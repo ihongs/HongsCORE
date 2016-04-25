@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <form name="sign">
+        <field name="username"
+               required="yes">
+        </field>
+        <field name="password"
+               required="yes">
+        </field>
+    </form>
+    <form name="mine">
+        <field name="username">
+        </field>
+        <field name="password">
+        </field>
+        <field name="passolde">
+        </field>
+        <field name="name">
+        </field>
+        <field name="head">
+        </field>
+    </form>
+</root>

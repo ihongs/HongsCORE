@@ -41,6 +41,8 @@
 
 ## 使用方法
 
+* 由于之前 gz 等大文件提交导致仓库非常大，现已不再提供压缩包，可使用 mvn package 等命令构建系统。 *
+
 下载 Hongs-CORE-x.x.x.tar.gz 后解压到任意目录(别下 release 里的、很久没更新了), 打开命令行(Linux,Mac的终端)并切换到该目录下, 先执行 `bin/run system:setup` 设置数据库, 再执行 `bin/run server:start` 启动服务器, 然后打开浏览器在地址栏输入 http://localhost:8080/ 即可进入; 登录账号 `admin@xxx.com` 口令 `123456`; 如需停止服务, 关闭命令窗口或按 Ctrl+C 即可; Linux,Mac 系统需要检查 run 是否有执行权限(`chmod +x etc/*`).
 
 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行上面的两条命令, windows 用户只需双击即可设置和启动.

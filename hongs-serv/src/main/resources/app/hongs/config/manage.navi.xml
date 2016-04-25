@@ -1,0 +1,5 @@
+<root>
+    <menu disp="后台" href="common/menu.act?m=manage">
+        <role disp="登录后台" name="manage"></role>
+    </menu>
+</root>

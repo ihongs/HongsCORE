@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<db xmlns="http://hongs-core"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://hongs-core db.xsd">
+  <source drvr="org.sqlite.JDBC"
+          jdbc="jdbc:sqlite:common.db"
+          maxPoolSize="5"/>
+</db>

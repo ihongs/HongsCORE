@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<db xmlns="http://hongs-core"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://hongs-core db.xsd">
+    <config link="manage"/>
+    <tables>
+        <table name="form"
+               tableName="a_module_form"
+               primaryKey="id"
+               model="app.hongs.serv.module.Form">
+            <assoc type="BLS_TO"
+                   name="unit"
+                   foreignKey="unit_id">
+            </assoc>
+        </table>
+        <table name="unit"
+               tableName="a_module_unit"
+               primaryKey="id"
+               model="app.hongs.serv.module.Unit">
+        </table>
+        <table name="data"
+               tableName="a_module_data"
+               primaryKey="id">
+        </table>
+    </tables>
+</db>

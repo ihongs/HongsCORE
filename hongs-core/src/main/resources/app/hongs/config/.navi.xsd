@@ -1,0 +1,63 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+    <!-- 基础属性 -->
+    <xs:attribute name="name" type="xs:string"/>
+    <xs:attribute name="href" type="xs:string"/>
+    <xs:attribute name="hrel" type="xs:string"/>
+    <xs:attribute name="icon" type="xs:string"/>
+    <xs:attribute name="disp" type="xs:string"/>
+
+    <!-- 动作 -->
+    <xs:element name="action" type="xs:string"/>
+
+    <!-- 依赖 -->
+    <xs:element name="depend" type="xs:string"/>
+
+    <!-- 包含 -->
+    <xs:element name="import" type="xs:string"/>
+
+    <!-- 会话 -->
+    <xs:element name="rsname" type="xs:string"/>
+
+    <!-- 角色 -->
+    <xs:element name="role">
+        <xs:complexType>
+            <xs:attribute ref="name" use="required"/>
+            <xs:attribute ref="disp"/>
+            <xs:all>
+                <xs:element ref="action" maxOccurs="unbounded"/>
+                <xs:element ref="depend" maxOccurs="unbounded"/>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- 页面 -->
+    <xs:element name="menu">
+        <xs:complexType>
+            <xs:attribute ref="href" use="required"/>
+            <xs:attribute ref="hrel"/>
+            <xs:attribute ref="icon"/>
+            <xs:attribute ref="disp"/>
+            <xs:all>
+                <xs:element ref="menu" maxOccurs="unbounded"/>
+                <xs:element ref="role" maxOccurs="unbounded"/>
+                <xs:element ref="import" maxOccurs="unbounded"/>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+    <!-- 总配 -->
+    <xs:element name="root">
+        <xs:complexType>
+            <xs:all>
+                <xs:element ref="menu" maxOccurs="unbounded"/>
+                <xs:element ref="role" maxOccurs="unbounded"/>
+                <xs:element ref="import" maxOccurs="unbounded"/>
+                <xs:element ref="rsname" maxOccurs="unbounded"/>
+            </xs:all>
+        </xs:complexType>
+    </xs:element>
+
+</xs:schema>

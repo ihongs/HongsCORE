@@ -1,0 +1,75 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- 基础属性 -->
+  <xs:attribute name="name" type="xs:string"/>
+  <xs:attribute name="code" type="xs:string"/>
+  <xs:attribute name="disp" type="xs:string"/>
+  <xs:attribute name="hint" type="xs:string"/>
+  <xs:attribute name="type" type="xs:string"/>
+  <xs:attribute name="rule" type="xs:string"/>
+  <xs:attribute name="required" type="xs:string"/>
+  <xs:attribute name="repeated" type="xs:string"/>
+
+  <!-- 字段参数 -->
+  <xs:element name="param" type="xs:string">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 字段 -->
+  <xs:element name="field">
+      <xs:complexType>
+          <xs:attribute ref="name" use="required"/>
+          <xs:attribute ref="disp"/>
+          <xs:attribute ref="hint"/>
+          <xs:attribute ref="type"/>
+          <xs:attribute ref="rule"/>
+          <xs:attribute ref="required"/>
+          <xs:attribute ref="repeated"/>
+          <xs:all>
+              <xs:element ref="param" maxOccurs="unbounded"/>
+          </xs:all>
+      </xs:complexType>
+  </xs:element>
+
+  <!-- 表单 -->
+  <xs:element name="form">
+      <xs:complexType>
+          <xs:attribute ref="name" use="required"/>
+          <xs:all>
+              <xs:element ref="field" maxOccurs="unbounded"/>
+          </xs:all>
+      </xs:complexType>
+  </xs:element>
+
+  <!-- 枚举选项 -->
+  <xs:element name="value" type="xs:string">
+      <xs:complexType>
+          <xs:attribute ref="code" use="required"/>
+      </xs:complexType>
+  </xs:element>
+
+  <!-- 枚举 -->
+  <xs:element name="enum">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:all>
+        <xs:element ref="value" maxOccurs="unbounded"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 总配 -->
+  <xs:element name="root">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="enum" maxOccurs="unbounded"/>
+        <xs:element ref="form" maxOccurs="unbounded"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+</xs:schema>

@@ -1,0 +1,114 @@
+<?xml version="1.0"?>
+
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+
+  <!-- 基础配置 -->
+  <xs:element name="config">
+    <xs:complexType>
+      <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="dbClass" type="xs:string"/>
+      <xs:attribute name="tableClass" type="xs:string"/>
+      <xs:attribute name="modelClass" type="xs:string"/>
+      <xs:attribute name="tablePrefix" type="xs:string"/>
+      <xs:attribute name="tableSuffix" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 内部数据源驱动 -->
+  <xs:element name="source">
+    <xs:complexType>
+      <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="drvr" type="xs:string" use="required"/>
+      <xs:attribute name="jdbc" type="xs:string" use="required"/>
+      <xs:attribute name="user" type="xs:string"/>
+      <xs:attribute name="password" type="xs:string"/>
+      <xs:attribute name="maxIdleTime" type="xs:int"/>
+      <xs:attribute name="minPoolSize" type="xs:int"/>
+      <xs:attribute name="maxPoolSize" type="xs:int"/>
+      <xs:attribute name="initialPoolSize" type="xs:int"/>
+      <xs:attribute name="acquireIncrement" type="xs:int"/>
+      <xs:attribute name="numHelperThreads" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 外部数据源配置 -->
+  <xs:element name="origin">
+    <xs:complexType>
+      <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="user" type="xs:string"/>
+      <xs:attribute name="password" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 关联表配置 -->
+  <xs:element name="assoc">
+    <xs:complexType>
+      <xs:attribute ref="type" use="required"/>
+      <xs:attribute ref="join"/>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="tableName"/>
+      <xs:attribute ref="foreignKey" use="required"/>
+      <xs:attribute ref="primaryKey"/>
+      <xs:attribute ref="updateKeys"/>
+      <!-- 其他限定 -->
+      <xs:attribute ref="select"/>
+      <xs:attribute ref="filter"/>
+      <xs:attribute ref="groupBy"/>
+      <xs:attribute ref="having"/>
+      <xs:attribute ref="orderBy"/>
+      <xs:attribute ref="limit"/>
+      <xs:all>
+        <!-- 递归关联 -->
+        <xs:element ref="assoc" minOccurs="0"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 基础表参数 -->
+  <xs:element name="param" type="xs:string">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 基础表配置 -->
+  <xs:element name="table">
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="tableName"/>
+      <xs:attribute ref="class"/>
+      <xs:attribute ref="prefix"/>
+      <xs:attribute ref="suffix"/>
+      <xs:attribute ref="primaryKey"/>
+      <xs:all>
+        <!-- 关联子表 -->
+        <xs:element ref="assoc" minOccurs="0"/>
+        <!-- 附加参数 -->
+        <xs:element rel="param" minOccurs="0"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 基础表集合 -->
+  <xs:element name="tables">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="table" maxOccurs="unbounded"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 总配置 -->
+  <xs:element name="db">
+    <xs:complexType>
+      <xs:all>
+        <xs:element ref="config" minOccurs="0"/>
+        <xs:element ref="origin" minOccurs="0"/>
+        <xs:element ref="source" minOccurs="0"/>
+        <xs:element ref="tables" minOccurs="0"/>
+      </xs:all>
+    <xs:complexType>
+  </xs:element>
+
+</xs:schema>

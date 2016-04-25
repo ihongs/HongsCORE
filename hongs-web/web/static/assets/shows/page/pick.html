@@ -1,0 +1,35 @@
+<h2>选择分类</h2>
+<div id="medium-section-list"
+     data-module="hsList"
+     data-load-url="data/sections.json"
+     data-open-urls-0="['.create','page/form.html','@']"
+     data-data-0="_fill__fork:(hsForkFillList)">
+    <div>
+        <div class="toolbox col-md-8 btn-group">
+            <button type="button" class="ensure btn btn-primary">确认选择</button>
+        </div>
+        <form class="findbox col-md-4 input-group" action="" method="POST">
+            <input type="search" name="wd" class="form-control input-search"/>
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+            </span>
+        </form>
+    </div>
+    <div class="listbox table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th data-fn="id[]" data-ft="_fork" class="_check">
+                        <input type="checkbox" class="checkall" name="id[]"/>
+                    </th>
+                    <th data-fn="name"  class="sortable name">名称</th>
+                    <th data-fn="note"  class="sortable note">说明</th>
+                    <th data-fn="cnum"  class="sortable text-right" data-fv="0" >下级数量</th>
+                    <th data-fn="ctime" class="sortable _htime" data-ft="_htime">创建时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="pagebox"></div>
+</div>

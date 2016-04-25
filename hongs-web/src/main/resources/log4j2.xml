@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+    <Properties>
+        <property name="fileSize">20 Mb</property>
+        <property name="fileName">$${sys:logs.dir}/run.log</property>
+        <property name="filePatt">$${sys:logs.dir}/%d{yyyy/MM}/run-%d{yyyyMMdd}-%i.log</property>
+        <property name="lessPatt">%d{yyyy/MM/dd HH:mm:ss} %p %m %n</property>
+        <property name="morePatt">%d{yyyy/MM/dd HH:mm:ss} %p %m - by %c at %C.%M:%L %n</property>
+    </Properties>
+    <Appenders>
+        <Console name="CONSOLE" target="SYSTEM_ERR">
+            <PatternLayout pattern="${lessPatt}"/>
+        </Console>
+        <RollingFile name="LessLog" fileName="${fileName}" filePattern="${filePatt}">
+            <PatternLayout pattern="${lessPatt}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${fileSize}"/>
+            </Policies>
+        </RollingFile>
+        <RollingFile name="MoreLog" fileName="${fileName}" filePattern="${filePatt}">
+            <PatternLayout pattern="${morePatt}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${fileSize}"/>
+            </Policies>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Root level="ERROR" includeLocation="true">
+            <AppenderRef ref="CONSOLE"/>
+            <AppenderRef ref="MoreLog"/>
+        </Root>
+        <Logger name="hongs.out" level="TRACE" additivity="false">
+            <AppenderRef ref="CONSOLE"/>
+        </Logger>
+        <Logger name="hongs.log" level="ERROR" additivity="false">
+            <AppenderRef ref="LessLog"/>
+        </Logger>
+    </Loggers>
+</Configuration>

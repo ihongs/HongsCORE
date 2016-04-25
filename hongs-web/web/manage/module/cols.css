@@ -1,0 +1,13 @@
+
+.cols-form legend
+    {margin-bottom: 15px; font-weight: bolder;}
+.cols-form .form-group legend
+    {font-size: 15px;}
+.cols-form .record-form .glyphicon,
+.cols-form .target-form .glyphicon,
+.cols-form .widget-form .glyphicon
+    {display: none; color: #aaa; margin: 4px 0 0 8px;}
+.cols-form .widget-form .glyphicon.glyphicon-plus-sign,
+.cols-form .target-form .glyphicon.glyphicon-info-sign,
+.cols-form .target-form .glyphicon.glyphicon-remove-sign
+    {display: inline-block;}

@@ -1,0 +1,43 @@
+<ol class="backable breadcrumb row hide" data-toggle="hsTabs">
+    <li class="back-crumb dont-close pull-right">
+        <a href="javascript:;">
+            <i class="glyphicon glyphicon-remove-sign"></i>
+        </a>
+    </li>
+    <li class="home-crumb active">
+        <a href="javascript:;">
+            <i class="glyphicon glyphicon-folder-open"></i>
+            <b>分类及文章</b>
+        </a>
+    </li>
+</ol>
+<div class="backable panes">
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-3 side-context">
+            <div id="medium-section-tree"
+                 data-module="hsTree"
+                 data-load-url="data/sections.json"
+                 data-link-urls-0="['.main-context','page/list.html?xxxx_id={ID}']"
+                 data-open-urls-0="['.create','page/form.html?pid={ID}','@']"
+                 data-open-urls-1="['.modify','page/form.html?id={ID}','@']"
+                 data-send-urls-0="['.delete','data/create.json','您确定要删除此分类?']"
+                 data-cnum-key="cnum"
+                 data-root-name="频道分类">
+                <div class="toolbox btn-group">
+                    <button type="button" class="create btn btn-default">添加</button>
+                    <button type="button" class="modify for-select btn btn-default">修改</button>
+                    <button type="button" class="delete for-select btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+                <div class="treebox"></div>
+            </div>
+        </div>
+        <div class="col-md-9 main-context"></div>
+        <div class="col-md-12 alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <p style="padding: 2px 0px 2px 5px;">
+            <strong>注意!</strong> 由于演示数据是静态的, 请求返回并不会有变化, 会使树节点 ID 重复而出错, 故请不要展开下级; 如已点过展开, 请刷新.
+            </p>
+        </div>
+    </div>
+</div>

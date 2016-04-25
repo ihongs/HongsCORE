@@ -1,0 +1,85 @@
+{
+    "ok": true,
+    "err": "",
+    "rel": "",
+    "msg": "",
+    "page": {
+        "pagecount": 2,
+        "rowscount": 18
+    },
+    "list": [
+        {
+            "id": "1",
+            "name": "文章1",
+            "score": 1,
+            "count_browses": 1,
+            "count_comment": 1,
+            "count_consent": 1,
+            "count_dissent": 1,
+            "means_consent": 1,
+            "score_consent": 1,
+            "mtime": 1460780299,
+            "ctime": 1460780299,
+            "word": "哇哈哈 哟嘻嘻",
+            "note": "要一步一步往上爬, 在最高点乘着叶片往前飞",
+            "snap": "../img/head_icon.jpg",
+            "sect_id": "a",
+            "section": {
+                "id": "a",
+                "name": "分类1"
+            }
+        },
+        {
+            "id": "2",
+            "name": "文章2",
+            "score": 1,
+            "count_browses": 1,
+            "count_comment": 1,
+            "count_consent": 1,
+            "count_dissent": 1,
+            "means_consent": 1,
+            "score_consent": 1,
+            "mtime": 1460780299,
+            "ctime": 1460780299
+        },
+        {
+            "id": "3",
+            "name": "文章3",
+            "score": 1,
+            "count_browses": 1,
+            "count_comment": 1,
+            "count_consent": 1,
+            "count_dissent": 1,
+            "means_consent": 1,
+            "score_consent": 1,
+            "mtime": 1460780299,
+            "ctime": 1460780299
+        },
+        {
+            "id": "4",
+            "name": "文章4",
+            "score": 1,
+            "count_browses": 1,
+            "count_comment": 1,
+            "count_consent": 1,
+            "count_dissent": 1,
+            "means_consent": 1,
+            "score_consent": 1,
+            "mtime": 1460780299,
+            "ctime": 1460780299
+        },
+        {
+            "id": "5",
+            "name": "文章5",
+            "score": 1,
+            "count_browses": 1,
+            "count_comment": 1,
+            "count_consent": 1,
+            "count_dissent": 1,
+            "means_consent": 1,
+            "score_consent": 1,
+            "mtime": 1460780299,
+            "ctime": 1460780299
+        }
+    ]
+}

@@ -1,0 +1,433 @@
+<h2>{DO}表单</h2>
+<div id="hongs-module-form" class="cols-form" data-module="hsCols">
+    <div class="row clearfix">
+        <div class="col-md-6">
+            <div data-module="hsForm"
+                 data-load-url="manage/module/form/info.act?id=${id}"
+                 data-save-url="manage/module/form/save.act">
+                <form class="record-form">
+                    <input type="hidden" name="id"/>
+                    <input type="hidden" name="unit_id" data-pn="unit_id"/>
+                    <input type="hidden" name="conf"/>
+                    <div class="form-group" data-type="text">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>名称</span>
+                        </label>
+                        <input class="form-control" name="name" type="text" required="required" placeholder="输入名字用以识别这个表单"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label clearfix" style="display: block">
+                            <span>权重</span>
+                        </label>
+                        <input class="form-control" name="snum" type="number" required="required" value="0"/>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label clearfix" style="display: block">
+                            <span>备注</span>
+                        </label>
+                        <textarea class="form-control" name="snum"></textarea>
+                    </div>
+                    <div class="invisible">
+                        <button type="submit"/>
+                    </div>
+                </form>
+            </div>
+            <div data-module="hsForm">
+                <form class="target-form">
+                    <div class="form-group" data-type="line">
+                        <legend class="clearfix" data-valtype="text">
+                            <span>点击备选字段上的“+”符号可将字段加入</span>
+                        </legend>
+                    </div>
+                    <div class="target-area"></div>
+                    <div class="clearfix">
+                        <div class="pull-left" >
+                            <button type="button" class="btn btn-success ensure">保存设置</button>
+                        </div>
+                        <div class="pull-right">
+                            <button type="submit" class="btn btn-primary">模拟提交</button>
+                            <button type="reset"  class="btn btn-link">重置</button>
+                        </div>
+                    </div>
+                    <div class="invisible">
+                        <div class="form-gorup">
+                            <input type="hidden" name="validate" data-validate="validate"/>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="col-md-6" style="background: #f8f8f8; padding-top: 15px;">
+            <form class="widget-form" onsubmit="return false;">
+                <div class="form-group" data-type="line">
+                    <legend class="clearfix" data-valtype="text">
+                        <span>分隔栏</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </legend>
+                    <input type="line" name="-" style="display: none;"/>
+                </div>
+                <div class="form-group" data-type="text">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>单行文本</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="text" placeholder="请输入..."/>
+                </div>
+                <div class="form-group" data-type="email">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>邮箱</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="email" placeholder="请输入电子邮箱"/>
+                </div>
+                <div class="form-group" data-type="url">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>网址</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="url" placeholder="请输入链接地址"/>
+                </div>
+                <div class="form-group" data-type="tel">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>电话</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="tel" placeholder="请输入电话号码"/>
+                </div>
+                <div class="form-group" data-type="number">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>数字</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="number" placeholder="请输入数字"/>
+                </div>
+                <div class="form-group" data-type="date">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>日期</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="date"/>
+                </div>
+                <div class="form-group" data-type="select">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>选项</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <select class="form-control" name="-">
+                        <option value="">--请选择--</option>
+                    </select>
+                </div>
+                <div class="form-group" data-type="textarea">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>多行文本</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <textarea class="form-control" name="-" style="min-height: 4em; height: 4em;" placeholder="请输入..."></textarea>
+                </div>
+                <div class="form-group" data-type="file">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>文件</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="-" type="file"/>
+                </div>
+                <div class="form-group" data-type="pick">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>关联</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <ul data-ft="_pick" data-fn="-"></ul>
+                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="">请选择...</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div style="display:none;">
+        <div class="widget-pane widget-pane-line">
+            <div class="form-group">
+                <input class="form-control" type="text" name="span:first" value=""/>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-text">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="input|placeholder" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">验证规则</label>
+                <input class="form-control" type="text" name="input|pattern" value="" placeholder="使用正则表达式进行验证"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">长度范围</label>
+                <div class="control-group">
+                    <input class="form-control" type="number" name="input|minlength" value="" style="display: inline-block; width: 8em;"/>
+                    <span>&nbsp;~&nbsp;</span>
+                    <input class="form-control" type="number" name="input|maxlength" value="" style="display: inline-block; width: 8em;"/>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="input|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-fltrable" value="yes"/>筛选
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-findable" value="yes"/>搜索
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-email widget-pane-url widget-pane-tel">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="input|placeholder" value=""/>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="input|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-fltrable" value="yes"/>筛选
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-findable" value="yes"/>搜索
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-number">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="input|placeholder" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">取值范围</label>
+                <div class="control-group">
+                    <input class="form-control" type="number" name="input|min" value="" style="display: inline-block; width: 8em;"/>
+                    <span>&nbsp;~&nbsp;</span>
+                    <input class="form-control" type="number" name="input|max" value="" style="display: inline-block; width: 8em;"/>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="input|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-fltrable" value="yes"/>筛选
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-findable" value="yes"/>搜索
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-date">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="input|placeholder" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">日期范围</label>
+                <div class="control-group">
+                    <input class="form-control" type="date" name="input|mindate" value="" style="display: inline-block; width: 8em;"/>
+                    <span>&nbsp;~&nbsp;</span>
+                    <input class="form-control" type="date" name="input|maxdate" value="" style="display: inline-block; width: 8em;"/>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="input|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-fltrable" value="yes"/>筛选
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-findable" value="yes"/>搜索
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-select">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">选项列表</label>
+                <textarea class="form-control" name="select|datalist" placeholder="一行一条,格式: 文本 或 取值::文本, 以!!打头的为默认选中"></textarea>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="select|required" value="required"/>必选
+                </label>
+                <label>
+                    <input type="checkbox" name="select|data-repeated" value="yes"/>多选
+                </label>
+                <label>
+                    <input type="checkbox" name="select|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="select|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="select|data-fltrable" value="yes"/>筛选
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-textarea">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="textarea|placeholder" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">长度范围</label>
+                <div class="control-group">
+                    <input class="form-control" type="number" name="input|minlength" value="" style="display: inline-block; width: 8em;"/>
+                    <span>&nbsp;~&nbsp;</span>
+                    <input class="form-control" type="number" name="input|maxlength" value="" style="display: inline-block; width: 8em;"/>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="textarea|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="textarea|data-findable" value="yes"/>搜索
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-file">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="input|placeholder" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">文件类型</label>
+                <input class="form-control" type="text" name="input|data-extn" value="" placeholder="逗号分隔, 如 png,jpg,gif"/>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="input|required" value="required"/>必传
+                </label>
+                <label>
+                    <input type="checkbox" name="input|repeated" value="required"/>多个
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-pick">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="button|text" value=""/>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="input|required" value="required"/>必选
+                </label>
+                <label>
+                    <input type="checkbox" name="input|repeated" value="required"/>多个
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-fltrable" value="yes"/>筛选
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form onsubmit="return false;">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title"></h4>
+                    </div>
+                    <div class="modal-body"></div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary">保存</button>
+                    </div>
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+</div>
+<!-- cols util -->
+<link rel="stylesheet" type="text/css" href="manage/module/cols.css"/>
+<script type="text/javascript" src="manage/module/cols.js"></script>
+<script type="text/javascript" src="static/addons/json2/json2.min.js"></script>

@@ -1,0 +1,79 @@
+<!doctype html>
+<html>
+    <head>
+        <title>HongsCORE::Login</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base href="../">
+        <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
+        <!--[if glt IE8.0]>
+        <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
+        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
+        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
+        <script type="text/javascript" src="common/conf/default.js"></script>
+        <script type="text/javascript" src="common/lang/default.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron" style="margin-top: 2em; background-color: #222; color: #ccc;">
+            <div class="container">
+                <h1 data-i18n="hello">Hello!</h1>
+                <p> <span data-i18n="welcome1">Welcome to</span>
+                    <!--<span style="color:#f08" class="glyphicon glyphicon-fire"></span>-->
+                    <span style="color:#f00">&nbsp;H</span>
+                    <span style="color:#f22">o</span>
+                    <span style="color:#f44">n</span>
+                    <span style="color:#f66">g</span>
+                    <span style="color:#f88">s</span>
+                    <span style="color:#faa">C</span>
+                    <span style="color:#fbb">O</span>
+                    <span style="color:#fcc">R</span>
+                    <span style="color:#fdd">E&nbsp;</span>
+                    <span data-i18n="welcome2">management information systems. Please login...</span></p>
+                <div class="row">
+                    <form action="manage/sign/create.act" data-module="hsForm" class="col-lg-6" id="sign-in-form">
+                        <input type="hidden" name="place" value="manage"/>
+                        <div class="form-group">
+                            <input name="username" type="text" value="abc@def.cn" placeholder="input.username" class="form-control i18n" required="required"/>
+                        </div>
+                        <div class="form-group">
+                            <input name="password" type="password" value="123456" placeholder="input.password" class="form-control i18n" required="required"/>
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-sm-6">
+                                <input name="captcha" type="text" value="" placeholder="验证码" class="form-control i18n" required="required"/>
+                            </div>
+                            <div class="col-sm-6">
+                                <img src="handle/capt/create.act?b=222222&f=cccccc&h=43" onclick="this.src='handle/capt/create.act?b=222222&f=cccccc&h=43&_='+Math.random()" title="看不清? 点一下换一个."/>
+                            </div>
+                            <div class="col-sm-12 help-block"></div>
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-primary btn-lg" data-i18n="login">Sign in Now</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <nav id="footbox" class="navbar">
+            <div class="container">
+                <blockquote><p>Copyleft &copy; 2015 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="static/power.html" target="_blank">others</a>.</small></p></blockquote>
+            </div>
+        </nav>
+        <script type="text/javascript">
+            (function() {
+                $("#sign-in-form").on("saveBack", function() {
+                    var r = hsGetParam( location.href, "r" );
+                    if (r) {
+                        location.href = hsFixUri(r);
+                    } else {
+                        location.href = "./";
+                    }
+                });
+            })(jQuery);
+        </script>
+    </body>
+</html>

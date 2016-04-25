@@ -1,0 +1,84 @@
+<!doctype html>
+<html>
+    <head>
+        <title>HongsCORE::Powered by...</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon" type="image/x-icon" href="../favicon.ico"/>
+        <link rel="stylesheet" type="text/css" href="assets/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="assets/css/hongscore.min.css"/>
+        <!--[if glt IE8.0]>
+        <script type="text/javascript" src="addons/respond/respond.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="assets/jquery.min.js"></script>
+    </head>
+    <body>
+        <div class="jumbotron" style="margin-top: 2em; background-color: #222; color: #ccc;">
+            <div class="container">
+                <h1><b>: )</b> Thanks for...</h1>
+                <p>&nbsp;</p>
+                <div class="row">
+                    <div class="col-md-4">
+                        <h2><span class="glyphicon glyphicon-eye-open"></span> Front End</h2>
+                        <ul style="font-weight: bold;">
+                            <li><a href="http://www.jquery.com/" target="_blank">jQuery</a></li>
+                            <li><a href="http://www.jqueryui.com/" target="_blank">jQuery UI</a></li>
+                            <li><a href="http://getbootstrap.com/" target="_blank">Bootstrap</a></li>
+                            <li><a href="http://glyphicons.com/" target="_blank">Glyphicons</a></li>
+                            <li><a href="http://echarts.baidu.com/" target="_blank">ECharts</a></li>
+                            <li><a href="http://ueditor.baidu.com/" target="_blank">UEditor</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h2><span class="glyphicon glyphicon-cloud"></span> Service</h2>
+                        <ul style="font-weight: bold;">
+                            <li><a href="http://www.eclipse.org/jetty/" target="_blank">Jetty</a></li>
+                            <li><a href="http://lucene.apache.org/" target="_blank">Lucene</a></li>
+                            <li><a href="http://www.mchange.com/projects/c3p0/" target="_blank">C3P0</a></li>
+                            <li><a href="http://www.sqlite.org/" target="_blank">SQLite</a></li>
+                            <li><a href="https://www.mysql.com/" target="_blank">MySQL</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-4">
+                        <h2><span class="glyphicon glyphicon-heart"></span> Others</h2>
+                        <ul style="font-weight: bold;">
+                            <li><a href="https://www.java.com/" target="_blank">Java</a></li>
+                            <li><a href="https://maven.apache.org/" target="_blank">Maven</a></li>
+                            <li><a href="http://logging.apache.org/log4j/2.x/" target="_blank">Log4j</a></li>
+                            <li><a href="http://static/assetss.apache.org/" target="_blank">Apache Commons</a></li>
+                            <li><a href="http://projects.coobird.net/thumbnailator/" target="_blank">Thumbnailator</a>
+                        </ul>
+                    </div>
+                </div>
+                <p>&nbsp;</p>
+                <p><strong>Thanks for sharing those selfless people in the world, sharp tools make good work.</strong></p>
+            </div>
+        </div>
+        <nav id="footbox" class="navbar">
+            <div class="container">
+                <blockquote><p>Copyleft &copy; 2015 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="static/power.html" target="_blank">others</a>.</small></p></blockquote>
+            </div>
+        </nav>
+        <script type="text/javascript">
+            (function() {
+                var colors = [
+                    "#222222", "#222224", "#222244", "#222444", "#224444", "#244444",
+                    "#444444", "#444442", "#444422", "#444222", "#442222", "#422222",
+                    "#222222"
+                ];
+                var colori = 1;
+                var colorx = function() {
+                    $(".jumbotron").css("background-color", colors[colori]);
+                    if (colori  > colors.length - 2) {
+                        colori  = 0;
+                        setTimeout(colorx, 5000);
+                    } else {
+                        colori += 1;
+                        setTimeout(colorx, 50);
+                    }
+                };
+                colorx();
+            })(jQuery);
+        </script>
+    </body>
+</html>

@@ -1,0 +1,9 @@
+.DS_Store
+.project
+nbproject
+nbactions*
+nb-configuration.xml
+/target
+/*/target
+/Hongs-CORE-*
+/hongs-web/web/WEB-INF/lib/*

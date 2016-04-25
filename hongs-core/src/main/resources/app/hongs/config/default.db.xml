@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DOCTYPE db SYSTEM ".db.dtd"-->
+<!--
+    Document   : default.db.xml
+    Created on : March 11, 2010, 10:56 AM
+    Author     : Hongs
+    Description:
+        select,where,groupBy,which,orderBy等中,
+        用"."表示当前表, 用":"表示上级表,
+        仅当有设置join时可使用":".
+//-->
+
+<db xmlns="http://hongs-core"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://hongs-core db.xsd">
+  <source drvr="org.sqlite.JDBC"
+          jdbc="jdbc:sqlite:default.db"
+          maxPoolSize="5"/>
+  <!-- 正式环境
+  <source drvr="com.mysql.jdbc.Driver"
+          jdbc="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
+          user="root"
+          password="123456"
+          maxPoolSize="5"/>
+  <origin name="jdbc/hongs-core"/>
+  //-->
+
+  <!--
+  <!== 实例配置 ==>
+  <config dbClass="[DB类, 仅在使用"DB.getInstance(dbName)"时有效]"
+          tableClass="[Table类, 仅在使用"DB.getTable(tableName)"时有效]"
+          modelClass="[Model类, 仅在使用"DB.getModel(tableName)"时有效]"
+          tablePrefix="[表前缀]"
+          tableSuffix="[表后缀]"/>
+  <!== 内部数据源 ==>
+  <source drvr="驱动类名"
+          jdbc="驱动链接"
+          user="账号"
+          password="密码"
+          minPoolSize="最小连接池限制"
+          maxPoolSize="最大连接池限制"
+          maxIdleTime="最大存活时限制"
+          maxStatements="最大Statement数量限制"
+          initialPoolSize="初始连接限制"
+          numHelperThreads="助手实例数量"
+          checkoutTimeout="新增连接超时"
+          acquireIncrement="新增连接数量"/>
+  <!== 外部数据源==>
+  <origin name="数据源名称"/>
+  <!== 表配置 ==>
+  <tables>
+    <!== 结构说明 ==>
+    <table name="[名称]"
+           tableName="[表名]"
+           primaryKey="[主键]"
+           class="[Table类, 仅在使用DB.getTable(tableName)时有效]"
+           prefix="[表前缀]"
+           suffix="[表后缀]">
+      <assoc type="[BLS_TO|HAS_ONE|HAS_MANY]"
+             join="[INNER|LEFT|RIGHT|FULL]"
+             name="[关联名]"
+             tableName="[真实名, 指向真实的table的name]"
+             foreignKey="[关联外键]"
+             primaryKey="[关联主键]"
+             select="[限制字段]"
+             where="[查询条件]"
+             groupBy="[附加分组]"
+             which="[过滤条件]"
+             orderBy="[附加排序]"/>
+    </table>
+    <!== 举例说明 ==>
+    <table name="hs_demo"
+           primaryKey="id">
+      <assoc where=""
+             select=""
+             orderBy=""/>
+      <assoc type="BLS_TO"
+             join="LEFT"
+             name="hs_demo"
+             alias="hs_demo_bls_to"
+             foreignKey="pid"/>
+      <assoc type="HAS_ONE"
+             join="LEFT"
+             name="hs_demo"
+             alias="hs_demo_has_one"
+             foreignKey="pid"/>
+      <assoc type="HAS_MANY"
+             name="hs_demo"
+             alias="hs_demo_has_many"
+             foreignKey="pid"/>
+    </table>
+  </tables>
+  //-->
+</db>

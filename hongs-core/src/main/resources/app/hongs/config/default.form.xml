@@ -1,0 +1,109 @@
+<root>
+    <enum name="__types__">
+        <!-- String -->
+        <value code="string">string</value>
+        <value code="stored">string</value>
+        <value code="search">string</value>
+        <value code="hidden">string</value>
+        <value code="text">string</value>
+        <value code="textarea">string</value><!-- Luncene 中同 stored -->
+        <value code="textcase">string</value><!-- Luncene 中同 search -->
+        <value code="email">string</value>
+        <value code="url">string</value>
+        <value code="tel">string</value>
+        <!-- Number -->
+        <value code="number">number</value>
+        <value code="range">number</value>
+        <value code="onoff">number</value>
+        <!-- Date -->
+        <value code="date">date</value>
+        <value code="time">date</value>
+        <value code="datetime">date</value>
+        <!-- Form -->
+        <value code="form">form</value>
+        <!-- Fork -->
+        <value code="fork">fork</value>
+        <value code="pick">fork</value>
+        <!-- Enum -->
+        <value code="enum">enum</value>
+        <value code="select">enum</value>
+        <value code="radio">enum</value>
+        <value code="check">enum</value>
+        <!-- File -->
+        <value code="file">file</value>
+        <value code="upload">file</value>
+        <value code="image">file</value>
+        <value code="audio">file</value>
+        <value code="video">file</value>
+    </enum>
+    <enum name="__patts__">
+        <value code="email"><![CDATA[^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\.([a-z\.]{2,6})$]]></value>
+        <value code="url"><![CDATA[^(\w+:\/\/)?[\da-z\.\-]+\.[a-z\.]{2,6}[#&+_\?\/\w \.\-=]*$]]></value>
+        <value code="id"><![CDATA[^[A-Z0-9]{16,20}$]]></value>
+    </enum>
+    <enum name="gender">
+        <vlaue code="1">男</vlaue>
+        <vlaue code="0">女</vlaue>
+        <vlaue code="*">未知</vlaue>
+    </enum>
+    <enum name="sexual">
+        <value code="0">正常</value>
+        <value code="*">未知</value>
+    </enum>
+    <!--
+    <enum name="demo-enum">
+        <value code="1">名称1</value>
+        <value code="1">名称2</value>
+    </enum>
+    <form name="demo-form">
+        <field name="str" disp="文本" type="text,textarea,hidden,search,tel,url,email">
+            <param name="minlength">100</param>
+            <param name="maxlength">500</param>
+            <param name="pattern"></param>
+        </field>
+        <field name="num" disp="数字" type="number,range,onoff">
+            <param name="min">100</param>
+            <param name="max">500</param>
+            <param name="type">int,long,float,double</param>
+            <param name="format">####.##</param>
+        </field>
+        <field name="day" disp="日期" type="date,time,datetime">
+            <param name="min">2014/01</param>
+            <param name="max">2014/12</param>
+            <param name="type">date,timestamp,microtime</param>
+            <param name="format">yyyy/MM</param>
+        </field>
+        <field name="file" disp="文件" type="file">
+            <param name="path"></param>
+            <param name="href"></param>
+            <param name="name"></param>
+            <param name="type"></param>
+            <param name="extn"></param>
+        </field>
+        <field name="enum" disp="枚举" type="enum,select,check,radio">
+            <param name="conf"></param>
+            <param name="enum">demo-enum</param>
+        </field>
+        <field name="form" disp="外键" type="fork">
+            <param name="conf"></param>
+            <param name="form">demo-form</param>
+        </field>
+        <field name="form" disp="表单" type="form">
+            <param name="conf"></param>
+            <param name="form">demo-form</param>
+        </field>
+        <field name="more" disp="必填" type="text" required="yes">
+        </field>
+        <field name="more" disp="重复" type="text" repeated="yes">
+            <param name="distrinct"></param>
+            <param name="minrepeat"></param>
+            <param name="maxrepeat"></param>
+        </field>
+        <field name="more" disp="默认" type="text">
+            <param name="default">%now,$uid</div>
+            <param name="default-thrust">yes</param>
+            <param name="default-create">yes</param>
+        </field>
+    </form>
+    //-->
+</root>

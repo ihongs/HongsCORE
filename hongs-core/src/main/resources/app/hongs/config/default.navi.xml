@@ -1,0 +1,12 @@
+<root>
+    <rsname>roles</rsname>
+    <!--
+    <menu disp="" href="" hrel="" icon="">
+        <role disp="" name="">
+            <action></action>
+            <depend></depend>
+        </role>
+        <import></import>
+    </menu>
+    //-->
+</root>

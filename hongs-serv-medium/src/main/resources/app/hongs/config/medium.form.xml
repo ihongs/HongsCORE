@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <form name="aritcle">
+        <field name="@" rule="Ignore">
+            <param name="dont.auto.bind.findable"></param>
+            <param name="dont.auto.bind.listable"></param>
+        </field>
+        <field name="id" type="string"></field>
+        <field name="name" type="search"></field>
+        <field name="word" type="search"></field>
+        <field name="note" type="search"></field>
+        <field name="body" type="search">
+            <param name="unstored">0</param>
+        </field>
+    </form>
+    <enum name="dissent_cause">
+        <value code="1">虚假信息</value>
+        <value code="2">敏感信息</value>
+        <value code="3">淫秽色情</value>
+        <value code="4">人身攻击</value>
+        <value code="*">其他</value>
+    </enum>
+</root>

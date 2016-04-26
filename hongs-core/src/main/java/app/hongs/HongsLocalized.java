@@ -71,6 +71,17 @@ public class HongsLocalized {
         String codx, desx;
         String[]   optx;
 
+        /**
+         * 在例如多线程环境下未初始化 Core 时
+         * 出现异常会导致下方因找不到语言类别而提前终止
+         * 从而无法获知真实的错误位置
+         * 此时设为默认的语言让其继续
+         */
+        if (Core.ACTION_LANG.get() == null) {
+            Core.ACTION_LANG.set(CoreConfig.getInstance().getProperty("core.language.default"));
+            CoreLogger.error("ACTION_LANG is null in error or exception: " + that.getMessage());
+        }
+
         trns = CoreLocale.getInstance("_error_").clone();
         codx = "Ex"+Integer.toHexString(code);
         desx = desc != null ? desc : "";

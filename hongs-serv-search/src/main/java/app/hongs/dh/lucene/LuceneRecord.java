@@ -1072,16 +1072,16 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 quary =  query;
             } else {
                 quary = new BooleanQuery();
-                query.add(quary, BooleanClause.Occur.MUST);
-                if (!(fv instanceof Map) ) {
-                   Map fw = new HashMap( );
-                   fw.put(Cnst.OR_REL, fv);
-                   fv= fw;
+                if (! ( fv instanceof Map) && !"".equals( fv ) && fv != null) {
+                    query.add(quary, BooleanClause.Occur.MUST);
+                    Map fw = new HashMap();
+                    fw.put(Cnst.OR_REL,fv);
+                    fv= fw;
                 }
             }
 
             for(String fk: cols) {
-                qryAdd(quary, fk, fv, new SearchQuery( ) );
+                qryAdd(quary, fk, fv, new SearchQuery());
             }
         }
 
@@ -1762,12 +1762,12 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 if (and != null &&  and) {
                     qp.setDefaultOperator (QueryParser.AND_OPERATOR);
                 }
-                if (alw != null) qp.setAllowLeadingWildcard(alw);
-                if (let != null) qp.setLowercaseExpandedTerms(let);
                 if (epi != null) qp.setEnablePositionIncrements(epi);
-                if (phr != null) qp.setPhraseSlop (phr);
-                if (fms != null) qp.setFuzzyMinSim(fms);
+                if (let != null) qp.setLowercaseExpandedTerms(let);
+                if (alw != null) qp.setAllowLeadingWildcard(alw);
                 if (fpl != null) qp.setFuzzyPrefixLength(fpl);
+                if (fms != null) qp.setFuzzyMinSim      (fms);
+                if (phr != null) qp.setPhraseSlop       (phr);
 
                 Query  q2 = qp.parse(s);
                 if (w != null) q2.setBoost ( w);

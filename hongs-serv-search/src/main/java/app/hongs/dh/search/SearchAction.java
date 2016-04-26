@@ -28,12 +28,12 @@ public class SearchAction extends LuceneAction {
          * 有指定查询条件则按匹配度排序
          */
         Map rd = helper.getRequestData();
-        Object wd = rd.get(Cnst.WD_KEY);
-        if (wd != null && "".equals(wd)) {
-            List ob = Synt.declare(rd.get(Cnst.OB_KEY), List.class);
+        Object  wd = rd.get(Cnst.WD_KEY);
+        if(null != wd && "".equals(wd) ) {
+           List ob  = Synt.declare(rd.get(Cnst.OB_KEY), List.class);
             if( ob == null) {
-                ob =  new ArrayList(  );
-                rd.put(Cnst.OB_KEY, ob);
+                ob  =  new  ArrayList( );
+                rd.put(Cnst.OB_KEY , ob);
                 ob.add( 0 , "-");
             } else
             if(!ob.contains("-")) {
@@ -49,7 +49,9 @@ public class SearchAction extends LuceneAction {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
+            rd = getReqMap (helper, sr, "counts", rd);
         Map sd = sh.counts (rd);
+            sd = getRspMap (helper, sr, "counts", sd);
                  sr.destroy(  );
         helper.reply(sd);
     }

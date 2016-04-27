@@ -932,13 +932,13 @@ public class ActionHelper implements Cloneable
   public static Map parseParam(Map<String, String[]> params)
   {
     Map<String, Object> paramz = new HashMap();
-    for (Map.Entry et : params.entrySet())
+    for (Map.Entry<String, String[]> et : params.entrySet())
     {
-      String key = (String)et.getKey();
-      String[] value = (String[])et.getValue();
-      for (int i = 0; i < value.length; i ++ )
+      String   key = et.getKey(  );
+      String[] arr = et.getValue();
+      for ( String value  :  arr )
       {
-        Dict.setParam( paramz, value[i], key );
+        Dict.setParam ( paramz , value , key );
       }
     }
     return paramz;

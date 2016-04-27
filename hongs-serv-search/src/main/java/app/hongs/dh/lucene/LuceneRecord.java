@@ -268,7 +268,11 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     @Override
     public int update(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
+        Map         wh  = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
         for(String  id  : ids) {
+            if(!permit(wh,id)) {
+                throw new HongsException(0x1096, "Can not update for id '"+id+"'");
+            }
             put(id, rd  );
         }
         return ids.size();
@@ -283,10 +287,30 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     @Override
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
+        Map         wh  = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
         for(String  id  : ids) {
+            if(!permit(wh,id)) {
+                throw new HongsException(0x1097, "Can not delete for id '"+id+"'");
+            }
             del(id /**/ );
         }
         return ids.size();
+    }
+
+    /**
+     * 确保操作合法
+     * @param id
+     * @param wh
+     * @return
+     * @throws HongsException
+     */
+    protected boolean permit(Map wh, String id) throws HongsException {
+        Set<String> rb = new HashSet();
+                    rb.add("id");
+        wh.put(Cnst.ID_KEY, id );
+        wh.put(Cnst.RB_KEY, rb );
+        wh = getOne(wh);
+        return wh != null && !wh.isEmpty();
     }
 
     /**

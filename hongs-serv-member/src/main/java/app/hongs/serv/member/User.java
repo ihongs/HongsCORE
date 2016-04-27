@@ -150,9 +150,9 @@ extends Model {
     }
 
     @Override
-    protected boolean permit(FetchCase caze, String id)
+    protected boolean permit(FetchCase caze, Map wh, String id)
     throws HongsException {
-        if (!super.permit(caze, id)) {
+        if (!super.permit(caze, wh, id)) {
             return false;
         }
 

@@ -269,7 +269,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     public int update(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         for(String  id  : ids) {
-            put(id, rd );
+            put(id, rd  );
         }
         return ids.size();
     }
@@ -284,7 +284,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         for(String  id  : ids) {
-            del(id);
+            del(id /**/ );
         }
         return ids.size();
     }

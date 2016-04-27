@@ -71,7 +71,7 @@ public class LuceneAction implements IAction, IActing {
     }
 
     @Action("create")
-    @Preset(conf="", envm="")
+    @Preset(conf="", envm="", used={":defence", ":create"})
     @Verify(conf="", form="")
     @CommitSuccess
     @Override
@@ -87,7 +87,7 @@ public class LuceneAction implements IAction, IActing {
     }
 
     @Action("update")
-    @Preset(conf="", envm="")
+    @Preset(conf="", envm="", used={":defence", ":update"})
     @Verify(conf="", form="")
     @CommitSuccess
     @Override
@@ -102,7 +102,7 @@ public class LuceneAction implements IAction, IActing {
     }
 
     @Action("delete")
-    @Preset(conf="", envm="")
+    @Preset(conf="", envm="", used={":defence", ":delete"})
     @CommitSuccess
     @Override
     public void delete(ActionHelper helper) throws HongsException {

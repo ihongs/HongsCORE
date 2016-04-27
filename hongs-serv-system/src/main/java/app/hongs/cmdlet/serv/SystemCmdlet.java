@@ -61,9 +61,10 @@ public class SystemCmdlet {
      */
     @Cmdlet("setup")
     public static void setup(String[] args) throws HongsException {
-        List<String> argz = Arrays.asList(args);
-                     argz.add(  0 , "_setup_" );
-        serve ( argz.toArray ( new String[0] ));
+        List<String> argz = new ArrayList();
+                     argz.add   ("_setup_");
+                     argz.addAll(Arrays.asList(args));
+        serve(argz.toArray(new String[]{}));
     }
 
     /**

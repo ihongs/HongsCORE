@@ -305,13 +305,13 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * @throws HongsException
      */
     protected boolean permit(Map wh, String id) throws HongsException {
+        if (id == null || "".equals(id)) {
+            throw new NullPointerException("Param id for permit can not be empty");
+        }
         if (wh == null) {
             throw new NullPointerException("Param wh for permit can not be null.");
         }
-        if (id == null) {
-            throw new NullPointerException("Param id for permit can not be null.");
-        }
-        Set<String> rb = new HashSet();
+        Set<String> rb = new HashSet( );
                     rb.add("id");
         wh.put(Cnst.ID_KEY, id );
         wh.put(Cnst.RB_KEY, rb );

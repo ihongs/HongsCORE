@@ -344,7 +344,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      */
     public void set(String id, Map rd) throws HongsException {
         if (id == null || id.length() == 0) {
-            throw new HongsException.Common("Id must be set in put");
+            throw new NullPointerException("Id must be set in set");
         }
         Document doc = getDoc(id);
         if (doc == null) {
@@ -374,11 +374,11 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      */
     public void put(String id, Map rd) throws HongsException {
         if (id == null || id.length() == 0) {
-            throw new HongsException.Common("Id must be set in put");
+            throw new NullPointerException("Id must be set in put");
         }
         Document doc = getDoc(id);
         if (doc == null) {
-            throw new HongsException.Common("Doc#"+id+" not exists");
+            throw new NullPointerException("Doc#"+id+" not exists");
         } else {
             /**
              * 实际运行中发现
@@ -402,6 +402,13 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * @throws HongsException
      */
     public void del(String id) throws HongsException {
+        if (id == null || id.length() == 0) {
+            throw new NullPointerException("Id must be set in del");
+        }
+        Document doc = getDoc(id);
+        if (doc == null) {
+            throw new NullPointerException("Doc#"+id+" not exists");
+        }
         delDoc(id);
     }
 

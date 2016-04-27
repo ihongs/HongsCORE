@@ -333,20 +333,21 @@ public class FetchCase
   {
     caze.options  = this.options;
     this.joinList.add(caze);
+    caze.joinName = null;
     caze.joinExpr = null;
     caze.joinType = LEFT;
     return caze;
   }
 
-  public FetchCase on(String expr)
-  {
-    this.joinExpr = expr;
-    return this;
-  }
-
   public FetchCase by( byte  type)
   {
     this.joinType = type;
+    return this;
+  }
+
+  public FetchCase on(String expr)
+  {
+    this.joinExpr = expr;
     return this;
   }
 

@@ -7,9 +7,11 @@
 DROP TABLE IF EXISTS `a_medium_article`;
 CREATE TABLE `a_medium_article` (
   `id` char(20) NOT NULL,
-  `kind` varchar(20 ) DEFAULT 'html', /* html,wiki,md,bb,album,asset */
-  `type` varchar(100) DEFAULT 'default',
-  `temp` varchar(100) DEFAULT 'default',
+  `user_id` char(20) DEFAULT NULL,
+  `insp_id` char(20) DEFAULT NULL,
+  `type` char(20) DEFAULT 'default',
+  `temp` char(20) DEFAULT 'default',
+  `kind` char(20) DEFAULT 'html', /* html,md */
   `name` varchar(255) NOT NULL,
   `href` varchar(255) DEFAULT NULL,
   `snap` varchar(255) DEFAULT NULL,
@@ -31,9 +33,9 @@ CREATE TABLE `a_medium_article` (
   PRIMARY KEY (`id`)
 );
 
+CREATE INDEX `a_medium_article_user` ON `a_medium_article` (`user_id`);
+CREATE INDEX `a_medium_article_insp` ON `a_medium_article` (`insp_id`);
 CREATE INDEX `a_medium_article_type` ON `a_medium_article` (`type`);
-CREATE INDEX `a_medium_article_temp` ON `a_medium_article` (`temp`);
-CREATE INDEX `a_medium_article_kind` ON `a_medium_article` (`kind`);
 CREATE INDEX `a_medium_article_ctime` ON `a_medium_article` (`ctime`);
 CREATE INDEX `a_medium_article_mtime` ON `a_medium_article` (`mtime`);
 CREATE INDEX `a_medium_article_score` ON `a_medium_article` (`score`);
@@ -47,8 +49,8 @@ DROP TABLE IF EXISTS `a_medium_section`;
 CREATE TABLE `a_medium_section` (
   `id` char(20) NOT NULL,
   `pid` char(20) DEFAULT NULL,
-  `type` varchar(100) DEFAULT 'default',
-  `temp` varchar(100) DEFAULT 'default',
+  `type` char(20) DEFAULT 'default',
+  `temp` char(20) DEFAULT 'default',
   `name` varchar(200) NOT NULL,
   `word` varchar(1000) DEFAULT NULL,
   `note` varchar(1000) DEFAULT NULL,
@@ -60,8 +62,6 @@ CREATE TABLE `a_medium_section` (
 
 CREATE INDEX `a_medium_section_sect` ON `a_medium_section` (`pid`);
 CREATE INDEX `a_medium_section_type` ON `a_medium_section` (`type`);
-CREATE INDEX `a_medium_section_temp` ON `a_medium_article` (`temp`);
-CREATE INDEX `a_medium_section_name` ON `a_medium_section` (`name`);
 CREATE INDEX `a_medium_section_mtime` ON `a_medium_section` (`mtime`);
 CREATE INDEX `a_medium_section_seria` ON `a_medium_section` (`seria`);
 CREATE INDEX `a_medium_section_state` ON `a_medium_section` (`state`);
@@ -74,9 +74,10 @@ CREATE UNIQUE INDEX `UK_a_medium_section_link` ON `a_medium_section` (`pid`,`typ
 DROP TABLE IF EXISTS `a_medium_segment`;
 CREATE TABLE `a_medium_segment` (
   `id` char(20) NOT NULL,
-  `sect_id` char(20) NOT NULL,
   `link_id` char(20) NOT NULL,
-  `link` varchar(200) NOT NULL,
+  `sect_id` char(20) NOT NULL,
+  `link` char(20) DEFAULT 'article',
+  `sect` char(20) DEFAULT 'section',
   `mtime` int(11) DEFAULT NULL,
   `seria` int(11) DEFAULT '0' ,
   PRIMARY KEY (`id`)
@@ -85,9 +86,10 @@ CREATE TABLE `a_medium_segment` (
 CREATE INDEX `a_medium_segment_sect` ON `a_medium_segment` (`sect_id`);
 CREATE INDEX `a_medium_segment_link` ON `a_medium_segment` (`link_id`);
 CREATE INDEX `a_medium_segment_type` ON `a_medium_segment` (`link`);
+CREATE INDEX `a_medium_segment_type` ON `a_medium_segment` (`sect`);
 CREATE INDEX `a_medium_segment_mtime` ON `a_medium_segment` (`mtime`);
 CREATE INDEX `a_medium_segment_seria` ON `a_medium_segment` (`seria`);
-CREATE UNIQUE INDEX `UK_a_medium_segment_link` ON `a_medium_segment` (`sect_id`,`link_id`,`link`);
+CREATE UNIQUE INDEX `UK_a_medium_segment_link` ON `a_medium_segment` (`link_id`,`sect_id`,`link`,`sect`);
 
 --
 -- 评论
@@ -98,9 +100,9 @@ CREATE TABLE `a_medium_comment` (
   `id` char(20) NOT NULL,
   `pid` char(20) DEFAULT NULL,
   `user_id` char(20) NOT NULL,
-  `mate_id` char(20) NOT NULL, 
+  `mate_id` char(20) NOT NULL,
   `link_id` char(20) NOT NULL,
-  `link` varchar(100) NOT NULL,
+  `link` char(20) NOT NULL,
   `note` text NOT NULL,
   `ctime` int(11) DEFAULT NULL,
   `mtime` int(11) DEFAULT NULL,
@@ -118,32 +120,6 @@ CREATE INDEX `a_medium_comment_mtime` ON `a_medium_comment` (`mtime`);
 CREATE INDEX `a_medium_comment_state` ON `a_medium_comment` (`state`);
 
 --
--- 赞同
---
-
-DROP TABLE IF EXISTS `a_medium_consent`;
-CREATE TABLE `a_medium_consent` (
-  `id` char(20) NOT NULL,
-  `user_id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` varchar(100) NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `score` tinyint(1) DEFAULT '1',
-  `state` tinyint(1) DEFAULT '1',
-  PRIMARY KEY (`id`)
-);
-
-CREATE INDEX `a_medium_consent_user` ON `a_medium_consent` (`user_id`);
-CREATE INDEX `a_medium_consent_link` ON `a_medium_consent` (`link_id`);
-CREATE INDEX `a_medium_consent_type` ON `a_medium_consent` (`link`);
-CREATE INDEX `a_medium_consent_ctime` ON `a_medium_consent` (`ctime`);
-CREATE INDEX `a_medium_consent_mtime` ON `a_medium_consent` (`mtime`);
-CREATE INDEX `a_medium_consent_score` ON `a_medium_consent` (`score`);
-CREATE INDEX `a_medium_consent_state` ON `a_medium_consent` (`state`);
-CREATE UNIQUE INDEX `UK_a_medium_consent_link` ON `a_medium_consent` (`user_id`,`link_id`,`link`);
-
---
 -- 举报
 --
 
@@ -152,7 +128,7 @@ CREATE TABLE `a_medium_dissent` (
   `id` char(20) NOT NULL,
   `user_id` char(20) NOT NULL,
   `link_id` char(20) NOT NULL,
-  `link` varchar(100) NOT NULL,
+  `link` char(20) NOT NULL,
   `note` text DEFAULT NULL,
   `ctime` int(11) DEFAULT NULL,
   `mtime` int(11) DEFAULT NULL,
@@ -171,6 +147,32 @@ CREATE INDEX `a_medium_dissent_state` ON `a_medium_dissent` (`state`);
 CREATE UNIQUE INDEX `UK_a_medium_dissent_link` ON `a_medium_dissent` (`user_id`,`link_id`,`link`);
 
 --
+-- 赞同
+--
+
+DROP TABLE IF EXISTS `a_medium_consent`;
+CREATE TABLE `a_medium_consent` (
+  `id` char(20) NOT NULL,
+  `user_id` char(20) NOT NULL,
+  `link_id` char(20) NOT NULL,
+  `link` char(20) NOT NULL,
+  `ctime` int(11) DEFAULT NULL,
+  `mtime` int(11) DEFAULT NULL,
+  `score` tinyint(1) DEFAULT '1',
+  `state` tinyint(1) DEFAULT '1',
+  PRIMARY KEY (`id`)
+);
+
+CREATE INDEX `a_medium_consent_user` ON `a_medium_consent` (`user_id`);
+CREATE INDEX `a_medium_consent_link` ON `a_medium_consent` (`link_id`);
+CREATE INDEX `a_medium_consent_type` ON `a_medium_consent` (`link`);
+CREATE INDEX `a_medium_consent_ctime` ON `a_medium_consent` (`ctime`);
+CREATE INDEX `a_medium_consent_mtime` ON `a_medium_consent` (`mtime`);
+CREATE INDEX `a_medium_consent_score` ON `a_medium_consent` (`score`);
+CREATE INDEX `a_medium_consent_state` ON `a_medium_consent` (`state`);
+CREATE UNIQUE INDEX `UK_a_medium_consent_link` ON `a_medium_consent` (`user_id`,`link_id`,`link`);
+
+--
 -- 浏览
 --
 
@@ -180,7 +182,7 @@ CREATE TABLE `a_medium_browses` (
   `sess_id` char(64) DEFAULT NULL,
   `user_id` char(20) DEFAULT NULL,
   `link_id` char(20) NOT NULL,
-  `link` varchar(100) NOT NULL,
+  `link` char(20) NOT NULL,
   `ctime` int(11) DEFAULT NULL,
   `state` tinyint(1) DEFAULT '1',
   PRIMARY KEY (`id`)
@@ -202,7 +204,7 @@ DROP TABLE IF EXISTS `a_medium_species`;
 CREATE TABLE `a_medium_species` (
   `id` char(20) NOT NULL,
   `link_id` char(20) NOT NULL,
-  `link` varchar(100) NOT NULL,
+  `link` char(20) NOT NULL,
   `name` varchar(200) NOT NULL,
   `note` varchar(200) DEFAULT NULL,
   `mtime` int(11) DEFAULT NULL,
@@ -227,7 +229,7 @@ DROP TABLE IF EXISTS `a_medium_statics`;
 CREATE TABLE `a_medium_statics` (
   `id` char(20) NOT NULL,
   `link_id` char(20) NOT NULL,
-  `link` varchar(100) NOT NULL,
+  `link` char(20) NOT NULL,
   `name` varchar(200) NOT NULL,
   `note` varchar(200) DEFAULT NULL,
   `mtime` int(11) DEFAULT NULL,

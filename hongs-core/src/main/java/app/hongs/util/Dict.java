@@ -338,7 +338,8 @@ public class Dict
   }
 
   private static Object[] parsePath(String path) {
-    String[] keyz = path.replaceAll("\\]\\[", ".")
+    String[] keyz = path.replaceAll("([^\\.])!", "$1.!") // id!eq 转换为 id.!eq
+                        .replaceAll("\\]\\[", ".")
                         .replace("[" , ".")
                         .replace("]" , "" )
                         .split("\\." , -1 );

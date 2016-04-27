@@ -220,8 +220,17 @@ implements IEntity
     Map dat = new HashMap(rd);
     dat.remove(this.table.primaryKey);
 
+    // 检查是否可更新
+    Map wh  = Synt.declare(rd.get(Cnst.WH_KEY) , new HashMap( ));
+    FetchCase fc = caze != null ? caze.clone() : new FetchCase();
+    fc.setOption("MODEL_METHOD" , "update");
     for (String id : ids)
     {
+      if (!this.permit(fc, wh, id))
+      {
+        throw new HongsException (0x1097, "Can not update for id '"+id+"'");
+      }
+
       this.put( id , dat);
     }
 
@@ -253,7 +262,7 @@ implements IEntity
   public int delete(Map rd, FetchCase caze)
     throws HongsException
   {
-    Object idz = rd.get(Cnst.ID_KEY);
+    Object idz = rd.get ( Cnst.ID_KEY );
     if (idz == null) {
         idz =  rd.get(table.primaryKey);
     }
@@ -268,8 +277,17 @@ implements IEntity
         ids.add   ( idz.toString());
     }
 
-    for (String id : ids )
+    // 检查是否可删除
+    Map wh  = Synt.declare(rd.get(Cnst.WH_KEY) , new HashMap( ));
+    FetchCase fc = caze != null ? caze.clone() : new FetchCase();
+    fc.setOption("MODEL_METHOD" , "delete");
+    for (String id : ids)
     {
+      if (!this.permit(fc, wh, id))
+      {
+        throw new HongsException (0x1097, "Can not delete for id '"+id+"'");
+      }
+
       this.del( id  );
     }
 
@@ -474,14 +492,6 @@ implements IEntity
       throw new HongsException (0x1092, "ID can not be empty for put");
     }
 
-    // 校验此操作
-    caze = caze != null ? caze.clone() : new FetchCase();
-    caze.setOption("MODEL_METHOD", "put");
-    if (!this.permit(caze, id))
-    {
-      throw new HongsException (0x1096, "Can not put for id '"+id+"'");
-    }
-
     // 更新主数据
     rd.remove(this.table.primaryKey );
     int an = this.table.update ( rd , "`"+this.table.primaryKey+"` = ?", id);
@@ -526,19 +536,11 @@ implements IEntity
       throw new HongsException (0x1093, "ID can not be empty for del");
     }
 
-    // 校验此操作
-    caze = caze != null ? caze.clone() : new FetchCase();
-    caze.setOption("MODEL_METHOD", "del");
-    if (!this.permit(caze, id))
-    {
-      throw new HongsException (0x1097, "Can not del for id '"+id+"'");
-    }
-
     // 删除主数据
     int an = this.table.delete ("`"+this.table.primaryKey+"` = ?", id);
 
     // 删除子数据
-    this.table.deleteSubValues (id);
+    this.table.deleteSubValues ( id );
 
     return an;
   }
@@ -916,12 +918,14 @@ implements IEntity
 
   /**
    * "变更"过滤
-   * @param id 主键值
+   * 默认调用 filter 进行判断, 即能操作的一定是能看到的
    * @param caze 条件
+   * @param wh   约束
+   * @param id 主键值
    * @return
    * @throws HongsException
    */
-  protected boolean permit(FetchCase caze, String id)
+  protected boolean permit(FetchCase caze, Map wh, String id)
     throws HongsException
   {
     if (!caze.hasOption("ASSOCS") && caze.joinList.isEmpty())
@@ -930,7 +934,7 @@ implements IEntity
     }
     caze.setSelect(".`"+this.table.primaryKey+"`")
             .where(".`"+this.table.primaryKey+"`=?", id);
-    this.filter(caze, new HashMap());
+    this.filter(caze, wh);
     return ! this.table.fetchLess(caze).isEmpty( );
   }
 

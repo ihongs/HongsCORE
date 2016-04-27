@@ -24,6 +24,8 @@ public class Cnst {
 
     public static final String WD_KEY =  "wd"; // 关键词    (Word)
 
+    public static final String WH_KEY =  "wh"; // 变更约束  (Where)
+
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
     public static final String GN_KEY =  "gn"; // 分页数量  (Pags num)

@@ -310,15 +310,17 @@
 
                 box = context.find(".sys-info-box");
                 opts = rst.info.sys_info;
-                box.find("[data-fn=host]").text(opts.host+" "+opts.addr);
+                box.find("[data-fn=java]").text(/**/"Java "  +opts.java);
                 box.find("[data-fn=name]").text(opts.name+" "+opts.vers);
-                box.find("[data-fn=java]").text("Java "+opts.java);
                 box.find("[data-fn=user]").text(opts.user);
                 opts = rst.info.app_info;
                 opts.open_time = hsFmtDate(opts.open_time, hsGetLang("datetime.format"));
+                opts.base_href = location.protocol + "//" + location.host
+                      + (location.port != "80"?":"+location.port:"")+opts.base_href+ "/";
                 box.find("[data-fn=server_id]").text(opts.server_id);
-                box.find("[data-fn=base_href]").text(opts.base_href);
                 box.find("[data-fn=open_time]").text(opts.open_time);
+                box.find("[data-fn=base_href]").text(opts.base_href);
+                box.find("[data-fn=base_path]").text(opts.base_path);
 
                 // 系统负载
                 box = context.find(".run-info-box")[0];

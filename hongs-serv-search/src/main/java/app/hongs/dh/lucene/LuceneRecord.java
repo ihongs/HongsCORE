@@ -453,9 +453,8 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             }
 
             if (tops.totalHits > 0) {
-                ScoreDoc[] scos  = tops.scoreDocs;
-                ScoreDoc   sco   = scos[ 0 ] /**/;
-                Document   doc   = reader.document(sco.doc);
+                ScoreDoc sco = /****/ tops.scoreDocs[0];
+                Document doc = reader.document(sco.doc);
                 return doc2Map(doc);
             }
 
@@ -474,33 +473,45 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     public LinkedList getAll(Map rd) throws HongsException {
         initial();
         try {
+            int total = 65534;
+            int limit = 1024 ;
+
             Query q = getQuery(rd);
             Sort  s = getSort (rd);
                       ignFlds (rd);
-            int   n = 1000;
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
                 CoreLogger.debug("LuceneRecord.getAll: "+q.toString()+" Sort: "+s.toString());
             }
 
-            TopDocs    tops = finder.search (q,n,s);
-            LinkedList list = new LinkedList(/***/);
+            TopDocs  tops;
+            if (s != null) {
+                tops = finder.search(q, limit, s);
+            } else {
+                tops = finder.search(q, limit);
+            }
+
+            LinkedList list = new LinkedList();
 
             while(tops.totalHits > 0) {
-                ScoreDoc[] scos  = tops.scoreDocs  ;
-                ScoreDoc   sco   = null;
+                ScoreDoc[] scos  =  tops.scoreDocs ;
+                ScoreDoc   sco   =  null;
                 Document   doc   ;
+
                 for(int i = 0; i < scos.length;i++) {
                     sco =  scos[i];
                     doc = reader.document(sco.doc );
                     list.add(/**/doc2Map (/**/doc));
                 }
 
-                if (scos.length != n) {
+                if (scos.length != limit || list.size() > total) {
                     break;
                 }
-
-                tops = finder.searchAfter(sco, q, n, s);
+                if (s != null) {
+                    tops = finder.searchAfter(sco, q, limit, s );
+                } else {
+                    tops = finder.searchAfter(sco, q, limit/**/);
+                }
             }
 
             return  list;
@@ -512,13 +523,13 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     /**
      * 获取部分文档
      * @param rd
-     * @param total 总数限制
+     * @param limit 总数限制
      * @param begin 起始位置
      * @param end   结束位置(不含), 给定 0 则取到最后
      * @return      首位为实际总数, 请用 .poll() 取出
      * @throws HongsException
      */
-    public LinkedList getAll(Map rd, int total, int begin, int end) throws HongsException {
+    public LinkedList getAll(Map rd, int limit, int begin, int end) throws HongsException {
         initial( );
         try {
             Query q = getQuery(rd);
@@ -527,24 +538,33 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
                 CoreLogger.debug("LuceneRecord.getAll: "+q.toString()+" Sort: "+s.toString()
-                                                +" limit: "+total+" range: "+begin+","+end );
+                                                +" limit: "+limit+" range: "+begin+","+end );
             }
 
-              TopDocs  tops = finder.search(q, total, s);
-            ScoreDoc[] scos = tops.scoreDocs ;
-
-            if (end >  scos.length || end < 1 ) {
-                end =  scos.length;
+            TopDocs  tops;
+            if (s != null) {
+                tops = finder.search(q, limit, s);
+            } else {
+                tops = finder.search(q, limit);
             }
 
-            LinkedList list = new LinkedList( );
-            list.add ( scos.length );
-            ScoreDoc   sco  ;
-            Document   doc  ;
-            for(int i = begin ; i < end ; i ++) {
-                sco =  scos[i];
-                doc = reader.document(sco.doc );
-                list.add(/**/doc2Map (/**/doc));
+            LinkedList list = new LinkedList();
+
+            if (tops.totalHits > 0) {
+                ScoreDoc[] scos  =  tops.scoreDocs ;
+                ScoreDoc   sco   ;
+                Document   doc   ;
+
+                if (end >  scos.length || end < 1 ) {
+                    end =  scos.length ;
+                }
+                list.add ( scos.length);
+
+                for(int i = begin ; i < end ; i ++) {
+                    sco =  scos[i];
+                    doc = reader.document(sco.doc );
+                    list.add(/**/doc2Map (/**/doc));
+                }
             }
 
             return  list;

@@ -315,8 +315,7 @@
                 box.find("[data-fn=user]").text(opts.user);
                 opts = rst.info.app_info;
                 opts.open_time = hsFmtDate(opts.open_time, hsGetLang("datetime.format"));
-                opts.base_href = location.protocol + "//" + location.host
-                      + (location.port != "80"?":"+location.port:"")+opts.base_href+ "/";
+                opts.base_href = location.protocol+"//"+location.host+opts.base_href+"/";
                 box.find("[data-fn=server_id]").text(opts.server_id);
                 box.find("[data-fn=open_time]").text(opts.open_time);
                 box.find("[data-fn=base_href]").text(opts.base_href);

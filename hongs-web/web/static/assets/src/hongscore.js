@@ -1902,28 +1902,29 @@ function(evt) {
     var ths = $(this);
     do {
         // 云标签
-        if (ths.is( "li>.close")) {
+        if (ths.is("li>.close")) {
             return;
         }
         // 选项卡
-        if (ths.is(".tabs>li>a")) {
+        if (ths.is("li .close")) {
+            box = ths.closest("a");
             break ;
         }
         // 标题栏
         box = ths.closest(".modal-header").next();
-        if (box.is(".openbox")) {
+        if (box.is( ".openbox")) {
             box = box.closest(".modal");
             break ;
         }
         // 警示框
         box = ths.closest( ".notebox, .warnbox" );
-        if (box.is(".alert-body")) {
+        if (box.is( ".alert-body")) {
             box = box.closest(".alert");
             break ;
         }
         // 模态框
         box = ths.closest( ".openbox" );
-        if (box.is(".modal-body")) {
+        if (box.is( ".modal-body")) {
             box = box.closest(".modal");
             break ;
         }

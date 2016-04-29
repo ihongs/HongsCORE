@@ -400,3 +400,182 @@ hsFormFillFork = hsFormFillPick;
 hsListFillFork = hsListFillPick;
 hsForkFillForm = hsFormFillPick;
 hsForkFillList = hsListFillPick;
+
+/**
+ * 文件上传辅助工具
+ * @param {jQuery.class} $
+ */
+(function($) {
+    /**
+     * 文件校验
+     * @param {Object} cnf
+     */
+    $.fn.hsFileVali = function(cnf) {
+        // 以后补充
+    };
+
+    //** 选择文件 **/
+
+    /**
+     * 选取文件
+     * @param {Element} box 文件列表区域
+     * @param {String } src 文件路径取值
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFilePick = function(box, src) {
+        if (! src) {
+            return ;
+        }
+        var txt = src.replace(/^.*[\/\\]/, '');
+        var inp =$(this).clone( );
+        var grp =$(this).parent();
+            box =$(box );
+        var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
+           .append(this)
+           .append('<span class="glyphicon glyphicon-file"></span>')
+           .append($('<span  class="picktxt"></span>').text( txt ) )
+           .append('<span  class="close pull-right">&times;</span>');
+        box.append(div );
+        grp.append(inp );
+        inp.val("");
+        return div ;
+    };
+
+    /**
+     * 填充文件
+     * @param {String } nam 文件字段名称
+     * @param {String } src 文件路径取值
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFillFile = function(nam, src) {
+        if (! src) {
+            return ;
+        }
+        var txt = src.replace(/^.*[\/\\]/, '');
+        var box =$(this);
+        var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
+           .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
+           .append('<span class="glyphicon glyphicon-file"></span>')
+           .append($('<span  class="picktxt"></span>').text( txt ) )
+           .append('<span  class="close pull-right">&times;</span>');
+        box.append(div );
+        return div ;
+    };
+
+    //** 预览图片 **/
+
+    /**
+     * 预载文件
+     * @param {Function} cal 回调函数
+     * @returns {jQuery} 当前文件节点
+     */
+    $.fn.hsFileLoad = function(cal) {
+        this.each(function() {
+            var that = this;
+            if (window.FileReader) {
+                var fr = new FileReader( );
+                fr.onloadend = function(e) {
+                    cal.call(that, e.target.result);
+                };  cal.call(that);
+                $.each( this.files, function(i, fo) {
+                    fr.readAsDataURL( fo );
+                });
+            } else
+            if (this.getAsDataURL) {
+                cal.call(that, that.getAsDataURL());
+            } else {
+                cal.call(that, that.value);
+            }
+        });
+        return this;
+    };
+
+    /**
+     * 预览文件
+     * @param {Element} box 预览列表区域
+     * @param {String } src 文件路径取值
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFileView = function(box, src, w, h) {
+        if (! src) {
+            return ;
+        }
+            box =$(box );
+        var grp =$(this).parent();
+        var inp =$(this).clone().val("");
+        var img =$.hsMakeView(src, w, h);
+        img.css("positoin" , "absolute");
+        var div =$('<li class="preview"></li>').css({
+            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+        } ).append(this)
+           .append(img )
+           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+        box.append(div );
+        grp.append(inp );
+        return div ;
+    };
+
+    /**
+     * 填充预览
+     * @param {String } nam 文件字段名称
+     * @param {String } src 文件路径取值
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFillView = function(nam, src, w, h) {
+        if (! src) {
+            return ;
+        }
+        var box =$(this);
+        var img =$.hsMakeView(src, w, h);
+        img.css("positoin" , "absolute");
+        var div =$('<li class="preview"></li>').css({
+            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+        } ).append($('<input type="hidden" />').attr( "name", nam ).val( src ) )
+           .append(img )
+           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+        box.append(div );
+        return div ;
+    };
+
+    /**
+     * 构建预览
+     * @param {String } src 文件真实路径
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @returns {Element}
+     */
+    $.hsMakeView = function(src, w, h) {
+        var img  =  new Image();
+        img.onload = function() {
+            var xw = img.width ;
+            var xh = img.height;
+            var zw = xh * w / h;
+//          var zh = xw * h / w;
+            if (zw > xw) {
+                // 宽度优先
+                img.width   = w;
+                img.height  = xh * w / xw;
+                $(img).css("top" , (((h - img.height) / 2)) + "px");
+            } else {
+                // 高度优先
+                img.height  = h;
+                img.width   = xw * h / xh;
+                $(img).css("left", (((w - img.width ) / 2)) + "px");
+            }
+        };
+        img.src = src ;
+        return  $(img);
+    };
+
+    /**
+     * 移除文件事件处理
+     */
+    $(document).on("click", ".forkbox .close,.pickbox .close,.preview .close",
+    function( ) {
+        $(this).parent().remove();
+    });
+})(jQuery);

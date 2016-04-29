@@ -530,15 +530,15 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                                                 +" limit: "+total+" range: "+begin+","+end );
             }
 
-            TopDocs    tops = finder.search (q, total, s);
-            LinkedList list = new LinkedList( );
+              TopDocs  tops = finder.search(q, total, s);
+            ScoreDoc[] scos = tops.scoreDocs ;
 
-            if (end  > tops.totalHits || end<1) {
-                end  = tops.totalHits;
+            if (end >  scos.length || end < 1 ) {
+                end =  scos.length;
             }
 
-            ScoreDoc[] scos = tops.scoreDocs ;
-            list.add(  scos.length  );
+            LinkedList list = new LinkedList( );
+            list.add ( scos.length );
             ScoreDoc   sco  ;
             Document   doc  ;
             for(int i = begin ; i < end ; i ++) {

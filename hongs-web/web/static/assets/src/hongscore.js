@@ -1738,8 +1738,10 @@ $.fn._hsConfig = $.fn.hsData; // 兼容旧版命名
 
 $.fn.hsFind = function(selr) {
     var elem = this;
+    selr = $.trim(selr);
     var flag = selr.charAt(0);
     var salr = selr.substr(1);
+    salr = $.trim(salr);
     switch (flag) {
         case '@':
             do {
@@ -1750,7 +1752,7 @@ $.fn.hsFind = function(selr) {
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".loadbox");
                 if (x.size()) { elem = x; break; }
-                elem = document;
+                elem = $(document);
             } while (false);
             return salr ? $(salr, elem) : elem;
         case '%':
@@ -1760,19 +1762,19 @@ $.fn.hsFind = function(selr) {
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".openbox");
                 if (x.size()) { elem = x; break; }
-                elem = document;
+                elem = $(document);
             } while (false);
             return salr ? $(salr, elem) : elem;
-        case ' ':
-            return elem.find(salr);
-        case '.':
-        case ':':
-        case '[':
-            return elem.find(selr);
+        case '^':
         case '<':
-            return salr  ===  ''  ?
-                   elem.parent  ():
-                   elem.closest (salr);
+            elem = elem.parent();
+            if (! salr) return elem;
+            var a = salr.split('|', 2);
+            if (a.length > 1) {
+                return elem.closest(salr);
+            } else {
+                return elem.closest(a[0]).hsFind(a[1]);
+            }
         case '>':
             return elem.children(salr);
         case '~':
@@ -1781,6 +1783,10 @@ $.fn.hsFind = function(selr) {
             return elem.next(salr);
         case '-':
             return elem.prev(salr);
+        case '.':
+        case ':':
+        case '[':
+            return elem.find(selr);
         case '*':
             return $(salr);
         default :

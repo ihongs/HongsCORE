@@ -47,6 +47,7 @@ public class DiskAction {
             long tim = Core.STARTS_TIME;
             app.put("server_id",Core.SERVER_ID);
             app.put("base_href",Core.BASE_HREF);
+            app.put("base_path",Core.BASE_PATH);
             app.put("open_time",tim);
             app.put("live_time",Tool.humanTime(now - tim));
         }

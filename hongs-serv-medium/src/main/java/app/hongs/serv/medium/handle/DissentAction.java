@@ -30,7 +30,7 @@ public class DissentAction extends DBAction {
             super.create(helper);
         } catch (HongsException ex) {
         if (ex.getCode() == 0x104e) {
-            helper.fault("您已经举报过了, 无法重复举报");
+            helper.fault("您已经举报过了, 请等候或查看处理结果");
         }
         }
     }
@@ -75,15 +75,17 @@ public class DissentAction extends DBAction {
     @Override
     protected String getRspMsg(ActionHelper helper, Model mod, String opr, int num)
     throws HongsException {
+        String lid = helper.getParameter("link_id");
+        String lnk = (( ALinkModel ) mod).getLink();
+        Table  art = mod.db.getTable(lnk);
+
         if ("create".equals(opr)) {
-            String lnk = ((ALinkModel) mod).getLink();
-            Table  art =  mod.db.getTable(lnk);
-            String sql = "UPDATE `"+art.tableName+"` SET `count_dissent` = `count_dissent` + 1";
-            mod.db.execute(sql);
+            String sql = "UPDATE `"+art.tableName+"` SET `count_dissent` = `count_dissent` + 1 WHERE id = ?";
+            art.db.execute (sql, lid);
             return "举报成功";
-        } else {
-            return super.getRspMsg(helper, mod, opr, num);
         }
+
+        return super.getRspMsg(helper, mod, opr, num);
     }
 
 }

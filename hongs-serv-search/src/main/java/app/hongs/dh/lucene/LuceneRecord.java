@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
@@ -218,9 +219,9 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
         int maxRn = rn + minRn;
 
         // 获取列表
-        LinkedList list = getAll(rd, limit, minRn, maxRn);
-        int rc = (int) list.poll( /* rowscount */);
-        int pc = (int) Math.ceil((double) rc / rn);
+        List list = getAll(rd, limit, minRn, maxRn);
+        int rc = (int) list.remove(0);
+        int pc = (int) Math.ceil( (double) rc / rn);
 
         // 记录分页
         Map  resp = new HashMap();
@@ -435,32 +436,11 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * @throws HongsException
      */
     public Map getOne(Map rd) throws HongsException {
-        initial();
-        try {
-            Query q = getQuery(rd);
-            Sort  s = getSort (rd);
-                      ignFlds (rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("LuceneRecord.getOne: "+q.toString()+" Sort: "+s.toString());
-            }
-
-            TopDocs  tops;
-            if (s != null) {
-                tops = finder.search(q, 1, s);
-            } else {
-                tops = finder.search(q, 1);
-            }
-
-            if (tops.totalHits > 0) {
-                ScoreDoc sco = /****/ tops.scoreDocs[0];
-                Document doc = reader.document(sco.doc);
-                return doc2Map(doc);
-            }
-
-            return new HashMap(   );
-        } catch (IOException ex) {
-            throw new HongsException.Common( ex );
+        Roll roll = search(rd, 0, 1);
+        if   (   roll.hasNext( )) {
+            return  roll.next( );
+        } else {
+            return new HashMap();
         }
     }
 
@@ -470,107 +450,59 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * @return
      * @throws HongsException
      */
-    public LinkedList getAll(Map rd) throws HongsException {
-        initial();
-        try {
-            int total = 65534;
-            int limit = 1024 ;
-
-            Query q = getQuery(rd);
-            Sort  s = getSort (rd);
-                      ignFlds (rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("LuceneRecord.getAll: "+q.toString()+" Sort: "+s.toString());
-            }
-
-            TopDocs  tops;
-            if (s != null) {
-                tops = finder.search(q, limit, s);
-            } else {
-                tops = finder.search(q, limit);
-            }
-
-            LinkedList list = new LinkedList();
-
-            while(tops.totalHits > 0) {
-                ScoreDoc[] scos  =  tops.scoreDocs ;
-                ScoreDoc   sco   =  null;
-                Document   doc   ;
-
-                for(int i = 0; i < scos.length;i++) {
-                    sco =  scos[i];
-                    doc = reader.document(sco.doc );
-                    list.add(/**/doc2Map (/**/doc));
-                }
-
-                if (scos.length != limit || list.size() > total) {
-                    break;
-                }
-                if (s != null) {
-                    tops = finder.searchAfter(sco, q, limit, s );
-                } else {
-                    tops = finder.searchAfter(sco, q, limit/**/);
-                }
-            }
-
-            return  list;
-        } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+    public List getAll(Map rd) throws HongsException {
+        Roll roll = search(rd, 0, 0);
+        List list = new LinkedList();
+        while  (  roll.hasNext()) {
+            list.add(roll.next());
         }
+        return list;
     }
 
     /**
      * 获取部分文档
      * @param rd
-     * @param limit 总数限制
+     * @param total 总数限制
      * @param begin 起始位置
      * @param end   结束位置(不含), 给定 0 则取到最后
      * @return      首位为实际总数, 请用 .poll() 取出
      * @throws HongsException
      */
-    public LinkedList getAll(Map rd, int limit, int begin, int end) throws HongsException {
-        initial( );
-        try {
-            Query q = getQuery(rd);
-            Sort  s = getSort (rd);
-                      ignFlds (rd);
-
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("LuceneRecord.getAll: "+q.toString()+" Sort: "+s.toString()
-                                                +" limit: "+limit+" range: "+begin+","+end );
+    public List getAll(Map rd, int total, int begin, int end) throws HongsException {
+        Roll roll = search(rd, begin, total - begin);
+        List list = new LinkedList();
+        int    i  = 0 ;
+        list.add( roll.size(  ) );
+        while  (  roll.hasNext()) {
+            list.add(roll.next());
+            if (  ++i  >=  end  ) {
+                break ;
             }
-
-            TopDocs  tops;
-            if (s != null) {
-                tops = finder.search(q, limit, s);
-            } else {
-                tops = finder.search(q, limit);
-            }
-
-            LinkedList list = new LinkedList();
-
-            if (tops.totalHits > 0) {
-                ScoreDoc[] scos  =  tops.scoreDocs ;
-                ScoreDoc   sco   ;
-                Document   doc   ;
-
-                if (end >  scos.length || end < 1 ) {
-                    end =  scos.length ;
-                }
-                list.add ( scos.length);
-
-                for(int i = begin ; i < end ; i ++) {
-                    sco =  scos[i];
-                    doc = reader.document(sco.doc );
-                    list.add(/**/doc2Map (/**/doc));
-                }
-            }
-
-            return  list;
-        } catch (IOException ex ) {
-            throw new HongsException.Common(ex);
         }
+        return list;
+    }
+
+    /**
+     * 搜索查询文档
+     * @param rd
+     * @param begin 起始位置
+     * @param limit 获取限制
+     * @return
+     * @throws HongsException
+     */
+    public Roll search(Map rd, int begin, int limit) throws HongsException {
+        initial();
+
+        Query  q = getQuery(rd);
+        Sort   s = getSort (rd);
+                   ignFlds (rd);
+        Roll   r = new Roll(this, q, s, begin, limit);
+
+        if ( 0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            CoreLogger.debug("LuceneRecord.search: " + r.toString());
+        }
+
+        return r ;
     }
 
     public void addDoc(Document doc) throws HongsException {
@@ -1641,6 +1573,134 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             Set s = new HashSet();
             s.addAll(m.values( ));
             qryAdd(qry, k, s, q );
+        }
+    }
+
+    /**
+     * 查询迭代器
+     */
+    public static class Roll implements Iterator<Map> {
+        private final LuceneRecord that;
+        private       ScoreDoc[]   docs;
+        private       ScoreDoc     doc ;
+        private final Query   q;
+        private final Sort    s;
+        private final int     b; // 起始位置
+        private final int     l; // 单次限制
+        private       int     L; // 起始限制
+        private       int     h; // 单次总数
+        private       int     H; // 全局总数
+        private       int     i; // 提取游标
+        private       boolean A; // 无限查询
+
+        /**
+         * 查询迭代器
+         * @param that 记录实例
+         * @param q 查询对象
+         * @param s 排序对象
+         * @param l 查询限额
+         * @param b 起始偏移
+         */
+        public Roll(LuceneRecord that, Query q, Sort s, int b, int l) {
+            this.that = that;
+            this.docs = null;
+            this.doc  = null;
+            this.q    = q;
+            this.s    = s;
+            this.b    = b;
+
+            // 是否获取全部
+            if ( l  ==  0) {
+                 l = 1000;
+                 A = true;
+            }
+
+            this.l    = l;
+            this.L    = l;
+
+            // 起始位置偏移
+            if ( b  !=  0) {
+                 L  +=  b;
+            }
+        }
+
+        @Override
+        public boolean hasNext() {
+            try {
+                if ( docs == null) {
+                     TopDocs tops;
+                    if (s != null) {
+                        tops = that.finder.search/***/(/***/q, L, s);
+                    } else {
+                        tops = that.finder.search/***/(/***/q, L);
+                    }
+                    docs = tops.scoreDocs;
+                    h    = docs.length;
+                    i    = b;
+                    H    = h;
+                    L    = l;
+                } else
+                if ( A && L <= i ) {
+                     TopDocs tops;
+                    if (s != null) {
+                        tops = that.finder.searchAfter(doc, q, l, s);
+                    } else {
+                        tops = that.finder.searchAfter(doc, q, l);
+                    }
+                    docs = tops.scoreDocs;
+                    h    = docs.length;
+                    i    = 0;
+                    H   += h;
+                }
+                return i < h;
+            } catch (IOException ex) {
+                throw new HongsError.Common(ex);
+            }
+        }
+
+        @Override
+        public Map next() {
+            if ( i >= h ) {
+                throw new NullPointerException("hasNext()?");
+            }
+            try {
+                /*Read*/ doc = docs[i++];
+                Document dox = that.reader.document(doc.doc);
+                return that.doc2Map(dox);
+            } catch (IOException ex) {
+                throw new HongsError.Common(ex);
+            }
+        }
+
+        /**
+         * 获取命中总数
+         * 注意:
+         * 初始化时 l 参数为 0 (即获取全部命中)
+         * 则在全部循环完后获取到的数值才是对的
+         * 但其实此时完全可以直接计算循环的次数
+         * 此方法主要用于分页时获取查询命中总量
+         * @return
+         */
+        public int size() {
+            hasNext();
+            return H ;
+        }
+
+        @Override
+        public String toString() {
+            hasNext();
+            StringBuilder sb = new StringBuilder(q.toString());
+            if ( s != null ) {
+                sb.append(" Sort: " );
+                sb.append( s );
+            }
+            if ( l != 0 || b != 0 ) {
+                sb.append(" Limit: ");
+                sb.append( b );
+                sb.append(",");
+                sb.append( l );
+            }
+            return sb.toString();
         }
     }
 

@@ -58,9 +58,9 @@ public class CommentAction extends DBAction {
         }
         if ("create".equals(opr)) {
             return "添加评论成功";
-        } else {
-            return super.getRspMsg(helper, mod, opr, num);
         }
+
+        return super.getRspMsg(helper, mod, opr, num);
     }
 
 }

@@ -36,28 +36,33 @@ public class ConsentAction extends DBAction {
         Map    req = helper.getRequestData();
         String aid = helper.getParameter("link_id");
         String lnk = ( (ALinkModel) mod ).getLink();
+
         String whr = "link = ? AND link_id = ?";
-        Map    row = mod.table.fetchCase()
-                .select("id,state,score" )
-                .where ( whr , lnk , aid )
+        Map    row = mod.table
+                .filter(whr , lnk , aid )
+                .select("id,state,score")
                 .one( );
+
         if (row != null && !row.isEmpty()) {
             helper.setAttribute("score", row.get("score"));
             if (Synt.asserts( row.get("state"), 1 ) == 0 ) {
                 // 恢复
+                int s = Synt.declare(req.get("socre"), 1 );
                 row.clear();
-                row.put("score",Synt.declare(req.get("socre"),1));
-                row.put("state",  1 );
-                mod.table.fetchCase()
-                        .where (whr, aid)
-                        .update(row );
+                row.put("state", 1);
+                row.put("score", s);
+                mod.table
+                   .filter(whr, lnk, aid)
+                   .update(row);
+
                 helper.reply(getRspMsg(helper, mod, "create", 1));
             } else {
-                helper.getRequestData ().put("id", row.get("id"));
-                delete(helper);
+                req.put("id" , row.get("id"));
+
+                delete (helper);
             }
         } else {
-            create(helper);
+                create (helper);
         }
     }
 
@@ -74,7 +79,12 @@ public class ConsentAction extends DBAction {
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
         ALinkModel model = (ALinkModel) DB.getInstance("medium").getModel("consent");
-        model.setLink("article");
+        String     type  = Synt.declare(helper.getParameter("type"), "");
+        if ( ! "".equals(type)) {
+            model.setLink("article_"+type);
+        } else {
+            model.setLink("article");
+        }
         return model;
     }
 
@@ -95,31 +105,47 @@ public class ConsentAction extends DBAction {
     throws HongsException {
         int newScore = Synt.declare(helper.getParameter("score"), 1);
         int oldScore = Synt.declare(helper.getAttribute("score"), 0);
-        String  lnk  = ((ALinkModel) mod).getLink();
-        Table   art  =  mod.db.getTable(lnk);
+        String lid = helper.getParameter("link_id");
+        String lnk = ( (ALinkModel) mod ).getLink();
+        String tab = lnk;
+        String cnt ;
+        String opn ;
+
+        if (lnk.endsWith("_collect")) {
+            tab = tab.substring(0, tab.length() - 8);
+            cnt = "count_collect";
+            opn = "收藏";
+        } else {
+            cnt = "count_consent";
+            opn = "赞";
+        }
+
+        Table  art = mod.db.getTable(tab);
+
         if (newScore > 0) {
             if ("create".equals(opr)) {
-                String sql = "UPDATE `"+art.tableName+"` SET `count_consent` = `count_consent` + 1";
-                mod.db.execute(sql);
-                return "赞";
+                String sql = "UPDATE `"+art.tableName+"` SET `"+cnt+"` = `"+cnt+"` + 1 WHERE id = ?";
+                art.db.execute (sql, lid);
+                return opn ;
             } else
             if ("delete".equals(opr)) {
-                String sql = "UPDATE `"+art.tableName+"` SET `count_consent` = `count_consent` - 1 WHERE `count_consent` > 1";
-                mod.db.execute(sql);
-                return "取消赞";
+                String sql = "UPDATE `"+art.tableName+"` SET `"+cnt+"` = `"+cnt+"` - 1 WHERE `"+cnt+"` > 1 AND id = ?";
+                art.db.execute (sql, lid);
+                return "取消" + opn ;
             }
         } else {
             if (oldScore > 0) {
-                String sql = "UPDATE `"+art.tableName+"` SET `count_consent` = `count_consent` - 1 WHERE `count_consent` > 1";
-                mod.db.execute(sql);
+                String sql = "UPDATE `"+art.tableName+"` SET `"+cnt+"` = `"+cnt+"` - 1 WHERE `"+cnt+"` > 1 AND id = ?";
+                art.db.execute (sql, lid);
             }
             if ("create".equals(opr)) {
-                return "踩";
+                return opn ;
             } else
             if ("delete".equals(opr)) {
-                return "取消踩";
+                return "取消" + opn ;
             }
         }
+
         return super.getRspMsg(helper, mod, opr, num);
     }
 

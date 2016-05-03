@@ -1,7 +1,6 @@
 package app.hongs.serv.member;
 
 import app.hongs.Cnst;
-import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -14,16 +13,12 @@ import app.hongs.db.FetchCase;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.image.Thumb;
-import java.awt.Image;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.imageio.ImageIO;
-import net.coobird.thumbnailator.Thumbnails;
-import net.coobird.thumbnailator.geometry.Positions;
 
 /**
  * 用户动作接口
@@ -123,16 +118,16 @@ public class UserAction {
 
         String id = model.set(rd);
 
-        rd = new HashMap();
-        rd.put( "id" , id);
-        rd.put("name", rd.get("name"));
-        rd.put("head", rd.get("head"));
-        rd.put("username", rd.get("username"));
+        Map sd = new HashMap();
+        sd.put( "id" , id);
+        sd.put("name", rd.get("name"));
+        sd.put("head", rd.get("head"));
+        sd.put("username", rd.get("username"));
 
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("member" );
         String ms = ln.translate("core.save.user.success");
-        helper.reply(ms, rd);
+        helper.reply(ms, sd);
     }
 
     @Action("delete")

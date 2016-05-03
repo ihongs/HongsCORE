@@ -452,6 +452,7 @@ ul.pickbox > li.btn span {
 
 /** Chrome and Safari **/
 @media screen and (-webkit-min-device-pixel-ratio: 0) {
+    .nav .close,
     .btn .close,
     .file-preview .close {
         margin-top: -3px;

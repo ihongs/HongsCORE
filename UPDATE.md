@@ -1,6 +1,7 @@
 
 # 更新日志
 
+* 2015/05/03 增加 Lucene 查询迭代, 增加公共注册动作
 * 2015/04/16 修改 FetchCase/FetchMore 等, 增加级联操作, 解决关联查询中的别名、层级问题
 * 2015/01/05 增加 medium,market 两个模块, 分别用于媒体和销售; 拆分基础管理服务为 member,module 作为独立模块
 * 2015/01/03 Web,Action 结构更新, 分成 manage,handle,static 三大块, 分别表示: 管理区,应用区,静态区

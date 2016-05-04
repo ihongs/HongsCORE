@@ -493,12 +493,14 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     public List getAll(Map rd, int total, int begin, int end) throws HongsException {
         Roll roll = search(rd, begin, total - begin);
         List list = new LinkedList();
-        int    i  = 0 ;
+        int  idx  = 0 ;
+        if ( end == 0 ) {
+             end  = total - begin;
+        }
         list.add( roll.size(  ) );
         while  (  roll.hasNext()) {
             list.add(roll.next());
-            i ++;
-            if (0!=end && i>=end) {
+            if (  ++idx >= end  ) {
                 break ;
             }
         }

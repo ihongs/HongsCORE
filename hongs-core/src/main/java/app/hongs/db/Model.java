@@ -71,17 +71,22 @@ implements IEntity
   /**
    * 可搜索的字段
    */
-  public String[] findCols = new String[] {"name"};
+  public String[] findCols = new String[] {} ;
 
   /**
    * 可列举的字段
    */
-  public String[] listCols = new String[] {"name"};
+  public String[] listCols = new String[] {} ;
+
+  /**
+   * 可排序的字段
+   */
+  public String[] sortCols = new String[] {} ;
 
   /**
    * 不查询的字段
    */
-  protected final static Set<String> funcKeys;
+  protected static final Set<String> funcKeys;
   static {
     funcKeys = new HashSet( );
     funcKeys.add(Cnst.PN_KEY);
@@ -116,6 +121,8 @@ implements IEntity
     if (cs != null) this.findCols = cs.split(",");
     cs = table.getField("listCols");
     if (cs != null) this.listCols = cs.split(",");
+    cs = table.getField("sortCols");
+    if (cs != null) this.sortCols = cs.split(",");
   }
 
   //** 标准动作方法 **/
@@ -165,16 +172,20 @@ implements IEntity
     throws HongsException
   {
     String id = add(rd);
-    Map sd = new LinkedHashMap();
-    sd.put(table.primaryKey, id);
-    for(String  fn : listCols  )
-    {
-      if ( ! fn.contains( "." ))
-      {
-        sd.put( fn , rd.get(fn));
-      }
+    if (null != listCols
+    ||   0   != listCols.length) {
+        Map sd = new LinkedHashMap();
+        sd.put(table.primaryKey, id);
+        for(String fn: listCols) {
+        if ( ! fn.contains(".")) {
+            sd.put(fn, rd.get( fn ));
+        }
+        }
+        return sd;
+    } else {
+        rd.put(table.primaryKey, id);
+        return rd;
     }
-    return sd;
   }
 
   /**
@@ -1161,11 +1172,23 @@ implements IEntity
 //      caze.setOption("ASSOCS", tns);
     }
 
+    // 检查排序限制
+    Set obs  = null;
+    if ( sortCols != null && sortCols.length != 0 )
+    {
+        obs  = new HashSet(Arrays.asList(sortCols));
+    }
+
     for (String col : cols)
     {
       col = col.trim();
       boolean esc = col.startsWith("-");
       if(esc) col = col.substring ( 1 );
+
+      if(obs != null && !obs.contains(col))
+      {
+        continue;
+      }
 
       int pos  = col.indexOf(".");
       if (pos != -1)

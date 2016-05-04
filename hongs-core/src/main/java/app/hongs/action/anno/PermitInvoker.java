@@ -23,12 +23,8 @@ public class PermitInvoker implements FilterInvoker {
             String form;
             form = chains.getEntity();
             conf = chains.getModule();
-            try {
-                new NaviMap(conf);
-            } catch (HongsException ex) {
-                if (ex.getCode() == 0x10e0) {
-                    conf = conf +"/"+ form;
-                }
+            if (NaviMap.hasConfFile(conf+"/"+form)) {
+                conf = conf+"/"+form ;
             }
         }
 

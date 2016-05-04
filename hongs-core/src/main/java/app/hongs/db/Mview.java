@@ -7,10 +7,8 @@ import app.hongs.action.FormSet;
 import app.hongs.action.NaviMap;
 import app.hongs.util.Synt;
 import java.sql.Types;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -26,10 +24,11 @@ import java.util.regex.Pattern;
  */
 public class Mview extends Model {
 
-    private Model  model = null;
-    private String nmkey = null;
-    private String title = null;
     private Map<String, Map<String, String>> fields = null;
+
+    private Model    model = null;
+    private String   title = null;
+    private String   nmkey = null;
 
     public Mview(Table table) throws HongsException {
         super(table);
@@ -153,67 +152,87 @@ public class Mview extends Model {
             fields  =  new LinkedHashMap( fields );
         }
 
-        CoreLocale lang = getLang();
-        Set<String> findCols = new LinkedHashSet();
-        Set<String> listCols = new LinkedHashSet();
-
         Map<String, String> conf = fields.get("@");
+        Set<String> findColz = new LinkedHashSet();
+        Set<String> listColz = new LinkedHashSet();
+        Set<String> sortColz = new LinkedHashSet();
+
         Set findable = null;
-        if (conf == null || !Synt.declare(conf.get("dont.auto.bind.findable"), false)) {
-            findable = new HashSet(Arrays.asList(Synt.declare(
-                CoreConfig.getInstance()
-               .get("core.findable.types"),
-                    "string,search,text,email,url,tel,textarea"
-            ).split(",")));
-        }
-        Set sortable = null;
-        if (conf == null || !Synt.declare(conf.get("dont.auto.bind.sortable"), false)) {
-            sortable = new HashSet(Arrays.asList(Synt.declare(
-                CoreConfig.getInstance()
-               .get("core.sortable.types"),
-                    "string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check"
-            ).split(",")));
+        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.findable"), false)) {
+            findable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("findable"));
         }
         Set listable = null;
-        if (conf == null || !Synt.declare(conf.get("dont.auto.bind.listable"), false)) {
-            listable = new HashSet(Arrays.asList(Synt.declare(
-                CoreConfig.getInstance()
-               .get("core.listable.types"),
-                    "string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,fork,form"
-            ).split(",")));
+        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.listable"), false)) {
+            listable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("listable"));
+        }
+        Set sortable = null;
+        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.sortable"), false)) {
+            sortable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
         }
 
+        if (null == conf || ! Synt.declare(conf.get("dont.auto.append.fields"), false)) {
+            addTableFields();
+        }
+
+        if (null == conf || ! Synt.declare(conf.get("dont.auto.append.assocs"), false)) {
+            addAssocFields();
+        }
+
+        // 检查字段, 为其添加搜索、排序、列举参数
+        chkFields(findable, listable, sortable, findColz, listColz, sortColz );
+
+        this.findCols = findColz.toArray(new String[]{});
+        this.listCols = listColz.toArray(new String[]{});
+        this.sortCols = sortColz.toArray(new String[]{});
+        if (model != null) {
+            model.findCols = this.findCols;
+            model.listCols = this.listCols;
+            model.sortCols = this.sortCols;
+        }
+
+        return fields;
+    }
+
+    private void chkFields(
+            Set findable, Set listable, Set sortable,
+            Set findColz, Set listColz, Set sortColz
+    ) {
         for(Map.Entry<String, Map<String, String>> ent : fields.entrySet()) {
             String name = ent.getKey();
             Map field = ent.getValue();
+            String ft = (String) field.get("__type__");
 
-            // 多值字段默认不能列举、排序和搜索
+            // 多值字段不能搜索、排序、列举
             if (Synt.declare(field.get("__repeated__"), false)) {
                 continue;
             }
 
-            // 特定类型才能搜索、列举、排序
-            String ft = (String) field.get("__type__");
-            if (!field.containsKey("listable") && listable != null && listable.contains(ft)) {
-                field.put("listable", "yes");
-            }
+            // 特定类型才能搜索、排序、列举
             if (!field.containsKey("findable") && findable != null && findable.contains(ft)) {
                 field.put("findable", "yes");
+            }
+            if (!field.containsKey("listable") && listable != null && listable.contains(ft)) {
+                field.put("listable", "yes");
             }
             if (!field.containsKey("sortable") && sortable != null && sortable.contains(ft)) {
                 field.put("sortable", "yes");
             }
 
-            // 提取搜索和列举字段
-            if (Synt.declare(field.get(  "listable"  ), false)) {
-                listCols.add(name);
-            }
             if (Synt.declare(field.get(  "findable"  ), false)) {
-                findCols.add(name);
+                findColz.add(name);
+            }
+            if (Synt.declare(field.get(  "listable"  ), false)) {
+                listColz.add(name);
+            }
+            if (Synt.declare(field.get(  "sortable"  ), false)) {
+                sortColz.add(name);
             }
         }
+    }
 
-        if (null == conf || !Synt.declare(conf.get("dont.auto.append.fields"), false)) {
+    private void addTableFields() throws HongsException {
+        CoreLocale lang = getLang();
+
         /*
         String sql = "SHOW FULL FIELDS FROM `"+table.tableName+"`";
         List<Map<String, Object>> rows = db.fetchAll(sql);
@@ -292,31 +311,14 @@ public class Mview extends Model {
                 }
                 */
             }
-
-            // 特定类型才能搜索、列举、排序
-            String ft = (String) field.get("__type__");
-            if (!field.containsKey("listable") && listable != null && listable.contains(ft)) {
-                field.put("listable", "yes");
-            }
-            if (!field.containsKey("sortable") && sortable != null && sortable.contains(ft)) {
-                field.put("sortable", "yes");
-            }
-            if (!field.containsKey("findable") && findable != null && findable.contains(ft)) {
-                field.put("findable", "yes");
-            }
-
-            // 提取搜索和列举字段
-            if (Synt.declare(field.get("listable"), false)) {
-                listCols.add(name);
-            }
-            if (Synt.declare(field.get("findable"), false)) {
-                findCols.add(name);
-            }
         }
+    }
+
+    private void addAssocFields() throws HongsException {
+        if (  null == table.assocs  ) {
+            return;
         }
 
-        if (null == conf || !Synt.declare(conf.get("dont.auto.append.assocs"), false)) {
-        if (null != table.assocs) {
         Iterator it = table.assocs.entrySet().iterator();
         while (  it.hasNext( )  ) {
             Map.Entry et = (Map.Entry)it.next();
@@ -404,39 +406,7 @@ public class Mview extends Model {
                 field.put("data-vk", vk);
                 field.put("data-tk", tk);
             }
-
-            // 特定类型才能搜索、列举、排序
-            String ft = (String) field.get("__type__");
-            if (!field.containsKey("listable") && listable != null && listable.contains(ft)) {
-                field.put("listable", "yes");
-            }
-            if (!field.containsKey("sortable") && sortable != null && sortable.contains(ft)) {
-                field.put("sortable", "yes");
-            }
-            if (!field.containsKey("findable") && findable != null && findable.contains(ft)) {
-                field.put("findable", "yes");
-            }
-
-            // 提取搜索和列举字段
-            if (Synt.declare(field.get("listable"), false)) {
-                listCols.add(name);
-            }
-            if (Synt.declare(field.get("findable"), false)) {
-                findCols.add(name);
-            }
         }
-        }
-        }
-
-        // 设置搜索和列举字段
-        this.findCols = findCols.toArray(new String[0]);
-        this.listCols = listCols.toArray(new String[0]);
-        if (model != null) {
-            model.findCols = this.findCols;
-            model.listCols = this.listCols;
-        }
-
-        return fields;
     }
 
 }

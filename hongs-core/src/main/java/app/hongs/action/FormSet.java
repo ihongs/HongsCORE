@@ -314,6 +314,28 @@ public class FormSet
 
   //** 工厂方法 **/
 
+  public static boolean hasConfFile(String name) {
+    String fn;
+
+    fn = Core.DATA_PATH
+       + File.separator + "serial"
+       + File.separator + name + Cnst.FORM_EXT + ".ser";
+    if (new File(fn).exists()) {
+        return true;
+    }
+
+    fn = Core.CONF_PATH
+       + File.separator + name + Cnst.FORM_EXT + ".xml";
+    if (new File(fn).exists()) {
+        return true;
+    }
+
+    fn = name.contains("/")
+       ? name + Cnst.FORM_EXT + ".xml"
+       : "app/hongs/config/" + name + Cnst.FORM_EXT + ".xml";
+    return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
+  }
+
   public static FormSet getInstance(String name) throws HongsException {
       String key = FormSet.class.getName() + ":" + name;
       Core core = Core.getInstance();

@@ -55,12 +55,8 @@ public class SelectInvoker implements FilterInvoker {
         if (form.length() == 0 || conf.length() == 0) {
             form = chains.getEntity();
             conf = chains.getModule();
-            try {
-                new FormSet(conf);
-            } catch (HongsException ex) {
-                if (ex.getCode() == 0x10e8) {
-                    conf = conf +"/"+ form;
-                }
+            if (FormSet.hasConfFile( conf+"/"+form )) {
+                conf = conf+"/"+form ;
             }
         }
 

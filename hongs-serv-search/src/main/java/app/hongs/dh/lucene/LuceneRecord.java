@@ -497,7 +497,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         list.add( roll.size(  ) );
         while  (  roll.hasNext()) {
             list.add(roll.next());
-            if (  ++i  >=  end  ) {
+            i ++;
+            if (0!=end && i>=end) {
                 break ;
             }
         }

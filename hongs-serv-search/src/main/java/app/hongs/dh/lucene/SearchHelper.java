@@ -122,9 +122,8 @@ public class SearchHelper {
      * @throws HongsException
      */
     public Map counts(Map rd) throws HongsException {
-        that.initial();
-        IndexReader   reader = that.getReader();
         IndexSearcher finder = that.getFinder();
+        IndexReader   reader = that.getReader();
 
         Map  resp = new HashMap();
         Map  cnts = new HashMap();

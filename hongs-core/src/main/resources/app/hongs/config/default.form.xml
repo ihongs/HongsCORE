@@ -2,12 +2,12 @@
     <enum name="__types__">
         <!-- String -->
         <value code="string">string</value>
-        <value code="stored">string</value>
-        <value code="search">string</value>
+        <value code="stored">string</value> <!-- Lucene 特有仅存不查 -->
+        <value code="search">string</value> <!-- Lucene 中可分词查询 -->
         <value code="hidden">string</value>
         <value code="text">string</value>
-        <value code="textarea">string</value><!-- Luncene 中同 stored -->
-        <value code="textcase">string</value><!-- Luncene 中同 search -->
+        <value code="textarea">string</value><!-- Lucene 中同 stored -->
+        <value code="textcase">string</value><!-- Lucene 中同 search -->
         <value code="email">string</value>
         <value code="url">string</value>
         <value code="tel">string</value>
@@ -37,18 +37,15 @@
         <value code="video">file</value>
     </enum>
     <enum name="__patts__">
-        <value code="email"><![CDATA[^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\.([a-z\.]{2,6})$]]></value>
-        <value code="url"><![CDATA[^(\w+:\/\/)?[\da-z\.\-]+\.[a-z\.]{2,6}[#&+_\?\/\w \.\-=]*$]]></value>
-        <value code="id"><![CDATA[^[A-Z0-9]{16,20}$]]></value>
+        <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>
+        <value code="url"><![CDATA[^([a-z]+:)?//[^\s]*$]]></value>
+        <value code="qq"><![CDATA[^[1-9][0-9]{4,}$]]></value>
     </enum>
-    <enum name="gender">
-        <vlaue code="1">男</vlaue>
-        <vlaue code="0">女</vlaue>
-        <vlaue code="*">未知</vlaue>
-    </enum>
-    <enum name="sexual">
-        <value code="0">正常</value>
-        <value code="*">未知</value>
+    <enum name="__ables__">
+        <value code="findable">string,search,text,email,url,tel,textcase</value>
+        <value code="sortable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime</value>
+        <value code="listable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,file,upload,image,audio,video,form,fork,pick</value>
+        <value code="viewable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,file,upload,image,audio,video,form,fork,pick,textarea,textcase,hidden,stored</value>
     </enum>
     <!--
     <enum name="demo-enum">

@@ -36,7 +36,7 @@ public class Article extends LuceneRecord {
     private Map<String, Map> fields = null;
 
     public Article(String path, String type) throws HongsException {
-        super(path, null, null);
+        super(path);
         this.type = type;
         this.name = "medium.article";
         this.snap = "upload/medium/snap";
@@ -60,7 +60,7 @@ public class Article extends LuceneRecord {
     }
 
     @Override
-    protected Map<String, Map> getFields() {
+    public Map<String, Map> getFields() {
         if (null != fields) {
             return  fields;
         }

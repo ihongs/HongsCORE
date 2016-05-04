@@ -15,11 +15,7 @@ import org.apache.lucene.document.Document;
  */
 public class SearchRecord extends LuceneRecord {
 
-    public SearchRecord(String path, Map<String, Map> form, Map<String, String> fmap) throws HongsException {
-        super(path, form, fmap);
-    }
-
-    public SearchRecord(String path, Map<String, Map> form) throws HongsException {
+    public SearchRecord(String path, Map form) throws HongsException {
         super(path, form);
     }
 
@@ -72,7 +68,7 @@ public class SearchRecord extends LuceneRecord {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            ignFlds(new HashMap());
+            setReps(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -108,7 +104,7 @@ public class SearchRecord extends LuceneRecord {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            ignFlds(new HashMap());
+            setReps(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;

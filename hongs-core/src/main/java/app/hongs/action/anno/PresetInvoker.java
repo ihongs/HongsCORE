@@ -59,12 +59,8 @@ public class PresetInvoker implements FilterInvoker {
         if (envm.length() == 0 || conf.length() == 0) {
             envm = chains.getEntity();
             conf = chains.getModule();
-            try {
-                new FormSet(conf);
-            } catch (HongsException ex) {
-                if (ex.getCode() == 0x10e8) {
-                    conf = conf +"/"+ envm;
-                }
+            if (FormSet.hasConfFile( conf+"/"+envm )) {
+                conf = conf+"/"+envm ;
             }
         }
 

@@ -842,6 +842,28 @@ public class NaviMap
 
   //** 工厂方法 **/
 
+  public static boolean hasConfFile(String name) {
+    String fn;
+
+    fn = Core.DATA_PATH
+       + File.separator + "serial"
+       + File.separator + name + Cnst.NAVI_EXT + ".ser";
+    if (new File(fn).exists()) {
+        return true;
+    }
+
+    fn = Core.CONF_PATH
+       + File.separator + name + Cnst.NAVI_EXT + ".xml";
+    if (new File(fn).exists()) {
+        return true;
+    }
+
+    fn = name.contains("/")
+       ? name + Cnst.NAVI_EXT + ".xml"
+       : "app/hongs/config/" + name + Cnst.NAVI_EXT + ".xml";
+    return null != NaviMap.class.getClassLoader().getResourceAsStream(fn);
+  }
+
   public static NaviMap getInstance(String name) throws HongsException {
       String cn = NaviMap.class.getName() + ":" + name;
       Core core = Core.getInstance();

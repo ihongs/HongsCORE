@@ -9,6 +9,7 @@ import app.hongs.HongsException;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
+import app.hongs.dh.ModelView;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
@@ -43,11 +44,9 @@ import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.document.FloatDocValuesField;
-import org.apache.lucene.document.DoubleDocValuesField;
-import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.SortedSetDocValuesField;
+import org.apache.lucene.document.SortedNumericDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
@@ -56,6 +55,9 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
@@ -63,35 +65,36 @@ import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
+import org.apache.lucene.util.NumericUtils;
 
 /**
  * Lucene 记录模型
  * @author Hongs
  */
-public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
+public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.Destroy {
 
     protected boolean IN_TRNSCT_MODE = false;
     protected boolean IN_OBJECT_MODE = false;
 
-    private   IndexSearcher       finder   = null;
-    private   IndexReader         reader   = null;
-    private   IndexWriter         writer   = null;
-    private   String              dbpath   = null;
-    private   Map<String, Map>    fields   = null;
-    private   Map<String, String> ftypes   = null;
-    private   Set<String>         listCols = null;
-    private   Set<String>         findCols = null;
-    private   Set<String>         funcCols = null;
+    private   IndexSearcher  finder  = null ;
+    private   IndexReader    reader  = null ;
+    private   IndexWriter    writer  = null ;
+    private   String         dtpath  = null ;
 
-    public LuceneRecord(String path, Map<String, Map> form, Map<String, String> envm)
+    /**
+     * 构造方法
+     * @param path 存储路径
+     * @param form 字段配置
+     * @param tmap 类型映射
+     * @param dmap 类型默认
+     * @throws HongsException
+     */
+    public LuceneRecord(String path, Map form, Map tmap, Map dmap)
     throws HongsException {
         if (path != null) {
             Map m = new HashMap();
@@ -104,9 +107,10 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             }
         }
 
-        this.dbpath = path;
-        this.fields = form;
-        this.ftypes = envm;
+        this.dtpath  = path ;
+        this.setFields(form);
+        this.setFtypes(tmap);
+        this.setDtypes(dmap);
 
         // 模式标识
         CoreConfig conf = CoreConfig.getInstance();
@@ -118,33 +122,38 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 conf.getProperty("core.in.object.mode", false));
     }
 
-    public LuceneRecord(String path, Map<String, Map> form)
+    public LuceneRecord(String path, Map form)
     throws HongsException {
-        this(path, form, null);
+        this(path, form, null, null);
     }
 
     public LuceneRecord(String path)
     throws HongsException {
-        this(path, null, null);
+        this(path, null, null, null);
     }
 
     /**
      * 获取实例
-     * 生命周期将交由 Core 维护
+     * 存储为 conf/form 表单为 conf.form
+     * 表单缺失则尝试获取 conf/form.form
+     * 实例生命周期将交由 Core 维护
      * @param conf
      * @param form
      * @return
      * @throws HongsException
      */
     public static LuceneRecord getInstance(String conf, String form) throws HongsException {
-        LuceneRecord inst;
+        LuceneRecord  inst;
         Core   core = Core.getInstance();
-        String name = LuceneRecord.class.getName() +":"+ conf +":"+ form;
-        if (core.containsKey(name)) {
-            inst = (LuceneRecord) core.got(name);
+        String name = LuceneRecord.class.getName( ) + ":" +  conf + "." + form;
+        if ( ! core.containsKey(name)) {
+            String  canf = FormSet.hasConfFile(conf + "/" +  form)
+                         ? conf + "/" + form : conf ;
+            Map     farm = FormSet.getInstance(canf).getForm(name);
+               inst =  new LuceneRecord(conf + "/" + form ,  farm);
+               core.put( name, inst );
         } else {
-            inst = new LuceneRecord(conf+"/"+form, FormSet.getInstance(conf).getForm(form));
-            core.put(name , inst);
+               inst =  (LuceneRecord) core.got(name);
         }
         return inst;
     }
@@ -252,12 +261,21 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      */
     @Override
     public Map create(Map rd) throws HongsException {
-        Map sd = new LinkedHashMap();
-        sd.put(Cnst.ID_KEY, add(rd));
-        for(String  fn : getLists()) {
-            sd.put( fn , rd.get(fn));
+        String id = add(rd);
+        Set<String> fs = getLists();
+        if (fs != null && !fs.isEmpty()) {
+            Map sd = new LinkedHashMap();
+            sd.put(Cnst.ID_KEY, id);
+            for(String  fn : getLists()) {
+            if (  !  fn.contains( "." )) {
+                sd.put( fn , rd.get(fn));
+            }
+            }
+            return sd;
+        } else {
+            rd.put(Cnst.ID_KEY, id);
+            return rd;
         }
-        return rd;
     }
 
     /**
@@ -312,10 +330,12 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
         if (wh == null) {
             throw new NullPointerException("Param wh for permit can not be null.");
         }
-        Set<String> rb = new HashSet( );
-                    rb.add("id");
-        wh.put(Cnst.ID_KEY, id );
-        wh.put(Cnst.RB_KEY, rb );
+        Set<String> rb ;
+        wh = new HashMap(wh);
+        rb = new HashSet(  );
+        rb.add( "id"  );
+        wh.put(Cnst.ID_KEY, id);
+        wh.put(Cnst.RB_KEY, rb);
         wh = getOne(wh);
         return wh != null && !wh.isEmpty();
     }
@@ -357,7 +377,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            ignFlds(new HashMap());
+            setReps(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -387,7 +407,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            ignFlds(new HashMap());
+            setReps(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -422,7 +442,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     public Map get(String id) throws HongsException {
         Document doc = getDoc(id);
         if (doc != null) {
-           ignFlds(new HashMap());
+           setReps(new HashMap());
             return doc2Map( doc );
         } else {
             return new HashMap( );
@@ -491,14 +511,12 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * @throws HongsException
      */
     public Roll search(Map rd, int begin, int limit) throws HongsException {
-        initial();
+        Query q = getQuery(rd);
+        Sort  s = getSort (rd);
+                  setReps (rd);
+        Roll  r = new Roll(this, q, s, begin, limit);
 
-        Query  q = getQuery(rd);
-        Sort   s = getSort (rd);
-                   ignFlds (rd);
-        Roll   r = new Roll(this, q, s, begin, limit);
-
-        if ( 0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug("LuceneRecord.search: " + r.toString());
         }
 
@@ -506,9 +524,9 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     }
 
     public void addDoc(Document doc) throws HongsException {
-        connect();
+        IndexWriter iw = getWriter();
         try {
-            writer.addDocument(doc);
+            iw.addDocument (doc);
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
@@ -518,9 +536,9 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     }
 
     public void setDoc(String id, Document doc) throws HongsException {
-        connect();
+        IndexWriter iw = getWriter();
         try {
-            writer.updateDocument (new Term(Cnst.ID_KEY, id), doc);
+            iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
@@ -530,9 +548,9 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     }
 
     public void delDoc(String id) throws HongsException {
-        connect();
+        IndexWriter iw = getWriter();
         try {
-            writer.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
+            iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
@@ -542,13 +560,13 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     }
 
     public Document getDoc(String id) throws HongsException {
-        initial();
+        IndexSearcher  f    = getFinder();
         try {
                 Query  q    = new TermQuery(new Term(Cnst.ID_KEY, id));
-              TopDocs  docs = finder.search(q, 1);
-            ScoreDoc[] hits =   docs.scoreDocs;
+              TopDocs  docs = f.search(q, 1);
+            ScoreDoc[] hits = docs.scoreDocs;
             if  ( 0 != hits.length ) {
-                return finder.doc(hits[0].doc);
+                return f.doc( hits[ 0 ].doc);
             } else {
                 return null;
             }
@@ -867,78 +885,31 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     }
 
     protected String getDbPath() {
-        if (null != dbpath) {
-            return  dbpath;
+        if (null != dtpath) {
+            return  dtpath;
         }
-        throw  new NullPointerException("Lucene dbpath can not be null");
+        throw new NullPointerException("DBPath can not be null");
     }
 
-    protected Map<String, Map   > getFields() {
-        if (null != fields) {
-            return  fields;
+    protected boolean sortable(Map fc) {
+        if (fc.containsKey("sortable")) {
+            return Synt.asserts(fc.get("sortable"), false);
         }
-        throw  new NullPointerException("Lucene fields can not be null");
+        String t = Synt.asserts(fc.get("__type__"),  ""  );
+        Set    s = getSorts();
+        return s == null || s.isEmpty() || s.contains( t );
     }
 
-    protected Map<String, String> getFtypes() {
-        if (null != ftypes) {
-            return  ftypes;
-        }
-        try {
-            ftypes = FormSet.getInstance("default").getEnum("__types__");
-            return  ftypes;
-        } catch (HongsException ex ) {
-            throw new HongsError.Common( ex );
-        }
+    protected boolean repeated(Map fc) {
+        return Synt.asserts(fc.get("__repeated__"), false);
     }
 
-    protected Set<String> getLists() {
-        if (null != listCols) {
-            return  listCols;
-        }
-        listCols = new LinkedHashSet();
-        Map<String, Map> fields = getFields( );
-        for(Map.Entry<String, Map> et : fields.entrySet( )) {
-            Map field = et.getValue();
-            String fn = et.getKey(  );
-            if (Synt.declare(field.get("listable"), false)) {
-                listCols.add(fn);
-            }
-        }
-        return  listCols;
+    protected boolean unstored(Map fc) {
+        return Synt.asserts(fc.get(  "unstored"  ), false);
     }
 
-    protected Set<String> getFinds() {
-        if (null != findCols) {
-            return  findCols;
-        }
-        findCols = new LinkedHashSet();
-        Map<String, Map> fields = getFields( );
-        for(Map.Entry<String, Map> et : fields.entrySet( )) {
-            Map field = et.getValue();
-            String fn = et.getKey(  );
-            if (Synt.declare(field.get("findable"), false)) {
-                findCols.add(fn);
-            }
-        }
-        return  findCols;
-    }
-
-    protected Set<String> getFuncs() {
-        if (null != funcCols) {
-            return  funcCols;
-        }
-        funcCols = new HashSet( );
-        funcCols.add(Cnst.PN_KEY);
-        funcCols.add(Cnst.GN_KEY);
-        funcCols.add(Cnst.RN_KEY);
-        funcCols.add(Cnst.OB_KEY);
-        funcCols.add(Cnst.RB_KEY);
-        funcCols.add(Cnst.WD_KEY);
-        funcCols.add(Cnst.OR_KEY);
-        funcCols.add(Cnst.AR_KEY);
-        funcCols.add(Cnst.SR_KEY);
-        return  funcCols;
+    protected boolean unwanted(Map fc) {
+        return Synt.asserts(fc.get("--unwanted--"), false);
     }
 
     /**
@@ -957,7 +928,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     protected String getFtype(Map fc) {
         String t = Synt.declare(fc.get("lucene-fieldtype"), String.class);
 
-        // 如果未指定 lucene-fieldtype 则用 field-type 替代
+        // 如果未指定 lucene-fieldtype 则用 __type__ 替代
         if (t == null) {
             t = (String) fc.get("__type__");
 
@@ -965,6 +936,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 return t;
             }
 
+            // 特例处理
             if ("textarea".equals(t)) {
                 return "stored";
             }
@@ -972,6 +944,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 return "search";
             }
 
+            // 类型细分
             t = Synt.declare(getFtypes().get(t), t);
             if ("number".equals(t)) {
                 t = Synt.declare(fc.get("type"), "double");
@@ -1101,13 +1074,8 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
         }
 
         // 没有条件则查询全部
-        if ( query.clauses( ).isEmpty( ) ) {
+        if (query.clauses( ).isEmpty( )) {
             return new MatchAllDocsQuery();
-        }
-
-        // 有条件无排序则按相关度排序
-        if(!rd.containsKey(Cnst.OB_KEY)) {
-            rd.put(Cnst.OB_KEY, "-");
         }
 
         return query;
@@ -1128,26 +1096,27 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
         List<SortField> of = new LinkedList();
 
         for (String fn: ob) {
+            // 文档
+            if (fn.equals/**/("_")) {
+                of.add(SortField.FIELD_DOC  );
+                continue;
+            }
+
             // 相关
-            if (fn.equals/**/("-") ) {
+            if (fn.equals/**/("-")) {
                 of.add(SortField.FIELD_SCORE);
                 continue;
             }
 
             // 逆序
-            boolean rv;
-            if (fn.startsWith("-") ) {
-                fn = fn.substring(1);
-                rv = true ;
-            } else {
-                rv = false;
-            }
+            boolean rv = fn.startsWith("-");
+            if (rv) fn = fn.substring ( 1 );
 
-            Map m = (Map ) fields.get( fn );
+            Map m = (Map ) fields.get ( fn);
             if (m == null) {
                 continue;
             }
-            if (!Synt.declare(m.get("sortable"), false)) {
+            if (sortable(m)==false) {
                 continue;
             }
 
@@ -1171,12 +1140,13 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             }
 
             /**
-             * 因 Lucene 5 必须使用 DocValues 字段才能排序
-             * 在构建 Document 时, 单独建立了一个 "." 打头的排序字段
+             * 因为 Lucene 5 必须使用 DocValues 才能排序
+             * 在更新数据时, 默认有加 '.' 打头的排序字段
              */
-            of.add( new SortField("."+fn, st, rv));
+            of.add( new SortField ("." + fn, st, rv));
         }
 
+        // 未指定则按文档顺序
         if (of.isEmpty()) {
             of.add(SortField.FIELD_DOC);
         }
@@ -1185,10 +1155,10 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
     }
 
     /**
-     * 忽略字段
+     * 查询字段
      * @param rd
      */
-    protected void ignFlds(Map rd) {
+    protected void setReps(Map rd) {
         Object fz = rd.get(Cnst.RB_KEY);
         Set<String> fs = fz != null
                   ? Synt.asTerms ( fz )
@@ -1215,12 +1185,12 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             for(Map.Entry<String, Map> me : fields.entrySet()) {
                 Map fc = me.getValue();
                 String f = me.getKey();
-                fc.put("-ignore-", cf.contains(f));
+                fc.put   ( "--unwanted--" , cf.contains(f) || unstored(fc));
             }
         } else {
             for(Map.Entry<String, Map> me : fields.entrySet()) {
                 Map fc = me.getValue();
-                fc.remove("-ignore-" );
+                fc.remove( "--unwanted--" );
             }
         }
     }
@@ -1232,13 +1202,13 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             Map    m = (Map) e.getValue();
             String k = (String)e.getKey();
 
-            if (Synt.declare(m.get("unstored"), false)
-            ||  Synt.declare(m.get("-ignore-"), false)) {
+            if (unstored(m)
+            ||  unwanted(m)) {
                 continue;
             }
 
             String  t = getFtype(m);
-            boolean r = Synt.declare(m.get("__repeated__"), false);
+            boolean r = repeated(m);
             IndexableField[] fs = doc.getFields(k);
 
             if (  "json".equals(t)) {
@@ -1330,29 +1300,29 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             }
 
             String  t = getFtype(m);
-            boolean u = !Synt.declare(m.get("unstored"), false);
-            boolean s =  Synt.declare(m.get("sortable"), false);
-            boolean r =  Synt.declare(m.get("__repeated__"), false);
+            boolean s = sortable(m);
+            boolean u = unstored(m);
+            boolean r = repeated(m);
 
             doc.removeFields(k);
             if (r && v instanceof Collection) {
                 for (Object x : ( Collection) v) {
-                    this.docAdd(doc, k, x, t, u, s, true );
+                    this.docAdd(doc, k, x, t, s, u, true );
                 }
             } else
             if (r && v instanceof Object[ ] ) {
                 for (Object x : ( Object[ ] ) v) {
-                    this.docAdd(doc, k, x, t, u, s, true );
+                    this.docAdd(doc, k, x, t, s, u, true );
                 }
             } else
             if (r) {
                 Set a = Synt.declare(v, Set.class);
                 for (Object x : a) {
-                    this.docAdd(doc, k, x, t, u, s, true );
+                    this.docAdd(doc, k, x, t, s, u, true );
                 }
             } else
             {
-                /**/this.docAdd(doc, k, v, t, u, s, false);
+                /**/this.docAdd(doc, k, v, t, s, u, false);
             }
         }
     }
@@ -1363,28 +1333,28 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * @param k 属性
      * @param v 取值
      * @param t 类型
-     * @param u 是否要存储
      * @param s 是否可排序
+     * @param u 是否不存储
      * @param r 是否多个值
      */
-    protected void docAdd(Document doc, String k, Object v, String t, boolean u, boolean s, boolean r) {
+    protected void docAdd(Document doc, String k, Object v, String t, boolean s, boolean u, boolean r) {
         if (   "int".equals(t)) {
-            doc.add(new    IntField(k, Synt.declare(v, 0 ), u ? Field.Store.YES : Field.Store.NO));
+            doc.add(new    IntField(k, Synt.declare(v, 0 ), u ? Field.Store.NO : Field.Store.YES));
         } else
         if (  "long".equals(t)) {
-            doc.add(new   LongField(k, Synt.declare(v, 0L), u ? Field.Store.YES : Field.Store.NO));
+            doc.add(new   LongField(k, Synt.declare(v, 0L), u ? Field.Store.NO : Field.Store.YES));
         } else
         if ( "float".equals(t)) {
-            doc.add(new  FloatField(k, Synt.declare(v, 0.0F), u ? Field.Store.YES : Field.Store.NO));
+            doc.add(new  FloatField(k, Synt.declare(v, 0.0F), u ? Field.Store.NO : Field.Store.YES));
         } else
         if ("double".equals(t)) {
-            doc.add(new DoubleField(k, Synt.declare(v, 0.0D), u ? Field.Store.YES : Field.Store.NO));
+            doc.add(new DoubleField(k, Synt.declare(v, 0.0D), u ? Field.Store.NO : Field.Store.YES));
         } else
         if ("string".equals(t)) {
-            doc.add(new StringField(k, Synt.declare(v, ""), u ? Field.Store.YES : Field.Store.NO));
+            doc.add(new StringField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES));
         } else
         if ("search".equals(t)) {
-            doc.add(new   TextField(k, Synt.declare(v, ""), u ? Field.Store.YES : Field.Store.NO));
+            doc.add(new   TextField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES));
         } else
         if (  "json".equals(t)) {
             if (v == null || "".equals(v)) {
@@ -1403,15 +1373,17 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
          * 针对 Lucene 5 的排序
          */
         if (s) {
-            if (   "int".equals(t)
-            ||    "long".equals(t)) {
-                doc.add(new NumericDocValuesField("."+k, Synt.declare(v, 0L)));
+            if (   "int".equals(t)) {
+                doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
+            } else
+            if (  "long".equals(t)) {
+                doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
             } else
             if ( "float".equals(t)) {
-                doc.add(new   FloatDocValuesField("."+k, Synt.declare(v, 0.0F)));
+                doc.add(new SortedNumericDocValuesField("."+k, NumericUtils. floatToSortableInt (Synt.declare(v, 0.0F))));
             } else
             if ("double".equals(t)) {
-                doc.add(new  DoubleDocValuesField("."+k, Synt.declare(v, 0.0D)));
+                doc.add(new SortedNumericDocValuesField("."+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D))));
             } else
             if (r) {
                 doc.add(new SortedSetDocValuesField("."+k, new BytesRef(Synt.declare(v, ""))));
@@ -1477,6 +1449,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             SearchQuery sq = (SearchQuery) q;
             Map fc = (Map) fields.get(k);
             sq.ana(getAnalyzer(fc,true));
+
             // 额外的一些细微配置
             sq.phraseSlop (Synt.declare(fc.get("lucene-parser-phraseSlop" ), Integer.class));
             sq.fuzzyPreLen(Synt.declare(fc.get("lucene-parser-fuzzyPreLen"), Integer.class));
@@ -1490,7 +1463,7 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
 
         if (m.containsKey(Cnst.WT_REL)) {
             Object n = m.remove(Cnst.WT_REL);
-            q.bst(Synt.declare(n, 1F));
+            q.bst( Synt.declare(n, 1F));
         }
 
         if (m.containsKey(Cnst.EQ_REL)) {
@@ -1580,9 +1553,11 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
      * 查询迭代器
      */
     public static class Roll implements Iterator<Map> {
-        private final LuceneRecord that;
-        private       ScoreDoc[]   docs;
-        private       ScoreDoc     doc ;
+        private final IndexSearcher finder;
+        private final IndexReader   reader;
+        private final LuceneRecord  that;
+        private       ScoreDoc[]    docs;
+        private       ScoreDoc      doc ;
         private final Query   q;
         private final Sort    s;
         private final int     b; // 起始位置
@@ -1622,6 +1597,14 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
             if ( b  !=  0) {
                  L  +=  b;
             }
+
+            // 获取查读对象
+            try {
+                finder = that.getFinder();
+                reader = that.getReader();
+            } catch ( HongsException ex ) {
+                throw new HongsError.Common(ex);
+            }
         }
 
         @Override
@@ -1630,9 +1613,9 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 if ( docs == null) {
                      TopDocs tops;
                     if (s != null) {
-                        tops = that.finder.search/***/(/***/q, L, s);
+                        tops = finder.search/***/(/***/q, L, s);
                     } else {
-                        tops = that.finder.search/***/(/***/q, L);
+                        tops = finder.search/***/(/***/q, L);
                     }
                     docs = tops.scoreDocs;
                     h    = docs.length;
@@ -1643,9 +1626,9 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
                 if ( A && L <= i ) {
                      TopDocs tops;
                     if (s != null) {
-                        tops = that.finder.searchAfter(doc, q, l, s);
+                        tops = finder.searchAfter(doc, q, l, s);
                     } else {
-                        tops = that.finder.searchAfter(doc, q, l);
+                        tops = finder.searchAfter(doc, q, l);
                     }
                     docs = tops.scoreDocs;
                     h    = docs.length;
@@ -1661,11 +1644,11 @@ public class LuceneRecord implements IEntity, ITrnsct, Core.Destroy {
         @Override
         public Map next() {
             if ( i >= h ) {
-                throw new NullPointerException("hasNext()?");
+                throw new NullPointerException("hasNext not run ?");
             }
             try {
                 /*Read*/ doc = docs[i++];
-                Document dox = that.reader.document(doc.doc);
+                Document dox = reader.document( doc.doc );
                 return that.doc2Map(dox);
             } catch (IOException ex) {
                 throw new HongsError.Common(ex);

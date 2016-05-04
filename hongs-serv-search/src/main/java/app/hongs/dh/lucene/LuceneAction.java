@@ -72,6 +72,7 @@ public class LuceneAction implements IAction, IActing {
 
     @Action("create")
     @Preset(conf="", envm="", used={":defence", ":create"})
+    @Select(conf="", form="", mode=2)
     @Verify(conf="", form="")
     @CommitSuccess
     @Override

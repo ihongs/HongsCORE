@@ -64,15 +64,14 @@ public class DBAction implements IAction, IActing {
         Model   mod = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, mod, "retrieve", req);
-        FetchCase c = new FetchCase();
-        c.setOption("INCLUDE_REMOVED", Synt.declare(req.get("include-removed"), false));
-        Map     rsp = mod.retrieve(req, c);
+        Map     rsp = mod.retrieve(req);
                 rsp = getRspMap(helper, mod, "retrieve", rsp);
         helper.reply(rsp);
     }
 
     @Action("create")
     @Preset(conf="", envm="", used={":defence", ":create"})
+    @Select(conf="", form="", mode=2)
     @Verify(conf="", form="")
     @CommitSuccess
     @Override

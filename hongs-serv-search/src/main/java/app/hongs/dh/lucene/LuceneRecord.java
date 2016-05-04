@@ -67,6 +67,8 @@ import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
+import org.apache.lucene.search.SortedNumericSortField;
+import org.apache.lucene.search.SortedSetSortField;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
@@ -560,18 +562,18 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     }
 
     public Document getDoc(String id) throws HongsException {
-        IndexSearcher  f    = getFinder();
+        IndexSearcher  ff = getFinder( );
         try {
-                Query  q    = new TermQuery(new Term(Cnst.ID_KEY, id));
-              TopDocs  docs = f.search(q, 1);
-            ScoreDoc[] hits = docs.scoreDocs;
-            if  ( 0 != hits.length ) {
-                return f.doc( hits[ 0 ].doc);
+                Query  qq = new TermQuery(new Term(Cnst.ID_KEY, id));
+              TopDocs  tt = ff.search(qq,  1  );
+            ScoreDoc[] hh = tt.scoreDocs;
+            if  ( 0 != hh.length ) {
+                return ff.doc(hh[0].doc);
             } else {
                 return null;
             }
-        } catch (IOException e) {
-            throw new HongsException.Common(e);
+        } catch ( IOException ex ) {
+            throw new HongsException.Common(ex);
         }
     }
 
@@ -1119,11 +1121,16 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             if (sortable(m)==false) {
                 continue;
             }
+            if (repeated(m)== true) {
+                continue;
+            }
 
             SortField.Type st;
             String t = getFtype(m);
-            if (   "int".equals(t)
-            ||    "long".equals(t)) {
+            if (   "int".equals(t)) {
+                st = SortField.Type.INT;
+            } else
+            if (  "long".equals(t)) {
                 st = SortField.Type.LONG;
             } else
             if ( "float".equals(t)) {
@@ -1143,7 +1150,11 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
              * 因为 Lucene 5 必须使用 DocValues 才能排序
              * 在更新数据时, 默认有加 '.' 打头的排序字段
              */
-            of.add( new SortField ("." + fn, st, rv));
+            if (st == SortField.Type.STRING) {
+                of.add(new /* String */ SortField("."+fn, st, rv));
+            } else {
+                of.add(new SortedNumericSortField("."+fn, st, rv));
+            }
         }
 
         // 未指定则按文档顺序
@@ -1372,7 +1383,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         /**
          * 针对 Lucene 5 的排序
          */
-        if (s) {
+        if (s && !r) {
             if (   "int".equals(t)) {
                 doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
             } else
@@ -1385,11 +1396,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             if ("double".equals(t)) {
                 doc.add(new SortedNumericDocValuesField("."+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D))));
             } else
-            if (r) {
-                doc.add(new SortedSetDocValuesField("."+k, new BytesRef(Synt.declare(v, ""))));
-            } else
             {
-                doc.add(new    SortedDocValuesField("."+k, new BytesRef(Synt.declare(v, ""))));
+                doc.add(new SortedDocValuesField("."+k, new BytesRef(Synt.declare(v, ""))));
             }
         }
     }

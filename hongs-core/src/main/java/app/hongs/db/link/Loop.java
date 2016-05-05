@@ -17,20 +17,20 @@ import java.util.Map;
  * @author Hong
  */
 public class Loop implements Iterator<Map<String,Object>> {
-    private final DB  db;
+    private final Link  db;
     private final Statement   ps;
     private final ResultSet   rs;
     private       Boolean     il = null;
     private ResultSetMetaData md = null;
     private Map<String,Class> td = null;
 
-    public Loop(DB db, Statement ps, ResultSet rs) throws HongsException {
+    public Loop(Link db, Statement ps, ResultSet rs) throws HongsException {
         this.db = db;
         this.ps = ps;
         this.rs = rs;
     }
 
-    public DB getDB() {
+    public Link getLink() {
         return db;
     }
 

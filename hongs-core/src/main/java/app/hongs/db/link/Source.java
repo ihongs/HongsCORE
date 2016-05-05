@@ -1,6 +1,8 @@
 package app.hongs.db.link;
 
 import app.hongs.Core;
+import app.hongs.CoreLogger;
+import app.hongs.HongsException;
 import app.hongs.util.Tool;
 import org.apache.commons.dbcp.BasicDataSource;
 import java.io.File;
@@ -16,7 +18,45 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 私有连接池
  * @author Hongs
  */
-public class Source {
+public class Source extends Link {
+
+    private final String     jdbc;
+    private final String     path;
+    private final Properties info;
+
+    public  Source(String jdbc, String name, Properties info)
+            throws HongsException {
+        super(name);
+
+        this.jdbc = jdbc;
+        this.path = name;
+        this.info = info;
+    }
+
+    public  Source(String jdbc, String name)
+            throws HongsException {
+        this( jdbc, name, new Properties() );
+    }
+
+    @Override
+    public  Connection connect()
+            throws HongsException {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connection  = connect( jdbc , path , info );
+                
+                if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                    CoreLogger.trace("DB: Connect to '"+name+"' by source mode: "+jdbc+" "+path);
+                }
+            }
+
+            initial(); // 预置
+
+            return connection;
+        } catch (SQLException ex) {
+            throw new HongsException(0x1024, ex);
+        }
+    }
 
     private static final Map<String, BasicDataSource> sourcePool = new HashMap();
     private static final ReadWriteLock sourceLock = new ReentrantReadWriteLock();

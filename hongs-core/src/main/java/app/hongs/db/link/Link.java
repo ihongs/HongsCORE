@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 抽象数据库连接
+ * 抽象数据连接
  * @author Hongs
  */
 abstract public class Link

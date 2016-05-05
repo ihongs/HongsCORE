@@ -1,7 +1,8 @@
 package app.hongs.db.link;
 
+import app.hongs.Core;
+import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.db.DB;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -11,7 +12,7 @@ import java.util.Properties;
  * 简单连接器
  * @author Hongs
  */
-public class Simple extends DB {
+public class Simple extends Link {
 
     private final String     jdbc;
     private final String     path;
@@ -19,7 +20,7 @@ public class Simple extends DB {
 
     public  Simple(String jdbc, String name, Properties info)
             throws HongsException {
-        super();
+        super(name);
 
         this.jdbc = jdbc;
         this.path = name;
@@ -37,15 +38,19 @@ public class Simple extends DB {
         try {
             if (connection == null || connection.isClosed()) {
                 connection  = connect( jdbc , path , info );
+                
+                if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                    CoreLogger.trace("DB: Connect to '"+name+"' by simple mode: "+jdbc+" "+path);
+                }
             }
 
             initial(); // 预置
 
             return connection;
         } catch (SQLException ex) {
-            throw new HongsException(0x1023, ex);
+            throw new HongsException(0x1024, ex);
         } catch (ClassNotFoundException ex ) {
-            throw new HongsException(0x1023, ex);
+            throw new HongsException(0x1024, ex);
         }
     }
 

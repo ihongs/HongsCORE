@@ -1,5 +1,8 @@
 package app.hongs.db.link;
 
+import app.hongs.Core;
+import app.hongs.CoreLogger;
+import app.hongs.HongsException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -12,7 +15,47 @@ import javax.naming.NamingException;
  * 公共连接池
  * @author Hongs
  */
-public class Origin {
+public class Origin extends Link {
+
+    private final String     jndi;
+    private final String     path;
+    private final Properties info;
+
+    public  Origin(String jndi, String name, Properties info)
+            throws HongsException {
+        super(name);
+
+        this.jndi = jndi;
+        this.path = name;
+        this.info = info;
+    }
+
+    public  Origin(String jdbc, String name)
+            throws HongsException {
+        this( jdbc, name, new Properties() );
+    }
+
+    @Override
+    public  Connection connect()
+            throws HongsException {
+        try {
+            if (connection == null || connection.isClosed()) {
+                connection  = connect( jndi , path , info );
+                
+                if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                    CoreLogger.trace("DB: Connect to '"+name+"' by origin mode: "+jndi+" "+path);
+                }
+            }
+
+            initial(); // 预置
+
+            return connection;
+        } catch (SQLException ex) {
+            throw new HongsException(0x1022, ex);
+        } catch (NamingException ex ) {
+            throw new HongsException(0x1022, ex);
+        }
+    }
 
     public  static Connection connect(String jndi, String namc, Properties info)
             throws SQLException, NamingException {

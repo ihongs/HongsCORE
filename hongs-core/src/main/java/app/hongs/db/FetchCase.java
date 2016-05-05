@@ -2,6 +2,7 @@ package app.hongs.db;
 
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.db.link.Link;
 import app.hongs.db.link.Loop;
 import app.hongs.util.Synt;
 import java.io.Serializable;
@@ -1055,14 +1056,14 @@ public class FetchCase
 
   //** 串联查询/操作 **/
 
-  private DB _db_ = null;
+  private Link _db_ = null;
 
   /**
    * 指定查询要查询的库
    * @param db
    * @return
    */
-  public FetchCase use(DB db)
+  public FetchCase use(Link db)
   {
     _db_ =  db ;
     return this;

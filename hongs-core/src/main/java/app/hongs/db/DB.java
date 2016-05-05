@@ -1569,10 +1569,10 @@ public class DB
   throws HongsException
   {
     DB db = new DB();
-    db.source = new HashMap();
-    db.source.put("jndi", jndi);
-    db.source.put("name", name);
-    db.source.put("info", info);
+    db.origin = new HashMap();
+    db.origin.put("jndi", jndi);
+    db.origin.put("name", name);
+    db.origin.put("info", info);
     return db;
   }
 

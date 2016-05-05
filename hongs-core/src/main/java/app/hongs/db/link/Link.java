@@ -5,7 +5,6 @@ import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.db.DB;
 import app.hongs.db.FetchCase;
 import app.hongs.dh.ITrnsct;
 import app.hongs.util.Synt;

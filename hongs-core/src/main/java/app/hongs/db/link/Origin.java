@@ -1,6 +1,5 @@
-package app.hongs.db.pool;
+package app.hongs.db.link;
 
-import app.hongs.HongsException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -10,13 +9,17 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * 内部数据源
+ * 内部连接池
  * @author Hongs
  */
-public class Base {
+public class Origin {
 
     public  static Connection connect(String comp, String namc, Properties info)
-            throws HongsException, NamingException {
+            throws SQLException, NamingException {
+        if (comp == null || comp.length( ) == 0) {
+            comp = "java:comp/env";
+        }
+
         Context ct;
         DataSource ds;
         InitialContext ic;
@@ -24,16 +27,12 @@ public class Base {
         ct = (Context) ic.lookup(comp);
         ds = (DataSource) ct.lookup(namc);
 
-        try {
-            if (info.isEmpty()) {
-                return ds.getConnection();
-            } else {
-                return ds.getConnection(
-                       info.getProperty("username") ,
-                       info.getProperty("password"));
-            }
-        } catch (SQLException ex) {
-            throw new app.hongs.HongsException(0x1022, ex);
+        if (info.isEmpty()) {
+            return ds.getConnection();
+        } else {
+            return ds.getConnection(
+                   info.getProperty("username") ,
+                   info.getProperty("password"));
         }
     }
 

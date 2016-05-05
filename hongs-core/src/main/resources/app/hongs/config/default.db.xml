@@ -14,39 +14,31 @@
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
   <source drvr="org.sqlite.JDBC"
-          jdbc="jdbc:sqlite:default.db"
-          maxPoolSize="5"/>
+          durl="jdbc:sqlite:default.db"/>
   <!-- 正式环境
   <source drvr="com.mysql.jdbc.Driver"
-          jdbc="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
-          user="root"
-          password="123456"
-          maxPoolSize="5"/>
+          durl="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
+          username="root"
+          password="123456"/>
   <origin name="jdbc/hongs-core"/>
   //-->
 
   <!--
+  <!== 外部数据源==>
+  <origin name="数据源名称"
+          username="账号"
+          password="密码"/>
+  <!== 内部数据源 ==>
+  <source drvr="驱动类名"
+          jdbc="驱动链接"
+          username="账号"
+          password="密码"/>
   <!== 实例配置 ==>
   <config dbClass="[DB类, 仅在使用"DB.getInstance(dbName)"时有效]"
           tableClass="[Table类, 仅在使用"DB.getTable(tableName)"时有效]"
           modelClass="[Model类, 仅在使用"DB.getModel(tableName)"时有效]"
           tablePrefix="[表前缀]"
           tableSuffix="[表后缀]"/>
-  <!== 内部数据源 ==>
-  <source drvr="驱动类名"
-          jdbc="驱动链接"
-          user="账号"
-          password="密码"
-          minPoolSize="最小连接池限制"
-          maxPoolSize="最大连接池限制"
-          maxIdleTime="最大存活时限制"
-          maxStatements="最大Statement数量限制"
-          initialPoolSize="初始连接限制"
-          numHelperThreads="助手实例数量"
-          checkoutTimeout="新增连接超时"
-          acquireIncrement="新增连接数量"/>
-  <!== 外部数据源==>
-  <origin name="数据源名称"/>
   <!== 表配置 ==>
   <tables>
     <!== 结构说明 ==>

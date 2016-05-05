@@ -43,6 +43,15 @@ public class ConfTag extends TagSupport {
         if ("yes".equals(this.esc)) {
           str = Tool.escape(str);
         }
+        else if ("xml".equals(this.esc)) {
+          str = Pagelet.escapeXML (str);
+        }
+        else if ("url".equals(this.esc)) {
+          str = Pagelet.escapeURL (str);
+        }
+        else if ("jss".equals(this.esc)) {
+          str = Pagelet.escapeJSS (str);
+        }
         else {
           str = Tool.escape(str, this.esc);
         }

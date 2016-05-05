@@ -385,7 +385,7 @@ public class DBConfig
   private static Map getSource(Element element)
   {
     String drvr = "";
-    String jdbc = "";
+    String durl = "";
     Properties info = new Properties();
 
     NamedNodeMap atts = element.getAttributes();
@@ -399,9 +399,9 @@ public class DBConfig
         drvr = value;
       }
       else
-      if ("jdbc".equals(name))
+      if ("durl".equals(name))
       {
-        jdbc = value;
+        durl = value;
       }
       else
       {
@@ -411,7 +411,7 @@ public class DBConfig
 
     Map source = new HashMap();
     source.put("drvr", drvr);
-    source.put("jdbc", jdbc);
+    source.put("durl", durl);
     source.put("info", info);
 
     return source;

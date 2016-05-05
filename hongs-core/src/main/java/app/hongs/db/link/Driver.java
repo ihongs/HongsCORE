@@ -11,17 +11,17 @@ import java.util.Properties;
  */
 public class Driver {
 
-    public  static Connection connect(String drvr, String durl, Properties info)
+    public  static Connection connect(String jdbc, String name, Properties info)
             throws SQLException, ClassNotFoundException {
-        Class.forName(drvr);
+        Class.forName(jdbc);
 
         if (info != null && ! info.isEmpty()) {
             if (info.containsKey("username")) {
                 info.put ( "user" , info.get("username") );
             }
-            return DriverManager.getConnection(durl, info);
+            return DriverManager.getConnection(name, info);
         } else {
-            return DriverManager.getConnection(durl);
+            return DriverManager.getConnection(name);
         }
     }
 }

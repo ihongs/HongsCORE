@@ -21,9 +21,9 @@ public class Source {
     private static final Map<String, BasicDataSource> sourcePool = new HashMap();
     private static final ReadWriteLock sourceLock = new ReentrantReadWriteLock();
 
-    public  static Connection connect(String drvr, String durl, Properties info)
+    public  static Connection connect(String jdbc, String name, Properties info)
             throws SQLException {
-        String  namc = drvr+" "+durl;
+        String  namc = jdbc+" "+name;
         BasicDataSource         pool;
 
         sourceLock.readLock().lock();
@@ -37,8 +37,8 @@ public class Source {
         }
 
         // SQLite 数据路径处理
-        if (durl.startsWith("jdbc:sqlite:")) {
-            String jurl = durl.substring(12);
+        if (name.startsWith("jdbc:sqlite:")) {
+            String jurl = name.substring(12);
             Map injt = new HashMap();
             injt.put("CORE_PATH", Core.CORE_PATH);
             injt.put("CONF_PATH", Core.CONF_PATH);
@@ -50,15 +50,15 @@ public class Source {
             if(!new File(jurl).getParentFile().exists()) {
                 new File(jurl).getParentFile().mkdirs();
             }
-            durl = "jdbc:sqlite:"+ jurl;
+            name = "jdbc:sqlite:"+ jurl;
         }
 
         sourceLock.writeLock( ).lock( );
         try {
             pool = new BasicDataSource( );
             sourcePool.put ( namc , pool);
-            pool.setDriverClassName(drvr);
-            pool.setUrl/* Source */(durl);
+            pool.setDriverClassName(jdbc);
+            pool.setUrl/* Source */(name);
 
             if (info.containsKey("username")) {
                 pool.setUsername(info.getProperty("username"));
@@ -67,6 +67,7 @@ public class Source {
                 pool.setPassword(info.getProperty("password"));
             }
 
+            // 基础设置
             if (info.containsKey("initialSize")) {
                 pool.setInitialSize(Integer.parseInt(info.getProperty("initialSize")));
             }
@@ -83,12 +84,49 @@ public class Source {
                 pool.setMaxWait(Long.parseLong(info.getProperty("maxWait")));
             }
 
+            // 回收设置
+            if (info.containsKey("logAbandoned")) {
+                pool.setLogAbandoned(Boolean.parseBoolean(info.getProperty("logAbandoned")));
+            }
+            if (info.containsKey("removeAbandoned")) {
+                pool.setRemoveAbandoned(Boolean.parseBoolean(info.getProperty("removeAbandoned")));
+            }
+            if (info.containsKey("removeAbandonedTimeout")) {
+                pool.setRemoveAbandonedTimeout(Integer.parseInt(info.getProperty("removeAbandonedTimeout")));
+            }
+
+            // 检测设置
+            if (info.containsKey("testOnBorrow")) {
+                pool.setTestOnBorrow(Boolean.parseBoolean(info.getProperty("testOnBorrow")));
+            }
+            if (info.containsKey("testOnReturn")) {
+                pool.setTestOnReturn(Boolean.parseBoolean(info.getProperty("testOnReturn")));
+            }
+            if (info.containsKey("testWhileIdle")) {
+                pool.setTestWhileIdle(Boolean.parseBoolean(info.getProperty("testWhileIdle")));
+            }
+            if (info.containsKey("validationQuery")) {
+                pool.setValidationQuery(info.getProperty("validationQuery"));
+            }
+            if (info.containsKey("validationQueryTimeout")) {
+                pool.setValidationQueryTimeout(Integer.parseInt(info.getProperty("validationQueryTimeout")));
+            }
+
             // 其他设置
-            if (info.containsKey("maxOpenPreparedStatements" )) {
+            if (info.containsKey("numTestsPerEvictionRun")) {
+                pool.setNumTestsPerEvictionRun(Integer.parseInt(info.getProperty("numTestsPerEvictionRun")));
+            }
+            if (info.containsKey("poolPreparedStatements")) {
+                pool.setPoolPreparedStatements(Boolean.parseBoolean(info.getProperty("poolPreparedStatements")));
+            }
+            if (info.containsKey("maxOpenPreparedStatements")) {
                 pool.setMaxOpenPreparedStatements(Integer.parseInt(info.getProperty("maxOpenPreparedStatements")));
             }
             if (info.containsKey("minEvictableIdleTimeMillis")) {
                 pool.setMinEvictableIdleTimeMillis(Long.parseLong(info.getProperty("minEvictableIdleTimeMillis")));
+            }
+            if (info.containsKey("timeBetweenEvictionRunsMillis")) {
+                pool.setTimeBetweenEvictionRunsMillis(Long.parseLong(info.getProperty("timeBetweenEvictionRunsMillis")));
             }
 
             return     pool.getConnection();

@@ -355,37 +355,8 @@ public class DBConfig
 
   private static Map getOrigin(Element element)
   {
-    String name = "";
-    Properties info = new Properties();
-
-    NamedNodeMap atts = element.getAttributes();
-    for (int i = 0; i < atts.getLength(); i ++)
-    {
-      Node attr = atts.item(i);
-      String namz = attr.getNodeName();
-      String value = attr.getNodeValue();
-
-      if ("name".equals(namz))
-      {
-        name = value;
-      }
-      else
-      {
-        info.setProperty(namz, value);
-      }
-    }
-
-    Map origin = new HashMap();
-    origin.put("name", name);
-    origin.put("info", info);
-
-    return origin;
-  }
-
-  private static Map getSource(Element element)
-  {
-    String drvr = "";
-    String durl = "";
+    String mode = "";
+    String namc = "";
     Properties info = new Properties();
 
     NamedNodeMap atts = element.getAttributes();
@@ -394,14 +365,48 @@ public class DBConfig
       Node attr = atts.item(i);
       String name = attr.getNodeName();
       String value = attr.getNodeValue();
-      if ("drvr".equals(name))
+      if ("jndi".equals(name))
       {
-        drvr = value;
+        mode = value;
+      }
+      if ("name".equals(name))
+      {
+        namc = value;
       }
       else
-      if ("durl".equals(name))
       {
-        durl = value;
+        info.setProperty(name, value);
+      }
+    }
+
+    Map origin = new HashMap();
+    origin.put("jndi", mode);
+    origin.put("name", namc);
+    origin.put("info", info);
+
+    return origin;
+  }
+
+  private static Map getSource(Element element)
+  {
+    String mode = "";
+    String namc = "";
+    Properties info = new Properties();
+
+    NamedNodeMap atts = element.getAttributes();
+    for (int i = 0; i < atts.getLength(); i ++)
+    {
+      Node attr = atts.item(i);
+      String name = attr.getNodeName();
+      String value = attr.getNodeValue();
+      if ("jdbc".equals(name))
+      {
+        mode = value;
+      }
+      else
+      if ("name".equals(name))
+      {
+        namc = value;
       }
       else
       {
@@ -410,8 +415,8 @@ public class DBConfig
     }
 
     Map source = new HashMap();
-    source.put("drvr", drvr);
-    source.put("durl", durl);
+    source.put("jdbc", mode);
+    source.put("name", namc);
     source.put("info", info);
 
     return source;

@@ -2,6 +2,46 @@
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
+  <!-- 外部数据源配置 -->
+  <xs:element name="origin">
+    <xs:complexType>
+      <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="jndi" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="username" type="xs:string"/>
+      <xs:attribute name="password" type="xs:string"/>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 内部数据源驱动 -->
+  <xs:element name="source">
+    <xs:complexType>
+      <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="jdbc" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="username" type="xs:string"/>
+      <xs:attribute name="password" type="xs:string"/>
+      <xs:attribute name="initialSize" type="xs:int"/>
+      <xs:attribute name="maxActive" type="xs:int"/>
+      <xs:attribute name="minIdle" type="xs:int"/>
+      <xs:attribute name="maxIdle" type="xs:int"/>
+      <xs:attribute name="maxWait" type="xs:long"/>
+      <xs:attribute name="logAbandoned" type="xs:string"/>
+      <xs:attribute name="removeAbandoned" type="xs:string"/>
+      <xs:attribute name="removeAbandonedTimeout" type="xs:int"/>
+      <xs:attribute name="testOnBorrow" type="xs:string"/>
+      <xs:attribute name="testOnReturn" type="xs:string"/>
+      <xs:attribute name="testWhileIdle" type="xs:string"/>
+      <xs:attribute name="validationQuery" type="xs:string"/>
+      <xs:attribute name="validationQueryTimeout" type="xs:int"/>
+      <xs:attribute name="numTestsPerEvictionRun" type="xs:int"/>
+      <xs:attribute name="poolPreparedStatements" type="xs:string"/>
+      <xs:attribute name="maxOpenPreparedStatements" type="xs:int"/>
+      <xs:attribute name="minEvictableIdleTimeMillis" type="xs:long"/>
+      <xs:attribute name="timeBetweenEvictionRunsMillis" type="xs:int"/>
+    </xs:complexType>
+  </xs:element>
+
   <!-- 基础配置 -->
   <xs:element name="config">
     <xs:complexType>
@@ -11,33 +51,6 @@
       <xs:attribute name="modelClass" type="xs:string"/>
       <xs:attribute name="tablePrefix" type="xs:string"/>
       <xs:attribute name="tableSuffix" type="xs:string"/>
-    </xs:complexType>
-  </xs:element>
-
-  <!-- 内部数据源驱动 -->
-  <xs:element name="source">
-    <xs:complexType>
-      <xs:attribute name="link" type="xs:string"/>
-      <xs:attribute name="drvr" type="xs:string" use="required"/>
-      <xs:attribute name="jdbc" type="xs:string" use="required"/>
-      <xs:attribute name="user" type="xs:string"/>
-      <xs:attribute name="password" type="xs:string"/>
-      <xs:attribute name="maxIdleTime" type="xs:int"/>
-      <xs:attribute name="minPoolSize" type="xs:int"/>
-      <xs:attribute name="maxPoolSize" type="xs:int"/>
-      <xs:attribute name="initialPoolSize" type="xs:int"/>
-      <xs:attribute name="acquireIncrement" type="xs:int"/>
-      <xs:attribute name="numHelperThreads" type="xs:int"/>
-    </xs:complexType>
-  </xs:element>
-
-  <!-- 外部数据源配置 -->
-  <xs:element name="origin">
-    <xs:complexType>
-      <xs:attribute name="link" type="xs:string"/>
-      <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="user" type="xs:string"/>
-      <xs:attribute name="password" type="xs:string"/>
     </xs:complexType>
   </xs:element>
 

@@ -233,31 +233,35 @@ public class DB
         break;
       }
 
+      if (origin.containsKey("jndi") == false)
+      {
+        throw new HongsException(0x1021, "Can not find jndi in origin");
+      }
       if (origin.containsKey("name") == false)
       {
         throw new HongsException(0x1021, "Can not find name in origin");
       }
 
-      String comp = (String)origin.get("type");
+      String mode = (String)origin.get("jndi");
       String namc = (String)origin.get("name");
       Properties info = (Properties)origin.get("info");
 
       try
       {
-        connection = app.hongs.db.link.Origin.connect(comp, namc, info);
+        connection = app.hongs.db.link.Origin.connect(mode, namc, info);
       }
       catch (SQLException ex)
       {
-        throw new HongsException(0x1022 , ex);
+        throw new HongsException(0x1022 , ex );
       }
-      catch (javax.naming.NamingException ex)
+      catch (javax.naming.NamingException ex )
       {
         ez = ex ; break ; // 没有对应的数据源, 尝试其他连接方式
       }
 
       if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
       {
-        CoreLogger.trace("DB: Connect to '"+name+"' by origin mode, name: "+namc);
+        CoreLogger.trace("DB: Connect to '"+name+"' by origin mode: "+mode+" "+namc);
       }
 
       break TOP;
@@ -273,31 +277,31 @@ public class DB
         break;
       }
 
-      if (!source.containsKey("drvr"))
+      if (!source.containsKey("jdbc"))
       {
-        throw new app.hongs.HongsException(0x1023, "Can not find drvr in source");
+        throw new app.hongs.HongsException(0x1023, "Can not find jdbc in source");
       }
-      if (!source.containsKey("durl"))
+      if (!source.containsKey("name"))
       {
-        throw new app.hongs.HongsException(0x1023, "Can not find durl in source");
+        throw new app.hongs.HongsException(0x1023, "Can not find name in source");
       }
 
-      String drvr = (String)source.get("drvr");
-      String durl = (String)source.get("durl");
+      String mode = (String)source.get("jdbc");
+      String namc = (String)source.get("name");
       Properties info = (Properties)source.get("info");
 
       try
       {
-        connection = app.hongs.db.link.Source.connect(drvr, durl, info);
+        connection = app.hongs.db.link.Source.connect(mode, namc, info);
       }
       catch (SQLException ex)
       {
-        throw new HongsException(0x1024 , ex);
+        throw new HongsException(0x1024 , ex );
       }
 
       if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
       {
-        CoreLogger.trace("DB: Connect to '"+name+"' by source mode, type: "+drvr+" "+durl);
+        CoreLogger.trace("DB: Connect to '"+name+"' by source mode: "+mode+" "+namc);
       }
 
       break TOP;
@@ -1536,60 +1540,40 @@ public class DB
   }
 
   /**
-   * 以外部数据源的形式构造对象
+   * 以私有数据源的形式构造对象
+   * @param jdbc
    * @param name
    * @param info
    * @return
    * @throws HongsException
    */
-  public static DB newInstance(String name, Properties info)
+  public static DB newSourceDB(String jdbc, String name, Properties info)
   throws HongsException {
-      DB db = new DB();
-      db.origin = new HashMap();
-      db.origin.put("name", name);
-      db.origin.put("info", info);
-      return db;
+    DB db = new DB();
+    db.source = new HashMap();
+    db.source.put("jdbc", jdbc);
+    db.source.put("name", name);
+    db.source.put("info", info);
+    return db;
   }
 
   /**
-   * 以外部数据源的形式构造对象
+   * 以公共数据源的形式构造对象
+   * @param jndi
    * @param name
-   * @return
-   * @throws HongsException
-   */
-  public static DB newInstance(String name)
-  throws HongsException {
-      return DB.newInstance(name, new Properties());
-  }
-
-  /**
-   * 以内部数据源的形式构造对象(c3p0)
-   * @param drvr
-   * @param jdbc
    * @param info
    * @return
-   * @throws HongsException
+     * @throws app.hongs.HongsException
    */
-  public static DB newInstance(String drvr, String jdbc, Properties info)
-  throws HongsException {
-      DB db = new DB();
-      db.source = new HashMap();
-      db.source.put("drvr", drvr);
-      db.source.put("jdbc", jdbc);
-      db.source.put("info", info);
-      return db;
-  }
-
-  /**
-   * 以内部数据源的形式构造对象
-   * @param drvr
-   * @param jdbc
-   * @return
-   * @throws HongsException
-   */
-  public static DB newInstance(String drvr, String jdbc)
-  throws HongsException {
-      return DB.newInstance(drvr, jdbc, new Properties());
+  public static DB newOriginDB(String jndi, String name, Properties info)
+  throws HongsException
+  {
+    DB db = new DB();
+    db.source = new HashMap();
+    db.source.put("jndi", jndi);
+    db.source.put("name", name);
+    db.source.put("info", info);
+    return db;
   }
 
     /**

@@ -14,17 +14,17 @@ import javax.naming.NamingException;
  */
 public class Origin {
 
-    public  static Connection connect(String comp, String namc, Properties info)
+    public  static Connection connect(String jndi, String namc, Properties info)
             throws SQLException, NamingException {
-        if (comp == null || comp.length( ) == 0) {
-            comp = "java:comp/env";
+        if (jndi == null || jndi.length( ) == 0) {
+            jndi = "java:comp/env";
         }
 
         Context ct;
         DataSource ds;
         InitialContext ic;
         ic = new InitialContext ( );
-        ct = (Context) ic.lookup(comp);
+        ct = (Context) ic.lookup(jndi);
         ds = (DataSource) ct.lookup(namc);
 
         if (info.isEmpty()) {

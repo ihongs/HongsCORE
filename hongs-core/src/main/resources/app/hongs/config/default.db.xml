@@ -13,11 +13,11 @@
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
-  <source drvr="org.sqlite.JDBC"
-          durl="jdbc:sqlite:default.db"/>
+  <source jdbc="org.sqlite.JDBC"
+          name="jdbc:sqlite:default.db"/>
   <!-- 正式环境
-  <source drvr="com.mysql.jdbc.Driver"
-          durl="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
+  <source jdbc="com.mysql.jdbc.Driver"
+          name="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
           username="root"
           password="123456"/>
   <origin name="jdbc/hongs-core"/>
@@ -25,12 +25,13 @@ xsi:schemaLocation="http://hongs-core db.xsd">
 
   <!--
   <!== 外部数据源==>
-  <origin name="数据源名称"
+  <origin jndi="命名接口"
+          name="连接名称"
           username="账号"
           password="密码"/>
   <!== 内部数据源 ==>
-  <source drvr="驱动类名"
-          jdbc="驱动链接"
+  <source jdbc="驱动类名"
+          name="链接地址"
           username="账号"
           password="密码"/>
   <!== 实例配置 ==>

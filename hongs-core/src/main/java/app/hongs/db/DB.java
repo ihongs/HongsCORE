@@ -108,27 +108,32 @@ public class DB
   /**
    * 关联库
    */
-  protected DB  link  =  null;
+  protected DB  link = null;
 
   /**
-   * 表类
+   * 连接对象
    */
-  protected String tableClass;
+  protected Connection connection;
 
   /**
    * 模型类
    */
-  protected String modelClass;
+  protected String     modelClass;
+
+  /**
+   * 库表类
+   */
+  protected String     tableClass;
 
   /**
    * 表前缀
    */
-  protected String tablePrefix;
+  protected String     tablePrefix;
 
   /**
    * 表后缀
    */
-  protected String tableSuffix;
+  protected String     tableSuffix;
 
   /**
    * 表配置
@@ -145,11 +150,6 @@ public class DB
    */
   protected Map<String, Model> modelObjects;
 
-  /**
-   * 连接对象
-   */
-  protected Connection connection;
-
   private   final  Map source;
   private   final  Map origin;
 
@@ -159,8 +159,8 @@ public class DB
     this.name         = "";
     this.source       = new HashMap();
     this.origin       = new HashMap();
-    this.tableClass   = Table.class.getName();
     this.modelClass   = Model.class.getName();
+    this.tableClass   = Table.class.getName();
     this.tablePrefix  = "";
     this.tableSuffix  = "";
     this.tableConfigs = new HashMap();
@@ -174,8 +174,8 @@ public class DB
     this.name         = conf.name;
     this.source       = conf.source;
     this.origin       = conf.origin;
-    this.tableClass   = conf.tableClass;
     this.modelClass   = conf.modelClass;
+    this.tableClass   = conf.tableClass;
     this.tablePrefix  = conf.tablePrefix;
     this.tableSuffix  = conf.tableSuffix;
     this.tableConfigs = conf.tableConfigs;

@@ -458,7 +458,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
      * @throws HongsException
      */
     public Map getOne(Map rd) throws HongsException {
-        Roll roll = search(rd, 0, 1);
+        Iter roll = search(rd, 0, 1);
         if   (   roll.hasNext( )) {
             return  roll.next( );
         } else {
@@ -473,7 +473,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
      * @throws HongsException
      */
     public List getAll(Map rd) throws HongsException {
-        Roll roll = search(rd, 0, 0);
+        Iter roll = search(rd, 0, 0);
         List list = new LinkedList();
         while  (  roll.hasNext()) {
             list.add(roll.next());
@@ -491,7 +491,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
      * @throws HongsException
      */
     public List getAll(Map rd, int total, int begin, int end) throws HongsException {
-        Roll roll = search(rd, begin, total - begin);
+        Iter roll = search(rd, begin, total - begin);
         List list = new LinkedList();
         int  idx  = 0 ;
         if ( end == 0 ) {
@@ -515,11 +515,11 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
      * @return
      * @throws HongsException
      */
-    public Roll search(Map rd, int begin, int limit) throws HongsException {
+    public Iter search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
                   setReps (rd);
-        Roll  r = new Roll(this, q, s, begin, limit);
+        Iter  r = new Iter(this, q, s, begin, limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug("LuceneRecord.search: " + r.toString());
@@ -1563,7 +1563,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     /**
      * 查询迭代器
      */
-    public static class Roll implements Iterator<Map> {
+    public static class Iter implements Iterator<Map> {
         private final IndexSearcher finder;
         private final IndexReader   reader;
         private final LuceneRecord  that;
@@ -1587,7 +1587,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
          * @param l 查询限额
          * @param b 起始偏移
          */
-        public Roll(LuceneRecord that, Query q, Sort s, int b, int l) {
+        public Iter(LuceneRecord that, Query q, Sort s, int b, int l) {
             this.that = that;
             this.docs = null;
             this.doc  = null;

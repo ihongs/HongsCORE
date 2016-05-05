@@ -9,7 +9,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
 /**
- * 内部连接池
+ * 公共连接池
  * @author Hongs
  */
 public class Origin {

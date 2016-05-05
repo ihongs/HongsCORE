@@ -145,9 +145,13 @@ public class DB
    */
   protected Map<String, Model> modelObjects;
 
-  private Map           source;
-  private Map           origin;
-  private Connection    connection;
+  /**
+   * 连接对象
+   */
+  protected Connection connection;
+
+  private   final  Map source;
+  private   final  Map origin;
 
   protected DB()
     throws HongsException
@@ -322,17 +326,23 @@ public class DB
 
     /** 初始化设置 **/
 
+    initial  (  );
+
+    return this.connection;
+  }
+
+  public void initial()
+  throws HongsException
+  {
     // 自动提交设置
     try
     {
-      this.connection.setAutoCommit(!this.IN_TRNSCT_MODE);
+      this.connection.setAutoCommit(! this.IN_TRNSCT_MODE);
     }
-    catch (SQLException ex )
+    catch (SQLException ex)
     {
-      throw  new  app.hongs.HongsException( 0x1026 , ex );
+      throw new HongsException(0x1026, ex);
     }
-
-    return this.connection;
   }
 
   @Override
@@ -1537,43 +1547,6 @@ public class DB
     throws HongsException
   {
     return DB.getInstance("default");
-  }
-
-  /**
-   * 以私有数据源的形式构造对象
-   * @param jdbc
-   * @param name
-   * @param info
-   * @return
-   * @throws HongsException
-   */
-  public static DB newSourceDB(String jdbc, String name, Properties info)
-  throws HongsException {
-    DB db = new DB();
-    db.source = new HashMap();
-    db.source.put("jdbc", jdbc);
-    db.source.put("name", name);
-    db.source.put("info", info);
-    return db;
-  }
-
-  /**
-   * 以公共数据源的形式构造对象
-   * @param jndi
-   * @param name
-   * @param info
-   * @return
-     * @throws app.hongs.HongsException
-   */
-  public static DB newOriginDB(String jndi, String name, Properties info)
-  throws HongsException
-  {
-    DB db = new DB();
-    db.origin = new HashMap();
-    db.origin.put("jndi", jndi);
-    db.origin.put("name", name);
-    db.origin.put("info", info);
-    return db;
   }
 
     /**

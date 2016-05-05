@@ -13,7 +13,7 @@ import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * DBCP连接池
+ * 私有连接池
  * @author Hongs
  */
 public class Source {

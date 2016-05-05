@@ -8,9 +8,9 @@ import org.apache.commons.dbcp.BasicDataSource;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Properties;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 

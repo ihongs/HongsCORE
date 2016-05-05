@@ -769,8 +769,8 @@ public class FetchCase
     List   paramz = this.getParamsList();
     try
     {
-      DB.checkSQLParams(sb, paramz);
-      DB.mergeSQLParams(sb, paramz);
+      Link.checkSQLParams(sb, paramz);
+      Link.mergeSQLParams(sb, paramz);
     }
     catch (HongsException ex)
     {

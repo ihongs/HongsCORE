@@ -198,7 +198,7 @@ implements  ITrnsct , Core.Destroy
      */
     List      paramz = new ArrayList(Arrays.asList(params));
     StringBuilder sb = new StringBuilder(sql);
-    DB.checkSQLParams(sb, paramz);
+    checkSQLParams(sb, paramz);
     sql = sb.toString();
 
     PreparedStatement ps = this.prepareStatement(sql);
@@ -351,8 +351,8 @@ implements  ITrnsct , Core.Destroy
     {
       StringBuilder sb = new StringBuilder(sql);
       List      paramz = new ArrayList(Arrays.asList(params));
-      DB.checkSQLParams(sb, paramz);
-      DB.mergeSQLParams(sb, paramz);
+      checkSQLParams(sb, paramz);
+      mergeSQLParams(sb, paramz);
       app.hongs.CoreLogger.debug("DB.query: "+ sb.toString());
     }
 
@@ -552,8 +552,8 @@ implements  ITrnsct , Core.Destroy
     {
       StringBuilder sb = new StringBuilder(sql);
       List      paramz = new ArrayList(Arrays.asList(params));
-      DB.checkSQLParams(sb, paramz);
-      DB.mergeSQLParams(sb, paramz);
+      checkSQLParams(sb, paramz);
+      mergeSQLParams(sb, paramz);
       app.hongs.CoreLogger.debug("DB.execute: " + sb.toString());
     }
 
@@ -589,8 +589,8 @@ implements  ITrnsct , Core.Destroy
     {
       StringBuilder sb = new StringBuilder(sql);
       List      paramz = new ArrayList(Arrays.asList(params));
-      DB.checkSQLParams(sb, paramz);
-      DB.mergeSQLParams(sb, paramz);
+      checkSQLParams(sb, paramz);
+      mergeSQLParams(sb, paramz);
       app.hongs.CoreLogger.debug("DB.updates: " + sb.toString());
     }
 
@@ -890,7 +890,7 @@ implements  ITrnsct , Core.Destroy
       else
       {
         str = obj.toString();
-        str = DB.quoteValue(str);
+        str = quoteValue(str);
       }
 
       sql.replace(pos, pos + 1, str);

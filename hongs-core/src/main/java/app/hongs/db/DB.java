@@ -7,6 +7,8 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.db.link.Iter;
+import app.hongs.db.link.Origin;
+import app.hongs.db.link.Source;
 import app.hongs.dh.ITrnsct;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -250,7 +252,7 @@ public class DB
 
       try
       {
-        connection = app.hongs.db.link.Origin.connect(mode, namc, info);
+        connection = Origin.connect(mode, namc, info );
       }
       catch (SQLException ex)
       {
@@ -294,7 +296,7 @@ public class DB
 
       try
       {
-        connection = app.hongs.db.link.Source.connect(mode, namc, info);
+        connection = Source.connect(mode, namc, info );
       }
       catch (SQLException ex)
       {
@@ -851,7 +853,7 @@ public class DB
    * @return 查询结果
    * @throws HongsException
    */
-  public Roll query(String sql, int start, int limit, Object... params)
+  public Iter query(String sql, int start, int limit, Object... params)
     throws HongsException
   {
     /**
@@ -910,7 +912,7 @@ public class DB
       throw new app.hongs.HongsException(0x1043, ex);
     }
 
-    return new Roll(this, ps, rs);
+    return new Iter(this, ps, rs);
   }
 
   /**
@@ -929,7 +931,7 @@ public class DB
     List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row;
 
-    Roll rs  = this.query(sql, start, limit, params);
+    Iter rs  = this.query(sql, start, limit, params);
     while (( row = rs.next() ) != null)
     {
       rows.add(row);
@@ -981,7 +983,7 @@ public class DB
    * @return 全部数据
    * @throws app.hongs.HongsException
    */
-  public Roll queryMore(FetchCase caze)
+  public Iter queryMore(FetchCase caze)
     throws HongsException
   {
   boolean on_object_mode = false;
@@ -1545,19 +1547,6 @@ public class DB
     throws HongsException
   {
     return DB.getInstance("default");
-  }
-
-  /**
-   * 遍历获取结果
-   * @deprecated 请改用 app.hongs.db.link.Iter
-   * @author Hong
-   */
-  public class Roll extends Iter {
-    public Roll(DB db, Statement ps, ResultSet rs)
-      throws HongsException
-    {
-      super  ( db, ps, rs );
-    }
   }
 
 }

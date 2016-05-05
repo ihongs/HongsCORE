@@ -2,7 +2,6 @@ package app.hongs.db.link;
 
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.db.DB;
 import app.hongs.util.Dict;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;

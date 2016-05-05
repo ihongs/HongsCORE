@@ -2,7 +2,7 @@ package app.hongs.db;
 
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.db.link.Iter;
+import app.hongs.db.link.Loop;
 import app.hongs.util.Synt;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -1097,7 +1097,7 @@ public class FetchCase
    * @return
    * @throws HongsException
    */
-  public Iter oll() throws HongsException {
+  public Loop oll() throws HongsException {
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }

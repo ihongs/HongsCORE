@@ -13,10 +13,10 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
- * 遍历获取结果
+ * 查询结果迭代
  * @author Hong
  */
-public class Iter implements Iterator<Map<String,Object>> {
+public class Loop implements Iterator<Map<String,Object>> {
     private final DB  db;
     private final Statement   ps;
     private final ResultSet   rs;
@@ -24,7 +24,7 @@ public class Iter implements Iterator<Map<String,Object>> {
     private ResultSetMetaData md = null;
     private Map<String,Class> td = null;
 
-    public Iter(DB db, Statement ps, ResultSet rs) throws HongsException {
+    public Loop(DB db, Statement ps, ResultSet rs) throws HongsException {
         this.db = db;
         this.ps = ps;
         this.rs = rs;

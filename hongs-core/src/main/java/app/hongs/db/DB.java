@@ -6,7 +6,7 @@ import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.db.link.Iter;
+import app.hongs.db.link.Loop;
 import app.hongs.db.link.Origin;
 import app.hongs.db.link.Source;
 import app.hongs.dh.ITrnsct;
@@ -853,7 +853,7 @@ public class DB
    * @return 查询结果
    * @throws HongsException
    */
-  public Iter query(String sql, int start, int limit, Object... params)
+  public Loop query(String sql, int start, int limit, Object... params)
     throws HongsException
   {
     /**
@@ -912,7 +912,7 @@ public class DB
       throw new app.hongs.HongsException(0x1043, ex);
     }
 
-    return new Iter(this, ps, rs);
+    return new Loop(this, ps, rs);
   }
 
   /**
@@ -931,7 +931,7 @@ public class DB
     List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row;
 
-    Iter rs  = this.query(sql, start, limit, params);
+    Loop rs  = this.query(sql, start, limit, params);
     while (( row = rs.next() ) != null)
     {
       rows.add(row);
@@ -983,7 +983,7 @@ public class DB
    * @return 全部数据
    * @throws app.hongs.HongsException
    */
-  public Iter queryMore(FetchCase caze)
+  public Loop queryMore(FetchCase caze)
     throws HongsException
   {
   boolean on_object_mode = false;

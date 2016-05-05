@@ -2,7 +2,7 @@ package app.hongs.db;
 
 import app.hongs.Core;
 import app.hongs.HongsException;
-import app.hongs.db.link.Iter;
+import app.hongs.db.link.Loop;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.util.ArrayList;
@@ -194,7 +194,7 @@ public class FetchMore
         .from (tableName , name);
 
     // 获取关联数据
-    Iter rs = db.queryMore(caze);
+    Loop rs = db.queryMore(caze);
 
     /**
      * 根据之前的 id=>行 关系以表名为键放入列表中

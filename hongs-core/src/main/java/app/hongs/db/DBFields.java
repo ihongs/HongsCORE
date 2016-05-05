@@ -3,7 +3,7 @@ package app.hongs.db;
 import app.hongs.Cnst;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
-import app.hongs.db.link.Iter;
+import app.hongs.db.link.Loop;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -51,7 +51,7 @@ public class DBFields
   {
     this.fields = new LinkedHashMap();
 
-    Iter rs = this.table.db.query("SELECT * FROM `"
+    Loop rs = this.table.db.query("SELECT * FROM `"
             + this.table.tableName + "`", 0,1);
     try
     {

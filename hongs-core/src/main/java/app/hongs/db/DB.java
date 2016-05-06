@@ -6,6 +6,7 @@ import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.db.link.Link;
+import app.hongs.db.link.Loop;
 import app.hongs.db.link.Origin;
 import app.hongs.db.link.Source;
 import app.hongs.util.Synt;
@@ -17,6 +18,7 @@ import java.util.Map;
 import java.util.Set;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 /**
  * 数据库基础类
@@ -79,7 +81,7 @@ public class DB
   /**
    * 关联库
    */
-  protected DB  link = null;
+  protected DB link = null;
 
   /**
    * 模型类
@@ -107,7 +109,7 @@ public class DB
   protected Map<String, Map  > tableConfigs;
 
   /**
-   * 表对象
+   * 库表对象
    */
   protected Map<String, Table> tableObjects;
 
@@ -118,6 +120,12 @@ public class DB
 
   private   final  Map source;
   private   final  Map origin;
+
+  public DB(  String name)
+    throws HongsException
+  {
+    this (new DBConfig(name));
+  }
 
   public DB(DBConfig conf)
     throws HongsException
@@ -282,6 +290,55 @@ public class DB
     initial  (  );
 
     return this.connection;
+  }
+
+  /**
+   * 采用查询体获取全部数据
+   * <p>注: 调query实现</p>
+   * @param caze
+   * @return 全部数据
+   * @throws app.hongs.HongsException
+   */
+  public Loop queryMore(FetchCase caze)
+    throws HongsException
+  {
+    return caze.use(this).oll();
+  }
+
+  /**
+   * 采用查询体获取全部数据
+   * <p>注: 调fetch实现</p>
+   * @param caze
+   * @return 全部数据
+   * @throws app.hongs.HongsException
+   */
+  public List fetchMore(FetchCase caze)
+    throws HongsException
+  {
+    return caze.use(this).all();
+  }
+
+  /**
+   * 采用查询体获取单条数据
+   * <p>注: 调fetch实现</p>
+   * @param caze
+   * @return 单条数据
+   * @throws app.hongs.HongsException
+   */
+  public Map  fetchLess(FetchCase caze)
+    throws HongsException
+  {
+    return caze.use(this).one();
+  }
+
+  /**
+   * 调用 FetchCase 构建查询
+   * 可用 all , one 得到结果, 以及 delete, update 等操作数据
+   * @return 绑定了 db 的查询对象
+   */
+  public FetchCase fetchCase()
+  {
+    return new FetchCase().use(this);
   }
 
   //** 模型方法 **/
@@ -558,16 +615,16 @@ public class DB
    * 获取指定数据库对象
    * <b>注意:</b>
    * <p>
-   * 会根据当前运行环境自动设置IN_OBJECT_MODE和IN_TRNSCT_MODE;
-   * 如果指定数据库配置中有指定dbClass, 务必添加方法:
+   * 会根据当前运行环境自动设置 IN_OBJECT_MODE,IN_TRNSCT_MODE;
+   * 如果当前数据库配置中有指定 dbClass, 务必添加 getInstance:
    * </p>
    * <pre>
- public static XxxDB getInstance()
-    throws HongsException
- {
-    return new XxxDB();
- }
- </pre>
+    public static XxDB getInstance()
+       throws HongsException
+    {
+       return new XxDB();
+    }
+   * </pre>
    * @param name
    * @return 指定DB对象
    * @throws app.hongs.HongsException

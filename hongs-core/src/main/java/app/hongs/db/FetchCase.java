@@ -1078,7 +1078,23 @@ public class FetchCase
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
-    return _db_.fetchLess(this);
+
+    boolean on_option_mode = false;
+    boolean in_obejct_mode = false;
+    try {
+      if (hasOption("FETCH_OBJECT")) {
+        on_option_mode = true;
+        in_obejct_mode = _db_.IN_OBJECT_MODE;
+        _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
+      }
+
+      return _db_.fetchOne(getSQL(), getParams());
+
+    } finally {
+      if (on_option_mode) {
+        _db_.IN_OBJECT_MODE = in_obejct_mode;
+      }
+    }
   }
 
   /**
@@ -1090,7 +1106,23 @@ public class FetchCase
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
-    return _db_.fetchMore(this);
+
+    boolean on_option_mode = false;
+    boolean in_obejct_mode = false;
+    try {
+      if (hasOption("FETCH_OBJECT")) {
+        on_option_mode = true;
+        in_obejct_mode = _db_.IN_OBJECT_MODE;
+        _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
+      }
+
+      return _db_.fetch(getSQL(), getStart(), getLimit(), getParams());
+
+    } finally {
+      if (on_option_mode) {
+        _db_.IN_OBJECT_MODE = in_obejct_mode;
+      }
+    }
   }
 
   /**
@@ -1102,7 +1134,23 @@ public class FetchCase
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
-    return _db_.queryMore(this);
+
+    boolean on_option_mode = false;
+    boolean in_obejct_mode = false;
+    try {
+      if (hasOption("FETCH_OBJECT")) {
+        on_option_mode = true;
+        in_obejct_mode = _db_.IN_OBJECT_MODE;
+        _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
+      }
+
+      return _db_.query(getSQL(), getStart(), getLimit(), getParams());
+
+    } finally {
+      if (on_option_mode) {
+        _db_.IN_OBJECT_MODE = in_obejct_mode;
+      }
+    }
   }
 
   /**
@@ -1115,6 +1163,7 @@ public class FetchCase
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
+
     String whr = delSQLTbls(wheres.toString());
     whr  =  pw.matcher(whr).replaceFirst( "" );
     return _db_.delete(tableName, /**/ whr, wparams.toArray());
@@ -1131,6 +1180,7 @@ public class FetchCase
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
+
     String whr = delSQLTbls(wheres.toString());
     whr  =  pw.matcher(whr).replaceFirst( "" );
     return _db_.update(tableName, dat, whr, wparams.toArray());
@@ -1148,6 +1198,7 @@ public class FetchCase
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
+
     return _db_.insert(tableName, dat);
   }
 

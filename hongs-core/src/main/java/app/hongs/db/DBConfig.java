@@ -56,8 +56,6 @@ public class DBConfig
 
   protected String name;
 
-  public    String link;
-
   public DBConfig(String name)
     throws HongsException
   {
@@ -123,6 +121,8 @@ public class DBConfig
   }
 
   //** 数据 **/
+
+  public String link;
 
   public String dbClass;
 

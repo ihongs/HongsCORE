@@ -450,9 +450,9 @@ public class FetchCase
                           String pn)
   {
     if (this.tableName == null
-    ||  this.tableName.length() == 0)
+    ||  this.tableName.length() < 1)
     {
-        throw new Error( new HongsException(0x10b4) );
+        throw new Error(new HongsException(0x10b4, "tableName can not be empty"));
     }
 
     // 表名

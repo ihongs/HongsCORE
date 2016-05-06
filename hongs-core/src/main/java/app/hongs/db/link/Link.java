@@ -5,7 +5,6 @@ import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.db.FetchCase;
 import app.hongs.dh.ITrnsct;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -45,7 +44,7 @@ implements  ITrnsct , Core.Destroy
   /**
    * 库名
    */
-  public String name;
+  public String  name;
 
   /**
    * 连接对象
@@ -438,99 +437,6 @@ implements  ITrnsct , Core.Destroy
     {
       return new HashMap();
     }
-  }
-
-  /**
-   * 采用查询体获取全部数据
-   * <p>注: 调fetch实现</p>
-   * @param caze
-   * @return 全部数据
-   * @throws app.hongs.HongsException
-   */
-  public Loop queryMore(FetchCase caze)
-    throws HongsException
-  {
-  boolean on_object_mode = false;
-  boolean in_obejct_mode = false;
-    try
-    {
-      if (caze.hasOption("FETCH_OBJECT"))
-      {
-          on_object_mode = true ;
-          in_obejct_mode = IN_OBJECT_MODE;
-          IN_OBJECT_MODE = caze.getOption( "FETCH_OBJECT", false );
-      }
-      return query(caze.getSQL(), caze.getStart(), caze.getLimit(), caze.getParams());
-    }
-    finally
-    {
-      if (on_object_mode)
-      {
-          IN_OBJECT_MODE = in_obejct_mode;
-      }
-    }
-  }
-
-  /**
-   * 采用查询体获取全部数据
-   * <p>注: 调fetch实现</p>
-   * @param caze
-   * @return 全部数据
-   * @throws app.hongs.HongsException
-   */
-  public List fetchMore(FetchCase caze)
-    throws HongsException
-  {
-  boolean on_object_mode = false;
-  boolean in_obejct_mode = false;
-    try
-    {
-      if (caze.hasOption("FETCH_OBJECT"))
-      {
-          on_object_mode = true ;
-          in_obejct_mode = IN_OBJECT_MODE;
-          IN_OBJECT_MODE = caze.getOption( "FETCH_OBJECT", false );
-      }
-      return fetch(caze.getSQL(), caze.getStart(), caze.getLimit(), caze.getParams());
-    }
-    finally
-    {
-      if (on_object_mode)
-      {
-          IN_OBJECT_MODE = in_obejct_mode;
-      }
-    }
-  }
-
-  /**
-   * 采用查询体获取单条数据
-   * <p>注: 调fetch实现</p>
-   * @param caze
-   * @return 单条数据
-   * @throws app.hongs.HongsException
-   */
-  public Map  fetchLess(FetchCase caze)
-    throws HongsException
-  {
-    List<Map<String, Object>> rows = this.fetch(caze.getSQL(), 0,1, caze.getParams());
-    if (! rows.isEmpty() )
-    {
-      return rows.get( 0 );
-    }
-    else
-    {
-      return new HashMap();
-    }
-  }
-
-  /**
-   * 调用 FetchCase 构建查询
- 可用 list, one  得到结果, 以及 delete, update 操作数据
-   * @return 绑定了 db 的查询对象
-   */
-  public FetchCase fetchCase()
-  {
-    return new FetchCase().use(this);
   }
 
   /** 执行语句 **/

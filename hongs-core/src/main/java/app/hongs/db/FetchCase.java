@@ -394,7 +394,7 @@ public class FetchCase
     else
     {
       sql.append(" `" )
-         .append(this.name)
+         .append(name == null || name.isEmpty() ? tableName : name)
          .append("`.*");
     }
 
@@ -458,9 +458,9 @@ public class FetchCase
     // 表名
     String tn;
     StringBuilder b = new StringBuilder();
-    b.append("`").append(this.tableName ).append("`");
-    if (this.name != null &&  this.name.length() != 0
-    && !this.name.equals(this.tableName))
+    b.append("`" ).append(this.tableName).append("`");
+    if ( this.name != null && !this.name.isEmpty(   )
+    && ! this.name.equals(this.tableName))
     {
       b.append(" AS `").append(this.name).append("`");
       tn = this.name;

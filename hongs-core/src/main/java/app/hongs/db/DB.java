@@ -338,7 +338,30 @@ public class DB
    */
   public FetchCase fetchCase()
   {
-    return new FetchCase().use(this);
+    return new FetchCase().use( this );
+  }
+
+  /**
+   * 快速取 FetchCase
+   * @param tableName 真实表名
+   * @return
+   */
+  public FetchCase from (String tableName)
+  {
+    return fetchCase().from(tableName);
+  }
+
+  /**
+   * 快速取 FetchCase
+   * @param tableName 内部表名
+   * @return
+   * @throws HongsException
+   */
+  public FetchCase with (String tableName)
+    throws HongsException
+  {
+    Table  tableInst = getTable(tableName);
+    return fetchCase().from(tableInst.tableName, tableInst.name);
   }
 
   //** 模型方法 **/

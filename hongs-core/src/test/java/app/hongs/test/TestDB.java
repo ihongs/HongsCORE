@@ -73,8 +73,8 @@ public class TestDB {
 
         copy = caze.gotJoin("t2").clone();
         vali = "SELECT (1.2 + f1) v1, 3.4 * f2 AS `v2`, 5.6e10 / f3 AS `v3` FROM `t2` WHERE f4 = 123 AND f5 IN (456) AND `f6` like 'abc' ORDER BY `f1`, v1 ASC, `v2` DESC";
-//      System.out.println(vali);
-//      System.out.println(copy.toString());
+      System.out.println(vali);
+      System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
         caze = new FetchCase();

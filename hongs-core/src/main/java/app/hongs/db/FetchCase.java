@@ -599,10 +599,9 @@ public class FetchCase
    */
   private String addSQLTbls(String s, String tn, String pn)
   {
-      // 没有关联表则直接去掉前缀
-      if (this.joinList.isEmpty()
-      &&  this.joinType  ==  0  ) {
-          return delSQLTbls( s  );
+      // 顶层且无关联则直接去掉前缀
+      if (null== pn && joinList.isEmpty()) {
+          return delSQLTbls(s);
       }
 
       String       x, y, z;

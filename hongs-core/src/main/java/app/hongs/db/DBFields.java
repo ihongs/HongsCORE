@@ -66,15 +66,15 @@ public class DBFields
         field.put("unsigned",      !md.isSigned(i));
         field.put("required",       md.isNullable(i)
                 == ResultSetMetaData.columnNoNulls );
-        field.put("writable",       md.isWritable(i));
-        field.put("searchable",     md.isSearchable(i));
-        field.put("caseSensitive",  md.isCaseSensitive(i));
         field.put("autoIncrement",  md.isAutoIncrement(i));
+        field.put("caseSensitive",  md.isCaseSensitive(i));
 
         // 在这里没什么意义的属性:
         /*
         field.put("currency",       md.isCurrency(i));
         field.put("readOnly",       md.isReadOnly(i));
+        field.put("writable",       md.isWritable(i));
+        field.put("searchable",     md.isSearchable(i));
         field.put("tableName",      md.getTableName(i));
         field.put("schemaName",     md.getSchemaName(i));
         field.put("catalogName",    md.getCatalogName(i));

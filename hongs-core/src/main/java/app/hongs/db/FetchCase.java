@@ -140,13 +140,14 @@ public class FetchCase
     this.groups     = new StringBuilder();
     this.havins     = new StringBuilder();
     this.orders     = new StringBuilder();
-    this.limits     = new int[0];
+    this.limits     = new  int [ 0 ] ;
     this.wparams    = new ArrayList();
     this.hparams    = new ArrayList();
     this.options    = new  HashMap ();
-    this.joinType   = 0 ;
-    this.joinExpr   = "";
     this.joinList   = new LinkedHashSet();
+    this.joinType   =  0  ;
+    this.joinExpr   = null;
+    this.joinName   = null;
   }
 
   /**
@@ -157,19 +158,23 @@ public class FetchCase
   public FetchCase clone()
   {
     try {
-    FetchCase caze  = (FetchCase)  super.clone( );
+    FetchCase caze  = (FetchCase) super.clone();
     caze.fields     = new StringBuilder( this.fields );
     caze.wheres     = new StringBuilder( this.wheres );
     caze.groups     = new StringBuilder( this.groups );
     caze.havins     = new StringBuilder( this.havins );
     caze.orders     = new StringBuilder( this.orders );
-    caze.limits     = this.limits.clone( );
+    caze.limits     = this.limits.clone();
     caze.wparams    = new ArrayList(this.wparams);
     caze.hparams    = new ArrayList(this.hparams);
     caze.options    = new  HashMap (this.options);
-    caze.joinType   = 0 ;
-    caze.joinExpr   = "";
-    caze.joinList   = new LinkedHashSet(this.joinList);
+    caze.joinList   = new LinkedHashSet();
+
+    // 深度克隆关联列表
+    for   (   FetchCase fc : joinList   ) {
+        caze.joinList.add( fc.clone( )  );
+    }
+
     return caze;
     }
     catch (CloneNotSupportedException ex) {

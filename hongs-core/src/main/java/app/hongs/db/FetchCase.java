@@ -779,7 +779,7 @@ public class FetchCase
     }
     catch (HongsException ex)
     {
-           return   null;
+      throw  new  Error ( ex);
     }
     return sb.toString();
   }

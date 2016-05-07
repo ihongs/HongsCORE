@@ -386,7 +386,8 @@ public class FetchCase
     StringBuilder o = new StringBuilder();
     StringBuilder w = new StringBuilder();
     StringBuilder h = new StringBuilder();
-    this.getSQLDeep(  t, f, g, o, w, h, null);
+
+    getSQLDeep ( t, f, g, o, w, h, null );
 
     StringBuilder sql = new StringBuilder("SELECT");
 
@@ -505,8 +506,8 @@ public class FetchCase
 
       // Add in 2016/4/15
       // 为关联表的查询列添加层级名
-      if (null != joinName) {
-          if (!"".equals(joinName)) {
+      if (null != pn && null != joinName) {
+          if ( ! "".equals( joinName )  ) {
               s = addSQLTbln(s, joinName);
           } else {
               s = addSQLTbln(s, tn);

@@ -72,7 +72,7 @@ public class Cnst {
 
     public static final String DB_EXT = ".db"; // 数据库配置
 
-    public static final String DF_EXT = ".df"; // 字段表缓存
+    public static final String DF_EXT = ".df"; // 表字段缓存
 
     public static final String FORM_EXT = ".form"; // 表单配置
 

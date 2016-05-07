@@ -22,22 +22,24 @@ import java.io.Serializable;
  *
  * @author hongs
  */
-public class DBFields
+public class Fields
      extends CoreSerial
   implements Serializable
 {
 
-  private final Table table;
+  private final DB     db;
+  private final String tn;
 
   public Map<String, Map> fields;
 
-  public DBFields(Table table)
+  public Fields(DB db, String tn)
     throws HongsException
   {
-    this.table = table;
-    if ( table.db.name != null && table.db.name.length() != 0 )
+    this.db = db;
+    this.tn = tn;
+    if (db.name != null && ! db.name.isEmpty())
     {
-      this.init( table.db.name +"."+ table.tableName + Cnst.DF_EXT );
+      this.init(db.name +"."+ tn + Cnst.DF_EXT);
     }
     else
     {
@@ -45,14 +47,19 @@ public class DBFields
     }
   }
 
+  public Fields(Table table)
+    throws HongsException
+  {
+    this(table.db, table.tableName);
+  }
+
   @Override
   protected final void imports()
     throws HongsException
   {
-    this.fields = new LinkedHashMap();
+    fields = new LinkedHashMap();
 
-    Loop rs = this.table.db.query("SELECT * FROM `"
-            + this.table.tableName +"`", 0, 1);
+    Loop rs = db.query("SELECT * FROM `"+ tn +"`", 0, 1);
     try
     {
       ResultSetMetaData md = rs.getMetaData( );
@@ -69,7 +76,7 @@ public class DBFields
         field.put("autoIncrement",  md.isAutoIncrement(i));
         field.put("caseSensitive",  md.isCaseSensitive(i));
 
-        // 在这里没什么意义的属性:
+        // 用处不大的的属性:
         /*
         field.put("currency",       md.isCurrency(i));
         field.put("readOnly",       md.isReadOnly(i));
@@ -89,7 +96,7 @@ public class DBFields
     }
     catch (SQLException ex)
     {
-      throw new HongsException(0x107a, ex);
+      throw new HongsException(0x107a , ex);
     }
     finally
     {

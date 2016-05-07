@@ -52,7 +52,7 @@ public class DBFields
     this.fields = new LinkedHashMap();
 
     Loop rs = this.table.db.query("SELECT * FROM `"
-            + this.table.tableName + "`", 0,1);
+            + this.table.tableName +"`", 0, 1);
     try
     {
       ResultSetMetaData md = rs.getMetaData( );

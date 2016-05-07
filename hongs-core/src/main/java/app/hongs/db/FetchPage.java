@@ -176,7 +176,7 @@ public class FetchPage
     String     sql;
     Object[]   params;
     FetchCase  caze2 = this.caze.clone().limit(limit);
-    if(clnJoin(caze2))
+    if(hasGrpb(caze2))
     {
       sql    =  "SELECT COUNT(!*) AS __count__ FROM ("
              + caze2.getSQL( )+") AS __table__" ;
@@ -204,13 +204,13 @@ public class FetchPage
     return this.info;
   }
 
-  private boolean clnJoin(FetchCase caze) {
+  private boolean hasGrpb(FetchCase caze) {
     boolean hasg = caze.hasGroupBy();
     caze.setOrderBy("");
     caze.setSelect ("");
 
     for (FetchCase caze2 : caze.joinList) {
-      if( clnJoin( caze2 )) {
+      if( hasGrpb( caze2 )) {
           hasg  =  true  ;
       }
     }

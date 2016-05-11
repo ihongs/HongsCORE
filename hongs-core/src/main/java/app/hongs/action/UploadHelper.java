@@ -15,6 +15,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.net.FileNameMap;
+import java.net.URLConnection;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.commons.fileupload.util.Streams;
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+//import eu.medsea.mimeutil.MimeUtil;
+//import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 /**
  * 文件上传助手
@@ -39,9 +41,9 @@ public class UploadHelper {
     private Set<String> allowTypes = null;
     private Set<String> allowExtns = null;
 
-    static {
-        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
-    }
+//  static {
+//      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
+//  }
 
     public UploadHelper setUploadName(String name) {
         this.uploadName = name;
@@ -154,7 +156,8 @@ public class UploadHelper {
      */
     public File upload(InputStream xis, String type, String extn, String fame) throws Wrong {
         if (extn.contains( "." )) {
-            extn = MimeUtil.getExtension(extn);
+//          extn = MimeUtil.getExtension(extn);
+            extn = extn.substring(extn.lastIndexOf('.') + 1);
         }
         chkTypeOrExtn(type, extn);
         setResultName(fame, extn);
@@ -202,8 +205,12 @@ public class UploadHelper {
         String extn;
 
         if (file.exists()) {
-            extn = MimeUtil.getExtension(file);
-            type = MimeUtil.getMimeTypes(file).toString();
+//          extn = MimeUtil.getExtension(file);
+//          type = MimeUtil.getMimeTypes(file).toString();
+            FileNameMap cmap = URLConnection.getFileNameMap();
+            type = cmap.getContentTypeFor(path); 
+            extn = file.getName();
+            extn = extn.substring(extn.lastIndexOf('.') + 1 ); 
         } else {
             temp = new File(path+".tnp");
 
@@ -214,7 +221,7 @@ public class UploadHelper {
                 FileInputStream fs;
                 fs = new FileInputStream(temp );
                 try(InputStreamReader sr = new InputStreamReader(fs);
-                    BufferedReader    fr = new BufferedReader   (sr))
+                       BufferedReader fr = new    BufferedReader(sr))
                 {
                     extn = fr.readLine().trim();
                     type = fr.readLine().trim();

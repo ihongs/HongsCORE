@@ -32,6 +32,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.imageio.ImageIO;
 
 import eu.medsea.mimeutil.MimeUtil;
+import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
@@ -43,6 +44,10 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 @Action("handle/file")
 public class FileAction {
 
+    static {
+        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
+    }
+  
     @Action("create")
     public void uploadFile(ActionHelper helper) throws HongsException {
         Map sd = new HashMap();

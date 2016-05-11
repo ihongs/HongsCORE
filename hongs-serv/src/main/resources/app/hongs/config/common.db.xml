@@ -3,4 +3,7 @@
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
   <source link="default"/>
+  <tables>
+      <table name="record" tableName="a_common_record" primaryKey="id"/>
+  </tables>
 </db>

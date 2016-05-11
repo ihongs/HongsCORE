@@ -12,7 +12,7 @@ import app.hongs.serv.auth.AuthKit;
 import app.hongs.serv.member.User;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
-import app.hongs.util.image.Thumb;
+import app.hongs.util.sketch.Thumb;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

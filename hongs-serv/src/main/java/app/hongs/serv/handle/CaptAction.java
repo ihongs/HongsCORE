@@ -4,7 +4,7 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.util.Synt;
-import app.hongs.util.image.Vcode;
+import app.hongs.util.sketch.Vcode;
 import java.io.IOException;
 
 /**

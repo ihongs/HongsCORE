@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * </pre>
  * <p>
  * 注意:
- * actoin-path, layout-path 与 filter-mapping 的 url-pattern 不能有从属关系,
+ * action-path, layout-path 与 filter-mapping 的 url-pattern 不能有从属关系,
  * 否则会造成死循环
  * </p>
  *

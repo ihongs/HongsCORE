@@ -12,7 +12,7 @@ import app.hongs.db.DB;
 import app.hongs.db.FetchCase;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
-import app.hongs.util.image.Thumb;
+import app.hongs.util.sketch.Thumb;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;

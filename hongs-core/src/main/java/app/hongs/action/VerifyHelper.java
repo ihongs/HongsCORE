@@ -12,7 +12,7 @@ import app.hongs.util.verify.Rule;
 import app.hongs.util.verify.Veri;
 import app.hongs.util.verify.Wrong;
 import app.hongs.util.verify.Wrongs;
-import static app.hongs.util.verify.Rule.FALSE;
+import static app.hongs.util.verify.Rule.AVOID;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -205,7 +205,7 @@ public class VerifyHelper implements Veri {
 
             data = verify(rulez, data, name, valuez, wrongz);
 
-            if (data != FALSE) {
+            if (data != AVOID) {
                 Dict.setParam( valuez, data, name );
             } else if (prompt && !wrongz.isEmpty()) {
                 break;
@@ -236,14 +236,14 @@ public class VerifyHelper implements Veri {
                 // 设置字段标签
                 w.setLocalizedSegment( (String) rule.params.get("__disp__") );
                 failed(wrongz, w , name);
-                data =  FALSE;
+                data =  AVOID;
                 break;
             } catch (Wrongs w) {
                 failed(wrongz, w , name);
-                data =  FALSE;
+                data =  AVOID;
                 break;
             }
-            if (data == FALSE) {
+            if (data == AVOID) {
                 break;
             }
 
@@ -288,10 +288,10 @@ public class VerifyHelper implements Veri {
 
                 String name3 = name + "." + (i3 ++);
                 data3 = verify(rulez, data3, name3, values, wrongz);
-                if (data3 !=  FALSE) {
+                if (data3 !=  AVOID) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
-                    return FALSE;
+                    return AVOID;
                 }
             }
         } else if (data instanceof Map) {
@@ -311,10 +311,10 @@ public class VerifyHelper implements Veri {
 
                 String name3 = name +"."+ ( (String) e3.getKey( ) );
                 data3 = verify(rulez, data3, name3, values, wrongz);
-                if (data3 !=  FALSE) {
+                if (data3 !=  AVOID) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
-                    return FALSE;
+                    return AVOID;
                 }
             }
         }
@@ -325,13 +325,13 @@ public class VerifyHelper implements Veri {
         if (n != 0 && c < n) {
             failed(wrongz, new Wrong("fore.form.lt.minrepeat", String.valueOf(n), String.valueOf(c))
                     .setLocalizedSegment((String) params.get("__disp__")), name);
-            return FALSE;
+            return AVOID;
         }
         n = Synt.declare(params.get("maxrepeat"), 0);
         if (n != 0 && c > n) {
             failed(wrongz, new Wrong("fore.form.gt.maxrepeat", String.valueOf(n), String.valueOf(c))
                     .setLocalizedSegment((String) params.get("__disp__")), name);
-            return FALSE;
+            return AVOID;
         }
 
         return data2;

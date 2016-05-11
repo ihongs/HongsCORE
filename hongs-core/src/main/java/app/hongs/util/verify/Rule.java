@@ -7,7 +7,7 @@ public abstract class Rule {
     /**
      * 返回此对象将被抛弃
      */
-    public static final Object FALSE = new Object();
+    public static final Object AVOID = new Object();
 
     public Map  values = null;
     public Map  params = null;

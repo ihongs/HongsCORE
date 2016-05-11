@@ -16,7 +16,7 @@ public class Default extends Rule {
         if (value == null || tst) {
             if (helper.isUpdate() && crt) {
                 if (tst) {
-                    return FALSE;
+                    return AVOID;
                 } else {
                     return value;
                 }

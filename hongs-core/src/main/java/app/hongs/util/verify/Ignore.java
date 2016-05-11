@@ -6,6 +6,6 @@ package app.hongs.util.verify;
 public class Ignore extends Rule {
     @Override
     public Object verify(Object value) {
-        return FALSE;
+        return AVOID;
     }
 }

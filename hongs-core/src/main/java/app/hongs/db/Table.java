@@ -349,7 +349,7 @@ public class Table
   {
     if (null == this.fields)
     {
-      this.fields = (new Fields(this)).fields;
+      this.fields = (new DBFields(this)).fields;
     }
     return /**/ this.fields;
   }

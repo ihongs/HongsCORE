@@ -1,4 +1,4 @@
-package app.hongs.util.image;
+package app.hongs.util.sketch;
 
 import app.hongs.CoreConfig;
 import java.awt.Image;

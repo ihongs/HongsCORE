@@ -23,26 +23,37 @@ import org.eclipse.jetty.server.session.SessionHandler;
 @Cmdlet("server")
 public class ServerCmdlet {
 
-    private static File PPID;
-
     @Cmdlet("start")
     public static void start(String[] args) throws HongsException {
         int port = args.length > 0 ? Synt.declare(args[0], 8080) : 8080;
-
-        // 进程检查
-        if (port != 8080 ) {
-            PPID  = new File(Core.DATA_PATH +"/server."+ port +".pid" );
-        } else {
-            PPID  = new File(Core.DATA_PATH +"/server.pid");
+        String conf = Core.CORE_PATH + File.separator + "web.xml";
+        if ( ! (new File(conf)).exists( ) ) {
+               conf = Core.CONF_PATH + File.separator + "web.xml";
         }
-        if (PPID.exists()) {
+        String serd = Core.DATA_PATH + File.separator + "server" ;
+        String sesd = serd + File.separator + "sess";
+        String temd = serd + File.separator + "work";
+        String pidf = serd + File.separator +  port + ".pid";
+        File sess = new File(sesd);
+        File temp = new File(temd);
+        File ppid = new File(pidf);
+
+        if (!sess.exists() ) {
+             sess.mkdirs();
+        }
+        if (!temp.exists() ) {
+             temp.mkdirs();
+        }
+
+        // 检查进程
+        if ( ppid.exists() ) {
             CmdletHelper.println("Process already exists!");
             return;
         }
         try {
             String     pid = ManagementFactory.getRuntimeMXBean()
                             .getName().split("@" , 2)[0];
-            FileWriter dip = new  FileWriter(PPID, true);
+            FileWriter dip = new  FileWriter(ppid, true);
             dip.write( pid );
             dip.close(     );
         }
@@ -50,31 +61,22 @@ public class ServerCmdlet {
             throw new HongsException.Common(e);
         }
 
-        String conf = Core.CORE_PATH + File.separator + "web.xml";
-        if ( ! ( new  File(conf) ).exists( ) ) {
-               conf = Core.CONF_PATH + File.separator + "web.xml";
-        }
-        String temp = Core.DATA_PATH + File.separator + "server" ;
-
+        // 构建应用
         WebAppContext webapp  = new WebAppContext();
         webapp.setDescriptor   (conf);
+        webapp.setTempDirectory(temp);
         webapp.setDisplayName  ("CORE");
         webapp.setContextPath  (Core.BASE_HREF);
         webapp.setResourceBase (Core.BASE_PATH);
-        webapp.setTempDirectory(new File(temp));
         webapp.setParentLoaderPriority ( true );
 
         // 设置会话
         try {
-            File sd = new File( Core.DATA_PATH + "/sesion" );
-            if (!sd.exists()) {
-                 sd.mkdirs();
-            }
             HashSessionManager sm = new HashSessionManager();
 //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
 //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
 //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
-            sm.setStoreDirectory(/**/sd);
+            sm.setStoreDirectory( sess );
             SessionHandler/**/ sh = new SessionHandler( sm );
             webapp.setSessionHandler(sh);
         }
@@ -87,7 +89,8 @@ public class ServerCmdlet {
         server.setHandler(webapp);
 
         // 停止机制
-        Runtime.getRuntime( ).addShutdownHook(new Stoper(server));
+        Runtime.getRuntime( ).addShutdownHook(new Stoper(server, ppid));
+
         try {
             server.start();
             server.join( );
@@ -99,10 +102,12 @@ public class ServerCmdlet {
 
     private static class Stoper extends Thread {
 
-        private final/**/ org.eclipse.jetty.server.Server server;
+        private final org.eclipse.jetty.server.Server server;
+        private final File ppid  ;
 
-        public Stoper(org.eclipse.jetty.server.Server server) {
-            this.server = server;
+        public Stoper(org.eclipse.jetty.server.Server server, File ppid) {
+            this.server  = server;
+            this.ppid    = ppid  ;
         }
 
         @Override
@@ -121,7 +126,7 @@ public class ServerCmdlet {
             } catch (Exception ex) {
                 throw new HongsError.Common(ex);
             } finally {
-                PPID.delete();
+                ppid.delete();
             }
         }
 

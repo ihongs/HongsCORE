@@ -32,7 +32,8 @@ public class IsFile extends Rule {
         if (Synt.declare(params.get("down-remote"), false)) {
             String u = value.toString( );
             if (u.matches("^https?://")) {
-                do { String  x;
+            do {
+                String x;
                 // 如果是本地路径则不再下载
                 x = (String) params.get("href");
                 if (x != null && !"".equals(x)) {
@@ -46,8 +47,8 @@ public class IsFile extends Rule {
                 if (x == null &&  "".equals(x)) {
                     x  = Core.DATA_PATH + "/upload/";
                 }
-                stores( value.toString( ) , x );
-                }while( false );
+                value = stores(value.toString(), x );
+            } while(false);
             }
         }
 
@@ -77,10 +78,10 @@ public class IsFile extends Rule {
             u.upload(   value.toString());
         }
 
-        return u.getResultHref();
+        return checks(u.getResultHref(), u.getResultPath());
     }
 
-    protected void stores(String href, String path) throws Wrong {
+    protected String stores(String href, String temp) throws Wrong {
         URL url = null;
         try {
             url = new URL(href);
@@ -108,7 +109,7 @@ public class IsFile extends Rule {
             }
 
             // 写入文件内容
-            out  = new FileOutputStream(path + File.separator + fid + ".tmp");
+            out  = new FileOutputStream(temp + File.separator + fid + ".tmp");
             byte[] buf = new byte[1204];
             int    siz = 0;
             int    ovr = 0;
@@ -122,18 +123,20 @@ public class IsFile extends Rule {
             ins  = null;
 
             // 写入文件信息
-            out  = new FileOutputStream(path + File.separator + fid + ".tnp");
+            out  = new FileOutputStream(temp + File.separator + fid + ".tnp");
             out.write((name+"\r\n"+type+"\r\n"+siz).getBytes( ) );
             out.close();
             out  = null;
+
+            return fid ;
         } catch (IOException ex) {
-            throw new Wrong(ex, "file.can.not.fetch", href, path);
+            throw new Wrong(ex, "file.can.not.fetch", href, temp);
         } finally {
         if (out != null) {
         try {
             out.close( );
         } catch (IOException ex) {
-            throw new Wrong(ex, "file.can.not.close", path);
+            throw new Wrong(ex, "file.can.not.close", temp);
         }
         }
         if (ins != null) {
@@ -145,4 +148,9 @@ public class IsFile extends Rule {
         }
         }
     }
+
+    protected String checks(String href, String path) throws Wrong {
+        return href;
+    }
+
 }

@@ -101,14 +101,19 @@ public class SystemCmdlet {
 
         // 获取目录下全部待执行的文件
         List<File> fxs = new ArrayList();
-        File[    ] fos = fu. listFiles();
-        for (File  fo  : fos) {
-            if ( fo.isDirectory() || fo.isHidden() ) {
-                continue;
+        if (! fu.isFile()) {
+            File[] fus = fu. listFiles();
+            for (File fo : fus) {
+                if (! fo.isFile()
+                || fo.getName().startsWith(".")) {
+                    continue;
+                }
+                fxs.add (fo);
             }
-            fxs.add (fo);
+            Collections.sort(fxs, new Sorter( ));
+        } else {
+                fxs.add (fu);
         }
-        Collections.sort(fxs, new Sorter());
 
         Logger lgr = new Logger();
         String act = Core.ACTION_NAME.get();
@@ -250,7 +255,7 @@ public class SystemCmdlet {
         // 获取命令
         x = e.getElementsByTagName("cmd");
         if (x.getLength() == 0) {
-            throw new HongsException.Common("Wrong cmd: " + e);
+            throw new Error( "Wrong cmd: " + e );
         }
         m = (Element) x.item(0);
         s = m.getNodeValue();
@@ -305,7 +310,7 @@ public class SystemCmdlet {
         // 获取命令
         x = e.getElementsByTagName("act");
         if (x.getLength() == 0) {
-            throw new HongsException.Common("Wrong act: " + e);
+            throw new Error( "Wrong act: " + e );
         }
         m = (Element) x.item(0);
         s = m.getNodeValue();

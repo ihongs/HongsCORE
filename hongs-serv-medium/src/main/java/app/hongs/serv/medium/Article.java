@@ -11,7 +11,7 @@ import app.hongs.db.Mview;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
-import app.hongs.util.image.Thumb;
+import app.hongs.util.sketch.Thumb;
 import app.hongs.util.verify.Wrong;
 import java.io.File;
 import java.io.IOException;
@@ -291,7 +291,7 @@ public class Article extends LuceneRecord {
         setDoc(id, map2Doc(dd));
     }
 
-    protected String saveSnap(String nv, String ov) throws Wrong {
+    protected String saveSnap(String nv, String ov) throws Wrong, HongsException {
         if (null == nv || "".equals(nv)) {
             return  ov;
         }

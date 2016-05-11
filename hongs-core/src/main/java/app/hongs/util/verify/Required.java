@@ -8,7 +8,7 @@ public class Required extends Rule {
     public Object verify(Object value) throws Wrong {
         if (value  ==  null ) {
             if (helper.isUpdate()) {
-                return FALSE;
+                return AVOID;
             }
             throw new Wrong("fore.form.required");
         }

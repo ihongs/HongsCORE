@@ -43,7 +43,7 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 @Action("handle/file")
 public class FileAction {
 
-    @Action("upload")
+    @Action("create")
     public void uploadFile(ActionHelper helper) throws HongsException {
         Map sd = new HashMap();
         Map rd = helper.getRequestData();
@@ -78,7 +78,7 @@ public class FileAction {
         helper.reply(sd);
     }
 
-    @Action("image/upload")
+    @Action("image/create")
     public void uploadImage(ActionHelper helper) throws HongsException {
         CoreConfig c = CoreConfig.getInstance();
         String t , e , p , u , v = null;
@@ -209,7 +209,7 @@ public class FileAction {
         outputFile( df , helper.getResponse() );
     }
 
-    private void outputFile(File df, HttpServletResponse rs) {
+    private void outputFile(File df, HttpServletResponse rs) throws HongsException {
         rs.reset();
         rs.setContentLengthLong(df.length());
         rs.setContentType(MimeUtil.getMimeTypes(df).toString());

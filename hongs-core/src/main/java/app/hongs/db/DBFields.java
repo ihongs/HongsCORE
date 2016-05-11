@@ -22,7 +22,7 @@ import java.io.Serializable;
  *
  * @author hongs
  */
-public class Fields
+public class DBFields
      extends CoreSerial
   implements Serializable
 {
@@ -32,7 +32,7 @@ public class Fields
 
   public Map<String, Map> fields;
 
-  public Fields(DB db, String tn)
+  public DBFields(DB db, String tn)
     throws HongsException
   {
     this.db = db;
@@ -47,7 +47,7 @@ public class Fields
     }
   }
 
-  public Fields(Table table)
+  public DBFields(Table table)
     throws HongsException
   {
     this(table.db, table.tableName);

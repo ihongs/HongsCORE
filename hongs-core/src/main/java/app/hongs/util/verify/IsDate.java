@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
 
 public class IsDate extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong {
+    public Object verify(Object value) throws Wrong, HongsException {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
@@ -94,7 +94,7 @@ public class IsDate extends Rule {
         throw new Wrong("fore.form.is.not."+ typa);
     }
 
-    private long getTim(String tim, long now) {
+    private long getTim(String tim, long now) throws HongsException {
         Matcher mat = Pattern.compile("^([+-])?(\\d+)$").matcher(tim);
         if (!mat.matches()) {
             throw new HongsException.Common("Can not recognize time '"+tim+"'.");

@@ -1,7 +1,7 @@
-package app.hongs.util.image;
+package app.hongs.util.sketch;
 
 import app.hongs.CoreConfig;
-import app.hongs.HongsException;
+import app.hongs.HongsError;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Color;
@@ -44,7 +44,7 @@ public class Vcode {
 
     public static Vcode captcha(int h, String b, String f, String e) {
         if (h < 40 || h > 200) {
-            throw new HongsException.Common("h must be 40 to 200 px");
+            throw new HongsError.Common("h must be 40 to 200 px");
         }
 
         // 获取配置
@@ -148,9 +148,9 @@ public class Vcode {
             }
             font = Font.createFont ( Font.TRUETYPE_FONT , is ) ;
         } catch (FontFormatException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsError.Common(ex);
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsError.Common(ex);
         }
 
         for(int i  = 0; i < codeCount; i ++) {

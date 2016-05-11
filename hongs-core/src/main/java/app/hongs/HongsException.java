@@ -92,7 +92,7 @@ public class HongsException extends Exception implements HongsCause {
     /**
      * 常规错误(无需错误代码)
      */
-    public static class Common extends HongsError {
+    public static class Common extends HongsException {
         public Common(String desc, Throwable cause) {
             super(COMMON, desc, cause);
         }
@@ -107,7 +107,7 @@ public class HongsException extends Exception implements HongsCause {
     /**
      * 通告错误(无需错误代码)
      */
-    public static class Notice extends HongsError {
+    public static class Notice extends HongsException {
         public Notice(String desc, Throwable cause) {
             super(NOTICE, desc, cause);
         }

@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 public class Mview extends Model {
 
     private Map<String, Map<String, String>> fields = null;
-
+    private Map<String, Mview> views = null;
     private Model    model = null;
     private String   title = null;
     private String   nmkey = null;
@@ -37,6 +37,12 @@ public class Mview extends Model {
     public Mview(Model model) throws HongsException {
         this(model.table);
         this.model=model ;
+    }
+
+    protected Mview(Model model, Map views) throws HongsException {
+        this(model.table);
+        this.model=model ;
+        this.views=views ;
     }
 
     public final CoreConfig getConf() {
@@ -51,21 +57,28 @@ public class Mview extends Model {
         return  lang;
     }
 
-    public final Map getMenu() throws HongsException {
+    private Map getMenu() throws HongsException {
+        try {
         NaviMap navi = NaviMap.getInstance(db.name);
         return  navi.getMenu(db.name +"/"+ table.name +"/");
+        } catch (HongsException ex) {
+            if (ex.getCode() != 0x10e0) {
+                throw ex;
+            }
+            return  null;
+        }
     }
 
-    public final Map getForm() throws HongsException {
-        FormSet form = FormSet.getInstance(db.name);
+    private Map getForm() throws HongsException {
         try {
-            return form.getFormTranslated( table.name /**/);
+        FormSet form = FormSet.getInstance(db.name);
+        return  form.getFormTranslated(/**/table.name /**/);
         } catch (HongsException ex) {
-        if (ex.getCode() == 0x10ea) {
-            return null;
-        } else {
-            throw  ex  ;
-        }
+            if (ex.getCode() != 0x10e8
+            &&  ex.getCode() != 0x10ea) {
+                throw ex;
+            }
+            return  null;
         }
     }
 
@@ -137,6 +150,15 @@ public class Mview extends Model {
         }
         return dsp;
         */
+    }
+
+    public Map<String, String> getParams()
+    throws HongsException {
+        Map form =  /**/getForm();
+        if (form == null) {
+            return  new HashMap();
+        }
+        return Synt.asserts(form.get("@"), new HashMap());
     }
 
     public Map<String, Map<String, String>> getFields()
@@ -319,6 +341,10 @@ public class Mview extends Model {
             return;
         }
 
+        Map<String, Mview> viewz = new LinkedHashMap();
+        if (views != null) viewz.putAll ( views );
+        viewz.put(table.db.name+":"+table.name , this);
+
         Iterator it = table.assocs.entrySet().iterator();
         while (  it.hasNext( )  ) {
             Map.Entry et = (Map.Entry)it.next();
@@ -332,42 +358,48 @@ public class Mview extends Model {
                 tn   = (String) vd.get("tableName" );
                 vk   = (String) vd.get("foreignKey");
                 tn   = tn != null ? tn : ak;
-                name = vk;
 
-                Model hm = db.getModel(tn);
-                Mview hb = hm.table.name.equals(table.name)
-                        && hm.db.name.equals(db.name)
-                    ? this : new Mview(hm);
+                Model  hm = db.getModel(tn);
+                tk   = hm.db.name+":"+hm.table.name ;
+                Mview  hb = viewz.containsKey(tk)
+                          ? viewz.get(tk)
+                          : new Mview(hm , viewz);
+
                 tk   = hb.getNmKey();
                 disp = hb.getTitle();
+                name = vk;
             } else
             if ("HAS_ONE".equals(type)) {
                 ak   = (String) vd.get("name");
                 tn   = (String) vd.get("tableName" );
                 vk   = (String) vd.get("foreignKey");
                 tn   = tn != null ? tn : ak;
-                name = ak + "." + vk;
 
-                Model hm = db.getModel(tn);
-                Mview hb = hm.table.name.equals(table.name)
-                        && hm.db.name.equals(db.name)
-                    ? this : new Mview(hm);
+                Model  hm = db.getModel(tn);
+                tk   = hm.db.name+":"+hm.table.name ;
+                Mview  hb = viewz.containsKey(tk)
+                          ? viewz.get(tk)
+                          : new Mview(hm , viewz);
+
                 tk   = hb.getNmKey();
                 disp = hb.getTitle();
+                name = ak + "." + vk;
             } else
             if ("HAS_MANY".equals(type)) {
                 ak   = (String) vd.get("name");
                 tn   = (String) vd.get("tableName" );
                 vk   = (String) vd.get("foreignKey");
                 tn   = tn != null ? tn : ak;
-                name = ak + ".." + vk;
 
-                Model hm = db.getModel(tn);
-                Mview hb = hm.table.name.equals(table.name)
-                        && hm.db.name.equals(db.name)
-                    ? this : new Mview(hm);
+                Model  hm = db.getModel(tn);
+                tk   = hm.db.name+":"+hm.table.name ;
+                Mview  hb = viewz.containsKey(tk)
+                          ? viewz.get(tk)
+                          : new Mview(hm , viewz);
+
                 tk   = hb.getNmKey();
                 disp = hb.getTitle();
+                name = ak + ".."+ vk;
             } else
             if ("HAS_MORE".equals(type)) {
                 Map xd = (Map) vd.get("assocs");
@@ -381,14 +413,16 @@ public class Mview extends Model {
                 tn   = (String) ad.get("tableName" );
                 vk   = (String) vd.get("foreignKey");
                 tn   = tn != null ? tn : ek;
-                name = ak + ".." + vk;
 
-                Model hm = db.getModel(tn);
-                Mview hb = hm.table.name.equals(table.name)
-                        && hm.db.name.equals(db.name)
-                    ? this : new Mview(hm);
+                Model  hm = db.getModel(tn);
+                tk   = hm.db.name+":"+hm.table.name ;
+                Mview  hb = viewz.containsKey(tk)
+                          ? viewz.get(tk)
+                          : new Mview(hm , viewz);
+
                 tk   = hb.getNmKey();
                 disp = hb.getTitle();
+                name = ak + ".."+ vk;
             } else {
                 continue;
             }

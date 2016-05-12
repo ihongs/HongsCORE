@@ -4,6 +4,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
+import app.hongs.util.Synt;
 import java.sql.Types;
 import java.sql.Date;
 import java.sql.Time;
@@ -44,9 +45,9 @@ import java.util.Map;
  *
  * <h3>配置选项:</h3>
  * <pre>
- core.disable.check.values  设置为true禁止在存储时对数据进行检查
  core.default.date.format   可识别的日期类型, 默认"yyyy/MM/dd", 已移到语言
- core.default.time.format   可识别的时间类型, 默认"HH:mm:ss", 已移到语言
+ core.default.time.format   可识别的时间类型, 默认  "HH:mm:ss", 已移到语言
+ core.table.check.value     设置为true禁止在存储时对数据进行检查
  core.table.ctime.field     创建时间字段名
  core.table.mtime.field     修改时间字段名
  core.table.etime.field     结束时间字段名
@@ -152,6 +153,11 @@ public class Table
     else
     {
       this.params = new HashMap();
+    }
+
+    if (!assocs.isEmpty() && relats.isEmpty())
+    {
+      // 有关联无逆向结构, 自动生成; 后续补充.
     }
   }
 
@@ -586,10 +592,15 @@ public class Table
     Map mainValues = new HashMap();
 
     /**
-     * 是否关闭检查
+     * 是否开启检查
      */
-    CoreConfig conf = Core.getInstance(CoreConfig.class);
-    boolean checked = conf.getProperty("core.table.check.value", false);
+    boolean checked;
+    if (params.containsKey("check.value")) {
+        checked = Synt.asserts(params.get("check.value"), false);
+    } else {
+        checked = CoreConfig.getInstance()
+                  .getProperty("core.table.check.value" , false);
+    }
 
     /**
      * 日期时间格式

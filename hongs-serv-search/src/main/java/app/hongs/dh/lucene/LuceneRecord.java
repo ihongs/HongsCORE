@@ -3,6 +3,7 @@ package app.hongs.dh.lucene;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
+import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
@@ -19,8 +20,10 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -45,7 +48,6 @@ import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.document.SortedDocValuesField;
-import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.SortedNumericDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
@@ -68,7 +70,6 @@ import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.SortedNumericSortField;
-import org.apache.lucene.search.SortedSetSortField;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
@@ -76,6 +77,15 @@ import org.apache.lucene.util.NumericUtils;
 
 /**
  * Lucene 记录模型
+ *
+ * 可选字段配置参数:
+ *  lucene-fieldtype    Lucene 的字段类型(string,search,stored,int,long,float,double)
+ *  lucene-tokenizer
+ *  lucene-char-filter
+ *  lucene-token-filter
+ *  lucene-find-filter
+ *  lucene-query-filter
+ *
  * @author Hongs
  */
 public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.Destroy {
@@ -896,25 +906,16 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         throw new NullPointerException("DBPath can not be null");
     }
 
-    protected boolean sortable(Map fc) {
-        if (fc.containsKey("sortable")) {
-            return Synt.asserts(fc.get("sortable"), false);
-        }
-        String t = Synt.asserts(fc.get("__type__"),  ""  );
-        Set    s = getSorts();
-        return s == null || s.isEmpty() || s.contains( t );
-    }
-
     protected boolean repeated(Map fc) {
         return Synt.asserts(fc.get("__repeated__"), false);
     }
 
-    protected boolean unstored(Map fc) {
-        return Synt.asserts(fc.get(  "unstored"  ), false);
-    }
-
     protected boolean unwanted(Map fc) {
         return Synt.asserts(fc.get("--unwanted--"), false);
+    }
+
+    protected boolean unstored(Map fc) {
+        return Synt.asserts(fc.get(  "unstored"  ), false);
     }
 
     /**
@@ -937,7 +938,9 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         if (t == null) {
             t = (String) fc.get("__type__");
 
-            if ("stored".equals(t) || "search".equals(t)) {
+            if ("search".equals(t)
+            ||  "stored".equals(t)
+            ||  "sorted".equals(t)) {
                 return t;
             }
 
@@ -1225,23 +1228,6 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             boolean r = repeated(m);
             IndexableField[] fs = doc.getFields(k);
 
-            if (  "json".equals(t)) {
-                if (r) {
-                    if (fs.length > 0) {
-                        for(IndexableField f : fs) {
-                            Dict.put(map, Data.toObject(f.stringValue()), k, null);
-                        }
-                    } else {
-                        map.put(k, new ArrayList());
-                    }
-                } else {
-                    if (fs.length > 0) {
-                        map.put(k, Data.toObject(fs[0].stringValue()));
-                    } else {
-                        map.put(k, new HashMap( ) );
-                    }
-                }
-            } else
             if (   "int".equals(t)
             ||    "long".equals(t)
             ||   "float".equals(t)
@@ -1258,7 +1244,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                     }
                 } else {
                     if (fs.length > 0) {
-                        map.put(k, Tool.toNumStr(fs[0].numericValue()));
+                        map.put(k, Tool.toNumStr(fs[ 0 ].numericValue( )));
                     } else {
                         map.put(k,"0");
                     }
@@ -1274,25 +1260,80 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                     }
                 } else {
                     if (fs.length > 0) {
-                        map.put(k, fs[0].numericValue());
+                        map.put(k, fs[ 0 ].numericValue( ));
                     } else {
                         map.put(k, 0 );
                     }
                 }
             }
             } else
-            {
+            if (  "date".equals(t)) {
+            if ( ! IN_OBJECT_MODE ) {
+                String           fmt = CoreLocale.getInstance( )
+                           .getProperty("core.default.datetime");
+                SimpleDateFormat sdf = new SimpleDateFormat(fmt);
                 if (r) {
                     if (fs.length > 0) {
                         for(IndexableField f : fs) {
-                            Dict.put(map , f.stringValue( ), k, null);
+                            Dict.put(map , sdf.format(new Date(f.numericValue().longValue())), k, null);
                         }
                     } else {
                         map.put(k, new ArrayList());
                     }
                 } else {
                     if (fs.length > 0) {
-                        map.put(k, fs[0].stringValue( ));
+                        map.put(k, sdf.format(new Date(fs[ 0 ].numericValue( ).longValue())));
+                    } else {
+                        map.put(k, null);
+                    }
+                }
+            } else {
+                if (r) {
+                    if (fs.length > 0) {
+                        for(IndexableField f : fs) {
+                            Dict.put(map , new Date(f.numericValue().longValue()), k, null);
+                        }
+                    } else {
+                        map.put(k, new ArrayList());
+                    }
+                } else {
+                    if (fs.length > 0) {
+                        map.put(k, new Date(fs[ 0 ].numericValue( ).longValue()));
+                    } else {
+                        map.put(k, null);
+                    }
+                }
+            }
+            }
+            if (  "json".equals(t)) {
+                if (r) {
+                    if (fs.length > 0) {
+                        for(IndexableField f : fs) {
+                            Dict.put(map , Data.toObject(f.stringValue()), k, null);
+                        }
+                    } else {
+                        map.put(k, new ArrayList());
+                    }
+                } else {
+                    if (fs.length > 0) {
+                        map.put(k, Data.toObject(fs[ 0 ].stringValue( )));
+                    } else {
+                        map.put(k, new HashMap( ) );
+                    }
+                }
+            } else
+            {
+                if (r) {
+                    if (fs.length > 0) {
+                        for(IndexableField f : fs) {
+                            Dict.put(map , f.stringValue(), k, null);
+                        }
+                    } else {
+                        map.put(k, new ArrayList());
+                    }
+                } else {
+                    if (fs.length > 0) {
+                        map.put(k, fs[ 0 ].stringValue( ));
                     } else {
                         map.put(k, "");
                     }
@@ -1309,7 +1350,10 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             String k = (String)e.getKey();
             Object v = Dict.getParam(map , k);
 
-            if (null == v) {
+            if (null == v
+            ||  "".equals(k)
+            || "@".equals(k)
+            || "Ignore".equals(m.get("rule"))) {
                 continue;
             }
 
@@ -1370,6 +1414,15 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         if ("search".equals(t)) {
             doc.add(new   TextField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES));
         } else
+        if ("sorted".equals(t)) {
+            s = true; // 此类型的字段仅用于排序
+        } else
+        if (  "date".equals(t)) {
+            if (v instanceof Date) {
+                v = ((Date) v).getTime( );
+            }
+            doc.add(new   LongField(k, Synt.declare(v, 0L), u ? Field.Store.NO : Field.Store.YES));
+        }
         if (  "json".equals(t)) {
             if (v == null || "".equals(v)) {
                 v = "{}";
@@ -1385,8 +1438,14 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
 
         /**
          * 针对 Lucene 5 的排序
+         * 多值的字段只取第一个
          */
-        if (s && !r) {
+        if (s) {
+            if (r) {
+                if (doc.getField(k) != null) {
+                    return;
+                }
+            }
             if (   "int".equals(t)) {
                 doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
             } else

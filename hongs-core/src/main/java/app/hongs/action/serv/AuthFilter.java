@@ -29,8 +29,8 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>初始化参数(init-param):</h3>
  * <pre>
- * config       菜单配置
- * expire       登录超时(默认为永久)
+ * config-name  菜单配置
+ * expire-time  登录超时(默认为永久)
  * index-page   起始页(为空则不跳转)
  * login-page   登录页(为空则不跳转)
  * ignore-urls  忽略的URL, 可用","分割多个, 可用"*"为前后缀
@@ -90,12 +90,12 @@ public class AuthFilter
     /**
      * 获取登录超时
      */
-    this.exp = Synt.asserts(config.getInitParameter("expire"), 0L);
+    this.exp = Synt.asserts(config.getInitParameter("expire-time"), 0L);
 
     /**
      * 获取权限配置名
      */
-    s = config.getInitParameter("config");
+    s = config.getInitParameter("config-name");
     if ( null != s)
     {
       this.aut = s;

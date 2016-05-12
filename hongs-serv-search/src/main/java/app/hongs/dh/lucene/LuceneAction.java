@@ -36,13 +36,13 @@ public class LuceneAction implements IAction, IActing {
         cnf = runner.getModule();
 
         try {
-            // 下划线开头的为私有, 不直接对外开放
+            // 下划线开头的为内部资源, 不直接对外开放
             if (ent.startsWith("_")) {
                 throw new HongsException(0x1100, "Unsupported Request!");
             }
 
-            // 判断是否禁用了动作, 忽略表单不存在
-            if (Dict.getValue (FormSet.getInstance( cnf ).getForm( ent ),
+            // 判断是否禁用了当前动作, 忽略表单不存在
+            if ( Dict.getValue(FormSet.getInstance(cnf ).getForm( ent ),
                 false, "@", "cant.call." + act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }

@@ -36,13 +36,13 @@ public class DBAction implements IAction, IActing {
         cnf = runner.getModule();
 
         try {
-            // 下划线开头的为私有, 不直接对外开放
+            // 下划线开头的为内部资源, 不直接对外开放
             if (ent.startsWith("_")) {
                 throw new HongsException(0x1100, "Unsupported Request!");
             }
 
-            // 判断是否禁用了动作, 忽略表单不存在
-            if (Dict.getValue (FormSet.getInstance( cnf ).getForm( ent ),
+            // 判断是否禁用了当前动作, 忽略表单不存在
+            if ( Dict.getValue(FormSet.getInstance( cnf ).getForm( ent ),
                 false, "@", "cant.call." + act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
@@ -150,7 +150,7 @@ public class DBAction implements IAction, IActing {
      */
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
-        Model  mod = DB.getInstance(cnf).getModel(ent);
+        Model  mod = DB.getInstance(this.cnf).getModel(ent);
         new Mview(mod).getFields();
         return mod;
     }
@@ -212,7 +212,7 @@ public class DBAction implements IAction, IActing {
     protected String getRspMsg(ActionHelper helper, Model mod, String opr, int num)
     throws HongsException {
         CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.loadIgnrFNF(cnf);
+        lang.loadIgnrFNF(this.cnf );
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
         if (! lang.containsKey(key)) {

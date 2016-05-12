@@ -55,7 +55,7 @@
         <filter-name>AuthFilter_MN</filter-name>
         <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
-            <param-name>config</param-name>
+            <param-name>config-name</param-name>
             <param-value>manage</param-value>
         </init-param>
         <init-param>

@@ -184,7 +184,7 @@ public class ActionRunner {
         pos  = ent.lastIndexOf('/');
         ent  = ent.substring(0,pos); // 去掉动作
         pos  = ent.lastIndexOf('/');
-        ent  = ent.substring(1+pos);
+        ent  = ent.substring(1+pos); // 得到实体
         return ent;
     }
     public String getHandle() throws HongsException {
@@ -194,7 +194,7 @@ public class ActionRunner {
         int pos;
         ant  = getAction();
         pos  = ant.lastIndexOf('/');
-        ant  = ant.substring(1+pos);
+        ant  = ant.substring(1+pos); // 得到动作
         return ant;
     }
 

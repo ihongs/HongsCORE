@@ -205,14 +205,14 @@ public class UploadHelper {
         String extn;
 
         if (file.exists()) {
-//          extn = MimeUtil.getExtension(file);
-//          type = MimeUtil.getMimeTypes(file).toString();
+//          type = MimeUtil.getMimeTypes (file).toString(   );
+//          extn = MimeUtil.getExtension (file);
             FileNameMap cmap = URLConnection.getFileNameMap();
-            type = cmap.getContentTypeFor(path); 
+            type = cmap.getContentTypeFor(path);
             extn = file.getName();
-            extn = extn.substring(extn.lastIndexOf('.') + 1 ); 
+            extn = extn.substring(extn.lastIndexOf('.') + 1 );
         } else {
-            temp = new File(path+".tnp");
+            temp = new File(path + ".tnp");
 
             /**
              * 从上传信息中提取类型和扩展名
@@ -238,7 +238,7 @@ public class UploadHelper {
                 throw new Wrong(ex, "fore.form.upload.failed");
             }
 
-            file = new File(path+".tmp");
+            file = new File(path + ".tmp");
         }
 
         chkTypeOrExtn(type, extn);

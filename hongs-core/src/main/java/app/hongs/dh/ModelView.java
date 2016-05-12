@@ -113,6 +113,33 @@ abstract public class ModelView {
         return  sortColz;
     }
 
+    protected boolean listable(Map  fc) {
+        return xxxxable("listable", fc);
+    }
+
+    protected boolean sortable(Map  fc) {
+        if ("sorted".equals(fc.get("__type__"))) {
+            return true;
+        }
+        return xxxxable("sortable", fc);
+    }
+
+    protected boolean findable(Map  fc) {
+        if ("search".equals(fc.get("__type__"))) {
+            return true;
+        }
+        return xxxxable("findable", fc);
+    }
+
+    protected final boolean xxxxable(String dn, Map fc) {
+        if (fc.containsKey(dn)) {
+            return Synt.asserts(fc.get(dn), false);
+        }
+        String t = Synt.asserts(fc.get("__type__"), "" );
+        Set    s = getAbles(dn);
+        return s == null || s.isEmpty() || s.contains(t);
+    }
+
     protected final Set<String> getAbles(String dn) {
         Set ables = new LinkedHashSet();
 
@@ -120,7 +147,7 @@ abstract public class ModelView {
         Map<String, String> fc = fields.get("@");
         Set sets;
         if ( fc == null || ! Synt.declare(fc.get("dont.auto.bind."+dn), false)) {
-            sets = Synt.asTerms(getDtypes( ).get(dn ));
+            sets = Synt.asTerms(getDtypes( ).get( dn ));
         } else {
             sets = new HashSet ();
         }

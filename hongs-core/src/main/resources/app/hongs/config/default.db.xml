@@ -15,14 +15,6 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
   <source jdbc="org.sqlite.JDBC"
           name="jdbc:sqlite:default.db"/>
-  <!-- 正式环境
-  <source jdbc="com.mysql.jdbc.Driver"
-          name="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
-          username="root"
-          password="123456"/>
-  <origin name="jdbc/hongs-core"/>
-  //-->
-
   <!--
   <!== 外部数据源==>
   <origin jndi="命名接口"
@@ -35,7 +27,8 @@ xsi:schemaLocation="http://hongs-core db.xsd">
           username="账号"
           password="密码"/>
   <!== 实例配置 ==>
-  <config dbClass="[DB类, 仅在使用"DB.getInstance(dbName)"时有效]"
+  <config link="关联连接"
+          dbClass="[DB类, 仅在使用"DB.getInstance(dbName)"时有效]"
           tableClass="[Table类, 仅在使用"DB.getTable(tableName)"时有效]"
           modelClass="[Model类, 仅在使用"DB.getModel(tableName)"时有效]"
           tablePrefix="[表前缀]"

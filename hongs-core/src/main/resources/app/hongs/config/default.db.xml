@@ -42,6 +42,7 @@ xsi:schemaLocation="http://hongs-core db.xsd">
            class="[Table类, 仅在使用DB.getTable(tableName)时有效]"
            prefix="[表前缀]"
            suffix="[表后缀]">
+      <param name="[参数]">[取值]</param>
       <assoc type="[BLS_TO|HAS_ONE|HAS_MANY]"
              join="[INNER|LEFT|RIGHT|FULL]"
              name="[关联名]"
@@ -54,26 +55,41 @@ xsi:schemaLocation="http://hongs-core db.xsd">
              which="[过滤条件]"
              orderBy="[附加排序]"/>
     </table>
-    <!== 举例说明 ==>
+    <!== 配置举例 ==>
     <table name="hs_demo"
            primaryKey="id">
-      <assoc where=""
+      <param name="check.value">yes</param>
+      <param name="removed.state">0</param>
+      <param name="default.state">1</param>
+      <param name="state.field">state</param>
+      <param name="ctime.field">ctime</param>
+      <param name="mtime.field">mtime</param>
+      <assoc filter=""
              select=""
              orderBy=""/>
       <assoc type="BLS_TO"
              join="LEFT"
-             name="hs_demo"
-             alias="hs_demo_bls_to"
+             name="hs_demo_bls_to"
+             tableName="hs_demo"
              foreignKey="pid"/>
       <assoc type="HAS_ONE"
              join="LEFT"
-             name="hs_demo"
-             alias="hs_demo_has_one"
+             name="hs_demo_has_one"
+             tableName="hs_demo"
              foreignKey="pid"/>
       <assoc type="HAS_MANY"
-             name="hs_demo"
-             alias="hs_demo_has_many"
+             name="hs_demo_has_many"
+             tableName="hs_demo"
              foreignKey="pid"/>
+      <assoc type="HAS_MORE"
+             name="hs_demo_has_more"
+             tableName="hs_demo"
+             foreignKey="pid">
+        <assoc type="BLS_TO"
+               name="hs_demo"
+               tableName="hs_demo"
+               foreignKey="pid"/>
+      </assoc>
     </table>
   </tables>
   //-->

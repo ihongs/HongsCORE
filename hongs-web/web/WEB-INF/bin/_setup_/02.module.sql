@@ -6,15 +6,15 @@
 
 DROP TABLE IF EXISTS `a_module_unit`;
 CREATE TABLE `a_module_unit` (
-  `id` char(20) NOT NULL,
-  `pid` char(20) DEFAULT NULL,
-  `name` varchar(200) NOT NULL,
-  `note` text,
-  `snum` int(11) DEFAULT '0',
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `boost` int(11) DEFAULT NULL,
-  `state` tinyint(4) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `pid` CHAR(20) DEFAULT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `note` TEXT,
+  `snum` UNSIGNED INT(11) DEFAULT '0',
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `boost` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -30,16 +30,16 @@ CREATE UNIQUE INDEX `UK_a_module_unit_name` ON `a_module_unit` (`name`,`pid`);
 
 DROP TABLE IF EXISTS `a_module_form`;
 CREATE TABLE `a_module_form` (
-  `id` char(20) NOT NULL,
-  `unit_id` char(20) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `note` text,
-  `conf` text NOT NULL,
-  `snum` int(11) DEFAULT '0',
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `boost` int(11) DEFAULT NULL,
-  `state` tinyint(4) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `unit_id` CHAR(20) NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `note` TEXT,
+  `conf` TEXT NOT NULL,
+  `snum` UNSIGNED INT(11) DEFAULT '0',
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `boost` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`unit_id`) REFERENCES `a_module_unit` (`id`) ON DELETE CASCADE
 );
@@ -55,14 +55,14 @@ CREATE UNIQUE INDEX `UK_a_module_form_name` ON `a_module_form` (`name`,`unit_id`
 
 DROP TABLE IF EXISTS `a_module_data`;
 CREATE TABLE `a_module_data` (
-  `id` char(20) NOT NULL,
-  `form_id` char(20) NOT NULL,
-  `name` varchar(255) DEFAULT NULL,
-  `data` longtext NOT NULL,
-  `ctime` bigint(15) DEFAULT NULL,
-  `etime` bigint(15) DEFAULT NULL,
-  `rtime` bigint(15) DEFAULT NULL,
-  `state` tinyint(4) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `form_id` CHAR(20) NOT NULL,
+  `name` VARCHAR(255) DEFAULT NULL,
+  `data` LONGTEXT NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `etime` UNSIGNED INT(11) DEFAULT NULL,
+  `rtime` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`,`etime`),
   FOREIGN KEY (`form_id`) REFERENCES `a_module_form` (`id`) ON DELETE CASCADE
 );

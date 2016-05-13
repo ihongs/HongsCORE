@@ -6,14 +6,14 @@
 
 DROP TABLE IF EXISTS `a_member_dept`;
 CREATE TABLE `a_member_dept` (
-  `id` char(20) NOT NULL,
-  `pid` char(20) DEFAULT NULL,
-  `name` varchar(200) NOT NULL,
-  `note` text,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `rtime` int(11) DEFAULT NULL,
-  `state` tinyint(4) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `pid` CHAR(20) DEFAULT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `note` TEXT,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `rtime` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`pid`) REFERENCES `a_member_dept` (`id`) ON DELETE CASCADE
 );
@@ -39,8 +39,8 @@ INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`s
 
 DROP TABLE IF EXISTS `a_member_dept_role`;
 CREATE TABLE `a_member_dept_role` (
-  `dept_id` char(20) NOT NULL,
-  `role` varchar(100) NOT NULL,
+  `dept_id` CHAR(20) NOT NULL,
+  `role` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`dept_id`,`role`),
   FOREIGN KEY (`dept_id`) REFERENCES `a_member_dept` (`id`)
 );
@@ -54,23 +54,23 @@ CREATE INDEX `IK_a_member_dept_role_role` ON `a_member_dept_role` (`role`);
 
 DROP TABLE IF EXISTS `a_member_user`;
 CREATE TABLE `a_member_user` (
-  `id` char(20) NOT NULL,
-  `password` varchar(200) DEFAULT NULL,
-  `username` varchar(200) DEFAULT NULL,
-  `name` varchar(200) NOT NULL,
-  `head` varchar(100),
-  `note` text,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `rtime` int(11) DEFAULT NULL,
-  `state` tinyint(4) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `password` VARCHAR(200) DEFAULT NULL,
+  `username` VARCHAR(200) DEFAULT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `head` VARCHAR(100),
+  `note` TEXT,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `rtime` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   /* 扩展字段 */
-  `organ` varchar(200) DEFAULT NULL,
-  `title` varchar(200) DEFAULT NULL,
-  `email` varchar(200) DEFAULT NULL,
-  `phone` varchar(20 ) DEFAULT NULL,
-  `email_checked` tinyint(1) DEFAULT '0',
-  `phone_checked` tinyint(1) DEFAULT '0',
+  `organ` VARCHAR(200) DEFAULT NULL,
+  `title` VARCHAR(200) DEFAULT NULL,
+  `email` VARCHAR(200) DEFAULT NULL,
+  `phone` VARCHAR(20 ) DEFAULT NULL,
+  `email_checked` TINYINT(1) DEFAULT '0',
+  `phone_checked` TINYINT(1) DEFAULT '0',
   PRIMARY KEY (`id`)
 );
 
@@ -94,8 +94,8 @@ INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ct
 
 DROP TABLE IF EXISTS `a_member_user_dept`;
 CREATE TABLE `a_member_user_dept` (
-  `user_id` char(20) NOT NULL,
-  `dept_id` char(20) NOT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `dept_id` CHAR(20) NOT NULL,
   PRIMARY KEY (`user_id`,`dept_id`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`dept_id`) REFERENCES `a_member_dept` (`id`) ON DELETE CASCADE
@@ -118,8 +118,8 @@ INSERT INTO `a_member_user_dept` VALUES ('HY9XQN2L000WGH9Q01','HYPS1ROT007T1AG60
 
 DROP TABLE IF EXISTS `a_member_user_role`;
 CREATE TABLE `a_member_user_role` (
-  `user_id` char(20) NOT NULL,
-  `role` varchar(100) NOT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `role` VARCHAR(100) NOT NULL,
   PRIMARY KEY (`user_id`,`role`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
@@ -151,10 +151,10 @@ INSERT INTO `a_member_user_role` VALUES ('1','manage/module/unit/delete');
 
 DROP TABLE IF EXISTS `a_member_user_open`;
 CREATE TABLE `a_member_user_open` (
-  `user_id` char(20) NOT NULL,
-  `appid` varchar(100) NOT NULL,
-  `opnid` varchar(100) NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `appid` VARCHAR(100) NOT NULL,
+  `opnid` VARCHAR(100) NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
@@ -169,10 +169,10 @@ CREATE INDEX `IK_a_member_user_open_opnid` ON `a_member_user_open` (`opnid`);
 
 DROP TABLE IF EXISTS `a_member_user_sign`;
 CREATE TABLE `a_member_user_sign` (
-  `user_id` char(20) NOT NULL,
-  `appid` varchar(100) NOT NULL,
-  `sesid` varchar(100) NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `appid` VARCHAR(100) NOT NULL,
+  `sesid` VARCHAR(100) NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );

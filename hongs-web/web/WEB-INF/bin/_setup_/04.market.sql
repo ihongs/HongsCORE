@@ -6,9 +6,9 @@
 
 DROP TABLE IF EXISTS `a_market_section`;
 CREATE TABLE `a_market_section` (
-  `id` char(20) NOT NULL,
-  `conf` text DEFAULT NULL,
-  `coll` text DEFAULT NULL,
+  `id` CHAR(20) NOT NULL,
+  `conf` TEXT DEFAULT NULL,
+  `coll` TEXT DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -18,9 +18,9 @@ CREATE TABLE `a_market_section` (
 
 DROP TABLE IF EXISTS `a_market_product`;
 CREATE TABLE `a_market_product` (
-  `id` char(20) NOT NULL,
-  `conf` text DEFAULT NULL,
-  `coll` text DEFAULT NULL,
+  `id` CHAR(20) NOT NULL,
+  `conf` TEXT DEFAULT NULL,
+  `coll` TEXT DEFAULT NULL,
   `price` float(6,2) DEFAULT 0.0,
   `prime` float(6,2) DEFAULT 0.0,
   PRIMARY KEY (`id`)
@@ -32,17 +32,17 @@ CREATE TABLE `a_market_product` (
 
 DROP TABLE IF EXISTS `a_market_package`;
 CREATE TABLE `a_market_package` (
-  `id` char(20) NOT NULL,
-  `pid` char(20) DEFAULT NULL,
-  `user_id` char(20) NOT NULL,
-  `cost_type` tinyint(2) DEFAULT 0,
-  `cost_time` int(11) DEFAULT NULL,
-  `sent_time` int(11) DEFAULT NULL,
-  `recv_time` int(11) DEFAULT NULL,
-  `total` float(8,2) DEFAULT 0.0,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `state` tinyint(1) DEFAULT 1, /* -1:挑选 1:就绪 2:付款 3:发出 4:送达 5:收到 */
+  `id` CHAR(20) NOT NULL,
+  `pid` CHAR(20) DEFAULT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `cost_type` TINYINT(2) DEFAULT 0,
+  `cost_time` UNSIGNED INT(11) DEFAULT NULL,
+  `sent_time` UNSIGNED INT(11) DEFAULT NULL,
+  `recv_time` UNSIGNED INT(11) DEFAULT NULL,
+  `total` UNSIGNED FLOAT(8, 2) DEFAULT 0.0,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT 1, /* -1:挑选 1:就绪 2:付款 3:发出 4:送达 5:收到 */
   PRIMARY KEY (`id`)
 );
 
@@ -56,11 +56,11 @@ CREATE INDEX `a_market_package_cost` ON `a_market_package` (`cost_type`);
 
 DROP TABLE IF EXISTS `a_market_package_flow`;
 CREATE TABLE `a_market_package_flow` (
-  `id` char(20) NOT NULL,
-  `package_id` char(20) NOT NULL,
-  `code` char(20) NOT NULL,
-  `note` varchar(255) NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
+  `id` CHAR(20) NOT NULL,
+  `package_id` CHAR(20) NOT NULL,
+  `code` CHAR(20) NOT NULL,
+  `note` VARCHAR(255) NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
@@ -74,17 +74,17 @@ CREATE UNIQUE INDEX `UK_a_market_package_flow_code` ON `a_market_package_flow` (
 
 DROP TABLE IF EXISTS `a_market_package_item`;
 CREATE TABLE `a_market_package_item` (
-  `id` char(20) NOT NULL,
-  `package_id` char(20) NOT NULL,
-  `product_id` char(20) NOT NULL,
-  `code` char(64) DEFAULT NULL,
-  `coll` text DEFAULT NULL,
-  `note` text DEFAULT NULL,
-  `total` float(8,2) DEFAULT 0.0,
-  `price` float(8,2) DEFAULT 0.0,
-  `count` int(11) DEFAULT 1,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
+  `id` CHAR(20) NOT NULL,
+  `package_id` CHAR(20) NOT NULL,
+  `product_id` CHAR(20) NOT NULL,
+  `code` CHAR(64) DEFAULT NULL,
+  `coll` TEXT DEFAULT NULL,
+  `note` TEXT DEFAULT NULL,
+  `total` UNSIGNED FLOAT(8, 2) DEFAULT 0.0,
+  `price` UNSIGNED FLOAT(8, 2) DEFAULT 0.0,
+  `count` UNSIGNED INT(11) DEFAULT 1,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 

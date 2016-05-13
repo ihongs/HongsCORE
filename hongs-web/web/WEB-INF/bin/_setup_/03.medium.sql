@@ -6,30 +6,30 @@
 
 DROP TABLE IF EXISTS `a_medium_article`;
 CREATE TABLE `a_medium_article` (
-  `id` char(20) NOT NULL,
-  `user_id` char(20) DEFAULT NULL,
-  `insp_id` char(20) DEFAULT NULL,
-  `type` char(20) DEFAULT 'default',
-  `temp` char(20) DEFAULT 'default',
-  `kind` char(20) DEFAULT 'html', /* html,md */
-  `name` varchar(255) NOT NULL,
-  `href` varchar(255) DEFAULT NULL,
-  `snap` varchar(255) DEFAULT NULL,
-  `word` text DEFAULT NULL,
-  `note` text DEFAULT NULL,
-  `html` longtext DEFAULT NULL,
-  `data` longtext DEFAULT NULL,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `score` int(11) DEFAULT '0' ,
-  `state` tinyint(1) DEFAULT '1',
-  `stave` tinyint(1) DEFAULT '0', /* 1:干净模式, 2:禁止评论 */
-  `count_browses` int(11) DEFAULT '0',
-  `count_consent` int(11) DEFAULT '0',
-  `count_dissent` int(11) DEFAULT '0',
-  `count_comment` int(11) DEFAULT '0',
-  `score_consent` int(11) DEFAULT '0',
-  `means_consent` int(11) DEFAULT '0',
+  `id` CHAR(20) NOT NULL,
+  `user_id` CHAR(20) DEFAULT NULL,
+  `insp_id` CHAR(20) DEFAULT NULL,
+  `type` CHAR(20) DEFAULT 'default',
+  `temp` CHAR(20) DEFAULT 'default',
+  `kind` CHAR(20) DEFAULT 'html', /* html,md */
+  `name` VARCHAR(255) NOT NULL,
+  `href` VARCHAR(255) DEFAULT NULL,
+  `snap` VARCHAR(255) DEFAULT NULL,
+  `word` TEXT DEFAULT NULL,
+  `note` TEXT DEFAULT NULL,
+  `html` LONGTEXT DEFAULT NULL,
+  `data` LONGTEXT DEFAULT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `score` UNSIGNED INT(11) DEFAULT '0' ,
+  `state` TINYINT(2) DEFAULT '1',
+  `stave` TINYINT(2) DEFAULT '0', /* 1:干净模式, 2:禁止评论 */
+  `count_browses` UNSIGNED INT(11) DEFAULT '0',
+  `count_consent` UNSIGNED INT(11) DEFAULT '0',
+  `count_dissent` UNSIGNED INT(11) DEFAULT '0',
+  `count_comment` UNSIGNED INT(11) DEFAULT '0',
+  `score_consent` UNSIGNED INT(11) DEFAULT '0',
+  `means_consent` UNSIGNED INT(11) DEFAULT '0',
   PRIMARY KEY (`id`)
 );
 
@@ -47,16 +47,16 @@ CREATE INDEX `a_medium_article_state` ON `a_medium_article` (`state`);
 
 DROP TABLE IF EXISTS `a_medium_section`;
 CREATE TABLE `a_medium_section` (
-  `id` char(20) NOT NULL,
-  `pid` char(20) DEFAULT NULL,
-  `type` char(20) DEFAULT 'default',
-  `temp` char(20) DEFAULT 'default',
-  `name` varchar(200) NOT NULL,
-  `word` varchar(1000) DEFAULT NULL,
-  `note` varchar(1000) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `seria` int(11) DEFAULT '0' ,
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `pid` CHAR(20) DEFAULT NULL,
+  `type` CHAR(20) DEFAULT 'default',
+  `temp` CHAR(20) DEFAULT 'default',
+  `name` VARCHAR(200) NOT NULL,
+  `word` VARCHAR(1000) DEFAULT NULL,
+  `note` VARCHAR(1000) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `seria` UNSIGNED INT(11) DEFAULT '0' ,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -73,13 +73,13 @@ CREATE UNIQUE INDEX `UK_a_medium_section_link` ON `a_medium_section` (`pid`,`typ
 
 DROP TABLE IF EXISTS `a_medium_segment`;
 CREATE TABLE `a_medium_segment` (
-  `id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `sect_id` char(20) NOT NULL,
-  `link` char(20) DEFAULT 'article',
-  `sect` char(20) DEFAULT 'section',
-  `mtime` int(11) DEFAULT NULL,
-  `seria` int(11) DEFAULT '0' ,
+  `id` CHAR(20) NOT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `sect_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) DEFAULT 'article',
+  `sect` CHAR(20) DEFAULT 'section',
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `seria` UNSIGNED INT(11) DEFAULT '0' ,
   PRIMARY KEY (`id`)
 );
 
@@ -97,16 +97,16 @@ CREATE UNIQUE INDEX `UK_a_medium_segment_link` ON `a_medium_segment` (`link_id`,
 
 DROP TABLE IF EXISTS `a_medium_comment`;
 CREATE TABLE `a_medium_comment` (
-  `id` char(20) NOT NULL,
-  `pid` char(20) DEFAULT NULL,
-  `user_id` char(20) NOT NULL,
-  `mate_id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` char(20) NOT NULL,
-  `note` text NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `pid` CHAR(20) DEFAULT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `mate_id` CHAR(20) NOT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) NOT NULL,
+  `note` TEXT NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -125,15 +125,15 @@ CREATE INDEX `a_medium_comment_state` ON `a_medium_comment` (`state`);
 
 DROP TABLE IF EXISTS `a_medium_dissent`;
 CREATE TABLE `a_medium_dissent` (
-  `id` char(20) NOT NULL,
-  `user_id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` char(20) NOT NULL,
-  `note` text DEFAULT NULL,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `cause` tinyint(2) DEFAULT '0',
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) NOT NULL,
+  `note` TEXT DEFAULT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `cause` TINYINT(2) DEFAULT '0',
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -152,14 +152,14 @@ CREATE UNIQUE INDEX `UK_a_medium_dissent_link` ON `a_medium_dissent` (`user_id`,
 
 DROP TABLE IF EXISTS `a_medium_consent`;
 CREATE TABLE `a_medium_consent` (
-  `id` char(20) NOT NULL,
-  `user_id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` char(20) NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `score` tinyint(1) DEFAULT '1',
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `user_id` CHAR(20) NOT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `score` TINYINT(2) DEFAULT '1',
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -178,13 +178,13 @@ CREATE UNIQUE INDEX `UK_a_medium_consent_link` ON `a_medium_consent` (`user_id`,
 
 DROP TABLE IF EXISTS `a_medium_browses`;
 CREATE TABLE `a_medium_browses` (
-  `id` char(20) NOT NULL,
-  `sess_id` char(64) DEFAULT NULL,
-  `user_id` char(20) DEFAULT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` char(20) NOT NULL,
-  `ctime` int(11) DEFAULT NULL,
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `sess_id` CHAR(64) DEFAULT NULL,
+  `user_id` CHAR(20) DEFAULT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) NOT NULL,
+  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -202,14 +202,14 @@ CREATE UNIQUE INDEX `UK_a_medium_browses_link` ON `a_medium_browses` (`sess_id`,
 
 DROP TABLE IF EXISTS `a_medium_species`;
 CREATE TABLE `a_medium_species` (
-  `id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` char(20) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `note` varchar(200) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `score` int(11) DEFAULT '0' ,
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `note` VARCHAR(200) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `score` UNSIGNED INT(11) DEFAULT '0' ,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -227,14 +227,14 @@ CREATE UNIQUE INDEX `UK_a_medium_species_link` ON `a_medium_species` (`link_id`,
 
 DROP TABLE IF EXISTS `a_medium_statics`;
 CREATE TABLE `a_medium_statics` (
-  `id` char(20) NOT NULL,
-  `link_id` char(20) NOT NULL,
-  `link` char(20) NOT NULL,
-  `name` varchar(200) NOT NULL,
-  `note` varchar(200) DEFAULT NULL,
-  `mtime` int(11) DEFAULT NULL,
-  `score` int(11) DEFAULT '0' ,
-  `state` tinyint(1) DEFAULT '1',
+  `id` CHAR(20) NOT NULL,
+  `link_id` CHAR(20) NOT NULL,
+  `link` CHAR(20) NOT NULL,
+  `name` VARCHAR(200) NOT NULL,
+  `note` VARCHAR(200) DEFAULT NULL,
+  `mtime` UNSIGNED INT(11) DEFAULT NULL,
+  `score` UNSIGNED INT(11) DEFAULT '0' ,
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 

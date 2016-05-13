@@ -34,7 +34,7 @@ import javax.servlet.http.HttpServletResponse;
  * index-page   起始页(为空则不跳转)
  * login-page   登录页(为空则不跳转)
  * ignore-urls  忽略的URL, 可用","分割多个, 可用"*"为前后缀
- </pre>
+ * </pre>
  *
  * @author Hongs
  */
@@ -213,10 +213,10 @@ public class AuthFilter
      * 判断当前用户是否登录超时
      */
     if (exp != 0) {
-        long tim = Synt.asserts(hlpr.getSessibute(Cnst.TIM_SES), 0L);
+        long tim = Synt.asserts(hlpr.getSessibute(Cnst.UST_SES), 0L);
         long now = System.currentTimeMillis() / 1000;
         if ( now - tim < exp) {
-            hlpr.setSessibute ( Cnst.TIM_SES , now );
+            hlpr.setSessibute (Cnst.UST_SES , now );
         } else {
             doFailed ( core, hlpr, (byte) 0 );
             return;
@@ -248,21 +248,36 @@ public class AuthFilter
 
     if (null == authset) {
         if (null != loginPage) {
-            doFailed(core, hlpr, (byte)1);
+            doFailed(core, hlpr, (byte) 1); // 没有登录
             return;
         }
         if (siteMap.actions.contains(act)) {
-            doFailed(core, hlpr, (byte)2);
+            doFailed(core, hlpr, (byte) 2); // 需要权限
             return;
         }
     } else {
-        if (siteMap.actions.contains(aut) && !authset.contains(aut)) {
-            doFailed(core, hlpr, (byte)3);
-            return;
+        if (siteMap.actions.contains(act)) {
+            if (  ! authset.contains(act)) {
+                doFailed(core, hlpr, (byte) 2); // 缺少权限
+                return;
+            }
         }
-        if (siteMap.actions.contains(act) && !authset.contains(act)) {
-            doFailed(core, hlpr, (byte)2);
-            return;
+        if (siteMap.actions.contains(aut)) {
+            if (  ! authset.contains(aut)) {
+                doFailed(core, hlpr, (byte) 3); // 禁入区域
+                return;
+            }
+
+            /**
+             * 权限配置中有指定区域的
+             * 必须在指定区域再次登录
+             * 登录时会将区域写入会话
+             */
+            Set usp = (Set) hlpr.getSessibute(Cnst.USL_SES);
+            if (usp == null || ! usp.contains(aut)) {
+                doFailed(core, hlpr, (byte) 1); // 登录区域
+                return;
+            }
         }
     }
 

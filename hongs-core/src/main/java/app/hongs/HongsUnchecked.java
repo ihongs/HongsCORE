@@ -1,41 +1,50 @@
 package app.hongs;
 
 /**
- * 通用错误类
+ * 通用异常类
+ *
+ * 与 HongsException 不同, 无需 throws
  *
  * <h3>取值范围:</h3>
  * <pre>
- * 核心: 0x10~0xFF (16~255)
- * 用户: 0x100~0xFFF (256~4095)
+ * 核心: 0x1000~0xFFFF (4096~65535)
+ * 用户: 0x10000~0xFFFFF (65536~1048575)
  * </pre>
  *
  * @author Hongs
  */
-public class HongsError extends Error implements HongsCause {
+public class HongsUnchecked extends RuntimeException implements HongsCause {
 
     protected final HongsCauze that;
 
-    public HongsError(int errno, String error, Throwable cause) {
+    public HongsUnchecked(int errno, String error, Throwable cause) {
         super(cause);
 
         that = new HongsCauze(errno, error, this);
 
-        if (errno < 0x10 || errno > 0xFFF) {
-            throw new HongsError(0x21,
-                "Error code must be from 0x10(16) to 0xFFF(4095).");
+        if (errno < 0x1000 || errno > 0xFFFFF) {
+            throw new HongsError(0x22,
+                "Unchecked code must be from 0x1000(65536) to 0xFFFFF(1048575).");
         }
     }
 
-    public HongsError(int code, Throwable cause) {
+    public HongsUnchecked(int code, Throwable cause) {
         this(code, cause.getMessage(), cause);
     }
 
-    public HongsError(int code, String desc) {
+    public HongsUnchecked(int code, String desc) {
         this(code, desc, null);
     }
 
-    public HongsError(int code) {
+    public HongsUnchecked(int code) {
         this(code, null, null);
+    }
+
+    public HongsException toException() {
+        HongsException ex = new HongsException(this.getErrno(), this.getError(), this);
+        ex.setLocalizedOptions(this.getLocalizedOptions());
+        ex.setLocalizedSection(this.getLocalizedSection());
+        return ex;
     }
 
     @Override
@@ -74,25 +83,25 @@ public class HongsError extends Error implements HongsCause {
     }
 
     @Override
-    public HongsError setLocalizedSection(String lang) {
+    public HongsUnchecked setLocalizedSection(String lang) {
         that.setLocalizedSection(lang);
         return this;
     }
 
     @Override
-    public HongsError setLocalizedOptions(String... opts) {
+    public HongsUnchecked setLocalizedOptions(String... opts) {
         that.setLocalizedOptions(opts);
         return this;
     }
 
-    public static final int COMMON = 0x10;
+    public static final int COMMON = 0x1000;
 
-    public static final int NOTICE = 0x11;
+    public static final int NOTICE = 0x1001;
 
     /**
      * 常规错误(无需错误代码)
      */
-    public static class Common extends HongsError {
+    public static class Common extends HongsUnchecked {
         public Common(String error, Throwable cause) {
             super(COMMON, error, cause);
         }
@@ -107,9 +116,9 @@ public class HongsError extends Error implements HongsCause {
     /**
      * 通告错误(无需错误代码)
      */
-    public static class Notice extends HongsError {
-        public Notice(String error, Throwable cause) {
-            super(NOTICE, error, cause);
+    public static class Notice extends HongsUnchecked {
+        public Notice(String desc, Throwable cause) {
+            super(NOTICE, desc, cause);
         }
         public Notice(Throwable cause) {
             super(NOTICE, cause);

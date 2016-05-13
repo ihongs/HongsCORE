@@ -5,6 +5,8 @@
         </field>
         <field name="password" required="yes">
         </field>
+        <field name="captcode" required="yes" rule="Capts">
+        </field>
     </form>
     <form name="mine">
         <field name="username" required="yes">

@@ -105,8 +105,8 @@ public class ASubsModel extends ALinkModel {
             }
             } catch (HongsException e) {
                 // 无法删除、修改(已逻辑删除)则跳过
-                if (e.getCode() != 0x1096
-                &&  e.getCode() != 0x1097) {
+                if (e.getErrno() != 0x1096
+                &&  e.getErrno() != 0x1097) {
                     throw e;
                 }
             }

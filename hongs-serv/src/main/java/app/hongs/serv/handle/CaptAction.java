@@ -1,14 +1,15 @@
 package app.hongs.serv.handle;
 
+import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.util.Synt;
-import app.hongs.util.sketch.Vcode;
+import app.hongs.util.sketch.Capts;
 import java.io.IOException;
 
 /**
- *
+ * 简单验证图片
  * @author Hongs
  */
 @Action("handle/capt")
@@ -21,11 +22,13 @@ public class CaptAction {
         String f  = Synt.declare(helper.getParameter("f"), "");
         String e  = Synt.declare(helper.getParameter("e"), "png");
 
-        Vcode  vc = Vcode.captcha(h, b, f, e);
+        Capts  vc = Capts.captcha(h, b, f, e);
 
         // 设置会话
-        helper.setSessibute("captcha_code", vc.getCode());
-        helper.setSessibute("captcha_time", System.currentTimeMillis());
+        String ss = CoreConfig.getInstance( )
+              .getProperty ("core.capt.session" , "capt");
+        helper.setSessibute(ss+"_code", /**/vc.getCode());
+        helper.setSessibute(ss+"_time", System.currentTimeMillis());
 
         // 禁止缓存
         helper.getResponse().setContentType("image/" + e);

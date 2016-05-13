@@ -114,7 +114,7 @@ public class PackAction {
             if (ex.getCause( ) instanceof HongsCause) {
                 HongsCause ez = (HongsCause) ex.getCause( );
                 String msg = ez.getLocalizedMessage();
-                String err = "Ex"+Integer.toHexString(ez.getCode());
+                String err = "Ex"+Integer.toHexString(ez.getErrno());
                 helper.fault( msg, err );
             } else {
                 String msg = ex.getLocalizedMessage();

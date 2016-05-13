@@ -3,6 +3,7 @@ package app.hongs.action.serv;
 import app.hongs.Core;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.NaviMap;
@@ -87,6 +88,10 @@ public class AuthAction
       data = Data.toString(datamap);
     }
     catch (HongsException ex) {
+      helper.error500(ex.getMessage());
+      return;
+    }
+    catch (HongsUnchecked ex) {
       helper.error500(ex.getMessage());
       return;
     }

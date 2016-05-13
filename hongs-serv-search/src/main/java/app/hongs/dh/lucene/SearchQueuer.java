@@ -6,6 +6,7 @@ import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.util.Async;
 import java.util.Map;
 
@@ -54,6 +55,8 @@ public class SearchQueuer extends Async<Map> implements Core.GlobalSingleton {
                 CoreLogger.getLogger("search.queuer").error("Can not run action: "+act);
             }
         } catch (HongsException ex) {
+            CoreLogger.getLogger("search.queuer").error(ex.getMessage());
+        } catch (HongsUnchecked ex) {
             CoreLogger.getLogger("search.queuer").error(ex.getMessage());
         } catch (HongsError er) {
             CoreLogger.getLogger("search.queuer").error(er.getMessage());

@@ -1,11 +1,12 @@
 
 # 更新日志
 
-* 2015/05/05 数据库连接池从 C3P0 更换为 DBCP, app.hongs.db.DB.Roll 更名为 app.hongs.db.link.Loop
-* 2015/05/03 增加 Lucene 查询迭代, 增加公共注册动作
-* 2015/04/16 修改 FetchCase/FetchMore 等, 增加级联操作, 解决关联查询中的别名、层级问题
-* 2015/01/05 增加 medium,market 两个模块, 分别用于媒体和销售; 拆分基础管理服务为 member,module 作为独立模块
-* 2015/01/03 Web,Action 结构更新, 分成 manage,handle,static 三大块, 分别表示: 管理区,应用区,静态区
+* 2016/05/14 增加 HongsUnchecked 异常类, 用于表示 unchecked exception, 此前的部分 HongsError 使用有误
+* 2016/05/05 数据库连接池从 C3P0 更换为 DBCP, app.hongs.db.DB.Roll 更名为 app.hongs.db.link.Loop
+* 2016/05/03 增加 Lucene 查询迭代, 增加公共注册动作
+* 2016/04/16 修改 FetchCase/FetchMore 等, 增加级联操作, 解决关联查询中的别名、层级问题
+* 2016/01/05 增加 medium,market 两个模块, 分别用于媒体和销售; 拆分基础管理服务为 member,module 作为独立模块
+* 2016/01/03 Web,Action 结构更新, 分成 manage,handle,static 三大块, 分别表示: 管理区,应用区,静态区
 * 2015/11/24 FetchCase 中组织 SQL 语句不再需要加 "." 前缀即可在关联查询中自动为字段添加当前表别名
 * 2015/10/30 取消了 object.config 来初始化组件的方式, 改为 data-* 的配置方式
 * 2015/10/13 建立 MassAction 用于一次请求多个 Action; 修复 SQL Like 生成语句问题; 将 FetchNext 更名为 DB.Roll, DBAssist 改回 Mview

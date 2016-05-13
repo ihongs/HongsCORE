@@ -1,7 +1,7 @@
 package app.hongs.serv.record;
 
-import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.anno.Cmdlet;
 import app.hongs.db.DB;
@@ -37,8 +37,8 @@ public class Record {
         try {
             getTable().delete("id = ?",key);
         }
-        catch (HongsException ex) {
-            throw new HongsError.Common(ex);
+        catch (HongsException ex ) {
+            throw ex.toUnchecked();
         }
     }
 
@@ -72,16 +72,16 @@ public class Record {
             return obj;
         }
         catch (ClassNotFoundException ex) {
-            throw new HongsError.Common(ex);
-        }
-        catch (HongsException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsUnchecked.Common(ex);
         }
         catch (SQLException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsUnchecked.Common(ex);
         }
         catch ( IOException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsUnchecked.Common(ex);
+        }
+        catch (HongsException ex ) {
+            throw ex.toUnchecked();
         }
     }
 
@@ -115,14 +115,14 @@ public class Record {
             ps.setLong  (4, now);
             ps.executeUpdate(  );
         }
-        catch (HongsException ex) {
-            throw new HongsError.Common(ex);
+        catch (SQLException ex ) {
+            throw new HongsUnchecked.Common(ex);
         }
-        catch (SQLException ex) {
-            throw new HongsError.Common(ex);
+        catch ( IOException ex ) {
+            throw new HongsUnchecked.Common(ex);
         }
-        catch ( IOException ex) {
-            throw new HongsError.Common(ex);
+        catch (HongsException ex ) {
+            throw ex.toUnchecked();
         }
     }
 

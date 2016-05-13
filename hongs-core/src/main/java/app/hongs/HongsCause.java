@@ -7,9 +7,9 @@ package app.hongs;
 public interface HongsCause
 {
 
-    public int getCode();
+    public int getErrno();
 
-    public String getDesc();
+    public String getError();
 
     public Throwable getCause();
 

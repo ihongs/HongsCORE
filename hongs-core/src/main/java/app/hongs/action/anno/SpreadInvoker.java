@@ -40,7 +40,7 @@ public class SpreadInvoker implements FilterInvoker {
             sup = new SpreadHelper().addItemsByForm(conf,form);
             sup.spread ( rsp);
         } catch (HongsException  ex) {
-            int  ec  = ex.getCode( );
+            int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea) {
                 throw  ex;
             }

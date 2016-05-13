@@ -1,7 +1,7 @@
 package app.hongs.db.link;
 
-import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.util.Dict;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -78,7 +78,7 @@ public class Loop implements Iterator<Map<String,Object>> {
                 il = rs.next();
             } catch (SQLException ex) {
                 this.over(   );
-                throw new HongsError.Common(new HongsException(0x10a4, ex));
+                throw new HongsUnchecked(0x10a4, ex);
             }
         }
         return  il;
@@ -95,11 +95,11 @@ public class Loop implements Iterator<Map<String,Object>> {
 
         // 获取当前字段类型
         try {
-//              getMetaData();
+//          getMetaData();
             getTypeDict();
         } catch (HongsException ex ) {
-            this.over();
-            throw new HongsError.Common(ex);
+            this.over ( );
+            throw  ex.toUnchecked( );
         }
 
         // 获取行内每列数据
@@ -120,7 +120,7 @@ public class Loop implements Iterator<Map<String,Object>> {
             return  row;
         } catch (  SQLException ex ) {
             this.over();
-            throw new HongsError.Common(new HongsException(0x10a6, ex));
+            throw new HongsUnchecked(0x10a6, ex);
         }
     }
 
@@ -132,7 +132,7 @@ public class Loop implements Iterator<Map<String,Object>> {
             db.closeResultSet( rs );
             db.closeStatement( ps );
         } catch (HongsException ex) {
-            throw new HongsError.Common(ex);
+            throw ex.toUnchecked( );
         } finally {
             td = null;
             md = null;

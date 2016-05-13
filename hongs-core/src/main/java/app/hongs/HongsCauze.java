@@ -4,25 +4,25 @@ package app.hongs;
  * 异常本地化工具
  * @author Hongs
  */
-public class HongsLocalized {
+public class HongsCauze {
 
+    private String    lang;
+    private String[]  opts;
     private final int code;
     private final String desc;
     private final Throwable that;
-    private String   lang;
-    private String[] opts;
 
-    public HongsLocalized(int code, String desc, Throwable that) {
-        this.code = code;
-        this.desc = desc;
-        this.that = that;
+    public HongsCauze(int errno, String error, Throwable cause) {
+        this.code  = errno;
+        this.desc  = error;
+        this.that  = cause;
     }
 
     /**
      * 获取代号
      * @return
      */
-    public int getCode() {
+    public int getErrno() {
         return this.code;
     }
 
@@ -30,7 +30,7 @@ public class HongsLocalized {
      * 获取描述
      * @return
      */
-    public String getDesc() {
+    public String getError() {
         return this.desc;
     }
 
@@ -46,19 +46,19 @@ public class HongsLocalized {
             codx   =  lang
                 .replaceAll  ("[/\\\\]", ".")
                 .replaceFirst("_error$", "" )
-              + "." + codx;
+                +"."+ codx ;
         }
         if (null  ==  desc) {
-            Throwable cause = that.getCause();
-            if (null != cause) {
-                if ( cause instanceof HongsCause) {
-                    return cause.getMessage();
+            Throwable erro = this.that.getCause();
+            if (null != erro) {
+                if (  erro instanceof HongsCause) {
+                    return erro.getMessage();
                 }
-                desx = cause.getClass().getName()
-                     +" "+ cause.getMessage();
+                desx  = erro.getClass().getName()
+                     +" "+ erro.getMessage();
             }
         }
-        return  codx +" "+ desx ;
+        return  codx +" "+ desx;
     }
 
     /**
@@ -69,7 +69,7 @@ public class HongsLocalized {
         CoreLocale trns;
         String ckey, dkey;
         String codx, desx;
-        String[]   optx;
+        String [ ] optx;
 
         /**
          * 在例如多线程环境下未初始化 Core 时
@@ -83,7 +83,7 @@ public class HongsLocalized {
         }
 
         trns = CoreLocale.getInstance("_error_").clone();
-        codx = "Ex"+Integer.toHexString(code);
+        codx = "Ex" +  Integer.toHexString(code);
         desx = desc != null ? desc : "";
         optx = opts != null ? opts : new String[0];
 
@@ -117,7 +117,7 @@ public class HongsLocalized {
             codx   =  lang
                 .replaceAll  ("[/\\\\]", ".")
                 .replaceFirst("_error$", "" )
-              + "." + codx ;
+                +"."+ codx ;
         }
         if (trns.containsKey(ckey)) {
             codx = trns.translate(ckey, codx);
@@ -125,7 +125,7 @@ public class HongsLocalized {
         if (trns.containsKey(dkey)) {
             desx = trns.translate(dkey, optx);
         } else {
-            Throwable cause = that.getCause();
+            Throwable cause = this.that.getCause( );
             if (null != cause && cause instanceof HongsCause) {
                 return  cause.getLocalizedMessage();
             }

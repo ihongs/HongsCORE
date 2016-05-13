@@ -1,6 +1,6 @@
 package app.hongs.jsp;
 
-import app.hongs.HongsError;
+import app.hongs.HongsUnchecked;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import java.io.IOException;
@@ -88,7 +88,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLEncoder.encode(str, "utf-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw   new   HongsError.Common ( ex );
+          throw  new HongsUnchecked.Common( ex );
       }
   }
 

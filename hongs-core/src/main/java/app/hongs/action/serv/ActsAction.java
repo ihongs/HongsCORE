@@ -6,6 +6,7 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsCause;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.ActionDriver;
@@ -88,6 +89,10 @@ public class ActsAction
     {
       senderr(helper, ex);
     }
+    catch (HongsUnchecked ex)
+    {
+      senderr(helper, ex);
+    }
     catch (HongsError ex)
     {
       senderr(helper, ex);
@@ -99,8 +104,8 @@ public class ActsAction
   {
     Throwable ta = (Throwable)ex;
     Throwable te = ta.getCause();
-    int    errno = ex.getCode( );
-    String errsn = ex.getDesc( );
+    int    errno = ex.getErrno();
+    String errsn = ex.getError();
     String error ;
 
     // 一般异常, 不记录日志
@@ -110,8 +115,8 @@ public class ActsAction
       if (/**/ ls == null || ls.length == 0)
       {
         HttpServletRequest rq = helper.getRequest();
-        String rp = ActionDriver.getRealPath(  rq );
-        ex.setLocalizedOptions(rp,ex.getDesc(  )  );
+        String rp = ActionDriver.getRealPath  (rq );
+        ex.setLocalizedOptions(rp, ex.getError( ) );
       }
     }
     else

@@ -22,9 +22,9 @@ public class Thumb extends IsFile {
         String rat = cc.getProperty("core.util.thumb.pick", "_bg:1*1");
         String map = cc.getProperty("core.util.thumb.zoom", "_lg:256*256,_md:128*128,_sm:64*64");
 
-        ext = Synt.declare(params.get("thumb.extn"), ext);
-        rat = Synt.declare(params.get("thumb.pick"), rat);
-        map = Synt.declare(params.get("thumb.zoom"), map);
+        ext = Synt.declare(params.get("thumb-extn"), ext);
+        rat = Synt.declare(params.get("thumb-pick"), rat);
+        map = Synt.declare(params.get("thumb-zoom"), map);
 
         try {
             String[][] a = app.hongs.util.sketch.Thumb.toThumbs(path, href, ext, rat, map);

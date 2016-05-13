@@ -40,6 +40,6 @@ public class Wrong extends HongsException {
         if ( null != name ) {
             rep2.put("_" , trns.translate(name));
         }
-        return trns.translate(getDesc( ), rep2 );
+        return trns.translate(getError(), rep2 );
     }
 }

@@ -7,6 +7,7 @@ import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
@@ -1673,7 +1674,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                 finder = that.getFinder();
                 reader = that.getReader();
             } catch ( HongsException ex ) {
-                throw new HongsError.Common(ex);
+                throw ex.toUnchecked(   );
             }
         }
 
@@ -1707,7 +1708,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                 }
                 return i < h;
             } catch (IOException ex) {
-                throw new HongsError.Common(ex);
+                throw new HongsUnchecked.Common(ex);
             }
         }
 
@@ -1721,7 +1722,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                 Document dox = reader.document( doc.doc );
                 return that.doc2Map(dox);
             } catch (IOException ex) {
-                throw new HongsError.Common(ex);
+                throw new HongsUnchecked.Common(ex);
             }
         }
 
@@ -1940,10 +1941,10 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                 if (phr != null) qp.setPhraseSlop       (phr);
 
                 Query  q2 = qp.parse(s);
-                if (w != null) q2.setBoost ( w);
-                return q2;
+                if ( w  != null) q2.setBoost(w);
+                return q2 ;
             } catch (ParseException ex) {
-                throw new HongsError.Common(ex);
+                throw new HongsUnchecked.Common(ex);
             }
         }
         @Override

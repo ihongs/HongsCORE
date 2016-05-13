@@ -52,15 +52,15 @@ public class ActionRunner {
     private static final ReadWriteLock ACTLOCK = new ReentrantReadWriteLock();
 
     public ActionRunner(String action, ActionHelper helper) throws HongsException {
-        Mathod m = getActions().get(action);
-        if ( m == null ) {
-            throw new HongsException(0x1104, "Can not find action '"+action+"'");
+        Mathod mt = getActions().get(action);
+        if (mt == null ) {
+            throw new HongsException(0x1104, "Can not find action '"+ action +"'");
         }
 
         this.action = action;
         this.helper = helper;
-        this.mclass = m.mclass;
-        this.method = m.method;
+        this.mclass = mt.mclass;
+        this.method = mt.method;
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
         helper.setAttribute(Cnst.RUNNER_ATTR , this);
@@ -75,7 +75,7 @@ public class ActionRunner {
         return object;
     }
 
-    public String getMetAnn() {
+    public String getMthAnn() {
         return method.getAnnotation(Action.class).value();
     }
 
@@ -163,6 +163,17 @@ public class ActionRunner {
         ant = name;
     }
 
+    /**
+     * 设置动作名
+     * 即用于此动作的虚拟动作名,
+     * getModule,getEntity,getHandle
+     * 可从此动作名分解出各部分.
+     * @param name
+     */
+    public void setAction(String name) {
+        act = name;
+    }
+
     public String getModule() throws HongsException {
         if (null != mod) {
             return  mod;
@@ -200,11 +211,12 @@ public class ActionRunner {
 
     /**
      * 获取动作名
-     * 如果有指定工作路径(ActionDriver.PATH)则返回工作动作名
+     * 外部有指定工作路径(ActionDriver.PATH)则返回工作动作名
+     * 同时可使用 setAction 进行设置
      * @return
      * @throws HongsException
      */
-    public String getAction( ) throws HongsException {
+    public String getAction() throws HongsException {
         if (null != act) {
             return  act;
         }

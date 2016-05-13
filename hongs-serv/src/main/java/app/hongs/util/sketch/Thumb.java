@@ -63,7 +63,11 @@ public class Thumb {
     public String pick(String suf, int w, int h) throws IOException {
         chkPathAndExtn();
 
-        Image img = ImageIO.read(new File(pth));
+        Image img = ImageIO.read ( new File(pth) );
+        if (null == img) {
+            throw new IOException("Can not read image '"+pth+"'");
+        }
+
         int xw = img.getWidth (null);
         int xh = img.getHeight(null);
         int zw = xh * w / h;

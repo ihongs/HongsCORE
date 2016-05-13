@@ -67,10 +67,10 @@ public class Article extends LuceneRecord {
 
         Map fs , ss;
         try {
-            fs =  getMveiw( ).getFields(  );
-            fs =  new HashMap ( fs);
+            fs = getMveiw().getFields();
+            fs = new  HashMap ( fs);
         } catch (HongsException ex) {
-            throw new HongsError.Common(ex);
+            throw ex.toUnchecked( );
         }
 
         // href,snap 等字段均仅需存储

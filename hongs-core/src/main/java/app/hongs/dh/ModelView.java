@@ -69,7 +69,7 @@ abstract public class ModelView {
             ftypez = FormSet.getInstance("default").getEnum("__types__");
             return  ftypez;
         } catch (HongsException e) {
-            throw new HongsError.Common ( e );
+            throw e.toUnchecked( );
         }
     }
 
@@ -81,7 +81,7 @@ abstract public class ModelView {
             dtypez = FormSet.getInstance("default").getEnum("__ables__");
             return  dtypez;
         } catch (HongsException e) {
-            throw new HongsError.Common ( e );
+            throw e.toUnchecked( );
         }
     }
 

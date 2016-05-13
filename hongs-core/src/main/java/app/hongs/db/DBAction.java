@@ -48,7 +48,7 @@ public class DBAction implements IAction, IActing {
             }
         }
         catch  (HongsException  ex ) {
-            int ec  = ex.getCode(  );
+            int ec  = ex.getErrno( );
             if (ec != 0x10e8 && ec != 0x10ea) {
                 throw ex;
             }

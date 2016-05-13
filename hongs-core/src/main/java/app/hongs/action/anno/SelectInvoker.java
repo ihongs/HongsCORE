@@ -66,7 +66,7 @@ public class SelectInvoker implements FilterInvoker {
             sup = new SelectHelper().addEnumsByForm(conf,form);
             sup.select ( rsp, mode );
         } catch (HongsException  ex) {
-            int  ec  = ex.getCode( );
+            int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea) {
                 throw  ex;
             }

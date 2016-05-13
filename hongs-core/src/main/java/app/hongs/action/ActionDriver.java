@@ -113,9 +113,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             //** 系统属性配置 **/
 
-            CoreConfig cnf = CoreConfig.getInstance();
+            CoreConfig cnf = CoreConfig.getInstance( );
             Core.SERVER_ID = cnf.getProperty("core.server.id" , "0");
-            cnf = CoreConfig.getInstance( "_begin_" );
+            cnf   = CoreConfig.getInstance( "_init_" );
 
             Map m = new HashMap();
             m.put("BASE_PATH", Core.BASE_PATH);

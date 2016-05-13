@@ -171,9 +171,9 @@ public class CmdletRunner
 
     /** 系统属性配置 **/
 
-    CoreConfig cnf = CoreConfig.getInstance();
+    CoreConfig cnf = CoreConfig.getInstance( );
     Core.SERVER_ID = cnf.getProperty("core.server.id" , "0");
-    cnf = CoreConfig.getInstance( "_begin_" );
+    cnf   = CoreConfig.getInstance( "_init_" );
 
     Map m = new HashMap();
     m.put("SERVER_ID", Core.SERVER_ID);
@@ -309,8 +309,11 @@ public class CmdletRunner
             return  CMDLETS;
         }
 
-        String[] pkgs = CoreConfig.getInstance("_begin_").getProperty("core.load.serv").split(";");
-        CMDLETS = getCmdlets( pkgs );
+        String[] pkgs = CoreConfig
+                .getInstance(    "_init_"    )
+                .getProperty("core.load.serv")
+                .split(";");
+        CMDLETS = getCmdlets(pkgs);
         return CMDLETS;
     }
 

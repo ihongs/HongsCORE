@@ -7,7 +7,7 @@ set KLASSPATH=%CLASSPATH%;%CORE_PATH%\lib\*;%CORE_PATH%\classes;%CORE_PATH%\lib\
 
 "%JAVA_PATH%" %JAVA_OPTS% ^
   -classpath "%KLASSPATH%"^
-  -Dlog4j.configurationFile="\\%CORE_PATH%\etc\log4j2.xml"^
+  -Dlog4j.configurationFile="\\%CORE_PATH%\etc\_init_.log4j2.xml"^
   -Dlogs.dir="\\%CORE_PATH%\var\log"^
   -Dtmps.dir="\\%CORE_PATH%\tmp\log"^
   app.hongs.cmdlet.CmdletRunner %*  ^

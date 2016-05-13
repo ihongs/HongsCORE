@@ -28,8 +28,8 @@ public class DissentAction extends DBAction {
     throws HongsException {
         try {
             super.create(helper);
-        } catch (HongsException ex) {
-        if (ex.getCode() == 0x104e) {
+        } catch (HongsException ex ) {
+        if (ex.getErrno() == 0x104e) {
             helper.fault("您已经举报过了, 请等候或查看处理结果");
         }
         }

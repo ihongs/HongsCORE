@@ -6,6 +6,7 @@ import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.action.ActionHelper;
 import app.hongs.cmdlet.anno.Cmdlet;
 import app.hongs.util.Clses;
@@ -97,6 +98,7 @@ public class CmdletRunner
        */
       String error = ta.getLocalizedMessage();
       if (! (ta instanceof HongsException)
+      &&  ! (ta instanceof HongsUnchecked)
       &&  ! (ta instanceof HongsError  ) )
       {
         CoreLocale lang = Core.getInstance(CoreLocale.class);

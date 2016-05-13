@@ -48,7 +48,7 @@ public class LuceneAction implements IAction, IActing {
             }
         }
         catch  (HongsException  ex ) {
-            int ec  = ex.getCode(  );
+            int ec  = ex.getErrno( );
             if (ec != 0x10e8 && ec != 0x10ea) {
                 throw ex;
             }
@@ -220,8 +220,8 @@ public class LuceneAction implements IAction, IActing {
         FormSet form = FormSet.getInstance(cnf);
         try {
             return form.getFormTranslated (ent);
-        } catch (HongsException ex) {
-        if (ex.getCode() == 0x10ea) {
+        } catch (HongsException ex ) {
+        if (ex.getErrno() == 0x10ea) {
             return null;
         } else {
             throw  ex  ;

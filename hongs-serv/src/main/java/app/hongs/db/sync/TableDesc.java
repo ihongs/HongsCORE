@@ -94,7 +94,7 @@ public class TableDesc {
                 }
             }
         } catch (HongsException ex) {
-            if (ex.getCode() == 0x1047) {
+            if (ex.getErrno() == 0x1047) {
                 String msg = ex.getMessage();
                 if (msg.startsWith("Ex1047: Table ") && msg.endsWith(" doesn't exist")) {
                     return desc;

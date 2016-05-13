@@ -194,6 +194,7 @@ public class AuthKit {
     /**
      * 自运营登录
      * @param ah
+     * @param place
      * @param appid
      * @param usrid
      * @param uname 名称
@@ -202,27 +203,36 @@ public class AuthKit {
      * @return
      * @throws HongsException
      */
-    public static Map userSign(ActionHelper ah, String appid, String usrid,
-            String uname, String uhead, long utime)
+    public static Map userSign(ActionHelper ah,
+            String place, String appid, String usrid,
+            String uname, String uhead,  long  utime)
     throws HongsException {
-        HttpSession sd    = ah.getRequest().getSession(true);
-        String      sesid = sd.getId();
-        long        stime = System.currentTimeMillis()/1000 ;
+        HttpSession sd = ah.getRequest().getSession();
+        String   sesid = sd.getId();
+        long     stime = System.currentTimeMillis() / 1000;
 
         // 设置会话
-        sd.setAttribute(  "uid", usrid);
+        if (place != null && ! place.isEmpty()) {
+            Set s  = (Set) sd.getAttribute( Cnst.USL_SES );
+            if (s == null) {
+                s  = new HashSet();
+            }   s.add  (  place  );
+            sd.setAttribute(Cnst.USL_SES, s);
+        }
+        sd.setAttribute(Cnst.UST_SES, stime);
+        sd.setAttribute(Cnst.UID_SES, usrid);
         sd.setAttribute("appid", appid);
-        sd.setAttribute("stime", stime);
         sd.setAttribute("uname", uname);
         sd.setAttribute("uhead", uhead);
         sd.setAttribute("utime", utime);
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(  "uid", usrid);
-        rd.put("appid", appid);
+        rd.put(Cnst.UID_SES, usrid);
+        rd.put(Cnst.UST_SES, stime);
+        rd.put(Cnst.USL_SES, place);
         rd.put("sesid", sesid);
-        rd.put("stime", stime);
+        rd.put("appid", appid);
         rd.put("uname", uname);
         rd.put("uhead", uhead);
         rd.put("utime", utime);
@@ -233,8 +243,8 @@ public class AuthKit {
         tb.delete("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
         Map ud = new HashMap();
         ud.put("user_id", usrid);
-        ud.put("appid", appid);
         ud.put("sesid", sesid);
+        ud.put("appid", appid);
         ud.put("ctime", stime);
         tb.insert(ud);
 
@@ -244,6 +254,7 @@ public class AuthKit {
     /**
      * 第三方登录
      * @param ah
+     * @param place
      * @param appid
      * @param opnid
      * @param uname 名称
@@ -252,8 +263,9 @@ public class AuthKit {
      * @return
      * @throws HongsException
      */
-    public static Map openSign(ActionHelper ah, String appid, String opnid,
-            String uname, String uhead, long utime)
+    public static Map openSign(ActionHelper ah,
+            String place, String appid, String opnid,
+            String uname, String uhead,  long  utime)
     throws HongsException {
         DB    db = DB.getInstance("member");
         Table tb = db.getTable("user_open");
@@ -262,6 +274,7 @@ public class AuthKit {
                      .select("user_id")
                      .one   (   );
 
+        // 记录关联
         String usrid;
         if (ud != null && !ud.isEmpty()) {
             usrid = ud.get("user_id").toString();
@@ -281,7 +294,7 @@ public class AuthKit {
             db.getTable("user_open").insert(ud );
         }
 
-        return userSign(ah, appid, usrid, uname, uhead, utime);
+        return userSign(ah, place, appid, usrid, uname, uhead, utime);
     }
 
 }

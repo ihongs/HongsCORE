@@ -2,8 +2,8 @@ package app.hongs.cmdlet.serv;
 
 import app.hongs.Core;
 import app.hongs.CoreLogger;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.CmdletRunner;
 import app.hongs.cmdlet.anno.Cmdlet;
@@ -526,7 +526,7 @@ public class SystemCmdlet {
 
             return null;
         } catch (ParseException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsUnchecked.Common(ex);
         }
     }
 

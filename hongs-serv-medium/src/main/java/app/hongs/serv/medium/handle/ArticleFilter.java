@@ -129,7 +129,7 @@ public class ArticleFilter extends ActionDriver implements Filter {
                     break;
                 }
             } catch (HongsException ex) {
-                throw new HongsError.Common(ex);
+                throw ex.toUnchecked( );
             }
 
             fil = new File(Core.BASE_PATH + "/medium/action/article/%"+tpl+".jsp");

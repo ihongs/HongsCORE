@@ -98,7 +98,7 @@ public class PresetInvoker implements FilterInvoker {
             Dict.putAll(rxqd, reqd);
             reqd.putAll(rxqd  /**/);
         } catch (HongsException ex) {
-            int ec  = ex.getCode( );
+            int ec  = ex.getErrno();
             if (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10eb) {
                 throw ex ;
             }

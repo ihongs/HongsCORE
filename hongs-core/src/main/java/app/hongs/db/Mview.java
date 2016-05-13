@@ -62,7 +62,7 @@ public class Mview extends Model {
         NaviMap navi = NaviMap.getInstance(db.name);
         return  navi.getMenu(db.name +"/"+ table.name +"/");
         } catch (HongsException ex) {
-            if (ex.getCode() != 0x10e0) {
+            if (ex.getErrno() != 0x10e0) {
                 throw ex;
             }
             return  null;
@@ -72,10 +72,10 @@ public class Mview extends Model {
     private Map getForm() throws HongsException {
         try {
         FormSet form = FormSet.getInstance(db.name);
-        return  form.getFormTranslated(/**/table.name /**/);
+        return  form.getFormTranslated(/**/table.name/**/ );
         } catch (HongsException ex) {
-            if (ex.getCode() != 0x10e8
-            &&  ex.getCode() != 0x10ea) {
+            if (ex.getErrno() != 0x10e8
+            &&  ex.getErrno() != 0x10ea) {
                 throw ex;
             }
             return  null;

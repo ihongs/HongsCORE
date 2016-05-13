@@ -10,7 +10,6 @@ import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.serv.auth.AuthKit;
 import app.hongs.serv.member.User;
-import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.sketch.Thumb;
 import java.io.File;
@@ -82,7 +81,7 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
         sd.put("dept_id", "PUBLIC");
         mod.db.getTable("user_dept").insert(sd);
 
-        helper.reply(AuthKit.userSign(helper, appid, usrid, uname, uhead, utime));
+        helper.reply(AuthKit.userSign(helper, null, appid, usrid, uname, uhead, utime));
     }
 
     /**

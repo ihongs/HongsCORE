@@ -499,14 +499,14 @@ public class NaviMap
    */
   public Set<String> getRoleSet() throws HongsException {
       if (session == null || session.length() == 0) {
-//        throw new HongsException(0x10e2, "Can not get roles for menu: "+name);
+//        throw new HongsException(0x10e2, "Can not get roles for menu: " + name);
           return null;
       }
       if (session.startsWith("@")) {
-          return getInstance(session.substring( 1 )).getRoleSet();
+          return getInstance(session.substring(1)).getRoleSet();
       } else
       if (session.startsWith("!")) {
-          return (Set) Core.getInstance( session.substring( 1 ) );
+          return (Set) Core.getInstance( session.substring(1) );
       } else
       {
           return (Set) Core.getInstance( ActionHelper.class ).getSessibute(session);
@@ -587,8 +587,8 @@ public class NaviMap
     try {
       lang = CoreLocale.getInstance(name).clone();
     }
-    catch (app.hongs.HongsError e ) {
-      if  (   e.getCode() != 0x2a ) {
+    catch (app.hongs.HongsError e) {
+      if  (  e.getErrno() != 0x2a) {
         throw e;
       }
       // 语言文件不存在则拿一个空代替

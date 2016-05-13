@@ -3,6 +3,8 @@ package app.hongs;
 /**
  * 通用异常类
  *
+ * 与 HongsUnchecked 不同, 必须 throws
+ *
  * <h3>取值范围:</h3>
  * <pre>
  * 核心: 0x1000~0xFFFF (4096~65535)
@@ -13,14 +15,14 @@ package app.hongs;
  */
 public class HongsException extends Exception implements HongsCause {
 
-    protected HongsLocalized that;
+    protected final HongsCauze that;
 
-    public HongsException(int code, String desc, Throwable cause) {
+    public HongsException(int errno, String error, Throwable cause) {
         super(cause);
 
-        that = new HongsLocalized(code, desc, this);
+        that = new HongsCauze(errno, error, this);
 
-        if (code < 0x1000 || code > 0xFFFFF) {
+        if (errno < 0x1000 || errno > 0xFFFFF) {
             throw new HongsError(0x22,
                 "Exception code must be from 0x1000(65536) to 0xFFFFF(1048575).");
         }
@@ -38,14 +40,21 @@ public class HongsException extends Exception implements HongsCause {
         this(code, null, null);
     }
 
-    @Override
-    public int getCode() {
-        return that.getCode();
+    public HongsUnchecked toUnchecked() {
+        HongsUnchecked ex = new HongsUnchecked(this.getErrno(), this.getError(), this);
+        ex.setLocalizedOptions(this.getLocalizedOptions());
+        ex.setLocalizedSection(this.getLocalizedSection());
+        return ex;
     }
 
     @Override
-    public String getDesc() {
-        return that.getDesc();
+    public int getErrno() {
+        return that.getErrno();
+    }
+
+    @Override
+    public String getError() {
+        return that.getError();
     }
 
     @Override
@@ -93,14 +102,14 @@ public class HongsException extends Exception implements HongsCause {
      * 常规错误(无需错误代码)
      */
     public static class Common extends HongsException {
-        public Common(String desc, Throwable cause) {
-            super(COMMON, desc, cause);
+        public Common(String error, Throwable cause) {
+            super(COMMON, error, cause);
         }
         public Common(Throwable cause) {
             super(COMMON, cause);
         }
-        public Common(String desc) {
-            super(COMMON, desc );
+        public Common(String error) {
+            super(COMMON, error);
         }
     }
 
@@ -108,14 +117,14 @@ public class HongsException extends Exception implements HongsCause {
      * 通告错误(无需错误代码)
      */
     public static class Notice extends HongsException {
-        public Notice(String desc, Throwable cause) {
-            super(NOTICE, desc, cause);
+        public Notice(String error, Throwable cause) {
+            super(NOTICE, error, cause);
         }
         public Notice(Throwable cause) {
             super(NOTICE, cause);
         }
-        public Notice(String desc) {
-            super(NOTICE, desc );
+        public Notice(String error) {
+            super(NOTICE, error);
         }
     }
 

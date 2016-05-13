@@ -171,8 +171,8 @@ public class FetchCase
     caze.joinList   = new LinkedHashSet();
 
     // 深度克隆关联列表
-    for   (   FetchCase fc : joinList   ) {
-        caze.joinList.add( fc.clone( )  );
+    for (  FetchCase fc : joinList  ) {
+        caze.joinList.add(fc.clone());
     }
 
     return caze;

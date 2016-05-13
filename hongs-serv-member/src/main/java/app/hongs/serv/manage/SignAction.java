@@ -33,36 +33,22 @@ public class SignAction {
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
                password = AuthKit.getCrypt(password);
-        String captcha  = Synt.declare(ah.getParameter("captcha"), "").toUpperCase();
-        String captcode = Synt.declare(ah.getSessibute("captcha_code"), "");
-        long   capttime = Synt.declare(ah.getSessibute("captcha_time"), 0L);
 
-        // 人机校验
-        if (captcode.equals("") || !captcode.equals(captcha)) {
-            Map m = new HashMap();
-            Map e = new HashMap();
-            CoreLocale lang = CoreLocale.getInstance ("member");
-            m.put("captcha" , new Wrong("core.captcha.invalid").setLocalizedSection("member"));
-            e.put("errs", new Wrongs(m).getErrors());
-            e.put("msg", lang.translate("core.sign.in.invalid"));
-            e.put("ok", false);
-            ah.reply(e);
-            return;
-        }
-        if (capttime < System.currentTimeMillis( ) - 600000 ) {
-            Map m = new HashMap();
-            Map e = new HashMap();
-            CoreLocale lang = CoreLocale.getInstance ("member");
-            m.put("captcha" , new Wrong("core.captcha.timeout").setLocalizedSection("member"));
-            e.put("errs", new Wrongs(m).getErrors());
-            e.put("msg", lang.translate("core.sign.in.invalid"));
-            e.put("ok", false);
-            ah.reply(e);
-            return;
-        }
-        // 销毁验证码
-        ah.setSessibute("captcha_code", null);
-        ah.setSessibute("captcha_time", null);
+//        // 人机校验
+//        String captcha  = Synt.declare(ah.getParameter("captcha"), "").toUpperCase();
+//        String captcode = Synt.declare(ah.getSessibute("captcha_code"), "");
+//        long   capttime = Synt.declare(ah.getSessibute("captcha_time"), 0L);
+//        if (capttime < System.currentTimeMillis( ) - 600000 ) {
+//            ah.reply(getWrong("captcha", "core.captcha.timeout"));
+//            return;
+//        }
+//        if (captcode.equals("") || !captcode.equals(captcha)) {
+//            ah.reply(getWrong("captcha", "core.captcha.invalid"));
+//            return;
+//        }
+//        // 销毁验证码
+//        ah.setSessibute("captcha_code", null);
+//        ah.setSessibute("captcha_time", null);
 
         DB        db = DB.getInstance("member");
         Table     tb = db.getTable("user");
@@ -75,26 +61,12 @@ public class SignAction {
             .select ("password, id, name, head, mtime, state")
             .where  ("username = ?", username);
         ud = db.fetchLess(fc);
-        if ( ud.isEmpty(  ) ) {
-            Map m = new HashMap();
-            Map e = new HashMap();
-            CoreLocale lang = CoreLocale.getInstance( "member" );
-            m.put("username", new Wrong("core.username.invalid").setLocalizedSection("member"));
-            e.put("errs", new Wrongs(m).getErrors());
-            e.put("msg", lang.translate("core.sign.in.invalid"));
-            e.put("ok", false);
-            ah.reply(e);
+        if ( ud.isEmpty() ) {
+            ah.reply(getWrong("username", "core.username.invalid"));
             return;
         }
         if (! password.equals( ud.get("password") )) {
-            Map m = new HashMap();
-            Map e = new HashMap();
-            CoreLocale lang = CoreLocale.getInstance( "member" );
-            m.put("password", new Wrong("core.password.invalid").setLocalizedSection("member"));
-            e.put("errs", new Wrongs(m).getErrors());
-            e.put("msg", lang.translate("core.sign.in.invalid"));
-            e.put("ok", false);
-            ah.reply(e);
+            ah.reply(getWrong("passowrd", "core.password.invalid"));
             return;
         }
 
@@ -119,7 +91,7 @@ public class SignAction {
             return;
         }
 
-        ah.reply(AuthKit.userSign(ah, appid, usrid, uname, uhead, utime));
+        ah.reply(AuthKit.userSign(ah, place, appid, usrid, uname, uhead, utime));
     }
 
     @Action("delete")
@@ -142,6 +114,17 @@ public class SignAction {
           .invalidate();
 
         ah.reply("");
+    }
+
+    protected final Map getWrong(String k, String w) throws HongsException {
+        Map m = new HashMap();
+        Map e = new HashMap();
+        CoreLocale lang = CoreLocale.getInstance ("member") ;
+        m.put(k, new Wrong(w).setLocalizedSection("member"));
+        e.put("errs", new Wrongs(m).getErrors());
+        e.put("msg", lang.translate("core.sign.in.invalid"));
+        e.put("ok", false);
+        return e;
     }
 
 }

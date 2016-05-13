@@ -80,9 +80,11 @@ public class Cnst {
 
     //** 会话参数 **/
 
-    public static final String  TIM_SES =  "tim";
-
     public static final String  UID_SES =  "uid";
+
+    public static final String  UST_SES =  "ust"; // 最后访问时间
+
+    public static final String  USL_SES =  "usl"; // 已登录的区域
 
     public static final String  ADM_UID =  "1";
 

@@ -5,7 +5,6 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
@@ -409,7 +408,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 try {
                     rd  = that.getRequestData();
                 } catch (HongsException ex) {
-                    throw new HongsError.Common( ex );
+                    throw ex.toUnchecked( );
                 }
                 if (rd != null && !rd.isEmpty()) {
                     sb.append("\r\n\tRequest     : ")

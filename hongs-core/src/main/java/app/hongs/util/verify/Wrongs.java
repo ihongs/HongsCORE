@@ -51,7 +51,7 @@ public class Wrongs extends HongsException {
                 sb.append(et.getValue()).append("\r\n");
             }
         } catch (HongsException ex) {
-            throw new HongsError.Common ( ex );
+            throw ex.toUnchecked( );
         }
         return sb.toString().trim();
     }

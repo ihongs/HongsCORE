@@ -1,7 +1,7 @@
 package app.hongs.util.sketch;
 
 import app.hongs.CoreConfig;
-import app.hongs.HongsError;
+import app.hongs.HongsUnchecked;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Color;
@@ -19,7 +19,7 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
-public class Vcode {
+public class Capts {
 
     private int width = 160;
     private int height = 40;
@@ -42,9 +42,9 @@ public class Vcode {
     private String          code  =  null;
     private BufferedImage   buff  =  null;
 
-    public static Vcode captcha(int h, String b, String f, String e) {
+    public static Capts captcha(int h, String b, String f, String e) {
         if (h < 40 || h > 200) {
-            throw new HongsError.Common("h must be 40 to 200 px");
+            throw new HongsUnchecked.Common("h must be 40 ~ 200 px");
         }
 
         // 获取配置
@@ -64,7 +64,7 @@ public class Vcode {
         Color  fc = "".equals(f) ? new Color(0x000000) : new Color(Integer.parseInt(f, 16));
 
         // 构建实例
-        Vcode vc = new Vcode( );
+        Capts vc = new Capts( );
         vc.setSize (w , h );
         vc.setCodeCount(cn);
         vc.setMaskCount(mn);
@@ -142,15 +142,15 @@ public class Vcode {
         try {
             InputStream is;
             if (fontFile.startsWith("!")) {
-                is = Vcode.class.getResourceAsStream(fontFile.substring(1));
+                is = Capts.class.getResourceAsStream(fontFile.substring(1));
             } else {
                 is =  new  FileInputStream( new File(fontFile));
             }
             font = Font.createFont ( Font.TRUETYPE_FONT , is ) ;
         } catch (FontFormatException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsUnchecked.Common(ex);
         } catch (IOException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsUnchecked.Common(ex);
         }
 
         for(int i  = 0; i < codeCount; i ++) {

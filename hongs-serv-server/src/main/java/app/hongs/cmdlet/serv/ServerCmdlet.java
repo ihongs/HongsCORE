@@ -1,8 +1,6 @@
 package app.hongs.cmdlet.serv;
 
-import app.hongs.Cnst;
 import app.hongs.Core;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.anno.Cmdlet;
@@ -123,8 +121,8 @@ public class ServerCmdlet {
             }
             try {
                 server.stop();
-            } catch (Exception ex) {
-                throw new HongsError.Common(ex);
+            } catch ( Exception ex) {
+                throw new Error(ex);
             } finally {
                 ppid.delete();
             }

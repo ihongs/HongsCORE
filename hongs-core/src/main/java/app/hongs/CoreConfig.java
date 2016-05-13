@@ -104,7 +104,7 @@ public class CoreConfig
     try {
         this.load(name);
     } catch (app.hongs.HongsError e) {
-        if  (  e.getCode( ) != 0x2a) {
+        if  (  e.getErrno() != 0x2a) {
             throw e;
         }
     }

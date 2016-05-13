@@ -14,7 +14,7 @@ import java.util.jar.JarFile;
 /**
  * 通过包名获取类名集合
  * <p>
- * 此类被用于处理 _begin_.properties 中 core.load.serv 下 .* 后缀的包名扩展类名;
+ * 此类被用于处理 _init_.properties 中 core.load.serv 下 .* 后缀的包下的所有类名;
  * 但有个缺陷, 比如 app.demo.action 包存在于两个不同包下, 只有一个包的类会被找到;
  * 这是因为 ClassLoader 的 getResource() 并不会把所有不同 jar 中的同名资源都返回;
  * 2016/01/10 已修复以上缺陷, 通过 getResources() 可获取全部

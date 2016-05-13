@@ -24,7 +24,6 @@ mkdir     "$PACK_PATH/var/tmp"
 
 cp -f     "$WORK_PATH/hongs-serv-server/"*.bat "$PACK_PATH/"
 cp -f     "$WORK_PATH/hongs-serv-system/"*.bat "$PACK_PATH/"
-cp -f     "$PACK_PATH/lib/classes/log4j2.xml" "$PACK_PATH/etc/"
 
 chmod +x  "$PACK_PATH/bin/"*
 

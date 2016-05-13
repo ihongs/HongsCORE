@@ -267,8 +267,11 @@ public class ActionRunner {
         Lock wlock = ACTLOCK.writeLock();
         wlock.lock();
         try {
-            String[] pkgs = CoreConfig.getInstance("_begin_").getProperty("core.load.serv").split(";");
-            ACTIONS = getActions( pkgs );
+            String[] pkgs = CoreConfig
+                    .getInstance(    "_init_"    )
+                    .getProperty("core.load.serv")
+                    .split(";");
+            ACTIONS = getActions(pkgs);
             return ACTIONS;
         } finally {
             wlock.unlock();

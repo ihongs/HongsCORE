@@ -119,7 +119,7 @@ INSERT INTO `a_member_user_dept` VALUES ('HY9XQN2L000WGH9Q01','HYPS1ROT007T1AG60
 DROP TABLE IF EXISTS `a_member_user_role`;
 CREATE TABLE `a_member_user_role` (
   `user_id` CHAR(20) NOT NULL,
-  `role` VARCHAR(100) NOT NULL,
+  `role` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`user_id`,`role`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );

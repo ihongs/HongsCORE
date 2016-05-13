@@ -10,4 +10,4 @@ CREATE TABLE IF NOT EXISTS `a_common_record` (
     `ctime` INT UNSIGNED (11) DEFAULT 0,
     `xtime` INT UNSIGNED (11) DEFAULT 0,
     PRIMARY KEY (`id`)
-)
+);

@@ -4,18 +4,19 @@ package app.hongs;
  * 异常本地化工具
  * @author Hongs
  */
-public class HongsCauze {
+public final class HongsCauze {
 
-    private String    lang;
-    private String[]  opts;
-    private final int code;
-    private final String desc;
+    private final int       code;
+    private final String    desc;
     private final Throwable that;
 
-    public HongsCauze(int errno, String error, Throwable cause) {
-        this.code  = errno;
-        this.desc  = error;
-        this.that  = cause;
+    private String   lang;
+    private String[] opts;
+
+    HongsCauze( int errno, String error, Throwable cause ) {
+        this.code = errno;
+        this.desc = error;
+        this.that = cause;
     }
 
     /**

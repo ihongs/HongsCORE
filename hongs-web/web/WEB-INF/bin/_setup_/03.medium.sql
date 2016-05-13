@@ -86,7 +86,7 @@ CREATE TABLE `a_medium_segment` (
 CREATE INDEX `a_medium_segment_sect` ON `a_medium_segment` (`sect_id`);
 CREATE INDEX `a_medium_segment_link` ON `a_medium_segment` (`link_id`);
 CREATE INDEX `a_medium_segment_type` ON `a_medium_segment` (`sect`);
-CREATE INDEX `a_medium_segment_kind` ON `a_medium_segment` (`link`);
+CREATE INDEX `a_medium_segment_item` ON `a_medium_segment` (`link`);
 CREATE INDEX `a_medium_segment_mtime` ON `a_medium_segment` (`mtime`);
 CREATE INDEX `a_medium_segment_seria` ON `a_medium_segment` (`seria`);
 CREATE UNIQUE INDEX `UK_a_medium_segment_link` ON `a_medium_segment` (`link_id`,`sect_id`,`link`,`sect`);

@@ -217,7 +217,9 @@ public class LuceneAction implements IAction, IActing {
     }
 
     private Map getForm() throws HongsException {
-        FormSet form = FormSet.getInstance(cnf);
+        String  cuf  = FormSet.hasConfFile(cnf + "/" + ent)
+                       ? cnf + "/" + ent : cnf ;
+        FormSet form = FormSet.getInstance(cuf);
         try {
             return form.getFormTranslated (ent);
         } catch (HongsException ex ) {
@@ -230,8 +232,10 @@ public class LuceneAction implements IAction, IActing {
     }
 
     private Map getMenu() throws HongsException {
-        NaviMap navi = NaviMap.getInstance(cnf);
-        return  navi.getMenu(cnf+"/"+ent+"/" );
+        String  cuf  = FormSet.hasConfFile(cnf + "/" + ent)
+                       ? cnf + "/" + ent : cnf ;
+        NaviMap navi = NaviMap.getInstance(cuf);
+        return  navi.getMenu( cnf+"/"+ent+"/" );
     }
 
 }

@@ -10,7 +10,13 @@
             <div class="col-md-6 center-block">
                 <div class="form-group">
                     <label class="control-label">名称</label>
-                    <input class="form-control" name="name" type="text" required="required" placeholder="输入名字用以作为菜单显示"/>
+                    <input class="form-control" name="name" type="text" required="required" placeholder="请输入名字用以作为菜单显示"/>
+                </div>
+                <div class="form-group dont-close">
+                    <label class="control-label">图标</label>
+                    <input type="hidden" name="head" value="" class="form-ignored"/>
+                    <input type="file" name="head" class="form-control" required="required" data-toggle="fileinput" accept="image/*"/>
+                    <p class="help-block">缩略图比例 1:1, 推荐分辨率 64*64 到 256*256 (像素)</p>
                 </div>
                 <div class="form-group">
                     <label class="control-label">权重</label>

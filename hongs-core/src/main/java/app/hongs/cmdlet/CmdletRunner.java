@@ -170,9 +170,14 @@ public class CmdletRunner
     }
 
     // 项目 url 须以 / 开头, 如有缺失则自动补全
-    if (Core.BASE_HREF.length( ) != 0
-    && !Core.BASE_HREF.startsWith("/")) {
-        Core.BASE_HREF = "/" + Core.BASE_HREF ;
+    if (Core.BASE_HREF.length() != 0 ) {
+        if (Core.BASE_HREF.startsWith("/") == false) {
+            Core.BASE_HREF = "/" + Core.BASE_HREF  ;
+        }
+        if (Core.BASE_HREF.  endsWith("/") == true ) {
+            Core.BASE_HREF = Core.BASE_HREF.substring(0 ,
+                             Core.BASE_HREF.length() -1);
+        }
     }
 
     /** 系统属性配置 **/

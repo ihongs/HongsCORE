@@ -38,6 +38,7 @@
                 <h3>权限设置</h3>
                 <div class="form-group" data-fn="roles..role" data-ft="_checkset" data-vk="name" data-tk="disp" data-vl="rols" data-tl="disp">
                 </div>
+                <input type="hidden" name="roles..role" value="handle"/>
             </div>
         </div>
         <div>
@@ -49,14 +50,14 @@
 <script type="text/javascript">
     (function($) {
         var context = $("#member-user-form");
-        
+
         // 修改时口令变为选填
         context.on("loadOver", function() {
             if ($(this).find("[name=id]").val()) {
                 $(this).find(":password").removeAttr("required");
             }
         });
-        
+
         // 选择与之关联的权限
         context.on("change", "[name='roles..role']", function() {
             var area = $(this).closest(".form-group");

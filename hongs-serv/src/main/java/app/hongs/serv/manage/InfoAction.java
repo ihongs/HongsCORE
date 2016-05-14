@@ -27,8 +27,8 @@ import java.util.Set;
  * 管理信息
  * @author Hongs
  */
-@Action("manage/disk")
-public class DiskAction {
+@Action("manage/info")
+public class InfoAction {
 
     @Action("retrieve")
     public void retrieve(ActionHelper helper) throws HongsException {
@@ -105,11 +105,6 @@ public class DiskAction {
         }
 
         helper.reply("", rsp);
-    }
-
-    @Action("delete")
-    public void delete(ActionHelper hleper) {
-
     }
 
     private static Map  getAllSize(File d) {

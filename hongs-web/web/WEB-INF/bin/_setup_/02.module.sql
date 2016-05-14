@@ -9,6 +9,7 @@ CREATE TABLE `a_module_unit` (
   `id` CHAR(20) NOT NULL,
   `pid` CHAR(20) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
+  `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
   `snum` UNSIGNED INT(11) DEFAULT '0',
   `ctime` UNSIGNED INT(11) DEFAULT NULL,

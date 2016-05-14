@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <rsname>@manage</rsname>
+    <menu disp="管理首页" href="common/menu.act?m=manage_base">
+        <menu disp="首页" href="manage/#global" hrel="manage/global/main.html"></menu>
+        <menu disp="系统信息" href="manage/#global.info" hrel="manage/global/info.html">
+        </menu>
+        <menu disp="文件管理" href="manage/#global.file" hrel="manage/global/file.html">
+        </menu>
+    </menu>
+</root>

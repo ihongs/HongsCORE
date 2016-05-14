@@ -300,7 +300,7 @@
 
     function setAllCharts(ec, et) {
         $.hsAjax({
-            url: "manage/disk/retrieve.act",
+            url: "manage/info/retrieve.act",
             dataType: "json",
             success: function(rst) {
                 var box;
@@ -358,7 +358,7 @@
                         return;
                     }
                     $.hsAjax({
-                        url: "manage/disk/retrieve.act?rb=run_info",
+                        url: "manage/info/retrieve.act?rb=run_info",
                         dataType: "json",
                         success: function(rst) {
                             opts = getLneOption(rst.info.run_info, "运行", rst.info.now_msec);
@@ -370,7 +370,7 @@
         });
     }
 
-    self.diskInfoInit = function() {
+    self.infoInit = function() {
         require.config({
             paths: {
                 echarts: hsFixUri('static/addons/echarts')

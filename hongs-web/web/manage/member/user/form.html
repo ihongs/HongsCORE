@@ -9,8 +9,8 @@
         <div class="row">
             <div class="col-md-6">
                 <div class="form-group">
-                    <label class="control-label">邮箱</label>
-                    <input type="email" name="username" class="form-control" required="required" data-unique="manage/member/user/unique.act?id=${id}"/>
+                    <label class="control-label">账号</label>
+                    <input type="text" name="username" class="form-control" required="required" data-unique="manage/member/user/unique.act?id=${id}"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">口令</label>
@@ -35,10 +35,10 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <h3>权限设置</h3>
+                <h3><i class="glyphicon glyphicon-th-list"></i> 权限设置</h3>
                 <div class="form-group" data-fn="roles..role" data-ft="_checkset" data-vk="name" data-tk="disp" data-vl="rols" data-tl="disp">
                 </div>
-                <input type="hidden" name="roles..role" value="handle"/>
+                <input type="hidden" name="roles..role" value="handle" class="form-ignored"/>
             </div>
         </div>
         <div>
@@ -82,4 +82,9 @@
             }
         });
     })(jQuery);
+    function hsGetParam (url, name) {
+    var val = hsGetParams(url, name);
+    if (val.length) return val.pop();
+    else            return "";
+}
 </script>

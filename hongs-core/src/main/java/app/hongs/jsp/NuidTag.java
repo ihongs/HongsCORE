@@ -31,7 +31,7 @@ public class NuidTag extends SimpleTagSupport {
       JspFragment f = getJspBody();
       if (f != null) f.invoke(out);
     } catch (java.io.IOException ex) {
-      throw new JspException("Error in SuidTag", ex);
+      throw new JspException("Error in NuidTag", ex);
     }
   }
 

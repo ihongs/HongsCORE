@@ -30,7 +30,9 @@ CREATE TABLE `a_medium_article` (
   `count_comment` UNSIGNED INT(11) DEFAULT '0',
   `score_consent` UNSIGNED INT(11) DEFAULT '0',
   `means_consent` UNSIGNED INT(11) DEFAULT '0',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`insp_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `a_medium_article_user` ON `a_medium_article` (`user_id`);
@@ -107,7 +109,9 @@ CREATE TABLE `a_medium_comment` (
   `ctime` UNSIGNED INT(11) DEFAULT NULL,
   `mtime` UNSIGNED INT(11) DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`mate_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `a_medium_comment_prev` ON `a_medium_comment` (`pid`);
@@ -134,7 +138,8 @@ CREATE TABLE `a_medium_dissent` (
   `mtime` UNSIGNED INT(11) DEFAULT NULL,
   `cause` TINYINT(2) DEFAULT '0',
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `a_medium_dissent_user` ON `a_medium_dissent` (`user_id`);
@@ -160,7 +165,8 @@ CREATE TABLE `a_medium_consent` (
   `mtime` UNSIGNED INT(11) DEFAULT NULL,
   `score` TINYINT(2) DEFAULT '1',
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `a_medium_consent_user` ON `a_medium_consent` (`user_id`);
@@ -185,7 +191,8 @@ CREATE TABLE `a_medium_browses` (
   `link` CHAR(20) NOT NULL,
   `ctime` UNSIGNED INT(11) DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `a_medium_browses_sess` ON `a_medium_browses` (`sess_id`);

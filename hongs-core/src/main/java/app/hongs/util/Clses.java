@@ -83,7 +83,7 @@ public class Clses {
         Set<String> names = new HashSet();
         File[]      files = new File(root + path).listFiles();
 
-        CoreLogger.debug("Package "+path+" in dir "+root+"" );
+//      CoreLogger.debug("Package "+path+" in dir "+root+"" );
 
         for (File file : files) {
             if (! file.isDirectory()) {
@@ -107,7 +107,7 @@ public class Clses {
         Set<String> names = new HashSet();
         int         pathl = 1 + path.length();
 
-        CoreLogger.debug("Package " +path+ " in jar " +root+ "" );
+//      CoreLogger.debug("Package " +path+ " in jar " +root+ "" );
 
         Enumeration<JarEntry> items = new JarFile(root).entries();
         while ( items.hasMoreElements( )) {

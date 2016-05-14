@@ -1,4 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.action.ActionDriver"%>
 <%@page import="app.hongs.db.DB"%>
@@ -14,6 +13,7 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="../Functions.jsp"%>
 <%
     Article     art = Article.getInstance ("default");

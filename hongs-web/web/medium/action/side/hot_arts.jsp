@@ -1,15 +1,15 @@
-
 <%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.db.DB"%>
 <%@page import="app.hongs.db.FetchCase"%>
 <%@page import="app.hongs.db.Model"%>
 <%@page import="app.hongs.db.Table"%>
+<%@page import="app.hongs.db.link.Loop"%>
 <%@page import="app.hongs.serv.medium.ABaseModel"%>
 <%@page import="java.util.HashSet"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     List<Map> getHotArts(Model mod, String sid) throws HongsException {
         Table  sec = mod.db.getTable("section");
@@ -20,10 +20,10 @@
         
         do {
             Set<String> sidx = new HashSet();
-            DB.Roll roll = sec.fetchCase()
+            Loop roll = sec.fetchCase()
                 .where  ("pid IN (?)", sidz)
                 .select ("id")
-                .rol    ();
+                .oll    ();
             Map row;
             while (roll.hasNext()) {
                 row = roll.next();

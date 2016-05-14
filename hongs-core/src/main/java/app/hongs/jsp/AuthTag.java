@@ -53,26 +53,27 @@ public class AuthTag extends BodyTagSupport {
 
       if (null != body) {
         String[] arr = body.getString().trim()
-                      .split("<!--ELSE-->", 2);
+                      .split("\\{ELSE\\}" , 2);
 
         JspWriter out = body.getEnclosingWriter();
 
         if (this.ebb) {
           out.print(arr[0]);
-        } else if (arr.length > 1) {
+        } else
+        if (arr.length > 1) {
           out.print(arr[1]);
         }
       } else {
         JspWriter out = this.pageContext.getOut();
 
         if (this.ebb) {
-          out.print("true");
+          out.print( "true");
         } else {
           out.print("false");
         }
       }
     } catch (IOException ex) {
-      throw new JspException("Error in ActTag", ex);
+      throw new JspException("Error in AuthTag", ex);
     }
 
     return BodyTagSupport.EVAL_PAGE;

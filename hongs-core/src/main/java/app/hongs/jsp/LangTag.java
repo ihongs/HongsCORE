@@ -115,7 +115,7 @@ public class LangTag extends TagSupport implements DynamicAttributes {
         name = name.substring(1);
       }
       if (this.repMap == null) {
-        this.repMap = new HashMap<String, String>();
+        this.repMap = new HashMap( );
       }
       this.repMap.put(name, (String)value);
     }

@@ -161,18 +161,24 @@ public class CmdletRunner
     Core.CONF_PATH = Synt.declare(opts.get("confpath"), Core.CORE_PATH + File.separator + "etc");
     Core.DATA_PATH = Synt.declare(opts.get("datapath"), Core.CORE_PATH + File.separator + "var");
     Core.BASE_PATH = Synt.declare(opts.get("basepath"), Core.CORE_PATH + File.separator + "web");
-    Core.BASE_HREF = Synt.declare(opts.get("basehref"), "" );
+    Core.BASE_HREF = Synt.declare(opts.get("basehref"), "");
 
     // 如果 web 目录不存在, 则视为在 WEB-INF 下
-    File bp = new File(Core.BASE_PATH );
+    File bp = new File(Core.BASE_PATH);
     if (!bp.exists()) {
-        Core.BASE_PATH = bp.getParent();
+        Core.BASE_PATH = bp.getParentFile ( ).getParent ( );
+    }
+
+    // 项目 url 须以 / 开头, 如有缺失则自动补全
+    if (Core.BASE_HREF.length( ) != 0
+    && !Core.BASE_HREF.startsWith("/")) {
+        Core.BASE_HREF = "/" + Core.BASE_HREF ;
     }
 
     /** 系统属性配置 **/
 
     CoreConfig cnf = CoreConfig.getInstance( );
-    Core.SERVER_ID = cnf.getProperty("core.server.id" , "0");
+    Core.SERVER_ID = cnf.getProperty("core.server.id", "0");
     cnf   = CoreConfig.getInstance( "_init_" );
 
     Map m = new HashMap();

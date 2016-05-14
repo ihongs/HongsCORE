@@ -1,11 +1,10 @@
-
 <%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.db.DB"%>
 <%@page import="app.hongs.db.Model"%>
 <%@page import="app.hongs.serv.medium.ABaseModel"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     List<Map> getSubSecs(Model mod, String sid) throws HongsException {
         return mod.table.fetchCase()

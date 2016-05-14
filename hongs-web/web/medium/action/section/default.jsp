@@ -1,4 +1,3 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.Core"%>
 <%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.action.ActionHelper"%>
@@ -18,6 +17,7 @@
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="../Functions.jsp"%>
 <%
     ABaseModel  sec = (ABaseModel) DB.getInstance("medium").getModel("section");

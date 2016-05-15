@@ -1,1 +1,1 @@
-app.hongs.dh.search.tokenizer.HongsTokenizerFactory
+app.hongs.dh.search.tokenizer.BaseTokenizerFactory

@@ -15,9 +15,9 @@ import org.apache.lucene.analysis.util.CharacterUtils.CharacterBuffer;
  * l lu luc luce lucen lucene 分 分词 分词器
  * @author Hongs
  */
-public class HongsTokenizer extends Tokenizer {
+public class BaseTokenizer extends Tokenizer {
 
-    public HongsTokenizer() {
+    public BaseTokenizer() {
         super();
     }
 

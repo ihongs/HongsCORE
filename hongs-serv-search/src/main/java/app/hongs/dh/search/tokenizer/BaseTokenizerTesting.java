@@ -14,7 +14,7 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
  * 已经逐步针对中文特点构建自己的分析器
  * @author Hongs
  */
-public class HongsTokenizerTesting {
+public class BaseTokenizerTesting {
 
     public static void main(String[] args) throws IOException {
         Analyzer az = CustomAnalyzer.builder()

@@ -1,8 +1,9 @@
-package app.hongs.dh.lucene;
+package app.hongs.dh.search;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,7 +69,7 @@ public class SearchRecord extends LuceneRecord {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setReps(new HashMap());
+            chkCols(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -104,7 +105,7 @@ public class SearchRecord extends LuceneRecord {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setReps(new HashMap());
+            chkCols(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;

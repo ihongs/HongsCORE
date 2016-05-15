@@ -6,7 +6,10 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.db.DB;
 import app.hongs.action.anno.CommitSuccess;
+import app.hongs.db.Table;
+import app.hongs.db.link.Loop;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -67,6 +70,19 @@ public class FormAction {
     throws HongsException {
         boolean v = model.unique(helper.getRequestData());
         helper.reply(null, v);
+    }
+    
+    @Action("fork/list")
+    public void getForkList() throws HongsException {
+        Table ft = model.table;
+        Table ut = model.db.getTable("unit");
+    }
+    
+    public void getForkList(List list, Table ft, Table ut) throws HongsException {
+        Loop rows = ut
+                .select(".`id`,.`name`")
+                .filter("")
+                .oll();
     }
 
 }

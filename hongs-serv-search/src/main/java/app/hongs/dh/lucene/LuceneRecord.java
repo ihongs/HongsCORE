@@ -98,6 +98,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     private   IndexReader    reader  = null ;
     private   IndexWriter    writer  = null ;
     private   String         dtpath  = null ;
+    private   String         dtname  = null ;
 
     /**
      * 构造方法
@@ -170,6 +171,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
         return inst;
     }
+
+    //** 实体方法 **/
 
     /**
      * 获取数据
@@ -353,6 +356,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         return wh != null && !wh.isEmpty();
     }
 
+    //** 模型方法 **/
+
     /**
      * 添加文档
      * @param rd
@@ -390,7 +395,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setReps(new HashMap());
+            chkCols(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -420,7 +425,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setReps(new HashMap());
+            chkCols(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -455,7 +460,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     public Map get(String id) throws HongsException {
         Document doc = getDoc(id);
         if (doc != null) {
-           setReps(new HashMap());
+           chkCols(new HashMap());
             return doc2Map( doc );
         } else {
             return new HashMap( );
@@ -529,7 +534,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     public Loop search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
-                  setReps (rd);
+                  chkCols (rd);
         Loop  r = new Loop(this, q, s, begin, limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
@@ -538,6 +543,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
 
         return r ;
     }
+
+    //** 组件方法 **/
 
     public void addDoc(Document doc) throws HongsException {
         IndexWriter iw = getWriter();
@@ -602,6 +609,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         mapAdd(map, doc);
         return map;
     }
+
+    //** 事务方法 **/
 
     /**
      * 初始化读操作
@@ -755,6 +764,310 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
+    //** 底层方法 **/
+
+    public String getDbPath() {
+        if (null != dtpath) {
+            return  dtpath;
+        }
+        throw new NullPointerException("DBPath can not be null");
+    }
+
+    public String getDbName() {
+        if (null != dtname) {
+            return  dtname;
+        }
+        String p = Core.DATA_PATH + "/lucene/";
+        String d = getDbPath();
+        if (! "/".equals (File.separator) ) {
+            d = d.replace(File.separator, "/");
+        }
+        if (d.endsWith("/")) {
+            d = d.substring(0,d.length()-1);
+        }
+        if (d.startsWith(p)) {
+            d = d.substring(  p.length()  );
+        }
+        dtname= d;
+        return  d;
+    }
+
+    public IndexSearcher getFinder() throws HongsException {
+        initial();
+        return finder;
+    }
+
+    public IndexReader getReader() throws HongsException {
+        initial();
+        return reader;
+    }
+
+    public IndexWriter getWriter() throws HongsException {
+        connect();
+        return writer;
+    }
+
+    /**
+     * 查询分析
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Query getQuery(Map rd) throws HongsException {
+        BooleanQuery query = new BooleanQuery();
+        Map<String, Map> fields  =  getFields();
+        Set<String  >  funcCols  =  getFuncs( );
+
+        for (Object o : rd.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
+            Object fv = e.getValue( );
+            String fn = (String) e.getKey();
+
+            // 功能型参数不在这里处理
+            if (fn == null || fv == null
+            ||  funcCols.contains( fn )) {
+                continue;
+            }
+
+            Map m = (Map ) fields.get( fn );
+            if (m == null) {
+                continue;
+            }
+
+            IQuery aq;
+            String t = getFtype(m);
+            if (   "int".equals(t)) {
+                aq = new IntQuery();
+            } else
+            if (  "long".equals(t)) {
+                aq = new LongQuery();
+            } else
+            if ( "float".equals(t)) {
+                aq = new FloatQuery();
+            } else
+            if ("double".equals(t)) {
+                aq = new DoubleQuery();
+            } else
+            if ("string".equals(t)) {
+                aq = new StringQuery();
+            } else
+            if ("search".equals(t)) {
+                aq = new SearchQuery();
+            } else
+            {
+                continue;
+            }
+
+            qryAdd(query, fn, fv, aq);
+        }
+
+        // 关键词
+        if (rd.containsKey(Cnst.WD_KEY)) {
+            Object fv = rd.get(Cnst.WD_KEY);
+
+            /**
+             * 当设置了多个搜索字段时
+             * 将条件整理为 +(fn1:xxx fn2:xxx)
+             */
+            BooleanQuery quary;
+            Set<String>  cols = getFinds();
+            if (cols.size() < 2) {
+                quary =  query;
+            } else {
+                quary = new BooleanQuery();
+                if (! ( fv instanceof Map) && !"".equals( fv ) && fv != null) {
+                    query.add(quary, BooleanClause.Occur.MUST);
+                    Map fw = new HashMap();
+                    fw.put(Cnst.OR_REL,fv);
+                    fv= fw;
+                }
+            }
+
+            for(String fk: cols) {
+                qryAdd(quary, fk, fv, new SearchQuery());
+            }
+        }
+
+        // 或条件
+        if (rd.containsKey(Cnst.OR_KEY)) {
+            BooleanQuery quary = new BooleanQuery( );
+            Set<Map> set = Synt.declare(rd.get(Cnst.OR_KEY), Set.class);
+            for(Map  map : set) {
+                quary.add(getQuery(map), BooleanClause.Occur.SHOULD);
+            }
+            query.add(quary, BooleanClause.Occur.MUST);
+        }
+
+        // 附条件
+        if (rd.containsKey(Cnst.SR_KEY)) {
+            Set<Map> set = Synt.declare(rd.get(Cnst.SR_KEY), Set.class);
+            for(Map  map : set) {
+                query.add(getQuery(map), BooleanClause.Occur.SHOULD);
+            }
+        }
+
+        // 并条件
+        if (rd.containsKey(Cnst.AR_KEY)) {
+            Set<Map> set = Synt.declare(rd.get(Cnst.AR_KEY), Set.class);
+            for(Map  map : set) {
+                query.add(getQuery(map), BooleanClause.Occur.MUST  );
+            }
+        }
+
+        // 没有条件则查询全部
+        if (query.clauses( ).isEmpty( )) {
+            return new MatchAllDocsQuery();
+        }
+
+        return query;
+    }
+
+    /**
+     * 排序分析
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Sort getSort(Map rd) throws HongsException {
+        Object xb = rd.get(Cnst.OB_KEY);
+        Set<String> ob = xb != null
+                  ? Synt.asTerms ( xb )
+                  : new LinkedHashSet();
+        Map<String, Map> fields = getFields();
+        List<SortField> of = new LinkedList();
+
+        for (String fn: ob) {
+            // 文档
+            if (fn.equals/**/("_")) {
+                of.add(SortField.FIELD_DOC  );
+                continue;
+            }
+
+            // 相关
+            if (fn.equals/**/("-")) {
+                of.add(SortField.FIELD_SCORE);
+                continue;
+            }
+
+            // 逆序
+            boolean rv = fn.startsWith("-");
+            if (rv) fn = fn.substring ( 1 );
+
+            Map m = (Map ) fields.get ( fn);
+            if (m == null) {
+                continue;
+            }
+            if (sortable(m)==false) {
+                continue;
+            }
+            if (repeated(m)== true) {
+                continue;
+            }
+
+            SortField.Type st;
+            String t = getFtype(m);
+            if (   "int".equals(t)) {
+                st = SortField.Type.INT;
+            } else
+            if (  "long".equals(t)) {
+                st = SortField.Type.LONG;
+            } else
+            if ( "float".equals(t)) {
+                st = SortField.Type.FLOAT;
+            } else
+            if ("double".equals(t)) {
+                st = SortField.Type.DOUBLE;
+            } else
+            if ("string".equals(t)) {
+                st = SortField.Type.STRING;
+            } else
+            {
+                continue;
+            }
+
+            /**
+             * 因为 Lucene 5 必须使用 DocValues 才能排序
+             * 在更新数据时, 默认有加 '.' 打头的排序字段
+             */
+            if (st == SortField.Type.STRING) {
+                of.add(new /* String */ SortField("."+fn, st, rv));
+            } else {
+                of.add(new SortedNumericSortField("."+fn, st, rv));
+            }
+        }
+
+        // 未指定则按文档顺序
+        if (of.isEmpty()) {
+            of.add(SortField.FIELD_DOC);
+        }
+
+        return new Sort(of.toArray(new SortField[0]));
+    }
+
+    /**
+     * 返回字段
+     * @param rd
+     */
+    public void chkCols(Map rd) {
+        Object fz = rd.get(Cnst.RB_KEY);
+        Set<String> fs = fz != null
+                  ? Synt.asTerms ( fz )
+                  : new LinkedHashSet();
+        Map<String, Map> fields = getFields();
+
+        if (fs != null && !fs.isEmpty()) {
+            Set<String> cf = new HashSet();
+            Set<String> sf = new HashSet();
+            for (String fn : fs) {
+                if (fn.startsWith("-")) {
+                    fn= fn.substring(1);
+                    cf.add(fn);
+                } else {
+                    sf.add(fn);
+                }
+            }
+            if (!sf.isEmpty()) {
+                cf.addAll(fields.keySet());
+                cf.removeAll(sf);
+            }
+            cf.add("@"); // Skip form conf;
+
+            for(Map.Entry<String, Map> me : fields.entrySet()) {
+                Map fc = me.getValue();
+                String f = me.getKey();
+                fc.put   ( "--unwanted--" , cf.contains(f) || unstored(fc));
+            }
+        } else {
+            for(Map.Entry<String, Map> me : fields.entrySet()) {
+                Map fc = me.getValue();
+                fc.remove( "--unwanted--" );
+            }
+        }
+    }
+
+    //** 底层工具 **/
+
+    /**
+     * 写入分析器
+     * @return
+     * @throws HongsException
+     */
+    protected Analyzer getAnalyzer() throws HongsException {
+        Map<String, Analyzer> az = new HashMap();
+        Map<String, Map>  fields = getFields(  );
+        Analyzer ad = new StandardAnalyzer();
+        for(Object ot : fields.entrySet( ) ) {
+            Map.Entry et = (Map.Entry) ot;
+            String fn = (String) et.getKey();
+            Map    fc = (Map ) et.getValue();
+            String t = getFtype(fc);
+            if ("search".equals(t)) {
+                az.put(fn, getAnalyzer(fc, false));
+            }
+        }
+        return new PerFieldAnalyzerWrapper(ad, az);
+    }
+
     /**
      * 构建分析器
      * @param fc 字段配置
@@ -865,61 +1178,6 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
     }
 
     /**
-     * 写入分析器
-     * @return
-     * @throws HongsException
-     */
-    protected Analyzer getAnalyzer() throws HongsException {
-        Map<String, Analyzer> az = new HashMap();
-        Map<String, Map>  fields = getFields(  );
-        Analyzer ad = new StandardAnalyzer();
-        for(Object ot : fields.entrySet( ) ) {
-            Map.Entry et = (Map.Entry) ot;
-            String fn = (String) et.getKey();
-            Map    fc = (Map ) et.getValue();
-            String t = getFtype(fc);
-            if ("search".equals(t)) {
-                az.put(fn, getAnalyzer(fc, false));
-            }
-        }
-        return new PerFieldAnalyzerWrapper(ad, az);
-    }
-
-    protected IndexSearcher getFinder() throws HongsException {
-        initial();
-        return finder;
-    }
-
-    protected IndexReader getReader() throws HongsException {
-        initial();
-        return reader;
-    }
-
-    protected IndexWriter getWriter() throws HongsException {
-        connect();
-        return writer;
-    }
-
-    protected String getDbPath() {
-        if (null != dtpath) {
-            return  dtpath;
-        }
-        throw new NullPointerException("DBPath can not be null");
-    }
-
-    protected boolean repeated(Map fc) {
-        return Synt.asserts(fc.get("__repeated__"), false);
-    }
-
-    protected boolean unwanted(Map fc) {
-        return Synt.asserts(fc.get("--unwanted--"), false);
-    }
-
-    protected boolean unstored(Map fc) {
-        return Synt.asserts(fc.get(  "unstored"  ), false);
-    }
-
-    /**
      * 获取字段类型
      * 支持的类型有
      * int
@@ -975,242 +1233,16 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         return t;
     }
 
-    /**
-     * 查询分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    protected Query getQuery(Map rd) throws HongsException {
-        BooleanQuery query = new BooleanQuery();
-        Map<String, Map> fields  =  getFields();
-        Set<String  >  funcCols  =  getFuncs( );
-
-        for (Object o : rd.entrySet()) {
-            Map.Entry e = (Map.Entry) o;
-            Object fv = e.getValue( );
-            String fn = (String) e.getKey();
-
-            // 功能型参数不在这里处理
-            if (fn == null || fv == null
-            ||  funcCols.contains( fn )) {
-                continue;
-            }
-
-            Map m = (Map ) fields.get( fn );
-            if (m == null) {
-                continue;
-            }
-
-            AddQuery aq;
-            String t = getFtype(m);
-            if (   "int".equals(t)) {
-                aq = new IntQuery();
-            } else
-            if (  "long".equals(t)) {
-                aq = new LongQuery();
-            } else
-            if ( "float".equals(t)) {
-                aq = new FloatQuery();
-            } else
-            if ("double".equals(t)) {
-                aq = new DoubleQuery();
-            } else
-            if ("string".equals(t)) {
-                aq = new StringQuery();
-            } else
-            if ("search".equals(t)) {
-                aq = new SearchQuery();
-            } else
-            {
-                continue;
-            }
-
-            qryAdd(query, fn, fv, aq);
-        }
-
-        // 关键词
-        if (rd.containsKey(Cnst.WD_KEY)) {
-            Object fv = rd.get(Cnst.WD_KEY);
-
-            /**
-             * 当设置了多个搜索字段时
-             * 将条件整理为 +(fn1:xxx fn2:xxx)
-             */
-            BooleanQuery quary;
-            Set<String>  cols = getFinds();
-            if (cols.size() < 2) {
-                quary =  query;
-            } else {
-                quary = new BooleanQuery();
-                if (! ( fv instanceof Map) && !"".equals( fv ) && fv != null) {
-                    query.add(quary, BooleanClause.Occur.MUST);
-                    Map fw = new HashMap();
-                    fw.put(Cnst.OR_REL,fv);
-                    fv= fw;
-                }
-            }
-
-            for(String fk: cols) {
-                qryAdd(quary, fk, fv, new SearchQuery());
-            }
-        }
-
-        // 或条件
-        if (rd.containsKey(Cnst.OR_KEY)) {
-            BooleanQuery quary = new BooleanQuery( );
-            Set<Map> set = Synt.declare(rd.get(Cnst.OR_KEY), Set.class);
-            for(Map  map : set) {
-                quary.add(getQuery(map), BooleanClause.Occur.SHOULD);
-            }
-            query.add(quary, BooleanClause.Occur.MUST);
-        }
-
-        // 附条件
-        if (rd.containsKey(Cnst.SR_KEY)) {
-            Set<Map> set = Synt.declare(rd.get(Cnst.SR_KEY), Set.class);
-            for(Map  map : set) {
-                query.add(getQuery(map), BooleanClause.Occur.SHOULD);
-            }
-        }
-
-        // 并条件
-        if (rd.containsKey(Cnst.AR_KEY)) {
-            Set<Map> set = Synt.declare(rd.get(Cnst.AR_KEY), Set.class);
-            for(Map  map : set) {
-                query.add(getQuery(map), BooleanClause.Occur.MUST  );
-            }
-        }
-
-        // 没有条件则查询全部
-        if (query.clauses( ).isEmpty( )) {
-            return new MatchAllDocsQuery();
-        }
-
-        return query;
+    protected boolean repeated(Map fc) {
+        return Synt.asserts(fc.get("__repeated__"), false);
     }
 
-    /**
-     * 排序分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    protected Sort getSort(Map rd) throws HongsException {
-        Object xb = rd.get(Cnst.OB_KEY);
-        Set<String> ob = xb != null
-                  ? Synt.asTerms ( xb )
-                  : new LinkedHashSet();
-        Map<String, Map> fields = getFields();
-        List<SortField> of = new LinkedList();
-
-        for (String fn: ob) {
-            // 文档
-            if (fn.equals/**/("_")) {
-                of.add(SortField.FIELD_DOC  );
-                continue;
-            }
-
-            // 相关
-            if (fn.equals/**/("-")) {
-                of.add(SortField.FIELD_SCORE);
-                continue;
-            }
-
-            // 逆序
-            boolean rv = fn.startsWith("-");
-            if (rv) fn = fn.substring ( 1 );
-
-            Map m = (Map ) fields.get ( fn);
-            if (m == null) {
-                continue;
-            }
-            if (sortable(m)==false) {
-                continue;
-            }
-            if (repeated(m)== true) {
-                continue;
-            }
-
-            SortField.Type st;
-            String t = getFtype(m);
-            if (   "int".equals(t)) {
-                st = SortField.Type.INT;
-            } else
-            if (  "long".equals(t)) {
-                st = SortField.Type.LONG;
-            } else
-            if ( "float".equals(t)) {
-                st = SortField.Type.FLOAT;
-            } else
-            if ("double".equals(t)) {
-                st = SortField.Type.DOUBLE;
-            } else
-            if ("string".equals(t)) {
-                st = SortField.Type.STRING;
-            } else
-            {
-                continue;
-            }
-
-            /**
-             * 因为 Lucene 5 必须使用 DocValues 才能排序
-             * 在更新数据时, 默认有加 '.' 打头的排序字段
-             */
-            if (st == SortField.Type.STRING) {
-                of.add(new /* String */ SortField("."+fn, st, rv));
-            } else {
-                of.add(new SortedNumericSortField("."+fn, st, rv));
-            }
-        }
-
-        // 未指定则按文档顺序
-        if (of.isEmpty()) {
-            of.add(SortField.FIELD_DOC);
-        }
-
-        return new Sort(of.toArray(new SortField[0]));
+    protected boolean unwanted(Map fc) {
+        return Synt.asserts(fc.get("--unwanted--"), false);
     }
 
-    /**
-     * 查询字段
-     * @param rd
-     */
-    protected void setReps(Map rd) {
-        Object fz = rd.get(Cnst.RB_KEY);
-        Set<String> fs = fz != null
-                  ? Synt.asTerms ( fz )
-                  : new LinkedHashSet();
-        Map<String, Map> fields = getFields();
-
-        if (fs != null && !fs.isEmpty()) {
-            Set<String> cf = new HashSet();
-            Set<String> sf = new HashSet();
-            for (String fn : fs) {
-                if (fn.startsWith("-")) {
-                    fn= fn.substring(1);
-                    cf.add(fn);
-                } else {
-                    sf.add(fn);
-                }
-            }
-            if (!sf.isEmpty()) {
-                cf.addAll(fields.keySet());
-                cf.removeAll(sf);
-            }
-            cf.add("@"); // Skip form conf;
-
-            for(Map.Entry<String, Map> me : fields.entrySet()) {
-                Map fc = me.getValue();
-                String f = me.getKey();
-                fc.put   ( "--unwanted--" , cf.contains(f) || unstored(fc));
-            }
-        } else {
-            for(Map.Entry<String, Map> me : fields.entrySet()) {
-                Map fc = me.getValue();
-                fc.remove( "--unwanted--" );
-            }
-        }
+    protected boolean unstored(Map fc) {
+        return Synt.asserts(fc.get(  "unstored"  ), false);
     }
 
     protected void mapAdd(Map map, Document doc) {
@@ -1490,7 +1522,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
      * @param q
      * @throws HongsException
      */
-    protected void qryAdd(BooleanQuery qry, String k, Object v, AddQuery q)
+    protected void qryAdd(BooleanQuery qry, String k, Object v, IQuery q)
     throws HongsException {
         Map m;
         if (v instanceof Map) {
@@ -1619,6 +1651,8 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             qryAdd(qry, k, s, q );
         }
     }
+
+    //** 辅助对象 **/
 
     /**
      * 查询迭代器
@@ -1758,13 +1792,13 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
-    protected static interface AddQuery {
+    protected static interface IQuery {
         public void  bst(float  w);
         public Query add(String k, Object v);
         public Query add(String k, Object n, Object x, boolean l, boolean r);
     }
 
-    protected static class IntQuery implements AddQuery {
+    protected static class IntQuery implements IQuery {
         private Float w = null;
         @Override
         public void  bst(float  w) {
@@ -1787,7 +1821,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
-    protected static class LongQuery implements AddQuery {
+    protected static class LongQuery implements IQuery {
         private Float w = null;
         @Override
         public void  bst(float  w) {
@@ -1810,7 +1844,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
-    protected static class FloatQuery implements AddQuery {
+    protected static class FloatQuery implements IQuery {
         private Float w = null;
         @Override
         public void  bst(float  w) {
@@ -1833,7 +1867,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
-    protected static class DoubleQuery implements AddQuery {
+    protected static class DoubleQuery implements IQuery {
         private Float w = null;
         @Override
         public void  bst(float  w) {
@@ -1856,7 +1890,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
-    protected static class StringQuery implements AddQuery {
+    protected static class StringQuery implements IQuery {
         private Float w = null;
         @Override
         public void  bst(float  w) {
@@ -1878,7 +1912,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         }
     }
 
-    protected static class SearchQuery implements AddQuery {
+    protected static class SearchQuery implements IQuery {
         private Boolean  des = null;
         private Boolean  and = null;
         private Boolean  alw = null;

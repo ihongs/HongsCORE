@@ -290,3 +290,8 @@ $.fn.hsCols = function() {
         saveConf(modal, field);
     });
 };
+
+// 关联数据
+$.ajax({
+    "url": ""
+});

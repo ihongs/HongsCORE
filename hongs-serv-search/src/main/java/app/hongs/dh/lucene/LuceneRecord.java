@@ -1491,8 +1491,11 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             if ("double".equals(t)) {
                 doc.add(new SortedNumericDocValuesField("."+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D))));
             } else
+            if (  "date".equals(t)) {
+                doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
+            } else
             {
-                doc.add(new SortedDocValuesField("."+k, new BytesRef(Synt.declare(v, ""))));
+                doc.add(new SortedDocValuesField("."+k, new BytesRef(v.toString())));
             }
         }
     }

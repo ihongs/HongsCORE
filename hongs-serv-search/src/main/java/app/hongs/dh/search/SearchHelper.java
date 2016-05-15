@@ -1,9 +1,10 @@
-package app.hongs.dh.lucene;
+package app.hongs.dh.search;
 
 import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.action.FormSet;
+import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import java.util.ArrayList;

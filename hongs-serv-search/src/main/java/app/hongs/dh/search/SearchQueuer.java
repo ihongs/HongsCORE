@@ -1,4 +1,4 @@
-package app.hongs.dh.lucene;
+package app.hongs.dh.search;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
@@ -7,6 +7,7 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.HongsUnchecked;
+import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Async;
 import java.util.Map;
 
@@ -27,10 +28,11 @@ public class SearchQueuer extends Async<Map> implements Core.GlobalSingleton {
     }
 
     public static SearchQueuer getInstance(LuceneRecord that) throws HongsException {
-        String path = that.getDbPath();
-        Map<String, Map> form = that.getFields();
-        String name = SearchQueuer.class.getName( )  +  ":"  +  path ;
-        SearchQueuer inst = (SearchQueuer) Core.GLOBAL_CORE.got(name);
+        Map<String,Map> form = that.getFields();
+            String      name = that.getDbName();
+            String      path = that.getDbPath();
+                        name = SearchQueuer.class.getName() +"::"+ name ;
+        SearchQueuer    inst = (SearchQueuer) Core.GLOBAL_CORE.got(name);
         if (inst == null) {
             that =  new LuceneRecord(path, form);
             inst =  new SearchQueuer(that  /**/);

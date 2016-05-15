@@ -160,7 +160,7 @@
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
                     <ul data-ft="_pick" data-fn="-"></ul>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="">请选择...</button>
+                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href=""><i class="glyphicon glyphicon-th-list"></i>选择...</button>
                 </div>
             </form>
         </div>
@@ -392,6 +392,12 @@
                 <label class="control-label">提示文字</label>
                 <input class="form-control" type="text" name="button|text" value=""/>
             </div>
+            <div class="form-group">
+                <label class="control-label">关联资源</label>
+                <select name=":fork" required="required">
+                    <option value="">--请选择--</option>
+                </select>
+            </div>
             <div class="checkbox">
                 <label>
                     <input type="checkbox" name="input|required" value="required"/>必选
@@ -429,5 +435,5 @@
 </div>
 <!-- cols util -->
 <link rel="stylesheet" type="text/css" href="manage/module/cols.css"/>
-<script type="text/javascript" src="manage/module/cols.js"></script>
+<script type="text/javascript" src="manage/module/cols.js"  ></script>
 <script type="text/javascript" src="static/addons/json2/json2.min.js"></script>

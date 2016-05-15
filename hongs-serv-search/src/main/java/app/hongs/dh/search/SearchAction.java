@@ -7,7 +7,6 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Select;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
-import app.hongs.dh.lucene.SearchHelper;
 import app.hongs.util.Synt;
 import java.util.ArrayList;
 import java.util.List;

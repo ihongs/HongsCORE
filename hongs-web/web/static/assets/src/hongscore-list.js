@@ -334,7 +334,7 @@ HsList.prototype = {
             case  2 :
             case "2":
                 hsSetSeria(this._data, this.pageKey, 1);
-                this.pageBox.empty().append('<div class="alert alert-warning">'+hsGetLang('list.outof')+'</div>');
+                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._outof_page_msg || hsGetLang('list.outof'))+'</div>');
                 this.listBox.hide( );
                 var that = this;
                 setTimeout(function() {
@@ -343,7 +343,7 @@ HsList.prototype = {
                 return;
             case  1 :
             case "1":
-                this.pageBox.empty().append('<div class="alert alert-warning">'+hsGetLang('list.empty')+'</div>');
+                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._empty_list_msg || hsGetLang('list.empty'))+'</div>');
                 this.listBox.hide( );
                 return;
             default :

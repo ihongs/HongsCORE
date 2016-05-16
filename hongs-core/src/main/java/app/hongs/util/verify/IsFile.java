@@ -45,7 +45,7 @@ public class IsFile extends Rule {
                 // 如果有临时目录则下载到这
                 x = (String) params.get("temp");
                 if (x == null &&  "".equals(x)) {
-                    x  = Core.DATA_PATH + "/upload/";
+                    x  = Core.DATA_PATH + File.separator + "upload" ;
                 }
                 value = stores(value.toString(), x );
             } while(false);
@@ -73,12 +73,21 @@ public class IsFile extends Rule {
 
         x = (String) params.get( "temp" );
         if (x != null && !"".equals( x )) {
+            x  = x+ File.separator +value;
             u.upload(x, value.toString());
         } else {
             u.upload(   value.toString());
         }
 
-        return checks(u.getResultHref(), u.getResultPath());
+        // 仅检查新上传的文件
+        String y;
+        x = u.getResultHref();
+        y = u.getResultPath();
+        if (! x.equals(value)) {
+            x = checks(x , y);
+        }
+
+        return x;
     }
 
     protected String stores(String href, String temp) throws Wrong {

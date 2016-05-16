@@ -26,6 +26,11 @@ public class Thumb extends IsFile {
         rat = Synt.declare(params.get("thumb-pick"), rat);
         map = Synt.declare(params.get("thumb-zoom"), map);
 
+        // 已经是截取图了则不再继续截取
+        if (href.endsWith(rat.replaceFirst(":.*$","")+"."+ext)) {
+            return href;
+        }
+
         try {
             String[][] a = app.hongs.util.sketch.Thumb.toThumbs(path, href, ext, rat, map);
             return a[1][0];

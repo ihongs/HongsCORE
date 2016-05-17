@@ -7,9 +7,9 @@ import app.hongs.util.Synt;
 
 /**
  * 验证码
- * 可选参数有
- * capts.sess 会话键
- * capts.time 有效期(秒)
+ * 规则参数
+ *  capts-sess 会话键
+ *  capts-time 有效期(秒)
  * @author Hongs
  */
 public class Capts extends Rule {

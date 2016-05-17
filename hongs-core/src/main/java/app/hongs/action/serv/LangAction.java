@@ -7,14 +7,14 @@ import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.util.Tool;
 
-import java.util.Map;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Date;
+import java.util.Map;
 import java.util.TimeZone;
-import java.text.SimpleDateFormat;
-import java.io.IOException;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -40,8 +40,8 @@ import javax.servlet.http.HttpServletResponse;
 public class LangAction
   extends  ActionDriver
 {
-  private static final Map<String, String> caches = new HashMap<String, String>();
-  private static final Map<String, String> lastModified = new HashMap<String, String>();
+  private static final Map<String, String> caches = new HashMap<>();
+  private static final Map<String, String> lmtime = new HashMap<>();
 
   /**
    * 服务方法
@@ -60,18 +60,18 @@ public class LangAction
 
     String name = req.getPathInfo();
     if (name == null || name.length() == 0) {
-      helper.error500("Path info required");
+      helper.error400("Path info required");
       return;
     }
     int p = name.lastIndexOf( '.' );
     if (p < 0) {
-      helper.error500("File type required");
+      helper.error400("File type required");
       return;
     }
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
     if ( !"js".equals(type) && !"json".equals(type)) {
-      helper.error500("Wrong file type: "+type);
+      helper.error400("Wrong file type: "+type);
       return;
     }
 
@@ -81,9 +81,9 @@ public class LangAction
      */
     String m;
     m = helper.getRequest().getHeader("If-Modified-Since");
-    if (m != null  &&  m.equals(LangAction.lastModified.get(name)))
+    if (m != null && m.equals(LangAction.lmtime.get(name)))
     {
-      helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED );
+      helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
       return;
     }
 
@@ -110,23 +110,38 @@ public class LangAction
       m = sdf.format(new Date());
 
       LangAction.caches.put(name , s);
-      LangAction.lastModified.put(name , m);
+      LangAction.lmtime.put(name , m);
     }
     else
     {
       s = LangAction.caches.get(name);
-      m = LangAction.lastModified.get(name);
+      m = LangAction.lmtime.get(name);
     }
 
     // 标明修改时间
     helper.getResponse().setHeader("Last-Modified", m);
 
     // 输出语言信息
-    if ("json".equals(type)) {
+    if ("json".equals(type))
+    {
       helper.print(s, "application/json");
     }
-    else {
-      helper.print("if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,"+s+");", "application/javascript");
+    else
+    {
+      String c = req.getParameter("callback");
+      if (c != null && c.length( ) != 0 )
+      {
+        if (!c.matches("^[a-zA-Z_\\$][a-zA-Z0-9_]*$"))
+        {
+          helper.error400("Illegal callback function name!");
+          return;
+        }
+        helper.print("function "+c+"() { return "+s+"; }", "text/javascript");
+      }
+      else
+      {
+        helper.print("if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,"+s+");", "text/javascript");
+      }
     }
   }
 
@@ -141,6 +156,7 @@ public class LangAction
 
     // 销毁配置信息
     LangAction.caches.clear();
+    LangAction.lmtime.clear();
   }
 
   /**
@@ -156,7 +172,7 @@ public class LangAction
     StringBuilder sb = new StringBuilder();
 
     /** 配置代码 **/
-    
+
     sb.append("{\r\n");
 
     // 公共语言
@@ -167,29 +183,52 @@ public class LangAction
         .append("\",\n")
         .append("\t\"zone\":\"")
         .append(Core.ACTION_ZONE.get())
-        .append("\",\n")
-        .append("\t\"error.label\":\"")
-        .append(mk.lang.getProperty("core.error.label", "ERROR"))
-        .append("\",\n")
-        .append("\t\"error.unkwn\":\"")
-        .append(mk.lang.getProperty("core.error.unkwn", "UNKWN"))
-        .append("\",\n")
-        .append("\t\"date.format\":\"")
-        .append(mk.lang.getProperty("core.default.date.format", "yyyy/MM/dd"))
-        .append("\",\n")
-        .append("\t\"time.format\":\"")
-        .append(mk.lang.getProperty("core.default.time.format",  "HH:mm:ss" ))
-        .append("\",\n")
-        .append("\t\"datetime.format\":\"")
-        .append(mk.lang.getProperty("core.default.datetime.format", "yyyy/MM/dd HH:mm:ss"))
         .append("\",\n");
+//        .append("\t\"error.label\":\"")
+//        .append(mk.lang.getProperty("core.error.label", "ERROR"))
+//        .append("\",\n")
+//        .append("\t\"error.unkwn\":\"")
+//        .append(mk.lang.getProperty("core.error.unkwn", "UNKWN"))
+//        .append("\",\n")
+//        .append("\t\"date.format\":\"")
+//        .append(mk.lang.getProperty("core.default.date.format", "yyyy/MM/dd"))
+//        .append("\",\n")
+//        .append("\t\"time.format\":\"")
+//        .append(mk.lang.getProperty("core.default.time.format",  "HH:mm:ss" ))
+//        .append("\",\n")
+//        .append("\t\"datetime.format\":\"")
+//        .append(mk.lang.getProperty("core.default.datetime.format", "yyyy/MM/dd HH:mm:ss"))
+//        .append("\",\n");
     }
 
     // 查找扩展语言信息
     Iterator it = mk.lang.keySet().iterator();
     while (it.hasNext())
     {
-      sb.append(mk.make((String) it.next( )));
+      String nk = (String) it.next();
+      if  (  nk.startsWith("fore."))
+      {
+          sb.append(mk.make(nk, nk));
+      }
+    }
+
+    // 查找共享语言信息
+    String x  = mk.lang.getProperty("core.join.fore");
+    if (null !=  x ) for ( String k : x.split( ";" )) {
+        k = k.trim();
+        if (k.length()==0) {
+            continue;
+        }
+        String[] a = k.split("=", 2);
+        String   n ;
+        if (1  < a.length) {
+            n  = a[0];
+            k  = a[1];
+        } else {
+            n  = a[0];
+            k  = a[0];
+        }
+        sb.append(mk.make(n, k) );
     }
 
     sb.append("\t\"\":\"\"\r\n}");
@@ -203,14 +242,14 @@ public class LangAction
    */
   private static class Maker
   {
-    private CoreLocale lang;
+    private final CoreLocale lang ;
 
     public Maker(String name)
     {
-      this.lang = new CoreLocale(name);
+      lang = CoreLocale.getInstance(name);
     }
 
-    public String make(String key)
+    public String make(String nam, String key)
     {
       /**
        * 后缀 意义
@@ -220,24 +259,21 @@ public class LangAction
        * .C   代码
        * .L   链接
        */
-      if (!key.startsWith("fore.") && !key.startsWith("$")) {
-          return "";
-      }
-      String name = key.replaceFirst("^(fore\\.|\\$)", "")
-                       .replaceFirst("\\.[B|N|C|L]$" , "");
-      if (key.endsWith(".L"))
+      String name = nam.replaceFirst( "\\.[B|N|C|L]$" , "")
+                       .replaceFirst("^(fore|core)\\.", "");
+      if (nam.endsWith(".L"))
       {
         return this.makeLink(name, key);
       }
-      else if (key.endsWith(".C"))
+      else if (nam.endsWith(".C"))
       {
         return this.makeCode(name, key);
       }
-      else if (key.endsWith(".B"))
+      else if (nam.endsWith(".B"))
       {
         return this.makeLang(name, key, false);
       }
-      else if (key.endsWith(".N"))
+      else if (nam.endsWith(".N"))
       {
         return this.makeLang(name, key, 0 );
       }
@@ -274,7 +310,7 @@ public class LangAction
 
     private String makeLink(String name, String key)
     {
-      String[] arr = this.lang.getProperty(key, "").split(":", 2);
+      String[] arr = this.lang.getProperty(key, "" ).split(":", 2);
       if (1 == arr.length)
       {
         name = "default";
@@ -285,8 +321,7 @@ public class LangAction
         name = arr[0];
         key  = arr[1];
       }
-        this.lang.load(name);
-      return this.make(key );
+      return new Maker(name).make(key, key);
     }
   }
 }

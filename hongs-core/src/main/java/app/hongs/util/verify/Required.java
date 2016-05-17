@@ -3,12 +3,16 @@ package app.hongs.util.verify;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * 必填约束
+ * @author Hongs
+ */
 public class Required extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
         if (value  ==  null ) {
             if (helper.isUpdate()) {
-                return AVOID;
+                return BLANK;
             }
             throw new Wrong("fore.form.required");
         }

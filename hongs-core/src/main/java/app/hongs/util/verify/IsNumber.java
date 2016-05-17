@@ -2,6 +2,16 @@ package app.hongs.util.verify;
 
 import app.hongs.util.Synt;
 
+/**
+ * 数字校验
+ * <pre>
+ * 校验参数:
+ *  type    数字类型, 取值: byte,short,int,long,float,double, 默认 double
+ *  min     最小值
+ *  max     最大值
+ * </pre>
+ * @author Hongs
+ */
 public class IsNumber extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {

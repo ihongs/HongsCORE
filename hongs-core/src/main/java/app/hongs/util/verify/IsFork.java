@@ -15,9 +15,14 @@ import java.util.regex.Pattern;
 
 /**
  * 外键规则
- *
+ * <pre>
  * 原名 IsPick, 对应 form 类型名为 pick，改名 fork 意为 foreign key
- *
+ * 规则参数:
+ *  conf    配置名, 默认为当前配置
+ *  form    表单名, 默认同 field.name
+ *  data-at 关联动作名
+ *  data-vk 关联键取值
+ * </pre>
  * @author Hongs
  */
 public class IsFork extends Rule {
@@ -57,7 +62,7 @@ public class IsFork extends Rule {
         if ("".equals(at)) {
             at =  cf+ "/" +fm+ "/retrieve.act";
         }
-        if ( "".equals(vk)) {
+        if ("".equals(vk)) {
             vk = "id";
         }
 

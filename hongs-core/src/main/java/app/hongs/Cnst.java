@@ -102,6 +102,8 @@ public class Cnst {
 
     public static final String RESP_ATTR = "__HONGS_RESP__"; // 返回数据
 
+    public static final String BACK_ATTR = "__HONGS_BACK__"; // 回调名称
+
     public static final String RUNNER_ATTR = "__RUNNER__"; // 动作执行器
 
     public static final String UPLOAD_ATTR = "__UPLOAD__"; // 上传参数键

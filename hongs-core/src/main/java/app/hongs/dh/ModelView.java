@@ -1,7 +1,6 @@
 package app.hongs.dh;
 
 import app.hongs.Cnst;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.FormSet;
 import app.hongs.util.Synt;

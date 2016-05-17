@@ -60,22 +60,22 @@ public class AuthAction
 
     String name = req.getPathInfo();
     if (name == null || name.length() == 0) {
-      helper.error500("Path info required");
+      helper.error400("Path info required");
       return;
     }
     int p = name.lastIndexOf( '.' );
     if (p < 0) {
-      helper.error500("File type required");
+      helper.error400("File type required");
       return;
     }
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
     if ( !"js".equals(type) && !"json".equals(type)) {
-      helper.error500("Wrong file type: "+type);
+      helper.error400("Wrong file type: "+type);
       return;
     }
 
-    String data;
+    String s;
     try {
       NaviMap  sitemap = NaviMap.getInstance(name);
       Set<String> authset = sitemap.getAuthSet(  );
@@ -85,7 +85,7 @@ public class AuthAction
         datamap.put( act , authset.contains(act) );
       }
 
-      data = Data.toString(datamap);
+      s = Data.toString(datamap);
     }
     catch (HongsException ex) {
       helper.error500(ex.getMessage());
@@ -100,12 +100,20 @@ public class AuthAction
       return;
     }
 
-    // 输出配置信息
-    if ( "json".equals(type)) {
-      helper.print(data, "application/json");
-    }
-    else {
-      helper.print("if(!window.HsAUTH)window.HsAUTH={};$.extend(window.HsAUTH,"+data+");", "application/javascript");
+    // 输出权限信息
+    if ("json".equals(type)) {
+      helper.print(s, "application/json");
+    } else {
+      String c = req.getParameter("callback");
+      if (c != null && c.length( ) != 0 ) {
+        if (!c.matches("^[a-zA-Z_\\$][a-zA-Z0-9_]*$")) {
+          helper.error400("Illegal callback function name!");
+          return;
+        }
+        helper.print("function "+c+"() { return "+s+"; }", "text/javascript");
+      } else {
+        helper.print("if(!window.HsAUTH)window.HsAUTH={};$.extend(window.HsAUTH,"+s+");", "text/javascript");
+      }
     }
   }
 

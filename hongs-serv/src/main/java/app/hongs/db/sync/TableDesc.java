@@ -49,12 +49,12 @@ public class TableDesc {
     private static final Pattern timePat = Pattern.compile(   "[^/-:]"   , Pattern.CASE_INSENSITIVE);
 
     public TableDesc() {
-        this.columns = new LinkedHashMap<String, String>();
-        this.priCols = new LinkedHashSet<String>();
-        this.uniKeys = new LinkedHashMap<String, Set<String>>();
-        this.idxKeys = new LinkedHashMap<String, Set<String>>();
+        this.columns = new LinkedHashMap<>();
+        this.priCols = new LinkedHashSet<>();
+        this.uniKeys = new LinkedHashMap<>();
+        this.idxKeys = new LinkedHashMap<>();
     }
-    
+
     public static TableDesc getInstance(Table table) throws HongsException {
         TableDesc  desc = new TableDesc();
 
@@ -102,7 +102,7 @@ public class TableDesc {
             }
             throw ex;
         }
-        
+
         return desc;
     }
 

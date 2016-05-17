@@ -824,15 +824,31 @@ public class ActionHelper implements Cloneable
 
   /**
    * 返回数据
+   * 将以 JSON/JSONP 格式输出, 编码 UTF-8
    */
   public void responed()
   {
-    String pb  = CoreConfig.getInstance().getProperty("core.powered.by");
-    if  (  pb != null  )
-    {
-      this.response.setHeader("X-Powered-By", pb);
+    String cb = ( String ) this.request.getAttribute( Cnst.BACK_ATTR  );
+    String pb = CoreConfig.getInstance().getProperty("core.powered.by");
+    PrintWriter pw = this.getResponseWrtr();
+
+    if (this.response != null && !this.response.isCommitted()) {
+        this.response.setContentType(cb != null ? "text/javascript" : "application/json");
+        this.response.setCharacterEncoding("UTF-8");
     }
-    this.print(responseData);
+
+    if (pb != null) {
+        this.response.setHeader("X-Powered-By", pb);
+    }
+
+    if (cb != null) {
+        pw.print("function " + cb + "() { return ");
+        pw.print( Data.toString(this.responseData));
+        pw.print(";}");
+    } else {
+        pw.print( Data.toString(this.responseData));
+    }
+
     this.responseData = null;
   }
 

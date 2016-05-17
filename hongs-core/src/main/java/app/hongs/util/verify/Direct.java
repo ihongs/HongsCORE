@@ -1,7 +1,7 @@
 package app.hongs.util.verify;
 
 /**
- * 直接通过
+ * 直接传递
  */
 public class Direct extends Rule {
     @Override

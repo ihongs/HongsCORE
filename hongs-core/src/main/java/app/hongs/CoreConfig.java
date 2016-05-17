@@ -33,7 +33,6 @@ public class CoreConfig
 
   /**
    * 加载指定名称的配置
-   * @param path
    * @param name
    */
   public CoreConfig(String name)
@@ -68,6 +67,21 @@ public class CoreConfig
   {
     InputStream is;
     String      fn;
+
+    // 优先尝试从配置目录的 .prop.xml 中加载数据
+    try
+    {
+        fn = Core.CONF_PATH + File.separator + name +".prop.xml";
+        is = new FileInputStream(fn);
+        this.loadFromXML(is);
+        return;
+    }
+    catch (FileNotFoundException ex)
+    {
+    }
+    catch (IOException e)
+    {
+    }
 
     try
     {

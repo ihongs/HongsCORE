@@ -4,6 +4,10 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Map;
 
+/**
+ * 多值约束
+ * @author Hongs
+ */
 public class Repeated extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {

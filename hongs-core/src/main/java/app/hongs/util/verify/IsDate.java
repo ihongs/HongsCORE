@@ -9,6 +9,17 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 日期校验
+ * <pre>
+ * 规则参数:
+ *  type    日期类型, date(Date对象),timestamp(时间戳),microtime(毫秒数)
+ *  format  日期格式, 同 java 的 SimpleDateFormat, 默认从语言资源中提取
+ *  min     最小时间, 采用 format 指定的格式
+ *  max     最大时间, 采用 format 指定的格式
+ * </pre>
+ * @author Hongs
+ */
 public class IsDate extends Rule {
     @Override
     public Object verify(Object value) throws Wrong, HongsException {

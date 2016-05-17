@@ -5,6 +5,15 @@ import app.hongs.action.VerifyHelper;
 import app.hongs.util.Synt;
 import java.util.Map;
 
+/**
+ * 子表检验
+ * <pre>
+ * 规则参数:
+ *  conf 配置名, 默认为当前配置
+ *  form 表单名, 默认同 field.name
+ * </pre>
+ * @author Hongs
+ */
 public class IsForm extends Rule {
     @Override
     public Object verify(Object value) throws Wrongs, HongsException {

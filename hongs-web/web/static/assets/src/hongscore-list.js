@@ -334,7 +334,7 @@ HsList.prototype = {
             case  2 :
             case "2":
                 hsSetSeria(this._data, this.pageKey, 1);
-                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._outof_page_msg || hsGetLang('list.outof'))+'</div>');
+                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._above_err || hsGetLang('list.above'))+'</div>');
                 this.listBox.hide( );
                 var that = this;
                 setTimeout(function() {
@@ -343,7 +343,7 @@ HsList.prototype = {
                 return;
             case  1 :
             case "1":
-                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._empty_list_msg || hsGetLang('list.empty'))+'</div>');
+                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._empty_err || hsGetLang('list.empty'))+'</div>');
                 this.listBox.hide( );
                 return;
             default :
@@ -596,7 +596,14 @@ function hsListFillItem(list) {
     var that = this;
     var cb   = this.context.find(".itembox:hidden:first");
     var tr, td, n, t, f, v;
-    this.listBox.children().not(cb).remove();
+
+    // _keep_prev 无论何种情况都不清空之前的列表
+    // _keep_void 当前数据为空时不清空之前的列表
+    if (! this._keep_prev || ! (this._keep_void && list.length == 0)) {
+        this.listBox.children()
+            .not(cb).remove(  );
+    }
+
     for (var i = 0 ; i < list.length ; i ++) {
         this._info = list[i];
         tr = cb.clone();
@@ -653,6 +660,75 @@ function hsListFillItem(list) {
     }
     if (typeof(this._info) !== "undefined")
         delete this._info;
+}
+
+function hsListFillNext(page) {
+    switch (page.err) {
+        case  1 :
+        case "1":
+            jQuery.hsNote(this._above_err || hsGetLang('list.empty'), "erro");
+            return;
+        case  2 :
+        case "2":
+            jQuery.hsNote(this._above_err || hsGetLang('list.above'), "erro");
+            return;
+    }
+
+    var btn = this.listBox.find("[data-pn]");
+    var p = page.page ? parseInt(page.page) : 1;
+    var t = page.pagecount ? parseInt(page.pagecount) : 1;
+
+    // 添加翻页按钮
+    if (btn.size() == 0) {
+        var box = jQuery('<ul class="pagination"></ul>').appendTo(this.pageBox);
+        box.append(jQuery(
+            '<li class="page-prev"><a href="javascript:;" data-pn="">'+hsGetLang('list.prev.page')+'</a></li>'
+        ));
+        box.append(jQuery(
+            '<li class="page-curr active"><a href="javascript:;"></a></li>'
+        ));
+        box.append(jQuery(
+            '<li class="page-next"><a href="javascript:;" data-pn="">'+hsGetLang('list.next.page')+'</a></li>'
+        ));
+        btn = this.listBox.find("[data-pn]");
+    }
+
+    // 设置页码参数
+    var pag = btn.filter(".page-curr a");
+    if (pag.size()) {
+        pag.text(p);
+    } else {
+        pag = btn.filter(".page-curr"  );
+        pag.text(p);
+    }
+    if (p > 1) {
+        pag = btn.filter(".page-prev").removeClass("disabled");
+        pag.filter("[data-pn]").attr("data-pn", p-1);
+        pag.find  ("[data-pn]").attr("data-pn", p-1);
+    } else {
+        pag = btn.filter(".page-prev").   addClass("disabled");
+        pag.filter("[data-pn]").attr("data-pn", 1  );
+        pag.find  ("[data-pn]").attr("data-pn", 1  );
+    }
+    if (p < t) {
+        pag = btn.filter(".page-next").removeClass("disabled");
+        pag.filter("[data-pn]").attr("data-pn", p +1);
+        pag.find  ("[data-pn]").attr("data-pn", p +1);
+    } else {
+        pag = btn.filter(".page-next").   addClass("disabled");
+        pag.filter("[data-pn]").attr("data-pn", t   );
+        pag.find  ("[data-pn]").attr("data-pn", t   );
+    }
+
+    // 翻页点击事件
+    if (! this.listBox.data("inited")) {
+        var that = this;
+        this.listBox.on("click", "[data-pn]", function(evt) {
+            hsSetSeria(that._data, that.pageKey, jQuery(this).attr("data-pn"));
+            evt.preventDefault();
+            that.load();
+        });
+    }
 }
 
 jQuery.fn.hsList = function(opts) {

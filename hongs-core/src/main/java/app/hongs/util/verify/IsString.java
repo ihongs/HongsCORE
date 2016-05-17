@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * 规则参数:
  *  maxlength   最大长度
  *  minlength   最短长度
- *  pattern     校验正则, 可使用 default.form.xml 中的 _patt_ 中预定义好的正则, 如 email,url
+ *  pattern     校验正则, 可使用 default.form.xml 里的 _patt_ 下预定好的正则, 如 email,url
  * </pre>
  * @author Hongs
  */

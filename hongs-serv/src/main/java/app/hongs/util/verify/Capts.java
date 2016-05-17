@@ -7,7 +7,7 @@ import app.hongs.util.Synt;
 
 /**
  * 验证码
- * 规则参数
+ * 规则参数:
  *  capts-sess 会话键
  *  capts-time 有效期(秒)
  * @author Hongs

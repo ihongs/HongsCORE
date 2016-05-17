@@ -6,7 +6,7 @@ import java.io.IOException;
 
 /**
  * 缩略图
- * 规则参数有
+ * 规则参数:
  *  thumb-extn 格式名称, 如 jpg
  *  thumb-pick 截取比例, 如 _bg:1*1, 或 _bg:1*1;keep
  *  thumb-zoom 缩放尺寸, 如 _lg:256*256,_md:128*128,_sm:64*64

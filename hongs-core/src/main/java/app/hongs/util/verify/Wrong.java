@@ -5,6 +5,10 @@ import app.hongs.HongsException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 单项错误
+ * @author Hongs
+ */
 public class Wrong extends HongsException {
     String name = null;
 

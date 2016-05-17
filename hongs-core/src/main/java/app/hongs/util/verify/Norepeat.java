@@ -1,5 +1,9 @@
 package app.hongs.util.verify;
 
+/**
+ * 单值约束
+ * @author Hongs
+ */
 public class Norepeat extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {

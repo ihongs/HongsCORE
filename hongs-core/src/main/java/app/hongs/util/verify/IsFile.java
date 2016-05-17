@@ -14,6 +14,20 @@ import java.net.URLConnection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 文件校验
+ * <pre>
+ * 规则参数:
+ *  skip-remote yes|no 是否跳过远程文件
+ *  down-remote yes|no 是否下载远程文件
+ *  href    存放位置的 URL 前缀, 当远程 URL 以 href 开头时跳过
+ *  link    存放位置的 URL 前缀, 使用此方式将自动补全域名等
+ *  temp    上传临时目录
+ *  extn    扩展名称限制
+ *  type    文件类型限制(Mime-Type)
+ * </pre>
+ * @author Hongs
+ */
 public class IsFile extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
@@ -22,7 +36,7 @@ public class IsFile extends Rule {
         }
 
         // 忽略远程地址
-        if (Synt.declare(params.get("pass-remote"), false)) {
+        if (Synt.declare(params.get("skip-remote"), false)) {
             if (value.toString( ).matches( "^(\\w+:)?//" )) {
                 return value;
             }

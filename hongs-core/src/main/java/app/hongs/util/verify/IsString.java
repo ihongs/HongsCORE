@@ -6,6 +6,16 @@ import app.hongs.util.Synt;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+/**
+ * 文本校验
+ * <pre>
+ * 规则参数:
+ *  maxlength   最大长度
+ *  minlength   最短长度
+ *  pattern     校验正则, 可使用 default.form.xml 中的 _patt_ 中预定义好的正则, 如 email,url
+ * </pre>
+ * @author Hongs
+ */
 public class IsString extends Rule {
     @Override
     public Object verify(Object value) throws Wrong, HongsException {

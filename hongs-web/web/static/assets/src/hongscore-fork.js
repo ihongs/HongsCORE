@@ -426,15 +426,15 @@ hsForkFillList = hsListFillPick;
         if (! src) {
             return ;
         }
+            box =$(box );
         var txt = src.replace(/^.*[\/\\]/, '');
         var inp =$(this).clone( );
         var grp =$(this).parent();
-            box =$(box );
         var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
            .append(this)
            .append('<span class="glyphicon glyphicon-file"></span>')
            .append($('<span  class="picktxt"></span>').text( txt ) )
-           .append('<span  class="close pull-right">&times;</span>');
+           .append('<span class="close pull-right" >&times;</span>');
         box.append(div );
         grp.append(inp );
         inp.val("");
@@ -451,13 +451,13 @@ hsForkFillList = hsListFillPick;
         if (! src) {
             return ;
         }
-        var txt = src.replace(/^.*[\/\\]/, '');
         var box =$(this);
+        var txt = src.replace(/^.*[\/\\]/, '');
         var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
            .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
            .append('<span class="glyphicon glyphicon-file"></span>')
            .append($('<span  class="picktxt"></span>').text( txt ) )
-           .append('<span  class="close pull-right">&times;</span>');
+           .append('<span class="close pull-right" >&times;</span>');
         box.append(div );
         return div ;
     };
@@ -496,16 +496,17 @@ hsForkFillList = hsListFillPick;
      * @param {String } src 文件路径取值
      * @param {Number } w   预览额定宽度
      * @param {Number } h   预览额定高度
+     * @param {boolean} k   为 true 保留, 否则截取
      * @returns {undefined|Element} 节点
      */
-    $.fn.hsFileView = function(box, src, w, h) {
+    $.fn.hsFileView = function(box, src, w, h, k) {
         if (! src) {
             return ;
         }
             box =$(box );
+        var inp =$(this).clone( );
         var grp =$(this).parent();
-        var inp =$(this).clone().val("");
-        var img =$.hsMakeView(src, w, h);
+        var img = k ? $.hsKeepView(src, w, h) : $.hsPickView(src, w, h);
         img.css("positoin" , "absolute");
         var div =$('<li class="preview"></li>').css({
             width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
@@ -514,6 +515,7 @@ hsForkFillList = hsListFillPick;
            .append('<a href="javascript:;" class="close pull-right">&times</a>');
         box.append(div );
         grp.append(inp );
+        inp.val("");
         return div ;
     };
 
@@ -523,14 +525,15 @@ hsForkFillList = hsListFillPick;
      * @param {String } src 文件路径取值
      * @param {Number } w   预览额定宽度
      * @param {Number } h   预览额定高度
+     * @param {boolean} k   为 true 保留, 否则截取
      * @returns {undefined|Element} 节点
      */
-    $.fn.hsFillView = function(nam, src, w, h) {
+    $.fn.hsFillView = function(nam, src, w, h, k) {
         if (! src) {
             return ;
         }
         var box =$(this);
-        var img =$.hsMakeView(src, w, h);
+        var img = k ? $.hsKeepView(src, w, h) : $.hsPickView(src, w, h);
         img.css("positoin" , "absolute");
         var div =$('<li class="preview"></li>').css({
             width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
@@ -542,13 +545,13 @@ hsForkFillList = hsListFillPick;
     };
 
     /**
-     * 构建预览
+     * 截取式预览
      * @param {String } src 文件真实路径
      * @param {Number } w   预览额定宽度
      * @param {Number } h   预览额定高度
      * @returns {Element}
      */
-    $.hsMakeView = function(src, w, h) {
+    $.hsPickView = function(src, w, h) {
         var img  =  new Image();
         img.onload = function() {
             var xw = img.width ;
@@ -556,6 +559,36 @@ hsForkFillList = hsListFillPick;
             var zw = xh * w / h;
 //          var zh = xw * h / w;
             if (zw > xw) {
+                // 宽度优先
+                img.width   = w;
+                img.height  = xh * w / xw;
+                $(img).css("top" , (((h - img.height) / 2)) + "px");
+            } else {
+                // 高度优先
+                img.height  = h;
+                img.width   = xw * h / xh;
+                $(img).css("left", (((w - img.width ) / 2)) + "px");
+            }
+        };
+        img.src = src ;
+        return  $(img);
+    };
+
+    /**
+     * 保留式预览
+     * @param {String } src 文件真实路径
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @returns {Element}
+     */
+    $.hsKeepView = function(src, w, h) {
+        var img  =  new Image();
+        img.onload = function() {
+            var xw = img.width ;
+            var xh = img.height;
+            var zw = xh * w / h;
+//          var zh = xw * h / w;
+            if (zw < xw) {
                 // 宽度优先
                 img.width   = w;
                 img.height  = xh * w / xw;

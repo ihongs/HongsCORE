@@ -1,5 +1,9 @@
 package app.hongs.util.verify;
 
+/**
+ * 可选约束
+ * @author Hongs
+ */
 public class Optional extends Rule {
      @Override
      public Object verify(Object value) throws Wrong {
@@ -10,7 +14,7 @@ public class Optional extends Rule {
              rule.setValues(values);
              value = rule.verify(value);
          }   catch (Wrong w) {
-             return AVOID;
+             return BLANK;
          }
          return value;
      }

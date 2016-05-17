@@ -3,6 +3,10 @@ package app.hongs.util.verify;
 import app.hongs.HongsException;
 import java.util.Map;
 
+/**
+ * 校验接口
+ * @author Hongs
+ */
 public interface Veri {
 
     public boolean  isUpdate();

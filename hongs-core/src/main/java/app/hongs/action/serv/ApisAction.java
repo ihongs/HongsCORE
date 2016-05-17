@@ -102,8 +102,17 @@ public class ApisAction
         // 提取 API 特有的参数
         String  _dat = req.getParameter("!data");
         String  _cnv = req.getParameter("!conv");
+        String  _cal = req.getParameter("!call");
         String  _wap = req.getParameter("!wrap");
         String  _sok = req.getParameter("!scok");
+
+        if (_cal != null && _cal.length( ) != 0) {
+            if (!_cal.matches ( "^[a-zA-Z_\\$][a-zA-Z0-9_]*$"  )  ) {
+                hlpr.error400 ( "Illegal callback function name!" );
+                return;
+            }
+            hlpr.setAttribute ( Cnst.BACK_ATTR ,  _cal);
+        }
 
         // 将请求数据处理之后传递
         if (_dat != null && _dat.length( ) != 0) {

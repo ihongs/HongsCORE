@@ -7,16 +7,25 @@ import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * 默认取值
+ * <pre>
+ * 规则参数:
+ *  default-create yes|no 仅创建的时候设置
+ *  default-compel yes|no 无论有没有都设置
+ * </pre>
+ * @author Hongs
+ */
 public class Default extends Rule {
     @Override
     public Object verify(Object value) {
-        boolean tst = Synt.declare(params.get("default-thrust"), false); // 无论有没有都设置
         boolean crt = Synt.declare(params.get("default-create"), false); // 仅创建的时候设置
+        boolean tst = Synt.declare(params.get("default-compel"), false); // 无论有没有都设置
 
         if (value == null || tst) {
             if (helper.isUpdate() && crt) {
                 if (tst) {
-                    return AVOID;
+                    return BLANK;
                 } else {
                     return value;
                 }

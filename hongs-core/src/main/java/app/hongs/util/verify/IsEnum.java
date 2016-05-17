@@ -5,6 +5,15 @@ import app.hongs.action.FormSet;
 import app.hongs.util.Synt;
 import java.util.Map;
 
+/**
+ * 枚举校验
+ * <pre>
+ * 规则参数:
+ *  conf    配置名, 默认为当前配置
+ *  enum    枚举名, 默认同 field.name
+ * </pre>
+ * @author Hongs
+ */
 public class IsEnum extends Rule {
     @Override
     public Object verify(Object value) throws Wrong, HongsException {

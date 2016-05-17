@@ -32,20 +32,20 @@ import java.util.regex.Pattern;
  * 已解决加表名前缀的问题;
  * 上级表请使用上级表别名;
  * 且兼容上面旧的前缀规则.
- * 增加了表示别名的前缀"!", 单纯统计行数须写 COUNT(!*).
+ * 增加了忽略别名的前缀"!", 单纯统计行数须写 COUNT(!*).
  * 以下 select,where,groupBy,which,orderBy,on 均可如此.
  * 本类处理一般的查询尚可, 过于复杂的 SQL 语句不用为好.
  * </p>
  *
- * <h3>将SQL语句拆解成以下对应部分:</h3>
+ * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
- * fields         SELECT    field1, field2...
- * tableName name FROM      tableName AS name
- * wheres         WHERE     expr1 AND expr2...
- * groups         GROUP BY  field1, field2...
- * havins         HAVING    expr1 AND expr2...
- * orders         ORDER BY  field1, field2...
- * limits         LIMIT     start, limit
+ * select()     SELECT    field1, field2...
+ * from()       FROM      tableName AS name
+ * filter()     WHERE     expr1 AND expr2...
+ * groupBy()    GROUP BY  field1, field2...
+ * having()     HAVING    expr1 AND expr2...
+ * orderBy()    ORDER BY  field1, field2...
+ * limit()      LIMIT     start, limit
  * </pre>
  *
  * <h3>系统已定义的"options":</h3>
@@ -55,7 +55,7 @@ import java.util.regex.Pattern;
  * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: FetchMore.fetchMore
  * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
  * ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
- * FETCH_OBJECT : boolean     获取对象; 作用域: DB.fetchMore
+ * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
  * page         : int|String  分页页码; 作用域: FetchPage
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage
@@ -159,11 +159,11 @@ public class FetchCase
   {
     try {
     FetchCase caze  = (FetchCase) super.clone();
-    caze.fields     = new StringBuilder( this.fields );
-    caze.wheres     = new StringBuilder( this.wheres );
-    caze.groups     = new StringBuilder( this.groups );
-    caze.havins     = new StringBuilder( this.havins );
-    caze.orders     = new StringBuilder( this.orders );
+    caze.fields     = new StringBuilder(this.fields);
+    caze.wheres     = new StringBuilder(this.wheres);
+    caze.groups     = new StringBuilder(this.groups);
+    caze.havins     = new StringBuilder(this.havins);
+    caze.orders     = new StringBuilder(this.orders);
     caze.limits     = this.limits.clone();
     caze.wparams    = new ArrayList(this.wparams);
     caze.hparams    = new ArrayList(this.hparams);
@@ -171,8 +171,34 @@ public class FetchCase
     caze.joinList   = new LinkedHashSet();
 
     // 深度克隆关联列表
-    for (  FetchCase fc : joinList  ) {
-        caze.joinList.add(fc.clone());
+    for (FetchCase fc : joinList) {
+        caze.joinList.add(fc.clone(caze));
+    }
+
+    return caze;
+    }
+    catch (CloneNotSupportedException ex) {
+        throw  new  HongsError.Common(ex);
+    }
+  }
+
+  private FetchCase clone(FetchCase caxe) {
+    try {
+    FetchCase caze  = (FetchCase) super.clone();
+    caze.fields     = new StringBuilder(this.fields);
+    caze.wheres     = new StringBuilder(this.wheres);
+    caze.groups     = new StringBuilder(this.groups);
+    caze.havins     = new StringBuilder(this.havins);
+    caze.orders     = new StringBuilder(this.orders);
+    caze.limits     = this.limits.clone();
+    caze.wparams    = new ArrayList(this.wparams);
+    caze.hparams    = new ArrayList(this.hparams);
+    caze.options    = caxe.options;
+    caze.joinList   = new LinkedHashSet();
+
+    // 深度克隆关联列表
+    for (FetchCase fc : joinList) {
+        caze.joinList.add(fc.clone(caxe));
     }
 
     return caze;
@@ -337,11 +363,11 @@ public class FetchCase
 
   public FetchCase join(FetchCase caze)
   {
-    caze.options  = this.options;
     this.joinList.add(caze);
     caze.joinName = null;
     caze.joinExpr = null;
     caze.joinType = LEFT;
+    caze.options  = options;
     return caze;
   }
 
@@ -954,7 +980,6 @@ public class FetchCase
 
   /**
    * 设置查询条件
-   * 字段名前, 用"."表示属于当前表, 用":"表示属于上级表
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
@@ -990,6 +1015,8 @@ public class FetchCase
   }
 
   /**
+   * 是否有设置过滤条件
+   * @return 存在为true, 反之为false
    * @deprecated
    */
   public boolean hasWhich()
@@ -998,6 +1025,10 @@ public class FetchCase
   }
 
   /**
+   * 设置查询条件
+   * @param where
+   * @param params 对应 where 中的 ?
+   * @return 当前查询结构对象
    * @deprecated
    */
   public FetchCase setWhich(String where, Object... params)

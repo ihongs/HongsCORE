@@ -1,13 +1,16 @@
 package app.hongs.util.verify;
 
 import app.hongs.CoreLocale;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.util.Dict;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * 错误集合
+ * @author Hongs
+ */
 public class Wrongs extends HongsException {
   protected final Map<String,Wrong> wrongs ;
 

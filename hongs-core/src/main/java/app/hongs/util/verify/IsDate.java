@@ -13,10 +13,10 @@ import java.util.regex.Pattern;
  * 日期校验
  * <pre>
  * 规则参数:
- *  type    日期类型, date(Date对象),timestamp(时间戳),microtime(毫秒数)
  *  format  日期格式, 同 java 的 SimpleDateFormat, 默认从语言资源中提取
- *  min     最小时间, 采用 format 指定的格式
- *  max     最大时间, 采用 format 指定的格式
+ *  type    日期类型, date(Date对象),timestamp(时间戳),microtime(毫秒数)
+ *  min     最小时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
+ *  max     最大时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
  * </pre>
  * @author Hongs
  */
@@ -62,11 +62,11 @@ public class IsDate extends Rule {
         if ("date".equals(type)) {
             return day;
         }
+        if ("microtime".equals(type)) {
+            return day.getTime();
+        }
         if ("timestamp".equals(type)) {
             return day.getTime() / 1000;
-        }
-        if ("microtime".equals(type)) {
-            return day.getTime( /***/ );
         }
         if (!"".equals(fmt)) {
             return new SimpleDateFormat(fmt).format(day);

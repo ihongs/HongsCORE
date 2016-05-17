@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  *  conf    配置名, 默认为当前配置
  *  form    表单名, 默认同 field.name
  *  data-at 关联动作名
- *  data-vk 关联键取值
+ *  data-vk 关联取值键
  * </pre>
  * @author Hongs
  */

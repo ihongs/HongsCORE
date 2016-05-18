@@ -202,12 +202,12 @@
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}" >
                                     <fileset dir="${basedir}/../hongs-serv-system">
-                                        <include name="*.bat"/>
+                                        <include name="*.bat" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}" >
                                     <fileset dir="${basedir}/../hongs-serv-server">
-                                        <include name="*.bat"/>
+                                        <include name="*.bat" />
                                     </fileset>
                                 </copy>
                                 <mkdir  dir="${project.build.directory}/${released.name}/var/log"/>

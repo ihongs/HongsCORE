@@ -201,7 +201,7 @@
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}" >
-                                    <fileset dir="${project.build.directory}">
+                                    <fileset dir="${project.build.directory}/..">
                                         <include name="*/*.bat"  />
                                     </fileset>
                                 </copy>

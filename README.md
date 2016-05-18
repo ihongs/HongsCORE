@@ -41,15 +41,31 @@
 
 ## 使用方法
 
-* 由于之前 gz 等大文件提交导致仓库非常大，现已不再提供压缩包，已安装好 java,maven 情况下, 进入此项目根目录, 执行 mvn clean compile package 后, 取 hongs-web/target/HongsCORE 即为发布的项目目录, 可拷贝到自己需要的任意目录下, 然后按以下流程设置和启动系统。 *
+请先安装 JDK 和 Maven, 然后进入您的工作目录, 按以下流程执行命令:
 
-下载 Hongs-CORE-x.x.x.tar.gz 后解压到任意目录(别下 release 里的、很久没更新了), 打开命令行(Linux,Mac的终端)并切换到该目录下, 先执行 `bin/run system:setup` 设置数据库, 再执行 `bin/run server:start` 启动服务器, 然后打开浏览器在地址栏输入 http://localhost:8080/ 即可进入; 登录账号 `admin@xxx.com` 口令 `123456`; 如需停止服务, 关闭命令窗口或按 Ctrl+C 即可; Linux,Mac 系统需要检查 run 是否有执行权限(`chmod +x etc/*`).
+    # 获取并构建系统
+    git clone https://github.com/ihongs/HongsCORE.new.git
+    git clone https://github.com/ihongs/ueditor-hh.git
+    cd ueditor*
+    mvn clean compile package install
+    cd ../HongsCORE*
+    mvn clean compile package
 
-同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行上面的两条命令, windows 用户只需双击即可设置和启动.
+    # 此时已建立目标系统目录 hongs-web/target/HongsCORE, 可拷贝到您需要的地方
 
-注意: 需要 JDK 而非 JRE(Java) 才能运行, 使用前请确保 JDK 已安装并加入 PATH 环境变量, 或设置 JAVA_HOME 环境变量为 jdk 的安装目录(Windows 必须设置). Windows,Linux,Mac 系统在官网下载并使用安装程序安装的通常已自动设置好了.
+    # 设置和启动系统
+    cd HongsCORE
+    bin/app system:setup
+    bin/app server:start
+
+加 --debug 1 可开启调试输出模式, 可在控制台(命令行)显示执行过程(调试信息), server:start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
+
+注意[1]: 退出运行应该用 Ctrl+C 而不应当直接关闭命令窗口, 后者可能导致直接死掉而无法执行退出清理, 再次启动需要删除 var/server 下端口对应的 .pid 文件才行.
+
+注意[2]: 需要 JDK 而非 JRE(Java) 才能运行, 使用前请确保 JDK 已安装并加入 PATH 环境变量, 或设置 JAVA_HOME 环境变量为 jdk 的安装目录(Windows 必须设置). 在官网下载并使用安装程序安装的通常已自动设置好了.
 
 > JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+> MVN 下载地址: http://maven.apache.org/download.cgi
 
 ## 前端开发
 

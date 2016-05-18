@@ -1,6 +1,7 @@
 
 # 更新日志
 
+* 2016/05/18 在 hongs-web 的 pom.xml 中编写 ant 代码已替代原来的 pack.sh 打包发布操作
 * 2016/05/14 增加 HongsUnchecked 异常类, 用于表示 unchecked exception, 此前的部分 HongsError 使用有误
 * 2016/05/05 数据库连接池从 C3P0 更换为 DBCP, app.hongs.db.DB.Roll 更名为 app.hongs.db.link.Loop
 * 2016/05/03 增加 Lucene 查询迭代, 增加公共注册动作

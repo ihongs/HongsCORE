@@ -15,7 +15,8 @@
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <endorsed.dirs>${project.build.directory}/endorsed</endorsed.dirs>
+        <released.name>HongsCORE</released.name>
     </properties>
     <dependencies>
         <dependency>
@@ -97,7 +98,7 @@
     </dependencies>
     <build>
         <!--directory>bin</directory-->
-        <finalName>HongsCORE-${project.version}</finalName>
+        <finalName>${released.name}-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -153,7 +154,7 @@
                     <source>1.6</source>
                     <target>1.6</target>
                     <compilerArguments>
-                        <endorseddirs>${endorsed.dir}</endorseddirs>
+                        <endorseddirs>${endorsed.dirs}</endorseddirs>
                     </compilerArguments>
                 </configuration>
             </plugin>
@@ -177,30 +178,30 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <delete dir="${basedir}/../HongsCORE"/>
-                                <copy todir="${basedir}/../HongsCORE" >
-                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}/WEB-INF">
+                                <delete dir="${project.build.directory}/${released.name}"/>
+                                <copy todir="${project.build.directory}/${released.name}" >
+                                    <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <exclude name="web.*" />
                                         <exclude name="classes/" />
                                     </fileset>
                                 </copy>
-                                <copy todir="${basedir}/../HongsCORE/etc">
-                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}/WEB-INF">
+                                <copy todir="${project.build.directory}/${released.name}/etc">
+                                    <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <include name="web.*" />
                                     </fileset>
                                 </copy>
-                                <copy todir="${basedir}/../HongsCORE/lib">
-                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}/WEB-INF">
+                                <copy todir="${project.build.directory}/${released.name}/lib">
+                                    <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <include name="classes/" />
                                     </fileset>
                                 </copy>
-                                <copy todir="${basedir}/../HongsCORE/web">
-                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}">
+                                <copy todir="${project.build.directory}/${released.name}/web">
+                                    <fileset dir="${project.build.directory}/${project.build.finalName}">
                                         <exclude name="*-INF/**" />
                                     </fileset>
                                 </copy>
-                                <mkdir dir="${basedir}/../HongsCORE/var/log"/>
-                                <mkdir dir="${basedir}/../HongsCORE/var/tmp"/> 
+                                <mkdir  dir="${project.build.directory}/${released.name}/var/log"/>
+                                <mkdir  dir="${project.build.directory}/${released.name}/var/tmp"/> 
                             </tasks>
                         </configuration>
                     </execution>

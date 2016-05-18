@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# 本脚本已废弃, 改为在 hongs-web 的 mvn package 中进行
+#
+
 PACK_NAME=Hongs-CORE-0.3-SNAPSHOT
 WORK_PATH=`dirname $0`
 PACK_PATH="$WORK_PATH/$PACK_NAME"

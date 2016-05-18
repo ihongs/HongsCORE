@@ -8,3 +8,4 @@ nb-configuration.xml
 /HongsCORE
 /HongsCORE-*
 /hongs-web/web/WEB-INF/lib/*
+/hongs-web/web/WEB-INF/var/*

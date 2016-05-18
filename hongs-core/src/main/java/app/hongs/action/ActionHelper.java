@@ -18,6 +18,7 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -551,13 +552,17 @@ public class ActionHelper implements Cloneable
    */
   public String getCookibute(String name) {
     if (this.cookiesData != null) {
-      return this.cookiesData.get(name);
+      return  this.cookiesData.get(name);
     } else {
-      Cookie[] cs = this.getRequest().getCookies();
+      Cookie[] cs = this.getRequest( ).getCookies( );
       if (cs != null) {
-        for(Cookie ce : cs /**/) {
-          if (ce.getName().equals(name)) {
-            return ce.getValue();
+        for(Cookie ce : cs) {
+          if ( ce.getName().equals(name)) {
+            try {
+              return URLDecoder.decode(ce.getValue(), "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+              throw  new HongsError.Common(e);
+            }
           }
         }
       }
@@ -600,7 +605,14 @@ public class ActionHelper implements Cloneable
    */
   public void setCookibute(String name, String value,
     int life, String path, String host, boolean httpOnly, boolean secuOnly) {
-      Cookie ce = new Cookie(name, value);
+      if (value != null) {
+        try {
+          value = URLEncoder.encode(value,"UTF-8");
+        } catch ( UnsupportedEncodingException e ) {
+          throw   new HongsError.Common(e);
+        }
+      }
+      Cookie ce = new Cookie(name , value);
       if (path != null) {
           ce.setPath  (path);
       }

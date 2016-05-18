@@ -97,7 +97,7 @@
     </dependencies>
     <build>
         <!--directory>bin</directory-->
-        <finalName>Hongs-CORE-${project.version}</finalName>
+        <finalName>HongsCORE-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -164,6 +164,45 @@
                 <configuration>
                     <skip>true</skip>
                 </configuration>
+            </plugin>
+            <!-- Build target system -->
+            <plugin>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>build-hongs-core-system</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <tasks>
+                                <delete dir="${basedir}/../HongsCORE"/>
+                                <copy todir="${basedir}/../HongsCORE" >
+                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}/WEB-INF">
+                                        <exclude name="web.*" />
+                                        <exclude name="classes/" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${basedir}/../HongsCORE/etc">
+                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}/WEB-INF">
+                                        <include name="web.*" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${basedir}/../HongsCORE/lib">
+                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}/WEB-INF">
+                                        <include name="classes/" />
+                                    </fileset>
+                                </copy>
+                                <copy todir="${basedir}/../HongsCORE/web">
+                                    <fileset dir="${project.build.directory}/HongsCORE-${project.version}">
+                                        <exclude name="*-INF/**" />
+                                    </fileset>
+                                </copy>
+                            </tasks>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

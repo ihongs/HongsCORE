@@ -181,13 +181,13 @@
                                 <delete dir="${project.build.directory}/${released.name}"/>
                                 <copy todir="${project.build.directory}/${released.name}" >
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
-                                        <exclude name="web.*"    />
+                                        <exclude name="web.*" />
                                         <exclude name="classes/" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}/etc">
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
-                                        <include name="web.*"    />
+                                        <include name="web.*" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}/lib">
@@ -197,12 +197,17 @@
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}/web">
                                     <fileset dir="${project.build.directory}/${project.build.finalName}">
-                                        <exclude name="*-INF/"   />
+                                        <exclude name="*-INF/" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}" >
-                                    <fileset dir="${basedir}/.."  >
-                                        <include name="*/*.bat"  />
+                                    <fileset dir="${basedir}/../hongs-serv-system">
+                                        <include name="*.bat"/>
+                                    </fileset>
+                                </copy>
+                                <copy todir="${project.build.directory}/${released.name}" >
+                                    <fileset dir="${basedir}/../hongs-serv-server">
+                                        <include name="*.bat"/>
                                     </fileset>
                                 </copy>
                                 <mkdir  dir="${project.build.directory}/${released.name}/var/log"/>

@@ -199,6 +199,8 @@
                                         <exclude name="*-INF/**" />
                                     </fileset>
                                 </copy>
+                                <mkdir dir="${basedir}/../HongsCORE/var/log"/>
+                                <mkdir dir="${basedir}/../HongsCORE/var/tmp"/> 
                             </tasks>
                         </configuration>
                     </execution>

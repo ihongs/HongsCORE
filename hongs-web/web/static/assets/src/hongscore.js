@@ -1541,9 +1541,13 @@ $.fn.hsTabs = function(rel) {
     box.addClass( "tabs" );
     rel.data( "tabs", box);
     box.data("panes", rel);
-    if (box.has(".active").size() === 0) {
-        box.find("li>a").first().click();
+
+    var act = box.children(".active" );
+    if (act.size() == 0) {
+        act = box.children("li:first");
     }
+    act.children("a").click();
+
     return box;
 };
 $.fn.hsTadd = function(ref) {

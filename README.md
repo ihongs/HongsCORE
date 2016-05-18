@@ -41,7 +41,7 @@
 
 ## 使用方法
 
-* 由于之前 gz 等大文件提交导致仓库非常大，现已不再提供压缩包，可使用 mvn package 等命令构建系统。 *
+* 由于之前 gz 等大文件提交导致仓库非常大，现已不再提供压缩包，已安装好 java,maven 情况下, 进入此项目根目录, 执行 mvn clean compile package 后, 取 hongs-web/target/HongsCORE 即为发布的项目目录, 可拷贝到自己需要的任意目录下, 然后按以下流程设置和启动系统。 *
 
 下载 Hongs-CORE-x.x.x.tar.gz 后解压到任意目录(别下 release 里的、很久没更新了), 打开命令行(Linux,Mac的终端)并切换到该目录下, 先执行 `bin/run system:setup` 设置数据库, 再执行 `bin/run server:start` 启动服务器, 然后打开浏览器在地址栏输入 http://localhost:8080/ 即可进入; 登录账号 `admin@xxx.com` 口令 `123456`; 如需停止服务, 关闭命令窗口或按 Ctrl+C 即可; Linux,Mac 系统需要检查 run 是否有执行权限(`chmod +x etc/*`).
 

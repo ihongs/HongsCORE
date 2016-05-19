@@ -90,8 +90,9 @@ public class CoreConfig
     }
     catch (FileNotFoundException ex)
     {
-        fn = name.contains("/") ? name + ".properties"
-           :"app/hongs/config/" + name + ".properties";
+        fn = name.contains(".")
+          || name.contains("/") ? name + ".properties"
+           : "app/hongs/config/"+ name + ".properties";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if ( null ==  is)
         {

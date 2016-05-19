@@ -39,9 +39,9 @@ public class CommentAction extends DBAction {
     }
 
     @Override
-    protected  Map   getReqMap(ActionHelper helper, Model mod, String opr, Map req)
+    protected  Map   getReqMap(ActionHelper helper, Model ett, String opr, Map req)
     throws HongsException {
-        req = super.getReqMap(helper, mod, opr, req);
+        req = super.getReqMap(helper, ett, opr, req);
 
         if (!"retrieve".equals(opr)) {
             req.put("user_id", helper.getSessibute(Cnst.UID_SES));
@@ -51,7 +51,7 @@ public class CommentAction extends DBAction {
     }
 
     @Override
-    protected String getRspMsg(ActionHelper helper, Model mod, String opr, int num)
+    protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         if ("delete".equals(opr)) {
             return "删除评论成功";
@@ -60,7 +60,7 @@ public class CommentAction extends DBAction {
             return "添加评论成功";
         }
 
-        return super.getRspMsg(helper, mod, opr, num);
+        return super.getRspMsg(helper, ett, opr, num);
     }
 
 }

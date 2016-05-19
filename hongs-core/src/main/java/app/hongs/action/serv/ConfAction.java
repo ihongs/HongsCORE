@@ -201,7 +201,7 @@ public class ConfAction
     }
 
     // 查找共享配置信息
-    String x  = mk.conf.getProperty("core.join.fore");
+    String x  = mk.conf.getProperty("core.fore.keys");
     if (null !=  x ) for ( String k : x.split( ";" )) {
         k = k.trim();
         if (k.length()==0) {

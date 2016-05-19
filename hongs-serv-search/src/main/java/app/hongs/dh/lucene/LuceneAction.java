@@ -25,7 +25,7 @@ import java.util.Map;
 @Action()
 public class LuceneAction implements IAction, IActing {
 
-    protected String cnf = null;
+    protected String mod = null;
     protected String ent = null;
 
     @Override
@@ -33,7 +33,7 @@ public class LuceneAction implements IAction, IActing {
         String act;
         act = runner.getHandle();
         ent = runner.getEntity();
-        cnf = runner.getModule();
+        mod = runner.getModule();
 
         try {
             // 下划线开头的为内部资源, 不直接对外开放
@@ -42,7 +42,7 @@ public class LuceneAction implements IAction, IActing {
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
-            if ( Dict.getValue(FormSet.getInstance(cnf ).getForm( ent ),
+            if (Dict.getValue(FormSet.getInstance( mod ).getForm( ent ),
                 false, "@", "cant.call." + act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
@@ -127,7 +127,7 @@ public class LuceneAction implements IAction, IActing {
      */
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        return LuceneRecord.getInstance(cnf, ent);
+        return LuceneRecord.getInstance(mod, ent);
     }
 
     /**
@@ -170,7 +170,7 @@ public class LuceneAction implements IAction, IActing {
     protected String getRspMsg(ActionHelper helper, IEntity ett, String opr, int num)
     throws HongsException {
         CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.loadIgnrFNF(cnf);
+        lang.loadIgnrFNF(mod);
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
         if (! lang.containsKey(key)) {
@@ -217,8 +217,8 @@ public class LuceneAction implements IAction, IActing {
     }
 
     private Map getForm() throws HongsException {
-        String  cuf  = FormSet.hasConfFile(cnf + "/" + ent)
-                       ? cnf + "/" + ent : cnf ;
+        String  cuf  = FormSet.hasConfFile(mod + "/" + ent)
+                       ? mod + "/" + ent : mod ;
         FormSet form = FormSet.getInstance(cuf);
         try {
             return form.getFormTranslated (ent);
@@ -232,10 +232,10 @@ public class LuceneAction implements IAction, IActing {
     }
 
     private Map getMenu() throws HongsException {
-        String  cuf  = FormSet.hasConfFile(cnf + "/" + ent)
-                       ? cnf + "/" + ent : cnf ;
+        String  cuf  = FormSet.hasConfFile(mod + "/" + ent)
+                       ? mod + "/" + ent : mod ;
         NaviMap navi = NaviMap.getInstance(cuf);
-        return  navi.getMenu( cnf+"/"+ent+"/" );
+        return  navi.getMenu(mod+"/"+ent+"/" );
     }
 
 }

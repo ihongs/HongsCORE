@@ -213,7 +213,7 @@ public class LangAction
     }
 
     // 查找共享语言信息
-    String x  = mk.lang.getProperty("core.join.fore");
+    String x  = mk.lang.getProperty("core.fore.keys");
     if (null !=  x ) for ( String k : x.split( ";" )) {
         k = k.trim();
         if (k.length()==0) {

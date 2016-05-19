@@ -55,6 +55,7 @@ public class SelectInvoker implements FilterInvoker {
         if (form.length() == 0 || conf.length() == 0) {
             form = chains.getEntity();
             conf = chains.getModule();
+            // 照顾 Module Action 的配置规则
             if (FormSet.hasConfFile( conf+"/"+form )) {
                 conf = conf+"/"+form ;
             }

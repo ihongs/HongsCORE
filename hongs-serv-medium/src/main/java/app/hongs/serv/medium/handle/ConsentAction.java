@@ -32,13 +32,13 @@ public class ConsentAction extends DBAction {
     @Override
     public void update(ActionHelper helper)
     throws HongsException {
-        Model  mod = getEntity(helper);
+        Model  ett = getEntity(helper);
         Map    req = helper.getRequestData();
         String aid = helper.getParameter("link_id");
-        String lnk = ( (ALinkModel) mod ).getLink();
+        String lnk = ( (ALinkModel) ett ).getLink();
 
         String whr = "link = ? AND link_id = ?";
-        Map    row = mod.table
+        Map    row = ett.table
                 .filter(whr , lnk , aid )
                 .select("id,state,score")
                 .one( );
@@ -51,11 +51,11 @@ public class ConsentAction extends DBAction {
                 row.clear();
                 row.put("state", 1);
                 row.put("score", s);
-                mod.table
+                ett.table
                    .filter(whr, lnk, aid)
                    .update(row);
 
-                helper.reply(getRspMsg(helper, mod, "create", 1));
+                helper.reply(getRspMsg(helper, ett, "create", 1));
             } else {
                 req.put("id" , row.get("id"));
 
@@ -89,9 +89,9 @@ public class ConsentAction extends DBAction {
     }
 
     @Override
-    protected  Map   getReqMap(ActionHelper helper, Model mod, String opr, Map req)
+    protected  Map   getReqMap(ActionHelper helper, Model ett, String opr, Map req)
     throws HongsException {
-        req = super.getReqMap(helper, mod, opr, req);
+        req = super.getReqMap(helper, ett, opr, req);
 
         if (!"retrieve".equals(opr)) {
             req.put("user_id", helper.getSessibute(Cnst.UID_SES));
@@ -101,12 +101,12 @@ public class ConsentAction extends DBAction {
     }
 
     @Override
-    protected String getRspMsg(ActionHelper helper, Model mod, String opr, int num)
+    protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         int newScore = Synt.declare(helper.getParameter("score"), 1);
         int oldScore = Synt.declare(helper.getAttribute("score"), 0);
         String lid = helper.getParameter("link_id");
-        String lnk = ( (ALinkModel) mod ).getLink();
+        String lnk = ( (ALinkModel) ett ).getLink();
         String tab = lnk;
         String cnt ;
         String opn ;
@@ -120,7 +120,7 @@ public class ConsentAction extends DBAction {
             opn = "赞";
         }
 
-        Table  art = mod.db.getTable(tab);
+        Table  art = ett.db.getTable(tab);
 
         if (newScore > 0) {
             if ("create".equals(opr)) {
@@ -146,7 +146,7 @@ public class ConsentAction extends DBAction {
             }
         }
 
-        return super.getRspMsg(helper, mod, opr, num);
+        return super.getRspMsg(helper, ett, opr, num);
     }
 
 }

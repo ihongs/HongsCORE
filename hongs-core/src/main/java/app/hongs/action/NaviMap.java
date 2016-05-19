@@ -181,9 +181,9 @@ public class NaviMap
     }
     catch (FileNotFoundException ex)
     {
-        fn = name.contains("/")
-           ? name + Cnst.NAVI_EXT + ".xml"
-           : "app/hongs/config/" + name + Cnst.NAVI_EXT + ".xml";
+        fn = name.contains(".")
+          || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
+           : "app/hongs/config/"+ name + Cnst.NAVI_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
@@ -600,8 +600,7 @@ public class NaviMap
     return lang;
   }
 
-  public List<Map> getRoleTranslates()
-  throws HongsException {
+  public List<Map> getRoleTranslates() {
       return getRoleTranslates(0, 0);
   }
 
@@ -619,10 +618,8 @@ public class NaviMap
    * @param index
    * @param depth
    * @return
-   * @throws app.hongs.HongsException
    */
-  public List<Map> getRoleTranslates(int index, int depth)
-  throws HongsException {
+  public List<Map> getRoleTranslates(int index, int depth)  {
       return getRoleTranslated(index, depth, null );
   }
 
@@ -660,11 +657,30 @@ public class NaviMap
       return getRoleTranslated(menuz, rolez, lang, depth, 0);
   }
 
+  public List<Map> getRoleTranslates(String name, int depth) {
+      return getRoleTranslated(name, depth, null);
+  }
+
+  public List<Map> getRoleTranslated(String name, int depth)
+  throws HongsException {
+      Set role =   getRoleSet();
+      if (role == null) {
+          role =  new HashSet();
+      }
+      return getRoleTranslated(name, depth, role);
+  }
+
+  public List<Map> getRoleTranslated(String name, int depth, Set<String> rolez) {
+      CoreLocale lang= getCurrTranslator();
+      Map menu = (Map) getMenu(name).get("menus");
+      return getRoleTranslated(menu, rolez, lang, depth, 0);
+  }
+
   protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
       List<Map> list = new ArrayList( );
 
-      if (menus==null || (j != 0 && j <= i)) {
-          return list;
+      if (null == menus||(j != 0 && j <= i)) {
+          return  list;
       }
 
       for(Map.Entry item : menus.entrySet()) {
@@ -787,11 +803,30 @@ public class NaviMap
       return getMenuTranslated(menuz, rolez, lang, depth, 0);
   }
 
-  protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
-      List <Map> list = new ArrayList( );
+  public List<Map> getMenuTranslates(String name, int depth) {
+      return getMenuTranslated(name, depth, null);
+  }
 
-      if (menus==null || (j != 0 && j <= i)) {
-          return list;
+  public List<Map> getMenuTranslated(String name, int depth)
+  throws HongsException {
+      Set role =  getRoleSet();
+      if (role == null) {
+          role = new HashSet();
+      }
+      return getMenuTranslated(name, depth, role);
+  }
+
+  public List<Map> getMenuTranslated(String name, int depth, Set<String> rolez) {
+      CoreLocale lang= getCurrTranslator();
+      Map menu = (Map) getMenu(name).get("menus");
+      return getMenuTranslated(menu, rolez, lang, depth, 0);
+  }
+
+  protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
+      List<Map> list = new ArrayList( );
+
+      if (null == menus||(j != 0 && j <= i)) {
+          return  list;
       }
 
       for(Map.Entry item : menus.entrySet()) {

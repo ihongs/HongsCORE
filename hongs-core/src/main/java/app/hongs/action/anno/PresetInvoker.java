@@ -59,6 +59,7 @@ public class PresetInvoker implements FilterInvoker {
         if (envm.length() == 0 || conf.length() == 0) {
             envm = chains.getEntity();
             conf = chains.getModule();
+            // 照顾 Module Action 的配置规则
             if (FormSet.hasConfFile( conf+"/"+envm )) {
                 conf = conf+"/"+envm ;
             }

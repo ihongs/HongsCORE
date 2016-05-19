@@ -20,14 +20,14 @@ public class ArticleAction extends SearchAction {
 
     @Action("basics/retrieve")
     public void basics(ActionHelper helper) throws HongsException {
-        ABaseModel mod = (ABaseModel) ((Article) getEntity(helper)).getModel();
+        ABaseModel art = (ABaseModel) ((Article) getEntity(helper)).getModel();
         Map rd = helper.getRequestData();
         Set rb = new HashSet( );
         rb.add("count_browses");
         rb.add("count_consent");
         rb.add("count_dissent");
         rd.put("rb", rb);
-        Map rs= mod.getInfo(rd);
+        Map rs= art.getInfo(rd);
         helper.reply(rs);
     }
 

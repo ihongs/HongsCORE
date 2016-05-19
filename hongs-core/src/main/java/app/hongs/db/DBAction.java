@@ -25,7 +25,7 @@ import java.util.Map;
 @Action("hongs/db")
 public class DBAction implements IAction, IActing {
 
-    protected String cnf = null;
+    protected String mod = null;
     protected String ent = null;
 
     @Override
@@ -33,7 +33,7 @@ public class DBAction implements IAction, IActing {
         String act;
         act = runner.getHandle();
         ent = runner.getEntity();
-        cnf = runner.getModule();
+        mod = runner.getModule();
 
         try {
             // 下划线开头的为内部资源, 不直接对外开放
@@ -42,7 +42,7 @@ public class DBAction implements IAction, IActing {
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
-            if ( Dict.getValue(FormSet.getInstance( cnf ).getForm( ent ),
+            if (Dict.getValue(FormSet.getInstance( mod ).getForm( ent ),
                 false, "@", "cant.call." + act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
@@ -61,11 +61,11 @@ public class DBAction implements IAction, IActing {
     @Override
     public void retrieve(ActionHelper helper)
     throws HongsException {
-        Model   mod = getEntity(helper);
+        Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "retrieve", req);
-        Map     rsp = mod.retrieve(req);
-                rsp = getRspMap(helper, mod, "retrieve", rsp);
+                req = getReqMap(helper, ett, "retrieve", req);
+        Map     rsp = ett.retrieve(req);
+                rsp = getRspMap(helper, ett, "retrieve", rsp);
         helper.reply(rsp);
     }
 
@@ -77,12 +77,12 @@ public class DBAction implements IAction, IActing {
     @Override
     public void create(ActionHelper helper)
     throws HongsException {
-        Model   mod = getEntity(helper);
+        Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "create", req);
-        Map     rsp = mod.create(req);
-                rsp = getRspMap(helper, mod, "create", rsp);
-        String  msg = getRspMsg(helper, mod, "create", 1  );
+                req = getReqMap(helper, ett, "create", req);
+        Map     rsp = ett.create(req);
+                rsp = getRspMap(helper, ett, "create", rsp);
+        String  msg = getRspMsg(helper, ett, "create", 1  );
         helper.reply(msg, rsp);
     }
 
@@ -93,11 +93,11 @@ public class DBAction implements IAction, IActing {
     @Override
     public void update(ActionHelper helper)
     throws HongsException {
-        Model   mod = getEntity(helper);
+        Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "update", req);
-        int     num = mod.update(req);
-        String  msg = getRspMsg(helper, mod, "update", num);
+                req = getReqMap(helper, ett, "update", req);
+        int     num = ett.update(req);
+        String  msg = getRspMsg(helper, ett, "update", num);
         helper.reply(msg, num);
     }
 
@@ -107,35 +107,35 @@ public class DBAction implements IAction, IActing {
     @Override
     public void delete(ActionHelper helper)
     throws HongsException {
-        Model   mod = getEntity(helper);
+        Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "delete", req);
-        int     num = mod.delete(req);
-        String  msg = getRspMsg(helper, mod, "delete", num);
+                req = getReqMap(helper, ett, "delete", req);
+        int     num = ett.delete(req);
+        String  msg = getRspMsg(helper, ett, "delete", num);
         helper.reply(msg, num);
     }
 
     @Action("exists")
     public void isExists(ActionHelper helper)
     throws HongsException {
-        Model   mod = getEntity(helper);
+        Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "exists", req);
+                req = getReqMap(helper, ett, "exists", req);
         FetchCase c = new FetchCase( );
         c.setOption("INCLUDE_REMOVED", Synt.declare(req.get("include-removed"), false));
-        boolean val = mod.exists(req , c );
+        boolean val = ett.exists(req , c );
         helper.reply(null, val);
     }
 
     @Action("unique")
     public void isUnique(ActionHelper helper)
     throws HongsException {
-        Model   mod = getEntity(helper);
+        Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "unique", req);
+                req = getReqMap(helper, ett, "unique", req);
         FetchCase c = new FetchCase( );
         c.setOption("INCLUDE_REMOVED", Synt.declare(req.get("include-removed"), false));
-        boolean val = mod.unique(req , c );
+        boolean val = ett.unique(req , c );
         helper.reply(null, val);
     }
 
@@ -150,25 +150,25 @@ public class DBAction implements IAction, IActing {
      */
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
-        Model  mod = DB.getInstance(this.cnf).getModel(ent);
-        new Mview(mod).getFields();
-        return mod;
+        Model  ett = DB.getInstance(this.mod).getModel(ent);
+        new Mview(ett).getFields();
+        return ett;
     }
 
     /**
      * 获取请求数据
      * @param helper
-     * @param mod
+     * @param ett
      * @param opr
      * @param req
      * @return
      * @throws HongsException
      */
-    protected  Map   getReqMap(ActionHelper helper, Model mod, String opr, Map req)
+    protected  Map   getReqMap(ActionHelper helper, Model ett, String opr, Map req)
     throws HongsException {
-        if (!Cnst.ID_KEY.equals(mod.table.primaryKey)) {
+        if (!Cnst.ID_KEY.equals(ett.table.primaryKey)) {
             if (req.containsKey(Cnst.ID_KEY)) {
-                req.put(mod.table.primaryKey, req.get(Cnst.ID_KEY));
+                req.put(ett.table.primaryKey, req.get(Cnst.ID_KEY));
             }
         }
         return req;
@@ -177,23 +177,23 @@ public class DBAction implements IAction, IActing {
     /**
      * 整理返回数据
      * @param helper
-     * @param mod
+     * @param ett
      * @param opr
      * @param rsp
      * @return
      * @throws HongsException
      */
-    protected  Map   getRspMap(ActionHelper helper, Model mod, String opr, Map rsp)
+    protected  Map   getRspMap(ActionHelper helper, Model ett, String opr, Map rsp)
     throws HongsException {
-        if (!Cnst.ID_KEY.equals(mod.table.primaryKey)) {
+        if (!Cnst.ID_KEY.equals(ett.table.primaryKey)) {
             if (rsp.containsKey("info")) {
                 /**/ Map  info = (Map ) rsp.get("info");
-                info.put(Cnst.ID_KEY , info.get(mod.table.primaryKey));
+                info.put(Cnst.ID_KEY , info.get(ett.table.primaryKey));
             }
             if (rsp.containsKey("list")) {
                 List<Map> list = (List) rsp.get("list");
             for(/**/ Map  info :  list ) {
-                info.put(Cnst.ID_KEY , info.get(mod.table.primaryKey));
+                info.put(Cnst.ID_KEY , info.get(ett.table.primaryKey));
             }
             }
         }
@@ -203,21 +203,21 @@ public class DBAction implements IAction, IActing {
     /**
      * 获取返回消息
      * @param helper
-     * @param mod
+     * @param ett
      * @param opr
      * @param num
      * @return
      * @throws HongsException
      */
-    protected String getRspMsg(ActionHelper helper, Model mod, String opr, int num)
+    protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.loadIgnrFNF(this.cnf );
+        lang.loadIgnrFNF( this.mod );
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
         if (! lang.containsKey(key)) {
                key = "fore." + opr + ".success" ;
-            Mview view = new  Mview(mod);
+            Mview view =  new Mview(ett);
             String tit = view.getTitle();
             return lang.translate(key, tit, cnt);
         } else {

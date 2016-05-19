@@ -56,10 +56,10 @@ public class SelectHelper {
 
     public SelectHelper addEnumsByForm(String conf, String form) throws HongsException {
         FormSet cnf = FormSet.getInstance(conf);
-        Map map  = cnf.getForm(form);
+        Map map = cnf.getForm(form);
 
         FormSet dfs = FormSet.getInstance("default");
-        Map tps  = dfs.getEnum("__types__");
+        Map tps = dfs.getEnum("__types__");
 
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {

@@ -4,7 +4,7 @@
         <role disp="登录后台" name="manage">
             <action>manage</action>
         </role>
-        <import>manage_base</import>
+        <import>manage-base</import>
         <import>member</import>
         <import>medium</import>
         <import>module</import>

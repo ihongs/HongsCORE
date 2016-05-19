@@ -114,9 +114,9 @@ public class FormSet
     }
     catch (FileNotFoundException ex)
     {
-        fn = name.contains("/")
-           ? name + Cnst.FORM_EXT + ".xml"
-           : "app/hongs/config/" + name + Cnst.FORM_EXT + ".xml";
+        fn = name.contains(".")
+          || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
+           : "app/hongs/config/"+ name + Cnst.FORM_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {

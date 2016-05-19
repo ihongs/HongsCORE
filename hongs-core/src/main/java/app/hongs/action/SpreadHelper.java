@@ -3,6 +3,7 @@ package app.hongs.action;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.dh.MergeMore;
+import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -100,21 +101,26 @@ public class SpreadHelper {
 
     public void spread(List list) throws HongsException {
         ActionHelper ah = ActionHelper.newInstance();
-        MergeMore    mm = new MergeMore(list);
+        MergeMore mm = new MergeMore(list);
+        ah.setAttribute( "in_fork" , true);
 
         for(Map.Entry et : items.entrySet()) {
             String fn = (String) et.getKey();
             Map    mt = (Map ) et.getValue();
 
             // 建立映射
-            Map<Object, List> ms = mm.mapped(fn);
+            Map<Object, List> ms = mm.mapped( fn );
             if (ms.isEmpty() ) {
                 continue;
             }
 
+            String ak = (String) mt.get("data-ak"); // 数据放入此下
+            String at = (String) mt.get("data-at"); // 关联动作路径
+            String aq = (String) mt.get("data-aq"); // 关联查询参数
+            String vk = (String) mt.get("data-vk"); // 关联字段
+            String tk = (String) mt.get("data-tk"); // 名称字段
+
             // 查询路径
-            String at = (String) mt.get("data-at");
-            String ak = (String) mt.get("data-ak");
             if (null == ak || "".equals(ak)) {
                 ak = fn.replace("_id$", "");
             }
@@ -126,37 +132,59 @@ public class SpreadHelper {
                 at  =  c + "/" + f +  "/retrieve" ;
             }
 
-            // 查询字段
-            Set rb = new HashSet();
-            String vk = (String) mt.get("data-vk");
-            String tk = (String) mt.get("data-tk");
+            // 查询结构
+            Map rd; Set rb; aq = aq.trim(  );
+            if (null != aq && !"".equals(aq)) {
+                if (aq.startsWith("{") && aq.endsWith("}")) {
+                    rd = (Map) Data.toObject(aq);
+                } else {
+                    rd = ActionHelper.parseParam(
+                         ActionHelper.parseQuery(
+                                             aq));
+                }
+                if (!rd.containsKey(Cnst.RB_KEY)) {
+                    rd.put(Cnst.RB_KEY, "-" );
+                }
+                if (!rd.containsKey(Cnst.RN_KEY)) {
+                    rd.put(Cnst.RN_KEY,  0  );
+                }
+            } else
             if (null != vk && !"".equals(vk )
             &&  null != tk && !"".equals(tk)) {
+                rd = new HashMap();
+                rb = new HashSet();
                 rb.add( vk);
                 rb.add( tk);
+                rd.put(Cnst.RB_KEY, rb);
+                rd.put(Cnst.RN_KEY, 0 );
             } else {
+                rd = new HashMap();
+                rb = new HashSet();
                 rb.add("-");
+                rd.put(Cnst.RB_KEY, rb);
+                rd.put(Cnst.RN_KEY, 0 );
             }
-
-            // 查询结构
-            Map rd = new HashMap( );
-            rd.put(   "!fork", "1");
-            rd.put(Cnst.RN_KEY, 0 );
-            rd.put(Cnst.RB_KEY, rb);
             rd.put(Cnst.ID_KEY, ms.keySet());
 
             // 获取结果
-            /* Get */ ah.setRequestData(rd);
-            new ActionRunner(at, ah).doInvoke();
-            Map  sd = ah.getResponseData( );
-            List ls = (List) sd.get("list");
+            ah.setRequestData(rd);
+            if (rd.containsKey(Cnst.MD_KEY)) {
+                new ActionRunner(at, ah).doAction();
+            } else {
+                new ActionRunner(at, ah).doInvoke();
+            }
+            Map sd  = ah.getResponseData(  );
+            List<Map> ls = (List) sd.get("list");
+            if (ls == null) {
+                continue;
+            }
 
             // 整合数据
             boolean rp = Synt.declare(mt.get("__repeated__"), true);
             if (rp) {
-                mm.append(ls, ms, fn, ak);
+                mm.append(ls, ms, vk, ak);
             } else {
-                mm.extend(ls, ms, fn, ak);
+                mm.extend(ls, ms, vk, ak);
             }
         }
     }

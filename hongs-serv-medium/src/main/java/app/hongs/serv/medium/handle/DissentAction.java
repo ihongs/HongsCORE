@@ -61,9 +61,9 @@ public class DissentAction extends DBAction {
     }
 
     @Override
-    protected  Map   getReqMap(ActionHelper helper, Model mod, String opr, Map req)
+    protected  Map   getReqMap(ActionHelper helper, Model ett, String opr, Map req)
     throws HongsException {
-        req = super.getReqMap(helper, mod, opr, req);
+        req = super.getReqMap(helper, ett, opr, req);
 
         if (!"retrieve".equals(opr)) {
             req.put("user_id", helper.getSessibute(Cnst.UID_SES));
@@ -73,11 +73,11 @@ public class DissentAction extends DBAction {
     }
 
     @Override
-    protected String getRspMsg(ActionHelper helper, Model mod, String opr, int num)
+    protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         String lid = helper.getParameter("link_id");
-        String lnk = (( ALinkModel ) mod).getLink();
-        Table  art = mod.db.getTable(lnk);
+        String lnk = (( ALinkModel ) ett).getLink();
+        Table  art = ett.db.getTable(lnk);
 
         if ("create".equals(opr)) {
             String sql = "UPDATE `"+art.tableName+"` SET `count_dissent` = `count_dissent` + 1 WHERE id = ?";
@@ -85,7 +85,7 @@ public class DissentAction extends DBAction {
             return "举报成功";
         }
 
-        return super.getRspMsg(helper, mod, opr, num);
+        return super.getRspMsg(helper, ett, opr, num);
     }
 
 }

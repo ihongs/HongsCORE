@@ -1,8 +1,11 @@
 package app.hongs.dh.search;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
+import app.hongs.action.ActionHelper;
+import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
@@ -31,6 +34,7 @@ public class SearchHelper {
 
     private final LuceneRecord that;
     private Map<String, Map<String, String>> enums = null;
+    private Map<String, Map<String, String>> forks = null;
 
     public SearchHelper(LuceneRecord that) {
         this.that = that;
@@ -40,77 +44,156 @@ public class SearchHelper {
         return that;
     }
 
-    /**
-     * 通过表单配置设置枚举数据
-     * @param conf
-     * @param form
-     * @throws HongsException
-     */
-    public void setEnums(String conf, String form) throws HongsException {
-        Map<String, Map> fs = FormSet.getInstance(conf).getForm(form);
-        enums = new HashMap();
-        for (Map.Entry<String, Map> et : fs.entrySet()) {
-            String fn = et.getKey(  );
-            Map    fc = et.getValue();
-            if (! "enum".equals( fc.get( "__type__" ))) {
-                continue;
-            }
-
-            String xn = (String) fc.get("enum");
-            String xc = (String) fc.get("conf");
-            if (xn == null || "".equals(xn)) xn = fn  ;
-            if (xc == null || "".equals(xc)) xc = conf;
-            Map xe = FormSet.getInstance(xc).getEnumTranslated ( xn );
-
-            enums.put(fn, xe);
-        }
-    }
-
-    /**
-     * 设置枚举
-     * @param dict
-     */
     public void setEnums(Map dict) {
         enums = dict;
     }
 
+    public void setForks(Map dict) {
+        forks = dict;
+    }
+
     /**
-     * 追加枚举
-     * @param info 通过 counts 得到的 info
+     * 通过表单配置设置枚举数据(及关联关系)
+     * @param conf
+     * @param form
+     * @param md 1 绑定枚举, 2 绑定关联, 3 全绑定
      * @throws HongsException
      */
-    public void addEnums(Map info) throws HongsException {
+    public void setLinks(String conf, String form, byte md) throws HongsException {
+        enums = new HashMap();
+        forks = new HashMap();
+        Map<String, Map> fs = FormSet.getInstance(conf).getForm(form);
+        for(Map.Entry<String, Map> et : fs.entrySet()) {
+            Map    fc = et.getValue();
+            String fn = et.getKey(  );
+            if (1 == (1 & md) && "enum".equals(fc.get("__type__"))) {
+                String xn = (String) fc.get("enum");
+                String xc = (String) fc.get("conf");
+                if (xn == null || "".equals(xn)) xn = fn  ;
+                if (xc == null || "".equals(xc)) xc = conf;
+                Map xe = FormSet.getInstance(xc).getEnumTranslated(xn);
+                enums.put(fn, xe);
+            } else
+            if (2 == (2 & md) && "fork".equals(fc.get("__type__"))) {
+                forks.put(fn, fc);
+            }
+        }
+    }
+
+    /**
+     * 追加名称列
+     * 此方法通过 addEnums,addForks 来执行具体的关联操作
+     * 请预先使用 setEnums,setForks 或 setLinks 设置关联
+     * @param info 为通过 counts 得到的 info
+     * @throws HongsException
+     */
+    public void addNames(Map info) throws HongsException {
         Iterator<Map.Entry> it = info.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry  et = it.next();
-            String     fn = Synt.asserts( et.getKey(), "" );
-            Map        es = enums.get( fn );
-            List<List<String>> ls =  (List) et.getValue(  );
+            Map.Entry et = it.next( );
+            Object lo = et.getValue();
+            if (!(lo instanceof List)) {
+                continue;
+            }
 
-            /**
-             * 加入枚举代号对应的标签文本
-             * 如果不是一个枚举字段
-             * 则将值复制一份反末尾
-             * 已保持相同长度方便前端处理
-             */
-            if (es == null || es.isEmpty()) {
-                for (List<String> x : ls) {
-                    String val =  x.get (1);
-                    x.add( val );
-                }
+            List<List> ls = (List) lo;
+            String fn = Synt.asserts(et.getKey() , "" );
+
+            if (enums != null && enums.containsKey(fn)) {
+                addEnums(ls, enums.get(fn), fn);
+            } else
+            if (forks != null && forks.containsKey(fn)) {
+                addForks(ls, forks.get(fn), fn);
             } else {
-                for (List<String> x : ls) {
-                    String val =  x.get (1);
-                    if (val != null) {
-                        val  = (String) es.get(val); // 得到标签
+                for ( List lx  :  ls ) {
+                    if (lx.size() < 3) {
+                        lx.add (lx.get(1));
                     }
-                    if (val == null) {
-                        val  = (String) es.get("*"); // 其他类型
-                    }
-                    if (val == null) {
-                        continue;
-                    }
-                    x.add( val );
+                }
+            }
+        }
+    }
+
+    /**
+     * 通过查找枚举信息来补全名称
+     * @param ls
+     * @param es
+     * @param fn
+     */
+    protected void addEnums(List<List> ls, Map es, String fn) {
+        for ( List lx : ls) {
+            String lv = (String) lx.get(1);
+            if (lv != null) {
+                lv  = (String) es.get(lv ); // 得到标签
+            }
+            if (lv == null) {
+                lv  = (String) es.get("*"); // 其他类型
+            }
+            if (lv == null) {
+                continue;
+            }
+            lx.add( lv );
+        }
+    }
+
+    /**
+     * 通过调用关联动作来补全名称
+     * @param ls
+     * @param fs
+     * @param fn
+     * @throws HongsException
+     */
+    protected void addForks(List<List> ls, Map fs, String fn) throws HongsException {
+        String at = (String) fs.get("data-at");
+        String vk = (String) fs.get("data-vk");
+        String tk = (String) fs.get("data-tk");
+        if (at == null || at.length() == 0
+        ||  vk == null || vk.length() == 0
+        ||  tk == null || tk.length() == 0 ) {
+            CoreLogger.error("data-at, data-vk or data-tk can not be empty in field "+fn);
+            return;
+        }
+
+        // 映射关系
+        Map<String, List> lm = new HashMap();
+        for ( List lx : ls) {
+            String lv = (String) lx.get( 1 );
+            List<List>  lw = lm.get(lv);
+            if (lw == null) {
+                lw =  new ArrayList(  );
+                lm.put(lv , lw);
+            }
+            lw.add(lx);
+        }
+
+        // 查询结构
+        Set rb = new HashSet( );
+        Map rd = new HashMap( );
+        rb.add(vk);
+        rb.add(tk);
+        rd.put(Cnst.RN_KEY, 0 );
+        rd.put(Cnst.RB_KEY, rb);
+        rd.put(Cnst.ID_KEY, lm.keySet());
+
+        // 获取结果
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setSessibute("in_fork", true);
+        ah.setRequestData(rd);
+        new ActionRunner (at, ah).doInvoke();
+        Map sd  = ah.getResponseData(  );
+        List<Map> lz = (List) sd.get("list");
+        if (lz == null) {
+            return;
+        }
+
+        // 整合数据
+        for ( Map  ro : lz) {
+            String lv = Synt.declare(ro.get(vk), "");
+            String lt = Synt.declare(ro.get(tk), "");
+            List<List>  lw = lm.get (lv);
+            if (lw != null) {
+                for ( List lx : lw) {
+                    lx.add(lt);
                 }
             }
         }
@@ -131,7 +214,7 @@ public class SearchHelper {
         resp.put( "info" , cnts );
 
         int         topz = Synt.declare(rd.get("top"), 0);
-        Set<String> cntz = Synt.declare(rd.get("cnt"), Set.class);
+        Set<String> cntz = Synt.asTerms(rd.get("cnt")   );
         Map<String, Map<String, Integer>> counts = new HashMap( );
         Map<String, Map<String, Integer>> countz = new HashMap( );
         Map<String, Set<String>> countx  =  new HashMap();

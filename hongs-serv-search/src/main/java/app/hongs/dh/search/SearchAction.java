@@ -3,8 +3,10 @@ package app.hongs.dh.search;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Select;
+import app.hongs.action.anno.Spread;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
@@ -21,6 +23,7 @@ public class SearchAction extends LuceneAction {
 
     @Action("retrieve")
     @Select()
+    @Spread()
     @Override
     public void retrieve(ActionHelper helper) throws HongsException {
         /**
@@ -52,6 +55,19 @@ public class SearchAction extends LuceneAction {
         Map sd = sh.counts (rd);
             sd = getRspMap (helper, sr, "counts", sd);
                  sr.destroy(  );
+
+        /**
+         * 追加枚举名称
+         */
+        Map xd = (Map) sd.get("info");
+       byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
+        if (md != 0 && xd != null && mod != null && ent != null) {
+            if (FormSet.hasConfFile( mod )) {
+                sh.setLinks(mod, ent, md );
+                sh.addNames(/* Add */ xd );
+            }
+        }
+
         helper.reply(sd);
     }
 

@@ -29,24 +29,24 @@ public class ArticleAction extends LuceneAction {
     @Select(conf="", form="")
     @Override
     public void retrieve(ActionHelper helper) throws HongsException {
-        ABaseModel mod = (ABaseModel) DB.getInstance("medium").getModel("article");
-                   mod.setType("default");
+        ABaseModel art = (ABaseModel) DB.getInstance("medium").getModel("article");
+                   art.setType("default");
 
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, mod, "retrieve", req);
+                req = getReqMap(helper, art, "retrieve", req);
 
         FetchCase c = new FetchCase();
         if (req.containsKey("sect_id")) {
             Object sid = req.get("sect_id");
-            c.join(mod.db.getTable("segment").tableName)
+            c.join(art.db.getTable("segment").tableName)
              .on  ("link_id = :id AND link = 'article'")
              .by  (FetchCase.INNER)
              .where("sect_id IN (?)", sid );
         }
         c.setOption("INCLUDE_REMOVED", Synt.declare(req.get("include-removed"), false));
         
-        Map     rsp = mod.retrieve(req, c);
-                rsp = getRspMap(helper, mod, "retrieve", rsp);
+        Map     rsp = art.retrieve(req, c);
+                rsp = getRspMap(helper, art, "retrieve", rsp);
         helper.reply(rsp);
     }
 

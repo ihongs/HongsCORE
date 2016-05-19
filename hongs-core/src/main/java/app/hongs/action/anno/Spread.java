@@ -15,4 +15,5 @@ import java.lang.annotation.Target;
 public @interface Spread {
     String   conf() default "default";
     String   form() default "";
+    byte     mode() default -1;
 }

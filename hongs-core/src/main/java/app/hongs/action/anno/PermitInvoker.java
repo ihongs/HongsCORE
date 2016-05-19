@@ -23,7 +23,8 @@ public class PermitInvoker implements FilterInvoker {
             String form;
             form = chains.getEntity();
             conf = chains.getModule();
-            if (NaviMap.hasConfFile(conf+"/"+form)) {
+            // 照顾 Module Action 的配置规则
+            if (NaviMap.hasConfFile( conf+"/"+form )) {
                 conf = conf+"/"+form ;
             }
         }

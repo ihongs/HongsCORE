@@ -59,13 +59,14 @@ public class MenuAction {
     @Action("list")
     public void list(ActionHelper helper)
     throws HongsException {
-        String name  = helper.getParameter("m");
+        String m = helper.getParameter("m");
+        String n = helper.getParameter("n");
         String level = helper.getParameter("l");
         String depth = helper.getParameter("d");
 
         int l, d;
-        if (name  == null || name .length() == 0) {
-            name  = "default";
+        if (m  == null || m .length() == 0) {
+            m  = "default";
         }
         if (level == null || level.length() == 0) {
             l = 1;
@@ -78,7 +79,10 @@ public class MenuAction {
             d = Integer.parseInt(depth);
         }
 
-        List list = NaviMap.getInstance(name).getMenuTranslated(l, d);
+        List list = n != null && n.length() != 0
+                  ? NaviMap.getInstance(m).getMenuTranslated(n, d)
+                  : NaviMap.getInstance(m).getMenuTranslated(l, d);
+
         Map data = new HashMap();
         data.put( "list", list );
         helper.reply(data);

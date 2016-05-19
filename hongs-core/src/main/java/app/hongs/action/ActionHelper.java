@@ -659,9 +659,9 @@ public class ActionHelper implements Cloneable
     try {
       helper = (ActionHelper) super.clone();
     } catch (CloneNotSupportedException ex) {
-      throw new HongsError.Common(ex);
+      throw new HongsError.Common( /**/ ex);
     }
-    helper.responseWrtr = this.getResponseWrtr( );
+    helper.responseWrtr = this.getResponseWrtr();
     helper.responseData = null;
     return helper;
   }

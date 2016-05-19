@@ -278,20 +278,30 @@ public class AuthKit {
         String usrid;
         if (ud != null && !ud.isEmpty()) {
             usrid = ud.get("user_id").toString();
-
-            ud  =  new HashMap( );
-            ud.put("name", uname);
-            db.getModel("user").put(usrid , ud );
         } else {
             ud  =  new HashMap( );
             ud.put("name", uname);
+            ud.put("head", uhead);
             usrid = db.getModel("user").add(ud );
 
+            // 第三方登录项
             ud  =  new HashMap( );
-            ud.put("appid",appid);
-            ud.put("opnid",opnid);
-            ud.put("user_id",usrid);
+            ud.put("user_id",  usrid  );
+            ud.put("appid"  ,  appid  );
+            ud.put("opnid"  ,  opnid  );
             db.getTable("user_open").insert(ud );
+
+            // 赋予公共权限
+            ud  =  new HashMap( );
+            ud.put("user_id",  usrid  );
+            ud.put("role"   , "public");
+            db.getTable("user_role").insert(ud );
+
+            // 加入公共部门
+            ud  =  new HashMap( );
+            ud.put("user_id",  usrid  );
+            ud.put("dept_id", "PUBLIC");
+            db.getTable("user_dept").insert(ud );
         }
 
         return userSign(ah, place, appid, usrid, uname, uhead, utime);

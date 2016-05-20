@@ -11,7 +11,7 @@
 * 2016/01/03 Web,Action 结构更新, 分成 manage,handle,static 三大块, 分别表示: 管理区,应用区,静态区
 * 2015/11/24 FetchCase 中组织 SQL 语句不再需要加 "." 前缀即可在关联查询中自动为字段添加当前表别名
 * 2015/10/30 取消了 object.config 来初始化组件的方式, 改为 data-* 的配置方式
-* 2015/10/13 建立 MassAction 用于一次请求多个 Action; 修复 SQL Like 生成语句问题; 将 FetchNext 更名为 DB.Roll, DBAssist 改回 Mview
+* 2015/10/13 建立 PackAction 用于一次请求多个 Action; 修复 SQL Like 生成语句问题; 将 FetchNext 更名为 DB.Roll, DBAssist 改回 Mview
 * 2015/09/23 修复关联查询子表数据未获取的问题
 * 2015/09/22 将常用的参数等集中放到 app.hongs.Cnst 类中, 这样就不用总去读配置了，此部分参数本就属于约定胜于配置的，并无配置的意义
 * 2015/09/22 添加了 app.hongs.action.PickedHelper 助手类, 可以更方便的通过 ActionRunner 本地调用, 为 form 关联查询数据了

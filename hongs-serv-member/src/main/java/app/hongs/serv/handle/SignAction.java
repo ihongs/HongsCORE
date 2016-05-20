@@ -91,13 +91,7 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
      */
     @Action("user/delete")
     public void userDelete(ActionHelper ah) throws HongsException {
-        HttpSession sess = ah.getRequest( ).getSession(   );
-        if (null == sess) {
-            ah.reply(AuthKit.getWrong(null, "core.sign.off.invalid"));
-            return;
-        }
-
-        String uuid = (String) ah.getAttribute(Cnst.UID_SES);
+        String uuid = (String) ah.getSessibute(Cnst.UID_SES);
         if (null == uuid) {
             ah.reply(AuthKit.getWrong(null, "core.sign.off.invalid"));
             return;

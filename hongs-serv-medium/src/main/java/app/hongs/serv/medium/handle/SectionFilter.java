@@ -1,7 +1,6 @@
 package app.hongs.serv.medium.handle;
 
 import app.hongs.Core;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
@@ -31,17 +30,12 @@ public class SectionFilter extends ActionDriver implements Filter {
         String url = ActionDriver.getCurrPath( req );
 
         // 从路径 /medium/section/ID/PN 中分解出ID和页码
-        String[] arr = url.split("/");
+        String[] arr = url.split( "/" );
         String   sid = arr.length > 3 ? arr[3] : "" ;
         String   pno = arr.length > 4 ? arr[4] : "" ;
-        if ("".equals(sid)) sid = "0";
-        if ("".equals(pno)) pno = "1";
-        Map dat;
-        try {
-            dat = hlpr.getRequestData();
-        } catch (  HongsException ex  ) {
-            dat = new  LinkedHashMap( );
-        }
+        if ( "".equals(sid) ) sid = "0";
+        if ( "".equals(pno) ) pno = "1";
+        Map dat = hlpr.getRequestData();
 
         /**
          * 没有特别的参数

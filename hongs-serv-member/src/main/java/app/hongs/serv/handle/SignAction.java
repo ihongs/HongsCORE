@@ -1,6 +1,6 @@
 package app.hongs.serv.handle;
 
-import app.hongs.CoreLocale;
+import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.UploadHelper;
@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpSession;
 
 /**
  * 登录动作
@@ -26,24 +27,23 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
 
     /**
      * 注册
-     * @param helper
+     * @param ah
      * @throws app.hongs.HongsException
      */
     @Action("user/create")
     @Preset(conf="member", envm="mine")
     @Verify(conf="member", form="mine")
-    public void memberCreate(ActionHelper helper) throws HongsException {
-        User   mod = (User) DB.getInstance("member").getModel("user");
-        Map     rd = helper.getRequestData();
+    public void userCreate(ActionHelper ah) throws HongsException {
+        Map rd = ah.getRequestData();
 
-        if (rd.containsKey("head")) {
+        if (rd.containsKey( "head" )) {
             // 上传头像
             UploadHelper uh = new UploadHelper()
                 .setUploadHref("upload/member/head")
                 .setUploadPath("upload/member/head")
                 .setAllowTypes("image/jpeg", "image/png", "image/gif")
-                .setAllowExtns("jpeg", "jpg", "png", "gif");
-            File fo  = uh.upload(rd.get("head").toString());
+                .setAllowExtns("jpeg", "jpg", "png", "gif" );
+            File fo = uh.upload(rd.get("head").toString());
 
             // 缩略头像
             if ( fo != null) {
@@ -54,52 +54,59 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
                 } catch (IOException ex) {
                     throw new HongsException.Common(ex);
                 }
-                rd.put("head" , fu);
+                rd.put("head", fu);
             } else {
-                rd.put("head" , "");
+                rd.put("head", "");
             }
         }
 
-        Map     sd = mod.create(rd);
+        User uo = (User) DB.getInstance( "member" ).getModel( "user" );
+        Map  sd = uo.create(  rd  );
 
         // 提取登录信息
         String usrid = Synt.asserts(sd.get(  "id" ), "");
         String uname = Synt.asserts(sd.get( "name"), "");
         String uhead = Synt.asserts(sd.get( "head"), "");
         long   utime = Synt.asserts(sd.get("mtime"), 0L) * 1000;
-        String appid = Synt.declare(helper.getParameter("appid"), "_WEB_");
+        String appid = Synt.declare(ah.getParameter("appid"), "_WEB_");
 
         // 赋予公共权限
         sd = new HashMap();
         sd.put("user_id",  usrid  );
         sd.put("role"   , "public");
-        mod.db.getTable("user_role").insert(sd);
+        uo.db.getTable("user_role").insert(sd);
 
         // 加入公共部门
         sd = new HashMap();
         sd.put("user_id",  usrid  );
         sd.put("dept_id", "PUBLIC");
-        mod.db.getTable("user_dept").insert(sd);
+        uo.db.getTable("user_dept").insert(sd);
 
-        helper.reply(AuthKit.userSign(helper, null, appid, usrid, uname, uhead, utime));
+        ah.reply(AuthKit.userSign(ah, null, appid, usrid, uname, uhead, utime));
     }
 
     /**
      * 注销
-     * @param helper
+     * @param ah
      */
     @Action("user/delete")
-    public void memberDelete(ActionHelper helper) throws HongsException {
-        User   mod = (User) DB.getInstance("member").getModel("user");
-        Map     rd = helper.getRequestData();
-        int     sd = mod.delete(rd);
+    public void userDelete(ActionHelper ah) throws HongsException {
+        HttpSession sess = ah.getRequest( ).getSession(   );
+        if (null == sess) {
+            ah.reply(AuthKit.getWrong(null, "core.sign.off.invalid"));
+            return;
+        }
 
-        CoreLocale   ln  ;
-        ln = CoreLocale.getInstance().clone();
-        ln.load("member");
-        String msg = ln.translate("core.delete.user.success");
+        String uuid = (String) ah.getAttribute(Cnst.UID_SES);
+        if (null == uuid) {
+            ah.reply(AuthKit.getWrong(null, "core.sign.off.invalid"));
+            return;
+        }
 
-        helper.reply(msg, sd);
+        User user = (User) DB.getInstance("member").getModel("user") ;
+        user.del(uuid);
+
+        signDelete(ah);
     }
 
 }

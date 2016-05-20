@@ -1,8 +1,7 @@
 package app.hongs.action.serv;
 
 import app.hongs.Cnst;
-import app.hongs.HongsError;
-import app.hongs.HongsException;
+import app.hongs.CoreConfig;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
@@ -16,6 +15,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +50,23 @@ import javax.servlet.http.HttpServletResponse;
 public class ApisAction
   extends  ActionDriver
 {
+    private String dataKey;
+    private String convKey;
+    private String callKey;
+    private String wrapKey;
+    private String scokKey;
+
+    @Override
+    public void init(ServletConfig conf) throws ServletException {
+        super.init(conf);
+
+        CoreConfig cc = CoreConfig.getInstance( );
+        dataKey  = cc.getProperty("core.api.data", ".data");
+        callKey  = cc.getProperty("core.api.call", ".call");
+        convKey  = cc.getProperty("core.api.conv", ".conv");
+        wrapKey  = cc.getProperty("core.api.wrap", ".wrap");
+        scokKey  = cc.getProperty("core.api.scok", ".scok");
+    }
 
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse rsp)
@@ -100,12 +117,13 @@ public class ApisAction
         ActionHelper hlpr = ActionDriver.getWorkCore(req).get(ActionHelper.class);
 
         // 提取 API 特有的参数
-        String  _dat = req.getParameter("!data");
-        String  _cnv = req.getParameter("!conv");
-        String  _cal = req.getParameter("!call");
-        String  _wap = req.getParameter("!wrap");
-        String  _sok = req.getParameter("!scok");
+        String _dat  = req.getParameter(dataKey);
+        String _cal  = req.getParameter(callKey);
+        String _cnv  = req.getParameter(convKey);
+        String _wap  = req.getParameter(wrapKey);
+        String _sok  = req.getParameter(scokKey);
 
+        // JSONP 回调函数名称登记
         if (_cal != null && _cal.length( ) != 0) {
             if (!_cal.matches ( "^[a-zA-Z_\\$][a-zA-Z0-9_]*$"  )  ) {
                 hlpr.error400 ( "Illegal callback function name!" );
@@ -119,16 +137,12 @@ public class ApisAction
             Map data;
             try {
                 data = Synt.declare(Data.toObject(_dat), Map.class);
-            } catch (HongsError e) {
+            } catch (ClassCastException e) {
                 hlpr.error400 ( "Can not parse value for '!data'" );
                 return;
             }
-            try {
-                hlpr.getRequestData( )
-                    .putAll (  data  );
-            } catch (HongsException e) {
-                throw new ServletException(e);
-            }
+            hlpr.getRequestData( )
+                .putAll (  data  );
         }
 
         // 将请求转发到动作处理器
@@ -136,7 +150,7 @@ public class ApisAction
         req.getRequestDispatcher( act)
                     .include(req, rsp);
 
-        // 将应答数据格式化后传递
+        // 获取响应数据逐步格式化
         Map resp  = hlpr.getResponseData();
         if (resp == null) {
             return;
@@ -145,8 +159,8 @@ public class ApisAction
         Set conv  = null;
         if (_cnv != null && _cnv.length( ) != 0) {
             try {
-                conv = Synt.declare( _cnv.split("[\\s\\+]+"), Set.class );
-            } catch (HongsError e) {
+                conv = Synt.asTerms(_cal );
+            } catch (ClassCastException e) {
                 hlpr.error400 ( "Can not parse value for '!conv'" );
                 return;
             }
@@ -155,7 +169,7 @@ public class ApisAction
         boolean wrap;
         try {
             wrap = Synt.declare(_wap, false);
-        } catch (HongsError e) {
+        } catch (ClassCastException e) {
             hlpr.error400("Value for '!wrap' can not be case to boolean");
             return;
         }
@@ -163,7 +177,7 @@ public class ApisAction
         boolean scok;
         try {
             scok = Synt.declare(_sok, false);
-        } catch (HongsError e) {
+        } catch (ClassCastException e) {
             hlpr.error400("Value for '!scok' can not be case to boolean");
             return;
         }

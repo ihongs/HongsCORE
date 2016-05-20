@@ -2,11 +2,16 @@ package app.hongs.serv.auth;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
+import app.hongs.CoreConfig;
+import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
+import app.hongs.util.Synt;
+import app.hongs.util.verify.Wrong;
+import app.hongs.util.verify.Wrongs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -191,6 +196,21 @@ public class AuthKit {
         return set;
     }
 
+    public static Map getWrong(String k, String w) throws HongsException {
+        Map m  = new HashMap();
+        Map e  = new HashMap();
+        CoreLocale   lang  =  CoreLocale.getInstance ("member") ;
+        if (k != null && ! "".equals(k)) {
+            m.put(k, new Wrong(w).setLocalizedSection("member"));
+            e.put("errs", new Wrongs(m).getErrors());
+            e.put("msg" , lang.translate(w));
+        } else {
+            e.put("msg" , lang.translate(w));
+        }
+        e.put("ok", false);
+        return e;
+    }
+
     /**
      * 自运营登录
      * @param ah
@@ -209,14 +229,31 @@ public class AuthKit {
     throws HongsException {
         HttpSession sd = ah.getRequest().getSession();
         String   sesid = sd.getId();
-        long     stime = System.currentTimeMillis() / 1000;
+        String   sesrk = CoreConfig.getInstance(/**/).getProperty("core.api.ssid", ".ssid");
+        String   sesmk = CoreConfig.getInstance("member").getProperty("core.keep.sess", "");
+        long     stime = System.currentTimeMillis() / 1000 ;
+
+        // 重建会话
+        Map<String,Object> xs = new HashMap( );
+        Set<String> ks = Synt.asTerms(sesmk );
+        ks.add(Cnst.USL_SES);
+        for(String  kn : ks) {
+            Object  kv = sd.getAttribute( kn );
+            if ( null != kv) xs.put( kn , kv );
+        }
+        sd.invalidate(/***/);
+        sd = ah.getRequest().getSession (true);
+        for(Map.Entry<String,Object> et: xs.entrySet()) {
+            sd.setAttribute(et.getKey(), et.getValue());
+        }
 
         // 设置会话
-        if (place != null && ! place.isEmpty()) {
-            Set s  = (Set) sd.getAttribute( Cnst.USL_SES );
+        if (place != null && 0 < place.length()) {
+            Set s  = Synt.declare(sd.getAttribute(Cnst.USL_SES), Set.class);
             if (s == null) {
                 s  = new HashSet();
             }   s.add  (  place  );
+            s.retainAll( RoleSet.getInstance( usrid ) ); // 仅保留拥有的区域
             sd.setAttribute(Cnst.USL_SES, s);
         }
         sd.setAttribute(Cnst.UST_SES, stime);
@@ -229,13 +266,11 @@ public class AuthKit {
         // 返回数据
         Map rd = new HashMap();
         rd.put(Cnst.UID_SES, usrid);
-        rd.put(Cnst.UST_SES, stime);
-        rd.put(Cnst.USL_SES, place);
-        rd.put("sesid", sesid);
+        rd.put( sesrk , sesid);
         rd.put("appid", appid);
+        rd.put("place", place);
         rd.put("uname", uname);
         rd.put("uhead", uhead);
-        rd.put("utime", utime);
 
         // 记录登录
         DB    db = DB.getInstance("member");

@@ -4,7 +4,7 @@ import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsError;
-import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 
@@ -90,15 +90,6 @@ public class ActionHelper implements Cloneable
    * 响应输出
    */
   private PrintWriter /* * */ responseWrtr = null;
-
-  /**
-   * @deprecated
-   */
-  public ActionHelper()
-  {
-    throw new HongsError.Common(
-    "Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
-  }
 
   /**
    * 初始化助手(用于cmdlet)
@@ -213,9 +204,8 @@ public class ActionHelper implements Cloneable
    * 如果Content-Type为"multipart/form-data", 则使用 apache-common-fileupload 先将文件存入临时目录.
    *
    * @return 请求数据
-   * @throws app.hongs.HongsException
    */
-  public Map<String, Object> getRequestData() throws HongsException
+  public Map<String, Object> getRequestData()
   {
     if (this.requestData == null)
     {
@@ -250,9 +240,8 @@ public class ActionHelper implements Cloneable
   /**
    * 解析 multipart/form-data 数据, 并将上传的文件放入临时目录
    * @param rd
-   * @throws HongsException
    */
-  protected final void setUploadsData(Map rd) throws HongsException {
+  protected final void setUploadsData(Map rd) {
     CoreConfig conf = CoreConfig.getInstance();
     String     path = Core.DATA_PATH+"/upload";
 
@@ -378,9 +367,9 @@ public class ActionHelper implements Cloneable
             uploadKeys.add(/****/ n);
         }
     } catch (FileUploadException ex) {
-        throw new HongsException(0x1110, ex);
+        throw new HongsUnchecked(0x1110, ex);
     } catch (IOException ex) {
-        throw new HongsException(0x1110, ex);
+        throw new HongsUnchecked(0x1110, ex);
     }
   }
 
@@ -435,9 +424,8 @@ public class ActionHelper implements Cloneable
    * 获取请求参数
    * @param name
    * @return 当前请求参数
-   * @throws HongsException
    */
-  public String getParameter(String name) throws HongsException
+  public String getParameter(String name)
   {
     Object o = Dict.getParam(getRequestData(), name);
     if (o == null)
@@ -632,16 +620,26 @@ public class ActionHelper implements Cloneable
   }
 
   /**
+   * ActionHelper 必须在 ActionDriver,CmdletRunner 初始化后才能用
+   * @return
+   * @deprecated
+   */
+  public static ActionHelper getInstance()
+  {
+    throw new HongsError.Common("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
+  }
+
+  /**
    * 新建实例
    * 用于使用 ActionRunner 时快速构建请求对象,
    * 可用以上 setXxxxxData 在构建之后设置参数.
    * @return
    */
   public static ActionHelper newInstance() {
-    Core    core = Core.getInstance();
-    String  inst = ActionHelper.class.getName();
-    if ( core.containsKey( inst ) ) {
-        return ( ( ActionHelper ) core.got( inst ) ).clone( );
+    Core   core = Core.getInstance();
+    String inst = ActionHelper.class.getName();
+    if (core.containsKey(inst)) {
+        return ((ActionHelper) core.got(inst)).clone();
     } else {
         return new ActionHelper(null, null, null, null, null);
     }

@@ -2,7 +2,6 @@ package app.hongs.serv.medium.handle;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
@@ -35,15 +34,10 @@ public class ArticleFilter extends ActionDriver implements Filter {
         String url = ActionDriver.getCurrPath( req );
 
         // 从路径 /medium/article/ID 中分解出ID
-        String[] arr = url.split("/");
+        String[] arr = url.split( "/" );
         String   aid = arr.length > 3 ? arr[3] : "" ;
-        if ("".equals(aid)) aid = "0";
-        Map dat;
-        try {
-            dat = hlpr.getRequestData();
-        } catch (  HongsException ex  ) {
-            dat = new  LinkedHashMap( );
-        }
+        if ( "".equals(aid) ) aid = "0";
+        Map dat = hlpr.getRequestData();
 
         // 文章浏览量
         String  whr ;

@@ -6,6 +6,7 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.util.Data;
+import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -40,7 +41,7 @@ public class PackAction {
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
         Enumeration<String> enu = req.getParameterNames();
-        Map                 dat = data(req.getParameter("!data"));
+        Map                 dat = data(Dict.getDepth(helper.getRequestData(), "", "data"));
         Map                 raq ;
         Map                 rap ;
         String              uri ;
@@ -129,15 +130,20 @@ public class PackAction {
         return  helper.getResponseData();
     }
 
-    private Map data(String str) {
-        if (str == null || "".equals(str)) {
-            return new HashMap( );
+    private Map data(Object obj) {
+        if (obj == null || "".equals(obj)) {
+            return new HashMap();
         }
+        if (obj instanceof Map ) {
+            return ( Map ) obj ;
+        }
+        String str = Synt.declare(obj, "");
         Map map;
         if (str.startsWith("{") && str.endsWith("}")) {
-            map = (Map)Data.toObject(str);
+            map = (Map) Data.toObject(str);
         } else {
-            map = ActionHelper.parseParam(ActionHelper.parseQuery(str));
+            map = ActionHelper.parseQuery(str);
+            map = ActionHelper.parseParam(map);
         }
         return map;
     }

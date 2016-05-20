@@ -1,9 +1,11 @@
 package app.hongs.serv.manage;
 
+import app.hongs.Cnst;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
+import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.serv.auth.AuthKit;
@@ -19,22 +21,23 @@ import java.util.Map;
 public class MineAction {
 
     @Action("retrieve")
-    public void mineRetrieve(ActionHelper helper)
+    @Preset(conf="member", envm="mine")
+    public void mineRetrieve(ActionHelper ah)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        String id = (String) helper.getSessibute("uid");
+        Map rd = ah.getRequestData();
+        String id = (String) ah.getSessibute(Cnst.UID_SES);
         rd.put( "id", id );
 
         UserAction ua = new UserAction();
-        ua.getInfo(helper);
+        ua.getInfo(ah);
     }
 
     @Action("update")
-    @Verify(conf="member",form="mine",save=1,tidy=true)
-    public void mineUpdate(ActionHelper helper)
+    @Verify(conf="member", form="mine", save=1, tidy=true)
+    public void mineUpdate(ActionHelper ah)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        String id = (String) helper.getSessibute("uid");
+        Map rd = ah.getRequestData();
+        String id = (String) ah.getSessibute(Cnst.UID_SES);
 
         // 禁止危险修改
         rd.put( "id", id );
@@ -54,25 +57,25 @@ public class MineAction {
             xd.put("ok", false);
             xd.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
             if (po != null && !"".equals(po)) {
-                Map row = DB.getInstance("member").getTable("user").fetchCase()
+                Map row = DB.getInstance("member").getTable ("user").fetchCase( )
                     .where ("id = ?", id)
                     .select( "password" )
                     .one();
                 po = AuthKit.getCrypt(po);
                 if (! po.equals(row.get("password")) ) {
                     ed.put("passolde", "旧密码不正确");
-                    helper.reply(xd);
+                    ah.reply(xd);
                     return;
                 }
             } else {
                     ed.put("passolde", "请填写旧密码");
-                    helper.reply(xd);
+                    ah.reply(xd);
                     return;
             }
         }
 
         UserAction ua = new UserAction();
-        ua.doSave(helper);
+        ua.doSave( ah );
     }
 
 }

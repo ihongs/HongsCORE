@@ -5,12 +5,12 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
-import app.hongs.HongsException;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -113,9 +113,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             //** 系统属性配置 **/
 
-            CoreConfig cnf = CoreConfig.getInstance( );
+            CoreConfig cnf;
+            cnf = CoreConfig.getInstance( /****/ );
             Core.SERVER_ID = cnf.getProperty("core.server.id" , "0");
-            cnf   = CoreConfig.getInstance( "_init_" );
+            cnf = CoreConfig.getInstance("_init_");
 
             Map m = new HashMap();
             m.put("BASE_PATH", Core.BASE_PATH);
@@ -148,6 +149,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
+        // 调一下 ActionRunner 来加载动作
+        ActionRunner.getActions();
+
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug(new StringBuilder("...")
                 .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
@@ -159,9 +163,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 .append("\r\n\tDATA_PATH   : ").append(Core.DATA_PATH)
                 .toString());
         }
-
-        // 调一下 ActionRunner 来加载动作
-        ActionRunner.getActions();
     }
 
     /**
@@ -277,6 +278,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.ACTION_TIME.set(System.currentTimeMillis());
 
         CoreConfig conf = core.get(CoreConfig.class);
+
+        doApiSes(req, conf); // Api 的特殊逻辑
 
         Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT-8"));
         if (conf.getProperty("core.timezone.probing", false)) {
@@ -404,12 +407,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             if (cf.getProperty("core.trace.action.request", false)) {
-                Map rd  = null;
-                try {
-                    rd  = that.getRequestData();
-                } catch (HongsException ex) {
-                    throw ex.toUnchecked( );
-                }
+                Map rd  = that.getRequestData();
                 if (rd != null && !rd.isEmpty()) {
                     sb.append("\r\n\tRequest     : ")
                       .append(Tool.indent(Data.toString(rd)).substring(1));
@@ -481,16 +479,41 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 执行动作
-     * 如需其他操作请覆盖此方法
-     * @param core
-     * @param hlpr
-     * @throws ServletException
-     * @throws IOException
+     * 通过请求参数设置 SessionID
+     * 仅仅针对接口请求
+     * @param req
      */
-    protected void doAction(Core core, ActionHelper hlpr )
-    throws ServletException, IOException {
-        service( hlpr.getRequest( ), hlpr.getResponse( ) );
+    private void doApiSes(HttpServletRequest req, CoreConfig cnf) {
+        try {
+            String api = cnf.getProperty ("core.api.extn", ".api" );
+            if (!getRealPath(req).endsWith(api)) {
+                return;
+            }
+
+            String ses = cnf.getProperty ("core.api.ssid", ".ssid");
+            String sid = req.getParameter( ses );
+            if (sid == null || sid.length() ==0) {
+                return;
+            }
+
+            try {
+                req.getClass ()
+                   .getMethod("setRequestedSessionId", String.class)
+                   .invoke   ( req , sid );
+            } catch ( NoSuchMethodException ex ) {
+                CoreLogger.getLogger(ActionDriver.class.getName()
+                        +".setRequestedSessionId")
+                          .warn(ex.getMessage( ) );
+            } catch (IllegalAccessException  |
+                   IllegalArgumentException  |
+                  InvocationTargetException ex ) {
+                CoreLogger.getLogger(ActionDriver.class.getName()
+                        +".setRequestedSessionId")
+                          .warn(ex.getMessage( ) );
+            }
+        } catch (Exception | Error ex) {
+            CoreLogger.error(ex);
+        }
     }
 
     /**
@@ -506,6 +529,19 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException, IOException {
         chn.doFilter((ServletRequest ) hlpr.getRequest( ),
                      (ServletResponse) hlpr.getResponse());
+    }
+
+    /**
+     * 执行动作
+     * 如需其他操作请覆盖此方法
+     * @param core
+     * @param hlpr
+     * @throws ServletException
+     * @throws IOException
+     */
+    protected void doAction(Core core, ActionHelper hlpr )
+    throws ServletException, IOException {
+        service( hlpr.getRequest( ), hlpr.getResponse( ) );
     }
 
     //** 静态工具函数 **/

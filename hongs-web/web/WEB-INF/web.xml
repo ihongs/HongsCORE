@@ -142,8 +142,8 @@
     <session-config>
         <session-timeout>43210</session-timeout>
         <cookie-config>
-            <name>_</name>
             <path>/</path>
+            <name>SSID</name>
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

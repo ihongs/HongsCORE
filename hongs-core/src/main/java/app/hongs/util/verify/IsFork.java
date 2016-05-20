@@ -70,13 +70,13 @@ public class IsFork extends Rule {
         Set rb = new HashSet();
         Map rd = new HashMap();
         rb.add(vk);
-        rd.put( "!fork", "1" );
         rd.put(Cnst.RN_KEY, 0);
         rd.put(Cnst.RB_KEY,rb);
         rd.put(Cnst.ID_KEY,value);
 
         // 获取结果
         ActionHelper ah = ActionHelper.newInstance();
+        ah.setAttribute( "fork", true );
         /* Get */ ah.setRequestData(rd);
         new ActionRunner(at, ah).doInvoke( );
         Map  sd = ah.getResponseData( );

@@ -141,6 +141,7 @@
     <!-- Session Sets -->
     <session-config>
         <session-timeout>43210</session-timeout>
+        <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>
             <name>SSID</name>

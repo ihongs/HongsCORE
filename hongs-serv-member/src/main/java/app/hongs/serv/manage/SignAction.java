@@ -86,11 +86,8 @@ public class SignAction {
           .delete("`sesid` = ?", sess.getId());
 
         // 清除会话
-        ah.getRequest()
-          .getSession()
-          .invalidate();
-
-        ah.reply("");
+        sess.invalidate();
+        ah.reply (  ""  );
     }
 
 }

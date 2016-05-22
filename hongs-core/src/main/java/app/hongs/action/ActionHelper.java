@@ -500,8 +500,8 @@ public class ActionHelper implements Cloneable
     if (this.sessionData != null) {
       return this.sessionData.get(name);
     } else {
-      HttpSession ss = this.getRequest().getSession();
-      if (null != ss)  return ss.getAttribute( name );
+      HttpSession ss = this.getRequest().getSession(false);
+      if (null != ss)  return ss.getAttribute(name);
       return null;
     }
   }
@@ -524,10 +524,10 @@ public class ActionHelper implements Cloneable
         this.sessionData.put(Cnst.UPDATE_ATTR, System.currentTimeMillis());
     } else {
       if (value == null) {
-        HttpSession ss = this.getRequest().getSession(/**/);
+        HttpSession ss = this.getRequest().getSession(false);
         if (null != ss ) ss.removeAttribute(name);
       } else {
-        HttpSession ss = this.getRequest().getSession(true);
+        HttpSession ss = this.getRequest().getSession(true );
         if (null != ss ) ss.setAttribute(name, value);
       }
     }

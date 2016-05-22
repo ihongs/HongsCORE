@@ -2,13 +2,16 @@ package app.hongs.action.serv;
 
 import app.hongs.Cnst;
 import app.hongs.CoreConfig;
+import app.hongs.CoreLogger;
 import app.hongs.action.ActionDriver;
+import static app.hongs.action.ActionDriver.getRealPath;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -17,8 +20,10 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  * 应用程序接口
@@ -55,6 +60,7 @@ public class ApisAction
     private String callKey;
     private String wrapKey;
     private String scokKey;
+    private String ssidKey;
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
@@ -66,6 +72,7 @@ public class ApisAction
         convKey  = cc.getProperty("core.api.conv", ".conv");
         wrapKey  = cc.getProperty("core.api.wrap", ".wrap");
         scokKey  = cc.getProperty("core.api.scok", ".scok");
+        ssidKey  = cc.getProperty("core.api.ssid", ".ssid");
     }
 
     @Override
@@ -122,6 +129,11 @@ public class ApisAction
         String _cnv  = req.getParameter(convKey);
         String _wap  = req.getParameter(wrapKey);
         String _sok  = req.getParameter(scokKey);
+        String _sid  = req.getParameter(ssidKey);
+
+        if (_sid != null && _sid.length( ) != 0) {
+            //setSessionId(req, _sid);
+        }
 
         // JSONP 回调函数名称登记
         if (_cal != null && _cal.length( ) != 0) {

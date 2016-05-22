@@ -45,7 +45,7 @@ public class ArticleFilter extends ActionDriver implements Filter {
         String  uid = (String) hlpr.getSessibute(Cnst.UID_SES);
         if (uid == null || "".equals(uid)) {
             has = false;
-            uid = hlpr.getRequest().getSession().getId();
+            uid = hlpr.getRequest().getRequestedSessionId();
             whr = "sess_id = ?";
         } else {
             whr = "user_id = ?";

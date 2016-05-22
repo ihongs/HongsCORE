@@ -279,7 +279,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         CoreConfig conf = core.get(CoreConfig.class);
 
-        doApiSes(req, conf); // Api 的特殊逻辑
+        // Api 的特殊逻辑
+        try {
+            chkApisSsid(req, conf);
+        }
+        catch (Exception|Error e ) {
+            CoreLogger.error ( e );
+        }
 
         Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT-8"));
         if (conf.getProperty("core.timezone.probing", false)) {
@@ -326,15 +332,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     private void doFinish(Core core, ActionHelper hlpr, HttpServletRequest req) {
         try {
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            ActionHelper that = Core.getInstance(ActionHelper.class);
-            HttpServletRequest R = that.getRequest();
-            HttpSession        S =    R.getSession();
+            HttpServletRequest R = hlpr.getRequest(/***/);
+            HttpSession        S =    R.getSession(false);
 
             // 获取远程IP
             String rip;
             do {
-                rip = R.getHeader(   "X-Forwarded-For");
-                if (null != rip && 0 != rip.length()/**/) {
+                rip = R.getHeader(    "X-Forwarded-For" );
+                if (null != rip && 0 != rip.length (   )) {
                     int pos = rip.indexOf  (  ','  );
                     if (pos > 0) {
                         rip = rip.substring(0, pos );
@@ -343,11 +348,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                         break;
                     }
                 }
-                rip = R.getHeader(   "Proxy-Client-IP");
+                rip = R.getHeader(    "Proxy-Client-IP" );
                 if (null != rip && 0 != rip.length() && !"unknown".equalsIgnoreCase(rip)) {
                     break;
                 }
-                rip = R.getHeader("WL-Proxy-Client-IP");
+                rip = R.getHeader( "WL-Proxy-Client-IP" );
                 if (null != rip && 0 != rip.length() && !"unknown".equalsIgnoreCase(rip)) {
                     break;
                 }
@@ -358,8 +363,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             String sid;
             String uid;
             if ( S != null ) {
-                sid = S.getId( );
-                uid = ( String ) S.getAttribute (Cnst.UID_SES);
+                sid = S.getId();
+                uid = (String) S.getAttribute(Cnst.UID_SES);
                 if (uid != null && uid.length() != 0) {
                     sid += " UID:"+uid;
                 }
@@ -388,14 +393,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             if (cf.getProperty("core.trace.action.client", true)) {
                 String hd;
-                hd = R.getHeader("User-Agent");
-                if (hd != null && hd.length() != 0) {
-                    sb.append("\r\n\tUser-Agent  : ").append(hd);
-                }
-                hd = R.getHeader("X-Requested-With");
-                if (hd != null && hd.length() != 0) {
-                    sb.append("\r\n\tQuest-With  : ").append(hd);
-                }
                 hd = R.getHeader("Accpet" );
                 if (hd != null && hd.length() != 0) {
                     sb.append("\r\n\tAccpet      : ").append(hd);
@@ -404,10 +401,18 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 if (hd != null && hd.length() != 0) {
                     sb.append("\r\n\tReferer     : ").append(hd);
                 }
+                hd = R.getHeader("User-Agent");
+                if (hd != null && hd.length() != 0) {
+                    sb.append("\r\n\tUser-Agent  : ").append(hd);
+                }
+                hd = R.getHeader("X-Requested-With");
+                if (hd != null && hd.length() != 0) {
+                    sb.append("\r\n\tQuest-With  : ").append(hd);
+                }
             }
 
             if (cf.getProperty("core.trace.action.request", false)) {
-                Map rd  = that.getRequestData();
+                Map rd  = hlpr.getRequestData();
                 if (rd != null && !rd.isEmpty()) {
                     sb.append("\r\n\tRequest     : ")
                       .append(Tool.indent(Data.toString(rd)).substring(1));
@@ -415,7 +420,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             if (cf.getProperty("core.trace.action.results", false)) {
-                Map xd  = that.getResponseData();
+                Map xd  = hlpr.getResponseData();
                 if (xd == null) {
                     xd  = (Map) R.getAttribute(  Cnst.RESP_ATTR  );
                 }
@@ -440,7 +445,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             if (cf.getProperty("core.trace.action.session", false)) {
               Map         map = new HashMap();
-              HttpSession ses = hlpr.getRequest().getSession( );
+              HttpSession ses = req.getSession (false);
               Enumeration<String> nms = ses.getAttributeNames();
               while (nms.hasMoreElements()) {
                   String  nme = nms.nextElement();
@@ -454,9 +459,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             if (cf.getProperty("core.trace.action.cookies", false)) {
               Map         map = new HashMap();
-              Cookie[]    cks = hlpr.getRequest().getCookies( );
+              Cookie[]    cks = req.getCookies (/***/);
               for (Cookie cke : cks) {
-                  map.put(cke.getName(), cke.getValue());
+                  map.put(cke.getName( ), cke.getValue( ));
               }
               if (!map.isEmpty()) {
                   sb.append("\r\n\tCookies     : ")
@@ -475,44 +480,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.ACTION_ZONE.remove();
         Core.ACTION_LANG.remove();
         Core.ACTION_NAME.remove();
-        }
-    }
-
-    /**
-     * 通过请求参数设置 SessionID
-     * 仅仅针对接口请求
-     * @param req
-     */
-    private void doApiSes(HttpServletRequest req, CoreConfig cnf) {
-        try {
-            String api = cnf.getProperty ("core.api.extn", ".api" );
-            if (!getRealPath(req).endsWith(api)) {
-                return;
-            }
-
-            String ses = cnf.getProperty ("core.api.ssid", ".ssid");
-            String sid = req.getParameter( ses );
-            if (sid == null || sid.length() ==0) {
-                return;
-            }
-
-            try {
-                req.getClass ()
-                   .getMethod("setRequestedSessionId", String.class)
-                   .invoke   ( req , sid );
-            } catch ( NoSuchMethodException ex ) {
-                CoreLogger.getLogger(ActionDriver.class.getName()
-                        +".setRequestedSessionId")
-                          .warn(ex.getMessage( ) );
-            } catch (IllegalAccessException  |
-                   IllegalArgumentException  |
-                  InvocationTargetException ex ) {
-                CoreLogger.getLogger(ActionDriver.class.getName()
-                        +".setRequestedSessionId")
-                          .warn(ex.getMessage( ) );
-            }
-        } catch (Exception | Error ex) {
-            CoreLogger.error(ex);
         }
     }
 
@@ -542,6 +509,70 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     protected void doAction(Core core, ActionHelper hlpr )
     throws ServletException, IOException {
         service( hlpr.getRequest( ), hlpr.getResponse( ) );
+    }
+
+    /**
+     * 通过请求参数设置 SessionID
+     * 仅仅针对接口请求
+     * @param req
+     */
+    private void chkApisSsid(HttpServletRequest req, CoreConfig cnf) {
+        String api = cnf.getProperty ("core.api.extn", ".api" );
+        if (! getRealPath(req).endsWith(api)) {
+            return;
+        }
+
+        String ses = cnf.getProperty ("core.api.ssid", ".ssid");
+        String sid = req.getParameter(  ses );
+        if (sid == null || sid.length() == 0) {
+            return;
+        }
+
+        String cls = req.getClass().getName();
+        if (cls.startsWith("org.apache.catalina.")) {
+            try {
+                req.getClass ()
+                   .getMethod("setRequestedSessionId", String.class)
+                   .invoke   (req, sid);
+                req.getClass ()
+                   .getMethod("setRequestedSessionURL", boolean.class)
+                   .invoke   (req, true );
+                req.getClass ()
+                   .getMethod("setRequestedSessionCookie", boolean.class)
+                   .invoke   (req, false);
+            } catch (Exception ex ) {
+                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
+            }
+        } else
+        if (cls.startsWith( "org.eclipse.jetty." )) {
+            try {
+                req.getClass ()
+                   .getMethod("setRequestedSessionId", String.class)
+                   .invoke   (req, sid);
+                req.getClass ()
+                   .getMethod("setRequestedSessionIdFromCookie", boolean.class)
+                   .invoke   (req, false);
+            } catch (Exception ex ) {
+                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
+            }
+
+            try {
+                Object obj;
+                obj = req.getClass ()
+                   .getMethod("getSessionManager")
+                   .invoke   (req);
+                obj = obj.getClass ()
+                   .getMethod("getHttpSession" , String.class)
+                   .invoke   (obj, sid);
+                req.getClass ()
+                   .getMethod("setSession", HttpSession.class)
+                   .invoke   (req, (HttpSession) obj);
+            } catch (Exception ex ) {
+                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
+            }
+        } else {
+            CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn("Read session id from parameter not suported "+cls);
+        }
     }
 
     //** 静态工具函数 **/

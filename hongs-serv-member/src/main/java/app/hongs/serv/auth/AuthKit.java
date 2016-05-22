@@ -227,25 +227,29 @@ public class AuthKit {
             String place, String appid, String usrid,
             String uname, String uhead,  long  utime)
     throws HongsException {
-        HttpSession sd = ah.getRequest().getSession();
-        String   sesid = sd.getId();
-        String   sesrk = CoreConfig.getInstance(/**/).getProperty("core.api.ssid", ".ssid");
+        HttpSession sd = ah.getRequest().getSession(false);
+        long     stime = System.currentTimeMillis() / 1000;
+        String   sesrk = CoreConfig.getInstance(  ).getProperty(  "core.api.ssid", ".ssid");
         String   sesmk = CoreConfig.getInstance("member").getProperty("core.keep.sess", "");
-        long     stime = System.currentTimeMillis() / 1000 ;
 
         // 重建会话
-        Map<String,Object> xs = new HashMap( );
-        Set<String> ks = Synt.asTerms(sesmk );
-        ks.add(Cnst.USL_SES);
-        for(String  kn : ks) {
-            Object  kv = sd.getAttribute( kn );
-            if ( null != kv) xs.put( kn , kv );
+        if (sd != null) {
+            Map<String,Object> xs = new HashMap();
+            Set<String> ks = Synt.asTerms(sesmk );
+            ks.add(Cnst.USL_SES);
+            for(String  kn : ks) {
+                Object  kv = sd.getAttribute(kn );
+                if ( null != kv) xs.put( kn, kv );
+            }
+            sd.invalidate();
+            sd = ah.getRequest().getSession(true);
+            for(Map.Entry<String,Object> et: xs.entrySet()) {
+                sd.setAttribute(et.getKey(), et.getValue());
+            }
+        } else {
+            sd = ah.getRequest().getSession(true);
         }
-        sd.invalidate(/***/);
-        sd = ah.getRequest().getSession (true);
-        for(Map.Entry<String,Object> et: xs.entrySet()) {
-            sd.setAttribute(et.getKey(), et.getValue());
-        }
+        String   sesid = sd.getId();
 
         // 设置会话
         if (place != null && 0 < place.length()) {

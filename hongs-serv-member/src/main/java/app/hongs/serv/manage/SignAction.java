@@ -74,20 +74,20 @@ public class SignAction {
 
     @Action("delete")
     public void signDelete(ActionHelper ah) throws HongsException {
-        HttpSession sess = ah.getRequest().getSession();
-        if (null == sess) {
-            ah.reply(AuthKit.getWrong(null, "core.sign.out.invalid"));
+        HttpSession ss = ah.getRequest().getSession(false);
+        if (null == ss) {
+            ah.reply( AuthKit.getWrong(null, "core.sign.out.invalid"));
             return;
         }
 
         // 清除登录
         DB.getInstance("member")
           .getTable("user_sign")
-          .delete("`sesid` = ?", sess.getId());
+          .delete("`sesid` = ?", ss.getId());
 
         // 清除会话
-        sess.invalidate();
-        ah.reply (  ""  );
+        ss.invalidate();
+        ah.reply ( "" );
     }
 
 }

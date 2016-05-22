@@ -6,6 +6,7 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpSession;
 
 /**
  * 我的信息
@@ -16,13 +17,16 @@ public class MineAction extends app.hongs.serv.manage.MineAction {
 
     @Action("sign/retrieve")
     public void ssidRetrieve(ActionHelper ah) {
-        Map sd = new HashMap();
-        String sk = CoreConfig.getInstance().getProperty("core.api.ssid");
-        sd.put(sk, ah.getRequest( ).getSession( ).getId( ));
+        Map        sd = new HashMap();
+        String     sk = CoreConfig.getInstance().getProperty("core.api.ssid");
+        sd.put(sk, ah.getRequest().getRequestedSessionId());
         sd.put(Cnst.UID_SES, ah.getSessibute(Cnst.UID_SES));
         sd.put(Cnst.UST_SES, ah.getSessibute(Cnst.UST_SES));
         sd.put(Cnst.USL_SES, ah.getSessibute(Cnst.USL_SES));
-        ah.reply("", sd);
+        sd.put("appid", ah.getSessibute("appid"));
+        sd.put("uname", ah.getSessibute("uname"));
+        sd.put("uhead", ah.getSessibute("uhead"));
+        ah.reply(   "", sd);
     }
 
 }

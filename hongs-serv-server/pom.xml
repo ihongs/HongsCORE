@@ -22,27 +22,20 @@
             <artifactId>hongs-core</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.2.7.v20150116</version>
+            <version>9.3.8.v20160314</version>
         </dependency>
-        //-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>9.2.7.v20150116</version>
+            <version>9.3.8.v20160314</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jsp</artifactId>
-            <version>9.2.7.v20150116</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-server</artifactId>
-            <version>9.2.15.v20160210</version>
+            <version>9.2.16.v20160414</version>
         </dependency>
     </dependencies>
 </project>

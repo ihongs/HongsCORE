@@ -14,7 +14,7 @@
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
   <source jdbc="org.sqlite.JDBC"
-          name="jdbc:sqlite:default.db"/>
+          name="jdbc:sqlite:default.db?useUnicode=true&amp;autoReconnect=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"/>
   <!--
   <!== 外部数据源==>
   <origin jndi="命名接口"

@@ -10,7 +10,6 @@ import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -280,12 +279,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         CoreConfig conf = core.get(CoreConfig.class);
 
         // Api 的特殊逻辑
-        try {
-            chkApisSsid(req, conf);
-        }
-        catch (Exception|Error e ) {
-            CoreLogger.error ( e );
-        }
+//        try {
+//            chkApisSsid(req, conf);
+//        }
+//        catch (Exception|Error e ) {
+//            CoreLogger.error ( e );
+//        }
 
         Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT-8"));
         if (conf.getProperty("core.timezone.probing", false)) {
@@ -516,64 +515,49 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * 仅仅针对接口请求
      * @param req
      */
-    private void chkApisSsid(HttpServletRequest req, CoreConfig cnf) {
-        String api = cnf.getProperty ("core.api.extn", ".api" );
-        if (! getRealPath(req).endsWith(api)) {
-            return;
-        }
-
-        String ses = cnf.getProperty ("core.api.ssid", ".ssid");
-        String sid = req.getParameter(  ses );
-        if (sid == null || sid.length() == 0) {
-            return;
-        }
-
-        String cls = req.getClass().getName();
-        if (cls.startsWith("org.apache.catalina.")) {
-            try {
-                req.getClass ()
-                   .getMethod("setRequestedSessionId", String.class)
-                   .invoke   (req, sid);
-                req.getClass ()
-                   .getMethod("setRequestedSessionURL", boolean.class)
-                   .invoke   (req, true );
-                req.getClass ()
-                   .getMethod("setRequestedSessionCookie", boolean.class)
-                   .invoke   (req, false);
-            } catch (Exception ex ) {
-                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
-            }
-        } else
-        if (cls.startsWith( "org.eclipse.jetty." )) {
-            try {
-                req.getClass ()
-                   .getMethod("setRequestedSessionId", String.class)
-                   .invoke   (req, sid);
-                req.getClass ()
-                   .getMethod("setRequestedSessionIdFromCookie", boolean.class)
-                   .invoke   (req, false);
-            } catch (Exception ex ) {
-                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
-            }
-
-            try {
-                Object obj;
-                obj = req.getClass ()
-                   .getMethod("getSessionManager")
-                   .invoke   (req);
-                obj = obj.getClass ()
-                   .getMethod("getHttpSession" , String.class)
-                   .invoke   (obj, sid);
-                req.getClass ()
-                   .getMethod("setSession", HttpSession.class)
-                   .invoke   (req, (HttpSession) obj);
-            } catch (Exception ex ) {
-                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
-            }
-        } else {
-            CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn("Read session id from parameter not suported "+cls);
-        }
-    }
+//    private void chkApisSsid(HttpServletRequest req, CoreConfig cnf) {
+//        String api = cnf.getProperty ("core.api.extn", ".api" );
+//        if (! getRealPath(req).endsWith(api)) {
+//            return;
+//        }
+//
+//        String ses = cnf.getProperty ("core.api.ssid", ".ssid");
+//        String sid = req.getParameter(  ses );
+//        if (sid == null || sid.length() == 0) {
+//            return;
+//        }
+//
+//        String cls = req.getClass().getName();
+//        if (cls.startsWith("org.eclipse.jetty.") ) {
+//            try {
+//                Object obj;
+//                obj = req.getClass ()
+//                   .getMethod("getSessionManager")
+//                   .invoke   (req);
+//                obj = obj.getClass ()
+//                   .getMethod("getHttpSession" , String.class)
+//                   .invoke   (obj, sid);
+//                req.getClass ()
+//                   .getMethod("setSession", HttpSession.class)
+//                   .invoke   (req, (HttpSession) obj);
+//            } catch (Exception ex ) {
+//                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
+//            }
+//
+//            try {
+//                req.getClass ()
+//                   .getMethod("setRequestedSessionId", String.class)
+//                   .invoke   (req, sid);
+//                req.getClass ()
+//                   .getMethod("setRequestedSessionIdFromCookie", boolean.class)
+//                   .invoke   (req, false);
+//            } catch (Exception ex ) {
+//                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
+//            }
+//        } else {
+//            CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn("Read session id from parameter not suported "+cls);
+//        }
+//    }
 
     //** 静态工具函数 **/
 

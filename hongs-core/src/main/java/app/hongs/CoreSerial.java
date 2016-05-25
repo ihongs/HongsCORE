@@ -193,8 +193,7 @@ public abstract class CoreSerial
 
   /**
    * 加载方法
-   * @param path
-   * @param name
+   * @param file
    * @param time
    * @throws app.hongs.HongsException
    */

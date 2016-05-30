@@ -1,4 +1,4 @@
-package app.hongs.serv.handle;
+package app.hongs.cmdlet.serv;
 
 import app.hongs.HongsException;
 import app.hongs.cmdlet.CmdletHelper;
@@ -11,7 +11,7 @@ import java.util.Map;
  * @author Hongs
  */
 @Cmdlet("common/test")
-public class TestCmdlet {
+public class Simple {
 
   @Cmdlet("__main__")
   public static void exec(String[] args)

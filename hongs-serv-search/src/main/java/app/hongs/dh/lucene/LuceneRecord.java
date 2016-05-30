@@ -625,10 +625,13 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
 
         try {
             // 索引目录不存在则先写入一个并删除
-            if (!(new File(dbpath)).exists()) {
-                connect();
-                del(add(new HashMap()));
-                commit( );
+            if (! (new File(dbpath)).exists() ) {
+                String id = Core.getUniqueId( );
+                Map rd = new HashMap( );
+                rd.put(Cnst.ID_KEY, id);
+                addDoc(map2Doc(rd));
+                delDoc(id);
+                commit(  );
             }
 
             Path p = Paths.get(dbpath );

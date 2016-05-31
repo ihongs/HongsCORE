@@ -5,8 +5,8 @@
             <action>manage</action>
         </role>
         <import>manage_base</import>
-        <import>member</import>
         <import>medium</import>
+        <import>member</import>
         <import>module</import>
         <import>manage/data</import>
     </menu>

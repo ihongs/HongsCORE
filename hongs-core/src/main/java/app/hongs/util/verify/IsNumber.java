@@ -41,7 +41,7 @@ public class IsNumber extends Rule {
             throw new Wrong("fore.form.conv.to."+type+".failed");
         }
 
-        // 最大最小值
+        // 取值范围
         Double m;
         m = Synt.declare(params.get("min"), Double.class);
         if (m != null && m > num.doubleValue()) {
@@ -50,6 +50,17 @@ public class IsNumber extends Rule {
         m = Synt.declare(params.get("max"), Double.class);
         if (m != null && m < num.doubleValue()) {
             throw new Wrong("fore.form.lt.max", Double.toString(m));
+        }
+
+        // 小数位数
+        Short  s;
+        s = Synt.declare(params.get("scale"), Short.class);
+        if (s != null && s > 0) {
+            double n = num.doubleValue() - num.longValue();
+            n  = n * Math.pow ( 10 , s );
+            if ( n > (long) n ) {
+                throw new Wrong("fore.form.gt.scale", s.toString());
+            }
         }
 
         return num;

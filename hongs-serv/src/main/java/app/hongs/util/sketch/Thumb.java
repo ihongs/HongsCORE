@@ -187,9 +187,9 @@ public class Thumb {
      */
     public static String[][] toThumbs(String pth, String url) throws IOException {
         CoreConfig cc = CoreConfig.getInstance();
-        String ext = cc.getProperty("core.util.thumb.extn", "jpg");
-        String rat = cc.getProperty("core.util.thumb.pick", "_bg:1*1");
-        String map = cc.getProperty("core.util.thumb.zoom", "_lg:256*256,_md:128*128,_sm:64*64");
+        String ext = cc.getProperty("core.thumb.extn", "jpg");
+        String rat = cc.getProperty("core.thumb.pick", "_bg:1*1");
+        String map = cc.getProperty("core.thumb.zoom", "_lg:256*256,_md:128*128,_sm:64*64");
         return toThumbs(pth, url, ext, rat, map);
     }
 

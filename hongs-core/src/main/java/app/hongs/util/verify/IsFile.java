@@ -35,7 +35,7 @@ public class IsFile extends Rule {
             return   null; // 允许为空
         }
 
-        // 忽略远程地址
+        // 跳过远程地址
         if (Synt.declare(params.get("pass-remote"), false)) {
             if (value.toString( ).matches( "^(\\w+:)?//" )) {
                 return value;

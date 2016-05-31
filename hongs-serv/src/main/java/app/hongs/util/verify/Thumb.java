@@ -20,9 +20,9 @@ public class Thumb extends IsFile {
     @Override
     public String checks(String href, String path) throws Wrong {
         CoreConfig cc = CoreConfig.getInstance();
-        String ext = cc.getProperty("core.util.thumb.extn", "jpg");
-        String rat = cc.getProperty("core.util.thumb.pick", "_bg:1*1");
-        String map = cc.getProperty("core.util.thumb.zoom", "_lg:256*256,_md:128*128,_sm:64*64");
+        String ext = cc.getProperty("core.thumb.extn", "jpg");
+        String rat = cc.getProperty("core.thumb.pick", "_bg:1*1");
+        String map = cc.getProperty("core.thumb.zoom", "_lg:256*256,_md:128*128,_sm:64*64");
 
         ext = Synt.declare(params.get("thumb-extn"), ext);
         rat = Synt.declare(params.get("thumb-pick"), rat);

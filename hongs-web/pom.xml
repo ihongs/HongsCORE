@@ -14,9 +14,9 @@
         <version>0.3-SNAPSHOT</version>
     </parent>
     <properties>
+        <released.name>HongsWeb</released.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <endorsed.dirs>${project.build.directory}/endorsed</endorsed.dirs>
-        <released.name>HongsCORE</released.name>
     </properties>
     <dependencies>
         <dependency>
@@ -52,16 +52,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-module</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-serv-medium</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-serv-market</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

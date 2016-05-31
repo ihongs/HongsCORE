@@ -30,7 +30,7 @@ public class Capts {
     private float maskRatio = 0.025f;
     private Color backColor = Color.WHITE;
     private Color fontColor = Color.BLACK;
-    private String fontFile ="!5TH AVENUE STENCIL.ttf";
+    private String fontFile ="!Anja Eliane.ttf";
     private char[] fontDict = new char[] {
         '1', '3', '4', '5', '6', '7', '8', '9',
         'A', 'B', 'C', 'D', 'E', 'F', 'G',
@@ -48,15 +48,15 @@ public class Capts {
         }
 
         // 获取配置
-        CoreConfig cc = CoreConfig.getInstance();
-        String ff = cc.getProperty("core.captcha.font.file", "!Anja Eliane.ttf");
-        String cs = cc.getProperty("core.captcha.code.dict", "13456789ABCDEFGHIJKLMNPQRSTUVWXY");
-        int    cn = cc.getProperty("core.captcha.code.count", 4 );
-        int    mn = cc.getProperty("core.captcha.mask.count", 17);
-        float  sr = cc.getProperty("core.captcha.size.ratio", 0.6f);
-        float  fr = cc.getProperty("core.captcha.font.ratio", 0.8f);
-        float  mr = cc.getProperty("core.captcha.mend.ratio", 0.167f);
-        float  xr = cc.getProperty("core.captcha.mask.ratio", 0.025f);
+        CoreConfig  cc = CoreConfig.getInstance();
+        String ff = cc.getProperty("core.capts.font.file", "!Anja Eliane.ttf");
+        String cs = cc.getProperty("core.capts.code.dict", "13456789ABCDEFGHIJKLMNPQRSTUVWXY");
+        int    cn = cc.getProperty("core.capts.code.count", 4 );
+        int    mn = cc.getProperty("core.capts.mask.count", 17);
+        float  sr = cc.getProperty("core.capts.size.ratio", 0.6f);
+        float  fr = cc.getProperty("core.capts.font.ratio", 0.8f);
+        float  mr = cc.getProperty("core.capts.mend.ratio", 0.167f);
+        float  xr = cc.getProperty("core.capts.mask.ratio", 0.025f);
         int    w  = (int) ((float) h * sr * (cn + 1));
 
         char[] cd = cs.toCharArray();

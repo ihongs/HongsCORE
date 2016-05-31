@@ -19,10 +19,10 @@ public class Capts extends Rule {
         ActionHelper ah = Core.getInstance(ActionHelper.class);
         String ss = Synt.declare(params.get("capts-sess"),
             CoreConfig.getInstance()
-                      .getProperty("core.capt.session","capt"));
+                      .getProperty("core.capts.sess", "capt"));
         long   xt = Synt.declare(params.get("capts-time"),
             CoreConfig.getInstance()
-                      .getProperty("core.capt.timeout", 600L ));
+                      .getProperty("core.capts.time",  600L ));
         String cc = Synt.declare(ah.getSessibute(ss + "_code"), "");
         long   ct = Synt.declare(ah.getSessibute(ss + "_time"), 0L);
         String vs = Synt.declare(value, "");

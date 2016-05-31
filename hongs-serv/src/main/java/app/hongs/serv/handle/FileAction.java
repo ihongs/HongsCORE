@@ -114,7 +114,8 @@ public class FileAction {
     @Action("image/retrieve")
     public void outputImage(ActionHelper helper) throws HongsException {
         String id = helper.getParameter("id");
-        String tp = helper.getParameter("tp");
+        String  t = helper.getParameter( "t");
+        String  s = helper.getParameter( "s");
         int     w = Synt.declare(helper.getParameter("w"), 0);
         int     h = Synt.declare(helper.getParameter("h"), 0);
         String wh = w+"x"+h;
@@ -132,12 +133,12 @@ public class FileAction {
 
         List<String> es = Arrays.asList(e.split(","));
         List<String> vs = Arrays.asList(v.split(","));
-        if (!es.contains(tp)) {
-            helper.error400("Wrong value '"+ tp +"' for param tp, must be "+ e);
+        if (!es.contains(t)) {
+            helper.error400("Wrong value '"+ t +"' for param tp, must be "+ e);
             return;
         }
-        if (tp == null || "".equals(tp)) {
-            tp =  es.get(0);
+        if (t == null || "".equals(t)) {
+            t =  es.get(0);
         }
 
         // 文件基本路径
@@ -151,7 +152,7 @@ public class FileAction {
                 break ;
             }
             if (i == j - 1 ) {
-                helper.error400("Image file '"+ tp +"' not exists");
+                helper.error400("Image file '"+ t +"' not exists");
                 return;
             }
         }
@@ -176,7 +177,7 @@ public class FileAction {
         }
 
         // 检查目标文件
-        File df = new File(fp+"."+tp);
+        File df = new File(fp+"."+t);
         if ( df.exists()) {
             long st, dt;
             st = sf.lastModified();
@@ -200,7 +201,7 @@ public class FileAction {
         }
 
         try {
-            Builder<File> bf = Thumbnails.of(sf).size(w,h).outputFormat(tp);
+            Builder<File> bf = Thumbnails.of(sf).size(w,h).outputFormat(t);
             if (!vs.contains(wh)) {
                 bf.toOutputStream( helper.getResponse().getOutputStream() );
                 return;

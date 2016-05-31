@@ -59,6 +59,16 @@ public class Wrongs extends HongsException {
         return sb.toString().trim();
     }
 
+    @Override
+    public String getMessage() {
+        return getLocalizedMessage();
+    }
+
+    @Override
+    public String toString() {
+        return getLocalizedMessage();
+    }
+
     /**
      * 转换为响应数据结构
      * @param mode 0错误消息 1单层Map 2复合Map

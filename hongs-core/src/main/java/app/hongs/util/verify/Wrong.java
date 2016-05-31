@@ -46,4 +46,14 @@ public class Wrong extends HongsException {
         }
         return trns.translate(getError(), rep2 );
     }
+    
+    @Override
+    public String getMessage() {
+        return getLocalizedMessage();
+    }
+
+    @Override
+    public String toString() {
+        return getLocalizedMessage();
+    }
 }

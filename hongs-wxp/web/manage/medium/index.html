@@ -1,0 +1,42 @@
+<!doctype html>
+<html>
+    <head>
+        <title>HongsCORE::内容管理</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base href="../../">
+        <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/addons/bootstrap-fileinput/css/fileinput.min.css"/>
+        <!--[if glt IE8.0]>
+        <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
+        <script type="text/javascript" src="static/assets/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
+        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
+        <script type="text/javascript" src="common/conf/default.js"></script>
+        <script type="text/javascript" src="common/lang/default.js"></script>
+        <script type="text/javascript" src="static/addons/bootstrap-fileinput/fileinput.min.js"></script>
+    </head>
+    <body>
+        <!-- Editor -->
+        <script type="text/javascript" src="manage/medium/article/ueditor/config.js" ></script>
+        <script type="text/javascript" src="static/addons/ueditor/ueditor.all.min.js"></script>
+        <div id="notebox"></div>
+        <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+                <div class="row" data-load="manage/head.jsp?n=medium&u=manage/medium"></div>
+            </div>
+        </nav>
+        <div id="bodybox">
+            <div class="container" id="main-context">加载中...</div>
+        </div>
+        <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
+            <div class="container">
+                <div class="row" data-load="manage/foot.jsp?n=medium&u=manage/medium"></div>
+            </div>
+        </nav>
+    </body>
+</html>

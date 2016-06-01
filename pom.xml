@@ -14,11 +14,7 @@
         <module>hongs-serv-search</module>
         <module>hongs-serv-member</module>
         <module>hongs-serv-module</module>
-        <module>hongs-serv-medium</module>
-        <module>hongs-serv-market</module>
-        <module>hongs-ueditor</module>
         <module>hongs-web</module>
-        <module>hongs-web-ims</module>
-        <module>hongs-web-cms</module>
+        <module>hongs-wms</module>
   </modules>
 </project>

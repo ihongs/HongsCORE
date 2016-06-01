@@ -1,6 +1,0 @@
-<root>
-    <menu disp="首页" href="">
-        <role name="handle"></role>
-        <menu disp="文章" href="medium/section/0"/>
-    </menu>
-</root>

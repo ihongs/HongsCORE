@@ -14,20 +14,16 @@
         <version>0.3-SNAPSHOT</version>
     </parent>
     <properties>
-        <released.name>HongsWxp</released.name>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <endorsed.dirs>${project.build.directory}/endorsed</endorsed.dirs>
+        <released.name>HongsCMS</released.name>
     </properties>
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-core</artifactId>
+            <artifactId>hongs-web-ims</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-serv</artifactId>
-            <version>${project.version}</version>
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
@@ -38,43 +34,6 @@
             <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-market</artifactId>
             <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-web</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>org.xerial</groupId>
-            <artifactId>sqlite-jdbc</artifactId>
-            <version>3.8.11.2</version>
-        </dependency>
-        <!--
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.36</version>
-        </dependency>
-        <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>9.1-901-1.jdbc4</version>
-        </dependency>
-        //-->
-        <!--
-        <dependency>
-            <groupId>com.baidu</groupId>
-            <artifactId>ueditor</artifactId>
-            <version>1.1.2</version>
-            <scope>system</scope>
-            <systemPath>${basedir}/lib/ueditor-1.1.2.jar</systemPath>
-        </dependency>
-        //-->
-        <dependency>
-            <groupId>com.baidu.ueditor</groupId>
-            <artifactId>ueditor-hh</artifactId>
-            <version>1.1.2</version>
         </dependency>
     </dependencies>
     <build>

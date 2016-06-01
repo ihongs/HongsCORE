@@ -9,6 +9,6 @@ package app.hongs.serv.manage;
  * 基础配置管理
  * @author Hongs
  */
-public class ConfAction {
+public class FileAction {
     
 }

@@ -3,14 +3,18 @@
     <rsname>@manage</rsname>
     <menu disp="管理首页" href="common/menu.act?m=manage_base">
         <menu disp="首页" href="manage/#global" hrel="manage/global/main.html"></menu>
-        <menu disp="系统信息" href="manage/#global.info" hrel="manage/global/info.html">
-            <role name="manage/global/info">
-                <depend>manage</depend>
-            </role>
+        <menu disp="系统信息" href="manage/#global.info" hrel="manage/global/info/info.html">
         </menu>
-        <menu disp="文件管理" href="manage/#global.file" hrel="manage/global/file.html">
-            <role name="manage/global/file">
+        <role disp="通知管理" name="manage/global/note">
+            <depend>manage</depend>
+            <action>manage/info/note/update.act</action>
+        </role>
+        <menu disp="文件管理" href="manage/#global.file" hrel="manage/global/file/dirs.html">
+            <role disp="文件管理" name="manage/global/file">
                 <depend>manage</depend>
+                <action>manage/file/retrieve.act</action>
+                <action>manage/file/update.act</action>
+                <action>manage/file/delete.act</action>
             </role>
         </menu>
     </menu>

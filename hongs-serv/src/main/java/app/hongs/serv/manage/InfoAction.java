@@ -107,6 +107,11 @@ public class InfoAction {
         helper.reply("", rsp);
     }
 
+    @Action("note/update")
+    public void noteUpdate(ActionHelper helper) {
+        
+    }
+
     private static Map  getAllSize(File d) {
         Map     map = new LinkedHashMap();
         long    all = 0;

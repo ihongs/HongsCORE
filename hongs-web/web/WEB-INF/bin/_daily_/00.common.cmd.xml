@@ -10,6 +10,10 @@
     //-->
     <!--
     <cmdlet system="no">
+        <cmd>common.record:clean</cmd>
+    </cmdlet>
+    <!--
+    <cmdlet system="no">
         <cmd>abc.def:xyz</cmd>
         <arg>{{yyyy/MM/dd|-1w}}</arg>
         <arg opt="opt1">123</arg>

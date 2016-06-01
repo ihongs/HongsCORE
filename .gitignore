@@ -7,5 +7,6 @@ nb-configuration.xml
 /*/target
 /HongsCORE
 /HongsCORE-*
-/hongs-web/web/WEB-INF/lib/*
-/hongs-web/web/WEB-INF/var/*
+/*/web/WEB-INF/classes/*
+/*/web/WEB-INF/lib/*
+/*/web/WEB-INF/var/*

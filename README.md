@@ -46,12 +46,12 @@
     cd ../HongsCORE*
     mvn clean compile package
 
-    # 此时已建立目标系统 hongs-web-cms/target/HongsCMS 和 hongs-web-ims/target/HongsIMS
-    # 其中 HongsCMS 为内容管理系统, HongsIMS 为信息管理系统
+    # 此时已建立目标系统 hongs-web-cms/target/HongsWeb 和 hongs-web-ims/target/HongsWMS
+    # 其中 HongsWMS 为管理系统, HongsWeb 为前端基础
     # 可根据需要, 拷贝到您需要的地方
 
     # 设置和启动系统
-    cd HongsCMS # 或 HongsIMS
+    cd HongsWMS
     bin/app system:setup
     bin/app server:start
 
@@ -116,14 +116,12 @@
         - sqlite        Sqlite本地数据库目录
         - lucene        Lucene本地索引库目录
     - web               前端文件(启动时可指定 --basepath,--basehref)
-        - common        前端通用库
-            - css       前端样式
-            - fonts     前端字体
-            - img       前端图片
-            - pages     通用页面
-            - src       前端源码
-        - compon        其他可选前端组件
-        - manage        内置信息管理系统
+        - handle        公共处理区域
+        - manage        系统管理区域
+        - static        前端静态文件
+            - assets    前端常用组件
+            - addons    前端扩展组件
+        - upload        上传文件目录
 
 ### 类库结构:
 
@@ -132,7 +130,7 @@
     app.hongs.cmdlet    命令支持
     app.hongs.db        关系数据模型
     app.hongs.dh        文档处理组件
-    app.hongs.tags      JSP标签
+    app.hongs.jsp       JSP工具
     app.hongs.util      工具
 
 以上仅列举了主要的包, 更多框架信息请参考 API 文档.

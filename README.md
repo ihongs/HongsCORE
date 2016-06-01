@@ -43,16 +43,15 @@
 
     # 获取并构建系统
     git clone https://github.com/ihongs/HongsCORE.new.git
-    git clone https://github.com/ihongs/ueditor-hh.git
-    cd ueditor*
-    mvn clean compile package install
     cd ../HongsCORE*
     mvn clean compile package
 
-    # 此时已建立目标系统目录 hongs-web/target/HongsCORE, 可拷贝到您需要的地方
+    # 此时已建立目标系统 hongs-web-cms/target/HongsCMS 和 hongs-web-ims/target/HongsIMS
+    # 其中 HongsCMS 为内容管理系统, HongsIMS 为信息管理系统
+    # 可根据需要, 拷贝到您需要的地方
 
     # 设置和启动系统
-    cd HongsCORE
+    cd HongsCMS # 或 HongsIMS
     bin/app system:setup
     bin/app server:start
 

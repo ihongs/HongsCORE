@@ -170,7 +170,7 @@ public class Unit extends Mtree {
             tr.setOutputProperty(OutputKeys.ENCODING, "utf-8");
             tr.setOutputProperty(OutputKeys.METHOD  , "xml"  );
             tr.setOutputProperty(OutputKeys.INDENT  , "yes"  );
-            tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4"); 
+            tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
             PrintWriter  pw = new PrintWriter (new FileOutputStream(file));
             StreamResult sr = new StreamResult( pw  );

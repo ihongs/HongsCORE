@@ -2,16 +2,13 @@ package app.hongs.action.serv;
 
 import app.hongs.Cnst;
 import app.hongs.CoreConfig;
-import app.hongs.CoreLogger;
 import app.hongs.action.ActionDriver;
-import static app.hongs.action.ActionDriver.getRealPath;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,10 +17,8 @@ import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 /**
  * 应用程序接口

@@ -77,6 +77,15 @@ public class VerifyHelper extends Verify {
                 }
             }
 
+            o = opts.remove("defiant");
+            if (o != null) {
+                Rule rule = new Default();
+                Map  prms = new HashMap();
+                     rule.setParams(prms);
+                this.addRule( code, rule);
+                prms.put("defiant" , o  );
+            }
+
             o = opts.remove("default");
             if (o != null) {
                 Rule rule = new Default();

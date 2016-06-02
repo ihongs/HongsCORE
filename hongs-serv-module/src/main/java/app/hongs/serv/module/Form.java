@@ -70,7 +70,7 @@ public class Form extends Model {
             conf = Data.toString(flds);
             rd.put("conf", conf);
         }
-        
+
         String  id = (String) rd.get(this.table.primaryKey);
         boolean ic;
         if (id == null || id.length() == 0) {
@@ -90,8 +90,18 @@ public class Form extends Model {
         if (name != null && !"".equals(name)) {
             updateOrCreateMenuSet( id, name );
         }
+
+        // 更新频道菜单
         if (ic) {
-          new Unit().updateOrCreateMenuSet( );
+            String unitId = (String) rd.get( "unit_id" );
+            String unitNm = (String) db.getTable("unit")
+                    .filter ("id = ?", unitId)
+                    .select ("name")
+                    .one    ()
+                    .get    ("name");
+            Unit   un  =  new Unit();
+            un.updateOrCreateMenuSet(unitId, unitNm);
+            un.updateOrCreateMenuSet(              );
         }
 
         return id;
@@ -99,10 +109,34 @@ public class Form extends Model {
 
     @Override
     public int delete(Map rd) throws HongsException {
+        String unitId = (String) db.getTable("form")
+                .filter ("id = ?", rd.get("id"))
+                .select ("unit_id")
+                .one    ()
+                .get    ("unit_id");
+        String unitNm = (String) db.getTable("unit")
+                .filter ("id = ?", unitId)
+                .select ("name")
+                .one    ()
+                .get    ("name");
+
         int n = super.delete(rd);
 
         // 更新单元菜单
-        new Unit().updateOrCreateMenuSet( );
+        Unit   un  =  new Unit();
+        un.updateOrCreateMenuSet(unitId, unitNm);
+        un.updateOrCreateMenuSet(              );
+
+        // 删除配置文件
+        File   fo;
+        fo = new File(Core.CONF_PATH +"manage/data/"+ rd.get("id") + Cnst.FORM_EXT +".xml");
+        if (fo.exists()) {
+            fo.delete();
+        }
+        fo = new File(Core.CONF_PATH +"manage/data/"+ rd.get("id") + Cnst.NAVI_EXT +".xml");
+        if (fo.exists()) {
+            fo.delete();
+        }
 
         return n;
     }
@@ -203,7 +237,7 @@ public class Form extends Model {
         item.setAttribute("disp", "ID");
         item.setAttribute("name", "id");
         item.setAttribute("type", "hidden");
-        
+
         for (  Map  fiel : conf ) {
             item = docm.createElement("field");
             form.appendChild ( item );

@@ -17,14 +17,25 @@
         </field>
         <field name="name" required="yes">
         </field>
-        <field name="head">
+        <field name="head" rule="Thumb">
+            <param name="href">upload/member/head</param>
+            <param name="path">upload/member/head</param>
         </field>
     </form>
     <enum name="mine:preset">
-        <value code=":confense">
+        <value code=":defense">
             <![CDATA[{
                 "id": ($session.uid)
             }]]>
         </value>
     </enum>
+    <form name="user">
+        <field name="head" rule="Thumb">
+            <param name="href">upload/member/head</param>
+            <param name="path">upload/member/head</param>
+        </field>
+        <field name="password">
+            <param name="defiant"></param>
+        </field>
+    </form>
 </root>

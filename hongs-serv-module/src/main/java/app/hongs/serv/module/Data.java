@@ -3,13 +3,16 @@ package app.hongs.serv.module;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.HongsUnchecked;
 import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import org.apache.lucene.document.Document;
 
 /**
@@ -18,16 +21,83 @@ import org.apache.lucene.document.Document;
  */
 public class Data extends LuceneRecord {
 
-    String formId = null;
-    public String[] findCols = new String[] {};
-    public String[] listCols = new String[] {};
+    private final String conf;
+    private final String form;
 
     public Data(String conf, String form) throws HongsException {
-        super(
-            conf.replaceFirst("^(handle|manage)/", "")+"/"+form,
-            FormSet.getInstance(conf + "/" + form).getForm(form)
-        );
-        formId = form;
+        super("data/"+ form);
+
+        this.conf = conf;
+        this.form = form;
+    }
+
+    @Override
+    public Map getFields() {
+        Map fields  = super.getFields();
+        if (fields != null) {
+            return  fields;
+        }
+
+        /**
+         * 字段以 manage/data 的字段为基础
+         * 但可在 handle/data 重设部分字段
+         */
+        try {
+            if (!"manage/data".equals(conf)) {
+                String comf = "manage/data";
+                Map  fieldx ;
+
+                /**
+                 * 配置文件不得放在资源包里面
+                 * 此处会校验表单文件是否存在
+                 */
+                if (! new File(
+                          Core.CONF_PATH
+                        + File.separator + conf
+                        + File.separator + form
+                        + Cnst.FORM_EXT  + ".xml"
+                ).exists()) {
+                    throw new HongsUnchecked(0x1104)
+                        .setLocalizedOptions(conf+"/"+form);
+                }
+                if (! new File(
+                          Core.CONF_PATH
+                        + File.separator + comf
+                        + File.separator + form
+                        + Cnst.FORM_EXT  + ".xml"
+                ).exists()) {
+                    throw new HongsUnchecked(0x1104)
+                        .setLocalizedOptions(comf+"/"+form);
+                }
+
+                fieldx = FormSet.getInstance(conf+"/"+form).getForm(form);
+                fields = FormSet.getInstance(comf+"/"+form).getForm(form);
+                for ( Map.Entry  et : (Set<Map.Entry>) fieldx.entrySet()) {
+                    Object fn =  et.getKey(  );
+                    if (fields.containsKey(fn)) {
+                        fields.put(fn, et.getValue( ));
+                    }
+                }
+            } else {
+                if (! new File(
+                          Core.CONF_PATH
+                        + File.separator + conf
+                        + File.separator + form
+                        + Cnst.FORM_EXT  + ".xml"
+                ).exists()) {
+                    throw new HongsUnchecked(0x1104)
+                        .setLocalizedOptions(conf+"/"+form);
+                }
+
+                fields = FormSet.getInstance(conf+"/"+form).getForm(form);
+            }
+        } catch (HongsException ex) {
+            throw ex.toUnchecked( );
+        }
+
+        setFields(fields);
+
+        return fields;
     }
 
     /**
@@ -140,14 +210,14 @@ public class Data extends LuceneRecord {
 
         // 拼接展示字段
         StringBuilder nm = new StringBuilder();
-        for (String fn : listCols) {
+        for (String fn : getLists()) {
             nm.append(dd.get(fn).toString()).append(' ');
         }
 
         // 保存到数据库
         Map nd = new HashMap();
         nd.put( "id" , id);
-        nd.put("form_id", formId);
+        nd.put("form_id", form);
         nd.put("name", nm.toString( ).trim( ));
         nd.put("data", app.hongs.util.Data.toString(dd));
         nd.put("etime", 0);
@@ -180,7 +250,7 @@ public class Data extends LuceneRecord {
         // 保存到数据库
         Map nd = new HashMap();
         nd.put( "id" , id);
-        nd.put("form_id", formId);
+        nd.put("form_id", form);
         nd.put("name", od.get("name" ));
         nd.put("data", od.get("data" ));
         nd.put("rtime",od.get("mtime"));

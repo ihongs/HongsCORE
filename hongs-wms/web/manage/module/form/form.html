@@ -154,7 +154,7 @@
                 </div>
                 <div class="form-group" data-type="pick">
                     <label class="control-label clearfix" style="display: block;">
-                        <span>关联</span>
+                        <span>关联表单</span>
                         <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
@@ -393,10 +393,9 @@
                 <input class="form-control" type="text" name="button|text" value=""/>
             </div>
             <div class="form-group">
-                <label class="control-label">关联资源</label>
-                <select name=":fork" required="required">
-                    <option value="">--请选择--</option>
-                </select>
+                <label class="control-label">关联表单</label>
+                <ul data-ft="_pick"></ul>
+                <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/module/form/pick.html"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
             </div>
             <div class="checkbox">
                 <label>

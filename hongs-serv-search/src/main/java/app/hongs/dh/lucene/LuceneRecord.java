@@ -105,7 +105,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
      * @param path 存储路径
      * @param form 字段配置
      * @param tmap 类型映射
-     * @param dmap 类型默认
+     * @param dmap 类型标识
      * @throws HongsException
      */
     public LuceneRecord(String path, Map form, Map tmap, Map dmap)

@@ -12,6 +12,7 @@ public abstract class Rule {
      * 返回此对象将被抛弃
      */
     public static final Object BLANK = new Object();
+    public static final Object EMPTY = null;
 
     public Map  params = null;
     public Map  values = null;

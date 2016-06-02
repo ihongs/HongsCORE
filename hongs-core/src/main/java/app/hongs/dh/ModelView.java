@@ -45,10 +45,22 @@ abstract public class ModelView {
         fieldz = map;
     }
 
+    /**
+     * 设置字段类型映射
+     * 结构:
+     *  inputType: fieldType
+     * @param map
+     */
     protected void setFtypes(Map map) {
         ftypez = map;
     }
 
+    /**
+     * 设置类型标识映射
+     * 结构:
+     *  xxxxable: inputType 或 fieldType, Set 或 逗号分隔字符串
+     * @param map
+     */
     protected void setDtypes(Map map) {
         dtypez = map;
     }

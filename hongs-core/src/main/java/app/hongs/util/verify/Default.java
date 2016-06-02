@@ -48,12 +48,12 @@ public class Default extends Rule {
 
         // 应用属性
         if (def.startsWith("=%")) {
-            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(1));
+            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
         }
 
         // 会话属性
         if (def.startsWith("=$")) {
-            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(1));
+            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
         }
 
         return  value;

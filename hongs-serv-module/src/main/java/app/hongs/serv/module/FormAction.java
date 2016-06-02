@@ -3,14 +3,17 @@ package app.hongs.serv.module;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.db.DB;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.db.Table;
 import app.hongs.db.link.Loop;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -18,7 +21,7 @@ import java.util.Map;
  */
 @Action("manage/module/form")
 public class FormAction {
-    
+
     private final Form model;
 
     public FormAction() throws HongsException {
@@ -71,18 +74,64 @@ public class FormAction {
         boolean v = model.unique(helper.getRequestData());
         helper.reply(null, v);
     }
-    
+
     @Action("fork/list")
     public void getForkList(ActionHelper helper) throws HongsException {
+        Map  data = new HashMap();
+        Map  item;
+        List list;
+
+        // 增加预定列表
+        Map form = FormSet.getInstance("module").getFormTranslated("form_fork");
+        list = new ArrayList();
+        for(Map.Entry et : (Set<Map.Entry>)form.entrySet()) {
+            item = new HashMap();
+            item.put("__name__", et.getKey());
+            item.putAll( (Map) et.getValue());
+        }
+        data.put("list", list);
+
+        // 获取全部表单
         Table ft = model.table;
         Table ut = model.db.getTable("unit");
+        list = new ArrayList();
+        getForkList( ft, ut, list, null, "");
+        data.put("roll", list);
+
+        helper.reply(data);
     }
-    
-    public void getForkList(List list, Table ft, Table ut) throws HongsException {
-        Loop rows = ut
-                .select(".`id`,.`name`")
-                .filter("")
+
+    public void getForkList(Table ft, Table ut, List list, String pid, String pre) throws HongsException {
+        Loop units = pid == null
+                   ? ut
+                .select(".`id`, .`name`")
+                .filter(".`pid` IS NULL")
+                .oll()
+                   : ut
+                .select(".`id`, .`name`")
+                .filter(".`pid`=?" , pid)
                 .oll();
+        while ( units.hasNext(  ) ) {
+            Map unit = units.next();
+
+            Loop forms = ft
+                    .select(".`id`,.`name`")
+                    .filter(".unit_id", pid)
+                    .oll();
+            while ( forms.hasNext(  ) ) {
+                Map form = forms.next();
+                Map item = new HashMap();
+                item.put("__name__", /**/form.get( "id" ));
+                item.put("__disp__", pre+form.get("name"));
+                item.put("data-vk", "id");
+                item.put("data-tk", "name");
+                item.put("data-at", "manage/data/"+form.get("id")+"/retrieve");
+                item.put("data-al", "manage/data/"+form.get("id")+"/list4fork.html");
+                list.add( item );
+            }
+
+            getForkList(ft, ut, list, (String) unit.get("id"), (String) unit.get("name") + "/");
+        }
     }
 
 }

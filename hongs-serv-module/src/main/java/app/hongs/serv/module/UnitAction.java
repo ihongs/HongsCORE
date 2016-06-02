@@ -3,14 +3,10 @@ package app.hongs.serv.module;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.UploadHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.db.DB;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.action.anno.Verify;
-import app.hongs.util.sketch.Thumb;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -47,7 +43,6 @@ public class UnitAction {
     public void doSave(ActionHelper helper)
     throws HongsException {
         Map  data = helper.getRequestData();
-                    saveLogo (data);
         String id = model.set(data);
         Map  info = new HashMap();
         info.put( "id" , id);
@@ -77,30 +72,4 @@ public class UnitAction {
         helper.reply(null, v);
     }
 
-    private void saveLogo(Map rd) throws HongsException {
-        if (rd.containsKey("icon")) {
-            // 上传头像
-            UploadHelper uh = new UploadHelper()
-                .setUploadHref("upload/module/icon")
-                .setUploadPath("upload/module/icon")
-                .setAllowTypes("image/jpeg", "image/png", "image/gif")
-                .setAllowExtns("jpeg", "jpg", "png", "gif");
-            File fo  = uh.upload(rd.get("icon").toString());
-
-            // 缩略头像
-            if ( fo != null) {
-                String fn = uh.getResultPath();
-                String fu = uh.getResultHref();
-                try {
-                    fu = Thumb.toThumbs( fn, fu )[1][0];
-                } catch (IOException ex) {
-                    throw new HongsException.Common(ex);
-                }
-                rd.put("icon", fu);
-            } else {
-                rd.put("icon", "");
-            }
-        }
-    }
-    
 }

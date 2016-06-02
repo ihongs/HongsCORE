@@ -5,16 +5,13 @@ import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.NaviMap;
-import app.hongs.action.UploadHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
+import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.db.FetchCase;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
-import app.hongs.util.sketch.Thumb;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,7 +56,7 @@ public class UserAction {
         String wr = helper.getParameter("-with-roles");
         String ud = (String)helper.getSessibute("uid");
 
-        if ( id != null && id.length() != 0 ) {
+        if (id != null && id.length() != 0) {
             rd = model.getInfo(rd);
         } else {
             rd =  new  HashMap(  );
@@ -83,33 +80,11 @@ public class UserAction {
     }
 
     @Action("save")
+    @Verify(conf="member", form="user")
+    @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
-
-        if (rd.containsKey("head")) {
-            // 上传头像
-            UploadHelper uh = new UploadHelper()
-                .setUploadHref("upload/member/head")
-                .setUploadPath("upload/member/head")
-                .setAllowTypes("image/jpeg", "image/png", "image/gif")
-                .setAllowExtns("jpeg", "jpg", "png", "gif");
-            File fo  = uh.upload(rd.get("head").toString());
-
-            // 缩略头像
-            if ( fo != null) {
-                String fn = uh.getResultPath();
-                String fu = uh.getResultHref();
-                try {
-                    fu = Thumb.toThumbs( fn, fu )[1][0];
-                } catch (IOException ex) {
-                    throw new HongsException.Common(ex);
-                }
-                rd.put("head", fu);
-            } else {
-                rd.put("head", "");
-            }
-        }
 
         // Ignore empty password in update
         if ("".equals(rd.get("password"))) {
@@ -122,7 +97,6 @@ public class UserAction {
         sd.put( "id" , id);
         sd.put("name", rd.get("name"));
         sd.put("head", rd.get("head"));
-        sd.put("username", rd.get("username"));
 
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("member" );

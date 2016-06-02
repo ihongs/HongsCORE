@@ -6,7 +6,6 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import java.util.HashMap;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
 
 /**
  * 我的信息

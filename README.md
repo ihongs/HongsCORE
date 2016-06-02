@@ -24,7 +24,7 @@
 8. 默认嵌入 jetty,sqlite,lucene 等库, 除 JDK 外无需安装其他软件即可运行;
 9. 内建有数据管理功能, 无需编程即可构建信息管理系统.
 
-另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-web/web/static/assets/source/).
+另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-web/web/static/assets/src/).
 
 ## 许可说明
 

@@ -42,12 +42,12 @@
 请先安装 JDK 和 Maven, 然后进入您的工作目录, 按以下流程执行命令:
 
     # 获取并构建系统
-    git clone https://github.com/ihongs/HongsCORE.new.git
+    git clone https://github.com/ihongs/HongsCORE.git
     cd ../HongsCORE*
     mvn clean compile package
 
     # 此时已建立目标系统 hongs-web-cms/target/HongsWeb 和 hongs-web-ims/target/HongsWMS
-    # 其中 HongsWMS 为管理系统, HongsWeb 为前端基础
+    # 其中 HongsWMS 为管理系统, HongsWeb 为基础前端
     # 可根据需要, 拷贝到您需要的地方
 
     # 设置和启动系统
@@ -112,7 +112,7 @@
         - tmp           临时文件(启动时可指定 -Dtmps.dir)
         - upload        文件上传临时存放目录
         - serial        序列缓存数据文件目录
-        - sesion        Jetty 及 API 会话数据存放目录
+        - server        Jetty JSP 编译及会话数据存放目录
         - sqlite        Sqlite本地数据库目录
         - lucene        Lucene本地索引库目录
     - web               前端文件(启动时可指定 --basepath,--basehref)

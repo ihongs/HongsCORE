@@ -62,10 +62,13 @@ public class SpreadHelper {
 
     public SpreadHelper addItemsByForm(String conf, String form) throws HongsException {
         FormSet cnf = FormSet.getInstance(conf);
-        Map map  = cnf.getForm(form);
+        Map map = cnf.getForm(form);
+        return addItemsByForm(conf , map );
+    }
 
+    public SpreadHelper addItemsByForm(String conf, Map map) throws HongsException {
         FormSet dfs = FormSet.getInstance("default");
-        Map tps  = dfs.getEnum("__types__");
+        Map tps = dfs.getEnum("__types__");
 
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {

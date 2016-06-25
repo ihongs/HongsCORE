@@ -152,11 +152,16 @@ abstract public class ModelView {
     }
 
     protected final Set<String> getAbles(String dn) {
-        Set ables = new LinkedHashSet();
-
         Map<String, Map   > fields = getFields();
         Map<String, String> fc = fields.get("@");
-        Set sets;
+
+        // 可以在 @ 区直接给出
+        if ( fc != null &&  fc.containsKey (dn)) {
+            return  Synt.asTerms  ( fc.get (dn));
+        }
+
+        Set sets ;
+        Set abls = new LinkedHashSet();
         if ( fc == null || ! Synt.declare(fc.get("dont.auto.bind."+dn), false)) {
             sets = Synt.asTerms(getDtypes( ).get( dn ));
         } else {
@@ -166,18 +171,21 @@ abstract public class ModelView {
         for(Map.Entry<String, Map> et: fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
+            if ("@".equals(fn)) {
+                continue; // 排除掉 @
+            }
             if (field.containsKey(dn)) {
                 if (Synt.declare (field.get(dn) , false)) {
-                    ables.add    (fn);
+                    abls.add     (fn);
                 }
             } else {
                 if (sets.contains(field.get("__type__"))) {
-                    ables.add    (fn);
+                    abls.add     (fn);
                 }
             }
         }
 
-        return  ables;
+        return  abls;
     }
 
 }

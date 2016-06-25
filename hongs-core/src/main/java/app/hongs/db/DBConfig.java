@@ -248,9 +248,9 @@ public class DBConfig
       }
     }
 
-    if ( 0 < Core.DEBUG  &&  4 != (4 & Core.DEBUG))
+    if ( 0 < Core.DEBUG  &&  8 != (8 & Core.DEBUG))
     {
-      CoreLogger.trace(Data.toString(tableConfigs));
+      CoreLogger.debug(Data.toString(tableConfigs));
     }
   }
 

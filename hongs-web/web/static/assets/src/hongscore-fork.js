@@ -35,11 +35,11 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
         tip  = null;
     }
 
+    var form = box.closest(".HsForm" ).data("HsForm" ) || { };
+    var n    = box.attr("name") || box.attr("data-fn");
     var v    = { };
-    var n    = box.attr("name")||box.attr("data-fn");
     var vk   = box.attr("data-vk") ||  "id" ;
     var tk   = box.attr("data-tk") || "name";
-    var form = box.closest(".HsForm").data("HsForm");
     var mul  = /(\[\]|\.\.|\.$)/.test(n);
     var btn  = jQuery(this);
 
@@ -168,10 +168,15 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
             var tds = chk.closest( "tr"  ).find( "td"  );
             var idx;
 
-            idx = thd.find("[data-ft=name]").index();
+            idx = thd.find("[data-fn='"+tk+"']").index();
             if (idx != -1) txt = tds.eq(idx).text( );
             if (txt) break;
-            idx = thd.find("[data-fn=name]").index();
+
+            idx = thd.find("[data-ft='"+tk+"']").index();
+            if (idx != -1) txt = tds.eq(idx).text( );
+            if (txt) break;
+
+            idx = thd.find("[data-ft=name]").index();
             if (idx != -1) txt = tds.eq(idx).text( );
         }
         while (false);

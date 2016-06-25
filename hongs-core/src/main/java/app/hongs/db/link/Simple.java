@@ -3,9 +3,13 @@ package app.hongs.db.link;
 import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
+import app.hongs.util.Tool;
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -38,13 +42,11 @@ public class Simple extends Link {
         try {
             if (connection == null || connection.isClosed()) {
                 connection  = connect( jdbc , path , info );
-                
+
                 if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                     CoreLogger.trace("DB: Connect to '"+name+"' by simple mode: "+jdbc+" "+path);
                 }
             }
-
-            initial(); // 预置
 
             return connection;
         } catch (SQLException ex) {
@@ -58,9 +60,29 @@ public class Simple extends Link {
             throws SQLException, ClassNotFoundException {
         Class.forName(jdbc);
 
+        // SQLite 数据路径处理
+        if (name.startsWith("jdbc:sqlite:")) {
+            String jurl = name.substring(12);
+            Map injt = new HashMap();
+            injt.put("CORE_PATH", Core.CORE_PATH);
+            injt.put("CONF_PATH", Core.CONF_PATH);
+            injt.put("DATA_PATH", Core.DATA_PATH);
+            jurl = Tool.inject(jurl , injt);
+            if(!new File(jurl).isAbsolute()) {
+                jurl = Core.DATA_PATH +"/sqlite/"+ jurl;
+            }
+            if(!new File(jurl).getParentFile().exists()) {
+                new File(jurl).getParentFile().mkdirs();
+            }
+            name = "jdbc:sqlite:"+ jurl;
+        }
+
         if (info != null && ! info.isEmpty()) {
             if (info.containsKey("username")) {
                 info.put ( "user" , info.get("username") );
+            }
+            if (info.containsKey("connectionProperties") ) {
+                name += "?" + info.getProperty("connectionProperties").replace(";", "&");
             }
             return DriverManager.getConnection(name, info);
         } else {

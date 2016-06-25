@@ -684,7 +684,7 @@ public class Table
       // 判断整型数值
       else if (type == Types.INTEGER || type == Types.TINYINT || type == Types.SMALLINT || type == Types.BIGINT)
       {
-        if (!valueStr.matches("^[\\-+]?[0-9]+$"))
+        if (!valueStr.matches("^[\\-+]?[0-9]+(\\.0+)?$"))
         {
           throw intgrException(namc, valueStr);
         }
@@ -697,8 +697,8 @@ public class Table
         /**
          * 取数字的绝对值(去负号), 便于检查长度
          */
-        DecimalFormat df = new DecimalFormat("#");
-        double valueNum = Double.parseDouble(valueStr);
+        DecimalFormat df = new DecimalFormat ("#");
+        double valueNum  = Double.parseDouble(valueStr);
         String valueStr2 = df.format(Math.abs(valueNum));
 
         // 判断精度
@@ -733,8 +733,8 @@ public class Table
         /**
          * 取数字的绝对值(去负号), 便于检查长度
          */
-        DecimalFormat df = new DecimalFormat(sbs);
-        double valueNum = Double.parseDouble(valueStr);
+        DecimalFormat df = new DecimalFormat (sbs);
+        double valueNum  = Double.parseDouble(valueStr);
         String valueStr2 = df.format(Math.abs(valueNum));
 
         int dotPos = valueStr2.indexOf('.');

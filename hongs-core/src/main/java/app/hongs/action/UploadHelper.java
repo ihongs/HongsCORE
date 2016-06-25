@@ -59,13 +59,13 @@ public class UploadHelper {
     }
 
     /**
-     * 与 setUploadHref 不同, 返回的 href 会加上当前服务器的域名/端口/容器路径
+     * 与 setUploadHref 不同, 返回的 href 会加上当前服务器的 协议://域名:端口/路径
      * @param href
      * @return
      */
     public UploadHelper setUploadLink(String href) {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
-        String hp = helper.getRequest().getProtocol(  );
+        String hp = helper.getRequest().getScheme();
         String hn = helper.getRequest().getServerName();
         int    pt = helper.getRequest().getServerPort();
         String hu = hp +"://"+ hn;
@@ -226,7 +226,7 @@ public class UploadHelper {
                     extn = fr.readLine().trim();
                     type = fr.readLine().trim();
                     int p  = extn.lastIndexOf('.');
-                    if (p  > 1) {
+                    if (p != -1) {
                         extn = extn.substring(p+1);
                     } else {
                         extn = "";

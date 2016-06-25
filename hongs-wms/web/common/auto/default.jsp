@@ -1,9 +1,9 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.CoreLocale"%>
 <%@page import="app.hongs.action.ActionDriver"%>
 <%@page import="app.hongs.action.NaviMap"%>
 <%@page import="java.util.Map"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
     int i;
     String _module, _entity;

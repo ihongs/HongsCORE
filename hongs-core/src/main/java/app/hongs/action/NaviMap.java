@@ -3,6 +3,7 @@ package app.hongs.action;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreLocale;
+import app.hongs.CoreLogger;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
 import java.io.File;
@@ -375,9 +376,9 @@ public class NaviMap
   }
 
   /**
-   * 获取页面单元
+   * 获取页面角色
    * @param names
-   * @return 单元字典
+   * @return 角色字典
    */
   public Map<String, Map> getMenuRoles(String... names)
   {
@@ -393,17 +394,17 @@ public class NaviMap
 
         Map map = (Map) menu.get("menus");
         if (map != null && !map.isEmpty()) {
-            rolez.putAll(getMoreRoles((String[]) map.keySet().toArray(new String[0])));
+            rolez.putAll(getMenuRoles((String[]) map.keySet().toArray(new String[0])));
         }
     }
 
-    return rolez;
+    return  rolez;
   }
 
   /**
    * 获取页面权限
    * @param names
-   * @return 单元字典
+   * @return 权限集合
    */
   public Set<String> getMenuAuths(String... names)
   {
@@ -414,16 +415,16 @@ public class NaviMap
 
         Set set = (Set) menu.get("roles");
         if (set != null && !set.isEmpty()) {
-            authz.addAll(NaviMap.this.getRoleAuths((String[]) set.toArray(new String[0])));
+            authz.addAll(getRoleAuths((String[]) set.toArray(new String[0])));
         }
 
         Map map = (Map) menu.get("menus");
         if (map != null && !map.isEmpty()) {
-            authz.addAll(NaviMap.this.getRoleAuths((String[]) map.keySet().toArray(new String[0])));
+            authz.addAll(getMenuAuths((String[]) map.keySet().toArray(new String[0])));
         }
     }
 
-    return authz;
+    return  authz;
   }
 
   /**
@@ -433,7 +434,7 @@ public class NaviMap
    */
   public Map getRole(String name)
   {
-    return this.roles.get(name);
+    return this.roles.get ( name);
   }
 
   /**
@@ -443,8 +444,8 @@ public class NaviMap
    */
   public Map<String, Map> getMoreRoles(String... names)
   {
-    Map<String, Map> ds = new HashMap();
-    this.getRoleAuths(ds, new HashSet(), names);
+    Map<String, Map>  ds = new HashMap();
+    this.getRoleAuths(ds , new HashSet(), names);
     return ds;
   }
 
@@ -456,7 +457,7 @@ public class NaviMap
   public Set<String> getRoleAuths(String... names)
   {
     Set<String>  as = new HashSet();
-    this.getRoleAuths(new HashMap(), as, names);
+    this.getRoleAuths(new HashMap(), as , names);
     return as;
   }
 
@@ -499,17 +500,18 @@ public class NaviMap
    */
   public Set<String> getRoleSet() throws HongsException {
       if (session == null || session.length() == 0) {
-//        throw new HongsException(0x10e2, "Can not get roles for menu: " + name);
+//        throw new HongsException(0x10e2, "Can not get roles for menu '" +name+ "'");
+          CoreLogger.trace("Can not get roles for menu: "+name);
           return null;
       }
       if (session.startsWith("@")) {
           return getInstance(session.substring(1)).getRoleSet();
       } else
       if (session.startsWith("!")) {
-          return (Set) Core.getInstance( session.substring(1) );
+          return ( Set ) Core.getInstance(session.substring(1));
       } else
       {
-          return (Set) Core.getInstance( ActionHelper.class ).getSessibute(session);
+          return ( Set ) Core.getInstance( ActionHelper.class ).getSessibute(session);
       }
   }
 
@@ -830,20 +832,20 @@ public class NaviMap
       }
 
       for(Map.Entry item : menus.entrySet()) {
-          Map v = (Map) item.getValue();
-          Map m = (Map) v.get("menus" );
-
           String h = (String) item.getKey();
+          Map    v = (Map) item.getValue( );
+          Map    m = (Map) v.get( "menus" );
+          List<Map> subz = getMenuTranslated(m, rolez, lang, j, i + 1);
 
           // 页面下的任意一个动作有权限即认为是可访问的
-          if (null != rolez) {
-              Set<String> z = getMenuRoles(h).keySet();
-              if (!z.isEmpty()) {
-                  boolean e = true ;
-                  for (String x : z) {
-                      if (rolez.contains(x)) {
-                          e = false;
-                          break;
+          if (null != rolez && subz.isEmpty()) {
+              Set<String> z  = getMenuRoles(h).keySet();
+              if ( ! z.isEmpty( ) ) {
+                  boolean e  = true ;
+                  for(String x : z) {
+                      if (rolez.contains( x )) {
+                          e  = false;
+                          /**/ break;
                       }
                   }
                   if (e) {
@@ -852,7 +854,6 @@ public class NaviMap
               }
           }
 
-          List<Map> subz = getMenuTranslated(m, rolez, lang, j, i + 1);
           String p = (String) v.get("hrel");
           String d = (String) v.get("icon");
           String s = (String) v.get("disp");

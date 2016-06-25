@@ -24,7 +24,7 @@ public class PermitInvoker implements FilterInvoker {
             form = chains.getEntity();
             conf = chains.getModule();
             // 照顾 Module Action 的配置规则
-            if (NaviMap.hasConfFile( conf+"/"+form )) {
+            if (NaviMap.hasConfFile(conf+"/"+form)) {
                 conf = conf+"/"+form ;
             }
         }

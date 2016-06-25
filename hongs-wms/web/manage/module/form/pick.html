@@ -1,6 +1,7 @@
 <div id="hongs-module-pick"
      data-module="hsList"
-     data-load-url="manage/module/form/list.act">
+     data-load-url="manage/module/form/list.act"
+     data-data-0="_fill__fork:(hsForkFillList)">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <button type="button" class="create btn btn-default">选择表单</button>
@@ -16,7 +17,7 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <th data-fn="id[]" data-ft="_check" class="_check">
+                    <th data-fn="id[]" data-ft="_fork" class="_check">
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                     <th data-fn="name" class="sortable">名称</th>
@@ -29,3 +30,9 @@
     </div>
     <div class="pagebox"></div>
 </div>
+<style type="text/css">
+    #hogns-module-pick .findbox { display: none; }
+    @media (min-width: 768px) {
+        #hogns-module-pick .findbox { display: block; }
+    }
+</style>

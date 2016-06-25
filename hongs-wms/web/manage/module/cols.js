@@ -13,18 +13,23 @@ function getTypePane(context, type) {
 }
 
 /**
- * 载入字段配置
+ * 打开设置时载入字段配置
  * @param {jQuery} modal
  * @param {jQuery} field
  */
 function loadConf(modal, field) {
-    modal.find("input,textarea").each(function() {
-        var name = $(this).attr("name");
+    var set = {};
+
+    modal.children(".simple-set")
+         .find("input,select,textarea,ul[data-fn]")
+         .each(function( ) {
+        var name = $(this).attr("name") || $(this).attr("data-fn");
         var attr ;
         var pos  = name.indexOf("|");
         if (pos !== -1) {
             attr = name.substring(pos + 1);
             name = name.substring(0 , pos);
+            set[attr] = true;
             if (attr === "datalist") {
                 var x = "";
                 field.find(name).find("option").each(function() {
@@ -48,30 +53,49 @@ function loadConf(modal, field) {
                     $(this).prop("checked", field.find(name).prop(attr));
                 }
             } else
-            if (attr === "text") {
-                $(this).val(field.find(name).text());
-            } else {
+            if (attr !== "text") {
                 $(this).val(field.find(name).attr(attr));
+            } else {
+                $(this).val(field.find(name).text());
             }
         } else {
             $(this).val(field.find(name).text());
         }
     });
+
+    var az = field.find("input,select,textarea,ul[data-fn]")[0].attributes;
+    var tb = modal.children(".detail-set").find("tbody");
+    var tp = tb.find(".hide");
+    for(var i = 0; i < az.length; i ++) {
+        var x = az[i];
+        if (!/^data-/.test(x.name) || set[x.name]) {
+            continue;
+        }
+        var tr = tp.clone().appendTo(tb).removeClass("hide");
+        tr.find("[name=param_name]" ).val(x.name
+                            .replace(/^data-/,""));
+        tr.find("[name=param_value]").val(x.value);
+    }
 }
 
 /**
- * 设置字段配置
+ * 确定设置时写入字段配置
  * @param {jQuery} modal
  * @param {jQuery} field
  */
 function saveConf(modal, field) {
-    modal.find("input,textarea").each(function() {
-        var name = $(this).attr("name");
+    var set = {};
+
+    modal.children(".simple-set")
+         .find("input,select,textarea,ul[data-fn]")
+         .each(function( ) {
+        var name = $(this).attr("name") || $(this).attr("data-fn");
         var attr ;
         var pos  = name.indexOf("|");
         if (pos !== -1) {
             attr = name.substring(pos + 1);
             name = name.substring(0 , pos);
+            set[attr] = true;
             if (attr === "datalist") {
                 var x = $(this).val().split(/[\r\n]/);
                 var n = field.find (name).empty( );
@@ -105,14 +129,23 @@ function saveConf(modal, field) {
                     field.find(name).prop(attr, $(this).prop("checked"));
                 }
             } else
-            if (attr === "text") {
-                field.find(name).text($(this).val());
-            } else {
+            if (attr !== "text") {
                 field.find(name).attr(attr, $(this).val());
+            } else {
+                field.find(name).text($(this).val());
             }
         } else {
             field.find(name).text($(this).val());
         }
+    });
+
+    var fd = field.find("input,select,textarea,ul[data-fn]").first();
+    modal.children(".detail-set")
+         .find("tr").not(".hide")
+         .each(function() {
+        var n = $(this).find("[name=param_name]" ).val();
+        var v = $(this).find("[name=param_value]").val();
+        fd.attr("data-"+n, v);
     });
 }
 
@@ -124,7 +157,7 @@ function saveConf(modal, field) {
 function gainFlds(fields, area) {
     area.find(".form-group").each(function() {
         var label = $(this).find("label span:first");
-        var input = $(this).find("input,select,textarea");
+        var input = $(this).find("input,select,textarea,ul[data-fn]");
         var disp  = label.text();
         var name  = input.attr("name");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
@@ -187,7 +220,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         }
         var group = getTypeItem(wdgt, type);
         var label = group.find("label span:first");
-        var input = group.find("input,select,textarea");
+        var input = group.find("input,select,textarea,ul[data-fn]");
         label.text(disp);
         input.attr("name", name);
         input.prop("required", !! required);
@@ -278,8 +311,10 @@ $.fn.hsCols = function() {
         var name  = getTypeName(widgets, type);
         var pane  = getTypePane(context, type);
         modal.find("h4").text(name);
-        modal.find( ".modal-body" )
+        modal.find( ".simple-set" ) // 基础设置区域
              .empty( ).append(pane);
+        modal.find( ".detail-set" ) // 详细设置区域
+             .find("tr").not(".hide").remove();
 
         loadConf(modal, field);
         modal.modal( "show"  );
@@ -288,5 +323,16 @@ $.fn.hsCols = function() {
     modal.find("form").submit(function() {
         modal.modal( "hide"  );
         saveConf(modal, field);
+    });
+
+    // 添加属性
+    modal.on("click", ".add-param", function() {
+        var tb = $(this).prev( ).find("tbody");
+        var tr = tb.find( ".hide" ).clone();
+        tr.appendTo(tb).removeClass("hide");
+    });
+    // 删除属性
+    modal.on("click", ".del-param", function() {
+        $(this).closest("tr").remove();
     });
 };

@@ -2,10 +2,15 @@ package app.hongs.serv.manage;
 
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
+import app.hongs.action.anno.Select;
+import app.hongs.action.anno.Spread;
+import app.hongs.action.anno.Verify;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.serv.module.Data;
+import java.lang.reflect.Method;
 
 /**
  * 数据存储动作
@@ -13,7 +18,21 @@ import app.hongs.serv.module.Data;
  */
 @Action("manage/auto")
 public class DataAction extends LuceneAction {
-    
+
+    @Override
+    public void initiate(ActionHelper helper, ActionRunner runner)
+    throws HongsException {
+        super.initiate(helper, runner);
+
+        // 绑定特制的表单
+        Method m = runner.getMethod( );
+        if (m.isAnnotationPresent(Select.class)
+        ||  m.isAnnotationPresent(Spread.class)
+        ||  m.isAnnotationPresent(Verify.class)) {
+            helper.setAttribute("form:"+mod+"/"+ent+"."+ent, getEntity(helper).getFields());
+        }
+    }
+
     /**
      * 获取模型对象
      * 注意:

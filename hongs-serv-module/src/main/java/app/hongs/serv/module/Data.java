@@ -31,75 +31,6 @@ public class Data extends LuceneRecord {
         this.form = form;
     }
 
-    @Override
-    public Map getFields() {
-        Map fields  = super.getFields();
-        if (fields != null) {
-            return  fields;
-        }
-
-        /**
-         * 字段以 manage/data 的字段为基础
-         * 但可在 handle/data 重设部分字段
-         */
-        try {
-            if (!"manage/data".equals(conf)) {
-                String comf = "manage/data";
-                Map  fieldx ;
-
-                /**
-                 * 配置文件不得放在资源包里面
-                 * 此处会校验表单文件是否存在
-                 */
-                if (! new File(
-                          Core.CONF_PATH
-                        + File.separator + conf
-                        + File.separator + form
-                        + Cnst.FORM_EXT  + ".xml"
-                ).exists()) {
-                    throw new HongsUnchecked(0x1104)
-                        .setLocalizedOptions(conf+"/"+form);
-                }
-                if (! new File(
-                          Core.CONF_PATH
-                        + File.separator + comf
-                        + File.separator + form
-                        + Cnst.FORM_EXT  + ".xml"
-                ).exists()) {
-                    throw new HongsUnchecked(0x1104)
-                        .setLocalizedOptions(comf+"/"+form);
-                }
-
-                fieldx = FormSet.getInstance(conf+"/"+form).getForm(form);
-                fields = FormSet.getInstance(comf+"/"+form).getForm(form);
-                for ( Map.Entry  et : (Set<Map.Entry>) fieldx.entrySet()) {
-                    Object fn =  et.getKey(  );
-                    if (fields.containsKey(fn)) {
-                        fields.put(fn, et.getValue( ));
-                    }
-                }
-            } else {
-                if (! new File(
-                          Core.CONF_PATH
-                        + File.separator + conf
-                        + File.separator + form
-                        + Cnst.FORM_EXT  + ".xml"
-                ).exists()) {
-                    throw new HongsUnchecked(0x1104)
-                        .setLocalizedOptions(conf+"/"+form);
-                }
-
-                fields = FormSet.getInstance(conf+"/"+form).getForm(form);
-            }
-        } catch (HongsException ex) {
-            throw ex.toUnchecked( );
-        }
-
-        setFields(fields);
-
-        return fields;
-    }
-
     /**
      * 获取实例
      * 生命周期将交由 Core 维护
@@ -119,6 +50,69 @@ public class Data extends LuceneRecord {
             core.put ( name, inst);
         }
         return inst;
+    }
+
+    /**
+     * 获取字段
+     * 当表单不在管理区域时
+     * 会用当前表单覆盖管理表单
+     * 配置文件不存在则抛出异常 0x1104
+     * @return
+     */
+    @Override
+    public Map getFields() {
+        Map fields  = super.getFields();
+        if (fields != null) {
+            return  fields;
+        }
+
+        /**
+         * 字段以 manage/data 的字段为基础
+         * 但可在 handle/data 重设部分字段
+         *
+         * 配置文件不得放在资源包里面
+         * 此处会校验表单文件是否存在
+         */
+        try {
+            if (! new File(
+                      Core.CONF_PATH
+                    + "/"+ conf +"/"+ form
+                    + Cnst.FORM_EXT +".xml"
+            ).exists()) {
+                throw new HongsUnchecked(0x1104)
+                    .setLocalizedOptions(conf+"/"+form);
+            }
+
+            fields = FormSet.getInstance(conf+"/"+form).getForm(form);
+
+            if (!"manage/data".equals(conf)) {
+                String comf = "manage/data";
+                Map  fieldx =  fields;
+
+                if (! new File(
+                          Core.CONF_PATH
+                        + "/"+ comf +"/"+ form
+                        + Cnst.FORM_EXT +".xml"
+                ).exists()) {
+                    throw new HongsUnchecked(0x1104)
+                        .setLocalizedOptions(comf+"/"+form);
+                }
+
+                fields = FormSet.getInstance(comf+"/"+form).getForm(form);
+                for ( Map.Entry  et : (Set<Map.Entry>) fieldx.entrySet()) {
+                    Object fn =  et.getKey(  );
+                    if (fields.containsKey(fn)) {
+                        fields.put(fn, et.getValue( ));
+                    }
+                }
+            }
+        } catch (HongsException ex) {
+            throw ex.toUnchecked( );
+        }
+
+        setFields(fields);
+
+        return fields;
     }
 
     /**

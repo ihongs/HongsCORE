@@ -1,9 +1,13 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.CoreConfig"%>
 <%@page import="app.hongs.CoreLocale"%>
+<%@page import="app.hongs.HongsError"%>
+<%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.action.ActionDriver"%>
 <%@page import="app.hongs.action.FormSet"%>
 <%@page import="app.hongs.action.NaviMap"%>
+<%@page import="app.hongs.db.DB"%>
+<%@page import="app.hongs.db.Mview"%>
+<%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.HashSet"%>
@@ -11,40 +15,63 @@
 ﻿<%@page import="java.util.Set"%>
 <%@page import="java.util.Map"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
+    // 获取路径动作
     int i;
-    String _module, _entity;
+    String _module, _entity, _action;
     _module = ActionDriver.getWorkPath(request);
     i = _module.lastIndexOf('/');
     _module = _module.substring(1, i);
     i = _module.lastIndexOf('/');
     _entity = _module.substring(i+ 1);
     _module = _module.substring(0, i);
+    _action = Synt.declare(request.getAttribute("form.action"), "create");
 
-    String _action, _render;
-    _action = (String)request.getAttribute("form.action");
-    if (_action == null) {
-        _action = "create";
-        _render = "form.jsp";
-    } else {
-        _render = "form4"+_action+".jsp";
-    }
+    // 获取字段集合
+    Map        flds;
+    CoreLocale lang;
+    do {
+        try {
+            Mview view = new Mview(DB.getInstance(_module).getTable(_entity));
+            flds = view.getFields();
+            lang = view.getLang(  );
+        } catch (HongsException ex) {
+            if (ex.getErrno() != 0x1039) {
+                throw ex;
+            }
+        } catch (HongsError ex) {
+            if (ex.getErrno() != 0x2a  ) {
+                throw ex;
+            }
+        }
 
-    CoreLocale lang = CoreLocale.getInstance().clone();
-               lang.loadIgnrFNF(_module);
-    NaviMap    site = NaviMap.getInstance(_module+"/"+_entity);
-    FormSet    form = FormSet.getInstance(_module+"/"+_entity);
-    Map        menu = site.getMenu(_module +"/#"+ _entity);
-    Map        flds = form.getFormTranslated(_entity );
+        FormSet form = FormSet.getInstance(_module+"/"+_entity);
+        flds = form.getFormTranslated(_entity );
+        lang = CoreLocale.getInstance().clone();
+        lang.loadIgnrFNF(_module);
+    } while (false);
 
-    String nm = menu == null ? "" : (String) menu.get( "disp");
-           nm = lang.translate(nm);
-    String id = (_module +"-"+ _entity +"-"+ _action ).replace('/', '-');
-    String at = " id=\""+ id +"\"";
+    // 获取资源标题
+    String id , nm ;
+    id = (_module +"-"+ _entity +"-"+ _action).replace('/','-');
+    do {
+        NaviMap site = NaviMap.getInstance(_module+"/"+_entity);
+        Map menu  = site.getMenu(_module+"/#"+_entity);
+        if (menu != null) {
+            nm = (String) menu.get("disp");
+            if (nm != null) {
+                nm  = lang.translate( nm );
+                break;
+            }
+        }
+
+        nm = Dict.getValue( flds, "", "@", "disp" );
+    } while (false);
 %>
 <!-- 表单 -->
 <h2><%=lang.translate("fore."+_action+".title", nm)%></h2>
-<div<%=at%> class="row">
+<div id="<%=id%>" class="row">
     <form action="" method="POST">
         <div class="col-md-6 center-block">
             <%
@@ -83,7 +110,7 @@
                         <%
                             String extr = "";
                             if ("string".equals(type)) type = "text";
-                            if (info.containsKey("size")) extr += " size=\""+info.get("size").toString()+"\""; 
+                            if (info.containsKey("size")) extr += " size=\""+info.get("size").toString()+"\"";
                             if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
                             if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
                             if (info.containsKey("pattern")) extr += " pattern=\""+info.get("pattern").toString()+"\"";
@@ -97,19 +124,26 @@
                             if (info.containsKey("max")) extr += " max=\""+info.get("max").toString()+"\"";
                         %>
                         <input class="form-control" type="<%=type%>" name="<%=name%>" value="" <%=rqrd%><%=extr%>/>
-                    <%} else if ("date".equals(type)) {%>
-                        <input class="form-control input-date" type="text" name="<%=name%>" value="" data-toggle="datetimepicker" <%=rqrd%>/>
-                    <%} else if ("time".equals(type)) {%>
-                        <input class="form-control input-time" type="text" name="<%=name%>" value="" data-toggle="datetimepicker" <%=rqrd%>/>
-                    <%} else if ("datetime".equals(type)) {%>
-                        <input class="form-control input-datetime" type="text" name="<%=name%>" value="" data-toggle="datetimepicker" <%=rqrd%>/>
+                    <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
+                        <%
+                            String extr = "";
+                            if (info.containsKey("format")) extr += " data-format=\""+info.get("format").toString()+"\"";
+                        %>
+                        <input class="form-control input-date" type="text" name="<%=name%>" value="" readonly="readonly" <%=rqrd%><%=extr%> data-toggle="datetimepicker"/>
                     <%} else if ("check".equals(type)) {%>
                         <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                     <%} else if ("radio".equals(type)) {%>
                         <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                     <%} else if ("enum".equals(type) || "select".equals(type)) {%>
                         <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
-                    <%} else if ("pick".equals(type) ||   "fork".equals(type)) {%>
+                    <%} else if ("file".equals(type) || "upload".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
+                        <%
+                            String extr = "";
+                            if (info.containsKey("type")) extr += " accept=\""+info.get("type").toString()+"\"";
+                            else if ("image".equals(type) || "video".equals(type) || "audio".equals(type)) extr += " accept=\""+type+"/*\"";
+                        %>
+                        <input type="file" name="<%=name%>" <%=rqrd%><%=extr%> data-toggle="fileinput"/>
+                    <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                         <%
                             String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :  "id" ;
                             String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
@@ -118,7 +152,7 @@
                             String al = info.containsKey("data-al") ? (String) info.get("data-al") :
                                       ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) : _module )
                                     + ( info.containsKey("form"   ) ? (String) info.get("form"   ) : /**/ ak )
-                                    + "list4fork.html";
+                                    + "list_fork.html";
                         %>
                         <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
                         <button type="button" class="btn btn-default form-control" data-toggle="hsPick" data-target="@" data-href="<%=al%>"><%=lang.translate("fore.select.lebel", disp)%></button>
@@ -138,7 +172,7 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=id%>");
-    
+
     context.hsForm({
         loadUrl: "<%=_module%>/<%=_entity%>/retrieve.act?id=\${id}&md=\${md}",
         saveUrl: "<%=_module%>/<%=_entity%>/<%=_action%>.act",

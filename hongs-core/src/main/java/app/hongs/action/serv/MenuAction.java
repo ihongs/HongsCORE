@@ -31,24 +31,20 @@ public class MenuAction {
             n = "common/menu.act?m=" + m + "&n=" + n ;
         }
 
-            NaviMap         site =  NaviMap.getInstance(m);
-            Map<String,Map> menu =  site.getMenu( n );
-        if (menu != null && menu.containsKey("menus")) {
-            Map<String,Map> manu =  menu.get("menus");
-                String mu = null ;
-            for(String mn : manu.keySet()) {
-                if (site.chkMenu(mn)) {
-                    helper.redirect(Core.BASE_HREF+"/"+mn);
+        String            href;
+        NaviMap           site;
+        Map<String, Map>  menu;
+        site = NaviMap.getInstance(m);
+        menu = site.getMenu(n);
+        if (menu != null) {
+            menu  = menu.get("menus");
+            if (menu != null) {
+                href  = getRedirect(site, menu);
+                if (href != null) {
+                    helper.redirect(Core.BASE_HREF + "/" + href);
                     return;
-                }
-                if (mu == null) {
-                    mu  =  mn ;
                 }
             }
-                if (mu != null) {
-                    helper.redirect(Core.BASE_HREF+"/"+mu);
-                    return;
-                }
 
             helper.error403(CoreLocale.getInstance().translate("core.error.no.power"));
         } else {
@@ -86,6 +82,32 @@ public class MenuAction {
         Map data = new HashMap();
         data.put( "list", list );
         helper.reply(data);
+    }
+
+    private String getRedirect(NaviMap site, Map<String, Map> menu)
+    throws  HongsException {
+        for (Map.Entry<String, Map> et : menu.entrySet()) {
+            String  href  = et.getKey(  );
+            if (href.startsWith("!")) {
+                continue;
+            }
+            if (href.startsWith("#")
+            ||  href.startsWith("common/menu.act?")) {
+                Map item  = et.getValue();
+                Map<String, Map> subs = (Map) item.get("menus");
+                if (subs != null && !subs.isEmpty()) {
+                    href  = getRedirect(site, subs);
+                    if ( null != href ) {
+                        return   href;
+                    }
+                }
+            } else {
+                if (site.chkMenu(href)) {
+                        return   href;
+                }
+            }
+        }
+        return null;
     }
 
 }

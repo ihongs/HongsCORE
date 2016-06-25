@@ -192,10 +192,23 @@ public class Mview extends Model {
             sortable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
         }
 
+        // 搜索、排序等字段也可以直接在主字段给出
+        if (conf != null && conf.containsKey("findable")) {
+            findColz = Synt.asTerms(conf.get("findable"));
+            findable = null;
+        }
+        if (conf != null && conf.containsKey("listable")) {
+            listColz = Synt.asTerms(conf.get("listable"));
+            listable = null;
+        }
+        if (conf != null && conf.containsKey("sortable")) {
+            sortColz = Synt.asTerms(conf.get("sortable"));
+            sortable = null;
+        }
+
         if (null == conf || ! Synt.declare(conf.get("dont.auto.append.fields"), false)) {
             addTableFields();
         }
-
         if (null == conf || ! Synt.declare(conf.get("dont.auto.append.assocs"), false)) {
             addAssocFields();
         }
@@ -223,6 +236,11 @@ public class Mview extends Model {
             String name = ent.getKey();
             Map field = ent.getValue();
             String ft = (String) field.get("__type__");
+
+            // 表单信息字段需要排除
+            if ("@".equals(name)) {
+                continue;
+            }
 
             // 多值字段不能搜索、排序、列举
             if (Synt.declare(field.get("__repeated__"), false)) {

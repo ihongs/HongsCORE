@@ -86,6 +86,10 @@
             <param-name>action-path</param-name>
             <param-value>/manage/auto</param-value>
         </init-param>
+        <init-param>
+            <param-name>render-path</param-name>
+            <param-value>/common/auto</param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>AutoFilter_MD</filter-name>
@@ -100,6 +104,10 @@
         <init-param>
             <param-name>action-path</param-name>
             <param-value>/handle/auto</param-value>
+        </init-param>
+        <init-param>
+            <param-name>render-path</param-name>
+            <param-value>/common/auto</param-value>
         </init-param>
     </filter>
     <filter-mapping>

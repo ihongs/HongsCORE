@@ -154,13 +154,23 @@
                 </div>
                 <div class="form-group" data-type="pick">
                     <label class="control-label clearfix" style="display: block;">
-                        <span>关联表单</span>
+                        <span>关联</span>
                         <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
                     <ul data-ft="_pick" data-fn="-"></ul>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href=""><i class="glyphicon glyphicon-th-list"></i>选择...</button>
+                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/module/form/pick.html" data-vk="id" data-tk="name"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
+                </div>
+                <div class="form-group" data-type="user">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>关联用户</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <ul data-ft="_pick" data-fn="-"></ul>
+                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/member/user/pick.html" data-vk="id" data-tk="name"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
                 </div>
             </form>
         </div>
@@ -253,6 +263,8 @@
                     <input class="form-control" type="number" name="input|min" value="" style="display: inline-block; width: 8em;"/>
                     <span>&nbsp;~&nbsp;</span>
                     <input class="form-control" type="number" name="input|max" value="" style="display: inline-block; width: 8em;"/>
+                    <span>&nbsp;.&nbsp;</span>
+                    <input class="form-control" type="number" name="input|scale" value="" style="display: inline-block; width: 4em;"/>
                 </div>
             </div>
             <div class="checkbox">
@@ -394,21 +406,53 @@
             </div>
             <div class="form-group">
                 <label class="control-label">关联表单</label>
-                <ul data-ft="_pick"></ul>
-                <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/module/form/pick.html"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
+                <ul data-ft="_pick" data-fn="-"></ul>
+                <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/module/form/pick.html">选择...</button>
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="input|required" value="required"/>必选
+                    <input type="checkbox" name="ul|required" value="required"/>必选
                 </label>
                 <label>
-                    <input type="checkbox" name="input|repeated" value="required"/>多个
+                    <input type="checkbox" name="ul|repeated" value="repeated"/>多个
                 </label>
                 <label>
-                    <input type="checkbox" name="input|data-listable" value="yes"/>列举
+                    <input type="checkbox" name="ul|data-listable" value="yes"/>列举
                 </label>
                 <label>
-                    <input type="checkbox" name="input|data-fltrable" value="yes"/>筛选
+                    <input type="checkbox" name="ul|data-fltrable" value="yes"/>筛选
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-user">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="button|text" value=""/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">会话关联</label>
+                <select name="ul|data-preset-value" class="form-control">
+                    <option value="">----</option>
+                    <option value="default-cuid">默认当前用户</option>
+                    <option value="defense-cuid">强制当前用户</option>
+                </select>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="ul|required" value="required"/>必选
+                </label>
+                <label>
+                    <input type="checkbox" name="ul|repeated" value="required"/>多个
+                </label>
+                <label>
+                    <input type="checkbox" name="ul|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="ul|data-fltrable" value="yes"/>筛选
                 </label>
             </div>
         </div>
@@ -422,7 +466,31 @@
                         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title"></h4>
                     </div>
-                    <div class="modal-body"></div>
+                    <div class="modal-body">
+                        <ul class="nav nav-tabs" data-toggle="hsTabs">
+                            <li><a href="javascript:;">基础设置</a></li>
+                            <li><a href="javascript:;">高级设置</a></li>
+                        </ul>
+                        <div class="panes">
+                            <div class="simple-set"></div>
+                            <div class="detail-set">
+                                <table style="width: 100%;">
+                                    <tr class="hide">
+                                        <td style="width: 10em;">
+                                            <input type="text" name="param_name"  class="form-control col-sm-4" placeholder="参数"/>
+                                        </td>
+                                        <td>
+                                            <input type="text" name="param_value" class="form-control col-sm-8" placeholder="取值"/>
+                                        </td>
+                                        <td style="width: 2em; text-align: center; vertical-align: middle;">
+                                            <a href="javascript:;" class="del-param"><span class="glyphicon glyphicon-minus-sign"></span></a>
+                                        </td>
+                                    </tr>
+                                </table>
+                                <a href="javascript:;" class="btn btn-link add-param"><span class="glyphicon glyphicon-plus-sign"></span> 添加自定义设置</a>
+                            </div>
+                        </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                         <button type="submit" class="btn btn-primary">保存</button>

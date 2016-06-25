@@ -44,7 +44,12 @@ implements  ITrnsct , Core.Destroy
   /**
    * 库名
    */
-  public String  name;
+  public     String    name;
+
+  /**
+   * 执行标识
+   */
+  protected  boolean   initialled;
 
   /**
    * 连接对象
@@ -72,6 +77,9 @@ implements  ITrnsct , Core.Destroy
     {
       throw new HongsException(0x1026, ex);
     }
+
+    // 准备执行标识
+    this.initialled = true;
   }
 
   @Override
@@ -79,30 +87,33 @@ implements  ITrnsct , Core.Destroy
   {
     try
     {
-      if (this.connection == null  /***/
+      if (this.connection == null
       ||  this.connection.isClosed(/***/))
       {
         return;
       }
 
       // 退出自动提交
-      if(!this.connection.getAutoCommit())
+      if (this.initialled
+      && !this.connection.getAutoCommit())
       {
         try
         {
-          try
-          {
-            this.commit();
-          }
-          catch (Error e)
-          {
-            this.rolbak();
-            throw e;
-          }
+          this.commit();
         }
-        catch (Error e)
+        catch (Exception | Error e)
         {
           CoreLogger.error(e);
+
+        try
+        {
+          this.rolbak();
+        }
+        catch (Exception | Error x)
+        {
+          CoreLogger.error(x);
+        }
+
         }
       }
 
@@ -115,6 +126,7 @@ implements  ITrnsct , Core.Destroy
     finally
     {
       this.connection = null ;
+      this.initialled = false;
     }
 
     if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
@@ -129,10 +141,11 @@ implements  ITrnsct , Core.Destroy
   @Override
   public void trnsct()
   {
-    this.IN_TRNSCT_MODE = true ;
+    this.IN_TRNSCT_MODE = true;
     try {
-        if (connection != null && !connection.isClosed()) {
-            this.connection.setAutoCommit(false);
+        if (connection != null
+        && !connection.isClosed()) {
+            connection.setAutoCommit(false);
         }
     } catch (SQLException ex) {
         throw new HongsError(0x3a, ex);
@@ -150,11 +163,15 @@ implements  ITrnsct , Core.Destroy
     }
     IN_TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
     try {
-        if (connection != null && !connection.isClosed()) {
+        if (connection != null
+        && !connection.isClosed()
+        && !connection.getAutoCommit()) {
             connection.commit(  );
         }
     } catch (SQLException ex) {
         throw new HongsError(0x3b, ex);
+    } finally {
+        this.initialled = false  ;
     }
   }
 
@@ -169,11 +186,15 @@ implements  ITrnsct , Core.Destroy
     }
     IN_TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
     try {
-        if (connection != null && !connection.isClosed()) {
+        if (connection != null
+        && !connection.isClosed()
+        && !connection.getAutoCommit()) {
             connection.rollback();
         }
     } catch (SQLException ex) {
         throw new HongsError(0x3c, ex);
+    } finally {
+        this.initialled = false  ;
     }
   }
 
@@ -452,6 +473,7 @@ implements  ITrnsct , Core.Destroy
     throws HongsException
   {
     this.connect();
+    this.initial();
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
     {
@@ -489,6 +511,7 @@ implements  ITrnsct , Core.Destroy
     throws HongsException
   {
     this.connect();
+    this.initial();
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
     {

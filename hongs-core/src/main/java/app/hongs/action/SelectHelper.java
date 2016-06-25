@@ -57,7 +57,10 @@ public class SelectHelper {
     public SelectHelper addEnumsByForm(String conf, String form) throws HongsException {
         FormSet cnf = FormSet.getInstance(conf);
         Map map = cnf.getForm(form);
+        return addEnumsByForm(conf , map );
+    }
 
+    public SelectHelper addEnumsByForm(String conf, Map map) throws HongsException {
         FormSet dfs = FormSet.getInstance("default");
         Map tps = dfs.getEnum("__types__");
 
@@ -75,7 +78,7 @@ public class SelectHelper {
             String xame = (String) mt.get("enum");
             if (null == xonf || "".equals( xonf )) xonf = conf;
             if (null == xame || "".equals( xame )) xame = name;
-            Map xnum  = FormSet.getInstance(xonf).getEnumTranslated(xame);
+            Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
             enums.put(name, xnum);
         }
 

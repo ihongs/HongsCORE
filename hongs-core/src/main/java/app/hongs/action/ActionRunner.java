@@ -71,14 +71,34 @@ public class ActionRunner {
         }
     }
 
+    /**
+     * 获得当前 action 对象
+     * @return
+     */
     public Object getObject() {
         return object;
     }
 
-    public String getMthAnn() {
+    /**
+     * 获得当前动作方法对象
+     * @return
+     */
+    public Method getMethod() {
+        return method;
+    }
+
+    /**
+     * 获取当前方法名称
+     * @return
+     */
+    public String getMtdAnn() {
         return method.getAnnotation(Action.class).value();
     }
 
+    /**
+     * 获得当前资源名称
+     * @return
+     */
     public String getClsAnn() {
         return mclass.getAnnotation(Action.class).value();
     }

@@ -47,8 +47,6 @@ public class Origin extends Link {
                 }
             }
 
-            initial(); // 预置
-
             return connection;
         } catch (SQLException ex) {
             throw new HongsException(0x1022, ex);

@@ -56,24 +56,30 @@ public class PresetInvoker implements FilterInvoker {
         }
 
         // 识别路径
-        if (envm.length() == 0 || conf.length() == 0) {
+        if (envm.length() == 0) {
             envm = chains.getEntity();
+        }
+        if (conf.length() == 0) {
             conf = chains.getModule();
             // 照顾 Module Action 的配置规则
-            if (FormSet.hasConfFile( conf+"/"+envm )) {
+            if (FormSet.hasConfFile(conf+"/"+envm)) {
                 conf = conf+"/"+envm ;
             }
         }
 
         // 补充参数
         try {
-            Map<String, String> data = FormSet.getInstance(conf).getEnum(envm + act);
+            Map<String, String> data = (Map) helper.getAttribute("enum:"+conf+"."+envm+act);
+            if (data == null) {
+                data  = FormSet.getInstance(conf).getEnum(envm+act);
+            }
+
             Map reqd = helper.getRequestData();
-            Map rxqd = new HashMap(  );
+            Map rxqd = new HashMap();
 
             // 防御参数
             String n = ":defense";
-            if (data.containsKey( n )) {
+            if (data.containsKey(n)) {
                 String v = data.get(n);
                 if (v != null && v.length() != 0) {
                     inject(helper, v, reqd);

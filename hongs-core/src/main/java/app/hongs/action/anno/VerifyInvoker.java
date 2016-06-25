@@ -28,6 +28,7 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
  * @author Hong
  */
 public class VerifyInvoker implements FilterInvoker {
+
     @Override
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
     throws HongsException {
@@ -53,19 +54,26 @@ public class VerifyInvoker implements FilterInvoker {
         boolean upd = mods == 1 ;
 
         // 识别路径
-        if (form.length() == 0 || conf.length() == 0) {
+        if (form.length() == 0) {
             form = chains.getEntity();
+        }
+        if (conf.length() == 0) {
             conf = chains.getModule();
             // 照顾 Module Action 的配置规则
-            if (FormSet.hasConfFile( conf+"/"+form )) {
+            if (FormSet.hasConfFile(conf+"/"+form)) {
                 conf = conf+"/"+form ;
             }
         }
 
         // 执行校验
         try {
+            Map data  = (Map) helper.getAttribute("form:"+conf+"."+form);
+            if (data == null) {
+                data  = FormSet.getInstance(conf).getForm(form);
+            }
+
             VerifyHelper ver = new VerifyHelper();
-            ver.addRulesByForm(conf, form);
+            ver.addRulesByForm(conf, form, data );
             ver.isPrompt(prp);
             ver.isUpdate(upd);
             Map vls = ver.verify(dat);
@@ -108,4 +116,5 @@ public class VerifyInvoker implements FilterInvoker {
 
         chains.doAction();
     }
+
 }

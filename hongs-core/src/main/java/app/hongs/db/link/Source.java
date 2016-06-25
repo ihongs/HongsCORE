@@ -50,8 +50,6 @@ public class Source extends Link {
                 }
             }
 
-            initial(); // 预置
-
             return connection;
         } catch (SQLException ex) {
             throw new HongsException(0x1024, ex);
@@ -106,6 +104,11 @@ public class Source extends Link {
             if (info.containsKey("password")) {
                 pool.setPassword(info.getProperty("password"));
             }
+            
+            // 连接属性
+            if (info.containsKey("connectionProperties")) {
+                pool.setConnectionProperties(info.getProperty("connectionProperties").replace("&", ";"));
+            }
 
             // 基础设置
             if (info.containsKey("initialSize")) {
@@ -124,18 +127,10 @@ public class Source extends Link {
                 pool.setMaxWait(Long.parseLong(info.getProperty("maxWait")));
             }
 
-            // 回收设置
+            // 回收检测
             if (info.containsKey("logAbandoned")) {
                 pool.setLogAbandoned(Boolean.parseBoolean(info.getProperty("logAbandoned")));
             }
-            if (info.containsKey("removeAbandoned")) {
-                pool.setRemoveAbandoned(Boolean.parseBoolean(info.getProperty("removeAbandoned")));
-            }
-            if (info.containsKey("removeAbandonedTimeout")) {
-                pool.setRemoveAbandonedTimeout(Integer.parseInt(info.getProperty("removeAbandonedTimeout")));
-            }
-
-            // 检测设置
             if (info.containsKey("testOnBorrow")) {
                 pool.setTestOnBorrow(Boolean.parseBoolean(info.getProperty("testOnBorrow")));
             }
@@ -144,6 +139,12 @@ public class Source extends Link {
             }
             if (info.containsKey("testWhileIdle")) {
                 pool.setTestWhileIdle(Boolean.parseBoolean(info.getProperty("testWhileIdle")));
+            }
+            if (info.containsKey("removeAbandoned")) {
+                pool.setRemoveAbandoned(Boolean.parseBoolean(info.getProperty("removeAbandoned")));
+            }
+            if (info.containsKey("removeAbandonedTimeout")) {
+                pool.setRemoveAbandonedTimeout(Integer.parseInt(info.getProperty("removeAbandonedTimeout")));
             }
             if (info.containsKey("validationQuery")) {
                 pool.setValidationQuery(info.getProperty("validationQuery"));

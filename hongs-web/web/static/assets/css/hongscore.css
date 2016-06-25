@@ -114,6 +114,7 @@ legend {
     display: none;
 }
 
+.radio    label ,
 .checkbox label {
     padding-right: 15px;
 }

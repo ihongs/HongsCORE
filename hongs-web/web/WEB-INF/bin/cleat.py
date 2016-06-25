@@ -16,10 +16,10 @@ from getopt import getopt
 
 if  __name__ == "__main__":
     def cmd_help():
-        print "Usage: clamp.py SRC_PATH DST_PATH"
+        print "Usage: cleat.py SRC_PATH DST_PATH"
         print "Another options:"
         print "  -n --name             Dest name with time format"
-        print "  -x --pack             Pack the back"
+        print "  -p --pack             Pack the back"
         print "  -z --gzip             Gzip the back"
         print "  -h --help             Show this msg"
         print "--name(-n) syntax:"
@@ -55,7 +55,7 @@ if  __name__ == "__main__":
     for n,v in opts:
         if  n in ("-n", "--name"):
             tn = v
-        if  n in ("-x", "--pack"):
+        if  n in ("-p", "--pack"):
             pc = True
         if  n in ("-z", "--gzip"):
             gz = True

@@ -32,7 +32,10 @@ public class VerifyHelper extends Verify {
     public VerifyHelper addRulesByForm(String conf, String form) throws HongsException {
         FormSet cnf = FormSet.getInstance(conf);
         Map map  = cnf.getForm(form);
+        return  addRulesByForm(conf, form, map);
+    }
 
+    public VerifyHelper addRulesByForm(String conf, String form, Map map) throws HongsException {
         FormSet dfs = FormSet.getInstance("default");
         Map tps  = dfs.getEnum("__types__");
         Map pts  = dfs.getEnum("__patts__");

@@ -73,23 +73,6 @@ public class CoreLogger
     }
 
     /**
-     * 输出
-     * @param text
-     * @param args
-     */
-    public static void trace(String text, Object... args) {
-        if (4 == (4 & Core.DEBUG)) {
-            return; // 禁止跟踪
-        }
-        if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.out")).trace(envir(text), args);
-        }
-        if (2 == (2 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).trace(envir(text), args);
-        }
-    }
-
-    /**
      * 调试
      * @param text
      * @param args
@@ -103,6 +86,23 @@ public class CoreLogger
         }
         if (2 == (2 & Core.DEBUG)) {
             getLogger(space("hongs.log")).debug(envir(text), args);
+        }
+    }
+
+    /**
+     * 输出
+     * @param text
+     * @param args
+     */
+    public static void trace(String text, Object... args) {
+        if (4 == (4 & Core.DEBUG)) {
+            return; // 禁止跟踪
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(space("hongs.out")).trace(envir(text), args);
+        }
+        if (2 == (2 & Core.DEBUG)) {
+            getLogger(space("hongs.log")).trace(envir(text), args);
         }
     }
 
@@ -138,14 +138,15 @@ public class CoreLogger
         }
 
         ByteArrayOutputStream b = new ByteArrayOutputStream();
-        t.printStackTrace(new PrintStream(b));
+        t.printStackTrace(new PrintStream ( b ) );
+        String s = b.toString().replaceAll("^\\S","  $0");
 
         if (1 == (1 & Core.DEBUG )
         ||  2 != (2 & Core.DEBUG)) {
-            getLogger("hongs.out" + flag).error(envir(b.toString(  )));
+            getLogger("hongs.out" + flag).error(envir(s));
         }
         if (2 == (2 & Core.DEBUG)) {
-            getLogger("hongs.log" + flag).error(envir(b.toString(  )));
+            getLogger("hongs.log" + flag).error(envir(s));
         }
     }
 

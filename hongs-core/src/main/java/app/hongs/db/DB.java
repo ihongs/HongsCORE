@@ -285,10 +285,6 @@ public class DB
     }
     while (false);
 
-    /** 初始化设置 **/
-
-    initial  (  );
-
     return this.connection;
   }
 

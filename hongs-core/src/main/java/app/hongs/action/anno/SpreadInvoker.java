@@ -41,23 +41,30 @@ public class SpreadInvoker implements FilterInvoker {
         }
 
         // 识别路径
-        if (form.length() == 0 || conf.length() == 0) {
+        if (form.length() == 0) {
             form = chains.getEntity();
+        }
+        if (conf.length() == 0) {
             conf = chains.getModule();
             // 照顾 Module Action 的配置规则
-            if (FormSet.hasConfFile( conf+"/"+form )) {
+            if (FormSet.hasConfFile(conf+"/"+form)) {
                 conf = conf+"/"+form ;
             }
         }
 
         // 填充数据
         try {
+            Map data  = (Map) helper.getAttribute("form:"+conf+"."+form);
+            if (data == null) {
+                data  = FormSet.getInstance(conf).getForm(form);
+            }
+
             SpreadHelper sup ;
-            sup = new SpreadHelper().addItemsByForm(conf,form);
+            sup = new SpreadHelper().addItemsByForm(conf, data);
             sup.spread ( rsp);
         } catch (HongsException  ex) {
             int  ec  = ex.getErrno();
-            if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea) {
+            if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {
                 throw  ex;
             }
         }

@@ -330,15 +330,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     private void doFinish(Core core, ActionHelper hlpr, HttpServletRequest req) {
         try {
-        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            HttpServletRequest R = hlpr.getRequest(/***/);
-            HttpSession        S =    R.getSession(false);
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                        req = hlpr.getRequest(/***/);
+            HttpSession ses =  req.getSession(false);
 
             // 获取远程IP
             String rip;
             do {
-                rip = R.getHeader(    "X-Forwarded-For" );
-                if (null != rip && 0 != rip.length (   )) {
+                rip = req.getHeader("X-Forwarded-For");
+                if (null != rip && 0 != rip.length() ) {
                     int pos = rip.indexOf  (  ','  );
                     if (pos > 0) {
                         rip = rip.substring(0, pos );
@@ -347,23 +347,23 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                         break;
                     }
                 }
-                rip = R.getHeader(    "Proxy-Client-IP" );
+                rip = req.getHeader(   "Proxy-Client-IP");
                 if (null != rip && 0 != rip.length() && !"unknown".equalsIgnoreCase(rip)) {
                     break;
                 }
-                rip = R.getHeader( "WL-Proxy-Client-IP" );
+                rip = req.getHeader("WL-Proxy-Client-IP");
                 if (null != rip && 0 != rip.length() && !"unknown".equalsIgnoreCase(rip)) {
                     break;
                 }
-                rip = R.getRemoteAddr();
+                rip = req.getRemoteAddr();
             } while (false);
 
             // 获取会话ID和用户ID
             String sid;
             String uid;
-            if ( S != null ) {
-                sid = S.getId();
-                uid = (String) S.getAttribute(Cnst.UID_SES);
+            if (ses != null) {
+                sid = ses.getId();
+                uid = (String) ses.getAttribute(Cnst.UID_SES);
                 if (uid != null && uid.length() != 0) {
                     sid += " UID:"+uid;
                 }
@@ -377,7 +377,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
                 .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
                 .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
-                .append("\r\n\tMethod      : ").append(R.getMethod())
+                .append("\r\n\tMethod      : ").append(req.getMethod())
                 .append("\r\n\tRemote      : ").append(rip)
                 .append("\r\n\tMember      : ").append(sid)
                 .append("\r\n\tObjects     : ").append(core.keySet().toString())
@@ -390,27 +390,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             CoreConfig cf = CoreConfig.getInstance();
 
-            if (cf.getProperty("core.trace.action.client", true)) {
-                String hd;
-                hd = R.getHeader("Accpet" );
-                if (hd != null && hd.length() != 0) {
-                    sb.append("\r\n\tAccpet      : ").append(hd);
-                }
-                hd = R.getHeader("Referer");
-                if (hd != null && hd.length() != 0) {
-                    sb.append("\r\n\tReferer     : ").append(hd);
-                }
-                hd = R.getHeader("User-Agent");
-                if (hd != null && hd.length() != 0) {
-                    sb.append("\r\n\tUser-Agent  : ").append(hd);
-                }
-                hd = R.getHeader("X-Requested-With");
-                if (hd != null && hd.length() != 0) {
-                    sb.append("\r\n\tQuest-With  : ").append(hd);
-                }
-            }
-
-            if (cf.getProperty("core.trace.action.request", false)) {
+            if (cf.getProperty("core.debug.action.request", false)) {
                 Map rd  = hlpr.getRequestData();
                 if (rd != null && !rd.isEmpty()) {
                     sb.append("\r\n\tRequest     : ")
@@ -418,10 +398,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
             }
 
-            if (cf.getProperty("core.trace.action.results", false)) {
+            if (cf.getProperty("core.debug.action.results", false)) {
                 Map xd  = hlpr.getResponseData();
                 if (xd == null) {
-                    xd  = (Map) R.getAttribute(  Cnst.RESP_ATTR  );
+                    xd  = (Map) req.getAttribute( Cnst.RESP_ATTR );
                 }
                 if (xd != null && !xd.isEmpty()) {
                     sb.append("\r\n\tResults     : ")
@@ -429,7 +409,20 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
             }
 
-            if (cf.getProperty("core.trace.action.context", false)) {
+            if (cf.getProperty("core.debug.action.headers", false)) {
+              Map         map = new HashMap();
+              Enumeration<String> nms = req.getHeaderNames();
+              while (nms.hasMoreElements()) {
+                  String  nme = nms.nextElement();
+                  map.put(nme , req.getHeader(nme));
+              }
+              if (!map.isEmpty()) {
+                  sb.append("\r\n\tHeaders     : ")
+                    .append(Tool.indent(Data.toString(map)).substring(1));
+              }
+            }
+
+            if (cf.getProperty("core.debug.action.context", false)) {
               Map         map = new HashMap();
               Enumeration<String> nms = req.getAttributeNames();
               while (nms.hasMoreElements()) {
@@ -442,9 +435,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
               }
             }
 
-            if (cf.getProperty("core.trace.action.session", false)) {
+            if (cf.getProperty("core.debug.action.session", false) && ses != null) {
               Map         map = new HashMap();
-              HttpSession ses = req.getSession (false);
               Enumeration<String> nms = ses.getAttributeNames();
               while (nms.hasMoreElements()) {
                   String  nme = nms.nextElement();
@@ -456,9 +448,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
               }
             }
 
-            if (cf.getProperty("core.trace.action.cookies", false)) {
+            if (cf.getProperty("core.debug.action.cookies", false)) {
               Map         map = new HashMap();
-              Cookie[]    cks = req.getCookies (/***/);
+              Cookie[]    cks = req.getCookies();
               for (Cookie cke : cks) {
                   map.put(cke.getName( ), cke.getValue( ));
               }
@@ -468,11 +460,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
               }
             }
 
-            CoreLogger.trace(sb.toString());
+            CoreLogger.debug(sb.toString());
         }
         } finally {
         // 销毁此周期内的对象
-        core.destroy();
+        try {
+            core.destroy();
+        } catch (Exception | Error e) {
+            CoreLogger.error( e );
+        }
         req.removeAttribute(Cnst.CORE_ATTR);
         Core.THREAD_CORE.remove();
         Core.ACTION_TIME.remove();

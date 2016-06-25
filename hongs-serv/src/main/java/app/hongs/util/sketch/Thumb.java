@@ -25,9 +25,9 @@ public class Thumb {
     String pre = null;
     String ext = null;
 
-    // 扩展名:宽*高...
-    private static final Pattern pat = Pattern.compile("([\\w_]+):(\\d+)\\*(\\d+)");
-    // keep:(R,G,B,A),取值0~255,A可选
+    // 扩展名:宽*高... 扩展名可以为空串
+    private static final Pattern pat = Pattern.compile("([\\w_]*):(\\d+)\\*(\\d+)");
+    // keep:(R,G,B,A), 取值0~255, A可选
     private static final Pattern pxt = Pattern.compile(";keep\\((\\d+,\\d+,\\d+(,\\d+)?)\\)", Pattern.CASE_INSENSITIVE);
 
     /**
@@ -174,6 +174,7 @@ public class Thumb {
 
         String dst =  pre  +  suf + "." + ext ;
         Thumbnails.of(pth)
+                .scale (1)
                 .outputFormat(ext).toFile(dst);
         return dst;
     }

@@ -258,7 +258,10 @@ function hsFormFillPick(box, v, n, t) {
         var x  = {};
         for(var i = 0; i < v.length; i++) {
             var j = v[i];
-            x[j[vk]] = j[tk];
+            if (j[vk] !== undefined
+            &&  j[tk] !== undefined) {
+              x[j[vk]] = j[tk];
+            }
         }
         v = x ;
     } else if (! jQuery.isPlainObject(v)) {

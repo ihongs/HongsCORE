@@ -4,7 +4,6 @@
         <value code="string">string</value>
         <value code="search">string</value> <!-- Lucene 中可分词查询 -->
         <value code="stored">string</value> <!-- Lucene 特有仅存不查 -->
-        <value code="sorted">number</value> <!-- Lucene 特有仅能排序 -->
         <value code="hidden">string</value>
         <value code="text">string</value>
         <value code="textarea">string</value><!-- Lucene 中同 stored -->
@@ -13,6 +12,7 @@
         <value code="url">string</value>
         <value code="tel">string</value>
         <!-- Number -->
+        <value code="sorted">number</value> <!-- Lucene 特有仅能排序 -->
         <value code="number">number</value>
         <value code="range">number</value>
         <value code="onoff">number</value>
@@ -39,13 +39,13 @@
     </enum>
     <enum name="__patts__">
         <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>
-        <value code="url"><![CDATA[^([a-z]+:)?//[^\s]*$]]></value>
+        <value code="url"><![CDATA[^([a-z]+:)?//[^\s]+$]]></value>
+        <value code="tel"><![CDATA[^(\+[1-9])?\d\d{2,}$]]></value>
     </enum>
     <enum name="__ables__">
         <value code="findable">string,search,text,email,url,tel,textcase</value>
         <value code="sortable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,sorted</value>
-        <value code="listable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,file,upload,image,audio,video,form,fork,pick</value>
-        <value code="viewable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,file,upload,image,audio,video,form,fork,pick,textarea,textcase,hidden,stored</value>
+        <value code="listable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,file,upload,image,audio,video,fork,pick</value>
     </enum>
     <!--
     <enum name="demo-enum">

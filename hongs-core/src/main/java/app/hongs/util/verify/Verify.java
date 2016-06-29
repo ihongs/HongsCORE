@@ -8,10 +8,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 数据校验助手
@@ -135,27 +137,25 @@ public class Verify {
             data2 = new ArrayList(/**/);
         }
 
-        // 可设置 disregard 为某个要忽略的值
-        // 页面中 checkbox  如果不选代表清空
-        // 可以加 hidden    值设为要忽略的值
+        // 可设置 defiant   为某个要忽略的值
+        // 页面加 hidden    值设为要忽略的值
+        // 此时如 check     全部未选代表清空
         // 默认对 null/空串 忽略
-        Object disregard = Synt.declare(params.get("disregard"),"");
+        Set d  =  Synt.asTerms(params.get( "defiant" ));
+        if (d  == null || d.isEmpty( )) {
+            d  =  new  HashSet();
+            d.add ("");
+        }
 
         // 将后面的规则应用于每一个值
         if (data instanceof Collection) {
             int i3 = 0;
-            for(Object data3 : ( Collection ) data) {
-                if (disregard != null) {
-                    if (disregard.equals( data3 ) ) {
-                        continue;
-                    }
-                } else {
-                    if (data3 == null) {
-                        continue;
-                    }
+            for(Object data3  :  ( Collection ) data  ) {
+                if (data3 == null || d.contains(data3)) {
+                    continue;
                 }
 
-                String name3 = name + "." + ( i3  ++ );
+                String name3 = name + "." + (  i3 ++  );
                 data3 = verify(rulez, data3, name3, values, wrongz);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
@@ -168,14 +168,8 @@ public class Verify {
                 Map.Entry e3 = (Map.Entry) i3;
                 Object data3 = e3.getValue( );
 
-                if (disregard != null) {
-                    if (disregard.equals( data3 ) ) {
-                        continue;
-                    }
-                } else {
-                    if (data3 == null) {
-                        continue;
-                    }
+                if (data3 == null || d.contains(data3)) {
+                    continue;
                 }
 
                 String name3 = name + "." + ((String) e3.getKey() );

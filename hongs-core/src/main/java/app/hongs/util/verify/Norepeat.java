@@ -12,9 +12,9 @@ public class Norepeat extends Rule {
             rule.setHelper(helper);
             rule.setParams(params);
             rule.setValues(values);
-            value = rule.verify(value);
+            rule.verify(value);
         }   catch (Wrong w) {
-            return value;
+            return value ;
         }
         throw new Wrong("fore.form.norepeat");
     }

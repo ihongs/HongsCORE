@@ -196,6 +196,8 @@ public class FormSet
         this.parse(element2, items, null);
         forms.put(namz, items);
 
+        items.put("__name__", namz);
+
         namz = element2.getAttribute("disp");
         items.put("__disp__", namz);
 

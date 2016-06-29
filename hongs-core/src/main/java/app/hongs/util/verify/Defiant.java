@@ -1,25 +1,34 @@
 package app.hongs.util.verify;
 
 import app.hongs.util.Synt;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
  * 弃用占位
  *
- * 字段如果可重复, 需要清空取值时,
- * 如果一个也不传, 什么也不会改变.
- * 比较简单的方法是传递一个占位值，
- * 可用此校验器设置要抛弃的占位值.
+ * <pre>
+ * 规则参数:
+ *  defiant 为指定值转为 null 移交后续处理, 此同名属性在 Repeated 中为忽略取值
+ * </pre>
  *
  * @author Hongs
  */
 public class Defiant extends Rule {
     @Override
     public Object verify(Object value) {
-        Set def  =  Synt.asTerms(params.get("defiant"));
-        if (null == value  ||  def.contains(  value  )) {
-            return  BLANK;
+        Object prm = params.get("defiant");
+        Set    def ;
+        if ( ! "".equals(prm)) {
+            def  = Synt.asTerms(prm);
+        } else {
+            def  = new  HashSet(   );
+            def.add( "" );
         }
-        return value;
+        if (null != value && ! def.contains(value)) {
+            return  value;
+        } else {
+            return  EMPTY;
+        }
     }
 }

@@ -22,9 +22,9 @@ import java.util.regex.Pattern;
  *  down-remote yes|no 是否下载远程文件
  *  href    存放位置的 URL 前缀, 当远程 URL 以 href 开头时跳过
  *  link    存放位置的 URL 前缀, 使用此方式将自动补全域名等
- *  temp    上传临时目录
- *  extn    扩展名称限制
  *  type    文件类型限制(Mime-Type)
+ *  extn    扩展名称限制
+ *  temp    上传临时目录
  * </pre>
  * @author Hongs
  */
@@ -37,7 +37,8 @@ public class IsFile extends Rule {
 
         // 跳过远程地址
         if (Synt.declare(params.get("pass-remote"), false)) {
-            if (value.toString( ).matches( "^(\\w+:)?//" )) {
+            String u = value.toString( );
+            if (u.matches("^\\w+://.*")) {
                 return value;
             }
         }
@@ -45,7 +46,7 @@ public class IsFile extends Rule {
         // 下载远程文件
         if (Synt.declare(params.get("down-remote"), false)) {
             String u = value.toString( );
-            if (u.matches("^https?://")) {
+            if (u.matches("^\\w+://.*")) {
             do {
                 String x;
                 // 如果是本地路径则不再下载

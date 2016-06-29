@@ -53,6 +53,16 @@ extends HashMap<String, Object>
 {
 
   /**
+   * 托管某对象, 结束时调 destroy 回收资源
+   *
+   * @param inst 活动实例
+   */
+  public void add(Object inst)
+  {
+    put( inst.getClass().getName() + ":" + inst.hashCode(), inst );
+  }
+
+  /**
    * 获取类对应的唯一对象
    *
    * @param <T> 返回对象类型

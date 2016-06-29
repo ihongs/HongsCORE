@@ -3,6 +3,7 @@ package app.hongs.action;
 import app.hongs.HongsException;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Default;
+import app.hongs.util.verify.Defiant;
 import app.hongs.util.verify.Norepeat;
 import app.hongs.util.verify.Optional;
 import app.hongs.util.verify.Repeated;
@@ -48,6 +49,28 @@ public class VerifyHelper extends Verify {
             Map     opts =  new HashMap( optz );
             Object  o;
 
+            o = opts.remove("defiant");
+            if (o != null) {
+                Rule rule = new Defiant();
+                Map  prms = new HashMap();
+                     rule.setParams(prms);
+                this.addRule( code, rule);
+                prms.put("defiant" , o  );
+            }
+
+            o = opts.remove("default");
+            if (o != null) {
+                Rule rule = new Default();
+                Map  prms = new HashMap();
+                     rule.setParams(prms);
+                this.addRule( code, rule);
+                prms.put("default" , o  );
+                if (opts.containsKey("default-create"))
+                    prms.put("default-create", opts.remove("default-create"));
+                if (opts.containsKey("default-always"))
+                    prms.put("default-always", opts.remove("default-always"));
+            }
+
             o = opts.remove("__required__");
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
@@ -74,30 +97,12 @@ public class VerifyHelper extends Verify {
                         prms.put("minrepeat", opts.remove("minrepeat"));
                     if (opts.containsKey("maxrepeat"))
                         prms.put("maxrepeat", opts.remove("maxrepeat"));
+                    if (! opts.containsKey("defiant"))
+                        prms.put( "defiant" , opts.remove( "defiant" ));
                 } else {
                     Rule rule = new Norepeat();
                     this.addRule( code, rule );
                 }
-            }
-
-            o = opts.remove("defiant");
-            if (o != null) {
-                Rule rule = new Default();
-                Map  prms = new HashMap();
-                     rule.setParams(prms);
-                this.addRule( code, rule);
-                prms.put("defiant" , o  );
-            }
-
-            o = opts.remove("default");
-            if (o != null) {
-                Rule rule = new Default();
-                Map  prms = new HashMap();
-                     rule.setParams(prms);
-                this.addRule( code, rule);
-                prms.put("default" , o  );
-                prms.put("alwayset", opts.remove("default-alwayset"));
-                prms.put("increate", opts.remove("default-increate"));
             }
 
             String rule = (String) opts.get("__rule__");

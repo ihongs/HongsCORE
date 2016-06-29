@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public abstract class Rule {
     /**
-     * 返回此对象将被抛弃
+     * 返回此对象将被抛弃, 后续处理器会被跳过
      */
     public static final Object BLANK = new Object();
     public static final Object EMPTY = null;

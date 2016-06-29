@@ -3,6 +3,7 @@ package app.hongs.dh.search;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
 import java.util.HashMap;
@@ -24,6 +25,36 @@ public class SearchRecord extends LuceneRecord {
         super(path);
     }
 
+    public SearchQueuer getQueuer() throws HongsException {
+        return SearchQueuer.getInstance(this);
+    }
+
+    /**
+     * 获取实例
+     * 存储为 conf/form 表单为 conf.form
+     * 表单缺失则尝试获取 conf/form.form
+     * 实例生命周期将交由 Core 维护
+     * @param conf
+     * @param form
+     * @return
+     * @throws HongsException
+     */
+    public static SearchRecord getInstance(String conf, String form) throws HongsException {
+        SearchRecord  inst;
+        Core   core = Core.getInstance();
+        String name = SearchRecord.class.getName( ) + ":" +  conf + "." + form;
+        if ( ! core.containsKey( name )) {
+            String path = conf + "/" +  form;
+            String canf = FormSet.hasConfFile(path) ? path : conf ;
+            Map    farm = FormSet.getInstance(canf).getForm( form);
+            inst =  new SearchRecord(path , farm);
+            core.put( name, inst );
+        } else {
+            inst =  (SearchRecord) core.got(name);
+        }
+        return inst;
+    }
+
     /**
      * 添加文档
      * @param rd
@@ -43,7 +74,7 @@ public class SearchRecord extends LuceneRecord {
         //addDoc(map2Doc(rd));
         rd = new HashMap(rd);
         rd.put("__action__", "set");
-        SearchQueuer.getInstance(this).add(rd);
+        getQueuer( ).add(rd);
 
         return id;
     }
@@ -81,7 +112,7 @@ public class SearchRecord extends LuceneRecord {
         //setDoc(id, doc);
         rd = new HashMap(rd);
         rd.put("__action__", "set");
-        SearchQueuer.getInstance(this).add(rd);
+        getQueuer( ).add(rd);
     }
 
     /**
@@ -117,7 +148,7 @@ public class SearchRecord extends LuceneRecord {
         //setDoc(id, doc);
         rd = new HashMap(rd);
         rd.put("__action__", "set");
-        SearchQueuer.getInstance(this).add(rd);
+        getQueuer( ).add(rd);
     }
 
     /**
@@ -132,7 +163,7 @@ public class SearchRecord extends LuceneRecord {
         Map rd = new HashMap();
         rd.put("__action__", "set");
         rd.put(Cnst.ID_KEY ,  id  );
-        SearchQueuer.getInstance(this).add(rd);
+        getQueuer( ).add( rd );
     }
 
 }

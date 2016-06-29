@@ -36,14 +36,19 @@ public class LuceneAction implements IAction, IActing {
         mod = runner.getModule();
 
         try {
+            // 方便自动机处理
+            if (FormSet.hasConfFile(mod + "/" + ent)) {
+                mod  =  mod + "/" + ent;
+            }
+
             // 下划线开头的为内部资源, 不直接对外开放
             if (ent.startsWith("_")) {
                 throw new HongsException(0x1100, "Unsupported Request!");
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
-            if (Dict.getValue(FormSet.getInstance( mod ).getForm( ent ),
-                false, "@", "cant.call." + act)) {
+            if (Dict.getValue( FormSet.getInstance( mod ).getForm( ent ),
+                false, "@","cant.call."+act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
         }

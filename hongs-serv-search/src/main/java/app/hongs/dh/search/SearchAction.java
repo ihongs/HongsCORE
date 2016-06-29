@@ -3,6 +3,7 @@ package app.hongs.dh.search;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Select;
@@ -20,6 +21,18 @@ import java.util.Map;
  */
 @Action()
 public class SearchAction extends LuceneAction {
+
+    @Override
+    public void initiate(ActionHelper helper, ActionRunner runner) throws HongsException {
+        super.initiate(helper, runner);
+
+        // 给 counts 腾出空间
+        if ("counts".equals(ent)) {
+            int pos = mod.lastIndexOf("/");
+            ent = mod.substring(1 + pos);
+            mod = mod.substring(0 , pos);
+        }
+    }
 
     @Action("retrieve")
     @Select()

@@ -11,7 +11,7 @@ import app.hongs.HongsUnchecked;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
-import app.hongs.dh.ModelView;
+import app.hongs.dh.ModelForm;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
@@ -49,7 +49,7 @@ import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.document.SortedDocValuesField;
-import org.apache.lucene.document.SortedNumericDocValuesField;
+import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
@@ -62,15 +62,14 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.Query;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TermRangeQuery;
-import org.apache.lucene.search.MatchAllDocsQuery;
-import org.apache.lucene.search.NumericRangeQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.TermRangeQuery;
+import org.apache.lucene.search.NumericRangeQuery;
+import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
-import org.apache.lucene.search.SortedNumericSortField;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.util.BytesRef;
@@ -89,7 +88,7 @@ import org.apache.lucene.util.NumericUtils;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.Destroy {
+public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.Destroy {
 
     protected boolean IN_TRNSCT_MODE = false;
     protected boolean IN_OBJECT_MODE = false;
@@ -160,14 +159,14 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         LuceneRecord  inst;
         Core   core = Core.getInstance();
         String name = LuceneRecord.class.getName( ) + ":" +  conf + "." + form;
-        if ( ! core.containsKey(name)) {
-            String  canf = FormSet.hasConfFile(conf + "/" +  form)
-                         ? conf + "/" + form : conf ;
-            Map     farm = FormSet.getInstance(canf).getForm(name);
-               inst =  new LuceneRecord(conf + "/" + form ,  farm);
-               core.put( name, inst );
+        if ( ! core.containsKey( name )) {
+            String path = conf + "/" +  form;
+            String canf = FormSet.hasConfFile(path) ? path : conf ;
+            Map    farm = FormSet.getInstance(canf).getForm( form);
+            inst =  new LuceneRecord(path , farm);
+            core.put( name, inst );
         } else {
-               inst =  (LuceneRecord) core.got(name);
+            inst =  (LuceneRecord) core.got(name);
         }
         return inst;
     }
@@ -399,6 +398,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
+            doc =  new Document();
         }
         rd.put(Cnst.ID_KEY, id);
         docAdd(doc, rd);
@@ -984,6 +984,9 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             if ("string".equals(t)) {
                 st = SortField.Type.STRING;
             } else
+            if ("sorted".equals(t)) {
+                st = SortField.Type.LONG;
+            } else
             {
                 continue;
             }
@@ -992,11 +995,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
              * 因为 Lucene 5 必须使用 DocValues 才能排序
              * 在更新数据时, 默认有加 '.' 打头的排序字段
              */
-            if (st == SortField.Type.STRING) {
-                of.add(new /* String */ SortField("."+fn, st, rv));
-            } else {
-                of.add(new SortedNumericSortField("."+fn, st, rv));
-            }
+            of.add(new SortField("." + fn , st , rv));
         }
 
         // 未指定则按文档顺序
@@ -1200,6 +1199,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         if (t == null) {
             t = (String) fc.get("__type__");
 
+            // 专有类型
             if ("search".equals(t)
             ||  "stored".equals(t)
             ||  "sorted".equals(t)) {
@@ -1214,14 +1214,22 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                 return "search";
             }
 
-            // 类型细分
             t = Synt.declare(getFtypes().get(t), t);
+
+            // 其他特例
+            if ( "enum" .equals(t)
+            ||   "fork" .equals(t)) {
+                return "string";
+            }
+
+            // 类型细分
             if ("number".equals(t)) {
                 t = Synt.declare(fc.get("type"), "double");
             } else
             if ( "date" .equals(t)) {
                 Object x = fc.get("type");
-                if ("microtime".equals(x) || "timestamp".equals(x)) {
+                if ("microtime".equals(x)
+                ||  "timestamp".equals(x)) {
                     t = "long";
                 }
             }
@@ -1236,6 +1244,11 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         return t;
     }
 
+    protected boolean sortable(Map fc) {
+        String  fn  = Synt.asserts(fc.get("__name__"), "");
+        return getSorts().contains(fn);
+    }
+
     protected boolean repeated(Map fc) {
         return Synt.asserts(fc.get("__repeated__"), false);
     }
@@ -1248,6 +1261,12 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         return Synt.asserts(fc.get(  "unstored"  ), false);
     }
 
+    protected boolean ignored (Map fc, String k) {
+        return  "".equals(k)
+            || "@".equals(k)
+            || "Ignore".equals(fc.get( "rule" ));
+    }
+
     protected void mapAdd(Map map, Document doc) {
         Map<String, Map> fields = getFields( );
         for(Object o : fields.entrySet()) {
@@ -1255,8 +1274,9 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             Map    m = (Map) e.getValue();
             String k = (String)e.getKey();
 
-            if (unstored(m)
-            ||  unwanted(m)) {
+            if (unwanted(m)
+            ||  unstored(m)
+            ||  ignored (m, k)) {
                 continue;
             }
 
@@ -1340,7 +1360,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                     }
                 }
             }
-            }
+            } else
             if (  "json".equals(t)) {
                 if (r) {
                     if (fs.length > 0) {
@@ -1387,9 +1407,7 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
             Object v = Dict.getParam(map , k);
 
             if (null == v
-            ||  "".equals(k)
-            || "@".equals(k)
-            || "Ignore".equals(m.get("rule"))) {
+            ||  ignored(m, k) ) {
                 continue;
             }
 
@@ -1450,15 +1468,16 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
         if ("search".equals(t)) {
             doc.add(new   TextField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES));
         } else
-        if ("sorted".equals(t)) {
-            s = true; // 此类型的字段仅用于排序
+        if ("sorted".equals(t)) { // 此类型的字段仅用于排序
+            s =  true ;
+            t = "long";
         } else
         if (  "date".equals(t)) {
             if (v instanceof Date) {
                 v = ((Date) v).getTime( );
             }
             doc.add(new   LongField(k, Synt.declare(v, 0L), u ? Field.Store.NO : Field.Store.YES));
-        }
+        } else
         if (  "json".equals(t)) {
             if (v == null || "".equals(v)) {
                 v = "{}";
@@ -1483,22 +1502,22 @@ public class LuceneRecord extends ModelView implements IEntity, ITrnsct, Core.De
                 }
             }
             if (   "int".equals(t)) {
-                doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
+                doc.add(new NumericDocValuesField("."+k, Synt.declare(v, 0L)));
             } else
             if (  "long".equals(t)) {
-                doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
+                doc.add(new NumericDocValuesField("."+k, Synt.declare(v, 0L)));
             } else
             if ( "float".equals(t)) {
-                doc.add(new SortedNumericDocValuesField("."+k, NumericUtils. floatToSortableInt (Synt.declare(v, 0.0F))));
+                doc.add(new NumericDocValuesField("."+k, NumericUtils. floatToSortableInt (Synt.declare(v, 0.0F))));
             } else
             if ("double".equals(t)) {
-                doc.add(new SortedNumericDocValuesField("."+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D))));
+                doc.add(new NumericDocValuesField("."+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D))));
             } else
             if (  "date".equals(t)) {
-                doc.add(new SortedNumericDocValuesField("."+k, Synt.declare(v, 0L)));
+                doc.add(new NumericDocValuesField("."+k, Synt.declare(v, 0L)));
             } else
             {
-                doc.add(new SortedDocValuesField("."+k, new BytesRef(v.toString())));
+                doc.add(new  SortedDocValuesField("."+k, new BytesRef(v.toString())));
             }
         }
     }

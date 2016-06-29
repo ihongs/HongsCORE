@@ -67,6 +67,7 @@ public class ServerCmdlet {
         webapp.setContextPath  (Core.BASE_HREF);
         webapp.setResourceBase (Core.BASE_PATH);
         webapp.setParentLoaderPriority ( true );
+        webapp.setInitParameter("org.eclipse.jetty.servlet.Default.dirAllowed", "false");
 
         // 设置会话
         try {

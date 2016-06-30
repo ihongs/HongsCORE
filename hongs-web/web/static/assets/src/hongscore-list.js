@@ -330,7 +330,7 @@ HsList.prototype = {
         }
     },
     fillPage : function(page) {
-        switch (page.err) {
+        switch (page.ern) {
             case  2 :
             case "2":
                 hsSetSeria(this._data, this.pageKey, 1);
@@ -663,7 +663,7 @@ function hsListFillItem(list) {
 }
 
 function hsListFillNext(page) {
-    switch (page.err) {
+    switch (page.ern) {
         case  1 :
         case "1":
             jQuery.hsNote(this._above_err || hsGetLang('list.empty'), "erro");

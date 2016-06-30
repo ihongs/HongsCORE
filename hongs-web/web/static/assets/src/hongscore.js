@@ -90,7 +90,7 @@ function hsResponObj(rst, qut, pus) {
             // 需要清理其中的html代码, 以供输出简洁的消息
             rst = {
                 "ok" : false,
-                "err":  "" ,
+                "sig":  "" ,
                 "msg":  rst
                     .replace(/<script.*?>.*?<\/script>/img, "")
                     .replace(/<style.*?>.*?<\/style>/img, "")
@@ -101,7 +101,7 @@ function hsResponObj(rst, qut, pus) {
         } else {
             rst = {
                 "ok" : false,
-                "err":  "" ,
+                "sig":  "" ,
                 "msg":  rst
             };
         }
@@ -113,8 +113,8 @@ function hsResponObj(rst, qut, pus) {
         if (rst.ok === "0") {
             rst.ok = false;
         }
-        if (typeof(rst.err) === "undefined") {
-            rst.err =  "" ;
+        if (typeof(rst.sig) === "undefined") {
+            rst.sig =  "" ;
         }
         if (typeof(rst.msg) === "undefined") {
             rst.msg =  "" ;

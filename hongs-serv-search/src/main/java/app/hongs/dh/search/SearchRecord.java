@@ -25,8 +25,8 @@ public class SearchRecord extends LuceneRecord {
         super(path);
     }
 
-    public SearchQueuer getQueuer() throws HongsException {
-        return SearchQueuer.getInstance(this);
+    public SearchQueuer getQueuer( ) throws HongsException {
+        return  SearchQueuer.getInstance(this);
     }
 
     /**
@@ -100,7 +100,7 @@ public class SearchRecord extends LuceneRecord {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            chkCols(new HashMap());
+            setView(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;
@@ -136,7 +136,7 @@ public class SearchRecord extends LuceneRecord {
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            chkCols(new HashMap());
+            setView(new HashMap());
             Map  md = doc2Map(doc);
             md.putAll(rd);
             rd = md;

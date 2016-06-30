@@ -1,6 +1,7 @@
 package app.hongs.action.serv;
 
 import app.hongs.Cnst;
+import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
@@ -124,11 +125,11 @@ public class ApisAction
         String _cnv  = req.getParameter(convKey);
         String _wap  = req.getParameter(wrapKey);
         String _sok  = req.getParameter(scokKey);
-        String _sid  = req.getParameter(ssidKey);
+//      String _sid  = req.getParameter(ssidKey);
 
-        if (_sid != null && _sid.length( ) != 0) {
-            //setSessionId(req, _sid);
-        }
+//      if (_sid != null && _sid.length( ) != 0) {
+//          setSessionId(req, _sid);
+//      }
 
         // JSONP 回调函数名称登记
         if (_cal != null && _cal.length( ) != 0) {
@@ -152,6 +153,11 @@ public class ApisAction
                 .putAll (  data  );
         }
 
+        // 指定转换则启用对象模式
+        if (_cnv != null && _cnv.length( ) != 0) {
+            Core.getInstance().put(Cnst.OBJECT_MODE, true);
+        }
+
         // 将请求转发到动作处理器
         act =       parseAct(act, mts);
         req.getRequestDispatcher( act)
@@ -166,7 +172,7 @@ public class ApisAction
         Set conv  = null;
         if (_cnv != null && _cnv.length( ) != 0) {
             try {
-                conv = Synt.asTerms(_cal );
+                conv = Synt.asTerms(_cnv );
             } catch (ClassCastException e) {
                 hlpr.error400 ( "Can not parse value for '!conv'" );
                 return;
@@ -226,9 +232,9 @@ public class ApisAction
             cnvr.all  = all ?  new  Conv2Str( ) : new Conv2Obj( ) ;
             cnvr.num  = all || conv.contains( "num2str") ? new Conv2Str(/**/) : cnvr.all;
             cnvr.nul  = all || conv.contains("null2str") ? new ConvNull2Str() : cnvr.all;
-            cnvr.bool = conv.contains("bool2str") ? new ConvBool2Str()
-                      :(conv.contains("bool2num") ? new ConvBool2Num() : new Conv2Obj());
-            cnvr.date = conv.contains("date2mic") ? new ConvDate2Mic()
+            cnvr.bool = conv.contains("bool2num") ? new ConvBool2Num()
+                      :(conv.contains("bool2str") ? new ConvBool2Str() : new Conv2Obj());
+            cnvr.date = conv.contains("date2num") ? new ConvDate2Num()
                       :(conv.contains("date2sec") ? new ConvDate2Sec() : new Conv2Obj());
             hlpr.reply (Synt.foreach(resp, cnvr));
         }
@@ -325,7 +331,7 @@ public class ApisAction
     private static final Set _API_RSP = new HashSet();
     static {
         _API_RSP.add("ok");
-        _API_RSP.add("err");
+        _API_RSP.add("sig");
         _API_RSP.add("msg");
         _API_RSP.add("ref");
         _API_RSP.add("data");
@@ -342,16 +348,16 @@ public class ApisAction
             if (o == null) {
                 return nul.conv(o);
             } else
-            if (o instanceof Number ) {
+            if (o instanceof Number) {
                 return num.conv(o);
             } else
             if (o instanceof Boolean) {
-                o = bool.conv(o);
+                o  =  bool.conv(o);
             } else
             if (o instanceof Date) {
-                o = date.conv(o);
+                o  =  date.conv(o);
             }
-            return   all.conv(o);
+            return     all.conv(o);
         }
     }
     private static class Conv2Obj {
@@ -386,7 +392,7 @@ public class ApisAction
             return ((Boolean) o) ?  1  :  0;
         }
     }
-    private static class ConvDate2Mic extends Conv2Obj {
+    private static class ConvDate2Num extends Conv2Obj {
         @Override
         public Object conv(Object o) {
             return ((Date) o).getTime();

@@ -1,6 +1,7 @@
 package app.hongs.action.anno;
 
 import app.hongs.Cnst;
+import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
@@ -17,6 +18,10 @@ import java.util.regex.Pattern;
 
 /**
  * 预置补充处理器
+ * <pre>
+ * 参数含义:
+ * md=8  将启用对象模式
+ * </pre>
  * @author Hong
  */
 public class PresetInvoker implements FilterInvoker {
@@ -109,6 +114,12 @@ public class PresetInvoker implements FilterInvoker {
             if (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10eb) {
                 throw ex ;
             }
+        }
+
+        // 是否要求启用对象模式
+        byte mode = Synt.declare(helper.getParameter(Cnst.MD_KEY), (byte) -1);
+        if ( mode != -1 && 8 == (8 & mode) ) {
+            Core.getInstance().put(Cnst.OBJECT_MODE, true);
         }
 
         chains.doAction();

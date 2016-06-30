@@ -84,7 +84,7 @@ public class VerifyInvoker implements FilterInvoker {
             dat.put("ok",false);
 
             if (prp) {
-                dat.put("err", "Er400");
+                dat.put("sig", "Er400");
                 dat.put("msg", err.getLocalizedMessage());
             } else {
                 Map ers;
@@ -94,7 +94,7 @@ public class VerifyInvoker implements FilterInvoker {
                     ers = err.getErrors();
                 }
                 dat.put("errs",  ers  );
-                dat.put("err", "Er400");
+                dat.put("sig", "Er400");
                 dat.put("msg", CoreLocale.getInstance ( )
                         .translate("fore.form.invalid" ));
             }

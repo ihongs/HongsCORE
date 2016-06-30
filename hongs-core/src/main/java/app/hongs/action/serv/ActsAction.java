@@ -195,7 +195,7 @@ public class ActsAction
 
     Map data = new HashMap();
     data.put( "ok" , false );
-    data.put( "err", errsn );
+    data.put( "sig", errsn );
     data.put( "msg", error );
     helper.reply(data);
   }

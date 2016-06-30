@@ -5,6 +5,7 @@ import app.hongs.HongsError;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -176,6 +177,12 @@ public class Synt {
                 if (EMPT.equals(val)) {
                     return null; // 空串视为未取值
                 }
+
+                // 将日期先转换为时间戳
+                if (val instanceof Date) {
+                    val = ( (Date) val ).getTime();
+                }
+
                 if (Integer.class.isAssignableFrom(cls)) {
                     if (val instanceof Number) {
                         val = /**/ ((Number) val).intValue();

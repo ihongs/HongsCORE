@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * <pre>
  * 规则参数:
  *  format  日期格式, 同 java 的 SimpleDateFormat, 默认从语言资源中提取
- *  type    日期类型, date(Date对象),timestamp(时间戳),microtime(毫秒数)
+ *  type    日期类型, date(Date对象),timemills(毫秒数),timestamp(时间戳),datestamp(Date对象,精确到秒)
  *  min     最小时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
  *  max     最大时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
  * </pre>
@@ -59,13 +59,14 @@ public class IsDate extends Rule {
             }
         }
 
-        if ("date".equals(type)) {
+        if ("date"      .equals(type)
+        ||  "datestamp" .equals(type)) {
             return day;
         }
-        if ("microtime".equals(type)) {
+        if ("timemillis".equals(type)) {
             return day.getTime();
         }
-        if ("timestamp".equals(type)) {
+        if ("timestamp" .equals(type)) {
             return day.getTime() / 1000;
         }
         if (!"".equals(fmt)) {
@@ -95,7 +96,8 @@ public class IsDate extends Rule {
 
         if (val instanceof Number) {
             Number num =  (Number) val;
-            if ("timestamp".equals(type)) {
+            if ("timestamp".equals(type)
+            ||  "datestamp".equals(type)) {
                 return new Date(num.longValue() * 1000);
             } else {
                 return new Date(num.longValue() /***/ );

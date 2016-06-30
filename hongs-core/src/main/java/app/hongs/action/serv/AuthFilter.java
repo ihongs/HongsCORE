@@ -363,7 +363,7 @@ public class AuthFilter
         Map rsp = new HashMap();
             rsp.put("ok",false);
             rsp.put("msg", msg);
-            rsp.put("err", "Er40"+type);
+            rsp.put("sig", "Er40"+type);
         if (uri != null && uri.length() != 0) {
             rsp.put("ref", uri);
         }

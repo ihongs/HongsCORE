@@ -128,15 +128,15 @@ public class FetchPage
     List list = this.gotList();
     if (!list.isEmpty())
     {
-      this.info.put("err" , 0); // 没有异常
+      this.info.put("ern" , 0); // 没有异常
     } else
     if (this.page != 1 )
     {
-      this.info.put("err" , 2); // 页码超出
+      this.info.put("ern" , 2); // 页码超出
     }
     else
     {
-      this.info.put("err" , 1); // 列表为空
+      this.info.put("ern" , 1); // 列表为空
       this.info.put("pagecount", 0);
       this.info.put("rowscount", 0);
     }

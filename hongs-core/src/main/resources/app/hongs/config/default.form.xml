@@ -67,7 +67,7 @@
         <field name="day" disp="日期" type="date,time,datetime">
             <param name="min">2014/01</param>
             <param name="max">2014/12</param>
-            <param name="type">date,datestamp,timestamp,timemillis</param>
+            <param name="type">date,time,datestamp,timestamp</param>
             <param name="format">yyyy/MM</param>
         </field>
         <field name="file" disp="文件" type="file">

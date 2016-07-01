@@ -896,7 +896,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
 
         // 或条件
         if (rd.containsKey(Cnst.OR_KEY)) {
-            BooleanQuery quary = new BooleanQuery( );
+            BooleanQuery quary = new BooleanQuery();
             Set<Map> set = Synt.declare(rd.get(Cnst.OR_KEY), Set.class);
             for(Map  map : set) {
                 quary.add(getQuery(map), BooleanClause.Occur.SHOULD);
@@ -916,7 +916,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
         if (rd.containsKey(Cnst.AR_KEY)) {
             Set<Map> set = Synt.declare(rd.get(Cnst.AR_KEY), Set.class);
             for(Map  map : set) {
-                query.add(getQuery(map), BooleanClause.Occur.MUST  );
+                query.add(getQuery(map), BooleanClause.Occur.MUST);
             }
         }
 
@@ -943,15 +943,15 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
         List<SortField> of = new LinkedList();
 
         for (String fn: ob) {
-            // 文档
-            if (fn.equals/**/("_")) {
-                of.add(SortField.FIELD_DOC  );
-                continue;
-            }
-
             // 相关
             if (fn.equals/**/("-")) {
                 of.add(SortField.FIELD_SCORE);
+                continue;
+            }
+
+            // 文档
+            if (fn.equals/**/("_")) {
+                of.add(SortField.FIELD_DOC);
                 continue;
             }
 
@@ -1186,6 +1186,24 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     }
 
     /**
+     * 获取时间格式
+     * @param fc
+     * @return
+     */
+    protected SimpleDateFormat getFormat(Map fc) {
+        String  fm = Synt.asserts(fc.get( "format" ), "");
+        if ( "".equals(fm)) {
+                fm = Synt.declare(fc.get("__type__"), "datetime");
+                fm = CoreLocale.getInstance()
+                     .getProperty("core.default."+ fm +".format");
+            if (fm == null) {
+                fm = "yyyy/MM/dd HH:ii:ss";
+            }
+        }
+        return new SimpleDateFormat(fm);
+    }
+
+    /**
      * 获取字段类型
      * 返回的类型有
      * int
@@ -1293,15 +1311,14 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
                 continue; // 排序字段没有可见值
             } else
             if (  "date".equals(t)) {
-                String fmt = Synt.asserts(m.get("format"), "");
-                String typ = Synt.asserts(m.get( "type" ), "");
                 // 时间戳转 Date 对象时需要乘以 1000
-                int    mul = "timestamp".equals(typ)
-                          || "datestamp".equals(typ) ? 1000: 1;
+                String typ = Synt.asserts(m.get("type"), "");
+                int    mul = "datestamp".equals( typ  )
+                          || "timestamp".equals( typ  )
+                           ? 1000 : 1;
 
                 if (IN_OBJECT_MODE) {
-                    if ("timestamp" .equals(typ)
-                    ||  "timemillis".equals(typ)) {
+                    if ("time".equals(typ) || "timestamp".equals(typ)) {
                         v = new NumberValue();
                         u =  0  ;
                     } else {
@@ -1310,23 +1327,14 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
                         ((DtsObjValue) v).mul = mul;
                     }
                 } else {
-                    if ("timestamp" .equals(typ)
-                    ||  "timemillis".equals(typ)) {
+                    if ("time".equals(typ) || "timestamp".equals(typ)) {
                         v = new NumStrValue();
                         u = "0" ;
                     } else {
-                        // 取得用于显示日期时间的格式
-                        if ( "".equals(fmt) ) {
-                            fmt = Synt.declare(m.get("__type__"), "datetime");
-                            fmt = CoreLocale.getInstance()
-                                  .getProperty("core.default."+fmt+".format");
-                        }
-                        SimpleDateFormat  sdf  =  new SimpleDateFormat( fmt );
-
                         v = new DtsStrValue();
                         u =  "" ;
                         ((DtsStrValue) v).mul = mul;
-                        ((DtsStrValue) v).sdf = sdf;
+                        ((DtsStrValue) v).sdf = getFormat(m);
                     }
                 }
             } else
@@ -1653,8 +1661,8 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
          * @param that 记录实例
          * @param q 查询对象
          * @param s 排序对象
-         * @param l 查询限额
          * @param b 起始偏移
+         * @param l 查询限额
          */
         public Loop(LuceneRecord that, Query q, Sort s, int b, int l) {
             this.that = that;
@@ -1754,7 +1762,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
             hasNext();
             StringBuilder sb = new StringBuilder(q.toString());
             if ( s != null ) {
-                sb.append(" Sort: " );
+                sb.append( " Sort: ");
                 sb.append( s );
             }
             if ( l != 0 || b != 0 ) {

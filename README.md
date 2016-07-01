@@ -213,8 +213,8 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
     {
         "ok": true成功 false失败,
-        "msg": "响应消息",
         "sig": "响应代号",
+        "msg": "响应消息",
         "ref": "跳转地址",
         其他...
     }

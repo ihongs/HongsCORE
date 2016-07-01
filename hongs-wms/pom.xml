@@ -14,8 +14,8 @@
         <version>0.3-SNAPSHOT</version>
     </parent>
     <properties>
-        <endorsed.dirs>${project.build.directory}/endorsed</endorsed.dirs>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <endorsed.dirs>${project.build.directory}/endorsed</endorsed.dirs>
         <released.name>HongsWMS</released.name>
     </properties>
     <dependencies>
@@ -121,13 +121,14 @@
                                 <delete dir="${project.build.directory}/${released.name}"/>
                                 <copy todir="${project.build.directory}/${released.name}" >
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
-                                        <exclude name="web.*" />
                                         <exclude name="classes/" />
+                                        <exclude name="web.*" />
                                     </fileset>
-                                </copy>
-                                <copy todir="${project.build.directory}/${released.name}/etc">
-                                    <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
-                                        <include name="web.*" />
+                                    <fileset dir="${basedir}/../hongs-serv-system">
+                                        <include name="*.bat" />
+                                    </fileset>
+                                    <fileset dir="${basedir}/../hongs-serv-server">
+                                        <include name="*.bat" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}/lib">
@@ -135,19 +136,14 @@
                                         <include name="classes/" />
                                     </fileset>
                                 </copy>
+                                <copy todir="${project.build.directory}/${released.name}/etc">
+                                    <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
+                                        <include name="web.*" />
+                                    </fileset>
+                                </copy>
                                 <copy todir="${project.build.directory}/${released.name}/web">
                                     <fileset dir="${project.build.directory}/${project.build.finalName}">
-                                        <exclude name="*-INF/" />
-                                    </fileset>
-                                </copy>
-                                <copy todir="${project.build.directory}/${released.name}" >
-                                    <fileset dir="${basedir}/../hongs-serv-system">
-                                        <include name="*.bat" />
-                                    </fileset>
-                                </copy>
-                                <copy todir="${project.build.directory}/${released.name}" >
-                                    <fileset dir="${basedir}/../hongs-serv-server">
-                                        <include name="*.bat" />
+                                        <exclude name="*-INF/"/>
                                     </fileset>
                                 </copy>
                                 <mkdir  dir="${project.build.directory}/${released.name}/var/log"/>

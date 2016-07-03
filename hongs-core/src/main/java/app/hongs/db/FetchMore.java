@@ -350,7 +350,7 @@ public class FetchMore
         String tp = (String)assoc.get("type");
         String jn = (String)assoc.get("join");
         String an = (String)assoc.get("name");
-        String rn = (String)assoc.get("tableName"); // 原名 tableName
+        String rn = (String)assoc.get("tableName");
         if (rn == null || rn.length() == 0) rn = an ;
         if (rn == null || rn.length() == 0) continue;
 
@@ -463,8 +463,8 @@ public class FetchMore
         String tp = (String)assoc.get("type");
         String jn = (String)assoc.get("join");
         String an = (String)assoc.get("name");
-        String rn = (String)assoc.get("tableName"); // 原名 tableName
-        String tn = (String)assoc.get("assocName"); // 原名 linkName
+        String rn = (String)assoc.get("tableName");
+        String tn = (String)assoc.get("assocName");
         if (rn == null || rn.length() == 0) rn = an ;
         if (rn == null || rn.length() == 0) continue;
 

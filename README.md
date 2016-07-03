@@ -308,6 +308,8 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     dont.show.checks.column 告知视图不要显示选择列
     cant.call.ACTION_HANDLE 告知 DBAction 等"脚手架"处理器拒绝处理某些操作, 也可以通过权限控制
 
+对于 dont.auto.bind.xxxxable 部分, 非关系数据库默认为 true.
+
 另, 每个枚举(enum)可以有一个 code="\*" 的取值, 该取值用作"其他"选项, 当出现枚举中没有记录的值时, 将显示为"其他".
 
 ### 数据配置

@@ -141,7 +141,7 @@ abstract public class ModelForm {
         // 检查是否阻止自动识别
         Set sets ;
         Set abls = new LinkedHashSet();
-        if (! Synt.declare(params.get("dont.auto.bind." + dn), false)) {
+        if (! Synt.declare(params.get("dont.auto.bind." + dn), true)) {
             sets = Synt.asTerms( getDtypes( ).get( dn ) );
         } else {
             sets = new HashSet ( );

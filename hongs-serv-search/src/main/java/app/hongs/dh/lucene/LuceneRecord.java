@@ -1197,7 +1197,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
                 fm = CoreLocale.getInstance()
                      .getProperty("core.default."+ fm +".format");
             if (fm == null) {
-                fm = "yyyy/MM/dd HH:ii:ss";
+                fm = "yyyy/MM/dd HH:mm:ss";
             }
         }
         return new SimpleDateFormat(fm);
@@ -1640,7 +1640,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     /**
      * 查询迭代器
      */
-    public static class Loop implements Iterator<Map> {
+    public static class Loop implements Iterable<Map>, Iterator<Map> {
         private final IndexSearcher finder;
         private final IndexReader   reader;
         private final LuceneRecord  that;
@@ -1693,6 +1693,11 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
             } catch ( HongsException ex ) {
                 throw ex.toUnchecked(   );
             }
+        }
+
+        @Override
+        public Iterator<Map> iterator() {
+            return this;
         }
 
         @Override

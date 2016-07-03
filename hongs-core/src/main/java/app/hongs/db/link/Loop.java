@@ -3,19 +3,19 @@ package app.hongs.db.link;
 import app.hongs.HongsException;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Dict;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.LinkedHashMap;
 
 /**
  * 查询结果迭代
  * @author Hong
  */
-public class Loop implements Iterator<Map<String,Object>> {
+public class Loop implements Iterable<Map>, Iterator<Map> {
     private final Link  db;
     private final Statement   ps;
     private final ResultSet   rs;
@@ -70,6 +70,11 @@ public class Loop implements Iterator<Map<String,Object>> {
     }
 
     @Override
+    public Iterator<Map> iterator() {
+        return this;
+    }
+
+    @Override
     public boolean hasNext() {
         // SQLite 等的 driver 并不支持 isLast
         // 故不得不在此靠执行 next 来获取状态
@@ -85,7 +90,7 @@ public class Loop implements Iterator<Map<String,Object>> {
     }
 
     @Override
-    public Map<String,Object> next( ) {
+    public Map next( ) {
         // 判断是否到达末尾
         if (! hasNext()) {
             this.over();

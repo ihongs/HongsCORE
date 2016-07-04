@@ -63,7 +63,7 @@ public abstract class Batch<T> extends CoreSerial implements Core.Destroy {
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Btask(this, cache.get(i), sizeout, timeout));
+            servs.execute(new Btask(this, "batch:"+name+"("+i+")", cache.get(i), sizeout, timeout));
         }
 
         //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务
@@ -168,12 +168,14 @@ public abstract class Batch<T> extends CoreSerial implements Core.Destroy {
     private static class Btask implements Runnable {
 
         private final Batch batch;
+        private final String name;
+        private final Collection cache;
         private final int sizeout;
         private final int timeout;
-        private final Collection cache;
 
-        public Btask(Batch batch, Collection cache, int sizeout, int timeout) {
+        public Btask(Batch batch, String name, Collection cache, int sizeout, int timeout) {
             this.batch = batch;
+            this.name  = name ;
             this.cache = cache;
             this.sizeout = sizeout;
             this.timeout = timeout;
@@ -181,6 +183,9 @@ public abstract class Batch<T> extends CoreSerial implements Core.Destroy {
 
         @Override
         public void run() {
+            // 方便日志中识别是哪个队列
+            Core.ACTION_NAME.set(name);
+
             Object  data;
             while ( true) {
                 try {

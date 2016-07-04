@@ -46,7 +46,7 @@ public abstract class Async<T> extends CoreSerial implements Core.Destroy {
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Atask(this));
+            servs.execute(new Atask(this, "async:"+name+"("+i+")"));
         }
 
         //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务
@@ -113,13 +113,18 @@ public abstract class Async<T> extends CoreSerial implements Core.Destroy {
     private static class Atask implements Runnable {
 
         private final Async async;
+        private final String name;
 
-        public Atask(Async async) {
+        public Atask(Async async, String name) {
             this.async = async;
+            this.name  = name ;
         }
 
         @Override
         public void run() {
+            // 方便日志中识别是哪个队列
+            Core.ACTION_NAME.set(name);
+
             Object  data;
             while ( true) {
                 try {

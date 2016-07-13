@@ -44,6 +44,10 @@ public class Verify {
         rulez.addAll(Arrays.asList(rule));
         return this;
     }
+    public Verify setRule(String name, Rule... rule) {
+        rules.put(name , Arrays.asList(rule));
+        return this;
+    }
     public Map<String, List<Rule>> getRules() {
         return rules ;
     }
@@ -129,14 +133,6 @@ public class Verify {
 
     private Object repeat(List<Rule> rulez, Object data, String name, Map values, Map wrongz, Map params)
     throws HongsException {
-        // 是否必须不同的值
-        Collection data2;
-        if (Synt.declare(params.get("distrinct"), false)) {
-            data2 = new LinkedHashSet();
-        } else {
-            data2 = new ArrayList(/**/);
-        }
-
         // 可设置 defiant   为某个要忽略的值
         // 页面加 hidden    值设为要忽略的值
         // 此时如 check     全部未选代表清空
@@ -145,6 +141,14 @@ public class Verify {
         if (d  == null || d.isEmpty( )) {
             d  =  new  HashSet();
             d.add ("");
+        }
+
+        // 是否必须不同的值
+        Collection data2;
+        if (Synt.declare(params.get("diverse"), false)) {
+            data2 = new LinkedHashSet();
+        } else {
+            data2 = new ArrayList(/**/);
         }
 
         // 将后面的规则应用于每一个值

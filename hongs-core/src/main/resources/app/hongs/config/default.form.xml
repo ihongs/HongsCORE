@@ -92,7 +92,8 @@
         <field name="more" disp="必填" type="text" required="yes">
         </field>
         <field name="more" disp="重复" type="text" repeated="yes">
-            <param name="distrinct"></param>
+            <param name="defiant"></param>
+            <param name="diverse"></param>
             <param name="minrepeat"></param>
             <param name="maxrepeat"></param>
         </field>

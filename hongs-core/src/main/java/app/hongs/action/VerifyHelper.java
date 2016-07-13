@@ -91,14 +91,14 @@ public class VerifyHelper extends Verify {
                     Map  prms = new HashMap( );
                          rule.setParams(prms );
                     this.addRule( code, rule );
-                    if (opts.containsKey("distrinct"))
-                        prms.put("distrinct", opts.remove("distrinct"));
+                    if (opts.containsKey( "defiant" ))
+                        prms.put( "defiant" , opts.remove( "defiant" ));
+                    if (opts.containsKey( "diverse" ))
+                        prms.put( "diverse" , opts.remove( "diverse" ));
                     if (opts.containsKey("minrepeat"))
                         prms.put("minrepeat", opts.remove("minrepeat"));
                     if (opts.containsKey("maxrepeat"))
                         prms.put("maxrepeat", opts.remove("maxrepeat"));
-                    if (! opts.containsKey("defiant"))
-                        prms.put( "defiant" , opts.remove( "defiant" ));
                 } else {
                     Rule rule = new Norepeat();
                     this.addRule( code, rule );

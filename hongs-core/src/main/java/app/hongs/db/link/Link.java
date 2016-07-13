@@ -234,7 +234,7 @@ implements  ITrnsct , Core.Destroy
         ps.setObject(++ i, x);
       }
     }
-    catch (SQLException ex)
+    catch ( SQLException ex )
     {
       throw new HongsException(0x1042, ex);
     }

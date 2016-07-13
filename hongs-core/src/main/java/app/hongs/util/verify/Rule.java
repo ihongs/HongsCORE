@@ -14,14 +14,14 @@ public abstract class Rule {
     public static final Object BLANK = new Object();
     public static final Object EMPTY = null;
 
-    public Map  params = null;
-    public Map  values = null;
-    public Verify helper ;
+    public Map params = null;
+    public Map values = null;
+    public Verify helper;
 
-    public void setParams(Map  params) {
+    public void setParams(Map params) {
         this.params = params;
     }
-    public void setValues(Map  values) {
+    public void setValues(Map values) {
         this.values = values;
     }
     public void setHelper(Verify helper) {

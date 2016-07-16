@@ -117,18 +117,18 @@ public class PackAction {
                 String msg = ez.getLocalizedMessage();
                 String err = ez.getMessage();
                 String ern = "Ex"+Integer.toHexString(ez.getErrno());
-                helper.fault( ern, err, msg);
+                helper.fault( msg, ern, err);
             } else {
                 String msg = ex.getLocalizedMessage();
                 String err = ex.getMessage();
                 String ern = "Er500";
-                helper.fault( ern, err, msg);
+                helper.fault( msg, ern, err);
             }
         } catch (IOException ex) {
                 String msg = ex.getLocalizedMessage();
                 String err = ex.getMessage();
                 String ern = "Er500";
-                helper.fault( ern, err, msg);
+                helper.fault( msg, ern, err);
         }
         return  helper.getResponseData();
     }

@@ -765,21 +765,39 @@ public class ActionHelper implements Cloneable
 
   /**
    * 返回错误信息
-   * @param ern
-   * @param err
    * @param msg
+   * @param ern
    */
-  public void fault(String ern, String err, String msg)
+  public void fault(String msg, String ern)
   {
     Map map = new HashMap();
+    if (null !=  msg) {
+        map.put("msg", msg);
+    }
+    if (null !=  ern) {
+        map.put("ern", ern);
+    }
+    map.put("ok", false);
+    reply(map);
+  }
+
+  /**
+   * 返回错误信息
+   * @param msg
+   * @param ern
+   * @param err
+   */
+  public void fault(String msg, String ern, String err)
+  {
+    Map map = new HashMap();
+    if (null !=  msg) {
+        map.put("msg", msg);
+    }
     if (null !=  ern) {
         map.put("ern", ern);
     }
     if (null !=  err) {
         map.put("err", err);
-    }
-    if (null !=  msg) {
-        map.put("msg", msg);
     }
     map.put("ok", false);
     reply(map);

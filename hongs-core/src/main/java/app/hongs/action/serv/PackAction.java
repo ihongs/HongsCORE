@@ -115,17 +115,20 @@ public class PackAction {
             if (ex.getCause( ) instanceof HongsCause) {
                 HongsCause ez = (HongsCause) ex.getCause( );
                 String msg = ez.getLocalizedMessage();
-                String err = "Ex"+Integer.toHexString(ez.getErrno());
-                helper.fault( msg, err );
+                String err = ez.getMessage();
+                String ern = "Ex"+Integer.toHexString(ez.getErrno());
+                helper.fault( ern, err, msg);
             } else {
                 String msg = ex.getLocalizedMessage();
-                String err = "Er500";
-                helper.fault( msg, err );
+                String err = ex.getMessage();
+                String ern = "Er500";
+                helper.fault( ern, err, msg);
             }
         } catch (IOException ex) {
                 String msg = ex.getLocalizedMessage();
-                String err = "Er500";
-                helper.fault( msg, err );
+                String err = ex.getMessage();
+                String ern = "Er500";
+                helper.fault( ern, err, msg);
         }
         return  helper.getResponseData();
     }

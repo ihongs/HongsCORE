@@ -90,7 +90,8 @@ function hsResponObj(rst, qut, pus) {
             // 需要清理其中的html代码, 以供输出简洁的消息
             rst = {
                 "ok" : false,
-                "sig":  "" ,
+                "ern":  "" ,
+                "err":  "" ,
                 "msg":  rst
                     .replace(/<script.*?>.*?<\/script>/img, "")
                     .replace(/<style.*?>.*?<\/style>/img, "")
@@ -101,7 +102,8 @@ function hsResponObj(rst, qut, pus) {
         } else {
             rst = {
                 "ok" : false,
-                "sig":  "" ,
+                "ern":  "" ,
+                "err":  "" ,
                 "msg":  rst
             };
         }
@@ -113,22 +115,25 @@ function hsResponObj(rst, qut, pus) {
         if (rst.ok === "0") {
             rst.ok = false;
         }
-        if (typeof(rst.sig) === "undefined") {
-            rst.sig =  "" ;
+        if (typeof(rst.ern) === "undefined") {
+            rst.ern =  "" ;
+        }
+        if (typeof(rst.err) === "undefined") {
+            rst.err =  "" ;
         }
         if (typeof(rst.msg) === "undefined") {
             rst.msg =  "" ;
         }
         // 服务接口要求跳转 (常为未登录或无权限)
         if (! pus) {
-            if (rst.ref) {
+            if (rst.ern && /^Er[34]0[123]$/.test(rst.ern)) {
                 if (rst.msg) {
                     alert( rst.msg );
                 }
                 if (rst.ref === "#") {
                     location.reload( );
                 } else {
-                    location.assign(rst.ref);
+                    location.assign(rst.err);
                 }
                 throw new Exception("Exit!");
             }

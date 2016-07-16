@@ -331,9 +331,9 @@ public class ApisAction
     private static final Set _API_RSP = new HashSet();
     static {
         _API_RSP.add("ok");
-        _API_RSP.add("sig");
+        _API_RSP.add("ern");
+        _API_RSP.add("err");
         _API_RSP.add("msg");
-        _API_RSP.add("ref");
         _API_RSP.add("data");
     }
 

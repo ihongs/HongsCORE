@@ -213,13 +213,13 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
     {
         "ok": true成功 false失败,
-        "sig": "响应代号",
+        "ern": "错误代号",
+        "err": "错误信息",
         "msg": "响应消息",
-        "ref": "跳转地址",
         其他...
     }
 
-ref 通常没有, 无访问权限而需要跳转时才会设置. 其他数据通常有:
+ern 为 Er301,Er302,Er401,Er402,Er403 时, err 如有值则为跳转 URL. 其他数据通常有:
 
     // 列表信息, 在 retrieve,list 动作返回
     "list": [

@@ -79,7 +79,8 @@ public class Wrongs extends HongsException {
         Map data = new HashMap();
         data.put( "ok" , false );
         if (mode != 1 && mode != 2 ) {
-            data.put("sig", "Er400");
+            data.put("ern", "Er400");
+            data.put("err", "Invalid values");
             data.put("msg", this.getLocalizedMessage());
         } else {
             Map errs;
@@ -89,7 +90,8 @@ public class Wrongs extends HongsException {
                 errs = this.getErrors();
             }
             data.put("errs", errs  );
-            data.put("sig", "Er400");
+            data.put("ern", "Er400");
+            data.put("err", "Invalid values");
             data.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
         }
         return data;

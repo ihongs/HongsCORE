@@ -676,8 +676,11 @@ public class ActionHelper implements Cloneable
     if(!map.containsKey("ok" )) {
         map.put("ok", true);
     }
-    if(!map.containsKey("sig")) {
-        map.put("sig", "" );
+    if(!map.containsKey("ern")) {
+        map.put("ern", "" );
+    }
+    if(!map.containsKey("err")) {
+        map.put("err", "" );
     }
     if(!map.containsKey("msg")) {
         map.put("msg", "" );
@@ -762,17 +765,21 @@ public class ActionHelper implements Cloneable
 
   /**
    * 返回错误信息
+   * @param ern
+   * @param err
    * @param msg
-   * @param sig
    */
-  public void fault(String msg, String sig)
+  public void fault(String ern, String err, String msg)
   {
     Map map = new HashMap();
+    if (null !=  ern) {
+        map.put("ern", ern);
+    }
+    if (null !=  err) {
+        map.put("err", err);
+    }
     if (null !=  msg) {
         map.put("msg", msg);
-    }
-    if (null !=  sig) {
-        map.put("sig", sig);
     }
     map.put("ok", false);
     reply(map);

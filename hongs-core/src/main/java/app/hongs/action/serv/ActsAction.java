@@ -65,7 +65,7 @@ public class ActsAction
 
     if (act == null || act.length() == 0)
     {
-      senderr(helper, 0x1104, null, "Action URI can not be empty.");
+      senderr(helper, 0x1104, null, "Action URI can not be empty.", "");
       return;
     }
 
@@ -104,12 +104,13 @@ public class ActsAction
   {
     Throwable ta = (Throwable)ex;
     Throwable te = ta.getCause();
-    int    errno = ex.getErrno();
-    String errsn = ex.getError();
-    String error ;
+    int    ern = ex.getErrno();
+    String ers = ex.getError();
+    String err ;
+    String msg ;
 
     // 一般异常, 不记录日志
-    if (errno >= 0x1100 && errno <= 0x1109 )
+    if (ern >= 0x1100 && ern <= 0x1109)
     {
       String[] ls = ex.getLocalizedOptions();
       if (/**/ ls == null || ls.length == 0)
@@ -121,7 +122,7 @@ public class ActsAction
     }
     else
     // 服务异常, 交换且记录
-    if (errno >= 0x110a && errno <= 0x110e )
+    if (ern >= 0x110a && ern <= 0x110e)
     {
         Throwable  tx  = ta ;
                    ta  = te ;
@@ -135,53 +136,54 @@ public class ActsAction
     }
 
     // 错误消息
-      error = ta.getLocalizedMessage( );
+      err = ta.getMessage( );
+      msg = ta.getLocalizedMessage();
     if (null != te
-    && (null == error || error.length() == 0))
+    && (null == msg || msg.length() == 0))
     {
-      error = te.getLocalizedMessage( );
+      msg = te.getLocalizedMessage();
     }
-    if (null == error || error.length() == 0 )
+    if (null == msg || msg.length() == 0 )
     {
-      error = CoreLocale.getInstance( ).translate("core.error.unkwn");
+      msg = CoreLocale.getInstance().translate("core.error.unkwn");
     }
 
-    senderr(helper, errno, errsn, error);
+    senderr(helper, ern, ers, err, msg);
   }
 
-  private void senderr(ActionHelper helper, int errno, String errsn, String error )
+  private void senderr(ActionHelper helper, int ern, String ers, String err, String msg)
     throws ServletException
   {
-    switch(errno)
+    switch(ern)
     {
       case 0x1100:
-        errsn = "Er400";
+        ers = "Er400";
         helper.getResponse().setStatus(HttpServletResponse.SC_BAD_REQUEST );
         break;
       case 0x1101:
-        errsn = "Er401";
+        ers = "Er401";
         helper.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         break;
       case 0x1102:
-        errsn = "Er402";
+        ers = "Er402";
         helper.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
         break;
       case 0x1103:
-        errsn = "Er403";
+        ers = "Er403";
         helper.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN);
         break;
       case 0x1104:
-        errsn = "Er404";
+        ers = "Er404";
         helper.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
         break;
       case 0x1105:
-        errsn = "Er405";
+        ers = "Er405";
         helper.getResponse().setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         break;
       case 0x110e:
       case HongsException.COMMON:
       case     HongsError.COMMON:
-        errsn = "Er500";
+        ers = "Er500";
         helper.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         break;
       case HongsException.NOTICE:
@@ -189,14 +191,15 @@ public class ActsAction
         helper.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         break;
       default:
-        errsn = "Ex"+Integer.toHexString(errno);
+        ers = "Ex"+Integer.toHexString(ern);
         helper.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     Map data = new HashMap();
     data.put( "ok" , false );
-    data.put( "sig", errsn );
-    data.put( "msg", error );
+    data.put("ern", ers );
+    data.put("err", err );
+    data.put("msg", msg );
     helper.reply(data);
   }
 

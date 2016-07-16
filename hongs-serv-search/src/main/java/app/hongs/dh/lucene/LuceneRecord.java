@@ -259,10 +259,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
         page.put("rowscount", rc);
         page.put("uncertain", rc == limit); // 为 true 表示总数不确定
         if (rc == 0) {
-            page.put("sig", 1);
+            page.put("ern", 1);
         } else
         if (list.isEmpty()) {
-            page.put("sig", 2);
+            page.put("ern", 2);
         }
 
         return  resp;

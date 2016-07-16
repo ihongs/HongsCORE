@@ -80,24 +80,7 @@ public class VerifyInvoker implements FilterInvoker {
             if (tidy) dat.clear (   );
             dat.putAll(  vls);
         } catch (Wrongs  err) {
-            dat = new HashMap();
-            dat.put("ok",false);
-
-            if (prp) {
-                dat.put("sig", "Er400");
-                dat.put("msg", err.getLocalizedMessage());
-            } else {
-                Map ers;
-                if (mode == 2) {
-                    ers = err.getErrmap();
-                } else {
-                    ers = err.getErrors();
-                }
-                dat.put("errs",  ers  );
-                dat.put("sig", "Er400");
-                dat.put("msg", CoreLocale.getInstance ( )
-                        .translate("fore.form.invalid" ));
-            }
+            dat = err.toReply(prp ? 0 : mode);
 
             helper.reply(dat);
 

@@ -89,22 +89,22 @@ function hsResponObj(rst, qut, pus) {
             // 某些时候服务器可能出错, 返回错误消息的页面
             // 需要清理其中的html代码, 以供输出简洁的消息
             rst = {
-                "ok" : false,
-                "ern":  "" ,
-                "err":  "" ,
                 "msg":  rst
                     .replace(/<script.*?>.*?<\/script>/img, "")
                     .replace(/<style.*?>.*?<\/style>/img, "")
                     .replace(/<[^>]*?>/g, "")
                     .replace(/&[^&;]*;/g, "")
-                    .replace(/^\s*(\r\n|\r|\n)/mg, "")
+                    .replace(/^\s*(\r\n|\r|\n)/mg, ""),
+                "err":  "" ,
+                "ern":  "" ,
+                "ok" : false
             };
         } else {
             rst = {
-                "ok" : false,
-                "ern":  "" ,
+                "msg":  rst,
                 "err":  "" ,
-                "msg":  rst
+                "ern":  "" ,
+                "ok" : false
             };
         }
     }
@@ -126,7 +126,7 @@ function hsResponObj(rst, qut, pus) {
         }
         // 服务接口要求跳转 (常为未登录或无权限)
         if (! pus) {
-            if (rst.ern && /^Er[34]0[123]$/.test(rst.ern)) {
+            if (rst.ern && /^Er[34]0[0-9]$/.test(rst.ern)) {
                 if (rst.msg) {
                     alert( rst.msg );
                 }

@@ -184,7 +184,7 @@ public class FetchPage
     }
     else
     {
-      caze2.setSelect( "COUNT(!*) AS __count__");
+      caze2.setSelect( "COUNT(.*) AS __count__");
       sql    = caze2.getSQL(/**/);
       params = caze2.getParams( );
     }

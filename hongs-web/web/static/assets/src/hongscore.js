@@ -397,17 +397,24 @@ function hsSetParam (url, name, value) {
  * @return 获取到的值, 如果没有则取默认值
  */
 function hsGetValue (obj, path, def) {
+    /**
+     需要注意的键:
+     a[1]   数字将作为字符串对待
+     a[][k] 空键将作为字符串对待, 但放在末尾会直接忽略
+     */
     if (jQuery.isArray(path)) {
         return _hsGetPoint(obj, path, def);
-    }
+    } else
     if (typeof(path) === "number") {
-        return _hsGetPoint(obj,[path],def);
+        var keys = [ path ];
+        return _hsGetPoint(obj, keys, def);
+    } else
+    if (typeof(path) === "string") {
+        var keys = _hsGetPkeys( path );
+        return _hsGetPoint(obj, keys, def);
+    } else {
+        throw "hsGetValue: 'path' must be an array or string";
     }
-    if (typeof(path) !== "string") {
-        throw "hsGetValue: 'path' must be a string";
-    }
-    var keys = _hsGetPkeys( path );
-    return _hsGetPoint(obj, keys, def);
 }
 /**
  * 从树对象获取值(hsGetValue的底层方法)
@@ -504,25 +511,27 @@ function _hsGetPkeys(path) {
  * 向树对象设置值
  * @param {Object|Array} obj
  * @param {Array|String} path ['a','b'] 或 a.b
- * @param val
+ * @param val 将设置的值
  */
 function hsSetValue (obj, path, val) {
     /**
      需要注意的键:
-     a[1]   数字将作为字符串对待, 但可用hsSetArray完成
+     a[1]   数字将作为字符串对待
      a[][k] 空键将作为字符串对待, 但放在末尾可表示push
      */
     if (jQuery.isArray(path)) {
-        _hsSetPoint(obj, path, val); return;
-    }
+        _hsSetPoint( obj, path, val);
+    } else
     if (typeof(path) === "number") {
-        _hsSetPoint(obj,[path],val); return;
+        var keys = [path];
+        _hsSetPoint( obj, keys, val);
+    } else
+    if (typeof(path) === "string") {
+        var keys = _hsGetPkeys(path);
+        _hsSetPoint( obj, keys, val);
+    } else {
+        throw "hsSetValue: 'path' must be an array or string";
     }
-    if (typeof(path) !== "string") {
-        throw "hsSetValue: 'path' must be a string";
-    }
-    var keys = _hsGetPkeys(path);
-    _hsSetPoint( obj, keys, val);
 }
 /**
  * 向树对象设置值(hsSetValue的底层方法)

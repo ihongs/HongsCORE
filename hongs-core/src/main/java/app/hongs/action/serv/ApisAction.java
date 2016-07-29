@@ -56,7 +56,7 @@ public class ApisAction
     private String callKey;
     private String wrapKey;
     private String scokKey;
-    private String ssidKey;
+//  private String ssidKey;
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
@@ -68,7 +68,7 @@ public class ApisAction
         convKey  = cc.getProperty("core.api.conv", ".conv");
         wrapKey  = cc.getProperty("core.api.wrap", ".wrap");
         scokKey  = cc.getProperty("core.api.scok", ".scok");
-        ssidKey  = cc.getProperty("core.api.ssid", ".ssid");
+//      ssidKey  = cc.getProperty("core.api.ssid", ".ssid");
     }
 
     @Override

@@ -37,7 +37,7 @@ public class CoreConfig
    */
   public CoreConfig(String name)
   {
-    super();
+    super(new Properties());
 
     if (null != name)
     {
@@ -66,47 +66,62 @@ public class CoreConfig
   public void load(String name)
   {
     InputStream is;
+    Exception   er;
     String      fn;
+    boolean     ld;
 
-    // 优先尝试从配置目录的 .prop.xml 中加载数据
+    // 资源中的作为默认配置
+    fn = name.contains(".")
+      || name.contains("/") ? name + ".properties"
+       : "app/hongs/conf/"  + name + ".properties";
+    is = this.getClass().getClassLoader().getResourceAsStream(fn);
+    ld = is != null;
+    if ( ld )  try
+    {
+        defaults.load( is);
+    }
+    catch (IOException ex)
+    {
+        throw new app.hongs.HongsError(0x2b, "Can not read '"+name+".properties'.", ex);
+    }
+
+    // 优先尝试从配置目录的 .properties 加载数据
     try
     {
-        fn = Core.CONF_PATH + File.separator + name +".prop.xml";
+        fn = Core.CONF_PATH + File.separator + name + ".properties";
+        is = new FileInputStream(fn);
+        this.load(is);
+        return;
+    }
+    catch (FileNotFoundException ex)
+    {
+        er = ex;
+    }
+    catch (IOException ex)
+    {
+        throw new app.hongs.HongsError(0x2b, "Can not read '"+name+".properties'.", ex);
+    }
+
+    // 然后尝试从配置目录的 .prop.xml 中加载数据
+    try
+    {
+        fn = Core.CONF_PATH + File.separator + name + Cnst.PROP_EXT + ".xml";
         is = new FileInputStream(fn);
         this.loadFromXML(is);
         return;
     }
     catch (FileNotFoundException ex)
     {
+        er = ex;
     }
-    catch (IOException e)
+    catch (IOException ex)
     {
-    }
-
-    try
-    {
-        fn = Core.CONF_PATH + File.separator + name +".properties";
-        is = new FileInputStream(fn);
-    }
-    catch (FileNotFoundException ex)
-    {
-        fn = name.contains(".")
-          || name.contains("/") ? name + ".properties"
-           : "app/hongs/config/"+ name + ".properties";
-        is = this.getClass().getClassLoader().getResourceAsStream(fn);
-        if ( null ==  is)
-        {
-            throw new app.hongs.HongsError(0x2a, "Can not find the properties file '" + name + ".properties'.");
-        }
+        throw new app.hongs.HongsError(0x2b, "Can not read '"+name+Cnst.PROP_EXT+".xml'.", ex);
     }
 
-    try
+    if ( ! ld )
     {
-        /**/this.load(is);
-    }
-    catch (IOException e)
-    {
-        /**/throw new app.hongs.HongsError(0x2b, "Can not read the properties file '" + name + ".properties'.");
+        throw new app.hongs.HongsError(0x2a, "Can not find '"+name+"' properties config.", er);
     }
   }
 

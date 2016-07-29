@@ -116,8 +116,9 @@ public class ActsAction
       if (/**/ ls == null || ls.length == 0)
       {
         HttpServletRequest rq = helper.getRequest();
-        String rp = ActionDriver.getRealPath  (rq );
-        ex.setLocalizedOptions(rp, ex.getError( ) );
+        String rp = ActionDriver.getRealPath ( rq );
+        String er = ex.getError(/****/);
+        ex.setLocalizedOptions (er, rp);
       }
     }
     else
@@ -146,6 +147,15 @@ public class ActsAction
     if (null == msg || msg.length() == 0 )
     {
       msg = CoreLocale.getInstance().translate("core.error.unkwn");
+    }
+
+    // 40x异常可选本地化参数依次为: 错误,当前URL,跳转URL
+    if (ern >= 0x1100 && ern <= 0x1109)
+    {
+      String[] arr;
+      arr = ex.getLocalizedOptions();
+      err = arr!=null && arr.length>2
+          ? arr[2]: "";
     }
 
     senderr(helper, ern, ers, err, msg);

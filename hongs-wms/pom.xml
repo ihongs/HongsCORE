@@ -32,6 +32,11 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
+            <artifactId>hongs-serv-mesage</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-module</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -81,6 +86,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
+                            <includeTypes>jar</includeTypes>
                             <outputDirectory>web/WEB-INF/lib</outputDirectory>
                         </configuration>
                     </execution>

@@ -116,9 +116,9 @@ public class FormSet
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-           : "app/hongs/config/"+ name + Cnst.FORM_EXT + ".xml";
+           : "app/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
-        if (  is  ==  null )
+        if ( null == is )
         {
             throw new app.hongs.HongsException(0x10e8,
                 "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'.");
@@ -332,9 +332,9 @@ public class FormSet
         return true;
     }
 
-    fn = name.contains("/")
-       ? name + Cnst.FORM_EXT + ".xml"
-       : "app/hongs/config/" + name + Cnst.FORM_EXT + ".xml";
+    fn = name.contains(".")
+      || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
+       : "app/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
     return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
   }
 

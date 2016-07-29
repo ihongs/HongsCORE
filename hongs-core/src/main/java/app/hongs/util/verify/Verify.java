@@ -25,7 +25,7 @@ import java.util.Set;
  * error.Ex10f0=规则格式错误
  * </pre>
  */
-public class Verify {
+public class Verify implements Veri {
 
     private final Map<String, List<Rule>> rules;
     private boolean update;
@@ -35,6 +35,16 @@ public class Verify {
         rules = new LinkedHashMap();
     }
 
+    @Override
+    public Map<String, List<Rule>> getRules() {
+        return rules ;
+    }
+    @Override
+    public Verify setRule(String name, Rule... rule) {
+        rules.put(name , Arrays.asList(rule));
+        return this;
+    }
+    @Override
     public Verify addRule(String name, Rule... rule) {
         List rulez = rules.get(name);
         if (rulez == null) {
@@ -44,30 +54,28 @@ public class Verify {
         rulez.addAll(Arrays.asList(rule));
         return this;
     }
-    public Verify setRule(String name, Rule... rule) {
-        rules.put(name , Arrays.asList(rule));
-        return this;
-    }
-    public Map<String, List<Rule>> getRules() {
-        return rules ;
-    }
 
+    @Override
     public boolean isUpdate() {
         return update;
     }
+    @Override
     public boolean isPrompt() {
         return prompt;
     }
+    @Override
     public void isUpdate(boolean update) {
         this.update = update;
     }
+    @Override
     public void isPrompt(boolean prompt) {
         this.prompt = prompt;
     }
 
+    @Override
     public Map verify(Map values) throws Wrongs, HongsException {
-        Map<String, Object> valuez = new LinkedHashMap();
         Map<String, Wrong > wrongz = new LinkedHashMap();
+        Map<String, Object> cleans = new LinkedHashMap();
 
         if (values == null) {
             values =  new HashMap();
@@ -76,12 +84,12 @@ public class Verify {
         for(Map.Entry<String, List<Rule>> et : rules.entrySet()) {
             List<Rule> rulez = et.getValue();
             String     name  = et.getKey(  );
-            Object     data  = Dict.getParam(values, name  );
+            Object     data  = Dict.getParam(values, name );
 
-            data = verify(rulez, data, name, valuez, wrongz);
+            data = verify(rulez, data, name, values, cleans, wrongz);
 
             if (data != BLANK) {
-                Dict.setParam( valuez, data, name );
+                Dict.setParam(cleans, data, name );
             } else if (prompt && !wrongz.isEmpty()) {
                 break;
             }
@@ -91,10 +99,10 @@ public class Verify {
             throw new Wrongs(wrongz);
         }
 
-        return valuez;
+        return cleans;
     }
 
-    private Object verify(List<Rule> rulez, Object data, String name, Map values, Map wrongz) throws HongsException {
+    private Object verify(List<Rule> rulez, Object data, String name, Map values, Map cleans, Map wrongz) throws HongsException {
         int i =0;
         for (Rule  rule  :  rulez) {
             i ++;
@@ -103,6 +111,7 @@ public class Verify {
                 rule.setParams(new HashMap());
             }
             rule.setValues(values);
+            rule.setCleans(cleans);
             rule.setHelper( this );
 
             try {
@@ -124,14 +133,14 @@ public class Verify {
 
             if (rule instanceof Repeated) {
                 List<Rule> rulex = rulez.subList(i, rulez.size());
-                data = repeat(rulex, data, name, values, wrongz, rule.params);
+                data = repeat(rulex, data, name, values, wrongz, cleans, rule.params);
                 break;
             }
         }
         return  data ;
     }
 
-    private Object repeat(List<Rule> rulez, Object data, String name, Map values, Map wrongz, Map params)
+    private Object repeat(List<Rule> rulez, Object data, String name, Map values, Map cleans, Map wrongz, Map params)
     throws HongsException {
         // 可设置 defiant   为某个要忽略的值
         // 页面加 hidden    值设为要忽略的值
@@ -160,7 +169,7 @@ public class Verify {
                 }
 
                 String name3 = name + "." + (  i3 ++  );
-                data3 = verify(rulez, data3, name3, values, wrongz);
+                data3 = verify(rulez, data3, name3, values, cleans, wrongz);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -177,7 +186,7 @@ public class Verify {
                 }
 
                 String name3 = name + "." + ((String) e3.getKey() );
-                data3 = verify(rulez, data3, name3, values, wrongz);
+                data3 = verify(rulez, data3, name3, values, cleans, wrongz);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {

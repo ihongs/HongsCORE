@@ -215,7 +215,7 @@ public class DBAction implements IAction, IActing {
         lang.loadIgnrFNF( this.mod );
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
-        if (! lang.containsKey(key)) {
+        if (lang.getProperty(key) != null) {
                key = "fore." + opr + ".success" ;
             Mview view =  new Mview(ett);
             String tit = view.getTitle();

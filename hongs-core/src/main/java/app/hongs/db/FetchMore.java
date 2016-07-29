@@ -703,14 +703,14 @@ public class FetchMore
       }
       else
       {
-        if (subValues instanceof List)
-        {
-          subValues2.addAll((List)subValues);
-        }
-        else
-        if (subValues instanceof Map )
+        if (subValues instanceof Map)
         {
           subValues2.addAll(((Map)subValues).values());
+        }
+        else
+        if (subValues instanceof Collection)
+        {
+          subValues2.addAll(( Collection ) subValues );
         }
         else
         {

@@ -202,11 +202,9 @@ public class LangAction
     }
 
     // 查找扩展语言信息
-    Iterator it = mk.lang.keySet().iterator();
-    while (it.hasNext())
+    for (String nk : mk.lang.stringPropertyNames())
     {
-      String nk = (String) it.next();
-      if  (  nk.startsWith("fore."))
+      if( nk.startsWith ( "fore." ))
       {
           sb.append(mk.make(nk, nk));
       }

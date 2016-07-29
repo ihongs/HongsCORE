@@ -120,10 +120,10 @@ public final class HongsCauze {
                 .replaceAll("[/\\\\]", ".")
                 +"."+ codx ;
         }
-        if (trns.containsKey(ckey)) {
+        if (trns.getProperty(ckey) != null) {
             codx = trns.translate(ckey, codx);
         }
-        if (trns.containsKey(dkey)) {
+        if (trns.getProperty(dkey) != null) {
             desx = trns.translate(dkey, optx);
         } else {
             Throwable cause = this.that.getCause( );

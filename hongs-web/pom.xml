@@ -107,6 +107,7 @@
                             <goal>copy-dependencies</goal>
                         </goals>
                         <configuration>
+                            <includeTypes>jar</includeTypes>
                             <outputDirectory>web/WEB-INF/lib</outputDirectory>
                         </configuration>
                     </execution>

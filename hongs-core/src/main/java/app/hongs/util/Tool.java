@@ -350,6 +350,8 @@ public final class Tool
           }
           if (vars.containsKey(st)) {
               st = vars.get(st);
+              if ( st == null )
+              st = "";
           } else {
               st = "";
           }

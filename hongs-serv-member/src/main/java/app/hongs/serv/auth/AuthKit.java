@@ -229,8 +229,7 @@ public class AuthKit {
     throws HongsException {
         HttpSession sd = ah.getRequest().getSession(false);
         long     stime = System.currentTimeMillis() / 1000;
-        String   sesrk = CoreConfig.getInstance(  ).getProperty(  "core.api.ssid", ".ssid");
-        String   sesmk = CoreConfig.getInstance("member").getProperty("core.keep.sess", "");
+        String   sesmk = CoreConfig.getInstance( "member").getProperty("core.keep.sess", ""); // 登录时哪些会话数据需要保留
 
         // 重建会话
         if (sd != null) {
@@ -269,12 +268,14 @@ public class AuthKit {
 
         // 返回数据
         Map rd = new HashMap();
+        rd.put(Cnst.UST_SES, stime);
         rd.put(Cnst.UID_SES, usrid);
-        rd.put( sesrk , sesid);
         rd.put("appid", appid);
         rd.put("place", place);
         rd.put("uname", uname);
         rd.put("uhead", uhead);
+        rd.put("utime", utime);
+        rd.put("sesid", sesid);
 
         // 记录登录
         DB    db = DB.getInstance("member");

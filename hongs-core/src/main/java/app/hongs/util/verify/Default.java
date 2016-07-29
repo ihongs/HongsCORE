@@ -46,14 +46,20 @@ public class Default extends Rule {
             return  now;
         }
 
-        // 应用属性
-        if (def.startsWith("=%")) {
-            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
+        // 别名属性
+        if (def.startsWith("=@")) {
+            def= def.substring(2);
+            return cleans.containsKey(def) ? cleans.get(def) : values.get(def);
         }
 
         // 会话属性
         if (def.startsWith("=$")) {
             return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
+        }
+
+        // 应用属性
+        if (def.startsWith("=%")) {
+            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
         }
 
         return  value;

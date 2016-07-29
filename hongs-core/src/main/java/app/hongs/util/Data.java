@@ -42,7 +42,7 @@ public class Data
   /**
    * 将JSON字符串解析成Java对象
    * @param str JSON字符串
-   * @return 数组,集合框架,基础类型
+   * @return 基础类型,集合框架
    */
   public static Object toObject(String str)
   {
@@ -58,7 +58,7 @@ public class Data
 
   /**
    * 将Java对象转换为JSON字符串
-   * @param obj 数组,集合框架,基础类型
+   * @param obj 基础类型,集合框架,数组
    * @return JSON字符串
    */
   public static String toString(Object obj)

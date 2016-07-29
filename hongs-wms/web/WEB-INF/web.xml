@@ -23,6 +23,15 @@
         <servlet-name>Apis</servlet-name>
         <url-pattern>*.api</url-pattern>
     </servlet-mapping>
+    <!-- Msgs Servlet -->
+    <servlet>
+        <servlet-name>Msgs</servlet-name>
+        <servlet-class>app.hongs.serv.handle.MesageSocket</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Msgs</servlet-name>
+        <url-pattern>/handle/mesage/socket/*</url-pattern>
+    </servlet-mapping>
     <!-- Conf Servlet -->
     <servlet>
         <servlet-name>Conf</servlet-name>

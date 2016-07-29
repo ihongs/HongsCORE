@@ -1,7 +1,6 @@
 package app.hongs.action.anno;
 
 import app.hongs.Cnst;
-import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
@@ -10,7 +9,6 @@ import app.hongs.action.VerifyHelper;
 import app.hongs.util.verify.Wrongs;
 import app.hongs.util.Synt;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.Map;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 

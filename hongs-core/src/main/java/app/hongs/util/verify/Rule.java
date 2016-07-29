@@ -16,6 +16,7 @@ public abstract class Rule {
 
     public Map params = null;
     public Map values = null;
+    public Map cleans = null;
     public Verify helper;
 
     public void setParams(Map params) {
@@ -23,6 +24,9 @@ public abstract class Rule {
     }
     public void setValues(Map values) {
         this.values = values;
+    }
+    public void setCleans(Map cleans) {
+        this.cleans = cleans;
     }
     public void setHelper(Verify helper) {
         this.helper = helper;

@@ -24,7 +24,7 @@ public class Wrongs extends HongsException {
         return wrongs;
     }
 
-    public Map<String, String> getErrors() throws HongsException {
+    public Map<String, String> getErrors() {
         Map<String, String> errors = new LinkedHashMap();
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong )  et.getValue();
@@ -35,7 +35,7 @@ public class Wrongs extends HongsException {
         return errors;
     }
 
-    public Map<String, Object> getErrmap() throws HongsException {
+    public Map<String, Object> getErrmap() {
         Map<String, Object> errors = new LinkedHashMap();
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong )  et.getValue();
@@ -48,15 +48,11 @@ public class Wrongs extends HongsException {
 
     @Override
     public String getLocalizedMessage() {
-        StringBuilder sb = new StringBuilder();
-        try {
-            for (Map.Entry<String, String> et : getErrors().entrySet()) {
-                sb.append(et.getValue()).append("\r\n");
-            }
-        } catch (HongsException ex) {
-            throw ex.toUnchecked( );
+        StringBuilder sb = new StringBuilder ();
+        for ( String  er : getErrors().values()) {
+            sb.append(er).append("\r\n");
         }
-        return sb.toString().trim();
+        return sb.toString( ).trim();
     }
 
     @Override
@@ -73,9 +69,8 @@ public class Wrongs extends HongsException {
      * 转换为响应数据结构
      * @param mode 0错误消息 1单层Map 2复合Map
      * @return
-     * @throws HongsException
      */
-    public Map toReply(byte mode) throws HongsException {
+    public Map toReply(byte mode) {
         Map data = new HashMap();
         data.put( "ok" , false );
         if (mode != 1 && mode != 2 ) {

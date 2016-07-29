@@ -424,7 +424,7 @@ public class CoreLocale
       return true;
     }
 
-    path = "app/hongs/config/default_"+ lang +".properties";
+    path = "app/hongs/conf/default_"+ lang +".properties";
     if (null != CoreConfig.class.getClassLoader().getResourceAsStream(path))
     {
       return true;

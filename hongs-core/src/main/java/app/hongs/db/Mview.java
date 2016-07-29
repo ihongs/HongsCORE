@@ -302,7 +302,7 @@ public class Mview extends Model {
 
             if (!field.containsKey("__disp__") || "".equals(field.get("__disp__"))) {
 //              if (disp!=null && !"".equals(disp)) {
-                if (lang.containsKey(disp)) {
+                if (lang.getProperty(disp) != null) {
                     disp = lang.translate(disp);
                     field.put("__disp__", disp);
                 } else {

@@ -78,6 +78,8 @@ public class Cnst {
 
     public static final String NAVI_EXT = ".navi"; // 导航配置
 
+    public static final String PROP_EXT = ".prop"; // 属性配置
+    
     //** 会话参数 **/
 
     public static final String  UID_SES =  "uid";

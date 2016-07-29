@@ -124,8 +124,14 @@ public class ActionHelper implements Cloneable
 
     try
     {
-      this.request .setCharacterEncoding("UTF-8");
-      this.response.setCharacterEncoding("UTF-8");
+      if (null != this.request )
+      {
+        this.request .setCharacterEncoding("UTF-8");
+      }
+      if (null != this.response)
+      {
+        this.response.setCharacterEncoding("UTF-8");
+      }
     }
     catch (UnsupportedEncodingException ex)
     {
@@ -140,8 +146,14 @@ public class ActionHelper implements Cloneable
 
     try
     {
-      this.request .setCharacterEncoding("UTF-8");
-      this.response.setCharacterEncoding("UTF-8");
+      if (null != this.request )
+      {
+        this.request .setCharacterEncoding("UTF-8");
+      }
+      if (null != this.response)
+      {
+        this.response.setCharacterEncoding("UTF-8");
+      }
     }
     catch (UnsupportedEncodingException ex)
     {
@@ -863,11 +875,11 @@ public class ActionHelper implements Cloneable
    */
   public void responed()
   {
-    String cb = ( String ) this.request.getAttribute( Cnst.BACK_ATTR  );
-    String pb = CoreConfig.getInstance().getProperty("core.powered.by");
-    PrintWriter pw = this.getResponseWrtr();
+    PrintWriter pw =  this.getResponseWrtr();
+    String pb = CoreConfig.getInstance().getProperty ("core.powered.by");
+    String cb = ( String )  this.request.getAttribute( Cnst.BACK_ATTR  );
 
-    if (this.response != null && !this.response.isCommitted()) {
+    if (this.response.isCommitted() != true) {
         this.response.setContentType(cb != null ? "text/javascript" : "application/json");
         this.response.setCharacterEncoding("UTF-8");
     }
@@ -877,7 +889,7 @@ public class ActionHelper implements Cloneable
     }
 
     if (cb != null) {
-        pw.print("function " + cb + "() { return ");
+        pw.print("function " + cb + "() {return " );
         pw.print( Data.toString(this.responseData));
         pw.print(";}");
     } else {

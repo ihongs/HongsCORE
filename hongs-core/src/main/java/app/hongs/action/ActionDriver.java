@@ -193,68 +193,66 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void service (ServletRequest rep, ServletResponse rsp)
     throws ServletException, IOException {
-        HttpServletRequest  req = (HttpServletRequest ) rep;
-        HttpServletResponse rsq = (HttpServletResponse) rsp;
-
-        ActionHelper hlpr;
-        Core core = (Core) req.getAttribute(Cnst.CORE_ATTR);
-        if (core != null) {
-            Core.THREAD_CORE.set (  core);
-            hlpr = core.get(ActionHelper.class);
-            hlpr.reinitHelper( req , rsq);
-            /**/doAction(core, hlpr /**/);
-        } else {
-            core = Core.getInstance(/**/);
-            req.setAttribute(Cnst.CORE_ATTR , core);
-            hlpr = new ActionHelper( req , rsq);
-            core.put ( ActionHelper.class.getName(), hlpr);
-
-            try {
-                doIniter(core, hlpr, req);
-                doAction(core, hlpr /**/);
-                doOutput(hlpr, req , rsq);
-            } finally {
-                doFinish(core, hlpr, req);
+        doDriver(rep, rsp, new ActionDrive() {
+            @Override
+            public void doDriver(Core core, ActionHelper hlpr)
+            throws ServletException, IOException {
+                doAction(core, hlpr);
             }
-        }
+        });
     }
 
     @Override
-    public void doFilter(ServletRequest rep, ServletResponse rsp, FilterChain chn)
+    public void doFilter(ServletRequest rep, ServletResponse rsp, final FilterChain chn)
+    throws ServletException, IOException {
+        doDriver(rep, rsp, new ActionDrive() {
+            @Override
+            public void doDriver(Core core, ActionHelper hlpr)
+            throws ServletException, IOException {
+                doFilter(core, hlpr, chn);
+            }
+        });
+    }
+
+    public void doDriver(ServletRequest rep, ServletResponse rsp, final ActionDrive adr)
     throws ServletException, IOException {
         HttpServletRequest  req = (HttpServletRequest ) rep;
         HttpServletResponse rsq = (HttpServletResponse) rsp;
 
         ActionHelper hlpr;
         Core core = (Core) req.getAttribute(Cnst.CORE_ATTR);
-        if (core != null) {
-            Core.THREAD_CORE.set (  core);
-            hlpr = core.get(ActionHelper.class);
-            hlpr.reinitHelper( req , rsq);
-            /**/doFilter(core, hlpr, chn);
-        } else {
-            core = Core.getInstance(/**/);
-            req.setAttribute(Cnst.CORE_ATTR , core);
-            hlpr = new ActionHelper( req , rsq);
+        if ( core == null) {
+            /**
+             * 外层调用
+             */
+            core = Core.getInstance( );
+            req.setAttribute(Cnst.CORE_ATTR, core );
+            hlpr = new ActionHelper( req, rsq );
             core.put ( ActionHelper.class.getName(), hlpr );
 
             try {
-                doIniter(core, hlpr, req);
-                doFilter(core, hlpr, chn);
-                doOutput(hlpr, req , rsq);
-            } catch (ServletException ex) {
+                doIniter(core, hlpr, req );
+                 adr.doDriver( core, hlpr); // 调用
+                doRespon(hlpr, req , rsq );
+            } catch (ServletException | IOException ex) {
                 CoreLogger.error(ex);
-            } catch (IOException ex) {
-                CoreLogger.error(ex);
-            } catch (Error er) {
+            } catch (RuntimeException |   Error     er) {
                 CoreLogger.error(er);
             } finally {
-                doFinish(core, hlpr, req);
+                doFinish(core, hlpr, req );
             }
+        } else {
+            /**
+             * 内层调用
+             */
+            Core.THREAD_CORE.set(core);
+            hlpr = core.get(ActionHelper.class);
+            hlpr.reinitHelper( req , rsq );
+            /**/ adr.doDriver( core, hlpr); // 调用
         }
     }
 
-    private void doOutput(ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
+    private void doRespon(ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException {
 //        if (hlpr.getResponse().isCommitted()) {
 //            ServletException se = new ServletException("Response is committed!");
@@ -611,6 +609,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             uri = req.getServletPath();
         }
         return uri;
+    }
+
+    /**
+     * 用于包裹动作执行程序
+     */
+    public static interface ActionDrive {
+
+        public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
+
     }
 
 }

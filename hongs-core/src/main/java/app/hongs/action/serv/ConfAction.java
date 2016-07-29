@@ -190,11 +190,9 @@ public class ConfAction
     }
 
     // 查找扩展配置信息
-    Iterator it = mk.conf.keySet().iterator();
-    while (it.hasNext())
+    for (String nk : mk.conf.stringPropertyNames())
     {
-      String nk = (String) it.next();
-      if  (  nk.startsWith("fore."))
+      if( nk.startsWith ( "fore." ))
       {
           sb.append(mk.make(nk, nk));
       }

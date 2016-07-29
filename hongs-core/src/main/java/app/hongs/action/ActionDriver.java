@@ -248,6 +248,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             Core.THREAD_CORE.set(core);
             hlpr = core.get(ActionHelper.class);
             hlpr.reinitHelper( req , rsq );
+
             /**/ adr.doDriver( core, hlpr); // 调用
         }
     }

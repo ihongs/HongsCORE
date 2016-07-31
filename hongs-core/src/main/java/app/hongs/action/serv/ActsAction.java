@@ -149,13 +149,14 @@ public class ActsAction
       msg = CoreLocale.getInstance().translate("core.error.unkwn");
     }
 
-    // 40x异常可选本地化参数依次为: 错误,当前URL,跳转URL
-    if (ern >= 0x1100 && ern <= 0x1109)
+    // 401,402.403,404 异常可选本地化参数依次为: 错误,当前URL,跳转URL
+    if (ern >= 0x1101 && ern <= 0x1104)
     {
       String[] arr;
       arr = ex.getLocalizedOptions();
       err = arr!=null && arr.length>2
-          ? arr[2]: "";
+          ? "Goto " + arr[2]
+          : "";
     }
 
     senderr(helper, ern, ers, err, msg);

@@ -365,7 +365,7 @@ public class AuthFilter
             rsp.put("msg", msg);
             rsp.put("ern", "Er40"+type);
         if (uri != null && uri.length() != 0) {
-            rsp.put("err", uri);
+            rsp.put("err", "Goto "+uri);
         }
 
         hlpr.reply(rsp);

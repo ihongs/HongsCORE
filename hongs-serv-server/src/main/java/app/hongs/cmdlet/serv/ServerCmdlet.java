@@ -39,11 +39,15 @@ public class ServerCmdlet {
         }
         String serd = Core.DATA_PATH + File.separator + "server" ;
         File   ppid = new  File(serd + File.separator +  port + ".pid" );
+        File   ppcd = ppid.getParentFile( );
 
         // 检查进程
-        if ( ppid.exists() ) {
+        if (ppid.exists() == true ) {
             CmdletHelper.println("Process already exists!");
             return;
+        }
+        if (ppcd.exists() == false) {
+            ppcd.mkdirs();
         }
         try {
             String     pid = ManagementFactory.getRuntimeMXBean()
@@ -53,15 +57,19 @@ public class ServerCmdlet {
             dip.close(     );
         }
         catch (IOException e) {
-            throw new HongsException.Common (e);
+            throw new HongsException.Common(e);
         }
 
         // 构建应用
-        WebAppContext webapp  = new WebAppContext();
-        webapp.setDescriptor   (conf);
-        webapp.setContextPath  (Core.BASE_HREF);
-        webapp.setResourceBase (Core.BASE_PATH);
-        webapp.setParentLoaderPriority ( true );
+        Server        server;
+        WebAppContext webapp;
+        server = new  Server ( port );
+        webapp = new  WebAppContext();
+        server.setHandler    (webapp);
+        webapp.setDescriptor  (conf );
+        webapp.setContextPath (Core.BASE_HREF);
+        webapp.setResourceBase(Core.BASE_PATH);
+        webapp.setParentLoaderPriority( true );
 
         // 外部配置
         CoreConfig c = CoreConfig.getInstance("_init_");
@@ -101,10 +109,6 @@ public class ServerCmdlet {
                 }
             }
         }
-
-        Server server;
-        server = new Server(port);
-        server.setHandler(webapp);
 
         // 停止机制
         Runtime.getRuntime( ).addShutdownHook(new Stoper(server, ppid));

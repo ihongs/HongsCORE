@@ -126,16 +126,19 @@ function hsResponObj(rst, qut, pus) {
         }
         // 服务接口要求跳转 (常为未登录或无权限)
         if (! pus) {
-            if (rst.ern && /^Er[34]0[0-9]$/.test(rst.ern)) {
+            if (rst.ern && /^Er(301|302|401|402|403|404)$/.test(rst.ern)) {
                 if (rst.msg) {
-                    alert( rst.msg );
+                    alert(rst.msg);
                 }
-                if (rst.ref === "#") {
-                    location.reload( );
-                } else {
-                    location.assign(rst.err);
+                if (rst.err && /^Goto /i.test(rst.err)) {
+                    var url = rst.err.substring(5);
+                    if (url == "#") {
+                        location.reload(   );
+                    } else {
+                        location.assign(url);
+                    }
                 }
-                throw new Exception("Exit!");
+                throw new Exception(rst.err);
             }
         }
         // 成功失败消息处理 (失败则总是发出警告)

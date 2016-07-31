@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>HongsCORE::聊天测试</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <base href="../../">
+        <link rel="icon" type="image/x-icon" href="favicon.ico"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/addons/bootstrap-fileinput/css/fileinput.min.css"/>
+        <link rel="stylesheet" type="text/css" href="static/addons/bootstrap-datetimepicker/css/datetimepicker.min.css"/>
+        <!--[if glt IE8.0]>
+        <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
+        <![endif]-->
+        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
+        <script type="text/javascript" src="static/assets/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
+        <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
+        <script type="text/javascript" src="common/conf/default.js"></script>
+        <script type="text/javascript" src="common/lang/default.js"></script>
+    </head>
+    <body>
+        <div  id="message-context"></div>
+        <form id="message-formbox" onsubmit="return false;">
+            <input  type="hidden" name="type" value="user"/>
+            <input  type="hidden" name="kind" value="text"/>
+            <input  type="text"   name="body"/><br/>
+            <button type="submit">发送</button>
+        </form>
+        <script type="text/javascript">
+            (function($) {
+                var xid = "1";
+                var act = "handle/mesage/user/retrieve.act";
+                var sok = 'ws://localhost:8080/handle/mesage/socket/';
+                var usr = {};
+
+                var context = $("#message-context");
+                var formbox = $("#message-formbox");
+                var socket  ;
+
+                function socketInit(tid) {
+                    socket  = new WebSocket(sok + tid);
+
+                    // 接收消息
+                    socket.onmessage = function(evt) {
+                        var dat = JSON.parse(evt.data);
+                        dat = hsResponObj(dat);
+                        if (! dat.ok ) return ;
+                        dat = dat.info;
+
+                        var div = $('<div class="message"></div>');
+                        div.text(usr[dat.uid].name+": "+dat.body );
+                        div.appendTo(context);
+                    };
+
+                    // 发送消息
+                    formbox.submit(function() {
+                        var dat = hsSerialDic($(this));
+                        var msg = JSON.stringify(dat );
+                        socket.send(msg);
+                    });
+                }
+
+                // 获取会话及好友信息
+                $.ajax({
+                    url: hsFixUri(act),
+                    data: {"id" : xid},
+                    success: function(rst) {
+                        rst = hsResponObj(rst);
+                        if (! rst.ok ) return ;
+                        rst = rst.info;
+
+                        socketInit(rst.id);
+
+                        var a = rst.users;
+                        var l = a.length;
+                        var i = 0;
+                        for ( ; i < l; i ++ ) {
+                            usr[a[i].uid] = a[i];
+                        }
+
+                        console.log(rst);
+                    }
+                });
+
+            })(jQuery);
+        </script>
+    </body>
+</html>

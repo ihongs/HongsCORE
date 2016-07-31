@@ -219,7 +219,7 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
         其他...
     }
 
-ern 为 Er301,Er302,Er401,Er402,Er403 时, err 如有值则为跳转 URL. 其他数据通常有:
+ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则跳转到 URL. 其他数据通常有:
 
     // 列表信息, 在 retrieve,list 动作返回
     "list": [

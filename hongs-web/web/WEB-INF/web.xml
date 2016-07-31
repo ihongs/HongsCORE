@@ -50,13 +50,6 @@
         <servlet-name>Auth</servlet-name>
         <url-pattern>/common/auth/*</url-pattern>
     </servlet-mapping>
-    <!-- Default Tags -->
-    <jsp-config>
-        <taglib>
-            <taglib-uri>/hongs.tag</taglib-uri>
-            <taglib-location>web.tld</taglib-location>
-        </taglib>
-    </jsp-config>
     <!-- Session Sets -->
     <session-config>
         <session-timeout>43210</session-timeout>
@@ -67,15 +60,23 @@
             <http-only>true</http-only>
         </cookie-config>
     </session-config>
+    <!-- Default Tags -->
+    <jsp-config>
+        <taglib>
+            <taglib-uri>/hongs.tag</taglib-uri>
+            <taglib-location>web.tld</taglib-location>
+        </taglib>
+    </jsp-config>
     <!-- Another Sets -->
-    <icon>
-        <small-icon>/favicon.ico</small-icon>
-        <large-icon>/favicon.ico</large-icon>
-    </icon>
+    <error-page>
+       <error-code>403</error-code>
+       <location>/403.jsp</location>
+    </error-page>
     <error-page>
        <error-code>404</error-code>
        <location>/404.jsp</location>
     </error-page>
+    <!--
     <error-page>
        <error-code>500</error-code>
        <location>/500.jsp</location>
@@ -88,6 +89,11 @@
        <exception-type>javax.servle.ServletException</exception-type>
        <location>/500.jsp</location>
     </error-page>
+    //-->
+    <icon>
+        <small-icon>/favicon.ico</small-icon>
+        <large-icon>/favicon.ico</large-icon>
+    </icon>
     <welcome-file-list>
         <welcome-file>index.jsp</welcome-file>
         <welcome-file>index.html</welcome-file>

@@ -139,11 +139,9 @@ public class SpreadHelper {
             Map rd; Set rb; aq = aq.trim(  );
             if (null != aq && !"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {
-                    rd = (Map) Data.toObject(aq);
+                    rd = (  Map  ) Data.toObject(aq);
                 } else {
-                    rd = ActionHelper.parseParam(
-                         ActionHelper.parseQuery(
-                                             aq));
+                    rd = ActionHelper.parseQuery(aq);
                 }
                 if (!rd.containsKey(Cnst.RB_KEY)) {
                     rd.put(Cnst.RB_KEY, "-" );

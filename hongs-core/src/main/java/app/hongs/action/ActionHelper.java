@@ -3,6 +3,7 @@ package app.hongs.action;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
+import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
@@ -174,7 +175,7 @@ public class ActionHelper implements Cloneable
     this.cookiesData  = data;
   }
 
-  public HttpServletRequest getRequest()
+  public final HttpServletRequest getRequest()
   {
     return this.request;
   }
@@ -185,7 +186,7 @@ public class ActionHelper implements Cloneable
    */
   public String getRequestText()
   {
-    try
+    if (null != this.request) try
     {
       BufferedReader reader = this.request.getReader();
       String text = "";
@@ -194,7 +195,7 @@ public class ActionHelper implements Cloneable
 
       while (-1 != ( i = reader.read(buf, j, 1024) ) )
       {
-        text += new String( buf );
+        text += new String ( buf);
         j += i * 1024 ;
       }
 
@@ -202,8 +203,10 @@ public class ActionHelper implements Cloneable
     }
     catch (IOException ex)
     {
-      return "";
+      CoreLogger.error(ex);
     }
+
+    return "";
   }
 
   /**
@@ -219,7 +222,7 @@ public class ActionHelper implements Cloneable
    */
   public Map<String, Object> getRequestData()
   {
-    if (this.requestData == null)
+    if (this.request != null && this.requestData == null)
     {
       String ct  = this.request.getContentType();
       if  (  ct != null)
@@ -242,7 +245,7 @@ public class ActionHelper implements Cloneable
         // 处理上传文件
         if ("multipart/form-data".equals(ct))
         {
-          setUploadsData( this.requestData );
+          chkUploadsData( this.requestData );
         }
       }
     }
@@ -253,7 +256,7 @@ public class ActionHelper implements Cloneable
    * 解析 multipart/form-data 数据, 并将上传的文件放入临时目录
    * @param rd
    */
-  protected final void setUploadsData(Map rd) {
+  protected final void chkUploadsData(Map rd ) {
     CoreConfig conf = CoreConfig.getInstance();
     String     path = Core.DATA_PATH+"/upload";
 
@@ -385,7 +388,7 @@ public class ActionHelper implements Cloneable
     }
   }
 
-  public HttpServletResponse getResponse()
+  public final HttpServletResponse getResponse()
   {
     return this.response;
   }
@@ -465,14 +468,17 @@ public class ActionHelper implements Cloneable
    * 获取容器属性
    * 注意; 为防止歧义, 请不要在 name 中使用 "[","]"和"."
    * @param name
-   * @return 当前属性, 没有则为null
+   * @return 当前属性, 没有则为 null
    */
-  public Object getAttribute(String name)
+  public Object getAttribute(String  name)
   {
-    if (this.contextData != null) {
-      return this.contextData.get(name);
+    if (null != this.contextData) {
+        return  this.contextData.get(name);
+    } else
+    if (null != this.request/**/) {
+        return  this.request.getAttribute(name);
     } else {
-      return this.getRequest().getAttribute(name);
+        return  null;
     }
   }
 
@@ -489,14 +495,15 @@ public class ActionHelper implements Cloneable
       if (value == null) {
         this.contextData.remove(name);
       } else {
-        this.contextData.put(name, value);
+        this.contextData.put(name , value);
       }
         this.contextData.put(Cnst.UPDATE_ATTR, System.currentTimeMillis());
-    } else {
+    } else
+    if (this.request/**/ != null) {
       if (value == null) {
-        this.getRequest().removeAttribute(name);
+        this.request.removeAttribute(name);
       } else {
-        this.getRequest().setAttribute(name, value);
+        this.request.setAttribute(name , value);
       }
     }
   }
@@ -505,15 +512,18 @@ public class ActionHelper implements Cloneable
    * 获取会话取值
    * 注意; 为防止歧义, 请不要在 name 中使用 "[","]"和"."
    * @param name
-   * @return 当前取值, 没有则为null
+   * @return 当前取值, 没有则为 null
    */
-  public Object getSessibute(String name)
+  public Object getSessibute(String  name)
   {
-    if (this.sessionData != null) {
-      return this.sessionData.get(name);
+    if (null != this.sessionData) {
+        return  this.sessionData.get(name);
+    } else
+    if (null != this.request/**/) {
+      HttpSession ss = this.request.getSession(false);
+      if (null != ss ) return ss.getAttribute ( name);
+      return null;
     } else {
-      HttpSession ss = this.getRequest().getSession(false);
-      if (null != ss)  return ss.getAttribute(name);
       return null;
     }
   }
@@ -531,16 +541,17 @@ public class ActionHelper implements Cloneable
       if (value == null) {
         this.sessionData.remove(name);
       } else {
-        this.sessionData.put(name, value);
+        this.sessionData.put(name , value);
       }
         this.sessionData.put(Cnst.UPDATE_ATTR, System.currentTimeMillis());
-    } else {
+    } else
+    if (this.request/**/ != null) {
       if (value == null) {
-        HttpSession ss = this.getRequest().getSession(false);
+        HttpSession ss = this.request.getSession(false);
         if (null != ss ) ss.removeAttribute(name);
       } else {
-        HttpSession ss = this.getRequest().getSession(true );
-        if (null != ss ) ss.setAttribute(name, value);
+        HttpSession ss = this.request.getSession(true );
+        if (null != ss ) ss.setAttribute(name , value );
       }
     }
   }
@@ -550,22 +561,25 @@ public class ActionHelper implements Cloneable
    * @param name
    * @return
    */
-  public String getCookibute(String name) {
-    if (this.cookiesData != null) {
-      return  this.cookiesData.get(name);
-    } else {
-      Cookie[] cs = this.getRequest( ).getCookies( );
+  public String getCookibute(String  name) {
+    if (null != this.cookiesData) {
+        return  this.cookiesData.get(name);
+    } else
+    if (null != this.request/**/) {
+      Cookie [] cs = this.request.getCookies();
       if (cs != null) {
-        for(Cookie ce : cs) {
-          if ( ce.getName().equals(name)) {
+        for(Cookie ce: cs) {
+          if (ce.getName().equals(name)) {
             try {
               return URLDecoder.decode(ce.getValue(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-              throw  new HongsError.Common(e);
+              throw  new  HongsUnchecked.Common ( e);
             }
           }
         }
       }
+      return null;
+    } else {
       return null;
     }
   }
@@ -583,7 +597,8 @@ public class ActionHelper implements Cloneable
         this.cookiesData.put(name, value);
       }
         this.cookiesData.put(Cnst.UPDATE_ATTR, Long.toString(System.currentTimeMillis()));
-    } else {
+    } else
+    if (this.response    != null) {
       if (value == null) {
         setCookibute(name, value, 0/*Remove*/, Core.BASE_HREF + "/", null, false, false );
       } else {
@@ -628,7 +643,7 @@ public class ActionHelper implements Cloneable
       if (httpOnly) {
           ce.setHttpOnly(true);
       }
-      getResponse().addCookie(ce);
+      response.addCookie( ce );
   }
 
   /**
@@ -989,6 +1004,57 @@ public class ActionHelper implements Cloneable
 
   /**
    * 解析参数
+   * 用于处理查询串
+   * @param s
+   * @return
+   */
+  public static Map parseQuery(String s) {
+      HashMap<String, List<String>> a = new HashMap<>();
+      int j , i;
+          j = 0;
+
+      while (j < s.length()) {
+          // 查找键
+          i = j;
+          while (j < s.length() && s.charAt(j) != '=' && s.charAt(j) != '&') {
+              j ++;
+          }
+          String k;
+          try {
+              k = s.substring(i, j);
+              k = URLDecoder.decode(k, "UTF-8");
+          } catch (UnsupportedEncodingException ex) {
+              throw new HongsError.Common(ex);
+          }
+          if (j < s.length() && s.charAt(j) == '=') {
+              j++;
+          }
+
+          // 查找值
+          i = j;
+          while (j < s.length() && s.charAt(j) != '&') {
+              j++;
+          }
+          String v;
+          try {
+              v = s.substring(i, j);
+              v = URLDecoder.decode(v, "UTF-8");
+          } catch (UnsupportedEncodingException ex) {
+              throw new HongsError.Common(ex);
+          }
+          if (j < s.length() && s.charAt(j) == '&') {
+              j++;
+          }
+
+          Dict.setParam(a, v, k);
+      }
+
+      return a;
+  }
+
+  /**
+   * 解析参数
+   * 用于处理 Servlet 请求数据
    * @param params
    * @return 解析后的Map
    */
@@ -997,97 +1063,35 @@ public class ActionHelper implements Cloneable
     Map<String, Object> paramz = new HashMap();
     for (Map.Entry<String, String[]> et : params.entrySet())
     {
-      String   key = et.getKey(  );
-      String[] arr = et.getValue();
-      for ( String value  :  arr )
-      {
-        Dict.setParam ( paramz , value , key );
-      }
+        String   key = et.getKey(  );
+        String[] arr = et.getValue();
+        for ( String value  :  arr )
+        {
+            Dict.setParam(paramz, value, key );
+        }
     }
     return paramz;
   }
 
   /**
-   * Parses an URL query string and returns a map with the parameter values.
-   * The URL query string is the part in the URL after the first '?' character up
-   * to an optional '#' character. It has the format "name=value&name=value&...".
-   * The map has the same structure as the one returned by
-   * javax.servlet.ServletRequest.getParameterMap().
-   * A parameter name may occur multiple times within the query string.
-   * For each parameter name, the map contains a string array with the parameter values.
-   * @param   s an URL query string.
-   * @return  a map containing parameter names as keys and parameter values as map values.
-   * @author  Christian d'Heureuse, Inventec Informatik AG, Switzerland, www.source-code.biz.
+   * 解析参数
+   * 用于处理 WebSocket 请求数据
+   * @param params
+   * @return 解析后的Map
    */
-  public static Map<String, String[]> parseQuery(String s) {
-    if (s == null) {
-      return new HashMap<String, String[]>(0);
+  public static Map parseQuest(Map<String, List<String>> params)
+  {
+    Map<String, Object> paramz = new HashMap();
+    for (Map.Entry<String, List<String>> et : params.entrySet())
+    {
+        String   key = et.getKey(  );
+        List     arr = et.getValue();
+        for ( Object value  :  arr )
+        {
+            Dict.setParam(paramz, value, key );
+        }
     }
-    // In map1 we use strings and ArrayLists to collect the parameter values.
-    HashMap<String, Object> map1 = new HashMap<String, Object>();
-    int p = 0;
-    while (p < s.length()) {
-      int p0 = p;
-      while (p < s.length() && s.charAt(p) != '=' && s.charAt(p) != '&') {
-        p++;
-      }
-      String name;
-      try {
-        name = s.substring(p0, p);
-        name = URLDecoder.decode(name, "UTF-8");
-      } catch (UnsupportedEncodingException ex) {
-        throw new HongsError(0x10, ex);
-      }
-      if (p < s.length() && s.charAt(p) == '=') {
-        p++;
-      }
-      p0 = p;
-      while (p < s.length() && s.charAt(p) != '&') {
-        p++;
-      }
-      String value;
-      try {
-        value = s.substring(p0, p);
-        value = URLDecoder.decode(value, "UTF-8");
-      } catch (UnsupportedEncodingException ex) {
-        throw new HongsError(0x10, ex);
-      }
-      if (p < s.length() && s.charAt(p) == '&') {
-        p++;
-      }
-      Object x = map1.get(name);
-      if (x == null) {
-        // The first value of each name is added directly as a string to the map.
-        map1.put(name, value);
-      } else if (x instanceof String) {
-        // For multiple values, we use an ArrayList.
-        ArrayList<String> a = new ArrayList<String>();
-        a.add((String) x);
-        a.add(value);
-        map1.put(name, a);
-      } else {
-        @SuppressWarnings("unchecked")
-        ArrayList<String> a = (ArrayList<String>) x;
-        a.add(value);
-      }
-    }
-    // Copy map1 to map2. Map2 uses string arrays to store the parameter values.
-    HashMap<String, String[]> map2 = new HashMap<String, String[]>(map1.size());
-    for (Map.Entry<String, Object> e : map1.entrySet()) {
-      String name = e.getKey();
-      Object x = e.getValue();
-      String[] v;
-      if (x instanceof String) {
-        v = new String[]{(String) x};
-      } else {
-        @SuppressWarnings("unchecked")
-        ArrayList<String> a = (ArrayList<String>) x;
-        v = new String[a.size()];
-        v = a.toArray(v);
-      }
-      map2.put(name, v);
-    }
-    return map2;
+    return paramz;
   }
 
 }

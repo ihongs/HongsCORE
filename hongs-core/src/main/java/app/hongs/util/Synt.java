@@ -6,6 +6,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -369,6 +371,41 @@ public class Synt {
             return new LinkedHashSet(b);
         }
         return declare(val, Set.class );
+    }
+
+    /**
+     * 快捷构建 List, Arrays.asList 的别名
+     * @param objs
+     * @return
+     */
+    public static List asList(Object... objs) {
+        return Arrays.asList (objs);
+    }
+
+    /**
+     * 快捷构建 Set
+     * @param objs
+     * @return
+     */
+    public static Set asSet(Object... objs) {
+        Set set = new HashSet();
+        for (int i = 0; i < objs.length; i += 1) {
+            set.add( objs[i] );
+        }
+        return set;
+    }
+
+    /**
+     * 快捷构建 Map
+     * @param objs
+     * @return
+     */
+    public static Map asMap(Object... objs) {
+        Map map = new HashMap();
+        for (int i = 0; i < objs.length; i += 2) {
+            map.put( objs[i], objs[i + 1] );
+        }
+        return map;
     }
 
     /**

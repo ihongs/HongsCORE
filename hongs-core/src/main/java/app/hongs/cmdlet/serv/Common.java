@@ -284,9 +284,9 @@ public class Common {
 
         Map data;
         if (text.startsWith("{") && text.endsWith("}")) {
-            data =         (Map)    Data.toObject(text);
+            data = (  Map  ) Data.toObject(text);
         } else {
-            data = ActionHelper.parseParam(ActionHelper.parseQuery(text));
+            data = ActionHelper.parseQuery(text);
         }
 
         return data;

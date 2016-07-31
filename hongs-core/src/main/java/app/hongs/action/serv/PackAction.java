@@ -143,10 +143,9 @@ public class PackAction {
         String str = Synt.declare(obj, "");
         Map map;
         if (str.startsWith("{") && str.endsWith("}")) {
-            map = (Map) Data.toObject(str);
+            map = (  Map  ) Data.toObject(str);
         } else {
             map = ActionHelper.parseQuery(str);
-            map = ActionHelper.parseParam(map);
         }
         return map;
     }

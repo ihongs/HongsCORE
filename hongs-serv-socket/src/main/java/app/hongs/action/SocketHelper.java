@@ -3,8 +3,13 @@ package app.hongs.action;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
+import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.cmdlet.serv.ServerCmdlet;
+import app.hongs.util.Synt;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.Writer;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletException;
@@ -25,7 +30,7 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
 public class SocketHelper extends ActionHelper {
 
     private SocketHelper(Map prop, Map data) {
-        super( data, prop, null, null, null);
+        super(data, prop, null, null);
     }
 
     @Override
@@ -49,6 +54,32 @@ public class SocketHelper extends ActionHelper {
         }
     }
 
+    @Override
+    public OutputStream getOutputStream() {
+        Session sess = (Session) getAttribute(Session.class.getName());
+        if (null != sess) {
+            try {
+                return sess.getBasicRemote().getSendStream();
+            } catch (IOException ex) {
+                throw new HongsError(0x32, "Can not get socket stream.", ex);
+            }
+        }
+        return super.getOutputStream();
+    }
+
+    @Override
+    public Writer getOutputWriter() {
+        Session sess = (Session) getAttribute(Session.class.getName());
+        if (null != sess) {
+            try {
+                return sess.getBasicRemote().getSendWriter();
+            } catch (IOException ex) {
+                throw new HongsError(0x32, "Can not get socket writer.", ex);
+            }
+        }
+        return super.getOutputWriter();
+    }
+
     /**
      * 构建助手对象
      * @param data
@@ -56,14 +87,9 @@ public class SocketHelper extends ActionHelper {
      * @param uri
      * @return
      */
-    static public SocketHelper getInstance(Map prop, Map data, String uri) {
+    static public SocketHelper newInstance(Map prop, Map data, String uri) {
+        Core         core;
         SocketHelper hepr;
-        hepr = (SocketHelper) prop.get(SocketHelper.class.getName());
-        if ( null != hepr) {
-            return   hepr;
-        }
-
-        Core core;
         core = Core.getInstance();
         hepr = new SocketHelper(prop, data);
 
@@ -86,7 +112,11 @@ public class SocketHelper extends ActionHelper {
          */
 
         Core.ACTION_TIME.set(System.currentTimeMillis());
-        Core.ACTION_NAME.set(  uri.substring ( 1 ) );
+        if (Core.BASE_HREF.length() + 1 <= uri.length()) {
+            Core.ACTION_NAME.set(uri.substring(Core.BASE_HREF.length() + 1));
+        } else {
+            throw  new  HongsError.Common ( "Wrong web socket uri: " + uri );
+        }
 
         CoreConfig conf = core.get(CoreConfig.class);
 
@@ -97,9 +127,6 @@ public class SocketHelper extends ActionHelper {
              */
             String name = conf.getProperty("core.timezone.session", "zone");
             String zone = (String) hepr.getSessibute(name);
-            if (zone == null || zone.length() == 0) {
-                   zone = (String) hepr.getAttribute( "Accept-Timezone" );
-            }
 
             if (zone != null) {
                 Core.ACTION_ZONE.set(zone);
@@ -113,8 +140,24 @@ public class SocketHelper extends ActionHelper {
              */
             String name = conf.getProperty("core.language.session", "lang");
             String lang = (String) hepr.getSessibute(name);
+
+            /**
+             * 通过 WebSocket Headers 提取语言选项
+             */
             if (lang == null || lang.length() == 0) {
-                   lang = (String) hepr.getAttribute( "Accept-Language" );
+                do {
+                    Map <String, List<String>> headers;
+                    headers  = ( Map <String, List<String>> ) hepr.getAttribute("HttpHeaders");
+                    if (headers == null) {
+                        break ;
+                    }
+                    List<String> headerz;
+                    headerz  = headers.get("Accept-Language");
+                    if (headerz == null) {
+                        break ;
+                    }
+                    lang = headerz.isEmpty() ? headerz.get(0): null;
+                } while(false);
             }
 
             /**
@@ -128,6 +171,26 @@ public class SocketHelper extends ActionHelper {
             }
         }
 
+        /**
+         * 写入当前会话备用
+         */
+        prop.put("ACTION_NAME", Core.ACTION_NAME.get());
+        prop.put("ACTION_TIME", Core.ACTION_TIME.get());
+        prop.put("ACTION_LANG", Core.ACTION_LANG.get());
+        prop.put("ACTION_ZONE", Core.ACTION_ZONE.get());
+
+        /**
+         * 输出一些调试信息
+         */
+        if (Core.DEBUG > 0) {
+            StringBuilder sb = new StringBuilder("WebSocket start");
+              sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
+                .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
+                .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
+                .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get());
+            CoreLogger.debug(sb.toString());
+        }
+
         return  hepr;
     }
 
@@ -137,19 +200,41 @@ public class SocketHelper extends ActionHelper {
      * @return
      */
     public static SocketHelper getInstance(Session sess) {
-        SocketHelper hepr;
-        hepr = (SocketHelper) sess.getUserProperties().get(SocketHelper.class.getName());
-        if ( null != hepr) {
-            return   hepr;
+        Core  core = Core.getInstance();
+        Map   prop = sess.getUserProperties();
+        Session sexx = (Session) core.got(Session.class.getName());
+        SocketHelper hepr = (SocketHelper) prop.get(SocketHelper.class.getName());
+
+        if ( null == hepr ) {
+            /**
+             * 提取数据和路径等
+             * 用于构造助手对象
+             */
+            String u = sess.getRequestURI().getPath();
+            Map data = sess.getRequestParameterMap( );
+            data = ActionHelper.parseQuest(data );
+            data.putAll(sess.getPathParameters());
+            hepr = newInstance( prop , data , u );
+
+            core.put(Session.class.getName(), sess);
+        } else
+        if ( null != sexx && !sess.equals(sexx) ) {
+            core.put(Session.class.getName(), sess);
+
+            /**
+             * 在 Jetty 中(别的应用容器还没试)
+             * 每次事件都有可能在不同的线程中
+             * Core 却是为常规 Servlet 设计的
+             * 故需每次事件判断 Core 与会话匹配否
+             * 不匹配则重新设置 Core 动作环境信息
+             */
+            Core.ACTION_TIME.set(System.currentTimeMillis());
+            Core.ACTION_NAME.set(Synt.asserts(prop.get("ACTION_NAME"), ""));
+            Core.ACTION_LANG.set(Synt.asserts(prop.get("ACTION_LANG"), ""));
+            Core.ACTION_ZONE.set(Synt.asserts(prop.get("ACTION_ZONE"), ""));
         }
 
-        String u = sess.getRequestURI().toString();
-        Map data = sess.getRequestParameterMap();
-        Map prop = sess.getUserProperties ( );
-        data = ActionHelper.parseQuest(data );
-        data.putAll(sess.getPathParameters());
-
-        return getInstance( prop , data , u );
+        return hepr;
     }
 
     /**
@@ -165,26 +250,11 @@ public class SocketHelper extends ActionHelper {
                 HandshakeResponse response)
         {
             /**
-             * 准备 SocketHelper
+             * 注入 HttpSession, Headers
              */
-            String u = request.getRequestURI().toString();
-            Map data = request.getParameterMap ();
             Map prop = config.getUserProperties();
-            data = ActionHelper.parseQuest(data );
-
-            /**
-             * 注入 HttpSession, Accept-Language
-             */
-            prop.put( HttpSession.class.getName(), request.getHttpSession() );
-            List<String> lang = request.getHeaders().get( "Accept-Langauge" );
-            if (null  != lang && ! lang.isEmpty()) {
-                prop.put("Accept-Language" , lang.get(0));
-            }
-
-            /**
-             * 构建 SocketHelper
-             */
-            getInstance(prop, data, u);
+            prop.put("HttpHeaders", request.getHeaders( ));
+            prop.put( HttpSession.class.getName(), request.getHttpSession());
         }
     }
 

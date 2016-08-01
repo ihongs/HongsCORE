@@ -14,6 +14,7 @@ import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 
 import java.io.File;
+import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -293,13 +294,14 @@ public class CmdletRunner
     }
     Core.ACTION_LANG.set(lang);
 
-    /** 初始化核心 **/
+    /** 初始化动作助手, 可复用动作组件 **/
 
-    Core.getInstance().put(ActionHelper.class.getName(),
-        new ActionHelper(null, null, null, null, null));
+    ActionHelper  ah  = new ActionHelper(null, null, null, null);
+    Core.getInstance( ).put(ActionHelper.class.getName( ), ah  );
+    ah.setOutputWriter( new  PrintWriter(System.out));
 
     // Clean instatnces fis core at exit
-    Runtime.getRuntime().addShutdownHook( new Thread ()
+    Runtime.getRuntime().addShutdownHook(new Thread()
     {
       @Override
       public void  run()

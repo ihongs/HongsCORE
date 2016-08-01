@@ -42,7 +42,7 @@ public class UploadHelper {
     private Set<String> allowExtns = null;
 
 //  static {
-//      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
+//      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getLocalizedSegment());
 //  }
 
     public UploadHelper setUploadName(String name) {

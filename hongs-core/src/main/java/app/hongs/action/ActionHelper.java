@@ -16,8 +16,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ public class ActionHelper implements Cloneable
   /**
    * HttpServletRequest
    */
-  private HttpServletRequest request;
+  private HttpServletRequest  request;
 
   /**
    * 请求数据
@@ -90,7 +92,8 @@ public class ActionHelper implements Cloneable
   /**
    * 响应输出
    */
-  private PrintWriter /* * */ responseWrtr = null;
+  private OutputStream        outputStream = null;
+  private Writer              outputWriter = null;
 
   /**
    * 初始化助手(用于cmdlet)
@@ -101,7 +104,7 @@ public class ActionHelper implements Cloneable
    * @param cok
    * @param out
    */
-  public ActionHelper(Map req, Map att, Map ses, Map cok, PrintWriter out)
+  public ActionHelper(Map req, Map att, Map ses, Map cok)
   {
     this.request      = null;
     this.requestData  = req != null ? req : new HashMap();
@@ -109,7 +112,6 @@ public class ActionHelper implements Cloneable
     this.sessionData  = ses != null ? ses : new HashMap();
     this.cookiesData  = cok != null ? cok : new HashMap();
     this.response     = null;
-    this.responseWrtr = out != null ? out : new PrintWriter(System.out);
   }
 
   /**
@@ -173,6 +175,12 @@ public class ActionHelper implements Cloneable
   }
   public void setCookiesData(Map<String, String> data) {
     this.cookiesData  = data;
+  }
+  public void setOutputStream(OutputStream pipe) {
+    this.outputStream = pipe;
+  }
+  public void setOutputWriter(Writer pipe) {
+    this.outputWriter = pipe;
   }
 
   public final HttpServletRequest getRequest()
@@ -413,11 +421,37 @@ public class ActionHelper implements Cloneable
    * 获取响应输出
    * @return 响应输出
    */
-  public PrintWriter getResponseWrtr()
+  public OutputStream getOutputStream()
   {
-    if (this.responseWrtr != null)
+    if (this.outputStream != null)
     {
-        return this.responseWrtr;
+        return this.outputStream;
+    } else
+    if (this.response/**/ != null)
+    {
+      try
+      {
+        return this.response.getOutputStream();
+      }
+      catch (IOException ex)
+      {
+        throw new HongsError(0x32, "Can not get output stream.", ex);
+      }
+    } else
+    {
+        throw new HongsError(0x32, "Can not get output stream."/**/);
+    }
+  }
+
+  /**
+   * 获取响应输出
+   * @return 响应输出
+   */
+  public Writer getOutputWriter()
+  {
+    if (this.outputWriter != null)
+    {
+        return this.outputWriter;
     } else
     if (this.response/**/ != null)
     {
@@ -427,11 +461,11 @@ public class ActionHelper implements Cloneable
       }
       catch (IOException ex)
       {
-        throw new HongsError(0x32, "Can not send to browser.", ex);
+        throw new HongsError(0x32, "Can not get output writer.", ex);
       }
     } else
     {
-        throw new HongsError(0x32, "Can not send to browser."/**/);
+        throw new HongsError(0x32, "Can not get output writer."/**/);
     }
   }
 
@@ -666,9 +700,9 @@ public class ActionHelper implements Cloneable
     Core   core = Core.getInstance();
     String inst = ActionHelper.class.getName();
     if (core.containsKey(inst)) {
-        return ((ActionHelper) core.got(inst)).clone();
+        return ((ActionHelper) core.got(inst)).clone( );
     } else {
-        return new ActionHelper(null, null, null, null, null);
+        return new ActionHelper(null, null, null, null);
     }
   }
 
@@ -686,7 +720,8 @@ public class ActionHelper implements Cloneable
     } catch (CloneNotSupportedException ex) {
       throw new HongsError.Common( /**/ ex);
     }
-    helper.responseWrtr = this.getResponseWrtr();
+    helper.outputStream = this.getOutputStream();
+    helper.outputWriter = this.getOutputWriter();
     helper.responseData = null;
     return helper;
   }
@@ -840,16 +875,19 @@ public class ActionHelper implements Cloneable
    */
   public void print(String txt, String ctt, String cst)
   {
-    if (this.response != null && !this.response.isCommitted())
-    {
+    if (this.response != null && !this.response.isCommitted()) {
       if (cst != null) {
-          this.response.setCharacterEncoding(cst);
+        this.response.setCharacterEncoding(cst);
       }
       if (ctt != null) {
-          this.response.setContentType(ctt);
+        this.response.setContentType(ctt);
       }
     }
-    this.getResponseWrtr().print(txt);
+    try {
+      this.getOutputWriter(  ).write(txt);
+    } catch (IOException e)  {
+      throw new HongsError(0x32, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -890,7 +928,7 @@ public class ActionHelper implements Cloneable
    */
   public void responed()
   {
-    PrintWriter pw =  this.getResponseWrtr();
+    Writer pw = this.getOutputWriter(  );
     String pb = CoreConfig.getInstance().getProperty ("core.powered.by");
     String cb = ( String )  this.request.getAttribute( Cnst.BACK_ATTR  );
 
@@ -903,12 +941,16 @@ public class ActionHelper implements Cloneable
         this.response.setHeader("X-Powered-By", pb);
     }
 
+    try {
     if (cb != null) {
-        pw.print("function " + cb + "() {return " );
-        pw.print( Data.toString(this.responseData));
-        pw.print(";}");
+        pw.write("function " + cb + "() {return " );
+        pw.write( Data.toString(this.responseData));
+        pw.write(";}");
     } else {
-        pw.print( Data.toString(this.responseData));
+        pw.write( Data.toString(this.responseData));
+    }
+    } catch (IOException ex ) {
+        throw new HongsError(0x32, "Can not send to client.", ex);
     }
 
     this.responseData = null;

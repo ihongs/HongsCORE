@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.IOException;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -65,10 +66,10 @@ public class CoreConfig
    */
   public void load(String name)
   {
-    InputStream is;
-    Exception   er;
     String      fn;
     boolean     ld;
+    Exception   er;
+    InputStream is;
 
     // 资源中的作为默认配置
     fn = name.contains(".")
@@ -76,51 +77,45 @@ public class CoreConfig
        : "app/hongs/conf/"  + name + ".properties";
     is = this.getClass().getClassLoader().getResourceAsStream(fn);
     ld = is != null;
-    if ( ld )  try
-    {
+    if ( ld )  try {
         defaults.load( is);
     }
-    catch (IOException ex)
-    {
+    catch (IOException ex) {
         throw new app.hongs.HongsError(0x2b, "Can not read '"+name+".properties'.", ex);
     }
 
     // 优先尝试从配置目录的 .properties 加载数据
-    try
-    {
+    try {
         fn = Core.CONF_PATH + File.separator + name + ".properties";
         is = new FileInputStream(fn);
         this.load(is);
         return;
     }
-    catch (FileNotFoundException ex)
-    {
+    catch (FileNotFoundException ex) {
         er = ex;
     }
-    catch (IOException ex)
-    {
+    catch (IOException ex) {
         throw new app.hongs.HongsError(0x2b, "Can not read '"+name+".properties'.", ex);
     }
 
     // 然后尝试从配置目录的 .prop.xml 中加载数据
-    try
-    {
+    try {
         fn = Core.CONF_PATH + File.separator + name + Cnst.PROP_EXT + ".xml";
         is = new FileInputStream(fn);
         this.loadFromXML(is);
         return;
     }
-    catch (FileNotFoundException ex)
-    {
+    catch (FileNotFoundException ex) {
         er = ex;
     }
-    catch (IOException ex)
-    {
+    catch (IOException ex) {
         throw new app.hongs.HongsError(0x2b, "Can not read '"+name+Cnst.PROP_EXT+".xml'.", ex);
     }
 
-    if ( ! ld )
-    {
+    // 没有额外的配置则将默认配置放到前台
+    if (ld) {
+        this.putAll(defaults);
+    } else {
         throw new app.hongs.HongsError(0x2a, "Can not find '"+name+"' properties config.", er);
     }
   }
@@ -233,6 +228,33 @@ public class CoreConfig
     {
       return def;
     }
+  }
+
+  /**
+   * 获取默认配置
+   * @return
+   */
+  public Properties getDefaults()
+  {
+    return defaults;
+  }
+
+  /**
+   * 用默认值填充
+   * @return 
+   */
+  public CoreConfig padDefaults()
+  {
+    if (defaults != null) {
+        for (Map.Entry et : defaults.entrySet()) {
+            Object k = et.getKey( );
+            if (this.containsKey(k) == false) {
+                this.put( k , et.getValue() );
+            }
+        }
+        defaults  = null;
+    }
+    return  this;
   }
 
   //** 静态属性及方法 **/

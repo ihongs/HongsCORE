@@ -117,8 +117,10 @@ public class Verify implements Veri {
             try {
                 data = rule.verify(data);
             } catch (Wrong  w) {
-                // 设置字段标签
-                w.setLocalizedSegment( (String) rule.params.get("__disp__") );
+                // 设置字段标签和取值
+                if (w.getLocalizedSegment() == null) {
+                    w.setLocalizedSegment(( String ) rule.params.get("__disp__"));
+                }
                 failed(wrongz, w , name);
                 data =  BLANK;
                 break;

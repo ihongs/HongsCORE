@@ -2,11 +2,10 @@ package app.hongs.util.verify;
 
 import app.hongs.Cnst;
 import app.hongs.HongsException;
-import app.hongs.action.SocketHelper;
 import app.hongs.db.DB;
 import java.util.Map;
-import javax.servlet.http.HttpSession;
 import javax.websocket.Session;
+import javax.servlet.http.HttpSession;
 
 /**
  * 消息区域ID
@@ -16,22 +15,22 @@ public class MesageTopic extends Rule {
 
     @Override
     public Object verify(Object value) throws Wrong, Wrongs, HongsException {
-        /**/Session   sess = (/**/Session)    values.get    (/**/Session.class.getName());
-        SocketHelper  hepr = SocketHelper.getInstance(sess );
-        HttpSession    ses = (HttpSession) hepr.getAttribute(HttpSession.class.getName());
-        Object         uid = hepr.getAttribute(Cnst.UID_SES);
-        String         tid = hepr.getParameter("tid");
-        Object         gid = ses.getId(  );
+        /**/Session  sess = (/**/Session) values.get(/**/Session.class.getName());
+        /**/Map    propes = sess.getUserProperties();
+        HttpSession  hses = (HttpSession) propes.get(HttpSession.class.getName());
+        String tid = sess.getPathParameters().get("tid");
+        Object uid = hses.getAttribute(Cnst.UID_SES);
+        Object gid = hses.getId();
 
         values.put("uid", uid);
         values.put("tid", tid);
         values.put("gid", gid);
 
-        if (uid == null || "".equals(uid)) {
-            throw new Wrong("core.uid.cannot.be.empty").setLocalizedSection("mesage");
-        }
         if (tid == null || "".equals(tid)) {
             throw new Wrong("core.tid.cannot.be.empty").setLocalizedSection("mesage");
+        }
+        if (uid == null || "".equals(uid)) {
+            throw new Wrong("core.uid.cannot.be.empty").setLocalizedSection("mesage");
         }
 
         DB  db = DB.getInstance("mesage");

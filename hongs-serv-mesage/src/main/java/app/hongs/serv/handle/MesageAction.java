@@ -201,9 +201,10 @@ public class MesageAction {
             ver.addRulesByForm("mesage", "connect");
             tmp = ver.verify(dat);
 
-            // 提取主题并将连接数据并入消息数据
+            // 提取主题并将连接数据并入消息数据, 清空规则为校验消息做准备
             tid = (String) tmp.get("tid");
-                  dat.putAll(tmp);
+            ver.getRules().clear();
+            dat.putAll(tmp);
 
             // 验证消息数据
             ver.addRulesByForm("mesage", "message");

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <form name="connect">
-        <field name="tid" rule="MesageTopic"></field><!-- 目标编号 -->
+        <field name="tid" rule="MesageTopic" required=""></field><!-- 目标编号 -->
         <field name="uid" required="yes"></field><!-- 用户编号 -->
         <field name="gid" required="yes"></field><!-- 终端标识 -->
     </form>
@@ -21,16 +21,16 @@
         <field name="file" type="file"></field><!-- 附带文件, kind 为 image,audio,video 时有值 -->
     </form>
     <enum name="type">
-        <value name="user">用户</value>
-        <value name="group">讨论组</value>
-        <value name="crowd">临时组</value>
+        <value code="user">用户</value>
+        <value code="group">讨论组</value>
+        <value code="crowd">临时组</value>
     </enum>
     <enum name="kind">
-        <value name="note">通告</value>
-        <value name="text">文本</value>
-        <value name="link">链接</value>
-        <value name="image">图片</value>
-        <value name="audio">音频</value>
-        <value name="video">视频</value>
+        <value code="note">通告</value>
+        <value code="text">文本</value>
+        <value code="link">链接</value>
+        <value code="image">图片</value>
+        <value code="audio">音频</value>
+        <value code="video">视频</value>
     </enum>
 </root>

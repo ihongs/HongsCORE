@@ -131,14 +131,14 @@ function hsResponObj(rst, qut, pus) {
                     alert(rst.msg);
                 }
                 if (rst.err && /^Goto /i.test(rst.err)) {
-                    var url = rst.err.substring(5);
-                    if (url == "#") {
-                        location.reload(   );
-                    } else {
+                    var url  = rst.err.substring(5);
+                    if (url != "#") {
                         location.assign(url);
+                    } else {
+                        location.reload();
                     }
                 }
-                throw new Exception(rst.err);
+                throw new Error (rst.err);
             }
         }
         // 成功失败消息处理 (失败则总是发出警告)

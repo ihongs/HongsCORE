@@ -1,7 +1,6 @@
 package app.hongs.serv.handle;
 
 import app.hongs.Cnst;
-import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.VerifyHelper;
@@ -9,28 +8,25 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Permit;
 import app.hongs.action.anno.Select;
 import app.hongs.db.DB;
-import app.hongs.db.FetchCase;
+import app.hongs.db.util.FetchCase;
 import app.hongs.db.Model;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Wrongs;
 import java.util.Collection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Properties;
 import org.apache.kafka.clients.consumer.Consumer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.PartitionInfo;
 import org.apache.kafka.common.TopicPartition;
-import org.apache.kafka.common.serialization.StringDeserializer;
 
 /**
  * 消息处理器
@@ -48,8 +44,9 @@ public class MesageAction {
         long   bid = Synt.declare(req.get("bid"), 0L);
         int     rn = Synt.declare(req.get("rn" ), Cnst.RN_DEF);
 
-        String top = getPrefix()+".m:"+tid;
-        Consumer c = newConsumer(rn);
+        String top = MesageSocket.topicPrefix() + ".m:" + tid ;
+        Consumer c = MesageSocket.newConsumer(null, null, rn );
+        c.subscribe(Arrays.asList(top));
 
         // 一个 tid 相同 key，所以只有一个分区
         TopicPartition      tp = null;
@@ -188,8 +185,8 @@ public class MesageAction {
         VerifyHelper ver = new VerifyHelper( );
         Map      dat = helper.getRequestData();
         byte     mod = Synt.declare(dat.get("md"), (byte) 0);
-        Producer pcr = newProducer();
-        String   pre = getPrefix  ();
+        Producer pcr = MesageSocket.newProducer();
+        String   pre = MesageSocket.topicPrefix  ();
         String   tid ;
         Map      tmp ;
 
@@ -227,26 +224,6 @@ public class MesageAction {
     @Permit(conf="$", role={"", "handle", "manage"})
     public void createFile(ActionHelper helper) {
         helper.reply("",helper.getRequestData());
-    }
-
-    protected String getPrefix() {
-        Properties prop = new CoreConfig("mesage");
-        return prop.getProperty("core.mesage.topic.prefix");
-    }
-
-    protected Producer newProducer() {
-        Properties prop = new CoreConfig("mesage_consumer").clone();
-        prop.put(  "key.deserializer", StringDeserializer.class);
-        prop.put("value.deserializer", StringDeserializer.class);
-        return new KafkaProducer(prop);
-    }
-
-    protected Consumer newConsumer(int rn) {
-        Properties prop = new CoreConfig("mesage_consumer").clone();
-        prop.put(  "key.deserializer", StringDeserializer.class);
-        prop.put("value.deserializer", StringDeserializer.class);
-        prop.setProperty("max.poll.records", String.valueOf(rn));
-        return new KafkaConsumer(prop);
     }
 
     /**

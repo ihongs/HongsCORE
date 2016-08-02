@@ -10,6 +10,7 @@ import app.hongs.action.VerifyHelper;
 import app.hongs.util.Data;
 import app.hongs.util.verify.Wrongs;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -49,6 +50,7 @@ public class MesageSocket {
             Worker        worker;
             Producer      producer;
             Consumer      consumer;
+            String        tid;
             String        uid;
             String        gid;
 
@@ -75,7 +77,7 @@ public class MesageSocket {
                     sess.getBasicRemote().sendText(Data.toString(sd));
                     return;
                 } catch (HongsException ex) {
-                    Map sd = inReply(ex.getLocalizedMessage());
+                    Map sd = toError(ex.getLocalizedMessage());
                     sess.getBasicRemote().sendText(Data.toString(sd));
                     return;
                 }
@@ -84,12 +86,14 @@ public class MesageSocket {
                 return;
             }
 
+            tid = (String) data.get("tid");
             uid = (String) data.get("uid");
             gid = (String) data.get("gid");
 
             // 生产者、消费者
             producer = newProducer();
             consumer = newConsumer(gid , uid , 0 );
+            consumer.subscribe(Arrays.asList(topicPrefix + "_m_" + tid));
 
             // 当前会话处理器
             worker   = new Worker (consumer, sess);
@@ -155,7 +159,7 @@ public class MesageSocket {
                     sess.getBasicRemote().sendText(Data.toString(sd));
                     return;
                 } catch (HongsException ex) {
-                    Map sd = inReply(ex.getLocalizedMessage());
+                    Map sd = toError(ex.getLocalizedMessage());
                     sess.getBasicRemote().sendText(Data.toString(sd));
                     return;
                 }
@@ -163,13 +167,14 @@ public class MesageSocket {
                 CoreLogger.error(ex);
                 return;
             }
+            String str = Data.toString(dat);
 
             if (Core.DEBUG > 0) {
-                CoreLogger.trace("Send to "+topicPrefix+".m:"+tid+" "+dat);
+                CoreLogger.trace("Send to "+topicPrefix+"_m_"+tid+" "+str);
             }
 
-            producer.send(new ProducerRecord<>(topicPrefix+".m:"+tid, tid, dat)); // 消息
-            producer.send(new ProducerRecord<>(topicPrefix+".n:"/**/, tid, dat)); // 通知
+            producer.send(new ProducerRecord<>(topicPrefix+"_m_"+tid, tid, str)); // 消息
+            producer.send(new ProducerRecord<>(topicPrefix+"_n" /**/, tid, str)); // 通知
         } catch (Exception|Error er) {
             CoreLogger.error(  er  );
         } finally {
@@ -194,31 +199,27 @@ public class MesageSocket {
 
         @Override
         public void run() {
-            Map     sd;
-            String  ss;
-
-            while (!exit) {
-                try {
-
-                    ConsumerRecords<String, Map> rs = cons.poll(pollTimeout);
-                for(ConsumerRecord <String, Map> rd : rs) {
-                    sd = rd.value(  );
-                    sd.put("id" , rd.offset());
-                    sd = inReply (sd);
-                    ss = Data.toString(  sd  );
-
+            try {
+                while (!exit) {
                     try {
-                        sess.getBasicRemote().sendText(ss);
-                    } catch (IOException ex) {
-                        CoreLogger.error(ex);
+                            ConsumerRecords<String, String> rs = cons.poll(pollTimeout);
+                        for(ConsumerRecord <String, String> rd : rs) {
+                            String sd  =  rd.value( ).substring( 1 );
+                            sd = "{\"ok\":true,\"ern\":\"\",\"err\":\"\",\"msg\":\"\","
+                               + "\"info\":{\"id\":\"" + rd.offset() + "\"," + sd + "}";
+
+                            try {
+                                sess.getBasicRemote().sendText(sd);
+                            } catch (IOException ex) {
+                                CoreLogger.error(ex);
+                            }
+                        }
+                    } catch (Exception | Error er) {
+                        CoreLogger.error(er);
                     }
                 }
-
-                } catch (Exception|Error er) {
-                        CoreLogger.error(er);
-                } finally {
-                        cons.close();
-                }
+            }  finally {
+                cons.close();
             }
         }
 
@@ -244,11 +245,19 @@ public class MesageSocket {
         pollTimeout = cnf.getProperty("core.mesage.poll.timeout", 100L );
     }
 
-    private static KafkaProducer newProducer() {
+    public static long pollTimeout() {
+        return pollTimeout;
+    }
+
+    public static String topicPrefix() {
+        return topicPrefix;
+    }
+
+    public static KafkaProducer newProducer() {
         return new KafkaProducer(producerConfig);
     }
 
-    private static KafkaConsumer newConsumer(String gid, String cid, int max) {
+    public static KafkaConsumer newConsumer(String gid, String cid, int max) {
         Properties cnf = (Properties) consumerConfig.clone();
         if (gid != null) {
             cnf.setProperty( "group.id", gid);
@@ -321,14 +330,9 @@ public class MesageSocket {
         return rd;
     }
 
-    private static Map inReply(Map rd) {
+    private static Map toError(String msg) {
         Map xd = new HashMap();
-        xd.put("info", rd);
-        return toReply(xd);
-    }
-
-    private static Map inReply(String msg) {
-        Map xd = new HashMap();
+        xd.put("ok",false);
         xd.put("msg", msg);
         return toReply(xd);
     }

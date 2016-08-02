@@ -6,6 +6,7 @@ import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.cmdlet.serv.ServerCmdlet;
+import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -29,10 +30,10 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
  * <code>
  *  // 事件处理器示例:
  *  @ServerEndpoint(value="/sock/path/{xxx}", configurator=SocketHelper.Config.class)
- *  public class Xxx {
- *      @OnXxx
- *      public void onXxx(Session sess) {
- *          SocketHelper helper = SocketHelper.getInstance(sess);
+ *  public class Xxxx {
+ *      @OnXxxx
+ *      public void onXxxx(Session ss) {
+ *          SocketHelper helper = SocketHelper.getInstance(ss);
  *          try {
  *              // TODO: Some thing...
  *          }
@@ -139,7 +140,14 @@ public class SocketHelper extends ActionHelper {
 
     @Override
     public void responed() {
-        print(getResponseData());
+        Session sess = (Session) getAttribute(Session.class.getName());
+        try {
+            Map    map = getResponseData( );
+            String str = Data.toString(map);
+            sess.getBasicRemote().sendText(str);
+        } catch (IOException ex ) {
+            throw new HongsError(0x32, "Can not send to remote.", ex );
+        }
     }
 
     /**
@@ -348,7 +356,7 @@ public class SocketHelper extends ActionHelper {
             }
 
             CoreConfig   c = CoreConfig.getInstance("_init_");
-            String ws =  c.getProperty("jetty.webs");
+            String ws =  c.getProperty("jetty.sock");
             if (null !=  ws) {
                 String[] wa = ws.split(";");
                 for ( String  wn: wa) {

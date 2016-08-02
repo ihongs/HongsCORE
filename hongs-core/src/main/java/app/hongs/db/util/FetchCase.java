@@ -1,4 +1,4 @@
-package app.hongs.db;
+package app.hongs.db.util;
 
 import app.hongs.HongsError;
 import app.hongs.HongsException;
@@ -87,7 +87,7 @@ public class FetchCase
   protected int[]               limits;
 
   protected List<Object>        wparams;
-  protected List<Object>        hparams;
+  protected List<Object>        vparams;
   protected Map<String, Object> options;
 
   protected byte                joinType;
@@ -101,28 +101,28 @@ public class FetchCase
   public    static final byte   INNER = 4;
   public    static final byte   CROSS = 5;
 
-  private static final Pattern ps = Pattern
+  static final Pattern ps = Pattern
           .compile("^\\s*,\\s*" /***/ , Pattern.CASE_INSENSITIVE);
-  private static final Pattern pw = Pattern
+  static final Pattern pw = Pattern
           .compile("^\\s*(AND|OR)\\s+", Pattern.CASE_INSENSITIVE);
 
   // 查找列名加关联层级名
-  private static final Pattern pa = Pattern
-          .compile("(['`\\)\\w]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,|$))");
+  static final Pattern pa = Pattern
+          .compile("(['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
 
   // 通过约定标识确定字段
-  private static final Pattern pc = Pattern
+  static final Pattern pf = Pattern
           .compile("(?<![`\\w])[\\.:!](`.+?`|\\w+|\\*)");
 
   // 查找与字段相关的元素
-  private static final Pattern p0 = Pattern
+  static final Pattern p0 = Pattern
           .compile("('.+?'|`.+?`|\\w+|\\*|\\))\\s*");
   // 后面不跟字段可跟别名, \\d 换成 \\w 则不处理没 "`" 包裹的字段
-  private static final Pattern p1 = Pattern
+  static final Pattern p1 = Pattern
           .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
                      , Pattern.CASE_INSENSITIVE);
   // 后面可跟字段的关键词
-  private static final Pattern p2 = Pattern
+  static final Pattern p2 = Pattern
           .compile("IS|IN|ON|OR|AND|NOT|TOP|CASE|WHEN|THEN|ELSE|LIKE|ESCAPE|BETWEEN|DISTINCT"
                      , Pattern.CASE_INSENSITIVE);
 
@@ -142,7 +142,7 @@ public class FetchCase
     this.orders     = new StringBuilder();
     this.limits     = new  int [ 0 ] ;
     this.wparams    = new ArrayList();
-    this.hparams    = new ArrayList();
+    this.vparams    = new ArrayList();
     this.options    = new  HashMap ();
     this.joinList   = new LinkedHashSet();
     this.joinType   =  0  ;
@@ -158,33 +158,19 @@ public class FetchCase
   public FetchCase clone()
   {
     try {
-    FetchCase caze  = (FetchCase) super.clone();
-    caze.fields     = new StringBuilder(this.fields);
-    caze.wheres     = new StringBuilder(this.wheres);
-    caze.groups     = new StringBuilder(this.groups);
-    caze.havins     = new StringBuilder(this.havins);
-    caze.orders     = new StringBuilder(this.orders);
-    caze.limits     = this.limits.clone();
-    caze.wparams    = new ArrayList(this.wparams);
-    caze.hparams    = new ArrayList(this.hparams);
-    caze.options    = new  HashMap (this.options);
-    caze.joinList   = new LinkedHashSet();
-
-    // 深度克隆关联列表
-    for (FetchCase fc : joinList) {
-        caze.joinList.add(fc.clone(caze));
-    }
-
-    return caze;
+        return this.clone(new HashMap(this.options));
     }
     catch (CloneNotSupportedException ex) {
         throw  new  HongsError.Common(ex);
     }
   }
-
-  private FetchCase clone(FetchCase caxe) {
-    try {
+  private FetchCase clone(Map opts )
+    throws CloneNotSupportedException
+  {
     FetchCase caze  = (FetchCase) super.clone();
+
+    caze.tableName  = this.tableName;
+    caze.name       = this.name;
     caze.fields     = new StringBuilder(this.fields);
     caze.wheres     = new StringBuilder(this.wheres);
     caze.groups     = new StringBuilder(this.groups);
@@ -192,20 +178,19 @@ public class FetchCase
     caze.orders     = new StringBuilder(this.orders);
     caze.limits     = this.limits.clone();
     caze.wparams    = new ArrayList(this.wparams);
-    caze.hparams    = new ArrayList(this.hparams);
-    caze.options    = caxe.options;
+    caze.vparams    = new ArrayList(this.vparams);
+    caze.options    = opts;
     caze.joinList   = new LinkedHashSet();
+    caze.joinType   = this.joinType;
+    caze.joinExpr   = this.joinExpr;
+    caze.joinName   = this.joinName;
 
     // 深度克隆关联列表
-    for (FetchCase fc : joinList) {
-        caze.joinList.add(fc.clone(caxe));
+    for ( FetchCase caxe : joinList) {
+        caze.joinList.add( caxe.clone() );
     }
 
     return caze;
-    }
-    catch (CloneNotSupportedException ex) {
-        throw  new  HongsError.Common(ex);
-    }
   }
 
   //** 查询 **/
@@ -254,6 +239,7 @@ public class FetchCase
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
+   * @deprecated 请使用 filter
    */
   public FetchCase where(String where, Object... params)
   {
@@ -290,11 +276,12 @@ public class FetchCase
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
+   * @deprecated 请使用 having
    */
   public FetchCase which(String where, Object... params)
   {
     this.havins.append(" AND ").append(where);
-    this.hparams.addAll(Arrays.asList(params));
+    this.vparams.addAll(Arrays.asList(params));
     return this;
   }
 
@@ -383,9 +370,29 @@ public class FetchCase
     return this;
   }
 
+  /**
+   * 查询字段前缀
+   * 比如 select("fn1,fn2").in("foo") 得到 `foo.fn1`,`foo.fn2`
+   * 查询结果会按 . 自动拆解为层级结构, 如 foo={fn1=v1,fn2=v2}
+   * @param name
+   * @return
+   */
   public FetchCase in(String name)
   {
     this.joinName = name;
+    return this;
+  }
+
+  /**
+   * 设置查询别名
+   * 等同 from,join 第二参数的作用, 且当 in("") 时与 in(name) 结果一致
+   * 但与 in 不同在于, as 仅设别名, 不与 in("") 配合不会为结果添加前缀
+   * @param name
+   * @return
+   */
+  public FetchCase as(String name)
+  {
+    this.name = name;
     return this;
   }
 
@@ -594,26 +601,83 @@ public class FetchCase
    * @param an
    * @return
    */
-  private String addSQLTbln(String s, String an)
+  final String addSQLTbln(CharSequence s, String an)
   {
-      StringBuffer sb = new StringBuffer( );
-      Matcher      ma = pa.matcher(s);
-      String       fn;
-      while ( ma.find() ) {
-              fn = ma.group(2);
-          if (fn == null) {
-              fn = ma.group(3);
+      StringBuilder b = new StringBuilder();
+      StringBuilder p = new StringBuilder();
+      boolean quoteBegin = false;
+      boolean fieldBegin = false;
+      int     groupLevel = 0;
+
+      for (int i = 0; i < s.length(); i++) {
+          char c = s.charAt(i);
+          p.append(c);
+
+          if (quoteBegin) {
+              if (c == '\'') {
+                  quoteBegin = false;
+              }
+              continue;
           }
-          if (ma.group(1) == null) {
-              fn = "`"+fn+"` AS `"+an+"."+fn+"`";
+          if (fieldBegin) {
+              if (c == '`') {
+                  fieldBegin = false;
+              }
+              continue;
+          }
+
+          if (c == '\'') {
+              quoteBegin = true;
+              continue;
+          }
+          if (c == '`') {
+              fieldBegin = true;
+              continue;
+          }
+
+          if (c == '(') {
+              groupLevel += 1;
+              continue;
+          }
+          if (c == ')') {
+              groupLevel -= 1;
+              continue;
+          }
+          if (groupLevel != 0) {
+              continue;
+          }
+
+          if (c != ',') {
+              continue;
+          }
+
+          b.append(setSQLTbln(p, an));
+          p.setLength(0);
+      }   b.append(setSQLTbln(p, an));
+
+      return b.toString();
+  }
+
+  final CharSequence setSQLTbln(CharSequence s, String an)
+  {
+      Matcher m = pa.matcher(s);
+      String  n;
+
+      if (m.find()) {
+              n = m.group(2);
+          if (n == null) {
+              n = m.group(3);
+          }
+          if (m.group(1) == null) {
+              n = "`"+n+"` AS `"+an+"."+n+"`";
           } else {
-              fn = /* alias */ "`"+an+"."+fn+"`";
+              n = /* alias */"`"+an+"."+n+"`";
           }
-          fn = Matcher.quoteReplacement(fn);
-          ma.appendReplacement(sb, "$1"+fn+"$4");
+          n = Matcher.quoteReplacement(n);
+          s = m.replaceFirst("$1"+n+"$4");
       }
-      ma.appendTail ( sb );
-      return sb.toString();
+
+      return s;
   }
 
   /**
@@ -623,17 +687,31 @@ public class FetchCase
    * @param pn
    * @return
    */
-  private String addSQLTbls(String s, String tn, String pn)
+  final String addSQLTbls(CharSequence s, String tn, String pn)
   {
       // 顶层且无关联则直接去掉前缀
       if (null== pn && joinList.isEmpty()) {
           return delSQLTbls(s);
       }
 
-      String       x, y, z;
-      StringBuffer f = new StringBuffer(s);
+      StringBuffer f = new  StringBuffer(s);
       StringBuffer b;
       Matcher      m;
+      String x, y, z;
+
+      /**
+       * 为字段名前添加表别名
+       * 先找出所有可能是字段的单元
+       * 判断该单元是不是以 .|(|{ 结尾, 这些是表别名或函数名等, 跳过此组
+       * 判断该单元是不是以 .|:|! 开头, 这些是前版本的别名方案, 待后处理
+       * 然后排除掉纯字符串,保留字,别名,数字等
+       *
+       * 通过疑似字段的前后环境及偏移记录来判断, 符合以下规范:
+       * [TABLE.]FIELD[[ AS] ALIAS], FUNCTION(FIELS...)
+       *
+       * 以下 i 为单元开始位置, j 为单元结束位置, k 为上一组单元结束位置
+       * 单元包含结尾空白字符
+       */
 
       z = "`"+tn+"`.$0";
       m = p0.matcher(f);
@@ -659,12 +737,12 @@ public class FetchCase
                   continue;
               }
           }
-          x = m.group(1);
-          if (x.startsWith("'")/*ST*/) {
+          x = m.group (1);
+          if (x.charAt(0)=='\'') {
               // 字符串后不跟字段
               k  = j;
           } else
-          if (x.startsWith("*")&&k==i) {
+          if (x.charAt(0)=='*' &&k==i) {
               // 跳过乘号且不偏移
           } else
           if (p2.matcher(x).matches()) {
@@ -690,7 +768,7 @@ public class FetchCase
       x = "$1";
       y = "`"+pn+"`.$1";
       z = "`"+tn+"`.$1";
-      m = pc.matcher(f);
+      m = pf.matcher(f);
       b = new StringBuffer();
       while ( m.find( )) {
           switch (f.charAt(m.start())) {
@@ -705,26 +783,26 @@ public class FetchCase
   }
 
   /**
-   * 替换SQL表名
+   * 清除SQL表名
    * @param s
    * @return
    */
-  private String delSQLTbls(String s)
+  final String delSQLTbls(CharSequence s)
   {
+      StringBuffer f = new  StringBuffer(s);
+      StringBuffer b;
       Matcher      m;
       String       x;
-      StringBuffer b;
-      StringBuffer c = new StringBuffer(s);
 
       x = "$1";
-      m = pc.matcher(c);
+      m = pf.matcher(f);
       b = new StringBuffer();
       while ( m.find( )) {
           m.appendReplacement(b, x);
       }
-      c = m.appendTail(b);
+      f = m.appendTail(b);
 
-      return c.toString();
+      return f.toString();
   }
 
   public int getStart() {
@@ -776,7 +854,7 @@ public class FetchCase
   private void getParamsDeep(List wparamz, List hparamz)
   {
     wparamz.addAll(this.wparams);
-    hparamz.addAll(this.hparams);
+    hparamz.addAll(this.vparams);
 
     for (FetchCase caze  :  this.joinList)
     {
@@ -878,16 +956,30 @@ public class FetchCase
     return caze;
   }
 
-  //** 获取选项 **/
+  //** 选项操作 **/
 
   /**
-   * 是否存在选项
+   * 设置选项
    * @param key
-   * @return 存在为true, 反之为false
+   * @param obj
+   * @return 当前查询结构对象
    */
-  public boolean hasOption(String key)
+  public FetchCase setOption(String key, Object obj)
   {
-    return this.options.containsKey(key);
+    this.options.put(key, obj);
+    return this;
+  }
+
+  /**
+   * 获取选项(可指定类型)
+   * @param <T>
+   * @param key
+   * @param def
+   * @return 指定选项
+   */
+  public <T> T getOption(String key , T def)
+  {
+    return Synt.asserts (this.getOption(key), def);
   }
 
   /**
@@ -901,27 +993,23 @@ public class FetchCase
   }
 
   /**
-   * 获取选项(可指定类型)
-   * @param <T>
+   * 删除选项
    * @param key
-   * @param def
-   * @return 指定选项
+   * @return 旧的选项
    */
-  public <T> T getOption(String key, T def)
+  public Object delOption(String key)
   {
-    return Synt.asserts(this.getOption(key), def);
+    return this.options.remove(key);
   }
 
   /**
-   * 设置参数(单个)
+   * 是否存在选项
    * @param key
-   * @param obj
-   * @return 当前查询结构对象
+   * @return 存在为true, 反之为false
    */
-  public FetchCase setOption(String key, Object obj)
+  public boolean hasOption(String key)
   {
-    this.options.put(key, obj);
-    return this;
+    return this.options.containsKey(key);
   }
 
   //** 不推荐的方法 **/
@@ -1034,7 +1122,7 @@ public class FetchCase
   public FetchCase setWhich(String where, Object... params)
   {
     this.havins = new StringBuilder(checkWhere(where));
-    this.hparams = Arrays.asList(params);
+    this.vparams = Arrays.asList(params);
     return this;
   }
 
@@ -1191,7 +1279,7 @@ public class FetchCase
 
   /**
    * 删除全部匹配的记录
-   * 注意: 会忽略 join 的条件, 有 :fn, xx.fn 的字段条件会报 SQL 错误
+ 注意: 会忽略 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
    * @return
    * @throws HongsException
    */
@@ -1200,14 +1288,13 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTbls(wheres.toString());
-    whr  =  pw.matcher(whr).replaceFirst( "" );
-    return _db_.delete(tableName, /**/ whr, wparams.toArray());
+    String whr = delSQLTbls(pw.matcher(wheres).replaceFirst(""));
+    return _db_.delete(tableName, /**/ whr, wparams.toArray(  ));
   }
 
   /**
    * 更新全部匹配的数据
-   * 注意: 会忽略 join 的条件, 有 :fn, xx.fn 的字段条件会报 SQL 错误
+ 注意: 会忽略 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
    * @param dat
    * @return
    * @throws HongsException
@@ -1217,9 +1304,8 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTbls(wheres.toString());
-    whr  =  pw.matcher(whr).replaceFirst( "" );
-    return _db_.update(tableName, dat, whr, wparams.toArray());
+    String whr = delSQLTbls(pw.matcher(wheres).replaceFirst(""));
+    return _db_.update(tableName, dat, whr, wparams.toArray(  ));
   }
 
   /**

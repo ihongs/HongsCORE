@@ -1,6 +1,8 @@
-package app.hongs.db;
+package app.hongs.db.util;
 
 import app.hongs.HongsException;
+import app.hongs.db.DB;
+import app.hongs.db.Table;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -9,26 +11,27 @@ import java.util.HashMap;
  * 分页查询
  * @author Hongs
  */
-public class FetchPage
+public final class FetchPage
 {
 
-  private DB db;
+  private final DB db;
 
-  private Table tb = null;
+  private final Table tb;
 
-  private FetchCase caze;
+  private final FetchCase caze;
 
-  private int page =  1 ;
+  private final Map info = new HashMap();
 
-  private int pags =  0 ;
+  private int page =  1;
 
-  private int rows = 20 ;
+  private int pags =  0;
 
-  private Map info = new HashMap();
+  private int rows = 20;
 
   public FetchPage(FetchCase caze, DB db) throws HongsException
   {
     this.db    = db;
+    this.tb    = null;
     this.caze  = caze;
 
     Object page2 = caze.getOption("page");
@@ -184,7 +187,7 @@ public class FetchPage
     }
     else
     {
-      caze2.setSelect( "COUNT(.*) AS __count__");
+      caze2.setSelect( "COUNT(!*) AS __count__");
       sql    = caze2.getSQL(/**/);
       params = caze2.getParams( );
     }

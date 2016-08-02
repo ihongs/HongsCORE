@@ -1,5 +1,6 @@
 package app.hongs.db;
 
+import app.hongs.db.util.FetchCase;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;

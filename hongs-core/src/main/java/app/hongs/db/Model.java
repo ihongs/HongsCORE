@@ -1,5 +1,8 @@
 package app.hongs.db;
 
+import app.hongs.db.util.FetchPage;
+import app.hongs.db.util.FetchCast;
+import app.hongs.db.util.FetchCase;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
@@ -939,7 +942,7 @@ implements IEntity
   protected boolean permit(FetchCase caze, Map wh, String id)
     throws HongsException
   {
-    if (!caze.hasOption("ASSOCS") && caze.joinList.isEmpty())
+    if (! caze.hasOption("ASSOCS") && ! caze.hasJoin() )
     {
       caze.setOption("ASSOCS", new HashSet());
     }
@@ -1454,6 +1457,13 @@ implements IEntity
 //      caze.setOption("ASSOCS", tns);
     }
 
+    /**
+     * 在 packFilter 内部
+     * 不能将条件放入关联对象下
+     * 否则无法依据层级包裹条件
+     */
+    boolean inPack = caze.getOption("IN_PACK", false);
+
     Map tc =  this.table.getAssoc( key );
     if (tc == null) return;
     String[] ts = Table.getAssocPath(tc);
@@ -1461,7 +1471,7 @@ implements IEntity
     Table    tb =  this.db.getTable (tn);
     Map      cs = tb.getFields();
 
-    Map<String, Object> vs = Synt.declare( val, Map.class );
+    Map<String, Object> vs = Synt.declare(val, Map.class);
     for ( Map.Entry et2 : vs.entrySet())
     {
       String key2 = (String)et2.getKey();
@@ -1471,10 +1481,11 @@ implements IEntity
       {
         if (val2 != null)
         {
-          tns.addAll(Arrays.asList(ts) );
+          tns.addAll(Arrays.asList (ts));
           tns.add   (key);
-          FetchCase fc = caze.gotJoin(ts).gotJoin(key);
-          this.mkeyFilter(fc, val2, "`"+key+"`.`"+key2+"`");
+          this.mkeyFilter(inPack ? caze :
+              caze.gotJoin(ts).gotJoin(key),
+              val2, "`"+key+"`.`"+key2+"`");
         }
       }
     }
@@ -1490,29 +1501,29 @@ implements IEntity
   protected void packFilter(FetchCase caze, Object val, String key)
   throws HongsException
   {
+    caze.setOption("IN_PACK", true);
     StringBuilder ws = new StringBuilder();
-    FetchCase cx = new FetchCase();
-    cx.joinList  = caze.joinList;
-    cx.wparams   = caze.wparams ;
-    cx.options   = caze.options ;
+    FetchCast cx = new FetchCast(  caze  );
     Set<Map> set = Synt.declare(val, Set.class);
     for(Map  map : set)
     {
       filter( cx , map);
-      if (cx.wheres.length() > 0)
+      String  wx = cx.getFilter();
+      if (wx.length() > 0)
       {
         ws.append(' ')
           .append(key)
           .append(' ')
           .append('(')
-          .append(cx.wheres.substring(5))
+          .append( wx.substring(5) )
           .append(')');
       }
     }
     if (ws.length() > 0)
     {
-      caze.where ( '(' + ws.substring(key.length() + 2) + ")");
+      caze.where ('(' + ws.substring(key.length() + 2) + ")");
     }
+    caze.delOption("IN_PACK");
   }
 
 }

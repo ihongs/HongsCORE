@@ -1,9 +1,11 @@
 package app.hongs.db;
 
+import app.hongs.db.util.FetchCase;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
+import app.hongs.db.util.FetchMost;
 import app.hongs.util.Synt;
 import java.sql.Types;
 import java.sql.Date;
@@ -182,7 +184,7 @@ public class Table
       caze.where(".`"+rstat+"` != ?", rflag);
     }
 
-    return FetchMore.fetchMore(this, caze, assocs);
+    return FetchMost.fetchMore(this, caze, assocs);
   }
 
   /**
@@ -244,7 +246,7 @@ public class Table
   public FetchCase filter(String where, Object... params)
     throws HongsException
   {
-    return  fetchCase(  ).filter(where, params);
+    return  fetchCase(  ).where( where, params );
   }
 
   /**
@@ -345,12 +347,22 @@ public class Table
 
   //** 工具方法 **/
 
+  public Map getParams()
+  {
+    return this.params;
+  }
+
+  public Map getAssocs()
+  {
+    return this.assocs;
+  }
+
   /**
    * 获取字段(包含名称及类型等)
    * @return 全部字段信息
    * @throws app.hongs.HongsException
    */
-  protected Map getFields()
+  public Map getFields()
     throws HongsException
   {
     if (null == this.fields)
@@ -366,7 +378,7 @@ public class Table
    * @return
    * @throws HongsException
    */
-  protected String getField(String field)
+  public String getField(String field)
     throws HongsException
   {
     String param = (String) params.get("field."+ field);
@@ -386,7 +398,7 @@ public class Table
    * @param state
    * @return
    */
-  protected String getState(String state)
+  public String getState(String state)
   {
     String param = (String) params.get("state."+ state);
     if (null == param) {
@@ -548,7 +560,7 @@ public class Table
   public void deleteSubValues(Object... ids)
     throws HongsException
   {
-    FetchMore.deleteMore(this, assocs , ids);
+    FetchMost.deleteMore(this, assocs , ids);
   }
 
   /**
@@ -562,7 +574,7 @@ public class Table
   public void insertSubValues(Map values)
     throws HongsException
   {
-    FetchMore.insertMore(this, assocs, values);
+    FetchMost.insertMore(this, assocs, values);
   }
 
   /**

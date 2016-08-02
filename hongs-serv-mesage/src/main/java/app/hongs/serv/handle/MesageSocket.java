@@ -41,10 +41,9 @@ public class MesageSocket {
 
     @OnOpen
     public void onOpen(Session sess) {
+        SocketHelper hepr = SocketHelper.getInstance(sess);
         try {
-            SocketHelper.getInstance(sess); // 初始化环境
-
-            Map           prop = sess.getUserProperties();
+            Map           prop = sess.getUserProperties( );
             Map           data;
             VerifyHelper  veri;
             Worker        worker;
@@ -65,24 +64,17 @@ public class MesageSocket {
              * 校验过程中以此提取请求、会话数据等
              */
             try {
-                try {
-                    data.put(Session.class.getName(), sess ); // 会话
+                data.put(Session.class.getName(), sess ); // 会话
 
-                    veri.addRulesByForm("mesage", "connect");
-                    data = veri.verify(data);
-                    veri.getRules( ).clear();
-                    veri.addRulesByForm("mesage", "message");
-                } catch (Wrongs wr ) {
-                    Map sd = toReply(wr.toReply ( (byte) 0 ) );
-                    sess.getBasicRemote().sendText(Data.toString(sd));
-                    return;
-                } catch (HongsException ex) {
-                    Map sd = toError(ex.getLocalizedMessage());
-                    sess.getBasicRemote().sendText(Data.toString(sd));
-                    return;
-                }
-            } catch (IOException ex) {
-                CoreLogger.error(ex);
+                veri.addRulesByForm("mesage", "connect");
+                data = veri.verify(data);
+                veri.getRules( ).clear();
+                veri.addRulesByForm("mesage", "message");
+            } catch (Wrongs wr ) {
+                hepr.reply( wr.toReply(( byte ) 9 ));
+                return;
+            } catch (HongsException ex) {
+                hepr.fault(ex.getLocalizedMessage());
                 return;
             }
 
@@ -107,10 +99,12 @@ public class MesageSocket {
             prop.put(VerifyHelper.class.getName(), veri);
 
             setSession(sess , true );
-        } catch (Exception|Error er) {
-            CoreLogger.error(  er  );
-        } finally {
-            Core.getInstance().destroy(); // 销毁环境
+        }
+        catch (Exception|Error er) {
+            CoreLogger.error ( er);
+        }
+        finally {
+            hepr.destroy(); // 销毁环境
         }
     }
 
@@ -133,9 +127,8 @@ public class MesageSocket {
 
     @OnMessage
     public void onMessage(Session sess, String msg, @PathParam("tid") String tid) {
+        SocketHelper hepr = SocketHelper.getInstance(sess);
         try {
-            SocketHelper.getInstance(sess); // 初始化环境
-
             Map          prop = sess.getUserProperties();
             Map          data = (Map) prop.get( "data" );
             VerifyHelper veri = (VerifyHelper) prop.get(VerifyHelper.class.getName());
@@ -151,20 +144,13 @@ public class MesageSocket {
 
             // 验证数据
             try {
-                try {
-                    dat.putAll(data);
-                    dat = veri.verify(dat);
-                } catch (Wrongs wr ) {
-                    Map sd = toReply(wr.toReply( ( byte ) 0 ));
-                    sess.getBasicRemote().sendText(Data.toString(sd));
-                    return;
-                } catch (HongsException ex) {
-                    Map sd = toError(ex.getLocalizedMessage());
-                    sess.getBasicRemote().sendText(Data.toString(sd));
-                    return;
-                }
-            } catch (IOException ex) {
-                CoreLogger.error(ex);
+                dat.putAll(data);
+                dat = veri.verify(dat);
+            } catch (Wrongs wr ) {
+                hepr.reply( wr.toReply(( byte ) 9 ));
+                return;
+            } catch (HongsException ex) {
+                hepr.fault(ex.getLocalizedMessage());
                 return;
             }
             String str = Data.toString(dat);
@@ -175,10 +161,12 @@ public class MesageSocket {
 
             producer.send(new ProducerRecord<>(topicPrefix+"_m_"+tid, tid, str)); // 消息
             producer.send(new ProducerRecord<>(topicPrefix+"_n" /**/, tid, str)); // 通知
-        } catch (Exception|Error er) {
-            CoreLogger.error(  er  );
-        } finally {
-            Core.getInstance().destroy(); // 销毁环境
+        }
+        catch (Exception|Error er) {
+            CoreLogger.error ( er);
+        }
+        finally {
+            hepr.destroy(); // 销毁环境
         }
     }
 

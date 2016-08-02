@@ -33,7 +33,7 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
  *  public class Xxxx {
  *      @OnXxxx
  *      public void onXxxx(Session ss) {
- *          SocketHelper helper = SocketHelper.getInstance(ss);
+ *          SocketHelper sh = SocketHelper.getInstance(ss);
  *          try {
  *              // TODO: Some thing...
  *          }
@@ -41,7 +41,7 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
  *              CoreLogger.error ( ex);
  *          }
  *          finally {
- *              helper.destroy(); // 销毁环境
+ *              sh.destroy(); // 销毁环境
  *          }
  *      }
  *  }

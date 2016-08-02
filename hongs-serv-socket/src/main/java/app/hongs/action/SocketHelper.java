@@ -25,6 +25,28 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
 
 /**
  * WebSocket 助手类
+ *
+ * <code>
+ *  // 事件处理器示例:
+ *  @ServerEndpoint(value="/sock/path/{xxx}", configurator=SocketHelper.Config.class)
+ *  public class Xxx {
+ *      @OnXxx
+ *      public void onXxx(Session sess) {
+ *          SocketHelper helper = SocketHelper.getInstance(sess);
+ *          try {
+ *              // TODO: Some thing...
+ *          }
+ *          catch (Error|Exception ex) {
+ *              CoreLogger.error ( ex);
+ *          }
+ *          finally {
+ *              helper.destroy(); // 销毁环境
+ *          }
+ *      }
+ *  }
+ *  // 并将此类名(含包名)加入 _init_.properties 中 jetty.webs 值
+ * </code>
+ *
  * @author Hongs
  */
 public class SocketHelper extends ActionHelper {
@@ -33,6 +55,27 @@ public class SocketHelper extends ActionHelper {
         super(data, prop, null, null);
     }
 
+    /**
+     * 销毁环境
+     */
+    public void destroy() {
+        getCore().destroy();
+    }
+
+    /**
+     * 获取核心
+     * @return
+     */
+    public Core getCore() {
+        return (Core) getAttribute(Core.class.getName());
+    }
+
+    /**
+     * 获取 HttpSession
+     * 获取 WebSocket Session 请使用 getAttribute
+     * @param name
+     * @return
+     */
     @Override
     public Object getSessibute(String  name) {
         HttpSession hsess = (HttpSession) getAttribute(HttpSession.class.getName());
@@ -42,6 +85,12 @@ public class SocketHelper extends ActionHelper {
         return null;
     }
 
+    /**
+     * 设置 HttpSession
+     * 设置 WebSocket Session 请使用 setAttribute
+     * @param name
+     * @param value
+     */
     @Override
     public void setSessibute(String name, Object value) {
         HttpSession hsess = (HttpSession) getAttribute(HttpSession.class.getName());
@@ -54,6 +103,10 @@ public class SocketHelper extends ActionHelper {
         }
     }
 
+    /**
+     * 获取输出流
+     * @return
+     */
     @Override
     public OutputStream getOutputStream() {
         Session sess = (Session) getAttribute(Session.class.getName());
@@ -67,6 +120,10 @@ public class SocketHelper extends ActionHelper {
         return super.getOutputStream();
     }
 
+    /**
+     * 获取输出器
+     * @return
+     */
     @Override
     public Writer getOutputWriter() {
         Session sess = (Session) getAttribute(Session.class.getName());
@@ -78,6 +135,22 @@ public class SocketHelper extends ActionHelper {
             }
         }
         return super.getOutputWriter();
+    }
+
+    @Override
+    public void responed() {
+        print(getResponseData());
+    }
+
+    /**
+     * 响应输出
+     * 与 ActionHelper 不同, 此处会立即输出
+     * @param dat
+     */
+    @Override
+    public void reply(Map dat) {
+        super.reply(dat);
+         this.responed();
     }
 
     /**

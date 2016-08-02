@@ -786,15 +786,15 @@ public class ActionHelper implements Cloneable
    * 返回审核状态
    * 针对 unique,exists 等
    * @param msg
-   * @param sure
+   * @param ok 对应 rows 的值 1,0
    */
-  public void reply(String msg, boolean sure)
+  public void reply(String msg, boolean ok)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
     }
-    map.put("sure", sure);
+    map.put("rows", ok ? 1 : 0);
     reply(map);
   }
 

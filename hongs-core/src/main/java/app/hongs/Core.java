@@ -193,11 +193,6 @@ extends HashMap<String, Object>
     }
   }
 
-  public boolean containsKey(Class klass)
-  {
-    return this.containsKey(klass.getName());
-  }
-
   private Object check(Core core, String name)
   {
     if (super.containsKey(name))

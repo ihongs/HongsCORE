@@ -832,14 +832,14 @@ HsForm.prototype = {
                 "cache": false,
                 "context": this,
                 "success": function(rst) {
-                    if (rst["info"] !== undefined) {
-                        ret = !jQuery.isEmptyObject(rst["info"]);
-                    } else
                     if (rst["list"] !== undefined) {
                         ret = rst["list"].length > 0;
                     } else
-                    if (rst["sure"] !== undefined) {
-                        ret = rst["sure"] ? true :
+                    if (rst["info"] !== undefined) {
+                        ret = !jQuery.isEmptyObject(rst["info"]);
+                    } else
+                    if (rst["rows"] !== undefined) {
+                        ret = rst["rows"] > 0 ? true :
                             ( rst["msg" ] ? rst["msg"] : false );
                     } else {
                         ret = rst[ "ok" ] ? true :

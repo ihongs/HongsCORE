@@ -7,7 +7,7 @@ import app.hongs.action.NaviMap;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.db.DB;
-import app.hongs.db.FetchCase;
+import app.hongs.db.util.FetchCase;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.util.HashMap;

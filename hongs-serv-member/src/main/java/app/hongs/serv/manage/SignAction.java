@@ -5,7 +5,7 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
-import app.hongs.db.FetchCase;
+import app.hongs.db.util.FetchCase;
 import app.hongs.db.Table;
 import app.hongs.serv.auth.AuthKit;
 import app.hongs.serv.auth.RoleSet;

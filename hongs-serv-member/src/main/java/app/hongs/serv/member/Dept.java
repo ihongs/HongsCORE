@@ -3,7 +3,7 @@ package app.hongs.serv.member;
 import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Mtree;
-import app.hongs.db.FetchCase;
+import app.hongs.db.util.FetchCase;
 import app.hongs.db.Table;
 import app.hongs.serv.auth.AuthKit;
 import app.hongs.util.Synt;

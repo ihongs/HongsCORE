@@ -138,6 +138,10 @@ public class SocketHelper extends ActionHelper {
         return super.getOutputWriter();
     }
 
+    /**
+     * 响应输出
+     * 将响应数据立即发送到客户端
+     */
     @Override
     public void responed() {
         Session sess = (Session) getAttribute(Session.class.getName());

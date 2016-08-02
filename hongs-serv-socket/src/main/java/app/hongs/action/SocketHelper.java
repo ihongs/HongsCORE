@@ -45,7 +45,7 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
  *          }
  *      }
  *  }
- *  // 并将此类名(含包名)加入 _init_.properties 中 jetty.webs 值
+ *  // 并将此类名(含包名)加入 _init_.properties 中 jetty.sock 值
  * </code>
  *
  * @author Hongs

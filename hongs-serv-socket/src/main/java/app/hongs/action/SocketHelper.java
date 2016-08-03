@@ -6,13 +6,17 @@ import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.cmdlet.serv.ServerCmdlet;
+import app.hongs.util.Clses;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
+import app.hongs.util.Tool;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.Writer;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpSession;
 import javax.websocket.DeploymentException;
@@ -20,6 +24,7 @@ import javax.websocket.HandshakeResponse;
 import javax.websocket.Session;
 import javax.websocket.server.HandshakeRequest;
 import javax.websocket.server.ServerContainer;
+import javax.websocket.server.ServerEndpoint;
 import javax.websocket.server.ServerEndpointConfig;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer;
@@ -60,7 +65,20 @@ public class SocketHelper extends ActionHelper {
      * 销毁环境
      */
     public void destroy() {
-        getCore().destroy();
+        Core core = getCore();
+
+        if ( Core.DEBUG > 0 ) {
+            long time = System.currentTimeMillis(  ) - Core.ACTION_TIME.get();
+            StringBuilder sb = new StringBuilder("...");
+              sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
+                .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
+                .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
+                .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
+                .append("\r\n\tObjects     : ").append(core.keySet().toString())
+                .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
+        }
+
+        core.destroy();
     }
 
     /**
@@ -359,25 +377,72 @@ public class SocketHelper extends ActionHelper {
                 throw new HongsError.Common(ex);
             }
 
-            CoreConfig   c = CoreConfig.getInstance("_init_");
-            String ws =  c.getProperty("jetty.sock");
-            if (null !=  ws) {
-                String[] wa = ws.split(";");
-                for ( String  wn: wa) {
-                         wn = wn.trim (   );
-                    if ("".equals(wn)) {
+            String pkgx  = CoreConfig.getInstance( "_init_" ).getProperty("mount.serv");
+            if  (  pkgx != null ) {
+                String[]   pkgs = pkgx.split(";");
+                for(String pkgn : pkgs) {
+                    pkgn = pkgn.trim  ( );
+                    if  (  pkgn.length( ) == 0  ) {
                         continue;
                     }
 
-                    try {
-                        contain.addEndpoint(Class.forName(wn));
-                    } catch (ClassNotFoundException ex) {
-                        throw new HongsError.Common(ex);
-                    } catch (   DeploymentException ex) {
-                        throw new HongsError.Common(ex);
+                    Set<String> clss = getClss(pkgn);
+                    for(String  clsn : clss) {
+                        Class   clso = getClso(clsn);
+
+                        ServerEndpoint anno = (ServerEndpoint) clso.getAnnotation(ServerEndpoint.class);
+                        if (anno != null) {
+                            try {
+                                contain.addEndpoint(clso);
+                            } catch  (  DeploymentException ex) {
+                                throw new HongsError.Common(ex);
+                            }
+                        }
                     }
                 }
             }
+        }
+
+        private Class getClso(String clsn) {
+            Class  clso;
+            try {
+                clso = Class.forName(clsn);
+            } catch (ClassNotFoundException ex ) {
+                throw new HongsError.Common("Can not find class '" + clsn + "'.", ex);
+            }
+            return clso;
+        }
+
+        private Set<String> getClss(String pkgn) {
+            Set<String> clss;
+
+            if (pkgn.endsWith(".**")) {
+                pkgn = pkgn.substring(0, pkgn.length() - 3);
+                try {
+                    clss = Clses.getClassNames(pkgn, true );
+                } catch (IOException ex) {
+                    throw new HongsError.Common("Can not load package '" + pkgn + "'.", ex);
+                }
+                if (clss == null) {
+                    throw new HongsError.Common("Can not find package '" + pkgn + "'.");
+                }
+            } else
+            if (pkgn.endsWith(".*" )) {
+                pkgn = pkgn.substring(0, pkgn.length() - 2);
+                try {
+                    clss = Clses.getClassNames(pkgn, false);
+                } catch (IOException ex) {
+                    throw new HongsError.Common("Can not load package '" + pkgn + "'.", ex);
+                }
+                if (clss == null) {
+                    throw new HongsError.Common("Can not find package '" + pkgn + "'.");
+                }
+            } else {
+                clss = new HashSet();
+                clss.add  (  pkgn  );
+            }
+
+            return clss;
         }
 
     }

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
  * 
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x10c0~0x10cf
+ * 区间: 0x10c2~0x10cf
  * 0x10c2 无法识别的关联方式(LINK)
  * 0x10c4 无法识别的关联类型(JOIN)
  * 0x10c6 找不到指定的关联表(LINK)
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author Hongs
  */
-public class FetchMost {
+public class UniteTool {
 
   /**
    * 关联查询

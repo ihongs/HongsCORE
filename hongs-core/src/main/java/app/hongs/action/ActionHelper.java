@@ -9,17 +9,17 @@ import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 
+import java.io.File;
+import java.io.Writer;
+import java.io.FileWriter;
+import java.io.OutputStream;
+import java.io.FileOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FileWriter;
-import java.io.PrintWriter;
-import java.io.OutputStream;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.io.Writer;
+import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -45,8 +45,8 @@ import org.apache.commons.fileupload.servlet.ServletFileUpload;
  * 动作助手类
  *
  * <p>
- * 通过 getRequestData,getParameter,getAttribute,getSessValue
- * 来获取请求/容器/会话; 通过 reply 来通知前端动作的成功或失败
+ * 通过 getRequestData, getParameter, getAttribute, getSessValue
+ * 来获取请求/容器/会话, 通过 reply 来通知前端动作是成功还是失败
  * </p>
  *
  * @author Hongs
@@ -93,16 +93,15 @@ public class ActionHelper implements Cloneable
    * 响应输出
    */
   private OutputStream        outputStream = null;
-  private Writer              outputWriter = null;
+  private       Writer        outputWriter = null;
 
   /**
    * 初始化助手(用于cmdlet)
    *
-   * @param req
-   * @param att
-   * @param ses
-   * @param cok
-   * @param out
+   * @param req 请求数据
+   * @param att 容器属性
+   * @param ses Session 数据
+   * @param cok Cookies 数据
    */
   public ActionHelper(Map req, Map att, Map ses, Map cok)
   {
@@ -253,7 +252,7 @@ public class ActionHelper implements Cloneable
         // 处理上传文件
         if ("multipart/form-data".equals(ct))
         {
-          chkUploadsData( this.requestData );
+          getUploadsData( this.requestData );
         }
       }
     }
@@ -264,7 +263,7 @@ public class ActionHelper implements Cloneable
    * 解析 multipart/form-data 数据, 并将上传的文件放入临时目录
    * @param rd
    */
-  protected final void chkUploadsData(Map rd ) {
+  final void getUploadsData(Map rd) {
     CoreConfig conf = CoreConfig.getInstance();
     String     path = Core.DATA_PATH+"/upload";
 
@@ -371,9 +370,9 @@ public class ActionHelper implements Cloneable
 
                 // 存储到临时文件
                 /**/FileOutputStream fos = new /**/FileOutputStream(new File( file ));
+                 BufferedInputStream bis = new  BufferedInputStream(fis.openStream());
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
-                BufferedInputStream  bis = new BufferedInputStream (fis.openStream());
-                long size = Streams.copy(bis, bos, true );
+                long   size = Streams.copy(bis, bos, true );
 
                 // 如果没有则跳过
                 if (size == 0) {

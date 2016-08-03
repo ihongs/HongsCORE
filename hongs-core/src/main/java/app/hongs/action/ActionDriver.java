@@ -214,7 +214,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         });
     }
 
-    public void doDriver(ServletRequest rep, ServletResponse rsp, final ActionDrive adr)
+    final  void doDriver(ServletRequest rep, ServletResponse rsp, final ActionDrive adr)
     throws ServletException, IOException {
         HttpServletRequest  req = (HttpServletRequest ) rep;
         HttpServletResponse rsq = (HttpServletResponse) rsp;
@@ -231,7 +231,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             core.put ( ActionHelper.class.getName(), hlpr );
 
             try {
-                doIniter(core, hlpr, req );
+                doLaunch(core, hlpr, req );
                  adr.doDriver( core, hlpr); // 调用
                 doRespon(hlpr, req , rsq );
             } catch (ServletException | IOException ex) {
@@ -269,7 +269,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
     }
 
-    private void doIniter(Core core, ActionHelper hlpr, HttpServletRequest req)
+    private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req)
     throws ServletException {
         Core.ACTION_NAME.set(getRealPath(req).substring(1));
 
@@ -462,18 +462,18 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             CoreLogger.debug(sb.toString());
         }
         } finally {
-        // 销毁此周期内的对象
-        try {
-            core.destroy();
-        } catch (Exception | Error e) {
-            CoreLogger.error( e );
-        }
-        req.removeAttribute(Cnst.CORE_ATTR);
-        Core.THREAD_CORE.remove();
-        Core.ACTION_TIME.remove();
-        Core.ACTION_ZONE.remove();
-        Core.ACTION_LANG.remove();
-        Core.ACTION_NAME.remove();
+            // 销毁此周期内的对象
+            try {
+                core.destroy();
+            } catch (Exception | Error e) {
+                CoreLogger.error( e );
+            }
+            req.removeAttribute(Cnst.CORE_ATTR);
+            Core.THREAD_CORE.remove();
+            Core.ACTION_TIME.remove();
+            Core.ACTION_ZONE.remove();
+            Core.ACTION_LANG.remove();
+            Core.ACTION_NAME.remove();
         }
     }
 
@@ -488,7 +488,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     protected void doFilter(Core core, ActionHelper hlpr, FilterChain chn)
     throws ServletException, IOException {
-        chn.doFilter((ServletRequest ) hlpr.getRequest( ),
+        chn.doFilter((ServletRequest ) hlpr.getRequest ( ),
                      (ServletResponse) hlpr.getResponse());
     }
 
@@ -610,15 +610,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             uri = req.getServletPath();
         }
         return uri;
-    }
-
-    /**
-     * 用于包裹动作执行程序
-     */
-    public static interface ActionDrive {
-
-        public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
-
     }
 
 }

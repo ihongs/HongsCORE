@@ -1,12 +1,11 @@
 package app.hongs.db;
 
-import app.hongs.db.util.FetchPage;
-import app.hongs.db.util.FetchCast;
-import app.hongs.db.util.FetchCase;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsException;
+import app.hongs.db.util.FetchCase;
+import app.hongs.db.util.FetchPage;
 import app.hongs.dh.IEntity;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -1501,29 +1500,50 @@ implements IEntity
   protected void packFilter(FetchCase caze, Object val, String key)
   throws HongsException
   {
-    caze.setOption("IN_PACK", true);
-    StringBuilder ws = new StringBuilder();
-    FetchCast cx = new FetchCast(  caze  );
+    /**
+     * 构建一个新的查询结构体
+     * 仅能获取条件和条件参数
+     */
+    FetchCase caxe = new FetchCase() {
+        public FetchCase init(FetchCase caze) {
+            options = caze.getOptions();
+            return this;
+        }
+        @Override
+        public Object[ ] getParams() {
+            return wparams.toArray();
+        }
+        @Override
+        public String getSQL( ) {
+            String ws = wheres.length() > 0 ? wheres.substring(5) : "";
+            wheres.setLength(0);
+            return ws;
+        }
+    }.init(caze);
+
+    StringBuilder  ws = new StringBuilder(/**/);
     Set<Map> set = Synt.declare(val, Set.class);
+    caxe.setOption("IN_PACK", true);
     for(Map  map : set)
     {
-      filter( cx , map);
-      String  wx = cx.getFilter();
+      filter(caxe, map);
+      String  wx = caxe.getSQL( );
       if (wx.length() > 0)
       {
         ws.append(' ')
           .append(key)
           .append(' ')
           .append('(')
-          .append( wx.substring(5) )
+          .append(wx.substring(5))
           .append(')');
       }
     }
     if (ws.length() > 0)
     {
-      caze.where ('(' + ws.substring(key.length() + 2) + ")");
+      caze.filter('('+ws.substring(key.length()+2)+")", caxe.getParams());
     }
-    caze.delOption("IN_PACK");
+
+    caxe.delOption("IN_PACK");
   }
 
 }

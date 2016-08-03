@@ -1,11 +1,11 @@
 package app.hongs.db;
 
-import app.hongs.db.util.FetchCase;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
-import app.hongs.db.util.FetchMost;
+import app.hongs.db.util.FetchCase;
+import app.hongs.db.util.UniteTool;
 import app.hongs.util.Synt;
 import java.sql.Types;
 import java.sql.Date;
@@ -184,7 +184,7 @@ public class Table
       caze.where(".`"+rstat+"` != ?", rflag);
     }
 
-    return FetchMost.fetchMore(this, caze, assocs);
+    return UniteTool.fetchMore(this, caze, assocs);
   }
 
   /**
@@ -560,7 +560,7 @@ public class Table
   public void deleteSubValues(Object... ids)
     throws HongsException
   {
-    FetchMost.deleteMore(this, assocs , ids);
+    UniteTool.deleteMore(this, assocs , ids);
   }
 
   /**
@@ -574,7 +574,7 @@ public class Table
   public void insertSubValues(Map values)
     throws HongsException
   {
-    FetchMost.insertMore(this, assocs, values);
+    UniteTool.insertMore(this, assocs, values);
   }
 
   /**

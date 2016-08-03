@@ -239,9 +239,8 @@ public class FetchCase
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
-   * @deprecated 请使用 filter
    */
-  public FetchCase where(String where, Object... params)
+  public FetchCase filter(String where, Object... params)
   {
     this.wheres.append(" AND ").append(where);
     this.wparams.addAll(Arrays.asList(params));
@@ -249,13 +248,15 @@ public class FetchCase
   }
 
   /**
-   * where 的别名
+   * 追加查询条件, filter 的旧名
    * @param where
    * @param params
    * @return
+   * @deprecated 请使用 filter
    */
-  public FetchCase filter(String where, Object... params) {
-    return where(where, params);
+  public FetchCase where(String where, Object... params)
+  {
+    return filter(where, params);
   }
 
   /**
@@ -276,9 +277,8 @@ public class FetchCase
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
-   * @deprecated 请使用 having
    */
-  public FetchCase which(String where, Object... params)
+  public FetchCase having(String where, Object... params)
   {
     this.havins.append(" AND ").append(where);
     this.vparams.addAll(Arrays.asList(params));
@@ -286,13 +286,15 @@ public class FetchCase
   }
 
   /**
-   * which 的正名
+   * 追加过滤条件, having 的别名
    * @param where
    * @param params
    * @return
+   * @deprecated 请使用 having
    */
-  public FetchCase having(String where, Object... params) {
-    return which(where, params);
+  public FetchCase which(String where, Object... params)
+  {
+    return having(where, params);
   }
 
   /**
@@ -977,19 +979,19 @@ public class FetchCase
    * @param def
    * @return 指定选项
    */
-  public <T> T getOption(String key , T def)
+  public <T>T getOption(String key, T def)
   {
-    return Synt.asserts (this.getOption(key), def);
+    return Synt.asserts(getOption(key), def);
   }
 
   /**
    * 获取选项
    * @param key
-   * @return 指定选项
+   * @return 当前选项
    */
   public Object getOption(String key)
   {
-    return this.options.get(key);
+    return this.options.get   (key);
   }
 
   /**
@@ -1003,13 +1005,12 @@ public class FetchCase
   }
 
   /**
-   * 是否存在选项
-   * @param key
-   * @return 存在为true, 反之为false
+   * 全部选项
+   * @return
    */
-  public boolean hasOption(String key)
+  public Map<String, Object> getOptions()
   {
-    return this.options.containsKey(key);
+    return this.options;
   }
 
   //** 不推荐的方法 **/
@@ -1148,6 +1149,17 @@ public class FetchCase
     return this;
   }
 
+  /**
+   * 是否存在选项
+   * @param key
+   * @return 存在为true, 反之为false
+   * @deprecated 请使用 getOptions().containsKey(key)
+   */
+  public boolean hasOption(String key)
+  {
+    return this.options.containsKey(key);
+  }
+
   private String checkField(String field)
   {
     if (field == null) return "";
@@ -1279,11 +1291,11 @@ public class FetchCase
 
   /**
    * 删除全部匹配的记录
- 注意: 会忽略 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
+   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
    * @return
    * @throws HongsException
    */
-  public int  delete() throws HongsException {
+  public int delete() throws HongsException {
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
@@ -1294,12 +1306,12 @@ public class FetchCase
 
   /**
    * 更新全部匹配的数据
- 注意: 会忽略 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
+   * 注意: 考虑到 SQL 兼容性, 忽略了 join 的条件, 有 :n, xx.n 的字段条件会报 SQL 错误
    * @param dat
    * @return
    * @throws HongsException
    */
-  public int  update(Map<String, Object> dat) throws HongsException {
+  public int update(Map<String, Object> dat) throws HongsException {
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
@@ -1316,7 +1328,7 @@ public class FetchCase
    * @return
    * @throws HongsException
    */
-  public int  insert(Map<String, Object> dat) throws HongsException {
+  public int insert(Map<String, Object> dat) throws HongsException {
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }

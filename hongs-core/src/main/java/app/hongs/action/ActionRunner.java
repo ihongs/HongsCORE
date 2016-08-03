@@ -2,25 +2,19 @@ package app.hongs.action;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
-import app.hongs.CoreConfig;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.FilterInvoker;
 import app.hongs.dh.IActing;
-import app.hongs.util.Clses;
-import java.io.IOException;
+import app.hongs.serv.ServLoader;
+import app.hongs.serv.ServLoader.Mathod;
+
+import java.util.Map;
+import java.lang.reflect.Method;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 动作执行器
@@ -48,8 +42,6 @@ public class ActionRunner {
     private final Class<?> mclass;
     private final ActionHelper helper;
     private final Annotation[] annarr;
-    private static Map<String, Mathod> ACTIONS = null;
-    private static final ReadWriteLock ACTLOCK = new ReentrantReadWriteLock();
 
     public ActionRunner(String action, ActionHelper helper) throws HongsException {
         Mathod mt = getActions().get(action);
@@ -59,8 +51,8 @@ public class ActionRunner {
 
         this.action = action;
         this.helper = helper;
-        this.mclass = mt.mclass;
-        this.method = mt.method;
+        this.mclass = mt.getMclass();
+        this.method = mt.getMethod();
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
         helper.setAttribute(Cnst.RUNNER_ATTR , this);
@@ -258,121 +250,8 @@ public class ActionRunner {
 
     //** 动作方法 **/
 
-    public  static final class Mathod {
-        Method   method;
-        Class<?> mclass;
-        @Override
-        public String    toString() {
-            return mclass.getName()+"."+method.getName();
-        }
-        public Method   getMethod() {
-            return method;
-        }
-        public Class<?> getMclass() {
-            return mclass;
-        }
-    }
-
-    public  static Map<String, Mathod> getActions() {
-        Lock rlock = ACTLOCK. readLock();
-        rlock.lock();
-        try {
-            if (ACTIONS != null) {
-                return  ACTIONS;
-            }
-        } finally {
-            rlock.unlock();
-        }
-
-        Lock wlock = ACTLOCK.writeLock();
-        wlock.lock();
-        try {
-            String[] pkgs = CoreConfig
-                    .getInstance(    "_init_"    )
-                    .getProperty("core.load.serv")
-                    .split(";");
-            ACTIONS = getActions(pkgs);
-            return ACTIONS;
-        } finally {
-            wlock.unlock();
-        }
-    }
-
-    private static Map<String, Mathod> getActions(String... pkgs) {
-        Map<String, Mathod> acts = new HashMap();
-
-        for(String pkgn : pkgs) {
-            pkgn = pkgn.trim( );
-            if (pkgn.length ( ) == 0) continue;
-            Set< String > clss ;
-
-            if (pkgn.endsWith(".*")) {
-                pkgn = pkgn.substring(0, pkgn.length() - 2);
-                try {
-                    clss = Clses.getClassNames(pkgn, false);
-                } catch (IOException ex) {
-                    throw new HongsError( 0x4a , "Can not load package '" + pkgn + "'.", ex);
-                }
-                if (clss == null) {
-                    throw new HongsError( 0x4a , "Can not find package '" + pkgn + "'.");
-                }
-            } else {
-                clss = new HashSet();
-                clss.add(pkgn);
-            }
-
-            for(String clsn : clss) {
-                Class  clso;
-                try {
-                    clso = Class.forName(clsn);
-                } catch (ClassNotFoundException ex) {
-                    throw new HongsError(0x4a, "Can not find class '" + clsn + "'.");
-                }
-
-                // 从注解提取动作名
-                Action anno = (Action) clso.getAnnotation(Action.class);
-                if (anno == null) {
-                    continue;
-                }
-                String actn = anno.value();
-                if (actn == null || actn.length() == 0) {
-                    actn =  clsn.replace('.','/');
-                }
-
-                Method[] mtds = clso.getMethods();
-                for(Method mtdo : mtds) {
-                    String mtdn = mtdo.getName( );
-
-                    // 从注解提取动作名
-                    Action annx = (Action) mtdo.getAnnotation(Action.class);
-                    if (annx == null) {
-                        continue;
-                    }
-                    String actx = annx.value();
-                    if (actx == null || actx.length() == 0) {
-                        actx =  mtdn;
-                    }
-
-                    // 检查方法是否合法
-                    Class[] prms = mtdo.getParameterTypes();
-                    if (prms == null || prms.length != 1 || !prms[0].isAssignableFrom(ActionHelper.class)) {
-                        throw new HongsError(0x4a, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
-                    }
-
-                    Mathod mtdx = new Mathod();
-                    mtdx.method = mtdo;
-                    mtdx.mclass = clso;
-
-                    if ("__main__".equals(actx)) {
-                        acts.put(actn /*__main__*/ , mtdx );
-                    } else {
-                        acts.put(actn + "/" + actx , mtdx );
-                    }
-                }
-            }
-        }
-
-        return acts;
+    public static Map<String, Mathod> getActions() {
+        return ServLoader.getActions();
     }
 
 }

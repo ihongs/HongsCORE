@@ -551,33 +551,35 @@ implements  ITrnsct , Core.Destroy
   {
     if (values == null || values.isEmpty())
     {
-      throw new app.hongs.HongsException(0x104b, "Insert values can not be empty.");
+      throw new app.hongs.HongsException(0x104b, "Insert value can not be empty.");
     }
+
+    table = quoteField(table);
 
     /** 组织语句 **/
 
-    String sql = "INSERT INTO `" + Tool.escape(table, "`") + "`";
-    List params2 = new ArrayList();
-    String fs = "", vs = "";
-
+    List paramz = new ArrayList();
+    String   fs = "";
+    String   vs = "";
     Iterator it = values.entrySet().iterator();
     while (it.hasNext())
     {
       Map.Entry entry = (Map.Entry)it.next();
       String field = (String)entry.getKey();
-      params2.add((Object)entry.getValue());
+      paramz.add((Object)entry.getValue());
 
-      fs += "`" + Tool.escape(field, "`") + "`, ";
-      vs += "?, ";
+      fs += ", " + quoteField(field);
+      vs += ", ?";
     }
 
-    sql += " (" + fs.substring(0, fs.length() - 2) + ")";
-    sql += " VALUES";
-    sql += " (" + vs.substring(0, vs.length() - 2) + ")";
+    String sql = "INSERT INTO " + table
+               + " (" + fs.substring(2) + ")"
+               + " VALUES"
+               + " (" + vs.substring(2) + ")";
 
     /** 执行更新 **/
 
-    return this.updates(sql, params2.toArray());
+    return this.updates(sql, paramz.toArray());
   }
 
   /**
@@ -595,39 +597,41 @@ implements  ITrnsct , Core.Destroy
   {
     if (values == null || values.isEmpty())
     {
-      throw new app.hongs.HongsException(0x104d, "Update values can not be empty.");
+      throw new app.hongs.HongsException(0x104d, "Update value can not be empty.");
     }
+    if ( where == null ||  where.isEmpty())
+    {
+      throw new app.hongs.HongsException(0x1052, "Update where can not be empty.");
+    }
+
+    table = quoteField(table);
 
     /** 组织语言 **/
 
-    String sql = "UPDATE `" + Tool.escape(table, "`") + "` SET ";
-    List params2 = new ArrayList();
-
+    List paramz = new ArrayList();
+    String   vs = "";
     Iterator it = values.entrySet().iterator();
     while (it.hasNext())
     {
       Map.Entry entry = (Map.Entry)it.next();
       String field = (String)entry.getKey();
-      params2.add((Object)entry.getValue());
+      paramz.add((Object)entry.getValue());
 
-      sql += "`" + Tool.escape(field, "`") + "` = ?, ";
+      vs += ", " + quoteField(field) + " = ?";
     }
 
-    sql = sql.substring(0, sql.length()  - 2);
-
-    if (where != null && where.length() != 0)
-    {
-      sql += " WHERE " + where;
-    }
+    String sql = "UPDATE " + table
+               + " SET "   + vs.substring(2)
+               + " WHERE " + where;
 
     if (params.length > 0)
     {
-      params2.addAll(Arrays.asList(params));
+      paramz.addAll(Arrays.asList(params));
     }
 
     /** 执行更新 **/
 
-    return this.updates(sql, params2.toArray());
+    return this.updates(sql, paramz.toArray());
   }
 
   /**
@@ -642,14 +646,16 @@ implements  ITrnsct , Core.Destroy
   public int delete(String table, String where, Object... params)
     throws HongsException
   {
+    if ( where == null ||  where.isEmpty())
+    {
+      throw new app.hongs.HongsException(0x1052, "Delete where can not be empty.");
+    }
+
+    table = quoteField(table);
+
     /** 组织语句 **/
 
-    String sql = "DELETE FROM `" + Tool.escape(table, "`") + "`";
-
-    if (where != null && where.length() != 0)
-    {
-      sql += " WHERE " + where;
-    }
+    String sql = "DELETE FROM " + table + " WHERE " + where;
 
     /** 执行更新 **/
 

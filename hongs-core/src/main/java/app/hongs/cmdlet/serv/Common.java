@@ -7,6 +7,7 @@ import app.hongs.action.ActionRunner;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.CmdletRunner;
 import app.hongs.cmdlet.anno.Cmdlet;
+import app.hongs.serv.ServLoader.Mathod;
 import app.hongs.util.Data;
 import app.hongs.util.Tool;
 import java.io.File;
@@ -127,9 +128,9 @@ public class Common {
         Map<String, String> a = new TreeMap(new PropComparator());
         int i = 0, j;
 
-        for (Map.Entry<String, ActionRunner.Mathod> et : ActionRunner.getActions().entrySet()) {
+        for (Map.Entry<String, Mathod> et : ActionRunner.getActions().entrySet()) {
             String k = et.getKey(  );
-            ActionRunner.Mathod v = et.getValue();
+            Mathod v = et.getValue();
             a.put( k, v.toString() );
             j = k.length();
             if (i < j && j < 31) {

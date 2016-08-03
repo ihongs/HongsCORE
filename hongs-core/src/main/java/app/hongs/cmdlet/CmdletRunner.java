@@ -8,23 +8,20 @@ import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.HongsUnchecked;
 import app.hongs.action.ActionHelper;
-import app.hongs.cmdlet.anno.Cmdlet;
-import app.hongs.util.Clses;
+import app.hongs.serv.ServLoader;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 
 import java.io.File;
 import java.io.PrintWriter;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 外壳程序启动器
@@ -113,7 +110,7 @@ public class CmdletRunner
         }
       }
 
-      CoreLogger.error(ta);
+      CoreLogger.error(error);
       System.exit(4);
     }
     finally
@@ -195,8 +192,9 @@ public class CmdletRunner
     m.put("DATA_PATH", Core.DATA_PATH);
 
     // 启动系统属性
-    for(String k : cnf.stringPropertyNames()) {
-        String v = cnf.getProperty(k);
+    for(Map.Entry et : cnf.entrySet()) {
+        String k = (String) et.getKey  ();
+        String v = (String) et.getValue();
         if (k.startsWith("envir.")) {
             k = k.substring(6  );
             v = Tool.inject(v,m);
@@ -206,8 +204,9 @@ public class CmdletRunner
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
     // 调试系统属性
-    for(String k : cnf.stringPropertyNames()) {
-        String v = cnf.getProperty(k);
+    for(Map.Entry et : cnf.entrySet()) {
+        String k = (String) et.getKey  ();
+        String v = (String) et.getValue();
         if (k.startsWith("debug.")) {
             k = k.substring(6  );
             v = Tool.inject(v,m);
@@ -313,92 +312,9 @@ public class CmdletRunner
     return args;
   }
 
-    private static Map<String, Method> CMDLETS = null;
-
-    public  static Map<String, Method> getCmdlets() {
-        if (CMDLETS != null) {
-            return  CMDLETS;
-        }
-
-        String[] pkgs = CoreConfig
-                .getInstance(    "_init_"    )
-                .getProperty("core.load.serv")
-                .split(";");
-        CMDLETS = getCmdlets(pkgs);
-        return CMDLETS;
-    }
-
-    private static Map<String, Method> getCmdlets(String... pkgs) {
-        Map<String, Method> acts = new HashMap();
-
-        for(String pkgn : pkgs) {
-            pkgn = pkgn.trim( );
-            if (pkgn.length ( ) == 0) continue;
-            Set< String > clss ;
-
-            if (pkgn.endsWith(".*")) {
-                pkgn = pkgn.substring(0, pkgn.length() - 2);
-                try {
-                    clss = Clses.getClassNames(pkgn, false);
-                } catch (IOException ex) {
-                    throw new HongsError( 0x4b , "Can not load package '" + pkgn + "'.", ex);
-                }
-                if (clss == null) {
-                    throw new HongsError( 0x4b , "Can not find package '" + pkgn + "'.");
-                }
-            } else {
-                clss = new HashSet();
-                clss.add(pkgn);
-            }
-
-            for(String clsn : clss) {
-                Class  clso;
-                try {
-                    clso = Class.forName(clsn);
-                } catch (ClassNotFoundException ex) {
-                    throw new HongsError(0x4b, "Can not find class '" + clsn + "'.");
-                }
-
-                // 从注解提取动作名
-                Cmdlet anno = (Cmdlet) clso.getAnnotation(Cmdlet.class);
-                if (anno == null) {
-                    continue;
-                }
-                String actn = anno.value();
-                if (actn == null || actn.length() == 0) {
-                    actn =  clsn;
-                }
-
-                Method[] mtds = clso.getMethods();
-                for(Method mtdo : mtds) {
-                    String mtdn = mtdo.getName( );
-
-                    // 从注解提取动作名
-                    Cmdlet annx = (Cmdlet) mtdo.getAnnotation(Cmdlet.class);
-                    if (annx == null) {
-                        continue;
-                    }
-                    String actx = annx.value();
-                    if (actx == null || actx.length() == 0) {
-                        actx =  mtdn;
-                    }
-
-                    // 检查方法是否合法
-                    Class[] prms = mtdo.getParameterTypes();
-                    if (prms == null || prms.length != 1 || !prms[0].isAssignableFrom(String[].class)) {
-                        throw new HongsError(0x4b, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
-                    }
-
-                    if ("__main__".equals(actx)) {
-                        acts.put(actn /*__main__*/ , mtdo );
-                    } else {
-                        acts.put(actn + ":" + actx , mtdo );
-                    }
-                }
-            }
-        }
-
-        return acts;
-    }
+  public static Map<String, Method> getCmdlets()
+  {
+    return ServLoader.getCmdlets();
+  }
 
 }

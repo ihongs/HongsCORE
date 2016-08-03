@@ -19,9 +19,7 @@ import java.util.regex.Pattern;
  *
  * <h3>异常代码:</h3>
  * <pre>
- * 区间: 0x10c0~0x10cf
  * 0x10c0 获取行号失败, 可能缺少关联字段
- * 后续号码为 FetchMost 的
  * </pre>
  *
  * @author Hongs

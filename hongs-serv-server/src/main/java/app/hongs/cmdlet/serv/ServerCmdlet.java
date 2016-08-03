@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.lang.management.ManagementFactory;
+import java.util.Map;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.servlet.ServletContextHandler;
@@ -73,8 +74,9 @@ public class ServerCmdlet {
 
         // 外部配置
         CoreConfig c = CoreConfig.getInstance("_init_");
-        for(String k : c.stringPropertyNames()) {
-            String v = c.getProperty(k);
+        for(Map.Entry  t : c.entrySet( )) {
+            String k = (String) t.getKey  ();
+            String v = (String) t.getValue();
             if (k.startsWith("jetty.attr.")) {
                 webapp.setAttribute(k.substring(11), v);
             } else

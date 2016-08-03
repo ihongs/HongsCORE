@@ -110,6 +110,7 @@ public class MesageSocket {
 
     @OnClose
     public void onClose(Session sess) {
+        SocketHelper hepr = SocketHelper.getInstance(sess);
         try {
             /**
              * 终止通道监听线程
@@ -120,8 +121,12 @@ public class MesageSocket {
             w.die( );
 
             setSession(sess , false);
-        } catch (Exception|Error er) {
-            CoreLogger.error(  er  );
+        }
+        catch (Exception|Error er) {
+            CoreLogger.error ( er);
+        }
+        finally {
+            hepr.destroy(); // 销毁环境
         }
     }
 

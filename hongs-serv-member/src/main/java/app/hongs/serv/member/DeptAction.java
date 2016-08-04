@@ -32,7 +32,7 @@ public class DeptAction {
     public void getList(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
-        FetchCase fc  =  new FetchCase();
+        FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
         rd = model.getList(rd, fc);
         helper.reply(rd);
@@ -95,7 +95,7 @@ public class DeptAction {
     public void isUnique(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
-        FetchCase fc  =  new FetchCase();
+        FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
         boolean rv = model.unique(rd,fc);
         helper.reply("", rv);

@@ -103,7 +103,7 @@ extends Model {
         Set<String> depts = new HashSet();
 
         asoc = this.db.getTable("a_member_user_dept");
-        caze = new FetchCase( );
+        caze = this.fetchCase();
         caze.select(".dept_id")
             .where (".user_id = ?", userId);
         rows = asoc.fetchMore(caze);
@@ -112,8 +112,8 @@ extends Model {
         }
 
         asoc = this.db.getTable("a_member_dept_role");
-        caze = new FetchCase();
-        caze.select(".role"  )
+        caze = this.fetchCase();
+        caze.select(".role")
             .where (".dept_id = ?", depts );
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
@@ -121,8 +121,8 @@ extends Model {
         }
 
         asoc = this.db.getTable("a_member_user_role");
-        caze = new FetchCase();
-        caze.select(".role"  )
+        caze = this.fetchCase();
+        caze.select(".role")
             .where (".user_id = ?", userId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {

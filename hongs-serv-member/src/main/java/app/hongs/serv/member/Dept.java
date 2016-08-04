@@ -61,8 +61,8 @@ extends Mtree {
         Set<String> roles = new HashSet();
 
         asoc = this.db.getTable("a_member_dept_role");
-        caze = new FetchCase();
-        caze.select(".role"  )
+        caze = this.fetchCase();
+        caze.select(".role")
             .where (".dept_id = ?", deptId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {

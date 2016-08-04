@@ -50,19 +50,9 @@
         <servlet-name>Auth</servlet-name>
         <url-pattern>/common/auth/*</url-pattern>
     </servlet-mapping>
-    <!--
-    <servlet>
-        <servlet-name>Msgs</servlet-name>
-        <servlet-class>app.hongs.serv.handle.MesageSocket</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Msgs</servlet-name>
-        <url-pattern>/handle/mesage/socket/*</url-pattern>
-    </servlet-mapping>
-    //-->
     <!-- Auth Filter -->
     <filter>
-        <filter-name>AuthFilter_MN</filter-name>
+        <filter-name>AuthFilter_Manage</filter-name>
         <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
@@ -82,7 +72,7 @@
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter_MN</filter-name>
+        <filter-name>AuthFilter_Manage</filter-name>
         <url-pattern>/manage/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
@@ -90,7 +80,7 @@
     </filter-mapping>
     <!-- Auto Filter -->
     <filter>
-        <filter-name>AutoFilter_MD</filter-name>
+        <filter-name>AutoFilter_Manage</filter-name>
         <filter-class>app.hongs.action.serv.AutoFilter</filter-class>
         <init-param>
             <param-name>action-path</param-name>
@@ -102,14 +92,14 @@
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AutoFilter_MD</filter-name>
+        <filter-name>AutoFilter_Manage</filter-name>
         <url-pattern>/manage/data/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
     <filter>
-        <filter-name>AutoFilter_HD</filter-name>
+        <filter-name>AutoFilter_Handle</filter-name>
         <filter-class>app.hongs.action.serv.AutoFilter</filter-class>
         <init-param>
             <param-name>action-path</param-name>
@@ -121,7 +111,7 @@
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AutoFilter_HD</filter-name>
+        <filter-name>AutoFilter_Handle</filter-name>
         <url-pattern>/handle/data/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
@@ -146,12 +136,12 @@
     </jsp-config>
     <!-- Another Sets -->
     <error-page>
-       <error-code>403</error-code>
-       <location>/403.jsp</location>
+        <error-code>403</error-code>
+        <location>/403.jsp</location>
     </error-page>
     <error-page>
-       <error-code>404</error-code>
-       <location>/404.jsp</location>
+        <error-code>404</error-code>
+        <location>/404.jsp</location>
     </error-page>
     <!--
     <error-page>

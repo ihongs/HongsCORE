@@ -1120,7 +1120,7 @@ public class ActionHelper implements Cloneable
    * @param params
    * @return 解析后的Map
    */
-  public static Map parseQuest(Map<String, List<String>> params)
+  public static Map parseParan(Map<String, List<String>> params)
   {
     Map<String, Object> paramz = new HashMap();
     for (Map.Entry<String, List<String>> et : params.entrySet())

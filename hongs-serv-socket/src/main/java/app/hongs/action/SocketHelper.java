@@ -315,7 +315,7 @@ public class SocketHelper extends ActionHelper {
              */
             String u = sess.getRequestURI().getPath();
             Map data = sess.getRequestParameterMap( );
-            data = ActionHelper.parseQuest(data );
+            data = ActionHelper.parseParan(data );
             data.putAll(sess.getPathParameters());
             hepr = newInstance( prop , data , u );
 

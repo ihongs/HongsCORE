@@ -113,11 +113,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             //** 系统属性配置 **/
 
             CoreConfig cnf;
-            cnf = CoreConfig.getInstance( /****/ );
-            Core.SERVER_ID = cnf.getProperty("core.server.id" , "0");
+            cnf = CoreConfig.getInstance(/*deft*/);
+            Core.SERVER_ID = cnf.getProperty("core.server.id", "0" );
+            Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
+            Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
             cnf = CoreConfig.getInstance("_init_");
 
+            // 用于替换下面系统属性中的变量
             Map m = new HashMap();
+            m.put("SERVER_ID", Core.SERVER_ID);
             m.put("BASE_PATH", Core.BASE_PATH);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("CONF_PATH", Core.CONF_PATH);

@@ -4,19 +4,20 @@ import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
 
 /**
  * 批量任务

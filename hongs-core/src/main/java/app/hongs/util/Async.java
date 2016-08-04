@@ -4,10 +4,11 @@ import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
-import java.io.ByteArrayOutputStream;
+
 import java.io.File;
-import java.io.IOException;
 import java.io.PrintStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.BlockingQueue;

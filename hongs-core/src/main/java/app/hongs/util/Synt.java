@@ -1,7 +1,5 @@
 package app.hongs.util;
 
-import app.hongs.CoreLogger;
-import app.hongs.HongsError;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -312,11 +310,9 @@ public class Synt {
     public static <T> T asserts(Object val, T def) {
         try {
             return declare(val, def);
-        } catch (HongsError ex) {
-            if  (null  ==  def) {
-                throw  ex;
-            }
-            CoreLogger.error  ( ex );
+        }
+        catch (ClassCastException e) {
+            app.hongs.CoreLogger.error(e); // 记录错误, 以备调错
             return def;
         }
     }

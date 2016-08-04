@@ -626,15 +626,15 @@ public final class Tool
           }
           return sb.toString();
       } catch (FileNotFoundException ex) {
-          throw new app.hongs.HongsUnchecked.Common("Can not find " + path, ex);
+          throw new RuntimeException("Can not find " + path, ex);
       } catch (IOException ex) {
-          throw new app.hongs.HongsUnchecked.Common("Can not read " + path, ex);
+          throw new RuntimeException("Can not read " + path, ex);
       } finally {
       if (br != null) {
       try {
           br.close( );
       } catch (IOException ex) {
-          throw new app.hongs.HongsUnchecked.Common("Can not close "+ path, ex);
+          throw new RuntimeException("Can not close "+ path, ex);
       }
       }
       }
@@ -658,13 +658,13 @@ public final class Tool
               bw.write (text);
           }
       } catch (IOException ex) {
-          throw new app.hongs.HongsUnchecked.Common("Can not save " + path, ex);
+          throw new RuntimeException("Can not save " + path, ex);
       } finally {
       if (bw != null) {
       try {
           bw.close( );
       } catch (IOException ex) {
-          throw new app.hongs.HongsUnchecked.Common("Can not close "+ path, ex);
+          throw new RuntimeException("Can not close "+ path, ex);
       }
       }
       }

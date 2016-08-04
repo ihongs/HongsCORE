@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
  * 且兼容上面旧的前缀规则.
  * 增加了忽略别名的前缀"!", 单纯统计行数须写 COUNT(!*).
  * 以下 select,where,groupBy,which,orderBy,on 均可如此.
- * 本类处理一般的查询尚可, 过于复杂的 SQL 语句不用为好.
+ * 本类处理一般的查询尚可 , 过于复杂的如子查询不要使用.
  * </p>
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
@@ -48,14 +48,16 @@ import java.util.regex.Pattern;
  * limit()      LIMIT     start, limit
  * </pre>
  *
- * <h3>系统已定义的"options":</h3>
+ * <h3>系统已知 options:</h3>
  * <pre>
- * ASSOCS       : Set         仅对某些表做关联; 作用域: FetchMore.fetchMore
- * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: FetchMore.fetchMore
- * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: FetchMore.fetchMore
+ * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
+ * UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
+ * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
  * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
  * ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
- * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
+ * ASSOCS       : Set         仅对某些表做关联; 作用域: UniteTool.fetchMore
+ * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: UniteTool.fetchMore
+ * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: UniteTool.fetchMore
  * page         : int|String  分页页码; 作用域: FetchPage
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage
@@ -79,7 +81,7 @@ public class FetchCase
   protected String              tableName;
   protected String              name;
 
-  protected StringBuilder       fields;
+  public StringBuilder       fields;
   protected StringBuilder       wheres;
   protected StringBuilder       groups;
   protected StringBuilder       havins;
@@ -112,12 +114,12 @@ public class FetchCase
 
   // 通过约定标识确定字段
   static final Pattern pf = Pattern
-          .compile("(?<![`\\w])[\\.:!](`.+?`|\\w+|\\*)");
+          .compile("(?<![`\\w])[\\.:!](\\*|\\w+|`.+?`)|'.+?'");
 
   // 查找与字段相关的元素
   static final Pattern p0 = Pattern
           .compile("('.+?'|`.+?`|\\w+|\\*|\\))\\s*");
-  // 后面不跟字段可跟别名, \\d 换成 \\w 则不处理没 "`" 包裹的字段
+  // 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
   static final Pattern p1 = Pattern
           .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
                      , Pattern.CASE_INSENSITIVE);
@@ -376,25 +378,13 @@ public class FetchCase
    * 查询字段前缀
    * 比如 select("fn1,fn2").in("foo") 得到 `foo.fn1`,`foo.fn2`
    * 查询结果会按 . 自动拆解为层级结构, 如 foo={fn1=v1,fn2=v2}
+   * 但当选项 UNFIX_ALIAS 为 true 时此设置直接忽略
    * @param name
    * @return
    */
   public FetchCase in(String name)
   {
     this.joinName = name;
-    return this;
-  }
-
-  /**
-   * 设置查询别名
-   * 等同 from,join 第二参数的作用, 且当 in("") 时与 in(name) 结果一致
-   * 但与 in 不同在于, as 仅设别名, 不与 in("") 配合不会为结果添加前缀
-   * @param name
-   * @return
-   */
-  public FetchCase as(String name)
-  {
-    this.name = name;
     return this;
   }
 
@@ -417,12 +407,12 @@ public class FetchCase
   {
     StringBuilder t = new StringBuilder();
     StringBuilder f = new StringBuilder();
-    StringBuilder g = new StringBuilder();
-    StringBuilder o = new StringBuilder();
     StringBuilder w = new StringBuilder();
+    StringBuilder g = new StringBuilder();
     StringBuilder h = new StringBuilder();
+    StringBuilder o = new StringBuilder();
 
-    getSQLDeep ( t, f, g, o, w, h, null );
+    getSQLDeep ( t, f, w, g, h, o, null );
 
     StringBuilder sql = new StringBuilder("SELECT");
 
@@ -486,8 +476,8 @@ public class FetchCase
    * @return SQL组合
    */
   private void getSQLDeep(StringBuilder t, StringBuilder f,
-                          StringBuilder g, StringBuilder o,
-                          StringBuilder w, StringBuilder h,
+                          StringBuilder w, StringBuilder g,
+                          StringBuilder h, StringBuilder o,
                           String pn)
   {
     if (this.tableName == null
@@ -495,6 +485,10 @@ public class FetchCase
     {
         throw new Error(new HongsException(0x10b4, "tableName can not be empty"));
     }
+
+    boolean noJoins = pn == null && joinList.isEmpty(); // 无关联查询
+    boolean unField = getOption("UNFIX_FIELD", false ); // 不补全表名
+    boolean unAlias = getOption("UNFIX_ALIAS", false ); // 不补全别名
 
     // 表名
     String tn;
@@ -526,7 +520,11 @@ public class FetchCase
       if (this.joinExpr != null && this.joinExpr.length() != 0)
       {
         String s  =  this.joinExpr;
-        s = addSQLTbls( s, tn, pn);
+        if (unField) {
+            s = addSQLTbls(s, tn, pn);
+        } else {
+            s = addSQLTblz(s, tn, pn);
+        }
         b.append(" ON ").append(s);
       }
     }
@@ -537,17 +535,25 @@ public class FetchCase
     if (this.fields.length() != 0)
     {
       String s = this.fields.toString().trim();
-      s = addSQLTbls(s, tn, pn);
+      if (noJoins) {
+          s = delSQLTbls(s);
+      } else
+      if (unField) {
+          s = addSQLTbls(s, tn, pn);
+      } else {
+          s = addSQLTblz(s, tn, pn);
+      }
 
       // Add in 2016/4/15
       // 为关联表的查询列添加层级名
+      if (! unAlias) {
       if (null != pn && null != joinName) {
           if ( ! "".equals( joinName )  ) {
               s = addSQLTbln(s, joinName);
           } else {
               s = addSQLTbln(s, tn);
           }
-      }
+      }}
 
       f.append(" ").append( s );
     }
@@ -556,24 +562,38 @@ public class FetchCase
     if (this.wheres.length() != 0)
     {
       String s = this.wheres.toString().trim();
-      s = addSQLTbls(s, tn, pn);
-      w.append(" ").append( s );
+      if (noJoins) {
+          s = delSQLTbls(s);
+      } else
+      if (unField) {
+          s = addSQLTbls(s, tn, pn);
+      } else {
+          s = addSQLTblz(s, tn, pn);
+      }
+      w.append(" ").append(s);
     }
 
     // 分组
     if (this.groups.length() != 0)
     {
       String s = this.groups.toString().trim();
-      s = addSQLTbls(s, tn, pn);
-      g.append(" ").append( s );
+      if (noJoins) {
+          s = delSQLTbls(s);
+      } else
+      if (unField) {
+          s = addSQLTbls(s, tn, pn);
+      } else {
+          s = addSQLTblz(s, tn, pn);
+      }
+      g.append(" ").append(s);
     }
 
     // 下级
-    for  ( FetchCase caze : this.joinList)
+    for  (FetchCase caze : this.joinList)
     {
-      if ( caze.joinType != 0 )
+      if (caze.joinType != 0)
       {
-        caze.getSQLDeep(t, f, g, o, w, h, tn );
+        caze.getSQLDeep(t, f, w, g, h, o, tn );
       }
     }
 
@@ -581,16 +601,30 @@ public class FetchCase
     if (this.havins.length() != 0)
     {
       String s = this.havins.toString().trim();
-      s = addSQLTbls(s, tn, pn);
-      h.append(" ").append( s );
+      if (noJoins) {
+          s = delSQLTbls(s);
+      } else
+      if (unField) {
+          s = addSQLTbls(s, tn, pn);
+      } else {
+          s = addSQLTblz(s, tn, pn);
+      }
+      h.append(" ").append(s);
     }
 
     // 排序
     if (this.orders.length() != 0)
     {
       String s = this.orders.toString().trim();
-      s = addSQLTbls(s, tn, pn);
-      o.append(" ").append( s );
+      if (noJoins) {
+          s = delSQLTbls(s);
+      } else
+      if (unField) {
+          s = addSQLTbls(s, tn, pn);
+      } else {
+          s = addSQLTblz(s, tn, pn);
+      }
+      o.append(" ").append(s);
     }
   }
 
@@ -654,12 +688,21 @@ public class FetchCase
           }
 
           b.append(setSQLTbln(p, an));
-          p.setLength(0);
-      }   b.append(setSQLTbln(p, an));
+          p.setLength( 0);
+      }
+      if (p.length() > 0) {
+          b.append(setSQLTbln(p, an));
+      }
 
       return b.toString();
   }
 
+  /**
+   * addSQLTbln 的内部方法
+   * @param s
+   * @param an
+   * @return
+   */
   final CharSequence setSQLTbln(CharSequence s, String an)
   {
       Matcher m = pa.matcher(s);
@@ -673,7 +716,7 @@ public class FetchCase
           if (m.group(1) == null) {
               n = "`"+n+"` AS `"+an+"."+n+"`";
           } else {
-              n = /* alias */"`"+an+"."+n+"`";
+              n = /* Alias */"`"+an+"."+n+"`";
           }
           n = Matcher.quoteReplacement(n);
           s = m.replaceFirst("$1"+n+"$4");
@@ -683,23 +726,18 @@ public class FetchCase
   }
 
   /**
-   * 替换SQL表名
+   * 替换SQL表名(聪明模式, 慢)
    * @param s
    * @param tn
    * @param pn
    * @return
    */
-  final String addSQLTbls(CharSequence s, String tn, String pn)
+  final String addSQLTblz(CharSequence s, String tn, String pn)
   {
-      // 顶层且无关联则直接去掉前缀
-      if (null== pn && joinList.isEmpty()) {
-          return delSQLTbls(s);
-      }
-
-      StringBuffer f = new  StringBuffer(s);
+      StringBuffer f = new StringBuffer(s);
       StringBuffer b;
       Matcher      m;
-      String x, y, z;
+      String x  ,  z;
 
       /**
        * 为字段名前添加表别名
@@ -765,6 +803,23 @@ public class FetchCase
       }
       f = m.appendTail(b);
 
+      return addSQLTbls( f , tn , pn );
+  }
+
+  /**
+   * 替换SQL表名(傻瓜模式, 快)
+   * @param s
+   * @param tn
+   * @param pn
+   * @return
+   */
+  final String addSQLTbls(CharSequence s, String tn, String pn)
+  {
+      StringBuffer f = new StringBuffer(s);
+      StringBuffer b;
+      Matcher      m;
+      String x, y, z;
+
       //** 符号标识方式(旧,兼容) **/
 
       x = "$1";
@@ -774,9 +829,9 @@ public class FetchCase
       b = new StringBuffer();
       while ( m.find( )) {
           switch (f.charAt(m.start())) {
-              case '.': m.appendReplacement(b, z); break;
-              case ':': m.appendReplacement(b, y); break;
-              case '!': m.appendReplacement(b, x); break;
+              case '.' : m.appendReplacement(b, z); break;
+              case ':' : m.appendReplacement(b, y); break;
+              case '!' : m.appendReplacement(b, x); break;
           }
       }
       f = m.appendTail(b);
@@ -800,7 +855,10 @@ public class FetchCase
       m = pf.matcher(f);
       b = new StringBuffer();
       while ( m.find( )) {
-          m.appendReplacement(b, x);
+          switch (f.charAt(m.start())) {
+              case '\'': /* Nothing todo for str */ break;
+              default  : m.appendReplacement(b, x); break;
+          }
       }
       f = m.appendTail(b);
 

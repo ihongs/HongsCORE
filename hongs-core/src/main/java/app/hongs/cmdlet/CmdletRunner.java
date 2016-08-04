@@ -303,8 +303,9 @@ public class CmdletRunner
     Runtime.getRuntime().addShutdownHook(new Thread()
     {
       @Override
-      public void  run()
+      public void run ()
       {
+        Core.THREAD_CORE.get().destroy();
         Core.GLOBAL_CORE.destroy();
       }
     });

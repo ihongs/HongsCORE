@@ -203,7 +203,7 @@ public class Mtree extends Model
     }
     if (caze == null)
     {
-      caze = new FetchCase();
+      caze = fetchCase();
     }
 
     //** 默认字段 **/

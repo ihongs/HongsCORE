@@ -245,6 +245,8 @@ public class AuthFilter
     if (act.startsWith( "/" )) {
         act = act.substring(1);
     }
+    // 附带上协议方法
+    String amt = act + "|" + hlpr.getRequest().getMethod();
 
     if (null == authset) {
         if (null != loginPage) {
@@ -255,10 +257,20 @@ public class AuthFilter
             doFailed(core, hlpr, (byte) 2); // 需要权限
             return;
         }
+        if (siteMap.actions.contains(amt)) {
+            doFailed(core, hlpr, (byte) 2); // 需要权限(带方法)
+            return;
+        }
     } else {
         if (siteMap.actions.contains(act)) {
             if (  ! authset.contains(act)) {
                 doFailed(core, hlpr, (byte) 2); // 缺少权限
+                return;
+            }
+        }
+        if (siteMap.actions.contains(amt)) {
+            if (  ! authset.contains(amt)) {
+                doFailed(core, hlpr, (byte) 2); // 缺少权限(带方法)
                 return;
             }
         }

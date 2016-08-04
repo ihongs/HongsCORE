@@ -234,8 +234,8 @@ implements IEntity
     dat.remove(this.table.primaryKey);
 
     // 检查是否可更新
-    Map wh  = Synt.declare(rd.get(Cnst.WH_KEY) , new HashMap( ));
-    FetchCase fc = caze != null ? caze.clone() : new FetchCase();
+    Map wh = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
+    FetchCase fc = caze != null ? caze.clone() : fetchCase( );
     fc.setOption("MODEL_METHOD" , "update");
     for (String id : ids)
     {
@@ -291,8 +291,8 @@ implements IEntity
     }
 
     // 检查是否可删除
-    Map wh  = Synt.declare(rd.get(Cnst.WH_KEY) , new HashMap( ));
-    FetchCase fc = caze != null ? caze.clone() : new FetchCase();
+    Map wh = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
+    FetchCase fc = caze != null ? caze.clone() : fetchCase( );
     fc.setOption("MODEL_METHOD" , "delete");
     for (String id : ids)
     {
@@ -351,7 +351,7 @@ implements IEntity
     }
     if (caze == null)
     {
-      caze = new FetchCase();
+      caze = fetchCase();
     }
 
     // 默认不关联
@@ -576,7 +576,7 @@ implements IEntity
     rd.put(table.primaryKey, id);
 
     // 调用filter进行过滤
-    caze = caze != null ? caze.clone() : new FetchCase();
+    caze = caze != null ? caze.clone() : fetchCase();
     caze.setOption("MODEL_METHOD", "get");
     this.filter(caze , rd);
 
@@ -597,7 +597,7 @@ implements IEntity
     }
 
     // 调用filter进行过滤
-    caze = caze != null ? caze.clone() : new FetchCase();
+    caze = caze != null ? caze.clone() : fetchCase();
     caze.setOption("MODEL_METHOD", "getOne");
     this.filter(caze , rd);
 
@@ -618,7 +618,7 @@ implements IEntity
     }
 
     // 调用filter进行过滤
-    caze = caze != null ? caze.clone() : new FetchCase();
+    caze = caze != null ? caze.clone() : fetchCase();
     caze.setOption("MODEL_METHOD", "getAll");
     this.filter(caze , rd);
 
@@ -655,7 +655,7 @@ implements IEntity
     }
     if (caze == null)
     {
-      caze = new FetchCase();
+      caze = fetchCase();
     }
 
     if (rd.containsKey(Cnst.ID_KEY))
@@ -713,7 +713,7 @@ implements IEntity
     }
     if (caze == null)
     {
-      caze = new FetchCase();
+      caze = fetchCase();
     }
 
     if (rd.containsKey(Cnst.ID_KEY))
@@ -1544,6 +1544,20 @@ implements IEntity
     }
 
     caxe.delOption("IN_PACK");
+  }
+
+  /**
+   * 内建 FetchCase
+   * 用于用户未给 FetchCase 时的默认查询
+   * 此方法会设置 UNFIX_FIELD, UNFIX_ALIAS 为 true
+   * @return
+   * @throws app.hongs.HongsException
+   */
+  public FetchCase fetchCase() throws HongsException
+  {
+    return table.fetchCase()
+      .setOption("UNFIX_FIELD", true)
+      .setOption("UNFIX_ALIAS", true);
   }
 
 }

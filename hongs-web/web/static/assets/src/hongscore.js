@@ -124,23 +124,30 @@ function hsResponObj(rst, qut, pus) {
         if (typeof(rst.msg) === "undefined") {
             rst.msg =  "" ;
         }
+
         // 服务接口要求跳转 (常为未登录或无权限)
         if (! pus) {
             if (rst.ern && /^Er(301|302|401|402|403|404)$/.test(rst.ern)) {
                 if (rst.msg) {
-                    alert(rst.msg);
+                    alert(rst.msg); // 严重错误, 不使用 hsNote,hsWarn 这些了
                 }
                 if (rst.err && /^Goto /i.test(rst.err)) {
-                    var url  = rst.err.substring(5);
+                    var url  = hsFixUri(rst.err.substring(5));
                     if (url != "#") {
                         location.assign(url);
                     } else {
-                        location.reload();
+                        location.reload(   );
                     }
+                } else
+                // 2016/8/4 返回数据未指定跳转时检查配置中是否有指定
+                if (/**/undefined  !==  HsCONF[rst.ern+".redirect"]) {
+                    var url  = hsFixUri(HsCONF[rst.ern+".redirect"]);
+                    location.assign(url);
                 }
-                throw new Error (rst.err);
+                throw new Error(rst.err);
             }
         }
+
         // 成功失败消息处理 (失败则总是发出警告)
         if (! qut) {
             if (rst.ok ) {
@@ -155,6 +162,7 @@ function hsResponObj(rst, qut, pus) {
                 }
             }
         }
+
         // 针对特定数据结构
         if (typeof(rst['data']) !== "undefined") {
             jQuery.extend(rst , rst['data']);
@@ -225,6 +233,7 @@ function hsSerialArr(obj) {
     }
     return  arr;
 }
+
 /**
  * 序列化为字典, 供快速地查找(直接使用object-key获取数据)
  * @param {String|Object|Array|Elements} obj
@@ -252,6 +261,7 @@ function hsSerialDic(obj) {
     }
     return  obj;
 }
+
 /**
  * 序列化为对象, 供进一步操作(可以使用hsGetValue获取数据)
  * @param {String|Object|Array|Elements} obj
@@ -265,6 +275,7 @@ function hsSerialObj(obj) {
     }
     return obj;
 }
+
 /**
  * 将 ar2 并入 arr 中, arr 和 ar2 必须都是 serializeArray 结构
  * @param {Array} arr
@@ -282,6 +293,7 @@ function hsSerialMix(arr, ar2) {
     }
     return jQuery.merge(arr, ar2);
 }
+
 /**
  * 获取多个序列值
  * @param {Array} arr 使用 hsSerialArr 获得
@@ -297,6 +309,7 @@ function hsGetSerias(arr, name) {
     }
     return val;
 }
+
 /**
  * 设置多个序列值
  * @param {Array} arr 使用 hsSerialArr 获得
@@ -313,6 +326,7 @@ function hsSetSerias(arr, name, value) {
         arr.push({name: name, value: value[i]});
     }
 }
+
 /**
  * 获取单个序列值
  * @param {Array} arr 使用 hsSerialArr 获得
@@ -324,6 +338,7 @@ function hsGetSeria (arr, name) {
     if (val.length) return val.pop();
     else            return "";
 }
+
 /**
  * 设置单个序列值
  * @param {Array} arr 使用 hsSerialArr 获得
@@ -352,6 +367,7 @@ function hsGetParams(url, name) {
     }
     return val;
 }
+
 /**
  * 设置多个参数值
  * @param {String} url
@@ -371,6 +387,7 @@ function hsSetParams(url, name, value) {
     }
     return url;
 }
+
 /**
  * 获取单个参数值
  * @param {String} url
@@ -382,6 +399,7 @@ function hsGetParam (url, name) {
     if (val.length) return val.pop();
     else            return "";
 }
+
 /**
  * 设置单个参数值
  * @param {String} url
@@ -419,6 +437,7 @@ function hsGetValue (obj, path, def) {
         throw "hsGetValue: 'path' must be an array or string";
     }
 }
+
 /**
  * 从树对象获取值(hsGetValue的底层方法)
  * @param {Object|Array} obj
@@ -441,6 +460,7 @@ function _hsGetPoint(obj, keys, def) {
     }
     return _hsGetDepth(obj, keys, def, 0);
 }
+
 function _hsGetDepth(obj, keys, def, pos) {
     var key = keys[pos];
     if (obj == null) {
@@ -474,6 +494,7 @@ function _hsGetDepth(obj, keys, def, pos) {
         }
     }
 }
+
 function _hsGetDapth(lst, keys, def, pos) {
     var col = [];
     for(var i = 0; i < lst.length; i ++) {
@@ -488,6 +509,7 @@ function _hsGetDapth(lst, keys, def, pos) {
         return def;
     }
 }
+
 function _hsGetPkeys(path) {
     path = path.replace(/\]\[/g, ".")
                .replace(/\[/   , ".")
@@ -510,6 +532,7 @@ function _hsGetPkeys(path) {
     }
     return  keys;
 }
+
 /**
  * 向树对象设置值
  * @param {Object|Array} obj
@@ -536,6 +559,7 @@ function hsSetValue (obj, path, val) {
         throw "hsSetValue: 'path' must be an array or string";
     }
 }
+
 /**
  * 向树对象设置值(hsSetValue的底层方法)
  * @param {Object|Array} obj
@@ -557,6 +581,7 @@ function _hsSetPoint(obj, keys, val) {
     }
     _hsSetDepth(obj, keys, val, 0);
 }
+
 function _hsSetDepth(obj, keys, val, pos) {
     var key = keys[pos];
 
@@ -639,7 +664,7 @@ function hsForEach(data, func) {
  * @param {String} def 默认值
  * @return {String} 获取到的配置, 如果没有则取默认值
  */
-function hsGetConf  (key, def) {
+function hsGetConf(key, def) {
     if (typeof(HsCONF[key]) !== "undefined") {
         return HsCONF[key];
     }
@@ -647,13 +672,14 @@ function hsGetConf  (key, def) {
         return def;
     }
 }
+
 /**
  * 获取语言
  * @param {String} key
  * @param {Object|Array} rep 替换参数, {a:1,b:2} 或 [1,2]
  * @return {String} 获取到的语言, 其中的 $a或$0 可被 rep 替换
  */
-function hsGetLang  (key, rep) {
+function hsGetLang(key, rep) {
     if (typeof(HsLANG[key]) !== "undefined") {
         key  = HsLANG[key];
     }
@@ -685,25 +711,27 @@ function hsGetLang  (key, rep) {
 
     return key;
 }
+
 /**
  * 检查URI是否有权访问
  * @param {String} uri
  * @return {Boolean} 是(true)否(false)有权访问
  */
-function hsChkUri   (uri) {
+function hsChkUri(uri) {
     if (typeof(HsAUTH[uri]) !== "undefined") {
         return HsAUTH[uri];
     }
     else {
-        return false;
+        return true;
     }
 }
+
 /**
  * 补全URI为其增加前缀
  * @param {String} uri
  * @return {String} 完整的URI
  */
-function hsFixUri   (uri) {
+function hsFixUri(uri) {
     if (/^(\w+:\/\/|\/|\.|\.\.)/.test(uri) === false) {
         var pre  = HsCONF["BASE_HREF"];
         if (pre == undefined) {
@@ -719,6 +747,7 @@ function hsFixUri   (uri) {
         return uri;
     }
 }
+
 /**
  * 补全URI为其设置参数
  * 注意: 参数必须是单个的, 对多个参数如 &a[]=$a&a[]=$a 只会设置两个一样的值
@@ -726,7 +755,7 @@ function hsFixUri   (uri) {
  * @param {Object} pms 可以是 hsSerialArr 或 .loadbox 节点
  * @returns {String} 完整的URI
  */
-function hsFixPms   (uri, pms) {
+function hsFixPms(uri, pms) {
     if (pms instanceof Element || pms instanceof jQuery) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
@@ -1077,6 +1106,7 @@ function _hs2bsDF(format) {
                .replace(/h/g , 'H')
                .replace(/x/g , 'h');
 }
+
 /**
  * Bootstrap日期格式转HongsCORE日期格式
  * @param {String} format

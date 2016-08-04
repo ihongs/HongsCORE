@@ -126,10 +126,10 @@ public class ServerCmdlet {
 
     private static class Stoper extends Thread {
 
-        private final org.eclipse.jetty.server.Server server;
-        private final File ppid  ;
+        private final Server server;
+        private final File   ppid  ;
 
-        public Stoper(org.eclipse.jetty.server.Server server, File ppid) {
+        public Stoper(Server server, File ppid) {
             this.server  = server;
             this.ppid    = ppid  ;
         }

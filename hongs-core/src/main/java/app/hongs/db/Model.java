@@ -821,28 +821,29 @@ implements IEntity
     throws HongsException
   {
     /**
-     * 如果没指定查询的字
+     * 如果没指定查询的表、字段
      * 默认只关联 BLS_TO,HAS_ONE 的表(仅能关联一个)
      * 默认只连接 LEFT  ,INNER   的表(必须满足左表)
      */
-    if (! rd.containsKey(Cnst.RB_KEY)
-    && ("getAll" .equals(rd.get("MODEL_METHOD"))
-    ||  "getList".equals(rd.get("MODEL_METHOD"))
+    if (  !  rd.containsKey(Cnst.RB_KEY)
+    &&  null == caze.getOption("ASSOCS")
+    && ("getAll" .equals(caze.getOption("MODEL_METHOD"))
+    ||  "getList".equals(caze.getOption("MODEL_METHOD"))
     ))
     {
-      if (null == caze.getOption("ASSOC_JOINS"))
-      {
-        Set types = new HashSet();
-        types.add( "LEFT"  );
-        types.add( "INNER" );
-        caze.setOption("ASSOC_JOINS", types);
-      }
       if (null == caze.getOption("ASSOC_TYPES"))
       {
         Set types = new HashSet();
         types.add("BLS_TO" );
         types.add("HAS_ONE");
         caze.setOption("ASSOC_TYPES", types);
+      }
+      if (null == caze.getOption("ASSOC_JOINS"))
+      {
+        Set types = new HashSet();
+        types.add( "LEFT"  );
+        types.add( "INNER" );
+        caze.setOption("ASSOC_JOINS", types);
       }
     }
 

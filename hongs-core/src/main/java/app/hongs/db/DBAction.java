@@ -44,7 +44,7 @@ public class DBAction implements IAction, IActing {
 
             // 判断是否禁用了当前动作, 忽略表单不存在
             if (Dict.getValue(FormSet.getInstance( mod ).getForm( ent ),
-                false, "@", "cant.call." + act)) {
+                false, "@", "deny.call." + act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
         }

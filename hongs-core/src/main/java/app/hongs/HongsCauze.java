@@ -4,7 +4,7 @@ package app.hongs;
  * 异常本地化工具
  * @author Hongs
  */
-public final class HongsCauze {
+public class HongsCauze {
 
     private final int       code;
     private final String    desc;
@@ -86,7 +86,7 @@ public final class HongsCauze {
         codx = "Ex"+Integer.toHexString(code);
         desx = desc != null ? desc : "" /**/ ;
         optx = opts != null ? opts : new String[]{};
-        trns = CoreLocale.getInstance("default_zx").clone();
+        trns = CoreLocale.getInstance("default~ex").clone();
 
         // 0x10,0x1000 为通用一般异常代号
         // 0x11,0x1001 使用消息作为语言键
@@ -116,7 +116,7 @@ public final class HongsCauze {
         if (null  !=  lang) {
             trns.load(lang);
             codx   =  lang
-                .replaceFirst("_zx$" , "" )
+                .replaceFirst("~ex$" , "" )
                 .replaceAll("[/\\\\]", ".")
                 +"."+ codx ;
         }

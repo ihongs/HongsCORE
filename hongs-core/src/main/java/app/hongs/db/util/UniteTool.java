@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 /**
  * 关联工具
- * 
+ *
  * <h3>异常代码:</h3>
  * <pre>
  * 区间: 0x10c2~0x10cf
@@ -274,30 +274,63 @@ public class UniteTool {
   }
 
   private static void buildCase(FetchCase caze, Map assoc) {
-    String sql;
-    sql = (String) assoc.get("select");
+    String  sql;
+    boolean has = false;
+    boolean haz = false;
+
+    sql = (String) assoc.get("select" );
     if (sql != null) {
-        caze.setSelect (sql); // rb 参数将无效
+        caze.setSelect (sql);   // rb 参数将无效
+        if (!sql.startsWith(".") && sql.length() != 0) {
+            has = true;
+            haz = true;
+        }
     }
+
     sql = (String) assoc.get("orderBy");
     if (sql != null) {
-        caze.setOrderBy(sql); // ob 参数将无效
+        caze.setOrderBy(sql);   // ob 参数将无效
+        if (!has && !sql.startsWith(".") && sql.length() != 0) {
+            has = true;
+        }
     }
+
     sql = (String) assoc.get("filter" );
     if (sql != null && sql.length() != 0) {
-        caze.where(sql); // 此处为附加条件, 外部条件仍有效
+        caze.filter(sql);       // 此处为附加条件, 外部条件仍有效
+        if (!has && !sql.startsWith(".")) {
+            has = true;
+        }
     }
+
     sql = (String) assoc.get("groupBy");
     if (sql != null) {
         caze.setGroupBy(sql);
+        if (!has && !sql.startsWith(".") && sql.length() != 0) {
+            has = true;
+        }
     }
+
     sql = (String) assoc.get("having" );
     if (sql != null && sql.length() != 0) {
         caze.having(sql);
+        if (!has && !sql.startsWith(".")) {
+            has = true;
+        }
     }
+
     sql = (String) assoc.get( "limit" );
     if (sql != null && sql.length() != 0) {
-        caze.limit (Synt.asserts(sql, 1));
+        caze.limit (Synt.asserts(sql, 1));  // 仅对非 JOIN 的有效
+    }
+
+    // 有设置查询、条件等时, 必须开启自动补全
+    // 如果首字段、条件以点开头则可不自动补全
+    if (has) {
+        caze.setOption("UNFIX_FIELD", false);
+    }
+    if (haz) {
+        caze.setOption("UNFIX_ALIAS", false);
     }
   }
 
@@ -465,7 +498,7 @@ public class UniteTool {
       String wh = (String) config.get("filter");
       if (wh != null && wh.length() != 0)
       {
-        Pattern pat = Pattern.compile("(?:`(.*?)`|([\\w]+))\\s*=\\s(?:'(.*?)'|([\\d\\.]+))");
+        Pattern pat = Pattern.compile("(?:`(.*?)`|(\\w+))\\s*=\\s*(?:'(.*?)'|(\\d+(?:\\.\\d+)?))");
         Matcher mat = pat.matcher(wh);
         Map     map = new HashMap();
         while ( mat.find()) {

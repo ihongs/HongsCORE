@@ -180,7 +180,7 @@ public class ServLoader {
             if ("__main__".equals(actx)) {
                 acts.put(actn /*__main__*/ , mtdo );
             } else {
-                acts.put(actn + ":" + actx , mtdo );
+                acts.put(actn + "." + actx , mtdo );
             }
         }
     }

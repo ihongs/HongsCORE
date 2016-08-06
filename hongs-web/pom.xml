@@ -113,7 +113,9 @@
                         </goals>
                         <configuration>
                             <tasks>
+                                <!--
                                 <delete dir="${project.build.directory}/${released.name}"/>
+                                //-->
                                 <copy todir="${project.build.directory}/${released.name}" >
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <exclude name="classes/" />

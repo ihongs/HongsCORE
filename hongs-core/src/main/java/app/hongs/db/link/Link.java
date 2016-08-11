@@ -13,15 +13,15 @@ import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
+import java.util.Collection;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * 抽象数据连接
@@ -735,12 +735,12 @@ implements  ITrnsct , Core.Destroy
        * 将在当前问号后补充足量的问号,
        * 并将参数补充到当前参数列表中.
        */
-      if (obj instanceof Set)
+      if (obj instanceof Collection)
       {
-        Set set = (Set)obj;
-        int off =      num;
+        Collection set =(Collection) obj;
+        int off  = num;
 
-        // 加一个空参数防止查询失败
+        // 加一个空参数防止语法错误
         if (set.isEmpty())
         {
           set = new HashSet();
@@ -756,7 +756,7 @@ implements  ITrnsct , Core.Destroy
         }
 
         // 平铺到参数列表中
-        params.remove(off);
+        params.remove(off/***/);
         params.addAll(off, set);
       }
 

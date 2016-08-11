@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -1130,6 +1131,39 @@ public class ActionHelper implements Cloneable
         for ( Object value  :  arr )
         {
             Dict.setParam(paramz, value, key );
+        }
+    }
+    return paramz;
+  }
+
+  /**
+   * 解析参数
+   * 无论值是数组、列表、其他均能正常解析
+   * @param params
+   * @return
+   */
+  public static Map parseParax(Map params)
+  {
+    Map<String, Object> paramz = new HashMap();
+    Iterator it = params.entrySet().iterator();
+    while  ( it.hasNext() )
+    {
+        Map.Entry<String, Object> et = (Map.Entry) it.next();
+        String   key = et.getKey(  );
+        Object   val = et.getValue();
+        if (val instanceof Object[]) {
+            Object[] arr =(Object[]) val;
+            for (Object value : arr) {
+                Dict.setParam(paramz, value, key );
+            }
+        } else
+        if (val instanceof /**/List) {
+            List<Object> lst =(List) val;
+            for (Object value : lst) {
+                Dict.setParam(paramz, value, key );
+            }
+        } else {
+            Dict.setParam(paramz, val, key );
         }
     }
     return paramz;

@@ -179,7 +179,7 @@ function hsResponObj(rst, qut, pus) {
  */
 function hsSerialArr(obj) {
     var arr = [];
-    var typ = !jQuery.isPlainObject() ? jQuery.type(obj) : "objact";
+    var typ = !jQuery.isPlainObject(obj) ? jQuery.type(obj) : "objact";
     switch (typ) {
         case "string":
             var ar1, ar2, key, val, i = 0;
@@ -1126,11 +1126,45 @@ function _bs2hsDF(format) {
 
 $.jqAjax = $.ajax;
 $.hsAjax = function(url, settings) {
-    if (typeof(url) === "object") {
+    if (typeof(url) ===  "object") {
         settings = url;
-        if (typeof(url["url"]) !== "undefined")
+        if (typeof(url["url"]) !== "undefined") {
             url  = url["url"];
+        }
     }
+
+    // 增加 dataKind, 取值 form,text,json,xml,dom
+    if (settings.data && settings.dataKind
+    &&  typeof(settings.data) !== "string"
+    &&  typeof(settings.data) !== "number") {
+        switch(settings.dataKind) {
+            case "json":
+                if (settings.data instanceof jQuery
+                ||  settings.data instanceof Element) {
+                    settings.data = hsSerialObj(settings.data);
+                }
+                settings.data = JSON.stringify (settings.data);
+                settings.contentType = "application/json";
+                break;
+            case "xml" :
+            case "dom" :
+                if (settings.data instanceof jQuery
+                ||  settings.data instanceof Element) {
+                    settings.data = '<?xml version="1.0" ?>' +
+                        $( settings.data ).prop( 'outerHTML' );
+                }
+                settings.contentType = "application/xml" ;
+                break;
+            case "text":
+                settings.contentType = "plain/text";
+                break;
+            case "form":
+                break;
+            default:
+                throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);
+        }
+    }
+
     return $.jqAjax( hsFixUri(url) , settings );
 };
 $.hsOpen = function(url, data, complete) {

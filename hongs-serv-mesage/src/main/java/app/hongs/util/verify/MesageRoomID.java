@@ -11,23 +11,23 @@ import javax.servlet.http.HttpSession;
  * 消息区域ID
  * @author Hongs
  */
-public class MesageTopic extends Rule {
+public class MesageRoomID extends Rule {
 
     @Override
     public Object verify(Object value) throws Wrong, Wrongs, HongsException {
         /**/Session  sess = (/**/Session) values.get(/**/Session.class.getName());
         /**/Map    propes = sess.getUserProperties();
         HttpSession  hses = (HttpSession) propes.get(HttpSession.class.getName());
-        String tid = sess.getPathParameters().get("tid");
+        String rid = sess.getPathParameters().get("rid");
         Object uid = hses.getAttribute(Cnst.UID_SES);
         Object gid = hses.getId();
 
+        values.put("rid", rid);
         values.put("uid", uid);
-        values.put("tid", tid);
         values.put("gid", gid);
 
-        if (tid == null || "".equals(tid)) {
-            throw new Wrong("core.tid.cannot.be.empty").setLocalizedSection("mesage");
+        if (rid == null || "".equals(rid)) {
+            throw new Wrong("core.rid.cannot.be.empty").setLocalizedSection("mesage");
         }
         if (uid == null || "".equals(uid)) {
             throw new Wrong("core.uid.cannot.be.empty").setLocalizedSection("mesage");
@@ -38,7 +38,7 @@ public class MesageTopic extends Rule {
 
         ro = db.fetchCase()
             .from  (db.getTable("room").tableName)
-            .where ("id = ? AND state > 0" , tid )
+            .where ("id = ? AND state > 0" , rid )
             .select("id")
             .one   ();
         if (ro == null || ro.isEmpty()) {
@@ -47,14 +47,14 @@ public class MesageTopic extends Rule {
 
         ro = db.fetchCase()
             .from  (db.getTable("room_mate").tableName)
-            .where ("rid = ? AND uid = ? AND state > 0", tid, uid)
+            .where ("rid = ? AND uid = ? AND state > 0", rid, uid)
             .select("rid")
             .one   ();
         if (ro == null || ro.isEmpty()) {
             throw new Wrong("core.user.not.in.room").setLocalizedSection("mesage");
         }
 
-        return tid;
+        return rid;
     }
 
 }

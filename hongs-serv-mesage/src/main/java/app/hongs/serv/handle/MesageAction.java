@@ -10,23 +10,19 @@ import app.hongs.action.anno.Select;
 import app.hongs.db.DB;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.Model;
+import app.hongs.serv.mesage.MesageHelper;
+import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Wrongs;
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
-import org.apache.kafka.common.PartitionInfo;
-import org.apache.kafka.common.TopicPartition;
 
 /**
  * 消息处理器
@@ -38,48 +34,49 @@ public class MesageAction {
     @Action("retrieve")
     @Permit(conf="$", role={"", "handle", "manage"})
     @Select(conf="mesage", form="message")
-    public void retrieve(ActionHelper helper) {
+    public void retrieve(ActionHelper helper) throws HongsException {
+        DB      db = DB.getInstance("mesage");
+        Model  mod = db.getModel   ( "note" );
         Map    req = helper.getRequestData( );
-        String tid = Synt.declare(req.get("tid"), "");
-        long   bid = Synt.declare(req.get("bid"), 0L);
-        int     rn = Synt.declare(req.get("rn" ), Cnst.RN_DEF);
 
-        String top = MesageSocket.topicPrefix() + ".m:" + tid ;
-        Consumer c = MesageSocket.newConsumer(null, null, rn );
-        c.subscribe(Arrays.asList(top));
-
-        // 一个 tid 相同 key，所以只有一个分区
-        TopicPartition      tp = null;
-        List<PartitionInfo> ps = c.partitionsFor(top);
-        for (PartitionInfo  pi : ps) {
-            tp = new TopicPartition(top, pi.partition( ));
+        // time 是 stime 的别名
+        if (req.containsKey("time")) {
+            req.put("stime", req.get("time"));
         }
 
-        // 指定 bid 上移 rn 位置, 否则从开始读
-        if (tp != null) {
-            if (bid == 0L) {
-                bid = c.position(tp);
+        // rid 不能为空
+        String rid = helper.getParameter("rid");
+        if (rid == null || "".equals(rid)) {
+            helper.fault("Parameter 'rid' can not be empty");
+            return;
+        }
+        // 检查操作权限
+        // TODO:
+
+        Map rsp = mod.retrieve(req);
+
+        /**
+         * 直接取出消息数据列表
+         * 扔掉用于索引的数据项
+         */
+        List<Map> list = null;
+        if (rsp.containsKey("list")) {
+            list = (List<Map>) rsp.get("list");
+        } else
+        if (rsp.containsKey("info")) {
+            Map info = ( Map ) rsp.get("info");
+            list = new ArrayList();
+            list.add(info);
+        }
+        if (list != null) {
+            for (Map info : list ) {
+                String msg = (String) info.get("msg");
+                info.clear();
+                info.putAll((Map) Data.toObject(msg));
             }
-            c.seek(tp, bid > rn ? bid - rn : 0);
-        } else {
-            c.seek(tp, 1L);
         }
 
-        // 读取 rn 条记录
-        List<Map> ls = new ArrayList();
-            ConsumerRecords<String, Map> rs = c.poll(0);
-        for(ConsumerRecord <String, Map> rd : rs) {
-            Map  sd  =  rd.value ( );
-            sd.put("id",rd.offset());
-            ls.add( sd );
-            if (0 == -- rn) {
-                break;
-            }
-        }
-
-        Map sd = new HashMap();
-        sd.put("list", ls);
-        helper.reply ( sd);
+        helper.reply(rsp);
     }
 
     @Action("room/retrieve")
@@ -185,9 +182,9 @@ public class MesageAction {
         VerifyHelper ver = new VerifyHelper( );
         Map      dat = helper.getRequestData();
         byte     mod = Synt.declare(dat.get("md"), (byte) 0);
-        Producer pcr = MesageSocket.newProducer();
-        String   pre = MesageSocket.topicPrefix  ();
-        String   tid ;
+        Producer pcr = MesageHelper.newProducer();
+        String   top = MesageHelper.getProperty("core.mesage.chat.topic");
+        String   rid ;
         Map      tmp ;
 
         ver.isUpdate( false );
@@ -199,7 +196,7 @@ public class MesageAction {
             tmp = ver.verify(dat);
 
             // 提取主题并将连接数据并入消息数据, 清空规则为校验消息做准备
-            tid = (String) tmp.get("tid");
+            rid = (String) tmp.get("rid");
             ver.getRules().clear();
             dat.putAll(tmp);
 
@@ -208,8 +205,7 @@ public class MesageAction {
             tmp = ver.verify(dat);
 
             // 送入消息队列
-            pcr.send(new ProducerRecord<>(pre+".m:"+tid, tid, tmp)); // 消息
-            pcr.send(new ProducerRecord<>(pre+".n:"/**/, tid, tmp)); // 通知
+            pcr.send(new ProducerRecord<>(top, rid, tmp));
 
             dat = new HashMap(  );
             dat.put("info" , tmp);
@@ -242,7 +238,7 @@ public class MesageAction {
         Map<Object, Map> gmp = new HashMap();
         List<Map> rz; // 临时查询列表
 
-        // 获取到 tid 映射
+        // 获取到 rid 映射
         for(Map ro : rs) {
             if (Synt.asserts(ro.get("state"), 0) == 1) {
                 fmp.put(ro.get("id"), ro );

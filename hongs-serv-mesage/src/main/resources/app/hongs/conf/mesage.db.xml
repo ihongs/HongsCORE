@@ -14,6 +14,10 @@ xsi:schemaLocation="http://hongs-core db.xsd">
                    foreignKey="rid">
             </assoc>
         </table>
+        <table name="note"
+               tableName="a_mesage_note"
+               primaryKey="id">
+        </table>
         <table name="room_mate"
                tableName="a_mesage_room_mate"/>
         <table name="user_mate"

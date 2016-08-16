@@ -1,24 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <form name="connect">
-        <field name="tid" rule="MesageTopic" required=""></field><!-- 目标编号 -->
+        <field name="rid" rule="MesageRoomID" required=""></field><!-- 目标编号 -->
         <field name="uid" required="yes"></field><!-- 用户编号 -->
         <field name="gid" required="yes"></field><!-- 终端标识 -->
     </form>
     <form name="message">
-        <field name="id"></field><!-- offset -->
-        <field name="sn"  type="string"></field>
-        <field name="tid" rule="Intact"></field>
-        <field name="gid" rule="Intact"></field>
+        <field name="id"  type="string"></field>
+        <field name="rid" rule="Intact"></field>
         <field name="uid" rule="Intact"></field>
+        <field name="gid" rule="Intact"></field>
         <field name="time">
             <param name="default">=%now</param>
             <param name="default-always">yes</param>
         </field><!-- 发送时间 -->
         <field name="type" type="enum"></field><!-- 目标类型, user,group,crowd -->
         <field name="kind" type="enum"></field><!-- 消息类型, note,text,link,image,audio,video -->
-        <field name="body"></field><!-- 消息内容 -->
-        <field name="file" type="file"></field><!-- 附带文件, kind 为 image,audio,video 时有值 -->
+        <field name="body" type="text"><!-- 消息内容 -->
+            <param name="maxlength">1024</param>
+        </field>
+        <field name="extr" type="text"><!-- 附加标识 -->
+            <param name="maxlength">64</param>
+        </field>
+        <field name="file" type="file"><!-- 附带文件, kind 为 image,audio,video 时有值 -->
+            <param name="maxlength">64</param>
+        </field>
     </form>
     <enum name="type">
         <value code="user">用户</value>

@@ -1,32 +1,27 @@
 package app.hongs.serv.handle;
 
 import app.hongs.Core;
-import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.SocketHelper;
 import app.hongs.action.VerifyHelper;
+import app.hongs.serv.mesage.MesageChatWorker;
+import app.hongs.serv.mesage.MesageHelper;
 import app.hongs.util.Data;
+import app.hongs.util.Synt;
 import app.hongs.util.verify.Wrongs;
-import java.io.IOException;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.Properties;
 import javax.websocket.OnOpen;
 import javax.websocket.OnClose;
+import javax.websocket.OnError;
 import javax.websocket.OnMessage;
 import javax.websocket.Session;
 import javax.websocket.server.PathParam;
 import javax.websocket.server.ServerEndpoint;
-import org.apache.kafka.clients.consumer.Consumer;
-import org.apache.kafka.clients.consumer.ConsumerRecord;
-import org.apache.kafka.clients.consumer.ConsumerRecords;
-import org.apache.kafka.clients.consumer.KafkaConsumer;
-import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.Producer;
 import org.apache.kafka.clients.producer.ProducerRecord;
 
@@ -35,7 +30,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
  * @author Hongs
  */
 @ServerEndpoint(
-        value = "/handle/mesage/socket/{tid}",
+        value = "/handle/mesage/socket/{rid}",
         configurator = SocketHelper.Config.class)
 public class MesageSocket {
 
@@ -46,15 +41,13 @@ public class MesageSocket {
             Map           prop = sess.getUserProperties( );
             Map           data;
             VerifyHelper  veri;
-            Worker        worker;
-            Producer      producer;
-            Consumer      consumer;
-            String        tid;
-            String        uid;
-            String        gid;
+            Producer      prod;
+            String        pipe;
 
-            data = new HashMap();
+            pipe = MesageHelper.getProperty("core.mesage.chat.topic");
+            prod = MesageHelper.newProducer();
             veri = new VerifyHelper();
+            data = new HashMap();
             veri.isPrompt(true );
 
             /**
@@ -78,27 +71,13 @@ public class MesageSocket {
                 return;
             }
 
-            tid = (String) data.get("tid");
-            uid = (String) data.get("uid");
-            gid = (String) data.get("gid");
-
-            // 生产者、消费者
-            producer = newProducer();
-            consumer = newConsumer(gid , uid , 0 );
-            consumer.subscribe(Arrays.asList(topicPrefix + "_m_" + tid));
-
-            // 当前会话处理器
-            worker   = new Worker (consumer, sess);
-                       new Thread (worker).start();
-
             // 注入环境备后用
-            prop.put( "data", data );
-            prop.put(Worker.class.getName(), worker);
-            prop.put(Producer.class.getName(), producer);
-            prop.put(Consumer.class.getName(), consumer);
+            prop.put("data", data);
+            prop.put("pipe", pipe);
+            prop.put(Producer.class.getName(), prod);
             prop.put(VerifyHelper.class.getName(), veri);
 
-            setSession(sess , true );
+            setSession(sess, true); // 登记会话
         }
         catch (Exception|Error er) {
             CoreLogger.error ( er);
@@ -112,15 +91,7 @@ public class MesageSocket {
     public void onClose(Session sess) {
         SocketHelper hepr = SocketHelper.getInstance(sess);
         try {
-            /**
-             * 终止通道监听线程
-             */
-            Map prop = sess.getUserProperties();
-            String n =  Worker.class.getName( );
-            Worker w = (Worker) prop.get(  n  );
-            w.die( );
-
-            setSession(sess , false);
+            setSession(sess,false); // 删除会话
         }
         catch (Exception|Error er) {
             CoreLogger.error ( er);
@@ -130,14 +101,25 @@ public class MesageSocket {
         }
     }
 
+    @OnError
+    public void onError(Session sess, Throwable ta) {
+        try {
+            CoreLogger.debug ( ta.getMessage() );
+        }
+        finally {
+            onClose(sess);
+        }
+    }
+
     @OnMessage
-    public void onMessage(Session sess, String msg, @PathParam("tid") String tid) {
+    public void onMessage(Session sess, String msg, @PathParam("rid") String rid) {
         SocketHelper hepr = SocketHelper.getInstance(sess);
         try {
             Map          prop = sess.getUserProperties();
-            Map          data = (Map) prop.get( "data" );
+            Map          data = (Map   ) prop.get("data");
+            String       pipe = (String) prop.get("pipe");
+            Producer     prod = (Producer) prop.get(Producer.class.getName());
             VerifyHelper veri = (VerifyHelper) prop.get(VerifyHelper.class.getName());
-            Producer     producer = (Producer) prop.get(/**/Producer.class.getName());
 
             // 解析数据
             Map dat;
@@ -148,24 +130,27 @@ public class MesageSocket {
             }
 
             // 验证数据
+            String uid, id, tm;
             try {
                 dat.putAll(data);
-                dat = veri.verify(dat);
+                dat = veri.verify( dat );
+                 id = Core.getUniqueId();
+                dat.put("id",id);
+                 tm = Synt.declare(dat.get("time"), "");
+                uid = Synt.declare(dat.get("uid" ), "");
             } catch (Wrongs wr ) {
                 hepr.reply( wr.toReply(( byte ) 9 ));
                 return;
-            } catch (HongsException ex) {
+            } catch (HongsException ex ) {
                 hepr.fault(ex.getLocalizedMessage());
                 return;
             }
-            String str = Data.toString(dat);
+            msg = rid+","+uid+","+id+","+tm+"|"+Data.toString(dat);
 
+            prod.send(new ProducerRecord< >(pipe , rid , msg));
             if (Core.DEBUG > 0) {
-                CoreLogger.trace("Send to "+topicPrefix+"_m_"+tid+" "+str);
+                CoreLogger.trace("Send to {}: {}", pipe, msg );
             }
-
-            producer.send(new ProducerRecord<>(topicPrefix+"_m_"+tid, tid, str)); // 消息
-            producer.send(new ProducerRecord<>(topicPrefix+"_n" /**/, tid, str)); // 通知
         }
         catch (Exception|Error er) {
             CoreLogger.error ( er);
@@ -175,159 +160,110 @@ public class MesageSocket {
         }
     }
 
-    public static class Worker implements Runnable {
-
-     volatile  private  boolean exit = false;
-        final  private  Session sess ;
-        final  private Consumer cons ;
-
-        public Worker(Consumer cons, Session sess) {
-            this.cons = cons;
-            this.sess = sess;
-        }
-
-        public void die() {
-            exit  = true;
-        }
-
-        @Override
-        public void run() {
-            try {
-                while (!exit) {
-                    try {
-                            ConsumerRecords<String, String> rs = cons.poll(pollTimeout);
-                        for(ConsumerRecord <String, String> rd : rs) {
-                            String sd  =  rd.value( ).substring( 1 );
-                            sd = "{\"ok\":true,\"ern\":\"\",\"err\":\"\",\"msg\":\"\","
-                               + "\"info\":{\"id\":\"" + rd.offset() + "\"," + sd + "}";
-
-                            try {
-                                sess.getBasicRemote().sendText(sd);
-                            } catch (IOException ex) {
-                                CoreLogger.error(ex);
-                            }
-                        }
-                    } catch (Exception | Error er) {
-                        CoreLogger.error(er);
-                    }
-                }
-            }  finally {
-                cons.close();
-            }
-        }
-
-    }
-
     //** 静态工具方法 **/
 
-    public  static final Set<Session> conns = new HashSet();
-    public  static final Map<String, Set<Session>> userConns = new HashMap();
-    public  static final Map<String, Set<Session>> roomConns = new HashMap();
-
-    private static final CoreConfig producerConfig;
-    private static final CoreConfig consumerConfig;
-    private static final String     topicPrefix;
-    private static final long       pollTimeout;
-
-    static {
-        producerConfig = new CoreConfig("mesage_producer").padDefaults();
-        consumerConfig = new CoreConfig("mesage_consumer").padDefaults();
-
-        CoreConfig cnf = new CoreConfig("mesage");
-        topicPrefix = cnf.getProperty("core.mesage.topic.prefix","core");
-        pollTimeout = cnf.getProperty("core.mesage.poll.timeout", 100L );
-    }
-
-    public static long pollTimeout() {
-        return pollTimeout;
-    }
-
-    public static String topicPrefix() {
-        return topicPrefix;
-    }
-
-    public static KafkaProducer newProducer() {
-        return new KafkaProducer(producerConfig);
-    }
-
-    public static KafkaConsumer newConsumer(String gid, String cid, int max) {
-        Properties cnf = (Properties) consumerConfig.clone();
-        if (gid != null) {
-            cnf.setProperty( "group.id", gid);
-        }
-        if (cid != null) {
-            cnf.setProperty("client.id", cid);
-        }
-        if (max != 0) {
-            cnf.setProperty("max.poll.records", String.valueOf(max));
-        }
-        return new KafkaConsumer(cnf);
-    }
+    public  static final Set<Session > conns = new HashSet();
+    public  static final Set<Runnable> works = new HashSet();
+    public  static final Map<String, Set<Session>> roomConns = new HashMap(); // room_id:[Session]
+    public  static final Map<String, Set<Session>> userConns = new HashMap(); // user_id:[Session]
+    public  static final Map<String, Set<String >> roomUsers = new HashMap(); // room_id:[user_id]
 
     synchronized private static void setSession(Session sess, boolean add) {
         SocketHelper hlpr = (SocketHelper) sess.getUserProperties().get(SocketHelper.class.getName());
-        String tid = hlpr.getParameter("tid");
+        String rid = hlpr.getParameter("rid");
         String uid = hlpr.getParameter("uid");
-        Set roomConn = roomConns.get(tid);
+        Set roomConn = roomConns.get(rid);
         Set userConn = userConns.get(uid);
+        Set roomUser = roomUsers.get(rid);
 
         if (add) {
             conns.add(sess);
 
             if (roomConn == null) {
                 roomConn  = new HashSet();
-                roomConns.put(tid, roomConn);
+                roomConns.put(rid, roomConn);
             }
             roomConn.add(sess);
 
             if (userConn == null) {
                 userConn  = new HashSet();
-                roomConns.put(tid, userConn);
+                roomConns.put(rid, userConn);
             }
             userConn.add(sess);
+
+            if (roomUser == null) {
+                roomUser  = new HashSet();
+                roomUsers.put(rid, roomUser);
+            }
+            roomUser.add(uid );
         } else {
             conns.remove(sess);
 
             if (roomConn != null) {
-                roomConn.remove(tid);
+                roomConn.remove(sess);
                 if (roomConn.isEmpty()) {
-                    roomConns.remove(tid);
+                    roomConns.remove(rid);
                 }
             }
 
             if (userConn != null) {
-                userConn.remove(uid );
+                userConn.remove(sess);
                 if (userConn.isEmpty()) {
                     userConns.remove(uid);
                 }
             }
-        }
-    }
 
-    private static Map toReply(Map rd) {
-        if (! rd.containsKey( "ok" )) {
-            rd.put("ok", true);
+            if (roomUser != null) {
+                roomUser.remove(uid );
+                if (roomUser.isEmpty()) {
+                    roomUsers.remove(rid);
+                }
+            }
         }
-        if (! rd.containsKey("ern" )) {
-            rd.put("ern" , "");
-        }
-        if (! rd.containsKey("err" )) {
-            rd.put("err" , "");
-        }
-        if (! rd.containsKey("ern" )) {
-            rd.put("msg" , "");
-        }
-        if (! rd.containsKey("info")) {
-            rd.put("info", new HashMap());
-        }
-        return rd;
-    }
 
-    private static Map toError(String msg) {
-        Map xd = new HashMap();
-        xd.put("ok",false);
-        xd.put("msg", msg);
-        return toReply(xd);
+        /**
+         * 首次调用时启动工作线程
+         */
+        if (works.isEmpty()) {
+            String topic;
+            String group;
+            int    count;
+
+            // 聊天
+            topic = MesageHelper.getProperty("core.mesage.chat.topic");
+            group = MesageHelper.getProperty("core.mesage.chat.group");
+            count = Synt.asserts(MesageHelper.getProperty("core.mesage.chat.works"), 0);
+            for (int i = 0; i < count; i ++) {
+              works.add(new MesageChatWorker(group, topic, roomConns));
+            }
+
+            // 分发
+            group = MesageHelper.getProperty("core.mesage.dist.group");
+            count = Synt.asserts(MesageHelper.getProperty("core.mesage.dist.works"), 0);
+            for (int i = 0; i < count; i ++) {
+              works.add(new MesageChatWorker(group, topic, roomConns));
+            }
+
+            // 记录
+            group = MesageHelper.getProperty("core.mesage.keep.group");
+            count = Synt.asserts(MesageHelper.getProperty("core.mesage.keep.works"), 0);
+            for (int i = 0; i < count; i ++) {
+              works.add(new MesageChatWorker(group, topic, roomConns));
+            }
+
+            // 通知
+            topic = MesageHelper.getProperty("core.mesage.note.topic");
+            group = MesageHelper.getProperty("core.mesage.note.group");
+            count = Synt.asserts(MesageHelper.getProperty("core.mesage.note.works"), 0);
+            for (int i = 0; i < count; i ++) {
+              works.add(new MesageChatWorker(group, topic, roomConns));
+            }
+
+            // 把这些工作线程都启动起来
+            for ( Runnable run : works) {
+                new Thread(run).start();
+            }
+        }
     }
 
 }

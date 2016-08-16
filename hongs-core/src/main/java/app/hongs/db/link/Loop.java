@@ -144,4 +144,12 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
         }
     }
 
+    /**
+     * @deprecated
+     */
+    @Override
+    public void remove() {
+        throw new UnsupportedOperationException("Not supported remove in db rs loop.");
+    }
+
 }

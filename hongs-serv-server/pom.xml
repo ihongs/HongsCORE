@@ -25,22 +25,22 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-            <version>9.3.10.v20160621</version>
+            <version>9.3.11.v20160721</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>9.3.10.v20160621</version>
+            <version>9.3.11.v20160721</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>apache-jsp</artifactId>
-            <version>9.3.10.v20160621</version>
+            <version>9.3.11.v20160721</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-plus</artifactId>
-            <version>9.3.0.M0</version>
+            <version>9.3.11.v20160721</version>
         </dependency>
     </dependencies>
 </project>

@@ -91,6 +91,12 @@ public class CmdletRunner
     {
       Throwable ta = ex.getCause();
 
+      if  ( 0 < Core.DEBUG )
+      {
+        CoreLogger.error(ta);
+        return;
+      }
+
       /**
        * 构建错误消息
        */

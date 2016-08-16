@@ -135,6 +135,13 @@ implements  ITrnsct , Core.Destroy
     }
   }
 
+  @Override
+  protected void finalize() throws Throwable
+  {
+     this.destroy( );
+    super.finalize();
+  }
+  
   /**
    * 事务:开始
    */
@@ -352,6 +359,7 @@ implements  ITrnsct , Core.Destroy
         .getMetaData()
         .getDatabaseProductName()
         .toUpperCase();
+
         if ("SQLITE".equals(dpn)) {
             sql += " LIMIT ?,?";
             Object[] paramz = new Object[params.length + 2];

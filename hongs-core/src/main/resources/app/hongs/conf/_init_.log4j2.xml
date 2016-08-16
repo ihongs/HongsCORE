@@ -31,10 +31,10 @@
             <AppenderRef ref="CONSOLE"/>
             <AppenderRef ref="MoreLog"/>
         </Root>
-        <Logger name="hongs.out" level="TRACE" additivity="false">
+        <Logger name="hongs.out" level="ALL" additivity="false">
             <AppenderRef ref="CONSOLE"/>
         </Logger>
-        <Logger name="hongs.log" level="ERROR" additivity="false">
+        <Logger name="hongs.log" level="ALL" additivity="false">
             <AppenderRef ref="LessLog"/>
         </Logger>
     </Loggers>

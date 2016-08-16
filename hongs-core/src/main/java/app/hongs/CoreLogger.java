@@ -73,6 +73,23 @@ public class CoreLogger
     }
 
     /**
+     * 跟踪
+     * @param text
+     * @param args
+     */
+    public static void trace(String text, Object... args) {
+        if (4 == (4 & Core.DEBUG)) {
+            return; // 禁止跟踪
+        }
+        if (1 == (1 & Core.DEBUG)) {
+            getLogger(space("hongs.out")).trace(envir(text), args);
+        }
+        if (2 == (2 & Core.DEBUG)) {
+            getLogger(space("hongs.log")).trace(envir(text), args);
+        }
+    }
+
+    /**
      * 调试
      * @param text
      * @param args
@@ -86,23 +103,6 @@ public class CoreLogger
         }
         if (2 == (2 & Core.DEBUG)) {
             getLogger(space("hongs.log")).debug(envir(text), args);
-        }
-    }
-
-    /**
-     * 输出
-     * @param text
-     * @param args
-     */
-    public static void trace(String text, Object... args) {
-        if (4 == (4 & Core.DEBUG)) {
-            return; // 禁止跟踪
-        }
-        if (1 == (1 & Core.DEBUG)) {
-            getLogger(space("hongs.out")).trace(envir(text), args);
-        }
-        if (2 == (2 & Core.DEBUG)) {
-            getLogger(space("hongs.log")).trace(envir(text), args);
         }
     }
 

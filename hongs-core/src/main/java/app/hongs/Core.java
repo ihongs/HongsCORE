@@ -27,7 +27,7 @@ import java.util.Map;
  * <h3>静态属性:</h3>
  * <pre>
  ENVIR            标识不同运行环境(0 cmd, 1 web)
- DEBUG            标识不同调试模式(0 无 , 1 输出, 2 日志, 4 禁止错误 8 禁止调试 16 静默模式; 可使用位运算, 比如 3 表示既输出又记录)
+ DEBUG            标识不同调试模式(0 无 , 1 输出, 2 日志, 4 禁止跟踪 8 禁止调试; 可使用位运算例如 3 表示既输出又记录)
  BASE_HREF        应用访问路径(WEB应用中为ContextPath)
  BASE_PATH        应用目录路径(WEB应用中为RealPath(/))
  CORE_PATH        应用目录路径(WEB应用中为WEB-INF目录)

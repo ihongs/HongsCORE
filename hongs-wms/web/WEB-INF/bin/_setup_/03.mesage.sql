@@ -63,31 +63,34 @@ CREATE INDEX `IK_a_mesage_user_mate_ctime` ON `a_mesage_user_mate` (`ctime`);
 CREATE INDEX `IK_a_mesage_user_mate_mtime` ON `a_mesage_user_mate` (`mtime`);
 
 --
--- 通知
+-- 消息
 --
 
 DROP TABLE IF EXISTS `a_mesage_note`;
 CREATE TABLE `a_mesage_note` (
   `id`  VARCHAR(200) NOT NULL,
   `uid` VARCHAR(200) NOT NULL,
-  `dat` TEXT,
+  `rid` VARCHAR(200) NOT NULL,
+  `msg` TEXT,
+  `stime` UNSIGNED INT(11) DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1', /* 1 未读, 2 已读 */
-  `ctime` UNSIGNED INT(11) DEFAULT NULL,
   PRIMARY KEY (`id`)
 );
 
 CREATE INDEX `IK_a_mesage_note_uid` ON `a_mesage_note` (`uid`);
+CREATE INDEX `IK_a_mesage_note_rid` ON `a_mesage_note` (`rid`);
 CREATE INDEX `IK_a_mesage_note_state` ON `a_mesage_note` (`state`);
-CREATE INDEX `IK_a_mesage_note_ctime` ON `a_mesage_note` (`ctime`);
+CREATE INDEX `IK_a_mesage_note_ctime` ON `a_mesage_note` (`stime`);
 
 --
--- 通知统计
+-- 消息统计
 --
 
 DROP TABLE IF EXISTS `a_mesage_note_stat`;
 CREATE TABLE `a_mesage_note_stat` (
   `uid` VARCHAR(200) NOT NULL,
-  `cnt` INTEGER( 10) NOT NULL,
+  `unread_count` INTEGER(10) DEFAULT 0,
+  `unread_final` TEXT,
   `state` TINYINT(2) DEFAULT '1', /* 1 无新, 2 有新 */
   `mtime` UNSIGNED INT(11) DEFAULT NULL,
   PRIMARY KEY (`uid`)

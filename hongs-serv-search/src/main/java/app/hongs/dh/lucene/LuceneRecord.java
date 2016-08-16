@@ -1762,6 +1762,14 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
             return H ;
         }
 
+        /**
+         * @deprecated
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported remove in lucene loop.");
+        }
+
         @Override
         public String toString() {
             hasNext();

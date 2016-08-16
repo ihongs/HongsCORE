@@ -52,8 +52,8 @@
 
     # 设置和启动系统
     cd HongsWMS
-    bin/app system:setup
-    bin/app server:start
+    bin/app system.setup
+    bin/app server.start
 
 加 --debug 1 可开启调试输出模式, 可在控制台(命令行)显示执行过程(调试信息), server:start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
 
@@ -306,7 +306,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     dont.show.update.button 告知视图不要显示修改按钮
     dont.show.delete.button 告知视图不要显示删除按钮
     dont.show.checks.column 告知视图不要显示选择列
-    cant.call.ACTION_HANDLE 告知 DBAction 等"脚手架"处理器拒绝处理某些操作, 也可以通过权限控制
+    deny.call.ACTION_HANDLE 告知 DBAction 等"脚手架"处理器拒绝处理某些操作, 也可以通过权限控制
 
 对于 dont.auto.bind.xxxxable 部分, 非关系数据库默认为 true.
 

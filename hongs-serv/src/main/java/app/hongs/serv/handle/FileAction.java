@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.awt.Image;
+import java.net.URLConnection;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -28,14 +29,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.imageio.ImageIO;
-
-import eu.medsea.mimeutil.MimeUtil;
-import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
+import javax.servlet.http.HttpServletResponse;
 
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
+
+//import eu.medsea.mimeutil.MimeUtil;
+//import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 /**
  * 通用上传动作
@@ -44,10 +45,10 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 @Action("handle/file")
 public class FileAction {
 
-    static {
-        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
-    }
-  
+//    static {
+//        MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getName());
+//    }
+
     @Action("create")
     public void uploadFile(ActionHelper helper) throws HongsException {
         Map sd = new HashMap();
@@ -216,9 +217,14 @@ public class FileAction {
     }
 
     private void outputFile(File df, HttpServletResponse rs) throws HongsException {
+        long   sz = df.length( );
+        String fn = df.getPath();
+        String mt = URLConnection.getFileNameMap().getContentTypeFor(fn);
+//      String mt = MimeUtil.getMimeTypes(df).toString();
+
         rs.reset();
-        rs.setContentLengthLong(df.length());
-        rs.setContentType(MimeUtil.getMimeTypes(df).toString());
+        rs.setContentType(mt);
+        rs.setContentLengthLong(sz);
 
         try {
              InputStream ips;

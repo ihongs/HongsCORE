@@ -28,13 +28,13 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   ActionHelper helper = null;
 
   @Override
-  public void jspInit()
+  public void  jspInit()
   {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public void jspDestroy()
+  public void  jspDestroy()
   {
     throw new UnsupportedOperationException("Not supported yet.");
   }

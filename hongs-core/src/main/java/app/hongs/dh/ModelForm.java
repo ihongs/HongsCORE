@@ -13,6 +13,8 @@ import java.util.Set;
 /**
  * 模型表单
  * 用于对存储实例提供表单字段支持
+ * 注意 ModelForm 默认 dont.auto.bind.xxxxable 为 true
+ * 即默认不会根据字段类型自动设置 findable,sortable 等
  * @author Hongs
  */
 abstract public class ModelForm {
@@ -145,6 +147,13 @@ abstract public class ModelForm {
             sets = Synt.asTerms( getDtypes( ).get( dn ) );
         } else {
             sets = new HashSet ( );
+            // 专用类型特例, 无需特别设置
+            if ("findable".equals(dn)) {
+                sets.add("search");
+            } else
+            if ("sortable".equals(dn)) {
+                sets.add("sorted");
+            }
         }
 
         for(Map.Entry<String, Map> et: fields.entrySet()) {

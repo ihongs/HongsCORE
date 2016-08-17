@@ -1425,6 +1425,9 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
             if ("string".equals (t)) {
                 f = new StringFiald();
             } else
+            if ("search".equals (t)) {
+                f = new SearchFiald();
+            } else
             if ("object".equals (t)) {
                 f = new ObjectFiald();
             } else

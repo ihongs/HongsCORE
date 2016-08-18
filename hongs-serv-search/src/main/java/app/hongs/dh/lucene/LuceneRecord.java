@@ -727,6 +727,12 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
         }
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+         this.destroy( );
+        super.finalize();
+    }
+    
     /**
      * 事务开始
      */

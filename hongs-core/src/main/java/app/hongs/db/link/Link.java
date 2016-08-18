@@ -141,7 +141,7 @@ implements  ITrnsct , Core.Destroy
      this.destroy( );
     super.finalize();
   }
-  
+
   /**
    * 事务:开始
    */

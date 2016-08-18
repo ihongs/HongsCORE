@@ -722,12 +722,12 @@ public class DB
    * 如果指定数据库配置中有指定dbClass, 务必添加方法:
    * </p>
    * <pre>
- public static XxxDB getInstance()
+  public static XxxDB getInstance()
     throws HongsException
- {
-    return new XxxDB();
- }
- </pre>
+  {
+    return new  XxxDB();
+  }
+   * </pre>
    * @return 默认DB对象
    * @throws app.hongs.HongsException
    */

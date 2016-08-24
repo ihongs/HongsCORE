@@ -67,12 +67,12 @@ function H$() {
 
 /**
  * 标准化返回对象
- * @param {Object|String} rst JSON对象/JSON文本或错误消息
- * @param {Boolean} qut 不显示消息, 忽略 msg
- * @param {Boolean} pus 不进行跳转, 忽略 ref
+ * @param {Object|String|XHR} rst JSON对象/JSON文本或错误消息
+ * @param {Boolean} qut 不显示消息
+ * @param {Boolean} qxt 不进行跳转
  * @return {Object}
  */
-function hsResponObj(rst, qut, pus) {
+function hsResponObj(rst, qut, qxt) {
     if (typeof(rst.responseText) !== "undefined") {
         rst  = rst.responseText;
     }
@@ -126,25 +126,25 @@ function hsResponObj(rst, qut, pus) {
         }
 
         // 服务接口要求跳转 (常为未登录或无权限)
-        if (! pus) {
+        if (! qxt) {
             if (rst.ern && /^Er(301|302|401|402|403|404)$/.test(rst.ern)) {
                 if (rst.msg) {
-                    alert(rst.msg); // 严重错误, 不使用 hsNote,hsWarn 这些了
+                    alert(rst.msg); // 严重错误, 直接弹框
                 }
-                if (rst.err && /^Goto /i.test(rst.err)) {
-                    var url  = hsFixUri(rst.err.substring(5));
-                    if (url != "#") {
-                        location.assign(url);
+                if (rst.err &&/^Goto /i.test(rst.err)) {
+                    var url =  rst.err.substring( 5 ) ;
+                    if (url && url != '#') {
+                        location.assign(hsFixUri(url));
                     } else {
-                        location.reload(   );
+                        location.reload( );
                     }
-                } else
-                // 2016/8/4 返回数据未指定跳转时检查配置中是否有指定
-                if (/**/undefined  !==  HsCONF[rst.ern+".redirect"]) {
-                    var url  = hsFixUri(HsCONF[rst.ern+".redirect"]);
-                    location.assign(url);
+                } else {
+                    var url = hsGetConf(rst.ern + ".redirect");
+                    if (url) {
+                        location.assign(hsFixUri(url));
+                    }
                 }
-                throw new Error(rst.err);
+                throw new Error( rst.err );
             }
         }
 

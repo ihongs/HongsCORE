@@ -647,8 +647,8 @@ public class UniteTool {
         List<Map> lst  =  tbl.fetchMore
         (
           new FetchCase()
-            .select ("`"+ tbl.primaryKey +"`")
-            .where  ("`"+foreignKey+"`=?",ids)
+            .select("`" + tbl.primaryKey + "`"/**/)
+            .filter("`" + foreignKey + "`=?", ids )
         );
         idx = new ArrayList();
         for ( Map row : lst )

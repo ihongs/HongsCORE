@@ -379,7 +379,7 @@ implements IEntity
       throw new HongsException(0x109b, "Column " + n + " is not exists");
     }
 
-    caze.where(".`"+n+"` = ?", v);
+    caze.filter(".`"+n+"` = ?", v);
 
     Iterator it = rd.entrySet().iterator();
     while (it.hasNext())
@@ -390,13 +390,14 @@ implements IEntity
 
       if (columns.containsKey(field))
       {
-        if (field.equals( this.table.primaryKey) || field.equals(Cnst.ID_KEY))
+        if (field.equals(Cnst.ID_KEY)
+        ||  field.equals(this.table.primaryKey))
         {
-          caze.where(".`"+this.table.primaryKey+"` != ?", value);
+          caze.filter(".`"+this.table.primaryKey+"` != ?", value);
         }
         else
         {
-          caze.where(".`"+field+"` = ?", value);
+          caze.filter(".`"+field+"` = ?", value);
         }
       }
     }
@@ -947,7 +948,7 @@ implements IEntity
       caze.setOption("ASSOCS", new HashSet());
     }
     caze.setSelect(".`"+this.table.primaryKey+"`")
-            .where(".`"+this.table.primaryKey+"`=?", id);
+           .filter(".`"+this.table.primaryKey+"`=?", id);
     this.filter(caze, wh);
     return ! this.table.fetchLess(caze).isEmpty( );
   }
@@ -1332,7 +1333,7 @@ implements IEntity
     sb.delete(sb.length() - 4, sb.length());
     sb.append(")"/**/);
 
-    caze.where(sb.toString(), pa );
+    caze.filter(sb.toString(), pa);
   }
 
   /**
@@ -1359,11 +1360,11 @@ implements IEntity
         Object vaz = map.get(Cnst.EQ_REL);
         if (vaz != null)
         {
-          caze.where(key+ " = ?", vaz);
+          caze.filter(key+ " = ?", vaz);
         }
         else
         {
-          caze.where(key+ " IS NULL" );
+          caze.filter(key+ " IS NULL" );
         }
       }
       if (map.containsKey(Cnst.NE_REL))
@@ -1372,48 +1373,48 @@ implements IEntity
         Object vaz = map.get(Cnst.NE_REL);
         if (vaz != null)
         {
-          caze.where(key+" != ?", vaz);
+          caze.filter(key+" != ?", vaz);
         }
         else
         {
-          caze.where(key+" IS NOT NULL" );
+          caze.filter(key+" IS NOT NULL");
         }
       }
       if (map.containsKey(Cnst.LT_REL))
       {
         set.remove(Cnst.LT_REL);
         Object vaz = map.get(Cnst.LT_REL);
-        caze.where(key + " < ?" , vaz);
+        caze.filter(key + " < ?" , vaz);
       }
       if (map.containsKey(Cnst.LE_REL))
       {
         set.remove(Cnst.LE_REL);
         Object vaz = map.get(Cnst.LE_REL);
-        caze.where(key + " <= ?", vaz);
+        caze.filter(key + " <= ?", vaz);
       }
       if (map.containsKey(Cnst.GT_REL))
       {
         set.remove(Cnst.GT_REL);
         Object vaz = map.get(Cnst.GT_REL);
-        caze.where(key + " > ?" , vaz);
+        caze.filter(key + " > ?" , vaz);
       }
       if (map.containsKey(Cnst.GE_REL))
       {
         set.remove(Cnst.GE_REL);
         Object vaz = map.get(Cnst.GE_REL);
-        caze.where(key + " >= ?", vaz);
+        caze.filter(key + " >= ?", vaz);
       }
       if (map.containsKey(Cnst.IN_REL))
       {
         set.remove(Cnst.IN_REL);
         Object vaz = map.get(Cnst.IN_REL);
-        caze.where(key+" IN (?)", vaz);
+        caze.filter(key + " IN (?)", vaz);
       }
       if (map.containsKey(Cnst.NI_REL))
       {
         set.remove(Cnst.NI_REL);
         Object vaz = map.get(Cnst.NI_REL);
-        caze.where(key+" NOT IN (?)",vaz);
+        caze.filter(key + " NOT IN (?)", vaz);
       }
       if (!set.isEmpty())
       {
@@ -1426,16 +1427,17 @@ implements IEntity
     if (val instanceof Collection)
     {
       Set col = new HashSet((Collection) val);
-      col.remove(null); col.remove( "" );
+      col.remove(null);
+      col.remove( "" );
       if (!col.isEmpty())
       {
-          caze.where(key+" IN (?)", val);
+          caze.filter(key+" IN (?)", val);
       }
     } else
     {
-      if (val != null && !"".equals(val))
+      if (val != null && ! "".equals(val))
       {
-          caze.where(key + " = ?" , val);
+          caze.filter(key + " = ?" , val);
       }
     }
   }

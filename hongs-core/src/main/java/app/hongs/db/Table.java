@@ -179,9 +179,9 @@ public class Table
 
     // 默认不查询已经删除的记录
     if (rstat != null && rflag != null
-    && ! caze.hasOption("INCLUDE_REMOVED") )
+    && ! caze.hasOption("INCLUDE_REMOVED"))
     {
-      caze.where(".`"+rstat+"` != ?", rflag);
+      caze.filter(".`"+ rstat +"` != ?", rflag);
     }
 
     return UniteTool.fetchMore(this, caze, assocs);
@@ -246,7 +246,7 @@ public class Table
   public FetchCase filter(String where, Object... params)
     throws HongsException
   {
-    return  fetchCase(  ).where( where, params );
+    return  fetchCase(  ).filter(where, params);
   }
 
   /**

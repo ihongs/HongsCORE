@@ -180,8 +180,8 @@ public class FetchMore
     }
 
     // 构建查询结构
-    caze.where(col + " IN (?)", ids)
-        .from (tableName , name);
+    caze.filter(col + " IN (?)" , ids)
+        .from  (tableName, name);
 
     // 获取关联数据
     Loop rs = db.queryMore(caze);
@@ -283,7 +283,5 @@ public class FetchMore
   {
     this.join(table, new FetchCase( ), col, col);
   }
-
-  //** 静态方法 **/
 
 }

@@ -120,7 +120,7 @@ public final class FetchPage
       return this.db.fetchMore(caze);
     }
   }
-  
+
   public List getList()
     throws HongsException
   {
@@ -133,7 +133,7 @@ public final class FetchPage
     {
       this.info.put("ern" , 0); // 没有异常
     } else
-    if (this.page != 1 )
+    if ( this.page != 1)
     {
       this.info.put("ern" , 2); // 页码超出
     }
@@ -179,7 +179,7 @@ public final class FetchPage
     String     sql;
     Object[]   params;
     FetchCase  caze2 = this.caze.clone().limit(limit);
-    if(hasGrpb(caze2))
+    if(clnSort(caze2))
     {
       sql    =  "SELECT COUNT(!*) AS __count__ FROM ("
              + caze2.getSQL( )+") AS __table__" ;
@@ -207,18 +207,24 @@ public final class FetchPage
     return this.info;
   }
 
-  private boolean hasGrpb(FetchCase caze) {
-    boolean hasg = caze.hasGroupBy();
+  /**
+   * 检查是否有启用分组
+   * 同时清空排序和查询
+   * @param caze
+   * @return 
+   */
+  private boolean clnSort(FetchCase caze) {
+    boolean gos  =  caze.hasGroupBy();
     caze.setOrderBy("");
     caze.setSelect ("");
 
-    for (FetchCase caze2 : caze.joinList) {
-      if( hasGrpb( caze2 )) {
-          hasg  =  true  ;
-      }
+    for ( FetchCase caze2: caze.joinList) {
+        if (clnSort(caze2)) {
+            gos  =  true ;
+        }
     }
 
-    return hasg;
+    return  gos;
   }
 
 }

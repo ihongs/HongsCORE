@@ -105,7 +105,7 @@ extends Model {
         asoc = this.db.getTable("a_member_user_dept");
         caze = this.fetchCase();
         caze.select(".dept_id")
-            .where (".user_id = ?", userId);
+            .filter(".user_id = ?", userId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             depts.add((String) row.get("dept_id") );
@@ -114,7 +114,7 @@ extends Model {
         asoc = this.db.getTable("a_member_dept_role");
         caze = this.fetchCase();
         caze.select(".role")
-            .where (".dept_id = ?", depts );
+            .filter(".dept_id = ?", depts );
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             roles.add((String) row.get("role"));
@@ -123,7 +123,7 @@ extends Model {
         asoc = this.db.getTable("a_member_user_role");
         caze = this.fetchCase();
         caze.select(".role")
-            .where (".user_id = ?", userId);
+            .filter(".user_id = ?", userId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             roles.add((String) row.get("role"));
@@ -142,10 +142,10 @@ extends Model {
          * 则关联a_member_user_dept来约束范围
          */
         Object deptId = req.get("dept_id");
-        if (null != deptId && !"".equals(deptId)) {
-            caze.join ("a_member_user_dept", "depts")
-                .on   ("`user_id` = `user`.`id`")
-                .where("`dept_id` IN (?)",deptId);
+        if (null != deptId && ! "".equals(deptId)) {
+            caze.join  ("a_member_user_dept", "depts")
+                .on    ("`user_id` = `user`.`id`")
+                .filter("`dept_id` IN (?)",deptId);
         }
     }
 

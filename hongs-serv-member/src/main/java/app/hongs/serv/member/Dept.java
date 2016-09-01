@@ -63,7 +63,7 @@ extends Mtree {
         asoc = this.db.getTable("a_member_dept_role");
         caze = this.fetchCase();
         caze.select(".role")
-            .where (".dept_id = ?", deptId);
+            .filter(".dept_id = ?", deptId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             roles.add((String) row.get("role"));
@@ -82,10 +82,10 @@ extends Mtree {
          * 则关联a_member_user_dept来约束范围
          */
         Object userId = req.get("user_id");
-        if (null != userId && !"".equals(userId)) {
-            caze.join ("a_member_user_dept", "users")
-                .on   ("`dept_id` = `dept`.`id`")
-                .where("`user_id` IN (?)",userId);
+        if (null != userId && ! "".equals(userId)) {
+            caze.join  ("a_member_user_dept", "users")
+                .on    ("`dept_id` = `dept`.`id`")
+                .filter("`user_id` IN (?)",userId);
         }
     }
 

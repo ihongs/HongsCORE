@@ -58,7 +58,7 @@ public class MineAction {
             xd.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
             if (po != null && !"".equals(po)) {
                 Map row = DB.getInstance("member").getTable ("user").fetchCase( )
-                    .where ("id = ?", id)
+                    .filter("id = ?", id)
                     .select( "password" )
                     .one();
                 po = AuthKit.getCrypt(po);

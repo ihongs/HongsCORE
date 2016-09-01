@@ -39,7 +39,7 @@ public class SignAction {
         fc = new FetchCase( )
             .from   (tb.tableName)
             .select ("password, id, name, head, mtime, state")
-            .where  ("username = ?"  , username);
+            .filter ("username = ? " , username);
         ud = db.fetchLess(fc);
         if ( ud.isEmpty() ) {
             ah.reply(AuthKit.getWrong("username", "core.username.invalid"));

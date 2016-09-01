@@ -186,7 +186,7 @@ public class AuthKit {
 
         Table rel = DB.getInstance("member").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
-            .where  ("user_id = ?",uid)
+            .filter ("user_id = ?",uid)
             .select ("dept_id")
             .all    ();
         Set set = new HashSet();
@@ -310,8 +310,8 @@ public class AuthKit {
         DB    db = DB.getInstance("member");
         Table tb = db.getTable("user_open");
         Map   ud = tb.fetchCase()
-                     .where ("`opnid` =? AND `appid` = ?", opnid, appid)
-                     .select("user_id")
+                     .filter("`opnid` =? AND `appid` = ?", opnid, appid)
+                     .select("`user_id`")
                      .one   (   );
 
         // 记录关联

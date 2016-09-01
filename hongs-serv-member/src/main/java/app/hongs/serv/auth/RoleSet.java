@@ -60,7 +60,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         tb = db.getTable("user");
         fc = new FetchCase( )
                 .select (".rtime, .state")
-                .where  (".id = ?",userId)
+                .filter (".id = ?",userId)
                 .from   (tb.tableName, tb.name);
         rs = db.fetchLess(fc);
         rt = Synt.declare(rs.get( "rtime" ), 0);
@@ -83,7 +83,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
               fc.join   (td.tableName, td.name)
                 .by     (FetchCase.INNER )
                 .on     (".dept_id = :id")
-                .where  (".user_id = ?",userId);
+                .filter (".user_id = ?",userId);
         rs = db.fetchLess(fc);
         rt = Synt.declare(rs.get( "rtime" ), 0);
         st = Synt.declare(rs.get( "state" ), 0);
@@ -118,7 +118,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         fc = new FetchCase( )
                 .select (".role")
                 .from   (tb.tableName, tb.name)
-                .where  (".user_id = ?",userId);
+                .filter (".user_id = ?",userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get("role"));
@@ -134,7 +134,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
               fc.join   (td.tableName, td.name)
                 .by     (FetchCase.INNER )
                 .on     (".dept_id = :dept_id")
-                .where  (".user_id = ?",userId);
+                .filter (".user_id = ?",userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get( "role" ));

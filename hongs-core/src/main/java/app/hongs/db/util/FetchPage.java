@@ -187,7 +187,7 @@ public final class FetchPage
     }
     else
     {
-      caze2.setSelect( "COUNT(!*) AS __count__");
+      caze2.field( "COUNT(!*) AS __count__");
       sql    = caze2.getSQL(/**/);
       params = caze2.getParams( );
     }
@@ -214,16 +214,13 @@ public final class FetchPage
    * @return 
    */
   private boolean clnSort(FetchCase caze) {
-    boolean gos  =  caze.hasGroupBy();
-    caze.setOrderBy("");
-    caze.setSelect ("");
-
-    for ( FetchCase caze2: caze.joinList) {
-        if (clnSort(caze2)) {
-            gos  =  true ;
-        }
-    }
-
+    boolean gos = caze.hasGroup();
+      caze.order( null );
+      caze.field( null );
+    for(FetchCase caze2 : caze.joinSet) {
+    if ( clnSort( caze2)) {
+            gos = true  ;
+    }}
     return  gos;
   }
 

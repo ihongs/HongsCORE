@@ -45,6 +45,7 @@
     <enum name="__ables__">
         <value code="findable">string,search,text,email,url,tel,textcase</value>
         <value code="sortable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,sorted</value>
+        <value code="filtable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check</value>
         <value code="listable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,file,upload,image,audio,video,fork,pick</value>
     </enum>
     <!--

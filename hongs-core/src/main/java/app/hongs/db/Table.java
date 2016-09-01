@@ -432,7 +432,7 @@ public class Table
       case Types.INTEGER  :
         return time / 1000;
       default:
-        return time /****/;
+        return time ;
     }
   }
 
@@ -502,7 +502,7 @@ public class Table
    */
   protected static String getAssocName(Map assoc)
   {
-    String tn = (String) assoc.get("tableName"); // 原名 realName
+    String tn = (String) assoc.get("tableName");
     if  (  tn == null || tn.length() == 0)
            tn = (String) assoc.get("name");
     return tn;

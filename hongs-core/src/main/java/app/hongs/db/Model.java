@@ -6,11 +6,10 @@ import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.util.FetchPage;
+import app.hongs.db.util.UniteCase;
 import app.hongs.dh.IEntity;
 import app.hongs.util.Synt;
-import app.hongs.util.Tool;
 import java.util.Iterator;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -71,35 +70,24 @@ implements IEntity
   public Table table;
 
   /**
-   * 可搜索的字段
-   */
-  public String[] findCols = new String[] {} ;
-
-  /**
    * 可列举的字段
    */
-  public String[] listCols = new String[] {} ;
+  public String[] listable = null;
 
   /**
    * 可排序的字段
    */
-  public String[] sortCols = new String[] {} ;
+  public String[] sortable = null;
 
   /**
-   * 不查询的字段
+   * 可搜索的字段
    */
-  protected static final Set<String> funcKeys;
-  static {
-    funcKeys = new HashSet( );
-    funcKeys.add(Cnst.PN_KEY);
-    funcKeys.add(Cnst.GN_KEY);
-    funcKeys.add(Cnst.RN_KEY);
-    funcKeys.add(Cnst.OB_KEY);
-    funcKeys.add(Cnst.RB_KEY);
-    funcKeys.add(Cnst.WD_KEY);
-    funcKeys.add(Cnst.OR_KEY);
-    funcKeys.add(Cnst.AR_KEY);
-  }
+  public String[] findable = null;
+
+  /**
+   * 可过滤的字段
+   */
+  public String[] filtable = null;
 
   /**
    * 构造方法
@@ -120,11 +108,11 @@ implements IEntity
 
     String cs;
     cs = table.getField("findCols");
-    if (cs != null) this.findCols = cs.split(",");
+    if (cs != null) this.findable = cs.split(",");
     cs = table.getField("listCols");
-    if (cs != null) this.listCols = cs.split(",");
+    if (cs != null) this.listable = cs.split(",");
     cs = table.getField("sortCols");
-    if (cs != null) this.sortCols = cs.split(",");
+    if (cs != null) this.sortable = cs.split(",");
   }
 
   //** 标准动作方法 **/
@@ -173,20 +161,23 @@ implements IEntity
   public Map create(Map rd)
     throws HongsException
   {
+    String[] cf = listable;
     String id = add(rd);
-    if (null != listCols
-    ||   0   != listCols.length) {
+    if (cf  ==  null  ) {
+        cf = (String[]) table.getFields().keySet().toArray(new String[]{});
+    }
+    if (cf.length == 0) {
+        rd.put(table.primaryKey, id);
+        return rd;
+    } else {
         Map sd = new LinkedHashMap();
         sd.put(table.primaryKey, id);
-        for(String fn: listCols) {
+        for(String fn: listable) {
         if ( ! fn.contains(".")) {
             sd.put(fn, rd.get( fn ));
         }
         }
         return sd;
-    } else {
-        rd.put(table.primaryKey, id);
-        return rd;
     }
   }
 
@@ -787,7 +778,7 @@ implements IEntity
   //** 辅助过滤方法 **/
 
   /**
-   * "获取"过滤
+   * "查询"过滤
    *
    * <pre>
    * 作用于getPage,getList上
@@ -799,7 +790,7 @@ implements IEntity
    * 如需指定关联方式请设置FetchCase的option: ASSOC_JOINS, ASSOC_TYEPS
    *
    * 设计目标:
-   * 1) 按照cs参数设置查询字段;
+   * 1) 按照rb参数设置查询字段;
    *    限定字段列表: rb=a+b+c或rb=-a+x.b, -表示排除该字段;
    * 2) 按照ob参数设置排序方式,
    *    多个字段排序: ob=a+b+c或ob=-a+b+c, -表示该字段逆序;
@@ -808,9 +799,9 @@ implements IEntity
    *    指定字段搜索: wd.a=x或wd.a.b=y, 同样适用上面的规则,
    *    a.b为搜索关联表, 但需注意: a,a.b必须在findCols中有指定;
    * 4) 如果有字段名相同的参数则获取与之对应的记录,
-   *    可以在字段名后跟.加上-gt,-lt,-ge,-le,-ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
+   *    可以在字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 5) 如果有子表.字段名相同的参数则获取与之对应的记录,
-   *    可以在子表.字段名后跟.加上-gt,-lt,-ge,-le,-ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
+   *    可以在子表.字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
    * </pre>
    *
@@ -823,11 +814,11 @@ implements IEntity
   {
     /**
      * 如果没指定查询的表、字段
-     * 默认只关联 BLS_TO,HAS_ONE 的表(仅能关联一个)
-     * 默认只连接 LEFT  ,INNER   的表(必须满足左表)
+     * 默认只关联 BLS_TO , HAS_ONE 的表(仅能关联一个)
+     * 默认只连接 LEFT,INNER,RIGHT 的表(常规关联均可)
      */
-    if (  !  rd.containsKey(Cnst.RB_KEY)
-    &&  null == caze.getOption("ASSOCS")
+    if (null == caze.getOption("ASSOCS")
+    && !caze.getOption("INCLUDE_HASMANY", false)
     && ("getAll" .equals(caze.getOption("MODEL_METHOD"))
     ||  "getList".equals(caze.getOption("MODEL_METHOD"))
     ))
@@ -842,92 +833,23 @@ implements IEntity
       if (null == caze.getOption("ASSOC_JOINS"))
       {
         Set types = new HashSet();
-        types.add( "LEFT"  );
         types.add( "INNER" );
+        types.add( "LEFT"  );
+        types.add( "RIGNT" );
+        types.add( "FULL"  );
         caze.setOption("ASSOC_JOINS", types);
       }
     }
 
-    if (rd.isEmpty())
+    if (! rd.isEmpty())
     {
-      return;
-    }
-
-    /**
-     * 依据设计规则, 解析请求参数, 转为查询结构
-     */
-
-    List finds = Arrays.asList(this.findCols);
-    Map fields = this.table.getFields (  );
-    Map relats = this.table.relats != null
-               ? this.table.relats
-               : new HashMap( );
-    Object value;
-
-    // 字段
-    value = rd.get(Cnst.RB_KEY);
-    if (value != null)
-    {
-      this.colsFilter(caze, value, fields);
-    }
-
-    // 排序
-    value = rd.get(Cnst.OB_KEY);
-    if (value != null)
-    {
-      this.sortFilter(caze, value, fields);
-    }
-
-    Iterator it = rd.entrySet().iterator();
-    while (it.hasNext())
-    {
-      Map.Entry et = (Map.Entry) it.next();
-      String   key = (String) et.getKey( );
-             value = et.getValue( );
-
-      if (key == null || funcKeys.contains(key))
-      {
-        continue;
-      }
-
-      // 可搜索字段 (用 !eq 仍可精确匹配)
-      if (finds.contains(key) && !(value instanceof Map))
-      {
-        this.findFilter(caze, value, new String[ ] {key});
-      }
-
-      // 当前表字段
-      else if (fields.containsKey( key ))
-      {
-        this.mkeyFilter(caze, value, key);
-      }
-
-      // 关联表字段
-      else if (relats.containsKey( key ))
-      {
-        this.skeyFilter(caze, value, key);
-      }
-    }
-
-    // 或
-    value = rd.get(Cnst.OR_KEY);
-    if (value != null)
-    {
-      this.packFilter(caze, value, "OR" );
-    }
-
-    // 并或
-    value = rd.get(Cnst.AR_KEY);
-    if (value != null)
-    {
-      this.packFilter(caze, value, "AND");
-    }
-
-    // 搜索
-    value = rd.get(Cnst.WD_KEY);
-    if (value != null)
-    {
-      this.findFilter(caze, value, findCols);
+      UniteCase uc = new UniteCase(caze);
+      uc.allow(this);
+      if (this.listable != null) uc.allow(UniteCase.LISTABLE, listable);
+      if (this.sortable != null) uc.allow(UniteCase.SORTABLE, sortable);
+      if (this.findable != null) uc.allow(UniteCase.FINDABLE, findable);
+      if (this.filtable != null) uc.allow(UniteCase.FILTABLE, filtable);
+      uc.trans( rd );
     }
   }
 
@@ -943,610 +865,14 @@ implements IEntity
   protected boolean permit(FetchCase caze, Map wh, String id)
     throws HongsException
   {
-    if (! caze.hasOption("ASSOCS") && ! caze.hasJoin() )
+    if (caze.getOption("ASSOCS") == null && caze.getJoinSet().isEmpty())
     {
-      caze.setOption("ASSOCS", new HashSet());
+        caze.setOption("ASSOCS", new HashSet());
     }
-    caze.setSelect(".`"+this.table.primaryKey+"`")
-           .filter(".`"+this.table.primaryKey+"`=?", id);
+    caze.field (".`"+this.table.primaryKey+"`")
+        .filter(".`"+this.table.primaryKey+"`=?", id);
     this.filter(caze, wh);
-    return ! this.table.fetchLess(caze).isEmpty( );
-  }
-
-  /**
-   * 字段过滤(被caseFileter调用)
-   * 根据请求的字段设置查询及判断需要关联的表
-   * @param caze
-   * @param val
-   * @param columns
-   * @throws HongsException
-   */
-  protected void colsFilter(FetchCase caze, Object val, Map columns)
-    throws HongsException
-  {
-    if (caze.hasSelect( ))
-    {
-      return;
-    }
-
-    Set<String> cols  = Synt.asTerms(val);
-    if (null == cols || cols.isEmpty( ) )
-    {
-      return;
-    }
-
-    Set<String> tns = (Set<String>)caze.getOption("ASSOCS");
-    if (tns == null)
-    {
-        tns  = new HashSet();
-        caze.setOption("ASSOCS", tns);
-    }
-
-    Map<String, Set<String>> colsBuf = new HashMap();
-    Map<String, Set<String>> colsExc = new HashMap();
-
-    for (String col : cols)
-    {
-      String  tbl = "";
-      col = col.trim();
-      boolean exc = col.startsWith("-");
-      if(exc) col = col.substring ( 1 );
-
-      int pos  = col.indexOf(".");
-      if (pos != -1)
-      {
-        tbl = col.substring(0 , pos);
-        col = col.substring(pos + 1);
-      }
-
-      Set set;
-      if (exc)
-      {
-        set = colsExc.get(tbl);
-        if (set == null)
-        {
-          set = new LinkedHashSet();
-          colsExc.put(tbl,set);
-        }
-      }
-      else
-      {
-        set = colsBuf.get(tbl);
-        if (set == null)
-        {
-          set = new LinkedHashSet();
-          colsBuf.put(tbl,set);
-        }
-      }
-      set.add(col);
-    }
-
-    // 查询的字段
-    for ( Map.Entry  et : colsBuf.entrySet())
-    {
-      Map          cols2;
-      FetchCase    caze2;
-      Set<String>  colz = (Set) et.getValue();
-      String         tn = (String)et.getKey();
-
-      if (!"".equals(tn))
-      {
-        Map          tc;
-        Table        tb;
-        String       tx;
-        String[]     ts;
-
-        tc = this.table.getAssoc(tn);
-        if (tc == null)
-        {
-          continue;
-        }
-
-        tx = Table.getAssocName (tc);
-        ts = Table.getAssocPath (tc);
-        tb =  this.db.getTable  (tx);
-        cols2 =    tb.getFields (  );
-        tns.addAll(Arrays.asList(ts));
-        tns.add   (/* current */ tn );
-        caze2 = caze.gotJoin(ts).gotJoin(tn);
-
-        // 取交集
-        Set<String> colx = new LinkedHashSet( cols2.keySet() );
-        colx.retainAll(colz);
-
-        // JOIN 的必须取别名
-        Object jn = tc.get("join");
-        if (jn != null && !"".equals(jn)) {
-            for (String col : colx) {
-                caze2.select(".`"+col+"` AS `"+tn+"."+col+"`");
-            }
-        } else {
-            for (String col : colx) {
-                caze2.select(".`"+col+"`");
-            }
-        }
-      }
-      else
-      {
-        cols2 = columns;
-        caze2 = caze;
-
-        Set<String> colx = new LinkedHashSet( cols2.keySet() );
-        colx.retainAll(colz);
-
-        for (String col : colx) {
-            caze2.select(".`"+col+"`");
-        }
-      }
-    }
-
-    // 排除的字段
-    for ( Map.Entry  et : colsExc.entrySet())
-    {
-      Map          cols2;
-      FetchCase    caze2;
-      Set<String>  colz = (Set) et.getValue();
-      String         tn = (String)et.getKey();
-
-      // 如果表已有指定查询字段
-      // 则不可再指定排除字段了
-      if (colsBuf.containsKey(tn))
-      {
-        continue;
-      }
-
-      if (!"".equals(tn))
-      {
-        Map          tc;
-        Table        tb;
-        String       tx;
-        String[]     ts;
-
-        tc = this.table.getAssoc(tn);
-        if (tc == null)
-        {
-          continue;
-        }
-
-        tx = Table.getAssocName (tc);
-        ts = Table.getAssocPath (tc);
-        tb =  this.db.getTable  (tx);
-        cols2 =    tb.getFields (  );
-        tns.addAll(Arrays.asList(ts));
-        tns.add   (/* current */ tn );
-        caze2 = caze.gotJoin(ts).gotJoin(tn);
-
-        // 取差集
-        Set<String> colx = new LinkedHashSet( cols2.keySet() );
-        colx.removeAll(colz);
-
-        // JOIN 的必须取别名
-        Object jn = tc.get("join");
-        if (jn != null && !"".equals(jn)) {
-            for (String col : colx) {
-                caze2.select(".`"+col+"` AS `"+tn+"."+col+"`");
-            }
-        } else {
-            for (String col : colx) {
-                caze2.select(".`"+col+"`");
-            }
-        }
-      }
-      else
-      {
-        cols2 = columns;
-        caze2 = caze;
-
-        Set<String> colx = new LinkedHashSet( cols2.keySet() );
-        colx.removeAll(colz);
-
-        for (String col : colx) {
-            caze2.select(".`"+col+"`");
-        }
-      }
-    }
-  }
-
-  /**
-   * 排序过滤(被caseFileter调用)
-   * 如果字段有前缀“-”则该字段为逆序
-   * @param caze
-   * @param val
-   * @param columns
-   * @throws HongsException
-   */
-  protected void sortFilter(FetchCase caze, Object val, Map columns)
-    throws HongsException
-  {
-    if (caze.hasOrderBy())
-    {
-      return;
-    }
-
-    Set<String> cols  = Synt.asTerms(val);
-    if (null == cols || cols.isEmpty( ) )
-    {
-      return;
-    }
-
-    Set<String> tns = (Set<String>)caze.getOption("ASSOCS");
-    if (tns == null)
-    {
-        tns  = new HashSet();
-//      caze.setOption("ASSOCS", tns);
-    }
-
-    // 检查排序限制
-    Set obs  = null;
-    if ( sortCols != null && sortCols.length != 0 )
-    {
-        obs  = new HashSet(Arrays.asList(sortCols));
-    }
-
-    for (String col : cols)
-    {
-      col = col.trim();
-      boolean esc = col.startsWith("-");
-      if(esc) col = col.substring ( 1 );
-
-      if(obs != null && !obs.contains(col))
-      {
-        continue;
-      }
-
-      int pos  = col.indexOf(".");
-      if (pos != -1)
-      {
-        String tn = col.substring(0,  pos);
-        String fn = col.substring(pos + 1);
-
-        Map          tc;
-        Map          cs;
-        Table        tb;
-        String       tx;
-        String[]     ts;
-
-        tc = this.table.getAssoc(tn);
-        if (tc == null)
-        {
-          continue;
-        }
-
-        tx = Table.getAssocName (tc);
-        ts = Table.getAssocPath (tc);
-        tb =  this.db.getTable  (tx);
-        cs =       tb.getFields (  );
-        if (  ! cs.containsKey  (fn))
-        {
-          continue;
-        }
-
-        tns.addAll(Arrays.asList(ts));
-        tns.add   (/* current */ tn );
-        FetchCase cace = caze.gotJoin(ts).gotJoin(tn);
-
-        cace.orderBy(".`"+fn +"`"+(esc ? " DESC":""));
-      }
-      else
-      {
-        if ( ! columns.containsKey(col))
-        {
-          continue;
-        }
-
-        caze.orderBy(".`"+col+"`"+(esc ? " DESC":""));
-      }
-    }
-  }
-
-  /**
-   * 搜索过滤(被caseFileter调用)
-   * @param caze
-   * @param val
-   * @param keys
-   */
-  protected void findFilter(FetchCase caze, Object val, String[] keys)
-  {
-    if (keys == null || keys.length == 0)
-    {
-      return;
-    }
-
-    /**
-     * 空串查全部, 故不用理会
-     */
-    if (val  == null || "".equals( val ))
-    {
-      return;
-    }
-
-    /**
-     * 也可指定只匹配其中一个可搜索字段
-     */
-    if (val instanceof Map)
-    {
-        List ks = Arrays.asList(keys);
-        Map  m1 = (Map) val;
-        for (Object o1 : m1.entrySet()) {
-            Map.Entry e1 = (Map.Entry) o1;
-            Object    v1 = e1.getValue( );
-            String    k1 = e1.getKey().toString();
-
-            if (v1 instanceof Map) {
-                Map m2 = (Map) v1;
-                for (Object o2 : m2.entrySet()) {
-                    Map.Entry e2 = (Map.Entry) o2;
-                    String    v2 = e2.getValue( ).toString();
-                    String    k2 = k1 + "." + e2.getKey().toString();
-
-                    if (ks.contains(k2)) {
-                        this.findFilter(caze, v2, new String[] {k2});
-                    }
-                }
-            } else {
-                    if (ks.contains(k1)) {
-                        this.findFilter(caze, v1, new String[] {k1});
-                    }
-            }
-        }
-        return;
-    }
-
-    Set<String> vals  = Synt.asWords(val);
-    if (null == vals || vals.isEmpty( ) )
-    {
-      return;
-    }
-
-    StringBuilder sb = new StringBuilder();
-    Object[]      pa = new String[keys.length * vals.size()];
-    int           pi = 0;
-
-    sb.append("(");
-    for (String key : keys)
-    {
-      if (key.indexOf('.') != -1)
-      {
-        String[] b = key.split("\\." , 2);
-        key = "`"+ b[0] +"`.`"+ b[1] +"`";
-      }
-      else
-      {
-        key = ".`" + key + "`";
-      }
-
-      sb.append("(");
-      for (String txt : vals)
-      {
-        /**
-         * 符号 "%_[]" 在 SQL LIKE 中有特殊意义,
-         * 需要对这些符号进行转义.
-         */
-        txt = "%" + Tool.escape(txt, "%_[]/", "/") + "%";
-
-        sb.append(key).append(" LIKE ? ESCAPE '/' AND ");
-        pa[ pi ++ ] = txt ;
-      }
-      sb.delete(sb.length() - 5, sb.length());
-      sb.append(") OR ");
-    }
-    sb.delete(sb.length() - 4, sb.length());
-    sb.append(")"/**/);
-
-    caze.filter(sb.toString(), pa);
-  }
-
-  /**
-   * 当前表字段过滤
-   * @param caze
-   * @param val
-   * @param key
-   * @throws HongsException
-   */
-  protected void mkeyFilter(FetchCase caze, Object val, String key)
-    throws HongsException
-  {
-    if (key.indexOf('.') == -1)
-    {
-      key = ".`" + key + "`";
-    }
-    if (val instanceof Map)
-    {
-      Map map = (Map) val;
-      Set set = map.keySet();
-      if (map.containsKey(Cnst.EQ_REL))
-      {
-        set.remove(Cnst.EQ_REL);
-        Object vaz = map.get(Cnst.EQ_REL);
-        if (vaz != null)
-        {
-          caze.filter(key+ " = ?", vaz);
-        }
-        else
-        {
-          caze.filter(key+ " IS NULL" );
-        }
-      }
-      if (map.containsKey(Cnst.NE_REL))
-      {
-        set.remove(Cnst.NE_REL);
-        Object vaz = map.get(Cnst.NE_REL);
-        if (vaz != null)
-        {
-          caze.filter(key+" != ?", vaz);
-        }
-        else
-        {
-          caze.filter(key+" IS NOT NULL");
-        }
-      }
-      if (map.containsKey(Cnst.LT_REL))
-      {
-        set.remove(Cnst.LT_REL);
-        Object vaz = map.get(Cnst.LT_REL);
-        caze.filter(key + " < ?" , vaz);
-      }
-      if (map.containsKey(Cnst.LE_REL))
-      {
-        set.remove(Cnst.LE_REL);
-        Object vaz = map.get(Cnst.LE_REL);
-        caze.filter(key + " <= ?", vaz);
-      }
-      if (map.containsKey(Cnst.GT_REL))
-      {
-        set.remove(Cnst.GT_REL);
-        Object vaz = map.get(Cnst.GT_REL);
-        caze.filter(key + " > ?" , vaz);
-      }
-      if (map.containsKey(Cnst.GE_REL))
-      {
-        set.remove(Cnst.GE_REL);
-        Object vaz = map.get(Cnst.GE_REL);
-        caze.filter(key + " >= ?", vaz);
-      }
-      if (map.containsKey(Cnst.IN_REL))
-      {
-        set.remove(Cnst.IN_REL);
-        Object vaz = map.get(Cnst.IN_REL);
-        caze.filter(key + " IN (?)", vaz);
-      }
-      if (map.containsKey(Cnst.NI_REL))
-      {
-        set.remove(Cnst.NI_REL);
-        Object vaz = map.get(Cnst.NI_REL);
-        caze.filter(key + " NOT IN (?)", vaz);
-      }
-      if (!set.isEmpty())
-      {
-        String ss = set.toString();
-        HongsException ex = new HongsException(0x109c, "Unrecognized symbols: "+ss);
-        ex.setLocalizedOptions(ss);
-        throw ex;
-      }
-    } else
-    if (val instanceof Collection)
-    {
-      Set col = new HashSet((Collection) val);
-      col.remove(null);
-      col.remove( "" );
-      if (!col.isEmpty())
-      {
-          caze.filter(key+" IN (?)", val);
-      }
-    } else
-    {
-      if (val != null && ! "".equals(val))
-      {
-          caze.filter(key + " = ?" , val);
-      }
-    }
-  }
-
-  /**
-   * 关联表字段过滤
-   * @param caze
-   * @param val
-   * @param key
-   * @throws app.hongs.HongsException
-   */
-  protected void skeyFilter(FetchCase caze, Object val, String key)
-  throws HongsException
-  {
-    Set<String> tns = (Set<String>) caze.getOption("ASSOCS");
-    if (tns == null)
-    {
-        tns  = new HashSet();
-//      caze.setOption("ASSOCS", tns);
-    }
-
-    /**
-     * 在 packFilter 内部
-     * 不能将条件放入关联对象下
-     * 否则无法依据层级包裹条件
-     */
-    boolean inPack = caze.getOption("IN_PACK", false);
-
-    Map tc =  this.table.getAssoc( key );
-    if (tc == null) return;
-    String[] ts = Table.getAssocPath(tc);
-    String   tn = Table.getAssocName(tc);
-    Table    tb =  this.db.getTable (tn);
-    Map      cs = tb.getFields();
-
-    Map<String, Object> vs = Synt.declare(val, Map.class);
-    for ( Map.Entry et2 : vs.entrySet())
-    {
-      String key2 = (String)et2.getKey();
-      Object val2 = et2.getValue();
-
-      if (cs.containsKey(key2))
-      {
-        if (val2 != null)
-        {
-          tns.addAll(Arrays.asList (ts));
-          tns.add   (key);
-          this.mkeyFilter(inPack ? caze :
-              caze.gotJoin(ts).gotJoin(key),
-              val2, "`"+key+"`.`"+key2+"`");
-        }
-      }
-    }
-  }
-
-  /**
-   * 组条件查询语句过滤
-   * @param caze
-   * @param val
-   * @param key
-   * @throws HongsException
-   */
-  protected void packFilter(FetchCase caze, Object val, String key)
-  throws HongsException
-  {
-    /**
-     * 构建一个新的查询结构体
-     * 仅能获取条件和条件参数
-     */
-    FetchCase caxe = new FetchCase() {
-        public FetchCase init(FetchCase caze) {
-            options = caze.getOptions();
-            return this;
-        }
-        @Override
-        public Object[ ] getParams() {
-            return wparams.toArray();
-        }
-        @Override
-        public String getSQL( ) {
-            String ws = wheres.length() > 0 ? wheres.substring(5) : "";
-            wheres.setLength(0);
-            return ws;
-        }
-    }.init(caze);
-
-    StringBuilder  ws = new StringBuilder(/**/);
-    Set<Map> set = Synt.declare(val, Set.class);
-    caxe.setOption("IN_PACK", true);
-    for(Map  map : set)
-    {
-      filter(caxe, map);
-      String  wx = caxe.getSQL( );
-      if (wx.length() > 0)
-      {
-        ws.append(' ')
-          .append(key)
-          .append(' ')
-          .append('(')
-          .append(wx.substring(5))
-          .append(')');
-      }
-    }
-    if (ws.length() > 0)
-    {
-      caze.filter('('+ws.substring(key.length()+2)+")", caxe.getParams());
-    }
-
-    caxe.delOption("IN_PACK");
+    return ! this.table.fetchLess( caze ).isEmpty(  );
   }
 
   /**

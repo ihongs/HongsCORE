@@ -95,12 +95,12 @@ public class Mview extends Model {
 
         getFields( );
 
-        if (this.listCols.length > 0) {
-            nmkey = this.listCols [0];
+        if (this.listable.length > 0) {
+            nmkey = this.listable [0];
             return nmkey;
         }
-        if (this.findCols.length > 0) {
-            nmkey = this.findCols [0];
+        if (this.findable.length > 0) {
+            nmkey = this.findable [0];
             return nmkey;
         }
 
@@ -175,35 +175,44 @@ public class Mview extends Model {
         }
 
         Map<String, String> conf = fields.get("@");
-        Set<String> findColz = new LinkedHashSet();
         Set<String> listColz = new LinkedHashSet();
         Set<String> sortColz = new LinkedHashSet();
+        Set<String> findColz = new LinkedHashSet();
+        Set<String> filtColz = new LinkedHashSet();
 
-        Set findable = null;
-        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.findable"), false)) {
-            findable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("findable"));
-        }
-        Set listable = null;
+        Set listTypz = null;
         if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.listable"), false)) {
-            listable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("listable"));
+            listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("listable"));
         }
-        Set sortable = null;
+        Set sortTypz = null;
         if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.sortable"), false)) {
-            sortable = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
+            sortTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
+        }
+        Set findTypz = null;
+        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.findable"), false)) {
+            findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("findable"));
+        }
+        Set filtTypz = null;
+        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.filtable"), false)) {
+            filtTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("filtable"));
         }
 
-        // 搜索、排序等字段也可以直接在主字段给出
-        if (conf != null && conf.containsKey("findable")) {
-            findColz = Synt.asTerms(conf.get("findable"));
-            findable = null;
-        }
+        // 排序、搜索等字段也可以直接在主字段给出
         if (conf != null && conf.containsKey("listable")) {
             listColz = Synt.asTerms(conf.get("listable"));
-            listable = null;
+            listTypz = null;
         }
         if (conf != null && conf.containsKey("sortable")) {
             sortColz = Synt.asTerms(conf.get("sortable"));
-            sortable = null;
+            sortTypz = null;
+        }
+        if (conf != null && conf.containsKey("findable")) {
+            findColz = Synt.asTerms(conf.get("findable"));
+            findTypz = null;
+        }
+        if (conf != null && conf.containsKey("filtable")) {
+            filtColz = Synt.asTerms(conf.get("filtable"));
+            filtTypz = null;
         }
 
         if (null == conf || ! Synt.declare(conf.get("dont.auto.append.fields"), false)) {
@@ -214,24 +223,25 @@ public class Mview extends Model {
         }
 
         // 检查字段, 为其添加搜索、排序、列举参数
-        chkFields(findable, listable, sortable, findColz, listColz, sortColz );
+        chkFields(listTypz, sortTypz, findTypz, filtTypz, listColz, sortColz, findColz, filtColz);
 
-        this.findCols = findColz.toArray(new String[]{});
-        this.listCols = listColz.toArray(new String[]{});
-        this.sortCols = sortColz.toArray(new String[]{});
+        this.listable = listColz.toArray(new String[]{});
+        this.sortable = sortColz.toArray(new String[]{});
+        this.findable = findColz.toArray(new String[]{});
+        this.filtable = filtColz.toArray(new String[]{});
         if (model != null) {
-            model.findCols = this.findCols;
-            model.listCols = this.listCols;
-            model.sortCols = this.sortCols;
+            model.listable = this.listable;
+            model.sortable = this.sortable;
+            model.findable = this.findable;
+            model.filtable = this.filtable;
         }
 
         return fields;
     }
 
     private void chkFields(
-            Set findable, Set listable, Set sortable,
-            Set findColz, Set listColz, Set sortColz
-    ) {
+            Set listTypz, Set sortTypz, Set findTypz, Set filtTypz,
+            Set listColz, Set sortColz, Set findColz, Set filtColz) {
         for(Map.Entry<String, Map<String, String>> ent : fields.entrySet()) {
             String name = ent.getKey();
             Map field = ent.getValue();
@@ -247,25 +257,31 @@ public class Mview extends Model {
                 continue;
             }
 
-            // 特定类型才能搜索、排序、列举
-            if (!field.containsKey("findable") && findable != null && findable.contains(ft)) {
-                field.put("findable", "yes");
-            }
-            if (!field.containsKey("listable") && listable != null && listable.contains(ft)) {
+            // 特定类型才能排序、列举、搜索、过滤
+            if (!field.containsKey("listable") && listTypz != null && listTypz.contains(ft)) {
                 field.put("listable", "yes");
             }
-            if (!field.containsKey("sortable") && sortable != null && sortable.contains(ft)) {
+            if (!field.containsKey("sortable") && sortTypz != null && sortTypz.contains(ft)) {
                 field.put("sortable", "yes");
             }
-
-            if (Synt.declare(field.get(  "findable"  ), false)) {
-                findColz.add(name);
+            if (!field.containsKey("findable") && findTypz != null && findTypz.contains(ft)) {
+                field.put("findable", "yes");
             }
+            if (!field.containsKey("filtable") && filtTypz != null && filtTypz.contains(ft)) {
+                field.put("filtable", "yes");
+            }
+
             if (Synt.declare(field.get(  "listable"  ), false)) {
                 listColz.add(name);
             }
             if (Synt.declare(field.get(  "sortable"  ), false)) {
                 sortColz.add(name);
+            }
+            if (Synt.declare(field.get(  "findable"  ), false)) {
+                findColz.add(name);
+            }
+            if (Synt.declare(field.get(  "filtable"  ), false)) {
+                filtColz.add(name);
             }
         }
     }
@@ -450,7 +466,7 @@ public class Mview extends Model {
                 field =  new HashMap( );
                 fields.put(name, field);
 
-                field = new HashMap();
+                field =  new HashMap( );
                 fields.put(name, field);
                 field.put("__type__","pick");
                 field.put("__disp__", disp );

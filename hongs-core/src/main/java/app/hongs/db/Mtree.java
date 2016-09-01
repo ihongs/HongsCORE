@@ -208,7 +208,7 @@ public class Mtree extends Model
 
     //** 默认字段 **/
 
-    if (!caze.hasSelect() && !rd.containsKey(Cnst.RB_KEY))
+    if (!caze.hasField() && !rd.containsKey(Cnst.RB_KEY))
     {
       if (!caze.hasOption("ASSOCS")
       &&  !caze.hasOption("ASSOC_TYPES")

@@ -14,34 +14,48 @@ import java.util.Set;
  * 模型表单
  * 用于对存储实例提供表单字段支持
  * 注意 ModelForm 默认 dont.auto.bind.xxxxable 为 true
- * 即默认不会根据字段类型自动设置 findable,sortable 等
+ * 即默认不会根据字段类型自动设置 listable,sortable 等
  * @author Hongs
  */
-abstract public class ModelForm {
+public class ModelForm {
 
-    private Map   fieldz = null;
-    private Map   ftypez = null;
-    private Map   dtypez = null;
+    private Map fieldz = null;
+    private Map ftypez = null;
+    private Map dtypez = null;
+    private Set rbColz = null;
+    private Set obColz = null;
+    private Set wdColz = null;
+    private Set whColz = null;
 
-    private Set listColz = null;
-    private Set findColz = null;
-    private Set sortColz = null;
-
-    private static final Set funcKeyz;
+    private static final Set fnKeyz;
     static {
-        funcKeyz = new HashSet( );
-        funcKeyz.add(Cnst.PN_KEY);
-        funcKeyz.add(Cnst.GN_KEY);
-        funcKeyz.add(Cnst.RN_KEY);
-        funcKeyz.add(Cnst.OB_KEY);
-        funcKeyz.add(Cnst.RB_KEY);
-        funcKeyz.add(Cnst.UD_KEY);
-        funcKeyz.add(Cnst.MD_KEY);
-        funcKeyz.add(Cnst.WD_KEY);
-        funcKeyz.add(Cnst.WH_KEY);
-        funcKeyz.add(Cnst.OR_KEY);
-        funcKeyz.add(Cnst.AR_KEY);
-        funcKeyz.add(Cnst.SR_KEY);
+      fnKeyz = new HashSet( );
+      fnKeyz.add(Cnst.PN_KEY);
+      fnKeyz.add(Cnst.GN_KEY);
+      fnKeyz.add(Cnst.RN_KEY);
+      fnKeyz.add(Cnst.OB_KEY);
+      fnKeyz.add(Cnst.RB_KEY);
+      fnKeyz.add(Cnst.UD_KEY);
+      fnKeyz.add(Cnst.MD_KEY);
+      fnKeyz.add(Cnst.WD_KEY);
+      fnKeyz.add(Cnst.WH_KEY);
+      fnKeyz.add(Cnst.OR_KEY);
+      fnKeyz.add(Cnst.AR_KEY);
+      fnKeyz.add(Cnst.SR_KEY);
+    }
+
+    public ModelForm(Map fields, Map ftypes, Map dtypes) {
+        setFields(fields);
+        setFtypes(fields);
+        setDtypes(fields);
+    }
+
+    public ModelForm(Map fields) {
+        setFields(fields);
+    }
+
+    public ModelForm() {
+        // Nothing todo...
     }
 
     protected void setFields(Map map) {
@@ -68,15 +82,15 @@ abstract public class ModelForm {
         dtypez = map;
     }
 
+    public Map getParams() {
+        return Synt.asserts(getFields().get("@"), new HashMap());
+    }
+
     public Map getFields() {
         if (null != fieldz) {
             return  fieldz;
         }
         throw new NullPointerException("Fields can not be null");
-    }
-
-    public Map getParams() {
-        return Synt.asserts(getFields().get("@"), new HashMap());
     }
 
     public Map getFtypes() {
@@ -104,31 +118,39 @@ abstract public class ModelForm {
     }
 
     public Set<String> getFuncs() {
-        return  funcKeyz;
+        return fnKeyz;
     }
 
     public Set<String> getLists() {
-        if (null != listColz) {
-            return  listColz;
+        if (null != rbColz) {
+            return  rbColz;
         }
-        listColz = getAbles("listable");
-        return  listColz;
-    }
-
-    public Set<String> getFinds() {
-        if (null != findColz) {
-            return  findColz;
-        }
-        findColz = getAbles("findable");
-        return  findColz;
+        rbColz = getAbles("listable");
+        return rbColz;
     }
 
     public Set<String> getSorts() {
-        if (null != sortColz) {
-            return  sortColz;
+        if (null != obColz) {
+            return  obColz;
         }
-        sortColz = getAbles("sortable");
-        return  sortColz;
+        obColz = getAbles("sortable");
+        return obColz;
+    }
+
+    public Set<String> getFinds() {
+        if (null != wdColz) {
+            return  wdColz;
+        }
+        wdColz = getAbles("findable");
+        return wdColz;
+    }
+
+    public Set<String> getFilts() {
+        if (null != whColz) {
+            return  whColz;
+        }
+        whColz = getAbles("filtable");
+        return whColz;
     }
 
     protected Set<String> getAbles(String dn) {

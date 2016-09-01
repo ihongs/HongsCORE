@@ -59,14 +59,14 @@ public class TestDB {
         assertEquals(vali, caze.toString());
 
         copy = caze.clone();
-        copy.gotJoin("t2" ).in( null    );
+        copy.gotJoin("t2" ).in(null);
         vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + `t2`.f1) v1, 3.4 * `t2`.f2 AS `v2`, 5.6e10 / `t2`.f3 AS `v3` FROM `t1` INNER JOIN `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
         copy = caze.clone();
-        copy.gotJoin("t2" ).by((byte) 0 );
+        copy.gotJoin("t2" ).by(FetchCase.NONE);
         vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 FROM `t1`";
         System.out.println(vali);
         System.out.println(copy.toString());

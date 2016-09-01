@@ -63,7 +63,7 @@ public class UniteTool {
     // 当关联表也要查全部
     // 会导致不查主表字段
     // 故只要未指定主表字段即取全部
-    if (!caze.hasSelect()) {
+    if (!caze.hasField()) {
         caze.select(".*");
     }
 
@@ -180,7 +180,7 @@ public class UniteTool {
 
         // Fixed in 2015/10/22
         // 因 JOIN 无法用 * 查询(可能导致重名), 故需要追加全部字段
-        if ( ! caze.hasSelect( ) && ! caze2.hasSelect( ) ) {
+        if ( ! caze.hasField( ) && ! caze2.hasField( ) ) {
             Set<String> cols = table2.getFields().keySet();
             for(String  col  : cols) {
                 caze2.select(".`"+ col +"` AS `"+an+"."+ col +"`");
@@ -278,24 +278,24 @@ public class UniteTool {
     boolean has = false;
     boolean haz = false;
 
-    sql = (String) assoc.get("select" );
+    sql = (String) assoc.get("select");
     if (sql != null) {
-        caze.setSelect (sql);   // rb 参数将无效
+        caze.field (sql);   // rb 参数将无效
         if (!sql.startsWith(".") && sql.length() != 0) {
             has = true;
             haz = true;
         }
     }
 
-    sql = (String) assoc.get("orderBy");
+    sql = (String) assoc.get("orders");
     if (sql != null) {
-        caze.setOrderBy(sql);   // ob 参数将无效
+        caze.order(sql);   // ob 参数将无效
         if (!has && !sql.startsWith(".") && sql.length() != 0) {
             has = true;
         }
     }
 
-    sql = (String) assoc.get("filter" );
+    sql = (String) assoc.get("filter");
     if (sql != null && sql.length() != 0) {
         caze.filter(sql);       // 此处为附加条件, 外部条件仍有效
         if (!has && !sql.startsWith(".")) {
@@ -303,23 +303,23 @@ public class UniteTool {
         }
     }
 
-    sql = (String) assoc.get("groupBy");
+    sql = (String) assoc.get("groups");
     if (sql != null) {
-        caze.setGroupBy(sql);
+        caze.group(sql);
         if (!has && !sql.startsWith(".") && sql.length() != 0) {
             has = true;
         }
     }
 
-    sql = (String) assoc.get("having" );
+    sql = (String) assoc.get("having");
     if (sql != null && sql.length() != 0) {
-        caze.having(sql);
+        caze.havin(sql);
         if (!has && !sql.startsWith(".")) {
             has = true;
         }
     }
 
-    sql = (String) assoc.get( "limit" );
+    sql = (String) assoc.get("limits");
     if (sql != null && sql.length() != 0) {
         caze.limit (Synt.asserts(sql, 1));  // 仅对非 JOIN 的有效
     }

@@ -39,13 +39,16 @@ import java.util.regex.Pattern;
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
- * select()     SELECT    field1, field2...
- * from()       FROM      tableName AS name
- * filter()     WHERE     expr1 AND expr2...
- * groupBy()    GROUP BY  field1, field2...
- * having()     HAVING    expr1 AND expr2...
- * orderBy()    ORDER BY  field1, field2...
- * limit()      LIMIT     start, limit
+ * select       SELECT    field1, field2...
+ * from         FROM      tableName AS name
+ * join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
+ * filter       WHERE     expr1 AND expr2...
+ * groupBy      GROUP BY  field1, field2...
+ * having       HAVING    expr1 AND expr2...
+ * orderBy      ORDER BY  field1, field2...
+ * limit        LIMIT     start, limit
+ * <br/>
+ * 注: 对应五字母方法(field,where,group,havin,order)为设置操作, 会清空原值
  * </pre>
  *
  * <h3>系统已知 options:</h3>
@@ -81,7 +84,7 @@ public class FetchCase
   protected String              tableName;
   protected String              name;
 
-  public StringBuilder       fields;
+  protected StringBuilder       fields;
   protected StringBuilder       wheres;
   protected StringBuilder       groups;
   protected StringBuilder       havins;
@@ -90,17 +93,18 @@ public class FetchCase
 
   protected List<Object>        wparams;
   protected List<Object>        vparams;
-  protected Map<String, Object> options;
+  protected Map<String,Object>  options;
 
-  protected byte                joinType;
-  protected String              joinExpr;
+  protected Set<  FetchCase  >  joinSet;
   protected String              joinName;
-  protected Set<FetchCase>      joinList;
+  protected String              joinExpr;
+  protected byte                joinType;
 
-  public    static final byte    LEFT = 1;
-  public    static final byte   RIGHT = 2;
-  public    static final byte    FULL = 3;
-  public    static final byte   INNER = 4;
+  public    static final byte    NONE = 0;
+  public    static final byte   INNER = 1;
+  public    static final byte    LEFT = 2;
+  public    static final byte   RIGHT = 3;
+  public    static final byte    FULL = 4;
   public    static final byte   CROSS = 5;
 
   static final Pattern ps = Pattern
@@ -146,7 +150,7 @@ public class FetchCase
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
     this.options    = new  HashMap ();
-    this.joinList   = new LinkedHashSet();
+    this.joinSet   = new LinkedHashSet();
     this.joinType   =  0  ;
     this.joinExpr   = null;
     this.joinName   = null;
@@ -157,7 +161,7 @@ public class FetchCase
    * @return 新查询结构对象
    */
   @Override
-  public FetchCase clone()
+  public  FetchCase clone()
   {
     try {
         return this.clone(new HashMap(this.options));
@@ -166,7 +170,7 @@ public class FetchCase
         throw  new  HongsError.Common(ex);
     }
   }
-  private FetchCase clone(Map opts )
+  private FetchCase clone(Map opts)
     throws CloneNotSupportedException
   {
     FetchCase caze  = (FetchCase) super.clone();
@@ -182,14 +186,14 @@ public class FetchCase
     caze.wparams    = new ArrayList(this.wparams);
     caze.vparams    = new ArrayList(this.vparams);
     caze.options    = opts;
-    caze.joinList   = new LinkedHashSet();
+    caze.joinSet   = new LinkedHashSet();
     caze.joinType   = this.joinType;
     caze.joinExpr   = this.joinExpr;
     caze.joinName   = this.joinName;
 
     // 深度克隆关联列表
-    for ( FetchCase caxe : joinList) {
-        caze.joinList.add( caxe.clone() );
+    for ( FetchCase caxe : joinSet) {
+        caze.joinSet.add( caxe.clone() );
     }
 
     return caze;
@@ -225,19 +229,31 @@ public class FetchCase
 
   /**
    * 追加查询字段
-   * 必须包含当前表字段, 必须在当前表字段前加"."
-   * @param fields
+   * @param field
    * @return 当前查询结构对象
    */
-  public FetchCase select(String fields)
+  public FetchCase select(String field)
   {
-    this.fields.append(", ").append(fields);
+    this.fields.append(", ").append(field);
+    return this;
+  }
+
+  /**
+   * 设置查询字段
+   * @param field
+   * @return 当前查询结构对象
+   */
+  public FetchCase field(String field)
+  {
+    this.fields.setLength(0);
+    if ( field != null ) {
+        select ( field );
+    }
     return this;
   }
 
   /**
    * 追加查询条件
-   * 字段名前, 用"."表示属于当前表, 用":"表示属于上级表
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
@@ -250,32 +266,48 @@ public class FetchCase
   }
 
   /**
-   * 追加查询条件, filter 的旧名
+   * 设置查询条件
    * @param where
-   * @param params
-   * @return
-   * @deprecated 请使用 filter
+   * @param params 对应 where 中的 ?
+   * @return 当前查询结构对象
    */
   public FetchCase where(String where, Object... params)
   {
-    return filter(where, params);
+    this.wheres.setLength(0);
+    this.wparams.clear(/**/);
+    if ( where != null ) {
+        filter(where,params);
+    }
+    return this;
   }
 
   /**
    * 追加分组字段
-   * 必须包含当前表字段, 必须在当前表字段前加"."
-   * @param fields
+   * @param field
    * @return 当前查询结构对象
    */
-  public FetchCase groupBy(String fields)
+  public FetchCase groupBy(String field)
   {
-    this.groups.append(", ").append(fields);
+    this.groups.append(", ").append(field);
+    return this;
+  }
+
+  /**
+   * 设置分组字段
+   * @param field
+   * @return 当前查询结构对象
+   */
+  public FetchCase group(String field)
+  {
+    this.groups.setLength(0);
+    if ( field != null ) {
+        groupBy( field );
+    }
     return this;
   }
 
   /**
    * 追加过滤条件
-   * 字段名前, 用"."表示属于当前表, 用":"表示属于上级表
    * @param where
    * @param params 对应 where 中的 ?
    * @return 当前查询结构对象
@@ -288,26 +320,43 @@ public class FetchCase
   }
 
   /**
-   * 追加过滤条件, having 的别名
+   * 设置过滤条件
    * @param where
-   * @param params
-   * @return
-   * @deprecated 请使用 having
+   * @param params 对应 where 中的 ?
+   * @return 当前查询结构对象
    */
-  public FetchCase which(String where, Object... params)
+  public FetchCase havin(String where, Object... params)
   {
-    return having(where, params);
+    this.havins.setLength(0);
+    this.wparams.clear(/**/);
+    if ( where != null ) {
+        having(where,params);
+    }
+    return this;
   }
 
   /**
    * 追加排序字段
-   * 必须包含当前表字段, 必须在当前表字段前加"."
-   * @param fields
+   * @param field
    * @return 当前查询结构对象
    */
-  public FetchCase orderBy(String fields)
+  public FetchCase orderBy(String field)
   {
-    this.orders.append(", ").append(fields);
+    this.orders.append(", ").append(field);
+    return this;
+  }
+
+  /**
+   * 设置排序字段
+   * @param field
+   * @return 当前查询结构对象
+   */
+  public FetchCase order(String field)
+  {
+    this.orders.setLength(0);
+    if ( field != null ) {
+        orderBy( field );
+    }
     return this;
   }
 
@@ -354,7 +403,7 @@ public class FetchCase
 
   public FetchCase join(FetchCase caze)
   {
-    this.joinList.add(caze);
+    this.joinSet.add(caze);
     caze.joinName = null;
     caze.joinExpr = null;
     caze.joinType = LEFT;
@@ -388,7 +437,7 @@ public class FetchCase
     return this;
   }
 
-  //** 获取结果 **/
+  //** 结果 **/
 
   /**
    * 获取SQL
@@ -486,7 +535,7 @@ public class FetchCase
         throw new Error(new HongsException(0x10b4, "tableName can not be empty"));
     }
 
-    boolean noJoins = pn == null && joinList.isEmpty(); // 无关联查询
+    boolean noJoins = pn == null && joinSet.isEmpty(); // 无关联查询
     boolean unField = getOption("UNFIX_FIELD", false ); // 不补全表名
     boolean unAlias = getOption("UNFIX_ALIAS", false ); // 不补全别名
 
@@ -589,7 +638,7 @@ public class FetchCase
     }
 
     // 下级
-    for  (FetchCase caze : this.joinList)
+    for  (FetchCase caze : this.joinSet)
     {
       if (caze.joinType != 0)
       {
@@ -916,7 +965,7 @@ public class FetchCase
     wparamz.addAll(this.wparams);
     hparamz.addAll(this.vparams);
 
-    for (FetchCase caze  :  this.joinList)
+    for (FetchCase caze  :  this.joinSet)
     {
       if (0 == caze.joinType)
       {
@@ -948,7 +997,81 @@ public class FetchCase
     return sb.toString();
   }
 
-  //** 获取关联 **/
+  //** 选项 **/
+
+  /**
+   * 设置选项
+   * @param key
+   * @param obj
+   * @return 当前查询结构对象
+   */
+  public FetchCase setOption(String key, Object obj)
+  {
+    this.options.put(key, obj);
+    return this;
+  }
+
+  /**
+   * 获取选项(可指定类型)
+   * @param <T>
+   * @param key
+   * @param def
+   * @return 指定选项
+   */
+  public < T > T getOption(String key, T def)
+  {
+    return Synt.asserts(getOption(key) , def);
+  }
+
+  /**
+   * 获取选项
+   * @param key
+   * @return 指定选项
+   */
+  public Object  getOption(String key)
+  {
+    return this.options.get(key);
+  }
+
+  /**
+   * 删除选项
+   * @param key
+   * @return
+   */
+  public Object  delOption(String key)
+  {
+    return this.options.remove(key);
+  }
+
+  /**
+   * 检查选项
+   * @param key
+   * @return
+   */
+  public boolean hasOption(String key)
+  {
+    return this.options.containsKey(key);
+  }
+
+  /**
+   * 全部选项
+   * @return 全部选项
+   */
+  public Map<String,Object> getOptions()
+  {
+    return this.options;
+  }
+
+  //** 探查 **/
+
+  /**
+   * 全部关联
+   * @return 关联集合
+   */
+  public Set<  FetchCase  > getJoinSet()
+  {
+    return this.joinSet;
+  }
 
   /**
    * 获取关联对象
@@ -957,7 +1080,7 @@ public class FetchCase
    */
   public FetchCase getJoin(String name)
   {
-    for (FetchCase caze : this.joinList)
+    for (FetchCase caze : this.joinSet)
     {
       if (name.equals(caze.name))
       {
@@ -1010,245 +1133,98 @@ public class FetchCase
       if (null != c) {
           caze  = c;
       } else {
-          caze  = caze.join(n).by((byte)0);
+          caze  = caze.join(n).by(NONE);
       }
     }
     return caze;
   }
 
-  //** 选项操作 **/
-
-  /**
-   * 设置选项
-   * @param key
-   * @param obj
-   * @return 当前查询结构对象
-   */
-  public FetchCase setOption(String key, Object obj)
-  {
-    this.options.put(key, obj);
-    return this;
-  }
-
-  /**
-   * 获取选项(可指定类型)
-   * @param <T>
-   * @param key
-   * @param def
-   * @return 指定选项
-   */
-  public <T>T getOption(String key, T def)
-  {
-    return Synt.asserts(getOption(key), def);
-  }
-
-  /**
-   * 获取选项
-   * @param key
-   * @return 当前选项
-   */
-  public Object getOption(String key)
-  {
-    return this.options.get   (key);
-  }
-
-  /**
-   * 删除选项
-   * @param key
-   * @return 旧的选项
-   */
-  public Object delOption(String key)
-  {
-    return this.options.remove(key);
-  }
-
-  /**
-   * 全部选项
-   * @return
-   */
-  public Map<String, Object> getOptions()
-  {
-    return this.options;
-  }
-
-  //** 不推荐的方法 **/
-
-  /**
-   * 是否有设置表名
-   * @return 存在未true, 反之为false
-   * @deprecated
-   */
-  public boolean hasFrom()
-  {
-    return this.tableName != null;
-  }
-
-  /**
-   * 是否有关联的表
-   * @return 存在未true, 反之为false
-   * @deprecated
-   */
-  public boolean hasJoin()
-  {
-    return !this.joinList.isEmpty();
-  }
-
   /**
    * 是否有设置查询字段
-   * @return 存在为true, 反之为false
-   * @deprecated
+   * @return
    */
-  public boolean hasSelect()
+  public boolean hasField()
   {
-    return this.fields.length() != 0;
-  }
-
-  /**
-   * 设置查询字段
-   * @param fields
-   * @return 当前查询结构对象
-   * @deprecated
-   */
-  public FetchCase setSelect(String fields)
-  {
-    this.fields = new StringBuilder(checkField(fields));
-    return this;
+    if (this.fields.length() > 0) {
+        return true;
+    }
+    for(FetchCase caze : joinSet) {
+    if (caze.hasField()) {
+        return true;
+    }
+    }
+    return false;
   }
 
   /**
    * 是否有设置查询条件
-   * @return 存在为true, 反之为false
-   * @deprecated
+   * @return
    */
   public boolean hasWhere()
   {
-    return this.wheres.length() != 0;
-  }
-
-  /**
-   * 设置查询条件
-   * @param where
-   * @param params 对应 where 中的 ?
-   * @return 当前查询结构对象
-   * @deprecated
-   */
-  public FetchCase setWhere(String where, Object... params)
-  {
-    this.wheres = new StringBuilder(checkWhere(where));
-    this.wparams = Arrays.asList(params);
-    return this;
+    if (this.wheres.length() > 0) {
+        return true;
+    }
+    for(FetchCase caze : joinSet) {
+    if (caze.hasWhere()) {
+        return true;
+    }
+    }
+    return false;
   }
 
   /**
    * 是否有设置分组
-   * @return 存在为true, 反之为false
-   * @deprecated
+   * @return
    */
-  public boolean hasGroupBy()
+  public boolean hasGroup()
   {
-    return this.groups.length() != 0;
-  }
-
-  /**
-   * 设置分组字段
-   * @param fields
-   * @return 当前查询结构对象
-   * @deprecated
-   */
-  public FetchCase setGroupBy(String fields)
-  {
-    this.groups = new StringBuilder(checkField(fields));
-    return this;
+    if (this.groups.length() > 0) {
+        return true;
+    }
+    for(FetchCase caze : joinSet) {
+    if (caze.hasGroup()) {
+        return true;
+    }
+    }
+    return false;
   }
 
   /**
    * 是否有设置过滤条件
-   * @return 存在为true, 反之为false
-   * @deprecated
+   * @return
    */
-  public boolean hasWhich()
+  public boolean hasHavin()
   {
-    return this.havins.length() != 0;
-  }
-
-  /**
-   * 设置查询条件
-   * @param where
-   * @param params 对应 where 中的 ?
-   * @return 当前查询结构对象
-   * @deprecated
-   */
-  public FetchCase setWhich(String where, Object... params)
-  {
-    this.havins = new StringBuilder(checkWhere(where));
-    this.vparams = Arrays.asList(params);
-    return this;
+    if (this.havins.length() > 0) {
+        return true;
+    }
+    for(FetchCase caze : joinSet) {
+    if (caze.hasHavin()) {
+        return true;
+    }
+    }
+    return false;
   }
 
   /**
    * 是否有设置排序
-   * @return 存在为true, 反之为false
-   * @deprecated
+   * @return
    */
-  public boolean hasOrderBy()
+  public boolean hasOrder()
   {
-    return this.orders.length() != 0;
-  }
-
-  /**
-   * 设置排序字段
-   * @param fields
-   * @return 当前查询结构对象
-   * @deprecated
-   */
-  public FetchCase setOrderBy(String fields)
-  {
-    this.orders = new StringBuilder(checkField(fields));
-    return this;
-  }
-
-  /**
-   * 是否存在选项
-   * @param key
-   * @return 存在为true, 反之为false
-   * @deprecated 请使用 getOptions().containsKey(key)
-   */
-  public boolean hasOption(String key)
-  {
-    return this.options.containsKey(key);
-  }
-
-  private String checkField(String field)
-  {
-    if (field == null) return "";
-        field = field.trim();
-    if (field.length() != 0
-    && !field.startsWith(","))
-    {
-      return ", " + field;
+    if (this.orders.length() > 0) {
+        return true;
     }
-    else
-    {
-      return field;
+    for(FetchCase caze : joinSet) {
+    if (caze.hasOrder()) {
+        return true;
     }
+    }
+    return false;
   }
 
-  private String checkWhere(String where)
-  {
-    if (where == null) return "";
-        where = where.trim();
-    if (where.length() != 0
-    && !where.matches("^(AND|OR) (?i)"))
-    {
-      return "AND " + where;
-    }
-    else
-    {
-      return where;
-    }
-  }
-
-  //** 串联查询/操作 **/
+  //** 串联 **/
 
   private Link _db_ = null;
 
@@ -1276,7 +1252,7 @@ public class FetchCase
     boolean on_option_mode = false;
     boolean in_obejct_mode = false;
     try {
-      if (hasOption("FETCH_OBJECT")) {
+      if (getOptions().containsKey("FETCH_OBJECT")) {
         on_option_mode = true;
         in_obejct_mode = _db_.IN_OBJECT_MODE;
         _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
@@ -1304,7 +1280,7 @@ public class FetchCase
     boolean on_option_mode = false;
     boolean in_obejct_mode = false;
     try {
-      if (hasOption("FETCH_OBJECT")) {
+      if (getOptions().containsKey("FETCH_OBJECT")) {
         on_option_mode = true;
         in_obejct_mode = _db_.IN_OBJECT_MODE;
         _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
@@ -1332,7 +1308,7 @@ public class FetchCase
     boolean on_option_mode = false;
     boolean in_obejct_mode = false;
     try {
-      if (hasOption("FETCH_OBJECT")) {
+      if (getOptions().containsKey("FETCH_OBJECT")) {
         on_option_mode = true;
         in_obejct_mode = _db_.IN_OBJECT_MODE;
         _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);

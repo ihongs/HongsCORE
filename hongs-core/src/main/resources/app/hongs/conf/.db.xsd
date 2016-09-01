@@ -26,12 +26,12 @@
       <xs:attribute name="minIdle" type="xs:int"/>
       <xs:attribute name="maxIdle" type="xs:int"/>
       <xs:attribute name="maxWait" type="xs:long"/>
-      <xs:attribute name="logAbandoned" type="xs:string"/>
-      <xs:attribute name="removeAbandoned" type="xs:string"/>
-      <xs:attribute name="removeAbandonedTimeout" type="xs:int"/>
       <xs:attribute name="testOnBorrow" type="xs:string"/>
       <xs:attribute name="testOnReturn" type="xs:string"/>
       <xs:attribute name="testWhileIdle" type="xs:string"/>
+      <xs:attribute name="logAbandoned" type="xs:string"/>
+      <xs:attribute name="removeAbandoned" type="xs:string"/>
+      <xs:attribute name="removeAbandonedTimeout" type="xs:int"/>
       <xs:attribute name="validationQuery" type="xs:string"/>
       <xs:attribute name="validationQueryTimeout" type="xs:int"/>
       <xs:attribute name="numTestsPerEvictionRun" type="xs:int"/>
@@ -63,14 +63,14 @@
       <xs:attribute ref="tableName"/>
       <xs:attribute ref="foreignKey" use="required"/>
       <xs:attribute ref="primaryKey"/>
-      <xs:attribute ref="updateKeys"/>
       <!-- 其他限定 -->
       <xs:attribute ref="select"/>
       <xs:attribute ref="filter"/>
-      <xs:attribute ref="groupBy"/>
+      <xs:attribute ref="groups"/>
       <xs:attribute ref="having"/>
-      <xs:attribute ref="orderBy"/>
-      <xs:attribute ref="limit"/>
+      <xs:attribute ref="orders"/>
+      <xs:attribute ref="unique"/>
+      <xs:attribute ref="canvey"/>
       <xs:all>
         <!-- 递归关联 -->
         <xs:element ref="assoc" minOccurs="0"/>
@@ -90,10 +90,11 @@
     <xs:complexType>
       <xs:attribute ref="name" use="required"/>
       <xs:attribute ref="tableName"/>
-      <xs:attribute ref="class"/>
+      <xs:attribute ref="primaryKey"/>
       <xs:attribute ref="prefix"/>
       <xs:attribute ref="suffix"/>
-      <xs:attribute ref="primaryKey"/>
+      <xs:attribute ref="class"/>
+      <xs:attribute ref="model"/>
       <xs:all>
         <!-- 关联子表 -->
         <xs:element ref="assoc" minOccurs="0"/>

@@ -148,8 +148,8 @@ public class DBConfig
   Arrays.asList( new String[] {
     "type","join",
     "name","tableName","primaryKey","foreignKey",
-    "canvey","unique",
-    "select","filter","groupBy","having","orderBy","limit"
+    "canvey","unique","filter",
+    "select","groups","having","orders","limits"
   }));
 
   public DBConfig(Document doc)

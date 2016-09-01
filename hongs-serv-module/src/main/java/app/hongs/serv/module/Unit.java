@@ -88,7 +88,8 @@ public class Unit extends Mtree {
 
         // 单元下的表单
         rows = this.db.getTable("form").fetchCase()
-            .select("id").where("unit_id = ?" , id)
+            .filter("unit_id = ?", id )
+            .select("id")
             .all();
         for (Map row : rows) {
             String fid = row.get("id").toString();
@@ -118,7 +119,8 @@ public class Unit extends Mtree {
 
         // 全部一级单元
         rows = this.table.fetchCase( )
-            .select("id").where("pid  = 0")
+            .filter("pid  = 0")
+            .select("id")
             .all();
         for (Map row : rows) {
             String uid = row.get("id").toString();
@@ -134,7 +136,8 @@ public class Unit extends Mtree {
 
         // 一级以下单元
         rows = this.table.fetchCase( )
-            .select("id").where("pid != 0")
+            .filter("pid != 0")
+            .select("id")
             .all();
         for (Map row : rows) {
             String uid = row.get("id").toString();

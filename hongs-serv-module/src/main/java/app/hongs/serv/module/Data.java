@@ -176,7 +176,7 @@ public class Data extends LuceneRecord {
         }
 
         // 获取旧的数据
-        dd = model.table.fetchCase().select("data").where(where, param).one( );
+        dd = model.table.fetchCase().select("data").filter(where, param).one();
         if(!dd.isEmpty()) {
             dd = (Map) app.hongs.util.Data.toObject(dd.get("data").toString());
         }
@@ -232,7 +232,7 @@ public class Data extends LuceneRecord {
         Object[] param = new String[ ] { id , "0" };
 
         // 获取旧的数据
-        od = model.table.fetchCase().select("data").where(where, param).one( );
+        od = model.table.fetchCase().select("data").filter(where, param).one();
         if(!od.isEmpty()) {
             dd = (Map) app.hongs.util.Data.toObject(od.get("data").toString());
         } else {

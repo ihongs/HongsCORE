@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title></title>
+    <script src="http://cdn.bootcss.com/jquery/1.12.4/jquery.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.js"></script>
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
+    <script type="text/javascript">
+        function HsEditor(opts, context) {
+            var editbox;
+            var editbar;
+            var textbox;
+
+            if (context) {
+                context = jQuery(context);
+                if (context.is("textarea,input")) {
+                    textbox = context;
+                    context = jQuery('<div></div>');
+                    editbox = jQuery('<div class="editbox"></div>');
+                    editbar = jQuery('<div class="editbar"></div>');
+                    textbox.after (context);
+                    context.append(editbar);
+                    context.append(editbox);
+                } else {
+                    textbox = context.find("textarea,input");
+                    editbox = context.find(".editbox");
+                    editbar = context.find(".editbar");
+                }
+            }
+
+            if (opts.editbox) {
+                editbox = jQuery(opts.editbox);
+            }
+            if (opts.editbar) {
+                editbar = jQuery(opts.editbar);
+            }
+            if (opts.textbox) {
+                textbox = jQuery(opts.textbox);
+            }
+            if (opts.toolbts === undefined) {
+                opts.toolbts = ["bold", "italic"];
+            }
+
+            editbox.prop("contenteditable", true)
+                   .addClass ( "editbox" );
+            if (textbox) textbox.addClass("textbox");
+            if (editbar) editbar.addClass("editbar");
+
+            this.textbox = textbox;
+            this.editbox = editbox;
+            this.editbar = editbar;
+
+            this.fillTool(opts.toolbts);
+        }
+        HsEditor.prototype = {
+            execCommand : function(name, value) {
+                this.focus();
+                document.execCommand(name, false, value);console.log(name, value);
+            },
+            focus : function() {
+                this.editbox.focus();
+            },
+            getText : function() {
+                return this.editbox.text();
+            },
+            getHtml : function() {
+                var    html;
+                html = this.editbox.html();
+                return html;
+            },
+            hookData : {
+                bold : {
+                    title : "粗体",
+                    className : "glyphicon glyphicon-bold"
+                },
+                italic : {
+                    title : "斜体",
+                    className : "glyphicon glyphicon-italic"
+                }
+            },
+            fillTool : function(btns) {
+                if (typeof(btns) === "string") {
+                    btns = btns.split(/\s*,\s*/);
+                }
+                var that = this;
+                jQuery.each(btns, function(i, n) {
+                    var btn;
+                    if (that.hookData[n]) {
+                        btn = that.fillHook(n);
+                    } else
+                    if (that["_fill_"+n]) {
+                        btn = that["_fill_"+n]();
+                    } else {
+                        console.log("[Warn] HsEditor.fillTool: "+n+" is not exists");
+                        return;
+                    }
+                    if (btn) {
+                        that.editbar.append(btn);
+                    }
+                });
+            },
+            fillHook : function(data) {
+                var that = this;
+                var hook = jQuery('<a href="javascript:;"></a>');
+                if (typeof(data) === "string") {
+                    var  name = data;
+                    data = this.hookData[data];
+                    data.name = name;
+                }
+                hook.data(data);console.log(data);
+                if (data.title) {
+                    hook.attr("title",data.title);
+                }
+                if (data.className) {
+                    hook.addClass(data.className);
+                }
+                hook.on("click", function() {
+                    var name  = jQuery(this).data("name" );
+                    var value = jQuery(this).data("value");
+                    that.execCommand(name, value);
+                });
+                return hook;
+            },
+            _fill_backColor : function() {
+
+            },
+            _fill_foreColor : function() {
+
+            }
+        };
+
+        (function($) {
+            $(function() {
+                new HsEditor({}, $("[data-module=hsEditor]"));
+            });
+        })(jQuery);
+    </script>
+    <style type="text/css">
+        .textbox {display: none;}
+        .editbox {height: 300px; border: 1px solid #ddd;}
+    </style>
+</head>
+<body>
+    <textarea data-module="hsEditor"></textarea>
+</body>
+</html>

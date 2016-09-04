@@ -67,7 +67,7 @@ import java.util.regex.Pattern;
  FINDABLE     : Map         可搜索列; 作用域: UniteCase
  INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
  INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
- </pre>
+ * </pre>
  *
  * <h3>异常代码:</h3>
  * <pre>

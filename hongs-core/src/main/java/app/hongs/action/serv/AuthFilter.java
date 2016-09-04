@@ -2,12 +2,14 @@ package app.hongs.action.serv;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
+import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.util.Synt;
+import app.hongs.util.Tool;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -254,29 +256,29 @@ public class AuthFilter
             return;
         }
         if (siteMap.actions.contains(act)) {
-            doFailed(core, hlpr, (byte) 2); // 需要权限
+            doFailed(core, hlpr, (byte) 3); // 需要权限
             return;
         }
         if (siteMap.actions.contains(amt)) {
-            doFailed(core, hlpr, (byte) 2); // 需要权限(带方法)
+            doFailed(core, hlpr, (byte) 3); // 需要权限(带方法)
             return;
         }
     } else {
         if (siteMap.actions.contains(act)) {
             if (  ! authset.contains(act)) {
-                doFailed(core, hlpr, (byte) 2); // 缺少权限
+                doFailed(core, hlpr, (byte) 3); // 缺少权限
                 return;
             }
         }
         if (siteMap.actions.contains(amt)) {
             if (  ! authset.contains(amt)) {
-                doFailed(core, hlpr, (byte) 2); // 缺少权限(带方法)
+                doFailed(core, hlpr, (byte) 3); // 缺少权限(带方法)
                 return;
             }
         }
         if (siteMap.actions.contains(aut)) {
             if (  ! authset.contains(aut)) {
-                doFailed(core, hlpr, (byte) 3); // 禁入区域
+                doFailed(core, hlpr, (byte) 2); // 禁入区域
                 return;
             }
 
@@ -313,7 +315,7 @@ public class AuthFilter
             msg = lang.translate("core.error.wr.place.redirect");
         }
     } else
-    if (2 == type) {
+    if (3 == type) {
         uri = this.indexPage;
         if (uri == null || uri.length() == 0) {
             msg = lang.translate("core.error.no.power");
@@ -387,12 +389,30 @@ public class AuthFilter
             hlpr.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN   );
         }
     } else {
-        if (uri != null && uri.length() != 0) {
-            hlpr.redirect(uri);
-        } else if (type == 1 ) {
-            hlpr.error401(msg);
+        /**
+         * 有时候如果客户从收藏夹或历史记录打开了一个没有权限的页
+         * 如果此区域没有提供跳转的路径
+         * 则从全局错误跳转构建响应代码
+         */
+
+        CoreConfig conf = CoreConfig.getInstance();
+        if (uri == null && uri.length() == 0) {
+            uri  = conf.getProperty("fore.Er40" + type + ".redirect");
+        if (uri == null || uri.length() == 0) {
+            uri  = Core.BASE_HREF + "/";
+        }
+        }
+
+        String err = conf.getProperty("core.error.redirect");
+        Map<String, String> rep = new HashMap();
+        rep.put("msg", msg);
+        rep.put("uri", uri);
+        err = Tool.inject(err, rep);
+
+        if (type == 1 ) {
+            hlpr.error401(err);
         } else {
-            hlpr.error403(msg);
+            hlpr.error403(err);
         }
     }
   }

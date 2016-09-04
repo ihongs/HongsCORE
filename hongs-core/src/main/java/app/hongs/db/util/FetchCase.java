@@ -123,7 +123,7 @@ public class FetchCase
   static final Pattern pf = Pattern
           .compile("(?<![`\\w])[\\.:!](\\*|\\w+|`.+?`)|'.+?'");
 
-  // 查找与字段相关的元素
+  // 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
   static final Pattern p0 = Pattern
           .compile("('.+?'|`.+?`|\\w+|\\*|\\))\\s*");
   // 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段

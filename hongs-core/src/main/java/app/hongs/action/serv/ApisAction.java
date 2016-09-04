@@ -14,6 +14,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletConfig;
@@ -52,11 +54,11 @@ public class ApisAction
   extends  ActionDriver
 {
     private String dataKey;
-    private String convKey;
     private String callKey;
+    private String convKey;
+    private String flatKey;
     private String wrapKey;
     private String scokKey;
-//  private String ssidKey;
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
@@ -66,9 +68,9 @@ public class ApisAction
         dataKey  = cc.getProperty("core.api.data", ".data");
         callKey  = cc.getProperty("core.api.call", ".call");
         convKey  = cc.getProperty("core.api.conv", ".conv");
+        flatKey  = cc.getProperty("core.api.flat", ".flat");
         wrapKey  = cc.getProperty("core.api.wrap", ".wrap");
         scokKey  = cc.getProperty("core.api.scok", ".scok");
-//      ssidKey  = cc.getProperty("core.api.ssid", ".ssid");
     }
 
     @Override
@@ -123,15 +125,16 @@ public class ApisAction
         String _dat  = req.getParameter(dataKey);
         String _cal  = req.getParameter(callKey);
         String _cnv  = req.getParameter(convKey);
+        String _flt  = req.getParameter(flatKey);
         String _wap  = req.getParameter(wrapKey);
         String _sok  = req.getParameter(scokKey);
-//      String _sid  = req.getParameter(ssidKey);
 
-//      if (_sid != null && _sid.length( ) != 0) {
-//          setSessionId(req, _sid);
-//      }
-
-        // JSONP 回调函数名称登记
+        // JSONP 回调函数名称登记, 为避免参数被占用, 总能用 .call
+        if (!callKey.startsWith(".")) {
+        String _cxl  = req.getParameter(".call");
+        if (_cxl != null && _cxl.length( ) != 0) {
+            _cal  = _cxl;
+        }}
         if (_cal != null && _cal.length( ) != 0) {
             if (!_cal.matches ( "^[a-zA-Z_\\$][a-zA-Z0-9_]*$"  )  ) {
                 hlpr.error400 ( "Illegal callback function name!" );
@@ -169,6 +172,8 @@ public class ApisAction
             return;
         }
 
+        //** 数据转换策略 **/
+
         Set conv  = null;
         if (_cnv != null && _cnv.length( ) != 0) {
             try {
@@ -177,7 +182,16 @@ public class ApisAction
                 hlpr.error400 ( "Can not parse value for '!conv'" );
                 return;
             }
+        } else
+        if (_flt != null && _flt.length( ) != 0) {
+            conv  = new HashSet(/***/);
         }
+
+        if (conv != null) {
+            convData(resp, conv, _flt);
+        }
+
+        //** 包裹返回数据 **/
 
         boolean wrap;
         try {
@@ -187,6 +201,12 @@ public class ApisAction
             return;
         }
 
+        if (wrap) {
+            wrapData(resp);
+        }
+
+        //** 状态总是 200 **/
+
         boolean scok;
         try {
             scok = Synt.declare(_sok, false);
@@ -195,48 +215,8 @@ public class ApisAction
             return;
         }
 
-        // 状态总是 200
         if (scok) {
             rsp.setStatus( javax.servlet.http.HttpServletResponse.SC_OK );
-        }
-
-        // 返回节点
-        if (wrap) {
-            Map    data;
-            Object doto = resp.get("data");
-            if (doto == null) {
-                data =  new HashMap( );
-                resp.put("data", data);
-            }  else {
-                try {
-                    data = (Map) doto ;
-                }   catch  (ClassCastException e) {
-                    throw new ServletException(e);
-                }
-            }
-            Iterator it = resp.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry et = (Map.Entry) it.next();
-                Object k = et.getKey();
-                if ( ! _API_RSP.contains( k )) {
-                    data.put(k, et.getValue());
-                    it.remove();
-                }
-            }
-        }
-
-        // 转换策略
-        if (conv != null) {
-            Conv cnvr = new Conv();
-            boolean     all =  conv.contains( "all2str");
-            cnvr.all  = all ?  new  Conv2Str( ) : new Conv2Obj( ) ;
-            cnvr.num  = all || conv.contains( "num2str") ? new Conv2Str(/**/) : cnvr.all;
-            cnvr.nul  = all || conv.contains("null2str") ? new ConvNull2Str() : cnvr.all;
-            cnvr.bool = conv.contains("bool2num") ? new ConvBool2Num()
-                      :(conv.contains("bool2str") ? new ConvBool2Str() : new Conv2Obj());
-            cnvr.date = conv.contains("date2num") ? new ConvDate2Num()
-                      :(conv.contains("date2sec") ? new ConvDate2Sec() : new Conv2Obj());
-            hlpr.reply (Synt.foreach(resp, cnvr));
         }
     }
 
@@ -328,6 +308,44 @@ public class ApisAction
         }
     }
 
+    private void wrapData(Map resp) throws ServletException {
+        Map    data;
+        Object doto = resp.get("data");
+        if (doto == null) {
+            data =  new HashMap( );
+            resp.put("data", data);
+        }  else {
+            try {
+                data = (Map) doto ;
+            }   catch  (ClassCastException e) {
+                throw new ServletException(e);
+            }
+        }
+        Iterator it = resp.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry) it.next();
+            Object k = et.getKey();
+            if ( ! _API_RSP.contains( k )) {
+                data.put(k, et.getValue());
+                it.remove();
+            }
+        }
+    }
+
+    private void convData(Map resp, Set<String> conv, String _evn) {
+        Conv cnvr = new Conv();
+        boolean     all =  conv.contains( "all2str");
+        cnvr.all  = all ?  new  Conv2Str( ) : new Conv2Obj( ) ;
+        cnvr.num  = all || conv.contains( "num2str") ? new Conv2Str(/**/) : cnvr.all;
+        cnvr.nul  = all || conv.contains("null2str") ? new ConvNull2Str() : cnvr.all;
+        cnvr.bool = conv.contains("bool2num") ? new ConvBool2Num()
+                  :(conv.contains("bool2str") ? new ConvBool2Str() : new Conv2Obj());
+        cnvr.date = conv.contains("date2num") ? new ConvDate2Num()
+                  :(conv.contains("date2sec") ? new ConvDate2Sec() : new Conv2Obj());
+        cnvr.flat = _evn != null && !"".equals(_evn) ? new Flat4Map(cnvr,_evn): null;
+        resp.putAll(Synt.filter(resp , cnvr));
+    }
+
     private static final Set _API_RSP = new HashSet();
     static {
         _API_RSP.add("ok");
@@ -337,18 +355,20 @@ public class ApisAction
         _API_RSP.add("data");
     }
 
-    private static class Conv extends Synt.LeafNode {
+    private static class Conv implements Synt.Each {
         private Conv2Obj all;
         private Conv2Obj nul;
         private Conv2Obj num;
         private Conv2Obj bool;
         private Conv2Obj date;
+        private Flat4Map flat = null;
+
         @Override
-        public Object leaf(Object o) {
+        public Object run(Object o, Object k, int i) {
             if (o == null) {
                 return nul.conv(o);
             } else
-            if (o instanceof Number) {
+            if (o instanceof Number ) {
                 return num.conv(o);
             } else
             if (o instanceof Boolean) {
@@ -356,15 +376,62 @@ public class ApisAction
             } else
             if (o instanceof Date) {
                 o  =  date.conv(o);
+            } else
+
+            // 向下递归, 拉平层级
+            if (o instanceof Map ) {
+                if (flat != null ) {
+                  return flat.run ((Map ) o,  "" );
+                }
+                return Synt.filter((Map ) o, this);
+            } else
+            if (o instanceof Set ) {
+                return Synt.filter((Set ) o, this);
+            } else
+            if (o instanceof List) {
+                return Synt.filter((List) o, this);
+            } else
+            if (o instanceof Object[]) {
+                return Synt.filter((Object[]) o, this);
             }
-            return     all.conv(o);
+
+            return all.conv(o);
         }
     }
+
+    private static class Flat4Map {
+        private final Conv  conv;
+        private final String dot;
+
+        public Flat4Map(Conv conv, String dot) {
+            this.conv = conv;
+            this.dot  = dot ;
+        }
+
+        public Object run(Map o, String p) {
+            Map x = new LinkedHashMap( );
+            for(Object ot : o.entrySet() ) {
+                Map.Entry et = (Map.Entry) ot;
+                String k = et.getKey().toString();
+                Object v = et.getValue();
+                if (v instanceof Map) {
+                    Map m = (Map) v;
+                    m = ( Map ) this.run(m, p + k + dot);
+                    x.putAll(m);
+                } else {
+                    x.put(p+ k, this.conv.run(v, k, -1));
+                }
+            }
+            return x;
+        }
+    }
+
     private static class Conv2Obj {
         public Object conv(Object o) {
             return o;
         }
     }
+
     private static class Conv2Str extends Conv2Obj {
         @Override
         public Object conv(Object o) {
@@ -374,30 +441,35 @@ public class ApisAction
             return o.toString();
         }
     }
+
     private static class ConvNull2Str extends Conv2Obj {
         @Override
         public Object conv(Object o) {
             return "";
         }
     }
+
     private static class ConvBool2Str extends Conv2Obj {
         @Override
         public Object conv(Object o) {
             return ((Boolean) o) ? "1" : "";
         }
     }
+
     private static class ConvBool2Num extends Conv2Obj {
         @Override
         public Object conv(Object o) {
             return ((Boolean) o) ?  1  :  0;
         }
     }
+
     private static class ConvDate2Num extends Conv2Obj {
         @Override
         public Object conv(Object o) {
             return ((Date) o).getTime();
         }
     }
+
     private static class ConvDate2Sec extends Conv2Obj {
         @Override
         public Object conv(Object o) {

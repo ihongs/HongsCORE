@@ -494,9 +494,11 @@ public class DBConfig
 
       if (tagName2.equals("param"))
       {
-        if (params != null)
+        String name  = element2.getAttribute("name");
+        String value = element2.getTextContent(/**/);
+        if (value != null)
         {
-            params.put(element2.getAttribute("name"), element2.getNodeValue().trim());
+          params.put(name, value.trim());
         }
       } else
       if (tagName2.equals("assoc"))
@@ -554,9 +556,11 @@ public class DBConfig
       NodeList list = element.getElementsByTagName("param");
       for (int i = 0, j = list.getLength( ); i < j; j += 1) {
           Element item = (Element) list.item(i);
-          String n = item.getAttribute( "name");
-          String v = item.getNodeValue().trim();
-          info.setProperty(n, v);
+          String n = item.getAttribute("name" );
+          String v = item.getTextContent( );
+          if ( v  != null ) {
+              info.setProperty(n, v.trim());
+          }
       }
   }
 

@@ -146,10 +146,7 @@ public class DBConfig
   }));
   private static Set<String> assocAttrs = new HashSet(
   Arrays.asList( new String[] {
-    "type","join",
-    "name","tableName","primaryKey","foreignKey",
-    "canvey","unique","filter",
-    "select","groups","having","orders","limits"
+    "name","tableName","primaryKey","foreignKey","type","join"
   }));
 
   public DBConfig(Document doc)
@@ -379,6 +376,9 @@ public class DBConfig
       }
     }
 
+    // 2016/9/4 增加 source,origin 的 param 节点, 附加设置可使用 param
+    getProperties(element, info);
+
     Map origin = new HashMap();
     origin.put("jndi", mode);
     origin.put("name", namc);
@@ -460,7 +460,7 @@ public class DBConfig
         // 放入关联配置
         Map params2 = new /***/ HashMap();
         Map relats2 = new LinkedHashMap();
-        Map assocs2 = getAssocs(element2, relats2, params2, new ArrayList());
+        Map assocs2 = getAssocs(element2, params2, relats2, new ArrayList());
         if (assocs2.isEmpty( ) == false )
         {
             table.put("assocs" , assocs2);
@@ -476,7 +476,7 @@ public class DBConfig
     return tables;
   }
 
-  private static Map getAssocs(Element element, Map relats, Map params, List tns)
+  private static Map getAssocs(Element element, Map params, Map relats, List tns)
   {
     Map assocs = new LinkedHashMap();
 
@@ -496,7 +496,7 @@ public class DBConfig
       {
         if (params != null)
         {
-            params.put(element2.getAttribute("name"), element2.getNodeValue());
+            params.put(element2.getAttribute("name"), element2.getNodeValue().trim());
         }
       } else
       if (tagName2.equals("assoc"))
@@ -528,10 +528,15 @@ public class DBConfig
         }
 
         // 递归关联配置
-        Map assocs2 = getAssocs(element2, relats, null, tns2);
+        Map params2 = new /***/ HashMap();
+        Map assocs2 = getAssocs(element2, params2, relats, tns2);
         if (assocs2.isEmpty( ) == false )
         {
             assoc.put("assocs" , assocs2);
+        }
+        if (params2.isEmpty( ) == false )
+        {
+            assoc.put("params" , params2);
         }
       }
     }
@@ -545,8 +550,18 @@ public class DBConfig
     return text != null && text.length() != 0 ? text : def;
   }
 
-  /** 源 **/
+  private static void getProperties(Element element, Properties info) {
+      NodeList list = element.getElementsByTagName("param");
+      for (int i = 0, j = list.getLength( ); i < j; j += 1) {
+          Element item = (Element) list.item(i);
+          String n = item.getAttribute( "name");
+          String v = item.getNodeValue().trim();
+          info.setProperty(n, v);
+      }
+  }
 
+  /** 源 **/
+/*
   public static class DBSource {
 
   }
@@ -554,9 +569,9 @@ public class DBConfig
   public static class DBOrigin {
 
   }
-
+*/
   /** 表 **/
-
+/*
   public static class TableConfig {
 
   }
@@ -564,5 +579,5 @@ public class DBConfig
   public static class AssocConfig {
 
   }
-
+*/
 }

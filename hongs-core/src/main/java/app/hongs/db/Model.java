@@ -820,7 +820,7 @@ implements IEntity
    * 5) 如果有子表.字段名相同的参数则获取与之对应的记录,
    *    可以在子表.字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
-   * 
+   *
    * [2016/9/4] 以上过滤逻辑已移至 UniteCase, 但未指定 listable 时字段过滤使用本类的 field,allow 来处理
    * </pre>
    *
@@ -932,10 +932,31 @@ implements IEntity
         if (rb == null || rb.isEmpty()) return;
 
         Map<String, Object[]> af = new LinkedHashMap();
-        allow(caze, af);
+        Map<String, Set<String>> cf = new HashMap();
         Set<String> ic = new LinkedHashSet();
         Set<String> ec = new LinkedHashSet();
         Set<String> xc ;
+
+        allow(caze, af);
+
+        // 整理出层级结构, 方便处理通配符
+        for(String  fn : af.keySet()) {
+            String  k  ;
+            int p = fn.lastIndexOf(".");
+            if (p > -1) {
+                k = fn.substring(0 , p)+".*";
+            } else {
+                k = "*";
+            }
+
+            Set<String> fs = cf.get ( k );
+            if (fs == null  ) {
+                fs  = new LinkedHashSet();
+                cf.put(k, fs);
+            }
+
+            fs.add(fn);
+        }
 
         for(String  fn : rb) {
             if (fn.startsWith("-") ) {
@@ -945,27 +966,22 @@ implements IEntity
                 xc = ic;
             }
 
-            /**
-             * 可以使用通配符来表示层级全部字段
-             */
-
-            if (fn.endsWith(".*" )) {
-                fn = fn.substring(0, fn.length() - 1);
-                for(String kn : af.keySet()) {
-                    if (kn.startsWith( fn )) {
-                        xc.add(kn);
-                    }
-                }
+            if (cf.containsKey(fn) ) {
+                xc.addAll(cf.get(fn));
             } else
-            if (fn.equals  ( "*" )) {
-                for(String kn : af.keySet()) {
-                    if (kn.indexOf('.') < 0) {
-                        xc.add(kn);
-                    }
-                }
-            } else
-            if (af.containsKey(fn)) {
+            if (af.containsKey(fn) ) {
                 xc.add(fn);
+
+                // 排除时, 先在包含中增加全部
+                if (xc == ec) {
+                    int p  = fn.lastIndexOf(".");
+                    if (p != -1) {
+                        fn = fn.substring(0 , p)+".*";
+                    } else {
+                        fn = "*";
+                    }
+                    ic.addAll(cf.get(fn));
+                }
             }
         }
 

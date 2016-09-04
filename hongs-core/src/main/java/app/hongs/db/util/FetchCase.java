@@ -20,51 +20,54 @@ import java.util.regex.Pattern;
  * 查询结构及操作
  *
  * <p>
- * 字段名前, 用"."表示属于当前表, 用":"表示属于上级表.<br/>
- * 关联字段, 用"表.列"描述字段时, "."的两侧不得有空格.<br/>
- * 本想自动识别字段的所属表(可部分区域), 但总是出问题;<br/>
- * 好的规则胜过万行代码, 定此规矩, 多敲了一个符号而已.<br/>
- * setOption用于登记特定查询选项, 以备组织查询结构的过程中读取.
+ * 字段名前, 用"."表示属于当前表, 用":"表示属于上级表<br/>
+ * 关联字段, 用"表.列"描述字段时, "."的两侧不得有空格<br/>
+ * 本想自动识别字段的所属表(可部分区域), 但总是出问题<br/>
+ * 好的规则胜过万行代码, 定此规矩, 多敲了一个符号而已<br/>
+ * setOption 用于登记特定查询选项, 以备组织查询结构的过程中读取
  * </p>
  *
  * <p>
- * [2015/11/24 00:28]
- * 已解决加表名前缀的问题;
- * 上级表请使用上级表别名;
- * 且兼容上面旧的前缀规则.
- * 增加了忽略别名的前缀"!", 单纯统计行数须写 COUNT(!*).
- * 以下 select,where,groupBy,which,orderBy,on 均可如此.
- * 本类处理一般的查询尚可 , 过于复杂的如子查询不要使用.
+ * [2015/11/24 00:28]<br/>
+ * 已解决加表名前缀的问题, 且兼容上面旧的前缀规则;<br/>
+ * 本类处理一般的查询尚可, 过于复杂的查询请勿使用;<br/>
+ * 增加了忽略别名的前缀 !, 单纯统计行数须写 COUNT(!*)
  * </p>
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
- * select       SELECT    field1, field2...
- * from         FROM      tableName AS name
- * join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
- * filter       WHERE     expr1 AND expr2...
- * groupBy      GROUP BY  field1, field2...
- * having       HAVING    expr1 AND expr2...
- * orderBy      ORDER BY  field1, field2...
- * limit        LIMIT     start, limit
- * <br/>
- * 注: 对应五字母方法(field,where,group,havin,order)为设置操作, 会清空原值
+ select       SELECT    field1, field2
+ from         FROM      tableName AS name
+ join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
+ digest       WHERE     expr1 AND expr2
+ groupBy      GROUP BY  field1, field2
+ having       HAVING    expr1 AND expr2
+ orderBy      ORDER BY  field1, field2
+ limit        LIMIT     start, limit
+ <b>注意: 以上所列方法为追加操作; 五字母方法(field,where,group,havin,order)为设置操作, 会清空原值</b>
  * </pre>
  *
  * <h3>系统已知 options:</h3>
  * <pre>
- * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
- * UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
- * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
- * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
- * ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
- * ASSOCS       : Set         仅对某些表做关联; 作用域: UniteTool.fetchMore
- * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: UniteTool.fetchMore
- * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: UniteTool.fetchMore
- * page         : int|String  分页页码; 作用域: FetchPage
- * pags         : int|String  链接数量; 作用域: FetchPage
- * rows         : int|String  分页行数; 作用域: FetchPage
- * </pre>
+ FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
+ UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
+ UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
+ ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
+ ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
+ ASSOC_FILLS  : boolean     补全空白关联数据; 作用域: FetchMore
+ ASSOCS       : Set         仅对某些表做关联; 作用域: UniteTool.fetchMore
+ ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: UniteTool.fetchMore
+ ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: UniteTool.fetchMore
+ page         : int|String  分页页码; 作用域: FetchPage
+ pags         : int|String  链接数量; 作用域: FetchPage
+ rows         : int|String  分页行数; 作用域: FetchPage
+ LISTABLE     : Map         可列举列; 作用域: UniteCase
+ SORTABLE     : Map         可排序列; 作用域: UniteCase
+ FILTABLE     : Map         可过滤列; 作用域: UniteCase
+ FINDABLE     : Map         可搜索列; 作用域: UniteCase
+ INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
+ INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
+ </pre>
  *
  * <h3>异常代码:</h3>
  * <pre>
@@ -100,11 +103,11 @@ public class FetchCase
   protected String              joinExpr;
   protected byte                joinType;
 
-  public    static final byte    NONE = 0;
+  public    static final byte   NONE  = 0;
   public    static final byte   INNER = 1;
-  public    static final byte    LEFT = 2;
+  public    static final byte   LEFT  = 2;
   public    static final byte   RIGHT = 3;
-  public    static final byte    FULL = 4;
+  public    static final byte   FULL  = 4;
   public    static final byte   CROSS = 5;
 
   static final Pattern ps = Pattern
@@ -150,7 +153,7 @@ public class FetchCase
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
     this.options    = new  HashMap ();
-    this.joinSet   = new LinkedHashSet();
+    this.joinSet    = new LinkedHashSet();
     this.joinType   =  0  ;
     this.joinExpr   = null;
     this.joinName   = null;
@@ -186,14 +189,14 @@ public class FetchCase
     caze.wparams    = new ArrayList(this.wparams);
     caze.vparams    = new ArrayList(this.vparams);
     caze.options    = opts;
-    caze.joinSet   = new LinkedHashSet();
+    caze.joinSet    = new LinkedHashSet();
     caze.joinType   = this.joinType;
     caze.joinExpr   = this.joinExpr;
     caze.joinName   = this.joinName;
 
     // 深度克隆关联列表
-    for ( FetchCase caxe : joinSet) {
-        caze.joinSet.add( caxe.clone() );
+    for ( FetchCase caxe : joinSet ) {
+        caze.joinSet.add( caxe.clone( ) );
     }
 
     return caze;
@@ -246,7 +249,7 @@ public class FetchCase
   public FetchCase field(String field)
   {
     this.fields.setLength(0);
-    if ( field != null ) {
+    if ( field != null && field.length() != 0) {
         select ( field );
     }
     return this;
@@ -275,7 +278,7 @@ public class FetchCase
   {
     this.wheres.setLength(0);
     this.wparams.clear(/**/);
-    if ( where != null ) {
+    if ( where != null && where.length() != 0) {
         filter(where,params);
     }
     return this;
@@ -300,7 +303,7 @@ public class FetchCase
   public FetchCase group(String field)
   {
     this.groups.setLength(0);
-    if ( field != null ) {
+    if ( field != null && field.length() != 0) {
         groupBy( field );
     }
     return this;
@@ -329,7 +332,7 @@ public class FetchCase
   {
     this.havins.setLength(0);
     this.wparams.clear(/**/);
-    if ( where != null ) {
+    if ( where != null && where.length() != 0) {
         having(where,params);
     }
     return this;
@@ -354,7 +357,7 @@ public class FetchCase
   public FetchCase order(String field)
   {
     this.orders.setLength(0);
-    if ( field != null ) {
+    if ( field != null && field.length() != 0) {
         orderBy( field );
     }
     return this;
@@ -1145,15 +1148,7 @@ public class FetchCase
    */
   public boolean hasField()
   {
-    if (this.fields.length() > 0) {
-        return true;
-    }
-    for(FetchCase caze : joinSet) {
-    if (caze.hasField()) {
-        return true;
-    }
-    }
-    return false;
+    return this.fields.length() > 0;
   }
 
   /**
@@ -1162,15 +1157,7 @@ public class FetchCase
    */
   public boolean hasWhere()
   {
-    if (this.wheres.length() > 0) {
-        return true;
-    }
-    for(FetchCase caze : joinSet) {
-    if (caze.hasWhere()) {
-        return true;
-    }
-    }
-    return false;
+    return this.wheres.length() > 0;
   }
 
   /**
@@ -1179,15 +1166,7 @@ public class FetchCase
    */
   public boolean hasGroup()
   {
-    if (this.groups.length() > 0) {
-        return true;
-    }
-    for(FetchCase caze : joinSet) {
-    if (caze.hasGroup()) {
-        return true;
-    }
-    }
-    return false;
+    return this.groups.length() > 0;
   }
 
   /**
@@ -1196,15 +1175,7 @@ public class FetchCase
    */
   public boolean hasHavin()
   {
-    if (this.havins.length() > 0) {
-        return true;
-    }
-    for(FetchCase caze : joinSet) {
-    if (caze.hasHavin()) {
-        return true;
-    }
-    }
-    return false;
+    return this.havins.length() > 0;
   }
 
   /**
@@ -1213,15 +1184,7 @@ public class FetchCase
    */
   public boolean hasOrder()
   {
-    if (this.orders.length() > 0) {
-        return true;
-    }
-    for(FetchCase caze : joinSet) {
-    if (caze.hasOrder()) {
-        return true;
-    }
-    }
-    return false;
+    return this.orders.length() > 0;
   }
 
   //** 串联 **/

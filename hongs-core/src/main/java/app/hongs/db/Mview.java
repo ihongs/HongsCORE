@@ -29,7 +29,7 @@ public class Mview extends Model {
     private Model    model = null;
 
     public  String   title = null;
-    public  String   label = null;
+    public  String   nmkey = null;
 
     public Mview(Table table) throws HongsException {
         super(table);
@@ -90,8 +90,8 @@ public class Mview extends Model {
 
     public String getNmKey()
     throws HongsException {
-        if (null != label) {
-            return  label;
+        if (null != nmkey) {
+            return  nmkey;
         }
 
         getFields( );
@@ -99,7 +99,7 @@ public class Mview extends Model {
         if (findable != null && findable.length > 0) {
             for (String n : findable) {
                 if(n != null && !n.contains(".") && !n.endsWith("id")) {
-                    label = n;
+                    nmkey = n;
                     return  n;
                 }
             }
@@ -108,14 +108,14 @@ public class Mview extends Model {
         if (listable != null && listable.length > 0) {
             for (String n : listable) {
                 if(n != null && !n.contains(".") && !n.endsWith("id")) {
-                    label = n;
+                    nmkey = n;
                     return  n;
                 }
             }
         }
 
-        label  =  "";
-        return label;
+        nmkey  =  "";
+        return nmkey;
     }
 
     public String getTitle()

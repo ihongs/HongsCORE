@@ -95,13 +95,21 @@ public class Mview extends Model {
 
         getFields( );
 
-        if (this.listable.length > 0) {
-            nmkey = this.listable [0];
-            return nmkey;
+        if (listable != null && listable.length > 0) {
+            for (String n : listable) {
+                if(n != null && !n.equals("id") && !n.endsWith("_id")) {
+                    nmkey = n;
+                    return  n;
+                }
+            }
         }
-        if (this.findable.length > 0) {
-            nmkey = this.findable [0];
-            return nmkey;
+        if (filtable != null && findable.length > 0) {
+            for (String n : findable) {
+                if(n != null && !n.equals("id") && !n.endsWith("_id")) {
+                    nmkey = n;
+                    return  n;
+                }
+            }
         }
 
         nmkey  =  "";

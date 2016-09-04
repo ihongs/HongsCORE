@@ -34,7 +34,22 @@ import java.util.regex.Pattern;
  */
 public class UniteCase {
 
-    private final  FetchCase     temp;
+    /**
+     * 可列举字段, 用于 FetchCase 的 Option
+     */
+    public  static final String  LISTABLE = "LISTABLE";
+    /**
+     * 可排序字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
+     */
+    public  static final String  SORTABLE = "SORTABLE";
+    /**
+     * 可模糊搜索, 用于 FetchCase 的 Option
+     */
+    public  static final String  FINDABLE = "FINDABLE";
+    /**
+     * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
+     */
+    public  static final String  FILTABLE = "FILTABLE";
 
     private static final String  fnPn = "[a-z][a-z0-9_]*";
     private static final Pattern cnPt
@@ -65,22 +80,8 @@ public class UniteCase {
         rels.put(Cnst.NI_REL, "NOT IN");
     }
 
-    /**
-     * 可列举字段, 用于 FetchCase 的 Option
-     */
-    public  static final String  LISTABLE = "LISTABLE";
-    /**
-     * 可排序字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
-     */
-    public  static final String  SORTABLE = "SORTABLE";
-    /**
-     * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
-     */
-    public  static final String  FILTABLE = "FILTABLE";
-    /**
-     * 可模糊搜索, 用于 FetchCase 的 Option
-     */
-    public  static final String  FINDABLE = "FINDABLE";
+    private final Map<String, Map> bufs;
+    private final FetchCase        that;
 
     /**
      * 构造方法
@@ -90,7 +91,30 @@ public class UniteCase {
         if (temp == null) {
             throw new NullPointerException(UniteCase.class.getName()+": temp can not be null");
         }
-        this.temp = temp;
+        this.bufs = new HashMap();
+        this.that = temp;
+    }
+
+    /**
+     * 从库表设置许可字段
+     * @param table
+     * @return
+     */
+    public UniteCase allow(Table table) {
+        Map af = allow(table, table, table.getAssocs(), null, null, new LinkedHashMap());
+
+        bufs.put(LISTABLE, af);
+        bufs.put(SORTABLE, af);
+        bufs.put(FILTABLE, af);
+
+        /**
+         * 此处未将 FINDTABLE 设为当前所有字段
+         * 模糊搜索比较特殊
+         * 文本类型字段才行
+         * 并不便于自动指派
+         */
+
+        return this;
     }
 
     /**
@@ -100,20 +124,20 @@ public class UniteCase {
      */
     public UniteCase allow(Model model) {
         allow(model.table);
-        return this;
-    }
 
-    /**
-     * 从库表设置许可字段
-     * @param table
-     * @return
-     */
-    public UniteCase allow(Table table) {
-        Map af = allow(table, table, table.getAssocs(), null, null);
-        temp.setOption(LISTABLE, af);
-        temp.setOption(SORTABLE, af);
-        temp.setOption(FILTABLE, af);
-        temp.setOption(FINDABLE, af);
+        if (model.listable != null) {
+            allow(LISTABLE, model.listable);
+        }
+        if (model.sortable != null) {
+            allow(SORTABLE, model.sortable);
+        }
+        if (model.filtable != null) {
+            allow(FILTABLE, model.filtable);
+        }
+        if (model.findable != null) {
+            allow(FINDABLE, model.findable);
+        }
+
         return this;
     }
 
@@ -124,7 +148,16 @@ public class UniteCase {
      * @return
      */
     public UniteCase allow(String an, String... fs) {
+        if (fs.length == 1 && fs[0] == null) {
+            that.delOption(an);
+            bufs.remove(an);
+            return this;
+        }
+
         Map af = new LinkedHashMap();
+        that.setOption(an, af);
+        bufs.remove(an);
+
         Matcher m;
         String  k;
         for(String f : fs) {
@@ -139,9 +172,9 @@ public class UniteCase {
             } else {
                     k = f;
             }
-            af.put( k , f );
+            af.put (k , f);
         }
-        temp.setOption(an, af);
+
         return this;
     }
 
@@ -175,8 +208,8 @@ public class UniteCase {
      */
     public FetchCase trans(Map rd) {
         Map xd = new LinkedHashMap (rd);
-        trans( temp, xd );
-        return temp;
+        trans(that, xd );
+        return that;
     }
 
     /**
@@ -187,10 +220,46 @@ public class UniteCase {
      * @return
      */
     public FetchCase tranz(Map rd) {
-        FetchCase caze = temp.clone(  );
+        FetchCase caze = that.clone(  );
         Map xd = new LinkedHashMap (rd);
         trans( caze, xd );
         return caze;
+    }
+
+    /**
+     * 清理数据
+     * 取出可列举字段对应的值
+     * 以便用于创建和更新操作
+     * @param rd 请求数据
+     * @param fs 附加字段
+     * @return
+     */
+    public Map clean(Map rd, String... fs) {
+        Map<String, String> af = allow( that , LISTABLE );
+        Map xd = new HashMap();
+
+        for(Map.Entry<String, String> et : af.entrySet()) {
+            String fn = et.getKey(  );
+            String fc = et.getValue();
+            if (fn.indexOf ('.') < 0
+            || !fc.endsWith("`"+ fn +"`")) {
+                continue;
+            }
+
+            Object fv = rd.get ( fn );
+            if (fv != null) {
+                xd.put( fn, fv );
+            }
+        }
+
+        for(String fn : fs) {
+            Object fv = rd.get ( fn );
+            if (fv != null) {
+                xd.put( fn, fv );
+            }
+        }
+
+        return  xd;
     }
 
     //** 内部工具方法 **/
@@ -200,7 +269,7 @@ public class UniteCase {
 
         field(caze, Synt.asTerms(rd.remove(Cnst.RB_KEY)));
         order(caze, Synt.asTerms(rd.remove(Cnst.OB_KEY)));
-        query(caze, Synt.asTerms(rd.remove(Cnst.WD_KEY)));
+        query(caze, Synt.asWords(rd.remove(Cnst.WD_KEY)));
         where(caze, rd);
     }
 
@@ -210,7 +279,7 @@ public class UniteCase {
         Map<String, String> af = allow(caze, LISTABLE);
         Set<String> ic = new LinkedHashSet();
         Set<String> ec = new LinkedHashSet();
-        Set<String> xc;
+        Set<String> xc ;
 
         for(String  fn : rb) {
             if (fn.startsWith("-") ) {
@@ -285,24 +354,32 @@ public class UniteCase {
         if (wd == null || wd.isEmpty()) return;
 
         Map<String, String> af = allow(caze, FINDABLE);
-        int            i = 0 ;
-        int            j = wd.size()*af.size();
+        int  i = 0;
+        int  l = wd.size( ) * af.size( );
+        Object[]      ab = new Object[l];
+        Set<String>   xd = new HashSet();
         StringBuilder sb = new StringBuilder();
-        Object[]      ab = new Object[   j   ];
+
+        // 转义待查词, 避开通配符, 以防止歧义
+        for(String  wb : wd) {
+            xd.add("%" + Tool.escape( wb , "/%_[]" , "/") + "%" );
+        }
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String fn = et.getValue();
             sb.append("(");
-            for(String wb : wd) {
+            for(String wb : xd) {
+                ab[ i++ ] = wb;
                 sb.append(fn).append( " LIKE ? ESCAPE '/' AND " );
-                ab[ i++ ] = "%"+Tool.escape(wb, "%_[]/", "/")+"%";
             }
             sb.setLength(sb.length() - 5);
             sb.append(") OR " );
         }
-            sb.setLength(sb.length() - 4);
 
-        caze.filter(sb.toString().substring(4) , ab);
+        if (l > 0) {
+            sb.setLength(sb.length() - 4);
+            caze.filter ("(" + sb.toString() + ")" , ab );
+        }
     }
 
     private void group(FetchCase caze, Set<Map> ar, String rn) {
@@ -374,21 +451,29 @@ public class UniteCase {
                 for(String rl : func) {
                     fm.remove(rl);
                 }
+                    fm.remove("");
 
                 // 如果还有剩余, 就当做 IN 来处理
                 if (!fm.isEmpty()) {
-                    fv = new LinkedHashSet( fm.values() );
+                    fv = new LinkedHashSet( fm.values(  ) );
                     caze.filter(fn+" IN (?)", fv);
                 }
             } else
             if (fv instanceof Set) {
-                caze.filter(fn+" IN (?)", fv);
+                Set vs = (Set) fv;
+                    vs.remove("");
+                if(!vs.isEmpty( )) {
+                    caze.filter(fn+" IN (?)", fv);
+                }
             } else
             if (fv instanceof Collection) {
-                fv = new LinkedHashSet(( Collection ) fv);
-                caze.filter(fn+" IN (?)", fv);
+                Set vs = new LinkedHashSet((Collection) fv);
+                    vs.remove("");
+                if(!vs.isEmpty( )) {
+                    caze.filter(fn+" IN (?)", fv);
+                }
             } else {
-                caze.filter(fn+  " = ?" , fv);
+                    caze.filter(fn+  " = ?" , fv);
             }
         }
 
@@ -398,11 +483,19 @@ public class UniteCase {
     }
 
     private Map allow(FetchCase caze, String on) {
-        return  allow(caze, on, null, null);
+        Map af  = bufs.get( on );
+        if (af != null ) {
+            return af;
+        }
+
+        af = new LinkedHashMap();
+        allow( caze, on,null,af);
+        bufs.put(on, af);
+        return af;
     }
 
     private Map allow(FetchCase caze, String on, String qn, Map al) {
-        String tn, tx, ax;
+        String  ax , tx , tn;
 
         if (null != caze.name && ! "".equals(caze.name)) {
             tn = caze.name /**/;
@@ -418,21 +511,16 @@ public class UniteCase {
         if (null ==  qn  ) {        // 第一层
             qn = "";
             ax = "";
-        if (! joins(caze)) {        // 第一层且无关联可不加查询别名
-            tx = "";
-        } else {
-            tx = "`" + tn + "`.";
-        }
-            al = new LinkedHashMap();
+            tx = ".";
         } else
         if ("".equals(qn)) {        // 第二层
             qn = tn;
             ax = qn + ".";
-            tx = "`" + tn + "`.";
+            tx = "`"+ tn +"`.";
         } else {                    // 其他层
-            qn = qn + "." + tn  ;
+            qn = qn + "."+ tn ;
             ax = qn + ".";
-            tx = "`" + tn + "`.";
+            tx = "`"+ tn +"`.";
         }
 
         // 也可以在 FetchCase 中特别指定命名前缀
@@ -468,47 +556,26 @@ public class UniteCase {
         return  al;
     }
 
-    private boolean joins(FetchCase caze) {
-        for(FetchCase caxe : caze.getJoinSet() ) {
-            if (caxe.joinType != FetchCase.NONE) {
-                return true;
-            }
-        }
-        return  false;
-    }
+    private Map allow(Table table, Table assoc, Map ac, String tn, String qn, Map al) {
+        String  ax , tx  ;
 
-    private Map allow(Table tabo, Table asso, Map ac, Map al, String qn){
-        String tn, tx, ax;
-
-        if (null != asso.name && ! "".equals(tabo.name)) {
-            tn = asso.name /**/;
-        } else {
-            tn = asso.tableName;
-        }
-
-        // 类似于 allow(FetchCase, String, String, Map)
         if (null ==  qn  ) {
             qn = "";
             ax = "";
-        if (! joins( ac )) {
-            tx = "";
-        } else {
-            tx = "`" + tn + "`.";
-        }
-            al = new LinkedHashMap();
+            tx = ".";
         } else
         if ("".equals(qn)) {
             qn = tn;
             ax = qn + ".";
-            tx = "`" + tn + "`.";
+            tx = "`"+ tn +"`.";
         } else {
-            qn = qn + "." + tn  ;
+            qn = qn + "."+ tn ;
             ax = qn + ".";
-            tx = "`" + tn + "`.";
+            tx = "`"+ tn +"`.";
         }
 
         try {
-            Map fs = asso.getFields( );
+            Map fs = assoc.getFields( );
             for(Object n : fs.keySet()) {
                 String k = (String) n;
                 String f = (String) n;
@@ -522,11 +589,11 @@ public class UniteCase {
         }
 
         if (ac != null && !ac.isEmpty()) {
-            Iterator it = ac.entrySet( ).iterator();
+            Iterator it = ac.entrySet().iterator(  );
             while (it.hasNext()) {
-                Map.Entry et = (Map.Entry)it.next();
-                Map    tc = (Map) et.getValue();
-                String jn = (String) tc.get("join");
+                Map.Entry et = (Map.Entry) it.next();
+                Map       tc = (Map) et.getValue(  );
+                String jn = (String) tc.get ("join");
 
                 // 不是 JOIN 的不理会
                 if (! "INNER".equals(jn)
@@ -537,10 +604,10 @@ public class UniteCase {
                 }
 
                 try {
-                    String tn2 = (String) et.getKey(   );
-                    Table  at2 = tabo.getAssocInst(tn2);
-                    Map    ac2 = (Map) tc.get ("assocs");
-                    allow(tabo, at2, ac2, al, qn);
+                    ac = (Map) tc.get("assocs");
+                    tn = (String) et.getKey(  );
+                    assoc = table.getAssocInst(tn);
+                    allow(table, assoc, ac, tn,qn, al);
                 }
                 catch (HongsException ex) {
                     CoreLogger.error( ex);
@@ -549,28 +616,6 @@ public class UniteCase {
         }
 
         return  al;
-    }
-
-    private boolean joins(Map ac) {
-        if (ac != null && !ac.isEmpty()) {
-            Iterator it = ac.entrySet( ).iterator();
-            while (it.hasNext()) {
-                Map.Entry et = (Map.Entry)it.next();
-                Map    tc = (Map) et.getValue( );
-                String jn = (String) tc.get("join");
-
-                // 不是 JOIN 的不理会
-                if (! "INNER".equals(jn)
-                &&  !  "LEFT".equals(jn)
-                &&  ! "RIGHT".equals(jn)
-                &&  !  "FULL".equals(jn)) {
-                    continue;
-                }
-
-                return  true;
-            }
-        }
-        return  false;
     }
 
 }

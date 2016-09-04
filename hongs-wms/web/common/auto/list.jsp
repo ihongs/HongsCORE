@@ -101,7 +101,7 @@
                     String  name = (String) et.getKey( );
 
                     if ("@".equals(name)
-                    || !Synt.declare(info.get("listable"), false)) {
+                    ||  Synt.declare(info.get("hide.in.list"), false)) {
                         continue ;
                     }
 

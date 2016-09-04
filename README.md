@@ -80,10 +80,9 @@
 
     default.html     引导页面
     form.html        创建表单
-    form4edit.html   编辑表单
-    form4view.html   查看表单
+    form_edit.html   编辑表单
     list.html        列表区块
-    list4pick.html   选择区块
+    list_fork.html   选择区块
 
 一个简单的方法是通过 http://localhost:8080/mytest/form.html 这样的 url 来获取 html 文件, 然后存下来后在这个基础上改. 以后会增加一个按钮来比较方便的固化这个 html. 如不想使用原页面体系可在构建的 default.html 中按自定规则编码。
 
@@ -286,20 +285,22 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 一个 xxx.form.xml 配置文件由 form,field,param,enum,value 这些节点组成, 结构类似于 Protobuf, form 类似 Protobuf 的 message. field 有 required/repeated 对应 Protobuf message 下条目的 required/optional/repeated; type 对应条目的类型, 只是更贴近HTML控件和数据库字段类型.
 
-其中 field 的 param 设置中, 可用于控制视图布局的参数有:
+其中 field 的 param 设置中, 可用于控制查询及布局的参数有:
 
-    sortable    字段可排序(枚举等类型的字段实为分组类聚)
-    findable    字段可搜索(且搜索框查询会查询此字段的值)
-    listable    字段可显示在列表中
-    inedible    字段不在编辑页出现
-    invisble    字段不在查看页出现
-    unstored    不保存原文(针对 Lucene 特有, 可查询或排序却不能读取)
+    listable        字段可获取(可通过rb参数控制)
+    sortable        字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
+    findable        字段可搜索(可通过wd参数限制)
+    filtable        字段可过滤
+    unstored        不保存原文(可查询或排序, 却不可以读取, 针对 Lucene 特有)
+    hide.in.list    字段不在列表页出现
+    hide.in.form    字段不在表单页出现
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
     dont.auto.bind.listable 告知 Mview 不要自动将字段设为可列举
     dont.auto.bind.sortable 告知 Mview 不要自动将字段设为可排序
     dont.auto.bind.findable 告知 Mview 不要自动将字段设为可搜索
+    dont.auto.bind.filtable 告知 Mview 不要自动将字段设为可过滤
     dont.auto.append.fields 告知 Mview 不要自动追加表内字段
     dont.auto.append.assocs 告知 Mview 不要自动追加关联字段
     dont.show.create.button 告知视图不要显示创建按钮

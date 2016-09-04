@@ -82,7 +82,7 @@
                 String  name = (String) et.getKey( );
 
                 if ("@".equals(name)
-                ||  Synt.declare(info.get("inedible"), false)) {
+                ||  Synt.declare(info.get("hide.in.form"), false)) {
                     continue ;
                 }
 

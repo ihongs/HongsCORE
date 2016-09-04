@@ -225,15 +225,23 @@ public class Mview extends Model {
         // 检查字段, 为其添加搜索、排序、列举参数
         chkFields(listTypz, sortTypz, findTypz, filtTypz, listColz, sortColz, findColz, filtColz);
 
-        this.listable = listColz.toArray(new String[]{});
-        this.sortable = sortColz.toArray(new String[]{});
-        this.findable = findColz.toArray(new String[]{});
-        this.filtable = filtColz.toArray(new String[]{});
+        if (!listColz.isEmpty()) {
+            listable = listColz.toArray(new String[]{});
+        }
+        if (!sortColz.isEmpty()) {
+            sortable = sortColz.toArray(new String[]{});
+        }
+        if (!findColz.isEmpty()) {
+            findable = findColz.toArray(new String[]{});
+        }
+        if (!filtColz.isEmpty()) {
+            filtable = filtColz.toArray(new String[]{});
+        }
         if (model != null) {
-            model.listable = this.listable;
-            model.sortable = this.sortable;
-            model.findable = this.findable;
-            model.filtable = this.filtable;
+            model.listable = listable;
+            model.sortable = sortable;
+            model.findable = findable;
+            model.filtable = filtable;
         }
 
         return fields;

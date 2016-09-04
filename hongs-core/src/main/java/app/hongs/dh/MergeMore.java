@@ -152,6 +152,7 @@ public class MergeMore
    * 填充映射
    * 可以在调 mixing,extend,append 之前预置为空对象
    * 但不能用于处理并到行的操作
+   * 此方法总是覆盖指定子健的值
    * @param map 映射表
    * @param sub 子键, 不可以为空
    */

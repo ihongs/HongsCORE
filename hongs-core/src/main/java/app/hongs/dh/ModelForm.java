@@ -58,7 +58,7 @@ public class ModelForm {
         // Nothing todo...
     }
 
-    protected void setFields(Map map) {
+    protected final void setFields(Map map) {
         fieldz = map;
     }
 
@@ -68,7 +68,7 @@ public class ModelForm {
      *  inputType: fieldType
      * @param map
      */
-    protected void setFtypes(Map map) {
+    protected final void setFtypes(Map map) {
         ftypez = map;
     }
 
@@ -78,14 +78,14 @@ public class ModelForm {
      *  xxxxable: inputType 或 fieldType, Set 或 逗号分隔字符串
      * @param map
      */
-    protected void setDtypes(Map map) {
+    protected final void setDtypes(Map map) {
         dtypez = map;
     }
 
     /**
      * 获取表单参数
      * 默认来自字段配置的 @ 项
-     * @return 
+     * @return
      */
     public Map getParams() {
         return Synt.asserts(getFields().get("@"), new HashMap());
@@ -93,7 +93,17 @@ public class ModelForm {
 
     /**
      * 获取字段配置
-     * @return 
+     * 如需覆盖, 可参考以下代码:
+     * <code>
+     *  try {
+     *      return super.getFields();
+     *  }
+     *  catch (NullPointerException) {}
+     *  // TODO: 自行获取 fields
+     *  setFields(fields);
+     *  return fields;
+     * </code>
+     * @return
      */
     public Map getFields() {
         if (null != fieldz) {
@@ -104,7 +114,7 @@ public class ModelForm {
 
     /**
      * 获取字段类型映射
-     * @return 
+     * @return
      */
     public Map getFtypes() {
         if (null != ftypez) {
@@ -120,7 +130,7 @@ public class ModelForm {
 
     /**
      * 获取查询类型映射
-     * @return 
+     * @return
      */
     public Map getDtypes() {
         if (null != dtypez) {
@@ -136,7 +146,7 @@ public class ModelForm {
 
     /**
      * 获取功能请求参数
-     * @return 
+     * @return
      */
     public Set<String> getFuncKeys() {
         return fnKeyz;
@@ -144,78 +154,78 @@ public class ModelForm {
 
     /**
      * 获取可列举的字段
-     * @return 
+     * @return
      */
     public Set<String> getListable() {
         if (null != rbColz) {
             return  rbColz;
         }
-        rbColz = getAble("listable");
+        rbColz = getXables("listable");
         return rbColz;
     }
 
     /**
      * 获取可排序的字段
-     * @return 
+     * @return
      */
     public Set<String> getSortable() {
         if (null != obColz) {
             return  obColz;
         }
-        obColz = getAble("sortable");
+        obColz = getXables("sortable");
         return obColz;
     }
 
     /**
      * 获取可搜索的字段
-     * @return 
+     * @return
      */
     public Set<String> getFindable() {
         if (null != wdColz) {
             return  wdColz;
         }
-        wdColz = getAble("findable");
+        wdColz = getXables("findable");
         return wdColz;
     }
 
     /**
      * 获取可过滤的字段
-     * @return 
+     * @return
      */
     public Set<String> getFiltable() {
         if (null != whColz) {
             return  whColz;
         }
-        whColz = getAble("filtable");
+        whColz = getXables("filtable");
         return whColz;
     }
 
     /**
      * 获取特定许可的字段
-     * @param dn
-     * @return 
+     * @param x 标识 例如 listable,sortable
+     * @return
      */
-    protected Set<String> getAble(String dn) {
+    protected Set<String> getXables(String x) {
         Map<String, Map   > fields = getFields();
         Map<String, String> params = getParams();
 
         // 可在表参数区直接给出
-        if (params.containsKey ( dn )) {
-            return Synt.asTerms(params.get(dn) );
+        if (params.containsKey(x)) {
+            return Synt.asTerms(params.get(x));
         }
 
         // 检查是否阻止自动识别
         Set sets ;
         Set abls = new LinkedHashSet();
-        if (! Synt.declare(params.get("dont.auto.bind." + dn), true)) {
-            sets = Synt.asTerms( getDtypes( ).get( dn ) );
+        if (! Synt.declare(params.get("dont.auto.bind." + x), true)) {
+            sets = Synt.asTerms(getDtypes().get(x));
         } else {
-            sets = new HashSet ( );
+            sets = new HashSet();
             // 专用类型特例, 无需特别设置
-            if ("findable".equals(dn)) {
+            if ("findable".equals(x)) {
                 sets.add("search");
             } else
-            if ("sortable".equals(dn)) {
+            if ("sortable".equals(x)) {
                 sets.add("sorted");
             }
         }
@@ -226,13 +236,13 @@ public class ModelForm {
             if ("@".equals(fn)) {
                 continue; // 排除掉 @
             }
-            if (field.containsKey(dn)) {
-                if (Synt.declare (field.get(dn) , false)) {
-                    abls.add     (fn);
+            if (field.containsKey(x)) {
+                if (Synt.declare (field.get(x) , false )) {
+                    abls.add(fn);
                 }
             } else {
                 if (sets.contains(field.get("__type__"))) {
-                    abls.add     (fn);
+                    abls.add(fn);
                 }
             }
         }

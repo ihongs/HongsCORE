@@ -103,12 +103,15 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
      * 构造方法
      * @param path 存储路径
      * @param form 字段配置
-     * @param tmap 类型映射
-     * @param dmap 类型标识
+     * @param fmap 字段归类映射
+     * @param dmap 行为归类映射
      * @throws HongsException
      */
-    public LuceneRecord(String path, Map form, Map tmap, Map dmap)
+    public LuceneRecord(String path, Map form, Map fmap, Map dmap)
     throws HongsException {
+        super(form, fmap, dmap);
+
+        // 保存路径
         if (path != null) {
             Map m = new HashMap();
             m.put("CORE_PATH", Core.CORE_PATH);
@@ -116,14 +119,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
             m.put("DATA_PATH", Core.DATA_PATH);
             path = Tool.inject(path, m);
             if (! new File(path).isAbsolute()) {
-                path = Core.DATA_PATH +"/lucene/"+ path;
+               path = Core.DATA_PATH + "/lucene/" + path;
             }
         }
-
-        this.dtpath  = path ;
-        this.setFields(form);
-        this.setFtypes(tmap);
-        this.setDtypes(dmap);
+        this.dtpath = path;
 
         // 模式标识
         CoreConfig conf = CoreConfig.getInstance();
@@ -732,7 +731,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
          this.destroy( );
         super.finalize();
     }
-    
+
     /**
      * 事务开始
      */

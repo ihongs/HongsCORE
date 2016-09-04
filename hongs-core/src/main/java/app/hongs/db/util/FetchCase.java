@@ -49,24 +49,24 @@ import java.util.regex.Pattern;
  *
  * <h3>系统已知 options:</h3>
  * <pre>
- FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
- UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
- UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
- ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
- ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
- ASSOC_FILLS  : boolean     补全空白关联数据; 作用域: FetchMore
- ASSOCS       : Set         仅对某些表做关联; 作用域: UniteTool.fetchMore
- ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: UniteTool.fetchMore
- ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: UniteTool.fetchMore
- page         : int|String  分页页码; 作用域: FetchPage
- pags         : int|String  链接数量; 作用域: FetchPage
- rows         : int|String  分页行数; 作用域: FetchPage
- LISTABLE     : Map         可列举列; 作用域: UniteCase
- SORTABLE     : Map         可排序列; 作用域: UniteCase
- FILTABLE     : Map         可过滤列; 作用域: UniteCase
- FINDABLE     : Map         可搜索列; 作用域: UniteCase
- INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
- INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
+ * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
+ * UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
+ * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
+ * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
+ * ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
+ * ASSOC_FILLS  : boolean     补全空白关联数据; 作用域: FetchMore
+ * ASSOCS       : Set         仅对某些表做关联; 作用域: UniteTool.fetchMore
+ * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: UniteTool.fetchMore
+ * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: UniteTool.fetchMore
+ * page         : int|String  分页页码; 作用域: FetchPage
+ * pags         : int|String  链接数量; 作用域: FetchPage
+ * rows         : int|String  分页行数; 作用域: FetchPage
+ * LISTABLE     : Map         可列举列; 作用域: UniteCase
+ * SORTABLE     : Map         可排序列; 作用域: UniteCase
+ * FILTABLE     : Map         可过滤列; 作用域: UniteCase
+ * FINDABLE     : Map         可搜索列; 作用域: UniteCase
+ * INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
+ * INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
  * </pre>
  *
  * <h3>异常代码:</h3>

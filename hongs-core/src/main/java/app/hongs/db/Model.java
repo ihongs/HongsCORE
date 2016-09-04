@@ -3,6 +3,7 @@ package app.hongs.db;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
+import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.util.FetchPage;
@@ -24,18 +25,18 @@ import java.util.Set;
  *
  * <p>
  * 当您需要使用 create,add,update,put,delete,del 等时请确保表有主键.<br/>
- * 基础动作方法: retrieve,create,update,delete
- * 扩展动作方法: unique,exists
- * 通常它们被动作类直接调用;
- * 基础模型方法: get,add,put,del
- * 一般改写只需覆盖它们即可;
- * filter, permit 分别用于获取和更改数据等常规操作时进行过滤,
- * permit 默认调用 filter 来实现的, 可覆盖它来做资源过滤操作.<br/>
+ 基础动作方法: retrieve,create,update,delete
+ 扩展动作方法: unique,exists
+ 通常它们被动作类直接调用;
+ 基础模型方法: get,add,put,del
+ 一般改写只需覆盖它们即可;
+ digest, permit 分别用于获取和更改数据等常规操作时进行过滤,
+ permit 默认调用 digest 来实现的, 可覆盖它来做资源过滤操作.<br/>
  * retrieve 可使用查询参数:
  * <code>
  * ?pn=1&rn=10&f1=123&f2.-gt=456&wd=a+b&ob=-f1+f2&rb=id+f1+f2
  * </code>
- * 详见 filter 方法说明
+ 详见 digest 方法说明
  </p>
  *
  * <h3>异常代码:</h3>
@@ -107,12 +108,14 @@ implements IEntity
     this.db = table.db;
 
     String cs;
-    cs = table.getField("findCols");
-    if (cs != null) this.findable = cs.split(",");
-    cs = table.getField("listCols");
+    cs = table.getField("listable");
     if (cs != null) this.listable = cs.split(",");
-    cs = table.getField("sortCols");
+    cs = table.getField("sortable");
     if (cs != null) this.sortable = cs.split(",");
+    cs = table.getField("findable");
+    if (cs != null) this.findable = cs.split(",");
+    cs = table.getField("filtable");
+    if (cs != null) this.filtable = cs.split(",");
   }
 
   //** 标准动作方法 **/
@@ -775,6 +778,20 @@ implements IEntity
     return data;
   }
 
+  /**
+   * 内建 FetchCase
+   * 用于用户未给 FetchCase 时的默认查询
+   * 此方法会设置 UNFIX_FIELD, UNFIX_ALIAS 为 true
+   * @return
+   * @throws app.hongs.HongsException
+   */
+  public FetchCase fetchCase() throws HongsException
+  {
+    return table.fetchCase()
+      .setOption("UNFIX_FIELD", true)
+      .setOption("UNFIX_ALIAS", true);
+  }
+
   //** 辅助过滤方法 **/
 
   /**
@@ -803,6 +820,8 @@ implements IEntity
    * 5) 如果有子表.字段名相同的参数则获取与之对应的记录,
    *    可以在子表.字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
+   * 
+   * [2016/9/4] 以上过滤逻辑已移至 UniteCase, 但未指定 listable 时字段过滤使用本类的 field,allow 来处理
    * </pre>
    *
    * @param caze
@@ -820,8 +839,7 @@ implements IEntity
     if (null == caze.getOption("ASSOCS")
     && !caze.getOption("INCLUDE_HASMANY", false)
     && ("getAll" .equals(caze.getOption("MODEL_METHOD"))
-    ||  "getList".equals(caze.getOption("MODEL_METHOD"))
-    ))
+    ||  "getList".equals(caze.getOption("MODEL_METHOD")) ))
     {
       if (null == caze.getOption("ASSOC_TYPES"))
       {
@@ -841,21 +859,49 @@ implements IEntity
       }
     }
 
-    if (! rd.isEmpty())
+    /**
+     * 补全空白关联数据
+     * 避免外部解析麻烦
+     */
+    caze.setOption("ASSOC_FILLS", true);
+
+    if (rd.isEmpty())
     {
-      UniteCase uc = new UniteCase(caze);
-      uc.allow(this);
-      if (this.listable != null) uc.allow(UniteCase.LISTABLE, listable);
-      if (this.sortable != null) uc.allow(UniteCase.SORTABLE, sortable);
-      if (this.findable != null) uc.allow(UniteCase.FINDABLE, findable);
-      if (this.filtable != null) uc.allow(UniteCase.FILTABLE, filtable);
-      uc.trans( rd );
+      return;
+    }
+
+    /**
+     * 没有指定 listable
+     * 则不使用 UniteCase 处理查询字段
+     * 此方法的不会将所有字段绑定在顶层用例上
+     * 而是按照不同表分别绑在对应的下级查询上
+     * 这样可以为那些不是 JOIN 关联的用例指定字段
+     */
+    Object rb  = null;
+    if (listable == null)
+    {
+      rb = rd.remove(Cnst.RB_KEY);
+      if ( rb != null)
+      {
+        field(caze, Synt.asTerms(rb) );
+      }
+    }
+
+    UniteCase uc = new UniteCase(caze);
+    uc.allow(this);
+    uc.trans( rd );
+
+    // 以此绕开 UniteCase
+    // 后续调试可正常观察
+    if (rb !=null)
+    {
+      rd.put(Cnst.RB_KEY, rb);
     }
   }
 
   /**
    * "变更"过滤
-   * 默认调用 filter 进行判断, 即能操作的一定是能看到的
+ 默认调用 digest 进行判断, 即能操作的一定是能看到的
    * @param caze 条件
    * @param wh   约束
    * @param id 主键值
@@ -875,18 +921,178 @@ implements IEntity
     return ! this.table.fetchLess( caze ).isEmpty(  );
   }
 
-  /**
-   * 内建 FetchCase
-   * 用于用户未给 FetchCase 时的默认查询
-   * 此方法会设置 UNFIX_FIELD, UNFIX_ALIAS 为 true
-   * @return
-   * @throws app.hongs.HongsException
-   */
-  public FetchCase fetchCase() throws HongsException
-  {
-    return table.fetchCase()
-      .setOption("UNFIX_FIELD", true)
-      .setOption("UNFIX_ALIAS", true);
-  }
+    //** 查询字段处理 **/
+
+    /**
+     * 绑定许可字段
+     * @param caze
+     * @param rb
+     */
+    protected final void field(FetchCase caze, Set<String> rb) {
+        if (rb == null || rb.isEmpty()) return;
+
+        Map<String, Object[]> af = new LinkedHashMap();
+        allow(caze, af);
+        Set<String> ic = new LinkedHashSet();
+        Set<String> ec = new LinkedHashSet();
+        Set<String> xc ;
+
+        for(String  fn : rb) {
+            if (fn.startsWith("-") ) {
+                fn = fn.substring(1);
+                xc = ec;
+            } else {
+                xc = ic;
+            }
+
+            /**
+             * 可以使用通配符来表示层级全部字段
+             */
+
+            if (fn.endsWith(".*" )) {
+                fn = fn.substring(0, fn.length() - 1);
+                for(String kn : af.keySet()) {
+                    if (kn.startsWith( fn )) {
+                        xc.add(kn);
+                    }
+                }
+            } else
+            if (fn.equals  ( "*" )) {
+                for(String kn : af.keySet()) {
+                    if (kn.indexOf('.') < 0) {
+                        xc.add(kn);
+                    }
+                }
+            } else
+            if (af.containsKey(fn)) {
+                xc.add(fn);
+            }
+        }
+
+        // 默认没给就是全部
+        if (ic.isEmpty() == true ) {
+            ic.addAll(af.keySet());
+        }
+
+        // 取差集排排除字段
+        if (ec.isEmpty() == false) {
+            ic.removeAll(ec);
+        }
+
+        for(String  fn : ic) {
+            Object[]  fa = af.get (fn);
+                      fn = (String   ) fa[0];
+            String    fv = (String   ) fa[1];
+            FetchCase fc = (FetchCase) fa[2];
+            fc.select(fv +" AS `"+ fn +"`" );
+        }
+    }
+
+    /**
+     * 提取许可字段
+     * @param caze  查询用例
+     * @param af    结果字段, 返回结构: { KEY: [COL, FetchCase]... }
+     */
+    protected final void allow(FetchCase caze, Map af) {
+        allow(caze, table, caze, table, table.getAssocs(), null, null, null, af);
+    }
+
+    /**
+     * 递归提取字段
+     * @param caze  顶层查询用例
+     * @param table 顶层模型库表
+     * @param caxe  当前查询用例
+     * @param assoc 当前关联库表
+     * @param ac    当前下级关联
+     * @param tn    当前表名
+     * @param qn    层级名称
+     * @param pn    相对层级
+     * @param al    结果字段
+     */
+    private void allow(FetchCase caze, Table table,
+                       FetchCase caxe, Table assoc,
+                       Map ac, String tn, String qn, String pn, Map al) {
+        String  tx , ax  , az;
+
+            tx = ".";
+
+        if (null ==  qn  ) {
+            qn = "";
+            ax = "";
+        } else
+        if ("".equals(qn)) {
+            qn = tn;
+            ax = qn + ".";
+        } else {
+            qn = qn + "."+ tn ;
+            ax = qn + ".";
+        }
+
+        if (null ==  pn  ) {
+            pn = "";
+            az = "";
+        } else
+        if ("".equals(pn)) {
+            pn = tn;
+            az = pn + ".";
+        } else {
+            pn = pn + "."+ tn ;
+            az = pn + ".";
+        }
+
+        try {
+            Map fs = assoc.getFields( );
+            for(Object n : fs.keySet()) {
+                String f = (String) n;
+                String k = f;
+                String l = f;
+                f = tx +"`"+ f +"`";
+                k = ax +/**/ k /**/;
+                l = az +/**/ l /**/;
+                al.put(k , new Object[] {l,f, caxe});
+            }
+        }
+        catch (HongsException ex) {
+            CoreLogger.error( ex);
+        }
+
+        if (ac != null && !ac.isEmpty()) {
+            Iterator it = ac.entrySet().iterator(  );
+            while (it.hasNext()) {
+                Map.Entry et = (Map.Entry) it.next();
+                Map       tc = (Map) et.getValue(  );
+                String jn = (String) tc.get ("join");
+
+                // 不是 JOIN 的重置 pn, 层级名随之改变
+                if (! "INNER".equals(jn)
+                &&  !  "LEFT".equals(jn)
+                &&  ! "RIGHT".equals(jn)
+                &&  !  "FULL".equals(jn)) {
+                    jn = null;
+                } else {
+                    jn = pn  ;
+                }
+
+                try {
+                    ac = (Map) tc.get("assocs");
+                    tn = (String) et.getKey(  );
+                    assoc = table.getAssocInst(tn);
+                    caxe  = table.getAssocCase(tn, caze);
+
+                    if (null == caxe || null == assoc) {
+                        CoreLogger.debug(Model.class.getName( )
+                            + ".allow: Can not get AssocCase or AssocInst for table "
+                            + table.db.name + ":" + table.name);
+                        continue;
+                    }
+
+                    allow(caze, table, caxe, assoc, ac, tn, qn, jn, al);
+                }
+                catch (HongsException ex) {
+                    CoreLogger.error( ex);
+                }
+            }
+        }
+    }
 
 }

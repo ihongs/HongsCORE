@@ -1,15 +1,3 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Context antiJARLocking="true" path="/HongsWeb" reloadable="true">
-  <!--
-    <Resource auth="Container"
-              type="javax.sql.DataSource"
-              name="jdbc/hongs-core"
-              username="root"
-              password="123456"
-              driverClassName="com.mysql.jdbc.Driver"
-              url="jdbc:mysql://localhost:3306/hongs_core_new?useUnicode=true&amp;characterEncoding=utf8&amp;zeroDateTimeBehavior=convertToNull"
-              maxActive="4"
-              maxIdle="4"
-              maxWait="5000"/>
-    //-->
 </Context>

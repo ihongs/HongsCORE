@@ -36,15 +36,15 @@ import java.util.regex.Pattern;
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
- select       SELECT    field1, field2
- from         FROM      tableName AS name
- join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
- digest       WHERE     expr1 AND expr2
- groupBy      GROUP BY  field1, field2
- having       HAVING    expr1 AND expr2
- orderBy      ORDER BY  field1, field2
- limit        LIMIT     start, limit
- <b>注意: 以上所列方法为追加操作; 五字母方法(field,where,group,havin,order)为设置操作, 会清空原值</b>
+ *  select       SELECT    field1, field2
+ *  from         FROM      tableName AS name
+ *  join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
+ *  filter       WHERE     expr1 AND expr2
+ *  groupBy      GROUP BY  field1, field2
+ *  having       HAVING    expr1 AND expr2
+ *  orderBy      ORDER BY  field1, field2
+ *  limit        LIMIT     start, limit
+ *  <b>注意: 以上所列方法为追加操作; 五字母方法(field,where,group,havin,order)为设置操作, 会清空原值</b>
  * </pre>
  *
  * <h3>系统已知 options:</h3>

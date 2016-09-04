@@ -51,13 +51,8 @@ public class UniteCase {
      */
     public  static final String  FILTABLE = "FILTABLE";
 
-    private static final String  fnPn = "[a-z][a-z0-9_]*";
-    private static final Pattern cnPt
-          = Pattern.compile("^"+ fnPn +"$",
-            Pattern.CASE_INSENSITIVE);
-    private static final Pattern anPt
-          = Pattern.compile("^(?:"+ fnPn +"\\.)*"+fnPn+"(?:\\:|$)",
-            Pattern.CASE_INSENSITIVE);
+    private static final Pattern cnPt = Pattern.compile("^[\\w]$");
+    private static final Pattern anPt = Pattern.compile("^[\\w\\.]+(:|$)");
 
     private static final Set<String  /**/  > func = new HashSet();
     private static final Map<String, String> rels = new HashMap();
@@ -80,19 +75,19 @@ public class UniteCase {
         rels.put(Cnst.NI_REL, "NOT IN");
     }
 
-    private final Map<String, Map> bufs;
     private final FetchCase        that;
+    private final Map<String, Map> bufs;
 
     /**
      * 构造方法
-     * @param temp 模板查询对象
+     * @param caze 模板查询对象
      */
-    public UniteCase(FetchCase temp) {
-        if (temp == null) {
+    public UniteCase(FetchCase caze) {
+        if (caze == null) {
             throw new NullPointerException(UniteCase.class.getName()+": temp can not be null");
         }
         this.bufs = new HashMap();
-        this.that = temp;
+        this.that = caze;
     }
 
     /**
@@ -161,18 +156,23 @@ public class UniteCase {
         Matcher m;
         String  k;
         for(String f : fs) {
+            f = f.trim();
+            if (f.isEmpty()) {
+                continue;
+            }
+
             m = anPt.matcher(f);
             if (m.matches()) {
-                if (m.group().endsWith(":")) {
+                if (":".equals(m.group(1))) {
                     k = f.substring(0, m.end() -1);
                     f = f.substring(   m.end()   );
                 } else {
                     k = f;
                 }
+                af.put( k, f);
             } else {
-                    k = f;
+                af.put( f, f);
             }
-            af.put (k , f);
         }
 
         return this;
@@ -180,20 +180,22 @@ public class UniteCase {
 
     /**
      * 从表单设置许可字段
+     * 默认逗号分隔, 语句较复杂时, 可用分号分隔, 但不支持混用
+     * 可用 table.getParams() 或 forms.get("@"), 后者可以调用 FormSet.getForm(String).get(String)
      * @param fc
      * @return
      */
     public UniteCase allow(Map fc) {
         String[] ks = new String[] {"listable", "sortable", "findable", "filtable"};
         for(String k : ks) {
-            String s = Dict.getValue(fc, "", "@", k);
-            if ("".equals(s)) continue;
-            if (s.indexOf("'") != -1
-            ||  s.indexOf('"') != -1
-            ||  s.indexOf('(') != -1) {
-                allow(k.toUpperCase(), s.split(","));
+            String s = fc.get(k).toString( ).trim( );
+            if ("".equals(s) ) {
+                continue ;
+            }
+            if (s.indexOf(';') != -1) {
+                allow(k.toUpperCase(), s.split(";"));
             } else {
-                // TODO: 复杂字符串解析
+                allow(k.toUpperCase(), s.split(","));
             }
         }
         return this;
@@ -208,7 +210,7 @@ public class UniteCase {
      */
     public FetchCase trans(Map rd) {
         Map xd = new LinkedHashMap (rd);
-        trans(that, xd );
+        trans( that, xd );
         return that;
     }
 
@@ -277,9 +279,29 @@ public class UniteCase {
         if (rb == null || rb.isEmpty()) return;
 
         Map<String, String> af = allow(caze, LISTABLE);
+        Map<String, Set<String>> cf = new HashMap();
         Set<String> ic = new LinkedHashSet();
         Set<String> ec = new LinkedHashSet();
         Set<String> xc ;
+
+        // 整理出层级结构, 方便处理通配符
+        for(String  fn : af.keySet()) {
+            String  k  ;
+            int p = fn.lastIndexOf(".");
+            if (p > -1) {
+                k = fn.substring(0 , p)+".*";
+            } else {
+                k = "*";
+            }
+
+            Set<String> fs = cf.get ( k );
+            if (fs == null  ) {
+                fs  = new LinkedHashSet();
+                cf.put(k, fs);
+            }
+
+            fs.add(fn);
+        }
 
         for(String  fn : rb) {
             if (fn.startsWith("-") ) {
@@ -289,27 +311,22 @@ public class UniteCase {
                 xc = ic;
             }
 
-            /**
-             * 可以使用通配符来表示层级全部字段
-             */
-
-            if (fn.endsWith(".*" )) {
-                fn = fn.substring(0, fn.length() - 1);
-                for(String kn : af.keySet()) {
-                    if (kn.startsWith( fn )) {
-                        xc.add(kn);
-                    }
-                }
+            if (cf.containsKey(fn) ) {
+                xc.addAll(cf.get(fn));
             } else
-            if (fn.equals  ( "*" )) {
-                for(String kn : af.keySet()) {
-                    if (fn.indexOf('.') < 0) {
-                        xc.add(kn);
-                    }
-                }
-            } else
-            if (af.containsKey(fn)) {
+            if (af.containsKey(fn) ) {
                 xc.add(fn);
+
+                // 排除时, 先在包含中增加全部
+                if (xc == ec) {
+                    int p  = fn.lastIndexOf(".");
+                    if (p != -1) {
+                        fn = fn.substring(0 , p)+".*";
+                    } else {
+                        fn = "*";
+                    }
+                    ic.addAll(cf.get(fn));
+                }
             }
         }
 
@@ -382,38 +399,10 @@ public class UniteCase {
         }
     }
 
-    private void group(FetchCase caze, Set<Map> ar, String rn) {
-        if (ar == null || ar.isEmpty()) return;
-
-        StringBuilder sb = new StringBuilder();
-        FetchCase   caxe = new FetchCase(    );
-
-        for (Map rd : (Set<Map>) ar) {
-            // 将查询用例里的条件清空
-            // 然后将分组数据转为条件
-            // 参数无需清空
-            caxe.wheres.setLength(0);
-            where(caxe, rd);
-
-            if (caxe.wheres.length() > 0) {
-                String wh = FetchCase.pw.matcher(caxe.wheres).replaceFirst("");
-                sb.append('(').append(wh).append(')')
-                  .append(' ').append(rn).append(' ');
-            }
-        }
-
-        if (sb.length() > 0) {
-            sb.setLength( sb.length()-rn.length()-2 );
-            caze.wheres .append(   " AND "   )
-                  .append('(').append(sb).append(')');
-            caze.wparams.addAll(caxe.wparams );
-        }
-    }
-
     private void where(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
-        Map<String, String> af = allow(caze, FINDABLE);
+        Map<String, String> af = allow(caze, FILTABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
@@ -480,6 +469,34 @@ public class UniteCase {
         // 分组查询, 满足复杂的组合查询条件
         group(caze, Synt.declare(rd.get(Cnst.OR_KEY), Set.class), "OR" );
         group(caze, Synt.declare(rd.get(Cnst.AR_KEY), Set.class), "AND");
+    }
+
+    private void group(FetchCase caze, Set<Map> ar, String rn) {
+        if (ar == null || ar.isEmpty()) return;
+
+        StringBuilder sb = new StringBuilder();
+        FetchCase   caxe = new FetchCase(    );
+
+        for (Map rd : (Set<Map>) ar) {
+            // 将查询用例里的条件清空
+            // 然后将分组数据转为条件
+            // 参数无需清空
+            caxe.wheres.setLength(0);
+            where(caxe, rd);
+
+            if (caxe.wheres.length() > 0) {
+                String wh = FetchCase.pw.matcher(caxe.wheres).replaceFirst("");
+                sb.append('(').append(wh).append(')')
+                  .append(' ').append(rn).append(' ');
+            }
+        }
+
+        if (sb.length() > 0) {
+            sb.setLength( sb.length()-rn.length()-2 );
+            caze.wheres .append(   " AND "   )
+                  .append('(').append(sb).append(')');
+            caze.wparams.addAll(caxe.wparams );
+        }
     }
 
     private Map allow(FetchCase caze, String on) {

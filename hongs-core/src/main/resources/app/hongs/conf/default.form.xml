@@ -43,10 +43,10 @@
         <value code="tel"><![CDATA[^(\+[1-9])?\d\d{2,}$]]></value>
     </enum>
     <enum name="__ables__">
-        <value code="findable">string,search,text,email,url,tel,textcase</value>
-        <value code="sortable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,sorted</value>
-        <value code="filtable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check</value>
-        <value code="listable">string,search,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
+        <value code="findable">string,search,hidden,text,email,url,tel,textcase</value>
+        <value code="sortable">string,search,hidden,text,email,url,tel,number,range,onoff,date,time,datetime,sorted</value>
+        <value code="filtable">string,search,hidden,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check</value>
+        <value code="listable">string,search,hidden,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
     </enum>
     <!--
     <enum name="demo-enum">

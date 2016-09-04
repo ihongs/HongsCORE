@@ -541,12 +541,12 @@ public class Table
    * @return 关联查询体
    * @throws HongsException
    */
-  public FetchCase getAssocCase(String name, FetchCase caze)
+  public FetchCase getAssocCase(String name , FetchCase caze)
     throws HongsException
   {
     Map tc =  this.getAssoc(name);
     if (tc == null) return  null ;
-    return caze.gotJoin(Table.getAssocPath(tc)).gotJoin(Table.getAssocName(tc));
+    return caze.gotJoin(Table.getAssocPath(tc)).gotJoin(name);
   }
 
   /**
@@ -574,7 +574,7 @@ public class Table
   public void insertSubValues(Map values)
     throws HongsException
   {
-    UniteTool.insertMore(this, assocs, values);
+    UniteTool.insertMore(this, assocs , values);
   }
 
   /**

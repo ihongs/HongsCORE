@@ -338,7 +338,7 @@ public class Dict
     setValues(map, oth, parsePath(path));
   }
 
-  private static Object[] parsePath(String path) {
+  public static Object[] parsePath(String path) {
     String[] keyz = path.replaceAll("([^\\.])!", "$1.!") // id!eq 转换为 id.!eq
                         .replaceAll("\\]\\[", ".")
                         .replace("[" , ".")
@@ -348,7 +348,7 @@ public class Dict
     int i = 0;
     for ( String keyn : keyz) {
         /*
-        if (keyn.startsWith("#")) {
+        if (keyn.matches("^#\\d+$")) {
             keys[i++] = Synt.declare(keyn.substring(1) , 0);
         } else
         */

@@ -7,6 +7,7 @@ import app.hongs.db.link.Loop;
 import app.hongs.util.Synt;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -107,15 +108,13 @@ public class FetchMore
 
   /**
    * 获取关联数据
-   * 类似 SQL: JOIN table ON table.col = super.key
-   * 注意 app.hogns.dh.MergeMore 的 col,key 参数顺序与此相反, 下同
    * @param table 关联表
    * @param caze  附加查询
+   * @param map   映射关系
    * @param col   关联字段
-   * @param key   映射键名
    * @throws app.hongs.HongsException
    */
-  public void join(Table table, FetchCase caze, String col, String key)
+  public void join(Table table, FetchCase caze, Map<String,List> map, String col)
     throws HongsException
   {
     if (this.rows.isEmpty())
@@ -126,6 +125,7 @@ public class FetchMore
     DB db = table.db;
     String       name   = table.name;
     String  tableName   = table.tableName;
+    boolean fills       = caze.getOption("ASSOC_FILLS", false);
     boolean multi       = caze.getOption("ASSOC_MULTI", false);
     boolean merge       = caze.getOption("ASSOC_MERGE", false);
 
@@ -135,7 +135,6 @@ public class FetchMore
     }
 
     // 获取id及行号
-    Map<String, List> map = this.mapped(key);
     Set ids = map.keySet();
     if (ids.isEmpty())
     {
@@ -187,9 +186,10 @@ public class FetchMore
     Loop rs = db.queryMore(caze);
 
     /**
-     * 根据之前的 id=>行 关系以表名为键放入列表中
+     * 根据之前的 ID=>行 关系以表名为键放入列表中
      */
 
+    Set     idz = new HashSet();
     Map     row, sub;
     List    lst;
     String  sid;
@@ -200,6 +200,7 @@ public class FetchMore
       {
         sid = Synt.declare(sub.get(rel), String.class);
         lst = map.get(sid);
+        idz.add(sid);
 
         if (lst == null)
         {
@@ -230,6 +231,7 @@ public class FetchMore
       {
         sid = Synt.declare(sub.get(rel), String.class);
         lst = map.get(sid);
+        idz.add(sid);
 
         if (lst == null)
         {
@@ -255,25 +257,82 @@ public class FetchMore
         }
       }
     }
+
+    /**
+     * 自动补全空数据
+     * 避免客户端麻烦
+     */
+
+    if (! fills) {
+        return;
+    }
+
+    if (! multi && merge) {
+        Set<String> padSet = rs.getTypeDict( ).keySet();
+        for(Map.Entry<String, List> et : map.entrySet()) {
+            String colKey = et.getKey();
+            if (idz.contains( colKey )) {
+                continue;
+            }
+            List<Map> mapLst = et.getValue();
+            for( Map  mapRow : mapLst ) {
+                for(String k : padSet ) {
+                    if(!mapRow.containsKey(k)) {
+                        mapRow.put( k , null );
+                    }
+                }
+            }
+        }
+    } else {
+        Object padDat = ! multi ? new HashMap() : new ArrayList();
+        for(Map.Entry<String, List> et : map.entrySet()) {
+            String colKey = et.getKey();
+            if (idz.contains( colKey )) {
+                continue;
+            }
+            List<Map> mapLst = et.getValue();
+            for( Map  mapRow : mapLst ) {
+                if(!mapRow.containsKey(name)) {
+                    mapRow.put(name, padDat);
+                }
+            }
+        }
+    }
   }
 
   /**
    * 获取关联数据
-   *
+   * 类似 SQL: JOIN table ON table.col = super.key
    * @param table 关联表
+   * @param caze  附加查询
+   * @param key   映射关系
    * @param col   关联字段
-   * @param key   映射键名
    * @throws app.hongs.HongsException
    */
-  public void join(Table table, String col, String key)
+  public void join(Table table, FetchCase caze, String key, String col)
     throws HongsException
   {
-    this.join(table, new FetchCase( ), col, key);
+    Map<String, List> map = this.mapped(key);
+    join(table, caze, map , col);
   }
 
   /**
    * 获取关联数据
-   *
+   * 类似 SQL: JOIN table ON table.col = super.key
+   * @param table 关联表
+   * @param key   映射键名
+   * @param col   关联字段
+   * @throws app.hongs.HongsException
+   */
+  public void join(Table table, String key, String col)
+    throws HongsException
+  {
+    join(table, new FetchCase( ), key, col);
+  }
+
+  /**
+   * 获取关联数据
+   * 类似 SQL: JOIN table ON table.col = super.col
    * @param table 关联表
    * @param col   关联字段
    * @throws app.hongs.HongsException
@@ -281,7 +340,7 @@ public class FetchMore
   public void join(Table table, String col)
     throws HongsException
   {
-    this.join(table, new FetchCase( ), col, col);
+    join(table, new FetchCase( ), col, col);
   }
 
 }

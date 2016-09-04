@@ -258,7 +258,7 @@ public class SystemCmdlet {
             throw new Error( "Wrong cmd: " + e );
         }
         m = (Element) x.item(0);
-        s = m.getNodeValue();
+        s = m.getTextContent( );
         a.add(s);
 
         // 获取参数
@@ -270,8 +270,8 @@ public class SystemCmdlet {
             }
 
             m = (Element) u;
-            c = m.getTagName(  );
-            s = m.getNodeValue();
+            c = m.getTagName();
+            s = m.getTextContent();
 
             if ("act".equals(c)) {
                 continue;
@@ -313,7 +313,7 @@ public class SystemCmdlet {
             throw new Error( "Wrong act: " + e );
         }
         m = (Element) x.item(0);
-        s = m.getNodeValue();
+        s = m.getTextContent( );
         a.add(s);
 
         // 获取参数
@@ -325,8 +325,8 @@ public class SystemCmdlet {
             }
 
             m = (Element) u;
-            c = m.getTagName(  );
-            s = m.getNodeValue();
+            c = m.getTagName();
+            s = m.getTextContent();
             if ("act".equals(c)) {
                 continue;
             }

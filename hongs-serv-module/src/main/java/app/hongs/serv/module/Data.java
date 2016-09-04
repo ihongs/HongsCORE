@@ -204,7 +204,7 @@ public class Data extends LuceneRecord {
 
         // 拼接展示字段
         StringBuilder nm = new StringBuilder();
-        for (String fn : getLists()) {
+        for (String fn : getListable()) {
             nm.append(dd.get(fn).toString()).append(' ');
         }
 

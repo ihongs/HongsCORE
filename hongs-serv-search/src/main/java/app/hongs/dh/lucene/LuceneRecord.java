@@ -277,15 +277,15 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     @Override
     public Map create(Map rd) throws HongsException {
         String id = add(rd);
-        Set<String> fs = getLists();
+        Set<String> fs = getListable();
         if (fs != null && !fs.isEmpty()) {
             Map sd = new LinkedHashMap();
-            sd.put(Cnst.ID_KEY, id);
-            for(String  fn : getLists()) {
+            for(String  fn : getListable()) {
             if (  !  fn.contains( "." )) {
                 sd.put( fn , rd.get(fn));
             }
             }
+            sd.put(Cnst.ID_KEY, id);
             return sd;
         } else {
             rd.put(Cnst.ID_KEY, id);
@@ -824,8 +824,8 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
      */
     public Query getQuery(Map rd) throws HongsException {
         BooleanQuery query = new BooleanQuery();
-        Map<String, Map> fields  =  getFields();
-        Set<String  >  funcCols  =  getFuncs( );
+        Map<String, Map> fields = getFields(  );
+        Set<String>    funcCols = getFuncKeys();
 
         for (Object o : rd.entrySet()) {
             Map.Entry e = (Map.Entry) o;
@@ -882,7 +882,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
              * 将条件整理为 +(fn1:xxx fn2:xxx)
              */
             BooleanQuery quary;
-            Set<String>  cols = getFinds();
+            Set<String>  cols = getFindable();
             if (cols.size() < 2) {
                 quary =  query;
             } else {
@@ -1273,7 +1273,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     }
 
     protected boolean sortable(Map fc) {
-        return getSorts().contains(Synt.asserts(fc.get("__name__"), ""));
+        return getSortable().contains(Synt.asserts(fc.get("__name__"), ""));
     }
 
     protected boolean repeated(Map fc) {

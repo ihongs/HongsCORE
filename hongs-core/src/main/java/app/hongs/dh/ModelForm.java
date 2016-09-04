@@ -82,10 +82,19 @@ public class ModelForm {
         dtypez = map;
     }
 
+    /**
+     * 获取表单参数
+     * 默认来自字段配置的 @ 项
+     * @return 
+     */
     public Map getParams() {
         return Synt.asserts(getFields().get("@"), new HashMap());
     }
 
+    /**
+     * 获取字段配置
+     * @return 
+     */
     public Map getFields() {
         if (null != fieldz) {
             return  fieldz;
@@ -93,6 +102,10 @@ public class ModelForm {
         throw new NullPointerException("Fields can not be null");
     }
 
+    /**
+     * 获取字段类型映射
+     * @return 
+     */
     public Map getFtypes() {
         if (null != ftypez) {
             return  ftypez;
@@ -105,6 +118,10 @@ public class ModelForm {
         }
     }
 
+    /**
+     * 获取查询类型映射
+     * @return 
+     */
     public Map getDtypes() {
         if (null != dtypez) {
             return  dtypez;
@@ -117,43 +134,68 @@ public class ModelForm {
         }
     }
 
-    public Set<String> getFuncs() {
+    /**
+     * 获取功能请求参数
+     * @return 
+     */
+    public Set<String> getFuncKeys() {
         return fnKeyz;
     }
 
-    public Set<String> getLists() {
+    /**
+     * 获取可列举的字段
+     * @return 
+     */
+    public Set<String> getListable() {
         if (null != rbColz) {
             return  rbColz;
         }
-        rbColz = getAbles("listable");
+        rbColz = getAble("listable");
         return rbColz;
     }
 
-    public Set<String> getSorts() {
+    /**
+     * 获取可排序的字段
+     * @return 
+     */
+    public Set<String> getSortable() {
         if (null != obColz) {
             return  obColz;
         }
-        obColz = getAbles("sortable");
+        obColz = getAble("sortable");
         return obColz;
     }
 
-    public Set<String> getFinds() {
+    /**
+     * 获取可搜索的字段
+     * @return 
+     */
+    public Set<String> getFindable() {
         if (null != wdColz) {
             return  wdColz;
         }
-        wdColz = getAbles("findable");
+        wdColz = getAble("findable");
         return wdColz;
     }
 
-    public Set<String> getFilts() {
+    /**
+     * 获取可过滤的字段
+     * @return 
+     */
+    public Set<String> getFiltable() {
         if (null != whColz) {
             return  whColz;
         }
-        whColz = getAbles("filtable");
+        whColz = getAble("filtable");
         return whColz;
     }
 
-    protected Set<String> getAbles(String dn) {
+    /**
+     * 获取特定许可的字段
+     * @param dn
+     * @return 
+     */
+    protected Set<String> getAble(String dn) {
         Map<String, Map   > fields = getFields();
         Map<String, String> params = getParams();
 

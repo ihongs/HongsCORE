@@ -27,8 +27,9 @@ public class Mview extends Model {
     private Map<String, Map<String, String>> fields = null;
     private Map<String, Mview> views = null;
     private Model    model = null;
-    private String   title = null;
-    private String   nmkey = null;
+
+    public  String   title = null;
+    public  String   label = null;
 
     public Mview(Table table) throws HongsException {
         super(table);
@@ -89,31 +90,32 @@ public class Mview extends Model {
 
     public String getNmKey()
     throws HongsException {
-        if (null != nmkey) {
-            return  nmkey;
+        if (null != label) {
+            return  label;
         }
 
         getFields( );
 
-        if (listable != null && listable.length > 0) {
-            for (String n : listable) {
-                if(n != null && !n.equals("id") && !n.endsWith("_id")) {
-                    nmkey = n;
-                    return  n;
-                }
-            }
-        }
-        if (filtable != null && findable.length > 0) {
+        if (findable != null && findable.length > 0) {
             for (String n : findable) {
-                if(n != null && !n.equals("id") && !n.endsWith("_id")) {
-                    nmkey = n;
+                if(n != null && !n.contains(".") && !n.endsWith("id")) {
+                    label = n;
                     return  n;
                 }
             }
         }
 
-        nmkey  =  "";
-        return nmkey;
+        if (listable != null && listable.length > 0) {
+            for (String n : listable) {
+                if(n != null && !n.contains(".") && !n.endsWith("id")) {
+                    label = n;
+                    return  n;
+                }
+            }
+        }
+
+        label  =  "";
+        return label;
     }
 
     public String getTitle()

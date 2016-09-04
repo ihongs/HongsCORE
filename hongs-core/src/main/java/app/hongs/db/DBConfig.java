@@ -496,6 +496,7 @@ public class DBConfig
       {
         String name  = element2.getAttribute("name");
         String value = element2.getTextContent(/**/);
+
         if (value != null)
         {
           params.put(name, value.trim());

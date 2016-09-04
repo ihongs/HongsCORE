@@ -44,13 +44,6 @@ public class Synt {
     public  static final Pattern FAKE = Pattern.compile("^(|0|n|f|no|false)$", Pattern.CASE_INSENSITIVE );
 
     /**
-     * 在 Each.each 里
-     * 返回 LOOP.NEXT 则排除此项
-     * 返回 LOOP.LAST 则跳出循环
-     */
-    public  static enum  LOOP  { NEXT, LAST };
-
-    /**
      * 取默认值(null 视为无值)
      * @param <T>
      * @param vals
@@ -405,21 +398,18 @@ public class Synt {
     }
 
     /**
-     * 遍历 Map
+     * 过滤 Map
      * @param data
      * @param conv
      * @return
      */
-    public static Map foreach(Map data, Each conv) {
-        conv.setObj(data);
-        conv.setIdx(-1);
+    public static Map filter(Map data, Each conv) {
         Map dat = new LinkedHashMap();
         for (Object o : data.entrySet()) {
             Map.Entry e = (Map.Entry) o;
-            Object k = e.getKey();
+            Object k = e.getKey(  );
             Object v = e.getValue();
-            conv.setKey(k);
-            v = conv.each(v);
+            v = conv.run(v, k, -1 );
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -432,18 +422,15 @@ public class Synt {
     }
 
     /**
-     * 遍历 Set
+     * 过滤 Set
      * @param data
      * @param conv
      * @return
      */
-    public static Set foreach(Set data, Each conv) {
-        conv.setObj(data);
-        conv.setKey(null);
-        conv.setIdx(-1);
+    public static Set filter(Set data, Each conv) {
         Set dat = new LinkedHashSet();
         for (Object v : data) {
-            v = conv.each(v);
+            v = conv.run(v, null, -1);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -456,19 +443,16 @@ public class Synt {
     }
 
     /**
-     * 遍历 List
+     * 过滤 List
      * @param data
      * @param conv
      * @return
      */
-    public static List foreach(List data, Each conv) {
-        conv.setObj(data);
-        conv.setKey(null);
+    public static List filter(List data, Each conv) {
         List dat = new ArrayList();
         for (int i = 0; i < data.size(); i++) {
             Object v = data.get(i);
-            conv.setIdx(i);
-            v = conv.each(v);
+            v = conv.run(v, null, i);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -481,19 +465,16 @@ public class Synt {
     }
 
     /**
-     * 遍历数组
+     * 过滤数组
      * @param data
      * @param conv
      * @return
      */
-    public static Object[] foreach(Object[] data, Each conv) {
-        conv.setObj(data);
-        conv.setKey(null);
+    public static Object[] filter(Object[] data, Each conv) {
         List dat = new ArrayList();
         for (int i = 0; i < data.length; i++) {
             Object v = data[i];
-            conv.setIdx(i);
-            v = conv.each(v);
+            v = conv.run(v, null, i);
             if (v == LOOP.NEXT) {
                 continue;
             }
@@ -505,60 +486,110 @@ public class Synt {
         return dat.toArray();
     }
 
+    /**
+     * 过滤全部叶子节点
+     * @param data
+     * @param conv
+     * @return
+     */
+    public static Map digest(Map data, Each conv) {
+        return filter(data, new Leaf(conv));
+    }
+
+    /**
+     * 过滤全部叶子节点
+     * @param data
+     * @param conv
+     * @return
+     */
+    public static Set digest(Set data, Each conv) {
+        return filter(data, new Leaf(conv));
+    }
+
+    /**
+     * 过滤全部叶子节点
+     * @param data
+     * @param conv
+     * @return
+     */
+    public static List digest(List data, Each conv) {
+        return filter(data, new Leaf(conv));
+    }
+
+    /**
+     * 过滤全部叶子节点
+     * @param data
+     * @param conv
+     * @return
+     */
+    public static Object[] digest(Object[] data, Each conv) {
+        return filter(data, new Leaf(conv));
+    }
+
+    /**
+     * Each.run 或 Leaf.run 里
+     * 返回 LOOP.NEXT 跳过此项
+     * 返回 LOOP.LAST 跳出循环
+     */
+    public static enum LOOP { NEXT, LAST };
+
     public static interface Each {
-        public Object each(Object v);
-        public void setObj(Object d);
-        public void setKey(Object k);
-        public void setIdx(int i);
+        public Object run(Object v, Object k, int i);
     }
 
-    /**
-     * 遍历每个节点
-     */
-    public static abstract class EachNode implements Each {
-        protected Object o;
-        protected Object k;
-        protected int i;
-
-        @Override
-        public void setObj(Object o) {
-            this.o = o;
+    private static class Leaf implements Each {
+      private final Each leaf;
+        public Leaf(Each leaf) {
+            this.leaf  = leaf;
         }
-
         @Override
-        public void setKey(Object k) {
-            this.k = k;
-        }
-
-        @Override
-        public void setIdx(int i) {
-            this.i = i;
-        }
-    }
-
-    /**
-     * 遍历叶子节点
-     */
-    public static abstract class LeafNode extends EachNode {
-        public abstract Object leaf(Object v);
-
-        @Override
-        public Object each(Object v) {
+        public Object run(Object v, Object k, int i) {
             if (v instanceof Map ) {
-                return foreach((Map ) v, this);
+                return filter((Map ) v, this);
             } else
             if (v instanceof Set ) {
-                return foreach((Set ) v, this);
+                return filter((Set ) v, this);
             } else
             if (v instanceof List) {
-                return foreach((List) v, this);
+                return filter((List) v, this);
             } else
             if (v instanceof Object[]) {
-                return foreach((Object[]) v, this);
+                return filter((Object[]) v, this);
             } else {
-                return leaf(v);
+                return leaf.run(v, k, i);
             }
         }
     }
+
+    /*
+    public static void main(String[] args) {
+        // filter, digest 的函数式特性测试
+        Object[] a = new Object[] {"a", "b", "c",
+                     new Object[] {"d", "e", "f"},
+                     asSet("g", "h", "i", "j"),
+                     asMap("k", "l", "m", "n")};
+
+        System.err.println("filter:");
+        Object[] b = filter(a, (v, k, i) -> {
+            System.err.println (i+":"+v);
+            return v.toString().toUpperCase();
+        });
+        System.err.println("");
+
+        System.err.println("digest:");
+        Object[] c = digest(a, (v, k, i) -> {
+            System.err.println (k+":"+v);
+            return v.toString().toUpperCase();
+        });
+        System.err.println("");
+
+        System.err.print("a = ");
+        Data.dumps(a);
+        System.err.print("b = ");
+        Data.dumps(b);
+        System.err.print("c = ");
+        Data.dumps(c);
+    }
+    */
 
 }

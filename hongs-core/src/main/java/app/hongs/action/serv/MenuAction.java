@@ -11,6 +11,7 @@ import app.hongs.util.Tool;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 通用菜单动作
@@ -52,6 +53,12 @@ public class MenuAction {
         } else {
             helper.error404(getRedirect(4));
         }
+
+        // 禁止缓存
+        HttpServletResponse rsp = helper.getResponse();
+        rsp.addHeader("Cache-Control", "no-cache");
+        rsp.setHeader("Pragma", "no-cache");
+        rsp.setDateHeader("Expires", 0);
     }
 
     @Action("list")

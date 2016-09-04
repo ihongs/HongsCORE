@@ -414,6 +414,12 @@ public class AuthFilter
         } else {
             hlpr.error403(err);
         }
+
+        // 禁止缓存
+        HttpServletResponse rsp = hlpr.getResponse();
+        rsp.addHeader("Cache-Control", "no-cache");
+        rsp.setHeader("Pragma", "no-cache");
+        rsp.setDateHeader("Expires", 0);
     }
   }
 

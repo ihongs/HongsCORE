@@ -48,16 +48,9 @@ public class UniteTool {
   throws HongsException {
     if (assocs == null) assocs = new HashMap();
 
-    List<Map> lnks = new ArrayList(  );
+    List<Map> lnks = new ArrayList ( );
     fetchMore(table, caze, assocs, lnks, null);
-
-    // Added in 2015/12/08
-    // 利用匿名的关联配置
-    // 来作为表的默认查询
-    Map assoc  = (Map) assocs.get("@");
-    if (assoc != null) {
-        buildCase( caze, assoc /***/ );
-    }
+    buildCase(caze, table.getParams());
 
     // Fixed in 2015/10/22
     // 当关联表也要查全部
@@ -172,7 +165,7 @@ public class UniteTool {
         }
         caze2.in( pu );
 
-        buildCase(caze2, assoc);
+        /**/buildCase(caze2 , (Map) assoc.get("params"));
 
         if ( assocs2 !=  null ) {
             fetchMore(table2, caze2, assocs2, lnks2, pu);
@@ -259,21 +252,25 @@ public class UniteTool {
         }
 
         // 合并关联模式
-        caze2.setOption (  "ASSOC_MERGE"  ,  "MERGE".equals(  jn  ));
+        caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
 
-        buildCase(caze2, assoc);
+        /**/buildCase(caze2 , (Map) assoc.get( "params" ));
 
         if ( assocs2 !=  null ) {
             fetchMore(table2, caze2, assocs2, lnkz2, null);
         }
 
-        join.join (table2, caze2, fk.startsWith(":") ? fk.substring(1) : fk, pk);
+        join.join (table2, caze2, pk, fk.startsWith(":") ? fk.substring(1) : fk);
     }
         lnks2 = lnkz2;
     }
   }
 
   private static void buildCase(FetchCase caze, Map assoc) {
+    if (assoc == null || assoc.isEmpty()) {
+        return ;
+    }
+
     String  sql;
     boolean has = false;
     boolean haz = false;
@@ -313,7 +310,7 @@ public class UniteTool {
 
     sql = (String) assoc.get("having");
     if (sql != null && sql.length() != 0) {
-        caze.havin(sql);
+        caze.having(sql);
         if (!has && !sql.startsWith(".")) {
             has = true;
         }

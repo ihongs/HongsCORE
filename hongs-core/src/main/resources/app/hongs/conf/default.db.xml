@@ -5,17 +5,20 @@
     Created on : March 11, 2010, 10:56 AM
     Author     : Hongs
     Description:
-        select,where,groupBy,which,orderBy等中,
+        附加参数 select,filter,groups,having,orders,
         用"."表示当前表, 用":"表示上级表,
-        仅当有设置join时可使用":".
+        仅当有设置join时可使用":"
 //-->
 
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
   <source jdbc="org.sqlite.JDBC"
-          name="jdbc:sqlite:default.db"
-          connectionProperties="autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull"/>
+          name="jdbc:sqlite:default.db">
+      <param name="connectionProperties">
+          autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
+      </param>
+  </source>
   <!--
   <!== 外部数据源==>
   <origin jndi="命名接口"
@@ -49,12 +52,10 @@ xsi:schemaLocation="http://hongs-core db.xsd">
              name="[关联名]"
              tableName="[真实名, 指向真实的table的name]"
              foreignKey="[关联外键]"
-             primaryKey="[关联主键]"
-             select="[限制字段]"
-             where="[查询条件]"
-             groupBy="[附加分组]"
-             which="[过滤条件]"
-             orderBy="[附加排序]"/>
+             primaryKey="[关联主键]">
+        <param name="[convey|unique|select|filter|groups|having|orders|limits]">[取值]</param>
+        <assoc.../>
+      </assoc>
     </table>
     <!== 配置举例 ==>
     <table name="hs_demo"
@@ -65,9 +66,6 @@ xsi:schemaLocation="http://hongs-core db.xsd">
       <param name="state.field">state</param>
       <param name="ctime.field">ctime</param>
       <param name="mtime.field">mtime</param>
-      <assoc filter=""
-             select=""
-             orderBy=""/>
       <assoc type="BLS_TO"
              join="LEFT"
              name="hs_demo_bls_to"

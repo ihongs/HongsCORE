@@ -2,14 +2,10 @@
 
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
 
-  <!-- 外部数据源配置 -->
-  <xs:element name="origin">
+  <!-- 附加参数 -->
+  <xs:element name="param" type="xs:string">
     <xs:complexType>
-      <xs:attribute name="link" type="xs:string"/>
-      <xs:attribute name="jndi" type="xs:string" use="required"/>
-      <xs:attribute name="name" type="xs:string" use="required"/>
-      <xs:attribute name="username" type="xs:string"/>
-      <xs:attribute name="password" type="xs:string"/>
+      <xs:attribute ref="name" use="required"/>
     </xs:complexType>
   </xs:element>
 
@@ -21,24 +17,25 @@
       <xs:attribute name="name" type="xs:string" use="required"/>
       <xs:attribute name="username" type="xs:string"/>
       <xs:attribute name="password" type="xs:string"/>
-      <xs:attribute name="initialSize" type="xs:int"/>
-      <xs:attribute name="maxActive" type="xs:int"/>
-      <xs:attribute name="minIdle" type="xs:int"/>
-      <xs:attribute name="maxIdle" type="xs:int"/>
-      <xs:attribute name="maxWait" type="xs:long"/>
-      <xs:attribute name="testOnBorrow" type="xs:string"/>
-      <xs:attribute name="testOnReturn" type="xs:string"/>
-      <xs:attribute name="testWhileIdle" type="xs:string"/>
-      <xs:attribute name="logAbandoned" type="xs:string"/>
-      <xs:attribute name="removeAbandoned" type="xs:string"/>
-      <xs:attribute name="removeAbandonedTimeout" type="xs:int"/>
-      <xs:attribute name="validationQuery" type="xs:string"/>
-      <xs:attribute name="validationQueryTimeout" type="xs:int"/>
-      <xs:attribute name="numTestsPerEvictionRun" type="xs:int"/>
-      <xs:attribute name="poolPreparedStatements" type="xs:string"/>
-      <xs:attribute name="maxOpenPreparedStatements" type="xs:int"/>
-      <xs:attribute name="minEvictableIdleTimeMillis" type="xs:long"/>
-      <xs:attribute name="timeBetweenEvictionRunsMillis" type="xs:int"/>
+      <xs:all>
+        <!-- 附加参数 -->
+        <xs:element rel="param" minOccurs="0"/>
+      </xs:all>
+    </xs:complexType>
+  </xs:element>
+
+  <!-- 外部数据源配置 -->
+  <xs:element name="origin">
+    <xs:complexType>
+      <xs:attribute name="link" type="xs:string"/>
+      <xs:attribute name="jndi" type="xs:string" use="required"/>
+      <xs:attribute name="name" type="xs:string" use="required"/>
+      <xs:attribute name="username" type="xs:string"/>
+      <xs:attribute name="password" type="xs:string"/>
+      <xs:all>
+        <!-- 附加参数 -->
+        <xs:element rel="param" minOccurs="0"/>
+      </xs:all>
     </xs:complexType>
   </xs:element>
 
@@ -63,25 +60,12 @@
       <xs:attribute ref="tableName"/>
       <xs:attribute ref="foreignKey" use="required"/>
       <xs:attribute ref="primaryKey"/>
-      <!-- 其他限定 -->
-      <xs:attribute ref="select"/>
-      <xs:attribute ref="filter"/>
-      <xs:attribute ref="groups"/>
-      <xs:attribute ref="having"/>
-      <xs:attribute ref="orders"/>
-      <xs:attribute ref="unique"/>
-      <xs:attribute ref="canvey"/>
       <xs:all>
         <!-- 递归关联 -->
         <xs:element ref="assoc" minOccurs="0"/>
+        <!-- 附加参数 -->
+        <xs:element rel="param" minOccurs="0"/>
       </xs:all>
-    </xs:complexType>
-  </xs:element>
-
-  <!-- 基础表参数 -->
-  <xs:element name="param" type="xs:string">
-    <xs:complexType>
-      <xs:attribute ref="name" use="required"/>
     </xs:complexType>
   </xs:element>
 

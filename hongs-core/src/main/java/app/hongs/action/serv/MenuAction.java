@@ -1,11 +1,13 @@
 package app.hongs.action.serv;
 
 import app.hongs.Core;
+import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.action.anno.Action;
+import app.hongs.util.Tool;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,9 +48,9 @@ public class MenuAction {
                 }
             }
 
-            helper.error403(CoreLocale.getInstance().translate("core.error.no.power"));
+            helper.error403(getRedirect(3));
         } else {
-            helper.error404(CoreLocale.getInstance().translate("core.error.no.found"));
+            helper.error404(getRedirect(4));
         }
     }
 
@@ -108,6 +110,21 @@ public class MenuAction {
             }
         }
         return null;
+    }
+
+    private String getRedirect(int type) {
+        CoreConfig conf = CoreConfig.getInstance();
+        CoreLocale lang = CoreLocale.getInstance();
+        String msg = lang.translate("core.error.no." + (type == 4 ? "found" : "power"));
+        String uri = conf.getProperty("fore.Er40" + type + ".redirect");
+        String err = conf.getProperty("core.error.redirect");
+        if (uri == null || uri.length() == 0) {
+            uri = Core.BASE_HREF + "/";
+        }
+        Map<String, String> rep = new HashMap();
+        rep.put("msg", msg);
+        rep.put("uri", uri);
+        return  Tool.inject(err , rep);
     }
 
 }

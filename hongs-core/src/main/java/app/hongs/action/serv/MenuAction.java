@@ -1,20 +1,23 @@
 package app.hongs.action.serv;
 
 import app.hongs.Core;
-import app.hongs.CoreConfig;
-import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.action.anno.Action;
-import app.hongs.util.Tool;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * 通用菜单动作
+ *
+ * 请求参数说明:
+ * 参数 m 是导航配置名
+ * 参数 n 是菜单节点名
+ * 如果 m,n 一致则仅给 m
+ * 对应的菜单节点的 href 写作 common/menu.act?m=&n=
+ *
  * @author Hong
  */
 @Action("common/menu")
@@ -25,40 +28,32 @@ public class MenuAction {
     throws HongsException {
         String m = helper.getParameter("m");
         String n = helper.getParameter("n");
+        String x = n;
         if (null == m || "".equals(m)) {
             m = "default";
         }
         if (null == n || "".equals(n)) {
             n = "common/menu.act?m=" + m ;
+            x = !"deafult".equals(m) ? m : "" ;
         } else {
             n = "common/menu.act?m=" + m + "&n=" + n ;
         }
 
-        String            href;
-        NaviMap           site;
-        Map<String, Map>  menu;
-        site = NaviMap.getInstance(m);
-        menu = site.getMenu(n);
+        NaviMap site  =  NaviMap.getInstance(m);
+        Map<String, Map> menu = site.getMenu(n);
+        String  href  ;
         if (menu != null) {
             menu  = menu.get("menus");
             if (menu != null) {
                 href  = getRedirect(site, menu);
                 if (href != null) {
-                    helper.redirect(Core.BASE_HREF + "/" + href);
+                    helper.redirect(Core.BASE_HREF +"/"+ href);
                     return;
                 }
             }
-
-            helper.error403(getRedirect(3));
-        } else {
-            helper.error404(getRedirect(4));
         }
 
-        // 禁止缓存
-        HttpServletResponse rsp = helper.getResponse();
-        rsp.addHeader("Cache-Control", "no-cache");
-        rsp.setHeader("Pragma", "no-cache");
-        rsp.setDateHeader("Expires", 0);
+        helper.redirect(Core.BASE_HREF +"/"+ x);
     }
 
     @Action("list")
@@ -117,21 +112,6 @@ public class MenuAction {
             }
         }
         return null;
-    }
-
-    private String getRedirect(int type) {
-        CoreConfig conf = CoreConfig.getInstance();
-        CoreLocale lang = CoreLocale.getInstance();
-        String msg = lang.translate("core.error.no." + (type == 4 ? "found" : "power"));
-        String uri = conf.getProperty("fore.Er40" + type + ".redirect");
-        String err = conf.getProperty("core.error.redirect");
-        if (uri == null || uri.length() == 0) {
-            uri = Core.BASE_HREF + "/";
-        }
-        Map<String, String> rep = new HashMap();
-        rep.put("msg", msg);
-        rep.put("uri", uri);
-        return  Tool.inject(err , rep);
     }
 
 }

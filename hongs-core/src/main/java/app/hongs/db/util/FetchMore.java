@@ -125,9 +125,9 @@ public class FetchMore
     DB db = table.db;
     String       name   = table.name;
     String  tableName   = table.tableName;
-    boolean fills       = caze.getOption("ASSOC_FILLS", false);
     boolean multi       = caze.getOption("ASSOC_MULTI", false);
     boolean merge       = caze.getOption("ASSOC_MERGE", false);
+    boolean fills       = caze.getOption("ASSOC_FILLS", false);
 
     if (null != caze.name && 0 != caze.name.length())
     {
@@ -189,10 +189,12 @@ public class FetchMore
      * 根据之前的 ID=>行 关系以表名为键放入列表中
      */
 
-    Set     idz = new HashSet();
-    Map     row, sub;
-    List    lst;
-    String  sid;
+    String    sid;
+    List      lst;
+    Map row , sub;
+
+    Set idz = new   HashSet (); // 登记已关联上的ID
+    Map tdz = rs.getTypeDict(); // 暂存字段类型字典
 
     if (! multi)
     {
@@ -268,7 +270,7 @@ public class FetchMore
     }
 
     if (! multi && merge) {
-        Set<String> padSet = rs.getTypeDict( ).keySet();
+        Set< String > padSet = tdz.keySet( );
         for(Map.Entry<String, List> et : map.entrySet()) {
             String colKey = et.getKey();
             if (idz.contains( colKey )) {

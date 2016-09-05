@@ -54,17 +54,17 @@ import java.util.regex.Pattern;
  * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
  * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
  * ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
- * ASSOC_FILLS  : boolean     补全空白关联数据; 作用域: FetchMore
- * ASSOCS       : Set         仅对某些表做关联; 作用域: UniteTool.fetchMore
- * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: UniteTool.fetchMore
- * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: UniteTool.fetchMore
+ * ASSOC_FILLS  : boolean     给缺失的关联补全空白数据; 作用域: FetchMore
+ * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore.fetchMore
+ * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: AssocMore.fetchMore
+ * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: AssocMore.fetchMore
  * page         : int|String  分页页码; 作用域: FetchPage
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage
- * LISTABLE     : Map         可列举列; 作用域: UniteCase
- * SORTABLE     : Map         可排序列; 作用域: UniteCase
- * FILTABLE     : Map         可过滤列; 作用域: UniteCase
- * FINDABLE     : Map         可搜索列; 作用域: UniteCase
+ * LISTABLE     : Map         可列举列; 作用域: AssocCase
+ * SORTABLE     : Map         可排序列; 作用域: AssocCase
+ * FILTABLE     : Map         可过滤列; 作用域: AssocCase
+ * FINDABLE     : Map         可搜索列; 作用域: AssocCase
  * INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
  * INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
  * </pre>
@@ -539,8 +539,8 @@ public class FetchCase
     }
 
     boolean noJoins = pn == null && joinSet.isEmpty(); // 无关联查询
-    boolean unField = getOption("UNFIX_FIELD", false ); // 不补全表名
-    boolean unAlias = getOption("UNFIX_ALIAS", false ); // 不补全别名
+    boolean unField = getOption("UNFIX_FIELD", false); // 不补全表名
+    boolean unAlias = getOption("UNFIX_ALIAS", false); // 不补全别名
 
     // 表名
     String tn;
@@ -1065,7 +1065,7 @@ public class FetchCase
     return this.options;
   }
 
-  //** 探查 **/
+  //** 递进 **/
 
   /**
    * 全部关联
@@ -1141,6 +1141,18 @@ public class FetchCase
     }
     return caze;
   }
+
+  /**
+   * 获取查询用例名称
+   * 同时也是关联名称
+   * @return
+   */
+  public String getName()
+  {
+    return this.name;
+  }
+
+  //** 探查 **/
 
   /**
    * 是否有设置查询字段

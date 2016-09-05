@@ -3,6 +3,7 @@ package app.hongs.util.verify;
 import app.hongs.HongsException;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
+import app.hongs.util.verify.Functor.Rune;
 import static app.hongs.util.verify.Rule.BLANK;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,15 +36,33 @@ public class Verify implements Veri {
         rules = new LinkedHashMap();
     }
 
+    /**
+     * 获取规则
+     * @return
+     */
     @Override
     public Map<String, List<Rule>> getRules() {
         return rules ;
     }
+
+    /**
+     * 设置规则
+     * @param name
+     * @param rule
+     * @return
+     */
     @Override
     public Verify setRule(String name, Rule... rule) {
         rules.put(name , Arrays.asList(rule));
         return this;
     }
+
+    /**
+     * 添加规则
+     * @param name
+     * @param rule
+     * @return
+     */
     @Override
     public Verify addRule(String name, Rule... rule) {
         List rulez = rules.get(name);
@@ -52,6 +71,19 @@ public class Verify implements Veri {
             rules.put( name, rulez );
         }
         rulez.addAll(Arrays.asList(rule));
+        return this;
+    }
+
+    /**
+     * 利用 Functor 的 Rune 接口可使用 Java8 函数式方法
+     * @param name
+     * @param rule
+     * @return
+     */
+    public Verify addRule(String name, Rune... rule) {
+        for (  Rune rune : rule  ) {
+            addRule(name , new Functor(rune));
+        }
         return this;
     }
 
@@ -72,6 +104,13 @@ public class Verify implements Veri {
         this.prompt = prompt;
     }
 
+    /**
+     * 校验数据
+     * @param values
+     * @return
+     * @throws Wrongs
+     * @throws HongsException
+     */
     @Override
     public Map verify(Map values) throws Wrongs, HongsException {
         Map<String, Wrong > wrongz = new LinkedHashMap();

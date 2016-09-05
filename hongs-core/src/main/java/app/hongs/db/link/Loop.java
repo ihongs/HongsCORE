@@ -130,7 +130,7 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
     }
 
     public void over( ) {
-        if (td == null) {
+        if (md == null) {
             return;
         }
         try {
@@ -139,8 +139,8 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
         } catch (HongsException ex) {
             throw ex.toUnchecked( );
         } finally {
-            td = null;
             md = null;
+            td = null;
         }
     }
 

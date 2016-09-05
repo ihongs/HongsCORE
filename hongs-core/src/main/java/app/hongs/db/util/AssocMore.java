@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author Hongs
  */
-public class UniteTool {
+public class AssocMore {
 
   /**
    * 关联查询
@@ -158,7 +158,7 @@ public class UniteTool {
         }
         caze2.by( ji );
 
-        // 添加关联层级
+        // 添加关联层级, 但如果有 UNFIX_ALIAS 则没作用
         String pu = an;
         if (null != pn) {
                pu = pn +"."+ pu;
@@ -176,7 +176,7 @@ public class UniteTool {
         if ( ! caze.hasField( ) && ! caze2.hasField( ) ) {
             Set<String> cols = table2.getFields().keySet();
             for(String  col  : cols) {
-                caze2.select(".`"+ col +"` AS `"+an+"."+ col +"`");
+                caze2.select(".`"+ col +"` AS `"+pu+"."+ col +"`");
             }
         }
     }
@@ -250,6 +250,10 @@ public class UniteTool {
         if (tn != null && tn.length() != 0 && !tn.equals(caze.name)) {
             pk = tn +"."+ pk;
         }
+        // 忘了为何这样
+        if (fk.startsWith(":") ) {
+            fk = fk.substring(1);
+        }
 
         // 合并关联模式
         caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
@@ -260,7 +264,7 @@ public class UniteTool {
             fetchMore(table2, caze2, assocs2, lnkz2, null);
         }
 
-        join.join (table2, caze2, pk, fk.startsWith(":") ? fk.substring(1) : fk);
+        join.join(table2, caze2, pk, fk);
     }
         lnks2 = lnkz2;
     }

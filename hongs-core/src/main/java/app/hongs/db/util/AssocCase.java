@@ -32,7 +32,7 @@ import java.util.regex.Pattern;
  *
  * @author Hongs
  */
-public class UniteCase {
+public class AssocCase {
 
     /**
      * 可列举字段, 用于 FetchCase 的 Option
@@ -82,9 +82,9 @@ public class UniteCase {
      * 构造方法
      * @param caze 模板查询对象
      */
-    public UniteCase(FetchCase caze) {
+    public AssocCase(FetchCase caze) {
         if (caze == null) {
-            throw new NullPointerException(UniteCase.class.getName()+": temp can not be null");
+            throw new NullPointerException(AssocCase.class.getName()+": temp can not be null");
         }
         this.bufs = new HashMap();
         this.that = caze;
@@ -95,7 +95,7 @@ public class UniteCase {
      * @param table
      * @return
      */
-    public UniteCase allow(Table table) {
+    public AssocCase allow(Table table) {
         Map af = allow(table, table, table.getAssocs(), null, null, new LinkedHashMap());
 
         bufs.put(LISTABLE, af);
@@ -117,7 +117,7 @@ public class UniteCase {
      * @param model
      * @return
      */
-    public UniteCase allow(Model model) {
+    public AssocCase allow(Model model) {
         allow(model.table);
 
         if (model.listable != null) {
@@ -126,11 +126,11 @@ public class UniteCase {
         if (model.sortable != null) {
             allow(SORTABLE, model.sortable);
         }
-        if (model.filtable != null) {
-            allow(FILTABLE, model.filtable);
-        }
         if (model.findable != null) {
             allow(FINDABLE, model.findable);
+        }
+        if (model.filtable != null) {
+            allow(FILTABLE, model.filtable);
         }
 
         return this;
@@ -142,7 +142,7 @@ public class UniteCase {
      * @param fs
      * @return
      */
-    public UniteCase allow(String an, String... fs) {
+    public AssocCase allow(String an, String... fs) {
         if (fs.length == 1 && fs[0] == null) {
             that.delOption(an);
             bufs.remove(an);
@@ -185,7 +185,7 @@ public class UniteCase {
      * @param fc
      * @return
      */
-    public UniteCase allow(Map fc) {
+    public AssocCase allow(Map fc) {
         String[] ks = new String[] {"listable", "sortable", "findable", "filtable"};
         for(String k : ks) {
             String s = fc.get(k).toString( ).trim( );
@@ -432,7 +432,7 @@ public class UniteCase {
                     &&  !(rv instanceof Collection)) {
                         caze.filter(fn+" "+rn+ " ?" , rv);
                     } else {
-                        CoreLogger.trace(UniteCase.class.getName()+": Can not set "+fn+" "+rn+" Collection");
+                        CoreLogger.trace(AssocCase.class.getName()+": Can not set "+fn+" "+rn+" Collection");
                     }
                 }
 

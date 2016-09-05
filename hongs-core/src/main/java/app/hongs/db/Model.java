@@ -7,7 +7,7 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.util.FetchPage;
-import app.hongs.db.util.UniteCase;
+import app.hongs.db.util.AssocCase;
 import app.hongs.dh.IEntity;
 import app.hongs.util.Synt;
 import java.util.Iterator;
@@ -819,10 +819,10 @@ implements IEntity
    *    可以在字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 5) 如果有子表.字段名相同的参数则获取与之对应的记录,
    *    可以在子表.字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
-   * 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
-   *
-   * [2016/9/4] 以上过滤逻辑已移至 UniteCase, 但未指定 listable 时字段过滤使用本类的 field,allow 来处理
-   * </pre>
+ 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
+
+ [2016/9/4] 以上过滤逻辑已移至 AssocCase, 但未指定 listable 时字段过滤使用本类的 field,allow 来处理
+ </pre>
    *
    * @param caze
    * @param rd
@@ -872,7 +872,7 @@ implements IEntity
 
     /**
      * 没有指定 listable
-     * 则不使用 UniteCase 处理查询字段
+     * 则不使用 AssocCase 处理查询字段
      * 此方法的不会将所有字段绑定在顶层用例上
      * 而是按照不同表分别绑在对应的下级查询上
      * 这样可以为那些不是 JOIN 关联的用例指定字段
@@ -887,11 +887,11 @@ implements IEntity
       }
     }
 
-    UniteCase uc = new UniteCase(caze);
+    AssocCase uc = new AssocCase(caze);
     uc.allow(this);
     uc.trans( rd );
 
-    // 以此绕开 UniteCase
+    // 以此绕开 AssocCase
     // 后续调试可正常观察
     if (rb !=null)
     {
@@ -931,28 +931,38 @@ implements IEntity
     protected final void field(FetchCase caze, Set<String> rb) {
         if (rb == null || rb.isEmpty()) return;
 
-        Map<String, Object[]> af = new LinkedHashMap();
-        Map<String, Set<String>> cf = new HashMap();
-        Set<String> ic = new LinkedHashSet();
-        Set<String> ec = new LinkedHashSet();
+        Map<String, Object[]> af = new LinkedHashMap();             // 许可的字段
+        Map<String, Set<String>>  cf  =  new HashMap();             // 通配符字段
+        Set<String> tc = caze.getOption("ASSOCS", new HashSet());   // 可关联的表
+        Set<String> ic = new LinkedHashSet();                       // 包含字段
+        Set<String> ec = new LinkedHashSet();                       // 排除字段
         Set<String> xc ;
 
         allow(caze, af);
 
         // 整理出层级结构, 方便处理通配符
-        for(String  fn : af.keySet()) {
-            String  k  ;
+        for(Map.Entry<String, Object[]> et : af.entrySet()) {
+            String  fn = et.getKey(   );
             int p = fn.lastIndexOf(".");
+            String  k  ;
             if (p > -1) {
                 k = fn.substring(0 , p)+".*";
             } else {
                 k = "*";
             }
 
-            Set<String> fs = cf.get ( k );
+            Set<String> fs = cf.get( k);
             if (fs == null  ) {
-                fs  = new LinkedHashSet();
+                fs  = new LinkedHashSet( );
                 cf.put(k, fs);
+
+                // 当字段别名有点时表示是 JOIN 关联, 这种情况总是需要查询
+                Object[]  fa = et.getValue();
+                String    ln = (String   ) fa[1]; // 别名
+                FetchCase fc = (FetchCase) fa[2]; // 用例
+                if (ln.contains( "." ) ) {
+                    tc.add( fc.getName() );
+                }
             }
 
             fs.add(fn);
@@ -990,18 +1000,22 @@ implements IEntity
             ic.addAll(af.keySet());
         }
 
-        // 取差集排排除字段
+        // 排除字段即取差集
         if (ec.isEmpty() == false) {
             ic.removeAll(ec);
         }
 
         for(String  fn : ic) {
             Object[]  fa = af.get (fn);
-                      fn = (String   ) fa[0];
-            String    fv = (String   ) fa[1];
-            FetchCase fc = (FetchCase) fa[2];
-            fc.select(fv +" AS `"+ fn +"`" );
+                      fn = (String   ) fa[0]; // 字段
+            String    ln = (String   ) fa[1]; // 别名
+            FetchCase fc = (FetchCase) fa[2]; // 用例
+            fc.select(fn +" AS `"+ ln +"`" );
+
+            tc.add( fc.getName( ) );
         }
+
+        caze.setOption("ASSOCS",tc);
     }
 
     /**
@@ -1023,7 +1037,7 @@ implements IEntity
      * @param tn    当前表名
      * @param qn    层级名称
      * @param pn    相对层级
-     * @param al    结果字段
+     * @param al    字段集合, 结构: {字段参数: [字段, 别名, 查询用例]}
      */
     private void allow(FetchCase caze, Table table,
                        FetchCase caxe, Table assoc,
@@ -1062,10 +1076,10 @@ implements IEntity
                 String f = (String) n;
                 String k = f;
                 String l = f;
-                f = tx +"`"+ f +"`";
-                k = ax +/**/ k /**/;
-                l = az +/**/ l /**/;
-                al.put(k , new Object[] {l,f, caxe});
+                f = tx +"`"+ f +"`"; // 字段完整名
+                l = az +/**/ l /**/; // 字段别名
+                k = ax +/**/ k /**/; // 外部键
+                al.put(k , new Object[] {f,l, caxe});
             }
         }
         catch (HongsException ex) {

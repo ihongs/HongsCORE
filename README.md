@@ -263,7 +263,7 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
     // 验证信息, 在 unique,exists 动作返回
     "rows": 1真, 0假
 
-在调用 API(REST) 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 !data 参数传递; 如加请求参数 !wrap=1 可将全部返回数据放入 data 键下; 如加请求参数 !scok=1 则无论是否异常总是返回 200 状态; 可加请求参数 !conv=RULES 启用数据转换规则, RULES 取值可以为:
+在调用 API(REST) 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .wrap=1 可将全部返回数据放入 data 键下; 如加请求参数 .scok=1 则无论是否异常总是返回 200 状态; 可加请求参数 .conv=RULES 启用数据转换规则, RULES 取值可以为:
 
     all2str     全部转为字串
     num2str     数字转为字串
@@ -273,7 +273,9 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
     date2sec    转为时间戳(秒)
     date2mic    转为时间戳(毫秒)
 
-dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为字符串; 如果仅指定 all2str 则时间/日期会转为"年-月-日"格式的字符串. 多个规则可以用逗号或加号分隔
+dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为字符串; 如果仅指定 all2str 则时间/日期会转为"年-月-日"格式的字符串. 多个规则可以用逗号、分号、空格或加号分隔.
+
+参数 .flat=连接符 可将层级 map 结果拉平, key 使用 连接符 串起来, 如 .flat=_ 对 user: {name: "Kevin"} 会转换为 user_name: "Kevin" 结构. 另有参数 .call=回调名 可用来封装为 JSONP 方式以供跨域调用, 为遵守普遍规则, 此参数默认叫 callback, 如果 callback 对应字段或有其他用途, 则总是能用且优先可用 .call 参数.
 
 ## 运行设置
 
@@ -336,7 +338,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     ctime   创建时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     mtime   修改时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     etime   结束时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
-    state   状态标识, TINYINT, 1正常, 0删除, 可增设其他状态值; 如果删除后需要恢复之前的状态, 请新增其他状态字段
+    state   状态标识, TINYINT, 1正常, 0删除, 可增设其他状态值; 如果删除后需要恢复之前的状态, 请新增其他状态字段, 或使用负值标识删除.
 
 因字段名可用于 URL 中作为过滤参数, 而部分参数已有特殊含义, 字段取名时请尽量避开这些名称: pn,gn,rn,wd,md,ob,rb,or,ar, 比较简单的办法是避免取 2 个字母的字段名. 另, 在 Cnst 类和配置文件中可以重新定义这些名称, 但并不建议修改(我信奉少量的约定胜于过多的配置).
 

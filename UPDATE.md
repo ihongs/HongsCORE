@@ -1,7 +1,7 @@
 
 # 更新日志
 
-* 2016/09/04 重写 Model 的 filter 相关方法, 将全部过滤逻辑在 UniteCase 中重写, 改下 Synt.filter(原名foreach) 以适应 Java8 的函数式形式
+* 2016/09/04 重写 Model 的 filter 相关方法, 将全部过滤逻辑在 AssocCase 中重写, 改下 Synt.filter(原名foreach) 以适应 Java8 的函数式形式
 * 2016/08/06 将 db 包中的 FetchCase,FetchMore 等类迁移到 app.hongs.db.util 下
 * 2016/05/20 增加 sessionId 通过参数传递的方式, 使用 sessionId 作为 API Token, 简化接口的会话类数据操作 (2016/05/22 通过研究 Tomcat 和 Jetty 的源码, 无法完美解决此问题, 故只能废弃)
 * 2016/05/18 在 hongs-web 的 pom.xml 中编写 ant 代码已替代原来的 pack.sh 打包发布操作

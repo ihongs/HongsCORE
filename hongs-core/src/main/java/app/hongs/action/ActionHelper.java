@@ -380,8 +380,12 @@ public class ActionHelper implements Cloneable
                 }
 
                 // 记录类型名称等
-                try(FileWriter fw = new FileWriter(info)) {
+                FileWriter fw = null;
+                try {
+                    fw = new FileWriter(info);
                     fw.write(name+ "\r\n" + type + "\r\n" +size);
+                } finally {
+                    if (null != fw)fw.close();
                 }
             }
 
@@ -1050,7 +1054,7 @@ public class ActionHelper implements Cloneable
    * @return
    */
   public static Map parseQuery(String s) {
-      HashMap<String, List<String>> a = new HashMap<>();
+      HashMap<String, List<String>> a = new HashMap();
       int j , i;
           j = 0;
 

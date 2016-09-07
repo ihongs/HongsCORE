@@ -218,11 +218,13 @@ public class UploadHelper {
              * 从上传信息中提取类型和扩展名
              */
             try {
-                FileInputStream fs;
-                fs = new FileInputStream(temp );
-                try(InputStreamReader sr = new InputStreamReader(fs);
-                       BufferedReader fr = new    BufferedReader(sr))
-                {
+                FileInputStream   fs = null;
+                InputStreamReader sr = null;
+                BufferedReader    fr = null;
+                try {
+                    fs = new FileInputStream(temp);
+                    sr = new InputStreamReader(fs);
+                    fr = new    BufferedReader(sr);
                     extn = fr.readLine().trim();
                     type = fr.readLine().trim();
                     int p  = extn.lastIndexOf('.');
@@ -231,8 +233,12 @@ public class UploadHelper {
                     } else {
                         extn = "";
                     }
-                }   fs.close();
-            } catch (FileNotFoundException ex ) {
+                } finally {
+                    if (fr != null) fr.close();
+                    if (sr != null) sr.close();
+                    if (fs != null) fs.close();
+                }
+            } catch (FileNotFoundException ex) {
                 throw new Wrong(ex, "fore.form.upload.failed");
             } catch (IOException ex ) {
                 throw new Wrong(ex, "fore.form.upload.failed");

@@ -238,9 +238,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 doLaunch(core, hlpr, req );
                  adr.doDriver( core, hlpr); // 调用
                 doRespon(hlpr, req , rsq );
-            } catch (ServletException | IOException ex) {
+            } catch (ServletException ex ) {
                 CoreLogger.error(ex);
-            } catch (RuntimeException |   Error     er) {
+            } catch (IOException ex) {
+                CoreLogger.error(ex);
+            } catch (RuntimeException ex) {
+                CoreLogger.error(ex);
+            } catch (Error er) {
                 CoreLogger.error(er);
             } finally {
                 doFinish(core, hlpr, req );
@@ -469,7 +473,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             // 销毁此周期内的对象
             try {
                 core.destroy();
-            } catch (Exception | Error e) {
+            } catch (Exception e) {
+                CoreLogger.error( e );
+            } catch (Error e ) {
                 CoreLogger.error( e );
             }
             req.removeAttribute(Cnst.CORE_ATTR);

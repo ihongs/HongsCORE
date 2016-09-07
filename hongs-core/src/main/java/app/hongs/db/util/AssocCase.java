@@ -79,7 +79,7 @@ public class AssocCase {
         rels.put(Cnst.NI_REL, "NOT IN");
     }
 
-    private final FetchCase        that;
+    private final FetchCase  /**/  that;
     private final Map<String, Map> bufs;
 
     /**

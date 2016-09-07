@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ConfAction
   extends  ActionDriver
 {
-  private static final Map<String, String> caches = new HashMap<>();
-  private static final Map<String, String> lmtime = new HashMap<>();
+  private static final Map<String, String> caches = new HashMap();
+  private static final Map<String, String> lmtime = new HashMap();
 
   /**
    * 服务方法

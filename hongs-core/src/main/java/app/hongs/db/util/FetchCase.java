@@ -65,6 +65,7 @@ import java.util.regex.Pattern;
  * SORTABLE     : Map         可排序列; 作用域: AssocCase
  * FILTABLE     : Map         可过滤列; 作用域: AssocCase
  * FINDABLE     : Map         可搜索列; 作用域: AssocCase
+ * SAVEABLE     : Map         可保存列; 作用域: AssocCase
  * INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
  * INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
  * </pre>

@@ -40,12 +40,12 @@ public class TestDB {
         FetchCase copy ;
         String    vali ;
 
-        caze.from   ("t1")
+        caze.from   ("table1", "t1")
             .select ("f1,`f2`,.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`")
             .select ("CONCAT(f1, `f2`, .f3, t1.f4, tf.`f5`, 'abc') AS c3")
             .select ("COUNT(!*) AS c1, COUNT(DISTINCT *) c2 ")
             .select ("'abc' AS x1, 'def' x2")
-            .join   ("t2")
+            .join   ("table2", "t2")
             .by     ( FetchCase.INNER )
             .on     ("`t1_id` = :`id`")
             .in     ("") // 追加别名
@@ -53,27 +53,27 @@ public class TestDB {
             .select ("(1.2 + f1) v1, 3.4 * f2 AS `v2`, 5.6e10 / .f3 AS !`v3`")
             .filter ("f4 = ? AND .f5 IN (?) AND `f6` like ?", 123, 456, "abc")
             .orderBy("`f1`, f2 DESC, !v1 ASC, !`v2` DESC");
-        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS `t2.v0`, 'abc.def 0.15 .xy' AS `t2.x0`, (1.2 + `t2`.f1) `t2.v1`, 3.4 * `t2`.f2 AS `t2.v2`, 5.6e10 / `t2`.f3 AS `t2.v3` FROM `t1` INNER JOIN `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
+        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS `t2.v0`, 'abc.def 0.15 .xy' AS `t2.x0`, (1.2 + `t2`.f1) `t2.v1`, 3.4 * `t2`.f2 AS `t2.v2`, 5.6e10 / `t2`.f3 AS `t2.v3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
         System.out.println(vali);
         System.out.println(caze.toString());
         assertEquals(vali, caze.toString());
 
         copy = caze.clone();
         copy.gotJoin("t2" ).in(null);
-        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + `t2`.f1) v1, 3.4 * `t2`.f2 AS `v2`, 5.6e10 / `t2`.f3 AS `v3` FROM `t1` INNER JOIN `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
+        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + `t2`.f1) v1, 3.4 * `t2`.f2 AS `v2`, 5.6e10 / `t2`.f3 AS `v3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
         copy = caze.clone();
         copy.gotJoin("t2" ).by(FetchCase.NONE);
-        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 FROM `t1`";
+        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 FROM `table1` AS `t1`";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
         copy = caze.gotJoin("t2").clone();
-        vali = "SELECT CONCAT(f1, f2, f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + f1) v1, 3.4 * f2 AS `v2`, 5.6e10 / f3 AS `v3` FROM `t2` WHERE f4 = 123 AND f5 IN (456) AND `f6` like 'abc' ORDER BY `f1`, f2 DESC, v1 ASC, `v2` DESC";
+        vali = "SELECT CONCAT(f1, f2, f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + f1) v1, 3.4 * f2 AS `v2`, 5.6e10 / f3 AS `v3` FROM `table2` AS `t2` WHERE f4 = 123 AND f5 IN (456) AND `f6` like 'abc' ORDER BY `f1`, f2 DESC, v1 ASC, `v2` DESC";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());

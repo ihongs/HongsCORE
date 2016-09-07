@@ -448,14 +448,14 @@ public class FetchCase
    */
   public String getSQL()
   {
-    return this.getSQLStrb().toString();
+    return this.getSQLStrs().toString();
   }
 
   /**
    * 获取SQL字串
    * @return SQL字串
    */
-  private StringBuilder getSQLStrb()
+  private StringBuilder getSQLStrs()
   {
     StringBuilder t = new StringBuilder();
     StringBuilder f = new StringBuilder();
@@ -546,11 +546,18 @@ public class FetchCase
     String tn;
     StringBuilder b = new StringBuilder();
     b.append("`" ).append(this.tableName).append("`");
+    
+    // 别名
     if ( this.name != null && !this.name.isEmpty(   )
     && ! this.name.equals(this.tableName))
     {
       b.append(" AS `").append(this.name).append("`");
       tn = this.name;
+    }
+    else if ( pn != null)
+    {
+      b.append(" AS `_`");
+      tn = "_" ;
     }
     else
     {
@@ -573,9 +580,9 @@ public class FetchCase
       {
         String s  =  this.joinExpr;
         if (unField) {
-            s = addSQLTbls(s, tn, pn);
+            s = fixSQLTable(s, tn, pn);
         } else {
-            s = addSQLTblz(s, tn, pn);
+            s = fixSQLField(s, tn, pn);
         }
         b.append(" ON ").append(s);
       }
@@ -588,12 +595,12 @@ public class FetchCase
     {
       String s = this.fields.toString().trim();
       if (noJoins) {
-          s = delSQLTbls(s);
+          s = delSQLTable(s);
       } else
       if (unField) {
-          s = addSQLTbls(s, tn, pn);
+          s = fixSQLTable(s, tn, pn);
       } else {
-          s = addSQLTblz(s, tn, pn);
+          s = fixSQLField(s, tn, pn);
       }
 
       // Add in 2016/4/15
@@ -601,9 +608,9 @@ public class FetchCase
       if (! unAlias) {
       if (null != pn && null != joinName) {
           if ( ! "".equals( joinName )  ) {
-              s = addSQLTbln(s, joinName);
+              s = fixSQLAlias(s, joinName);
           } else {
-              s = addSQLTbln(s, tn);
+              s = fixSQLAlias(s, tn);
           }
       }}
 
@@ -615,12 +622,12 @@ public class FetchCase
     {
       String s = this.wheres.toString().trim();
       if (noJoins) {
-          s = delSQLTbls(s);
+          s = delSQLTable(s);
       } else
       if (unField) {
-          s = addSQLTbls(s, tn, pn);
+          s = fixSQLTable(s, tn, pn);
       } else {
-          s = addSQLTblz(s, tn, pn);
+          s = fixSQLField(s, tn, pn);
       }
       w.append(" ").append(s);
     }
@@ -630,12 +637,12 @@ public class FetchCase
     {
       String s = this.groups.toString().trim();
       if (noJoins) {
-          s = delSQLTbls(s);
+          s = delSQLTable(s);
       } else
       if (unField) {
-          s = addSQLTbls(s, tn, pn);
+          s = fixSQLTable(s, tn, pn);
       } else {
-          s = addSQLTblz(s, tn, pn);
+          s = fixSQLField(s, tn, pn);
       }
       g.append(" ").append(s);
     }
@@ -654,12 +661,12 @@ public class FetchCase
     {
       String s = this.havins.toString().trim();
       if (noJoins) {
-          s = delSQLTbls(s);
+          s = delSQLTable(s);
       } else
       if (unField) {
-          s = addSQLTbls(s, tn, pn);
+          s = fixSQLTable(s, tn, pn);
       } else {
-          s = addSQLTblz(s, tn, pn);
+          s = fixSQLField(s, tn, pn);
       }
       h.append(" ").append(s);
     }
@@ -669,12 +676,12 @@ public class FetchCase
     {
       String s = this.orders.toString().trim();
       if (noJoins) {
-          s = delSQLTbls(s);
+          s = delSQLTable(s);
       } else
       if (unField) {
-          s = addSQLTbls(s, tn, pn);
+          s = fixSQLTable(s, tn, pn);
       } else {
-          s = addSQLTblz(s, tn, pn);
+          s = fixSQLField(s, tn, pn);
       }
       o.append(" ").append(s);
     }
@@ -689,7 +696,7 @@ public class FetchCase
    * @param an
    * @return
    */
-  final String addSQLTbln(CharSequence s, String an)
+  final String fixSQLAlias(CharSequence s, String an)
   {
       StringBuilder b = new StringBuilder();
       StringBuilder p = new StringBuilder();
@@ -739,23 +746,23 @@ public class FetchCase
               continue;
           }
 
-          b.append(setSQLTbln(p, an));
+          b.append(fixSQLAliaz(p, an));
           p.setLength( 0);
       }
       if (p.length() > 0) {
-          b.append(setSQLTbln(p, an));
+          b.append(fixSQLAliaz(p, an));
       }
 
       return b.toString();
   }
 
   /**
-   * addSQLTbln 的内部方法
+   * fixSQLAlias 的内部方法
    * @param s
    * @param an
    * @return
    */
-  final CharSequence setSQLTbln(CharSequence s, String an)
+  final CharSequence fixSQLAliaz(CharSequence s, String an)
   {
       Matcher m = pa.matcher(s);
       String  n;
@@ -784,7 +791,7 @@ public class FetchCase
    * @param pn
    * @return
    */
-  final String addSQLTblz(CharSequence s, String tn, String pn)
+  final String fixSQLField(CharSequence s, String tn, String pn)
   {
       StringBuffer f = new StringBuffer(s);
       StringBuffer b;
@@ -855,7 +862,8 @@ public class FetchCase
       }
       f = m.appendTail(b);
 
-      return addSQLTbls( f , tn , pn );
+      // 兼容傻瓜模式
+      return fixSQLTable( f, tn , pn );
   }
 
   /**
@@ -865,14 +873,12 @@ public class FetchCase
    * @param pn
    * @return
    */
-  final String addSQLTbls(CharSequence s, String tn, String pn)
+  final String fixSQLTable(CharSequence s, String tn, String pn)
   {
       StringBuffer f = new StringBuffer(s);
       StringBuffer b;
       Matcher      m;
       String x, y, z;
-
-      //** 符号标识方式(旧,兼容) **/
 
       x = "$1";
       y = "`"+pn+"`.$1";
@@ -896,7 +902,7 @@ public class FetchCase
    * @param s
    * @return
    */
-  final String delSQLTbls(CharSequence s)
+  final String delSQLTable(CharSequence s)
   {
       StringBuffer f = new  StringBuffer(s);
       StringBuffer b;
@@ -986,8 +992,8 @@ public class FetchCase
   @Override
   public String toString()
   {
-    StringBuilder sb = this.getSQLStrb();
-    List   paramz = this.getParamsList();
+    StringBuilder sb = this.getSQLStrs();
+    List  paramz  = this.getParamsList();
     try
     {
       Link.checkSQLParams(sb, paramz);
@@ -1309,7 +1315,7 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTbls(pw.matcher(wheres).replaceFirst(""));
+    String whr = delSQLTable(pw.matcher(wheres).replaceFirst(""));
     return _db_.delete(tableName, /**/ whr, wparams.toArray(  ));
   }
 
@@ -1325,7 +1331,7 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTbls(pw.matcher(wheres).replaceFirst(""));
+    String whr = delSQLTable(pw.matcher(wheres).replaceFirst(""));
     return _db_.update(tableName, dat, whr, wparams.toArray(  ));
   }
 

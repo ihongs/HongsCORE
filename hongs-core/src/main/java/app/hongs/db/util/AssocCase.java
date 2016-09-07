@@ -50,12 +50,16 @@ public class AssocCase {
      * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  FILTABLE = "FILTABLE";
+    /**
+     * 可存储字段, 用于 FetchCase 的 Option, 为设置则取 LISTABLE
+     */
+    public  static final String  SAVEABLE = "SAVEABLE";
 
-    private static final Pattern cnPt = Pattern.compile("^[\\w]$");
     private static final Pattern anPt = Pattern.compile("^[\\w\\.]+(:|$)");
+    private static final Pattern cnPt = Pattern.compile("^[\\w]$");
 
-    private static final Set<String  /**/  > func = new HashSet();
-    private static final Map<String, String> rels = new HashMap();
+    private static final Set<String  /**/  > func = new HashSet( );
+    private static final Map<String, String> rels = new HashMap( );
     static {
         func.add(Cnst.PN_KEY);
         func.add(Cnst.GN_KEY);
@@ -217,11 +221,11 @@ public class AssocCase {
     /**
      * 根据请求数据生成查询用例
      * 此处会克隆一份 FetchCase
-     * 故可以在设置好 allow 后反复 tranz
+     * 故可以在设置好 allow 后反复 tranc
      * @param rd
      * @return
      */
-    public FetchCase tranz(Map rd) {
+    public FetchCase tranc(Map rd) {
         FetchCase caze = that.clone(  );
         Map xd = new LinkedHashMap (rd);
         trans( caze, xd );
@@ -229,39 +233,26 @@ public class AssocCase {
     }
 
     /**
-     * 清理数据
+     * 获取存储数据
      * 取出可列举字段对应的值
      * 以便用于创建和更新操作
      * @param rd 请求数据
-     * @param fs 附加字段
      * @return
      */
-    public Map clean(Map rd, String... fs) {
-        Map<String, String> af = allow( that , LISTABLE );
-        Map xd = new HashMap();
+    public Map<String, Object> saves(Map rd) {
+        Map<String, String> af = allow( that, SAVEABLE );
+        Map sd = new HashMap(  );
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String fn = et.getKey(  );
             String fc = et.getValue();
-            if (fn.indexOf ('.') < 0
-            || !fc.endsWith("`"+ fn +"`")) {
-                continue;
-            }
-
             Object fv = rd.get ( fn );
             if (fv != null) {
-                xd.put( fn, fv );
+                sd.put( fc, fv );
             }
         }
 
-        for(String fn : fs) {
-            Object fv = rd.get ( fn );
-            if (fv != null) {
-                xd.put( fn, fv );
-            }
-        }
-
-        return  xd;
+        return  sd;
     }
 
     //** 内部工具方法 **/
@@ -500,73 +491,101 @@ public class AssocCase {
     }
 
     private Map allow(FetchCase caze, String on) {
-        Map af  = bufs.get( on );
+        Map af  = bufs.get ( on );
         if (af != null ) {
             return af;
         }
 
-        af = new LinkedHashMap();
-        allow( caze, on,null,af);
+        af = allowCheck(caze, on);
         bufs.put(on, af);
         return af;
     }
 
-    private Map allow(FetchCase caze, String on, String qn, Map al) {
-        String  ax , tx , tn;
+    private Map allowCheck(FetchCase caze, String on) {
+        Map af = (Map) caze.getOption(on);
 
-        if (null != caze.name && ! "".equals(caze.name)) {
-            tn = caze.name /**/;
-        } else {
-            tn = caze.tableName;
+        // 相对列表字段增加减少
+        if (af != null && ! LISTABLE.equals(on)) {
+            Map xf = allowDiffs(af, caze);
+            if (xf != null) {
+                return xf ;
+            }
         }
 
-        /**
-         * 三个变量: 层级名(qn), 名前缀(ax), 表前缀(tx)
-         * 第一层时, 无需加名前缀, 无关联表前缀也不用加
-         * 第二层时, 需将表名作为名前缀, 下级需带层级名
-         */
-        if (null ==  qn  ) {        // 第一层
-            qn = "";
-            ax = "";
-            tx = ".";
-        } else
-        if ("".equals(qn)) {        // 第二层
-            qn = tn;
-            ax = qn + ".";
-            tx = "`"+ tn +"`.";
-        } else {                    // 其他层
-            qn = qn + "."+ tn ;
-            ax = qn + ".";
-            tx = "`"+ tn +"`.";
-        }
-
-        // 也可以在 FetchCase 中特别指定命名前缀
-        if (null != caze.joinName && ! "".equals(caze.joinName) /*sub*/ ) {
-            ax = caze.joinName + ".";
-        }
-
-        Map af = (Map) caze.getOption(   on   );
         if (af == null && ! LISTABLE.equals(on) && ! FINDABLE.equals(on)) {
             af = (Map) caze.getOption(LISTABLE);
         }
+        if (af == null) {
+            af =  new  HashMap( );
+        }
 
-        if (af != null) // Check field :
+        if (SAVEABLE.equals(on) ) {
+            return allowSaves(af);
+        } else {
+            return allowTrans(af);
+        }
+    }
+
+    private Map allowDiffs(Map af, FetchCase caze) {
+        Map ic = new LinkedHashMap();
+        Set ec = new HashSet();
+
+        for(Object o : af.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
+            String k = (String) e.getKey(  );
+            String f = (String) e.getValue();
+            if (k.startsWith("+")) {
+                ic.put(k.substring(1), f);
+            } else
+            if (k.startsWith("-")) {
+                ec.add(k.substring(1));
+            }
+        }
+
+        if (ic.isEmpty() && ec.isEmpty()) {
+            return null;
+        }
+
+        Map xf = new LinkedHashMap(allow(caze, LISTABLE));
+
+        for(Object o : xf.entrySet()) {
+            Map.Entry e = (Map.Entry) o;
+            String k = (String) e.getKey(  );
+            String f = (String) e.getValue();
+            xf.put(k, f);
+        }
+        for(Object k : ec) {
+            xf.remove(k);
+        }
+
+        return xf;
+    }
+
+    private Map allowTrans(Map af) {
+        Map al = new LinkedHashMap();
+
         for(Object ot : af.entrySet()) {
             Map.Entry et = (Map.Entry) ot;
             String k = (String) et.getKey(  );
-            if (cnPt.matcher(k).matches()) {
-                k = ax +/**/ k /**/;
-            }
             String f = (String) et.getValue();
             if (cnPt.matcher(f).matches()) {
-                f = tx +"`"+ f +"`";
+                f = ".`"+ f +"`";
             }
-            al.put(k, f);
+                al.put(k, f);
         }
 
-        for(FetchCase caxe : caze.getJoinSet() ) {
-            if (caxe.joinType != FetchCase.NONE) {
-                allow(caxe, on, qn, al);
+        return  al;
+    }
+
+    private Map allowSaves(Map af) {
+        Map al = new LinkedHashMap();
+
+        for(Object ot : af.entrySet()) {
+            Map.Entry et = (Map.Entry) ot;
+            String k = (String) et.getKey(  );
+            String f = (String) et.getValue();
+            if (cnPt.matcher(f).matches()) {
+                al.put(k, f);
             }
         }
 
@@ -576,6 +595,11 @@ public class AssocCase {
     private Map allow(Table table, Table assoc, Map ac, String tn, String qn, Map al) {
         String  ax , tx  ;
 
+        /**
+         * 三个变量: 层级名(qn), 名前缀(ax), 表前缀(tx)
+         * 第一层时, 无需加名前缀, 无关联表前缀也不用加
+         * 第二层时, 需将表名作为名前缀, 下级需带层级名
+         */
         if (null ==  qn  ) {
             qn = "";
             ax = "";

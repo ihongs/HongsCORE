@@ -476,7 +476,7 @@ public class AssocCase {
             where(caxe, rd);
 
             if (caxe.wheres.length() > 0) {
-                String wh = FetchCase.pw.matcher(caxe.wheres).replaceFirst("");
+                String wh = FetchCase.preWhere.matcher(caxe.wheres).replaceFirst("");
                 sb.append('(').append(wh).append(')')
                   .append(' ').append(rn).append(' ');
             }

@@ -110,28 +110,47 @@ public class FetchCase
   public    static final byte   FULL  = 4;
   public    static final byte   CROSS = 5;
 
-  static final Pattern ps = Pattern
-          .compile("^\\s*,\\s*" /***/ , Pattern.CASE_INSENSITIVE);
-  static final Pattern pw = Pattern
+  /**
+   * 字段可能的前导字符
+   */
+  static final Pattern preField = Pattern
+          .compile(   "^\\s*,\\s*"    , Pattern.CASE_INSENSITIVE);
+
+  /**
+   * 条件可能的前导字符
+   */
+  static final Pattern preWhere = Pattern
           .compile("^\\s*(AND|OR)\\s+", Pattern.CASE_INSENSITIVE);
 
-  // 查找列名加关联层级名
-  static final Pattern pa = Pattern
+  /**
+   * 查找列名加关联层级名
+   */
+  static final Pattern sqlAlias = Pattern
           .compile("(['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
 
-  // 通过约定标识确定字段
-  static final Pattern pf = Pattern
+  /**
+   * 通过约定标识确定字段
+   */
+  static final Pattern sqlTable = Pattern
           .compile("(?<![`\\w])[\\.:!](\\*|\\w+|`.+?`)|'.+?'");
 
-  // 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
-  static final Pattern p0 = Pattern
+  /**
+   * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
+   */
+  static final Pattern sqlField = Pattern
           .compile("('.+?'|`.+?`|\\w+|\\*|\\))\\s*");
-  // 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
-  static final Pattern p1 = Pattern
+
+  /**
+   * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
+   */
+  static final Pattern sqlFieldBeforeAlias = Pattern
           .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
                      , Pattern.CASE_INSENSITIVE);
-  // 后面可跟字段的关键词
-  static final Pattern p2 = Pattern
+
+  /**
+   * 后面可跟字段的关键词
+   */
+  static final Pattern sqlFieldBeforeWords = Pattern
           .compile("IS|IN|ON|OR|AND|NOT|TOP|CASE|WHEN|THEN|ELSE|LIKE|ESCAPE|BETWEEN|DISTINCT"
                      , Pattern.CASE_INSENSITIVE);
 
@@ -472,7 +491,7 @@ public class FetchCase
     if (f.length() != 0)
     {
       sql.append( " " )
-         .append(ps.matcher(f).replaceFirst(""));
+         .append(preField.matcher(f).replaceFirst(""));
     }
     else
     {
@@ -488,28 +507,28 @@ public class FetchCase
     if (w.length() != 0)
     {
       sql.append(" WHERE " )
-         .append(pw.matcher(w).replaceFirst(""));
+         .append(preWhere.matcher(w).replaceFirst(""));
     }
 
     // 分组
     if (g.length() != 0)
     {
       sql.append(" GROUP BY ")
-         .append(ps.matcher(g).replaceFirst(""));
+         .append(preField.matcher(g).replaceFirst(""));
     }
 
     // 过滤
     if (h.length() != 0)
     {
       sql.append(" HAVING ")
-         .append(pw.matcher(h).replaceFirst(""));
+         .append(preWhere.matcher(h).replaceFirst(""));
     }
 
     // 排序
     if (o.length() != 0)
     {
       sql.append(" ORDER BY ")
-         .append(ps.matcher(o).replaceFirst(""));
+         .append(preField.matcher(o).replaceFirst(""));
     }
 
     // 限额, 不同库不同方式, 就不在此处理了
@@ -546,15 +565,15 @@ public class FetchCase
     String tn;
     StringBuilder b = new StringBuilder();
     b.append("`" ).append(this.tableName).append("`");
-    
+
     // 别名
-    if ( this.name != null && !this.name.isEmpty(   )
+    if ( this.name != null && !this.name.equals( "" )
     && ! this.name.equals(this.tableName))
     {
       b.append(" AS `").append(this.name).append("`");
       tn = this.name;
     }
-    else if ( pn != null)
+    else if ( pn == null)
     {
       b.append(" AS `_`");
       tn = "_" ;
@@ -764,7 +783,7 @@ public class FetchCase
    */
   final CharSequence fixSQLAliaz(CharSequence s, String an)
   {
-      Matcher m = pa.matcher(s);
+      Matcher m = sqlAlias.matcher(s);
       String  n;
 
       if (m.find()) {
@@ -813,8 +832,8 @@ public class FetchCase
        */
 
       z = "`"+tn+"`.$0";
-      m = p0.matcher(f);
-      b = new StringBuffer();
+      m = sqlField.matcher(f);
+      b = new StringBuffer( );
       int i , j, k = -1, l = f.length();
       while ( m.find( )) {
 //        System.out.println(m.group());
@@ -837,17 +856,17 @@ public class FetchCase
               }
           }
           x = m.group (1);
-          if (x.charAt(0)=='\'') {
+          if (x.charAt(0) == '\'') {
               // 字符串后不跟字段
               k  = j;
           } else
-          if (x.charAt(0)=='*' &&k==i) {
+          if (x.charAt(0) == '*' && k == i) {
               // 跳过乘号且不偏移
           } else
-          if (p2.matcher(x).matches()) {
+          if (sqlFieldBeforeWords.matcher(x).matches()) {
               // 跳过保留字不偏移
           } else
-          if (p1.matcher(x).matches()) {
+          if (sqlFieldBeforeAlias.matcher(x).matches()) {
               // 跳过别名和数字等
               k  = j;
           } else
@@ -883,7 +902,7 @@ public class FetchCase
       x = "$1";
       y = "`"+pn+"`.$1";
       z = "`"+tn+"`.$1";
-      m = pf.matcher(f);
+      m = sqlTable.matcher(f);
       b = new StringBuffer();
       while ( m.find( )) {
           switch (f.charAt(m.start())) {
@@ -910,7 +929,7 @@ public class FetchCase
       String       x;
 
       x = "$1";
-      m = pf.matcher(f);
+      m = sqlTable.matcher(f);
       b = new StringBuffer();
       while ( m.find( )) {
           switch (f.charAt(m.start())) {
@@ -1315,7 +1334,7 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTable(pw.matcher(wheres).replaceFirst(""));
+    String whr = delSQLTable(preWhere.matcher(wheres).replaceFirst(""));
     return _db_.delete(tableName, /**/ whr, wparams.toArray(  ));
   }
 
@@ -1331,7 +1350,7 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTable(pw.matcher(wheres).replaceFirst(""));
+    String whr = delSQLTable(preWhere.matcher(wheres).replaceFirst(""));
     return _db_.update(tableName, dat, whr, wparams.toArray(  ));
   }
 

@@ -40,7 +40,7 @@ public class CommitInvoker implements FilterInvoker {
                         ((ITrnsct) o).commit();
                     }
                 }
-            } catch (Exception|Error ex) {
+            } catch (Throwable ex) {
                 // 回滚
                 for(Object o : core.values()) {
                     if (o instanceof ITrnsct) {

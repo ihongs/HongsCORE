@@ -201,7 +201,7 @@ public abstract class Batch<T> extends CoreSerial implements Core.Destroy {
                     if (cache.size( ) >= sizeout) {
                         try {
                             batch.run(cache);
-                        } catch (Error | Exception e) {
+                        } catch (Throwable e) {
                             ByteArrayOutputStream b = new ByteArrayOutputStream();
                             e.printStackTrace(new PrintStream(b));
                             String n = batch.getClass().getName();
@@ -214,7 +214,7 @@ public abstract class Batch<T> extends CoreSerial implements Core.Destroy {
                     if (cache.isEmpty() == false) {
                         try {
                             batch.run(cache);
-                        } catch (Error | Exception e) {
+                        } catch (Throwable e) {
                             ByteArrayOutputStream b = new ByteArrayOutputStream();
                             e.printStackTrace(new PrintStream(b));
                             String n = batch.getClass().getName();

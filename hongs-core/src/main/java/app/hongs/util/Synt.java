@@ -24,6 +24,13 @@ public class Synt {
     private static final Boolean FALS = false;
 
     /**
+     * Each.run 或 Leaf.run 里
+     * 返回 LOOP.NEXT 跳过此项
+     * 返回 LOOP.LAST 跳出循环
+     */
+    public  static  enum LOOP { NEXT, LAST };
+
+    /**
      * 拆分字符: 空字符或+,;
      */
     private static final Pattern TEXP = Pattern.compile("\\s*[\\s\\+,;]\\s*");
@@ -59,6 +66,28 @@ public class Synt {
     }
 
     /**
+     * 取默认值(null 视为无值)
+     * Java8 环境的函数式支持
+     * 可以更好的做到惰性计算
+     * @param <T>
+     * @param val
+     * @param vals 由于在 java7 下编译, 无法使用 Supplier
+     * @return
+     */
+    public static <T> T defoult(T val, Defn<T>... vals) {
+        if (val != null) {
+            return val ;
+        }
+        for (Defn<T> def : vals) {
+            val = def.get();
+            if (val != null) {
+                return val ;
+            }
+        }
+        return  null;
+    }
+
+    /**
      * 取默认值(null,false,0,"" 均视为无值, 同 javascript)
      * @param <T>
      * @param vals
@@ -66,6 +95,34 @@ public class Synt {
      */
     public static <T> T defxult(T... vals) {
         for (T  val :  vals) {
+            if (val != null
+            && !FALS.equals(val)
+            && !EMPT.equals(val)
+            && !ZERO.equals(val)) {
+                return val ;
+            }
+        }
+        return  null;
+    }
+
+    /**
+     * 取默认值(null,false,0,"" 均视为无值, 同 javascript)
+     * Java8 环境的函数式支持
+     * 可以更好的做到惰性计算
+     * @param <T>
+     * @param val
+     * @param vals 由于在 java7 下编译, 无法使用 Supplier
+     * @return
+     */
+    public static <T> T defxult(T val, Defn<T>... vals) {
+        if (val != null
+        && !FALS.equals(val)
+        && !EMPT.equals(val)
+        && !ZERO.equals(val)) {
+            return val ;
+        }
+        for (Defn<T> def : vals) {
+            val = def.get();
             if (val != null
             && !FALS.equals(val)
             && !EMPT.equals(val)
@@ -368,7 +425,7 @@ public class Synt {
      * @return
      */
     public static List asList(Object... objs) {
-        return Arrays.asList (objs);
+        return  Arrays.asList(objs);
     }
 
     /**
@@ -379,7 +436,7 @@ public class Synt {
     public static Set asSet(Object... objs) {
         Set set = new HashSet();
         for (int i = 0; i < objs.length; i += 1) {
-            set.add( objs[i] );
+            set.add ( objs[i] );
         }
         return set;
     }
@@ -392,7 +449,7 @@ public class Synt {
     public static Map asMap(Object... objs) {
         Map map = new HashMap();
         for (int i = 0; i < objs.length; i += 2) {
-            map.put( objs[i], objs[i + 1] );
+            map.put ( objs[i] , objs[i+1] );
         }
         return map;
     }
@@ -526,13 +583,19 @@ public class Synt {
         return filter(data, new Leaf(conv));
     }
 
-    /**
-     * Each.run 或 Leaf.run 里
-     * 返回 LOOP.NEXT 跳过此项
-     * 返回 LOOP.LAST 跳出循环
-     */
-    public static enum LOOP { NEXT, LAST };
+    //** 内部工具类 **/
 
+    /**
+     * 用于提供默认取值
+     * @param <T>
+     */
+    public static interface Defn<T> {
+        public T get();
+    }
+
+    /**
+     * 用于遍历每个节点
+     */
     public static interface Each {
         public Object run(Object v, Object k, int i);
     }
@@ -589,6 +652,13 @@ public class Synt {
         Data.dumps(b);
         System.err.print("c = ");
         Data.dumps(c);
+        
+        // defoult, defxult 的函数式特性测试
+        String v;
+        v = null;
+        System.err.println(defoult(v, ()->"a"));
+        v = "";
+        System.err.println(defxult(v, ()->"1"));
     }
     */
 

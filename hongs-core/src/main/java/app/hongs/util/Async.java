@@ -141,7 +141,7 @@ public abstract class Async<T> extends CoreSerial implements Core.Destroy {
 
                 try {
                     async.run(data);
-                } catch (Error | Exception e) {
+                } catch (Throwable e) {
                     ByteArrayOutputStream b = new ByteArrayOutputStream();
                     e.printStackTrace(new PrintStream(b));
                     String n = async.getClass().getName();

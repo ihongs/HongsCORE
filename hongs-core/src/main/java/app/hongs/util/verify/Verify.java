@@ -3,7 +3,7 @@ package app.hongs.util.verify;
 import app.hongs.HongsException;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
-import app.hongs.util.verify.Functor.Rune;
+import static app.hongs.util.verify.Rule.BREAK;
 import static app.hongs.util.verify.Rule.BLANK;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,6 +19,18 @@ import java.util.Set;
 /**
  * 数据校验助手
  * @author Hongs
+ *
+ * Java8 中利用 Verfiy.Func 使用函数式, 可简化代码, 如:
+ * <pre>
+ *  values = new Verify()
+ *      .addRule("f1", (v, r)->{
+ *          return v != null ? v : BLANK;
+ *      })
+ *      .addRule("f2", (v, r)->{
+ *          return v != null ? v : EMPTY;
+ *      })
+ *      .verify(values);
+ * </pre>
  *
  * <h3>异常代码</h3>
  * <pre>
@@ -75,14 +87,14 @@ public class Verify implements Veri {
     }
 
     /**
-     * 利用 Functor 的 Rune 接口可使用 Java8 函数式方法
+     * 利用 Rune 的 Func 接口可使用 Java8 函数式方法
      * @param name
      * @param rule
      * @return
      */
-    public Verify addRule(String name, Rune... rule) {
-        for (  Rune rune : rule  ) {
-            addRule(name , new Functor(rune));
+    public Verify addRule(String name, Func... rule) {
+        for (  Func rune : rule  ) {
+            addRule(name , new Rune(rune));
         }
         return this;
     }
@@ -127,10 +139,15 @@ public class Verify implements Veri {
 
             data = verify(rulez, data, name, values, cleans, wrongz);
 
-            if (data != BLANK) {
-                Dict.setParam(cleans, data, name );
-            } else if (prompt && !wrongz.isEmpty()) {
-                break;
+            if (data == BREAK) {
+                    break;
+            } else
+            if (data == BLANK) {
+                if (prompt && ! wrongz.isEmpty()) {
+                    break;
+                }
+            } else {
+                Dict.setParam(cleans, data, name);
             }
         }
 
@@ -169,6 +186,9 @@ public class Verify implements Veri {
                 break;
             }
             if (data == BLANK) {
+                break;
+            }
+            if (data == BREAK) {
                 break;
             }
 
@@ -264,6 +284,27 @@ public class Verify implements Veri {
             Wrong  e = et.getValue( );
             wrongz.put(name+"."+n, e);
         }
+    }
+
+    public class Rune extends Rule {
+
+      private final Func func;
+
+        public Rune(Func func) {
+            this.func  = func;
+        }
+
+        @Override
+        public Object verify(Object value) throws Wrong, Wrongs, HongsException {
+            return func.run (value, this );
+        }
+
+    }
+
+    public static interface Func {
+
+        public Object run(Object value, Rule rule);
+
     }
 
 }

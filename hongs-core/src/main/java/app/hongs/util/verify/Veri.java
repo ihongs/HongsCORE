@@ -25,6 +25,14 @@ public interface Veri {
     public Veri     setRule (String name, Rule... rule);
     public Veri     addRule (String name, Rule... rule);
 
+    /**
+     * 校验数据
+     * 返回干净的数据, 校验失败则抛出 Wrongs 异常
+     * @param values
+     * @return
+     * @throws Wrongs
+     * @throws HongsException
+     */
     public Map      verify  (Map values) throws Wrongs, HongsException;
 
 }

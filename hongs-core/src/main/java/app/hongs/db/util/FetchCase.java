@@ -61,11 +61,6 @@ import java.util.regex.Pattern;
  * page         : int|String  分页页码; 作用域: FetchPage
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage
- * LISTABLE     : Map         可列举列; 作用域: AssocCase
- * SORTABLE     : Map         可排序列; 作用域: AssocCase
- * FILTABLE     : Map         可过滤列; 作用域: AssocCase
- * FINDABLE     : Map         可搜索列; 作用域: AssocCase
- * SAVEABLE     : Map         可保存列; 作用域: AssocCase
  * INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
  * INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
  * </pre>

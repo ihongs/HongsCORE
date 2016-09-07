@@ -80,6 +80,7 @@ public class AssocCase {
     }
 
     private final FetchCase  /**/  that;
+    private final Map<String, Map> opts;
     private final Map<String, Map> bufs;
 
     /**
@@ -90,8 +91,9 @@ public class AssocCase {
         if (caze == null) {
             throw new NullPointerException(AssocCase.class.getName()+": temp can not be null");
         }
-        this.bufs = new HashMap();
         this.that = caze;
+        this.opts = new HashMap();
+        this.bufs = new HashMap();
     }
 
     /**
@@ -142,19 +144,20 @@ public class AssocCase {
 
     /**
      * 自定义许可字段
+     * fs 仅给一个 null 时表示删除对应 allow 设置
      * @param an
      * @param fs
      * @return
      */
     public AssocCase allow(String an, String... fs) {
         if (fs.length == 1 && fs[0] == null) {
-            that.delOption(an);
+            opts.remove(an);
             bufs.remove(an);
             return this;
         }
 
         Map af = new LinkedHashMap();
-        that.setOption(an, af);
+        opts.put(an,af);
         bufs.remove(an);
 
         Matcher m;
@@ -502,18 +505,18 @@ public class AssocCase {
     }
 
     private Map allowCheck(FetchCase caze, String on) {
-        Map af = (Map) caze.getOption(on);
+        Map af = opts.get(on);
 
         // 相对列表字段增加减少
-        if (af != null && ! LISTABLE.equals(on)) {
+        if (af != null && !LISTABLE.equals(on)) {
             Map xf = allowDiffs(af, caze);
             if (xf != null) {
                 return xf ;
             }
         }
 
-        if (af == null && ! LISTABLE.equals(on) && ! FINDABLE.equals(on)) {
-            af = (Map) caze.getOption(LISTABLE);
+        if (af == null && !LISTABLE.equals(on) && !FINDABLE.equals(on)) {
+            af =  opts.get(LISTABLE);
         }
         if (af == null) {
             af =  new  HashMap( );

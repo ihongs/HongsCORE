@@ -46,7 +46,6 @@ public class TestDB {
             .select ("COUNT(!*) AS c1, COUNT(DISTINCT *) c2 ")
             .select ("'abc' AS x1, 'def' x2")
             .join   ("table2", "t2")
-            .by     ( FetchCase.INNER )
             .on     ("`t1_id` = :`id`")
             .in     ("") // 追加别名
             .select ("CONCAT(f1, f2, f3) AS v0, 'abc.def 0.15 .xy' AS x0")

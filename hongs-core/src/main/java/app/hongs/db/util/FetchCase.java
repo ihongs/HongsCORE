@@ -49,7 +49,7 @@ import java.util.regex.Pattern;
  *
  * <h3>系统已知 options:</h3>
  * <pre>
- * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase
+ * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase.oll,all,one
  * UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
  * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
  * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
@@ -62,7 +62,7 @@ import java.util.regex.Pattern;
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage
  * INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
- * INCLUDE_HASMANY : boolean  包含多对多额关联; 作用域: Model.filter
+ * INCLUDE_HASMANY : boolean  包含多对多的关联; 作用域: Table.fetchMore
  * </pre>
  *
  * <h3>异常代码:</h3>
@@ -176,7 +176,7 @@ public class FetchCase
 
   /**
    * 克隆
-   * @return 新查询结构对象
+   * @return 新实例
    */
   @Override
   public  FetchCase clone()
@@ -223,7 +223,7 @@ public class FetchCase
    * 设置查询表和别名
    * @param tableName
    * @param name
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase from(String tableName, String name)
   {
@@ -235,7 +235,7 @@ public class FetchCase
   /**
    * 设置查询表(如果别名已设置则不会更改)
    * @param tableName
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase from(String tableName)
   {
@@ -248,7 +248,7 @@ public class FetchCase
   /**
    * 追加查询字段
    * @param field
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase select(String field)
   {
@@ -259,7 +259,7 @@ public class FetchCase
   /**
    * 设置查询字段
    * @param field
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase field(String field)
   {
@@ -274,7 +274,7 @@ public class FetchCase
    * 追加查询条件
    * @param where
    * @param params 对应 where 中的 ?
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase filter(String where, Object... params)
   {
@@ -287,7 +287,7 @@ public class FetchCase
    * 设置查询条件
    * @param where
    * @param params 对应 where 中的 ?
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase where(String where, Object... params)
   {
@@ -302,7 +302,7 @@ public class FetchCase
   /**
    * 追加分组字段
    * @param field
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase groupBy(String field)
   {
@@ -313,7 +313,7 @@ public class FetchCase
   /**
    * 设置分组字段
    * @param field
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase group(String field)
   {
@@ -328,7 +328,7 @@ public class FetchCase
    * 追加过滤条件
    * @param where
    * @param params 对应 where 中的 ?
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase having(String where, Object... params)
   {
@@ -341,7 +341,7 @@ public class FetchCase
    * 设置过滤条件
    * @param where
    * @param params 对应 where 中的 ?
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase havin(String where, Object... params)
   {
@@ -356,7 +356,7 @@ public class FetchCase
   /**
    * 追加排序字段
    * @param field
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase orderBy(String field)
   {
@@ -367,7 +367,7 @@ public class FetchCase
   /**
    * 设置排序字段
    * @param field
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase order(String field)
   {
@@ -384,7 +384,7 @@ public class FetchCase
    * 设置限额
    * @param start
    * @param limit
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase limit(int start, int limit)
   {
@@ -395,7 +395,7 @@ public class FetchCase
   /**
    * 设置限额
    * @param limit
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase limit(int limit)
   {
@@ -405,36 +405,103 @@ public class FetchCase
 
   //** 关联 **/
 
+  /**
+   * 快速关联
+   * @param tableName
+   * @param name
+   * @param on
+   * @param by
+   * @return join 前(左) 的用例
+   */
+  public FetchCase join(String tableName, String name, String on, byte by)
+  {
+    FetchCase caze = new FetchCase();
+    this.join(caze);
+    caze.from(tableName, name)
+        .on  ( on )
+        .by  ( by );
+    return    this ;
+  }
+
+  /**
+   * 快速关联
+   * @param tableName
+   * @param name
+   * @param on
+   * @return join 前(左) 的用例
+   */
+  public FetchCase join(String tableName, String name, String on)
+  {
+    FetchCase caze = new FetchCase();
+    this.join(caze);
+    caze.from(tableName, name)
+        .on  ( on );
+    return    this ;
+  }
+
+  /**
+   * 关联
+   * 注意: 此方法返回新构建的关联对象
+   * @param tableName
+   * @param name
+   * @return
+   */
   public FetchCase join(String tableName, String name)
   {
-    FetchCase caze = this.join(new FetchCase());
+    FetchCase caze = new FetchCase();
+    this.join(caze);
     caze.from(tableName, name);
-    return caze;
+    return    caze ;
   }
 
+  /**
+   * 关联
+   * 注意: 此方法返回新构建的关联对象
+   * @param tableName
+   * @return
+   */
   public FetchCase join(String tableName)
   {
-    FetchCase caze = this.join(new FetchCase());
+    FetchCase caze = new FetchCase();
+    this.join(caze);
     caze.from(tableName);
-    return caze;
+    return    caze ;
   }
 
+  /**
+   * 关联已有的用例
+   * 注意: 关联关系等记录在关联对象内部
+   * 请不要在不同 case 上 join 同一 case
+   * 稍不注意就会致与后者的关联关系混乱
+   * @param caze
+   * @return join 前(左) 的用例
+   */
   public FetchCase join(FetchCase caze)
   {
     this.joinSet.add(caze);
-    caze.joinName = null;
+    caze.options = options;
+    caze.joinType = INNER;
     caze.joinExpr = null;
-    caze.joinType = LEFT;
-    caze.options  = options;
-    return caze;
+    caze.joinName = null;
+    return this;
   }
 
+  /**
+   * 关联类型
+   * @param type
+   * @return
+   */
   public FetchCase by( byte  type)
   {
     this.joinType = type;
     return this;
   }
 
+  /**
+   * 关联条件
+   * @param expr
+   * @return
+   */
   public FetchCase on(String expr)
   {
     this.joinExpr = expr;
@@ -479,7 +546,7 @@ public class FetchCase
     StringBuilder h = new StringBuilder();
     StringBuilder o = new StringBuilder();
 
-    getSQLDeep ( t, f, w, g, h, o, null );
+    getSQLDeep(t, f, w, g, h, o, null, null);
 
     StringBuilder sql = new StringBuilder("SELECT");
 
@@ -545,7 +612,7 @@ public class FetchCase
   private void getSQLDeep(StringBuilder t, StringBuilder f,
                           StringBuilder w, StringBuilder g,
                           StringBuilder h, StringBuilder o,
-                          String pn)
+                          String pn, String qn)
   {
     if (this.tableName == null
     ||  this.tableName.length() < 1)
@@ -563,16 +630,11 @@ public class FetchCase
     b.append("`" ).append(this.tableName).append("`");
 
     // 别名
-    if ( this.name != null && !this.name.equals( "" )
+    if ( this.name != null && !this.name .equals("" )
     && ! this.name.equals(this.tableName))
     {
       b.append(" AS `").append(this.name).append("`");
-      tn = this.name;
-    }
-    else if ( pn == null)
-    {
-      b.append(" AS `_`");
-      tn = "_" ;
+      tn = this.name /**/;
     }
     else
     {
@@ -601,6 +663,21 @@ public class FetchCase
         }
         b.append(" ON ").append(s);
       }
+
+      /**
+       * 别名层级
+       * 第一层是不许前缀的
+       * 第二层等同于与表名
+       * 二层之后携带所有上级表名(不包含第一层表名)
+       * 下面代码逻辑需从下往上看
+       */
+      if (! "".equals(qn)) {
+        qn = qn+ "." +tn;
+      } else {
+        qn = tn;
+      }
+    } else {
+        qn = "";
     }
 
     t.append(b);
@@ -623,9 +700,9 @@ public class FetchCase
       if (! unAlias) {
       if (null != pn && null != joinName) {
           if ( ! "".equals( joinName )  ) {
-              s = fixSQLAlias(s, joinName);
+              s = fixSQLAlias(s,joinName);
           } else {
-              s = fixSQLAlias(s, tn);
+              s = fixSQLAlias(s, qn);
           }
       }}
 
@@ -667,7 +744,7 @@ public class FetchCase
     {
       if (caze.joinType != 0)
       {
-        caze.getSQLDeep(t, f, w, g, h, o, tn );
+        caze.getSQLDeep(t, f, w, g, h, o, tn, qn);
       }
     }
 
@@ -1027,7 +1104,7 @@ public class FetchCase
    * 设置选项
    * @param key
    * @param obj
-   * @return 当前查询结构对象
+   * @return 当前实例
    */
   public FetchCase setOption(String key, Object obj)
   {
@@ -1139,9 +1216,10 @@ public class FetchCase
    *
    * 与 getJoin 不同在于不存在的关联会自动则创建
    * 注意:
-   * 命名虽与 Core.got 类似, 但意义却不同
-   * Core.got 为调用原 Map 的 get, 没有则返回 null
-   * FetchCase.gotJoin 相反没有则创建关联
+   * 命名虽与 Core.got 类似, 但意义却不同,
+   * Core.got 为调用原 Map 的 get, 没有则返回 null,
+   * FetchCase.gotJoin 相反没有则创建关联;
+   * 新创建的关联实例不设置关联关系和类型;
    *
    * @param name
    * @return

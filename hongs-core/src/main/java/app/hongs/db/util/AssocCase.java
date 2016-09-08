@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * <pre>
  *  FetchCase secondCase = new FetchCase(firstCase)
  *      .allow( table )
- *      .trans(request);
+ *      .parse(request);
  *  allow(table) 可换成 allow(form), form 可使用 FormSet.getForm 来得到
  * </pre>
  *
@@ -55,11 +55,11 @@ public class AssocCase {
      */
     public  static final String  SAVEABLE = "SAVEABLE";
 
-    private static final Pattern anPt = Pattern.compile("^[\\w\\.]+(:|$)");
-    private static final Pattern cnPt = Pattern.compile("^[\\w]$");
+    private static final Pattern anPt = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
+    private static final Pattern cnPt = Pattern.compile("^[\\w]+$");
 
-    private static final Set<String  /**/  > func = new HashSet( );
-    private static final Map<String, String> rels = new HashMap( );
+    private static final Set<String  /**/  > func = new HashSet();
+    private static final Map<String, String> rels = new HashMap();
     static {
         func.add(Cnst.PN_KEY);
         func.add(Cnst.GN_KEY);
@@ -162,20 +162,65 @@ public class AssocCase {
 
         Matcher m;
         String  k;
+        String  kp = null; // 别名前缀
+        String  fp = null; // 字段前缀
+
         for(String f : fs) {
             f = f.trim();
             if (f.isEmpty()) {
                 continue;
             }
 
+            /**
+             * #别名前缀:当前表名
+             * 发现此行时即当设置
+             * 后面遇到的干净别名、字段均会附加上设置的前缀
+             * 别名前缀可以用点或下划线结尾, 没有的自动补点
+             * 表名前缀可以用点结尾, 每有则补点，下划线转点
+             */
+            if (f.startsWith("#")) {
+                f = f.substring(1);
+                int p = f.indexOf(":");
+                if (p > -1) {
+                    kp = f.substring(0, p).trim();
+                    fp = f.substring(1+ p).trim();
+                } else {
+                    kp = fp = f.trim();
+                }
+
+                if ( fp.endsWith("_")) {
+                     fp = fp.substring(0, fp.length() - 1);
+                     fp = "`" + fp +"`.";
+                } else
+                if (!fp.endsWith(".")) {
+                     fp = "`" + fp +"`.";
+                }
+
+                if (!kp.endsWith("." )
+                &&  !kp.endsWith("_")) {
+                     kp = kp + ".";
+                }
+
+                continue;
+            }
+
             m = anPt.matcher(f);
-            if (m.matches()) {
+            if (m.find()) {
                 if (":".equals(m.group(1))) {
-                    k = f.substring(0, m.end() -1);
-                    f = f.substring(   m.end()   );
+                    k = f.substring(0, m.end() -1).trim();
+                    f = f.substring(   m.end()   ).trim();
                 } else {
                     k = f;
                 }
+
+                // 补全前缀
+                if (kp != null && cnPt.matcher(k).matches()) {
+                    k = kp +/**/ k /**/;
+                }
+                if (fp != null && cnPt.matcher(f).matches()) {
+                    f = fp +"`"+ f +"`";
+                }
+
                 af.put( k, f);
             } else {
                 af.put( f, f);
@@ -193,7 +238,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "sortable", "findable", "filtable"};
+        String[] ks = new String[] {"listable", "sortable", "findable", "filtable", "saveable"};
         for(String k : ks) {
             String s = fc.get(k).toString( ).trim( );
             if ("".equals(s) ) {
@@ -209,37 +254,35 @@ public class AssocCase {
     }
 
     /**
-     * 根据请求数据生成查询用例
-     * 此处执行写当前 FetchCase
-     * 故无法在设置好 allow 后反复 trans
+     * 解析查询数据
+     * @param rd
+     * @return
+     */
+    public AssocCase parse(Map rd) {
+        Map xd = new LinkedHashMap (rd);
+        AssocCase.this.parse( that, xd );
+        return this;
+    }
+
+    /**
+     * 转换查询数据
+     * 此处会克隆一份 FetchCase
+     * 故可以在设置好后反复调用
      * @param rd
      * @return
      */
     public FetchCase trans(Map rd) {
-        Map xd = new LinkedHashMap (rd);
-        trans( that, xd );
-        return that;
-    }
-
-    /**
-     * 根据请求数据生成查询用例
-     * 此处会克隆一份 FetchCase
-     * 故可以在设置好 allow 后反复 tranc
-     * @param rd
-     * @return
-     */
-    public FetchCase tranc(Map rd) {
         FetchCase caze = that.clone(  );
         Map xd = new LinkedHashMap (rd);
-        trans( caze, xd );
+        AssocCase.this.parse( caze, xd );
         return caze;
     }
 
     /**
      * 获取存储数据
-     * 取出可列举字段对应的值
-     * 以便用于创建和更新操作
-     * @param rd 请求数据
+     * 取出可列举的字段对应的值
+     * 以便用于创建和更新等操作
+     * @param rd
      * @return
      */
     public Map<String, Object> saves(Map rd) {
@@ -260,7 +303,7 @@ public class AssocCase {
 
     //** 内部工具方法 **/
 
-    private void trans(FetchCase caze, Map rd) {
+    private void parse(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
         field(caze, Synt.asTerms(rd.remove(Cnst.RB_KEY)));
@@ -507,7 +550,7 @@ public class AssocCase {
     private Map allowCheck(FetchCase caze, String on) {
         Map af = opts.get(on);
 
-        // 相对列表字段增加减少
+        // 相对查询字段增加, 删减
         if (af != null && !LISTABLE.equals(on)) {
             Map xf = allowDiffs(af, caze);
             if (xf != null) {
@@ -515,7 +558,8 @@ public class AssocCase {
             }
         }
 
-        if (af == null && !LISTABLE.equals(on) && !FINDABLE.equals(on)) {
+        if (af == null && !LISTABLE.equals(on)
+                       && !FINDABLE.equals(on)) {
             af =  opts.get(LISTABLE);
         }
         if (af == null) {
@@ -640,10 +684,8 @@ public class AssocCase {
                 String jn = (String) tc.get ("join");
 
                 // 不是 JOIN 的不理会
-                if (! "INNER".equals(jn)
-                &&  !  "LEFT".equals(jn)
-                &&  ! "RIGHT".equals(jn)
-                &&  !  "FULL".equals(jn)) {
+                if (!"INNER".equals(jn) && !"LEFT".equals(jn)
+                &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
                     continue;
                 }
 
@@ -661,5 +703,28 @@ public class AssocCase {
 
         return  al;
     }
+
+    /*
+    public static void main(String[] args) {
+        FetchCase fc = new FetchCase()
+                .from("abc", "a")
+                .join("def", "d", ".id = :d_id")
+                .join("xyz", "x", ".a_id = :id");
+        AssocCase ac = new AssocCase(fc)
+                .allow(AssocCase.LISTABLE,
+                        "f1", "a1:f2", "a2:CONCAT('$', .f3)",
+                        "#b :d",
+                        "f1", "a1:f2", "a2:CONCAT('$',d.f3)",
+                        "#x_",
+                        "f1", "a1:f2", "a2:CONCAT(x.f3,'%')")
+                .parse(Synt.asMap(
+                        "rb", "f1,a2,b.a2",
+                        "ob", "f2,a2,x_a2",
+                        "x_a1", "123"
+                ));
+        app.hongs.util.Data.dumps(ac.opts);
+        System.err.println(fc.toString( ));
+    }
+    */
 
 }

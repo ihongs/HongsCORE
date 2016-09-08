@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 数据表基础类
@@ -47,16 +48,16 @@ import java.util.Map;
  *
  * <h3>配置选项:</h3>
  * <pre>
- core.default.date.format   可识别的日期类型, 默认"yyyy/MM/dd", 已移到语言
- core.default.time.format   可识别的时间类型, 默认  "HH:mm:ss", 已移到语言
- core.table.check.value     设置为true禁止在存储时对数据进行检查
- core.table.ctime.field     创建时间字段名
- core.table.mtime.field     修改时间字段名
- core.table.etime.field     结束时间字段名
- core.table.state.field     状态字段名
- core.table.default.state   默认状态
- core.table.removed.state   删除状态
- </pre>
+ * core.default.date.format   可识别的日期类型, 默认"yyyy/MM/dd", 已移到语言
+ * core.default.time.format   可识别的时间类型, 默认  "HH:mm:ss", 已移到语言
+ * core.table.check.value     设置为true禁止在存储时对数据进行检查
+ * core.table.ctime.field     创建时间字段名
+ * core.table.mtime.field     修改时间字段名
+ * core.table.etime.field     结束时间字段名
+ * core.table.state.field     状态字段名
+ * core.table.default.state   默认状态
+ * core.table.removed.state   删除状态
+ * </pre>
  *
  * @author Hongs
  */
@@ -179,9 +180,19 @@ public class Table
 
     // 默认不查询已经删除的记录
     if (rstat != null && rflag != null
-    && ! caze.hasOption("INCLUDE_REMOVED"))
+    && !caze.hasOption("INCLUDE_REMOVED"))
     {
-      caze.filter(".`"+ rstat +"` != ?", rflag);
+      caze.filter(".`" + rstat +"` != ?", rflag);
+    }
+
+    // 默认列表查询不包含对多的, 可用此开启
+    if (caze.getOption("INCLUDE_HASMANY", false) )
+    {
+      Set s  = (Set) caze.getOption("ASSOC_TYPES");
+      if (s != null) {
+          s.add("HAS_MANY");
+          s.add("HAS_MORE");
+      }
     }
 
     return AssocMore.fetchMore(this, caze, assocs);
@@ -212,7 +223,7 @@ public class Table
   /**
    * 调用 FetchCase 构建查询
    * 可用 all, one  得到结果, 以及 delete, update 操作数据
-   * 但与 fetchMore,fetchLess 不同, 不会自动的设置关联查询
+   * 但与 fetchMore,fetchLess 不同, 并不会自动设置关联查询
    * @return 绑定了 db, table 的查询对象
    * @throws app.hongs.HongsException
    */
@@ -323,6 +334,12 @@ public class Table
 
   /**
    * 删除数据
+   * <pre>
+   * 如果状态有多个, 且希望删除后可恢复回以前的状态,
+   * 可采用负值记录, 请自行构建和调用类似下面的 SQL:
+   * 删除: "UPDATE `"+tableName+"` SET `state` = 0 - `state` WHERE `state` &gt; 0 AND " + where
+   * 恢复: "UPDATE `"+tableName+"` SET `state` = 0 - `state` WHERE `state` &lt; 0 AND " + where
+   * </pre>
    * @param where
    * @param params
    * @return 删除条数
@@ -334,7 +351,7 @@ public class Table
     String rstat = getField( "state" );
     String rflag = getState("removed");
 
-    // 存在 rstat 字段则将删除标识设置为1
+    // 存在 rstat 字段则将删除标识设为 removed 值
     if (rstat != null && rflag != null)
     {
       Map data = new HashMap();

@@ -837,10 +837,9 @@ implements IEntity
      * 默认只连接 LEFT,INNER,RIGHT 的表(常规关联均可)
      */
     if (null == caze.getOption("ASSOCS")
-    && !caze.getOption("INCLUDE_HASMANY", false)
     && ("getAll" .equals(caze.getOption("MODEL_METHOD"))
-    ||  "getList".equals(caze.getOption("MODEL_METHOD")) ))
-    {
+    ||  "getList".equals(caze.getOption("MODEL_METHOD"))
+    )) {
       if (null == caze.getOption("ASSOC_TYPES"))
       {
         Set types = new HashSet();
@@ -853,7 +852,7 @@ implements IEntity
         Set types = new HashSet();
         types.add( "INNER" );
         types.add( "LEFT"  );
-        types.add( "RIGNT" );
+        types.add( "RIGHT" );
         types.add( "FULL"  );
         caze.setOption("ASSOC_JOINS", types);
       }
@@ -889,7 +888,7 @@ implements IEntity
 
     AssocCase uc = new AssocCase(caze);
     uc.allow(this);
-    uc.trans( rd );
+    uc.parse( rd );
 
     // 以此绕开 AssocCase
     // 后续调试可正常观察
@@ -1094,13 +1093,11 @@ implements IEntity
                 String jn = (String) tc.get ("join");
 
                 // 不是 JOIN 的重置 pn, 层级名随之改变
-                if (! "INNER".equals(jn)
-                &&  !  "LEFT".equals(jn)
-                &&  ! "RIGHT".equals(jn)
-                &&  !  "FULL".equals(jn)) {
+                if (!"INNER".equals(jn) && !"LEFT".equals(jn)
+                &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
                     jn = null;
                 } else {
-                    jn = pn  ;
+                    jn =  pn ;
                 }
 
                 try {

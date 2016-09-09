@@ -1,13 +1,11 @@
 package app.hongs.dh;
 
-import app.hongs.util.Dict;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * 合并列表
@@ -149,118 +147,6 @@ public class MergeMore
   }
 
   /**
-   * 填充映射
-   * 可以在调 mixing,extend,append 之前预置为空对象
-   * 但不能用于处理并到行的操作
-   * 此方法总是覆盖指定子健的值
-   * @param map 映射表
-   * @param sub 子键, 不可以为空
-   */
-  public void pading(Map<Object, List> map, String... sub)
-  {
-    Object raw = new HashMap();
-
-    // 存在 null 则将默认值改为 List
-    for (int i = 0 ; i < sub.length ; i ++)
-    {
-      if(sub[i] == null && i != 0)
-      {
-        sub = Arrays.copyOfRange(sub, 0, i);
-        raw = new  ArrayList();
-        break;
-      }
-    }
-
-    for (Map.Entry<Object, List> t : map.entrySet())
-    {
-      List<Map> lst = t.getValue();
-      for (Map  row : lst)
-      {
-        Dict.setValue(row, raw, ( Object[ ] ) sub );
-      }
-    }
-  }
-
-  /**
-   * 填充映射
-   * 可以在调 mixing,extend,append 之前预置为空对象
-   * 但不能用于处理并到行的操作
-   * @param map
-   * @param sub 使用"."分隔的键
-   */
-  public void padded(Map<Object, List> map, String sub)
-  {
-    pading(map, sub.split("\\."));
-  }
-
-  /**
-   * 复合关联
-   * @param iter 数据迭代
-   * @param map 映射表
-   * @param col 关联键
-   * @param sub 子键, 未给或为空并到行, 其他位为 null 则可追加
-   */
-  public void mixing(Iterator iter, Map<Object, List> map, String col, String... sub)
-  {
-    Map     row, raw;
-    List    lst;
-    Object  rid;
-
-//  while (sub.length != 0 &&  sub[ 0 ] == null  )
-//  {
-//    sub = Arrays.copyOfRange(sub, 1, sub.length);
-//  }
-    /**
-     * 不管前面有多少 null
-     * 只要第一位等于 null
-     * 就认为要并到行
-     */
-    if (sub.length == 0 || sub[0] == null)
-    {
-      sub = null;
-    }
-
-    while (iter.hasNext())
-    {
-      raw = ( Map  ) iter.next( );
-      rid =          raw.get(col);
-      lst = ( List ) map.get(rid);
-
-      if (lst == null)
-      {
-        //throw new HongsException(0x10c0, "Line nums is null");
-        continue;
-      }
-
-      Iterator it = lst.iterator();
-      while (it.hasNext())
-      {
-        row = (Map) it.next();
-
-        if ( null != sub )
-        {
-          Dict.setValue(row, raw, (Object[]) sub);
-        }
-        else
-        {
-          raw.putAll(row);
-          row.putAll(raw);
-        }
-      }
-    }
-  }
-
-  public void mixing(List<Map> rows, Map<Object, List > map, String col, String... sub)
-  {
-    mixing(rows.iterator(), map, col, sub);
-  }
-
-  public void mixing(List<Map> rows, String key, String col, String... sub)
-  {
-    mixing(rows, mapped ( key ), col, sub);
-  }
-
-  /**
    * 一对一关联
    * @param iter 数据迭代
    * @param map 映射表
@@ -290,14 +176,14 @@ public class MergeMore
       {
         row = (Map) it.next();
 
-        if ( null != sub )
-        {
-          row.put(sub, raw);
-        }
-        else
+        if ( null == sub)
         {
           raw.putAll(row);
           row.putAll(raw);
+        }
+        else
+        {
+          row.put( sub, raw );
         }
       }
     }
@@ -314,6 +200,36 @@ public class MergeMore
   }
 
   /**
+   * 补全一对一
+   * 可在 extend rows 之后执行
+   * @param map 映射表
+   * @param raw 默认值
+   * @param sub 子键, 为空并到行
+   */
+  public void extend(Map<Object, List> map, Map raw, String sub)
+  {
+    if (raw == null) {
+        raw  = new HashMap();
+    }
+
+    for (Map.Entry<Object, List> t : map.entrySet())
+    {
+      List<Map> lst = t.getValue();
+      for (Map  row : lst)
+      {
+        if ( sub == null )
+        {
+          raw.putAll (row);
+          row.putAll (raw);
+        }
+        if (!row.containsKey(sub)) {
+          row.put(sub,sub);
+        }
+      }
+    }
+  }
+
+  /**
    * 一对多关联
    * @param iter 数据迭代
    * @param map 映射表
@@ -324,6 +240,7 @@ public class MergeMore
   {
     Map     row, raw;
     List    lst;
+    List    lzt;
     Object  rid;
 
     while (iter.hasNext())
@@ -341,18 +258,16 @@ public class MergeMore
       Iterator it = lst.iterator();
       while (it.hasNext())
       {
-        row = (Map) it.next();
+        row = (Map ) it.next(   );
+        lzt = (List) row.get(sub);
 
-        if (row.containsKey(sub))
+        if ( null == lzt)
         {
-          (( List ) row.get(sub)).add(raw);
+          lzt = new ArrayList();
+          row.put ( sub , lzt );
         }
-        else
-        {
-          List lzt = new ArrayList();
-          row.put(sub , lzt);
-          lzt.add(raw);
-        }
+
+          lzt.add ( raw );
       }
     }
   }
@@ -365,6 +280,32 @@ public class MergeMore
   public void append(List<Map> rows, String key, String col, String sub)
   {
     append(rows, mapped ( key ), col, sub);
+  }
+
+  /**
+   * 补全一对多
+   * 可在 append rows 之后执行
+   * @param map 映射表
+   * @param lzt 默认值
+   * @param sub 子键, 不可为空
+   */
+  public void append(Map<Object, List> map, List lzt, String sub)
+  {
+    if (lzt == null) {
+        lzt  = new ArrayList();
+    }
+
+    for (Map.Entry<Object, List> t : map.entrySet())
+    {
+      List<Map> lst = t.getValue();
+      for (Map  row : lst)
+      {
+        if (!row.containsKey(sub))
+        {
+          row.put(sub,lzt);
+        }
+      }
+    }
   }
 
 }

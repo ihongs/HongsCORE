@@ -53,32 +53,22 @@ extends HashMap<String, Object>
 {
 
   /**
-   * 托管某对象, 结束时调 destroy 回收资源
-   *
-   * @param inst 活动实例
-   */
-  public void add(Object inst)
-  {
-    put(inst.getClass().getName() + ":" + inst.hashCode(), inst);
-  }
-
-  /**
    * 获取类对应的唯一对象
    *
-   * @param <T> 返回对象类型
-   * @param ct [包路径.]类名.class
+   * @param <T> 返回类型同请求类型
+   * @param klass [包.]类名.class
    * @return 唯一对象
    */
-  public <T> T get(Class<T> ct)
+  public <T> T get(Class<T> klass)
   {
-    String name = ct.getName( );
+    String name = klass.getName(  );
     Core   core = Core.GLOBAL_CORE ;
     Object inst = check(core, name);
-    return (T) (inst != null ? inst : build(core, name, ct));
+    return (T) (inst != null ? inst : build(core, name, klass));
   }
 
   /**
-   * 获取名称对应的唯一对象
+   * 获取名对应的唯一对象
    *
    * @param name [包路径.]类名
    * @return 唯一对象
@@ -91,10 +81,10 @@ extends HashMap<String, Object>
   }
 
   /**
-   * 调用原始get方法
+   * 调用原始 get 方法
    *
    * @param name
-   * @return 唯一对象
+   * @return 唯一对象, 不存在则返回空
    */
   public Object got(String name)
   {
@@ -102,22 +92,24 @@ extends HashMap<String, Object>
   }
 
   /**
-   * 不支持get(Object), 仅支持get(String)
+   * 不支持 get(Object), 仅支持 got(String),get(String|Class)
    *
    * @param name
-   * @return 抛出错误
+   * @return 抛出异常, 为避歧义禁用之
+   * @throws UnsupportedOperationException
    * @deprecated
    */
   @Override
   public Object get(Object name)
   {
     throw new UnsupportedOperationException(
-      "May cause an error on 'get(Object)', use 'get(String|Class)'");
+      "May cause an error on 'get(Object)', use 'got(String)' or 'get(String|Class)'");
   }
 
   /**
-   * 不支持clear
+   * 不支持 clear, 可使用 destory, 系统会在结束时自动销毁对象
    *
+   * @throws UnsupportedOperationException 总是抛出此异常
    * @deprecated
    */
   @Override

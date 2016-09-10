@@ -60,11 +60,11 @@ public class AssocCase {
     /**
      * 禁止某项 allow 设置
      */
-    public  static final String DENY = "__DENY__";
+    public  static final String  DENY = "__DENY__";
     /**
      * 清空某项 allow 设置
      */
-    public  static final String WIPE = "__WIPE__";
+    public  static final String  WIPE = "__WIPE__";
 
     private static final Pattern anPt = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
     private static final Pattern cnPt = Pattern.compile("^[\\w]+$");

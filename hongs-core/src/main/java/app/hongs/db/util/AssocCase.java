@@ -193,7 +193,7 @@ public class AssocCase {
         String  kp = null; // 别名前缀
         String  fp = null; // 字段前缀
 
-        for(String f : fs) {
+        for( String f : fs ) {
             f = f.trim();
             if (f.isEmpty()) {
                 continue;

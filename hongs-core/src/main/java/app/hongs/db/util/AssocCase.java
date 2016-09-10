@@ -157,7 +157,14 @@ public class AssocCase {
      * fs 仅给一个常量 DENY 表示禁用 an 的 allow 设置,
      * fs 不给值或给空串同样表示禁用 an 的 allow 设置,
      * 清除后非 LISTABLE,FINDABLE 即可继承 LISTABLE;
-     * 字段的首字符, + 相对 LISTABLE 增加字段, - 相对 LISTABLE 删减字段
+     * </pre>
+     * <pre>
+     * <b>字段的首字符:</b>
+     *   + 相对 LISTABLE 增加字段,
+     *   - 相对 LISTABLE 删减字段,
+     *   # 定义后续字段的别名前缀和表名,
+     *     如 "#foo:bar" 定义别名前缀为 "foo." 表名前缀为 "bar.",
+     *     表名省略时等于于别名, 别名以 "_" 结尾时则不再追加 ".";
      * </pre>
      * @param an
      * @param fs

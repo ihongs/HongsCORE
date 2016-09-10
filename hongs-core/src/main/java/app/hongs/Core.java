@@ -59,7 +59,7 @@ extends HashMap<String, Object>
    */
   public void add(Object inst)
   {
-    put( inst.getClass().getName() + ":" + inst.hashCode(), inst );
+    put(inst.getClass().getName() + ":" + inst.hashCode(), inst);
   }
 
   /**
@@ -71,8 +71,8 @@ extends HashMap<String, Object>
    */
   public <T> T get(Class<T> ct)
   {
+    String name = ct.getName( );
     Core   core = Core.GLOBAL_CORE ;
-    String name = ct.getName ( );
     Object inst = check(core, name);
     return (T) (inst != null ? inst : build(core, name, ct));
   }
@@ -156,11 +156,11 @@ extends HashMap<String, Object>
       {
         try
         {
-          ((Destroy) object).destroy();
+          ((Destroy) object).destroy(  );
         }
         catch (Throwable ta)
         {
-          CoreLogger.error(ta);
+          ta.printStackTrace(System.err);
         }
       }
     }

@@ -54,6 +54,14 @@ public class AssocCase {
      * 可存储字段, 用于 FetchCase 的 Option, 为设置则取 LISTABLE
      */
     public  static final String  SAVEABLE = "SAVEABLE";
+    /**
+     * 禁止某项 allow 设置
+     */
+    public  static final String DENY = "__DENY__";
+    /**
+     * 清空某项 allow 设置
+     */
+    public  static final String WIPE = "__WIPE__";
 
     private static final Pattern anPt = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
     private static final Pattern cnPt = Pattern.compile("^[\\w]+$");
@@ -144,19 +152,32 @@ public class AssocCase {
 
     /**
      * 自定义许可字段
-     * fs 仅给一个 null 时表示删除对应 allow 设置
+     * <pre>
+     * fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
+     * fs 仅给一个常量 DENY 表示禁用 an 的 allow 设置,
+     * fs 不给值或给空串同样表示禁用 an 的 allow 设置,
+     * 清除后非 LISTABLE,FINDABLE 即可继承 LISTABLE;
+     * 字段的首字符, + 相对 LISTABLE 增加字段, - 相对 LISTABLE 删减字段
+     * </pre>
      * @param an
      * @param fs
      * @return
      */
     public AssocCase allow(String an, String... fs) {
-        if (fs.length == 1 && fs[0] == null) {
-            opts.remove(an);
-            bufs.remove(an);
-            return this;
+        if (fs.length == 1) {
+            if (WIPE.equals(fs[0])) {
+                bufs.remove(an);
+                opts.remove(an);
+                return this;
+            } else
+            if (DENY.equals(fs[0])) {
+                bufs.remove(an);
+                opts.put(an, new LinkedHashMap( ) );
+                return this;
+            }
         }
 
-        Map af = new LinkedHashMap();
+        Map af = new LinkedHashMap( );
         opts.put(an,af);
         bufs.remove(an);
 

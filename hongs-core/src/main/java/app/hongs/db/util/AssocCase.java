@@ -27,7 +27,10 @@ import java.util.regex.Pattern;
  *  FetchCase secondCase = new FetchCase(firstCase)
  *      .allow( table )
  *      .parse(request);
- *  allow(table) 可换成 allow(form), form 可使用 FormSet.getForm 来得到
+ *
+ *  allow(table) 可换成 allow(params)
+ *  params 可用 Table.getParams 或 FormSet.getForm().get("@") 得到,
+ *  得到的 Map 中的 listable,sortable,findable,filtable 等用于设置.
  * </pre>
  *
  * @author Hongs

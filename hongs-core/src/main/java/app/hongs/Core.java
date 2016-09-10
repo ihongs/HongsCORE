@@ -492,7 +492,7 @@ extends HashMap<String, Object>
    * 当Core结束时(程序结束, Servlet请求结束)
    * 将执行实现了该接口的类的无参destroy方法
    */
-  public static interface Destroy { public void destroy() throws Throwable; }
+  public static interface Destroy { public void destroy(); }
 
   /**
    * 全局唯一

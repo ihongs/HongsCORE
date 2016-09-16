@@ -508,7 +508,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     public List getAll(Map rd, int total, int begin, int end) throws HongsException {
         Loop roll = search(rd, begin, total - begin);
         List list = new LinkedList();
-        int  idx  = 0 ;
+        int  idx  = begin ;
         if ( end == 0 ) {
              end  = total - begin;
         }
@@ -1745,7 +1745,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
         @Override
         public Map next() {
             if ( i >= h ) {
-                throw new NullPointerException("hasNext not run ?");
+                throw new NullPointerException("hasNext not run?");
             }
             try {
                 /*Read*/ doc = docs[i++];

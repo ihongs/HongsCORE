@@ -62,8 +62,8 @@ extends Mtree {
 
         asoc = this.db.getTable("a_member_dept_role");
         caze = this.fetchCase();
-        caze.select(".role")
-            .filter(".dept_id = ?", deptId);
+        caze.select(asoc.name+".role")
+            .filter(asoc.name+".dept_id = ?", deptId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             roles.add((String) row.get("role"));
@@ -84,8 +84,8 @@ extends Mtree {
         Object userId = req.get("user_id");
         if (null != userId && ! "".equals(userId)) {
             caze.join  ("a_member_user_dept", "users")
-                .on    ("`dept_id` = `dept`.`id`")
-                .filter("`user_id` IN (?)",userId);
+                .on    ("`users`.`dept_id` = `dept`.`id`")
+                .filter("`users`.`user_id` IN (?)",userId);
         }
     }
 

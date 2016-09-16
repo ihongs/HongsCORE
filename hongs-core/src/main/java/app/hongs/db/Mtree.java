@@ -217,21 +217,21 @@ public class Mtree extends Model
         caze.setOption("ASSOCS", new HashSet());
       }
 
-      caze.select(".`" + this.table.primaryKey + "`")
-          .select(".`" + this.pidKey  + "`")
-          .select(".`" + this.nameKey + "`");
+      caze.select("`"+this.table.name+"`.`" + this.table.primaryKey + "`")
+          .select("`"+this.table.name+"`.`" + this.pidKey  + "`")
+          .select("`"+this.table.name+"`.`" + this.nameKey + "`");
 
       if (this.noteKey != null)
       {
-        caze.select(".`" + this.noteKey + "`");
+        caze.select("`"+this.table.name+"`.`" + this.noteKey + "`");
       }
       if (this.typeKey != null)
       {
-        caze.select(".`" + this.typeKey + "`");
+        caze.select("`"+this.table.name+"`.`" + this.typeKey + "`");
       }
       if (this.cnumKey != null)
       {
-        caze.select(".`" + this.cnumKey + "`");
+        caze.select("`"+this.table.name+"`.`" + this.cnumKey + "`");
       }
       else
       {
@@ -239,7 +239,7 @@ public class Mtree extends Model
       }
       if (this.snumKey != null)
       {
-        caze.select(".`" + this.snumKey + "`");
+        caze.select("`"+this.table.name+"`.`" + this.snumKey + "`");
       }
       else
       {

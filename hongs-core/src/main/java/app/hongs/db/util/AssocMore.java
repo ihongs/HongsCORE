@@ -113,20 +113,14 @@ public class AssocMore {
         if ("BLS_TO".equals(tp)) {
             // 上级外键连接下级主键
             if (pk == null) pk = table2.primaryKey;
-            if (tn == null || tn.length() == 0) {
-                fk =         ":`"+fk+"`";
-            } else {
-                fk = "`"+tn+"`.`"+fk+"`";
-            }   pk = "`"+an+"`.`"+pk+"`";
+            fk = "`"+tn+"`.`"+fk+"`";
+            pk = "`"+an+"`.`"+pk+"`";
         } else
         if ("HAS_ONE".equals(tp)) {
             // 上级主键连接下级外键
             if (pk == null) pk = table .primaryKey;
-            if (tn == null || tn.length() == 0) {
-                pk =         ":`"+pk+"`";
-            } else {
-                pk = "`"+tn+"`.`"+pk+"`";
-            }   fk = "`"+an+"`.`"+fk+"`";
+            pk = "`"+tn+"`.`"+pk+"`";
+            fk = "`"+an+"`.`"+fk+"`";
         } else
         if ("HAS_MANY".equals(tp) || "HAS_MORE".equals(tp)) {
             throw new HongsException(0x10c2,  "Unsupported assoc type '"+tp+"'");
@@ -176,7 +170,7 @@ public class AssocMore {
         if ( ! caze.hasField( ) && ! caze2.hasField( ) ) {
             Set<String> cols = table2.getFields().keySet();
             for(String  col  : cols) {
-                caze2.select(".`"+ col +"` AS `"+pu+"."+ col +"`");
+                caze2.select("`"+an+"`.`"+ col +"` AS `"+pu+"."+ col +"`");
             }
         }
     }
@@ -276,47 +270,63 @@ public class AssocMore {
     }
 
     String  sql;
-    boolean has = false;
-    boolean haz = false;
+    boolean fixTable = false;
+    boolean fixField = false;
+    boolean fixAlias = false;
 
     sql = (String) assoc.get("select");
     if (sql != null) {
         caze.field (sql);   // rb 参数将无效
-        if (!sql.startsWith(".") && sql.length() != 0) {
-            has = true;
-            haz = true;
+        if (sql.startsWith(".")) {
+            fixTable = true;
+        } else
+        if (sql.length()  !=  0) {
+            fixField = true;
+            fixAlias = true;
         }
     }
 
     sql = (String) assoc.get("orders");
     if (sql != null) {
         caze.order(sql);   // ob 参数将无效
-        if (!has && !sql.startsWith(".") && sql.length() != 0) {
-            has = true;
-        }
-    }
-
-    sql = (String) assoc.get("filter");
-    if (sql != null && sql.length() != 0) {
-        caze.filter(sql);       // 此处为附加条件, 外部条件仍有效
-        if (!has && !sql.startsWith(".")) {
-            has = true;
+        if (sql.startsWith(".")) {
+            fixTable = true;
+        } else
+        if (sql.length()  !=  0) {
+            fixField = true;
         }
     }
 
     sql = (String) assoc.get("groups");
     if (sql != null) {
         caze.group(sql);
-        if (!has && !sql.startsWith(".") && sql.length() != 0) {
-            has = true;
+        if (sql.startsWith(".")) {
+            fixTable = true;
+        } else
+        if (sql.length()  !=  0) {
+            fixField = true;
+        }
+    }
+
+    sql = (String) assoc.get("filter");
+    if (sql != null && sql.length() != 0) {
+        caze.filter(sql);  // 此处为附加条件, 外部条件仍有效
+        if (sql.startsWith(".")) {
+            fixTable = true;
+        } else
+        {
+            fixField = true;
         }
     }
 
     sql = (String) assoc.get("having");
     if (sql != null && sql.length() != 0) {
-        caze.having(sql);
-        if (!has && !sql.startsWith(".")) {
-            has = true;
+        caze.having(sql);  // 此处为附加条件, 外部条件仍有效
+        if (sql.startsWith(".")) {
+            fixTable = true;
+        } else
+        {
+            fixField = true;
         }
     }
 
@@ -327,10 +337,13 @@ public class AssocMore {
 
     // 有设置查询、条件等时, 必须开启自动补全
     // 如果首字段、条件以点开头则可不自动补全
-    if (has) {
+    if (fixTable) {
+        caze.setOption("UNFIX_TABLE", false);
+    }
+    if (fixField) {
         caze.setOption("UNFIX_FIELD", false);
     }
-    if (haz) {
+    if (fixAlias) {
         caze.setOption("UNFIX_ALIAS", false);
     }
   }

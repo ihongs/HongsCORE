@@ -595,6 +595,7 @@ public class AssocCase {
     }
 
     private Map allowTrans(Map af) {
+        String n = that.getName( );
         Map al = new LinkedHashMap();
 
         for(Object ot : af.entrySet()) {
@@ -602,7 +603,7 @@ public class AssocCase {
             String k = (String) et.getKey(  );
             String f = (String) et.getValue();
             if (cnPt.matcher(f).matches()) {
-                f = ".`"+ f +"`";
+                f = "`"+n+"`.`"+ f +"`";
             }
                 al.put(k, f);
         }

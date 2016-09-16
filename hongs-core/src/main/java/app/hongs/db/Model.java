@@ -373,7 +373,7 @@ implements IEntity
       throw new HongsException(0x109b, "Column " + n + " is not exists");
     }
 
-    caze.filter(".`"+n+"` = ?", v);
+    caze.filter("`"+this.table.name+"`.`"+n+"` = ?", v);
 
     Iterator it = rd.entrySet().iterator();
     while (it.hasNext())
@@ -382,17 +382,14 @@ implements IEntity
       String field = (String) entry.getKey();
       String value = (String) entry.getValue();
 
+      if (field.equals( this.table.primaryKey)
+      ||  field.equals( Cnst.ID_KEY))
+      {
+        caze.filter("`"+this.table.name+"`.`"+this.table.primaryKey+"` != ?", value);
+      } else
       if (columns.containsKey(field))
       {
-        if (field.equals(Cnst.ID_KEY)
-        ||  field.equals(this.table.primaryKey))
-        {
-          caze.filter(".`"+this.table.primaryKey+"` != ?", value);
-        }
-        else
-        {
-          caze.filter(".`"+field+"` = ?", value);
-        }
+        caze.filter("`"+this.table.name+"`.`"+field+"` = ?", value);
       }
     }
 
@@ -780,14 +777,16 @@ implements IEntity
 
   /**
    * 内建 FetchCase
-   * 用于用户未给 FetchCase 时的默认查询
-   * 此方法会设置 UNFIX_FIELD, UNFIX_ALIAS 为 true
+   * 此方法会设置 UNFIX_TABLE, UNFIX_FIELD, UNFIX_ALIAS 为 true
+   * 后续构建查询语句仅作简单拼接
+   * 您必须严格的使用表和字段别名
    * @return
    * @throws app.hongs.HongsException
    */
   public FetchCase fetchCase() throws HongsException
   {
     return table.fetchCase()
+      .setOption("UNFIX_TABLE", true)
       .setOption("UNFIX_FIELD", true)
       .setOption("UNFIX_ALIAS", true);
   }
@@ -914,8 +913,8 @@ implements IEntity
     {
         caze.setOption("ASSOCS", new HashSet());
     }
-    caze.field (".`"+this.table.primaryKey+"`")
-        .filter(".`"+this.table.primaryKey+"`=?", id);
+    caze.field ("`"+this.table.name+"`.`"+this.table.primaryKey+"`" /**/ )
+        .filter("`"+this.table.name+"`.`"+this.table.primaryKey+"`=?", id);
     this.filter(caze, wh);
     return ! this.table.fetchLess( caze ).isEmpty(  );
   }
@@ -1041,9 +1040,8 @@ implements IEntity
     private void allow(FetchCase caze, Table table,
                        FetchCase caxe, Table assoc,
                        Map ac, String tn, String qn, String pn, Map al) {
-        String  tx , ax  , az;
-
-            tx = ".";
+        String tx, ax, az;
+        tx = "`"+tn+"`." ;
 
         if (null ==  qn  ) {
             qn = "";

@@ -146,7 +146,7 @@ public class FetchMore
     String rel = col;
     if (table.getFields().containsKey(col))
     {
-      col = ".`" + col + "`";
+      col = "`" + name + "`.`" + col + "`";
     }
     else
     {

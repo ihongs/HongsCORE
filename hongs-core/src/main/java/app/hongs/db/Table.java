@@ -182,7 +182,7 @@ public class Table
     if (rstat != null && rflag != null
     && !caze.hasOption("INCLUDE_REMOVED"))
     {
-      caze.filter(".`" + rstat +"` != ?", rflag);
+      caze.filter("`"+name+"`.`" + rstat +"` != ?", rflag);
     }
 
     // 默认列表查询不包含对多的, 可用此开启

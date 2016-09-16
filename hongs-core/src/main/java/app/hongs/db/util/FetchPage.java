@@ -181,13 +181,13 @@ public final class FetchPage
     FetchCase  caze2 = this.caze.clone().limit(limit);
     if(clnSort(caze2))
     {
-      sql    =  "SELECT COUNT(!*) AS __count__ FROM ("
+      sql    =   "SELECT COUNT(1) AS __count__ FROM ("
              + caze2.getSQL( )+") AS __table__" ;
       params = caze2.getParams( );
     }
     else
     {
-      caze2.field( "COUNT(!*) AS __count__");
+      caze2.field( "COUNT(1) AS __count__");
       sql    = caze2.getSQL(/**/);
       params = caze2.getParams( );
     }

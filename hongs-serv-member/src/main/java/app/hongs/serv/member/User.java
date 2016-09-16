@@ -104,17 +104,17 @@ extends Model {
 
         asoc = this.db.getTable("a_member_user_dept");
         caze = this.fetchCase();
-        caze.select(".dept_id")
-            .filter(".user_id = ?", userId);
+        caze.select(asoc.name+".dept_id")
+            .filter(asoc.name+".user_id = ?", userId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
-            depts.add((String) row.get("dept_id") );
+            depts.add((String) row.get("dept_id"));
         }
 
         asoc = this.db.getTable("a_member_dept_role");
         caze = this.fetchCase();
-        caze.select(".role")
-            .filter(".dept_id = ?", depts );
+        caze.select(asoc.name+".role")
+            .filter(asoc.name+".dept_id = ?", depts );
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             roles.add((String) row.get("role"));
@@ -122,8 +122,8 @@ extends Model {
 
         asoc = this.db.getTable("a_member_user_role");
         caze = this.fetchCase();
-        caze.select(".role")
-            .filter(".user_id = ?", userId);
+        caze.select(asoc.name+".role")
+            .filter(asoc.name+".user_id = ?", userId);
         rows = asoc.fetchMore(caze);
         for (Map row : rows) {
             roles.add((String) row.get("role"));
@@ -144,8 +144,8 @@ extends Model {
         Object deptId = req.get("dept_id");
         if (null != deptId && ! "".equals(deptId)) {
             caze.join  ("a_member_user_dept", "depts")
-                .on    ("`user_id` = `user`.`id`")
-                .filter("`dept_id` IN (?)",deptId);
+                .on    ("`depts`.`user_id` = `user`.`id`")
+                .filter("`depts`.`dept_id` IN (?)",deptId);
         }
     }
 

@@ -31,7 +31,12 @@ import java.util.regex.Pattern;
  * [2015/11/24 00:28]<br/>
  * 已解决加表名前缀的问题, 且兼容上面旧的前缀规则;<br/>
  * 本类处理一般的查询尚可, 过于复杂的查询请勿使用;<br/>
- * 增加了忽略别名的前缀 !, 单纯统计行数须写 COUNT(!*)
+ * 增加了忽略别名的前缀 !, 单纯统计行数须写 COUNT(!*) 或 COUNT(1)
+ * </p>
+ * <p>
+ * [2016/09/16 13:31]<br/>
+ * 可以用 UNFIX_TABLE 关闭 ".",":" 这种旧的替换法,<br/>
+ * 也可用 UNFIX_FIELD, UNFIX_ALIAS 关闭新处理过程
  * </p>
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
@@ -50,6 +55,7 @@ import java.util.regex.Pattern;
  * <h3>系统已知 options:</h3>
  * <pre>
  * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase.oll,all,one
+ * UNFIX_TABLE  : boolean     不要自动设置表名; 作用域: FetchCase
  * UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
  * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
  * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
@@ -141,14 +147,14 @@ public class FetchCase
    */
   static final Pattern sqlFieldBeforeAlias = Pattern
           .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
-                     , Pattern.CASE_INSENSITIVE);
+                         , Pattern.CASE_INSENSITIVE);
 
   /**
    * 后面可跟字段的关键词
    */
   static final Pattern sqlFieldBeforeWords = Pattern
           .compile("IS|IN|ON|OR|AND|NOT|TOP|CASE|WHEN|THEN|ELSE|LIKE|ESCAPE|BETWEEN|DISTINCT"
-                     , Pattern.CASE_INSENSITIVE);
+                         , Pattern.CASE_INSENSITIVE);
 
   //** 构造 **/
 
@@ -471,7 +477,7 @@ public class FetchCase
   /**
    * 关联已有的用例
    * 注意: 关联关系等记录在关联对象内部
-   * 请不要在不同的用例上重用关联的用例
+   * 请避免在不同的用例上重用关联的用例
    * 稍不注意就会致与后者的关联关系混乱
    * @param caze
    * @return join 前(左) 的用例
@@ -512,7 +518,7 @@ public class FetchCase
    * 查询字段前缀
    * 比如 select("fn1,fn2").in("foo") 得到 `foo.fn1`,`foo.fn2`
    * 查询结果会按 . 自动拆解为层级结构, 如 foo={fn1=v1,fn2=v2}
-   * 但当选项 UNFIX_ALIAS 为 true 时此设置直接忽略
+   * 但当选项 UNFIX_ALIAS 为 true 时此设置将被忽略
    * @param name
    * @return
    */
@@ -620,9 +626,10 @@ public class FetchCase
         throw new Error(new HongsException(0x10b4, "tableName can not be empty"));
     }
 
-    boolean noJoins = pn == null && joinSet.isEmpty(); // 无关联查询
-    boolean unField = getOption("UNFIX_FIELD", false); // 不补全表名
-    boolean unAlias = getOption("UNFIX_ALIAS", false); // 不补全别名
+    boolean hasJoins = pn != null || !joinSet.isEmpty(); // 有关联表
+    boolean fixTable = !getOption("UNFIX_TABLE", false); // 补全表名
+    boolean fixField = !getOption("UNFIX_FIELD", false); // 补全表名
+    boolean fixAlias = !getOption("UNFIX_ALIAS", false); // 补全别名
 
     // 表名
     String tn;
@@ -656,10 +663,11 @@ public class FetchCase
       if (this.joinExpr != null && this.joinExpr.length() != 0)
       {
         String s  =  this.joinExpr;
-        if (unField) {
-            s = fixSQLTable(s, tn, pn);
-        } else {
-            s = fixSQLField(s, tn, pn);
+        if (fixField) {
+          s = fixSQLField (s, tn, pn);
+        } else
+        if (fixTable) {
+          s = fixSQLTable (s, tn, pn);
         }
         b.append(" ON ").append(s);
       }
@@ -686,41 +694,52 @@ public class FetchCase
     if (this.fields.length() != 0)
     {
       String s = this.fields.toString().trim();
-      if (noJoins) {
-          s = delSQLTable(s);
-      } else
-      if (unField) {
-          s = fixSQLTable(s, tn, pn);
+
+      if (hasJoins) {
+        if (fixField) {
+          s = fixSQLField (s, tn, pn);
+        } else
+        if (fixTable) {
+          s = fixSQLTable (s, tn, pn);
+        }
       } else {
-          s = fixSQLField(s, tn, pn);
+        if (fixTable) {
+          s = delSQLTable (s);
+        }
       }
 
       // Add in 2016/4/15
       // 为关联表的查询列添加层级名
-      if (! unAlias) {
-      if (null != pn && null != joinName) {
-          if ( ! "".equals( joinName )  ) {
-              s = fixSQLAlias(s,joinName);
-          } else {
-              s = fixSQLAlias(s, qn);
-          }
-      }}
+      if (fixAlias && null != joinName ) {
+        if (!   "".equals (   joinName)) {
+          s = fixSQLAlias (s, joinName );
+        } else
+        if (!   "".equals (   qn)) {
+          s = fixSQLAlias (s, qn );
+        }
+      }
 
-      f.append(" ").append( s );
+      f.append(" ").append(s);
     }
 
     // 条件
     if (this.wheres.length() != 0)
     {
       String s = this.wheres.toString().trim();
-      if (noJoins) {
-          s = delSQLTable(s);
-      } else
-      if (unField) {
-          s = fixSQLTable(s, tn, pn);
+
+      if (hasJoins) {
+        if (fixField) {
+          s = fixSQLField (s, tn, pn);
+        } else
+        if (fixTable) {
+          s = fixSQLTable (s, tn, pn);
+        }
       } else {
-          s = fixSQLField(s, tn, pn);
+        if (fixTable) {
+          s = delSQLTable (s);
+        }
       }
+
       w.append(" ").append(s);
     }
 
@@ -728,14 +747,20 @@ public class FetchCase
     if (this.groups.length() != 0)
     {
       String s = this.groups.toString().trim();
-      if (noJoins) {
-          s = delSQLTable(s);
-      } else
-      if (unField) {
-          s = fixSQLTable(s, tn, pn);
+
+      if (hasJoins) {
+        if (fixField) {
+          s = fixSQLField (s, tn, pn);
+        } else
+        if (fixTable) {
+          s = fixSQLTable (s, tn, pn);
+        }
       } else {
-          s = fixSQLField(s, tn, pn);
+        if (fixTable) {
+          s = delSQLTable (s);
+        }
       }
+
       g.append(" ").append(s);
     }
 
@@ -752,14 +777,20 @@ public class FetchCase
     if (this.havins.length() != 0)
     {
       String s = this.havins.toString().trim();
-      if (noJoins) {
-          s = delSQLTable(s);
-      } else
-      if (unField) {
-          s = fixSQLTable(s, tn, pn);
+
+      if (hasJoins) {
+        if (fixField) {
+          s = fixSQLField (s, tn, pn);
+        } else
+        if (fixTable) {
+          s = fixSQLTable (s, tn, pn);
+        }
       } else {
-          s = fixSQLField(s, tn, pn);
+        if (fixTable) {
+          s = delSQLTable (s);
+        }
       }
+
       h.append(" ").append(s);
     }
 
@@ -767,14 +798,20 @@ public class FetchCase
     if (this.orders.length() != 0)
     {
       String s = this.orders.toString().trim();
-      if (noJoins) {
-          s = delSQLTable(s);
-      } else
-      if (unField) {
-          s = fixSQLTable(s, tn, pn);
+
+      if (hasJoins) {
+        if (fixField) {
+          s = fixSQLField (s, tn, pn);
+        } else
+        if (fixTable) {
+          s = fixSQLTable (s, tn, pn);
+        }
       } else {
-          s = fixSQLField(s, tn, pn);
+        if (fixTable) {
+          s = delSQLTable (s);
+        }
       }
+
       o.append(" ").append(s);
     }
   }
@@ -1408,7 +1445,13 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTable(preWhere.matcher(wheres).replaceFirst(""));
+    // 删除条件中字段上的表名
+    String whr = preWhere.matcher(wheres).replaceFirst("");
+    if (!getOption("UNFIX_TABLE", false)) {
+        whr = delSQLTable( whr );
+    }   whr = whr.replace(/**/ name + ".", "")
+                 .replace("`"+ name +"`.", "");
+
     return _db_.delete(tableName, /**/ whr, wparams.toArray(  ));
   }
 
@@ -1424,7 +1467,13 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    String whr = delSQLTable(preWhere.matcher(wheres).replaceFirst(""));
+    // 删除条件中字段上的表名
+    String whr = preWhere.matcher(wheres).replaceFirst("");
+    if (!getOption("UNFIX_TABLE", false)) {
+        whr = delSQLTable( whr );
+    }   whr = whr.replace(/**/ name + ".", "")
+                 .replace("`"+ name +"`.", "");
+
     return _db_.update(tableName, dat, whr, wparams.toArray(  ));
   }
 

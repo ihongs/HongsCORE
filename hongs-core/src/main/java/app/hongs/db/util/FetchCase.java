@@ -662,14 +662,14 @@ public class FetchCase
       }
       if (this.joinExpr != null && this.joinExpr.length() != 0)
       {
-        String s  =  this.joinExpr;
+        String s = this.joinExpr;
         if (fixField) {
           s = fixSQLField (s, tn, pn);
         } else
         if (fixTable) {
           s = fixSQLTable (s, tn, pn);
         }
-        b.append(" ON ").append(s);
+        b.append( " ON " ).append(s );
       }
 
       /**
@@ -693,7 +693,7 @@ public class FetchCase
     // 字段
     if (this.fields.length() != 0)
     {
-      String s = this.fields.toString().trim();
+      CharSequence s = this.fields.toString().trim();
 
       if (hasJoins) {
         if (fixField) {
@@ -704,7 +704,7 @@ public class FetchCase
         }
       } else {
         if (fixTable) {
-          s = delSQLTable (s);
+          s = clnSQLTable (s);
         }
       }
 
@@ -725,7 +725,7 @@ public class FetchCase
     // 条件
     if (this.wheres.length() != 0)
     {
-      String s = this.wheres.toString().trim();
+      CharSequence s = this.wheres.toString().trim();
 
       if (hasJoins) {
         if (fixField) {
@@ -736,7 +736,7 @@ public class FetchCase
         }
       } else {
         if (fixTable) {
-          s = delSQLTable (s);
+          s = clnSQLTable (s);
         }
       }
 
@@ -746,7 +746,7 @@ public class FetchCase
     // 分组
     if (this.groups.length() != 0)
     {
-      String s = this.groups.toString().trim();
+      CharSequence s = this.groups.toString().trim();
 
       if (hasJoins) {
         if (fixField) {
@@ -757,7 +757,7 @@ public class FetchCase
         }
       } else {
         if (fixTable) {
-          s = delSQLTable (s);
+          s = clnSQLTable (s);
         }
       }
 
@@ -776,7 +776,7 @@ public class FetchCase
     // 筛选
     if (this.havins.length() != 0)
     {
-      String s = this.havins.toString().trim();
+      CharSequence s = this.havins.toString().trim();
 
       if (hasJoins) {
         if (fixField) {
@@ -787,7 +787,7 @@ public class FetchCase
         }
       } else {
         if (fixTable) {
-          s = delSQLTable (s);
+          s = clnSQLTable (s);
         }
       }
 
@@ -797,7 +797,7 @@ public class FetchCase
     // 排序
     if (this.orders.length() != 0)
     {
-      String s = this.orders.toString().trim();
+      CharSequence s = this.orders.toString().trim();
 
       if (hasJoins) {
         if (fixField) {
@@ -808,7 +808,7 @@ public class FetchCase
         }
       } else {
         if (fixTable) {
-          s = delSQLTable (s);
+          s = clnSQLTable (s);
         }
       }
 
@@ -825,7 +825,7 @@ public class FetchCase
    * @param an
    * @return
    */
-  final String fixSQLAlias(CharSequence s, String an)
+  final CharSequence fixSQLAlias(CharSequence s, String an)
   {
       StringBuilder b = new StringBuilder(); // 新的 SQL
       StringBuilder p = new StringBuilder(); // 字段单元
@@ -882,7 +882,7 @@ public class FetchCase
           b.append(fixSQLAliaz(p, an));
       }
 
-      return b.toString();
+      return b;
   }
 
   /**
@@ -1027,11 +1027,11 @@ public class FetchCase
   }
 
   /**
-   * 清除SQL表名
+   * 清理SQL表名
    * @param s
    * @return
    */
-  final String delSQLTable(CharSequence s)
+  final String clnSQLTable(CharSequence s)
   {
       StringBuffer f = new  StringBuffer(s);
       StringBuffer b;
@@ -1050,6 +1050,21 @@ public class FetchCase
       f = m.appendTail(b);
 
       return f.toString();
+  }
+
+  /**
+   * 清除SQL表名
+   * @param s
+   * @return
+   */
+  final String clrSQLTable(CharSequence s)
+  {
+      if (!getOption("UNFIX_TABLE", false)) {
+             s = clnSQLTable(s);
+      }
+      String n = Pattern.quote( getName( ));
+      String p = "(^|[\\s\\(,])(`" + n + "`|" + n + ")\\." ;
+      return Pattern.compile(p).matcher(s).replaceAll("$1");
   }
 
   public int getStart() {
@@ -1446,13 +1461,10 @@ public class FetchCase
     }
 
     // 删除条件中字段上的表名
-    String whr = preWhere.matcher(wheres).replaceFirst("");
-    if (!getOption("UNFIX_TABLE", false)) {
-        whr = delSQLTable( whr );
-    }   whr = whr.replace(/**/ name + ".", "")
-                 .replace("`"+ name +"`.", "");
+    String where = preWhere.matcher( wheres ).replaceFirst( "" );
+           where = clrSQLTable(where );
 
-    return _db_.delete(tableName, /**/ whr, wparams.toArray(  ));
+    return _db_.delete(tableName, /**/ where, wparams.toArray());
   }
 
   /**
@@ -1468,13 +1480,10 @@ public class FetchCase
     }
 
     // 删除条件中字段上的表名
-    String whr = preWhere.matcher(wheres).replaceFirst("");
-    if (!getOption("UNFIX_TABLE", false)) {
-        whr = delSQLTable( whr );
-    }   whr = whr.replace(/**/ name + ".", "")
-                 .replace("`"+ name +"`.", "");
+    String where = preWhere.matcher( wheres ).replaceFirst( "" );
+           where = clrSQLTable(where );
 
-    return _db_.update(tableName, dat, whr, wparams.toArray(  ));
+    return _db_.update(tableName, dat, where, wparams.toArray());
   }
 
   /**

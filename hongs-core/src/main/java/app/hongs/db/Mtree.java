@@ -494,13 +494,19 @@ public class Mtree extends Model
     {
       if (this.snumKey != null)
       {
-        caze.orderBy(this.snumKey);
-      }
-      else if (this.cnumKey != null)
+        caze.orderBy("`"
+            + this.table.name
+            +"`.`"
+            + this.snumKey
+            + "`");
+      } else
+      if (this.cnumKey != null)
       {
         caze.orderBy("(CASE WHEN `"
-             + this.cnumKey +
-           "` > 0 THEN 1 END) DESC");
+            + this.table.name
+            + "`.`"
+            + this.cnumKey
+            + "` > 0 THEN 1 END) DESC");
       }
     }
   }

@@ -174,7 +174,7 @@ public class FetchCase
     this.vparams    = new ArrayList();
     this.options    = new  HashMap ();
     this.joinSet    = new LinkedHashSet();
-    this.joinType   =  0  ;
+    this.joinType   = NONE;
     this.joinExpr   = null;
     this.joinName   = null;
   }
@@ -215,8 +215,10 @@ public class FetchCase
     caze.joinName   = this.joinName;
 
     // 深度克隆关联列表
-    for ( FetchCase caxe : joinSet ) {
-        caze.joinSet.add( caxe.clone( ) );
+    for(FetchCase caxe : joinSet) {
+        FetchCase caoe = caxe.clone();
+        caoe.options   = opts ;
+        caze.joinSet.add(caoe);
     }
 
     return caze;
@@ -485,9 +487,10 @@ public class FetchCase
   {
     this.joinSet.add(caze);
     caze.options = options;
-    caze.joinType = INNER;
-    caze.joinExpr = null;
-    caze.joinName = null;
+    if (caze.joinType == NONE)
+    {
+        caze.joinType = INNER;
+    }
     return this;
   }
 

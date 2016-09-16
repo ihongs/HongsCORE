@@ -215,10 +215,8 @@ public class FetchCase
     caze.joinName   = this.joinName;
 
     // 深度克隆关联列表
-    for(FetchCase caxe : joinSet) {
-        FetchCase caoe = caxe.clone();
-        caoe.options   = opts ;
-        caze.joinSet.add(caoe);
+    for ( FetchCase caxe : joinSet ) {
+        caze.joinSet.add(caxe.clone(opts));
     }
 
     return caze;

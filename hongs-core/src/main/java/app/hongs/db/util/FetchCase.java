@@ -346,7 +346,7 @@ public class FetchCase
   public FetchCase havin(String where, Object... params)
   {
     this.havins.setLength(0);
-    this.wparams.clear(/**/);
+    this.vparams.clear(/**/);
     if ( where != null && where.length() != 0) {
         having(where,params);
     }
@@ -471,7 +471,7 @@ public class FetchCase
   /**
    * 关联已有的用例
    * 注意: 关联关系等记录在关联对象内部
-   * 请不要在不同 case 上 join 同一 case
+   * 请不要在不同的用例上重用关联的用例
    * 稍不注意就会致与后者的关联关系混乱
    * @param caze
    * @return join 前(左) 的用例
@@ -898,7 +898,7 @@ public class FetchCase
        * 然后排除掉纯字符串,保留字,别名,数字等
        *
        * 通过疑似字段的前后环境及偏移记录来判断, 符合以下规范:
-       * [TABLE.]FIELD[[ AS] ALIAS], FUNCTION(FIELS...)
+       * [TABLE.]FIELD[[ AS] ALIAS], FUNCTION(FIELDS...)
        *
        * 以下 i 为单元开始位置, j 为单元结束位置, k 为上一组单元结束位置
        * 单元包含结尾空白字符

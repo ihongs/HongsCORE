@@ -335,87 +335,6 @@ public class AssocMore {
     }
   }
 
-    /**
-     * 关联更新
-     *
-     * @param table  主表
-     * @param rows   要插入的数据
-     * @param keys   判断改变的键
-     * @param where  更新/删除范围
-     * @param params where 的参数
-     * @throws HongsException
-     */
-    public static void updateMore(
-        Table           table,
-        List<Map>       rows,
-        String[ ]       keys,
-        String          where,
-        Object...       params
-    )   throws HongsException
-    {
-        List<Object> params1 = Arrays.asList(params);
-        List<Object> params2;
-        Object[]     params3;
-
-        StringBuilder where2 = new StringBuilder(where);
-        String        where3;
-        for (String k : keys)
-        {
-            where2.append(" AND `").append(k).append("` = ?");
-        }
-        where3 = where2.toString( );
-
-        List ids = new ArrayList( );
-
-        // 状态键值, 2015/12/15
-        String rstat = table.getField( "state" );
-        String vstat = table.getState("default");
-
-        for (Map row : rows)
-        {
-            // 默认状态, 2015/12/15
-            if (rstat != null && vstat != null && !row.containsKey(rstat)) {
-                row.put( rstat , vstat );
-            }
-
-            params2 = new ArrayList(params1);
-            for (String k : keys )
-            {
-                params2.add(row.get(k) );
-            }
-            params3 = params2.toArray( );
-
-            String sql = "SELECT `" + table.primaryKey + "` FROM `" + table.tableName + "` WHERE " + where2;
-            Map<String, Object> one = table.db.fetchOne( sql , params3 );
-            if (!one.isEmpty())
-            {
-                // 有则更新
-                if (!row.containsKey(table.primaryKey) || "".equals(row.get(table.primaryKey)))
-                {
-                    row.put(table.primaryKey, one.get(table.primaryKey));
-                }
-                table.update(row, where3, params3);
-            }
-            else
-            {
-                // 没则插入
-                if (!row.containsKey(table.primaryKey) || "".equals(row.get(table.primaryKey)))
-                {
-                    row.put(table.primaryKey, Core.getUniqueId(/*SID*/));
-                }
-                table.insert(row);
-            }
-
-            ids.add(row.get(table.primaryKey));
-        }
-
-        // 删除多余
-        where2  = new StringBuilder(where);
-        where2.append(" AND `").append(table.primaryKey).append("` NOT IN (?)");
-        params2 = new ArrayList( params1 ); params2.add( ids );
-        table .delete(  where2.toString( ), params2.toArray());
-    }
-
   /**
    * 关联插入
    *
@@ -668,5 +587,86 @@ public class AssocMore {
       }
     }
   }
+
+    /**
+     * 关联更新
+     *
+     * @param table  主表
+     * @param rows   要插入的数据
+     * @param keys   判断改变的键
+     * @param where  更新/删除范围
+     * @param params where 的参数
+     * @throws HongsException
+     */
+    public static void updateMore(
+        Table           table,
+        List<Map>       rows,
+        String[ ]       keys,
+        String          where,
+        Object...       params
+    )   throws HongsException
+    {
+        List<Object> params1 = Arrays.asList(params);
+        List<Object> params2;
+        Object[]     params3;
+
+        StringBuilder where2 = new StringBuilder(where);
+        String        where3;
+        for (String k : keys)
+        {
+            where2.append(" AND `").append(k).append("` = ?");
+        }
+        where3 = where2.toString( );
+
+        List ids = new ArrayList( );
+
+        // 状态键值, 2015/12/15
+        String rstat = table.getField( "state" );
+        String vstat = table.getState("default");
+
+        for (Map row : rows)
+        {
+            // 默认状态, 2015/12/15
+            if (rstat != null && vstat != null && !row.containsKey(rstat)) {
+                row.put( rstat , vstat );
+            }
+
+            params2 = new ArrayList(params1);
+            for (String k : keys )
+            {
+                params2.add(row.get(k) );
+            }
+            params3 = params2.toArray( );
+
+            String sql = "SELECT `" + table.primaryKey + "` FROM `" + table.tableName + "` WHERE " + where2;
+            Map<String, Object> one = table.db.fetchOne( sql , params3 );
+            if (!one.isEmpty())
+            {
+                // 有则更新
+                if (!row.containsKey(table.primaryKey) || "".equals(row.get(table.primaryKey)))
+                {
+                    row.put(table.primaryKey, one.get(table.primaryKey));
+                }
+                table.update(row, where3, params3);
+            }
+            else
+            {
+                // 没则插入
+                if (!row.containsKey(table.primaryKey) || "".equals(row.get(table.primaryKey)))
+                {
+                    row.put(table.primaryKey, Core.getUniqueId(/*SID*/));
+                }
+                table.insert(row);
+            }
+
+            ids.add(row.get(table.primaryKey));
+        }
+
+        // 删除多余
+        where2  = new StringBuilder(where);
+        where2.append(" AND `").append(table.primaryKey).append("` NOT IN (?)");
+        params2 = new ArrayList( params1 ); params2.add( ids );
+        table .delete(  where2.toString( ), params2.toArray());
+    }
 
 }

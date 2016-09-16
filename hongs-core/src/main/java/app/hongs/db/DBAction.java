@@ -213,10 +213,10 @@ public class DBAction implements IAction, IActing {
     protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.loadIgnrFNF( this.mod );
+        lang.loadIgnrFNF(mod);
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
-        if (lang.getProperty(key) != null) {
+        if (! lang.containsKey(key)) {
                key = "fore." + opr + ".success" ;
             Mview view =  new Mview(ett);
             String tit = view.getTitle();

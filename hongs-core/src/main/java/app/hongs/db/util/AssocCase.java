@@ -108,52 +108,6 @@ public class AssocCase {
     }
 
     /**
-     * 从库表设置许可字段
-     * @param table
-     * @return
-     */
-    public AssocCase allow(Table table) {
-        Map af = allow(table, table, table.getAssocs(), null, null, new LinkedHashMap());
-
-        bufs.put(LISTABLE, af);
-        bufs.put(SORTABLE, af);
-        bufs.put(FILTABLE, af);
-
-        /**
-         * 此处未将 FINDTABLE 设为当前所有字段
-         * 模糊搜索比较特殊
-         * 文本类型字段才行
-         * 并不便于自动指派
-         */
-
-        return this;
-    }
-
-    /**
-     * 从模型设置许可字段
-     * @param model
-     * @return
-     */
-    public AssocCase allow(Model model) {
-        allow(model.table);
-
-        if (model.listable != null) {
-            allow(LISTABLE, model.listable);
-        }
-        if (model.sortable != null) {
-            allow(SORTABLE, model.sortable);
-        }
-        if (model.findable != null) {
-            allow(FINDABLE, model.findable);
-        }
-        if (model.filtable != null) {
-            allow(FILTABLE, model.filtable);
-        }
-
-        return this;
-    }
-
-    /**
      * 自定义许可字段
      * <pre>
      * fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
@@ -305,7 +259,7 @@ public class AssocCase {
     public FetchCase trans(Map rd) {
         FetchCase caze = that.clone(  );
         Map xd = new LinkedHashMap (rd);
-        AssocCase.this.parse( caze, xd );
+        AssocCase.this.parse(caze , xd);
         return caze;
     }
 
@@ -317,15 +271,15 @@ public class AssocCase {
      * @return
      */
     public Map<String, Object> saves(Map rd) {
-        Map<String, String> af = allow( that, SAVEABLE );
-        Map sd = new HashMap(  );
+        Map<String, String> af = allow(SAVEABLE);
+        Map sd = new HashMap();
 
         for(Map.Entry<String, String> et : af.entrySet()) {
-            String fn = et.getKey(  );
             String fc = et.getValue();
+            String fn = et.getKey(  );
             Object fv = rd.get ( fn );
             if (fv != null) {
-                sd.put( fc, fv );
+                sd.put(fc, fv);
             }
         }
 
@@ -346,8 +300,8 @@ public class AssocCase {
     private void field(FetchCase caze, Set<String> rb) {
         if (rb == null || rb.isEmpty()) return;
 
-        Map<String, String> af = allow(caze, LISTABLE);
-        Map<String, Set<String>> cf = new HashMap();
+        Map<String,     String > af = allow(LISTABLE);
+        Map<String, Set<String>> cf = new HashMap(  );
         Set<String> ic = new LinkedHashSet();
         Set<String> ec = new LinkedHashSet();
         Set<String> xc ;
@@ -417,7 +371,7 @@ public class AssocCase {
     private void order(FetchCase caze, Set<String> ob) {
         if (ob == null || ob.isEmpty()) return;
 
-        Map<String, String> af = allow(caze, SORTABLE);
+        Map<String, String> af = allow(SORTABLE);
 
         for(String fn : ob) {
             boolean desc = fn.startsWith("-");
@@ -438,7 +392,7 @@ public class AssocCase {
     private void query(FetchCase caze, Set<String> wd) {
         if (wd == null || wd.isEmpty()) return;
 
-        Map<String, String> af = allow(caze, FINDABLE);
+        Map<String, String> af = allow(FINDABLE);
         int  i = 0;
         int  l = wd.size( ) * af.size( );
         Object[]      ab = new Object[l];
@@ -470,7 +424,7 @@ public class AssocCase {
     private void where(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
-        Map<String, String> af = allow(caze, FILTABLE);
+        Map<String, String> af = allow(FILTABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
@@ -567,31 +521,32 @@ public class AssocCase {
         }
     }
 
-    private Map allow(FetchCase caze, String on) {
+    private Map allow(String on) {
         Map af  = bufs.get ( on );
         if (af != null ) {
             return af;
         }
 
-        af = allowCheck(caze, on);
+        af = allowCheck(on);
         bufs.put(on, af);
         return af;
     }
 
-    private Map allowCheck(FetchCase caze, String on) {
+    private Map allowCheck(String on) {
         Map af = opts.get(on);
 
         // 相对查询字段增加, 删减
         if (af != null && !LISTABLE.equals(on)) {
-            Map xf = allowDiffs(af, caze);
+            Map xf = allowDiffs(af);
             if (xf != null) {
                 return xf ;
             }
         }
 
+        // 搜索字段不能从列举继承
         if (af == null && !LISTABLE.equals(on)
                        && !FINDABLE.equals(on)) {
-            af =  opts.get(LISTABLE);
+            af =  allow(LISTABLE);
         }
         if (af == null) {
             af =  new  HashMap( );
@@ -604,7 +559,7 @@ public class AssocCase {
         }
     }
 
-    private Map allowDiffs(Map af, FetchCase caze) {
+    private Map allowDiffs(Map af) {
         Map ic = new LinkedHashMap();
         Set ec = new HashSet();
 
@@ -624,7 +579,7 @@ public class AssocCase {
             return null;
         }
 
-        Map xf = new LinkedHashMap(allow(caze, LISTABLE));
+        Map xf = new LinkedHashMap(allow(LISTABLE));
 
         for(Object o : xf.entrySet()) {
             Map.Entry e = (Map.Entry) o;
@@ -668,6 +623,55 @@ public class AssocCase {
         }
 
         return  al;
+    }
+
+    //** Model,Table 的快捷支持 **/
+
+    /**
+     * 从模型设置许可字段
+     * @param model
+     * @return
+     */
+    public AssocCase allow(Model model) {
+        allow(model.table);
+
+        if (model.listable != null) {
+            allow(LISTABLE, model.listable);
+        }
+        if (model.sortable != null) {
+            allow(SORTABLE, model.sortable);
+        }
+        if (model.findable != null) {
+            allow(FINDABLE, model.findable);
+        }
+        if (model.filtable != null) {
+            allow(FILTABLE, model.filtable);
+        }
+
+        return this;
+    }
+
+    /**
+     * 从库表设置许可字段
+     * @param table
+     * @return
+     */
+    public AssocCase allow(Table table) {
+        Map af = new LinkedHashMap();
+
+        /**
+         * 此处未将 FINDTABLE 设为当前所有字段
+         * 模糊搜索比较特殊
+         * 文本类型字段才行
+         * 并不便于自动指派
+         */
+        bufs.put(LISTABLE, af);
+        bufs.put(SORTABLE, af);
+        bufs.put(FILTABLE, af);
+
+        allow(table, table, table.getAssocs(), null, null, af);
+
+        return this;
     }
 
     private Map allow(Table table, Table assoc, Map ac, String tn, String qn, Map al) {

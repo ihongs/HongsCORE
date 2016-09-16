@@ -827,8 +827,8 @@ public class FetchCase
    */
   final String fixSQLAlias(CharSequence s, String an)
   {
-      StringBuilder b = new StringBuilder();
-      StringBuilder p = new StringBuilder();
+      StringBuilder b = new StringBuilder(); // 新的 SQL
+      StringBuilder p = new StringBuilder(); // 字段单元
       boolean quoteBegin = false;
       boolean fieldBegin = false;
       int     groupLevel = 0;

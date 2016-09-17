@@ -670,8 +670,9 @@ public class AssocCase {
         bufs.put(SORTABLE, af);
         bufs.put(FILTABLE, af);
 
-        String name = Synt.defoult(table.name, table.tableName);
-        allow(table, table, table.getAssocs(), name, null, af );
+        String name = Synt.defoult(
+               that.getName( ) , table.name , table.tableName);
+        allow(table, table, table.getAssocs(), name, null, af);
 
         return this;
     }

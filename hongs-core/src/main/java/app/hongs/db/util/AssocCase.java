@@ -670,32 +670,32 @@ public class AssocCase {
         bufs.put(SORTABLE, af);
         bufs.put(FILTABLE, af);
 
-        allow(table, table, table.getAssocs(), null, null, af);
+        String name = Synt.defoult(table.name, table.tableName);
+        allow(table, table, table.getAssocs(), name, null, af );
 
         return this;
     }
 
     private Map allow(Table table, Table assoc, Map ac, String tn, String qn, Map al) {
-        String  ax , tx  ;
-
         /**
          * 三个变量: 层级名(qn), 名前缀(ax), 表前缀(tx)
          * 第一层时, 无需加名前缀, 无关联表前缀也不用加
          * 第二层时, 需将表名作为名前缀, 下级需带层级名
          */
+
+        String  tx , ax  ;
+        tx = "`"+tn+"`." ;
+
         if (null ==  qn  ) {
             qn = "";
             ax = "";
-            tx = ".";
         } else
         if ("".equals(qn)) {
             qn = tn;
             ax = qn + ".";
-            tx = "`"+ tn +"`.";
         } else {
             qn = qn + "."+ tn ;
             ax = qn + ".";
-            tx = "`"+ tn +"`.";
         }
 
         try {

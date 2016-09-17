@@ -879,7 +879,7 @@ implements IEntity
     if (listable == null)
     {
       rb = rd.remove(Cnst.RB_KEY);
-      if ( rb != null)
+      if ( rb == null)
       {
         field(caze, Synt.asTerms(rb) );
       }
@@ -927,7 +927,9 @@ implements IEntity
      * @param rb
      */
     protected final void field(FetchCase caze, Set<String> rb) {
-        if (rb == null || rb.isEmpty()) return;
+        if (rb == null) {
+            rb =  new HashSet();
+        }
 
         Map<String, Object[]> af = new LinkedHashMap();             // 许可的字段
         Map<String, Set<String>>  cf  =  new HashMap();             // 通配符字段
@@ -1022,7 +1024,8 @@ implements IEntity
      * @param af    结果字段, 返回结构: { KEY: [COL, FetchCase]... }
      */
     protected final void allow(FetchCase caze, Map af) {
-        allow(caze, table, caze, table, table.getAssocs(), null, null, null, af);
+        String name = Synt.defoult( caze.getName ( ), table.name, table.tableName);
+        allow( caze, table, caze, table, table.getAssocs(), name, null, null, af );
     }
 
     /**
@@ -1076,7 +1079,7 @@ implements IEntity
                 f = tx +"`"+ f +"`"; // 字段完整名
                 l = az +/**/ l /**/; // 字段别名
                 k = ax +/**/ k /**/; // 外部键
-                al.put(k , new Object[] {f,l, caxe});
+                al.put(k , new Object[]{f, l, caxe});
             }
         }
         catch (HongsException ex) {

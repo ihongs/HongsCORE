@@ -235,7 +235,7 @@ public class Mtree extends Model
       }
       else
       {
-        caze.select("'1' AS `"+ cnumKey + "`");
+        caze.select("'1' AS `cnum`");
       }
       if (this.snumKey != null)
       {
@@ -243,7 +243,7 @@ public class Mtree extends Model
       }
       else
       {
-        caze.select("'0' AS `"+ snumKey + "`");
+        caze.select("'0' AS `snum`");
       }
     }
 

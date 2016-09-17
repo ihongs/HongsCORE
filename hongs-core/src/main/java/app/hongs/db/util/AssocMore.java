@@ -57,11 +57,11 @@ public class AssocMore {
     // 会导致不查主表字段
     // 故只要未指定主表字段即取全部
     if (!caze.hasField()) {
-        caze.select(".*");
+      caze.select("`"+ caze.getName() + "`.*");
     }
 
     List rows = table.db.fetchMore(caze);
-    fetchMore(table, caze,  rows , lnks);
+    fetchMore(table, caze , rows , lnks);
 
     return rows;
   }

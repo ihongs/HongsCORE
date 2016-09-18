@@ -1,6 +1,5 @@
 package app.hongs.db.util;
 
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.db.link.Link;
 import app.hongs.db.link.Loop;
@@ -19,25 +18,6 @@ import java.util.regex.Pattern;
 /**
  * 查询结构及操作
  *
- * <p>
- * 字段名前, 用"."表示属于当前表, 用":"表示属于上级表<br/>
- * 关联字段, 用"表.列"描述字段时, "."的两侧不得有空格<br/>
- * 本想自动识别字段的所属表(可部分区域), 但总是出问题<br/>
- * 好的规则胜过万行代码, 定此规矩, 多敲了一个符号而已<br/>
- * setOption 用于登记特定查询选项, 以备组织查询结构的过程中读取
- * </p>
- * <p>
- * [2015/11/24 00:28]<br/>
- * 已解决加表名前缀的问题, 且兼容上面旧的前缀规则;<br/>
- * 本类处理一般的查询尚可, 过于复杂的查询请勿使用;<br/>
- * 增加了忽略别名的前缀 !, 单纯统计行数须写 COUNT(!*) 或 COUNT(1)
- * </p>
- * <p>
- * [2016/09/16 13:31]<br/>
- * 可以用 UNFIX_TABLE 关闭 ".",":" 这种旧的替换法,<br/>
- * 也可用 UNFIX_FIELD, UNFIX_ALIAS 关闭新处理过程
- * </p>
- *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
  *  select       SELECT    field1, field2
@@ -48,21 +28,23 @@ import java.util.regex.Pattern;
  *  having       HAVING    expr1 AND expr2
  *  orderBy      ORDER BY  field1, field2
  *  limit        LIMIT     start, limit
- *  <b>注意: 以上所列方法为追加操作; 五字母方法(field,where,group,havin,order)为设置操作, 会清空原值</b>
+ *
+ * 注意:
+ * select,filter,groupBy,having,orderBy 为追加方法, 保留原设值;
+ * field ,where ,group  ,havin ,order   为设置方法, 将清空原值;
+ * 如果 CLEVER_MODE 开启, !打头的不加表别名, :的将加上级表别名;
  * </pre>
  *
  * <h3>系统已知 options:</h3>
  * <pre>
- * FETCH_OBJECT : boolean     获取对象; 作用域: FetchCase.oll,all,one
- * UNFIX_TABLE  : boolean     不要自动设置表名; 作用域: FetchCase
- * UNFIX_FIELD  : boolean     不要自动补全表名; 作用域: FetchCase
- * UNFIX_ALIAS  : boolean     不要自动补全别名; 作用域: FetchCase
- * ASSOC_MULTI  : boolean     多行关联(使用IN方式关联); 作用域: FetchMore
- * ASSOC_MERGE  : boolean     归并关联(仅限非多行关联); 作用域: FetchMore
+ * CLEVER_MODE  : boolean     聪明模式, 设为 true 则自动根据关联层级补全表名和别名
+ * OBJECT_MODE  : boolean     对象模式, 设为 true 则获取的结果为字段类型对应的对象
+ * ASSOC_MULTI  : boolean     对多关联(使用IN方式关联); 作用域: FetchMore
+ * ASSOC_MERGE  : boolean     归并关联(仅限非对多关联); 作用域: FetchMore
  * ASSOC_FILLS  : boolean     给缺失的关联补全空白数据; 作用域: FetchMore
- * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore.fetchMore
  * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: AssocMore.fetchMore
  * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: AssocMore.fetchMore
+ * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore.fetchMore
  * page         : int|String  分页页码; 作用域: FetchPage
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage
@@ -111,11 +93,15 @@ public class FetchCase
   public    static final byte   FULL  = 4;
   public    static final byte   CROSS = 5;
 
+  public    static final byte  STRICT = 2;
+  public    static final byte  CLEVER = 3;
+  public    static final byte  OBJECT = 4;
+
   /**
    * 字段可能的前导字符
    */
   static final Pattern preField = Pattern
-          .compile(   "^\\s*,\\s*"    , Pattern.CASE_INSENSITIVE);
+          .compile("^\\s*,\\s*" /***/ , Pattern.CASE_INSENSITIVE);
 
   /**
    * 条件可能的前导字符
@@ -127,19 +113,19 @@ public class FetchCase
    * 查找列名加关联层级名
    */
   static final Pattern sqlAlias = Pattern
-          .compile("(['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
+          .compile("([:!]|['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
 
   /**
-   * 通过约定标识确定字段
+   * 上级表或保留名标识符
    */
-  static final Pattern sqlTable = Pattern
-          .compile("(?<![`\\w])[\\.:!](\\*|\\w+|`.+?`)|'.+?'");
+  static final Pattern sqlPoint = Pattern
+          .compile( "'.*?'|[:!](?=`.*?`|\\w+|\\*)" );
 
   /**
    * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
    */
   static final Pattern sqlField = Pattern
-          .compile("('.+?'|`.+?`|\\w+|\\*|\\))\\s*");
+          .compile("('.*?'|`.*?`|\\w+|\\*|\\))\\s*");
 
   /**
    * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
@@ -158,18 +144,31 @@ public class FetchCase
   //** 构造 **/
 
   /**
-   * 构建表结构对象
+   * 标准构造
    */
   public FetchCase()
   {
-    this.tableName  = null;
+    this ((byte) 0 );
+  }
+
+  /**
+   * 高级构造
+   * mode 可选常量:
+   * OBJECT 对象模式, 获取的结果为字段类型对应的对象
+   * CLEVER 智能模式, 自动根据关联层级补全表名和别名
+   * STRICT 严格模式, 与智能模式相反, 但拼接速度较快
+   * @param mode 2 STRICT, 3 CLEVER, 4 OBJECT
+   */
+  public FetchCase(byte mode)
+  {
     this.name       = null;
+    this.tableName  = null;
     this.fields     = new StringBuilder();
     this.wheres     = new StringBuilder();
     this.groups     = new StringBuilder();
     this.havins     = new StringBuilder();
     this.orders     = new StringBuilder();
-    this.limits     = new  int [ 0 ] ;
+    this.limits     = new  int  [ 0 ];
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
     this.options    = new  HashMap ();
@@ -177,49 +176,52 @@ public class FetchCase
     this.joinType   = NONE;
     this.joinExpr   = null;
     this.joinName   = null;
+
+    if (4 == (4 & mode)) {
+      this.options.put("OBJECT_MODE", true);
+    }
+    if (3 == (3 & mode)) {
+      this.options.put("CLEVER_MODE", true);
+    } else
+    if (2 == (2 & mode)) {
+      this.options.put("CLEVER_MODE",false);
+    }
   }
 
   /**
-   * 克隆
-   * @return 新实例
+   * 深度构造
+   * @param caze 源用例
+   * @param opts 新选项
+   * @param flat 浅拷贝
    */
-  @Override
-  public  FetchCase clone()
+  protected FetchCase(FetchCase caze, Map opts, boolean flat)
   {
-    try {
-        return this.clone(new HashMap(this.options));
+    if (caze == null) {
+      throw new NullPointerException("Param caze can not be null");
     }
-    catch (CloneNotSupportedException ex) {
-        throw  new  HongsError.Common(ex);
-    }
-  }
-  private FetchCase clone(Map opts)
-    throws CloneNotSupportedException
-  {
-    FetchCase caze  = (FetchCase) super.clone();
-
-    caze.tableName  = this.tableName;
-    caze.name       = this.name;
-    caze.fields     = new StringBuilder(this.fields);
-    caze.wheres     = new StringBuilder(this.wheres);
-    caze.groups     = new StringBuilder(this.groups);
-    caze.havins     = new StringBuilder(this.havins);
-    caze.orders     = new StringBuilder(this.orders);
-    caze.limits     = this.limits.clone();
-    caze.wparams    = new ArrayList(this.wparams);
-    caze.vparams    = new ArrayList(this.vparams);
-    caze.options    = opts;
-    caze.joinSet    = new LinkedHashSet();
-    caze.joinType   = this.joinType;
-    caze.joinExpr   = this.joinExpr;
-    caze.joinName   = this.joinName;
-
-    // 深度克隆关联列表
-    for ( FetchCase caxe : joinSet ) {
-        caze.joinSet.add(caxe.clone(opts));
+    if (opts == null) {
+      throw new NullPointerException("Param opts can not be null");
     }
 
-    return caze;
+    this.name       = caze.name;
+    this.tableName  = caze.tableName;
+    this.fields     = new StringBuilder(caze.fields);
+    this.wheres     = new StringBuilder(caze.wheres);
+    this.groups     = new StringBuilder(caze.groups);
+    this.havins     = new StringBuilder(caze.havins);
+    this.orders     = new StringBuilder(caze.orders);
+    this.limits     = caze.limits.clone();
+    this.wparams    = new ArrayList(caze.wparams);
+    this.vparams    = new ArrayList(caze.vparams);
+    this.options    = opts;
+    this.joinSet    = new LinkedHashSet();
+    this.joinType   = caze.joinType;
+    this.joinExpr   = caze.joinExpr;
+    this.joinName   = caze.joinName;
+
+    if ( ! flat ) for ( FetchCase caxe : caze.joinSet ) {
+      this.joinSet.add(new FetchCase(caxe, opts, flat));
+    }
   }
 
   //** 查询 **/
@@ -478,6 +480,7 @@ public class FetchCase
    * 注意: 关联关系等记录在关联对象内部
    * 请避免在不同的用例上重用关联的用例
    * 稍不注意就会致与后者的关联关系混乱
+   * 可以使用 clone/copy 进行深或浅克隆
    * @param caze
    * @return join 前(左) 的用例
    */
@@ -488,6 +491,10 @@ public class FetchCase
     if (caze.joinType == NONE)
     {
         caze.joinType = INNER;
+    }
+    if (caze.joinName == null)
+    {
+        caze.joinName =  ""  ;
     }
     return this;
   }
@@ -518,7 +525,7 @@ public class FetchCase
    * 查询字段前缀
    * 比如 select("fn1,fn2").in("foo") 得到 `foo.fn1`,`foo.fn2`
    * 查询结果会按 . 自动拆解为层级结构, 如 foo={fn1=v1,fn2=v2}
-   * 但当选项 UNFIX_ALIAS 为 true 时此设置将被忽略
+   * 但当选项 CLEVER_MODE 为 true 时才有效
    * @param name
    * @return
    */
@@ -565,7 +572,7 @@ public class FetchCase
     else
     {
       sql.append(" `" )
-         .append(name == null || name.isEmpty() ? tableName : name)
+         .append(name != null && name.length() != 0 ? name : tableName)
          .append("`.*");
     }
 
@@ -627,9 +634,7 @@ public class FetchCase
     }
 
     boolean hasJoins = pn != null || !joinSet.isEmpty(); // 有关联表
-    boolean fixTable = !getOption("UNFIX_TABLE", false); // 补全表名
-    boolean fixField = !getOption("UNFIX_FIELD", false); // 补全表名
-    boolean fixAlias = !getOption("UNFIX_ALIAS", false); // 补全别名
+    boolean fixField = getOption("CLEVER_MODE", false ); // 补全语句
 
     // 表名
     String tn;
@@ -662,14 +667,11 @@ public class FetchCase
       }
       if (this.joinExpr != null && this.joinExpr.length() != 0)
       {
-        String s = this.joinExpr;
+        CharSequence s = this.joinExpr;
         if (fixField) {
-          s = fixSQLField (s, tn, pn);
-        } else
-        if (fixTable) {
-          s = fixSQLTable (s, tn, pn);
+          s = fixSQLField( s, tn, pn );
         }
-        b.append( " ON " ).append(s );
+        b.append( " ON " ).append( s );
       }
 
       /**
@@ -695,27 +697,21 @@ public class FetchCase
     {
       CharSequence s = this.fields.toString().trim();
 
-      if (hasJoins) {
-        if (fixField) {
-          s = fixSQLField (s, tn, pn);
+      // 为关联表的查询列添加层级名
+      if (fixField && null != joinName) {
+        if ( 0 < joinName.length(  )  ) {
+          s  = fixSQLAlias(s, joinName);
         } else
-        if (fixTable) {
-          s = fixSQLTable (s, tn, pn);
-        }
-      } else {
-        if (fixTable) {
-          s = clnSQLTable (s);
+        if ( 0 < qn.length(  )  ) {
+          s  = fixSQLAlias(s, qn);
         }
       }
 
-      // Add in 2016/4/15
-      // 为关联表的查询列添加层级名
-      if (fixAlias && null != joinName ) {
-        if (!   "".equals (   joinName)) {
-          s = fixSQLAlias (s, joinName );
-        } else
-        if (!   "".equals (   qn)) {
-          s = fixSQLAlias (s, qn );
+      if (fixField) {
+        if (hasJoins) {
+          s  = fixSQLField(s, tn, pn);
+        } else {
+          s  = fixSQLPoint(s, "", pn);
         }
       }
 
@@ -727,16 +723,11 @@ public class FetchCase
     {
       CharSequence s = this.wheres.toString().trim();
 
-      if (hasJoins) {
-        if (fixField) {
-          s = fixSQLField (s, tn, pn);
-        } else
-        if (fixTable) {
-          s = fixSQLTable (s, tn, pn);
-        }
-      } else {
-        if (fixTable) {
-          s = clnSQLTable (s);
+      if (fixField) {
+        if (hasJoins) {
+          s  = fixSQLField(s, tn, pn);
+        } else {
+          s  = fixSQLPoint(s, "", pn);
         }
       }
 
@@ -748,29 +739,15 @@ public class FetchCase
     {
       CharSequence s = this.groups.toString().trim();
 
-      if (hasJoins) {
-        if (fixField) {
-          s = fixSQLField (s, tn, pn);
-        } else
-        if (fixTable) {
-          s = fixSQLTable (s, tn, pn);
-        }
-      } else {
-        if (fixTable) {
-          s = clnSQLTable (s);
+      if (fixField) {
+        if (hasJoins) {
+          s  = fixSQLField(s, tn, pn);
+        } else {
+          s  = fixSQLPoint(s, "", pn);
         }
       }
 
       g.append(" ").append(s);
-    }
-
-    // 下级
-    for  (FetchCase caze : this.joinSet)
-    {
-      if (caze.joinType != 0)
-      {
-        caze.getSQLDeep(t, f, w, g, h, o, tn, qn);
-      }
     }
 
     // 筛选
@@ -778,16 +755,11 @@ public class FetchCase
     {
       CharSequence s = this.havins.toString().trim();
 
-      if (hasJoins) {
-        if (fixField) {
-          s = fixSQLField (s, tn, pn);
-        } else
-        if (fixTable) {
-          s = fixSQLTable (s, tn, pn);
-        }
-      } else {
-        if (fixTable) {
-          s = clnSQLTable (s);
+      if (fixField) {
+        if (hasJoins) {
+          s  = fixSQLField(s, tn, pn);
+        } else {
+          s  = fixSQLPoint(s, "", pn);
         }
       }
 
@@ -799,20 +771,24 @@ public class FetchCase
     {
       CharSequence s = this.orders.toString().trim();
 
-      if (hasJoins) {
-        if (fixField) {
-          s = fixSQLField (s, tn, pn);
-        } else
-        if (fixTable) {
-          s = fixSQLTable (s, tn, pn);
-        }
-      } else {
-        if (fixTable) {
-          s = clnSQLTable (s);
+      if (fixField) {
+        if (hasJoins) {
+          s  = fixSQLField(s, tn, pn);
+        } else {
+          s  = fixSQLPoint(s, "", pn);
         }
       }
 
       o.append(" ").append(s);
+    }
+
+    // 下级
+    for  (FetchCase caze : this.joinSet)
+    {
+      if (caze.joinType != 0)
+      {
+        caze.getSQLDeep(t, f, w, g, h, o, tn, qn);
+      }
     }
   }
 
@@ -825,7 +801,7 @@ public class FetchCase
    * @param an
    * @return
    */
-  final CharSequence fixSQLAlias(CharSequence s, String an)
+  protected static CharSequence fixSQLAlias(CharSequence s, String an)
   {
       StringBuilder b = new StringBuilder(); // 新的 SQL
       StringBuilder p = new StringBuilder(); // 字段单元
@@ -891,12 +867,16 @@ public class FetchCase
    * @param an
    * @return
    */
-  final CharSequence fixSQLAliaz(CharSequence s, String an)
+  private static CharSequence fixSQLAliaz(CharSequence s, String an)
   {
       Matcher m = sqlAlias.matcher(s);
-      String  n;
+      String  n ;
 
       if (m.find()) {
+              n = m.group(1);
+          if ( ":".equals(n) || "!".equals(n)) {
+              return s;
+          }
               n = m.group(2);
           if (n == null) {
               n = m.group(3);
@@ -920,12 +900,13 @@ public class FetchCase
    * @param pn
    * @return
    */
-  final String fixSQLField(CharSequence s, String tn, String pn)
+  protected static CharSequence fixSQLField(CharSequence s, String tn, String pn)
   {
+      StringBuffer b = new StringBuffer( );
       StringBuffer f = new StringBuffer(s);
-      StringBuffer b;
-      Matcher      m;
-      String x  ,  z;
+      Matcher      m = sqlField.matcher(f);
+      String       z = "`"+ tn +"`.$0";
+      String       x ;
 
       /**
        * 为字段名前添加表别名
@@ -941,44 +922,51 @@ public class FetchCase
        * 单元包含结尾空白字符
        */
 
-      z = "`"+tn+"`.$0";
-      m = sqlField.matcher(f);
-      b = new StringBuffer( );
-      int i , j, k = -1, l = f.length();
+      int i;
+      int j;
+      int k = -1;
+      int l = f.length();
+
       while ( m.find( )) {
-//        System.out.println(m.group());
-          // 以 .|(|{ 结尾的要跳过
+          // 以 .|( 结尾的要跳过
           j = m.end ( );
           if ( j <  l ) {
-              char r = f.charAt(j/**/);
+              char r = f.charAt(j - 0);
               if ( r == '.' || r == '(' || r == '{' ) {
                    k = j;
                   continue;
               }
           }
-          // 以 .|:|! 开头的要跳过
+
+          // 以 .|: 开头的要跳过
           i = m.start();
           if ( i >  0 ) {
               char r = f.charAt(i - 1);
               if ( r == '.' || r == ':' || r == '!' ) {
                    k = j;
-                  continue;
+                   continue;
               }
           }
+
           x = m.group (1);
           if (x.charAt(0) == '\'') {
               // 字符串后不跟字段
               k  = j;
           } else
-          if (x.charAt(0) == '*' && k == i) {
-              // 跳过乘号且不偏移
+          if (x.charAt(0) == ')' ) {
+              // 括号之后不跟字段
+              k  = j;
           } else
-          if (sqlFieldBeforeWords.matcher(x).matches()) {
-              // 跳过保留字不偏移
+          if (x.charAt(0) == '*'
+          && (k == i || f.charAt(j) == ')')) {
+              // 跳过乘号且不偏移,  COUNT(*) 也要跳过
           } else
           if (sqlFieldBeforeAlias.matcher(x).matches()) {
               // 跳过别名和数字等
               k  = j;
+          } else
+          if (sqlFieldBeforeWords.matcher(x).matches()) {
+              // 跳过保留字不偏移
           } else
           if (k == i) {
               // 紧挨前字段要跳过
@@ -986,70 +974,29 @@ public class FetchCase
           } else {
               // 为字段添加表前缀
               k  = j;
-              m.appendReplacement(b,z);
+              m.appendReplacement(b, z);
           }
       }
       f = m.appendTail(b);
 
-      // 兼容傻瓜模式
-      return fixSQLTable( f, tn , pn );
+      return fixSQLPoint( f , "" , pn );
   }
 
-  /**
-   * 替换SQL表名(傻瓜模式, 快)
-   * @param s
-   * @param tn
-   * @param pn
-   * @return
-   */
-  final String fixSQLTable(CharSequence s, String tn, String pn)
-  {
+  private static CharSequence fixSQLPoint(CharSequence s, String sn, String pn) {
+      StringBuffer b = new StringBuffer( );
       StringBuffer f = new StringBuffer(s);
-      StringBuffer b;
-      Matcher      m;
-      String x, y, z;
+      Matcher      m = sqlPoint.matcher(f);
+      pn  = "`" + pn + "`.";
 
-      x = "$1";
-      y = "`"+pn+"`.$1";
-      z = "`"+tn+"`.$1";
-      m = sqlTable.matcher(f);
-      b = new StringBuffer();
-      while ( m.find( )) {
-          switch (f.charAt(m.start())) {
-              case '.' : m.appendReplacement(b, z); break;
-              case ':' : m.appendReplacement(b, y); break;
-              case '!' : m.appendReplacement(b, x); break;
+      while (m.find()) {
+          switch (m.group(0).charAt(0)) {
+              case ':': m.appendReplacement(b, pn); break;
+              case '!': m.appendReplacement(b, sn); break;
           }
       }
       f = m.appendTail(b);
 
-      return f.toString();
-  }
-
-  /**
-   * 清理SQL表名
-   * @param s
-   * @return
-   */
-  final String clnSQLTable(CharSequence s)
-  {
-      StringBuffer f = new  StringBuffer(s);
-      StringBuffer b;
-      Matcher      m;
-      String       x;
-
-      x = "$1";
-      m = sqlTable.matcher(f);
-      b = new StringBuffer();
-      while ( m.find( )) {
-          switch (f.charAt(m.start())) {
-              case '\'': /* Nothing todo for str */ break;
-              default  : m.appendReplacement(b, x); break;
-          }
-      }
-      f = m.appendTail(b);
-
-      return f.toString();
+      return f;
   }
 
   /**
@@ -1057,13 +1004,13 @@ public class FetchCase
    * @param s
    * @return
    */
-  final String clrSQLTable(CharSequence s)
+  protected final String delSQLTable(CharSequence s)
   {
-      if (!getOption("UNFIX_TABLE", false)) {
-             s = clnSQLTable(s);
+      if (getOption("CLEVER_MODE", false)) {
+             s = fixSQLPoint(s, "", "NaT");
       }
-      String n = Pattern.quote( getName( ));
-      String p = "(^|[\\s\\(,])(`" + n + "`|" + n + ")\\." ;
+      String n = Pattern.quote( getName());
+      String p = "('.*?')|(?:`"+ n +"`|"+ n +")\\s*\\.\\s*";
       return Pattern.compile(p).matcher(s).replaceAll("$1");
   }
 
@@ -1129,27 +1076,6 @@ public class FetchCase
     }
   }
 
-  /**
-   * 转换为字符串
-   * @return 合并了SQL和参数
-   */
-  @Override
-  public String toString()
-  {
-    StringBuilder sb = this.getSQLStrs();
-    List  paramz  = this.getParamsList();
-    try
-    {
-      Link.checkSQLParams(sb, paramz);
-      Link.mergeSQLParams(sb, paramz);
-    }
-    catch (HongsException ex)
-    {
-      throw  new  Error ( ex);
-    }
-    return sb.toString();
-  }
-
   //** 选项 **/
 
   /**
@@ -1206,6 +1132,8 @@ public class FetchCase
     return this.options.containsKey(key);
   }
 
+  //** 递进 **/
+
   /**
    * 全部选项
    * @return 全部选项
@@ -1214,8 +1142,6 @@ public class FetchCase
   {
     return this.options;
   }
-
-  //** 递进 **/
 
   /**
    * 全部关联
@@ -1300,7 +1226,7 @@ public class FetchCase
    */
   public String getName()
   {
-    return this.name;
+    return name != null && name.length() != 0 ? name : tableName;
   }
 
   //** 探查 **/
@@ -1350,6 +1276,50 @@ public class FetchCase
     return this.orders.length() > 0;
   }
 
+  //** 对象 **/
+
+  /**
+   * 转换为字符串
+   * @return 合并了SQL/参数
+   */
+  @Override
+  public String toString()
+  {
+    StringBuilder sb = this.getSQLStrs();
+    List  paramz  = this.getParamsList();
+    try
+    {
+      Link.checkSQLParams(sb, paramz);
+      Link.mergeSQLParams(sb, paramz);
+    }
+    catch (HongsException ex)
+    {
+      throw  new  Error ( ex);
+    }
+    return sb.toString();
+  }
+
+  /**
+   * 深度克隆用例
+   * 关联用例一并克隆
+   * @return 全新的用例对象
+   */
+  @Override
+  public FetchCase clone()
+  {
+    return new FetchCase(this, new HashMap(this.options), false);
+  }
+
+  /**
+   * 浅层拷贝用例
+   * 关联用例全部抛弃
+   * @return 全新的用例对象
+   */
+  public FetchCase copy( )
+  {
+    return new FetchCase(this, new HashMap(this.options), true );
+  }
+
   //** 串联 **/
 
   private Link _db_ = null;
@@ -1378,10 +1348,10 @@ public class FetchCase
     boolean on_option_mode = false;
     boolean in_obejct_mode = false;
     try {
-      if (getOptions().containsKey("FETCH_OBJECT")) {
+      if (hasOption("OBJECT_MODE")) {
         on_option_mode = true;
         in_obejct_mode = _db_.IN_OBJECT_MODE;
-        _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
+        _db_.IN_OBJECT_MODE = getOption("OBJECT_MODE", false);
       }
 
       return _db_.fetchOne(getSQL(), getParams());
@@ -1406,10 +1376,10 @@ public class FetchCase
     boolean on_option_mode = false;
     boolean in_obejct_mode = false;
     try {
-      if (getOptions().containsKey("FETCH_OBJECT")) {
+      if (hasOption("OBJECT_MODE")) {
         on_option_mode = true;
         in_obejct_mode = _db_.IN_OBJECT_MODE;
-        _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
+        _db_.IN_OBJECT_MODE = getOption("OBJECT_MODE", false);
       }
 
       return _db_.fetch(getSQL(), getStart(), getLimit(), getParams());
@@ -1434,10 +1404,10 @@ public class FetchCase
     boolean on_option_mode = false;
     boolean in_obejct_mode = false;
     try {
-      if (getOptions().containsKey("FETCH_OBJECT")) {
+      if (hasOption("OBJECT_MODE")) {
         on_option_mode = true;
         in_obejct_mode = _db_.IN_OBJECT_MODE;
-        _db_.IN_OBJECT_MODE = getOption("FETCH_OBJECT", false);
+        _db_.IN_OBJECT_MODE = getOption("OBJECT_MODE", false);
       }
 
       return _db_.query(getSQL(), getStart(), getLimit(), getParams());
@@ -1462,7 +1432,7 @@ public class FetchCase
 
     // 删除条件中字段上的表名
     String where = preWhere.matcher( wheres ).replaceFirst( "" );
-           where = clrSQLTable(where );
+           where = delSQLTable(where );
 
     return _db_.delete(tableName, /**/ where, wparams.toArray());
   }
@@ -1481,7 +1451,7 @@ public class FetchCase
 
     // 删除条件中字段上的表名
     String where = preWhere.matcher( wheres ).replaceFirst( "" );
-           where = clrSQLTable(where );
+           where = delSQLTable(where );
 
     return _db_.update(tableName, dat, where, wparams.toArray());
   }

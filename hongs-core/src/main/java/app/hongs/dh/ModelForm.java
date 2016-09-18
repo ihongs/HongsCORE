@@ -46,8 +46,8 @@ public class ModelForm {
 
     public ModelForm(Map fields, Map ftypes, Map dtypes) {
         setFields(fields);
-        setFtypes(fields);
-        setDtypes(fields);
+        setFtypes(ftypes);
+        setDtypes(dtypes);
     }
 
     public ModelForm(Map fields) {

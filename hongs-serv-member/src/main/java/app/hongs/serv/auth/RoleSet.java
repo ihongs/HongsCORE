@@ -59,9 +59,9 @@ public class RoleSet extends CoreSerial implements Set<String> {
 
         tb = db.getTable("user");
         fc = new FetchCase( )
-                .select (".rtime, .state")
-                .filter (".id = ?",userId)
-                .from   (tb.tableName, tb.name);
+                .from   (tb.tableName, tb.name)
+                .select (tb.name+".rtime, "+tb.name+".state")
+                .filter (tb.name+".id = ?" , userId);
         rs = db.fetchLess(fc);
         rt = Synt.declare(rs.get( "rtime" ), 0);
         st = Synt.declare(rs.get( "state" ), 0);
@@ -77,26 +77,24 @@ public class RoleSet extends CoreSerial implements Set<String> {
         tb = db.getTable("dept");
         td = db.getTable("user_dept");
         fc = new FetchCase( )
-                .select (".rtime, .state")
-                .orderBy(".rtime DESC")
-                .from   (tb.tableName, tb.name);
+                .from   (tb.tableName, tb.name)
+                .select (tb.name+".rtime, "+tb.name+".state")
+                .orderBy(tb.name+".rtime DESC");
               fc.join   (td.tableName, td.name)
-                .by     (FetchCase.INNER )
-                .on     (".dept_id = :id")
-                .filter (".user_id = ?",userId);
+                .on     (td.name+".dept_id = "+tb.name+".id")
+                .filter (td.name+".user_id = ?", userId);
         rs = db.fetchLess(fc);
         rt = Synt.declare(rs.get( "rtime" ), 0);
         st = Synt.declare(rs.get( "state" ), 0);
         if (rs.isEmpty()) { // 没有部门
-            return;     
+            return;
         }
         if (st <=   0 ) { // 删除或锁定
             rtime = 0 ;
             return;
         }
         if (rt > rtime) { // 从库表加载
-            load(f, 1);
-            return;
+            load(f, 1 );
         }
     }
 
@@ -116,9 +114,9 @@ public class RoleSet extends CoreSerial implements Set<String> {
 
         tb = db.getTable("user_role");
         fc = new FetchCase( )
-                .select (".role")
                 .from   (tb.tableName, tb.name)
-                .filter (".user_id = ?",userId);
+                .select (tb.name+".role")
+                .filter (tb.name+".user_id = ?",userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get("role"));
@@ -129,12 +127,11 @@ public class RoleSet extends CoreSerial implements Set<String> {
         tb = db.getTable("dept_role");
         td = db.getTable("user_dept");
         fc = new FetchCase( )
-                .select (".role")
-                .from   (tb.tableName, tb.name);
+                .from   (tb.tableName, tb.name)
+                .select (tb.name+".role");
               fc.join   (td.tableName, td.name)
-                .by     (FetchCase.INNER )
-                .on     (".dept_id = :dept_id")
-                .filter (".user_id = ?",userId);
+                .on     (td.name+".dept_id = "+tb.name+".dept_id")
+                .filter (td.name+".user_id = ?", userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get( "role" ));

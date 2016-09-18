@@ -36,48 +36,48 @@ public class TestDB {
 
     @Test
     public void testFetchCase() throws HongsException {
-        FetchCase caze = new FetchCase();
+        FetchCase caze = new FetchCase(FetchCase.CLEVER);
         FetchCase copy ;
         String    vali ;
 
         caze.from   ("table1", "t1")
-            .select ("f1,`f2`,.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`")
-            .select ("CONCAT(f1, `f2`, .f3, t1.f4, tf.`f5`, 'abc') AS c3")
-            .select ("COUNT(!*) AS c1, COUNT(DISTINCT *) c2 ")
-            .select ("'abc' AS x1, 'def' x2")
-            .join   ("table2", "t2")
-            .on     ("`t1_id` = :`id`")
-            .in     ("") // 追加别名
-            .select ("CONCAT(f1, f2, f3) AS v0, 'abc.def 0.15 .xy' AS x0")
-            .select ("(1.2 + f1) v1, 3.4 * f2 AS `v2`, 5.6e10 / .f3 AS !`v3`")
-            .filter ("f4 = ? AND .f5 IN (?) AND `f6` like ?", 123, 456, "abc")
-            .orderBy("`f1`, f2 DESC, !v1 ASC, !`v2` DESC");
-        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS `t2.v0`, 'abc.def 0.15 .xy' AS `t2.x0`, (1.2 + `t2`.f1) `t2.v1`, 3.4 * `t2`.f2 AS `t2.v2`, 5.6e10 / `t2`.f3 AS `t2.v3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
+            .select ("f1, `f2` , t1.f3, t1.`f4` , `t1`.f5, `t1`.`f6`")
+            .select ("CONCAT(f1, `f2`, t1.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT f1)) AS c1")
+            .select ("'xyz' AS a1, 45.6 AS !a2, 78.9 AS !`a3`")
+            .filter ("f1 = ? AND f2 IN (?) AND `f3` LIKE ?", 123, 456, "abc")
+            .orderBy("`f1`, f2 DESC, !a2 ASC, !`a3` DESC")
+            .join   ("table2", "t2").on("`t1_id` = :`id`")
+            .select ("f1, `f2` , t2.f3, t2.`f4` , `t2`.f5, `t2`.`f6`")
+            .select ("CONCAT(f1, `f2`, t2.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT f1)) AS c1")
+            .select ("'xyz' AS a1, 45.6 AS !a2, 78.9 AS !`a3`")
+            .filter ("f1 = ? AND f2 IN (?) AND `f3` LIKE ?", 123, 456, "abc")
+            .orderBy("`f1`, f2 DESC, !a2 ASC, !`a3` DESC");
+        vali = "SELECT `t1`.f1, `t1`.`f2` , t1.f3, t1.`f4` , `t1`.f5, `t1`.`f6`, CONCAT(`t1`.f1, `t1`.`f2`, t1.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t1`.f1)) AS c1, 'xyz' AS a1, 45.6 AS a2, 78.9 AS `a3` , `t2`.`f1` AS `t2.f1`, `t2`.`f2` AS `t2.f2` , t2.`f3` AS `t2.f3`, t2.`f4` AS `t2.f4` , `t2`.`f5` AS `t2.f5`, `t2`.`f6` AS `t2.f6`, CONCAT(`t2`.f1, `t2`.`f2`, t2.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t2`.f1)) AS `t2.c1`, 'xyz' AS `t2.a1`, 45.6 AS a2, 78.9 AS `a3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t1`.f1 = 123 AND `t1`.f2 IN (456) AND `t1`.`f3` LIKE 'abc' AND `t2`.f1 = 123 AND `t2`.f2 IN (456) AND `t2`.`f3` LIKE 'abc' ORDER BY `t1`.`f1`, `t1`.f2 DESC, a2 ASC, `a3` DESC , `t2`.`f1`, `t2`.f2 DESC, a2 ASC, `a3` DESC";
         System.out.println(vali);
         System.out.println(caze.toString());
         assertEquals(vali, caze.toString());
 
         copy = caze.clone();
         copy.gotJoin("t2" ).in(null);
-        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 , CONCAT(`t2`.f1, `t2`.f2, `t2`.f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + `t2`.f1) v1, 3.4 * `t2`.f2 AS `v2`, 5.6e10 / `t2`.f3 AS `v3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t2`.f4 = 123 AND `t2`.f5 IN (456) AND `t2`.`f6` like 'abc' ORDER BY `t2`.`f1`, `t2`.f2 DESC, v1 ASC, `v2` DESC";
+        vali = "SELECT `t1`.f1, `t1`.`f2` , t1.f3, t1.`f4` , `t1`.f5, `t1`.`f6`, CONCAT(`t1`.f1, `t1`.`f2`, t1.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t1`.f1)) AS c1, 'xyz' AS a1, 45.6 AS a2, 78.9 AS `a3` , `t2`.f1, `t2`.`f2` , t2.f3, t2.`f4` , `t2`.f5, `t2`.`f6`, CONCAT(`t2`.f1, `t2`.`f2`, t2.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t2`.f1)) AS c1, 'xyz' AS a1, 45.6 AS a2, 78.9 AS `a3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t1`.f1 = 123 AND `t1`.f2 IN (456) AND `t1`.`f3` LIKE 'abc' AND `t2`.f1 = 123 AND `t2`.f2 IN (456) AND `t2`.`f3` LIKE 'abc' ORDER BY `t1`.`f1`, `t1`.f2 DESC, a2 ASC, `a3` DESC , `t2`.`f1`, `t2`.f2 DESC, a2 ASC, `a3` DESC";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
         copy = caze.clone();
         copy.gotJoin("t2" ).by(FetchCase.NONE);
-        vali = "SELECT `t1`.f1,`t1`.`f2`,`t1`.`f3` , t1.f4, t1.`f5`, `t1`.f6, `t1`.`f7`, CONCAT(`t1`.f1, `t1`.`f2`, `t1`.f3, t1.f4, tf.`f5`, 'abc') AS c3, COUNT(*) AS c1, COUNT(DISTINCT `t1`.*) c2 , 'abc' AS x1, 'def' x2 FROM `table1` AS `t1`";
+        vali = "SELECT `t1`.f1, `t1`.`f2` , t1.f3, t1.`f4` , `t1`.f5, `t1`.`f6`, CONCAT(`t1`.f1, `t1`.`f2`, t1.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t1`.f1)) AS c1, 'xyz' AS a1, 45.6 AS a2, 78.9 AS `a3` FROM `table1` AS `t1` WHERE `t1`.f1 = 123 AND `t1`.f2 IN (456) AND `t1`.`f3` LIKE 'abc' ORDER BY `t1`.`f1`, `t1`.f2 DESC, a2 ASC, `a3` DESC";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
         copy = caze.gotJoin("t2").clone();
-        vali = "SELECT CONCAT(f1, f2, f3) AS v0, 'abc.def 0.15 .xy' AS x0, (1.2 + f1) v1, 3.4 * f2 AS `v2`, 5.6e10 / f3 AS `v3` FROM `table2` AS `t2` WHERE f4 = 123 AND f5 IN (456) AND `f6` like 'abc' ORDER BY `f1`, f2 DESC, v1 ASC, `v2` DESC";
+        vali = "SELECT f1, `f2` , t2.f3, t2.`f4` , `t2`.f5, `t2`.`f6`, CONCAT(f1, `f2`, t2.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT f1)) AS c1, 'xyz' AS a1, 45.6 AS a2, 78.9 AS `a3` FROM `table2` AS `t2` WHERE f1 = 123 AND f2 IN (456) AND `f3` LIKE 'abc' ORDER BY `f1`, f2 DESC, a2 ASC, `a3` DESC";
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
 
-        caze = new FetchCase();
+        caze = new FetchCase(FetchCase.CLEVER);
         caze.from   ("a_member_user", "user")
             .filter ("state != 1 AND dept_id IN (?)", 1)
             .join   ("a_member_user_dept", "depts")

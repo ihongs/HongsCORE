@@ -50,14 +50,11 @@ public class AssocMore {
 
     List<Map> lnks = new ArrayList ( );
     fetchMore(table, caze, assocs, lnks, null);
-    buildCase(caze, table.getParams());
 
-    // Fixed in 2015/10/22
-    // 当关联表也要查全部
-    // 会导致不查主表字段
-    // 故只要未指定主表字段即取全部
+    buildCase(caze, table.getParams( ) , null);
+
     if (!caze.hasField()) {
-      caze.select("`"+ caze.getName() + "`.*");
+      caze.select("`"+ caze.getName( ) +"`.*");
     }
 
     List rows = table.db.fetchMore(caze);
@@ -152,14 +149,14 @@ public class AssocMore {
         }
         caze2.by( ji );
 
-        // 添加关联层级, 但如果有 UNFIX_ALIAS 则没作用
+        // 添加关联层级, 但如果非 CLEVER_MODE 则没作用
         String pu = an;
         if (null != pn) {
                pu = pn +"."+ pu;
         }
         caze2.in( pu );
 
-        /**/buildCase(caze2 , (Map) assoc.get("params"));
+        buildCase(caze2 , (Map) assoc.get("params"), pu);
 
         if ( assocs2 !=  null ) {
             fetchMore(table2, caze2, assocs2, lnks2, pu);
@@ -252,7 +249,7 @@ public class AssocMore {
         // 合并关联模式
         caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
 
-        /**/buildCase(caze2 , (Map) assoc.get( "params" ));
+        buildCase(caze2 , (Map) assoc.get("params"), null);
 
         if ( assocs2 !=  null ) {
             fetchMore(table2, caze2, assocs2, lnkz2, null);
@@ -264,87 +261,61 @@ public class AssocMore {
     }
   }
 
-  private static void buildCase(FetchCase caze, Map assoc) {
+  private static void buildCase(FetchCase caze, Map assoc, String pu) {
     if (assoc == null || assoc.isEmpty()) {
-        return ;
+        return;
     }
 
-    String  sql;
-    boolean fixTable = false;
-    boolean fixField = false;
-    boolean fixAlias = false;
+    String  sq;
+    String  pn = "NaT";
+    boolean cm = caze.getOption("CLEVER_MODE", false);
 
-    sql = (String) assoc.get("select");
-    if (sql != null) {
-        caze.field (sql);   // rb 参数将无效
-        if (sql.startsWith(".")) {
-            fixTable = true;
-        } else
-        if (sql.length()  !=  0) {
-            fixField = true;
-            fixAlias = true;
+    sq = (String) assoc.get("select");
+    if (sq != null) { // 外部设置将无效
+        if (! cm && sq.length() != 0) {
+            if (pu != null && pu.length() != 0) {
+                sq  = FetchCase.fixSQLAlias(sq, pu).toString();
+            }
+            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
         }
+        caze.field(sq);
     }
 
-    sql = (String) assoc.get("orders");
-    if (sql != null) {
-        caze.order(sql);   // ob 参数将无效
-        if (sql.startsWith(".")) {
-            fixTable = true;
-        } else
-        if (sql.length()  !=  0) {
-            fixField = true;
+    sq = (String) assoc.get("orders");
+    if (sq != null) { // 外部设置将无效
+        if (! cm && sq.length() != 0) {
+            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
         }
+        caze.order(sq);
     }
 
-    sql = (String) assoc.get("groups");
-    if (sql != null) {
-        caze.group(sql);
-        if (sql.startsWith(".")) {
-            fixTable = true;
-        } else
-        if (sql.length()  !=  0) {
-            fixField = true;
+    sq = (String) assoc.get("groups");
+    if (sq != null) { // 外部设置将无效
+        if (! cm && sq.length() != 0) {
+            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
         }
+        caze.group(FetchCase.fixSQLField(sq, caze.getName(), "UNKNOWN").toString());
     }
 
-    sql = (String) assoc.get("filter");
-    if (sql != null && sql.length() != 0) {
-        caze.filter(sql);  // 此处为附加条件, 外部条件仍有效
-        if (sql.startsWith(".")) {
-            fixTable = true;
-        } else
-        {
-            fixField = true;
+    sq = (String) assoc.get("filter");
+    if (sq != null && sq.length() != 0) { // 此处为附加条件, 外部条件仍有效
+        if (! cm && sq.length() != 0) {
+            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
         }
+        caze.filter(sq);
     }
 
-    sql = (String) assoc.get("having");
-    if (sql != null && sql.length() != 0) {
-        caze.having(sql);  // 此处为附加条件, 外部条件仍有效
-        if (sql.startsWith(".")) {
-            fixTable = true;
-        } else
-        {
-            fixField = true;
+    sq = (String) assoc.get("having");
+    if (sq != null && sq.length() != 0) { // 此处为附加条件, 外部条件仍有效
+        if (! cm && sq.length() != 0) {
+            sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
         }
+        caze.having(sq);
     }
 
-    sql = (String) assoc.get("limits");
-    if (sql != null && sql.length() != 0) {
-        caze.limit (Synt.asserts(sql, 1));  // 仅对非 JOIN 的有效
-    }
-
-    // 有设置查询、条件等时, 必须开启自动补全
-    // 如果首字段、条件以点开头则可不自动补全
-    if (fixTable) {
-        caze.setOption("UNFIX_TABLE", false);
-    }
-    if (fixField) {
-        caze.setOption("UNFIX_FIELD", false);
-    }
-    if (fixAlias) {
-        caze.setOption("UNFIX_ALIAS", false);
+    sq = (String) assoc.get("limits");
+    if (sq != null && sq.length() != 0) { // 仅对非 JOIN 的有效
+        caze.limit(Synt.asserts(sq, 1));
     }
   }
 

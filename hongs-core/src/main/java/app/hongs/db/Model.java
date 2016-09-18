@@ -777,7 +777,7 @@ implements IEntity
 
   /**
    * 内建 FetchCase
-   * 此方法会设置 UNFIX_TABLE, UNFIX_FIELD, UNFIX_ALIAS 为 true
+   * 此方法会设置 CLEVER_MODE 为 false
    * 后续构建查询语句仅作简单拼接
    * 您必须严格的使用表和字段别名
    * @return
@@ -785,10 +785,7 @@ implements IEntity
    */
   public FetchCase fetchCase() throws HongsException
   {
-    return table.fetchCase()
-      .setOption("UNFIX_TABLE", true)
-      .setOption("UNFIX_FIELD", true)
-      .setOption("UNFIX_ALIAS", true);
+      return table.fetchCase().setOption("CLEVER_MODE", false);
   }
 
   //** 辅助过滤方法 **/

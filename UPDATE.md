@@ -1,10 +1,11 @@
 
 # 更新日志
 
-* 2016/09/04 重写 Model 的 filter 相关方法, 将全部过滤逻辑在 AssocCase 中重写, 改下 Synt.filter(原名foreach) 以适应 Java8 的函数式形式
+* 2016/09/19 彻底去除 FetchCase 中当前表字段表示方法; 模型默认为严格模式, 简单拼接速度较快; 启用聪明模式后将自动为关联的各用例中的字段、条件补全表名和别名; 未指明模式时, 当有关联时自动开启聪明模式
+* 2016/09/04 重写 Model 的 filter 相关方法, 将全部过滤逻辑在 AssocCase 中重写, 改写 Synt.filter(原名foreach) 以适应 Java8 的函数式形式
 * 2016/08/06 将 db 包中的 FetchCase,FetchMore 等类迁移到 app.hongs.db.util 下
 * 2016/05/20 增加 sessionId 通过参数传递的方式, 使用 sessionId 作为 API Token, 简化接口的会话类数据操作 (2016/05/22 通过研究 Tomcat 和 Jetty 的源码, 无法完美解决此问题, 故只能废弃)
-* 2016/05/18 在 hongs-web 的 pom.xml 中编写 ant 代码已替代原来的 pack.sh 打包发布操作
+* 2016/05/18 在 hongs-web 的 pom.xml 中编写 ant 代码以替代原来的 pack.sh 打包发布操作
 * 2016/05/14 增加 HongsUnchecked 异常类, 用于表示 unchecked exception, 此前的部分 HongsError 使用有误
 * 2016/05/05 数据库连接池从 C3P0 更换为 DBCP, app.hongs.db.DB.Roll 更名为 app.hongs.db.link.Loop
 * 2016/05/03 增加 Lucene 查询迭代, 增加公共注册动作

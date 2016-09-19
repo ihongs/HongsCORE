@@ -20,14 +20,14 @@ import java.util.regex.Pattern;
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
- *  select       SELECT    field1, field2
- *  from         FROM      tableName AS name
- *  join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
- *  filter       WHERE     expr1 AND expr2
- *  groupBy      GROUP BY  field1, field2
- *  having       HAVING    expr1 AND expr2
- *  orderBy      ORDER BY  field1, field2
- *  limit        LIMIT     start, limit
+ * select       SELECT    field1, field2
+ * from         FROM      tableName AS name
+ * join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
+ * filter       WHERE     expr1 AND expr2
+ * groupBy      GROUP BY  field1, field2
+ * having       HAVING    expr1 AND expr2
+ * orderBy      ORDER BY  field1, field2
+ * limit        LIMIT     start, limit
  *
  * 注意:
  * select,filter,groupBy,having,orderBy 为追加方法, 保留原设值;
@@ -67,8 +67,8 @@ public class FetchCase
   implements Cloneable, Serializable
 {
 
-  protected String              tableName;
   protected String              name;
+  protected String              tableName;
 
   protected StringBuilder       fields;
   protected StringBuilder       wheres;
@@ -1043,21 +1043,13 @@ public class FetchCase
    */
   private List getParamsList()
   {
-    List paramz = new ArrayList();
+    List  paramz = new ArrayList();
     List wparamz = new ArrayList();
     List hparamz = new ArrayList();
 
-    // 参数
     this.getParamsDeep(wparamz, hparamz);
     paramz.addAll(wparamz);
     paramz.addAll(hparamz);
-
-    // 限额(不同数据库的限额方式不一样, 在 DB.limit 中实现)
-//    if (this.limits.length > 0)
-//    {
-//      paramz.add(this.limits[0]);
-//      paramz.add(this.limits[1]);
-//    }
 
     return paramz;
   }
@@ -1071,14 +1063,12 @@ public class FetchCase
     wparamz.addAll(this.wparams);
     hparamz.addAll(this.vparams);
 
-    for (FetchCase caze  :  this.joinSet)
+    for(FetchCase caze : this.joinSet)
     {
-      if (0 == caze.joinType)
+      if (NONE != caze.joinType)
       {
-        continue;
+        caze.getParamsDeep(wparamz, hparamz);
       }
-
-      caze.getParamsDeep(wparamz, hparamz);
     }
   }
 
@@ -1167,7 +1157,7 @@ public class FetchCase
   {
     for (FetchCase caze : this.joinSet)
     {
-      if (name.equals(caze.name))
+      if (name.equals(caze.getName( )))
       {
         return caze;
       }
@@ -1189,7 +1179,7 @@ public class FetchCase
       if (null != c) {
           caze  = c;
       } else {
-          caze  = null; break; /* ignore */
+          caze  = null; break;
       }
     }
     return caze;
@@ -1232,7 +1222,10 @@ public class FetchCase
    */
   public String getName()
   {
-    return name != null && name.length() != 0 ? name : tableName;
+    if (null != name && name.length() > 0) {
+        return  name;
+    }
+    return tableName;
   }
 
   //** 探查 **/

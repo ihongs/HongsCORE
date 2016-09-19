@@ -228,16 +228,17 @@ implements IEntity
     dat.remove(this.table.primaryKey);
 
     // 检查是否可更新
-    Map wh = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
-    FetchCase fc = caze != null ? caze.clone() : fetchCase( );
-    fc.setOption("MODEL_METHOD" , "update");
+    FetchCase fc = caze != null ? caze.clone() : fetchCase ( );
+    Map wh = Synt.declare( rd.get(Cnst.WH_KEY), new HashMap());
+        fc.setOption("MODEL_METHOD", "update");
+        wh.put (this.table.primaryKey, ids);
+    this.filter(fc , wh );
+    if (this.table.fetchLess(fc).isEmpty()) {
+        throw new HongsException(0x1097, "Can not update for ids: "+ids);
+    }
+
     for (String id : ids)
     {
-      if (!this.permit(fc, wh, id))
-      {
-        throw new HongsException (0x1097, "Can not update for id '"+id+"'");
-      }
-
       this.put( id , dat);
     }
 
@@ -285,16 +286,17 @@ implements IEntity
     }
 
     // 检查是否可删除
-    Map wh = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
-    FetchCase fc = caze != null ? caze.clone() : fetchCase( );
-    fc.setOption("MODEL_METHOD" , "delete");
+    FetchCase fc = caze != null ? caze.clone() : fetchCase ( );
+    Map wh = Synt.declare( rd.get(Cnst.WH_KEY), new HashMap());
+        fc.setOption("MODEL_METHOD", "delete");
+        wh.put (this.table.primaryKey, ids);
+    this.filter(fc , wh );
+    if (this.table.fetchLess(fc).isEmpty()) {
+        throw new HongsException(0x1097, "Can not delete for ids: "+ids);
+    }
+
     for (String id : ids)
     {
-      if (!this.permit(fc, wh, id))
-      {
-        throw new HongsException (0x1097, "Can not delete for id '"+id+"'");
-      }
-
       this.del( id  );
     }
 
@@ -860,7 +862,7 @@ implements IEntity
      */
     caze.setOption("ASSOC_FILLS", true);
 
-    if (rd.isEmpty())
+    if ( rd == null  ||  rd.isEmpty() )
     {
       return;
     }
@@ -876,7 +878,7 @@ implements IEntity
     if (listable == null)
     {
       rb = rd.remove(Cnst.RB_KEY);
-      if ( rb == null)
+      if ( rb != null)
       {
         field(caze, Synt.asTerms(rb) );
       }
@@ -892,28 +894,6 @@ implements IEntity
     {
       rd.put(Cnst.RB_KEY, rb);
     }
-  }
-
-  /**
-   * "变更"过滤
-   * 默认调用 filter 进行判断, 即能操作的一定是能看到的
-   * @param caze 条件
-   * @param wh   约束
-   * @param id 主键值
-   * @return
-   * @throws HongsException
-   */
-  protected boolean permit(FetchCase caze, Map wh, String id)
-    throws HongsException
-  {
-    if (caze.getOption("ASSOCS") == null && caze.getJoinSet().isEmpty())
-    {
-        caze.setOption("ASSOCS", new HashSet());
-    }
-    caze.field ("`"+this.table.name+"`.`"+this.table.primaryKey+"`" /**/ )
-        .filter("`"+this.table.name+"`.`"+this.table.primaryKey+"`=?", id);
-    this.filter(caze, wh);
-    return ! this.table.fetchLess( caze ).isEmpty(  );
   }
 
     //** 查询字段处理 **/

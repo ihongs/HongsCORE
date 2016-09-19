@@ -118,6 +118,10 @@
 
                     String type = (String) info.get("__type__");
                     String disp = (String) info.get("__disp__");
+
+                    if ("hidden".equals(type)) {
+                        continue;
+                    }
                 %>
                 <%if ("number".equals(type) || "range".equals(type)) {%>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=disp%></th>

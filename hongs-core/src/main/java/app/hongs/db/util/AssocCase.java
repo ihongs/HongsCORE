@@ -24,14 +24,20 @@ import java.util.regex.Pattern;
  *
  * <p>此类可将外部请求数据转换为库表查询用例, 用法如下:</p>
  * <pre>
- *  FetchCase secondCase = new FetchCase(firstCase)
- *      .allow( table )
- *      .parse(request);
- *
- *  allow(table) 可换成 allow(params)
- *  params 可用 Table.getParams 或 FormSet.getForm().get("@") 得到,
- *  得到的 Map 中的 listable,sortable,findable,filtable 等用于设置.
+ *  AssocCase ac = new AssocCase(fc)
+ *      .allow(AssocCase.LISTABLE,
+ *          "f1", "a1:f2", "a2:CONCAT('$', .f3)", // 查询别名:字段名
+ *          "#b :d",                              // 命名层级:表别名
+ *          "f1", "a1:f2", "a2:CONCAT('$',d.f3)",
+ *          "#x_",
+ *          "f1", "a1:f2", "a2:CONCAT(x.f3,'%')")
+ *      .parse(queryData);
  * </pre>
+ * <p>
+ * allow 所传值可用 Table.getParams() 或 FormSet.getForm().get("@")
+ * 所得到的 Map 里面的 listable,sortable,findable,filtable 等来设置,
+ * 同时提供了 allow(Table), allow(Model) 两个快捷方法自动读取并设置;
+ * </p>
  *
  * @author Hongs
  */
@@ -117,8 +123,8 @@ public class AssocCase {
      * </pre>
      * <pre>
      * <b>字段的首字符:</b>
-     *   + 相对 LISTABLE 增加字段,
      *   - 相对 LISTABLE 删减字段,
+     *   + 相对 LISTABLE 增加字段,
      *   # 定义后续字段的别名前缀和表名,
      *     如 "#foo:bar" 定义别名前缀为 "foo." 表名前缀为 "bar.",
      *     表名省略时等同于别名, 别名以 "_" 结尾时则不再追加 ".";
@@ -745,8 +751,8 @@ public class AssocCase {
     public static void main(String[] args) {
         FetchCase fc = new FetchCase()
                 .from("abc", "a")
-                .join("def", "d", ".id = :d_id")
-                .join("xyz", "x", ".a_id = :id");
+                .join("def", "d", "id = :d_id")
+                .join("xyz", "x", "a_id = :id");
         AssocCase ac = new AssocCase(fc)
                 .allow(AssocCase.LISTABLE,
                         "f1", "a1:f2", "a2:CONCAT('$', .f3)",

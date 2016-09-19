@@ -95,7 +95,6 @@ public class Table
     {
       throw new HongsException(0x1070, "Param db can not be null");
     }
-    this.db = db;
 
     if (conf == null)
     {
@@ -106,6 +105,8 @@ public class Table
     {
       throw new HongsException(0x1074, "Table name in conf required.");
     }
+
+    this.db   =  db ;
     this.name = (String)conf.get("name");
 
     if (conf.containsKey("tableName"))
@@ -165,7 +166,7 @@ public class Table
   }
 
   /**
-   * 查询多条记录(采用查询结构)
+   * 查询多条记录(会根据配置自动关联)
    * @param caze
    * @return 全部记录
    * @throws app.hongs.HongsException
@@ -186,7 +187,7 @@ public class Table
     }
 
     // 默认列表查询不包含对多的, 可用此开启
-    if (caze.getOption("INCLUDE_HASMANY", false) )
+    if (caze.getOption("INCLUDE_HASMANY" , false))
     {
       Set s  = (Set) caze.getOption("ASSOC_TYPES");
       if (s != null) {
@@ -199,7 +200,7 @@ public class Table
   }
 
   /**
-   * 获取单条记录(采用查询结构)
+   * 获取单条记录(会根据配置自动关联)
    * @param caze
    * @return 单条记录
    * @throws app.hongs.HongsException
@@ -223,7 +224,7 @@ public class Table
   /**
    * 调用 FetchCase 构建查询
    * 可用 all, one  得到结果, 以及 delete, update 操作数据
-   * 但与 fetchMore,fetchLess 不同, 并不会自动设置关联查询
+   * 但与 fetchMore,fetchLess 不同, 不会自动关联和排除已删
    * @return 绑定了 db, table 的查询对象
    * @throws app.hongs.HongsException
    */
@@ -235,7 +236,7 @@ public class Table
 
   /**
    * 查询数据
-   * 注意: 此方法不会自动排除已删除的数据
+   * 同 fetchCase().select(field)
    * @param field
    * @return
    * @throws HongsException
@@ -248,7 +249,7 @@ public class Table
 
   /**
    * 过滤数据
-   * 注意: 此方法不会自动排除已删除的数据
+   * 同 fetchCase().filter(where, params)
    * @param where
    * @param params
    * @return

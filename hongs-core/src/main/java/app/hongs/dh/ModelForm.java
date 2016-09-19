@@ -214,19 +214,20 @@ public class ModelForm {
             return Synt.asTerms(params.get(x));
         }
 
-        // 检查是否阻止自动识别
-        Set sets ;
+        Set typs ;
         Set abls = new LinkedHashSet();
+
+        // 检查是否阻止自动识别
         if (! Synt.declare(params.get("dont.auto.bind." + x), true)) {
-            sets = Synt.asTerms(getDtypes().get(x));
+            typs = Synt.asTerms(getDtypes().get(x));
         } else {
-            sets = new HashSet();
+            typs = new HashSet();
             // 专用类型特例, 无需特别设置
             if ("findable".equals(x)) {
-                sets.add("search");
+                typs.add("search");
             } else
             if ("sortable".equals(x)) {
-                sets.add("sorted");
+                typs.add("sorted");
             }
         }
 
@@ -241,7 +242,7 @@ public class ModelForm {
                     abls.add(fn);
                 }
             } else {
-                if (sets.contains(field.get("__type__"))) {
+                if (typs.contains(field.get("__type__"))) {
                     abls.add(fn);
                 }
             }

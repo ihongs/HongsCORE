@@ -824,7 +824,13 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     public Query getQuery(Map rd) throws HongsException {
         BooleanQuery query = new BooleanQuery();
         Map<String, Map> fields = getFields(  );
+        Set<String>    filtCols = getFiltable();
         Set<String>    funcCols = getFuncKeys();
+
+        // 可过滤字段不可能为空, 至少应该有一个 id
+        if (filtCols == null || filtCols.isEmpty()) {
+            filtCols  = fields.keySet();
+        }
 
         for (Object o : rd.entrySet()) {
             Map.Entry e = (Map.Entry) o;
@@ -833,7 +839,8 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
 
             // 功能型参数不在这里处理
             if (fn == null || fv == null
-            ||  funcCols.contains( fn )) {
+            ||  funcCols.contains( fn )
+            || !filtCols.contains( fn )) {
                 continue;
             }
 

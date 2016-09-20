@@ -17,6 +17,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -61,12 +62,33 @@ public class Form extends Model {
         String name = (String) rd.get("name");
         List<Map> flds = null;
         if (conf != null && !"".equals(conf)) {
+             Map  top  = null;
+
             flds = Synt.declare(Data.toObject(conf), List.class);
             for (Map fld : flds) {
-                if ("".equals(fld.get("__name__"))) {
+                if ( "".equals(fld.get("__name__"))) {
                     fld.put("__name__", Core.getUniqueId());
+                } else
+                if ("@".equals(fld.get("__name__"))) {
+                    top = fld;
                 }
             }
+
+            // 增加表配置项
+            if (top == null) {
+                top  = new HashMap();
+            }
+            flds.add(0, top);
+            top.put("__name__" , "@" );
+            top.put("__disp__" , name);
+
+            // 增加编号字段
+            top = new HashMap();
+            flds.add(1, top);
+            top.put("__name__" , "id");
+            top.put("__disp__" , "ID");
+            top.put("__type__" , "hidden");
+
             conf = Data.toString(flds);
             rd.put("conf", conf);
         }
@@ -141,7 +163,7 @@ public class Form extends Model {
         return n;
     }
 
-    public void updateOrCreateMenuSet(String id, String name) throws HongsException {
+    protected void updateOrCreateMenuSet(String id, String name) throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -220,7 +242,7 @@ public class Form extends Model {
         saveDocument(Core.CONF_PATH+"/manage/data/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 
-    public void updateOrCreateFormSet(String id, List<Map> conf) throws HongsException {
+    protected void updateOrCreateFormSet(String id, List<Map> conf) throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -231,12 +253,6 @@ public class Form extends Model {
         form.setAttribute("name", id);
 
         Element  item, anum, para;
-
-        item = docm.createElement("field");
-        form.appendChild(item);
-        item.setAttribute("disp", "ID");
-        item.setAttribute("name", "id");
-        item.setAttribute("type", "hidden");
 
         for (  Map  fiel : conf ) {
             item = docm.createElement("field");

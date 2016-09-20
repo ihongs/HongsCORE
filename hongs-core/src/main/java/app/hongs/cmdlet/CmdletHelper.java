@@ -289,26 +289,29 @@ public class CmdletHelper
    */
   public static void progres(String text, float rate)
   {
+    StringBuilder sb = new StringBuilder();
+    Formatter     ft = new Formatter( sb );
+
     if (text == null) text = "" ;
     if (rate <    0 ) rate =   0;
     if (rate >  100 ) rate = 100;
 
-    StringBuilder sb = new StringBuilder();
-    Formatter     ft = new Formatter( sb );
+    ft.format(" %6.2f%%" , rate);
 
+    sb.append(" |");
     for (int i = 0; i < 100; i += 5)
     {
       if (rate < i + 5)
       {
-        sb.append(".");
+        sb.append(' ');
       }
       else
       {
-        sb.append("!");
+        sb.append('█');
       }
     }
-
-    ft.format(" %6.2f%% %s", rate, text);
+    sb.append("| ");
+    sb.append(text);
 
     // 清除末尾多余的字符, 并将光标移回行首
     // 每行按最少80个字符来计算

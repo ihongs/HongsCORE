@@ -61,10 +61,15 @@ public class Data extends LuceneRecord {
      */
     @Override
     public Map getFields() {
-        Map fields  = super.getFields();
-        if (fields != null) {
-            return  fields;
+        try {
+            return super.getFields();
+        } catch (NullPointerException ex) {
+            // Nothing todo
         }
+
+        Map fields;
+        Map fieldx;
+        String comf = "manage/data/" + form;
 
         /**
          * 字段以 manage/data 的字段为基础
@@ -75,37 +80,34 @@ public class Data extends LuceneRecord {
          */
         try {
             if (! new File(
-                      Core.CONF_PATH
-                    + "/"+ conf +"/"+ form
-                    + Cnst.FORM_EXT +".xml"
+                Core.CONF_PATH + "/"+ conf + Cnst.FORM_EXT +".xml"
             ).exists()) {
                 throw new HongsUnchecked(0x1104)
-                    .setLocalizedOptions(conf+"/"+form);
+                    .setLocalizedOptions(conf);
             }
 
-            fields = FormSet.getInstance(conf+"/"+form).getForm(form);
+            fields = FormSet.getInstance(conf).getForm(form);
 
-            if (!"manage/data".equals(conf)) {
-                String comf = "manage/data";
-                Map  fieldx =  fields;
+        if (! comf.equals(conf)) {
+            fieldx = fields ;
 
-                if (! new File(
-                          Core.CONF_PATH
-                        + "/"+ comf +"/"+ form
-                        + Cnst.FORM_EXT +".xml"
-                ).exists()) {
-                    throw new HongsUnchecked(0x1104)
-                        .setLocalizedOptions(comf+"/"+form);
-                }
+            if (! new File(
+                Core.CONF_PATH + "/"+ comf + Cnst.FORM_EXT +".xml"
+            ).exists()) {
+                throw new HongsUnchecked(0x1104)
+                    .setLocalizedOptions(comf);
+            }
 
-                fields = FormSet.getInstance(comf+"/"+form).getForm(form);
-                for ( Map.Entry  et : (Set<Map.Entry>) fieldx.entrySet()) {
-                    Object fn =  et.getKey(  );
-                    if (fields.containsKey(fn)) {
-                        fields.put(fn, et.getValue( ));
-                    }
+            fields = FormSet.getInstance(comf).getForm(form);
+
+            for(Map.Entry et : (Set<Map.Entry>) fieldx.entrySet()) {
+                Object fn =  et.getKey(  );
+                Object fv =  et.getValue();
+                if (fields.containsKey(fn)) {
+                    fields.put(fn, fv);
                 }
             }
+        }
         } catch (HongsException ex) {
             throw ex.toUnchecked( );
         }

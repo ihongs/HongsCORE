@@ -174,7 +174,7 @@ HsForm.prototype = {
             if (! n) {
                 continue;
             }
-            fns[n] =  n ;
+            fns[n] = n;
             fts[n] = v.attr("data-ft");
             fvs[n] = v.data("fv");
             /**/f  = v.data("fl");
@@ -187,6 +187,8 @@ HsForm.prototype = {
                     throw new Error("Parse list data-fl error: " + e);
                 }
                 v.data("fl",f);
+            }
+            if (f) {
                 fls [ n ] = f ;
             }
         }

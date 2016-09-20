@@ -145,14 +145,14 @@ public class SelectHelper {
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
             Object   val = Dict.getParam(info, key);
-            if (val != null) {
-                val  = map.get(val);
+            if (val != null && ! "".equals(val)) {
+                val  = map.get(val); // 需要排除空串
             }
             if (val == null) {
                 val  = map.get("*"); // * 总代表其他
             }
             if (val == null) {
-                continue;
+                val  = "";
             }
             Dict.setParam(info, val, key + "_disp");
         }

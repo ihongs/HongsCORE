@@ -287,7 +287,7 @@ public class MergeMore
    * 可在 append rows 之后执行
    * @param map 映射表
    * @param lzt 默认值
-   * @param sub 子键, 不可为空
+   * @param sub 子键, 不可以为空
    */
   public void append(Map<Object, List> map, List lzt, String sub)
   {

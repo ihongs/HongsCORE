@@ -416,15 +416,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
             }
 
-            if (cf.getProperty("core.debug.action.headers", false)) {
+            if (cf.getProperty("core.debug.action.session", false) && ses != null) {
               Map         map = new HashMap();
-              Enumeration<String> nms = req.getHeaderNames();
+              Enumeration<String> nms = ses.getAttributeNames();
               while (nms.hasMoreElements()) {
                   String  nme = nms.nextElement();
-                  map.put(nme , req.getHeader(nme));
+                  map.put(nme , ses.getAttribute(nme));
               }
               if (!map.isEmpty()) {
-                  sb.append("\r\n\tHeaders     : ")
+                  sb.append("\r\n\tSession     : ")
                     .append(Tool.indent(Data.toString(map)).substring(1));
               }
             }
@@ -442,15 +442,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
               }
             }
 
-            if (cf.getProperty("core.debug.action.session", false) && ses != null) {
+            if (cf.getProperty("core.debug.action.headers", false)) {
               Map         map = new HashMap();
-              Enumeration<String> nms = ses.getAttributeNames();
+              Enumeration<String> nms = req.getHeaderNames();
               while (nms.hasMoreElements()) {
                   String  nme = nms.nextElement();
-                  map.put(nme , ses.getAttribute(nme));
+                  map.put(nme , req.getHeader(nme));
               }
               if (!map.isEmpty()) {
-                  sb.append("\r\n\tSession     : ")
+                  sb.append("\r\n\tHeaders     : ")
                     .append(Tool.indent(Data.toString(map)).substring(1));
               }
             }
@@ -473,9 +473,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             // 销毁此周期内的对象
             try {
                 core.destroy();
-            } catch (Exception e) {
-                CoreLogger.error( e );
             } catch (Error e ) {
+                CoreLogger.error( e );
+            } catch (Exception e) {
                 CoreLogger.error( e );
             }
             req.removeAttribute(Cnst.CORE_ATTR);

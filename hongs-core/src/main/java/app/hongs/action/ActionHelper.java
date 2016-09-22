@@ -182,6 +182,11 @@ public class ActionHelper implements Cloneable
     this.outputWriter = pipe;
   }
 
+  /**
+   * 获取 Servlet 请求对象
+   * 注意: 当请求来自系统终端运维命令或虚构请求, 一般会返回 null
+   * @return 
+   */
   public final HttpServletRequest getRequest()
   {
     return this.request;
@@ -399,6 +404,11 @@ public class ActionHelper implements Cloneable
     }
   }
 
+  /**
+   * 获取 Servlet 响应对象
+   * 注意: 当请求来自系统终端运维命令或虚构请求, 一般会返回 null
+   * @return 
+   */
   public final HttpServletResponse getResponse()
   {
     return this.response;
@@ -422,6 +432,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取响应输出
+   * 注意: 当为虚拟请求时, 可能抛 HongsError, 错误码 0x32
    * @return 响应输出
    */
   public OutputStream getOutputStream()
@@ -448,6 +459,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取响应输出
+   * 注意: 当为虚拟请求时, 可能抛 HongsError, 错误码 0x32
    * @return 响应输出
    */
   public Writer getOutputWriter()
@@ -789,15 +801,15 @@ public class ActionHelper implements Cloneable
    * 返回审核状态
    * 针对 unique,exists 等
    * @param msg
-   * @param ok 对应 rows 的值 1,0
+   * @param sure 对应 rows 的值 1,0
    */
-  public void reply(String msg, boolean ok)
+  public void reply(String msg, boolean sure)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
     }
-    map.put("rows", ok ? 1 : 0);
+    map.put("rows", sure ? 1 : 0);
     reply(map);
   }
 

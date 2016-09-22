@@ -1,5 +1,6 @@
 package app.hongs.serv.handle;
 
+import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
@@ -31,6 +32,9 @@ public class DataAction extends LuceneAction {
         ||  m.isAnnotationPresent(Verify.class)) {
             helper.setAttribute("form:"+mod+"/"+ent+"."+ent, getEntity(helper).getFields());
         }
+        
+        // 放入当前用户ID
+        helper.getRequestData().put("cuid", helper.getSessibute(Cnst.UID_SES));
     }
 
     /**

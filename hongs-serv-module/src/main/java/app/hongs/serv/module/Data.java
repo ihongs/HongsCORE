@@ -165,7 +165,7 @@ public class Data extends LuceneRecord {
     public void save(String id, Map rd) throws HongsException {
         Model model = DB.getInstance("module").getModel("data");
         Map   dd,od = new HashMap();
-        od.put("etime", System.currentTimeMillis());
+        od.put("etime", System.currentTimeMillis( ) / 1000);
         String   where = "`id` = ? AND `etime` = ?";
         Object[] param = new String[ ] { id , "0" };
 
@@ -178,7 +178,10 @@ public class Data extends LuceneRecord {
         }
 
         // 获取旧的数据
-        dd = model.table.fetchCase().select("data").filter(where, param).one();
+        dd = model.table.fetchCase()
+                .filter(where, param)
+                .select("data")
+                .one();
         if(!dd.isEmpty()) {
             dd = (Map) app.hongs.util.Data.toObject(dd.get("data").toString());
         }
@@ -206,16 +209,22 @@ public class Data extends LuceneRecord {
 
         // 拼接展示字段
         StringBuilder nm = new StringBuilder();
-        for (String fn : getListable()) {
+        for (String fn : getFindable()) {
             nm.append(dd.get(fn).toString()).append(' ');
+        }
+        
+        if (od.containsKey("mtime")) {
+            od.put("etime", od.get("mtime"));
         }
 
         // 保存到数据库
         Map nd = new HashMap();
         nd.put( "id" , id);
-        nd.put("form_id", form);
+        nd.put("form_id",form);
         nd.put("name", nm.toString( ).trim( ));
         nd.put("data", app.hongs.util.Data.toString(dd));
+        nd.put("note", rd.get("note"));
+        nd.put("cuid", rd.get("cuid"));
         nd.put("etime", 0);
         model.table.update(od , where , param);
         model.table.insert(nd);
@@ -227,30 +236,35 @@ public class Data extends LuceneRecord {
         setDoc(id, doc);
     }
 
-    public void redo(String id, String ct) throws HongsException {
+    public void redo(String id, String uid) throws HongsException {
         Model model = DB.getInstance("module").getModel("data");
         Map   dd,od ;
-        String   where = "`id` = ? AND `etime` = ?";
+        String   where = "`id` = ? AND `state` = ?";
         Object[] param = new String[ ] { id , "0" };
 
         // 获取旧的数据
-        od = model.table.fetchCase().select("data").filter(where, param).one();
+        od = model.table.fetchCase()
+                .filter (where, param)
+                .select ("data")
+                .orderBy("ctime DESC")
+                .one();
         if(!od.isEmpty()) {
             dd = (Map) app.hongs.util.Data.toObject(od.get("data").toString());
         } else {
             super.del(id);
             return;
         }
-        ct = String.valueOf(System.currentTimeMillis());
 
         // 保存到数据库
         Map nd = new HashMap();
         nd.put( "id" , id);
-        nd.put("form_id", form);
+        nd.put("form_id",form);
         nd.put("name", od.get("name" ));
         nd.put("data", od.get("data" ));
-        nd.put("rtime",od.get("mtime"));
-        nd.put("ctime",ct);
+        nd.put("note", od.get("note" ));
+        nd.put("cuid", od.get("cuid" ));
+        nd.put("rtime",od.get("ctime"));
+        nd.put("ctime",System.currentTimeMillis() / 1000);
         nd.put("etime", 0);
         model.table.insert(nd);
 

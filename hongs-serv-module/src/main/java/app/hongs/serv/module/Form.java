@@ -6,6 +6,7 @@ import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.db.Table;
+import app.hongs.db.util.FetchCase;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 
@@ -79,15 +80,53 @@ public class Form extends Model {
                 top  = new HashMap();
             }
             flds.add(0, top);
-            top.put("__name__" , "@" );
-            top.put("__disp__" , name);
+            top.put("__name__", "@" );
+            top.put("__disp__", name);
 
             // 增加编号字段
             top = new HashMap();
             flds.add(1, top);
-            top.put("__name__" , "id");
-            top.put("__disp__" , "ID");
-            top.put("__type__" , "hidden");
+            top.put("__name__", "id");
+            top.put("__disp__", "ID");
+            top.put("__type__", "hidden");
+
+            // 增加创建用户
+            top = new HashMap();
+            flds.add(2, top);
+            top.put("__name__",  "cuid" );
+            top.put("__type__", "string");
+            top.put("default" , "$"+Cnst.UID_SES);
+            top.put("default-create","yes");
+            top.put("default-always","yes");
+
+            // 增加修改用户
+            top = new HashMap();
+            flds.add(3, top);
+            top.put("__name__",  "muid" );
+            top.put("__type__", "string");
+            top.put("default" , "$"+Cnst.UID_SES);
+            top.put("default-create", "no");
+            top.put("default-always","yes");
+
+            // 增加创建时间
+            top = new HashMap();
+            flds.add(4, top);
+            top.put("__name__", "ctime" );
+            top.put("__type__", "datetime");
+            top.put(  "type"  ,"timestamp");
+            top.put("default" ,  "%now" );
+            top.put("default-create","yes");
+            top.put("default-always","yes");
+
+            // 增加操作时间
+            top = new HashMap();
+            flds.add(4, top);
+            top.put("__name__", "mtime" );
+            top.put("__type__", "datetime");
+            top.put(  "type"  ,"timestamp");
+            top.put("default" ,  "%now" );
+            top.put("default-create", "no");
+            top.put("default-always","yes");
 
             conf = Data.toString(flds);
             rd.put("conf", conf);
@@ -130,9 +169,9 @@ public class Form extends Model {
     }
 
     @Override
-    public int delete(Map rd) throws HongsException {
+    public int del(String id, FetchCase fc) throws HongsException {
         String unitId = (String) db.getTable("form")
-                .filter ("id = ?", rd.get("id"))
+                .filter ("id = ?", id)
                 .select ("unit_id")
                 .one    ()
                 .get    ("unit_id");
@@ -142,7 +181,7 @@ public class Form extends Model {
                 .one    ()
                 .get    ("name");
 
-        int n = super.delete(rd);
+        int n = super.del(id,fc);
 
         // 更新单元菜单
         Unit   un  =  new Unit();
@@ -151,11 +190,11 @@ public class Form extends Model {
 
         // 删除配置文件
         File   fo;
-        fo = new File(Core.CONF_PATH +"manage/data/"+ rd.get("id") + Cnst.FORM_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"manage/data/"+ id + Cnst.FORM_EXT +".xml");
         if (fo.exists()) {
             fo.delete();
         }
-        fo = new File(Core.CONF_PATH +"manage/data/"+ rd.get("id") + Cnst.NAVI_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"manage/data/"+ id + Cnst.NAVI_EXT +".xml");
         if (fo.exists()) {
             fo.delete();
         }

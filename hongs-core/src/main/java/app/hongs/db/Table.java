@@ -702,8 +702,18 @@ public class Table
       if (type == Types.CHAR  || type == Types.VARCHAR  || type == Types.LONGVARCHAR
        || type == Types.NCHAR || type == Types.NVARCHAR || type == Types.LONGNVARCHAR)
       {
-        // 判断长度
-        if (valueStr.length() > size  &&  0 < size)
+        // 判断长度, 多字节的字符统统被记为 2
+        int l  = 0, i , c;
+        for(i  = 0; i < valueStr.length(); i ++)
+        {
+          c = Character.codePointAt(valueStr, i);
+          if (c >= 0 && c <= 255) {
+            l += 1;
+          } else {
+            l += 2;
+          }
+        }
+        if (l > size && 0 < size)
         {
           throw sizeException(namc, valueStr, size);
         }

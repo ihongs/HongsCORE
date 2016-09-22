@@ -87,8 +87,8 @@
             <param-value>/manage/auto</param-value>
         </init-param>
         <init-param>
-            <param-name>render-path</param-name>
-            <param-value>/common/auto</param-value>
+            <param-name>layout-path</param-name>
+            <param-value>/manage/auto</param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -106,8 +106,8 @@
             <param-value>/handle/auto</param-value>
         </init-param>
         <init-param>
-            <param-name>render-path</param-name>
-            <param-value>/common/auto</param-value>
+            <param-name>layout-path</param-name>
+            <param-value>/handle/auto</param-value>
         </init-param>
     </filter>
     <filter-mapping>

@@ -26,7 +26,7 @@
                 <div class="form-group dont-close">
                     <label class="control-label">头像</label>
                     <input type="hidden" name="head" value="" class="form-ignored"/>
-                    <input type="file" name="head" class="form-control" required="required" data-toggle="fileinput" accept="image/*"/>
+                    <input type="file" name="head" class="form-control" data-toggle="fileinput" accept="image/*"/>
                     <p class="help-block">缩略图比例 1:1, 推荐分辨率 64*64 到 256*256 (像素)</p>
                 </div>
                 <div class="form-group">
@@ -35,7 +35,7 @@
                 </div>
             </div>
             <div class="col-md-6">
-                <h3><i class="glyphicon glyphicon-th-list"></i> 权限设置</h3>
+                <h4><i class="glyphicon glyphicon-th-list"></i> 权限设置</h4>
                 <div class="form-group" data-fn="roles..role" data-ft="_checkset" data-vk="name" data-tk="disp" data-vl="rols" data-tl="disp">
                 </div>
                 <input type="hidden" name="roles..role" value="handle" class="form-ignored"/>
@@ -47,6 +47,9 @@
         </div>
     </form>
 </div>
+<style type="text/css">
+    #member-user-form legend {font-size: 14px;}
+</style>
 <script type="text/javascript">
     (function($) {
         var context = $("#member-user-form");

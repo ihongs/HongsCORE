@@ -10,9 +10,9 @@ CREATE TABLE `a_member_dept` (
   `pid` CHAR(20) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
-  `ctime` UNSIGNED INT(11) DEFAULT NULL,
-  `mtime` UNSIGNED INT(11) DEFAULT NULL,
-  `rtime` UNSIGNED INT(11) DEFAULT NULL,
+  `ctime` UNSIGNED INT(10) DEFAULT NULL,
+  `mtime` UNSIGNED INT(10) DEFAULT NULL,
+  `rtime` UNSIGNED INT(10) DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`pid`) REFERENCES `a_member_dept` (`id`) ON DELETE CASCADE
@@ -60,9 +60,9 @@ CREATE TABLE `a_member_user` (
   `name` VARCHAR(200) DEFAULT NULL,
   `head` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `ctime` UNSIGNED INT(11) DEFAULT NULL,
-  `mtime` UNSIGNED INT(11) DEFAULT NULL,
-  `rtime` UNSIGNED INT(11) DEFAULT NULL,
+  `ctime` UNSIGNED INT(10) DEFAULT NULL,
+  `mtime` UNSIGNED INT(10) DEFAULT NULL,
+  `rtime` UNSIGNED INT(10) DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
   /* 扩展字段 */
   `organ` VARCHAR(200) DEFAULT NULL,
@@ -170,7 +170,7 @@ CREATE TABLE `a_member_user_open` (
   `user_id` CHAR(20) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `opnid` VARCHAR(100) NOT NULL,
-  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `ctime` UNSIGNED INT(10) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );
@@ -188,7 +188,7 @@ CREATE TABLE `a_member_user_sign` (
   `user_id` CHAR(20) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `sesid` VARCHAR(100) NOT NULL,
-  `ctime` UNSIGNED INT(11) DEFAULT NULL,
+  `ctime` UNSIGNED INT(10) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_member_user` (`id`) ON DELETE CASCADE
 );

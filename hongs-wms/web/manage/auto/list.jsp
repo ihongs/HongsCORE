@@ -23,7 +23,7 @@
     i = _module.lastIndexOf('/');
     _entity = _module.substring(i+ 1);
     _module = _module.substring(0, i);
-    _action = Synt.declare(request.getAttribute("form.action"), "create");
+    _action = Synt.declare(request.getAttribute("list.action"), "list");
 
     // 获取字段集合
     Map        flds;

@@ -20,7 +20,7 @@ function getTypePane(context, type) {
 function loadConf(modal, field) {
     var set = {};
 
-    modal.children(".simple-set")
+    modal.find(".simple-set")
          .find("input,select,textarea,ul[data-fn]")
          .each(function( ) {
         var name = $(this).attr("name") || $(this).attr("data-fn");
@@ -64,11 +64,11 @@ function loadConf(modal, field) {
     });
 
     var az = field.find("input,select,textarea,ul[data-fn]")[0].attributes;
-    var tb = modal.children(".detail-set").find("tbody");
+    var tb = modal.find(".detail-set tbody");
     var tp = tb.find(".hide");
     for(var i = 0; i < az.length; i ++) {
         var x = az[i];
-        if (!/^data-/.test(x.name) || set[x.name]) {
+        if (! /^data-(?!fn|ft)/.test(x.name) || set[x.name]) {
             continue;
         }
         var tr = tp.clone().appendTo(tb).removeClass("hide");
@@ -86,7 +86,7 @@ function loadConf(modal, field) {
 function saveConf(modal, field) {
     var set = {};
 
-    modal.children(".simple-set")
+    modal.find(".simple-set")
          .find("input,select,textarea,ul[data-fn]")
          .each(function( ) {
         var name = $(this).attr("name") || $(this).attr("data-fn");
@@ -140,9 +140,8 @@ function saveConf(modal, field) {
     });
 
     var fd = field.find("input,select,textarea,ul[data-fn]").first();
-    modal.children(".detail-set")
-         .find("tr").not(".hide")
-         .each(function() {
+    var tr = modal.find(".detail-set tr").not(".hide");
+    tr.each(function() {
         var n = $(this).find("[name=param_name]" ).val();
         var v = $(this).find("[name=param_value]").val();
         fd.attr("data-"+n, v);
@@ -159,7 +158,7 @@ function gainFlds(fields, area) {
         var label = $(this).find("label span:first");
         var input = $(this).find("input,select,textarea,ul[data-fn]");
         var disp  = label.text();
-        var name  = input.attr("name");
+        var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
         var required = input.prop("required") ? "true" : "";
         var repeated = input.prop("multiple") ? "true" : "";
@@ -236,8 +235,8 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 input.empty();
                 var datalist = JSON.parse(field["datalist"]) || [];
                 var selected = JSON.parse(field["selected"]) || [];
-                for(var i = 0; i < datalist.length; i ++ ) {
-                    var a = datalist[i];
+                for(var j = 0; j < datalist.length; j ++ ) {
+                    var a = datalist[j];
                     var o = $("<option></option>");
                     o.val(a[0]).text(a[1]).appendTo(input);
                 }

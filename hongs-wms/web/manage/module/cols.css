@@ -3,6 +3,8 @@
     {margin-bottom: 15px; font-weight: bolder;}
 .cols-form .form-group legend
     {font-size: 15px;}
+.cols-form .form-group ul
+    {padding-left: 0;}
 .cols-form .record-form .glyphicon,
 .cols-form .target-form .glyphicon,
 .cols-form .widget-form .glyphicon

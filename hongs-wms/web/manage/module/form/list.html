@@ -57,12 +57,5 @@
             context.find(".pagebox").addClass("invisible");
             context.find(".alert").show();
         }
-
-        // 更新后重载菜单栏
-        context.on("saveBack, sendBack", function( ) {
-            $("#headbox [data-load] ").each( function( ) {
-                $(this).hsLoad($(this).attr("data-load"));
-            });
-        });
     })(jQuery);
 </script>

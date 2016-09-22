@@ -39,10 +39,10 @@
         <script type="text/javascript" src="static/assets/jquery.min.js"></script>
         <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-        <script type="text/javascript" src="static/addons/bootstrap-fileinput/fileinput.min.js"></script>
-        <script type="text/javascript" src="static/addons/bootstrap-datetimepicker/datetimepicker.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
+        <script type="text/javascript" src="static/addons/bootstrap-fileinput/fileinput.min.js"></script>
+        <script type="text/javascript" src="static/addons/bootstrap-datetimepicker/datetimepicker.min.js"></script>
         <script type="text/javascript">
             $(document).on("noMenu", function() {
                 $('#main-context').empty().append(

@@ -27,7 +27,8 @@ function H$() {
     case ':': return hsGetLang.apply(this, arguments);
     case '?': return hsChkUri .apply(this, arguments);
     case '/': return hsFixUri .apply(this, arguments);
-    case '&':
+    case '&': // 同 #, 但 HTML 中较特殊, 逐步废弃
+    case '#':
     case '@':
         if (arguments.length === 1) {
             arguments[1] = location.href;
@@ -49,19 +50,23 @@ function H$() {
         }
     case '$':
     case '%':
-        var c = b === '$' ? window.sessionStorage : window.localStorage;
-        if (typeof(c) === "undefined") {
-            throw "H$: Does not support '"+(b=='$' ? 'session':'local')+"Storage'";
+        var c = b === '%' ? window.localStorage : window.sessionStorage;
+        if (typeof c === "undefined") {
+            throw "H$: Does not support '"
+                + (b === '$' ? 'local' : 'session')
+                + "Storage'" ;
         }
         if (arguments.length === 1) {
             return c.getItem(arguments[0]);
-        } else if (arguments[1]) {
-                   c.setItem(arguments[0] , arguments[1]);
-        } else {
-                c.removeItem(arguments[0]);
+        } else
+        if (arguments[ 1 ] == null) {
+            /**/c.removeItem(arguments[0]);
+        } else
+        {
+            /****/ c.setItem(arguments[0], arguments[1]);
         }
     default:
-        throw "H$: Unrecognized identified '"+b+"'";
+        throw "H$: Unrecognized identified '" + b + "'" ;
     }
 }
 
@@ -1674,7 +1679,7 @@ $.fn.hsInit = function(cnf) {
         cnf.title = h.text();
     }
     if (cnf.title) {
-        cnf.title = H$("&id" , box )?
+        cnf.title = H$("#id" , box )?
             cnf.title.replace('{DO}', cnf.update || hsGetLang("form.update")):
             cnf.title.replace('{DO}', cnf.create || hsGetLang("form.create"));
     }

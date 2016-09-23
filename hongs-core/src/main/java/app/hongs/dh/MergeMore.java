@@ -178,7 +178,7 @@ public class MergeMore
 
         if ( null == sub)
         {
-          raw.putAll(row);
+//        raw.putAll(row);
           row.putAll(raw);
         }
         else
@@ -221,9 +221,9 @@ public class MergeMore
         {
           raw.putAll (row);
           row.putAll (raw);
-        }
-        if (!row.containsKey(sub)) {
-          row.put(sub,sub);
+        } else
+        if (! row.containsKey(sub)) {
+          row.put( sub, raw );
         }
       }
     }
@@ -300,7 +300,7 @@ public class MergeMore
       List<Map> lst = t.getValue();
       for (Map  row : lst)
       {
-        if (!row.containsKey(sub))
+        if (! row.containsKey(sub))
         {
           row.put(sub,lzt);
         }

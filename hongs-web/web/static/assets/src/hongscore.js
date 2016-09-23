@@ -1834,6 +1834,8 @@ $.fn.hsFind = function(selr) {
     var salr = selr.substr(1);
     salr = $.trim(salr);
     switch (flag) {
+        case '!':
+            return $(this).closest("."+salr).data(salr); // 快捷提取模块对象
         case '@':
             do {
                 var x;
@@ -1857,10 +1859,9 @@ $.fn.hsFind = function(selr) {
             } while (false);
             return salr ? $(salr, elem) : elem;
         case '^':
-        case '<':
             elem = elem.parent();
             if (! salr) return elem;
-            var a = salr.split('|', 2);
+            var a = salr.split('::', 2);
             if (a.length > 1) {
                 return elem.closest(salr);
             } else {
@@ -1874,6 +1875,8 @@ $.fn.hsFind = function(selr) {
             return elem.next(salr);
         case '-':
             return elem.prev(salr);
+        case '?':
+            return elem.find(salr);
         case '.':
         case ':':
         case '[':
@@ -1888,7 +1891,7 @@ $.fn._hsTarget = $.fn.hsFind; // 兼容旧版命名
 
 $.fn._hsModule = function(func, opts) {
     var elem = this;
-    var name = func.name || /^function (\w+)/.exec(func.toString())[1];
+    var name = func.name || /^function\s+(\w+)/.exec(func.toString())[1];
     var inst = elem.data(name);
     if (! inst) {
         inst = new func(opts, elem);
@@ -1943,48 +1946,51 @@ $(document).ajaxError(function(evt, xhr, cnf) {
 });
 
 $(document)
-.on("click", "[data-toggle=hsLoad]",
-function(evt) {
-    var box = $(this).attr("data-target");
-    var url = $(this).attr("data-href");
-    var dat = $(this).attr("data-data");
-    var bak = $(this).attr("data-back");
-        url = hsFixPms(url, this);
-    if (box) {
-        box = $(this).hsFind(box);
-        /**/box.hsLoad(url,  dat);
-    } else {
-        box = $.hsOpen(url,  dat);
-    }
-    if (bak) {
-        var btn = this;
-        box.on("saveBack" , function(evt) {
-            eval('(function(event){'+bak+'})').call(btn, evt);
-            $(btn).trigger(evt);
-        });
-    }
-    evt.stopPropagation();
-})
 .on("click", "[data-toggle=hsOpen]",
 function(evt) {
-    var box = $(this).attr("data-target");
-    var url = $(this).attr("data-href");
-    var dat = $(this).attr("data-data");
-    var bak = $(this).attr("data-back");
-        url = hsFixPms(url, this);
-    if (box) {
-        box = $(this).hsFind(box);
-        /**/box.hsOpen(url,  dat);
-    } else {
-        box = $.hsOpen(url,  dat);
+    var btn = $(this);
+    var box = btn.data("target");
+    var url = btn.data("href");
+    var dat = btn.data("data");
+    var das = btn.data();
+    var dos = {};
+
+    // 提取数据内事件, 命名为 onXxx
+    for(var n in das) {
+        var f =  das[n];
+
+        if (! f) {
+            continue;
+        }
+        if (! /^on[A-Z].*/.test(n)) {
+            continue;
+        }
+
+        if  ( typeof f !== "function") {
+            f = eval('(function(event) {' + f + '})');
+        }
+        n = n.substring(2, 3).toLowerCase() + n.substring(3);
+
+        dos[n]  =  f;
     }
-    if (bak) {
-        var btn = this;
-        box.on("saveBack" , function(evt) {
-            eval('(function(event){'+bak+'})').call(btn, evt);
-            $(btn).trigger(evt);
+
+    url = hsFixPms(url, this);
+    if (box) {
+        box = btn.hsFind(box)
+                 .hsOpen(url, dat, dos["onOpenBack"]);
+    } else {
+        box =   $.hsOpen(url, dat, dos["onOpenBack"]);
+    }
+    delete dos["onOpenBack"];
+
+    // 绑定额外的事件, 关闭的后即销毁
+    for(var n in dos) {
+        var f =  dos[n];
+        box.on(n, function() {
+            f.apply(btn, arguments);
         });
     }
+
     evt.stopPropagation();
 })
 .on("click", "[data-toggle=hsClose],.close,.cancel",
@@ -2095,12 +2101,14 @@ function(evt) {
     $(this).data("vals", vals);
     $(this).val ( vals );
 })
-.on("click", ".back-crumb a", function() {
+.on("click", ".back-crumb a",
+function() {
     var nav = $(this).closest ('.breadcrumb');
     nav.find('li:last a').hsClose();
     nav.find('li:last a').  click();
 })
-.on("hsReady hsCloze", ".backable.panes", function() {
+.on("hsReady hsCloze", ".backable.panes",
+function() {
     var nav = $(this).siblings('.breadcrumb') || $(this).data("tabs");
     if (nav.children( ).not( '.back-crumb,.home-crumb' ).size()) {
         nav.show().removeClass("hide").removeClass("invisible");

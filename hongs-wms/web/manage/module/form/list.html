@@ -49,7 +49,7 @@
     (function($) {
         var context = $('#hongs-module-list');
         var loadBox = context.closest(".loadbox");
-        var unitId  = H$("&unit_id", loadBox);
+        var unitId  = H$("#unit_id", loadBox);
         if (unitId == "" || unitId == "0") {
             context.find(".create" ).prop("disabled", true);
             context.find(".findbox").find("input,button").prop("disabled", true);

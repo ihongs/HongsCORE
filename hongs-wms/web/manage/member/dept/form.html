@@ -34,7 +34,7 @@
     (function($) {
         var context = $("#member-dept-form");
         
-        if (H$("&id", context) === "PUBLIC") {
+        if (H$("#id", context) === "PUBLIC") {
             context.find(".role-info").remove();
             context.find(".base-info, .form-btns").addClass("center-block");
         }

@@ -31,6 +31,7 @@ function H$() {
     case '#':
     case '@':
         if (arguments.length === 1) {
+            arguments.length  =  2;
             arguments[1] = location.href;
         }
         if (typeof(arguments[1]) !== "string") {
@@ -764,8 +765,7 @@ function hsFixPms(uri, pms) {
     if (pms instanceof Element || pms instanceof jQuery) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
-    }
-    pms = hsSerialObj (pms);
+    }   pms = hsSerialObj(pms);
     return uri.replace(/\$(\w+|\{.+?\})/gm , function(w) {
         if (w.substring(0 , 2) === "${") {
             w = w.substring(2, w.length -1);
@@ -1193,6 +1193,7 @@ $.hsOpen = function(url, data, complete) {
     return  box;
 };
 $.hsNote = function(msg, typ, yes, sec) {
+    'use strict';
     var div = $('<div class="alert alert-dismissable fade in">'
               + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
               + '<div class="alert-body notebox" ></div></div>');
@@ -1250,6 +1251,7 @@ $.hsNote = function(msg, typ, yes, sec) {
     return  div;
 };
 $.hsWarn = function(msg, typ, yes, not) {
+    'use strict';
     var div = $('<div class="alert alert-dismissable fade in">'
               + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
               + '<div class="alert-body warnbox" ></div></div>');
@@ -1313,9 +1315,10 @@ $.hsWarn = function(msg, typ, yes, not) {
     var end = null;
     for(var i = j ; i < arguments.length ; i = i + 1) {
         var v = arguments[i];
+        // 没给 label 就是设置警告窗体
         if (v["label"] === undefined) {
             if (v["close"]) {
-                end = v["click"];
+                end = v["close"];
             }
             if (v["title"]) {
                 btt.text(v["title"]);
@@ -1958,9 +1961,21 @@ function(evt) {
     var url = btn.data("href");
     var dat = btn.data("data");
     var das = btn.data();
-    var dos = {};
 
-    // 提取数据内事件, 命名为 onXxx
+    url = hsFixPms(url, this);
+    if (box) {
+        box = btn.hsFind(box)
+                 .hsOpen(url, dat, das["onOpenBack"]);
+    } else {
+        box =   $.hsOpen(url, dat, das["onOpenBack"]);
+    }
+
+    /**
+     * 从数据属性中提取出事件句柄
+     * 绑定在打开的区域上
+     * 因打开的区域会在关闭后销毁
+     * 故可在打开重复绑定
+     */
     for(var n in das) {
         var f =  das[n];
 
@@ -1970,27 +1985,15 @@ function(evt) {
         if (! /^on[A-Z].*/.test(n)) {
             continue;
         }
+        if (  n === "onOpenBack"  ) {
+            cotninue;
+        }
 
         if  ( typeof f !== "function") {
             f = eval('(function(event) {' + f + '})');
         }
         n = n.substring(2, 3).toLowerCase() + n.substring(3);
 
-        dos[n]  =  f;
-    }
-
-    url = hsFixPms(url, this);
-    if (box) {
-        box = btn.hsFind(box)
-                 .hsOpen(url, dat, dos["onOpenBack"]);
-    } else {
-        box =   $.hsOpen(url, dat, dos["onOpenBack"]);
-    }
-    delete dos["onOpenBack"];
-
-    // 绑定额外的事件, 关闭的后即销毁
-    for(var n in dos) {
-        var f =  dos[n];
         box.on(n, function() {
             f.apply(btn, arguments);
         });
@@ -1998,7 +2001,7 @@ function(evt) {
 
     evt.stopPropagation();
 })
-.on("click", "[data-toggle=hsClose],.close,.cancel",
+.on("click", "[data-toggle=hsClose],.close,.closes,.cancel",
 function(evt) {
     var box;
     var ths = $(this);

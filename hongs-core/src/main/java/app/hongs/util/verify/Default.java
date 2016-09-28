@@ -11,7 +11,7 @@ import java.util.regex.Pattern;
  * 默认取值
  * <pre>
  * 规则参数:
- *  default 默认值, 可使用 =$会话属性, =%应用属性, =%now+-偏移毫秒
+ *  default 默认值, 可使用 =@请求参数 =$会话属性, =%应用属性, =%now+-偏移毫秒
  *  default-create yes|no 仅创建的时候设置
  *  default-always yes|no 无论有没有都设置
  * </pre>
@@ -20,12 +20,19 @@ import java.util.regex.Pattern;
 public class Default extends Rule {
     @Override
     public Object verify(Object value) {
-        if (helper.isUpdate() && Synt.declare(params.get("default-create"), false)) {
-            return BLANK;
+        if ( Synt.declare(params.get("default-create"), false)) {
+            if (helper.isUpdate()) {
+                return BLANK;
+            }
         }
 
-        if (value != null  &&  ! Synt.declare(params.get("default-always"), false)) {
-            return value;
+        if (!Synt.declare(params.get("default-always"), false)) {
+            if (helper.isUpdate() && value == null) {
+                return BLANK;
+            }
+            if (!"".equals(value) && value != null) {
+                return value;
+            }
         }
 
         value = params.get("default");

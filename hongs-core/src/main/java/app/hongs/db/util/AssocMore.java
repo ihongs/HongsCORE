@@ -294,7 +294,7 @@ public class AssocMore {
         if (! cm && sq.length() != 0) {
             sq = FetchCase.fixSQLField(sq, caze.getName(), pn).toString();
         }
-        caze.group(FetchCase.fixSQLField(sq, caze.getName(), "UNKNOWN").toString());
+        caze.group(sq);
     }
 
     sq = (String) assoc.get("filter");

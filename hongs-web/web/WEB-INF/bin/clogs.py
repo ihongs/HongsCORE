@@ -30,7 +30,7 @@ if  __name__ == "__main__":
     lv = None
     tr = None
 
-    opts, args = getopt(sys.argv[1:], "n:zxh", ["name", "gzip", "pack", "help"])
+    opts, args = getopt(sys.argv[1:], "n:a:l:t:h", ["name", "addr", "leve", "time", "help"])
     for n,v in opts:
         if  n in ("-n", "--name"):
             if  v.startswith('*')
@@ -79,7 +79,7 @@ if  __name__ == "__main__":
             continue
 
         rb = ln
-        mt = ln.strip().split(' ', 6)
+        mt = ln.strip().split(' ', 6) # 日志拆解, 此处格式: Date Time ClientAddr ActionPath
 
         if  tn and tn.match(mt[4]):
             rf = True

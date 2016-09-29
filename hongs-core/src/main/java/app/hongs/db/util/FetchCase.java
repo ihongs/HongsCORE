@@ -45,6 +45,7 @@ import java.util.regex.Pattern;
  * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: AssocMore.fetchMore
  * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: AssocMore.fetchMore
  * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore.fetchMore
+ * CHECKS       ：Set         查询检查设置标识; 作用域: AssocMore.checkCase
  * page         : int|String  分页页码; 作用域: FetchPage
  * pags         : int|String  链接数量; 作用域: FetchPage
  * rows         : int|String  分页行数; 作用域: FetchPage

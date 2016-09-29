@@ -231,7 +231,10 @@ public class Table
   public FetchCase fetchCase()
     throws HongsException
   {
-    return new FetchCase().use(db).from(tableName, name);
+    FetchCase  fc = new FetchCase()
+          .use(db).from(tableName, name);
+    AssocMore.checkCase(fc, getParams());
+    return     fc ;
   }
 
   /**
@@ -514,28 +517,28 @@ public class Table
   }
 
   /**
-   * 获取关联表名
-   * @param assoc 关联信息
-   * @return 关联表名
-   */
-  protected static String getAssocName(Map assoc)
-  {
-    String tn = (String) assoc.get("tableName");
-    if  (  tn == null || tn.length() == 0)
-           tn = (String) assoc.get("name");
-    return tn;
-  }
-
-  /**
    * 获取关联路径
    * @param assoc 关联信息
    * @return 关联路径
    */
   protected static String[] getAssocPath(Map assoc)
   {
-    List<String> ts = (List)assoc.get("path");
-    if  (  ts == null  ) ts = new ArrayList();
+    List<String> ts = (List) assoc.get("path");
+    if  (  ts == null  )  ts = new ArrayList();
     return ts.toArray(new String[0]);
+  }
+
+  /**
+   * 获取关联表名
+   * @param assoc 关联信息
+   * @return 关联表名
+   */
+  protected static String   getAssocName(Map assoc)
+  {
+    String tn = (String) assoc.get("tableName");
+    if  (  tn == null || tn.length() == 0)
+           tn = (String) assoc.get("name");
+    return tn;
   }
 
   /**
@@ -549,7 +552,7 @@ public class Table
   {
     Map tc =  this.getAssoc(name);
     if (tc == null) return  null ;
-    return this.db.getTable(Table.getAssocName(tc));
+    return this.db.getTable(getAssocName(tc));
   }
 
   /**
@@ -564,7 +567,13 @@ public class Table
   {
     Map tc =  this.getAssoc(name);
     if (tc == null) return  null ;
-    return caze.gotJoin(Table.getAssocPath(tc)).gotJoin(name);
+    Table     tb = this.db.getTable(getAssocName(tc));
+    FetchCase fc = caze
+            .gotJoin(getAssocPath(tc))
+            .gotJoin(name)
+            .   from(tb.tableName/**/);
+    AssocMore.checkCase(caze, (Map) tc.get("params"));
+    return fc;
   }
 
   /**
@@ -1005,7 +1014,7 @@ public class Table
   public static Table newInstance(DB db, String name, String pkey)
     throws HongsException
   {
-    return Table.newInstance(db, name, name, pkey);
+    return newInstance(db, name, name, pkey);
   }
 
   /**
@@ -1018,7 +1027,7 @@ public class Table
   public static Table newInstance(DB db, String name)
     throws HongsException
   {
-    return Table.newInstance(db, name, name, null);
+    return newInstance(db, name, name, null);
   }
 
 }

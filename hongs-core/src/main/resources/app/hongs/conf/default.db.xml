@@ -53,7 +53,7 @@ xsi:schemaLocation="http://hongs-core db.xsd">
              tableName="[真实名, 指向真实的table的name]"
              foreignKey="[关联外键]"
              primaryKey="[关联主键]">
-        <param name="[convey|unique|select|filter|groups|having|orders|limits]">[取值]</param>
+        <param name="[convey|unique|fields|filter|groups|having|orders|limits]">[取值]</param>
         <assoc.../>
       </assoc>
     </table>

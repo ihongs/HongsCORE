@@ -64,7 +64,7 @@ public class AssocMore {
     String  pu = caze.joinName;
     boolean cm = caze.getOption("CLEVER_MODE", false);
 
-    sq = (String) params.get("select");
+    sq = (String) params.get("fields");
     if (sq != null) { // 外部设置将无效
         if (! cm && sq.length() != 0) {
             if (pu != null && pu.length() != 0) {
@@ -126,14 +126,10 @@ public class AssocMore {
   throws HongsException {
     if (assocs == null) assocs = new HashMap();
 
-    List<Map> lnks = new ArrayList ( );
+    checkCase(caze , table.getParams( ));
+
+    List<Map> lnks = new ArrayList(/**/);
     fetchMore(table, caze, assocs, lnks, null);
-
-    checkCase(caze, table.getParams());
-
-    if (!caze.hasField ()) {
-      caze.select("`" +caze.getName( )+ "`.*");
-    }
 
     List rows = table.db.fetchMore(caze);
     fetchMore(table, caze , rows , lnks);

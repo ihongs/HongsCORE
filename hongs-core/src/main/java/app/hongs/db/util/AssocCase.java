@@ -297,9 +297,15 @@ public class AssocCase {
     private void parse(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
-        field(caze, Synt.asTerms(rd.remove(Cnst.RB_KEY)));
-        order(caze, Synt.asTerms(rd.remove(Cnst.OB_KEY)));
-        query(caze, Synt.asWords(rd.remove(Cnst.WD_KEY)));
+        if (! caze.hasField()) {
+            field(caze, Synt.asTerms(rd.remove(Cnst.RB_KEY)));
+        }
+        if (! caze.hasOrder()) {
+            order(caze, Synt.asTerms(rd.remove(Cnst.OB_KEY)));
+        }
+
+        /**/query(caze, Synt.asWords(rd.remove(Cnst.WD_KEY)));
+
         where(caze, rd);
     }
 

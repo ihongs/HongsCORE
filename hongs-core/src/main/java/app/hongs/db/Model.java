@@ -875,10 +875,11 @@ implements IEntity
      * 这样可以为那些不是 JOIN 关联的用例指定字段
      */
     Object rb  = null;
-    if (listable == null)
+    if (listable == null
+    && !caze.hasField())
     {
       rb = rd.remove(Cnst.RB_KEY);
-      if ( rb != null)
+      if ( rb != null )
       {
         field(caze, Synt.asTerms(rb) );
       }

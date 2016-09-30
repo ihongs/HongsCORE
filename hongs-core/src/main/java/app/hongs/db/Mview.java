@@ -26,10 +26,11 @@ public class Mview extends Model {
 
     private Map<String, Map<String, String>> fields = null;
     private Map<String, Mview> views = null;
-    private Model    model = null;
-
-    public  String   title = null;
-    public  String   nmkey = null;
+    private Model       model = null;
+    private String      title = null;
+    private String      txkey = null;
+    private CoreConfig  conf  = null;
+    private CoreLocale  lang  = null;
 
     public Mview(Table table) throws HongsException {
         super(table);
@@ -47,13 +48,15 @@ public class Mview extends Model {
     }
 
     public final CoreConfig getConf() {
-        CoreConfig conf = CoreConfig.getInstance( ).clone();
+        if (conf != null) return conf;
+        conf = CoreConfig.getInstance( ).clone();
         conf.loadIgnrFNF(db.name);
         return  conf;
     }
 
     public final CoreLocale getLang() {
-        CoreLocale lang = CoreLocale.getInstance( ).clone();
+        if (lang != null) return lang;
+        lang = CoreLocale.getInstance( ).clone();
         lang.loadIgnrFNF(db.name);
         return  lang;
     }
@@ -83,15 +86,25 @@ public class Mview extends Model {
         }
     }
 
+    /**
+     * 获取主键字段名
+     * @return
+     * @throws HongsException 
+     */
     public String getIdKey()
     throws HongsException {
         return table.primaryKey;
     }
 
-    public String getNmKey()
+    /**
+     * 获取名称字段名
+     * @return
+     * @throws HongsException 
+     */
+    public String getTxKey()
     throws HongsException {
-        if (null != nmkey) {
-            return  nmkey;
+        if (null != txkey) {
+            return  txkey;
         }
 
         getFields( );
@@ -99,7 +112,7 @@ public class Mview extends Model {
         if (findable != null && findable.length > 0) {
             for (String n : findable) {
                 if(n != null && !n.contains(".") && !n.endsWith("id")) {
-                    nmkey = n;
+                    txkey = n;
                     return  n;
                 }
             }
@@ -108,16 +121,21 @@ public class Mview extends Model {
         if (listable != null && listable.length > 0) {
             for (String n : listable) {
                 if(n != null && !n.contains(".") && !n.endsWith("id")) {
-                    nmkey = n;
+                    txkey = n;
                     return  n;
                 }
             }
         }
 
-        nmkey  =  "";
-        return nmkey;
+        txkey  =  "";
+        return txkey;
     }
 
+    /**
+     * 获取表单模型名称
+     * @return
+     * @throws HongsException 
+     */
     public String getTitle()
     throws HongsException {
         if (null != title) {
@@ -162,6 +180,12 @@ public class Mview extends Model {
         */
     }
 
+    /**
+     * 后去表单配置参数
+     * 注意非表配置参数
+     * @return
+     * @throws HongsException 
+     */
     public Map<String, String> getParams()
     throws HongsException {
         Map form =  /**/getForm();
@@ -171,6 +195,12 @@ public class Mview extends Model {
         return Synt.asserts(form.get("@"), new HashMap());
     }
 
+    /**
+     * 获取全部字段配置
+     * 混合了表和表单的
+     * @return
+     * @throws HongsException 
+     */
     public Map<String, Map<String, String>> getFields()
     throws HongsException {
         if (null != fields) {
@@ -184,51 +214,51 @@ public class Mview extends Model {
             fields  =  new LinkedHashMap( fields );
         }
 
-        Map<String, String> conf = fields.get("@");
+        Map<String, String> prms = fields.get("@");
         Set<String> listColz = new LinkedHashSet();
         Set<String> sortColz = new LinkedHashSet();
         Set<String> findColz = new LinkedHashSet();
         Set<String> filtColz = new LinkedHashSet();
 
         Set listTypz = null;
-        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.listable"), false)) {
+        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.listable"), false)) {
             listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("listable"));
         }
         Set sortTypz = null;
-        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.sortable"), false)) {
+        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.sortable"), false)) {
             sortTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
         }
         Set findTypz = null;
-        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.findable"), false)) {
+        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.findable"), false)) {
             findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("findable"));
         }
         Set filtTypz = null;
-        if (conf == null || ! Synt.declare(conf.get("dont.auto.bind.filtable"), false)) {
+        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.filtable"), false)) {
             filtTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("filtable"));
         }
 
         // 排序、搜索等字段也可以直接在主字段给出
-        if (conf != null && conf.containsKey("listable")) {
-            listColz = Synt.asTerms(conf.get("listable"));
+        if (prms != null && prms.containsKey("listable")) {
+            listColz = Synt.asTerms(prms.get("listable"));
             listTypz = null;
         }
-        if (conf != null && conf.containsKey("sortable")) {
-            sortColz = Synt.asTerms(conf.get("sortable"));
+        if (prms != null && prms.containsKey("sortable")) {
+            sortColz = Synt.asTerms(prms.get("sortable"));
             sortTypz = null;
         }
-        if (conf != null && conf.containsKey("findable")) {
-            findColz = Synt.asTerms(conf.get("findable"));
+        if (prms != null && prms.containsKey("findable")) {
+            findColz = Synt.asTerms(prms.get("findable"));
             findTypz = null;
         }
-        if (conf != null && conf.containsKey("filtable")) {
-            filtColz = Synt.asTerms(conf.get("filtable"));
+        if (prms != null && prms.containsKey("filtable")) {
+            filtColz = Synt.asTerms(prms.get("filtable"));
             filtTypz = null;
         }
 
-        if (null == conf || ! Synt.declare(conf.get("dont.auto.append.fields"), false)) {
+        if (null == prms || ! Synt.declare(prms.get("dont.auto.append.fields"), false)) {
             addTableFields();
         }
-        if (null == conf || ! Synt.declare(conf.get("dont.auto.append.assocs"), false)) {
+        if (null == prms || ! Synt.declare(prms.get("dont.auto.append.assocs"), false)) {
             addAssocFields();
         }
 
@@ -305,7 +335,7 @@ public class Mview extends Model {
     }
 
     private void addTableFields() throws HongsException {
-        CoreLocale lang = getLang();
+        getLang();
 
         /*
         String sql = "SHOW FULL FIELDS FROM `"+table.tableName+"`";
@@ -417,7 +447,7 @@ public class Mview extends Model {
                           ? viewz.get(tk)
                           : new Mview(hm , viewz);
 
-                tk   = hb.getNmKey();
+                tk   = hb.getTxKey();
                 disp = hb.getTitle();
                 name = vk;
             } else
@@ -433,7 +463,7 @@ public class Mview extends Model {
                           ? viewz.get(tk)
                           : new Mview(hm , viewz);
 
-                tk   = hb.getNmKey();
+                tk   = hb.getTxKey();
                 disp = hb.getTitle();
                 name = ak + "." + vk;
             } else
@@ -449,7 +479,7 @@ public class Mview extends Model {
                           ? viewz.get(tk)
                           : new Mview(hm , viewz);
 
-                tk   = hb.getNmKey();
+                tk   = hb.getTxKey();
                 disp = hb.getTitle();
                 name = ak + ".."+ vk;
             } else
@@ -472,7 +502,7 @@ public class Mview extends Model {
                           ? viewz.get(tk)
                           : new Mview(hm , viewz);
 
-                tk   = hb.getNmKey();
+                tk   = hb.getTxKey();
                 disp = hb.getTitle();
                 name = ak + ".."+ vk;
             } else {

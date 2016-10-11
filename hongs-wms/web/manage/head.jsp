@@ -57,21 +57,21 @@
 %>
 <%
     ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
-    String m = helper.getParameter("m");
-    if (m == null || "".equals(m)) {
-        m = "manage";
+    String w = helper.getParameter("w");
+    if (w == null || "".equals(w)) {
+        w = "manage";
     }
-    String n = helper.getParameter("n");
-    if (n == null || "".equals(n)) {
-        n =  m;
+    String m = helper.getParameter("n");
+    if (m == null || "".equals(m)) {
+        m =  w;
     }
     String u = helper.getParameter("u");
     if (u == null || "".equals(u)) {
-        u =  n;
+        u =  m;
     }
 
-    NaviMap main = NaviMap.getInstance(m);
-    NaviMap curr = NaviMap.getInstance(n);
+    NaviMap main = NaviMap.getInstance(w);
+    NaviMap curr = NaviMap.getInstance(m);
     List<Map> mainMenu = main.getMenuTranslated();
     List<Map> currMenu = curr.getMenuTranslates();
 

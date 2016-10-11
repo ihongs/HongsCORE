@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  * select,filter,groupBy,having,orderBy 为追加方法, 保留原设值;
  * field ,where ,group  ,havin ,order   为设置方法, 将清空原值;
  * 如果 CLEVER_MODE 开启, !打头的不加表别名, :的将加上级表别名;
+ * 避免 CLEVER_MODE 下使用较复杂的语句, 仅对常规语句有做过测试;
  * </pre>
  *
  * <h3>系统已知 options:</h3>
@@ -120,13 +121,13 @@ public class FetchCase
    * 上级表或保留名标识符
    */
   static final Pattern sqlPoint = Pattern
-          .compile( "'.*?'|[:!](?=`.*?`|\\w+|\\*)" );
+          .compile( "\".*?\"|'.*?'|[:!](?=`.*?`|\\w+|\\*)" );
 
   /**
    * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
    */
   static final Pattern sqlField = Pattern
-          .compile("('.*?'|`.*?`|\\w+|\\*|\\))\\s*");
+          .compile("(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))\\s*");
 
   /**
    * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
@@ -813,6 +814,7 @@ public class FetchCase
       StringBuilder b = new StringBuilder(); // 新的 SQL
       StringBuilder p = new StringBuilder(); // 字段单元
       boolean quoteBegin = false;
+      boolean quotaBegin = false;
       boolean fieldBegin = false;
       int     groupLevel = 0;
 
@@ -826,6 +828,12 @@ public class FetchCase
               }
               continue;
           }
+          if (quotaBegin) {
+              if (c == '"') {
+                  quotaBegin = false;
+              }
+              continue;
+          }
           if (fieldBegin) {
               if (c == '`') {
                   fieldBegin = false;
@@ -835,6 +843,10 @@ public class FetchCase
 
           if (c == '\'') {
               quoteBegin = true;
+              continue;
+          }
+          if (c == '"') {
+              quotaBegin = true;
               continue;
           }
           if (c == '`') {
@@ -956,17 +968,15 @@ public class FetchCase
           }
 
           x = m.group (1);
-          if (x.charAt(0) == '\'') {
-              // 字符串后不跟字段
-              k  = j;
-          } else
-          if (x.charAt(0) == ')' ) {
-              // 括号之后不跟字段
+          if (x.charAt(0) == '\''
+          ||  x.charAt(0) == '"'
+          ||  x.charAt(0) == ')') {
+              // 字符串后不跟字段, 函数调用块也要跳过
               k  = j;
           } else
           if (x.charAt(0) == '*'
           && (k == i || f.charAt(j) == ')')) {
-              // 跳过乘号且不偏移,  COUNT(*) 也要跳过
+              // 跳过乘号且不偏移, COUNT (*) 也要跳过
           } else
           if (sqlFieldBeforeAlias.matcher(x).matches()) {
               // 跳过别名和数字等

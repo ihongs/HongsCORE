@@ -76,7 +76,16 @@ public class TestDB {
         System.out.println(vali);
         System.out.println(copy.toString());
         assertEquals(vali, copy.toString());
-
+        
+        caze = new FetchCase(FetchCase.CLEVER);
+        caze.from   ("xxx", "x")
+            .join   ("yyy", "y", "xxx_id = :id")
+            .filter ("name = \"Hong's\" AND age = '30'");
+        vali = "SELECT `x`.* FROM `xxx` AS `x` INNER JOIN `yyy` AS `y` ON `y`.xxx_id = `x`.id WHERE `x`.name = \"Hong's\" AND `x`.age = '30'";
+        System.out.println(vali);
+        System.out.println(caze.toString());
+        assertEquals(vali, caze.toString());
+        
         caze = new FetchCase(FetchCase.CLEVER);
         caze.from   ("a_member_user", "user")
             .filter ("state != 1 AND dept_id IN (?)", 1)

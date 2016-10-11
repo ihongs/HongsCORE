@@ -387,7 +387,10 @@ implements IEntity
       if (field.equals( this.table.primaryKey)
       ||  field.equals( Cnst.ID_KEY))
       {
+      if (value != null && ! value.equals(""))
+      {
         caze.filter("`"+this.table.name+"`.`"+this.table.primaryKey+"` != ?", value);
+      }
       } else
       if (columns.containsKey(field))
       {

@@ -14,9 +14,9 @@ import java.util.Map;
  *
  * 请求参数说明:
  * 参数 m 是导航配置名
- * 参数 n 是菜单节点名
- * 如果 m,n 一致则仅给 m
- * 对应的菜单节点的 href 写作 common/menu.act?m=&n=
+ * 参数 n 是导航路径名
+ * m 与 n 相同时省略 n
+ * 对应的菜单节点的 href 写作 common/menu.act?m=XXX&n=XXX
  *
  * @author Hong
  */
@@ -28,32 +28,45 @@ public class MenuAction {
     throws HongsException {
         String m = helper.getParameter("m");
         String n = helper.getParameter("n");
-        String x = n;
-        if (null == m || "".equals(m)) {
-            m = "default";
+        String x = helper.getParameter("x");
+        String u = "common/menu.act";
+
+        if (m == null || "".equals(m)) {
+            m  = "default";
+        }   u += "?m=" + m;
+        if (n != null) {
+            u += "&n=" + n;
         }
-        if (null == n || "".equals(n)) {
-            n = "common/menu.act?m=" + m ;
-            x = !"deafult".equals(m) ? m : "" ;
-        } else {
-            n = "common/menu.act?m=" + m + "&n=" + n ;
+        if (x != null) {
+            u += "&x=" + x;
         }
 
-        NaviMap site  =  NaviMap.getInstance(m);
-        Map<String, Map> menu = site.getMenu(n);
-        String  href  ;
-        if (menu != null) {
-            menu  = menu.get("menus");
+        // 检查是否有可以进入的下级菜单
+        NaviMap site = NaviMap.getInstance(m);
+        if (site.chkMenu(u) ) {
+            String  href  ;
+            Map<String, Map> menu = site.getMenu(u);
             if (menu != null) {
-                href  = getRedirect(site, menu);
-                if (href != null) {
-                    helper.redirect(Core.BASE_HREF +"/"+ href);
-                    return;
+                menu  = menu.get(  "menus"  );
+                if (menu != null) {
+                    href  = getRedirect(site, menu);
+                    if (href != null) {
+                        helper.redirect(Core.BASE_HREF + "/" + href);
+                        return;
+                    }
                 }
             }
         }
 
-        helper.redirect(Core.BASE_HREF +"/"+ x);
+        // 没有权限则跳到指定目录或首页
+        if (n == null) {
+            if (! "default".equals(m)) {
+                n = m;
+            } else {
+                n ="";
+            }
+        }
+        helper.redirect(Core.BASE_HREF + "/" + n);
     }
 
     @Action("list")

@@ -113,6 +113,32 @@ public class AssocMore {
     }
   }
 
+  private static void checkCase(FetchCase caze, Map params,
+          String xn, String an, Table table)
+          throws HongsException {
+    checkCase(caze, params );
+
+    if (an == null) {
+        an =  caze.getName();
+    }
+
+    // 补全查询字段, 没有则查全部
+    if (xn == null) {
+        caze.setOption("__HAS_FIELD__", caze.hasField());
+        if (! caze.hasField() && (params == null || ! params.containsKey("fields"))) {
+            caze.field( an+".*" );
+        }
+    } else
+    if (caze.getOption("__HAS_FIELD__", false) == false) {
+        if (! caze.hasField() && (params == null || ! params.containsKey("fields"))) {
+            Set<String> fs = table.getFields().keySet( );
+            for(String  fn : fs ) {
+                caze.select( "`" + an + "`.`" + fn + "` AS `" + xn + "." + fn+"`" );
+            }
+        }
+    }
+  }
+
   /**
    * 关联查询
    * @param table  主表
@@ -124,12 +150,14 @@ public class AssocMore {
   public static List fetchMore
     (Table table, FetchCase caze, Map assocs)
   throws HongsException {
-    if (assocs == null) assocs = new HashMap();
-
-    checkCase(caze , table.getParams( ));
+    if (assocs == null) {
+        assocs = new HashMap();
+    }
 
     List<Map> lnks = new ArrayList(/**/);
     fetchMore(table, caze, assocs, lnks, null);
+
+    checkCase(caze , table.getParams() , null, null, null);
 
     List rows = table.db.fetchMore(caze);
     fetchMore(table, caze , rows , lnks);
@@ -221,29 +249,17 @@ public class AssocMore {
         else {
             throw new HongsException(0x10c4, "Unrecognized assoc join '"+jn+"'");
         }
-        caze2.by( ji );
+        caze2.by(ji);
 
-        // 添加关联层级, 但如果非 CLEVER_MODE 则没作用
-        String pu = an;
-        if (null != pn) {
-               pu = pn +"."+ pu;
-        }
-        caze2.in( pu );
-
-        checkCase(caze2, (Map) assoc.get("params") /**/);
+        // 添加关联层级名, 如果不是 CLEVER_MODE 则没作用
+        String   pu   = null != pn ? pn + "." + an : an ;
+        caze2.in(pu);
 
         if ( assocs2 != null ) {
             fetchMore(table2, caze2, assocs2, lnks2, pu);
         }
 
-        // Fixed in 2015/10/22
-        // 因 JOIN 无法用 * 查询(可能导致重名), 故需要追加全部字段
-        if ( ! caze.hasField( ) && ! caze2.hasField( ) ) {
-            Set<String> cols = table2.getFields().keySet();
-            for(String  col  : cols) {
-                caze2.select("`"+an+"`.`"+ col +"` AS `"+pu+"."+ col +"`");
-            }
-        }
+        checkCase(caze2, (Map) assoc.get("params") , pu, an, table2);
     }
   }
 
@@ -312,26 +328,22 @@ public class AssocMore {
         else {
             throw new HongsException(0x10c2, "Unrecognized assoc type '"+tp+"'");
         }
-        if (tn != null && tn.length() != 0 && !tn.equals(caze.name)) {
-            pk = tn +"."+ pk;
-        }
-        // 忘了为何这样
-        if (fk.startsWith(":") ) {
-            fk = fk.substring(1);
+
+        if (tn != null && !tn.equals("") && !tn.equals(an)) {
+            pk  = tn +"."+ pk;
         }
 
-        // 合并关联模式
-        caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
+        caze2.setOption("ASSOC_MERGE" , "MERGE".equals(jn));
 
-        checkCase(caze2, (Map) assoc.get( "params" ) /**/);
-
-        if ( assocs2 != null ) {
-            fetchMore(table2, caze2, assocs2, lnkz2, null);
+        if (assocs2 != null) {
+            fetchMore(table2, caze2, assocs2, lnkz2, null );
         }
+
+        checkCase(caze2, (Map) assoc.get("params") , null, null, null);
 
         join.join(table2, caze2, pk, fk);
     }
-        lnks2 = lnkz2;
+        lnks2  =  lnkz2 ;
     }
   }
 

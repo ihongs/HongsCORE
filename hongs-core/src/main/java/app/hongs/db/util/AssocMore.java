@@ -277,7 +277,7 @@ public class AssocMore {
         String jn = (String)assoc.get("join");
         String an = (String)assoc.get("name");
         String rn = (String)assoc.get("tableName");
-        String tn = (String)assoc.get("assocName");
+        String pn = (String)assoc.get("assocName");
         if (rn == null || rn.length() == 0) rn = an ;
         if (rn == null || rn.length() == 0) continue;
 
@@ -329,21 +329,21 @@ public class AssocMore {
             throw new HongsException(0x10c2, "Unrecognized assoc type '"+tp+"'");
         }
 
-        if (tn != null && !tn.equals("") && !tn.equals(an)) {
-            pk  = tn +"."+ pk;
-        }
-
-        caze2.setOption("ASSOC_MERGE" , "MERGE".equals(jn));
+        caze2.setOption("ASSOC_MERGE", "MERGE".equals(jn));
 
         if (assocs2 != null) {
-            fetchMore(table2, caze2, assocs2, lnkz2, null );
+            fetchMore(table2, caze2, assocs2, lnkz2, null);
         }
 
         checkCase(caze2, (Map) assoc.get("params") , null, null, null);
 
+        if (pn != null && !pn.equals("") && !pn.equals(caze.getName())) {
+            pk  = pn +"."+ pk;
+        }
+
         join.join(table2, caze2, pk, fk);
     }
-        lnks2  =  lnkz2 ;
+        lnks2 = lnkz2;
     }
   }
 

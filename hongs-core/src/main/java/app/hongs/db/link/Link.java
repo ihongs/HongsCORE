@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Hongs
  */
 abstract public class Link
-implements  ITrnsct , Core.Destroy
+implements ITrnsct, Core.Destroy
 {
 
   /**

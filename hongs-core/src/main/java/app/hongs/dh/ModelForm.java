@@ -58,6 +58,10 @@ public class ModelForm {
         // Nothing todo...
     }
 
+    /**
+     * 设置字段配置
+     * @param map 
+     */
     protected final void setFields(Map map) {
         fieldz = map;
     }

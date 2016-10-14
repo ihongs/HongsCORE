@@ -20,18 +20,18 @@ import java.util.regex.Pattern;
  *
  * <h3>使用以下方法将SQL语句拆解成对应部分:</h3>
  * <pre>
- * select       SELECT    field1, field2
+ * field        SELECT    field1, field2
  * from         FROM      tableName AS name
- * join.by.on   LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
- * filter       WHERE     expr1 AND expr2
- * groupBy      GROUP BY  field1, field2
- * having       HAVING    expr1 AND expr2
- * orderBy      ORDER BY  field1, field2
+ * join         LEFT JOIN assocName AS nam2 ON nam2.xx = name.yy
+ * where        WHERE     expr1 AND expr2
+ * group        GROUP BY  field1, field2
+ * havin        HAVING    expr1 AND expr2
+ * order        ORDER BY  field1, field2
  * limit        LIMIT     start, limit
  *
  * 注意:
- * select,filter,groupBy,having,orderBy 为追加方法, 保留原设值;
  * field ,where ,group  ,havin ,order   为设置方法, 将清空原值;
+ * select,filter,groupBy,having,orderBy 为追加方法, 保留原设值;
  * 如果 CLEVER_MODE 开启, !打头的不加表别名, :的将加上级表别名;
  * 避免 CLEVER_MODE 下使用较复杂的语句, 仅对常规语句有做过测试;
  * </pre>
@@ -146,7 +146,7 @@ public class FetchCase
   //** 构造 **/
 
   /**
-   * 标准构造
+   * 简单构造
    */
   public FetchCase()
   {
@@ -159,6 +159,7 @@ public class FetchCase
    * OBJECT 对象模式, 获取的结果为字段类型对应的对象
    * CLEVER 智能模式, 自动根据关联层级补全表名和别名
    * STRICT 严格模式, 与智能模式相反, 但拼接速度较快
+   * 不设置 CLEVER 或 STRICT 则当用 JOIN 时开启 CLEVER 模式
    * @param mode 2 STRICT, 3 CLEVER, 4 OBJECT
    */
   public FetchCase(byte mode)
@@ -192,6 +193,7 @@ public class FetchCase
 
   /**
    * 深度构造
+   * 用于 clone 和 copy
    * @param caze 源用例
    * @param opts 新选项
    * @param flat 浅拷贝
@@ -255,17 +257,6 @@ public class FetchCase
   }
 
   /**
-   * 追加查询字段
-   * @param field
-   * @return 当前实例
-   */
-  public FetchCase select(String field)
-  {
-    this.fields.append(", ").append(field);
-    return this;
-  }
-
-  /**
    * 设置查询字段
    * @param field
    * @return 当前实例
@@ -276,19 +267,6 @@ public class FetchCase
     if ( field != null && field.length() != 0) {
         select ( field );
     }
-    return this;
-  }
-
-  /**
-   * 追加查询条件
-   * @param where
-   * @param params 对应 where 中的 ?
-   * @return 当前实例
-   */
-  public FetchCase filter(String where, Object... params)
-  {
-    this.wheres.append(" AND ").append(where);
-    this.wparams.addAll(Arrays.asList(params));
     return this;
   }
 
@@ -309,17 +287,6 @@ public class FetchCase
   }
 
   /**
-   * 追加分组字段
-   * @param field
-   * @return 当前实例
-   */
-  public FetchCase groupBy(String field)
-  {
-    this.groups.append(", ").append(field);
-    return this;
-  }
-
-  /**
    * 设置分组字段
    * @param field
    * @return 当前实例
@@ -330,19 +297,6 @@ public class FetchCase
     if ( field != null && field.length() != 0) {
         groupBy( field );
     }
-    return this;
-  }
-
-  /**
-   * 追加过滤条件
-   * @param where
-   * @param params 对应 where 中的 ?
-   * @return 当前实例
-   */
-  public FetchCase having(String where, Object... params)
-  {
-    this.havins.append(" AND ").append(where);
-    this.vparams.addAll(Arrays.asList(params));
     return this;
   }
 
@@ -363,17 +317,6 @@ public class FetchCase
   }
 
   /**
-   * 追加排序字段
-   * @param field
-   * @return 当前实例
-   */
-  public FetchCase orderBy(String field)
-  {
-    this.orders.append(", ").append(field);
-    return this;
-  }
-
-  /**
    * 设置排序字段
    * @param field
    * @return 当前实例
@@ -387,10 +330,8 @@ public class FetchCase
     return this;
   }
 
-  //** 限额 **/
-
   /**
-   * 设置限额
+   * 限额, 关联查询上无效
    * @param start
    * @param limit
    * @return 当前实例
@@ -402,13 +343,74 @@ public class FetchCase
   }
 
   /**
-   * 设置限额
+   * 限额, 关联查询上无效
    * @param limit
    * @return 当前实例
    */
   public FetchCase limit(int limit)
   {
     this.limits = limit == 0 ? new int[0] : new int[] {  0  , limit};
+    return this;
+  }
+
+  //** 追加 **/
+
+  /**
+   * 追加查询字段
+   * @param field
+   * @return 当前实例
+   */
+  public FetchCase select(String field)
+  {
+    this.fields.append(", ").append(field);
+    return this;
+  }
+
+  /**
+   * 追加查询条件
+   * @param where
+   * @param params 对应 where 中的 ?
+   * @return 当前实例
+   */
+  public FetchCase filter(String where, Object... params)
+  {
+    this.wheres.append(" AND ").append(where);
+    this.wparams.addAll(Arrays.asList(params));
+    return this;
+  }
+
+  /**
+   * 追加分组字段
+   * @param field
+   * @return 当前实例
+   */
+  public FetchCase groupBy(String field)
+  {
+    this.groups.append(", ").append(field);
+    return this;
+  }
+
+  /**
+   * 追加过滤条件
+   * @param where
+   * @param params 对应 where 中的 ?
+   * @return 当前实例
+   */
+  public FetchCase having(String where, Object... params)
+  {
+    this.havins.append(" AND ").append(where);
+    this.vparams.addAll(Arrays.asList(params));
+    return this;
+  }
+
+  /**
+   * 追加排序字段
+   * @param field
+   * @return 当前实例
+   */
+  public FetchCase orderBy(String field)
+  {
+    this.orders.append(", ").append(field);
     return this;
   }
 

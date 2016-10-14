@@ -492,10 +492,10 @@ public class AssocMore {
        * 找出没改变的数据并更新, 然后插入新增数据, 最后删除更新和新增之外的数据.
        */
       String ks = (String) config.get("unique");
+      // 2016/4/15, 也可以读取表自身的唯一键
       if (ks == null || ks.length() == 0)
       {
-          // 2016/4/15, 也可以读取表自身的唯一键
-          ks = Dict.getValue(tb.getAssocs(), "", "@", "unique");
+          ks  = Synt.asserts(tb.getParams().get("unique"), "");
       }
       if (ks != null && ks.length() != 0)
       {

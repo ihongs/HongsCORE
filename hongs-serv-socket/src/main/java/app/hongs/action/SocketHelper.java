@@ -78,7 +78,7 @@ public class SocketHelper extends ActionHelper {
                 .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
         }
 
-        core.destroy();
+        core.close();
     }
 
     /**

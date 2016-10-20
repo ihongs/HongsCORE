@@ -40,11 +40,11 @@ public class Source extends Link {
     }
 
     @Override
-    public  Connection connect()
+    public  Connection open()
             throws HongsException {
         try {
             if (connection == null || connection.isClosed()) {
-                connection  = connect( jdbc , path , info );
+                connection  = open( jdbc , path , info );
 
                 if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                     CoreLogger.trace("DB: Connect to '"+name+"' by source mode: "+jdbc+" "+path);
@@ -60,7 +60,7 @@ public class Source extends Link {
     private static final Map<String, BasicDataSource> sourcePool = new HashMap();
     private static final ReadWriteLock sourceLock = new ReentrantReadWriteLock();
 
-    public  static Connection connect(String jdbc, String name, Properties info)
+    public  static Connection open(String jdbc, String name, Properties info)
             throws SQLException {
         String  namc = jdbc+" "+name;
         BasicDataSource         pool;

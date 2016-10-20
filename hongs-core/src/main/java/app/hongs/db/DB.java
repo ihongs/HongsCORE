@@ -156,7 +156,7 @@ public class DB
   }
 
   @Override
-  public Connection connect()
+  public Connection open()
     throws HongsException
   {
     TOP: do
@@ -180,7 +180,7 @@ public class DB
      */
     if (  this.link  != null)
     {
-      this.connection = this.link.connect();
+      this.connection = this.link.open();
       if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
       {
         CoreLogger.trace("DB: Connect to '"+name+"' link '"+this.link.name+"'");
@@ -214,7 +214,7 @@ public class DB
 
       try
       {
-        connection = Origin.connect(mode, namc, info );
+        connection = Origin.open(mode, namc, info );
       }
       catch (SQLException ex)
       {
@@ -258,7 +258,7 @@ public class DB
 
       try
       {
-        connection = Source.connect(mode, namc, info );
+        connection = Source.open(mode, namc, info );
       }
       catch (SQLException ex)
       {

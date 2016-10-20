@@ -1,6 +1,7 @@
 
 # 更新日志
 
+* 2016/10/20 废弃 Core.Destroy 改用 AutoCloseable 接口, destroy 方法均改名为 close
 * 2016/09/19 彻底去除 FetchCase 中当前表字段表示方法; 模型默认为严格模式, 简单拼接速度较快; 启用聪明模式后将自动为关联的各用例中的字段、条件补全表名和别名; 未指明模式时, 当有关联时自动开启聪明模式
 * 2016/09/04 重写 Model 的 filter 相关方法, 将全部过滤逻辑在 AssocCase 中重写, 改写 Synt.filter(原名foreach) 以适应 Java8 的函数式形式
 * 2016/08/06 将 db 包中的 FetchCase,FetchMore 等类迁移到 app.hongs.db.util 下

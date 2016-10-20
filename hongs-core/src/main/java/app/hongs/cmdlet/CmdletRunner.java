@@ -123,12 +123,12 @@ public class CmdletRunner
     {
       try
       {
-          core.destroy( );
+          core.close ( );
       }
-      catch (Throwable e)
+      catch (Throwable er)
       {
-          CoreLogger.error(e);
-          System.exit (5);
+          CoreLogger.error(er);
+          System.exit(5);
       }
 
       /**
@@ -311,8 +311,11 @@ public class CmdletRunner
       @Override
       public void run ()
       {
-        Core.THREAD_CORE.get().destroy();
-        Core.GLOBAL_CORE.destroy();
+        Core.THREAD_CORE
+                .get(  )
+                .close();
+        Core.GLOBAL_CORE
+                .close();
       }
     });
 

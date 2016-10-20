@@ -67,7 +67,7 @@ public class SearchAction extends LuceneAction {
             rd = getReqMap (helper, sr, "counts", rd);
         Map sd = sh.counts (rd);
             sd = getRspMap (helper, sr, "counts", sd);
-                 sr.destroy(  );
+                 sr.close  (  );
 
         /**
          * 追加枚举名称

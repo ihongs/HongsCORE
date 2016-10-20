@@ -88,7 +88,7 @@ import org.apache.lucene.util.NumericUtils;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.Destroy {
+public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoCloseable {
 
     protected boolean IN_TRNSCT_MODE = false;
     protected boolean IN_OBJECT_MODE = false;
@@ -615,7 +615,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
      * 初始化读操作
      * @throws HongsException
      */
-    public void initial() throws HongsException {
+    public void init() throws HongsException {
         if (reader != null) {
             return;
         }
@@ -651,7 +651,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
      * 连接写数据库
      * @throws HongsException
      */
-    public void connect() throws HongsException {
+    public void open() throws HongsException {
         if (writer != null) {
             return;
         }
@@ -679,7 +679,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
      * 销毁读写连接
      */
     @Override
-    public void destroy() {
+    public void close() {
         if (writer != null) {
             // 默认退出时提交
             if (IN_TRNSCT_MODE) {
@@ -728,15 +728,18 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
 
     @Override
     protected void finalize() throws Throwable {
-         this.destroy( );
-        super.finalize();
+        try {
+           this.close(   );
+        } finally {
+          super.finalize();
+        }
     }
 
     /**
      * 事务开始
      */
     @Override
-    public void trnsct() {
+    public void begin() {
         IN_TRNSCT_MODE = true;
     }
 
@@ -801,17 +804,17 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Core.De
     }
 
     public IndexSearcher getFinder() throws HongsException {
-        initial();
+        init();
         return finder;
     }
 
     public IndexReader getReader() throws HongsException {
-        initial();
+        init();
         return reader;
     }
 
     public IndexWriter getWriter() throws HongsException {
-        connect();
+        open();
         return writer;
     }
 

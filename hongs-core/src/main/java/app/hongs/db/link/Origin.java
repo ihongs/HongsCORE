@@ -36,11 +36,11 @@ public class Origin extends Link {
     }
 
     @Override
-    public  Connection connect()
+    public  Connection open()
             throws HongsException {
         try {
             if (connection == null || connection.isClosed()) {
-                connection  = connect( jndi , path , info );
+                connection  = open( jndi , path , info );
                 
                 if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                     CoreLogger.trace("DB: Connect to '"+name+"' by origin mode: "+jndi+" "+path);
@@ -55,7 +55,7 @@ public class Origin extends Link {
         }
     }
 
-    public  static Connection connect(String jndi, String namc, Properties info)
+    public  static Connection open(String jndi, String namc, Properties info)
             throws SQLException, NamingException {
         if (jndi == null || jndi.length( ) == 0) {
             jndi = "java:comp/env";

@@ -21,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * @author Hongs
  * @param <T> 任务的数据类型
  */
-public abstract class Async<T> extends CoreSerial implements Core.Destroy {
+public abstract class Async<T> extends CoreSerial implements AutoCloseable {
 
     private File back = null;
     public  BlockingQueue<T> tasks;
@@ -59,7 +59,7 @@ public abstract class Async<T> extends CoreSerial implements Core.Destroy {
     }
 
     @Override
-    public void destroy() {
+    public void close() {
         if (!servs.isShutdown( )) {
             servs.shutdownNow( );
         }
@@ -90,7 +90,7 @@ public abstract class Async<T> extends CoreSerial implements Core.Destroy {
     @Override
     protected void finalize() throws Throwable {
         try {
-           this.destroy( );
+           this.close(   );
         } finally {
           super.finalize();
         }
@@ -177,10 +177,10 @@ public abstract class Async<T> extends CoreSerial implements Core.Destroy {
             String x = input.nextLine().trim( );
             System.out.println("- "+Thread.currentThread().getId()+"\t"+x);
             if ("".equals(x)) {
-                a.destroy( );
-                break;
+                a.close();
+                break ;
             }
-            a.add( x);
+            a.add( x );
         }
         int m = a.tasks.size();
         System.out.println("end!!!"+(m>0?m:""));

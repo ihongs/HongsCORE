@@ -67,7 +67,7 @@ public class SearchCmdlet {
             rd = vh.verify(rd);
             
             try {
-                so.trnsct( );
+                so.begin ( );
                 for (String id  : ds) {
                     so.set( id  , rd);
                 }
@@ -78,13 +78,13 @@ public class SearchCmdlet {
                 throw ex;
             }
             finally {
-                so.destroy();
+                so.close ( );
             }
         }
         else {
             // 不给内容即为删除
             try {
-                so.trnsct( );
+                so.begin( );
                 for (String id  : ds) {
                     so.del( id );
                 }
@@ -95,7 +95,7 @@ public class SearchCmdlet {
                 throw ex;
             }
             finally {
-                so.destroy();
+                so.close ( );
             }
         }
     }

@@ -320,7 +320,7 @@ public class ActionHelper implements Cloneable
     try {
         ServletFileUpload sfu = new ServletFileUpload();
         if (fileSizeMax > 0) {
-            sfu.setFileSizeMax(fullSizeMax);
+            sfu.setFileSizeMax(fileSizeMax);
         }
         if (fullSizeMax > 0) {
             sfu.setSizeMax/**/(fullSizeMax);
@@ -374,10 +374,11 @@ public class ActionHelper implements Cloneable
                 String info = path + File.separator + v + ".tnp";
 
                 // 存储到临时文件
-                /**/FileOutputStream fos = new /**/FileOutputStream(new File( file ));
-                 BufferedInputStream bis = new  BufferedInputStream(fis.openStream());
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
-                long   size = Streams.copy(bis, bos, true );
+                long size = Streams.copy(
+                    new BufferedInputStream (fis.openStream()),
+                    new BufferedOutputStream(
+                    new /**/FileOutputStream(new File (file))),
+                    true);
 
                 // 如果没有则跳过
                 if (size == 0) {

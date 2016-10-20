@@ -5,6 +5,7 @@ import java.lang.reflect.Method;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+import java.io.Closeable;
 
 /**
  * 核心类
@@ -48,8 +49,9 @@ import java.util.Map;
  *
  * @author Hongs
  */
-public class Core
-extends HashMap<String, Object>
+public final class Core
+     extends HashMap<String, Object>
+  implements AutoCloseable
 {
 
   /**
@@ -96,7 +98,7 @@ extends HashMap<String, Object>
    *
    * @param name
    * @return 抛出异常, 为避歧义禁用之
-   * @throws UnsupportedOperationException
+   * @throws UnsupportedOperationException 总是抛出此异常
    * @deprecated
    */
   @Override
@@ -107,7 +109,7 @@ extends HashMap<String, Object>
   }
 
   /**
-   * 不支持 clear, 可使用 destory, 系统会在结束时自动销毁对象
+   * 不支持 clear, 可使用 close, 将会在结束时自动销毁对象
    *
    * @throws UnsupportedOperationException 总是抛出此异常
    * @deprecated
@@ -116,16 +118,17 @@ extends HashMap<String, Object>
   public void clear()
   {
     throw new UnsupportedOperationException(
-      "May cause an error on 'clear', use the 'destroy'");
+      "May cause an error on 'clear', use the 'close'");
   }
 
   /**
    * 销毁核心
    *
-   * Destory对象会执行destroy方法
-   * GlobalSingleton和ThreadSingleton对象不会被移除
+   * AutoCloseabe 和 Closeable 对象会执行其 close 方法
+   * GlobalSingleton 和 ThreadSingleton 对象不会被移除
    */
-  public final void destroy()
+  @Override
+  public void close()
   {
     if (this.isEmpty())
     {
@@ -135,8 +138,8 @@ extends HashMap<String, Object>
     Iterator it;
 
     /**
-     * 先执行 destroy 再执行 remove 就
-     * 不会因 destroy 里用到了其他对象而导致失败了
+     * 先执行 close 再执行 remove 就
+     * 不会因 close 里用到了其他对象而导致失败了
      */
 
     it = this.entrySet().iterator( );
@@ -144,16 +147,20 @@ extends HashMap<String, Object>
     {
       Map.Entry  et = (Map.Entry) it.next( );
       Object object =  et.getValue();
-      if (object instanceof Destroy)
+      try
       {
-        try
+        if (object instanceof AutoCloseable)
         {
-          ((Destroy) object).destroy(  );
-        }
-        catch (Throwable ta)
+          ((AutoCloseable) object).close(  );
+        } else
+        if (object instanceof Closeable)
         {
-          ta.printStackTrace(System.err);
+          ((Closeable) object).close(  );
         }
+      }
+      catch (Throwable ta)
+      {
+        ta.printStackTrace( System.err );
       }
     }
 
@@ -177,7 +184,7 @@ extends HashMap<String, Object>
   {
     try
     {
-       this.destroy( );
+       this.close(   );
     }
     finally
     {
@@ -372,7 +379,7 @@ extends HashMap<String, Object>
       @Override
       public void remove() {
           try {
-            ((Core) get()).destroy();
+            ( (Core) get()).close();
           } catch (Throwable ex) {
             throw  new Error(ex);
           }
@@ -478,13 +485,6 @@ extends HashMap<String, Object>
   }
 
   //** 核心接口 **/
-
-  /**
-   * 核心处理结束事件接口
-   * 当Core结束时(程序结束, Servlet请求结束)
-   * 将执行实现了该接口的类的无参destroy方法
-   */
-  public static interface Destroy { public void destroy(); }
 
   /**
    * 全局唯一

@@ -79,8 +79,6 @@ public class Clses {
         Set<String> names = new HashSet();
         File[]      files = new File(root + path).listFiles();
 
-//      CoreLogger.debug("Package "+path+" in dir "+root+"" );
-
         for (File file : files) {
             if (! file.isDirectory()) {
                 String name = file.getPath().substring(root.length());
@@ -102,24 +100,24 @@ public class Clses {
             throws IOException {
         Set<String> names = new HashSet();
         int         pathl = 1 + path.length();
+        try(JarFile filej = new JarFile(root)) {
+            Enumeration<JarEntry> items  =  filej.entries();
 
-//      CoreLogger.debug("Package " +path+ " in jar " +root+ "" );
-
-        Enumeration<JarEntry> items = new JarFile(root).entries();
-        while ( items.hasMoreElements( )) {
-            String name = items.nextElement().getName();
-            if (!name.startsWith( path )) {
-                continue;
+            while ( items.hasMoreElements( )) {
+                String name = items.nextElement().getName();
+                if (!name.startsWith( path )) {
+                    continue;
+                }
+                if (!name.endsWith(".class")) {
+                    continue;
+                }
+                name = name.substring(0, name.length() - 6);
+                if (!recu && name.indexOf("/", pathl ) > 0) {
+                    continue;
+                }
+                name = name.replace("/", ".");
+                names.add(name);
             }
-            if (!name.endsWith(".class")) {
-                continue;
-            }
-            name = name.substring(0, name.length() - 6);
-            if (!recu && name.indexOf("/", pathl ) > 0) {
-                continue;
-            }
-            name = name.replace("/", ".");
-            names.add(name);
         }
 
         return  names;

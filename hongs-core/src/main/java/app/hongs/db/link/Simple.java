@@ -37,11 +37,11 @@ public class Simple extends Link {
     }
 
     @Override
-    public  Connection connect()
+    public  Connection open()
             throws HongsException {
         try {
             if (connection == null || connection.isClosed()) {
-                connection  = connect( jdbc , path , info );
+                connection  = open( jdbc , path , info );
 
                 if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                     CoreLogger.trace("DB: Connect to '"+name+"' by simple mode: "+jdbc+" "+path);
@@ -56,7 +56,7 @@ public class Simple extends Link {
         }
     }
 
-    public  static Connection connect(String jdbc, String name, Properties info)
+    public  static Connection open(String jdbc, String name, Properties info)
             throws SQLException, ClassNotFoundException {
         Class.forName(jdbc);
 

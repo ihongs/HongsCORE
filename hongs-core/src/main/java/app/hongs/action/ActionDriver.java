@@ -188,7 +188,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         try {
-            Core.GLOBAL_CORE.destroy( );
+            Core.GLOBAL_CORE.close();
         } catch ( Throwable  e) {
             CoreLogger.error(e);
         }
@@ -472,8 +472,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         } finally {
             // 销毁此周期内的对象
             try {
-                core.destroy();
-            } catch (Error e ) {
+                core.close( );
+            } catch (Error e) {
                 CoreLogger.error( e );
             } catch (Exception e) {
                 CoreLogger.error( e );

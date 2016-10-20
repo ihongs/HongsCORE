@@ -9,7 +9,7 @@ import app.hongs.HongsException;
  */
 public interface ITrnsct {
 
-    public void trnsct();
+    public void begin( );
 
     public void commit() throws HongsException;
 

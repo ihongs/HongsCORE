@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Hongs
  */
 abstract public class Link
-implements ITrnsct, Core.Destroy
+implements ITrnsct, AutoCloseable
 {
 
   /**
@@ -62,28 +62,19 @@ implements ITrnsct, Core.Destroy
     this.name = name;
   }
 
-  public abstract Connection connect()
+  /**
+   * 开启连接
+   * @return
+   * @throws HongsException 
+   */
+  public abstract Connection open()
     throws HongsException;
 
-  public void initial()
-    throws HongsException
-  {
-    // 自动提交设置
-    try
-    {
-      this.connection.setAutoCommit(! this.IN_TRNSCT_MODE);
-    }
-    catch (SQLException ex)
-    {
-      throw new HongsException(0x1026, ex);
-    }
-
-    // 准备执行标识
-    this.initialled = true;
-  }
-
+  /**
+   * 关闭连接
+   */
   @Override
-  public void destroy()
+  public void close()
   {
     try
     {
@@ -138,15 +129,39 @@ implements ITrnsct, Core.Destroy
   @Override
   protected void finalize() throws Throwable
   {
-     this.destroy( );
-    super.finalize();
+    try {
+       this.close(   );
+    } finally {
+      super.finalize();
+    }
   }
 
   /**
-   * 事务:开始
+   * 执行准备
+   * @throws HongsException 
+   */
+  protected void ready()
+    throws HongsException
+  {
+    // 自动提交设置
+    try
+    {
+      this.connection.setAutoCommit(! this.IN_TRNSCT_MODE);
+    }
+    catch (SQLException ex)
+    {
+      throw new HongsException(0x1026, ex);
+    }
+
+    // 准备执行标识
+    this.initialled = true;
+  }
+
+  /**
+   * 事务开始
    */
   @Override
-  public void trnsct()
+  public void begin()
   {
     this.IN_TRNSCT_MODE = true;
     try {
@@ -160,7 +175,7 @@ implements ITrnsct, Core.Destroy
   }
 
   /**
-   * 事务:提交
+   * 事务提交
    */
   @Override
   public void commit()
@@ -183,7 +198,7 @@ implements ITrnsct, Core.Destroy
   }
 
   /**
-   * 事务:回滚
+   * 事务回滚
    */
   @Override
   public void rolbak()
@@ -352,10 +367,10 @@ implements ITrnsct, Core.Destroy
      * 故对这样的库采用组织语句的分页查询
      */
     if (limit == 0) {
-        this.connect();
+        this.open();
     }   else   try  {
         String dpn =
-        this.connect()
+        this.open()
         .getMetaData()
         .getDatabaseProductName()
         .toUpperCase();
@@ -480,8 +495,8 @@ implements ITrnsct, Core.Destroy
   public boolean execute(String sql, Object... params)
     throws HongsException
   {
-    this.connect();
-    this.initial();
+    this.open( );
+    this.ready();
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
     {
@@ -518,8 +533,8 @@ implements ITrnsct, Core.Destroy
   public int updates(String sql, Object... params)
     throws HongsException
   {
-    this.connect();
-    this.initial();
+    this.open( );
+    this.ready();
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
     {

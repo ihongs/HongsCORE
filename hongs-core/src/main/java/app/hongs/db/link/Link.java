@@ -140,7 +140,7 @@ implements ITrnsct, AutoCloseable
    * 执行准备
    * @throws HongsException 
    */
-  protected void ready()
+  public void ready()
     throws HongsException
   {
     // 自动提交设置

@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.commons.fileupload.util.Streams;
 //import eu.medsea.mimeutil.MimeUtil;
 //import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
@@ -162,17 +161,26 @@ public class UploadHelper {
         chkTypeOrExtn(type, extn);
         setResultName(fame, extn);
 
+        String path = getResultPath();
+        File   file = new File(path );
+
+        // 拷贝数据
         try {
-            String path = this.getResultPath();
-            File   file = new File(path);
-            /**/FileOutputStream fos = new /**/FileOutputStream(file);
-            BufferedOutputStream bos = new BufferedOutputStream(fos );
-            BufferedInputStream  bis = new BufferedInputStream (xis );
-            Streams.copy(bis, bos, true);
-            return  file;
+            try (
+                FileOutputStream     fos = new FileOutputStream    (file);
+                BufferedInputStream  bis = new BufferedInputStream (xis );
+                BufferedOutputStream bos = new BufferedOutputStream(fos );
+            ) {
+                byte[] buf = new byte [1024];
+                while (bis.read (buf) != -1) {
+                       bos.write(buf);
+                }
+            }
         } catch (IOException ex) {
             throw new Wrong(ex, "fore.form.upload.failed");
         }
+
+        return file;
     }
 
     /**

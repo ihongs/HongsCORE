@@ -8,16 +8,16 @@ import app.hongs.HongsError;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 
 import java.io.File;
 import java.io.Writer;
 import java.io.FileWriter;
+import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -30,16 +30,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest ;
 import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.fileupload.util.Streams;
-import org.apache.commons.fileupload.FileItemStream;
-import org.apache.commons.fileupload.FileItemIterator;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.Part;
 
 /**
  * 动作助手类
@@ -185,7 +181,7 @@ public class ActionHelper implements Cloneable
   /**
    * 获取 Servlet 请求对象
    * 注意: 当请求来自系统终端运维命令或虚构请求, 一般会返回 null
-   * @return 
+   * @return
    */
   public final HttpServletRequest getRequest()
   {
@@ -300,115 +296,110 @@ public class ActionHelper implements Cloneable
          denyExtns = new HashSet(Arrays.asList(x.split(",")));
     }
 
-    long fileSizeMax = 0;
-    long fullSizeMax = 0;
-    long i;
-    i = conf.getProperty("fore.upload.file.size.max", 0);
-    if ( i != 0 ) {
-         fileSizeMax = i;
-    }
-    i = conf.getProperty("fore.upload.full.size.max", 0);
-    if ( i != 0 ) {
-         fullSizeMax = i;
-    }
-
-    Set<String> uploadKeys = new HashSet();
-    setAttribute(Cnst.UPLOAD_ATTR, uploadKeys);
+    Set< String > uploadKeys  =  new HashSet( );
+    setAttribute(Cnst.UPLOAD_ATTR, uploadKeys );
 
     //** 解析数据 **/
 
     try {
-        ServletFileUpload sfu = new ServletFileUpload();
-        if (fileSizeMax > 0) {
-            sfu.setFileSizeMax(fileSizeMax);
-        }
-        if (fullSizeMax > 0) {
-            sfu.setSizeMax/**/(fullSizeMax);
-        }
-        FileItemIterator fit = sfu.getItemIterator(request);
+        for ( Part part : request.getParts( ) ) {
+            String name = part.getName();
+            long   size = part.getSize();
+            String type = part.getContentType();
 
-        while (fit.hasNext()) {
-            FileItemStream fis = fit.next();
-            String n  =  fis.getFieldName();
-            String v;
-
-            if (fis.isFormField()) {
-                v = Streams.asString(fis.openStream());
-            } else {
-                String type = fis.getContentType();
-                if (type != null) {
-                    type  = type.split(";" , 2)[0];
-                } else {
-                    type  = "";
-                }
-
-                // 检查类型
-                if (allowTypes != null && !allowTypes.contains(type)) {
-                    continue;
-                }
-                if ( denyTypes != null &&   denyTypes.contains(type)) {
-                    continue;
-                }
-
-                // 提取扩展
-                String extn;
-                String name = fis.getName().replaceAll("[\r\n]", "");
-                int pos  = name.lastIndexOf('.');
-                if (pos  > 1) {
-                    extn = name.substring(1+pos);
-                }
-                else {
-                    extn = "";
-                }
-
-                // 检查扩展
-                if (allowExtns != null && !allowExtns.contains(extn)) {
-                    continue;
-                }
-                if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                    continue;
-                }
-
-                v = Core.getUniqueId();
-                String file = path + File.separator + v + ".tmp";
-                String info = path + File.separator + v + ".tnp";
-
-                // 存储到临时文件
-                long size = Streams.copy(
-                    new BufferedInputStream (fis.openStream()),
-                    new BufferedOutputStream(
-                    new /**/FileOutputStream(new File (file))),
-                    true);
-
-                // 如果没有则跳过
-                if (size == 0) {
-                    continue;
-                }
-
-                // 记录类型名称等
-                FileWriter fw = null;
-                try {
-                    fw = new FileWriter(info);
-                    fw.write(name+ "\r\n" + type + "\r\n" +size);
-                } finally {
-                    if (null != fw)fw.close();
-                }
+            if (name == null || name.isEmpty()) {
+                continue;
             }
 
-            Dict.setParam (rd, v, n);
-            uploadKeys.add(/****/ n);
+            // 无类型的普通参数已在外部处理
+            if (type == null || type.isEmpty()) {
+                continue;
+            }
+
+            // 空文件无伴随参数则将其设为空
+            // 在修改的操作中表示将其置为空
+            if (size == 0) {
+                if (null == request.getParameter(name)) {
+                    Dict.setParam  ( rd , null , name );
+                }
+                continue;
+            }
+
+            int pos;
+
+            // 检查类型
+                pos  = type./**/indexOf( ',' );
+            if (pos == -1) {
+                type = "";
+            } else {
+                type = type.substring(0 , pos);
+            }
+            if (allowTypes != null && !allowTypes.contains(type)) {
+                part.delete();
+                continue;
+            }
+            if ( denyTypes != null &&   denyTypes.contains(type)) {
+                part.delete();
+                continue;
+            }
+
+            String subn , extn;
+            extn = subn = part.getSubmittedFileName();
+
+            // 检查扩展
+                pos  = extn.lastIndexOf( '.' );
+            if (pos == -1) {
+                extn = "";
+            } else {
+                extn = extn.substring(1 + pos);
+            }
+            if (allowExtns != null && !allowExtns.contains(extn)) {
+                part.delete();
+                continue;
+            }
+            if ( denyExtns != null &&   denyExtns.contains(extn)) {
+                part.delete();
+                continue;
+            }
+
+            String id  = Core.getUniqueId();
+            String tmp = path + File.separator + id + ".tmp";
+            String tnp = path + File.separator + id + ".tnp";
+
+            // 存储到临时文件
+            try (
+                /**/InputStream      fis = part.getInputStream     (   );
+                FileOutputStream     fos = new FileOutputStream    (tmp);
+                FileOutputStream     fox = new FileOutputStream    (tnp);
+                BufferedInputStream  bis = new BufferedInputStream (fis);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
+            ) {
+                byte[] buf = new byte [1024];
+                while (bis.read (buf) != -1) {
+                       bos.write(buf);
+                }
+
+                String mts = subn + "\r\n" + type + "\r\n" + size;
+                byte[] nts = mts.getBytes("UTF-8");
+                fox.write(nts);
+            } finally {
+                part.delete( );
+            }
+
+            Dict.setParam ( rd , id , name);
+            uploadKeys.add(name);
         }
-    } catch (FileUploadException ex) {
-        throw new HongsUnchecked(0x1110, ex);
-    } catch (IOException ex) {
-        throw new HongsUnchecked(0x1110, ex);
+    } catch (ServletException e) {
+        throw new HongsUnchecked(0x1110, e);
+    } catch (IOException e) {
+        throw new HongsUnchecked(0x1110, e);
     }
   }
 
   /**
    * 获取 Servlet 响应对象
    * 注意: 当请求来自系统终端运维命令或虚构请求, 一般会返回 null
-   * @return 
+   * @return
    */
   public final HttpServletResponse getResponse()
   {

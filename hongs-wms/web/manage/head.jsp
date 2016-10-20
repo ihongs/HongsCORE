@@ -61,7 +61,7 @@
     if (w == null || "".equals(w)) {
         w = "manage";
     }
-    String m = helper.getParameter("n");
+    String m = helper.getParameter("m");
     if (m == null || "".equals(m)) {
         m =  w;
     }

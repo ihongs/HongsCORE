@@ -65,10 +65,10 @@ public class IsDate extends Rule {
         if ("time".equals(type)) {
             return day.getTime();
         }
-        if ("datestamp" .equals(type)) {
+        if ("datestamp".equals(type)) {
             return day;
         }
-        if ("timestamp" .equals(type)) {
+        if ("timestamp".equals(type)) {
             return day.getTime() / 1000;
         }
         if (!"".equals(fmt)) {

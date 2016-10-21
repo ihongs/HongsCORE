@@ -3,15 +3,18 @@ package app.hongs.util;
 import app.hongs.Core;
 import app.hongs.HongsError;
 
+import org.json.simple.JSONValue;
+import org.json.simple.parser.ParseException;
+
+import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.Map;
-import org.json.simple.JSONValue;
-import org.json.simple.parser.ParseException;
 
 /**
  * JSON格式工具
@@ -38,6 +41,27 @@ import org.json.simple.parser.ParseException;
  */
 public class Data
 {
+
+  /**
+   * 将JSON字符流解析成Java对象
+   * @param str JSON字符流
+   * @return 基础类型,集合框架
+   */
+  public static Object toObject(Reader str)
+  {
+    try
+    {
+      return JSONValue.parseWithException(str);
+    }
+    catch (ParseException ex)
+    {
+      throw new HongsError(0x41, "Can not parse data by json", ex);
+    }
+    catch (   IOException ex)
+    {
+      throw new HongsError(0x41, "Can not parse data by json", ex);
+    }
+  }
 
   /**
    * 将JSON字符串解析成Java对象

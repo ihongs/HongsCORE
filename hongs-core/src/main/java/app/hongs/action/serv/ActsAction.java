@@ -199,6 +199,7 @@ public class ActsAction
         break;
       case HongsException.NOTICE:
       case     HongsError.NOTICE:
+        // 错误即代号
         helper.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         break;
       default:

@@ -3,27 +3,24 @@ package app.hongs.action;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
-import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 
 import java.io.File;
 import java.io.Writer;
-import java.io.FileWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.BufferedReader;
 import java.io.FileOutputStream;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -189,35 +186,6 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 获取请求文本
-   * @return 请求文本
-   */
-  public String getRequestText()
-  {
-    if (null != this.request) try
-    {
-      BufferedReader reader = this.request.getReader();
-      String text = "";
-      char[] buf = new char[1024];
-      int i = 0, j = 0;
-
-      while (-1 != ( i = reader.read(buf, j, 1024) ) )
-      {
-        text += new String ( buf);
-        j += i * 1024 ;
-      }
-
-      return text;
-    }
-    catch (IOException ex)
-    {
-      CoreLogger.error(ex);
-    }
-
-    return "";
-  }
-
-  /**
    * 获取请求数据
    *
    * 不同于 request.getParameterMap,
@@ -233,27 +201,40 @@ public class ActionHelper implements Cloneable
     if (this.request != null && this.requestData == null)
     {
       String ct  = this.request.getContentType();
-      if  (  ct != null)
-      {
-        ct = ct.split(";", 2)[0];
-      }
-      else
+      if  (  ct == null)
       {
         ct = "application/x-www-form-urlencode" ;
       }
-
-      if ("application/json".equals(ct) || "text/json".equals(ct))
-      {
-        this.requestData = (Map<String, Object>) Data.toObject(getRequestText());
-      }
       else
       {
-        this.requestData = parseParam(request.getParameterMap(  ));
+        ct = ct.split( ";", 2 )[ 0 ];
+      }
 
-        // 处理上传文件
-        if ("multipart/form-data".equals(ct))
+      try
+      {
+        Map rd  = null;
+        if (ct.startsWith("multipart/"))
         {
-          getUploadsData( this.requestData );
+          rd = this.getRequestPart(); // 处理上传文件
+        }
+        else if (ct.endsWith( "/json" ))
+        {
+          rd = this.getRequestJson(); // 处理JSON数据
+        }
+
+        this.requestData = parseParam(request.getParameterMap());
+
+        if (rd != null)
+        {
+          this.requestData.putAll(rd);
+        }
+      }
+      finally
+      {
+        // 防止解析故障后再调用又出错
+        if (this.requestData == null)
+        {
+          this.requestData = new HashMap();
         }
       }
     }
@@ -261,47 +242,69 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 解析 multipart/form-data 数据, 并将上传的文件放入临时目录
+   * 解析 application/json 或 txt/json 数据
    * @param rd
    */
-  final void getUploadsData(Map rd) {
-    CoreConfig conf = CoreConfig.getInstance();
-    String     path = Core.DATA_PATH+"/upload";
+  final Map<String, Object> getRequestJson() {
+    try {
+        return (Map<String, Object>) Data.toObject(request.getReader());
+    } catch ( HongsError er) {
+        throw new HongsUnchecked(0x1100, er.getCause());
+    } catch (IOException ex) {
+        throw new HongsUnchecked(0x1114, ex);
+    }
+  }
 
-    // 临时目录不存在则创建
-    File df = new File (path);
-    if (!df.isDirectory()) {
-         df.mkdirs();
+  /**
+   * 解析 multipart/form-data 数据, 上传暂存
+   * @param rd
+   */
+  final Map<String, Object> getRequestPart() {
+    CoreConfig conf = CoreConfig.getInstance();
+
+    // 是否仅登录用户可上传
+    if (conf.getProperty("core.upload.auth.needs", false)
+    &&  null  ==  getSessibute  (Cnst.UID_SES)) {
+        throw new HongsUnchecked(0x1100, "Multipart is not supported");
     }
 
-    Set<String> allowTypes = null;
-    Set<String>  denyTypes = null;
-    Set<String> allowExtns = null;
-    Set<String>  denyExtns = null;
     String x;
+    Set<String> allowTypes = null;
     x = conf.getProperty("fore.upload.allow.types", null);
     if (x != null) {
         allowTypes = new HashSet(Arrays.asList(x.split(",")));
     }
+    Set<String>  denyTypes = null;
     x = conf.getProperty("fore.upload.deny.types" , null);
     if (x != null) {
          denyTypes = new HashSet(Arrays.asList(x.split(",")));
     }
+    Set<String> allowExtns = null;
     x = conf.getProperty("fore.upload.allow.extns", null);
     if (x != null) {
         allowExtns = new HashSet(Arrays.asList(x.split(",")));
     }
+    Set<String>  denyExtns = null;
     x = conf.getProperty("fore.upload.deny.extns" , null);
     if (x != null) {
          denyExtns = new HashSet(Arrays.asList(x.split(",")));
     }
 
-    Set< String > uploadKeys  =  new HashSet( );
-    setAttribute(Cnst.UPLOAD_ATTR, uploadKeys );
+    // 临时目录不存在则创建
+    String path = Core.DATA_PATH + "/upload";
+    File df = new File (  path  );
+    if (!df.isDirectory()) {
+         df.mkdirs();
+    }
 
     //** 解析数据 **/
 
+    Set< String > uploadKeys  =  new HashSet( );
+    setAttribute(Cnst.UPLOAD_ATTR, uploadKeys );
+
     try {
+        Map rd = new HashMap();
+
         for ( Part part : request.getParts( ) ) {
             String name = part.getName();
             long   size = part.getSize();
@@ -335,16 +338,15 @@ public class ActionHelper implements Cloneable
                 type = type.substring(0 , pos);
             }
             if (allowTypes != null && !allowTypes.contains(type)) {
-                part.delete();
-                continue;
+                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is not allowed");
             }
             if ( denyTypes != null &&   denyTypes.contains(type)) {
-                part.delete();
-                continue;
+                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
             }
 
             String subn , extn;
-            extn = subn = part.getSubmittedFileName();
+            extn = part.getSubmittedFileName();
+            subn = extn.replaceAll("[\\\\/\\r\\n\"?:*<>|]" , ""); // 非法字符清理
 
             // 检查扩展
                 pos  = extn.lastIndexOf( '.' );
@@ -354,12 +356,10 @@ public class ActionHelper implements Cloneable
                 extn = extn.substring(1 + pos);
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                part.delete();
-                continue;
+                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                part.delete();
-                continue;
+                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
             }
 
             String id  = Core.getUniqueId();
@@ -386,9 +386,13 @@ public class ActionHelper implements Cloneable
                 part.delete( );
             }
 
-            Dict.setParam ( rd , id , name);
             uploadKeys.add(name);
+            Dict.setParam ( rd , id , name);
         }
+
+        return rd;
+    } catch (IllegalStateException e) {
+        throw new HongsUnchecked(0x1100, e); // 上传受限, 如大小超标
     } catch (ServletException e) {
         throw new HongsUnchecked(0x1110, e);
     } catch (IOException e) {
@@ -877,7 +881,7 @@ public class ActionHelper implements Cloneable
   /**
    * 输出内容
    * @param txt
-   * @param ctt Content-Type 定义, 如 text/html
+   * @param ctt Content-Type 定义, 如 txt/html
    * @param cst Content-Type 编码, 如 utf-8
    */
   public void print(String txt, String ctt, String cst)

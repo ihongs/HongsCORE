@@ -108,9 +108,9 @@ public class Cnst {
 
     public static final String RUNNER_ATTR = "__RUNNER__"; // 动作执行器
 
-    public static final String UPLOAD_ATTR = "__UPLOAD__"; // 上传参数键
+    public static final String UPDATE_ATTR = "__UPDATE__"; // 更新时间戳(当会话或属性改变时将被设置)
 
-    public static final String UPDATE_ATTR = "__UPDATE__"; // 更新时间戳(当会话、属性改变时设置)
+    public static final String UPLOAD_ATTR = "__UPLOAD__"; // 上传参数键(用于存放哪些参数是文件上传)
 
     //** 数据模式 **/
 

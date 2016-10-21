@@ -27,7 +27,7 @@ import java.lang.reflect.InvocationTargetException;
  * 0x1102 区域错误
  * 0x1103 无权访问
  * 0x1104 无此动作
- * 0x1105 不支持此方法
+ * 0x1105 非法请求
  * 0x110e 无法执行, 禁止访问或参数错误
  * 0x110f 注解链溢出
  * </pre>

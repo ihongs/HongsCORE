@@ -9,7 +9,6 @@ import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.util.Synt;
-import app.hongs.util.Tool;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -395,19 +394,18 @@ public class AuthFilter
          * 则从全局错误跳转构建响应代码
          */
 
-        CoreConfig conf = CoreConfig.getInstance();
         if (uri == null && uri.length() == 0) {
-            uri  = conf.getProperty("fore.Er40" + type + ".redirect");
+            uri  = core.get(CoreConfig.class)
+                       .getProperty("fore.Er40"+ type +".redirect");
         if (uri == null || uri.length() == 0) {
-            uri  = Core.BASE_HREF + "/";
-        }
-        }
+            uri  = Core.BASE_HREF +"/";
+        }}
 
-        String err = conf.getProperty("core.error.redirect");
         Map<String, String> rep = new HashMap();
-        rep.put("msg", msg);
+        rep.put("urt", Core.BASE_HREF);
         rep.put("uri", uri);
-        err = Tool.inject(err, rep);
+        rep.put("msg", msg);
+        String err = lang.translate("core.redirect.html", rep /**/);
 
         if (type == 1 ) {
             hlpr.error401(err);

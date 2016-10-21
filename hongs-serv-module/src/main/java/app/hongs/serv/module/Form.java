@@ -95,18 +95,22 @@ public class Form extends Model {
             flds.add(2, top);
             top.put("__name__",  "cuid" );
             top.put("__type__", "string");
-            top.put("default" , "$"+Cnst.UID_SES);
+            top.put("default" , "=$"+Cnst.UID_SES);
             top.put("default-create","yes");
             top.put("default-always","yes");
+            top.put("hide.in.form" , "yes");
+            top.put("hide.in.list" , "yes");
 
             // 增加修改用户
             top = new HashMap();
             flds.add(3, top);
             top.put("__name__",  "muid" );
             top.put("__type__", "string");
-            top.put("default" , "$"+Cnst.UID_SES);
+            top.put("default" , "=$"+Cnst.UID_SES);
             top.put("default-create", "no");
             top.put("default-always","yes");
+            top.put("hide.in.form" , "yes");
+            top.put("hide.in.list" , "yes");
 
             // 增加创建时间
             top = new HashMap();
@@ -114,9 +118,11 @@ public class Form extends Model {
             top.put("__name__", "ctime" );
             top.put("__type__", "datetime");
             top.put(  "type"  ,"timestamp");
-            top.put("default" ,  "%now" );
+            top.put("default" , "=%now" );
             top.put("default-create","yes");
             top.put("default-always","yes");
+            top.put("hide.in.form" , "yes");
+            top.put("hide.in.list" , "yes");
 
             // 增加操作时间
             top = new HashMap();
@@ -124,9 +130,11 @@ public class Form extends Model {
             top.put("__name__", "mtime" );
             top.put("__type__", "datetime");
             top.put(  "type"  ,"timestamp");
-            top.put("default" ,  "%now" );
+            top.put("default" , "=%now" );
             top.put("default-create", "no");
             top.put("default-always","yes");
+            top.put("hide.in.form" , "yes");
+            top.put("hide.in.list" , "yes");
 
             conf = Data.toString(flds);
             rd.put("conf", conf);

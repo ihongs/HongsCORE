@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Hongs
  */
 abstract public class Link
-implements ITrnsct, AutoCloseable
+  implements ITrnsct, AutoCloseable
 {
 
   /**
@@ -98,7 +98,7 @@ implements ITrnsct, AutoCloseable
 
         try
         {
-          this.rolbak();
+          this.revert();
         }
         catch (Exception | Error x)
         {
@@ -201,7 +201,7 @@ implements ITrnsct, AutoCloseable
    * 事务回滚
    */
   @Override
-  public void rolbak()
+  public void revert()
   {
     if (!IN_TRNSCT_MODE) {
         return;

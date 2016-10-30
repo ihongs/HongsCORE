@@ -687,7 +687,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
                     try {
                         commit();
                     } catch (Error er) {
-                        rolbak();
+                        revert();
                         throw er;
                     }
                 } catch (Error e) {
@@ -763,7 +763,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
      * 回滚操作
      */
     @Override
-    public void rolbak() {
+    public void revert() {
         if (writer == null) {
             return;
         }

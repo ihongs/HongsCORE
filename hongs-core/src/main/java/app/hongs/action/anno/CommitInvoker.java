@@ -24,12 +24,12 @@ public class CommitInvoker implements FilterInvoker {
         try {
             core.put(Cnst.TRNSCT_MODE, true);
 
-                // 开启
-                for(Object o : core.values()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).begin();
-                    }
+            // 开启
+            for(Object o : core.values()) {
+                if (o instanceof ITrnsct) {
+                    ((ITrnsct) o).begin();
                 }
+            }
 
             try {
                 chains.doAction();
@@ -44,7 +44,7 @@ public class CommitInvoker implements FilterInvoker {
                 // 回滚
                 for(Object o : core.values()) {
                     if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).rolbak();
+                        ((ITrnsct) o).revert();
                     }
                 }
 

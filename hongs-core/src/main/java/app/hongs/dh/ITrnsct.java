@@ -13,6 +13,6 @@ public interface ITrnsct {
 
     public void commit() throws HongsException;
 
-    public void rolbak() throws HongsException;
+    public void revert() throws HongsException;
 
 }

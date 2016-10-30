@@ -57,7 +57,7 @@ public class TableSync
     }
     catch (HongsException ex)
     {
-      sdb.rolbak();
+      sdb.revert();
       throw ex;
     }
   }

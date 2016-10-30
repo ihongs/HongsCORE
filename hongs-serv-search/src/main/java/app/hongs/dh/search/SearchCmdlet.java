@@ -74,7 +74,7 @@ public class SearchCmdlet {
                 so.commit( );
             }
             catch (HongsException ex) {
-                so.rolbak( );
+                so.revert( );
                 throw ex;
             }
             finally {
@@ -91,7 +91,7 @@ public class SearchCmdlet {
                 so.commit( );
             }
             catch (HongsException ex) {
-                so.rolbak( );
+                so.revert( );
                 throw ex;
             }
             finally {

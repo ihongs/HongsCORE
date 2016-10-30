@@ -172,7 +172,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * 公共销毁
      */
     @Override
-    public void destroy() {
+    public void destroy () {
         if (! INIT) {
             return;
         }
@@ -197,7 +197,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void service (ServletRequest rep, ServletResponse rsp)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new ActionDrive() {
+        doDriver(rep, rsp, new DirverChain() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -209,7 +209,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void doFilter(ServletRequest rep, ServletResponse rsp, final FilterChain chn)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new ActionDrive() {
+        doDriver(rep, rsp, new DirverChain() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -218,7 +218,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         });
     }
 
-    final  void doDriver(ServletRequest rep, ServletResponse rsp, final ActionDrive adr)
+    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DirverChain drv)
     throws ServletException, IOException {
         HttpServletRequest  req = (HttpServletRequest ) rep;
         HttpServletResponse rsq = (HttpServletResponse) rsp;
@@ -236,7 +236,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             try {
                 doLaunch(core, hlpr, req );
-                 adr.doDriver( core, hlpr); // 调用
+                 drv.doDriver( core, hlpr); // 调用
                 doRespon(hlpr, req , rsq );
             } catch (ServletException ex ) {
                 CoreLogger.error(ex);
@@ -257,7 +257,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             hlpr = core.get(ActionHelper.class);
             hlpr.reinitHelper( req , rsq );
 
-            /**/ adr.doDriver( core, hlpr); // 调用
+            /**/ drv.doDriver( core, hlpr); // 调用
         }
     }
 
@@ -620,6 +620,16 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             uri = req.getServletPath();
         }
         return uri;
+    }
+
+    /**
+     * 执行包裹
+     * @author Hongs
+     */
+    public static interface DirverChain {
+
+        public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
+
     }
 
 }

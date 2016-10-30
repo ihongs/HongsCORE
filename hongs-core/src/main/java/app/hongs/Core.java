@@ -204,7 +204,7 @@ public final class Core
       return  core.get(name);
     }
 
-    if (name == null || name.length() == 0)
+    if ( name == null || name.length() == 0)
     {
       throw new HongsError(0x24, "Instance name can not be empty.");
     }

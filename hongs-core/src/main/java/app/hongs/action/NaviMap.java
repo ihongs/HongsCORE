@@ -42,7 +42,7 @@ import org.xml.sax.SAXException;
     menus = {
       "href" : {
         hrel: 页面,
-        icon: 数据,
+        icon: 图标,
         disp: 名称,
         menus : {
           子级菜单...

@@ -21,15 +21,15 @@ import java.util.Map;
  *
  * <p>
  * 支持将 <b>数组,集合框架,基础类型</b> 的数据转换为 JSON 字符串,
- * 反向解析 JSON 字符串到 Java 集合框架对象; 采用 org.json.simple 完成.
+ * 反向解析 JSON 字符串到 Java 集合框架对象; 采用 org.json.simple 完成
  * </p>
  *
  * <p>
- 顺便说说为什么不采用第3方的 JSON 库:
- 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
- 后来采用 org.json.simple, 也很好, 但是不支持 Set, 需要修改其源码将 List 改成 Collection;
- 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
- 故将其修改成该 Data 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了.
+ * 顺便说说为什么不采用第3方的 JSON 库:
+ * 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
+ * 后来采用 org.json.simple , 也很好, 但是不支持 Set , 需要修改其源码将 List 改成 Collection;
+ * 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
+ * 故将其修改成该 Data 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
  * </p>
  *
  * <h3>错误代码</h3>
@@ -87,9 +87,9 @@ public class Data
    */
   public static String toString(Object obj)
   {
-    String xx = (0 < Core.DEBUG)? "": null;
+    String sp = (0 < Core.DEBUG) ? "" : null;
     StringBuilder sb = new StringBuilder();
-    Data.dumps(sb, xx, null, obj, 0, 0);
+    Data.dumps(sb, sp, null, obj, 0, 0);
     return sb.toString().trim();
   }
 

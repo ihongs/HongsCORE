@@ -64,7 +64,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Btask(this, "batch:"+name+"("+i+")", cache.get(i), sizeout, timeout));
+            servs.execute(new Btask(this, "batch:"+name+"["+i+"]", cache.get(i), sizeout, timeout));
         }
 
         //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务

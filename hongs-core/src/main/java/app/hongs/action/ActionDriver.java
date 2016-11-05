@@ -81,7 +81,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param cont
      * @throws ServletException
      */
-    synchronized private void init(ServletContext cont) throws ServletException {
+    synchronized final void init(ServletContext cont) throws ServletException {
         if (Core.ENVIR != 1) {
             Core.ENVIR  = 1;
         } else {
@@ -623,7 +623,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 执行包裹
+     * 驱动链
      * @author Hongs
      */
     public static interface DirverChain {

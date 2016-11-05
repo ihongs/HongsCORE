@@ -60,6 +60,19 @@
         <servlet-name>Auth</servlet-name>
         <url-pattern>/common/auth/*</url-pattern>
     </servlet-mapping>
+    <!-- CSRF Filter -->
+    <filter>
+        <filter-name>CsrfFilter</filter-name>
+        <filter-class>app.hongs.serv.handle.CsrfFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>CsrfFilter</filter-name>
+        <url-pattern>*.act</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>CsrfFilter</filter-name>
+        <url-pattern>*.api</url-pattern>
+    </filter-mapping>
     <!-- Auth Filter -->
     <filter>
         <filter-name>AuthFilter_Manage</filter-name>

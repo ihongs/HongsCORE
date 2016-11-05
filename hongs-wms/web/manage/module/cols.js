@@ -1,15 +1,35 @@
 
 function getTypeName(widgets, type) {
-    if (type == "select") {
-        return "选择";
-    }
+    if (type == "datetime" || type == "time") type = "date";
     return widgets.find( "[data-type='"+type+"']"   ).find("span").first().text();
 }
 function getTypeItem(widgets, type) {
+    if (type == "datetime" || type == "time") type = "date";
     return widgets.find( "[data-type='"+type+"']"   ).clone();
 }
 function getTypePane(context, type) {
+    if (type == "datetime" || type == "time") type = "date";
     return context.find(".widget-pane-"+type).first().clone();
+}
+
+function setItemType(input, type) {
+    input = jQuery(input);
+    var oldAttrs = input[0].attributes;
+    var newInput = jQuery('<input type="'+type+'"/>');
+    for(var i = 0; i < oldAttrs.length; i ++ ) {
+        var attrValue = oldAttrs[i].nodeValue;
+        var attrName  = oldAttrs[i].nodeName ;
+        if (attrName != "type") {
+            newInput.attr(attrName, attrValue);
+        }
+    }
+    input.before(newInput);
+    input.remove( );
+    return newInput;
+}
+
+function getFormInfo(id) {
+    
 }
 
 /**
@@ -53,6 +73,9 @@ function loadConf(modal, field) {
                     $(this).prop("checked", field.find(name).prop(attr));
                 }
             } else
+            if (attr === "type") {
+                $(this).val(field.find(name).attr(attr)).change();
+            } else
             if (attr !== "text") {
                 $(this).val(field.find(name).attr(attr));
             } else {
@@ -76,6 +99,8 @@ function loadConf(modal, field) {
                             .replace(/^data-/,""));
         tr.find("[name=param_value]").val(x.value);
     }
+    
+    // 关联
 }
 
 /**
@@ -129,6 +154,9 @@ function saveConf(modal, field) {
                     field.find(name).prop(attr, $(this).prop("checked"));
                 }
             } else
+            if (attr === "type") {
+                setItemType(field.find(name) , $(this).val());
+            } else
             if (attr !== "text") {
                 field.find(name).attr(attr, $(this).val());
             } else {
@@ -146,6 +174,11 @@ function saveConf(modal, field) {
         var v = $(this).find("[name=param_value]").val();
         fd.attr("data-"+n, v);
     });
+    
+    // 关联
+    modal.find(".pickval").each(function() {
+        fd.attr("data-form", $(this).val());
+    });
 }
 
 /**
@@ -160,6 +193,7 @@ function gainFlds(fields, area) {
         var disp  = label.text();
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
+        if (input.attr("data-ft") == "_pick") type = "pick";
         var required = input.prop("required") ? "true" : "";
         var repeated = input.prop("multiple") ? "true" : "";
         var params   = {};
@@ -169,6 +203,10 @@ function gainFlds(fields, area) {
             var v = a[i].nodeValue;
             if (v !== ""
             &&  k.substr(0,5) === "data-") {
+                if (k == "data-fn"
+                ||  k == "data-ft") {
+                    continue;
+                }
                 params[k.substring(5)] = v;
             }
         }
@@ -184,6 +222,7 @@ function gainFlds(fields, area) {
                 selected.push( $(this).val());
                 }
             });
+            input.change();
             params["datalist"] = JSON.stringify(datalist);
             params["selected"] = JSON.stringify(selected);
         }
@@ -217,11 +256,22 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (suf) {
             name  = name + suf;
         }
+        if (name == "cuid" || name == "ctime"
+        ||  name == "muid" || name == "mtime") {
+            continue; // 保留字段不可编辑
+        }
         var group = getTypeItem(wdgt, type);
+        if (type == "datetime" || type == "time" ) {
+            setItemType(group.find("input"), type);
+        }
         var label = group.find("label span:first");
         var input = group.find("input,select,textarea,ul[data-fn]");
         label.text(disp);
-        input.attr("name", name);
+        if (input.is( "[data-fn]" )) {
+            input.attr("data-fn", name);
+        } else {
+            input.attr("name"   , name);
+        }
         input.prop("required", !! required);
         input.prop("multiple", !! repeated);
         for(var k in field  ) {
@@ -333,5 +383,13 @@ $.fn.hsCols = function() {
     // 删除属性
     modal.on("click", ".del-param", function() {
         $(this).closest("tr").remove();
+    });
+
+    // 日期类型
+    modal.on("change", "[name='input|type']", function() {
+        var type = $(this).val();
+        $(this).closest(".form-group").next().find("input").each(function() {
+            setItemType(this, type);
+        });
     });
 };

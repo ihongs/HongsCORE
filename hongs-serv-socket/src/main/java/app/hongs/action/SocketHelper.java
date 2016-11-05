@@ -363,7 +363,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * WebSocket 加载器
-     * 使用 _init_.properties 设置 jetty.webs 来告知 ServletContext 要加载哪些 WebSocket 类
+     * 使用 _init_.properties 设置 mouse.serv 来告知 ServletContext 要加载哪些 WebSocket 类
      * 多个类名使用分号";"分隔
      */
     static public class Loader implements ServerCmdlet.Initer {

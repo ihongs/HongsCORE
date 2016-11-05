@@ -2001,7 +2001,7 @@ function(evt) {
 
     evt.stopPropagation();
 })
-.on("click", "[data-toggle=hsClose],.close,.closes,.cancel",
+.on("click", "[data-toggle=hsClose],.close,.cancel",
 function(evt) {
     var box;
     var ths = $(this);

@@ -959,13 +959,13 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
 
         for (String fn: ob) {
             // 相关
-            if (fn.equals/**/("-")) {
+            if (fn.equals("-")) {
                 of.add(SortField.FIELD_SCORE);
                 continue;
             }
 
             // 文档
-            if (fn.equals/**/("_")) {
+            if (fn.equals("_")) {
                 of.add(SortField.FIELD_DOC);
                 continue;
             }
@@ -973,6 +973,11 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
             // 逆序
             boolean rv = fn.startsWith("-");
             if (rv) fn = fn.substring ( 1 );
+
+            // 自定义排序
+            if (sorted(of, fn, rv)) {
+                continue;
+            }
 
             Map m = (Map ) fields.get ( fn);
             if (m == null) {
@@ -1298,9 +1303,12 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
     }
 
     protected boolean ignored (Map fc, String k) {
-        return  "".equals(k)
-            || "@".equals(k)
+        return "".equals( k)  ||  "@".equals( k)
             || "Ignore".equals(fc.get( "rule" ));
+    }
+
+    protected boolean sorted  (List<SortField> sf, String k, boolean r) {
+        return false;
     }
 
     protected void mapAdd(Map map, Document doc) {

@@ -377,28 +377,22 @@ function hsListFillPick(cel, v, n) {
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
     function() {
         var url = $(this).attr("data-href") || $(this).attr("href");
-        var box = $(this).attr("data-target");
-        if (box) {
-            box = $(this)._hsTarget(box);
-        } else {
-            box =   null ;
+        var tip = $(this).attr("data-target");
+        var box = $(this).attr("data-result");
+
+        // 选择区域
+        if (tip) {
+            tip = $(this).hsFind(tip);
         }
 
         // 填充区域
-        var inp = $(this).attr("data-fill-area");
-        if (inp) {
-            inp = inp.charAt(0) == ">" ? $(inp , this) : $(inp);
+        if (box) {
+            box = $(this).hsFind(box);
         } else {
-            inp = $(this).siblings("[name],[data-fn]");
+            box = $(this).siblings("[name],[data-fn]").not(".form-ignored");
         }
 
-        // 填充函数
-        var fun = $(this).attr("data-fill-func");
-        if (fun) {
-            fun = eval ( '(' + fun + ')' );
-        }
-
-        $(this).hsPick(url, box, inp, fun);
+        $(this).hsPick(url, tip, box);
         return false;
     });
 })(jQuery);

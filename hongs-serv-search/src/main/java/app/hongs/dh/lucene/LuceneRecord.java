@@ -88,7 +88,7 @@ import org.apache.lucene.util.NumericUtils;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoCloseable {
+public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneable, AutoCloseable {
 
     protected boolean IN_TRNSCT_MODE = false;
     protected boolean IN_OBJECT_MODE = false;
@@ -652,7 +652,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
      * @throws HongsException
      */
     public void open() throws HongsException {
-        if (writer != null) {
+        if (writer != null && writer.isOpen()) {
             return;
         }
 
@@ -723,6 +723,15 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, AutoClo
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
             CoreLogger.trace("Close lucene connection, data path: " + getDbPath());
+        }
+    }
+
+    @Override
+    public LuceneRecord clone() {
+        try {
+            return (LuceneRecord) super.clone();
+        } catch (CloneNotSupportedException ex) {
+            throw new InternalError(ex.getMessage());
         }
     }
 

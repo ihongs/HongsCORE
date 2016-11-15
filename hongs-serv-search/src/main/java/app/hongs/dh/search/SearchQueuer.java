@@ -14,6 +14,11 @@ import java.util.Map;
 /**
  * 索引队列
  * 防止同时写入而造成锁损坏
+ * <p>
+ * 注意:
+ * 此类中为调用 setDoc 和 delDoc 进行最终的写操作,
+ * 切记不要覆盖 setDoc 或 delDoc 来做加入索引操作.
+ * </p>
  * @author Hongs
  */
 public class SearchQueuer extends Async<Map> implements Core.GlobalSingleton {
@@ -28,15 +33,16 @@ public class SearchQueuer extends Async<Map> implements Core.GlobalSingleton {
     }
 
     public static SearchQueuer getInstance(LuceneRecord that) throws HongsException {
-        Map<String,Map> form = that.getFields();
+//      Map<String,Map> form = that.getFields();
+//          String      path = that.getDbPath();
             String      name = that.getDbName();
-            String      path = that.getDbPath();
                         name = SearchQueuer.class.getName() +"::"+ name ;
         SearchQueuer    inst = (SearchQueuer) Core.GLOBAL_CORE.got(name);
         if (inst == null) {
-            that =  new LuceneRecord(path, form);
-            inst =  new SearchQueuer(that  /**/);
-            /**/Core.GLOBAL_CORE.put(name, inst);
+//          that =  new LuceneRecord(path, form);
+            that =  that.clone(); that.close();
+            inst =  new SearchQueuer ( that);
+            Core.GLOBAL_CORE.put(name, inst);
         }
         return inst;
     }
@@ -44,18 +50,22 @@ public class SearchQueuer extends Async<Map> implements Core.GlobalSingleton {
     @Override
     public void run(Map rd) {
         try {
-            String act = (String) rd.get( "__action__" );
+            String act = (String) rd.get("__action__");
+            String  id = (String) rd.get(Cnst.ID_KEY );
             if ("set".equals(act)) {
-                String id = (String) rd.get(Cnst.ID_KEY);
-                that.setDoc ( id  , that.map2Doc( rd ) );
+                that.begin  (    );
+                that.setDoc ( id , that.map2Doc( rd ));
+                that.commit (    );
             } else
             if ("del".equals(act)) {
-                String id = (String) rd.get(Cnst.ID_KEY);
+                that.begin  (    );
                 that.delDoc ( id );
+                that.commit (    );
             } else
             {
-                CoreLogger.getLogger("search.queuer").error("Can not run action: "+act);
+                CoreLogger.getLogger("search.queuer").error("Unrecognized action `"+act+"` for "+that.getDbName());
             }
+            CoreLogger.getLogger("search.queuer").trace(act+" '"+id+"' for "+that.getDbName());
         } catch (HongsException ex) {
             CoreLogger.getLogger("search.queuer").error(ex.getMessage());
         } catch (HongsUnchecked ex) {

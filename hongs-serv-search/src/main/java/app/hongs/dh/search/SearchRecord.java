@@ -13,6 +13,10 @@ import org.apache.lucene.document.Document;
 /**
  * 搜索记录
  * 避免同时写入而产生异常
+ * <p>
+ * 此类中的 add,put,set和del 不会立即写库,
+ * 而是调用 SearchQueuer.add 排队等待写入.
+ * </p>
  * @author Hongs
  */
 public class SearchRecord extends LuceneRecord {

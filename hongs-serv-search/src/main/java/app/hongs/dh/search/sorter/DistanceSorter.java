@@ -23,41 +23,30 @@ public class DistanceSorter extends FieldComparatorSource {
 
     @Override
     public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) throws IOException {
-        return new Comparator(fn, nh, rv, x, y);
+        return new Comparator(fn, rv, nh, x, y);
     }
 
-    static public class Comparator extends BaseComparator<String> {
+    static public class Comparator extends BaseComparator {
 
-        boolean desc;
-        long    x;
-        long    y;
+        long x;
+        long y;
 
-        public Comparator(String fieldName, int numHits, boolean desc, long x, long y) {
-            super(fieldName, numHits);
-            this.desc = desc;
+        public Comparator(String name, boolean desc, int hits, long x, long y) {
+            super(name, desc, hits);
             this.x = x;
             this.y = y;
         }
 
         @Override
-        public String cv2sv(long v) {
-            return String.valueOf(v);
-        }
-
-        @Override
-        public long sv2cv(String t) {
-            return Long.parseLong(t);
-        }
-
-        @Override
-        public long price(int d) {
-            BytesRef bytesRef = binaryDocValues.get(d);
+        protected long worth(int d) {
+            BytesRef bytesRef = originalValues.get(d);
             String   fv = bytesRef.utf8ToString();
             String[] xy = fv.split(",");
-            long     fx = Long.parseLong(xy[0]) - x;
-            long     fy = Long.parseLong(xy[1]) - y;
-                     fx = (long) Math.sqrt(fx * fx + fy * fy);
-            return desc ? 0 - fx : fx;
+            long     fx = Long.parseLong(xy[0]);
+            long     fy = Long.parseLong(xy[1]);
+                     fx = Math.abs (fx - x);
+                     fy = Math.abs (fy - y);
+            return (long) Math.sqrt(fx * fx + fy * fy);
         }
     }
 

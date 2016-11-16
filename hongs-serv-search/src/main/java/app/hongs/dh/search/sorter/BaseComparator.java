@@ -8,33 +8,48 @@ import org.apache.lucene.search.SimpleFieldComparator;
 /**
  * 基础对比类
  * @author Hongs
- * @param <T>
  */
-public abstract class BaseComparator<T> extends SimpleFieldComparator<T> {
+public abstract class BaseComparator extends SimpleFieldComparator<Long> {
 
-    protected final String fieldName;
-    protected final long[] values;
-    protected       long   top;
-    protected       long   bot;
+    protected final String    name;
+    protected final boolean   desc;
+    protected       long      top;
+    protected       long      bot;
+    protected final long[]    comparedValues;
+    protected BinaryDocValues originalValues;
 
-    protected BinaryDocValues binaryDocValues;
-
-    public BaseComparator(String fieldName, int numHits) {
-        this.fieldName = fieldName;
-        values = new long[numHits];
+    public BaseComparator(String name, boolean desc, int hits) {
+        this.name = name;
+        this.desc = desc;
+        comparedValues = new long[hits];
     }
 
     @Override
     protected void doSetNextReader(LeafReaderContext lrc) throws IOException {
-        binaryDocValues = lrc.reader().getSortedDocValues(fieldName);
+        originalValues = lrc.reader().getSortedDocValues(name);
+    }
+
+    @Override
+    public void setTopValue(Long t) {
+        top  = t;
+    }
+
+    @Override
+    public void setBottom(int i) {
+        bot  = comparedValues[i];
+    }
+
+    @Override
+    public Long value(int i) {
+        return comparedValues[i];
     }
 
     @Override
     public int compare(int i0, int i1) {
-        if (values[i0] > values[i1]) {
+        if (comparedValues[i0] > comparedValues[i1]) {
             return 1;
         }
-        if (values[i0] < values[i1]) {
+        if (comparedValues[i0] < comparedValues[i1]) {
             return -1;
         }
         return 0;
@@ -42,66 +57,49 @@ public abstract class BaseComparator<T> extends SimpleFieldComparator<T> {
 
     @Override
     public int compareTop(int d) throws IOException {
-        long dist = price(d);
+        long dist = wxrth(d);
         if (top < dist) {
             return -1;
         }
         if (top > dist) {
-            return 1;
+            return  1;
         }
         return 0;
     }
 
     @Override
     public int compareBottom(int d) throws IOException {
-        long dist = price(d);
+        long dist = wxrth(d);
         if (bot < dist) {
             return -1;
         }
         if (bot > dist) {
-            return 1;
+            return  1;
         }
         return 0;
     }
 
     @Override
-    public void setTopValue(T t) {
-        top = sv2cv (t);
-    }
-
-    @Override
-    public void setBottom(int i) {
-        bot = values[i];
-    }
-
-    @Override
     public void copy(int i, int d) throws IOException {
-        values[i] = price(d);
-    }
-
-    @Override
-    public T value(int i) {
-        return cv2sv(values[i]);
+        comparedValues[i] = wxrth(d);
     }
 
     /**
-     * 对比值转存储值
-     * @param v
-     * @return
-     */
-    public abstract T cv2sv(long v);
-
-    /**
-     * 存储值转对比值
-     * @param t
-     * @return
-     */
-    public abstract long sv2cv(T t);
-
-    /**
-     * 获取存储的取值
+     * 判断是否逆序
      * @param d
      * @return
+     * @throws IOException 
      */
-    public abstract long price(int d);
+    protected /*desc*/ long wxrth(int d) throws IOException {
+        return  desc  ? 0 - worth(d) : worth(d);
+    }
+
+    /**
+     * 获取存储值, 转为对比值
+     * @param d 文档索引
+     * @return
+     * @throws java.io.IOException
+     */
+    protected abstract long worth(int d) throws IOException;
+
 }

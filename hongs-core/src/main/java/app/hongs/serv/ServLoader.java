@@ -81,7 +81,7 @@ public class ServLoader {
                     .getInstance(  "_init_"  )
                     .getProperty("enrol.serv")
                     .split(";");
-            addServ( ACTIONS, CMDLETS, pkgs );
+            addServ(ACTIONS, CMDLETS, pkgs);
         } finally {
             wlock.unlock();
         }

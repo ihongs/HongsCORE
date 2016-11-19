@@ -426,7 +426,7 @@ public final class Core
    * @return 类的对象
    */
   public static <T> T getInstance(Class<T> ct) {
-    return getInstance().get(ct);
+    return getInstance().get( ct );
   }
 
   /**

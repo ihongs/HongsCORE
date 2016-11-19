@@ -79,8 +79,8 @@ function H$() {
  * @return {Object}
  */
 function hsResponObj(rst, qut, qxt) {
-    if (typeof(rst.responseText) !== "undefined") {
-        rst  = rst.responseText;
+    if (typeof (rst.responseText) !== "undefined") {
+        rst  =  rst.responseText;
     }
     if (typeof (rst) === "string") {
         if (rst.charAt(0) === '{') {
@@ -114,7 +114,7 @@ function hsResponObj(rst, qut, qxt) {
             };
         }
     }
-    if (typeof(rst) === "object") {
+    if (typeof (rst) === "object") {
         if (typeof(rst.ok ) === "undefined") {
             rst.ok = true ;
         } else
@@ -1138,6 +1138,7 @@ $.hsAjax = function(url, settings) {
         }
     }
 
+    // 为明确所送数据类型, 便于服务端正确解析
     // 增加 dataKind, 取值 form,json,xml
     if (settings.dataKind) {
         switch(settings.dataKind.toLowerCase()) {
@@ -1169,7 +1170,7 @@ $.hsAjax = function(url, settings) {
                     settings.data = '<?xml version="1.0"?>' +
                           $(settings.data).prop('outerHTML');
                 }
-                settings.contentType = "application/xml ; charset=UTF-8";
+                settings.contentType = "application/xml; charset=UTF-8";
                 break;
             default:
                 throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);
@@ -1638,7 +1639,7 @@ $.fn.hsTabs = function(rel) {
     box.data("panes", rel);
 
     var act = box.children(".active" );
-    if (act.size() == 0) {
+    if (act.size() === 0 ) {
         act = box.children("li:first");
     }
     act.children("a").click();
@@ -1916,6 +1917,7 @@ $.fn._hsModule = function(func, opts) {
 };
 
 // 三态选择
+// indeterminate 有三个值: true 选中, null 半选, false 未选
 $.propHooks.choosed = {
     get : function(elem) {
         return elem.checked ? true : (elem.indeterminate ?  null : false);

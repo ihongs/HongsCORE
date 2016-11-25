@@ -79,8 +79,6 @@ public class IsFile extends Rule {
         if (x != null) u.setUploadPath(x);
         x = (String) params.get( "href" );
         if (x != null) u.setUploadHref(x);
-        x = (String) params.get( "link" );
-        if (x != null) u.setUploadLink(x);
         x = (String) params.get( "type" );
         if (x != null) u.setAllowTypes(x.split(","));
         x = (String) params.get( "extn" );

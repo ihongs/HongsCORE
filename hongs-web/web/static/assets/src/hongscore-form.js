@@ -765,18 +765,21 @@ HsForm.prototype = {
             return true;
         },
         "[type=email],.input-email" : function(val, inp) {
+            if (!val) return true; // 规避非 required 的情况
             if (!/^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\.([a-z\.]{2,6})$/i.test(val)) {
                 return this.geterror(inp, "form.is.not.email");
             }
             return true;
         },
         "[type=url],.input-url" : function(val, inp) {
+            if (!val) return true; // 规避非 required 的情况
             if (!/^(https?:\/\/)?[\da-z\.\-]+\.[a-z\.]{2,6}(:\d+)?(\/[^\s]*)?$/i.test(val)) {
                 return this.geterror(inp, "form.is.not.url");
             }
             return true;
         },
         "[type=tel],.input-tel" : function(val, inp) {
+            if (!val) return true; // 规避非 required 的情况
             if (!/^(\+\d{1,3})?\d{3,}$/i.test(val)) {
                 return this.geterror(inp, "form.is.not.tel");
             }

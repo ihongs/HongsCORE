@@ -57,27 +57,6 @@ public class UploadHelper {
         return this;
     }
 
-    /**
-     * 与 setUploadHref 不同, 返回的 href 会加上当前服务器的 协议://域名:端口/路径
-     * @param href
-     * @return
-     */
-    public UploadHelper setUploadLink(String href) {
-        ActionHelper helper = Core.getInstance(ActionHelper.class);
-        String hp = helper.getRequest().getScheme();
-        String hn = helper.getRequest().getServerName();
-        int    pt = helper.getRequest().getServerPort();
-        String hu = hp +"://"+ hn;
-        if (pt != 80 && pt != 443) {
-            hu += ":" + pt ;
-        }
-            hu += Core.BASE_HREF ;
-        if (!href.startsWith("/")) {
-            hu += "/" ;
-        }
-        return setUploadHref(hu + href);
-    }
-
     public UploadHelper setAllowTypes(String... type) {
         this.allowTypes = new HashSet(Arrays.asList(type));
         return this;
@@ -122,10 +101,34 @@ public class UploadHelper {
         m.put("CONF_PATH", Core.CONF_PATH);
         m.put("DATA_PATH", Core.DATA_PATH);
         path = Tool.inject(path, m );
+
         if (! new File(path).isAbsolute()) {
             path = Core.BASE_PATH  + "/" + path;
         }
+
         return path;
+    }
+
+    private String getResultHref(String href) {
+        // 如果环境中没给则尝试从请求中提取
+        String CURR_BASE_LINK = System.getenv("base.url");
+        if ( ( CURR_BASE_LINK == null || CURR_BASE_LINK.length() == 0)) {
+            ActionHelper helper = Core.getInstance(ActionHelper.class);
+            String hp = helper.getRequest().getScheme(  );
+            String hn = helper.getRequest().getServerName();
+            int    pt = helper.getRequest().getServerPort();
+            CURR_BASE_LINK  = hp + "://"+ hn;
+            if (pt != 80 && pt != 443) {
+            CURR_BASE_LINK += /**/ ":"  + pt;
+            }
+            CURR_BASE_LINK += Core.BASE_HREF;
+        }
+
+        Map m = new HashMap();
+        m.put("BASE_HREF", Core.BASE_HREF);
+        m.put("BASE_LINK", CURR_BASE_LINK);
+        href = Tool.inject(href, m );
+        return href;
     }
 
     public String getResultPath() {
@@ -141,7 +144,7 @@ public class UploadHelper {
         if (this.uploadHref != null) {
             href = this.uploadHref + "/" + href;
         }
-        return href;
+        return getResultHref( href );
     }
 
     /**

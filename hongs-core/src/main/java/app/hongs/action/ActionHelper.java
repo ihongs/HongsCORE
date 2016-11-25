@@ -10,11 +10,8 @@ import app.hongs.util.Dict;
 
 import java.io.File;
 import java.io.Writer;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -366,24 +363,14 @@ public class ActionHelper implements Cloneable
             String tmp = path + File.separator + id + ".tmp";
             String tnp = path + File.separator + id + ".tnp";
 
-            // 存储到临时文件
+            // 存储文件
             try (
-                /**/InputStream      fis = part.getInputStream     (   );
-                FileOutputStream     fos = new FileOutputStream    (tmp);
-                FileOutputStream     fox = new FileOutputStream    (tnp);
-                BufferedInputStream  bis = new BufferedInputStream (fis);
-                BufferedOutputStream bos = new BufferedOutputStream(fos);
+                FileOutputStream temp = new FileOutputStream(tnp);
             ) {
-                byte[] buf = new byte [1024];
-                while (bis.read (buf) != -1) {
-                       bos.write(buf);
-                }
-
                 String mts = subn + "\r\n" + type + "\r\n" + size;
                 byte[] nts = mts.getBytes("UTF-8");
-                fox.write(nts);
-            } finally {
-                part.delete( );
+                part.write(tmp );
+                temp.write(nts );
             }
 
             uploadKeys.add(name);

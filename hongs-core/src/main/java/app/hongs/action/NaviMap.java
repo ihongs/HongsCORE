@@ -363,6 +363,16 @@ public class NaviMap
   }
 
   /**
+   * 获取单元信息
+   * @param name
+   * @return 找不到则返回null
+   */
+  public Map getRole(String name)
+  {
+    return this.roles.get ( name);
+  }
+
+  /**
    * 获取页面信息
    * @param name
    * @return 找不到则返回null
@@ -387,9 +397,17 @@ public class NaviMap
     for (String namz : names) {
         Map menu = getMenu(namz);
 
+        // 此方法主要用在判断菜单能否可以进入
+        // 通常的是判断其拥有任一个角色即有效
+        // 如果取了依赖的角色
+        // 会导致因为依赖通用角色总是误认有效
+        // 例如所有管理后台角色均依赖基础管理
         Set set = (Set) menu.get("roles");
         if (set != null && !set.isEmpty()) {
-            rolez.putAll(getMoreRoles((String[]) set.toArray(new String[0])));
+            for (Object name : set) {
+                rolez.put( (String) name, roles.get(name));
+            }
+//          rolez.putAll(getMoreRoles((String[]) set.toArray(new String[0])));
         }
 
         Map map = (Map) menu.get("menus");
@@ -399,42 +417,6 @@ public class NaviMap
     }
 
     return  rolez;
-  }
-
-  /**
-   * 获取页面权限
-   * @param names
-   * @return 权限集合
-   */
-  public Set<String> getMenuAuths(String... names)
-  {
-    Set<String> authz = new HashSet();
-
-    for (String namz : names) {
-        Map menu = getMenu(namz);
-
-        Set set = (Set) menu.get("roles");
-        if (set != null && !set.isEmpty()) {
-            authz.addAll(getRoleAuths((String[]) set.toArray(new String[0])));
-        }
-
-        Map map = (Map) menu.get("menus");
-        if (map != null && !map.isEmpty()) {
-            authz.addAll(getMenuAuths((String[]) map.keySet().toArray(new String[0])));
-        }
-    }
-
-    return  authz;
-  }
-
-  /**
-   * 获取单元信息
-   * @param name
-   * @return 找不到则返回null
-   */
-  public Map getRole(String name)
-  {
-    return this.roles.get ( name);
   }
 
   /**
@@ -484,6 +466,7 @@ public class NaviMap
         Set<String> actionsSet = (Set<String>) role.get("actions");
         auths.addAll(actionsSet);
       }
+      
       if (role.containsKey("depends"))
       {
         Set<String> dependsSet = (Set<String>) role.get("depends");

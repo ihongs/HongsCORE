@@ -32,8 +32,8 @@ import javax.servlet.http.HttpServletResponse;
 @Action("common/pack")
 public class PackAction {
 
-    private static final Pattern _ACT_PAT = Pattern.compile("#.*?$");
-    private static final Pattern _EXT_PAT = Pattern.compile("\\.(act|api)(#.*?)?$");
+    private static final Pattern ACT_PAT = Pattern.compile("#.*?$");
+    private static final Pattern EXT_PAT = Pattern.compile("\\.(act|api)(#.*?)?$");
 
     @Action("__main__")
     public void pack(ActionHelper helper) {
@@ -48,19 +48,19 @@ public class PackAction {
         String              urx ;
 
         while (enu.hasMoreElements()) {
-            uri = enu.nextElement ( );
+            uri = enu.nextElement( );
 
-            if (! _EXT_PAT.matcher(uri).matches()) {
+            if (! EXT_PAT.matcher(uri).matches()) {
                 continue;
             }
-            urx = _ACT_PAT.matcher(uri).replaceFirst("");
+            urx = ACT_PAT.matcher(uri).replaceFirst("");
 
             // 解析请求参数
             raq = data(req.getParameter(uri));
             rap = new HashMap();
             rap.putAll(dat);
             rap.putAll(raq);
-            helper.setRequestData (rap);
+            helper.setRequestData(rap);
 
             // 代理执行动作
             rap = call(helper, urx, req, rsp);

@@ -175,10 +175,12 @@ implements IEntity
     } else {
         Map sd = new LinkedHashMap();
         sd.put(table.primaryKey, id);
-        for(String fn: listable) {
-        if ( ! fn.contains(".")) {
-            sd.put(fn, rd.get( fn ));
-        }
+        if (null != listable) {
+            for(String fn: listable) {
+            if ( ! fn.contains(".")) {
+                sd.put(fn, rd.get(fn));
+            }
+            }
         }
         return sd;
     }
@@ -820,10 +822,10 @@ implements IEntity
    *    可以在字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 5) 如果有子表.字段名相同的参数则获取与之对应的记录,
    *    可以在子表.字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
- 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
-
- [2016/9/4] 以上过滤逻辑已移至 AssocCase, 但未指定 listable 时字段过滤使用本类的 field,allow 来处理
- </pre>
+   * 注: "+" 在URL中表示空格; 以上设计目录均已实现; 以上1/2/3中的参数名可统一设置或单独指定;
+   *
+   * [2016/9/4] 以上过滤逻辑已移至 AssocCase, 但未指定 listable 时字段过滤使用本类的 field,allow 来处理
+   * </pre>
    *
    * @param caze
    * @param rd

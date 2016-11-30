@@ -175,14 +175,7 @@
                 });
             });
 
-        $(function() {
-            if ($("#curr-menubar .active").size()) {
-                return;
-            }
-            if ($("#curr-menubar li").size() == 0) {
-                $( document ).trigger ( "noMenu" );
-                return;
-            }
+        function initMenu() {
             // Click the first available menu item
             var a;
             if (location.hash) {
@@ -200,6 +193,19 @@
                 a = $("#main-menubar ul.dropdown-menu a").first();
             }
             a.click();
+        }
+        
+        $(function() {
+            if ($("#curr-menubar .active").size()) {
+                return;
+            }
+            if ($("#curr-menubar li").size() == 0) {
+                $( document ).trigger ( "noMenu" );
+                return;
+            }
+            initMenu();
         });
+        
+        $(window).on("hashchange", initMenu);
     })(jQuery);
 </script>

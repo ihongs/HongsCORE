@@ -59,7 +59,7 @@ public class IsFile extends Rule {
                 }
                 // 如果有临时目录则下载到这
                 x = (String) params.get("temp");
-                if (x == null &&  "".equals(x)) {
+                if (x == null ||  "".equals(x)) {
                     x  = Core.DATA_PATH + File.separator + "upload" ;
                 }
                 value = stores(value.toString(), x );
@@ -103,6 +103,13 @@ public class IsFile extends Rule {
         return x;
     }
 
+    /**
+     * 远程文件预先下载到本地
+     * @param href 文件链接
+     * @param temp 临时目录
+     * @return
+     * @throws Wrong
+     */
     protected String stores(String href, String temp) throws Wrong {
         URL url = null;
         try {
@@ -135,7 +142,7 @@ public class IsFile extends Rule {
             byte[] buf = new byte[1204];
             int    siz = 0;
             int    ovr = 0;
-            while((ovr = ins.read(buf))!=-1) {
+            while((ovr = ins.read(buf )) != -1) {
                 out.write(buf, 0, ovr );
                 siz += ovr;
             }
@@ -146,7 +153,7 @@ public class IsFile extends Rule {
 
             // 写入文件信息
             out  = new FileOutputStream(temp + File.separator + fid + ".tnp");
-            out.write((name+"\r\n"+type+"\r\n"+siz).getBytes( ) );
+            out.write((name + "\r\n" + type + "\r\n" + siz).getBytes());
             out.close();
             out  = null;
 
@@ -154,23 +161,31 @@ public class IsFile extends Rule {
         } catch (IOException ex) {
             throw new Wrong(ex, "file.can.not.fetch", href, temp);
         } finally {
-        if (out != null) {
-        try {
-            out.close( );
-        } catch (IOException ex) {
-            throw new Wrong(ex, "file.can.not.close", temp);
-        }
-        }
-        if (ins != null) {
-        try {
-            ins.close( );
-        } catch (IOException ex) {
-            throw new Wrong(ex, "file.can.not.close", href);
-        }
-        }
+            if (out != null) {
+                try {
+                    out.close( );
+                } catch (IOException ex) {
+                    throw new Wrong(ex, "file.can.not.close", temp);
+                }
+            }
+            if (ins != null) {
+                try {
+                    ins.close( );
+                } catch (IOException ex) {
+                    throw new Wrong(ex, "file.can.not.close", href);
+                }
+            }
         }
     }
 
+    /**
+     * 上传成功后的进一步检查
+     * 用于后续处理, 如生成缩略图, 或视频截图等
+     * @param href 文件链接
+     * @param path 文件路径
+     * @return
+     * @throws Wrong
+     */
     protected String checks(String href, String path) throws Wrong {
         return href;
     }

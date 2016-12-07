@@ -2,6 +2,7 @@ package app.hongs.util.verify;
 
 import app.hongs.CoreConfig;
 import app.hongs.util.Synt;
+import java.io.File;
 import java.io.IOException;
 
 /**
@@ -28,17 +29,30 @@ public class Thumb extends IsFile {
         rat = Synt.declare(params.get("thumb-pick"), rat);
         map = Synt.declare(params.get("thumb-zoom"), map);
 
-        // 已经是截取图了则不再继续截取
-        if (href.endsWith(rat.replaceFirst(":.*$","")+"."+ext)) {
+        // 已为截图了则不再继续
+        String xxt = rat.length() != 0
+                   ? rat.replaceFirst(":.*$", "")
+                   : map.replaceFirst(":.*$", "");
+        if (href.endsWith(xxt + "." + ext)) {
             return href;
         }
 
+        String  dest;
         try {
-            String[][] a = app.hongs.util.sketch.Thumb.toThumbs(path, href, ext, rat, map);
-            return a[1][0];
+            String[][] ph = app.hongs.util.sketch.Thumb.toThumbs(path, href, ext, rat, map);
+            dest = ph[0][0];
+            href = ph[1][0];
         } catch (IOException ex) {
-            throw new Wrong( ex, "Can not get thumbs");
+            throw new Wrong( ex, "Can not create thumbs");
         }
+
+        // 是否需要抛弃原始文件
+        if (Synt.declare(params.get("drop-origin"),false)
+        && !dest.equals (  path  )) {
+            new File(path).delete();
+        }
+
+        return  href;
     }
 
 }

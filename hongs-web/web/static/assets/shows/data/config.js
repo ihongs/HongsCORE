@@ -2,7 +2,7 @@
 if(!window.HsCONF)window.HsCONF={};$.extend(window.HsCONF,{
 	"DEBUG":3,
 	"SERVER_ID":"0",
-	"BASE_HREF":"./",
+	"BASE_HREF":".",
 	"pn.key":"pn",
 	"gn.key":"gn",
 	"rn.key":"rn",

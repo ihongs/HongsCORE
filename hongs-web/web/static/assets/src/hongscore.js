@@ -1578,19 +1578,17 @@ $.fn.hsClose = function() {
 //      tab.parent().children().eq(idx).find( "a" ).click() ;
         var tbs = tab.parent().children();
         var pns = prt.parent().children();
-        if (tbs) {
-            tbs.removeClass("active")
-                      .eq(idx).show()
-                  .addClass("active");
-        }
-        if (pns) {
-            pns.hide().eq(idx).show()
-                  .trigger("hsRecur");
-        }
+        var tb2 = tbs.eq(idx);
+        var pn2 = pns.eq(idx);
+        tbs./**/removeClass("active");
+        tb2.show().addClass("active");
+        pns.hide();
+        pn2.show();
         if (tab.has(".close").size()) {
             tab.remove();
             prt.remove();
         }
+        pn2.trigger("hsRecur"); // 触发重现事件
     } else
     // 恢复内容
     if (box.data( "ref" )) {
@@ -1598,6 +1596,7 @@ $.fn.hsClose = function() {
         prt.append(ref.contents());
         box.remove();
         ref.remove();
+        prt.trigger("hsRecur"); // 触发重现事件
     } else
     // 关闭浮窗
     if (box.closest(".modal").size()) {
@@ -1605,7 +1604,7 @@ $.fn.hsClose = function() {
     } else
     // 关闭通知
     if (box.closest(".alert").size()) {
-        box.closest(".alert").remove(/****/);
+        box.closest(".alert").remove( /**/ );
     }
 
     return box;
@@ -1958,20 +1957,13 @@ $(document).ajaxError(function(evt, xhr, cnf) {
 
 $(document)
 .on("click", "[data-toggle=hsOpen]",
-function(evt) {
+function() {
     var btn = $(this);
     var box = btn.data("target");
     var url = btn.data("href");
     var dat = btn.data("data");
     var das = btn.data();
-
-    url = hsFixPms(url, this);
-    if (box) {
-        box = btn.hsFind(box)
-                 .hsOpen(url, dat, das["onOpenBack"]);
-    } else {
-        box =   $.hsOpen(url, dat, das["onOpenBack"]);
-    }
+    var evs = { };
 
     /**
      * 从数据属性中提取出事件句柄
@@ -1980,32 +1972,37 @@ function(evt) {
      * 故可在打开重复绑定
      */
     for(var n in das) {
-        var f =  das[n];
-
-        if (! f) {
+        var f  = das[n];
+        if (! /^on[A-Z]\w*/.test( n )) {
             continue;
         }
-        if (! /^on[A-Z].*/.test(n)) {
-            continue;
-        }
-        if (  n === "onOpenBack"  ) {
-            cotninue;
-        }
-
-        if  ( typeof f !== "function") {
-            f = eval('(function(event) {' + f + '})');
+        if (typeof(f) !== "function" ) {
+            f = eval('(function(event) {'+ f +'})');
         }
         n = n.substring(2, 3).toLowerCase() + n.substring(3);
+        evs[n] = f;
+    }
 
+    url = hsFixPms(url, this);
+    if (box) {
+        box = btn.hsFind(box)
+                 .hsOpen(url, dat, evs.hsReady);
+    } else {
+        box =   $.hsOpen(url, dat, evs.hsReady);
+    }
+
+    for(var n in evs) {
+        var f  = evs[n];
+        if (n === "hsReady") {
+            continue;
+        }
         box.on(n, function() {
             f.apply(btn, arguments);
         });
     }
-
-    evt.stopPropagation();
 })
 .on("click", "[data-toggle=hsClose],.close,.cloze,.cancel",
-function(evt) {
+function() {
     var box;
     var ths = $(this);
     do {
@@ -2049,10 +2046,9 @@ function(evt) {
             return;
     }
     box.hsClose( );
-    evt.stopPropagation();
 })
 .on("click", ".tabs > li > a",
-function(evt) {
+function() {
     var ths = $(this);
     var tab = ths.parent();
     var nav = tab.parent();
@@ -2076,7 +2072,6 @@ function(evt) {
         ths.removeAttr("data-href");
         pne.hsOpen( ref );
     }
-    evt.stopPropagation();
     pne.siblings().hide();
     tab.siblings()
            .removeClass("active");
@@ -2091,7 +2086,6 @@ function(evt) {
     var cont = $(this).parent( );
     cont.toggleClass( "dropup" );
     body.toggleClass("invisible", !cont.is(".dropup"));
-    evt.stopPropagation();
 })
 .on("click", "select[multiple]",
 function(evt) {

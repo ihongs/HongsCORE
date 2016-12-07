@@ -10,6 +10,7 @@ import app.hongs.util.Dict;
 
 import java.io.File;
 import java.io.Writer;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
@@ -303,16 +304,16 @@ public class ActionHelper implements Cloneable
         Map rd = new HashMap();
 
         for ( Part part : request.getParts( ) ) {
-            String name = part.getName();
             long   size = part.getSize();
+            String name = part.getName();
             String type = part.getContentType();
-
-            if (name == null || name.isEmpty()) {
-                continue;
-            }
+            String subn = part.getSubmittedFileName();
+            String extn = subn;
 
             // 无类型的普通参数已在外部处理
-            if (type == null || type.isEmpty()) {
+            if (name == null || name.isEmpty()
+            ||  type == null || type.isEmpty()
+            ||  extn == null || extn.isEmpty()) {
                 continue;
             }
 
@@ -320,7 +321,7 @@ public class ActionHelper implements Cloneable
             // 在修改的操作中表示将其置为空
             if (size == 0) {
                 if (null == request.getParameter(name)) {
-                    Dict.setParam  ( rd , null , name );
+                    Dict.setParam(rd, null, name);
                 }
                 continue;
             }
@@ -341,10 +342,6 @@ public class ActionHelper implements Cloneable
                 throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
             }
 
-            String subn , extn;
-            extn = part.getSubmittedFileName();
-            subn = extn.replaceAll("[\\\\/\\r\\n\"?:*<>|]" , ""); // 非法字符清理
-
             // 检查扩展
                 pos  = extn.lastIndexOf( '.' );
             if (pos == -1) {
@@ -359,18 +356,27 @@ public class ActionHelper implements Cloneable
                 throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
             }
 
-            String id  = Core.getUniqueId();
-            String tmp = path + File.separator + id + ".tmp";
-            String tnp = path + File.separator + id + ".tnp";
+            String id = Core.getUniqueId();
+            String temp = path + File.separator + id + ".tmp";
+            String tenp = path + File.separator + id + ".tnp";
+            subn = subn.replaceAll("[\\r\\n\\\\/]", ""); // 清理非法字符: 换行和路径分隔符
+            subn = subn + "\r\n" + type + "\r\n" + size; // 拼接存储信息: 名称和类型及大小
 
             // 存储文件
             try (
-                FileOutputStream temp = new FileOutputStream(tnp);
+                InputStream      xmin = part.getInputStream();
+                FileOutputStream mout = new FileOutputStream(temp);
+                FileOutputStream nout = new FileOutputStream(tenp);
             ) {
-                String mts = subn + "\r\n" + type + "\r\n" + size;
-                byte[] nts = mts.getBytes("UTF-8");
-                part.write(tmp );
-                temp.write(nts );
+                byte[] nts = subn.getBytes("UTF-8");
+		byte[] buf = new byte[1024];
+                int    cnt ;
+
+		while((cnt = xmin.read(buf)) != -1) {
+                    mout.write(buf, 0, cnt);
+		}
+
+                nout.write(nts );
             }
 
             uploadKeys.add(name);

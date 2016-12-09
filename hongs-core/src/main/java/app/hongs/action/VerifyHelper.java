@@ -4,7 +4,7 @@ import app.hongs.HongsException;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Default;
 import app.hongs.util.verify.Defiant;
-import app.hongs.util.verify.Norepeat;
+import app.hongs.util.verify.NoRepeat;
 import app.hongs.util.verify.Optional;
 import app.hongs.util.verify.Repeated;
 import app.hongs.util.verify.Required;
@@ -100,7 +100,7 @@ public class VerifyHelper extends Verify {
                     if (opts.containsKey("maxrepeat"))
                         prms.put("maxrepeat", opts.remove("maxrepeat"));
                 } else {
-                    Rule rule = new Norepeat();
+                    Rule rule = new NoRepeat();
                     this.addRule( code, rule );
                 }
             }

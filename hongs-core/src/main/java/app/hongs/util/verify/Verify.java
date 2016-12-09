@@ -223,13 +223,15 @@ public class Verify implements Veri {
 
         // 将后面的规则应用于每一个值
         if (data instanceof Collection) {
-            int i3 = 0;
+            int i3 = -1;
             for(Object data3  :  ( Collection ) data  ) {
+                i3 += 1;
+
                 if (data3 == null || d.contains(data3)) {
                     continue;
                 }
 
-                String name3 = name + "." + (  i3 ++  );
+                String name3 = name + "[" + i3 + "]";
                 data3 = verify(rulez, data3, name3, values, cleans, wrongz);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
@@ -246,7 +248,7 @@ public class Verify implements Veri {
                     continue;
                 }
 
-                String name3 = name + "." + ((String) e3.getKey() );
+                String name3 = name + "." + e3.getKey();
                 data3 = verify(rulez, data3, name3, values, cleans, wrongz);
                 if (data3 !=  BLANK) {
                     data2.add(data3);

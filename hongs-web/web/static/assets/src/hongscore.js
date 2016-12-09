@@ -1343,7 +1343,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     var ini = { show : true };
     if (btn.children().size()) {
         ini.keyboard = false ;
-        ini.backdrop ="static" ;
+        ini.backdrop = "static";
 
         // 外围包裹
         var wrp = $('<div></div>');
@@ -1354,15 +1354,18 @@ $.hsWarn = function(msg, typ, yes, not) {
 
         // 重新布局
         btu.append(box.contents());
-        div.find(".close").hide( );
         btu.addClass("warn3");
         btn.addClass("warn4");
         box.append(btt);
         box.append(btu);
         box.append(btn);
 
-        // 必须置空, 否则二次打开将不触发 shown.bs.modal
-        $.support.transition = undefined;
+        // 隐藏关闭
+        div.find(".close").hide( );
+        div.removeClass("alert-dismissable");
+
+        // 必须置空, 否则二次打开不会触发下方事件
+        $.support.transition  =  undefined  ;
 
         // 垂直居中
         mod.on("shown.bs.modal", function() {
@@ -1371,6 +1374,7 @@ $.hsWarn = function(msg, typ, yes, not) {
             if (wh > mh) {
                 mh = Math.floor((wh - mh) / 2);
                 div.css("margin-top", mh+"px");
+                mod.css("padding-right","0px"); // 去掉模态框BS设的15像素右补丁
             }
         } );
     }

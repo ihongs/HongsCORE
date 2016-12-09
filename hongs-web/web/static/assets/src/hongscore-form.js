@@ -242,7 +242,7 @@ HsForm.prototype = {
                 i.attr("data-value", v).change();
             } else
             if (i.is  ("input,select,textarea")) {
-                i.val (v).change( );
+                i.not (":file").val( v).change();
             } else {
                 i.text(v);
             }
@@ -574,16 +574,10 @@ HsForm.prototype = {
     },
     validate : function(inp) {
         if (inp === undefined) {
-            this.verifies( );
-            return;
+            return this.verifies();
         }
 
-        if (typeof inp == "string") {
-            inp = this.formBox.find('[name="'+inp+'"],[data-fn="'+inp+'"]')
-                              .not ('.form-ignored');
-        } else {
-            inp = jQuery(inp);
-        }
+        inp = this.getinput( inp );
 
         for(var key in this.rules) {
             if (!inp.is(key)) {
@@ -611,19 +605,14 @@ HsForm.prototype = {
             return;
         }
 
-        if (typeof inp == "string") {
-            inp = this.formBox.find('[name="'+inp+'"],[data-fn="'+inp+'"]')
-                              .not ('.form-ignored');
-        } else {
-            inp = jQuery(inp);
-        }
+        inp = this.getinput(inp);
 
         var grp = inp.closest(".form-group");
         var blk = grp.find   (".help-block");
-        if (blk.size() == 0 ) {
+        if (blk.size() == 0) {
             blk = jQuery('<p class="help-block"></p>').appendTo(grp);
         }
-        if (err == undefined) {
+        if (err===undefined) {
             grp.removeClass("has-error");
             blk.   addClass("invisible");
         } else {
@@ -634,8 +623,7 @@ HsForm.prototype = {
     },
     geterror : function(inp, err, rep) {
         var msg = err.replace(/^form\./, "").replace(/\./g, "-");
-            msg = "data-"+ msg+"-error";
-            msg = inp.attr(msg)
+            msg = inp.attr("data-" + msg + "-error" )
                || inp.attr("data-error");
         if (msg) {
             err = msg;
@@ -666,6 +654,52 @@ HsForm.prototype = {
         }
 
         return hsGetLang(err, rep);
+    },
+    getinput : function(inp) {
+        if (typeof inp != "string") {
+            return jQuery(inp);
+        }
+
+        do {
+            var sel = inp;
+
+            inp = this.formBox.find('[name="'+sel+'"],[data-fn="'+sel+'"]');
+            if (inp.size()) {
+                break;
+            }
+
+            /**
+             * 从字段名里提取数组下标
+             * 并使用下标来查找表单项
+             * 还找不到则尝试按集合名
+             * 如: name. 和 name[]
+             * 此查找方法主要为解决显示服务端多值字段校验的错误消息
+             */
+
+            var grp = /^(.*)\[(\d+)\]$/.exec(sel);
+            if (grp == null) {
+                break;
+            }
+            var idx = grp[2];
+                sel = grp[1];
+
+            inp = this.formBox.find('[name="'+sel+'"],[data-fn="'+sel+'"]');
+            if (inp.size()) {
+                return inp.eq(parseInt(idx)); // 精确位置, 直接返回
+            }
+
+            inp = this.formBox.find('[name="'+sel+'."],[data-fn="'+sel+'."]');
+            if (inp.size()) {
+                break;
+            }
+
+            inp = this.formBox.find('[name="'+sel+'[]"],[data-fn="'+sel+'[]"]');
+            if (inp.size()) {
+                break;
+            }
+        } while (false);
+
+        return inp.not(".form-ignored");
     },
     rmsgs : {
     },

@@ -7,7 +7,7 @@ import java.util.Map;
  * 单值约束
  * @author Hongs
  */
-public class NoRepeat extends Rule {
+public class NoRepeat2 extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
         if (value instanceof Object[ ] ) {

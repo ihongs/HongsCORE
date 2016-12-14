@@ -21,64 +21,68 @@ import static net.coobird.thumbnailator.geometry.Positions.CENTER;
  */
 public class Thumb {
 
-    String pth = null;
+    File   src = null;
     String pre = null;
     String ext = null;
 
     // 扩展名:宽*高... 扩展名可以为空串
-    private static final Pattern pat = Pattern.compile("([\\w_]*):(\\d+)\\*(\\d+)");
+    private static final Pattern PAT = Pattern.compile("([\\w_]*):(\\d+)\\*(\\d+)");
     // keep:(R,G,B,A), 取值0~255, A可选
-    private static final Pattern pxt = Pattern.compile(";keep\\((\\d+,\\d+,\\d+(,\\d+)?)\\)", Pattern.CASE_INSENSITIVE);
+    private static final Pattern PXT = Pattern.compile(";keep\\((\\d+,\\d+,\\d+(,\\d+)?)\\)", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 设置原始图片文件
+     * @param src
+     */
+    public void setFile(File src) {
+        this.src = src;
+        this.pre = src.getAbsolutePath().replaceFirst("\\.\\w+$", "");
+    }
 
     /**
      * 设置原始图片路径
      * @param pth
      */
     public void setPath(String pth) {
-        this.pth = pth ;
-        this.pre = null;
+        this.src = new File(pth);
+        this.pre = src.getAbsolutePath().replaceFirst("\\.\\w+$", "");
     }
 
     /**
      * 设置规定输出格式
+     * 支持 png,jpg,gif 等
      * @param ext
      */
     public void setExtn(String ext) {
-        this.ext = ext ;
-        this.pre = null;
+        this.ext = ext;
     }
 
     /**
      * 检查路径和扩展名
      */
     protected final void chkPathAndExtn() {
-        if (pth == null) {
-            throw new NullPointerException("Must setPath");
+        if (pre == null) {
+            throw new NullPointerException("Must setFile or setPath");
         }
         if (ext == null) {
             throw new NullPointerException("Must setExtn");
-        }
-        if (pre == null) {
-            pth = new File(pth).getAbsolutePath();
-            pre = pth.replaceFirst("\\.\\w+$","");
         }
     }
 
     /**
      * 按比例保留
-     * @param suf
+     * @param dst
      * @param w
      * @param h
      * @param b RGBA
-     * @return
      * @throws IOException
      */
-    public String keep(String suf, int w, int h, Color b) throws IOException {
+    public void keep(File dst, int w, int h, Color b) throws IOException {
         chkPathAndExtn();
 
-        Image img = ImageIO.read ( new File(pth) );
+        Image img = ImageIO.read ( src );
         if (null == img) {
-            throw new IOException("Can not read image '"+pth+"'");
+            throw new IOException("Can not read image '" + src.getAbsolutePath() + "'");
         }
 
         int xw = img.getWidth (null);
@@ -103,27 +107,40 @@ public class Thumb {
         g.drawImage(img, l,t , null);
         g.dispose  ( );
 
-        String dst =  pre  +  suf + "." + ext ;
         Thumbnails.of(buf)
                 .size(w,h)
-                .outputFormat(ext).toFile(dst);
+                .outputFormat(ext)
+                .toFile(dst);
+    }
+
+    /**
+     * 按比例保留
+     * @param suf
+     * @param w
+     * @param h
+     * @param b RGBA
+     * @return
+     * @throws IOException
+     */
+    public String keep(String suf, int w, int h, Color b) throws IOException {
+        String dst =  pre  +  suf + "." + ext ;
+        keep(new File(dst), w, h, b);
         return dst;
     }
 
     /**
      * 按比例截取
-     * @param suf
+     * @param dst
      * @param w
      * @param h
-     * @return
      * @throws IOException
      */
-    public String pick(String suf, int w, int h) throws IOException {
+    public void pick(File dst, int w, int h) throws IOException {
         chkPathAndExtn();
 
-        Image img = ImageIO.read ( new File(pth) );
+        Image img = ImageIO.read ( src );
         if (null == img) {
-            throw new IOException("Can not read image '"+pth+"'");
+            throw new IOException("Can not read image '" + src.getAbsolutePath() + "'");
         }
 
         int xw = img.getWidth (null);
@@ -137,12 +154,41 @@ public class Thumb {
              h = xh; // 高度优先
         }
 
-        String dst =  pre  +  suf + "." + ext ;
-        Thumbnails.of(pth)
-                .sourceRegion(CENTER , w , h )
+        Thumbnails.of(src)
+                .sourceRegion(CENTER, w, h)
                 .size(w,h)
-                .outputFormat(ext).toFile(dst);
+                .outputFormat(ext)
+                .toFile(dst);
+    }
+
+    /**
+     * 按比例截取
+     * @param suf
+     * @param w
+     * @param h
+     * @return
+     * @throws IOException
+     */
+    public String pick(String suf, int w, int h) throws IOException {
+        String dst =  pre  +  suf + "." + ext ;
+        pick(new File(dst), w, h);
         return dst;
+    }
+
+    /**
+     * 按尺寸缩放
+     * @param dst
+     * @param w
+     * @param h
+     * @throws IOException
+     */
+    public void zoom(File dst, int w, int h) throws IOException {
+        chkPathAndExtn();
+
+        Thumbnails.of(src)
+                .size(w,h)
+                .outputFormat(ext)
+                .toFile(dst);
     }
 
     /**
@@ -154,13 +200,23 @@ public class Thumb {
      * @throws IOException
      */
     public String zoom(String suf, int w, int h) throws IOException {
+        String dst =  pre  +  suf + "." + ext ;
+        zoom(new File(dst), w, h);
+        return dst;
+    }
+
+    /**
+     * 仅转换格式
+     * @param dst
+     * @throws IOException
+     */
+    public void conv(File dst) throws IOException {
         chkPathAndExtn();
 
-        String dst =  pre  +  suf + "." + ext ;
-        Thumbnails.of(pth)
-                .size(w,h)
-                .outputFormat(ext).toFile(dst);
-        return dst;
+        Thumbnails.of(src)
+                .scale (1)
+                .outputFormat(ext)
+                .toFile(dst);
     }
 
     /**
@@ -170,12 +226,8 @@ public class Thumb {
      * @throws IOException
      */
     public String conv(String suf) throws IOException {
-        chkPathAndExtn();
-
         String dst =  pre  +  suf + "." + ext ;
-        Thumbnails.of(pth)
-                .scale (1)
-                .outputFormat(ext).toFile(dst);
+        conv(new File(dst));
         return dst;
     }
 
@@ -229,12 +281,12 @@ public class Thumb {
         thb.setPath(pth);
 
         // 原始图
-        mat = pat.matcher(rat);
+        mat = PAT.matcher(rat);
         if  ( mat.find() ) {
             suf = mat.group(1);
             w   = Integer.parseInt(mat.group(2));
             h   = Integer.parseInt(mat.group(3));
-            mxt = pxt.matcher(rat);
+            mxt = PXT.matcher(rat);
             if (mxt.find() ) {
                 // 提取背景色(RGBA)
                 String[] x = mxt.group(1).split(",");
@@ -252,7 +304,7 @@ public class Thumb {
                 pth = thb.pick(suf, w, h);
             }
             pts.add(pth);
-            urs.add(url + suf+"."+ext);
+            urs.add(url + suf + "." + ext);
         } else {
             pth = thb.conv(rat);
         }
@@ -261,7 +313,7 @@ public class Thumb {
         thb.setPath(pth);
 
         // 缩放图
-        mat = pat.matcher(map);
+        mat = PAT.matcher(map);
         while(mat.find() ) {
             suf = mat.group(1);
             w   = Integer.parseInt(mat.group(2));

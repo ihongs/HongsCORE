@@ -20,11 +20,12 @@ import java.util.regex.Pattern;
  * 规则参数:
  *  pass-remote yes|no 是否跳过远程文件
  *  down-remote yes|no 是否下载远程文件
- *  href    存放位置的 URL 前缀, 当远程 URL 以 href 开头时跳过
- *  link    存放位置的 URL 前缀, 使用此方式将自动补全域名等
- *  type    文件类型限制(Mime-Type)
- *  extn    扩展名称限制
- *  temp    上传临时目录
+ *  drop-origin yes|no 抛弃原始文件, 此参数在本类中没有用上, 其他文件转换中可能用到
+ *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
+ *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
+ *  href 上传文件链接, 可用变量 $BASE_HREF, $BASE_LINK 等, 后者带域名前缀
+ *  type 文件类型限制(Mime-Type), 逗号分隔
+ *  extn 扩展名称限制, 逗号分隔
  * </pre>
  * @author Hongs
  */
@@ -73,24 +74,19 @@ public class IsFile extends Rule {
         }
 
         UploadHelper u = new UploadHelper();
-        u.setUploadName(name);
         String x;
-        x = (String) params.get( "path" );
+        x = (String) params.get("temp");
+        if (x != null) u.setUploadTemp(x);
+        x = (String) params.get("path");
         if (x != null) u.setUploadPath(x);
-        x = (String) params.get( "href" );
+        x = (String) params.get("href");
         if (x != null) u.setUploadHref(x);
-        x = (String) params.get( "type" );
-        if (x != null) u.setAllowTypes(x.split(","));
-        x = (String) params.get( "extn" );
-        if (x != null) u.setAllowExtns(x.split(","));
+        x = (String) params.get("type");
+        if (x != null) u.setAllowTypes(x.trim().split(","));
+        x = (String) params.get("extn");
+        if (x != null) u.setAllowExtns(x.trim().split(","));
 
-        x = (String) params.get( "temp" );
-        if (x != null && !"".equals( x )) {
-            x  = x+ File.separator +value;
-            u.upload(x, value.toString());
-        } else {
-            u.upload(   value.toString());
-        }
+        u.upload(value.toString());
 
         // 仅检查新上传的文件
         String y;

@@ -33,10 +33,11 @@ import java.util.Set;
  * @author Hongs
  */
 public class UploadHelper {
-    private String uploadHref = "upload";
+    private String uploadTemp = "upload";
     private String uploadPath = "upload";
-    private String uploadName = null;
+    private String uploadHref = "upload";
     private String resultName = null;
+    private String requestKey = null;
     private Set<String> allowTypes = null;
     private Set<String> allowExtns = null;
 
@@ -44,23 +45,62 @@ public class UploadHelper {
 //      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getLocalizedSegment());
 //  }
 
-    public UploadHelper setUploadName(String name) {
-        this.uploadName = name;
+    /**
+     * 设置上传临时目录
+     * @param path
+     * @return
+     */
+    public UploadHelper setUploadTemp(String path) {
+        this.uploadTemp = path;
         return this;
     }
+
+    /**
+     * 设置上传目标目录
+     * @param path
+     * @return
+     */
     public UploadHelper setUploadPath(String path) {
         this.uploadPath = path;
         return this;
     }
+
+    /**
+     * 设置目标链接前缀
+     * @param href
+     * @return
+     */
     public UploadHelper setUploadHref(String href) {
         this.uploadHref = href;
         return this;
     }
 
+    /**
+     * 设置请求参数名称
+     * 仅用于 upload(Map, UploadHelper...) 方法中为每个 UploaderHelper 指定请求参数
+     * @param name
+     * @return
+     */
+    public UploadHelper setRequestKey(String name) {
+        this.requestKey = name;
+        return this;
+    }
+
+    /**
+     * 设置许可的类型(Mime-Type)
+     * @param type
+     * @return
+     */
     public UploadHelper setAllowTypes(String... type) {
         this.allowTypes = new HashSet(Arrays.asList(type));
         return this;
     }
+
+    /**
+     * 设置许可的类型(扩展名)
+     * @param extn
+     * @return
+     */
     public UploadHelper setAllowExtns(String... extn) {
         this.allowExtns = new HashSet(Arrays.asList(extn));
         return this;
@@ -92,6 +132,21 @@ public class UploadHelper {
             famc += "." + extn;
         }
         this.resultName = famc;
+    }
+
+    private String getUploadTemp(String path) {
+        Map m = new HashMap();
+        m.put("BASE_PATH", Core.BASE_PATH);
+        m.put("CORE_PATH", Core.CORE_PATH);
+        m.put("CONF_PATH", Core.CONF_PATH);
+        m.put("DATA_PATH", Core.DATA_PATH);
+        path = Tool.inject(path, m );
+
+        if (! new File(path).isAbsolute()) {
+            path = Core.DATA_PATH  + "/" + path;
+        }
+
+        return path;
     }
 
     private String getResultPath(String path) {
@@ -131,6 +186,10 @@ public class UploadHelper {
         return href;
     }
 
+    /**
+     * 获取完整目标路径
+     * @return
+     */
     public String getResultPath() {
         String path = this.resultName;
         if (this.uploadPath != null) {
@@ -139,6 +198,10 @@ public class UploadHelper {
         return getResultPath( path );
     }
 
+    /**
+     * 获取完整目标链接
+     * @return
+     */
     public String getResultHref() {
         String href = this.resultName;
         if (this.uploadHref != null) {
@@ -149,10 +212,10 @@ public class UploadHelper {
 
     /**
      * 检查文件流并写入目标目录
-     * @param xis
-     * @param type
-     * @param extn
-     * @param fame 指定文件ID
+     * @param xis  上传文件输入流
+     * @param type 上传文件类型
+     * @param extn 上传文件扩展
+     * @param fame 目标文件名称
      * @return
      * @throws Wrong
      */
@@ -188,9 +251,9 @@ public class UploadHelper {
 
     /**
      * 检查文件流并写入目标目录
-     * @param xis
-     * @param type
-     * @param extn
+     * @param xis  上传文件输入流
+     * @param type 上传文件类型
+     * @param extn 上传文件扩展
      * @return
      * @throws Wrong
      */
@@ -200,15 +263,12 @@ public class UploadHelper {
 
     /**
      * 检查已上传的文件并从临时目录移到目标目录
-     * @param path
-     * @param fame 指定文件ID
+     * @param path 临时文件路径
+     * @param fame 目标文件名称
      * @return
      * @throws Wrong
      */
     public File upload(String path, String fame) throws Wrong {
-        if (fame == null) {
-            fame  = Core.getUniqueId( );
-        }
         path = this.getResultPath(path);
         File file = new File(path);
         File temp = null;
@@ -261,11 +321,10 @@ public class UploadHelper {
         chkTypeOrExtn(type, extn);
         setResultName(fame, extn);
 
-        String disp = this.getResultPath();
-        File   dist = new File(disp);
         // 原始文件与目标文件不一样才需要移动
-        if(!dist.getAbsolutePath().equals(file.getAbsolutePath())) {
-            File dirt  =  dist.getParentFile();
+        File dist = new File(getResultPath());
+        if (!dist.getAbsolutePath().equals(file.getAbsolutePath())) {
+            File dirt = dist.getParentFile( );
             if (!dirt.isDirectory()) {
                  dirt.mkdirs( );
             }
@@ -280,7 +339,7 @@ public class UploadHelper {
 
     /**
      * 检查已上传的文件并从临时目录移到目标目录
-     * @param fame 指定文件ID
+     * @param fame 目标文件名称或链接
      * @return
      * @throws Wrong
      */
@@ -295,9 +354,9 @@ public class UploadHelper {
         }
 
         /*
-         * 如果直接给的路径
-         * 则从路径中取名称
-         * 如果路径没有改变
+         * 如果直接给的链接
+         * 则从链接中取名称
+         * 如果链接没有改变
          * 则不变更
          * 否则拷贝
          */
@@ -311,16 +370,18 @@ public class UploadHelper {
                 extn = fame.substring(j + 1);
                 name = fame.substring(i + 1 , j);
             }
+
             setResultName(name, extn);
             String href = getResultHref();
-            String path = UploadHelper.this.getResultPath();
+            String path = getResultPath();
             if  (  fame.equals (href)) {
-                return new File(path); // 不变
+                return new File(path);
             }
-            return upload(fame, null); // 拷贝
+
+            return upload(fame, Core.getUniqueId());
         }
 
-        return upload(Core.DATA_PATH + "/upload/" + fame, fame);
+        return upload(getUploadTemp(uploadTemp) + File.separator + fame, fame);
     }
 
     /**
@@ -329,9 +390,9 @@ public class UploadHelper {
      * @param uploads
      * @throws Wrong
      */
-    public static void upload(Map<String, Object> request, UploadHelper... uploads) throws Wrong {
+    public static void upload(Map request, UploadHelper... uploads) throws Wrong {
         for(UploadHelper upload : uploads) {
-            String n =   upload.uploadName != null? upload.uploadName: "file";
+            String n =   upload.requestKey != null? upload.requestKey: "file";
             Object v = Dict.getParam(request, null, n);
             String u ;
             File   f ;
@@ -339,7 +400,7 @@ public class UploadHelper {
             //** 单个文件 **/
 
             if(!(v instanceof Collection)
-            && !(v instanceof Map   )   ) {
+            && !(v instanceof Map)) {
                  u = Synt.declare (v, "");
                  f = upload.upload(u);
                 if (f != null) {

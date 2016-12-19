@@ -414,6 +414,9 @@ public class DBConfig
       }
     }
 
+    // 2016/9/4 增加 source,origin 的 param 节点, 附加设置可使用 param
+    getProperties(element, info);
+
     Map source = new HashMap();
     source.put("jdbc", mode);
     source.put("name", namc);
@@ -550,12 +553,12 @@ public class DBConfig
   private static String getAttribute(Element element, String name, String def)
   {
     String text = element.getAttribute(name);
-    return text != null && text.length() != 0 ? text : def;
+    return text != null && text.length() != 0 ? text : def ;
   }
 
   private static void getProperties(Element element, Properties info) {
       NodeList list = element.getElementsByTagName("param");
-      for (int i = 0, j = list.getLength( ); i < j; j += 1) {
+      for (int i = 0, j = list.getLength( ); i < j; i += 1) {
           Element item = (Element) list.item(i);
           String n = item.getAttribute("name" );
           String v = item.getTextContent( );

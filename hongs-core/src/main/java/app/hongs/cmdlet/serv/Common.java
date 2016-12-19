@@ -183,7 +183,7 @@ public class Common {
     public static void execAction(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts (args ,
-            "request:s", "context", "session", "cookies:s"
+            "request:s", "context:s", "session:s", "cookies:s"
         );
         args = ( String[] ) opts.get( "" );
 

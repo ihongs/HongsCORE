@@ -64,8 +64,8 @@
         <session-timeout>43210</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
-            <path>/</path>
             <name>SSID</name>
+            <max-age>604800</max-age>
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

@@ -47,15 +47,15 @@ public class CoreLogger
 
         // add IP Address
         if (Core.ENVIR == 1) {
-            Core core = Core.getInstance();
-            if ( core.containsKey( ActionHelper.class.getName() ) ) {
-                ActionHelper helper = Core.getInstance(ActionHelper.class);
-                if (/**/null != helper.getRequest()) {
-                    line.append(helper.getRequest( ).getRemoteAddr( )/**/)
-                        .append(' ');
-                } else {
-                    line.append("ACTION ");
-                }
+            ActionHelper h = (ActionHelper)
+                Core.getInstance( ).got( ActionHelper.class.getName( ) );
+            if ( h != null ) {
+                javax.servlet.http.HttpServletRequest r = h.getRequest();
+            if ( r != null ) {
+                line.append(r.getRemoteAddr( )).append(' ');
+            } else {
+                line.append("ACTION ");
+            }
             } else {
                 line.append("ACTION ");
             }

@@ -615,14 +615,15 @@ public final class Tool
           br = new BufferedReader(
                new FileReader(
                new File(path)));
-          StringBuilder sb = new StringBuilder();
+          int           bn ;
           char[ ]       bs ;
+          StringBuilder sb = new StringBuilder();
           while ( true ) {
-              bs = new char[ 1024 ];
-              if( -1 == br.read(bs)) {
+              bs = new char [1024];
+              if((bn = br.read(bs)) < 0) {
                   break;
               }
-              sb.append(bs);
+              sb.append(bs, 0, bn);
           }
           return sb.toString();
       } catch (FileNotFoundException ex) {

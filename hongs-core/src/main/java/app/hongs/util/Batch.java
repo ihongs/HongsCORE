@@ -22,10 +22,8 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * 批量任务
  * 此类用于批量执行一些操作, 应用场景同异步任务
- * 不同点在于仅当数量或时间累积到一定量时才执行
- * 注意: 数量和时间按工作线程计算.
- * 例如: 工作线程数2, 缓冲区容量5,
- * 首次执行需要累积到10个才会处理.
+ * 但需要间隔一段时间, 或累积到一定数量才会执行
+ * 注意: 数量按工作线程计算, 如: 工作线程数2, 缓冲区容量5, 首次执行需要累积到10个才会处理.
  * @author Hongs
  * @param <T> 任务的数据类型
  */
@@ -33,25 +31,25 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
 
     private File back = null;
     public  BlockingQueue<T> tasks;
-    public transient ExecutorService/**/ servs;
+    public transient ExecutorService servs;
     public transient List<Collection<T>> cache;
 
     /**
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
      * @param maxTasks  最多容纳的任务数量
      * @param maxServs  最多可用的线程数量
-     * @param sizeout   缓冲区长度达到此数量后执行
-     * @param timeout   此秒后还没有新的进来则执行
-     * @param deduplicate 是否去重(缓冲类型): true 为 Set, false 为 List
+     * @param timeout   间隔此毫秒时间后开始执行
+     * @param sizeout   缓冲区长度达此数量后执行
+     * @param diverse   是否去重(缓冲类型): true 为 Set, false 为 List
      * @throws HongsException
      */
-    protected Batch(String name, int maxTasks, int maxServs, int sizeout, int timeout, boolean deduplicate) throws HongsException {
+    protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) throws HongsException {
         servs = Executors.newCachedThreadPool(  );
         tasks = new LinkedBlockingQueue(maxTasks);
         cache = new ArrayList();
 
         for(int i = 0; i < maxServs; i ++) {
-            cache.add(deduplicate ? new LinkedHashSet() : new ArrayList());
+            cache.add(diverse ? new LinkedHashSet() : new ArrayList());
         }
 
         if (name != null) {
@@ -64,7 +62,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         }
 
         for(int i = 0; i < maxServs; i ++) {
-            servs.execute(new Btask(this, "batch:"+name+"["+i+"]", cache.get(i), sizeout, timeout));
+            servs.execute(new Btask(this, "batch:"+name+"["+i+"]", cache.get(i), timeout, sizeout));
         }
 
         //tasks.offer(null); // 放一个空对象促使其执行终止时未执行完的任务
@@ -171,15 +169,15 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
         private final Batch batch;
         private final String name;
         private final Collection cache;
-        private final int sizeout;
         private final int timeout;
+        private final int sizeout;
 
-        public Btask(Batch batch, String name, Collection cache, int sizeout, int timeout) {
+        public Btask(Batch batch, String name, Collection cache, int timeout, int sizeout) {
             this.batch = batch;
             this.name  = name ;
             this.cache = cache;
-            this.sizeout = sizeout;
             this.timeout = timeout;
+            this.sizeout = sizeout;
         }
 
         @Override
@@ -190,7 +188,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
             Object  data;
             while ( true) {
                 try {
-                    data = batch.tasks.poll(timeout, TimeUnit.SECONDS);
+                    data = batch.tasks.poll(timeout, TimeUnit.MICROSECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
                     break;
@@ -238,7 +236,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
     public static void main(String[] args) throws IOException, HongsException {
         app.hongs.cmdlet.CmdletRunner.init(args);
 
-        Batch a = new Batch<String>("test", Integer.MAX_VALUE, 2, 5, 10, false) {
+        Batch a = new Batch<String>("test", Integer.MAX_VALUE, 2, 10000, 5, false) {
 
             @Override
             public void run(Collection<String> x) {

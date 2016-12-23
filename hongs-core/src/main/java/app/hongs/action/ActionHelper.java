@@ -10,6 +10,7 @@ import app.hongs.util.Dict;
 
 import java.io.File;
 import java.io.Writer;
+import java.io.PrintWriter;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.FileOutputStream;
@@ -83,8 +84,8 @@ public class ActionHelper implements Cloneable
   /**
    * 响应输出
    */
-  private OutputStream        outputStream = null;
-  private       Writer        outputWriter = null;
+  private OutputStream        outputStream;
+  private       Writer        outputWriter;
 
   /**
    * 初始化助手(用于cmdlet)
@@ -97,11 +98,15 @@ public class ActionHelper implements Cloneable
   public ActionHelper(Map req, Map att, Map ses, Map cok)
   {
     this.request      = null;
+    this.response     = null;
+
+    this.outputStream = null;
+    this.outputWriter = null;
+
     this.requestData  = req != null ? req : new HashMap();
     this.contextData  = att != null ? att : new HashMap();
     this.sessionData  = ses != null ? ses : new HashMap();
     this.cookiesData  = cok != null ? cok : new HashMap();
-    this.response     = null;
   }
 
   /**
@@ -130,9 +135,17 @@ public class ActionHelper implements Cloneable
     {
       throw new HongsError(0x31, "Can not set encoding.", ex);
     }
+
+    this.outputStream = null;
+    this.outputWriter = null;
   }
 
-  public void reinitHelper(HttpServletRequest req, HttpServletResponse rsp)
+  /**
+   * 供 ActionDriver 重设助手
+   * @param req
+   * @param rsp
+   */
+  public final void updateHelper(HttpServletRequest req, HttpServletResponse rsp)
   {
     this.request  = req;
     this.response = rsp;
@@ -152,25 +165,42 @@ public class ActionHelper implements Cloneable
     {
       throw new HongsError(0x31, "Can not set encoding.", ex);
     }
+
+    this.outputStream = null;
+    this.outputWriter = null;
   }
 
-  public void setRequestData(Map<String, Object> data) {
-    this.requestData  = data;
+  /**
+   * 供 CmdletRunner 重设输出
+   * @param out
+   * @param wrt
+   */
+  public final void updateOutput(OutputStream out, Writer wrt)
+  {
+    this.outputStream = out ;
+    this.outputWriter = wrt ;
   }
-  public void setContextData(Map<String, Object> data) {
-    this.contextData  = data;
+
+  /**
+   * 供 CmdletRunner 重设输出
+   * @param out
+   */
+  public final void updateOutput(OutputStream out)
+  {
+    this.updateOutput ( out , new PrintWriter(out));
   }
-  public void setSessionData(Map<String, Object> data) {
-    this.sessionData  = data;
+
+  public final void setRequestData(Map<String, Object> data) {
+    this.requestData = data;
   }
-  public void setCookiesData(Map<String, String> data) {
-    this.cookiesData  = data;
+  public final void setContextData(Map<String, Object> data) {
+    this.contextData = data;
   }
-  public void setOutputStream(OutputStream pipe) {
-    this.outputStream = pipe;
+  public final void setSessionData(Map<String, Object> data) {
+    this.sessionData = data;
   }
-  public void setOutputWriter(Writer pipe) {
-    this.outputWriter = pipe;
+  public final void setCookiesData(Map<String, String> data) {
+    this.cookiesData = data;
   }
 
   /**
@@ -471,6 +501,20 @@ public class ActionHelper implements Cloneable
     {
         throw new HongsError(0x32, "Can not get output writer."/**/);
     }
+  }
+
+  /**
+   * 获取客户标识, 通常为远程IP
+   * 注意: 当为虚拟请求时, 可能会返回null
+   * @return 客户标识
+   */
+  public String getClientSymbol()
+  {
+    if (this.request == null)
+    {
+      return null;
+    }
+    return ActionDriver.getRealAddr(this.request);
   }
 
   /**

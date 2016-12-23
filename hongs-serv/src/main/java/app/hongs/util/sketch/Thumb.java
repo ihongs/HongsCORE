@@ -16,7 +16,7 @@ import net.coobird.thumbnailator.Thumbnails;
 import static net.coobird.thumbnailator.geometry.Positions.CENTER;
 
 /**
- *
+ * 缩略图工具
  * @author Hongs
  */
 public class Thumb {

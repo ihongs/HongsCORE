@@ -19,6 +19,10 @@ import java.util.Random;
 
 import javax.imageio.ImageIO;
 
+/**
+ * 图像验证码
+ * @author Hongs
+ */
 public class Capts {
 
     private int width = 160;

@@ -79,7 +79,7 @@ public class PackAction {
         // 许可及IP白名单
         boolean sw  = cnf.getProperty( "core.pack.call.enable" , false);
         String  ia  = cnf.getProperty( "core.pack.call.origin" );
-        String  ip  = getIP(req);
+        String  ip  = addr(req );
         Set     ias = Synt.asTerms( ia );
         if (ias == null || ias.isEmpty()) {
             ias  = new HashSet();
@@ -150,29 +150,21 @@ public class PackAction {
         return map;
     }
 
-    private String getIP(HttpServletRequest req) throws HongsException {
+    private String addr(HttpServletRequest req) throws HongsException {
         /**
          * 代理会有安全隐患
          * 故不支持使用代理
          */
         String ip;
-        ip = req.getHeader(     "X-Forwarded-For");
+        ip = req.getHeader(   "X-Forwarded-For");
         if (ip != null && ip.length () != 0) {
             throw new HongsException(0x1100, "Illegal request!");
         }
-        ip = req.getHeader("HTTP_X_FORWARDED_FOR");
+        ip = req.getHeader(   "Proxy-Client-IP");
         if (ip != null && ip.length () != 0) {
             throw new HongsException(0x1100, "Illegal request!");
         }
-        ip = req.getHeader(      "HTTP_CLIENT_IP");
-        if (ip != null && ip.length () != 0) {
-            throw new HongsException(0x1100, "Illegal request!");
-        }
-        ip = req.getHeader(     "Proxy-Client-IP");
-        if (ip != null && ip.length () != 0) {
-            throw new HongsException(0x1100, "Illegal request!");
-        }
-        ip = req.getHeader(  "WL-Proxy-Client-IP");
+        ip = req.getHeader("WL-Proxy-Client-IP");
         if (ip != null && ip.length () != 0) {
             throw new HongsException(0x1100, "Illegal request!");
         }

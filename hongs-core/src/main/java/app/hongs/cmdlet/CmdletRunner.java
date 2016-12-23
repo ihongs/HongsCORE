@@ -301,9 +301,9 @@ public class CmdletRunner
 
     /** 初始化动作助手, 可复用动作组件 **/
 
-    ActionHelper  ah  = new ActionHelper(null, null, null, null);
-    Core.getInstance( ).put(ActionHelper.class.getName( ), ah  );
-    ah.setOutputWriter( new  PrintWriter(System.out));
+    ActionHelper hlpr = new ActionHelper(null, null, null, null);
+    Core.getInstance( ).put(ActionHelper.class.getName( ), hlpr);
+    hlpr.updateOutput (System.out , new PrintWriter(System.out));
 
     // Clean instatnces fis core at exit
     Runtime.getRuntime().addShutdownHook(new Thread()

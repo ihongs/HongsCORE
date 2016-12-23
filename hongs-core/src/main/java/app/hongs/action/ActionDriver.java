@@ -255,7 +255,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
              */
             Core.THREAD_CORE.set(core);
             hlpr = core.get(ActionHelper.class);
-            hlpr.reinitHelper( req , rsq );
+            hlpr.updateHelper( req , rsq );
 
             /**/ drv.doDriver( core, hlpr); // 调用
         }
@@ -272,7 +272,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Map dat  = hlpr.getResponseData();
         if (dat != null) {
             req .setAttribute(Cnst.RESP_ATTR, dat);
-            hlpr.reinitHelper( req, rsp );
+            hlpr.updateHelper( req, rsp );
             hlpr.responed();
         }
     }
@@ -341,31 +341,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                         req = hlpr.getRequest(/***/);
             HttpSession ses =  req.getSession(false);
 
-            // 获取远程IP
-            String rip;
-            do {
-                rip = req.getHeader("X-Forwarded-For");
-                if (null != rip && 0 != rip.length() ) {
-                    int pos = rip.indexOf  (  ','  );
-                    if (pos > 0) {
-                        rip = rip.substring(0, pos );
-                    }
-                    if (!"unknown".equalsIgnoreCase(rip)) {
-                        break;
-                    }
-                }
-                rip = req.getHeader(   "Proxy-Client-IP");
-                if (null != rip && 0 != rip.length() && !"unknown".equalsIgnoreCase(rip)) {
-                    break;
-                }
-                rip = req.getHeader("WL-Proxy-Client-IP");
-                if (null != rip && 0 != rip.length() && !"unknown".equalsIgnoreCase(rip)) {
-                    break;
-                }
-                rip = req.getRemoteAddr();
-            } while (false);
-
-            // 获取会话ID和用户ID
             String sid;
             String uid;
             if (ses != null) {
@@ -384,8 +359,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
                 .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
                 .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
-                .append("\r\n\tMethod      : ").append(req.getMethod())
-                .append("\r\n\tRemote      : ").append(rip)
+                .append("\r\n\tMethod      : ").append(req.getMethod( ))
+                .append("\r\n\tRemote      : ").append(getRealAddr(req))
                 .append("\r\n\tMember      : ").append(sid)
                 .append("\r\n\tObjects     : ").append(core.keySet().toString())
                 .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
@@ -620,6 +595,34 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             uri = req.getServletPath();
         }
         return uri;
+    }
+
+    /**
+     * 获得真实的客户端IP
+     * @param req
+     * @return
+     */
+    public static String getRealAddr(HttpServletRequest req) {
+        String rip = req.getRemoteAddr();
+
+        for(String key : new String[] {
+            "X-Forwarded-For",
+            "Proxy-Client-IP",
+         "WL-Proxy-Client-IP"}) {
+            String val = req.getHeader(key);
+            if (null != val && 0 != val.length()) {
+                int pos = val.indexOf  (  ','  );
+                if (pos > 0) {
+                    val = val.substring(0 , pos);
+                }
+                if (!"unknown".equalsIgnoreCase(rip)) {
+                    rip = val;
+                    break;
+                }
+            }
+        }
+
+        return rip;
     }
 
     /**

@@ -64,7 +64,7 @@ public class IsFile extends Rule {
                 // 如果有临时目录则下载到这
                 x = (String) params.get("temp");
                 if (x == null ||  "".equals(x)) {
-                    x  = Core.DATA_PATH + File.separator + "upload" ;
+                    x = Core.DATA_PATH + File.separator + "tmp";
                 }
                 value = stores(value.toString(), x );
             } while(false);
@@ -138,7 +138,6 @@ public class IsFile extends Rule {
             String name = cnn.getHeaderField("Content-Disposition");
             Pattern pat = Pattern.compile   ("filename=\"(.*?)\"" );
             Matcher mat = pat.matcher( name );
-            String  fid = Core.getUniqueId( );
             if (mat.find()) {
                 name = mat.group(1);
             } else {
@@ -151,16 +150,24 @@ public class IsFile extends Rule {
                 name = name.substring(i + 1);
             }
             int j  = name.lastIndexOf( '.' );
-            if (j == -1) {
-                name = URLEncoder.encode(name, "UTF-8");
-            } else {
+            if (j != -1) {
                 name = URLEncoder.encode(name.substring(i , j), "UTF-8")
                      + "."
                      + URLEncoder.encode(name.substring(j + 1), "UTF-8");
+            } else {
+                name = URLEncoder.encode(name, "UTF-8");
+            }
+                name = Core.getUniqueId () + "." + name; // 加上编号避免重名
+
+            // 检查目录避免写入失败
+            File file = new File(temp + File.separator + name);
+            File fdir = file.getParentFile();
+            if (!fdir.exists()) {
+                 fdir.mkdirs();
             }
 
             // 将上传的存入临时文件
-            out  = new FileOutputStream(temp + File.separator + fid + "!" + name);
+            out  = new FileOutputStream( file );
             byte[] buf = new byte[1204];
             int    ovr ;
             while((ovr = ins.read(buf )) != -1) {
@@ -171,7 +178,7 @@ public class IsFile extends Rule {
             ins.close();
             ins  = null;
 
-            return fid + "." + name;
+            return name;
         } catch (IOException ex) {
             throw new Wrong( ex, "core.file.can.not.fetch", href, temp);
         } finally {

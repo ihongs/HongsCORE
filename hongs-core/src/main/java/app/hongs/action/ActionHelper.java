@@ -8,25 +8,24 @@ import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 
-import java.io.File;
 import java.io.Writer;
 import java.io.PrintWriter;
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest ;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.Cookie;
@@ -317,13 +316,6 @@ public class ActionHelper implements Cloneable
          denyExtns = new HashSet(Arrays.asList(x.split(",")));
     }
 
-    // 临时目录不存在则创建
-    String path = Core.DATA_PATH + File.separator + "upload" ;
-    File df = new File (  path  );
-    if (!df.isDirectory()) {
-         df.mkdirs();
-    }
-
     //** 解析数据 **/
 
     try {
@@ -355,7 +347,6 @@ public class ActionHelper implements Cloneable
 
             // 检查类型
             int pos  = type.indexOf(',');
-            pos  = extn.lastIndexOf('.');
             if (pos == -1) {
                 type = "";
             } else {
@@ -1102,7 +1093,7 @@ public class ActionHelper implements Cloneable
    * @return
    */
   public static Map parseQuery(String s) {
-      HashMap<String, List<String>> a = new HashMap();
+      Map<String, List<String>> a = new LinkedHashMap();
       int j , i;
           j = 0;
 

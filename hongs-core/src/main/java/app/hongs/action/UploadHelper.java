@@ -30,7 +30,7 @@ import javax.servlet.http.Part;
  * @author Hongs
  */
 public class UploadHelper {
-    private String uploadTemp = "upload";
+    private String uploadTemp = "tmp";
     private String uploadPath = "upload";
     private String uploadHref = "upload";
     private String resultName = null;

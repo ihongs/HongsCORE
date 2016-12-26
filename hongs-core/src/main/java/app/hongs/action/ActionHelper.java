@@ -11,9 +11,7 @@ import app.hongs.util.Dict;
 import java.io.File;
 import java.io.Writer;
 import java.io.PrintWriter;
-import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.io.IOException;
 import java.net.URLDecoder;
@@ -22,6 +20,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -270,7 +269,7 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 解析 application/json 或 txt/json 数据
+   * 解析 application/json 或 text/json 数据
    * @param rd
    */
   final Map<String, Object> getRequestJson() {
@@ -319,7 +318,7 @@ public class ActionHelper implements Cloneable
     }
 
     // 临时目录不存在则创建
-    String path = Core.DATA_PATH + "/upload";
+    String path = Core.DATA_PATH + File.separator + "upload" ;
     File df = new File (  path  );
     if (!df.isDirectory()) {
          df.mkdirs();
@@ -327,11 +326,9 @@ public class ActionHelper implements Cloneable
 
     //** 解析数据 **/
 
-    Set< String > uploadKeys  =  new HashSet( );
-    setAttribute(Cnst.UPLOAD_ATTR, uploadKeys );
-
     try {
-        Map rd = new HashMap();
+        Map rd = new LinkedHashMap();
+        Map ud = new LinkedHashMap();
 
         for ( Part part : request.getParts( ) ) {
             long   size = part.getSize();
@@ -356,10 +353,9 @@ public class ActionHelper implements Cloneable
                 continue;
             }
 
-            int pos;
-
             // 检查类型
-                pos  = type./**/indexOf( ',' );
+            int pos  = type.indexOf(',');
+            pos  = extn.lastIndexOf('.');
             if (pos == -1) {
                 type = "";
             } else {
@@ -373,7 +369,7 @@ public class ActionHelper implements Cloneable
             }
 
             // 检查扩展
-                pos  = extn.lastIndexOf( '.' );
+            pos  = extn.lastIndexOf('.');
             if (pos == -1) {
                 extn = "";
             } else {
@@ -386,13 +382,17 @@ public class ActionHelper implements Cloneable
                 throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
             }
 
+            /**
+             * 存储文件
+             * 不再需要暂存
+             * 可以直接利用 Part 向下传递即可
+             */
+            /*
             String id = Core.getUniqueId();
             String temp = path + File.separator + id + ".tmp";
             String tenp = path + File.separator + id + ".tnp";
             subn = subn.replaceAll("[\\r\\n\\\\/]", ""); // 清理非法字符: 换行和路径分隔符
             subn = subn + "\r\n" + type + "\r\n" + size; // 拼接存储信息: 名称和类型及大小
-
-            // 存储文件
             try (
                 InputStream      xmin = part.getInputStream();
                 FileOutputStream mout = new FileOutputStream(temp);
@@ -401,17 +401,20 @@ public class ActionHelper implements Cloneable
                 byte[] nts = subn.getBytes("UTF-8");
 		byte[] buf = new byte[1024];
                 int    cnt ;
-
 		while((cnt = xmin.read(buf)) != -1) {
                     mout.write(buf, 0, cnt);
 		}
-
-                nout.write(nts );
+                nout.write(nts);
             }
+            Dict.setParam( rd , id , name );
+            */
 
-            uploadKeys.add(name);
-            Dict.setParam ( rd , id , name);
+            Dict.setValue( ud, part, name  , null );
+            Dict.setParam( rd, part, name );
         }
+
+        // 记录在应用里以便有需要时候还可读取原始值
+        setAttribute(Cnst.UPLOAD_ATTR , ud);
 
         return rd;
     } catch (IllegalStateException e) {

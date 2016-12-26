@@ -7,14 +7,10 @@ import app.hongs.util.Tool;
 import app.hongs.util.verify.Wrong;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.util.Arrays;
@@ -25,6 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import javax.servlet.http.Part;
 //import eu.medsea.mimeutil.MimeUtil;
 //import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
@@ -126,8 +123,8 @@ public class UploadHelper {
         }
     }
 
-    private void setResultName(String fame, String extn) {
-        String famc = Tool.splitPath( fame );
+    private void setResultName(String name, String extn) {
+        String famc = Tool.splitPath( name );
         if (extn != null && !extn.equals("")) {
             famc += "." + extn;
         }
@@ -215,17 +212,18 @@ public class UploadHelper {
      * @param xis  上传文件输入流
      * @param type 上传文件类型
      * @param extn 上传文件扩展
-     * @param fame 目标文件名称
+     * @param subn 目标文件名称
      * @return
      * @throws Wrong
      */
-    public File upload(InputStream xis, String type, String extn, String fame) throws Wrong {
+    public File upload(InputStream xis, String type, String extn, String subn) throws Wrong {
         if (extn.contains( "." )) {
 //          extn = MimeUtil.getExtension(extn);
             extn = extn.substring(extn.lastIndexOf('.') + 1);
         }
+
         chkTypeOrExtn(type, extn);
-        setResultName(fame, extn);
+        setResultName(subn, extn);
 
         String path = getResultPath();
         File   file = new File(path );
@@ -262,126 +260,164 @@ public class UploadHelper {
     }
 
     /**
-     * 检查已上传的文件并从临时目录移到目标目录
-     * @param path 临时文件路径
-     * @param fame 目标文件名称
+     * 检查上传对象并写入目标目录
+     * @param part
+     * @param subn
      * @return
      * @throws Wrong
      */
-    public File upload(String path, String fame) throws Wrong {
-        path = this.getResultPath(path);
-        File file = new File(path);
-        File temp = null;
-        String type;
-        String extn;
-
-        if (file.exists()) {
-//          type = MimeUtil.getMimeTypes (file).toString(   );
-//          extn = MimeUtil.getExtension (file);
-            FileNameMap cmap = URLConnection.getFileNameMap();
-            type = cmap.getContentTypeFor(path);
-            extn = file.getName();
-            extn = extn.substring(extn.lastIndexOf('.') + 1 );
-        } else {
-            temp = new File(path + ".tnp");
-
-            /**
-             * 从上传信息中提取类型和扩展名
-             */
-            try {
-                FileInputStream   fs = null;
-                InputStreamReader sr = null;
-                BufferedReader    fr = null;
-                try {
-                    fs = new FileInputStream(temp);
-                    sr = new InputStreamReader(fs);
-                    fr = new    BufferedReader(sr);
-                    extn = fr.readLine().trim();
-                    type = fr.readLine().trim();
-                    int p  = extn.lastIndexOf('.');
-                    if (p != -1) {
-                        extn = extn.substring(p+1);
-                    } else {
-                        extn = "";
-                    }
-                } finally {
-                    if (fr != null) fr.close();
-                    if (sr != null) sr.close();
-                    if (fs != null) fs.close();
-                }
-            } catch (FileNotFoundException ex) {
-                throw new Wrong(ex, "fore.form.upload.failed");
-            } catch (IOException ex ) {
-                throw new Wrong(ex, "fore.form.upload.failed");
-            }
-
-            file = new File(path + ".tmp");
+    public File upload(Part part, String subn) throws Wrong {
+        if (part == null) {
+            setResultName("", null);
+            return  null;
         }
 
-        chkTypeOrExtn(type, extn);
-        setResultName(fame, extn);
+        String type = part.getContentType();
+        String extn = part.getSubmittedFileName();
 
-        // 原始文件与目标文件不一样才需要移动
+        /**
+         * 从 Mime-Type 和原始文件名中分解出类型和扩展名
+         */
+        int pos  = type.indexOf(',');
+        if (pos == -1) {
+            type = "";
+        } else {
+            type = type.substring(0 , pos);
+        }
+        pos  = extn.lastIndexOf('.');
+        if (pos == -1) {
+            extn = "";
+        } else {
+            extn = extn.substring(1 + pos);
+        }
+
+        try {
+            return upload(part.getInputStream(), type, extn, subn);
+        }
+        catch ( IOException ex) {
+            throw new Wrong(ex, "fore.form.upload.failed");
+        }
+    }
+
+    /**
+     * 检查上传对象并写入目标目录
+     * @param part
+     * @return
+     * @throws Wrong
+     */
+    public File upload(Part part) throws Wrong {
+        return  upload(part, Core.getUniqueId());
+    }
+
+    /**
+     * 检查文件对象并写入目标目录
+     * 检查当前文件
+     * @param file
+     * @param subn
+     * @return
+     * @throws Wrong
+     */
+    public File upload(File file, String subn) throws Wrong {
+        if (file == null) {
+            setResultName("", null);
+            return  null;
+        }
+
+        if (file.exists() == false) {
+            throw new Wrong("core.file.upload.not.exists");
+        }
+
+        /**
+         * 从文件名中解析类型和提取扩展名
+         */
+//      type = MimeUtil.getMimeTypes (file).toString(   );
+//      extn = MimeUtil.getExtension (file);
+        FileNameMap nmap = URLConnection.getFileNameMap();
+        String      extn = file.getName(  );
+        String      type = nmap.getContentTypeFor( extn );
+        extn = extn.substring(extn.lastIndexOf('.') + 1 );
+
+        chkTypeOrExtn(type, extn);
+        setResultName(subn, extn);
+
+        /**
+         * 原始文件与目标文件不同才需移动
+         */
         File dist = new File(getResultPath());
-        if (!dist.getAbsolutePath().equals(file.getAbsolutePath())) {
+        if (!dist.equals(file)) {
             File dirt = dist.getParentFile( );
             if (!dirt.isDirectory()) {
                  dirt.mkdirs( );
             }
             file.renameTo(dist);
-            if ( temp !=  null) {
-                 temp.delete( );
-            }
         }
 
         return dist;
     }
 
     /**
-     * 检查已上传的文件并从临时目录移到目标目录
-     * @param fame 目标文件名称或链接
+     * 检查文件对象并写入目标目录
+     * @param file
      * @return
      * @throws Wrong
      */
-    public File upload(String fame) throws Wrong {
+    public File upload(File file) throws Wrong {
+        return  upload(file, Core.getUniqueId());
+    }
+
+    /**
+     * 检查临时文件或目标链接情况
+     * @param name 文件名或链接
+     * @return
+     * @throws Wrong
+     */
+    public File upload(String name) throws Wrong {
         /*
          * 为空不处理
          * 直接返回空
          */
-        if (fame == null || fame.length( ) == 0) {
+        if (name == null || name.length( ) == 0) {
             setResultName("", null);
             return  null;
         }
 
-        /*
-         * 如果直接给的链接
-         * 则从链接中取名称
-         * 如果链接没有改变
-         * 则不变更
-         * 否则拷贝
-         */
-        int i  = fame.lastIndexOf('/'  );
+        String subn = name;
+        String extn =  "" ;
+        name = name.replace( '\\', '/' ); // 避免 Windows 异常
+        int i  = subn.lastIndexOf( '/' );
         if (i != -1) {
-            String name, extn = "";
-            int j  = fame.indexOf('.',i);
-            if (j == -1) {
-                name = fame.substring(i + 1);
-            } else {
-                extn = fame.substring(j + 1);
-                name = fame.substring(i + 1 , j);
-            }
-
-            setResultName(name, extn);
-            String href = getResultHref();
-            String path = getResultPath();
-            if  (  fame.equals (href)) {
-                return new File(path);
-            }
-
-            return upload(fame, Core.getUniqueId());
+            subn = subn.substring(i + 1);
+        }
+        int j  = subn.lastIndexOf( '.' );
+        if (j != -1) {
+            extn = subn.substring(j + 1);
+            subn = subn.substring(0 , j);
         }
 
-        return upload(getUploadTemp(uploadTemp) + File.separator + fame, fame);
+        /*
+         * 修改时文件未重新上传则回传原路径
+         * 此时传入名称和扩展应得到相同结果
+         * 这种情况无需额外的操作
+         */
+        setResultName(subn, extn);
+        String href = getResultHref();
+        String path = getResultPath();
+        if  (  name.equals (href)) {
+            return new File(path);
+        }
+
+        /*
+         * 不能直接当作文件路径来处理
+         * 这会导致严重的安全漏洞
+         * 如给的是某重要配置文件路径
+         * 则可能导致敏感数据泄露
+         */
+        if (i != -1) {
+            throw new Wrong( "core.file.upload.not.allows" );
+//          return upload(new File(subn),Core.getUniqueId());
+        }
+
+        return upload(new File(getUploadTemp(uploadTemp) + File.separator + name), subn);
     }
 
     /**
@@ -401,29 +437,45 @@ public class UploadHelper {
 
             if(!(v instanceof Collection)
             && !(v instanceof Map)) {
-                 u = Synt.declare (v, "");
-                 f = upload.upload(u);
-                if (f != null) {
-                    u  = upload.getResultHref(   );
-                    Dict.setParam(request, u , n );
+                if (v instanceof Part) {
+                    f = upload.upload((Part) v);
+                } else
+                if (v instanceof File) {
+                    f = upload.upload((File) v);
                 } else {
-                    Dict.setParam(request, "", n );
+                    u = Synt.declare (v, "");
+                    f = upload.upload(u);
+                }
+                if (f != null) {
+                    u  = upload.getResultHref();
+                    Dict.setParam(request, u,n);
+                } else {
+                    Dict.setParam(request,"",n);
                 }
                 continue;
             }
 
             //** 多个文件 **/
 
-            List s = new ArrayList( );
-            List a = Synt.declare (v, List.class );
-            n = n.replaceFirst("(\\.|\\[\\])$","");
+            List s = new ArrayList();
+            List a = Synt.declare ( v, List.class );
+            n = n.replaceFirst("(\\.|\\[\\])$", "");
+
             for (Object x : a) {
-                 u = Synt.declare (x, "");
-                 f = upload.upload(u);
+                if (x instanceof Part) {
+                    f = upload.upload((Part) x);
+                } else
+                if (x instanceof File) {
+                    f = upload.upload((File) x);
+                } else {
+                    u = Synt.declare (x, "");
+                    f = upload.upload(u);
+                }
                 if (f != null) {
-                    s.add(upload.getResultHref( ));
+                    s.add(upload.getResultHref());
                 }
             }
+
             Dict.setParam(request, s, n );
         }
     }

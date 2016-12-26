@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.Part;
 
 /**
  * 动作驱动器
@@ -337,113 +339,127 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     private void doFinish(Core core, ActionHelper hlpr, HttpServletRequest req) {
         try {
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                        req = hlpr.getRequest(/***/);
-            HttpSession ses =  req.getSession(false);
+            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                            req = hlpr.getRequest(/***/);
+                HttpSession ses =  req.getSession(false);
 
-            String sid;
-            String uid;
-            if (ses != null) {
-                sid = ses.getId();
-                uid = (String) ses.getAttribute(Cnst.UID_SES);
-                if (uid != null && uid.length() != 0) {
-                    sid += " UID:"+uid;
+                String sid;
+                String uid;
+                if (ses != null) {
+                    sid = ses.getId();
+                    uid = (String) ses.getAttribute(Cnst.UID_SES);
+                    if (uid != null && uid.length() != 0) {
+                        sid += " UID:"+uid;
+                    }
+                } else {
+                        sid  = "[UNKNOWN]";
                 }
-            } else {
-                    sid  = "[UNKNOWN]";
+
+                long time = System.currentTimeMillis(  ) - Core.ACTION_TIME.get();
+                StringBuilder sb = new StringBuilder("...");
+                  sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
+                    .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
+                    .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
+                    .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
+                    .append("\r\n\tMethod      : ").append(req.getMethod( ))
+                    .append("\r\n\tRemote      : ").append(getRealAddr(req))
+                    .append("\r\n\tMember      : ").append(sid)
+                    .append("\r\n\tObjects     : ").append(core.keySet().toString())
+                    .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
+
+                /**
+                 * 显示请求报头及输入输出
+                 * 这对调试程序非常有帮助
+                 */
+
+                CoreConfig cf = CoreConfig.getInstance();
+
+                if (cf.getProperty("core.debug.action.request", false)) {
+                    Map rd  = hlpr.getRequestData();
+                    if (rd != null && !rd.isEmpty()) {
+                        sb.append("\r\n\tRequest     : ")
+                          .append(Tool.indent(Data.toString(rd)).substring(1));
+                    }
+                }
+
+                if (cf.getProperty("core.debug.action.results", false)) {
+                    Map xd  = hlpr.getResponseData();
+                    if (xd == null) {
+                        xd  = (Map) req.getAttribute( Cnst.RESP_ATTR );
+                    }
+                    if (xd != null && !xd.isEmpty()) {
+                        sb.append("\r\n\tResults     : ")
+                          .append(Tool.indent(Data.toString(xd)).substring(1));
+                    }
+                }
+
+                if (cf.getProperty("core.debug.action.session", false) && ses != null) {
+                  Map         map = new HashMap();
+                  Enumeration<String> nms = ses.getAttributeNames();
+                  while (nms.hasMoreElements()) {
+                      String  nme = nms.nextElement();
+                      map.put(nme , ses.getAttribute(nme));
+                  }
+                  if (!map.isEmpty()) {
+                      sb.append("\r\n\tSession     : ")
+                        .append(Tool.indent(Data.toString(map)).substring(1));
+                  }
+                }
+
+                if (cf.getProperty("core.debug.action.context", false)) {
+                  Map         map = new HashMap();
+                  Enumeration<String> nms = req.getAttributeNames();
+                  while (nms.hasMoreElements()) {
+                      String  nme = nms.nextElement();
+                      map.put(nme , req.getAttribute(nme));
+                  }
+                  if (!map.isEmpty()) {
+                      sb.append("\r\n\tContext     : ")
+                        .append(Tool.indent(Data.toString(map)).substring(1));
+                  }
+                }
+
+                if (cf.getProperty("core.debug.action.headers", false)) {
+                  Map         map = new HashMap();
+                  Enumeration<String> nms = req.getHeaderNames();
+                  while (nms.hasMoreElements()) {
+                      String  nme = nms.nextElement();
+                      map.put(nme , req.getHeader(nme));
+                  }
+                  if (!map.isEmpty()) {
+                      sb.append("\r\n\tHeaders     : ")
+                        .append(Tool.indent(Data.toString(map)).substring(1));
+                  }
+                }
+
+                if (cf.getProperty("core.debug.action.cookies", false)) {
+                  Map         map = new HashMap();
+                  Cookie[]    cks = req.getCookies();
+                  for (Cookie cke : cks) {
+                      map.put(cke.getName( ), cke.getValue( ));
+                  }
+                  if (!map.isEmpty()) {
+                      sb.append("\r\n\tCookies     : ")
+                        .append(Tool.indent(Data.toString(map)).substring(1));
+                  }
+                }
+
+                CoreLogger.debug(sb.toString());
             }
 
-            long time = System.currentTimeMillis(  ) - Core.ACTION_TIME.get();
-            StringBuilder sb = new StringBuilder("...");
-              sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
-                .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
-                .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
-                .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
-                .append("\r\n\tMethod      : ").append(req.getMethod( ))
-                .append("\r\n\tRemote      : ").append(getRealAddr(req))
-                .append("\r\n\tMember      : ").append(sid)
-                .append("\r\n\tObjects     : ").append(core.keySet().toString())
-                .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
-
-            /**
-             * 显示请求报头及输入输出
-             * 这对调试程序非常有帮助
-             */
-
-            CoreConfig cf = CoreConfig.getInstance();
-
-            if (cf.getProperty("core.debug.action.request", false)) {
-                Map rd  = hlpr.getRequestData();
-                if (rd != null && !rd.isEmpty()) {
-                    sb.append("\r\n\tRequest     : ")
-                      .append(Tool.indent(Data.toString(rd)).substring(1));
+            // 删除上传的临时文件
+            Map<String, List<Part>> ud = Synt.declare(hlpr.getAttribute(Cnst.UPLOAD_ATTR), Map.class);
+            if (ud != null) {
+                for(List<Part> pa : ud.values()) {
+                    for (Part  pr : pa) {
+                        try {
+                            pr.delete();
+                        } catch (IOException ex) {
+                            CoreLogger.error(ex);
+                        }
+                    }
                 }
             }
-
-            if (cf.getProperty("core.debug.action.results", false)) {
-                Map xd  = hlpr.getResponseData();
-                if (xd == null) {
-                    xd  = (Map) req.getAttribute( Cnst.RESP_ATTR );
-                }
-                if (xd != null && !xd.isEmpty()) {
-                    sb.append("\r\n\tResults     : ")
-                      .append(Tool.indent(Data.toString(xd)).substring(1));
-                }
-            }
-
-            if (cf.getProperty("core.debug.action.session", false) && ses != null) {
-              Map         map = new HashMap();
-              Enumeration<String> nms = ses.getAttributeNames();
-              while (nms.hasMoreElements()) {
-                  String  nme = nms.nextElement();
-                  map.put(nme , ses.getAttribute(nme));
-              }
-              if (!map.isEmpty()) {
-                  sb.append("\r\n\tSession     : ")
-                    .append(Tool.indent(Data.toString(map)).substring(1));
-              }
-            }
-
-            if (cf.getProperty("core.debug.action.context", false)) {
-              Map         map = new HashMap();
-              Enumeration<String> nms = req.getAttributeNames();
-              while (nms.hasMoreElements()) {
-                  String  nme = nms.nextElement();
-                  map.put(nme , req.getAttribute(nme));
-              }
-              if (!map.isEmpty()) {
-                  sb.append("\r\n\tContext     : ")
-                    .append(Tool.indent(Data.toString(map)).substring(1));
-              }
-            }
-
-            if (cf.getProperty("core.debug.action.headers", false)) {
-              Map         map = new HashMap();
-              Enumeration<String> nms = req.getHeaderNames();
-              while (nms.hasMoreElements()) {
-                  String  nme = nms.nextElement();
-                  map.put(nme , req.getHeader(nme));
-              }
-              if (!map.isEmpty()) {
-                  sb.append("\r\n\tHeaders     : ")
-                    .append(Tool.indent(Data.toString(map)).substring(1));
-              }
-            }
-
-            if (cf.getProperty("core.debug.action.cookies", false)) {
-              Map         map = new HashMap();
-              Cookie[]    cks = req.getCookies();
-              for (Cookie cke : cks) {
-                  map.put(cke.getName( ), cke.getValue( ));
-              }
-              if (!map.isEmpty()) {
-                  sb.append("\r\n\tCookies     : ")
-                    .append(Tool.indent(Data.toString(map)).substring(1));
-              }
-            }
-
-            CoreLogger.debug(sb.toString());
-        }
         } finally {
             // 销毁此周期内的对象
             try {

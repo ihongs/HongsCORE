@@ -5,14 +5,15 @@ import app.hongs.action.UploadHelper;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
+import java.io.IOException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.net.URLConnection;
+import java.net.MalformedURLException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javax.servlet.http.Part;
 
 /**
  * 文件校验
@@ -35,6 +36,8 @@ public class IsFile extends Rule {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
+
+        if (value instanceof String) {
 
         // 跳过远程地址
         if (Synt.declare(params.get("pass-remote"), false)) {
@@ -68,9 +71,11 @@ public class IsFile extends Rule {
             }
         }
 
+        } // End If
+
         String name = Synt.declare(params.get("name"), String.class);
         if (name == null || "".equals(name)) {
-            name = Synt.declare(params.get("__name__"), "");
+            name  = Synt.declare(params.get("__name__"), "");
         }
 
         UploadHelper u = new UploadHelper();
@@ -86,7 +91,14 @@ public class IsFile extends Rule {
         x = (String) params.get("extn");
         if (x != null) u.setAllowExtns(x.trim().split(","));
 
-        u.upload(value.toString());
+        if (value instanceof Part) {
+            u.upload((Part) value);
+        } else
+        if (value instanceof File) {
+            u.upload((File) value);
+        } else {
+            u.upload(value.toString( ));
+        }
 
         // 仅检查新上传的文件
         String y;
@@ -101,6 +113,7 @@ public class IsFile extends Rule {
 
     /**
      * 远程文件预先下载到本地
+     * 返临时文件名
      * @param href 文件链接
      * @param temp 临时目录
      * @return
@@ -121,8 +134,7 @@ public class IsFile extends Rule {
             cnn = url.openConnection( );
             ins = cnn.getInputStream( );
 
-            // 获取类型名称
-            String type = HttpURLConnection.guessContentTypeFromStream(ins);
+            // 从响应头中获取到名称
             String name = cnn.getHeaderField("Content-Disposition");
             Pattern pat = Pattern.compile   ("filename=\"(.*?)\"" );
             Matcher mat = pat.matcher( name );
@@ -130,45 +142,51 @@ public class IsFile extends Rule {
             if (mat.find()) {
                 name = mat.group(1);
             } else {
-                name = cnn.getURL().getFile();
+                name = cnn.getURL().getPath();
             }
 
-            // 写入文件内容
-            out  = new FileOutputStream(temp + File.separator + fid + ".tmp");
+            // 重组名称避免无法存储
+            int i  = name.lastIndexOf( '/' );
+            if (i != -1) {
+                name = name.substring(i + 1);
+            }
+            int j  = name.lastIndexOf( '.' );
+            if (j == -1) {
+                name = URLEncoder.encode(name, "UTF-8");
+            } else {
+                name = URLEncoder.encode(name.substring(i , j), "UTF-8")
+                     + "."
+                     + URLEncoder.encode(name.substring(j + 1), "UTF-8");
+            }
+
+            // 将上传的存入临时文件
+            out  = new FileOutputStream(temp + File.separator + fid + "!" + name);
             byte[] buf = new byte[1204];
-            int    siz = 0;
-            int    ovr = 0;
+            int    ovr ;
             while((ovr = ins.read(buf )) != -1) {
                 out.write(buf, 0, ovr );
-                siz += ovr;
             }
             out.close();
             out  = null;
             ins.close();
             ins  = null;
 
-            // 写入文件信息
-            out  = new FileOutputStream(temp + File.separator + fid + ".tnp");
-            out.write((name + "\r\n" + type + "\r\n" + siz).getBytes());
-            out.close();
-            out  = null;
-
-            return fid ;
+            return fid + "." + name;
         } catch (IOException ex) {
-            throw new Wrong(ex, "file.can.not.fetch", href, temp);
+            throw new Wrong( ex, "core.file.can.not.fetch", href, temp);
         } finally {
             if (out != null) {
                 try {
                     out.close( );
                 } catch (IOException ex) {
-                    throw new Wrong(ex, "file.can.not.close", temp);
+                    throw new Wrong( ex, "core.file.can.not.close", temp);
                 }
             }
             if (ins != null) {
                 try {
                     ins.close( );
                 } catch (IOException ex) {
-                    throw new Wrong(ex, "file.can.not.close", href);
+                    throw new Wrong( ex, "core.file.can.not.close", href);
                 }
             }
         }

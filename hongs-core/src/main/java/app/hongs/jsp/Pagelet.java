@@ -16,7 +16,7 @@ import javax.servlet.http.HttpServletResponse;
  * 抽象JSP类
  *
  * <pre>
- * 如果在JSP中需要使用框架提供的方法和标签, 需要从这继承:<br/>
+ * 如果在JSP中需要使用框架提供的方法和标签, 需要从这继承:
  * &lt;%@page extends="app.hongs.action.Pagelet"%&gt;
  * </pre>
  *

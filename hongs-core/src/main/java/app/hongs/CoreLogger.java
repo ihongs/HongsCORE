@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * 日志记录工具
- *
  * @author Hongs
  */
 public class CoreLogger

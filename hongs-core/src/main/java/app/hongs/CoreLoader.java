@@ -1,7 +1,5 @@
-package app.hongs.serv;
+package app.hongs;
 
-import app.hongs.CoreConfig;
-import app.hongs.HongsError;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.cmdlet.anno.Cmdlet;
@@ -20,7 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 服务加载工具
  * @author Hongs
  */
-public class ServLoader {
+public class CoreLoader {
 
     private static final ReadWriteLock RWLOCKS = new ReentrantReadWriteLock();
     private static Map<String, Method> CMDLETS = null;

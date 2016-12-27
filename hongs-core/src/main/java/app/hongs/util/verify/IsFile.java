@@ -19,7 +19,8 @@ import javax.servlet.http.Part;
  * 文件校验
  * <pre>
  * 规则参数:
- *  pass-remote yes|no 是否跳过远程文件
+ *  pass-source yes|no 是否跳过资源链接
+ *  pass-remote yes|no 是否跳过远程链接
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 此参数在本类中没有用上, 其他文件转换中可能用到
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
@@ -38,6 +39,14 @@ public class IsFile extends Rule {
         }
 
         if (value instanceof String) {
+
+        // 跳过资源路径
+        if (Synt.declare(params.get("pass-source"), false)) {
+            String u = value.toString( );
+            if (u.indexOf( '/' ) != -1 ) {
+                return value;
+            }
+        }
 
         // 跳过远程地址
         if (Synt.declare(params.get("pass-remote"), false)) {
@@ -72,11 +81,6 @@ public class IsFile extends Rule {
         }
 
         } // End If
-
-        String name = Synt.declare(params.get("name"), String.class);
-        if (name == null || "".equals(name)) {
-            name  = Synt.declare(params.get("__name__"), "");
-        }
 
         UploadHelper u = new UploadHelper();
         String x;
@@ -113,7 +117,7 @@ public class IsFile extends Rule {
 
     /**
      * 远程文件预先下载到本地
-     * 返临时文件名
+     * 返回临时名称
      * @param href 文件链接
      * @param temp 临时目录
      * @return
@@ -136,7 +140,7 @@ public class IsFile extends Rule {
 
             // 从响应头中获取到名称
             String name = cnn.getHeaderField("Content-Disposition");
-            Pattern pat = Pattern.compile   ("filename=\"(.*?)\"" );
+            Pattern pat = Pattern.compile("filename=\"(.*?)\"");
             Matcher mat = pat.matcher( name );
             if (mat.find()) {
                 name = mat.group(1);
@@ -157,7 +161,7 @@ public class IsFile extends Rule {
             } else {
                 name = URLEncoder.encode(name, "UTF-8");
             }
-                name = Core.getUniqueId () + "." + name; // 加上编号避免重名
+                name = Core.getUniqueId () + "!" + name; // 加上编号避免重名
 
             // 检查目录避免写入失败
             File file = new File(temp + File.separator + name);

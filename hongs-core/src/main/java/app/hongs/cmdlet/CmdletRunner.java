@@ -4,11 +4,11 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
+import app.hongs.CoreLoader;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.HongsUnchecked;
 import app.hongs.action.ActionHelper;
-import app.hongs.serv.ServLoader;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 
@@ -324,7 +324,7 @@ public class CmdletRunner
 
   public static Map<String, Method> getCmdlets()
   {
-    return ServLoader.getCmdlets();
+    return CoreLoader.getCmdlets();
   }
 
 }

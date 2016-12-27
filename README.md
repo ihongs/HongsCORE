@@ -109,7 +109,6 @@
     - var               数据文件(启动时可指定 --datapath)
         - log           运行日志(启动时可指定 -Dlogs.dir)
         - tmp           临时文件(启动时可指定 -Dtmps.dir)
-        - upload        文件上传临时存放目录
         - serial        序列缓存数据文件目录
         - server        Jetty JSP 编译及会话数据存放目录
         - sqlite        Sqlite本地数据库目录
@@ -120,7 +119,7 @@
         - static        前端静态文件
             - assets    前端常用组件
             - addons    前端扩展组件
-        - upload        上传文件目录
+        - upload        默认上传接收目录
 
 ### 类库结构:
 
@@ -129,7 +128,7 @@
     app.hongs.cmdlet    命令支持
     app.hongs.db        关系数据模型
     app.hongs.dh        文档处理组件
-    app.hongs.jsp       JSP工具
+    app.hongs.jsp       JSP 工具
     app.hongs.util      工具
 
 以上仅列举了主要的包, 更多框架信息请参考 API 文档.
@@ -138,14 +137,15 @@
 
 ### 路径映射
 
-    xxx.foo:bar         对应标记 @Cmdlet("xxx.foo") 的类下 @Cmdlet("bar") 的方法
+    xxx.foo.bar         对应标记 @Cmdlet("xxx.foo") 的类下 @Cmdlet("bar") 的方法
     xxx.foo             对应标记 @Cmdlet("xxx.foo") 的类下 @Cmdlet("__main__") 的方法
     xxx/foo/bar.act     对应标记 @Action("xxx/foo") 的类下 @Action("bar") 的方法
     xxx/foo.act         对应标记 @Action("xxx/foo") 的类下 @Action("__main__") 的方法
-    xxx/foo.api         对应标记 @Action("xxx/foo") 的类下 @Action("retrieve,create,update,delete") 的方法(这四种动作分别对应 HTTP METHOD: GET,POST,PUT,DELETE)
-    common/auth/name.js 读取 WBE-INF/conf/name.as.xml 中 actions+session 的组合
+    xxx/foo.api         对应标记 @Action("xxx/foo") 的类下 @Action("retrieve,create,update,delete") 的方法
+                        这四种动作分别对应 HTTP METHOD: GET,POST,PUT,DELETE
+    common/auth/name.js 读取 WBE-INF/conf/name.menu.xml 中 actions+session 的组合
     common/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置
-    common/lang/name.js 读取 WEB-INF/conf/name.xx-XX.properties 中 fore.xxxx. 开头的配置
+    common/lang/name.js 读取 WEB-INF/conf/name_xx_XX.properties 中 fore.xxxx. 开头的配置
 
 action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果不指定则用类,方法名作为路径; 请在 etc/\_begin\_.properties 中设置 enrol.serv 为 Action,Cmdlet 类, 或 xxx.foo.* 告知该包下存在 Action,Cmdlet 类, 多个类/包用";"分隔.
 最后3个路径, 将扩展名 .js 换成 .json 即可得到 JSON 格式的数据; 语言配置可在 name 后加语言区域标识, 如 example_zh_CN.js 为获取 example 的中文大陆简体的 js 格式的语言配置.

@@ -83,6 +83,7 @@ function hsResponObj(rst, qut, qxt) {
         rst  =  rst.responseText;
     }
     if (typeof (rst) === "string") {
+        rst  =  jQuery.trim( rst );
         if (rst.charAt(0) === '{') {
             if (typeof(JSON) !== "undefined") {
                 rst  = JSON.parse( rst );
@@ -93,21 +94,24 @@ function hsResponObj(rst, qut, qxt) {
         } else
         if (rst.charAt(0) === '<') {
             // 某些时候服务器可能出错, 返回错误消息的页面
-            // 需要清理其中的html代码, 以供输出简洁的消息
+            // 需清理其中的超文本代码, 以供输出简洁的消息
             rst = {
-                "msg":  rst
-                    .replace(/<script.*?>.*?<\/script>/img, "")
-                    .replace(/<style.*?>.*?<\/style>/img, "")
-                    .replace(/<[^>]*?>/g, "")
-                    .replace(/&[^&;]*;/g, "")
-                    .replace(/^\s*(\r\n|\r|\n)/mg, ""),
+                "msg": rst
+                    .replace(/<script.*?>.*?<\/script>/gmi, "")  // 清除脚本代码
+                    .replace(/<style.*?>.*?<\/style>/gmi, "")    // 清除样式代码
+                    .replace(/<!--.*?-->/gm, "")                 // 清除注释
+                    .replace(/<[^>]*?>/gm , " ")                 // 清除标签
+                    .replace(/&[^&;]*;/gm , " ")                 // 清除符号
+                    .replace(/^\s*$/gm, "")                      // 清除空行
+                    .replace(/[ \f\t\v]+/g, " ")                 // 清理多余空白
+                    .replace(/(^[ \f\t\v]+|[ \f\t\v]+$)/gm, ""), // 清理首尾空白
                 "err":  "" ,
                 "ern":  "" ,
                 "ok" : false
             };
         } else {
             rst = {
-                "msg":  rst,
+                "msg": rst ,
                 "err":  "" ,
                 "ern":  "" ,
                 "ok" : false

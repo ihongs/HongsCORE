@@ -35,8 +35,8 @@ public final class Tool
   }
 
   /**
-   * 因为 Number.toString 会用科学计数法表示
-   * 故用 NumberFormat    格式化成普通数字串
+   * 因为 Number.toString 会用科学计数法
+   * 故用 NumberFormat 格式化成普通数字串
    * @param num
    * @return
    */
@@ -411,7 +411,7 @@ public final class Tool
    */
   public static String clearNL(String str)
   {
-    return Pattern.compile("(\\r\\n|\\r|\\n)", Pattern.MULTILINE)
+    return Pattern.compile("(\\r\\n|\\r|\\n)")
                   .matcher(str).replaceAll("");
   }
 
@@ -422,7 +422,7 @@ public final class Tool
    */
   public static String clearEL(String str)
   {
-    return Pattern.compile("^\\s*(\\r\\n|\\r|\\n)", Pattern.MULTILINE)
+    return Pattern.compile("^\\s*$", Pattern.MULTILINE)
                   .matcher(str).replaceAll("");
   }
 
@@ -433,8 +433,13 @@ public final class Tool
    */
   public static String clearSC(String str)
   {
-    return Pattern.compile("[ \\t\\v\\f\\x0B\\u3000]+", Pattern.MULTILINE)
-                  .matcher(str).replaceAll(" ");
+    Pattern pat;
+    final String  scx  =  "[ \\f\\t\\v\\x0b\\u3000]+";
+    pat = Pattern.compile("(^"+ scx + "|" + scx +"$)", Pattern.MULTILINE);
+    str = pat.matcher(str).replaceAll("" );
+    pat = Pattern.compile(      scx      );
+    str = pat.matcher(str).replaceAll(" ");
+    return  str;
   }
 
   /**
@@ -446,9 +451,11 @@ public final class Tool
   public static String cleanXML(String str)
   {
     Pattern pat;
-    pat = Pattern.compile("<[^>]*?>", Pattern.CASE_INSENSITIVE|Pattern.MULTILINE);
+    pat = Pattern.compile("<!--.*?-->", Pattern.DOTALL);
+    str = pat.matcher(str).replaceAll("" );
+    pat = Pattern.compile("<[^>]*?>");
     str = pat.matcher(str).replaceAll(" ");
-    pat = Pattern.compile("&[^&;]*;", Pattern.CASE_INSENSITIVE|Pattern.MULTILINE);
+    pat = Pattern.compile("&[^&;]*;");
     str = pat.matcher(str).replaceAll(" ");
     return  str;
   }
@@ -462,11 +469,11 @@ public final class Tool
   public static String cleanHTM(String str)
   {
     Pattern pat;
-    pat = Pattern.compile("<script.*?>.*?</script>", Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL);
+    pat = Pattern.compile("<script.*?>.*?</script>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     str = pat.matcher(str).replaceAll("" );
-    pat = Pattern.compile( "<style.*?>.*?</style>" , Pattern.CASE_INSENSITIVE|Pattern.MULTILINE|Pattern.DOTALL);
+    pat = Pattern.compile( "<style.*?>.*?</style>" , Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     str = pat.matcher(str).replaceAll("" );
-    return   cleanXML(str);
+    return  cleanXML (str);
   }
 
   //** 格式 **/

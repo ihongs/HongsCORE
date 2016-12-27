@@ -376,7 +376,7 @@ public class ActionHelper implements Cloneable
             /**
              * 存储文件
              * 不再需要暂存
-             * 可以直接利用 Part 向下传递即可
+             * 可以直接利用 Part 继续向下传递
              */
             /*
             String id = Core.getUniqueId();

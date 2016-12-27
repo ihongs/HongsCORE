@@ -622,9 +622,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         String rip = req.getRemoteAddr();
 
         for(String key : new String[] {
-            "X-Forwarded-For",
-            "Proxy-Client-IP",
-         "WL-Proxy-Client-IP"}) {
+                  "X-Forwarded-For",
+                  "Proxy-Client-IP",
+               "WL-Proxy-Client-IP"}) {
             String val = req.getHeader(key);
             if (null != val && 0 != val.length()) {
                 int pos = val.indexOf  (  ','  );
@@ -639,16 +639,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         return rip;
-    }
-
-    /**
-     * 驱动链
-     * @author Hongs
-     */
-    public static interface DirverChain {
-
-        public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
-
     }
 
 }

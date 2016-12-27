@@ -110,7 +110,7 @@ public class UploadHelper {
         if (this.allowTypes != null
         && !this.allowTypes.contains(type)) {
             // 文件类型不对
-            throw new Wrong("fore.form.unallowed.types", this.allowTypes.toString());
+            throw new Wrong("fore.form.invalid.types", this.allowTypes.toString());
         }
 
         /**
@@ -119,7 +119,7 @@ public class UploadHelper {
         if (this.allowExtns != null
         && !this.allowExtns.contains(extn)) {
             // 扩展名不对
-            throw new Wrong("fore.form.unallowed.extns", this.allowExtns.toString());
+            throw new Wrong("fore.form.invalid.extns", this.allowExtns.toString());
         }
     }
 
@@ -225,8 +225,11 @@ public class UploadHelper {
         chkTypeOrExtn(type, extn);
         setResultName(subn, extn);
 
-        String path = getResultPath();
-        File   file = new File(path );
+        File file = new File(getResultPath());
+        File fdir = file.getParentFile();
+        if (!fdir.exists()) {
+             fdir.mkdirs();
+        }
 
         // 拷贝数据
         try {
@@ -235,9 +238,10 @@ public class UploadHelper {
                 BufferedInputStream  bis = new BufferedInputStream (xis );
                 BufferedOutputStream bos = new BufferedOutputStream(fos );
             ) {
-                byte[] buf = new byte [1024];
-                while (bis.read (buf) != -1) {
-                       bos.write(buf);
+                byte[] buf = new byte[1024];
+                int    ovr ;
+                while((ovr = bis.read(buf )) != -1) {
+                    bos.write(buf, 0, ovr );
                 }
             }
         } catch (IOException ex) {
@@ -367,15 +371,12 @@ public class UploadHelper {
 
     /**
      * 检查临时文件或目标链接情况
-     * @param name 文件名或链接
+     * 参数为临时文件名或结果链接
+     * @param name
      * @return
      * @throws Wrong
      */
     public File upload(String name) throws Wrong {
-        /*
-         * 为空不处理
-         * 直接返回空
-         */
         if (name == null || name.length( ) == 0) {
             setResultName("", null);
             return  null;
@@ -417,7 +418,13 @@ public class UploadHelper {
 //          return upload(new File(subn),Core.getUniqueId());
         }
 
-        return upload(new File(getUploadTemp(uploadTemp) + File.separator + name), subn);
+        /**
+         * 尝试移动临时目录的文件
+         */
+        return upload(
+                new File(getUploadTemp(uploadTemp)
+                        + File.separator  +  name),
+                Core.getUniqueId());
     }
 
     /**

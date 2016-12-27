@@ -2,14 +2,14 @@ package app.hongs.action;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
+import app.hongs.CoreLoader;
+import app.hongs.CoreLoader.Mathod;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.FilterInvoker;
 import app.hongs.dh.IActing;
-import app.hongs.serv.ServLoader;
-import app.hongs.serv.ServLoader.Mathod;
 
 import java.util.Map;
 import java.lang.reflect.Method;
@@ -251,7 +251,7 @@ public class ActionRunner {
     //** 动作方法 **/
 
     public static Map<String, Mathod> getActions() {
-        return ServLoader.getActions();
+        return CoreLoader.getActions();
     }
 
 }

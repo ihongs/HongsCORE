@@ -3,7 +3,6 @@ package app.hongs.serv.handle;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.UploadHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Verify;
@@ -11,9 +10,6 @@ import app.hongs.db.DB;
 import app.hongs.serv.auth.AuthKit;
 import app.hongs.serv.member.User;
 import app.hongs.util.Synt;
-import app.hongs.util.sketch.Thumb;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,34 +29,9 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
     @Preset(conf="member", envm="mine")
     @Verify(conf="member", form="mine")
     public void userCreate(ActionHelper ah) throws HongsException {
-        Map rd = ah.getRequestData();
-
-        if (rd.containsKey( "head" )) {
-            // 上传头像
-            UploadHelper uh = new UploadHelper()
-                .setUploadHref("upload/member/head")
-                .setUploadPath("upload/member/head")
-                .setAllowTypes("image/jpeg", "image/png", "image/gif")
-                .setAllowExtns("jpeg", "jpg", "png", "gif" );
-            File fo = uh.upload(rd.get("head").toString());
-
-            // 缩略头像
-            if ( fo != null) {
-                String fn = uh.getResultPath();
-                String fu = uh.getResultHref();
-                try {
-                    fu = Thumb.toThumbs( fn, fu )[1][0];
-                } catch (IOException ex) {
-                    throw new HongsException.Common(ex);
-                }
-                rd.put("head", fu);
-            } else {
-                rd.put("head", "");
-            }
-        }
-
+        Map  rd = ah.getRequestData();
         User uo = (User) DB.getInstance( "member" ).getModel( "user" );
-        Map  sd = uo.create(  rd  );
+        Map  sd = uo.create  (  rd  );
 
         // 提取登录信息
         String usrid = Synt.asserts(sd.get(  "id" ), "");

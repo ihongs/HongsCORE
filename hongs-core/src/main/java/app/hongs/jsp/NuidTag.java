@@ -8,6 +8,12 @@ import javax.servlet.jsp.tagext.SimpleTagSupport;
 
 /**
  * 唯一ID生成器
+ *
+ * <h3>使用方法:</h3>
+ * <pre>
+ * &lt;hs:nuid [sid="SID"]/&gt;
+ * </pre>
+ *
  * @author Hongs
  */
 public class NuidTag extends SimpleTagSupport {

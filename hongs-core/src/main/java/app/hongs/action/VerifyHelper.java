@@ -16,13 +16,14 @@ import java.util.Map;
 
 /**
  * 数据校验助手
- * @author Hongs
  *
  * <h3>异常代码</h3>
  * <pre>
  * 代码区间 0x10f0~0x10ff
  * error.Ex10f1=找不到表单规则
  * </pre>
+ *
+ * @author Hongs
  */
 public class VerifyHelper extends Verify {
 

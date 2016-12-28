@@ -1,5 +1,7 @@
 .DS_Store
 .project
+.idea
+*.iml
 nbproject
 nbactions*
 nb-configuration.xml

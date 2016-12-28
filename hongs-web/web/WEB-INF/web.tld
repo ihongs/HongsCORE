@@ -13,6 +13,18 @@
       <type>java.lang.String</type>
     </attribute>
     <attribute>
+      <name>menu</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
+      <name>role</name>
+      <required>true</required>
+      <rtexprvalue>true</rtexprvalue>
+      <type>java.lang.String</type>
+    </attribute>
+    <attribute>
       <name>act</name>
       <required>true</required>
       <rtexprvalue>true</rtexprvalue>
@@ -20,11 +32,6 @@
     </attribute>
     <attribute>
       <name>not</name>
-      <rtexprvalue>true</rtexprvalue>
-      <type>java.lang.Boolean</type>
-    </attribute>
-    <attribute>
-      <name>els</name>
       <rtexprvalue>true</rtexprvalue>
       <type>java.lang.Boolean</type>
     </attribute>

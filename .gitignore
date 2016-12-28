@@ -1,10 +1,3 @@
-.DS_Store
-.project
-.idea
-*.iml
-nbproject
-nbactions*
-nb-configuration.xml
 /target
 /*/target
 /HongsCORE
@@ -12,3 +5,12 @@ nb-configuration.xml
 **/WEB-INF/classes
 **/WEB-INF/lib
 **/WEB-INF/var
+
+.DS_Store
+.project
+.idea
+*.iml
+*.iws
+nbproject
+nbactions*
+nb-configuration.xml

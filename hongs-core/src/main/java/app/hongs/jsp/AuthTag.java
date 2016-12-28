@@ -13,33 +13,38 @@ import javax.servlet.jsp.tagext.BodyTagSupport;
  *
  * <h3>使用方法:</h3>
  * <pre>
- * &lt;hs:auth act="action" [not="true|false"] [els="true|false"]/&gt;
- * &lt;hs:auth act="action" [not="true|false"] [els="true|false"]&gt;Some Text&lt;/hs:auth&gt;
+ * &lt;hs:auth conf="navi.name" [menu="menu.href"] [role="role.name"] [act="action"] [not="true|false"]/&gt;
+ * &lt;hs:auth conf="navi.name" [menu="menu.href"] [role="role.name"] [act="action"] [not="true|false"]&gt;Some Text&lt;/hs:auth&gt;
+ * act,role,menu 任意给一个即可, 给多个则必须满足全部条件才行.
  * </pre>
  *
  * @author Hongs
  */
 public class AuthTag extends BodyTagSupport {
 
-  private String act;
+  private String  cnf = "default";
+  private String  act = null;
+  private String  rol = null;
+  private String  men = null;
   private Boolean not = false;
-  private Boolean els = false;
   private Boolean ebb = false;
-  private String cnf = "default";
 
   @Override
   public int doStartTag() throws JspException {
     try {
-      this.ebb = NaviMap.getInstance(this.cnf).chkAuth(this.act);
+      NaviMap nav = NaviMap.getInstance(this.cnf);
+      this.ebb = (this.act == null || nav.chkAuth(this.act))
+              && (this.rol == null || nav.chkRole(this.rol))
+              && (this.men == null || nav.chkRole(this.men));
     } catch ( HongsException ex) {
       throw new JspException(ex);
     }
 
     if (this.not) {
-        this.ebb =! this.ebb;
+        this.ebb = !this.ebb;
     }
 
-    if (this.els || this.ebb) {
+    if (this.ebb) {
       return BodyTagSupport.EVAL_BODY_BUFFERED;
     } else {
       return BodyTagSupport.SKIP_BODY;
@@ -52,16 +57,10 @@ public class AuthTag extends BodyTagSupport {
       BodyContent body = this.getBodyContent();
 
       if (null != body) {
-        String[] arr = body.getString().trim()
-                      .split("\\{ELSE\\}" , 2);
-
         JspWriter out = body.getEnclosingWriter();
 
         if (this.ebb) {
-          out.print(arr[0]);
-        } else
-        if (arr.length > 1) {
-          out.print(arr[1]);
+          out.print(body.getString());
         }
       } else {
         JspWriter out = this.pageContext.getOut();
@@ -83,16 +82,20 @@ public class AuthTag extends BodyTagSupport {
     this.cnf = cn;
   }
 
+  public void setMenu(String men) {
+    this.men = men;
+  }
+
+  public void setRole(String rol) {
+    this.rol = rol;
+  }
+
   public void setAct(String act) {
     this.act = act;
   }
 
   public void setNot(Boolean not) {
     this.not = not;
-  }
-
-  public void setEls(Boolean els) {
-    this.els = els;
   }
 
 }

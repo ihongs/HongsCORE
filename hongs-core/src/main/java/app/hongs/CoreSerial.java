@@ -20,11 +20,12 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * 本地缓存工具
  *
- * <h3>特别注意:</h3>
- * <pre>
- * 仅当前类的"非" static 类型的 public 的属性会被存储,
+ * <p>
+ * 仅当前类的"非" static 类型的 public 属性会被存储,
  * 特殊情况可重载 save(data) 和 load(data) 来自定义.
- * </pre>
+ * </p>
+ *
+ * <h3>特别注意:</h3>
  * <pre>
  * entrySet(),keySet(),values() 返回的对象无法被序列化,
  * 请 new HashSet(x.entrySet()) 预处理后再存入当前对象.

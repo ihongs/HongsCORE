@@ -25,18 +25,21 @@ import javax.servlet.jsp.tagext.DynamicAttributes;
  */
 public class LangTag extends TagSupport implements DynamicAttributes {
 
-  private String key = null;
-  private String esc = null;
-  private String load = null;
-  private String[] repArr = null;
-  private List<String> repLst = null;
-  private Map<String, String> repMap = null;
+  private CoreLocale lang = null;
+  private String     load = null;
+  private String     key  = null;
+  private String     esc  = null;
+  private String[]             repArr = null;
+  private List<String>         repLst = null;
+  private Map <String, String> repMap = null;
 
   @Override
   public int doStartTag() throws JspException {
     JspWriter out = this.pageContext.getOut();
 
-    CoreLocale lang = CoreLocale.getInstance().clone();
+    if (this.lang == null) {
+      lang = CoreLocale.getInstance().clone();
+    }
 
     if (this.load != null) {
       lang.load(this.load);

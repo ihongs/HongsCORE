@@ -19,16 +19,19 @@ import javax.servlet.jsp.tagext.TagSupport;
  */
 public class ConfTag extends TagSupport {
 
-  private String load = null;
-  private String key = null;
-  private String esc = null;
-  private String def = null;
+  private CoreConfig conf = null;
+  private String     load = null;
+  private String     key  = null;
+  private String     esc  = null;
+  private String     def  = null;
 
   @Override
   public int doStartTag() throws JspException {
     JspWriter out = this.pageContext.getOut();
 
-    CoreConfig conf = CoreConfig.getInstance().clone();
+    if (this.conf == null) {
+      conf = CoreConfig.getInstance().clone();
+    }
 
     if (this.load != null) {
       conf.load(this.load);

@@ -21,10 +21,9 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>处理器编程:</h3>
  * <p>
- 添加一个包, 将包名加到 default.properties 里的 core.action.pacakges 值中;
- 添加一个类, 给类加上注解 @Action(action/path), 不添加或提供一个无参构造方法;
- 添加一个方法, 给方法加上 @Action(action_name), 提供一个 ActionHelper 参数;
- </p>
+ * 添加一个类, 给类加注解 @Action(action/path), 不添加或提供一个无参的构造方法;
+ * 添加一个方法, 给方法加 @Action(action_name), 提供一个 ActionHelper 类型参数;
+ * </p>
  *
  * <h3>web.xml配置:</h3>
  * <pre>

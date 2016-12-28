@@ -71,7 +71,7 @@ import org.xml.sax.SAXException;
       }
       ...
     }
- </pre>
+ * </pre>
  *
  * <h3>异常代码:</h3>
  * <pre>
@@ -466,7 +466,7 @@ public class NaviMap
         Set<String> actionsSet = (Set<String>) role.get("actions");
         auths.addAll(actionsSet);
       }
-      
+
       if (role.containsKey("depends"))
       {
         Set<String> dependsSet = (Set<String>) role.get("depends");

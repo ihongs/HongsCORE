@@ -35,8 +35,9 @@ import javax.servlet.http.Part;
  * 动作驱动器
  *
  * <p>
- * 其他 Servlet,Filter 继承此类即可安全的使用 Core 请求对象;
- * 或者将其作为 Filter 加入到 web.xml, 则其后执行的 Filter,Servlet 均可安全的使用 Core 请求对象.
+ * 其他的 Servlet,Filter 继承此类即可安全的使用 Core 请求对象;
+ * 也可以将其作为 Filter 加入到 web.xml,
+ * 其后的 Servlet,Filter 实例对象均可安全的使用 Core 请求对象.
  * </p>
  *
  * <h3>配置选项:</h3>

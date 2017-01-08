@@ -102,7 +102,9 @@ public class Cnst {
 
     public static final String PATH_ATTR = "__HONGS_PATH__"; // 请求路径
 
-    public static final String RESP_ATTR = "__HONGS_RESP__"; // 返回数据
+    public static final String DATA_ATTR = "__HONGS_DATA__"; // 请求数据
+
+    public static final String RESP_ATTR = "__HONGS_RESP__"; // 响应数据
 
     public static final String BACK_ATTR = "__HONGS_BACK__"; // 回调名称
 

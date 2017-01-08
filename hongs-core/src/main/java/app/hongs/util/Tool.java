@@ -659,12 +659,8 @@ public final class Tool
       try {
           bw = new BufferedWriter(
                new FileWriter(
-               new File(path)));
-          if (append) {
-              bw.append(text);
-          } else {
-              bw.write (text);
-          }
+               new File(path), append));
+          bw.write(text);
       } catch (IOException ex) {
           throw new RuntimeException("Can not save " + path, ex);
       } finally {

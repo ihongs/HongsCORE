@@ -105,7 +105,7 @@ public class SpreadHelper {
     public void spread(List list) throws HongsException {
         ActionHelper ah = ActionHelper.newInstance();
         MergeMore mm = new MergeMore(list);
-        ah.setAttribute( "in_fork" , true);
+        ah.setAttribute( "IN_FORK" , true);
 
         for(Map.Entry et : items.entrySet()) {
             String fn = (String) et.getKey();
@@ -117,9 +117,8 @@ public class SpreadHelper {
                 continue;
             }
 
-            String ak = (String) mt.get("data-ak"); // 数据放入此下
             String at = (String) mt.get("data-at"); // 关联动作路径
-            String aq = (String) mt.get("data-aq"); // 关联查询参数
+            String ak = (String) mt.get("data-ak"); // 数据放入此下
             String vk = (String) mt.get("data-vk"); // 关联字段
             String tk = (String) mt.get("data-tk"); // 名称字段
 
@@ -136,7 +135,13 @@ public class SpreadHelper {
             }
 
             // 查询结构
-            Map rd; Set rb; aq = aq.trim(  );
+            Map rd ; Set rb ;
+            String aq = null;
+            int ps = at.indexOf('?');
+            if (ps > -1) {
+                aq = at.substring(ps + 1).trim();
+                at = at.substring(0 , ps).trim();
+            }
             if (null != aq && !"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {
                     rd = (  Map  ) Data.toObject(aq);

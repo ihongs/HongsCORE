@@ -8,6 +8,7 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
+import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -60,9 +61,16 @@ public class SearchHelper {
      * @throws HongsException
      */
     public void setLinks(String conf, String form, byte md) throws HongsException {
-        enums = new HashMap();
-        forks = new HashMap();
-        Map<String, Map> fs = FormSet.getInstance(conf).getForm(form);
+        if (1 != (1 & md) && 2 != (2 & md)) {
+            return;
+        }
+        if (enums == null) {
+            enums = new HashMap();
+        }
+        if (forks == null) {
+            forks = new HashMap();
+        }
+        Map<String, Map> fs = FormSet.getInstance(conf ).getForm(form );
         for(Map.Entry<String, Map> et : fs.entrySet()) {
             Map    fc = et.getValue();
             String fn = et.getKey(  );
@@ -167,8 +175,21 @@ public class SearchHelper {
         }
 
         // 查询结构
-        Set rb = new HashSet( );
         Map rd = new HashMap( );
+        Set rb = new HashSet( );
+        int ps = at.indexOf("?");
+        if (ps > -1) {
+            String aq;
+            aq = at.substring(ps + 1).trim();
+            at = at.substring(0 , ps).trim();
+            if (!"".equals(aq)) {
+                if (aq.startsWith("{") && aq.endsWith("}")) {
+                    rd = (  Map  ) Data.toObject(aq);
+                } else {
+                    rd = ActionHelper.parseQuery(aq);
+                }
+            }
+        }
         rb.add(vk);
         rb.add(tk);
         rd.put(Cnst.RN_KEY, 0 );
@@ -177,7 +198,7 @@ public class SearchHelper {
 
         // 获取结果
         ActionHelper ah = ActionHelper.newInstance();
-        ah.setSessibute("in_fork", true);
+        ah.setAttribute("IN_FORK", true);
         ah.setRequestData(rd);
         new ActionRunner (at, ah).doInvoke();
         Map sd  = ah.getResponseData(  );

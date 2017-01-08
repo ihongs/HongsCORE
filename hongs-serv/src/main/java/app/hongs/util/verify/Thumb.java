@@ -46,7 +46,7 @@ public class Thumb extends IsFile {
             throw new Wrong( ex, "Can not create thumbs");
         }
 
-        // 是否需要抛弃原始文件
+        // 可以选择抛弃原始文件
         if (Synt.declare(params.get("drop-origin"),false)
         && !dest.equals (  path  )) {
             new File(path).delete();

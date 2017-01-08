@@ -1,17 +1,22 @@
 package app.hongs.serv.manage;
 
 import app.hongs.Cnst;
+import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
+import app.hongs.action.anno.CommitSuccess;
+import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
 import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.serv.module.Data;
+import app.hongs.util.Synt;
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * 数据存储动作
@@ -50,6 +55,31 @@ public class DataAction extends LuceneAction {
     public LuceneRecord getEntity(ActionHelper helper)
     throws HongsException {
         return Data.getInstance(mod, ent);
+    }
+
+    /**
+     * 后台总是能指定 id, 有则更新, 无则添加
+     * @param helper
+     * @throws HongsException 
+     */
+    @Action("save")
+    @Preset(conf="", envm="", used={":defence", ":create"})
+    @Verify(conf="", form="")
+    @CommitSuccess
+    @Override
+    public void update(ActionHelper helper) throws HongsException {
+        String  id = (String) helper.getParameter("id");
+        if (id == null || "".equals(id)) {
+            id  = Core.getUniqueId (  );
+        }
+
+        Data    sr = (Data) getEntity(helper);
+        Map     rd = helper.getRequestData( );
+                rd = getReqMap(helper, sr, "update", rd);
+                sr.set(id, rd);
+        String  ss = getRspMsg(helper, sr, "update", 1 );
+
+        helper.reply(ss, Synt.asMap("id",id));
     }
 
 }

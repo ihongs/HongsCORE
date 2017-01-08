@@ -290,11 +290,11 @@ public class Thumb {
             if (mxt.find() ) {
                 // 提取背景色(RGBA)
                 String[] x = mxt.group(1).split(",");
-                int r  = Integer.parseInt (x[0]);
-                int g  = Integer.parseInt (x[1]);
-                int b  = Integer.parseInt (x[2]);
-                int a  = x.length == 3  ?  255
-                       : Integer.parseInt (x[3]);
+                int r = Integer.parseInt( x[0] );
+                int g = Integer.parseInt( x[1] );
+                int b = Integer.parseInt( x[2] );
+                int a = x.length == 3 ? 255
+                      : Integer.parseInt( x[3] );
                 pth = thb.keep(suf, w, h, new Color(r, g, b, a));
             } else
             if (rat.endsWith(";keep")) {
@@ -303,10 +303,14 @@ public class Thumb {
             } else {
                 pth = thb.pick(suf, w, h);
             }
-            pts.add(pth);
-            urs.add(url + suf + "." + ext);
+                pts.add(pth);
+                urs.add(url + suf + "." + ext);
         } else {
-            pth = thb.conv(rat);
+                pth = thb.conv(rat);
+            if (  !  "".equals(rat)) {
+                pts.add(pth);
+                urs.add(url + rat + "." + ext);
+            }
         }
 
         // 以上面截取的图为蓝本进行缩放
@@ -314,13 +318,19 @@ public class Thumb {
 
         // 缩放图
         mat = PAT.matcher(map);
-        while(mat.find() ) {
+        while (mat.find()) {
             suf = mat.group(1);
             w   = Integer.parseInt(mat.group(2));
             h   = Integer.parseInt(mat.group(3));
             pth = thb.zoom(suf, w, h );
             pts.add(pth);
-            urs.add(url + suf+"."+ext);
+            urs.add(url + suf + "." + ext);
+        }
+
+        // 没截取或缩放则用指定格式路径
+        if (pts.isEmpty()) {
+            pts.add(pth);
+            urs.add(url + rat + "." + ext);
         }
 
         return new String[][] {

@@ -58,15 +58,15 @@ DROP TABLE IF EXISTS `a_module_data`;
 CREATE TABLE `a_module_data` (
   `id` CHAR(20) NOT NULL,
   `form_id` CHAR(20) NOT NULL,
+  `user_id` CHAR(20) NOT NULL,
   `name` VARCHAR(255) DEFAULT NULL,
   `note` VARCHAR(255) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,
-  `cuid` CHAR(20) NOT NULL,
   `ctime` UNSIGNED INT(10) DEFAULT NULL,
   `etime` UNSIGNED INT(10) DEFAULT NULL,
   `rtime` UNSIGNED INT(10) DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`,`etime`),
+  PRIMARY KEY (`id`,`form_id`,`etime`),
   FOREIGN KEY (`form_id`) REFERENCES `a_module_form` (`id`) ON DELETE CASCADE
 );
 

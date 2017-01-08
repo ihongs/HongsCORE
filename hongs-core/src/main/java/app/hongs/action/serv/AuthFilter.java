@@ -217,7 +217,7 @@ public class AuthFilter
         long tim = Synt.asserts(hlpr.getSessibute(Cnst.UST_SES), 0L);
         long now = System.currentTimeMillis() / 1000;
         if ( now - tim < exp) {
-            hlpr.setSessibute (Cnst.UST_SES , now );
+            hlpr.setSessibute ( Cnst.UST_SES , now );
         } else {
             doFailed ( core, hlpr, (byte) 0 );
             return;

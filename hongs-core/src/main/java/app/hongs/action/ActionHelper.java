@@ -7,6 +7,7 @@ import app.hongs.HongsError;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
+import app.hongs.util.Synt;
 
 import java.io.Writer;
 import java.io.PrintWriter;
@@ -233,19 +234,22 @@ public class ActionHelper implements Cloneable
       }
       else
       {
-        ct = ct.split( ";", 2 )[ 0 ];
+        ct = ct.split(";", 2)[0];
       }
 
       try
       {
-        Map rd  = null;
-        if (ct.startsWith("multipart/"))
+        Map rd = this.getRequestAttr(); // 可用属性传递
+        if (rd == null)
         {
-          rd = this.getRequestPart(); // 处理上传文件
-        }
-        else if (ct.endsWith( "/json" ))
-        {
-          rd = this.getRequestJson(); // 处理JSON数据
+          if (ct.startsWith("multipart/"))
+          {
+            rd = this.getRequestPart(); // 处理上传文件
+          }
+          else if (ct.endsWith( "/json" ))
+          {
+            rd = this.getRequestJson(); // 处理JSON数据
+          }
         }
 
         this.requestData = parseParam(request.getParameterMap());
@@ -264,16 +268,31 @@ public class ActionHelper implements Cloneable
         }
       }
     }
-    return this.requestData;
+    return  this.requestData;
+  }
+
+  /**
+   * 特殊 Content-Type 可通过过滤解析并传递
+   * @return
+   */
+  final Map getRequestAttr() {
+    // 特殊类型可用 Filter 预解析
+    // 无法转换则报 HTTP 400 错误
+    try {
+        return (Map) request.getAttribute(Cnst.DATA_ATTR);
+    }
+    catch (ClassCastException ex) {
+        throw new HongsUnchecked(0x1000, ex);
+    }
   }
 
   /**
    * 解析 application/json 或 text/json 数据
-   * @param rd
+   * @return
    */
-  final Map<String, Object> getRequestJson() {
+  final Map getRequestJson() {
     try {
-        return (Map<String, Object>) Data.toObject(request.getReader());
+        return (Map) Data.toObject(request.getReader());
     } catch ( HongsError er) {
         throw new HongsUnchecked(0x1100, er.getCause());
     } catch (IOException ex) {
@@ -282,10 +301,10 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 解析 multipart/form-data 数据, 上传暂存
-   * @param rd
+   * 解析 multipart/form-data 数据, 处理上传
+   * @return
    */
-  final Map<String, Object> getRequestPart() {
+  final Map getRequestPart() {
     CoreConfig conf = CoreConfig.getInstance();
 
     // 是否仅登录用户可上传

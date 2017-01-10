@@ -406,7 +406,7 @@ public class SocketHelper extends ActionHelper {
                 throw new HongsError.Common(ex);
             }
 
-            String pkgx  = CoreConfig.getInstance( "_init_" ).getProperty("mount.serv");
+            String pkgx  = CoreConfig.getInstance( "_init_" ).getProperty("jetty.sock");
             if  (  pkgx != null ) {
                 String[]   pkgs = pkgx.split(";");
                 for(String pkgn : pkgs) {

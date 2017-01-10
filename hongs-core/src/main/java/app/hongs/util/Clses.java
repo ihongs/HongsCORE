@@ -13,7 +13,7 @@ import java.util.jar.JarFile;
 /**
  * 通过包名获取类名集合
  * <p>
- * 此类被用于处理 _init_.properties 中 enrol.serv 下 .* 后缀的包下的所有类名
+ * 此类被用于处理 _init_.properties 中 mount.serv 下 .* 后缀的包下的所有类名
  * </p>
  * @author Hongs
  */

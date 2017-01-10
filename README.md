@@ -147,7 +147,7 @@
     common/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置
     common/lang/name.js 读取 WEB-INF/conf/name_xx_XX.properties 中 fore.xxxx. 开头的配置
 
-action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果不指定则用类,方法名作为路径; 请在 etc/\_begin\_.properties 中设置 enrol.serv 为 Action,Cmdlet 类, 或 xxx.foo.* 告知该包下存在 Action,Cmdlet 类, 多个类/包用";"分隔.
+action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果不指定则用类,方法名作为路径; 请在 etc/\_begin\_.properties 中设置 mount.serv 为 Action,Cmdlet 类, 或 xxx.foo.* 告知该包下存在 Action,Cmdlet 类, 多个类/包用";"分隔.
 最后3个路径, 将扩展名 .js 换成 .json 即可得到 JSON 格式的数据; 语言配置可在 name 后加语言区域标识, 如 example_zh_CN.js 为获取 example 的中文大陆简体的 js 格式的语言配置.
 
 ### 请求规则

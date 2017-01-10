@@ -77,7 +77,7 @@ public class CoreLoader {
             CMDLETS = new HashMap();
             String[] pkgs = CoreConfig
                     .getInstance(  "_init_"  )
-                    .getProperty("enrol.serv")
+                    .getProperty("mount.serv")
                     .split(";");
             addServ(ACTIONS, CMDLETS, pkgs);
         } finally {

@@ -15,6 +15,8 @@
         <!-- Number -->
         <value code="number">number</value>
         <value code="range">number</value>
+        <value code="slider">number</value>
+        <value code="switch">number</value>
         <value code="sorted">number</value> <!-- Lucene 特有仅能排序 -->
         <!-- Date -->
         <value code="date">date</value>
@@ -45,9 +47,9 @@
     </enum>
     <enum name="__ables__">
         <value code="findable">string,search,hidden,text,email,url,tel,textcase</value>
-        <value code="sortable">string,search,hidden,text,email,url,tel,number,range,onoff,date,time,datetime,sorted</value>
-        <value code="filtable">string,search,hidden,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check</value>
-        <value code="listable">string,search,hidden,text,email,url,tel,number,range,onoff,date,time,datetime,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
+        <value code="sortable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,sorted</value>
+        <value code="filtable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check</value>
+        <value code="listable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
     </enum>
     <!--
     <enum name="demo-enum">

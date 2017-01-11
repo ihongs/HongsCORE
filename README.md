@@ -116,10 +116,11 @@
     - web               前端文件(启动时可指定 --basepath,--basehref)
         - handle        公共处理区域
         - manage        系统管理区域
-        - static        前端静态文件
+        - public        公共资源
+            - upload    默认上传目录
+        - static        静态资源
             - assets    前端常用组件
             - addons    前端扩展组件
-        - upload        默认上传接收目录
 
 ### 类库结构:
 

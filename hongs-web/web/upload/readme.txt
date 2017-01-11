@@ -1,1 +1,0 @@
-This directory stores uploaded files.

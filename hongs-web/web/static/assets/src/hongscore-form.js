@@ -264,6 +264,7 @@ HsForm.prototype = {
                 var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
                 var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
                 var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
+                data.append('<input type="hidden" name=".ajax" value="1"/>'); // 显式告知遵循 AJAX 方式
                 data.attr("target", name).before(frame);
                 frame.on ("load", function() {
                     var doc = frame[0].contentDocument || frame[0].contentWindow.document;

@@ -65,12 +65,11 @@ public class ApisAction
         super.init(conf);
 
         CoreConfig cc = CoreConfig.getInstance( );
-        dataKey  = cc.getProperty("core.api.data", ".data");
-        callKey  = cc.getProperty("core.api.call", ".call");
-        convKey  = cc.getProperty("core.api.conv", ".conv");
-        flatKey  = cc.getProperty("core.api.flat", ".flat");
-        wrapKey  = cc.getProperty("core.api.wrap", ".wrap");
-        scokKey  = cc.getProperty("core.api.scok", ".scok");
+        dataKey  = cc.getProperty("core.api.data", ".data"); // 请求数据
+        callKey  = cc.getProperty("core.api.call", ".call"); // 回调名称
+        convKey  = cc.getProperty("core.api.conv", ".conv"); // 转换策略
+        wrapKey  = cc.getProperty("core.api.wrap", ".wrap"); // 包裹数据
+        scokKey  = cc.getProperty("core.api.scok", ".scok"); // 无错误码
     }
 
     @Override
@@ -125,7 +124,6 @@ public class ApisAction
         String _dat  = req.getParameter(dataKey);
         String _cal  = req.getParameter(callKey);
         String _cnv  = req.getParameter(convKey);
-        String _flt  = req.getParameter(flatKey);
         String _wap  = req.getParameter(wrapKey);
         String _sok  = req.getParameter(scokKey);
 
@@ -182,13 +180,10 @@ public class ApisAction
                 hlpr.error400 ( "Can not parse value for '!conv'" );
                 return;
             }
-        } else
-        if (_flt != null && _flt.length( ) != 0) {
-            conv  = new HashSet(/***/);
         }
 
         if (conv != null) {
-            convData(resp, conv, _flt);
+            convData(resp, conv);
         }
 
         //** 包裹返回数据 **/
@@ -197,7 +192,7 @@ public class ApisAction
         try {
             wrap = Synt.declare(_wap, false);
         } catch (ClassCastException e) {
-            hlpr.error400("Value for '!wrap' can not be case to boolean");
+            hlpr.error400("Value for '.wrap' can not be case to boolean");
             return;
         }
 
@@ -211,7 +206,7 @@ public class ApisAction
         try {
             scok = Synt.declare(_sok, false);
         } catch (ClassCastException e) {
-            hlpr.error400("Value for '!scok' can not be case to boolean");
+            hlpr.error400("Value for '.scok' can not be case to boolean");
             return;
         }
 
@@ -332,7 +327,7 @@ public class ApisAction
         }
     }
 
-    private void convData(Map resp, Set<String> conv, String _evn) {
+    private void convData(Map resp, Set<String> conv) {
         Conv cnvr = new Conv();
         boolean     all =  conv.contains( "all2str");
         cnvr.all  = all ?  new  Conv2Str( ) : new Conv2Obj( ) ;
@@ -342,7 +337,9 @@ public class ApisAction
                   :(conv.contains("bool2str") ? new ConvBool2Str() : new Conv2Obj());
         cnvr.date = conv.contains("date2num") ? new ConvDate2Num()
                   :(conv.contains("date2sec") ? new ConvDate2Sec() : new Conv2Obj());
-        cnvr.flat = _evn != null && !"".equals(_evn) ? new Flat4Map(cnvr,_evn): null;
+        cnvr.flat = conv.contains("flat.map") ? new Flat4Map(cnvr, ".")
+                  :(conv.contains("flat_map") ? new Flat4Map(cnvr, "_")
+                  : null);
         resp.putAll(Synt.filter(resp , cnvr));
     }
 

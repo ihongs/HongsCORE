@@ -1,11 +1,13 @@
 package app.hongs;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Iterator;
-import java.util.HashMap;
-import java.util.Map;
 import java.io.Closeable;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.TimeZone;
+import java.util.Locale;
+import java.lang.reflect.Method;
+import java.lang.reflect.InvocationTargetException;
 
 /**
  * 核心类
@@ -409,28 +411,74 @@ public final class Core
    * 获取核心对象
    * @return 核心对象
    */
-  public static Core getInstance() {
+  public static Core getInstance()
+  {
     return THREAD_CORE.get();
   }
 
   /**
    * 按类获取单例
    *
-   * @param ct
+   * @param clas
    * @return 类的对象
    */
-  public static <T> T getInstance(Class<T> ct) {
-    return getInstance().get( ct );
+  public static <T>T getInstance(Class<T> clas)
+  {
+    return getInstance().get(clas);
   }
 
   /**
-   * 按类名获取单例
+   * 类名获取单例
    *
    * @param name
    * @return 类的对象
    */
-  public static Object getInstance(String name) {
+  public static Object getInstance(String name)
+  {
     return getInstance().get(name);
+  }
+
+  /**
+   * 获取当前时区
+   * @return
+   */
+  public static TimeZone getTimezone()
+  {
+    Core     core = Core.getInstance();
+    String   name = TimeZone.class.getName();
+    TimeZone inst = (TimeZone)core.got(name);
+    if (null != inst) {
+        return  inst;
+    }
+
+    inst = TimeZone.getTimeZone(Core.ACTION_ZONE.get());
+
+    core.put(name, inst);
+    return inst;
+  }
+
+  /**
+   * 获取语言地区
+   * @return
+   */
+  public static  Locale  getLocality()
+  {
+    Core     core = Core.getInstance();
+    String   name = Locale.class.getName();
+    Locale   inst = (Locale)core.got(name);
+    if (null != inst) {
+        return  inst;
+    }
+
+    String[] lang = Core.ACTION_LANG.get().split("_",2);
+    if (2 <= lang.length) {
+        inst = new Locale(lang[0],lang[1]);
+    } else {
+        inst = new Locale(lang[0]);
+    }
+
+    core.put(name, inst);
+    return inst;
   }
 
   /**

@@ -34,6 +34,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
@@ -1229,7 +1230,9 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                 fm = "yyyy/MM/dd HH:mm:ss";
             }
         }
-        return new SimpleDateFormat(fm);
+        SimpleDateFormat fd = new SimpleDateFormat(fm);
+        fd.setTimeZone(Core.getTimezone());
+        return  fd;
     }
 
     /**

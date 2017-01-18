@@ -418,19 +418,18 @@ public class CoreLocale
   {
     String path;
 
-    path = Core.CONF_PATH + File.separator +"default_"+ lang +".properties";
-    if ((new File(path)).exists())
+    path = Core.CONF_PATH + File.separator +"default_"+ lang;
+    if ((new File(path +".prop.xml"  )).exists())
+    {
+      return true;
+    }
+    if ((new File(path +".properties")).exists())
     {
       return true;
     }
 
-    path = "app/hongs/conf/default_"+ lang +".properties";
-    if (null != CoreConfig.class.getClassLoader().getResourceAsStream(path))
-    {
-      return true;
-    }
-
-    return  false;
+    path = "app/hongs/conf/"+ name +"_"+ lang +".properties";
+    return null != CoreConfig.class.getClassLoader().getResourceAsStream(path);
   }
 
 }

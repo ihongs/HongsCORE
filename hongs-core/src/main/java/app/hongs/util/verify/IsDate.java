@@ -1,11 +1,14 @@
 package app.hongs.util.verify;
 
+import app.hongs.Core;
 import app.hongs.util.Synt;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Calendar;
+import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -13,8 +16,9 @@ import java.util.regex.Pattern;
  * 日期校验
  * <pre>
  * 规则参数:
- *  format  日期格式, 同 java 的 SimpleDateFormat, 默认从语言资源中提取
  *  type    日期类型, date(Date对象),time(毫秒数),datestamp(Date对象,精确到秒),timestamp(时间戳,精确到秒)
+ *  format  日期格式, 同 java 的 SimpleDateFormat, 默认从语言资源中提取
+ *  offset  偏移时间, 毫秒时间戳, 可用 +-, 与 format 配合来解决日期精度
  *  min     最小时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
  *  max     最大时间, 毫秒时间戳, 可用 +- 前缀表示当前时间偏移
  * </pre>
@@ -31,6 +35,7 @@ public class IsDate extends Rule {
         String type = Synt.declare(params.get(  "type"  ), "");
 
         // 日期格式
+        int     off = Synt.declare(params.get( "offset" ), 0 );
         String  fmt = Synt.declare(params.get( "format" ), "");
         String  fwt =  fmt ;
         if ( "".equals(fmt)) {
@@ -40,20 +45,20 @@ public class IsDate extends Rule {
             }
         }
 
-        Date day = getDay(value, typa, type, fwt);
+        Date day = getDate( value, typa, type, fwt, off );
 
         // 区间校验
         String  min = Synt.declare(params.get(   "min"  ), "");
         String  max = Synt.declare(params.get(   "max"  ), "");
         long now = new Date().getTime();
         if (!"".equals(min)) {
-            long tim = getTim(min, now);
+            long tim = getTime(min, now);
             if ( tim > day.getTime( ) ) {
                 throw new Wrong("fore.form.lt.mindate", new SimpleDateFormat(fwt).format(new Date(tim)));
             }
         }
         if (!"".equals(max)) {
-            long tim = getTim(max, now);
+            long tim = getTime(max, now);
             if ( tim < day.getTime( ) ) {
                 throw new Wrong("fore.form.gt.maxdate", new SimpleDateFormat(fwt).format(new Date(tim)));
             }
@@ -78,38 +83,53 @@ public class IsDate extends Rule {
         return value;
     }
 
-    private Date getDay(Object val, String typa, String type, String fwt) throws Wrong {
+    private Date getDate(Object val, String typa, String type, String fwt, int off) throws Wrong {
         if (val instanceof Date) {
             return  (Date) val ;
+        }
+
+        if (val instanceof Number) {
+            long num = Synt.declare(val,0L);
+            if ("timestamp".equals(type)
+            ||  "datestamp".equals(type)) {
+                return new Date(num * 1000);
+            } else {
+                return new Date(num /* */ );
+            }
         }
 
         if (val instanceof String) {
             String str =  (String) val;
             if (Pattern.matches("^\\d+$", str)) {
-                val = Synt.declare(str, 0L);
-            } else {
-                try {
-                    return new SimpleDateFormat(fwt).parse(str);
-                } catch (ParseException ex) {
-                    throw new Wrong("fore.form.is.not." + typa);
+                long num = Synt.declare(val,0L);
+                if ("timestamp".equals(type)
+                ||  "datestamp".equals(type)) {
+                    return new Date(num * 1000);
+                } else {
+                    return new Date(num /* */ );
                 }
             }
-        }
 
-        if (val instanceof Number) {
-            Number num =  (Number) val;
-            if ("timestamp".equals(type)
-            ||  "datestamp".equals(type)) {
-                return new Date(num.longValue() * 1000);
-            } else {
-                return new Date(num.longValue() /***/ );
+            // 按指定格式解析日期字符串
+            // 要精确时间的可以使用偏移
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat(fwt);
+                Calendar cal = Calendar.getInstance();
+                TimeZone tmz = Core.getTimezone( );
+                sdf.setTimeZone(tmz);
+                cal.setTimeZone(tmz);
+                cal.setTime(sdf.parse(str));
+                cal.add(Calendar.MILLISECOND, off);
+                return cal.getTime();
+            } catch (ParseException e) {
+                // Nothing todo.
             }
         }
 
         throw new Wrong("fore.form.is.not."+ typa);
     }
 
-    private long getTim(String tim, long now) throws HongsException {
+    private long getTime(String tim, long now) throws HongsException {
         Matcher mat = Pattern.compile("^([+-])?(\\d+)$").matcher(tim);
         if (!mat.matches()) {
             throw new HongsException.Common("Can not recognize time '"+tim+"'.");

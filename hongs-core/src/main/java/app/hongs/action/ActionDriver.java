@@ -5,6 +5,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
+import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -14,6 +15,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TimeZone;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -296,7 +298,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 //            CoreLogger.error ( e );
 //        }
 
-        Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT-8"));
+        Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT+8"));
         if (conf.getProperty("core.timezone.probing", false)) {
             /**
              * 时区可以记录到Session/Cookies里
@@ -307,8 +309,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                    zone = /*str*/ hlpr.getCookibute(sess);
             }
 
+            /**
+             * 过滤一下避免错误时区
+             */
             if (zone != null) {
+                zone = TimeZone.getTimeZone(zone).getID();
+//          if (zone != null) {
                 Core.ACTION_ZONE.set(zone);
+//          }
             }
         }
 
@@ -376,7 +384,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 CoreConfig cf = CoreConfig.getInstance();
 
                 if (cf.getProperty("core.debug.action.request", false)) {
-                    Map rd  = hlpr.getRequestData();
+                    Map rd  = null;
+                    try {
+                        rd  = hlpr.getRequestData();
+                    } catch ( HongsUnchecked  ex  ) {
+                        CoreLogger.debug(ex.getMessage());
+                    }
                     if (rd != null && !rd.isEmpty()) {
                         sb.append("\r\n\tRequest     : ")
                           .append(Tool.indent(Data.toString(rd)).substring(1));
@@ -386,7 +399,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 if (cf.getProperty("core.debug.action.results", false)) {
                     Map xd  = hlpr.getResponseData();
                     if (xd == null) {
-                        xd  = (Map) req.getAttribute( Cnst.RESP_ATTR );
+                        xd  = (Map) req.getAttribute(Cnst.RESP_ATTR);
                     }
                     if (xd != null && !xd.isEmpty()) {
                         sb.append("\r\n\tResults     : ")

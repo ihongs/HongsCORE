@@ -7,7 +7,6 @@ import app.hongs.HongsError;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
-import app.hongs.util.Synt;
 
 import java.io.Writer;
 import java.io.PrintWriter;

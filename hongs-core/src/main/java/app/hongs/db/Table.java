@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TimeZone;
 
 /**
  * 数据表基础类
@@ -851,6 +852,7 @@ public class Table
             dateFormat = getDtfmt(namc, "date", values);
           }
           SimpleDateFormat sdf = new SimpleDateFormat(dateFormat);
+          sdf.setTimeZone(Core.getTimezone());
 
           try
           {
@@ -882,6 +884,7 @@ public class Table
             timeFormat = getDtfmt(namc, "time", values);
           }
           SimpleDateFormat sdf = new SimpleDateFormat(timeFormat);
+          sdf.setTimeZone(Core.getTimezone());
 
           try
           {
@@ -913,6 +916,7 @@ public class Table
             datetimeFormat = getDtfmt(namc, "datetime", values);
           }
           SimpleDateFormat sdf = new SimpleDateFormat(datetimeFormat);
+          sdf.setTimeZone(Core.getTimezone());
 
           try
           {

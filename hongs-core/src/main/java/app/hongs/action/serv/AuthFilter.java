@@ -426,6 +426,9 @@ public class AuthFilter
   }
 
   private boolean isAjax(HttpServletRequest req) {
+      if (Synt.declare(req.getParameter(".ajax") , false )) {
+          return  true; // 为方便特殊情况下使用 POST, 可显式申明 AJAX
+      }
       String x  = req.getHeader("X-Requested-With");
       return x == null ? false : IS_AJAX.matcher(x).find( );
   }

@@ -21,7 +21,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
 
 /**
  * 外壳程序启动器
@@ -242,7 +244,14 @@ public class CmdletRunner
     }
     if (zone == null || zone.length() == 0)
     {
-      zone = cnf.getProperty("core.timezone.default");
+      if (cnf.getProperty("core.timezone.probing", false))
+      {
+        zone = TimeZone.getDefault( ).getID( );
+      }
+      else
+      {
+        zone = cnf.getProperty("core.timezone.default", "GMT+8");
+      }
     }
     Core.ACTION_ZONE.set(zone);
 
@@ -255,25 +264,18 @@ public class CmdletRunner
     {
       if (cnf.getProperty("core.language.probing", false))
       {
-        String l = System.getProperty("user.language");
-        String c = System.getProperty("user.country" );
-        if (l != null && c != null)
-        {
-          lang = l.toLowerCase() +"_"+ c.toUpperCase();
-        }
-        else
-        if (l != null)
-        {
-          lang = l;
-        }
-
         /**
-         * 检查是否是支持的语言
+         * 获取系统默认的区域
+         * 仅保留 语言[_地区]
          */
-        if (lang != null)
-        {
-          lang = CoreLocale.getAcceptLanguage(lang);
-        }
+        lang = Locale.getDefault().toString();
+        int pos  = lang.indexOf('_');
+        if (pos  > 0) {
+            pos  = lang.indexOf('_', pos + 1);
+        if (pos  > 0) {
+            lang = lang.substring(0, pos/**/);
+        }}
+        lang = CoreLocale.getAcceptLanguage(lang);
         if (lang == null)
         {
           lang = cnf.getProperty("core.language.default", "zh_CN");
@@ -289,11 +291,12 @@ public class CmdletRunner
       /**
        * 检查语言参数设置
        */
-      String l = lang;
-          lang = CoreLocale.getAcceptLanguage(lang);
+      String leng;
+      leng = lang;
+      lang = CoreLocale.getAcceptLanguage(lang);
       if (lang ==null)
       {
-        CoreLogger.error("ERROR: Unsupported language: "+l+".");
+        CoreLogger.error("ERROR: Unsupported language: "+leng+".");
         System.exit(1);
       }
     }

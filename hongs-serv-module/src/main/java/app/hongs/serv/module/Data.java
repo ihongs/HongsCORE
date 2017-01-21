@@ -125,7 +125,7 @@ public class Data extends LuceneRecord {
      */
     @Override
     public String add(Map rd) throws HongsException {
-        String id = Core.getUniqueId();
+        String id = Core.newIdentity();
         save(id, rd);
         return id;
     }

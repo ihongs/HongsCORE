@@ -71,7 +71,7 @@ public class SearchRecord extends LuceneRecord {
         if (id != null && id.length() != 0) {
             throw new HongsException.Common("Id can not set in add");
         }
-        id = Core.getUniqueId();
+        id = Core.newIdentity();
         rd.put(Cnst.ID_KEY, id);
 
         // 放入索引队列

@@ -70,7 +70,7 @@ public class DataAction extends LuceneAction {
     public void update(ActionHelper helper) throws HongsException {
         String  id = (String) helper.getParameter("id");
         if (id == null || "".equals(id)) {
-            id  = Core.getUniqueId (  );
+            id  = Core.newIdentity (  );
         }
 
         Data    sr = (Data) getEntity(helper);

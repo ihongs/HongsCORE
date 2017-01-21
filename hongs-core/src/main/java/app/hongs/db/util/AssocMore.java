@@ -528,7 +528,7 @@ public class AssocMore {
           &&  tb.primaryKey.length() != 0
           &&  ! subValues3.containsKey( tb.primaryKey /**/ ))
           {
-            subValues3.put(tb.primaryKey, Core.getUniqueId());
+            subValues3.put(tb.primaryKey, Core.newIdentity());
           }
 
           tb.insert(subValues3);
@@ -666,7 +666,7 @@ public class AssocMore {
                 // 没则插入
                 if (!row.containsKey(table.primaryKey) || "".equals(row.get(table.primaryKey)))
                 {
-                    row.put(table.primaryKey, Core.getUniqueId(/*SID*/));
+                    row.put(table.primaryKey, Core.newIdentity(/*SID*/));
                 }
                 table.insert(row);
             }

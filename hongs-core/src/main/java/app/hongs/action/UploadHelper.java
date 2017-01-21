@@ -260,7 +260,7 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(InputStream xis, String type, String extn) throws Wrong {
-        return  upload(xis, type, extn, Core.getUniqueId());
+        return  upload(xis, type, extn, Core.newIdentity());
     }
 
     /**
@@ -310,7 +310,7 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(Part part) throws Wrong {
-        return  upload(part, Core.getUniqueId());
+        return  upload(part, Core.newIdentity());
     }
 
     /**
@@ -366,7 +366,7 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(File file) throws Wrong {
-        return  upload(file, Core.getUniqueId());
+        return  upload(file, Core.newIdentity());
     }
 
     /**
@@ -424,7 +424,7 @@ public class UploadHelper {
         return upload(
                 new File(getUploadTemp(uploadTemp)
                         + File.separator  +  name),
-                Core.getUniqueId());
+                Core.newIdentity());
     }
 
     /**

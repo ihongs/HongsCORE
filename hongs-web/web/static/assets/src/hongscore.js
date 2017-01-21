@@ -1941,6 +1941,32 @@ $.propHooks.choosed = {
     }
 };
 
+// 字串长度
+String.prototype.baseSize = function() {
+    var len = 0;
+    for(var i = 0; i < this.length; i ++) {
+        var c = this.charCodeAt(i);
+        if (c > 128) {
+            len += 2;
+        } else {
+            len += 1;
+        }
+    }
+    return  len;
+};
+String.prototype.byteSize = function() {
+    var len = 0;
+    for(var i = 0; i < this.length; i ++) {
+        var c = this.charCodeAt(i);
+        if (c > 128) {
+            len += 3;
+        } else {
+            len += 1;
+        }
+    }
+    return  len;
+};
+
 //** Global Events **/
 
 $(document).ajaxError(function(evt, xhr, cnf) {

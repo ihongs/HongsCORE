@@ -68,7 +68,7 @@ public class Form extends Model {
             flds = Synt.declare(Data.toObject(conf), List.class);
             for (Map fld : flds) {
                 if ( "".equals(fld.get("__name__"))) {
-                    fld.put("__name__", Core.getUniqueId());
+                    fld.put("__name__", Core.newIdentity());
                 } else
                 if ("@".equals(fld.get("__name__"))) {
                     top = fld;

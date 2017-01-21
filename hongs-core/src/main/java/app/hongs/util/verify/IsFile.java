@@ -161,7 +161,7 @@ public class IsFile extends Rule {
             } else {
                 name = URLEncoder.encode(name, "UTF-8");
             }
-                name = Core.getUniqueId () + "!" + name; // 加上编号避免重名
+                name = Core.newIdentity () + "!" + name; // 加上编号避免重名
 
             // 检查目录避免写入失败
             File file = new File(temp + File.separator + name);

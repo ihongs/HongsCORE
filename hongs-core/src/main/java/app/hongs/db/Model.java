@@ -461,7 +461,7 @@ implements IEntity
       throw new HongsException (0x1091, "Add can not have a id");
     }
 
-    id = Core.getUniqueId();
+    id = Core.newIdentity();
     rd.put(this.table.primaryKey, id);
 
     // 存入主数据

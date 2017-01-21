@@ -39,7 +39,7 @@ public class Common {
     @Cmdlet("make-uid")
     public static void makeUID(String[] args) {
         String sid =  args.length > 0 ? args[0] : Core.SERVER_ID;
-        String uid =  Core.getUniqueId( sid );
+        String uid =  Core.newIdentity( sid );
         System.out.println(uid);
     }
 

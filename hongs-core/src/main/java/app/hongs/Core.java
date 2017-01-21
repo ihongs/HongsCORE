@@ -30,7 +30,7 @@ import java.lang.reflect.InvocationTargetException;
  * CORE_PATH        应用目录路径(WEB应用中为WEB-INF目录)
  * CONF_PATH        配置文件存放目录
  * DATA_PATH        数据文件存放目录
- * SERVER_ID        服务器ID(会附在 Core.getUniqueId() 的左侧)
+ * SERVER_ID        服务器ID(会附在 Core.getUniqueId() 的内部)
  * 注: 以上属性需要在 Servlet/Filter/Cmdlet 等初始化时进行设置.
  * </pre>
  *
@@ -439,71 +439,16 @@ public final class Core
   }
 
   /**
-   * 获取当前时区
-   * @return
-   */
-  public static TimeZone getTimezone()
-  {
-    Core     core = Core.getInstance();
-    String   name = TimeZone.class.getName();
-    TimeZone inst = (TimeZone)core.got(name);
-    if (null != inst) {
-        return  inst;
-    }
-
-    inst = TimeZone.getTimeZone(Core.ACTION_ZONE.get());
-
-    core.put(name, inst);
-    return inst;
-  }
-
-  /**
-   * 获取语言地区
-   * @return
-   */
-  public static  Locale  getLocality()
-  {
-    Core     core = Core.getInstance();
-    String   name = Locale.class.getName();
-    Locale   inst = (Locale)core.got(name);
-    if (null != inst) {
-        return  inst;
-    }
-
-    String[] lang = Core.ACTION_LANG.get().split("_",2);
-    if (2 <= lang.length) {
-        inst = new Locale(lang[0],lang[1]);
-    } else {
-        inst = new Locale(lang[0]);
-    }
-
-    core.put(name, inst);
-    return inst;
-  }
-
-  /**
-   * 获取唯一ID
-   *
-   * 采用当前服务器ID(Core.SERVER_ID)
-   *
-   * @return 唯一ID
-   */
-  public static String getUniqueId()
-  {
-    return Core.getUniqueId(Core.SERVER_ID);
-  }
-
-  /**
-   * 获取唯一ID
+   * 新建唯一标识
    *
    * 36进制的12位字串(不包括服务器ID),
    * 至少支持到"2059/01/01 00:00:00".
    * 取值范围: 0~9A~Z
    *
    * @param svid 服务器ID
-   * @return 唯一ID
+   * @return 唯一标识
    */
-  public static String getUniqueId(String svid)
+  public static String newIdentity(String svid)
   {
     long n;
 
@@ -524,6 +469,61 @@ public final class Core
         .append(time).append(trid)
         .append(rand).append(svid)
         .toString( ).replace(' ', '0');
+  }
+
+  /**
+   * 新建唯一标识
+   *
+   * 采用当前服务器ID(Core.SERVER_ID)
+   *
+   * @return 唯一标识
+   */
+  public static String newIdentity()
+  {
+    return Core.newIdentity(Core.SERVER_ID);
+  }
+
+  /**
+   * 获取语言地区
+   * @return
+   */
+  public static Locale getLocality()
+  {
+    Core     core = Core.getInstance();
+    String   name = Locale.class.getName();
+    Locale   inst = (Locale)core.got(name);
+    if (null != inst) {
+        return  inst;
+    }
+
+    String[] lang = Core.ACTION_LANG.get().split("_",2);
+    if (2 <= lang.length) {
+        inst = new Locale(lang[0],lang[1]);
+    } else {
+        inst = new Locale(lang[0]);
+    }
+
+    core.put(name, inst);
+    return inst;
+  }
+
+  /**
+   * 获取当前时区
+   * @return
+   */
+  public static TimeZone getTimezone()
+  {
+    Core     core = Core.getInstance();
+    String   name = TimeZone.class.getName();
+    TimeZone inst = (TimeZone)core.got(name);
+    if (null != inst) {
+        return  inst;
+    }
+
+    inst = TimeZone.getTimeZone(Core.ACTION_ZONE.get());
+
+    core.put(name, inst);
+    return inst;
   }
 
   //** 核心接口 **/

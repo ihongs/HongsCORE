@@ -26,9 +26,9 @@ public class NuidTag extends SimpleTagSupport {
 
     String uid;
     if (this.sid != null) {
-      uid = Core.getUniqueId(this.sid);
+      uid = Core.newIdentity(this.sid);
     } else {
-      uid = Core.getUniqueId();
+      uid = Core.newIdentity();
     }
 
     try {

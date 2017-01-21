@@ -368,7 +368,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         if (id != null && id.length() != 0) {
             throw new HongsException.Common("Id can not set in add");
         }
-        id = Core.getUniqueId();
+        id = Core.newIdentity();
         rd.put(Cnst.ID_KEY, id);
         addDoc(map2Doc(rd));
         return id;
@@ -626,7 +626,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         try {
             // 索引目录不存在则先写入一个并删除
             if (! (new File(dbpath)).exists() ) {
-                String id = Core.getUniqueId( );
+                String id = Core.newIdentity( );
                 Map rd = new HashMap( );
                 rd.put(Cnst.ID_KEY, id);
                 addDoc(map2Doc(rd));

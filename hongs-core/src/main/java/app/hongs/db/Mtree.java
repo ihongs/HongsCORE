@@ -87,9 +87,8 @@ public class Mtree extends Model
    * 构造方法
    *
    * 需指定该模型对应的表对象.
-   * 如传递的newPid,bid参数名不同,
-   * 或newPid,name等字段名不同,
-   * 或rootId不同,
+   * 如传递的 bid,pid 等参数名不同,
+   * 或 name,root,pid 等字段名不同,
    * 可在构造时分别指定;
    * 请指定被搜索的字段.
    *

@@ -24,27 +24,39 @@ import java.util.regex.Pattern;
  */
 public class Mview extends Model {
 
-    private Map<String, Map<String, String>> fields = null;
-    private Map<String, Mview> views = null;
     private Model       model = null;
     private String      title = null;
     private String      txkey = null;
     private CoreConfig  conf  = null;
     private CoreLocale  lang  = null;
+    private Map<String, Map<String, String>> fields = null;
 
+    /**
+     * 构造方法
+     *
+     * 同 Model(Table)
+     *
+     * @param table
+     * @throws HongsException
+     */
     public Mview(Table table) throws HongsException {
         super(table);
     }
 
+    /**
+     * 构造方法
+     *
+     * 注意:
+     * 如果 model 中覆盖了 add,put,del和filter 等
+     * 调用 Mview 中相同方法并不会使用此 model 的
+     * 但会在调用 getFields 后设置 model.xxxxable
+     *
+     * @param model
+     * @throws HongsException
+     */
     public Mview(Model model) throws HongsException {
         this(model.table);
         this.model=model ;
-    }
-
-    protected Mview(Model model, Map views) throws HongsException {
-        this(model.table);
-        this.model=model ;
-        this.views=views ;
     }
 
     public final CoreConfig getConf() {
@@ -89,7 +101,7 @@ public class Mview extends Model {
     /**
      * 获取主键字段名
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public String getIdKey()
     throws HongsException {
@@ -99,7 +111,7 @@ public class Mview extends Model {
     /**
      * 获取名称字段名
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public String getTxKey()
     throws HongsException {
@@ -134,7 +146,7 @@ public class Mview extends Model {
     /**
      * 获取表单模型名称
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public String getTitle()
     throws HongsException {
@@ -181,10 +193,10 @@ public class Mview extends Model {
     }
 
     /**
-     * 后去表单配置参数
+     * 获取表单配置参数
      * 注意非表配置参数
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public Map<String, String> getParams()
     throws HongsException {
@@ -199,7 +211,7 @@ public class Mview extends Model {
      * 获取全部字段配置
      * 混合了表和表单的
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public Map<String, Map<String, String>> getFields()
     throws HongsException {
@@ -423,9 +435,7 @@ public class Mview extends Model {
             return;
         }
 
-        Map<String, Mview> viewz = new LinkedHashMap();
-        if (views != null) viewz.putAll ( views );
-        viewz.put(table.db.name+":"+table.name , this);
+        getInstance(this); // 确保当前对象在模型对象库中
 
         Iterator it = table.assocs.entrySet().iterator();
         while (  it.hasNext( )  ) {
@@ -442,10 +452,7 @@ public class Mview extends Model {
                 tn   = tn != null ? tn : ak;
 
                 Model  hm = db.getModel(tn);
-                tk   = hm.db.name+":"+hm.table.name ;
-                Mview  hb = viewz.containsKey(tk)
-                          ? viewz.get(tk)
-                          : new Mview(hm , viewz);
+                Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
                 disp = hb.getTitle();
@@ -458,10 +465,7 @@ public class Mview extends Model {
                 tn   = tn != null ? tn : ak;
 
                 Model  hm = db.getModel(tn);
-                tk   = hm.db.name+":"+hm.table.name ;
-                Mview  hb = viewz.containsKey(tk)
-                          ? viewz.get(tk)
-                          : new Mview(hm , viewz);
+                Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
                 disp = hb.getTitle();
@@ -474,10 +478,7 @@ public class Mview extends Model {
                 tn   = tn != null ? tn : ak;
 
                 Model  hm = db.getModel(tn);
-                tk   = hm.db.name+":"+hm.table.name ;
-                Mview  hb = viewz.containsKey(tk)
-                          ? viewz.get(tk)
-                          : new Mview(hm , viewz);
+                Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
                 disp = hb.getTitle();
@@ -497,10 +498,7 @@ public class Mview extends Model {
                 tn   = tn != null ? tn : ek;
 
                 Model  hm = db.getModel(tn);
-                tk   = hm.db.name+":"+hm.table.name ;
-                Mview  hb = viewz.containsKey(tk)
-                          ? viewz.get(tk)
-                          : new Mview(hm , viewz);
+                Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
                 disp = hb.getTitle();
@@ -523,6 +521,47 @@ public class Mview extends Model {
                 field.put("data-tk", tk);
             }
         }
+    }
+
+    /**
+     * 此方法用于获取和构建视图模型唯一对象
+     * 将会在获取关联字段的额外属性时被使用
+     *
+     * @param model
+     * @return
+     * @throws HongsException
+     */
+    public static Mview getInstance(Model model) throws HongsException {
+        Map    core  = model.db.modelObjects;
+        String name  = model.table.name;
+        Object minst = core.get( name );
+        Mview  mview ;
+
+        if (minst != null && minst instanceof Mview) {
+            return ( Mview ) minst ;
+        }
+
+        name  = name +":Mview";
+        minst = core.get(name);
+
+        if (minst != null && minst instanceof Mview) {
+            return ( Mview ) minst ;
+        }
+
+        /**
+         * 不在开始检查 model 的类型,
+         * 是为了总是将 mview 放入到模型库中管理,
+         * 可以避免当前 model 关联的模型再关联回来时重复构造.
+         */
+        if (model instanceof Mview) {
+            mview  = ( Mview ) model ;
+            core.put (name , minst);
+        } else {
+            mview  = new Mview(model);
+            core.put (name , minst);
+        }
+
+        return mview;
     }
 
 }

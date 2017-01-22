@@ -1,6 +1,5 @@
 package app.hongs.db;
 
-import app.hongs.db.util.FetchCase;
 import app.hongs.Cnst;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
@@ -12,6 +11,7 @@ import app.hongs.action.anno.CommitSuccess;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
 import app.hongs.action.anno.Verify;
+import app.hongs.db.util.FetchCase;
 import app.hongs.dh.IActing;
 import app.hongs.dh.IAction;
 import app.hongs.util.Dict;

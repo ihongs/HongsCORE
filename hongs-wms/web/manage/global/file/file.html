@@ -1,16 +1,39 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
-</html>
+<div id="global-file-list"
+     class="global-file-list"
+     data-module="hsList"
+     data-load-url="manage/file/retrieve.act?path=${path}&type=file&ob=name"
+     data-send-urls-0="['.delete','manage/file/delete.act','您确定要删除此文件?']">
+    <div>
+        <div class="toolbox btn-group">
+            <button type="button" class="create btn btn-default">新建文件</button>
+            <button type="button" class="modify for-choose btn btn-default">修改</button>
+            <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+        </div>
+    </div>
+    <div class="listbox table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th data-fn="path[]" data-ft="_check" class="_check">
+                        <input type="checkbox" class="checkall" name="path[]"/>
+                    </th>
+                    <th data-fn="name" class="sortable">文件名</th>
+                    <th data-fn="size" class="sortable">大小</th>
+                    <th data-fn="type" class="sortable">类型</th>
+                    <th data-fn="mtime" data-ft="_htime" class="_htime sortable">修改时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="pagebox"></div>
+</div>
+<style type="text/css">
+    #global-file-list .pagination {display: none;}
+</style>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#global-file-list");
+
+    })(jQuery);
+</script>

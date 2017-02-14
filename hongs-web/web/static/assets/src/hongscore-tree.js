@@ -443,7 +443,7 @@ HsTree.prototype = {
     select   : function(id) {
         var nod = this.getNode(id);
             id  = this.getId (nod);
-        nod.children("table").trigger("select", [ id, this ] );
+        nod.children("table").trigger("select", [id, this]);
 
         this.treeBox.find(".tree-curr")
             .removeClass ( "tree-curr");
@@ -452,7 +452,7 @@ HsTree.prototype = {
     toggle   : function(id) {
         var nod = this.getNode(id);
             id  = this.getId (nod);
-        nod.children("table").trigger("toggle", [ id, this ] );
+        nod.children("table").trigger("toggle", [id, this]);
 
         var lst = nod.children(".tree-list");
             lst.toggle();

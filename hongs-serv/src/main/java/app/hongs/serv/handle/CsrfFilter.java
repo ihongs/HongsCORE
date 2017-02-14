@@ -1,5 +1,6 @@
 package app.hongs.serv.handle;
 
+import app.hongs.Core;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -26,13 +27,13 @@ public class CsrfFilter implements Filter {
         HttpServletRequest  req = (HttpServletRequest ) rxq;
         HttpServletResponse rsp = (HttpServletResponse) rxp;
         String ref  = req.getHeader("Referer");
-        String sche = req.getScheme( );
-        String host = req.getServerName( );
-        long   port = req.getServerPort( );
-        if (port != 80) host += ":" + port;
-        System.out.println(ref);
-        System.out.println(sche + "://" + host+"/");
-        if (null == ref || !ref.startsWith(sche + "://" + host+"/")) {
+        String sche = req.getScheme( ) + "://";
+        String host = req.getServerName();
+        long   port = req.getServerPort();
+        if (port != 80 && port != 443) {
+            host += ":" + port;
+        }
+        if (null == ref || !ref.startsWith(sche + host + Core.BASE_HREF + "/")) {
             rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
             rsp.getWriter().print("CSRF Access Forbidden!");
             return;
@@ -44,5 +45,5 @@ public class CsrfFilter implements Filter {
     public void destroy() {
         // Nothing todo.
     }
-    
+
 }

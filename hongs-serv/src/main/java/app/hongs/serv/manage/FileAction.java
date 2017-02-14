@@ -14,13 +14,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import java.util.TreeSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * 文件管理
@@ -39,26 +38,39 @@ public class FileAction implements IAction {
         File   file;
 
         // 根目录
-        if ("".equals(path)) {
-            helper.reply(Synt.asMap(
-                "list", Synt.asList(
-                    Synt.asMap(
-                        "path", "/CONF",
-                        "name", "配置",
-                        "size", "1"
+        if ("".equals(path) || "/".equals(path)) {
+            if ("file".equals(type)) {
+                helper.reply(Synt.asMap (
+                    "page" , Synt.asMap (
+                        "ern", 1
                     ),
-                    Synt.asMap(
-                        "path", "/DATA",
-                        "name", "数据",
-                        "size", "1"
-                    ),
-                    Synt.asMap(
-                        "path", "/BASE",
-                        "name", "网站",
-                        "size", "1"
+                    "list" , Synt.asList(
                     )
-                )
-            ));
+                ));
+            } else {
+                helper.reply(Synt.asMap (
+                    "page" , Synt.asMap (
+                        "ern", 0
+                    ),
+                    "list" , Synt.asList(
+                        Synt.asMap(
+                            "path", "/BASE/",
+                            "name", "网站",
+                            "size", "1"
+                        ),
+                        Synt.asMap(
+                            "path", "/CONF/",
+                            "name", "配置",
+                            "size", "1"
+                        ),
+                        Synt.asMap(
+                            "path", "/DATA/",
+                            "name", "数据",
+                            "size", "1"
+                        )
+                    )
+                ));
+            }
             return;
         }
 
@@ -86,16 +98,81 @@ public class FileAction implements IAction {
         }
 
         if ( file.isDirectory()) {
-            File[] files = sortByName(file.listFiles());
-            List<Map> filez = new ArrayList();
+            File[ ]  files = file.listFiles();
+            Set<Map> filez;
+
+            // 排序规则, 默认按名称排序
+            final boolean ds;
+            String ob = helper.getParameter("ob");
+            if (ob != null && ob.startsWith("-")) {
+                ob  = ob.substring(1);
+                ds  = true  ;
+            } else {
+                ds  = false ;
+            }
+            if ("size".equals(ob)) {
+                filez = new TreeSet(new Comparator<Map>() {
+                    @Override
+                    public int compare(Map f1, Map f2) {
+                        long s1 = Synt.declare(f1.get("size") , 0L);
+                        long s2 = Synt.declare(f2.get("size") , 0L);
+                        if (s1 != s2)
+                        if (ds)
+                            return s1 < s2 ? 1 : -1;
+                        else
+                            return s1 > s2 ? 1 : -1;
+
+                        String n1 = (String) f1.get("name");
+                        String n2 = (String) f2.get("name");
+                        if (ds)
+                            return n2.compareTo(n1);
+                        else
+                            return n1.compareTo(n2);
+                    };
+                });
+            } else
+            if ("type".equals(ob)) {
+                filez = new TreeSet(new Comparator<Map>() {
+                    @Override
+                    public int compare(Map f1, Map f2) {
+                        String t1 = (String) f1.get("type");
+                        String t2 = (String) f2.get("type");
+                        if ( ! t1.equals(t2))
+                        if (ds)
+                            return t2.compareTo(t1);
+                        else
+                            return t1.compareTo(t2);
+
+                        String n1 = (String) f1.get("name");
+                        String n2 = (String) f2.get("name");
+                        if (ds)
+                            return n2.compareTo(n1);
+                        else
+                            return n1.compareTo(n2);
+                    };
+                });
+            } else {
+                filez = new TreeSet(new Comparator<Map>() {
+                    @Override
+                    public int compare(Map f1, Map f2) {
+                        String n1 = (String) f1.get("name");
+                        String n2 = (String) f2.get("name");
+                        if (ds)
+                            return n2.compareTo(n1);
+                        else
+                            return n1.compareTo(n2);
+                    };
+                });
+            }
+
             for (File item  : files) {
                 if (t == 1) {
-                    if (!item.isDirectory()) {
+                    if ( ! item.isDirectory()) {
                         continue;
                     }
                 } else
                 if (t == 2) {
-                    if (!item.isFile()) {
+                    if ( ! item.isFile()) {
                         continue;
                     }
                 }
@@ -103,11 +180,16 @@ public class FileAction implements IAction {
                 xxxx.put("path" , pxth + "/" + item.getName());
                 xxxx.put("name" , item.getName());
                 xxxx.put("size" , item.isDirectory() ? item.list().length : item.length());
-                xxxx.put("ftype", item.isDirectory() ? 0 : ( isTextFile( item ) ? 1 : 2 ));
+                xxxx.put("type" , item.isDirectory() ? "dir" : (isTextFile(item) ? "txt" : "bin"));
                 xxxx.put("mtime", item.lastModified());
+                filez.add(xxxx );
             }
+
             Map rsp = new HashMap();
             rsp.put("list", filez );
+            rsp.put("page", Synt.asMap(
+                "ern", filez.size() > 0 ? 0 : 1
+            ));
             helper.reply(rsp);
         } else
         if (isTextFile(file)) {
@@ -229,6 +311,10 @@ public class FileAction implements IAction {
             helper.fault(lang.translate("core.serv.manage.file.path.is.not.exists"));
             return;
         }
+        if (file.isDirectory() && file.list().length > 0) {
+            helper.fault(lang.translate("core.serv.manage.file.path.is.not.blanks"));
+            return;
+        }
 
         if (!file.delete()) {
             helper.fault(lang.translate("core.serv.manage.file.delete.failed"));
@@ -245,19 +331,45 @@ public class FileAction implements IAction {
             return  null;
         }
         if (path.startsWith("/BASE/")) {
-            return  Core.BASE_PATH+"/"+path.substring(6);
+            path =  Core.BASE_PATH+"/"+path.substring(6);
         } else
         if (path.startsWith("/CONF/")) {
-            return  Core.CONF_PATH+"/"+path.substring(6);
+            path =  Core.CONF_PATH+"/"+path.substring(6);
         } else
         if (path.startsWith("/DATA/")) {
-            return  Core.DATA_PATH+"/"+path.substring(6);
+            path =  Core.DATA_PATH+"/"+path.substring(6);
         } else {
             return  null;
         }
+        if (path.endsWith("/")) {
+            path = path.substring(0 , path.length() - 1);
+        }
+        return path;
     }
 
     private File[] sortByName(File[] files) {
+        TreeSet<File> ts = new TreeSet(new Comparator<File>() {
+            @Override
+            public int compare(File f1, File f2) {
+                return f1.getName().compareTo(f2.getName());
+            }
+        });
+        ts.addAll(Arrays.asList(files));
+        return ts.toArray(new File[]{});
+    }
+
+    private File[] sortBySize(File[] files) {
+        TreeSet<File> ts = new TreeSet(new Comparator<File>() {
+            @Override
+            public int compare(File f1, File f2) {
+                return f1.getName().compareTo(f2.getName());
+            }
+        });
+        ts.addAll(Arrays.asList(files));
+        return ts.toArray(new File[]{});
+    }
+
+    private File[] sortByTime(File[] files) {
         TreeSet<File> ts = new TreeSet(new Comparator<File>() {
             @Override
             public int compare(File f1, File f2) {

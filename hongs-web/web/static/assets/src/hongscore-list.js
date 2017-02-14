@@ -216,7 +216,7 @@ HsList.prototype = {
             if ( rst.list && rst.list.length) {
                 this.fillPage({uncertain: 1});
             } else {
-                this.fillPage({err: 1});
+                this.fillPage({ern: 1});
             }
         }
 

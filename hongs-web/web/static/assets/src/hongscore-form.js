@@ -526,10 +526,16 @@ HsForm.prototype = {
     valiInit : function() {
         var that = this;
         this.formBox.attr("novalidate", "novalidate");
-        this.formBox.on( "reset", function() {
+        this.formBox.on("reset" , function(evt) {
+            if (evt.isDefaultPrevented()) {
+                return;
+            }
             return that.verified( );
         });
-        this.formBox.on("submit", function() {
+        this.formBox.on("submit", function(evt) {
+            if (evt.isDefaultPrevented()) {
+                return;
+            }
             return that.verifies( );
         });
         this.formBox.on("change","input,select,textarea,[data-fn]",

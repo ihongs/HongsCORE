@@ -25,10 +25,10 @@ public class Thumb {
     String pre = null;
     String ext = null;
 
-    // 扩展名:宽*高... 扩展名可以为空串
+    // 扩展名:宽*高, 扩展名可以为空串
     private static final Pattern PAT = Pattern.compile("([\\w_]*):(\\d+)\\*(\\d+)");
-    // keep:(R,G,B,A), 取值0~255, A可选
-    private static final Pattern PXT = Pattern.compile(";keep\\((\\d+,\\d+,\\d+(,\\d+)?)\\)", Pattern.CASE_INSENSITIVE);
+    // keep:R,G,B,A, 取值0~255, A可选
+    private static final Pattern PXT = Pattern.compile( ";keep:(\\d+(,\\d+){2,3})");
 
     /**
      * 设置原始图片文件
@@ -50,7 +50,7 @@ public class Thumb {
 
     /**
      * 设置规定输出格式
-     * 支持 png,jpg,gif 等
+     * 支持 png,jpg,gif 等, 无需带'.'
      * @param ext
      */
     public void setExtn(String ext) {
@@ -58,11 +58,23 @@ public class Thumb {
     }
 
     /**
+     * 设置目标路径前缀
+     * 存到 pre+suf+"."+ext 的路径, 必须在 setFile,setPath 后执行
+     * @param pre
+     */
+    public void setPren(String pre) {
+        this.pre = pre;
+    }
+
+    /**
      * 检查路径和扩展名
      */
     protected final void chkPathAndExtn() {
-        if (pre == null) {
+        if (src == null) {
             throw new NullPointerException("Must setFile or setPath");
+        }
+        if (pre == null) {
+            throw new NullPointerException("Must setPren");
         }
         if (ext == null) {
             throw new NullPointerException("Must setExtn");
@@ -271,16 +283,19 @@ public class Thumb {
         List<String> pts = new ArrayList();
         List<String> urs = new ArrayList();
         Thumb        thb = new Thumb();
-        Matcher      mat , mxt;
-        String       suf;
+        Matcher      mat , mxt ;
+        String       pre , suf ;
+        File         tmp = null;
         int          w,h;
 
-        url = url.replaceFirst( "\\.\\w+$", "" );
+        pth = new File(pth).getAbsolutePath( );
+        pre = pth.replaceFirst("\\.\\w+$", "");
+        url = url.replaceFirst("\\.\\w+$", "");
 
         thb.setExtn(ext);
         thb.setPath(pth);
 
-        // 原始图
+        // 截取图
         mat = PAT.matcher(rat);
         if  ( mat.find() ) {
             suf = mat.group(1);
@@ -297,24 +312,29 @@ public class Thumb {
                       : Integer.parseInt( x[3] );
                 pth = thb.keep(suf, w, h, new Color(r, g, b, a));
             } else
-            if (rat.endsWith(";keep")) {
+            if (rat.contains(";keep")) {
                 // 默认黑色或者透明
                 pth = thb.keep(suf, w, h, new Color(0, 0, 0, 0));
             } else {
                 pth = thb.pick(suf, w, h);
             }
-                pts.add(pth);
-                urs.add(url + suf + "." + ext);
+            if (rat.contains(";temp")) {
+                tmp = new File(pth);
+            } else {
+                pts.add( pth );
+                urs.add( url + suf + "." + ext );
+            }
         } else {
                 pth = thb.conv(rat);
             if (  !  "".equals(rat)) {
-                pts.add(pth);
-                urs.add(url + rat + "." + ext);
+                pts.add( pth );
+                urs.add( url + rat + "." + ext );
             }
         }
 
         // 以上面截取的图为蓝本进行缩放
         thb.setPath(pth);
+        thb.setPren(pre);
 
         // 缩放图
         mat = PAT.matcher(map);
@@ -323,14 +343,19 @@ public class Thumb {
             w   = Integer.parseInt(mat.group(2));
             h   = Integer.parseInt(mat.group(3));
             pth = thb.zoom(suf, w, h );
-            pts.add(pth);
-            urs.add(url + suf + "." + ext);
+            pts.add( pth );
+            urs.add( url + suf + "." + ext );
         }
 
         // 没截取或缩放则用指定格式路径
         if (pts.isEmpty()) {
-            pts.add(pth);
-            urs.add(url + rat + "." + ext);
+            pts.add( pre + "." + ext );
+            urs.add( url + "." + ext );
+        }
+
+        // 删除为缩放准备的临时截取文件
+        if (tmp != null) {
+            tmp.delete();
         }
 
         return new String[][] {

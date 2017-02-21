@@ -23,6 +23,7 @@ import javax.servlet.http.Part;
  *  pass-remote yes|no 是否跳过远程链接("http://"等开头)
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 此参数在本类中没有用上, 其他文件转换中可能用到
+ *  keep-origin yes|no 保留原始路径, 此参数在本类中没有用上, 其他文件转换中可能用到
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $BASE_HREF, $BASE_LINK 等, 后者带域名前缀

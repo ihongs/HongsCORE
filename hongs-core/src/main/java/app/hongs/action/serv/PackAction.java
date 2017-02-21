@@ -10,10 +10,12 @@ import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,12 +34,11 @@ import javax.servlet.http.HttpServletResponse;
 @Action("common/pack")
 public class PackAction {
 
-    private static final Pattern ACT_PAT = Pattern.compile("#.*?$");
     private static final Pattern EXT_PAT = Pattern.compile("\\.(act|api)(#.*?)?$");
 
     @Action("__main__")
     public void pack(ActionHelper helper) {
-        Map<String, Object> ret = new HashMap();
+        Map<String, Object> ret = new LinkedHashMap( );
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
         Enumeration<String> enu = req.getParameterNames();
@@ -46,14 +47,15 @@ public class PackAction {
         Map                 rap ;
         String              uri ;
         String              urx ;
+        Matcher             mat ;
 
-        while (enu.hasMoreElements()) {
-            uri = enu.nextElement( );
-
-            if (! EXT_PAT.matcher(uri).matches()) {
+        while (enu.hasMoreElements( )) {
+            uri = enu.nextElement(   );
+            mat = EXT_PAT.matcher(uri);
+            if (! mat.find()) {
                 continue;
             }
-            urx = ACT_PAT.matcher(uri).replaceFirst("");
+            urx = uri.substring(0,mat.end(1));
 
             // 解析请求参数
             raq = data(req.getParameter(uri));

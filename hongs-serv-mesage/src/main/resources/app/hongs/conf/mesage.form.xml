@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <form name="connect">
+        <field name="rid" rule="MesageRoomID" required=""></field><!-- 目标编号 -->
+        <field name="uid" required="yes"></field><!-- 用户编号 -->
+        <field name="gid" required="yes"></field><!-- 终端标识 -->
+    </form>
+    <form name="message">
+        <field name="id"  type="string"></field>
+        <field name="rid" rule="Intact"></field>
+        <field name="uid" rule="Intact"></field>
+        <field name="gid" rule="Intact"></field>
+        <field name="time" type="date">
+            <param name="default">=%now</param>
+            <param name="default-always">yes</param>
+            <param name="type">time</param>
+        </field><!-- 发送时间 -->
+        <field name="type" type="enum"></field><!-- 目标类型, user,group,crowd -->
+        <field name="kind" type="enum"></field><!-- 消息类型, text,link,file,image,video,voice,note,data -->
+        <field name="body" type="text"><!-- 消息内容 -->
+            <param name="maxlength">1024</param>
+        </field>
+        <field name="extr" type="text"><!-- 附加标识, 用于端到端附加数据 -->
+            <param name="maxlength">255</param>
+        </field>
+    </form>
+    <enum name="type">
+        <value code="user">私聊</value>
+        <value code="group">群聊</value>
+    </enum>
+    <enum name="kind">
+        <value code="text">文本</value>
+        <value code="link">链接</value>
+        <value code="file">文件</value>
+        <value code="image">图片</value>
+        <value code="video">视频</value>
+        <value code="voice">音频</value>
+        <value code="note">通知</value>
+        <value code="data">数据</value>
+    </enum>
+    <form name="file">
+        <field name="file" type="file">
+            <param name="href">mesage/file/other</param>
+            <param name="path">mesage/file/other</param>
+        </field>
+    </form>
+    <form name="file_image">
+        <field name="file" type="file" rule="Thumb">
+            <param name="href">mesage/file/image</param>
+            <param name="path">mesage/file/image</param>
+            <param name="thumb-extn">png</param>
+            <param name="thumb-zoom">_bg:128*128,_sm:64*64</param>
+        </field>
+    </form>
+</root>

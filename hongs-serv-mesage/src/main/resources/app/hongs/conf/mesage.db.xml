@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<db xmlns="http://hongs-core"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://hongs-core db.xsd">
+    <config link="manage"/>
+    <tables>
+        <table name="room"
+               tableName="a_mesage_room"
+               primaryKey="id">
+            <assoc type="HAS_MANY"
+                   name="users"
+                   tableName="room_mate"
+                   foreignKey="room_id">
+            </assoc>
+        </table>
+        <table name="note"
+               tableName="a_mesage_note"
+               primaryKey="id">
+            <assoc name="room"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="room"
+                   foreignKey="room_id">
+            </assoc>
+            <assoc name="user"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="user"
+                   foreignKey="user_id">
+            </assoc>
+        </table>
+        <table name="room_mate"
+               tableName="a_mesage_room_mate">
+            <assoc name="room"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="room"
+                   foreignKey="room_id">
+            </assoc>
+            <assoc name="user"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="user"
+                   foreignKey="user_id">
+            </assoc>
+        </table>
+        <table name="user_mate"
+               tableName="a_mesage_user_mate">
+            <assoc name="mate"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="user"
+                   foreignKey="mate_id">
+            </assoc>
+            <assoc name="user"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="user"
+                   foreignKey="user_id">
+            </assoc>
+        </table>
+        <table name="user_term"
+               tableName="a_mesage_user_term">
+            <assoc name="user"
+                   type="BLS_TO"
+                   join="INNER"
+                   tableName="user"
+                   foreignKey="user_id">
+            </assoc>
+        </table>
+        <table name="note_stat"
+               tableName="a_mesage_note_stat">
+        </table>
+        <!-- 其他表 -->
+        <table name="user"
+               tableName="a_member_user"
+               primaryKey="id">
+        </table>
+    </tables>
+</db>

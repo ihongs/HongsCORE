@@ -4,7 +4,7 @@ import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
-import app.hongs.serv.auth.AuthKit;
+import app.hongs.serv.member.auth.AuthKit;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import java.util.HashMap;

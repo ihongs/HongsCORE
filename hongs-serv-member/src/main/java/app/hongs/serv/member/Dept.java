@@ -5,7 +5,7 @@ import app.hongs.db.DB;
 import app.hongs.db.Mtree;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.Table;
-import app.hongs.serv.auth.AuthKit;
+import app.hongs.serv.member.auth.AuthKit;
 import app.hongs.util.Synt;
 import java.util.HashSet;
 import java.util.List;

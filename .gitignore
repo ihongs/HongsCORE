@@ -6,6 +6,7 @@
 **/WEB-INF/lib
 **/WEB-INF/var
 
+desktop.ini
 .DS_Store
 .project
 .idea

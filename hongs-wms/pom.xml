@@ -32,11 +32,6 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-serv-socket</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-system</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -48,11 +43,6 @@
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-member</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>hongs-serv-mesage</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

@@ -1,5 +1,5 @@
 
-/* global self */
+/* global self, FormData */
 
 /**
  * 表单组件
@@ -252,21 +252,22 @@ HsForm.prototype = {
 
     saveInit : function(act) {
         var url  = this.formBox.attr("action" ) || act;
-        var type = this.formBox.attr("method" );
-        var enc  = this.formBox.attr("enctype");
+        var type = this.formBox.attr("method" ) || "POST";
+        var enct = this.formBox.attr("enctype") || "application/x-www-form-urlencoded; charset=UTF-8";
+        var mult = /^multipart\/.*/i.test(enct);
         var data = this.formBox;
         var that = this;
 
-        data.attr("action", hsFixUri( url ));
+        data.attr("action", hsFixUri( url ) );
 
-        if ( enc === "multipart/form-data" ) {
-            if (data.attr("target") == null) {
+        if ( mult && FormData === undefined ) {
+            if (  ! data.attr(  "target"  ) ) {
                 var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
                 var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
                 var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
                 data.append('<input type="hidden" name=".ajax" value="1"/>'); // 显式告知遵循 AJAX 方式
                 data.attr("target", name).before(frame);
-                frame.on ("load", function() {
+                frame.on ("load", function( ) {
                     var doc = frame[0].contentDocument || frame[0].contentWindow.document;
                     if (doc.location.href == "about:blank") return;
                     var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, '' );
@@ -278,19 +279,21 @@ HsForm.prototype = {
                 if (evt.isDefaultPrevented()) {
                     return;
                 }
-                evt.preventDefault( );
+                evt.preventDefault();
                 jQuery.hsAjax({
-                    "url"       : url,
-                    "data"      : hsSerialArr(data),
-                    "type"      : type || "POST",
-                    "dataType"  : "json",
-                    "funcName"  : "save",
-                    "async"     : false,
-                    "cache"     : false,
-                    "global"    : false,
-                    "context"   : that,
-                    "complete"  : that.saveBack,
-                    "error"     : function() { return false; }
+                    "url"         : url ,
+                    "type"        : type,
+                    "data"        : FormData === undefined || !mult ? data.serialize() : new FormData(data[0]),
+                    "contentType" : FormData === undefined || !mult ? enct : false,
+                    "processData" : FormData === undefined || !mult ? true : false,
+                    "dataType"    : "json",
+                    "funcName"    : "save",
+                    "async"       : false,
+                    "cache"       : false,
+                    "global"      : false,
+                    "context"     : that,
+                    "complete"    : that.saveBack,
+                    "error"       : function() { return false; }
                 });
             });
         }

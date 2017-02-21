@@ -8,18 +8,18 @@ import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 
-import java.io.Writer;
-import java.io.PrintWriter;
 import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -392,7 +392,7 @@ public class ActionHelper implements Cloneable
             }
 
             /**
-             * 存储文件
+             * 临时存储文件
              * 不再需要暂存
              * 可以直接利用 Part 继续向下传递
              */
@@ -408,11 +408,11 @@ public class ActionHelper implements Cloneable
                 FileOutputStream nout = new FileOutputStream(tenp);
             ) {
                 byte[] nts = subn.getBytes("UTF-8");
-		byte[] buf = new byte[1024];
+                byte[] buf = new byte[1024];
                 int    cnt ;
-		while((cnt = xmin.read(buf)) != -1) {
+                while((cnt = xmin.read(buf)) != -1) {
                     mout.write(buf, 0, cnt);
-		}
+                }
                 nout.write(nts);
             }
             Dict.setParam( rd , id , name );

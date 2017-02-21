@@ -1,4 +1,4 @@
-package app.hongs.serv.module.anno;
+package app.hongs.serv.module.maping;
 
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.VerifyInvoker;
@@ -8,7 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- *
+ * 字段映射
  * @author Hongs
  */
 @Target(ElementType.METHOD)

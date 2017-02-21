@@ -1,4 +1,4 @@
-package app.hongs.serv.module;
+package app.hongs.serv.module.maping;
 
 import app.hongs.Cnst;
 import app.hongs.util.Synt;
@@ -14,12 +14,12 @@ import java.util.Set;
  * 数据别名映射
  * @author Hongs
  */
-public class DataMaping {
+public class MapingHelper {
 
     Map maping;
     Map mapout;
 
-    public DataMaping(Map form) {
+    public MapingHelper(Map form) {
         maping = new HashMap();
         mapout = new HashMap();
         for(Object ot : form.entrySet()) {

@@ -325,7 +325,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new app.hongs.HongsException(0x1034, ex);
+      throw new HongsException(0x1034, ex);
     }
   }
 
@@ -344,7 +344,7 @@ abstract public class Link
     }
     catch (SQLException ex)
     {
-      throw new app.hongs.HongsException(0x1035, ex);
+      throw new HongsException(0x1035, ex);
     }
   }
 
@@ -395,7 +395,7 @@ abstract public class Link
       List      paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      app.hongs.CoreLogger.debug("DB.query: "+ sb.toString());
+      CoreLogger.debug("DB.query: "+ sb.toString());
     }
 
     PreparedStatement ps = this.prepareStatement(sql, params);
@@ -416,7 +416,7 @@ abstract public class Link
     }
     catch (SQLException ex )
     {
-      throw new app.hongs.HongsException(0x1043, ex);
+      throw new HongsException(0x1043, ex);
     }
 
     return new Loop(this, ps, rs);
@@ -430,7 +430,7 @@ abstract public class Link
    * @param limit
    * @param params
    * @return 全部数据
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public List fetch(String sql, int start, int limit, Object... params)
     throws HongsException
@@ -453,7 +453,7 @@ abstract public class Link
    * @param sql
    * @param params
    * @return 全部数据
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public List fetchAll(String sql, Object... params)
     throws HongsException
@@ -467,7 +467,7 @@ abstract public class Link
    * @param sql
    * @param params
    * @return 单条数据
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public Map  fetchOne(String sql, Object... params)
     throws HongsException
@@ -504,7 +504,7 @@ abstract public class Link
       List      paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      app.hongs.CoreLogger.debug("DB.execute: " + sb.toString());
+      CoreLogger.debug("DB.execute: " + sb.toString());
     }
 
     PreparedStatement ps = this.prepareStatement(sql, params);
@@ -515,7 +515,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new app.hongs.HongsException(0x104a, ex);
+      throw new HongsException(0x104a, ex);
     }
     finally
     {
@@ -542,7 +542,7 @@ abstract public class Link
       List      paramz = new ArrayList(Arrays.asList(params));
       checkSQLParams(sb, paramz);
       mergeSQLParams(sb, paramz);
-      app.hongs.CoreLogger.debug("DB.updates: " + sb.toString());
+      CoreLogger.debug("DB.updates: " + sb.toString());
     }
 
     PreparedStatement ps = this.prepareStatement(sql, params);
@@ -553,7 +553,7 @@ abstract public class Link
     }
     catch (  SQLException  ex )
     {
-      throw new app.hongs.HongsException(0x104e, ex);
+      throw new HongsException(0x104e, ex);
     }
     finally
     {
@@ -567,14 +567,14 @@ abstract public class Link
    * @param table
    * @param values
    * @return 插入条数
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public int insert(String table, Map<String, Object> values)
     throws HongsException
   {
     if (values == null || values.isEmpty())
     {
-      throw new app.hongs.HongsException(0x104b, "Insert value can not be empty.");
+      throw new HongsException(0x104b, "Insert value can not be empty.");
     }
 
     table = quoteField(table);
@@ -613,18 +613,18 @@ abstract public class Link
    * @param where
    * @param params
    * @return 更新条数
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public int update(String table, Map<String, Object> values, String where, Object... params)
     throws HongsException
   {
     if (values == null || values.isEmpty())
     {
-      throw new app.hongs.HongsException(0x104d, "Update value can not be empty.");
+      throw new HongsException(0x104d, "Update value can not be empty.");
     }
     if ( where == null ||  where.isEmpty())
     {
-      throw new app.hongs.HongsException(0x1052, "Update where can not be empty.");
+      throw new HongsException(0x1052, "Update where can not be empty.");
     }
 
     table = quoteField(table);
@@ -664,14 +664,14 @@ abstract public class Link
    * @param where
    * @param params
    * @return 删除条数
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public int delete(String table, String where, Object... params)
     throws HongsException
   {
     if ( where == null ||  where.isEmpty())
     {
-      throw new app.hongs.HongsException(0x1052, "Delete where can not be empty.");
+      throw new HongsException(0x1052, "Delete where can not be empty.");
     }
 
     table = quoteField(table);
@@ -711,7 +711,7 @@ abstract public class Link
    * 检查SQL数据项
    * @param sql
    * @param params
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public static void checkSQLParams(StringBuilder sql, List params)
     throws HongsException
@@ -800,7 +800,7 @@ abstract public class Link
    * 调用本方法前务必先调用内checkSQLParams
    * @param sql
    * @param params
-   * @throws app.hongs.HongsException
+   * @throws HongsException
    */
   public static void mergeSQLParams(StringBuilder sql, List params)
     throws HongsException

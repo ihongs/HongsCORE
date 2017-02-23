@@ -1,4 +1,4 @@
-package app.hongs.serv.member.auth;
+package app.hongs.serv.auth;
 
 import app.hongs.Core;
 import app.hongs.CoreSerial;

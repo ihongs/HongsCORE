@@ -3,12 +3,12 @@ package app.hongs.serv.record;
 import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -36,15 +36,8 @@ public class MRecord implements IRecord {
         long now = System.currentTimeMillis() / 1000;
 
         try {
-            PreparedStatement ps = table.db.prepareStatement(
-          "SELECT `data` FROM `" + table.tableName + "` WHERE id = ? AND (xtime > ? OR xtime == 0)"
-            );
-
-            ps.setString(1, key);
-            ps.setLong  (2, now);
-            ps.setFetchSize(1);
-            ps.setMaxRows  (1);
-            ResultSet rs = ps.executeQuery();
+            String sql = "SELECT `data` FROM `" + table.tableName + "` WHERE id = ? AND (xtime > ? OR xtime == 0)";
+            ResultSet rs = table.db.query(sql, 0, 1, key, now).getReusltSet();
             if (! rs.next()) {
                 return null;
             }
@@ -79,20 +72,22 @@ public class MRecord implements IRecord {
         del( key );
 
         try {
+            table.db.open( );
+            table.db.ready();
             PreparedStatement ps = table.db.prepareStatement(
                  "INSERT INTO `" + table.tableName + "` (id, data, xtime, ctime) VALUES (?, ?, ?, ?)"
             );
 
             // 序列化值
-            byte[] arr ;
+            byte[] arr;
             ByteArrayOutputStream bos = new ByteArrayOutputStream(   );
                ObjectOutputStream out = new    ObjectOutputStream(bos);
             out.writeObject ( val );
             arr = bos.toByteArray();
              ByteArrayInputStream bis = new  ByteArrayInputStream(arr);
 
-            ps.setString(1, key);
             ps.setBinaryStream(2, bis);
+            ps.setString(1, key);
             ps.setLong  (3, exp);
             ps.setLong  (4, now);
             ps.executeUpdate(  );
@@ -114,6 +109,8 @@ public class MRecord implements IRecord {
     @Override
     public void set(String key, long exp) throws HongsException {
         try {
+            table.db.open( );
+            table.db.ready();
             PreparedStatement ps = table.db.prepareStatement(
                  "UPDATE `" + table.tableName + "` SET xtime = ? WHERE id = ?"
             );

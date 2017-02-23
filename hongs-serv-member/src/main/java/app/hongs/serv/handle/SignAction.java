@@ -7,7 +7,7 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
-import app.hongs.serv.member.auth.AuthKit;
+import app.hongs.serv.auth.AuthKit;
 import app.hongs.serv.member.User;
 import app.hongs.util.Synt;
 import java.util.HashMap;

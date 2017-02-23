@@ -6,7 +6,7 @@
 
 DROP TABLE IF EXISTS `a_common_record`;
 CREATE TABLE `a_common_record` (
-    `id` CHAR(64) NOT NULL,
+    `id` VARCHAR(64) NOT NULL,
     `data` BLOB NOT NULL,
     `ctime` UNSIGNED INT(11) DEFAULT 0,
     `xtime` UNSIGNED INT(11) DEFAULT 0,

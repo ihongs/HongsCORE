@@ -21,6 +21,11 @@ import javax.servlet.http.HttpSession;
 @Action("manage/sign")
 public class SignAction {
 
+    /**
+     * 登录
+     * @param ah
+     * @throws HongsException 
+     */
     @Action("create")
     @Verify(conf="member",form="sign")
     public void signCreate(ActionHelper ah) throws HongsException {
@@ -72,11 +77,17 @@ public class SignAction {
         ah.reply(AuthKit.userSign(ah, place, appid, usrid, uname, uhead, utime));
     }
 
+    /**
+     * 登出
+     * 此动作可以清除会话数据
+     * @param ah
+     * @throws HongsException 
+     */
     @Action("delete")
     public void signDelete(ActionHelper ah) throws HongsException {
         HttpSession ss = ah.getRequest().getSession(false);
         if (null == ss) {
-            ah.reply( AuthKit.getWrong(null, "core.sign.out.invalid"));
+            ah.reply( AuthKit.getWrong(null, "core.sign.phase.invalid"));
             return;
         }
 
@@ -87,6 +98,23 @@ public class SignAction {
 
         // 清除会话
         ss.invalidate();
+        ah.reply ( "" );
+    }
+
+    /**
+     * 更新
+     * 此动作可维持会话不过期
+     * @param ah
+     * @throws HongsException 
+     */
+    @Action("update")
+    public void signUpdate(ActionHelper ah) throws HongsException {
+        HttpSession ss = ah.getRequest().getSession(false);
+        if (null == ss) {
+            ah.reply( AuthKit.getWrong(null, "core.sign.phase.invalid"));
+            return;
+        }
+
         ah.reply ( "" );
     }
 

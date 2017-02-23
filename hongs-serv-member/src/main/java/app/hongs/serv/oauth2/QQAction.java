@@ -1,5 +1,6 @@
 package app.hongs.serv.oauth2;
 
+import app.hongs.serv.member.auth.ConnKit;
 import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;

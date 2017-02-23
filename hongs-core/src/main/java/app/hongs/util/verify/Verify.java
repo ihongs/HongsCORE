@@ -288,6 +288,12 @@ public class Verify implements Veri {
         }
     }
 
+    public static interface Func {
+
+        public Object run(Object value, Rule rule);
+
+    }
+
     public class Rune extends Rule {
 
       private final Func func;
@@ -300,12 +306,6 @@ public class Verify implements Veri {
         public Object verify(Object value) throws Wrong, Wrongs, HongsException {
             return func.run (value, this );
         }
-
-    }
-
-    public static interface Func {
-
-        public Object run(Object value, Rule rule);
 
     }
 

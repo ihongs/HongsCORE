@@ -1,4 +1,4 @@
-package app.hongs.serv.oauth2;
+package app.hongs.serv.member.auth;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;

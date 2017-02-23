@@ -452,15 +452,16 @@ public final class Core
   {
     long n;
 
-    n = System.currentTimeMillis();
+    n = System.currentTimeMillis( );
     String time = String.format("%8s", Long.toString(n, 36));
 
     n = Thread.currentThread().getId();
     String trid = String.format("%4s", Long.toString(n, 36));
 
-    n = (long) ( Math.random() * 1679615 ); //36^4-1
+    n = (long) ( Math.random() * 1679615); //36^4-1
     String rand = String.format("%4s", Long.toString(n, 36));
 
+    // 确保位数不超限量
     if (time.length() > 8) time = time.substring(time.length() - 8);
     if (trid.length() > 4) trid = trid.substring(trid.length() - 4);
     if (rand.length() > 4) rand = rand.substring(rand.length() - 4);
@@ -468,7 +469,8 @@ public final class Core
     return new StringBuilder()
         .append(time).append(trid)
         .append(rand).append(svid)
-        .toString( ).replace(' ', '0');
+        .toString().toUpperCase( )
+        .replace ( ' ' , '0' );
   }
 
   /**

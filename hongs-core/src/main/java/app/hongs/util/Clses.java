@@ -31,46 +31,47 @@ public class Clses {
         String           ppath = pkgn.replace( "." , "/" );
         Enumeration<URL> links = pload.getResources(ppath);
         Set<String>      names = new  HashSet();
-        int              count = 0 ;
+//      boolean          gotit = false;
 
         while ( links.hasMoreElements(  )  ) {
             URL plink = links.nextElement( );
 
             String  proto = plink.getProtocol();
-            String  proot = plink.getPath( ).replaceFirst( "/$", "" );
-            proot = proot.substring(0, proot.length()-ppath.length());
+            String  proot = plink.getPath( ).replaceFirst( "/$" , "")  // 去掉结尾的 /
+                                            .replaceFirst("^.+:", ""); // 去掉开头的 file:
+            proot = proot.substring(0, proot.length()-ppath.length()); // 去掉目标包的路径
 
             if ( "jar".equals(proto)) {
-                // 路径格式: file:/PATH!/
-                proot = proot.substring(proot.indexOf("/"), proot.indexOf("!"));
+                // 路径类似 file:/xxx/xxx.jar!/zzz/zzz
+                // 上面已删 zzz/zzz 还需删掉 !/
+                proot = proot.substring(0 , proot.lastIndexOf( "!" ));
                 names.addAll(getClassNamesByJar( proot, ppath, recu));
             } else
             if ("file".equals(proto)){
-                // 路径格式: /PATH/
+                // 路径类似 /xxx/xxx/ 有后缀 /
                 names.addAll(getClassNamesByDir( proot, ppath, recu));
-            } else
-            {
-                // Nothing todo
             }
 
-            count ++ ;
+//          gotit = true;
         }
 
-        if (count == 0) {
+        /*
+        // 上面找不到就找不到了, 没必要再用 URLClassLoader
+        if (gotit) {
             URL[] paurl = ((URLClassLoader) pload).getURLs();
 
             if (  paurl != null  ) for ( URL pourl : paurl ) {
                 String proot = pourl.getPath( );
-                // 忽略搜索: classes
-                if (proot.endsWith("/classes/")) {
-                    continue;
-                }
 
-                // 路径格式: file:/PATH!/
-                proot = proot.substring(proot.indexOf("/"), proot.indexOf("!"));
-                names.addAll(getClassNamesByJar( proot, ppath, recu));
+                if (proot.endsWith(".jar")) {
+                    names.addAll(getClassNamesByJar( proot, ppath, recu));
+                } else
+                if (proot.endsWith(  "/" )) {
+                    names.addAll(getClassNamesByDir( proot, ppath, recu));
+                }
             }
         }
+        */
 
         return  names;
     }
@@ -129,6 +130,11 @@ public class Clses {
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
+        URL[] paurl = ((URLClassLoader) Thread.currentThread().getContextClassLoader()).getURLs();
+        for (URL pourl : paurl) {
+            System.out.println(pourl.getPath());
+        }
+
         boolean wcp  =  false;
         Set<String> pkgs = new HashSet();
         for (String pkg  :  args) {

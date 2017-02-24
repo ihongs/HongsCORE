@@ -18,6 +18,7 @@ import javax.servlet.http.HttpSessionContext;
  * @author Hongs
  */
 public class Sesion implements HttpSession, Serializable {
+
     private transient boolean isNew = false;
     private transient boolean isMod = false;
     private transient ServletContext ctx;

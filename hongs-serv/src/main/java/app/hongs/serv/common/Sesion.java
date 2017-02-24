@@ -201,7 +201,7 @@ public class Sesion implements HttpSession, Serializable {
      * @param id
      * @return
      */
-    public static Sesion getStatus(String id) {
+    public static Sesion getSesion(String id) {
         try {
             return getRecord().get("$." + id);
         }

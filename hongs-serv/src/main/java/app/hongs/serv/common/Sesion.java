@@ -32,8 +32,8 @@ public class Sesion implements HttpSession, Serializable {
         dat   = new HashMap();
         ctime = System.currentTimeMillis();
         atime = ctime;
-        isNew = true;
-        isMod = true;
+        isNew = true ;
+        isMod = true ;
     }
 
     public Sesion() {
@@ -106,12 +106,12 @@ public class Sesion implements HttpSession, Serializable {
         }
 
         // 重建新的会话
-        dat.clear( );
+        dat.clear(  );
         sid   = Core.newIdentity();
         ctime = System.currentTimeMillis();
         atime = ctime;
-        isNew = true;
-        isMod = true;
+        isMod = false;
+        isNew = true ;
     }
 
     @Override

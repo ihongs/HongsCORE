@@ -1,5 +1,6 @@
 package app.hongs.serv.auth;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
@@ -162,7 +163,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
     public static RoleSet getInstance()
     throws HongsException {
         ActionHelper ah = Core.getInstance (ActionHelper.class);
-        String id = (String)ah.getSessibute("uid");
+        String id = (String)ah.getSessibute(Cnst.UID_SES);
         if  (  id == null  ) {
             return   null; // 未登录
         }

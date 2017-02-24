@@ -306,7 +306,7 @@ public class AuthFilter
     String uri;
     String msg;
 
-    if (3 == type) {
+    if ( 2 == type) {
         uri = Core.BASE_HREF;
         if (uri == null || uri.length() == 0) {
             msg = lang.translate("core.error.wr.place");
@@ -314,7 +314,7 @@ public class AuthFilter
             msg = lang.translate("core.error.wr.place.redirect");
         }
     } else
-    if (3 == type) {
+    if ( 3 == type) {
         uri = this.indexPage;
         if (uri == null || uri.length() == 0) {
             msg = lang.translate("core.error.no.power");

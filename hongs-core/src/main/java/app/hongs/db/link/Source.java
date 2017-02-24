@@ -108,10 +108,10 @@ public class Source extends Link {
 
             // 连接属性
             if (info.containsKey("connectionProperties")) {
-                pool.setConnectionProperties(info.getProperty("connectionProperties").replace("&", ";"));
+                pool.setConnectionProperties(info.getProperty("connectionProperties").trim().replace("&", ";"));
             }
             if (info.containsKey("connectionInitSqls")) {
-                pool.setConnectionInitSqls(Arrays.asList(info.getProperty("connectionInitSqls").split(";")));
+                pool.setConnectionInitSqls(Arrays.asList(info.getProperty("connectionInitSqls").trim().split("\\s*;\\s*")));
             }
 
             // 基础设置
@@ -132,8 +132,8 @@ public class Source extends Link {
             }
 
             // 回收检测
-            if (info.containsKey("testWhileIdle")) {
-                pool.setTestWhileIdle(Boolean.parseBoolean(info.getProperty("testWhileIdle")));
+            if (info.containsKey("logAbandoned")) {
+                pool.setLogAbandoned(Boolean.parseBoolean(info.getProperty("logAbandoned")));
             }
             if (info.containsKey("testOnCreate")) {
                 pool.setTestOnBorrow(Boolean.parseBoolean(info.getProperty("testOnCreate")));
@@ -144,8 +144,8 @@ public class Source extends Link {
             if (info.containsKey("testOnReturn")) {
                 pool.setTestOnReturn(Boolean.parseBoolean(info.getProperty("testOnReturn")));
             }
-            if (info.containsKey("logAbandoned")) {
-                pool.setLogAbandoned(Boolean.parseBoolean(info.getProperty("logAbandoned")));
+            if (info.containsKey("testWhileIdle")) {
+                pool.setTestWhileIdle(Boolean.parseBoolean(info.getProperty("testWhileIdle")));
             }
             if (info.containsKey("validationQuery")) {
                 pool.setValidationQuery(info.getProperty("validationQuery"));
@@ -164,23 +164,26 @@ public class Source extends Link {
             }
 
             // 其他设置
-            if (info.containsKey("poolPreparedStatements")) {
-                pool.setPoolPreparedStatements(Boolean.parseBoolean(info.getProperty("poolPreparedStatements")));
+            if (info.containsKey(   "poolPreparedStatements" )) {
+                pool.setPoolPreparedStatements(Boolean.parseBoolean(info.getProperty(  "poolPreparedStatements")));
             }
-            if (info.containsKey("maxOpenPreparedStatements")) {
+            if (info.containsKey("maxOpenPreparedStatements" )) {
                 pool.setMaxOpenPreparedStatements(Integer.parseInt(info.getProperty("maxOpenPreparedStatements")));
             }
             if (info.containsKey("numTestsPerEvictionRun")) {
                 pool.setNumTestsPerEvictionRun(Integer.parseInt(info.getProperty("numTestsPerEvictionRun")));
             }
             if (info.containsKey("maxConnLifetimeMillis" )) {
-                pool.setMaxConnLifetimeMillis(Long.parseLong(info.getProperty("maxConnLifetimeMillis")));
+                pool.setMaxConnLifetimeMillis ( Long.parseLong (info.getProperty("maxConnLifetimeMillis" )));
             }
             if (info.containsKey("minEvictableIdleTimeMillis")) {
                 pool.setMinEvictableIdleTimeMillis(Long.parseLong(info.getProperty("minEvictableIdleTimeMillis")));
             }
-            if (info.containsKey("timeBetweenEvictionRunsMillis")) {
-                pool.setTimeBetweenEvictionRunsMillis(Long.parseLong(info.getProperty("timeBetweenEvictionRunsMillis")));
+            if (info.containsKey("softMinEvictableIdleTimeMillis")) {
+                pool.setSoftMinEvictableIdleTimeMillis(Long.parseLong(info.getProperty("softMinEvictableIdleTimeMillis")));
+            }
+            if (info.containsKey("timeBetweenEvictionRunsMillis" )) {
+                pool.setTimeBetweenEvictionRunsMillis (Long.parseLong(info.getProperty("timeBetweenEvictionRunsMillis" )));
             }
 
             return     pool.getConnection();

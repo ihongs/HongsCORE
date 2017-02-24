@@ -988,21 +988,22 @@ public class ActionHelper implements Cloneable
    */
   public void responed()
   {
-    Writer pw = this.getOutputWriter(  );
-    String pb = CoreConfig.getInstance().getProperty ("core.powered.by");
-    String cb = ( String )  this.request.getAttribute( Cnst.BACK_ATTR  );
+    CoreConfig  cc = CoreConfig.getInstance();
+    String pb = cc.getProperty( "core.powered.by" );
+    String cb = (String) this.request.getAttribute(Cnst.BACK_ATTR);
+    Writer pw = this.getOutputWriter();
 
-    if (this.response.isCommitted() != true) {
+    if ( ! this.response.isCommitted()) {
         this.response.setContentType(cb != null ? "text/javascript" : "application/json");
         this.response.setCharacterEncoding("UTF-8");
     }
 
-    if (pb != null) {
+    if (pb != null && pb.length() != 0) {
         this.response.setHeader("X-Powered-By", pb);
     }
 
     try {
-    if (cb != null) {
+    if (cb != null && cb.length() != 0) {
         pw.write("function " + cb + "() {return " );
         pw.write( Data.toString(this.responseData));
         pw.write(";}");

@@ -1,10 +1,9 @@
-package app.hongs.serv.record;
+package app.hongs.serv.common;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.util.Synt;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Iterator;
@@ -18,23 +17,36 @@ import javax.servlet.http.HttpSessionContext;
  * 会话状态
  * @author Hongs
  */
-public class Status implements HttpSession, Serializable {
+public class Sesion implements HttpSession, Serializable {
     private transient boolean isNew = false;
     private transient boolean isMod = false;
-    private transient ServletContext  ctx;
-    private final Map<String, Object> map;
-    private final String sid;
-    private long  ctime = -1;
-    private long  atime = -1;
-    private int   etime = -1;
+    private transient ServletContext ctx;
+    private final Map<String,Object> dat;
+    private String sid;
+    private long ctime = -1;
+    private long atime = -1;
+    private int  xtime = -1;
 
-    public Status() {
-        map   = new HashMap();
-        sid   = Core.newIdentity();
+    public Sesion(String nid) {
+        sid   = nid;
+        dat   = new HashMap();
         ctime = System.currentTimeMillis();
         atime = ctime;
         isNew = true;
         isMod = true;
+    }
+
+    public Sesion() {
+        this(Core.newIdentity());
+    }
+
+    public void setServletContext(ServletContext ctx) {
+        this.ctx = ctx;
+    }
+
+    @Override
+    public ServletContext getServletContext() {
+        return ctx;
     }
 
     @Override
@@ -54,48 +66,52 @@ public class Status implements HttpSession, Serializable {
 
     @Override
     public int  getMaxInactiveInterval() {
-        return etime;
+        return xtime;
     }
 
     @Override
     public void setMaxInactiveInterval(int sec) {
-        this.etime = sec;
-    }
-
-    @Override
-    public ServletContext getServletContext(  ) {
-        return  this.ctx;
-    }
-
-    public void setServletContext(ServletContext ctx) {
-        this.ctx  =  ctx;
+        this.xtime = sec;
     }
 
     @Override
     public Enumeration<String> getAttributeNames() {
-        return new It2Em(map.keySet());
+        return new Attrs(dat.keySet());
     }
 
     @Override
     public Object getAttribute(String s) {
-        return map.get(s);
+        return dat.get(s);
     }
 
     @Override
     public void setAttribute(String s, Object v) {
-        isMod = true;
-        map.put(s, v);
+        dat.put(s, v);
+        isMod = true ;
     }
 
     @Override
     public void removeAttribute(String s) {
-        isMod = true;
-        map.remove(s);
+        dat.remove(s);
+        isMod = true ;
     }
 
     @Override
     public void invalidate() {
-        setMaxInactiveInterval(0);
+        // 删除旧的会话
+        try {
+            getRecord( ).del( "$." + sid );
+        } catch (HongsException e) {
+            throw new HongsError.Common(e);
+        }
+
+        // 重建新的会话
+        dat.clear( );
+        sid   = Core.newIdentity();
+        ctime = System.currentTimeMillis();
+        atime = ctime;
+        isNew = true;
+        isMod = true;
     }
 
     @Override
@@ -120,12 +136,13 @@ public class Status implements HttpSession, Serializable {
         }
 
         if (exp <  0) {
-            exp  = 0; // 永不过期
+            exp =  0; // 永不过期
         } else {
-            exp += System.currentTimeMillis() / 1000;
+            exp = exp + System.currentTimeMillis() / 1000;
         }
 
         if (isMod( )) {
+            atime   =   System.currentTimeMillis() / 1000;
             getRecord().set(key, this, exp);
         } else {
             getRecord().set(key, /***/ exp);
@@ -147,7 +164,7 @@ public class Status implements HttpSession, Serializable {
      */
     @Override
     public String[] getValueNames() {
-        return map.keySet().toArray(new String[]{});
+        return dat.keySet().toArray(new String[]{});
     }
 
     /**
@@ -157,7 +174,7 @@ public class Status implements HttpSession, Serializable {
      */
     @Override
     public Object getValue(String s) {
-        return map.get(s);
+        return dat.get(s);
     }
 
     /**
@@ -167,7 +184,7 @@ public class Status implements HttpSession, Serializable {
      */
     @Override
     public void putValue(String s, Object o) {
-        map.put(s, o);
+        dat.put(s, o);
     }
 
     /**
@@ -176,33 +193,39 @@ public class Status implements HttpSession, Serializable {
      */
     @Override
     public void removeValue(String s) {
-        map.remove(s);
+        dat.remove(s);
     }
 
     /**
-     * 通过会话 ID 获取会话对象
-     * @param ssid
+     * 用会话 ID 获取会话对象
+     * @param id
      * @return
      */
-    public  static  Status getStatus(String ssid) {
+    public static Sesion getStatus(String id) {
         try {
-            return Synt.declare(getRecord().get(ssid), Status.class);
+            return getRecord().get("$." + id);
         }
         catch (HongsException ex) {
-            throw new HongsError.Common(ex);
+            throw new HongsError.Common( ex );
         }
     }
 
-    private static IRecord getRecord() {
-        String clsn = CoreConfig.getInstance().getProperty("core.common.status.class", MRecord.class.getName());
-        return Synt.declare(Core.getInstance( clsn ), MRecord.class);
+    private static IRecord<Sesion> getRecord() {
+        CoreConfig  conf = CoreConfig.getInstance();
+        String clsn = conf.getProperty("core.sesion.record.model");
+        if (clsn == null || clsn.length() < 1) {
+               clsn = conf.getProperty("core.common.record.model");
+        if (clsn == null || clsn.length() < 1) {
+               clsn = MRecord.class.getName( );
+        }}
+        return (IRecord<Sesion>) Core.getInstance(clsn);
     }
 
-    private class It2Em implements Enumeration<String> {
+    private static class Attrs implements Enumeration<String> {
         private Iterable<String> iterable;
         private Iterator<String> iterator;
 
-        public It2Em(Iterable<String> iterable) {
+        public Attrs(Iterable<String> iterable) {
             this.iterable = iterable;
         }
 

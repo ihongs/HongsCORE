@@ -1,4 +1,4 @@
-package app.hongs.serv.record;
+package app.hongs.serv.common;
 
 import app.hongs.HongsException;
 import app.hongs.db.DB;
@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,8 +15,9 @@ import java.sql.SQLException;
 /**
  * 简单数据存取模型
  * @author Hongs
+ * @param <T>
  */
-public class MRecord implements IRecord {
+public class MRecord<T> implements IRecord<T> {
 
     private final Table table;
 
@@ -32,29 +32,33 @@ public class MRecord implements IRecord {
      * @throws app.hongs.HongsException
      */
     @Override
-    public Object get(String key) throws HongsException {
+    public T get(String key) throws HongsException {
         long now = System.currentTimeMillis() / 1000;
 
-        try {
-            String sql = "SELECT `data` FROM `" + table.tableName + "` WHERE id = ? AND (xtime > ? OR xtime == 0)";
-            ResultSet rs = table.db.query(sql, 0, 1, key, now).getReusltSet();
+        try (
+            ResultSet rs = table.db.query(
+  "SELECT `data` FROM `" + table.tableName + "` WHERE id = ? AND (xtime > ? OR xtime == 0)"
+            , 0,1, key, now).getReusltSet();
+        ) {
             if (! rs.next()) {
                 return null;
             }
 
             // 反序列化
-                  InputStream ins =    rs.getBinaryStream( 1 );
-            ObjectInputStream ois = new ObjectInputStream(ins);
-            Object obj = ois.readObject();
-            return obj;
-        }
-        catch (ClassNotFoundException ex) {
-            throw new HongsException.Common(ex);
+            try (
+                InputStream ins = rs.getBinaryStream(1);
+                ObjectInputStream ois = new ObjectInputStream(ins);
+            ) {
+                return ( T ) ois.readObject(  );
+            }
         }
         catch (SQLException ex) {
             throw new HongsException.Common(ex);
         }
         catch ( IOException ex) {
+            throw new HongsException.Common(ex);
+        }
+        catch (ClassNotFoundException ex) {
             throw new HongsException.Common(ex);
         }
     }
@@ -66,36 +70,50 @@ public class MRecord implements IRecord {
      * @param exp
      */
     @Override
-    public void set(String key, Object val, long exp) throws HongsException {
+    public void set(String key, T val, long exp) throws HongsException {
         long now = System.currentTimeMillis() / 1000;
 
-        del( key );
-
-        try {
-            table.db.open( );
-            table.db.ready();
-            PreparedStatement ps = table.db.prepareStatement(
-                 "INSERT INTO `" + table.tableName + "` (id, data, xtime, ctime) VALUES (?, ?, ?, ?)"
-            );
-
-            // 序列化值
-            byte[] arr;
+        // 序列化值
+        byte[] arr;
+        try (
             ByteArrayOutputStream bos = new ByteArrayOutputStream(   );
                ObjectOutputStream out = new    ObjectOutputStream(bos);
+        ) {
             out.writeObject ( val );
+            out.flush();
             arr = bos.toByteArray();
-             ByteArrayInputStream bis = new  ByteArrayInputStream(arr);
+        }
+        catch (IOException ex) {
+            throw new HongsException.Common(ex);
+        }
 
-            ps.setBinaryStream(2, bis);
+        table.db.open( );
+        table.db.ready();
+
+        try (
+            PreparedStatement ps = table.db.prepareStatement(
+                 "DELETE FROM `" + table.tableName + "` WHERE id = ?"
+            );
+        ) {
             ps.setString(1, key);
-            ps.setLong  (3, exp);
-            ps.setLong  (4, now);
             ps.executeUpdate(  );
         }
         catch (SQLException ex ) {
             throw new HongsException.Common(ex);
         }
-        catch ( IOException ex ) {
+
+        try (
+            PreparedStatement ps = table.db.prepareStatement(
+                 "INSERT INTO `" + table.tableName + "` (id, data, xtime, ctime) VALUES (?, ?, ?, ?)"
+            );
+        ) {
+            ps.setString(1, key);
+            ps.setBytes (2, arr);
+            ps.setLong  (3, exp);
+            ps.setLong  (4, now);
+            ps.executeUpdate(  );
+        }
+        catch (SQLException ex ) {
             throw new HongsException.Common(ex);
         }
     }
@@ -108,13 +126,14 @@ public class MRecord implements IRecord {
      */
     @Override
     public void set(String key, long exp) throws HongsException {
-        try {
-            table.db.open( );
-            table.db.ready();
-            PreparedStatement ps = table.db.prepareStatement(
-                 "UPDATE `" + table.tableName + "` SET xtime = ? WHERE id = ?"
-            );
+        table.db.open( );
+        table.db.ready();
 
+        try (
+            PreparedStatement ps = table.db.prepareStatement(
+                      "UPDATE `" + table.tableName + "` SET xtime = ? WHERE id = ?"
+            );
+        ) {
             ps.setString(2, key);
             ps.setLong  (1, exp);
             ps.executeUpdate(  );

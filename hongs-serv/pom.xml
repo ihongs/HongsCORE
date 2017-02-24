@@ -27,7 +27,7 @@
             <artifactId>thumbnailator</artifactId>
             <version>0.4.8</version>
         </dependency>
-        <!-- 已使用 URLConnection.getFileNameMap().getContentTypeFor(fn) 替代
+        <!-- 已用 URLConnection.getFileNameMap().getContentTypeFor(fn) 替代
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
             <artifactId>mime-util</artifactId>

@@ -52,7 +52,7 @@ public class SessFiller extends HttpServletRequestWrapper {
 
         if (sid != null) {
             // 存在会话 ID 则尝试去获取
-            ses  = Sesion.getStatus(sid);
+            ses  = Sesion.getSesion(sid);
             if (ses == null) {
             if (add == true) {
                 ses  = new Sesion(sid);

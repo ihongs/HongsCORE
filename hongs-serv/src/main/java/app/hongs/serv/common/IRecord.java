@@ -1,12 +1,13 @@
-package app.hongs.serv.record;
+package app.hongs.serv.common;
 
 import app.hongs.HongsException;
 
 /**
  * 简单数据存取接口
  * @author Hongs
+ * @param <T>
  */
-public interface IRecord {
+public interface IRecord<T> {
 
     /**
      * 获取数据
@@ -14,7 +15,7 @@ public interface IRecord {
      * @return
      * @throws app.hongs.HongsException
      */
-    public Object get(String key) throws HongsException;
+    public T get(String key) throws HongsException;
 
     /**
      * 设置数据
@@ -23,7 +24,7 @@ public interface IRecord {
      * @param exp 到期时间(秒), 0 表示长期
      * @throws app.hongs.HongsException
      */
-    public void set(String key, Object val, long exp) throws HongsException;
+    public void set(String key, T val, long exp) throws HongsException;
 
     /**
      * 更新过期

@@ -1,13 +1,13 @@
-package app.hongs.serv.record;
+package app.hongs.serv.common;
 
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.action.ActionDriver;
+import app.hongs.action.ActionHelper;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.ServletException;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -17,7 +17,7 @@ import javax.servlet.http.HttpServletResponse;
  * 会话状态过滤
  * @author Hongs
  */
-public class StatusFilter implements Filter {
+public class SessFilter extends ActionDriver implements Filter {
 
     private String SSPN = "SSID"; // 会话请求参数名称
     private String SSCN = "SSID"; // 会话 Cookie 键名
@@ -42,14 +42,14 @@ public class StatusFilter implements Filter {
     }
 
     @Override
-    public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chn) throws IOException, ServletException {
-        HttpServletRequest  raq = (HttpServletRequest ) req;
-        HttpServletResponse rap = (HttpServletResponse) rsp;
+    public void doFilter(Core core, ActionHelper hlpr, FilterChain chin) throws IOException, ServletException {
+        HttpServletRequest  req = hlpr.getRequest( );
+        HttpServletResponse rsp = hlpr.getResponse();
 
         // 提取会话 ID
-        String sid = raq.getParameter ( SSPN );
+        String sid = req.getParameter ( SSPN );
         if (sid == null) {
-            for(Cookie cok : raq.getCookies( )) {
+            for(Cookie cok : req.getCookies( )) {
                 if (SSCN.equals(cok.getName())) {
                     sid = cok.getValue();
                     break;
@@ -60,19 +60,18 @@ public class StatusFilter implements Filter {
         // 包裹请求
         // 使得其后可通过特别方法提取会话
         try {
-            Status ses;
+            req = new SessFiller(req, sid);
+            hlpr.updateHelper   (req, rsp);
+            chin.doFilter       (req, rsp);
 
-            raq = new StatusWraper(raq, sid);
-
-            /* RUN */ chn.doFilter(raq, rsp);
-
-            ses = (Status) raq.getSession(false);
+            Sesion ses  =  (Sesion)  req.getSession(false);
             if (ses != null) {
                 // 设置 Cookie 过期
                 Cookie cok = new Cookie(SSCN, ses.getId());
-                cok.setPath(Core.BASE_HREF+ "/");
-                cok.setMaxAge(CEXP);
-                rap.addCookie(cok );
+                cok.setPath(Core.BASE_HREF + "/");
+                cok.setHttpOnly (true);
+                cok.setMaxAge   (CEXP);
+                rsp.addCookie   (cok );
 
                 // 设置会话过期时间
                 int exp = ses.getMaxInactiveInterval();

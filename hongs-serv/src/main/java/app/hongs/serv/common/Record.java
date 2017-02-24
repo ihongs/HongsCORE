@@ -1,4 +1,4 @@
-package app.hongs.serv.record;
+package app.hongs.serv.common;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;
@@ -16,7 +16,7 @@ import app.hongs.util.Synt;
 public class Record {
 
     private static IRecord getRecord() throws HongsException {
-        String clsn = CoreConfig.getInstance().getProperty("core.common.record.class", MRecord.class.getName());
+        String clsn = CoreConfig.getInstance().getProperty("core.common.record.model", MRecord.class.getName());
         return Synt.declare(Core.getInstance(clsn), MRecord.class);
     }
 

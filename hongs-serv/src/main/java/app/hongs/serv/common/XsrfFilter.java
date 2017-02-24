@@ -1,4 +1,4 @@
-package app.hongs.serv.handle;
+package app.hongs.serv.common;
 
 import app.hongs.Core;
 import java.io.IOException;
@@ -12,10 +12,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 表单欺骗拦截
+ * 跨站攻击拦截
  * @author Hongs
  */
-public class CsrfFilter implements Filter {
+public class XsrfFilter implements Filter {
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
@@ -35,7 +35,7 @@ public class CsrfFilter implements Filter {
         }
         if (null == ref || !ref.startsWith(sche + host + Core.BASE_HREF + "/")) {
             rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            rsp.getWriter().print("CSRF Access Forbidden!");
+            rsp.getWriter().print("XSRF Access Forbidden!");
             return;
         }
         fc.doFilter(req, rsp);

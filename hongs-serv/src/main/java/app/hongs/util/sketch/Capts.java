@@ -46,43 +46,6 @@ public class Capts {
     private String          code  =  null;
     private BufferedImage   buff  =  null;
 
-    public static Capts captcha(int h, String b, String f, String e) {
-        if (h < 40 || h > 200) {
-            throw new HongsUnchecked.Common("h must be 40 ~ 200 px");
-        }
-
-        // 获取配置
-        CoreConfig  cc = CoreConfig.getInstance();
-        String ff = cc.getProperty("core.capts.font.file", "!Anja Eliane.ttf");
-        String cs = cc.getProperty("core.capts.code.dict", "13456789ABCDEFGHIJKLMNPQRSTUVWXY");
-        int    cn = cc.getProperty("core.capts.code.count", 4 );
-        int    mn = cc.getProperty("core.capts.mask.count", 17);
-        float  sr = cc.getProperty("core.capts.size.ratio", 0.6f);
-        float  fr = cc.getProperty("core.capts.font.ratio", 0.8f);
-        float  mr = cc.getProperty("core.capts.mend.ratio", 0.167f);
-        float  xr = cc.getProperty("core.capts.mask.ratio", 0.025f);
-        int    w  = (int) ((float) h * sr * (cn + 1));
-
-        char[] cd = cs.toCharArray();
-        Color  bc = "".equals(b) ? new Color(0xffffff) : new Color(Integer.parseInt(b, 16));
-        Color  fc = "".equals(f) ? new Color(0x000000) : new Color(Integer.parseInt(f, 16));
-
-        // 构建实例
-        Capts vc = new Capts( );
-        vc.setSize (w , h );
-        vc.setCodeCount(cn);
-        vc.setMaskCount(mn);
-        vc.setFontRatio(fr);
-        vc.setMendRatio(mr);
-        vc.setMaskRatio(xr);
-        vc.setBackColor(bc);
-        vc.setFontColor(fc);
-        vc.setFontFile (ff);
-        vc.setCodeDict (cd);
-
-        return vc;
-    }
-
     public void setSize(int w, int h) {
         this.width  = w;
         this.height = h;
@@ -124,7 +87,21 @@ public class Capts {
         this.fontDict  = a;
     }
 
-    public void savCode ( ) {
+    public BufferedImage getBuff() {
+        if (buff == null) {
+            newCapt();
+        }
+        return buff;
+    }
+
+    public String getCode() {
+        if (code == null) {
+            newCapt();
+        }
+        return code;
+    }
+
+    public void newCapt() {
         buff = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
         int fw = width / (1 + codeCount);            // 单位宽度
@@ -188,23 +165,15 @@ public class Capts {
         code = sb.toString();
     }
 
-    public String getCode() {
-        if (code == null) {
-            savCode();
-        }
-        return code;
-    }
-
-    public BufferedImage getBuff() {
-        if (buff == null) {
-            savCode();
-        }
-        return buff;
-    }
-
+    /**
+     * 输出图片
+     * 注意: 请在调用后自行决定关闭 out
+     * @param ext
+     * @param out
+     * @throws IOException 
+     */
     public void write(String ext, OutputStream out) throws IOException {
         ImageIO.write(getBuff( ), ext, out);
-        out.close();
     }
 
     private void shearX(int w, int h, Graphics g, Random r, Color c) {
@@ -239,6 +208,43 @@ public class Capts {
             g.drawLine(i, (int) d, i, 0   );
             g.drawLine(i, (int) d+ h, i, h);
         }
+    }
+
+    public static Capts captcha(int h, String b, String f, String e) {
+        if (h < 40 || h > 200) {
+            throw new HongsUnchecked.Common("h must be 40 ~ 200 px");
+        }
+
+        // 获取配置
+        CoreConfig  cc = CoreConfig.getInstance();
+        String ff = cc.getProperty("core.capts.font.file", "!Anja Eliane.ttf");
+        String cs = cc.getProperty("core.capts.code.dict", "13456789ABCDEFGHIJKLMNPQRSTUVWXY");
+        int    cn = cc.getProperty("core.capts.code.count", 4 );
+        int    mn = cc.getProperty("core.capts.mask.count", 17);
+        float  sr = cc.getProperty("core.capts.size.ratio", 0.6f);
+        float  fr = cc.getProperty("core.capts.font.ratio", 0.8f);
+        float  mr = cc.getProperty("core.capts.mend.ratio", 0.167f);
+        float  xr = cc.getProperty("core.capts.mask.ratio", 0.025f);
+        int    w  = (int) ((float) h * sr * (cn + 1));
+
+        char[] cd = cs.toCharArray();
+        Color  bc = "".equals(b) ? new Color(0xffffff) : new Color(Integer.parseInt(b, 16));
+        Color  fc = "".equals(f) ? new Color(0x000000) : new Color(Integer.parseInt(f, 16));
+
+        // 构建实例
+        Capts vc = new Capts( );
+        vc.setSize (w , h );
+        vc.setCodeCount(cn);
+        vc.setMaskCount(mn);
+        vc.setFontRatio(fr);
+        vc.setMendRatio(mr);
+        vc.setMaskRatio(xr);
+        vc.setBackColor(bc);
+        vc.setFontColor(fc);
+        vc.setFontFile (ff);
+        vc.setCodeDict (cd);
+
+        return vc;
     }
 
 }

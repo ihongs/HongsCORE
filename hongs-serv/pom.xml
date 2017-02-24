@@ -22,6 +22,11 @@
             <artifactId>hongs-core</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.coobird</groupId>
+            <artifactId>thumbnailator</artifactId>
+            <version>0.4.8</version>
+        </dependency>
         <!-- 可以考虑用 MsgPack 来替代 Java 序列化, 但为最小依赖原则暂放弃
         <dependency>
             <groupId>org.msgpack</groupId>
@@ -29,12 +34,7 @@
             <version>0.6.12</version>
         </dependency>
         //-->
-        <dependency>
-            <groupId>net.coobird</groupId>
-            <artifactId>thumbnailator</artifactId>
-            <version>0.4.8</version>
-        </dependency>
-        <!-- 已用 URLConnection.getFileNameMap().getContentTypeFor(fn) 替代
+        <!-- 已用 URLConnection.getFileNameMap().getContentTypeFor(s) 替代
         <dependency>
             <groupId>eu.medsea.mimeutil</groupId>
             <artifactId>mime-util</artifactId>

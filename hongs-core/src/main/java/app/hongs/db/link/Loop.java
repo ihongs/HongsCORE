@@ -102,7 +102,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
     @Override
     public Map next() {
         // 判断是否到达末尾
-        if (! hasNext()) {
+        if ( ! hasNext()) {
             this.close();
             return null ;
         }

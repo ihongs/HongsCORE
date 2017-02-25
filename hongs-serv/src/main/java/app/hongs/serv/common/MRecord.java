@@ -49,7 +49,7 @@ public class MRecord<T> implements IRecord<T> {
 
             // 反序列化
             try (
-                InputStream ins = rs.getBinaryStream(1);
+                      InputStream ins =    rs.getBinaryStream( 1 );
                 ObjectInputStream ois = new ObjectInputStream(ins);
             ) {
                 return ( T ) ois.readObject(  );

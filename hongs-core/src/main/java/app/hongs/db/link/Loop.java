@@ -147,7 +147,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                     rs.close();
                 }
             }
-            catch (SQLException ex) {
+            catch (SQLException ex ) {
                 throw new HongsUnchecked(0x1035, ex);
             }
         }
@@ -157,7 +157,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                     ps.close();
                 }
             }
-            catch (SQLException ex) {
+            catch (SQLException ex ) {
                 throw new HongsUnchecked(0x1034, ex);
             }
         }

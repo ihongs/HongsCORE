@@ -307,7 +307,7 @@ public class CmdletHelper
       }
       else
       {
-        sb.append('█');
+        sb.append('=');
       }
     }
     sb.append("| ");

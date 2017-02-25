@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class XsrfFilter implements Filter {
 
-    private static final Pattern DMN_PAT = Pattern.compile("^(\\w+:)?//([^/:]+)");
+    private static final Pattern DMN_PAT = Pattern.compile("^\\w+://([^/:]+)");
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
@@ -41,7 +41,7 @@ public class XsrfFilter implements Filter {
         String ref = req.getHeader("Referer");
         String dmn = req.getServerName( );
         Matcher ma = DMN_PAT.matcher(ref);
-        if (ma.find( ) && ! ma.group( 2 ).equals(dmn) ) {
+        if (ma.find( ) && ! ma.group( 1 ).equals(dmn) ) {
             fc.doFilter(rxq, rxp);
             return;
         }

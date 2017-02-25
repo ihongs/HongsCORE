@@ -9,9 +9,10 @@ import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.Cookie;
 
 /**
  * 会话状态过滤
@@ -60,27 +61,21 @@ public class SessFilter extends ActionDriver implements Filter {
         // 包裹请求
         // 使得其后可通过特别方法提取会话
         try {
-            req = new SessFiller(req, sid);
+            req = new SessFiller(req, sid , SEXP);
             hlpr.updateHelper   (req, rsp);
             chin.doFilter       (req, rsp);
 
-            Sesion ses  =  (Sesion)  req.getSession(false);
-            if (ses != null) {
-                // 设置 Cookie 过期
-                Cookie cok = new Cookie(SSCN, ses.getId());
-                cok.setPath(Core.BASE_HREF + "/");
-                cok.setHttpOnly (true);
-                cok.setMaxAge   (CEXP);
-                rsp.addCookie   (cok );
-
-                // 设置会话过期时间
-                int exp = ses.getMaxInactiveInterval();
-                if (exp > SEXP && 0 < SEXP) {
-                    ses.setMaxInactiveInterval( SEXP );
-                }
-
+            HttpSession sez =  req.getSession (false);
+            if (null != sez && sez instanceof Sesion) {
                 // 持久存储会话数据
-                ses.store( );
+                Sesion  ses = ( Sesion ) sez ; ses.store( );
+
+                // 重设 Cookie 期限
+                Cookie  cok = new Cookie(SSCN, ses.getId());
+                cok.setPath(Core.BASE_HREF + "/");
+                cok.setHttpOnly(true);
+                cok.setMaxAge  (CEXP);
+                rsp.addCookie  (cok );
             }
         }
         catch (HongsException ex) {

@@ -107,7 +107,7 @@ public class MRecord<T> implements IRecord<T> {
 
         try (
             PreparedStatement ps = table.db.prepareStatement(
-                 "INSERT INTO `" + table.tableName + "` (id, data, xtime, ctime) VALUES (?, ?, ?, ?)"
+                 "INSERT INTO `" + table.tableName + "` (id, data, xtime, mtime) VALUES (?, ?, ?, ?)"
             );
         ) {
             ps.setString(1, key);
@@ -129,16 +129,19 @@ public class MRecord<T> implements IRecord<T> {
      */
     @Override
     public void set(String key, long exp) throws HongsException {
+        long now = System.currentTimeMillis() / 1000;
+
         table.db.open( );
         table.db.ready();
 
         try (
             PreparedStatement ps = table.db.prepareStatement(
-                      "UPDATE `" + table.tableName + "` SET xtime = ? WHERE id = ?"
+                      "UPDATE `" + table.tableName + "` SET xtime = ?, mtime = ? WHERE id = ?"
             );
         ) {
-            ps.setString(2, key);
+            ps.setString(3, key);
             ps.setLong  (1, exp);
+            ps.setLong  (2, now);
             ps.executeUpdate(  );
         }
         catch (SQLException ex ) {

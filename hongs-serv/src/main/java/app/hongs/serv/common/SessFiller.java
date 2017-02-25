@@ -14,10 +14,11 @@ public class SessFiller extends HttpServletRequestWrapper {
 
     private Sesion ses;
     private String sid;
+    private int    exp;
 
     private static final Pattern SIDFMT = Pattern.compile("^[a-zA-Z0-9\\-]{1,32}$");
 
-    public SessFiller(HttpServletRequest request, String sid) {
+    public SessFiller(HttpServletRequest request, String sid, int exp) {
         super(request);
 
         // 判断会话 ID 是否正确, 不对则报 400 错误请求
@@ -27,6 +28,7 @@ public class SessFiller extends HttpServletRequestWrapper {
         }
 
         this.sid = sid;
+        this.exp = exp;
     }
 
     /**
@@ -46,32 +48,30 @@ public class SessFiller extends HttpServletRequestWrapper {
      */
     @Override
     public HttpSession getSession(boolean add) {
-        if (ses != null) {
-            return ses;
-        }
-
-        if (sid != null) {
-            // 存在会话 ID 则尝试去获取
-            ses  = Sesion.getSesion(sid);
-            if (ses == null) {
-            if (add == true) {
-                ses  = new Sesion(sid);
-                ses.setServletContext(getServletContext());
+            if (ses != null) {
+                return ses;
             }
+
+            if (sid != null) {
+                ses  = Sesion.getSesion(sid);
+                if (ses != null) {
+                    ses.setServletContext(getServletContext());
+                } else
+                if (add == true) {
+                    ses  =  new  Sesion(sid);
+                    ses.setMaxInactiveInterval(exp);
+                    ses.setServletContext(getServletContext());
+                }
             } else {
-                sid  = ses.getId (   );
-                ses.setServletContext(getServletContext());
+                if (add == true) {
+                    ses  =  new  Sesion(   );
+                    ses.setMaxInactiveInterval(exp);
+                    ses.setServletContext(getServletContext());
+                    sid  =  ses.getId  (   );
+                }
             }
-        } else {
-            // 会话缺失则判断是否要新建
-            if (add == true) {
-                ses  = new Sesion(  );
-                sid  = ses.getId (  );
-                ses.setServletContext(getServletContext());
-            }
-        }
 
-        return  ses;
+        return  ses  ;
     }
 
 }

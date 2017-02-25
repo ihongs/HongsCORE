@@ -42,7 +42,7 @@ public class MRecord<T> implements IRecord<T> {
                     + "` WHERE id = ? AND (xtime > ? OR xtime == 0)"
             , 0,1, key, now);
         ) {
-            ResultSet rs = lp.getReusltSet();
+            ResultSet rs = lp.getReusltSet ();
             if (! rs.next()) {
                 return null;
             }

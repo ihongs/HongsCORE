@@ -123,13 +123,13 @@ public class Loop implements Iterable<Map>, Iterator<Map>, Closeable {
             Map<String,Object> row = new LinkedHashMap();
             if (ib) {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
-                    //row.put(et.getKey(), rs.getObject(++ i, et.getState()));
-                    Dict.put(row, rs.getObject(++ i, et.getValue()), (Object[])et.getKey().split("\\."));
+                    // row.put(et.getKey() , rs.getObject(++ i, et.getState()));
+                    Dict.put(row, rs.getObject(++ i, et.getValue()), (Object[]) et.getKey().split("\\."));
                 }
             } else {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
-                    //row.put(et.getKey(), rs.getString(++ i /* No Type */ ));
-                    Dict.put(row, rs.getString(++ i /* No Type */ ), (Object[])et.getKey().split("\\."));
+                    // row.put(et.getKey() , rs.getString(++ i /* No Type */ ));
+                    Dict.put(row, rs.getString(++ i /* No Type */ ), (Object[]) et.getKey().split("\\."));
                 }
             }
             return  row;
@@ -173,7 +173,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, Closeable {
      */
     @Override
     public void remove() {
-        throw new UnsupportedOperationException("Not supported remove in loop.");
+        throw new UnsupportedOperationException("Not supported remove in this loop.");
     }
 
 }

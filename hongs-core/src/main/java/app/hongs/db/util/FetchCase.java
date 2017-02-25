@@ -1358,9 +1358,9 @@ public class FetchCase
     }
 
     Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
-    if (hasOption("OBJECT_MODE")) {
-         rs.inObjectMode(getOption("OBJECT_MODE", false));
-    }
+    Boolean om = Synt.declare(getOption("OBJECT_MODE") , Boolean.class);
+    if ( om != null ) rs.inObjectMode(  om  ); // 可单独设置是否对象模式
+
     return  rs;
   }
 
@@ -1370,14 +1370,16 @@ public class FetchCase
    * @throws HongsException
    */
   public List all() throws HongsException {
+    List<Map<String, Object>> ra = new ArrayList();
+         Map<String, Object>  ro  ;
+
     try (Loop rs = oll()) {
-        List<Map<String, Object>> rows = new ArrayList();
-             Map<String, Object>  row  ;
-        while ((row = rs.next()) != null) {
-            rows.add(row);
+        while ((ro = rs.next()) != null ) {
+            ra.add( ro );
         }
-        return rows;
     }
+
+    return  ra;
   }
 
   /**
@@ -1386,13 +1388,12 @@ public class FetchCase
    * @throws HongsException
    */
   public Map  one() throws HongsException {
-    limit(1);
+    this.limit( 1 );
+
     try (Loop rs = oll()) {
-        Map row  = rs.next();
-        if (row == null ) {
-            row  = new HashMap();
-        }
-        return row;
+        Map<String, Object> ro = rs.next();
+        if (null == ro) ro = new HashMap();
+        return ro;
     }
   }
 

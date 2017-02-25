@@ -438,11 +438,11 @@ abstract public class Link
     throws HongsException
   {
     List<Map<String, Object>> rows = new ArrayList();
-         Map<String, Object>  row;
+         Map<String, Object>  row  ;
 
     try (Loop rs = query(sql, start, limit, params))
     {
-        while ((row = rs.next( )) != null )
+        while ( (row = rs.next()) != null )
         {
           rows.add(row);
         }
@@ -462,11 +462,11 @@ abstract public class Link
     throws HongsException
   {
     List<Map<String, Object>> rows = new ArrayList();
-         Map<String, Object>  row;
+         Map<String, Object>  row  ;
 
     try (Loop rs = query(sql, 0, 0, params))
     {
-        while ((row = rs.next( )) != null )
+        while ( (row = rs.next()) != null )
         {
           rows.add(row);
         }

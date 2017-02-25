@@ -132,7 +132,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                     Dict.put(row, rs.getString(++ i /* No Type */ ), (Object[]) et.getKey().split("\\."));
                 }
             }
-            return  row;
+            return  row ;
         } catch (  SQLException ex ) {
             this.close();
             throw new HongsUnchecked(0x10a6, ex);
@@ -141,9 +141,6 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
 
     @Override
     public void close() {
-        if (md == null) {
-            return;
-        }
         try {
             try {
                 if (rs != null && ! rs.isClosed()) {
@@ -151,20 +148,18 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             }
             catch (SQLException ex) {
-              throw new HongsUnchecked(0x1035, ex);
+                throw new HongsUnchecked(0x1035, ex);
             }
+        }
+        finally {
             try {
                 if (ps != null && ! ps.isClosed()) {
                     ps.close();
                 }
             }
             catch (SQLException ex) {
-              throw new HongsUnchecked(0x1034, ex);
+                throw new HongsUnchecked(0x1034, ex);
             }
-        }
-        finally {
-            md = null;
-            td = null;
         }
     }
 

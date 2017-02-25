@@ -3,7 +3,6 @@ package app.hongs.db.link;
 import app.hongs.HongsException;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Dict;
-import java.io.Closeable;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -19,7 +18,8 @@ import java.util.LinkedHashMap;
  *
  * @author Hong
  */
-public class Loop implements Iterable<Map>, Iterator<Map>, Closeable {
+public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
+
     private final Statement   ps;
     private final ResultSet   rs;
     private ResultSetMetaData md = null;

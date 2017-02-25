@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class XsrfFilter implements Filter {
 
-    private static final Pattern DMN_PAT = Pattern.compile("^\\w+://([^/:]+)");
+    private static final Pattern DMN_PAT = Pattern.compile("^(?:\\w+\\:)?//(.+?)(?:\\:\\d+)?/");
 
     @Override
     public void init(FilterConfig fc) throws ServletException {

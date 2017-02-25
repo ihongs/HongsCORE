@@ -3,6 +3,7 @@ package app.hongs.serv.common;
 import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
+import app.hongs.db.link.Loop;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
@@ -36,10 +37,12 @@ public class MRecord<T> implements IRecord<T> {
         long now = System.currentTimeMillis() / 1000;
 
         try (
-            ResultSet rs = table.db.query(
-  "SELECT `data` FROM `" + table.tableName + "` WHERE id = ? AND (xtime > ? OR xtime == 0)"
-            , 0,1, key, now).getReusltSet();
+            Loop lp = table.db.query("SELECT `data` FROM `"
+                    + table.tableName
+                    + "` WHERE id = ? AND (xtime > ? OR xtime == 0)"
+            , 0,1, key, now);
         ) {
+            ResultSet rs = lp.getReusltSet();
             if (! rs.next()) {
                 return null;
             }
@@ -149,7 +152,20 @@ public class MRecord<T> implements IRecord<T> {
      */
     @Override
     public void del(String key) throws HongsException {
-        table.delete("id = ?", key);
+        table.db.open( );
+        table.db.ready();
+
+        try (
+            PreparedStatement ps = table.db.prepareStatement(
+                 "DELETE FROM `" + table.tableName + "` WHERE id = ?"
+            );
+        ) {
+            ps.setString(1, key);
+            ps.executeUpdate(  );
+        }
+        catch (SQLException ex ) {
+            throw new HongsException.Common(ex);
+        }
     }
 
     /**
@@ -158,7 +174,20 @@ public class MRecord<T> implements IRecord<T> {
      */
     @Override
     public void del( long  exp) throws HongsException {
-        table.delete("xtime <= ? AND xtime != 0", exp);
+        table.db.open( );
+        table.db.ready();
+
+        try (
+            PreparedStatement ps = table.db.prepareStatement(
+                 "DELETE FROM `" + table.tableName + "` WHERE xtime <= ? AND xtime != ?"
+            );
+        ) {
+            ps.setLong  (1, exp);
+            ps.executeUpdate(  );
+        }
+        catch (SQLException ex ) {
+            throw new HongsException.Common(ex);
+        }
     }
 
 }

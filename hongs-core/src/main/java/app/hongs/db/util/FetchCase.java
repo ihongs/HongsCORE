@@ -1388,7 +1388,7 @@ public class FetchCase
    * @throws HongsException
    */
   public Map  one() throws HongsException {
-    this.limit( 1 );
+    this.limit(1);
 
     try (Loop rs = oll()) {
         Map<String, Object> ro = rs.next();

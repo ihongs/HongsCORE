@@ -35,20 +35,20 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         this.rs = rs;
     }
 
+    public void inObjectMode(boolean ib) {
+        this.ib = ib;
+    }
+
+    public boolean isObjectMode() {
+        return ib;
+    }
+
     public Statement getStatement() {
         return ps;
     }
 
     public ResultSet getReusltSet() {
         return rs;
-    }
-
-    public  boolean  isObjectMode() {
-        return ib;
-    }
-
-    public  void  inObjectMode(boolean ib) {
-        this.ib = ib;
     }
 
     public ResultSetMetaData getMetaData() throws HongsException {

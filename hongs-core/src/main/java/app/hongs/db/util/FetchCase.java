@@ -1361,7 +1361,6 @@ public class FetchCase
     if (hasOption("OBJECT_MODE")) {
          rs.inObjectMode(getOption("OBJECT_MODE", false));
     }
-
     return  rs;
   }
 
@@ -1371,15 +1370,14 @@ public class FetchCase
    * @throws HongsException
    */
   public List all() throws HongsException {
-    Loop rs = oll();
-
-    List<Map<String, Object>> rows = new ArrayList();
-         Map<String, Object>  row  ;
-    while ((row = rs.next()) != null) {
-        rows.add(row);
+    try (Loop rs = oll()) {
+        List<Map<String, Object>> rows = new ArrayList();
+             Map<String, Object>  row  ;
+        while ((row = rs.next()) != null) {
+            rows.add(row);
+        }
+        return rows;
     }
-
-    return rows;
   }
 
   /**
@@ -1388,10 +1386,14 @@ public class FetchCase
    * @throws HongsException
    */
   public Map  one() throws HongsException {
-    this.limit( 1 );
-    Loop rs = oll();
-
-    return rs.hasNext() ? rs.next() : new HashMap();
+    limit(1);
+    try (Loop rs = oll()) {
+        Map row  = rs.next();
+        if (row == null ) {
+            row  = new HashMap();
+        }
+        return row;
+    }
   }
 
   /**

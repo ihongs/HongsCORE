@@ -419,7 +419,7 @@ abstract public class Link
       throw new HongsException(0x1043, ex);
     }
 
-    Loop   loop  =  new Loop(rs, ps);
+    Loop   loop = new Loop( rs , ps );
     loop.inObjectMode(IN_OBJECT_MODE);
     return loop;
   }
@@ -440,10 +440,12 @@ abstract public class Link
     List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row;
 
-    Loop rs  = this.query(sql, start, limit, params);
-    while ((row = rs.next()) != null)
+    try (Loop rs = query(sql, start, limit, params))
     {
-      rows.add(row);
+        while ((row = rs.next( )) != null )
+        {
+          rows.add(row);
+        }
     }
 
     return rows;
@@ -462,10 +464,12 @@ abstract public class Link
     List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row;
 
-    Loop rs  = this.query(sql, 0, 0, params);
-    while ((row = rs.next()) != null)
+    try (Loop rs = query(sql, 0, 0, params))
     {
-      rows.add(row);
+        while ((row = rs.next( )) != null )
+        {
+          rows.add(row);
+        }
     }
 
     return rows;
@@ -481,11 +485,12 @@ abstract public class Link
   public Map  fetchOne(String sql, Object... params)
     throws HongsException
   {
-    Loop rs  = this.query(sql, 0, 1, params);
-    Map<String , Object> row = rs.next();
-    if (row == null) row = new HashMap();
-
-    return row ;
+    try (Loop rs = query(sql, 0, 1, params))
+    {
+        Map<String , Object> row = rs.next();
+        if (row == null) row = new HashMap();
+        return row;
+    }
   }
 
   /** 执行语句 **/

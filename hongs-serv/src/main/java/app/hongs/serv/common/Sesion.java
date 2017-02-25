@@ -26,7 +26,7 @@ public class Sesion implements HttpSession, Serializable {
     private String sid;
     private long ctime = -1;
     private long atime = -1;
-    private int  xtime = -1;
+    private int  xtime = 86400;
 
     public Sesion(String nid) {
         sid   = nid;

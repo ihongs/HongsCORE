@@ -1,7 +1,8 @@
 package app.hongs.serv.common;
 
-import app.hongs.Core;
 import java.io.IOException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -17,6 +18,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class XsrfFilter implements Filter {
 
+    private static final Pattern DMN_PAT = Pattern.compile("^(\\w+:)?//([^/:]+)");
+
     @Override
     public void init(FilterConfig fc) throws ServletException {
         // Nothing todo.
@@ -26,19 +29,25 @@ public class XsrfFilter implements Filter {
     public void doFilter(ServletRequest rxq, ServletResponse rxp, FilterChain fc) throws IOException, ServletException {
         HttpServletRequest  req = (HttpServletRequest ) rxq;
         HttpServletResponse rsp = (HttpServletResponse) rxp;
-        String ref  = req.getHeader("Referer");
-        String sche = req.getScheme( ) + "://";
-        String host = req.getServerName();
-        long   port = req.getServerPort();
-        if (port != 80 && port != 443) {
-            host += ":" + port;
-        }
-        if (null == ref || !ref.startsWith(sche + host + Core.BASE_HREF + "/")) {
-            rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-            rsp.getWriter().print("XSRF Access Forbidden!");
+
+        // 如果有 X-Requested-With 表示请求来自 AJAX 或 APP
+        String ret = req.getHeader("X-Requested-With" );
+        if (ret != null && ret.length() != 0) {
+            fc.doFilter(rxq, rxp);
             return;
         }
-        fc.doFilter(req, rsp);
+
+        // 提取到 Referer 并与当前请求的 URL 比对来判断同域
+        String ref = req.getHeader("Referer");
+        String dmn = req.getServerName( );
+        Matcher ma = DMN_PAT.matcher(ref);
+        if (ma.find( ) && ! ma.group( 2 ).equals(dmn) ) {
+            fc.doFilter(rxq, rxp);
+            return;
+        }
+
+        rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        rsp.getWriter().print("XSRF Access Forbidden!");
     }
 
     @Override

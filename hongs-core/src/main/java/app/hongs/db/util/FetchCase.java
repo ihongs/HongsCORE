@@ -1327,7 +1327,7 @@ public class FetchCase
    * 关联用例全部抛弃
    * @return 全新的用例对象
    */
-  public FetchCase copy( )
+  public FetchCase klone()
   {
     return new FetchCase(this, new HashMap(this.options), true );
   }

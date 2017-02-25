@@ -143,7 +143,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
     public void close() {
         try {
             try {
-                if (rs != null && ! rs.isClosed()) {
+                if (rs != null && !rs.isClosed()) {
                     rs.close();
                 }
             }
@@ -153,7 +153,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         }
         finally {
             try {
-                if (ps != null && ! ps.isClosed()) {
+                if (ps != null && !ps.isClosed()) {
                     ps.close();
                 }
             }

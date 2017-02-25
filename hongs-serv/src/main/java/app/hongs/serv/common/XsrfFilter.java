@@ -41,7 +41,7 @@ public class XsrfFilter implements Filter {
         String ref = req.getHeader("Referer");
         String dmn = req.getServerName( );
         Matcher ma = DMN_PAT.matcher(ref);
-        if (ma.find( ) && ! ma.group( 1 ).equals(dmn) ) {
+        if (ma.find( )  &&  ma.group( 1 ).equals(dmn) ) {
             fc.doFilter(rxq, rxp);
             return;
         }

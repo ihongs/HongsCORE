@@ -100,7 +100,7 @@ public class DBFields
     }
     finally
     {
-      rs.over();
+      rs.close();
     }
   }
 

@@ -65,7 +65,7 @@ abstract public class Link
   /**
    * 开启连接
    * @return
-   * @throws HongsException 
+   * @throws HongsException
    */
   public abstract Connection open()
     throws HongsException;
@@ -138,7 +138,7 @@ abstract public class Link
 
   /**
    * 执行准备
-   * @throws HongsException 
+   * @throws HongsException
    */
   public void ready()
     throws HongsException
@@ -419,7 +419,9 @@ abstract public class Link
       throw new HongsException(0x1043, ex);
     }
 
-    return new Loop(this, ps, rs);
+    Loop   loop  =  new Loop(rs, ps);
+    loop.inObjectMode(IN_OBJECT_MODE);
+    return loop;
   }
 
   /**
@@ -439,7 +441,7 @@ abstract public class Link
          Map<String, Object>  row;
 
     Loop rs  = this.query(sql, start, limit, params);
-    while (( row = rs.next() ) != null)
+    while ((row = rs.next()) != null)
     {
       rows.add(row);
     }
@@ -449,7 +451,6 @@ abstract public class Link
 
   /**
    * 获取查询的全部数据
-   * <p>注: 调fetch实现</p>
    * @param sql
    * @param params
    * @return 全部数据
@@ -458,12 +459,20 @@ abstract public class Link
   public List fetchAll(String sql, Object... params)
     throws HongsException
   {
-    return this.fetch(sql, 0, 0, params);
+    List<Map<String, Object>> rows = new ArrayList();
+         Map<String, Object>  row;
+
+    Loop rs  = this.query(sql, 0, 0, params);
+    while ((row = rs.next()) != null)
+    {
+      rows.add(row);
+    }
+
+    return rows;
   }
 
   /**
    * 获取查询的单条数据
-   * <p>注: 调fetch实现</p>
    * @param sql
    * @param params
    * @return 单条数据
@@ -472,15 +481,11 @@ abstract public class Link
   public Map  fetchOne(String sql, Object... params)
     throws HongsException
   {
-    List<Map<String, Object>> rows = this.fetch(sql, 0, 1, params);
-    if (! rows.isEmpty( ))
-    {
-      return rows.get( 0 );
-    }
-    else
-    {
-      return new HashMap();
-    }
+    Loop rs  = this.query(sql, 0, 1, params);
+    Map<String , Object> row = rs.next();
+    if (row == null) row = new HashMap();
+
+    return row ;
   }
 
   /** 执行语句 **/

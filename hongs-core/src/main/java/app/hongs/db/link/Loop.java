@@ -3,6 +3,7 @@ package app.hongs.db.link;
 import app.hongs.HongsException;
 import app.hongs.HongsUnchecked;
 import app.hongs.util.Dict;
+import java.io.Closeable;
 import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -13,24 +14,25 @@ import java.util.LinkedHashMap;
 
 /**
  * 查询结果迭代
+ *
+ * 结束自动关闭 ResultSet 和 Statement, Statement 给 null 则请自行关闭
+ *
  * @author Hong
  */
-public class Loop implements Iterable<Map>, Iterator<Map> {
-    private final Link  db;
+public class Loop implements Iterable<Map>, Iterator<Map>, Closeable {
     private final Statement   ps;
     private final ResultSet   rs;
-    private       Boolean     il = null;
     private ResultSetMetaData md = null;
     private Map<String,Class> td = null;
+    private       Boolean     il = null;
+    private       boolean     ib;
 
-    public Loop(Link db, Statement ps, ResultSet rs) throws HongsException {
-        this.db = db;
+    public Loop(ResultSet rs, Statement ps) throws HongsException {
+        if (rs == null) {
+            throw new NullPointerException("ResultSet can not be null");
+        }
         this.ps = ps;
         this.rs = rs;
-    }
-
-    public Link getLink() {
-        return db;
     }
 
     public Statement getStatement() {
@@ -39,6 +41,14 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
 
     public ResultSet getReusltSet() {
         return rs;
+    }
+
+    public  boolean  isObjectMode() {
+        return ib;
+    }
+
+    public  void  inObjectMode(boolean ib) {
+        this.ib = ib;
     }
 
     public ResultSetMetaData getMetaData() throws HongsException {
@@ -82,7 +92,7 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
             try {
                 il = rs.next();
             } catch (SQLException ex) {
-                this.over(   );
+                this.close(  );
                 throw new HongsUnchecked(0x10a4, ex);
             }
         }
@@ -90,11 +100,11 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
     }
 
     @Override
-    public Map next( ) {
+    public Map next() {
         // 判断是否到达末尾
         if (! hasNext()) {
-            this.over();
-            return null;
+            this.close();
+            return null ;
         }
         il  = null;
 
@@ -103,7 +113,7 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
 //          getMetaData();
             getTypeDict();
         } catch (HongsException ex ) {
-            this.over ( );
+            this.close( );
             throw  ex.toUnchecked( );
         }
 
@@ -111,7 +121,7 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
         try {
             int i = 0;
             Map<String,Object> row = new LinkedHashMap();
-            if ( db.IN_OBJECT_MODE ) {
+            if (ib) {
                 for (Map.Entry<String,Class> et : td.entrySet()) {
                     //row.put(et.getKey(), rs.getObject(++ i, et.getState()));
                     Dict.put(row, rs.getObject(++ i, et.getValue()), (Object[])et.getKey().split("\\."));
@@ -124,21 +134,35 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
             }
             return  row;
         } catch (  SQLException ex ) {
-            this.over();
+            this.close();
             throw new HongsUnchecked(0x10a6, ex);
         }
     }
 
-    public void over( ) {
+    @Override
+    public void close() {
         if (md == null) {
             return;
         }
         try {
-            db.closeResultSet( rs );
-            db.closeStatement( ps );
-        } catch (HongsException ex) {
-            throw ex.toUnchecked( );
-        } finally {
+            try {
+                if (rs != null && ! rs.isClosed()) {
+                    rs.close();
+                }
+            }
+            catch (SQLException ex) {
+              throw new HongsUnchecked(0x1035, ex);
+            }
+            try {
+                if (ps != null && ! ps.isClosed()) {
+                    ps.close();
+                }
+            }
+            catch (SQLException ex) {
+              throw new HongsUnchecked(0x1034, ex);
+            }
+        }
+        finally {
             md = null;
             td = null;
         }
@@ -149,7 +173,7 @@ public class Loop implements Iterable<Map>, Iterator<Map> {
      */
     @Override
     public void remove() {
-        throw new UnsupportedOperationException("Not supported remove in db rs loop.");
+        throw new UnsupportedOperationException("Not supported remove in loop.");
     }
 
 }

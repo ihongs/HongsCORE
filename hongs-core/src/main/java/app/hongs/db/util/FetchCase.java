@@ -1348,62 +1348,6 @@ public class FetchCase
   }
 
   /**
-   * 查询并获取单个结果
-   * @return
-   * @throws HongsException
-   */
-  public Map  one() throws HongsException {
-    if (_db_ == null) {
-      throw new HongsException(0x10b6);
-    }
-
-    boolean on_option_mode = false;
-    boolean in_obejct_mode = false;
-    try {
-      if (hasOption("OBJECT_MODE")) {
-        on_option_mode = true;
-        in_obejct_mode = _db_.IN_OBJECT_MODE;
-        _db_.IN_OBJECT_MODE = getOption("OBJECT_MODE", false);
-      }
-
-      return _db_.fetchOne(getSQL(), getParams());
-
-    } finally {
-      if (on_option_mode) {
-        _db_.IN_OBJECT_MODE = in_obejct_mode;
-      }
-    }
-  }
-
-  /**
-   * 查询并获取全部结果
-   * @return
-   * @throws HongsException
-   */
-  public List all() throws HongsException {
-    if (_db_ == null) {
-      throw new HongsException(0x10b6);
-    }
-
-    boolean on_option_mode = false;
-    boolean in_obejct_mode = false;
-    try {
-      if (hasOption("OBJECT_MODE")) {
-        on_option_mode = true;
-        in_obejct_mode = _db_.IN_OBJECT_MODE;
-        _db_.IN_OBJECT_MODE = getOption("OBJECT_MODE", false);
-      }
-
-      return _db_.fetch(getSQL(), getStart(), getLimit(), getParams());
-
-    } finally {
-      if (on_option_mode) {
-        _db_.IN_OBJECT_MODE = in_obejct_mode;
-      }
-    }
-  }
-
-  /**
    * 查询并获取记录迭代
    * @return
    * @throws HongsException
@@ -1413,22 +1357,41 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    boolean on_option_mode = false;
-    boolean in_obejct_mode = false;
-    try {
-      if (hasOption("OBJECT_MODE")) {
-        on_option_mode = true;
-        in_obejct_mode = _db_.IN_OBJECT_MODE;
-        _db_.IN_OBJECT_MODE = getOption("OBJECT_MODE", false);
-      }
-
-      return _db_.query(getSQL(), getStart(), getLimit(), getParams());
-
-    } finally {
-      if (on_option_mode) {
-        _db_.IN_OBJECT_MODE = in_obejct_mode;
-      }
+    Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
+    if (hasOption("OBJECT_MODE")) {
+         rs.inObjectMode(getOption("OBJECT_MODE", false));
     }
+
+    return  rs;
+  }
+
+  /**
+   * 查询并获取全部结果
+   * @return
+   * @throws HongsException
+   */
+  public List all() throws HongsException {
+    Loop rs = oll();
+
+    List<Map<String, Object>> rows = new ArrayList();
+         Map<String, Object>  row  ;
+    while ((row = rs.next()) != null) {
+        rows.add(row);
+    }
+
+    return rows;
+  }
+
+  /**
+   * 查询并获取单个结果
+   * @return
+   * @throws HongsException
+   */
+  public Map  one() throws HongsException {
+    this.limit( 1 );
+    Loop rs = oll();
+
+    return rs.hasNext() ? rs.next() : new HashMap();
   }
 
   /**

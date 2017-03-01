@@ -1057,4 +1057,44 @@ public class Mtree extends Model
     this.checkAndRepair(this.rootId);
   }
 
+    /**
+     * 此方法用于获取和构建树形模型唯一对象
+     *
+     * @param model
+     * @return
+     * @throws HongsException
+     */
+    public static Mtree getInstance(Model model) throws HongsException {
+        Map    core  = model.db.modelObjects;
+        String name  = model.table.name;
+        Object minst = core.get( name );
+        Mtree  mtree ;
+
+        if (minst != null && minst instanceof Mview) {
+            return ( Mtree ) minst ;
+        }
+
+        name  = name +":Mtree";
+        minst = core.get(name);
+
+        if (minst != null && minst instanceof Mview) {
+            return ( Mtree ) minst ;
+        }
+
+        /**
+         * 不在开始检查 model 的类型,
+         * 是为了总是将 mtree 放入到模型库中管理,
+         * 可以避免当前 model 关联的模型再关联回来时重复构造.
+         */
+        if (model instanceof Mtree) {
+            mtree  = ( Mtree ) model ;
+            core.put (name , mtree);
+        } else {
+            mtree  = new Mtree(model);
+            core.put (name , mtree);
+        }
+
+        return mtree;
+    }
+
 }

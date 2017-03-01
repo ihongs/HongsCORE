@@ -337,7 +337,7 @@ public class FormSet
        : "app/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
     return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
   }
-
+  
   public static FormSet getInstance(String name) throws HongsException {
       String key = FormSet.class.getName() + ":" + name;
       Core core = Core.getInstance();

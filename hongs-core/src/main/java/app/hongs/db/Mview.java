@@ -431,7 +431,7 @@ public class Mview extends Model {
     }
 
     private void addAssocFields() throws HongsException {
-        if (  null == table.assocs  ) {
+        if (null == table.assocs) {
             return;
         }
 
@@ -555,10 +555,10 @@ public class Mview extends Model {
          */
         if (model instanceof Mview) {
             mview  = ( Mview ) model ;
-            core.put (name , minst);
+            core.put (name , mview);
         } else {
             mview  = new Mview(model);
-            core.put (name , minst);
+            core.put (name , mview);
         }
 
         return mview;

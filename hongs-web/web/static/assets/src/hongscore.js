@@ -742,7 +742,7 @@ function hsChkUri(uri) {
  * @return {String} 完整的URI
  */
 function hsFixUri(uri) {
-    if (/^(\w+:\/\/|\/|\.|\.\.)/.test(uri) === false) {
+    if (/^(\w+:\/\/|\/|\.\/|\.\.\/)/.test(uri) === false) {
         var pre  = HsCONF["BASE_HREF"];
         if (pre == undefined) {
             pre  = jQuery("base").attr("href");
@@ -1877,13 +1877,10 @@ $.fn.hsFind = function(selr) {
             return salr ? $(salr, elem) : elem;
         case '^':
             elem = elem.parent();
-            if (! salr) return elem;
-            var a = salr.split('::', 2);
-            if (a.length > 1) {
-                return elem.closest(salr);
-            } else {
-                return elem.closest(a[0]).hsFind(a[1]);
-            }
+            var a = salr.split(';' , 2);
+            if (! a[0]) elem = elem.closest(a[0]);
+            if (! a[1]) elem = elem.hsFind (a[1]);
+            return elem;
         case '>':
             return elem.children(salr);
         case '~':
@@ -1894,14 +1891,12 @@ $.fn.hsFind = function(selr) {
             return elem.prev(salr);
         case '?':
             return elem.find(salr);
-        case '.':
-        case ':':
-        case '[':
-            return elem.find(selr);
         case '*':
             return $(salr);
-        default :
+        case '#':
             return $(selr);
+        default : // .:[
+            return elem.find(selr);
     }
 };
 $.fn._hsTarget = $.fn.hsFind; // 兼容旧版命名

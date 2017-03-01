@@ -20,10 +20,14 @@ import java.sql.SQLException;
  */
 public class MRecord<T> implements IRecord<T> {
 
-    private final Table table;
+    protected  final  Table table;
+
+    protected MRecord(Table table) throws HongsException {
+        this.table =  table;
+    }
 
     public MRecord() throws HongsException {
-        table = DB.getInstance("common").getTable("record");
+        this(DB.getInstance("common").getTable("record"));
     }
 
     /**

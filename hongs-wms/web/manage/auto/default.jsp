@@ -15,8 +15,11 @@
     _module = _module.substring(0, i);
 
     CoreLocale lang = CoreLocale.getInstance().clone();
-               lang.loadIgnrFNF( _module+"/"+_entity );
-    NaviMap    site = NaviMap.getInstance(_module+"/"+_entity);
+               lang.loadIgnrFNF(_module);
+               lang.loadIgnrFNF(_module +"/"+ _entity);
+    NaviMap    site = NaviMap.hasConfFile(_module+"/"+_entity)
+                    ? NaviMap.getInstance(_module+"/"+_entity)
+                    : NaviMap.getInstance(_module);
     Map        menu = site.getMenu(_module +"/"+ _entity +"/");
 
     String nm = menu == null ? "" : (String) menu.get( "disp");
@@ -24,7 +27,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>HongsCORE::<%=nm%></title>
+        <title>HongsCORE::<%=lang.translate(nm)%></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">

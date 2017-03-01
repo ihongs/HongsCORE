@@ -33,6 +33,7 @@
             Mview view = new Mview(DB.getInstance(_module).getTable(_entity));
             flds = view.getFields();
             lang = view.getLang(  );
+            break;
         } catch (HongsException ex) {
             if (ex.getErrno() != 0x1039) {
                 throw ex;
@@ -43,17 +44,22 @@
             }
         }
 
-        FormSet form = FormSet.getInstance(_module+"/"+_entity);
+        FormSet form = FormSet.hasConfFile(_module+"/"+_entity)
+                     ? FormSet.getInstance(_module+"/"+_entity)
+                     : FormSet.getInstance(_module);
         flds = form.getFormTranslated(_entity );
         lang = CoreLocale.getInstance().clone();
         lang.loadIgnrFNF(_module);
+        lang.loadIgnrFNF(_module +"/"+ _entity);
     } while (false);
 
     // 获取资源标题
     String id , nm ;
     id = (_module +"-"+ _entity +"-"+ _action).replace('/','-');
     do {
-        NaviMap site = NaviMap.getInstance(_module+"/"+_entity);
+        NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
+                     ? NaviMap.getInstance(_module+"/"+_entity)
+                     : NaviMap.getInstance(_module);
         Map menu  = site.getMenu(_module+"/#"+_entity);
         if (menu != null) {
             nm = (String) menu.get("disp");
@@ -158,7 +164,7 @@
     context.hsList({
         loadUrl : "<%=_module%>/<%=_entity%>/retrieve.act?md=2",
         openUrls: [
-            ['.create', '<%=_module%>/<%=_entity%>/form.html?id=0&md=0', '@'],
+            ['.create', '<%=_module%>/<%=_entity%>/form.html?md=0', '@'],
             ['.update', '<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}', '@']
         ],
         sendUrls: [

@@ -1198,7 +1198,6 @@ $.hsOpen = function(url, data, complete) {
     return  box;
 };
 $.hsNote = function(msg, typ, yes, sec) {
-    'use strict';
     var div = $('<div class="alert alert-dismissable fade in">'
               + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
               + '<div class="alert-body notebox" ></div></div>');
@@ -1256,7 +1255,6 @@ $.hsNote = function(msg, typ, yes, sec) {
     return  div;
 };
 $.hsWarn = function(msg, typ, yes, not) {
-    'use strict';
     var div = $('<div class="alert alert-dismissable fade in">'
               + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
               + '<div class="alert-body warnbox" ></div></div>');
@@ -1265,12 +1263,13 @@ $.hsWarn = function(msg, typ, yes, not) {
     var btt = $('<h4></h4>');
     var btu = $( '<p></p>' );
     var btn = $( '<p></p>' );
-    var tit ;
+    var tit;
+    var end;
 
     // 参数检查
-    var j   =  2   ;
+    var j = 2;
     if (typeof typ !== "string") {
-        j   =  1   ;
+        j = 1;
         not =  yes ;
         yes =  typ ;
         typ ='info';
@@ -1300,46 +1299,57 @@ $.hsWarn = function(msg, typ, yes, not) {
     btt.text(tit);
     box.text(msg);
 
-    // 常规按钮
-    if (yes == null || $.isFunction(yes)) {
-        arguments[j + 0] = {
-            "click": yes,
-            "class": "btn-primary",
-            "label": hsGetLang("ensure")
-        };
-    }
-    if (not == null || $.isFunction(not)) {
-        arguments[j + 1] = {
-            "click": not,
-            "class": "btn-default",
-            "label": hsGetLang("cancel")
-        };
-    }
-
     // 操作按钮
-    var end = null;
-    for(var i = j ; i < arguments.length ; i = i + 1) {
+    for(var i = j; i < arguments.length; i ++) {
         var v = arguments[i];
-        // 没给 label 就是设置警告窗体
-        if (v["label"] === undefined) {
+
+        // 确认和取消按钮可使用简化参数
+        if (v === null || $.isFunction(v)) {
+            if (i == j + 0) {
+                v = {
+                    "click": v,
+                    "class": "btn-primary",
+                    "label": hsGetLang("ensure")
+                };
+            } else
+            if (i == j + 1) {
+                v = {
+                    "click": v,
+                    "class": "btn-default",
+                    "label": hsGetLang("cancel")
+                };
+            } else {
+                throw new Error("hsWarn: The value of the "+i+"th argument is not supported");
+                continue;
+            }
+        }
+
+        if (v["label"] || v["click"]) {
+            var btm = $('<button type="button" class="btn btn-md"></button>');
+            btn.append(btm);
+            if (v["label"]) {
+                btm.text (v["label"]);
+            }
+            if (v["click"]) {
+                btm.click(v["click"]);
+            }
+            if (v["class"]) {
+                btm.addClass(v["class"]);
+            } else
+            {
+                btm.addClass("btn-default");
+            }
+        } else {
+            // 未指定标签则认为是在设置窗体
             if (v["close"]) {
-                end = v["close"];
+                end   =   v["close"] ;
             }
             if (v["title"]) {
-                btt.text(v["title"]);
+                btt.text (v["title"]);
             }
             if (v["class"]) {
                 div.addClass(v["class"]);
             }
-            continue;
-        }
-        if (v["class"] === undefined) {
-            v["class"]  =  "btn-default";
-        }
-        var btm = $('<button type="button" class="btn btn-md"></button>');
-            btm.text( v["label"] ).addClass( v["class"] ).appendTo( btn );
-        if (v["click"]) {
-            btm.on("click" , v["click"]);
         }
     }
 
@@ -1402,7 +1412,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     return  div;
 };
 
-$.fn.jqLoad = $.fn.load;
+$.fn.jqLoad = $.fn.load ;
 $.fn.hsLoad = function(url, data, complete) {
     if ( $.isFunction(  data  )) {
         complete = data ;

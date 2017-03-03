@@ -11,15 +11,15 @@ CREATE TABLE `a_module_unit` (
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `snum` UNSIGNED INT(10) DEFAULT '0',
-  `ctime` UNSIGNED INT(10) DEFAULT NULL,
-  `mtime` UNSIGNED INT(10) DEFAULT NULL,
-  `boost` UNSIGNED INT(10) DEFAULT NULL,
+  `snum` INT(10) UNSIGNED DEFAULT '0',
+  `ctime` INT(10) UNSIGNED DEFAULT NULL,
+  `mtime` INT(10) UNSIGNED DEFAULT NULL,
+  `boost` INT(10) UNSIGNED DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `IK_a_module_unit_unit` ON `a_member_dept` (`pid`);
+CREATE INDEX `IK_a_module_unit_unit` ON `a_module_unit` (`pid`);
 CREATE INDEX `IK_a_module_unit_state` ON `a_module_unit` (`state`);
 CREATE INDEX `IK_a_module_unit_ctime` ON `a_module_unit` (`ctime`);
 CREATE INDEX `IK_a_module_unit_mtime` ON `a_module_unit` (`mtime`);
@@ -36,10 +36,10 @@ CREATE TABLE `a_module_form` (
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
   `conf` TEXT NOT NULL,
-  `snum` UNSIGNED INT(10) DEFAULT '0',
-  `ctime` UNSIGNED INT(10) DEFAULT NULL,
-  `mtime` UNSIGNED INT(10) DEFAULT NULL,
-  `boost` UNSIGNED INT(10) DEFAULT NULL,
+  `snum` INT(10) UNSIGNED DEFAULT '0',
+  `ctime` INT(10) UNSIGNED DEFAULT NULL,
+  `mtime` INT(10) UNSIGNED DEFAULT NULL,
+  `boost` INT(10) UNSIGNED DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`unit_id`) REFERENCES `a_module_unit` (`id`) ON DELETE CASCADE
@@ -62,9 +62,9 @@ CREATE TABLE `a_module_data` (
   `name` VARCHAR(255) DEFAULT NULL,
   `note` VARCHAR(255) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,
-  `ctime` UNSIGNED INT(10) DEFAULT NULL,
-  `etime` UNSIGNED INT(10) DEFAULT NULL,
-  `rtime` UNSIGNED INT(10) DEFAULT NULL,
+  `ctime` INT(10) UNSIGNED DEFAULT NULL,
+  `etime` INT(10) UNSIGNED DEFAULT NULL,
+  `rtime` INT(10) UNSIGNED DEFAULT NULL,
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`,`form_id`,`etime`),
   FOREIGN KEY (`form_id`) REFERENCES `a_module_form` (`id`) ON DELETE CASCADE

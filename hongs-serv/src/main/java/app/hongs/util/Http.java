@@ -1,14 +1,18 @@
 package app.hongs.util;
 
 import app.hongs.HongsException;
+import app.hongs.action.ActionHelper;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -94,7 +98,7 @@ public class Http {
                 HttpPost pozt = new HttpPost();
                 http = pozt;
 
-                pozt.setEntity(makeEntity(post));
+                pozt.setEntity(buildPost(post));
             }
 
             if (head != null) {
@@ -147,7 +151,7 @@ public class Http {
      * @return
      * @throws HongsException
      */
-    public static HttpEntity makeEntity(Map<String, Object> data)
+    public static HttpEntity buildPost(Map<String, Object> data)
             throws HongsException {
         List<NameValuePair> pair = new ArrayList();
         for (Map.Entry<String, Object> et : data.entrySet()) {
@@ -179,6 +183,40 @@ public class Http {
             throw  new HongsException.Common(ex);
         }
     }
+
+    /**
+     * 解析响应数据
+     *
+     * 可以识别 JSON,JSONP,FormData 形式数据
+     *
+     * @param resp
+     * @return
+     * @throws app.hongs.HongsException.Common
+     */
+    public static Map parseData(String resp)
+            throws HongsException.Common {
+        resp = resp.trim();
+
+        // 识别是否为 JSONP 格式的数据
+        Matcher mat = JSONP.matcher(resp);
+        if (mat.matches()) {
+            resp = mat.group(1).trim();
+        }
+
+        if (resp.length() == 0) {
+            return new HashMap();
+        }
+        if (resp.startsWith("{") && resp.endsWith("}")) {
+            return (Map) Data.toObject(resp);
+        } else
+        if (resp.startsWith("[") && resp.endsWith("]")) {
+            throw  new HongsException.Common("Unsupported list: "+ resp );
+        } else {
+            return ActionHelper.parseParam(ActionHelper.parseQuery(resp));
+        }
+    }
+
+    private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$");
 
     /**
      * 请求状态异常

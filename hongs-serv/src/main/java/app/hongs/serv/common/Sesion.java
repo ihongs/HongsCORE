@@ -14,13 +14,14 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
 
 /**
- * 会话状态
+ * 会话状态记录
  * @author Hongs
  */
-public class Sesion implements HttpSession, Serializable {
+public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     private transient boolean isNew = false;
     private transient boolean isMod = false;
+    private transient    SessFiller  ctz;
     private transient ServletContext ctx;
     private final Map<String,Object> dat;
     private String sid;
@@ -39,6 +40,10 @@ public class Sesion implements HttpSession, Serializable {
 
     public Sesion() {
         this(Core.newIdentity());
+    }
+
+    public void setRequestContext(   SessFiller  ctz) {
+        this.ctz = ctz;
     }
 
     public void setServletContext(ServletContext ctx) {
@@ -113,6 +118,11 @@ public class Sesion implements HttpSession, Serializable {
         atime = ctime;
         isMod = false;
         isNew = true ;
+
+        // 延期会话 Cookie
+        if (  ctz != null  ) {
+            ctz.setCookies();
+        }
     }
 
     @Override
@@ -125,10 +135,11 @@ public class Sesion implements HttpSession, Serializable {
     }
 
     /**
-     * 将会话数据持久存储
+     * 退出时将会话数据存起来
      * @throws HongsException
      */
-    public void store() throws HongsException {
+    @Override
+    public void close() throws HongsException {
         long   exp = getMaxInactiveInterval();
         String key = "$." + sid ;
         if (exp == 0) {
@@ -142,11 +153,22 @@ public class Sesion implements HttpSession, Serializable {
             exp = exp + System.currentTimeMillis() / 1000;
         }
 
+        IRecord rec = getRecord( );
+
         if (isMod( )) {
             atime   =   System.currentTimeMillis() / 1000;
-            getRecord().set(key, this, exp);
+            rec.set(key, this, exp);
         } else {
-            getRecord().set(key, /***/ exp);
+            rec.set(key, /***/ exp);
+        }
+
+        // 如果对应的数据记录对象可关闭, 则关闭之
+        if (rec instanceof AutoCloseable) {
+            try {
+                (   (AutoCloseable) rec ).close(   );
+            } catch (Exception err) {
+                throw new HongsException.Common(err);
+            }
         }
     }
 

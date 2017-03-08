@@ -1,77 +1,147 @@
 package app.hongs.serv.common;
 
+import app.hongs.Core;
+import app.hongs.CoreLogger;
 import app.hongs.HongsUnchecked;
 import java.util.regex.Pattern;
+import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
- * 会话状态包裹
+ * 会话请求包装
  * @author Hongs
  */
 public class SessFiller extends HttpServletRequestWrapper {
 
-    private Sesion ses;
-    private String sid;
-    private int    exp;
+    private final static Pattern      SID = Pattern.compile("^[a-zA-Z0-9_\\-]{1,32}$");
+    private final /****/ SessFilter   flt;
+    private final HttpServletResponse rsp;
 
-    private static final Pattern SIDFMT = Pattern.compile("^[a-zA-Z0-9\\-]{1,32}$");
+    public Sesion  ses;
+    public boolean gotSes;
+    public String  sid;
+    public boolean gotSid;
 
-    public SessFiller(HttpServletRequest request, String sid, int exp) {
-        super(request);
-
-        // 判断会话 ID 是否正确, 不对则报 400 错误请求
-        if (sid != null && sid.length() != 0
-        && !SIDFMT.matcher(sid).matches()) {
-            throw new HongsUnchecked(0x1100, "Session ID must be 1 to 32 alphanumeric or '-'.");
-        }
-
-        this.sid = sid;
-        this.exp = exp;
+    public SessFiller(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
+        super(  req  );
+        this.rsp = rsp;
+        this.flt = flt;
     }
 
-    /**
-     * 返回自定义 HttpSession
-     * 没有则新建
-     * @return
-     */
     @Override
     public HttpSession getSession() {
         return getSession(true);
     }
 
-    /**
-     * 返回自定义 HttpSession
-     * @param add
-     * @return
-     */
     @Override
     public HttpSession getSession(boolean add) {
-            if (ses != null) {
-                return ses;
-            }
+        // 从请求数据提取会话 ID
+        if (! gotSid) {
+            gotSid = true;
 
+            String xid;
+            do {
+                xid = this.getParameter(flt.SSRN);
+                if (xid != null && xid.length() != 0) {
+                    setSid(xid);
+                    break ;
+                }
+
+                xid = this.getCookibute(flt.SSCN);
+                if (xid != null && xid.length() != 0) {
+                    setSid(xid);
+                    break ;
+                }
+
+                xid = this.getAuthibute(flt.SSCN);
+                if (xid != null && xid.length() != 0) {
+                    setSid(xid);
+                    break ;
+                }
+            } while(false);
+        }
+
+        // 获取或构建会话对象
+        if (! gotSes || (add && ses == null)) {
+            gotSes = true;
+
+            Sesion xes;
             if (sid != null) {
-                ses  = Sesion.getSesion(sid);
-                if (ses != null) {
-                    ses.setServletContext(getServletContext());
+                xes  = Sesion.getSesion(sid);
+                if (xes != null) {
+                    setSes(xes);
                 } else
                 if (add == true) {
-                    ses  =  new  Sesion(sid);
-                    ses.setMaxInactiveInterval(exp);
-                    ses.setServletContext(getServletContext());
+                    xes  =  new  Sesion(sid);
+                    setSes(xes);
                 }
             } else {
                 if (add == true) {
-                    ses  =  new  Sesion(   );
-                    ses.setMaxInactiveInterval(exp);
-                    ses.setServletContext(getServletContext());
-                    sid  =  ses.getId  (   );
+                    xes  =  new  Sesion(   );
+                    setSes(xes);
                 }
             }
 
-        return  ses  ;
+            // 延期会话 Cookie
+            setCookies();
+        }
+
+        return ses;
+    }
+
+    public void setCookies() {
+        if (ses == null) {
+            return;
+        }
+
+        if (rsp.isCommitted ( )) {
+            CoreLogger.error("Can not set SessionID to Cookie {}:{} = {}, Response is committed",
+                      flt.SSCN, flt.SSCP, ses.getId());
+            return;
+        }
+
+        Cookie cok = new Cookie(flt.SSCN, ses.getId());
+        cok.setPath(Core.BASE_HREF + flt.SSCP);
+        cok.setHttpOnly ( true);
+        cok.setMaxAge(flt.CEXP);
+        rsp.addCookie(cok /**/);
+    }
+
+    private void setSes(Sesion xes) {
+        ServletContext cont = getServletContext();
+        xes.setMaxInactiveInterval(flt.SEXP);
+        xes.setServletContext(cont);
+        xes.setRequestContext(this);
+        ses = xes;
+    }
+
+    private void setSid(String xid) {
+        if (SID.matcher(xid).matches() == false) {
+            throw new HongsUnchecked(0x1100, "Session ID must be 1 to 32 alphanumeric, '-' and '_'");
+        }
+        sid = xid;
+    }
+
+    private String getCookibute(String key) {
+        Cookie[ ] cks = this.getCookies();
+        if (cks != null) for (Cookie cok : cks) {
+            if (key.equals(cok.getName ())) {
+                return     cok.getValue();
+            }
+        }
+        return  null;
+    }
+
+    private String getAuthibute(String key) {
+        String xid = this.getHeader("Authorization");
+        if (xid != null && xid.startsWith(key + "=")) {
+            return xid.substring( key.length() + 1 );
+        }
+        return  null;
     }
 
 }

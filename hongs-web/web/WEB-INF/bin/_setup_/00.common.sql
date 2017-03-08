@@ -13,5 +13,5 @@ CREATE TABLE `a_common_record` (
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `IK_a_common_record_xtime` ON `a_member_dept` (`xtime`);
-CREATE INDEX `IK_a_common_record_mtime` ON `a_member_dept` (`mtime`);
+CREATE INDEX `IK_a_common_record_xtime` ON `a_common_record` (`xtime`);
+CREATE INDEX `IK_a_common_record_mtime` ON `a_common_record` (`mtime`);

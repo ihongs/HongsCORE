@@ -20,7 +20,7 @@ public class CaptAction {
         int    h  = Synt.declare(helper.getParameter("h"), 40);
         String b  = Synt.declare(helper.getParameter("b"), "");
         String f  = Synt.declare(helper.getParameter("f"), "");
-        String e  = Synt.declare(helper.getParameter("e"), "png");
+        String e  = Synt.declare(helper.getParameter("e"), "png" );
 
         Capts  vc = Capts.captcha(h, b, f, e);
 

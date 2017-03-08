@@ -54,9 +54,7 @@ public class ApisAction
   extends  ActionDriver
 {
     private String dataKey;
-    private String callKey;
     private String convKey;
-    private String flatKey;
     private String wrapKey;
     private String scokKey;
 
@@ -66,7 +64,6 @@ public class ApisAction
 
         CoreConfig cc = CoreConfig.getInstance( );
         dataKey  = cc.getProperty("core.api.data", ".data"); // 请求数据
-        callKey  = cc.getProperty("core.api.call", ".call"); // 回调名称
         convKey  = cc.getProperty("core.api.conv", ".conv"); // 转换策略
         wrapKey  = cc.getProperty("core.api.wrap", ".wrap"); // 包裹数据
         scokKey  = cc.getProperty("core.api.scok", ".scok"); // 无错误码
@@ -122,24 +119,9 @@ public class ApisAction
 
         // 提取 API 特有的参数
         String _dat  = req.getParameter(dataKey);
-        String _cal  = req.getParameter(callKey);
         String _cnv  = req.getParameter(convKey);
         String _wap  = req.getParameter(wrapKey);
         String _sok  = req.getParameter(scokKey);
-
-        // JSONP 回调函数名称登记, 为避免参数被占用, 总能用 .call
-        if (!callKey.startsWith(".")) {
-        String _cxl  = req.getParameter(".call");
-        if (_cxl != null && _cxl.length( ) != 0) {
-            _cal  = _cxl;
-        }}
-        if (_cal != null && _cal.length( ) != 0) {
-            if (!_cal.matches ( "^[a-zA-Z_\\$][a-zA-Z0-9_]*$"  )  ) {
-                hlpr.error400 ( "Illegal callback function name!" );
-                return;
-            }
-            hlpr.setAttribute ( Cnst.BACK_ATTR ,  _cal);
-        }
 
         // 将请求数据处理之后传递
         if (_dat != null && _dat.length( ) != 0) {
@@ -278,7 +260,7 @@ public class ApisAction
         }
 
         /**
-         * 但已知的动作中无法匹配时
+         * 当已知的动作中无法匹配时
          * 可能是使用了 AutoFilter 的原因
          * 可尝试检查当前动作或方法
          */

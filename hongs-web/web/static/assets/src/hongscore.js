@@ -1440,7 +1440,7 @@ $.fn.hsLoad = function(url, data, complete) {
     if (pos != -1) {
         url = url.substring(0, pos);
     }
-    pos = url.indexOf('.html?');
+    pos = url.indexOf(".html?");
     if (pos != -1 && !hsGetParam(url, '_') && !hsGetSeria(dat, '_')) {
         url = url.substring(0, pos + 5);
         dat = undefined;

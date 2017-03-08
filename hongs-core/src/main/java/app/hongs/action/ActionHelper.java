@@ -10,7 +10,6 @@ import app.hongs.util.Dict;
 
 import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -83,7 +82,7 @@ public class ActionHelper implements Cloneable
    * 响应输出
    */
   private OutputStream        outputStream;
-  private       Writer        outputWriter;
+  private  PrintWriter        outputWriter;
 
   /**
    * 初始化助手(用于cmdlet)
@@ -173,7 +172,7 @@ public class ActionHelper implements Cloneable
    * @param out
    * @param wrt
    */
-  public final void updateOutput(OutputStream out, Writer wrt)
+  public final void updateOutput(OutputStream out, PrintWriter wrt)
   {
     this.outputStream = out ;
     this.outputWriter = wrt ;
@@ -493,7 +492,7 @@ public class ActionHelper implements Cloneable
    * 注意: 当为虚拟请求时, 可能抛 HongsError, 错误码 0x32
    * @return 响应输出
    */
-  public Writer getOutputWriter()
+  public PrintWriter getOutputWriter()
   {
     if (this.outputWriter != null)
     {
@@ -943,11 +942,11 @@ public class ActionHelper implements Cloneable
         this.response.setContentType(ctt);
       }
     }
-    try {
-      this.getOutputWriter(  ).write(txt);
-    } catch (IOException e)  {
-      throw new HongsError(0x32, "Can not send to client.", e);
-    }
+//  try {
+        this.getOutputWriter().write(txt);
+//  } catch (IOException e)  {
+//    throw new HongsError(0x32, "Can not send to client.", e);
+//  }
   }
 
   /**
@@ -988,31 +987,36 @@ public class ActionHelper implements Cloneable
    */
   public void responed()
   {
-    CoreConfig  cc = CoreConfig.getInstance();
-    String pb = cc.getProperty( "core.powered.by" );
-    String cb = (String) this.request.getAttribute(Cnst.BACK_ATTR);
-    Writer pw = this.getOutputWriter();
+    PrintWriter out;
+    String      fun;
+    out = this.getOutputWriter();
+    fun = this.getParameter(CoreConfig
+              .getInstance(/* default setting */)
+              .getProperty("core.act.call", "cb")
+    );
 
-    if ( ! this.response.isCommitted()) {
-        this.response.setContentType(cb != null ? "text/javascript" : "application/json");
-        this.response.setCharacterEncoding("UTF-8");
-    }
+//  try {
+    if ( fun != null && fun.length() != 0 ) {
+        if ( ! this.response.isCommitted()) {
+            this.response.setCharacterEncoding("UTF-8");
+            this.response.setContentType("text/javascript" );
+        }
 
-    if (pb != null && pb.length() != 0) {
-        this.response.setHeader("X-Powered-By", pb);
-    }
-
-    try {
-    if (cb != null && cb.length() != 0) {
-        pw.write("function " + cb + "() {return " );
-        pw.write( Data.toString(this.responseData));
-        pw.write(";}");
+         out.print(fun );
+         out.print("(" );
+        Data.print(out, this.responseData);
+         out.print(");");
     } else {
-        pw.write( Data.toString(this.responseData));
+        if ( ! this.response.isCommitted()) {
+            this.response.setCharacterEncoding("UTF-8");
+            this.response.setContentType("application/json");
+        }
+
+        Data.print(out, this.responseData);
     }
-    } catch (IOException ex ) {
-        throw new HongsError(0x32, "Can not send to client.", ex);
-    }
+//  } catch (IOException e) {
+//      throw new HongsError(0x32, "Can not send to client.", e);
+//  }
 
     this.responseData = null;
   }
@@ -1127,7 +1131,7 @@ public class ActionHelper implements Cloneable
               k = s.substring(i, j);
               k = URLDecoder.decode(k, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsError.Common(ex);
+              throw new HongsUnchecked.Common ( ex);
           }
           if (j < s.length() && s.charAt(j) == '=') {
               j++;
@@ -1143,7 +1147,7 @@ public class ActionHelper implements Cloneable
               v = s.substring(i, j);
               v = URLDecoder.decode(v, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsError.Common(ex);
+              throw new HongsUnchecked.Common ( ex);
           }
           if (j < s.length() && s.charAt(j) == '&') {
               j++;

@@ -240,14 +240,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             core.put ( ActionHelper.class.getName(), hlpr );
 
             try {
-                doLaunch(core, hlpr, req );
-                 drv.doDriver( core, hlpr); // 调用
-                doRespon(hlpr, req , rsq );
-            } catch (ServletException ex ) {
-                CoreLogger.error(ex);
+                doLaunch(core, hlpr, req, rsq );
+                 drv.doDriver( core, hlpr);
+                doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
                 CoreLogger.error(ex);
-            } catch (RuntimeException ex) {
+            } catch (ServletException ex ) {
+                CoreLogger.error(ex);
+            } catch (RuntimeException ex ) {
                 CoreLogger.error(ex);
             } catch (Error er) {
                 CoreLogger.error(er);
@@ -262,18 +262,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             hlpr = core.get(ActionHelper.class);
             hlpr.updateHelper( req , rsq );
 
-            /**/ drv.doDriver( core, hlpr); // 调用
+            /**/ drv.doDriver( core, hlpr);
         }
     }
 
-    private void doRespon(ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
-            throws ServletException {
-//        if (hlpr.getResponse().isCommitted()) {
-//            ServletException se = new ServletException("Response is committed!");
-//            CoreLogger.error(se);
-//            throw se;
-//        }
-
+    private void doCommit(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
+    throws ServletException {
         Map dat  = hlpr.getResponseData();
         if (dat != null) {
             req .setAttribute(Cnst.RESP_ATTR, dat);
@@ -282,21 +276,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
     }
 
-    private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req)
+    private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException {
         Core.ACTION_NAME.set(getRealPath(req).substring(1));
 
         Core.ACTION_TIME.set(System.currentTimeMillis());
 
         CoreConfig conf = core.get(CoreConfig.class);
-
-        // Api 的特殊逻辑
-//        try {
-//            chkApisSsid(req, conf);
-//        }
-//        catch (Exception|Error e ) {
-//            CoreLogger.error ( e );
-//        }
 
         Core.ACTION_ZONE.set(conf.getProperty("core.timezone.default","GMT+8"));
         if (conf.getProperty("core.timezone.probing", false)) {
@@ -342,6 +328,21 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             if (lang != null) {
                 Core.ACTION_LANG.set(lang);
             }
+            }
+        }
+ 
+        if (! hlpr.getResponse().isCommitted()) {
+            /**
+             * 输出特定的服务器信息
+             */
+            String pb;
+            pb = conf.getProperty("core.powered.by");
+            if (pb != null && pb.length() != 0) {
+                rsp.setHeader("X-Powered-By", pb);
+            }
+            pb = conf.getProperty("core.service.by");
+            if (pb != null && pb.length() != 0) {
+                rsp.setHeader(  "Server"    , pb);
             }
         }
     }
@@ -519,55 +520,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException, IOException {
         service( hlpr.getRequest( ), hlpr.getResponse( ) );
     }
-
-    /**
-     * 通过请求参数设置 SessionID
-     * 仅仅针对接口请求
-     * @param req
-     */
-//    private void chkApisSsid(HttpServletRequest req, CoreConfig cnf) {
-//        String api = cnf.getProperty ("core.api.extn", ".api" );
-//        if (! getRealPath(req).endsWith(api)) {
-//            return;
-//        }
-//
-//        String ses = cnf.getProperty ("core.api.ssid", ".ssid");
-//        String sid = req.getParameter(  ses );
-//        if (sid == null || sid.length() == 0) {
-//            return;
-//        }
-//
-//        String cls = req.getClass().getName();
-//        if (cls.startsWith("org.eclipse.jetty.") ) {
-//            try {
-//                Object obj;
-//                obj = req.getClass ()
-//                   .getMethod("getSessionManager")
-//                   .invoke   (req);
-//                obj = obj.getClass ()
-//                   .getMethod("getHttpSession" , String.class)
-//                   .invoke   (obj, sid);
-//                req.getClass ()
-//                   .getMethod("setSession", HttpSession.class)
-//                   .invoke   (req, (HttpSession) obj);
-//            } catch (Exception ex ) {
-//                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
-//            }
-//
-//            try {
-//                req.getClass ()
-//                   .getMethod("setRequestedSessionId", String.class)
-//                   .invoke   (req, sid);
-//                req.getClass ()
-//                   .getMethod("setRequestedSessionIdFromCookie", boolean.class)
-//                   .invoke   (req, false);
-//            } catch (Exception ex ) {
-//                CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn(ex.getMessage());
-//            }
-//        } else {
-//            CoreLogger.getLogger(CoreLogger.space("hongs.out")).warn("Read session id from parameter not suported "+cls);
-//        }
-//    }
 
     //** 静态工具函数 **/
 

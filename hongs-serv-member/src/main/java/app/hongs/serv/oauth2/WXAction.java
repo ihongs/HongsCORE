@@ -85,7 +85,7 @@ public class WXAction {
         req.put("appid"         , appId);
         req.put("secret"        , appSk);
         req.put("grant_type"    , "authorization_code");
-        rsp = ConnKit.requests(url, req);
+        rsp = ConnKit.retrieve(url, req);
 
         err = Synt.declare(rsp.get("errcode"), 0);
         if (err != 0) {
@@ -98,7 +98,7 @@ public class WXAction {
         req = new HashMap();
         req.put("openid", opnId);
         req.put("access_token", token);
-        rsp = ConnKit.requests(url, req);
+        rsp = ConnKit.retrieve(url, req);
 
         err = Synt.declare(rsp.get("errcode"), 0);
         if (err != 0) {

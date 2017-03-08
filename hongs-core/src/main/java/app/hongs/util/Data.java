@@ -6,10 +6,8 @@ import app.hongs.HongsError;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
 
-import java.io.IOException;
-import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
@@ -35,6 +33,7 @@ import java.util.Map;
  * <h3>错误代码</h3>
  * <pre>
  * 0x41 解析JSON数据失败
+ * 0x42 写入JSON数据失败
  * </pre>
  *
  * @author Hongs
@@ -87,21 +86,18 @@ public class Data
    */
   public static String toString(Object obj)
   {
-    String sp = (0 < Core.DEBUG) ? "" : null;
-    StringBuilder sb = new StringBuilder();
-    Data.dumps(sb, sp, null, obj, 0, 0);
-    return sb.toString().trim();
+    StringBuilder out = new StringBuilder();
+    Data.print(out , obj);
+    return out.toString();
   }
 
   /**
-   * 直接将Java对象输出到标准控制台, 用于简单调试, 输出到 STDERR
-   * @param obj 数组,集合框架,基础类型
+   * 直接将Java对象输出到标准控制台
+   * @param obj
    */
   public static void dumps(Object obj)
   {
-    StringBuilder sb = new StringBuilder();
-    Data.dumps(sb, "", null, obj, 0, 0);
-    System.err.print(sb.toString());
+    print(System.out, obj, false);
   }
 
   /**
@@ -109,28 +105,35 @@ public class Data
    * @param obj
    * @param out
    */
-  public static void dumps(Object obj, PrintStream out)
+  public static void print(Appendable out, Object obj)
   {
-    StringBuilder sb = new StringBuilder();
-    Data.dumps(sb, "", null, obj, 0, 0);
-    out.print(sb.toString());
+    // 禁止跟踪和调试则启用严格模式
+    print(out, obj, 0 == Core.DEBUG
+            || 4 == (4 & Core.DEBUG)
+            || 8 == (8 & Core.DEBUG));
   }
 
   /**
-   * 直接将Java对象输出到指定书写器
+   * 直接将Java对象输出到指定输出流
    * @param obj
    * @param out
+   * @param strict
    */
-  public static void dumps(Object obj, PrintWriter out)
+  public static void print(Appendable out, Object obj, boolean strict)
   {
-    StringBuilder sb = new StringBuilder();
-    Data.dumps(sb, "", null, obj, 0, 0);
-    out.print(sb.toString());
+    try
+    {
+      Data.dumps(out, null, obj, strict ? null : "", strict, true);
+    }
+    catch (IOException ex)
+    {
+      throw new HongsError(0x42, "Can not write data to json", ex);
+    }
   }
 
   //** 操作方法 **/
 
-  private static void dumps(StringBuilder sb, String pre, Object key, Object val, int i, int j)
+  private static void dumps(Appendable sb, Object key, Object val, String pre, boolean strict, boolean ending) throws IOException
   {
     /** 键 **/
 
@@ -141,10 +144,16 @@ public class Data
 
     if (key != null)
     {
-      sb.append("\"")
-        .append(JSONValue.escape(key.toString()))
-        .append("\"")
-        .append( ":");
+      String str = String.valueOf(key);
+      if (strict) {
+          str = JSONValue.escape (str);
+      } else {
+          str = /**/ Tool.escape (str);
+      }
+      sb.append('"')
+        .append(str)
+        .append('"')
+        .append(':');
     }
 
     /** 值 **/
@@ -155,135 +164,74 @@ public class Data
     }
     else if (val instanceof Object[])
     {
-      Data.dumps(sb , pre, (Object[]) val);
+      Data.dumps(sb, (Object[]) val, pre, strict);
     }
     else if (val instanceof Iterator)
     {
-      Data.dumps(sb , pre, (Iterator) val);
+      Data.dumps(sb, (Iterator) val, pre, strict);
+    }
+    else if (val instanceof Enumeration)
+    {
+      Data.dumps(sb, (Enumeration) val, pre, strict);
     }
     else if (val instanceof Collection)
     {
-      Data.dumps(sb , pre, (Collection) val);
+      Data.dumps(sb, (Collection) val, pre, strict);
     }
     else if (val instanceof Dictionary)
     {
-      Data.dumps(sb , pre, (Dictionary) val);
+      Data.dumps(sb, (Dictionary) val, pre, strict);
     }
     else if (val instanceof Map)
     {
-      Data.dumps(sb , pre, (Map) val);
-    }
-    else if (val instanceof Number )
-    {
-      sb.append(Tool.toNumStr((Number) val));
+      Data.dumps(sb, (Map) val, pre, strict);
     }
     else if (val instanceof Boolean)
     {
       sb.append(val.toString( ));
     }
+    else if (val instanceof Number )
+    {
+      sb.append(Tool.toNumStr((Number) val ));
+    }
     else
     {
-      sb.append('"');
-      sb.append(JSONValue.escape(val.toString()));
-      sb.append('"');
-    }
-
-    if (i < j - 1)
-    {
-      sb.append(",");
-    }
-    if (pre != null)
-    {
-      sb.append("\r\n");
-    }
-  }
-
-  private static void dumps(StringBuilder sb, String pre, Object[] arr)
-  {
-    sb.append("[");
-    if (pre != null)
-    {
-      sb.append("\r\n");
-    }
-
-    int j = arr.length;
-
-    for (int i = 0; i < arr.length; i ++)
-    {
-      Object obj = arr[i];
-
-      Data.dumps(sb, pre == null ? pre : pre + "\t", null, obj, i, j);
-    }
-
-    if (pre != null)
-    {
-      sb.append(pre);
-    }
-    sb.append("]");
-  }
-
-  private static void dumps(StringBuilder sb, String pre, Iterator it )
-  {
-    sb.append("[");
-    if (pre != null)
-    {
-      sb.append("\r\n");
-    }
-
-    int i = 0;
-    int j = 1;
-
-    while (it.hasNext())
-    {
-      Object obj = it.next();
-
-      Data.dumps(sb, pre == null ? pre : pre + "\t", null, obj, i, j);
-
-      i ++;
-      j ++;
-    }
-
-    // 去掉末尾的逗号
-    if (i > 0)
-    {
-      if (pre != null)
-      {
-        j = sb.length();
-        sb.replace(j - 3, j - 2, "");
+      String str = String.valueOf(val);
+      if (strict) {
+          str = JSONValue.escape (str);
+      } else {
+          str = /**/ Tool.escape (str);
       }
-      else
-      {
-        j = sb.length();
-        sb.replace(j - 1, j - 0, "");
-      }
+      sb.append('"');
+      sb.append(str);
+      sb.append('"');
     }
 
-    if (pre != null)
+    if (!ending)
     {
-      sb.append(pre);
+      sb.append(',');
     }
-    sb.append("]");
-  }
-
-  private static void dumps(StringBuilder sb, String pre, Collection col)
-  {
-    sb.append("[");
-    if (pre != null)
+    if (!strict)
     {
       sb.append("\r\n");
     }
+  }
 
-    int i = 0;
-    int j = col.size();
+  private static void dumps(Appendable sb, Object[] arr, String pre, boolean strict) throws IOException
+  {
+    String pra;
 
-    Iterator it = col.iterator();
-    while (it.hasNext())
+    sb.append("[");
+        pra  = pre;
+    if (pre != null)
     {
-      Object obj = it.next();
+      sb.append("\r\n");
+      pre = pre + "\t" ;
+    }
 
-      Data.dumps(sb, pre == null ? pre : pre + "\t", null, obj, i, j);
-
-      i ++;
+    for (  int i = 0 , j = arr.length ; i < j ; i = i + 1)
+    {
+      Data.dumps(sb, null, arr[i], pra, strict, i > j - 2);
     }
 
     if (pre != null)
@@ -293,26 +241,107 @@ public class Data
     sb.append("]");
   }
 
-  private static void dumps(StringBuilder sb, String pre, Dictionary dic)
+  private static void dumps(Appendable sb, Iterator itr, String pre, boolean strict) throws IOException
   {
+    String pra;
+    sb.append("[");
+        pra  = pre;
+    if (pre != null)
+    {
+      sb.append("\r\n");
+      pra = pre + "\t" ;
+    }
+
+    boolean ending = !itr.hasNext();
+    while (!ending)
+    {
+      Object obj = itr.next();
+      ending = !itr.hasNext();
+      Data.dumps(sb, null, obj, pra, strict, ending);
+    }
+
+    if (pre != null)
+    {
+      sb.append(pre);
+    }
+    sb.append("]");
+  }
+
+  private static void dumps(Appendable sb, Enumeration enu, String pre, boolean strict) throws IOException
+  {
+    String pra;
+
+    sb.append("[");
+        pra  = pre;
+    if (pre != null)
+    {
+      sb.append("\r\n");
+      pra = pre + "\t" ;
+    }
+
+    boolean ending = !enu.hasMoreElements();
+    while (!ending)
+    {
+      Object obj = enu.nextElement ();
+      ending = !enu.hasMoreElements();
+      Data.dumps(sb, null, obj, pra, strict, ending);
+    }
+
+    if (pre != null)
+    {
+      sb.append(pre);
+    }
+    sb.append("]");
+  }
+
+  private static void dumps(Appendable sb, Collection col, String pre, boolean strict) throws IOException
+  {
+    String pra;
+
+    sb.append("[");
+        pra  = pre;
+    if (pre != null)
+    {
+      sb.append("\r\n");
+      pra = pre + "\t" ;
+    }
+
+    Iterator itr = col.iterator(  );
+    boolean ending = !itr.hasNext();
+    while (!ending)
+    {
+      Object obj = itr.next();
+      ending = !itr.hasNext();
+      Data.dumps(sb, null, obj, pra, strict, ending);
+    }
+
+    if (pre != null)
+    {
+      sb.append(pre);
+    }
+    sb.append("]");
+  }
+
+  private static void dumps(Appendable sb, Dictionary dic, String pre, boolean strict) throws IOException
+  {
+    String pra;
+
     sb.append("{");
+        pra  = pre;
     if (pre != null)
     {
       sb.append("\r\n");
+      pra = pre + "\t" ;
     }
 
-    int i = 0;
-    int j = dic.size();
-
-    Enumeration en = dic.keys();
-    while (en.hasMoreElements())
+    Enumeration enu = dic.keys( );
+    boolean ending = !enu.hasMoreElements();
+    while (!ending)
     {
-      Object key = en.nextElement();
-      Object val = dic.get(key);
-
-      Data.dumps(sb, pre == null ? pre : pre + "\t", key, val, i, j);
-
-      i ++;
+      Object key = enu.nextElement ();
+      ending = !enu.hasMoreElements();
+      Object val = dic.get( key );
+      Data.dumps(sb, key, val, pra, strict, ending);
     }
 
     if (pre != null)
@@ -322,27 +351,27 @@ public class Data
     sb.append("}");
   }
 
-  private static void dumps(StringBuilder sb, String pre, Map map)
+  private static void dumps(Appendable sb, Map map, String pre, boolean strict) throws IOException
   {
+    String pra;
+
     sb.append("{");
+        pra  = pre;
     if (pre != null)
     {
       sb.append("\r\n");
+      pra = pre + "\t" ;
     }
 
-    int i = 0;
-    int j = map.size();
-
-    Iterator it = map.entrySet().iterator();
-    while (it.hasNext())
+    Iterator itr = map.entrySet().iterator();
+    boolean ending = !itr.hasNext();
+    while (!ending)
     {
-      Map.Entry obj = (Map.Entry)it.next();
-      Object key = obj.getKey();
+      Map.Entry obj = (Map.Entry) itr.next();
+      Object key = obj.getKey(  );
       Object val = obj.getValue();
-
-      Data.dumps(sb, pre == null ? pre : pre + "\t", key, val, i, j);
-
-      i ++;
+      ending = !itr.hasNext();
+      Data.dumps(sb, key, val, pra, strict, ending);
     }
 
     if (pre != null)

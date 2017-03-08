@@ -90,7 +90,7 @@ public class QQAction {
         req.put("client_secret" , appSk);
         req.put("redirect_uri"  , rurl );
         req.put("grant_type"    , "authorization_code");
-        rsp = ConnKit.requests(url, req);
+        rsp = ConnKit.retrieve(url, req);
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
@@ -103,7 +103,7 @@ public class QQAction {
             : "https://graph.qq.com/oauth2.0/me";
         req = new HashMap();
         req.put("access_token"  , token);
-        rsp = ConnKit.requests(url, req);
+        rsp = ConnKit.retrieve(url, req);
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
@@ -116,7 +116,7 @@ public class QQAction {
         req.put("oauth_consumer_key", appId);
         req.put("access_token"  , token);
         req.put("openid"        , opnId);
-        rsp = ConnKit.requests(url, req);
+        rsp = ConnKit.retrieve(url, req);
 
         err = Synt.declare(rsp.get("ret"), 0);
         if (err != 0) {

@@ -197,7 +197,7 @@ public class CmdletHelper
                 newOpts.put(name, val );
               }
             }
-            
+
             continue F;
           }
 
@@ -296,9 +296,7 @@ public class CmdletHelper
     if (rate <    0 ) rate =   0;
     if (rate >  100 ) rate = 100;
 
-    ft.format(" %6.2f%%" , rate);
-
-    sb.append(" |");
+    sb.append("|");
     for (int i = 0; i < 100; i += 5)
     {
       if (rate < i + 5)
@@ -310,8 +308,10 @@ public class CmdletHelper
         sb.append('=');
       }
     }
-    sb.append("| ");
-    sb.append(text);
+    sb.append("|");
+
+    ft.format(" %6.2f%% ", rate);
+    sb.append(/* extra */  text);
 
     // 清除末尾多余的字符, 并将光标移回行首
     // 每行按最少80个字符来计算
@@ -393,7 +393,7 @@ public class CmdletHelper
 
   /**
    * 终止输出进度
-   * 
+   *
    * 请将执行块包裹在 try catch 中
    * 接获到异常或中止执行时
    * 使用本方法可安全的切行

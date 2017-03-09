@@ -75,6 +75,16 @@ public class Crypto {
         return docrypt(content, key , null, 0, true );
     }
 
+    /**
+     * 加解密
+     * @param content 待加解密内容
+     * @param key 秘钥
+     * @param enc 算法
+     * @param len 长度
+     * @param dec 解密 true, 加密 false
+     * @return
+     * @throws HongsException 
+     */
     public static byte[] docrypt(byte[] content, String key, String enc, int len, boolean dec)
     throws HongsException {
         CoreConfig conf = CoreConfig.getInstance();

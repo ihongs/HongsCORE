@@ -8,8 +8,9 @@ import app.hongs.HongsUnchecked;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 
-import java.io.OutputStream;
+import java.io.Writer;
 import java.io.PrintWriter;
+import java.io.OutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -82,7 +83,7 @@ public class ActionHelper implements Cloneable
    * 响应输出
    */
   private OutputStream        outputStream;
-  private  PrintWriter        outputWriter;
+  private       Writer        outputWriter;
 
   /**
    * 初始化助手(用于cmdlet)
@@ -172,7 +173,7 @@ public class ActionHelper implements Cloneable
    * @param out
    * @param wrt
    */
-  public final void updateOutput(OutputStream out, PrintWriter wrt)
+  public final void updateOutput(OutputStream out, Writer wrt)
   {
     this.outputStream = out ;
     this.outputWriter = wrt ;
@@ -492,7 +493,7 @@ public class ActionHelper implements Cloneable
    * 注意: 当为虚拟请求时, 可能抛 HongsError, 错误码 0x32
    * @return 响应输出
    */
-  public PrintWriter getOutputWriter()
+  public Writer getOutputWriter()
   {
     if (this.outputWriter != null)
     {
@@ -942,11 +943,11 @@ public class ActionHelper implements Cloneable
         this.response.setContentType(ctt);
       }
     }
-//  try {
+    try {
         this.getOutputWriter().write(txt);
-//  } catch (IOException e)  {
-//    throw new HongsError(0x32, "Can not send to client.", e);
-//  }
+    } catch (IOException e)  {
+      throw new HongsError(0x32, "Can not send to client.", e);
+    }
   }
 
   /**
@@ -987,36 +988,34 @@ public class ActionHelper implements Cloneable
    */
   public void responed()
   {
-    PrintWriter out;
-    String      fun;
-    out = this.getOutputWriter();
-    fun = this.getParameter(CoreConfig
-              .getInstance(/* default setting */)
-              .getProperty("core.act.call", "cb")
+    Writer out = getOutputWriter();
+    String fun = getParameter(CoreConfig
+                .getInstance(/* default setting */)
+                .getProperty("core.act.call", "cb")
     );
 
-//  try {
-    if ( fun != null && fun.length() != 0 ) {
-        if ( ! this.response.isCommitted()) {
-            this.response.setCharacterEncoding("UTF-8");
-            this.response.setContentType("text/javascript" );
-        }
+    try {
+        if ( fun != null && fun.length() != 0 ) {
+            if ( ! this.response.isCommitted()) {
+                this.response.setCharacterEncoding("UTF-8");
+                this.response.setContentType("text/javascript" );
+            }
 
-         out.print(fun );
-         out.print("(" );
-        Data.print(out, this.responseData);
-         out.print(");");
-    } else {
-        if ( ! this.response.isCommitted()) {
-            this.response.setCharacterEncoding("UTF-8");
-            this.response.setContentType("application/json");
-        }
+             out.append(fun );
+             out.append("(" );
+            Data.append(out, this.responseData);
+             out.append(");");
+        } else {
+            if ( ! this.response.isCommitted()) {
+                this.response.setCharacterEncoding("UTF-8");
+                this.response.setContentType("application/json");
+            }
 
-        Data.print(out, this.responseData);
+            Data.append(out, this.responseData);
+        }
+    } catch ( IOException e ) {
+        throw new HongsError(0x32, "Can not send to client.", e);
     }
-//  } catch (IOException e) {
-//      throw new HongsError(0x32, "Can not send to client.", e);
-//  }
 
     this.responseData = null;
   }

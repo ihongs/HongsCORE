@@ -157,13 +157,12 @@ public class Common {
                 + "Just for CoreSerial or Collection object.");
         }
 
-        try
-        {
-            File file = new File( args[ 0 ] );
-            FileInputStream fis = new   FileInputStream(file);
-          ObjectInputStream ois = new ObjectInputStream(fis );
-            Data.dumps((Map)ois.readObject());
-             ois.close();
+        File fio = new File(args[0]);
+        try (
+            FileInputStream fis = new   FileInputStream(fio);
+          ObjectInputStream ois = new ObjectInputStream(fis);
+        ) {
+          CmdletHelper.preview((Map) ois.readObject());
         }
         catch (ClassNotFoundException e)
         {
@@ -182,10 +181,10 @@ public class Common {
     @Cmdlet("exec-action")
     public static void execAction(String[] args) throws HongsException {
         Map<String, Object> opts;
-        opts = CmdletHelper.getOpts (args ,
+        opts = CmdletHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s"
         );
-        args = ( String[] ) opts.get( "" );
+        args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
             System.err.println("Action name required!\r\nUsage: ACTION_NAME --request QUERY_STRING --cookies QUERY_STRING --session QUERY_STRING --context QUERY_STRING");
@@ -198,8 +197,10 @@ public class Common {
         helper.setSessionData(data( (String) opts.get("session")));
         helper.setCookiesData(data( (String) opts.get("cookies")));
 
-        new app.hongs.action.ActionRunner(args[0], helper ).doAction();
-        app.hongs.util.Data.dumps(helper.getResponseData());
+        ActionRunner runner = new ActionRunner( args[0] , helper );
+        runner.doAction( );
+
+        CmdletHelper.preview( helper.getResponseData() );
     }
 
     @Cmdlet("call-action")

@@ -52,11 +52,7 @@ public class Data
     {
       return JSONValue.parseWithException(str);
     }
-    catch (ParseException ex)
-    {
-      throw new HongsError(0x41, "Can not parse data by json", ex);
-    }
-    catch (   IOException ex)
+    catch (ParseException | IOException ex)
     {
       throw new HongsError(0x41, "Can not parse data by json", ex);
     }
@@ -87,53 +83,55 @@ public class Data
   public static String toString(Object obj)
   {
     StringBuilder out = new StringBuilder();
-    Data.print(out , obj);
+    Data.append(out, obj);
     return out.toString();
   }
 
   /**
-   * 直接将Java对象输出到标准控制台
+   * 将Java对象在标准控制台显示
+   * @see app.hongs.cmdlet.CmdletHelper preview()
+   * @deprecated
    * @param obj
    */
-  public static void dumps(Object obj)
+  public static void print (Object obj)
   {
-    print(System.out, obj, false);
+    Data.append(System.out, obj, false);
   }
 
   /**
-   * 直接将Java对象输出到指定输出流
+   * 将Java对象输出到指定输出流
+   * 按调试等级决定是否严格模式
    * @param obj
    * @param out
    */
-  public static void print(Appendable out, Object obj)
+  public static void append(Appendable out, Object obj)
   {
-    // 禁止跟踪和调试则启用严格模式
-    print(out, obj, 0 == Core.DEBUG
-            || 4 == (4 & Core.DEBUG)
-            || 8 == (8 & Core.DEBUG));
+    Data.append(out, obj, 0 == Core.DEBUG
+                  || 4 == (4 & Core.DEBUG)
+                  || 8 == (8 & Core.DEBUG));
   }
 
   /**
-   * 直接将Java对象输出到指定输出流
+   * 将Java对象输出到指定输出流
    * @param obj
    * @param out
    * @param strict
    */
-  public static void print(Appendable out, Object obj, boolean strict)
+  public static void append(Appendable out, Object obj, boolean strict)
   {
     try
     {
-      Data.dumps(out, null, obj, strict ? null : "", strict, true);
+      Data.append(out, null, obj, strict ? null : "", strict, true);
     }
     catch (IOException ex)
     {
-      throw new HongsError(0x42, "Can not write data to json", ex);
+      throw new HongsError(0x42, "Can not write data for json", ex);
     }
   }
 
   //** 操作方法 **/
 
-  private static void dumps(Appendable sb, Object key, Object val, String pre, boolean strict, boolean ending) throws IOException
+  private static void append(Appendable sb, Object key, Object val, String pre, boolean strict, boolean ending) throws IOException
   {
     /** 键 **/
 
@@ -164,27 +162,27 @@ public class Data
     }
     else if (val instanceof Object[])
     {
-      Data.dumps(sb, (Object[]) val, pre, strict);
+      append(sb, (Object[]) val, pre, strict);
     }
     else if (val instanceof Iterator)
     {
-      Data.dumps(sb, (Iterator) val, pre, strict);
+      append(sb, (Iterator) val, pre, strict);
     }
     else if (val instanceof Enumeration)
     {
-      Data.dumps(sb, (Enumeration) val, pre, strict);
+      append(sb, (Enumeration) val, pre, strict);
     }
     else if (val instanceof Collection)
     {
-      Data.dumps(sb, (Collection) val, pre, strict);
+      append(sb, (Collection) val, pre, strict);
     }
     else if (val instanceof Dictionary)
     {
-      Data.dumps(sb, (Dictionary) val, pre, strict);
+      append(sb, (Dictionary) val, pre, strict);
     }
     else if (val instanceof Map)
     {
-      Data.dumps(sb, (Map) val, pre, strict);
+      append(sb, (Map) val, pre, strict);
     }
     else if (val instanceof Boolean)
     {
@@ -217,7 +215,7 @@ public class Data
     }
   }
 
-  private static void dumps(Appendable sb, Object[] arr, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, Object[] arr, String pre, boolean strict) throws IOException
   {
     String pra;
 
@@ -226,12 +224,12 @@ public class Data
     if (pre != null)
     {
       sb.append("\r\n");
-      pre = pre + "\t" ;
+      pra = pre + "\t" ;
     }
 
-    for (  int i = 0 , j = arr.length ; i < j ; i = i + 1)
+    for (int i = 0 , j = arr.length; i < j; i = i + 1)
     {
-      Data.dumps(sb, null, arr[i], pra, strict, i > j - 2);
+      append(sb, null, arr[i], pra, strict, i > j - 2);
     }
 
     if (pre != null)
@@ -241,7 +239,7 @@ public class Data
     sb.append("]");
   }
 
-  private static void dumps(Appendable sb, Iterator itr, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, Iterator itr, String pre, boolean strict) throws IOException
   {
     String pra;
     sb.append("[");
@@ -257,7 +255,7 @@ public class Data
     {
       Object obj = itr.next();
       ending = !itr.hasNext();
-      Data.dumps(sb, null, obj, pra, strict, ending);
+      append(sb, null, obj, pra, strict, ending);
     }
 
     if (pre != null)
@@ -267,7 +265,7 @@ public class Data
     sb.append("]");
   }
 
-  private static void dumps(Appendable sb, Enumeration enu, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, Enumeration enu, String pre, boolean strict) throws IOException
   {
     String pra;
 
@@ -282,9 +280,9 @@ public class Data
     boolean ending = !enu.hasMoreElements();
     while (!ending)
     {
-      Object obj = enu.nextElement ();
+      Object obj = enu.nextElement( );
       ending = !enu.hasMoreElements();
-      Data.dumps(sb, null, obj, pra, strict, ending);
+      append(sb, null, obj, pra, strict, ending);
     }
 
     if (pre != null)
@@ -294,7 +292,7 @@ public class Data
     sb.append("]");
   }
 
-  private static void dumps(Appendable sb, Collection col, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, Collection col, String pre, boolean strict) throws IOException
   {
     String pra;
 
@@ -312,7 +310,7 @@ public class Data
     {
       Object obj = itr.next();
       ending = !itr.hasNext();
-      Data.dumps(sb, null, obj, pra, strict, ending);
+      append(sb, null, obj, pra, strict, ending);
     }
 
     if (pre != null)
@@ -322,7 +320,7 @@ public class Data
     sb.append("]");
   }
 
-  private static void dumps(Appendable sb, Dictionary dic, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, Dictionary dic, String pre, boolean strict) throws IOException
   {
     String pra;
 
@@ -338,10 +336,10 @@ public class Data
     boolean ending = !enu.hasMoreElements();
     while (!ending)
     {
-      Object key = enu.nextElement ();
+      Object key = enu.nextElement( );
       ending = !enu.hasMoreElements();
-      Object val = dic.get( key );
-      Data.dumps(sb, key, val, pra, strict, ending);
+      Object val = dic.get(key);
+      append(sb, key, val, pra, strict, ending);
     }
 
     if (pre != null)
@@ -351,7 +349,7 @@ public class Data
     sb.append("}");
   }
 
-  private static void dumps(Appendable sb, Map map, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, Map map, String pre, boolean strict) throws IOException
   {
     String pra;
 
@@ -371,7 +369,7 @@ public class Data
       Object key = obj.getKey(  );
       Object val = obj.getValue();
       ending = !itr.hasNext();
-      Data.dumps(sb, key, val, pra, strict, ending);
+      append(sb, key, val, pra, strict, ending);
     }
 
     if (pre != null)

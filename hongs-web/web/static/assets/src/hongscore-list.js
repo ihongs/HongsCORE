@@ -540,6 +540,9 @@ HsList.prototype = {
         return false;
     },
     _fill__alink : function(td, v, n) {
+        // 把 a.b[c][] 改为 a-b-c
+        n = n.replace(/(\[|\.)/, '-')
+             .replace(/(\]|\-$)/, '');
         jQuery('<a href="javascript:;"></a>')
             .addClass("a-"+n).text(v)
             .appendTo(td);

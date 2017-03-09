@@ -117,9 +117,9 @@ public class Crypto {
             throw new HongsException.Common(e);
         } catch (InvalidKeyException e) {
             throw new HongsException.Common(e);
-        } catch (IllegalBlockSizeException e) {
-            throw new HongsException.Common(e);
         } catch (BadPaddingException e) {
+            throw new HongsException.Common(e);
+        } catch (IllegalBlockSizeException  e) {
             throw new HongsException.Common(e);
         }
     }

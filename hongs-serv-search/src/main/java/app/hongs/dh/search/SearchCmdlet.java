@@ -33,7 +33,7 @@ public class SearchCmdlet {
             "gn:i",
             "rn:i"
         });
-        
+
         String conf = Synt.declare(opts.remove("conf"), String.class);
         String name = Synt.declare(opts.remove("name"), String.class);
         ActionHelper ah = Core.getInstance(ActionHelper.class);
@@ -41,10 +41,9 @@ public class SearchCmdlet {
         Map req = ah.getRequestData();
         req.putAll(opts);
         Map rsp = so.retrieve ( req );
-        
-        Data.dumps(rsp );
+        CmdletHelper.preview  ( rsp );
     }
-    
+
     @Cmdlet("update")
     public void update(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
@@ -65,7 +64,7 @@ public class SearchCmdlet {
             VerifyHelper vh = new VerifyHelper();
             vh.addRulesByForm(conf, name);
             rd = vh.verify(rd);
-            
+
             try {
                 so.begin ( );
                 for (String id  : ds) {

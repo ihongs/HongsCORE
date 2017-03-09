@@ -2,6 +2,7 @@ package app.hongs.cmdlet;
 
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
+import app.hongs.util.Data;
 import app.hongs.util.Tool;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -267,6 +268,16 @@ public class CmdletHelper
   }
 
   //** 输出相关 **/
+
+  /**
+   * 输出数据预览
+   * 此方法会将对象(基础类型、集合框架)以 JSON 形式输出到终端.
+   * @param data 预览数据
+   */
+  public static void preview(Object data)
+  {
+    Data.append(System.out , data, false);
+  }
 
   /**
    * 输出辅助信息

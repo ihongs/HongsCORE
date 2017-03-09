@@ -123,7 +123,7 @@ public class Record {
     @Cmdlet("clean")
     public static void clean(String[] args) {
         long exp = 0;
-        if ( args.length == 0 ) {
+        if ( args.length != 0 ) {
              exp = Integer.parseInt ( args  [ 0 ]  );
         }
         del(System.currentTimeMillis() / 1000 - exp);
@@ -134,7 +134,7 @@ public class Record {
         if ( args.length == 0 ) {
             CmdletHelper.println("Record ID required");
         }
-        Data.dumps(get(args[0]));
+        CmdletHelper.preview(get(args[0]));
     }
 
 }

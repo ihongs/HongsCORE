@@ -3,14 +3,14 @@ package app.hongs.util.crypto;
 import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import java.io.UnsupportedEncodingException;
+import java.security.SecureRandom;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
+import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
@@ -83,7 +83,7 @@ public class Crypto {
      * @param len 长度
      * @param dec 解密 true, 加密 false
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public static byte[] docrypt(byte[] content, String key, String enc, int len, boolean dec)
     throws HongsException {

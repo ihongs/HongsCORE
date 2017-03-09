@@ -43,13 +43,10 @@ public class HongsCauze {
     {
         String codx = "Ex" + Integer.toHexString(code);
         String desx = desc != null ? desc : "";
-        if (null  !=  lang) {
-            codx   =  lang
-                .replaceFirst("_zx$" , "" )
-                .replaceAll("[/\\\\]", ".")
-                +"."+ codx ;
+        if (null != lang) {
+            codx  = lang.replaceAll("[/\\\\]", ".")+"."+codx;
         }
-        if (null  ==  desc) {
+        if (null == desc) {
             Throwable erro = this.that.getCause();
             if (null != erro) {
                 if (  erro instanceof HongsCause) {
@@ -86,7 +83,7 @@ public class HongsCauze {
         codx = "Ex"+Integer.toHexString(code);
         desx = desc != null ? desc : "" /**/ ;
         optx = opts != null ? opts : new String[]{};
-        trns = CoreLocale.getInstance("default~ex").clone();
+        trns = CoreLocale.getInstance("defence").clone();
 
         // 0x10,0x1000 为通用一般异常代号
         // 0x11,0x1001 使用消息作为语言键
@@ -115,10 +112,7 @@ public class HongsCauze {
 
         if (null  !=  lang) {
             trns.load(lang);
-            codx   =  lang
-                .replaceFirst("~ex$" , "" )
-                .replaceAll("[/\\\\]", ".")
-                +"."+ codx ;
+            codx = lang.replaceAll("[/\\\\]", ".")+"."+codx;
         }
         if (trns.getProperty(ckey) != null) {
             codx = trns.translate(ckey, codx);

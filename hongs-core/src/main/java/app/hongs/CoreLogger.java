@@ -19,7 +19,7 @@ public class CoreLogger
      * @return
      */
     public static Logger getLogger(String name) {
-        return LoggerFactory.getLogger (name);
+        return LoggerFactory.getLogger(name);
     }
 
     /**

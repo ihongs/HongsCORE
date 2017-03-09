@@ -256,17 +256,19 @@ public class Dict
 
   /**
    * 获取树纵深值(以属性或键方式"a.b[c]"获取)
+   * @see splitKeys
    * @param map
    * @param path
    * @return 键对应的值
    */
   public static Object getParam(Map map, String path)
   {
-    return getDepth(map, parsePath(path));
+    return getDepth(map, splitKeys(path));
   }
 
   /**
    * 获取树纵深值
+   * @see splitKeys
    * @param map
    * @param def
    * @param path
@@ -274,11 +276,12 @@ public class Dict
    */
   public static <T> T getParam(Map map, T def, String path)
   {
-    return Dict.getValue(map, def, parsePath(path));
+    return Dict.getValue(map, def, splitKeys(path));
   }
 
   /**
    * 获取树纵深值(以属性或键方式"a.b[c]"获取)
+   * @see splitKeys
    * @param map
    * @param cls
    * @param path
@@ -286,7 +289,7 @@ public class Dict
    */
   public static <T> T getParam(Map map, Class<T> cls, String path)
   {
-    return Dict.getValue(map, cls, parsePath(path));
+    return Dict.getValue(map, cls, splitKeys(path));
   }
 
   /**
@@ -302,13 +305,14 @@ public class Dict
 
   /**
    * 设置树纵深值(以属性或键方式"a.b[c]"设置)
+   * @see splitKeys
    * @param map
    * @param val
    * @param path
    */
   public static void setParam(Map map, Object val, String path)
   {
-    put(map, val, parsePath(path));
+    put(map, val, splitKeys(path));
   }
 
   /**
@@ -330,36 +334,125 @@ public class Dict
   /**
    * 将 oth 追加到 map.path 中(path会按 .|[] 拆分)
    * 与 Map.putAll 的不同在于: 本函数会将其子级的 Map 也进行合并
+   * @see splitKeys
    * @param map
    * @param oth
    * @param path
    */
   public static void setParams(Map map, Map oth, String path) {
-    setValues(map, oth, parsePath(path));
+    setValues(map, oth, splitKeys(path));
   }
 
-  public static Object[] parsePath(String path) {
-    String[] keyz = path.replaceAll("([^\\.])!", "$1.!") // id!eq 转换为 id.!eq
-                        .replaceAll("\\]\\[", ".")
-                        .replace("[" , ".")
-                        .replace("]" , "" )
-                        .split("\\." , -1 );
-    Object[] keys = new Object[keyz.length];
-    int i = 0;
-    for ( String keyn : keyz) {
-        /*
-        if (keyn.matches("^#\\d+$")) {
-            keys[i++] = Synt.declare(keyn.substring(1) , 0);
-        } else
-        */
-        if (keyn.length() == 0 && i != 0) {
-            keys[i++] = null;
-        } else
-        {
-            keys[i++] = keyn;
-        }
+  /**
+   * 拆分键
+   *
+   * <pre>
+   * 可以将 a.b[c]!d.!e[!f][] 解析为 a b c !d !e !f null
+   * 参考自 Javascript 和 PHP 的语法,
+   * Javascript 方括号里面用的是变量,
+   * 而 PHP 对象键并不支持点符号写法.
+   * </pre>
+   *
+   * @param path
+   * @return
+   */
+  public static Object[] splitKeys(String path) {
+    if (path == null) {
+        throw new NullPointerException("path can not be null");
     }
-    return  keys;
+
+    /**
+     * 原代码为
+     * <code>
+     *  path.replaceAll("([^\\.\\]])!", "$1.!")
+     *      .replace("[", ".")
+     *      .replace("]", "" )
+     *      .split("\\.")
+     * </code>
+     * 然后遍历将空串换成 null 空值,
+     * 无法处理 [] 里面有 .! 的情况;
+     * 采用下面的程序可规避此种问题,
+     * 且无需正则而仅做一次遍历即可.
+     */
+
+    List    lst = new ArrayList();
+    int     len = path.length(  );
+    int     beg = 0;
+    int     end = 0;
+    char    pnt;
+    boolean fkh = false;
+
+    while (end < len ) {
+        pnt = path.charAt(end);
+        switch ( pnt ) {
+            case '!' :
+                if (fkh) {
+                    break; // [] 内可以用 !
+                }
+                if (beg != end) {
+                    lst.add(path.substring(beg, end));
+                    beg  = end;
+                }
+                break;
+            case '.' :
+                if (fkh) {
+                    break; // [] 内可以用 .
+                }
+                if (beg != end) {
+                    lst.add(path.substring(beg, end));
+                } else
+                if (beg != 0  ) {
+                    if (path.charAt(beg - 1) != ']' ) // 规避 a[b].c 中的 ].
+                    lst.add(null);
+                } else {
+                    lst.add( "" );
+                }
+                beg  = end + 1;
+                break;
+            case '[' :
+                if (fkh) {
+                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+                }
+                if (beg != end) {
+                    lst.add(path.substring(beg, end));
+                } else
+                if (beg != 0  ) {
+                    if (path.charAt(beg - 1) != ']' ) // 规避 a[b][c] 中的 ][
+                    lst.add(null);
+                } else {
+                    lst.add( "" );
+                }
+                beg  = end + 1;
+                fkh  = true;
+                break;
+            case ']' :
+                if (! fkh) {
+                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+                }
+                if (beg != end) {
+                    lst.add(path.substring(beg, end));
+                } else
+                if (beg != 0  ) {
+                    lst.add(null);
+                } else {
+                    lst.add( "" );
+                }
+                beg  = end + 1;
+                fkh  = false;
+                break;
+        }
+        end  ++;
+    }
+
+    if (beg  ==  0
+    &&  end  ==  0  ) {
+        lst.add(path);
+    } else
+    if (beg  !=  len) {
+        lst.add(path.substring(beg));
+    }
+
+    return lst.toArray();
   }
 
 }

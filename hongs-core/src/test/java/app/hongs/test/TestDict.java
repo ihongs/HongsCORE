@@ -2,6 +2,7 @@ package app.hongs.test;
 
 import app.hongs.util.Dict;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -134,6 +135,14 @@ public class TestDict extends TestCase {
         assertEquals(y, x);
 
         //Data.dumps(dict);
+    }
+    
+    public void testSplitKeys() {
+        Object[] a = new Object[ ] {"", "a", "b", "c", "d", "!e", "!f", "g", "!h", null, "x.y!z", "def"};
+        Object[] b = Dict.splitKeys(".a.b[c][d].!e!f[g]!h[][x.y!z].def");
+        app.hongs.util.Data.print(a);
+        app.hongs.util.Data.print(b);
+        assertTrue( Arrays.equals(a, b) );
     }
 
 }

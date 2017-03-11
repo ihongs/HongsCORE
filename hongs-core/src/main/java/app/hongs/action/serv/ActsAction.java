@@ -6,7 +6,7 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsCause;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.ActionDriver;
@@ -88,7 +88,7 @@ public class ActsAction
     {
       senderr(helper, ex);
     }
-    catch (HongsUnchecked ex)
+    catch (HongsExpedient ex)
     {
       senderr(helper, ex);
     }

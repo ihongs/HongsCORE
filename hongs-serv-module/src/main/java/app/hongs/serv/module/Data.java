@@ -3,7 +3,7 @@ package app.hongs.serv.module;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
@@ -82,7 +82,7 @@ public class Data extends LuceneRecord {
             if (! new File(
                 Core.CONF_PATH + "/"+ conf + Cnst.FORM_EXT +".xml"
             ).exists()) {
-                throw new HongsUnchecked(0x1104)
+                throw new HongsExpedient(0x1104)
                     .setLocalizedOptions(conf);
             }
 
@@ -94,7 +94,7 @@ public class Data extends LuceneRecord {
             if (! new File(
                 Core.CONF_PATH + "/"+ comf + Cnst.FORM_EXT +".xml"
             ).exists()) {
-                throw new HongsUnchecked(0x1104)
+                throw new HongsExpedient(0x1104)
                     .setLocalizedOptions(comf);
             }
 
@@ -109,7 +109,7 @@ public class Data extends LuceneRecord {
             }
         }
         } catch (HongsException ex) {
-            throw ex.toUnchecked( );
+            throw ex.toExpedient( );
         }
 
         setFields(fields);

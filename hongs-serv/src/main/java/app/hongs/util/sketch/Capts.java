@@ -1,7 +1,7 @@
 package app.hongs.util.sketch;
 
 import app.hongs.CoreConfig;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Color;
@@ -129,9 +129,9 @@ public class Capts {
             }
             font = Font.createFont ( Font.TRUETYPE_FONT , is ) ;
         } catch (FontFormatException ex) {
-            throw new HongsUnchecked.Common(ex);
+            throw new HongsExpedient.Common(ex);
         } catch (IOException ex) {
-            throw new HongsUnchecked.Common(ex);
+            throw new HongsExpedient.Common(ex);
         }
 
         for(int i  = 0; i < codeCount; i ++) {
@@ -212,7 +212,7 @@ public class Capts {
 
     public static Capts captcha(int h, String b, String f, String e) {
         if (h < 40 || h > 200) {
-            throw new HongsUnchecked.Common("h must be 40 ~ 200 px");
+            throw new HongsExpedient.Common("h must be 40 ~ 200 px");
         }
 
         // 获取配置

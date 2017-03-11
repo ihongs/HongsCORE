@@ -13,11 +13,11 @@ package app.hongs;
  *
  * @author Hongs
  */
-public class HongsUnchecked extends RuntimeException implements HongsCause {
+public class HongsExpedient extends RuntimeException implements HongsCause {
 
     protected final HongsCauze that;
 
-    public HongsUnchecked(int errno, String error, Throwable cause) {
+    public HongsExpedient(int errno, String error, Throwable cause) {
         super(cause);
 
         that = new HongsCauze(errno, error, this);
@@ -28,15 +28,15 @@ public class HongsUnchecked extends RuntimeException implements HongsCause {
         }
     }
 
-    public HongsUnchecked(int code, Throwable cause) {
+    public HongsExpedient(int code, Throwable cause) {
         this(code, cause.getMessage(), cause);
     }
 
-    public HongsUnchecked(int code, String desc) {
+    public HongsExpedient(int code, String desc) {
         this(code, desc, null);
     }
 
-    public HongsUnchecked(int code) {
+    public HongsExpedient(int code) {
         this(code, null, null);
     }
 
@@ -83,13 +83,13 @@ public class HongsUnchecked extends RuntimeException implements HongsCause {
     }
 
     @Override
-    public HongsUnchecked setLocalizedSection(String lang) {
+    public HongsExpedient setLocalizedSection(String lang) {
         that.setLocalizedSection(lang);
         return this;
     }
 
     @Override
-    public HongsUnchecked setLocalizedOptions(String... opts) {
+    public HongsExpedient setLocalizedOptions(String... opts) {
         that.setLocalizedOptions(opts);
         return this;
     }
@@ -101,7 +101,7 @@ public class HongsUnchecked extends RuntimeException implements HongsCause {
     /**
      * 常规错误(无需错误代码)
      */
-    public static class Common extends HongsUnchecked {
+    public static class Common extends HongsExpedient {
         public Common(String error, Throwable cause) {
             super(COMMON, error, cause);
         }
@@ -116,7 +116,7 @@ public class HongsUnchecked extends RuntimeException implements HongsCause {
     /**
      * 通告错误(无需错误代码)
      */
-    public static class Notice extends HongsUnchecked {
+    public static class Notice extends HongsExpedient {
         public Notice(String desc, Throwable cause) {
             super(NOTICE, desc, cause);
         }

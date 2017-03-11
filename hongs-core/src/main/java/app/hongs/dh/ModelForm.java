@@ -128,7 +128,7 @@ public class ModelForm {
             ftypez = FormSet.getInstance("default").getEnum("__types__");
             return  ftypez;
         } catch (HongsException e) {
-            throw e.toUnchecked( );
+            throw e.toExpedient( );
         }
     }
 
@@ -144,7 +144,7 @@ public class ModelForm {
             dtypez = FormSet.getInstance("default").getEnum("__ables__");
             return  dtypez;
         } catch (HongsException e) {
-            throw e.toUnchecked( );
+            throw e.toExpedient( );
         }
     }
 

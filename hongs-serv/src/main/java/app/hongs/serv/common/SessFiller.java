@@ -2,7 +2,7 @@ package app.hongs.serv.common;
 
 import app.hongs.Core;
 import app.hongs.CoreLogger;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -121,7 +121,7 @@ public class SessFiller extends HttpServletRequestWrapper {
 
     private void setSid(String xid) {
         if (SID.matcher(xid).matches() == false) {
-            throw new HongsUnchecked(0x1100, "Session ID must be 1 to 32 alphanumeric, '-' and '_'");
+            throw new HongsExpedient(0x1100, "Session ID must be 1 to 32 alphanumeric, '-' and '_'");
         }
         sid = xid;
     }

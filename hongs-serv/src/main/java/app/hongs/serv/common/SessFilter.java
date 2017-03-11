@@ -1,7 +1,7 @@
 package app.hongs.serv.common;
 
 import app.hongs.HongsException;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -64,7 +64,7 @@ public class SessFilter implements Filter {
                ((Sesion)ses).close();
             }
         }
-        catch (HongsException | HongsUnchecked ex) {
+        catch (HongsException | HongsExpedient ex) {
             throw new ServletException(ex);
         }
     }

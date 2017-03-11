@@ -3,7 +3,7 @@ package app.hongs;
 /**
  * 通用异常类
  *
- * 与 HongsUnchecked 不同, 必须 throws
+ * 与 HongsExpedient 不同, 必须 throws
  *
  * <h3>取值范围:</h3>
  * <pre>
@@ -40,8 +40,8 @@ public class HongsException extends Exception implements HongsCause {
         this(code, null, null);
     }
 
-    public HongsUnchecked toUnchecked() {
-        HongsUnchecked ex = new HongsUnchecked(this.getErrno(), this.getError(), this);
+    public HongsExpedient toExpedient() {
+        HongsExpedient ex = new HongsExpedient(this.getErrno(), this.getError(), this);
         ex.setLocalizedOptions(this.getLocalizedOptions());
         ex.setLocalizedSection(this.getLocalizedSection());
         return ex;

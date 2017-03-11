@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * @author Hongs
  */
-public class Dict
+public final class Dict
 {
 
   private static Object gat(List lst, Object def, Object[] keys, int pos)

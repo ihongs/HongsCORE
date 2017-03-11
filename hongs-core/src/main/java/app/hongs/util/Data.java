@@ -38,7 +38,7 @@ import java.util.Map;
  *
  * @author Hongs
  */
-public class Data
+public final class Data
 {
 
   /**

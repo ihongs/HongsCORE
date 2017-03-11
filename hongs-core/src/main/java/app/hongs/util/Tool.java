@@ -22,7 +22,7 @@ import java.io.File;
 public final class Tool
 {
 
-  static private final NumberFormat _NoFmt = NumberFormat.getInstance();
+  static private NumberFormat _NoFmt = NumberFormat.getInstance();
   static {
       _NoFmt.setGroupingUsed(false);
   }

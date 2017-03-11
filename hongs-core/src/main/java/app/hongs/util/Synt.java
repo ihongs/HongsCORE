@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
  * 常用语法补充
  * @author Hongs
  */
-public class Synt {
+public final class Synt {
 
     private static final Number  ZERO = 0 ;
     private static final String  EMPT = "";

@@ -2,10 +2,10 @@ package app.hongs.util;
 
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.IOException;
+import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -51,6 +51,78 @@ public final class Remote {
     /**
      * 简单远程请求
      *
+     * <p>
+     * 协议支持 HTTP,HTTPS.
+     * <p>
+     *
+     * @param url
+     * @return
+     * @throws HongsException
+     */
+    public static String get (String url)
+            throws HongsException {
+        return request(METHOD.GET , url, null, null, false);
+    }
+
+    /**
+     * 简单远程请求
+     *
+     * <p>
+     * 协议支持 HTTP,HTTPS;
+     * 一个键对多个值时可以用数组或列表.
+     * <p>
+     *
+     * @param url
+     * @param data
+     * @return
+     * @throws HongsException
+     */
+    public static String get (String url, Map<String, Object> data)
+            throws HongsException {
+        return request(METHOD.GET , url, data, null, false);
+    }
+
+    /**
+     * 简单远程请求
+     *
+     * <p>
+     * 协议支持 HTTP,HTTPS;
+     * 一个键对多个值时可以用数组或列表.
+     * Content-Type: application/x-www-from-urlencoded
+     * <p>
+     *
+     * @param url
+     * @param data
+     * @return
+     * @throws HongsException
+     */
+    public static String post(String url, Map<String, Object> data)
+            throws HongsException {
+        return request(METHOD.POST, url, data, null, false);
+    }
+
+    /**
+     * 简单远程请求
+     *
+     * <p>
+     * 协议支持 HTTP,HTTPS;
+     * 一个键对多个值时可以用数组或列表.
+     * Content-Type: multipart/form-data
+     * <p>
+     *
+     * @param url
+     * @param data
+     * @return
+     * @throws HongsException
+     */
+    public static String part(String url, Map<String, Object> data)
+            throws HongsException {
+        return request(METHOD.POST, url, data, null, true );
+    }
+
+    /**
+     * 简单远程请求
+     *
      * @param type
      * @param url
      * @param data
@@ -65,22 +137,15 @@ public final class Remote {
             throw new NullPointerException("Request url can not be null");
         }
 
+        HttpRequestBase http = null;
         try {
             // 构建 HTTP 请求对象
-            HttpRequestBase  http;
             switch (type) {
                 case DELETE: http = new HttpDelete(); break;
-                case PATCH: http = new HttpPatch(); break;
-                case POST: http = new HttpPost(); break;
-                case PUT: http = new HttpPut(); break;
-                default : http = new HttpGet(); break;
-            }
-
-            // 设置报头
-            if (head != null) {
-                for(Map.Entry<String, String> et : head.entrySet()) {
-                    http.setHeader( et.getKey( ) , et.getValue( ) );
-                }
+                case PATCH : http = new HttpPatch( ); break;
+                case POST  : http = new HttpPost(  ); break;
+                case PUT   : http = new HttpPut(   ); break;
+                default    : http = new HttpGet(   ); break;
             }
 
             // 设置报文
@@ -93,17 +158,19 @@ public final class Remote {
                         htte.setEntity(buildPost(data));
                     }
                 } else {
-                    HttpEntity  ent  = buildPost(data) ;
-                    try (
-                        ByteArrayOutputStream buf = new ByteArrayOutputStream()
-                    ) {
-                        ent.writeTo(buf);
-                        if (url.indexOf('?') == -1) {
-                            url += "?" + buf.toString();
-                        } else {
-                            url += "&" + buf.toString();
-                        }
+                    String qry = EntityUtils.toString(buildPost(data), "UTF-8");
+                    if (url.indexOf('?') == -1) {
+                        url += "?" + qry;
+                    } else {
+                        url += "&" + qry;
                     }
+                }
+            }
+
+            // 设置报头
+            if (head != null) {
+                for(Map.Entry<String, String> et : head.entrySet()) {
+                    http.setHeader( et.getKey( ) , et.getValue( ) );
                 }
             }
 
@@ -115,89 +182,82 @@ public final class Remote {
 
             // 判断结果
             int sta = rsp.getStatusLine().getStatusCode();
-            if (sta >= 200 && sta <= 299) {
-                String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
-                return txt;
-            } else
             if (sta >= 300 && sta <= 399) {
                 Header hea = rsp.getFirstHeader( "Location" );
                 String loc = hea != null ? hea.getValue(): "";
                 throw  new StatusException(sta, url, loc);
-            } else {
+            } else
+            if (sta <= 199 || sta >= 400) {
                 String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
-                if (sta >= 400 || sta <= 499) {
-                    throw  new StatusException(sta, url, txt);
-                } else
-                if (sta >= 500 && sta <= 599) {
-                    throw  new StatusException(sta, url, txt);
-                } else
-                if (sta >= 100 && sta <= 199) {
-                    throw  new StatusException(sta, url, txt);
-                } else {
-                    throw  new StatusException(sta, url, txt);
-                }
+                throw  new StatusException(sta, url, txt);
+            } else
+            {
+                String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
+                return txt;
             }
-        } catch (URISyntaxException|IOException ex) {
-                throw  new SimpleException(url, ex);
+        } catch (URISyntaxException | IOException ex) {
+            throw new SimpleException (url, ex);
+        } finally {
+            if (http != null) {
+                http.releaseConnection();
+            }
         }
     }
 
     /**
-     * 简单远程请求
-     *
-     * <p>
-     * 协议支持 HTTP,HTTPS;
-     * <p>
-     *
+     * 简单下载文件
      * @param url
-     * @return
+     * @param file
      * @throws HongsException
      */
-    public static String get(String url)
-            throws HongsException {
-        return request(METHOD.GET, url, null, null, false);
-    }
+    public static void download(String url, File file) throws HongsException {
+        if (url == null) {
+            throw new NullPointerException("Request url can not be null");
+        }
 
-    /**
-     * 简单远程请求
-     *
-     * <p>
-     * 协议支持 HTTP,HTTPS;
-     * 当 post 非 null 则采用 POST 反之为 GET,
-     * 当一个键对多个值时, 值可以是数组或列表.
-     * <p>
-     *
-     * @param url
-     * @param post
-     * @return
-     * @throws HongsException
-     */
-    public static String post(String url, Map<String, Object> post)
-            throws HongsException {
-        return request(METHOD.POST, url, post, null, false);
-    }
+        HttpRequestBase http = null;
+        try {
+            // 构建 HTTP 请求对象
+            http = new HttpGet();
 
-    /**
-     * 简单远程请求
-     *
-     * <p>
-     * 协议支持 HTTP,HTTPS;
-     * 当 post 非 null 则采用 POST 反之为 GET,
-     * 当一个键对多个值时, 值可以是数组或列表.
-     * <p>
-     *
-     * @param url
-     * @param post
-     * @return
-     * @throws HongsException
-     */
-    public static String upload(String url, Map<String, Object> post)
-            throws HongsException {
-        return request(METHOD.POST, url, post, null, true );
-    }
+            // 执行请求
+            http.setURI(new URI(url));
+            HttpResponse rsp = HttpClients
+                     .createDefault()
+                     .execute( http );
 
-    public static String download(String url, File file) {
-        return null;
+            // 判断结果
+            int sta = rsp.getStatusLine().getStatusCode();
+            if (sta >= 300 && sta <= 399) {
+                Header hea = rsp.getFirstHeader( "Location" );
+                String loc = hea != null ? hea.getValue(): "";
+                throw  new StatusException(sta, url, loc);
+            } else
+            if (sta <= 199 || sta >= 400) {
+                String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
+                throw  new StatusException(sta, url, txt);
+            }
+
+            // 保存文件
+            HttpEntity ett = rsp.getEntity();
+            try (
+                InputStream  his = ett.getContent();
+                FileOutputStream fos = new FileOutputStream(file);
+            ) {
+                int     bn ;
+                byte[]  bs = new byte[1024];
+                while ((bn = his.read( bs )) != -1) {
+                    fos.write( bs, 0 , bn );
+                }
+                    fos.flush( );
+            }
+        } catch (URISyntaxException | IOException ex) {
+            throw new SimpleException(url, ex);
+        } finally {
+            if (http != null) {
+                http.releaseConnection();
+            }
+        }
     }
 
     private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$");
@@ -279,7 +339,7 @@ public final class Remote {
     }
 
     /**
-     * 构建上传实体
+     * 构建复合实体
      *
      * 采用键值对的数据结构,
      * 当一个键对应多个值时,

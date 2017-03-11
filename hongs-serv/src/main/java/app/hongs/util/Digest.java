@@ -12,9 +12,6 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * 消息摘要工具
- *
- * 注意: 非线程安全
- *
  * @author Hongs
  */
 public class Digest {

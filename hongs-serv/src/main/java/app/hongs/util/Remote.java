@@ -203,6 +203,7 @@ public final class Remote {
 
     /**
      * 简单下载文件
+     *
      * @param url
      * @param file
      * @throws HongsException

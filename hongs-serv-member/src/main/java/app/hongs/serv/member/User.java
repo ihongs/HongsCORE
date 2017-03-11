@@ -113,9 +113,16 @@ extends Model {
     }
 
     protected void permit(String id, Map data) throws HongsException {
-        // 加密密码
-        if (data.containsKey("password")) {
-            data.put("password", AuthKit.getCrypt((String) data.get("password")));
+        // 加密密码, 用户名作附加码
+        if (data.containsKey("password")
+        &&  data.containsKey("username")) {
+            String username = Synt.declare(data.get("username"), "");
+            String password = Synt.declare(data.get("password"), "");
+            data.put("password", AuthKit.getCrypt(username + password));
+        } else
+        if (data.containsKey("password")
+        ||  data.containsKey("username")) {
+            throw new HongsException.Notice("必须同时给账号和密码才能修改");
         }
 
         // 权限限制, 仅能赋予当前登录用户所有的权限

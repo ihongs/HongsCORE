@@ -29,7 +29,7 @@ import javax.servlet.http.HttpSession;
  */
 public class AuthKit {
 
-    private static final byte[] pazz = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
+    private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
 
     /**
      * 获取特征加密字符串
@@ -42,12 +42,10 @@ public class AuthKit {
             MessageDigest m = MessageDigest.getInstance("MD5");
             byte[] pzwd = m.digest(pswd.getBytes());
             byte[] pxwd = new byte[pzwd.length * 2];
-            int i = 0;
-            int j = 0;
-            for (; i < pzwd.length; i++) {
+            for (int i = 0, j = 0; i < pzwd.length; i ++) {
                 byte pzbt = pzwd[i];
-                pxwd[j++] = pazz[pzbt >>> 4 & 15];
-                pxwd[j++] = pazz[pzbt & 15];
+                pxwd[j++] = PAZZ[pzbt >>> 4 & 15];
+                pxwd[j++] = PAZZ[pzbt       & 15];
             }
             return new String(pxwd);
         } catch (NoSuchAlgorithmException ex) {
@@ -345,6 +343,20 @@ public class AuthKit {
         }
 
         return userSign(ah, place, appid, usrid, uname, uhead, utime);
+    }
+
+    public static void signOut(HttpSession ss) throws HongsException {
+        // 清除登录
+        DB.getInstance("member")
+          .getTable("user_sign")
+          .delete("`sesid` = ?", ss.getId());
+
+        // 清除会话
+        ss.invalidate();
+    }
+
+    public static void signUpd(HttpSession ss) throws HongsException {
+        // Nothing todo.
     }
 
 }

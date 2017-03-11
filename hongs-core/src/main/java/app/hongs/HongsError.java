@@ -20,9 +20,9 @@ public class HongsError extends Error implements HongsCause {
 
         that = new HongsCauze(errno, error, this);
 
-        if (errno < 0x10 || errno > 0xFFF) {
+        if (errno > 0xFFF) {
             throw new HongsError(0x21,
-                "Error code must be from 0x10(16) to 0xFFF(4095).");
+                  "Error code must be less than 0x1000(4096).");
         }
     }
 

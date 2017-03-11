@@ -3,7 +3,7 @@ package app.hongs;
 /**
  * 通用异常类
  *
- * 与 HongsException 不同, 无需 throws
+ * 与 HongsException 不同, 无需 throws;
  *
  * <h3>取值范围:</h3>
  * <pre>
@@ -22,9 +22,9 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
 
         that = new HongsCauze(errno, error, this);
 
-        if (errno < 0x1000 || errno > 0xFFFFF) {
+        if (errno < 0x1000) {
             throw new HongsError(0x22,
-                "Unchecked code must be from 0x1000(65536) to 0xFFFFF(1048575).");
+                "Expedient code must be greater than 0xFFF(4095).");
         }
     }
 

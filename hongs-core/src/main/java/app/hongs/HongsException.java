@@ -22,9 +22,9 @@ public class HongsException extends Exception implements HongsCause {
 
         that = new HongsCauze(errno, error, this);
 
-        if (errno < 0x1000 || errno > 0xFFFFF) {
+        if (errno < 0x1000) {
             throw new HongsError(0x22,
-                "Exception code must be from 0x1000(65536) to 0xFFFFF(1048575).");
+                "Exception code must be greater than 0xFFF(4095).");
         }
     }
 

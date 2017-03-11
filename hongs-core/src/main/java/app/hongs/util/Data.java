@@ -133,25 +133,19 @@ public class Data
 
   private static void append(Appendable sb, Object key, Object val, String pre, boolean strict, boolean ending) throws IOException
   {
-    /** 键 **/
-
     if (pre != null)
     {
       sb.append(pre);
     }
 
+    /** 键 **/
+
     if (key != null)
     {
-      String str = String.valueOf(key);
-      if (strict) {
-          str = JSONValue.escape (str);
-      } else {
-          str = /**/ Tool.escape (str);
-      }
-      sb.append('"')
-        .append(str)
-        .append('"')
-        .append(':');
+      sb.append('"');
+      escape(sb, String.valueOf(key));
+      sb.append('"');
+      sb.append(':');
     }
 
     /** 值 **/
@@ -194,14 +188,8 @@ public class Data
     }
     else
     {
-      String str = String.valueOf(val);
-      if (strict) {
-          str = JSONValue.escape (str);
-      } else {
-          str = /**/ Tool.escape (str);
-      }
       sb.append('"');
-      sb.append(str);
+      escape(sb, String.valueOf(val));
       sb.append('"');
     }
 
@@ -339,6 +327,7 @@ public class Data
       Object key = enu.nextElement( );
       ending = !enu.hasMoreElements();
       Object val = dic.get(key);
+      if (key == null) key = "";
       append(sb, key, val, pra, strict, ending);
     }
 
@@ -368,6 +357,7 @@ public class Data
       Map.Entry obj = (Map.Entry) itr.next();
       Object key = obj.getKey(  );
       Object val = obj.getValue();
+      if (key == null) key = "";
       ending = !itr.hasNext();
       append(sb, key, val, pra, strict, ending);
     }
@@ -378,6 +368,52 @@ public class Data
     }
     sb.append("}");
   }
+
+    private static void escape(Appendable sb, String s) throws IOException {
+        for (int i = 0, j = s.length(); i < j; i++ ) {
+            char c = s.charAt(i);
+            switch (c) {
+                case '"' :
+                    sb.append("\\\"");
+                    break;
+                case '\\':
+                    sb.append("\\\\");
+                    break;
+                case '/' :
+                    sb.append("\\/");
+                    break;
+                case '\b':
+                    sb.append("\\b");
+                    break;
+                case '\f':
+                    sb.append("\\f");
+                    break;
+                case '\n':
+                    sb.append("\\n");
+                    break;
+                case '\r':
+                    sb.append("\\r");
+                    break;
+                case '\t':
+                    sb.append("\\t");
+                    break;
+                default:
+                    //Reference: http://www.unicode.org/versions/Unicode5.1.0/
+                    if ((c >= '\u0000' && c <= '\u001F')
+                    ||  (c >= '\u007F' && c <= '\u009F')
+                    ||  (c >= '\u2000' && c <= '\u20FF')) {
+                        String  n = Integer.toHexString(c).toUpperCase();
+                            sb.append("\\u");
+                        for(int k = 0, l = 4 - n.length( ); k < l; k ++) {
+                            sb.append( '0' );
+                        }
+                        sb.append(n);
+                    } else {
+                        sb.append(c);
+                    }
+            }
+        }
+    }
 
   //** 编码 **/
   /*

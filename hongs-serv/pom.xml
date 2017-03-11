@@ -27,13 +27,11 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.3</version>
         </dependency>
-        <!--
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
-            <artifactId>httpcomponents-client</artifactId>
+            <artifactId>httpmime</artifactId>
             <version>4.5.3</version>
         </dependency>
-        //-->
         <dependency>
             <groupId>net.coobird</groupId>
             <artifactId>thumbnailator</artifactId>

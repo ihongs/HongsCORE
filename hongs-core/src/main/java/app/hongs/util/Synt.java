@@ -7,8 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.regex.Pattern;
@@ -434,7 +432,7 @@ public final class Synt {
      * @return
      */
     public static Set asSet(Object... objs) {
-        Set set = new HashSet();
+        Set set = new LinkedHashSet();
         for (int i = 0; i < objs.length; i += 1) {
             set.add ( objs[i] );
         }
@@ -447,7 +445,7 @@ public final class Synt {
      * @return
      */
     public static Map asMap(Object... objs) {
-        Map map = new HashMap();
+        Map map = new LinkedHashMap();
         for (int i = 0; i < objs.length; i += 2) {
             map.put ( objs[i] , objs[i+1] );
         }

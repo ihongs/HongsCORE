@@ -4,7 +4,7 @@ import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsError;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 
@@ -281,7 +281,7 @@ public class ActionHelper implements Cloneable
         return (Map) request.getAttribute(Cnst.DATA_ATTR);
     }
     catch (ClassCastException ex) {
-        throw new HongsUnchecked(0x1000, ex);
+        throw new HongsExpedient(0x1000, ex);
     }
   }
 
@@ -293,9 +293,9 @@ public class ActionHelper implements Cloneable
     try {
         return (Map) Data.toObject(request.getReader());
     } catch ( HongsError er) {
-        throw new HongsUnchecked(0x1100, er.getCause());
+        throw new HongsExpedient(0x1100, er.getCause());
     } catch (IOException ex) {
-        throw new HongsUnchecked(0x1114, ex);
+        throw new HongsExpedient(0x1114, ex);
     }
   }
 
@@ -309,7 +309,7 @@ public class ActionHelper implements Cloneable
     // 是否仅登录用户可上传
     if (conf.getProperty("core.upload.auth.needs", false)
     &&  null  ==  getSessibute  (Cnst.UID_SES)) {
-        throw new HongsUnchecked(0x1100, "Multipart is not supported");
+        throw new HongsExpedient(0x1100, "Multipart is not supported");
     }
 
     String x;
@@ -371,10 +371,10 @@ public class ActionHelper implements Cloneable
                 type = type.substring(0 , pos);
             }
             if (allowTypes != null && !allowTypes.contains(type)) {
-                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is not allowed");
+                throw new HongsExpedient(0x1100, "Type '" +type+ "' is not allowed");
             }
             if ( denyTypes != null &&   denyTypes.contains(type)) {
-                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
+                throw new HongsExpedient(0x1100, "Type '" +type+ "' is denied");
             }
 
             // 检查扩展
@@ -385,10 +385,10 @@ public class ActionHelper implements Cloneable
                 extn = extn.substring(1 + pos);
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is not allowed");
+                throw new HongsExpedient(0x1100, "Type '" +type+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsUnchecked(0x1100, "Type '" +type+ "' is denied");
+                throw new HongsExpedient(0x1100, "Type '" +type+ "' is denied");
             }
 
             /**
@@ -427,11 +427,11 @@ public class ActionHelper implements Cloneable
 
         return rd;
     } catch (IllegalStateException e) {
-        throw new HongsUnchecked(0x1100, e); // 上传受限, 如大小超标
+        throw new HongsExpedient(0x1100, e); // 上传受限, 如大小超标
     } catch (ServletException e) {
-        throw new HongsUnchecked(0x1110, e);
+        throw new HongsExpedient(0x1110, e);
     } catch (IOException e) {
-        throw new HongsUnchecked(0x1110, e);
+        throw new HongsExpedient(0x1110, e);
     }
   }
 
@@ -667,7 +667,7 @@ public class ActionHelper implements Cloneable
             try {
               return URLDecoder.decode(ce.getValue(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-              throw  new  HongsUnchecked.Common ( e);
+              throw  new  HongsExpedient.Common ( e);
             }
           }
         }
@@ -1130,7 +1130,7 @@ public class ActionHelper implements Cloneable
               k = s.substring(i, j);
               k = URLDecoder.decode(k, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsUnchecked.Common ( ex);
+              throw new HongsExpedient.Common ( ex);
           }
           if (j < s.length() && s.charAt(j) == '=') {
               j++;
@@ -1146,7 +1146,7 @@ public class ActionHelper implements Cloneable
               v = s.substring(i, j);
               v = URLDecoder.decode(v, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsUnchecked.Common ( ex);
+              throw new HongsExpedient.Common ( ex);
           }
           if (j < s.length() && s.charAt(j) == '&') {
               j++;

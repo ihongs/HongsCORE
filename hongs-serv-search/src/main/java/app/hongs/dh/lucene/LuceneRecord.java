@@ -7,7 +7,7 @@ import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
@@ -1729,7 +1729,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                 finder = that.getFinder();
                 reader = that.getReader();
             } catch ( HongsException ex ) {
-                throw ex.toUnchecked(   );
+                throw ex.toExpedient(   );
             }
         }
 
@@ -1768,7 +1768,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                 }
                 return i < h;
             } catch (IOException ex) {
-                throw new HongsUnchecked.Common(ex);
+                throw new HongsExpedient.Common(ex);
             }
         }
 
@@ -1782,7 +1782,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                 Document dox = reader.document( doc.doc );
                 return that.doc2Map(dox);
             } catch (IOException ex) {
-                throw new HongsUnchecked.Common(ex);
+                throw new HongsExpedient.Common(ex);
             }
         }
 
@@ -2160,7 +2160,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                 if ( w  != null) q2.setBoost(w);
                 return q2 ;
             } catch (ParseException ex) {
-                throw new HongsUnchecked.Common(ex);
+                throw new HongsExpedient.Common(ex);
             }
         }
         @Override

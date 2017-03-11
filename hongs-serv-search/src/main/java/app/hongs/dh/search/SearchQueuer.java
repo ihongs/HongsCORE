@@ -6,7 +6,7 @@ import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Async;
 import java.util.Map;
@@ -68,7 +68,7 @@ public class SearchQueuer extends Async<Map> implements Core.GlobalSingleton {
             CoreLogger.getLogger("search.queuer").trace(act+" '"+id+"' for "+that.getDbName());
         } catch (HongsException ex) {
             CoreLogger.getLogger("search.queuer").error(ex.getMessage());
-        } catch (HongsUnchecked ex) {
+        } catch (HongsExpedient ex) {
             CoreLogger.getLogger("search.queuer").error(ex.getMessage());
         } catch (HongsError er) {
             CoreLogger.getLogger("search.queuer").error(er.getMessage());

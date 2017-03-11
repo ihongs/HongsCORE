@@ -5,7 +5,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -388,7 +388,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     Map rd  = null;
                     try {
                         rd  = hlpr.getRequestData();
-                    } catch ( HongsUnchecked  ex  ) {
+                    } catch ( HongsExpedient  ex  ) {
                         CoreLogger.debug(ex.getMessage());
                     }
                     if (rd != null && !rd.isEmpty()) {

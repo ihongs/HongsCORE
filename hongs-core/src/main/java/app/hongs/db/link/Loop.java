@@ -1,7 +1,7 @@
 package app.hongs.db.link;
 
 import app.hongs.HongsException;
-import app.hongs.HongsUnchecked;
+import app.hongs.HongsExpedient;
 import app.hongs.util.Dict;
 import java.sql.Statement;
 import java.sql.ResultSet;
@@ -93,7 +93,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 il = rs.next();
             } catch (SQLException ex) {
                 this.close(  );
-                throw new HongsUnchecked(0x10a4, ex);
+                throw new HongsExpedient(0x10a4, ex);
             }
         }
         return  il;
@@ -114,7 +114,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             getTypeDict();
         } catch (HongsException ex ) {
             this.close( );
-            throw  ex.toUnchecked( );
+            throw  ex.toExpedient( );
         }
 
         // 获取行内每列数据
@@ -135,7 +135,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             return  row ;
         } catch (  SQLException ex ) {
             this.close();
-            throw new HongsUnchecked(0x10a6, ex);
+            throw new HongsExpedient(0x10a6, ex);
         }
     }
 
@@ -148,7 +148,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             }
             catch (SQLException ex ) {
-                throw new HongsUnchecked(0x1035, ex);
+                throw new HongsExpedient(0x1035, ex);
             }
         }
         finally {
@@ -158,7 +158,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
                 }
             }
             catch (SQLException ex ) {
-                throw new HongsUnchecked(0x1034, ex);
+                throw new HongsExpedient(0x1034, ex);
             }
         }
     }

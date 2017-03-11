@@ -355,12 +355,4 @@ public class Remote {
 
     }
 
-    public static void main(String[] args) throws HongsException, IOException {
-        HttpEntity ent = buildPost(Synt.asMap("a", "b", "c", Synt.asSet("x", "y", "z")));
-        ByteArrayOutputStream baos=new ByteArrayOutputStream();
-ent.writeTo(baos);
-String str = baos.toString();
-        System.out.println(str);
-    }
-
 }

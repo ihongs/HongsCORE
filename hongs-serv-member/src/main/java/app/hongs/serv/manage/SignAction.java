@@ -24,7 +24,7 @@ public class SignAction {
     /**
      * 登录
      * @param ah
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("create")
     @Verify(conf="member",form="sign")
@@ -33,7 +33,7 @@ public class SignAction {
         String place    = Synt.declare(ah.getParameter("place"), "public");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
-               password = AuthKit.getCrypt(password);
+               password = AuthKit.getCrypt(username + password);
 
         DB        db = DB.getInstance("member");
         Table     tb = db.getTable("user");
@@ -43,7 +43,7 @@ public class SignAction {
         // 验证密码
         fc = new FetchCase( )
             .from   (tb.tableName)
-            .select ("password, id, name, head, mtime, state")
+            .select ("password, passcode, id, name, head, mtime, state")
             .filter ("username = ? " , username);
         ud = db.fetchLess(fc);
         if ( ud.isEmpty() ) {
@@ -81,23 +81,18 @@ public class SignAction {
      * 登出
      * 此动作可以清除会话数据
      * @param ah
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("delete")
     public void signDelete(ActionHelper ah) throws HongsException {
         HttpSession ss = ah.getRequest().getSession(false);
         if (null == ss) {
-            ah.reply( AuthKit.getWrong(null, "core.sign.phase.invalid"));
+            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
             return;
         }
 
-        // 清除登录
-        DB.getInstance("member")
-          .getTable("user_sign")
-          .delete("`sesid` = ?", ss.getId());
+        AuthKit.signOut(ss);
 
-        // 清除会话
-        ss.invalidate();
         ah.reply ( "" );
     }
 
@@ -105,15 +100,17 @@ public class SignAction {
      * 更新
      * 此动作可维持会话不过期
      * @param ah
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("update")
     public void signUpdate(ActionHelper ah) throws HongsException {
         HttpSession ss = ah.getRequest().getSession(false);
         if (null == ss) {
-            ah.reply( AuthKit.getWrong(null, "core.sign.phase.invalid"));
+            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
             return;
         }
+
+        AuthKit.signUpd(ss);
 
         ah.reply ( "" );
     }

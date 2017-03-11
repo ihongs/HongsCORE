@@ -4,7 +4,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import app.hongs.util.Http;
+import app.hongs.util.Remote;
 import java.util.Map;
 
 public class ConnKit {
@@ -20,7 +20,7 @@ public class ConnKit {
      */
     public static Map retrieve(String url, Map<String, Object> req)
             throws HongsException {
-        return Http.parseData(Http.request(url, req));
+        return Remote.parseData(Remote.post(url, req));
     }
 
     /**

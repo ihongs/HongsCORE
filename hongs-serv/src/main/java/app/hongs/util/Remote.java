@@ -5,9 +5,11 @@ import app.hongs.action.ActionHelper;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -27,6 +29,9 @@ import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.message.BasicNameValuePair;
@@ -39,7 +44,7 @@ import org.apache.http.protocol.HTTP;
  *
  * @author Hongs
  */
-public class Remote {
+public final class Remote {
 
     public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
 
@@ -287,8 +292,46 @@ public class Remote {
      */
     public static HttpEntity buildPart(Map<String, Object> data)
             throws HongsException{
-        // TODO: 生成 multipart/form-data 数据
-        return null;
+        MultipartEntityBuilder part = MultipartEntityBuilder.create();
+        part.setMode( HttpMultipartMode.BROWSER_COMPATIBLE );
+        part.setCharset( Charset.forName("UTF-8") );
+        for (Map.Entry<String, Object> et : data.entrySet()) {
+            String n = et.getKey(  );
+            Object o = et.getValue();
+            if (o == null) {
+                // continue;
+            } else
+            if (o instanceof Object [ ]) { // 针对 Servlet 参数格式
+                for(Object v : (Object [ ]) o) {
+                    buildPart(part, n, v);
+                }
+            } else
+            if (o instanceof Collection) { // 针对 WebSocket 的格式
+                for(Object v : (Collection) o) {
+                    buildPart(part, n, v);
+                }
+            } else {
+                    buildPart(part, n, o);
+            }
+        }
+        return part.build();
+    }
+    private static void buildPart(MultipartEntityBuilder part, String n, Object v) {
+        if (v instanceof ContentBody) {
+            part.addPart(n, (ContentBody) v);
+        } else
+        if (v instanceof File) {
+            part.addBinaryBody(n , (File) v);
+        } else
+        if (v instanceof byte[]) {
+            part.addBinaryBody(n , (byte[]) v);
+        } else
+        if (v instanceof InputStream) {
+            part.addBinaryBody(n , (InputStream) v);
+        } else
+        {
+            part.addTextBody(n , String.valueOf(v));
+        }
     }
 
     /**

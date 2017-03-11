@@ -89,7 +89,7 @@ public class Digest {
         return Core.getInstance(Digest.class).digest(text);
     }
 
-    public static final String md5(File file)
+    public static final String md5( File  file)
     throws IOException {
         return Core.getInstance(Digest.class).digest(file);
     }

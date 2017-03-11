@@ -71,10 +71,10 @@ public class Digest {
         int  i = 0;
         int  j = a.length;
         StringBuilder s = new StringBuilder(2 * j);
-        for (  ; i < j; i ++ ) {
-            byte b = a[i];
-            char e = DIGITS[ b & 0xf ];
-            char c = DIGITS[(b & 0xf0) >> 4];
+        for (  ; i < j; i ++  ) {
+            byte b = a[ i ];
+            char e = DIGITS[b & 0xf];
+            char c = DIGITS[b >>> 4 & 0xf];
             s.append(c);
             s.append(e);
         }

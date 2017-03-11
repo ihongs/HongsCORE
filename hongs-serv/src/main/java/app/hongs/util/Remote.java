@@ -284,13 +284,13 @@ public final class Remote {
         if (resp.length() == 0) {
             return new HashMap();
         }
-        if (resp.startsWith("{") && resp.endsWith("}")) {
-            return (Map) Data.toObject(resp);
-        } else
         if (resp.startsWith("[") && resp.endsWith("]")) {
             throw  new HongsException.Common("Unsupported list: "+ resp );
+        } else
+        if (resp.startsWith("{") && resp.endsWith("}")) {
+            return (  Map  ) Data.toObject(resp);
         } else {
-            return ActionHelper.parseParam(ActionHelper.parseQuery(resp));
+            return ActionHelper.parseQuery(resp);
         }
     }
 

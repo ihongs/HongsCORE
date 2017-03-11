@@ -41,10 +41,9 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     }
 
     public HongsException toException() {
-        HongsException ex = new HongsException(this.getErrno(), this.getError(), this);
-        ex.setLocalizedOptions(this.getLocalizedOptions());
-        ex.setLocalizedSection(this.getLocalizedSection());
-        return ex;
+        return new HongsException(this.getErrno(), this.getError(), this)
+             .setLocalizedOptions(this.getLocalizedOptions())
+             .setLocalizedSection(this.getLocalizedSection());
     }
 
     @Override

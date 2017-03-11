@@ -16,6 +16,7 @@ import java.io.PrintWriter;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
@@ -259,9 +260,32 @@ public class Common {
         }
     }
 
-    private static String text(String text) {
+    public static String file(String path) throws HongsException {
+        try (
+            BufferedReader br = new BufferedReader(
+                 new FileReader(new File(path)));
+        ) {
+            int           bn ;
+            char[ ]       bs ;
+            StringBuilder sb = new StringBuilder();
+            while ( true ) {
+                bs = new char [1024];
+                if((bn = br.read(bs)) < 0) {
+                    break;
+                }
+                sb.append(bs, 0, bn);
+            }
+            return sb.toString();
+        } catch (FileNotFoundException ex) {
+            throw new HongsException.Common("Can not find " + path, ex);
+        } catch (IOException ex) {
+            throw new HongsException.Common("Can not read " + path, ex);
+        }
+    }
+
+    private static String text(String text) throws HongsException {
         if (text == null ) {
-            return  "" ;
+            return   ""   ;
         }
         text = text.trim();
 
@@ -270,7 +294,7 @@ public class Common {
             if ( ! new File(text).isAbsolute()) {
                 text = Core.CORE_PATH  +  text;
             }
-            text = Tool.fetchFile (text);
+            text = file(text);
             text = text.replaceAll("//.*?(\\r|\\n|$)", "$1");
             text = text.trim();
         }
@@ -278,13 +302,16 @@ public class Common {
         return text;
     }
 
-    private static Map data(String text) {
+    private static Map data(String text) throws HongsException {
         text = text(text);
         if (text.length() == 0 ) {
             return new HashMap();
         }
 
         Map data;
+        if (text.startsWith("[") && text.endsWith("]")) {
+            throw  new HongsException.Common("Unsupported list: "+ text );
+        } else
         if (text.startsWith("{") && text.endsWith("}")) {
             data = (  Map  ) Data.toObject(text);
         } else {

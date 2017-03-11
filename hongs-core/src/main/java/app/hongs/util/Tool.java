@@ -1,19 +1,12 @@
 package app.hongs.util;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 
 /**
  * 常用文本工具
@@ -607,71 +600,6 @@ public final class Tool
               .append(File.separator );
       }   path.append(name );
       return path.toString();
-  }
-
-  //** 文件 **/
-
-  /**
-   * 从文件中获取所有内容
-   * @param path 文件路径
-   * @return
-   */
-  public static String fetchFile(String path) {
-      BufferedReader br = null;
-      try {
-          br = new BufferedReader(
-               new FileReader(
-               new File(path)));
-          int           bn ;
-          char[ ]       bs ;
-          StringBuilder sb = new StringBuilder();
-          while ( true ) {
-              bs = new char [1024];
-              if((bn = br.read(bs)) < 0) {
-                  break;
-              }
-              sb.append(bs, 0, bn);
-          }
-          return sb.toString();
-      } catch (FileNotFoundException ex) {
-          throw new RuntimeException("Can not find " + path, ex);
-      } catch (IOException ex) {
-          throw new RuntimeException("Can not read " + path, ex);
-      } finally {
-      if (br != null) {
-      try {
-          br.close( );
-      } catch (IOException ex) {
-          throw new RuntimeException("Can not close "+ path, ex);
-      }
-      }
-      }
-  }
-
-  /**
-   * 将内容写入指定文件中
-   * @param path 文件路径
-   * @param text 写入内容
-   * @param append 是否为追加
-   */
-  public static void storeFile(String path, String text, boolean append) {
-      BufferedWriter bw = null;
-      try {
-          bw = new BufferedWriter(
-               new FileWriter(
-               new File(path), append));
-          bw.write(text);
-      } catch (IOException ex) {
-          throw new RuntimeException("Can not save " + path, ex);
-      } finally {
-      if (bw != null) {
-      try {
-          bw.close( );
-      } catch (IOException ex) {
-          throw new RuntimeException("Can not close "+ path, ex);
-      }
-      }
-      }
   }
 
 }

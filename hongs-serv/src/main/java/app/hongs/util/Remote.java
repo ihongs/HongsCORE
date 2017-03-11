@@ -38,10 +38,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
 /**
- * 远程请求工具集
- *
- * 使用 HTTP 协议
- *
+ * 远程请求工具
  * @author Hongs
  */
 public final class Remote {

@@ -397,7 +397,7 @@ public final class Remote {
      *
      * getStatus() 对应 HTTP 的响应码
      * getUrl() 的 Url 为当前请求地址
-     * getRsp() 在 3xx 代码时返回跳转地址, 其他均返回响应文本
+     * getRsp() 在 3xx 时返回跳转地址, 其他情况则返回响应文本
      */
     public static class StatusException extends HongsException.Common {
 

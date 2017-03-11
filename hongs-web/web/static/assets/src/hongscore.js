@@ -1697,7 +1697,8 @@ $.fn.hsInit = function(cnf) {
     // 自动提取标题, 替换编辑文字
     // 如主键不叫id, 打开编辑页面, 则需加上id=0
     var h = box.children("h1,h2,h3").first();
-    if (h.length ) {
+    if (h.length
+    && !cnf.title) {
         cnf.title = h.text();
     }
     if (cnf.title) {

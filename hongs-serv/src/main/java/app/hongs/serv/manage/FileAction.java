@@ -7,12 +7,13 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.dh.IAction;
 import app.hongs.util.Synt;
-import app.hongs.util.Tool;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -237,7 +238,13 @@ public class FileAction implements IAction {
             return;
         }
 
-        Tool.storeFile(path, text, false);
+        // 写入文件
+        try {
+            saveFile(file, text);
+        } catch (Exception ex) {
+            helper.fault("写入文件失败");
+        }
+
         helper.reply("");
     }
 
@@ -286,7 +293,13 @@ public class FileAction implements IAction {
             return;
         }
 
-        Tool.storeFile(path, text, false);
+        // 写入文件
+        try {
+            saveFile(file, text);
+        } catch (Exception ex) {
+            helper.fault("写入文件失败");
+        }
+
         helper.reply("");
     }
 
@@ -381,32 +394,35 @@ public class FileAction implements IAction {
     }
 
     private String readFile(File file) {
-      BufferedReader br = null;
-      try {
-          br = new BufferedReader(new FileReader(file));
-          StringBuilder sb = new StringBuilder();
-          char[ ]       bs ;
-          while ( true ) {
-              bs = new char[ 1024 ];
-              if( -1 == br.read(bs)) {
-                  break;
-              }
-              sb.append(bs);
-          }
-          return sb.toString();
-      } catch (FileNotFoundException ex) {
-          throw new RuntimeException("Can not find " + file.getAbsolutePath(), ex);
-      } catch (IOException ex) {
-          throw new RuntimeException("Can not read " + file.getAbsolutePath(), ex);
-      } finally {
-      if (br != null) {
-      try {
-          br.close( );
-      } catch (IOException ex) {
-          throw new RuntimeException("Can not close "+ file.getAbsolutePath(), ex);
-      }
-      }
-      }
+        try (
+            BufferedReader br = new BufferedReader(new FileReader(file));
+        ) {
+            StringBuilder  sb = new StringBuilder ( );
+            char[]         bs;
+            while (true) {
+                bs = new char [ 1024 ];
+                if ( -1 == br.read(bs)) {
+                    break;
+                }
+                sb.append( bs );
+            }
+            return sb.toString();
+        } catch (FileNotFoundException ex) {
+            throw new RuntimeException("Can not find " + file.getAbsolutePath(), ex);
+        } catch (IOException ex) {
+            throw new RuntimeException("Can not read " + file.getAbsolutePath(), ex);
+        }
+    }
+    
+    private void saveFile(File file, String text) {
+        try (
+            FileWriter fw = new FileWriter(file,false);
+            BufferedWriter bw = new BufferedWriter(fw);
+        ) {
+            bw.write(text);
+        } catch (IOException ex) {
+            throw new RuntimeException("Can not save " + file.getAbsolutePath(), ex);
+        }
     }
 
     private boolean isTextFile(File file) {

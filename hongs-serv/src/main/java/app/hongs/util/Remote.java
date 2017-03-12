@@ -263,7 +263,7 @@ public final class Remote {
     /**
      * 解析响应数据
      *
-     * 可以识别 JSON,JSONP,FormData 形式数据
+     * 可以识别 JSON,JSONP,form-urlencode 形式数据
      *
      * @param resp
      * @return

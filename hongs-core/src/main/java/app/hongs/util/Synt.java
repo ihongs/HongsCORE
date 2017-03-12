@@ -29,12 +29,12 @@ public final class Synt {
     public  static  enum LOOP { NEXT, LAST };
 
     /**
-     * 拆分字符: 空字符或+,;
+     * 拆分字符: 空字符 或 +,;
      */
     private static final Pattern TEXP = Pattern.compile("\\s*[\\s\\+,;]\\s*");
 
     /**
-     * 拆分字符: 空字符或+,;.:!?'" 及同类全角标点
+     * 拆分字符: 空字符 或 +,;.:!?'" 及 同类全角标点
      */
     private static final Pattern WEXP = Pattern.compile("\\s*[\\s\\+,;\\.:\\?!\'\"　＋，；．：？！]\\s*");
 

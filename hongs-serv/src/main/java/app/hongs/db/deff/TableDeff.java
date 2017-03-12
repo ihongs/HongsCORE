@@ -1,4 +1,4 @@
-package app.hongs.db.sync;
+package app.hongs.db.deff;
 
 import app.hongs.HongsException;
 import app.hongs.db.DB;
@@ -17,7 +17,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class TableSync
+public class TableDeff
 {
 
   private final Table table;
@@ -28,7 +28,7 @@ public class TableSync
    * @param table
    * @throws app.hongs.HongsException
    */
-  public TableSync(Table table)
+  public TableDeff(Table table)
   throws HongsException
   {
     this.table = table;
@@ -44,7 +44,7 @@ public class TableSync
   public void syncSlaver(Table slaver, boolean delExtraFields)
   throws HongsException
   {
-    List<String> sqls = this.syncSlaverSqls(slaver, delExtraFields);
+    List<String> sqls = this.deffSlaver(slaver, delExtraFields);
     DB sdb = slaver.db;
     sdb.IN_TRNSCT_MODE = true;
     try
@@ -62,7 +62,7 @@ public class TableSync
     }
   }
 
-  public List<String> syncSlaverSqls(Table slaver, boolean delExtraFields)
+  public List<String> deffSlaver(Table slaver, boolean delExtraFields)
   throws HongsException
   {
     List sqls = new ArrayList();

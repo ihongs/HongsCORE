@@ -611,7 +611,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * 动作驱动链
      * @author Hongs
      */
-    public interface DriverChain {
+    public static interface DriverChain {
 
         public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
 

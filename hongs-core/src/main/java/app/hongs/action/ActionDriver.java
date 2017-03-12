@@ -202,7 +202,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void service (ServletRequest rep, ServletResponse rsp)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new DirverChain() {
+        doDriver(rep, rsp, new DriverChain() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -214,7 +214,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void doFilter(ServletRequest rep, ServletResponse rsp, final FilterChain chn)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new DirverChain() {
+        doDriver(rep, rsp, new DriverChain() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -223,7 +223,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         });
     }
 
-    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DirverChain drv)
+    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DriverChain drv)
     throws ServletException, IOException {
         HttpServletRequest  req = (HttpServletRequest ) rep;
         HttpServletResponse rsq = (HttpServletResponse) rsp;
@@ -605,6 +605,16 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         }
 
         return rip;
+    }
+
+    /**
+     * 动作驱动链
+     * @author Hongs
+     */
+    public interface DriverChain {
+
+        public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
+
     }
 
 }

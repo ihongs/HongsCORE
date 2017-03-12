@@ -174,7 +174,7 @@ public final class Synt {
             } else if (val instanceof Map ) {
                 val = new ArrayList(((Map ) val).values());
             } else if (val instanceof Object[] ) {
-                val = Arrays.asList(( Object[] ) val /**/);
+                val = new ArrayList(Arrays.asList((Object[]) val));
             } else {
                 List lst = new ArrayList ();
                 lst.add(val);
@@ -418,12 +418,14 @@ public final class Synt {
     }
 
     /**
-     * 快捷构建 List, Arrays.asList 的别名
+     * 快捷构建 List
+     * 不等同于 Arrays.asList, 
+     * 可以在此 List 上增删改.
      * @param objs
      * @return
      */
     public static List asList(Object... objs) {
-        return  Arrays.asList(objs);
+        return new ArrayList(Arrays.asList(objs));
     }
 
     /**

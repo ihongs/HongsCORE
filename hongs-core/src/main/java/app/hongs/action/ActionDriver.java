@@ -56,7 +56,7 @@ import javax.servlet.http.Part;
 public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     /**
-     * 首位标识, 为 true 表示第一个执行，负责系统初始化
+     * 首位标识, 为 true 表示最先执行，负责初始化和清理
      */
     private boolean INIT = false;
 

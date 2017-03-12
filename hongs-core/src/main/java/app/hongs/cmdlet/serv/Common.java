@@ -309,11 +309,14 @@ public class Common {
         }
 
         Map data;
-        if (text.startsWith("[") && text.endsWith("]")) {
-            throw  new HongsException.Common("Unsupported list: "+ text );
-        } else
         if (text.startsWith("{") && text.endsWith("}")) {
             data = (  Map  ) Data.toObject(text);
+        } else
+        if (text.startsWith("[") && text.endsWith("]")) {
+            throw  new HongsException.Common("Unsupported list: "+ text);
+        } else
+        if (text.startsWith("<") && text.endsWith(">")) {
+            throw  new HongsException.Common("Unsupported html: "+ text);
         } else {
             data = ActionHelper.parseQuery(text);
         }

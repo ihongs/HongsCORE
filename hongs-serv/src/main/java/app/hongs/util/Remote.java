@@ -276,17 +276,20 @@ public final class Remote {
         // 识别是否为 JSONP 格式的数据
         Matcher mat = JSONP.matcher(resp);
         if (mat.matches()) {
-            resp = mat.group(1).trim();
+            resp = mat.group( 1 ).trim( );
         }
 
-        if (resp.length() == 0) {
+        if (resp.length( ) == 0) {
             return new HashMap();
         }
-        if (resp.startsWith("[") && resp.endsWith("]")) {
-            throw  new HongsException.Common("Unsupported list: "+ resp );
-        } else
         if (resp.startsWith("{") && resp.endsWith("}")) {
             return (  Map  ) Data.toObject(resp);
+        } else
+        if (resp.startsWith("[") && resp.endsWith("]")) {
+            throw  new HongsException.Common("Unsupported list: "+ resp);
+        } else
+        if (resp.startsWith("<") && resp.endsWith(">")) {
+            throw  new HongsException.Common("Unsupported html: "+ resp);
         } else {
             return ActionHelper.parseQuery(resp);
         }

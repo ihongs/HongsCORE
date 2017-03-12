@@ -13,12 +13,12 @@ package app.hongs;
  */
 public class HongsError extends Error implements HongsCause {
 
-    protected final HongsCauze that;
+    protected final HongsCurse that;
 
     public HongsError(int errno, String error, Throwable cause) {
         super(cause);
 
-        that = new HongsCauze(errno, error, this);
+        that = new HongsCurse(errno, error, this);
 
         if (errno > 0xFFF) {
             throw new HongsError(0x21,

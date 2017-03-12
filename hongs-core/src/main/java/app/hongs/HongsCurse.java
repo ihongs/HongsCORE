@@ -4,7 +4,7 @@ package app.hongs;
  * 异常本地化工具
  * @author Hongs
  */
-public class HongsCauze {
+public class HongsCurse {
 
     private final int       code;
     private final String    desc;
@@ -13,7 +13,7 @@ public class HongsCauze {
     private String   lang;
     private String[] opts;
 
-    HongsCauze( int errno, String error, Throwable cause ) {
+    HongsCurse( int errno, String error, Throwable cause ) {
         this.code = errno;
         this.desc = error;
         this.that = cause;

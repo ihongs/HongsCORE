@@ -15,12 +15,12 @@ package app.hongs;
  */
 public class HongsException extends Exception implements HongsCause {
 
-    protected final HongsCauze that;
+    protected final HongsCurse that;
 
     public HongsException(int errno, String error, Throwable cause) {
         super(cause);
 
-        that = new HongsCauze(errno, error, this);
+        that = new HongsCurse(errno, error, this);
 
         if (errno < 0x1000) {
             throw new HongsError(0x22,

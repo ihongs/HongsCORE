@@ -1,4 +1,4 @@
-package app.hongs.db.sync;
+package app.hongs.db.deff;
 
 import app.hongs.HongsException;
 import app.hongs.db.DB;
@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class DBSync
+public class DBDeff
 {
 
   private DB db;
@@ -29,7 +29,7 @@ public class DBSync
    * @param db
    * @throws app.hongs.HongsException
    */
-  public DBSync(DB db)
+  public DBDeff(DB db)
   throws HongsException
   {
     this.db = db;
@@ -47,7 +47,7 @@ public class DBSync
   public void syncSlaver(DB slaver, String tablePrefix, String tableSuffix, boolean delExtraTables, boolean delExtraFields)
   throws HongsException
   {
-    List<String> sqls = this.syncSlaverSqls(slaver, tablePrefix, tableSuffix, delExtraTables, delExtraFields);
+    List<String> sqls = this.deffSlaver(slaver, tablePrefix, tableSuffix, delExtraTables, delExtraFields);
     DB sdb = slaver;
     sdb.IN_TRNSCT_MODE = true;
     try
@@ -65,7 +65,7 @@ public class DBSync
     }
   }
 
-  public List<String> syncSlaverSqls(DB slaver, String tablePrefix, String tableSuffix, boolean delExtraTables, boolean delExtraFields)
+  public List<String> deffSlaver(DB slaver, String tablePrefix, String tableSuffix, boolean delExtraTables, boolean delExtraFields)
   throws HongsException
   {
     List<String> sqls = new ArrayList();
@@ -97,8 +97,8 @@ public class DBSync
       if (tableSuffix != null) config.put("tableSuffix", tableSuffix);
       Table tablz = new Table(slaver, config);
 
-      TableSync sync = new TableSync( table );
-      sqlz = sync.syncSlaverSqls(tablz, delExtraFields);
+      TableDeff sync = new TableDeff( table );
+      sqlz = sync.deffSlaver(tablz, delExtraFields);
       sqls.addAll( sqlz );
 
       if (delExtraTables)

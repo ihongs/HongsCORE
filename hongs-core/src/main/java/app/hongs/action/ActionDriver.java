@@ -202,7 +202,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void service (ServletRequest rep, ServletResponse rsp)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new DriverChain() {
+        doDriver(rep, rsp, new DriverAgent() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -214,7 +214,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void doFilter(ServletRequest rep, ServletResponse rsp, final FilterChain chn)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new DriverChain() {
+        doDriver(rep, rsp, new DriverAgent() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -223,7 +223,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         });
     }
 
-    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DriverChain drv)
+    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DriverAgent agt)
     throws ServletException, IOException {
         HttpServletRequest  req = (HttpServletRequest ) rep;
         HttpServletResponse rsq = (HttpServletResponse) rsp;
@@ -241,7 +241,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             try {
                 doLaunch(core, hlpr, req, rsq );
-                 drv.doDriver( core, hlpr);
+                 agt.doDriver( core, hlpr);
                 doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
                 CoreLogger.error(ex);
@@ -262,7 +262,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             hlpr = core.get(ActionHelper.class);
             hlpr.updateHelper( req , rsq );
 
-            /**/ drv.doDriver( core, hlpr);
+            /**/ agt.doDriver( core, hlpr);
         }
     }
 
@@ -611,7 +611,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * 动作驱动链
      * @author Hongs
      */
-    public static interface DriverChain {
+    public static interface DriverAgent {
 
         public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
 

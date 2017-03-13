@@ -1,7 +1,7 @@
 package app.hongs.serv.common;
 
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.util.Synt;
 import java.io.IOException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -19,11 +19,13 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SessFilter implements Filter {
 
+    private   String ATT  =  null ; // 过滤器名称
     protected String SSRN = "SSID"; // 会话请求参数名称
     protected String SSCN = "SSID"; // 会话 Cookie 键名
     protected String SSCP =    "/"; // 会话 Cookie 路径
     protected int    SEXP =  86400; // 会话过期时间(秒)
     protected int    CEXP =     -1; // 过期 Cookie (秒)
+
 
     @Override
     public void init(FilterConfig fc)
@@ -44,28 +46,36 @@ public class SessFilter implements Filter {
 
         fn = fc.getInitParameter( "cookie-max-age");
         if (fn != null) CEXP = Integer.parseInt(fn);
+
+        ATT = SessFilter.class.getName( ) +":"+ fc.getFilterName( ) +":INSIDE";
     }
 
     @Override
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain flt)
     throws ServletException, IOException {
+        if (Synt.declare(req.getAttribute(ATT), false)) {
+            return; // 路径嵌套则不必再执行
+        }
+
         HttpServletRequest  raq = (HttpServletRequest ) req;
         HttpServletResponse rzp = (HttpServletResponse) rsp;
 
-        // 包裹请求
-        // 使之后可通过特别方法提取会话
-        // 最终任务完成后对会话进行保存
         try {
-            raq = new SessFiller( raq, rzp, this );
-            flt.doFilter( raq, rzp );
+            raq = new SessFiller(raq, rzp, this);
+            raq.setAttribute    (ATT,      true);
+            flt.doFilter        (raq, rzp);
+        } finally {
+            raq.removeAttribute (ATT);
 
-            HttpSession ses  = raq.getSession( false );
-            if (null != ses && ses instanceof Sesion ) {
-               ((Sesion)ses).close();
+            // 最终任务完成后对会话进行保存
+            HttpSession ses  = raq.getSession (false);
+            if (null != ses && ses instanceof Sesion) {
+                try {
+                    ( (Sesion) ses).close();
+                } catch (HongsException ex) {
+                    throw new ServletException(ex);
+                }
             }
-        }
-        catch (HongsException | HongsExpedient ex) {
-            throw new ServletException(ex);
         }
     }
 

@@ -2,8 +2,6 @@ package app.hongs.serv.common;
 
 import app.hongs.Core;
 import app.hongs.CoreLogger;
-import app.hongs.HongsExpedient;
-import java.util.regex.Pattern;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpSession;
@@ -17,14 +15,15 @@ import javax.servlet.http.HttpServletRequestWrapper;
  */
 public class SessFiller extends HttpServletRequestWrapper {
 
-    private final static Pattern      SID = Pattern.compile("^[a-zA-Z0-9_\\-]{1,32}$");
-    private final /****/ SessFilter   flt;
+    private final        SessFilter   flt;
     private final HttpServletResponse rsp;
 
-    public Sesion  ses;
-    public boolean gotSes;
-    public String  sid;
-    public boolean gotSid;
+    private Sesion  ses;
+    private boolean gotSes;
+    private String  sid;
+    private boolean gotSid;
+    private boolean frmCok;
+    private boolean frmUrl;
 
     public SessFiller(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
         super(  req  );
@@ -33,67 +32,97 @@ public class SessFiller extends HttpServletRequestWrapper {
     }
 
     @Override
+    public boolean isRequestedSessionIdFromCookie() {
+        getRequestedSessionId();
+        return frmCok;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdFromURL() {
+        getRequestedSessionId();
+        return frmUrl;
+    }
+
+    @Override
+    public boolean isRequestedSessionIdValid() {
+        return getSession(false) != null;
+    }
+
+    @Override
     public HttpSession getSession() {
-        return getSession(true);
+        return getSession(true );
     }
 
     @Override
     public HttpSession getSession(boolean add) {
-        // 从请求数据提取会话 ID
-        if (! gotSid) {
-            gotSid = true;
-
-            String xid;
-            do {
-                xid = this.getParameter(flt.SSRN);
-                if (xid != null && xid.length() != 0) {
-                    setSid(xid);
-                    break ;
-                }
-
-                xid = this.getCookibute(flt.SSCN);
-                if (xid != null && xid.length() != 0) {
-                    setSid(xid);
-                    break ;
-                }
-
-                xid = this.getAuthibute(flt.SSCN);
-                if (xid != null && xid.length() != 0) {
-                    setSid(xid);
-                    break ;
-                }
-            } while(false);
-        }
-
         // 获取或构建会话对象
-        if (! gotSes || (add && ses == null)) {
+        if ( ! gotSes || (add && ses == null)) {
             gotSes = true;
 
-            Sesion xes;
+            // 获取会话 ID
+            getRequestedSessionId();
+
             if (sid != null) {
-                xes  = Sesion.getSesion(sid);
+                Sesion xes = Sesion.getSesion(sid);
                 if (xes != null) {
-                    setSes(xes);
+                    setSession(xes);
                 } else
                 if (add == true) {
-                    xes  =  new  Sesion(sid);
-                    setSes(xes);
+                    setSession(new Sesion());
                 }
             } else {
                 if (add == true) {
-                    xes  =  new  Sesion(   );
-                    setSes(xes);
+                    setSession(new Sesion());
                 }
             }
 
             // 延期会话 Cookie
-            setCookies();
+            fitRequestedSessionId();
         }
 
         return ses;
     }
 
-    public void setCookies() {
+    @Override
+    public String getRequestedSessionId() {
+        // 从请求数据提取会话 ID
+        if ( ! gotSid ) {
+            gotSid = true;
+
+            String xid;
+            do {
+//              xid = this.getPathibute(flt.SSCN);
+//              if (xid != null && xid.length() != 0) {
+//                  frmUrl = true;
+//                  sid = xid;
+//                  break ;
+//              }
+
+                xid = this.getCookibute(flt.SSCN);
+                if (xid != null && xid.length() != 0) {
+                    frmCok = true;
+                    sid = xid;
+                    break ;
+                }
+
+                xid = this.getAuthibute(flt.SSCN);
+                if (xid != null && xid.length() != 0) {
+                    sid = xid;
+                    break ;
+                }
+
+                xid = this.getParameter(flt.SSRN);
+                if (xid != null && xid.length() != 0) {
+                    sid = xid;
+                    break ;
+                }
+            } while(false);
+        }
+
+        return sid;
+    }
+
+    public void fitRequestedSessionId() {
         if (ses == null) {
             return;
         }
@@ -105,13 +134,13 @@ public class SessFiller extends HttpServletRequestWrapper {
         }
 
         Cookie cok = new Cookie(flt.SSCN, ses.getId());
-        cok.setPath(Core.BASE_HREF + flt.SSCP);
+        cok.setPath(Core.BASE_HREF+flt.SSCP);
         cok.setHttpOnly ( true);
         cok.setMaxAge(flt.CEXP);
         rsp.addCookie(cok /**/);
     }
 
-    private void setSes(Sesion xes) {
+    private void setSession(Sesion xes) {
         ServletContext cont = getServletContext();
         xes.setMaxInactiveInterval(flt.SEXP);
         xes.setServletContext(cont);
@@ -119,12 +148,14 @@ public class SessFiller extends HttpServletRequestWrapper {
         ses = xes;
     }
 
-    private void setSid(String xid) {
-        if (SID.matcher(xid).matches() == false) {
-            throw new HongsExpedient(0x1100, "Session ID must be 1 to 32 alphanumeric, '-' and '_'");
-        }
-        sid = xid;
-    }
+//  private String getPathibute(String key) {
+//      String uri = this.getRequestURI(  );
+//      int pos  = uri.indexOf(";"+key+"=");
+//      if (pos != -1 ) {
+//          return uri.substring( pos + 1 );
+//      }
+//      return  null;
+//  }
 
     private String getCookibute(String key) {
         Cookie[ ] cks = this.getCookies();

@@ -18,7 +18,7 @@ import java.sql.SQLException;
  * @author Hongs
  * @param <T>
  */
-public class MRecord<T> implements IRecord<T> {
+public class MRecord<T> implements IRecord<T>, AutoCloseable {
 
     protected  final  Table table;
 
@@ -195,6 +195,11 @@ public class MRecord<T> implements IRecord<T> {
         catch (SQLException ex ) {
             throw new HongsException.Common(ex);
         }
+    }
+
+    @Override
+    public void close() throws HongsException {
+        table.db.close();
     }
 
 }

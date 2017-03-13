@@ -21,6 +21,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     private transient boolean isNew = false;
     private transient boolean isMod = false;
+    private transient boolean isSav = false;
     private transient    SessFiller  ctz;
     private transient ServletContext ctx;
     private final Map<String,Object> dat;
@@ -36,6 +37,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         atime = ctime;
         isNew = true ;
         isMod = true ;
+        isSav = false;
     }
 
     public Sesion() {
@@ -76,8 +78,9 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     }
 
     @Override
-    public void setMaxInactiveInterval(int sec) {
-        this.xtime = sec;
+    public void setMaxInactiveInterval( int time ) {
+        xtime = time ;
+        isSav = false;
     }
 
     @Override
@@ -94,12 +97,14 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     public void setAttribute(String s, Object v) {
         dat.put(s, v);
         isMod = true ;
+        isSav = false;
     }
 
     @Override
     public void removeAttribute(String s) {
         dat.remove(s);
         isMod = true ;
+        isSav = false;
     }
 
     @Override
@@ -116,12 +121,13 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         sid   = Core.newIdentity();
         ctime = System.currentTimeMillis();
         atime = ctime;
-        isMod = false;
         isNew = true ;
+        isMod = true ;
+        isSav = false;
 
         // 延期会话 Cookie
-        if (  ctz != null  ) {
-            ctz.setCookies();
+        if (ctz != null) {
+            ctz.fitRequestedSessionId();
         }
     }
 
@@ -130,39 +136,42 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         return isNew;
     }
 
-    public boolean isMod() {
-        return isMod;
-    }
-
-    /**
-     * 退出时将会话数据存起来
-     * @throws HongsException
-     */
-    @Override
-    public void close() throws HongsException {
-        long   exp = getMaxInactiveInterval();
-        String key = "$." + sid ;
-        if (exp == 0) {
-            getRecord().del(key);
+    public void store() throws HongsException {
+        if (isSav   ) {
             return;
         }
+        boolean beMod = isMod;
+        isMod = false;
+        isSav = true ;
 
-        if (exp <  0) {
-            exp =  0; // 永不过期
+        IRecord rec = getRecord();
+        String  key = "$." + sid ;
+        long    exp = getMaxInactiveInterval();
+
+        if (exp == 0) {
+            rec.del(key); return ;
+        } else
+        if (exp  < 0) {
+            exp  = 0; // 永不过期;
         } else {
-            exp = exp + System.currentTimeMillis() / 1000;
+            exp  += System.currentTimeMillis() / 1000;
         }
 
-        IRecord rec = getRecord( );
-
-        if (isMod( )) {
-            atime   =   System.currentTimeMillis() / 1000;
+        if (beMod   ) {
+            atime = System.currentTimeMillis() / 1000;
             rec.set(key, this, exp);
         } else {
-            rec.set(key, /***/ exp);
+            rec.set(key,       exp);
         }
+    }
 
-        // 如果对应的数据记录对象可关闭, 则关闭之
+    @Override
+    public void close() throws HongsException {
+        store();
+
+        IRecord rec = getRecord();
+
+        // 如果数据记录对象可关闭, 关闭之
         if (rec instanceof AutoCloseable) {
             try {
                 (   (AutoCloseable) rec ).close(   );
@@ -233,7 +242,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         }
     }
 
-    private static IRecord<Sesion> getRecord() {
+    public static IRecord<Sesion> getRecord() {
         CoreConfig  conf = CoreConfig.getInstance();
         String clsn = conf.getProperty("core.sesion.record.model");
         if (clsn == null || clsn.length() < 1) {

@@ -88,11 +88,15 @@
     </filter>
     <filter-mapping>
         <filter-name>SessFilter</filter-name>
-        <url-pattern>*.act</url-pattern>
+        <url-pattern>/common/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
         <filter-name>SessFilter</filter-name>
-        <url-pattern>*.api</url-pattern>
+        <url-pattern>/manage/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>SessFilter</filter-name>
+        <url-pattern>/handle/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
@@ -112,7 +116,7 @@
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
-            <param-value>/manage/login.html;/manage/sign/create.act;/manage/sign/delete.act;*.api</param-value>
+            <param-value>/manage/login.html;/manage/sign/create.act;/manage/sign/delete.act;*.api;*.html;*.css;*.js;*.png;*.jpg;*.gif</param-value>
         </init-param>
     </filter>
     <filter-mapping>

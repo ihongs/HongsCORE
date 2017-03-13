@@ -33,7 +33,7 @@ public class SignAction {
         String place    = Synt.declare(ah.getParameter("place"), "public");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
-               password = AuthKit.getCrypt(username + password);
+               password = AuthKit.getCrypt(password);
 
         DB        db = DB.getInstance("member");
         Table     tb = db.getTable("user");
@@ -43,7 +43,7 @@ public class SignAction {
         // 验证密码
         fc = new FetchCase( )
             .from   (tb.tableName)
-            .select ("password, passcode, id, name, head, mtime, state")
+            .select ("password, id, name, head, mtime, state")
             .filter ("username = ? " , username);
         ud = db.fetchLess(fc);
         if ( ud.isEmpty() ) {

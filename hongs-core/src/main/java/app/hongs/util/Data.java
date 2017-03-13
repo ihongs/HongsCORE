@@ -113,15 +113,15 @@ public final class Data
 
   /**
    * 将Java对象输出到指定输出流
-   * @param obj
    * @param out
-   * @param strict
+   * @param obj
+   * @param compact
    */
-  public static void append(Appendable out, Object obj, boolean strict)
+  public static void append(Appendable out, Object obj, boolean compact)
   {
     try
     {
-      Data.append(out, null, obj, strict ? null : "", strict, true);
+      Data.append(out, compact ? null : "", null , obj, false);
     }
     catch (IOException ex)
     {
@@ -131,7 +131,7 @@ public final class Data
 
   //** 操作方法 **/
 
-  private static void append(Appendable sb, Object key, Object val, String pre, boolean strict, boolean ending) throws IOException
+  private static void append(Appendable sb, String pre, Object key, Object val, boolean hasNext) throws IOException
   {
     if (pre != null)
     {
@@ -156,27 +156,27 @@ public final class Data
     }
     else if (val instanceof Object[])
     {
-      append(sb, (Object[]) val, pre, strict);
+      append(sb, pre, (Object[]) val);
     }
     else if (val instanceof Iterator)
     {
-      append(sb, (Iterator) val, pre, strict);
+      append(sb, pre, (Iterator) val);
     }
     else if (val instanceof Enumeration)
     {
-      append(sb, (Enumeration) val, pre, strict);
+      append(sb, pre, (Enumeration) val);
     }
     else if (val instanceof Collection)
     {
-      append(sb, (Collection) val, pre, strict);
+      append(sb, pre, (Collection) val);
     }
     else if (val instanceof Dictionary)
     {
-      append(sb, (Dictionary) val, pre, strict);
+      append(sb, pre, (Dictionary) val);
     }
     else if (val instanceof Map)
     {
-      append(sb, (Map) val, pre, strict);
+      append(sb, pre, (Map) val);
     }
     else if (val instanceof Boolean)
     {
@@ -184,7 +184,7 @@ public final class Data
     }
     else if (val instanceof Number )
     {
-      sb.append(Tool.toNumStr((Number) val ));
+      sb.append(Tool.toNumStr((Number) val));
     }
     else
     {
@@ -193,17 +193,19 @@ public final class Data
       sb.append('"');
     }
 
-    if (!ending)
+    if (hasNext)
     {
       sb.append(',');
     }
-    if (!strict)
+
+    if (pre != null
+    && !pre.isEmpty( ))
     {
       sb.append("\r\n");
     }
   }
 
-  private static void append(Appendable sb, Object[] arr, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, String pre, Object[] arr) throws IOException
   {
     String pra;
 
@@ -215,9 +217,9 @@ public final class Data
       pra = pre + "\t" ;
     }
 
-    for (int i = 0 , j = arr.length; i < j; i = i + 1)
+    for (int i = 0, j = arr.length; i < j ; i ++)
     {
-      append(sb, null, arr[i], pra, strict, i > j - 2);
+      append(sb, pra, null, arr[i], i < j - 1   );
     }
 
     if (pre != null)
@@ -227,9 +229,10 @@ public final class Data
     sb.append("]");
   }
 
-  private static void append(Appendable sb, Iterator itr, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, String pre, Iterator itr) throws IOException
   {
     String pra;
+
     sb.append("[");
         pra  = pre;
     if (pre != null)
@@ -238,12 +241,12 @@ public final class Data
       pra = pre + "\t" ;
     }
 
-    boolean ending = !itr.hasNext();
-    while (!ending)
+    boolean hasNext = itr.hasNext();
+    while ( hasNext )
     {
       Object obj = itr.next();
-      ending = !itr.hasNext();
-      append(sb, null, obj, pra, strict, ending);
+      hasNext = itr.hasNext();
+      append(sb, pra, null, obj, hasNext);
     }
 
     if (pre != null)
@@ -253,7 +256,7 @@ public final class Data
     sb.append("]");
   }
 
-  private static void append(Appendable sb, Enumeration enu, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, String pre, Enumeration enu) throws IOException
   {
     String pra;
 
@@ -265,12 +268,12 @@ public final class Data
       pra = pre + "\t" ;
     }
 
-    boolean ending = !enu.hasMoreElements();
-    while (!ending)
+    boolean hasNext = enu.hasMoreElements();
+    while ( hasNext )
     {
       Object obj = enu.nextElement( );
-      ending = !enu.hasMoreElements();
-      append(sb, null, obj, pra, strict, ending);
+      hasNext = enu.hasMoreElements();
+      append(sb, pra, null, obj, hasNext);
     }
 
     if (pre != null)
@@ -280,7 +283,7 @@ public final class Data
     sb.append("]");
   }
 
-  private static void append(Appendable sb, Collection col, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, String pre, Collection col) throws IOException
   {
     String pra;
 
@@ -293,12 +296,12 @@ public final class Data
     }
 
     Iterator itr = col.iterator(  );
-    boolean ending = !itr.hasNext();
-    while (!ending)
+    boolean hasNext = itr.hasNext();
+    while ( hasNext )
     {
       Object obj = itr.next();
-      ending = !itr.hasNext();
-      append(sb, null, obj, pra, strict, ending);
+      hasNext = itr.hasNext();
+      append(sb, pra, null, obj, hasNext);
     }
 
     if (pre != null)
@@ -308,7 +311,7 @@ public final class Data
     sb.append("]");
   }
 
-  private static void append(Appendable sb, Dictionary dic, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, String pre, Dictionary dic) throws IOException
   {
     String pra;
 
@@ -321,14 +324,14 @@ public final class Data
     }
 
     Enumeration enu = dic.keys( );
-    boolean ending = !enu.hasMoreElements();
-    while (!ending)
+    boolean hasNext = enu.hasMoreElements();
+    while ( hasNext )
     {
       Object key = enu.nextElement( );
-      ending = !enu.hasMoreElements();
+      hasNext = enu.hasMoreElements();
       Object val = dic.get(key);
       if (key == null) key = "";
-      append(sb, key, val, pra, strict, ending);
+      append(sb, pra, key, val, hasNext);
     }
 
     if (pre != null)
@@ -338,7 +341,7 @@ public final class Data
     sb.append("}");
   }
 
-  private static void append(Appendable sb, Map map, String pre, boolean strict) throws IOException
+  private static void append(Appendable sb, String pre, Map map) throws IOException
   {
     String pra;
 
@@ -351,15 +354,15 @@ public final class Data
     }
 
     Iterator itr = map.entrySet().iterator();
-    boolean ending = !itr.hasNext();
-    while (!ending)
+    boolean hasNext = itr.hasNext();
+    while ( hasNext )
     {
       Map.Entry obj = (Map.Entry) itr.next();
-      Object key = obj.getKey(  );
       Object val = obj.getValue();
+      Object key = obj.getKey(  );
+      hasNext = itr.hasNext(  );
       if (key == null) key = "";
-      ending = !itr.hasNext();
-      append(sb, key, val, pra, strict, ending);
+      append(sb, pra, key, val, hasNext);
     }
 
     if (pre != null)
@@ -379,9 +382,6 @@ public final class Data
                 case '\\':
                     sb.append("\\\\");
                     break;
-                case '/' :
-                    sb.append("\\/");
-                    break;
                 case '\b':
                     sb.append("\\b");
                     break;
@@ -396,6 +396,9 @@ public final class Data
                     break;
                 case '\t':
                     sb.append("\\t");
+                    break;
+                case '/' :
+                    sb.append("\\/");
                     break;
                 default:
                     //Reference: http://www.unicode.org/versions/Unicode5.1.0/

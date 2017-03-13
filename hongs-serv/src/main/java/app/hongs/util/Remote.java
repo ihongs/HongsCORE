@@ -267,10 +267,8 @@ public final class Remote {
      *
      * @param resp
      * @return
-     * @throws app.hongs.HongsException.Common
      */
-    public static Map parseData(String resp)
-            throws HongsException.Common {
+    public static Map parseData(String resp) {
         resp = resp.trim();
 
         // 识别是否为 JSONP 格式的数据
@@ -286,10 +284,10 @@ public final class Remote {
             return (  Map  ) Data.toObject(resp);
         } else
         if (resp.startsWith("[") && resp.endsWith("]")) {
-            throw  new HongsException.Common("Unsupported list: "+ resp);
+            throw  new UnsupportedOperationException("Unsupported list: "+ resp);
         } else
         if (resp.startsWith("<") && resp.endsWith(">")) {
-            throw  new HongsException.Common("Unsupported html: "+ resp);
+            throw  new UnsupportedOperationException("Unsupported html: "+ resp);
         } else {
             return ActionHelper.parseQuery(resp);
         }

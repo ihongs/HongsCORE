@@ -94,10 +94,6 @@
         <filter-name>SessFilter</filter-name>
         <url-pattern>*.api</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>SessFilter</filter-name>
-        <url-pattern>/manage/*</url-pattern>
-    </filter-mapping>
     <!-- Auth Filter -->
     <filter>
         <filter-name>AuthFilter_Manage</filter-name>

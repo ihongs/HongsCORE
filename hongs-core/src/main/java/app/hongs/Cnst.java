@@ -4,7 +4,7 @@ package app.hongs;
  * 常量
  * @author Hongs
  */
-public class Cnst {
+public final class Cnst {
 
     //** 默认数值 **/
 
@@ -105,8 +105,6 @@ public class Cnst {
     public static final String DATA_ATTR = "__HONGS_DATA__"; // 请求数据
 
     public static final String RESP_ATTR = "__HONGS_RESP__"; // 响应数据
-
-    public static final String RUNNER_ATTR = "__RUNNER__"; // 动作执行器
 
     public static final String UPDATE_ATTR = "__UPDATE__"; // 更新时间戳(当会话或属性改变时将被设置)
 

@@ -9,7 +9,6 @@ import app.hongs.HongsException;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.FilterInvoker;
-import app.hongs.dh.IActing;
 
 import java.util.Map;
 import java.lang.reflect.Method;
@@ -55,11 +54,13 @@ public class ActionRunner {
         this.method = mt.getMethod();
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
-        helper.setAttribute(Cnst.RUNNER_ATTR , this);
+
+        // Regist the runner
+        helper.setAttribute(ActionRunner.class.getName( ), this);
 
         // Initialize action
-        if (object instanceof IActing) {
-            ((IActing)object).initiate(helper, this);
+        if (object instanceof app.hongs.dh.IActing) {
+           ((app.hongs.dh.IActing)object).initiate(helper, this);
         }
     }
 

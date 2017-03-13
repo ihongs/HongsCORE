@@ -313,10 +313,10 @@ public class Common {
             data = (  Map  ) Data.toObject(text);
         } else
         if (text.startsWith("[") && text.endsWith("]")) {
-            throw  new HongsException.Common("Unsupported list: "+ text);
+            throw  new UnsupportedOperationException("Unsupported list: "+ text);
         } else
         if (text.startsWith("<") && text.endsWith(">")) {
-            throw  new HongsException.Common("Unsupported html: "+ text);
+            throw  new UnsupportedOperationException("Unsupported html: "+ text);
         } else {
             data = ActionHelper.parseQuery(text);
         }

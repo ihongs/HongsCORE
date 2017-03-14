@@ -21,7 +21,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 本地缓存工具
  *
  * <p>
- * 仅当前类的"非" static 类型的 public 属性会被存储,
+ * 非 transient,static,final 的属性可以被持久化存储;
  * 特殊情况可重载 save(data) 和 load(data) 来自定义.
  * </p>
  *

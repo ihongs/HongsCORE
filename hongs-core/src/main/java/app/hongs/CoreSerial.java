@@ -356,10 +356,10 @@ public abstract class CoreSerial
       }
 
       String name = field.getName();
+      field.setAccessible  ( true );
 
       try
       {
-        field.setAccessible( true );
         field.set(this, map.get(name));
       }
       catch (IllegalAccessException e)
@@ -425,10 +425,10 @@ public abstract class CoreSerial
       }
 
       String name = field.getName();
+      field.setAccessible  ( true );
 
       try
       {
-        field.setAccessible( true );
         map.put(name, field.get(this));
       }
       catch (IllegalAccessException e)

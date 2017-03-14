@@ -96,7 +96,7 @@ public final class Data
    * @param str
    * @return
    */
-  public static String toEscape(String str)
+  public static String doEscape(String str)
   {
     StringBuilder out = new StringBuilder();
     Data.excape(out, str);

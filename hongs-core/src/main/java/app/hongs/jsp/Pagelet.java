@@ -98,7 +98,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeJSS(String str) {
-      return Data.toEscape(str);
+      return Data.doEscape(str);
   }
 
   /**

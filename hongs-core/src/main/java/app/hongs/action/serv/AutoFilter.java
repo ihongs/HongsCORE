@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
-import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Set;
 import javax.servlet.FilterChain;
@@ -43,12 +42,14 @@ public class AutoFilter extends ActionDriver {
 
     private String action;
     private String layout;
-    private String [][] ignore = null;
     private Set<String> actset = null;
     private Set<String> layset = null;
+    private FilterCheck ignore = null;
 
     @Override
-    public void init(FilterConfig cnf) {
+    public void init(FilterConfig cnf) throws ServletException {
+        super.init(cnf);
+        
         action = cnf.getInitParameter("action-path");
         layout = cnf.getInitParameter("layout-path");
         if (action == null) {
@@ -58,32 +59,11 @@ public class AutoFilter extends ActionDriver {
             layout =  action;
         }
 
-        /**
-         * 获取不包含的URL
-         */
-        String s = cnf.getInitParameter("ignore-urls");
-        if (s != null)
-        {
-          Set<String> cu = new HashSet();
-          Set<String> su = new HashSet();
-          Set<String> eu = new HashSet();
-          for (String  u : s.split(";"))
-          {
-            u = u.trim();
-            if (u.endsWith("*")) {
-                su.add(u.substring( 0, u.length() - 2));
-            } else if(u.startsWith("*")) {
-                eu.add(u.substring( 1 ));
-            } else {
-                cu.add(u);
-            }
-          }
-          this.ignore = new String[ ][] {
-            cu.toArray( new String[0] ),
-            su.toArray( new String[0] ),
-            eu.toArray( new String[0] )
-          };
-        }
+        // 获取不包含的URL
+        this.ignore = new FilterCheck(
+            cnf.getInitParameter("ignore-urls"),
+            cnf.getInitParameter("attend-urls")
+        );
     }
 
     @Override
@@ -99,26 +79,10 @@ public class AutoFilter extends ActionDriver {
         HttpServletResponse rsp = hlpr.getResponse();
         String url = ActionDriver.getCurrPath( req );
 
-        // 依次校验是否是需要排除的URL
-        if (ignore != null) {
-            for (String uri : ignore[0]) {
-                if (url.equals(uri)) {
-                    chain.doFilter(req , rsp);
-                    return;
-                }
-            }
-            for (String uri : ignore[1]) {
-                if (url.startsWith(uri)) {
-                    chain.doFilter(req , rsp);
-                    return;
-                }
-            }
-            for (String uri : ignore[2]) {
-                if (url.endsWith(uri)) {
-                    chain.doFilter(req , rsp);
-                    return;
-                }
-            }
+        // 检查是否需要跳过
+        if (ignore != null && ignore.ignore(url)) {
+            chain.doFilter(req , rsp);
+            return;
         }
 
         if (url.endsWith(".api")) {

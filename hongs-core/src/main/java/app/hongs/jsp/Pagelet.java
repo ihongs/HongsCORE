@@ -3,10 +3,10 @@ package app.hongs.jsp;
 import app.hongs.HongsExpedient;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
+import app.hongs.util.Data;
+import java.net.URLEncoder;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import org.json.simple.JSONValue;
 import javax.servlet.ServletException;
 import javax.servlet.jsp.HttpJspPage;
 import javax.servlet.http.HttpServletRequest;
@@ -86,7 +86,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    */
   public static String escapeURL(String str) {
       try {
-          return URLEncoder.encode(str, "utf-8");
+          return URLEncoder.encode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
           throw  new HongsExpedient.Common( ex );
       }
@@ -98,7 +98,16 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeJSS(String str) {
-      return JSONValue.escape(str);
+      return Data.escape  (str);
+  }
+
+  /**
+   * 转为JS对象
+   * @param obj
+   * @return
+   */
+  public static String encodeJSO(Object obj) {
+      return Data.toString(obj);
   }
 
 }

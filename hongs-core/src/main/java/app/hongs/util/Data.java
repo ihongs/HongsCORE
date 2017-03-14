@@ -9,11 +9,15 @@ import org.json.simple.parser.ParseException;
 
 import java.io.Reader;
 import java.io.IOException;
+import java.io.Serializable;
+import java.util.Map;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 /**
  * JSON格式工具
@@ -185,10 +189,21 @@ public final class Data
     {
       sb.append(Tool.toNumStr((Number) val));
     }
+    else if (val instanceof  Date  )
+    {
+      sb.append(Tool.toNumStr(((Date ) val).getTime()));
+    }
+    else if (val instanceof Serializable
+      &&  ! (val instanceof CharSequence)
+      &&  ! (val instanceof Character)
+      &&  ! (val instanceof Throwable)  )
+    {
+      append(sb, pre, val); // 反射钻取之
+    }
     else
     {
       sb.append('"');
-      escape(sb, String.valueOf(val));
+      escape(sb, val.toString());
       sb.append('"');
     }
 
@@ -370,6 +385,69 @@ public final class Data
     }
     sb.append("}");
   }
+
+    private static void append(Appendable sb, String pre, Object obj) throws IOException {
+        String pra;
+
+        sb.append("{");
+            pra  = pre;
+        if (pre != null) {
+            sb.append("\r\n");
+            pra = pre + "\t" ;
+        }
+
+        Field[] fds;
+        Class cls = obj.getClass();
+
+        // 读取公共属性
+        fds = cls.getFields();
+        for (int i = 0, j = fds.length; i < j; i ++) {
+            try {
+                Field fld = fds[i];
+                int   mod = fld.getModifiers();
+                if (Modifier.isTransient(mod )
+                ||  Modifier.isStatic(mod )
+                ||  Modifier.isFinal (mod)) {
+                    continue;
+                }
+                String key = fld.getName();
+                Object val = fld.get (obj);
+                append(sb, pra, key, val, i < j - 1);
+            }
+            catch (IllegalArgumentException
+              | IllegalAccessException ex) {
+                throw  new IOException(ex);
+            }
+        }
+
+        // 读取非公属性
+        fds = cls.getDeclaredFields();
+        for (int i = 0, j = fds.length; i < j; i ++) {
+            try {
+                Field fld = fds[i];
+                int   mod = fld.getModifiers();
+                if (Modifier.isTransient(mod )
+                ||  Modifier.isPublic(mod )
+                ||  Modifier.isStatic(mod )
+                ||  Modifier.isFinal (mod)) {
+                    continue;
+                }
+                fld.setAccessible ( true );
+                String key = fld.getName();
+                Object val = fld.get (obj);
+                append(sb, pra, key, val, i < j - 1);
+            }
+            catch (IllegalArgumentException
+              | IllegalAccessException ex) {
+                throw  new IOException(ex);
+            }
+        }
+
+        if (pre != null) {
+          sb.append(pre);
+        }
+        sb.append("}");
+    }
 
     /**
      * JSON 方式转义

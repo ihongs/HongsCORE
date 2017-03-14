@@ -18,15 +18,15 @@ import java.sql.SQLException;
  * @author Hongs
  * @param <T>
  */
-public class MRecord<T> implements IRecord<T>, AutoCloseable {
+public class JRecord<T> implements IRecord<T>, AutoCloseable {
 
     protected  final  Table table;
 
-    protected MRecord(Table table) throws HongsException {
+    protected JRecord(Table table) throws HongsException {
         this.table =  table;
     }
 
-    public MRecord() throws HongsException {
+    public JRecord() throws HongsException {
         this(DB.getInstance("common").getTable("record"));
     }
 

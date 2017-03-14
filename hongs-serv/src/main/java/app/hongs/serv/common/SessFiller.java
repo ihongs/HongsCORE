@@ -1,6 +1,5 @@
 package app.hongs.serv.common;
 
-import app.hongs.Core;
 import app.hongs.CoreLogger;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
@@ -22,8 +21,8 @@ public class SessFiller extends HttpServletRequestWrapper {
     private boolean gotSes;
     private String  sid;
     private boolean gotSid;
-    private boolean frmCok;
-    private boolean frmUrl;
+    private boolean valSid;
+    private byte    src= 0;
 
     public SessFiller(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
         super(  req  );
@@ -34,23 +33,24 @@ public class SessFiller extends HttpServletRequestWrapper {
     @Override
     public boolean isRequestedSessionIdFromCookie() {
         getRequestedSessionId();
-        return frmCok;
+        return (src == 1);
     }
 
     @Override
     public boolean isRequestedSessionIdFromURL() {
         getRequestedSessionId();
-        return frmUrl;
+        return (src == 2);
     }
 
     @Override
     public boolean isRequestedSessionIdValid() {
-        return getSession(false) != null;
+        getSession(false);
+        return valSid;
     }
 
     @Override
     public HttpSession getSession() {
-        return getSession(true );
+        return getSession(true);
     }
 
     @Override
@@ -65,7 +65,7 @@ public class SessFiller extends HttpServletRequestWrapper {
             if (sid != null) {
                 Sesion xes = Sesion.getSesion(sid);
                 if (xes != null) {
-                    setSession(xes);
+                    setSession(xes); valSid = true;
                 } else
                 if (add == true) {
                     setSession(new Sesion());
@@ -93,26 +93,28 @@ public class SessFiller extends HttpServletRequestWrapper {
             do {
 //              xid = this.getPathibute(flt.SSCN);
 //              if (xid != null && xid.length() != 0) {
-//                  frmUrl = true;
+//                  src =  2 ;
 //                  sid = xid;
 //                  break ;
 //              }
 
                 xid = this.getCookibute(flt.SSCN);
                 if (xid != null && xid.length() != 0) {
-                    frmCok = true;
+                    src =  1 ;
                     sid = xid;
                     break ;
                 }
 
                 xid = this.getAuthibute(flt.SSCN);
                 if (xid != null && xid.length() != 0) {
+                    src =  4 ;
                     sid = xid;
                     break ;
                 }
 
                 xid = this.getParameter(flt.SSRN);
                 if (xid != null && xid.length() != 0) {
+                    src =  8 ;
                     sid = xid;
                     break ;
                 }
@@ -123,28 +125,31 @@ public class SessFiller extends HttpServletRequestWrapper {
     }
 
     public void fitRequestedSessionId() {
-        if (ses == null) {
+        // 没有会话 或 确定会话 ID 不来自于 Cookie 则不设置 Cookie
+        if (ses == null || src > 1) {
             return;
         }
 
-        if (rsp.isCommitted ( )) {
-            CoreLogger.error("Can not set SessionID to Cookie {}:{} = {}, Response is committed",
-                      flt.SSCN, flt.SSCP, ses.getId());
+        // 特殊情况可能存在内容开始输出了却还没开始设置会话 Cookie
+        if (rsp.isCommitted (  )  ) {
+            CoreLogger.error("Can not set SessionID to Cookie {}={}; Path={},"
+                      + " the response is committed." ,
+                      flt.SSCN, ses.getId(), flt.SSCP);
             return;
         }
 
         Cookie cok = new Cookie(flt.SSCN, ses.getId());
-        cok.setPath(Core.BASE_HREF+flt.SSCP);
         cok.setHttpOnly ( true);
+        cok.setPath  (flt.SSCP);
         cok.setMaxAge(flt.CEXP);
-        rsp.addCookie(cok /**/);
+        rsp.addCookie(cok     );
     }
 
     private void setSession(Sesion xes) {
         ServletContext cont = getServletContext();
-        xes.setMaxInactiveInterval(flt.SEXP);
         xes.setServletContext(cont);
-        xes.setRequestContext(this);
+        xes.setServletRequest(this);
+        xes.setMaxInactiveInterval(flt.SEXP);
         ses = xes;
     }
 

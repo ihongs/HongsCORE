@@ -5,8 +5,6 @@ import app.hongs.CoreConfig;
 import app.hongs.HongsException;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.anno.Cmdlet;
-import app.hongs.util.Data;
-import app.hongs.util.Synt;
 
 /**
  * 简单数据存储
@@ -16,8 +14,11 @@ import app.hongs.util.Synt;
 public class Record {
 
     private static IRecord getRecord() throws HongsException {
-        String clsn = CoreConfig.getInstance().getProperty("core.common.record.model", MRecord.class.getName());
-        return Synt.declare(Core.getInstance(clsn), MRecord.class);
+        String cls = CoreConfig.getInstance().getProperty("core.common.record.model");
+        if (null == cls || 0 == cls.length()) {
+               cls = JRecord.class.getName( );
+        }
+        return (IRecord)Core.getInstance(cls);
     }
 
     /**
@@ -120,21 +121,29 @@ public class Record {
         }
     }
 
+    /**
+     * 清除过期的数据
+     * @param args 
+     */
     @Cmdlet("clean")
     public static void clean(String[] args) {
         long exp = 0;
-        if ( args.length != 0 ) {
+        if (args.length != 0) {
              exp = Integer.parseInt ( args  [ 0 ]  );
         }
         del(System.currentTimeMillis() / 1000 - exp);
     }
 
+    /**
+     * 预览存储的数据
+     * @param args 
+     */
     @Cmdlet("check")
     public static void check(String[] args) {
-        if ( args.length == 0 ) {
-            CmdletHelper.println("Record ID required");
+        if (args.length == 0) {
+          CmdletHelper.println("Record ID required");
         }
-        CmdletHelper.preview(get(args[0]));
+        CmdletHelper.preview(get(args[0]) );
     }
 
 }

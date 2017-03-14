@@ -2,7 +2,6 @@ package app.hongs.util;
 
 import app.hongs.Core;
 import app.hongs.HongsError;
-import app.hongs.HongsExpedient;
 
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -93,6 +92,18 @@ public final class Data
   }
 
   /**
+   * 将Java文本转义为JSON字符串
+   * @param str
+   * @return
+   */
+  public static String toEscape(String str)
+  {
+    StringBuilder out = new StringBuilder();
+    Data.excape(out, str);
+    return out.toString();
+  }
+
+  /**
    * 将Java对象在标准控制台显示
    * @see app.hongs.cmdlet.CmdletHelper preview()
    * @deprecated
@@ -146,7 +157,7 @@ public final class Data
     if (key != null)
     {
       sb.append('"');
-      escape(sb, String.valueOf(key));
+            Data.escape(sb, String.valueOf(key));
       sb.append('"');
       sb.append(':');
     }
@@ -203,7 +214,7 @@ public final class Data
     else
     {
       sb.append('"');
-      escape(sb, val.toString());
+            Data.escape(sb, val.toString());
       sb.append('"');
     }
 
@@ -448,20 +459,12 @@ public final class Data
         sb.append("}");
     }
 
-    /**
-     * JSON 方式转义
-     * @param s
-     * @return
-     */
-    public static String escape(String s) {
-        StringBuilder b = new StringBuilder( );
+    private static void excape(Appendable sb, String s) {
         try {
-            escape(b, s);
+            escape  (  sb  , s );
+        } catch (IOException ex)  {
+            throw new HongsError.Common(ex);
         }
-        catch (IOException e) {
-            throw new HongsExpedient.Common(e);
-        }
-        return  b.toString( );
     }
 
     private static void escape(Appendable sb, String s) throws IOException {

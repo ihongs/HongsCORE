@@ -85,6 +85,12 @@
             <param-name>cookie-max-age</param-name>
             <param-value>604800</param-value>
         </init-param>
+        <init-param>
+            <param-name>ignore-urls</param-name>
+            <param-value>
+                *.html;*.css;*.js;*.png;*.gif;*.jpg;*.bmp
+            </param-value>
+        </init-param>
     </filter>
     <filter-mapping>
         <filter-name>SessFilter</filter-name>
@@ -116,7 +122,13 @@
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
-            <param-value>/manage/login.html;/manage/sign/create.act;/manage/sign/delete.act;*.api;*.html;*.css;*.js;*.png;*.jpg;*.gif</param-value>
+            <param-value>
+                *.api;
+                /manage/login.html;
+                /manage/sign/create.act;
+                /manage/sign/delete.act;
+                *.html;*.css;*.js;*.png;*.gif;*.jpg;*.bmp
+            </param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -170,6 +182,7 @@
         <session-timeout>43200</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
+            <path>/</path>
             <name>SSID</name>
             <max-age>604800</max-age>
             <http-only>true</http-only>

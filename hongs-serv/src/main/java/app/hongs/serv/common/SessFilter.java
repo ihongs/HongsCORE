@@ -78,7 +78,7 @@ public class SessFilter implements Filter {
         }
 
         try {
-            raq = new SessFiller(raq, rzp, this);
+            raq = new SessAccess(raq, rzp, this);
             raq.setAttribute    ( inside , true);
             flt.doFilter        (raq, rzp);
         } finally {

@@ -302,14 +302,14 @@ public abstract class CoreSerial
     }
   }
 
-  /** 私有方法 **/
+  /** 保护方法 **/
 
   /**
    * 从缓存获取属性写入当前对象
    * @param map
    * @throws app.hongs.HongsException
    */
-  private void load(Map<String, Object> map)
+  protected void load(Map<String, Object> map)
     throws HongsException
   {
     Field[] fields;
@@ -379,7 +379,7 @@ public abstract class CoreSerial
    * @param map
    * @throws HongsException
    */
-  private void save(Map<String, Object> map)
+  protected void save(Map<String, Object> map)
     throws HongsException
   {
     Field[] fields;
@@ -443,6 +443,8 @@ public abstract class CoreSerial
       }
     }
   }
+
+  /** 私有方法 **/
 
   private ReadWriteLock lock(String flag)
   {

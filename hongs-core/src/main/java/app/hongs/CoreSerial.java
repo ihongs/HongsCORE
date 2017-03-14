@@ -312,13 +312,16 @@ public abstract class CoreSerial
   private void load(Map<String, Object> map)
     throws HongsException
   {
-    Field[] fields = this.getClass().getFields();
+    Field[] fields;
+
+    // 设置所有公共字段
+    fields = this.getClass().getFields();
     for (Field field : fields)
     {
       int ms = field.getModifiers();
       if (Modifier.isTransient(ms )
-      ||  Modifier.isStatic(ms)
-      || !Modifier.isPublic(ms))
+      ||  Modifier.isStatic(ms )
+      ||  Modifier.isFinal (ms))
       {
         continue;
       }
@@ -329,13 +332,43 @@ public abstract class CoreSerial
       {
         field.set(this, map.get(name));
       }
-      catch (IllegalArgumentException ex)
+      catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10da, ex);
+        throw new HongsException(0x10da, e);
       }
-      catch (IllegalAccessException ex)
+      catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10da, ex);
+        throw new HongsException(0x10da, e);
+      }
+    }
+
+    // 设置所有非公字段
+    fields = this.getClass().getDeclaredFields();
+    for (Field field : fields)
+    {
+      int ms = field.getModifiers();
+      if (Modifier.isTransient(ms )
+      ||  Modifier.isPublic(ms )
+      ||  Modifier.isStatic(ms )
+      ||  Modifier.isFinal (ms))
+      {
+        continue;
+      }
+
+      String name = field.getName();
+
+      try
+      {
+        field.setAccessible( true );
+        field.set(this, map.get(name));
+      }
+      catch (IllegalAccessException e)
+      {
+        throw new HongsException(0x10da, e);
+      }
+      catch (IllegalArgumentException e)
+      {
+        throw new HongsException(0x10da, e);
       }
     }
   }
@@ -348,13 +381,16 @@ public abstract class CoreSerial
   private void save(Map<String, Object> map)
     throws HongsException
   {
-    Field[] fields = this.getClass().getFields();
+    Field[] fields;
+
+    // 提取所有公共字段
+    fields = this.getClass().getFields();
     for (Field field : fields)
     {
       int ms = field.getModifiers();
       if (Modifier.isTransient(ms )
-      ||  Modifier.isStatic(ms)
-      || !Modifier.isPublic(ms))
+      ||  Modifier.isStatic(ms )
+      ||  Modifier.isFinal (ms))
       {
         continue;
       }
@@ -365,13 +401,43 @@ public abstract class CoreSerial
       {
         map.put(name, field.get(this));
       }
-      catch (IllegalArgumentException ex)
+      catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10da, ex);
+        throw new HongsException(0x10da, e);
       }
-      catch (IllegalAccessException ex)
+      catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10da, ex);
+        throw new HongsException(0x10da, e);
+      }
+    }
+
+    // 提取所有非公字段
+    fields = this.getClass().getDeclaredFields();
+    for (Field field : fields)
+    {
+      int ms = field.getModifiers();
+      if (Modifier.isTransient(ms )
+      ||  Modifier.isPublic(ms )
+      ||  Modifier.isStatic(ms )
+      ||  Modifier.isFinal (ms))
+      {
+        continue;
+      }
+
+      String name = field.getName();
+
+      try
+      {
+        field.setAccessible( true );
+        map.put(name, field.get(this));
+      }
+      catch (IllegalAccessException e)
+      {
+        throw new HongsException(0x10da, e);
+      }
+      catch (IllegalArgumentException e)
+      {
+        throw new HongsException(0x10da, e);
       }
     }
   }

@@ -395,7 +395,7 @@ public final class Data
             sb.append("\r\n");
             pra = pre + "\t" ;
         }
-
+        
         Field[] fds;
         Class cls = obj.getClass();
 
@@ -413,8 +413,8 @@ public final class Data
                 String key = fld.getName();
                 Object val = fld.get (obj);
                 append(sb, pra, key, val, i < j - 1);
-            }
-            catch (IllegalArgumentException
+            } catch (
+              IllegalArgumentException
               | IllegalAccessException ex) {
                 throw  new IOException(ex);
             }
@@ -436,8 +436,8 @@ public final class Data
                 String key = fld.getName();
                 Object val = fld.get (obj);
                 append(sb, pra, key, val, i < j - 1);
-            }
-            catch (IllegalArgumentException
+            } catch (
+              IllegalArgumentException
               | IllegalAccessException ex) {
                 throw  new IOException(ex);
             }

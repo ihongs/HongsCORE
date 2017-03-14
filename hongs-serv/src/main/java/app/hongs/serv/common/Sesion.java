@@ -255,8 +255,8 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     /**
      * 清除过期的数据
-     * @param args 
-     * @throws app.hongs.HongsException 
+     * @param args
+     * @throws app.hongs.HongsException
      */
     @Cmdlet("clean")
     public static void clean(String[] args) throws HongsException {
@@ -269,8 +269,8 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     /**
      * 预览存储的数据
-     * @param args 
-     * @throws app.hongs.HongsException 
+     * @param args
+     * @throws app.hongs.HongsException
      */
     @Cmdlet("check")
     public static void check(String[] args) throws HongsException {
@@ -293,10 +293,18 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         }
     }
 
-    private static IRecord<Sesion> getRecord() {
+    private static IRecord<Sesion> getRecord() throws HongsException {
         String cls = CoreConfig.getInstance( ).getProperty("core.common.sesion.model");
         if (null == cls || 0 == cls.length() ) {
                cls = Recs.class.getName  (   );
+
+            // 缺失则用私有类构造一个
+            Core core = Core.getInstance();
+            if (!core.containsKey(cls)) {
+                Recs rec = new Recs();
+                core.put ( cls, rec );
+                return rec;
+            }
         }
         return (IRecord<Sesion>) Core.getInstance(cls);
     }

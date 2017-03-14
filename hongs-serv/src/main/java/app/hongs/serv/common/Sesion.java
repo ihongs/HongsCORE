@@ -28,7 +28,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     private transient boolean isNew = false;
     private transient boolean isMod = false;
     private transient boolean isSav = false;
-    private transient    SessFiller  req;
+    private transient    SessAccess  req;
     private transient ServletContext ctx;
     private final Map<String,Object> dat;
     private String sid;
@@ -50,7 +50,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         this(null );
     }
 
-    public void setServletRequest(   SessFiller  req) {
+    public void setServletRequest(   SessAccess  req) {
         this.req = req;
     }
 

@@ -12,7 +12,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
  * 会话请求包装
  * @author Hongs
  */
-public class SessFiller extends HttpServletRequestWrapper {
+public class SessAccess extends HttpServletRequestWrapper {
 
     private final        SessFilter   flt;
     private final HttpServletResponse rsp;
@@ -24,7 +24,7 @@ public class SessFiller extends HttpServletRequestWrapper {
     private boolean valSid;
     private byte    src= 0;
 
-    public SessFiller(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
+    public SessAccess(HttpServletRequest req, HttpServletResponse rsp, SessFilter flt) {
         super(  req  );
         this.rsp = rsp;
         this.flt = flt;

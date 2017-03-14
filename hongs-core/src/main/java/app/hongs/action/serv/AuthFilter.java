@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -71,7 +70,7 @@ public class AuthFilter
   /**
    * 不包含的URL
    */
-  private String[][] ignoreUrls = null;
+  private FilterCheck ignoreCase = null;
 
   /**
    * 环境检测正则
@@ -142,30 +141,10 @@ public class AuthFilter
     /**
      * 获取不包含的URL
      */
-    s = config.getInitParameter("ignore-urls");
-    if (s != null)
-    {
-      Set<String> cu = new HashSet();
-      Set<String> su = new HashSet();
-      Set<String> eu = new HashSet();
-      for (String  u : s.split(";"))
-      {
-        u = u.trim();
-        if (u.endsWith("*")) {
-            su.add(u.substring( 0, u.length() - 2));
-        } else if(u.startsWith("*")) {
-            eu.add(u.substring( 1 ));
-        } else {
-            cu.add(u);
-        }
-      }
-      String u3[][] = {
-          cu.toArray(new String[0]),
-          su.toArray(new String[0]),
-          eu.toArray(new String[0])
-      };
-      this.ignoreUrls = u3;
-    }
+    this.ignoreCase = new FilterCheck(
+        config.getInitParameter("ignore-urls"),
+        config.getInitParameter("attend-urls")
+    );
   }
 
   @Override
@@ -176,7 +155,7 @@ public class AuthFilter
     siteMap    = null;
     indexPage  = null;
     loginPage  = null;
-    ignoreUrls = null;
+    ignoreCase = null;
   }
 
   @Override
@@ -187,27 +166,12 @@ public class AuthFilter
     ServletResponse rsp = hlpr.getResponse();
     String act = ActionDriver.getCurrPath((HttpServletRequest) req);
 
-    DO:do {
-
     /**
-     * 依次校验是否是需要排除的URL
+     * 检查当前动作是否可以忽略
      */
-    if (ignoreUrls != null) {
-        for (String url : ignoreUrls[0]) {
-            if (act.equals(url)) {
-                break DO;
-            }
-        }
-        for (String url : ignoreUrls[2]) {
-            if (act.endsWith(url)) {
-                break DO;
-            }
-        }
-        for (String url : ignoreUrls[1]) {
-            if (act.startsWith(url)) {
-                break DO;
-            }
-        }
+    if (ignoreCase != null && ignoreCase.ignore(act)) {
+        chain.doFilter(req, rsp);
+        return;
     }
 
     /**
@@ -230,7 +194,8 @@ public class AuthFilter
     if (Core.DEBUG > 0) {
       String uid = Synt.asserts(hlpr.getSessibute(Cnst.UID_SES), "");
         if ( uid!= null && uid.equals(Cnst.ADM_UID)) {
-            break ;
+            chain.doFilter(req , rsp );
+            return;
         }
     }
 
@@ -293,8 +258,6 @@ public class AuthFilter
             }
         }
     }
-
-    } while(false);
 
     chain.doFilter(req, rsp);
   }

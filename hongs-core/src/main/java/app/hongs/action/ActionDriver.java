@@ -13,8 +13,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -202,7 +204,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void service (ServletRequest rep, ServletResponse rsp)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new DriverAgent() {
+        doDriver(rep, rsp, new DriverProxy() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -214,7 +216,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     @Override
     public void doFilter(ServletRequest rep, ServletResponse rsp, final FilterChain chn)
     throws ServletException, IOException {
-        doDriver(rep, rsp, new DriverAgent() {
+        doDriver(rep, rsp, new DriverProxy() {
             @Override
             public void doDriver(Core core, ActionHelper hlpr)
             throws ServletException, IOException {
@@ -223,7 +225,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         });
     }
 
-    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DriverAgent agt)
+    final  void doDriver(ServletRequest rep, ServletResponse rsp, final DriverProxy agt)
     throws ServletException, IOException {
         HttpServletRequest  req = (HttpServletRequest ) rep;
         HttpServletResponse rsq = (HttpServletResponse) rsp;
@@ -330,7 +332,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
             }
         }
- 
+
         if (! hlpr.getResponse().isCommitted()) {
             /**
              * 输出特定的服务器信息
@@ -528,7 +530,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static Core getWorkCore(HttpServletRequest req) {
+    public static final Core getWorkCore(HttpServletRequest req) {
         Core core = (Core) req.getAttribute(Cnst.CORE_ATTR);
         if (core ==  null) {
             core  =  Core.GLOBAL_CORE ;
@@ -545,7 +547,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static String getWorkPath(HttpServletRequest req) {
+    public static final String getWorkPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(Cnst.PATH_ATTR);
         if (uri == null) {
             uri = getCurrPath(req);
@@ -558,7 +560,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static String getCurrPath(HttpServletRequest req) {
+    public static final String getCurrPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH);
         if (uri == null) {
             uri = req.getServletPath();
@@ -571,7 +573,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static String getRealPath(HttpServletRequest req) {
+    public static final String getRealPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH);
         if (uri == null) {
             uri = req.getServletPath();
@@ -584,36 +586,135 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static String getRealAddr(HttpServletRequest req) {
-        String rip = req.getRemoteAddr();
-
-        for(String key : new String[] {
+    public static final String getRealAddr(HttpServletRequest req) {
+        for (String key : new String[] {
                   "X-Forwarded-For",
                   "Proxy-Client-IP",
-               "WL-Proxy-Client-IP"}) {
-            String val = req.getHeader(key);
-            if (null != val && 0 != val.length()) {
-                int pos = val.indexOf  (  ','  );
+                "WL-Proxy-Client-IP"}) {
+             String val = req.getHeader(key);
+            if (val != null && val.length( )  !=  0 ) {
+                int pos = val.indexOf  (',');
                 if (pos > 0) {
-                    val = val.substring(0 , pos);
-                }
-                if (!"unknown".equalsIgnoreCase(rip)) {
-                    rip = val;
-                    break;
+                    val = val.substring(0, pos);
+                }   val = val.trim();
+                if (!"unknown".equalsIgnoreCase(val)) {
+                    return val;
                 }
             }
         }
 
-        return rip;
+        return  req.getRemoteAddr( );
     }
 
     /**
-     * 动作驱动链
-     * @author Hongs
+     * 执行动作代理
      */
-    public static interface DriverAgent {
+    public static  interface  DriverProxy {
 
         public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
+
+    }
+
+    /**
+     * 路径过滤检查
+     */
+    public static final class FilterCheck {
+
+        protected String[][] ignoreUrls;
+        protected String[][] attendUrls;
+
+        /**
+         * 构建过滤实例
+         * 路径分号分隔, 之间允许有空字符
+         * @param ignoreUrls 待忽略的路径
+         * @param attendUrls 需处理的路径
+         */
+        public FilterCheck(String ignoreUrls, String attendUrls) {
+            this.ignoreUrls = split(ignoreUrls);
+            this.attendUrls = split(attendUrls);
+        }
+
+        /**
+         * 检查是否要忽略
+         * 优先 uri 匹配 attendUrls 返回 false
+         * @param uri
+         * @return
+         */
+        public boolean ignore(String uri) {
+            if (check(uri, attendUrls)) {
+                return false;
+            }
+            if (check(uri, ignoreUrls)) {
+                return true ;
+            }
+            return false;
+        }
+
+        /**
+         * 检查是否要继续
+         * 优先 uri 匹配 ignoreUrls 返回 false
+         * @param uri
+         * @return
+         */
+        public boolean attend(String uri) {
+            if (check(uri, ignoreUrls)) {
+                return false;
+            }
+            if (check(uri, attendUrls)) {
+                return true ;
+            }
+            return false;
+        }
+
+        private boolean check(String uri, String[][] uris) {
+            for (String url : uris[0]) {
+                if (uri.equals(url)) {
+                    return true;
+                }
+            }
+            for (String url : uris[1]) {
+                if (uri.endsWith(url)) {
+                    return true;
+                }
+            }
+            for (String url : uris[2]) {
+                if (uri.startsWith(url)) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private String[][] split(String urls) {
+            if (urls == null) {
+                return new String[][] {
+                    new String[] {},
+                    new String[] {},
+                    new String[] {}
+                };
+            }
+
+            Set<String> cu = new HashSet();
+            Set<String> eu = new HashSet();
+            Set<String> su = new HashSet();
+            for (String  u : urls.split(";")) {
+                u = u.trim();
+                if (u.length() == 0) {
+                    // ignore
+                } else if (u.endsWith  ("*")) {
+                    su.add(u.substring ( 0, u.length() - 2));
+                } else if (u.startsWith("*")) {
+                    eu.add(u.substring ( 1 ));
+                } else {
+                    cu.add(u);
+                }
+            }
+            return new String[][] {
+                cu.toArray(new String[0]),
+                eu.toArray(new String[0]),
+                su.toArray(new String[0])
+            };
+        }
 
     }
 

@@ -2,6 +2,7 @@ package app.hongs.util;
 
 import app.hongs.Core;
 import app.hongs.HongsError;
+import app.hongs.HongsExpedient;
 
 import org.json.simple.JSONValue;
 import org.json.simple.parser.ParseException;
@@ -100,28 +101,26 @@ public final class Data
 
   /**
    * 将Java对象输出到指定输出流
-   * 按调试等级决定是否严格模式
+   * 非调试环境将会启用紧凑模式
    * @param obj
    * @param out
    */
   public static void append(Appendable out, Object obj)
   {
-    Data.append(out, obj, 0 == Core.DEBUG
-                  || 4 == (4 & Core.DEBUG)
-                  || 8 == (8 & Core.DEBUG));
+    Data.append(out, obj, Core.DEBUG == 0);
   }
 
   /**
    * 将Java对象输出到指定输出流
    * @param out
    * @param obj
-   * @param compact
+   * @param compact 紧凑模式
    */
   public static void append(Appendable out, Object obj, boolean compact)
   {
     try
     {
-      Data.append(out, compact ? null : "", null , obj, false);
+      Data.append(out, compact ? null : "" , null, obj, false);
     }
     catch (IOException ex)
     {
@@ -371,6 +370,22 @@ public final class Data
     }
     sb.append("}");
   }
+
+    /**
+     * JSON 方式转义
+     * @param s
+     * @return
+     */
+    public static String escape(String s) {
+        StringBuilder b = new StringBuilder( );
+        try {
+            escape(b, s);
+        }
+        catch (IOException e) {
+            throw new HongsExpedient.Common(e);
+        }
+        return  b.toString( );
+    }
 
     private static void escape(Appendable sb, String s) throws IOException {
         for (int i = 0, j = s.length(); i < j; i++ ) {

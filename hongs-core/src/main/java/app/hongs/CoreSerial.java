@@ -313,9 +313,10 @@ public abstract class CoreSerial
     throws HongsException
   {
     Field[] fields;
+    Class   clazz = getClass();
 
     // 设置所有公共字段
-    fields = this.getClass().getFields();
+    fields = clazz.getFields();
     for (Field field : fields)
     {
       int ms = field.getModifiers();
@@ -343,7 +344,7 @@ public abstract class CoreSerial
     }
 
     // 设置所有非公字段
-    fields = this.getClass().getDeclaredFields();
+    fields = clazz.getDeclaredFields();
     for (Field field : fields)
     {
       int ms = field.getModifiers();
@@ -382,9 +383,10 @@ public abstract class CoreSerial
     throws HongsException
   {
     Field[] fields;
+    Class   clazz = getClass();
 
     // 提取所有公共字段
-    fields = this.getClass().getFields();
+    fields = clazz.getFields();
     for (Field field : fields)
     {
       int ms = field.getModifiers();
@@ -412,7 +414,7 @@ public abstract class CoreSerial
     }
 
     // 提取所有非公字段
-    fields = this.getClass().getDeclaredFields();
+    fields = clazz.getDeclaredFields();
     for (Field field : fields)
     {
       int ms = field.getModifiers();

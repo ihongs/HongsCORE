@@ -54,13 +54,13 @@ public class DBConfig
 
   //** 缓存 **/
 
-  protected String name;
+  protected transient String name;
 
   public DBConfig(String name)
     throws HongsException
   {
     this.name = name;
-    this.init(name+Cnst.DB_EXT);
+    this.init ( name+Cnst.DB_EXT);
   }
 
   @Override

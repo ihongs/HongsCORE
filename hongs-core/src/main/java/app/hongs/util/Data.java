@@ -387,7 +387,9 @@ public final class Data
   }
 
     private static void append(Appendable sb, String pre, Object obj) throws IOException {
-        String pra;
+        String  pra;
+        Field[] fds;
+        Class   cls = obj.getClass();
 
         sb.append("{");
             pra  = pre;
@@ -395,9 +397,6 @@ public final class Data
             sb.append("\r\n");
             pra = pre + "\t" ;
         }
-        
-        Field[] fds;
-        Class cls = obj.getClass();
 
         // 读取公共属性
         fds = cls.getFields();
@@ -444,7 +443,7 @@ public final class Data
         }
 
         if (pre != null) {
-          sb.append(pre);
+            sb.append(pre);
         }
         sb.append("}");
     }

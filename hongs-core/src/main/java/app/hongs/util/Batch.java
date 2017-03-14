@@ -29,10 +29,10 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
 
-    private File back = null;
-    public  BlockingQueue<T> tasks;
-    public transient ExecutorService servs;
-    public transient List<Collection<T>> cache;
+    private transient File back = null;
+    public  transient ExecutorService     servs;
+    public  transient List<Collection<T>> cache;
+    public            BlockingQueue  <T>  tasks;
 
     /**
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存

@@ -106,14 +106,14 @@ public final class Cnst {
 
     public static final String RESP_ATTR = "__HONGS_RESP__"; // 响应数据
 
-    public static final String UPDATE_ATTR = "__UPDATE__"; // 更新时间戳(当会话或属性改变时将被设置)
+    public static final String UPDATE_ATTR = "__UPDATE_TIME__"; // 更新时间(当会话或属性改变时将被设置)
 
-    public static final String UPLOAD_ATTR = "__UPLOAD__"; // 上传参数键(用于存放哪些参数是文件上传)
+    public static final String UPLOAD_ATTR = "__UPLOAD_KEYS__"; // 上传参数(用于存放哪些参数是文件上传)
 
     //** 数据模式 **/
 
-    public static final String OBJECT_MODE = "__IN_OBJECT_MODE__"; // 对象模式
+    public static final String OBJECT_MODE = "__OBJECT_MODE__"; // 对象模式
 
-    public static final String TRNSCT_MODE = "__IN_TRNSCT_MODE__"; // 事务模式
+    public static final String TRNSCT_MODE = "__TRNSCT_MODE__"; // 事务模式
 
 }

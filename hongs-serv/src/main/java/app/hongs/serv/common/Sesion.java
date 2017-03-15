@@ -8,15 +8,17 @@ import app.hongs.action.ActionDriver;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.anno.Cmdlet;
 import app.hongs.db.DB;
+import app.hongs.util.Digest;
 import java.io.Serializable;
 import java.util.Enumeration;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletRequest;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionContext;
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * 会话状态记录
@@ -28,7 +30,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     private transient boolean isNew = false;
     private transient boolean isMod = false;
     private transient boolean isSav = false;
-    private transient    SessAccess  req;
+    private transient ServletRequest req;
     private transient ServletContext ctx;
     private final Map<String,Object> dat;
     private String sid;
@@ -50,7 +52,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         this(null );
     }
 
-    public void setServletRequest(   SessAccess  req) {
+    public void setServletRequest(ServletRequest req) {
         this.req = req;
     }
 
@@ -69,6 +71,11 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
             sid = newId();
         }
         return sid;
+    }
+
+    @Override
+    public boolean isNew() {
+        return isNew;
     }
 
     @Override
@@ -118,51 +125,56 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     @Override
     public void invalidate() {
-        // 删除旧的会话
-        try {
-            getRecord().del(getId());
-        } catch ( HongsException e ) {
-            throw new HongsError.Common(e);
-        }
-
-        // 重建新的会话
-        dat.clear();
-        sid=newId();
+        dat.clear ( );
+        sid = newId();
+        isNew = true ;
+        isMod = true ;
+        isSav = true ;
         ctime = System.currentTimeMillis();
-        atime = ctime;
+        
+        // 删除会话 Cookie
+        if (req != null && req instanceof SessAccess) {
+           ((SessAccess) req ).delCookie();
+        }
+    }
+
+    public void revalidate() {
+        sid = newId();
         isNew = true ;
         isMod = true ;
         isSav = false;
-
-        // 延期会话 Cookie
-        if (req != null) {
-            req.fitRequestedSessionId();
+        ctime = System.currentTimeMillis();
+        
+        // 更新会话 Cookie
+        if (req != null && req instanceof SessAccess) {
+           ((SessAccess) req ).setCookie();
         }
-    }
-
-    @Override
-    public boolean isNew() {
-        return isNew;
     }
 
     private String newId() {
-        StringBuilder sb = new StringBuilder(Core.newIdentity());
-        if ( req != null ) {
-            String s;
-            s = ActionDriver.getRealPath(req);
-            if (s != null && s.length() != 0) {
-                sb.append("%").append(s);
+        // 删除旧的数据
+        if (sid != null) {
+            try {
+                getRecord().del(sid);
             }
-            s = req.getHeader("X-Device-ID" );
-            if (s != null && s.length() != 0) {
-                sb.append("#").append(s);
+            catch (HongsException e) {
+                throw new HongsError.Common(e);
             }
         }
-        return Base64.encodeBase64URLSafeString(sb.toString().getBytes());
+
+        // 重建新的 ID
+        String  id = Core.newIdentity();
+        if (req != null) {
+            String s = ActionDriver.getRealAddr((HttpServletRequest) req);
+            if (s != null && 0 != s.length()) {
+                id = id+"#"+s;
+            }
+        }
+        return Digest.md5(id);
     }
 
     public void store() throws HongsException {
-        if (isSav ) {
+        if (isSav) {
             return;
         }
         boolean beMod = isMod;
@@ -182,7 +194,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
             exp  += System.currentTimeMillis() / 1000;
         }
 
-        if (beMod ) {
+        if (beMod) {
             atime = System.currentTimeMillis() / 1000;
             rec.set(key, this, exp);
         } else {
@@ -285,18 +297,18 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
      * @param id
      * @return
      */
-    public static Sesion getSesion(String id) {
+    public static Sesion getInstance(String id) {
         try {
             return getRecord().get(id);
-        } catch (  HongsException  ex) {
-            throw  new  HongsError.Common(ex);
+        } catch ( HongsException  ex ) {
+            throw new HongsError.Common(ex);
         }
     }
 
     private static IRecord<Sesion> getRecord() throws HongsException {
         String cls = CoreConfig.getInstance( ).getProperty("core.common.sesion.model");
         if (null == cls || 0 == cls.length() ) {
-               cls = Recs.class.getName  (   );
+               cls = Recs.class.getName( );
 
             // 缺失则用私有类构造一个
             Core core = Core.getInstance();

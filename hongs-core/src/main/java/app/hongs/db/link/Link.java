@@ -34,17 +34,17 @@ abstract public class Link
   /**
    * 是否为事务模式(即不会自动提交)
    */
-  public boolean IN_TRNSCT_MODE;
+  public boolean TRNSCT_MODE;
 
   /**
    * 是否为对象模式(即获取的是对象)
    */
-  public boolean IN_OBJECT_MODE;
+  public boolean OBJECT_MODE;
 
   /**
    * 库名
    */
-  public     String    name;
+  public String  name;
 
   /**
    * 执行标识
@@ -146,7 +146,7 @@ abstract public class Link
     // 自动提交设置
     try
     {
-      this.connection.setAutoCommit(! this.IN_TRNSCT_MODE);
+      this.connection.setAutoCommit(! this.TRNSCT_MODE);
     }
     catch (SQLException ex)
     {
@@ -163,7 +163,7 @@ abstract public class Link
   @Override
   public void begin()
   {
-    this.IN_TRNSCT_MODE = true;
+    this.TRNSCT_MODE = true;
     try {
         if (connection != null
         && !connection.isClosed()) {
@@ -180,10 +180,10 @@ abstract public class Link
   @Override
   public void commit()
   {
-    if (!IN_TRNSCT_MODE) {
+    if (!TRNSCT_MODE) {
         return;
     }
-    IN_TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
+    TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
     try {
         if (connection != null
         && !connection.isClosed()
@@ -203,10 +203,10 @@ abstract public class Link
   @Override
   public void revert()
   {
-    if (!IN_TRNSCT_MODE) {
+    if (!TRNSCT_MODE) {
         return;
     }
-    IN_TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
+    TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
     try {
         if (connection != null
         && !connection.isClosed()
@@ -420,7 +420,7 @@ abstract public class Link
     }
 
     Loop   loop = new Loop( rs , ps );
-    loop.inObjectMode(IN_OBJECT_MODE);
+    loop.inObjectMode(OBJECT_MODE);
     return loop;
   }
 

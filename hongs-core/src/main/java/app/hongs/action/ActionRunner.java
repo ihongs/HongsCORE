@@ -2,8 +2,8 @@ package app.hongs.action;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
-import app.hongs.CoreLoader;
-import app.hongs.CoreLoader.Mathod;
+import app.hongs.CoreRoster;
+import app.hongs.CoreRoster.Mathod;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.anno.Action;
@@ -252,7 +252,7 @@ public class ActionRunner {
     //** 动作方法 **/
 
     public static Map<String, Mathod> getActions() {
-        return CoreLoader.getActions();
+        return CoreRoster.getActions();
     }
 
 }

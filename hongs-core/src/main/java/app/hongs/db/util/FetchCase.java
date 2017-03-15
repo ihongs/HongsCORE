@@ -1357,9 +1357,11 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
-    Boolean om = Synt.declare(getOption("OBJECT_MODE") , Boolean.class);
-    if ( om != null ) rs.inObjectMode(  om  ); // 可单独设置是否对象模式
+    Loop rs  = _db_.query(getSQL(), getStart(), getLimit(), getParams());
+    Boolean om = Synt.declare( getOption("OBJECT_MODE"), Boolean.class );
+    if ( om != null ) {
+         rs.inObjectMode (om);
+    }
 
     return  rs;
   }

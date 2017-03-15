@@ -635,8 +635,8 @@ public class DB
    * 获取指定数据库对象
    * <b>注意:</b>
    * <p>
-   * 会根据当前运行环境自动设置 IN_OBJECT_MODE,IN_TRNSCT_MODE;
-   * 如果当前数据库配置中有指定 dbClass, 务必添加 getInstance:
+   * 会根据当前运行环境自动设置 OBJECT_MODE,TRNSCT_MODE;
+   * 数据库配置中有指定 dbClass, 请务必添加 getInstance:
    * </p>
    * <pre>
     public static XxDB getInstance()
@@ -701,16 +701,14 @@ public class DB
       core.put(key, db);
     }
 
-    db.IN_OBJECT_MODE = conf.getProperty("core.in.object.mode", false);
-    db.IN_TRNSCT_MODE = conf.getProperty("core.in.trnsct.mode", false);
+    db.OBJECT_MODE = conf.getProperty("core.in.object.mode", false);
+    db.TRNSCT_MODE = conf.getProperty("core.in.trnsct.mode", false);
 
     }
     while (false);
 
-    db.IN_OBJECT_MODE = Synt.declare(
-              Core.getInstance().got(Cnst.OBJECT_MODE), db.IN_OBJECT_MODE);
-    db.IN_TRNSCT_MODE = Synt.declare(
-              Core.getInstance().got(Cnst.TRNSCT_MODE), db.IN_TRNSCT_MODE);
+    db.OBJECT_MODE = Synt.declare(Core.getInstance().got(Cnst.OBJECT_MODE), db.OBJECT_MODE);
+    db.TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), db.TRNSCT_MODE);
 
     return db;
   }

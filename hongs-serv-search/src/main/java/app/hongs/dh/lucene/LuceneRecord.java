@@ -34,7 +34,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TimeZone;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
@@ -91,14 +90,14 @@ import org.apache.lucene.util.NumericUtils;
  */
 public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneable, AutoCloseable {
 
-    protected boolean IN_TRNSCT_MODE = false;
-    protected boolean IN_OBJECT_MODE = false;
+    protected boolean TRNSCT_MODE = false;
+    protected boolean OBJECT_MODE = false;
 
-    private   IndexSearcher  finder  = null ;
-    private   IndexReader    reader  = null ;
-    private   IndexWriter    writer  = null ;
-    private   String         dtpath  = null ;
-    private   String         dtname  = null ;
+    private IndexSearcher finder  = null ;
+    private IndexReader   reader  = null ;
+    private IndexWriter   writer  = null ;
+    private String        dtpath  = null ;
+    private String        dtname  = null ;
 
     /**
      * 构造方法
@@ -126,13 +125,13 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         this.dtpath = path;
 
         // 模式标识
-        CoreConfig conf = CoreConfig.getInstance();
-        this.IN_TRNSCT_MODE = Synt.declare(
-                Core.getInstance().got(Cnst.TRNSCT_MODE),
-                conf.getProperty("core.in.trnsct.mode", false));
-        this.IN_OBJECT_MODE = Synt.declare(
-                Core.getInstance().got(Cnst.OBJECT_MODE),
-                conf.getProperty("core.in.object.mode", false));
+        CoreConfig  conf = CoreConfig.getInstance( );
+        this.TRNSCT_MODE = Synt.declare(
+            Core.getInstance().got(Cnst.TRNSCT_MODE),
+            conf.getProperty("core.in.trnsct.mode", false));
+        this.OBJECT_MODE = Synt.declare(
+            Core.getInstance().got(Cnst.OBJECT_MODE),
+            conf.getProperty("core.in.object.mode", false));
     }
 
     public LuceneRecord(String path, Map form)
@@ -553,7 +552,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
-        if (!IN_TRNSCT_MODE) {
+        if (!TRNSCT_MODE) {
             commit();
         }
     }
@@ -565,7 +564,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
-        if (!IN_TRNSCT_MODE) {
+        if (!TRNSCT_MODE) {
             commit();
         }
     }
@@ -577,7 +576,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
-        if (!IN_TRNSCT_MODE) {
+        if (!TRNSCT_MODE) {
             commit();
         }
     }
@@ -683,7 +682,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
     public void close() {
         if (writer != null) {
             // 默认退出时提交
-            if (IN_TRNSCT_MODE) {
+            if (TRNSCT_MODE) {
                 try {
                     try {
                         commit();
@@ -750,7 +749,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      */
     @Override
     public void begin() {
-        IN_TRNSCT_MODE = true;
+        TRNSCT_MODE = true;
     }
 
     /**
@@ -761,7 +760,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         if (writer == null) {
             return;
         }
-        IN_TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
+        TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
         try {
             writer.commit(  );
         } catch (IOException ex) {
@@ -777,7 +776,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         if (writer == null) {
             return;
         }
-        IN_TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
+        TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
         try {
             writer.rollback();
         } catch (IOException ex) {
@@ -1352,7 +1351,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                           || "timestamp".equals( typ  )
                            ? 1000 : 1;
 
-                if (IN_OBJECT_MODE) {
+                if (OBJECT_MODE) {
                     if ("time".equals(typ) || "timestamp".equals(typ)) {
                         v = new NumberValue();
                         u =  0  ;
@@ -1378,7 +1377,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             ||   "float".equals(t)
             ||  "double".equals(t)
             ||  "number".equals(t)) {
-                if (IN_OBJECT_MODE) {
+                if (OBJECT_MODE) {
                     v = new NumberValue();
                     u =  0 ;
                 } else {

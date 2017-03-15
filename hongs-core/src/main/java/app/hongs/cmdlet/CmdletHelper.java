@@ -277,6 +277,7 @@ public class CmdletHelper
   public static void preview(Object data)
   {
     Data.append(System.out , data, false);
+    System.out.println();
   }
 
   /**

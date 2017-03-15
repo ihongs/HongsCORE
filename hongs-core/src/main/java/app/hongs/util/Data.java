@@ -112,6 +112,7 @@ public final class Data
   public static void print (Object obj)
   {
     Data.append(System.out, obj, false);
+    System.out.println();
   }
 
   /**

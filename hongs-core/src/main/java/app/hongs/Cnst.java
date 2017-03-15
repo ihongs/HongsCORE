@@ -92,10 +92,6 @@ public final class Cnst {
 
     public static final String  ADM_GID =  "0";
 
-//  public static final String CSID_KEY =  "_";
-
-//  public static final String PSID_KEY =  "_";
-
     //** 请求属性 **/
 
     public static final String CORE_ATTR = "__HONGS_CORE__"; // 核心对象
@@ -106,9 +102,9 @@ public final class Cnst {
 
     public static final String RESP_ATTR = "__HONGS_RESP__"; // 响应数据
 
-    public static final String UPDATE_ATTR = "__UPDATE_TIME__"; // 更新时间(当会话或属性改变时将被设置)
-
     public static final String UPLOAD_ATTR = "__UPLOAD_KEYS__"; // 上传参数(用于存放哪些参数是文件上传)
+
+    public static final String UPDATE_ATTR = "__UPDATE_TIME__"; // 更新时间(当会话或属性改变时将被设置)
 
     //** 数据模式 **/
 

@@ -4,7 +4,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
-import app.hongs.CoreLoader;
+import app.hongs.CoreRoster;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
@@ -327,7 +327,7 @@ public class CmdletRunner
 
   public static Map<String, Method> getCmdlets()
   {
-    return CoreLoader.getCmdlets();
+    return CoreRoster.getCmdlets();
   }
 
 }

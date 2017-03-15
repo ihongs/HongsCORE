@@ -18,7 +18,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 服务加载工具
  * @author Hongs
  */
-public class CoreLoader {
+public class CoreRoster {
 
     private static final ReadWriteLock RWLOCKS = new ReentrantReadWriteLock();
     private static Map<String, Method> CMDLETS = null;

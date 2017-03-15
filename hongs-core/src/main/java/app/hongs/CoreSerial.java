@@ -235,14 +235,20 @@ public abstract class CoreSerial
   {
     try
     {
-        FileInputStream fis = new   FileInputStream(file);
-      ObjectInputStream ois = new ObjectInputStream(fis );
-      //fis.getChannel().lock();
-
-      Map map = (Map)ois.readObject();
-      load( map );
-
-      ois.close();
+        FileInputStream fis = null;
+      ObjectInputStream ois = null;
+      try
+      {
+        fis = new   FileInputStream(file);
+        ois = new ObjectInputStream(fis );
+        Map map = (Map) ois.readObject( );
+        load( map );
+      }
+      finally
+      {
+        if (ois != null) ois.close();
+        if (fis != null) fis.close();
+      }
     }
     catch (ClassNotFoundException ex)
     {
@@ -268,29 +274,35 @@ public abstract class CoreSerial
   {
     // 文件不存在则创建
     if (!file.exists()) {
-      File dn = file.getParentFile();
+      File dn = file.getParentFile(  );
       if (!dn.exists()) {
            dn.mkdirs();
       }
       try {
-        file.createNewFile(  );
-      } catch (IOException ex) {
-        throw new HongsException(0x10d0, ex);
+        file.createNewFile( );
+      } catch (IOException e) {
+        throw new HongsException(0x10d0,e);
       }
     }
 
     try
     {
-        FileOutputStream fos = new   FileOutputStream(file);
-      ObjectOutputStream oos = new ObjectOutputStream(fos );
-      //fos.getChannel().lock();
-
-      Map map = new HashMap();
-      save( map );
-      oos.writeObject ( map );
-
-      oos.flush();
-      oos.close();
+        FileOutputStream fos = null;
+      ObjectOutputStream oos = null;
+      try
+      {
+        fos = new   FileOutputStream(file);
+        oos = new ObjectOutputStream(fos );
+        Map map = new HashMap();
+        save( map );
+        oos.writeObject ( map );
+        oos.flush();
+      }
+      finally
+      {
+        if (oos != null) oos.close();
+        if (fos != null) fos.close();
+      }
     }
     catch (FileNotFoundException ex)
     {

@@ -1357,10 +1357,9 @@ public class FetchCase
       throw new HongsException(0x10b6);
     }
 
-    Loop rs  = _db_.query(getSQL(), getStart(), getLimit(), getParams());
-    Boolean om = Synt.declare( getOption("OBJECT_MODE"), Boolean.class );
-    if ( om != null ) {
-         rs.inObjectMode (om);
+    Loop rs = _db_.query(getSQL(), getStart(), getLimit(), getParams());
+    if (hasOption("OBJECT_MODE")) {
+         rs.inObjectMode(getOption("OBJECT_MODE", false));
     }
 
     return  rs;

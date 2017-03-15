@@ -46,7 +46,7 @@ public class TableDeff
   {
     List<String> sqls = this.deffSlaver(slaver, delExtraFields);
     DB sdb = slaver.db;
-    sdb.IN_TRNSCT_MODE = true;
+    sdb.begin();
     try
     {
       for (String sql : sqls)

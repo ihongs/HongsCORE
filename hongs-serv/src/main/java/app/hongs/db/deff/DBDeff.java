@@ -49,7 +49,7 @@ public class DBDeff
   {
     List<String> sqls = this.deffSlaver(slaver, tablePrefix, tableSuffix, delExtraTables, delExtraFields);
     DB sdb = slaver;
-    sdb.IN_TRNSCT_MODE = true;
+    sdb.begin();
     try
     {
       for (String sql : sqls)

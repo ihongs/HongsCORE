@@ -1,12 +1,11 @@
 package app.hongs.util;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
-import java.io.File;
 
 /**
  * 常用文本工具
@@ -141,7 +140,7 @@ public final class Tool
           map.put( arr[i], i );
       }
       for (i = 0; i < y; i ++) {
-          num += Math.pow(x, y-i-1) * map.get(chs[i]);
+          num += Math.pow(x, y - i - 1) * map.get(chs[i]);
       }
       return num;
   }
@@ -157,7 +156,7 @@ public final class Tool
           map.put( arr[i], i );
       }
       for (i = 0; i < y; i ++) {
-          num += Math.pow(y-i+1, x) * (map.get(chs[i])+1);
+          num += Math.pow(y - i + 1, x) * (map.get(chs[i]) + 1);
       }
       return num;
   }
@@ -575,7 +574,7 @@ public final class Tool
       StringBuilder path = new StringBuilder();
       for (; i < j; i += 2 ) {
           path.append(name.substring(i, i+ 2))
-              .append(File.separator );
+              .append(java.io.File.separator );
       }   path.append(name );
       return path.toString();
   }
@@ -597,7 +596,7 @@ public final class Tool
       StringBuilder path = new StringBuilder();
       for (; i < j; i += 4 ) {
           path.append(name.substring(i, i+ 2))
-              .append(File.separator );
+              .append(java.io.File.separator );
       }   path.append(name );
       return path.toString();
   }

@@ -22,19 +22,19 @@ import java.io.File;
 public final class Tool
 {
 
-  static private NumberFormat _NoFmt = NumberFormat.getInstance();
+  private static final NumberFormat NS_FMT = NumberFormat.getInstance();
   static {
-      _NoFmt.setGroupingUsed(false);
+      NS_FMT.setGroupingUsed(false);
   }
 
   /**
-   * 因为 Number.toString 会用科学计数法
+   * 默认情况大数字转字符串会用科学计数法
    * 故用 NumberFormat 格式化成普通数字串
    * @param num
    * @return
    */
   public static String toNumStr(Number num) {
-      return  _NoFmt.format ( num );
+      return  NS_FMT.format ( num );
   }
 
   //** 进制 **/
@@ -50,13 +50,13 @@ public final class Tool
    * 正所谓: 阳中有阴, 阴中有阳, 呵呵^________________^
    * </pre>
    */
-  private final static char[] _36Hex = {
+  private static final char[] HEX_36 = {
     '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
     'U', 'V', 'W', 'X', 'Y', 'Z'
   };
-  private final static char[] _26Hex = {
+  private static final char[] HEX_26 = {
     'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
     'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T',
     'U', 'V', 'W', 'X', 'Y', 'Z'
@@ -117,7 +117,7 @@ public final class Tool
    */
   public static String to36Hex(long num)
   {
-    return Tool.toXHex(num, _36Hex);
+    return Tool.toXHex(num, HEX_36);
   }
 
   /**
@@ -127,7 +127,7 @@ public final class Tool
    */
   public static String to26Hex(long num)
   {
-    return Tool.toYHex(num, _26Hex);
+    return Tool.toYHex(num, HEX_26);
   }
 
   public static long asXHex(String str, char[] arr) {
@@ -163,11 +163,11 @@ public final class Tool
   }
 
   public static long as36Hex(String str) {
-      return asXHex(str, _36Hex);
+      return asXHex(str, HEX_36);
   }
 
   public static long as26Hex(String str) {
-      return asYHex(str, _26Hex);
+      return asYHex(str, HEX_26);
   }
 
   //** 转义 **/
@@ -323,7 +323,7 @@ public final class Tool
   //** 注入 **/
 
   // 偶数个转义符$单词或{文本}
-  private static final Pattern injectPattern = Pattern.compile("((?:[\\\\][\\\\])*)\\$(?:(\\w+)|\\{(.*?)\\})");
+  private static final Pattern IJ_PAT = Pattern.compile("((?:[\\\\][\\\\])*)\\$(?:(\\w+)|\\{(.*?)\\})");
 
   /**
    * 注入参数
@@ -332,7 +332,7 @@ public final class Tool
    * @return 注入后的文本
    */
   public static String inject(String str, Map<String, String> vars) {
-      Matcher matcher = injectPattern.matcher(str);
+      Matcher matcher = IJ_PAT.matcher(str);
       StringBuffer sb = new StringBuffer();
       String       st;
 

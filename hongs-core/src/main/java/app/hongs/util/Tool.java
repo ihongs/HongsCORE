@@ -184,10 +184,10 @@ public final class Tool
   {
     /*
     StringBuilder sb = new StringBuilder();
-         char[]   cs = str.toCharArray();
+         char[]   cs = str.toCharArray(  );
     for (char c : cs)
     {
-      sb.append(String.format("\\u%04x",(int)c));
+      sb.append(String.format("\\u%04x", (int)c));
     }
     return sb.toString();
     */
@@ -205,7 +205,7 @@ public final class Tool
   private static String escapeReplace(String str)
   {
     /*
-    return str.replaceAll("(\\\\|\\$)","\\\\$1");
+    return str.replaceAll("(\\\\|\\$)", "\\\\$1");
     */
     return Matcher.quoteReplacement(str);
   }

@@ -197,13 +197,10 @@ public class Thumb {
         List<String> pts = new ArrayList();
         List<String> urs = new ArrayList();
         Thumb        thb = new Thumb(pth );
-
-            Builder bld;
+        Builder      bld ;
         Matcher      mat ;
-        String       pre , prl, suf ;
-        File         src ;
+        String       pre , prl , suf ;
         int          w, h;
-        boolean      tmp = false;
 
         pth = new File( pth ).getAbsolutePath( );
         pre = pth.replaceFirst("\\.[^\\.]+$","");
@@ -216,7 +213,7 @@ public class Thumb {
             w   = Integer.parseInt(mat.group(2));
             h   = Integer.parseInt(mat.group(3));
 
-            // 提取背景色(RGBA)
+            // 提取背景颜色(RGBA)
             mat = PXT.matcher(rat);
             if (mat.find()) {
                 String[] x = mat.group(1).split(",");
@@ -228,7 +225,7 @@ public class Thumb {
                 thb.setColor(new Color(r, g, b, a) );
             }
 
-            // 提取位置
+            // 提取拼贴位置(TBLR)
             if (rat.contains(";bot-right")) {
                 thb.setPosition(Positions.BOTTOM_RIGHT);
             } else

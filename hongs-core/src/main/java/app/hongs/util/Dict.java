@@ -269,6 +269,7 @@ public final class Dict
   /**
    * 获取树纵深值
    * @see splitKeys
+   * @param <T>
    * @param map
    * @param def
    * @param path
@@ -282,6 +283,7 @@ public final class Dict
   /**
    * 获取树纵深值(以属性或键方式"a.b[c]"获取)
    * @see splitKeys
+   * @param <T>
    * @param map
    * @param cls
    * @param path

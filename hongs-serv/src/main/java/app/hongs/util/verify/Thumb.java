@@ -1,56 +1,49 @@
 package app.hongs.util.verify;
 
-import app.hongs.CoreConfig;
+import app.hongs.HongsExpedient;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import net.coobird.thumbnailator.Thumbnails.Builder;
 
 /**
  * 缩略图
+ *
  * 规则参数:
- *  thumb-extn 格式名称, 如 jpg
- *  thumb-pick 截取比例, 如 _bg, _bg:1*1 或 _bg:1*1;keep;temp
- *  thumb-zoom 缩放尺寸, 如 _lg:256*256,_md:128*128,_sm:64*64
- *  back-origin yes|no 返回原始路径
- *  drop-origin yes|no 抛弃原始文件
- * 冒号前为尺寸对应的文件名后缀, 在扩展名的前面
- * back-origin,drop-origin 互斥, 二者仅能选一个; keep,temp 均是可选项
- * thumb-pick 可只给后缀, 表示仅转换格式而不截取
- * keep 后可跟背景色":R,G,B[,A]", 缺省为黑色透明
- * temp 表示此截取图片仅作为模板, 将在缩放后删除
+ *  thumb-extn      格式名称, 如 jpg
+ *  thumb-size      缩放尺寸, 如 _lg:80*40; _md:60*30
+ *  thumb-mode      处理模式, 如 pick 截取, keep 保留
+ *  thumb-index     返回索引, 默认为 0, 即首个
+ *  thumb-color     背景颜色
+ *  thumb-place     粘贴位置
+ *  back-origin     yes|no 返回原始路径
+ *  drop-origin     yes|no 抛弃原始文件
+ *
+ * @see app.hongs.util.sketch.Thumb toThumbs
  * @author Hongs
  */
 public class Thumb extends IsFile {
 
     @Override
     public String checks(String href, String path) throws Wrong {
-        CoreConfig cc = CoreConfig.getInstance();
-        String ext = cc.getProperty("core.thumb.extn", "jpg");
-        String rat = cc.getProperty("core.thumb.pick", "_bg:1*1");
-        String map = cc.getProperty("core.thumb.zoom", "_lg:256*256,_md:128*128,_sm:64*64");
+        String extn = Synt.declare(params.get("thumb-extn"), "jpg");
+        String size = Synt.declare(params.get("thumb-size"), "");
+        String mode = Synt.declare(params.get("thumb-mode"), "");
+        String col  = Synt.declare(params.get("thumb-color"), "");
+        String pos  = Synt.declare(params.get("thumb-place"), "");
+        int    idx  = Synt.declare(params.get("thumb-index"), 0 );
 
-        ext = Synt.declare(params.get("thumb-extn"), ext);
-        rat = Synt.declare(params.get("thumb-pick"), rat);
-        map = Synt.declare(params.get("thumb-zoom"), map);
-
-        // 已是截图了则不再继续
-        // 验证中已查是否新传的
-        /*
-        String xxt = rat.length() != 0 && !rat.contains(";temp")
-                   ? rat.replaceFirst(":.*$", "")
-                   : map.replaceFirst(":.*$", "");
-        if (href.endsWith(xxt + "." + ext)) {
-            return href;
-        }
-        */
-
-        String dest, durl;
+        String dest , durl;
         try {
-            String[][] ph = app.hongs.util.sketch.Thumb.toThumbs(path, href, ext, rat, map);
-            dest = ph[0][0];
-            durl = ph[1][0];
-        } catch (IOException ex) {
-            throw new Wrong( ex, "Can not create thumbs." );
+            String[][] ph = exec(path, href, extn, size, mode, col, pos);
+            dest = ph[0][idx];
+            durl = ph[1][idx];
+        } catch (IOException|HongsExpedient ex) {
+            throw new Wrong(ex, "Can not create the thumbs.");
+        } catch ( IndexOutOfBoundsException ex) {
+            throw new Wrong(ex, "Thumb index out of bounds.");
         }
 
         // 可以选择抛弃原始文件
@@ -63,6 +56,162 @@ public class Thumb extends IsFile {
         }
 
         return durl;
+    }
+
+    /**
+     * 生成缩略图
+     * @param pth 原始图片路径
+     * @param url 原始图片链接
+     * @param ext 输出格式: png,gif,jpg,bmp 之类
+     * @param suf 截取比例: _bg:1/1,_sm:9*9 等等
+     * @param mod 处理模式: pick 截取, keep 保留
+     * @param col 背景颜色: R,G,B[,A] 取值 0~255
+     * @param pos 贴图位置: center 中央, top-left 左上, top-right 右上, bot-left 左下, bot-right 右下
+     * @return 缩略图路径,链接
+     * @throws IOException
+     */
+    private String[][] exec(String pth, String url, String ext, String suf, String mod, String col, String pos) throws IOException {
+//        if (pth == null || pth.equals("")) {
+//                throw new NullPointerException("Path can not be empty");
+//        }
+//        if (ext == null || ext.equals("")) {
+//            int idx = pth.lastIndexOf('.');
+//            if (idx > 0) {
+//                ext = pth.substring(idx+1);
+//            } else {
+//                throw new NullPointerException("Extn can not be empty");
+//            }
+//        }
+//        if (url == null) url = "";
+//        if (suf == null) suf = "";
+
+        List<String> pts = new ArrayList();
+        List<String> urs = new ArrayList();
+        Builder      bld = null;
+        String       pre , prl ;
+
+        pth = new File( pth ).getAbsolutePath( );
+        pre = pth.replaceFirst("\\.[^\\.]+$","");
+        prl = url.replaceFirst("\\.[^\\.]+$","");
+
+        if (suf.contains(";")
+        &&  suf.contains(":")) {
+
+            String[] sia = suf.split (";");
+            String   src = pth;
+            double   scl = 0;
+            boolean  rat;
+            int      w;
+            int      h;
+
+        for (String siz : sia) {
+            /**
+             * 解析后缀和缩放尺寸,
+             * 除号为仅按比例裁剪.
+             */
+            try {
+                String[] arr;
+                siz = siz.trim (  );
+                arr = siz.split(":", 2);
+                suf = arr[0].trim();
+                siz = arr[1].trim();
+                if (rat = siz.contains("/")) {
+                    arr = siz.split("\\/", 2 );
+                } else {
+                    arr = siz.split("\\*", 2 );
+                }
+                w   = Integer.parseInt(arr[0]);
+                h   = Integer.parseInt(arr[1]);
+            } catch (IndexOutOfBoundsException ex) {
+                throw new HongsExpedient.Common("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
+            } catch (/**/NumberFormatException ex) {
+                throw new HongsExpedient.Common("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
+            }
+
+            /**
+             * 第一个或比例有了变化,
+             * 才需要特别去裁剪铺贴.
+             */
+            if (bld == null || scl != w / h) {
+                bld  = make(src, col, pos, mod, w, h);
+                scl  = ( w / h );
+            } else {
+                bld  = make(bld);
+            }
+            if (rat != true/**/) {
+                bld.size(w , h );
+            }
+
+            // 保存到文件
+            pth = pre + suf + "." + ext;
+            url = prl + suf + "." + ext;
+            bld.outputFormat(ext)
+               .toFile(pth);
+            pts.add(pth);
+            urs.add(url);
+        }} else {
+            /**
+             * 如果没有指定缩放尺寸,
+             * 那就认为仅需转换格式.
+             */
+            bld = make(pth , col);
+
+            // 保存到文件
+            pth = pre + suf + "." + ext;
+            url = prl + suf + "." + ext;
+            bld.outputFormat(ext)
+               .toFile(pth);
+            pts.add(pth);
+            urs.add(url);
+        }
+
+        return new String[][] {
+            pts.toArray(new String[] {}),
+            urs.toArray(new String[] {})
+        };
+    }
+
+    private Builder make(String pth, String col, String pos, String mod, int w, int h) throws IOException {
+        app.hongs.util.sketch.Thumb thb = new app.hongs.util.sketch.Thumb(pth);
+
+        // 设置背景颜色
+        if (col != null) {
+            thb.setColor(col);
+        }
+
+        // 设置拼贴位置
+        if (pos != null) {
+            thb.setPlace(pos);
+        }
+
+        // 拼贴或者裁剪
+        if ("keep".equals(mod)) {
+            return thb.keep(w, h);
+        } else
+        if ("pick".equals(mod)) {
+            return thb.pick(w, h);
+        } else
+        {
+            return thb.make();
+        }
+    }
+
+    private Builder make(String pth, String col) throws IOException {
+        app.hongs.util.sketch.Thumb thb = new app.hongs.util.sketch.Thumb(pth);
+
+        if (col != null) {
+            thb.setColor(col);
+
+            return thb.make();
+        } else {
+            return thb.made();
+        }
+    }
+
+    private Builder make(Builder bld) throws IOException {
+        app.hongs.util.sketch.Thumb thb = new app.hongs.util.sketch.Thumb(bld);
+
+        return thb.made();
     }
 
 }

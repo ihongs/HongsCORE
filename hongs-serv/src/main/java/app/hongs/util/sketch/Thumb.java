@@ -12,9 +12,11 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 /**
  * 缩略图工具
  *
- * 此工具为对 Thumbnails.Builder 的一点补充
- * 增加背景颜色设置, 规避 png 转 jpg 后透明部分成黑色
- * 增加贴图方位设置, 截取等操作后可指定源图停靠的方位
+ * 此工具为对 Thumbnails.Builder 的一点补充,
+ * 增加背景颜色设置, 规避 png 转 jpg 后透明部分成黑色,
+ * 增加贴图方位设置, 截取等操作后可指定源图停靠的方位.
+ * 需注意 made 仅仅是 Thumbnails.of(src) 的别名,
+ * 而其他 make, size, pick, keep 均会创建新的图.
  *
  * @author Hongs
  */

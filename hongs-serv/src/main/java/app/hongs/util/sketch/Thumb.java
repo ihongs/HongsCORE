@@ -224,8 +224,8 @@ public class Thumb {
         BufferedImage  buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics grp = buf.createGraphics();
         if (col != null) {
-            grp.setColor (col);
-            grp.fillRect (0,0, w,h);
+            grp.setColor(col);
+            grp.fillRect(0,0, w,h);
         }
         grp.drawImage(img, x,y, null);
         grp.dispose();
@@ -236,8 +236,8 @@ public class Thumb {
         BufferedImage  buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics grp = buf.createGraphics();
         if (col != null) {
-            grp.setColor (col);
-            grp.fillRect (0,0, w,h);
+            grp.setColor(col);
+            grp.fillRect(0,0, w,h);
         }
         grp.drawImage(img, 0,0, null);
         grp.dispose();

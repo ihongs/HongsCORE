@@ -81,7 +81,7 @@
     String  msgs = msgc == null ? null : (msgc > 9 ? "9+" : Integer.toString(msgc));
 
     if (head != null && !"".equals(head)) {
-        head = head.replaceFirst("\\.[^\\.]+$","_sm.jpg");
+        head = head.replaceFirst("(_[^_]+)?\\.[^\\.]+$","_sm.png");
     } else {
         head = "static/assets/img/head_icon_sm.jpg";
     }

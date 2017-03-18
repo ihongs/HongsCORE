@@ -183,8 +183,8 @@
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>
-            <name>SSID</name>
-            <max-age>604800</max-age>
+            <name>XXID</name>
+            <max-age>0</max-age>
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

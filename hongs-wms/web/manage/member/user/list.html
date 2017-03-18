@@ -65,7 +65,7 @@
                  +'display:inline-block;width:32px;height:32px;border-radius:32px;margin-top:-5px;margin-bottom:-10px;background-position:center;background-repeat:no-repeat;"/></a>')
                 .appendTo(c);
             } else {
-                var u = v.replace(/\.[^\.]+$/, "_sm.jpg");
+                var u = v.replace(/(_[^_]+)?\.[^\.]+$/, "_sm.png");
                 $('<a href="javascript:;" data-href="'+v+'">'
                  +'<span style="background-image:url('+u+');'
                  +'display:inline-block;width:32px;height:32px;border-radius:32px;margin-top:-5px;margin-bottom:-10px;background-position:center;background-repeat:no-repeat;"/></a>')

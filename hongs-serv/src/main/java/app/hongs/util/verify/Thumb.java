@@ -204,7 +204,7 @@ public class Thumb extends IsFile {
             return thb.made().scale(1);
         }
     }
-    
+
     private File file(String pth) {
         File file = new File(pth);
         File dir  = file.getParentFile();

@@ -206,11 +206,12 @@ public class Thumb extends IsFile {
     }
     
     private File file(String pth) {
-        File dir = new File (pth).getParentFile();
+        File file = new File(pth);
+        File dir  = file.getParentFile();
         if (!dir.exists()) {
              dir.mkdirs();
         }
-        return dir;
+        return file;
     }
 
 }

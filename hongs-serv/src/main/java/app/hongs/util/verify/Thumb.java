@@ -147,7 +147,7 @@ public class Thumb extends IsFile {
             pth = pre + suf + "." + ext;
             url = prl + suf + "." + ext;
             bld.outputFormat(ext)
-               .toFile(pth);
+               .toFile( file(pth) );
             pts.add(pth);
             urs.add(url);
         }} else {
@@ -161,7 +161,7 @@ public class Thumb extends IsFile {
             pth = pre + suf + "." + ext;
             url = prl + suf + "." + ext;
             bld.outputFormat(ext)
-               .toFile(pth);
+               .toFile( file(pth) );
             pts.add(pth);
             urs.add(url);
         }
@@ -189,7 +189,7 @@ public class Thumb extends IsFile {
             return thb.pick(w, h);
         } else
         {
-            return thb.make();
+            return thb.make().scale(1);
         }
     }
 
@@ -199,10 +199,18 @@ public class Thumb extends IsFile {
         if (col != null) {
             thb.setColor(col);
 
-            return thb.make();
+            return thb.make().scale(1);
         } else {
-            return thb.made();
+            return thb.made().scale(1);
         }
+    }
+    
+    private File file(String pth) {
+        File dir = new File (pth).getParentFile();
+        if (!dir.exists()) {
+             dir.mkdirs();
+        }
+        return dir;
     }
 
 }

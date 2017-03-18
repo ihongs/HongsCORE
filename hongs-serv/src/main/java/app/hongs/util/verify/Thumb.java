@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 
 /**
@@ -132,14 +133,14 @@ public class Thumb extends IsFile {
              * 第一个或比例有了变化,
              * 才需要特别去裁剪铺贴.
              */
-            if (bld == null || scl != w / h) {
-                bld  = make(src, col, pos, mod, w, h);
-                scl  = ( w / h );
+            if (bld != null && scl != w / h) {
+                bld  = Thumbnails.of(bld.asBufferedImage());
             } else {
-                bld  = make(bld);
+                bld  = make(src, col, pos, mod, w, h);
+                scl  =  (w / h);
             }
-            if (rat != true/**/) {
-                bld.size(w , h );
+            if (! rat) {
+                bld.size(w , h);
             }
 
             // 保存到文件
@@ -175,14 +176,10 @@ public class Thumb extends IsFile {
         app.hongs.util.sketch.Thumb thb = new app.hongs.util.sketch.Thumb(pth);
 
         // 设置背景颜色
-        if (col != null) {
-            thb.setColor(col);
-        }
+        thb.setColor(col);
 
         // 设置拼贴位置
-        if (pos != null) {
-            thb.setPlace(pos);
-        }
+        thb.setPlace(pos);
 
         // 拼贴或者裁剪
         if ("keep".equals(mod)) {
@@ -206,12 +203,6 @@ public class Thumb extends IsFile {
         } else {
             return thb.made();
         }
-    }
-
-    private Builder make(Builder bld) throws IOException {
-        app.hongs.util.sketch.Thumb thb = new app.hongs.util.sketch.Thumb(bld);
-
-        return thb.made();
     }
 
 }

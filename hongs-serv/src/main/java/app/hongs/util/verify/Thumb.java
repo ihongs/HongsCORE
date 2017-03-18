@@ -29,9 +29,9 @@ public class Thumb extends IsFile {
 
     @Override
     public String checks(String href, String path) throws Wrong {
-        String extn = Synt.declare(params.get("thumb-extn"), "jpg");
-        String size = Synt.declare(params.get("thumb-size"), "");
-        String mode = Synt.declare(params.get("thumb-mode"), "");
+        String extn = Synt.declare(params.get("thumb-extn" ), "jpg");
+        String size = Synt.declare(params.get("thumb-size" ), "");
+        String mode = Synt.declare(params.get("thumb-mode" ), "");
         String col  = Synt.declare(params.get("thumb-color"), "");
         String pos  = Synt.declare(params.get("thumb-place"), "");
         int    idx  = Synt.declare(params.get("thumb-index"), 0 );

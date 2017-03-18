@@ -22,7 +22,7 @@
             <param name="path">public/upload/member/head</param>
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:128*128;_md:64*64;_sm:32*32</param>
+            <param name="thumb-size">_lg:256*256;_md:128*128;_sm:64*64</param>
         </field>
     </form>
     <enum name="mine:preset">
@@ -34,8 +34,11 @@
     </enum>
     <form name="user">
         <field name="head" rule="Thumb">
-            <param name="href">upload/member/head</param>
-            <param name="path">upload/member/head</param>
+            <param name="href">public/upload/member/head</param>
+            <param name="path">public/upload/member/head</param>
+            <param name="thumb-extn">png</param>
+            <param name="thumb-mode">pick</param>
+            <param name="thumb-size">_lg:256*256;_md:128*128;_sm:64*64</param>
         </field>
         <field name="password">
             <param name="defiant"></param>

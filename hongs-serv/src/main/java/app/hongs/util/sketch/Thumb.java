@@ -55,7 +55,7 @@ public class Thumb {
     }
 
     public Thumb setColor(String col) {
-        if (col == null) {
+        if (col == null || col.length() == 0) {
             this.col = null;
             return this;
         }

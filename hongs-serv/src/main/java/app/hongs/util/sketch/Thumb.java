@@ -11,13 +11,18 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 
 /**
  * 缩略图工具
+ *
+ * 此工具为对 Thumbnails.Builder 的一点补充
+ * 增加背景颜色设置, 规避 png 转 jpg 后透明部分成黑色
+ * 增加贴图方位设置, 截取等操作后可指定源图停靠的方位
+ *
  * @author Hongs
  */
 public class Thumb {
 
-    private BufferedImage src;
-    private Color col  = null;
-    private Place pos  = null;
+    private BufferedImage src ;
+    private Color   col = null;
+    private Place   pos = null;
 
     public static enum Place { CENTER, TOP_LEFT, TOP_RIGHT, BOT_LEFT, BOT_RIGHT };
 
@@ -64,17 +69,17 @@ public class Thumb {
     }
 
     public Thumb setPlace(String pos) {
-        if ("top-right".equals(pos)) {
-            setPlace(Place.TOP_RIGHT);
-        } else
         if ("top-left".equals(pos)) {
             setPlace(Place.TOP_LEFT);
         } else
-        if ("bot-right".equals(pos)) {
-            setPlace(Place.BOT_RIGHT);
+        if ("top-right".equals(pos)) {
+            setPlace(Place.TOP_RIGHT);
         } else
         if ("bot-left".equals(pos)) {
             setPlace(Place.BOT_LEFT);
+        } else
+        if ("bot-right".equals(pos)) {
+            setPlace(Place.BOT_RIGHT);
         } else
         {
             setPlace(Place.CENTER);
@@ -199,6 +204,17 @@ public class Thumb {
         return Thumbnails.of(src);
     }
 
+    /**
+     * 创建图层
+     * @param img 源图
+     * @param col 背景颜色
+     * @param pos 停靠位置
+     * @param w   目标宽
+     * @param h   目标高
+     * @param x   源图宽
+     * @param y   源图高
+     * @return    新的图层
+     */
     private BufferedImage draw(BufferedImage img, Color col, Place pos, int w, int h, int x, int y) {
         if (pos == Place.TOP_LEFT ) {
             x = 0;
@@ -232,6 +248,14 @@ public class Thumb {
         return buf;
     }
 
+    /**
+     * 创建图层
+     * @param img 源图
+     * @param col 背景颜色
+     * @param w   目标宽
+     * @param h   目标高
+     * @return    新的图层
+     */
     private BufferedImage draw(BufferedImage img, Color col, int w, int h) {
         BufferedImage  buf = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
         Graphics grp = buf.createGraphics();

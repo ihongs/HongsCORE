@@ -18,8 +18,11 @@
         <field name="name" required="yes">
         </field>
         <field name="head" rule="Thumb">
-            <param name="href">upload/member/head</param>
-            <param name="path">upload/member/head</param>
+            <param name="href">public/upload/member/head</param>
+            <param name="path">public/upload/member/head</param>
+            <param name="thumb-extn">png</param>
+            <param name="thumb-mode">pick</param>
+            <param name="thumb-size">_lg:128*128;_md:64*64;_sm:32*32</param>
         </field>
     </form>
     <enum name="mine:preset">

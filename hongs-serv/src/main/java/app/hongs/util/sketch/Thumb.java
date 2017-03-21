@@ -1,5 +1,6 @@
 package app.hongs.util.sketch;
 
+import app.hongs.HongsExpedient;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -8,13 +9,16 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
+import net.coobird.thumbnailator.geometry.Position;
+import net.coobird.thumbnailator.geometry.Positions;
 
 /**
  * 缩略图工具
  *
  * 此工具为对 Thumbnails.Builder 的一点补充,
  * 增加背景颜色设置, 规避 png 转 jpg 后透明部分成黑色,
- * 增加贴图方位设置, 截取等操作后可指定源图停靠的方位.
+ * 增加贴图方位设置, 截取等操作后可指定源图停靠的方位,
+ * 类似 Thumbnails.Builder 的 sourceRegion 方法.
  * 需注意 made 仅仅是 Thumbnails.of(src) 的别名,
  * 而其他 make, size, pick, keep 均会创建新的图.
  *
@@ -22,15 +26,9 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  */
 public class Thumb {
 
-    private BufferedImage src ;
-    private Color   col = null;
-    private Place   pos = null;
-
-    public static enum Place { CENTER, TOP_LEFT, TOP_RIGHT, BOT_LEFT, BOT_RIGHT };
-
-    public Thumb(BufferedImage img) {
-        this.src = img;
-    }
+    private BufferedImage src;
+    private Position      pos = null;
+    private Color         col = null;
 
     public Thumb(File src) throws IOException {
         this(ImageIO.read(src));
@@ -41,7 +39,11 @@ public class Thumb {
     }
 
     public Thumb(Builder tmp) throws IOException {
-        this(tmp.asBufferedImage( ));
+        this(tmp.asBufferedImage());
+    }
+
+    public Thumb(BufferedImage img) {
+        this.src = img;
     }
 
     public Thumb setColor(Color col) {
@@ -49,7 +51,7 @@ public class Thumb {
         return this;
     }
 
-    public Thumb setPlace(Place pos) {
+    public Thumb setPlace(Position pos) {
         this.pos = pos;
         return this;
     }
@@ -59,34 +61,47 @@ public class Thumb {
             this.col = null;
             return this;
         }
-
-        String[] x = col.split(  ","  );
-        int r = Integer.parseInt (x[0]);
-        int g = Integer.parseInt (x[1]);
-        int b = Integer.parseInt (x[2]);
-        int a = (x.length == 3)  ?  255
-              : Integer.parseInt (x[3]);
-        setColor(new Color(r, g, b, a));
-        return this;
+        try {
+            String[] x = col.split(",");
+            int r = Integer.parseInt (x[0].trim());
+            int g = Integer.parseInt (x[1].trim());
+            int b = Integer.parseInt (x[2].trim());
+            int a = (x.length == 3)  ?  255
+                  : Integer.parseInt (x[3].trim());
+            return setColor(new Color(r, g, b, a));
+        }
+        catch ( NumberFormatException
+          | IndexOutOfBoundsException ex) {
+            throw new HongsExpedient.Common("Unable to parse color value: "+col, ex);
+        }
     }
 
     public Thumb setPlace(String pos) {
-        if ("top-left".equals(pos)) {
-            setPlace(Place.TOP_LEFT);
-        } else
-        if ("top-right".equals(pos)) {
-            setPlace(Place.TOP_RIGHT);
-        } else
-        if ("bot-left".equals(pos)) {
-            setPlace(Place.BOT_LEFT);
-        } else
-        if ("bot-right".equals(pos)) {
-            setPlace(Place.BOT_RIGHT);
-        } else
-        {
-            setPlace(Place.CENTER);
+        if (pos == null || pos.length() == 0) {
+            this.pos = null;
+            return this;
         }
-        return this;
+        switch (pos.toLowerCase()) {
+            case "center,center": case "center":
+                return setPlace(Positions.CENTER       );
+            case "top,center"   : case "top"   :
+                return setPlace(Positions.TOP_CENTER   );
+            case "center,left"  : case "left"  :
+                return setPlace(Positions.CENTER_LEFT  );
+            case "center,right" : case "right" :
+                return setPlace(Positions.CENTER_RIGHT );
+            case "bototm,center": case "bottom":
+                return setPlace(Positions.BOTTOM_CENTER);
+            case "top,left"     :
+                return setPlace(Positions.TOP_LEFT     );
+            case "top,right"    :
+                return setPlace(Positions.TOP_RIGHT    );
+            case "bottom,left"  :
+                return setPlace(Positions.BOTTOM_LEFT  );
+            case "bottom,right" :
+                return setPlace(Positions.BOTTOM_RIGHT );
+            default: throw new HongsExpedient.Common("Unsupported place: "+pos);
+        }
     }
 
     /**
@@ -219,22 +234,38 @@ public class Thumb {
      * @param y   源图高
      * @return    新的图层
      */
-    private BufferedImage draw(BufferedImage img, Color col, Place pos, int w, int h, int x, int y) {
-        if (pos == Place.TOP_LEFT ) {
+    private BufferedImage draw(BufferedImage img, Color col, Position pos, int w, int h, int x, int y) {
+        if (pos == Positions.TOP_LEFT) {
             x = 0;
             y = 0;
         } else
-        if (pos == Place.TOP_RIGHT) {
+        if (pos == Positions.TOP_RIGHT) {
             x = (w - x);
             y = 0;
         } else
-        if (pos == Place.BOT_LEFT ) {
+        if (pos == Positions.TOP_CENTER) {
+            x = (w - x) / 2;
+            y = 0;
+        } else
+        if (pos == Positions.BOTTOM_LEFT) {
             x = 0;
             y = (h - y);
         } else
-        if (pos == Place.BOT_RIGHT) {
+        if (pos == Positions.BOTTOM_RIGHT) {
             x = (w - x);
             y = (h - y);
+        } else
+        if (pos == Positions.BOTTOM_CENTER) {
+            x = (w - x) / 2;
+            y = (h - y);
+        } else
+        if (pos == Positions.CENTER_LEFT) {
+            x = 0;
+            y = (h - y) / 2;
+        } else
+        if (pos == Positions.CENTER_RIGHT) {
+            x = (w - x);
+            y = (h - y) / 2;
         } else
         {
             x = (w - x) / 2;

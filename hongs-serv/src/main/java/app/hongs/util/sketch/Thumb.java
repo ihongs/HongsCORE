@@ -56,51 +56,76 @@ public class Thumb {
         return this;
     }
 
-    public Thumb setColor(String col) {
-        if (col == null || col.length() == 0) {
-            this.col = null;
+    public Thumb setColor(String str) {
+        if (str == null) {
+            col  = null;
+            return this;
+        }
+        str = str.trim();
+        if (str.length() == 0) {
+            col  = null;
             return this;
         }
         try {
-            String[] x = col.split(",");
-            int r = Integer.parseInt (x[0].trim());
-            int g = Integer.parseInt (x[1].trim());
-            int b = Integer.parseInt (x[2].trim());
-            int a = (x.length == 3)  ?  255
-                  : Integer.parseInt (x[3].trim());
-            return setColor(new Color(r, g, b, a));
+            // RGBA 表示方法
+            if (!str.startsWith("#")) {
+                String[] x = str.split(",");
+                int r = Integer.parseInt (x[0].trim());
+                int g = Integer.parseInt (x[1].trim());
+                int b = Integer.parseInt (x[2].trim());
+                int a = (x.length == 3 ) ? 255
+                      : Integer.parseInt (x[3].trim());
+                return setColor(new Color(r, g, b, a));
+            }
+            // 16 进制表示法
+            int c = Integer.parseInt (str.substring(1), 16);
+            if (str.length() == 6) {
+                return setColor(new Color(c , false) );
+            } else
+            if (str.length() == 8) {
+                return setColor(new Color(c , true ) );
+            } else
+            {
+                throw new HongsExpedient.Common("Unable to parse color value: "+str);
+            }
         }
         catch ( NumberFormatException
           | IndexOutOfBoundsException ex) {
-            throw new HongsExpedient.Common("Unable to parse color value: "+col, ex);
+            throw new HongsExpedient.Common("Unable to parse color value: "+str, ex);
         }
     }
 
-    public Thumb setPlace(String pos) {
-        if (pos == null || pos.length() == 0) {
-            this.pos = null;
+    public Thumb setPlace(String str) {
+        if (str == null) {
+            pos  = null;
             return this;
         }
-        switch (pos.toLowerCase()) {
-            case "center,center": case "center":
+        str = str.trim();
+        if (str.length() == 0) {
+            pos  = null;
+            return this;
+        }
+        str = str.toLowerCase().replaceAll(" {2,}", " ");
+        switch (str) {
+            case "center center": case "center":
                 return setPlace(Positions.CENTER       );
-            case "top,center"   : case "top"   :
+            case "top center"   : case "top"   :
                 return setPlace(Positions.TOP_CENTER   );
-            case "center,left"  : case "left"  :
+            case "center left"  : case "left"  :
                 return setPlace(Positions.CENTER_LEFT  );
-            case "center,right" : case "right" :
+            case "center right" : case "right" :
                 return setPlace(Positions.CENTER_RIGHT );
-            case "bototm,center": case "bottom":
+            case "bototm center": case "bottom":
                 return setPlace(Positions.BOTTOM_CENTER);
-            case "top,left"     :
+            case "top left"     :
                 return setPlace(Positions.TOP_LEFT     );
-            case "top,right"    :
+            case "top right"    :
                 return setPlace(Positions.TOP_RIGHT    );
-            case "bottom,left"  :
+            case "bottom left"  :
                 return setPlace(Positions.BOTTOM_LEFT  );
-            case "bottom,right" :
+            case "bottom right" :
                 return setPlace(Positions.BOTTOM_RIGHT );
-            default: throw new HongsExpedient.Common("Unsupported place: "+pos);
+            default: throw new HongsExpedient.Common("Unsupported place: "+str);
         }
     }
 

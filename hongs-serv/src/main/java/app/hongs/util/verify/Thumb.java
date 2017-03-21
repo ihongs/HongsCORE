@@ -67,7 +67,7 @@ public class Thumb extends IsFile {
      * @param suf 截取比例: _bg:1/1,_sm:9*9 等等
      * @param mod 处理模式: pick 截取, keep 保留
      * @param col 背景颜色: R,G,B[,A] 取值 0~255
-     * @param pos 贴图位置: center 中央, top-left 左上, top-right 右上, bot-left 左下, bot-right 右下
+     * @param pos 贴图位置: 9宫格式
      * @return 缩略图路径,链接
      * @throws IOException
      */

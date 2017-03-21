@@ -46,16 +46,32 @@ public class Thumb {
         this.src = img;
     }
 
+    /**
+     * 设置背景颜色
+     * @param col
+     * @return 
+     */
     public Thumb setColor(Color col) {
         this.col = col;
         return this;
     }
 
+    /**
+     * 设置停靠位置
+     * @param pos
+     * @return 
+     */
     public Thumb setPlace(Position pos) {
         this.pos = pos;
         return this;
     }
 
+    /**
+     * 设置背景颜色
+     * 可以用 #RRGGBB 或 #AARRGGBB 或 R,G,B 或 R,G,B,A 的形式
+     * @param str
+     * @return 
+     */
     public Thumb setColor(String str) {
         if (str == null) {
             col  = null;
@@ -95,6 +111,12 @@ public class Thumb {
         }
     }
 
+    /**
+     * 设置停靠位置
+     * 可以用 CSS background-position 的形式, 如 center 或 bottom center 等
+     * @param str
+     * @return 
+     */
     public Thumb setPlace(String str) {
         if (str == null) {
             pos  = null;

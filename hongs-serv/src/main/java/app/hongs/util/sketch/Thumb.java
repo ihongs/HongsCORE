@@ -98,22 +98,23 @@ public class Thumb {
      * @return
      */
     public Builder keep(int w, int h, boolean f) {
+        int tw , th;
         int sw = src.getWidth( );
         int sh = src.getHeight();
-        int dw = sh * w / h;
+        int dw = sh * w / h; // 注意: 先乘再除能避免整形除法的精度损失
         if (dw < sw) {
-             h = sw * h / w;
-             w = sw; // 宽度优先
+            th = sw * h / w;
+            tw = sw; // 宽度优先
         } else {
-             w = dw;
-             h = sh; // 高度优先
+            tw = dw;
+            th = sh; // 高度优先
         }
 
-        BufferedImage img = draw(src, col, pos, w, h, sw, sh);
+        BufferedImage img = draw(src, col, pos, tw, th, sw, sh);
 
         Builder bud = Thumbnails.of(img);
         if (f) {
-            return  bud.forceSize  (h,w);
+            return  bud.forceSize  (w,h);
         } else {
             return  bud;
         }
@@ -132,22 +133,23 @@ public class Thumb {
      * @return
      */
     public Builder pick(int w, int h, boolean f) {
+        int tw , th;
         int sw = src.getWidth ();
         int sh = src.getHeight();
-        int dw = sh * w / h;
+        int dw = sh * w / h; // 注意: 先乘再除能避免整形除法的精度损失
         if (dw > sw) {
-             h = sw * h / w;
-             w = sw; // 宽度优先
+            th = sw * h / w;
+            tw = sw; // 宽度优先
         } else {
-             w = dw;
-             h = sh; // 高度优先
+            tw = dw;
+            th = sh; // 高度优先
         }
 
-        BufferedImage img = draw(src, col, pos, w, h, sw, sh);
+        BufferedImage img = draw(src, col, pos, tw, th, sw, sh);
 
         Builder bud = Thumbnails.of(img);
         if (f) {
-            return  bud.forceSize  (h,w);
+            return  bud.forceSize  (w,h);
         } else {
             return  bud;
         }
@@ -173,9 +175,9 @@ public class Thumb {
 
         Builder bud = Thumbnails.of(img);
         if (f) {
-            return  bud.forceSize  (h,w);
+            return  bud.forceSize  (w,h);
         } else {
-            return  bud.size(h,w);
+            return  bud.size(w,h);
         }
     }
 

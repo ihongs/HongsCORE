@@ -100,14 +100,10 @@ public class Thumb {
             } else
             if (str.length() == 8) {
                 return setColor(new Color(c , true ) );
-            } else
-            {
-                throw new HongsExpedient.Common("Unable to parse color value: "+str);
             }
-        }
-        catch ( NumberFormatException
-          | IndexOutOfBoundsException ex) {
-            throw new HongsExpedient.Common("Unable to parse color value: "+str, ex);
+            throw new HongsExpedient.Common("Unable to parse color value: "+str);
+        } catch (NumberFormatException | IndexOutOfBoundsException e) {
+            throw new HongsExpedient.Common("Unable to parse color value: "+str);
         }
     }
 

@@ -147,7 +147,8 @@ public class Thumb {
                 return setPlace(Positions.BOTTOM_LEFT  );
             case "bottom right" :
                 return setPlace(Positions.BOTTOM_RIGHT );
-            default: throw new HongsExpedient.Common("Unsupported place: "+str);
+            default:
+                throw new HongsExpedient.Common("Unsupported place: "+str);
         }
     }
 

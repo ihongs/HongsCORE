@@ -109,7 +109,7 @@ public class Thumb {
 
     /**
      * 设置停靠位置
-     * 可以用 CSS align 的形式, 如 center 或 bottom center 等
+     * 类似于 HTML align 的形式, 如 center 或 center right 等
      * @param str
      * @return 
      */

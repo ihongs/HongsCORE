@@ -22,8 +22,8 @@ import javax.servlet.http.Part;
  *  pass-source yes|no 是否跳过资源链接(存在有"/"的字符)
  *  pass-remote yes|no 是否跳过远程链接("http://"等开头)
  *  down-remote yes|no 是否下载远程文件
- *  back-origin yes|no 返回原始路径, 此参数在本类中没有用上, 其他文件转换中可能用到
- *  drop-origin yes|no 抛弃原始文件, 此参数在本类中没有用上, 其他文件转换中可能用到
+ *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
+ *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $BASE_HREF, $BASE_LINK 等, 后者带域名前缀
@@ -76,44 +76,60 @@ public class IsFile extends Rule {
                 if (x == null ||  "".equals(x)) {
                     x = Core.DATA_PATH + File.separator + "tmp";
                 }
-                value = stores(value.toString(), x );
+                value = stores(value.toString(), x);
             } while(false);
             }
         }
 
         } // End If
 
-        UploadHelper u = new UploadHelper();
-        String x;
+        UploadHelper hlpr = new UploadHelper();
+        String href, path , x;
+
         x = (String) params.get("temp");
-        if (x != null) u.setUploadTemp(x);
+        if (x != null) hlpr.setUploadTemp(x);
         x = (String) params.get("path");
-        if (x != null) u.setUploadPath(x);
+        if (x != null) hlpr.setUploadPath(x);
         x = (String) params.get("href");
-        if (x != null) u.setUploadHref(x);
+        if (x != null) hlpr.setUploadHref(x);
         x = (String) params.get("type");
-        if (x != null) u.setAllowTypes(x.trim().split(","));
+        if (x != null) hlpr.setAllowTypes(x.trim().split(","));
         x = (String) params.get("extn");
-        if (x != null) u.setAllowExtns(x.trim().split(","));
+        if (x != null) hlpr.setAllowExtns(x.trim().split(","));
 
         if (value instanceof Part) {
-            u.upload((Part) value);
+            hlpr.upload((Part) value);
         } else
         if (value instanceof File) {
-            u.upload((File) value);
+            hlpr.upload((File) value);
         } else {
-            u.upload(value.toString( ));
+            hlpr.upload(value.toString());
         }
 
-        // 仅检查新上传的文件
-        String y;
-        x = u.getResultHref();
-        y = u.getResultPath();
-        if (! x.equals(value)) {
-            x = checks(x , y);
+        href = hlpr.getResultHref();
+        path = hlpr.getResultPath();
+
+        /**
+         * 检查新上传的文件
+         * 可以返回原始路径
+         * 或者抛弃原始文件
+         */
+        if ( ! href.equals(value) ) {
+            x = checks(href , path);
+            if ( ! href.equals(x) ) {
+                if (Synt.declare(params.get("keep-origin"), false)) {
+                    // Keep to return origin href
+                } else
+                if (Synt.declare(params.get("drop-origin"), false)) {
+                    new File(path).delete();
+                    href = x;
+                } else {
+                    href = x;
+                }
+            }
         }
 
-        return x;
+        return href;
     }
 
     /**
@@ -178,10 +194,6 @@ public class IsFile extends Rule {
             while((ovr = ins.read(buf )) != -1) {
                 out.write(buf, 0, ovr );
             }
-            out.close();
-            out  = null;
-            ins.close();
-            ins  = null;
 
             return name;
         } catch (IOException ex) {

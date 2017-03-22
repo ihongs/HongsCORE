@@ -1,6 +1,5 @@
 package app.hongs.util.verify;
 
-import app.hongs.HongsExpedient;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
@@ -19,8 +18,6 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  *  thumb-index     返回索引, 默认为 0, 即首个
  *  thumb-color     背景颜色
  *  thumb-align     停靠位置
- *  back-origin     yes|no 返回原始路径
- *  drop-origin     yes|no 抛弃原始文件
  *
  * @see app.hongs.util.sketch.Thumb toThumbs
  * @author Hongs
@@ -36,27 +33,13 @@ public class Thumb extends IsFile {
         String pos  = Synt.declare(params.get("thumb-align"), "");
         int    idx  = Synt.declare(params.get("thumb-index"), 0 );
 
-        String dest , durl;
         try {
-            String[][] ph = exec(path, href, extn, size, mode, col, pos);
-            dest = ph[0][idx];
-            durl = ph[1][idx];
-        } catch (IOException|HongsExpedient ex) {
-            throw new Wrong(ex, "Can not create the thumbs.");
-        } catch ( IndexOutOfBoundsException ex) {
-            throw new Wrong(ex, "Thumb index out of bounds.");
+            return exec(path, href, extn, size, mode, col, pos)[1][idx];
+        } catch (IndexOutOfBoundsException ex) {
+            throw new Wrong( ex, "Thumb index out of bounds." );
+        } catch (IOException | Wrong ex) {
+            throw new Wrong( ex, "Can not create the thumbs." );
         }
-
-        // 可以选择抛弃原始文件
-        // 亦或保留返回原始路径
-        if (Synt.declare(params.get("drop-origin"), false)) {
-            if (!dest.equals(path)) new File(path).delete();
-        } else
-        if (Synt.declare(params.get("back-origin"), false)) {
-            durl = href;
-        }
-
-        return durl;
     }
 
     /**
@@ -71,7 +54,8 @@ public class Thumb extends IsFile {
      * @return 缩略图路径,链接
      * @throws IOException
      */
-    private String[][] exec(String pth, String url, String ext, String suf, String mod, String col, String pos) throws IOException {
+    private String[][] exec(String pth, String url, String ext, String suf, String mod, String col, String pos)
+    throws Wrong, IOException {
 //        if (pth == null || pth.equals("")) {
 //                throw new NullPointerException("Path can not be empty");
 //        }
@@ -124,9 +108,9 @@ public class Thumb extends IsFile {
                 w   = Integer.parseInt(arr[0]);
                 h   = Integer.parseInt(arr[1]);
             } catch (IndexOutOfBoundsException ex) {
-                throw new HongsExpedient.Common("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
+                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
             } catch (/**/NumberFormatException ex) {
-                throw new HongsExpedient.Common("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
+                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
             }
 
             /**

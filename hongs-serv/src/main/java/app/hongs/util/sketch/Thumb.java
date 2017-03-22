@@ -309,7 +309,7 @@ public class Thumb {
         if (pos == Positions.CENTER_RIGHT) {
             x = (w - x);
             y = (h - y) / 2;
-        } else
+        } else /* Default is CENTER CENTER */
         {
             x = (w - x) / 2;
             y = (h - y) / 2;

@@ -119,11 +119,10 @@ public class Thumb {
             return this;
         }
         str = str.trim();
-        if (str.length() == 0 ) {
+        if (str.length() == 0) {
             pos  = null;
             return this;
         }
-        str = str.toLowerCase();
         switch (str) {
             case "center center": case "center":
                 return setAlign(Positions.CENTER       );

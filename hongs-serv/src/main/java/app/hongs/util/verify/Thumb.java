@@ -18,7 +18,7 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  *  thumb-mode      处理模式, 如 pick 截取, keep 保留
  *  thumb-index     返回索引, 默认为 0, 即首个
  *  thumb-color     背景颜色
- *  thumb-place     粘贴位置
+ *  thumb-align     停靠位置
  *  back-origin     yes|no 返回原始路径
  *  drop-origin     yes|no 抛弃原始文件
  *
@@ -33,7 +33,7 @@ public class Thumb extends IsFile {
         String size = Synt.declare(params.get("thumb-size" ), "");
         String mode = Synt.declare(params.get("thumb-mode" ), "");
         String col  = Synt.declare(params.get("thumb-color"), "");
-        String pos  = Synt.declare(params.get("thumb-place"), "");
+        String pos  = Synt.declare(params.get("thumb-align"), "");
         int    idx  = Synt.declare(params.get("thumb-index"), 0 );
 
         String dest , durl;
@@ -67,7 +67,7 @@ public class Thumb extends IsFile {
      * @param suf 截取比例: _bg:1/1,_sm:9*9 等等
      * @param mod 处理模式: pick 截取, keep 保留
      * @param col 背景颜色: R,G,B[,A] 取值 0~255
-     * @param pos 贴图位置: 9宫格式
+     * @param pos 停靠位置: 9宫格式
      * @return 缩略图路径,链接
      * @throws IOException
      */
@@ -179,7 +179,7 @@ public class Thumb extends IsFile {
         thb.setColor(col);
 
         // 设置拼贴位置
-        thb.setPlace(pos);
+        thb.setAlign(pos);
 
         // 拼贴或者裁剪
         if ("keep".equals(mod)) {

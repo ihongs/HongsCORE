@@ -61,7 +61,7 @@ public class Thumb {
      * @param pos
      * @return 
      */
-    public Thumb setPlace(Position pos) {
+    public Thumb setAlign(Position pos) {
         this.pos = pos;
         return this;
     }
@@ -109,11 +109,11 @@ public class Thumb {
 
     /**
      * 设置停靠位置
-     * 可以用 CSS background-position 的形式, 如 center 或 bottom center 等
+     * 可以用 CSS align 的形式, 如 center 或 bottom center 等
      * @param str
      * @return 
      */
-    public Thumb setPlace(String str) {
+    public Thumb setAlign(String str) {
         if (str == null) {
             pos  = null;
             return this;
@@ -126,23 +126,23 @@ public class Thumb {
         str = str.toLowerCase().replaceAll(" {2,}", " ");
         switch (str) {
             case "center center": case "center":
-                return setPlace(Positions.CENTER       );
+                return setAlign(Positions.CENTER       );
             case "top center"   : case "top"   :
-                return setPlace(Positions.TOP_CENTER   );
+                return setAlign(Positions.TOP_CENTER   );
             case "center left"  : case "left"  :
-                return setPlace(Positions.CENTER_LEFT  );
+                return setAlign(Positions.CENTER_LEFT  );
             case "center right" : case "right" :
-                return setPlace(Positions.CENTER_RIGHT );
+                return setAlign(Positions.CENTER_RIGHT );
             case "bototm center": case "bottom":
-                return setPlace(Positions.BOTTOM_CENTER);
+                return setAlign(Positions.BOTTOM_CENTER);
             case "top left"     :
-                return setPlace(Positions.TOP_LEFT     );
+                return setAlign(Positions.TOP_LEFT     );
             case "top right"    :
-                return setPlace(Positions.TOP_RIGHT    );
+                return setAlign(Positions.TOP_RIGHT    );
             case "bottom left"  :
-                return setPlace(Positions.BOTTOM_LEFT  );
+                return setAlign(Positions.BOTTOM_LEFT  );
             case "bottom right" :
-                return setPlace(Positions.BOTTOM_RIGHT );
+                return setAlign(Positions.BOTTOM_RIGHT );
             default:
                 throw new HongsExpedient.Common("Unsupported place value: "+str);
         }

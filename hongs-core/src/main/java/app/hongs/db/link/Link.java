@@ -107,7 +107,7 @@ abstract public class Link
         }
         finally
         {
-          this.connection.close();
+          this.connection.close(  );
 
           if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
           {

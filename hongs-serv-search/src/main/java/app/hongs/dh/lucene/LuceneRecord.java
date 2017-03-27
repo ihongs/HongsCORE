@@ -5,7 +5,6 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
@@ -764,7 +763,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         try {
             writer.commit(  );
         } catch (IOException ex) {
-            throw new HongsError(0x3b, ex);
+            throw new HongsExpedient(0x102c, ex);
         }
     }
 
@@ -780,7 +779,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         try {
             writer.rollback();
         } catch (IOException ex) {
-            throw new HongsError(0x3c, ex);
+            throw new HongsExpedient(0x102d, ex);
         }
     }
 

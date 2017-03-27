@@ -3,7 +3,6 @@ package app.hongs.db.link;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreLogger;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.dh.ITrnsct;
@@ -116,7 +115,7 @@ abstract public class Link
         }
       }
     }
-    catch (SQLException | HongsError er)
+    catch (SQLException er )
     {
       CoreLogger.error( er );
     }
@@ -363,7 +362,7 @@ abstract public class Link
             limit  = 0;
         }
     } catch (SQLException ex) {
-        throw new HongsError(0x10, ex);
+        throw new HongsException.Common( ex );
     }
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))

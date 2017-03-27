@@ -92,7 +92,7 @@ abstract public class Link
           /**
            * 关闭之前先将未提交的语句提交
            */
-          if(!connection.getAutoCommit())
+          if (!connection.getAutoCommit())
           {
             try
             {

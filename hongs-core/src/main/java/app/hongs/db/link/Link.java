@@ -5,6 +5,7 @@ import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.dh.ITrnsct;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -44,12 +45,7 @@ abstract public class Link
   /**
    * 库名
    */
-  public String  name;
-
-  /**
-   * 执行标识
-   */
-  protected  boolean   initialled;
+  public String name;
 
   /**
    * 连接对象
@@ -70,62 +66,6 @@ abstract public class Link
   public abstract Connection open()
     throws HongsException;
 
-  /**
-   * 关闭连接
-   */
-  @Override
-  public void close()
-  {
-    try
-    {
-      if (this.connection == null
-      ||  this.connection.isClosed(/***/))
-      {
-        return;
-      }
-
-      // 退出自动提交
-      if (this.initialled
-      && !this.connection.getAutoCommit())
-      {
-        try
-        {
-          this.commit();
-        }
-        catch (Exception | Error e)
-        {
-          CoreLogger.error(e);
-
-        try
-        {
-          this.revert();
-        }
-        catch (Exception | Error x)
-        {
-          CoreLogger.error(x);
-        }
-
-        }
-      }
-
-      this.connection.close();
-    }
-    catch (SQLException ex)
-    {
-      CoreLogger.error( ex);
-    }
-    finally
-    {
-      this.connection = null ;
-      this.initialled = false;
-    }
-
-    if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
-    {
-      CoreLogger.trace("DB: Connection '"+name+"' has been closed");
-    }
-  }
-
   @Override
   protected void finalize() throws Throwable
   {
@@ -137,40 +77,87 @@ abstract public class Link
   }
 
   /**
+   * 关闭连接
+   */
+  @Override
+  public void close( )
+  {
+    try
+    {
+      if (this.connection != null
+      && !this.connection.isClosed())
+      {
+        try
+        {
+          /**
+           * 关闭之前先将未提交的语句提交
+           */
+          if(!connection.getAutoCommit())
+          {
+            try
+            {
+              connection.commit(  );
+            }
+            catch (SQLException ex)
+            {
+              connection.rollback();
+              throw ex;
+            }
+          }
+        }
+        finally
+        {
+          this.connection.close();
+
+          if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG))
+          {
+            CoreLogger.trace("DB: Connection '"+name+"' has been closed");
+          }
+        }
+      }
+    }
+    catch (SQLException | HongsError er)
+    {
+      CoreLogger.error( er );
+    }
+    finally
+    {
+      this.connection = null;
+    }
+  }
+
+  /**
    * 执行准备
    * @throws HongsException
    */
-  public void ready()
+  public void ready( )
     throws HongsException
   {
-    // 自动提交设置
-    try
-    {
-      this.connection.setAutoCommit(! this.TRNSCT_MODE);
-    }
-    catch (SQLException ex)
-    {
-      throw new HongsException(0x1026, ex);
-    }
+    this.open(); // 先连接数据库
 
-    // 准备执行标识
-    this.initialled = true;
+    try {
+        if (this.connection.getAutoCommit() == this.TRNSCT_MODE) {
+            this.connection.setAutoCommit(  !  this.TRNSCT_MODE);
+        }
+    } catch (SQLException ex) {
+        throw new HongsException(0x102a, ex);
+    }
   }
 
   /**
    * 事务开始
    */
   @Override
-  public void begin()
+  public void begin( )
   {
-    this.TRNSCT_MODE = true;
+    TRNSCT_MODE = true;
     try {
         if (connection != null
         && !connection.isClosed()) {
             connection.setAutoCommit(false);
         }
     } catch (SQLException ex) {
-        throw new HongsError(0x3a, ex);
+        throw new HongsExpedient(0x102b, ex);
     }
   }
 
@@ -180,9 +167,6 @@ abstract public class Link
   @Override
   public void commit()
   {
-    if (!TRNSCT_MODE) {
-        return;
-    }
     TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
     try {
         if (connection != null
@@ -191,9 +175,7 @@ abstract public class Link
             connection.commit(  );
         }
     } catch (SQLException ex) {
-        throw new HongsError(0x3b, ex);
-    } finally {
-        this.initialled = false  ;
+        throw new HongsExpedient(0x102c, ex);
     }
   }
 
@@ -203,9 +185,6 @@ abstract public class Link
   @Override
   public void revert()
   {
-    if (!TRNSCT_MODE) {
-        return;
-    }
     TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
     try {
         if (connection != null
@@ -214,9 +193,7 @@ abstract public class Link
             connection.rollback();
         }
     } catch (SQLException ex) {
-        throw new HongsError(0x3c, ex);
-    } finally {
-        this.initialled = false  ;
+        throw new HongsExpedient(0x102d, ex);
     }
   }
 
@@ -419,7 +396,7 @@ abstract public class Link
       throw new HongsException(0x1043, ex);
     }
 
-    Loop   loop = new Loop( rs , ps );
+    Loop loop = new Loop( rs, ps );
     loop.inObjectMode(OBJECT_MODE);
     return loop;
   }
@@ -505,7 +482,6 @@ abstract public class Link
   public boolean execute(String sql, Object... params)
     throws HongsException
   {
-    this.open( );
     this.ready();
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
@@ -543,7 +519,6 @@ abstract public class Link
   public int updates(String sql, Object... params)
     throws HongsException
   {
-    this.open( );
     this.ready();
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))

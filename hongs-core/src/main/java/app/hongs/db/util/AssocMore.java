@@ -610,11 +610,11 @@ public class AssocMore {
      * @throws HongsException
      */
     public static void updateMore(
-        Table           table,
-        List<Map>       rows,
-        String[ ]       keys,
-        String          where,
-        Object...       params
+        Table        table,
+        List<Map>    rows,
+        String[ ]    keys,
+        String       where,
+        Object...    params
     )   throws HongsException
     {
         List<Object> params1 = Arrays.asList(params);

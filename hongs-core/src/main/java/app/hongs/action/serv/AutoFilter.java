@@ -182,7 +182,7 @@ public class AutoFilter extends ActionDriver {
                               .get(action.substring(1) + "/retrieve")
                               .getMclass( );
         } catch ( NullPointerException ex ) {
-            throw new HongsError(0x50,
+            throw new HongsError(0x3e,
                  "Atuo action '" + action.substring(1) + "/retrieve' is not exists", ex);
         }
 
@@ -214,11 +214,11 @@ public class AutoFilter extends ActionDriver {
 
         File dir = new File(Core.BASE_PATH + layout);
         if (!dir.exists( )) {
-            throw new HongsError(0x51,
+            throw new HongsError(0x3f,
                  "Atuo layout '" + layout.substring(1) + "' is not exists");
         }
         if (!dir.isDirectory()) {
-            throw new HongsError(0x15,
+            throw new HongsError(0x3f,
                  "Atuo layout '" + layout.substring(1) + "' is not a directory");
         }
 

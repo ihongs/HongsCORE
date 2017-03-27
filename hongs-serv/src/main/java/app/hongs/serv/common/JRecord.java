@@ -94,7 +94,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             throw new HongsException.Common(ex);
         }
 
-        table.db.open( );
+//      table.db.open( );
         table.db.ready();
 
         try (
@@ -135,7 +135,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
     public void set(String key, long exp) throws HongsException {
         long now = System.currentTimeMillis() / 1000;
 
-        table.db.open( );
+//      table.db.open( );
         table.db.ready();
 
         try (
@@ -159,7 +159,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
      */
     @Override
     public void del(String key) throws HongsException {
-        table.db.open( );
+//      table.db.open( );
         table.db.ready();
 
         try (
@@ -181,7 +181,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
      */
     @Override
     public void del( long  exp) throws HongsException {
-        table.db.open( );
+//      table.db.open( );
         table.db.ready();
 
         try (

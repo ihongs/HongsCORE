@@ -31,19 +31,19 @@ import java.util.Set;
  *
  * <h3>错误代码:</h3>
  * <pre>
- * 区间: 0x1070~0x109f
+ * 区间: 0x1080~0x108f
  *
- * 0x1070 缺少数据库对象
- * 0x1072 配置不能为空
- * 0x1074 缺少表名
+ * 0x1081 缺少数据库对象
+ * 0x1082 配置不能为空
+ * 0x1083 缺少表名
  *
- * 0x1080 不能为空
- * 0x1082 精度超出
- * 0x1084 小数位超出
- * 0x1086 不是整型数值
- * 0x1088 不是浮点数值
- * 0x108a 不能为负值
- * 0x108c 无法识别的日期或时间格式
+ * 0x1089 不能为空
+ * 0x108a 精度超出
+ * 0x108b 小数位超出
+ * 0x108c 不是浮点数值
+ * 0x108d 不是整型数值
+ * 0x108e 不能为负值
+ * 0x108f 无法识别的日期或时间格式
  * </pre>
  *
  * <h3>配置选项:</h3>
@@ -93,17 +93,17 @@ public class Table
   {
     if (db == null)
     {
-      throw new HongsException(0x1070, "Param db can not be null");
+      throw new HongsException(0x1081, "Param db can not be null");
     }
 
     if (conf == null)
     {
-      throw new HongsException(0x1072, "Param conf can not be null");
+      throw new HongsException(0x1082, "Param conf can not be null");
     }
 
     if (!conf.containsKey("name"))
     {
-      throw new HongsException(0x1074, "Table name in conf required.");
+      throw new HongsException(0x1083, "Table name in conf required.");
     }
 
     this.db   =  db ;
@@ -942,37 +942,37 @@ public class Table
 
   private HongsException nullException(String name) {
     String error = "Value for column '"+name+"' can not be NULL";
-    return validateException(0x1080, error, name);
+    return validateException(0x1089, error, name);
   }
 
   private HongsException sizeException(String name, String value, int size) {
     String error = "Value for column '"+name+"'("+value+") must be a less than "+size;
-    return validateException(0x1082, error, name, value, String.valueOf(size));
+    return validateException(0x108a, error, name, value, String.valueOf(size));
   }
 
   private HongsException scleException(String name, String value, int scle) {
     String error = "Scale for column '"+name+"'("+value+") must be a less than "+scle;
-    return validateException(0x1084, error, name, value, String.valueOf(scle));
+    return validateException(0x108b, error, name, value, String.valueOf(scle));
   }
 
   private HongsException floatException(String name, String value) {
     String error = "Value for column '"+name+"'("+value+") is not a float number";
-    return validateException(0x1088, error, name, value);
+    return validateException(0x108c, error, name, value);
   }
 
   private HongsException intgrException(String name, String value) {
     String error = "Value for column '"+name+"'("+value+") is not a integer number";
-    return validateException(0x1086, error, name, value);
+    return validateException(0x108d, error, name, value);
   }
 
   private HongsException usngdException(String name, String value) {
     String error = "Value for column '"+name+"'("+value+") must be a unsigned number";
-    return validateException(0x108a, error, name, value);
+    return validateException(0x108e, error, name, value);
   }
 
   private HongsException datetimeException(String name, String value, String format) {
     String error = "Format for column '"+name+"'("+value+") must like this '"+format+"'";
-    return validateException(0x108c, error, name, value, format);
+    return validateException(0x108f, error, name, value, format);
   }
 
   private HongsException validateException(int code, String error, String fieldName, String... otherParams)

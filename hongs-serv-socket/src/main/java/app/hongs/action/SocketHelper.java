@@ -68,6 +68,11 @@ public class SocketHelper extends ActionHelper {
         prop.put(ActionHelper.class.getName(), this);
     }
 
+    /**
+     * 更新环境
+     * @param core
+     * @param sess 
+     */
     protected void updateHelper(Core core, Session sess) {
         Map prop = sess.getUserProperties( );
         prop.put(Core.class.getName(), core);

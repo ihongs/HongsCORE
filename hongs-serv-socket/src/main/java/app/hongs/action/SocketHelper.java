@@ -216,6 +216,7 @@ public class SocketHelper extends ActionHelper {
                 .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
                 .append("\r\n\tObjects     : ").append(core.keySet().toString())
                 .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
+            CoreLogger.debug(sb.toString());
         }
 
         core.close();

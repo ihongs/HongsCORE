@@ -344,6 +344,17 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * 响应输出
+     * 与 ActionHelper 不同, 此处会立即输出
+     * @param dat
+     */
+    @Override
+    public void reply(Map dat) {
+        super.reply(dat);
+         this.responed();
+    }
+
+    /**
+     * 响应输出
      * 将响应数据立即发送到客户端
      */
     @Override
@@ -360,17 +371,6 @@ public class SocketHelper extends ActionHelper {
         } else {
                 throw new HongsError(0x32, "Session does not exist." /**/);
         }
-    }
-
-    /**
-     * 响应输出
-     * 与 ActionHelper 不同, 此处会立即输出
-     * @param dat
-     */
-    @Override
-    public void reply(Map dat) {
-        super.reply(dat);
-         this.responed();
     }
 
     /**

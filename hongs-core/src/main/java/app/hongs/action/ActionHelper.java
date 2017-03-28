@@ -1114,7 +1114,7 @@ public class ActionHelper implements Cloneable
    * @param s
    * @return
    */
-  public static Map parseQuery(String s) {
+  public static final Map parseQuery(String s) {
       Map<String, List<String>> a = new LinkedHashMap();
       int j , i;
           j = 0;
@@ -1164,7 +1164,7 @@ public class ActionHelper implements Cloneable
    * @param params
    * @return 解析后的Map
    */
-  public static Map parseParam(Map<String, String[]> params)
+  public static final Map parseParam(Map<String, String[]> params)
   {
     Map<String, Object> paramz = new HashMap();
     for (Map.Entry<String, String[]> et : params.entrySet())
@@ -1185,7 +1185,7 @@ public class ActionHelper implements Cloneable
    * @param params
    * @return 解析后的Map
    */
-  public static Map parseParan(Map<String, List<String>> params)
+  final public static Map parseParan(Map<String, List<String>> params)
   {
     Map<String, Object> paramz = new HashMap();
     for (Map.Entry<String, List<String>> et : params.entrySet())

@@ -209,7 +209,7 @@ public class SocketHelper extends ActionHelper {
 
         if ( Core.DEBUG > 0 ) {
             long time = System.currentTimeMillis(  ) - Core.ACTION_TIME.get();
-            StringBuilder sb = new StringBuilder("WebSocket close");
+            StringBuilder sb = new StringBuilder("...");
               sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
                 .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
                 .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())

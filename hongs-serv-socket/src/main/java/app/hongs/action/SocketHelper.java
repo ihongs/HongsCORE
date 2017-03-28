@@ -374,6 +374,69 @@ public class SocketHelper extends ActionHelper {
     }
 
     /**
+     * @deprecated WebSocket 中不支持
+     * @param url 
+     */
+    @Override
+    public void redirect(String url) {
+        throw new UnsupportedOperationException("Can not redirect to "+url+" in web socket");
+    }
+
+    /**
+     * @deprecated WebSocket 中不支持
+     * @param msg 
+     */
+    @Override
+    public void error400(String msg) {
+        throw new UnsupportedOperationException("Can not send http stat 400 in web socket, msg: "+msg);
+    }
+
+    /**
+     * @deprecated WebSocket 中不支持
+     * @param msg 
+     */
+    @Override
+    public void error401(String msg) {
+        throw new UnsupportedOperationException("Can not send http stat 401 in web socket, msg: "+msg);
+    }
+
+    /**
+     * @deprecated WebSocket 中不支持
+     * @param msg 
+     */
+    @Override
+    public void error403(String msg) {
+        throw new UnsupportedOperationException("Can not send http stat 403 in web socket, msg: "+msg);
+    }
+
+    /**
+     * @deprecated WebSocket 中不支持
+     * @param msg 
+     */
+    @Override
+    public void error404(String msg) {
+        throw new UnsupportedOperationException("Can not send http stat 404 in web socket, msg: "+msg);
+    }
+
+    /**
+     * @deprecated WebSocket 中不支持
+     * @param msg 
+     */
+    @Override
+    public void error405(String msg) {
+        throw new UnsupportedOperationException("Can not send http stat 405 in web socket, msg: "+msg);
+    }
+
+    /**
+     * @deprecated WebSocket 中不支持
+     * @param msg 
+     */
+    @Override
+    public void error500(String msg) {
+        throw new UnsupportedOperationException("Can not send http stat 500 in web socket, msg: "+msg);
+    }
+
+    /**
      * WebSocket 配置器
      * 用于初始化请求环境和记录 HttpSession 等
      * 用于 \@ServerEndpoint(value="/xxx" configurator=SocketHelper.config)

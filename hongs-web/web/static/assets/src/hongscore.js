@@ -2082,7 +2082,7 @@ function() {
         }
     } while(false);
     // 禁止关闭
-    if(ths.closest(".dont-close",box[0]).size()) {
+    if (ths.closest(".dont-close", box ).size()) {
             return;
     }
     box.hsClose( );

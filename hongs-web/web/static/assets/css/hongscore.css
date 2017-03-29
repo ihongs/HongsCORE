@@ -1,7 +1,7 @@
 /**
  * HongsCORE 公共样式
  * 作者: 黄弘<kevin.hongs@gmail.com>
- * 更新: 2015/05/14 22:16:10
+ * 更新: 2017/03/29 23:59:10
  */
 
 html, body, label, input, select, button, textarea {
@@ -60,10 +60,9 @@ legend {
 
 .nav .close,
 .btn .close {
-    font-size: 20px;
-    padding-left: 6px;
-    padding-right: 6px;
-    margin-right: -12px;
+    margin-top: -7.5px;
+    margin-right: -15px;
+    padding: 0 6px 0 6px;
 }
 .nav .close {
     color: #666;
@@ -86,8 +85,9 @@ legend {
 }
 
 .btn,
+.btn span,
 .form-control {
-    line-height: 21px;
+    line-height: 1.42857143;
 }
  textarea.form-control,
 .form-control[multiple] {
@@ -396,19 +396,20 @@ legend {
 
 /** 其他 **/
 
-ul.forkbox,
 ul.pickbox {
     padding-left : 0;
     margin-bottom: 0;
 }
-
 ul.pickbox > li.btn {
     width: 100%;
     text-align: left;
-    margin-bottom: 5px;
 }
 ul.pickbox > li.btn span {
+    float: left;
     overflow: hidden;
+}
+ul.pickmul > li.btn {
+    margin-bottom: 5px;
 }
 
 .preview {
@@ -427,6 +428,10 @@ ul.pickbox > li.btn span {
     padding: 0 0.25em 0 0.25em;
 }
 
+.file-preview .close {
+    margin-right : 4px;
+}
+
 /** 适配 **/
 
 @media (min-width: 600px) {
@@ -443,16 +448,5 @@ ul.pickbox > li.btn span {
     .modal > .warn1 {
         width : 100% ;
         border-radius: 0;
-    }
-}
-
-/** 兼容 **/
-
-/** Chrome and Safari **/
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-    .nav .close,
-    .btn .close,
-    .file-preview .close {
-        margin-top: -3px;
     }
 }

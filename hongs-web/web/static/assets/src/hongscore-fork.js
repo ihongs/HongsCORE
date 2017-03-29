@@ -4,16 +4,25 @@
 /**
  * 组合选择工具之用法:
  * 在选择列表配置添加:
- * data-data-0="_fill__fork:(hsForkFillList)"
+ * data-data-0="_fill__fork:(hsListFillFork)"
  * 在选择列表头部添加:
  * <td data-ft="_fork"><input type="checkbox" class="checkall"/></td>
  * 在表单配置区域添加:
- * data-data-0="_fill__fork:(hsForkFillForm)"
+ * data-data-0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
- * <ul data-ft="_fork" data-fn="my_example" required="required"></ul>
- * <button type="button" data-toggle="hsFork" data-target="@" data-href="my_example/fork.html">Pick It!</button>
+ * <ul data-ft="_fork" data-fn="xx_id" class="pickbox" data-ak="xx" data-vk="id" data-tk="name"></ul>
+ * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/fork.html">Select...</button>
  *
- *注: 2015/11/30 原 hsPick 更名为 hsFork(Hong's Foreign Key kit)
+ * 文件上传及预览用法:
+ * 在表单配置区域添加:
+ * data-data-0="_fill__file:(hsFormFillFile)"
+ * 在表单选项区域添加:
+ * <ul data-ft="_file" data-fn="x_url" class="pickbox"></ul>
+ * <button type="button" data-toggle="hsFile">Browse...</button>
+ * 图片预览相应的改为 hsFormFillView, hsView
+ *
+ * 注(1): 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
+ * 注(2): 2016/06/10 增加文件上传 (hsFile) 以及图片预览 (hsView) 工具
  **/
 
 /**
@@ -330,12 +339,12 @@ function hsFormFillPick(box, v, n, t) {
             btn.hide();
         }
 
-        box.empty();
+        box.empty().toggleClass("pickmul", mul);
         for(var val in v) {
             var txt  = v[val];
             box.append(jQuery('<li class="btn btn-success form-control"></li>').attr("title", txt )
                .append(jQuery('<input class="pickval" type="hidden"/>').attr( "name", n ).val(val))
-               .append(jQuery('<span  class="picktxt"></span>').text(   txt   ))
+               .append(jQuery('<span  class="picktxt"></span>'  ).text(  txt  ))
                .append(jQuery('<span  class="close pull-right">&times;</span>'))
             );
         }
@@ -350,13 +359,13 @@ function hsFormFillPick(box, v, n, t) {
  * @returns {undefined}
  */
 function hsListFillPick(cel, v, n) {
-    var box = cel.closest(".pickbox");
-    var mul = box.hasClass("pickmul");
-    var dat = box.data("pickData") || {};
+    var box = cel.closest (".pickbox");
+    var mul = box.hasClass( "pickmul");
+    var dat = box.data("pickData")||{};
 
     // 单选还是多选
     if (! mul) {
-        box.find(".checkall").hide( );
+        box.find( ".checkall" ).hide();
     }
 
     // 填充选择控件
@@ -397,27 +406,14 @@ function hsListFillPick(cel, v, n) {
     });
 })(jQuery);
 
-// 2015/11/30 原 hsPick 更名为 hsFork
+// 别名
 jQuery.fn.hsFork = jQuery.fn.hsPick;
 hsFormFillFork = hsFormFillPick;
 hsListFillFork = hsListFillPick;
-hsForkFillForm = hsFormFillPick;
-hsForkFillList = hsListFillPick;
 
-/**
- * 文件上传辅助工具
- * @param {jQuery.class} $
- */
+//** 文件上传辅助工具 **/
+
 (function($) {
-    /**
-     * 文件校验
-     * @param {Object} cnf
-     */
-    $.fn.hsFileVali = function(cnf) {
-        // 以后补充
-    };
-
-    //** 选择文件 **/
 
     /**
      * 选取文件
@@ -425,22 +421,19 @@ hsForkFillList = hsListFillPick;
      * @param {String } src 文件路径取值
      * @returns {undefined|Element} 节点
      */
-    $.fn.hsFilePick = function(box, src) {
-        if (! src) {
-            return ;
+    $.fn.hsPickFile = function(box, src) {
+        if (! src ) {
+            return;
         }
             box =$(box );
-        var txt = src.replace(/^.*[\/\\]/, '');
-        var inp =$(this).clone( );
-        var grp =$(this).parent();
+        $(this).before($(this).clone().val(''));
+        var txt = src.replace(/^.*[\/\\]/, '' );
         var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
            .append(this)
-           .append('<span class="glyphicon glyphicon-file"></span>')
-           .append($('<span  class="picktxt"></span>').text( txt ) )
-           .append('<span class="close pull-right" >&times;</span>');
+           .append('<span class="glyphicon glyphicon-open-file"></span>' )
+           .append($('<span class="picktxt"></span>' ).text( txt ) )
+           .append('<span class="close pull-right">&times;</span>' );
         box.append(div );
-        grp.append(inp );
-        inp.val("");
         return div ;
     };
 
@@ -451,28 +444,79 @@ hsForkFillList = hsListFillPick;
      * @returns {undefined|Element} 节点
      */
     $.fn.hsFillFile = function(nam, src) {
-        if (! src) {
-            return ;
+        if (! src ) {
+            return;
         }
         var box =$(this);
-        var txt = src.replace(/^.*[\/\\]/, '');
+        var txt = src.replace(/^.*[\/\\]/, '' );
         var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
            .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
-           .append('<span class="glyphicon glyphicon-file"></span>')
-           .append($('<span  class="picktxt"></span>').text( txt ) )
-           .append('<span class="close pull-right" >&times;</span>');
+           .append('<span class="glyphicon glyphicon-save-file"></span>' )
+           .append($('<span class="picktxt"></span>' ).text( txt ) )
+           .append('<span class="close pull-right">&times;</span>' );
+        box.append(div );
+        return div;
+    };
+
+    //** 预览图片 **/
+
+    /**
+     * 选取预览
+     * @param {Element} box 预览列表区域
+     * @param {String } src 文件路径取值
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @param {boolean} k   为 true 保留, 否则截取
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsPickView = function(box, src, w, h, k) {
+        if (! src ) {
+            return;
+        }
+            box =$(box );
+        $(this).before($(this).clone().val(''));
+        var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
+        var div =$('<li class="preview"></li>').css({
+            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+        } ).append(this)
+           .append(img )
+           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+        box.append(div );
+        return div;
+    };
+
+    /**
+     * 填充预览
+     * @param {String } nam 文件字段名称
+     * @param {String } src 文件路径取值
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @param {boolean} k   为 true 保留, 否则截取
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFillView = function(nam, src, w, h, k) {
+        if (! src ) {
+            return;
+        }
+        var box =$(this);
+        var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
+        var div =$('<li class="preview"></li>').css({
+            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+        } ).append($('<input type="hidden" />').attr( "name", nam ).val( src ) )
+           .append(img )
+           .append('<a href="javascript:;" class="close pull-right">&times</a>');
         box.append(div );
         return div ;
     };
 
-    //** 预览图片 **/
+    //** 预览辅助 **/
 
     /**
      * 预载文件
      * @param {Function} cal 回调函数
      * @returns {jQuery} 当前文件节点
      */
-    $.fn.hsFileLoad = function(cal) {
+    $.fn.hsReadFile = function(cal) {
         this.each(function() {
             var that = this;
             if (window.FileReader) {
@@ -494,67 +538,13 @@ hsForkFillList = hsListFillPick;
     };
 
     /**
-     * 预览文件
-     * @param {Element} box 预览列表区域
-     * @param {String } src 文件路径取值
-     * @param {Number } w   预览额定宽度
-     * @param {Number } h   预览额定高度
-     * @param {boolean} k   为 true 保留, 否则截取
-     * @returns {undefined|Element} 节点
-     */
-    $.fn.hsFileView = function(box, src, w, h, k) {
-        if (! src) {
-            return ;
-        }
-            box =$(box );
-        var inp =$(this).clone( );
-        var grp =$(this).parent();
-        var img = k ? $.hsKeepView(src, w, h) : $.hsPickView(src, w, h);
-        img.css("positoin" , "absolute");
-        var div =$('<li class="preview"></li>').css({
-            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
-        } ).append(this)
-           .append(img )
-           .append('<a href="javascript:;" class="close pull-right">&times</a>');
-        box.append(div );
-        grp.append(inp );
-        inp.val("");
-        return div ;
-    };
-
-    /**
-     * 填充预览
-     * @param {String } nam 文件字段名称
-     * @param {String } src 文件路径取值
-     * @param {Number } w   预览额定宽度
-     * @param {Number } h   预览额定高度
-     * @param {boolean} k   为 true 保留, 否则截取
-     * @returns {undefined|Element} 节点
-     */
-    $.fn.hsFillView = function(nam, src, w, h, k) {
-        if (! src) {
-            return ;
-        }
-        var box =$(this);
-        var img = k ? $.hsKeepView(src, w, h) : $.hsPickView(src, w, h);
-        img.css("positoin" , "absolute");
-        var div =$('<li class="preview"></li>').css({
-            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
-        } ).append($('<input type="hidden" />').attr( "name", nam ).val( src ) )
-           .append(img )
-           .append('<a href="javascript:;" class="close pull-right">&times</a>');
-        box.append(div );
-        return div ;
-    };
-
-    /**
      * 截取式预览
      * @param {String } src 文件真实路径
      * @param {Number } w   预览额定宽度
      * @param {Number } h   预览额定高度
      * @returns {Element}
      */
-    $.hsPickView = function(src, w, h) {
+    $.hsPickSnap = function(src, w, h) {
         var img  =  new Image();
         img.onload = function() {
             var xw = img.width ;
@@ -584,7 +574,7 @@ hsForkFillList = hsListFillPick;
      * @param {Number } h   预览额定高度
      * @returns {Element}
      */
-    $.hsKeepView = function(src, w, h) {
+    $.hsKeepSnap = function(src, w, h) {
         var img  =  new Image();
         img.onload = function() {
             var xw = img.width ;
@@ -610,8 +600,109 @@ hsForkFillList = hsListFillPick;
     /**
      * 移除文件事件处理
      */
-    $(document).on("click", ".forkbox .close,.pickbox .close,.preview .close",
+    $(document).on("click", "ul.pickbox .close,.preview .close",
     function( ) {
+        var box = $(this).closest(".pickbox");
+        _hsSoloFile( box , true );
         $(this).parent().remove();
     });
+
+    /**
+     * 打开文件事件处理
+     */
+    $(document).on("click", "ul.pickbox li",
+    function(x) {
+        if ($(x.target).hasClass("close")
+        || !$(this).parent( )
+                   .siblings("[data-toggle=hsFile],[data-toggle=hsView]")
+                   .size  ()) {
+            return;
+        }
+        // 无法打开刚上传的文件
+        var inp = $(this).find( ":file" );
+        if (inp.size( ) == 0) {
+            inp = $(this).find(":hidden");
+            var url = hsFixUri(inp.val());
+            if (url) {
+                window.open(url,"_blank");
+            }
+        }
+    });
+
+    /**
+     * 选择文件事件处理
+     */
+    $(document).on("click", "[data-toggle=hsFile]",
+    function( ) {
+        var inp = $(this).siblings(":file");
+        if (! inp.data("picked")) {
+            inp.data("picked", 1);
+            var box = inp.siblings(".pickbox");
+            inp.on("change", function( ) {
+                   _hsSoloFile(box, false);
+                inp.hsPickFile(box, inp.val());
+            });
+        }
+        inp.click();
+    });
+
+    /**
+     * 选择图片事件处理
+     */
+    $(document).on("click", "[data-toggle=hsView]",
+    function( ) {
+        var inp = $(this).siblings(":file");
+        if (! inp.data("picked")) {
+            inp.data("picked", 1);
+            var box = inp.siblings(".pickbox");
+            var  w  = box.data("width" );
+            var  h  = box.data("height");
+            inp.on("change", function( ) {
+            inp.hsReadFile ( function(src) {
+                   _hsSoloFile(box, false);
+                inp.hsPickView(box, src, w, h);
+            });
+            });
+        }
+        inp.click();
+    });
+
 })(jQuery);
+
+function _hsSoloFile(box, show) {
+    var fn = box.data("fn");
+    if (fn && !/(\[\]|\.\.|\.$)/.test(fn)) {
+        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
+        box.removeClass("pickmul");
+    } else {
+        box.   addClass("pickmul");
+    }
+}
+
+function hsFormFillFile(box, v, n) {
+    if (! v) return;
+    if (! jQuery.isArray(v)) {
+        v = [ v ];
+    }
+    if (v.length) {
+        _hsSoloFile ( box, false );
+    }
+    jQuery.each(v , function(i, x) {
+        box.hsFillFile(n, x);
+    });
+}
+
+function hsFormFillView(box, v, n) {
+    if (! v) return;
+    if (! jQuery.isArray(v)) {
+        v = [ v ];
+    }
+    if (v.length) {
+        _hsSoloFile ( box, false );
+    }
+    var w = box.data("width" );
+    var h = box.data("height");
+    jQuery.each(v , function(i, x) {
+        box.hsFillView(n, x, w, h);
+    });
+}

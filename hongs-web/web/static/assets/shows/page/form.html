@@ -3,7 +3,7 @@
      data-module="hsForm"
      data-load-url="('data/retrieve.json?md='+(H$('#id',this)?'1':'0'))"
      data-save-url="('data/create.json')"
-     data-data-0="_fill__fork:(hsForkFillForm)">
+     data-data-0="_fill__fork:(hsFormFillFork)">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id"/>
         <input type="hidden" name="sections.0.sect_id" data-pn="sect_id"/>
@@ -19,8 +19,16 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">所属分类</label>
+                    <input type="hidden" name="sect_id" class="form-ignored"/>
                     <ul class="pickbox" data-ft="_fork" data-fn="sect_id" data-ak="section" data-tk="name" data-vk="id" data-required="required" data-unpicked-error="尚未选择分类"></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="page/pick.html">选择所属的分类</button>
+                </div>
+                <div class="form-group dont-close">
+                    <label class="control-label">关联附件</label>
+                    <input type="text" name="file" class="form-ignored invisible"/>
+                    <input type="file" name="file" class="form-ignored invisible"/>
+                    <ul class="pickbox" data-ft="_file" data-fn="file" data-required="required" data-unpicked-error="尚未选择附件"></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="hsFile">选择关联的附件</button>
                 </div>
                 <div class="form-group dont-close">
                     <label class="control-label">宣传图片</label>
@@ -54,10 +62,3 @@
         </div>
     </form>
 </div>
-<script type="text/javascript">
-    (function($) {
-        var context = hsOriginBox().find( "#medium-article-form" );
-        var loadbox = context.closest(".loadbox");
-        console.log(context);
-    })(jQuery);
-</script>

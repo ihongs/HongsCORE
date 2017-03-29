@@ -665,6 +665,13 @@ function hsListFillItem(list) {
         delete this._info;
 }
 
+/**
+ * 这是比 fillPage 更简单的上下页导航方式
+ * 需替代 fillPage 时, 在初始化参数中加入
+ * fillPage: hsListFillNext
+ * @param {type} page
+ * @return {undefined}
+ */
 function hsListFillNext(page) {
     switch (page.ern) {
         case  1 :

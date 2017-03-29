@@ -671,7 +671,10 @@ hsListFillFork = hsListFillPick;
 
 function _hsSoloFile(box, show) {
     var fn = box.data("fn");
-    if (fn && !/(\[\]|\.\.|\.$)/.test(fn)) {
+    if (! fn) {
+        return;
+    }
+    if (! /(\[\]|\.\.|\.$)/.test(fn)) {
         box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
         box.removeClass("pickmul");
     } else {

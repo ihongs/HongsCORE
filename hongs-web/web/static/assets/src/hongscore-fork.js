@@ -610,7 +610,7 @@ hsListFillFork = hsListFillPick;
     /**
      * 打开文件事件处理
      */
-    $(document).on("click", "ul.pickbox li",
+    $(document).on("click", "ul.pickbox li.btn",
     function(x) {
         if ($(x.target).hasClass("close")
         || !$(this).parent( )

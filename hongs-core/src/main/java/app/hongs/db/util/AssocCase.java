@@ -251,7 +251,7 @@ public class AssocCase {
      */
     public AssocCase parse(Map rd) {
         Map xd = new LinkedHashMap (rd);
-        AssocCase.this.parse( that, xd);
+        parse( that, xd);
         return this;
     }
 
@@ -265,7 +265,7 @@ public class AssocCase {
     public FetchCase trans(Map rd) {
         FetchCase caze = that.clone(  );
         Map xd = new LinkedHashMap (rd);
-        AssocCase.this.parse(caze , xd);
+        parse( caze, xd);
         return caze;
     }
 

@@ -10,7 +10,6 @@ import app.hongs.util.Data;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.lang.annotation.Annotation;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -80,35 +79,39 @@ public class PresetInvoker implements FilterInvoker {
             }
 
             Map reqd = helper.getRequestData();
-            Map rxqd = new HashMap();
+
+            // 预置参数
+            for(String k : used /**/ ) {
+                String v = data.get(k);
+                if (v != null && v.length() != 0) {
+                    Map rxqd = decode(helper , v);
+                    insert(reqd, rxqd);
+                }
+            }
 
             // 防御参数
             String n = ":defense";
             if (data.containsKey(n)) {
                 String v = data.get(n);
                 if (v != null && v.length() != 0) {
-                    inject(helper, v, reqd);
+                    Map rxqd = decode(helper , v);
+                    inject(reqd, rxqd);
+
+                    /**
+                     * 防御条件
+                     * update,delete 通常只用 id 作为参数
+                     * 故需要将防御参数作为特定的过滤参数
+                     */
+                    if (! rxqd.containsKey(Cnst.WH_KEY)) {
+                        Map rwqd  =  Synt.declare(reqd.get(Cnst.WH_KEY), Map.class);
+                        if (rwqd ==  null) {
+                            reqd.put(Cnst.WH_KEY, rxqd);
+                        } else {
+                            inject  (rwqd /***/ , rxqd);
+                        }
+                    }
                 }
             }
-
-            // 预置参数
-            for(String k : used /**/ ) {
-                String v = data.get(k);
-                if (v != null && v.length() != 0) {
-                    inject(helper, v, rxqd);
-                }
-            }
-
-            /**
-             * 执行了两次 putAll
-             * 目的在于确保当前请求参数优先
-             * 如当前请求参数有a
-             * 而补充参数中也有a
-             * 则用当前请求参数a
-             * 但 :defence 除外
-             */
-            Dict.putAll(rxqd, reqd);
-            reqd.putAll(rxqd  /**/);
         } catch (HongsException ex) {
             int ec  = ex.getErrno();
             if (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10eb) {
@@ -125,12 +128,11 @@ public class PresetInvoker implements FilterInvoker {
         chains.doAction();
     }
 
-    private  void  inject(ActionHelper helper, String v, Map r) throws HongsException {
-        v = inject(helper , v);
-        Map<String, Object> o = (Map) Data.toObject(v);
+    private void inject(Map r, Map v) throws HongsException {
+        Map<String, Object> o = v;
         for(Map.Entry<String, Object> m: o.entrySet()) {
-            String n = m.getKey(  );
             Object x = m.getValue();
+            String n = m.getKey(  );
             if (x != null) {
                 if (x instanceof Map) {
                     Map y = (Map) x;
@@ -142,7 +144,26 @@ public class PresetInvoker implements FilterInvoker {
         }
     }
 
-    private String inject(ActionHelper helper, String v) throws HongsException {
+    private void insert(Map r, Map v) throws HongsException {
+        Map<String, Object> o = v;
+        for(Map.Entry<String, Object> m: o.entrySet()) {
+            Object x = m.getValue();
+            String n = m.getKey(  );
+            if (Dict.getParam(r, n) == null) {
+                continue; // 存在就不要设置;
+            }
+            if (x != null) {
+                if (x instanceof Map) {
+                    Map y = (Map) x;
+                    Dict.setParams(r, y, n);
+                } else {
+                    Dict.setParam (r, x, n);
+                }
+            }
+        }
+    }
+
+    private Map decode(ActionHelper helper, String v) throws HongsException {
         Matcher      mat = INJ_PAT.matcher(v);
         StringBuffer buf = new StringBuffer();
         while ( mat.find( )  ) {
@@ -173,7 +194,7 @@ public class PresetInvoker implements FilterInvoker {
         if (buf.length() > 0) {
                v = mat.appendTail(buf).toString( );
         }
-        return v;
+        return (Map) Data.toObject(v);
     }
 
 }

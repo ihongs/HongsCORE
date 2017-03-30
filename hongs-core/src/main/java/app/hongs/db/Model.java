@@ -873,6 +873,12 @@ implements IEntity
     }
 
     /**
+     * 如果不是 table.fetchCase( ) 构建查询
+     * 在下面组织过滤等时可能导致表别名错误
+     */
+    caze.from(table.tableName, table.name);
+
+    /**
      * 没有指定 listable
      * 则不使用 AssocCase 处理查询字段
      * 此方法并不会将所有字段绑定在顶层用例上

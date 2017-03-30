@@ -93,13 +93,13 @@ public final class Dict
         if (obj == null) {
             lst = new ArrayList();
         } else {
-            lst = Synt.declare(obj , List.class);
+            lst = Synt.declare(obj, List.class);
         }
 
         if (keys.length == pos + 1) {
             lst.add(val);
         } else {
-            lst.add(put(null, val, keys, pos+1));
+            lst.add(put(null, val, keys, pos + 1));
         }
 
         return lst;
@@ -109,15 +109,14 @@ public final class Dict
         if (obj == null) {
             lst = new ArrayList();
         } else {
-            lst = Synt.declare(obj , List.class);
+            lst = Synt.declare(obj, List.class);
         }
 
         // 如果列表长度不够, 填充到索引的长度
-        int idx = (Integer)key;
-        if (lst.size( ) <= idx) {
-            for(int i = 0; i <= idx; i++) {
-                lst.add( null );
-            }
+        int idx = (Integer ) key;
+        int idz = lst.size();
+        for(; idx >= idz; ++ idz) {
+            lst.add ( null );
         }
 
         if (keys.length == pos + 1) {
@@ -132,7 +131,7 @@ public final class Dict
         if (obj == null) {
             map = new LinkedHashMap();
         } else {
-            map = Synt.declare(obj, Map.class);
+            map = Synt.declare(obj,  Map.class);
         }
 
         if (keys.length == pos + 1) {
@@ -325,11 +324,11 @@ public final class Dict
    * @param keys
    */
   public static void setValues(Map map, Map oth, Object... keys) {
-      Object sub = get(map, keys);
-      if (sub == null || !(sub instanceof Map)) {
-        put   ( map, oth, keys);
-      } else {
+      Object sub = get ( map , null , keys );
+      if (sub != null && sub instanceof Map) {
         putAll((Map) sub, oth );
+      } else {
+        put   ( map, oth, keys);
       }
   }
 

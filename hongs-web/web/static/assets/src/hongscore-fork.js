@@ -618,7 +618,15 @@ hsListFillFork = hsListFillPick;
                    .size  ()) {
             return;
         }
-        // 无法打开刚上传的文件
+
+        /**
+         * 暂时没有较好的办法像打开远程文件一样打开刚选择待上传的文件
+         * 倒是可以通过 hsReadFile 来获取 base64 编码进而在新窗口打开
+         * 但如果是较大的文件可能不太合适
+         * 故干脆放弃待上传新窗口打开预览
+         * 预览待上传图片用 hsView 等方法
+         */
+
         var inp = $(this).find( ":file" );
         if (inp.size( ) == 0) {
             inp = $(this).find(":hidden");
@@ -671,10 +679,10 @@ hsListFillFork = hsListFillPick;
 
 function _hsSoloFile(box, show) {
     var fn = box.data("fn");
-    if (! fn) {
+    if (! fn || box.hasClass("pickmul")) {
         return;
     }
-    if (! /(\[\]|\.\.|\.$)/.test(fn)) {
+    if (! /(\[\]|\.\.|\.$)/.test ( fn )) {
         box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
         box.removeClass("pickmul");
     } else {

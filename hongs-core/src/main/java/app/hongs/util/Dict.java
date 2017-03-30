@@ -62,8 +62,8 @@ public final class Dict
         List lst = Synt.declare(obj, List.class);
 
         // 如果列表长度不够, 则直接返回默认值
-        int idx = (Integer)key;
-        if (lst.size( ) <= idx) {
+        int  idx = ( Integer )  key;
+        if ( idx > lst.size( ) - 1) {
             return def;
         }
 
@@ -113,10 +113,10 @@ public final class Dict
         }
 
         // 如果列表长度不够, 填充到索引的长度
-        int idx = (Integer ) key;
-        int idz = lst.size();
-        for(; idx >= idz; ++ idz) {
-            lst.add ( null );
+        int idx = ( Integer )  key;
+        int idz = lst.size( );
+        for ( ; idx >= idz; ++ idz) {
+            lst.add ( null  );
         }
 
         if (keys.length == pos + 1) {

@@ -874,7 +874,7 @@ implements IEntity
 
     /**
      * 如果不是 table.fetchCase( ) 构建查询
-     * 在下面组织过滤等时可能导致表别名错误
+     * 在下面组织过滤等时可能导致表别名为空
      */
     caze.from(table.tableName, table.name);
 

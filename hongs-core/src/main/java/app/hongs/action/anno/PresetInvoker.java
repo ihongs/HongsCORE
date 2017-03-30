@@ -149,7 +149,7 @@ public class PresetInvoker implements FilterInvoker {
         for(Map.Entry<String, Object> m: o.entrySet()) {
             Object x = m.getValue();
             String n = m.getKey(  );
-            if (Dict.getParam(r, n) == null) {
+            if (Dict.getParam(r, n) != null) {
                 continue; // 存在就不要设置;
             }
             if (x != null) {

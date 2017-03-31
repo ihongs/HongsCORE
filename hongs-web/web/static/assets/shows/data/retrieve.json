@@ -27,7 +27,8 @@
             "section": {
                 "id": "a",
                 "name": "分类1"
-            }
+            },
+            "file" : ["abc.png", "def.png"]
         },
         {
             "id": "2",

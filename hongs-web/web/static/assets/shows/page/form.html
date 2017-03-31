@@ -3,7 +3,8 @@
      data-module="hsForm"
      data-load-url="('data/retrieve.json?md='+(H$('#id',this)?'1':'0'))"
      data-save-url="('data/create.json')"
-     data-data-0="_fill__fork:(hsFormFillFork)">
+     data-data-0="_fill__fork:(hsFormFillFork)"
+     data-data-1="_fill__file:(hsFormFillFile)">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id"/>
         <input type="hidden" name="sections.0.sect_id" data-pn="sect_id"/>
@@ -25,9 +26,9 @@
                 </div>
                 <div class="form-group dont-close">
                     <label class="control-label">关联附件</label>
-                    <input type="text" name="file" class="form-ignored invisible"/>
-                    <input type="file" name="file" class="form-ignored invisible"/>
-                    <ul class="pickbox" data-ft="_file" data-fn="file" data-required="required" data-unpicked-error="尚未选择附件"></ul>
+                    <input type="text" name="file." class="form-ignored invisible"/>
+                    <input type="file" name="file." class="form-ignored invisible"/>
+                    <ul class="pickbox" data-ft="_file" data-fn="file." data-required="required" data-unpicked-error="尚未选择附件"></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="hsFile">选择关联的附件</button>
                 </div>
                 <div class="form-group dont-close">

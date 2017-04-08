@@ -191,6 +191,8 @@ function hsSerialArr(obj) {
     var arr = [];
     var typ = !jQuery.isPlainObject(obj) ? jQuery.type(obj) : "objact";
     switch (typ) {
+        case "undefined":
+            break;
         case "array" :
             arr = obj;
             break;
@@ -240,6 +242,8 @@ function hsSerialArr(obj) {
                 arr = jQuery(obj).serializeArray();
             }
             break;
+        default:
+            throw new Error("hsSerialArr: Unsupported type "+typ);
     }
     return  arr;
 }
@@ -649,23 +653,22 @@ function _hsSetDepth(obj, keys, val, pos) {
  * @param {Function} func
  */
 function hsForEach(data, func) {
-    var path = [];
-    if (arguments.length>2) {
-        path = arguments[2];
-    }
-    if (jQuery.isPlainObject(data)) {
-        for (var k in data) {
-            hsForEach(data[k], func, path.concat([k]));
+    function _each(data, func, path) {
+        if (jQuery.isPlainObject(data)) {
+            for (var k in data) {
+                hsForEach(data[k], func, path.concat([k]));
+            }
+        }
+        else if (jQuery.isArray (data)) {
+            for (var i = 0 , l = data.length; i < l; i ++) {
+                hsForEach(data[i], func, path.concat([i]));
+            }
+        }
+        else if (path.length > 0) {
+            func(data, path);
         }
     }
-    else if (jQuery.isArray (data)) {
-        for (var i = 0; i < data.length; i ++) {
-            hsForEach(data[i], func, path.concat([i]));
-        }
-    }
-    else if (path.length > 0) {
-        func(data, path);
-    }
+    _each( data, func, [ ] );
 }
 
 /**

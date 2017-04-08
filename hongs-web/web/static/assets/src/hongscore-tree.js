@@ -18,6 +18,7 @@ function HsTree(opts, context) {
     var sendUrls = hsGetValue(opts, "sendUrls");
     var openUrls = hsGetValue(opts, "openUrls");
     var linkUrls = hsGetValue(opts, "linkUrls");
+    var loadDat  = hsGetValue(opts, "loadData");
 
     // 数据的节点属性的键
     this.idKey   = hsGetValue(opts, "idKey"  , "id"  );
@@ -46,10 +47,6 @@ function HsTree(opts, context) {
         ||  this[k] !== undefined ) {
             this[k]  =  opts[k];
         }
-    }
-
-    if (loadUrl) {
-        loadUrl = hsFixPms(loadUrl, loadBox);
     }
 
     var that = this;
@@ -211,7 +208,9 @@ function HsTree(opts, context) {
     //** 立即加载 **/
 
     if (loadUrl) {
-        this.load(rootInfo.id, loadUrl, []);
+        loadDat = hsSerialMix(hsSerialArr(loadDat), hsSerialArr(findBox));
+        loadUrl = hsFixPms  (  loadUrl, loadBox);
+        this.load(rootInfo.id, loadUrl, findBox);
     }
 }
 HsTree.prototype = {

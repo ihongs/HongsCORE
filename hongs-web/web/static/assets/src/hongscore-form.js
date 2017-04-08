@@ -15,6 +15,8 @@ function HsForm(opts, context) {
     var formBox  = context.find   ( "form"   );
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var saveUrl  = hsGetValue(opts, "saveUrl");
+    var loadDat  = hsGetValue(opts, "loadData");
+    var initDat  = hsGetValue(opts, "initData");
     var idKey    = hsGetValue(opts, "idKey", "id"); // id参数名, 用于判断编辑还是创建
     var mdKey    = hsGetValue(opts, "mdKey", "md"); // md参数名, 用于判断是否要枚举表
 
@@ -30,6 +32,10 @@ function HsForm(opts, context) {
         if ('_'===k.substring(0,1 )
         ||  this[k] !== undefined ) {
             this[k]  =  opts[k];
+        } else
+        if ('@'===k.substring(0,1)) {
+            var n = k.substring(1);
+            this.rules["[name="+n+"],[data-fn="+n+"]"] = opts[k];
         } else
         if ('$'===k.substring(0,1)) {
             this.rules[k.substring(1)] = opts[k];
@@ -52,14 +58,16 @@ function HsForm(opts, context) {
      * 在打开表单窗口时, 可能指定一些参数(如父ID, 初始选中项等)
      * 这时有必要将这些参数值填写入对应的表单项, 方便初始化过程
      */
-    var i , n, v;
-    for(i = 0; i < loadArr.length; i++) {
-        n = loadArr[i].name ;
-        v = loadArr[i].value;
-        if ( n === idKey && v === "0" ) continue;
-        formBox.find("[name='"+n+"']" ).not(".form-ignored").val(v);
-        formBox.find("[data-fn='"+n+"']").val(v);
+    initDat = initDat ? hsSerialArr(initDat)
+          : ( loadDat ? hsSerialArr(loadDat)
+          : ( loadArr ) );
+    for(var i = 0; i < initDat.length; i ++) {
+        var n = initDat[i].name ;
+        var v = initDat[i].value;
+        if (n === idKey && v === "0" ) continue ;
         formBox.find("[data-pn='"+n+"']").val(v);
+        formBox.find("[data-fn='"+n+"']").val(v);
+        formBox.find("[name='"+n+"']" ).not(".form-ignored").val(v);
     }
 
     /**
@@ -69,13 +77,13 @@ function HsForm(opts, context) {
     if (loadUrl
     && (hsGetParam(loadUrl, idKey)
     ||  hsGetParam(loadUrl, mdKey))) {
-        this.load (loadUrl, loadArr);
+        this.load (loadUrl, loadDat || loadArr );
     } else {
-        this.loadBack( {} );
+        this.loadBack({ });
     }
 
-    this.valiInit(/*all*/ );
-    this.saveInit(saveUrl );
+    this.valiInit(/*****/);
+    this.saveInit(saveUrl);
 }
 HsForm.prototype = {
     load     : function(url, data) {

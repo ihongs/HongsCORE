@@ -18,6 +18,7 @@ function HsList(opts, context) {
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var sendUrls = hsGetValue(opts, "sendUrls");
     var openUrls = hsGetValue(opts, "openUrls");
+    var loadDat  = hsGetValue(opts, "loadData");
 
     // 排序, 分页等参数
     this.sortKey = hsGetValue(opts, "sortKey", hsGetConf("ob.key", "ob"));
@@ -49,10 +50,6 @@ function HsList(opts, context) {
         ||  this[k] !== undefined ) {
             this[k]  =  opts[k];
         }
-    }
-
-    if (loadUrl) {
-        loadUrl = hsFixPms(loadUrl, loadBox);
     }
 
     var that = this;
@@ -185,7 +182,9 @@ function HsList(opts, context) {
     //** 立即加载 **/
 
     if (loadUrl) {
-        this.load(loadUrl, findBox);
+        loadDat = hsSerialMix(hsSerialArr(loadDat), hsSerialArr(findBox));
+        loadUrl = hsFixPms(loadUrl, loadBox);
+        this.load(loadUrl, loadDat);
     }
 }
 HsList.prototype = {

@@ -80,7 +80,7 @@ public class Thumb extends IsFile {
         prl = url.replaceFirst("\\.[^\\.]+$","");
 
         if (suf.contains(";")
-        &&  suf.contains(":")) {
+        ||  suf.contains(":")) {
 
             String[] sia = suf.split (";");
             String   src = pth;

@@ -65,9 +65,9 @@ function HsForm(opts, context) {
         var n = initDat[i].name ;
         var v = initDat[i].value;
         if (n === idKey && v === "0" ) continue ;
-        formBox.find("[data-pn='"+n+"']").val(v);
-        formBox.find("[data-fn='"+n+"']").val(v);
-        formBox.find("[name='"+n+"']" ).not(".form-ignored").val(v);
+        formBox.find("[data-pn='"+n+"']").val(v).change();
+        formBox.find("[data-fn='"+n+"']").val(v).change();
+        formBox.find("[name='"+n+"']").not(":file,.form-ignored").val(v).change();
     }
 
     /**
@@ -250,7 +250,7 @@ HsForm.prototype = {
                 i.attr("data-value", v).change();
             } else
             if (i.is  ("input,select,textarea")) {
-                i.not (":file").val( v).change();
+                i.val (v).change();
             } else {
                 i.text(v);
             }

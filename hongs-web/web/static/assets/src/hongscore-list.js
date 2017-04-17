@@ -491,12 +491,6 @@ HsList.prototype = {
         jQuery.hsWarn.apply(self, arguments);
     },
 
-    getRow   : function(o) {
-        return jQuery(o)
-                .closest("tr,.itembox")
-                .find   ( ".checkone" )
-                .filter ( ":checkbox,:radio,:hidden" );
-    },
     getAll   : function() {
         var cks = this.context.find(".checkone").filter(":checked");
         if (cks.length == 0) {
@@ -516,6 +510,12 @@ HsList.prototype = {
         else {
             return cks ;
         }
+    },
+    getRow   : function(o) {
+        return jQuery(o)
+                .closest("tr,.itembox")
+                .find   ( ".checkone" )
+                .filter ( ":checkbox,:radio,:hidden" );
     },
 
     // /** 填充函数 **/

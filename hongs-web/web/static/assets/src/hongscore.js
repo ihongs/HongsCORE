@@ -656,12 +656,12 @@ function hsForEach(data, func) {
     function _each(data, func, path) {
         if (jQuery.isPlainObject(data)) {
             for (var k in data) {
-                hsForEach(data[k], func, path.concat([k]));
+                _each(data[k], func, path.concat([k]));
             }
         }
         else if (jQuery.isArray (data)) {
-            for (var i = 0 , l = data.length; i < l; i ++) {
-                hsForEach(data[i], func, path.concat([i]));
+            for (var i = 0 ; i < data.length ; i ++ ) {
+                _each(data[i], func, path.concat([i]));
             }
         }
         else if (path.length > 0) {
@@ -1212,6 +1212,7 @@ $.hsNote = function(msg, typ, yes, sec) {
         yes =  typ ;
         typ ='info';
     }
+
     switch (typ) {
         case 'info':
             div.addClass("alert-info"   );
@@ -1268,15 +1269,18 @@ $.hsWarn = function(msg, typ, yes, not) {
     var btn = $( '<p></p>' );
     var tit;
     var end;
+    var fns;
 
     // 参数检查
-    var j = 2;
-    if (typeof typ !== "string") {
-        j = 1;
+    if (typeof typ === "string") {
+        fns = Array.prototype.slice.call(arguments, 2);
+    } else {
+        fns = Array.prototype.slice.call(arguments, 1);
         not =  yes ;
         yes =  typ ;
         typ ='info';
     }
+
     switch (typ) {
         case 'info':
             div.addClass("alert-info"   );
@@ -1303,19 +1307,19 @@ $.hsWarn = function(msg, typ, yes, not) {
     box.text(msg);
 
     // 操作按钮
-    for(var i = j; i < arguments.length; i ++) {
-        var v = arguments[i];
+    for(var i = 0; i < fns.length; i ++ )  {
+        var v = fns[i];
 
         // 确认和取消按钮可使用简化参数
         if (v === null || $.isFunction(v)) {
-            if (i == j + 0) {
+            if (i == 0) {
                 v = {
                     "click": v,
                     "class": "btn-primary",
                     "label": hsGetLang("ensure")
                 };
             } else
-            if (i == j + 1) {
+            if (i == 1) {
                 v = {
                     "click": v,
                     "class": "btn-default",
@@ -1323,7 +1327,6 @@ $.hsWarn = function(msg, typ, yes, not) {
                 };
             } else {
                 throw new Error("hsWarn: The value of the "+i+"th argument is not supported");
-                continue;
             }
         }
 

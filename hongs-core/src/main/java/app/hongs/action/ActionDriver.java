@@ -641,13 +641,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
          * @return
          */
         public boolean ignore(String uri) {
-            if (check(uri, attendUrls)) {
-                return false;
-            }
-            if (check(uri, ignoreUrls)) {
-                return true ;
-            }
-            return false;
+            return !check(uri, attendUrls) && check(uri, ignoreUrls);
         }
 
         /**
@@ -657,13 +651,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
          * @return
          */
         public boolean attend(String uri) {
-            if (check(uri, ignoreUrls)) {
-                return false;
-            }
-            if (check(uri, attendUrls)) {
-                return true ;
-            }
-            return false;
+            return !check(uri, ignoreUrls) && check(uri, attendUrls);
         }
 
         private boolean check(String uri, String[][] uris) {

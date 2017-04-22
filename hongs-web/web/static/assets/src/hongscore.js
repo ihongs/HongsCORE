@@ -1268,8 +1268,9 @@ $.hsWarn = function(msg, typ, yes, not) {
     var btu = $( '<p></p>' );
     var btn = $( '<p></p>' );
     var tit;
-    var end;
     var fns;
+    var end;
+    var foc = 0;
 
     // 参数检查
     if (typeof typ === "string") {
@@ -1347,14 +1348,17 @@ $.hsWarn = function(msg, typ, yes, not) {
             }
         } else {
             // 未指定标签则认为是在设置窗体
-            if (v["close"]) {
-                end   =   v["close"] ;
+            if (v["close"] !== undefined) {
+                end = v["close"];
             }
-            if (v["title"]) {
+            if (v["focus"] !== undefined) {
+                foc = v["focus"];
+            }
+            if (v["title"] !== undefined) {
                 btt.text (v["title"]);
             }
-            if (v["class"]) {
-                div.addClass(v["class"]);
+            if (v["class"] !== undefined) {
+                div.addClass (v["class"]);
             }
         }
     }
@@ -1384,9 +1388,6 @@ $.hsWarn = function(msg, typ, yes, not) {
         div.find(".close").hide( );
         div.removeClass("alert-dismissable");
 
-        // 必须置空, 否则二次打开不会触发下方事件
-        $.support.transition  =  undefined  ;
-
         // 垂直居中
         mod.on("shown.bs.modal", function() {
             var wh =$(window).height();
@@ -1396,10 +1397,19 @@ $.hsWarn = function(msg, typ, yes, not) {
                 div.css("margin-top", mh+"px");
                 mod.css("padding-right","0px"); // 去掉模态框BS设的15像素右补丁
             }
-        } );
+        });
+
+        // 必须置空, 否则二次打开不会触发上方事件
+        $.support.transition = undefined;
+
+        // 按钮聚焦, 方便用户使用键盘快速默认操作
+        setTimeout( function() {
+            btn.find("button").eq(foc)[0].focus();
+        }, 500);
+    } else {
+        $(":focus").blur();
     }
 
-    $( ":focus" ).blur( );
     btn.on( "click","button", function() {
         mod.modal("hide");
     } );

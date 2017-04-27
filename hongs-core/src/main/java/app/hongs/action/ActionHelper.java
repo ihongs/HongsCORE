@@ -780,8 +780,6 @@ public class ActionHelper implements Cloneable
     } catch (CloneNotSupportedException ex) {
       throw new HongsError.Common( /**/ ex);
     }
-    helper.outputStream = this.getOutputStream();
-    helper.outputWriter = this.getOutputWriter();
     helper.responseData = null;
     return helper;
   }

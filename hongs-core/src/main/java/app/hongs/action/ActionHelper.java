@@ -941,8 +941,20 @@ public class ActionHelper implements Cloneable
         this.response.setContentType(ctt);
       }
     }
+
+    // 动作调用了 forward 之后
+    // 这时再调用 getWriter 会抛 STREAM 异常
+    // 因容器调用 getOutputStream 来输出内容
+    // 所以必须将 OutputStream 包装成 Writer
+    Writer out;
     try {
-        this.getOutputWriter().write(txt);
+        out = getOutputWriter();
+    } catch ( IllegalStateException e ) {
+        out = new PrintWriter(getOutputStream());
+    }
+
+    try {
+        out.write(txt);
     } catch (IOException e)  {
       throw new HongsError(0x32, "Can not send to client.", e);
     }
@@ -986,11 +998,29 @@ public class ActionHelper implements Cloneable
    */
   public void responed()
   {
-    Writer out = getOutputWriter();
-    String fun = getParameter(CoreConfig
-                .getInstance(/* default setting */)
-                .getProperty("core.act.call", "cb")
-    );
+    if (null == this.responseData) {
+        return;
+    }
+
+    // 动作调用了 forward 之后
+    // 这时再调用 getWriter 会抛 STREAM 异常
+    // 因容器调用 getOutputStream 来输出内容
+    // 所以必须将 OutputStream 包装成 Writer
+    Writer out;
+    try {
+        out = getOutputWriter();
+    } catch ( IllegalStateException e ) {
+        out = new PrintWriter(getOutputStream());
+    }
+
+    // 检查是否有 JSONP 的回调函数
+    String fun;
+    fun = getParameter(Cnst.CB_KEY);
+    if (fun == null || fun.isEmpty( ) ) {
+        fun  = getParameter( CoreConfig
+              .getInstance ()
+              .getProperty ("core.act.call" , "callback") );
+    }
 
     try {
         if ( fun != null && fun.length() != 0 ) {

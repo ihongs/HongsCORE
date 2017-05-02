@@ -344,12 +344,18 @@ public class AuthFilter
             rsp.put("err", "Goto "+uri);
         }
 
-        hlpr.reply(rsp);
         if (type == 1 ) {
             hlpr.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
             hlpr.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN   );
         }
+
+        /**
+         * 必须调用 responed 立即输出
+         * 用以应对 forward  后输出失败的问题
+         */
+        hlpr.reply(rsp);
+        hlpr.responed();
     } else {
         /**
          * 有时候如果客户从收藏夹或历史记录打开了一个没有权限的页

@@ -36,6 +36,8 @@ public final class Cnst {
 
     public static final String RB_KEY =  "rb"; // 应答字段  (Reply By)
 
+    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
+
     public static final String OR_KEY =  "or"; // 或关系    (Or)
 
     public static final String AR_KEY =  "ar"; // 与或      (And Or)

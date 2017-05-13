@@ -109,6 +109,8 @@ public class UserAction {
     public void doDelete(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
+        FetchCase fc = model.fetchCase();
+        fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
 
         // 不能删除自己和超级管理员
         Set rs = Synt.declare(rd.get(model.table.primaryKey), Set.class);
@@ -123,9 +125,9 @@ public class UserAction {
             }
         }
 
-        int rn = model.delete(rd);
+        int rn = model.delete(rd, fc);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("member" );
+                    ln.load("member");
         String ms = ln.translate("core.delete.user.success", Integer.toString(rn));
         helper.reply(ms, rn);
     }

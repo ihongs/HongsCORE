@@ -291,7 +291,7 @@ public class Table
       values.put(ctime, getDtval(ctime, time));
     }
 
-    // 存在 rstat 字段则自动放入默认值
+    // 存在 state 字段则自动放入默认值
     if (rstat != null && !values.containsKey(rstat))
     {
       String s = getState("default");
@@ -349,20 +349,38 @@ public class Table
    * @return 删除条数
    * @throws app.hongs.HongsException
    */
-  public int delete(String where, Object... params)
+  public int remove(String where, Object... params)
     throws HongsException
   {
-    String rstat = getField( "state" );
-    String rflag = getState("removed");
+    String rstat = getField ( "state" );
+    String rflag = getState ("removed");
 
     // 存在 rstat 字段则将删除标识设为 removed 值
     if (rstat != null && rflag != null)
     {
       Map data = new HashMap();
       data.put( rstat, rflag );
-      return  this.update(data, where, params);
+      return this.update(data, where, params);
     }
+    else
+    {
+      return this.delete(/***/ where, params);
+    }
+  }
 
+  /**
+   * 物理删除
+   * <pre>
+   * 不理会是否存在状态字段, 此方法总是执行物理删除
+   * </pre>
+   * @param where
+   * @param params
+   * @return
+   * @throws HongsException
+   */
+  public int delete(String where, Object... params)
+    throws HongsException
+  {
     return this.db.delete(this.tableName, where, params);
   }
 

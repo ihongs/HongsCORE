@@ -513,7 +513,7 @@ public class AssocMore {
       else
       {
         // 先删除旧数据
-        tb.delete("`"+foreignKey+"`=?" , id);
+        tb.remove("`"+foreignKey+"`=?" , id);
 
         // 再插入新数据
         Iterator it2 = subValues2.iterator();
@@ -589,7 +589,7 @@ public class AssocMore {
       }
 
       // 下级伪删除同样有效
-      tbl.delete("`"+foreignKey+"`=?",ids);
+      tbl.remove("`"+foreignKey+"`=?",ids);
 
       // 递归删除下级的下级
       if (idx != null && ! idx.isEmpty() )
@@ -677,7 +677,7 @@ public class AssocMore {
         where2  = new StringBuilder(where);
         where2.append(" AND `").append(table.primaryKey).append("` NOT IN (?)");
         params2 = new ArrayList( params1 ); params2.add( ids );
-        table .delete(  where2.toString( ), params2.toArray());
+        table .remove(  where2.toString( ), params2.toArray());
     }
 
 }

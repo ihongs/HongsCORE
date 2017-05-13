@@ -22,24 +22,24 @@ import java.util.regex.Pattern;
 public class CmdletHelper
 {
 
-  //** 参数相关 **/
-
   /**
    * 错误消息集合
    */
-  private static final String[] getErrs = new String[]
-  {
-    "Can not parse rule '%chk'",
-    "Option '%opt' is required",
-    "Option '%opt' must be specified value",
-    "Option '%opt' can only have one value",
-    "Value for option '%opt' must be int",
-    "Value for option '%opt' must be float",
-    "Value for option '%opt' must be boolean",
-    "Value for option '%opt' not matches: %mat",
-    "Unrecognized option '%opt'",
-    "Unupport anonymous options"
-  };
+  private static final String[]
+    GETERRS = {
+      "Can not parse rule '%chk'",
+      "Option '%opt' is required",
+      "Option '%opt' must be specified value",
+      "Option '%opt' can only have one value",
+      "Value for option '%opt' must be int",
+      "Value for option '%opt' must be float",
+      "Value for option '%opt' must be boolean",
+      "Value for option '%opt' not matches: %mat",
+      "Unrecognized option '%opt'",
+      "Unupport anonymous options"
+    };
+
+  //** 参数相关 **/
 
   /**
    * 解析参数
@@ -83,7 +83,7 @@ public class CmdletHelper
         }
 
         // 0号错误
-        errMsgs.add(getErrs[0].replace("%chk", chk));
+        errMsgs.add(GETERRS[0].replace("%chk", chk));
         continue;
       }
 
@@ -108,7 +108,7 @@ public class CmdletHelper
         if (err != null) {
           err = err.trim();
         } else {
-          err = getErrs[7];
+          err = GETERRS[7];
         }
         reg = "/"+reg+"/"+mod;
         chkz.put(name, new Object[] {sign.charAt(0),'r',pat,reg,err});
@@ -161,21 +161,21 @@ public class CmdletHelper
             switch (type) {
               case 'i':
                 if (!ip.matcher(arg).matches()) {
-                  errMsgs.add(getErrs[4].replace("%opt", name));
+                  errMsgs.add(GETERRS[4].replace("%opt", name));
                   continue W;
                 }
                 val = Long.parseLong(arg);
                 break;
               case 'f':
                 if (!fp.matcher(arg).matches()) {
-                  errMsgs.add(getErrs[5].replace("%opt", name));
+                  errMsgs.add(GETERRS[5].replace("%opt", name));
                   continue W;
                 }
                 val = Double.parseDouble(arg);
                 break;
               case 'b':
                 if (!bp.matcher(arg).matches()) {
-                  errMsgs.add(getErrs[6].replace("%opt", name));
+                  errMsgs.add(GETERRS[6].replace("%opt", name));
                   continue W;
                 }
                 val = tp.matcher(arg).matches();
@@ -193,7 +193,7 @@ public class CmdletHelper
               vals.add(val );
             } else {
               if (newOpts.containsKey(name)) {
-                errMsgs.add(getErrs[3].replace("%opt", name));
+                errMsgs.add(GETERRS[3].replace("%opt", name));
               } else {
                 newOpts.put(name, val );
               }
@@ -207,18 +207,18 @@ public class CmdletHelper
               vals.add(true);
             } else {
               if (newOpts.containsKey(name)) {
-                errMsgs.add(getErrs[3].replace("%opt", name));
+                errMsgs.add(GETERRS[3].replace("%opt", name));
               } else {
                 newOpts.put(name, true);
               }
             }
           } else {
-            errMsgs.add(getErrs[2].replace("%opt", name));
+            errMsgs.add(GETERRS[2].replace("%opt", name));
           }
         }
         else if (ub) {
             // 7号错误
-            errMsgs.add(getErrs[8].replace("%opt", name));
+            errMsgs.add(GETERRS[8].replace("%opt", name));
         }
         else {
             newArgs.add(   args[i]);
@@ -226,7 +226,7 @@ public class CmdletHelper
       }
       else if (vb) {
         // 8号错误
-        errMsgs.add(getErrs[9]);
+        errMsgs.add(GETERRS[9]);
       }
       else {
         newArgs.add(   args[i]);
@@ -236,7 +236,7 @@ public class CmdletHelper
     for (String name : reqOpts) {
       if (!newOpts.containsKey(name)) {
         Set<String> err = new LinkedHashSet();
-        err.add(getErrs[1].replace("%opt", name));
+        err.add(GETERRS[1].replace("%opt", name));
         err.addAll(errMsgs);
         errMsgs  =  err;
       }
@@ -308,7 +308,7 @@ public class CmdletHelper
     if (rate <    0 ) rate =   0;
     if (rate >  100 ) rate = 100;
 
-    sb.append("|");
+    sb.append("[");
     for (int i = 0; i < 100; i += 5)
     {
       if (rate < i + 5)
@@ -320,7 +320,7 @@ public class CmdletHelper
         sb.append('=');
       }
     }
-    sb.append("|");
+    sb.append("]");
 
     ft.format(" %6.2f%% ", rate);
     sb.append(/* extra */  text);

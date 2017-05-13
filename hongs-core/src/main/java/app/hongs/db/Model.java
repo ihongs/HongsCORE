@@ -548,8 +548,16 @@ implements IEntity
       throw new HongsException (0x1093, "ID can not be empty for del");
     }
 
-    // 删除主数据
-    int an = this.table.delete ("`"+this.table.primaryKey+"` = ?", id);
+    // 删除主数据, 默认可使用逻辑删除
+    int an;
+    if ( ! caze.getOption("INCLUDE_REMOVED", false) )
+    {
+      an = this.table.remove ("`"+ this.table.primaryKey +"` = ?", id);
+    }
+    else
+    {
+      an = this.table.delete ("`"+ this.table.primaryKey +"` = ?", id);
+    }
 
     // 删除子数据
     this.table.deleteSubValues ( id );

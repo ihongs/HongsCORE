@@ -278,7 +278,7 @@ public class AuthKit {
         // 记录登录
         DB    db = DB.getInstance("member");
         Table tb = db.getTable("user_sign");
-        tb.delete("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
+        tb.remove("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
         Map ud = new HashMap();
         ud.put("user_id", usrid);
         ud.put("sesid", sesid);
@@ -349,7 +349,7 @@ public class AuthKit {
         // 清除登录
         DB.getInstance("member")
           .getTable("user_sign")
-          .delete("`sesid` = ?", ss.getId());
+          .remove("`sesid` = ?", ss.getId());
 
         // 清除会话
         ss.invalidate();

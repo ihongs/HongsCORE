@@ -17,6 +17,8 @@
  * 在表单配置区域添加:
  * data-data-0="_fill__file:(hsFormFillFile)"
  * 在表单选项区域添加:
+ * <input type="text" name="x_url" class="form-ignored invisible"/>
+ * <input type="file" name="x_url" class="form-ignored invisible"/>
  * <ul data-ft="_file" data-fn="x_url" class="pickbox"></ul>
  * <button type="button" data-toggle="hsFile">Browse...</button>
  * 图片预览相应的改为 hsFormFillView, hsView
@@ -628,7 +630,7 @@ hsListFillFork = hsListFillPick;
          */
 
         var inp = $(this).find( ":file" );
-        if (inp.size( ) == 0) {
+        if (inp.size() === 0) {
             inp = $(this).find(":hidden");
             var url = hsFixUri(inp.val());
             if (url) {
@@ -711,9 +713,10 @@ function hsFormFillView(box, v, n) {
     if (v.length) {
         _hsSoloFile ( box, false );
     }
+    var k = box.data("keep"  );
     var w = box.data("width" );
     var h = box.data("height");
     jQuery.each(v , function(i, x) {
-        box.hsFillView(n, x, w, h);
+        box.hsFillView(n, x, w, h, k);
     });
 }

@@ -1,4 +1,4 @@
-package app.hongs.serv.module.maping;
+package app.hongs.serv.module.Byname;
 
 import app.hongs.Cnst;
 import app.hongs.util.Synt;
@@ -14,20 +14,20 @@ import java.util.Set;
  * 数据别名映射
  * @author Hongs
  */
-public class MapingHelper {
+public class BynameHelper {
 
     Map maping;
     Map mapout;
 
-    public MapingHelper(Map form) {
+    public BynameHelper(Map form) {
         maping = new HashMap();
         mapout = new HashMap();
         for(Object ot : form.entrySet()) {
             Map.Entry et = (Map.Entry) ot;
-            String n = (String) et.getKey();
             Map    c = (Map ) et.getValue();
-            String a = (String) c.get("alias");
-            if (a != null && a.length() != 0 ) {
+            String n = (String) et.getKey();
+            String a = (String) c.get("byname");
+            if (a != null && a.length() != 0) {
                 maping.put(a, n);
                 mapout.put(n, a);
             }

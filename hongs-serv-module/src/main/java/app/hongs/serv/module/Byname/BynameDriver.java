@@ -1,4 +1,4 @@
-package app.hongs.serv.module.maping;
+package app.hongs.serv.module.Byname;
 
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -13,7 +13,7 @@ import java.util.Map;
  * 字段映射处理
  * @author Hongs
  */
-public class MapingDriver implements FilterInvoker {
+public class BynameDriver implements FilterInvoker {
     
     @Override
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
@@ -39,7 +39,7 @@ public class MapingDriver implements FilterInvoker {
         if (data == null) {
             data  = FormSet.getInstance(conf).getForm(form);
         }
-        MapingHelper  dm = new MapingHelper(data);
+        BynameHelper  dm = new BynameHelper(data);
         
         Map req = helper.getRequestData();
         req.clear();

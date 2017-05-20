@@ -9,6 +9,7 @@ import app.hongs.util.Synt;
 import java.sql.Types;
 import java.util.Iterator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -231,20 +232,20 @@ public class Mview extends Model {
         Set<String> sortColz = new LinkedHashSet();
         Set<String> findColz = new LinkedHashSet();
         Set<String> filtColz = new LinkedHashSet();
+        Set<String> listTypz = new HashSet();
+        Set<String> sortTypz = new HashSet();
+        Set<String> findTypz = new HashSet();
+        Set<String> filtTypz = new HashSet();
 
-        Set listTypz = null;
         if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.listable"), false)) {
             listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("listable"));
         }
-        Set sortTypz = null;
         if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.sortable"), false)) {
             sortTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
         }
-        Set findTypz = null;
         if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.findable"), false)) {
             findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("findable"));
         }
-        Set filtTypz = null;
         if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.filtable"), false)) {
             filtTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("filtable"));
         }
@@ -252,19 +253,19 @@ public class Mview extends Model {
         // 排序、搜索等字段也可以直接在主字段给出
         if (prms != null && prms.containsKey("listable")) {
             listColz = Synt.asTerms(prms.get("listable"));
-            listTypz = null;
+            listTypz.clear();
         }
         if (prms != null && prms.containsKey("sortable")) {
             sortColz = Synt.asTerms(prms.get("sortable"));
-            sortTypz = null;
+            sortTypz.clear();
         }
         if (prms != null && prms.containsKey("findable")) {
             findColz = Synt.asTerms(prms.get("findable"));
-            findTypz = null;
+            findTypz.clear();
         }
         if (prms != null && prms.containsKey("filtable")) {
             filtColz = Synt.asTerms(prms.get("filtable"));
-            filtTypz = null;
+            filtTypz.clear();
         }
 
         if (null == prms || ! Synt.declare(prms.get("dont.auto.append.fields"), false)) {
@@ -303,12 +304,12 @@ public class Mview extends Model {
             Set listTypz, Set sortTypz, Set findTypz, Set filtTypz,
             Set listColz, Set sortColz, Set findColz, Set filtColz) {
         for(Map.Entry<String, Map<String, String>> ent : fields.entrySet()) {
-            String name = ent.getKey();
             Map field = ent.getValue();
+            String fn = ent.getKey(  );
             String ft = Synt.asserts(field.get("__type__"), "text");
 
             // 表单信息字段需要排除
-            if ("@".equals(name)) {
+            if ("@".equals(fn)) {
                 continue;
             }
 
@@ -317,31 +318,60 @@ public class Mview extends Model {
                 continue;
             }
 
-            // 特定类型才能排序、列举、搜索、过滤
-            if (!field.containsKey("listable") && listTypz != null && listTypz.contains(ft)) {
-                field.put("listable", "yes");
-            }
-            if (!field.containsKey("sortable") && sortTypz != null && sortTypz.contains(ft)) {
-                field.put("sortable", "yes");
-            }
-            if (!field.containsKey("findable") && findTypz != null && findTypz.contains(ft)) {
-                field.put("findable", "yes");
-            }
-            if (!field.containsKey("filtable") && filtTypz != null && filtTypz.contains(ft)) {
-                field.put("filtable", "yes");
+            if (field.containsKey("listable")) {
+                if (Synt.declare(field.get("listable"), false)) {
+                    listColz.add(fn);
+                }
+            } else {
+                if (listTypz.contains(ft)) {
+                    listColz.add(fn);
+//                  field.put("listable", "yes");
+//              } else
+//              if (listColz.contains(fn)) {
+//                  field.put("listable", "yes");
+                }
             }
 
-            if (Synt.declare(field.get(  "listable"  ), false)) {
-                listColz.add(name);
+            if (field.containsKey("sortable")) {
+                if (Synt.declare(field.get("sortable"), false)) {
+                    sortColz.add(fn);
+                }
+            } else {
+                if (sortTypz.contains(ft)) {
+                    sortColz.add(fn);
+//                  field.put("sortable", "yes");
+//              } else
+//              if (sortColz.contains(fn)) {
+//                  field.put("sortable", "yes");
+                }
             }
-            if (Synt.declare(field.get(  "sortable"  ), false)) {
-                sortColz.add(name);
+
+            if (field.containsKey("findable")) {
+                if (Synt.declare(field.get("findable"), false)) {
+                    findColz.add(fn);
+                }
+            } else {
+                if (findTypz.contains(ft)) {
+                    findColz.add(fn);
+//                  field.put("findable", "yes");
+//              } else
+//              if (findColz.contains(fn)) {
+//                  field.put("findable", "yes");
+                }
             }
-            if (Synt.declare(field.get(  "findable"  ), false)) {
-                findColz.add(name);
-            }
-            if (Synt.declare(field.get(  "filtable"  ), false)) {
-                filtColz.add(name);
+
+            if (field.containsKey("filtable")) {
+                if (Synt.declare(field.get("filtable"), false)) {
+                    filtColz.add(fn);
+                }
+            } else {
+                if (filtTypz.contains(ft)) {
+                    filtColz.add(fn);
+//                  field.put("filtable", "yes");
+//              } else
+//              if (filtColz.contains(fn)) {
+//                  field.put("filtable", "yes");
+                }
             }
         }
     }

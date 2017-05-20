@@ -356,12 +356,12 @@ public final class Core
   /**
    * 系统启动时间
    */
-  public static long STARTS_TIME = System.currentTimeMillis();
+  public static final long STARTS_TIME = System.currentTimeMillis();
 
   /**
    * 全局核心对象
    */
-  public static Core GLOBAL_CORE = new Core();
+  public static final Core GLOBAL_CORE = new Core();
 
   /**
    * 线程核心对象

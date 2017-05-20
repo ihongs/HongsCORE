@@ -15,9 +15,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.FileNameMap;
+import java.net.URLConnection;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.Map;
 import java.util.Set;
@@ -28,6 +32,34 @@ import java.util.Set;
  */
 @Action("manage/file")
 public class FileAction implements IAction {
+
+    private static final Map<String, Byte> TYPE_SORT = new HashMap();
+    static {
+        TYPE_SORT.put("dir", (byte) 0);
+        TYPE_SORT.put("txt", (byte) 1);
+        TYPE_SORT.put("bin", (byte) 2);
+    }
+    private static final List ROOT_LIST = new ArrayList();
+    static {
+        ROOT_LIST.add(Synt.asMap(
+            "path", "/BASE",
+            "name", "网站",
+            "type", "dir",
+            "size", "1"
+        ));
+        ROOT_LIST.add(Synt.asMap(
+            "path", "/CONF",
+            "name", "配置",
+            "type", "dir",
+            "size", "1"
+        ));
+        ROOT_LIST.add(Synt.asMap(
+            "path", "/DATA",
+            "name", "数据",
+            "type", "dir",
+            "size", "1"
+        ));
+    }
 
     @Override
     @Action("retrieve")
@@ -41,35 +73,18 @@ public class FileAction implements IAction {
         // 根目录
         if ("".equals(path) || "/".equals(path)) {
             if ("file".equals(type)) {
-                helper.reply(Synt.asMap (
-                    "page" , Synt.asMap (
-                        "ern", 1
+                helper.reply(Synt.asMap(
+                    "page" , Synt.asMap(
+                        "ern" , 1
                     ),
-                    "list" , Synt.asList(
-                    )
+                    "list" , new ArrayList()
                 ));
             } else {
-                helper.reply(Synt.asMap (
-                    "page" , Synt.asMap (
-                        "ern", 0
+                helper.reply(Synt.asMap(
+                    "page" , Synt.asMap(
+                        "ern" , 0
                     ),
-                    "list" , Synt.asList(
-                        Synt.asMap(
-                            "path", "/BASE/",
-                            "name", "网站",
-                            "size", "1"
-                        ),
-                        Synt.asMap(
-                            "path", "/CONF/",
-                            "name", "配置",
-                            "size", "1"
-                        ),
-                        Synt.asMap(
-                            "path", "/DATA/",
-                            "name", "数据",
-                            "size", "1"
-                        )
-                    )
+                    "list" , ROOT_LIST
                 ));
             }
             return;
@@ -111,12 +126,15 @@ public class FileAction implements IAction {
             } else {
                 ds  = false ;
             }
-            if ("size".equals(ob)) {
+
+            if ("type".equals(ob)) {
                 filez = new TreeSet(new Comparator<Map>() {
                     @Override
                     public int compare(Map f1, Map f2) {
-                        long s1 = Synt.declare(f1.get("size") , 0L);
-                        long s2 = Synt.declare(f2.get("size") , 0L);
+                        String t1 = (String) f1.get("type");
+                        String t2 = (String) f2.get("type");
+                        byte s1 = Synt.declare(TYPE_SORT.get(t1), (byte) 0);
+                        byte s2 = Synt.declare(TYPE_SORT.get(t2), (byte) 0);
                         if (s1 != s2)
                         if (ds)
                             return s1 < s2 ? 1 : -1;
@@ -132,17 +150,17 @@ public class FileAction implements IAction {
                     };
                 });
             } else
-            if ("type".equals(ob)) {
+            if ("size".equals(ob)) {
                 filez = new TreeSet(new Comparator<Map>() {
                     @Override
                     public int compare(Map f1, Map f2) {
-                        String t1 = (String) f1.get("type");
-                        String t2 = (String) f2.get("type");
-                        if ( ! t1.equals(t2))
+                        long s1 = Synt.declare(f1.get("size") , 0L);
+                        long s2 = Synt.declare(f2.get("size") , 0L);
+                        if (s1 != s2)
                         if (ds)
-                            return t2.compareTo(t1);
+                            return s1 < s2 ? 1 : -1;
                         else
-                            return t1.compareTo(t2);
+                            return s1 > s2 ? 1 : -1;
 
                         String n1 = (String) f1.get("name");
                         String n2 = (String) f2.get("name");
@@ -177,11 +195,18 @@ public class FileAction implements IAction {
                         continue;
                     }
                 }
+
+                FileNameMap nmap = URLConnection.getFileNameMap();
+                String      name = item.getName();
+                String      extn = name.replaceFirst("^.*/" , "");
+                String      mime = nmap.getContentTypeFor( extn );
+
                 Map xxxx = new HashMap();
-                xxxx.put("path" , pxth + "/" + item.getName());
-                xxxx.put("name" , item.getName());
-                xxxx.put("size" , item.isDirectory() ? item.list().length : item.length());
+                xxxx.put("path" , pxth + "/" + name);
+                xxxx.put("name" , name );
+                xxxx.put("mime" , mime );
                 xxxx.put("type" , item.isDirectory() ? "dir" : (isTextFile(item) ? "txt" : "bin"));
+                xxxx.put("size" , item.isDirectory() ? item.list(  ).length  :  item.length(  )  );
                 xxxx.put("mtime", item.lastModified());
                 filez.add(xxxx );
             }
@@ -194,12 +219,18 @@ public class FileAction implements IAction {
             helper.reply(rsp);
         } else
         if (isTextFile(file)) {
+            FileNameMap nmap = URLConnection.getFileNameMap();
+            String      name = file.getName();
+            String      extn = name.replaceFirst("^.*/" , "");
+            String      mime = nmap.getContentTypeFor( extn );
+
             Map xxxx = new HashMap();
-            xxxx.put("path" , pxth + "/" + file.getName());
-            xxxx.put("name" , file.getName());
-            xxxx.put("size" , file.length ());
+            xxxx.put("path" , pxth + "/" + name);
+            xxxx.put("name" , name );
+            xxxx.put("mime" , mime );
+            xxxx.put("type" , "txt");
+            xxxx.put("size" , file.length( ));
             xxxx.put("text" , readFile(file));
-            xxxx.put("ftype", 1);
             xxxx.put("mtime", file.lastModified());
             helper.reply( "", xxxx );
         } else {
@@ -241,7 +272,7 @@ public class FileAction implements IAction {
         // 写入文件
         try {
             saveFile(file, text);
-        } catch (Exception ex) {
+        } catch ( Exception ex ) {
             helper.fault("写入文件失败");
         }
 
@@ -275,28 +306,29 @@ public class FileAction implements IAction {
 
         // 改名移动
         if ( dist != null ) {
-            dist = realPath(dist);
-            if ( dist == null ) {
-                helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
-                return;
+             dist = realPath(dist);
+            if (!path.equals(dist)) {
+                if ( dist == null ) {
+                    helper.fault(lang.translate("core.serv.manage.file.path.is.error" ));
+                    return;
+                }
+                dizt = new File(dist);
+                if ( dizt.exists()) {
+                    helper.fault(lang.translate("core.serv.manage.file.dist.is.exists"));
+                    return;
+                }
+                if (!file.renameTo(dizt)) {
+                    helper.fault(lang.translate("core.serv.manage.file.rename.failed" ));
+                    return;
+                }
+                file = dizt;
             }
-            dizt = new File(dist);
-            if ( dizt.exists()) {
-                helper.fault(lang.translate("core.serv.manage.file.dist.is.exists"));
-                return;
-            }
-            if (!file.renameTo(dizt)) {
-                helper.fault(lang.translate("core.serv.manage.file.rename.failed"));
-            } else {
-                helper.reply("");
-            }
-            return;
         }
 
         // 写入文件
         try {
             saveFile(file, text);
-        } catch (Exception ex) {
+        } catch ( Exception ex ) {
             helper.fault("写入文件失败");
         }
 
@@ -328,12 +360,12 @@ public class FileAction implements IAction {
             helper.fault(lang.translate("core.serv.manage.file.path.is.not.blanks"));
             return;
         }
-
         if (!file.delete()) {
             helper.fault(lang.translate("core.serv.manage.file.delete.failed"));
-        } else {
-            helper.reply("");
+            return;
         }
+
+        helper.reply("");
     }
 
     private String realPath(String path) {
@@ -413,7 +445,7 @@ public class FileAction implements IAction {
             throw new RuntimeException("Can not read " + file.getAbsolutePath(), ex);
         }
     }
-    
+
     private void saveFile(File file, String text) {
         try (
             FileWriter fw = new FileWriter(file,false);

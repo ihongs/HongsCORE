@@ -1,4 +1,4 @@
-package app.hongs.serv.module.maping;
+package app.hongs.serv.module.Byname;
 
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.VerifyInvoker;
@@ -14,7 +14,7 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Filter(VerifyInvoker.class)
-public @interface Maping {
+public @interface Byname {
     String   conf() default "default";
     String   form() default "";
 }

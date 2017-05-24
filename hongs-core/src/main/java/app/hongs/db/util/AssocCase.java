@@ -72,28 +72,35 @@ public class AssocCase {
      */
     public  static final String  WIPE = "__WIPE__";
 
-    private static final Pattern anPt = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
-    private static final Pattern cnPt = Pattern.compile("^[\\w]+$");
+    private static final Pattern ANPT = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
+    private static final Pattern CNPT = Pattern.compile("^[\\w]+$");
 
-    private static final Set<String  /**/  > func = new HashSet();
-    private static final Map<String, String> rels = new HashMap();
+    private static final Map<String, String> RELS = new HashMap(  );
+    private static final Set<String  /**/  > NOLS = new HashSet(  );
+    private static final Set<String  /**/  > FUNC = new HashSet(  );
     static {
-        func.add(Cnst.PN_KEY);
-        func.add(Cnst.GN_KEY);
-        func.add(Cnst.RN_KEY);
-        func.add(Cnst.OB_KEY);
-        func.add(Cnst.RB_KEY);
-        func.add(Cnst.WD_KEY);
-        func.add(Cnst.OR_KEY);
-        func.add(Cnst.AR_KEY);
-        rels.put(Cnst.EQ_REL, "=" );
-        rels.put(Cnst.NE_REL, "!=");
-        rels.put(Cnst.GT_REL, ">" );
-        rels.put(Cnst.GE_REL, ">=");
-        rels.put(Cnst.LT_REL, "<" );
-        rels.put(Cnst.LE_REL, "<=");
-        rels.put(Cnst.IN_REL, "IN");
-        rels.put(Cnst.NI_REL, "NOT IN");
+        RELS.put(Cnst.EQ_REL, "=" );
+        RELS.put(Cnst.NE_REL, "!=");
+        RELS.put(Cnst.GT_REL, ">" );
+        RELS.put(Cnst.GE_REL, ">=");
+        RELS.put(Cnst.LT_REL, "<" );
+        RELS.put(Cnst.LE_REL, "<=");
+        RELS.put(Cnst.IN_REL, "IN");
+        RELS.put(Cnst.NI_REL, "NOT IN");
+
+        NOLS.add(Cnst.AI_REL);
+        NOLS.add(Cnst.OI_REL);
+        NOLS.add(Cnst.OR_REL);
+        NOLS.add(Cnst.WT_REL);
+
+        FUNC.add(Cnst.PN_KEY);
+        FUNC.add(Cnst.GN_KEY);
+        FUNC.add(Cnst.RN_KEY);
+        FUNC.add(Cnst.OB_KEY);
+        FUNC.add(Cnst.RB_KEY);
+        FUNC.add(Cnst.WD_KEY);
+        FUNC.add(Cnst.OR_KEY);
+        FUNC.add(Cnst.AR_KEY);
     }
 
     private final FetchCase  /**/  that;
@@ -195,7 +202,7 @@ public class AssocCase {
                 continue;
             }
 
-            m = anPt.matcher(f);
+            m = ANPT.matcher(f);
             if (m.find()) {
                 if (":".equals(m.group(1))) {
                     k = f.substring(0, m.end() -1).trim();
@@ -205,10 +212,10 @@ public class AssocCase {
                 }
 
                 // 补全前缀
-                if (kp != null && cnPt.matcher(k).matches()) {
+                if (kp != null && CNPT.matcher(k).matches()) {
                     k = kp +/**/ k /**/;
                 }
-                if (fp != null && cnPt.matcher(f).matches()) {
+                if (fp != null && CNPT.matcher(f).matches()) {
                     f = fp +"`"+ f +"`";
                 }
 
@@ -452,7 +459,7 @@ public class AssocCase {
                 fm.putAll(( Map ) fv );
 
                 // 处理关系符号
-                for(Map.Entry<String, String> el : rels.entrySet()) {
+                for(Map.Entry<String, String> el : RELS.entrySet()) {
                     String rl = el.getKey(  );
                     Object rv = fm.remove(rl);
                     if (rv == null) continue ;
@@ -470,11 +477,41 @@ public class AssocCase {
                     }
                 }
 
-                // 清除功能参数
-                for(String rl : func) {
-                    fm.remove(rl);
+                // 数值区间查询
+                if (fm.containsKey(Cnst.RG_REL)) {
+                    Object[] a = Synt.asRange(fm.remove(Cnst.RG_REL));
+                    if (a != null) {
+                        if (a[0] != null) {
+                            if ((boolean) a[2]) {
+                                caze.filter(fn+" >= ?", a[0]);
+                            } else {
+                                caze.filter(fn+" > ?" , a[0]);
+                            }
+                        }
+                        if (a[1] != null) {
+                            if ((boolean) a[3]) {
+                                caze.filter(fn+" <= ?", a[1]);
+                            } else {
+                                caze.filter(fn+" < ?" , a[1]);
+                            }
+                        }
+                    }
                 }
-                    fm.remove("");
+
+                // 清除不支持的
+                for(String rl : NOLS) {
+                    fm.remove(rl);
+                    CoreLogger.trace(AssocCase.class.getName()+": Can not support "+fn+"."+rl);
+                }
+
+                // 清除功能参数
+                for(String rl : FUNC) {
+                    fm.remove(rl);
+                    CoreLogger.trace(AssocCase.class.getName()+": Can not dispose "+fn+"."+rl);
+                }
+
+                // 清除空字符串, 如想要 IN ('') 可使用 !in 操作符
+                fm.remove("");
 
                 // 如果还有剩余, 就当做 IN 来处理
                 if (!fm.isEmpty()) {
@@ -614,7 +651,7 @@ public class AssocCase {
             Map.Entry et = (Map.Entry) ot;
             String k = (String) et.getKey(  );
             String f = (String) et.getValue();
-            if (cnPt.matcher(f).matches()) {
+            if (CNPT.matcher(f).matches()) {
                 f = "`"+n+"`.`"+ f +"`";
             }
                 al.put(k, f);
@@ -630,7 +667,7 @@ public class AssocCase {
             Map.Entry et = (Map.Entry) ot;
             String k = (String) et.getKey(  );
             String f = (String) et.getValue();
-            if (cnPt.matcher(f).matches()) {
+            if (CNPT.matcher(f).matches()) {
                 al.put(k, f);
             }
         }

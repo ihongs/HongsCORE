@@ -11,6 +11,7 @@ import app.hongs.action.anno.Spread;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -76,8 +77,31 @@ public class SearchAction extends LuceneAction {
        byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
         if (md != 0 && xd != null && mod != null && ent != null) {
             if (FormSet.hasConfFile( mod )) {
-                sh.setLinks(mod, ent, md );
-                sh.addNames(/* Add */ xd );
+                sh.addLabel(xd , md, mod, ent);
+            }
+        }
+
+        helper.reply(sd);
+    }
+
+    @Action("statis/retrieve")
+    public void statis(ActionHelper helper) throws HongsException {
+        LuceneRecord sr = (LuceneRecord) getEntity(helper);
+        SearchHelper sh = new SearchHelper(sr);
+        Map rd = helper.getRequestData();
+            rd = getReqMap (helper, sr, "statis", rd);
+        Map sd = sh.statis (rd);
+            sd = getRspMap (helper, sr, "statis", sd);
+                 sr.close  (  );
+
+        /**
+         * 追加枚举名称
+         */
+        Map xd = (Map) sd.get("info");
+       byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
+        if (md != 0 && xd != null && mod != null && ent != null) {
+            if (FormSet.hasConfFile( mod )) {
+                sh.addLabel(xd , md, mod, ent);
             }
         }
 

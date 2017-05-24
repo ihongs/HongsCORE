@@ -460,32 +460,32 @@ public abstract class CoreSerial
 
   private ReadWriteLock lock(String flag)
   {
-      ReadWriteLock rwlock;
+      ReadWriteLock rwlk;
       Lock lock;
 
-      lock = lockr. readLock();
+      lock = LOCKR.readLock();
       lock.lock();
       try {
-          rwlock = locks.get(flag);
-          if (rwlock != null) {
-              return rwlock;
+          rwlk = LOCKS.get(flag);
+          if (null != rwlk) {
+              return  rwlk;
           }
       } finally {
           lock.unlock();
       }
 
-      lock = lockr.writeLock();
+      lock = LOCKR.writeLock();
       lock.lock();
       try {
-          rwlock = new ReentrantReadWriteLock();
-          locks.put(flag, rwlock);
-          return rwlock;
+          rwlk = new ReentrantReadWriteLock();
+          LOCKS.put(flag , rwlk);
+          return rwlk;
       } finally {
           lock.unlock();
       }
   }
 
-  private static Map<String, ReadWriteLock> locks = new HashMap(  );
-  private static ReadWriteLock lockr = new ReentrantReadWriteLock();
+  private static final Map<String, ReadWriteLock> LOCKS = new HashMap(  );
+  private static final ReadWriteLock LOCKR = new ReentrantReadWriteLock();
 
 }

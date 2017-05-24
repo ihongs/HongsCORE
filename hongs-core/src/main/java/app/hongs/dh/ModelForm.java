@@ -27,21 +27,21 @@ public class ModelForm {
     private Set wdColz = null;
     private Set whColz = null;
 
-    private static final Set fnKeyz;
+    private static final Set FN_KEYS;
     static {
-      fnKeyz = new HashSet( );
-      fnKeyz.add(Cnst.PN_KEY);
-      fnKeyz.add(Cnst.GN_KEY);
-      fnKeyz.add(Cnst.RN_KEY);
-      fnKeyz.add(Cnst.OB_KEY);
-      fnKeyz.add(Cnst.RB_KEY);
-      fnKeyz.add(Cnst.UD_KEY);
-      fnKeyz.add(Cnst.MD_KEY);
-      fnKeyz.add(Cnst.WD_KEY);
-      fnKeyz.add(Cnst.WH_KEY);
-      fnKeyz.add(Cnst.OR_KEY);
-      fnKeyz.add(Cnst.AR_KEY);
-      fnKeyz.add(Cnst.SR_KEY);
+        FN_KEYS = new HashSet( );
+        FN_KEYS.add(Cnst.PN_KEY);
+        FN_KEYS.add(Cnst.GN_KEY);
+        FN_KEYS.add(Cnst.RN_KEY);
+        FN_KEYS.add(Cnst.OB_KEY);
+        FN_KEYS.add(Cnst.RB_KEY);
+        FN_KEYS.add(Cnst.UD_KEY);
+        FN_KEYS.add(Cnst.MD_KEY);
+        FN_KEYS.add(Cnst.WD_KEY);
+        FN_KEYS.add(Cnst.WH_KEY);
+        FN_KEYS.add(Cnst.OR_KEY);
+        FN_KEYS.add(Cnst.AR_KEY);
+        FN_KEYS.add(Cnst.SR_KEY);
     }
 
     public ModelForm(Map fields, Map ftypes, Map dtypes) {
@@ -153,7 +153,7 @@ public class ModelForm {
      * @return
      */
     public Set<String> getFuncKeys() {
-        return fnKeyz;
+        return FN_KEYS;
     }
 
     /**

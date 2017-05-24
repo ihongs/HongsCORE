@@ -263,13 +263,17 @@ public final class Core
       catch (InvocationTargetException ex)
       {
         Throwable ta = ex.getCause();
+
+        // 调用层级过多, 最好直接抛出
         if (ta instanceof StackOverflowError)
-            throw (Error) ta;
+        {
+            throw ( StackOverflowError ) ta ;
+        }
 
         throw new HongsError(0x27, "Can not build "+name, ta);
       }
     }
-    catch (NoSuchMethodException ex2)
+    catch (NoSuchMethodException ez)
     {
       // 获取标准对象
       try
@@ -297,16 +301,20 @@ public final class Core
       }
       catch (InstantiationException ex)
       {
-        Throwable e = ex.getCause();
-        if (e instanceof StackOverflowError)
-            throw (Error) e;
+        Throwable ta = ex.getCause();
+
+        // 调用层级过多, 最好直接抛出
+        if (ta instanceof StackOverflowError)
+        {
+            throw ( StackOverflowError ) ta ;
+        }
 
         throw new HongsError(0x28, "Can not build "+name, ex);
       }
     }
-    catch (SecurityException ex2)
+    catch (SecurityException se)
     {
-        throw new HongsError(0x26, "Can not build "+name, ex2);
+        throw new HongsError(0x26, "Can not build "+name, se);
     }
   }
 

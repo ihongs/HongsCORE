@@ -7,7 +7,7 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
- * 资源锁
+ * 全局资源锁
  * @author Hongs
  */
 public class Lock {

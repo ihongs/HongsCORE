@@ -1,21 +1,19 @@
 package app.hongs;
 
+import app.hongs.util.Lock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 本地缓存工具
@@ -198,31 +196,43 @@ public abstract class CoreSerial
    * @param time
    * @throws app.hongs.HongsException
    */
-  protected void load(File file, long time)
+  protected void load(final File file, final long time)
     throws HongsException
   {
-      ReadWriteLock rwlock = lock(file.getAbsolutePath());
-      Lock lock;
+      final String key = CoreSerial.class.getName() + ":" + file.getAbsolutePath();
+      final Valids vld = new Valids( );
 
-      lock = rwlock. readLock();
-      lock.lock();
-      try {
-          if (file.exists() && !expired(time)) {
-              load(file);
-              return;
-          }
-      } finally {
-          lock.unlock( );
+      Lock.reader(key, new Runnable( ) {
+        @Override
+        public void run() {
+            try {
+                if (!file.exists() || expired(time)) {
+                    vld.valids = false;
+                    return;
+                }
+                load(file);
+            } catch (HongsException e) {
+                throw e.toExpedient( );
+            }
+        }
+      });
+
+      // 文件可用则直接退出
+      if (vld.valids) {
+          return;
       }
 
-      lock = rwlock.writeLock();
-      lock.lock();
-      try {
-          imports( );
-          save(file);
-      } finally {
-          lock.unlock( );
-      }
+      Lock.writer(key, new Runnable( ) {
+        @Override
+        public void run() {
+            try {
+                imports( );
+                save(file);
+            } catch (HongsException e) {
+                throw e.toExpedient( );
+            }
+        }
+      });
   }
 
   /**
@@ -456,36 +466,8 @@ public abstract class CoreSerial
     }
   }
 
-  /** 私有方法 **/
-
-  private ReadWriteLock lock(String flag)
-  {
-      ReadWriteLock rwlk;
-      Lock lock;
-
-      lock = LOCKR.readLock();
-      lock.lock();
-      try {
-          rwlk = LOCKS.get(flag);
-          if (null != rwlk) {
-              return  rwlk;
-          }
-      } finally {
-          lock.unlock();
-      }
-
-      lock = LOCKR.writeLock();
-      lock.lock();
-      try {
-          rwlk = new ReentrantReadWriteLock();
-          LOCKS.put(flag , rwlk);
-          return rwlk;
-      } finally {
-          lock.unlock();
-      }
+  private class Valids {
+      public boolean valids = true;
   }
-
-  private static final Map<String, ReadWriteLock> LOCKS = new HashMap(  );
-  private static final ReadWriteLock LOCKR = new ReentrantReadWriteLock();
 
 }

@@ -1,4 +1,4 @@
-package app.hongs.serv.module.Byname;
+package app.hongs.serv.module.byname;
 
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.VerifyInvoker;

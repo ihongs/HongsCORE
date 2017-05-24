@@ -1526,6 +1526,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      * !le 小于或等于
      * !gt 大于
      * !ge 大于或等于
+     * !rg 区间
      * !in 包含
      * !ni 不包含
      * 以下为 Lucene 特有的操作符:
@@ -1638,24 +1639,35 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         Object  n, x;
         boolean l, g;
 
-        if (m.containsKey(Cnst.GT_REL)) {
-            n = m.remove (Cnst.GT_REL); l = false;
-        } else
-        if (m.containsKey(Cnst.GE_REL)) {
-            n = m.remove (Cnst.GE_REL); l = true;
-        } else
-        {
-            n = null; l = true;
-        }
+        if (m.containsKey(Cnst.RG_REL)) {
+            Object[] a = Synt.asRange(m.remove(Cnst.RG_REL));
+            if (null  !=  a) {
+                n = a[0]; l = (boolean) a[2];
+                x = a[1]; g = (boolean) a[3];
+            } else {
+                n = null; l = false;
+                x = null; g = false;
+            }
+        } else {
+            if (m.containsKey(Cnst.GE_REL)) {
+                n = m.remove (Cnst.GE_REL); l = true ;
+            } else
+            if (m.containsKey(Cnst.GT_REL)) {
+                n = m.remove (Cnst.GT_REL); l = false;
+            } else
+            {
+                n = null; l = false;
+            }
 
-        if (m.containsKey(Cnst.LT_REL)) {
-            x = m.remove (Cnst.LT_REL); g = false;
-        } else
-        if (m.containsKey(Cnst.LE_REL)) {
-            x = m.remove (Cnst.LE_REL); g = true;
-        } else
-        {
-            x = null; g = true;
+            if (m.containsKey(Cnst.LE_REL)) {
+                x = m.remove (Cnst.LE_REL); g = true ;
+            } else
+            if (m.containsKey(Cnst.LT_REL)) {
+                x = m.remove (Cnst.LT_REL); g = false;
+            } else
+            {
+                x = null; g = false;
+            }
         }
 
         if (n != null || x != null) {

@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -36,17 +37,22 @@ public final class Synt {
     /**
      * 拆分字符: 空字符 或 +,;.:!?'" 及 同类全角标点
      */
-    private static final Pattern WEXP = Pattern.compile("\\s*[\\s\\+,;\\.:\\?!\'\"　＋，；．：？！]\\s*");
+    private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F]\\s*");
+
+    /**
+     * 区间参数: 同数学表达式 [min,max] (min,max) [min,max) 空则表示无限
+     */
+    private static final Pattern RNGP = Pattern.compile("^(\\(\\[)?([^,]+)?,([^,]+)?(\\]\\))?");
+
+    /**
+     * 视为假的字符串有: 0,n,f,no,false 和 空串
+     */
+    public  static final Pattern FAKE = Pattern.compile("^(|0|n|f|no|false)$", Pattern.CASE_INSENSITIVE);
 
     /**
      * 视为真的字符串有: 1,y,t,yes,true
      */
-    public  static final Pattern TRUE = Pattern.compile( "^(1|y|t|yes|true)$", Pattern.CASE_INSENSITIVE );
-
-    /**
-     * 视为假的字符串有: 0,n,f,no,false 和空串
-     */
-    public  static final Pattern FAKE = Pattern.compile("^(|0|n|f|no|false)$", Pattern.CASE_INSENSITIVE );
+    public  static final Pattern TRUE = Pattern.compile( "^(1|y|t|yes|true)$", Pattern.CASE_INSENSITIVE);
 
     /**
      * 取默认值(null 视为无值)
@@ -159,6 +165,8 @@ public final class Synt {
 
         if (Object[].class.isAssignableFrom(cls)) {
             if (val instanceof Object[] ) {
+            } else if (val instanceof List) {
+                val = ((List)val).toArray();
             } else if (val instanceof Set ) {
                 val = ((Set) val).toArray();
             } else if (val instanceof Map ) {
@@ -397,7 +405,7 @@ public final class Synt {
      * 与 declare(Object, T) 不同
      * 当数据为字符串时
      * 空串会返回空 Set
-     * 否则按此类字符拆分: 空字符或+,;.:!?'" 及同类全角标点
+     * 否则按此类字符拆分: 空字符或+,;.:!?'"及同类全角标点
      * @param val
      * @return
      */
@@ -418,8 +426,69 @@ public final class Synt {
     }
 
     /**
+     * 解析区间值
+     * 可将数学表达式 [min,max] (min,max) 等解析为 {min,max,gte,lte}
+     * 空串空值将被认为无限小或无限大
+     * 方括号可以省略, 格式不符返回空
+     * @param val
+     * @return
+     */
+    public static Object[] asRange(Object val) {
+        if (val == null) {
+            return null;
+        }
+        if (val instanceof String) {
+            String vs = declare(val, "");
+            Matcher m = RNGP.matcher(vs);
+            if (! m.matches( )) {
+                return null;
+            }
+            return new Object[] {
+                m.group(2),
+                m.group(3),
+              ! "(".equals(m.group(1)),
+              ! ")".equals(m.group(4))
+            };
+        }
+
+        /**
+         * 也可以直接给到数组
+         * 两位时默认为开区间
+         */
+        Object[] arr;
+        if (val instanceof Object[]) {
+            arr = (Object[ ]) val;
+        } else if (val instanceof List) {
+            arr = ((List)val).toArray();
+        } else {
+            return null;
+        }
+        switch (arr.length) {
+            case 4:
+                boolean lteq, gteq;
+                try {
+                    lteq = declare(arr[2], false);
+                    gteq = declare(arr[3], false);
+                }
+                catch (ClassCastException e) {
+                    throw new ClassCastException("Range array 2,3 must be boolean: "+arr);
+                }
+
+                return new Object[] {
+                    arr[0], arr[1], lteq, gteq
+                };
+            case 2:
+                return new Object[] {
+                    arr[0], arr[1], true, true
+                };
+
+            default:throw new ClassCastException("Range array size must be 2 or 4: "+arr);
+        }
+    }
+
+    /**
      * 快捷构建 List
-     * 不等同于 Arrays.asList, 
+     * 不等同于 Arrays.asList,
      * 可以在此 List 上增删改.
      * @param objs
      * @return
@@ -652,7 +721,7 @@ public final class Synt {
         Data.dumps(b);
         System.err.print("c = ");
         Data.dumps(c);
-        
+
         // defoult, defxult 的函数式特性测试
         String v;
         v = null;

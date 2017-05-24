@@ -58,6 +58,8 @@ public final class Cnst {
 
     public static final String GE_REL = "!ge"; // 大于或等于
 
+    public static final String RG_REL = "!rg"; // 区间
+
     public static final String IN_REL = "!in"; // 包含
 
     public static final String NI_REL = "!ni"; // 不包含    (Not in)

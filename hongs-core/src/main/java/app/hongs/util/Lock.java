@@ -23,57 +23,16 @@ public class Lock {
      * @param fun 操作
      */
     public static void locker(String key, Runnable fun) {
-        StLock lock = null;
-        java.util.concurrent.locks.Lock loxk;
+        StLock lock = getStLock(key);
+        inlock(lock, ST_LOCKR);
 
-        // 获取对应的锁
-        do {
-            loxk = ST_LOCKR. readLock( );
-            loxk.lock();
-            try {
-                lock = ST_LOCKS.get(key);
-            } finally {
-                loxk.unlock();
-            }
-            if (lock != null) {
-                break;
-            }
-
-            loxk = ST_LOCKR.writeLock( );
-            loxk.lock();
-            try {
-                lock = new StLock(/***/);
-                ST_LOCKS.put(key , lock);
-            } finally {
-                loxk.unlock();
-            }
-        } while (false );
-
-        loxk = ST_LOCKR.writeLock( );
-        loxk.lock();
-        try {
-            lock.xcount ++;
-        } finally {
-            loxk.unlock( );
-        }
-
-        // 锁住当前操作
         lock.lock.lock();
         try {
-            fun.run();
+            fun.run(   );
         } finally {
             lock.lock.unlock();
 
-            loxk = ST_LOCKR.writeLock( );
-            loxk.lock();
-            try {
-                if  (  lock.xcount <= 1) {
-                    ST_LOCKS.remove(key);
-                }
-                lock.xcount --;
-            } finally {
-                loxk.unlock( );
-            }
+            unlock(lock, ST_LOCKR, ST_LOCKS, key);
         }
     }
 
@@ -83,58 +42,16 @@ public class Lock {
      * @param fun 操作
      */
     public static void reader(String key, Runnable fun) {
-        RwLock lock = null;
-        java.util.concurrent.locks.Lock loxk;
+        RwLock lock = getRwLock(key);
+        inlock(lock, RW_LOCKR);
 
-        // 获取对应的锁
-        do {
-            loxk = RW_LOCKR. readLock( );
-            loxk.lock();
-            try {
-                lock = RW_LOCKS.get(key);
-            } finally {
-                loxk.unlock();
-            }
-            if (lock != null) {
-                break;
-            }
-
-            loxk = RW_LOCKR.writeLock( );
-            loxk.lock();
-            try {
-                lock = new RwLock(/***/);
-                RW_LOCKS.put(key , lock);
-            } finally {
-                loxk.unlock();
-            }
-        } while (false );
-
-        loxk = ST_LOCKR.writeLock( );
-        loxk.lock();
-        try {
-            lock.rcount ++;
-        } finally {
-            loxk.unlock( );
-        }
-
-        // 锁住当前操作
         lock.lock. readLock().lock();
         try {
             fun.run();
         } finally {
             lock.lock. readLock().unlock();
 
-            loxk = ST_LOCKR.writeLock( );
-            loxk.lock();
-            try {
-                if  (  lock.rcount <= 1
-                   &&  lock.wcount <= 0) {
-                    ST_LOCKS.remove(key);
-                }
-                lock.rcount --;
-            } finally {
-                loxk.unlock( );
-            }
+            unlock(lock, RW_LOCKR, RW_LOCKS, key);
         }
     }
 
@@ -144,76 +61,108 @@ public class Lock {
      * @param fun 操作
      */
     public static void writer(String key, Runnable fun) {
-        RwLock lock = null;
-        java.util.concurrent.locks.Lock loxk;
+        RwLock lock = getRwLock(key);
+        inlock(lock, RW_LOCKR);
 
-        // 获取对应的锁
-        do {
-            loxk = RW_LOCKR. readLock( );
-            loxk.lock();
-            try {
-                lock = RW_LOCKS.get(key);
-            } finally {
-                loxk.unlock();
-            }
-            if (lock != null) {
-                break;
-            }
-
-            loxk = RW_LOCKR.writeLock( );
-            loxk.lock();
-            try {
-                lock = new RwLock(/***/);
-                RW_LOCKS.put(key , lock);
-            } finally {
-                loxk.unlock();
-            }
-        } while (false );
-
-        loxk = ST_LOCKR.writeLock( );
-        loxk.lock();
-        try {
-            lock.wcount ++;
-        } finally {
-            loxk.unlock( );
-        }
-
-        // 锁住当前操作
         lock.lock.writeLock().lock();
         try {
             fun.run();
         } finally {
             lock.lock.writeLock().unlock();
 
-            loxk = ST_LOCKR.writeLock( );
-            loxk.lock();
-            try {
-                if  (  lock.wcount <= 1
-                   &&  lock.rcount <= 0) {
-                    ST_LOCKS.remove(key);
-                }
-                lock.wcount --;
-            } finally {
-                loxk.unlock( );
+            unlock(lock, RW_LOCKR, RW_LOCKS, key);
+        }
+    }
+
+    private static void inlock(MyLock lock, ReadWriteLock lockr) {
+        java.util.concurrent.locks.Lock loxk;
+
+        loxk = lockr.writeLock( );
+        loxk.lock();
+        try {
+            lock.cite ++ ;
+        } finally {
+            loxk.unlock();
+        }
+    }
+
+    private static void unlock(MyLock lock, ReadWriteLock lockr, Map locks, String key) {
+        java.util.concurrent.locks.Lock loxk;
+
+        loxk = lockr.writeLock( );
+        loxk.lock();
+        try {
+            lock.cite -- ;
+            if (lock.cite  <=  0) {
+                locks.remove(key);
             }
+        } finally {
+            loxk.unlock();
         }
     }
 
-    private static class StLock {
-        public final ReentrantLock lock;
-        public int xcount = 0;
-        public StLock() {
-            lock = new ReentrantLock( );
+    private static StLock getStLock(String key) {
+        java.util.concurrent.locks.Lock loxk;
+        StLock lock = null;
+
+        loxk = ST_LOCKR. readLock( );
+        loxk.lock();
+        try {
+            lock = ST_LOCKS.get(key);
+        } finally {
+            loxk.unlock();
         }
+        if (null != lock) {
+            return  lock ;
+        }
+
+        loxk = ST_LOCKR.writeLock( );
+        loxk.lock();
+        try {
+            lock = new StLock(/***/);
+            ST_LOCKS.put(key , lock);
+        } finally {
+            loxk.unlock();
+        }
+        return lock;
     }
 
-    private static class RwLock {
-        public final ReadWriteLock lock;
-        public int rcount = 0;
-        public int wcount = 0;
-        public RwLock() {
-            lock = new ReentrantReadWriteLock();
+    private static RwLock getRwLock(String key) {
+        java.util.concurrent.locks.Lock loxk;
+        RwLock lock = null;
+
+        loxk = RW_LOCKR. readLock( );
+        loxk.lock();
+        try {
+            lock = RW_LOCKS.get(key);
+        } finally {
+            loxk.unlock();
         }
+        if (null != lock) {
+            return  lock ;
+        }
+
+        loxk = RW_LOCKR.writeLock( );
+        loxk.lock();
+        try {
+            lock = new RwLock(/***/);
+            RW_LOCKS.put(key , lock);
+        } finally {
+            loxk.unlock();
+        }
+        return lock;
+    }
+
+    private static class MyLock {
+        public int cite = 0;
+    }
+
+    private static class StLock extends MyLock {
+        public final ReentrantLock lock = new ReentrantLock();
+    }
+
+    private static class RwLock extends MyLock {
+        public final ReadWriteLock lock = new ReentrantReadWriteLock();
     }
 
 }

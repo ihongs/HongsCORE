@@ -10,16 +10,19 @@ import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
+
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Collection;
 import java.util.Comparator;
+import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.ScoreDoc;
@@ -34,47 +37,52 @@ import org.apache.lucene.search.IndexSearcher;
 public class SearchHelper {
 
     private final LuceneRecord that;
-    private Map<String, Map<String, String>> enums = null;
-    private Map<String, Map<String, String>> forks = null;
+
+    private static final Set<String> ENUM_TYPES;
+    private static final Set<String> FORK_TYPES;
+    static {
+        ENUM_TYPES = new HashSet();
+        FORK_TYPES = new HashSet();
+        FORK_TYPES.add(  "fork"  );
+        ENUM_TYPES.add(  "enum"  );
+        ENUM_TYPES.add(  "date"  );
+        ENUM_TYPES.add( "number" );
+
+        // jdk 1.7 加上这个后排序不会报错
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
+    }
 
     public SearchHelper(LuceneRecord that) {
         this.that = that;
     }
 
-    public LuceneRecord getRecord() {
+    public final LuceneRecord getRecord( ) {
         return that;
-    }
-
-    public void setEnums(Map dict) {
-        enums = dict;
-    }
-
-    public void setForks(Map dict) {
-        forks = dict;
     }
 
     /**
      * 通过表单配置设置枚举数据(及关联关系)
+     * @param info
      * @param conf
      * @param form
      * @param md 1 绑定枚举, 2 绑定关联, 3 全绑定
      * @throws HongsException
      */
-    public void setLinks(String conf, String form, byte md) throws HongsException {
+    public void addLabel(Map info, byte md, String conf, String form) throws HongsException {
         if (1 != (1 & md) && 2 != (2 & md)) {
             return;
         }
-        if (enums == null) {
-            enums = new HashMap();
-        }
-        if (forks == null) {
-            forks = new HashMap();
-        }
-        Map<String, Map> fs = FormSet.getInstance(conf ).getForm(form );
+
+        Map<String, Map<String, String>> enums = new HashMap();
+        Map<String, Map<String, String>> forks = new HashMap();
+        Map<String, Map   > fs = FormSet.getInstance(conf).getForm ( form );
+        Map<String, String> ts = FormSet.getInstance().getEnum("__types__");
+
         for(Map.Entry<String, Map> et : fs.entrySet()) {
             Map    fc = et.getValue();
             String fn = et.getKey(  );
-            if (1 == (1 & md) && "enum".equals(fc.get("__type__"))) {
+            String ft = ts.get((String) fc.get("__type__"));
+            if (1 == (1 & md) && ENUM_TYPES.contains( ft )) {
                 String xn = (String) fc.get("enum");
                 String xc = (String) fc.get("conf");
                 if (xn == null || "".equals(xn)) xn = fn  ;
@@ -82,10 +90,12 @@ public class SearchHelper {
                 Map xe = FormSet.getInstance(xc).getEnumTranslated(xn);
                 enums.put(fn, xe);
             } else
-            if (2 == (2 & md) && "fork".equals(fc.get("__type__"))) {
+            if (2 == (2 & md) && FORK_TYPES.contains( ft )) {
                 forks.put(fn, fc);
             }
         }
+
+        addLabel(info, enums, forks);
     }
 
     /**
@@ -93,9 +103,14 @@ public class SearchHelper {
      * 此方法通过 addEnums,addForks 来执行具体的关联操作
      * 请预先使用 setEnums,setForks 或 setLinks 设置关联
      * @param info 为通过 counts 得到的 info
+     * @param enums
+     * @param forks
      * @throws HongsException
      */
-    public void addNames(Map info) throws HongsException {
+    public void addLabel(Map info,
+            Map<String, Map<String, String>> enums,
+            Map<String, Map<String, String>> forks)
+            throws HongsException {
         Iterator<Map.Entry> it = info.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = it.next( );
@@ -104,7 +119,7 @@ public class SearchHelper {
                 continue;
             }
 
-            List<List> ls = (List) lo;
+            List<Map> ls = (List) lo;
             String fn = Synt.asserts(et.getKey() , "" );
 
             if (enums != null && enums.containsKey(fn)) {
@@ -113,9 +128,10 @@ public class SearchHelper {
             if (forks != null && forks.containsKey(fn)) {
                 addForks(ls, forks.get(fn), fn);
             } else {
-                for ( List lx  :  ls ) {
-                    if (lx.size() < 3) {
-                        lx.add (lx.get(1));
+                // 没有对应的枚举表则用值来补全
+                for(Map lx :ls) {
+                    if (lx.containsKey("label")) {
+                        lx.put("label",lx.get("value"));
                     }
                 }
             }
@@ -128,8 +144,8 @@ public class SearchHelper {
      * @param es
      * @param fn
      */
-    protected void addEnums(List<List> ls, Map es, String fn) {
-        for ( List lx : ls) {
+    protected void addEnums(List<Map> ls, Map es, String fn) {
+        for ( Map  lx : ls) {
             String lv = (String) lx.get(1);
             if (lv != null) {
                 lv  = (String) es.get(lv ); // 得到标签
@@ -140,7 +156,7 @@ public class SearchHelper {
             if (lv == null) {
                 continue;
             }
-            lx.add( lv );
+            lx.put("label", lv);
         }
     }
 
@@ -151,7 +167,7 @@ public class SearchHelper {
      * @param fn
      * @throws HongsException
      */
-    protected void addForks(List<List> ls, Map fs, String fn) throws HongsException {
+    protected void addForks(List<Map> ls, Map fs, String fn) throws HongsException {
         String at = (String) fs.get("data-at");
         String vk = (String) fs.get("data-vk");
         String tk = (String) fs.get("data-tk");
@@ -164,9 +180,9 @@ public class SearchHelper {
 
         // 映射关系
         Map<String, List> lm = new HashMap();
-        for ( List lx : ls) {
+        for ( Map lx : ls) {
             String lv = (String) lx.get( 1 );
-            List<List>  lw = lm.get(lv);
+            List<Map>  lw = lm.get(lv);
             if (lw == null) {
                 lw =  new ArrayList(  );
                 lm.put(lv , lw);
@@ -211,11 +227,11 @@ public class SearchHelper {
         for ( Map  ro : lz) {
             String lv = Synt.declare(ro.get(vk), "");
             String lt = Synt.declare(ro.get(tk), "");
-            List<List>  lw = lm.get (lv);
-            if (lw != null) {
-                for ( List lx : lw) {
-                    lx.add(lt);
-                }
+
+            List<Map> lw = lm.get(lv);
+            if  (  null != lw)
+            for (Map  lx : lw) {
+                lx.put ( "label", lt);
             }
         }
     }
@@ -240,7 +256,7 @@ public class SearchHelper {
         Map<String, Map<String, Integer>> countz = new HashMap( );
         Map<String, Set<String>> countx  =  new HashMap();
 
-        //** 整理代统计的数据 **/
+        //** 整理待统计的数据 **/
 
         if (cntz != null && !cntz.isEmpty()) {
             Map<String, Map> fields = that.getFields();
@@ -289,26 +305,36 @@ public class SearchHelper {
         cxts.addAll(counts.keySet());
         cxts.addAll(countz.keySet());
 
-        // 条件中的统计值也要作为统计项
-        for(String k : cxts) {
-            Set vs  =  Synt.declare(rd.get(k), Set.class);
-            if (vs !=  null) {
-                Map<String, Integer> vz = countz.get( k );
-                if (vz == null) {
-                    vz = new HashMap();
-                    countz.put(k , vz);
-                }
-                Set vx = countx.get(k);
-                for(Object v : vs) {
-                    if (vx == null || ! vx.contains( v )) {
-                        vz.put(v.toString(), 0);
-                    }
-                }
-            }
-        }
+        /**
+         * 根据请求数据进行综合判断,
+         * 如果字段已经作为过滤条件,
+         * 则此字段的统计需单独进行,
+         * 且需抛开此字段的过滤数据.
+         *
+         * 例如某数据有一个地区字段且每条记录只能有一个地区,
+         * 如果没有以下处理则选某地后其他未选地区数量将为零.
+         *
+         * 最终结果类似 LinkedIn 的筛选
+         */
 
         for(String k : cxts) {
-            if (! rd.containsKey(k)) {
+            Set    vs = null;
+            Object vo = rd.get(k );
+            if (vo instanceof Map) {
+                Map vm = (Map) vo ;
+                if (vm.containsKey(Cnst.EQ_REL)) {
+                    vs = Synt.declare(vm.get(Cnst.EQ_REL), Set.class);
+                } else
+                if (vm.containsKey(Cnst.IN_REL)) {
+                    vs = Synt.declare(vm.get(Cnst.IN_REL), Set.class);
+                }
+            } else {
+                if (!"".equals(vo)) {
+                    vs = Synt.declare(rd.get(k), Set.class);
+                }
+            }
+
+            if (vs == null) {
                 if (counts.containsKey(k)) {
                     counts2.put(k, counts.get(k));
                 }
@@ -319,23 +345,37 @@ public class SearchHelper {
                     countx2.put(k, countx.get(k));
                 }
             } else {
-                countz3.clear();
+                Map<String, Integer> va = counts.get(k);
+                Map<String, Integer> vz = countz.get(k);
+                Set<String         > vx = countx.get(k);
+
                 counts3.clear();
+                countz3.clear();
                 countx3.clear();
 
-                if (counts.containsKey(k)) {
-                    counts3.put(k, counts.get(k));
+                if (va != null) {
+                    counts3.put(k, va);
                 }
-                if (countz.containsKey(k)) {
-                    countz3.put(k, countz.get(k));
+                if (vx != null) {
+                    countx3.put(k, vx);
                 }
-                if (countx.containsKey(k)) {
-                    countx3.put(k, countx.get(k));
+                if (vz != null) {
+                    countz3.put(k, vz);
+                } else {
+                    vz = new HashMap();
+                    countz3.put(k, vz);
+                }
+
+                for(Object v : vs) {
+                    String s = v.toString();
+                    if (vx == null || !vx.contains(s)) {
+                        vz.put( s, 0 );
+                    }
                 }
 
                 Map xd = new HashMap();
                 xd.putAll(rd);
-                xd.remove(k );
+                xd.remove( k);
                 counts(xd, counts3, countz3, countx3, reader, finder);
             }
         }
@@ -379,12 +419,12 @@ public class SearchHelper {
         }
 
         for (Map.Entry<String, List<Map.Entry<String, Integer>>> et : cntlst.entrySet()) {
-            List<List> a = new ArrayList();
+            List<Map> a = new ArrayList();
             for (Map.Entry<String, Integer> e : et.getValue()) {
-                 List  b = new ArrayList();
-                b.add(e.getValue() );
-                b.add(e.getKey(  ) );
+                 Map  b = new HashMap(  );
                 a.add(b);
+                b.put("value", e.getKey(  ));
+                b.put("count", e.getValue());
             }
             cnts.put(et.getKey(), a);
         }
@@ -392,8 +432,11 @@ public class SearchHelper {
         return resp;
     }
 
-    private int counts(Map rd, Map<String, Map<String, Integer>> counts, Map<String, Map<String, Integer>> countz, Map<String, Set<String>> countx,
-    IndexReader reader, IndexSearcher finder) throws HongsException {
+    private int counts(Map rd,
+            Map<String, Map<String, Integer>> counts,
+            Map<String, Map<String, Integer>> countz,
+            Map<String, Set<String         >> countx,
+            IndexReader reader, IndexSearcher finder) throws HongsException {
         int total = 0;
 
         try {
@@ -413,8 +456,8 @@ public class SearchHelper {
 
                         for (Map.Entry<String, Map<String, Integer>> et : countz.entrySet()) {
                             String k = et.getKey();
-                            Map<String, Integer> cntc = et.getValue();
                             String[] vals = doc.getValues(k);
+                            Map<String, Integer> cntc = et.getValue();
 
                             for (String val: vals) {
                                 if (cntc.containsKey(val)) {
@@ -425,8 +468,8 @@ public class SearchHelper {
 
                         for (Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
                             String k = et.getKey();
-                            Map<String, Integer> cntc = et.getValue();
                             String[] vals = doc.getValues(k);
+                            Map<String, Integer> cntc = et.getValue();
                             Set<String> cntx = countx.get(k);
                             Map<String, Integer> cntu = countz.get(k);
                             Set<String> cntv = cntu != null ? cntu.keySet() : null;
@@ -458,6 +501,239 @@ public class SearchHelper {
         return total;
     }
 
+    public Map statis(Map rd) throws HongsException {
+        IndexSearcher finder = that.getFinder();
+        IndexReader   reader = that.getReader();
+
+        Map  resp = new HashMap();
+        Map  cnts = new HashMap();
+        resp.put( "info" , cnts );
+
+        Set<String> cntz = Synt.asTerms(rd.get("cnt"));
+        Map<String, Map<Minmax, Cntsum>> counts = new HashMap();
+        Map<String, Set<Minmax        >> countx = new HashMap();
+
+        //** 整理待统计的数据 **/
+
+        if (cntz != null && !cntz.isEmpty()) {
+            Map<String, Map> fields = that.getFields();
+            for(String   x : cntz) {
+                String[] a = x.split(":", 2);
+                if (a[0].startsWith ("-")) {
+                    a[0] = a[0].substring(1);
+                    if (!fields.containsKey(a[0])) {
+                        throw new HongsException.Common("Field "+a[0]+" not exists");
+                    }
+                    if (a.length > 1) {
+                        if (!countx.containsKey(a[0])) {
+                            countx.put(a[0], new HashSet());
+                        }
+
+                        Minmax mm = new Minmax(a[1]);
+                        countx.get( a[0] ).add( mm );
+                    }
+                } else {
+                    if (!fields.containsKey(a[0])) {
+                        throw new HongsException.Common("Field "+a[0]+" not exists");
+                    }
+                    if (a.length > 1) {
+                        if (!counts.containsKey(a[0])) {
+                            counts.put(a[0], new HashMap());
+                        }
+
+                        Minmax mm = new Minmax(a[1]);
+                        Cntsum cs = new Cntsum(    );
+                        counts.get(a[0]).put(mm, cs);
+                    } else {
+                        if (!counts.containsKey(a[0])) {
+                            counts.put(a[0], new HashMap());
+                        }
+
+                        Minmax mm = null;
+                        Cntsum cs = new Cntsum(    );
+                        counts.get(a[0]).put(mm, cs);
+                    }
+                }
+            }
+        }
+
+        //** 分块统计数据 **/
+
+        Map<String, Map<Minmax , Cntsum>> counts2 = new HashMap();
+        Map<String, Set<Minmax         >> countx2 = new HashMap();
+
+        Map<String, Map<Minmax , Cntsum>> counts3 = new HashMap();
+        Map<String, Set<Minmax         >> countx3 = new HashMap();
+
+        Set<String> cxts = counts.keySet();
+
+        /**
+         * 类似 counts 对应部分的逻辑
+         */
+
+        for(String k : cxts) {
+            Minmax mm = null;
+            Object vo = rd.get(k );
+            if (vo instanceof Map) {
+                Map vm = (Map) vo ;
+                if (vm.containsKey(Cnst.RG_REL)) {
+                    mm = new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), ""));
+                } else
+                if (vm.containsKey(Cnst.EQ_REL)) {
+                    mm = new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), 0D));
+                }
+            } else {
+                if (!"".equals(vo) && !( vo instanceof Collection )) {
+                    mm = new Minmax(Synt.declare(vo, 0D));
+                }
+            }
+
+            if (mm == null) {
+                if (counts.containsKey(k)) {
+                    counts2.put(k, counts.get(k));
+                }
+                if (countx.containsKey(k)) {
+                    countx2.put(k, countx.get(k));
+                }
+            } else {
+                Map<Minmax , Cntsum> vz = counts.get(k);
+                Set<Minmax         > vx = countx.get(k);
+
+                counts3.clear();
+                countx3.clear();
+
+                if (vx != null) {
+                    countx3.put(k, vx);
+                }
+                if (vz != null) {
+                    counts3.put(k, vz);
+                } else {
+                    vz = new HashMap();
+                    counts3.put(k, vz);
+                }
+
+                if (vx == null || !vx.contains(mm)) {
+                    vz.put(mm, new Cntsum());
+                }
+
+                Map xd = new HashMap();
+                xd.putAll(rd);
+                xd.remove( k);
+                statis(xd, counts3, countx3, reader, finder);
+            }
+        }
+
+        int z = statis(rd, counts2, countx2, reader, finder);
+        cnts.put("__total__", z);
+
+        //** 排序统计数据 **/
+
+        Map<String, List<Map.Entry<Minmax, Cntsum>>> cntlst = new HashMap();
+
+        for (Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
+            String k = et.getKey();
+            List<Map.Entry<Minmax, Cntsum>> l = new ArrayList(et.getValue().entrySet());
+            List<Map.Entry<Minmax, Cntsum>> a = cntlst.get(k);
+            if ( null != a ) {
+                l.addAll(a );
+            }
+            Collections.sort( l, new Sortes());
+            cntlst.put(k, l);
+        }
+
+        for (Map.Entry<String, List<Map.Entry<Minmax, Cntsum>>> et : cntlst.entrySet()) {
+            List<Map>  a = new ArrayList();
+            for (Map.Entry<Minmax, Cntsum> e : et.getValue()) {
+                 Map   b = new HashMap();
+                Cntsum c = e.getValue( );
+                Minmax m = e.getKey(   );
+                String k = m != null ? m.toString() : null;
+                a.add( b );
+                b.put("value", k/**/);
+                b.put("label", c.cnt);
+                b.put( "sum" , c.sum);
+                if (c.cnt == 0) {
+                    b.put("min" , 0 );
+                    b.put("max" , 0 );
+                } else {
+                    b.put("min" , c.min);
+                    b.put("max" , c.max);
+                }
+            }
+            cnts.put(et.getKey(), a );
+        }
+
+        return resp;
+    }
+
+    private int statis(Map rd,
+            Map<String, Map<Minmax , Cntsum>> counts,
+            Map<String, Set<Minmax         >> countx,
+            IndexReader reader, IndexSearcher finder) throws HongsException {
+        int total = 0;
+
+        try {
+            Query q = that.getQuery(rd);
+
+            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                CoreLogger.debug("SearchRecord.counts: "+q.toString());
+            }
+
+            TopDocs docz = finder.search(q, 500);
+            while ( docz.totalHits > 0) {
+                ScoreDoc[] docs = docz.scoreDocs;
+
+                if (!counts.isEmpty()) {
+                    for(ScoreDoc dox : docs) {
+                        Document doc = reader.document(dox.doc);
+
+                        for (Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
+                            String k = et.getKey();
+                            Map<Minmax, Cntsum > cntc = et.getValue();
+                            Set<Minmax> cntx = countx.get(k);
+                            String[] vals = doc.getValues(k);
+
+                            F1: for (String val: vals) {
+                                double v = Synt.asserts(val, 0D);
+                                F2: for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
+                                    Minmax m = mc.getKey(  );
+
+                                    /*
+                                     * 键为空表示此为总计行
+                                     * 总计需跳过忽略的取值
+                                     */
+                                    if (m != null) {
+                                        if (!m.covers(v)) {
+                                            continue  F2;
+                                        }
+                                    } else
+                                    for (Minmax w : cntx) {
+                                        if ( w.covers(v)) {
+                                            continue  F1;
+                                        }
+                                    }
+
+                                    mc.getValue().add(v);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                if (docs.length > 0) {
+                    docz = finder.searchAfter(docs[docs.length - 1], q, 500);
+                    total += docs.length;
+                } else {
+                    break;
+                }
+            }
+        } catch (IOException ex) {
+            throw new HongsException.Common(ex);
+        }
+
+        return total;
+    }
+
     private static class Sorted implements Comparator<Map.Entry<String, Integer>> {
         @Override
         public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
@@ -466,8 +742,90 @@ public class SearchHelper {
         }
     }
 
-    static {
-        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true"); // jdk1.7加上这个后排序不会报错
+    private static class Sortes implements Comparator<Map.Entry<Minmax, Cntsum >> {
+        @Override
+        public int compare(Map.Entry<Minmax, Cntsum > o1, Map.Entry<Minmax, Cntsum > o2) {
+            // 区间为空的表示总计, 确保它总是在第一个
+            Minmax k1 = o1.getKey(  ) , k2 = o2.getKey(  );
+            if (k1 == null) return  1;
+            if (k2 == null) return -1;
+
+            Cntsum x1 = o1.getValue() , x2 = o2.getValue();
+            return x1.cnt != x2.cnt ? ( x2.cnt > x2.cnt ? 1 : -1)
+                : (x1.sum != x2.sum ? ( x2.sum > x1.sum ? 1 : -1) : 0);
+        }
+    }
+
+    private static class Cntsum {
+        public int    cnt = 0;
+        public double sum = 0;
+        public double min = Double.MIN_VALUE;
+        public double max = Double.MAX_VALUE;
+
+        public void add(double v) {
+            cnt += 1;
+            sum += v;
+            if (min > v) min = v;
+            if (max < v) max = v;
+        }
+    }
+
+    private static class Minmax {
+        public double min = Double.MIN_VALUE;
+        public double max = Double.MAX_VALUE;
+        public boolean le = false;
+        public boolean ge = false;
+
+        public Minmax(double n) {
+            min = max = n;
+        }
+
+        public Minmax(String s) {
+            Object[] a = Synt.asRange(s);
+            if (a[0] != null) min = Synt.declare(a[0], 0D);
+            if (a[1] != null) max = Synt.declare(a[1], 0D);
+            le = (boolean) a[2];
+            ge = (boolean) a[3];
+        }
+
+        @Override
+        public String toString() {
+            StringBuilder sb = new StringBuilder();
+            sb.append(le ? "(" : "[");
+            sb.append(min != Double.MIN_VALUE ? min : "");
+            sb.append(",");
+            sb.append(max != Double.MAX_VALUE ? max : "");
+            sb.append(le ? ")" : "]");
+            return sb.toString();
+        }
+
+        @Override
+        public int hashCode() {
+            return toString().hashCode( );
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (!(o instanceof Minmax)) {
+                return false;
+            }
+            Minmax m = (Minmax) o;
+            return m.min == min && m.max == max;
+        }
+
+        public boolean covers(double n) {
+            if (le) { if (n >  max) {
+                return false;
+            }} else { if (n >= max) {
+                return false;
+            }}
+            if (ge) { if (n <  min) {
+                return false;
+            }} else { if (n <= min) {
+                return false;
+            }}
+            return true;
+        }
     }
 
 }

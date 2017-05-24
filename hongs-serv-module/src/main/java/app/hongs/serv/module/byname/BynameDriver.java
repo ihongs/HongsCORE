@@ -1,4 +1,4 @@
-package app.hongs.serv.module.Byname;
+package app.hongs.serv.module.byname;
 
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;

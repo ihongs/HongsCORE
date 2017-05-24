@@ -1,4 +1,4 @@
-package app.hongs.serv.module.Byname;
+package app.hongs.serv.module.byname;
 
 import app.hongs.Cnst;
 import app.hongs.util.Synt;
@@ -26,7 +26,7 @@ public class BynameHelper {
             Map.Entry et = (Map.Entry) ot;
             Map    c = (Map ) et.getValue();
             String n = (String) et.getKey();
-            String a = (String) c.get("byname");
+            String a = (String) c.get("name");
             if (a != null && a.length() != 0) {
                 maping.put(a, n);
                 mapout.put(n, a);

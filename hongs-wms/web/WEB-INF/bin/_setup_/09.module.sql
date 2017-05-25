@@ -64,7 +64,7 @@ CREATE TABLE `a_module_data` (
   `data` LONGTEXT NOT NULL,
   `ctime` UNSIGNED INT(10) DEFAULT NULL,
   `etime` UNSIGNED INT(10) DEFAULT NULL,
-  `rtime` UNSIGNED INT(10) DEFAULT NULL,
+  `rtime` UNSIGNED INT(10) DEFAULT NULL, /* 从哪个时间点恢复 */
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`,`form_id`,`etime`),
   FOREIGN KEY (`form_id`) REFERENCES `a_module_form` (`id`) ON DELETE CASCADE
@@ -73,3 +73,4 @@ CREATE TABLE `a_module_data` (
 CREATE INDEX `IK_a_module_data_state` ON `a_module_data` (`state`);
 CREATE INDEX `IK_a_module_data_ctime` ON `a_module_data` (`ctime`);
 CREATE INDEX `IK_a_module_data_etime` ON `a_module_data` (`etime`);
+CREATE INDEX `IK_a_module_data_rtime` ON `a_module_data` (`rtime`);

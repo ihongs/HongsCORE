@@ -89,7 +89,8 @@ public class Form extends Model {
             top.put("__name__", "id");
             top.put("__disp__", "ID");
             top.put("__type__", "hidden");
-
+            top.put("listable","yes");
+/*
             // 增加创建用户
             top = new HashMap();
             flds.add(2, top);
@@ -98,8 +99,8 @@ public class Form extends Model {
             top.put("default" , "=$"+Cnst.UID_SES);
             top.put("default-create","yes");
             top.put("default-always","yes");
-            top.put("hide.in.form" , "yes");
-            top.put("hide.in.list" , "yes");
+            top.put("editable", "no");
+            top.put("listable", "no");
 
             // 增加修改用户
             top = new HashMap();
@@ -109,33 +110,33 @@ public class Form extends Model {
             top.put("default" , "=$"+Cnst.UID_SES);
             top.put("default-create", "no");
             top.put("default-always","yes");
-            top.put("hide.in.form" , "yes");
-            top.put("hide.in.list" , "yes");
+            top.put("editable", "no");
+            top.put("listable", "no");
 
             // 增加创建时间
             top = new HashMap();
-            flds.add(4, top);
+            flds.add(top);
             top.put("__name__", "ctime" );
             top.put("__type__", "datetime");
             top.put(  "type"  ,"timestamp");
             top.put("default" , "=%now" );
             top.put("default-create","yes");
             top.put("default-always","yes");
-            top.put("hide.in.form" , "yes");
-            top.put("hide.in.list" , "yes");
+            top.put("editable", "no");
+            top.put("listable","yes");
 
-            // 增加操作时间
+            // 增加修改时间
             top = new HashMap();
-            flds.add(4, top);
+            flds.add(top);
             top.put("__name__", "mtime" );
             top.put("__type__", "datetime");
             top.put(  "type"  ,"timestamp");
             top.put("default" , "=%now" );
             top.put("default-create", "no");
             top.put("default-always","yes");
-            top.put("hide.in.form" , "yes");
-            top.put("hide.in.list" , "yes");
-
+            top.put("editable", "no");
+            top.put("listable","yes");
+*/
             conf = Data.toString(flds);
             rd.put("conf", conf);
         }

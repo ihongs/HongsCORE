@@ -88,7 +88,7 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.html;*.css;*.js;*.png;*.gif;*.jpg;*.bmp
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp
             </param-value>
         </init-param>
     </filter>
@@ -127,7 +127,7 @@
                 /manage/login.html;
                 /manage/sign/create.act;
                 /manage/sign/delete.act;
-                *.html;*.css;*.js;*.png;*.gif;*.jpg;*.bmp
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp
             </param-value>
         </init-param>
     </filter>

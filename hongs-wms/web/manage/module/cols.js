@@ -188,8 +188,8 @@ function saveConf(modal, field) {
  */
 function gainFlds(fields, area) {
     area.find(".form-group").each(function() {
-        var label = $(this).find("label span:first");
-        var input = $(this).find("input,select,textarea,ul[data-fn]");
+        var label = $(this).find("label span:first,legend span:first");
+        var input = $(this).find("input,select,textarea,ul[data-fn]" );
         var disp  = label.text();
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
@@ -256,16 +256,18 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (suf) {
             name  = name + suf;
         }
-        if (name == "cuid" || name == "ctime"
-        ||  name == "muid" || name == "mtime") {
-            continue; // 保留字段不可编辑
+        var group = getTypeItem(wdgt, name);
+        if (group.size() == 0) {
+            group = getTypeItem(wdgt, type);
         }
-        var group = getTypeItem(wdgt, type);
+        if (group.size() == 0) {
+            continue;
+        }
         if (type == "datetime" || type == "time" ) {
             setItemType(group.find("input"), type);
         }
-        var label = group.find("label span:first");
-        var input = group.find("input,select,textarea,ul[data-fn]");
+        var label = group.find("label span:first,legend span:first");
+        var input = group.find("input,select,textarea,ul[data-fn]" );
         label.text(disp);
         if (input.is( "[data-fn]" )) {
             input.attr("data-fn", name);
@@ -343,6 +345,16 @@ $.fn.hsCols = function() {
 
     // 添加字段
     widgets.on("click", ".glyphicon-plus-sign", function() {
+        // 预定字段不能重复添加
+        var item = $(this).closest(".form-group");
+        if (item.is(".base-field")) {
+            var name = item.attr("data-type");
+            if (targetz.find("[data-type="+name+"]").size() > 0) {
+                $.hsWarn("预定字段不可重复添加, 请检查已设字段");
+                return;
+            }
+        }
+
         index = index + 1;
         field = $(this).closest(".form-group").clone();
         field.find("[name=-]").attr("name", "-"+index);

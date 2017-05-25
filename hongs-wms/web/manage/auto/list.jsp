@@ -11,6 +11,7 @@
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.util.Set"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
@@ -26,13 +27,17 @@
     _action = Synt.declare(request.getAttribute("list.action"), "list");
 
     // 获取字段集合
-    Map        flds;
     CoreLocale lang;
+    Map        flds;
+    Set        lsts = null;
+    Set        srts = null;
     do {
         try {
             Mview view = new Mview(DB.getInstance(_module).getTable(_entity));
-            flds = view.getFields();
             lang = view.getLang(  );
+            flds = view.getFields();
+            lsts = Synt.asTerms(view.listable);
+            srts = Synt.asTerms(view.sortable);
             break;
         } catch (HongsException ex) {
             if (ex.getErrno() != 0x1039) {
@@ -44,10 +49,12 @@
             }
         }
 
-        FormSet form = FormSet.hasConfFile(_module+"/"+_entity)
-                     ? FormSet.getInstance(_module+"/"+_entity)
+        FormSet form = FormSet.hasConfFile(_module +"/"+ _entity)
+                     ? FormSet.getInstance(_module +"/"+ _entity)
                      : FormSet.getInstance(_module);
         flds = form.getFormTranslated(_entity );
+        lsts = Synt.asTerms(Dict.getDepth(flds, "@", "listable"));
+        srts = Synt.asTerms(Dict.getDepth(flds, "@", "sortable"));
         lang = CoreLocale.getInstance().clone();
         lang.loadIgnrFNF(_module);
         lang.loadIgnrFNF(_module +"/"+ _entity);
@@ -105,28 +112,30 @@
                     Map.Entry et = (Map.Entry)it.next( );
                     Map     info = (Map ) et.getValue( );
                     String  name = (String) et.getKey( );
+                    String  type = (String) info.get("__type__");
+                    String  disp = (String) info.get("__disp__");
 
-                    if ("@".equals(name)
-                    ||  Synt.declare(info.get("hide.in.list"), false)) {
-                        continue ;
+                    if ("@".equals(name) || "hidden".equals(type)) {
+                        continue;
+                    }
+
+                    if ( (lsts != null
+                    && !lsts.contains(name) )
+                    || !Synt.declare(info.get("listable"), false)) {
+                        continue;
                     }
 
                     String ob = "";
                     String oc = "";
-                    if (Synt.declare(info.get("sortable"), false)) {
+                    if ( (srts != null
+                    &&  srts.contains(name) )
+                    ||  Synt.declare(info.get("sortable"), false)) {
                         ob = (String)info.get("data-ob" );
                         if (ob == null) {
                             ob = name;
                         }
                         ob = "data-ob=\""+ob+"\"";
                         oc = "sortable";
-                    }
-
-                    String type = (String) info.get("__type__");
-                    String disp = (String) info.get("__disp__");
-
-                    if ("hidden".equals(type)) {
-                        continue;
                     }
                 %>
                 <%if ("number".equals(type) || "range".equals(type)) {%>

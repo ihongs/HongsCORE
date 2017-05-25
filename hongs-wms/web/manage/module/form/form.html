@@ -68,7 +68,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </legend>
-                    <input type="line" name="-" style="display: none;"/>
+                    <input type="line" name="-" style="display: none;" data-listable="no"/>
                 </div>
                 <div class="form-group" data-type="text">
                     <label class="control-label clearfix" style="display: block;">
@@ -162,6 +162,47 @@
                     </label>
                     <ul data-ft="_pick" data-fn="-"></ul>
                     <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/module/form/pick.html" data-vk="id" data-tk="name"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
+                </div>
+                <div class="form-group">
+                    <legend class="clearfix" data-valtype="text">
+                        <span>内置环境字段</span>
+                    </legend>
+                </div>
+                <div class="form-group base-field" data-type="ctime">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>创建时间</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="=%now" data-default-create="yes" data-default-always="yes" data-editable="no"/>
+                </div>
+                <div class="form-group base-field" data-type="mtime">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>修改时间</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="=%now" data-default-create="no" data-default-always="yes" data-editable="no"/>
+                </div>
+                <div class="form-group base-field" data-type="cuid">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>创建用户</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="invisible" type="fork" name="cuid" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-editable="no" data-at="manage/member/user/list.act" data-ak="user" data-vk="id" data-tk="name"/>
+                </div>
+                <div class="form-group base-field" data-type="muid">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>修改用户</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="invisible" type="fork" name="muid" data-default="=$uid" data-default-create="no" data-default-always="yes" data-editable="no" data-at="manage/member/user/list.act" data-ak="user" data-vk="id" data-tk="name"/>
                 </div>
             </form>
         </div>
@@ -421,6 +462,23 @@
                 </label>
                 <label>
                     <input type="checkbox" name="ul|data-fltrable" value="yes"/>筛选
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-ctime widget-pane-mtime">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="select|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name="select|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="select|data-fltrable" value="yes"/>筛选
                 </label>
             </div>
         </div>

@@ -29,13 +29,13 @@
     _action = Synt.declare(request.getAttribute("form.action"), "create");
 
     // 获取字段集合
-    Map        flds;
     CoreLocale lang;
+    Map        flds;
     do {
         try {
             Mview view = new Mview(DB.getInstance(_module).getTable(_entity));
-            flds = view.getFields();
             lang = view.getLang(  );
+            flds = view.getFields();
             break;
         } catch (HongsException ex) {
             if (ex.getErrno() != 0x1039) {
@@ -88,7 +88,7 @@
                 String  name = (String) et.getKey( );
 
                 if ("@".equals(name)
-                ||  Synt.declare(info.get("hide.in.form"), false)) {
+                || !Synt.declare(info.get("editable"), true)) {
                     continue ;
                 }
 
@@ -104,9 +104,13 @@
             %>
             <%if ("hidden".equals(type)) {%>
                 <input type="hidden" name="<%=name%>" value="<%="form_id".equals(name)?_entity:""%>"/>
+            <%} else if ("line".equals(type)) {%>
+                <legend class="form-group"><%=disp%></legend>
             <%} else if ("checkbag".equals(type)) {%>
-                <h3><%=disp%></h3>
-                <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>
+                <fieldset>
+                    <legend><%=disp%></legend>
+                    <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>
+                </fieldset>
             <%} else {%>
                 <div class="form-group">
                     <label class="control-label"><%=disp%></label>

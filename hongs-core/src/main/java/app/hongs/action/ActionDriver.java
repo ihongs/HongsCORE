@@ -189,8 +189,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             long time = System.currentTimeMillis() - Core.STARTS_TIME;
             CoreLogger.debug(new StringBuilder("...")
                 .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
+                .append("\r\n\tObjects     : ").append(core.toString())
                 .append("\r\n\tRuntime     : ").append(Tool.humanTime(time))
-                .append("\r\n\tObjects     : ").append(core.keySet().toString())
                 .toString());
         }
 
@@ -376,8 +376,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     .append("\r\n\tMethod      : ").append(req.getMethod( ))
                     .append("\r\n\tRemote      : ").append(getRealAddr(req))
                     .append("\r\n\tMember      : ").append(sid)
-                    .append("\r\n\tObjects     : ").append(core.keySet().toString())
-                    .append("\r\n\tRuntime     : ").append(Tool.humanTime(  time  ));
+                    .append("\r\n\tObjects     : ").append(core.toString( ))
+                    .append("\r\n\tRuntime     : ").append(Tool.humanTime( time ));
 
                 /**
                  * 显示请求报头及输入输出

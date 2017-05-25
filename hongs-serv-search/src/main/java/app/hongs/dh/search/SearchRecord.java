@@ -9,7 +9,6 @@ import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Lock;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;

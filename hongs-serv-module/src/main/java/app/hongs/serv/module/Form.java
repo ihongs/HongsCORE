@@ -89,7 +89,6 @@ public class Form extends Model {
             top.put("__name__", "id");
             top.put("__disp__", "ID");
             top.put("__type__", "hidden");
-            top.put("listable","yes");
 /*
             // 增加创建用户
             top = new HashMap();

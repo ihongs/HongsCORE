@@ -928,7 +928,7 @@ public class ActionHelper implements Cloneable
   /**
    * 输出内容
    * @param txt
-   * @param ctt Content-Type 定义, 如 txt/html
+   * @param ctt Content-Type 定义, 如 text/html
    * @param cst Content-Type 编码, 如 utf-8
    */
   public void print(String txt, String ctt, String cst)
@@ -1022,17 +1022,37 @@ public class ActionHelper implements Cloneable
               .getProperty ("core.act.call" , "callback") );
     }
 
+    // 默认的数据输出为格式为 JSON 和 JSONP
+    // 有指定回调函数名则使用 JSONP
+    // 当函数名以 top,parent,opener 开头表示以 frame,iframe 等方式提交
+    // 此情况下需将回调包裹上 HTML.
     try {
         if ( fun != null && fun.length() != 0 ) {
-            if ( ! this.response.isCommitted()) {
-                this.response.setCharacterEncoding("UTF-8");
-                this.response.setContentType("text/javascript" );
-            }
+            if (fun.startsWith(   "top.")
+            ||  fun.startsWith("parent.")
+            ||  fun.startsWith("opener.") ) {
+                if ( ! this.response.isCommitted()) {
+                    this.response.setCharacterEncoding("UTF-8");
+                    this.response.setContentType( "text/html" );
+                }
 
-             out.append(fun );
-             out.append("(" );
-            Data.append(out, this.responseData);
-             out.append(");");
+                out.append("<script type=\"text/javascript\">");
+                out.append( fun);
+                out.append("(" );
+                Data.append(out, this.responseData);
+                out.append(");");
+                out.append("</script>");
+            } else {
+                if ( ! this.response.isCommitted()) {
+                    this.response.setCharacterEncoding("UTF-8");
+                    this.response.setContentType("text/javascript");
+                }
+
+                out.append( fun);
+                out.append("(" );
+                Data.append(out, this.responseData);
+                out.append(");");
+            }
         } else {
             if ( ! this.response.isCommitted()) {
                 this.response.setCharacterEncoding("UTF-8");

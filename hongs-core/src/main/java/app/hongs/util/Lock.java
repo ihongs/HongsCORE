@@ -1,7 +1,10 @@
 package app.hongs.util;
 
+import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -18,21 +21,34 @@ public class Lock {
     private static final Map<String, RwLock> RW_LOCKS = new HashMap();
 
     /**
+     * 自启动一个定时器,
+     * 每隔一段时间清理,
+     * 默认为10分钟
+     */
+    static {
+        long time = Long.parseLong(System.getProperty(Lock.class.getName()+".cleans.period", "600000"));
+        new Timer(Lock.class.getName()+".cleans", true)
+        .schedule(new TimerTask() {
+            @Override
+            public void run() {
+                cleans();
+            }
+        } , time , time);
+    }
+
+    /**
      * 加锁
      * @param key 资源标识符
      * @param fun 操作
      */
     public static void locker(String key, Runnable fun) {
         StLock lock = getStLock(key);
-        inlock(lock, ST_LOCKR);
 
-        lock.lock.lock();
+        lock.lock(  );
         try {
-            fun.run(   );
+            fun.run();
         } finally {
-            lock.lock.unlock();
-
-            unlock(lock, ST_LOCKR, ST_LOCKS, key);
+            lock.unlock( );
         }
     }
 
@@ -43,15 +59,12 @@ public class Lock {
      */
     public static void reader(String key, Runnable fun) {
         RwLock lock = getRwLock(key);
-        inlock(lock, RW_LOCKR);
 
-        lock.lock. readLock().lock();
+        lock.lockr( );
         try {
             fun.run();
         } finally {
-            lock.lock. readLock().unlock();
-
-            unlock(lock, RW_LOCKR, RW_LOCKS, key);
+            lock.unlockr();
         }
     }
 
@@ -62,43 +75,86 @@ public class Lock {
      */
     public static void writer(String key, Runnable fun) {
         RwLock lock = getRwLock(key);
-        inlock(lock, RW_LOCKR);
 
-        lock.lock.writeLock().lock();
+        lock.lockw( );
         try {
             fun.run();
         } finally {
-            lock.lock.writeLock().unlock();
-
-            unlock(lock, RW_LOCKR, RW_LOCKS, key);
+            lock.unlockw();
         }
     }
 
-    private static void inlock(MyLock lock, ReadWriteLock lockr) {
+    /**
+     * 清理
+     */
+    public static void cleans() {
         java.util.concurrent.locks.Lock loxk;
 
-        loxk = lockr.writeLock( );
+        loxk = ST_LOCKR.writeLock();
         loxk.lock();
         try {
-            lock.cite ++ ;
-        } finally {
-            loxk.unlock();
-        }
-    }
-
-    private static void unlock(MyLock lock, ReadWriteLock lockr, Map locks, String key) {
-        java.util.concurrent.locks.Lock loxk;
-
-        loxk = lockr.writeLock( );
-        loxk.lock();
-        try {
-            lock.cite -- ;
-            if (lock.cite  <=  0) {
-                locks.remove(key);
+            Iterator<Map.Entry<String, StLock>> it = ST_LOCKS.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String , StLock> et = it.next();
+                StLock lock = et.getValue();
+                if (lock.cite <= 0) {
+                    it.remove();
+                }
             }
         } finally {
             loxk.unlock();
         }
+
+        loxk = RW_LOCKR.writeLock();
+        loxk.lock();
+        try {
+            Iterator<Map.Entry<String, RwLock>> it = RW_LOCKS.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String , RwLock> et = it.next();
+                RwLock lock = et.getValue();
+                if (lock.cite <= 0) {
+                    it.remove();
+                }
+            }
+        } finally {
+            loxk.unlock();
+        }
+    }
+
+    /**
+     * 摘要
+     * @return 摘要信息
+     */
+    public static String resume() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("ReentrantLock:\r\n");
+        Iterator<Map.Entry<String, StLock>> it = ST_LOCKS.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String , StLock> et = it.next();
+            String key  = et.getKey(  );
+            StLock lock = et.getValue();
+            sb.append(key)
+              .append(" => ")
+              .append(lock.cite)
+              .append("\r\n");
+        }
+
+        sb.append("\r\n");
+
+        sb.append("ReadWriteLock:\r\n");
+        Iterator<Map.Entry<String, RwLock>> jt = RW_LOCKS.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry<String , RwLock> et = jt.next();
+            String key  = et.getKey(  );
+            RwLock lock = et.getValue();
+            sb.append(key)
+              .append(" => ")
+              .append(lock.cite)
+              .append("\r\n");
+        }
+
+        return sb.toString( );
     }
 
     private static StLock getStLock(String key) {
@@ -153,16 +209,56 @@ public class Lock {
         return lock;
     }
 
-    private static class MyLock {
-        public int cite = 0;
-    }
-
-    private static class StLock extends MyLock {
+    private static class StLock {
         public final ReentrantLock lock = new ReentrantLock();
+        public int cite = 0;
+
+        public void lock() {
+            synchronized (this) {
+                cite ++;
+            }
+            lock.lock();
+        }
+
+        public void unlock() {
+            synchronized (this) {
+                cite --;
+            }
+            lock.unlock();
+        }
     }
 
-    private static class RwLock extends MyLock {
+    private static class RwLock {
         public final ReadWriteLock lock = new ReentrantReadWriteLock();
+        public int cite = 0;
+
+        public void lockr() {
+            synchronized (this) {
+                cite ++;
+            }
+            lock.readLock().lock();
+        }
+
+        public void unlockr() {
+            synchronized (this) {
+                cite --;
+            }
+            lock.readLock().unlock();
+        }
+
+        public void lockw() {
+            synchronized (this) {
+                cite ++;
+            }
+            lock.writeLock().lock();
+        }
+
+        public void unlockw() {
+            synchronized (this) {
+                cite --;
+            }
+            lock.writeLock().unlock();
+        }
     }
 
 }

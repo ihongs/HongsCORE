@@ -7,7 +7,7 @@ import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
-import app.hongs.dh.lucene.LuceneRecord;
+import app.hongs.dh.search.SearchRecord;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import org.apache.lucene.document.Document;
  * 数据存储模型
  * @author Hongs
  */
-public class Data extends LuceneRecord {
+public class Data extends SearchRecord {
 
     private final String conf;
     private final String form;

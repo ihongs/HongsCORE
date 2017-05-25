@@ -5,6 +5,7 @@ import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
+import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.action.anno.Preset;
@@ -13,6 +14,7 @@ import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
+import app.hongs.dh.search.SearchHelper;
 import app.hongs.serv.module.Data;
 import app.hongs.util.Synt;
 import java.lang.reflect.Method;
@@ -66,8 +68,7 @@ public class DataAction extends LuceneAction {
     @Preset(conf="", envm="", used={":defence", ":create"})
     @Verify(conf="", form="")
     @CommitSuccess
-    @Override
-    public void update(ActionHelper helper) throws HongsException {
+    public void save(ActionHelper helper) throws HongsException {
         String  id = (String) helper.getParameter("id");
         if (id == null || "".equals(id)) {
             id  = Core.newIdentity (  );
@@ -80,6 +81,52 @@ public class DataAction extends LuceneAction {
         String  ss = getRspMsg(helper, sr, "update", 1 );
 
         helper.reply(ss, Synt.asMap("id",id));
+    }
+
+    @Action("counts/retrieve")
+    public void counts(ActionHelper helper) throws HongsException {
+        LuceneRecord sr = (LuceneRecord) getEntity(helper);
+        SearchHelper sh = new SearchHelper(sr);
+        Map rd = helper.getRequestData();
+            rd = getReqMap (helper, sr, "counts", rd);
+        Map sd = sh.counts (rd);
+            sd = getRspMap (helper, sr, "counts", sd);
+
+        /**
+         * 追加枚举名称
+         */
+        Map xd = (Map) sd.get("info");
+       byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
+        if (md != 0 && xd != null && mod != null && ent != null) {
+            if (FormSet.hasConfFile( mod )) {
+                sh.addLabel(xd , md, mod, ent);
+            }
+        }
+
+        helper.reply(sd);
+    }
+
+    @Action("statis/retrieve")
+    public void statis(ActionHelper helper) throws HongsException {
+        LuceneRecord sr = (LuceneRecord) getEntity(helper);
+        SearchHelper sh = new SearchHelper(sr);
+        Map rd = helper.getRequestData();
+            rd = getReqMap (helper, sr, "statis", rd);
+        Map sd = sh.statis (rd);
+            sd = getRspMap (helper, sr, "statis", sd);
+
+        /**
+         * 追加枚举名称
+         */
+        Map xd = (Map) sd.get("info");
+       byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
+        if (md != 0 && xd != null && mod != null && ent != null) {
+            if (FormSet.hasConfFile( mod )) {
+                sh.addLabel(xd , md, mod, ent);
+            }
+        }
+
+        helper.reply(sd);
     }
 
 }

@@ -200,17 +200,17 @@ public abstract class CoreSerial
     throws HongsException
   {
       final String key = CoreSerial.class.getName() + ":" + file.getAbsolutePath();
-      final Valids vld = new Valids( );
+      final Loaded loa = new Loaded( );
 
       Lock.reader(key, new Runnable( ) {
         @Override
         public void run() {
             try {
                 if (!file.exists() || expired(time)) {
-                    vld.valids = false;
                     return;
                 }
                 load(file);
+                loa.loaded = true;
             } catch (HongsException e) {
                 throw e.toExpedient( );
             }
@@ -218,7 +218,7 @@ public abstract class CoreSerial
       });
 
       // 文件可用则直接退出
-      if (vld.valids) {
+      if (loa.loaded) {
           return;
       }
 
@@ -466,8 +466,8 @@ public abstract class CoreSerial
     }
   }
 
-  private class Valids {
-      public boolean valids = true;
+  private class Loaded {
+      public boolean loaded = false;
   }
 
 }

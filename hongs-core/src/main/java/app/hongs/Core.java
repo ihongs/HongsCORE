@@ -21,6 +21,14 @@ import java.lang.reflect.InvocationTargetException;
  * 获取当前 Core 的唯一实例总是用 Core.getInstance()
  * </p>
  *
+ * <p>
+ * 注意: 这不是线程安全的,
+ * THREAD_CORE 是 ThreadLocal 的,
+ * 实例在单一线程内使用并没有什么问题,
+ * 如果跨线程使用则可能有线程安全问题;
+ * GLOBAL_CORE 可全局使用, 需小心对待.
+ * </p>
+ *
  * <h3>静态属性:</h3>
  * <pre>
  * ENVIR            标识不同运行环境(0 cmd, 1 web)
@@ -186,6 +194,34 @@ public final class Core
     {
       super.finalize();
     }
+  }
+
+  @Override
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+    for(Map.Entry<String, Object> et : entrySet())
+    {
+      Object ob = et.getValue();
+      if (ob instanceof GlobalSingleton)
+      {
+        sb.append("[G]");
+      } else
+      if (ob instanceof ThreadSingleton)
+      {
+        sb.append("[T]");
+      }
+      sb.append(et.getKey()).append( ", ");
+    }
+
+    // 去掉尾巴上多的逗号
+    int sl = sb.length();
+    if (sl > 0 )
+    {
+      sb.delete(sb.length() - 2 , sb.length());
+    }
+
+    return sb.toString();
   }
 
   private Object check(Core core, String name)

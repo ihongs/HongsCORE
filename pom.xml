@@ -4,7 +4,7 @@
     <name>Hong's All</name>
     <groupId>app.hongs</groupId>
     <artifactId>hongs-all</artifactId>
-    <version>0.3-SNAPSHOT</version>
+    <version>0.4-SNAPSHOT</version>
     <packaging>pom</packaging>
     <modules>
         <module>hongs-core</module>

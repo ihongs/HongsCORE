@@ -14,7 +14,7 @@ import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
  * 已经逐步针对中文特点构建自己的分析器
  * @author Hongs
  */
-public class BaseTokenizerTesting {
+public class DemoTest {
 
     public static void main(String[] args) throws IOException {
         Analyzer az = CustomAnalyzer.builder()
@@ -23,12 +23,12 @@ public class BaseTokenizerTesting {
             //.addTokenFilter("ICUTransform", "id", "Han-Latin;NFD;[[:NonspacingMark:][:Space:]] Remove")
             //.addTokenFilter("EdgeNGram", "minGramSize", "1", "maxGramSize", "20")
             .build();
-        
+
         StringReader      sr = new StringReader(args[0]);
         TokenStream       ts = az.tokenStream  ("" , sr);
         OffsetAttribute   oa = ts.addAttribute (OffsetAttribute.class);
         CharTermAttribute ta = ts.addAttribute (CharTermAttribute.class);
-        
+
         try {
             ts.reset(); // Resets this stream to the beginning. (Required)
             while (ts.incrementToken()) {

@@ -4,8 +4,6 @@ import java.io.IOException;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
-import org.apache.lucene.analysis.util.CharacterUtils;
-import org.apache.lucene.analysis.util.CharacterUtils.CharacterBuffer;
 
 /**
  * 分词器
@@ -15,9 +13,9 @@ import org.apache.lucene.analysis.util.CharacterUtils.CharacterBuffer;
  * l lu luc luce lucen lucene 分 分词 分词器
  * @author Hongs
  */
-public class BaseTokenizer extends Tokenizer {
+public class NameTokenizer extends Tokenizer {
 
-    public BaseTokenizer() {
+    public NameTokenizer() {
         super();
     }
 
@@ -26,9 +24,8 @@ public class BaseTokenizer extends Tokenizer {
 
     private final CharTermAttribute termAttr = addAttribute(CharTermAttribute.class);
     private final OffsetAttribute   ofstAttr = addAttribute(  OffsetAttribute.class);
-
-    private final CharacterUtils  cutils = CharacterUtils.getInstance();
-    private final CharacterBuffer buffer = CharacterUtils.newCharacterBuffer(BUFFER_SIZE);
+    private final CharUtil.Buffer   buffer   = new CharUtil.Buffer(BUFFER_SIZE);
+    private final CharUtil          cutils   = new CharUtil(  );
 
     @Override
     public boolean incrementToken() throws IOException {
@@ -52,41 +49,26 @@ public class BaseTokenizer extends Tokenizer {
 
             bgn = bufferIndex + offsetShift - offset;
 
-            chr = cutils.codePointAt (buffer.getBuffer(), bufferIndex, buffer.getLength());
+            chr = cutils.codePointAt(buffer, bufferIndex);
             cnt = Character.charCount(chr);
             bufferIndex += cnt;
-            
+
             chr = filterToken(chr);
             if (chr == 0x0) {
                 buf = termAttr.buffer();
                 offset = 0;
                 continue;
             }
-            
+
             len = Character.toChars(chr, buf, offset);
             end = bgn + len;
 
             termAttr.setLength(len + offset);
             ofstAttr.setOffset(correctOffset(bgn), endset = correctOffset(end));
-            
+
             offset += cnt;
             return  true;
         }
-    }
-    
-    /**
-     * 以符号作为分隔
-     * @param chr
-     * @return 
-     */
-    public int filterToken(int chr) {
-        if ((chr >= 0x0  && chr <= 0x2f)
-        ||  (chr >= 0x3a && chr <= 0x40)
-        ||  (chr >= 0x5b && chr <= 0x60)
-        ||  (chr >= 0x7b && chr <= 0x7f)) {
-            return  0x0;
-        }
-        return chr;
     }
 
     @Override
@@ -101,10 +83,25 @@ public class BaseTokenizer extends Tokenizer {
     }
 
     @Override
-    public final void end() throws IOException {
-        super.end();
+    public void end() throws IOException {
+          super.end();
         // set final offsetShift
         ofstAttr.setOffset(endset, endset);
+    }
+
+    /**
+     * 以符号作为分隔
+     * @param chr
+     * @return
+     */
+    public int filterToken(int chr) {
+        if ((chr >= 0x0  && chr <= 0x2f)
+        ||  (chr >= 0x3a && chr <= 0x40)
+        ||  (chr >= 0x5b && chr <= 0x60)
+        ||  (chr >= 0x7b && chr <= 0x7f)) {
+            return  0x0;
+        }
+        return chr;
     }
 
 }

@@ -1,6 +1,5 @@
 package app.hongs.dh.search.sorter;
 
-import java.io.IOException;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 import org.apache.lucene.util.BytesRef;
@@ -20,7 +19,7 @@ public class IntervalSorter extends FieldComparatorSource {
     }
 
     @Override
-    public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) throws IOException {
+    public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
         return new Comparator(fn, rv, nh, dist);
     }
 

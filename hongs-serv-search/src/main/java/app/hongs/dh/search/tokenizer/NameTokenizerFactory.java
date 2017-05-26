@@ -6,18 +6,18 @@ import org.apache.lucene.analysis.util.TokenizerFactory;
 import org.apache.lucene.util.AttributeFactory;
 
 /**
- *
+ * 分词器工厂
  * @author Hongs
  */
-public class FencTokenizerFactory extends TokenizerFactory {
+public class NameTokenizerFactory extends TokenizerFactory {
 
-    public FencTokenizerFactory(Map<String, String> args) {
+    public NameTokenizerFactory(Map<String, String> args) {
         super(args);
     }
     
     @Override
     public Tokenizer create(AttributeFactory af) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new NameTokenizer();
     }
     
 }

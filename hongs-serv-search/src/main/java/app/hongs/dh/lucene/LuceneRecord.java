@@ -11,6 +11,9 @@ import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
 import app.hongs.dh.ModelForm;
+import app.hongs.dh.lucene.field.*;
+import app.hongs.dh.lucene.query.*;
+import app.hongs.dh.lucene.value.*;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
@@ -23,7 +26,6 @@ import java.nio.file.Paths;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -39,40 +41,25 @@ import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.Field;
-import org.apache.lucene.document.IntField;
-import org.apache.lucene.document.LongField;
-import org.apache.lucene.document.FloatField;
-import org.apache.lucene.document.DoubleField;
-import org.apache.lucene.document.StoredField;
-import org.apache.lucene.document.StringField;
-import org.apache.lucene.document.TextField;
-import org.apache.lucene.document.SortedDocValuesField;
-import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.Query;
+import org.apache.lucene.search.MatchAllDocsQuery;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.TermRangeQuery;
-import org.apache.lucene.search.NumericRangeQuery;
-import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.BytesRef;
-import org.apache.lucene.util.NumericUtils;
 
 /**
  * Lucene 记录模型
@@ -833,7 +820,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      * @throws HongsException
      */
     public Query getQuery(Map rd) throws HongsException {
-        BooleanQuery query = new BooleanQuery();
+        BooleanQuery.Builder query = new BooleanQuery.Builder();
         Map<String, Map> fields = getFields(  );
         Set<String>    filtCols = getFiltable();
         Set<String>    funcCols = getFuncKeys();
@@ -874,14 +861,14 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             if ("double".equals(t)) {
                 aq = new DoubleQuery();
             } else
+            if (  "date".equals(t)) {
+                aq = new LongQuery();
+            } else
             if ("string".equals(t)) {
                 aq = new StringQuery();
             } else
             if ("search".equals(t)) {
                 aq = new SearchQuery();
-            } else
-            if (  "date".equals(t)) {
-                aq = new LongQuery();
             } else
             {
                 continue;
@@ -893,38 +880,39 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         // 关键词
         if (rd.containsKey(Cnst.WD_KEY)) {
             Object fv = rd.get(Cnst.WD_KEY);
+            Set<String> fs = getFindable( );
+            BooleanQuery.Builder quary;
 
             /**
              * 当设置了多个搜索字段时
              * 将条件整理为 +(fn1:xxx fn2:xxx)
              */
-            BooleanQuery quary;
-            Set<String>  cols = getFindable();
-            if (cols.size() < 2) {
-                quary =  query;
+
+            if (fs.size() < 2) {
+                quary = query;
             } else {
-                quary = new BooleanQuery();
-                if (! ( fv instanceof Map) && !"".equals( fv ) && fv != null) {
-                    query.add(quary, BooleanClause.Occur.MUST);
-                    Map fw = new HashMap();
-                    fw.put(Cnst.OR_REL,fv);
+                quary = new BooleanQuery.Builder();
+                if (! ( fv instanceof Map ) && !"".equals(fv) && fv != null) {
+                    query.add(quary.build(), BooleanClause.Occur.MUST);
+                    Map fw = new HashMap( );
+                    fw.put(Cnst.OR_REL, fv);
                     fv= fw;
                 }
             }
 
-            for(String fk: cols) {
+            for(String fk: fs) {
                 qryAdd(quary, fk, fv, new SearchQuery());
             }
         }
 
         // 或条件
         if (rd.containsKey(Cnst.OR_KEY)) {
-            BooleanQuery quary = new BooleanQuery();
+            BooleanQuery.Builder quary = new BooleanQuery.Builder();
             Set<Map> set = Synt.declare(rd.get(Cnst.OR_KEY), Set.class);
             for(Map  map : set) {
                 quary.add(getQuery(map), BooleanClause.Occur.SHOULD);
             }
-            query.add(quary, BooleanClause.Occur.MUST);
+            query.add(quary.build(), BooleanClause.Occur.MUST);
         }
 
         // 附条件
@@ -944,11 +932,12 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         }
 
         // 没有条件则查询全部
-        if (query.clauses( ).isEmpty( )) {
+        BooleanQuery quary = query.build();
+        if (quary.clauses().isEmpty( )) {
             return new MatchAllDocsQuery();
         }
 
-        return query;
+        return quary;
     }
 
     /**
@@ -1300,6 +1289,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         return getSortable().contains(Synt.asserts(fc.get("__name__"), ""));
     }
 
+    protected boolean filtable(Map fc) {
+        return getFiltable().contains(Synt.asserts(fc.get("__name__"), ""));
+    }
+
     protected boolean repeated(Map fc) {
         return Synt.asserts(fc.get("__repeated__"), false);
     }
@@ -1355,19 +1348,19 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                         v = new NumberValue();
                         u =  0  ;
                     } else {
-                        v = new DtsObjValue();
+                        v = new DatimeValue();
                         u = null;
-                        ((DtsObjValue) v).mul = mul;
+                        ((DatimeValue) v).mul = mul;
                     }
                 } else {
                     if ("time".equals(typ) || "timestamp".equals(typ)) {
                         v = new NumStrValue();
                         u = "0" ;
                     } else {
-                        v = new DtsStrValue();
+                        v = new DatStrValue();
                         u =  "" ;
-                        ((DtsStrValue) v).mul = mul;
-                        ((DtsStrValue) v).sdf = getFormat(m);
+                        ((DatStrValue) v).mul = mul;
+                        ((DatStrValue) v).sdf = getFormat(m);
                     }
                 }
             } else
@@ -1420,15 +1413,17 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             Object v = Dict.getParam(map , k);
 
             if (null == v
-            ||  ignored(m, k) ) {
+            ||  ignored(m , k)) {
                 continue;
             }
 
             IField  f ;
             String  t = getFtype(m);
             boolean s = sortable(m);
+            boolean q = filtable(m);
             boolean u = unstored(m);
             boolean r = repeated(m);
+            boolean g = true; // 是否要存储, 数值类型过滤与存储是分离的, 故其等同于 !unstored
 
             /**
              * 日期和排序均是长整型
@@ -1444,73 +1439,85 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             }
 
             if (   "int".equals (t)) {
-                f = new IntFiald( );
+                f = new IntField( );
+                g = !u;
             } else
             if (  "long".equals (t)) {
-                f = new LongFiald();
+                f = new LongField();
+                g = !u;
             } else
             if ( "float".equals (t)) {
-                f = new FloatFiald();
+                f = new FloatField();
+                g = !u;
             } else
             if ("double".equals (t)) {
-                f = new DoubleFiald();
+                f = new DoubleField();
+                g = !u;
             } else
             if ("string".equals (t)) {
                 f = new StringFiald();
+                q = false; // 字符类型自带筛选
             } else
             if ("search".equals (t)) {
                 f = new SearchFiald();
+                q = false; // 文本类型自带筛选
+                s = false; // 文本类型无法排序
             } else
             if ("object".equals (t)) {
                 f = new ObjectFiald();
+                q = false; // 对象类型无法筛选
+                s = false; // 对象类型无法排序
             } else
             {
                 f = new StoredFiald();
+                q = false; // 对象类型无法筛选
+                s = false; // 对象类型无法排序
             }
 
             doc.removeFields(k);
+
             if (r) {
-                Object z = null;
-                if (v instanceof Collection) {
-                    for (Object x : ( Collection) v ) {
-                        doc.add(f.get(k, x, u, true));
-                        z = x;
-                    }
-                } else
-                if (v instanceof Object[ ] ) {
-                    for (Object x : ( Object[ ] ) v ) {
-                        doc.add(f.get(k, x, u, true));
-                        z = x;
-                    }
-                } else
-                {
-                    Set a = Synt.declare(v,Set.class);
-                    for (Object x : a) {
-                        doc.add(f.get(k, x, u, true));
-                        z = x;
+                if (g) {
+                    if (v instanceof Object[ ] ) {
+                        for (Object w: (Object[ ] ) v) {
+                            doc.add(f.get(k, w, u));
+                        }
+                    } else
+                    if (v instanceof Collection) {
+                        for (Object w: (Collection) v) {
+                            doc.add(f.get(k, w, u));
+                        }
+                    } else
+                    {
+                        Set a = Synt.declare(v, Set.class);
+                        for (Object w: a) {
+                            doc.add(f.get(k, w, u));
+                        }
+                        v = a;
                     }
                 }
 
-                /**
-                 * 多个值仅取最后一个值用于排序
-                 * 如需对多个值排序
-                 * 应当使用额外字段
-                 * 明确用平均值、最大值或最小值
-                 */
-                if (s && z != null) {
-                    Field  x  = f.get(k, z);
-                    if ( x != null) {
-                        doc.add( x);
+                // 筛选和排序前去重
+                Set a = Synt.declare(v, Set.class);
+                if (q && a != null && !a.isEmpty()) {
+                    for (Object w: a) {
+                        doc.add(f.got(k, w));
+                    }
+                }
+                if (s && a != null && !a.isEmpty()) {
+                    for (Object w: a) {
+                        doc.add(f.srt(k, w));
                     }
                 }
             } else
             {
-                doc.add(f.get(k, v, u, false));
+                doc.add(f.get( k, v, u));
+
+                if (q) {
+                    doc.add(f.got(k, v));
+                }
                 if (s) {
-                    Field  x  = f.get(k, v);
-                    if ( x != null) {
-                        doc.add( x);
-                    }
+                    doc.add(f.srt(k, v));
                 }
             }
         }
@@ -1542,7 +1549,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      * @param q
      * @throws HongsException
      */
-    protected void qryAdd(BooleanQuery qry, String k, Object v, IQuery q)
+    protected void qryAdd(BooleanQuery.Builder qry, String k, Object v, IQuery q)
     throws HongsException {
         Map m;
         if (v instanceof Map) {
@@ -1568,10 +1575,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
 
         // 对 text 类型指定分词器
         if (q instanceof SearchQuery) {
-            Map<String, Map> fields = getFields();
-            SearchQuery sq = (SearchQuery) q;
-            Map fc = (Map) fields.get(k);
-            sq.ana(getAnalyzer(fc,true));
+            Map<String, Map> fields = getFields( );
+            Map         fc = ( Map ) fields.get(k);
+            SearchQuery sq = ( SearchQuery ) q;
+            sq.analyzer(getAnalyzer(fc,true) );
 
             // 额外的一些细微配置
             sq.phraseSlop (Synt.declare(fc.get("lucene-parser-phraseSlop" ), Integer.class));
@@ -1584,9 +1591,13 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             sq.enablePositionIncrements(Synt.declare(fc.get("lucene-parser-enablePositionIncrements"), Boolean.class));
         }
 
+        float bst = 1F;
+        BooleanQuery.Builder src = null;
         if (m.containsKey(Cnst.WT_REL)) {
             Object n = m.remove(Cnst.WT_REL);
-            q.bst( Synt.declare(n, 1F));
+            bst = Synt.declare (n , 1F);
+            src = qry;
+            qry = new BooleanQuery.Builder();
         }
 
         if (m.containsKey(Cnst.EQ_REL)) {
@@ -1605,12 +1616,12 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         }
 
         if (m.containsKey(Cnst.IN_REL)) { // In
-            BooleanQuery qay = new BooleanQuery();
+            BooleanQuery.Builder qay = new BooleanQuery.Builder();
             Set a = Synt.declare(m.remove(Cnst.IN_REL), new HashSet());
             for(Object x : a) {
                 qay.add(q.get(k, x), BooleanClause.Occur.SHOULD);
             }
-            qry.add(qay, BooleanClause.Occur.MUST);
+            qry.add(qay.build(), BooleanClause.Occur.MUST);
         }
 
         if (m.containsKey(Cnst.AI_REL)) { // All In
@@ -1680,6 +1691,15 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             Set s = new HashSet();
             s.addAll(m.values( ));
             qryAdd(qry, k, s, q );
+        }
+
+        //** 权重设置 **/
+
+        if (src != null ) {
+            BooleanQuery qay = qry.build();
+            if (qay.clauses().size() > 0 ) {
+                src.add(new BoostQuery(qay, bst), BooleanClause.Occur.MUST);
+            }
         }
     }
 
@@ -1833,353 +1853,6 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                 sb.append( l );
             }
             return sb.toString();
-        }
-    }
-
-    protected static interface IValue {
-        public Object get(IndexableField f);
-    }
-
-    protected static class StringValue implements IValue {
-        @Override
-        public Object get(IndexableField f) {
-            return f.stringValue();
-        }
-    }
-
-    protected static class ObjectValue implements IValue {
-        @Override
-        public Object get(IndexableField f) {
-            return Data.toObject(f.stringValue());
-        }
-    }
-
-    protected static class NumberValue implements IValue {
-        @Override
-        public Object get(IndexableField f) {
-            return f.numericValue();
-        }
-    }
-
-    protected static class NumStrValue implements IValue {
-        @Override
-        public Object get(IndexableField f) {
-            return Tool.toNumStr(f.numericValue());
-        }
-    }
-
-    protected static class DtsObjValue implements IValue {
-        public int mul = 1;
-        @Override
-        public Object get(IndexableField f) {
-            return new Date(f.numericValue().longValue() * mul);
-        }
-    }
-
-    protected static class DtsStrValue implements IValue {
-        public int mul = 1;
-        public SimpleDateFormat sdf = null;
-        @Override
-        public Object get(IndexableField f) {
-            return sdf.format(new Date(f.numericValue().longValue() * mul));
-        }
-    }
-
-    protected static interface IField {
-        public Field get(String k, Object v);
-        public Field get(String k, Object v, boolean u, boolean r);
-    }
-
-    protected static class IntFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return new NumericDocValuesField("."+k, Synt.declare(v, 0L));
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new IntField(k, Synt.declare(v, 0 ), u ? Field.Store.NO : Field.Store.YES);
-        }
-    }
-
-    protected static class LongFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return new NumericDocValuesField("."+k, Synt.declare(v, 0L));
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new LongField(k, Synt.declare(v, 0L), u ? Field.Store.NO : Field.Store.YES);
-        }
-    }
-
-    protected static class FloatFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return new NumericDocValuesField("."+k, NumericUtils. floatToSortableInt (Synt.declare(v, 0.0F)));
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new FloatField(k, Synt.declare(v, 0F), u ? Field.Store.NO : Field.Store.YES);
-        }
-    }
-
-    protected static class DoubleFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return new NumericDocValuesField("."+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0F)));
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new DoubleField(k, Synt.declare(v, 0D), u ? Field.Store.NO : Field.Store.YES);
-        }
-    }
-
-    protected static class StringFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return new  SortedDocValuesField("."+k, new BytesRef(v.toString()));
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new StringField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES);
-        }
-    }
-
-    protected static class SearchFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return null;
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new TextField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES);
-        }
-    }
-
-    protected static class StoredFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return null;
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            return new StoredField(k, v.toString());
-        }
-    }
-
-    protected static class ObjectFiald implements IField {
-        @Override
-        public Field get(String k, Object v) {
-            return null;
-        }
-        @Override
-        public Field get(String k, Object v, boolean u, boolean r) {
-            if (v == null || "".equals(v)) {
-                v  = "{}" ;
-            } else
-            if (! ( v instanceof String )) {
-                v  = Data.toString(v);
-            }
-            return new StoredField(k, v.toString());
-        }
-    }
-
-    protected static interface IQuery {
-        public void  bst(float  w);
-        public Query get(String k, Object v);
-        public Query get(String k, Object n, Object x, boolean l, boolean g);
-    }
-
-    protected static class IntQuery implements IQuery {
-        private Float w = null;
-        @Override
-        public void  bst(float  w) {
-            this.w = w;
-        }
-        @Override
-        public Query get(String k, Object v) {
-            Integer n2 = Synt.declare(v, Integer.class);
-            Query   q2 = NumericRangeQuery.newIntRange(k, n2, n2, true, true);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-        @Override
-        public Query get(String k, Object n, Object x, boolean l, boolean g) {
-            Integer n2 = Synt.declare(n, Integer.class);
-            Integer x2 = Synt.declare(x, Integer.class);
-            Query   q2 = NumericRangeQuery.newIntRange(k, n2, x2, l, g);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-    }
-
-    protected static class LongQuery implements IQuery {
-        private Float w = null;
-        @Override
-        public void  bst(float  w) {
-            this.w = w;
-        }
-        @Override
-        public Query get(String k, Object v) {
-            Long    n2 = Synt.declare(v, Long.class);
-            Query   q2 = NumericRangeQuery.newLongRange(k, n2, n2, true, true);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-        @Override
-        public Query get(String k, Object n, Object x, boolean l, boolean g) {
-            Long    n2 = Synt.declare(n, Long.class);
-            Long    x2 = Synt.declare(x, Long.class);
-            Query   q2 = NumericRangeQuery.newLongRange(k, n2, x2, l, g);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-    }
-
-    protected static class FloatQuery implements IQuery {
-        private Float w = null;
-        @Override
-        public void  bst(float  w) {
-            this.w = w;
-        }
-        @Override
-        public Query get(String k, Object v) {
-            Float   n2 = Synt.declare(v, Float.class);
-            Query   q2 = NumericRangeQuery.newFloatRange(k, n2, n2, true, true);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-        @Override
-        public Query get(String k, Object n, Object x, boolean l, boolean g) {
-            Float   n2 = Synt.declare(n, Float.class);
-            Float   x2 = Synt.declare(x, Float.class);
-            Query   q2 = NumericRangeQuery.newFloatRange(k, n2, x2, l, g);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-    }
-
-    protected static class DoubleQuery implements IQuery {
-        private Float w = null;
-        @Override
-        public void  bst(float  w) {
-            this.w = w;
-        }
-        @Override
-        public Query get(String k, Object v) {
-            Double  n2 = Synt.declare(v, Double.class);
-            Query   q2 = NumericRangeQuery.newDoubleRange(k, n2, n2, true, true);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-        @Override
-        public Query get(String k, Object n, Object x, boolean l, boolean g) {
-            Double  n2 = Synt.declare(n, Double.class);
-            Double  x2 = Synt.declare(x, Double.class);
-            Query   q2 = NumericRangeQuery.newDoubleRange(k, n2, x2, l, g);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-    }
-
-    protected static class StringQuery implements IQuery {
-        private Float w = null;
-        @Override
-        public void  bst(float  w) {
-            this.w = w;
-        }
-        @Override
-        public Query get(String k, Object v) {
-            Query   q2 = new TermQuery(new Term(k, v.toString()));
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-        @Override
-        public Query get(String k, Object n, Object x, boolean l, boolean g) {
-            String  n2 = n.toString();
-            String  x2 = x.toString();
-            Query   q2 = TermRangeQuery.newStringRange(k, n2, x2, l, g);
-            if (w != null) q2.setBoost(w);
-            return  q2;
-        }
-    }
-
-    protected static class SearchQuery implements IQuery {
-        private Boolean  des = null;
-        private Boolean  and = null;
-        private Boolean  alw = null;
-        private Boolean  let = null;
-        private Boolean  epi = null;
-        private Integer  phr = null;
-        private Integer  fpl = null;
-        private Float    fms = null;
-        public void  advanceAnalysisInUse(Boolean x) {
-            this.des = x;
-        }
-        public void  defaultOperatorIsAnd(Boolean x) {
-            this.and = x;
-        }
-        public void  allowLeadingWildcard(Boolean x) {
-            this.alw = x;
-        }
-        public void  lowercaseExpandedTerms(Boolean x) {
-            this.let = x;
-        }
-        public void  enablePositionIncrements(Boolean x) {
-            this.epi = x;
-        }
-        public void  phraseSlop (Integer x) {
-            this.phr = x;
-        }
-        public void  fuzzyPreLen(Integer x) {
-            this.fpl = x;
-        }
-        public void  fuzzyMinSim(Float   x) {
-            this.fms = x;
-        }
-
-        private Analyzer a = null;
-        private Float    w = null;
-        public void  ana(Analyzer a) {
-            this.a = a;
-        }
-        @Override
-        public void  bst(  float  w) {
-            this.w = w;
-        }
-        @Override
-        public Query get(String k, Object v) {
-            try {
-                QueryParser qp = new QueryParser(k , a);
-
-                String s = v.toString( );
-                if (des == null || !des) {
-                    s = QueryParser.escape(s);
-                }
-                if (and != null &&  and) {
-                    qp.setDefaultOperator (QueryParser.AND_OPERATOR);
-                }
-                if (epi != null) qp.setEnablePositionIncrements(epi);
-                if (let != null) qp.setLowercaseExpandedTerms(let);
-                if (alw != null) qp.setAllowLeadingWildcard(alw);
-                if (fpl != null) qp.setFuzzyPrefixLength(fpl);
-                if (fms != null) qp.setFuzzyMinSim      (fms);
-                if (phr != null) qp.setPhraseSlop       (phr);
-
-                Query  q2 = qp.parse(s);
-                if ( w  != null) q2.setBoost(w);
-                return q2 ;
-            } catch (ParseException ex) {
-                throw new HongsExpedient.Common(ex);
-            }
-        }
-        @Override
-        public Query get(String k, Object n, Object x, boolean l, boolean g) {
-            String  n2 = n.toString();
-            String  x2 = x.toString();
-            Query   q2 = TermRangeQuery.newStringRange(k, n2, x2, l, g);
-            if (w != null) q2.setBoost(w);
-            return  q2;
         }
     }
 

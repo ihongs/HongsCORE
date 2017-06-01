@@ -12,7 +12,7 @@ if (typeof(HsLANG) === "undefined") HsLANG = {};
  * :    获取语言
  * ?    检查权限
  * /    补全路径
- * &    获取单个参数值, 第二个参数指定参数容器
+ * #    获取单个参数值, 第二个参数指定参数容器
  * @    获取多个参数值, 第二个参数指定参数容器
  * $    获取/设置会话存储, 第二个参数存在为设置, 第二个参数为null则删除
  * %    获取/设置本地存储, 第二个参数存在为设置, 第二个参数为null则删除
@@ -137,24 +137,24 @@ function hsResponObj(rst, qut, qxt) {
 
         // 服务接口要求跳转 (常为未登录或无权限)
         if (! qxt) {
-            if (rst.ern && /^Er(301|302|401|402|403|404)$/.test(rst.ern)) {
-                if (rst.msg) {
-                    alert(rst.msg); // 严重错误, 直接弹框
+            if (rst.ern && /^Er[34]\d+/i.test(rst.ern)) {
+                var url;
+                if (rst.err && /^Goto /i.test(rst.err)) {
+                    url = jQuery.trim(rst.err.substring(5));
+                } else {
+                    url =  hsGetConf (rst.ern+".redirect" );
                 }
-                if (rst.err &&/^Goto /i.test(rst.err)) {
-                    var url =  rst.err.substring( 5 ) ;
+                if (url !== undefined && url !== null)  {
+                    if (rst.msg) {
+                        alert( rst.msg );
+                    }
                     if (url && url != '#') {
                         location.assign(hsFixUri(url));
                     } else {
                         location.reload( );
                     }
-                } else {
-                    var url = hsGetConf(rst.ern + ".redirect");
-                    if (url) {
-                        location.assign(hsFixUri(url));
-                    }
+                    throw new Error(rst.err);
                 }
-                throw new Error( rst.err );
             }
         }
 
@@ -1174,10 +1174,10 @@ $.hsAjax = function(url, settings) {
             case "xml" :
                 if (settings.data instanceof jQuery
                 ||  settings.data instanceof Element) {
-                    settings.data = '<?xml version="1.0"?>' +
-                          $(settings.data).prop('outerHTML');
+                    settings.data = '<?xml version="1.0" encoding="UTF-8"?>'
+                                  + $( settings.data).prop( 'outerHTML');
                 }
-                settings.contentType = "application/xml; charset=UTF-8";
+                settings.contentType =  "application/xml; charset=UTF-8";
                 break;
             default:
                 throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);

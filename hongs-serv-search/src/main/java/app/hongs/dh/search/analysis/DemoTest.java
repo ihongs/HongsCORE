@@ -1,4 +1,4 @@
-package app.hongs.dh.search.tokenizer;
+package app.hongs.dh.search.analysis;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -18,7 +18,8 @@ public class DemoTest {
 
     public static void main(String[] args) throws IOException {
         Analyzer az = CustomAnalyzer.builder()
-            .withTokenizer ("Standard")
+            //.withTokenizer("Standard")
+            .withTokenizer("Name")
             .addTokenFilter("EdgeNGram", "minGramSize", "1", "maxGramSize", "20")
             //.addTokenFilter("ICUTransform", "id", "Han-Latin;NFD;[[:NonspacingMark:][:Space:]] Remove")
             //.addTokenFilter("EdgeNGram", "minGramSize", "1", "maxGramSize", "20")

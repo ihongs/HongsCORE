@@ -8,7 +8,7 @@
     var textbox = context.find(".textbox");
     var socket;
     
-    var uid = H$("&uid", context);
+    var uid = H$("#uid", context);
     var ssl = location.protocol == 'https:';
     var sok = (ssl ?   'wss' :   'ws') + '://'+location.host+'/handle/mesage/socket/';
     var act = (ssl ? 'https' : 'http') + '://'+location.host+"/handle/mesage/user/retrieve.act";

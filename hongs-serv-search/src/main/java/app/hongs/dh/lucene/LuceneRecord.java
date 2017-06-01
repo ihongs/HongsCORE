@@ -879,29 +879,30 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
 
         // 关键词
         if (rd.containsKey(Cnst.WD_KEY)) {
-            Object fv = rd.get(Cnst.WD_KEY);
-            Set<String> fs = getFindable( );
-            BooleanQuery.Builder quary;
+            Object fv = rd.get (Cnst.WD_KEY);
+                   fv = Synt.asserts(fv, "");
+            Set<String> fs = getFindable(  );
 
-            /**
-             * 当设置了多个搜索字段时
-             * 将条件整理为 +(fn1:xxx fn2:xxx)
-             */
+            if (fv != null && !"".equals(fv)) {
+                if (fs.size() > 1) {
+                    // 当设置了多个搜索字段时
+                    // 将条件整理为: +(fn1:xxx fn2:xxx)
 
-            if (fs.size() < 2) {
-                quary = query;
-            } else {
-                quary = new BooleanQuery.Builder();
-                if (! ( fv instanceof Map ) && !"".equals(fv) && fv != null) {
-                    query.add(quary.build(), BooleanClause.Occur.MUST);
-                    Map fw = new HashMap( );
-                    fw.put(Cnst.OR_REL, fv);
-                    fv= fw;
+                    Map fw = new HashMap(  );
+                    fw.put(Cnst.OR_REL , fv);
+                    BooleanQuery.Builder quary;
+                     quary = new BooleanQuery.Builder();
+
+                    for(String fk: fs) {
+                        qryAdd(quary, fk, fw, new SearchQuery());
+                    }
+
+                     query.add(quary.build(), BooleanClause.Occur.MUST);
+                } else {
+                    for(String fk: fs) {
+                        qryAdd(query, fk, fv, new SearchQuery());
+                    }
                 }
-            }
-
-            for(String fk: fs) {
-                qryAdd(quary, fk, fv, new SearchQuery());
             }
         }
 
@@ -933,7 +934,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
 
         // 没有条件则查询全部
         BooleanQuery quary = query.build();
-        if (quary.clauses().isEmpty( )) {
+        if (quary.clauses( ).isEmpty( )) {
             return new MatchAllDocsQuery();
         }
 
@@ -1195,7 +1196,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             }
 
             return cb.build();
-        } catch (IOException ex) {
+        } catch ( IOException ex) {
             throw new HongsException.Common(ex);
         } catch ( IllegalArgumentException  ex) {
             throw new HongsException.Common(ex);

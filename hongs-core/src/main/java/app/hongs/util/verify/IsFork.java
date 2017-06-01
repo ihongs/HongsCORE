@@ -39,17 +39,17 @@ public class IsFork extends Rule {
         String at = Synt.declare(params.get( "data-at"), "");
         String vk = Synt.declare(params.get( "data-vk"), "");
 
-        // 明确指定为 @ 则检查是否是编号
-        if("@".equals(at)) {
+        // 明确指定为 # 则检查是否是编号
+        if("#".equals(at)) {
             Map    ps = FormSet.getInstance(/**/).getEnum("__patts__");
-            String pn = Synt.declare(ps.get("id"), "^[A-Z0-9]{12,20}");
-            if (!Pattern.matches(pn, at)) {
+            String pn = Synt.declare(ps.get("id"), "^[A-Z0-9_]{1,32}");
+            if (! Pattern.matches(pn, at)) {
                 throw new Wrong("fore.form.haserror");
             }
             return  value;
         }
-        // 明确指定为 # 则表示不需要校验
-        if("#".equals(at)) {
+        // 明确指定为 * 则表示不需要校验
+        if("*".equals(at)) {
             return  value;
         }
 

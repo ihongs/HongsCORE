@@ -1,4 +1,4 @@
-package app.hongs.dh.search.tokenizer;
+package app.hongs.dh.search.analysis;
 
 import java.util.Map;
 import org.apache.lucene.analysis.Tokenizer;

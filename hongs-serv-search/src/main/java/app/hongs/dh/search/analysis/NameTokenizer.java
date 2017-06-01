@@ -1,4 +1,4 @@
-package app.hongs.dh.search.tokenizer;
+package app.hongs.dh.search.analysis;
 
 import java.io.IOException;
 import org.apache.lucene.analysis.Tokenizer;

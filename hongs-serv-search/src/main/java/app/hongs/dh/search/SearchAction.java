@@ -27,8 +27,8 @@ public class SearchAction extends LuceneAction {
     public void initiate(ActionHelper helper, ActionRunner runner) throws HongsException {
         super.initiate(helper, runner);
 
-        // 给 counts 腾出空间
-        if ("counts".equals(ent)) {
+        // 给统计腾出空间
+        if ("counts".equals(ent) || "statis".equals(ent)) {
             int pos = mod.lastIndexOf("/");
             ent = mod.substring(1 + pos);
             mod = mod.substring(0 , pos);

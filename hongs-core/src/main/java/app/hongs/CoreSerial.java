@@ -199,40 +199,28 @@ public abstract class CoreSerial
   protected void load(final File file, final long time)
     throws HongsException
   {
-      final String key = CoreSerial.class.getName() + ":" + file.getAbsolutePath();
-      final Loaded loa = new Loaded( );
+      String       key = CoreSerial.class.getName()
+                       +":"+ file.getAbsolutePath();
+      Lock.RwLock  loc = Lock.getRwLock( key );
 
-      Lock.reader(key, new Runnable( ) {
-        @Override
-        public void run() {
-            try {
-                if (!file.exists() || expired(time)) {
-                    return;
-                }
-                load(file);
-                loa.loaded = true;
-            } catch (HongsException e) {
-                throw e.toExpedient( );
-            }
-        }
-      });
-
-      // 文件可用则直接退出
-      if (loa.loaded) {
-          return;
+      loc.lockr();
+      try {
+          if (file.exists() && !expired(time)) {
+              load(file);
+          }
+      }
+      finally {
+          loc.unlockr( );
       }
 
-      Lock.writer(key, new Runnable( ) {
-        @Override
-        public void run() {
-            try {
-                imports( );
-                save(file);
-            } catch (HongsException e) {
-                throw e.toExpedient( );
-            }
-        }
-      });
+      loc.lockw();
+      try {
+          imports( );
+          save(file);
+      }
+      finally {
+          loc.unlockw( );
+      }
   }
 
   /**

@@ -1,5 +1,6 @@
 package app.hongs.util;
 
+import app.hongs.CoreLogger;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 全局资源锁
  * @author Hongs
  */
-public class Lock {
+public final class Lock {
 
     private static final ReadWriteLock ST_LOCKR = new ReentrantReadWriteLock();
     private static final ReadWriteLock RW_LOCKR = new ReentrantReadWriteLock();
@@ -21,16 +22,19 @@ public class Lock {
     private static final Map<String, RwLock> RW_LOCKS = new HashMap();
 
     /**
-     * 自启动一个定时器,
+     * 自启一个定时任务,
      * 每隔一段时间清理,
-     * 默认为10分钟
+     * 默认10分钟
      */
     static {
-        long time = Long.parseLong(System.getProperty(Lock.class.getName()+".cleans.period", "600000"));
-        new Timer(Lock.class.getName()+".cleans", true)
-        .schedule(new TimerTask() {
+        long time  =  Long.parseLong(
+                  System.getProperty(
+                  Lock.class.getName() + ".cleans.period", "600000"));
+        new Timer(Lock.class.getName() + ".cleans", true )
+        .schedule( new TimerTask( ) {
             @Override
             public void run() {
+                CoreLogger.debug("Try to clean locks\r\n" + resume());
                 cleans();
             }
         } , time , time);
@@ -157,7 +161,7 @@ public class Lock {
         return sb.toString( );
     }
 
-    private static StLock getStLock(String key) {
+    public static StLock getStLock(String key) {
         java.util.concurrent.locks.Lock loxk;
         StLock lock = null;
 
@@ -183,7 +187,7 @@ public class Lock {
         return lock;
     }
 
-    private static RwLock getRwLock(String key) {
+    public static RwLock getRwLock(String key) {
         java.util.concurrent.locks.Lock loxk;
         RwLock lock = null;
 
@@ -209,7 +213,7 @@ public class Lock {
         return lock;
     }
 
-    private static class StLock {
+    public final static class StLock {
         public final ReentrantLock lock = new ReentrantLock();
         public int cite = 0;
 
@@ -228,7 +232,7 @@ public class Lock {
         }
     }
 
-    private static class RwLock {
+    public final static class RwLock {
         public final ReadWriteLock lock = new ReentrantReadWriteLock();
         public int cite = 0;
 

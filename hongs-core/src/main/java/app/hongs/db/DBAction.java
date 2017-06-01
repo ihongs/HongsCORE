@@ -3,6 +3,7 @@ package app.hongs.db;
 import app.hongs.Cnst;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
@@ -43,12 +44,12 @@ public class DBAction implements IAction, IActing {
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
-            if (Dict.getValue(FormSet.getInstance( mod ).getForm( ent ),
+            if (Dict.getValue( FormSet.getInstance( mod ).getForm( ent ),
                 false, "@", "deny.call." + act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
         }
-        catch  (HongsException  ex ) {
+        catch (HongsException|HongsExpedient ex) {
             int ec  = ex.getErrno( );
             if (ec != 0x10e8 && ec != 0x10ea) {
                 throw ex;

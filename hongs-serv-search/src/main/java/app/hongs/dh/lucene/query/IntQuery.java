@@ -35,8 +35,8 @@ public class IntQuery implements IQuery {
         if (x == null || "".equals(x)) {
             x2 = Integer.MAX_VALUE;
         } else {
-            x2 = Synt.declare(n, Integer.class);
-            if (!l) {
+            x2 = Synt.declare(x, Integer.class);
+            if (!g) {
                 x2 = x2 - 1;
             }
         }

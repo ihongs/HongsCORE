@@ -35,8 +35,8 @@ public class FloatQuery implements IQuery {
         if (x == null || "".equals(x)) {
             x2 = Float.MAX_VALUE;
         } else {
-            x2 = Synt.declare(n, Float.class);
-            if (!l) {
+            x2 = Synt.declare(x, Float.class);
+            if (!g) {
                 x2 = FloatPoint.nextDown(x2);
             }
         }

@@ -1,6 +1,7 @@
 package app.hongs;
 
 import app.hongs.util.Lock;
+import app.hongs.util.Lock.RwLock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -199,27 +200,28 @@ public abstract class CoreSerial
   protected void load(final File file, final long time)
     throws HongsException
   {
-      String       key = CoreSerial.class.getName()
-                       +":"+ file.getAbsolutePath();
-      Lock.RwLock  loc = Lock.getRwLock( key );
+      String name = CoreSerial.class.getName()
+            + ":" + file.getAbsolutePath();
+      RwLock lock = Lock.getRwLock( name );
 
-      loc.lockr();
+      lock.lockr();
       try {
           if (file.exists() && !expired(time)) {
               load(file);
+              return;
           }
       }
       finally {
-          loc.unlockr( );
+          lock.unlockr();
       }
 
-      loc.lockw();
+      lock.lockw();
       try {
           imports( );
           save(file);
       }
       finally {
-          loc.unlockw( );
+          lock.unlockw();
       }
   }
 

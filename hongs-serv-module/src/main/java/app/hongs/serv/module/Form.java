@@ -89,53 +89,7 @@ public class Form extends Model {
             top.put("__name__", "id");
             top.put("__disp__", "ID");
             top.put("__type__", "hidden");
-/*
-            // 增加创建用户
-            top = new HashMap();
-            flds.add(2, top);
-            top.put("__name__",  "cuid" );
-            top.put("__type__", "string");
-            top.put("default" , "=$"+Cnst.UID_SES);
-            top.put("default-create","yes");
-            top.put("default-always","yes");
-            top.put("editable", "no");
-            top.put("listable", "no");
 
-            // 增加修改用户
-            top = new HashMap();
-            flds.add(3, top);
-            top.put("__name__",  "muid" );
-            top.put("__type__", "string");
-            top.put("default" , "=$"+Cnst.UID_SES);
-            top.put("default-create", "no");
-            top.put("default-always","yes");
-            top.put("editable", "no");
-            top.put("listable", "no");
-
-            // 增加创建时间
-            top = new HashMap();
-            flds.add(top);
-            top.put("__name__", "ctime" );
-            top.put("__type__", "datetime");
-            top.put(  "type"  ,"timestamp");
-            top.put("default" , "=%now" );
-            top.put("default-create","yes");
-            top.put("default-always","yes");
-            top.put("editable", "no");
-            top.put("listable","yes");
-
-            // 增加修改时间
-            top = new HashMap();
-            flds.add(top);
-            top.put("__name__", "mtime" );
-            top.put("__type__", "datetime");
-            top.put(  "type"  ,"timestamp");
-            top.put("default" , "=%now" );
-            top.put("default-create", "no");
-            top.put("default-always","yes");
-            top.put("editable", "no");
-            top.put("listable","yes");
-*/
             conf = Data.toString(flds);
             rd.put("conf", conf);
         }

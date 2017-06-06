@@ -198,11 +198,11 @@ public class Form extends Model {
 
         // 删除配置文件
         File   fo;
-        fo = new File(Core.CONF_PATH +"manage/data/"+ id + Cnst.FORM_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"/manage/data/"+ id + Cnst.FORM_EXT +".xml");
         if (fo.exists()) {
             fo.delete();
         }
-        fo = new File(Core.CONF_PATH +"manage/data/"+ id + Cnst.NAVI_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"/manage/data/"+ id + Cnst.NAVI_EXT +".xml");
         if (fo.exists()) {
             fo.delete();
         }

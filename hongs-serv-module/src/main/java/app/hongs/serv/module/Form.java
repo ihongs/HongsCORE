@@ -40,6 +40,8 @@ import org.w3c.dom.Element;
  */
 public class Form extends Model {
 
+    protected String configPrefix = "manage/data";
+    
     public Form() throws HongsException {
         this(DB.getInstance("module").getTable("form"));
     }

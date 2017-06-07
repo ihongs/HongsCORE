@@ -30,18 +30,19 @@ public class ModelForm {
     private static final Set FN_KEYS;
     static {
         FN_KEYS = new HashSet( );
+        FN_KEYS.add(Cnst.MD_KEY);
+        FN_KEYS.add(Cnst.WD_KEY);
         FN_KEYS.add(Cnst.PN_KEY);
         FN_KEYS.add(Cnst.GN_KEY);
         FN_KEYS.add(Cnst.RN_KEY);
         FN_KEYS.add(Cnst.OB_KEY);
         FN_KEYS.add(Cnst.RB_KEY);
-        FN_KEYS.add(Cnst.UD_KEY);
-        FN_KEYS.add(Cnst.MD_KEY);
-        FN_KEYS.add(Cnst.WD_KEY);
-        FN_KEYS.add(Cnst.WH_KEY);
+        FN_KEYS.add(Cnst.AB_KEY);
+        FN_KEYS.add(Cnst.WR_KEY);
         FN_KEYS.add(Cnst.OR_KEY);
         FN_KEYS.add(Cnst.AR_KEY);
         FN_KEYS.add(Cnst.SR_KEY);
+        FN_KEYS.add(Cnst.CB_KEY);
     }
 
     public ModelForm(Map fields, Map ftypes, Map dtypes) {

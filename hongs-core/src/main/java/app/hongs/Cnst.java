@@ -6,10 +6,10 @@ package app.hongs;
  * <p>
  * 命名规律:
  *
- * 特殊查询参数都是使用两个字符,
+ * 特殊查询参数都是使用两个字符;
  * 因模型中会将参数作为字段过滤,
- * 故请避免将字段取名为两个字符,
- * 但 id 可以并推荐作为主键字段;
+ * 故请避免将字段取名为两个字符.
+ * 但 id 可以并推荐作为主键字段.
  *
  * 查询关系符号为叹号加两个字符,
  * 叹号在这里表示特别而不是否定.
@@ -35,15 +35,13 @@ public final class Cnst {
 
     //** 查询参数 **/
 
-    public static final String ID_KEY =  "id"; // 编号参数
-
-    public static final String MD_KEY =  "md"; // 模式参数  (Mode)
-
-    public static final String UD_KEY =  "ud"; // 常用参数  (Used)
+    public static final String ID_KEY =  "id"; // 编号
 
     public static final String WD_KEY =  "wd"; // 关键词    (Word)
 
-    public static final String WH_KEY =  "wh"; // 变更约束  (Where)
+    public static final String MD_KEY =  "md"; // 模式参数  (Mode)
+
+    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
 
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
@@ -55,7 +53,9 @@ public final class Cnst {
 
     public static final String RB_KEY =  "rb"; // 应答字段  (Reply By)
 
-    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
+    public static final String AB_KEY =  "ab"; // 应用约束  (Apply By)
+
+    public static final String WR_KEY =  "wr"; // 附加约束  (Where)
 
     public static final String OR_KEY =  "or"; // 或关系    (Or)
 

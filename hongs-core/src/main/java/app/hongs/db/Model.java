@@ -231,7 +231,7 @@ implements IEntity
 
     // 检查是否可更新
     FetchCase fc = caze != null ? caze.clone() : fetchCase ( );
-    Map wh = Synt.declare( rd.get(Cnst.WH_KEY), new HashMap());
+    Map wh = Synt.declare( rd.get(Cnst.WR_KEY), new HashMap());
         fc.setOption("MODEL_METHOD", "update");
         wh.put (this.table.primaryKey, ids);
     this.filter(fc , wh );
@@ -289,7 +289,7 @@ implements IEntity
 
     // 检查是否可删除
     FetchCase fc = caze != null ? caze.clone() : fetchCase ( );
-    Map wh = Synt.declare( rd.get(Cnst.WH_KEY), new HashMap());
+    Map wh = Synt.declare( rd.get(Cnst.WR_KEY), new HashMap());
         fc.setOption("MODEL_METHOD", "delete");
         wh.put (this.table.primaryKey, ids);
     this.filter(fc , wh );

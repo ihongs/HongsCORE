@@ -17,6 +17,14 @@ import java.util.regex.Pattern;
 
 /**
  * 预置补充处理器
+ *
+ * <p>
+ * 可使用 ab 参数将指定好的条件注入到 wr 数据中.
+ * 这样可减少终端一些常规参数,
+ * 并能在未来更方便地做出调整;
+ * 如 ab=v1 附加版本 1 的参数.
+ * </p>
+ *
  * <pre>
  * 参数含义:
  * md=8  将启用对象模式
@@ -36,7 +44,7 @@ public class PresetInvoker implements FilterInvoker {
         String[] used = ann.used();
 
         if (used == null || used.length == 0) {
-            Set<String> uzed = Synt.asTerms(helper.getParameter(Cnst.UD_KEY));
+            Set<String> uzed = Synt.asTerms(helper.getParameter(Cnst.AB_KEY));
         if (uzed != null && ! uzed.isEmpty()) {
             used  = uzed.toArray(new String[] {});
         }
@@ -102,10 +110,10 @@ public class PresetInvoker implements FilterInvoker {
                      * update,delete 通常只用 id 作为参数
                      * 故需要将防御参数作为特定的过滤参数
                      */
-                    if (! rxqd.containsKey(Cnst.WH_KEY)) {
-                        Map rwqd  =  Synt.declare(reqd.get(Cnst.WH_KEY), Map.class);
+                    if (! rxqd.containsKey(Cnst.WR_KEY)) {
+                        Map rwqd  =  Synt.declare(reqd.get(Cnst.WR_KEY), Map.class);
                         if (rwqd ==  null) {
-                            reqd.put(Cnst.WH_KEY, rxqd);
+                            reqd.put(Cnst.WR_KEY, rxqd);
                         } else {
                             inject  (rwqd /***/ , rxqd);
                         }

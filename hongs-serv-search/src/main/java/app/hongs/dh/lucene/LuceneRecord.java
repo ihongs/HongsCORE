@@ -287,7 +287,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
     @Override
     public int update(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        Map         wh  = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
+        Map         wh  = Synt.declare(rd.get(Cnst.WR_KEY), new HashMap());
         for(String  id  : ids) {
             if(!permit(wh,id)) {
                 throw new HongsException(0x1096, "Can not update for id '"+id+"'");
@@ -306,7 +306,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
     @Override
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        Map         wh  = Synt.declare(rd.get(Cnst.WH_KEY), new HashMap());
+        Map         wh  = Synt.declare(rd.get(Cnst.WR_KEY), new HashMap());
         for(String  id  : ids) {
             if(!permit(wh,id)) {
                 throw new HongsException(0x1097, "Can not delete for id '"+id+"'");

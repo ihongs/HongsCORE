@@ -299,7 +299,7 @@ implements IEntity
 
     for (String id : ids)
     {
-      this.del( id  );
+      this.del( id ,caze);
     }
 
     return ids.size();
@@ -436,14 +436,14 @@ implements IEntity
  配置文件中用 model 来指定新的模型类
 
  MySQL,SQLite add 方法主体改造:
-    rd.remove(this.table.primaryKey );
     // 存入主数据
-    this.table.insert          ( rd );
-    // 查询自增ID, MySQL: last_insert_id() SQLite: last_insert_rowid()
-    Map  rd = this.db.fetchOne ("SELECT last_insert_id() AS id");
-    id = rd.get("id").toString (    );
-    rd.put(this.table.primaryKey, id);
+    rd.remove(this.table.primaryKey );
+    int an = this.table.insert ( rd );
+    // 自增ID, MySQL: last_insert_id() SQLite: last_insert_rowid()
+    Map rd = this.db.fetchOne  ( "SELECT last_insert_id() AS id" );
+    Object id = rd.get("id");
     // 存入子数据
+    rd.put(this.table.primaryKey, id);
     this.table.insertSubValues ( rd );
 
  或对 DB,Table,Model 同步改造, 使用 PreparedStatement.getGeneratedKeys 获取
@@ -455,22 +455,36 @@ implements IEntity
   public String add(Map rd)
     throws HongsException
   {
-    String id = Synt.declare(rd.get(Cnst.ID_KEY), String.class );
-    if (id != null && id.length() != 0)
+    String id = Core.newIdentity(   );
+
+    add(id,rd);
+
+    return id ;
+  }
+
+  /**
+   * 添加记录
+   *
+   * @param id
+   * @param rd
+   * @return 添加条数
+   * @throws HongsException
+   */
+  public int add(String id, Map rd)
+    throws HongsException
+  {
+    if (id == null || id.length() == 0)
     {
-      throw new HongsException (0x1091, "Add can not have a id");
+      throw new HongsException (0x1091, "ID can not be empty for add");
     }
 
-    id = Core.newIdentity();
-    rd.put(this.table.primaryKey, id);
-
     // 存入主数据
-    this.table.insert/* new */ ( rd );
+    int an = this.table.insert ( rd );
 
     // 存入子数据
     this.table.insertSubValues ( rd );
 
-    return id;
+    return an;
   }
 
   /**
@@ -482,21 +496,6 @@ implements IEntity
    * @throws app.hongs.HongsException
    */
   public int put(String id, Map rd)
-    throws HongsException
-  {
-    return this.put(id, rd, null);
-  }
-
-  /**
-   * 更新记录
-   *
-   * @param rd
-   * @param id
-   * @param caze
-   * @return 更新条数
-   * @throws app.hongs.HongsException
-   */
-  public int put(String id, Map rd, FetchCase caze)
     throws HongsException
   {
     if (id == null || id.length() == 0)
@@ -560,7 +559,10 @@ implements IEntity
     }
 
     // 删除子数据
-    this.table.deleteSubValues ( id );
+    if (caze == null || ! caze.getOption( "EXCLUDE_HASMANY", false ) )
+    {
+      this.table.deleteSubValues ( id );
+    }
 
     return an;
   }

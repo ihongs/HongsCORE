@@ -9,17 +9,14 @@ import app.hongs.db.Table;
 import app.hongs.db.util.FetchCase;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
-
-import java.util.Map;
-import java.util.List;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
+import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -30,7 +27,6 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -40,8 +36,8 @@ import org.w3c.dom.Element;
  */
 public class Form extends Model {
 
-    protected String configPrefix = "manage/data";
-    
+    protected String prefix = "manage/data";
+
     public Form() throws HongsException {
         this(DB.getInstance("module").getTable("form"));
     }
@@ -59,11 +55,96 @@ public class Form extends Model {
      * @throws app.hongs.HongsException
      */
     @Override
-    public String set(Map rd) throws HongsException {
-        // 给字段加名字
+    public int add(String id, Map rd) throws HongsException {
+        List<Map> flds = parseConf(rd);
+        String name = (String) rd.get("name");
+
+        int an = superAdd (id,  rd );
+
+        // 建立表单配置
+        if (flds != null) {
+            updateFormConf(id, flds);
+        }
+
+        // 建立菜单配置
+        if (name != null) {
+            updateFormMenu(id, name);
+        }
+
+        // 更新频道菜单
+        String unitId = (String) rd.get( "unit_id" );
+        String unitNm = (String) db.getTable("unit")
+                .filter ("id = ?", unitId)
+                .select ("name")
+                .one    ()
+                .get    ("name");
+        updateUnitMenu(unitId, unitNm);
+
+        return an;
+    }
+
+    public int put(String id, Map rd) throws HongsException {
+        List<Map> flds = parseConf(rd);
+
+        String  name = (String) rd.get("name");
+
+        int an = superPut (id,  rd );
+
+        // 建立表单配置
+        if (flds != null) {
+            updateFormConf(id, flds);
+        }
+
+        // 建立菜单配置
+        if (name != null) {
+            updateFormMenu(id, name);
+        }
+
+        return an;
+    }
+
+    @Override
+    public int del(String id, FetchCase fc) throws HongsException {
+        String unitId = (String) db.getTable("form")
+                .filter ("id = ?", id)
+                .select ("unit_id")
+                .one    ()
+                .get    ("unit_id");
+        String unitNm = (String) db.getTable("unit")
+                .filter ("id = ?", unitId)
+                .select ("name")
+                .one    ()
+                .get    ("name");
+
+        int n = super.del(id,fc);
+
+        // 删除配置文件
+        deleteFormConf(id);
+        deleteFormMenu(id);
+
+        // 更新单元菜单
+        updateUnitMenu(unitId, unitNm);
+
+        return n;
+    }
+
+    protected final int superAdd(String id, Map rd) throws HongsException {
+        return super.add(id, rd);
+    }
+
+    protected final int superPut(String id, Map rd) throws HongsException {
+        return super.put(id, rd);
+    }
+
+    protected final int superDel(String id, FetchCase fc) throws HongsException {
+        return super.del(id, fc);
+    }
+
+    protected List<Map> parseConf(Map rd) {
+        List<Map> flds = null;
         String conf = (String) rd.get("conf");
         String name = (String) rd.get("name");
-        List<Map> flds = null;
+
         if (conf != null && !"".equals(conf)) {
              Map  top  = null;
 
@@ -86,87 +167,42 @@ public class Form extends Model {
             top.put("__disp__", name);
 
             // 增加编号字段
-            top = new HashMap();
+            top = new HashMap( );
             flds.add(1, top);
             top.put("__name__", "id");
             top.put("__disp__", "ID");
             top.put("__type__", "hidden");
 
-            conf = Data.toString(flds);
+            conf = Data.toString ( flds );
             rd.put("conf", conf);
-        }
-
-        String  id = (String) rd.get(this.table.primaryKey);
-        boolean ic;
-        if (id == null || id.length() == 0) {
-            id = this.add(rd);
-            ic = true ;
         } else {
-            this.put(id , rd);
-            ic = false;
+            rd.remove ( "conf" );
         }
 
-        // 建立表单配置
-        if (flds != null) {
-            updateOrCreateFormSet( id, flds );
-        }
-
-        // 建立菜单配置
-        if (name != null && !"".equals(name)) {
-            updateOrCreateMenuSet( id, name );
-        }
-
-        // 更新频道菜单
-        if (ic) {
-            String unitId = (String) rd.get( "unit_id" );
-            String unitNm = (String) db.getTable("unit")
-                    .filter ("id = ?", unitId)
-                    .select ("name")
-                    .one    ()
-                    .get    ("name");
-            Unit   un  =  new Unit();
-            un.updateOrCreateMenuSet(unitId, unitNm);
-            un.updateOrCreateMenuSet(              );
-        }
-
-        return id;
+        return flds;
     }
 
-    @Override
-    public int del(String id, FetchCase fc) throws HongsException {
-        String unitId = (String) db.getTable("form")
-                .filter ("id = ?", id)
-                .select ("unit_id")
-                .one    ()
-                .get    ("unit_id");
-        String unitNm = (String) db.getTable("unit")
-                .filter ("id = ?", unitId)
-                .select ("name")
-                .one    ()
-                .get    ("name");
-
-        int n = super.del(id,fc);
-
-        // 更新单元菜单
-        Unit   un  =  new Unit();
-        un.updateOrCreateMenuSet(unitId, unitNm);
-        un.updateOrCreateMenuSet(              );
-
-        // 删除配置文件
-        File   fo;
-        fo = new File(Core.CONF_PATH +"/manage/data/"+ id + Cnst.FORM_EXT +".xml");
+    protected void deleteFormMenu(String id) {
+        File fo = new File(Core.CONF_PATH +"/"+ prefix +"/"+ id + Cnst.FORM_EXT +".xml");
         if (fo.exists()) {
             fo.delete();
         }
-        fo = new File(Core.CONF_PATH +"/manage/data/"+ id + Cnst.NAVI_EXT +".xml");
+    }
+
+    protected void deleteFormConf(String id) {
+        File fo = new File(Core.CONF_PATH +"/"+ prefix +"/"+ id + Cnst.NAVI_EXT +".xml");
         if (fo.exists()) {
             fo.delete();
         }
-
-        return n;
     }
 
-    protected void updateOrCreateMenuSet(String id, String name) throws HongsException {
+    protected void updateUnitMenu(String id, String name) throws HongsException {
+        Unit un = new Unit();
+        un.updateUnitMenu(id, name);
+        un.updateRootMenu(        );
+    }
+
+    protected void updateFormMenu(String id, String name) throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -175,8 +211,8 @@ public class Form extends Model {
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("disp", name);
-        menu.setAttribute("href", "manage/data/#"+id);
-        menu.setAttribute("hrel", "manage/data/" +id+"/main.html");
+        menu.setAttribute("href", prefix+"/#"+id);
+        menu.setAttribute("hrel", prefix+"/" +id+"/main.html");
 
         Element  role, actn, depn;
 
@@ -189,63 +225,63 @@ public class Form extends Model {
 
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", "manage/data/" +id+"/retrieve");
+        role.setAttribute("name", prefix+"/"+id+"/retrieve");
         role.setAttribute("disp", "查看"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode("manage/data/"+id+"/retrieve.act") );
+        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve.act") );
 
         // 添加
 
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", "manage/data/" +id+"/create");
+        role.setAttribute("name", prefix+"/"+id+"/create");
         role.setAttribute("disp", "添加"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode("manage/data/"+id+"/create.act") );
+        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/create.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode("manage/data/"+id+"/retrieve"  ) );
+        depn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve"  ) );
 
         // 修改
 
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", "manage/data/" +id+"/update");
+        role.setAttribute("name", prefix+"/"+id+"/update");
         role.setAttribute("disp", "修改"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode("manage/data/"+id+"/update.act") );
+        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/update.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode("manage/data/"+id+"/retrieve"  ) );
+        depn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve"  ) );
 
         // 删除
 
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", "manage/data/" +id+"/delete");
+        role.setAttribute("name", prefix+"/"+id+"/delete");
         role.setAttribute("disp", "删除"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode("manage/data/"+id+"/delete.act") );
+        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/delete.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode("manage/data/"+id+"/retrieve"  ) );
+        depn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve"  ) );
 
         // 保存
-        saveDocument(Core.CONF_PATH+"/manage/data/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 
-    protected void updateOrCreateFormSet(String id, List<Map> conf) throws HongsException {
+    protected void updateFormConf(String id, List<Map> conf) throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -315,7 +351,7 @@ public class Form extends Model {
             }
         }
 
-        saveDocument(Core.CONF_PATH+"/manage/data/"+id+Cnst.FORM_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.FORM_EXT+".xml", docm);
     }
 
     private Document makeDocument() throws HongsException {

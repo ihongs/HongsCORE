@@ -22,7 +22,7 @@ import java.util.Set;
 @Action("manage/module/form")
 public class FormAction {
 
-    private final Form model;
+    protected final Form model;
 
     public FormAction() throws HongsException {
         model = (Form) DB.getInstance("module").getModel("form");

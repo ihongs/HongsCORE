@@ -31,6 +31,8 @@ import org.w3c.dom.Element;
  */
 public class Unit extends Mtree {
 
+    protected String prefix = "manage/data";
+
     public Unit() throws HongsException {
         this(DB.getInstance("module").getTable("unit"));
     }
@@ -59,14 +61,14 @@ public class Unit extends Mtree {
         // 建立菜单配置
         String name = (String) rd.get("name");
         if (name != null && !"".equals(name)) {
-            updateOrCreateMenuSet( id, name );
-            updateOrCreateMenuSet(  );
+            updateUnitMenu(id, name);
+            updateRootMenu(        );
         }
 
         return id;
     }
 
-    public void updateOrCreateMenuSet(String id, String name) throws HongsException {
+    public void updateUnitMenu(String id, String name) throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -75,7 +77,7 @@ public class Unit extends Mtree {
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("disp", name);
-        menu.setAttribute("href", "manage/data/"+id+"/");
+        menu.setAttribute("href", prefix+"/"+id+"/");
 
         Element  incl;
 
@@ -95,14 +97,14 @@ public class Unit extends Mtree {
             String fid = row.get("id").toString();
             incl = docm.createElement( "import" );
             menu.appendChild( incl );
-            incl.appendChild( docm.createTextNode("manage/data/"+fid) );
+            incl.appendChild( docm.createTextNode(prefix+"/"+fid) );
         }
 
         // 保存
-        saveDocument(Core.CONF_PATH+"/manage/data/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 
-    public void updateOrCreateMenuSet() throws HongsException {
+    public void updateRootMenu() throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -126,13 +128,13 @@ public class Unit extends Mtree {
             String uid = row.get("id").toString();
             incl = docm.createElement( "import" );
             root.appendChild( incl );
-            incl.appendChild( docm.createTextNode("manage/data/"+uid) );
+            incl.appendChild( docm.createTextNode(prefix+"/"+uid) );
         }
 
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("disp", "");
-        menu.setAttribute("href", "!manage/data/");
+        menu.setAttribute("href", "!"+prefix+"/");
 
         // 一级以下单元
         rows = this.table.fetchCase( )
@@ -143,10 +145,10 @@ public class Unit extends Mtree {
             String uid = row.get("id").toString();
             incl = docm.createElement( "import" );
             menu.appendChild( incl );
-            incl.appendChild( docm.createTextNode("manage/data/"+uid) );
+            incl.appendChild( docm.createTextNode(prefix+"/"+uid) );
         }
 
-        saveDocument(Core.CONF_PATH+"/manage/data"+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+prefix+Cnst.NAVI_EXT+".xml", docm);
     }
 
     private Document makeDocument() throws HongsException {

@@ -17,7 +17,7 @@ import java.util.Map;
 @Action("manage/module/unit")
 public class UnitAction {
     
-    private final Unit model;
+    protected final Unit model;
 
     public UnitAction() throws HongsException {
         model = (Unit) DB.getInstance("module").getModel("unit");

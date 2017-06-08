@@ -21,14 +21,19 @@ import org.apache.lucene.document.Document;
  */
 public class Data extends SearchRecord {
 
-    private final String conf;
-    private final String form;
+    protected String prefix = "manage/data";
+    protected final String conf;
+    protected final String form;
 
-    public Data(String conf, String form) throws HongsException {
-        super("data/"+ form);
+    public Data(String path, String conf, String form) throws HongsException {
+        super(path);
 
         this.conf = conf;
         this.form = form;
+    }
+
+    public Data(String conf, String form) throws HongsException {
+        this("data/" + form, conf , form);
     }
 
     /**
@@ -69,7 +74,7 @@ public class Data extends SearchRecord {
 
         Map fields;
         Map fieldx;
-        String comf = "manage/data/" + form;
+        String comf = prefix + "/" + form;
 
         /**
          * 字段以 manage/data 的字段为基础
@@ -219,7 +224,7 @@ public class Data extends SearchRecord {
         }
 
         //** 保存到数据库 **/
-        
+
         if (!saveToDb) {
             // 拼接展示字段
             StringBuilder nm = new StringBuilder();
@@ -245,7 +250,7 @@ public class Data extends SearchRecord {
         }
 
         //** 保存到索引库 **/
-        
+
         Document doc = new Document();
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
@@ -256,7 +261,7 @@ public class Data extends SearchRecord {
         if (etime == 0) {
             throw new HongsException.Common("Record can not be current");
         }
-        
+
         Model    model = DB.getInstance("module").getModel("data");
 
         //** 获取旧的数据 **/
@@ -280,15 +285,15 @@ public class Data extends SearchRecord {
         param = new Object[] {id, form, 0};
 
         long mtime = System.currentTimeMillis() / 1000;
-        
+
         Map ud = new HashMap();
         ud.put("etime", mtime);
-        
+
         dd.put("rtime", dd.get("etime"));
         dd.put("ctime", mtime);
         dd.put("etime", 0);
         dd.put("user_id", uid);
-        
+
         model.table.update(ud, where, param);
         model.table.insert(dd);
 

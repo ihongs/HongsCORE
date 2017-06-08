@@ -325,12 +325,13 @@ public class Mtree extends Model
   /**
    * 添加节点
    *
+   * @param id
    * @param rd
    * @return 节点ID
    * @throws app.hongs.HongsException
    */
   @Override
-  public String add(Map rd)
+  public int add(String id, Map rd)
     throws HongsException
   {
     if (rd == null)
@@ -360,12 +361,12 @@ public class Mtree extends Model
       rd.put(this.cnumKey, "0");
     }
 
-    String id = super.add(rd);
+    int cnt = super.add(id, rd);
 
-    // 将父节点的子节点数量加1
-    this.chgChildsNum(pid, 1);
+    // 子节点数量递增
+    this.chgChildsNum( pid, 1 );
 
-    return id;
+    return cnt;
   }
 
   /**
@@ -377,7 +378,7 @@ public class Mtree extends Model
    * @throws app.hongs.HongsException
    */
   @Override
-  public int put(String id, Map rd, FetchCase caze)
+  public int put(String id, Map rd)
     throws HongsException
   {
     if (rd == null)
@@ -398,7 +399,7 @@ public class Mtree extends Model
     String newPid = (String) rd.get(this.pidKey);
     String oldPid = this.getParentId (id);
     int    ordNum = this.getSerialNum(id);
-    int    i = super.put( id, rd , caze );
+    int    chgNum = super.put(id, rd);
 
     /**
      * 如果有指定新的pid且不同于旧的pid, 则
@@ -447,7 +448,7 @@ public class Mtree extends Model
       }
     }
 
-    return i;
+    return chgNum;
   }
 
   /**

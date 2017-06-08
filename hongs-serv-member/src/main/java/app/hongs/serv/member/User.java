@@ -40,10 +40,10 @@ extends Model {
     }
 
     @Override
-    public int put(String id, Map data, FetchCase caze) throws HongsException {
+    public int put(String id, Map data) throws HongsException {
         permit( id , data);
 
-        return super.put(id, data, caze);
+        return super.put(id, data);
     }
 
     @Override

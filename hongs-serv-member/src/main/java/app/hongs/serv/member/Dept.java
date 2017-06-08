@@ -41,14 +41,14 @@ extends Mtree {
     }
 
     @Override
-    public int put(String id, Map data, FetchCase caze) throws HongsException {
+    public int put(String id, Map data) throws HongsException {
         // 权限限制, 仅能赋予当前登录用户所有的权限
         if (data.containsKey("roles") ) {
             data.put("rtime", System.currentTimeMillis() / 1000);
             AuthKit.clnRoles( Synt.declare(data.get("roles"), List.class),  id  );
         }
 
-        return super.put(id, data, caze);
+        return super.put(id, data);
     }
 
     public Set<String> getRoles(String deptId)

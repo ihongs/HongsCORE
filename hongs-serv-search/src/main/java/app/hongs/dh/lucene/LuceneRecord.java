@@ -179,7 +179,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      * @throws HongsException
      */
     @Override
-    public Map retrieve(Map rd) throws HongsException {
+    public Map search(Map rd) throws HongsException {
         // 指定单个 id 则走 getOne
         Object id = rd.get (Cnst.ID_KEY);
         if (id != null && !(id instanceof Collection) && !(id instanceof Map)) {

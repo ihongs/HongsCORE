@@ -42,21 +42,9 @@ public class Unit extends Mtree {
         super(table);
     }
 
-    /**
-     * 添加/修改记录
-     *
-     * @param rd
-     * @return 记录ID
-     * @throws app.hongs.HongsException
-     */
     @Override
-    public String set(Map rd) throws HongsException {
-        String id = (String) rd.get(this.table.primaryKey);
-        if (id == null || id.length() == 0) {
-            id = this.add(rd);
-        } else {
-            this.put(id , rd);
-        }
+    public int add(String id, Map rd) throws HongsException {
+        int an = super.add(id, rd);
 
         // 建立菜单配置
         String name = (String) rd.get("name");
@@ -65,7 +53,21 @@ public class Unit extends Mtree {
             updateRootMenu(        );
         }
 
-        return id;
+        return an;
+    }
+
+    @Override
+    public int put(String id, Map rd) throws HongsException {
+        int an = super.put(id, rd);
+
+        // 建立菜单配置
+        String name = (String) rd.get("name");
+        if (name != null && !"".equals(name)) {
+            updateUnitMenu(id, name);
+            updateRootMenu(        );
+        }
+
+        return an;
     }
 
     public void updateUnitMenu(String id, String name) throws HongsException {

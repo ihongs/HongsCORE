@@ -455,10 +455,8 @@ implements IEntity
   public String add(Map rd)
     throws HongsException
   {
-    String id = Core.newIdentity(   );
-
+    String id = Core.newIdentity();
     add(id,rd);
-
     return id ;
   }
 
@@ -479,9 +477,11 @@ implements IEntity
     }
 
     // 存入主数据
+    rd.put(this.table.primaryKey, id);
     int an = this.table.insert ( rd );
 
     // 存入子数据
+//  rd.put(this.table.primaryKey, id);
     this.table.insertSubValues ( rd );
 
     return an;
@@ -582,7 +582,7 @@ implements IEntity
     }
 
     Map rd = new HashMap();
-    rd.put(table.primaryKey, id);
+    rd.put(this.table.primaryKey, id);
 
     // 调用filter进行过滤
     caze = caze != null ? caze.clone() : fetchCase();
@@ -592,7 +592,7 @@ implements IEntity
     return this.table.fetchLess(caze);
   }
 
-  public Map  getOne(Map rd)
+  public Map getOne(Map rd)
     throws HongsException
   {
     return this.getOne(rd, null);

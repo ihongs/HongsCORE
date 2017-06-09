@@ -30,8 +30,8 @@ import java.util.Set;
 @Action("manage/info")
 public class InfoAction {
 
-    @Action("retrieve")
-    public void retrieve(ActionHelper helper) throws HongsException {
+    @Action("search")
+    public void search(ActionHelper helper) throws HongsException {
         Map  rsp = new HashMap();
         Map  req = helper.getRequestData();
         long now = System.currentTimeMillis( );

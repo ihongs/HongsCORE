@@ -184,7 +184,7 @@
     var context = $("#<%=id%>");
 
     context.hsForm({
-        loadUrl: "<%=_module%>/<%=_entity%>/retrieve.act?id=\${id}&md=\${md}",
+        loadUrl: "<%=_module%>/<%=_entity%>/search.act?id=\${id}&md=\${md}",
         saveUrl: "<%=_module%>/<%=_entity%>/<%=_action%>.act",
         _fill__fork: hsFormFillFork
     });

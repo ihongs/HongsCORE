@@ -83,6 +83,7 @@ public class Form extends Model {
         return an;
     }
 
+    @Override
     public int put(String id, Map rd) throws HongsException {
         List<Map> flds = parseConf(rd);
 
@@ -225,12 +226,12 @@ public class Form extends Model {
 
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/retrieve");
+        role.setAttribute("name", prefix+"/"+id+"/search");
         role.setAttribute("disp", "查看"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search.act") );
 
         // 添加
 
@@ -241,11 +242,11 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/create.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/create.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve"  ) );
+        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
 
         // 修改
 
@@ -256,11 +257,11 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/update.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve"  ) );
+        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
 
         // 删除
 
@@ -271,11 +272,11 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(prefix+"/"+id+"/delete.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/delete.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(prefix+"/"+id+"/retrieve"  ) );
+        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
 
         // 保存
         saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.NAVI_EXT+".xml", docm);

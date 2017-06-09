@@ -42,19 +42,19 @@ public class FileAction implements IAction {
     private static final List ROOT_LIST = new ArrayList();
     static {
         ROOT_LIST.add(Synt.asMap(
-            "path", "/BASE",
+            "path", "/BASE/",
             "name", "网站",
             "type", "dir",
             "size", "1"
         ));
         ROOT_LIST.add(Synt.asMap(
-            "path", "/CONF",
+            "path", "/CONF/",
             "name", "配置",
             "type", "dir",
             "size", "1"
         ));
         ROOT_LIST.add(Synt.asMap(
-            "path", "/DATA",
+            "path", "/DATA/",
             "name", "数据",
             "type", "dir",
             "size", "1"
@@ -62,8 +62,8 @@ public class FileAction implements IAction {
     }
 
     @Override
-    @Action("retrieve")
-    public void retrieve(ActionHelper helper) throws HongsException {
+    @Action("search")
+    public void search(ActionHelper helper) throws HongsException {
         CoreLocale lang = CoreLocale.getInstance("manage_serv");
         String type = helper.getParameter("type");
         String pxth = helper.getParameter("path");

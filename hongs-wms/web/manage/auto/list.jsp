@@ -171,7 +171,7 @@
     var context = $("#<%=id%>");
 
     context.hsList({
-        loadUrl : "<%=_module%>/<%=_entity%>/retrieve.act?md=2",
+        loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=2",
         openUrls: [
             ['.create', '<%=_module%>/<%=_entity%>/form.html?md=0', '@'],
             ['.update', '<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}', '@']

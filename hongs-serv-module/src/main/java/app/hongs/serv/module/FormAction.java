@@ -125,7 +125,7 @@ public class FormAction {
                 item.put("__disp__", pre+form.get("name"));
                 item.put("data-vk", "id");
                 item.put("data-tk", "name");
-                item.put("data-at", "manage/data/"+form.get("id")+"/retrieve");
+                item.put("data-at", "manage/data/"+form.get("id")+"/search");
                 item.put("data-al", "manage/data/"+form.get("id")+"/list4fork.html");
                 list.add( item );
             }

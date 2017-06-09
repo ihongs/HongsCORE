@@ -28,9 +28,9 @@ import java.util.Map;
 public class DataAction extends LuceneAction {
 
     @Override
-    public void initiate(ActionHelper helper, ActionRunner runner)
+    public void acting(ActionHelper helper, ActionRunner runner)
     throws HongsException {
-        super.initiate(helper, runner);
+        super.acting(helper, runner);
 
         // 绑定特制的表单
         Method m = runner.getMethod( );
@@ -83,7 +83,7 @@ public class DataAction extends LuceneAction {
         helper.reply(ss, Synt.asMap("id",id));
     }
 
-    @Action("counts/retrieve")
+    @Action("counts/search")
     public void counts(ActionHelper helper) throws HongsException {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
@@ -106,7 +106,7 @@ public class DataAction extends LuceneAction {
         helper.reply(sd);
     }
 
-    @Action("statis/retrieve")
+    @Action("statis/search")
     public void statis(ActionHelper helper) throws HongsException {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);

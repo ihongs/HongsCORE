@@ -21,9 +21,9 @@ import java.lang.reflect.Method;
 public class DataAction extends LuceneAction {
 
     @Override
-    public void initiate(ActionHelper helper, ActionRunner runner)
+    public void acting(ActionHelper helper, ActionRunner runner)
     throws HongsException {
-        super.initiate(helper, runner);
+        super.acting(helper, runner);
 
         // 绑定特制的表单
         Method m = runner.getMethod( );

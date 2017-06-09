@@ -14,8 +14,8 @@ import java.util.Map;
 @Action("handle/mine")
 public class MineAction extends app.hongs.serv.manage.MineAction {
 
-    @Action("sign/retrieve")
-    public void ssidRetrieve(ActionHelper ah) {
+    @Action("sign/info")
+    public void signInfo(ActionHelper ah) {
         Map        sd = new HashMap();
         String     sk = CoreConfig.getInstance().getProperty("core.api.ssid");
         sd.put(sk, ah.getRequest().getRequestedSessionId());

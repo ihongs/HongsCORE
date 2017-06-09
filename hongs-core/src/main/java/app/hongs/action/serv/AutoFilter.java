@@ -174,16 +174,16 @@ public class AutoFilter extends ActionDriver {
             return  actset;
         }
 
-        // 总是通过 retrieve 获取动作 class
-        // 即使无需 retrieve 也要存在 retrieve 方法才行
+        // 总是通过 search 获取动作 class
+        // 即使无需 search 也要存在 search 方法才行
         Class cls;
         try {
             cls = ActionRunner.getActions()
-                              .get(action.substring(1) + "/retrieve")
+                              .get(action.substring(1) + "/search")
                               .getMclass( );
         } catch ( NullPointerException ex ) {
             throw new HongsError(0x3e,
-                 "Auto action '" + action.substring(1) + "/retrieve' is not exists", ex);
+                 "Auto action '" + action.substring(1) + "/search' is not exists", ex);
         }
 
         actset = new TreeSet(new Comparator<String>() {

@@ -521,7 +521,7 @@ public class DB
      * 表名可以是"数据库.表名"
      * 用于引用另一个库中的表
      */
-    int pos = tableName.indexOf('.');
+    int pos = tableName.lastIndexOf('.');
     if (pos > 0)
     {
       String db = tableName.substring(0,  pos);

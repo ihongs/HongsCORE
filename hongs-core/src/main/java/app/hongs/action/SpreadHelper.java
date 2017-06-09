@@ -131,7 +131,7 @@ public class SpreadHelper {
                 String f = (String) mt.get("form");
                 if (null == c || "".equals(c)) c = ""; // 缺省情况有问题
                 if (null == f || "".equals(f)) f = ak;
-                at  =  c + "/" + f +  "/retrieve" ;
+                at  =  c + "/" + f + "/search";
             }
 
             // 查询结构

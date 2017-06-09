@@ -9,7 +9,7 @@ import java.util.Map;
  */
 public interface IEntity {
 
-    public Map retrieve(Map rd) throws HongsException;
+    public Map search(Map rd) throws HongsException;
 
     public Map create(Map rd) throws HongsException;
 

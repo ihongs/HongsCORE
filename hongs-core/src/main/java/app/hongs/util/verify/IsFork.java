@@ -57,10 +57,10 @@ public class IsFork extends Rule {
             cf =  ck ;
         }
         if ("".equals(fm)) {
-            fm =  fk.replaceFirst("_id$" , "");
+            fm =  fk.replaceFirst("_id$", "");
         }
         if ("".equals(at)) {
-            at =  cf+ "/" +fm+ "/retrieve.act";
+            at =  cf +"/"+ fm + "/search.act";
         }
         if ("".equals(vk)) {
             vk = "id";

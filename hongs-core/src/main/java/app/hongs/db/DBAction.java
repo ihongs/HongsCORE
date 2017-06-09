@@ -31,7 +31,7 @@ public class DBAction implements IAction, IActing {
     protected String ent = null;
 
     @Override
-    public void initiate(ActionHelper helper, ActionRunner runner) throws HongsException {
+    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
         String act;
         act = runner.getHandle();
         ent = runner.getEntity();
@@ -57,17 +57,17 @@ public class DBAction implements IAction, IActing {
         }
     }
 
-    @Action("retrieve")
+    @Action("search")
     @Preset(conf="", envm="")
     @Select(conf="", form="")
     @Override
-    public void retrieve(ActionHelper helper)
+    public void search(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
-                req = getReqMap(helper, ett, "retrieve", req);
-        Map     rsp = ett.retrieve(req);
-                rsp = getRspMap(helper, ett, "retrieve", rsp);
+                req = getReqMap(helper, ett, "search", req);
+        Map     rsp = ett.search(req);
+                rsp = getRspMap(helper, ett, "search", rsp);
         helper.reply(rsp);
     }
 

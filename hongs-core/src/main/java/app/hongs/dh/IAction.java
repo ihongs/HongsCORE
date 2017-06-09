@@ -9,7 +9,7 @@ import app.hongs.action.ActionHelper;
  */
 public interface IAction {
 
-    public void retrieve(ActionHelper helper) throws HongsException;
+    public void search(ActionHelper helper) throws HongsException;
 
     public void create(ActionHelper helper) throws HongsException;
 

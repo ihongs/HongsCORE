@@ -20,9 +20,9 @@ import java.util.Map;
 @Action("manage/mine")
 public class MineAction {
 
-    @Action("retrieve")
+    @Action("info")
     @Preset(conf="member", envm="mine")
-    public void mineRetrieve(ActionHelper ah)
+    public void mineInfo(ActionHelper ah)
     throws HongsException {
         Map rd = ah.getRequestData();
         String id = (String) ah.getSessibute(Cnst.UID_SES);

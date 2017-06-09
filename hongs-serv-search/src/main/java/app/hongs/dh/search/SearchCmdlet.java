@@ -40,8 +40,8 @@ public class SearchCmdlet {
         LuceneRecord so = new LuceneRecord(conf+"/"+name, FormSet.getInstance(conf).getForm(name));
         Map req = ah.getRequestData();
         req.putAll(opts);
-        Map rsp = so.retrieve ( req );
-        CmdletHelper.preview  ( rsp );
+        Map rsp = so.search (req);
+        CmdletHelper.preview(rsp);
     }
 
     @Cmdlet("update")

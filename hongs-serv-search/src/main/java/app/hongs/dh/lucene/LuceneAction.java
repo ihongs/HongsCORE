@@ -30,7 +30,7 @@ public class LuceneAction implements IAction, IActing {
     protected String ent = null;
 
     @Override
-    public void initiate(ActionHelper helper, ActionRunner runner) throws HongsException {
+    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
         String act;
         act = runner.getHandle();
         ent = runner.getEntity();
@@ -61,17 +61,17 @@ public class LuceneAction implements IAction, IActing {
         }
     }
 
-    @Action("retrieve")
+    @Action("search")
     @Preset(conf="", envm="")
     @Select(conf="", form="")
     @Spread(conf="", form="")
     @Override
-    public void retrieve(ActionHelper helper) throws HongsException {
+    public void search(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
-                rd = getReqMap(helper, sr, "retrieve", rd);
-        Map     sd = sr.retrieve( rd );
-                sd = getRspMap(helper, sr, "retrieve", sd);
+                rd = getReqMap(helper, sr, "search", rd);
+        Map     sd = sr.search( rd );
+                sd = getRspMap(helper, sr, "search", sd);
 //              sr.destroy( );
         helper.reply(sd);
     }

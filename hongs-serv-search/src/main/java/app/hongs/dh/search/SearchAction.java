@@ -24,8 +24,8 @@ import java.util.Map;
 public class SearchAction extends LuceneAction {
 
     @Override
-    public void initiate(ActionHelper helper, ActionRunner runner) throws HongsException {
-        super.initiate(helper, runner);
+    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
+        super.acting(helper, runner);
 
         // 给统计腾出空间
         if ("counts".equals(ent) || "statis".equals(ent)) {
@@ -35,11 +35,11 @@ public class SearchAction extends LuceneAction {
         }
     }
 
-    @Action("retrieve")
+    @Action("search")
     @Select()
     @Spread()
     @Override
-    public void retrieve(ActionHelper helper) throws HongsException {
+    public void search(ActionHelper helper) throws HongsException {
         /**
          * 有指定查询条件则按匹配度排序
          */
@@ -57,10 +57,10 @@ public class SearchAction extends LuceneAction {
             }
         }
 
-        super.retrieve(helper);
+        super.search(helper);
     }
 
-    @Action("counts/retrieve")
+    @Action("counts/search")
     public void counts(ActionHelper helper) throws HongsException {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
@@ -84,7 +84,7 @@ public class SearchAction extends LuceneAction {
         helper.reply(sd);
     }
 
-    @Action("statis/retrieve")
+    @Action("statis/search")
     public void statis(ActionHelper helper) throws HongsException {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);

@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * <p>
  * REST 适配器, 可将不同 Method 请求转发到原有的 Action 方法:<br/>
  * <pre>
- * GET      retrieve, list or info
+ * GET      search, list or info
  * PUT      update, save
  * POST     create, save
  * DELETE   delete
@@ -72,7 +72,7 @@ public class ApisAction
     @Override
     public void doGet(HttpServletRequest req, HttpServletResponse rsp)
             throws IOException, ServletException {
-        doAction(req, rsp, "retrieve", "list");
+        doAction(req, rsp, "search", "list", "info");
     }
 
     @Override
@@ -231,8 +231,8 @@ public class ApisAction
                  * 其他外键则叫 x_id
                  */
                 if (i == ats.length - 1) {
-                    if ("retrieve".equals(m)) {
-                        mts = new String[] {"retrieve", "info", "list"};
+                    if ("search".equals(m)) {
+                        mts = new String[] {"search", "info", "list"};
                     }
                     n  = /**/Cnst.ID_KEY;
                 } else {
@@ -281,7 +281,7 @@ public class ApisAction
             return "/"+acl+"/delete.act" + p;
         } else
         {
-            return "/"+acl+"/retrieve.act"+p;
+            return "/"+acl+"/search.act" + p;
         }
     }
 

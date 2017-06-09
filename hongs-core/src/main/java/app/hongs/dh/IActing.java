@@ -9,7 +9,7 @@ import app.hongs.action.ActionRunner;
  * @author Hongs
  */
 public interface IActing {
-    
-    public void initiate(ActionHelper helper, ActionRunner runner) throws HongsException;
+
+    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException;
 
 }

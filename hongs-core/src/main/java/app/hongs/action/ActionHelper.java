@@ -788,7 +788,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 返回响应数据
-   * 针对 retrieve 等
+   * 针对 search 等
    * @param map
    */
   public void reply(Map map)

@@ -25,15 +25,15 @@ import java.util.Set;
  *
  * <p>
  * 当您需要使用 create,add,update,put,delete,del 等时请确保表有主键.<br/>
- * 基础动作方法: retrieve,create,update,delete
- * 扩展动作方法: unique,exists
- * 通常它们被动作类直接调用;
- * 基础模型方法: get,add,put,del
- * 一般改写只需覆盖它们即可;
- * filter, permit 分别用于获取和更改数据等常规操作时进行过滤,
- * permit 默认调用 filter 来实现的, 可覆盖它来做资源过滤操作.<br/>
- * retrieve 可使用查询参数:
- * <code>
+ 基础动作方法: search,create,update,delete
+ 扩展动作方法: unique,exists
+ 通常它们被动作类直接调用;
+ 基础模型方法: get,add,put,del
+ 一般改写只需覆盖它们即可;
+ filter, permit 分别用于获取和更改数据等常规操作时进行过滤,
+ permit 默认调用 filter 来实现的, 可覆盖它来做资源过滤操作.<br/>
+ search 可使用查询参数:
+ <code>
  * ?pn=1&rn=10&f1=123&f2.-gt=456&wd=a+b&ob=-f1+f2&rb=id+f1+f2
  * </code>
  * 详见 filter 方法说明
@@ -127,10 +127,10 @@ implements IEntity
    * @throws HongsException
    */
   @Override
-  public Map retrieve(Map rd)
+  public Map search(Map rd)
     throws HongsException
   {
-    return this.retrieve(rd, null);
+    return this.search(rd, null);
   }
 
   /**
@@ -140,7 +140,7 @@ implements IEntity
    * @return
    * @throws HongsException
    */
-  public Map retrieve(Map rd, FetchCase caze)
+  public Map search(Map rd, FetchCase caze)
     throws HongsException
   {
     Object id = rd.get(this.table.primaryKey);

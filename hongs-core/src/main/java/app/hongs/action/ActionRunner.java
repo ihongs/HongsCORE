@@ -14,6 +14,7 @@ import java.util.Map;
 import java.lang.reflect.Method;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
+import app.hongs.action.anno.Assign;
 
 /**
  * 动作执行器
@@ -34,8 +35,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Hong
  */
 public class ActionRunner {
-    private int idx = 0;
-    private String action;
+    private int    idx = 0;
+    private String action ;
     private final Object   object;
     private final Method   method;
     private final Class<?> mclass;
@@ -60,7 +61,7 @@ public class ActionRunner {
 
         // Initialize action
         if (object instanceof app.hongs.dh.IActing) {
-           ((app.hongs.dh.IActing)object).initiate(helper, this);
+           ((app.hongs.dh.IActing)object).acting(helper, this);
         }
     }
 
@@ -191,6 +192,13 @@ public class ActionRunner {
         if (null != mod) {
             return  mod;
         }
+
+        // 从注解提取模块名称
+        Assign ing = mclass.getAnnotation(Assign.class);
+        if (null != ing) {
+            return  ing.conf();
+        }
+
         int pos;
         mod  = getAction();
         pos  = mod.lastIndexOf('/');
@@ -199,10 +207,18 @@ public class ActionRunner {
         mod  = mod.substring(0,pos); // 去掉实体
         return mod;
     }
+
     public String getEntity() throws HongsException {
         if (null != ent) {
             return  ent;
         }
+
+        // 从注解提取实体名称
+        Assign ing = mclass.getAnnotation(Assign.class);
+        if (null != ing) {
+            return  ing.name();
+        }
+
         int pos;
         ent  = getAction();
         pos  = ent.lastIndexOf('/');
@@ -211,10 +227,12 @@ public class ActionRunner {
         ent  = ent.substring(1+pos); // 得到实体
         return ent;
     }
+
     public String getHandle() throws HongsException {
         if (null != ant) {
             return  ant;
         }
+
         int pos;
         ant  = getAction();
         pos  = ant.lastIndexOf('/');
@@ -224,7 +242,7 @@ public class ActionRunner {
 
     /**
      * 获取动作名
-     * 外部有指定工作路径(ActionDriver.PATH)则返回工作动作名
+     * 外部有指定工作路径(Cnst.PATH_ATTR)则返回工作动作名
      * 同时可使用 setAction 进行设置
      * @return
      * @throws HongsException
@@ -233,9 +251,10 @@ public class ActionRunner {
         if (null != act) {
             return  act;
         }
+
+        // 去除路径中的根目录和扩展名
         act = (String) helper.getAttribute(Cnst.PATH_ATTR);
         if (act != null) {
-            // 去除路径中的根目录和扩展名
             int pos = act.lastIndexOf('.');
             if (pos > 0) {
                 act = act.substring(0,pos);

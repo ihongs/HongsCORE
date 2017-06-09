@@ -63,16 +63,18 @@ public class XsrfFilter implements Filter {
 
         // 提取到 Referer 并与当前请求的 URL 比对来判断同域
         String ref = req.getHeader("Referer");
-        String dmn = req.getServerName();
-        Matcher ma = DOMAIN.matcher(ref);
-        if (ma.find(  ) && ma.group( 1 ).equals( dmn )) {
-            try {
-                req.setAttribute(inside,true);
-                fc.doFilter(rxq, rxp);
-            } finally {
-                req.removeAttribute( inside );
+        String dmn = req.getServerName( );
+        if (ref != null && dmn != null) {
+            Matcher mat = DOMAIN.matcher(ref);
+            if (mat.find( ) && mat.group(1).equals(dmn)) {
+                try {
+                    req.setAttribute(inside,true);
+                    fc.doFilter(rxq, rxp);
+                } finally {
+                    req.removeAttribute( inside );
+                }
+                return;
             }
-            return;
         }
 
         rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);

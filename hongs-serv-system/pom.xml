@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>app.hongs</groupId>
-    <artifactId>hongs-serv-system</artifactId>
-    <name>hongs-serv-system</name>
-    <!--version>0.3-SNAPSHOT</version-->
     <packaging>jar</packaging>
+    <artifactId>hongs-serv-system</artifactId>
     <parent>
+        <artifactId>hongs-base</artifactId>
         <groupId>app.hongs</groupId>
-        <artifactId>hongs-all</artifactId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>
@@ -18,8 +15,8 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>hongs-core</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

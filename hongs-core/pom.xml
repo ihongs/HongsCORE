@@ -3,75 +3,75 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>app.hongs</groupId>
-    <artifactId>hongs-core</artifactId>
-    <!--version>0.3-SNAPSHOT</version-->
     <packaging>jar</packaging>
+    <artifactId>hongs-core</artifactId>
     <parent>
+        <artifactId>hongs-base</artifactId>
         <groupId>app.hongs</groupId>
-        <artifactId>hongs-all</artifactId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <slf4j.version>1.7.21</slf4j.version>
+        <log4j.version>2.6.2</log4j.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <groupId>junit</groupId>
             <version>4.10</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+            <groupId>javax.servlet</groupId>
             <version>3.1.0</version>
         </dependency>
         <dependency>
-            <groupId>javax.servlet.jsp</groupId>
             <artifactId>javax.servlet.jsp-api</artifactId>
+            <groupId>javax.servlet.jsp</groupId>
             <version>2.3.1</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
-            <version>2.6.2</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-api</artifactId>
-            <version>2.6.2</version>
-        </dependency>
-        <dependency>
             <groupId>org.apache.logging.log4j</groupId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
             <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.6.2</version>
+            <groupId>org.apache.logging.log4j</groupId>
+            <version>${log4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.21</version>
+            <groupId>org.slf4j</groupId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
-            <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
+            <groupId>commons-logging</groupId>
             <version>1.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
             <artifactId>commons-pool2</artifactId>
+            <groupId>org.apache.commons</groupId>
             <version>2.4.2</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
             <artifactId>commons-dbcp2</artifactId>
+            <groupId>org.apache.commons</groupId>
             <version>2.1.1</version>
         </dependency>
         <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
+            <groupId>com.googlecode.json-simple</groupId>
             <version>1.1.1</version>
         </dependency>
     </dependencies>
@@ -88,39 +88,34 @@
     </reporting>
     <build>
         <!--directory>bin</directory-->
-        <finalName>Hongs-CORE-${project.version}</finalName>
+        <!--
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
-                <version>2.5</version>
-                <configuration>
-                    <encoding>UTF-8</encoding>
-                </configuration>
-            </plugin>
-            <!--
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.5.1</version>
                 <configuration>
-                    <source>1.6</source>
-                    <target>1.6</target>
                     <encoding>UTF-8</encoding>
                 </configuration>
             </plugin>
-            //-->
-            <!--
             <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
+                <version>2.5.1</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.18.1</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <version>2.5.1</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>
             </plugin>
-            //-->
         </plugins>
+        //-->
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

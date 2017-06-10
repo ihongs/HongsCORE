@@ -3,14 +3,12 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <name>Hong's Web</name>
-    <groupId>app.hongs</groupId>
-    <artifactId>hongs-web</artifactId>
-    <!--version>0.3-SNAPSHOT</version-->
     <packaging>war</packaging>
+    <name>Hong's Web</name>
+    <artifactId>hongs-web</artifactId>
     <parent>
+        <artifactId>hongs-base</artifactId>
         <groupId>app.hongs</groupId>
-        <artifactId>hongs-all</artifactId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>
@@ -20,13 +18,13 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>hongs-core</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-server</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -35,8 +33,8 @@
         <finalName>${released.name}-${project.version}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.5</version>
                 <configuration>
                     <warSourceDirectory>web</warSourceDirectory>
@@ -47,8 +45,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-clean-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.6.1</version>
                 <executions>
                     <execution>
@@ -64,8 +62,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.9</version>
                 <executions>
                     <execution>
@@ -82,8 +80,8 @@
                 </executions>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.3.2</version>
                 <configuration>
                     <source>1.6</source>
@@ -94,8 +92,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.18.1</version>
                 <configuration>
                     <skip>true</skip>

@@ -1,46 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>app.hongs</groupId>
-    <artifactId>hongs-serv-socket</artifactId>
-    <name>hongs-serv-socket</name>
-    <!--version>0.3-SNAPSHOT</version-->
     <packaging>jar</packaging>
+    <artifactId>hongs-serv-socket</artifactId>
     <parent>
+        <artifactId>hongs-base</artifactId>
         <groupId>app.hongs</groupId>
-        <artifactId>hongs-all</artifactId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.7</maven.compiler.source>
         <maven.compiler.target>1.7</maven.compiler.target>
+        <jetty.version>9.3.11.v20160721</jetty.version>
     </properties>
     <dependencies>
         <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>hongs-serv-server</artifactId>
+            <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>javax.websocket</groupId>
             <artifactId>javax.websocket-api</artifactId>
+            <groupId>javax.websocket</groupId>
             <version>1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>websocket-servlet</artifactId>
-            <version>9.3.11.v20160721</version>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-server-impl</artifactId>
-            <version>9.3.11.v20160721</version>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <version>${jetty.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.jetty.websocket</groupId>
             <artifactId>javax-websocket-client-impl</artifactId>
-            <version>9.3.11.v20160721</version>
+            <groupId>org.eclipse.jetty.websocket</groupId>
+            <version>${jetty.version}</version>
         </dependency>
     </dependencies>
 </project>

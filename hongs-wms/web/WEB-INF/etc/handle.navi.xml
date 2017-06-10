@@ -1,5 +1,0 @@
-<root>
-    <menu disp="首页" href="">
-        <role name="handle"></role>
-    </menu>
-</root>

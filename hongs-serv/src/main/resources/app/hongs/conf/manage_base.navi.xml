@@ -12,7 +12,7 @@
         <menu disp="文件管理" href="manage/#global.file" hrel="manage/global/file/dirs.html">
             <role disp="文件管理" name="manage/global/file">
                 <depend>manage</depend>
-                <action>manage/file/retrieve.act</action>
+                <action>manage/file/search.act</action>
                 <action>manage/file/update.act</action>
                 <action>manage/file/delete.act</action>
             </role>

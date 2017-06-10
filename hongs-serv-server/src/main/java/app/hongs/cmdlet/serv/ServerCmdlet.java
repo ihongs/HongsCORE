@@ -120,7 +120,7 @@ public class ServerCmdlet {
             server.start();
             server.join( );
         }
-        catch (  Exception e) {
+        catch ( Exception e ) {
             throw new HongsException.Common(e);
         }
     }

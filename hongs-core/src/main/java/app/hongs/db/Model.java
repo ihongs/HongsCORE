@@ -416,7 +416,7 @@ implements IEntity
   public String set(Map rd)
     throws HongsException
   {
-    String id = (String) rd.get(this.table.primaryKey);
+    String id = Synt.declare(rd.get(this.table.primaryKey), String.class);
     if (id == null || id.length() == 0)
     {
       id = this.add(rd);

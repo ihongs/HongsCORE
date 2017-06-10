@@ -67,11 +67,11 @@ public class ServerCmdlet {
         WebAppContext webapp;
         server = new  Server ( port );
         webapp = new  WebAppContext();
-        server.setHandler    (webapp);
         webapp.setDescriptor ( conf );
         webapp.setContextPath (Core.BASE_HREF);
         webapp.setResourceBase(Core.BASE_PATH);
         webapp.setParentLoaderPriority( true );
+        server.setHandler    (webapp);
 
         // 外部配置
         CoreConfig c = CoreConfig.getInstance("_init_");

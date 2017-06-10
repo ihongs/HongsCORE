@@ -68,7 +68,7 @@ public class ServerCmdlet {
         server = new  Server ( port );
         webapp = new  WebAppContext();
         server.setHandler    (webapp);
-        webapp.setDescriptor  (conf );
+        webapp.setDescriptor ( conf );
         webapp.setContextPath (Core.BASE_HREF);
         webapp.setResourceBase(Core.BASE_PATH);
         webapp.setParentLoaderPriority( true );

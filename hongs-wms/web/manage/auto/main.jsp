@@ -1,5 +1,10 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.action.ActionDriver"%>
+<%
+    String _prefix = ActionDriver
+            .getWorkPath(request)
+            .replaceAll ("(^/|/[^/]*$)", "");
+%>
 <ol class="backable breadcrumb row hide" data-toggle="hsTabs">
     <li class="back-crumb dont-close pull-right">
         <a href="javascript:;">
@@ -15,5 +20,5 @@
 </ol>
 <div class="backable panes">
     <div class="row"></div>
-    <div class="row" data-load="<%=ActionDriver.getWorkPath(request).replaceFirst("/[^/]*$", "")%>/list.html"></div>
+    <div class="row" data-load="<%=_prefix%>/list.html"></div>
 </div>

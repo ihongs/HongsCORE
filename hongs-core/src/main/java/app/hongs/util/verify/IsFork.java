@@ -43,8 +43,8 @@ public class IsFork extends Rule {
         if("#".equals(at)) {
             Map    ps = FormSet.getInstance(/**/).getEnum("__patts__");
             String pn = Synt.declare(ps.get("id"), "^[A-Z0-9_]{1,32}");
-            if (! Pattern.matches(pn, at)) {
-                throw new Wrong("fore.form.haserror");
+            if (! Pattern.matches(pn, value.toString())) {
+                throw new Wrong  ("fore.form.haserror");
             }
             return  value;
         }

@@ -23,9 +23,9 @@ public final class Synt {
     private static final Boolean FALS = false;
 
     /**
-     * Each.run 或 Leaf.run 里
-     * 返回 LOOP.NEXT 跳过此项
-     * 返回 LOOP.LAST 跳出循环
+     * Each.run 或 EachLeaf.run 里
+ 返回 LOOP.NEXT 跳过此项
+ 返回 LOOP.LAST 跳出循环
      */
     public  static  enum LOOP { NEXT, LAST };
 
@@ -618,8 +618,8 @@ public final class Synt {
      * @param conv
      * @return
      */
-    public static Map digest(Map data, Each conv) {
-        return filter(data, new Leaf(conv));
+    public static Map digest(Map data, Deep conv) {
+        return filter(data, new EachLeaf(conv));
     }
 
     /**
@@ -628,8 +628,8 @@ public final class Synt {
      * @param conv
      * @return
      */
-    public static Set digest(Set data, Each conv) {
-        return filter(data, new Leaf(conv));
+    public static Set digest(Set data, Deep conv) {
+        return filter(data, new EachLeaf(conv));
     }
 
     /**
@@ -638,8 +638,8 @@ public final class Synt {
      * @param conv
      * @return
      */
-    public static List digest(List data, Each conv) {
-        return filter(data, new Leaf(conv));
+    public static List digest(List data, Deep conv) {
+        return filter(data, new EachLeaf(conv));
     }
 
     /**
@@ -648,8 +648,8 @@ public final class Synt {
      * @param conv
      * @return
      */
-    public static Object[] digest(Object[] data, Each conv) {
-        return filter(data, new Leaf(conv));
+    public static Object[] digest(Object[] data, Deep conv) {
+        return filter(data, new EachLeaf(conv));
     }
 
     //** 内部工具类 **/
@@ -669,13 +669,26 @@ public final class Synt {
         public Object run(Object v, Object k, int i);
     }
 
-    private static class Leaf implements Each {
-      private final Each leaf;
-        public Leaf(Each leaf) {
-            this.leaf  = leaf;
+    /**
+     * 用于遍历叶子节点
+     */
+    public static interface Deep {
+        public Object run(Object v, List p);
+    }
+
+    private static class EachLeaf implements Each {
+        private final Deep deep;
+        private final List path;
+
+        public EachLeaf(Deep leaf) {
+            this.deep = leaf;
+            this.path = new ArrayList( );
         }
+
         @Override
         public Object run(Object v, Object k, int i) {
+            List p = new ArrayList(path);
+                 p.add(i != -1 ? i : k );
             if (v instanceof Map ) {
                 return filter((Map ) v, this);
             } else
@@ -688,7 +701,7 @@ public final class Synt {
             if (v instanceof Object[]) {
                 return filter((Object[]) v, this);
             } else {
-                return leaf.run(v, k, i);
+                return deep.run(v, p);
             }
         }
     }
@@ -709,8 +722,8 @@ public final class Synt {
         System.err.println("");
 
         System.err.println("digest:");
-        Object[] c = digest(a, (v, k, i) -> {
-            System.err.println (k+":"+v);
+        Object[] c = digest(a, (v, p) -> {
+            System.err.println (p+":"+v);
             return v.toString().toUpperCase();
         });
         System.err.println("");

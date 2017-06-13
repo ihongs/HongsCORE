@@ -98,14 +98,10 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.api;*.js;*.css;*.png;*.gif;*.jpg;*.bmp;
-                *.eot;*.svg;*.ttf;*.woff;*.woff2;
-                /manage/login.html;
-                /manage/sign/create.act;
-                /manage/sign/delete.act;
-                /handle/capt/create.act;
-                /handle/sign/create.act;
-                /handle/sign/delete.act;
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
+                /handle/capt/create.act;/manage/login.html;
+                /handle/sign/create.act;/handle/sign/delete.act;
+                /manage/sign/create.act;/manage/sign/delete.act;
             </param-value>
         </init-param>
     </filter>

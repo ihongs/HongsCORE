@@ -36,28 +36,12 @@
     <!-- Conf Servlet -->
     <servlet>
         <servlet-name>Conf</servlet-name>
-        <servlet-class>app.hongs.action.serv.ConfAction</servlet-class>
+        <servlet-class>app.hongs.serv.common.BaseConfig</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Conf</servlet-name>
         <url-pattern>/common/conf/*</url-pattern>
-    </servlet-mapping>
-    <!-- Lang Servlet -->
-    <servlet>
-        <servlet-name>Lang</servlet-name>
-        <servlet-class>app.hongs.action.serv.LangAction</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Lang</servlet-name>
         <url-pattern>/common/lang/*</url-pattern>
-    </servlet-mapping>
-    <!-- Auth Servlet -->
-    <servlet>
-        <servlet-name>Auth</servlet-name>
-        <servlet-class>app.hongs.action.serv.AuthAction</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Auth</servlet-name>
         <url-pattern>/common/auth/*</url-pattern>
     </servlet-mapping>
     <!-- XSRF Filter -->
@@ -68,9 +52,6 @@
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
         <url-pattern>*.act</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>XsrfFilter</filter-name>
         <url-pattern>*.api</url-pattern>
     </filter-mapping>
     <!-- Sess Filter -->
@@ -94,19 +75,13 @@
     </filter>
     <filter-mapping>
         <filter-name>SessFilter</filter-name>
-        <url-pattern>/common/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>SessFilter</filter-name>
         <url-pattern>/manage/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>SessFilter</filter-name>
         <url-pattern>/handle/*</url-pattern>
+        <url-pattern>/common/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
-        <filter-name>AuthFilter_Manage</filter-name>
+        <filter-name>AuthFilter</filter-name>
         <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
@@ -123,17 +98,21 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.api;
+                *.api;*.js;*.css;*.png;*.gif;*.jpg;*.bmp;
+                *.eot;*.svg;*.ttf;*.woff;*.woff2;
                 /manage/login.html;
                 /manage/sign/create.act;
                 /manage/sign/delete.act;
-                *.js;*.css;*.png;*.gif;*.jpg;*.bmp
+                /handle/capt/create.act;
+                /handle/sign/create.act;
+                /handle/sign/delete.act;
             </param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter_Manage</filter-name>
+        <filter-name>AuthFilter</filter-name>
         <url-pattern>/manage/*</url-pattern>
+        <url-pattern>/handle/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

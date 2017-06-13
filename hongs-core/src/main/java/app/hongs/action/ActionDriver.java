@@ -620,8 +620,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     public static final class FilterCheck {
 
-        protected String[][] ignoreUrls;
-        protected String[][] attendUrls;
+        protected Set<String>[] ignoreUrls;
+        protected Set<String>[] attendUrls;
 
         /**
          * 构建过滤实例
@@ -654,54 +654,64 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             return !check(uri, ignoreUrls) && check(uri, attendUrls);
         }
 
-        private boolean check(String uri, String[][] uris) {
-            for (String url : uris[0]) {
-                if (uri.equals(url)) {
-                    return true;
+        private boolean check(String uri, Set<String>[] uris) {
+            if (uris[0].contains(uri)) {
+                return true;
+            }
+
+            int poz = uri.lastIndexOf( ".");
+            int pos = uri.lastIndexOf( "/");
+
+            // 扩展名
+            if ( ! uris[1].isEmpty() ) {
+                if (poz != -1 && poz > pos) {
+                    String suf = uri.substring(1 + pos);
+                    if (uris[1].contains (suf)) {
+                        return true;
+                    }
                 }
             }
-            for (String url : uris[1]) {
-                if (uri.endsWith(url)) {
-                    return true;
+
+            // 目录名
+            if ( ! uris[2].isEmpty() ) {
+                while  ( pos  !=  -1 ) {
+                    String pre = uri.substring(0 , pos);
+                    if (uris[2].contains (pre)) {
+                        return true;
+                    }
+                    pos = pre.lastIndexOf("/");
+                    uri = pre;
                 }
             }
-            for (String url : uris[2]) {
-                if (uri.startsWith(url)) {
-                    return true;
-                }
-            }
+
             return false;
         }
 
-        private String[][] split(String urls) {
+        private Set<String>[] split(String urls) {
             if (urls == null) {
-                return new String[][] {
-                    new String[] {},
-                    new String[] {},
-                    new String[] {}
+                return  new Set[] {
+                    new HashSet(),
+                    new HashSet(),
+                    new HashSet()
                 };
             }
 
             Set<String> cu = new HashSet();
             Set<String> eu = new HashSet();
             Set<String> su = new HashSet();
-            for (String  u : urls.split(";")) {
+            for ( String u : urls.split( ";")) {
                 u = u.trim();
                 if (u.length() == 0) {
                     // ignore
-                } else if (u.endsWith  ("*")) {
+                } else if (u.endsWith  ("/*")) {
                     su.add(u.substring ( 0, u.length() - 2));
-                } else if (u.startsWith("*")) {
-                    eu.add(u.substring ( 1 ));
+                } else if (u.startsWith("*.")) {
+                    eu.add(u.substring ( 2  ));
                 } else {
                     cu.add(u);
                 }
             }
-            return new String[][] {
-                cu.toArray(new String[0]),
-                eu.toArray(new String[0]),
-                su.toArray(new String[0])
-            };
+            return new Set[ ] { cu , eu , su };
         }
 
     }

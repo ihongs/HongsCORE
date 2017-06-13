@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 public class ConfAction
   extends  ActionDriver
 {
-  private static final Map<String, String> caches = new HashMap();
-  private static final Map<String, String> lmtime = new HashMap();
+  private static final Map<String, String> CACHES = new HashMap();
+  private static final Map<String, String> MTIMES = new HashMap();
 
   /**
    * 服务方法
@@ -80,7 +80,7 @@ public class ConfAction
      */
     String m;
     m = helper.getRequest().getHeader("If-Modified-Since");
-    if (m != null && m.equals(ConfAction.lmtime.get(name)))
+    if (m != null && m.equals(ConfAction.MTIMES.get(name)))
     {
       helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
       return;
@@ -91,7 +91,7 @@ public class ConfAction
      * 则调用工厂方法构造 JS 代码
      */
     String s;
-    if (!ConfAction.caches.containsKey(name))
+    if (!ConfAction.CACHES.containsKey(name))
     {
       try {
         s = this.makeConf(name);
@@ -107,13 +107,13 @@ public class ConfAction
           sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
       m = sdf.format(new Date());
 
-      ConfAction.caches.put(name , s);
-      ConfAction.lmtime.put(name , m);
+      ConfAction.CACHES.put(name , s);
+      ConfAction.MTIMES.put(name , m);
     }
     else
     {
-      s = ConfAction.caches.get(name);
-      m = ConfAction.lmtime.get(name);
+      s = ConfAction.CACHES.get(name);
+      m = ConfAction.MTIMES.get(name);
     }
 
     // 标明修改时间
@@ -153,8 +153,8 @@ public class ConfAction
     super.destroy();
 
     // 销毁配置信息
-    ConfAction.caches.clear();
-    ConfAction.lmtime.clear();
+    ConfAction.CACHES.clear();
+    ConfAction.MTIMES.clear();
   }
 
   /**

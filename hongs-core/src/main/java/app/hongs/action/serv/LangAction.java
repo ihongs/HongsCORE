@@ -39,8 +39,8 @@ import javax.servlet.http.HttpServletResponse;
 public class LangAction
   extends  ActionDriver
 {
-  private static final Map<String, String> caches = new HashMap();
-  private static final Map<String, String> lmtime = new HashMap();
+  private static final Map<String, String> CACHES = new HashMap();
+  private static final Map<String, String> MTIMES = new HashMap();
 
   /**
    * 服务方法
@@ -80,7 +80,7 @@ public class LangAction
      */
     String m;
     m = helper.getRequest().getHeader("If-Modified-Since");
-    if (m != null && m.equals(LangAction.lmtime.get(name)))
+    if (m != null && m.equals(LangAction.MTIMES.get(name)))
     {
       helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
       return;
@@ -91,7 +91,7 @@ public class LangAction
      * 则调用工厂方法构造 JS 代码
      */
     String s;
-    if (!LangAction.caches.containsKey(name))
+    if (!LangAction.CACHES.containsKey(name))
     {
       try
       {
@@ -108,13 +108,13 @@ public class LangAction
           sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
       m = sdf.format(new Date());
 
-      LangAction.caches.put(name , s);
-      LangAction.lmtime.put(name , m);
+      LangAction.CACHES.put(name , s);
+      LangAction.MTIMES.put(name , m);
     }
     else
     {
-      s = LangAction.caches.get(name);
-      m = LangAction.lmtime.get(name);
+      s = LangAction.CACHES.get(name);
+      m = LangAction.MTIMES.get(name);
     }
 
     // 标明修改时间
@@ -154,8 +154,8 @@ public class LangAction
     super.destroy();
 
     // 销毁配置信息
-    LangAction.caches.clear();
-    LangAction.lmtime.clear();
+    LangAction.CACHES.clear();
+    LangAction.MTIMES.clear();
   }
 
   /**

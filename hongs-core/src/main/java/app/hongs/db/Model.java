@@ -550,7 +550,7 @@ implements IEntity
 
     // 删除主数据, 默认可使用逻辑删除
     int an;
-    if ( ! caze.getOption("INCLUDE_REMOVED", false) )
+    if (caze == null || !caze.getOption("INCLUDE_REMOVED", false))
     {
       an = this.table.remove ("`"+ this.table.primaryKey +"` = ?", id);
     }

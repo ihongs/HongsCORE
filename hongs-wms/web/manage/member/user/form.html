@@ -1,7 +1,7 @@
 <h2>{DO}用户</h2>
 <div id="member-user-form"
      data-module="hsForm"
-     data-load-url="manage/member/user/info.act?md=0&-with-roles=1"
+     data-load-url="manage/member/user/info.act?md=0&navi-conf=default"
      data-save-url="manage/member/user/save.act">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id"/>
@@ -47,9 +47,6 @@
         </div>
     </form>
 </div>
-<style type="text/css">
-    #member-user-form legend {font-size: 14px;}
-</style>
 <script type="text/javascript">
     (function($) {
         var context = $("#member-user-form");

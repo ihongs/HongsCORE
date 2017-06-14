@@ -14,7 +14,7 @@
         <module>hongs-serv-socket</module>
         <module>hongs-serv-search</module>
         <module>hongs-serv-member</module>
-        <module>hongs-serv-module</module>
+        <module>hongs-serv-matrix</module>
         <module>hongs-web</module>
         <module>hongs-wms</module>
     </modules>

@@ -81,7 +81,7 @@
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
-        <filter-name>AuthFilter</filter-name>
+        <filter-name>AuthFilter_Manage</filter-name>
         <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
@@ -99,15 +99,38 @@
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
-                /handle/capt/create.act;/manage/login.html;
-                /handle/sign/create.act;/handle/sign/delete.act;
-                /manage/sign/create.act;/manage/sign/delete.act;
+                /manage/login.html;
+                /manage/sign/create.act;
+                /manage/sign/delete.act;
             </param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter</filter-name>
+        <filter-name>AuthFilter_Manage</filter-name>
         <url-pattern>/manage/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <filter>
+        <filter-name>AuthFilter_Handle</filter-name>
+        <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
+        <init-param>
+            <param-name>config-name</param-name>
+            <param-value>handle</param-value>
+        </init-param>
+        <init-param>
+            <param-name>ignore-urls</param-name>
+            <param-value>
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
+                /handle/capt/create.act;
+                /handle/sign/create.act;
+                /handle/sign/delete.act;
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>AuthFilter_Handle</filter-name>
         <url-pattern>/handle/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>

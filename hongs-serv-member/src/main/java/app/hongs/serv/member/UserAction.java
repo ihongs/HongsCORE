@@ -51,10 +51,10 @@ public class UserAction {
     @Action("info")
     public void getInfo(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        String id = helper.getParameter( "id");
-        String wr = helper.getParameter("-with-roles");
-        String ud = (String)helper.getSessibute("uid");
+        Map    rd = helper.getRequestData(  );
+        String id = helper.getParameter("id");
+        String wr = helper.getParameter("navi-conf");
+        String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
         if (id != null && id.length() != 0) {
             rd = model.getInfo(rd);
@@ -69,10 +69,10 @@ public class UserAction {
         }
 
         // With all roles
-        if (Synt.declare(wr, false)) {
-            List rs = ! "1".equals(ud) ?
-                    NaviMap.getInstance("manage").getRoleTranslated(0, 0):
-                    NaviMap.getInstance("manage").getRoleTranslated(0, 0, null);
+        if (wr != null && wr.length() != 0) {
+            List rs = !Cnst.ADM_UID.equals(ud) ?
+                    NaviMap.getInstance(wr).getRoleTranslated(0, 0):
+                    NaviMap.getInstance(wr).getRoleTranslated(0, 0, null);
             Dict.put(rd, rs, "enum", "roles..role");
         }
 

@@ -32,24 +32,31 @@ public class PermitInvoker implements FilterInvoker {
          * 此时 role 解释为登录区域
          * 空串 role 表示可在匿名区
          */
-        if ("$".equals( conf ) ) {
-            Object uid = helper.getSessibute(Cnst.UID_SES);
-            if ( null == uid || "".equals( uid ) ) {
-                throw  new  HongsException  (   0x1101   );
+        if (conf.startsWith("$")) {
+            conf = conf.substring(1);
+            if (conf.length( ) == 0) {
+                conf = Cnst.USL_SES ;
             }
-            if (role.length > 0) {
-                Set usp = (Set) helper.getSessibute(Cnst.USL_SES);
-                Set rol =  new  HashSet ( Arrays.asList( role ) );
-                if (usp == null || !usp.isEmpty()) {
-                    if (!rol.contains ( "")) {
-                        throw new HongsException( 0x1102 );
+
+            Object uid = helper.getSessibute(Cnst.UID_SES);
+            if (uid == null || "".equals( uid )) {
+                throw new HongsException(0x1101);
+            }
+
+            if (role.length != 0) {
+                Set usl = (Set) helper.getSessibute(conf );
+                Set rol = new HashSet(Arrays.asList(role));
+                if (usl == null || ! usl.isEmpty()) {
+                    if (!rol.contains ("" )) {
+                        throw new HongsException(0x1102);
                     }
                 } else {
-                    if (!rol.retainAll(usp)) {
-                        throw new HongsException( 0x1102 );
+                    if (!rol.retainAll(usl)) {
+                        throw new HongsException(0x1102);
                     }
                 }
             }
+
             chains.doAction();
             return;
         }
@@ -70,10 +77,10 @@ public class PermitInvoker implements FilterInvoker {
         boolean has = false;
 
         if (! was) {
-            throw  new  HongsException (0x1101);
+            throw new HongsException(0x1101);
         }
 
-        if (  null == role || role.length == 0  ) {
+        if (role == null || role.length == 0) {
             has = map.chkAuth(chains.getAction());
         } else {
             for ( String rale : role ) {

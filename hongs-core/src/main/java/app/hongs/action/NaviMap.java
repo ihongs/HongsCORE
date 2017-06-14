@@ -346,13 +346,13 @@ public class NaviMap
       else
       if ("import".equals(tagName2))
       {
-        String impart = element2.getTextContent();
+        String impart = element2.getTextContent().trim();
         NaviMap  conf = new NaviMap(impart);
         paths.putAll(conf.paths);
         menus.putAll(conf.menus);
         roles.putAll(conf.roles);
         actions.addAll(conf.actions);
-        imports.add   (/**/ impart );
+        imports.add (  impart  );
         imports.addAll(conf.imports);
       }
     }
@@ -483,10 +483,12 @@ public class NaviMap
    */
   public Set<String> getRoleSet() throws HongsException {
       if (session == null || session.length() == 0) {
-//        throw new HongsException(0x10e2, "Can not get roles for menu '" +name+ "'");
-          CoreLogger.trace("Can not get roles for menu: "+name);
-          return null;
-      }
+          if ("default".equals( name ) ) {
+              CoreLogger.debug("Can not get roles for menu "+name);
+              return null;
+          }
+          return getInstance().getRoleSet();
+      } else
       if (session.startsWith("@")) {
           return getInstance(session.substring(1)).getRoleSet();
       } else

@@ -24,10 +24,5 @@
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <artifactId>hongs-serv-search</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 </project>

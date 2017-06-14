@@ -116,7 +116,9 @@
     - web               前端文件(启动时可指定 --basepath,--basehref)
         - handle        公共处理区域
         - manage        系统管理区域
+        - native        本地资源
         - public        公共资源
+            - caches    公共缓存目录
             - upload    默认上传目录
         - static        静态资源
             - assets    前端常用组件
@@ -297,8 +299,6 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     findable        字段可搜索(可通过wd参数限制)
     filtable        字段可过滤
     unstored        不保存原文(可查询或排序, 却不可以读取, 针对 Lucene 特有)
-    hide.in.list    字段不在列表页出现
-    hide.in.form    字段不在表单页出现
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 

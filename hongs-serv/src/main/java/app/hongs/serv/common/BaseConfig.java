@@ -25,14 +25,14 @@ public class BaseConfig extends ActionDriver {
       throws ServletException, IOException
     {
         String name = req.getServletPath();
-        name = name.substring(name.lastIndexOf("/"));
-        if ("conf".equals(name)) {
+               name = name.substring(name.lastIndexOf("/"));
+        if ("/conf".equals( name )) {
             conf.service(req, rsp);
         } else
-        if ("lang".equals(name)) {
+        if ("/lang".equals( name )) {
             lang.service(req, rsp);
         } else
-        if ("auth".equals(name)) {
+        if ("/auth".equals( name )) {
             auth.service(req, rsp);
         } else
         {

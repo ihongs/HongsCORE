@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <form name="unit">
+        <field name="icon" rule="Thumb">
+            <param name="href">upload/matrix/icon</param>
+            <param name="path">upload/matrix/icon</param>
+        </field>
+    </form>
+    <form name="form_fork">
+        <field name="user" disp="用户">
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+            <param name="data-at">manage/member/user/list</param>
+            <param name="data-al">manage/member/user/pick.html</param>
+        </field>
+    </form>
+</root>

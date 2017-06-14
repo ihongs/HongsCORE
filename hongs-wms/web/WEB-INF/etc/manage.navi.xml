@@ -1,12 +1,12 @@
 <root>
-    <rsname>!app.hongs.serv.auth.RoleSet</rsname>
+    <rsname>@default</rsname>
     <menu disp="后台" href="common/menu.act?m=manage">
         <role disp="登录后台" name="manage">
             <action>manage</action>
         </role>
         <import>manage_base</import>
         <import>member</import>
-        <import>module</import>
+        <import>matrix</import>
         <import>manage/data</import>
     </menu>
 </root>

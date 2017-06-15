@@ -36,7 +36,7 @@ import org.xml.sax.SAXException;
     forms = {
         "form_name" : {
             "field_name" : {
-                __disp__ : "Label",
+                __text__ : "Label",
                 __type__ : "string|number|date|file|enum|form",
                 __rule__ : "rule.class.Name",
                 __required__ : "yes|no",
@@ -198,8 +198,8 @@ public class FormSet
 
         items.put("__name__", namz);
 
-        namz = element2.getAttribute("disp");
-        items.put("__disp__", namz);
+        namz = element2.getAttribute("text");
+        items.put("__text__", namz);
 
         namz = element2.getAttribute("hint");
         items.put("__hint__", namz);
@@ -299,13 +299,13 @@ public class FormSet
       Map.Entry e = (Map.Entry) o;
       Map       m = (Map ) e.getValue();
       String    k = (String) e.getKey();
-      String    n = (String) m.get("__disp__");
+      String    n = (String) m.get("__text__");
       String    h = (String) m.get("__hint__");
       Map       u = new LinkedHashMap();
       u.putAll( m );
       if (n == null || "".equals(n)) {
           n = "fore.form."+name+"."+namc+"."+k;
-      }   u.put("__disp__", lang.translate(n));
+      }   u.put("__text__", lang.translate(n));
       if (h != null &&!"".equals(n)) {
           u.put("__hint__", lang.translate(h));
       }
@@ -337,7 +337,7 @@ public class FormSet
        : "app/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
     return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
   }
-  
+
   public static FormSet getInstance(String name) throws HongsException {
       String key = FormSet.class.getName() + ":" + name;
       Core core = Core.getInstance();

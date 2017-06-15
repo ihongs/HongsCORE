@@ -162,16 +162,16 @@ public class Mview extends Model {
             item = getForm( );
             if (item != null  && item.containsKey(   "@"    )) {
                 item  = ( Map  ) item.get(   "@"    );
-            if (item != null  && item.containsKey("__disp__")) {
-                title = (String) item.get("__disp__");
+            if (item != null  && item.containsKey("__text__")) {
+                title = (String) item.get("__text__");
                 break;
             }
             }
 
             // 再从菜单取名字
             item = getMenu( );
-            if (item != null  && item.containsKey(  "disp"  )) {
-                title = (String) item.get(  "disp"  );
+            if (item != null  && item.containsKey(  "text"  )) {
+                title = (String) item.get(  "text"  );
                 break;
             }
 
@@ -383,7 +383,7 @@ public class Mview extends Model {
         String sql = "SHOW FULL FIELDS FROM `"+table.tableName+"`";
         List<Map<String, Object>> rows = db.fetchAll(sql);
         for (Map<String, Object>  row  : rows) {
-            String disp = (String)row.get("Comment");
+            String text = (String)row.get("Comment");
             String name = (String)row.get( "Field" );
             String type = (String)row.get( "Type"  );
         */
@@ -393,7 +393,7 @@ public class Mview extends Model {
             String  name = ent.getKey(  );
             Integer type = (Integer) col.get("type");
             Boolean rqrd = (Boolean) col.get("required");
-            String  disp = "field."+ table.name +"."+ name +".name";
+            String  text = "field."+ table.name +"."+ name +".name";
 
             Map field = (Map) fields.get(name);
             if (field == null) {
@@ -406,13 +406,13 @@ public class Mview extends Model {
                 field.put("__required__", rqrd ? "yes" : "");
             }
 
-            if (!field.containsKey("__disp__") || "".equals(field.get("__disp__"))) {
-//              if (disp!=null && !"".equals(disp)) {
-                if (lang.getProperty(disp) != null) {
-                    disp = lang.translate(disp);
-                    field.put("__disp__", disp);
+            if (!field.containsKey("__text__") || "".equals(field.get("__text__"))) {
+//              if (text!=null && !"".equals(text)) {
+                if (lang.getProperty(text) != null) {
+                    text = lang.translate(text);
+                    field.put("__text__", text);
                 } else {
-                    field.put("__disp__", name);
+                    field.put("__text__", name);
                 }
             }
 
@@ -473,7 +473,7 @@ public class Mview extends Model {
             Map       vd = (Map ) et.getValue();
             String  type = (String) vd.get("type");
 
-            String  name, disp, vk, tk, ak, ek, tn;
+            String  name, text, vk, tk, ak, ek, tn;
 
             if ("BLS_TO".equals(type)) {
                 ak   = (String) vd.get("name");
@@ -485,7 +485,7 @@ public class Mview extends Model {
                 Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
-                disp = hb.getTitle();
+                text = hb.getTitle();
                 name = vk;
             } else
             if ("HAS_ONE".equals(type)) {
@@ -498,7 +498,7 @@ public class Mview extends Model {
                 Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
-                disp = hb.getTitle();
+                text = hb.getTitle();
                 name = ak + "." + vk;
             } else
             if ("HAS_MANY".equals(type)) {
@@ -511,7 +511,7 @@ public class Mview extends Model {
                 Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
-                disp = hb.getTitle();
+                text = hb.getTitle();
                 name = ak + ".."+ vk;
             } else
             if ("HAS_MORE".equals(type)) {
@@ -531,7 +531,7 @@ public class Mview extends Model {
                 Mview  hb = getInstance(hm);
 
                 tk   = hb.getTxKey();
-                disp = hb.getTitle();
+                text = hb.getTitle();
                 name = ak + ".."+ vk;
             } else {
                 continue;
@@ -545,7 +545,7 @@ public class Mview extends Model {
                 field =  new HashMap( );
                 fields.put(name, field);
                 field.put("__type__","pick");
-                field.put("__disp__", disp );
+                field.put("__text__", text );
                 field.put("data-ak", ak);
                 field.put("data-vk", vk);
                 field.put("data-tk", tk);

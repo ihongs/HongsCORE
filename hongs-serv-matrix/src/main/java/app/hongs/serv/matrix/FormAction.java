@@ -122,7 +122,7 @@ public class FormAction {
                 Map form = forms.next();
                 Map item = new HashMap();
                 item.put("__name__", /**/form.get( "id" ));
-                item.put("__disp__", pre+form.get("name"));
+                item.put("__text__", pre+form.get("name"));
                 item.put("data-vk", "id");
                 item.put("data-tk", "name");
                 item.put("data-at", "manage/data/"+form.get("id")+"/search");

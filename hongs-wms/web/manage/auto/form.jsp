@@ -65,14 +65,14 @@
                      : NaviMap.getInstance(_module);
         Map menu  = site.getMenu(_module+"/#"+_entity);
         if (menu != null) {
-            nm = (String) menu.get("disp");
+            nm = (String) menu.get("text");
             if (nm != null) {
                 nm  = lang.translate( nm );
                 break;
             }
         }
 
-        nm = Dict.getValue( flds, "", "@", "disp" );
+        nm = Dict.getValue( flds, "", "@", "text" );
     } while (false);
 %>
 <!-- 表单 -->
@@ -93,7 +93,7 @@
                 }
 
                 String  type = (String) info.get("__type__");
-                String  disp = (String) info.get("__disp__");
+                String  text = (String) info.get("__text__");
                 String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
                 String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
@@ -105,15 +105,15 @@
             <%if ("hidden".equals(type)) {%>
                 <input type="hidden" name="<%=name%>" value="<%="form_id".equals(name)?_entity:""%>"/>
             <%} else if ("line".equals(type)) {%>
-                <legend class="form-group"><%=disp%></legend>
+                <legend class="form-group"><%=text%></legend>
             <%} else if ("checkbag".equals(type)) {%>
                 <fieldset>
-                    <legend><%=disp%></legend>
+                    <legend><%=text%></legend>
                     <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>
                 </fieldset>
             <%} else {%>
                 <div class="form-group">
-                    <label class="control-label"><%=disp%></label>
+                    <label class="control-label"><%=text%></label>
                     <%if ("textarea".equals(type)) {%>
                         <textarea class="form-control" name="<%=name%>" <%=rqrd%>></textarea>
                     <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
@@ -165,7 +165,7 @@
                                     + "list_fork.html";
                         %>
                         <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
-                        <button type="button" class="btn btn-default form-control" data-toggle="hsPick" data-target="@" data-href="<%=al%>"><%=lang.translate("fore.select.lebel", disp)%></button>
+                        <button type="button" class="btn btn-default form-control" data-toggle="hsPick" data-target="@" data-href="<%=al%>"><%=lang.translate("fore.select.lebel", text)%></button>
                     <%} else {%>
                         <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
                     <%} /*End If */%>

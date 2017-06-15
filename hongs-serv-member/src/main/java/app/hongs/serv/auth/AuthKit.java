@@ -81,7 +81,7 @@ public class AuthKit {
                 Map menu_b = new HashMap();
                 List menus = new ArrayList();
                 menu_b.put("href", (String) et2.getKey());
-                menu_b.put("disp", menu_a.get("disp"));
+                menu_b.put("text", menu_a.get("text"));
                 menu_b.put("menus", menus);
                 units.add(menu_b);
 
@@ -89,7 +89,7 @@ public class AuthKit {
                 for(Map.Entry et3 : menus3.entrySet()) {
                     Map menu3 = (Map) et3.getValue( );
                     if (! menu3.containsKey("roles" )
-                    ||  "".equals(menu3.get("disp") )) {
+                    ||  "".equals(menu3.get("text") )) {
                         continue;
                     }
 
@@ -97,7 +97,7 @@ public class AuthKit {
                     Map menu_d = new HashMap();
                     List roles = new ArrayList();
                     menu_b.put("href", (String) et3.getKey());
-                    menu_d.put("disp", menu_c.get("disp"));
+                    menu_d.put("text", menu_c.get("text"));
                     menu_d.put("roles", roles);
                     menus.add(menu_d);
 
@@ -107,7 +107,7 @@ public class AuthKit {
                         Map role2 = new HashMap();
                         roles.add(role2);
                         role2.put("name", role1.get("name"));
-                        role2.put("disp", role1.get("disp"));
+                        role2.put("text", role1.get("text"));
                         role2.put("roles", ac.getMoreRoles(k).keySet());
                     }
                 }

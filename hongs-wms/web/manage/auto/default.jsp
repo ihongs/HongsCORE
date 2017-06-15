@@ -22,7 +22,7 @@
                     : NaviMap.getInstance(_module);
     Map        menu = site.getMenu(_module +"/"+ _entity +"/");
 
-    String nm = menu == null ? "" : (String) menu.get( "disp");
+    String nm = menu == null ? "" : (String) menu.get( "text");
 %>
 <!doctype html>
 <html>

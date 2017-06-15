@@ -78,7 +78,7 @@ public class Unit extends Mtree {
 
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
-        menu.setAttribute("disp", name);
+        menu.setAttribute("text", name);
         menu.setAttribute("href", prefix+"/"+id+"/");
 
         Element  incl;
@@ -135,7 +135,7 @@ public class Unit extends Mtree {
 
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
-        menu.setAttribute("disp", "");
+        menu.setAttribute("text", "");
         menu.setAttribute("href", "!"+prefix+"/");
 
         // 一级以下单元

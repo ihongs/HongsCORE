@@ -195,31 +195,31 @@ public class LuceneAction implements IAction, IActing {
      * @throws HongsException
      */
     protected String getTitle(CoreLocale lang) throws HongsException {
-        String  disp;
+        String  text;
         Map     item;
         do {
             // 先从表单取名字
             item = getForm();
             if (item != null  && item.containsKey(   "@"    )) {
                 item  = (Map   ) item.get(   "@"    );
-            if (item != null  && item.containsKey("__disp__")) {
-                disp  = (String) item.get("__disp__");
+            if (item != null  && item.containsKey("__text__")) {
+                text  = (String) item.get("__text__");
                 break;
             }
             }
 
             // 再从菜单取名字
             item = getMenu();
-            if (item != null  && item.containsKey(  "disp"  )) {
-                disp  = (String) item.get(  "disp"  );
+            if (item != null  && item.containsKey(  "text"  )) {
+                text  = (String) item.get(  "text"  );
                 break;
             }
 
             // 最后配置取名字
-            disp = "core.entity."+ent+".name";
+            text = "core.entity."+ent+".name";
         } while (false);
 
-        return lang.translate(disp);
+        return lang.translate(text);
     }
 
     private Map getForm() throws HongsException {

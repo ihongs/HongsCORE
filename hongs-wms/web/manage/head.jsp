@@ -21,13 +21,13 @@
 
         StringBuilder menus = new StringBuilder();
         for(Map menu : list) {
-            String disp = (String) menu.get("disp");
+            String text = (String) menu.get("text");
             String href = (String) menu.get("href");
             String hrel = (String) menu.get("hrel");
 //          String icon = (String) menu.get("icon");
             String acti = "";
 
-            if (disp.equals/**/(  ""  )
+            if (text.equals/**/(  ""  )
             ||  href.startsWith( "!" )) {
                 continue;
             }
@@ -48,7 +48,7 @@
                  .append("\" href=\"")
                  .append(href)
                  .append("\">"  )
-                 .append(disp)
+                 .append(text)
                  .append("</a>" )
                  .append("</li>");
         }

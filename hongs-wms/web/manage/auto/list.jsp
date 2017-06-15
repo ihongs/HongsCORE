@@ -69,14 +69,14 @@
                      : NaviMap.getInstance(_module);
         Map menu  = site.getMenu(_module+"/#"+_entity);
         if (menu != null) {
-            nm = (String) menu.get("disp");
+            nm = (String) menu.get("text");
             if (nm != null) {
                 nm  = lang.translate( nm );
                 break;
             }
         }
 
-        nm = Dict.getValue( flds, "", "@", "disp" );
+        nm = Dict.getValue( flds, "", "@", "text" );
     } while (false);
 %>
 <h2><%=lang.translate("fore."+_action+".title", nm)%></h2>
@@ -113,7 +113,7 @@
                     Map     info = (Map ) et.getValue( );
                     String  name = (String) et.getKey( );
                     String  type = (String) info.get("__type__");
-                    String  disp = (String) info.get("__disp__");
+                    String  text = (String) info.get("__text__");
 
                     if ("@".equals(name) || "hidden".equals(type)) {
                         continue;
@@ -139,23 +139,23 @@
                     }
                 %>
                 <%if ("number".equals(type) || "range".equals(type)) {%>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=disp%></th>
+                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=text%></th>
                 <%} else if ("datetime".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> datetime"><%=disp%></th>
+                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> datetime"><%=text%></th>
                 <%} else if ("date".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> date"><%=disp%></th>
+                    <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> date"><%=text%></th>
                 <%} else if ("time".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=disp%></th>
+                    <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=text%></th>
                 <%} else if ("file".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_file" <%=ob%> class="<%=oc%>"><%=disp%></th>
+                    <th data-fn="<%=name%>" data-ft="_file" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                    <th data-fn="<%=name%>_disp" <%=ob%> class="<%=oc%>"><%=disp%></th>
+                    <th data-fn="<%=name%>_text" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("pick".equals(type) ||   "fork".equals(type)) {%>
-                    <th data-fn="<%=info.get("data-ak")%>.<%=info.get("data-tk")%>" data-ft="_fork" <%=ob%> class="<%=oc%>"><%=disp%></th>
+                    <th data-fn="<%=info.get("data-ak")%>.<%=info.get("data-tk")%>" data-ft="_fork" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("form".equals(type)) {%>
-                    <th data-fn="<%=info.get("name")%>.<%=info.get("data-tk")%>" data-ft="_form" <%=ob%> class="<%=oc%>"><%=disp%></th>
+                    <th data-fn="<%=info.get("name")%>.<%=info.get("data-tk")%>" data-ft="_form" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if (!"primary".equals(info.get("primary")) && !"foreign".equals(info.get("foreign"))) {%>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=disp%></th>
+                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} /*End If */%>
                 <%} /*End For*/%>
                 </tr>

@@ -165,13 +165,13 @@ public class Form extends Model {
             }
             flds.add(0, top);
             top.put("__name__", "@" );
-            top.put("__disp__", name);
+            top.put("__text__", name);
 
             // 增加编号字段
             top = new HashMap( );
             flds.add(1, top);
             top.put("__name__", "id");
-            top.put("__disp__", "ID");
+            top.put("__text__", "ID");
             top.put("__type__", "hidden");
 
             conf = Data.toString ( flds );
@@ -211,7 +211,7 @@ public class Form extends Model {
 
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
-        menu.setAttribute("disp", name);
+        menu.setAttribute("text", name);
         menu.setAttribute("href", prefix+"/#"+id);
         menu.setAttribute("hrel", prefix+"/" +id+"/main.html");
 
@@ -227,7 +227,7 @@ public class Form extends Model {
         role = docm.createElement("role");
         menu.appendChild ( role );
         role.setAttribute("name", prefix+"/"+id+"/search");
-        role.setAttribute("disp", "查看"+name);
+        role.setAttribute("text", "查看"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
@@ -238,7 +238,7 @@ public class Form extends Model {
         role = docm.createElement("role");
         menu.appendChild ( role );
         role.setAttribute("name", prefix+"/"+id+"/create");
-        role.setAttribute("disp", "添加"+name);
+        role.setAttribute("text", "添加"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
@@ -253,7 +253,7 @@ public class Form extends Model {
         role = docm.createElement("role");
         menu.appendChild ( role );
         role.setAttribute("name", prefix+"/"+id+"/update");
-        role.setAttribute("disp", "修改"+name);
+        role.setAttribute("text", "修改"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
@@ -268,7 +268,7 @@ public class Form extends Model {
         role = docm.createElement("role");
         menu.appendChild ( role );
         role.setAttribute("name", prefix+"/"+id+"/delete");
-        role.setAttribute("disp", "删除"+name);
+        role.setAttribute("text", "删除"+name);
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
@@ -298,8 +298,8 @@ public class Form extends Model {
             item = docm.createElement("field");
             form.appendChild ( item );
             String s;
-            s = (String) fiel.get("__disp__");
-            item.setAttribute("disp", s);
+            s = (String) fiel.get("__text__");
+            item.setAttribute("text", s);
             s = (String) fiel.get("__name__");
             item.setAttribute("name", s);
             s = (String) fiel.get("__type__");

@@ -7,7 +7,7 @@
         </field>
     </form>
     <form name="form_fork">
-        <field name="user" disp="用户">
+        <field name="user" text="用户">
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-at">manage/member/user/list</param>

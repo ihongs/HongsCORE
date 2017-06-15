@@ -1,7 +1,7 @@
 <root>
     <rsname>@default</rsname>
-    <menu disp="后台" href="common/menu.act?m=manage">
-        <role disp="登录后台" name="manage">
+    <menu text="后台" href="common/menu.act?m=manage">
+        <role text="登录后台" name="manage">
             <action>manage</action>
         </role>
         <import>manage_base</import>

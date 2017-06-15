@@ -190,7 +190,7 @@ function gainFlds(fields, area) {
     area.find(".form-group").each(function() {
         var label = $(this).find("label span:first,legend span:first");
         var input = $(this).find("input,select,textarea,ul[data-fn]" );
-        var disp  = label.text();
+        var text  = label.text();
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
         if (input.attr("data-ft") == "_pick") type = "pick";
@@ -227,7 +227,7 @@ function gainFlds(fields, area) {
             params["selected"] = JSON.stringify(selected);
         }
         fields.push($.extend({
-            "__disp__": disp,
+            "__text__": text,
             "__name__": name,
             "__type__": type,
             "__required__": required,
@@ -245,7 +245,7 @@ function gainFlds(fields, area) {
 function drawFlds(fields, area, wdgt, pre, suf) {
     for(var i = 0; i < fields.length; i ++) {
         var field = fields[i];
-        var disp  = field["__disp__"];
+        var text  = field["__text__"];
         var name  = field['__name__'];
         var type  = field["__type__"];
         var required = field["__required__"];
@@ -268,7 +268,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         }
         var label = group.find("label span:first,legend span:first");
         var input = group.find("input,select,textarea,ul[data-fn]" );
-        label.text(disp);
+        label.text(text);
         if (input.is( "[data-fn]" )) {
             input.attr("data-fn", name);
         } else {

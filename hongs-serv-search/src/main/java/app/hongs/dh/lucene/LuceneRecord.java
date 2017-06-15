@@ -87,10 +87,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
 
     /**
      * 构造方法
-     * @param path 存储路径
-     * @param form 字段配置
-     * @param fmap 字段归类映射
-     * @param dmap 行为归类映射
+     * @param path 存储路径, 可覆盖 getDbName 来指定
+     * @param form 字段配置, 可覆盖 getFields 来指定
+     * @param fmap 字段归类映射, 默认取自 default.__types__
+     * @param dmap 行为归类映射, 默认取自 default.__ables__
      * @throws HongsException
      */
     public LuceneRecord(String path, Map form, Map fmap, Map dmap)

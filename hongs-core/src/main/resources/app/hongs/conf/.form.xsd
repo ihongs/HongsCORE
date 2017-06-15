@@ -5,7 +5,7 @@
   <!-- 基础属性 -->
   <xs:attribute name="name" type="xs:string"/>
   <xs:attribute name="code" type="xs:string"/>
-  <xs:attribute name="disp" type="xs:string"/>
+  <xs:attribute name="text" type="xs:string"/>
   <xs:attribute name="hint" type="xs:string"/>
   <xs:attribute name="type" type="xs:string"/>
   <xs:attribute name="rule" type="xs:string"/>
@@ -23,7 +23,7 @@
   <xs:element name="field">
       <xs:complexType>
           <xs:attribute ref="name" use="required"/>
-          <xs:attribute ref="disp"/>
+          <xs:attribute ref="text"/>
           <xs:attribute ref="hint"/>
           <xs:attribute ref="type"/>
           <xs:attribute ref="rule"/>

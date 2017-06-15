@@ -175,7 +175,7 @@ public class Verify implements Veri {
             } catch (Wrong  w) {
                 // 设置字段标签和取值
                 if (w.getLocalizedSegment() == null) {
-                    w.setLocalizedSegment(( String ) rule.params.get("__disp__"));
+                    w.setLocalizedSegment(( String ) rule.params.get("__text__"));
                 }
                 failed(wrongz, w , name);
                 data =  BLANK;
@@ -263,13 +263,13 @@ public class Verify implements Veri {
         n = Synt.declare(params.get("minrepeat"), 0);
         if (n != 0 && c < n) {
             failed(wrongz, new Wrong("fore.form.lt.minrepeat", String.valueOf(n), String.valueOf(c))
-                    .setLocalizedSegment((String) params.get("__disp__")), name);
+                    .setLocalizedSegment((String) params.get("__text__")), name);
             return BLANK;
         }
         n = Synt.declare(params.get("maxrepeat"), 0);
         if (n != 0 && c > n) {
             failed(wrongz, new Wrong("fore.form.gt.maxrepeat", String.valueOf(n), String.valueOf(c))
-                    .setLocalizedSegment((String) params.get("__disp__")), name);
+                    .setLocalizedSegment((String) params.get("__text__")), name);
             return BLANK;
         }
 

@@ -88,7 +88,7 @@ public class SelectHelper {
     /**
      * 填充
      * @param values 返回数据
-     * @param action 1 注入data, 2 添加disp
+     * @param action 1 注入data, 2 添加text
      * @throws HongsException
      */
     public void select(Map values, short action) throws HongsException {
@@ -104,12 +104,12 @@ public class SelectHelper {
         if (2 == (2 & action)) {
             if (values.containsKey("info")) {
                 Map        info = (Map ) values.get("info");
-                injectDisp(info , enums);
+                injectText(info , enums);
             }
             if (values.containsKey("list")) {
                 List<Map>  list = (List) values.get("list");
                 for (Map   info :  list) {
-                injectDisp(info , enums);
+                injectText(info , enums);
                 }
             }
         }
@@ -138,7 +138,7 @@ public class SelectHelper {
         }
     }
 
-    private void injectDisp(Map info, Map maps) throws HongsException {
+    private void injectText(Map info, Map maps) throws HongsException {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
@@ -154,7 +154,7 @@ public class SelectHelper {
             if (val == null) {
                 val  = "";
             }
-            Dict.setParam(info, val, key + "_disp");
+            Dict.setParam(info, val, key + "_text");
         }
     }
 

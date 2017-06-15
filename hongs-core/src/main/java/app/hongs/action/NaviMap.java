@@ -43,7 +43,7 @@ import org.xml.sax.SAXException;
       "href" : {
         hrel: 页面,
         icon: 图标,
-        disp: 名称,
+        text: 名称,
         menus : {
           子级菜单...
         },
@@ -57,7 +57,7 @@ import org.xml.sax.SAXException;
     }
     roles = {
       "name" : {
-        disp: 名称,
+        text: 名称,
         depends : [
           "fole.name1",
           "role.name2",
@@ -275,9 +275,9 @@ public class NaviMap
         if (icon == null) icon = "";
         menu2.put("icon", icon );
 
-        String disp = element2.getAttribute("disp");
-        if (disp == null) disp = "";
-        menu2.put("disp", disp );
+        String text = element2.getAttribute("text");
+        if (text == null) text = "";
+        menu2.put("text", text );
 
         List path2 = new ArrayList(path);
         path2.add(menu2);
@@ -307,9 +307,9 @@ public class NaviMap
         if (namz == null) namz = "";
         roles.put( namz , role2);
 
-        String disp = element2.getAttribute("disp");
-        if (disp == null) disp = "";
-        role2.put("disp", disp );
+        String text = element2.getAttribute("text");
+        if (text == null) text = "";
+        role2.put("text", text );
 
         Set actions2 = new HashSet();
         Set depends2 = new HashSet();
@@ -685,9 +685,9 @@ public class NaviMap
 
               Map    o = getRole(n);
               Set    x = (Set) o.get("depends");
-              String s = (String) o.get("disp");
+              String s = (String) o.get("text");
 
-              // 没有指定 disp 则用 name 获取
+              // 没有指定 text 则用 name 获取
               if (/**/"".equals(s)) {
                   s = "core.role." + n;
               }
@@ -695,7 +695,7 @@ public class NaviMap
 
               Map role = new HashMap();
               role.put("name", n);
-              role.put("disp", s);
+              role.put("text", s);
               role.put("rels", x);
               rolz.add(role);
           }
@@ -704,9 +704,9 @@ public class NaviMap
               String h = (String) item.getKey();
               String p = (String) v.get("hrel");
               String d = (String) v.get("icon");
-              String s = (String) v.get("disp");
+              String s = (String) v.get("text");
 
-              // 没有指定 disp 则用 href 获取
+              // 没有指定 text 则用 href 获取
               if (/**/"".equals(s)) {
                   s = "core.role." + h;
               }
@@ -716,7 +716,7 @@ public class NaviMap
               menu.put("href", h);
               menu.put("hrel", p);
               menu.put("icon", d);
-              menu.put("disp", s);
+              menu.put("text", s);
               menu.put("rols", rolz  );
               list.add(menu);
           }
@@ -841,11 +841,13 @@ public class NaviMap
 
           String p = (String) v.get("hrel");
           String d = (String) v.get("icon");
-          String s = (String) v.get("disp");
+          String s = (String) v.get("text");
 
-          // 没有指定 disp 则用 href 获取
-          if (/**/ "".equals(s)) {
-              s = "core.menu." + h;
+          // 没有指定 text 则用 href 获取
+          // "uri/to/#abc" 转为 "uri.to.abc"
+          // "common/menu.act?m=abc" 转为 "common.menu.act.m.abc"
+          if (s == null || s.length() == 0) {
+              s = "core.menu." + h.replaceAll("[/#?&=]+", ".");
           }
           s = lang.translate(s);
 
@@ -853,7 +855,7 @@ public class NaviMap
           menu.put("href", h);
           menu.put("hrel", p);
           menu.put("icon", d);
-          menu.put("disp", s);
+          menu.put("text", s);
           menu.put("subs", subz  );
           list.add( menu);
       }

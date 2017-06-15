@@ -1,8 +1,8 @@
 <root>
     <rsname>roles</rsname>
     <!--
-    <menu disp="" href="" hrel="" icon="">
-        <role disp="" name="">
+    <menu text="" href="" hrel="" icon="">
+        <role text="" name="">
             <action></action>
             <depend></depend>
         </role>

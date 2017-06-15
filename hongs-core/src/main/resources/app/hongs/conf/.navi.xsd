@@ -7,7 +7,7 @@
     <xs:attribute name="href" type="xs:string"/>
     <xs:attribute name="hrel" type="xs:string"/>
     <xs:attribute name="icon" type="xs:string"/>
-    <xs:attribute name="disp" type="xs:string"/>
+    <xs:attribute name="text" type="xs:string"/>
 
     <!-- 动作 -->
     <xs:element name="action" type="xs:string"/>
@@ -25,7 +25,7 @@
     <xs:element name="role">
         <xs:complexType>
             <xs:attribute ref="name" use="required"/>
-            <xs:attribute ref="disp"/>
+            <xs:attribute ref="text"/>
             <xs:all>
                 <xs:element ref="action" maxOccurs="unbounded"/>
                 <xs:element ref="depend" maxOccurs="unbounded"/>
@@ -39,7 +39,7 @@
             <xs:attribute ref="href" use="required"/>
             <xs:attribute ref="hrel"/>
             <xs:attribute ref="icon"/>
-            <xs:attribute ref="disp"/>
+            <xs:attribute ref="text"/>
             <xs:all>
                 <xs:element ref="menu" maxOccurs="unbounded"/>
                 <xs:element ref="role" maxOccurs="unbounded"/>

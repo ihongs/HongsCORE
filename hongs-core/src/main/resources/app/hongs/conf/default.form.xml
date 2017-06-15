@@ -57,51 +57,51 @@
         <value code="1">名称2</value>
     </enum>
     <form name="demo-form">
-        <field name="str" disp="文本" type="text,textarea,hidden,search,tel,url,email">
+        <field name="str" text="文本" type="text,textarea,hidden,search,tel,url,email">
             <param name="minlength">100</param>
             <param name="maxlength">500</param>
             <param name="pattern"></param>
         </field>
-        <field name="num" disp="数字" type="number,range,onoff">
+        <field name="num" text="数字" type="number,range,onoff">
             <param name="min">100</param>
             <param name="max">500</param>
             <param name="type">int,long,float,double</param>
             <param name="format">####.##</param>
         </field>
-        <field name="day" disp="日期" type="date,time,datetime">
+        <field name="day" text="日期" type="date,time,datetime">
             <param name="min">2014/01</param>
             <param name="max">2014/12</param>
             <param name="type">date,time,datestamp,timestamp</param>
             <param name="format">yyyy/MM</param>
         </field>
-        <field name="file" disp="文件" type="file">
+        <field name="file" text="文件" type="file">
             <param name="path"></param>
             <param name="href"></param>
             <param name="name"></param>
             <param name="type"></param>
             <param name="extn"></param>
         </field>
-        <field name="enum" disp="枚举" type="enum,select,check,radio">
+        <field name="enum" text="枚举" type="enum,select,check,radio">
             <param name="conf"></param>
             <param name="enum">demo-enum</param>
         </field>
-        <field name="form" disp="外键" type="fork">
+        <field name="form" text="外键" type="fork">
             <param name="conf"></param>
             <param name="form">demo-form</param>
         </field>
-        <field name="form" disp="表单" type="form">
+        <field name="form" text="表单" type="form">
             <param name="conf"></param>
             <param name="form">demo-form</param>
         </field>
-        <field name="more" disp="必填" type="text" required="yes">
+        <field name="more" text="必填" type="text" required="yes">
         </field>
-        <field name="more" disp="重复" type="text" repeated="yes">
+        <field name="more" text="重复" type="text" repeated="yes">
             <param name="defiant"></param>
             <param name="diverse"></param>
             <param name="minrepeat"></param>
             <param name="maxrepeat"></param>
         </field>
-        <field name="more" disp="默认" type="text">
+        <field name="more" text="默认" type="text">
             <param name="default">%now,$uid</div>
             <param name="default-thrust">yes</param>
             <param name="default-create">yes</param>

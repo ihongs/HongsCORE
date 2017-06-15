@@ -844,10 +844,12 @@ public class NaviMap
           String s = (String) v.get("text");
 
           // 没有指定 text 则用 href 获取
-          // "uri/to/#abc" 转为 "uri.to.abc"
-          // "common/menu.act?m=abc" 转为 "common.menu.act.m.abc"
+          // "abc/def#xyz" 转为 "abc.def.xyz"
+          // "abc.def?x=z" 转为 "abc.def.x.z"
           if (s == null || s.length() == 0) {
-              s = "core.menu." + h.replaceAll("[/#?&=]+", ".");
+              s = "core.menu."
+                + h.replaceAll("[/#?&=!]+", ".")  // URL 符号换成点
+                   .replaceAll("^\\.|\\.$", "" ); // 去前后多余的点
           }
           s = lang.translate(s);
 

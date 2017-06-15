@@ -142,6 +142,11 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         this(path, null, null, null);
     }
 
+    public LuceneRecord(  Map  form)
+    throws HongsException {
+        this(null, form, null, null);
+    }
+
     /**
      * 获取实例
      * 存储为 conf/form 表单为 conf.form

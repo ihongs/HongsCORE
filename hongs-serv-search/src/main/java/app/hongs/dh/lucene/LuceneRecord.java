@@ -97,6 +97,18 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
     throws HongsException {
         super(form, fmap, dmap);
 
+        // 可在表单配置中指定数据库的路径和代号
+        if (form != null) {
+            String dp = Dict.getValue(form, String.class, "@", "data-path");
+            String dn = Dict.getValue(form, String.class, "@", "base-name");
+            if (dp != null && dp.length() != 0) {
+                path = dp;
+            }
+            if (dn != null && dn.length() != 0) {
+              dtname = dn;
+            }
+        }
+
         // 保存路径
         if (path != null) {
             Map m = new HashMap();

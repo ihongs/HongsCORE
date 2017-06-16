@@ -1,7 +1,7 @@
 # HongsCORE framework for Java
 
-* 文档版本: 15.09.20
-* 软件版本: 0.4.0-20170526
+* 文档版本: 17.06.17
+* 软件版本: 0.4.0-20170617
 * 设计作者: 黄弘(Kevin Hongs)
 * 技术支持: kevin.hongs@gmail.com
 
@@ -298,7 +298,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     sortable        字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
     findable        字段可搜索(可通过wd参数限制)
     filtable        字段可过滤
-    unstored        不保存原文(可查询或排序, 却不可以读取, 针对 Lucene 特有)
+    unstored        不保存原文(可查询或排序, 但不可以读取, 仅针对 Lucene 特有)
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
@@ -338,9 +338,9 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     id      主键, CHAR(20)
     pid     父键, CHAR(20)
     xx_id   外键, CHAR(20), xx为关联表缩写
-    ctime   创建时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     mtime   修改时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
-    etime   结束时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
+    ctime   创建时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
+    etime   截止时间, DATETIME,TIMESTAMP,BIGINT,INTEGER, 用于仓库层记录数据的失效时间, 避免用作应用层的业务到期时间
     state   状态标识, TINYINT, 1正常, 0删除, 可增设其他状态值; 如果删除后需要恢复之前的状态, 请新增其他状态字段, 或使用负值标识删除.
 
 因字段名可用于 URL 中作为过滤参数, 而部分参数已有特殊含义, 字段取名时请尽量避开这些名称: pn,gn,rn,wd,md,ob,rb,or,ar, 比较简单的办法是避免取 2 个字母的字段名. 另, 在 Cnst 类和配置文件中可以重新定义这些名称, 但并不建议修改(我信奉少量的约定胜于过多的配置).

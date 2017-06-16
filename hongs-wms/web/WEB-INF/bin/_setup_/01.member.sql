@@ -140,14 +140,14 @@ INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/retrieve');
 INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/create');
 INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/update');
 INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/form/retrieve');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/form/create');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/form/update');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/form/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/unit/retrieve');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/unit/create');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/unit/update');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/module/unit/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/retrieve');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/create');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/update');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/retrieve');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/create');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/update');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/delete');
 
 --
 -- 用户关联账户

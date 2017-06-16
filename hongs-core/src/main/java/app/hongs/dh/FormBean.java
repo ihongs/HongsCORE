@@ -105,7 +105,7 @@ public class FormBean {
             return  fkindz;
         }
         try {
-            Map<String, String> m = FormSet.getInstance("default").getEnum("__saves__");
+            Map<String, String> m = FormSet.getInstance().getEnum("__saves__");
             fkindz = new HashMap();
             for(Map.Entry<String, String> et : m.entrySet()) {
                 fkindz.put(et.getKey(), Synt.asTerms(et.getValue()));
@@ -125,7 +125,7 @@ public class FormBean {
             return  fcasez;
         }
         try {
-            Map<String, String> m = FormSet.getInstance("default").getEnum("__cases__");
+            Map<String, String> m = FormSet.getInstance().getEnum("__cases__");
             fcasez = new HashMap();
             for(Map.Entry<String, String> et : m.entrySet()) {
                 fcasez.put(et.getKey(), Synt.asTerms(et.getValue()));

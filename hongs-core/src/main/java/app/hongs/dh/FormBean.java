@@ -54,18 +54,18 @@ public class FormBean {
     }
 
     /**
-     * 设置字段类型映射
+     * 设置存储类型映射
      * @param map
      */
-    protected final void setFieldKinds(Map<String, Set<String>> map) {
+    protected final void setSaveTypes(Map<String, Set<String>> map) {
         fkindz = map;
     }
 
     /**
-     * 设置类型功能映射
+     * 设置使用类型映射
      * @param map
      */
-    protected final void setFieldCases(Map<String, Set<String>> map) {
+    protected final void setCaseTypes(Map<String, Set<String>> map) {
         fcasez = map;
     }
 
@@ -103,12 +103,12 @@ public class FormBean {
      * 获取字段类型映射
      * @return
      */
-    public Map<String, Set<String>> getFieldKinds() {
+    public Map<String, Set<String>> getSaveTypes() {
         if (null != fkindz) {
             return  fkindz;
         }
         try {
-            Map<String, String> m = FormSet.getInstance("default").getEnum("__kinds__");
+            Map<String, String> m = FormSet.getInstance("default").getEnum("__saves__");
             fkindz = new HashMap();
             for(Map.Entry<String, String> et : m.entrySet()) {
                 fkindz.put(et.getKey(), Synt.asTerms(et.getValue()));
@@ -123,7 +123,7 @@ public class FormBean {
      * 获取查询类型映射
      * @return
      */
-    public Map<String, Set<String>> getFieldCases() {
+    public Map<String, Set<String>> getCaseTypes() {
         if (null != fcasez) {
             return  fcasez;
         }
@@ -144,8 +144,8 @@ public class FormBean {
      * @param x 类别, 如 string,number
      * @return 
      */
-    public Set<String> getFieldTypesByKind(String x) {
-        return getFieldKinds().get(x);
+    public Set<String> getSaveTypes(String x) {
+        return FormBean.this.getSaveTypes().get(x);
     }
 
     /**
@@ -153,10 +153,10 @@ public class FormBean {
      * @param x 类别, 如 string,number
      * @return
      */
-    public Set<String> getFieldNamesByKind(String x) {
+    public Set<String> getSaveNames(String x) {
         Map<String, Map> fields = getFields();
         Set<String> fns = new LinkedHashSet();
-        Set         fts = getFieldTypesByKind(x);
+        Set         fts = getSaveTypes(x);
 
         for(Map.Entry<String, Map> et: fields.entrySet()) {
             Map field = et.getValue();
@@ -177,8 +177,8 @@ public class FormBean {
      * @param x 标识, 如 listable,sortable
      * @return 
      */
-    public Set<String> getFieldTypesByCase(String x) {
-        return getFieldCases().get(x);
+    public Set<String> getCaseTypes(String x) {
+        return FormBean.this.getCaseTypes().get(x);
     }
 
     /**
@@ -186,7 +186,7 @@ public class FormBean {
      * @param x 标识 例如 listable,sortable
      * @return
      */
-    public Set<String> getFieldNamesByCase(String x) {
+    public Set<String> getCaseNames(String x) {
         // 可在表参数区直接给出
         Map<String, String> fps = getParams();
         if (fps.containsKey(x)) {
@@ -200,9 +200,9 @@ public class FormBean {
         // 检查是否阻止自动识别
         // 专用类型无需特别设置
         if (Synt.declare(fps.get("auto.bind." + x), false)) {
-            fts = getFieldTypesByCase(x);
+            fts = getCaseTypes(x);
         } else {
-            fts = new HashSet();
+            fts = new HashSet ( );
             if ("findable".equals(x)) {
                 fts.add("search");
             } else
@@ -232,7 +232,7 @@ public class FormBean {
     }
 
     /**
-     * 获取功能请求参数
+     * 获取关系符号
      * @return
      */
     public Set<String> getFuncKeys() {
@@ -247,7 +247,7 @@ public class FormBean {
         if (null != rbColz) {
             return  rbColz;
         }
-        rbColz = getFieldNamesByCase("listable");
+        rbColz = getCaseNames("listable");
         return rbColz;
     }
 
@@ -259,7 +259,7 @@ public class FormBean {
         if (null != obColz) {
             return  obColz;
         }
-        obColz = getFieldNamesByCase("sortable");
+        obColz = getCaseNames("sortable");
         return obColz;
     }
 
@@ -271,7 +271,7 @@ public class FormBean {
         if (null != wdColz) {
             return  wdColz;
         }
-        wdColz = getFieldNamesByCase("findable");
+        wdColz = getCaseNames("findable");
         return wdColz;
     }
 
@@ -283,7 +283,7 @@ public class FormBean {
         if (null != whColz) {
             return  whColz;
         }
-        whColz = getFieldNamesByCase("filtable");
+        whColz = getCaseNames("filtable");
         return whColz;
     }
 

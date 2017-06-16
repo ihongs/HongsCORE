@@ -1,11 +1,13 @@
 <root>
+    <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
         <value code="findable">string,search,hidden,text,email,url,tel,textcase</value>
         <value code="sortable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,sorted</value>
         <value code="filtable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check</value>
         <value code="listable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
     </enum>
-    <enum name="__kinds__">
+    <!-- 存储类型与字段类型的映射 -->
+    <enum name="__saves__">
         <value code="string">string,text,textarea,textcase,hidden,color,email,url,tel,fork,enum,select,radio,check,file,upload,image,video,audio,search,stored</value>
         <value code="number">number,range,slider,switch,sorted</value>
         <value code="date">date,time,datetime</value>
@@ -15,6 +17,7 @@
         <value code="search">search,textcase</value>
         <value code="sorted">sorted</value>
     </enum>
+    <!-- 字段校验类型映射 -->
     <enum name="__types__">
         <!-- String -->
         <value code="string">string</value>
@@ -54,6 +57,7 @@
         <!-- Fork -->
         <value code="fork">fork</value>
     </enum>
+    <!-- 文本校验正则映射 -->
     <enum name="__patts__">
         <value code="color"><![CDATA[^#[0-9A-Fa-f]{6}]]></value>
         <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>

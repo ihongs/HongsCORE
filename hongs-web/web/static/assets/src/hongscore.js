@@ -119,14 +119,14 @@ function hsResponObj(rst, qut, qxt) {
         }
     }
     if (typeof (rst) === "object") {
-        if (typeof(rst.ok) === "undefined") {
-            rst.ok = true ;
+        if (rst.ok === 0 || rst.ok === "0") {
+            rst.ok = false;
         } else
         if (rst.ok === 1 || rst.ok === "1") {
             rst.ok = true ;
-        }
-        if (rst.ok === 0 || rst.ok === "0") {
-            rst.ok = false;
+        } else
+        if (typeof(rst.ok ) === "undefined") {
+            rst.ok = true ;
         }
         if (typeof(rst.ern) === "undefined") {
             rst.ern =  "" ;

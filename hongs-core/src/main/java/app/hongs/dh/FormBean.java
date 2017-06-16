@@ -232,14 +232,6 @@ public class FormBean {
     }
 
     /**
-     * 获取关系符号
-     * @return
-     */
-    public Set<String> getFuncKeys() {
-        return FN_KEYS;
-    }
-
-    /**
      * 获取可列举的字段
      * @return
      */
@@ -285,6 +277,14 @@ public class FormBean {
         }
         whColz = getCaseNames("filtable");
         return whColz;
+    }
+
+    /**
+     * 获取关系符号
+     * @return
+     */
+    public Set<String> getFuncKeys() {
+        return FN_KEYS;
     }
 
 }

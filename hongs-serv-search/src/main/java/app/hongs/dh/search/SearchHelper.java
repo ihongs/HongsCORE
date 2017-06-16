@@ -38,16 +38,7 @@ public class SearchHelper {
 
     private final LuceneRecord that;
 
-    private static final Set<String> ENUM_TYPES;
-    private static final Set<String> FORK_TYPES;
     static {
-        ENUM_TYPES = new HashSet();
-        FORK_TYPES = new HashSet();
-        FORK_TYPES.add(  "fork"  );
-        ENUM_TYPES.add(  "enum"  );
-        ENUM_TYPES.add(  "date"  );
-        ENUM_TYPES.add( "number" );
-
         // jdk 1.7 加上这个后排序不会报错
         System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
@@ -58,6 +49,17 @@ public class SearchHelper {
 
     public final LuceneRecord getRecord( ) {
         return that;
+    }
+
+    protected Set<String> getForkTypes() {
+        return that.getFieldTypesByCase("fork");
+    }
+
+    protected Set<String> getEnumTypes() {
+        Set<String> ets = new HashSet(that.getFieldTypesByKind("enum"));
+        ets.addAll(that.getFieldTypesByKind( "date" ));
+        ets.addAll(that.getFieldTypesByKind("number"));
+        return ets;
     }
 
     /**
@@ -73,16 +75,17 @@ public class SearchHelper {
             return;
         }
 
+        Map<String, Map> fields = FormSet.getInstance(conf).getForm(form);
         Map<String, Map<String, String>> enums = new HashMap();
         Map<String, Map<String, String>> forks = new HashMap();
-        Map<String, Map   > fs = FormSet.getInstance(conf).getForm ( form );
-        Map<String, String> ts = FormSet.getInstance().getEnum("__types__");
+        Set<String> ets = getEnumTypes();
+        Set<String> fts = getForkTypes();
 
-        for(Map.Entry<String, Map> et : fs.entrySet()) {
+        for(Map.Entry<String, Map> et : fields.entrySet()) {
             Map    fc = et.getValue();
             String fn = et.getKey(  );
-            String ft = ts.get((String) fc.get("__type__"));
-            if (1 == (1 & md) && ENUM_TYPES.contains( ft )) {
+            String ft = (String) fc.get("__type__");
+            if (1 == (1 & md) && ets.contains( ft )) {
                 String xn = (String) fc.get("enum");
                 String xc = (String) fc.get("conf");
                 if (xn == null || "".equals(xn)) xn = fn  ;
@@ -90,7 +93,7 @@ public class SearchHelper {
                 Map xe = FormSet.getInstance(xc).getEnumTranslated(xn);
                 enums.put(fn, xe);
             } else
-            if (2 == (2 & md) && FORK_TYPES.contains( ft )) {
+            if (2 == (2 & md) && fts.contains( ft )) {
                 forks.put(fn, fc);
             }
         }

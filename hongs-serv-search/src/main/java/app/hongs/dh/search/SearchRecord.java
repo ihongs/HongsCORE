@@ -6,7 +6,8 @@ import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
-import app.hongs.util.Lock;
+import app.hongs.util.Block;
+import java.io.File;
 
 import java.io.IOException;
 import java.util.Map;
@@ -25,12 +26,18 @@ import org.apache.lucene.index.Term;
  */
 public class SearchRecord extends LuceneRecord {
 
-    public SearchRecord(String path) throws HongsException {
-        super(path);
-    }
+    private String dbname = null;
 
     public SearchRecord(String path, Map form) throws HongsException {
         super(path, form);
+    }
+
+    public SearchRecord(String path) throws HongsException {
+        this (path, null);
+    }
+
+    public SearchRecord(  Map  form) throws HongsException {
+        this (null, form);
     }
 
     /**
@@ -59,11 +66,35 @@ public class SearchRecord extends LuceneRecord {
         return inst;
     }
 
+    /**
+     * 获取仓库名称
+     * 通常为路径名
+     * @return 
+     */
+    public String getBaseName() {
+        if (null != dbname) {
+            return  dbname;
+        }
+        String p = Core.DATA_PATH + "/lucene/";
+        String d = getDataPath();
+        if (! "/".equals (File.separator) ) {
+            d = d.replace(File.separator, "/");
+        }
+        if (d.endsWith("/")) {
+            d = d.substring(0,d.length()-1);
+        }
+        if (d.startsWith(p)) {
+            d = d.substring(  p.length()  );
+        }
+        dbname= d;
+        return  d;
+    }
+
     @Override
     public void addDoc(final Document doc) throws HongsException {
         final SearchRecord that = this;
-        final String key = SearchRecord.class.getName() + ":" + getDbName();
-        Lock.locker( key , new Runnable( ) {
+        final String key = SearchRecord.class.getName() + ":" + getBaseName();
+        Block.locker(key , new Runnable( ) {
             @Override
             public void run() {
                 try {
@@ -82,8 +113,8 @@ public class SearchRecord extends LuceneRecord {
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
         final SearchRecord that = this;
-        final String key = SearchRecord.class.getName() + ":" + getDbName();
-        Lock.locker( key , new Runnable( ) {
+        final String key = SearchRecord.class.getName() + ":" + getBaseName();
+        Block.locker(key , new Runnable( ) {
             @Override
             public void run() {
                 try {
@@ -102,8 +133,8 @@ public class SearchRecord extends LuceneRecord {
     @Override
     public void delDoc(final String id) throws HongsException {
         final SearchRecord that = this;
-        final String key = SearchRecord.class.getName() + ":" + getDbName();
-        Lock.locker( key , new Runnable( ) {
+        final String key = SearchRecord.class.getName() + ":" + getBaseName();
+        Block.locker(key , new Runnable( ) {
             @Override
             public void run() {
                 try {

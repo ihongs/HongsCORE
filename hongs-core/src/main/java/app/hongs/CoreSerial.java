@@ -1,7 +1,7 @@
 package app.hongs;
 
-import app.hongs.util.Lock;
-import app.hongs.util.Lock.RwLock;
+import app.hongs.util.Block;
+import app.hongs.util.Block.Larder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -200,9 +200,12 @@ public abstract class CoreSerial
   protected void load(final File file, final long time)
     throws HongsException
   {
-      String name = CoreSerial.class.getName()
-            + ":" + file.getAbsolutePath();
-      RwLock lock = Lock.getRwLock( name );
+      // 用路径作为锁标识, 适当地缩短其长度
+      String name = file.getAbsolutePath();
+      if (/****/ name.startsWith(Core.DATA_PATH + "/serial/")) {
+          name = name.substring (Core.DATA_PATH.length() + 8);
+      }
+      Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name);
 
       lock.lockr();
       try {

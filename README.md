@@ -302,19 +302,19 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
-    dont.auto.bind.listable 告知 Mview 不要自动将字段设为可列举
-    dont.auto.bind.sortable 告知 Mview 不要自动将字段设为可排序
-    dont.auto.bind.findable 告知 Mview 不要自动将字段设为可搜索
-    dont.auto.bind.filtable 告知 Mview 不要自动将字段设为可过滤
-    dont.auto.append.fields 告知 Mview 不要自动追加表内字段
-    dont.auto.append.assocs 告知 Mview 不要自动追加关联字段
-    dont.show.create.button 告知视图不要显示创建按钮
-    dont.show.update.button 告知视图不要显示修改按钮
-    dont.show.delete.button 告知视图不要显示删除按钮
-    dont.show.checks.column 告知视图不要显示选择列
+    auto.bind.listable 告知 Mview 和 FormBean 不要自动将字段设为可列举
+    auto.bind.sortable 告知 Mview 和 FormBean 不要自动将字段设为可排序
+    auto.bind.findable 告知 Mview 和 FormBean 不要自动将字段设为可搜索
+    auto.bind.filtable 告知 Mview 和 FormBean 不要自动将字段设为可过滤
+    auto.append.fields 告知 Mview 不要自动追加表内字段
+    auto.append.assocs 告知 Mview 不要自动追加关联字段
+    hide.create.button 告知视图不要显示创建按钮
+    hide.update.button 告知视图不要显示修改按钮
+    hide.delete.button 告知视图不要显示删除按钮
+    hide.checks.column 告知视图不要显示选择列
     deny.call.ACTION_HANDLE 告知 DBAction 等"脚手架"处理器拒绝处理某些操作, 也可以通过权限控制
 
-对于 dont.auto.bind.xxxxable 部分, 非关系数据库默认为 true.
+对于 auto.bind,auto.append 部分, Mview 中默认为 true.
 
 另, 每个枚举(enum)可以有一个 code="\*" 的取值, 该取值用作"其他"选项, 当出现枚举中没有记录的值时, 将显示为"其他".
 

@@ -11,10 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 模型表单
- 用于对存储实例提供表单字段支持
- 注意 FormBean 默认 dont.auto.bind.xxxxable 为 true
- 即默认不会根据字段类型自动设置 listable,sortable 等
+ * 表单应用实例
  * @author Hongs
  */
 public class FormBean {

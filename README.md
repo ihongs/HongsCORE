@@ -144,7 +144,7 @@
     xxx.foo             对应标记 @Cmdlet("xxx.foo") 的类下 @Cmdlet("__main__") 的方法
     xxx/foo/bar.act     对应标记 @Action("xxx/foo") 的类下 @Action("bar") 的方法
     xxx/foo.act         对应标记 @Action("xxx/foo") 的类下 @Action("__main__") 的方法
-    xxx/foo.api         对应标记 @Action("xxx/foo") 的类下 @Action("retrieve,create,update,delete") 的方法
+    xxx/foo.api         对应标记 @Action("xxx/foo") 的类下 @Action("search,create,update,delete") 的方法
                         这四种动作分别对应 HTTP METHOD: GET,POST,PUT,DELETE
     common/auth/name.js 读取 WBE-INF/conf/name.menu.xml 中 actions+session 的组合
     common/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置
@@ -223,7 +223,7 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则跳转到 URL. 其他数据通常有:
 
-    // 列表信息, 在 retrieve,list 动作返回
+    // 列表信息, 在 search,list 动作返回
     "list": [
         {
             "字段": "取值",
@@ -232,14 +232,14 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
         ...
     ],
 
-    // 分页信息, 在 retrieve,list 动作返回
+    // 分页信息, 在 search,list 动作返回
     "page": {
         "pagecount": 总的页数,
         "rowscount": 当前行数,
         ...
     }
 
-    // 枚举信息, 在 retrieve,list,info 动作返回
+    // 枚举信息, 在 search,list,info 动作返回
     "enum": {
         "字段": [
             ["取值", "名称"],
@@ -248,7 +248,7 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
         ...
     }
 
-    // 单元信息, 在 retrieve,info,create 动作返回
+    // 单元信息, 在 search,info,create 动作返回
     "info": {
         "字段": "取值",
         ...

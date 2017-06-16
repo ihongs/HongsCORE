@@ -49,7 +49,7 @@ public class FormBean {
      * 设置字段配置
      * @param map
      */
-    protected final void setFields(Map map) {
+    public final void setFields(Map map) {
         fieldz = map;
     }
 
@@ -57,7 +57,7 @@ public class FormBean {
      * 设置存储类型映射
      * @param map
      */
-    protected final void setSaveTypes(Map<String, Set<String>> map) {
+    public final void setSaveTypes(Map<String, Set<String>> map) {
         fkindz = map;
     }
 
@@ -65,7 +65,7 @@ public class FormBean {
      * 设置使用类型映射
      * @param map
      */
-    protected final void setCaseTypes(Map<String, Set<String>> map) {
+    public final void setCaseTypes(Map<String, Set<String>> map) {
         fcasez = map;
     }
 

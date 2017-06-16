@@ -119,10 +119,13 @@ function hsResponObj(rst, qut, qxt) {
         }
     }
     if (typeof (rst) === "object") {
-        if (typeof(rst.ok ) === "undefined") {
+        if (typeof(rst.ok) === "undefined") {
             rst.ok = true ;
         } else
-        if (rst.ok === "0") {
+        if (rst.ok === 1 || rst.ok === "1") {
+            rst.ok = true ;
+        }
+        if (rst.ok === 0 || rst.ok === "0") {
             rst.ok = false;
         }
         if (typeof(rst.ern) === "undefined") {

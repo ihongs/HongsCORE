@@ -52,13 +52,13 @@ public class SearchHelper {
     }
 
     protected Set<String> getForkTypes() {
-        return that.getFieldTypesByCase("fork");
+        return that.getCaseTypes("fork");
     }
 
     protected Set<String> getEnumTypes() {
-        Set<String> ets = new HashSet(that.getFieldTypesByKind("enum"));
-        ets.addAll(that.getFieldTypesByKind( "date" ));
-        ets.addAll(that.getFieldTypesByKind("number"));
+        Set<String> ets = new HashSet(that.getSaveTypes("enum"));
+        ets.addAll(that.getSaveTypes( "date" ));
+        ets.addAll(that.getSaveTypes("number"));
         return ets;
     }
 

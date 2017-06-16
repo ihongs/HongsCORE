@@ -1240,39 +1240,39 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
 
         //** 先查特有的 **/
 
-        ks = getFieldTypesByKind("search");
+        ks = getSaveTypes("search");
         if (ks != null && ks.contains(t) ) {
             return "search";
         }
 
-        ks = getFieldTypesByKind("stored");
+        ks = getSaveTypes("stored");
         if (ks != null && ks.contains(t) ) {
             return "stored";
         }
 
-        ks = getFieldTypesByKind("sorted");
+        ks = getSaveTypes("sorted");
         if (ks != null && ks.contains(t) ) {
             return "sorted";
         }
 
-        ks = getFieldTypesByKind("object");
+        ks = getSaveTypes("object");
         if (ks != null && ks.contains(t) ) {
             return "object";
         }
 
         //** 再查一般的 **/
 
-        ks = getFieldTypesByKind("number");
+        ks = getSaveTypes("number");
         if (ks != null && ks.contains(t) ) {
             return Synt.declare(fc.get("type"), "double");
         }
 
-        ks = getFieldTypesByKind("string");
+        ks = getSaveTypes("string");
         if (ks != null && ks.contains(t) ) {
             return "string";
         }
 
-        ks = getFieldTypesByKind( "date" );
+        ks = getSaveTypes( "date" );
         if (ks != null && ks.contains(t) ) {
             return  "date" ;
         }

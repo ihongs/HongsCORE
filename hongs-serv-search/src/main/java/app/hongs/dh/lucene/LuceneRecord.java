@@ -8,9 +8,9 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
+import app.hongs.dh.FormBean;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
-import app.hongs.dh.ModelForm;
 import app.hongs.dh.lucene.field.*;
 import app.hongs.dh.lucene.query.*;
 import app.hongs.dh.lucene.value.*;
@@ -23,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -74,7 +75,7 @@ import org.apache.lucene.store.FSDirectory;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneable, AutoCloseable {
+public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneable, AutoCloseable {
 
     protected boolean TRNSCT_MODE = false;
     protected boolean OBJECT_MODE = false;
@@ -82,32 +83,27 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
     private IndexSearcher finder  = null ;
     private IndexReader   reader  = null ;
     private IndexWriter   writer  = null ;
-    private String        dtpath  = null ;
-    private String        dtname  = null ;
+    private String        dbpath  = null ;
 
     /**
      * 构造方法
-     * @param path 存储路径, 可覆盖 getDbName 来指定
-     * @param form 字段配置, 可覆盖 getFields 来指定
-     * @param fmap 字段归类映射, 默认取自 default.__types__
-     * @param dmap 行为归类映射, 默认取自 default.__ables__
+     * @param path 存储路径, 可覆盖 getDataPath
+     * @param form 字段配置, 可覆盖 getFields
      * @throws HongsException
      */
-    public LuceneRecord(String path, Map form, Map fmap, Map dmap)
+    public LuceneRecord(String path, Map form)
     throws HongsException {
-        super(form, fmap, dmap);
-
-        // 可在表单配置中指定数据库的路径和代号
+        // 可在表单配置中指定数据路径
         if (form != null) {
-            String dp = Dict.getValue(form, String.class, "@", "data-path");
-            String dn = Dict.getValue(form, String.class, "@", "base-name");
-            if (dp != null && dp.length() != 0) {
-                path = dp;
-            }
-            if (dn != null && dn.length() != 0) {
-              dtname = dn;
+            Map c = (Map) form.get("@");
+            if (c!= null) {
+                String p = (String) c.get("data-path");
+                if (p != null && p.length() != 0) {
+                    path = p;
+                }
             }
         }
+        setFields(form);
 
         // 保存路径
         if (path != null) {
@@ -120,7 +116,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                path = Core.DATA_PATH + "/lucene/" + path;
             }
         }
-        this.dtpath = path;
+        this.dbpath = path;
 
         // 模式标识
         CoreConfig  conf = CoreConfig.getInstance( );
@@ -132,19 +128,14 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             conf.getProperty("core.in.object.mode", false));
     }
 
-    public LuceneRecord(String path, Map form)
-    throws HongsException {
-        this(path, form, null, null);
-    }
-
     public LuceneRecord(String path)
     throws HongsException {
-        this(path, null, null, null);
+        this(path, null);
     }
 
     public LuceneRecord(  Map  form)
     throws HongsException {
-        this(null, form, null, null);
+        this(null, form);
     }
 
     /**
@@ -171,6 +162,13 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             inst =  (LuceneRecord) core.got(name);
         }
         return inst;
+    }
+
+    public String getDataPath() {
+        if (null != dbpath) {
+            return  dbpath;
+        }
+        throw new NullPointerException("Data path is not set");
     }
 
     //** 实体方法 **/
@@ -623,7 +621,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             return;
         }
 
-        String dbpath = getDbPath();
+        String dbpath = getDataPath();
 
         try {
             // 索引目录不存在则先写入一个并删除
@@ -659,7 +657,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             return;
         }
 
-        String dbpath = getDbPath();
+        String dbpath = getDataPath();
 
         try {
             IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
@@ -725,7 +723,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Close lucene connection, data path: " + getDbPath());
+            CoreLogger.trace("Close lucene connection, data path: " + getDataPath());
         }
     }
 
@@ -789,32 +787,6 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
 
     //** 底层方法 **/
 
-    public String getDbPath() {
-        if (null != dtpath) {
-            return  dtpath;
-        }
-        throw new NullPointerException("DBPath can not be null");
-    }
-
-    public String getDbName() {
-        if (null != dtname) {
-            return  dtname;
-        }
-        String p = Core.DATA_PATH + "/lucene/";
-        String d = getDbPath();
-        if (! "/".equals (File.separator) ) {
-            d = d.replace(File.separator, "/");
-        }
-        if (d.endsWith("/")) {
-            d = d.substring(0,d.length()-1);
-        }
-        if (d.startsWith(p)) {
-            d = d.substring(  p.length()  );
-        }
-        dtname= d;
-        return  d;
-    }
-
     public IndexSearcher getFinder() throws HongsException {
         init();
         return finder;
@@ -865,7 +837,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             }
 
             IQuery aq;
-            String t = getFtype(m);
+            String t = getTypeMutant(m);
             if (   "int".equals(t)) {
                 aq = new IntQuery();
             } else
@@ -1006,7 +978,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             }
 
             SortField.Type st;
-            String t = getFtype(m);
+            String t = getTypeMutant(m);
             if (   "int".equals(t)) {
                 st = SortField.Type.INT;
             } else
@@ -1101,10 +1073,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
         Analyzer ad = new StandardAnalyzer();
         for(Object ot : fields.entrySet( ) ) {
             Map.Entry et = (Map.Entry) ot;
-            String fn = (String) et.getKey();
             Map    fc = (Map ) et.getValue();
-            String t = getFtype(fc);
-            if ("search".equals(t)) {
+            String fn = (String) et.getKey();
+            String ft =  getTypeMutant(fc);
+            if ("search".equals( ft )) {
                 az.put(fn, getAnalyzer(fc, false));
             }
         }
@@ -1225,7 +1197,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      * @param fc
      * @return
      */
-    protected SimpleDateFormat getFormat(Map fc) {
+    protected DateFormat getDateFormat(Map fc) {
         String  fm = Synt.asserts(fc.get( "format" ), "");
         if ( "".equals(fm)) {
                 fm = Synt.declare(fc.get("__type__"), "datetime");
@@ -1241,7 +1213,7 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
     }
 
     /**
-     * 获取字段类型
+     * 获取类型变体
      * 返回的类型有
      * int
      * long
@@ -1254,50 +1226,55 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
      * @param fc 字段配置
      * @return
      */
-    protected String getFtype(Map fc) {
-        String t = Synt.declare(fc.get("lucene-fieldtype"), String.class);
-
-        // 如果未指定 lucene-fieldtype 则用 __type__ 替代
-        if (t == null) {
-            t = (String) fc.get("__type__");
-
-            // 特例处理
-            if ("textarea".equals(t)) {
-                return "stored";
+    protected String getTypeMutant(Map fc) {
+        String t = Synt.declare(fc.get("lucene-type"), String.class);
+        if (null != t) {
+            if (t.equals("text")) {
+                return "search"; // Lucene 的 text 在这里叫 search
             }
-            if ("textcase".equals(t)) {
-                return "search";
-            }
+            return  t;
+        }
 
-            // 专有类型
-            if ("search".equals(t)
-            ||  "stored".equals(t)
-            ||  "sorted".equals(t)) {
-                return t;
-            }
+        t = (String) fc.get("__type__");
+        Set <String> ks;
 
-            t = Synt.declare(getFtypes().get(t), t);
+        //** 先查特有的 **/
 
-            // 其他特例
-            if ( "enum" .equals(t)
-            ||   "fork" .equals(t)) {
-                return "string";
-            }
-            if ( "form" .equals(t)
-            ||   "json" .equals(t)) {
-                return "object";
-            }
+        ks = getFieldTypesByKind("search");
+        if (ks != null && ks.contains(t) ) {
+            return "search";
+        }
 
-            // 数字细分
-            if ("number".equals(t)) {
-                t = Synt.declare(fc.get("type"), "double");
-            }
-        } else
-        if ("number".equals(t)) {
-            t = "double";
-        } else
-        if ( "text" .equals(t)) {
-            t = "search";
+        ks = getFieldTypesByKind("stored");
+        if (ks != null && ks.contains(t) ) {
+            return "stored";
+        }
+
+        ks = getFieldTypesByKind("sorted");
+        if (ks != null && ks.contains(t) ) {
+            return "sorted";
+        }
+
+        ks = getFieldTypesByKind("object");
+        if (ks != null && ks.contains(t) ) {
+            return "object";
+        }
+
+        //** 再查一般的 **/
+
+        ks = getFieldTypesByKind("number");
+        if (ks != null && ks.contains(t) ) {
+            return Synt.declare(fc.get("type"), "double");
+        }
+
+        ks = getFieldTypesByKind("string");
+        if (ks != null && ks.contains(t) ) {
+            return "string";
+        }
+
+        ks = getFieldTypesByKind( "date" );
+        if (ks != null && ks.contains(t) ) {
+            return  "date" ;
         }
 
         return t;
@@ -1347,8 +1324,8 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
 
             IValue  v ;
             Object  u ;
-            String  t = getFtype(m);
             boolean r = repeated(m);
+            String  t = getTypeMutant(m);
             IndexableField[] fs = doc.getFields(k);
 
             if ("sorted".equals(t)) {
@@ -1375,10 +1352,10 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
                         v = new NumStrValue();
                         u = "0" ;
                     } else {
-                        v = new DatStrValue();
+                        v = new DatextValue();
                         u =  "" ;
-                        ((DatStrValue) v).mul = mul;
-                        ((DatStrValue) v).sdf = getFormat(m);
+                        ((DatextValue) v).mul = mul;
+                        ((DatextValue) v).sdf = getDateFormat(m);
                     }
                 }
             } else
@@ -1436,12 +1413,12 @@ public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneab
             }
 
             IField  f ;
-            String  t = getFtype(m);
             boolean s = sortable(m);
             boolean q = filtable(m);
             boolean u = unstored(m);
             boolean r = repeated(m);
             boolean g = true; // 是否要存储, 数值类型过滤与存储是分离的, 故其等同于 !unstored
+            String  t = getTypeMutant(m);
 
             /**
              * 日期和排序均是长整型

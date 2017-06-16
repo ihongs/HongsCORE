@@ -688,10 +688,9 @@ public class NaviMap
               String s = (String) o.get("text");
 
               // 没有指定 text 则用 name 获取
-              if (/**/"".equals(s)) {
-                  s = "core.role." + n;
+              if (s == null || s.length() == 0) {
+                  s = "core.role."+name2Prop(n);
               }
-              s = lang.translate(s);
 
               Map role = new HashMap();
               role.put("name", n);
@@ -707,8 +706,8 @@ public class NaviMap
               String s = (String) v.get("text");
 
               // 没有指定 text 则用 href 获取
-              if (/**/"".equals(s)) {
-                  s = "core.role." + h;
+              if (s == null || s.length() == 0) {
+                  s = "core.role."+name2Prop(h);
               }
               s = lang.translate(s);
 
@@ -844,12 +843,8 @@ public class NaviMap
           String s = (String) v.get("text");
 
           // 没有指定 text 则用 href 获取
-          // "abc/def#xyz" 转为 "abc.def.xyz"
-          // "abc.def?x=z" 转为 "abc.def.x.z"
           if (s == null || s.length() == 0) {
-              s = "core.menu."
-                + h.replaceAll("[/#?&=!]+", ".")  // URL 符号换成点
-                   .replaceAll("^\\.|\\.$", "" ); // 去前后多余的点
+              s = "core.menu."+name2Prop(h);
           }
           s = lang.translate(s);
 
@@ -864,6 +859,24 @@ public class NaviMap
 
       return list;
   }
+
+  /**
+   * 链接和名称转换为属性键
+   * <pre>
+   * 将一些特殊符号转换为点, 例如:
+   * "abc/def#xyz" 转为 "abc.def.xyz"
+   * "abc.def?x=z" 转为 "abc.def.x.z"
+   * </pre>
+   * @param n
+   * @return
+   */
+  protected static final String name2Prop(String n) {
+      n = CONV_DOT.matcher(n).replaceAll("."); // URL 符号换成点
+      n = TRIM_DOT.matcher(n).replaceAll("" ); // 去前后多余的点
+      return n;
+  }
+  private static final java.util.regex.Pattern CONV_DOT = java.util.regex.Pattern.compile("[/#?&=!]+");
+  private static final java.util.regex.Pattern TRIM_DOT = java.util.regex.Pattern.compile("^\\.|\\.$");
 
   //** 工厂方法 **/
 

@@ -237,17 +237,17 @@ public class Mview extends Model {
         Set<String> findTypz = new HashSet();
         Set<String> filtTypz = new HashSet();
 
-        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.listable"), false)) {
-            listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("listable"));
+        if (prms == null || ! Synt.declare(prms.get("auto.bind.listable"), true)) {
+            listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("listable"));
         }
-        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.sortable"), false)) {
-            sortTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("sortable"));
+        if (prms == null || ! Synt.declare(prms.get("auto.bind.sortable"), true)) {
+            sortTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("sortable"));
         }
-        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.findable"), false)) {
-            findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("findable"));
+        if (prms == null || ! Synt.declare(prms.get("auto.bind.findable"), true)) {
+            findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("findable"));
         }
-        if (prms == null || ! Synt.declare(prms.get("dont.auto.bind.filtable"), false)) {
-            filtTypz = Synt.asTerms(FormSet.getInstance().getEnum("__ables__").get("filtable"));
+        if (prms == null || ! Synt.declare(prms.get("auto.bind.filtable"), true)) {
+            filtTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("filtable"));
         }
 
         // 排序、搜索等字段也可以直接在主字段给出
@@ -268,10 +268,10 @@ public class Mview extends Model {
             filtTypz.clear();
         }
 
-        if (null == prms || ! Synt.declare(prms.get("dont.auto.append.fields"), false)) {
+        if (null == prms || ! Synt.declare(prms.get("auto.append.fields"), true)) {
             addTableFields();
         }
-        if (null == prms || ! Synt.declare(prms.get("dont.auto.append.assocs"), false)) {
+        if (null == prms || ! Synt.declare(prms.get("auto.append.assocs"), true)) {
             addAssocFields();
         }
 
@@ -544,7 +544,7 @@ public class Mview extends Model {
 
                 field =  new HashMap( );
                 fields.put(name, field);
-                field.put("__type__","pick");
+                field.put("__type__","fork");
                 field.put("__text__", text );
                 field.put("data-ak", ak);
                 field.put("data-vk", vk);

@@ -1,11 +1,27 @@
 <root>
+    <enum name="__cases__">
+        <value code="findable">string,search,hidden,text,email,url,tel,textcase</value>
+        <value code="sortable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,sorted</value>
+        <value code="filtable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check</value>
+        <value code="listable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
+    </enum>
+    <enum name="__kinds__">
+        <value code="string">string,text,textarea,textcase,hidden,color,email,url,tel,fork,enum,select,radio,check,file,upload,image,video,audio,search,stored</value>
+        <value code="number">number,range,slider,switch,sorted</value>
+        <value code="date">date,time,datetime</value>
+        <!-- 下为 Lucene 特有 -->
+        <value code="object">object,form,json</value>
+        <value code="stored">stored,textarea</value>
+        <value code="search">search,textcase</value>
+        <value code="sorted">sorted</value>
+    </enum>
     <enum name="__types__">
         <!-- String -->
         <value code="string">string</value>
-        <value code="search">string</value> <!-- Lucene 中可分词查询 -->
-        <value code="stored">string</value> <!-- Lucene 特有仅存不查 -->
         <value code="hidden">string</value>
         <value code="text">string</value>
+        <value code="search">string</value><!-- Lucene 中可分词查询 -->
+        <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
         <value code="textarea">string</value><!-- Lucene 中同 stored -->
         <value code="textcase">string</value><!-- Lucene 中同 search -->
         <value code="color">string</value>
@@ -22,34 +38,27 @@
         <value code="date">date</value>
         <value code="time">date</value>
         <value code="datetime">date</value>
-        <!-- Form -->
-        <value code="form">form</value>
-        <!-- Fork -->
-        <value code="fork">fork</value>
-        <value code="pick">fork</value>
-        <!-- Enum -->
-        <value code="enum">enum</value>
-        <value code="select">enum</value>
-        <value code="radio">enum</value>
-        <value code="check">enum</value>
         <!-- File -->
         <value code="file">file</value>
         <value code="upload">file</value>
         <value code="image">file</value>
         <value code="audio">file</value>
         <value code="video">file</value>
+        <!-- Enum -->
+        <value code="enum">enum</value>
+        <value code="select">enum</value>
+        <value code="radio">enum</value>
+        <value code="check">enum</value>
+        <!-- Form -->
+        <value code="form">form</value>
+        <!-- Fork -->
+        <value code="fork">fork</value>
     </enum>
     <enum name="__patts__">
         <value code="color"><![CDATA[^#[0-9A-Fa-f]{6}]]></value>
         <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>
         <value code="url"><![CDATA[^([a-z]+:)?//[^\s]+$]]></value>
         <value code="tel"><![CDATA[^(\+[1-9])?\d\d{2,}$]]></value>
-    </enum>
-    <enum name="__ables__">
-        <value code="findable">string,search,hidden,text,email,url,tel,textcase</value>
-        <value code="sortable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,sorted</value>
-        <value code="filtable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check</value>
-        <value code="listable">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
     </enum>
     <!--
     <enum name="demo-enum">

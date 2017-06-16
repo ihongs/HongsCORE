@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -15,34 +16,38 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * 全局资源锁
  * @author Hongs
  */
-public final class Lock {
+public final class Block {
 
     private static final ReadWriteLock ST_LOCKR = new ReentrantReadWriteLock();
     private static final ReadWriteLock RW_LOCKR = new ReentrantReadWriteLock();
-    private static final Map<String, StLock> ST_LOCKS = new HashMap();
-    private static final Map<String, RwLock> RW_LOCKS = new HashMap();
+    private static final Map<String , Locker> ST_LOCKS = new HashMap();
+    private static final Map<String , Larder> RW_LOCKS = new HashMap();
 
     /**
      * 自启一个定时任务,
      * 每隔一段时间清理,
-     * 默认10分钟
+     * 如设为  0 不清理,
+     * 默认为 10 分钟
      */
     static {
-        long time  =  Long.parseLong(
-                  System.getProperty(
-                  Lock.class.getName() + ".cleans.period", "600000"));
-        new Timer(Lock.class.getName() + ".cleans" , true )
-        .schedule( new TimerTask( ) {
+        long time = Long.parseLong(
+                System.getProperty(Block.class.getName()
+                        + ".cleans.period" , "600000" ));
+        if ( time > 0 ) // 明确设为 0 则不清理
+        new Timer(Block.class.getName()+".cleans", true)
+        .schedule(new TimerTask() {
             @Override
             public void run() {
-                if (Core.DEBUG > 0) {
-                    CoreLogger.trace("Try to clean locks\r\n"
-                                    + Tool.indent(report( )));
+                if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
+                    int n = cleans();
+                    if (Core.DEBUG > 0) {
+                        CoreLogger.trace("Cleared "+n+" lock(s)");
+                    }
+                } else {
+                    if (Core.DEBUG > 0) {
+                        CoreLogger.trace( "No locks be cleared" );
+                    }
                 }
-                if (ST_LOCKS.isEmpty() && RW_LOCKS.isEmpty()) {
-                    return;
-                }
-                cleans();
             }
         } , time , time);
     }
@@ -53,7 +58,7 @@ public final class Lock {
      * @param fun 操作
      */
     public static void locker(String key, Runnable fun) {
-        StLock lock = getStLock(key);
+        Locker lock = getLocker(key);
 
         lock.lock(  );
         try {
@@ -69,7 +74,7 @@ public final class Lock {
      * @param fun 操作
      */
     public static void reader(String key, Runnable fun) {
-        RwLock lock = getRwLock(key);
+        Larder lock = getLarder(key);
 
         lock.lockr( );
         try {
@@ -85,7 +90,7 @@ public final class Lock {
      * @param fun 操作
      */
     public static void writer(String key, Runnable fun) {
-        RwLock lock = getRwLock(key);
+        Larder lock = getLarder(key);
 
         lock.lockw( );
         try {
@@ -97,19 +102,22 @@ public final class Lock {
 
     /**
      * 清理
+     * @return 清理数量
      */
-    public static void cleans() {
-        java.util.concurrent.locks.Lock loxk;
+    public static int cleans() {
+        Lock loxk;
+        int ct = 0;
 
         loxk = ST_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String, StLock>> it = ST_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , StLock> et = it.next();
-                StLock lock = et.getValue();
+                Map.Entry<String , Locker> et = it.next();
+                Locker lock = et.getValue();
                 if (lock.cite <= 0) {
                     it.remove();
+                    ct ++;
                 }
             }
         } finally {
@@ -119,53 +127,50 @@ public final class Lock {
         loxk = RW_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String, RwLock>> it = RW_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String, Larder>> it = RW_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , RwLock> et = it.next();
-                RwLock lock = et.getValue();
+                Map.Entry<String , Larder> et = it.next();
+                Larder lock = et.getValue();
                 if (lock.cite <= 0) {
                     it.remove();
+                    ct ++;
                 }
             }
         } finally {
             loxk.unlock();
         }
+
+        return ct;
     }
 
     /**
-     * 摘要
-     * @return 摘要信息
+     * 统计
+     * @return 引用计数
      */
-    public static String report() {
-        StringBuilder sb = new StringBuilder();
+    public static Map counts() {
+        Map rs = new HashMap();
+        Map st = new HashMap();
+        Map rw = new HashMap();
 
-        sb.append("ReentrantLock:\r\n");
-        Iterator<Map.Entry<String, StLock>> it = ST_LOCKS.entrySet().iterator();
+        rs.put("ReentrantBlock", st);
+        Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String , StLock> et = it.next();
-            String key  = et.getKey(  );
-            StLock lock = et.getValue();
-            sb.append(key)
-              .append(" => ")
-              .append(lock.cite)
-              .append("\r\n");
+            Map.Entry<String , Locker> et = it.next();
+            Locker lock = et.getValue();
+            String key = et.getKey();
+            st.put(key , lock.cite );
         }
 
-        sb.append("\r\n");
-
-        sb.append("ReadWriteLock:\r\n");
-        Iterator<Map.Entry<String, RwLock>> jt = RW_LOCKS.entrySet().iterator();
+        rs.put("ReadWriteBlock", rw);
+        Iterator<Map.Entry<String, Larder>> jt = RW_LOCKS.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry<String , RwLock> et = jt.next();
-            String key  = et.getKey(  );
-            RwLock lock = et.getValue();
-            sb.append(key)
-              .append(" => ")
-              .append(lock.cite)
-              .append("\r\n");
+            Map.Entry<String , Larder> et = jt.next();
+            Larder lock = et.getValue();
+            String key = et.getKey();
+            rw.put(key , lock.cite );
         }
 
-        return sb.toString( );
+        return rs;
     }
 
     /**
@@ -173,9 +178,9 @@ public final class Lock {
      * @param key
      * @return
      */
-    public static StLock getStLock(String key) {
-        java.util.concurrent.locks.Lock loxk;
-        StLock lock = null;
+    public static Locker getLocker(String key) {
+        Lock loxk;
+        Locker lock = null;
 
         loxk = ST_LOCKR. readLock( );
         loxk.lock();
@@ -191,7 +196,7 @@ public final class Lock {
         loxk = ST_LOCKR.writeLock( );
         loxk.lock();
         try {
-            lock = new StLock(/***/);
+            lock = new Locker(/***/);
             ST_LOCKS.put(key , lock);
         } finally {
             loxk.unlock();
@@ -204,9 +209,9 @@ public final class Lock {
      * @param key
      * @return
      */
-    public static RwLock getRwLock(String key) {
-        java.util.concurrent.locks.Lock loxk;
-        RwLock lock = null;
+    public static Larder getLarder(String key) {
+        Lock loxk;
+        Larder lock = null;
 
         loxk = RW_LOCKR. readLock( );
         loxk.lock();
@@ -222,7 +227,7 @@ public final class Lock {
         loxk = RW_LOCKR.writeLock( );
         loxk.lock();
         try {
-            lock = new RwLock(/***/);
+            lock = new Larder(/***/);
             RW_LOCKS.put(key , lock);
         } finally {
             loxk.unlock();
@@ -232,12 +237,13 @@ public final class Lock {
 
     /**
      * 基础锁
+     * 对 ReentrantLock 的封装
      */
-    public final static class StLock {
+    public final static class Locker {
         private final ReentrantLock lock = new ReentrantLock();
         private int cite = 0;
 
-        private StLock(){} // 避免外部 new
+        private Locker(){} // 避免外部 new
 
         public void lock() {
             synchronized (this) {
@@ -256,12 +262,13 @@ public final class Lock {
 
     /**
      * 读写锁
+     * 对 ReadWriteLock 的封装
      */
-    public final static class RwLock {
+    public final static class Larder {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
         private int cite = 0;
 
-        private RwLock() {} // 避免外部 new
+        private Larder() {} // 避免外部 new
 
         public void lockr() {
             synchronized (this) {

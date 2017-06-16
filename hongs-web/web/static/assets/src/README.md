@@ -126,7 +126,7 @@
                     </div>
                     <div>
                         <button type="submit" class="ensure btn btn-primary">提交</button>
-                        <button type="button" class="cancel btn btn-link">取消</button>
+                        <button type="button" class="cancel btn btn-default">取消</button>
                     </div>
                 </div>
             </div>

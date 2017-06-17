@@ -1,6 +1,7 @@
 package app.hongs.dh.search.analysis;
 
 import java.io.IOException;
+import org.apache.lucene.analysis.CharacterUtils;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -19,24 +20,25 @@ public class NameTokenizer extends Tokenizer {
         super();
     }
 
-    private static final int BUFFER_SIZE = 4096;
-    private int bufferIndex = 0, bufferShift = 0, offsetShift = 0, offset = 0, endset = 0;
-
+    private final CharacterUtils.CharacterBuffer buffer = CharacterUtils.newCharacterBuffer(4096);
     private final CharTermAttribute termAttr = addAttribute(CharTermAttribute.class);
-    private final OffsetAttribute   ofstAttr = addAttribute(  OffsetAttribute.class);
-    private final CharUtil.Buffer   buffer   = new CharUtil.Buffer(BUFFER_SIZE);
-    private final CharUtil          cutils   = new CharUtil(  );
+    private final   OffsetAttribute ofstAttr = addAttribute(  OffsetAttribute.class);
+    private int bufferIndex = 0,
+                bufferShift = 0,
+                offsetShift = 0,
+                offset = 0,
+                endset = 0;
 
     @Override
     public boolean incrementToken() throws IOException {
         clearAttributes();
         char[] buf = termAttr.buffer();
-        int    bgn, end, len, chr, cnt;
+        int    bgn, end, len, chr, cnt, bgx;
 
         while (true) {
             // 判断是否结束
             if (bufferIndex >= bufferShift) {
-                cutils.fill(buffer , input);
+                CharacterUtils.fill(buffer , input);
                 offsetShift += bufferShift ;
                 bufferShift  = buffer.getLength();
                 bufferIndex  = 0;
@@ -49,7 +51,7 @@ public class NameTokenizer extends Tokenizer {
 
             bgn = bufferIndex + offsetShift - offset;
 
-            chr = cutils.codePointAt(buffer, bufferIndex);
+            chr = Character.codePointAt(buffer.getBuffer(), bufferIndex);
             cnt = Character.charCount(chr);
             bufferIndex += cnt;
 
@@ -64,7 +66,9 @@ public class NameTokenizer extends Tokenizer {
             end = bgn + len;
 
             termAttr.setLength(len + offset);
-            ofstAttr.setOffset(correctOffset(bgn), endset = correctOffset(end));
+            bgx    = correctOffset(bgn);
+            endset = correctOffset(end);
+            ofstAttr.setOffset(bgx , endset);
 
             offset += cnt;
             return  true;

@@ -85,8 +85,8 @@ public abstract class BaseComparator extends SimpleFieldComparator<Long> {
     }
 
     /**
-     * 判断是否逆序
-     * @param d
+     * 将值做逆序转换
+     * @param d 文档索引
      * @return
      * @throws IOException 
      */
@@ -95,7 +95,7 @@ public abstract class BaseComparator extends SimpleFieldComparator<Long> {
     }
 
     /**
-     * 获取存储值, 转为对比值
+     * 取得并转化数据
      * @param d 文档索引
      * @return
      * @throws java.io.IOException

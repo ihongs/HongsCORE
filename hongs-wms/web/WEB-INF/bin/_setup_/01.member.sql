@@ -130,7 +130,7 @@ CREATE INDEX `IK_a_member_user_role_user` ON `a_member_user_role` (`user_id`);
 CREATE INDEX `IK_a_member_user_role_role` ON `a_member_user_role` (`role`);
 
 INSERT INTO `a_member_user_role` VALUES ('1','manage');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/global/note');
+INSERT INTO `a_member_user_role` VALUES ('1','manage/global/info');
 INSERT INTO `a_member_user_role` VALUES ('1','manage/global/file');
 INSERT INTO `a_member_user_role` VALUES ('1','manage/member/user/search');
 INSERT INTO `a_member_user_role` VALUES ('1','manage/member/user/create');

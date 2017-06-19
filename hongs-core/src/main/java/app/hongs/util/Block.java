@@ -20,8 +20,8 @@ public final class Block {
 
     private static final ReadWriteLock ST_LOCKR = new ReentrantReadWriteLock();
     private static final ReadWriteLock RW_LOCKR = new ReentrantReadWriteLock();
-    private static final Map<String , Locker> ST_LOCKS = new HashMap();
-    private static final Map<String , Larder> RW_LOCKS = new HashMap();
+    private static final Map<String, Locker> ST_LOCKS = new HashMap();
+    private static final Map<String, Larder> RW_LOCKS = new HashMap();
 
     /**
      * 自启一个定时任务,
@@ -49,55 +49,7 @@ public final class Block {
                     }
                 }
             }
-        } , time , time);
-    }
-
-    /**
-     * 加锁
-     * @param key 资源标识符
-     * @param fun 操作
-     */
-    public static void locker(String key, Runnable fun) {
-        Locker lock = getLocker(key);
-
-        lock.lock(  );
-        try {
-            fun.run();
-        } finally {
-            lock.unlock( );
-        }
-    }
-
-    /**
-     * 读锁
-     * @param key 资源标识符
-     * @param fun 操作
-     */
-    public static void reader(String key, Runnable fun) {
-        Larder lock = getLarder(key);
-
-        lock.lockr( );
-        try {
-            fun.run();
-        } finally {
-            lock.unlockr();
-        }
-    }
-
-    /**
-     * 写锁
-     * @param key 资源标识符
-     * @param fun 操作
-     */
-    public static void writer(String key, Runnable fun) {
-        Larder lock = getLarder(key);
-
-        lock.lockw( );
-        try {
-            fun.run();
-        } finally {
-            lock.unlockw();
-        }
+        }, time, time);
     }
 
     /**
@@ -152,7 +104,7 @@ public final class Block {
         Map st = new HashMap();
         Map rw = new HashMap();
 
-        rs.put("ReentrantBlock", st);
+        rs.put("Locker", st);
         Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String , Locker> et = it.next();
@@ -161,7 +113,7 @@ public final class Block {
             st.put(key , lock.cite );
         }
 
-        rs.put("ReadWriteBlock", rw);
+        rs.put("Larder", rw);
         Iterator<Map.Entry<String, Larder>> jt = RW_LOCKS.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry<String , Larder> et = jt.next();
@@ -236,10 +188,28 @@ public final class Block {
     }
 
     /**
+     * 获取读锁
+     * @param key
+     * @return
+     */
+    public static Reader getReader(String key) {
+        return new Reader(getLarder(key));
+    }
+
+    /**
+     * 获取写锁
+     * @param key
+     * @return
+     */
+    public static Writer getWriter(String key) {
+        return new Writer(getLarder(key));
+    }
+
+    /**
      * 基础锁
      * 对 ReentrantLock 的封装
      */
-    public final static class Locker {
+    public static final class Locker {
         private final ReentrantLock lock = new ReentrantLock();
         private int cite = 0;
 
@@ -264,7 +234,7 @@ public final class Block {
      * 读写锁
      * 对 ReadWriteLock 的封装
      */
-    public final static class Larder {
+    public static final class Larder {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
         private int cite = 0;
 
@@ -296,6 +266,46 @@ public final class Block {
                 cite --;
             }
             lock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * 读锁
+     * 对 ReadWriteLock.readLock 的封装
+     */
+    public static final class Reader {
+        private final  Larder lock;
+
+        private Reader(Larder lock) {
+            this.lock = lock;
+        }
+
+        public void lock() {
+            lock.lockr();
+        }
+
+        public void unlock() {
+            lock.unlockr();
+        }
+    }
+
+    /**
+     * 写锁
+     * 对 ReadWriteLock.writeLock 的封装
+     */
+    public static final class Writer {
+        private final  Larder lock;
+
+        private Writer(Larder lock) {
+            this.lock = lock;
+        }
+
+        public void lock() {
+            lock.lockw();
+        }
+
+        public void unlock() {
+            lock.unlockw();
         }
     }
 

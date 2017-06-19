@@ -55,8 +55,8 @@ public final class Clses {
 //          gotit = true;
         }
 
-        /*
         // 上面找不到就找不到了, 没必要再用 URLClassLoader
+        /*
         if (gotit) {
             URL[] paurl = ((URLClassLoader) pload).getURLs();
 

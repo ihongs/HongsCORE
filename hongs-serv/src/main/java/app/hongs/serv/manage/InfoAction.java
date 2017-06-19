@@ -104,12 +104,22 @@ public class InfoAction {
             rsp.put("core_dir", getAllSize(new File(Core.CORE_PATH)));
         }
 
+        /**
+         * 公共核心情况和锁情况
+         */
+        if ( rb != null && rb.contains("core_info")) {
+            rsp.put("core_set", Core.GLOBAL_CORE.keySet());
+        }
+        if ( rb != null && rb.contains("lock_info")) {
+            rsp.put("lock_map", app.hongs.util.Block.counts());
+        }
+
         helper.reply("", rsp);
     }
 
     @Action("note/update")
     public void noteUpdate(ActionHelper helper) {
-        
+
     }
 
     private static Map  getAllSize(File d) {

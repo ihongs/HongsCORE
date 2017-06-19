@@ -7,8 +7,8 @@ import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Block;
-import java.io.File;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -69,7 +69,7 @@ public class SearchRecord extends LuceneRecord {
     /**
      * 获取仓库名称
      * 通常为路径名
-     * @return 
+     * @return
      */
     public String getBaseName() {
         if (null != dbname) {
@@ -92,62 +92,50 @@ public class SearchRecord extends LuceneRecord {
 
     @Override
     public void addDoc(final Document doc) throws HongsException {
-        final SearchRecord that = this;
         final String key = SearchRecord.class.getName() + ":" + getBaseName();
-        Block.locker(key , new Runnable( ) {
-            @Override
-            public void run() {
-                try {
-                    IndexWriter iw = that.getWriter( );
-                    iw.addDocument (doc);
-                    iw.commit();
-                } catch (   IOException e) {
-                    throw new HongsExpedient.Common(e);
-                } catch (HongsException e) {
-                    throw e.toExpedient( );
-                }
-            }
-        });
+        Block.Locker loc = Block.getLocker(key);
+        loc.lock();
+        try {
+            IndexWriter iw = this.getWriter(  );
+            iw.addDocument (doc);
+            iw.commit();
+        } catch (IOException ex) {
+            throw new HongsExpedient.Common(ex);
+        } finally {
+            loc.unlock();
+        }
     }
 
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
-        final SearchRecord that = this;
         final String key = SearchRecord.class.getName() + ":" + getBaseName();
-        Block.locker(key , new Runnable( ) {
-            @Override
-            public void run() {
-                try {
-                    IndexWriter iw = that.getWriter( );
-                    iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
-                    iw.commit();
-                } catch (   IOException e) {
-                    throw new HongsExpedient.Common(e);
-                } catch (HongsException e) {
-                    throw e.toExpedient( );
-                }
-            }
-        });
+        Block.Locker loc = Block.getLocker(key);
+        loc.lock();
+        try {
+            IndexWriter iw = this.getWriter(  );
+            iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
+            iw.commit();
+        } catch (IOException ex) {
+            throw new HongsExpedient.Common(ex);
+        } finally {
+            loc.unlock();
+        }
     }
 
     @Override
     public void delDoc(final String id) throws HongsException {
-        final SearchRecord that = this;
         final String key = SearchRecord.class.getName() + ":" + getBaseName();
-        Block.locker(key , new Runnable( ) {
-            @Override
-            public void run() {
-                try {
-                    IndexWriter iw = that.getWriter( );
-                    iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
-                    iw.commit();
-                } catch (   IOException e) {
-                    throw new HongsExpedient.Common(e);
-                } catch (HongsException e) {
-                    throw e.toExpedient( );
-                }
-            }
-        });
+        Block.Locker loc = Block.getLocker(key);
+        loc.lock();
+        try {
+            IndexWriter iw = this.getWriter(  );
+            iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
+            iw.commit();
+        } catch (IOException ex) {
+            throw new HongsExpedient.Common(ex);
+        } finally {
+            loc.unlock();
+        }
     }
 
 }

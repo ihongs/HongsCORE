@@ -103,7 +103,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
                 }
             }
         }
-        setFields(form);
+        super.setFields(form);
 
         // 保存路径
         if (path != null) {

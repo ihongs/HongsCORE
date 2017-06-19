@@ -17,7 +17,7 @@ import java.util.Set;
 public class FormBean {
 
     private Map fieldz = null;
-    private Map fkindz = null;
+    private Map fsavez = null;
     private Map fcasez = null;
     private Set rbColz = null;
     private Set obColz = null;
@@ -46,7 +46,7 @@ public class FormBean {
      * 设置字段配置
      * @param map
      */
-    public void setFields(Map map) {
+    protected void setFields(Map map) {
         fieldz = map;
     }
 
@@ -54,15 +54,15 @@ public class FormBean {
      * 设置存储类型映射
      * @param map
      */
-    public void setSaveTypes(Map<String, Set<String>> map) {
-        fkindz = map;
+    protected void setSaveTypes(Map<String, Set<String>> map) {
+        fsavez = map;
     }
 
     /**
      * 设置使用类型映射
      * @param map
      */
-    public void setCaseTypes(Map<String, Set<String>> map) {
+    protected void setCaseTypes(Map<String, Set<String>> map) {
         fcasez = map;
     }
 
@@ -101,16 +101,16 @@ public class FormBean {
      * @return
      */
     public Map<String, Set<String>> getSaveTypes() {
-        if (null != fkindz) {
-            return  fkindz;
+        if (null != fsavez) {
+            return  fsavez;
         }
         try {
             Map<String, String> m = FormSet.getInstance().getEnum("__saves__");
-            fkindz = new HashMap();
+            fsavez = new HashMap();
             for(Map.Entry<String, String> et : m.entrySet()) {
-                fkindz.put(et.getKey(), Synt.asTerms(et.getValue()));
+                fsavez.put(et.getKey(), Synt.asTerms(et.getValue()));
             }
-            return  fkindz;
+            return  fsavez;
         } catch (HongsException e) {
             throw e.toExpedient( );
         }
@@ -139,7 +139,7 @@ public class FormBean {
     /**
      * 获取特定类别的字段类型
      * @param x 类别, 如 string,number
-     * @return 
+     * @return
      */
     public Set<String> getSaveTypes(String x) {
         return FormBean.this.getSaveTypes().get(x);
@@ -172,7 +172,7 @@ public class FormBean {
     /**
      * 获取特定用途的字段类型
      * @param x 标识, 如 listable,sortable
-     * @return 
+     * @return
      */
     public Set<String> getCaseTypes(String x) {
         return FormBean.this.getCaseTypes().get(x);
@@ -277,7 +277,7 @@ public class FormBean {
     }
 
     /**
-     * 获取关系符号
+     * 获取特殊功能键
      * @return
      */
     public Set<String> getFuncKeys() {

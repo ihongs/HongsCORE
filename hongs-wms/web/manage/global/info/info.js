@@ -101,7 +101,72 @@
         return option;
     }
 
-    function getLneOption(data, title, ctime) {
+    function getProOption(data, ctime, queue) {
+        ctime = hsFmtDate(ctime, "yyyy/MM/dd HH:mm:ss");
+        queue.push({
+            value: [ctime, data.load[0]],
+            name :  ctime
+        });
+        if (queue.length > 10) {
+            queue.shift();
+        }
+        
+        var option = {
+            title: {
+                text: '动态数据 + 时间坐标轴'
+            },
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    params = params[0];
+                    var date = new Date(params.name);
+                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+                },
+                axisPointer: {
+                    animation: false
+                }
+            },
+            xAxis: {
+                type: 'time',
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                type: 'value',
+                boundaryGap: [0, '100%'],
+                splitLine: {
+                    show: false
+                }
+            },
+            series: [{
+                name: '模拟数据',
+                type: 'line',
+                showSymbol: false,
+                hoverAnimation: false,
+                data: queue,
+                itemStyle: {
+                    normal: {
+                        color: 'rgb(255, 70, 131)'
+                    }
+                },
+                areaStyle: {
+                    normal: {
+                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
+                            offset: 0,
+                            color: 'rgb(255, 158, 68)'
+                        }, {
+                            offset: 1,
+                            color: 'rgb(255, 70, 131)'
+                        }])
+                    }
+                }
+            }]
+        };
+        return option;
+    }
+
+    function getLneOption(data, ctime) {
         var option = {
             tooltip : {
                 formatter: "{a} <br/>{b}"
@@ -130,7 +195,7 @@
                         }
                     },
                     axisTick: {            // 坐标轴小标记
-                        show: true,
+                        show: false,
                         length :15,        // 属性length控制线长
                         lineStyle: {       // 属性lineStyle控制线条样式
                             color: 'auto'
@@ -185,13 +250,13 @@
                         }
                     },
                     splitLine: {           // 分隔线
-                        length :20,         // 属性length控制线长
+                        length :20,        // 属性length控制线长
                         lineStyle: {       // 属性lineStyle（详见lineStyle）控制线条样式
                             color: 'auto'
                         }
                     },
                     pointer: {
-                        width:5
+                        width:5,
                     },
                     title : {
                         show: false,
@@ -298,6 +363,18 @@
         return option;
     }
 
+    function addLneOption(opts, data, ctime) {
+        opts.series[0].data[0].value = data.load[0];
+        //opts.series[0].data[0].name  = data.load[1];
+        opts.series[0].data[0].value = data.free[0];
+        opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.free[1].replace(/([A-Z])/g, "$1 ")+"B";
+        opts.series[0].data[0].value = data.used[0];
+        opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.used[1].replace(/([A-Z])/g, "$1 ")+"B";
+        opts.series[0].data[0].value = data.uses[0];
+        opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.uses[1].replace(/([A-Z])/g, "$1 ")+"B";
+        return opts;
+    }
+
     function setAllCharts(ec, et) {
         $.hsAjax({
             url: "manage/info/search.act",
@@ -305,8 +382,13 @@
             success: function(rst) {
                 var box;
                 var opts;
-                var chart, runChart;
-                var context = $("#manage-info");
+                var chart;
+                var runChart;
+                var proChart;
+                var runOpts = {};
+                var proOpts = {};
+                var proQueue = [];
+                var context  = $("#manage-info");
 
                 box = context.find(".sys-info-box");
                 opts = rst.info.sys_info;
@@ -321,12 +403,20 @@
                 box.find("[data-fn=base_href]").text(opts.base_href);
                 box.find("[data-fn=base_path]").text(opts.base_path);
 
+                // 负载曲线
+                box = context.find(".sys-info-box")[0];
+                opts = getProOption(rst.info.run_info, rst.info.now_msec, proQueue);
+                chart = ec.init(box, et);
+                chart.setOption(opts, true);
+                proChart = chart;
+
                 // 系统负载
                 box = context.find(".run-info-box")[0];
-                opts = getLneOption(rst.info.run_info, "运行", rst.info.now_msec);
+                opts = getLneOption(rst.info.run_info, rst.info.now_msec);
                 chart = ec.init(box, et);
-                chart.setOption(opts);
+                chart.setOption(opts, true);
                 runChart = chart;
+                runOpts = opts;
 
                 // 网站目录
                 box = context.find(".base-dir-pie")[0];
@@ -361,16 +451,21 @@
                         url: "manage/info/search.act?rb=run_info",
                         dataType: "json",
                         success: function(rst) {
-                            opts = getLneOption(rst.info.run_info, "运行", rst.info.now_msec);
-                            runChart.setOption(opts);
+                            opts = getProOption(rst.info.run_info, rst.info.now_msec, proQueue);
+                            proChart.setOption(opts);
+                            
+                            opts = addLneOption(runOpts, rst.info.run_info, rst.info.now_msec);
+                            runChart.setOption(opts, true);
                         }
                     });
-                }, 1985);
+                }, 2000);
             }
         });
     }
 
     self.infoInit = function() {
+        setAllCharts(echarts);
+        /*
         require.config({
             paths: {
                 echarts: hsFixUri('static/addons/echarts')
@@ -385,5 +480,6 @@
             ],
             setAllCharts
         );
+        */
     };
 })(jQuery);

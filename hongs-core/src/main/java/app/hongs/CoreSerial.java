@@ -1,19 +1,21 @@
 package app.hongs;
 
-import app.hongs.util.Lock;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  * 本地缓存工具
@@ -196,43 +198,31 @@ public abstract class CoreSerial
    * @param time
    * @throws app.hongs.HongsException
    */
-  protected void load(final File file, final long time)
+  protected void load(File file, long time)
     throws HongsException
   {
-      final String key = CoreSerial.class.getName() + ":" + file.getAbsolutePath();
-      final Loaded loa = new Loaded( );
+      ReadWriteLock rwlock = lock(file.getAbsolutePath());
+      Lock lock;
 
-      Lock.reader(key, new Runnable( ) {
-        @Override
-        public void run() {
-            try {
-                if (!file.exists() || expired(time)) {
-                    return;
-                }
-                load(file);
-                loa.loaded = true;
-            } catch (HongsException e) {
-                throw e.toExpedient( );
-            }
-        }
-      });
-
-      // 文件可用则直接退出
-      if (loa.loaded) {
-          return;
+      lock = rwlock. readLock();
+      lock.lock();
+      try {
+          if (file.exists() && !expired(time)) {
+              load(file);
+              return;
+          }
+      } finally {
+          lock.unlock( );
       }
 
-      Lock.writer(key, new Runnable( ) {
-        @Override
-        public void run() {
-            try {
-                imports( );
-                save(file);
-            } catch (HongsException e) {
-                throw e.toExpedient( );
-            }
-        }
-      });
+      lock = rwlock.writeLock();
+      lock.lock();
+      try {
+          imports( );
+          save(file);
+      } finally {
+          lock.unlock( );
+      }
   }
 
   /**
@@ -466,8 +456,36 @@ public abstract class CoreSerial
     }
   }
 
-  private class Loaded {
-      public boolean loaded = false;
+  /** 私有方法 **/
+
+  private ReadWriteLock lock(String flag)
+  {
+      ReadWriteLock rwlock;
+      Lock lock;
+
+      lock = lockr. readLock();
+      lock.lock();
+      try {
+          rwlock = locks.get(flag);
+          if (rwlock != null) {
+              return rwlock;
+          }
+      } finally {
+          lock.unlock();
+      }
+
+      lock = lockr.writeLock();
+      lock.lock();
+      try {
+          rwlock = new ReentrantReadWriteLock();
+          locks.put(flag, rwlock);
+          return rwlock;
+      } finally {
+          lock.unlock();
+      }
   }
+
+  private static Map<String, ReadWriteLock> locks = new HashMap(  );
+  private static ReadWriteLock lockr = new ReentrantReadWriteLock();
 
 }

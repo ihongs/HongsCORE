@@ -6,10 +6,14 @@ import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
-import app.hongs.util.Lock;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -61,62 +65,82 @@ public class SearchRecord extends LuceneRecord {
 
     @Override
     public void addDoc(final Document doc) throws HongsException {
-        final SearchRecord that = this;
-        final String key = SearchRecord.class.getName() + ":" + getDbName();
-        Lock.locker( key , new Runnable( ) {
-            @Override
-            public void run() {
-                try {
-                    IndexWriter iw = that.getWriter( );
-                    iw.addDocument (doc);
-                    iw.commit();
-                } catch (   IOException e) {
-                    throw new HongsExpedient.Common(e);
-                } catch (HongsException e) {
-                    throw e.toExpedient( );
-                }
-            }
-        });
+        String key = SearchRecord.class.getName() + ":" + getDbName();
+        ReentrantLock loc = lock(key);
+        loc.lock();
+        try {
+            IndexWriter iw = this.getWriter( );
+            iw.addDocument (doc);
+            iw.commit();
+        } catch (IOException ex) {
+            throw new HongsException.Common(ex);
+        } finally {
+            loc.unlock();
+        }
     }
 
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
-        final SearchRecord that = this;
-        final String key = SearchRecord.class.getName() + ":" + getDbName();
-        Lock.locker( key , new Runnable( ) {
-            @Override
-            public void run() {
-                try {
-                    IndexWriter iw = that.getWriter( );
-                    iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
-                    iw.commit();
-                } catch (   IOException e) {
-                    throw new HongsExpedient.Common(e);
-                } catch (HongsException e) {
-                    throw e.toExpedient( );
-                }
-            }
-        });
+        String key = SearchRecord.class.getName() + ":" + getDbName();
+        ReentrantLock loc = lock(key);
+        loc.lock();
+        try {
+            IndexWriter iw = this.getWriter( );
+            iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
+            iw.commit();
+        } catch (IOException ex) {
+            throw new HongsException.Common(ex);
+        } finally {
+            loc.unlock();
+        }
     }
 
     @Override
     public void delDoc(final String id) throws HongsException {
-        final SearchRecord that = this;
-        final String key = SearchRecord.class.getName() + ":" + getDbName();
-        Lock.locker( key , new Runnable( ) {
-            @Override
-            public void run() {
-                try {
-                    IndexWriter iw = that.getWriter( );
-                    iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
-                    iw.commit();
-                } catch (   IOException e) {
-                    throw new HongsExpedient.Common(e);
-                } catch (HongsException e) {
-                    throw e.toExpedient( );
-                }
-            }
-        });
+        String key = SearchRecord.class.getName() + ":" + getDbName();
+        ReentrantLock loc = lock(key);
+        loc.lock();
+        try {
+            IndexWriter iw = this.getWriter( );
+            iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
+            iw.commit();
+        } catch (IOException ex) {
+            throw new HongsException.Common(ex);
+        } finally {
+            loc.unlock();
+        }
     }
+
+      /** 私有方法 **/
+
+      private ReentrantLock lock(String flag)
+      {
+          ReentrantLock rwlock;
+          Lock lock;
+
+          lock = lockr. readLock();
+          lock.lock();
+          try {
+              rwlock = locks.get(flag);
+              if (rwlock != null) {
+                  return rwlock;
+              }
+          } finally {
+              lock.unlock();
+          }
+
+          lock = lockr.writeLock();
+          lock.lock();
+          try {
+              rwlock = new ReentrantLock();
+              locks.put(flag, rwlock);
+              return rwlock;
+          } finally {
+              lock.unlock();
+          }
+      }
+
+      private static Map<String, ReentrantLock> locks = new HashMap(  );
+      private static ReadWriteLock lockr = new ReentrantReadWriteLock();
 
 }

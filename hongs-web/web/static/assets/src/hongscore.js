@@ -789,7 +789,7 @@ function hsFixPms(uri, pms) {
 };
 
 /**
- * 格式化数字
+ * 格式数字
  * @param {Number} num
  * @param {Number} len 总长度(不含小数点)
  * @param {Number} dec 小数位
@@ -875,9 +875,11 @@ function hsFmtNum(num, len, dec, sep, dot) {
 }
 
 /**
- * 格式化日期
+ * 格式日期
+ * 此方法实现较简单
+ * 仅支持基础的日期时间格式
  * @param {Date} date
- * @param {String} format
+ * @param {String} format 类似 Java SimpleDateFormat
  * @return {String}
  */
 function hsFmtDate(date, format) {
@@ -906,7 +908,7 @@ function hsFmtDate(date, format) {
 
   var y = date.getFullYear();
   var M = date.getMonth();
-  var d = date.getDate();
+  var d = date.getDate( );
   var H = date.getHours();
   var k = H + 1;
   var K = H > 11 ? H - 12 : H;
@@ -914,7 +916,7 @@ function hsFmtDate(date, format) {
   var m = date.getMinutes();
   var s = date.getSeconds();
   var S = date.getMilliseconds();
-  var E = date.getDay( );
+  var U = date.getDay( );
   var a = H < 12 ? 0 : 1;
 
   if (K == 12) K = 0;
@@ -934,23 +936,22 @@ function hsFmtDate(date, format) {
     var len = mat.length;
     var flg = mat.substring(0, 1);
     switch (flg) {
-      case 'y':
-        var x = _addzero(y, len);
-        if (len <= 2) {
-          return x.substring(x.length - len);
-        }
-        else {
-          return x;
-        }
       case 'M':
         if (len >= 4) {
-          return hsGetLang("date.format.LM")[M];
+          return hsGetLang("date.LM")[M];
         }
-        else if (len == 3) {
-          return hsGetLang("date.format.SM")[M];
+        if (len == 3) {
+          return hsGetLang("date.SM")[M];
         }
         else {
           return _addzero(M + 1, len);
+        }
+      case 'y':
+        if (len <= 2) {
+          return _addzero(y % 100, len);
+        }
+        else {
+          return _addzero(y, len);
         }
       case 'd':
         return _addzero(d, len);
@@ -968,92 +969,94 @@ function hsFmtDate(date, format) {
         return _addzero(s, len);
       case 'S':
         return _addzero(S, len);
-      case 'E':
-        if (len >= 4) {
-          return hsGetLang("date.format.LE")[E];
-        }
-        else {
-          return hsGetLang("date.format.SE")[E];
-        }
       case 'a':
         if (len >= 4) {
-          return hsGetLang("date.format.La")[a];
+          return hsGetLang("date.La")[a];
         }
         else {
-          return hsGetLang("date.format.Sa")[a];
+          return hsGetLang("date.Sa")[a];
         }
+      case 'E':
+        if (len >= 4) {
+          return hsGetLang("date.LE")[U];
+        }
+        else {
+          return hsGetLang("date.SE")[U];
+        }
+      case 'u':
+        return U != 0 ? U : 7;
+      case 'U':
+        return U;
+      default:
+        return mat;
     }
   }
 
-  return format.replace(/M+|d+|y+|H+|k+|K+|h+|m+|s+|S+|E+|a+/g, _replace);
+  return format.replace(/M+|d+|y+|H+|k+|K+|h+|m+|s+|S+|a+|E+|u+|U+|'.*'/g, _replace);
 }
 
 /**
  * 解析日期
+ * 此方法实现较简单
+ * 无法处理除格式外其他字母
  * @param {String} text
- * @param {String} format
+ * @param {String} format 类似 Java SimpleDateFormat
  * @return {Date}
  */
 function hsPrsDate(text, format) {
   if (text === undefined) {
     return new Date( 0  );
   }
-
-  if (typeof(text) === "string") {
-    if ( /^\d+$/.test(text)) {
-      text = parseInt(text);
-    }
-  }
-
   if (typeof(text) === "number") {
-    if (text <= 2147483647) {
-      text = text * 1000 ;
-    }
     return new Date(text);
   }
+  if (typeof(text) === "string") {
+    var x = parseInt(text);
+    if (!isNaN(x)) {
+        return new Date(x);
+    }
+  }
 
-  var a = text.split(/\W+/);
-  var b = format.match(/M+|d+|y+|H+|k+|K+|h+|m+|s+|S+|E+|a+/g);
+  function _getcode(arr, wrd) {
+    for (var j = 0; j < arr.length; j ++) {
+      if (wrd == arr[j]) {
+        return j;
+      }
+    }
+  }
 
-  var i, j;
-  var M, d, y, H = 0, m = 0, s = 0, A = 0;
+  var y, M, d, H = 0, m = 0, s = 0, S = 0, a = 0;
+  var fs = format.match(/\W+/);
+  var ws =   text.split(/\W+/);
 
-  for (i = 0; i < b.length; i ++) {
-    if (a[i] == null) continue;
+  for (var i = 0; i < fs.length; i ++) {
+    if (ws[i] == null) continue;
 
-    var wrd = a[i];
-    var len = b[i].length;
-    var flg = b[i].substring(0, 1);
+    var wrd = ws[i];
+    var len = fs[i].length;
+    var flg = fs[i].substring(0, 1);
     switch (flg) {
       case 'M':
         if (len >= 4) {
-          for (j = 0; j < hsGetLang("date.format.LM").length; j ++) {
-            if (wrd == hsGetLang("date.format.LM")[j]) {
-              M = j;
-              break;
-            }
-          }
-        }
-        else if (len == 3) {
-          for (j = 0; j < hsGetLang("date.format.SM").length; j ++) {
-            if (wrd == hsGetLang("date.format.SM")[j]) {
-              M = j;
-              break;
-            }
-          }
+          M = _getcode(hsGetLang("date.LM"), wrd);
+        } else
+        if (len == 3) {
+          M = _getcode(hsGetLang("date.SM"), wrd);
         }
         else {
           M = parseInt(wrd, 10);
         }
       break;
+      case 'y':
+        if (len <= 2) {
+          y = parseInt(wrd, 10) + 2000;
+        }
+        else {
+          y = parseInt(wrd, 10);
+        }
+      break;
       case 'd':
         d = parseInt(wrd, 10);
-      break;
-      case 'y':
-        y = parseInt(wrd, 10);
-        if (len <= 2) {
-          y += y > 29 ? 1900 : 2000;
-        }
       break;
       case 'H':
       case 'K':
@@ -1069,28 +1072,21 @@ function hsPrsDate(text, format) {
       case 's':
         s = parseInt(wrd, 10);
       break;
+      case 'S':
+        S = parseInt(wrd, 10);
+      break;
       case 'a':
         if (len >= 4) {
-          for (j = 0; j < hsGetLang("date.format.La").length; j ++) {
-            if (wrd == hsGetLang("date.format.La")[j]) {
-              A = j;
-              break;
-            }
-          }
+          a = _getcode(hsGetLang("date.La"), wrd);
         }
         else {
-          for (j = 0; j < hsGetLang("date.format.Sa").length; j ++) {
-            if (wrd == hsGetLang("date.format.Sa")[j]) {
-              A = j;
-              break;
-            }
-          }
+          a = _getcode(hsGetLang("date.Sa"), wrd);
         }
       break;
     }
   }
 
-  if (A == 1) {
+  if (a == 1) {
     H += 12;
   }
 
@@ -1098,10 +1094,10 @@ function hsPrsDate(text, format) {
   if (typeof(M) !== "undefined"
   &&  typeof(d) !== "undefined"
   &&  typeof(y) !== "undefined") {
-    text2 = M+"/"+d+"/"+y+" "+H+":"+m+":"+s;
+    text2 = M+"/"+d+"/"+y+" "+H+":"+m+":"+s+"."+S;
   }
   else {
-    text2 = H+":"+m+":"+s;
+    text2 = H+":"+m+":"+s+"."+S;
   }
 
   return new Date(Date.parse(text2));

@@ -241,9 +241,9 @@ HsList.prototype = {
             f = th.data( "fl" );
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(list, v, n){return '+f+';})');
+                    f = eval('(function(list,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: " + e);
+                    throw new Error("Parse list data-fl error: "+e);
                 }
                 th.data("fl",f);
             }
@@ -278,37 +278,29 @@ HsList.prototype = {
             }
         }
 
+        this._list = list;
         for (i = 0; i < list.length; i ++) {
-            tr = jQuery('<tr></tr>');
-            tb.append(tr);
-
             this._info = list[i];
+            tr = jQuery('<tr></tr>').appendTo(tb);
+
             for (j = 0; j < ths .length; j ++) {
                 th = jQuery(ths[j]);
-                td = jQuery('<td></td>');
-                td.appendTo(tr);
-                td.attr("class", th.attr("class"));
+                td = jQuery('<td></td>').appendTo(tr);
+                td.attr( "class" , th.attr("class") );
 
-                n  = th.attr("data-fn");
-                t  = th.attr("data-ft");
-                v  = th.data("fv");
+                n  = th.data("fn");
+                t  = th.data("ft");
                 f  = th.data("fl");
-
-                // 取值
-                if (n) {
-                    var x  =  hsGetValue(list[i], n);
-                    if (x === undefined) {
-                        x  =  list[i][n];
-                    }
-                    if (x) {
-                        v  =  x;
-                    }
+                v  = hsGetValue(list[i], n);
+                if (v === undefined) {
+                    v  =  list[i][n];
                 }
 
-                // 填充
+                // 调节
                 if (f) {
                     v  = f.call(td, this, v, n);
-                } else
+                }
+                // 填充
                 if (n && this["_fill_"+n] !== undefined) {
                     v  = this["_fill_"+n].call(this, td, v, n);
                 } else
@@ -324,6 +316,7 @@ HsList.prototype = {
             }
         }
 
+            delete this._list;
         if (typeof(this._info) !== "undefined") {
             delete this._info;
         }

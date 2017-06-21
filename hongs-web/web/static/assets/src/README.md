@@ -15,21 +15,20 @@
         data-fn     Field name
         data-ft     Field type
         data-fl     Field fill
-        data-fv     Default value
     Form:
         data-pn     Param name
         data-fn     Field name
         data-ft     Field type
         data-fl     Field fill
-        data-fv     Default value
+        data-fd     Field fill (enum data)
     Fork:
-        data-vk     Value key
         data-tk     Title key
+        data-vk     Value key
         data-ak     Assoc key
         data-al     Assoc url // FormSet 内部用
         data-at     Assoc act // FormSet 内部用
 
-其他非缩写 data 属性通常可按字面意思理解, data-toggle,data-target 等属性意义同 bootstrap 中相关功能.
+data-fl,data-fd 的取值可以是数字或表达式, 参数可使用 form|list,this,v,n; 其他非缩写 data 属性通常可按字面意思理解, data-toggle,data-target 等属性意义同 bootstrap 中相关功能.
 
 ## 环境加载
 

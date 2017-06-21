@@ -118,37 +118,58 @@ HsForm.prototype = {
         this.formBox.trigger("loadOver", [rst, this]);
     },
     fillEnum : function(envm) {
-        var fds, fns, fts, i, n, t, v;
+        var fds, fns, fts, fls, i, n, t, v, f;
         fds = this.formBox.find("[data-fn],select[name]")
                           .not ('.form-ignored');
-        fns = {}; fts = {};
+        fns = { }; fts = { }; fls = { };
         for(i = 0; i < fds.length; i ++) {
             v = jQuery(fds[i]);
             n = v.attr("name");
             if (! n) {
-                n  = v.attr("data-fn");
+                n  = v.data("fn");
             }
             if (! n) {
                 continue;
             }
             fns[n] = n;
-            fts[n] = v.attr("data-ft");
+            fts[n] = v.data("ft");
+                f  = v.data("fd");
+
+            // 解析填充方法
+            if (f && typeof f != "function") {
+                try {
+                    f = eval('(function(form,v,n){return '+f+';})');
+                } catch (e) {
+                    throw new Error("Parse list data-fl error: "+e);
+                }
+                v.data("fd",f);
+            }
+            if (f) {
+                fls [ n ] = f ;
+            }
         }
 
         this._enum =  envm;
-        for (n in fns) {
-                v  =  hsGetValue(envm, n);
+        for(n in fns) {
+            t  = fts[n];
+            f  = fls[n];
+            v  = hsGetValue(envm, n);
             if (v === undefined) {
-                v  =  envm[n];
+                v  =  envm [ n ];
             }
 
+            // 获取当前待填充的节点
+            // 非表单项可能仅需显示
                 i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
             if (i.length === 0 ) {
                 i = this.formBox.find('[data-fn="'+n+'"]').not(".form-ignored");
             }
 
+            // 调节
+            if (f) {
+                v  = f.call(i, this, v, n, t);
+            }
             // 填充
-            t = fts[n];
             if (n && this["_fill_"+n] !== undefined) {
                 v  = this["_fill_"+n].call(this, i, v, n, "enum");
             } else
@@ -169,30 +190,29 @@ HsForm.prototype = {
         delete this._enum;
     },
     fillInfo : function(info) {
-        var fds, fns, fts, fvs, fls, i, n, t, v, f;
+        var fds, fns, fts, fls, i, n, t, v, f;
         fds = this.formBox.find("[data-fn],input[name],select[name],textarea[name]")
                           .not ('.form-ignored');
-        fns = {}; fts = {}; fvs = {}; fls = {};
-        for(i = 0 ; i < fds.length ; i ++ ) {
+        fns = { }; fts = { }; fls = { };
+        for(i = 0; i < fds.length; i ++) {
             v = jQuery(fds[i]);
             n = v.attr("name");
             if (! n) {
-                n  = v.attr("data-fn");
+                n  = v.data("fn");
             }
             if (! n) {
                 continue;
             }
             fns[n] = n;
-            fts[n] = v.attr("data-ft");
-            fvs[n] = v.data("fv");
-            /**/f  = v.data("fl");
+            fts[n] = v.data("ft");
+                f  = v.data("fl");
 
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(form, v, n){return '+f+';})');
+                    f = eval('(function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: " + e);
+                    throw new Error("Parse list data-fl error: "+e);
                 }
                 v.data("fl",f);
             }
@@ -202,30 +222,29 @@ HsForm.prototype = {
         }
 
         this._info =  info;
-        for (n in fns) {
-                v  =  hsGetValue(info, n);
+        for(n in fns) {
+            t  = fts[n];
+            f  = fls[n];
+            v  = hsGetValue(info, n);
             if (v === undefined) {
-                v  =  info[n];
-            }
-            if (!  v  ) {
-                v  =  fvs [n];
+                v  =  info [ n ];
             }
 
+            // 获取当前待填充的节点
+            // 非表单项可能仅需显示
                 i = this.formBox.find('[name="'   +n+'"]').not(".form-ignored");
             if (i.length === 0 ) {
                 i = this.formBox.find('[data-fn="'+n+'"]').not(".form-ignored");
-                // 仅给了 data-fn 则此处可能仅需显示
-                if (fts[n] === undefined) {
-                    fts[n]  =  "_review";
+                if (t === undefined) {
+                    t  =  "_review";
                 }
             }
 
-            // 填充
-            t = fts[n];
-            f = fls[n];
+            // 调节
             if (f) {
-                v  = f.call(i, this, v, n);
-            } else
+                v  = f.call(i, this, v, n, t);
+            }
+            // 填充
             if (n && this["_fill_"+n] !== undefined) {
                 v  = this["_fill_"+n].call(this, i, v, n, "info");
             } else
@@ -937,6 +956,21 @@ HsForm.prototype = {
             var fd = this.formBox.find("[name="+fn+"],[data-fn="+fn+"]").not(".form-ignored");
             if (fd.val( ) != "" ) {
                 this.validate(fn);
+            }
+            return true;
+        },
+        "[data-depend]" : function(val, inp) {
+            if (inp.data("DEPENDING")) {
+                return true;
+            }
+            try {
+                inp.data("DEPENDING", true);
+                var fa = inp.data("data-depend").split(",");
+                for (var j = fa.length, i = 0; i < j; i ++) {
+                    this.validate( fa [i] );
+                }
+            } finally {
+                inp.removeData("DEPENDING");
             }
             return true;
         }

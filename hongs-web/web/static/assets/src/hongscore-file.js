@@ -1,191 +1,319 @@
 /**
- * File 国际化及初始化
- * Huang Hong <ihongs@live.cn>
- * @param $ jQuery
+ * 文件上传及预览用法:
+ * 在表单配置区域添加:
+ * data-data-0="_fill__file:(hsFormFillFile)"
+ * 在表单选项区域添加:
+ * <input type="text" name="x_url" class="form-ignored invisible"/>
+ * <input type="file" name="x_url" class="form-ignored invisible"/>
+ * <ul data-ft="_file" data-fn="x_url" class="pickbox"></ul>
+ * <button type="button" data-toggle="hsFile">Browse...</button>
+ * 图片预览相应的改为 hsFormFillView, hsView
+ *
+ * 注: 2016/06/10 增加文件上传及图片预览工具
  */
+
 (function($) {
-    if (!$.fn.fileinput) {
+
+    /**
+     * 选取文件
+     * @param {Element} box 文件列表区域
+     * @param {String } src 文件路径取值
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsPickFile = function(box, src) {
+        if (! src ) {
+            return;
+        }
+            box =$(box );
+        $(this).before($(this).clone().val(''));
+        var txt = src.replace(/^.*[\/\\]/, '' );
+        var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
+           .append(this)
+           .append('<span class="glyphicon glyphicon-open-file"></span>' )
+           .append($('<span class="picktxt"></span>' ).text( txt ) )
+           .append('<span class="close pull-right">&times;</span>' );
+        box.append(div );
+        return div ;
+    };
+
+    /**
+     * 填充文件
+     * @param {String } nam 文件字段名称
+     * @param {String } src 文件路径取值
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFillFile = function(nam, src) {
+        if (! src ) {
+            return;
+        }
+        var box =$(this);
+        var txt = src.replace(/^.*[\/\\]/, '' );
+        var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
+           .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
+           .append('<span class="glyphicon glyphicon-save-file"></span>' )
+           .append($('<span class="picktxt"></span>' ).text( txt ) )
+           .append('<span class="close pull-right">&times;</span>' );
+        box.append(div );
+        return div;
+    };
+
+    //** 预览图片 **/
+
+    /**
+     * 选取预览
+     * @param {Element} box 预览列表区域
+     * @param {String } src 文件路径取值
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @param {boolean} k   为 true 保留, 否则截取
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsPickView = function(box, src, w, h, k) {
+        if (! src ) {
+            return;
+        }
+            box =$(box );
+        $(this).before($(this).clone().val(''));
+        var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
+        var div =$('<li class="preview"></li>').css({
+            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+        } ).append(this)
+           .append(img )
+           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+        box.append(div );
+        return div;
+    };
+
+    /**
+     * 填充预览
+     * @param {String } nam 文件字段名称
+     * @param {String } src 文件路径取值
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @param {boolean} k   为 true 保留, 否则截取
+     * @returns {undefined|Element} 节点
+     */
+    $.fn.hsFillView = function(nam, src, w, h, k) {
+        if (! src ) {
+            return;
+        }
+        var box =$(this);
+        var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
+        var div =$('<li class="preview"></li>').css({
+            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+        } ).append($('<input type="hidden" />').attr( "name", nam ).val( src ) )
+           .append(img )
+           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+        box.append(div );
+        return div ;
+    };
+
+    //** 预览辅助 **/
+
+    /**
+     * 预载文件
+     * @param {Function} cal 回调函数
+     * @returns {jQuery} 当前文件节点
+     */
+    $.fn.hsReadFile = function(cal) {
+        this.each(function() {
+            var that = this;
+            if (window.FileReader) {
+                var fr = new FileReader( );
+                fr.onloadend = function(e) {
+                    cal.call(that, e.target.result);
+                };  cal.call(that);
+                $.each( this.files, function(i, fo) {
+                    fr.readAsDataURL( fo );
+                });
+            } else
+            if (this.getAsDataURL) {
+                cal.call(that, that.getAsDataURL());
+            } else {
+                cal.call(that, that.value);
+            }
+        });
+        return this;
+    };
+
+    /**
+     * 截取式预览
+     * @param {String } src 文件真实路径
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @returns {Element}
+     */
+    $.hsPickSnap = function(src, w, h) {
+        var img  =  new Image();
+        img.onload = function() {
+            var xw = img.width ;
+            var xh = img.height;
+            var zw = xh * w / h;
+//          var zh = xw * h / w;
+            if (zw > xw) {
+                // 宽度优先
+                img.width   = w;
+                img.height  = xh * w / xw;
+                $(img).css("top" , (((h - img.height) / 2)) + "px");
+            } else {
+                // 高度优先
+                img.height  = h;
+                img.width   = xw * h / xh;
+                $(img).css("left", (((w - img.width ) / 2)) + "px");
+            }
+        };
+        img.src = src ;
+        return  $(img);
+    };
+
+    /**
+     * 保留式预览
+     * @param {String } src 文件真实路径
+     * @param {Number } w   预览额定宽度
+     * @param {Number } h   预览额定高度
+     * @returns {Element}
+     */
+    $.hsKeepSnap = function(src, w, h) {
+        var img  =  new Image();
+        img.onload = function() {
+            var xw = img.width ;
+            var xh = img.height;
+            var zw = xh * w / h;
+//          var zh = xw * h / w;
+            if (zw < xw) {
+                // 宽度优先
+                img.width   = w;
+                img.height  = xh * w / xw;
+                $(img).css("top" , (((h - img.height) / 2)) + "px");
+            } else {
+                // 高度优先
+                img.height  = h;
+                img.width   = xw * h / xh;
+                $(img).css("left", (((w - img.width ) / 2)) + "px");
+            }
+        };
+        img.src = src ;
+        return  $(img);
+    };
+
+    /**
+     * 移除文件事件处理
+     */
+    $(document).on("click", "ul.pickbox .close,.preview .close",
+    function( ) {
+        var box = $(this).closest(".pickbox");
+        _hsSoloFile( box , true );
+        $(this).parent().remove();
+    });
+
+    /**
+     * 打开文件事件处理
+     */
+    $(document).on("click", "ul.pickbox li",
+    function(x) {
+        if ($(x.target).hasClass("close")
+        || !$(this).parent( )
+                   .siblings("[data-toggle=hsFile],[data-toggle=hsView]")
+                   .size  ()) {
+            return;
+        }
+
+        /**
+         * 暂时没有较好的办法像打开远程文件一样打开刚选择待上传的文件
+         * 倒是可以通过 hsReadFile 来获取 base64 编码进而在新窗口打开
+         * 但如果是较大的文件可能不太合适
+         * 故干脆放弃待上传新窗口打开预览
+         * 预览待上传图片用 hsView 等方法
+         */
+
+        var inp = $(this).find( ":file" );
+        if (inp.size() === 0) {
+            inp = $(this).find(":hidden");
+            var url = hsFixUri(inp.val());
+            if (url) {
+                window.open(url,"_blank");
+            }
+        }
+    });
+
+    /**
+     * 选择文件事件处理
+     */
+    $(document).on("click", "[data-toggle=hsFile]",
+    function( ) {
+        var inp = $(this).siblings(":file");
+        if (! inp.data("picked")) {
+            inp.data("picked", 1);
+            var box = inp.siblings(".pickbox");
+            inp.on("change", function( ) {
+                   _hsSoloFile(box, false);
+                inp.hsPickFile(box, inp.val());
+            });
+        }
+        inp.click();
+    });
+
+    /**
+     * 选择图片事件处理
+     */
+    $(document).on("click", "[data-toggle=hsView]",
+    function( ) {
+        var inp = $(this).siblings(":file");
+        if (! inp.data("picked")) {
+            inp.data("picked", 1);
+            var box = inp.siblings(".pickbox");
+            var  w  = box.data("width" );
+            var  h  = box.data("height");
+            inp.on("change", function( ) {
+            inp.hsReadFile ( function(src) {
+                   _hsSoloFile(box, false);
+                inp.hsPickView(box, src, w, h);
+            });
+            });
+        }
+        inp.click();
+    });
+
+})(jQuery);
+
+function _hsSoloFile(box, show) {
+    var fn = box.data("fn");
+    if (! fn || box.hasClass("pickmul")) {
         return;
     }
+    if (! /(\[\]|\.\.|\.$)/.test ( fn )) {
+        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
+        box.removeClass("pickmul");
+    } else {
+        box.   addClass("pickmul");
+    }
+}
 
-    $.fn.fileinputLocales.en = {
-        fileSingle      : hsGetLang('file.single'),
-        filePlural      : hsGetLang('file.plural'),
-        browseLabel     : hsGetLang('file.browse'),
-        removeLabel     : hsGetLang('file.remove'),
-        removeTitle     : hsGetLang('file.remove.title'),
-        uploadLabel     : hsGetLang('file.upload'),
-        uploadTitle     : hsGetLang('file.upload.title'),
-        cancelLabel     : hsGetLang('file.cancel'),
-        cancelTitle     : hsGetLang('file.cancel.title'),
-        dropZoneTitle   : hsGetLang('file.drop.to.here'),
-        msgSizeTooLarge         : hsGetLang('file.invalid.size'),
-        msgInvalidFileType      : hsGetLang('file.invalid.type'),
-        msgInvalidFileExtension : hsGetLang('file.invalid.extn'),
-
-        fileActionSettings: {
-            removeTitle : hsGetLang('file.remove'),
-            uploadTitle : hsGetLang('file.upload'),
-
-            indicatorNewTitle     : 'Not uploaded yet',
-            indicatorLoadingTitle : 'Uploading ...',
-            indicatorSuccessTitle : 'Uploaded',
-            indicatorErrorTitle   : 'Upload Error'
-        },
-
-        msgLoading              : 'Loading file {index} of {files} &hellip;',
-        msgProgress             : 'Loading file {index} of {files} - {name} - {percent}% completed.',
-        msgSelected             : '{n} {files} selected',
-        msgZoomTitle            : 'View details',
-        msgZoomModalHeading     : 'Detailed Preview',
-        msgFilesTooLess         : 'You must select at least <b>{n}</b> {files} to upload.',
-        msgFilesTooMany         : 'Number of files selected for upload <b>({n})</b> exceeds maximum allowed limit of <b>{m}</b>.',
-        msgFileSecured          : 'Security restrictions prevent reading the file "{name}".',
-        msgFileNotFound         : 'File "{name}" not found!',
-        msgFileNotReadable      : 'File "{name}" is not readable.',
-        msgFilePreviewAborted   : 'File preview aborted for "{name}".',
-        msgFilePreviewError     : 'An error occurred while reading the file "{name}".',
-        msgUploadAborted        : 'The file upload was aborted',
-        msgValidationError      : 'File Upload Error',
-        msgFoldersNotAllowed    : 'Drag & drop files only! Skipped {n} dropped folder(s).',
-
-        msgImageWidthSmall      : 'Width of image file "{name}" must be at least {size} px.',
-        msgImageHeightSmall     : 'Height of image file "{name}" must be at least {size} px.',
-        msgImageWidthLarge      : 'Width of image file "{name}" cannot exceed {size} px.',
-        msgImageHeightLarge     : 'Height of image file "{name}" cannot exceed {size} px.',
-        msgImageResizeError     : 'Could not get the image dimensions to resize.',
-        msgImageResizeException : 'Error while resizing the image.<pre>{errors}</pre>'
-    };
-
-    $.extend($.fn.fileinput.defaults, $.fn.fileinputLocales.en);
-
-    var initialPreview = function(opts, vals, name) {
-        var f;
-        switch (opts.previewFileType) {
-            case "image":
-                f = function(u) {
-                    return '<img src="'+u+'" class="file-preview-image">';
-                };
-                break;
-            case "video":
-                f = function(u) {
-                    return '<video controls><source src="'+u+'"></video>';
-                };
-                break;
-            case "audio":
-                f = function(u) {
-                    return '<audio controls><source src="'+u+'"></audio>';
-                };
-                break;
-            case "flash":
-                f = function(u) {
-                    return '<object class="file-object" data="'+u+'" type="application/x-shockwave-flash"></object>';
-                };
-                break;
-            default:
-                f = function(u) {
-                    return '<object class="file-object" data="'+u+'"></object>';
-                };
-                break;
-        }
-
-        var i = 0 , j = vals.length;
-        for ( ; i < j ; i ++ ) {
-            vals[i] = f(vals[i])+'<input type="hidden" name="'+name+'" value="'+vals[i]+'"/>';
-        }
-        return vals;
-    };
-
-    $(document).on("hsReady", function() {
-        $(this).find("[data-toggle=fileinput]").each(function() {
-            if ($(this).data("fileinput")) {
-                return;
-            }
-
-            var that = $(this);
-            var attr;
-            var opts;
-
-            var mrep = function(v) {
-                if (!/^(\{.*\})$/.test( v )) {
-                        v  = '{'+v+'}' ;
-                }
-                return  eval('('+v+')');
-            };
-
-            // 基础配置
-            attr = that.attr("data-config" );
-            if (attr) {
-                opts = mrep.call(this, attr);
-            } else {
-                opts = {};
-            }
-            if (opts.showRemove  === undefined) {
-                opts.showRemove   =  false;
-            }
-            if (opts.showCancel  === undefined) {
-                opts.showCancel   =  false;
-            }
-            if (opts.showUpload  === undefined) {
-                opts.showUpload   =  false;
-            }
-            if (opts.showCaption === undefined) {
-                opts.showCaption  =  false;
-            }
-            if (opts.browseClass === undefined) {
-                opts.browseClass  =  "btn btn-default form-control";
-            }
-
-            // 类型配置
-            attr = that.attr("accept");
-            if (attr) {
-                opts.previewFileType  = attr.replace(/\/.*$/, "");
-            }
-            attr = that.attr("data-type" );
-            if (attr) {
-                opts.previewFileType  = attr;
-            }
-            attr = that.attr("data-types");
-            if (attr) {
-                opts.allowedFileTypes = attr.split(",");
-            }
-            attr = that.attr("data-extns");
-            if (attr) {
-                opts.allowedFileExtensions = attr.split(",");
-            }
-
-            // 初始配置
-            attr = that.attr("data-value");
-            if (attr) {
-                opts.initialPreview = initialPreview(opts, attr.split(","), that.attr("name"));
-            }
-
-            that.removeClass("input-file");
-            that.fileinput(opts);
-        });
+function hsFormFillFile(box, v, n) {
+    if (! v) return;
+    if (! jQuery.isArray(v)) {
+        v = [ v ];
+    }
+    if (v.length) {
+        _hsSoloFile ( box, false );
+    }
+    jQuery.each(v , function(i, x) {
+        box.hsFillFile(n, x);
     });
+}
 
-    $(document).on("loadOver", ".HsForm", function() {
-        $(this).find("[data-toggle=fileinput]").each(function() {
-            if(!$(this).data("fileinput")) {
-                return;
-            }
-
-            var that = $(this);
-            var opts = {};
-            var attr;
-
-            attr = that.attr("data-type" );
-            if (attr) {
-                opts.previewFileType = attr ;
-            }
-
-            attr = that.attr("data-value");
-            if (attr) {
-                opts.initialPreview  = initialPreview(opts, attr.split(","), that.attr("name"));
-            }
-
-            that.fileinput("refresh" , opts);
-        });
+function hsFormFillView(box, v, n) {
+    if (! v) return;
+    if (! jQuery.isArray(v)) {
+        v = [ v ];
+    }
+    if (v.length) {
+        _hsSoloFile ( box, false );
+    }
+    var k = box.data("keep"  );
+    var w = box.data("width" );
+    var h = box.data("height");
+    jQuery.each(v , function(i, x) {
+        box.hsFillView(n, x, w, h, k);
     });
-})(jQuery);
+}

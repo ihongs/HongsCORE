@@ -14,13 +14,13 @@
         data-pn     Page num
         data-fn     Field name
         data-ft     Field type
-        data-fl     Field fill
+        data-fl     Field fill info data
     Form:
         data-pn     Param name
         data-fn     Field name
         data-ft     Field type
-        data-fl     Field fill
-        data-fd     Field fill (enum data)
+        data-fl     Field fill info data
+        data-fe     Field fill enum data
     Fork:
         data-tk     Title key
         data-vk     Value key

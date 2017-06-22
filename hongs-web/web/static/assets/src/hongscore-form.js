@@ -133,14 +133,14 @@ HsForm.prototype = {
             }
             fns[n] = n;
             fts[n] = v.data("ft");
-                f  = v.data("fd");
+                f  = v.data("fe");
 
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
                     f = eval('(function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: "+e);
+                    throw new Error("Parse list data-fe error: "+e);
                 }
                 v.data("fd",f);
             }

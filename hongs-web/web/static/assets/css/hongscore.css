@@ -119,6 +119,7 @@ legend {
     padding-right: 15px;
 }
 
+/** bootstrap-fileinput **/
 .file-preview-frame .file-preview-image,
 .file-preview-frame video,
 .file-preview-frame audio,
@@ -126,6 +127,9 @@ legend {
     width: auto;
     height: 160px;
     max-width: 100%;
+}
+.file-preview .close {
+    margin-right : 4px;
 }
 
 /** 布局 **/
@@ -400,6 +404,9 @@ ul.pickbox {
     padding-left : 0;
     margin-bottom: 0;
 }
+ul.pickmul > li.btn {
+    margin-bottom: 5px;
+}
 ul.pickbox > li.btn {
     width: 100%;
     text-align: left;
@@ -408,11 +415,9 @@ ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
 }
-ul.pickmul > li.btn {
-    margin-bottom: 5px;
-}
 
 .preview {
+    float: left;
     overflow: hidden;
     position: relative;
     border-radius: 5px;
@@ -428,8 +433,15 @@ ul.pickmul > li.btn {
     padding: 0 0.25em 0 0.25em;
 }
 
-.file-preview .close {
-    margin-right : 4px;
+.datebox.input-group .input-group-addon {
+    background: #fff;
+    padding-left: 5px;
+    padding-right: 5px;
+    border: 0px;
+    width: auto;
+}
+.datebox.input-group .form-control {
+    width: auto
 }
 
 /** 适配 **/

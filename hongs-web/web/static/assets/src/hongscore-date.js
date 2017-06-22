@@ -192,7 +192,7 @@
     }
 
     function _makeInputs(fmt) {
-        var box = $('<div class="input-group datebox" data-widget="hsDate"></div>');
+        var box = $('<div class="input-group datebox"></div>');
         var pat = /(\w+|\W+|'.*?')/g;
         var wrd = /^\w+$/;
         var grp ;
@@ -208,8 +208,8 @@
     }
 
     $.fn.hsDate = function() {
-        if (this.data("hsDate")) {
-            return;
+        if (this.data("linked")) {
+            return; // 跳过已初始化
         }
 
         var fmt = this.data("format") || hsGetLang("datetime.format");
@@ -241,18 +241,21 @@
              * 需要把选项向上提一层
              */
             if (inp.parent().is(".input-group")) {
-                inp.before(box.contents( ));
+                inp.before(box.contents());
                 box.remove();
-                box = inp.parent();
-                box.addClass("datebox");
-                box.data("widget","hsDate");
+                box = inp.parent( );
+                box.addClass ( "datebox" );
             }
         }
         while (false);
 
-        inp.data("hsDate", box);
-        box.data("hsDate", inp);
-        inp.trigger( "change" );
+        box.addClass("datebox");
+        box.attr("data-widget" , "hsDate");
+        box.data("linked", inp);
+        inp.attr("data-toggle" , "hsDate");
+        inp.data("linked", box);
+
+        inp.trigger ("change" );
     };
 
     // 处理大小月及闰年时日期的变化
@@ -290,12 +293,12 @@
         if ($(evt.target).data("toggle")=='hsDate') {
             return; // 跳过表单输入
         }
-        if (! $(this).data("hsDate")) {
+        if (! $(this).data("linked")) {
             return; // 跳过未初始化
         }
 
         var box = $(this);
-        var inp = box.data("hsDate");
+        var inp = box.data("linked");
         var typ = inp.data( "type" );
         var fmt = inp.data("format") || hsGetLang("datetime.format");
         var dat = _getdate(box, new Date(0));
@@ -322,12 +325,12 @@
         if ($(evt.target).data("toggle")!='hsDate') {
             return; // 跳过非表单项
         }
-        if (! $(this).data("hsDate")) {
+        if (! $(this).data("linked")) {
             return; // 跳过未初始化
         }
 
         var inp = $(this);
-        var box = inp.data("hsDate");
+        var box = inp.data("linked");
         var typ = inp.data( "type" );
         var fmt = inp.data("format") || hsGetLang("datetime.format");
         var val = inp.val (   );

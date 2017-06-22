@@ -589,51 +589,45 @@ HsList.prototype = {
  */
 function hsListFillItem(list) {
     var that = this;
-    var cb   = this.context.find(".itembox:hidden:first");
-    var tr, td, n, t, f, v;
+    var cb = this.context.find(".itembox:hidden:first");
+    var tr, td, n, t, v, f;
 
     // _keep_prev 无论何种情况都不清空之前的列表
     // _keep_void 当前数据为空时不清空之前的列表
-    if (! this._keep_prev || ! (this._keep_void && list.length == 0)) {
-        this.listBox.children()
-            .not(cb).remove(  );
+    if (! this._keep_prev
+    ||  !(this._keep_void && list.length == 0 )) {
+        this.listBox.children().not(cb).remove();
     }
 
+    this._list = list;
     for (var i = 0 ; i < list.length ; i ++) {
         this._info = list[i];
         tr = cb.clone();
         tr.find("[data-fn],[data-ft],[data-fl]").each(function() {
-            td = jQuery(this);
-            n = td.attr("data-fn");
-            t = td.attr("data-ft");
-            f = td.data("fl");
-            v = td.data("fv");
+            td = jQuery (this);
+            n  = td.data("fn");
+            t  = td.data("ft");
+            f  = td.data("fl");
+            v  = hsGetValue(list[i], n);
+            if (v === undefined) {
+                v  =  list[i][n];
+            }
 
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(list, v, n){return '+f+';})');
+                    f = eval('(function(list,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: " + e);
+                    throw new Error("Parse list data-fl error: "+e);
                 }
-                td.data( "fl", f );
+                td.data("fl", f);
             }
 
-            // 取值
-            if (n) {
-                var x  =  hsGetValue(list[i], n);
-                if (x === undefined) {
-                    x  =  list[i][n];
-                }
-                if (x) {
-                    v  =  x;
-                }
-            }
-
-            // 填充
+            // 调整
             if (f) {
                 v  = f.call(td, that, v, n);
-            } else
+            }
+            // 填充
             if (n && that["_fill_"+n] !== undefined) {
                 v  = that["_fill_"+n].call(that, td, v, n);
             } else
@@ -645,16 +639,15 @@ function hsListFillItem(list) {
                 return;
             }
 
-            if (td.is("input,select,textarea")) {
-                td.val (v);
-            } else {
-                td.text(v);
-            }
+            td.text(v);
         });
         tr.show( ).appendTo( this.listBox );
     }
-    if (typeof(this._info) !== "undefined")
+
+        delete this._list;
+    if (typeof(this._info) !== "undefined") {
         delete this._info;
+    }
 }
 
 /**

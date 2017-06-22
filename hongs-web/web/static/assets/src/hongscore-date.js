@@ -1,115 +1,351 @@
 /**
- * Datetime 国际化及启动器
- * Huang Hong <ihongs@live.cn>
- * @param $ jQuery
+ * 日期选择组添加方法:
+ * <input type="text" name="xtime" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000"/>
+ * 可包裹在输入框组内,
+ * 此输入框将被替换掉.
+ *
+ * 注: 2017/06/22 增加简单日期选择控件
  */
-(function($){
-    if (!$.fn.datetimepicker) {
-        return;
+
+
+(function($) {
+
+    function _addzero(num, len) {
+        num = num ? num : "";
+        num = num.toString();
+        var gth = num.length;
+        for (var i = gth; i < len; i ++) {
+            num = "0" + num ;
+        }
+        return num;
     }
 
-    $.fn.datetimepicker.dates.en = {
-        months      : hsGetLang("date.LM"),//["一月","二月","三月","四月","五月","六月","七月","八月","九月","十月","十一月", "十二月"],
-        monthsShort : hsGetLang("date.SM"),//["一","二","三","四","五","六","七","八","九","十","十一","十二"],
-        days        : hsGetLang("date.LE"),//["星期日","星期一","星期二","星期三","星期四","星期五","星期六"],
-        daysShort   : hsGetLang("date.SE"),//["日","一","二","三","四","五","六"],
-        daysMin     : hsGetLang("date.SE"),//["日","一","二","三","四","五","六"],
-        meridiem    : hsGetLang("time.Sa"),//["AM","PM"],
-        weekStart   : hsGetLang("week.start"),//1
-        today       : hsGetLang("date.today"),//今天
-        format      : _hs2bsDF(hsGetLang("datetime.format")),//yyyy-mm-dd HH:ii
-        suffix      : []
+    function _setdate(box, dat) {
+        box.find("[data-date]").each(function() {
+            var flg = $( this ).data( "date" );
+            switch (flg) {
+                case 'La':
+                case 'Sa':
+                    $(this).val(dat.getHours() > 11 ? 1 : 0);
+                    break;
+                case 'LM':
+                case 'SM':
+                    $(this).val(dat.getMonth());
+                    break;
+                case 'M':
+                    $(this).val(dat.getMonth() + 1);
+                    break;
+                case 'y':
+                    $(this).val(dat.getFullYear() );
+                    break;
+                case 'Sy':
+                    $(this).val(dat.getFullYear() - 2000);
+                    break;
+                case 'd':
+                    $(this).val(dat.getDate( ));
+                    break;
+                case 'H':
+                    $(this).val(dat.getHours());
+                    break;
+                case 'k':
+                    $(this).val(dat.getHours() + 1 );
+                    break;
+                case 'K':
+                    $(this).val(dat.getHours() % 12);
+                    break;
+                case 'h':
+                    $(this).val(dat.getHours() % 12) + 1;
+                    break;
+                case 'm':
+                    $(this).val(dat.getMinutes());
+                    break;
+                case 's':
+                    $(this).val(dat.getSeconds());
+                    break;
+                case 'S':
+                    $(this).val(dat.getMilliseconds());
+                    break;
+            }
+        });
+        return dat;
+    }
+
+    function _getdate(box, dat) {
+        var pm = box.find("[data-date=La],[data-date=Sa]").val() == '1';
+        box.find("[data-date]").each(function() {
+            var flg = $( this ).data( "date" );
+            var val = parseInt($(this).val( ));
+            switch (flg) {
+                case 'LM':
+                case 'SM':
+                    dat.setMonth(val);
+                    break;
+                case 'M':
+                    dat.setMonth(val - 1);
+                    break;
+                case 'y':
+                    dat.setFullYear(val);
+                    break;
+                case 'Sy':
+                    dat.setFullYear(val + 2000);
+                    break;
+                case 'd':
+                    dat.setDate(val);
+                    break;
+                case 'H':
+                    dat.setHours(val);
+                    break;
+                case 'k':
+                    dat.setHours(val - 1);
+                    break;
+                case 'K':
+                    dat.setHours(val + (pm ? 12 : 0));
+                    break;
+                case 'h':
+                    dat.setHours(val + (pm ? 11 :-1));
+                    break;
+                case 'm':
+                    dat.setMinutes(val);
+                    break;
+                case 's':
+                    dat.setSeconds(val);
+                    break;
+                case 'S':
+                    dat.setMilliseconds(val);
+                    break;
+            }
+        });
+        return dat;
     };
 
-    $(document).on("click", "[data-toggle=datetimepicker]", function() {
-        if ($(this).data("datetimepicker")) {
+    function _makeGroups(grp) {
+        var len = grp.length;
+        var flg = grp.substr(0, 1);
+        switch (flg) {
+            case 'a':
+                if (len >= 4) {
+                    return _makeChoose("La", hsGetLang("date.La"));
+                }
+                else {
+                    return _makeChoose("Sa", hsGetLang("date.Sa"));
+                }
+            case 'M':
+                if (len >= 4) {
+                    return _makeChoose("LM", hsGetLang("date.LM"));
+                }
+                if (len == 3) {
+                    return _makeChoose("SM", hsGetLang("date.SM"));
+                }
+                else {
+                    return _makeSelect( "M", 1, 12, len);
+                }
+            case 'y':
+                if (len >= 4) {
+                    return _makeSelect( "y", 1970, 2099, len);
+                }
+                else {
+                    return _makeSelect("Sy", 0, 99, len);
+                }
+            case 'd':
+                return _makeSelect(flg, 1, 31, len);
+            case 'H':
+                return _makeSelect(flg, 0, 23, len);
+            case 'k':
+                return _makeSelect(flg, 1, 24, len);
+            case 'K':
+                return _makeSelect(flg, 0, 11, len);
+            case 'h':
+                return _makeSelect(flg, 1, 12, len);
+            case 'm':
+                return _makeSelect(flg, 0, 59, len);
+            case 's':
+                return _makeSelect(flg, 0, 59, len);
+            case 'S':
+                return _makeSelect(flg, 0,999, len);
+        }
+    }
+
+    function _makeChoose(flg, arr) {
+        var s = '<select class="form-control datebox-'+flg+'" data-date="'+flg+'">';
+        for(var j = arr.length, i = 0; i < j; i ++) {
+            var v = arr[i];
+            s += '<option value="'+ i +'">'+ v +'</option>';
+        }
+        s += '</select>';
+        return $(s);
+    }
+
+    function _makeSelect(flg, min, max, len) {
+        var s = '<select class="form-control datebox-'+flg+'" data-date="'+flg+'">';
+        for(  ; min <= max  ; min ++  ) {
+            var v  = _addzero(min, len);
+            s += '<option value="'+min+'">'+ v +'</option>';
+        }
+        s += '</select>';
+        return $(s);
+    }
+
+    function _makeAddons(txt) {
+        var spn = $('<span class="input-group-addon"></span>');
+        spn.text ( txt );
+        return spn ;
+    }
+
+    function _makeInputs(fmt) {
+        var box = $('<div class="input-group datebox" data-widget="hsDate"></div>');
+        var pat = /(\w+|\W+|'.*?')/g;
+        var wrd = /^\w+$/;
+        var grp ;
+        while ((grp = pat.exec(fmt)) != null) {
+            grp = grp[0];
+            if (wrd.test(grp)) {
+                box.append(_makeGroups(grp));
+            } else {
+                box.append(_makeAddons(grp));
+            }
+        }
+        return box;
+    }
+
+    $.fn.hsDate = function() {
+        if (this.data("hsDate")) {
             return;
         }
 
-        var that = $(this);
-        var attr;
-        var opts;
+        var fmt = this.data("format") || hsGetLang("datetime.format");
+        var inp = this;
+        var box ;
 
-        var mrep = function(v) {
-            if (!/^(\{.*\})$/.test( v ) ) {
-                    v  = '{'+v+'}' ;
+        do {
+            /**
+             * 如果有查找到组件标记
+             * 说明用的是自定义选项
+             * 就不需要再构建选项了
+             */
+            box = inp.siblings().filter("[data-widget=hsDate]");
+            if (box.size() != 0) {
+                break;
             }
-            return  eval('('+v+')');
-        };
+            box = inp.parent(  ).filter("[data-widget=hsDate]");
+            if (box.size() != 0) {
+                break;
+            }
 
-        // 基础配置
-        attr = that.attr( "data-config" );
-        if (attr) {
-            opts = mrep.call(this , attr);
-        } else {
-            opts = {};
-        }
-        if (opts.autoclose === undefined) {
-            opts.autoclose  =  true;
-        }
-        if (opts.todayBtn  === undefined) {
-            opts.todayBtn   =  true;
-        }
-        if (opts.todayHighlight === undefined) {
-            opts.todayHighlight  =  true;
-        }
+            inp.addClass("invisible");
+            box = _makeInputs ( fmt );
+            box.insertBefore  ( inp );
 
-        // 获取格式
-        attr = that.attr("data-format" );
-        if (attr) {
-            opts.format = _hs2bsDF(attr);
-        } else
-        if (that.is(".input-date")) {
-            opts.format = _hs2bsDF(hsGetLang("date.format"));
-        } else
-        if (that.is(".input-time")) {
-            opts.format = _hs2bsDF(hsGetLang("time.format"));
-        } else
-        {
-            opts.format = _hs2bsDF(hsGetLang("datetime.format"));
+            /**
+             * 输入框组是不可嵌套的
+             * 如果已经在输入框组里
+             * 需要把选项向上提一层
+             */
+            if (inp.parent().is(".input-group")) {
+                inp.before(box.contents( ));
+                box.remove();
+                box = inp.parent();
+                box.addClass("datebox");
+                box.data("widget","hsDate");
+            }
         }
+        while (false);
 
-        // 获取位置
-        attr = that.attr("data-position");
-        if (attr) {
-            opts.pickerPosition  =  attr ;
-        }
+        inp.data("hsDate", box);
+        box.data("hsDate", inp);
+        inp.trigger( "change" );
+    };
 
-        // 根据格式选择视图
-        if (/p/i.test(opts.format)) {
-            opts.showMeridian = true;
-        }
-        if (/i/ .test(opts.format)) {
-            opts.startView = 0;
-            opts.minView = 0;
-            if (!/[md]/.test(opts.format)) {
-            if (!/[Hh]/.test(opts.format)) {
-                opts.maxView = 0;
+    // 处理大小月及闰年时日期的变化
+    $(document).on("change", "[data-date=M],[data-date=SM],[data-date=LM]", function() {
+        var y = $(this).closest(".input-group")
+                .find("[data-date=y],[data-date=Sy]").val();
+        var d = $(this).closest(".input-group")
+                .find("[data-date=d]");
+        var m = $(this).val( );
+        if (y < 100) y += 2000;
+        if (m == 2) {
+            if ((y % 4 == 0 && y % 100 != 0) || (y % 400 == 0)) {
+                d.find("option:gt(28)")
+                 .prop("selected", false)
+                 .hide();
             } else {
-                opts.maxView = 1;
-            } }
-        } else
-        if (/h/i.test(opts.format)) {
-            opts.startView = 1;
-            opts.minView = 1;
-            if (!/[md]/.test(opts.format)) {
-                opts.maxView = 1;
+                d.find("option:gt(27)")
+                 .prop("selected", false)
+                 .hide();
             }
-        } else
-        if (/d/ .test(opts.format)) {
-            opts.startView = 2;
-            opts.minView = 2;
-        } else
-        if (/m/ .test(opts.format)) {
-            opts.startView = 3;
-            opts.minView = 3;
-        } else
-        if (/y/ .test(opts.format)) {
-            opts.startView = 4;
-            opts.minView = 4;
+        } else {
+            if ((m < 7 && m % 2 == 0) || (m > 7 && m % 2 == 1)) {
+                d.find("option:gt(29)")
+                 .prop("selected", false)
+                 .hide();
+            } else {
+                d.find("option:gt(27)")
+                 .show();
+            }
+        }
+    });
+
+    // 控件组的值更新后联动日期输入
+    $(document).on("change", "[data-widget=hsDate]", function(evt) {
+        if ($(evt.target).data("toggle")=='hsDate') {
+            return; // 跳过表单输入
+        }
+        if (! $(this).data("hsDate")) {
+            return; // 跳过未初始化
         }
 
-        that.datetimepicker( opts );
-        that.datetimepicker("show");
+        var box = $(this);
+        var inp = box.data("hsDate");
+        var typ = inp.data( "type" );
+        var fmt = inp.data("format") || hsGetLang("datetime.format");
+        var dat = _getdate(box, new Date(0));
+        var val ;
+
+        switch (typ) {
+            case "time":
+                val = dat.getTime();
+                break;
+            case "timestamp":
+                val = dat.getTime() / 1000;
+                break;
+            default:
+                val = hsFmtDate(dat , fmt);
+        }
+
+        var evt = $.Event("change", {"date": dat});
+        inp.val    (val);
+        inp.trigger(evt);
     });
-}(jQuery));
+
+    // 表单项的值更改后联动日期控件
+    $(document).on("change", "[data-toggle=hsDate]", function(evt) {
+        if ($(evt.target).data("toggle")!='hsDate') {
+            return; // 跳过非表单项
+        }
+        if (! $(this).data("hsDate")) {
+            return; // 跳过未初始化
+        }
+
+        var inp = $(this);
+        var box = inp.data("hsDate");
+        var typ = inp.data( "type" );
+        var fmt = inp.data("format") || hsGetLang("datetime.format");
+        var val = inp.val (   );
+        var num = parseInt(val);
+
+        // 外部可以指定仅仅精确到秒
+        if (! isNaN(num) && (typ== "timestamp" || typ== "datestamp")) {
+            val = num * 1000;
+        }
+
+        _setdate(box, hsPrsDate(val, fmt));
+    });
+
+    // 加载就绪后自动初始化日期控件
+    $(document).on("hsReady", function() {
+        $(this).find("[data-toggle=hsDate]").each(function() {
+            $(this).hsDate();
+        });
+    });
+
+})(jQuery);

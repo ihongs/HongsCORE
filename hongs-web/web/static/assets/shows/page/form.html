@@ -4,7 +4,8 @@
      data-load-url="('data/search.json?md='+(H$('#id',this)?'1':'0'))"
      data-save-url="('data/create.json')"
      data-data-0="_fill__fork:(hsFormFillFork)"
-     data-data-1="_fill__file:(hsFormFillFile)">
+     data-data-1="_fill__file:(hsFormFillFile)"
+     data-data-2="_fill__view:(hsFormFillView)">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id"/>
         <input type="hidden" name="sections.0.sect_id" data-pn="sect_id"/>
@@ -33,17 +34,22 @@
                 </div>
                 <div class="form-group dont-close">
                     <label class="control-label">宣传图片</label>
-                    <input type="file" name="snap" class="form-control" data-toggle="fileinput" accept="image/*"/>
+                    <input type="text" name="snap." class="form-ignored invisible"/>
+                    <input type="file" name="snap." class="form-ignored invisible"/>
+                    <ul class="pickbox" data-ft="_view" data-fn="snap." data-width="100" data-height="100" data-required="required" data-unpicked-error="尚未选择图片"></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="hsView">选择关联的附件</button>
                 </div>
                 <div class="form-group dont-close">
                     <label class="control-label">日期区间</label>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <input type="text" name="mtime" class="form-control" data-ft="_datetime" data-toggle="datetimepicker" placeholder="开始时间" readonly/>
-                        </div>
-                        <div class="col-md-6">
-                            <input type="text" name="ctime" class="form-control" data-ft="_datetime" data-toggle="datetimepicker" placeholder="结束时间" readonly/>
-                        </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">从</span>
+                        <input type="text" name="mtime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="开始时间" readonly/>
+                        <span class="input-group-addon">&nbsp;</span>
+                    </div>
+                    <div class="input-group">
+                        <span class="input-group-addon">到</span>
+                        <input type="text" name="ctime" class="form-control" data-toggle="hsDate" data-type="timestamp" data-fl="v || new Date().getTime() / 1000" placeholder="结束时间" readonly/>
+                        <span class="input-group-addon">&nbsp;</span>
                     </div>
                     <div class="help-block"></div>
                 </div>

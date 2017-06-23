@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -76,8 +77,9 @@ public class IsDate extends Rule {
         if ("timestamp".equals(type)) {
             return day.getTime() / 1000;
         }
-        if (!"".equals(fmt)) {
-            return new SimpleDateFormat(fmt).format(day);
+        if (! "".equals(fmt)) {
+            Locale loc = Core.getLocality();
+            return new SimpleDateFormat(fmt, loc).format(day);
         }
 
         return value;
@@ -113,9 +115,10 @@ public class IsDate extends Rule {
             // 按指定格式解析日期字符串
             // 要精确时间的可以使用偏移
             try {
-                SimpleDateFormat sdf = new SimpleDateFormat(fwt);
-                Calendar cal = Calendar.getInstance();
+                Locale   loc = Core.getLocality( );
                 TimeZone tmz = Core.getTimezone( );
+                Calendar cal = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat(fwt, loc);
                 sdf.setTimeZone(tmz);
                 cal.setTimeZone(tmz);
                 cal.setTime(sdf.parse(str));

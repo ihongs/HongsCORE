@@ -292,16 +292,19 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
              * 时区可以记录到Session/Cookies里
              */
             String sess = conf.getProperty("core.timezone.session", "zone");
-            String zone = (String)hlpr.getSessibute(sess);
+            String zone = (String) hlpr.getSessibute(sess);
             if (zone == null || zone.length() == 0) {
-                   zone = /*str*/ hlpr.getCookibute(sess);
+                   zone = (String) hlpr.getCookibute(sess);
+            if (zone == null || zone.length() == 0) {
+                   zone = req.getHeader(/*Cur*/"Timezone");
+            }
             }
 
             /**
              * 过滤一下避免错误时区
              */
             if (zone != null) {
-                zone = TimeZone.getTimeZone(zone).getID();
+                zone  = TimeZone.getTimeZone(zone).getID();
 //          if (zone != null) {
                 Core.ACTION_ZONE.set(zone);
 //          }
@@ -314,11 +317,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
              * 语言可以记录到Session/Cookies里
              */
             String sess = conf.getProperty("core.language.session", "lang");
-            String lang = (String)hlpr.getSessibute(sess);
+            String lang = (String) hlpr.getSessibute(sess);
             if (lang == null || lang.length() == 0) {
-                   lang = /*str*/ hlpr.getCookibute(sess);
+                   lang = (String) hlpr.getCookibute(sess);
             if (lang == null || lang.length() == 0) {
-                lang = req.getHeader( "Accept-Language" );
+                   lang = req.getHeader("Accept-Language");
             }
             }
 
@@ -326,7 +329,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
              * 检查是否是支持的语言
              */
             if (lang != null) {
-                lang = CoreLocale.getAcceptLanguage(lang);
+                lang  = CoreLocale.getAcceptLanguage(lang);
             if (lang != null) {
                 Core.ACTION_LANG.set(lang);
             }

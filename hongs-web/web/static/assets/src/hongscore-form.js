@@ -750,11 +750,11 @@ HsForm.prototype = {
                 if (!inp. find (":checked").length) {
                     return this.geterror(inp, "form.requires");
                 }
-            } else if (inp.is(  "ul,div" )) {
-                if (!inp. find (":hidden" ).length) {
+            } else if (inp.is( "ul, div" )) {
+                if (!inp. find ( "input" ) .length) {
                     return this.geterror(inp, "form.requires");
                 }
-            } else if (inp.is(  ":file"  )) {
+            } else if (inp.is(":file")) {
                 if (!val && !inp.data( "value" )  ) {
                     return this.geterror(inp, "form.requires");
                 }

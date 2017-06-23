@@ -729,6 +729,21 @@ function hsGetLang(key, rep) {
 }
 
 /**
+ * 偏移值转换为GMT时区
+ * @param {Number} off
+ * @return {String} 例如 -480 可转为 GMT+08:00
+ */
+function hsGmtZone(off) {
+    var hur, min;
+    min = Math.abs(off);
+    hur = Math.floor(min / 60);
+    min = Math.floor(min % 60);
+    if (hur < 10) hur = "0" + hur;
+    if (min < 10) min = "0" + min;
+    return "GMT"+ (off > 0 ? "-" : "+") + hur + ":" + min;
+}
+
+/**
  * 检查URI是否有权访问
  * @param {String} uri
  * @return {Boolean} 是(true)否(false)有权访问

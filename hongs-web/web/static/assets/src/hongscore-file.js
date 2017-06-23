@@ -76,7 +76,7 @@
         $(this).before($(this).clone().val(''));
         var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
         var div =$('<li class="preview"></li>').css({
-            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+            width: w + 'px', height: h + 'px', overflow:'hidden'
         } ).append(this)
            .append(img )
            .append('<a href="javascript:;" class="close pull-right">&times</a>');
@@ -100,7 +100,7 @@
         var box =$(this);
         var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
         var div =$('<li class="preview"></li>').css({
-            width:w+'px', height:h+'px', overflow:'hidden', position:'relative'
+            width: w + 'px', height: h + 'px', overflow:'hidden'
         } ).append($('<input type="hidden" />').attr( "name", nam ).val( src ) )
            .append(img )
            .append('<a href="javascript:;" class="close pull-right">&times</a>');
@@ -199,11 +199,12 @@
     /**
      * 移除文件事件处理
      */
-    $(document).on("click", "ul.pickbox .close,.preview .close",
+    $(document).on("click", "ul.pickbox .close,li.preview .close",
     function( ) {
         var box = $(this).closest(".pickbox");
         _hsSoloFile( box , true );
         $(this).parent().remove();
+        box.trigger(  "change"  );
     });
 
     /**
@@ -264,11 +265,24 @@
             var box = inp.siblings(".pickbox");
             var  w  = box.data("width" );
             var  h  = box.data("height");
+            var tmp = $('<input type="hidden"/>')
+                  .attr("name", inp.attr("name"));
             inp.on("change", function( ) {
             inp.hsReadFile ( function(src) {
                    _hsSoloFile(box, false);
                 inp.hsPickView(box, src, w, h);
+                /**
+                 * 因为 hsReadFile 是异步的,
+                 * 插一个输入项规避校验失败;
+                 * 但是如果不加延时直接移除,
+                 * 还是会导致校验时检测不到,
+                 * 原因尚不清楚
+                 */
+                setTimeout ( function( ) {
+                    tmp.remove( );
+                }, 500);
             });
+                box.append( tmp );
             });
         }
         inp.click();

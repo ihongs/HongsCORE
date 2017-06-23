@@ -463,6 +463,7 @@ public final class Core
   /**
    * 按类获取单例
    *
+   * @param <T>
    * @param clas
    * @return 类的对象
    */

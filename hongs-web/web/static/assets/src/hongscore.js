@@ -2003,6 +2003,19 @@ String.prototype.byteSize = function() {
     return  len;
 };
 
+// 对象合并
+if (Object.assign === undefined)
+Object.assign = function() {
+    var a = arguments[0]||{};
+    for(var i = 1; i < arguments.length; i ++) {
+        var b = arguments[i];
+        for(var k in b) {
+            a[k] = b[k];
+        }
+    }
+    return a;
+};
+
 //** Global Events **/
 
 $(document).ajaxError(function(evt, xhr, cnf) {

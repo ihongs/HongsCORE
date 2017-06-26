@@ -139,7 +139,7 @@ public class LangAction
       }
       else
       {
-        helper.print("if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,"+s+");", "text/javascript");
+        helper.print("if(!self.HsLANG)self.HsLANG={};Object.assign(self.HsLANG,"+s+");", "text/javascript");
       }
     }
   }

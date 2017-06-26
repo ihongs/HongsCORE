@@ -138,7 +138,7 @@ public class ConfAction
       }
       else
       {
-        helper.print("if(!window.HsCONF)window.HsCONF={};$.extend(window.HsCONF,"+s+");", "text/javascript");
+        helper.print("if(!self.HsCONF)self.HsCONF={};Object.assign(self.HsCONF,"+s+");", "text/javascript");
       }
     }
   }

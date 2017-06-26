@@ -1,7 +1,7 @@
 /**
  * HongsCORE 公共样式
  * 作者: 黄弘<kevin.hongs@gmail.com>
- * 更新: 2017/03/29 23:59:10
+ * 版本: 2017/06/24 07:38:10
  */
 
 html, body, label, input, select, button, textarea {
@@ -99,6 +99,9 @@ legend {
 }
 .dropdown-toggle {
     cursor: pointer;
+}
+.btn .glyphicon {
+    font-size: 85%;
 }
 
 .clearfix > li,

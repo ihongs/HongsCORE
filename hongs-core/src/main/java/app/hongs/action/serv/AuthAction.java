@@ -112,7 +112,7 @@ public class AuthAction
         }
         helper.print("function "+c+"() { return "+s+"; }", "text/javascript");
       } else {
-        helper.print("if(!window.HsAUTH)window.HsAUTH={};$.extend(window.HsAUTH,"+s+");", "text/javascript");
+        helper.print("if(!self.HsAUTH)self.HsAUTH={};Object.assign(self.HsAUTH,"+s+");", "text/javascript");
       }
     }
   }

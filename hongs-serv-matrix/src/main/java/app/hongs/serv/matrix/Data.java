@@ -8,11 +8,11 @@ import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.dh.search.SearchRecord;
+import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import org.apache.lucene.document.Document;
 
 /**
@@ -21,7 +21,11 @@ import org.apache.lucene.document.Document;
  */
 public class Data extends SearchRecord {
 
-    protected String prefix = "manage/data";
+    /**
+     * 默认的配置目录
+     */
+    protected String base = "manage/data";
+
     protected final String conf;
     protected final String form;
 
@@ -72,9 +76,8 @@ public class Data extends SearchRecord {
             // Nothing todo
         }
 
-        Map fields;
-        Map fieldx;
-        String comf = prefix + "/" + form;
+        Map fields, fieldx;
+        String comf = base + "/" + form;
 
         /**
          * 字段以 manage/data 的字段为基础
@@ -94,8 +97,6 @@ public class Data extends SearchRecord {
             fields = FormSet.getInstance(conf).getForm(form);
 
         if (! comf.equals(conf)) {
-            fieldx = fields ;
-
             if (! new File(
                 Core.CONF_PATH + "/"+ comf + Cnst.FORM_EXT +".xml"
             ).exists()) {
@@ -103,15 +104,12 @@ public class Data extends SearchRecord {
                     .setLocalizedOptions(comf);
             }
 
-            fields = FormSet.getInstance(comf).getForm(form);
+            fieldx = FormSet.getInstance(comf).getForm(form);
 
-            for(Map.Entry et : (Set<Map.Entry>) fieldx.entrySet()) {
-                Object fn =  et.getKey(  );
-                Object fv =  et.getValue();
-                if (fields.containsKey(fn)) {
-                    fields.put(fn, fv);
-                }
-            }
+            // 补充上额外的字段设置
+            fieldx = new HashMap( fieldx );
+            fieldx.putAll( fields );
+            fields = fieldx;
         }
         } catch (HongsException ex) {
             throw ex.toExpedient( );
@@ -120,6 +118,22 @@ public class Data extends SearchRecord {
         setFields(fields);
 
         return fields;
+    }
+
+    @Override
+    public Map search(Map rd) throws HongsException {
+        // 搜索也可以查ID
+        String wd = Synt.declare(rd.get(Cnst.WD_KEY), String.class);
+        if (wd != null && !wd.isEmpty()) {
+            if (getFindable().isEmpty()) {
+                Dict.put(rd, wd, Cnst.ID_KEY, Cnst.EQ_REL, wd);
+            } else
+            if (wd.matches("^\\w{1,20}$")) {
+                Dict.put(rd, wd, Cnst.ID_KEY, Cnst.OR_REL, wd);
+            }
+        }
+
+        return super.search(rd);
     }
 
     /**

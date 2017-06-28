@@ -1349,7 +1349,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
                     }
                 } else {
                     if ("time".equals(typ) || "timestamp".equals(typ)) {
-                        v = new NumStrValue();
+                        v = new NumeraValue();
                         u = "0" ;
                     } else {
                         v = new DatextValue();
@@ -1368,7 +1368,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
                     v = new NumberValue();
                     u =  0 ;
                 } else {
-                    v = new NumStrValue();
+                    v = new NumeraValue();
                     u = "0";
                 }
             } else

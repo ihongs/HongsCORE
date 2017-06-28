@@ -253,11 +253,11 @@ public class SearchHelper {
         Map  cnts = new HashMap();
         resp.put( "info" , cnts );
 
-        int         topz = Synt.declare(rd.get("top"), 0);
-        Set<String> cntz = Synt.asTerms(rd.get("cnt")   );
+        int         topz = Synt.declare(rd.get(Cnst.RN_KEY), 0);
+        Set<String> cntz = Synt.asTerms(rd.get(Cnst.RB_KEY)   );
         Map<String, Map<String, Integer>> counts = new HashMap( );
         Map<String, Map<String, Integer>> countz = new HashMap( );
-        Map<String, Set<String>> countx  =  new HashMap();
+        Map<String, Set<String         >> countx = new HashMap();
 
         //** 整理待统计的数据 **/
 
@@ -512,7 +512,7 @@ public class SearchHelper {
         Map  cnts = new HashMap();
         resp.put( "info" , cnts );
 
-        Set<String> cntz = Synt.asTerms(rd.get("cnt"));
+        Set<String> cntz = Synt.asTerms(rd.get(Cnst.RB_KEY));
         Map<String, Map<Minmax, Cntsum>> counts = new HashMap();
         Map<String, Set<Minmax        >> countx = new HashMap();
 

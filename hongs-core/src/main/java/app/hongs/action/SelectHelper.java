@@ -39,7 +39,7 @@ public class SelectHelper {
         return addEnum(code, opts);
     }
 
-    public SelectHelper addEnum(String code, String...  args) {
+    public SelectHelper addEnum(String code, String ... args) {
         Map<String, String> opts = new LinkedHashMap();
         int i = 0;
         for(String   arg : args) {
@@ -83,6 +83,26 @@ public class SelectHelper {
         }
 
         return this;
+    }
+
+    /**
+     * 获取 enum
+     * @return
+     * @throws HongsException 
+     */
+    public Map select() throws HongsException {
+           Map values = new LinkedHashMap(  );
+        injectData (values, enums);
+        return values ;
+    }
+
+    /**
+     * 补充 text
+     * @param values
+     * @throws HongsException 
+     */
+    public void select(Map values) throws HongsException {
+        injectText (values, enums);
     }
 
     /**

@@ -86,26 +86,6 @@ public class SelectHelper {
     }
 
     /**
-     * 获取 enum
-     * @return
-     * @throws HongsException 
-     */
-    public Map select() throws HongsException {
-           Map values = new LinkedHashMap(  );
-        injectData (values, enums);
-        return values ;
-    }
-
-    /**
-     * 补充 text
-     * @param values
-     * @throws HongsException 
-     */
-    public void select(Map values) throws HongsException {
-        injectText (values, enums);
-    }
-
-    /**
      * 填充
      * @param values 返回数据
      * @param action 1 注入data, 2 添加text
@@ -135,7 +115,7 @@ public class SelectHelper {
         }
     }
 
-    private void injectData(Map data, Map maps) throws HongsException {
+    public void injectData(Map data, Map maps) throws HongsException {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
@@ -158,7 +138,7 @@ public class SelectHelper {
         }
     }
 
-    private void injectText(Map info, Map maps) throws HongsException {
+    public void injectText(Map info, Map maps) throws HongsException {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();

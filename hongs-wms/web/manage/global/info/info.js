@@ -1,3 +1,5 @@
+/* global self, echarts */
+
 (function($) {
     function setPieOption(a, legendData, seriesData) {
         var b  = a[1].replace(/([A-Z])/g, "$1 ")
@@ -101,20 +103,8 @@
         return option;
     }
 
-    function getProOption(data, ctime, queue) {
-        ctime = hsFmtDate(ctime, "yyyy/MM/dd HH:mm:ss");
-        queue.push({
-            value: [ctime, data.load[0]],
-            name :  ctime
-        });
-        if (queue.length > 10) {
-            queue.shift();
-        }
-        
+    function getCpuOption(data, ctime) {
         var option = {
-            title: {
-                text: '动态数据 + 时间坐标轴'
-            },
             tooltip: {
                 trigger: 'axis',
                 formatter: function (params) {
@@ -126,47 +116,293 @@
                     animation: false
                 }
             },
+            grid: {
+                top: 15,
+                left: 15,
+                right: 15,
+                bottom: 15
+            },
             xAxis: {
+                show: false,
                 type: 'time',
                 splitLine: {
                     show: false
                 }
             },
             yAxis: {
+                show: false,
                 type: 'value',
-                boundaryGap: [0, '100%'],
                 splitLine: {
                     show: false
                 }
             },
             series: [{
-                name: '模拟数据',
                 type: 'line',
                 showSymbol: false,
                 hoverAnimation: false,
-                data: queue,
+                data: [],
                 itemStyle: {
                     normal: {
-                        color: 'rgb(255, 70, 131)'
+                        color: '#d5d5d5'
                     }
                 },
                 areaStyle: {
                     normal: {
-                        color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [{
-                            offset: 0,
-                            color: 'rgb(255, 158, 68)'
-                        }, {
-                            offset: 1,
-                            color: 'rgb(255, 70, 131)'
-                        }])
+                        color: '#f5f5f5'
                     }
+                },
+                markLine: {
+                    silent: true,
+                    symbol: "",
+                    label: {
+                        "normal": {
+                            "position": "start"
+                        }
+                    },
+                    data: [{
+                        yAxis: 0
+                    }, {
+                        yAxis: 1
+                    }, {
+                        yAxis: 2
+                    }, {
+                        yAxis: 3
+                    }, {
+                        yAxis: 4
+                    }, {
+                        yAxis: 5
+                    }]
                 }
-            }]
+            }],
+            visualMap: {
+                show: false,
+                pieces: [{
+                    gt: 0,
+                    lte: 1,
+                    color: '#096'
+                }, {
+                    gt: 1,
+                    lte: 2,
+                    color: '#ffde33'
+                }, {
+                    gt: 2,
+                    lte: 3,
+                    color: '#ff9933'
+                }, {
+                    gt: 3,
+                    lte: 4,
+                    color: '#cc0033'
+                }, {
+                    gt: 4,
+                    lte: 5,
+                    color: '#660099'
+                }, {
+                    gt: 5,
+                    color: '#7e0023'
+                }],
+                outOfRange: {
+                    color: '#999'
+                }
+            }
         };
+        
+        addCpuOption(option, data, ctime);
+        
+        return option;
+    }
+    
+    function addCpuOption(opts, data, ctime) {
+        ctime = hsFmtDate(ctime, "yyyy/MM/dd HH:mm:ss");
+        var list = opts.series[0].data;
+        list.push({
+            value: [ctime, data.load[0]],
+            name :  ctime
+        });
+        if (list.length > 60) {
+            list.shift();
+        }
+    }
+
+    function getMemOption(data, ctime) {
+        var option = {
+            tooltip: {
+                trigger: 'axis',
+                formatter: function (params) {
+                    params = params[0];
+                    var date = new Date(params.name);
+                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
+                },
+                axisPointer: {
+                    animation: false
+                }
+            },
+            grid: {
+                top: 15,
+                left: 30,
+                right: 15,
+                bottom: 15
+            },
+            xAxis: {
+                show: false,
+                type: 'time',
+                splitLine: {
+                    show: false
+                }
+            },
+            yAxis: {
+                show: false,
+                type: 'value',
+                splitLine: {
+                    show: false
+                }
+            },
+            series: [{
+                type: 'line',
+                showSymbol: false,
+                hoverAnimation: false,
+                data: [],
+                itemStyle: {
+                    normal: {
+                        color: '#f5f5f5'
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#f5f5f5'
+                    }
+                },
+                areaStyle: {
+                    normal: {
+                        color: '#858585'
+                    }
+                },
+                markLine: {
+                    silent: true,
+                    symbol: "",
+                    label: {
+                        "normal": {
+                            "position": "start",
+                            "formatter": function(params) {
+                                return params.value <= 100 ? params.value * 100 : "x";
+                            }
+                        }
+                    },
+                    data: [{
+                        yAxis: 0.0
+                    }, {
+                        yAxis: 0.2
+                    }, {
+                        yAxis: 0.4
+                    }, {
+                        yAxis: 0.6
+                    }, {
+                        yAxis: 0.8
+                    }, {
+                        yAxis: 1.0
+                    }]
+                }
+            }, {
+                type: 'line',
+                showSymbol: false,
+                hoverAnimation: false,
+                data: [],
+                itemStyle: {
+                    normal: {
+                        color: '#f5f5f5'
+                    }
+                },
+                lineStyle: {
+                    normal: {
+                        color: '#f5f5f5'
+                    }
+                },
+                areaStyle: {
+                    normal: {
+                        color: '#f5f5f5'
+                    }
+                },
+                markLine: {
+                    silent: true,
+                    symbol: "",
+                    label: {
+                        "normal": {
+                            "position": "start",
+                            "formatter": function(params) {
+                                return params.value <= 100 ? params.value * 100 : "x";
+                            }
+                        }
+                    },
+                    data: [{
+                        yAxis: 0.0
+                    }, {
+                        yAxis: 0.2
+                    }, {
+                        yAxis: 0.4
+                    }, {
+                        yAxis: 0.6
+                    }, {
+                        yAxis: 0.8
+                    }, {
+                        yAxis: 1.0
+                    }]
+                }
+            }],
+            visualMap: {
+                show: false,
+                pieces: [{
+                    gt: 0.0,
+                    lte: 0.2,
+                    color: '#096'
+                }, {
+                    gt: 0.2,
+                    lte: 0.4,
+                    color: '#ffde33'
+                }, {
+                    gt: 0.4,
+                    lte: 0.6,
+                    color: '#ff9933'
+                }, {
+                    gt: 0.6,
+                    lte: 0.8,
+                    color: '#cc0033'
+                }, {
+                    gt: 0.8,
+                    lte: 1.0,
+                    color: '#660099'
+                }, {
+                    gt: 1.0,
+                    color: '#7e0023'
+                }],
+                outOfRange: {
+                    color: '#999'
+                }
+            }
+        };
+        
+        addMemOption(option, data, ctime);
+        
         return option;
     }
 
-    function getLneOption(data, ctime) {
+    function addMemOption(opts, data, ctime) {
+        ctime = hsFmtDate(ctime, "yyyy/MM/dd HH:mm:ss");
+        var list1 = opts.series[0].data;
+        var list2 = opts.series[1].data;
+        list1.push({
+            value: [ctime, data.used[0] / data.size[0]],
+            name :  ctime
+        });
+        list2.push({
+            value: [ctime,(data.used[0] + data.uses[0]) / data.size[0]],
+            name :  ctime
+        });
+        if (list1.length > 60) {
+            list1.shift();
+            list2.shift();
+        }
+    }
+
+    function getRunOption(data, ctime) {
         var option = {
             tooltip : {
                 formatter: "{a} <br/>{b}"
@@ -363,16 +599,15 @@
         return option;
     }
 
-    function addLneOption(opts, data, ctime) {
+    function addRunOption(opts, data, ctime) {
         opts.series[0].data[0].value = data.load[0];
-        //opts.series[0].data[0].name  = data.load[1];
+//      opts.series[0].data[0].name  = data.load[1];
         opts.series[0].data[0].value = data.free[0];
         opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.free[1].replace(/([A-Z])/g, "$1 ")+"B";
         opts.series[0].data[0].value = data.used[0];
         opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.used[1].replace(/([A-Z])/g, "$1 ")+"B";
         opts.series[0].data[0].value = data.uses[0];
         opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.uses[1].replace(/([A-Z])/g, "$1 ")+"B";
-        return opts;
     }
 
     function setAllCharts(ec, et) {
@@ -384,15 +619,17 @@
                 var opts;
                 var chart;
                 var runChart;
-                var proChart;
+                var cpuChart;
+                var memChart;
                 var runOpts = {};
-                var proOpts = {};
-                var proQueue = [];
-                var context  = $("#manage-info");
+                var cpuOpts = {};
+                var memOpts = {};
+                var context = $("#manage-info");
 
+                /*
                 box = context.find(".sys-info-box");
                 opts = rst.info.sys_info;
-                box.find("[data-fn=java]").text(/**/"Java "  +opts.java);
+                box.find("[data-fn=java]").text(    "Java "  +opts.java);
                 box.find("[data-fn=name]").text(opts.name+" "+opts.vers);
                 box.find("[data-fn=user]").text(opts.user);
                 opts = rst.info.app_info;
@@ -402,19 +639,29 @@
                 box.find("[data-fn=open_time]").text(opts.open_time);
                 box.find("[data-fn=base_href]").text(opts.base_href);
                 box.find("[data-fn=base_path]").text(opts.base_path);
+                */
 
-                // 负载曲线
-                box = context.find(".sys-info-box")[0];
-                opts = getProOption(rst.info.run_info, rst.info.now_msec, proQueue);
+                // CPU 曲线
+                box = context.find(".cpu-info-box")[0];
+                opts = getCpuOption(rst.info.run_info, rst.info.now_msec);
                 chart = ec.init(box, et);
-                chart.setOption(opts, true);
-                proChart = chart;
+                chart.setOption(opts);
+                cpuChart = chart;
+                cpuOpts = opts;
+
+                // MEM 曲线
+                box = context.find(".mem-info-box")[0];
+                opts = getMemOption(rst.info.run_info, rst.info.now_msec);
+                chart = ec.init(box, et);
+                chart.setOption(opts);
+                memChart = chart;
+                memOpts = opts;
 
                 // 系统负载
                 box = context.find(".run-info-box")[0];
-                opts = getLneOption(rst.info.run_info, rst.info.now_msec);
+                opts = getRunOption(rst.info.run_info, rst.info.now_msec);
                 chart = ec.init(box, et);
-                chart.setOption(opts, true);
+                chart.setOption(opts);
                 runChart = chart;
                 runOpts = opts;
 
@@ -451,11 +698,14 @@
                         url: "manage/info/search.act?rb=run_info",
                         dataType: "json",
                         success: function(rst) {
-                            opts = getProOption(rst.info.run_info, rst.info.now_msec, proQueue);
-                            proChart.setOption(opts);
+                            addRunOption(runOpts, rst.info.run_info, rst.info.now_msec);
+                            runChart.setOption(runOpts);
                             
-                            opts = addLneOption(runOpts, rst.info.run_info, rst.info.now_msec);
-                            runChart.setOption(opts, true);
+                            addCpuOption(cpuOpts, rst.info.run_info, rst.info.now_msec);
+                            cpuChart.setOption(cpuOpts);
+                            
+                            addMemOption(memOpts, rst.info.run_info, rst.info.now_msec);
+                            memChart.setOption(memOpts);
                         }
                     });
                 }, 2000);

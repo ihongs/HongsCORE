@@ -1,7 +1,7 @@
 <root>
     <rsname>@default</rsname>
-    <menu text="前台" href="common/menu.act?m=handle">
-        <role text="登录前台" name="manage">
+    <menu text="前台" href="!handle">
+        <role text="登录前台" name="handle">
             <action>handle</action>
         </role>
     </menu>

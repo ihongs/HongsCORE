@@ -24,19 +24,19 @@ import org.apache.lucene.index.Term;
  *
  * @author Hongs
  */
-public class SearchRecord extends LuceneRecord {
+public class SearchEntity extends LuceneRecord {
 
     private String dbname = null;
 
-    public SearchRecord(String path, Map form) throws HongsException {
+    public SearchEntity(String path, Map form) throws HongsException {
         super(path, form);
     }
 
-    public SearchRecord(String path) throws HongsException {
+    public SearchEntity(String path) throws HongsException {
         this (path, null);
     }
 
-    public SearchRecord(  Map  form) throws HongsException {
+    public SearchEntity(  Map  form) throws HongsException {
         this (null, form);
     }
 
@@ -50,18 +50,18 @@ public class SearchRecord extends LuceneRecord {
      * @return
      * @throws HongsException
      */
-    public static SearchRecord getInstance(String conf, String form) throws HongsException {
-        SearchRecord  inst;
+    public static SearchEntity getInstance(String conf, String form) throws HongsException {
+        SearchEntity  inst;
         Core   core = Core.getInstance();
-        String name = SearchRecord.class.getName( ) + ":" +  conf + "." + form;
+        String name = SearchEntity.class.getName( ) + ":" +  conf + "." + form;
         if ( ! core.containsKey( name )) {
             String path = conf + "/" +  form;
             String canf = FormSet.hasConfFile(path) ? path : conf ;
             Map    farm = FormSet.getInstance(canf).getForm( form);
-            inst =  new SearchRecord(path , farm);
+            inst =  new SearchEntity(path , farm);
             core.put( name, inst );
         } else {
-            inst =  (SearchRecord) core.got(name);
+            inst =  (SearchEntity) core.got(name);
         }
         return inst;
     }
@@ -92,7 +92,7 @@ public class SearchRecord extends LuceneRecord {
 
     @Override
     public void addDoc(final Document doc) throws HongsException {
-        final String key = SearchRecord.class.getName() + ":" + getBaseName();
+        final String key = SearchEntity.class.getName() + ":" + getBaseName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {
@@ -108,7 +108,7 @@ public class SearchRecord extends LuceneRecord {
 
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
-        final String key = SearchRecord.class.getName() + ":" + getBaseName();
+        final String key = SearchEntity.class.getName() + ":" + getBaseName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {
@@ -124,7 +124,7 @@ public class SearchRecord extends LuceneRecord {
 
     @Override
     public void delDoc(final String id) throws HongsException {
-        final String key = SearchRecord.class.getName() + ":" + getBaseName();
+        final String key = SearchEntity.class.getName() + ":" + getBaseName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {

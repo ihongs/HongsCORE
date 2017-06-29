@@ -4,18 +4,13 @@ import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.action.ActionHelper;
-import app.hongs.action.ActionRunner;
-import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
-import app.hongs.util.Data;
 import app.hongs.util.Synt;
 
 import java.io.IOException;
 import java.util.Collections;
 import java.util.Collection;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -49,194 +44,6 @@ public class SearchHelper {
 
     public final LuceneRecord getRecord( ) {
         return that;
-    }
-
-    protected Set<String> getForkTypes() {
-        return that.getCaseTypes("fork");
-    }
-
-    protected Set<String> getEnumTypes() {
-        Set<String> ets = new HashSet(that.getSaveTypes("enum"));
-        ets.addAll(that.getSaveTypes( "date" ));
-        ets.addAll(that.getSaveTypes("number"));
-        return ets;
-    }
-
-    /**
-     * 通过表单配置设置枚举数据(及关联关系)
-     * @param info
-     * @param conf
-     * @param form
-     * @param md 1 绑定枚举, 2 绑定关联, 3 全绑定
-     * @throws HongsException
-     */
-    public void addLabel(Map info, byte md, String conf, String form) throws HongsException {
-        if (1 != (1 & md) && 2 != (2 & md)) {
-            return;
-        }
-
-        Map<String, Map> fields = FormSet.getInstance(conf).getForm(form);
-        Map<String, Map<String, String>> enums = new HashMap();
-        Map<String, Map<String, String>> forks = new HashMap();
-        Set<String> ets = getEnumTypes();
-        Set<String> fts = getForkTypes();
-
-        for(Map.Entry<String, Map> et : fields.entrySet()) {
-            Map    fc = et.getValue();
-            String fn = et.getKey(  );
-            String ft = (String) fc.get("__type__");
-            if (1 == (1 & md) && ets.contains( ft )) {
-                String xn = (String) fc.get("enum");
-                String xc = (String) fc.get("conf");
-                if (xn == null || "".equals(xn)) xn = fn  ;
-                if (xc == null || "".equals(xc)) xc = conf;
-                Map xe = FormSet.getInstance(xc).getEnumTranslated(xn);
-                enums.put(fn, xe);
-            } else
-            if (2 == (2 & md) && fts.contains( ft )) {
-                forks.put(fn, fc);
-            }
-        }
-
-        addLabel(info, enums, forks);
-    }
-
-    /**
-     * 追加名称列
-     * 此方法通过 addEnums,addForks 来执行具体的关联操作
-     * 请预先使用 setEnums,setForks 或 setLinks 设置关联
-     * @param info 为通过 counts 得到的 info
-     * @param enums
-     * @param forks
-     * @throws HongsException
-     */
-    public void addLabel(Map info,
-            Map<String, Map<String, String>> enums,
-            Map<String, Map<String, String>> forks)
-            throws HongsException {
-        Iterator<Map.Entry> it = info.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry et = it.next( );
-            Object lo = et.getValue();
-            if (!(lo instanceof List)) {
-                continue;
-            }
-
-            List<Map> ls = (List) lo;
-            String fn = Synt.asserts(et.getKey() , "" );
-
-            if (enums != null && enums.containsKey(fn)) {
-                addEnums(ls, enums.get(fn), fn);
-            } else
-            if (forks != null && forks.containsKey(fn)) {
-                addForks(ls, forks.get(fn), fn);
-            } else {
-                // 没有对应的枚举表则用值来补全
-                for(Map lx :ls) {
-                    if (lx.containsKey("label")) {
-                        lx.put("label",lx.get("value"));
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * 通过查找枚举信息来补全名称
-     * @param ls
-     * @param es
-     * @param fn
-     */
-    protected void addEnums(List<Map> ls, Map es, String fn) {
-        for ( Map  lx : ls) {
-            String lv = (String) lx.get(1);
-            if (lv != null) {
-                lv  = (String) es.get(lv ); // 得到标签
-            }
-            if (lv == null) {
-                lv  = (String) es.get("*"); // 其他类型
-            }
-            if (lv == null) {
-                continue;
-            }
-            lx.put("label", lv);
-        }
-    }
-
-    /**
-     * 通过调用关联动作来补全名称
-     * @param ls
-     * @param fs
-     * @param fn
-     * @throws HongsException
-     */
-    protected void addForks(List<Map> ls, Map fs, String fn) throws HongsException {
-        String at = (String) fs.get("data-at");
-        String vk = (String) fs.get("data-vk");
-        String tk = (String) fs.get("data-tk");
-        if (at == null || at.length() == 0
-        ||  vk == null || vk.length() == 0
-        ||  tk == null || tk.length() == 0 ) {
-            CoreLogger.error("data-at, data-vk or data-tk can not be empty in field "+fn);
-            return;
-        }
-
-        // 映射关系
-        Map<String, List> lm = new HashMap();
-        for ( Map lx : ls) {
-            String lv = (String) lx.get( 1 );
-            List<Map>  lw = lm.get(lv);
-            if (lw == null) {
-                lw =  new ArrayList(  );
-                lm.put(lv , lw);
-            }
-            lw.add(lx);
-        }
-
-        // 查询结构
-        Map rd = new HashMap( );
-        Set rb = new HashSet( );
-        int ps = at.indexOf("?");
-        if (ps > -1) {
-            String aq;
-            aq = at.substring(ps + 1).trim();
-            at = at.substring(0 , ps).trim();
-            if (!"".equals(aq)) {
-                if (aq.startsWith("{") && aq.endsWith("}")) {
-                    rd = (  Map  ) Data.toObject(aq);
-                } else {
-                    rd = ActionHelper.parseQuery(aq);
-                }
-            }
-        }
-        rb.add(vk);
-        rb.add(tk);
-        rd.put(Cnst.RN_KEY, 0 );
-        rd.put(Cnst.RB_KEY, rb);
-        rd.put(Cnst.ID_KEY, lm.keySet());
-
-        // 获取结果
-        ActionHelper ah = ActionHelper.newInstance();
-        ah.setAttribute("IN_FORK", true);
-        ah.setRequestData(rd);
-        new ActionRunner (at, ah).doInvoke();
-        Map sd  = ah.getResponseData(  );
-        List<Map> lz = (List) sd.get("list");
-        if (lz == null) {
-            return;
-        }
-
-        // 整合数据
-        for ( Map  ro : lz) {
-            String lv = Synt.declare(ro.get(vk), "");
-            String lt = Synt.declare(ro.get(tk), "");
-
-            List<Map> lw = lm.get(lv);
-            if  (  null != lw)
-            for (Map  lx : lw) {
-                lx.put ( "label", lt);
-            }
-        }
     }
 
     /**
@@ -317,7 +124,7 @@ public class SearchHelper {
          * 例如某数据有一个地区字段且每条记录只能有一个地区,
          * 如果没有以下处理则选某地后其他未选地区数量将为零.
          *
-         * 最终结果类似 LinkedIn 的筛选
+         * 与 LinkedIn 左侧筛选类似.
          */
 
         for(String k : cxts) {
@@ -367,6 +174,7 @@ public class SearchHelper {
                 } else {
                     vz = new HashMap();
                     countz3.put(k, vz);
+                    countz .put(k, vz);
                 }
 
                 for(Object v : vs) {
@@ -653,7 +461,7 @@ public class SearchHelper {
                 String k = m != null ? m.toString() : null;
                 a.add( b );
                 b.put("value", k/**/);
-                b.put("label", c.cnt);
+                b.put("count", c.cnt);
                 b.put( "sum" , c.sum);
                 if (c.cnt == 0) {
                     b.put("min" , 0 );

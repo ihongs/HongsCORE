@@ -139,9 +139,9 @@ public class DataAction extends SearchAction {
                 Map ex = null;
 
                 String fx, ft;
-                fx = (String) mt.get("text");
-                ft = (String) mt.get("type");
-                ft = (String) ts.get(ft);
+                fx = (String) mt.get("__text__");
+                ft = (String) mt.get("__type__");
+                ft = (String) ts.get( ft );
                 if ("enum".equals(ft)) {
                     String xonf = (String) mt.get("conf");
                     String xame = (String) mt.get("enum");

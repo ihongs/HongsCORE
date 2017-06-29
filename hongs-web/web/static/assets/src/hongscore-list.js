@@ -174,8 +174,8 @@ function HsList(opts, context) {
 
     if (findBox.length) {
         findBox.on("submit", function() {
-            that.load( loadUrl , this );
-            return false;
+            that.load(null , findBox  );
+            return   false ;
         });
     }
 

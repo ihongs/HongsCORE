@@ -225,16 +225,19 @@ legend {
 
 /** 列表 **/
 
-.toolbox.btn-group {
-    padding-left: 0;
-    padding-right: 0;
-}
-
 .listbox,
 .pagebox,
 .toolbox,
 .findbox {
     margin-bottom: 15.75px
+}
+.toolbox.invisible,
+.findbox.invisible {
+    margin-bottom: 0
+}
+.toolbox.btn-group {
+    padding-right: 0;
+    padding-left : 0;
 }
 
 .listbox .table,

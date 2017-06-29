@@ -402,11 +402,11 @@ public final class Dict
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
                 } else
-                if (beg != 0  ) {
-                    if (path.charAt(beg - 1) != ']' ) // 规避 a[b].c 中的 ].
-                    lst.add(null);
-                } else {
+                if (beg == 0  ) {
                     lst.add( "" );
+                } else
+                if (']' != path.charAt(beg - 1)) { // 规避 a[b].c. 中的 ].
+                    lst.add(null);
                 }
                 beg  = end + 1;
                 break;
@@ -417,11 +417,11 @@ public final class Dict
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
                 } else
-                if (beg != 0  ) {
-                    if (path.charAt(beg - 1) != ']' ) // 规避 a[b][c] 中的 ][
-                    lst.add(null);
-                } else {
+                if (beg == 0  ) {
                     lst.add( "" );
+                } else
+                if (']' != path.charAt(beg - 1)) { // 规避 a[b][c] 中的 ][
+                    throw new RuntimeException("Syntax error at " + end + " in " + path);
                 }
                 beg  = end + 1;
                 fkh  = true;
@@ -435,9 +435,10 @@ public final class Dict
                 } else
                 if (beg != 0  ) {
                     lst.add(null);
-                } else {
-                    lst.add( "" );
-                }
+                } else
+//              if ('[' != path.charAt(beg - 1)) { // 这种情况其实并不存在
+                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+//              }
                 beg  = end + 1;
                 fkh  = false;
                 break;
@@ -451,6 +452,9 @@ public final class Dict
     } else
     if (beg  !=  len) {
         lst.add(path.substring(beg));
+    } else
+    if ('.'  == path.charAt(-1+len)) {
+        lst.add(null); // 点结尾列表.
     }
 
     return lst.toArray();

@@ -82,7 +82,7 @@
 <h2><%=lang.translate("fore."+_action+".title", nm)%></h2>
 <div id="<%=id%>" class="row">
     <div>
-        <div class="toolbox col-md-9 btn-group">
+        <div class="toolbox col-md-8 btn-group">
             <%if ( "select".equals(_action)) {%>
             <button type="button" class="ensure btn btn-primary"><%=lang.translate("fore.select", nm)%></button>
             <%} // End If %>
@@ -92,13 +92,88 @@
             <button type="button" class="delete for-checks btn btn-warning" title="<%=lang.translate("fore.delete", nm)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
-        <form class="findbox col-md-3 input-group" action="" method="POST">
+        <form class="findbox col-md-4 input-group" action="" method="POST">
             <input type="search" name="wd" class="form-control input-search"/>
             <span class="input-group-btn">
-                <button type="submit" class="btn btn-default" title="<%=lang.translate("fore.search", nm)%>"><span class="glyphicon glyphicon-search"></span></button>
+                <button type="submit" class="btn btn-default search" title="<%=lang.translate("fore.search", nm)%>"><span class="glyphicon glyphicon-search"></span></button>
+                <button type="button" class="btn btn-default filter" title="<%=lang.translate("fore.filter", nm)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                <button type="button" class="btn btn-default statis" title="<%=lang.translate("fore.filter", nm)%>"><span class="glyphicon glyphicon-stats" ></span></button>
+                <button type="button" class="btn btn-default export" title="<%=lang.translate("fore.filter", nm)%>"><span class="glyphicon glyphicon-save"  ></span></button>
             </span>
         </form>
     </div>
+    <!-- 筛选 -->
+    <form class="findbox filtbox invisible row" style="background: #ffe;">
+        <div class="form-group"></div>
+        <%
+        Iterator it2 = flds.entrySet().iterator();
+        while (it2.hasNext()) {
+            Map.Entry et = (Map.Entry)it2.next( );
+            Map     info = (Map ) et.getValue( );
+            String  name = (String) et.getKey( );
+            String  type = (String) info.get("__type__");
+            String  text = (String) info.get("__text__");
+
+            if ("@".equals(name)) {
+                continue;
+            }
+
+            if (!Synt.declare(info.get("filtable"), false)) {
+                continue;
+            }
+            // 
+            if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
+                continue;
+            }
+        %>
+        <div class="form-group row">
+            <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
+            <div class="col-sm-6">
+            <%if ("number".equals(type)) {%>
+                <input type="number" class="form-control" name="<%=name%>"/>
+            <%} else if ("string".equals(type)) {%>
+                <input type="text" class="form-control" name="<%=name%>"/>
+            <%} else if (  "date".equals(type)) {%>
+                <input type="date" class="form-control" name="<%=name%>"/>
+            <%} /*End If */%>
+            </div>
+        </div>
+        <%} /*End For*/%>
+        <div class="form-group row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <button type="submit" class="btn btn-default">确定</button>
+                <span style="padding:0.1em;"></span>
+                <button type="reset"  class="btn btn-default">重置</button>
+            </div>
+        </div>
+    </form>
+    <!-- 报表 -->
+    <form class="findbox statbox invisible row" style="backgorund: #ffe;">
+        <%
+        Iterator it3 = flds.entrySet().iterator();
+        while (it3.hasNext()) {
+            Map.Entry et = (Map.Entry)it3.next( );
+            Map     info = (Map ) et.getValue( );
+            String  name = (String) et.getKey( );
+            String  type = (String) info.get("__type__");
+            String  text = (String) info.get("__text__");
+
+            if ("@".equals(name)) {
+                continue;
+            }
+        %>
+        <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+        <div data-name="<%=name%>" data-text="<%=text%>" data-type="counts" class="col-md-6">
+            <div class="row">
+                <div class="col-sm-3 checkbox" style="height:300px; overflow: hidden; overflow-y: auto;"></div>
+                <div class="col-sm-9 chartbox" style="height:300px; overflow: hidden; overflow-y: auto;"></div>
+            </div>
+        </div>
+        <%} else {%>
+        <%} /*End If */%>
+        <%} /*End For*/%>
+    </form>
+    <!-- 列表 -->
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
             <thead>
@@ -150,7 +225,7 @@
                     <th data-fn="<%=name%>" data-ft="_file" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                     <th data-fn="<%=name%>_text" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("pick".equals(type) ||   "fork".equals(type)) {%>
+                <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <th data-fn="<%=info.get("data-ak")%>.<%=info.get("data-tk")%>" data-ft="_fork" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("form".equals(type)) {%>
                     <th data-fn="<%=info.get("name")%>.<%=info.get("data-tk")%>" data-ft="_form" <%=ob%> class="<%=oc%>"><%=text%></th>
@@ -166,9 +241,15 @@
     </div>
     <div class="pagebox"></div>
 </div>
+<script type="text/javascript" src="static/addons/echarts/echarts.js"></script>
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=id%>");
+    var toolbox = context.find(".toolbox");
+    var formbox = context.find(".findbox");
+    var findbox = formbox.eq(0);
+    var filtbox = context.find(".filtbox");
+    var statbox = context.find(".statbox");
 
     context.hsList({
         loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=2",
@@ -181,5 +262,183 @@
         ],
         _fill__fork: hsListFillFork
     });
-})( jQuery );
+
+    context.find(".export").click(function() {
+        var url = "<%=_module%>/<%=_entity%>/export/search.act?";
+        var req = formbox.serialize( );
+        window.open(url+req, "_blank");
+    });
+
+    function statis() {
+        var rb = [];
+        statbox.find("[data-type=statis]").each(function() {
+            rb.push($(this).attr("data-name"));
+        });
+        if (rb.length == 0) {
+            return;
+        }
+
+        $.ajax({
+            url: "<%=_module%>/<%=_entity%>/statis/search.act?rb="+rb.join(","),
+            data: formbox.serialize(),
+            dataType: "json",
+            context: statbox,
+            success: function(rst) {
+            }
+        });
+    }
+
+    function counts() {
+        var rb = [];
+        statbox.find("[data-type=counts]").each(function() {
+            rb.push($(this).attr("data-name"));
+        });
+        if (rb.length == 0) {
+            return;
+        }
+
+        $.ajax({
+            url: "<%=_module%>/<%=_entity%>/counts/search.act?rb="+rb.join(",")+"&md=3",
+            data: formbox.serialize(),
+            dataType: "json",
+            context: statbox,
+            success: function(rst) {
+                for (var k in rst.info) {
+                     if (k == "__total__") continue;
+                     var d  = rst.info[k];
+                     var n  = statbox.find("[data-name='"+k+"']");
+                     setCheck(n, d);
+                     setChart(n, d);
+                }
+                
+                var list = context.data( "HsList" );
+                var data = hsSerialDic (list._data);
+                for (var k in data) {
+                    statbox.find("[name='"+k+"']" ).val(data[k]);
+                }
+            }
+        });
+    }
+
+    function setCheck(box, data) {
+        var name  = box.data("name");
+        var text  = box.data("text");
+        var box2  = box.find( ".checkbox").empty();
+        
+        var label = $('<label></label>');
+        var check = $('<input type="checkbox" class="checkall"/>');
+        var title = $('<span></span>')
+                .text("全部 "+ text);
+            label.append(check).append(title).appendTo(box2);
+
+        for(var i = 0; i < data.length; i ++) {
+            var v = data[i];
+            label = $('<label></label>')
+                .attr("title", v.title +" ("+ v.count + ")");
+            check = $('<input type="checkbox" class="checkone"/>')
+                .attr("name" , name+".")
+                .attr("value", v.value );
+            title = $('<span></span>')
+                .text( v.title);
+            label.append(check).append(title).appendTo(box2);
+        }
+    }
+
+    function setChart(box, data) {
+        var legendData = [];
+        var seriesData = [];
+        for(var i = 0; i < data.length; i ++) {
+            var v = data[i];
+            legendData.push(v.label);
+            seriesData.push({
+                value : v.count,
+                name  : v.title
+            });
+        }
+
+        var opts = {
+            series : [
+                {
+                    data: seriesData,
+                    type: 'pie',
+                    radius: '80%',
+                    center: ['50%', '50%']
+                }
+            ]
+        };
+
+        box.data("echart").resize();
+        box.data("echart").setOption(opts);
+    }
+
+    if (filtbox.find(".form-group").size() == 2) {
+        findbox.find(".filter").hide( );
+    }
+    if (statbox.children().size() == 0) {
+        findbox.find(".statis").hide( );
+    }
+
+    findbox.find(".filter").click(function() {
+        filtbox.toggleClass("invisible");
+        if (!filtbox.is("invisible")) {
+            filtbox.trigger("opened");
+        }
+    });
+    findbox.find(".statis").click(function() {
+        statbox.toggleClass("invisible");
+        if (!statbox.is("invisible")) {
+            statbox.trigger("opened");
+        }
+    });
+    findbox.find(".search").click(function() {
+        filtbox.addClass("invisible");
+    });
+    filtbox.find(":submit").click(function() {
+        filtbox.addClass("invisible");
+    });
+    filtbox.find(":reset" ).click(function() {
+        setTimeout(function() {
+            filtbox.find(":submit").click();
+        }, 500);
+    });
+
+    toolbox.on("saveBack", function() {
+        if (statbox.is(".invisible")) {
+            statbox.data("changed", true );
+        } else {
+            statbox.data("changed", false);
+            setTimeout(function() {
+                statis();
+                counts();
+            }, 1000);
+        }
+    });
+    formbox.on("submit", function(  ) {
+        if (statbox.is(".invisible")) {
+            statbox.data("changed", true );
+        } else {
+            statbox.data("changed", false);
+            setTimeout(function() {
+                statis();
+                counts();
+            }, 1000);
+        }
+    });
+    statbox.on("opened", function( ) {
+        if (statbox.data("changed")) {
+            statis();
+            counts();
+        }
+    });
+    statbox.on("change", ":checkbox", function() {
+        findbox.find(":submit").click();
+    });
+
+    statbox.data("changed", true);
+    statbox.find("[data-type=counts]").each(function() {
+        var box = $(this).find(".chartbox")[0];
+        var obj = echarts.init(box);
+        $(this).data("echart", obj);
+    });
+})(jQuery);
 </script>

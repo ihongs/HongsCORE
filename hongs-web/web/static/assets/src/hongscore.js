@@ -258,16 +258,16 @@ function hsSerialArr(obj) {
  */
 function hsSerialDic(obj) {
     var arr = hsSerialArr(obj);
-    var reg = /(\.\.|\.$)/;
+    var reg = /(\[\]|\.\.|\.$)/;
     obj = {};
     for(var i = 0 ; i < arr.length ; i ++) {
         var k = arr[i].name ;
         var v = arr[i].value;
         if (k.length == 0) continue;
-        k = k.replace(/\]\[/g, ".")
-             .replace(/\[/   , ".")
-             .replace(/\]/   , "" );
-        if (reg.test( k )) { // a.b. 或 a..b 都是数组
+//      k = k.replace(/\]\[/g, ".")
+//           .replace(/\[/   , ".")
+//           .replace(/\]/   , "" );
+        if (reg.test( k )) { // a.b. a..b a[]b a[] 都是数组
             if (obj[k]===undefined) {
                 obj[k]=[ ];
             }
@@ -1947,7 +1947,7 @@ $.fn._hsModule = function(func, opts) {
     var name = func.name || /^function\s+(\w+)/.exec(func.toString())[1];
     var inst = elem.data(name);
     if (! inst) {
-        inst = new func(opts, elem);
+        inst = new func(opts ? opts : {}, elem);
         elem.data(name, inst);
         elem.addClass ( name);
     }

@@ -193,7 +193,8 @@ function gainFlds(fields, area) {
         var text  = label.text();
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
-        if (input.attr("data-ft") == "_pick") type = "pick";
+        if ( $(this).is("[data-type=image") ) type = "image";
+        if (input.attr("data-ft") == "_fork") type = "fork";
         var required = input.prop("required") ? "true" : "";
         var repeated = input.prop("multiple") ? "true" : "";
         var params   = {};

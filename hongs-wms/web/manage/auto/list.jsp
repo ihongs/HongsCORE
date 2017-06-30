@@ -118,10 +118,11 @@
                 continue;
             }
 
-            if (!Synt.declare(info.get("filtable"), false)) {
+            if (!Synt.declare(info.get("filtable"), false)
+            ||   Synt.declare(info.get("statable"), false)) {
                 continue;
             }
-            // 
+            //
             if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
                 continue;
             }
@@ -129,12 +130,14 @@
         <div class="form-group row">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
-            <%if ("number".equals(type)) {%>
+            <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                <select name="<%=name%>" class="form-control"></select>
+            <%} else if ("number".equals(type)) {%>
                 <input type="number" class="form-control" name="<%=name%>"/>
             <%} else if ("string".equals(type)) {%>
-                <input type="text" class="form-control" name="<%=name%>"/>
-            <%} else if (  "date".equals(type)) {%>
-                <input type="date" class="form-control" name="<%=name%>"/>
+                <input type="text"   class="form-control" name="<%=name%>"/>
+            <%} else if ("date"  .equals(type)) {%>
+                <input type="date"   class="form-control" name="<%=name%>"/>
             <%} /*End If */%>
             </div>
         </div>
@@ -148,7 +151,7 @@
         </div>
     </form>
     <!-- 报表 -->
-    <form class="findbox statbox invisible row" style="backgorund: #ffe;">
+    <form class="findbox statbox invisible row" style="background: #ffe;">
         <%
         Iterator it3 = flds.entrySet().iterator();
         while (it3.hasNext()) {
@@ -163,10 +166,10 @@
             }
         %>
         <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-        <div data-name="<%=name%>" data-text="<%=text%>" data-type="counts" class="col-md-6">
+        <div data-name="<%=name%>" data-text="<%=text%>" data-type="counts" class="col-md-6" style="border: 1px solid #ff8;">
             <div class="row">
-                <div class="col-sm-3 checkbox" style="height:300px; overflow: hidden; overflow-y: auto;"></div>
-                <div class="col-sm-9 chartbox" style="height:300px; overflow: hidden; overflow-y: auto;"></div>
+                <div class="col-sm-3 checkbox" style="height:250px; overflow: hidden; overflow-y: auto;"></div>
+                <div class="col-sm-9 chartbox" style="height:250px; overflow: hidden; overflow-y: auto;"></div>
             </div>
         </div>
         <%} else {%>
@@ -284,6 +287,19 @@
             dataType: "json",
             context: statbox,
             success: function(rst) {
+                for (var k in rst.info) {
+                     if (k == "__total__") continue;
+                     var d  = rst.info[k];
+                     var n  = statbox.find("[data-name='"+k+"']");
+                     setRadio(n, d);
+                     setChart(n, d);
+                }
+
+                var list = context.data( "HsList" );
+                var data = hsSerialDic (list._data);
+                for (var k in data) {
+                    statbox.find("[name='"+k+"']" ).val(data[k]);
+                }
             }
         });
     }
@@ -310,23 +326,29 @@
                      setCheck(n, d);
                      setChart(n, d);
                 }
-                
+
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='"+k+"']" ).val(data[k]);
+                    statbox.find("[name='" + k + "']").val(data[k]);
+                }
+                if (statbox.find(":checked"  ).size( )   ==   0   ) {
+                    statbox.find(".checkall2").prop("checked",true);
                 }
             }
         });
+    }
+
+    function setRadio(box, data) {
     }
 
     function setCheck(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.find( ".checkbox").empty();
-        
+
         var label = $('<label></label>');
-        var check = $('<input type="checkbox" class="checkall"/>');
+        var check = $('<input type="checkbox" class="checkall2"/>');
         var title = $('<span></span>')
                 .text("全部 "+ text);
             label.append(check).append(title).appendTo(box2);
@@ -335,7 +357,7 @@
             var v = data[i];
             label = $('<label></label>')
                 .attr("title", v.title +" ("+ v.count + ")");
-            check = $('<input type="checkbox" class="checkone"/>')
+            check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name+".")
                 .attr("value", v.value );
             title = $('<span></span>')
@@ -345,30 +367,85 @@
     }
 
     function setChart(box, data) {
-        var legendData = [];
-        var seriesData = [];
+        var chart = box.data("echart");
+        var xData = [];
+        var bData = [];
+        var pData = [];
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            legendData.push(v.label);
-            seriesData.push({
-                value : v.count,
-                name  : v.title
+            xData.push(v.title);
+            bData.push(v.count);
+            pData.push({
+                value: v.count,
+                name : v.title
             });
         }
 
         var opts = {
-            series : [
-                {
-                    data: seriesData,
-                    type: 'pie',
-                    radius: '80%',
-                    center: ['50%', '50%']
+            series: [{
+                data: pData,
+                type: 'pie'
+            }],
+            xAxis : [],
+            yAxis : [],
+            grid: {
+                top: 30,
+                left: 15,
+                right: 15,
+                bottom: 0,
+                containLabel: true
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    show: true,
+                    myPie: {
+                        show: true,
+                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
+                        title: '饼视图',
+                        onclick: function () {console.log(1);
+                            chart.setOption({
+                                series: [{
+                                    data: pData,
+                                    type: 'pie'
+                                }],
+                                xAxis : [{
+                                    show: false
+                                }],
+                                yAxis : [{
+                                    show: false
+                                }]
+                            });
+                        }
+                    },
+                    myBar: {
+                        show: true,
+                        icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
+                        title: '柱状图',
+                        onclick: function () {console.log(2);
+                            chart.setOption({
+                                series: [{
+                                    data: bData,
+                                    type: 'bar'
+                                }],
+                                xAxis : [{
+                                    data: xData,
+                                    show: true,
+                                    type: 'category'
+                                }],
+                                yAxis : [{
+                                    show: true,
+                                    type: "value"
+                                }]
+                            });
+                        }
+                    }
                 }
-            ]
+            }
         };
 
-        box.data("echart").resize();
-        box.data("echart").setOption(opts);
+        chart.resize();
+        chart.setOption(opts);
     }
 
     if (filtbox.find(".form-group").size() == 2) {
@@ -431,6 +508,11 @@
         }
     });
     statbox.on("change", ":checkbox", function() {
+        if ($(this).is(".checkall2")) {
+            $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
+        } else {
+            $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
+        }
         findbox.find(":submit").click();
     });
 

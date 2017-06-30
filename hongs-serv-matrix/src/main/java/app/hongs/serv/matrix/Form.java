@@ -304,6 +304,8 @@ public class Form extends Model {
             item.setAttribute("name", s);
             s = (String) fiel.get("__type__");
             item.setAttribute("type", s);
+            s = (String) fiel.get("__rule__");
+            item.setAttribute("rule", s);
             s = Synt.declare(fiel.get("__required__"), "");
             item.setAttribute("required", s);
             s = Synt.declare(fiel.get("__repeated__"), "");

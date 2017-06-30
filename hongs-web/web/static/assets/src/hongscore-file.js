@@ -263,14 +263,16 @@
         if (! inp.data("picked")) {
             inp.data("picked", 1);
             var box = inp.siblings(".pickbox");
-            var  w  = box.data("width" );
-            var  h  = box.data("height");
+            var  k  = box.data("keep");
+            var  w  = box.data("size");
+            var  h  = w.split ("*", 2);
+                 w  = h [0]; h = h [1];
             var tmp = $('<input type="hidden"/>')
                   .attr("name", inp.attr("name"));
             inp.on("change", function( ) {
             inp.hsReadFile ( function(src) {
                    _hsSoloFile(box, false);
-                inp.hsPickView(box, src, w, h);
+                inp.hsPickView(box, src, w, h, k);
                 /**
                  * 因为 hsReadFile 是异步的,
                  * 插一个输入项规避校验失败;
@@ -324,9 +326,10 @@ function hsFormFillView(box, v, n) {
     if (v.length) {
         _hsSoloFile ( box, false );
     }
-    var k = box.data("keep"  );
-    var w = box.data("width" );
-    var h = box.data("height");
+    var k = box.data("keep");
+    var w = box.data("size");
+    var h = w.split ("*", 2);
+        w = h [0]; h = h [1];
     jQuery.each(v , function(i, x) {
         box.hsFillView(n, x, w, h, k);
     });

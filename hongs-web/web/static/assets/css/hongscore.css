@@ -1,7 +1,7 @@
 /**
  * HongsCORE 公共样式
  * 作者: 黄弘<kevin.hongs@gmail.com>
- * 版本: 2017/06/24 07:38:10
+ * 版本: 2017/06/30 23:39
  */
 
 html, body, label, input, select, button, textarea {
@@ -421,23 +421,27 @@ ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
 }
+.pickbox:after {
+    clear: both;
+    content: " ";
+    display: table;
+}
 
 .preview {
     float: left;
     overflow: hidden;
-    position: relative;
-    border-radius: 5px;
     margin-bottom: 5px;
     margin-right : 5px;
-}
-.preview img {
-    position: absolute;
-}
-.preview .close {
-    border: 0px;
     position: relative;
-    border-radius: 1em;
-    padding: 0 0.25em 0 0.25em;
+}
+.preview a {
+    padding-left : 5px;
+    padding-right: 5px;
+    position: relative;
+}
+.preview img,
+.preview input {
+    position: absolute;
 }
 
 .datebox.input-group .form-control {

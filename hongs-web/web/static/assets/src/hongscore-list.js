@@ -99,10 +99,10 @@ function HsList(opts, context) {
             return;
         }
 
-        if (typeof(n) === "string") {
+        if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
+            context.hsFind(n).on("click", [n, m, u], sendHand);
+        } else {
             context.on("click", n, [n, m, u], sendHand);
-        } else if (n) {
-            n.on("click", [n, m, u], sendHand);
         }
     });
 
@@ -163,10 +163,10 @@ function HsList(opts, context) {
             return;
         }
 
-        if (typeof(n) === "string") {
+        if (typeof(n) !== "string" || /^[@%\^\-+~>*#]/.test(n)) {
+            context.hsFind(n).on("click", [n, m, u], openHand);
+        } else {
             context.on("click", n, [n, m, u], openHand);
-        } else if (n) {
-            n.on("click", [n, m, u], openHand);
         }
     });
 

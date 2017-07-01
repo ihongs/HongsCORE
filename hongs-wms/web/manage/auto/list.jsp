@@ -7,6 +7,7 @@
 <%@page import="app.hongs.action.ActionDriver"%>
 <%@page import="app.hongs.action.FormSet"%>
 <%@page import="app.hongs.action.NaviMap"%>
+<%@page import="app.hongs.util.Data"%>
 <%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
@@ -108,9 +109,9 @@
         <%
         Iterator it2 = flds.entrySet().iterator();
         while (it2.hasNext()) {
-            Map.Entry et = (Map.Entry)it2.next( );
-            Map     info = (Map ) et.getValue( );
-            String  name = (String) et.getKey( );
+            Map.Entry et = (Map.Entry) it2.next();
+            Map     info = (Map ) et.getValue();
+            String  name = (String) et.getKey();
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
@@ -122,10 +123,6 @@
             ||   Synt.declare(info.get("statable"), false)) {
                 continue;
             }
-            //
-            if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {
-                continue;
-            }
         %>
         <div class="form-group row">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
@@ -134,10 +131,10 @@
                 <select name="<%=name%>" class="form-control"></select>
             <%} else if ("number".equals(type)) {%>
                 <input type="number" class="form-control" name="<%=name%>"/>
-            <%} else if ("string".equals(type)) {%>
-                <input type="text"   class="form-control" name="<%=name%>"/>
             <%} else if ("date"  .equals(type)) {%>
                 <input type="date"   class="form-control" name="<%=name%>"/>
+            <%} else {%>
+                <input type="text"   class="form-control" name="<%=name%>"/>
             <%} /*End If */%>
             </div>
         </div>
@@ -155,25 +152,53 @@
         <%
         Iterator it3 = flds.entrySet().iterator();
         while (it3.hasNext()) {
-            Map.Entry et = (Map.Entry)it3.next( );
-            Map     info = (Map ) et.getValue( );
-            String  name = (String) et.getKey( );
+            Map.Entry et = (Map.Entry) it3.next();
+            Map     info = (Map ) et.getValue();
+            String  name = (String) et.getKey();
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
             if ("@".equals(name)) {
                 continue;
             }
+            if (!Synt.declare(info.get("statable"), false)
+            &&  !Synt.declare(info.get("filtable"), false)) {
+                continue;
+            }
+
+            String rb;
+
+            if ( "number".equals(type)
+            ||     "date".equals(type)
+            ||     "time".equals(type)
+            || "datetime".equals(type)) {
+                String enumConf = Synt.defxult((String) info.get("conf"),_module);
+                String enumName = Synt.defxult((String) info.get("enum"),   name);
+                Map    enumData = FormSet.getInstance(enumConf).getEnum(enumName);
+                if (enumData !=  null) {
+                    StringBuilder sb = new StringBuilder();
+                    for (Object code : enumData.keySet( )) {
+                        sb.append("&rb.=")
+                          .append(name)
+                          .append(":" )
+                          .append(code);
+                    }
+                    rb = sb.toString( );
+                } else {
+                    rb = "&rb.="+ name ;
+                }
+                type = "statis";
+            } else {
+                rb   = "&rb.=" +  name;
+                type = "counts";
+            }
         %>
-        <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-        <div data-name="<%=name%>" data-text="<%=text%>" data-type="counts" class="col-md-6" style="border: 1px solid #ff8;">
+        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="col-md-6" style="border: 1px solid #ff8;">
             <div class="row">
                 <div class="col-sm-3 checkbox" style="height:250px; overflow: hidden; overflow-y: auto;"></div>
                 <div class="col-sm-9 chartbox" style="height:250px; overflow: hidden; overflow-y: auto;"></div>
             </div>
         </div>
-        <%} else {%>
-        <%} /*End If */%>
         <%} /*End For*/%>
     </form>
     <!-- 列表 -->
@@ -256,14 +281,19 @@
 
     context.hsList({
         loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=2",
+        sendUrls: [
+            ['.delete', '<%=_module%>/<%=_entity%>/delete.act', '<%=lang.translate("fore.delete.confirm", nm)%>']
+        ],
         openUrls: [
             ['.create', '<%=_module%>/<%=_entity%>/form.html?md=0', '@'],
             ['.update', '<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}', '@']
         ],
-        sendUrls: [
-            ['.delete', '<%=_module%>/<%=_entity%>/delete.act', '<%=lang.translate("fore.delete.confirm", nm)%>']
-        ],
         _fill__fork: hsListFillFork
+    });
+
+    filtbox.hsForm({
+        loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=0",
+        fillInfo: function() {}
     });
 
     context.find(".export").click(function() {
@@ -275,14 +305,14 @@
     function statis() {
         var rb = [];
         statbox.find("[data-type=statis]").each(function() {
-            rb.push($(this).attr("data-name"));
+            rb.push($(this).attr("data-rb"));
         });
         if (rb.length == 0) {
             return;
         }
 
         $.ajax({
-            url: "<%=_module%>/<%=_entity%>/statis/search.act?rb="+rb.join(","),
+            url: "<%=_module%>/<%=_entity%>/statis/search.act?md=1"+rb.join(""),
             data: formbox.serialize(),
             dataType: "json",
             context: statbox,
@@ -291,8 +321,8 @@
                      if (k == "__total__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
-                     setRadio(n, d);
-                     setChart(n, d);
+                     setStatisCheck(n, d);
+                     setStatisChart(n, d);
                 }
 
                 var list = context.data( "HsList" );
@@ -307,14 +337,14 @@
     function counts() {
         var rb = [];
         statbox.find("[data-type=counts]").each(function() {
-            rb.push($(this).attr("data-name"));
+            rb.push($(this).attr("data-rb"));
         });
         if (rb.length == 0) {
             return;
         }
 
         $.ajax({
-            url: "<%=_module%>/<%=_entity%>/counts/search.act?rb="+rb.join(",")+"&md=3",
+            url: "<%=_module%>/<%=_entity%>/counts/search.act?md=1"+rb.join(""),
             data: formbox.serialize(),
             dataType: "json",
             context: statbox,
@@ -323,8 +353,8 @@
                      if (k == "__total__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
-                     setCheck(n, d);
-                     setChart(n, d);
+                     setCountsCheck(n, d);
+                     setCountsChart(n, d);
                 }
 
                 var list = context.data( "HsList" );
@@ -339,10 +369,10 @@
         });
     }
 
-    function setRadio(box, data) {
+    function setStatisCheck(box, data) {
     }
 
-    function setCheck(box, data) {
+    function setCountsCheck(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.find( ".checkbox").empty();
@@ -366,7 +396,7 @@
         }
     }
 
-    function setChart(box, data) {
+    function setCountsChart(box, data) {
         var chart = box.data("echart");
         var xData = [];
         var bData = [];

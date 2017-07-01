@@ -420,13 +420,12 @@
                     name:'负载',
                     type:'gauge',
                     radius : '100%',
-                    z: 3,
                     min:0,
-                    max:3,
-                    splitNumber:6,
+                    max:10,
+                    splitNumber:10,
                     axisLine: {            // 坐标轴线
                         lineStyle: {       // 属性lineStyle控制线条样式
-                            color: [[0.23, '#228b22'],[0.33, '#48b'],[0.66, '#f80'],[0.99, '#ff4500']], 
+                            color: [[0.1, '#228822'],[0.5, '#ff8800'],[1.0, '#ff4400']], 
                             width: 10
                         }
                     },
@@ -601,13 +600,13 @@
 
     function addRunOption(opts, data, ctime) {
         opts.series[0].data[0].value = data.load[0];
-//      opts.series[0].data[0].name  = data.load[1];
-        opts.series[0].data[0].value = data.free[0];
-        opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.free[1].replace(/([A-Z])/g, "$1 ")+"B";
-        opts.series[0].data[0].value = data.used[0];
-        opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.used[1].replace(/([A-Z])/g, "$1 ")+"B";
-        opts.series[0].data[0].value = data.uses[0];
-        opts.series[0].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.uses[1].replace(/([A-Z])/g, "$1 ")+"B";
+        opts.series[0].data[0].name  = data.load[1];
+        opts.series[1].data[0].value = data.free[0];
+        opts.series[1].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.free[1].replace(/([A-Z])/g, "$1 ")+"B";
+        opts.series[2].data[0].value = data.used[0];
+        opts.series[2].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.used[1].replace(/([A-Z])/g, "$1 ")+"B";
+        opts.series[3].data[0].value = data.uses[0];
+        opts.series[3].data[0].name  = hsFmtNum(data.free[0]/data.size[0]*100)+"%, "+data.uses[1].replace(/([A-Z])/g, "$1 ")+"B";
     }
 
     function setAllCharts(ec, et) {

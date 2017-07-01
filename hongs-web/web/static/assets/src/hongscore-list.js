@@ -67,7 +67,7 @@ function HsList(opts, context) {
             n = t.data   ( "trigger");
         }
         if (typeof(u) === "function") {
-            u.call(n, m, that);
+            u.call(that, n, m);
             return;
         }
 
@@ -125,7 +125,7 @@ function HsList(opts, context) {
             n = t.data   ( "trigger");
         }
         if (typeof(u) === "function") {
-            u.call(n, m, that);
+            u.call(that, n, m);
             return;
         }
 

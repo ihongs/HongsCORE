@@ -40,9 +40,9 @@ public final class Synt {
     private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F]\\s*");
 
     /**
-     * 区间参数: 同数学表达式 [min,max] (min,max) [min,max) 空则表示无限
+     * 区间参数: 表达式 [min,max] (min,max) [min,max) 空则表示无限, 逗号可替换为 ~
      */
-    private static final Pattern RNGP = Pattern.compile("^(\\(\\[)?([^,]+)?,([^,]+)?(\\]\\))?");
+    private static final Pattern RNGP = Pattern.compile("^(\\(\\[)?([^,~]+)?[,~]([^,~]+)?(\\]\\))?");
 
     /**
      * 视为假的字符串有: 0,n,f,no,false 和 空串

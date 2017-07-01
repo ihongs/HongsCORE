@@ -148,7 +148,7 @@ public class DataAction extends SearchAction {
                     String xonf = (String) mt.get("conf");
                     String xame = (String) mt.get("enum");
                     if (null == xonf || "".equals( xonf )) xonf = mod;
-                    if (null == xame || "".equals( xame )) xame = ent;
+                    if (null == xame || "".equals( xame )) xame = fn ;
                     ex = FormSet.getInstance(xonf).getEnum(xame);
                     es.put(fn, ex);
                 }

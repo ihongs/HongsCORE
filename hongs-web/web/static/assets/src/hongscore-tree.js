@@ -85,13 +85,13 @@ function HsTree(opts, context) {
     if (sendUrls) jQuery.each(sendUrls, function(i, a) {
         switch (a.length) {
         case 3:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = a[2];
             break;
         case 2:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = undefined;
             break;
         default:
@@ -148,13 +148,13 @@ function HsTree(opts, context) {
     if (openUrls) jQuery.each(openUrls, function(i, a) {
         switch (a.length) {
         case 3:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = a[2];
             break;
         case 2:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = undefined;
             break;
         default:
@@ -180,10 +180,11 @@ function HsTree(opts, context) {
     if (linkUrls) {
         treeBox.on("select", function(evt, id) {
             for(var i = 0; i < linkUrls.length; i ++) {
-                var u = linkUrls[i][1];
-                u = u.replace('{ID}', encodeURIComponent(id));
-                u = hsFixPms (   u  , loadBox   );
-                jQuery( linkUrls[i][0]).hsLoad(u);
+                var u = linkUrls[i][0];
+                var m = linkUrls[i][1];
+                u = u.replace ('{ID}', encodeURIComponent(id));
+                u =  hsFixPms (u , loadBox);
+                treeBox.hsFind(m).hsLoad(u);
             }
         });
     }

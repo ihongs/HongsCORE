@@ -1886,6 +1886,9 @@ $.fn.hsData = function() {
 $.fn._hsConfig = $.fn.hsData; // 兼容旧版命名
 
 $.fn.hsFind = function(selr) {
+    if (typeof selr != "string") {
+        return $ (selr);
+    }
     var elem = this;
     selr = $.trim(selr);
     var flag = selr.charAt(0);

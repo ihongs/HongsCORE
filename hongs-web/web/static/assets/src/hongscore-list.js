@@ -86,13 +86,13 @@ function HsList(opts, context) {
     if (sendUrls) jQuery.each(sendUrls, function(i, a) {
         switch (a.length) {
         case 3:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = a[2];
             break;
         case 2:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = undefined;
             break;
         default:
@@ -150,13 +150,13 @@ function HsList(opts, context) {
     if (openUrls) jQuery.each(openUrls, function(i, a) {
         switch (a.length) {
         case 3:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = a[2];
             break;
         case 2:
-            n = a[0];
-            u = a[1];
+            u = a[0];
+            n = a[1];
             m = undefined;
             break;
         default:

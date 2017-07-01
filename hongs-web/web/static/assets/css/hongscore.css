@@ -430,6 +430,7 @@ ul.pickbox > li.btn span {
 .preview {
     float: left;
     overflow: hidden;
+    border: 1px solid #ccc;
     margin-bottom: 5px;
     margin-right : 5px;
     position: relative;

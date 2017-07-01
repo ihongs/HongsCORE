@@ -84,6 +84,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
     private IndexReader   reader  = null ;
     private IndexWriter   writer  = null ;
     private String        dbpath  = null ;
+    private Set<String>  replies  = null ;
 
     /**
      * 构造方法
@@ -364,7 +365,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
      * @throws HongsException
      */
     public String add(Map rd) throws HongsException {
-        String id = Synt.declare(rd.get(Cnst.ID_KEY), String.class);
+        String id = Synt.declare(rd.get(Cnst.ID_KEY), String.class );
         if (id != null && id.length() != 0) {
             throw new HongsException.Common("Id can not set in add");
         }
@@ -394,10 +395,9 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setView(new HashMap());
-            Map  md = doc2Map(doc);
-            md.putAll(rd);
-            rd = md;
+            replies(null);
+            Map md = doc2Map(doc);
+            md.putAll(rd);rd = md;
             doc =  new Document();
         }
         rd.put(Cnst.ID_KEY, id);
@@ -425,10 +425,9 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setView(new HashMap());
-            Map  md = doc2Map(doc);
-            md.putAll(rd);
-            rd = md;
+            replies(null);
+            Map md = doc2Map(doc);
+            md.putAll(rd);rd = md;
         }
         rd.put(Cnst.ID_KEY, id);
         docAdd(doc, rd);
@@ -459,8 +458,8 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
      */
     public Map get(String id) throws HongsException {
         Document doc = getDoc(id);
-        if (doc != null) {
-           setView(new HashMap());
+        if ( doc != null) {
+            replies(null);
             return doc2Map( doc );
         } else {
             return new HashMap( );
@@ -534,7 +533,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
     public Loop search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
-                  setView (rd);
+                  replies (rd);
         Loop  r = new Loop(this, q, s, begin, limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
@@ -598,7 +597,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
         }
     }
 
-    public Document map2Doc(Map map) throws HongsException {
+    public Document map2Doc(Map map) {
         Document doc = new Document();
         docAdd(doc, map);
         return doc;
@@ -1009,47 +1008,6 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
         return new Sort(of.toArray(new SortField[0]));
     }
 
-    /**
-     * 返回字段
-     * @param rd
-     */
-    public void setView(Map rd) {
-        Object fz = rd.get(Cnst.RB_KEY);
-        Set<String> fs = fz != null
-                  ? Synt.asTerms ( fz )
-                  : new LinkedHashSet();
-        Map<String, Map> fields = getFields();
-
-        if (fs != null && !fs.isEmpty()) {
-            Set<String> cf = new HashSet();
-            Set<String> sf = new HashSet();
-            for (String fn : fs) {
-                if (fn.startsWith("-")) {
-                    fn= fn.substring(1);
-                    cf.add(fn);
-                } else {
-                    sf.add(fn);
-                }
-            }
-            if (!sf.isEmpty()) {
-                cf.addAll(fields.keySet());
-                cf.removeAll(sf);
-            }
-            cf.add("@"); // Skip form conf;
-
-            for(Map.Entry<String, Map> me : fields.entrySet()) {
-                Map fc = me.getValue();
-                String f = me.getKey();
-                fc.put   ( "--unwanted--" , cf.contains(f) || unstored(fc));
-            }
-        } else {
-            for(Map.Entry<String, Map> me : fields.entrySet()) {
-                Map fc = me.getValue();
-                fc.remove( "--unwanted--" );
-            }
-        }
-    }
-
     //** 底层工具 **/
 
     /**
@@ -1271,11 +1229,13 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
     }
 
     protected boolean sortable(Map fc) {
-        return getSortable().contains(Synt.asserts(fc.get("__name__"), ""));
+        String name = Synt.asserts(fc.get("__name__"), "");
+        return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
     protected boolean filtable(Map fc) {
-        return getFiltable().contains(Synt.asserts(fc.get("__name__"), ""));
+        String name = Synt.asserts(fc.get("__name__"), "");
+        return getFiltable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
     protected boolean repeated(Map fc) {
@@ -1286,20 +1246,31 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
         return Synt.asserts(fc.get(  "unstored"  ), false);
     }
 
-    protected boolean unwanted(Map fc) {
-        return Synt.asserts(fc.get("--unwanted--"), false);
+    protected boolean ignored (Map fc) {
+        return "".equals(fc.get("__name__"))
+          ||  "@".equals(fc.get("__name__"))
+          || "Ignore".equals(fc.get("rule"));
     }
 
-    protected boolean ignored (Map fc, String k) {
-        return "".equals( k)  ||  "@".equals( k)
-            || "Ignore".equals(fc.get( "rule" ));
+    protected boolean replied (Map fc) {
+        return replies == null
+          ||   replies.isEmpty (/* ignore empty */)
+          ||   replies.contains(fc.get("__name__"));
     }
 
-    protected boolean queried (BooleanQuery.Builder qb, String k, Object v) {
+    public final void replies (Map rd) {
+        if (  rd   == null) {
+            replies = null;
+            return;
+        }
+        replies = Synt.asTerms(rd.get(Cnst.RB_KEY));
+    }
+
+    protected boolean queried (BooleanQuery.Builder qb, String fn, Object fv) {
         return false;
     }
 
-    protected boolean sorted  (List <  SortField  > sf, String k,boolean r) {
+    protected boolean sorted  (List <  SortField  > sf, String fn, boolean r) {
         return false;
     }
 
@@ -1310,9 +1281,9 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
             Map    m = (Map) e.getValue();
             String k = (String)e.getKey();
 
-            if (unwanted(m)
-            ||  unstored(m)
-            ||  ignored (m, k)) {
+            if (unstored(m)
+            ||  ignored (m)
+            || !replied (m)) {
                 continue;
             }
 
@@ -1402,7 +1373,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
             Object v = Dict.getParam(map , k);
 
             if (null == v
-            ||  ignored(m , k)) {
+            ||  ignored(m)) {
                 continue;
             }
 

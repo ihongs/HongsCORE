@@ -50,9 +50,9 @@ data-fl,data-fd 的取值可以是数字或表达式, 参数可使用 form|list,
     <div id="member-user-list"
          data-module="hsList"
          data-load-url="manage/member/user/list.act?dept_id=${dept_id}"
-         data-open-urls-0="['.create','manage/member/user/form.html?dept_id=${dept_id}','@']"
-         data-open-urls-1="['.modify','manage/member/user/form.html?id={ID}','@']"
-         data-send-urls-0="['.delete','manage/member/user/delete.act','您确定要删除此用户?']">
+         data-send-urls-0="['manage/member/user/delete.act','.delete','您确定要删除此用户?']"
+         data-open-urls-0="['manage/member/user/form.html?dept_id=${dept_id}','.create','@']"
+         data-open-urls-1="['manage/member/user/form.html?id={ID}'           ,'.modify','@']">
         <div>
             <div class="toolbox col-md-8 btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
@@ -90,10 +90,10 @@ data-fl,data-fd 的取值可以是数字或表达式, 参数可使用 form|list,
     <div id="member-dept-tree"
          data-module="hsTree"
          data-load-url="manage/member/dept/list.act"
-         data-link-urls-0="['.main-context','manage/member/user/list.html?dept_id={ID}']"
-         data-open-urls-0="['.create','manage/member/dept/form.html?pid={ID}','@']"
-         data-open-urls-1="['.modify','manage/member/dept/form.html?id={ID}','@']"
-         data-send-urls-0="['.delete','manage/member/dept/delete.act','您确定要删除此部门?']"
+         data-send-urls-0="['manage/member/dept/delete.act','.delete','您确定要删除此部门?']"
+         data-link-urls-0="['manage/member/user/list.html?dept_id={ID}','.main-context']"
+         data-open-urls-0="['manage/member/dept/form.html?pid={ID}','.create','@']"
+         data-open-urls-1="['manage/member/dept/form.html?id={ID}' ,'.modify','@']"
          data-root-name="组织架构">
         <div class="toolbox btn-group">
             <button type="button" class="create btn btn-default">添加</button>

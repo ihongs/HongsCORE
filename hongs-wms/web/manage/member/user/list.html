@@ -1,9 +1,9 @@
 <div id="member-user-list"
      data-module="hsList"
      data-load-url="manage/member/user/list.act?dept_id=${dept_id}"
-     data-open-urls-0="['.create','manage/member/user/form.html?dept_id=${dept_id}','@']"
-     data-open-urls-1="['.modify','manage/member/user/form.html?id={ID}','@']"
-     data-send-urls-0="['.delete','manage/member/user/delete.act','您确定要删除此用户?']">
+     data-open-urls-0="['manage/member/user/form.html?dept_id=${dept_id}','.create','@']"
+     data-open-urls-1="['manage/member/user/form.html?id={ID}','.modify','@']"
+     data-send-urls-0="['manage/member/user/delete.act','.delete','您确定要删除此用户?']">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <button type="button" class="create btn btn-default">创建用户</button>

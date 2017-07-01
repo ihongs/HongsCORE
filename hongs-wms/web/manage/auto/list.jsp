@@ -282,11 +282,15 @@
     context.hsList({
         loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=2",
         sendUrls: [
-            ['.delete', '<%=_module%>/<%=_entity%>/delete.act', '<%=lang.translate("fore.delete.confirm", nm)%>']
+            ['<%=_module%>/<%=_entity%>/delete.act',
+             '.delete',
+             '<%=lang.translate("fore.delete.confirm", nm)%>']
         ],
         openUrls: [
-            ['.create', '<%=_module%>/<%=_entity%>/form.html?md=0', '@'],
-            ['.update', '<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}', '@']
+            ['<%=_module%>/<%=_entity%>/form.html?md=0',
+             '.create', '@'],
+            ['<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}',
+             '.update', '@']
         ],
         _fill__fork: hsListFillFork
     });

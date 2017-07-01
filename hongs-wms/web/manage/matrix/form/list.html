@@ -1,9 +1,9 @@
 <div id="hongs-module-list"
      data-module="hsList"
      data-load-url="manage/matrix/form/list.act?unit_id=${unit_id}&ob=snum"
-     data-open-urls-0="['.create','manage/matrix/form/form.html?unit_id=${unit_id}','@']"
-     data-open-urls-1="['.modify','manage/matrix/form/form.html?id={ID}','@']"
-     data-send-urls-0="['.delete','manage/matrix/form/delete.act','您确定要删除此表单?']">
+     data-send-urls-0="['manage/matrix/form/delete.act','.delete','您确定要删除此表单?']"
+     data-open-urls-0="['manage/matrix/form/form.html?unit_id=${unit_id}','.create','@']"
+     data-open-urls-1="['manage/matrix/form/form.html?id={ID}'           ,'.modify','@']">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <button type="button" class="create btn btn-default">创建表单</button>

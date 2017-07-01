@@ -173,6 +173,10 @@ public class Form extends Model {
             top.put("__name__", "id");
             top.put("__text__", "ID");
             top.put("__type__", "hidden");
+            top.put("listable", "yes");
+            top.put("sortable", "yes");
+            top.put("findable", "yes");
+            top.put("filtable", "yes");
 
             conf = Data.toString ( flds );
             rd.put("conf", conf);

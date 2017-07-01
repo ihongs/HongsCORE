@@ -120,22 +120,6 @@ public class Data extends SearchEntity {
         return fields;
     }
 
-    @Override
-    public Map search(Map rd) throws HongsException {
-        // 搜索也可以查ID
-        String wd = Synt.declare(rd.get(Cnst.WD_KEY), String.class);
-        if (wd != null && !wd.isEmpty()) {
-            if (getFindable().isEmpty()) {
-                Dict.put(rd, wd, Cnst.ID_KEY, Cnst.EQ_REL, wd);
-            } else
-            if (wd.matches("^\\w{1,20}$")) {
-                Dict.put(rd, wd, Cnst.ID_KEY, Cnst.OR_REL, wd);
-            }
-        }
-
-        return super.search(rd);
-    }
-
     /**
      * 添加文档
      * @param rd
@@ -239,7 +223,7 @@ public class Data extends SearchEntity {
 
         //** 保存到数据库 **/
 
-        if (!saveToDb) {
+        if (saveToDb) {
             // 拼接展示字段
             StringBuilder nm = new StringBuilder();
             for ( String  fn : getFindable( ) ) {

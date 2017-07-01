@@ -112,7 +112,9 @@ public class DataAction extends SearchAction {
         Data    sr = (Data) getEntity(helper);
         Map     rd = helper.getRequestData( );
                 rd = getReqMap(helper, sr, "export", rd);
-        Loop    lp = sr.search(  rd  , 0 , 0);
+        int     rn = Synt.declare(rd.get("rn"), 0);
+        int     pn = Synt.declare(rd.get("pn"), 0);
+        Loop    lp = sr.search( rd , pn , rn );
 
         /**
          * 逐行输出

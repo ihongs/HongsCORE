@@ -809,30 +809,24 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
      * @throws HongsException
      */
     public Query getQuery(Map rd) throws HongsException {
-        BooleanQuery.Builder query = new BooleanQuery.Builder();
-        Map<String, Map> fields = getFields(  );
-        Set<String>    filtCols = getFiltable();
-        Set<String>    funcCols = getFuncKeys();
-
-        // 可过滤字段不可能为空, 至少应该有一个 id
-        if (filtCols == null || filtCols.isEmpty()) {
-            filtCols  = fields.keySet();
-        }
+        Map<String, Map> fields = getFields();
+        BooleanQuery.Builder qr = new BooleanQuery.Builder();
 
         for (Object o : rd.entrySet()) {
             Map.Entry e = (Map.Entry) o;
             Object fv = e.getValue( );
             String fn = (String) e.getKey();
 
-            // 功能型参数不在这里处理
-            if (fn == null || fv == null
-            ||  funcCols.contains( fn )
-            || !filtCols.contains( fn )) {
+            // 自定义查询
+            if (queried(qr, fn, fv )) {
                 continue;
             }
 
             Map m = (Map ) fields.get( fn );
             if (m == null) {
+                continue;
+            }
+            if (filtable(m)==false) {
                 continue;
             }
 
@@ -863,7 +857,7 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
                 continue;
             }
 
-            qryAdd(query, fn, fv, aq);
+            qryAdd(qr, fn, fv, aq);
         }
 
         // 关键词
@@ -879,17 +873,16 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
 
                     Map fw = new HashMap(  );
                     fw.put(Cnst.OR_REL , fv);
-                    BooleanQuery.Builder quary;
-                     quary = new BooleanQuery.Builder();
+                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
-                    for(String fk: fs) {
-                        qryAdd(quary, fk, fw, new SearchQuery());
+                    for(String fk : fs) {
+                        qryAdd(qx , fk , fw , new SearchQuery());
                     }
 
-                     query.add(quary.build(), BooleanClause.Occur.MUST);
+                    qr.add(qx.build(), BooleanClause.Occur.MUST);
                 } else {
-                    for(String fk: fs) {
-                        qryAdd(query, fk, fv, new SearchQuery());
+                    for(String fk : fs) {
+                        qryAdd(qr , fk , fv , new SearchQuery());
                     }
                 }
             }
@@ -897,19 +890,19 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
 
         // 或条件
         if (rd.containsKey(Cnst.OR_KEY)) {
-            BooleanQuery.Builder quary = new BooleanQuery.Builder();
+            BooleanQuery.Builder qx = new BooleanQuery.Builder( );
             Set<Map> set = Synt.declare(rd.get(Cnst.OR_KEY), Set.class);
             for(Map  map : set) {
-                quary.add(getQuery(map), BooleanClause.Occur.SHOULD);
+                qx.add(getQuery(map), BooleanClause.Occur.SHOULD);
             }
-            query.add(quary.build(), BooleanClause.Occur.MUST);
+            qr.add(qx.build(), BooleanClause.Occur.MUST);
         }
 
         // 附条件
         if (rd.containsKey(Cnst.SR_KEY)) {
             Set<Map> set = Synt.declare(rd.get(Cnst.SR_KEY), Set.class);
             for(Map  map : set) {
-                query.add(getQuery(map), BooleanClause.Occur.SHOULD);
+                qr.add(getQuery(map), BooleanClause.Occur.SHOULD);
             }
         }
 
@@ -917,17 +910,17 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
         if (rd.containsKey(Cnst.AR_KEY)) {
             Set<Map> set = Synt.declare(rd.get(Cnst.AR_KEY), Set.class);
             for(Map  map : set) {
-                query.add(getQuery(map), BooleanClause.Occur.MUST);
+                qr.add(getQuery(map), BooleanClause.Occur.MUST);
             }
         }
 
         // 没有条件则查询全部
-        BooleanQuery quary = query.build();
-        if (quary.clauses( ).isEmpty( )) {
+        BooleanQuery query = qr.build(   );
+        if ( query.clauses( ).isEmpty( ) ) {
             return new MatchAllDocsQuery();
         }
 
-        return quary;
+        return query;
     }
 
     /**
@@ -937,12 +930,12 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
      * @throws HongsException
      */
     public Sort getSort(Map rd) throws HongsException {
-        Object xb = rd.get(Cnst.OB_KEY);
-        Set<String> ob = xb != null
-                  ? Synt.asTerms ( xb )
-                  : new LinkedHashSet();
         Map<String, Map> fields = getFields();
         List<SortField> of = new LinkedList();
+        Object xb = rd.get(Cnst.OB_KEY);
+        Set<String> ob  =  xb  !=  null
+                  ? Synt.asTerms ( xb )
+                  : new LinkedHashSet();
 
         for (String fn: ob) {
             // 相关
@@ -971,9 +964,6 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
                 continue;
             }
             if (sortable(m)==false) {
-                continue;
-            }
-            if (repeated(m)== true) {
                 continue;
             }
 
@@ -1292,12 +1282,12 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
         return Synt.asserts(fc.get("__repeated__"), false);
     }
 
-    protected boolean unwanted(Map fc) {
-        return Synt.asserts(fc.get("--unwanted--"), false);
-    }
-
     protected boolean unstored(Map fc) {
         return Synt.asserts(fc.get(  "unstored"  ), false);
+    }
+
+    protected boolean unwanted(Map fc) {
+        return Synt.asserts(fc.get("--unwanted--"), false);
     }
 
     protected boolean ignored (Map fc, String k) {
@@ -1305,7 +1295,11 @@ public class LuceneRecord extends FormBean implements IEntity, ITrnsct, Cloneabl
             || "Ignore".equals(fc.get( "rule" ));
     }
 
-    protected boolean sorted  (List<SortField> sf, String k, boolean r) {
+    protected boolean queried (BooleanQuery.Builder qb, String k, Object v) {
+        return false;
+    }
+
+    protected boolean sorted  (List <  SortField  > sf, String k,boolean r) {
         return false;
     }
 

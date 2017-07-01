@@ -139,7 +139,7 @@
                         String extr = "";
                         if (info.containsKey("format")) extr += " data-format=\""+info.get("format").toString()+"\"";
                     %>
-                    <input class="form-control input-date" type="text" name="<%=name%>" value="" readonly="readonly" <%=rqrd%><%=extr%> data-toggle="datetimepicker"/>
+                    <input class="form-control input-date" type="text" name="<%=name%>" value="" readonly="readonly" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
                 <%} else if ("check".equals(type)) {%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("radio".equals(type)) {%>
@@ -149,10 +149,36 @@
                 <%} else if ("file".equals(type) || "upload".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
-                        if (info.containsKey("type")) extr += " accept=\""+info.get("type").toString()+"\"";
-                        else if ("image".equals(type) || "video".equals(type) || "audio".equals(type)) extr += " accept=\""+type+"/*\"";
+                        String size = "";
+                        String keep = "";
+                        String ft =  "_file";
+                        String fm = "hsFile";
+                        if (info.containsKey("type")) {
+                            extr += " accept=\""+info.get("type").toString()+"\"";
+                        } else
+                        if ("image".equals(type) || "video".equals(type) || "audio".equals(type)) {
+                            extr += " accept=\""+type+"/*\"";
+                            if ("image".equals(type)) {
+                                ft =  "_view";
+                                fm = "hsView";
+                                size = Synt.asserts( info.get("thumb-size"), "" );
+                                keep = Synt.asserts( info.get("thumb-mode"), "" );
+                                if (size.length()==0) {
+                                    size = "100*100";
+                                    keep = "keep";
+                                } else {
+                                    size = size.replaceFirst("\\d+\\*\\d+", "$0");
+                                    if ( ! keep.equals("keep") ) {
+                                        keep = "";
+                                    }
+                                }
+                            }
+                        }
                     %>
-                    <input type="file" name="<%=name%>" <%=rqrd%><%=extr%> data-toggle="fileinput"/>
+                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <input type="file" name="<%=name%>" class="form-ignored invisible" <%=extr%>/>
+                    <ul class="pickbox" data-ft="<%=ft%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>" <%=rqrd%>></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=lang.translate("fore.file.browse")%></button>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :  "id" ;
@@ -164,8 +190,9 @@
                                 + ( info.containsKey("form"   ) ? (String) info.get("form"   ) : /**/ ak )
                                 + "list_fork.html";
                     %>
+                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="hsPick" data-target="@" data-href="<%=al%>"><%=lang.translate("fore.select.lebel", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=lang.translate("fore.select.lebel", text)%></button>
                 <%} else {%>
                     <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
                 <%} /*End If */%>
@@ -188,7 +215,9 @@
     context.hsForm({
         loadUrl: "<%=_module%>/<%=_entity%>/search.act?id=\${id}&md=\${md}",
         saveUrl: "<%=_module%>/<%=_entity%>/<%=_action%>.act",
-        _fill__fork: hsFormFillFork
+        _fill__fork: hsFormFillFork,
+        _fill__file: hsFormFillFile,
+        _fill__view: hsFormFillView
     });
 })( jQuery );
 </script>

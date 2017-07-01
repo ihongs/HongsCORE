@@ -115,12 +115,12 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
-            if ("@".equals(name)) {
+            if ("@".equals(name) || "id".equals(name)) {
                 continue;
             }
 
-            if (!Synt.declare(info.get("filtable"), false)
-            ||   Synt.declare(info.get("statable"), false)) {
+            if ( Synt.declare(info.get("statable"), false)
+            ||  !Synt.declare(info.get("filtable"), false)) {
                 continue;
             }
         %>
@@ -141,7 +141,7 @@
         <%} /*End For*/%>
         <div class="form-group row">
             <div class="col-sm-6 col-sm-offset-3">
-                <button type="submit" class="btn btn-default">确定</button>
+                <button type="submit" class="btn btn-default">过滤</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>
             </div>
@@ -158,11 +158,11 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
-            if ("@".equals(name)) {
+            if ("@".equals(name) || "id".equals(name)) {
                 continue;
             }
             if (!Synt.declare(info.get("statable"), false)
-            &&  !Synt.declare(info.get("filtable"), false)) {
+            ||  !Synt.declare(info.get("filtable"), false)) {
                 continue;
             }
 

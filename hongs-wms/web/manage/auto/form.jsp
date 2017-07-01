@@ -78,7 +78,7 @@
 <!-- 表单 -->
 <h2><%=lang.translate("fore."+_action+".title", nm)%></h2>
 <div id="<%=id%>" class="row">
-    <form action="" method="POST">
+    <form action="" method="POST" enctype="multipart/form-data">
         <%
         Iterator it = flds.entrySet().iterator();
         while (it.hasNext()) {

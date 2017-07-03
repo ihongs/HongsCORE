@@ -1,9 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <form name="unit">
-        <field name="icon" rule="Thumb">
-            <param name="href">upload/matrix/icon</param>
-            <param name="path">upload/matrix/icon</param>
+        <field name="icon" text="图标" rule="Thumb">
+            <param name="href">public/upload/matrix/icon</param>
+            <param name="path">public/upload/matrix/icon</param>
+        </field>
+    </form>
+    <form name="form">
+        <field name="state" text="状态" type="enum">
+            <param name="enum">form_state</param>
         </field>
     </form>
     <form name="form_fork">
@@ -14,4 +19,9 @@
             <param name="data-al">manage/member/user/pick.html</param>
         </field>
     </form>
+    <enum name="form_state">
+        <value code="1">正常</value>
+        <value code="2">冻结</value>
+        <value code="0">删除</value>
+    </enum>
 </root>

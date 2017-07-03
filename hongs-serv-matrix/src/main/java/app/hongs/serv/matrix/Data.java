@@ -8,11 +8,12 @@ import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.dh.search.SearchEntity;
-import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import org.apache.lucene.document.Document;
 
 /**
@@ -169,12 +170,12 @@ public class Data extends SearchEntity {
         Model    model = DB.getInstance("matrix").getModel("data");
         String   where = "`id`= ? AND `form_id`= ? AND `etime`= ?";
         Object[] param = new String[ ] { id , form , "0" };
-        long     mtime = System.currentTimeMillis() / 1000;
+        long     ctime = System.currentTimeMillis() / 1000;
 
         // 删除当前数据
         if (rd == null) {
             Map ud = new HashMap();
-            ud.put("etime", mtime);
+            ud.put("etime", ctime);
             ud.put("state",   0  );
             model.table.update(ud, where, param);
 
@@ -190,9 +191,12 @@ public class Data extends SearchEntity {
         if (saveToDb) {
             dd = model.table.fetchCase( )
                     .filter(where, param)
-                    .select("data")
+                    .select("data,ctime")
                     .one();
             if(!dd.isEmpty()) {
+                if (ctime <= Synt.asserts ( dd.get( "ctime" ) , 0L ) ) {
+                    throw new HongsException(0x1100, "等会儿, 不要急");
+                }
                 dd = (Map) app.hongs.util.Data.toObject(dd.get("data").toString());
             }
         } else {
@@ -225,21 +229,30 @@ public class Data extends SearchEntity {
 
         if (saveToDb) {
             // 拼接展示字段
-            StringBuilder nm = new StringBuilder();
-            for ( String  fn : getFindable( ) ) {
-                nm.append(dd.get(fn).toString()).append(' ');
+            StringBuilder nn = new  StringBuilder();
+            Set  <String> ns = new  HashSet( getListable() );
+                               ns.retainAll( getFindable() );
+            for ( String  fn : ns  ) {
+                if ( "id".equals(fn) ) continue ;
+                nn.append(dd.get(fn).toString()).append(' ');
+            }
+            String nm;
+            if (nn.length() > 120 + 1) {
+                nm = nn.substring(0, 120)+ "...";
+            } else {
+                nm = nn.toString().trim();
             }
 
             Map ud = new HashMap();
-            ud.put("etime", mtime);
+            ud.put("etime", ctime);
 
             Map nd = new HashMap();
-            nd.put("ctime", mtime);
+            nd.put("ctime", ctime);
             nd.put("etime", 0);
             nd.put( "id" , id);
-            nd.put("form_id",form);
-            nd.put("user_id", rd.get("cuid"));
-            nd.put("name", nm.toString( ).trim( ));
+            nd.put("form_id", rd.get( "form_id" ));
+            nd.put("user_id", rd.get( "user_id" ));
+            nd.put("name", nm);
             nd.put("note", rd.get("note"));
             nd.put("data", app.hongs.util.Data.toString(dd));
 
@@ -255,26 +268,27 @@ public class Data extends SearchEntity {
         setDoc(id, doc);
     }
 
-    public void redo(String id, String uid, long etime) throws HongsException {
-        if (etime == 0) {
-            throw new HongsException.Common("Record can not be current");
-        }
-
-        Model    model = DB.getInstance("matrix").getModel("data");
+    public void redo(String id, Map rd) throws HongsException {
+        long ctime = System.currentTimeMillis() / 1000;
+        long rtime = Synt.declare(rd.get("rtime"), 0L);
 
         //** 获取旧的数据 **/
 
-        String   where = "`id`= ? AND `form_id`= ? AND `etime`= ?";
-        Object[] param = new String [ ] { id , form , "" + etime };
+        Model    model = DB.getInstance("matrix").getModel("data");
+        String   where = "`id`= ? AND `form_id`= ? AND `ctime`= ?";
+        Object[] param = new String [ ] { id , form , rtime + "" };
 
         Map dd = model.table.fetchCase()
                 .filter (where, param)
-                .select ("data")
+                .select ("data, name, etime")
                 .orderBy("ctime DESC")
                 .one();
 
         if (dd.isEmpty()) {
-            throw new HongsException.Common("Record is not found");
+            throw new HongsException(0x1100, "恢复数据源不存在");
+        }
+        if (Synt.asserts(dd.get("etime"), 0L) == 0L) {
+            throw new HongsException(0x1100, "活跃数据不可操作");
         }
 
         //** 保存到数据库 **/
@@ -282,18 +296,17 @@ public class Data extends SearchEntity {
         where = "`id` = ? AND `form_id` = ? AND `etime` = ?";
         param = new Object[] {id, form, 0};
 
-        long mtime = System.currentTimeMillis() / 1000;
-
         Map ud = new HashMap();
-        ud.put("etime", mtime);
+        ud.put("etime", ctime);
 
-        dd.put("rtime", dd.get("etime"));
-        dd.put("ctime", mtime);
-        dd.put("etime", 0);
-        dd.put("user_id", uid);
+        rd.put("ctime", ctime);
+        rd.put("rtime", rtime);
+        rd.put("etime", 0);
+        rd.put("name" , dd.get("name"));
+        rd.put("data" , dd.get("data"));
 
         model.table.update(ud, where, param);
-        model.table.insert(dd);
+        model.table.insert(rd);
 
         //** 保存到索引库 **/
 

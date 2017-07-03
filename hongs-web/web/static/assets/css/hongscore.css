@@ -70,6 +70,9 @@ legend {
     display: inline-block;
     vertical-align: top;
 }
+.breadcrumb .close {
+    display: none;
+}
 .form-group .close,
 .form-group .close:hover,
 .form-group .close:focus {
@@ -112,9 +115,12 @@ legend {
 .center-block {
     float: none;
 }
-
-.breadcrumb .close {
+.help-block:empty {
     display: none;
+}
+.help-block.form-control-static {
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .radio    label ,
@@ -450,6 +456,7 @@ ul.pickbox > li.btn span {
 }
 .datebox.input-group .input-group-addon {
     width: auto;
+    color: #333;
     border: 0px;
     background: #fff;
     padding-left: 5px;

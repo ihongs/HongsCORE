@@ -579,7 +579,7 @@ HsForm.prototype = {
     },
     verified : function() {
         this.formBox.find(".form-group").removeClass( "has-error");
-        this.formBox.find(".help-block").   addClass( "invisible");
+        this.formBox.find(".form-error").   addClass( "invisible");
         return true;
     },
     verifies : function() {

@@ -299,10 +299,21 @@
 
         var box = $(this);
         var inp = box.data("linked");
+        var fmt = inp.data("format");
         var typ = inp.data( "type" );
-        var fmt = inp.data("format") || hsGetLang("datetime.format");
         var dat = _getdate(box, new Date(0));
         var val ;
+
+        switch (fmt) {
+            case "time":
+                fmt = hsGetLang("time.format");
+                break;
+            case "date":
+                fmt = hsGetLang("date.format");
+                break;
+            case "datetime" : case "" : case null :
+                fmt = hsGetLang("datetime.format");
+        }
 
         switch (typ) {
             case "time":
@@ -331,14 +342,33 @@
 
         var inp = $(this);
         var box = inp.data("linked");
+        var fmt = inp.data("format");
         var typ = inp.data( "type" );
-        var fmt = inp.data("format") || hsGetLang("datetime.format");
         var val = inp.val (   );
         var num = parseInt(val);
 
-        // 外部可以指定仅仅精确到秒
-        if (! isNaN(num) && (typ== "timestamp" || typ== "datestamp")) {
-            val = num * 1000;
+        switch (fmt) {
+            case "time":
+                fmt = hsGetLang("time.format");
+                break;
+            case "date":
+                fmt = hsGetLang("date.format");
+                break;
+            case "datetime" : case "" : case null :
+                fmt = hsGetLang("datetime.format");
+        }
+
+        /**
+         * 根据 type 确定精度
+         * 空为 0, 可规避异常
+         */
+        if (!isNaN(num)
+        && (typ == "timestamp"
+        ||  typ == "datestamp")) {
+            val =  num * 1000  ;
+        } else
+        if (val == "" ) {
+            val =  0  ;
         }
 
         _setdate(box, hsPrsDate(val, fmt));

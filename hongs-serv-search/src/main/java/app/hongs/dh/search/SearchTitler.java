@@ -106,8 +106,8 @@ public class SearchTitler {
                 addForks(ls, forks.get(fn), fn);
             } else {
                 // 没有对应的枚举表则用值来补全
-                for(Map lx :ls) {
-                    if (lx.containsKey("title")) {
+                for(Map lx: ls) {
+                    if (! lx.containsKey("title")) {
                         lx.put("title",lx.get("value"));
                     }
                 }

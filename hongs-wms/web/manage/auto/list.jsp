@@ -90,6 +90,7 @@
             <button type="button" class="create btn btn-default"><%=lang.translate("fore.create", nm)%></button>
             <%if (!"select".equals(_action)) {%>
             <button type="button" class="update for-choose btn btn-default"><%=lang.translate("fore.update", nm)%></button>
+            <button type="button" class="revert for-choose btn btn-default" title="<%=lang.translate("fore.revert", nm)%>"><span class="glyphicon glyphicon-time" ></span></button>
             <button type="button" class="delete for-checks btn btn-warning" title="<%=lang.translate("fore.delete", nm)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
@@ -290,7 +291,9 @@
             ['<%=_module%>/<%=_entity%>/form.html?md=0',
              '.create', '@'],
             ['<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}',
-             '.update', '@']
+             '.update', '@'],
+            ['<%=_module%>/<%=_entity%>/logs.html?id={ID}',
+             '.revert', '@']
         ],
         _fill__fork: hsListFillFork
     });

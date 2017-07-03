@@ -16,40 +16,42 @@
   <xs:element name="param" type="xs:string">
     <xs:complexType>
       <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="type"/>
     </xs:complexType>
   </xs:element>
 
   <!-- 字段 -->
   <xs:element name="field">
-      <xs:complexType>
-          <xs:attribute ref="name" use="required"/>
-          <xs:attribute ref="text"/>
-          <xs:attribute ref="hint"/>
-          <xs:attribute ref="type"/>
-          <xs:attribute ref="rule"/>
-          <xs:attribute ref="required"/>
-          <xs:attribute ref="repeated"/>
-          <xs:all>
-              <xs:element ref="param" maxOccurs="unbounded"/>
-          </xs:all>
-      </xs:complexType>
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:attribute ref="text"/>
+      <xs:attribute ref="hint"/>
+      <xs:attribute ref="type"/>
+      <xs:attribute ref="rule"/>
+      <xs:attribute ref="required"/>
+      <xs:attribute ref="repeated"/>
+      <xs:all>
+        <xs:element ref="param" maxOccurs="unbounded"/>
+      </xs:all>
+    </xs:complexType>
   </xs:element>
 
   <!-- 表单 -->
   <xs:element name="form">
-      <xs:complexType>
-          <xs:attribute ref="name" use="required"/>
-          <xs:all>
-              <xs:element ref="field" maxOccurs="unbounded"/>
-          </xs:all>
-      </xs:complexType>
+    <xs:complexType>
+      <xs:attribute ref="name" use="required"/>
+      <xs:all>
+        <xs:element ref="field" maxOccurs="unbounded"/>
+      </xs:all>
+    </xs:complexType>
   </xs:element>
 
   <!-- 枚举选项 -->
   <xs:element name="value" type="xs:string">
-      <xs:complexType>
-          <xs:attribute ref="code" use="required"/>
-      </xs:complexType>
+    <xs:complexType>
+      <xs:attribute ref="code" use="required"/>
+      <xs:attribute ref="type"/>
+    </xs:complexType>
   </xs:element>
 
   <!-- 枚举 -->

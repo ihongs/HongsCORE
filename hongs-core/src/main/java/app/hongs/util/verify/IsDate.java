@@ -101,8 +101,9 @@ public class IsDate extends Rule {
         }
 
         if (val instanceof String) {
-            String str =  (String) val;
-            if (Pattern.matches("^\\d+$", str)) {
+            String str = ( String) val;
+
+            try {
                 long num = Synt.declare(val,0L);
                 if ("timestamp".equals(type)
                 ||  "datestamp".equals(type)) {
@@ -110,6 +111,8 @@ public class IsDate extends Rule {
                 } else {
                     return new Date(num /* */ );
                 }
+            } catch (ClassCastException e) {
+                // Nothing to do.
             }
 
             // 按指定格式解析日期字符串
@@ -125,7 +128,7 @@ public class IsDate extends Rule {
                 cal.add(Calendar.MILLISECOND, off);
                 return cal.getTime();
             } catch (ParseException e) {
-                // Nothing todo.
+                // Nothing to do.
             }
         }
 

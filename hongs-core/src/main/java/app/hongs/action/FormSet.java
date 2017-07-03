@@ -5,14 +5,18 @@ import app.hongs.Core;
 import app.hongs.CoreLocale;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
+import app.hongs.util.Data;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.LinkedHashSet;
+import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -41,7 +45,7 @@ import org.xml.sax.SAXException;
                 __rule__ : "rule.class.Name",
                 __required__ : "yes|no",
                 __repeated__ : "yes|no",
-                "name" : "Value"
+                "param_name" : "Value"
                 ...
             }
             ...
@@ -228,18 +232,47 @@ public class FormSet
       if ("param".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
+        String typz = element2.getAttribute("type");
         String text = element2.getTextContent();
-        forms.put(namz, text);
+        forms.put(namz, parse(typz, text));
       }
       else
       if ("value".equals(tagName2))
       {
         String namz = element2.getAttribute("code");
+        String typz = element2.getAttribute("type");
         String text = element2.getTextContent();
-        enums.put(namz, text);
+        enums.put(namz, parse(typz, text));
       }
     }
   }
+
+  private Object parse(String type, String text) throws HongsException {
+      if (null == type || "".equals( type )) {
+          return  text;
+      }
+      if ("json".equals(type)) {
+          return  Data.toObject(text);
+      } else
+      if ("list".equals(type)) {
+          return  Arrays.asList(SEXP.split(text.trim()));
+      } else
+      if ( "set".equals(type)) {
+          return  new LinkedHashSet(
+                  Arrays.asList(SEXP.split(text.trim()))
+          );
+      } else
+      if ( "map".equals(type)) {
+          Map m = new LinkedHashMap();
+          for(String   s : SEXP.split(text)) {
+              String[] a = MEXP.split(s, 2);
+              m.put(a[0], a[1]);
+          }
+      }
+      throw new HongsException.Common("Unrecognized type '"+type+"'");
+  }
+  private static final Pattern SEXP = Pattern.compile ( "\\s*,\\s*" );
+  private static final Pattern MEXP = Pattern.compile ( "\\s*:\\s*" );
 
   public String getName() {
       return  this.name;

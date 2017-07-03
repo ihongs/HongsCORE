@@ -12,6 +12,8 @@ import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
 import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
+import app.hongs.db.DB;
+import app.hongs.db.Model;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.dh.lucene.LuceneRecord.Loop;
 import app.hongs.dh.search.SearchAction;
@@ -36,6 +38,7 @@ public class DataAction extends SearchAction {
 
     public DataAction() {
         sub.add("export");
+        sub.add("revert");
     }
 
     @Override
@@ -53,7 +56,9 @@ public class DataAction extends SearchAction {
         }
 
         // 放入当前用户ID
-        helper.getRequestData().put("cuid", helper.getSessibute(Cnst.UID_SES));
+        Object uid = helper.getSessibute(Cnst.UID_SES);
+        helper.getRequestData().put("user_id", uid);
+        helper.getRequestData().put("form_id", ent);
     }
 
     /**
@@ -95,15 +100,25 @@ public class DataAction extends SearchAction {
         helper.reply(ss, Synt.asMap("id",id));
     }
 
-    @Action("redo")
+    @Action("revert/update")
     @CommitSuccess
-    public void redo(ActionHelper helper) {
-        // TODO: Redo history updates
+    public void redo(ActionHelper helper) throws HongsException {
+        String  id = (String) helper.getParameter("id");
+        if (id == null || "".equals(id)) {
+            throw new HongsException(0x1100, "id required");
+        }
+        Data    sr = (Data) getEntity(helper);
+        Map     rd = helper.getRequestData( );
+        sr.redo(id , rd);
+        helper.reply("");
     }
 
-    @Action("logs")
-    public void list(ActionHelper helper) {
-        // TODO: Get the history logs
+    @Action("revert/search")
+    public void list(ActionHelper helper) throws HongsException {
+        Model   mo = DB.getInstance("matrix").getModel("data");
+        Map     rd = helper.getRequestData( );
+        Map     sd = mo.search(rd);
+        helper.reply(sd);
     }
 
     @Action("export/search")

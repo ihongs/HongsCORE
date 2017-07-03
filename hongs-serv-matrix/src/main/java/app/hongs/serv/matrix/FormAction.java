@@ -7,6 +7,7 @@ import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.db.DB;
 import app.hongs.action.anno.CommitSuccess;
+import app.hongs.action.anno.Select;
 import app.hongs.db.Table;
 import app.hongs.db.link.Loop;
 import java.util.ArrayList;
@@ -29,6 +30,7 @@ public class FormAction {
     }
 
     @Action("list")
+    @Select(conf="matrix", form="form")
     public void getList(ActionHelper helper)
     throws HongsException {
         Map data = model.getList(helper.getRequestData());
@@ -36,6 +38,7 @@ public class FormAction {
     }
 
     @Action("info")
+    @Select(conf="matrix", form="form")
     public void getInfo(ActionHelper helper)
     throws HongsException {
         Map data = model.getInfo(helper.getRequestData());

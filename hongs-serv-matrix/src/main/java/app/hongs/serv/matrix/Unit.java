@@ -91,8 +91,8 @@ public class Unit extends Mtree {
         List<Map> rows;
 
         // 单元下的表单
-        rows = this.db.getTable("form").fetchCase()
-            .filter("unit_id = ?", id )
+        rows = this.db.getTable("form").fetchCase( )
+            .filter("unit_id = ? AND state > 0", id)
             .select("id")
             .all();
         for (Map row : rows) {
@@ -112,6 +112,11 @@ public class Unit extends Mtree {
         Element  root = docm.createElement("root");
         docm.appendChild ( root );
 
+        Element  menu = docm.createElement("menu");
+        root.appendChild ( menu );
+        menu.setAttribute("text", "");
+        menu.setAttribute("href", "!"+ prefix+"/");
+
         Element  incl;
 
         // 会话
@@ -123,7 +128,7 @@ public class Unit extends Mtree {
 
         // 全部一级单元
         rows = this.table.fetchCase( )
-            .filter("pid  = 0")
+            .filter("pid = 0 AND state > 0")
             .select("id")
             .all();
         for (Map row : rows) {
@@ -133,14 +138,9 @@ public class Unit extends Mtree {
             incl.appendChild( docm.createTextNode(prefix+"/"+uid) );
         }
 
-        Element  menu = docm.createElement("menu");
-        root.appendChild ( menu );
-        menu.setAttribute("text", "");
-        menu.setAttribute("href", "!"+prefix+"/");
-
         // 一级以下单元
         rows = this.table.fetchCase( )
-            .filter("pid != 0")
+            .filter("pid != 0 AND state > 0")
             .select("id")
             .all();
         for (Map row : rows) {

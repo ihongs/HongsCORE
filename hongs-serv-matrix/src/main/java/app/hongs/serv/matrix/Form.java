@@ -3,6 +3,7 @@ package app.hongs.serv.matrix;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.db.Table;
@@ -57,7 +58,7 @@ public class Form extends Model {
     @Override
     public int add(String id, Map rd) throws HongsException {
         List<Map> flds = parseConf(rd);
-        String name = (String) rd.get("name");
+        String    name = (String)  rd.get("name");
 
         int an = superAdd (id,  rd );
 
@@ -86,8 +87,18 @@ public class Form extends Model {
     @Override
     public int put(String id, Map rd) throws HongsException {
         List<Map> flds = parseConf(rd);
+        String    name = (String)  rd.get("name");
 
-        String  name = (String) rd.get("name");
+        // 冻结意味着手动修改了配置
+        // 再操作可能会冲掉自定配置
+        if (!rd.containsKey("state")
+        &&  !fetchCase()
+            .field("id")
+            .where("id = ? AND state = ?", id, 2)
+            .one  (    )
+            .isEmpty(  )) {
+            throw new HongsException(0x1100, "表单已冻结, 禁止操作");
+        }
 
         int an = superPut (id,  rd );
 
@@ -237,20 +248,13 @@ public class Form extends Model {
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search.act") );
 
-        // 添加
-
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/create");
-        role.setAttribute("text", "添加"+name);
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/export/search.act") );
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/create.act") );
-
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/search.act") );
 
         // 修改
 
@@ -262,6 +266,25 @@ public class Form extends Model {
         actn = docm.createElement("action");
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update.act") );
+
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/update.act") );
+
+        depn = docm.createElement("depend");
+        role.appendChild ( depn );
+        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+
+        // 添加
+
+        role = docm.createElement("role");
+        menu.appendChild ( role );
+        role.setAttribute("name", prefix+"/"+id+"/create");
+        role.setAttribute("text", "添加"+name);
+
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/create.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
@@ -294,20 +317,22 @@ public class Form extends Model {
 
         Element  form = docm.createElement("form");
         root.appendChild ( form );
-        form.setAttribute("name", id);
+        form.setAttribute("name" , id);
 
         Element  item, anum, para;
 
-        for (  Map  fiel : conf ) {
+        Map types = FormSet.getInstance().getEnum("__types__");
+
+        for (Map fiel: conf) {
             item = docm.createElement("field");
             form.appendChild ( item );
-            String s;
+            String s, t;
             s = (String) fiel.get("__text__");
             item.setAttribute("text", s);
             s = (String) fiel.get("__name__");
             item.setAttribute("name", s);
-            s = (String) fiel.get("__type__");
-            item.setAttribute("type", s);
+            t = (String) fiel.get("__type__");
+            item.setAttribute("type", t);
             s = (String) fiel.get("__rule__");
             item.setAttribute("rule", s);
             s = Synt.declare(fiel.get("__required__"), "");
@@ -315,13 +340,28 @@ public class Form extends Model {
             s = Synt.declare(fiel.get("__repeated__"), "");
             item.setAttribute("repeated", s);
 
-            for (Object   ot : fiel.entrySet( )) {
+            // 文件类型要指定上传路径
+            if ("file".equals(types.get(t) )) {
+                if(!fiel.containsKey("path")
+                || !fiel.containsKey("href")) {
+                    fiel.put("path", "public/upload/data");
+                    fiel.put("href", "public/upload/data");
+                }
+            } else
+            // 日期类型要指定存储格式
+            if ("date".equals(types.get(t) )) {
+                if(!fiel.containsKey("type")) {
+                    fiel.put("type", "timestamp");
+                }
+            }
+
+            for(Object ot : fiel.entrySet( )) {
                 Map.Entry et = (Map.Entry) ot;
                 String k = (String) et.getKey(  );
                 String v = (String) et.getValue();
 
                 // 忽略基础参数
-                if (k.startsWith("__")) {
+                if (k.startsWith( "__" )) {
                     continue;
                 }
 
@@ -347,7 +387,7 @@ public class Form extends Model {
                 if (k.equals("findable") && Synt.declare(v, false)) {
                     para = docm.createElement("param");
                     item.appendChild ( para );
-                    para.setAttribute("name", "lucene-fieldtype");
+                    para.setAttribute("name" , "lucene-fieldtype");
                     para.appendChild ( docm.createTextNode("search") );
                 }
 

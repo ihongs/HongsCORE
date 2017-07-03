@@ -1019,7 +1019,7 @@ function hsFmtDate(date, format) {
  * @return {Date}
  */
 function hsPrsDate(text, format) {
-  if (text === undefined) {
+  if (!text) {
     return new Date( 0  );
   }
   if (typeof(text) === "number") {

@@ -1,6 +1,6 @@
 <div id="hongs-module-list"
      data-module="hsList"
-     data-load-url="manage/matrix/form/list.act?unit_id=${unit_id}&ob=snum"
+     data-load-url="manage/matrix/form/list.act?unit_id=${unit_id}&ob=-snum&md=2"
      data-send-urls-0="['manage/matrix/form/delete.act','.delete','您确定要删除此表单?']"
      data-open-urls-0="['manage/matrix/form/form.html?unit_id=${unit_id}','.create','@']"
      data-open-urls-1="['manage/matrix/form/form.html?id={ID}'           ,'.modify','@']">
@@ -29,6 +29,7 @@
                     <th data-fn="dcnt">数据总量</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
+                    <th data-fn="state_text" class="sortable">状态</th>
                 </tr>
             </thead>
             <tbody></tbody>

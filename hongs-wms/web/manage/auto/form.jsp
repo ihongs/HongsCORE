@@ -93,6 +93,7 @@
 
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
+            String  hint = (String) info.get("__hint__");
             String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
@@ -112,10 +113,10 @@
             </fieldset>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
+                <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
                 <%if ("textarea".equals(type)) {%>
-                    <textarea class="form-control" name="<%=name%>" <%=rqrd%>></textarea>
+                    <textarea class="form-control" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%>></textarea>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
                     <%
                         String extr = "";
@@ -125,21 +126,25 @@
                         if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
                         if (info.containsKey("pattern")) extr += " pattern=\""+info.get("pattern").toString()+"\"";
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" value="" <%=rqrd%><%=extr%>/>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
                 <%} else if ("number".equals(type) || "range".equals(type)) {%>
                     <%
                         String extr = "";
-                        if (info.containsKey("step")) extr += " step=\""+info.get("min").toString()+"\"";
+                        if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
                         if (info.containsKey("min")) extr += " min=\""+info.get("min").toString()+"\"";
                         if (info.containsKey("max")) extr += " max=\""+info.get("max").toString()+"\"";
                     %>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" value="" <%=rqrd%><%=extr%>/>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
                 <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
                     <%
-                        String extr = "";
-                        if (info.containsKey("format")) extr += " data-format=\""+info.get("format").toString()+"\"";
+                        String extr = " data-type=\""+info.get( "type" ).toString()+"\"";
+                        if (info.containsKey("format")) {
+                            extr += " data-format=\""+info.get("format").toString()+"\"";
+                        } else {
+                            extr += " data-format=\""+type+"\"";
+                        }
                     %>
-                    <input class="form-control input-date" type="text" name="<%=name%>" value="" readonly="readonly" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
+                    <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" data-fl="v ? v : new Date().getTime() / 1000" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
                 <%} else if ("check".equals(type)) {%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("radio".equals(type)) {%>
@@ -187,7 +192,7 @@
                                   ( info.containsKey("form"   ) ? (String) info.get("form"   ) : name.replaceFirst("_id$", "") );
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :
                                   ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) : _module )
-                                + ( info.containsKey("form"   ) ? (String) info.get("form"   ) : /**/ ak )
+                                + ( info.containsKey("form"   ) ? (String) info.get("form"   ) :    ak   )
                                 + "list_fork.html";
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
@@ -197,6 +202,7 @@
                     <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
                 <%} /*End If */%>
                 </div>
+                <div class="col-sm-6 col-sm-offset-3 help-block"></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

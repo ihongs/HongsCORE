@@ -70,6 +70,7 @@ CREATE TABLE `a_matrix_data` (
   FOREIGN KEY (`form_id`) REFERENCES `a_matrix_form` (`id`) ON DELETE CASCADE
 );
 
+CREATE INDEX `IK_a_matrix_data_user` ON `a_matrix_data` (`user_id`);
 CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
 CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime`);
 CREATE INDEX `IK_a_matrix_data_etime` ON `a_matrix_data` (`etime`);

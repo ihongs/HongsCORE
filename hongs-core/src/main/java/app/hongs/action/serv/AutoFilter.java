@@ -7,10 +7,12 @@ import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
+import app.hongs.action.anno.CustomReplies;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Set;
 import javax.servlet.FilterChain;
@@ -43,13 +45,14 @@ public class AutoFilter extends ActionDriver {
     private String action;
     private String layout;
     private Set<String> actset = null;
+    private Set<String> cstset = null;
     private Set<String> layset = null;
     private FilterCheck ignore = null;
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
         super.init(cnf);
-        
+
         action = cnf.getInitParameter("action-path");
         layout = cnf.getInitParameter("layout-path");
         if (action == null) {
@@ -106,7 +109,11 @@ public class AutoFilter extends ActionDriver {
             if (!ActionRunner.getActions().containsKey(act)) {
                 for(String axt : getacts()) {
                     if (act.endsWith(axt )) {
-                        doAction( req, rsp, url, axt + ext);
+                        if (cstset.contains(axt)) {
+                            doCustom(req, rsp, url, axt + ext);
+                        } else {
+                            doAction(req, rsp, url, axt + ext);
+                        }
                         return;
                     }
                 }
@@ -161,6 +168,14 @@ public class AutoFilter extends ActionDriver {
         req.getRequestDispatcher(action+ uri).include(req, rsp);
     }
 
+    private void doCustom(ServletRequest req, ServletResponse rsp, String url, String uri)
+            throws ServletException, IOException {
+        // 虚拟路径
+        req.setAttribute(Cnst.PATH_ATTR, url);
+        // 转发请求
+        req.getRequestDispatcher(action+ uri).forward(req, rsp);
+    }
+
     private void doLayout(ServletRequest req, ServletResponse rsp, String url, String uri)
             throws ServletException, IOException {
         // 虚拟路径
@@ -186,6 +201,7 @@ public class AutoFilter extends ActionDriver {
                  "Auto action '" + action.substring(1) + "/search' is not exists", ex);
         }
 
+        cstset = new HashSet();
         actset = new TreeSet(new Comparator<String>() {
             @Override
             public int compare(String o1, String o2 ) {
@@ -193,13 +209,18 @@ public class AutoFilter extends ActionDriver {
             }
         });
 
-        for(Method mtd : cls.getMethods(  )) {
-            Action ann = mtd.getAnnotation(Action.class);
-            if (ann != null) {
+        for (Method mtd : cls.getMethods( )) {
+             Action ann = mtd.getAnnotation(Action.class);
+            if (null != ann) {
+                String  uri;
                 if (!"".equals(ann.value())) {
-                    actset.add("/"+ann.value(  ));
+                    uri = "/"+ ann.value(  );
                 } else {
-                    actset.add("/"+mtd.getName());
+                    uri = "/"+ mtd.getName();
+                }
+                    actset.add(uri);
+                if (mtd.isAnnotationPresent(CustomReplies.class)) {
+                    cstset.add(uri);
                 }
             }
         }

@@ -58,6 +58,7 @@
                     <th data-fn="state_text">状态</th>
                     <th data-fn="" data-ft="_admin">操作
                         <div class="invisible">
+                            <a href="javascript:;" class="review">详情</a>
                             <a href="javascript:;" class="revert">恢复</a>
                         </div>
                     </th>
@@ -97,6 +98,13 @@
         var listObj = context.hsList({
             loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id.eq="+H$("&id", loadbox)+"&ob=-ctime&rb=-data",
             openUrls: [
+                [function(ln) {
+                    var tr = ln.closest("tr");
+                    var id = tr.data("id");
+                    var ct = tr.data("ctime");
+                    this.open(ln, ln.hsFind("@"),
+                      "<%=_module%>/<%=_entity%>/logs_info.html?id="+id+"&ctime="+ct);
+                }, ".review"],
                 [function(ln) {
                     sendbox.data ("ln", ln);
                     sendbox.modal( "show" );

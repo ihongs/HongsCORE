@@ -142,9 +142,9 @@ public class ApisAction
         }
 
         // 将请求转发到动作处理器
-        act =       parseAct(act, mts);
-        req.getRequestDispatcher( act)
-                    .include(req, rsp);
+        act = parseAct(act, mts);
+        req.getRequestDispatcher(act)
+              .include(req, rsp);
 
         // 获取响应数据逐步格式化
         Map resp  = hlpr.getResponseData();

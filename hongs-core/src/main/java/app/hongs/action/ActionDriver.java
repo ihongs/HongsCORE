@@ -243,7 +243,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             try {
                 doLaunch(core, hlpr, req, rsq );
-                 agt.doDriver( core, hlpr);
+                agt.doDriver ( core, hlpr);
                 doCommit(core, hlpr, req, rsq );
             } catch (IOException ex) {
                 CoreLogger.error(ex);
@@ -262,9 +262,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
              */
             Core.THREAD_CORE.set(core);
             hlpr = core.get(ActionHelper.class);
-            hlpr.updateHelper( req , rsq );
-
-            /**/ agt.doDriver( core, hlpr);
+            hlpr.updateHelper( req, rsq );
+            /**/ agt.doDriver(core, hlpr);
         }
     }
 

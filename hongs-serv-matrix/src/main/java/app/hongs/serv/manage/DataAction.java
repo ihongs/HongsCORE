@@ -6,8 +6,11 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
+import app.hongs.action.SelectHelper;
+import app.hongs.action.SpreadHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
+import app.hongs.action.anno.CustomReplies;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
 import app.hongs.action.anno.Spread;
@@ -18,6 +21,7 @@ import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.dh.lucene.LuceneRecord.Loop;
 import app.hongs.dh.search.SearchAction;
 import app.hongs.serv.matrix.Data;
+import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.IOException;
@@ -28,6 +32,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import javax.servlet.http.HttpServletResponse;
 
 /**
  * 数据存储动作
@@ -37,7 +42,6 @@ import java.util.Map;
 public class DataAction extends SearchAction {
 
     public DataAction() {
-        sub.add("export");
         sub.add("revert");
     }
 
@@ -118,11 +122,26 @@ public class DataAction extends SearchAction {
         Model   mo = DB.getInstance("matrix").getModel("data");
         Map     rd = helper.getRequestData( );
         Map     sd = mo.search(rd);
+        
+        // 详情数据转换
+        if (sd.containsKey("info")) {
+            Map df = (Map) sd.get("info");
+            Map dt = (Map) app.hongs.util.Data.toObject((String) df.get("data"));
+            df.putAll(dt);
+            new SelectHelper()
+                .addEnumsByForm(mod, ent)
+                .select ( df , (short) 2);
+            new SpreadHelper()
+                .addItemsByForm(mod, ent)
+                .spread ( df );
+        }
+        
         helper.reply(sd);
     }
 
-    @Action("export/search")
+    @Action("stream")
     @Preset(conf="", envm="")
+    @CustomReplies
     public void export(ActionHelper helper) throws HongsException, IOException {
         Data    sr = (Data) getEntity(helper);
         Map     rd = helper.getRequestData( );
@@ -135,14 +154,16 @@ public class DataAction extends SearchAction {
          * 逐行输出
          */
 
-        Map     fs = sr.getFields();
-        Map     es = new HashMap( );
-        Writer  ot = helper.getOutputWriter();
-
+        HttpServletResponse rs = helper.getResponse();
         String csv = ent + "_" + new SimpleDateFormat( "yyyyMMddHHmmss" ).format( new Date(  ) );
-        helper.getResponse().setHeader("Content-Disposition", "attachment;filename="+csv+".csv");
-        helper.getResponse().setHeader("Content-Type", "application/octet-stream;charset=UTF-8");
+        rs.setHeader("Content-Disposition", "attachment;filename="+csv+".csv");
+        rs.setHeader("Content-Type", "application/octet-stream;charset=UTF-8");
+        rs.setHeader("Transfer-Encoding", "chunked" );
 
+        Writer  ot = rs.getWriter();
+        Map     fs = sr.getFields();
+        Map     es = new HashMap ();
+        
         if (lp.hasNext()) {
             Map<String, Object> ds = lp.next();
             StringBuilder sf = new StringBuilder();
@@ -174,6 +195,7 @@ public class DataAction extends SearchAction {
 
             ot.write(sf.append("\r\n").substring(1));
             ot.write(sb.append("\r\n").substring(1));
+            ot.flush();
         }
 
         while (lp.hasNext()) {

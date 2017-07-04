@@ -250,7 +250,7 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/export/search.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/stream.act") );
 
         actn = docm.createElement("action");
         role.appendChild ( actn );

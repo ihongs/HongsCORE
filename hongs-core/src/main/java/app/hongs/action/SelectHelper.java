@@ -115,7 +115,15 @@ public class SelectHelper {
         }
     }
 
-    public void injectData(Map data, Map maps) throws HongsException {
+    public void injectData(Map data) throws HongsException {
+        injectData(data, enums);
+    }
+
+    public void injectText(Map info) throws HongsException {
+        injectText(info, enums);
+    }
+
+    private void injectData(Map data, Map maps) throws HongsException {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
@@ -138,7 +146,7 @@ public class SelectHelper {
         }
     }
 
-    public void injectText(Map info, Map maps) throws HongsException {
+    private void injectText(Map info, Map maps) throws HongsException {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();

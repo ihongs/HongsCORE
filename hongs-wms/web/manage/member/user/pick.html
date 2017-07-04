@@ -1,6 +1,7 @@
 <div id="member-user-pick"
      data-module="hsList"
-     data-load-url="manage/member/user/list.act">
+     data-load-url="manage/member/user/list.act"
+     data-data-0="_fill__fork:(hsListFillFork)">
     <div>
         <div class="toolbox col-md-9 btn-group">
             <button type="button" class="ensure btn btn-primary">选择用户</button>
@@ -16,7 +17,7 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <th data-fn="id[]" data-ft="_pick" class="_check">
+                    <th data-fn="id[]" data-ft="_fork" class="_check">
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                     <th data-fn="name" class="sortable">名称</th>

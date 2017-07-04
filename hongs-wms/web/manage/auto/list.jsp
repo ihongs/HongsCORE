@@ -304,7 +304,7 @@
     });
 
     context.find(".export").click(function() {
-        var url = "<%=_module%>/<%=_entity%>/export/search.act?";
+        var url = "<%=_module%>/<%=_entity%>/stream.act?";
         var req = formbox.serialize( );
         window.open(url+req, "_blank");
     });

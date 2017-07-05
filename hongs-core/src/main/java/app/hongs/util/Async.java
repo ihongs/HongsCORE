@@ -66,7 +66,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
 
         if (back == null) {
             if (!tasks.isEmpty()) {
-                CoreLogger.error("There has "+ tasks.size() +" task(s) not run in '"+back.getPath()+"'.");
+                CoreLogger.error("There has "+ tasks.size() +" task(s) not run.");
             }
             return;
         }

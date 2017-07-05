@@ -451,6 +451,9 @@ public final class Dict
     } else
     if (beg  !=  len) {
         lst.add(path.substring(beg));
+    } else
+    if ('.'  == path.charAt(-1+len)) {
+        lst.add(null);
     }
 
     return lst.toArray();

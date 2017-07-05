@@ -51,11 +51,8 @@
 
         nm = Dict.getValue( flds, "", "@", "text" );
     } while (false);
-    
-    String tm = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss")
-        .format(new Date(Synt.declare(request.getParameter("ctime"), 0L) * 1000));
 %>
-<h2><%=nm%>历史(<%=tm%>)</h2>
+<h2><%=nm%>详情</h2>
 <div id="<%=id%>">
     <form action="" method="POST" enctype="multipart/form-data">
         <%
@@ -72,27 +69,27 @@
 
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
-            String  hint = (String) info.get("__hint__");
-            String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
-            String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
-
-            if (!"".equals(rptd)) {
-                rptd += " size=\"3\"";
-                name += ".";
+            
+            if ("date".equals(type)) {
+                type = "_date";
+            } else
+            if ("time".equals(type)) {
+                type = "_time";
+            } else
+            if ("datetime".equals(type)) {
+                type = "_datetime";
+            } else
+            {
+                type = "_review";
             }
         %>
         <%if ("hidden".equals(type)) {%>
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
-        <%} else if ("checkbag".equals(type)) {%>
-            <fieldset>
-                <legend><%=text%></legend>
-                <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>
-            </fieldset>
         <%} else {%>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
-                <div class="col-sm-6 form-control-static" data-fn="<%=name%>"></div>
+                <div class="col-sm-6 form-control-static" data-fn="<%=name%>" data-ft="<%=type%>"></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>
@@ -103,7 +100,7 @@
     var context = $("#<%=id%>").removeAttr("id");
 
     context.hsForm({
-        loadUrl: "<%=_module%>/<%=_entity%>/revert/search.act?id=\${id}&md=\${md}",
+        loadUrl: "<%=_module%>/<%=_entity%>/revert/search.act?id=\${id}&ctime=\${ctime}",
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

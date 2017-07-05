@@ -53,6 +53,8 @@
                     location.href = hsFixUri("manage/");
                 } , 3000);
             });
+            
+            $.ajaxSetup({cache:true});
         </script>
     </head>
     <body>

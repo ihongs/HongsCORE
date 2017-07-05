@@ -124,7 +124,12 @@ public class SpreadHelper {
 
             // 查询路径
             if (null == ak || "".equals(ak)) {
-                ak = fn.replace("_id$", "");
+                int ln = -3 + fn.length(  );
+                if (fn.substring(ln).endsWith("_id")) {
+                    ak = fn.substring(0,ln);
+                } else {
+                    ak = fn + "_data";
+                }
             }
             if (null == at || "".equals(at)) {
                 String c = (String) mt.get("conf");
@@ -139,7 +144,7 @@ public class SpreadHelper {
             String aq = null;
             int ps = at.indexOf('?');
             if (ps > -1) {
-                aq = at.substring(ps + 1).trim();
+                aq = at.substring(1 + ps).trim();
                 at = at.substring(0 , ps).trim();
             }
             if (null != aq && !"".equals(aq)) {

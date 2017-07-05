@@ -5,6 +5,7 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
+import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,47 +33,72 @@ public class IsFork extends Rule {
             return  value;
         }
 
+        String vl = Synt.declare(params.get("verify-type"), "");
+        if("any".equals(vl)) {
+            return value;
+        } else
+        if("number".equals(vl)) {
+            IsNumber rl;
+            rl = new IsNumber( );
+            rl.setHelper(helper);
+            rl.setParams(params);
+            rl.setValues(values);
+            rl.setCleans(cleans);
+            return rl.verify(value);
+        } else
+        if("string".equals(vl)) {
+            IsString rl;
+            rl = new IsString( );
+            rl.setHelper(helper);
+            rl.setParams(params);
+            rl.setValues(values);
+            rl.setCleans(cleans);
+            return rl.verify(value);
+        }
+
+        String at = Synt.declare(params.get("data-at" ), "");
+        String vk = Synt.declare(params.get("data-vk" ), "");
+        String cl = Synt.declare(params.get("conf"    ), "");
+        String fl = Synt.declare(params.get("form"    ), "");
         String ck = Synt.declare(params.get("__conf__"), "");
         String fk = Synt.declare(params.get("__name__"), "");
-        String cf = Synt.declare(params.get( "conf"   ), "");
-        String fm = Synt.declare(params.get( "form"   ), "");
-        String at = Synt.declare(params.get( "data-at"), "");
-        String vk = Synt.declare(params.get( "data-vk"), "");
+        String aq = null;
 
-        // 明确指定为 # 则检查是否是编号
-        if("#".equals(at)) {
-            Map    ps = FormSet.getInstance(/**/).getEnum("__patts__");
-            String pn = Synt.declare(ps.get("id"), "^[A-Z0-9_]{1,32}");
-            if (! Pattern.matches(pn, value.toString())) {
-                throw new Wrong  ("fore.form.haserror");
-            }
-            return  value;
+        if ("".equals(cl)) {
+            cl =  ck ;
         }
-        // 明确指定为 * 则表示不需要校验
-        if("*".equals(at)) {
-            return  value;
-        }
-
-        if ("".equals(cf)) {
-            cf =  ck ;
-        }
-        if ("".equals(fm)) {
-            fm =  fk.replaceFirst("_id$", "");
-        }
-        if ("".equals(at)) {
-            at =  cf +"/"+ fm + "/search.act";
+        if ("".equals(fl)) {
+            fl =  fk.replaceFirst("_id$", "");
         }
         if ("".equals(vk)) {
             vk = "id";
         }
+        if ("".equals(at)) {
+            at =  cl + "/" + fl + "/search"  ;
+        } else {
+            // 尝试解析附加参数
+            int ps = at.indexOf("?");
+            if (ps > 0) {
+                aq = at.substring(1 + ps).trim();
+                at = at.substring(0 , ps).trim();
+            }
+        }
 
         // 请求数据
-        Set rb = new HashSet();
         Map rd = new HashMap();
+        Set rb = new HashSet();
         rb.add(vk);
         rd.put(Cnst.RN_KEY, 0);
         rd.put(Cnst.RB_KEY,rb);
         rd.put(Cnst.ID_KEY,value);
+        // 附加参数
+        if (aq != null && aq.length() != 0) {
+            if (aq.startsWith("{") && aq.endsWith("}")) {
+                rd.putAll( ( Map )  Data.toObject(aq));
+            } else {
+                rd.putAll(ActionHelper.parseQuery(aq));
+            }
+        }
 
         // 获取结果
         ActionHelper ah = ActionHelper.newInstance();
@@ -89,7 +115,7 @@ public class IsFork extends Rule {
             us.add(um.get(vk));
         }
         if (vs.size() != us.size() || !vs.containsAll(us)) {
-            throw new Wrong("fore.form.is.not.exists", fm);
+            throw new Wrong("fore.form.is.not.exists", fl);
         }
 
         return value;

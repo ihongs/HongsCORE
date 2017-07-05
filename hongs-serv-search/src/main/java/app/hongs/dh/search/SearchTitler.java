@@ -173,7 +173,7 @@ public class SearchTitler {
         int ps = at.indexOf("?");
         if (ps > -1) {
             String aq;
-            aq = at.substring(ps + 1).trim();
+            aq = at.substring(1 + ps).trim();
             at = at.substring(0 , ps).trim();
             if (!"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {

@@ -2,8 +2,9 @@ package app.hongs.action;
 
 import app.hongs.HongsException;
 import app.hongs.util.Dict;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -153,17 +154,45 @@ public class SelectHelper {
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
             Object   val = Dict.getParam(info, key);
-            if (val != null && ! "".equals(val)) {
-                val  = map.get(val); // 需要排除空串
+
+            if (val instanceof Collection) {
+                // 预置一个空列表, 规避无值导致客户端取文本节点出错
+                Dict.setParam(info, new ArrayList(), key + "_text");
+                for (Object vxl : (Collection) val) {
+                    vxl = codeToText(map, val);
+                    Dict.setParam(info, vxl, key + "_text.");
+                }
+            } else {
+                    val = codeToText(map, val);
+                    Dict.setParam(info, val, key + "_text" );
             }
-            if (val == null) {
-                val  = map.get("*"); // * 总代表其他
-            }
-            if (val == null) {
-                val  = "";
-            }
-            Dict.setParam(info, val, key + "_text");
         }
+    }
+
+    /**
+     * 将枚举代号转换为对应文本
+     * 空值和空串不处理
+     * 星号总是代表其他
+     * @param map
+     * @param val
+     * @return
+     */
+    private Object codeToText(Map map, Object val) {
+        if (null == val || "".equals(val)) {
+            return  val;
+        }
+
+        val = map.get(val);
+        if (null != val) {
+            return  val;
+        }
+
+        val = map.get("*");
+        if (null != val) {
+            return  val;
+        }
+
+        return "";
     }
 
 }

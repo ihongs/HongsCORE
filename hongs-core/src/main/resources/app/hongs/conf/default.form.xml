@@ -63,6 +63,7 @@
         <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>
         <value code="url"><![CDATA[^([a-z]+:)?//[^\s]+$]]></value>
         <value code="tel"><![CDATA[^(\+[1-9])?\d\d{2,}$]]></value>
+        <value code="id" ><![CDATA[^\\w{1,20}$]]></value>
     </enum>
     <!--
     <enum name="demo-enum">

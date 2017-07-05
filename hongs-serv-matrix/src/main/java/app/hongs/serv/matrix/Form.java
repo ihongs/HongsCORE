@@ -252,10 +252,6 @@ public class Form extends Model {
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/stream.act") );
 
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/search.act") );
-
         // 修改
 
         role = docm.createElement("role");
@@ -266,10 +262,6 @@ public class Form extends Model {
         actn = docm.createElement("action");
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update.act") );
-
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/update.act") );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
@@ -304,6 +296,29 @@ public class Form extends Model {
         depn = docm.createElement("depend");
         role.appendChild ( depn );
         depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+
+        // 恢复
+        
+        role = docm.createElement("role");
+        menu.appendChild ( role );
+        role.setAttribute("name", prefix+"/"+id+"/revert");
+        role.setAttribute("text", "恢复"+name);
+
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/search.act") );
+
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/update.act") );
+
+        depn = docm.createElement("depend");
+        role.appendChild ( depn );
+        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+
+        depn = docm.createElement("depend");
+        role.appendChild ( depn );
+        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update") );
 
         // 保存
         saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.NAVI_EXT+".xml", docm);

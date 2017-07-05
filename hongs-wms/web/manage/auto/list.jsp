@@ -207,7 +207,7 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <th data-fn="id[]" data-ft="<%if ("select".equals(_action)) {%>_pick<%} else {%>_check<%}%>" class="_check">
+                    <th data-fn="id[]" data-ft="<%if ("select".equals(_action)) {%>_fork<%} else {%>_check<%}%>" class="_check">
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                 <%
@@ -255,9 +255,11 @@
                 <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                     <th data-fn="<%=name%>_text" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
-                    <th data-fn="<%=info.get("data-ak")%>.<%=info.get("data-tk")%>" data-ft="_fork" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("form".equals(type)) {%>
-                    <th data-fn="<%=info.get("name")%>.<%=info.get("data-tk")%>" data-ft="_form" <%=ob%> class="<%=oc%>"><%=text%></th>
+                    <%
+                        if (info.get("data-ak") != null) name  = (String) info.get("data-ak");
+                        if (info.get("data-tk") != null) name +=   "."  + info.get("data-tk");
+                    %>
+                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if (!"primary".equals(info.get("primary")) && !"foreign".equals(info.get("foreign"))) {%>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} /*End If */%>
@@ -281,7 +283,7 @@
     var statbox = context.find(".statbox");
 
     context.hsList({
-        loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=2",
+        loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=6",
         sendUrls: [
             ['<%=_module%>/<%=_entity%>/delete.act',
              '.delete',

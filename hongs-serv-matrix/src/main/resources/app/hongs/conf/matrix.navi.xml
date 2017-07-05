@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
     <rsname>@manage</rsname>
-    <menu text="自定模块" href="common/menu.act?m=matrix">
-        <menu text="模块" href="manage/matrix/#matrix" hrel="manage/matrix/unit/tree.html">
+    <menu text="模型矩阵" href="common/menu.act?m=matrix">
+        <menu text="模型" href="manage/matrix/#matrix" hrel="manage/matrix/unit/tree.html">
             <role text="查看表单" name="manage/matrix/form/search">
                 <depend>manage</depend>
                 <depend>manage/matrix/unit/search</depend>

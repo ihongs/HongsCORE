@@ -33,8 +33,6 @@ public class CoreLocale
 
   /**
    * 加载指定路径\语言和名称的配置
-   * 注意: 与 CoreConfig  不同, 由于语言文件存在多份,
-   * 构造时用 loadIgnrFNF 加载, 故如果没有也不会报错.
    * @param name
    * @param lang
    */
@@ -51,7 +49,7 @@ public class CoreLocale
 
     if (null != name)
     {
-      this.fill(name);
+      this.load(name);
     }
   }
 

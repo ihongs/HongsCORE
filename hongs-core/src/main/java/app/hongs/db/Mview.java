@@ -1,5 +1,6 @@
 package app.hongs.db;
 
+import app.hongs.Cnst;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
@@ -7,6 +8,7 @@ import app.hongs.action.FormSet;
 import app.hongs.action.NaviMap;
 import app.hongs.util.Synt;
 import java.sql.Types;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -122,21 +124,14 @@ public class Mview extends Model {
 
         getFields( );
 
-        if (findable != null && findable.length > 0) {
-            for (String n : findable) {
-                if(n != null && !n.contains(".") && !n.endsWith("id")) {
-                    txkey = n;
-                    return  n;
-                }
-            }
-        }
-
-        if (listable != null && listable.length > 0) {
-            for (String n : listable) {
-                if(n != null && !n.contains(".") && !n.endsWith("id")) {
-                    txkey = n;
-                    return  n;
-                }
+        // 即能列举, 有可表意(可搜索), 则它就是名称字段
+        Set <String> la = new LinkedHashSet(Arrays.asList(listable));
+        Set <String> fa = new LinkedHashSet(Arrays.asList(findable));
+        la.retainAll(fa);
+        for (String n : la) {
+            if (null != n && !n.contains(".") && !n.endsWith(Cnst.ID_KEY)) {
+                txkey = n;
+                return  n;
             }
         }
 

@@ -22,17 +22,26 @@
         _module = _module.substring( 0, i );
 
         // 获取语言
-        _locale = CoreLocale.getInstance().clone();
-        _locale.loadIgnrFNF(_module);
-        _locale.loadIgnrFNF(_module +"/"+ _entity);
+        _locale = CoreLocale.getInstance( ).clone();
+        _locale.fill(_module);
+        _locale.fill(_module +"/"+ _entity);
 
         // 从菜单中提取标题
         NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
                      ? NaviMap.getInstance(_module+"/"+_entity)
                      : NaviMap.getInstance(_module);
-        Map map = site.getMenu(_module + "/#" + _entity);
-        if (map != null) {
-                _title  = (String) map.get ("text");
+        Map menu;
+        menu  = site.getMenu(_module +"/" +_entity+"/");
+        if (menu != null) {
+                _title  = (String) menu.get("text");
+            if (_title != null) {
+                _title  = _locale.translate(_title);
+                break;
+            }
+        }
+        menu  = site.getMenu(_module +"/#"+_entity);
+        if (menu != null) {
+                _title  = (String) menu.get("text");
             if (_title != null) {
                 _title  = _locale.translate(_title);
                 break;
@@ -43,16 +52,15 @@
         FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
                      ? FormSet.getInstance(_module+"/"+_entity)
                      : FormSet.getInstance(_module);
-        Map mxp = fset.getForm(_entity);
-        if (mxp != null) {
-                _title  = (String) Dict.get(mxp, null, "@", "__text__");
+        menu  = fset.getForm(_entity);
+        if (menu != null) {
+                _title  = (String) Dict.get(menu, null, "@", "__text__");
             if (_title != null) {
                 _title  = _locale.translate(_title);
                 break;
             }
         }
-        
-        _title = "";
+        _title  = "" ;
     }
     while (false);
 %>

@@ -4,7 +4,7 @@
     String _pageId = (_module + "-" + _entity + "-logs").replace('/', '-');
 %>
 <h2><%=_title%>历史</h2>
-<div id="{$_pageId}">
+<div id="<%=_pageId%>">
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
             <thead>

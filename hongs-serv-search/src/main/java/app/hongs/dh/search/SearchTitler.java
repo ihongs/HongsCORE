@@ -26,7 +26,7 @@ public class SearchTitler {
     protected final String form;
     protected Map<String, Map<String, String>> enums = null;
     protected Map<String, Map<String, String>> forks = null;
-    
+
     public SearchTitler(String conf, String form) {
         this.conf = conf;
         this.form = form;
@@ -96,8 +96,8 @@ public class SearchTitler {
                 continue;
             }
 
-            List<Map> ls = (List) lo;
-            String fn = Synt.asserts(et.getKey() , "" );
+            List<Object[]> ls = (List) lo;
+            String fn = Synt.asserts ( et.getKey(), "");
 
             if (enums != null && enums.containsKey(fn)) {
                 addEnums(ls, enums.get(fn), fn);
@@ -106,9 +106,9 @@ public class SearchTitler {
                 addForks(ls, forks.get(fn), fn);
             } else {
                 // 没有对应的枚举表则用值来补全
-                for(Map lx: ls) {
-                    if (! lx.containsKey("title")) {
-                        lx.put("title",lx.get("value"));
+                for(Object[ ] lx : ls) {
+                    if (lx[1] == null) {
+                        lx[1]  = lx[0];
                     }
                 }
             }
@@ -121,9 +121,9 @@ public class SearchTitler {
      * @param es
      * @param fn
      */
-    protected void addEnums(List<Map> ls, Map es, String fn) {
-        for ( Map  lx : ls) {
-            String lv = (String) lx.get("value");
+    protected void addEnums(List<Object[]> ls, Map es, String fn) {
+        for (Object[] lx : ls) {
+            String lv = (String) lx[0];
             if (lv != null) {
                 lv  = (String) es.get(lv ); // 得到标签
             }
@@ -133,7 +133,7 @@ public class SearchTitler {
             if (lv == null) {
                 continue;
             }
-            lx.put("title", lv);
+            lx[1] = lv;
         }
     }
 
@@ -144,7 +144,7 @@ public class SearchTitler {
      * @param fn
      * @throws HongsException
      */
-    protected void addForks(List<Map> ls, Map fs, String fn) throws HongsException {
+    protected void addForks(List<Object[]> ls, Map fs, String fn) throws HongsException {
         String at = (String) fs.get("data-at");
         String vk = (String) fs.get("data-vk");
         String tk = (String) fs.get("data-tk");
@@ -157,9 +157,9 @@ public class SearchTitler {
 
         // 映射关系
         Map<String, List> lm = new HashMap();
-        for(Map lx  : ls) {
-            String lv = (String) lx.get("value");
-            List<Map> lw = lm.get(lv);
+        for(Object[] lx : ls) {
+            String   lv = ( String ) lx[0];
+            List<Object[]> lw = lm.get(lv);
             if (lw == null) {
                 lw  = new ArrayList();
                 lm.put(lv, lw);
@@ -205,10 +205,10 @@ public class SearchTitler {
             String lv = Synt.declare(ro.get(vk), "");
             String lt = Synt.declare(ro.get(tk), "");
 
-            List<Map> lw = lm.get(lv);
-            if  (  null != lw)
-            for (Map  lx : lw) {
-                lx.put ( "title", lt);
+            List<Object[]> lw = lm.get(lv);
+            if  (  null != lw )
+            for (Object[]  lx : lw) {
+                   lx[1] = lt ;
             }
         }
     }

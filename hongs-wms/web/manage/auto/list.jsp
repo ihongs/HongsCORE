@@ -325,12 +325,12 @@
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
             label = $('<label></label>')
-                .attr("title", v.title +" ("+ v.count + ")");
+                .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name+".")
-                .attr("value", v.value );
+                .attr("value", v[0]);
             title = $('<span></span>')
-                .text( v.title);
+                .text(v[1]);
             label.append(check).append(title).appendTo(box2);
         }
     }
@@ -343,10 +343,10 @@
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
             xData.push(v.title);
-            bData.push(v.count);
+            bData.push(v[2]);
             pData.push({
-                value: v.count,
-                name : v.title
+                value: v[2],
+                name : v[1]
             });
         }
 
@@ -372,7 +372,7 @@
                         show: true,
                         icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
                         title: '饼视图',
-                        onclick: function () {console.log(1);
+                        onclick: function () {
                             chart.setOption({
                                 series: [{
                                     data: pData,
@@ -391,7 +391,7 @@
                         show: true,
                         icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
                         title: '柱状图',
-                        onclick: function () {console.log(2);
+                        onclick: function () {
                             chart.setOption({
                                 series: [{
                                     data: bData,

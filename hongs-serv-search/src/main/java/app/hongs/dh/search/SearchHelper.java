@@ -230,12 +230,11 @@ public class SearchHelper {
         }
 
         for (Map.Entry<String, List<Map.Entry<String, Integer>>> et : cntlst.entrySet()) {
-            List<Map> a = new ArrayList();
+            List<Object[]> a = new ArrayList();
             for (Map.Entry<String, Integer> e : et.getValue()) {
-                 Map  b = new HashMap(  );
-                a.add(b);
-                b.put("value", e.getKey(  ));
-                b.put("count", e.getValue());
+                a.add(new Object[] {
+                    e.getKey(), null, e.getValue()
+                });
             }
             cnts.put(et.getKey(), a);
         }
@@ -453,23 +452,16 @@ public class SearchHelper {
         }
 
         for (Map.Entry<String, List<Map.Entry<Minmax, Cntsum>>> et : cntlst.entrySet()) {
-            List<Map>  a = new ArrayList();
+            List<Object[]> a = new ArrayList();
             for (Map.Entry<Minmax, Cntsum> e : et.getValue()) {
-                 Map   b = new HashMap();
                 Cntsum c = e.getValue( );
                 Minmax m = e.getKey(   );
                 String k = m != null ? m.toString() : null;
-                a.add( b );
-                b.put("value", k/**/);
-                b.put("count", c.cnt);
-                b.put( "sum" , c.sum);
-                if (c.cnt == 0) {
-                    b.put("min" , 0 );
-                    b.put("max" , 0 );
-                } else {
-                    b.put("min" , c.min);
-                    b.put("max" , c.max);
-                }
+                a.add(new Object[] {
+                    k, null, c.cnt, c.sum ,
+                    c.cnt != 0 ? c.min : 0,
+                    c.cnt != 0 ? c.max : 0
+                });
             }
             cnts.put(et.getKey(), a );
         }

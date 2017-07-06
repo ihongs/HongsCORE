@@ -176,7 +176,7 @@ public class LuceneAction implements IAction, IActing {
     protected String getRspMsg(ActionHelper helper, IEntity ett, String opr, int num)
     throws HongsException {
         CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.loadIgnrFNF(mod);
+        lang.fill( mod );
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
         if (! lang.containsKey(key)) {

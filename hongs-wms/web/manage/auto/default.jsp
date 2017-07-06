@@ -1,33 +1,10 @@
-<%@page import="app.hongs.CoreLocale"%>
-<%@page import="app.hongs.action.ActionDriver"%>
-<%@page import="app.hongs.action.NaviMap"%>
-<%@page import="java.util.Map"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%
-    int i;
-    String _module, _entity;
-    _module = ActionDriver.getWorkPath(request);
-    i = _module.lastIndexOf('/');
-    _module = _module.substring(1, i);
-    i = _module.lastIndexOf('/');
-    _entity = _module.substring(i+ 1);
-    _module = _module.substring(0, i);
-
-    CoreLocale lang = CoreLocale.getInstance().clone();
-               lang.loadIgnrFNF(_module);
-               lang.loadIgnrFNF(_module +"/"+ _entity);
-    NaviMap    site = NaviMap.hasConfFile(_module+"/"+_entity)
-                    ? NaviMap.getInstance(_module+"/"+_entity)
-                    : NaviMap.getInstance(_module);
-    Map        menu = site.getMenu(_module +"/"+ _entity +"/");
-
-    String nm = menu == null ? "" : (String) menu.get( "text");
-%>
+<%@include file="_init_base_.jsp"%>
 <!doctype html>
 <html>
     <head>
-        <title>HongsCORE::<%=lang.translate(nm)%></title>
+        <title>HongsCORE::<%=_title%></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">
@@ -42,6 +19,7 @@
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
+        <script type="text/javascript" src="common/auth/manage.js"></script>
         <script type="text/javascript">
             $(document).on("noMenu", function() {
                 $('#main-context').empty().append(
@@ -65,7 +43,7 @@
             </div>
         </nav>
         <div id="bodybox">
-            <div class="container" id="main-context">加载中...</div>
+            <div class="container" id="main-context"><%=_locale.translate("fore.loading")%></div>
         </div>
         <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
             <div class="container">

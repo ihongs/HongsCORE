@@ -51,7 +51,7 @@ public class CoreLocale
 
     if (null != name)
     {
-      this.loadIgnrFNF(name);
+      this.fill(name);
     }
   }
 
@@ -87,7 +87,7 @@ public class CoreLocale
   {
     if (that != null)
     {
-        that.loadIgnrFNF( name);
+      that.fill(name);
     }
     super.load(name + "_" + this.lang);
   }

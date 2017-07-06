@@ -64,15 +64,15 @@ public class Mview extends Model {
 
     public final CoreConfig getConf() {
         if (conf != null) return conf;
-        conf = CoreConfig.getInstance( ).clone();
-        conf.loadIgnrFNF(db.name);
+        conf = CoreConfig.getInstance().clone();
+        conf.fill(db.name);
         return  conf;
     }
 
     public final CoreLocale getLang() {
         if (lang != null) return lang;
-        lang = CoreLocale.getInstance( ).clone();
-        lang.loadIgnrFNF(db.name);
+        lang = CoreLocale.getInstance().clone();
+        lang.fill(db.name);
         return  lang;
     }
 

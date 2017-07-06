@@ -579,10 +579,10 @@ public class NaviMap
         throw e;
       }
       // 语言文件不存在则拿一个空代替
-      lang = new CoreLocale(null);
+      lang  = new CoreLocale(null);
     }
-    for(String namz : imports) {
-        lang.loadIgnrFNF(namz);
+    for (  String namz : imports ) {
+        lang.fill(namz);
     }
     return lang;
   }

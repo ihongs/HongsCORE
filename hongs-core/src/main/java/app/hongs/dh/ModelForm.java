@@ -14,7 +14,7 @@ import java.util.Set;
  * 表单应用实例
  * @author Hongs
  */
-public class FormBean {
+public class ModelForm {
 
     private Map fieldz = null;
     private Map fsavez = null;
@@ -142,7 +142,7 @@ public class FormBean {
      * @return
      */
     public Set<String> getSaveTypes(String x) {
-        return FormBean.this.getSaveTypes().get(x);
+        return getSaveTypes().get(x);
     }
 
     /**
@@ -175,7 +175,7 @@ public class FormBean {
      * @return
      */
     public Set<String> getCaseTypes(String x) {
-        return FormBean.this.getCaseTypes().get(x);
+        return getCaseTypes().get(x);
     }
 
     /**

@@ -121,10 +121,10 @@ public class CoreConfig
   }
 
   /**
-   * 根据配置名称加载配置(忽略文件不存在)
+   * 根据配置名称加载配置(但忽略文件不存在)
    * @param name
    */
-  public void loadIgnrFNF(String name)
+  public void fill(String name)
   {
     try {
         this.load(name);

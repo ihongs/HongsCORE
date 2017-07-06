@@ -25,12 +25,12 @@
         i = _module.lastIndexOf('/');
         _entity = _module.substring( 1+ i );
         _module = _module.substring( 0, i );
-        
-        // 通过 Mview 一次性获取字段、语言、标题
+
+        // 通过模型视图获取字段、标题
         try {
             Mview  view = new Mview(DB.getInstance(_module).getTable(_entity));
+            _locale = view.getLocale();
             _fields = view.getFields();
-            _locale = view.getLang ( );
             _title  = view.getTitle( );
             break;
         } catch (HongsException ex) {
@@ -43,28 +43,43 @@
             }
         }
 
-        // 通过表单配置获取字段、语言、标题
+        // 获取语言
+        _locale = CoreLocale.getInstance( ).clone();
+        _locale.fill(_module);
+        _locale.fill(_module +"/"+ _entity);
+
+        // 通过表单配置获取字段、标题
         FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
                      ? FormSet.getInstance(_module+"/"+_entity)
                      : FormSet.getInstance(_module);
         _fields = fset.getFormTranslated  (_entity);
-        _locale = fset.getCurrTranslator  (       );
         _title  = Dict.getValue( _fields, "", "@", "__text__" );
         if (_title != null && _title.length() != 0) {
             break;
         }
 
-        // 如果表单里没有标题, 则从菜单里取
+        // 上面找不到, 则从菜单里提取
         NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
                      ? NaviMap.getInstance(_module+"/"+_entity)
                      : NaviMap.getInstance(_module);
-        Map map = site.getMenu(_module + "/#" + _entity);
-        if (map != null) {
-                _title  = (String) map.get ("text");
+        Map menu;
+        menu  = site.getMenu(_module +"/" +_entity+"/");
+        if (menu != null) {
+                _title  = (String) menu.get("text");
             if (_title != null) {
                 _title  = _locale.translate(_title);
+                break;
             }
         }
+        menu  = site.getMenu(_module +"/#"+_entity);
+        if (menu != null) {
+                _title  = (String) menu.get("text");
+            if (_title != null) {
+                _title  = _locale.translate(_title);
+                break;
+            }
+        }
+        _title  = "" ;
     }
     while (false);
 %>

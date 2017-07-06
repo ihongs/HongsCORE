@@ -9,7 +9,7 @@
     String _pageId = (_module +"-" + _entity +"-" + _action).replace('/', '-');
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="{$_pageId}" class="row">
+<div id="<%=_pageId%>" class="row">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <%if ( "select".equals(_action)) {%>

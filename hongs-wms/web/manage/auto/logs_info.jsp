@@ -14,7 +14,7 @@
     String _pageId = (_module + "-" + _entity + "-logs-info").replace('/','-');
 %>
 <h2><%=_title%>详情</h2>
-<div id="{$pageId}">
+<div id="<%=_pageId%>">
     <form action="" method="POST" enctype="multipart/form-data">
         <%
         Iterator it = _fields.entrySet().iterator();

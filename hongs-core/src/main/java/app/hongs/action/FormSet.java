@@ -312,9 +312,10 @@ public class FormSet
     itemz.putAll(items);
     for(Object o : itemz.entrySet()) {
       Map.Entry e = (Map.Entry) o ;
+      String    k = (String) e.getKey(  );
       String    n = (String) e.getValue();
       if (n == null || "".equals(n)) {
-          n = "fore.enum."+name+"."+namc+"."+((String) e.getKey());
+          n = "fore.enum."+name+"."+namc+"."+k;
       }
       e.setValue( lang.translate(n));
     }

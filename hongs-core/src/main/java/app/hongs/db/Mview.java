@@ -1,7 +1,5 @@
 package app.hongs.db;
 
-import app.hongs.Cnst;
-import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.FormSet;
@@ -27,12 +25,11 @@ import java.util.regex.Pattern;
  */
 public class Mview extends Model {
 
-    private Model       model = null;
-    private String      title = null;
-    private String      txkey = null;
-    private CoreConfig  conf  = null;
-    private CoreLocale  lang  = null;
-    private Map<String, Map<String, String>> fields = null;
+    private CoreLocale locale = null;
+    private Map        fields = null;
+    private Model      model  = null;
+    private String     txkey  = null;
+    private String     title  = null;
 
     /**
      * 构造方法
@@ -60,45 +57,6 @@ public class Mview extends Model {
     public Mview(Model model) throws HongsException {
         this(model.table);
         this.model=model ;
-    }
-
-    public final CoreConfig getConf() {
-        if (conf != null) return conf;
-        conf = CoreConfig.getInstance().clone();
-        conf.fill(db.name);
-        return  conf;
-    }
-
-    public final CoreLocale getLang() {
-        if (lang != null) return lang;
-        lang = CoreLocale.getInstance().clone();
-        lang.fill(db.name);
-        return  lang;
-    }
-
-    private Map getMenu() throws HongsException {
-        try {
-        NaviMap navi = NaviMap.getInstance(db.name);
-        return  navi.getMenu(db.name +"/"+ table.name +"/");
-        } catch (HongsException ex) {
-            if (ex.getErrno() != 0x10e0) {
-                throw ex;
-            }
-            return  null;
-        }
-    }
-
-    private Map getForm() throws HongsException {
-        try {
-        FormSet form = FormSet.getInstance(db.name);
-        return  form.getFormTranslated(/**/table.name/**/ );
-        } catch (HongsException ex) {
-            if (ex.getErrno() != 0x10e8
-            &&  ex.getErrno() != 0x10ea) {
-                throw ex;
-            }
-            return  null;
-        }
     }
 
     /**
@@ -129,7 +87,7 @@ public class Mview extends Model {
         Set <String> fa = new LinkedHashSet(Arrays.asList(findable));
         la.retainAll(fa);
         for (String n : la) {
-            if (null != n && !n.contains(".") && !n.endsWith(Cnst.ID_KEY)) {
+            if (null != n && !n.contains(".") && !n.equals(table.primaryKey)) {
                 txkey = n;
                 return  n;
             }
@@ -167,14 +125,15 @@ public class Mview extends Model {
             item = getMenu( );
             if (item != null  && item.containsKey(  "text"  )) {
                 title = (String) item.get(  "text"  );
+                title = getLocale( ).translate(title);
                 break;
             }
 
             // 最后配置取名字
-            title = "core.entity."+table.name+".name";
+            title = "fore.form."+ db.name +"."+ table.name +"@";
+            title = getLocale( ).translate(title);
         } while (false);
 
-        title = getLang().translate(title);
         return   title ;
 
         /*
@@ -189,18 +148,15 @@ public class Mview extends Model {
     }
 
     /**
-     * 获取表单配置参数
-     * 注意非表配置参数
+     * 获取当前语言资源
      * @return
-     * @throws HongsException
      */
-    public Map<String, String> getParams()
-    throws HongsException {
-        Map form =  /**/getForm();
-        if (form == null) {
-            return  new HashMap();
-        }
-        return Synt.asserts(form.get("@"), new HashMap());
+    public final CoreLocale getLocale() {
+        if (locale != null) return locale;
+        locale = CoreLocale.getInstance().clone();
+        locale.fill( db.name );
+        locale.fill( db.name + "/" + table.name );
+        return locale;
     }
 
     /**
@@ -209,7 +165,7 @@ public class Mview extends Model {
      * @return
      * @throws HongsException
      */
-    public Map<String, Map<String, String>> getFields()
+    public Map getFields()
     throws HongsException {
         if (null != fields) {
             return  fields;
@@ -222,7 +178,7 @@ public class Mview extends Model {
             fields  =  new LinkedHashMap( fields );
         }
 
-        Map<String, String> prms = fields.get("@");
+        Map<String , Object> prms = (Map) fields.get("@");
         Set<String> listColz = new LinkedHashSet();
         Set<String> sortColz = new LinkedHashSet();
         Set<String> findColz = new LinkedHashSet();
@@ -298,7 +254,8 @@ public class Mview extends Model {
     private void chkFields(
             Set listTypz, Set sortTypz, Set findTypz, Set filtTypz,
             Set listColz, Set sortColz, Set findColz, Set filtColz) {
-        for(Map.Entry<String, Map<String, String>> ent : fields.entrySet()) {
+        for(Map.Entry<String, Map> ent
+            : ( ( Map<String, Map> ) fields ).entrySet( )) {
             Map field = ent.getValue();
             String fn = ent.getKey(  );
             String ft = Synt.asserts(field.get("__type__"), "text");
@@ -372,7 +329,7 @@ public class Mview extends Model {
     }
 
     private void addTableFields() throws HongsException {
-        getLang();
+        getLocale();
 
         /*
         String sql = "SHOW FULL FIELDS FROM `"+table.tableName+"`";
@@ -388,7 +345,6 @@ public class Mview extends Model {
             String  name = ent.getKey(  );
             Integer type = (Integer) col.get("type");
             Boolean rqrd = (Boolean) col.get("required");
-            String  text = "field."+ table.name +"."+ name +".name";
 
             Map field = (Map) fields.get(name);
             if (field == null) {
@@ -402,9 +358,9 @@ public class Mview extends Model {
             }
 
             if (!field.containsKey("__text__") || "".equals(field.get("__text__"))) {
-//              if (text!=null && !"".equals(text)) {
-                if (lang.getProperty(text) != null) {
-                    text = lang.translate(text);
+                String text = "core.form."+ db.name +"."+ table.name +"."+ name;
+                if (null != locale.getProperty(text)) {
+                    text  = locale.translate  (text);
                     field.put("__text__", text);
                 } else {
                     field.put("__text__", name);
@@ -412,7 +368,7 @@ public class Mview extends Model {
             }
 
             if (!field.containsKey("__type__") || "".equals(field.get("__type__"))) {
-                if (name.equals(table.primaryKey) || name.endsWith("_id")) {
+                if ( name.equals(table.primaryKey) || name.endsWith("_id") ) {
                     field.put("__type__", "hidden");
                 } else
                 if (type == Types.DATE) {
@@ -545,6 +501,35 @@ public class Mview extends Model {
                 field.put("data-vk", vk);
                 field.put("data-tk", tk);
             }
+        }
+    }
+
+    private Map getForm() throws HongsException {
+        try {
+            FormSet form = FormSet.hasConfFile(db.name+"/"+table.name)
+                         ? FormSet.getInstance(db.name+"/"+table.name)
+                         : FormSet.getInstance(db.name);
+            return  form.getFormTranslated(/**/table.name/**/);
+        } catch (HongsException ex) {
+            if (ex.getErrno() != 0x10e8
+            &&  ex.getErrno() != 0x10ea) {
+                throw ex;
+            }
+            return  null;
+        }
+    }
+
+    private Map getMenu() throws HongsException {
+        try {
+            NaviMap navi = NaviMap.hasConfFile(db.name+"/"+table.name)
+                         ? NaviMap.getInstance(db.name+"/"+table.name)
+                         : NaviMap.getInstance(db.name);
+            return  navi.getMenu(db.name +"/"+ table.name+"/");
+        } catch (HongsException ex) {
+            if (ex.getErrno() != 0x10e0) {
+                throw ex;
+            }
+            return  null;
         }
     }
 

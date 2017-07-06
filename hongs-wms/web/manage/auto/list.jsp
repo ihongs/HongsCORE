@@ -342,7 +342,7 @@
         var pData = [];
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            xData.push(v.title);
+            xData.push(v[1]);
             bData.push(v[2]);
             pData.push({
                 value: v[2],

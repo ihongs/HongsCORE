@@ -1,51 +1,10 @@
-<%@page import="app.hongs.CoreLocale"%>
-<%@page import="app.hongs.action.ActionDriver"%>
-<%@page import="app.hongs.action.FormSet"%>
-<%@page import="app.hongs.action.NaviMap"%>
-<%@page import="app.hongs.util.Dict"%>
-<%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@include file="_init_base_.jsp"%>
 <%
-    // 获取路径动作
-    int i;
-    String _module, _entity;
-    _module = ActionDriver.getWorkPath(request);
-    i = _module.lastIndexOf('/');
-    _module = _module.substring(1, i);
-    i = _module.lastIndexOf('/');
-    _entity = _module.substring(i+ 1);
-    _module = _module.substring(0, i);
-    
-    String id, nm = "";
-    id = (_module +"-"+ _entity +"-logs").replace('/', '-');
-    do {
-        NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
-                     ? NaviMap.getInstance(_module+"/"+_entity)
-                     : NaviMap.getInstance(_module);
-        Map menu  = site.getMenu(_module+"/#"+_entity);
-        if (menu != null) {
-            nm = (String) menu.get("text");
-            if (nm != null) {
-                nm  = site.getCurrTranslator( ).translate( nm );
-                break;
-            }
-        }
-
-        FormSet form = FormSet.hasConfFile(_module+"/"+_entity)
-                     ? FormSet.getInstance(_module+"/"+_entity)
-                     : FormSet.getInstance(_module);
-        Map flds  = form.getForm(_entity);
-        if (flds != null) {
-            nm = (String) Dict.get( flds , null , "@" , "text");
-            if (nm != null) {
-                nm  = site.getCurrTranslator( ).translate( nm );
-                break;
-            }
-        }
-    } while (false);
+    String _pageId = (_module + "-" + _entity + "-logs").replace('/', '-');
 %>
-<h2><%=nm%>历史</h2>
-<div id="<%=id%>">
+<h2><%=_title%>历史</h2>
+<div id="{$_pageId}">
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
             <thead>
@@ -91,7 +50,7 @@
 
 <script type="text/javascript">
     (function($) {
-        var context = $('#<%=id%>').removeAttr("id");
+        var context = $('#<%=_pageId%>').removeAttr("id");
         var loadbox = context.closest(".loadbox");
         var sendbox = context.find(".sendbox");
         

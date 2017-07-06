@@ -1,90 +1,22 @@
-<%@page import="app.hongs.CoreConfig"%>
-<%@page import="app.hongs.CoreLocale"%>
-<%@page import="app.hongs.HongsError"%>
-<%@page import="app.hongs.HongsException"%>
-<%@page import="app.hongs.action.ActionDriver"%>
-<%@page import="app.hongs.action.FormSet"%>
-<%@page import="app.hongs.action.NaviMap"%>
-<%@page import="app.hongs.db.DB"%>
-<%@page import="app.hongs.db.Mview"%>
-<%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
-<%@page import="java.util.HashSet"%>
-<%@page import="java.util.HashMap"%>
-﻿<%@page import="java.util.Set"%>
-<%@page import="java.util.Map"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@include file="_init_more_.jsp"%>
 <%
-    // 获取路径动作
-    int i;
-    String _module, _entity, _action;
-    _module = ActionDriver.getWorkPath(request);
-    i = _module.lastIndexOf('/');
-    _module = _module.substring(1, i);
-    i = _module.lastIndexOf('/');
-    _entity = _module.substring(i+ 1);
-    _module = _module.substring(0, i);
-    _action = Synt.declare(request.getAttribute("form.action"), "create");
-
-    // 获取字段集合
-    CoreLocale lang;
-    Map        flds;
-    do {
-        try {
-            Mview view = new Mview(DB.getInstance(_module).getTable(_entity));
-            lang = view.getLang(  );
-            flds = view.getFields();
-            break;
-        } catch (HongsException ex) {
-            if (ex.getErrno() != 0x1039) {
-                throw ex;
-            }
-        } catch (HongsError ex) {
-            if (ex.getErrno() != 0x2a  ) {
-                throw ex;
-            }
-        }
-
-        FormSet form = FormSet.hasConfFile(_module+"/"+_entity)
-                     ? FormSet.getInstance(_module+"/"+_entity)
-                     : FormSet.getInstance(_module);
-        flds = form.getFormTranslated(_entity );
-        lang = CoreLocale.getInstance().clone();
-        lang.loadIgnrFNF(_module);
-        lang.loadIgnrFNF(_module +"/"+ _entity);
-    } while (false);
-
-    // 获取资源标题
-    String id , nm ;
-    id = (_module +"-"+ _entity +"-"+ _action).replace('/','-');
-    do {
-        NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
-                     ? NaviMap.getInstance(_module+"/"+_entity)
-                     : NaviMap.getInstance(_module);
-        Map menu  = site.getMenu(_module+"/#"+_entity);
-        if (menu != null) {
-            nm = (String) menu.get("text");
-            if (nm != null) {
-                nm  = lang.translate( nm );
-                break;
-            }
-        }
-
-        nm = Dict.getValue( flds, "", "@", "text" );
-    } while (false);
+    String _action = Synt.declare(request.getAttribute("form.action"), "create");
+    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
 %>
 <!-- 表单 -->
-<h2><%=lang.translate("fore."+_action+".title", nm)%></h2>
-<div id="<%=id%>" class="row">
+<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
+<div id="<%=_pageId%>" class="row">
     <form action="" method="POST" enctype="multipart/form-data">
         <%
-        Iterator it = flds.entrySet().iterator();
+        Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry et = (Map.Entry)it.next( );
-            Map     info = (Map ) et.getValue( );
-            String  name = (String) et.getKey( );
+            Map.Entry et = (Map.Entry) it.next();
+            Map     info = (Map ) et.getValue();
+            String  name = (String) et.getKey();
 
             if ("@".equals(name)
             || !Synt.declare(info.get("editable"), true)) {
@@ -97,6 +29,8 @@
             String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
+            if (text != null) text = _locale.translate(text);
+            
             if (!"".equals(rptd)) {
                 rptd += " size=\"3\"";
                 name += ".";
@@ -183,7 +117,7 @@
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <input type="file" name="<%=name%>" class="form-ignored invisible" <%=extr%>/>
                     <ul class="pickbox" data-ft="<%=ft%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=lang.translate("fore.file.browse")%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :  "id" ;
@@ -197,7 +131,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=lang.translate("fore.select.lebel", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.select.lebel", text)%></button>
                 <%} else {%>
                     <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
                 <%} /*End If */%>
@@ -208,15 +142,15 @@
         <%} /*End For*/%>
         <div class="form-group row">
             <div class="col-sm-6 col-sm-offset-3">
-                <button type="submit" class="ensure btn btn-primary"><%=lang.translate("fore.ensure")%></button>
-                <button type="button" class="cancel btn btn-link"   ><%=lang.translate("fore.cancel")%></button>
+                <button type="submit" class="ensure btn btn-primary"><%=_locale.translate("fore.ensure")%></button>
+                <button type="button" class="cancel btn btn-link"   ><%=_locale.translate("fore.cancel")%></button>
             </div>
         </div>
     </form>
 </div>
 <script type="text/javascript">
 (function($) {
-    var context = $("#<%=id%>");
+    var context = $("#<%=_pageId%>").removeAttr("id");
 
     context.hsForm({
         loadUrl: "<%=_module%>/<%=_entity%>/search.act?id=\${id}&md=\${md}",

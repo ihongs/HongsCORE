@@ -1,106 +1,34 @@
-<%@page import="app.hongs.CoreLocale"%>
-<%@page import="app.hongs.CoreConfig"%>
-<%@page import="app.hongs.HongsError"%>
-<%@page import="app.hongs.HongsException"%>
-<%@page import="app.hongs.db.DB"%>
-<%@page import="app.hongs.db.Mview"%>
-<%@page import="app.hongs.action.ActionDriver"%>
-<%@page import="app.hongs.action.FormSet"%>
-<%@page import="app.hongs.action.NaviMap"%>
-<%@page import="app.hongs.util.Data"%>
-<%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
-<%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@include file="_init_more_.jsp"%>
 <%
-    // 获取路径动作
-    int i;
-    String _module, _entity, _action;
-    _module = ActionDriver.getWorkPath(request);
-    i = _module.lastIndexOf('/');
-    _module = _module.substring(1, i);
-    i = _module.lastIndexOf('/');
-    _entity = _module.substring(i+ 1);
-    _module = _module.substring(0, i);
-    _action = Synt.declare(request.getAttribute("list.action"), "list");
-
-    // 获取字段集合
-    CoreLocale lang;
-    Map        flds;
-    Set        lsts = null;
-    Set        srts = null;
-    do {
-        try {
-            Mview view = new Mview(DB.getInstance(_module).getTable(_entity));
-            lang = view.getLang(  );
-            flds = view.getFields();
-            lsts = Synt.asTerms(view.listable);
-            srts = Synt.asTerms(view.sortable);
-            break;
-        } catch (HongsException ex) {
-            if (ex.getErrno() != 0x1039) {
-                throw ex;
-            }
-        } catch (HongsError ex) {
-            if (ex.getErrno() != 0x2a  ) {
-                throw ex;
-            }
-        }
-
-        FormSet form = FormSet.hasConfFile(_module +"/"+ _entity)
-                     ? FormSet.getInstance(_module +"/"+ _entity)
-                     : FormSet.getInstance(_module);
-        flds = form.getFormTranslated(_entity );
-        lsts = Synt.asTerms(Dict.getDepth(flds, "@", "listable"));
-        srts = Synt.asTerms(Dict.getDepth(flds, "@", "sortable"));
-        lang = CoreLocale.getInstance().clone();
-        lang.loadIgnrFNF(_module);
-        lang.loadIgnrFNF(_module +"/"+ _entity);
-    } while (false);
-
-    // 获取资源标题
-    String id , nm ;
-    id = (_module +"-"+ _entity +"-"+ _action).replace('/','-');
-    do {
-        NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
-                     ? NaviMap.getInstance(_module+"/"+_entity)
-                     : NaviMap.getInstance(_module);
-        Map menu  = site.getMenu(_module+"/#"+_entity);
-        if (menu != null) {
-            nm = (String) menu.get("text");
-            if (nm != null) {
-                nm  = lang.translate( nm );
-                break;
-            }
-        }
-
-        nm = Dict.getValue( flds, "", "@", "text" );
-    } while (false);
+    String _action = Synt.declare(request.getAttribute("list.action"), "list");
+    String _pageId = (_module +"-" + _entity +"-" + _action).replace('/', '-');
 %>
-<h2><%=lang.translate("fore."+_action+".title", nm)%></h2>
-<div id="<%=id%>" class="row">
+<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
+<div id="{$_pageId}" class="row">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <%if ( "select".equals(_action)) {%>
-            <button type="button" class="ensure btn btn-primary"><%=lang.translate("fore.select", nm)%></button>
+            <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
-            <button type="button" class="create btn btn-default"><%=lang.translate("fore.create", nm)%></button>
+            <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
             <%if (!"select".equals(_action)) {%>
-            <button type="button" class="update for-choose btn btn-default"><%=lang.translate("fore.update", nm)%></button>
-            <button type="button" class="revert for-choose btn btn-default" title="<%=lang.translate("fore.revert", nm)%>"><span class="glyphicon glyphicon-time" ></span></button>
-            <button type="button" class="delete for-checks btn btn-warning" title="<%=lang.translate("fore.delete", nm)%>"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
+            <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
+            <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
             <input type="search" name="wd" class="form-control input-search"/>
             <span class="input-group-btn">
-                <button type="submit" class="btn btn-default search" title="<%=lang.translate("fore.search", nm)%>"><span class="glyphicon glyphicon-search"></span></button>
-                <button type="button" class="btn btn-default filter" title="<%=lang.translate("fore.filter", nm)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                <button type="button" class="btn btn-default statis" title="<%=lang.translate("fore.filter", nm)%>"><span class="glyphicon glyphicon-stats" ></span></button>
-                <button type="button" class="btn btn-default export" title="<%=lang.translate("fore.filter", nm)%>"><span class="glyphicon glyphicon-save"  ></span></button>
+                <button type="submit" class="btn btn-default search" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
+                <button type="button" class="btn btn-default filter" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                <button type="button" class="btn btn-default statis" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
+                <button type="button" class="btn btn-default export" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-save"  ></span></button>
             </span>
         </form>
     </div>
@@ -108,7 +36,7 @@
     <form class="findbox filtbox invisible row" style="background: #ffe;">
         <div class="form-group"></div>
         <%
-        Iterator it2 = flds.entrySet().iterator();
+        Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
             Map.Entry et = (Map.Entry) it2.next();
             Map     info = (Map ) et.getValue();
@@ -151,7 +79,7 @@
     <!-- 报表 -->
     <form class="findbox statbox invisible row" style="background: #ffe;">
         <%
-        Iterator it3 = flds.entrySet().iterator();
+        Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {
             Map.Entry et = (Map.Entry) it3.next();
             Map     info = (Map ) et.getValue();
@@ -211,11 +139,13 @@
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                 <%
-                Iterator it = flds.entrySet().iterator();
+                Set lsts = Synt.asTerms(Dict.getDepth(_fields, "@", "listable"));
+                Set srts = Synt.asTerms(Dict.getDepth(_fields, "@", "sortable"));
+                Iterator it = _fields.entrySet().iterator();
                 while (it.hasNext()) {
-                    Map.Entry et = (Map.Entry)it.next( );
-                    Map     info = (Map ) et.getValue( );
-                    String  name = (String) et.getKey( );
+                    Map.Entry et = (Map.Entry) it.next();
+                    Map     info = (Map ) et.getValue();
+                    String  name = (String) et.getKey();
                     String  type = (String) info.get("__type__");
                     String  text = (String) info.get("__text__");
 
@@ -275,7 +205,7 @@
 <script type="text/javascript" src="static/addons/echarts/echarts.js"></script>
 <script type="text/javascript">
 (function($) {
-    var context = $("#<%=id%>");
+    var context = $("#<%=_pageId%>").removeAttr("id");
     var toolbox = context.find(".toolbox");
     var formbox = context.find(".findbox");
     var findbox = formbox.eq(0);
@@ -287,7 +217,7 @@
         sendUrls: [
             ['<%=_module%>/<%=_entity%>/delete.act',
              '.delete',
-             '<%=lang.translate("fore.delete.confirm", nm)%>']
+             '<%=_locale.translate("fore.delete.confirm", _title)%>']
         ],
         openUrls: [
             ['<%=_module%>/<%=_entity%>/form.html?md=0',

@@ -88,7 +88,7 @@ implements IEntity
   /**
    * 可过滤的字段
    */
-  public String[] filtable = null;
+  public String[] siftable = null;
 
   /**
    * 构造方法
@@ -114,8 +114,8 @@ implements IEntity
     if (cs != null) this.sortable = cs.split(",");
     cs = table.getField("findable");
     if (cs != null) this.findable = cs.split(",");
-    cs = table.getField("filtable");
-    if (cs != null) this.filtable = cs.split(",");
+    cs = table.getField("siftable");
+    if (cs != null) this.siftable = cs.split(",");
   }
 
   //** 标准动作方法 **/

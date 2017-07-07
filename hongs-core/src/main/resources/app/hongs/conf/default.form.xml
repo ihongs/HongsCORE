@@ -3,7 +3,7 @@
     <enum name="__cases__">
         <value code="findable" type="set">string,search,hidden,text,tel,url,email,textcase</value>
         <value code="sortable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,sorted</value>
-        <value code="filtable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
+        <value code="siftable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
         <value code="listable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->

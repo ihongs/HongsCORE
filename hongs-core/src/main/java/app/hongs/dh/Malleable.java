@@ -268,11 +268,11 @@ public class Malleable {
      * 获取可过滤的字段
      * @return
      */
-    public Set<String> getFiltable() {
+    public Set<String> getSiftable() {
         if (null != whColz) {
             return  whColz;
         }
-        whColz = getCaseNames("filtable");
+        whColz = getCaseNames("siftable");
         return whColz;
     }
 

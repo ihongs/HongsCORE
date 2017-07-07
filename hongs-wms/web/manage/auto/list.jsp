@@ -49,7 +49,7 @@
             }
 
             if ( Synt.declare(info.get("statable"), false)
-            ||  !Synt.declare(info.get("filtable"), false)) {
+            ||  !Synt.declare(info.get("siftable"), false)) {
                 continue;
             }
         %>
@@ -91,7 +91,7 @@
                 continue;
             }
             if (!Synt.declare(info.get("statable"), false)
-            ||  !Synt.declare(info.get("filtable"), false)) {
+            ||  !Synt.declare(info.get("siftable"), false)) {
                 continue;
             }
 

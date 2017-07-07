@@ -297,7 +297,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     listable        字段可获取(可通过rb参数控制)
     sortable        字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
     findable        字段可搜索(可通过wd参数限制)
-    filtable        字段可过滤
+    siftable        字段可过滤
     unstored        不保存原文(可查询或排序, 但不可以读取, 仅针对 Lucene 特有)
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
@@ -305,7 +305,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     auto.bind.listable 告知 Mview 和 Malleable 不要自动将字段设为可列举
     auto.bind.sortable 告知 Mview 和 Malleable 不要自动将字段设为可排序
     auto.bind.findable 告知 Mview 和 Malleable 不要自动将字段设为可搜索
-    auto.bind.filtable 告知 Mview 和 Malleable 不要自动将字段设为可过滤
+    auto.bind.siftable 告知 Mview 和 Malleable 不要自动将字段设为可过滤
     auto.append.fields 告知 Mview 不要自动追加表内字段
     auto.append.assocs 告知 Mview 不要自动追加关联字段
     hide.create.button 告知视图不要显示创建按钮

@@ -206,23 +206,24 @@ public class ApisAction
         }
 
         // 是否动作
-        Map acx = ActionRunner.getActions();
-        if (acx.containsKey( acl )) {
+        Map atx = ActionRunner.getActions();
+        if (atx.containsKey( acl )) {
             return "/"+acl+".act";
         }
 
         String[]    ats = acl.split ( "/" );
-        String        m = mts[0] ;
-        String        n = ats[0] ;
+        String        m = mts [0];
         StringBuilder u = new StringBuilder();
-        StringBuilder p = new StringBuilder();
+        StringBuilder q = new StringBuilder();
 
         // 分解路径
-        u.append(n);
-        for (int i = 1; i < ats.length; i ++) {
-            String v = ats[ i ];
-            if (v.endsWith("!")) {
-                v = v.substring(0, v.length() - 1);
+        for(int i = 1; i < ats.length; i ++ ) {
+            String  x  =  ats[ i ];
+            int p = x.indexOf('.');
+            if (p > 0) {
+                String n, v;
+                v = x.substring(1 + p);
+                x = x.substring(0 , p);
 
                 /**
                  * 当这是最后一个参数时
@@ -231,31 +232,38 @@ public class ApisAction
                  * 其他外键则叫 x_id
                  */
                 if (i == ats.length - 1) {
-                    if ("search".equals(m)) {
+                    if ( "search".equals(m) ) {
                         mts = new String[ ] {"search", "info", "list"};
                     }
-                    n  = /**/Cnst.ID_KEY;
+                    n = /****/Cnst.ID_KEY;
                 } else {
-                    n += "_"+Cnst.ID_KEY;
+                    n = x+"_"+Cnst.ID_KEY;
                 }
 
-                p.append('&').append(n)
+                q.append('&').append(n)
                  .append('=').append(v);
+                u.append('/').append(x);
             } else {
-                u.append('/').append(v);
+                u.append('/').append(x);
             }
         }
 
+        // 微调字串
+        if (0 < q.length()) {
+            q = q.replace(0, 1, "?");
+        }
+        if (0 < u.length()) {
+            m = u.substring( 1 );
+        } else {
+            m = u.toString (   );
+        }
+
         // 逐个对比
-        n = u.toString( );
-        for (String x : mts) {
-            x = n + "/" + x ;
-            if (acx.containsKey(x)) {
-                x = "/" + x + ".act";
-                if (0 < p.length()) {
-                    x = x + p.replace(0, 1, "?");
-                }
-                return  x;
+        for(String x : mts) {
+            x = m + "/" + x ;
+            if (atx.containsKey(x)) {
+                x = "/" + x + ".act" + q;
+                return    x ;
             }
         }
 
@@ -264,24 +272,21 @@ public class ApisAction
          * 可能是使用了 AutoFilter 的原因
          * 可尝试检查当前动作或方法
          */
-        if (0 < p.length()) {
-            p = p.replace(0, 1, "?");
-        }
         for( /**/ String mtd : mts ) {
         if (acl.endsWith("/" + mtd)) {
-            return "/"+acl+".act"+ p;
+            return "/"+acl+".act"+ q;
         }}
         if ("update".equals(mts[0])) {
-            return "/"+acl+"/update.act" + p;
+            return "/"+acl+"/update.act" + q;
         } else
         if ("create".equals(mts[0])) {
-            return "/"+acl+"/create.act" + p;
+            return "/"+acl+"/create.act" + q;
         } else
         if ("delete".equals(mts[0])) {
-            return "/"+acl+"/delete.act" + p;
+            return "/"+acl+"/delete.act" + q;
         } else
         {
-            return "/"+acl+"/search.act" + p;
+            return "/"+acl+"/search.act" + q;
         }
     }
 

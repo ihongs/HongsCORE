@@ -302,10 +302,10 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
-    auto.bind.listable 告知 Mview 和 FormBean 不要自动将字段设为可列举
-    auto.bind.sortable 告知 Mview 和 FormBean 不要自动将字段设为可排序
-    auto.bind.findable 告知 Mview 和 FormBean 不要自动将字段设为可搜索
-    auto.bind.filtable 告知 Mview 和 FormBean 不要自动将字段设为可过滤
+    auto.bind.listable 告知 Mview 和 Malleable 不要自动将字段设为可列举
+    auto.bind.sortable 告知 Mview 和 Malleable 不要自动将字段设为可排序
+    auto.bind.findable 告知 Mview 和 Malleable 不要自动将字段设为可搜索
+    auto.bind.filtable 告知 Mview 和 Malleable 不要自动将字段设为可过滤
     auto.append.fields 告知 Mview 不要自动追加表内字段
     auto.append.assocs 告知 Mview 不要自动追加关联字段
     hide.create.button 告知视图不要显示创建按钮

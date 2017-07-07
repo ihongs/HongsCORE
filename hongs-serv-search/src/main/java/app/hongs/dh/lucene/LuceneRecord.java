@@ -8,9 +8,9 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
-import app.hongs.dh.ModelForm;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
+import app.hongs.dh.Malleable;
 import app.hongs.dh.lucene.field.*;
 import app.hongs.dh.lucene.query.*;
 import app.hongs.dh.lucene.value.*;
@@ -75,7 +75,7 @@ import org.apache.lucene.store.FSDirectory;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelForm implements IEntity, ITrnsct, Cloneable, AutoCloseable {
+public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneable, AutoCloseable {
 
     protected boolean TRNSCT_MODE = false;
     protected boolean OBJECT_MODE = false;

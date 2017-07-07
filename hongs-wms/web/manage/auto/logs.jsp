@@ -55,7 +55,7 @@
         var sendbox = context.find(".sendbox");
         
         var listObj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id.eq="+H$("&id", loadbox)+"&ob=-ctime&rb=-data",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id!eq="+H$("&id", loadbox)+"&ob=-ctime&rb=-data",
             openUrls: [
                 [function(ln) {
                     var tr = ln.closest("tr");

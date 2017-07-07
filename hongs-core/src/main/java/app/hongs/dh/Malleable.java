@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 表单应用实例
+ * 表单应用
  * @author Hongs
  */
 public class Malleable {

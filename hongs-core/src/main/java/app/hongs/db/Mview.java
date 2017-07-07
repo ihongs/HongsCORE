@@ -189,11 +189,11 @@ public class Mview extends Model {
         Set<String> listColz = new LinkedHashSet();
         Set<String> sortColz = new LinkedHashSet();
         Set<String> findColz = new LinkedHashSet();
-        Set<String> filtColz = new LinkedHashSet();
+        Set<String> siftColz = new LinkedHashSet();
         Set<String> listTypz = new HashSet();
         Set<String> sortTypz = new HashSet();
         Set<String> findTypz = new HashSet();
-        Set<String> filtTypz = new HashSet();
+        Set<String> siftTypz = new HashSet();
 
         if (prms == null || ! Synt.declare(prms.get("auto.bind.listable"), true)) {
             listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("listable"));
@@ -204,8 +204,8 @@ public class Mview extends Model {
         if (prms == null || ! Synt.declare(prms.get("auto.bind.findable"), true)) {
             findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("findable"));
         }
-        if (prms == null || ! Synt.declare(prms.get("auto.bind.filtable"), true)) {
-            filtTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("filtable"));
+        if (prms == null || ! Synt.declare(prms.get("auto.bind.siftable"), true)) {
+            siftTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("siftable"));
         }
 
         // 排序、搜索等字段也可以直接在主字段给出
@@ -221,9 +221,9 @@ public class Mview extends Model {
             findColz = Synt.asTerms(prms.get("findable"));
             findTypz.clear();
         }
-        if (prms != null && prms.containsKey("filtable")) {
-            filtColz = Synt.asTerms(prms.get("filtable"));
-            filtTypz.clear();
+        if (prms != null && prms.containsKey("siftable")) {
+            siftColz = Synt.asTerms(prms.get("siftable"));
+            siftTypz.clear();
         }
 
         if (null == prms || ! Synt.declare(prms.get("auto.append.fields"), true)) {
@@ -234,7 +234,7 @@ public class Mview extends Model {
         }
 
         // 检查字段, 为其添加搜索、排序、列举参数
-        chkFields(listTypz, sortTypz, findTypz, filtTypz, listColz, sortColz, findColz, filtColz);
+        chkFields(listTypz, sortTypz, findTypz, siftTypz, listColz, sortColz, findColz, siftColz);
 
         if (!listColz.isEmpty()) {
             listable = listColz.toArray(new String[]{});
@@ -245,22 +245,22 @@ public class Mview extends Model {
         if (!findColz.isEmpty()) {
             findable = findColz.toArray(new String[]{});
         }
-        if (!filtColz.isEmpty()) {
-            filtable = filtColz.toArray(new String[]{});
+        if (!siftColz.isEmpty()) {
+            siftable = siftColz.toArray(new String[]{});
         }
         if (model != null) {
             model.listable = listable;
             model.sortable = sortable;
             model.findable = findable;
-            model.filtable = filtable;
+            model.siftable = siftable;
         }
 
         return fields;
     }
 
     private void chkFields(
-            Set listTypz, Set sortTypz, Set findTypz, Set filtTypz,
-            Set listColz, Set sortColz, Set findColz, Set filtColz) {
+            Set listTypz, Set sortTypz, Set findTypz, Set siftTypz,
+            Set listColz, Set sortColz, Set findColz, Set siftColz) {
         for(Map.Entry<String, Map> ent
             : ( ( Map<String, Map> ) fields ).entrySet( )) {
             Map field = ent.getValue();
@@ -319,17 +319,17 @@ public class Mview extends Model {
                 }
             }
 
-            if (field.containsKey("filtable")) {
-                if (Synt.declare(field.get("filtable"), false)) {
-                    filtColz.add(fn);
+            if (field.containsKey("siftable")) {
+                if (Synt.declare(field.get("siftable"), false)) {
+                    siftColz.add(fn);
                 }
             } else {
-                if (filtTypz.contains(ft)) {
-                    filtColz.add(fn);
-//                  field.put("filtable", "yes");
+                if (siftTypz.contains(ft)) {
+                    siftColz.add(fn);
+//                  field.put("siftable", "yes");
 //              } else
-//              if (filtColz.contains(fn)) {
-//                  field.put("filtable", "yes");
+//              if (siftColz.contains(fn)) {
+//                  field.put("siftable", "yes");
                 }
             }
         }

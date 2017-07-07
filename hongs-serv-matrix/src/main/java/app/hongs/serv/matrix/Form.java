@@ -187,7 +187,7 @@ public class Form extends Model {
             top.put("listable", "yes");
             top.put("sortable", "yes");
             top.put("findable", "yes");
-            top.put("filtable", "yes");
+            top.put("siftable", "yes");
 
             conf = Data.toString ( flds );
             rd.put("conf", conf);

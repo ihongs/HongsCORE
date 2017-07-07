@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  * </pre>
  * <p>
  * allow 所传值可用 Table.getParams() 或 FormSet.getForm().get("@")
- * 所得到的 Map 里面的 listable,sortable,findable,filtable 等来设置,
+ * 所得到的 Map 里面的 listable,sortable,findable,siftable 等来设置,
  * 同时提供了 allow(Table), allow(Model) 两个快捷方法自动读取并设置;
  * </p>
  *
@@ -58,7 +58,7 @@ public class AssocCase {
     /**
      * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
-    public  static final String  FILTABLE = "FILTABLE";
+    public  static final String  SIFTABLE = "SIFTABLE";
     /**
      * 可存储字段, 用于 FetchCase 的 Option, 为设置则取 LISTABLE
      */
@@ -236,7 +236,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "sortable", "findable", "filtable", "saveable"};
+        String[] ks = new String[] {"listable", "sortable", "findable", "siftable", "saveable"};
         for(String k : ks) {
             String s = fc.get(k).toString( ).trim( );
             if ("".equals(s) ) {
@@ -443,7 +443,7 @@ public class AssocCase {
     private void where(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
-        Map<String, String> af = allow(FILTABLE);
+        Map<String, String> af = allow(SIFTABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
@@ -694,8 +694,8 @@ public class AssocCase {
         if (model.findable != null) {
             allow(FINDABLE, model.findable);
         }
-        if (model.filtable != null) {
-            allow(FILTABLE, model.filtable);
+        if (model.siftable != null) {
+            allow(SIFTABLE, model.siftable);
         }
 
         return this;
@@ -717,7 +717,7 @@ public class AssocCase {
          */
         bufs.put(LISTABLE, af);
         bufs.put(SORTABLE, af);
-        bufs.put(FILTABLE, af);
+        bufs.put(SIFTABLE, af);
 
         String name = Synt.defoult(
                that.getName( ) , table.name , table.tableName);

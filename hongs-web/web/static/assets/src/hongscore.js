@@ -51,21 +51,22 @@ function H$() {
         }
     case '$':
     case '%':
-        var c = b === '%' ? window.localStorage : window.sessionStorage;
+        var c = b === '$' ? window.sessionStorage : window.localStorage;
         if (typeof c === "undefined") {
             throw "H$: Does not support '"
-                + (b === '$' ? 'local' : 'session')
+                + (b === '$' ? 'session' : 'local')
                 + "Storage'" ;
         }
-        if (arguments.length === 1) {
+        if (arguments.length == 1) {
             return c.getItem(arguments[0]);
         } else
-        if (arguments[ 1 ] == null) {
-            /**/c.removeItem(arguments[0]);
+        if (arguments[1] === null) {
+            c.removeItem(arguments[0]);
         } else
         {
-            /****/ c.setItem(arguments[0], arguments[1]);
+            c.setItem(arguments[0], arguments[1]);
         }
+        return;
     default:
         throw "H$: Unrecognized identified '" + b + "'" ;
     }

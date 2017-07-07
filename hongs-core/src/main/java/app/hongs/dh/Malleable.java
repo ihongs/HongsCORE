@@ -14,7 +14,7 @@ import java.util.Set;
  * 表单应用实例
  * @author Hongs
  */
-public class ModelForm {
+public class Malleable {
 
     private Map fieldz = null;
     private Map fsavez = null;

@@ -105,9 +105,9 @@ public class Malleable {
             return  fsavez;
         }
         try {
-            Map<String, String> m = FormSet.getInstance().getEnum("__saves__");
+            Map<String, Object> m = FormSet.getInstance().getEnum("__saves__");
             fsavez = new HashMap();
-            for(Map.Entry<String, String> et : m.entrySet()) {
+            for(Map.Entry<String, Object> et : m.entrySet()) {
                 fsavez.put(et.getKey(), Synt.asTerms(et.getValue()));
             }
             return  fsavez;
@@ -125,9 +125,9 @@ public class Malleable {
             return  fcasez;
         }
         try {
-            Map<String, String> m = FormSet.getInstance().getEnum("__cases__");
+            Map<String, Object> m = FormSet.getInstance().getEnum("__cases__");
             fcasez = new HashMap();
-            for(Map.Entry<String, String> et : m.entrySet()) {
+            for(Map.Entry<String, Object> et : m.entrySet()) {
                 fcasez.put(et.getKey(), Synt.asTerms(et.getValue()));
             }
             return  fcasez;
@@ -274,6 +274,36 @@ public class Malleable {
         }
         whColz = getCaseNames("filtable");
         return whColz;
+    }
+
+    /**
+     * 可用于命名的字段
+     * @return
+     * @throws HongsException
+     */
+    public Set<String> getNameable() throws HongsException {
+        Set<String> nams = new LinkedHashSet();
+        Set<String> lsts = getListable();
+        Map<String,  Map  > flds = getFields();
+        Map<String, String> typs = FormSet.getInstance().getEnum("__types__");
+
+        /**
+         * 寻找第一个非隐藏的字符串字段
+         */
+        for(String name : lsts) {
+            Map    item = flds.get(name);
+            if ( item == null ) continue;
+            String type = (String) item.get ("__type__");
+            String kind = typs.get(type);
+            if ("string".equals(kind)
+            && !"stored".equals(type)
+            && !"hidden".equals(type)
+            && !Cnst.ID_KEY.equals(type)) {
+                nams.add(name);
+            }
+        }
+
+        return !nams.isEmpty() ? nams : lsts;
     }
 
     /**

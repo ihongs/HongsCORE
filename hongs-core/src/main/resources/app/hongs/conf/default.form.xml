@@ -1,15 +1,15 @@
 <root>
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
-        <value code="findable" type="set">string,search,hidden,text,email,url,tel,textcase</value>
-        <value code="sortable" type="set">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,sorted</value>
-        <value code="filtable" type="set">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check</value>
-        <value code="listable" type="set">string,search,hidden,text,email,url,tel,date,time,datetime,number,range,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
+        <value code="findable" type="set">string,search,hidden,text,tel,url,email,textcase</value>
+        <value code="sortable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,sorted</value>
+        <value code="filtable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
+        <value code="listable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
-        <value code="string" type="set">string,text,textarea,textcase,hidden,color,email,url,tel,fork,enum,select,radio,check,file,upload,image,video,audio,search,stored</value>
-        <value code="number" type="set">number,range,slider,switch,sorted</value>
+        <value code="string" type="set">string,text,textarea,textcase,hidden,tel,url,email,fork,enum,select,radio,check,file,upload,image,video,audio,search,stored</value>
+        <value code="number" type="set">number,range,color,slider,switch,sorted</value>
         <value code="date"   type="set">date,time,datetime</value>
         <!-- 下为 Lucene 特有 -->
         <value code="object" type="set">object,form,json</value>
@@ -27,13 +27,13 @@
         <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
         <value code="textarea">string</value><!-- Lucene 中同 stored -->
         <value code="textcase">string</value><!-- Lucene 中同 search -->
-        <value code="color">string</value>
-        <value code="email">string</value>
-        <value code="url">string</value>
         <value code="tel">string</value>
+        <value code="url">string</value>
+        <value code="email">string</value>
         <!-- Number -->
         <value code="number">number</value>
         <value code="range">number</value>
+        <value code="color">number</value>
         <value code="slider">number</value>
         <value code="switch">number</value>
         <value code="sorted">number</value> <!-- Lucene 特有仅能排序 -->

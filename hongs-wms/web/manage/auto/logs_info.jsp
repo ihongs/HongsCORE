@@ -59,9 +59,10 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
+    var loadbox = context.closest("loadbox");
 
     context.hsForm({
-        loadUrl: "<%=_module%>/<%=_entity%>/revert/search.act?id=\${id}&ctime=\${ctime}",
+        loadUrl: "<%=_module%>/<%=_entity%>/revert/search.act?id="+H$("&id", loadbox)+"&ctime="+H$("&ctime", loadbox),
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

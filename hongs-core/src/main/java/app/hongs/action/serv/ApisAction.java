@@ -220,9 +220,9 @@ public class ApisAction
         // 分解路径
         u.append(n);
         for (int i = 1; i < ats.length; i ++) {
-            String  v   =   ats[i];
-            if (v.startsWith("!")) {
-                v = v.substring(1);
+            String v = ats[ i ];
+            if (v.endsWith("!")) {
+                v = v.substring(0, v.length() - 1);
 
                 /**
                  * 当这是最后一个参数时
@@ -232,7 +232,7 @@ public class ApisAction
                  */
                 if (i == ats.length - 1) {
                     if ("search".equals(m)) {
-                        mts = new String[] {"search", "info", "list"};
+                        mts = new String[ ] {"search", "info", "list"};
                     }
                     n  = /**/Cnst.ID_KEY;
                 } else {

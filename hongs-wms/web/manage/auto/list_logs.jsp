@@ -52,7 +52,6 @@
 <script type="text/javascript">
     (function($) {
         var context = $('#<%=_pageId%>').removeAttr("id");
-        var loadbox = context.closest(".loadbox");
         var sendbox = context.find(".sendbox");
         
         var listObj = context.hsList({

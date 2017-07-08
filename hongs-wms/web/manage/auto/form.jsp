@@ -94,23 +94,31 @@
                         String fm = "hsFile";
                         if (info.containsKey("type")) {
                             extr += " accept=\""+info.get("type").toString()+"\"";
-                        } else
-                        if ("image".equals(type) || "video".equals(type) || "audio".equals(type)) {
+                        } else {
                             extr += " accept=\""+type+"/*\"";
-                            if ("image".equals(type)) {
-                                ft =  "_view";
-                                fm = "hsView";
-                                size = Synt.asserts( info.get("thumb-size"), "" );
-                                keep = Synt.asserts( info.get("thumb-mode"), "" );
-                                if (size.length()==0) {
-                                    size = "100*100";
-                                    keep = "keep";
-                                } else {
-                                    size = size.replaceFirst("\\d+\\*\\d+", "$0");
-                                    if ( ! keep.equals("keep") ) {
-                                        keep = "";
-                                    }
+                        }
+                        if ("image".equals(type)) {
+                            ft =  "_view";
+                            fm = "hsView";
+                            size = Synt.asserts( info.get("thumb-size"), "" );
+                            keep = Synt.asserts( info.get("thumb-mode"), "" );
+                            if (size.length()!=0) {
+                                size = size.replaceFirst("\\d+\\*\\d+", "$0");
+                                if ( ! keep.equals("keep") ) {
+                                    keep = "";
                                 }
+                                // 限制最大宽度, 避免撑开容器
+                                String[ ] wh = size.split("\\*");
+                                int w = Synt.declare(wh[0], 300);
+                                int h = Synt.declare(wh[1], 300);
+                                if (w > 300) {
+                                    h = 300  * h / w;
+                                    w = 300;
+                                    size = w +"*"+ h;
+                                }
+                            } else {
+                                size = "100*100";
+                                keep = "keep";
                             }
                         }
                     %>

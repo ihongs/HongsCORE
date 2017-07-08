@@ -14,10 +14,11 @@
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="_htime" data-fl="v*1000" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="_htime" data-fl="v*1000" class="_htime">恢复起源</th>
-                    <th data-fn="state_text">状态</th>
-                    <th data-fn="" data-ft="_admin">操作
+                    <th data-fn="state_text" style="width:3.5em;">状态</th>
+                    <th data-fn="" data-ft="_admin" style="width:6em;">操作
                         <div class="invisible">
                             <a href="javascript:;" class="review">详情</a>
+                            <span style="margin-left:0.5em;"></span>
                             <a href="javascript:;" class="revert">恢复</a>
                         </div>
                     </th>
@@ -55,14 +56,14 @@
         var sendbox = context.find(".sendbox");
         
         var listObj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id!eq="+H$("&id", loadbox)+"&ob=-ctime&rb=-data",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id!eq=\${id}&ob=-ctime&rb=-data",
             openUrls: [
                 [function(ln) {
                     var tr = ln.closest("tr");
                     var id = tr.data("id");
                     var ct = tr.data("ctime");
                     this.open(ln, ln.hsFind("@"),
-                      "<%=_module%>/<%=_entity%>/logs_info.html?id="+id+"&ctime="+ct);
+                      "<%=_module%>/<%=_entity%>/info_logs.html?id="+id+"&ctime="+ct);
                 }, ".review"],
                 [function(ln) {
                     sendbox.data ("ln", ln);

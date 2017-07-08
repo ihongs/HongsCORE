@@ -224,7 +224,7 @@
              '.create', '@'],
             ['<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}',
              '.update', '@'],
-            ['<%=_module%>/<%=_entity%>/logs.html?id={ID}',
+            ['<%=_module%>/<%=_entity%>/list_logs.html?md=6&id={ID}',
              '.revert', '@']
         ],
         _fill__fork: hsListFillFork

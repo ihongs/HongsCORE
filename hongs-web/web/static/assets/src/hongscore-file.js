@@ -27,11 +27,11 @@
             box =$(box );
         $(this).before($(this).clone().val(''));
         var txt = src.replace(/^.*[\/\\]/, '' );
-        var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
+        var div =$( '<li class="btn btn-info form-control"></li>' ).attr( "title" , txt )
            .append(this)
-           .append('<span class="glyphicon glyphicon-open-file"></span>' )
-           .append($('<span class="picktxt"></span>' ).text( txt ) )
-           .append('<span class="close pull-right">&times;</span>' );
+           .append('<span class="glyphicon glyphicon-open-file"></span>')
+           .append($('<span class="picktxt"></span>').text( txt ) )
+           .append('<span class="close pull-right">&times;</span>');
         box.append(div );
         return div ;
     };
@@ -48,11 +48,11 @@
         }
         var box =$(this);
         var txt = src.replace(/^.*[\/\\]/, '' );
-        var div =$('<li class="btn btn-success form-control"></li>').attr("title" , txt )
+        var div =$( '<li class="btn btn-info form-control"></li>' ).attr( "title" , txt )
            .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
-           .append('<span class="glyphicon glyphicon-save-file"></span>' )
-           .append($('<span class="picktxt"></span>' ).text( txt ) )
-           .append('<span class="close pull-right">&times;</span>' );
+           .append('<span class="glyphicon glyphicon-save-file"></span>')
+           .append($('<span class="picktxt"></span>').text( txt ) )
+           .append('<span class="close pull-right">&times;</span>');
         box.append(div );
         return div;
     };
@@ -326,10 +326,12 @@ function hsFormFillView(box, v, n) {
     if (v.length) {
         _hsSoloFile ( box, false );
     }
+
     var k = box.data("keep");
     var w = box.data("size");
     var h = w.split ("*", 2);
         w = h [0]; h = h [1];
+
     jQuery.each(v , function(i, x) {
         box.hsFillView(n, x, w, h, k);
     });

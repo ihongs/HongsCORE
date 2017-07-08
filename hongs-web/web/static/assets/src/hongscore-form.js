@@ -412,17 +412,12 @@ HsForm.prototype = {
             return;
         }
 
-        // 链接,图片,多媒体
-        if (inp.is("img,audio,video")) {
-            inp.attr("src" , v);
-            return;
-        }
-        if (inp.is("object")) {
-            inp.attr("data", v);
-            return;
-        }
-        if (inp.is("a")) {
-            inp.attr("href", v);
+        // 链接,图片,视频,音频
+        if (inp.is("a,img,video,audio")) {
+            v = hsFixUri(v);
+            inp.filter("a").attr("href", v);
+            inp.filter("img,video,audio").attr("src", v);
+            inp.not ("a,img,video,audio").text(/****/ v);
             return;
         }
 

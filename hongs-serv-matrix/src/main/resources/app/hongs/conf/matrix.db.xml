@@ -5,6 +5,11 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
     <config link="manage"/>
     <tables>
+        <table name="unit"
+               tableName="a_matrix_unit"
+               primaryKey="id"
+               model="app.hongs.serv.matrix.Unit">
+        </table>
         <table name="form"
                tableName="a_matrix_form"
                primaryKey="id"
@@ -14,14 +19,20 @@ xsi:schemaLocation="http://hongs-core db.xsd">
                    foreignKey="unit_id">
             </assoc>
         </table>
-        <table name="unit"
-               tableName="a_matrix_unit"
-               primaryKey="id"
-               model="app.hongs.serv.matrix.Unit">
-        </table>
         <table name="data"
                tableName="a_matrix_data"
                primaryKey="id">
+            <assoc type="BLS_TO"
+                   name="form"
+                   foreignKey="form_id"
+                   fields="id,name">
+            </assoc>
+            <assoc type="BLS_TO"
+                   name="user"
+                   foreignKey="user_id"
+                   fields="id,name"
+                   tableName="member.user">
+            </assoc>
         </table>
     </tables>
 </db>

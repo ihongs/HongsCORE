@@ -106,7 +106,6 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
-    var loadbox = context.closest(".loadbox");
 
     /**
      * 文件、图片等控件都是为表单准备的

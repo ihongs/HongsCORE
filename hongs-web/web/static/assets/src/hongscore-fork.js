@@ -280,7 +280,7 @@ function hsFormFillPick(box, v, n, t) {
         function inset(box, btn, val, txt) {
             box.val (val);
             btn.text(txt);
-            btn.addClass("btn-success");
+            btn.addClass("btn-info" );
             btn.append('<a href="javascript:;" class="close">&times;</a>');
         }
 
@@ -333,10 +333,10 @@ function hsFormFillPick(box, v, n, t) {
         box.empty().toggleClass("pickmul", mul);
         for(var val in v) {
             var txt  = v[val];
-            box.append(jQuery('<li class="btn btn-success form-control"></li>').attr("title", txt )
-               .append(jQuery('<input class="pickval" type="hidden"/>').attr( "name", n ).val(val))
-               .append(jQuery('<span  class="picktxt"></span>'  ).text(  txt  ))
-               .append(jQuery('<span  class="close pull-right">&times;</span>'))
+            box.append(jQuery('<li class="btn btn-info form-control"></li>').attr( "title", txt )
+               .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
+               .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
+               .append(jQuery( '<span class="close pull-right">&times;</span>'))
             );
         }
     }

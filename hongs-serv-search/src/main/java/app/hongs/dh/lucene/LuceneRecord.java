@@ -21,7 +21,6 @@ import app.hongs.util.Tool;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -94,32 +93,34 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      */
     public LuceneRecord(String path, Map form)
     throws HongsException {
-        // 可在表单配置中指定数据路径
+        super.setFields(form);
+
+        // 可以在表单配置中指定数据路径
         if (form != null) {
             Map c = (Map) form.get("@");
             if (c!= null) {
-                String p = (String) c.get("data-path");
-                if (p != null && p.length() != 0) {
-                    path = p;
+                String p;
+                p = (String) c.get("data-path");
+                if (null != p && 0 < p.length()) {
+                    path  = p;
                 }
             }
         }
-        super.setFields(form);
 
-        // 保存路径
+        // 数据路径
         if (path != null) {
             Map m = new HashMap();
             m.put("CORE_PATH", Core.CORE_PATH);
-            m.put("CONF_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
+            m.put("SERVER_ID", Core.SERVER_ID);
             path = Tool.inject(path, m);
             if (! new File(path).isAbsolute()) {
                path = Core.DATA_PATH + "/lucene/" + path;
             }
+            this.dbpath = path;
         }
-        this.dbpath = path;
 
-        // 模式标识
+        // 环境模式
         CoreConfig  conf = CoreConfig.getInstance( );
         this.TRNSCT_MODE = Synt.declare(
             Core.getInstance().got(Cnst.TRNSCT_MODE),
@@ -620,12 +621,12 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             return;
         }
 
-        String dbpath = getDataPath();
+        String path = getDataPath();
 
         try {
             // 索引目录不存在则先写入一个并删除
-            if (! (new File(dbpath)).exists() ) {
-                String id = Core.newIdentity( );
+            if (! ( new File(path)).exists( )) {
+                String id = Core.newIdentity();
                 Map rd = new HashMap( );
                 rd.put(Cnst.ID_KEY, id);
                 addDoc(map2Doc(rd));
@@ -633,17 +634,16 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                 commit(  );
             }
 
-            Path p = Paths.get(dbpath );
-            Directory dir = FSDirectory.open(p);
+            Directory dir = FSDirectory.open(Paths.get(path));
 
-            reader = DirectoryReader.open (dir);
-            finder = new IndexSearcher (reader);
+            reader = DirectoryReader.open(dir);
+            finder = new IndexSearcher(reader);
         } catch (IOException x) {
-            throw new HongsException.Common (x);
+            throw new HongsException.Common(x);
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Connect to lucene reader, data path: " + dbpath);
+            CoreLogger.trace("Connect to lucene reader, data path: " + path);
         }
     }
 
@@ -656,22 +656,21 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             return;
         }
 
-        String dbpath = getDataPath();
+        String path = getDataPath();
 
         try {
             IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
             iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
-            Path d = Paths.get(dbpath );
-            Directory dir = FSDirectory.open(d);
+            Directory dir = FSDirectory.open(Paths.get(path));
 
-            writer = new IndexWriter(dir , iwc);
+            writer = new IndexWriter(dir, iwc);
         } catch (IOException x) {
-            throw new HongsException.Common (x);
+            throw new HongsException.Common(x);
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Connect to lucene writer, data path: " + dbpath);
+            CoreLogger.trace("Connect to lucene writer, data path: " + path);
         }
     }
 

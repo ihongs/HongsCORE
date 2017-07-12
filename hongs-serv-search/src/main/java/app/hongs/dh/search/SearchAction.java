@@ -9,6 +9,7 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
 import app.hongs.action.anno.Spread;
+import app.hongs.dh.IEntity;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
@@ -77,7 +78,7 @@ public class SearchAction extends LuceneAction {
             rd = getReqMap (helper, sr, "counts", rd);
         Map sd = sh.counts (rd);
             sd = getRspMap (helper, sr, "counts", sd);
-                 sr.close  (  );
+//               sr.close  (  ); // 应用容器可自行关闭
 
         /**
          * 追加枚举名称
@@ -101,7 +102,7 @@ public class SearchAction extends LuceneAction {
             rd = getReqMap (helper, sr, "statis", rd);
         Map sd = sh.statis (rd);
             sd = getRspMap (helper, sr, "statis", sd);
-                 sr.close  (  );
+//               sr.close  (  ); // 应用容器可自行关闭
 
         /**
          * 追加枚举名称
@@ -115,6 +116,12 @@ public class SearchAction extends LuceneAction {
         }
 
         helper.reply(sd);
+    }
+
+    @Override
+    public IEntity getEntity(ActionHelper helper)
+    throws HongsException {
+        return SearchEntity.getInstance(mod, ent);
     }
 
 }

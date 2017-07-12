@@ -8,7 +8,6 @@ import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Block;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -26,8 +25,8 @@ import org.apache.lucene.index.Term;
  */
 public class SearchEntity extends LuceneRecord {
 
-    private String dbname = null;
-
+    protected String dbname = null;
+    
     public SearchEntity(String path, Map form) throws HongsException {
         super(path, form);
     }
@@ -55,10 +54,11 @@ public class SearchEntity extends LuceneRecord {
         Core   core = Core.getInstance();
         String name = SearchEntity.class.getName( ) + ":" +  conf + "." + form;
         if ( ! core.containsKey( name )) {
-            String path = conf + "/" +  form;
+            String path = conf + "/" + form;
             String canf = FormSet.hasConfFile(path) ? path : conf ;
             Map    farm = FormSet.getInstance(canf).getForm( form);
             inst =  new SearchEntity(path , farm);
+            inst.dbname = conf + "." + form;
             core.put( name, inst );
         } else {
             inst =  (SearchEntity) core.got(name);
@@ -66,28 +66,11 @@ public class SearchEntity extends LuceneRecord {
         return inst;
     }
 
-    /**
-     * 获取仓库名称
-     * 通常为路径名
-     * @return
-     */
     public String getBaseName() {
         if (null != dbname) {
             return  dbname;
         }
-        String p = Core.DATA_PATH + "/lucene/";
-        String d = getDataPath();
-        if (! "/".equals (File.separator) ) {
-            d = d.replace(File.separator, "/");
-        }
-        if (d.endsWith("/")) {
-            d = d.substring(0,d.length()-1);
-        }
-        if (d.startsWith(p)) {
-            d = d.substring(  p.length()  );
-        }
-        dbname= d;
-        return  d;
+        return getDataPath();
     }
 
     @Override

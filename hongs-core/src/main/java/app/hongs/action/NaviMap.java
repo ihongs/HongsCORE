@@ -716,7 +716,7 @@ public class NaviMap
               menu.put("hrel", p);
               menu.put("icon", d);
               menu.put("text", s);
-              menu.put("rols", rolz  );
+              menu.put("roles", rolz );
               list.add(menu);
           }
 
@@ -853,7 +853,7 @@ public class NaviMap
           menu.put("hrel", p);
           menu.put("icon", d);
           menu.put("text", s);
-          menu.put("subs", subz  );
+          menu.put("menus", subz );
           list.add( menu);
       }
 

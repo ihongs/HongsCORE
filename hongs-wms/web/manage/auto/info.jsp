@@ -53,9 +53,9 @@
                 <%
                     String size = "";
                     String keep = "";
-                    String ft =  "_file";
+                    kind =  "_file" ;
                     if ("image".equals(type)) {
-                        ft =  "_view";
+                        kind =  "_view";
                         size = Synt.asserts( info.get("thumb-size"), "" );
                         keep = Synt.asserts( info.get("thumb-mode"), "" );
                         if (size.length()!=0) {
@@ -78,8 +78,12 @@
                         }
                     }
                 %>
+            <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
-                <ul class="col-sm-6 pickbox" data-ft="<%=ft%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>"></ul>
+                <div class="col-sm-6">
+                    <ul class="pickbox" data-ft="<%=kind%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>"></ul>
+                </div>
+            </div>
             <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                 <%
                     String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :  "id" ;
@@ -87,12 +91,18 @@
                     String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :
                               ( info.containsKey("form"   ) ? (String) info.get("form"   ) : name.replaceFirst("_id$", "") );
                 %>
+            <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
-                <ul class="col-sm-6 pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                <div class="col-sm-6">
+                    <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                </div>
+            </div>
             <%} else {%>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
-                <div class="col-sm-6 form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
+                <div class="col-sm-6">
+                    <p class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></p>
+                </div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

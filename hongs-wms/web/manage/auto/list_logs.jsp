@@ -11,13 +11,11 @@
                 <tr>
                     <th data-fn="name">名称</th>
                     <th data-fn="note">备注</th>
-                    <th data-fn="user.name">操作人员</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="_htime" data-fl="v*1000" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="_htime" data-fl="v*1000" class="_htime">恢复起源</th>
                     <th data-fn="state_text" style="width:3.5em;">状态</th>
-                    <th data-fn="" data-ft="_admin" style="width:6em;">
-                        操作
+                    <th data-fn="" data-ft="_admin" style="width:6em;">操作
                         <div class="invisible">
                             <a href="javascript:;" class="review">详情</a>
                             <span style="margin-left:0.5em;"></span>
@@ -57,7 +55,7 @@
         var sendbox = context.find(".sendbox");
         
         var listObj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id!eq=\${id}&ob=-ctime&rb=-data,user.*",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id!eq=\${id}&ob=-ctime&rb=-data",
             openUrls: [
                 [function(ln) {
                     var tr = ln.closest("tr");

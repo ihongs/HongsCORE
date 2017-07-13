@@ -227,15 +227,15 @@ public class Form extends Model {
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("text", name);
-        menu.setAttribute("href", prefix+"/#"+id);
-        menu.setAttribute("hrel", prefix+"/" +id+"/main.html");
+        menu.setAttribute("href", prefix+"/"+id+"/");
+        menu.setAttribute("hrel", prefix+"/"+id+"/main.html");
 
         Element  role, actn, depn;
 
         // 会话
         role = docm.createElement("rsname");
         root.appendChild ( role );
-        role.appendChild ( docm.createTextNode("@manage") );
+        role.appendChild ( docm.createTextNode( "@manage" ) );
 
         // 查看
 
@@ -385,25 +385,27 @@ public class Form extends Model {
                     anum = docm.createElement("enum");
                     root.appendChild ( anum );
                     anum.setAttribute("name", item.getAttribute("name"));
-                    Object x = Data.toObject( v );
-                    List de = new ArrayList(/**/);
-                    List dl = Synt.declare(x, de);
+                    Object x = Data.toObject(  v  );
+                    List  de = new ArrayList(     );
+                    List  dl = Synt.declare (x, de);
                     for (Object o : dl) {
-                        List di = Synt.declare(o, de);
+                        List  di = Synt.declare(o, de);
+                        String c = Synt.declare(di.get(0), "");
+                        String n = Synt.declare(di.get(1), "");
                         Element valu = docm.createElement("value");
                         anum.appendChild ( valu );
-                        valu.setAttribute("code", Synt.declare(di.get(0), ""));
-                        valu.appendChild ( docm.createTextNode(Synt.declare(di.get(1), "")) );
+                        valu.setAttribute("code", c);
+                        valu.appendChild ( docm.createTextNode(n));
                     }
                     continue;
                 }
 
                 // 识别搜索类型
-                if (k.equals("findable") && Synt.declare(v, false)) {
+                if (k.equals("findable")  &&  Synt.declare(v, false)) {
                     para = docm.createElement("param");
                     item.appendChild ( para );
-                    para.setAttribute("name" , "lucene-fieldtype");
-                    para.appendChild ( docm.createTextNode("search") );
+                    para.setAttribute("name" , "lucene-type");
+                    para.appendChild ( docm.createTextNode("search"));
                 }
 
                 para = docm.createElement("param");

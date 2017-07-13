@@ -1,41 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <rsname>@manage</rsname>
-    <menu text="用户管理" href="common/menu.act?m=member">
-        <menu text="用户" href="manage/member/#member" hrel="manage/member/dept/tree.html">
-            <role text="查看用户" name="manage/member/user/search">
-                <depend>manage</depend>
-                <depend>manage/member/dept/search</depend>
-                <action>manage/member/user/search.act</action>
-            </role>
-            <role text="添加用户" name="manage/member/user/create">
-                <depend>manage/member/user/search</depend>
-                <action>manage/member/user/create.act</action>
-            </role>
-            <role text="修改用户" name="manage/member/user/update">
-                <depend>manage/member/user/search</depend>
-                <action>manage/member/user/update.act</action>
-            </role>
-            <role text="删除用户" name="manage/member/user/delete">
-                <depend>manage/member/user/search</depend>
-                <action>manage/member/user/delete.act</action>
-            </role>
-            <role text="查看部门" name="manage/member/dept/search">
-                <depend>manage/member/user/search</depend>
-                <action>manage/member/dept/search.act</action>
-            </role>
-            <role text="添加部门" name="manage/member/dept/create">
-                <depend>manage/member/dept/search</depend>
-                <action>manage/member/dept/create.act</action>
-            </role>
-            <role text="修改部门" name="manage/member/dept/update">
-                <depend>manage/member/dept/search</depend>
-                <action>manage/member/dept/update.act</action>
-            </role>
-            <role text="删除部门" name="manage/member/dept/delete">
-                <depend>manage/member/dept/search</depend>
-                <action>manage/member/dept/delete.act</action>
-            </role>
-        </menu>
+    <menu text="用户管理" href="manage/member/" hrel="manage/member/dept/tree.html">
+        <role text="查看用户" name="manage/member/user/search">
+            <depend>manage</depend>
+            <depend>manage/member/dept/search</depend>
+            <action>manage/member/user/search.act</action>
+        </role>
+        <role text="添加用户" name="manage/member/user/create">
+            <depend>manage/member/user/search</depend>
+            <action>manage/member/user/create.act</action>
+        </role>
+        <role text="修改用户" name="manage/member/user/update">
+            <depend>manage/member/user/search</depend>
+            <action>manage/member/user/update.act</action>
+        </role>
+        <role text="删除用户" name="manage/member/user/delete">
+            <depend>manage/member/user/search</depend>
+            <action>manage/member/user/delete.act</action>
+        </role>
+        <role text="查看部门" name="manage/member/dept/search">
+            <depend>manage/member/user/search</depend>
+            <action>manage/member/dept/search.act</action>
+        </role>
+        <role text="添加部门" name="manage/member/dept/create">
+            <depend>manage/member/dept/search</depend>
+            <action>manage/member/dept/create.act</action>
+        </role>
+        <role text="修改部门" name="manage/member/dept/update">
+            <depend>manage/member/dept/search</depend>
+            <action>manage/member/dept/update.act</action>
+        </role>
+        <role text="删除部门" name="manage/member/dept/delete">
+            <depend>manage/member/dept/search</depend>
+            <action>manage/member/dept/delete.act</action>
+        </role>
     </menu>
 </root>

@@ -33,7 +33,7 @@
         </form>
     </div>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible row" style="background: #ffe;">
+    <form class="findbox filtbox invisible row bg-info" style="margin-left: 0; margin-right: 0">
         <div class="form-group"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -53,7 +53,7 @@
                 continue;
             }
         %>
-        <div class="form-group row">
+        <div class="form-group form-group-sm row">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
@@ -68,7 +68,7 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group row">
+        <div class="form-group form-group-sm row">
             <div class="col-sm-6 col-sm-offset-3">
                 <button type="submit" class="btn btn-default">过滤</button>
                 <span style="padding:0.1em;"></span>
@@ -77,7 +77,8 @@
         </div>
     </form>
     <!-- 报表 -->
-    <form class="findbox statbox invisible row" style="background: #ffe;">
+    <form class="findbox statbox invisible row bg-info" style="margin-left: 0; margin-right: 0">
+        <div class="clearfix" style="padding: 5px;">
         <%
         Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {
@@ -122,13 +123,14 @@
                 type = "counts";
             }
         %>
-        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="col-md-6" style="border: 1px solid #ff8;">
-            <div class="row">
-                <div class="col-sm-3 checkbox" style="height:250px; overflow: hidden; overflow-y: auto;"></div>
-                <div class="col-sm-9 chartbox" style="height:250px; overflow: hidden; overflow-y: auto;"></div>
+        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="col-md-6" style="padding: 5px;">
+            <div class="clearfix" style="background: #fff;">
+                <div class="col-sm-3 checkbox" style="height: 250px; overflow: hidden; overflow-y: auto;"></div>
+                <div class="col-sm-9 chartbox" style="height: 250px; margin: 10px 0; border-left: 1px dotted #ccc;"></div>
             </div>
         </div>
         <%} /*End For*/%>
+        </div>
     </form>
     <!-- 列表 -->
     <div class="listbox table-responsive">
@@ -319,7 +321,7 @@
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');
         var title = $('<span></span>')
-                .text("全部 "+ text);
+                .text("全部" + text);
             label.append(check).append(title).appendTo(box2);
 
         for(var i = 0; i < data.length; i ++) {
@@ -420,7 +422,7 @@
     if (filtbox.find(".form-group").size() == 2) {
         findbox.find(".filter").hide( );
     }
-    if (statbox.children().size() == 0) {
+    if (statbox.find( ".col-md-6" ).size() == 0) {
         findbox.find(".statis").hide( );
     }
 

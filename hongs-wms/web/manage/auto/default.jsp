@@ -39,7 +39,7 @@
         <div id="notebox"></div>
         <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
-                <div class="row" data-load="manage/head.jsp?m=<%=_module%>/<%=_entity%>"></div>
+                <div class="row" data-load="manage/head.jsp"></div>
             </div>
         </nav>
         <div id="bodybox">
@@ -47,7 +47,7 @@
         </div>
         <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
             <div class="container">
-                <div class="row" data-load="manage/foot.jsp?m=<%=_module%>/<%=_entity%>"></div>
+                <div class="row" data-load="manage/foot.jsp"></div>
             </div>
         </nav>
     </body>

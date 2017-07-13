@@ -5,8 +5,6 @@
  */
 
 html, body, label, input, select, button, textarea {
-    color: #666;
-    font-size: 15px;
     font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,STHeiti,"Microsoft Yahei",sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
@@ -166,16 +164,11 @@ legend {
     margin: 0 0.5em;
 }
 
-#headbox.navbar {
-    margin-bottom: 15px;
-}
-#headbox ul.nav {
-    font-size: 18px;
-}
-#headbox ul.nav>li.active {
+#headbox li.active  a {
     font-weight: bolder;
 }
 #headbox li.headico a {
+    padding-left : 0;
     padding-right: 0;
 }
 #headbox span.headimg {
@@ -211,7 +204,7 @@ legend {
 }
 
 #bodybox {
-    margin-top: 65px; /* 顶部菜单 */
+    margin-top   : 65px; /* 顶部菜单 */
     margin-bottom: 62px; /* 底部通栏 */
 }
 

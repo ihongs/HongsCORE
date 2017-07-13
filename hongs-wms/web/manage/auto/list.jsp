@@ -7,6 +7,9 @@
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "list");
     String _pageId = (_module +"-" + _entity +"-" + _action).replace('/', '-');
+    String _confId = FormSet.hasConfFile(_module+"/"+_entity)
+                  || NaviMap.hasConfFile(_module+"/"+_entity)
+                   ? _module +"/"+ _entity : _module;
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="row">
@@ -18,8 +21,9 @@
             <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
             <%if (!"select".equals(_action)) {%>
             <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
-            <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
-            <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
+            <button type="button" class="revert for-choose btn btn-warning" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
+            <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
@@ -102,8 +106,8 @@
             ||     "date".equals(type)
             ||     "time".equals(type)
             || "datetime".equals(type)) {
-                String enumConf = Synt.defxult((String) info.get("conf"),_module);
-                String enumName = Synt.defxult((String) info.get("enum"),   name);
+                String enumConf = Synt.defxult((String) info.get("conf"),_confId);
+                String enumName = Synt.defxult((String) info.get("enum"), name  );
                 Map    enumData = FormSet.getInstance(enumConf).getEnum(enumName);
                 if (enumData !=  null) {
                     StringBuilder sb = new StringBuilder();
@@ -226,6 +230,8 @@
              '.create', '@'],
             ['<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}',
              '.update', '@'],
+            ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
+             '.review', '@'],
             ['<%=_module%>/<%=_entity%>/list_logs.html?md=6&id={ID}',
              '.revert', '@']
         ],

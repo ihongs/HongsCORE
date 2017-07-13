@@ -12,6 +12,37 @@ function getTypePane(context, type) {
     return context.find(".widget-pane-"+type).first().clone();
 }
 
+function prsDataList(s) {
+    var a = [];
+    var x = s.split(/[\r\n]/);
+    for(var i = 0; i < x.length; i ++) {
+        var z = $.trim(x[i]);
+        if (! z.length ) {
+            continue;
+        }
+        // 键值
+        z = z.split ( "::" );
+        var v = $.trim(z[0]);
+        var t = z.length > 1
+              ? $.trim(z[1])
+              : v;
+        a.push([v, t]);
+    }
+    return a;
+}
+function strDataList(a) {
+    var x = [];
+    for(var i = 0; i < a.length; i ++) {
+        var v = a[i][0];
+        var t = a[i][1];
+        if (t != v) {
+            v += "::" + t;
+        }
+        x.push ( v);
+    }
+    return x.join("\r\n");
+}
+
 function setItemType(input, type) {
     input = jQuery(input);
     var oldAttrs = input[0].attributes;
@@ -208,6 +239,9 @@ function gainFlds(fields, area) {
                 ||  k == "data-ft") {
                     continue;
                 }
+                if (k == "data-datalist" ) {
+                    v = JSON.stringify(prsDataList(v));
+                }
                 params[k.substring(5)] = v;
             }
         }
@@ -285,6 +319,11 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 continue;
             }
             if (k === "datalist") {
+                if (input.is("input")) {
+                    var datalist = JSON.parse(field["datalist"]) || [];
+                    input.attr("data-datalist", strDataList(datalist));
+                    continue;
+                }
                 input.empty();
                 var datalist = JSON.parse(field["datalist"]) || [];
                 var selected = JSON.parse(field["selected"]) || [];
@@ -344,6 +383,10 @@ $.fn.hsCols = function() {
         records.find(":submit").click();
     });
 
+    // 删除字段
+    targetz.on("click", ".glyphicon-remove-sign", function() {
+        $(this).closest(".form-group").remove();
+    });
     // 添加字段
     widgets.on("click", ".glyphicon-plus-sign", function() {
         // 预定字段不能重复添加
@@ -360,10 +403,6 @@ $.fn.hsCols = function() {
         field = $(this).closest(".form-group").clone();
         field.find("[name=-]").attr("name", "-"+index);
         targetz.append(field );
-    });
-    // 删除字段
-    targetz.on("click", ".glyphicon-remove-sign", function() {
-        $(this).closest(".form-group").remove();
     });
 
     // 打开设置

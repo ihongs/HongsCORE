@@ -26,9 +26,9 @@ public class MenuAction {
     @Action("__main__")
     public void menu(ActionHelper helper)
     throws HongsException {
-        String m = helper.getParameter("m");
-        String n = helper.getParameter("n");
-        String x = helper.getParameter("x");
+        String m = helper.getParameter("m"); // 配置名称
+        String n = helper.getParameter("n"); // 活动区域
+        String x = helper.getParameter("x"); // 附加标识
         String u = "common/menu.act";
 
         if (m == null || "".equals(m)) {
@@ -60,10 +60,10 @@ public class MenuAction {
 
         // 没有权限则跳到指定目录或首页
         if (n == null) {
-            if (! "default".equals(m)) {
-                n = m;
+            if (!"default".equals(m)) {
+                n = m ;
             } else {
-                n ="";
+                n = "";
             }
         }
         helper.redirect(Core.BASE_HREF + "/" + n);

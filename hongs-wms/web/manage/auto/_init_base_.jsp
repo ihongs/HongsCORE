@@ -1,3 +1,4 @@
+<%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.CoreLocale"%>
 <%@page import="app.hongs.action.ActionDriver"%>
 <%@page import="app.hongs.action.FormSet"%>
@@ -27,39 +28,54 @@
         _locale.fill(_module +"/"+ _entity);
 
         // 从菜单中提取标题
-        NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
-                     ? NaviMap.getInstance(_module+"/"+_entity)
-                     : NaviMap.getInstance(_module);
-        Map menu;
-        menu  = site.getMenu(_module +"/" +_entity+"/");
-        if (menu != null) {
-                _title  = (String) menu.get("text");
-            if (_title != null) {
-                _title  = _locale.translate(_title);
-                break;
+        try {
+            NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
+                         ? NaviMap.getInstance(_module+"/"+_entity)
+                         : NaviMap.getInstance(_module);
+            Map menu;
+            menu  = site.getMenu(_module +"/" +_entity);
+            if (menu != null) {
+                    _title  = (String) menu.get("text");
+                if (_title != null) {
+                    _title  = _locale.translate(_title);
+                    break;
+                }
             }
-        }
-        menu  = site.getMenu(_module +"/#"+_entity);
-        if (menu != null) {
-                _title  = (String) menu.get("text");
-            if (_title != null) {
-                _title  = _locale.translate(_title);
-                break;
+            menu  = site.getMenu(_module +"/#"+_entity);
+            if (menu != null) {
+                    _title  = (String) menu.get("text");
+                if (_title != null) {
+                    _title  = _locale.translate(_title);
+                    break;
+                }
+            }
+        } catch (HongsException ex) {
+            if (ex.getErrno() != 0x10e0) {
+                throw ex ;
             }
         }
 
         // 没有则从表单提取
-        FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
-                     ? FormSet.getInstance(_module+"/"+_entity)
-                     : FormSet.getInstance(_module);
-        menu  = fset.getForm(_entity);
-        if (menu != null) {
-                _title  = (String) Dict.get(menu, null, "@", "__text__");
-            if (_title != null) {
-                _title  = _locale.translate(_title);
-                break;
+        try {
+            FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
+                         ? FormSet.getInstance(_module+"/"+_entity)
+                         : FormSet.getInstance(_module);
+            Map form;
+            form  = fset.getForm(_entity);
+            if (form != null) {
+                    _title  = (String) Dict.get( form , null, "@", "__text__" );
+                if (_title != null) {
+                    _title  = _locale.translate(_title);
+                    break;
+                }
+            }
+        } catch (HongsException ex) {
+            if (ex.getErrno() != 0x10e8
+            &&  ex.getErrno() != 0x10ea) {
+                throw ex ;
             }
         }
+
         _title  = "" ;
     }
     while (false);

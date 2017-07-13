@@ -9,79 +9,67 @@
 <%@page import="java.util.regex.Pattern"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%!
-    StringBuilder makeMenu(List<Map> list, String path) {
-        // 针对 data 的特殊逻辑
-        Pattern patt = Pattern.compile("^manage/data/[^/]+$");
-        String  pret ;
-        if (patt.matcher(path).matches()) {
-            pret = "manage/data/#";
-        } else {
-            pret = path + "/#";
-        }
-
+    StringBuilder makeMenu(List<Map> list, String acti) {
         StringBuilder menus = new StringBuilder();
         for(Map menu : list) {
             String text = (String) menu.get("text");
             String href = (String) menu.get("href");
             String hrel = (String) menu.get("hrel");
 //          String icon = (String) menu.get("icon");
-            String acti = "";
 
-            if (text.equals/**/(  ""  )
-            ||  href.startsWith( "!" )) {
+            if (href.startsWith("!")) {
                 continue;
             }
-            if (href.equals(path +"/")) {
-                acti = "class=\"active\"";
+            if (href.startsWith("-")) {
+                menus.append("<li class=\"divider\"></li>");
+                continue;
             }
-            if (href.startsWith( pret)) {
-                href = path+"/#"+href.substring(pret.length());
-                hrel = Core.BASE_HREF +"/"+ hrel;
-            } else {
-                href = Core.BASE_HREF +"/"+ href;
-                hrel = "";
-            }
+            
+            String actc = href.equals(acti) ? "active" : "";
+            href = Core.BASE_HREF +"/"+ href;
+            hrel = Core.BASE_HREF +"/"+ hrel;
 
-            menus.append("<li "+ acti +">")
-                 .append("<a data-href=\"")
-                 .append(hrel)
-                 .append("\" href=\"")
-                 .append(href)
-                 .append("\">"  )
-                 .append(text)
-                 .append("</a>" )
-                 .append("</li>");
+            List<Map> subs = (List) menu.get( "menus" );
+            if (subs != null && ! subs.isEmpty()) {
+                actc += " dropdown";
+                hrel += "\" data-toggle=\"dropdown\""  ;
+                hrel +=  " class=\"dropdown-toggle\""  ;
+                text += "<span class=\"caret\"></span>";
+                menus.append("<li class=\"")
+                     .append(actc).append("\">" );
+                menus.append( "<a href=\"" )
+                     .append(href).append("\" data-href=\"")
+                     .append(hrel).append("\">" )
+                     .append(text).append("</a>");
+                menus.append("<ul class=\"dropdown-menu\">")
+                     .append(makeMenu(subs, acti))
+                     .append("</ul>");
+                menus.append("</li>");
+            } else {
+                menus.append("<li class=\"")
+                     .append(actc).append("\">" );
+                menus.append( "<a href=\"" )
+                     .append(href).append("\" data-href=\"")
+                     .append(hrel).append("\">" )
+                     .append(text).append("</a>");
+                menus.append("</li>");
+            }
         }
         return menus;
     }
 %>
 <%
     ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
-    String w = helper.getParameter("w");
-    if (w == null || "".equals(w)) {
-        w = "manage";
-    }
-    String m = helper.getParameter("m");
-    if (m == null || "".equals(m)) {
-        m =  w;
-    }
-    String u = helper.getParameter("u");
-    if (u == null || "".equals(u)) {
-        u =  m;
-    }
+ 
+    NaviMap curr = NaviMap.getInstance("manage");
+    List    menu = curr.getMenuTranslates(1 , 2);
 
-    NaviMap main = NaviMap.getInstance(w);
-    NaviMap curr = NaviMap.getInstance(m);
-    List<Map> mainMenu = main.getMenuTranslated();
-    List<Map> currMenu = curr.getMenuTranslates();
-
-    String  user = (String ) helper.getSessibute("uname");
-    String  head = (String ) helper.getSessibute("uhead");
-    Integer msgc = (Integer) helper.getSessibute( "msgc");
-    String  msgs = msgc == null ? null : (msgc > 9 ? "9+" : Integer.toString(msgc));
+    String  acti = helper.getParameter("active");
+    String  user = (String) helper.getSessibute("uname");
+    String  head = (String) helper.getSessibute("uhead");
 
     if (head != null && !"".equals(head)) {
-        head = head.replaceFirst("(_[^_]+)?\\.[^\\.]+$","_sm.png");
+        head = head.replaceFirst("(_[^_]+)?\\.[^\\.]+$", "_sm.png");
     } else {
         head = "static/assets/img/head_icon_sm.jpg";
     }
@@ -94,7 +82,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" style="font-weight: bolder;" href="<%=request.getContextPath()%>/manage/">
+    <a class="navbar-brand" style="font-size: 15px; font-weight: bolder;" href="<%=Core.BASE_HREF%>/manage/">
         <span style="color:#f00;" class="glyphicon glyphicon-fire"></span>
         <span style="color:#833">H</span>
         <span style="color:#722">o</span>
@@ -109,31 +97,27 @@
 </div>
 
 <div class="collapse navbar-collapse" id="main-collapse">
-    <ul class="nav navbar-nav navbar-left " id="curr-menubar">
-        <%=makeMenu(currMenu, u)%>
+    <ul class="nav navbar-nav navbar-left " id="main-menubar">
+        <%=makeMenu(menu, acti)%>
     </ul>
-    <ul class="nav navbar-nav navbar-right" id="main-menubar">
+    <ul class="nav navbar-nav navbar-right" id="user-menubar">
         <li class="headico">
-            <a href="javascript:;" data-toggle="hsOpen" data-href="manage/global/mime.html">
+            <a href="javascript:;">
                 <span class="headimg" style="background-image:url(<%=head%>);"></span>
             </a>
         </li>
         <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                 <%if (user != null) {%>
-                <span <%/*uname*/%>><%=user%></span>
+                <span><%=user%></span>
                 <%} /* End If */%>
-                <%if (msgs != null) {%>
-                <span class="badge"><%=msgs%></span>
-                <%} /* End If */%>
+                <span class="badge"></span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-                <%=makeMenu(mainMenu, u)%>
-                <%if (user != null) {%>
-                <li class="divider"></li>
+                <li><a href="javascript:;" id="note-msg"><%=CoreLocale.getInstance().translate("fore.notify")%></a></li>
+                <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
                 <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
-                <%} /* End If */%>
             </ul>
         </li>
     </ul>
@@ -141,71 +125,52 @@
 
 <script type="text/javascript">
     (function($) {
-        $("#curr-menubar>li>a")
-            .filter(function() {
-                return !! $(this).attr("data-href");
-            })
-            .click(function() {
-                var h  =  $(this).attr("data-href");
-                var p  =  $(this).attr("data-hreq");
-                if (p) {
-                    $(this).removeAttr("data-hreq");
-                    if (h.index('?') != -1 ) {
-                        h += '?' + p;
-                    } else {
-                        h += '&' + p;
-                    }
-                }
-                $("#main-context").hsLoad(h);
-                $(this).closest("li").addClass("active")
-                       .siblings().removeClass("active");
-            });
-        $("#main-menubar>li>a")
-            .click(function() {
-                var that = $(this);
-                setTimeout(function() {
-                    that.parent( ).removeClass("active");
-                    that.blur  ( );
-                }, 100);
-            });
-        $("#sign-out")
-            .click(function() {
-                $.get(hsFixUri("manage/sign/delete.act"), function() {
-                    location.href = hsFixUri("manage/login.html");
-                });
-            });
+        var menubar = $("#main-menubar");
+        var context = $("#main-context");
 
         function initMenu() {
-            // Click the first available menu item
-            var a;
-            if (location.hash) {
-                // #def&x=1&y=2
-                var h = location.hash ;
-                var p = h.indexOf('&');
-                h = "<%=u%>/" + h;
-                p = p != -1 ? h.substring(p + 1) : "" ;
-                a = $("#curr-menubar a[href='"+h+"']");
-                a.attr("data-hreq", p);
-            } else {
-                a = $("#curr-menubar a").first();
+            var a, h, l;
+            h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
+            a = menubar.find("a[href='"+h+"']");
+            if (a.size()) {
+//              h = a.attr("href");
+                l = a.data("href");
+                if (l) {
+                    context.hsLoad(l);
+                }
+                menubar.find("li").removeClass("active");
+                a.parents(   "li"   ).addClass("active");
             }
-            if (a.size() == 0) {
-                a = $("#main-menubar ul.dropdown-menu a").first();
-            }
-            a.click();
         }
-        
+
         $(function() {
-            if ($("#curr-menubar .active").size()) {
+            if (menubar.find(".active").size()) {
+                menubar.find(".active")
+                       .parents("li").addClass("active");
                 return;
             }
-            if ($("#curr-menubar li").size() == 0) {
-                $( document ).trigger ( "noMenu" );
+            if (menubar.children().size() == 0) {
+                $( document ).trigger("noMenu");
                 return;
             }
             initMenu();
         });
         
-        $(window).on("hashchange", initMenu);
+        $(window).on( "hashchange" , initMenu );
+
+        $("#sign-out")
+            .click(function() {
+                $.get(hsFixUri("manage/sign/delete.act"), function() {
+                    location.assign(hsFixUri( "manage/login.html" ));
+                });
+            });
+        $("#user-set")
+            .click(function() {
+                $.hsOpen("manage/global/mime.html");
+            });
+        $("#note-msg")
+            .click(function() {
+                $.hsOpen("manage/global/note.html");
+            });
     })(jQuery);
 </script>

@@ -4,9 +4,12 @@
         <role text="登录后台" name="manage">
             <action>manage</action>
         </role>
-        <import>manage_base</import>
-        <import>member</import>
-        <import>matrix</import>
+        <menu text="通用" href="common/menu.act?m=manage&amp;x=base">
+            <menu text="首页" href="manage/#global" hrel="manage/global/main.html"></menu>
+            <import>manage_serv</import>
+            <import>member</import>
+            <import>matrix</import>
+        </menu>
         <import>manage/data</import>
     </menu>
 </root>

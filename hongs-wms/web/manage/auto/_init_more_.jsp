@@ -49,37 +49,21 @@
         _locale.fill(_module +"/"+ _entity);
 
         // 通过表单配置获取字段、标题
-        FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
-                     ? FormSet.getInstance(_module+"/"+_entity)
-                     : FormSet.getInstance(_module);
-        _fields = fset.getFormTranslated  (_entity);
-        _title  = Dict.getValue( _fields, "", "@", "__text__" );
-        if (_title != null && _title.length() != 0) {
+        try {
+            FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
+                         ? FormSet.getInstance(_module+"/"+_entity)
+                         : FormSet.getInstance(_module);
+            _fields = fset.getFormTranslated  (_entity);
+            _title  = Dict.getValue( _fields, "", "@", "__text__" );
             break;
+        } catch (HongsException ex) {
+            if (ex.getErrno() != 0x10e8
+            &&  ex.getErrno() != 0x10ea) {
+                throw ex;
+            }
         }
 
-        // 上面找不到, 则从菜单里提取
-        NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
-                     ? NaviMap.getInstance(_module+"/"+_entity)
-                     : NaviMap.getInstance(_module);
-        Map menu;
-        menu  = site.getMenu(_module +"/" +_entity+"/");
-        if (menu != null) {
-                _title  = (String) menu.get("text");
-            if (_title != null) {
-                _title  = _locale.translate(_title);
-                break;
-            }
-        }
-        menu  = site.getMenu(_module +"/#"+_entity);
-        if (menu != null) {
-                _title  = (String) menu.get("text");
-            if (_title != null) {
-                _title  = _locale.translate(_title);
-                break;
-            }
-        }
-        _title  = "" ;
+        throw new HongsException(0x1104, "资源不存在");
     }
     while (false);
 %>

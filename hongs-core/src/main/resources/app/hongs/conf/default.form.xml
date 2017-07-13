@@ -1,20 +1,20 @@
 <root>
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
-        <value code="findable" type="set">string,search,hidden,text,tel,url,email,textcase</value>
+        <value code="findable" type="set">string,search,hidden,text,tel,url,email</value>
         <value code="sortable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,sorted</value>
         <value code="siftable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
-        <value code="listable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check,textarea,textcase,fork,pick,file,upload,image,audio,video</value>
+        <value code="listable" type="set">string,search,hidden,text,tel,url,email,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check,file,upload,image,audio,video,fork</value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
-        <value code="string" type="set">string,text,textarea,textcase,hidden,tel,url,email,fork,enum,select,radio,check,file,upload,image,video,audio,search,stored</value>
+        <value code="string" type="set">string,hidden,text,textarea,tel,url,email,enum,select,radio,check,file,upload,image,video,audio,search,stored,fork</value>
         <value code="number" type="set">number,range,color,slider,switch,sorted</value>
         <value code="date"   type="set">date,time,datetime</value>
         <!-- 下为 Lucene 特有 -->
         <value code="object" type="set">object,form,json</value>
-        <value code="stored" type="set">stored,textarea</value>
-        <value code="search" type="set">search,textcase</value>
+        <value code="stored" type="set">stored</value>
+        <value code="search" type="set">search</value>
         <value code="sorted" type="set">sorted</value>
     </enum>
     <!-- 字段校验类型映射 -->
@@ -23,20 +23,19 @@
         <value code="string">string</value>
         <value code="hidden">string</value>
         <value code="text">string</value>
-        <value code="search">string</value><!-- Lucene 中可分词查询 -->
-        <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
-        <value code="textarea">string</value><!-- Lucene 中同 stored -->
-        <value code="textcase">string</value><!-- Lucene 中同 search -->
-        <value code="tel">string</value>
-        <value code="url">string</value>
+        <value code="textarea">string</value>
         <value code="email">string</value>
+        <value code="url">string</value>
+        <value code="tel">string</value>
+        <value code="search">string</value><!-- Lucene 特有分词查询 -->
+        <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
         <!-- Number -->
         <value code="number">number</value>
         <value code="range">number</value>
         <value code="color">number</value>
         <value code="slider">number</value>
         <value code="switch">number</value>
-        <value code="sorted">number</value> <!-- Lucene 特有仅能排序 -->
+        <value code="sorted">number</value><!-- Lucene 特有仅能排序 -->
         <!-- Date -->
         <value code="date">date</value>
         <value code="time">date</value>

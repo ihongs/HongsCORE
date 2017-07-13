@@ -17,11 +17,10 @@ import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
-import app.hongs.dh.lucene.LuceneRecord;
+import app.hongs.dh.IEntity;
 import app.hongs.dh.lucene.LuceneRecord.Loop;
 import app.hongs.dh.search.SearchAction;
 import app.hongs.serv.matrix.Data;
-import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.IOException;
@@ -45,26 +44,6 @@ public class DataAction extends SearchAction {
         sub.add("revert");
     }
 
-    @Override
-    public void acting(ActionHelper helper, ActionRunner runner)
-    throws HongsException {
-        super.acting(helper , runner);
-
-        // 绑定特制的表单
-        Method m = runner.getMethod();
-        if (m.isAnnotationPresent(Select.class)
-        ||  m.isAnnotationPresent(Spread.class)
-        ||  m.isAnnotationPresent(Verify.class)) {
-            Map fcs = getEntity(helper).getFields();
-            helper.setAttribute("form:"+mod+"/"+ent+"."+ent, fcs);
-        }
-
-        // 放入当前用户ID
-        Object uid = helper.getSessibute(Cnst.UID_SES);
-        helper.getRequestData().put("user_id", uid);
-        helper.getRequestData().put("form_id", ent);
-    }
-
     /**
      * 获取模型对象
      * 注意:
@@ -75,9 +54,30 @@ public class DataAction extends SearchAction {
      * @throws HongsException
      */
     @Override
-    public LuceneRecord getEntity(ActionHelper helper)
+    public IEntity getEntity(ActionHelper helper)
     throws HongsException {
         return Data.getInstance(mod, ent);
+    }
+
+    @Override
+    public void acting(ActionHelper helper, ActionRunner runner)
+    throws HongsException {
+        super.acting(helper , runner);
+
+        // 绑定特制的表单
+        Method m = runner.getMethod();
+        if (m.isAnnotationPresent(Select.class)
+        ||  m.isAnnotationPresent(Spread.class)
+        ||  m.isAnnotationPresent(Verify.class)) {
+            Data dat = (Data) getEntity(helper);
+            Map fcs = dat.getFields();
+            helper.setAttribute("form:"+mod+"/"+ent+"."+ent, fcs);
+        }
+
+        // 放入当前用户ID
+        Object uid = helper.getSessibute(Cnst.UID_SES);
+        helper.getRequestData().put("user_id", uid);
+        helper.getRequestData().put("form_id", ent);
     }
 
     /**
@@ -122,7 +122,7 @@ public class DataAction extends SearchAction {
         Model   mo = DB.getInstance("matrix").getModel("data");
         Map     rd = helper.getRequestData( );
         Map     sd = mo.search(rd);
-        
+
         // 详情数据转换
         if (sd.containsKey("info")) {
             Map df = (Map) sd.get("info");
@@ -135,7 +135,7 @@ public class DataAction extends SearchAction {
                 .addItemsByForm(mod, ent)
                 .spread ( df );
         }
-        
+
         helper.reply(sd);
     }
 
@@ -163,7 +163,7 @@ public class DataAction extends SearchAction {
         Writer  ot = rs.getWriter();
         Map     fs = sr.getFields();
         Map     es = new HashMap ();
-        
+
         if (lp.hasNext()) {
             Map<String, Object> ds = lp.next();
             StringBuilder sf = new StringBuilder();

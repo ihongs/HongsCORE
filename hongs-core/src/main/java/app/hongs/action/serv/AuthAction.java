@@ -10,7 +10,6 @@ import app.hongs.action.NaviMap;
 import app.hongs.util.Data;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletException;
@@ -79,7 +78,13 @@ public class AuthAction
     try {
       NaviMap  sitemap = NaviMap.getInstance(name);
       Set<String> authset = sitemap.getAuthSet(  );
-      if (null == authset) authset = new HashSet();
+
+      // 没有设置 rsname 的不公开
+      if (null == authset) {
+        helper.error404("Auth data for '"+name+"' is not open to the public");
+        return;
+      }
+
       Map<String, Boolean> datamap = new HashMap();
       for(String  act : sitemap.actions) {
         datamap.put( act , authset.contains(act) );
@@ -87,16 +92,12 @@ public class AuthAction
 
       s = Data.toString(datamap);
     }
-    catch (HongsException ex) {
-      helper.error500(ex.getMessage());
-      return;
-    }
-    catch (HongsExpedient ex) {
-      helper.error500(ex.getMessage());
-      return;
-    }
-    catch (HongsError ex) {
-      helper.error500(ex.getMessage());
+    catch (HongsException | HongsExpedient | HongsError ex) {
+      if (ex.getErrno() == 0x10e0) {
+        helper.error404(ex.getMessage());
+      } else {
+        helper.error500(ex.getMessage());
+      }
       return;
     }
 

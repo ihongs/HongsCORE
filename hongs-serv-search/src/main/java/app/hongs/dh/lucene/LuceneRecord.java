@@ -65,12 +65,12 @@ import org.apache.lucene.store.FSDirectory;
  * Lucene 记录模型
  *
  * 可选字段配置参数:
- *  lucene-fieldtype    Lucene 的字段类型(string,search,stored,int,long,float,double)
- *  lucene-tokenizer
- *  lucene-char-filter
- *  lucene-token-filter
- *  lucene-find-filter
- *  lucene-query-filter
+ *  lucene-type         Lucene 字段类型(string,search,stored,int,long,float,double)
+ *  lucene-tokenizer    Lucene 分词器类
+ *  lucene-char-filter  存储时使用的 CharFilter  类
+ *  lucene-token-filter 存储时使用的 TokenFilter 类
+ *  lucene-find-filter  查询时使用的 CharFilter  类
+ *  lucene-query-filter 查询时使用的 TokenFilter 类
  *
  * @author Hongs
  */

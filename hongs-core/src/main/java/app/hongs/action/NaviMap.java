@@ -483,12 +483,9 @@ public class NaviMap
    */
   public Set<String> getRoleSet() throws HongsException {
       if (session == null || session.length() == 0) {
-          if ("default".equals( name ) ) {
-              CoreLogger.debug("Can not get roles for menu "+name);
-              return null;
-          }
-          return getInstance().getRoleSet();
-      } else
+          CoreLogger.error("Can not get roles for menu "+ name);
+          return null;
+      }
       if (session.startsWith("@")) {
           return getInstance(session.substring(1)).getRoleSet();
       } else

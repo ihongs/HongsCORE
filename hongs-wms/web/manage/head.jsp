@@ -135,9 +135,17 @@
             if (a.size()) {
 //              h = a.attr("href");
                 l = a.data("href");
-                if (l) {
-                    context.hsLoad(l);
+                if (!l || l==='/') {
+                    a = a.closest("li").find("li a").first();
+                    h = a.attr (  "href"  );
+                    if (h) {
+                        location.replace(h);
+                    } else {
+                        menubar .trigger("loseMenu");
+                    }
+                    return;
                 }
+                context.hsLoad (l);
                 menubar.find("li").removeClass("active");
                 a.parents(   "li"   ).addClass("active");
             }
@@ -147,10 +155,6 @@
             if (menubar.find(".active").size()) {
                 menubar.find(".active")
                        .parents("li").addClass("active");
-                return;
-            }
-            if (menubar.children().size() == 0) {
-                $( document ).trigger("noMenu");
                 return;
             }
             initMenu();

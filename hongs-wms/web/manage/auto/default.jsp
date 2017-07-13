@@ -21,7 +21,7 @@
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/manage.js"></script>
         <script type="text/javascript">
-            $(document).on("noMenu", function() {
+            $(document).on("loseMenu", function() {
                 $('#main-context').empty().append(
                     '<div class="alert alert-info"><p>'
                   + ':( 糟糕! 这里什么也没有, <a href="manage/">换个地方</a>瞧瞧去?'

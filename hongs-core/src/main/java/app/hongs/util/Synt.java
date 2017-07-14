@@ -492,12 +492,12 @@ public final class Synt {
 
     /**
      * 快捷构建 List
-     * 不等同于 Arrays.asList,
+     * 不等同于 Arrays.listOf,
      * 可以在此 List 上增删改.
      * @param objs
      * @return
      */
-    public static List asList(Object... objs) {
+    public static List listOf(Object... objs) {
         return new ArrayList(Arrays.asList(objs));
     }
 
@@ -506,7 +506,7 @@ public final class Synt {
      * @param objs
      * @return
      */
-    public static Set asSet(Object... objs) {
+    public static Set setOf(Object... objs) {
         Set set = new LinkedHashSet();
         for (int i = 0; i < objs.length; i += 1) {
             set.add ( objs[i] );
@@ -519,7 +519,7 @@ public final class Synt {
      * @param objs
      * @return
      */
-    public static Map asMap(Object... objs) {
+    public static Map mapOf(Object... objs) {
         Map map = new LinkedHashMap();
         for (int i = 0; i < objs.length; i += 2) {
             map.put ( objs[i] , objs[i+1] );
@@ -715,8 +715,8 @@ public final class Synt {
         // filter, digest 的函数式特性测试
         Object[] a = new Object[] {"a", "b", "c",
                      new Object[] {"d", "e", "f"},
-                     asSet("g", "h", "i", "j"),
-                     asMap("k", "l", "m", "n")};
+                     setOf("g", "h", "i", "j"),
+                     mapOf("k", "l", "m", "n")};
 
         System.err.println("filter:");
         Object[] b = filter(a, (v, k, i) -> {

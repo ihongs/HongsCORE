@@ -26,7 +26,7 @@ import java.util.Set;
 @Action()
 public class SearchAction extends LuceneAction {
 
-    protected Set<String> sub = Synt.asSet("counts", "statis");
+    protected Set<String> sub = Synt.setOf("counts", "statis");
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {

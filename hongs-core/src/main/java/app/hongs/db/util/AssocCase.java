@@ -8,12 +8,14 @@ import app.hongs.db.Table;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -464,6 +466,7 @@ public class AssocCase {
                     Object rv = fm.remove(rl);
                     if (rv == null) continue ;
                     String rn = el.getValue();
+
                     if (Cnst.IN_REL.equals(rl)
                     ||  Cnst.NI_REL.equals(rl)) {
                         caze.filter(fn+" "+rn+" (?)", rv);
@@ -478,22 +481,57 @@ public class AssocCase {
                 }
 
                 // 数值区间查询
+                Set ir = null;
                 if (fm.containsKey(Cnst.RG_REL)) {
-                    Object[] a = Synt.asRange(fm.remove(Cnst.RG_REL));
-                    if (a != null) {
-                        if (a[0] != null) {
-                            if ((boolean) a[2]) {
-                                caze.filter(fn+" >= ?", a[0]);
-                            } else {
-                                caze.filter(fn+" > ?" , a[0]);
+                    ir = Synt.setOf  (fm.remove(Cnst.RG_REL));
+                } else
+                if (fm.containsKey(Cnst.IR_REL)) {
+                    ir = Synt.declare(fm.remove(Cnst.IR_REL), Set.class);
+                }
+                if (ir != null && !ir.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    List sp = new ArrayList();
+                    int i = 0;
+                    for(Object v : ir) {
+                        Object[] a = Synt.asRange(v);
+                        if (a != null) {
+                            StringBuilder sd = new StringBuilder();
+                            if (a[0] != null) {
+//                              if (sd.length() > 0) {
+//                                  sd.append(" AND ");
+//                              }
+                                if ((boolean) a[2] ) {
+                                    sd.append(fn).append(" >= ?");
+                                    sp.add  ( a[0] );
+                                } else {
+                                    sd.append(fn).append( " > ?");
+                                    sp.add  ( a[0] );
+                                }
+                            }
+                            if (a[1] != null) {
+                                if (sd.length() > 0) {
+                                    sd.append(" AND ");
+                                }
+                                if ((boolean) a[3] ) {
+                                    sd.append(fn).append(" <= ?");
+                                    sp.add  ( a[1] );
+                                } else {
+                                    sd.append(fn).append( " < ?");
+                                    sp.add  ( a[1] );
+                                }
+                            }
+                            if (sd.length() > 0) {
+                                sb.append("(").append(sd).append(") OR ");
+                                i ++;
                             }
                         }
-                        if (a[1] != null) {
-                            if ((boolean) a[3]) {
-                                caze.filter(fn+" <= ?", a[1]);
-                            } else {
-                                caze.filter(fn+" < ?" , a[1]);
-                            }
+                    }
+                    if (sb.length() > 0) {
+                        sb.setLength(sb.length() - 4);
+                        if (i == 1) {
+                            caze.filter(    sb.toString()    , sp.toArray());
+                        } else {
+                            caze.filter("("+sb.toString()+")", sp.toArray());
                         }
                     }
                 }
@@ -803,7 +841,7 @@ public class AssocCase {
                         "f1", "a1:f2", "a2:CONCAT('$',d.f3)",
                         "#x_",
                         "f1", "a1:f2", "a2:CONCAT(x.f3,'%')")
-                .parse(Synt.asMap(
+                .parse(Synt.mapOf(
                         "rb", "f1,a2,b.a2",
                         "ob", "f2,a2,x_a2",
                         "x_a1", "123"

@@ -42,7 +42,7 @@ public final class Synt {
     /**
      * 区间参数: 表达式 [min,max] (min,max) [min,max) 空则表示无限, 逗号可替换为 ~
      */
-    private static final Pattern RNGP = Pattern.compile("^(\\(\\[)?([^,~]+)?[,~]([^,~]+)?(\\]\\))?");
+    private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?([^,~]+)?[,~]([^,~]+)?([\\]\\)])?");
 
     /**
      * 视为假的字符串有: 0,n,f,no,false 和 空串
@@ -434,21 +434,25 @@ public final class Synt {
      * @return
      */
     public static Object[] asRange(Object val) {
-        if (val == null) {
+        if (val == null || "".equals(val)) {
             return null;
         }
-        if (val instanceof String) {
+
+        /**
+         * 按区间格式进行解析
+         */
+        if (val instanceof String ) {
             String vs = declare(val, "");
             Matcher m = RNGP.matcher(vs);
-            if (! m.matches( )) {
-                return null;
+            if (m.matches()) {
+                return new Object[] {
+                    m.group(2).trim(),
+                    m.group(3).trim(),
+                  ! "(".equals(m.group(1)),
+                  ! ")".equals(m.group(4))
+                };
             }
-            return new Object[] {
-                m.group(2),
-                m.group(3),
-              ! "(".equals(m.group(1)),
-              ! ")".equals(m.group(4))
-            };
+            throw new ClassCastException("'"+val+"' can not be cast to range");
         }
 
         /**
@@ -461,7 +465,7 @@ public final class Synt {
         } else if (val instanceof List) {
             arr = ((List)val).toArray();
         } else {
-            return null;
+            throw new ClassCastException("'"+val+"' can not be cast to range");
         }
         switch (arr.length) {
             case 4:
@@ -471,7 +475,7 @@ public final class Synt {
                     gteq = declare(arr[3], false);
                 }
                 catch (ClassCastException e) {
-                    throw new ClassCastException("Range array 2,3 must be boolean: "+arr);
+                    throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
                 }
 
                 return new Object[] {
@@ -482,7 +486,7 @@ public final class Synt {
                     arr[0], arr[1], true, true
                 };
 
-            default:throw new ClassCastException("Range array size must be 2 or 4: "+arr);
+            default:throw new ClassCastException("Range index size must be 2 or 4: "+arr);
         }
     }
 

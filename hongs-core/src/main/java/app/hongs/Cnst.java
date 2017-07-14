@@ -79,6 +79,8 @@ public final class Cnst {
 
     public static final String RG_REL = "!rg"; // 区间
 
+    public static final String IR_REL = "!ir"; // 区间集
+
     public static final String IN_REL = "!in"; // 包含
 
     public static final String NI_REL = "!ni"; // 不包含    (Not in)

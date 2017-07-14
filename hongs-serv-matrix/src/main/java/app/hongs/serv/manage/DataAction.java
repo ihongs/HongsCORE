@@ -101,7 +101,7 @@ public class DataAction extends SearchAction {
                 sr.set(id, rd);
         String  ss = getRspMsg(helper, sr, "update", 1 );
 
-        helper.reply(ss, Synt.asMap("id",id));
+        helper.reply(ss, Synt.mapOf("id",id));
     }
 
     @Action("revert/update")

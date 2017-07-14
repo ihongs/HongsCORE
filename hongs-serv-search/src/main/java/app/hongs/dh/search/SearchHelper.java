@@ -18,12 +18,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.search.IndexSearcher;
 
 /**
  * 搜索助手
@@ -32,11 +33,6 @@ import org.apache.lucene.search.IndexSearcher;
 public class SearchHelper {
 
     private final LuceneRecord that;
-
-    static {
-        // jdk 1.7 加上这个后排序不会报错
-        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
-    }
 
     public SearchHelper(LuceneRecord that) {
         this.that = that;
@@ -127,9 +123,9 @@ public class SearchHelper {
          * 与 LinkedIn 左侧筛选类似.
          */
 
-        for(String k : cxts) {
-            Set    vs = null;
-            Object vo = rd.get(k );
+        for(String  k  : cxts) {
+            Set     vs = null;
+            Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
                 if (vm.containsKey(Cnst.EQ_REL)) {
@@ -139,7 +135,7 @@ public class SearchHelper {
                     vs = Synt.declare(vm.get(Cnst.IN_REL), Set.class);
                 }
             } else {
-                if (!"".equals(vo)) {
+                if (vo!= null && !"".equals(vo)) {
                     vs = Synt.declare(rd.get(k), Set.class);
                 }
             }
@@ -265,11 +261,12 @@ public class SearchHelper {
                         Document doc = reader.document(dox.doc);
 
                         for (Map.Entry<String, Map<String, Integer>> et : countz.entrySet()) {
-                            String k = et.getKey();
-                            String[] vals = doc.getValues(k);
-                            Map<String, Integer> cntc = et.getValue();
+                            String               k    = et .getKey   ( );
+                            Map<String, Integer> cntc = et .getValue ( );
+                            IndexableField[]     vals = doc.getFields(k);
 
-                            for (String val: vals) {
+                            for(IndexableField vol : vals) {
+                                String   val = vol.stringValue();
                                 if (cntc.containsKey(val)) {
                                     cntc.put(val , cntc.get(val) + 1);
                                 }
@@ -277,14 +274,15 @@ public class SearchHelper {
                         }
 
                         for (Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-                            String k = et.getKey();
-                            String[] vals = doc.getValues(k);
-                            Map<String, Integer> cntc = et.getValue();
-                            Set<String> cntx = countx.get(k);
-                            Map<String, Integer> cntu = countz.get(k);
-                            Set<String> cntv = cntu != null ? cntu.keySet() : null;
+                            String               k    = et .getKey   ( );
+                            Map<String, Integer> cntc = et .getValue ( );
+                            IndexableField[]     vals = doc.getFields(k);
+                            Map<String, Integer> cntu = countz.get   (k);
+                            Set<String>          cntx = countx.get   (k);
+                            Set<String>          cntv = cntu != null ? cntu.keySet() : null;
 
-                            for (String val: vals) {
+                            for(IndexableField vol : vals) {
+                                String   val = vol.stringValue();
                                 if (cntc.containsKey(val)) {
                                     cntc.put(val , cntc.get(val) + 1);
                                 } else
@@ -381,24 +379,52 @@ public class SearchHelper {
          * 类似 counts 对应部分的逻辑
          */
 
-        for(String k : cxts) {
-            Minmax mm = null;
-            Object vo = rd.get(k );
+        for(String  k  : cxts) {
+            Set<Minmax>  ms = null;
+            Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
                 if (vm.containsKey(Cnst.RG_REL)) {
-                    mm = new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), ""));
+                    ms = Synt.setOf(new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), "")));
+                } else
+                if (vm.containsKey(Cnst.IR_REL)) {
+                    Set va = Synt.declare(vm.get(Cnst.IR_REL), Set.class);
+                    ms = new HashSet( );
+                    for(Object vx : va) {
+                        if (null != vx && !"".equals(vx)) {
+                            ms.add( new Minmax(Synt.declare(vx, "")));
+                        }
+                    }
                 } else
                 if (vm.containsKey(Cnst.EQ_REL)) {
-                    mm = new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), 0D));
+                    ms = Synt.setOf(new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), 0D)));
+                } else
+                if (vm.containsKey(Cnst.IN_REL)) {
+                    Set va = Synt.declare(vm.get(Cnst.IR_REL), Set.class);
+                    ms = new HashSet( );
+                    for(Object vx : va) {
+                        if (null != vx && !"".equals(vx)) {
+                            ms.add( new Minmax(Synt.declare(vx, 0D)));
+                        }
+                    }
                 }
             } else {
-                if (!"".equals(vo) && !( vo instanceof Collection )) {
-                    mm = new Minmax(Synt.declare(vo, 0D));
+                if (vo!= null && !"".equals(vo)) {
+                    ms = Synt.setOf(new Minmax(Synt.declare(vo, 0D)));
+                } else
+                if (vo  instanceof  Collection
+                ||  vo  instanceof  Object [ ] ) {
+                    Set va = Synt.declare(vo, Set.class);
+                    ms = new HashSet( );
+                    for(Object vx : va) {
+                        if (null != vx && !"".equals(vx)) {
+                            ms.add( new Minmax(Synt.declare(vx, 0D)));
+                        }
+                    }
                 }
             }
 
-            if (mm == null) {
+            if (ms == null) {
                 if (counts.containsKey(k)) {
                     counts2.put(k, counts.get(k));
                 }
@@ -422,8 +448,10 @@ public class SearchHelper {
                     counts3.put(k, vz);
                 }
 
-                if (vx == null || !vx.contains(mm)) {
-                    vz.put(mm, new Cntsum());
+                for (Minmax mm : ms) {
+                    if (vx == null || !vx.contains(mm)) {
+                        vz.put( mm  ,  new  Cntsum(  ));
+                    }
                 }
 
                 Map xd = new HashMap();
@@ -491,13 +519,13 @@ public class SearchHelper {
                         Document doc = reader.document(dox.doc);
 
                         for (Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
-                            String k = et.getKey();
-                            Map<Minmax, Cntsum > cntc = et.getValue();
-                            Set<Minmax> cntx = countx.get(k);
-                            String[] vals = doc.getValues(k);
+                            String              k    = et .getKey   ( );
+                            Map<Minmax, Cntsum> cntc = et .getValue ( );
+                            Set<Minmax        > cntx = countx.get   (k);
+                            IndexableField[   ] vals = doc.getFields(k);
 
-                            F1: for (String val: vals) {
-                                double v = Synt.asserts(val, 0D);
+                            F1: for (IndexableField x: vals) {
+                                double v = x.numericValue( ).doubleValue();
                                 F2: for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
                                     Minmax m = mc.getKey(  );
 
@@ -535,6 +563,11 @@ public class SearchHelper {
         }
 
         return total;
+    }
+
+    // jdk 1.7 加上这个后排序不会报错
+    static {
+        System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
     private static class Sorted implements Comparator<Map.Entry<String, Integer>> {
@@ -576,8 +609,8 @@ public class SearchHelper {
     private static class Minmax {
         public double min = Double.MIN_VALUE;
         public double max = Double.MAX_VALUE;
-        public boolean le = false;
-        public boolean ge = false;
+        public boolean le = true;
+        public boolean ge = true;
 
         public Minmax(double n) {
             min = max = n;
@@ -585,20 +618,33 @@ public class SearchHelper {
 
         public Minmax(String s) {
             Object[] a = Synt.asRange(s);
-            if (a[0] != null) min = Synt.declare(a[0], 0D);
-            if (a[1] != null) max = Synt.declare(a[1], 0D);
+            if (a == null) {
+                return;
+            }
+            if (a[0] != null) {
+                min = Synt.declare(a[0], min);
+            }
+            if (a[1] != null) {
+                max = Synt.declare(a[1], max);
+            }
             le = (boolean) a[2];
             ge = (boolean) a[3];
         }
 
         @Override
         public String toString() {
+            // 不限则为空
+            if (le && ge
+            && min == Double.MIN_VALUE
+            && max == Double.MAX_VALUE) {
+                return "";
+            }
             StringBuilder sb = new StringBuilder();
             sb.append(le ? "(" : "[");
             sb.append(min != Double.MIN_VALUE ? min : "");
             sb.append(",");
             sb.append(max != Double.MAX_VALUE ? max : "");
-            sb.append(le ? ")" : "]");
+            sb.append(ge ? ")" : "]");
             return sb.toString();
         }
 
@@ -617,14 +663,14 @@ public class SearchHelper {
         }
 
         public boolean covers(double n) {
-            if (le) { if (n >  max) {
+            if (le) { if (n >= max) {
                 return false;
-            }} else { if (n >= max) {
+            }} else { if (n >  max) {
                 return false;
             }}
-            if (ge) { if (n <  min) {
+            if (ge) { if (n <= min) {
                 return false;
-            }} else { if (n <= min) {
+            }} else { if (n <  min) {
                 return false;
             }}
             return true;

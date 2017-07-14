@@ -41,19 +41,19 @@ public class FileAction implements IAction {
     }
     private static final List ROOT_LIST = new ArrayList();
     static {
-        ROOT_LIST.add(Synt.asMap(
+        ROOT_LIST.add(Synt.mapOf(
             "path", "/BASE/",
             "name", "网站",
             "type", "dir",
             "size", "1"
         ));
-        ROOT_LIST.add(Synt.asMap(
+        ROOT_LIST.add(Synt.mapOf(
             "path", "/CONF/",
             "name", "配置",
             "type", "dir",
             "size", "1"
         ));
-        ROOT_LIST.add(Synt.asMap(
+        ROOT_LIST.add(Synt.mapOf(
             "path", "/DATA/",
             "name", "数据",
             "type", "dir",
@@ -73,15 +73,13 @@ public class FileAction implements IAction {
         // 根目录
         if ("".equals(path) || "/".equals(path)) {
             if ("file".equals(type)) {
-                helper.reply(Synt.asMap(
-                    "page" , Synt.asMap(
+                helper.reply(Synt.mapOf("page" , Synt.mapOf(
                         "ern" , 1
                     ),
                     "list" , new ArrayList()
                 ));
             } else {
-                helper.reply(Synt.asMap(
-                    "page" , Synt.asMap(
+                helper.reply(Synt.mapOf("page" , Synt.mapOf(
                         "ern" , 0
                     ),
                     "list" , ROOT_LIST
@@ -213,7 +211,7 @@ public class FileAction implements IAction {
 
             Map rsp = new HashMap();
             rsp.put("list", filez );
-            rsp.put("page", Synt.asMap(
+            rsp.put("page", Synt.mapOf(
                 "ern", filez.size() > 0 ? 0 : 1
             ));
             helper.reply(rsp);

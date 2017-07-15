@@ -112,7 +112,7 @@ public final class Synt {
             }
         }
 
-        return toList(val);
+        return asList(val);
     }
 
     public static Set  toSet (Object val) {
@@ -133,7 +133,7 @@ public final class Synt {
             }
         }
 
-        return toSet (val);
+        return asSet (val);
     }
 
     public static Map  toMap (Object val) {
@@ -159,7 +159,7 @@ public final class Synt {
             }
         }
 
-        return toMap (val);
+        return asMap (val);
     }
 
     public static Object[] asArray(Object val) {

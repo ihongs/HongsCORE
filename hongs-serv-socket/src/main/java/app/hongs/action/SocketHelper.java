@@ -92,9 +92,9 @@ public class SocketHelper extends ActionHelper {
          * 不匹配则重新设置 Core 动作环境信息
          */
         Core.ACTION_TIME.set(System.currentTimeMillis());
-        Core.ACTION_NAME.set(Synt.asserts(prop.get("ACTION_NAME"), ""));
-        Core.ACTION_LANG.set(Synt.asserts(prop.get("ACTION_LANG"), ""));
-        Core.ACTION_ZONE.set(Synt.asserts(prop.get("ACTION_ZONE"), ""));
+        Core.ACTION_NAME.set(Synt.declare(prop.get("ACTION_NAME"), ""));
+        Core.ACTION_LANG.set(Synt.declare(prop.get("ACTION_LANG"), ""));
+        Core.ACTION_ZONE.set(Synt.declare(prop.get("ACTION_ZONE"), ""));
     }
 
     /**

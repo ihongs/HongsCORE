@@ -184,7 +184,7 @@ public class Data extends SearchEntity {
             return;
         }
 
-        boolean saveToDb = !Synt.asserts(getParams().get("dont.save.to.db"),false);
+        boolean saveToDb = !Synt.declare(getParams().get("dont.save.to.db"),false);
 
         // 获取旧的数据
         Map dd;
@@ -194,7 +194,7 @@ public class Data extends SearchEntity {
                     .select("data,ctime")
                     .one();
             if(!dd.isEmpty()) {
-                if (ctime <= Synt.asserts ( dd.get( "ctime" ) , 0L ) ) {
+                if (ctime <= Synt.declare ( dd.get( "ctime" ) , 0L ) ) {
                     throw new HongsException(0x1100, "等会儿, 不要急");
                 }
                 dd = (Map) app.hongs.util.Data.toObject(dd.get("data").toString());
@@ -287,7 +287,7 @@ public class Data extends SearchEntity {
         if (dd.isEmpty()) {
             throw new HongsException(0x1100, "恢复数据源不存在");
         }
-        if (Synt.asserts(dd.get("etime"), 0L) == 0L) {
+        if (Synt.declare(dd.get("etime"), 0L) == 0L) {
             throw new HongsException(0x1100, "活跃数据不可操作");
         }
 

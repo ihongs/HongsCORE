@@ -90,7 +90,7 @@ public class AuthFilter
     /**
      * 获取登录超时
      */
-    this.exp = Synt.asserts(config.getInitParameter("expire-time"), 0L);
+    this.exp = Synt.declare(config.getInitParameter("expire-time"), 0L);
 
     /**
      * 获取权限配置名
@@ -178,7 +178,7 @@ public class AuthFilter
      * 判断当前用户是否登录超时
      */
     if (exp != 0) {
-        long tim = Synt.asserts(hlpr.getSessibute(Cnst.UST_SES), 0L);
+        long tim = Synt.declare(hlpr.getSessibute(Cnst.UST_SES), 0L);
         long now = System.currentTimeMillis() / 1000;
         if ( now - tim < exp) {
             hlpr.setSessibute ( Cnst.UST_SES , now );
@@ -192,7 +192,7 @@ public class AuthFilter
      * 调试模式超级管理员无限制
      */
     if (Core.DEBUG > 0) {
-      String uid = Synt.asserts(hlpr.getSessibute(Cnst.UID_SES), "");
+      String uid = Synt.declare(hlpr.getSessibute(Cnst.UID_SES), "");
         if ( uid!= null && uid.equals(Cnst.ADM_UID)) {
             chain.doFilter(req , rsp );
             return;

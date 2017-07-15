@@ -97,7 +97,7 @@ public class SearchTitler {
             }
 
             List<Object[]> ls = (List) lo;
-            String fn = Synt.asserts ( et.getKey(), "");
+            String fn = Synt.declare ( et.getKey(), "");
 
             if (enums != null && enums.containsKey(fn)) {
                 addEnums(ls, enums.get(fn), fn);

@@ -58,8 +58,8 @@ public class SignAction {
         String usrid = (String) ud.get( "id" );
         String uname = (String) ud.get("name");
         String uhead = (String) ud.get("head");
-        int    state = Synt.asserts(ud.get("state"), 0 ) ;
-        long   utime = Synt.asserts(ud.get("mtime"), 0L) * 1000 ;
+        int    state = Synt.declare(ud.get("state"), 0 ) ;
+        long   utime = Synt.declare(ud.get("mtime"), 0L) * 1000 ;
 
         // 验证状态
         if (state != 1) {

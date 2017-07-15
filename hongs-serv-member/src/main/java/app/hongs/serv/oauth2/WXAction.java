@@ -104,7 +104,7 @@ public class WXAction {
         if (err != 0) {
             throw new HongsException.Common("Get user info error\r\n"+Data.toString(rsp));
         }
-        opnId = Synt.asserts(rsp.get("unionid"), opnId);
+        opnId = Synt.declare(rsp.get("unionid"), opnId);
 
         req = new HashMap();
         req.put("appid", "wx" );

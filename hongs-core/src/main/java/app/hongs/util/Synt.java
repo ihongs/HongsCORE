@@ -1,5 +1,6 @@
 package app.hongs.util;
 
+import app.hongs.HongsExpedient;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -53,6 +54,115 @@ public final class Synt {
      * 视为真的字符串有: 1,y,t,yes,true
      */
     public  static final Pattern TRUE = Pattern.compile( "^(1|y|t|yes|true)$", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 快速构建 List
+     * 注意: 可以增删
+     * @param objs
+     * @return
+     */
+    public static List listOf(Object... objs) {
+        return new  ArrayList   (Arrays.asList(objs));
+    }
+
+    /**
+     * 快捷构建 Set
+     * 注意: 可以增删
+     * @param objs
+     * @return
+     */
+    public static Set setOf(Object... objs) {
+        return new LinkedHashSet(Arrays.asList(objs));
+    }
+
+    /**
+     * 快捷构建 Map
+     * 注意: 可以增删, 须偶数个
+     * @param objs
+     * @return
+     */
+    public static Map mapOf(Object... objs) {
+        if (objs.length % 2 != 0) {
+            throw new IndexOutOfBoundsException("mapOf must provide even numbers of entries");
+        }
+        int idx = 0;
+        Map map = new LinkedHashMap();
+        while (idx < objs.length) {
+            map.put( objs[idx ++], objs[idx ++] );
+        }
+        return map;
+    }
+
+    public static Object[] asArray(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Object[] ) {
+            return (Object[]) val;
+        } else if (val instanceof List) {
+            return ((List)val).toArray();
+        } else if (val instanceof Set ) {
+            return ((Set) val).toArray();
+        } else if (val instanceof Map ) {
+            return ((Map) val).values( ).toArray();
+        } else {
+            return new Object[ ] { val };
+        }
+    }
+
+    public static List asList(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return new ArrayList(( Set ) val);
+        } else if (val instanceof Map ) {
+            return new ArrayList(((Map ) val).values());
+        } else if (val instanceof Object[]) {
+            return new ArrayList(Arrays.asList((Object[]) val));
+        } else {
+            List lst = new ArrayList ();
+            lst.add(val);
+            return  lst ;
+        }
+    }
+
+    public static Set  asSet (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Set ) {
+            return ( Set ) val ;
+        } else if (val instanceof List) {
+            return new LinkedHashSet((List) val);
+        } else if (val instanceof Map ) {
+            return new LinkedHashSet(((Map) val).values());
+        } else if (val instanceof Object[]) {
+            return new LinkedHashSet(Arrays.asList((Object[]) val));
+        } else {
+            Set set = new LinkedHashSet();
+            set.add(val);
+            return  set ;
+        }
+    }
+
+    public static Map  asMap (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Map ) {
+            return ( Map ) val ;
+        }
+
+        // 其他类型均无法转换为 Map
+        throw new ClassCastException("'" + val + "' can not be cast to Map");
+    }
 
     public static String asString(Object val) {
         val = asSingle(val);
@@ -263,77 +373,6 @@ public final class Synt {
         return val;
     }
 
-    public static Object[] asArray(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Object[] ) {
-            return (Object[]) val;
-        } else if (val instanceof List) {
-            return ((List)val).toArray();
-        } else if (val instanceof Set ) {
-            return ((Set) val).toArray();
-        } else if (val instanceof Map ) {
-            return ((Map) val).values( ).toArray();
-        } else {
-            return new Object[ ] { val };
-        }
-    }
-
-    public static List asList(Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof List) {
-            return ( List) val ;
-        } else if (val instanceof Set ) {
-            return new ArrayList(( Set ) val);
-        } else if (val instanceof Map ) {
-            return new ArrayList(((Map ) val).values());
-        } else if (val instanceof Object[]) {
-            return new ArrayList(Arrays.asList((Object[]) val));
-        } else {
-            List lst = new ArrayList ();
-            lst.add(val);
-            return  lst ;
-        }
-    }
-
-    public static Set  asSet (Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Set ) {
-            return ( Set ) val ;
-        } else if (val instanceof List) {
-            return new LinkedHashSet((List) val);
-        } else if (val instanceof Map ) {
-            return new LinkedHashSet(((Map) val).values());
-        } else if (val instanceof Object[]) {
-            return new LinkedHashSet(Arrays.asList((Object[]) val));
-        } else {
-            Set set = new LinkedHashSet();
-            set.add(val);
-            return  set ;
-        }
-    }
-
-    public static Map  asMap (Object val) {
-        if (val == null) {
-            return null;
-        }
-
-        if (val instanceof Map ) {
-            return ( Map ) val ;
-        }
-
-        // 其他类型均无法转换为 Map
-        throw new ClassCastException("'" + val + "' can not be cast to Map");
-    }
-
     /**
      * 确保此变量为 Set  类型
      * 本方法用于处理排序字段参数
@@ -453,84 +492,6 @@ public final class Synt {
     }
 
     /**
-     * 快速构建 List
-     * 注意: 可以增删
-     * @param objs
-     * @return
-     */
-    public static List listOf(Object... objs) {
-        return new  ArrayList   (Arrays.asList(objs));
-    }
-
-    /**
-     * 快捷构建 Set
-     * 注意: 可以增删
-     * @param objs
-     * @return
-     */
-    public static Set setOf(Object... objs) {
-        return new LinkedHashSet(Arrays.asList(objs));
-    }
-
-    /**
-     * 快捷构建 Map
-     * 注意: 可以增删, 须偶数个
-     * @param objs
-     * @return
-     */
-    public static Map mapOf(Object... objs) {
-        if (objs.length % 2 != 0) {
-            throw new IndexOutOfBoundsException("mapOf must provide even numbers of entries");
-        }
-        int idx = 0;
-        Map map = new LinkedHashMap();
-        while (idx < objs.length) {
-            map.put( objs[idx ++], objs[idx ++] );
-        }
-        return map;
-    }
-
-    /**
-     * 同 decalare(val, def)
-     * 但转换不了则返回 def 而不抛出错误
-     * 通常针对内部数据
-     * @param <T>
-     * @param val
-     * @param def
-     * @return
-     */
-    public static <T> T asserts(Object val, T def) {
-        try {
-            return declare(val, def);
-        }
-        catch (ClassCastException e) {
-            app.hongs.CoreLogger.error(e); // 记录错误, 以备调错
-            return def;
-        }
-    }
-
-    /**
-     * 确保此变量类型为 def 的类型
-     * val 为空时则返回 def
-     * 其他的说明请参见 declare(val, cls)
-     * 通常针对外部数据
-     * @param <T>
-     * @param val
-     * @param def
-     * @return
-     */
-    public static <T> T declare(Object val, T def) {
-        if (def == null) {
-            throw  new NullPointerException("declare def can not be null");
-        }
-        val = declare(val, def.getClass());
-        if (val == null) {
-            return def;
-        }
-        return (T) val;
-    }
-
-    /**
      * 确保此变量类型为 cls 类型
      * string,number(int,long...) 类型间可互转;
      * cls 为 Boolean  时:
@@ -541,8 +502,8 @@ public final class Synt {
      * cls 为 Array,List,Set 时:
      *      val 非 List,Set,Map 时构建 Array,List,Set 后将 val 加入其下,
      *      val 为 Map 则取 values;
-     * 但其他类型均无法转为 Map.
-     * 通常针对外部数据
+     * 但其他类型均无法转为 Map 的类型.
+     * 如果类型明确建议使用 asXxx 方法.
      * @param <T>
      * @param val
      * @param cls
@@ -596,6 +557,26 @@ public final class Synt {
             val = asBool(val);
         }
 
+        return (T) val;
+    }
+
+    /**
+     * 确保 val 的类型为 def 的类型
+     * 如果 val 为空则取 def 默认值
+     * 其他的说明请参见 declare(Object, Class)
+     * @param <T>
+     * @param val
+     * @param def
+     * @return
+     */
+    public static <T> T declare(Object val, T def) {
+        if (def == null) {
+            throw  new NullPointerException("declare def can not be null");
+        }
+        val = declare(val, def.getClass());
+        if (val == null) {
+            return def;
+        }
         return (T) val;
     }
 

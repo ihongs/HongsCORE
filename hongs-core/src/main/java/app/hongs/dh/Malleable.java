@@ -93,7 +93,7 @@ public class Malleable {
      * @return
      */
     public Map getParams() {
-        return Synt.asserts(getFields().get("@"), new HashMap());
+        return Synt.declare(getFields().get("@"), new HashMap());
     }
 
     /**

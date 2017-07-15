@@ -34,10 +34,10 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
         Map  sd = uo.create  (  rd  );
 
         // 提取登录信息
-        String usrid = Synt.asserts(sd.get(  "id" ), "");
-        String uname = Synt.asserts(sd.get( "name"), "");
-        String uhead = Synt.asserts(sd.get( "head"), "");
-        long   utime = Synt.asserts(sd.get("mtime"), 0L) * 1000;
+        String usrid = Synt.declare(sd.get(  "id" ), "");
+        String uname = Synt.declare(sd.get( "name"), "");
+        String uhead = Synt.declare(sd.get( "head"), "");
+        long   utime = Synt.declare(sd.get("mtime"), 0L) * 1000;
         String appid = Synt.declare(ah.getParameter("appid"), "_WEB_");
 
         // 赋予公共权限

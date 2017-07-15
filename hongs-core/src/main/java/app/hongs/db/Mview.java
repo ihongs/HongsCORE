@@ -265,7 +265,7 @@ public class Mview extends Model {
             : ( ( Map<String, Map> ) fields ).entrySet( )) {
             Map field = ent.getValue();
             String fn = ent.getKey(  );
-            String ft = Synt.asserts(field.get("__type__"), "text");
+            String ft = Synt.declare(field.get("__type__"), "text");
 
             // 表单信息字段需要排除
             if ("@".equals(fn)) {

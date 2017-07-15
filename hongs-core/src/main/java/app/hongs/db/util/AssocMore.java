@@ -108,7 +108,7 @@ public class AssocMore {
 
     sq = (String) params.get("limits");
     if (sq != null && sq.length() != 0) { // 仅对非 JOIN 的有效
-        caze.limit(Synt.asserts(sq, 1));
+        caze.limit(Synt.declare(sq, 1));
     }
   }
 
@@ -494,7 +494,7 @@ public class AssocMore {
       // 2016/4/15, 也可以读取表自身的唯一键
       if (ks == null || ks.length() == 0)
       {
-          ks  = Synt.asserts(tb.getParams().get("unique"), "");
+          ks  = Synt.declare(tb.getParams().get("unique"), "");
       }
       if (ks != null && ks.length() != 0)
       {

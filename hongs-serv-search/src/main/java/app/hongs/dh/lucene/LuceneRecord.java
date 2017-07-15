@@ -861,7 +861,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         // 关键词
         if (rd.containsKey(Cnst.WD_KEY)) {
             Object fv = rd.get (Cnst.WD_KEY);
-                   fv = Synt.asserts(fv, "");
+                   fv = Synt.declare(fv, "");
             Set<String> fs = getFindable(  );
 
             if (fv != null && !"".equals(fv)) {
@@ -1145,7 +1145,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      * @return
      */
     protected DateFormat getDateFormat(Map fc) {
-        String  fm = Synt.asserts(fc.get( "format" ), "");
+        String  fm = Synt.declare(fc.get( "format" ), "");
         if ( "".equals(fm)) {
                 fm = Synt.declare(fc.get("__type__"), "datetime");
                 fm = CoreLocale.getInstance()
@@ -1228,21 +1228,21 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     }
 
     protected boolean sortable(Map fc) {
-        String name = Synt.asserts(fc.get("__name__"), "");
+        String name = Synt.declare(fc.get("__name__"), "");
         return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
     protected boolean siftable(Map fc) {
-        String name = Synt.asserts(fc.get("__name__"), "");
+        String name = Synt.declare(fc.get("__name__"), "");
         return getSiftable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
     protected boolean repeated(Map fc) {
-        return Synt.asserts(fc.get("__repeated__"), false);
+        return Synt.declare(fc.get("__repeated__"), false);
     }
 
     protected boolean unstored(Map fc) {
-        return Synt.asserts(fc.get(  "unstored"  ), false);
+        return Synt.declare(fc.get(  "unstored"  ), false);
     }
 
     protected boolean ignored (Map fc) {
@@ -1297,7 +1297,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             } else
             if (  "date".equals(t)) {
                 // 时间戳转 Date 对象时需要乘以 1000
-                String typ = Synt.asserts(m.get("type"), "");
+                String typ = Synt.declare(m.get("type"), "");
                 int    mul = "datestamp".equals( typ  )
                           || "timestamp".equals( typ  )
                            ? 1000 : 1;

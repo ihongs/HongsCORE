@@ -653,7 +653,7 @@ public class Table
      */
     boolean checked;
     if (params.containsKey("check.value")) {
-        checked = Synt.asserts(params.get("check.value"), false);
+        checked = Synt.declare(params.get("check.value"), false);
     } else {
         checked = CoreConfig.getInstance()
                   .getProperty("core.table.check.value" , false);

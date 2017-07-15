@@ -1108,7 +1108,7 @@ public class FetchCase
    */
   public < T > T getOption(String key, T def)
   {
-    return Synt.asserts(getOption(key) , def);
+    return Synt.declare(getOption(key) , def);
   }
 
   /**

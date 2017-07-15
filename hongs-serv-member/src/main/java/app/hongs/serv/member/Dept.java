@@ -34,7 +34,7 @@ extends Mtree {
         // 权限限制, 仅能赋予当前登录用户所有的权限
         if (data.containsKey("roles") ) {
             data.put("rtime", System.currentTimeMillis() / 1000);
-            AuthKit.clnRoles( Synt.declare(data.get("roles"), List.class), null );
+            AuthKit.clnRoles( Synt.asList( data.get( "roles" ) ), null );
         }
 
         return super.add(data);
@@ -45,7 +45,7 @@ extends Mtree {
         // 权限限制, 仅能赋予当前登录用户所有的权限
         if (data.containsKey("roles") ) {
             data.put("rtime", System.currentTimeMillis() / 1000);
-            AuthKit.clnRoles( Synt.declare(data.get("roles"), List.class),  id  );
+            AuthKit.clnRoles( Synt.asList( data.get( "roles" ) ),  id  );
         }
 
         return super.put(id, data);

@@ -50,19 +50,19 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        List lst = Synt.declare(obj, List.class);
+        List lst = Synt.asList(obj);
 
         if (keys.length == pos + 1) {
             return lst;
         } else {
-            return gat(lst, def, keys, pos + 1 );
+            return gat(lst, def, keys, pos + 1);
         }
     } else
     if (key instanceof Integer) {
-        List lst = Synt.declare(obj, List.class);
+        List lst = Synt.asList(obj);
 
         // 如果列表长度不够, 则直接返回默认值
-        int  idx = ( Integer )  key;
+        int  idx = ( Integer ) key ;
         if ( idx > lst.size( ) - 1) {
             return def;
         }
@@ -73,7 +73,7 @@ public final class Dict
             return get(lst.get(idx), def, keys, pos + 1);
         }
     } else {
-        Map  map = Synt.declare(obj,  Map.class);
+        Map  map = Synt.asMap (obj);
 
         if (keys.length == pos + 1) {
             return Synt.defoult(map.get(key), def);
@@ -91,9 +91,9 @@ public final class Dict
     if (key == null) {
         List lst;
         if (obj == null) {
-            lst = new ArrayList();
+            lst = new ArrayList( );
         } else {
-            lst = Synt.declare(obj, List.class);
+            lst = Synt.asList(obj);
         }
 
         if (keys.length == pos + 1) {
@@ -107,9 +107,9 @@ public final class Dict
     if (key instanceof Integer) {
         List lst;
         if (obj == null) {
-            lst = new ArrayList();
+            lst = new ArrayList( );
         } else {
-            lst = Synt.declare(obj, List.class);
+            lst = Synt.asList(obj);
         }
 
         // 如果列表长度不够, 填充到索引的长度
@@ -131,7 +131,7 @@ public final class Dict
         if (obj == null) {
             map = new LinkedHashMap();
         } else {
-            map = Synt.declare(obj,  Map.class);
+            map = Synt.asMap (  obj );
         }
 
         if (keys.length == pos + 1) {

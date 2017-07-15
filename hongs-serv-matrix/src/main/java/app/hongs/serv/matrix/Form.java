@@ -160,7 +160,7 @@ public class Form extends Model {
         if (conf != null && !"".equals(conf)) {
              Map  top  = null;
 
-            flds = Synt.declare(Data.toObject(conf), List.class);
+            flds = Synt.asList(Data.toObject(conf));
             for (Map fld : flds) {
                 if ( "".equals(fld.get("__name__"))) {
                     fld.put("__name__", Core.newIdentity());

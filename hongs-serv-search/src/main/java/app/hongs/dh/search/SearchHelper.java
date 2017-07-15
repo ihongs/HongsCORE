@@ -129,14 +129,14 @@ public class SearchHelper {
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
                 if (vm.containsKey(Cnst.EQ_REL)) {
-                    vs = Synt.declare(vm.get(Cnst.EQ_REL), Set.class);
+                    vs = Synt.asSet(vm.get(Cnst.EQ_REL));
                 } else
                 if (vm.containsKey(Cnst.IN_REL)) {
-                    vs = Synt.declare(vm.get(Cnst.IN_REL), Set.class);
+                    vs = Synt.asSet(vm.get(Cnst.IN_REL));
                 }
             } else {
                 if (vo!= null && !"".equals(vo)) {
-                    vs = Synt.declare(rd.get(k), Set.class);
+                    vs = Synt.asSet(rd.get( k ));
                 }
             }
 
@@ -388,7 +388,7 @@ public class SearchHelper {
                     ms = Synt.setOf(new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), "")));
                 } else
                 if (vm.containsKey(Cnst.IR_REL)) {
-                    Set va = Synt.declare(vm.get(Cnst.IR_REL), Set.class);
+                    Set va = Synt.asSet(vm.get(Cnst.IR_REL));
                     ms = new HashSet( );
                     for(Object vx : va) {
                         if (null != vx && !"".equals(vx)) {
@@ -400,7 +400,7 @@ public class SearchHelper {
                     ms = Synt.setOf(new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), 0D)));
                 } else
                 if (vm.containsKey(Cnst.IN_REL)) {
-                    Set va = Synt.declare(vm.get(Cnst.IR_REL), Set.class);
+                    Set va = Synt.asSet(vm.get(Cnst.IR_REL));
                     ms = new HashSet( );
                     for(Object vx : va) {
                         if (null != vx && !"".equals(vx)) {
@@ -414,7 +414,7 @@ public class SearchHelper {
                 } else
                 if (vo  instanceof  Collection
                 ||  vo  instanceof  Object [ ] ) {
-                    Set va = Synt.declare(vo, Set.class);
+                    Set va = Synt.asSet(vo);
                     ms = new HashSet( );
                     for(Object vx : va) {
                         if (null != vx && !"".equals(vx)) {

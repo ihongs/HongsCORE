@@ -21,8 +21,8 @@ public class IsEnum extends Rule {
             return   null; // 允许为空
         }
 
-        String conf = Synt.declare(params.get("conf"), String.class);
-        String name = Synt.declare(params.get("enum"), String.class);
+        String conf = Synt.asString(params.get("conf"));
+        String name = Synt.asString(params.get("enum"));
         if (conf == null || "".equals(conf)) {
             conf = Synt.declare(params.get("__conf__"), "");
         }

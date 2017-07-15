@@ -14,7 +14,7 @@ public class DoubleQuery implements IQuery {
         if (v == null) {
             throw new ClassCastException("Query for "+k+" must be double, but null");
         }
-        double  n2 = Synt.declare(v, Double.class);
+        double  n2 = Synt.asDouble(v);
         Query   q2 = DoublePoint.newExactQuery(":"+k, n2);
         return  q2;
     }
@@ -27,15 +27,15 @@ public class DoubleQuery implements IQuery {
         if (n == null || "".equals(n)) {
             n2 = Double.MIN_VALUE;
         } else {
-            n2 = Synt.declare(n, Float.class);
+            n2 = Synt.asFloat (n);
             if (!l) {
-                n2 = DoublePoint.nextUp(n2);
+                n2 = DoublePoint.nextUp  (n2);
             }
         }
         if (x == null || "".equals(x)) {
             x2 = Double.MAX_VALUE;
         } else {
-            x2 = Synt.declare(x, Float.class);
+            x2 = Synt.asFloat (x);
             if (!g) {
                 x2 = DoublePoint.nextDown(x2);
             }

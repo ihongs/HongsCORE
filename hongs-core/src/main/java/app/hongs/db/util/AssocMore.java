@@ -46,7 +46,7 @@ public class AssocMore {
     }
 
     // 判断是否已经检查过
-    Set cs  = Synt.declare(caze.getOption("CHECKS"), Set.class);
+    Set cs  = Synt.asSet(caze.getOption("CHECKS"));
     if (cs != null) {
         if (cs.contains( caze.getName( ) )) {
             return;

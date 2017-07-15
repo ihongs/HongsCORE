@@ -109,7 +109,7 @@ public class IsFork extends Rule {
         List<Map> ls = (List) sd.get("list");
 
         // 对比结果
-        Set vs = Synt.declare(value, Set.class);
+        Set vs = Synt.asSet(value);
         Set us = new HashSet();
         for(Map um : ls) {
             us.add(um.get(vk));

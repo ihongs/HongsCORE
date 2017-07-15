@@ -250,7 +250,7 @@ public class AuthKit {
 
         // 设置会话
         if (place != null && 0 < place.length()) {
-            Set s  = Synt.declare(sd.getAttribute(Cnst.USL_SES), Set.class);
+            Set s  = Synt.asSet(sd.getAttribute(Cnst.USL_SES));
             if (s == null) {
                 s  = new HashSet();
             }   s.add  (  place  );

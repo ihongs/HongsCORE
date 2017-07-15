@@ -34,8 +34,8 @@ public class SearchCmdlet {
             "rn:i"
         });
 
-        String conf = Synt.declare(opts.remove("conf"), String.class);
-        String name = Synt.declare(opts.remove("name"), String.class);
+        String conf = Synt.asString(opts.remove("conf"));
+        String name = Synt.asString(opts.remove("name"));
         ActionHelper ah = Core.getInstance(ActionHelper.class);
         LuceneRecord so = new LuceneRecord(conf+"/"+name, FormSet.getInstance(conf).getForm(name));
         Map req = ah.getRequestData();
@@ -52,9 +52,9 @@ public class SearchCmdlet {
             "id*s",
         });
 
-        String conf = Synt.declare(opts.remove("conf"), String.class);
-        String name = Synt.declare(opts.remove("name"), String.class);
-        List<String> ds = Synt.declare(opts.remove("id"), List.class);
+        String conf = Synt.asString(opts.remove("conf"));
+        String name = Synt.asString(opts.remove("name"));
+        List<String> ds = Synt.asList(opts.remove("id"));
         ActionHelper ah = Core.getInstance(ActionHelper.class);
         LuceneRecord so = new LuceneRecord(conf+"/"+name, FormSet.getInstance(conf).getForm(name));
         Map  rd = ah.getRequestData();

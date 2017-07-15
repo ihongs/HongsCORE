@@ -14,7 +14,7 @@ public class LongQuery implements IQuery {
         if (v == null) {
             throw new ClassCastException("Query for "+k+" must be long, but null");
         }
-        long    n2 = Synt.declare(v, Long.class);
+        long    n2 = Synt.asLong(v);
         Query   q2 = LongPoint.newExactQuery(":"+k, n2);
         return  q2;
     }
@@ -27,7 +27,7 @@ public class LongQuery implements IQuery {
         if (n == null || "".equals(n)) {
             n2 = Long.MIN_VALUE;
         } else {
-            n2 = Synt.declare(n, Long.class);
+            n2 = Synt.asLong(n);
             if (!l) {
                 n2 = n2 + 1;
             }
@@ -35,7 +35,7 @@ public class LongQuery implements IQuery {
         if (x == null || "".equals(x)) {
             x2 = Long.MAX_VALUE;
         } else {
-            x2 = Synt.declare(x, Long.class);
+            x2 = Synt.asLong(x);
             if (!g) {
                 x2 = x2 - 1;
             }

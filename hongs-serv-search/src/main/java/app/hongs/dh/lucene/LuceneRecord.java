@@ -366,7 +366,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      * @throws HongsException
      */
     public String add(Map rd) throws HongsException {
-        String id = Synt.declare(rd.get(Cnst.ID_KEY), String.class );
+        String id = Synt.asString(rd.get(Cnst.ID_KEY));
         if (id != null && id.length() != 0) {
             throw new HongsException.Common("Id can not set in add");
         }
@@ -889,7 +889,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         // 或条件
         if (rd.containsKey(Cnst.OR_KEY)) {
             BooleanQuery.Builder qx = new BooleanQuery.Builder( );
-            Set<Map> set = Synt.declare(rd.get(Cnst.OR_KEY), Set.class);
+            Set<Map> set = Synt.asSet(rd.get(Cnst.OR_KEY));
             for(Map  map : set) {
                 qx.add(getQuery(map), BooleanClause.Occur.SHOULD);
             }
@@ -898,7 +898,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
         // 附条件
         if (rd.containsKey(Cnst.SR_KEY)) {
-            Set<Map> set = Synt.declare(rd.get(Cnst.SR_KEY), Set.class);
+            Set<Map> set = Synt.asSet(rd.get(Cnst.SR_KEY));
             for(Map  map : set) {
                 qr.add(getQuery(map), BooleanClause.Occur.SHOULD);
             }
@@ -906,7 +906,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
         // 并条件
         if (rd.containsKey(Cnst.AR_KEY)) {
-            Set<Map> set = Synt.declare(rd.get(Cnst.AR_KEY), Set.class);
+            Set<Map> set = Synt.asSet(rd.get(Cnst.AR_KEY));
             for(Map  map : set) {
                 qr.add(getQuery(map), BooleanClause.Occur.MUST);
             }
@@ -1048,8 +1048,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                 int p  = an.indexOf('{');
                 if (p != -1) {
                     ac = an.substring(p);
-                    an = an.substring(0, p - 1).trim( );
-                    oc = Synt.declare(Data.toObject(ac), Map.class);
+                    an = an.substring(0, p - 1).trim();
+                    oc = Synt.asMap(Data.toObject(ac));
                     cb.withTokenizer(an, oc);
                 } else {
                     cb.withTokenizer(an/**/);
@@ -1072,8 +1072,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                         int p  = an.indexOf('{');
                         if (p != -1) {
                             ac = an.substring(p);
-                            an = an.substring(0, p - 1).trim( );
-                            oc = Synt.declare(Data.toObject(ac), Map.class);
+                            an = an.substring(0, p - 1).trim();
+                            oc = Synt.asMap(Data.toObject(ac));
                             cb.addCharFilter(an, oc);
                         } else {
                             cb.addCharFilter(an/**/);
@@ -1088,8 +1088,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                         int p  = an.indexOf('{');
                         if (p != -1) {
                             ac = an.substring(p);
-                            an = an.substring(0, p - 1).trim( );
-                            oc = Synt.declare(Data.toObject(ac), Map.class);
+                            an = an.substring(0, p - 1).trim();
+                            oc = Synt.asMap(Data.toObject(ac));
                             cb.addTokenFilter(an, oc);
                         } else {
                             cb.addTokenFilter(an/**/);
@@ -1106,7 +1106,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                         if (p != -1) {
                             ac = an.substring(p);
                             an = an.substring(0, p - 1).trim();
-                            oc = Synt.declare(Data.toObject(ac), Map.class);
+                            oc = Synt.asMap(Data.toObject(ac));
                             cb.addCharFilter(an, oc);
                         } else {
                             cb.addCharFilter(an/**/);
@@ -1122,7 +1122,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                         if (p != -1) {
                             ac = an.substring(p);
                             an = an.substring(0, p - 1).trim();
-                            oc = Synt.declare(Data.toObject(ac), Map.class);
+                            oc = Synt.asMap(Data.toObject(ac));
                             cb.addTokenFilter(an, oc);
                         } else {
                             cb.addTokenFilter(an/**/);
@@ -1174,7 +1174,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      * @return
      */
     protected String getTypeMutant(Map fc) {
-        String t = Synt.declare(fc.get("lucene-type"), String.class);
+        String t = Synt.asString(fc.get("lucene-type"));
         if (null != t) {
             if (t.equals("text")) {
                 return "search"; // Lucene 的 text 在这里叫 search
@@ -1448,7 +1448,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                         }
                     } else
                     {
-                        Set a = Synt.declare(v, Set.class);
+                        Set a = Synt.asSet(v);
                         for (Object w: a) {
                             doc.add(f.get(k, w, u));
                         }
@@ -1457,7 +1457,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                 }
 
                 // 筛选和排序前去重
-                Set a = Synt.declare(v, Set.class);
+                Set a = Synt.asSet(v);
                 if (q && a != null && !a.isEmpty()) {
                     for (Object w: a) {
                         doc.add(f.got(k, w));
@@ -1540,14 +1540,14 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             sq.analyzer(getAnalyzer(fc,true) );
 
             // 额外的一些细微配置
-            sq.phraseSlop (Synt.declare(fc.get("lucene-parser-phraseSlop" ), Integer.class));
-            sq.fuzzyPreLen(Synt.declare(fc.get("lucene-parser-fuzzyPreLen"), Integer.class));
-            sq.fuzzyMinSim(Synt.declare(fc.get("lucene-parser-fuzzyMinSim"),   Float.class));
-            sq.advanceAnalysisInUse(Synt.declare(fc.get("lucene-parser-advanceAnalysisInUse"), Boolean.class));
-            sq.defaultOperatorIsAnd(Synt.declare(fc.get("lucene-parser-defaultOperatorIsAnd"), Boolean.class));
-            sq.allowLeadingWildcard(Synt.declare(fc.get("lucene-parser-allowLeadingWildcard"), Boolean.class));
-            sq.lowercaseExpandedTerms(Synt.declare(fc.get("lucene-parser-lowercaseExpandedTerms"), Boolean.class));
-            sq.enablePositionIncrements(Synt.declare(fc.get("lucene-parser-enablePositionIncrements"), Boolean.class));
+            sq.phraseSlop (Synt.asInt  (fc.get("lucene-parser-phraseSlop" )));
+            sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-parser-fuzzyPreLen")));
+            sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-parser-fuzzyMinSim")));
+            sq.advanceAnalysisInUse(Synt.asBool(fc.get("lucene-parser-advanceAnalysisInUse")));
+            sq.defaultOperatorIsAnd(Synt.asBool(fc.get("lucene-parser-defaultOperatorIsAnd")));
+            sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parser-allowLeadingWildcard")));
+            sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parser-lowercaseExpandedTerms")));
+            sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parser-enablePositionIncrements")));
         }
 
         float bst = 1F;

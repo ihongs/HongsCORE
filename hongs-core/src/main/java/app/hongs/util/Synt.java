@@ -24,10 +24,10 @@ public final class Synt {
 
     /**
      * Each.run 或 EachLeaf.run 里
- 返回 LOOP.NEXT 跳过此项
- 返回 LOOP.LAST 跳出循环
+     * 返回 LOOP.NEXT 跳过此项
+     * 返回 LOOP.LAST 跳出循环
      */
-    public  static  enum LOOP { NEXT, LAST };
+    public  static  enum LOOP  { NEXT , LAST };
 
     /**
      * 拆分字符: 空字符 或 +,;
@@ -53,6 +53,551 @@ public final class Synt {
      * 视为真的字符串有: 1,y,t,yes,true
      */
     public  static final Pattern TRUE = Pattern.compile( "^(1|y|t|yes|true)$", Pattern.CASE_INSENSITIVE);
+
+    public static String asString(Object val) {
+        val = asSingle(val);
+        if (val == null) {
+            return null;
+        }
+
+        return val.toString();
+    }
+
+    public static Integer asInt(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val ).intValue( );
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).intValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to int");
+            }
+        }
+
+        return (Integer) val;
+    }
+
+    public static Long asLong(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val ).longValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).longValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to long");
+            }
+        }
+
+        return (Long) val;
+    }
+
+    public static Float asFloat(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val).floatValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).floatValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to float");
+            }
+        }
+
+        return (Float) val;
+    }
+
+    public static Double asDouble(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number)val).doubleValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).doubleValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to double");
+            }
+        }
+
+        return (Double) val;
+    }
+
+    public static Short asShort(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val).shortValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).shortValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to short");
+            }
+        }
+
+        return (Short) val;
+    }
+
+    public static Byte asByte(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val ).byteValue();
+        } else
+        if (val instanceof String) {
+            String str = ((String) val).trim();
+            try {
+                return new BigDecimal(str).byteValue();
+            } catch (NumberFormatException ex) {
+                throw new ClassCastException("'" + val + "' can not be cast to byte");
+            }
+        }
+
+        return (Byte) val;
+    }
+
+    public static Boolean asBool(Object val) {
+        val = asNumber(val);
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Number) {
+            return ((Number) val ).intValue( ) != 0;
+        } else if (val instanceof String) {
+            String str = ((String) val).trim();
+            if (TRUE.matcher(str).matches( ) ) {
+                return true ;
+            } else
+            if (FAKE.matcher(str).matches( ) ) {
+                return false;
+            } else {
+                throw new ClassCastException("'" + str + "' can not be cast to boolean");
+            }
+        }
+
+        return (Boolean) val;
+    }
+
+    /**
+     * 数字转换预处理, 空串视为无值, 日期取时间戳
+     * @param val
+     * @return
+     */
+    private static Object asNumber(Object val) {
+        val = asSingle(val);
+
+        if (val == null) {
+            return null;
+        }
+
+        // 空串视为未取值
+        if (EMPT.equals(val)) {
+            return null;
+        }
+
+        // 日期转为时间戳
+        if (val instanceof Date) {
+            val = ( (Date) val ).getTime();
+        }
+
+        return val;
+    }
+
+    /**
+     * 针对 servlet 的 requestMap 制定的规则, 多个值取第一个值
+     * @param val
+     * @return
+     */
+    private static Object asSingle(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Object[]) {
+            return ((Object[]) val)[0];
+        } else
+        if (val instanceof List) {
+            return ((List) val).get(0);
+        } else
+        if (val instanceof Set ) {
+            return ((Set ) val).toArray()[0];
+        } else
+        if (val instanceof Map ) {
+            return ((Map ) val).values().toArray()[0];
+        }
+
+        return val;
+    }
+
+    public static Object[] asArray(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Object[] ) {
+            return (Object[]) val;
+        } else if (val instanceof List) {
+            return ((List)val).toArray();
+        } else if (val instanceof Set ) {
+            return ((Set) val).toArray();
+        } else if (val instanceof Map ) {
+            return ((Map) val).values( ).toArray();
+        } else {
+            return new Object[ ] { val };
+        }
+    }
+
+    public static List asList(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return new ArrayList(( Set ) val);
+        } else if (val instanceof Map ) {
+            return new ArrayList(((Map ) val).values());
+        } else if (val instanceof Object[]) {
+            return new ArrayList(Arrays.asList((Object[]) val));
+        } else {
+            List lst = new ArrayList ();
+            lst.add(val);
+            return  lst ;
+        }
+    }
+
+    public static Set  asSet (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Set ) {
+            return ( Set ) val ;
+        } else if (val instanceof List) {
+            return new LinkedHashSet((List) val);
+        } else if (val instanceof Map ) {
+            return new LinkedHashSet(((Map) val).values());
+        } else if (val instanceof Object[]) {
+            return new LinkedHashSet(Arrays.asList((Object[]) val));
+        } else {
+            Set set = new LinkedHashSet();
+            set.add(val);
+            return  set ;
+        }
+    }
+
+    public static Map  asMap (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof Map ) {
+            return ( Map ) val ;
+        }
+
+        // 其他类型均无法转换为 Map
+        throw new ClassCastException("'" + val + "' can not be cast to Map");
+    }
+
+    /**
+     * 确保此变量为 Set  类型
+     * 本方法用于处理排序字段参数
+     * 与 declare(Object, T) 不同
+     * 当数据为字符串时
+     * 空串会返回空 Set
+     * 否则按此类字符拆分: 空字符或+,;
+     * @param val
+     * @return
+     */
+    public static Set<String> asTerms(Object val) {
+        if (val == null) {
+            return null;
+        }
+        if (val instanceof String) {
+            String   s = ((String) val).trim();
+            if ("".equals(s)) {
+                return new LinkedHashSet();
+            }
+            String[] a = TEXP.split (s);
+            List   b = Arrays.asList(a);
+            return new LinkedHashSet(b);
+        }
+        return asSet(val);
+    }
+
+    /**
+     * 确保此变量为 Set  类型
+     * 本方法用于处理模糊查找参数
+     * 与 declare(Object, T) 不同
+     * 当数据为字符串时
+     * 空串会返回空 Set
+     * 否则按此类字符拆分: 空字符或+,;.:!?'"及同类全角标点
+     * @param val
+     * @return
+     */
+    public static Set<String> asWords(Object val) {
+        if (val == null) {
+            return null;
+        }
+        if (val instanceof String) {
+            String   s = ((String) val).trim();
+            if ("".equals(s)) {
+                return new LinkedHashSet();
+            }
+            String[] a = WEXP.split (s);
+            List   b = Arrays.asList(a);
+            return new LinkedHashSet(b);
+        }
+        return asSet(val);
+    }
+
+    /**
+     * 解析区间值
+     * 可将数学表达式 [min,max] (min,max) 等解析为 {min,max,gte,lte}
+     * 空串空值将被认为无限小或无限大
+     * 方括号可以省略, 格式不符返回空
+     * @param val
+     * @return
+     */
+    public static Object[] asRange(Object val) {
+        if (val == null || "".equals(val)) {
+            return null;
+        }
+
+        /**
+         * 按区间格式进行解析
+         */
+        if (val instanceof String ) {
+            String vs = declare(val, "");
+            Matcher m = RNGP.matcher(vs);
+            if (m.matches()) {
+                return new Object[] {
+                    m.group(2).trim(),
+                    m.group(3).trim(),
+                  ! "(".equals(m.group(1)),
+                  ! ")".equals(m.group(4))
+                };
+            }
+            throw new ClassCastException("'"+val+"' can not be cast to range");
+        }
+
+        /**
+         * 也可以直接给到数组
+         * 两位时默认为开区间
+         */
+        Object[] arr;
+        if (val instanceof Object[]) {
+            arr = (Object[ ]) val;
+        } else if (val instanceof List) {
+            arr = ((List)val).toArray();
+        } else {
+            throw new ClassCastException("'"+val+"' can not be cast to range");
+        }
+
+        switch (arr.length) {
+            case 4:
+                Boolean lte, gte;
+                try {
+                    lte = defoult(asBool(arr[2]), false);
+                    gte = defoult(asBool(arr[3]), false);
+                }
+                catch (ClassCastException e) {
+                    throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
+                }
+
+                return new Object[] {
+                    arr[0], arr[1], lte , gte
+                };
+            case 2:
+                return new Object[] {
+                    arr[0], arr[1], true, true
+                };
+
+            default:throw new ClassCastException("Range index size must be 2 or 4: "+arr);
+        }
+    }
+
+    /**
+     * 快速构建 List
+     * 注意: 可以增删
+     * @param objs
+     * @return
+     */
+    public static List listOf(Object... objs) {
+        return new  ArrayList   (Arrays.asList(objs));
+    }
+
+    /**
+     * 快捷构建 Set
+     * 注意: 可以增删
+     * @param objs
+     * @return
+     */
+    public static Set setOf(Object... objs) {
+        return new LinkedHashSet(Arrays.asList(objs));
+    }
+
+    /**
+     * 快捷构建 Map
+     * 注意: 可以增删, 须偶数个
+     * @param objs
+     * @return
+     */
+    public static Map mapOf(Object... objs) {
+        if (objs.length % 2 != 0) {
+            throw new IndexOutOfBoundsException("mapOf must provide even numbers of entries");
+        }
+        int idx = 0;
+        Map map = new LinkedHashMap();
+        while (idx < objs.length) {
+            map.put( objs[idx ++], objs[idx ++] );
+        }
+        return map;
+    }
+
+    /**
+     * 同 decalare(val, def)
+     * 但转换不了则返回 def 而不抛出错误
+     * 通常针对内部数据
+     * @param <T>
+     * @param val
+     * @param def
+     * @return
+     */
+    public static <T> T asserts(Object val, T def) {
+        try {
+            return declare(val, def);
+        }
+        catch (ClassCastException e) {
+            app.hongs.CoreLogger.error(e); // 记录错误, 以备调错
+            return def;
+        }
+    }
+
+    /**
+     * 确保此变量类型为 def 的类型
+     * val 为空时则返回 def
+     * 其他的说明请参见 declare(val, cls)
+     * 通常针对外部数据
+     * @param <T>
+     * @param val
+     * @param def
+     * @return
+     */
+    public static <T> T declare(Object val, T def) {
+        if (def == null) {
+            throw  new NullPointerException("declare def can not be null");
+        }
+        val = declare(val, def.getClass());
+        if (val == null) {
+            return def;
+        }
+        return (T) val;
+    }
+
+    /**
+     * 确保此变量类型为 cls 类型
+     * string,number(int,long...) 类型间可互转;
+     * cls 为 Boolean  时:
+     *      非 0 数字为 true,
+     *      空字符串为 false,
+     *      字符串 1,y,t,yes,true 为真,
+     *      字符串 0,n,f,no,false 为假;
+     * cls 为 Array,List,Set 时:
+     *      val 非 List,Set,Map 时构建 Array,List,Set 后将 val 加入其下,
+     *      val 为 Map 则取 values;
+     * 但其他类型均无法转为 Map.
+     * 通常针对外部数据
+     * @param <T>
+     * @param val
+     * @param cls
+     * @return
+     */
+    public static <T> T declare(Object val, Class<T> cls) {
+        if (cls == null) {
+            throw  new NullPointerException("declare cls can not be null");
+        }
+        if (val == null) {
+            return null;
+        }
+
+        if (Object[].class.isAssignableFrom(cls)) {
+            val = asArray(val);
+        } else
+        if (List.class.isAssignableFrom(cls)) {
+            val = asList(val);
+        } else
+        if (Set.class.isAssignableFrom(cls)) {
+            val = asSet(val);
+        } else
+        if (Map.class.isAssignableFrom(cls)) {
+            val = asMap(val);
+        } else
+        if (String.class.isAssignableFrom(cls)) {
+            val = asString(val);
+        } else
+        if (Integer.class.isAssignableFrom(cls)) {
+            val = asInt(val);
+        } else
+        if (Long.class.isAssignableFrom(cls)) {
+            val = asLong(val);
+        } else
+        if (Float.class.isAssignableFrom(cls)) {
+            val = asFloat(val);
+        } else
+        if (Double.class.isAssignableFrom(cls)) {
+            val = asDouble(val);
+        } else
+        if (Short.class.isAssignableFrom(cls)) {
+            val = asShort(val);
+        } else
+        if (Byte.class.isAssignableFrom(cls)) {
+            val = asByte(val);
+        } else
+        if (Number.class.isAssignableFrom(cls)) {
+            val = asDouble(val);
+        } else
+        if (Boolean.class.isAssignableFrom(cls)) {
+            val = asBool(val);
+        }
+
+        return (T) val;
+    }
 
     /**
      * 取默认值(null 视为无值)
@@ -135,396 +680,6 @@ public final class Synt {
             }
         }
         return  null;
-    }
-
-    /**
-     * 确保此变量类型为 cls 类型
-     * string,number(int,long...) 类型间可互转;
-     * cls 为 Boolean  时:
-     *      非 0 数字为 true,
-     *      空字符串为 false,
-     *      字符串 1,y,t,yes,true 为真,
-     *      字符串 0,n,f,no,false 为假;
-     * cls 为 Array,List,Set 时:
-     *      val 非 List,Set,Map 时构建 Array,List,Set 后将 val 加入其下,
-     *      val 为 Map 则取 values;
-     * 但其他类型均无法转为 Map.
-     * 通常针对外部数据
-     * @param <T>
-     * @param val
-     * @param cls
-     * @return
-     */
-    public static <T> T declare(Object val, Class<T> cls) {
-        if (val == null) {
-            return null;
-        }
-        if (cls == null) {
-            throw  new NullPointerException("declare cls can not be null");
-        }
-
-        if (Object[].class.isAssignableFrom(cls)) {
-            if (val instanceof Object[] ) {
-            } else if (val instanceof List) {
-                val = ((List)val).toArray();
-            } else if (val instanceof Set ) {
-                val = ((Set) val).toArray();
-            } else if (val instanceof Map ) {
-                val = ((Map) val).values( ).toArray();
-            } else {
-                val = new Object[ ] { val };
-            }
-        } else
-        if (List.class.isAssignableFrom(cls)) {
-            if (val instanceof List) {
-            } else if (val instanceof Set ) {
-                val = new ArrayList(( Set ) val);
-            } else if (val instanceof Map ) {
-                val = new ArrayList(((Map ) val).values());
-            } else if (val instanceof Object[] ) {
-                val = new ArrayList(Arrays.asList((Object[]) val));
-            } else {
-                List lst = new ArrayList ();
-                lst.add(val);
-                val = lst;
-            }
-        } else
-        if ( Set.class.isAssignableFrom(cls)) {
-            if (val instanceof Set ) {
-            } else if (val instanceof List) {
-                val = new LinkedHashSet((List) val);
-            } else if (val instanceof Map ) {
-                val = new LinkedHashSet(((Map) val).values());
-            } else if (val instanceof Object[] ) {
-                val = new LinkedHashSet(Arrays.asList((Object[]) val));
-            } else {
-                Set set = new LinkedHashSet();
-                set.add(val);
-                val = set;
-            }
-        } else
-        if ( Map.class.isAssignableFrom(cls)) {
-            if (val instanceof Map ) {
-            } else {
-                // 其他类型均无法转换为 Map
-                throw new ClassCastException("'" + val + "' can not be cast to Map");
-            }
-        } else {
-            /**
-             * 针对 servlet 的 requestMap 制定的规则, 多个值取第一个值
-             */
-            if (val instanceof Object[]) {
-                val = ((Object[]) val)[0];
-            } else
-            if (val instanceof List) {
-                val = ((List) val).get(0);
-            } else
-            if (val instanceof Set ) {
-                val = ((Set ) val).toArray()[0];
-            } else
-            if (val instanceof Map ) {
-                val = ((Map ) val).values().toArray()[0];
-            }
-
-            if (String.class.isAssignableFrom(cls)) {
-                val = val.toString();
-            } else
-            if (Number.class.isAssignableFrom(cls)) {
-                if (EMPT.equals(val)) {
-                    return null; // 空串视为未取值
-                }
-
-                // 将日期先转换为时间戳
-                if (val instanceof Date) {
-                    val = ( (Date) val ).getTime();
-                }
-
-                if (Integer.class.isAssignableFrom(cls)) {
-                    if (val instanceof Number) {
-                        val = /**/ ((Number) val).intValue();
-                    } else
-                    if (val instanceof String) {
-                      String str = ((String) val).trim();
-                      try {
-                        val = new BigDecimal(str).intValue();
-                      } catch (NumberFormatException ex) {
-                        throw new ClassCastException("'" + val + "' can not be cast to int");
-                      }
-                    }
-                } else if (Byte.class.isAssignableFrom(cls)) {
-                    if (val instanceof Number) {
-                        val = ((Number) val).byteValue();
-                    } else
-                    if (val instanceof String) {
-                      String str = ((String) val).trim();
-                      try {
-                        val = new BigDecimal(str).byteValue();
-                      } catch (NumberFormatException ex) {
-                        throw new ClassCastException("'" + val + "' can not be cast to byte");
-                      }
-                    }
-                } else if (Short.class.isAssignableFrom(cls)) {
-                    if (val instanceof Number) {
-                        val = /**/ ((Number) val).shortValue();
-                    } else
-                    if (val instanceof String) {
-                      String str = ((String) val).trim();
-                      try {
-                        val = new BigDecimal(str).shortValue();
-                      } catch (NumberFormatException ex) {
-                        throw new ClassCastException("'" + val + "' can not be cast to short");
-                      }
-                    }
-                } else if (Long.class.isAssignableFrom(cls)) {
-                    if (val instanceof Number) {
-                        val = /**/ ((Number) val).longValue();
-                    } else
-                    if (val instanceof String) {
-                      String str = ((String) val).trim();
-                      try {
-                        val = new BigDecimal(str).longValue();
-                      } catch (NumberFormatException ex) {
-                        throw new ClassCastException("'" + val + "' can not be cast to long");
-                      }
-                    }
-                } else if (Float.class.isAssignableFrom(cls)) {
-                    if (val instanceof Number) {
-                        val = /**/ ((Number) val).floatValue();
-                    } else
-                    if (val instanceof String) {
-                      String str = ((String) val).trim();
-                      try {
-                        val = new BigDecimal(str).floatValue();
-                      } catch (NumberFormatException ex) {
-                        throw new ClassCastException("'" + val + "' can not be cast to float");
-                      }
-                    }
-                } else {
-                    if (val instanceof Number) {
-                        val = /**/ ((Number) val).doubleValue();
-                    } else
-                    if (val instanceof String) {
-                      String str = ((String) val).trim();
-                      try {
-                        val = new BigDecimal(str).doubleValue();
-                      } catch (NumberFormatException ex) {
-                        throw new ClassCastException("'" + val + "' can not be cast to double");
-                      }
-                    }
-                }
-            } else
-            if (Boolean.class.isAssignableFrom(cls)) {
-                if (val instanceof Number) {
-                    val = ((Number) val).intValue() != 0;
-                } else if (val instanceof String) {
-                    String str = ( (String) val ).trim();
-                    if (TRUE.matcher(str).matches()) {
-                        val = true ;
-                    } else
-                    if (FAKE.matcher(str).matches()) {
-                        val = false;
-                    } else {
-                        throw new ClassCastException("'" + str + "' can not be cast to boolean");
-                    }
-                }
-            }
-        }
-
-        return (T) val;
-    }
-
-    /**
-     * 确保此变量类型为 def 的类型
-     * val 为空时则返回 def
-     * 其他的说明请参见 declare(val, cls)
-     * 通常针对外部数据
-     * @param <T>
-     * @param val
-     * @param def
-     * @return
-     */
-    public static <T> T declare(Object val, T def) {
-        if (def == null) {
-            throw  new NullPointerException("declare def can not be null");
-        }
-        val = declare(val, def.getClass());
-        if (val == null) {
-            return def;
-        }
-        return (T) val;
-    }
-
-    /**
-     * 同 decalare(val, def)
-     * 但转换不了则返回 def 而不抛出错误
-     * 通常针对内部数据
-     * @param <T>
-     * @param val
-     * @param def
-     * @return
-     */
-    public static <T> T asserts(Object val, T def) {
-        try {
-            return declare(val, def);
-        }
-        catch (ClassCastException e) {
-            app.hongs.CoreLogger.error(e); // 记录错误, 以备调错
-            return def;
-        }
-    }
-
-    /**
-     * 确保此变量为 Set  类型
-     * 本方法用于处理排序字段参数
-     * 与 declare(Object, T) 不同
-     * 当数据为字符串时
-     * 空串会返回空 Set
-     * 否则按此类字符拆分: 空字符或+,;
-     * @param val
-     * @return
-     */
-    public static Set<String> asTerms(Object val) {
-        if (val == null) {
-            return null;
-        }
-        if (val instanceof String) {
-            String   s = ((String) val).trim();
-            if ("".equals(s)) {
-                return new LinkedHashSet();
-            }
-            String[] a = TEXP.split (s);
-            List   b = Arrays.asList(a);
-            return new LinkedHashSet(b);
-        }
-        return declare(val, Set.class );
-    }
-
-    /**
-     * 确保此变量为 Set  类型
-     * 本方法用于处理模糊查找参数
-     * 与 declare(Object, T) 不同
-     * 当数据为字符串时
-     * 空串会返回空 Set
-     * 否则按此类字符拆分: 空字符或+,;.:!?'"及同类全角标点
-     * @param val
-     * @return
-     */
-    public static Set<String> asWords(Object val) {
-        if (val == null) {
-            return null;
-        }
-        if (val instanceof String) {
-            String   s = ((String) val).trim();
-            if ("".equals(s)) {
-                return new LinkedHashSet();
-            }
-            String[] a = WEXP.split (s);
-            List   b = Arrays.asList(a);
-            return new LinkedHashSet(b);
-        }
-        return declare(val, Set.class );
-    }
-
-    /**
-     * 解析区间值
-     * 可将数学表达式 [min,max] (min,max) 等解析为 {min,max,gte,lte}
-     * 空串空值将被认为无限小或无限大
-     * 方括号可以省略, 格式不符返回空
-     * @param val
-     * @return
-     */
-    public static Object[] asRange(Object val) {
-        if (val == null || "".equals(val)) {
-            return null;
-        }
-
-        /**
-         * 按区间格式进行解析
-         */
-        if (val instanceof String ) {
-            String vs = declare(val, "");
-            Matcher m = RNGP.matcher(vs);
-            if (m.matches()) {
-                return new Object[] {
-                    m.group(2).trim(),
-                    m.group(3).trim(),
-                  ! "(".equals(m.group(1)),
-                  ! ")".equals(m.group(4))
-                };
-            }
-            throw new ClassCastException("'"+val+"' can not be cast to range");
-        }
-
-        /**
-         * 也可以直接给到数组
-         * 两位时默认为开区间
-         */
-        Object[] arr;
-        if (val instanceof Object[]) {
-            arr = (Object[ ]) val;
-        } else if (val instanceof List) {
-            arr = ((List)val).toArray();
-        } else {
-            throw new ClassCastException("'"+val+"' can not be cast to range");
-        }
-        switch (arr.length) {
-            case 4:
-                boolean lteq, gteq;
-                try {
-                    lteq = declare(arr[2], false);
-                    gteq = declare(arr[3], false);
-                }
-                catch (ClassCastException e) {
-                    throw new ClassCastException("Range index 2,3 must be boolean: "+arr);
-                }
-
-                return new Object[] {
-                    arr[0], arr[1], lteq, gteq
-                };
-            case 2:
-                return new Object[] {
-                    arr[0], arr[1], true, true
-                };
-
-            default:throw new ClassCastException("Range index size must be 2 or 4: "+arr);
-        }
-    }
-
-    /**
-     * 快捷构建 List
-     * 不等同于 Arrays.listOf,
-     * 可以在此 List 上增删改.
-     * @param objs
-     * @return
-     */
-    public static List listOf(Object... objs) {
-        return new ArrayList(Arrays.asList(objs));
-    }
-
-    /**
-     * 快捷构建 Set
-     * @param objs
-     * @return
-     */
-    public static Set setOf(Object... objs) {
-        Set set = new LinkedHashSet();
-        for (int i = 0; i < objs.length; i += 1) {
-            set.add ( objs[i] );
-        }
-        return set;
-    }
-
-    /**
-     * 快捷构建 Map
-     * @param objs
-     * @return
-     */
-    public static Map mapOf(Object... objs) {
-        Map map = new LinkedHashMap();
-        for (int i = 0; i < objs.length; i += 2) {
-            map.put ( objs[i] , objs[i+1] );
-        }
-        return map;
     }
 
     /**

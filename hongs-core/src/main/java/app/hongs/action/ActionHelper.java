@@ -281,7 +281,7 @@ public class ActionHelper implements Cloneable
         return (Map) request.getAttribute(Cnst.DATA_ATTR);
     }
     catch (ClassCastException ex) {
-        throw new HongsExpedient(0x1000, ex);
+        throw new HongsExpedient(0x1100, ex);
     }
   }
 

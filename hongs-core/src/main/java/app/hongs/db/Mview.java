@@ -196,33 +196,33 @@ public class Mview extends Model {
         Set<String> siftTypz = new HashSet();
 
         if (prms == null || ! Synt.declare(prms.get("auto.bind.listable"), true)) {
-            listTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("listable"));
+            listTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("listable"));
         }
         if (prms == null || ! Synt.declare(prms.get("auto.bind.sortable"), true)) {
-            sortTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("sortable"));
+            sortTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("sortable"));
         }
         if (prms == null || ! Synt.declare(prms.get("auto.bind.findable"), true)) {
-            findTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("findable"));
+            findTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("findable"));
         }
         if (prms == null || ! Synt.declare(prms.get("auto.bind.siftable"), true)) {
-            siftTypz = Synt.asTerms(FormSet.getInstance().getEnum("__cases__").get("siftable"));
+            siftTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("siftable"));
         }
 
         // 排序、搜索等字段也可以直接在主字段给出
         if (prms != null && prms.containsKey("listable")) {
-            listColz = Synt.asTerms(prms.get("listable"));
+            listColz = Synt.toSet ( prms.get("listable"));
             listTypz.clear();
         }
         if (prms != null && prms.containsKey("sortable")) {
-            sortColz = Synt.asTerms(prms.get("sortable"));
+            sortColz = Synt.toSet ( prms.get("sortable"));
             sortTypz.clear();
         }
         if (prms != null && prms.containsKey("findable")) {
-            findColz = Synt.asTerms(prms.get("findable"));
+            findColz = Synt.toSet ( prms.get("findable"));
             findTypz.clear();
         }
         if (prms != null && prms.containsKey("siftable")) {
-            siftColz = Synt.asTerms(prms.get("siftable"));
+            siftColz = Synt.toSet ( prms.get("siftable"));
             siftTypz.clear();
         }
 

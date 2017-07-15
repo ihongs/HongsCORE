@@ -11,11 +11,13 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -248,24 +250,51 @@ public class FormSet
   }
 
   private Object parse(String type, String text) throws HongsException {
-      if (null == type || "".equals( type )) {
-          return  text;
+      if (null == type || "".equals(type)) {
+          return  text  ;
       }
+
+      text = text.trim();
+
       if ("list".equals(type)) {
-          return  Arrays.asList(SEXP.split(text.trim()));
-      } else
-      if ( "set".equals(type)) {
-          return  new LinkedHashSet(
-                  Arrays.asList(SEXP.split(text.trim()))
+        if (text.startsWith("[") && text.endsWith("]")) {
+          return ( List) Data.toObject(text);
+        } else {
+          return  new  ArrayList   (
+              Arrays.asList(SEXP.split(text))
           );
-      } else
-      if ( "map".equals(type)) {
-          Map m = new LinkedHashMap();
-          for(String   s : SEXP.split(text)) {
-              String[] a = MEXP.split(s, 2);
-              m.put(a[0], a[1]);
-          }
+        }
       }
+
+      if ( "set".equals(type)) {
+        if (text.startsWith("[") && text.endsWith("]")) {
+          return  new LinkedHashSet(
+                 ( List) Data.toObject(text)
+          );
+        } else {
+          return  new LinkedHashSet(
+              Arrays.asList(SEXP.split(text))
+          );
+        }
+      }
+
+      if ( "map".equals(type)) {
+        if (text.startsWith("{") && text.endsWith("}")) {
+          return ( Map ) Data.toObject(text);
+        } else {
+          Map m = new LinkedHashMap();
+          for(String   s : SEXP.split (text)) {
+              String[] a = MEXP.split (s, 2);
+              if ( 2 > a.length ) {
+                  m.put( a[0], a[0] );
+              } else {
+                  m.put( a[0], a[1] );
+              }
+          }
+          return  m;
+        }
+      }
+
       throw new HongsException.Common("Unrecognized type '"+type+"'");
   }
   private static final Pattern SEXP = Pattern.compile ( "\\s*,\\s*" );

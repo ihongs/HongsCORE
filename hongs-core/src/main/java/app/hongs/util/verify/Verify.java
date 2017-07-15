@@ -207,7 +207,7 @@ public class Verify implements Veri {
         // 页面加 hidden    值设为要忽略的值
         // 此时如 check     全部未选代表清空
         // 默认对 null/空串 忽略
-        Set d  =  Synt.asTerms(params.get( "defiant" ));
+        Set d  =  Synt.toSet  (params.get( "defiant" ));
         if (d  == null || d.isEmpty( )) {
             d  =  new  HashSet();
             d.add ("");

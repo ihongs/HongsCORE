@@ -104,9 +104,9 @@ public final class Synt {
         if (val instanceof String) {
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
-                return ( List) Data.toObject(text);
+                return (List) Data.toObject (text);
             } else {
-                return  new  ArrayList   (
+                return new  ArrayList   (
                     Arrays.asList(SEXP.split(text))
                 );
             }
@@ -124,10 +124,10 @@ public final class Synt {
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return  new LinkedHashSet(
-                       ( List) Data.toObject(text)
+                       (List) Data.toObject (text)
                 );
             } else {
-                return  new LinkedHashSet(
+                return new LinkedHashSet(
                     Arrays.asList(SEXP.split(text))
                 );
             }
@@ -144,7 +144,7 @@ public final class Synt {
         if (val instanceof String) {
             String text = ( (String) val).trim(  );
             if (text.startsWith("{") && text.endsWith("}")) {
-                return ( Map ) Data.toObject(text);
+                return (Map ) Data.toObject (text);
             } else {
                 Map m = new LinkedHashMap();
                 for(String   s : SEXP.split (text)) {

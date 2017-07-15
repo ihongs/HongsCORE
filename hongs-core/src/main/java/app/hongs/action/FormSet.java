@@ -251,9 +251,6 @@ public class FormSet
       if (null == type || "".equals( type )) {
           return  text;
       }
-      if ("json".equals(type)) {
-          return  Data.toObject(text);
-      } else
       if ("list".equals(type)) {
           return  Arrays.asList(SEXP.split(text.trim()));
       } else
@@ -389,4 +386,5 @@ public class FormSet
   public static FormSet getInstance() throws HongsException {
       return getInstance("default");
   }
+
 }

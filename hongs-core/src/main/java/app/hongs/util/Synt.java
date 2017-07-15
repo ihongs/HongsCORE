@@ -498,7 +498,7 @@ public final class Synt {
      * 解析区间值
      * 可将数学表达式 [min,max] (min,max) 等解析为 {min,max,gte,lte}
      * 空串空值将被认为无限小或无限大
-     * 方括号可以省略, 格式不符返回空
+     * 方括号可以省略, ','可用'~'替代
      * @param val
      * @return
      */

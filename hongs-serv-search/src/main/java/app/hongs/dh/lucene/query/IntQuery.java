@@ -14,7 +14,7 @@ public class IntQuery implements IQuery {
         if (v == null) {
             throw new ClassCastException("Query for "+k+" must be int, but null");
         }
-        int     n2 = Synt.declare(v, Integer.class);
+        int     n2 = Synt.asInt(v);
         Query   q2 = IntPoint.newExactQuery(":"+k, n2);
         return  q2;
     }
@@ -27,7 +27,7 @@ public class IntQuery implements IQuery {
         if (n == null || "".equals(n)) {
             n2 = Integer.MIN_VALUE;
         } else {
-            n2 = Synt.declare(n, Integer.class);
+            n2 = Synt.asInt(n);
             if (!l) {
                 n2 = n2 + 1;
             }
@@ -35,7 +35,7 @@ public class IntQuery implements IQuery {
         if (x == null || "".equals(x)) {
             x2 = Integer.MAX_VALUE;
         } else {
-            x2 = Synt.declare(x, Integer.class);
+            x2 = Synt.asInt(x);
             if (!g) {
                 x2 = x2 - 1;
             }

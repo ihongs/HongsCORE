@@ -483,13 +483,13 @@ public class AssocCase {
                 // 数值区间查询
                 Set ir = null;
                 if (fm.containsKey(Cnst.RG_REL)) {
-                    ir = Synt.setOf  (fm.remove(Cnst.RG_REL));
+                    ir = Synt.setOf(fm.remove(Cnst.RG_REL));
                 } else
                 if (fm.containsKey(Cnst.IR_REL)) {
-                    ir = Synt.declare(fm.remove(Cnst.IR_REL), Set.class);
+                    ir = Synt.asSet(fm.remove(Cnst.IR_REL));
                 }
                 if (ir != null && !ir.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder( );
                     List sp = new ArrayList();
                     int i = 0;
                     for(Object v : ir) {
@@ -576,8 +576,8 @@ public class AssocCase {
         }
 
         // 分组查询, 满足复杂的组合查询条件
-        group(caze, Synt.declare(rd.get(Cnst.OR_KEY), Set.class), "OR" );
-        group(caze, Synt.declare(rd.get(Cnst.AR_KEY), Set.class), "AND");
+        group(caze, Synt.asSet(rd.get(Cnst.OR_KEY)), "OR" );
+        group(caze, Synt.asSet(rd.get(Cnst.AR_KEY)), "AND");
     }
 
     private void group(FetchCase caze, Set<Map> ar, String rn) {

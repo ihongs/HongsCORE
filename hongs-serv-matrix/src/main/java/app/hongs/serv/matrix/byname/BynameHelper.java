@@ -90,17 +90,17 @@ public class BynameHelper {
         Map subData ;
         Set setData ;
 
-        subData = Synt.declare(newData.get(Cnst.OR_KEY), Map.class);
+        subData = Synt.asMap(newData.get(Cnst.OR_KEY));
         if (subData != null) {
             newData.put(Cnst.OR_KEY, in(subData));
         }
 
-        subData = Synt.declare(newData.get(Cnst.AR_KEY), Map.class);
+        subData = Synt.asMap(newData.get(Cnst.AR_KEY));
         if (subData != null) {
             newData.put(Cnst.AR_KEY, in(subData));
         }
 
-        subData = Synt.declare(newData.get(Cnst.SR_KEY), Map.class);
+        subData = Synt.asMap(newData.get(Cnst.SR_KEY));
         if (subData != null) {
             newData.put(Cnst.SR_KEY, in(subData));
         }
@@ -125,18 +125,18 @@ public class BynameHelper {
 
         Map newData = new LinkedHashMap(data);
 
-        Map anum = Synt.declare(data.get("enum"), Map.class);
+        Map anum = Synt.asMap(data.get("enum"));
         if (anum != null) {
             newData.put("enum", out(anum));
         }
 
-        Map info = Synt.declare(data.get("info"), Map.class);
+        Map info = Synt.asMap(data.get("info"));
         if (info != null) {
             newData.put("info", out(info));
         }
 
         // 列表数据需要遍历每一行
-        List<Map> list = Synt.declare(data.get("list"), List.class);
+        List<Map> list = Synt.asList(data.get("list"));
         if (list != null) {
             List newList = new ArrayList(list.size( ));
             for(Map item : list) {

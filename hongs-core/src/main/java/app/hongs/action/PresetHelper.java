@@ -152,7 +152,7 @@ public class PresetHelper {
                 o = helper.getRequestData().get(n);
             }
             if (k != null) {
-                Map m  = Synt.declare ( o , Map.class  );
+                Map m  = Synt.asMap   (   o   );
                 if (m != null) {
                     o  = Dict.getParam( m , k );
                 }

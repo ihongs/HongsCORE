@@ -113,7 +113,7 @@ public class UserAction {
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
 
         // 不能删除自己和超级管理员
-        Set rs = Synt.declare(rd.get(model.table.primaryKey), Set.class);
+        Set rs = Synt.asSet(rd.get(model.table.primaryKey));
         if (rs != null) {
             if (rs.contains(helper.getSessibute(Cnst.UID_SES))) {
                 helper.fault("不能删除当前登录用户");

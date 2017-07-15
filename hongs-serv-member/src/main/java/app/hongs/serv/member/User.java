@@ -123,8 +123,8 @@ extends Model {
 
         // 权限限制, 仅能赋予当前登录用户所有的权限
         if (data.containsKey( "roles"  )) {
-            data.put( "rtime", System.currentTimeMillis( ) / 1000 );
-            List list = Synt.declare(data.get("roles"), List.class);
+            data.put("rtime", System.currentTimeMillis() / 1000);
+            List list = Synt.asList(data.get( "roles" ));
             AuthKit.clnRoles(list,  id );
             if ( list.isEmpty() ) {
                 throw new HongsException.Notice("分组设置错误, 请重试");
@@ -133,8 +133,8 @@ extends Model {
 
         // 部门限制, 仅能指定当前登录用户下属的部门
         if (data.containsKey( "depts"  )) {
-            data.put( "rtime", System.currentTimeMillis( ) / 1000 );
-            List list = Synt.declare(data.get("depts"), List.class);
+            data.put("rtime", System.currentTimeMillis() / 1000);
+            List list = Synt.asList(data.get( "depts" ));
             AuthKit.clnDepts(list,  id );
             if ( list.isEmpty() ) {
                 throw new HongsException.Notice("部门设置错误, 请重试");

@@ -14,7 +14,7 @@ public class FloatQuery implements IQuery {
         if (v == null) {
             throw new ClassCastException("Query for "+k+" must be float, but null");
         }
-        float   n2 = Synt.declare(v, Float.class);
+        float   n2 = Synt.asFloat(v);
         Query   q2 = FloatPoint.newExactQuery(":"+k, n2);
         return  q2;
     }
@@ -27,15 +27,15 @@ public class FloatQuery implements IQuery {
         if (n == null || "".equals(n)) {
             n2 = Float.MIN_VALUE;
         } else {
-            n2 = Synt.declare(n, Float.class);
+            n2 = Synt.asFloat(n);
             if (!l) {
-                n2 = FloatPoint.nextUp(n2);
+                n2 = FloatPoint.nextUp  (n2);
             }
         }
         if (x == null || "".equals(x)) {
             x2 = Float.MAX_VALUE;
         } else {
-            x2 = Synt.declare(x, Float.class);
+            x2 = Synt.asFloat(x);
             if (!g) {
                 x2 = FloatPoint.nextDown(x2);
             }

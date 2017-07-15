@@ -56,7 +56,7 @@ public class SearchAction extends LuceneAction {
         Map rd = helper.getRequestData();
         Object  wd = rd.get(Cnst.WD_KEY);
         if(null != wd && "".equals(wd) ) {
-           List ob  = Synt.declare(rd.get(Cnst.OB_KEY), List.class);
+           List ob  = Synt.asList(rd.get(Cnst.OB_KEY));
             if( ob == null) {
                 ob  =  new  ArrayList( );
                 rd.put(Cnst.OB_KEY , ob);

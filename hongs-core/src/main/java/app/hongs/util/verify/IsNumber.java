@@ -43,18 +43,18 @@ public class IsNumber extends Rule {
 
         // 取值范围
         Double m;
-        m = Synt.declare(params.get("min"), Double.class);
+        m = Synt.asDouble(params.get("min"));
         if (m != null && m > num.doubleValue()) {
             throw new Wrong("fore.form.lt.min", Double.toString(m));
         }
-        m = Synt.declare(params.get("max"), Double.class);
+        m = Synt.asDouble(params.get("max"));
         if (m != null && m < num.doubleValue()) {
             throw new Wrong("fore.form.lt.max", Double.toString(m));
         }
 
         // 小数位数
         Short  s;
-        s = Synt.declare(params.get("scale"), Short.class);
+        s = Synt.asShort(params.get("scale"));
         if (s != null && s > 0) {
             double n = num.doubleValue() - num.longValue();
             n  = n * Math.pow ( 10 , s );

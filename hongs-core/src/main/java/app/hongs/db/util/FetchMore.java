@@ -198,9 +198,9 @@ public class FetchMore
 
     if (! multi)
     {
-      while ((sub = rs.next()) != null)
+      while ((sub = rs.next( )) != null )
       {
-        sid = Synt.declare(sub.get(rel), String.class);
+        sid = Synt.asString(sub.get(rel));
         lst = map.get(sid);
         idz.add(sid);
 
@@ -229,9 +229,9 @@ public class FetchMore
     }
     else
     {
-      while ((sub = rs.next()) != null)
+      while ((sub = rs.next( )) != null )
       {
-        sid = Synt.declare(sub.get(rel), String.class);
+        sid = Synt.asString(sub.get(rel));
         lst = map.get(sid);
         idz.add(sid);
 

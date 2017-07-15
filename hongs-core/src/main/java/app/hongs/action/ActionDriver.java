@@ -467,7 +467,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             // 删除上传的临时文件
-            Map<String, List<Part>> ud = Synt.declare(hlpr.getAttribute(Cnst.UPLOAD_ATTR), Map.class);
+            Map<String, List<Part>> ud = Synt.asMap(hlpr.getAttribute(Cnst.UPLOAD_ATTR));
             if (ud != null) {
                 for(List<Part> pa : ud.values()) {
                     for (Part  pr : pa) {

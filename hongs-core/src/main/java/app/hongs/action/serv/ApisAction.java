@@ -127,9 +127,9 @@ public class ApisAction
         if (_dat != null && _dat.length( ) != 0) {
             Map data;
             try {
-                data = Synt.declare(Data.toObject(_dat), Map.class);
+                data = Synt.asMap(Data.toObject(_dat));
             } catch (ClassCastException e) {
-                hlpr.error400 ( "Can not parse value for '!data'" );
+                hlpr.error400("Can not parse value for '!data'");
                 return;
             }
             hlpr.getRequestData( )

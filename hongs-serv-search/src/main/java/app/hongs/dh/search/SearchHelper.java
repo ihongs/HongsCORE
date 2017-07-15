@@ -175,7 +175,7 @@ public class SearchHelper {
 
                 for(Object v : vs) {
                     String s = v.toString();
-                    if (vx == null || !vx.contains(s)) {
+                    if (vx  == null || ! vx.contains(s)) {
                         vz.put( s, 0 );
                     }
                 }
@@ -380,55 +380,23 @@ public class SearchHelper {
          */
 
         for(String  k  : cxts) {
-            Set<Minmax>  ms = null;
+            Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
-                if (vm.containsKey(Cnst.RG_REL)) {
-                    ms = Synt.setOf(new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), "")));
+                if (vm.containsKey (Cnst.RG_REL)) {
+                    vs = Synt.setOf(vm.get(Cnst.RG_REL));
                 } else
-                if (vm.containsKey(Cnst.IR_REL)) {
-                    Set va = Synt.asSet(vm.get(Cnst.IR_REL));
-                    ms = new HashSet( );
-                    for(Object vx : va) {
-                        if (null != vx && !"".equals(vx)) {
-                            ms.add( new Minmax(Synt.declare(vx, "")));
-                        }
-                    }
-                } else
-                if (vm.containsKey(Cnst.EQ_REL)) {
-                    ms = Synt.setOf(new Minmax(Synt.declare(vm.get(Cnst.EQ_REL), 0D)));
-                } else
-                if (vm.containsKey(Cnst.IN_REL)) {
-                    Set va = Synt.asSet(vm.get(Cnst.IR_REL));
-                    ms = new HashSet( );
-                    for(Object vx : va) {
-                        if (null != vx && !"".equals(vx)) {
-                            ms.add( new Minmax(Synt.declare(vx, 0D)));
-                        }
-                    }
-                }
-            } else {
-                if (vo!= null && !"".equals(vo)) {
-                    ms = Synt.setOf(new Minmax(Synt.declare(vo, 0D)));
-                } else
-                if (vo  instanceof  Collection
-                ||  vo  instanceof  Object [ ] ) {
-                    Set va = Synt.asSet(vo);
-                    ms = new HashSet( );
-                    for(Object vx : va) {
-                        if (null != vx && !"".equals(vx)) {
-                            ms.add( new Minmax(Synt.declare(vx, 0D)));
-                        }
-                    }
+                if (vm.containsKey (Cnst.IR_REL)) {
+                    vs = Synt.asSet(vm.get(Cnst.IR_REL));
                 }
             }
 
-            if (ms == null) {
-                if (counts.containsKey(k)) {
+            if (vs == null || vs.isEmpty()) {
+                if (counts .containsKey(k)) {
                     counts2.put(k, counts.get(k));
                 }
-                if (countx.containsKey(k)) {
+                if (countx .containsKey(k)) {
                     countx2.put(k, countx.get(k));
                 }
             } else {
@@ -448,9 +416,10 @@ public class SearchHelper {
                     counts3.put(k, vz);
                 }
 
-                for (Minmax mm : ms) {
-                    if (vx == null || !vx.contains(mm)) {
-                        vz.put( mm  ,  new  Cntsum(  ));
+                for(Object v : vs) {
+                    Minmax m = new Minmax(v.toString( ));
+                    if (vx  == null || ! vx.contains(m)) {
+                        vz.put( m, new Cntsum() );
                     }
                 }
 

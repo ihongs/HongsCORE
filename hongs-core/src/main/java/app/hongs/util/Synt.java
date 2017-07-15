@@ -29,6 +29,9 @@ public final class Synt {
      */
     public  static  enum LOOP  { NEXT , LAST };
 
+    private static final Pattern SEXP = Pattern.compile("\\s*,\\s*");
+    private static final Pattern MEXP = Pattern.compile("\\s*:\\s*");
+
     /**
      * 拆分字符: 空字符 或 +,;
      */
@@ -81,15 +84,82 @@ public final class Synt {
      * @return
      */
     public static Map  mapOf (Object... objs) {
-        if (objs.length % 2 != 0) {
+        if ( objs.length % 2 != 0 ) {
             throw new IndexOutOfBoundsException("mapOf must provide even numbers of entries");
         }
+
         int idx = 0;
         Map map = new LinkedHashMap();
-        while (idx < objs.length) {
-            map.put( objs[idx ++], objs[idx ++] );
+        while ( idx < objs.length ) {
+            map.put ( objs [idx ++] , objs [idx ++] );
         }
-        return map;
+        return  map;
+    }
+
+    public static List toList(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return ( List) Data.toObject(text);
+            } else {
+                return  new  ArrayList   (
+                    Arrays.asList(SEXP.split(text))
+                );
+            }
+        }
+
+        return toList(val);
+    }
+
+    public static Set  toSet (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return  new LinkedHashSet(
+                       ( List) Data.toObject(text)
+                );
+            } else {
+                return  new LinkedHashSet(
+                    Arrays.asList(SEXP.split(text))
+                );
+            }
+        }
+
+        return toSet (val);
+    }
+
+    public static Map  toMap (Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("{") && text.endsWith("}")) {
+                return ( Map ) Data.toObject(text);
+            } else {
+                Map m = new LinkedHashMap();
+                for(String   s : SEXP.split (text)) {
+                    String[] a = MEXP.split (s, 2);
+                    if ( 2 > a.length ) {
+                        m.put( a[0], a[0] );
+                    } else {
+                        m.put( a[0], a[1] );
+                    }
+                }
+                return  m ;
+            }
+        }
+
+        return toMap (val);
     }
 
     public static Object[] asArray(Object val) {

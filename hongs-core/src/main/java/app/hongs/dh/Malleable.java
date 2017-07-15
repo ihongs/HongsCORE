@@ -108,7 +108,7 @@ public class Malleable {
             Map<String, Object> m = FormSet.getInstance().getEnum("__saves__");
             fsavez = new HashMap();
             for(Map.Entry<String, Object> et : m.entrySet()) {
-                fsavez.put(et.getKey(), Synt.asTerms(et.getValue()));
+                fsavez.put(et.getKey(), Synt.toSet(et.getValue()));
             }
             return  fsavez;
         } catch (HongsException e) {
@@ -128,7 +128,7 @@ public class Malleable {
             Map<String, Object> m = FormSet.getInstance().getEnum("__cases__");
             fcasez = new HashMap();
             for(Map.Entry<String, Object> et : m.entrySet()) {
-                fcasez.put(et.getKey(), Synt.asTerms(et.getValue()));
+                fcasez.put(et.getKey(), Synt.toSet(et.getValue()));
             }
             return  fcasez;
         } catch (HongsException e) {
@@ -187,7 +187,7 @@ public class Malleable {
         // 可在表参数区直接给出
         Map<String, String> fps = getParams();
         if (fps.containsKey(x)) {
-            return  Synt.asTerms( fps.get(x));
+            return  Synt.toSet  ( fps.get(x));
         }
 
         Map<String, Map> fields = getFields();

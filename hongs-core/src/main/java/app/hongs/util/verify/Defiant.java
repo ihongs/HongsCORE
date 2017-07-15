@@ -1,7 +1,6 @@
 package app.hongs.util.verify;
 
 import app.hongs.util.Synt;
-import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -19,11 +18,10 @@ public class Defiant extends Rule {
     public Object verify(Object value) {
         Object prm = params.get("defiant");
         Set    def ;
-        if ( ! "".equals(prm)) {
-            def  = Synt.asTerms(prm);
+        if ("".equals(prm)) {
+            def = Synt.setOf("" );
         } else {
-            def  = new  HashSet(   );
-            def.add( "" );
+            def = Synt.toSet(prm);
         }
         if (null != value && ! def.contains(value)) {
             return  value;

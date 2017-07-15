@@ -82,7 +82,7 @@ public class ActsAction
     }
     catch (ClassCastException ex)
     {
-      senderr(helper, new HongsError(0x43, ex)); // 类型转换异常
+      senderr(helper, new HongsException(0x1100, ex)); // 类型转换失败按 400 错误处理
     }
     catch (HongsException ex)
     {

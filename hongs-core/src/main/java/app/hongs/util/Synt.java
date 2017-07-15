@@ -71,7 +71,7 @@ public final class Synt {
      * @param objs
      * @return
      */
-    public static Set setOf(Object... objs) {
+    public static Set  setOf (Object... objs) {
         return new LinkedHashSet(Arrays.asList(objs));
     }
 
@@ -81,7 +81,7 @@ public final class Synt {
      * @param objs
      * @return
      */
-    public static Map mapOf(Object... objs) {
+    public static Map  mapOf (Object... objs) {
         if (objs.length % 2 != 0) {
             throw new IndexOutOfBoundsException("mapOf must provide even numbers of entries");
         }

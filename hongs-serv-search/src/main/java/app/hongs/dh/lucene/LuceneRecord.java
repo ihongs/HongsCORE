@@ -1608,9 +1608,16 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
         Object  n, x;
         boolean l, g;
+        Set s = null;
 
+        if (m.containsKey(Cnst.RG_REL)) {
+            s = Synt.setOf(m.remove(Cnst.RG_REL));
+        } else
         if (m.containsKey(Cnst.IR_REL)) {
-            Set s = Synt.asTerms(m.remove(Cnst.IR_REL));
+            s = Synt.asSet(m.remove(Cnst.IR_REL));
+        }
+
+        if (s != null && !s.isEmpty( )) {
             BooleanQuery.Builder qay = new BooleanQuery.Builder();
 
             for(Object   o :  s) {
@@ -1630,35 +1637,24 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                 qry.add(qxy, BooleanClause.Occur.MUST);
             }
         } else {
-            if (m.containsKey(Cnst.RG_REL)) {
-                Object[] a = Synt.asRange(m.remove(Cnst.RG_REL));
-                if (null  !=  a) {
-                    n = a[0]; l = (boolean) a[2];
-                    x = a[1]; g = (boolean) a[3];
-                } else {
-                    n = null; l = false;
-                    x = null; g = false;
-                }
-            } else {
-                if (m.containsKey(Cnst.GE_REL)) {
-                    n = m.remove (Cnst.GE_REL); l = true ;
-                } else
-                if (m.containsKey(Cnst.GT_REL)) {
-                    n = m.remove (Cnst.GT_REL); l = false;
-                } else
-                {
-                    n = null; l = false;
-                }
+            if (m.containsKey(Cnst.GE_REL)) {
+                n = m.remove (Cnst.GE_REL); l = true ;
+            } else
+            if (m.containsKey(Cnst.GT_REL)) {
+                n = m.remove (Cnst.GT_REL); l = false;
+            } else
+            {
+                n = null; l = false;
+            }
 
-                if (m.containsKey(Cnst.LE_REL)) {
-                    x = m.remove (Cnst.LE_REL); g = true ;
-                } else
-                if (m.containsKey(Cnst.LT_REL)) {
-                    x = m.remove (Cnst.LT_REL); g = false;
-                } else
-                {
-                    x = null; g = false;
-                }
+            if (m.containsKey(Cnst.LE_REL)) {
+                x = m.remove (Cnst.LE_REL); g = true ;
+            } else
+            if (m.containsKey(Cnst.LT_REL)) {
+                x = m.remove (Cnst.LT_REL); g = false;
+            } else
+            {
+                x = null; g = false;
             }
 
             if (n != null || x != null) {
@@ -1669,9 +1665,9 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         //** 其他包含 **/
 
         if (!m.isEmpty()) {
-            Set s = new HashSet();
-            s.addAll(m.values( ));
-            qryAdd(qry, k, s, q );
+            s =  new  HashSet( );
+            s.addAll(m.values());
+            qryAdd(qry, k, s, q);
         }
 
         //** 权重设置 **/

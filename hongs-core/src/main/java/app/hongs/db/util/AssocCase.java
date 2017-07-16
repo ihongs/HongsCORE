@@ -538,14 +538,16 @@ public class AssocCase {
 
                 // 清除不支持的
                 for(String rl : NOLS) {
-                    fm.remove(rl);
-                    CoreLogger.trace(AssocCase.class.getName()+": Can not support "+fn+"."+rl);
+                    if (fm.remove(rl) != null) {
+                        CoreLogger.trace(AssocCase.class.getName()+": Can not support "+fn+"."+rl);
+                    }
                 }
 
                 // 清除功能参数
                 for(String rl : FUNC) {
-                    fm.remove(rl);
-                    CoreLogger.trace(AssocCase.class.getName()+": Can not dispose "+fn+"."+rl);
+                    if (fm.remove(rl) != null) {
+                        CoreLogger.trace(AssocCase.class.getName()+": Can not dispose "+fn+"."+rl);
+                    }
                 }
 
                 // 清除空字符串, 如想要 IN ('') 可使用 !in 操作符

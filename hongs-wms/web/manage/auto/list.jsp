@@ -102,14 +102,11 @@
 
             String rb;
 
-            if ( "number".equals(type)
-            ||     "date".equals(type)
-            ||     "time".equals(type)
-            || "datetime".equals(type)) {
+            if ("number".equals(type)) {
                 String enumConf = Synt.defxult((String) info.get("conf"),_confId);
                 String enumName = Synt.defxult((String) info.get("enum"), name  );
                 Map    enumData = FormSet.getInstance(enumConf).getEnum(enumName);
-                if (enumData !=  null) {
+                if (enumData != null ) {
                     StringBuilder sb = new StringBuilder();
                     for (Object code : enumData.keySet( )) {
                         sb.append("&rb.=")
@@ -123,7 +120,7 @@
                 }
                 type = "statis";
             } else {
-                rb   = "&rb.=" +  name;
+                rb   = "&rb.=" +  name ;
                 type = "counts";
             }
         %>

@@ -1664,6 +1664,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
         //** 其他包含 **/
 
+        m.remove(""); // 想 IN ('') 必须明确指定 xxx!in=''
         if (!m.isEmpty()) {
             s =  new  HashSet( );
             s.addAll(m.values());

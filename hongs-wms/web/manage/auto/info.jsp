@@ -56,8 +56,8 @@
                     kind =  "_file" ;
                     if ("image".equals(type)) {
                         kind =  "_view";
-                        size = Synt.asserts( info.get("thumb-size"), "" );
-                        keep = Synt.asserts( info.get("thumb-mode"), "" );
+                        size = Synt.declare( info.get("thumb-size"), "" );
+                        keep = Synt.declare( info.get("thumb-mode"), "" );
                         if (size.length()!=0) {
                             size = size.replaceFirst("\\d+\\*\\d+", "$0");
                             if ( ! keep.equals("keep") ) {

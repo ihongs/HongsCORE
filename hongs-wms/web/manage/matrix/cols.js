@@ -239,9 +239,9 @@ function gainFlds(fields, area) {
                 ||  k == "data-ft") {
                     continue;
                 }
-                if (k == "data-datalist" ) {
-                    v = JSON.stringify(prsDataList(v));
-                }
+//              if (k == "data-datalist" ) {
+//                  v = JSON.stringify(prsDataList(v));
+//              }
                 params[k.substring(5)] = v;
             }
         }
@@ -320,8 +320,9 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             }
             if (k === "datalist") {
                 if (input.is("input")) {
-                    var datalist = JSON.parse(field["datalist"]) || [];
-                    input.attr("data-datalist", strDataList(datalist));
+//                  var datalist = JSON.parse(field["datalist"]) || [];
+//                  input.attr("data-datalist", strDataList(datalist));
+                    input.attr("data-datalist", field[k] );
                     continue;
                 }
                 input.empty();

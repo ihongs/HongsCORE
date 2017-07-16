@@ -24,7 +24,7 @@
                 menus.append("<li class=\"divider\"></li>");
                 continue;
             }
-            
+
             String actc = href.equals(acti) ? "active" : "";
             href = Core.BASE_HREF +"/"+ href;
             hrel = Core.BASE_HREF +"/"+ hrel;
@@ -60,7 +60,7 @@
 %>
 <%
     ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
- 
+
     NaviMap curr = NaviMap.getInstance("manage");
     List    menu = curr.getMenuTranslates(1 , 2);
 
@@ -128,39 +128,46 @@
         var menubar = $("#main-menubar");
         var context = $("#main-context");
 
-        function initMenu() {
-            var a, h, l;
+        function initMenu (g) {
+            var a, b, h, l;
             h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
-            a = menubar.find("a[href='"+h+"']");
-            if (a.size()) {
-//              h = a.attr("href");
+            a = menubar.find("a[href='"+ h +"']");
+            b = menubar;
+            if (a.size() < 1 && g) {
+                a = menubar.find("li a").first( );
+            }
+            
+            if (a.size() > 0) {
+                h = a.attr("href");
                 l = a.data("href");
                 if (!l || l==='/') {
                     a = a.closest("li").find("li a").first();
-                    h = a.attr (  "href"  );
-                    if (h) {
-                        location.replace(h);
+                    if ( !h && g ) {
+                        b.trigger("loseMenu");
                     } else {
-                        menubar .trigger("loseMenu");
+                        location.replace( h );
                     }
                     return;
                 }
-                context.hsLoad (l);
-                menubar.find("li").removeClass("active");
-                a.parents(   "li"   ).addClass("active");
+
+                context.hsLoad(l);
+                b.find("li").removeClass("active");
+                a.parents("li").addClass("active");
             }
         }
 
         $(function() {
-            if (menubar.find(".active").size()) {
-                menubar.find(".active")
-                       .parents("li").addClass("active");
+            var a = menubar.find( ".active" );
+            if (a.size() > 0) {
+                a.parents("li").addClass("active");
                 return;
             }
-            initMenu();
+
+            initMenu(true );
         });
-        
-        $(window).on( "hashchange" , initMenu );
+        $(window).on("hashchange", function() {
+            initMenu(false);
+        });
 
         $("#sign-out")
             .click(function() {

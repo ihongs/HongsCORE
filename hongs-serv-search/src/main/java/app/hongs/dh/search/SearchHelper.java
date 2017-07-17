@@ -6,10 +6,10 @@ import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Synt;
+import app.hongs.util.Tool;
 
 import java.io.IOException;
 import java.util.Collections;
-import java.util.Collection;
 import java.util.Comparator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -357,7 +357,7 @@ public class SearchHelper {
                             counts.put(a[0], new HashMap());
                         }
 
-                        Minmax mm = null;
+                        Minmax mm = new Minmax( "" );
                         Cntsum cs = new Cntsum(    );
                         counts.get(a[0]).put(mm, cs);
                     }
@@ -444,7 +444,7 @@ public class SearchHelper {
             if ( null != a ) {
                 l.addAll(a );
             }
-            Collections.sort( l, new Sortes());
+            Collections.sort(l, new Sortes( ));
             cntlst.put(k, l);
         }
 
@@ -476,7 +476,7 @@ public class SearchHelper {
             Query q = that.getQuery(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("SearchRecord.counts: "+q.toString());
+                CoreLogger.debug("SearchRecord.counts: " +q.toString());
             }
 
             TopDocs docz = finder.search(q, 500);
@@ -493,23 +493,29 @@ public class SearchHelper {
                             Set<Minmax        > cntx = countx.get   (k);
                             IndexableField[   ] vals = doc.getFields(k);
 
-                            F1: for (IndexableField x: vals) {
-                                double v = x.numericValue( ).doubleValue();
-                                F2: for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
-                                    Minmax m = mc.getKey(  );
+                            F : for (IndexableField x: vals) {
+                                double v = x.numericValue( )
+                                            . doubleValue( );
+                                for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
+                                    Minmax m = mc.getKey ( );
 
                                     /*
-                                     * 键为空表示此为总计行
-                                     * 总计需跳过忽略的取值
+                                     * 注意:
+                                     * 总计并没有跳过需忽略的值,
+                                     * 忽略的值仅表示不进行统计;
+                                     * 如果需要从结果中排除记录,
+                                     * 应在wr或ar参数中进行指定.
                                      */
-                                    if (m != null) {
-                                        if (!m.covers(v)) {
-                                            continue  F2;
+                                    if (! m.covers( )) {
+                                        if (! m.covers(v)) {
+                                            continue;
                                         }
-                                    } else
-                                    for (Minmax w : cntx) {
-                                        if ( w.covers(v)) {
-                                            continue  F1;
+
+                                        if (  cntx  != null)
+                                        for(Minmax w : cntx) {
+                                            if (w.covers(v)) {
+                                                continue F ;
+                                            }
                                         }
                                     }
 
@@ -551,13 +557,13 @@ public class SearchHelper {
         @Override
         public int compare(Map.Entry<Minmax, Cntsum > o1, Map.Entry<Minmax, Cntsum > o2) {
             // 区间为空的表示总计, 确保它总是在第一个
-            Minmax k1 = o1.getKey(  ) , k2 = o2.getKey(  );
-            if (k1 == null) return  1;
-            if (k2 == null) return -1;
+            Minmax k1 = o1.getKey(  ), k2 = o2.getKey(  );
+            if  (  k1.covers()  ) return -1;
+            if  (  k2.covers()  ) return  1;
 
-            Cntsum x1 = o1.getValue() , x2 = o2.getValue();
-            return x1.cnt != x2.cnt ? ( x2.cnt > x2.cnt ? 1 : -1)
-                : (x1.sum != x2.sum ? ( x2.sum > x1.sum ? 1 : -1) : 0);
+            Cntsum x1 = o1.getValue(), x2 = o2.getValue();
+            return x1.cnt != x2.cnt ? (x2.cnt > x2.cnt ? 1 : -1)
+                : (x1.sum != x2.sum ? (x2.sum > x1.sum ? 1 : -1) : 0 );
         }
     }
 
@@ -570,8 +576,12 @@ public class SearchHelper {
         public void add(double v) {
             cnt += 1;
             sum += v;
-            if (min > v) min = v;
-            if (max < v) max = v;
+            if (min > v || min == Double.MIN_VALUE) {
+                min = v;
+            }
+            if (max < v || max == Double.MAX_VALUE) {
+                max = v;
+            }
         }
     }
 
@@ -610,16 +620,16 @@ public class SearchHelper {
             }
             StringBuilder sb = new StringBuilder();
             sb.append(le ? "(" : "[");
-            sb.append(min != Double.MIN_VALUE ? min : "");
+            sb.append(min != Double.MIN_VALUE ? Tool.toNumStr(min) : "");
             sb.append(",");
-            sb.append(max != Double.MAX_VALUE ? max : "");
+            sb.append(max != Double.MAX_VALUE ? Tool.toNumStr(max) : "");
             sb.append(ge ? ")" : "]");
             return sb.toString();
         }
 
         @Override
         public int hashCode() {
-            return toString().hashCode( );
+            return toString().hashCode();
         }
 
         @Override
@@ -628,7 +638,8 @@ public class SearchHelper {
                 return false;
             }
             Minmax m = (Minmax) o;
-            return m.min == min && m.max == max;
+            return m.le  == le  && m.ge  == ge
+                && m.min == min && m.max == max;
         }
 
         public boolean covers(double n) {
@@ -643,6 +654,12 @@ public class SearchHelper {
                 return false;
             }}
             return true;
+        }
+
+        public boolean covers() {
+            return le && ge
+            && min == Double.MIN_VALUE
+            && max == Double.MAX_VALUE;
         }
     }
 

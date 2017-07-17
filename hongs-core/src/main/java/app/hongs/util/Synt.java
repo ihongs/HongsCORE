@@ -514,11 +514,12 @@ public final class Synt {
             String vs = declare(val, "");
             Matcher m = RNGP.matcher(vs);
             if (m.matches()) {
+                String m2 = m.group ( 2);
+                String m3 = m.group ( 3);
+                if (null != m2) m2 = m2.trim();
+                if (null != m3) m3 = m3.trim();
                 return new Object[] {
-                    m.group(2).trim(),
-                    m.group(3).trim(),
-                  ! "(".equals(m.group(1)),
-                  ! ")".equals(m.group(4))
+                    m2, m3, ! "(".equals(m.group(1)), ! ")".equals(m.group(4))
                 };
             }
             throw new ClassCastException("'"+val+"' can not be cast to range");

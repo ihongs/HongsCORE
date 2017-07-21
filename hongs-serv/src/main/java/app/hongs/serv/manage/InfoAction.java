@@ -82,18 +82,21 @@ public class InfoAction {
             MemoryMXBean mm = ManagementFactory.getMemoryMXBean();
             MemoryUsage  nm = mm.getNonHeapMemoryUsage();
             MemoryUsage  hm = mm.getHeapMemoryUsage();
+            Runtime      rt = Runtime.getRuntime();
 
             double avg = os.getSystemLoadAverage();
+            long fre = rt. freeMemory();
+            long siz = rt.totalMemory();
             long stk = nm.getUsed( );
             long use = hm.getUsed( );
-            long max = hm.getMax(  );
-            long fre = max - use - stk;
+            long max = hm.getMax ( );
 
             inf.put("load" , new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("size" , new Object[] {max, Tool.humanSize(max), "全部"});
             inf.put("free" , new Object[] {fre, Tool.humanSize(fre), "空闲"});
+            inf.put("size" , new Object[] {siz, Tool.humanSize(max), "全部"});
             inf.put("used" , new Object[] {use, Tool.humanSize(use), "已用"});
             inf.put("uses" , new Object[] {stk, Tool.humanSize(stk), "非堆"});
+            inf.put("max"  , new Object[] {max, Tool.humanSize(fre), "空闲"});
         }
 
         // 磁盘情况

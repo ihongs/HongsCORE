@@ -38,17 +38,17 @@ public final class Synt {
     private static final Pattern TEXP = Pattern.compile("\\s*[\\s\\+,;]\\s*");
 
     /**
-     * 拆分字符: 空字符 或 +,;.:!?'" 及 同类全角标点
+     * 拆分字符: 空字符 或 +,;.:!?'" 及全角标点符号
      */
     private static final Pattern WEXP = Pattern.compile("\\s*[\\p{Space}\\p{Punct}\\u3000-\\u303F]\\s*");
 
     /**
-     * 区间参数: 表达式 [min,max] (min,max) [min,max) 空则表示无限, 逗号可替换为 ~
+     * 区间参数: [min,max] (min,max) 类似数学表达式
      */
-    private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?([^,~]+)?[,~]([^,~]+)?([\\]\\)])?");
+    private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
 
     /**
-     * 视为假的字符串有: 0,n,f,no,false 和 空串
+     * 视为假的字符串有: 0,n,f,no,false 和 空字符串
      */
     public  static final Pattern FAKE = Pattern.compile("^(|0|n|f|no|false)$", Pattern.CASE_INSENSITIVE);
 
@@ -96,6 +96,36 @@ public final class Synt {
         return  map;
     }
 
+    /**
+     * 尝试转为数组
+     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
+    public static Object[] toArray(Object val) {
+        if (val == null) {
+            return null;
+        }
+
+        if (val instanceof String) {
+            String text = ( (String) val).trim(  );
+            if (text.startsWith("[") && text.endsWith("]")) {
+                return ((List) Data.toObject(text))
+                                   .toArray (    );
+            } else {
+                return SEXP.split(text);
+            }
+        }
+
+        return asArray(val);
+    }
+
+    /**
+     * 尝试转为 List
+     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
     public static List toList(Object val) {
         if (val == null) {
             return null;
@@ -115,6 +145,12 @@ public final class Synt {
         return asList(val);
     }
 
+    /**
+     * 尝试转为 Set
+     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param val
+     * @return
+     */
     public static Set  toSet (Object val) {
         if (val == null) {
             return null;
@@ -136,6 +172,12 @@ public final class Synt {
         return asSet (val);
     }
 
+    /**
+     * 尝试转为 Map
+     * 与 asArray 的不同在于当 val 是字符串时, 尝试解析 JSON 或拆分逗号冒号
+     * @param val
+     * @return
+     */
     public static Map  toMap (Object val) {
         if (val == null) {
             return null;
@@ -162,6 +204,12 @@ public final class Synt {
         return asMap (val);
     }
 
+    /**
+     * 尝试转为数组
+     * 可将 List,Set,Map 转为数组, 其他情况构建一个单一值的数组
+     * @param val
+     * @return 
+     */
     public static Object[] asArray(Object val) {
         if (val == null) {
             return null;
@@ -180,6 +228,12 @@ public final class Synt {
         }
     }
 
+    /**
+     * 尝试转为 List
+     * 可将 数组,Set,Map 转为 List, 其他情况构建一个单一值的 List
+     * @param val
+     * @return 
+     */
     public static List asList(Object val) {
         if (val == null) {
             return null;
@@ -200,6 +254,12 @@ public final class Synt {
         }
     }
 
+    /**
+     * 尝试转为 Set
+     * 可将 数组,List,Map 转为 Set, 其他情况构建一个单一值的 Set
+     * @param val
+     * @return 
+     */
     public static Set  asSet (Object val) {
         if (val == null) {
             return null;
@@ -220,6 +280,13 @@ public final class Synt {
         }
     }
 
+    /**
+     * 尝试转为 List
+     * 非 Map 类型均会转换失败, 因 Map 转集合扔掉键即可,
+     * 但无法从其他集合类型中得到明确的可以作为键的东西.
+     * @param val
+     * @return 
+     */
     public static Map  asMap (Object val) {
         if (val == null) {
             return null;
@@ -233,6 +300,12 @@ public final class Synt {
         throw new ClassCastException("'" + val + "' can not be cast to Map");
     }
 
+    /**
+     * 确定转为字符串
+     * 数组和集合仅取第一个
+     * @param val
+     * @return 
+     */
     public static String asString(Object val) {
         val = asSingle(val);
         if (val == null) {
@@ -242,6 +315,12 @@ public final class Synt {
         return val.toString();
     }
 
+    /**
+     * 尝试转为整数
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return 
+     */
     public static Integer asInt(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -263,6 +342,12 @@ public final class Synt {
         return (Integer) val;
     }
 
+    /**
+     * 尝试转为长整型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return 
+     */
     public static Long asLong(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -284,6 +369,12 @@ public final class Synt {
         return (Long) val;
     }
 
+    /**
+     * 尝试转为浮点型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return 
+     */
     public static Float asFloat(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -305,6 +396,12 @@ public final class Synt {
         return (Float) val;
     }
 
+    /**
+     * 尝试转为双精度浮点型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return 
+     */
     public static Double asDouble(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -326,6 +423,12 @@ public final class Synt {
         return (Double) val;
     }
 
+    /**
+     * 尝试转为短整型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return 
+     */
     public static Short asShort(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -347,6 +450,12 @@ public final class Synt {
         return (Short) val;
     }
 
+    /**
+     * 尝试转为字节型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳
+     * @param val
+     * @return 
+     */
     public static Byte asByte(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -368,6 +477,12 @@ public final class Synt {
         return (Byte) val;
     }
 
+    /**
+     * 尝试转为布尔型
+     * 数组和集合仅取第一个, 日期类型取毫秒时间戳, 数字非零为 true
+     * @param val
+     * @return 
+     */
     public static Boolean asBool(Object val) {
         val = asNumber(val);
         if (val == null) {
@@ -392,7 +507,7 @@ public final class Synt {
     }
 
     /**
-     * 数字转换预处理, 空串视为无值, 日期取时间戳
+     * 转数字预处理, 空串视为无值, 日期取时间戳
      * @param val
      * @return
      */
@@ -417,7 +532,7 @@ public final class Synt {
     }
 
     /**
-     * 针对 servlet 的 requestMap 制定的规则, 多个值取第一个值
+     * 针对 servlet 的 requestMap 规则, 多个取首个值
      * @param val
      * @return
      */
@@ -497,8 +612,7 @@ public final class Synt {
     /**
      * 解析区间值
      * 可将数学表达式 [min,max] (min,max) 等解析为 {min,max,gte,lte}
-     * 空串空值将被认为无限小或无限大
-     * 方括号可以省略, ','可用'~'替代
+     * 方括号可以省略, 空串被视为无限, 数组仅给两个则后两个认为 true
      * @param val
      * @return
      */
@@ -514,12 +628,13 @@ public final class Synt {
             String vs = declare(val, "");
             Matcher m = RNGP.matcher(vs);
             if (m.matches()) {
-                String m2 = m.group ( 2);
-                String m3 = m.group ( 3);
-                if (null != m2) m2 = m2.trim();
-                if (null != m3) m3 = m3.trim();
+                String m2 = m.group (2 ).trim();
+                String m3 = m.group (3 ).trim();
                 return new Object[] {
-                    m2, m3, ! "(".equals(m.group(1)), ! ")".equals(m.group(4))
+                    ! "".equals(m2) ? m2 : null,
+                    ! "".equals(m3) ? m3 : null,
+                    !"(".equals(m.group ( 1 ) ),
+                    !")".equals(m.group ( 4 ) )
                 };
             }
             throw new ClassCastException("'"+val+"' can not be cast to range");

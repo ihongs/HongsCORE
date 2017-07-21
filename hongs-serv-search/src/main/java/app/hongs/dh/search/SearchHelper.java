@@ -619,11 +619,11 @@ public class SearchHelper {
                 return "";
             }
             StringBuilder sb = new StringBuilder();
-            sb.append(le ? "(" : "[");
+            sb.append(le ? "[" : "(");
             sb.append(min != Double.MIN_VALUE ? Tool.toNumStr(min) : "");
             sb.append(",");
             sb.append(max != Double.MAX_VALUE ? Tool.toNumStr(max) : "");
-            sb.append(ge ? ")" : "]");
+            sb.append(ge ? "]" : ")");
             return sb.toString();
         }
 

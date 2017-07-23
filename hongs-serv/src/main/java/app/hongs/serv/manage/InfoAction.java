@@ -75,9 +75,6 @@ public class InfoAction {
 
         // 运行信息
         if ( rb == null || rb.contains("run_info") ) {
-            Map  inf = new HashMap();
-            rsp.put("run_info", inf);
-
             OperatingSystemMXBean os = ManagementFactory.getOperatingSystemMXBean();
             MemoryMXBean mm = ManagementFactory.getMemoryMXBean();
             MemoryUsage  nm = mm.getNonHeapMemoryUsage();
@@ -85,18 +82,21 @@ public class InfoAction {
             Runtime      rt = Runtime.getRuntime();
 
             double avg = os.getSystemLoadAverage();
-            long fre = rt. freeMemory();
             long siz = rt.totalMemory();
+            long fre = rt.freeMemory();
+            long max = rt.maxMemory();
             long stk = nm.getUsed( );
             long use = hm.getUsed( );
-            long max = hm.getMax ( );
+
+            Map  inf = new HashMap();
+            rsp.put("run_info", inf);
 
             inf.put("load" , new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("free" , new Object[] {fre, Tool.humanSize(fre), "空闲"});
             inf.put("size" , new Object[] {siz, Tool.humanSize(max), "全部"});
+            inf.put("free" , new Object[] {fre, Tool.humanSize(fre), "空闲"});
+            inf.put("dist" , new Object[] {max, Tool.humanSize(fre), "可用"});
             inf.put("used" , new Object[] {use, Tool.humanSize(use), "已用"});
             inf.put("uses" , new Object[] {stk, Tool.humanSize(stk), "非堆"});
-            inf.put("max"  , new Object[] {max, Tool.humanSize(fre), "空闲"});
         }
 
         // 磁盘情况

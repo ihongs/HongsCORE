@@ -222,6 +222,8 @@
     var filtbox = context.find(".filtbox");
     var statbox = context.find(".statbox");
 
+    //** 列表、搜索表单 **/
+
     context.hsList({
         loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=6",
         sendUrls: [
@@ -337,7 +339,7 @@
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ", "+ v[3] +")" );
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name+".")
+                .attr("name" , name+"!ir.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);
@@ -362,7 +364,7 @@
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name+".")
+                .attr("name" , name+"!in.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);
@@ -613,6 +615,7 @@
     });
     statbox.on("opened", function( ) {
         if (statbox.data("changed")) {
+            statbox.data("changed", false);
             statis();
             counts();
         }

@@ -39,9 +39,11 @@ public class FetchMore
    * 获取关联ID和行
    *
    * @param map
+   * @param rows
+   * @param deep
    * @param keys
    */
-  private void maping(Map<String, List> map, List rows, String... keys)
+  private void maping(Map<String, List> map, List rows, boolean deep, String... keys)
   {
     Iterator it = rows.iterator();
     W:while (it.hasNext())
@@ -54,6 +56,7 @@ public class FetchMore
       {
         if (obj instanceof Map )
         {
+          if (deep) row  = obj ;
           obj = ((Map)obj).get(keys[i]);
         }
         else
@@ -65,7 +68,7 @@ public class FetchMore
           System.arraycopy(keys,i, keyz,0,j);
 
           // 往下递归一层
-          this.maping(map, (List) obj, keyz);
+          maping(map, (List)obj, deep, keyz);
 
           continue W;
         }
@@ -94,15 +97,22 @@ public class FetchMore
     }
   }
 
+  public Map<String, List> maping(boolean deep, String... keys)
+  {
+    Map<String, List> map = new HashMap();
+    maping(map, rows, deep, keys);
+    return map;
+  }
+
   public Map<String, List> maping(String... keys) {
     Map<String, List> map = new HashMap();
-    maping(map, rows, keys);
+    maping(map, rows, true, keys);
     return map;
   }
 
   public Map<String, List> mapped(String key) {
     Map<String, List> map = new HashMap();
-    maping(map, rows, key.split( "\\." ));
+    maping(map, rows, true, key.split("\\."));
     return map;
   }
 
@@ -114,10 +124,10 @@ public class FetchMore
    * @param col   关联字段
    * @throws app.hongs.HongsException
    */
-  public void join(Table table, FetchCase caze, Map<String,List> map, String col)
+  public void join(Table table, FetchCase caze, Map<String, List> map, String col)
     throws HongsException
   {
-    if (this.rows.isEmpty())
+    if (map.isEmpty())
     {
       return;
     }

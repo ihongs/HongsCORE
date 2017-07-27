@@ -1,10 +1,14 @@
 package app.hongs.util.verify;
 
 import app.hongs.util.Synt;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.imageio.ImageIO;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 
@@ -13,8 +17,8 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  *
  * 规则参数:
  *  thumb-extn      格式名称, 如 jpg
- *  thumb-size      缩放尺寸, 如 _lg:80*40; _md:60*30
- *  thumb-mode      处理模式, 如 pick 截取, keep 保留
+ *  thumb-size      缩放尺寸, 如 _lg:80*40, _md:60*30, _sm:40*20
+ *  thumb-mode      处理模式, 如 pick 截取, keep 保留, test 检查
  *  thumb-index     返回索引, 默认为 0, 即首个
  *  thumb-color     背景颜色
  *  thumb-align     停靠位置
@@ -24,6 +28,8 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  */
 public class Thumb extends IsFile {
 
+    Pattern TEST_PATT = Pattern.compile("^.*?:(\\d+)([\\*/])(\\d+)");
+    
     @Override
     public String checks(String href, String path) throws Wrong {
         String extn = Synt.declare(params.get("thumb-extn" ), "jpg");
@@ -70,6 +76,42 @@ public class Thumb extends IsFile {
 //        if (url == null) url = "";
 //        if (suf == null) suf = "";
 
+        /**
+         * 仅校验尺寸或比例,
+         * 不相符将直接退出.
+         * 会取出配置的第一个尺寸或比例,
+         * 多个尺寸后面的会进行缩放处理.
+         */
+        if ("test".equals(mod)) {
+            Matcher       mat ;
+            BufferedImage img = ImageIO.read(new File(pth));
+            int w = img.getWidth ();
+            int h = img.getHeight();
+            
+            mat = TEST_PATT.matcher(suf);
+            if (mat.matches()) {
+                String sc = mat.group(2);
+                int w2 = Integer.parseInt(mat.group(1));
+                int h2 = Integer.parseInt(mat.group(3));
+
+                if ("*".equals(sc)) {
+                    if (w != w2 || h != h2) {
+                        throw new Wrong("fore.size.unmatch")
+                            .setLocalizedOptions(mat.group(1), mat.group(3));
+                    }
+                } else {
+                    if (w *  h2 != h *  w2) {
+                        throw new Wrong("fore.scal.unmatch")
+                            .setLocalizedOptions(mat.group(1), mat.group(3));
+                    }
+                }
+            } else {
+                throw new Wrong("Thumb size config can not be used for test mode");
+            }
+            
+            mod = ""; // 尺寸匹配则
+        }
+
         List<String> pts = new ArrayList();
         List<String> urs = new ArrayList();
         Builder      bld = null;
@@ -79,10 +121,10 @@ public class Thumb extends IsFile {
         pre = pth.replaceFirst("\\.[^\\.]+$","");
         prl = url.replaceFirst("\\.[^\\.]+$","");
 
-        if (suf.contains(";")
-        ||  suf.contains(":")) {
+        if (suf.contains(":")
+        ||  suf.contains(",")) {
 
-            String[] sia = suf.split (";");
+            String[] sia = suf.split (",");
             String   src = pth;
             double   scl = 0;
             boolean  rat;
@@ -101,7 +143,7 @@ public class Thumb extends IsFile {
                 suf = arr[0].trim();
                 siz = arr[1].trim();
                 if (rat = siz.contains("/")) {
-                    arr = siz.split("\\/", 2 );
+                    arr = siz.split( "/" , 2 );
                 } else {
                     arr = siz.split("\\*", 2 );
                 }

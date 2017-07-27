@@ -27,7 +27,6 @@ public class Mview extends Model {
 
     private CoreLocale locale = null;
     private Map        fields = null;
-    private Model      model  = null;
     private String     txkey  = null;
     private String     title  = null;
 
@@ -49,14 +48,12 @@ public class Mview extends Model {
      * 注意:
      * 如果 model 中覆盖了 add,put,del和filter 等
      * 调用 Mview 中相同方法并不会使用此 model 的
-     * 但会在调用 getFields 后设置 model.xxxxable
      *
      * @param model
      * @throws HongsException
      */
     public Mview(Model model) throws HongsException {
         this(model.table);
-        this.model=model ;
     }
 
     /**
@@ -247,12 +244,6 @@ public class Mview extends Model {
         }
         if (!siftColz.isEmpty()) {
             siftable = siftColz.toArray(new String[]{});
-        }
-        if (model != null) {
-            model.listable = listable;
-            model.sortable = sortable;
-            model.findable = findable;
-            model.siftable = siftable;
         }
 
         return fields;

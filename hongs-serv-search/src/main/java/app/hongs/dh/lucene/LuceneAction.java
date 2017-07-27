@@ -159,7 +159,7 @@ public class LuceneAction implements IAction, IActing {
      * @return
      * @throws HongsException
      */
-    protected  Map   getRspMap(ActionHelper helper, IEntity ett,  String opr, Map rsp)
+    protected  Map   getRspMap(ActionHelper helper, IEntity ett, String opr, Map rsp)
     throws HongsException {
         return rsp;
     }

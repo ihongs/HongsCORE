@@ -20,6 +20,18 @@ public class Wrongs extends HongsException {
         this.wrongs = wrongs;
     }
 
+    @Override
+    public Wrongs setLocalizedSection(String    name) {
+        super.setLocalizedSection(name);
+        return this;
+    }
+
+    @Override
+    public Wrongs setLocalizedOptions(String... opts) {
+        super.setLocalizedOptions(opts);
+        return this;
+    }
+
     public Map<String, Wrong > getWrongs() {
         return wrongs;
     }

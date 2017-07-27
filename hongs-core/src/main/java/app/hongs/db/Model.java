@@ -886,20 +886,19 @@ implements IEntity
      * 如果不是 table.fetchCase( ) 构建查询
      * 在下面组织过滤等时可能导致表别名为空
      */
-    caze.from(table.tableName, table.name);
+    caze.from( table.tableName, table.name );
 
     /**
      * 没有指定 listable
-     * 则不使用 AssocCase 处理查询字段
-     * 此方法并不会将所有字段绑定在顶层用例上
-     * 而是按照不同表分别绑在对应的下级查询上
-     * 这样可以为那些不是 JOIN 关联的用例指定字段
+     * 则不使用 AssocCase  来处理查询的字段
+     * 此方法并不会将所有字段绑定在顶层用例
+     * 而是按照不同表分别绑在对应下级查询上
+     * 这可为非 JOIN 关联的用例指定查询字段
      */
-    Object rb  = null;
-    if (listable == null
-    && !caze.hasField())
+    Object rb  = null ;
+    if (listable == null && !caze.hasField())
     {
-      rb = rd.remove(Cnst.RB_KEY);
+      rb = rd.remove  (  Cnst.RB_KEY );
       if ( rb != null )
       {
         field(caze, Synt.asTerms(rb) );

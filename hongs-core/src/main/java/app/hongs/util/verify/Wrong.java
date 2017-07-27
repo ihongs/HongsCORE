@@ -17,9 +17,21 @@ public class Wrong extends HongsException {
     }
 
     public Wrong(String desc, String... prms) {
-        super(0x1100, desc  /***/);
+        super(0x1100, desc  /**/ );
         this.setLocalizedSection("default");
         this.setLocalizedOptions(   prms  );
+    }
+
+    @Override
+    public Wrong  setLocalizedOptions(String... opts) {
+        super.setLocalizedOptions(opts);
+        return this;
+    }
+
+    @Override
+    public Wrong  setLocalizedSection(String name) {
+        super.setLocalizedSection(name);
+        return this;
     }
 
     public Wrong  setLocalizedSegment(String name) {

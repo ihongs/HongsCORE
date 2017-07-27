@@ -54,6 +54,7 @@ public class FetchMore
       {
         if (obj instanceof Map )
         {
+          row = obj;
           obj = ((Map)obj).get(keys[i]);
         }
         else

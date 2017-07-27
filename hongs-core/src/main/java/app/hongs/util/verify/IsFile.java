@@ -84,7 +84,9 @@ public class IsFile extends Rule {
         } // End If
 
         UploadHelper hlpr = new UploadHelper();
-        String href, path , x;
+        String href, path;
+        String   x;
+        String[] y;
 
         x = (String) params.get("temp");
         if (x != null) hlpr.setUploadTemp(x);
@@ -92,10 +94,10 @@ public class IsFile extends Rule {
         if (x != null) hlpr.setUploadPath(x);
         x = (String) params.get("href");
         if (x != null) hlpr.setUploadHref(x);
-        x = (String) params.get("type");
-        if (x != null) hlpr.setAllowTypes(x.trim().split(","));
-        x = (String) params.get("extn");
-        if (x != null) hlpr.setAllowExtns(x.trim().split(","));
+        y = (String[]) Synt.toArray(params.get("type"));
+        if (x != null) hlpr.setAllowTypes(y);
+        y = (String[]) Synt.toArray(params.get("extn"));
+        if (x != null) hlpr.setAllowExtns(y);
 
         if (value instanceof Part) {
             hlpr.upload((Part) value);

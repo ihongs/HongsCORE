@@ -576,21 +576,23 @@ public class Table
   /**
    * 获取关联查询体
    * @param name 关联名
+   * @param unit 层级名
    * @param caze 查询体
    * @return 关联查询体
    * @throws HongsException
    */
-  public FetchCase getAssocCase(String name , FetchCase caze)
+  public FetchCase getAssocCase(String name, String unit, FetchCase caze)
     throws HongsException
   {
     Map tc =  this.getAssoc(name);
     if (tc == null) return  null ;
     Table     tb = this.db.getTable(getAssocName(tc));
     FetchCase fc = caze
-            .gotJoin(getAssocPath(tc))
-            .gotJoin(name)
-            .   from(tb.tableName/**/);
-    AssocMore.checkCase(caze, (Map) tc.get("params"));
+             .gotJoin(getAssocPath(tc))
+             .gotJoin(        name   )
+             .from   (tb.tableName   )
+             .in     (        unit   );
+    AssocMore.checkCase(fc, ( Map ) tc.get("params"));
     return fc;
   }
 

@@ -8,6 +8,7 @@ import app.hongs.HongsException;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.util.FetchPage;
 import app.hongs.db.util.AssocCase;
+import app.hongs.db.util.AssocMore;
 import app.hongs.dh.IEntity;
 import app.hongs.util.Synt;
 import java.util.Iterator;
@@ -1007,7 +1008,9 @@ implements IEntity
                       fn = (String   ) fa[0]; // 字段
             String    ln = (String   ) fa[1]; // 别名
             FetchCase fc = (FetchCase) fa[2]; // 用例
-            fc.select(fn +" AS `"+ ln +"`" );
+            if (fn != null) {
+                fc.select(fn +" AS `"+ ln +"`" );
+            }
 
             tc.add( fc.getName( ) );
         }
@@ -1021,6 +1024,7 @@ implements IEntity
      * @param af    结果字段, 返回结构: { KEY: [COL, FetchCase]... }
      */
     protected final void allow(FetchCase caze, Map af) {
+        AssocMore.checkCase(caze, table.getParams( ) );
         String name = Synt.defoult( caze.getName ( ), table.name, table.tableName);
         allow( caze, table, caze, table, table.getAssocs(), name, null, null, af );
     }
@@ -1067,7 +1071,10 @@ implements IEntity
             az = pn + ".";
         }
 
-        try {
+        if (caxe.hasField()) {
+            al.put(ax+"*", new Object[]{null, az+"*", caxe});
+        }
+        else try {
             Map fs = assoc.getFields( );
             for(Object n : fs.keySet()) {
                 String f = (String) n;
@@ -1088,21 +1095,28 @@ implements IEntity
             while (it.hasNext()) {
                 Map.Entry et = (Map.Entry) it.next();
                 Map       tc = (Map) et.getValue(  );
-                String jn = (String) tc.get ("join");
+                Map       as = (Map) tc.get("assocs");
+                String jn = (String) tc.get( "join" );
+                       tn = (String) et.getKey  (  );
 
                 // 不是 JOIN 的重置 pn, 层级名随之改变
+                String ln;
                 if (!"INNER".equals(jn) && !"LEFT".equals(jn)
                 &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
                     jn = null;
+                    ln = null;
                 } else {
                     jn =  pn ;
+                    if (  "".equals(pn) ) {
+                        ln = tn ;
+                    } else {
+                        ln = pn + "." + tn;
+                    }
                 }
 
                 try {
-                    ac = (Map) tc.get("assocs");
-                    tn = (String) et.getKey(  );
                     assoc = table.getAssocInst(tn);
-                    caxe  = table.getAssocCase(tn, caze);
+                    caxe  = table.getAssocCase(tn, ln, caze);
 
                     if (null == caxe || null == assoc) {
                         CoreLogger.debug(Model.class.getName( )
@@ -1111,7 +1125,7 @@ implements IEntity
                         continue;
                     }
 
-                    allow(caze, table, caxe, assoc, ac, tn, qn, jn, al);
+                    allow(caze, table, caxe, assoc, as, tn, qn, jn, al);
                 }
                 catch (HongsException ex) {
                     CoreLogger.error( ex);

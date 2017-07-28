@@ -48,6 +48,7 @@ public class Mview extends Model {
      * 注意:
      * 如果 model 中覆盖了 add,put,del和filter 等
      * 调用 Mview 中相同方法并不会使用此 model 的
+     * 同时 model 中的 listable,sortable 等也不变
      *
      * @param model
      * @throws HongsException

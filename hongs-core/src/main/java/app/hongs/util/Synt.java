@@ -108,6 +108,9 @@ public final class Synt {
         }
 
         if (val instanceof String) {
+            if ("".equals(val)) {
+                return new Object[0];
+            }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return ((List) Data.toObject(text))
@@ -132,11 +135,14 @@ public final class Synt {
         }
 
         if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new ArrayList();
+            }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return (List) Data.toObject (text);
             } else {
-                return new  ArrayList   (
+                return  new ArrayList(
                     Arrays.asList(SEXP.split(text))
                 );
             }
@@ -157,13 +163,16 @@ public final class Synt {
         }
 
         if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new LinkedHashSet();
+            }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return  new LinkedHashSet(
                        (List) Data.toObject (text)
                 );
             } else {
-                return new LinkedHashSet(
+                return  new LinkedHashSet(
                     Arrays.asList(SEXP.split(text))
                 );
             }
@@ -184,6 +193,9 @@ public final class Synt {
         }
 
         if (val instanceof String) {
+            if ("".equals(val)) {
+                return  new LinkedHashMap();
+            }
             String text = ( (String) val).trim(  );
             if (text.startsWith("{") && text.endsWith("}")) {
                 return (Map ) Data.toObject (text);

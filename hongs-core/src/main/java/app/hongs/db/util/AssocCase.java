@@ -240,11 +240,11 @@ public class AssocCase {
     public AssocCase allow(Map fc) {
         String[] ks = new String[] {"listable", "sortable", "findable", "siftable", "saveable"};
         for(String k : ks) {
-            Object s = fc.get(k);
+            Object s = fc.get( k );
             if (null == s) {
                 continue ;
             }
-            allow(k.toUpperCase(), (String[]) Synt.toArray(s));
+            allow(k.toUpperCase( ), (String[]) Synt.toArray(s));
         }
         return this;
     }

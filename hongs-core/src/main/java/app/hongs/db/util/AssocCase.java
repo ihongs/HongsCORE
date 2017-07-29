@@ -3,6 +3,7 @@ package app.hongs.db.util;
 import app.hongs.Cnst;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.db.Model;
 import app.hongs.db.Table;
 import app.hongs.util.Dict;
@@ -105,7 +106,7 @@ public class AssocCase {
         FUNC.add(Cnst.AR_KEY);
     }
 
-    private final FetchCase  /**/  that;
+    private final FetchCase        that;
     private final Map<String, Map> opts;
     private final Map<String, Map> bufs;
 
@@ -762,7 +763,7 @@ public class AssocCase {
         return this;
     }
 
-    private Map allow(Table table, Table assoc, Map ac, String tn, String qn, Map al) {
+    private void allow(Table table, Table assoc, Map ac, String tn, String qn, Map al) {
         /**
          * 三个变量: 层级名(qn), 名前缀(ax), 表前缀(tx)
          * 第一层时, 无需加名前缀, 无关联表前缀也不用加
@@ -793,37 +794,49 @@ public class AssocCase {
                 f = tx +"`"+ f +"`";
                 al.put(k , f);
             }
+        } catch (HongsException e ) {
+            throw e.toExpedient(  );
         }
-        catch (HongsException ex) {
-            CoreLogger.error( ex);
+
+        if (ac == null || ac.isEmpty()) {
+            return;
         }
 
-        if (ac != null && !ac.isEmpty()) {
-            Iterator it = ac.entrySet().iterator(  );
-            while (it.hasNext()) {
-                Map.Entry et = (Map.Entry) it.next();
-                Map       tc = (Map) et.getValue(  );
-                String jn = (String) tc.get ("join");
+        Iterator it = ac.entrySet().iterator(  );
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry) it.next();
+            Map       tc = (Map) et.getValue(  );
+            String jn = (String) tc.get ("join");
 
-                // 不是 JOIN 的不理会
-                if (!"INNER".equals(jn) && !"LEFT".equals(jn)
-                &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
-                    continue;
-                }
-
-                try {
-                    ac = (Map) tc.get("assocs");
-                    tn = (String) et.getKey(  );
-                    assoc = table.getAssocInst(tn);
-                    allow(table, assoc, ac, tn,qn, al);
-                }
-                catch (HongsException ex) {
-                    CoreLogger.error( ex);
-                }
+            // 不是 JOIN 的不理会
+            if (!"INNER".equals(jn) && !"LEFT".equals(jn)
+            &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
+                continue;
             }
-        }
 
-        return  al;
+            tn = (String) et.getKey(  );
+            ac = (Map) tc.get("assocs");
+
+            // 获取真实的表名, 构建关联表实例
+            String rn;
+            rn = (String) tc.get("tableName");
+            if (rn == null || "".equals (rn)) {
+                rn = (String) tc.get ("name");
+            }
+
+            try {
+                assoc = table.db.getTable(rn);
+            } catch (HongsException e ) {
+                throw e.toExpedient(  );
+            }
+            if (null == assoc) {
+                throw new HongsExpedient.Common(
+                    "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
+                );
+            }
+
+            allow(table, assoc, ac, tn, qn, al);
+        }
     }
 
     /*

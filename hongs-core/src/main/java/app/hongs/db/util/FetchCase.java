@@ -1101,6 +1101,7 @@ public class FetchCase
 
   /**
    * 获取选项(可指定类型)
+   * 注意: 对应选项不存在时并不会写入默认选项
    * @param <T>
    * @param key
    * @param def

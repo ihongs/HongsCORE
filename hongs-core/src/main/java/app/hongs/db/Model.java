@@ -5,6 +5,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.util.FetchPage;
 import app.hongs.db.util.AssocCase;
@@ -898,22 +899,25 @@ implements IEntity
     Object rb  = null ;
     if (listable == null && !caze.hasField())
     {
-      rb = rd.remove  (  Cnst.RB_KEY );
-      if ( rb != null )
+      rb = rd.remove(Cnst.RB_KEY);
+      Set <String> sb = Synt.asTerms(rb);
+      if ( sb != null && !sb.isEmpty() )
       {
-        field(caze, Synt.asTerms(rb) );
+        field(caze,sb);
       }
     }
 
-    AssocCase uc = new AssocCase(caze);
-    uc.allow(this);
-    uc.parse( rd );
-
     // 以此绕开 AssocCase
     // 后续调试可正常观察
-    if (rb !=null)
-    {
-      rd.put(Cnst.RB_KEY, rb);
+    try {
+      AssocCase uc = new AssocCase(caze);
+      uc.allow(this);
+      uc.parse( rd );
+    } finally {
+      if (rb !=null)
+      {
+        rd.put(Cnst.RB_KEY, rb);
+      }
     }
   }
 
@@ -1003,12 +1007,14 @@ implements IEntity
             ic.removeAll(ec);
         }
 
-        for(String  fn : ic) {
-            Object[]  fa = af.get (fn);
-                      fn = (String   ) fa[0]; // 字段
+        for(String  kn : ic) {
+            Object[]  fa = af.get (kn);
+            String    fn = (String   ) fa[0]; // 字段
             String    ln = (String   ) fa[1]; // 别名
             FetchCase fc = (FetchCase) fa[2]; // 用例
-            fc.select(fn +" AS `"+ ln +"`" );
+            if (fn != null && ln != null) {
+                fc.select(fn + " AS `" + ln + "`");
+            }
 
             tc.add( fc.getName( ) );
         }
@@ -1019,28 +1025,28 @@ implements IEntity
     /**
      * 提取许可字段
      * @param caze  查询用例
-     * @param af    结果字段, 返回结构: { KEY: [COL, FetchCase]... }
+     * @param af    结果字段, 返回结构: { KEY: [FIELD, ALIAS, FetchCase]... }
      */
     protected final void allow(FetchCase caze, Map af) {
-        String name = Synt.defoult( caze.getName ( ), table.name, table.tableName);
-        allow( caze, table, caze, table, table.getAssocs(), name, null, null, af );
+        String name = Synt.defoult( caze.getName(), table.name, table.tableName);
+        allow( table, table, table.getAssocs( ), table.getParams( )
+             , caze, name, null , null, af );
     }
 
     /**
      * 递归提取字段
-     * @param caze  顶层查询用例
      * @param table 顶层模型库表
-     * @param caxe  当前查询用例
      * @param assoc 当前关联库表
      * @param ac    当前下级关联
+     * @param pc    当前层级参数
+     * @param caze  当前查询用例
      * @param tn    当前表名
      * @param qn    层级名称
      * @param pn    相对层级
-     * @param al    字段集合, 结构: {字段参数: [字段, 别名, 查询用例]}
+     * @param al    字段集合, 结构: {参数: [字段, 别名, 查询用例]}
      */
-    private void allow(FetchCase caze, Table table,
-                       FetchCase caxe, Table assoc,
-                       Map ac, String tn, String qn, String pn, Map al) {
+    private void allow(Table table, Table assoc, Map ac, Map pc,
+            FetchCase caze, String tn, String qn, String pn, Map al) {
         String tx, ax, az;
         tx = "`"+tn+"`." ;
 
@@ -1068,7 +1074,9 @@ implements IEntity
             az = pn + ".";
         }
 
-        try {
+        if (pc.containsKey( "fields" )) {
+            al.put(az+"*", new Object[] {null, null, caze});
+        } else try {
             Map fs = assoc.getFields( );
             for(Object n : fs.keySet()) {
                 String f = (String) n;
@@ -1077,47 +1085,55 @@ implements IEntity
                 f = tx +"`"+ f +"`"; // 字段完整名
                 l = az +/**/ l /**/; // 字段别名
                 k = ax +/**/ k /**/; // 外部键
-                al.put(k , new Object[]{f, l, caxe});
+                al.put(k , new Object[] {f, l, caze});
             }
+        } catch (HongsException e ) {
+            throw e.toExpedient(  );
         }
-        catch (HongsException ex) {
-            CoreLogger.error( ex);
+
+        if (ac == null || ac.isEmpty()) {
+            return;
         }
 
-        if (ac != null && !ac.isEmpty()) {
-            Iterator it = ac.entrySet().iterator(  );
-            while (it.hasNext()) {
-                Map.Entry et = (Map.Entry) it.next();
-                Map       tc = (Map) et.getValue(  );
-                String jn = (String) tc.get ("join");
+        Iterator it = ac.entrySet().iterator(  );
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry) it.next();
+            Map       tc = (Map) et.getValue(  );
+            String jn = (String) tc.get ("join");
 
-                // 不是 JOIN 的重置 pn, 层级名随之改变
-                if (!"INNER".equals(jn) && !"LEFT".equals(jn)
-                &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
-                    jn = null;
-                } else {
-                    jn =  pn ;
-                }
-
-                try {
-                    ac = (Map) tc.get("assocs");
-                    tn = (String) et.getKey(  );
-                    assoc = table.getAssocInst(tn);
-                    caxe  = table.getAssocCase(tn, caze);
-
-                    if (null == caxe || null == assoc) {
-                        CoreLogger.debug(Model.class.getName( )
-                            + ".allow: Can not get AssocCase or AssocInst for table "
-                            + table.db.name + ":" + table.name);
-                        continue;
-                    }
-
-                    allow(caze, table, caxe, assoc, ac, tn, qn, jn, al);
-                }
-                catch (HongsException ex) {
-                    CoreLogger.error( ex);
-                }
+            // 不是 JOIN 的重置 pn, 层级名随之改变
+            if (!"INNER".equals(jn) && !"LEFT".equals(jn)
+            &&  !"RIGHT".equals(jn) && !"FULL".equals(jn)) {
+                jn = null;
+            } else {
+                jn =  pn ;
             }
+
+            tn = (String) et.getKey(  );
+            ac = (Map) tc.get("assocs");
+            pc = (Map) tc.get("params");
+
+            // 获取真实的表名, 构建关联表实例
+            String rn;
+            rn = (String) tc.get("tableName");
+            if (rn == null || "".equals( rn )) {
+                rn = (String) tc.get ("name");
+            }
+
+            FetchCase caxe;
+            try {
+                assoc = table.db.getTable(rn);
+                caxe  = caze .   gotJoin (tn);
+            } catch (HongsException e ) {
+                throw e.toExpedient(  );
+            }
+            if (null == assoc) {
+                throw new HongsExpedient.Common(
+                    "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
+                );
+            }
+
+            allow(table, assoc, ac, pc, caxe, tn, qn, jn, al);
         }
     }
 

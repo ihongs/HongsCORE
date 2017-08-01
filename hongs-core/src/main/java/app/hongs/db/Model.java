@@ -970,7 +970,7 @@ implements IEntity
             fs.add(fn);
         }
 
-        for(String  fn : rb) {
+        for(String fn : rb) {
             if (fn.startsWith("-") ) {
                 fn = fn.substring(1);
                 xc = ec;

@@ -152,9 +152,7 @@ public class DBAction implements IAction, IActing {
      */
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
-        Model  ett = DB.getInstance(mod).getModel(ent);
-        new Mview(ett).getFields();
-        return ett;
+        return DB.getInstance(mod).getModel(ent);
     }
 
     /**

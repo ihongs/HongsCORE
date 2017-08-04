@@ -50,12 +50,9 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
-            if ("@".equals(name) || "id".equals(name)) {
-                continue;
-            }
-
-            if ( Synt.declare(info.get("statable"), false)
-            ||  !Synt.declare(info.get("siftable"), false)) {
+            if ("@".equals(name) || "id".equals(name)
+            ||  Synt.declare(info.get("statable"), false)
+            || !Synt.declare(info.get("siftable"), false)) {
                 continue;
             }
         %>
@@ -94,11 +91,9 @@
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
 
-            if ("@".equals(name) || "id".equals(name)) {
-                continue;
-            }
-            if (!Synt.declare(info.get("statable"), false)
-            ||  !Synt.declare(info.get("siftable"), false)) {
+            if ("@".equals(name) || "id".equals(name)
+            || !Synt.declare(info.get("statable"), false)
+            || !Synt.declare(info.get("siftable"), false)) {
                 continue;
             }
 
@@ -149,8 +144,6 @@
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                 <%
-                Set lsts = Synt.asTerms(Dict.getDepth(_fields, "@", "listable"));
-                Set srts = Synt.asTerms(Dict.getDepth(_fields, "@", "sortable"));
                 Iterator it = _fields.entrySet().iterator();
                 while (it.hasNext()) {
                     Map.Entry et = (Map.Entry) it.next();
@@ -159,21 +152,14 @@
                     String  type = (String) info.get("__type__");
                     String  text = (String) info.get("__text__");
 
-                    if ("@".equals(name) || "hidden".equals(type)) {
-                        continue;
-                    }
-
-                    if ( (lsts != null
-                    && !lsts.contains(name) )
+                    if ("@".equals(name) || "hidden".equals(type)
                     || !Synt.declare(info.get("listable"), false)) {
                         continue;
                     }
 
                     String ob = "";
                     String oc = "";
-                    if ( (srts != null
-                    &&  srts.contains(name) )
-                    ||  Synt.declare(info.get("sortable"), false)) {
+                    if (Synt.declare(info.get("sortable"), false)) {
                         ob = (String)info.get("data-ob" );
                         if (ob == null) {
                             ob = name;

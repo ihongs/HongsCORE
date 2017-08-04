@@ -184,21 +184,25 @@ public class Malleable {
      * @return
      */
     public Set<String> getCaseNames(String x) {
-        // 可在表参数区直接给出
-        Map<String, String> fps = getParams();
-        if (fps.containsKey(x)) {
-            return  Synt.toSet  ( fps.get(x));
-        }
+        Set fts;
 
-        Map<String, Map> fields = getFields();
-        Set<String> fns = new LinkedHashSet();
-        Set         fts ;
+        Map<String, Object> pvs = getParams();
+        if (pvs.containsKey(x)) {
+            // 检查是否根据类型识别
+            // 亦或提取全部字段名称
+            Object  o  =  pvs.get(x);
+            if (!"?".equals(o)) {
+            if (!"*".equals(o)) {
+                return Synt.toSet(o);
+            } else {
+                Set fns = getFields().keySet();
+                fns = new LinkedHashSet( fns );
+                fns.remove("@");
+                return   fns   ;
+            }}
 
-        // 检查是否阻止自动识别
-        // 专用类型无需特别设置
-        if (Synt.declare(fps.get("auto.bind." + x), false)) {
-            fts = getCaseTypes(x);
-        } else {
+            // 可在表参数区直接给出
+            // 专用类型无需特别设置
             fts = new HashSet ( );
             if ("findable".equals(x)) {
                 fts.add("search");
@@ -206,20 +210,24 @@ public class Malleable {
             if ("sortable".equals(x)) {
                 fts.add("sorted");
             }
+        } else {
+            fts = getCaseTypes(x);
         }
 
-        for(Map.Entry<String, Map> et: fields.entrySet()) {
+        Map<String, Map   > fcs = getFields();
+        Set<String> fns = new LinkedHashSet();
+        for(Map.Entry<String, Map> et: fcs.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
             if ("@".equals(fn)) {
                 continue; // 排除掉 @
             }
             if (field.containsKey(x)) {
-                if (Synt.declare( field.get(x), false ) ) {
+                if (Synt.declare(field.get(x), false ) ) {
                     fns.add(fn);
                 }
             } else {
-                if (fts.contains( field.get("__type__"))) {
+                if (fts.contains(field.get("__type__"))) {
                     fns.add(fn);
                 }
             }

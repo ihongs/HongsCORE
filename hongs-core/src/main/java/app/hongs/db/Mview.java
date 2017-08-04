@@ -178,12 +178,33 @@ public class Mview extends Model {
 
         fields = getForm( );
         if (fields == null) {
-            fields  =  new LinkedHashMap( );
+            fields  =  new  LinkedHashMap( );
         } else {
-            fields  =  new LinkedHashMap( fields );
+            fields  =  new  LinkedHashMap( fields );
         }
 
-        Map<String , Object> prms = (Map) fields.get("@");
+        Map<String, Object> params = (Map) fields.get ("@");
+        if (params == null) {
+            params = new HashMap();
+        }
+
+        //** 追加表以及关联的字段 **/
+
+        if (! Synt.declare(params.get("dont.append.fields"), false)) {
+            addTableFields();
+        }
+        if (! Synt.declare(params.get("dont.append.assocs"), false)) {
+            addAssocFields();
+        }
+
+        //** 预处理分类字段类型等 **/
+
+        Map cases = FormSet.getInstance( ).getEnum("__cases__");
+        Set names = fields.keySet( /***/ );
+        names = new LinkedHashSet( names );
+        names.remove("@");
+        Object able;
+
         Set<String> listColz = new LinkedHashSet();
         Set<String> sortColz = new LinkedHashSet();
         Set<String> findColz = new LinkedHashSet();
@@ -193,73 +214,60 @@ public class Mview extends Model {
         Set<String> findTypz = new HashSet();
         Set<String> siftTypz = new HashSet();
 
-        if (prms == null || ! Synt.declare(prms.get("auto.bind.listable"), true)) {
-            listTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("listable"));
-        }
-        if (prms == null || ! Synt.declare(prms.get("auto.bind.sortable"), true)) {
-            sortTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("sortable"));
-        }
-        if (prms == null || ! Synt.declare(prms.get("auto.bind.findable"), true)) {
-            findTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("findable"));
-        }
-        if (prms == null || ! Synt.declare(prms.get("auto.bind.siftable"), true)) {
-            siftTypz = Synt.toSet(FormSet.getInstance().getEnum("__cases__").get("siftable"));
+
+        able = params.get("listable");
+        if ("?".equals(able)) {
+            listTypz = Synt.toSet(cases.get("listable"));
+        } else
+        if ("*".equals(able)) {
+            listColz = names;
+        } else
+        {
+            listColz = Synt.toSet(able);
         }
 
-        // 排序、搜索等字段也可以直接在主字段给出
-        if (prms != null && prms.containsKey("listable")) {
-            listColz = Synt.toSet ( prms.get("listable"));
-            listTypz.clear();
-        }
-        if (prms != null && prms.containsKey("sortable")) {
-            sortColz = Synt.toSet ( prms.get("sortable"));
-            sortTypz.clear();
-        }
-        if (prms != null && prms.containsKey("findable")) {
-            findColz = Synt.toSet ( prms.get("findable"));
-            findTypz.clear();
-        }
-        if (prms != null && prms.containsKey("siftable")) {
-            siftColz = Synt.toSet ( prms.get("siftable"));
-            siftTypz.clear();
+        able = params.get("sortable");
+        if ("?".equals(able)) {
+            sortTypz = Synt.toSet(cases.get("sortable"));
+        } else
+        if ("*".equals(able)) {
+            sortColz = names;
+        } else
+        {
+            sortColz = Synt.toSet(able);
         }
 
-        if (null == prms || ! Synt.declare(prms.get("auto.append.fields"), true)) {
-            addTableFields();
-        }
-        if (null == prms || ! Synt.declare(prms.get("auto.append.assocs"), true)) {
-            addAssocFields();
-        }
-
-        // 检查字段, 为其添加搜索、排序、列举参数
-        chkFields(listTypz, sortTypz, findTypz, siftTypz, listColz, sortColz, findColz, siftColz);
-
-        if (!listColz.isEmpty()) {
-            listable = listColz.toArray(new String[]{});
-        }
-        if (!sortColz.isEmpty()) {
-            sortable = sortColz.toArray(new String[]{});
-        }
-        if (!findColz.isEmpty()) {
-            findable = findColz.toArray(new String[]{});
-        }
-        if (!siftColz.isEmpty()) {
-            siftable = siftColz.toArray(new String[]{});
+        able = params.get("findable");
+        if ("?".equals(able)) {
+            findTypz = Synt.toSet(cases.get("findable"));
+        } else
+        if ("*".equals(able)) {
+            findColz = names;
+        } else
+        {
+            findColz = Synt.toSet(able);
         }
 
-        return fields;
-    }
+        able = params.get("siftable");
+        if ("?".equals(able)) {
+            siftTypz = Synt.toSet(cases.get("siftable"));
+        } else
+        if ("*".equals(able)) {
+            siftColz = names;
+        } else
+        {
+            siftColz = Synt.toSet(able);
+        }
 
-    private void chkFields(
-            Set listTypz, Set sortTypz, Set findTypz, Set siftTypz,
-            Set listColz, Set sortColz, Set findColz, Set siftColz) {
+        //** 检查列举、排序等参数 **/
+
         for(Map.Entry<String, Map> ent
             : ( ( Map<String, Map> ) fields ).entrySet( )) {
             Map field = ent.getValue();
             String fn = ent.getKey(  );
-            String ft = Synt.declare(field.get("__type__"), "text");
+            String ft = Synt.declare(field.get("__type__"), "string");
 
-            // 表单信息字段需要排除
+            // 表单主体配置信息字段需排除掉
             if ("@".equals(fn)) {
                 continue;
             }
@@ -276,10 +284,10 @@ public class Mview extends Model {
             } else {
                 if (listTypz.contains(ft)) {
                     listColz.add(fn);
-//                  field.put("listable", "yes");
-//              } else
-//              if (listColz.contains(fn)) {
-//                  field.put("listable", "yes");
+                    field.put("listable", "yes");
+                } else
+                if (listColz.contains(fn)) {
+                    field.put("listable", "yes");
                 }
             }
 
@@ -290,10 +298,10 @@ public class Mview extends Model {
             } else {
                 if (sortTypz.contains(ft)) {
                     sortColz.add(fn);
-//                  field.put("sortable", "yes");
-//              } else
-//              if (sortColz.contains(fn)) {
-//                  field.put("sortable", "yes");
+                    field.put("sortable", "yes");
+                } else
+                if (sortColz.contains(fn)) {
+                    field.put("sortable", "yes");
                 }
             }
 
@@ -304,10 +312,10 @@ public class Mview extends Model {
             } else {
                 if (findTypz.contains(ft)) {
                     findColz.add(fn);
-//                  field.put("findable", "yes");
-//              } else
-//              if (findColz.contains(fn)) {
-//                  field.put("findable", "yes");
+                    field.put("findable", "yes");
+                } else
+                if (findColz.contains(fn)) {
+                    field.put("findable", "yes");
                 }
             }
 
@@ -318,13 +326,30 @@ public class Mview extends Model {
             } else {
                 if (siftTypz.contains(ft)) {
                     siftColz.add(fn);
-//                  field.put("siftable", "yes");
-//              } else
-//              if (siftColz.contains(fn)) {
-//                  field.put("siftable", "yes");
+                    field.put("siftable", "yes");
+                } else
+                if (siftColz.contains(fn)) {
+                    field.put("siftable", "yes");
                 }
             }
         }
+
+        //** 填充对应的模型属性值 **/
+
+        if (!listColz.isEmpty()) {
+            listable = listColz.toArray(new String[]{});
+        }
+        if (!sortColz.isEmpty()) {
+            sortable = sortColz.toArray(new String[]{});
+        }
+        if (!findColz.isEmpty()) {
+            findable = findColz.toArray(new String[]{});
+        }
+        if (!siftColz.isEmpty()) {
+            siftable = siftColz.toArray(new String[]{});
+        }
+
+        return fields;
     }
 
     private void addTableFields() throws HongsException {

@@ -6,6 +6,7 @@ import app.hongs.CoreLocale;
 import app.hongs.CoreSerial;
 import app.hongs.HongsException;
 import app.hongs.util.Data;
+import app.hongs.util.Synt;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -255,6 +256,10 @@ public class FormSet
       }
 
       text = text.trim();
+
+      if ("bool".equals(type)) {
+          return Synt.defoult(Synt.asBool(text), false);
+      }
 
       if ("list".equals(type)) {
         if (text.startsWith("[") && text.endsWith("]")) {

@@ -292,29 +292,24 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 一个 xxx.form.xml 配置文件由 form,field,param,enum,value 这些节点组成, 结构类似于 Protobuf, form 类似 Protobuf 的 message. field 有 required/repeated 对应 Protobuf message 下条目的 required/optional/repeated; type 对应条目的类型, 只是更贴近HTML控件和数据库字段类型.
 
-其中 field 的 param 设置中, 可用于控制查询及布局的参数有:
+其中 field 的 param 设置中, 可用于控制布局和查询的参数有:
 
-    listable        字段可获取(可通过rb参数控制)
-    sortable        字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
-    findable        字段可搜索(可通过wd参数限制)
-    siftable        字段可过滤
-    unstored        不保存原文(可查询或排序, 但不可以读取, 仅针对 Lucene 特有)
+    listable           字段可获取(可通过rb参数控制)
+    sortable           字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
+    findable           字段可搜索(可通过wd参数限制)
+    siftable           字段可过滤
+    unstored           不保存原文(可查询或排序, 但不可以读取, 仅针对 Lucene 特有)
 
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
-    auto.bind.listable 告知 Mview 和 Malleable 不要自动将字段设为可列举
-    auto.bind.sortable 告知 Mview 和 Malleable 不要自动将字段设为可排序
-    auto.bind.findable 告知 Mview 和 Malleable 不要自动将字段设为可搜索
-    auto.bind.siftable 告知 Mview 和 Malleable 不要自动将字段设为可过滤
-    auto.append.fields 告知 Mview 不要自动追加表内字段
-    auto.append.assocs 告知 Mview 不要自动追加关联字段
+    xxxxable           如同 field 中的同名参数, 但值为字段名称列表, * 表全部字段, ? 按类型判别
+    dont.append.fields 告知 Mview 自动追加表内字段
+    dont.append.assocs 告知 Mview 自动追加关联字段
     hide.create.button 告知视图不要显示创建按钮
     hide.update.button 告知视图不要显示修改按钮
     hide.delete.button 告知视图不要显示删除按钮
     hide.checks.column 告知视图不要显示选择列
     deny.call.ACTION_HANDLE 告知 DBAction 等"脚手架"处理器拒绝处理某些操作, 也可以通过权限控制
-
-对于 auto.bind,auto.append 部分, Mview 中默认为 true.
 
 另, 每个枚举(enum)可以有一个 code="\*" 的取值, 该取值用作"其他"选项, 当出现枚举中没有记录的值时, 将显示为"其他".
 

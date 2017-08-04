@@ -170,13 +170,16 @@ public class Form extends Model {
                 }
             }
 
-            // 增加表配置项
+            // 增加表配置项, 默认自动判别列举、排序、筛选字段
             if (top == null) {
                 top  = new HashMap();
             }
             flds.add(0, top);
             top.put("__name__", "@" );
             top.put("__text__", name);
+            top.put("listable", "?" );
+            top.put("sortable", "?" );
+            top.put("siftable", "?" );
 
             // 增加编号字段
             top = new HashMap( );

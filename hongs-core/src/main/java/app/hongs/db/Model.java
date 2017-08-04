@@ -3,7 +3,6 @@ package app.hongs.db;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
-import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.HongsExpedient;
 import app.hongs.db.util.FetchCase;
@@ -108,14 +107,15 @@ implements IEntity
     this.table = table;
     this.db = table.db;
 
+    Map  ps = table.getParams();
     String cs;
-    cs = table.getField("listable");
+    cs = (String) ps.get("listable");
     if (cs != null) this.listable = cs.split(",");
-    cs = table.getField("sortable");
+    cs = (String) ps.get("sortable");
     if (cs != null) this.sortable = cs.split(",");
-    cs = table.getField("findable");
+    cs = (String) ps.get("findable");
     if (cs != null) this.findable = cs.split(",");
-    cs = table.getField("siftable");
+    cs = (String) ps.get("siftable");
     if (cs != null) this.siftable = cs.split(",");
   }
 
@@ -1074,8 +1074,10 @@ implements IEntity
             az = pn + ".";
         }
 
-        if (pc.containsKey( "fields" )) {
-            al.put(az+"*", new Object[] {null, null, caze});
+        if (pc != null && pc.containsKey( "fields" )) {
+            al.put(az+"*", new Object[] {
+                null, null, caze
+            });
         } else try {
             Map fs = assoc.getFields( );
             for(Object n : fs.keySet()) {

@@ -222,11 +222,12 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
     }
 
     if (tip) {
-        tip =    tip.hsOpen(url, undefined, pickOpen);
-        tip.data( "rel", btn.closest(".openbox")[0] );
+        tip =  tip  .hsOpen(url);
     } else {
-        tip = jQuery.hsOpen(url, undefined, pickOpen);
+        tip = jQuery.hsOpen(url);
     }
+    pickOpen.call ( tip );
+    tip.data("rel", btn.closest(".openbox")[0]);
 
     return tip;
 };

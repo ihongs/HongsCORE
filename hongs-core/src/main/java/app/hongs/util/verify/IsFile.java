@@ -95,9 +95,9 @@ public class IsFile extends Rule {
         x = (String) params.get("href");
         if (x != null) hlpr.setUploadHref(x);
         y = (String[]) Synt.toArray(params.get("type"));
-        if (x != null) hlpr.setAllowTypes(y);
+        if (y != null) hlpr.setAllowTypes(y);
         y = (String[]) Synt.toArray(params.get("extn"));
-        if (x != null) hlpr.setAllowExtns(y);
+        if (y != null) hlpr.setAllowExtns(y);
 
         if (value instanceof Part) {
             hlpr.upload((Part) value);

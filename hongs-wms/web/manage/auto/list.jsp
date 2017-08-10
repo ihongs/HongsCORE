@@ -51,22 +51,29 @@
             String  text = (String) info.get("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            ||  Synt.declare(info.get("statable"), false)
             || !Synt.declare(info.get("siftable"), false)) {
                 continue;
             }
         %>
         <div class="form-group form-group-sm row">
-            <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
+            <label class="col-sm-3 form-control-static control-label text-right" style="color:#eee;"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select name="<%=name%>" class="form-control"></select>
-            <%} else if ("number".equals(type)) {%>
-                <input type="number" class="form-control" name="<%=name%>"/>
-            <%} else if ("date"  .equals(type)) {%>
-                <input type="date"   class="form-control" name="<%=name%>"/>
+                <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
+            <%} else if ("number".equals(type) || "range".equals(type)) {%>
+                <div class="input-group">
+                    <input type="number"    class="form-control" name="ar.0.<%=name%>!ge"/>
+                    <span class="input-group-addon input-sm">~</span>
+                    <input type="number"    class="form-control" name="ar.0.<%=name%>!le"/>
+                </div>
+            <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
+                <div class="input-group">
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge"/>
+                    <span class="input-group-addon input-sm">~</span>
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le"/>
+                </div>
             <%} else {%>
-                <input type="text"   class="form-control" name="<%=name%>"/>
+                <input type="text" class="form-control" name="ar.0.<%=name%>"/>
             <%} /*End If */%>
             </div>
         </div>
@@ -79,7 +86,7 @@
             </div>
         </div>
     </form>
-    <!-- 报表 -->
+    <!-- 统计 -->
     <form class="findbox statbox invisible row bg-info" style="margin-left: 0; margin-right: 0">
         <div class="clearfix" style="padding: 5px;">
         <%
@@ -92,8 +99,7 @@
             String  text = (String) info.get("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            || !Synt.declare(info.get("statable"), false)
-            || !Synt.declare(info.get("siftable"), false)) {
+            || !Synt.declare(info.get("statable"), false)) {
                 continue;
             }
 
@@ -232,7 +238,14 @@
 
     filtbox.hsForm({
         loadUrl : "<%=_module%>/<%=_entity%>/search.act?md=0",
-        fillInfo: function() {}
+        fillInfo: function() { },
+        _fill__enum: function(td, v, n, t) {
+            if ("enum" != t) {
+                return v;
+            }
+            n  = n.replace(/^ar\.0\./, "");
+            return this._enum[n];
+        }
     });
 
     context.find(".export").click(function() {
@@ -321,7 +334,7 @@
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "") continue;
+            if (v[0] == "" || v[2] == 0) continue;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ", "+ v[3] +")" );
             check = $('<input type="checkbox" class="checkone2"/>')
@@ -346,7 +359,7 @@
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "") continue;
+            if (v[0] == "" || v[2] == 0) continue;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
@@ -365,6 +378,7 @@
         var pData = [];
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
+            if (v[0] == "" || v[2] == 0) continue;
             xData.push(v[1]);
             bData.push(v[2]);
             pData.push({
@@ -449,6 +463,7 @@
         var pData2 = []; // Sum
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
+            if (v[0] == "" || v[2] == 0) continue;
             xData.push(v[1]);
             bData1.push(v[2]);
             bData2.push(v[3]);

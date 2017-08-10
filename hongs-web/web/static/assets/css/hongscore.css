@@ -164,25 +164,23 @@ legend {
     margin: 0 0.5em;
 }
 
-#headbox li.active  a {
-    font-weight: bolder;
-}
-#headbox li.headico a {
-    padding-left : 0;
-    padding-right: 0;
-}
-#headbox span.headimg {
-    width: 32px;
+#headbox .uhead {
+    width : 32px;
     height: 32px;
-    border-radius: 32px;
-    margin-top: -6px;
+    margin-top   : -6px;
     margin-bottom: -9px;
+    border-radius: 32px;
     display: inline-block;
     background-position: center;
     background-repeat: no-repeat;
 }
+#headbox .badge {
+    margin-top  : -32px;
+    margin-left : -8px;
+    margin-right: -8px;
+}
 
-#footbox.navbar  {
+#footbox.navbar {
     margin-top: 0;
     margin-bottom: 0;
     min-height: 40px;

@@ -62,10 +62,10 @@
     ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
 
     NaviMap curr = NaviMap.getInstance("manage");
-    List    menu = curr.getMenuTranslates(1 , 2);
+    List    menu = curr.getMenuTranslated(1 , 2);
 
     String  acti = helper.getParameter("active");
-    String  user = (String) helper.getSessibute("uname");
+    String  name = (String) helper.getSessibute("uname");
     String  head = (String) helper.getSessibute("uhead");
 
     if (head != null && !"".equals(head)) {
@@ -101,22 +101,16 @@
         <%=makeMenu(menu, acti)%>
     </ul>
     <ul class="nav navbar-nav navbar-right" id="user-menubar">
-        <li class="headico">
-            <a href="javascript:;">
-                <span class="headimg" style="background-image:url(<%=head%>);"></span>
-            </a>
-        </li>
         <li class="dropdown">
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                <%if (user != null) {%>
-                <span><%=user%></span>
-                <%} /* End If */%>
+                <span class="uhead" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
                 <span class="badge"></span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
                 <li><a href="javascript:;" id="note-msg"><%=CoreLocale.getInstance().translate("fore.notify")%></a></li>
                 <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
+                <li role="separator" class="divider"></li>
                 <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
             </ul>
         </li>

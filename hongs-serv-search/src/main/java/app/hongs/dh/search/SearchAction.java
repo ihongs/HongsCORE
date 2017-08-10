@@ -45,7 +45,7 @@ public class SearchAction extends LuceneAction {
     }
 
     @Action("search")
-    @Preset(conf="", envm="")
+    @Preset(conf="", form="")
     @Select(conf="", form="")
     @Spread(conf="", form="")
     @Override

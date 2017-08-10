@@ -829,7 +829,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             }
 
             IQuery aq;
-            String t = getTypeMutant(m);
+            String t = datatype(m);
             if (   "int".equals(t)) {
                 aq = new IntQuery();
             } else
@@ -966,7 +966,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             }
 
             SortField.Type st;
-            String t = getTypeMutant(m);
+            String t = datatype(m);
             if (   "int".equals(t)) {
                 st = SortField.Type.INT;
             } else
@@ -1010,7 +1010,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     //** 底层工具 **/
 
     /**
-     * 写入分析器
+     * 存储分析器
      * @return
      * @throws HongsException
      */
@@ -1020,24 +1020,23 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         Analyzer ad = new StandardAnalyzer();
         for(Object ot : fields.entrySet( ) ) {
             Map.Entry et = (Map.Entry) ot;
-            Map    fc = (Map ) et.getValue();
-            String fn = (String) et.getKey();
-            String ft =  getTypeMutant(fc);
-            if ("search".equals( ft )) {
-                az.put(fn, getAnalyzer(fc, false));
+            Map    m = (Map ) et.getValue( );
+            String n = (String) et.getKey( );
+            String t = datatype(m);
+            if ("search".equals(t)) {
+                az.put(n, getAnalyzer(m));
             }
         }
         return new PerFieldAnalyzerWrapper(ad, az);
     }
 
     /**
-     * 构建分析器
+     * 存储分析器
      * @param fc 字段配置
-     * @param iq 是否查询
      * @return
      * @throws HongsException
      */
-    protected Analyzer getAnalyzer(Map fc, boolean iq) throws HongsException {
+    protected Analyzer getAnalyzer(Map fc) throws HongsException {
         try {
             CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
             String kn, an, ac; Map oc;
@@ -1062,71 +1061,38 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             for(Object ot2 : fc.entrySet()) {
                 Map.Entry et2 = (Map.Entry) ot2;
                 kn = (String) et2.getKey();
-                if (iq) {
-                    if (kn.startsWith("lucene-find-filter")) {
-                        an = (String) et2.getValue();
-                        an = an.trim();
-                        if ("".equals(an)) {
-                            continue;
-                        }
-                        int p  = an.indexOf('{');
-                        if (p != -1) {
-                            ac = an.substring(p);
-                            an = an.substring(0, p - 1).trim();
-                            oc = Synt.asMap(Data.toObject(ac));
-                            cb.addCharFilter(an, oc);
-                        } else {
-                            cb.addCharFilter(an/**/);
-                        }
-                    } else
-                    if (kn.startsWith("lucene-query-filter")) {
-                        an = (String) et2.getValue();
-                        an = an.trim();
-                        if ("".equals(an)) {
-                            continue;
-                        }
-                        int p  = an.indexOf('{');
-                        if (p != -1) {
-                            ac = an.substring(p);
-                            an = an.substring(0, p - 1).trim();
-                            oc = Synt.asMap(Data.toObject(ac));
-                            cb.addTokenFilter(an, oc);
-                        } else {
-                            cb.addTokenFilter(an/**/);
-                        }
+
+                // 存储参数为 char,token
+                if (kn.startsWith("lucene-char-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
                     }
-                } else {
-                    if (kn.startsWith("lucene-char-filter")) {
-                        an = (String) et2.getValue();
-                        an = an.trim();
-                        if ("".equals(an)) {
-                            continue;
-                        }
-                        int p  = an.indexOf('{');
-                        if (p != -1) {
-                            ac = an.substring(p);
-                            an = an.substring(0, p - 1).trim();
-                            oc = Synt.asMap(Data.toObject(ac));
-                            cb.addCharFilter(an, oc);
-                        } else {
-                            cb.addCharFilter(an/**/);
-                        }
-                    } else
-                    if (kn.startsWith("lucene-token-filter")) {
-                        an = (String) et2.getValue();
-                        an = an.trim();
-                        if ("".equals(an)) {
-                            continue;
-                        }
-                        int p  = an.indexOf('{');
-                        if (p != -1) {
-                            ac = an.substring(p);
-                            an = an.substring(0, p - 1).trim();
-                            oc = Synt.asMap(Data.toObject(ac));
-                            cb.addTokenFilter(an, oc);
-                        } else {
-                            cb.addTokenFilter(an/**/);
-                        }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addCharFilter(an, oc);
+                    } else {
+                        cb.addCharFilter(an/**/);
+                    }
+                } else
+                if (kn.startsWith("lucene-token-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addTokenFilter(an, oc);
+                    } else {
+                        cb.addTokenFilter(an/**/);
                     }
                 }
             }
@@ -1140,23 +1106,78 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     }
 
     /**
-     * 获取时间格式
-     * @param fc
+     * 查询分析器
+     * @param fc 字段配置
      * @return
+     * @throws HongsException
      */
-    protected DateFormat getDateFormat(Map fc) {
-        String  fm = Synt.declare(fc.get( "format" ), "");
-        if ( "".equals(fm)) {
-                fm = Synt.declare(fc.get("__type__"), "datetime");
-                fm = CoreLocale.getInstance()
-                     .getProperty("core.default."+ fm +".format");
-            if (fm == null) {
-                fm = "yyyy/MM/dd HH:mm:ss";
+    protected Analyzer getAnalyser(Map fc) throws HongsException {
+        try {
+            CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
+            String kn, an, ac; Map oc;
+
+            // 分词器
+            an = Synt.declare(fc.get("lucene-tokenizer"), "");
+            if (!"".equals(an)) {
+                int p  = an.indexOf('{');
+                if (p != -1) {
+                    ac = an.substring(p);
+                    an = an.substring(0, p - 1).trim();
+                    oc = Synt.asMap(Data.toObject(ac));
+                    cb.withTokenizer(an, oc);
+                } else {
+                    cb.withTokenizer(an/**/);
+                }
+            } else {
+                cb.withTokenizer("Standard");
             }
+
+            // 过滤器
+            for(Object ot2 : fc.entrySet()) {
+                Map.Entry et2 = (Map.Entry) ot2;
+                kn = (String) et2.getKey();
+
+                // 查询参数为 find,query
+                if (kn.startsWith("lucene-find-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addCharFilter(an, oc);
+                    } else {
+                        cb.addCharFilter(an/**/);
+                    }
+                } else
+                if (kn.startsWith("lucene-query-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addTokenFilter(an, oc);
+                    } else {
+                        cb.addTokenFilter(an/**/);
+                    }
+                }
+            }
+
+            return cb.build();
+        } catch ( IOException ex) {
+            throw new HongsException.Common(ex);
+        } catch ( IllegalArgumentException  ex) {
+            throw new HongsException.Common(ex);
         }
-        SimpleDateFormat fd = new SimpleDateFormat(fm);
-        fd.setTimeZone(Core.getTimezone());
-        return  fd;
     }
 
     /**
@@ -1173,7 +1194,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      * @param fc 字段配置
      * @return
      */
-    protected String getTypeMutant(Map fc) {
+    protected String datatype(Map fc) {
         String t = Synt.asString(fc.get("lucene-type"));
         if (null != t) {
             if (t.equals("text")) {
@@ -1287,9 +1308,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             }
 
             IValue  v ;
-            Object  u ;
+            String  t = datatype(m);
             boolean r = repeated(m);
-            String  t = getTypeMutant(m);
             IndexableField[] fs = doc.getFields(k);
 
             if ("sorted".equals(t)) {
@@ -1297,29 +1317,18 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             } else
             if (  "date".equals(t)) {
                 // 时间戳转 Date 对象时需要乘以 1000
-                String typ = Synt.declare(m.get("type"), "");
-                int    mul = "datestamp".equals( typ  )
-                          || "timestamp".equals( typ  )
-                           ? 1000 : 1;
-
+                String  y = Synt.declare(m.get("type"), "");
                 if (OBJECT_MODE) {
-                    if ("time".equals(typ) || "timestamp".equals(typ)) {
-                        v = new NumberValue();
-                        u =  0  ;
+                    if ("time".equals(y) || "timestamp".equals(y)) {
+                        v = new NumberValue( );
                     } else {
-                        v = new DatimeValue();
-                        u = null;
-                        ((DatimeValue) v).mul = mul;
+                        v = new DatimeValue(m);
                     }
                 } else {
-                    if ("time".equals(typ) || "timestamp".equals(typ)) {
-                        v = new NumeraValue();
-                        u = "0" ;
+                    if ("time".equals(y) || "timestamp".equals(y)) {
+                        v = new NumeraValue( );
                     } else {
-                        v = new DatextValue();
-                        u =  "" ;
-                        ((DatextValue) v).mul = mul;
-                        ((DatextValue) v).sdf = getDateFormat(m);
+                        v = new DatextValue(m);
                     }
                 }
             } else
@@ -1330,19 +1339,15 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             ||  "number".equals(t)) {
                 if (OBJECT_MODE) {
                     v = new NumberValue();
-                    u =  0 ;
                 } else {
                     v = new NumeraValue();
-                    u = "0";
                 }
             } else
             if ("object".equals(t)) {
                 v = new ObjectValue();
-                u = new HashMap( );
             } else
             {
                 v = new StringValue();
-                u = "";
             }
 
             if (r) {
@@ -1357,7 +1362,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                 if (fs.length > 0) {
                     map.put(k , v.get( fs[0] ) );
                 } else {
-                    map.put(k , u);
+                    map.put(k , null);
                 }
             }
         }
@@ -1377,12 +1382,12 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             }
 
             IField  f ;
+            String  t = datatype(m);
             boolean s = sortable(m);
             boolean q = siftable(m);
             boolean u = unstored(m);
             boolean r = repeated(m);
             boolean g = true; // 是否要存储, 数值类型过滤与存储是分离的, 故其等同于 !unstored
-            String  t = getTypeMutant(m);
 
             /**
              * 日期和排序均是长整型
@@ -1537,7 +1542,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             Map<String, Map> fields = getFields( );
             Map         fc = ( Map ) fields.get(k);
             SearchQuery sq = ( SearchQuery ) q;
-            sq.analyzer(getAnalyzer(fc,true) );
+            sq.analyzer(getAnalyzer( fc ));
 
             // 额外的一些细微配置
             sq.phraseSlop (Synt.asInt  (fc.get("lucene-parser-phraseSlop" )));
@@ -1657,7 +1662,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                 x = null; g = false;
             }
 
-            if (n != null || x != null) {
+            if ((n != null && ! "".equals(n))
+            ||  (x != null && ! "".equals(x)) ) {
                 qry.add(q.get(k, n, x, l, g), BooleanClause.Occur.MUST);
             }
         }
@@ -1796,11 +1802,11 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
         /**
          * 获取命中总数
-         * 注意:
-         * 初始化时 l 参数为 0 (即获取全部命中)
-         * 则在全部循环完后获取到的数值才是对的
-         * 但其实此时完全可以直接计算循环的次数
-         * 此方法主要用于分页时获取查询命中总量
+ 注意:
+ 初始化时 y 参数为 0 (即获取全部命中)
+ 则在全部循环完后获取到的数值才是对的
+ 但其实此时完全可以直接计算循环的次数
+ 此方法主要用于分页时获取查询命中总量
          * @return
          */
         public int size() {

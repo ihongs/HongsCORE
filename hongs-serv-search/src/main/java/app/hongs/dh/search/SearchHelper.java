@@ -453,6 +453,7 @@ public class SearchHelper {
             for (Map.Entry<Minmax, Cntsum> e : et.getValue()) {
                 Cntsum c = e.getValue( );
                 Minmax m = e.getKey(   );
+//              if (c.cnt == 0) continue; // 数值统计都是外部指定的区间, 故不能去掉空值
                 String k = m != null ? m.toString() : null;
                 a.add(new Object[] {
                     k, null, c.cnt, c.sum ,
@@ -570,24 +571,24 @@ public class SearchHelper {
     private static class Cntsum {
         public int    cnt = 0;
         public double sum = 0;
-        public double min = Double.MIN_VALUE;
-        public double max = Double.MAX_VALUE;
+        public double min = Double.NEGATIVE_INFINITY;
+        public double max = Double.POSITIVE_INFINITY;
 
         public void add(double v) {
             cnt += 1;
             sum += v;
-            if (min > v || min == Double.MIN_VALUE) {
+            if (min > v || min == Double.NEGATIVE_INFINITY) {
                 min = v;
             }
-            if (max < v || max == Double.MAX_VALUE) {
+            if (max < v || max == Double.POSITIVE_INFINITY) {
                 max = v;
             }
         }
     }
 
     private static class Minmax {
-        public double min = Double.MIN_VALUE;
-        public double max = Double.MAX_VALUE;
+        public double min = Double.NEGATIVE_INFINITY;
+        public double max = Double.POSITIVE_INFINITY;
         public boolean le = true;
         public boolean ge = true;
 
@@ -613,16 +614,15 @@ public class SearchHelper {
         @Override
         public String toString() {
             // 不限则为空
-            if (le && ge
-            && min == Double.MIN_VALUE
-            && max == Double.MAX_VALUE) {
+            if (le && min == Double.NEGATIVE_INFINITY
+            &&  ge && max == Double.POSITIVE_INFINITY) {
                 return "";
             }
             StringBuilder sb = new StringBuilder();
             sb.append(le ? "[" : "(");
-            sb.append(min != Double.MIN_VALUE ? Tool.toNumStr(min) : "");
+            sb.append(min != Double.NEGATIVE_INFINITY ? Tool.toNumStr(min) : "");
             sb.append(",");
-            sb.append(max != Double.MAX_VALUE ? Tool.toNumStr(max) : "");
+            sb.append(max != Double.POSITIVE_INFINITY ? Tool.toNumStr(max) : "");
             sb.append(ge ? "]" : ")");
             return sb.toString();
         }
@@ -658,8 +658,8 @@ public class SearchHelper {
 
         public boolean covers() {
             return le && ge
-            && min == Double.MIN_VALUE
-            && max == Double.MAX_VALUE;
+            && min == Double.NEGATIVE_INFINITY
+            && max == Double.POSITIVE_INFINITY;
         }
     }
 

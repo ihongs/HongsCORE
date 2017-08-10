@@ -464,6 +464,16 @@ public class AssocCase {
                     if (rv == null) continue ;
                     String rn = el.getValue();
 
+                    // 区间边界为空串表示无限
+                    if (Cnst.GT_REL.equals(rl)
+                    ||  Cnst.GE_REL.equals(rl)
+                    ||  Cnst.LT_REL.equals(rl)
+                    ||  Cnst.LE_REL.equals(rl)) {
+                        if ("".equals(rv)) {
+                            continue;
+                        }
+                    }
+
                     if (Cnst.IN_REL.equals(rl)
                     ||  Cnst.NI_REL.equals(rl)) {
                         caze.filter(fn+" "+rn+" (?)", rv);

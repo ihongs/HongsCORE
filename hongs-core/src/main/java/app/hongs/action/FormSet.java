@@ -257,8 +257,26 @@ public class FormSet
 
       text = text.trim();
 
-      if ("bool".equals(type)) {
-          return Synt.defoult(Synt.asBool(text), false);
+      if (   "int".equals(type)) {
+          return Synt.defoult(Synt.asInt   (text), false);
+      }
+      if (  "long".equals(type)) {
+          return Synt.defoult(Synt.asLong  (text), false);
+      }
+      if ( "float".equals(type)) {
+          return Synt.defoult(Synt.asFloat (text), false);
+      }
+      if ("double".equals(type)) {
+          return Synt.defoult(Synt.asDouble(text), false);
+      }
+      if ( "short".equals(type)) {
+          return Synt.defoult(Synt.asShort (text), false);
+      }
+      if (  "byte".equals(type)) {
+          return Synt.defoult(Synt.asByte  (text), false);
+      }
+      if (  "bool".equals(type)) {
+          return Synt.defoult(Synt.asBool  (text), false);
       }
 
       if ("list".equals(type)) {

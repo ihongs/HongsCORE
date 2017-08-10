@@ -380,7 +380,7 @@ public class CmdletHelper
     t = System.currentTimeMillis() - t;
     float  left1 = t / scale * 100 - t;
     String left2 = Tool.humanTime((long) left1);
-    String left3 = String.format("Ok(%d) TL: %s",
+    String left3 = String.format("Ok(%d) ETA: %s",
                                      ok, left2);
     CmdletHelper.progres(left3, scale);
   }
@@ -398,7 +398,7 @@ public class CmdletHelper
     t = System.currentTimeMillis() - t;
     float  left1 = t / scale * 100 - t;
     String left2 = Tool.humanTime((long) left1);
-    String left3 = String.format("Ok(%d) Er(%d) TL: %s",
+    String left3 = String.format("Ok(%d) Er(%d) ETA: %s",
                                  ok, er, left2);
     CmdletHelper.progres(left3, scale);
   }

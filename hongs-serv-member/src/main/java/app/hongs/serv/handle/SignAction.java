@@ -26,7 +26,7 @@ public class SignAction extends app.hongs.serv.manage.SignAction {
      * @throws app.hongs.HongsException
      */
     @Action("user/create")
-    @Preset(conf="member", envm="mine")
+    @Preset(conf="member", form="mine")
     @Verify(conf="member", form="mine")
     public void userCreate(ActionHelper ah) throws HongsException {
         Map  rd = ah.getRequestData();

@@ -8,12 +8,25 @@
         <field name="captcode" required="yes" rule="Capts">
         </field>
     </form>
+    <form name="user">
+        <field name="password">
+            <param name="defiant"></param>
+        </field>
+        <field name="head" rule="Thumb">
+            <param name="href">public/upload/member/head</param>
+            <param name="path">public/upload/member/head</param>
+            <param name="thumb-extn">png</param>
+            <param name="thumb-mode">pick</param>
+            <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
+        </field>
+    </form>
     <form name="mine">
         <field name="username" required="yes">
         </field>
-        <field name="password" required="yes">
+        <field name="passolde" required="yes">
         </field>
-        <field name="passolde">
+        <field name="password">
+            <param name="defiant"></param>
         </field>
         <field name="name" required="yes">
         </field>
@@ -25,23 +38,7 @@
             <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
         </field>
     </form>
-    <enum name="mine:preset">
-        <value code=":defense">
-            <![CDATA[{
-                "id": ($session.uid)
-            }]]>
-        </value>
+    <enum name="mine:defense">
+        <value code="id">($session.uid)</value>
     </enum>
-    <form name="user">
-        <field name="head" rule="Thumb">
-            <param name="href">public/upload/member/head</param>
-            <param name="path">public/upload/member/head</param>
-            <param name="thumb-extn">png</param>
-            <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
-        </field>
-        <field name="password">
-            <param name="defiant"></param>
-        </field>
-    </form>
 </root>

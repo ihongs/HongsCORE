@@ -86,7 +86,7 @@ public class DataAction extends SearchAction {
      * @throws HongsException
      */
     @Action("save")
-    @Preset(conf="", envm="", used={":defence", ":create"})
+    @Preset(conf="", form="", deft={":create"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void save(ActionHelper helper) throws HongsException {
@@ -140,7 +140,7 @@ public class DataAction extends SearchAction {
     }
 
     @Action("stream")
-    @Preset(conf="", envm="")
+    @Preset(conf="", form="")
     @CustomReplies
     public void export(ActionHelper helper) throws HongsException, IOException {
         Data    sr = (Data) getEntity(helper);

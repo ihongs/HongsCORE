@@ -15,155 +15,198 @@ import java.util.regex.Pattern;
  */
 public class PresetHelper {
 
-    private final Map<String, Object> data;
-    private final Pattern INJ_PAT = Pattern.compile("\\(\\$(request|context|session|cookies)\\.([a-zA-Z0-9_]+)(?:\\.([a-zA-Z0-9_\\.]+))?\\)");
+    private final Pattern INJ_PAT = Pattern.compile("\\(\\$(request|context|session|cookies|mapping)\\.([a-zA-Z0-9_]+)(?:\\.([a-zA-Z0-9_\\.]+))?\\)");
+    private final Map<String, Object> defenseData;
+    private final Map<String, Object> defaultData;
 
     public PresetHelper() {
-        data = new LinkedHashMap();
+        defenseData = new LinkedHashMap();
+        defaultData = new LinkedHashMap();
     }
 
-    public PresetHelper addItem(String code, Object info) {
-        data.put(code, info);
+    public PresetHelper addDefenseData(String code, Object data) {
+        defenseData.put(code, data);
         return this;
     }
 
-    public PresetHelper addItemsByEnum(Map<String, Object> envm) {
-        data.putAll(envm);
+    public PresetHelper addDefaultData(String code, Object data) {
+        defaultData.put(code, data);
         return this;
     }
 
-    public PresetHelper addItemsByEnum(String conf, String name) throws HongsException {
-        Map envm = FormSet.getInstance(conf).getEnum(name);
-        return addItemsByEnum(envm);
+    public PresetHelper addDefenseData(Map<String, Object> data) {
+        defenseData.putAll(data);
+        return this;
     }
 
-    public PresetHelper addItemsByForm(String conf, String name) throws HongsException {
-        name += ":preset";
-        Map envm = FormSet.getInstance(conf).getEnum(name);
-        return addItemsByEnum(envm);
+    public PresetHelper addDefaultData(Map<String, Object> data) {
+        defaultData.putAll(data);
+        return this;
+    }
+
+    public PresetHelper addDefenseData(FormSet form, String... used)
+    throws HongsException {
+        for(String usen : used) {
+            Map data  = form.getEnum(usen);
+            if (data != null) {
+                addDefenseData( data );
+            }
+        }
+        return this;
+    }
+
+    public PresetHelper addDefaultData(FormSet form, String... used)
+    throws HongsException {
+        for(String usen : used) {
+            Map data  = form.getEnum(usen);
+            if (data != null) {
+                addDefaultData( data );
+            }
+        }
+        return this;
     }
 
     /**
-     * 预置数据
-     * 注意: 内部会 insert:default 和 inject:defense
-     * @param helper
-     * @param reqd
-     * @param used
+     * 以表单配置追加预设值
+     * 注意:
+     *  deft,defs 中以 :,! 打头会把 name 作为前缀,
+     *  name=abc,deft=:xyz 会取配置的枚举 abc:xyz,
+     *  ! 用于外部默认参数
+     * @param conf
+     * @param name
+     * @param deft 默认值
+     * @param defs 防御值
+     * @return
      * @throws HongsException
      */
-    public void preset(ActionHelper helper, Map reqd, String... used) throws HongsException {
-        insert(helper, reqd, used);
-        insert(helper, reqd, ":default");
-        inject(helper, reqd, ":defense");
+    public PresetHelper addItemsByForm(String conf, String name, String[] deft, String[] defs)
+    throws HongsException {
+        FormSet form = FormSet.getInstance(conf);
+
+        addDefenseData(form , name , ":defense");
+        addDefaultData(form , name , ":default");
+
+        for (String usen : deft) {
+            if (name != null
+            && (usen.startsWith( ":" )
+            ||  usen.startsWith( "!" ))) {
+                usen  = name  +  usen ;
+            }
+            addDefenseData(form, usen);
+        }
+
+        for (String usen : deft) {
+            if (name != null
+            && (usen.startsWith( ":" )
+            ||  usen.startsWith( "!" ))) {
+                usen  = name  +  usen ;
+            }
+            addDefaultData(form, usen);
+        }
+
+        return this;
     }
 
-    /**
-     * 强制写入, 不管目标是否存在
-     * @param helper
-     * @param reqd
-     * @param used
-     * @throws HongsException
-     */
-    public void inject(ActionHelper helper, Map reqd, String... used) throws HongsException {
-        for(String k : used) {
-            Object v = data.get(k);
-            if (v != null && !"".equals(v)) {
-                Map rxqd = decode(helper, v);
-                inject(reqd, rxqd);
-            }
+    public void preset(Map reqd, ActionHelper helper) {
+        for(Map.Entry<String, Object> et : defenseData.entrySet()) {
+            Object data = et.getValue();
+            String code = et.getKey(  );
+            inject(reqd , data , code , helper);
+        }
+
+        for(Map.Entry<String, Object> et : defaultData.entrySet()) {
+            Object data = et.getValue();
+            String code = et.getKey(  );
+            insert(reqd , data , code , helper);
         }
     }
 
-    /**
-     * 补充插入, 目标存在则不跳过
-     * @param helper
-     * @param reqd
-     * @param used
-     * @throws HongsException
-     */
-    public void insert(ActionHelper helper, Map reqd, String... used) throws HongsException {
-        for(String k : used) {
-            Object v = data.get(k);
-            if (v != null && !"".equals(v)) {
-                Map rxqd = decode(helper, v);
-                insert(reqd, rxqd);
-            }
+    private void inject(Map r, Object x, String n, ActionHelper h) {
+        x = decode( x, r, h );
+        if (null != x) {
+            return;
         }
-    }
 
-    private void inject(Map r, Map v) throws HongsException {
-        Map<String, Object> o = v;
-        for(Map.Entry<String, Object> m: o.entrySet()) {
-            Object x = m.getValue();
-            String n = m.getKey(  );
-            if (x != null) {
-                if (x instanceof Map) {
-                    Map y = (Map) x;
-                    Dict.setParams(r, y, n);
-                } else {
-                    Dict.setParam (r, x, n);
-                }
-            }
-        }
-    }
-
-    private void insert(Map r, Map v) throws HongsException {
-        Map<String, Object> o = v;
-        for(Map.Entry<String, Object> m: o.entrySet()) {
-            Object x = m.getValue();
-            String n = m.getKey(  );
-            if (Dict.getParam(r, n) != null) {
-                continue; // 存在就不要设置;
-            }
-            if (x != null) {
-                if (x instanceof Map) {
-                    Map y = (Map) x;
-                    Dict.setParams(r, y, n);
-                } else {
-                    Dict.setParam (r, x, n);
-                }
-            }
-        }
-    }
-
-    private Map decode(ActionHelper helper, Object x) throws HongsException {
         if (x instanceof Map) {
-            return (Map) x;
+            Map y = (Map) x;
+            Dict.setParams(r, y, n);
+        } else {
+            Dict.setParam (r, x, n);
+        }
+    }
+
+    private void insert(Map r, Object x, String n, ActionHelper h) {
+        Object v;
+
+        v = Dict.getParam (r, n);
+        if (null != v) {
+            return;
         }
 
-        String       v   = x.toString();
-        Matcher      mat = INJ_PAT.matcher(v);
-        StringBuffer buf = new StringBuffer();
-        while ( mat.find( ) ) {
-            String s = mat.group(1);
-            String n = mat.group(2);
-            String k = mat.group(3);
-            Object o = null;
-            if ("context".equals(s)) {
-                o = helper.getAttribute(n);
-            } else
-            if ("session".equals(s)) {
-                o = helper.getSessibute(n);
-            } else
-            if ("cookies".equals(s)) {
-                o = helper.getCookibute(n);
-            } else
-            if ("request".equals(s)) {
-                o = helper.getRequestData().get(n);
-            }
-            if (k != null) {
-                Map m  = Synt.asMap   (   o   );
-                if (m != null) {
-                    o  = Dict.getParam( m , k );
+        x = decode( x, r, h );
+        if (null == x) {
+            return;
+        }
+
+        if (x instanceof Map) {
+            Map y = (Map) x;
+            Dict.setParams(r, y, n);
+        } else {
+            Dict.setParam (r, x, n);
+        }
+    }
+
+    private Object decode(Object data, Map reqd, ActionHelper help) {
+        if (data == null) {
+            return  data;
+        }
+
+        if (data instanceof String) {
+            String text = ((String) data ).trim();
+            Matcher mat = INJ_PAT.matcher( text );
+
+            if (mat.matches()) {
+                String s = mat.group(1);
+                String n = mat.group(2);
+                String k = mat.group(3);
+
+                if ("request".equals(s)) {
+                    data = help.getRequestData().get(n);
+                } else
+                if ("context".equals(s)) {
+                    data = help.getAttribute(n);
+                } else
+                if ("session".equals(s)) {
+                    data = help.getSessibute(n);
+                } else
+                if ("cookies".equals(s)) {
+                    data = help.getCookibute(n);
+                } else
+                {
+                    data = reqd.get (n);
                 }
+
+                if (k != null) {
+                    Map  d   = Synt.asMap   (data);
+                    if ( d  != null) {
+                        data = Dict.getParam(d, k);
+                    } else {
+                        data = null;
+                    }
+                }
+            } else
+            if (text.startsWith("(") && text.endsWith(")")) {
+                data = Data.toObject(text.substring(1, text.length() - 1));
+            } else
+            if (text.startsWith("{") && text.endsWith("}")) {
+                data = Data.toObject(text);
+            } else
+            if (text.startsWith("[") && text.endsWith("]")) {
+                data = Data.toObject(text);
             }
-            mat.appendReplacement(buf, Data.toString(o));
-        }
-        if (buf.length() > 0) {
-            v = mat.appendTail(buf).toString( );
         }
 
-        return (Map) Data.toObject(v);
+        return  data;
     }
 
 }

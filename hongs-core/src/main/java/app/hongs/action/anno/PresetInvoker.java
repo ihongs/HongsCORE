@@ -9,6 +9,7 @@ import app.hongs.action.FormSet;
 import app.hongs.action.PresetHelper;
 import app.hongs.util.Synt;
 import java.lang.annotation.Annotation;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,58 +36,43 @@ public class PresetInvoker implements FilterInvoker {
     throws HongsException {
         Preset   ann  = (Preset) anno;
         String   conf = ann.conf();
-        String   envm = ann.envm();
-        String[] used = ann.used();
+        String   form = ann.form();
+        String[] deft = ann.deft();
+        String[] defs = ann.defs();
 
-        if (used == null || used.length == 0) {
+        // 默认参数可完全由外部指定
+        if (deft == null || deft.length == 0) {
             Set<String> uzed = Synt.asTerms(helper.getParameter(Cnst.AB_KEY));
-            if (uzed != null) {
-                used  = uzed.toArray(new String[] {});
-            } else {
-                used  = new  String[ ] { };
+            Set<String> used = new LinkedHashSet ();
+            if (null != uzed && ! uzed.isEmpty ( )) {
+                for(String item : uzed) {
+                    used.add("!"+ item);
+                }
+                deft  = used.toArray(new String[0]);
             }
         }
 
-        // 获取行为
-        String act ;
-        int pos  = envm.indexOf  (  ':'  );
-        if (pos >= 1) {
-            act  = envm.substring(0 + pos);
-            envm = envm.substring(0 , pos);
-        } else
-        if (pos == 0) {
-            act  = envm;
-            envm =  "" ;
-        } else {
-            act  = ":preset";
-        }
-
         // 识别路径
-        if (envm.length() == 0) {
-            envm = chains.getEntity();
+        if (form.length() == 0) {
+            form = chains.getEntity();
         }
         if (conf.length() == 0) {
             conf = chains.getModule();
             // 照顾 Module Action 的配置规则
-            if (FormSet.hasConfFile(conf+"/"+envm)) {
-                conf = conf+"/"+envm ;
+            if (FormSet.hasConfFile(conf+"/"+form)) {
+                conf = conf+"/"+form ;
             }
         }
 
-        // 加回后缀
-        envm += act;
-
         // 补充参数
         try {
-            Map reqd  = helper.getRequestData();
-            Map data  = (Map) helper.getAttribute("enum:"+conf+"."+envm);
-            if (data == null) {
-                data  = FormSet.getInstance(conf).getEnum(envm);
-            }
-
+            Map          req;
             PresetHelper pre;
-            pre = new PresetHelper().addItemsByEnum( /**/ data);
-            pre.preset(helper, reqd, used);
+
+            req = helper.getRequestData();
+            pre = new PresetHelper();
+            pre.addItemsByForm(conf, form, deft, defs);
+            pre.preset(req, helper );
         } catch (HongsException  ex) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10eb ) {

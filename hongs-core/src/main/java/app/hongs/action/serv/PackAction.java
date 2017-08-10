@@ -42,7 +42,7 @@ public class PackAction {
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
         Enumeration<String> enu = req.getParameterNames();
-        Map                 dat = data(Dict.getDepth(helper.getRequestData(), "", "data"));
+        Map                 dat = data(Dict.get(helper.getRequestData(), null, "", "data"));
         Map                 raq ;
         Map                 rap ;
         String              uri ;

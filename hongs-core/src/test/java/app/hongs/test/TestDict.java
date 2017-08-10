@@ -1,5 +1,6 @@
 package app.hongs.test;
 
+import app.hongs.util.Data;
 import app.hongs.util.Dict;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -62,7 +63,7 @@ public class TestDict extends TestCase {
          *          "key1": "xx",
          *          "sub2": [
          *              "sub2,
-         *              [
+         *              [ // Set
          *                  "sub4"
          *              ]
          *          ],
@@ -97,12 +98,12 @@ public class TestDict extends TestCase {
         assertEquals("xx", x);
 
         x = Dict.get(dict, null, "sub1", "sub2", 1);
-        z = new HashSet(  ); z.add("sub4");
+        z = new HashSet( ); z.add("sub4");
         assertEquals(z, x);
 
         x = Dict.get(dict, null, "sub1", "sub2", 1, null);
-        y = new ArrayList(); y.add("sub4");
-        assertEquals(y, x);
+        z = new HashSet( ); z.add("sub4");
+        assertEquals(z, x);
 
         x = Dict.get(dict, null, "sub1", "sub3", null, "a");
         y = new ArrayList(); y.add(1); y.add(2);
@@ -124,10 +125,10 @@ public class TestDict extends TestCase {
         x = Dict.get(dict, null, "sub1", "sub2", 1);
         assertEquals(z, x);
 
-        y = new ArrayList(); y.add(1); y.add(2);
+        z = new HashSet(  ); z.add(1); z.add(2);
         Dict.put(dict, 2, "sub1", "sub2", 1, null);
         x = Dict.get(dict, null, "sub1", "sub2", 1, null);
-        assertEquals(y, x);
+        assertEquals(z, x);
 
         y = new ArrayList(); y.add(1); y.add(2); y.add(3);
         Dict.put(dict, 3, "sub1", "sub3", null, "a");

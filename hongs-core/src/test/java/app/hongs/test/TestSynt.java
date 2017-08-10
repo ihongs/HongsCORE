@@ -1,6 +1,7 @@
 package app.hongs.test;
 
 import app.hongs.util.Synt;
+import app.hongs.util.Tool;
 import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.AfterClass;

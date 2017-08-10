@@ -2,12 +2,14 @@ package app.hongs.util;
 
 import app.hongs.HongsError;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 字典数据工具
@@ -24,7 +26,46 @@ import java.util.Map;
 public final class Dict
 {
 
-  private static Object gat(List lst, Object def, Object[] keys, int pos)
+  private static Map  asMap (Object val) {
+    if (val != null) {
+        if (val instanceof Map ) {
+            return ( Map ) val ;
+        }
+    }
+    return  new LinkedHashMap();
+  }
+
+  private static List asList(Object val) {
+    if (val != null) {
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return new ArrayList(( Set ) val);
+        } else if (val instanceof Map ) {
+            return new ArrayList(((Map ) val).values( ) );
+        } else if (val instanceof Object[]) {
+            return new ArrayList(Arrays.asList((Object[]) val));
+        }
+    }
+    return  new ArrayList();
+  }
+
+  private static Collection asColl(Object val) {
+    if (val != null) {
+        if (val instanceof List) {
+            return ( List) val ;
+        } else if (val instanceof Set ) {
+            return ( Set ) val ;
+        } else if (val instanceof Map ) {
+            return new ArrayList(((Map ) val).values( ) );
+        } else if (val instanceof Object[]) {
+            return new ArrayList(Arrays.asList((Object[]) val));
+        }
+    }
+    return  new ArrayList();
+  }
+
+  private static Object gat(Collection lst, Object def, Object[] keys, int pos)
   {
     // 获取下面所有的节点的值
     List col = new ArrayList();
@@ -50,7 +91,7 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        List lst = Synt.asList(obj);
+        Collection lst = asColl(obj);
 
         if (keys.length == pos + 1) {
             return lst;
@@ -59,7 +100,7 @@ public final class Dict
         }
     } else
     if (key instanceof Integer) {
-        List lst = Synt.asList(obj);
+        List lst = asList(obj);
 
         // 如果列表长度不够, 则直接返回默认值
         int  idx = ( Integer ) key ;
@@ -73,7 +114,7 @@ public final class Dict
             return get(lst.get(idx), def, keys, pos + 1);
         }
     } else {
-        Map  map = Synt.asMap (obj);
+        Map  map = asMap (obj);
 
         if (keys.length == pos + 1) {
             return Synt.defoult(map.get(key), def);
@@ -89,12 +130,7 @@ public final class Dict
 
     // 按键类型来决定容器类型
     if (key == null) {
-        List lst;
-        if (obj == null) {
-            lst = new ArrayList( );
-        } else {
-            lst = Synt.asList(obj);
-        }
+        Collection lst = asColl(obj);
 
         if (keys.length == pos + 1) {
             lst.add(val);
@@ -105,12 +141,7 @@ public final class Dict
         return lst;
     } else
     if (key instanceof Integer) {
-        List lst;
-        if (obj == null) {
-            lst = new ArrayList( );
-        } else {
-            lst = Synt.asList(obj);
-        }
+        List lst = asList(obj);
 
         // 如果列表长度不够, 填充到索引的长度
         int idx = ( Integer )  key;
@@ -127,12 +158,7 @@ public final class Dict
 
         return lst;
     } else {
-        Map map;
-        if (obj == null) {
-            map = new LinkedHashMap();
-        } else {
-            map = Synt.asMap (  obj );
-        }
+        Map map = asMap (obj);
 
         if (keys.length == pos + 1) {
             map.put(key, val);
@@ -276,7 +302,7 @@ public final class Dict
    */
   public static <T> T getParam(Map map, T def, String path)
   {
-    return Dict.getValue(map, def, splitKeys(path));
+    return getValue(map, def, splitKeys(path));
   }
 
   /**
@@ -290,7 +316,7 @@ public final class Dict
    */
   public static <T> T getParam(Map map, Class<T> cls, String path)
   {
-    return Dict.getValue(map, cls, splitKeys(path));
+    return getValue(map, cls, splitKeys(path));
   }
 
   /**

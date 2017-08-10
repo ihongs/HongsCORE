@@ -21,7 +21,7 @@ import java.util.Map;
 public class MineAction {
 
     @Action("info")
-    @Preset(conf="member", envm="mine")
+    @Preset(conf="member", form="mine")
     public void mineInfo(ActionHelper ah)
     throws HongsException {
         Map rd = ah.getRequestData();

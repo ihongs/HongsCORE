@@ -25,7 +25,7 @@ public class DoubleQuery implements IQuery {
         }
         double n2, x2;
         if (n == null || "".equals(n)) {
-            n2 = Double.MIN_VALUE;
+            n2 = Double.NEGATIVE_INFINITY;
         } else {
             n2 = Synt.asFloat (n);
             if (!l) {
@@ -33,7 +33,7 @@ public class DoubleQuery implements IQuery {
             }
         }
         if (x == null || "".equals(x)) {
-            x2 = Double.MAX_VALUE;
+            x2 = Double.POSITIVE_INFINITY;
         } else {
             x2 = Synt.asFloat (x);
             if (!g) {

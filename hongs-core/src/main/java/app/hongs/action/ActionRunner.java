@@ -57,11 +57,11 @@ public class ActionRunner {
         this.annarr = method.getAnnotations( );
 
         // Regist the runner
-        helper.setAttribute(ActionRunner.class.getName( ), this);
+        helper.setAttribute(ActionRunner.class.getName(), this);
 
         // Initialize action
         if (object instanceof app.hongs.dh.IActing) {
-           ((app.hongs.dh.IActing)object).acting(helper, this);
+           ((app.hongs.dh.IActing) object).acting(helper, this);
         }
     }
 

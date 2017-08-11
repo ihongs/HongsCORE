@@ -263,7 +263,8 @@ public class FormSet
 
       if ("json".equals(type)) {
         if (text.startsWith("(") && text.endsWith(")")) {
-          return Data.toObject(text.substring(1, text.length() - 1));
+          text = text.substring( 1, text.length() - 1 );
+          return Data.toObject(text);
         } else {
           return Data.toObject(text);
         }

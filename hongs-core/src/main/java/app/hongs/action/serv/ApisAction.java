@@ -290,7 +290,7 @@ public class ApisAction
         }
     }
 
-    private void wrapData(Map resp) throws ServletException {
+    public static void wrapData(Map resp) throws ServletException {
         Map    data;
         Object doto = resp.get("data");
         if (doto == null) {
@@ -314,7 +314,7 @@ public class ApisAction
         }
     }
 
-    private void convData(Map resp, Set<String> conv) {
+    public static void convData(Map resp, Set<String> conv) {
         Conv cnvr = new Conv();
         boolean     all =  conv.contains( "all2str");
         cnvr.all  = all ?  new  Conv2Str( ) : new Conv2Obj( ) ;

@@ -170,8 +170,6 @@ public class AutoFilter extends ActionDriver {
                 boolean jsp = url.endsWith (".jsp" );
                 boolean htm = url.endsWith (".htm" )
                            || url.endsWith (".html");
-                int     pos = url.lastIndexOf( "." );
-                String  uxl = pos == -1 ? url: url.substring(0, pos);
 
                 for(String uri: getlays()) {
                     if (url.endsWith(uri)) {
@@ -183,7 +181,9 @@ public class AutoFilter extends ActionDriver {
                     }
                     if (htm) {
                         // xxx.htm => xxx.jsp
-                        if ((uxl + ".jsp").endsWith(uri)) {
+                        int  pos = url.lastIndexOf (".");
+                             url = url.substring(0, pos);
+                        if ((url + ".jsp").endsWith(uri)) {
                             forward(req, rsp, url, layout + uri);
                             return;
                         }

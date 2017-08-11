@@ -20,7 +20,7 @@
     </xs:complexType>
   </xs:element>
 
-  <!-- 字段 -->
+  <!-- 表单字段 -->
   <xs:element name="field">
     <xs:complexType>
       <xs:attribute ref="name" use="required"/>

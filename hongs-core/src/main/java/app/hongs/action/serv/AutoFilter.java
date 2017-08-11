@@ -12,11 +12,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.TreeSet;
-import java.util.Map;
 import java.util.Set;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -51,8 +49,8 @@ public class AutoFilter extends ActionDriver {
     private Set<String> layset = null;
     private Set<String> actset = null;
     private Set<String> cstset = null;
-    private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
-    private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
+//  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
+//  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
@@ -83,8 +81,8 @@ public class AutoFilter extends ActionDriver {
     @Override
     public void doFilter(Core core, ActionHelper hlpr, FilterChain chain)
             throws IOException, ServletException {
-        HttpServletRequest  req = hlpr.getRequest( );
         HttpServletResponse rsp = hlpr.getResponse();
+        HttpServletRequest  req = hlpr.getRequest( );
         String url = ActionDriver.getCurrPath( req );
 
         // 检查是否需要跳过
@@ -94,45 +92,64 @@ public class AutoFilter extends ActionDriver {
         }
 
         if (url.endsWith(".api")) {
-            // 接口无需处理
+                             // 接口不需要处理
         } else
         if (url.endsWith(".act")) {
-            String act;
-            String ext;
+            String act, ext; // 动作路径和扩展
+            String src, met; // 资源路径和方法
+            String uri;
             int    pos;
 
             try {
                 pos = url.lastIndexOf('.');
                 ext = url.substring(  pos);
                 act = url.substring(1,pos);
+
+                pos = act.lastIndexOf('/');
+                met = act.substring(1+pos);
+                src = act.substring(0,pos);
             } catch (IndexOutOfBoundsException ex) {
                 // 如果无法拆分则直接跳过
                 chain.doFilter ( req, rsp);
                 return;
             }
 
+            // 检查是否有特定动作脚本
+            uri = "/"+ src +"/@"+ met +".jsp";
+            if (new File(Core.BASE_PATH+ uri).exists()) {
+                include ( req, rsp, url, uri);
+                return;
+            }
+            uri = "/"+ src +"/#"+ met +".jsp";
+            if (new File(Core.BASE_PATH+ uri).exists()) {
+                forward ( req, rsp, url, uri);
+                return;
+            }
+
             if (!ActionRunner.getActions().containsKey(act)) {
-                // 检查是否有重写动作脚本
+                // 检查是否有重写动作脚本 (废弃, 动作归动作)
+                /*
                 getlays();
                 for(Map.Entry<String, String> et : cstmap.entrySet()) {
-                    String axt = et.getKey(  );
-                    String uri = et.getValue();
-                    if (act.endsWith(axt )) {
+                    met = et.getKey  (  );
+                    uri = et.getValue(  );
+                    if (act.endsWith(met)) {
                         include(req,rsp, url, layout + uri);
                         return;
                     }
                 }
                 for(Map.Entry<String, String> et : cxtmap.entrySet()) {
-                    String axt = et.getKey(  );
-                    String uri = et.getValue();
-                    if (act.endsWith(axt )) {
+                    met = et.getKey  (  );
+                    uri = et.getValue(  );
+                    if (act.endsWith(met)) {
                         forward(req,rsp, url, layout + uri);
                         return;
                     }
                 }
+                */
 
-                for(String axt : getacts()) {
-                    if (act.endsWith(axt )) {
+                for(String axt: getacts()) {
+                    if (act.endsWith(axt)) {
                         if (cstset.contains(axt)) {
                             forward(req, rsp, url, action + axt + ext);
                         } else {
@@ -156,8 +173,8 @@ public class AutoFilter extends ActionDriver {
                 int     pos = url.lastIndexOf( "." );
                 String  uxl = pos == -1 ? url: url.substring(0, pos);
 
-                for(String uri : getlays()) {
-                    if (url.endsWith(uri )) {
+                for(String uri: getlays()) {
+                    if (url.endsWith(uri)) {
                         forward(req, rsp, url, layout + uri);
                         return;
                     }
@@ -277,16 +294,16 @@ public class AutoFilter extends ActionDriver {
          * 下面是按越深越先加入的
          */
         layset = new LinkedHashSet();
-        cstmap = new LinkedHashMap();
-        cxtmap = new LinkedHashMap();
+//      cstmap = new LinkedHashMap();
+//      cxtmap = new LinkedHashMap();
 
         // 递归获取目录下所有文件
-        getlays(layset, cstmap, cxtmap, dir, "/");
+        getlays(layset, dir, "/");
 
         return  layset;
     }
 
-    private void getlays(Set layset, Map cstmap, Map cxtmap, File dx, String dn) {
+    private void getlays(Set layset, File dx, String dn) {
         File[] fs = dx.listFiles(  );
         if (null == fs) {
             return;
@@ -300,26 +317,26 @@ public class AutoFilter extends ActionDriver {
             }
 
             if (fx.isDirectory(   )) {
-                getlays(layset, cstmap, cxtmap, fx, dn + fn + "/");
+                getlays(layset, fx, dn + fn + "/");
             }
 
             /**
              * @,# 都表示这是一个动作脚步
              * @ 为 include, # 为 forward
              */
-            if (fn.startsWith ("@")) {
-                int    l  = fn.lastIndexOf(".");
-                String ln = fn.substring(1 , l);
-                cstmap.put( dn + ln , dn + fn );
-            } else
-            if (fn.startsWith ("#")) {
-                int    l  = fn.lastIndexOf(".");
-                String ln = fn.substring(1 , l);
-                cxtmap.put( dn + ln , dn + fn );
-            } else
-            {
+//          if (fn.startsWith ("@")) {
+//              int    l  = fn.lastIndexOf(".");
+//              String ln = fn.substring(1 , l);
+//              cstmap.put( dn + ln , dn + fn );
+//          } else
+//          if (fn.startsWith ("#")) {
+//              int    l  = fn.lastIndexOf(".");
+//              String ln = fn.substring(1 , l);
+//              cxtmap.put( dn + ln , dn + fn );
+//          } else
+//          {
                 layset.add( dn + fn);
-            }
+//          }
         }
     }
 

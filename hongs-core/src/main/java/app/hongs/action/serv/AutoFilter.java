@@ -181,9 +181,10 @@ public class AutoFilter extends ActionDriver {
                     }
                     if (htm) {
                         // xxx.htm => xxx.jsp
+                        String uxl;
                         int  pos = url.lastIndexOf (".");
-                             url = url.substring(0, pos);
-                        if ((url + ".jsp").endsWith(uri)) {
+                             uxl = url.substring(0, pos);
+                        if ((uxl + ".jsp").endsWith(uri)) {
                             forward(req, rsp, url, layout + uri);
                             return;
                         }

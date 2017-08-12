@@ -180,9 +180,9 @@ public class SpreadHelper {
             // 获取结果
             ah.setRequestData(rd);
             if (rd.containsKey(Cnst.MD_KEY)) {
-                new ActionRunner(at, ah).doAction();
+                new ActionRunner(ah, at).doAction();
             } else {
-                new ActionRunner(at, ah).doInvoke();
+                new ActionRunner(ah, at).doInvoke();
             }
             Map sd  = ah.getResponseData(  );
             List<Map> ls = (List) sd.get("list");

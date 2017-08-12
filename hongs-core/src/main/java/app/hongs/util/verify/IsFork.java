@@ -104,7 +104,7 @@ public class IsFork extends Rule {
         ActionHelper ah = ActionHelper.newInstance();
         ah.setAttribute( "fork", true );
         /* Get */ ah.setRequestData(rd);
-        new ActionRunner(at, ah).doInvoke( );
+        new ActionRunner(ah, at).doInvoke( );
         Map  sd = ah.getResponseData( );
         List<Map> ls = (List) sd.get("list");
 

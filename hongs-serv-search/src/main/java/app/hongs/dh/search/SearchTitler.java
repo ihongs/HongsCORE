@@ -193,7 +193,7 @@ public class SearchTitler {
         ActionHelper ah = ActionHelper.newInstance();
         ah.setAttribute("IN_FORK", true);
         ah.setRequestData(rd);
-        new ActionRunner (at, ah).doInvoke();
+        new ActionRunner (ah, at).doInvoke();
         Map sd  = ah.getResponseData(  );
         List<Map> lz = (List) sd.get("list");
         if (lz == null) {

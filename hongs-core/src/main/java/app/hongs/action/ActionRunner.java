@@ -54,9 +54,9 @@ public class ActionRunner {
             this.method = this.mclass.getMethod(method, ActionHelper.class);
             this.annarr = this.method.getAnnotations();
         } catch (NoSuchMethodException ex) {
-            throw new HongsException(0x1104, "Can not find action for '"+ mclass.getName() +"."+ method +"'");
+            throw new HongsException(0x1104, "Can not find action '"+ mclass.getName() +"."+ method +"'");
         } catch (    SecurityException ex) {
-            throw new HongsException(0x1104, "Can not exec action for '"+ mclass.getName() +"."+ method +"'");
+            throw new HongsException(0x1104, "Can not exec action '"+ mclass.getName() +"."+ method +"'");
         }
 
         // 从注解中提取动作

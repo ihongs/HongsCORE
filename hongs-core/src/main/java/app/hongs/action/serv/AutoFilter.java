@@ -252,7 +252,8 @@ public class AutoFilter extends ActionDriver {
                     i  ++;
                     c2 ++;
                 }
-                return Integer.compare(c2, c1);
+                i = Integer.compare(c2, c1);
+                return i != 0 ? i : 1;
             }
         });
 

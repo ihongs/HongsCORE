@@ -225,7 +225,8 @@ public class ActionRunner {
      */
     public void setAction(String name) {
         act = name;
-        rst = name != null;
+        rst = name
+           != null;
     }
 
     public String getModule() throws HongsException {

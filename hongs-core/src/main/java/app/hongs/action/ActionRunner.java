@@ -7,14 +7,14 @@ import app.hongs.CoreRoster.Mathod;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.anno.Action;
+import app.hongs.action.anno.Assign;
 import app.hongs.action.anno.Filter;
 import app.hongs.action.anno.FilterInvoker;
 
 import java.util.Map;
-import java.lang.reflect.Method;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import app.hongs.action.anno.Assign;
 
 /**
  * 动作执行器
@@ -43,9 +43,41 @@ public class ActionRunner {
     private final ActionHelper helper;
     private final Annotation[] annarr;
 
-    public ActionRunner(String action, ActionHelper helper) throws HongsException {
+    public ActionRunner(ActionHelper helper, Object object, String method)
+    throws HongsException {
+        this.helper = helper;
+        this.object = object;
+        this.mclass = object.getClass();
+
+        try {
+            this.method = this.mclass.getMethod(method, ActionHelper.class);
+            this.annarr = this.method.getAnnotations();
+        } catch (NoSuchMethodException ex) {
+            throw new HongsException(0x1104, "Can not find action '"+ action +"'");
+        } catch (    SecurityException ex) {
+            throw new HongsException(0x1104, "Can not exec action '"+ action +"'");
+        }
+
+        // 从注解中提取动作
+        Action a;
+        a = this.mclass.getAnnotation(Action.class);
+        if (null != a) {
+            this.action  = a.value()+"/";
+        } else {
+            this.action  = /*******/ "/";
+        }
+        a = this.method.getAnnotation(Action.class);
+        if (null != a) {
+            this.action += a.value();
+        }
+
+        init();
+    }
+
+    public ActionRunner(ActionHelper helper, String action)
+    throws HongsException {
         Mathod mt = getActions().get(action);
-        if (mt == null ) {
+        if ( null == mt ) {
             throw new HongsException(0x1104, "Can not find action '"+ action +"'");
         }
 
@@ -56,6 +88,11 @@ public class ActionRunner {
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
 
+        init();
+    }
+
+    private void init()
+    throws HongsException {
         // Regist the runner
         helper.setAttribute(ActionRunner.class.getName(), this);
 
@@ -148,7 +185,7 @@ public class ActionRunner {
         } catch ( IllegalArgumentException e) {
             throw new HongsException(0x1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
-            Throwable ex = e.getCause();
+            Throwable ex = e.getCause(  );
             if (ex instanceof HongsError/**/) {
                 throw (HongsError/**/) ex;
             } else
@@ -162,10 +199,11 @@ public class ActionRunner {
 
     //** 更方便的获取模块、实体、操作的方式 **/
 
-    private String mod = null;
-    private String ent = null;
-    private String ant = null;
-    private String act = null;
+    private String  mod = null ;
+    private String  ent = null ;
+    private String  met = null ;
+    private String  act = null ;
+    private boolean rst = false;
 
     public void setModule(String name) {
         mod = name;
@@ -174,7 +212,7 @@ public class ActionRunner {
         ent = name;
     }
     public void setHandle(String name) {
-        ant = name;
+        met = name;
     }
 
     /**
@@ -186,6 +224,7 @@ public class ActionRunner {
      */
     public void setAction(String name) {
         act = name;
+        rst = name != null;
     }
 
     public String getModule() throws HongsException {
@@ -194,9 +233,16 @@ public class ActionRunner {
         }
 
         // 从注解提取模块名称
-        Assign ing = mclass.getAnnotation(Assign.class);
-        if (null != ing) {
-            return  ing.conf();
+        if (! rst ) {
+            Assign  ing;
+            ing = method.getAnnotation(Assign.class);
+            if (null != ing) {
+                return  ing.conf();
+            }
+            ing = mclass.getAnnotation(Assign.class);
+            if (null != ing) {
+                return  ing.conf();
+            }
         }
 
         int pos;
@@ -214,9 +260,16 @@ public class ActionRunner {
         }
 
         // 从注解提取实体名称
-        Assign ing = mclass.getAnnotation(Assign.class);
-        if (null != ing) {
-            return  ing.name();
+        if (! rst ) {
+            Assign  ing;
+            ing = method.getAnnotation(Assign.class);
+            if (null != ing) {
+                return  ing.name();
+            }
+            ing = mclass.getAnnotation(Assign.class);
+            if (null != ing) {
+                return  ing.name();
+            }
         }
 
         int pos;
@@ -229,15 +282,15 @@ public class ActionRunner {
     }
 
     public String getHandle() throws HongsException {
-        if (null != ant) {
-            return  ant;
+        if (null != met) {
+            return  met;
         }
 
         int pos;
-        ant  = getAction();
-        pos  = ant.lastIndexOf('/');
-        ant  = ant.substring(1+pos); // 得到动作
-        return ant;
+        met  = getAction();
+        pos  = met.lastIndexOf('/');
+        met  = met.substring(1+pos); // 得到动作
+        return met;
     }
 
     /**

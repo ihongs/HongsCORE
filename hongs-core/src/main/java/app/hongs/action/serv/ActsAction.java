@@ -77,7 +77,7 @@ public class ActsAction
     // 获取并执行动作
     try
     {
-      ActionRunner runner = new ActionRunner(act, helper);
+      ActionRunner runner = new ActionRunner(helper, act);
       runner.doAction(  );
     }
     catch (ClassCastException ex)

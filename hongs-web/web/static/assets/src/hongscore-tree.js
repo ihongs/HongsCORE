@@ -170,15 +170,21 @@ function HsTree(opts, context) {
 
     //** 选中打开 **/
 
+    treeBox.on("click", ".tree-node td.tree-name", function() {
+        that.select(jQuery(this).closest(".tree-node"));
+    });
     treeBox.on("click", ".tree-node td.tree-hand", function() {
         that.toggle(jQuery(this).closest(".tree-node"));
     });
-    treeBox.on("click", ".tree-node td:not(.tree-hand)", function() {
-        that.select(jQuery(this).closest(".tree-node"));
+    treeBox.on("dbclick", ".tree-node td:not(.tree-hand)", function() {
+        that.toggle(jQuery(this).closest(".tree-node"));
     });
 
     if (linkUrls) {
         treeBox.on("select", function(evt, id) {
+            if (evt.isDefaultPrevented()) {
+                return;
+            }
             for(var i = 0; i < linkUrls.length; i ++) {
                 var u = linkUrls[i][0];
                 var m = linkUrls[i][1];
@@ -502,10 +508,10 @@ jQuery.fn.hsTree = function(opts) {
 (function($) {
     // 当选中非根节点时, 开启工具按钮, 否则禁用相关按钮
     $(document)
-    .on( "select" , ".HsTree .tree-node>table",
-    function(ev, id, obj) {
-        var box = obj.context;
+    .on( "select", ".HsTree .tree-node>table",
+    function(evt, nid, obj) {
+        var box = obj.context  ;
         var rid = obj.getRid( );
-        box.find(".for-select").prop("disabled", rid == id);
+        box.find(".for-select").prop("disabled", rid == nid);
     });
 })(jQuery);

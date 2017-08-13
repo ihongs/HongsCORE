@@ -176,16 +176,13 @@ function HsTree(opts, context) {
     treeBox.on("click", ".tree-node td.tree-hand", function() {
         that.toggle(jQuery(this).closest(".tree-node"));
     });
-    treeBox.on("dbclick", ".tree-node td:not(.tree-hand)", function() {
+    treeBox.on("dblclick", ".tree-node td:not(.tree-hand)", function() {
         that.toggle(jQuery(this).closest(".tree-node"));
     });
 
     if (linkUrls) {
-        treeBox.on("select", function(evt, id) {
-            if (evt.isDefaultPrevented()) {
-                return;
-            }
-            for(var i = 0; i < linkUrls.length; i ++) {
+        treeBox.on( "treeSelect" , function( ev , id ) {
+            for(var i = 0; i < linkUrls.length; i ++ ) {
                 var u = linkUrls[i][0];
                 var m = linkUrls[i][1];
                 u = u.replace ('{ID}', encodeURIComponent(id));
@@ -449,7 +446,9 @@ HsTree.prototype = {
     select   : function(id) {
         var nod = this.getNode(id);
             id  = this.getId (nod);
-        nod.children("table").trigger("select", [id, this]);
+        var evt = jQuery.Event("treeSelect");
+        nod.children("table").trigger(evt, [id, this]);
+        if (evt.isDefaultPrevented()) return;
 
         this.treeBox.find(".tree-curr")
             .removeClass ( "tree-curr");
@@ -458,7 +457,9 @@ HsTree.prototype = {
     toggle   : function(id) {
         var nod = this.getNode(id);
             id  = this.getId (nod);
-        nod.children("table").trigger("toggle", [id, this]);
+        var evt = jQuery.Event("treeToggle");
+        nod.children("table").trigger(evt, [id, this]);
+        if (evt.isDefaultPrevented()) return;
 
         var lst = nod.children(".tree-list");
             lst.toggle();
@@ -508,7 +509,7 @@ jQuery.fn.hsTree = function(opts) {
 (function($) {
     // 当选中非根节点时, 开启工具按钮, 否则禁用相关按钮
     $(document)
-    .on( "select", ".HsTree .tree-node>table",
+    .on("treeSelect", ".HsTree .tree-node>table",
     function(evt, nid, obj) {
         var box = obj.context  ;
         var rid = obj.getRid( );

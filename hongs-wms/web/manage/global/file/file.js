@@ -3,6 +3,7 @@ var EXTN_TO_MODE = {
     css         : "css",
     xml         : "xml",
     xsd         : "xml",
+    tld         : "xml",
     sql         : "sql",
     lua         : "lua",
     sh          : "shell",

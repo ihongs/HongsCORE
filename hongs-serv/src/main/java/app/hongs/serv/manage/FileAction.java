@@ -15,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.FileNameMap;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,6 +23,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.Map;
 import java.util.Set;
+import javax.activation.MimetypesFileTypeMap;
 
 /**
  * 文件管理
@@ -42,19 +41,19 @@ public class FileAction implements IAction {
     private static final List ROOT_LIST = new ArrayList();
     static {
         ROOT_LIST.add(Synt.mapOf(
-            "path", "/BASE/",
+            "path", "/BASE",
             "name", "网站",
             "type", "dir",
             "size", "1"
         ));
         ROOT_LIST.add(Synt.mapOf(
-            "path", "/CONF/",
+            "path", "/CONF",
             "name", "配置",
             "type", "dir",
             "size", "1"
         ));
         ROOT_LIST.add(Synt.mapOf(
-            "path", "/DATA/",
+            "path", "/DATA",
             "name", "数据",
             "type", "dir",
             "size", "1"
@@ -64,10 +63,11 @@ public class FileAction implements IAction {
     @Override
     @Action("search")
     public void search(ActionHelper helper) throws HongsException {
+        MimetypesFileTypeMap nmap = new MimetypesFileTypeMap( );
         CoreLocale lang = CoreLocale.getInstance("manage_serv");
         String type = helper.getParameter("type");
-        String pxth = helper.getParameter("path");
-        String path = pxth;
+        String path = helper.getParameter("path");
+        String pxth = path;
         File   file;
 
         // 根目录
@@ -194,10 +194,9 @@ public class FileAction implements IAction {
                     }
                 }
 
-                FileNameMap nmap = URLConnection.getFileNameMap();
-                String      name = item.getName();
-                String      extn = name.replaceFirst("^.*/" , "");
-                String      mime = nmap.getContentTypeFor( extn );
+                String name = item.getName();
+                String extn = name.replaceFirst("^.*/","");
+                String mime = nmap.getContentType ( extn );
 
                 Map xxxx = new HashMap();
                 xxxx.put("path" , pxth + "/" + name);
@@ -217,13 +216,12 @@ public class FileAction implements IAction {
             helper.reply(rsp);
         } else
         if (isTextFile(file)) {
-            FileNameMap nmap = URLConnection.getFileNameMap();
-            String      name = file.getName();
-            String      extn = name.replaceFirst("^.*/" , "");
-            String      mime = nmap.getContentTypeFor( extn );
+            String name = file.getName();
+            String extn = name.replaceFirst("^.*/","");
+            String mime = nmap.getContentType ( extn );
 
             Map xxxx = new HashMap();
-            xxxx.put("path" , pxth + "/" + name);
+            xxxx.put("path" , pxth );
             xxxx.put("name" , name );
             xxxx.put("mime" , mime );
             xxxx.put("type" , "txt");
@@ -373,14 +371,14 @@ public class FileAction implements IAction {
         if (path.matches(".*/\\.{1,2}/.*")) {
             return  null;
         }
-        if (path.startsWith("/BASE/")) {
-            path =  Core.BASE_PATH+"/"+path.substring(6);
+        if (path.startsWith("/BASE")) {
+            path =  Core.BASE_PATH+"/"+path.substring(5);
         } else
-        if (path.startsWith("/CONF/")) {
-            path =  Core.CONF_PATH+"/"+path.substring(6);
+        if (path.startsWith("/CONF")) {
+            path =  Core.CONF_PATH+"/"+path.substring(5);
         } else
-        if (path.startsWith("/DATA/")) {
-            path =  Core.DATA_PATH+"/"+path.substring(6);
+        if (path.startsWith("/DATA")) {
+            path =  Core.DATA_PATH+"/"+path.substring(5);
         } else {
             return  null;
         }
@@ -390,51 +388,19 @@ public class FileAction implements IAction {
         return path;
     }
 
-    private File[] sortByName(File[] files) {
-        TreeSet<File> ts = new TreeSet(new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
-        ts.addAll(Arrays.asList(files));
-        return ts.toArray(new File[]{});
-    }
-
-    private File[] sortBySize(File[] files) {
-        TreeSet<File> ts = new TreeSet(new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
-        ts.addAll(Arrays.asList(files));
-        return ts.toArray(new File[]{});
-    }
-
-    private File[] sortByTime(File[] files) {
-        TreeSet<File> ts = new TreeSet(new Comparator<File>() {
-            @Override
-            public int compare(File f1, File f2) {
-                return f1.getName().compareTo(f2.getName());
-            }
-        });
-        ts.addAll(Arrays.asList(files));
-        return ts.toArray(new File[]{});
-    }
-
     private String readFile(File file) {
         try (
             BufferedReader br = new BufferedReader(new FileReader(file));
         ) {
             StringBuilder  sb = new StringBuilder ( );
             char[]         bs;
+            int            bn;
             while (true) {
-                bs = new char [ 1024 ];
-                if ( -1 == br.read(bs)) {
+                bs = new char [1024];
+                if((bn = br.read(bs)) < 0) {
                     break;
                 }
-                sb.append( bs );
+                sb.append(bs, 0, bn);
             }
             return sb.toString();
         } catch (FileNotFoundException ex) {

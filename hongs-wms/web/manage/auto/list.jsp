@@ -179,11 +179,11 @@
                 <%} else if ("datetime".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> datetime"><%=text%></th>
                 <%} else if ("date".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> date"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_date"  <%=ob%> class="<%=oc%> date"><%=text%></th>
                 <%} else if ("time".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=text%></th>
-                <%} else if ("file".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_file" <%=ob%> class="<%=oc%>"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_time"  <%=ob%> class="<%=oc%> time"><%=text%></th>
+                <%} else if ("file".equals(type) ||  "url".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%> link"><%=text%></th>
                 <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                     <th data-fn="<%=name%>_text" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>

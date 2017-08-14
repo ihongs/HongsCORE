@@ -1,4 +1,4 @@
-var EXTNTOMODE = {
+var EXTN_TO_MODE = {
     jsx         : "jsx",
     css         : "css",
     xml         : "xml",
@@ -21,14 +21,19 @@ var EXTNTOMODE = {
 
 // 代码模式
 function getModeByName(mod) {
-    mod = mod.replace (/.*\./ , '');
-    return EXTNTOMODE [mod];
+    if (mod) {
+        return EXTN_TO_MODE[mod.replace(/.*\./,'')];
+    }
 }
 
 // 字符解码
 function decodeUnicode(str) {
-    return JSON.parse ('"'+str+'"')
-               .substr(  1  , -1  );
+    // 注意: 如果出现 \\\u1234 就歇菜了
+    str = str.replace (/\\u([0-9a-f]{4})/g,
+    function ( a, n ) {
+        return String.fromCharCode(parseInt(n, 16));
+    });
+    return str;
 }
 
 // 字符转码

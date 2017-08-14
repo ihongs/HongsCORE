@@ -1,4 +1,4 @@
-var MODE_MAP = {
+var EXTNTOMODE = {
     jsx         : "jsx",
     css         : "css",
     xml         : "xml",
@@ -22,7 +22,7 @@ var MODE_MAP = {
 // 代码模式
 function getModeByName(mod) {
     mod = mod.replace (/.*\./ , '');
-    return MODE_MAP[mod];
+    return EXTNTOMODE [mod];
 }
 
 // 字符解码

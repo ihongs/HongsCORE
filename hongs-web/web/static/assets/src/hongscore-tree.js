@@ -507,12 +507,20 @@ jQuery.fn.hsTree = function(opts) {
 };
 
 (function($) {
-    // 当选中非根节点时, 开启工具按钮, 否则禁用相关按钮
     $(document)
     .on("treeSelect", ".HsTree .tree-node>table",
     function(evt, nid, obj) {
+        // 当选中非根节点时,
+        // 工具按钮设为可用,
+        // 否则禁用相关按钮.
         var box = obj.context  ;
         var rid = obj.getRid( );
         box.find(".for-select").prop("disabled", rid == nid);
+    })
+    .on("selectstart", ".HsTree",
+    function(evt) {
+        // 阻止选中节点文字,
+        // 避免双击选中文字.
+        evt.preventDefault(   );
     });
 })(jQuery);

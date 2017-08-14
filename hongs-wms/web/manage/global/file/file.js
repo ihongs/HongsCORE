@@ -45,7 +45,7 @@ function encodeUnicode(str) {
         if (c > 0x7F) {
             res[i] = "\\u"+c.toString(16);
         } else {
-            res[i] = str[i];
+            res[i] = str [i];
         }
     }
     return res.join("");

@@ -521,13 +521,21 @@ HsList.prototype = {
     },
     _fill__check : function(td, v, n) {
         jQuery('<input type="checkbox" class="input-checkbox checkone"/>')
-            .attr("name", n).val(v)
+            .attr("name" , n).val( v)
             .appendTo(td);
         return false;
     },
     _fill__radio : function(td, v, n) {
         jQuery('<input type="radio" class="input-radio checkone"/>')
-            .attr("name", n).val(v)
+            .attr("name" , n).val( v)
+            .appendTo(td);
+        return false;
+    },
+    _fill__ulink : function(td, v, n) {
+        if (! v) return v;
+        v = hsFixUri( v );
+        jQuery('<a target="_blank"></a>')
+            .attr("href" , v).text(v)
             .appendTo(td);
         return false;
     },

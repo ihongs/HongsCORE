@@ -27,7 +27,7 @@
                  data-root-id="6666cd76f96956469e7be39d750cc7d9"
                  data-root-name="目录结构">
                 <div class="toolbox btn-group">
-                    <button type="button" class="create btn btn-default">添加</button>
+                    <button type="button" class="create for-create btn btn-default">添加</button>
                     <button type="button" class="modify for-select btn btn-default">修改</button>
                     <button type="button" class="delete for-select btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
                 </div>
@@ -75,10 +75,18 @@
             url = hsSetParam(url,"path",pathMap[hsGetParam(url,"path")]);
             return HsTree.prototype.open.call(this, btn, box, url, data);
         });
-        context.on("select", function(evt, id) {
-            var path = encodeURIComponent(pathMap[id]);
-            var link = "manage/global/file/file.html?path="+path+"&type=file";
-            context.closest(".row" ).children(".main-context" ).hsLoad( link);
+        context.on("treeSelect", function(evt, nid, obj) {
+            evt.stopPropagation(  );
+
+            var box  = obj.context ;
+            var rid  = obj.getRid();
+            var pre  = pathMap[nid];
+            box.find(".for-create").prop("disabled", rid == nid);
+            box.find(".for-select").prop("disabled", rid == nid || /^\/.*?\/$/.test(pre));
+
+            var prm = encodeURIComponent(pre);
+            var url = "manage/global/file/file.html?path="+prm+"&type=file";
+            context.closest(".row").children(".main-context").hsLoad( url );
         });
     })(jQuery);
 </script>

@@ -1,56 +1,76 @@
-<h2>新建文件</h2>
+<h2>修改文件</h2>
 <div id="global-file-file-modify"
      data-module="hsForm"
-     data-save-url="manage/file/update.act">
+     data-save-url="manage/file/update.act"
+     data-load-url="manage/file/search.act?path=${path}&type=file&md=1">
     <form action="" method="POST">
         <input type="hidden" name="type" data-pn="txt" />
         <input type="hidden" name="path" data-pn="path"/>
         <input type="hidden" name="dist" data-pn="path"/>
-        <div class="row">
-            <div class="col-md-6 center-block">
-                <div class="form-group">
-                    <label class="control-label">文件名</label>
-                    <input type="text" name="name" class="form-control" required="required"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">内容</label>
-                    <textarea name="text" class="form-control"></textarea>
-                </div>
-                <div>
-                    <button type="submit" class="ensure btn btn-primary">创建</button>
-                    <button type="button" class="cancel btn btn-link"   >取消</button>
-                </div>
+        <div class="form-group row">
+            <label class="col-sm-3 control-label form-control-static text-right">文件名</label>
+            <div class="col-sm-6">
+                <input type="text" name="name" class="form-control" required="required"/>
+            </div>
+        </div>
+        <div class="form-group" style="border: 1px solid #ccc;">
+            <textarea name="text" rows="20" class="form-control invisible"></textarea>
+        </div>
+        <div class="form-group row">
+            <div class="col-sm-6 col-sm-offset-3">
+                <button type="submit" class="ensure btn btn-primary">保存</button>
+                <button type="button" class="cancel btn btn-link"   >取消</button>
             </div>
         </div>
     </form>
 </div>
-<link rel="stylesheet" href="static/addons/codemirror/codemirror.css">
-<script src="static/addons/codemirror/codemirror.js"></script>
 <script type="text/javascript">
     (function($) {
         var context = $("#global-file-file-modify").removeAttr("id");
 
-        context.data("_fill_dist", function() {
-            return this._info.path.replace(/\/[^\/]*$/, '');
-        });
-        
         context.data("_fill_text", function(inp, val) {
-            inp.val(val);
-            var cm = CodeMirror.fromTextArea(inp[0], {
-                mode: this._info.mime,
-                lineNumbers: true
-            });
-            inp.data("CM", cm);
+            var name = this._info.name;
+            var mode = getModeByName(name);
+            if (/\.properties$/.test(name)) {
+                val  = decodeUnicode(val );
+            }
+
+            setTimeout (function() {
+                var cm = CodeMirror.fromTextArea(inp[0], {
+                    lineNumbers : true,
+                    mode : mode
+                });
+                cm.setSize(null , 500);
+                inp.data("CM", cm);
+            }, 500);
+
+            return val;
+        });
+
+        context.find("[name=name]").on("change", function() {
+            var inst = context.find("[name=text]").data("CM");
+            if (inst === undefined) return;
+            var name = $(this).val( );
+            var mode = getModeByName(name);
+            inst.setOption( "mode" , mode);
         });
 
         context.find("form").on("submit", function(evt) {
-            var inst = context.data("HsForm");
             var form = $(this);
+            var inst = context.data( "HsForm" );
+            var path = form.find("[name=path]").val();
+            var dist = form.find("[name=dist]").val();
+            var name = form.find("[name=name]").val();
+            var text = form.find("[name=text]").data("CM").getValue();
+                dist = dist.replace(/\/[^\/]*$/, '' );
+            if (/\.properties$/.test(name)) {
+                text = encodeUnicode(text)
+            }
             var data = {
-                dist : form.find("[name=dist]").val() + "/" + form.find("[name=name]").val(),
-                path : form.find("[name=path]").val(),
-                text : form.find("[name=text]").val(),
-                type : "file"
+                dist : dist + "/" + name,
+                path : path,
+                text : text,
+                type :"file"
             };
             evt.preventDefault();
             if (!inst.validate()) {

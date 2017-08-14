@@ -29,6 +29,9 @@
         </table>
     </div>
     <div class="pagebox"></div>
+    <form class="invisible">
+        <input type="file" name="file"/>
+    </form>
 </div>
 <style type="text/css">
     .global-file-list .pagination {display: none;}
@@ -37,5 +40,36 @@
     (function($) {
         var context = $("#global-file-list");
 
+        if (H$( "&path" , context) === '/' ) {
+            var toolBox = context.find(".toolbox");
+            var listBox = context.find(".listbox");
+            var pageBox = context.find(".pagebox");
+            context.removeAttr ( "data-load-url" );
+            toolBox.find(".btn").prop("disabled" , true);
+            listBox.hide( );
+            pageBox.empty().append('<div class="alert alert-warning">请选择下级目录</div>');
+        }
+        
+        context.on("click", ".create", function() {
+            var inst  = context.data("HsList");
+            var path  = H$( "&path", context );
+            inst.open($(this), $(this).hsFind("@"),
+            "manage/global/file/file_create.html?path="+encodeURIComponent(path));
+        });
+        context.on("click", ".modify", function() {
+            var inst  = context.data("HsList");
+            var path  = inst.getOne ();
+            if (path == null) {
+                return;
+            }
+            var type  = path.closest("tr").find("td:eq(3)").text();
+            if (type !="txt") {
+                alert("抱歉, 暂不支持对非文本文件进行编辑");
+                return;
+            }
+            path = path.val();
+            inst.open($(this), $(this).hsFind("@"),
+            "manage/global/file/file_modify.html?path="+encodeURIComponent(path));
+        });
     })(jQuery);
 </script>

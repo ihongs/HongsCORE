@@ -21,7 +21,7 @@ var MODE_MAP = {
 
 // 代码模式
 function getModeByName(mod) {
-    mod = mod.replace(/.*\./, '');
+    mod = mod.replace (/.*\./ , '');
     return MODE_MAP[mod];
 }
 

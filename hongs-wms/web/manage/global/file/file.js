@@ -27,8 +27,8 @@ function getModeByName(mod) {
 
 // 字符解码
 function decodeUnicode(str) {
-    str = str.replace(/\\/g, "%");
-    return unescape(str);
+    return JSON.parse ('"'+str+'"')
+               .substr(  1  , -1  );
 }
 
 // 字符转码

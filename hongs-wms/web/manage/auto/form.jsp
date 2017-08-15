@@ -167,9 +167,7 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _loadUrl: "<%=_module%>/<%=_entity%>/search.act"
-            + "?id=" + H$("&id", context)
-            + "&md=" + H$("&md", context)
+        _url: "<%=_module%>/<%=_entity%>/search.act"
     });
 
     // 附加脚本
@@ -178,6 +176,6 @@
     }
 
     // 加载数据
-    formobj.load(formobj._loadUrl , loadbox);
+    formobj.load(formobj._url, loadbox);
 })( jQuery );
 </script>

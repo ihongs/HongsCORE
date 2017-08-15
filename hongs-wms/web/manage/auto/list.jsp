@@ -235,17 +235,18 @@
             ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
              '.revert', '@']
         ],
+        _loadUrl: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime",
         _fill__fork: hsListFillFork
     });
 
     var filtobj = filtbox.hsForm({
-        fillInfo: function ( ) { },
+        _loadUrl: "<%=_module%>/<%=_entity%>/search.act?md=0",
         _fill__enum: hsListFillFilt
     });
 
     var statobj = context.hsStat({
-        statisUrl : "<%=_module%>/<%=_entity%>/statis/search.act?md=1",
-        countsUrl : "<%=_module%>/<%=_entity%>/counts/search.act?md=1"
+        statisUrl: "<%=_module%>/<%=_entity%>/statis/search.act?md=1",
+        countsUrl: "<%=_module%>/<%=_entity%>/counts/search.act?md=1"
     });
 
     if (filtbox.find(".form-group").size() == 2) {
@@ -323,15 +324,15 @@
         }
         findbox.find(":submit").click();
     });
-    statbox.data("changed", true);
+    statbox.data("changed", true );
 
     // 附加脚本
     if (self.inMyList) {
-        self.inMyList(context);
+        self.inMyList  ( context );
     }
 
     // 加载数据
-    filtobj.load("<%=_module%>/<%=_entity%>/search.act?md=0");
-    listobj.load("<%=_module%>/<%=_entity%>/search.act?md=6", findbox);
+    filtobj.load(filtobj._loadUrl);
+    listobj.load(listobj._loadUrl , findbox);
 })(jQuery);
 </script>

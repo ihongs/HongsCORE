@@ -161,21 +161,23 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
+    var loadbox = context.closest( ".loadbox" );
 
     var formobj = context.hsForm({
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView
+        _fill__view: hsFormFillView,
+        _loadUrl: "<%=_module%>/<%=_entity%>/search.act"
+            + "?id=" + H$("&id", context)
+            + "&md=" + H$("&md", context)
     });
 
     // 附加脚本
     if (self.inMyForm) {
-        self.inMyForm(context);
+        self.inMyForm  ( context );
     }
 
     // 加载数据
-    formobj.load("<%=_module%>/<%=_entity%>/search.act"
-            + "?id=" + H$("&id", context)
-            + "&md=" + H$("&md", context) );
+    formobj.load(formobj._loadUrl , loadbox);
 })( jQuery );
 </script>

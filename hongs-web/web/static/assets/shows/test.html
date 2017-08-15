@@ -8,7 +8,7 @@
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.css" rel="stylesheet">
     <link href="http://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap-theme.css" rel="stylesheet">
     <script type="text/javascript">
-        function HsEditor(opts, context) {
+        function HsEditor(context, opts) {
             var editbox;
             var editbar;
             var textbox;
@@ -133,7 +133,7 @@
 
         (function($) {
             $(function() {
-                new HsEditor({}, $("[data-module=hsEditor]"));
+                new HsEditor($("[data-module=hsEditor]"), {});
             });
         })(jQuery);
     </script>

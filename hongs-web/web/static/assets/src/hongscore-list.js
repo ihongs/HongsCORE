@@ -6,8 +6,8 @@
  * @param {Object} opts 选项
  * @param {Element} context 容器
  */
-function HsList(opts, context) {
-    context = jQuery (context);
+function HsList (context , opts) {
+    context = jQuery( context  );
     context.data("HsList", this);
     context.addClass( "HsList" );
 
@@ -531,6 +531,14 @@ HsList.prototype = {
             .appendTo(td);
         return false;
     },
+    _fill__email : function(td, v, n) {
+        if (! v) return v;
+        n = "mailto:" + v;
+        jQuery('<a></a>')
+            .attr("href" , n).text(v)
+            .appendTo(td);
+        return false;
+    },
     _fill__ulink : function(td, v, n) {
         if (! v) return v;
         v = hsFixUri( v );
@@ -539,7 +547,7 @@ HsList.prototype = {
             .appendTo(td);
         return false;
     },
-    _fill__alink : function(td, v, n) {
+    _fill__nlink : function(td, v, n) {
         // 把 a.b[c][] 改为 a-b-c
         n = n.replace(/(\[|\.)/, '-')
              .replace(/(\]|\-$)/, '');

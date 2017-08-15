@@ -6,8 +6,8 @@
  * @param {Object} opts 选项
  * @param {Element} context 容器
  */
-function HsForm(opts, context) {
-    context = jQuery (context);
+function HsForm (context , opts) {
+    context = jQuery( context  );
     context.data("HsForm", this);
     context.addClass( "HsForm" );
 
@@ -82,7 +82,7 @@ function HsForm(opts, context) {
         this.loadBack({ });
     }
 
-    this.valiInit(/*****/);
+    this.valiInit( /* */ );
     this.saveInit(saveUrl);
 }
 HsForm.prototype = {
@@ -416,6 +416,9 @@ HsForm.prototype = {
         if (inp.is("a,img,video,audio")) {
             v = hsFixUri(v);
             inp.filter("a").attr("href", v);
+            inp.filter("a.a-email").attr("href", "mailto:"+v);
+            inp.filter("a.a-tel").attr("href", "tel:"+v);
+            inp.filter("a.a-sms").attr("href", "sms:"+v);
             inp.filter("img,video,audio").attr("src", v);
             inp.not ("a,img,video,audio").text(/****/ v);
             return;

@@ -1947,18 +1947,19 @@ $.fn.hsFind = function(selr) {
 $.fn._hsTarget = $.fn.hsFind; // 兼容旧版命名
 
 $.fn._hsModule = function(func, opts) {
-    var elem = this;
     var name = func.name || /^function\s+(\w+)/.exec(func.toString())[1];
-    var inst = elem.data(name);
+    var inst = this.data(name);
     if (! inst) {
-        inst = new func(opts ? opts : {}, elem);
-        elem.data(name, inst);
-        elem.addClass ( name);
-    }
-    if (opts) for ( var k in opts ) {
-        if ('_'===k.substring(0, 1)
-        ||  inst[k] !== undefined ) {
-            inst[k]  =  opts[k];
+        inst =  new func(this , opts ? opts : {});
+        this.data(name , inst);
+        this. addClass ( name);
+    } else
+    if (opts) {
+        if (typeof inst.reset === "function") {
+            inst.reset ( opts);
+        } else
+        if (typeof inst.setup === "function") {
+            inst.setup ( opts);
         }
     }
     return  inst;
@@ -1968,7 +1969,7 @@ $.fn._hsModule = function(func, opts) {
 // indeterminate 有三个值: true 选中, null 半选, false 未选
 $.propHooks.choosed = {
     get : function(elem) {
-        return elem.checked ? true : (elem.indeterminate ?  null : false);
+        return elem.checked ? true : (elem.indeterminate ? null : false);
     },
     set : function(elem, stat) {
         if (stat === null) {

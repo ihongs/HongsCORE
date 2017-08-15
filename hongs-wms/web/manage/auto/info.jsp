@@ -117,6 +117,12 @@
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
 
+    var formobj = context.hsForm({
+        _fill__fork: hsFormFillFork,
+        _fill__file: hsFormFillFile,
+        _fill__view: hsFormFillView
+    });
+
     /**
      * 文件、图片等控件都是为表单准备的
      * 需去掉删除按钮及更换按钮样式才行
@@ -125,14 +131,25 @@
         context.find(".pickbox .close").hide();
         context.find(".pickbox .btn-info" )
                .removeClass("form-control")
-               .removeClass("btn-info").addClass("btn-link");
+               .removeClass("btn-info")
+               .addClass   ("btn-link");
     });
 
-    context.hsForm({
-        loadUrl: "<%=_module%>/<%=_entity%><%if ("revert".equals(_action)){%>/revert<%}%>/search.act?id=\${id}&md=\${md}&ctime=\${ctime}",
-        _fill__fork: hsFormFillFork,
-        _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView
-    });
+    // 附加脚本
+    if (self.inMyForm) {
+        self.inMyForm(context);
+    }
+
+    // 加载数据
+    <%if ("revert".equals(_action)) {%>
+    formobj.load("<%=_module%>/<%=_entity%>/revert/search.act"
+            + "?id=" + H$("&id", context)
+            + "&md=" + H$("&md", context)
+        +"&ctime="+ H$("&ctime", context) );
+    <%} else {%>
+    formobj.load("<%=_module%>/<%=_entity%>/search.act"
+            + "?id=" + H$("&id", context)
+            + "&md=" + H$("&md", context) );
+    <%}/*End*/%>
 })( jQuery );
 </script>

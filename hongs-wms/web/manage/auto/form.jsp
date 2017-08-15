@@ -1,3 +1,4 @@
+<%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
@@ -10,7 +11,8 @@
 <!-- 表单 -->
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="row">
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
+          method="POST" enctype="multipart/form-data">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -160,12 +162,20 @@
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
 
-    context.hsForm({
-        loadUrl: "<%=_module%>/<%=_entity%>/search.act?id=\${id}&md=\${md}",
-        saveUrl: "<%=_module%>/<%=_entity%>/<%=_action%>.act",
+    var formobj = context.hsForm({
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView
     });
+
+    // 附加脚本
+    if (self.inMyForm) {
+        self.inMyForm(context);
+    }
+
+    // 加载数据
+    formobj.load("<%=_module%>/<%=_entity%>/search.act"
+            + "?id=" + H$("&id", context)
+            + "&md=" + H$("&md", context) );
 })( jQuery );
 </script>

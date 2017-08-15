@@ -1,3 +1,5 @@
+<%@page import="app.hongs.Core"%>
+<%@page import="java.io.File"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_base_.jsp"%>
@@ -20,20 +22,8 @@
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/manage.js"></script>
-        <script type="text/javascript">
-            $(document).on("loseMenu", function() {
-                $('#main-context').empty().append(
-                    '<div class="alert alert-info"><p>'
-                  + ':( 糟糕! 这里什么也没有, <a href="manage/">换个地方</a>瞧瞧去?'
-                  + '</p></div>'
-                );
-                setTimeout(function() {
-                    location.href = hsFixUri("manage/");
-                } , 3000);
-            });
-            
-            $.ajaxSetup({cache:true});
-        </script>
+        <script type="text/javascript" src="manage/auto/stat.js"></script>
+        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/mine.js"></script>
     </head>
     <body>
         <div id="notebox"></div>

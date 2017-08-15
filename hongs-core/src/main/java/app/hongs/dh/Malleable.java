@@ -198,9 +198,11 @@ public class Malleable {
                 Set fns = getFields().keySet();
                 fns = new LinkedHashSet( fns );
                 fns.remove("@");
-                return   fns   ;
+                return fns ;
             }}
 
+            fts = getCaseTypes(x);
+        } else {
             // 可在表参数区直接给出
             // 专用类型无需特别设置
             fts = new HashSet ( );
@@ -210,8 +212,6 @@ public class Malleable {
             if ("sortable".equals(x)) {
                 fts.add("sorted");
             }
-        } else {
-            fts = getCaseTypes(x);
         }
 
         Map<String, Map   > fcs = getFields();

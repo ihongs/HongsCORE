@@ -16,16 +16,18 @@ import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerConfigurationException;
-import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
@@ -158,17 +160,58 @@ public class Form extends Model {
         String name = (String) rd.get("name");
 
         if (conf != null && !"".equals(conf)) {
-             Map  top  = null;
-
             flds = Synt.asList(Data.toObject(conf));
-            for (Map fld : flds) {
+            Set set = Synt.setOf("cuid", "muid", "ctime", "mtime");
+            Map top = null;
+            Map fld ;
+
+            Iterator<Map> it = flds.iterator(/***/);
+            while (it.hasNext()) {
+                fld = it.next();
+                if ("@".equals(fld.get("__name__"))) {
+                    it.remove();
+                    top = fld  ;
+                } else
                 if ( "".equals(fld.get("__name__"))) {
                     fld.put("__name__", Core.newIdentity());
                 } else
-                if ("@".equals(fld.get("__name__"))) {
-                    top = fld;
+                if (set.contains(fld.get("__name__"))) {
+                    set. remove (fld.get("__name__"));
                 }
             }
+
+            // 增加环境字段
+            for(Object nom : set) {
+                String nam = nom.toString();
+                if ( nam.endsWith("time") ) {
+                    flds.add(Synt.mapOf(
+                        "__name__", nam,
+                        "__type__", "number",
+                          "type"  ,  "long" ,
+                        "editable", "false" ,
+                        "default" , "=%now" ,
+                        "default-always", "yes",
+                        "default-create", nam.startsWith("c") ? "yes" : "no"
+                    ));
+                } else
+                if ( nam.endsWith( "uid") ) {
+                    flds.add(Synt.mapOf(
+                        "__name__", nam,
+                        "__type__", "hidden",
+                        "editable", "false" ,
+                        "default" , "=$uid" ,
+                        "default-always", "yes",
+                        "default-create", nam.startsWith("c") ? "yes" : "no"
+                    ));
+                }
+            }
+
+            // 增加编号字段
+            flds.add(0, Synt.mapOf(
+                "__name__", "id",
+                "__text__", "ID",
+                "__type__", "hidden"
+            ));
 
             // 增加表配置项, 默认自动判别列举、排序、筛选字段
             if (top == null) {
@@ -181,18 +224,7 @@ public class Form extends Model {
             top.put("sortable", "?" );
             top.put("siftable", "?" );
 
-            // 增加编号字段
-            top = new HashMap( );
-            flds.add(1, top);
-            top.put("__name__", "id");
-            top.put("__text__", "ID");
-            top.put("__type__", "hidden");
-            top.put("listable", "yes");
-            top.put("sortable", "yes");
-            top.put("findable", "yes");
-            top.put("siftable", "yes");
-
-            conf = Data.toString ( flds );
+            conf = Data.toString(flds);
             rd.put("conf", conf);
         } else {
             rd.remove ( "conf" );
@@ -301,7 +333,7 @@ public class Form extends Model {
         depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
 
         // 恢复
-        
+
         role = docm.createElement("role");
         menu.appendChild ( role );
         role.setAttribute("name", prefix+"/"+id+"/revert");

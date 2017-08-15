@@ -256,7 +256,7 @@ HsList.prototype = {
                     th.click(function( ) {
                         var td = jQuery ( this );
                         var fn = td.attr("data-ob") || td.attr("data-fn");
-                        var sn = "";
+                        var sn = null;
                         if ( td.hasClass("sort-a-z")) {
                             sn = "-"+fn;
                         } else

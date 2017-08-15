@@ -418,6 +418,9 @@ ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
 }
+ul.pickrol .close {
+    display: none;
+}
 .pickbox:after {
     clear: both;
     content: " ";

@@ -50,3 +50,30 @@ function encodeUnicode(str) {
     }
     return res.join("");
 }
+
+function humanSize(size)
+{
+    var n, a = [];
+
+    n = Math.floor(size / 1073741824);
+    if (n > 0) {
+        size = size % 1073741824;
+        a.push(n + "G");
+    }
+    n = Math.floor(size / 1048576);
+    if (n > 0) {
+        size = size % 1048576;
+        a.push(n + "M");
+    }
+    n = Math.floor(size / 1024);
+    if (n > 0) {
+        size = size % 1024;
+        a.push(n + "K");
+    }
+    n = size;
+    if (n > 0 || a.length == 0) {
+        a.push(n);
+    }
+
+    return a.join (" ");
+}

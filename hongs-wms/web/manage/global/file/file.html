@@ -2,13 +2,15 @@
      class="global-file-list"
      data-module="hsList"
      data-load-url="manage/file/search.act?path=${path}&type=file&ob=name"
-     data-send-urls-0="['manage/file/delete.act','.delete','您确定要删除此文件?']">
+     data-send-urls-0="['manage/file/delete.act','.delete','您确定要删除此文件?']"
+     data-data-0="_fill_size: ( function(x, v) {return humanSize(v);} )"
+     data-data-1="_empty_err: 没有文件, 您可以添加文件, 或查看下级目录!">
     <div>
         <div class="toolbox btn-group">
             <button type="button" class="create btn btn-default">新建文件</button>
             <button type="button" class="modify for-choose btn btn-default">修改</button>
             <button type="button" class="upload btn btn-default">上传</button>
-            <button type="button" class="dnload for-choose btn btn-default">下载</button>
+            <button type="button" class="dnload for-checks btn btn-default">下载</button>
             <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
     </div>
@@ -33,9 +35,6 @@
         <input type="file" name="file"/>
     </form>
 </div>
-<style type="text/css">
-    .global-file-list .pagination {display: none;}
-</style>
 <script type="text/javascript">
     (function($) {
         var context = $("#global-file-list");
@@ -47,7 +46,7 @@
             context.removeAttr ( "data-load-url" );
             toolBox.find(".btn").prop("disabled" , true);
             listBox.hide( );
-            pageBox.empty().append('<div class="alert alert-warning">请选择下级目录</div>');
+            pageBox.empty().append('<div class="alert alert-warning">可管理网站、配置、数据等文件, 请先选择下级目录, 然后可对其下文件进行操作.</div>');
         }
         
         context.on("click", ".create", function() {
@@ -70,6 +69,10 @@
             path = path.val();
             inst.open($(this), $(this).hsFind("@"),
             "manage/global/file/file_modify.html?path="+encodeURIComponent(path));
+        });
+
+        context.on("click", ".upload,.dnload", function() {
+            alert("抱歉, 暂不支持上传和下载");
         });
     })(jQuery);
 </script>

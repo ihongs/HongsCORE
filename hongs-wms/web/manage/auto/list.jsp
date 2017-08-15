@@ -235,12 +235,12 @@
             ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
              '.revert', '@']
         ],
-        _loadUrl: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime",
+        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime",
         _fill__fork: hsListFillFork
     });
 
     var filtobj = filtbox.hsForm({
-        _loadUrl: "<%=_module%>/<%=_entity%>/search.act?md=0",
+        _url: "<%=_module%>/<%=_entity%>/search.act?md=0",
         _fill__enum: hsListFillFilt
     });
 
@@ -322,7 +322,7 @@
         } else {
             $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
         }
-        findbox.find(":submit").click();
+        findbox.find(":submit").click( );
     });
     statbox.data("changed", true );
 
@@ -332,7 +332,7 @@
     }
 
     // 加载数据
-    filtobj.load(filtobj._loadUrl);
-    listobj.load(listobj._loadUrl , findbox);
+    filtobj.load(filtobj._url);
+    listobj.load(listobj._url , findbox);
 })(jQuery);
 </script>

@@ -81,7 +81,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
-                    <ul class="pickbox" data-ft="<%=kind%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>"></ul>
+                    <ul class="pickbox pickrol" data-ft="<%=kind%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>"></ul>
                 </div>
             </div>
             <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
@@ -94,7 +94,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
-                    <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                    <ul class="pickbox pickrol" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 </div>
             </div>
             <%} else {%>
@@ -122,19 +122,7 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _loadUrl: "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act"
-    });
-
-    /**
-     * 文件、图片等控件都是为表单准备的
-     * 需去掉删除按钮及更换按钮样式才行
-     */
-    context.on("loadOver", function() {
-        context.find(".pickbox .close").hide();
-        context.find(".pickbox .btn-info" )
-               .removeClass("form-control")
-               .removeClass("btn-info")
-               .addClass   ("btn-link");
+        _url: "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act"
     });
 
     // 附加脚本
@@ -143,6 +131,6 @@
     }
 
     // 加载数据
-    formobj.load(formobj._loadUrl, loadbox);
+    formobj.load(formobj._url, loadbox);
 })( jQuery );
 </script>

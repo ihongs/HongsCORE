@@ -116,11 +116,13 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
+    var loadbox = context.closest( ".loadbox" );
 
     var formobj = context.hsForm({
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView
+        _fill__view: hsFormFillView,
+        _loadUrl: "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act"
     });
 
     /**
@@ -137,19 +139,10 @@
 
     // 附加脚本
     if (self.inMyForm) {
-        self.inMyForm(context);
+        self.inMyForm  ( context );
     }
 
     // 加载数据
-    <%if ("revert".equals(_action)) {%>
-    formobj.load("<%=_module%>/<%=_entity%>/revert/search.act"
-            + "?id=" + H$("&id", context)
-            + "&md=" + H$("&md", context)
-        +"&ctime="+ H$("&ctime", context) );
-    <%} else {%>
-    formobj.load("<%=_module%>/<%=_entity%>/search.act"
-            + "?id=" + H$("&id", context)
-            + "&md=" + H$("&md", context) );
-    <%}/*End*/%>
+    formobj.load(formobj._loadUrl, loadbox);
 })( jQuery );
 </script>

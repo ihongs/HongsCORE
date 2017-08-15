@@ -60,7 +60,7 @@ function setItemType(input, type) {
 }
 
 function getFormInfo(id) {
-    
+
 }
 
 /**
@@ -130,7 +130,7 @@ function loadConf(modal, field) {
                             .replace(/^data-/,""));
         tr.find("[name=param_value]").val(x.value);
     }
-    
+
     // 关联
 }
 
@@ -205,7 +205,7 @@ function saveConf(modal, field) {
         var v = $(this).find("[name=param_value]").val();
         fd.attr("data-"+n, v);
     });
-    
+
     // 关联
     modal.find(".pickval").each(function() {
         fd.attr("data-form", $(this).val());
@@ -285,6 +285,10 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         var type  = field["__type__"];
         var required = field["__required__"];
         var repeated = field["__repeated__"];
+        if (type == "hidden" || (type == "number"
+        && (name == "ctime"  ||  name == "mtime"))) {
+            continue; // 内部缺省字段, 禁止自行设置
+        }
         if (pre) {
             name  = pre + name;
         }

@@ -130,8 +130,8 @@ public class SpreadHelper {
 
             // 查询路径
             if (null == ak || "".equals(ak)) {
-                int ln = -3 + fn.length(  );
-                if (fn.substring(ln).endsWith("_id")) {
+                if (fn.endsWith("_id")) {
+                    int  ln = fn.length()-3;
                     ak = fn.substring(0,ln);
                 } else {
                     ak = fn + "_data";
@@ -206,7 +206,7 @@ public class SpreadHelper {
             }
 
             // 整合数据
-            boolean rp = Synt.declare(mt.get("__repeated__"), true);
+            boolean rp = Synt.declare(mt.get("__repeated__"), false);
             if (rp) {
                 mm.append(ls, ms, vk, ak);
             } else {

@@ -77,12 +77,17 @@ public class SpreadHelper {
             Map       mt = (Map ) et.getValue();
             String  name = (String) et.getKey();
             String  type = (String) mt.get("__type__");
-                    type = (String) tps.get(type); // 类型别名转换
-            if (! "link".equals ( type )) {
+                    type = (String)tps.get(   type   ); // 类型别名转换
+            if (! "fork".equals ( type )) {
                 continue;
             }
+            if (! mt.containsKey("data-at")) {
             if (! mt.containsKey("conf")) {
                 mt.put("conf", conf);
+            }
+            if (! mt.containsKey("form")) {
+                mt.put("form", name.replace("_id",""));
+            }
             }
             items.put(name, mt);
         }
@@ -135,8 +140,6 @@ public class SpreadHelper {
             if (null == at || "".equals(at)) {
                 String c = (String) mt.get("conf");
                 String f = (String) mt.get("form");
-                if (null == c || "".equals(c)) c = ""; // 缺省情况有问题
-                if (null == f || "".equals(f)) f = ak;
                 at  =  c + "/" + f + "/search";
             }
 

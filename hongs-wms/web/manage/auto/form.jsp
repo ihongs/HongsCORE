@@ -130,20 +130,22 @@
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
-                        String fn = name;
+                        String fm = _module;
+                        String fn =  name  ;
+                        String kn =  name  ;
                         if (fn.endsWith("_id")) {
                             int  ln = fn.length() - 3;
                             fn = fn.substring(0 , ln);
+                            kn = fn;
                         } else {
-                            fn = fn + "_data";
+                            kn = fn + "_data";
                         }
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :   "id"   ;
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") :  "name"  ;
-                        String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :
-                                  ( info.containsKey("form"   ) ? (String) info.get("form"   ) :    fn   );
+                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :
-                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) : _module )
-                            +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :    fn   )
+                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
+                            +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                             +"/list_fork.html";
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>

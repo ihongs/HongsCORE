@@ -64,17 +64,17 @@ public class IsFork extends Rule {
         String ap = null;
         String aq = null;
 
+        if ("".equals(vk)) {
+            vk = Cnst.ID_KEY;
+        }
         if ("".equals(cl)) {
-            cl =  ck ;
+            cl = ck;
         }
         if ("".equals(fl)) {
-            fl =  fk.replaceFirst("_id$", "");
-        }
-        if ("".equals(vk)) {
-            vk = "id";
+            fl = fk.replaceFirst("_id$","");
         }
         if ("".equals(at)) {
-            at =  cl + "/" + fl + "/search"  ;
+            at = cl + "/" + fl + "/search" ;
         } else {
             // 尝试解析附加参数
             int ps;
@@ -89,18 +89,19 @@ public class IsFork extends Rule {
                 at = at.substring(0 , ps).trim();
             }
         }
-        
+
         ActionHelper ah = ActionHelper.newInstance();
         ah.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
 
         // 请求数据
         Map rd = new HashMap();
-        Set rb = new HashSet();
-        ah.setRequestData (rd);
+        Set rb = Synt.setOf ( vk  );
+        Set id = Synt.asSet (value);
         rb.add(vk);
         rd.put(Cnst.RN_KEY, 0);
         rd.put(Cnst.RB_KEY,rb);
-        rd.put(Cnst.ID_KEY,value);
+        rd.put(Cnst.ID_KEY,id);
+        ah.setRequestData (rd);
         // 虚拟路径
         if (ap != null && ap.length() != 0) {
             ah.setAttribute(Cnst.ACTION_ATTR, ap +".act");
@@ -122,9 +123,10 @@ public class IsFork extends Rule {
         // 对比结果
         Set vs = Synt.asSet(value);
         Set us = new HashSet();
+        if ( null != ls) {
         for(Map um : ls) {
             us.add(um.get(vk));
-        }
+        }}
         if (vs.size() != us.size() || !vs.containsAll(us)) {
             throw new Wrong("fore.form.is.not.exists", fl);
         }

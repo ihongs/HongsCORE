@@ -71,7 +71,7 @@ public class SelectHelper {
             Map       mt = (Map ) et.getValue();
             String  name = (String) et.getKey();
             String  type = (String) mt.get("__type__");
-                    type = (String) tps.get(type); // 类型别名转换
+                    type = (String)tps.get(   type   ); // 类型别名转换
             if (! "enum".equals(type)) {
                 continue;
             }

@@ -40,12 +40,13 @@
         hsListFillFork.call(this, cel, v, n);
         var chk =  cel.find(  ".checkone"  );
         chk.data({
-             form    :                  this._info.id,
-             conf    : "manage/data/" + this._info.id,
-            "data-at": "manage/auto/search!"
-                     + "manage/data/" + this._info.id + "/search",
-            "data-al": "manage/data/" + this._info.id + "/list_fork.html",
-            "data-vk": "id",
+             form    :                 this._info.id,
+             conf    : "manage/data/"+ this._info.id,
+            "data-ak":                 this._info.id + "_data" ,
+            "data-at": "manage/auto/search!" // 虚拟路径需要代理
+                     + "manage/data/"+ this._info.id +"/search",
+            "data-al": "manage/data/"+ this._info.id +"/list_fork.html",
+            "data-vk": "id" ,
             "data-tk": "name"
         });
     });

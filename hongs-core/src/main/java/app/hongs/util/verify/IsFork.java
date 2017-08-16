@@ -121,7 +121,9 @@ public class IsFork extends Rule {
         List<Map> ls = (List) sd.get("list");
 
         // 对比结果
-        Set vs = Synt.asSet(value);
+        Set vs = !"".equals(value)
+               ? Synt.asSet(value)
+               : new HashSet();
         Set us = new HashSet();
         if ( null != ls) {
         for(Map um : ls) {

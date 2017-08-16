@@ -83,7 +83,7 @@ public class IsFork extends Rule {
                 aq = at.substring(1 + ps).trim();
                 at = at.substring(0 , ps).trim();
             }
-            ps = at.indexOf('1');
+            ps = at.indexOf('!');
             if (ps > 0) {
                 ap = at.substring(1 + ps).trim();
                 at = at.substring(0 , ps).trim();

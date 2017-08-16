@@ -297,7 +297,7 @@ public class ActionRunner {
 
     /**
      * 获取动作名
-     * 外部有指定工作路径(Cnst.PATH_ATTR)则返回工作动作名
+     * 外部有指定工作路径(Cnst.ACTION_ATTR)则返回工作动作名
      * 同时可使用 setAction 进行设置
      * @return
      * @throws HongsException
@@ -308,14 +308,11 @@ public class ActionRunner {
         }
 
         // 去除路径中的根目录和扩展名
-        act = (String) helper.getAttribute(Cnst.PATH_ATTR);
+        act = (String) helper.getAttribute(Cnst.ACTION_ATTR);
         if (act != null) {
             int pos = act.lastIndexOf('.');
             if (pos > 0) {
                 act = act.substring(0,pos);
-            }
-            if (act.startsWith( "/" )) {
-                act = act.substring(1);
             }
             return    act;
         } else {

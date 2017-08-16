@@ -101,11 +101,12 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
     function pickBack() {
         // 未选警告
         if (jQuery.isEmptyObject(v)) {
-            var msg  = box.data("unpickedError" );
+            var msg = box.data("unpickedError");
             if (msg != "!") {
-                alert( msg  ?  hsGetLang(  msg  ):
-                      hsGetLang("fork.unpicked"));
-                return;
+                msg = msg?msg: "fork.unpicked" ;
+                if (! confirm (hsGetLang(msg))) {
+                    return;
+                }
             }
         }
 
@@ -146,24 +147,19 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
         var inf;
 
         do {
-            if (! chk.prop("checked") ) break;
-
-            // 获取额外数据
-            inf = chk.data();
-            if (! inf  ) {
-                inf = chk.attr("data-data");
-                if (inf) {
-                    inf = eval('('+inf+')');
-                }  else  {
-                    inf = null;
-                }
+            if (! chk.prop("checked")) {
+                break;
             }
 
-            txt = chk.attr("data-name");
-            if (txt) break;
-            txt = chk.closest("tr").find(".name").text();
+            // 获取代表名称
+            txt = chk.attr( "title" );
+
+            // 获取附加信息
+            inf = chk.hsData( );
+
             if (txt) break;
 
+            // 选项中没有指定则尝试从当前行的其他位置获取
             var thd = chk.closest("table").find("thead");
             var tds = chk.closest( "tr"  ).find( "td"  );
             var idx;
@@ -176,7 +172,7 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
             if (idx != -1) txt = tds.eq(idx).text( );
             if (txt) break;
 
-            idx = thd.find("[data-ft=name]").index();
+            idx = thd.find(".name").index( );
             if (idx != -1) txt = tds.eq(idx).text( );
         }
         while (false);
@@ -241,9 +237,6 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
  * @returns {undefined}
  */
 function hsFormFillPick(box, v, n, t) {
-    // 注意: 绑定当前函数用于选择后的填充
-    box.data("pickFunc", hsFormFillPick);
-
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
     var mul = /(\[\]|\.\.|\.$)/.test(n); // a[b][]|a[][b]|a.b.|a..b 均表示多选
 
@@ -292,9 +285,9 @@ function hsFormFillPick(box, v, n, t) {
             btn.on("click", ".close", box, function(evt) {
                 var btn = jQuery(evt.delegateTarget);
                 var box = evt.data;
-                reset(box, btn);
+                reset( box , btn );
                 box.trigger("change");
-                return false;
+                return false ;
             });
         }
 

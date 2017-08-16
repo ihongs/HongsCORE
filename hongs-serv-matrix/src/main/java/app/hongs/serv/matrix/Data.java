@@ -8,10 +8,10 @@ import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.dh.search.SearchEntity;
+import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.lucene.document.Document;
@@ -209,40 +209,31 @@ public class Data extends SearchEntity {
         for(String fn : fields.keySet()) {
             String fr = Synt.declare(rd.get(fn), "");
             String fo = Synt.declare(dd.get(fn), "");
-            if (   rd.containsKey( fn )) {
-                dd.put( fn , fr );
+            if (  "id".equals (fn)) {
+                dd.put(fn, id);
             } else
-            if ( "id".equals(fn)) {
-                dd.put( fn , id );
-            }
-            if ( ! fr.equals(fo)) {
-                i += 1;
+            if (rd.containsKey(fn)) {
+                dd.put(fn, fr);
+
+                if (!fr.equals(fo)
+                &&  !fn.equals("muid" )
+                &&  !fn.equals("mtime")) {
+                    i ++; // 需要排除修改环境数据
+                }
             }
         }
 
-        // 无更新不操作
+        // 无更新不存储
         if (i == 0) {
             return;
         }
 
+        dd.put("name", getName(dd));
+        dd.put("find", getFind(dd));
+
         //** 保存到数据库 **/
 
         if (saveToDb) {
-            // 拼接展示字段
-            StringBuilder nn = new  StringBuilder();
-            Set  <String> ns = new  HashSet( getListable() );
-                               ns.retainAll( getFindable() );
-            for ( String  fn : ns  ) {
-                if ( "id".equals(fn) ) continue ;
-                nn.append(dd.get(fn).toString()).append(' ');
-            }
-            String nm;
-            if (nn.length() > 120 + 1) {
-                nm = nn.substring(0, 120)+ "...";
-            } else {
-                nm = nn.toString().trim();
-            }
-
             Map ud = new HashMap();
             ud.put("etime", ctime);
 
@@ -252,7 +243,7 @@ public class Data extends SearchEntity {
             nd.put( "id" , id);
             nd.put("form_id", rd.get( "form_id" ));
             nd.put("user_id", rd.get( "user_id" ));
-            nd.put("name", nm);
+            nd.put("name", dd.get("name"));
             nd.put("note", rd.get("note"));
             nd.put("data", app.hongs.util.Data.toString(dd));
 
@@ -316,6 +307,77 @@ public class Data extends SearchEntity {
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
         setDoc(id, doc);
+    }
+
+    private Set<String> wdCols = null;
+    private Set<String> nmCols = null;
+
+    @Override
+    public Set<String> getFindable() {
+        if (null != wdCols) {
+            return  wdCols;
+        }
+        wdCols = getCaseNames("findable");
+        if (! Dict.getValue(getFields(), true, "find", "editable")) {
+            wdCols.remove("find");
+        }
+        return wdCols;
+    }
+
+    @Override
+    public Set<String> getNameable() {
+        if (null != nmCols) {
+            return  nmCols;
+        }
+        nmCols = getCaseNames("nameable");
+        if (! Dict.getValue(getFields(), true, "name", "editable")) {
+            nmCols.remove("name");
+        }
+        return nmCols;
+    }
+
+    /**
+     * 获取搜索串
+     * @param dd
+     * @return
+     * @throws HongsException
+     */
+    protected String getFind(Map dd) throws HongsException {
+        StringBuilder nn = new StringBuilder();
+        Set < String> ns = getFindable();
+        for ( String  fn : ns  ) {
+            nn.append(dd.get(fn).toString( ) )
+              .append(' ');
+        }
+        String nm = nn.toString().trim();
+
+        if (! ns.contains("id")) {
+            return dd.get("id") +" "+ nm;
+        } else {
+            return nm;
+        }
+    }
+
+    /**
+     * 获取名称串
+     * @param dd
+     * @return
+     * @throws HongsException
+     */
+    protected String getName(Map dd) throws HongsException {
+        StringBuilder nn = new StringBuilder();
+        Set < String> ns = getNameable();
+        for ( String  fn : ns  ) {
+            nn.append(dd.get(fn).toString( ) )
+              .append(' ');
+        }
+        String nm = nn.toString().trim();
+
+        if (nm.length(   ) > 99) {
+            return nm.substring(0, 99) + "...";
+        } else {
+            return nm;
+        }
     }
 
 }

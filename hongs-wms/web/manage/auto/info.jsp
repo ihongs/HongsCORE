@@ -127,10 +127,10 @@
 
     // 附加脚本
     if (self.inMyForm) {
-        self.inMyForm  ( context );
+        self.inMyForm( context );
     }
 
     // 加载数据
-    formobj.load(formobj._url, loadbox);
+    formobj.load(null, loadbox );
 })( jQuery );
 </script>

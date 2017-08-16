@@ -334,7 +334,7 @@ public class SocketHelper extends ActionHelper {
     }
 
     @Override
-    public String getClientSymbol() {
+    public String getClientName() {
         InetSocketAddress rip  = (InetSocketAddress) getAttribute("javax.we‌​bsocket.endpoint.rem‌​oteAddress");
         if (rip != null) {
             return rip.getAddress().getHostAddress();

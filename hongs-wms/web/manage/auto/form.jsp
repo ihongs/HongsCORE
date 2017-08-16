@@ -32,7 +32,7 @@
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
             if (text != null) text = _locale.translate(text);
-            
+
             if (!"".equals(rptd)) {
                 rptd += " size=\"3\"";
                 name += ".";
@@ -130,14 +130,15 @@
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :  "id" ;
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                        String fn = name.replaceFirst("_id$", "");
+                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :   "id"   ;
+                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") :  "name"  ;
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :
-                                  ( info.containsKey("form"   ) ? (String) info.get("form"   ) : name.replaceFirst("_id$", "") );
+                                  ( info.containsKey("form"   ) ? (String) info.get("form"   ) :    fn   );
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :
                                   ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) : _module )
-                                + ( info.containsKey("form"   ) ? (String) info.get("form"   ) :    ak   )
-                                + "list_fork.html";
+                            +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :    fn   )
+                            +"/list_fork.html";
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
@@ -172,10 +173,10 @@
 
     // 附加脚本
     if (self.inMyForm) {
-        self.inMyForm  ( context );
+        self.inMyForm( context );
     }
 
     // 加载数据
-    formobj.load(formobj._url, loadbox);
+    formobj.load(null, loadbox );
 })( jQuery );
 </script>

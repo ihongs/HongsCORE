@@ -48,12 +48,12 @@ public class CoreLogger
         if (Core.ENVIR == 1) {
             ActionHelper h = (ActionHelper) Core.getInstance().got(ActionHelper.class.getName());
             if ( h != null ) {
-            String r = h.getClientSymbol();
-            if ( r != null ) {
-                line.append(r).append(' ');
-            } else {
-                line.append("UNKNOW ");
-            }
+                String r= h.getClientName(   );
+                if ( r != null ) {
+                    line.append(r).append(' ');
+                } else {
+                    line.append("UNKNOW ");
+                }
             } else {
                 line.append("ACTION ");
             }
@@ -62,7 +62,7 @@ public class CoreLogger
         }
 
         // add Action Name
-        if (/**/null != Core.ACTION_NAME.get()) {
+        if (null   !=   Core.ACTION_NAME.get()) {
             line.append(Core.ACTION_NAME.get())
                 .append(' ');
         }

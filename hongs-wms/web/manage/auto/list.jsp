@@ -28,7 +28,7 @@
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
-            <input type="search" name="wd" class="form-control input-search"/>
+            <input type="search" name="find" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="btn btn-default search" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
             <%if (!"select".equals(_action)) {%>
@@ -39,6 +39,9 @@
             </span>
         </form>
     </div>
+    <%
+    if (!"select".equals(_action)) {
+    %>
     <!-- 筛选 -->
     <form class="findbox filtbox invisible row bg-info" style="margin-left: 0; margin-right: 0">
         <div class="form-group"></div>
@@ -142,6 +145,7 @@
         <%} /*End For*/%>
         </div>
     </form>
+    <%} /*End If */%>
     <!-- 列表 -->
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
@@ -207,15 +211,13 @@
     </div>
     <div class="pagebox"></div>
 </div>
-<script type="text/javascript" src="static/addons/echarts/echarts.js"></script>
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
-    var toolbox = context.find(".toolbox");
+    var statbox = context.find(".statbox");
+    var filtbox = context.find(".filtbox");
     var formbox = context.find(".findbox");
     var findbox = formbox.eq(0);
-    var filtbox = context.find(".filtbox");
-    var statbox = context.find(".statbox");
 
     //** 列表、搜索表单 **/
 
@@ -228,33 +230,58 @@
         openUrls: [
             ['<%=_module%>/<%=_entity%>/form.html?md=0',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?md=1&id={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?md=6&id={ID}',
              '.update', '@'],
             ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
              '.review', '@'],
             ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
              '.revert', '@']
         ],
-        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime",
-        _fill__fork: hsListFillFork
+        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime"
     });
 
+    <%if (!"select".equals(_action)) {%>
     var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/search.act?md=0",
-        _fill__enum: hsListFillFilt
+        _url: "<%=_module%>/<%=_entity%>/search.act?md=0"
     });
 
     var statobj = context.hsStat({
-        statisUrl: "<%=_module%>/<%=_entity%>/statis/search.act?md=1",
-        countsUrl: "<%=_module%>/<%=_entity%>/counts/search.act?md=1"
+        surl: "<%=_module%>/<%=_entity%>/statis/search.act?md=1",
+        curl: "<%=_module%>/<%=_entity%>/counts/search.act?md=1"
     });
 
     if (filtbox.find(".form-group").size() == 2) {
         findbox.find(".filter").remove();
     }
     if (statbox.find( ".col-md-6" ).size() == 0) {
-        findbox.find(".statis").remove( );
+        findbox.find(".statis").remove();
     }
+
+    filtbox.on("opened", function() {
+        if (filtbox.data("fetched") != true) {
+            filtbox.data("fetched"  ,  true);
+            filtobj.load();
+        }
+    });
+    statbox.on("opened", function() {
+        if (statbox.data("changed") == true) {
+            statbox.data("changed"  ,  null);
+            statobj.load();
+        }
+    });
+    statbox.data("changed", true);
+
+    filtobj._fill__enum = function(x, v, n, t) {
+        hsListFillFilt.call(this , x, v, n, t);
+    };
+    <%} /*End If */%>
+    <%if ( "select".equals(_action)) {%>
+    listobj._fill__fork = function(x, v, n, t) {
+        hsListFillFork.call(this , x, v, n, t);
+        console.log(x.find("input"));
+        x.find("input").attr("title", this._info.name);
+    };
+    <%} /*End If */%>
 
     // 管理动作
     findbox.find(".filter").click(function() {
@@ -282,57 +309,16 @@
     });
     filtbox.find(":reset" ).click(function() {
         setTimeout(function() {
-            filtbox.find(":submit").click();
+            filtbox.find( ":submit").click();
         }, 500);
     });
 
-    // 重新统计
-    toolbox.on("saveBack", function() {
-        if (statbox.is(".invisible")) {
-            statbox.data("changed", true );
-        } else {
-            statbox.data("changed", false);
-            setTimeout(function() {
-                statobj.statis( );
-                statobj.counts( );
-            }, 1000);
-        }
-    });
-    formbox.on("submit", function(  ) {
-        if (statbox.is(".invisible")) {
-            statbox.data("changed", true );
-        } else {
-            statbox.data("changed", false);
-            setTimeout(function() {
-                statobj.statis( );
-                statobj.counts( );
-            }, 1000);
-        }
-    });
-    statbox.on("opened", function( ) {
-        if (statbox.data("changed")) {
-            statbox.data("changed", false);
-            statobj.statis();
-            statobj.counts();
-        }
-    });
-    statbox.on("change", ":checkbox", function() {
-        if ($(this).is(".checkall2")) {
-            $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
-        } else {
-            $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
-        }
-        findbox.find(":submit").click( );
-    });
-    statbox.data("changed", true );
-
     // 附加脚本
     if (self.inMyList) {
-        self.inMyList  ( context );
+        self.inMyList( context );
     }
 
     // 加载数据
-    filtobj.load(filtobj._url);
-    listobj.load(listobj._url , findbox);
+    listobj.load(null, findbox );
 })(jQuery);
 </script>

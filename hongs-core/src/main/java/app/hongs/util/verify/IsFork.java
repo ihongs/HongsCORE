@@ -117,7 +117,7 @@ public class IsFork extends Rule {
 
         // 获取结果
         new ActionRunner(ah , at).doInvoke();
-        Map  sd = ah.getResponseData( );
+        Map       sd = ah.getResponseData( );
         List<Map> ls = (List) sd.get("list");
 
         // 对比结果

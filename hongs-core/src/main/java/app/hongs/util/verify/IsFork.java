@@ -28,8 +28,8 @@ import java.util.Set;
 public class IsFork extends Rule {
     @Override
     public Object verify(Object value) throws Wrongs, HongsException {
-        if (null == value) {
-            return  value;
+        if (value == null || "".equals(value)) {
+            return   null; // 允许为空
         }
 
         String vl = Synt.declare(params.get("verify-type"), "");
@@ -121,9 +121,7 @@ public class IsFork extends Rule {
         List<Map> ls = (List) sd.get("list");
 
         // 对比结果
-        Set vs = !"".equals(value)
-               ? Synt.asSet(value)
-               : new HashSet();
+        Set vs = Synt.asSet(value);
         Set us = new HashSet();
         if ( null != ls) {
         for(Map um : ls) {

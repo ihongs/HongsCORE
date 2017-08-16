@@ -130,7 +130,13 @@
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
-                        String fn = name.replaceFirst("_id$", "");
+                        String fn = name;
+                        if (fn.endsWith("_id")) {
+                            int  ln = fn.length() - 3;
+                            fn = fn.substring(0 , ln);
+                        } else {
+                            fn = fn + "_data";
+                        }
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :   "id"   ;
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") :  "name"  ;
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :

@@ -1,6 +1,7 @@
 package app.hongs.action;
 
 import app.hongs.Cnst;
+import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.dh.MergeMore;
 import app.hongs.util.Data;
@@ -103,9 +104,9 @@ public class SpreadHelper {
     }
 
     public void spread(List list) throws HongsException {
-        ActionHelper ah = ActionHelper.newInstance();
-        MergeMore mm = new MergeMore(list);
-        ah.setAttribute( "IN_FORK" , true);
+        MergeMore  mm = new MergeMore (list);
+        ActionHelper  ah = ActionHelper.newInstance();
+        ah.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
 
         for(Map.Entry et : items.entrySet()) {
             String fn = (String) et.getKey();
@@ -141,11 +142,22 @@ public class SpreadHelper {
 
             // 查询结构
             Map rd ; Set rb ;
+            String ap = null;
             String aq = null;
-            int ps = at.indexOf('?');
+            int ps;
+            ps = at.indexOf('?');
             if (ps > -1) {
                 aq = at.substring(1 + ps).trim();
                 at = at.substring(0 , ps).trim();
+            }
+            ps = at.indexOf('!');
+            if (ps > -1) {
+                ap = at.substring(1 + ps).trim();
+                at = at.substring(0 , ps).trim();
+            }
+            if (null != ap && !"".equals(ap)) {
+                ap = ap + ".act";
+                ah.setAttribute(Cnst.ACTION_ATTR,ap);
             }
             if (null != aq && !"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {

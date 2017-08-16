@@ -161,7 +161,7 @@ public class Form extends Model {
 
         if (conf != null && !"".equals(conf)) {
             flds = Synt.asList(Data.toObject(conf));
-            Set set = Synt.setOf("cuid", "muid", "ctime", "mtime");
+            Set set = Synt.setOf("name", "find", "cuid", "muid", "ctime", "mtime");
             Map top = null;
             Map fld ;
 
@@ -180,49 +180,91 @@ public class Form extends Model {
                 }
             }
 
-            // 增加环境字段
-            for(Object nom : set) {
-                String nam = nom.toString();
-                if ( nam.endsWith("time") ) {
-                    flds.add(Synt.mapOf(
-                        "__name__", nam,
-                        "__type__", "number",
-                          "type"  ,  "long" ,
-                        "editable", "false" ,
-                        "default" , "=%now" ,
-                        "default-always", "yes",
-                        "default-create", nam.startsWith("c") ? "yes" : "no"
-                    ));
-                } else
-                if ( nam.endsWith( "uid") ) {
-                    flds.add(Synt.mapOf(
-                        "__name__", nam,
-                        "__type__", "hidden",
-                        "editable", "false" ,
-                        "default" , "=$uid" ,
-                        "default-always", "yes",
-                        "default-create", nam.startsWith("c") ? "yes" : "no"
-                    ));
-                }
+            // 增加表配置项, 默认自动判别列举、排序、筛选字段
+            Map txp = Synt.mapOf(
+                "__text__", name,
+                "__name__", "@",
+                "listable", "?",
+                "sortable", "?",
+                "siftable", "?",
+                "nameable", "?" 
+            );
+            flds.add(0, txp);
+            if (top != null) {
+                txp.putAll(top);
             }
 
             // 增加编号字段
-            flds.add(0, Synt.mapOf(
+            flds.add(1, Synt.mapOf(
                 "__name__", "id",
                 "__text__", "ID",
                 "__type__", "hidden"
             ));
 
-            // 增加表配置项, 默认自动判别列举、排序、筛选字段
-            if (top == null) {
-                top  = new HashMap();
+            // 增加名称字段
+            if (set.contains("name")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "name",
+                    "__type__", "stored",
+                    "editable", "false"
+                ));
             }
-            flds.add(0, top);
-            top.put("__name__", "@" );
-            top.put("__text__", name);
-            top.put("listable", "?" );
-            top.put("sortable", "?" );
-            top.put("siftable", "?" );
+
+            // 增加搜索字段
+            if (set.contains("find")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "find",
+                    "__type__", "search",
+                    "editable", "false" ,
+                    "unstored", "true"
+                ));
+            }
+
+            // 增加用户字段
+            if (set.contains("cuid")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "cuid",
+                    "__type__", "hidden",
+                    "editable", "false" ,
+                    "default" , "=$uid" ,
+                    "default-always", "true",
+                    "default-create", "true"
+                ));
+            }
+            if (set.contains("muid")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "muid",
+                    "__type__", "hidden",
+                    "editable", "false" ,
+                    "default" , "=$uid" ,
+                    "default-always", "true",
+                    "default-create", "false"
+                ));
+            }
+
+            // 增加时间字段
+            if (set.contains("ctime")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "ctime" ,
+                    "__type__", "number",
+                      "type"  ,  "long" ,
+                    "editable", "false" ,
+                    "default" , "=%now" ,
+                    "default-always", "true",
+                    "default-create", "true"
+                ));
+            }
+            if (set.contains("mtime")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "mtime" ,
+                    "__type__", "number",
+                      "type"  ,  "long" ,
+                    "editable", "false" ,
+                    "default" , "=%now" ,
+                    "default-always", "true",
+                    "default-create", "false"
+                ));
+            }
 
             conf = Data.toString(flds);
             rd.put("conf", conf);

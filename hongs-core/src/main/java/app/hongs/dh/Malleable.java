@@ -23,7 +23,8 @@ public class Malleable {
     private Set obColz = null;
     private Set wdColz = null;
     private Set whColz = null;
-
+    private Set nmColz = null;
+    
     private static final Set FN_KEYS;
     static {
         FN_KEYS = new HashSet( );
@@ -287,31 +288,13 @@ public class Malleable {
     /**
      * 可用于命名的字段
      * @return
-     * @throws HongsException
      */
-    public Set<String> getNameable() throws HongsException {
-        Set<String> nams = new LinkedHashSet();
-        Set<String> lsts = getListable();
-        Map<String,  Map  > flds = getFields();
-        Map<String, String> typs = FormSet.getInstance().getEnum("__types__");
-
-        /**
-         * 寻找第一个非隐藏的字符串字段
-         */
-        for(String name : lsts) {
-            Map    item = flds.get(name);
-            if ( item == null ) continue;
-            String type = (String) item.get ("__type__");
-            String kind = typs.get(type);
-            if ("string".equals(kind)
-            && !"stored".equals(type)
-            && !"hidden".equals(type)
-            && !Cnst.ID_KEY.equals(type)) {
-                nams.add(name);
-            }
+    public Set<String> getNameable() {
+        if (null != nmColz) {
+            return  nmColz;
         }
-
-        return !nams.isEmpty() ? nams : lsts;
+        nmColz = getCaseNames("nameable");
+        return nmColz;
     }
 
     /**

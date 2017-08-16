@@ -5,8 +5,8 @@ function HsStat (context , opts) {
     context.data("HsStat", this);
     context.addClass( "HsStat" );
 
-    this.statisUrl = opts.statisUrl;
-    this.countsUrl = opts.countsUrl;
+    this.surl = opts.surl;
+    this.curl = opts.curl;
     this.context = context;
     this.statbox = context.find(".statbox");
     this.formbox = context.find(".findbox");
@@ -18,12 +18,55 @@ function HsStat (context , opts) {
         var obj = echarts.init(box);
         $(this).data("echart", obj);
     });
+
+    //** 条件改变时重载图表 **/
+
+    var statobj = this;
+    var statbox = this.statbox;
+    var formbox = this.formbox;
+    var toolbox = context.find(".toolbox");
+
+    toolbox.on("saveBack", function() {
+        if (statbox.is(".invisible")) {
+            statbox.data("changed", true );
+        } else {
+            statbox.data("changed", false);
+            setTimeout(function() {
+                statobj.load();
+            }, 1000);
+        }
+    });
+
+    formbox.on( "submit" , function() {
+        if (statbox.is(".invisible")) {
+            statbox.data("changed", true );
+        } else {
+            statbox.data("changed", false);
+            setTimeout(function() {
+                statobj.load();
+            }, 1000);
+        }
+    });
+
+    statbox.on( "change" , ":checkbox", function() {
+        if ($(this).is(".checkall2")) {
+            $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
+        } else {
+            $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
+        }
+        formbox.find(":submit:first").click();
+    });
 }
 
 HsStat.prototype = {
+    load: function () {
+        this.statis();
+        this.counts();
+    },
+    
     statis: function(rb) {
         var that = this;
-        var url  = this.statisUrl;
+        var url  = this.surl;
         var context = this.context;
         var statbox = this.statbox;
         var formbox = this.formbox;
@@ -63,7 +106,7 @@ HsStat.prototype = {
 
     counts: function(rb) {
         var that = this;
-        var url  = this.countsUrl;
+        var url  = this.curl;
         var context = this.context;
         var statbox = this.statbox;
         var formbox = this.formbox;

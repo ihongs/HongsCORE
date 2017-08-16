@@ -126,12 +126,14 @@ function loadConf(modal, field) {
             continue;
         }
         var tr = tp.clone().appendTo(tb).removeClass("hide");
-        tr.find("[name=param_name]" ).val(x.name
-                            .replace(/^data-/,""));
-        tr.find("[name=param_value]").val(x.value);
+        var pv =  x.value;
+        var pn =  x.name ;
+        if (/^data-.{3,}/.test(pn)) {
+            pn = pn.substring ( 5 );
+        }
+        tr.find("[name=param_name]" ).val(pn);
+        tr.find("[name=param_value]").val(pv);
     }
-
-    // 关联
 }
 
 /**
@@ -203,13 +205,18 @@ function saveConf(modal, field) {
     tr.each(function() {
         var n = $(this).find("[name=param_name]" ).val();
         var v = $(this).find("[name=param_value]").val();
-        fd.attr("data-"+n, v);
+        if (!/^data-/.test(n)) {
+            n =  "data-" + n ;
+        }
+        fd.attr(n, v);
     });
 
     // 关联
-    modal.find(".pickval").each(function() {
-        fd.attr("data-form", $(this).val());
-    });
+    if (fd.is("[data-ft=_fork]")) {
+        fd.next()
+          .attr("data-href", fd.attr("data-al"))
+          .attr("data-hrel", fd.attr("data-at"));
+    }
 }
 
 /**
@@ -242,10 +249,13 @@ function gainFlds(fields, area) {
 //              if (k == "data-datalist" ) {
 //                  v = JSON.stringify(prsDataList(v));
 //              }
-                params[k.substring(5)] = v;
+                if (/^data-.{3,}/.test(k)) {
+                    k = k.substring ( 5 );
+                }
+                params[k] = v;
             }
         }
-        if (name.substr(0, 1) === /**/"-") {
+        if (name.substr(0, 1) === "-") {
             name = "";
         }
         if (input.is("select")) {
@@ -340,7 +350,20 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 input.val(selected);
                 continue;
             }
-            input.attr("data-"+k, field[k]);
+
+            // 关联参数以 data- 打头
+            if (k === "data-al" ) {
+                input.next().attr("data-href", field[k]);
+            } else
+            if (k === "data-at" ) {
+                input.next().attr("data-hrel", field[k]);
+            }
+            if (/^data-/.test(k)) {
+                input.attr(k, field[k]);
+                continue;
+            }
+
+            input.attr("data-" + k, field[k]);
         }
         area.append(group);
     }
@@ -448,5 +471,35 @@ $.fn.hsCols = function() {
         $(this).closest(".form-group").next().find("input").each(function() {
             setItemType(this, type);
         });
+    });
+
+    // 关联选项
+    var datas = {};
+    modal.on("pickItem", "[data-ft=_pick]", function() {
+        if (arguments[3]) {
+            datas[arguments[1]] = arguments[3];
+        } else {
+            delete datas[arguments[1]];
+        }
+    });
+    modal.on( "change" , "[data-ft=_pick]", function() {
+        var  id  = $( this ).find( "input" ).val();
+        var  tb  = modal.find(".detail-set tbody");
+        var  tp  = tb.find(".hide");
+        var data = datas[id];
+        if (data) {
+            for(var k in data) {
+                var v  = data[k];
+                var tr = tb
+                   .find   ("[name=param_name]")
+                   .filter (function() {return $(this).val() == k;})
+                   .closest( "tr" );
+                if (tr.size() == 0) {
+                    tr = tp.clone().appendTo(tb).removeClass("hide");
+                }
+                tr.find("[name=param_name]" ).val(k);
+                tr.find("[name=param_value]").val(v);
+            }
+        }
     });
 };

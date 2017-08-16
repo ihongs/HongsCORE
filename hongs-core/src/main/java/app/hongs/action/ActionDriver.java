@@ -543,21 +543,6 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 获得当前工作的Path
-     * 当使用某些通用过滤器时会设置虚拟请求路径,
-     * 后方动作需按照此给出的路径来执行特定任务.
-     * @param req
-     * @return
-     */
-    public static final String getWorkPath(HttpServletRequest req) {
-        String uri = (String) req.getAttribute(Cnst.PATH_ATTR);
-        if (uri == null) {
-            uri = getCurrPath(req);
-        }
-        return uri;
-    }
-
-    /**
      * 获得当前的ServletPath
      * @param req
      * @return

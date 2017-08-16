@@ -121,11 +121,13 @@ public final class Cnst {
 
     public static final String CORE_ATTR = "__HONGS_CORE__"; // 核心对象
 
-    public static final String PATH_ATTR = "__HONGS_PATH__"; // 请求路径
-
     public static final String DATA_ATTR = "__HONGS_DATA__"; // 请求数据
 
     public static final String RESP_ATTR = "__HONGS_RESP__"; // 响应数据
+
+    public static final String ACTION_ATTR = "__ACTION_NAME__"; // 动作名称
+
+    public static final String ORIGIN_ATTR = "__ORIGIN_NAME__"; // 起源动作
 
     public static final String UPLOAD_ATTR = "__UPLOAD_KEYS__"; // 上传参数(用于存放哪些参数是文件上传)
 

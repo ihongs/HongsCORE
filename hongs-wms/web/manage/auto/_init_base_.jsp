@@ -15,7 +15,7 @@
     do {
         // 拆解路径
         int i;
-        _module = ActionDriver.getWorkPath(request);
+        _module = ActionDriver.getRealPath(request);
         i = _module.lastIndexOf('/');
         _module = _module.substring( 1, i );
         i = _module.lastIndexOf('/');

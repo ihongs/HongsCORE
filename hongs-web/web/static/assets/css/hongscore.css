@@ -418,8 +418,13 @@ ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
 }
-ul.pickrol .close {
+.pickrol .close {
     display: none;
+}
+.preview .close {
+    background: #eee;
+    box-shadow: 0 0.20em 0.20em #888;
+    border-radius: 0.5em;
 }
 .pickbox:after {
     clear: both;

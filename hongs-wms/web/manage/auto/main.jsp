@@ -2,7 +2,7 @@
 <%@page import="app.hongs.action.ActionDriver"%>
 <%
     String _prefix = ActionDriver
-            .getWorkPath(request)
+            .getRealPath(request)
             .replaceAll ("(^/|/[^/]*$)", "");
 %>
 <ol class="backable breadcrumb row hide" data-toggle="hsTabs">

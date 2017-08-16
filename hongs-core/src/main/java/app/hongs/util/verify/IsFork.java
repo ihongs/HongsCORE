@@ -1,10 +1,10 @@
 package app.hongs.util.verify;
 
 import app.hongs.Cnst;
+import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
-import app.hongs.action.FormSet;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import java.util.HashMap;
@@ -12,7 +12,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Pattern;
 
 /**
  * 外键规则
@@ -62,6 +61,7 @@ public class IsFork extends Rule {
         String fl = Synt.declare(params.get("form"    ), "");
         String ck = Synt.declare(params.get("__conf__"), "");
         String fk = Synt.declare(params.get("__name__"), "");
+        String ap = null;
         String aq = null;
 
         if ("".equals(cl)) {
@@ -77,20 +77,34 @@ public class IsFork extends Rule {
             at =  cl + "/" + fl + "/search"  ;
         } else {
             // 尝试解析附加参数
-            int ps = at.indexOf("?");
+            int ps;
+            ps = at.indexOf('?');
             if (ps > 0) {
                 aq = at.substring(1 + ps).trim();
                 at = at.substring(0 , ps).trim();
             }
+            ps = at.indexOf('1');
+            if (ps > 0) {
+                ap = at.substring(1 + ps).trim();
+                at = at.substring(0 , ps).trim();
+            }
         }
+        
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
 
         // 请求数据
         Map rd = new HashMap();
         Set rb = new HashSet();
+        ah.setRequestData (rd);
         rb.add(vk);
         rd.put(Cnst.RN_KEY, 0);
         rd.put(Cnst.RB_KEY,rb);
         rd.put(Cnst.ID_KEY,value);
+        // 虚拟路径
+        if (ap != null && ap.length() != 0) {
+            ah.setAttribute(Cnst.ACTION_ATTR, ap +".act");
+        }
         // 附加参数
         if (aq != null && aq.length() != 0) {
             if (aq.startsWith("{") && aq.endsWith("}")) {
@@ -101,10 +115,7 @@ public class IsFork extends Rule {
         }
 
         // 获取结果
-        ActionHelper ah = ActionHelper.newInstance();
-        ah.setAttribute( "fork", true );
-        /* Get */ ah.setRequestData(rd);
-        new ActionRunner(ah, at).doInvoke( );
+        new ActionRunner(ah , at).doInvoke();
         Map  sd = ah.getResponseData( );
         List<Map> ls = (List) sd.get("list");
 

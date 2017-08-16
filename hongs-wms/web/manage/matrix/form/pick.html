@@ -1,7 +1,7 @@
+<h2>关联选择</h2>
 <div id="hongs-module-pick"
      data-module="hsList"
-     data-load-url="manage/matrix/form/list.act"
-     data-data-0="_fill__fork:(hsListFillFork)">
+     data-load-url="manage/matrix/form/list.act">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <button type="button" class="ensure btn btn-default">选择表单</button>
@@ -31,9 +31,23 @@
     </div>
     <div class="pagebox"></div>
 </div>
-<style type="text/css">
-    #hogns-module-pick .findbox { display: none; }
-    @media (min-width: 768px) {
-        #hogns-module-pick .findbox { display: block; }
-    }
-</style>
+<script type="text/javascript">
+(function($) {
+    var context = $("#hongs-module-pick");
+
+    // 附加关联所需的额外配置参数
+    context.data("_fill__fork", function(cel, v, n) {
+        hsListFillFork.call(this, cel, v, n);
+        var chk =  cel.find(  ".checkone"  );
+        chk.data({
+             form    :                  this._info.id,
+             conf    : "manage/data/" + this._info.id,
+            "data-at": "manage/auto/search!"
+                     + "manage/data/" + this._info.id + "/search",
+            "data-al": "manage/data/" + this._info.id + "/list_fork.html",
+            "data-vk": "id",
+            "data-tk": "name"
+        });
+    });
+})(jQuery);
+</script>

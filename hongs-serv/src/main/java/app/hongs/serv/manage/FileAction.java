@@ -1,8 +1,12 @@
 package app.hongs.serv.manage;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
+import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
+import app.hongs.CoreLogger;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.dh.IAction;
@@ -98,7 +102,7 @@ public class FileAction implements IAction {
         }
         file = new File(path);
         if (!file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exists"));
+            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exist"));
             return;
         }
 
@@ -253,7 +257,11 @@ public class FileAction implements IAction {
         }
         file = new File(path);
         if ( file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.exists"));
+            helper.fault(lang.translate("core.serv.manage.file.path.is.exist"));
+            return;
+        }
+        if (isDenyFile(file)) {
+            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
             return;
         }
 
@@ -268,7 +276,9 @@ public class FileAction implements IAction {
         try {
             saveFile(file, text);
         } catch ( Exception ex ) {
-            helper.fault("写入文件失败");
+            CoreLogger.error(ex);
+            helper.fault(lang.translate("core.serv.manage.file.create.failed"));
+            return;
         }
 
         helper.reply("");
@@ -284,6 +294,10 @@ public class FileAction implements IAction {
         File   file;
         File   dizt;
 
+        if ( dist != null && dist.equals ( path )) {
+             dist  = null ;
+        }
+
         if ( path == null ) {
             helper.fault(lang.translate("core.serv.manage.file.path.required"));
             return;
@@ -295,36 +309,47 @@ public class FileAction implements IAction {
         }
         file = new File(path);
         if (!file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exists"));
+            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exist"));
+            return;
+        }
+        if (isDenyFile(file)) {
+            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
             return;
         }
 
         // 改名移动
         if ( dist != null ) {
-             dist = realPath(dist);
-            if (!path.equals(dist)) {
-                if ( dist == null ) {
-                    helper.fault(lang.translate("core.serv.manage.file.path.is.error" ));
-                    return;
-                }
-                dizt = new File(dist);
-                if ( dizt.exists()) {
-                    helper.fault(lang.translate("core.serv.manage.file.dist.is.exists"));
-                    return;
-                }
-                if (!file.renameTo(dizt)) {
-                    helper.fault(lang.translate("core.serv.manage.file.rename.failed" ));
-                    return;
-                }
-                file = dizt;
-            }
+        dist = realPath(dist);
+        if ( dist == null ) {
+            helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
+            return;
+        }
+        dizt = new File(dist);
+        if ( dizt.exists()) {
+            helper.fault(lang.translate("core.serv.manage.file.dist.is.exist"));
+            return;
+        }
+        if (isDenyFile(file)) {
+            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
+            return;
+        }
+        if (!file.renameTo(dizt)) {
+            helper.fault(lang.translate("core.serv.manage.file.rename.failed"));
+            return;
+        }
+        if ( text == null ) {
+            return;
+        }
+        file = dizt;
         }
 
         // 写入文件
         try {
             saveFile(file, text);
         } catch ( Exception ex ) {
-            helper.fault("写入文件失败");
+            CoreLogger.error(ex);
+            helper.fault(lang.translate("core.serv.manage.file.update.failed"));
+            return;
         }
 
         helper.reply("");
@@ -348,11 +373,15 @@ public class FileAction implements IAction {
         }
         file = new File(path);
         if (!file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exists"));
+            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exist"));
             return;
         }
-        if (file.isDirectory() && file.list().length > 0) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.blanks"));
+        if (isDenyDire(file)) {
+            helper.fault(lang.translate("core.serv.manage.file.path.is.not.empty"));
+            return;
+        }
+        if (isDenyFile(file)) {
+            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
             return;
         }
         if (!file.delete()) {
@@ -418,6 +447,23 @@ public class FileAction implements IAction {
         } catch (IOException ex) {
             throw new RuntimeException("Can not save " + file.getAbsolutePath(), ex);
         }
+    }
+
+    private boolean isDenyDire(File file) {
+        return file.isDirectory (   )
+            && file.list().length > 0;
+    }
+
+    private boolean isDenyFile(File file) {
+        if (file.isDirectory()) {
+            return true;
+        }
+        CoreConfig  conf = CoreConfig.getInstance();
+            String  extn = file.getName().replaceFirst("^.*\\.", "");
+        Set<String> extz = Synt.asTerms(conf.getProperty("fore.upload.deny.extns" ));
+        Set<String> exts = Synt.asTerms(conf.getProperty("fore.upload.allow.extns"));
+        return (null != extz &&  extz.contains(extn))
+            || (null != exts && !exts.contains(extn));
     }
 
     private boolean isTextFile(File file) {

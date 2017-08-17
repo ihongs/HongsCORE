@@ -186,9 +186,9 @@ public class ActionRunner {
         } catch ( IllegalArgumentException e) {
             throw new HongsException(0x1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
-            Throwable ex = e.getCause(  );
-            if (ex instanceof HongsError/**/) {
-                throw (HongsError/**/) ex;
+            Throwable  ex = e.getCause( );
+            if (ex instanceof HongsError) {
+                throw (HongsError) ex;
             } else
             if (ex instanceof HongsException) {
                 throw (HongsException) ex;
@@ -200,11 +200,10 @@ public class ActionRunner {
 
     //** 更方便的获取模块、实体、操作的方式 **/
 
-    private String  mod = null ;
-    private String  ent = null ;
-    private String  met = null ;
-    private String  act = null ;
-    private boolean rst = false;
+    private String mod = null;
+    private String ent = null;
+    private String met = null;
+    private String act = null;
 
     public void setModule(String name) {
         mod = name;
@@ -216,35 +215,20 @@ public class ActionRunner {
         met = name;
     }
 
-    /**
-     * 设置动作名
-     * 即用于此动作的虚拟动作名,
-     * getModule,getEntity,getHandle
-     * 可从此动作名分解出各部分.
-     * @param name
-     */
-    public void setAction(String name) {
-        act = name;
-        rst = name
-           != null;
-    }
-
     public String getModule() throws HongsException {
         if (null != mod) {
             return  mod;
         }
 
         // 从注解提取模块名称
-        if (! rst ) {
-            Assign  ing;
-            ing = method.getAnnotation(Assign.class);
-            if (null != ing) {
-                return  ing.conf();
-            }
-            ing = mclass.getAnnotation(Assign.class);
-            if (null != ing) {
-                return  ing.conf();
-            }
+        Assign ing;
+        ing = method.getAnnotation(Assign.class);
+        if (null != ing) {
+            return  ing.conf();
+        }
+        ing = mclass.getAnnotation(Assign.class);
+        if (null != ing) {
+            return  ing.conf();
         }
 
         int pos;
@@ -262,16 +246,14 @@ public class ActionRunner {
         }
 
         // 从注解提取实体名称
-        if (! rst ) {
-            Assign  ing;
-            ing = method.getAnnotation(Assign.class);
-            if (null != ing) {
-                return  ing.name();
-            }
-            ing = mclass.getAnnotation(Assign.class);
-            if (null != ing) {
-                return  ing.name();
-            }
+        Assign ing;
+        ing = method.getAnnotation(Assign.class);
+        if (null != ing) {
+            return  ing.name();
+        }
+        ing = mclass.getAnnotation(Assign.class);
+        if (null != ing) {
+            return  ing.name();
         }
 
         int pos;

@@ -1,6 +1,5 @@
 package app.hongs.dh;
 
-import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.FormSet;
 import app.hongs.util.Synt;
@@ -23,25 +22,6 @@ public class Malleable {
     private Set obColz = null;
     private Set wdColz = null;
     private Set whColz = null;
-    private Set nmColz = null;
-    
-    private static final Set FN_KEYS;
-    static {
-        FN_KEYS = new HashSet( );
-        FN_KEYS.add(Cnst.MD_KEY);
-        FN_KEYS.add(Cnst.WD_KEY);
-        FN_KEYS.add(Cnst.PN_KEY);
-        FN_KEYS.add(Cnst.GN_KEY);
-        FN_KEYS.add(Cnst.RN_KEY);
-        FN_KEYS.add(Cnst.OB_KEY);
-        FN_KEYS.add(Cnst.RB_KEY);
-        FN_KEYS.add(Cnst.AB_KEY);
-        FN_KEYS.add(Cnst.WR_KEY);
-        FN_KEYS.add(Cnst.OR_KEY);
-        FN_KEYS.add(Cnst.AR_KEY);
-        FN_KEYS.add(Cnst.SR_KEY);
-        FN_KEYS.add(Cnst.CB_KEY);
-    }
 
     /**
      * 设置字段配置
@@ -185,7 +165,7 @@ public class Malleable {
      * @return
      */
     public Set<String> getCaseNames(String x) {
-        Set fts;
+        Set fts = null;
 
         Map<String, Object> pvs = getParams();
         if (pvs.containsKey(x)) {
@@ -206,18 +186,19 @@ public class Malleable {
         } else {
             // 可在表参数区直接给出
             // 专用类型无需特别设置
-            fts = new HashSet ( );
             if ("findable".equals(x)) {
+                fts = new HashSet( );
                 fts.add("search");
             } else
             if ("sortable".equals(x)) {
+                fts = new HashSet( );
                 fts.add("sorted");
             }
         }
 
         Map<String, Map   > fcs = getFields();
         Set<String> fns = new LinkedHashSet();
-        for(Map.Entry<String, Map> et: fcs.entrySet()) {
+        for(Map.Entry<String, Map> et: fcs.entrySet( ) ) {
             Map field = et.getValue();
             String fn = et.getKey(  );
             if ("@".equals(fn)) {
@@ -227,7 +208,7 @@ public class Malleable {
                 if (Synt.declare(field.get(x), false ) ) {
                     fns.add(fn);
                 }
-            } else {
+            } else if ( fts != null ) {
                 if (fts.contains(field.get("__type__"))) {
                     fns.add(fn);
                 }
@@ -283,26 +264,6 @@ public class Malleable {
         }
         whColz = getCaseNames("siftable");
         return whColz;
-    }
-
-    /**
-     * 可用于命名的字段
-     * @return
-     */
-    public Set<String> getNameable() {
-        if (null != nmColz) {
-            return  nmColz;
-        }
-        nmColz = getCaseNames("nameable");
-        return nmColz;
-    }
-
-    /**
-     * 获取特殊功能键
-     * @return
-     */
-    public Set<String> getFuncKeys() {
-        return FN_KEYS;
     }
 
 }

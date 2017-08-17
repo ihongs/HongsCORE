@@ -1,11 +1,12 @@
 <root>
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
-        <value code="nameable" type="set">string,text</value>
-        <value code="findable" type="set">string,search,hidden,tel,url,email,text,textarea</value>
-        <value code="sortable" type="set">string,search,hidden,tel,url,email,text,date,time,datetime,number,range,color,slider,switch,sorted</value>
-        <value code="siftable" type="set">string,search,hidden,tel,url,email,text,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
         <value code="listable" type="set">string,search,hidden,tel,url,email,text,textarea,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check,file,upload,image,audio,video,fork</value>
+        <value code="siftable" type="set">string,search,hidden,tel,url,email,text,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
+        <value code="sortable" type="set">string,search,hidden,tel,url,email,text,date,time,datetime,number,range,color,slider,switch,sorted</value>
+        <value code="findable" type="set">string,search,hidden,tel,url,email,text,textarea</value>
+        <!-- 下为 Matrix 特有 -->
+        <value code="nameable" type="set">string,text</value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">

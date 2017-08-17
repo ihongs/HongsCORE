@@ -407,6 +407,52 @@ function hsListFillFilt(x, v, n, t) {
 }
 
 /**
+ * 获取当前模块对象
+ */
+function S$() {
+    var context = $(".HsList,.HsForm").filter(":visible:first");
+    return context.data("HsList")
+        || context.data("HsForm");
+}
+S$.src  = function() {
+    return (S$()._url || location.pathname)
+        .replace(/\?.*/, '')
+        .replace(/\/[^\/]+$/, '');
+};
+S$.send = function(url, req) {
+    var rzt;
+    $.hsAjax({
+        url     : hsFixUri   (url),
+        data    : hsSerialArr(req),
+        success : function   (rst) {
+            rzt = hsResponObj(rst);
+        },
+        type    : "post",
+        dataType: "json",
+        async   : false ,
+        cache   : false ,
+        global  : false
+    });
+    return  rzt ;
+};
+S$.search = function(req) {
+    var url = S$.src() + "/search.act";
+    return S$.send(url, req);
+};
+S$.create = function(req) {
+    var url = S$.src() + "/create.act";
+    return S$.send(url, req);
+};
+S$.update = function(req) {
+    var url = S$.src() + "/update.act";
+    return S$.send(url, req);
+};
+S$.delete = function(req) {
+    var url = S$.src() + "/delete.act";
+    return S$.send(url, req);
+};
+
+/**
  * 误入空菜单时通知
  */
 $(document).on("loseMenu",function() {

@@ -549,8 +549,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     public static final String getCurrPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH);
+        String suf = (String) req.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO);
         if (uri == null) {
-            uri = req.getServletPath();
+            uri  = req.getServletPath();
+            suf  = req.getPathInfo();
+        }
+        if (suf != null) {
+            uri += suf;
         }
         return uri;
     }
@@ -562,8 +567,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     public static final String getRealPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH);
+        String suf = (String) req.getAttribute(RequestDispatcher.FORWARD_PATH_INFO);
         if (uri == null) {
             uri = req.getServletPath();
+            suf  = req.getPathInfo();
+        }
+        if (suf != null) {
+            uri += suf;
         }
         return uri;
     }

@@ -6,11 +6,16 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_more_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("list.action"), "list");
-    String _pageId = (_module +"-" + _entity +"-" + _action).replace('/', '-');
-    String _confId = FormSet.hasConfFile(_module+"/"+_entity)
-                  || NaviMap.hasConfFile(_module+"/"+_entity)
-                   ? _module +"/"+ _entity : _module;
+    String _action = Synt.declare(request.getAttribute("list.action") , "list" );
+    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
+    String _confId = FormSet.hasConfFile(_module + "/" + _entity)
+                  || NaviMap.hasConfFile(_module + "/" + _entity)
+                   ?  _module + "/" + _entity : _module;
+
+    StringBuilder RB = new StringBuilder("id");
+    if ( _action.equals("select") ) {
+        RB.append(",name");
+    }
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="row">
@@ -178,6 +183,8 @@
                         ob = "data-ob=\""+ob+"\"";
                         oc = "sortable";
                     }
+
+                    RB.append(',').append( name );
                 %>
                 <%if ("number".equals(type) || "range".equals(type)) {%>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=text%></th>
@@ -230,14 +237,14 @@
         openUrls: [
             ['<%=_module%>/<%=_entity%>/form.html?md=0',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?md=6&id={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?md=5&id={ID}',
              '.update', '@'],
             ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
              '.review', '@'],
             ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
              '.revert', '@']
         ],
-        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime"
+        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime&rb=<%=RB%>"
     });
 
     <%if (!"select".equals(_action)) {%>

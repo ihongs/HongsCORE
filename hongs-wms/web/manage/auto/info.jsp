@@ -14,7 +14,7 @@
     String _action = Synt.declare(request.getAttribute("info.action"), "review");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
 %>
-<h2><%=_title%>详情</h2>
+<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>">
     <form action="" method="POST" enctype="multipart/form-data">
         <%
@@ -82,19 +82,29 @@
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
                     <ul class="pickbox pickrol" data-ft="<%=kind%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>"></ul>
+                    <button type="button" data-toggle="hsFile" class="hide"></button>
                 </div>
             </div>
             <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                 <%
-                    String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") :  "id" ;
-                    String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                    String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :
-                              ( info.containsKey("form"   ) ? (String) info.get("form"   ) : name.replaceFirst("_id$", "") );
+                        String fn =  name  ;
+                        String kn =  name  ;
+                        if (fn.endsWith("_id")) {
+                            int  ln = fn.length() - 3;
+                            fn = fn.substring(0 , ln);
+                            kn = fn;
+                        } else {
+                            kn = fn + "_data";
+                        }
+                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                 %>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
                     <ul class="pickbox pickrol" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                    <button type="button" data-toggle="hsFork" class="hide"></button>
                 </div>
             </div>
             <%} else {%>

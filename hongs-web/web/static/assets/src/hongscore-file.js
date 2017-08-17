@@ -212,10 +212,10 @@
      */
     $(document).on("click", "ul.pickbox li",
     function(x) {
-        if ($(x.target).hasClass("close")
-        || !$(this).parent( )
+        if ($(x.target).is(".close")
+        ||  $(this).parent( )
                    .siblings("[data-toggle=hsFile],[data-toggle=hsView]")
-                   .size  ()) {
+                   .size  ( ) == 0 ) {
             return;
         }
 

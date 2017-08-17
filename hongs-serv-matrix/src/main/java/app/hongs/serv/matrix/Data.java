@@ -317,20 +317,23 @@ public class Data extends SearchEntity {
         if (null != wdCols) {
             return  wdCols;
         }
-        wdCols = getCaseNames("findable");
-        if (! Dict.getValue(getFields(), true, "find", "editable")) {
+        if (Dict.getValue(getFields(), true, "find", "editable")) {
+            wdCols = Synt.setOf  (  "find"  );
+        } else {
+            wdCols = getCaseNames("findable");
             wdCols.remove("find");
         }
         return wdCols;
     }
 
-    @Override
     public Set<String> getNameable() {
         if (null != nmCols) {
             return  nmCols;
         }
-        nmCols = getCaseNames("nameable");
-        if (! Dict.getValue(getFields(), true, "name", "editable")) {
+        if (Dict.getValue(getFields(), true, "name", "editable")) {
+            nmCols = Synt.setOf  (  "name"  );
+        } else {
+            nmCols = getCaseNames("nameable");
             nmCols.remove("name");
         }
         return nmCols;
@@ -351,7 +354,8 @@ public class Data extends SearchEntity {
         }
         String nm = nn.toString().trim();
 
-        if (! ns.contains("id")) {
+        if (! ns.contains("find")
+        &&  ! ns.contains("id") ) {
             return dd.get("id") +" "+ nm;
         } else {
             return nm;
@@ -373,7 +377,8 @@ public class Data extends SearchEntity {
         }
         String nm = nn.toString().trim();
 
-        if (nm.length(   ) > 99) {
+        if (! ns.contains("name")
+        &&    99 < nm.length( ) ) {
             return nm.substring(0, 99) + "...";
         } else {
             return nm;

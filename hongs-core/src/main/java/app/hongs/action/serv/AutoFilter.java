@@ -74,6 +74,7 @@ public class AutoFilter extends ActionDriver {
 
     @Override
     public void destroy() {
+        super.destroy();
         actset = null;
         layset = null;
     }

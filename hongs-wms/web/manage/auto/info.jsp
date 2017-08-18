@@ -1,13 +1,9 @@
-<%@page import="app.hongs.CoreLocale"%>
-<%@page import="app.hongs.action.ActionDriver"%>
-<%@page import="app.hongs.action.FormSet"%>
-<%@page import="app.hongs.action.NaviMap"%>
 <%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
-<%@page import="java.text.SimpleDateFormat"%>
-<%@page import="java.util.Date"%>
 <%@page import="java.util.Iterator"%>
-<%@page import="java.util.Map"%>
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
+<%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_more_.jsp"%>
 <%
@@ -58,24 +54,29 @@
                         kind =  "_view";
                         size = Synt.declare( info.get("thumb-size"), "" );
                         keep = Synt.declare( info.get("thumb-mode"), "" );
-                        if (size.length()!=0) {
-                            size = size.replaceFirst("\\d+\\*\\d+", "$0");
-                            if ( ! keep.equals("keep") ) {
+                            if (! "keep".equals( keep )) {
                                 keep = "";
                             }
-                            // 限制最大宽度, 避免撑开容器
-                            String[ ] wh = size.split("\\*");
-                            int w = Synt.declare(wh[0], 300);
-                            int h = Synt.declare(wh[1], 300);
-                            if (w > 300) {
-                                h = 300  * h / w;
-                                w = 300;
-                                size = w +"*"+ h;
+                            if (size.length() != 0) {
+                                Pattern pat = Pattern.compile("\\d+\\*\\d+");
+                                Matcher mat = pat.matcher(size);
+                                if (mat.matches( )) {
+                                    size = mat.group( );
+                                    // 限制最大宽度, 避免撑开容器
+                                    String[ ] wh = size.split("\\*");
+                                    int w = Synt.declare(wh[0], 300);
+                                    int h = Synt.declare(wh[1], 300);
+                                    if (w > 300) {
+                                        h = 300  * h / w;
+                                        w = 300;
+                                        size = w +"*"+ h;
+                                    }
+                                } else {
+                                    size = "100*100";
+                                }
+                            } else {
+                                size = "100*100";
                             }
-                        } else {
-                            size = "100*100";
-                            keep = "keep";
-                        }
                     }
                 %>
             <div class="form-group row">

@@ -54,6 +54,15 @@
         <url-pattern>*.act</url-pattern>
         <url-pattern>*.api</url-pattern>
     </filter-mapping>
+    <!-- SPAR Filter -->
+    <filter>
+        <filter-name>SparFilter</filter-name>
+        <filter-class>app.hongs.serv.common.SparFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SparFilter</filter-name>
+        <url-pattern>/public/*</url-pattern>
+    </filter-mapping>
     <!-- Sess Filter -->
     <filter>
         <filter-name>SessFilter</filter-name>

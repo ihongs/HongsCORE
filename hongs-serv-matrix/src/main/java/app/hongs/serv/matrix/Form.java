@@ -15,7 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -187,7 +186,7 @@ public class Form extends Model {
                 "listable", "?",
                 "sortable", "?",
                 "siftable", "?",
-                "nameable", "?" 
+                "nameable", "?"
             );
             flds.add(0, txp);
             if (top != null) {
@@ -436,8 +435,8 @@ public class Form extends Model {
             if ("file".equals(types.get(t) )) {
                 if(!fiel.containsKey("path")
                 || !fiel.containsKey("href")) {
-                    fiel.put("path", "public/upload/data");
-                    fiel.put("href", "public/upload/data");
+                    fiel.put("path", "static/upload/data");
+                    fiel.put("href", "static/upload/data");
                 }
             } else
             // 日期类型要指定存储格式

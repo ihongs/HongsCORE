@@ -2,8 +2,8 @@
 <root>
     <form name="unit">
         <field name="icon" text="图标" rule="Thumb">
-            <param name="href">public/upload/matrix/icon</param>
-            <param name="path">public/upload/matrix/icon</param>
+            <param name="href">static/upload/matrix/icon</param>
+            <param name="path">static/upload/matrix/icon</param>
         </field>
     </form>
     <form name="form">

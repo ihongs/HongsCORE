@@ -31,8 +31,8 @@ import javax.servlet.http.Part;
  */
 public class UploadHelper {
     private String uploadTemp = "tmp";
-    private String uploadPath = "public/upload";
-    private String uploadHref = "public/upload";
+    private String uploadPath = "static/upload";
+    private String uploadHref = "static/upload";
     private String resultName = null;
     private String requestKey = null;
     private Set<String> allowTypes = null;

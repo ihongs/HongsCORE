@@ -1,6 +1,8 @@
 <%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
+<%@page import="java.util.regex.Matcher"%>
+<%@page import="java.util.regex.Pattern"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_more_.jsp"%>
@@ -61,27 +63,31 @@
                         if (info.containsKey("size")) extr += " size=\""+info.get("size").toString()+"\"";
                         if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
                         if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
-                        if (info.containsKey("pattern")) extr += " pattern=\""+info.get("pattern").toString()+"\"";
+                        if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
                 <%} else if ("number".equals(type) || "range".equals(type)) {%>
                     <%
                         String extr = "";
                         if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
-                        if (info.containsKey("min")) extr += " min=\""+info.get("min").toString()+"\"";
-                        if (info.containsKey("max")) extr += " max=\""+info.get("max").toString()+"\"";
+                        if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
+                        if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
                 <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
                     <%
-                        String extr = " data-type=\""+info.get( "type" ).toString()+"\"";
-                        if (info.containsKey("format")) {
-                            extr += " data-format=\""+info.get("format").toString()+"\"";
+                        String fomt = Synt.declare(info.get("format"),  type      );
+                        String typa = Synt.declare(info.get( "type" ), "timestamp");
+                        String extr = " data-type=\""+typa+"\" data-format=\""+fomt+"\"";
+                        if (info.containsKey("min" )) extr += " data-min=\""+info.get("min").toString()+"\"";
+                        if (info.containsKey("max" )) extr += " data-max=\""+info.get("max").toString()+"\"";
+                        if ("time".equals(typa) || "date".equals(typa)) {
+                            extr += " data-fl=\"v ? v : new Date().getTime()\"";
                         } else {
-                            extr += " data-format=\""+type+"\"";
+                            extr += " data-fl=\"v ? v : new Date().getTime() / 1000\"";
                         }
                     %>
-                    <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" data-fl="v ? v : new Date().getTime() / 1000" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
+                    <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
                 <%} else if ("check".equals(type)) {%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("radio".equals(type)) {%>
@@ -103,29 +109,33 @@
                         if ("image".equals(type)) {
                             ft =  "_view";
                             fm = "hsView";
-                            size = Synt.declare( info.get("thumb-size"), "" );
-                            keep = Synt.declare( info.get("thumb-mode"), "" );
-                            if (size.length()!=0) {
-                                size = size.replaceFirst("\\d+\\*\\d+", "$0");
-                                if ( ! keep.equals("keep") ) {
-                                    keep = "";
-                                }
-                                // 限制最大宽度, 避免撑开容器
-                                String[ ] wh = size.split("\\*");
-                                int w = Synt.declare(wh[0], 300);
-                                int h = Synt.declare(wh[1], 300);
-                                if (w > 300) {
-                                    h = 300  * h / w;
-                                    w = 300;
-                                    size = w +"*"+ h;
+                            size = Synt.declare( info.get("thumb-size"), "");
+                            keep = Synt.declare( info.get("thumb-mode"), "");
+                            if (! "keep".equals( keep )) {
+                                keep = "";
+                            }
+                            if (size.length() != 0) {
+                                Pattern pat = Pattern.compile("\\d+\\*\\d+");
+                                Matcher mat = pat.matcher(size);
+                                if (mat.matches( )) {
+                                    size = mat.group( );
+                                    // 限制最大宽度, 避免撑开容器
+                                    String[ ] wh = size.split("\\*");
+                                    int w = Synt.declare(wh[0], 300);
+                                    int h = Synt.declare(wh[1], 300);
+                                    if (w > 300) {
+                                        h = 300  * h / w;
+                                        w = 300;
+                                        size = w +"*"+ h;
+                                    }
+                                } else {
+                                    size = "100*100";
                                 }
                             } else {
                                 size = "100*100";
-                                keep = "keep";
                             }
                         }
                     %>
-                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <input type="file" name="<%=name%>" class="form-ignored invisible" <%=extr%>/>
                     <ul class="pickbox" data-ft="<%=ft%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>" <%=rqrd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
@@ -151,7 +161,7 @@
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.select.lebel", text)%></button>
+                    <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
                 <%} else {%>
                     <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
                 <%} /*End If */%>

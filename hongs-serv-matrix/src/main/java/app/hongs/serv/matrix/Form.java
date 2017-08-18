@@ -410,18 +410,16 @@ public class Form extends Model {
         root.appendChild ( form );
         form.setAttribute("name" , id);
 
-        Element  item, anum, para;
-
         Map types = FormSet.getInstance().getEnum("__types__");
 
         for (Map fiel: conf) {
-            item = docm.createElement("field");
+            Element  item  = docm.createElement( "field" );
             form.appendChild ( item );
-            String s, t;
+            String s, n, t;
             s = (String) fiel.get("__text__");
             item.setAttribute("text", s);
-            s = (String) fiel.get("__name__");
-            item.setAttribute("name", s);
+            n = (String) fiel.get("__name__");
+            item.setAttribute("name", n);
             t = (String) fiel.get("__type__");
             item.setAttribute("type", t);
             s = (String) fiel.get("__rule__");
@@ -445,49 +443,53 @@ public class Form extends Model {
                     fiel.put("type", "timestamp");
                 }
             }
+            // 可搜索指定存为搜索类型
+            if (Synt.asBool(fiel.get("findable"))) {
+                fiel.put("lucene-type", "search");
+            }
 
             for(Object ot : fiel.entrySet( )) {
                 Map.Entry et = (Map.Entry) ot;
                 String k = (String) et.getKey(  );
                 String v = (String) et.getValue();
 
-                // 忽略基础参数
-                if (k.startsWith( "__" )) {
+                // 忽略基础参数和枚举
+                if (k.startsWith( "__" )
+                ||  k.equals("datalist")) {
                     continue;
                 }
 
-                // 构建枚举列表
-                if (k.equals("datalist")) {
-                    anum = docm.createElement("enum");
-                    root.appendChild ( anum );
-                    anum.setAttribute("name", item.getAttribute("name"));
-                    Object x = Data.toObject(  v  );
-                    List  de = new ArrayList(     );
-                    List  dl = Synt.declare (x, de);
-                    for (Object o : dl) {
-                        List  di = Synt.declare(o, de);
-                        String c = Synt.declare(di.get(0), "");
-                        String n = Synt.declare(di.get(1), "");
-                        Element valu = docm.createElement("value");
-                        anum.appendChild ( valu );
-                        valu.setAttribute("code", c);
-                        valu.appendChild ( docm.createTextNode(n));
-                    }
-                    continue;
-                }
-
-                // 识别搜索类型
-                if (k.equals("findable")  &&  Synt.declare(v, false)) {
-                    para = docm.createElement("param");
-                    item.appendChild ( para );
-                    para.setAttribute("name" , "lucene-type");
-                    para.appendChild ( docm.createTextNode("search"));
-                }
-
-                para = docm.createElement("param");
+                Element  para = docm.createElement("param");
                 item.appendChild ( para );
-                para.setAttribute("name", k);
+                para.setAttribute("name" , k);
                 para.appendChild ( docm.createTextNode(v) );
+            }
+
+            //** 构建枚举列表 **/
+
+            Object a = fiel.get("datalist");
+            if (a == null) {
+                continue;
+            }
+            if (a instanceof String ) {
+                a = Data.toObject((String) a);
+            }
+
+            Element  anum = docm.createElement("enum");
+            root.appendChild ( anum );
+            anum.setAttribute("name",  n  );
+
+            List  de = new ArrayList(     );
+            List  dl = Synt.declare (a, de);
+            for (Object o : dl) {
+                List  di = Synt.declare(o,de);
+                String v = Synt.declare(di.get(0), "");
+                String l = Synt.declare(di.get(1), "");
+
+                Element  valu = docm.createElement("value");
+                anum.appendChild ( valu );
+                valu.setAttribute("code" , v);
+                valu.appendChild ( docm.createTextNode(l) );
             }
         }
 

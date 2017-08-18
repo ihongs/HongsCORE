@@ -318,10 +318,11 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         var label = group.find("label span:first,legend span:first");
         var input = group.find("input,select,textarea,ul[data-fn]" );
         label.text(text);
+        if (input.is( "[name]" )) {
+            input.attr("name", name);
+        }
         if (input.is( "[data-fn]" )) {
             input.attr("data-fn", name);
-        } else {
-            input.attr("name"   , name);
         }
         input.prop("required", !! required);
         input.prop("multiple", !! repeated);

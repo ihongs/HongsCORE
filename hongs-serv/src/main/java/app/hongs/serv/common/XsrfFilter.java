@@ -1,5 +1,6 @@
 package app.hongs.serv.common;
 
+import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionDriver.FilterCheck;
 import app.hongs.util.Synt;
 import java.io.IOException;
@@ -43,8 +44,8 @@ public class XsrfFilter implements Filter {
          * 对于嵌套相同过滤, 不在内部重复执行;
          * 如外部设置了忽略, 则跳过忽略的路径.
          */
-        if (inside != null &&  Synt.declare(req.getAttribute(inside), false)
-        ||  ignore != null && ignore.ignore(req.getServletPath() ) ) {
+        if (inside != null &&  Synt.declare(req.getAttribute(inside),false)
+        ||  ignore != null && ignore.ignore(ActionDriver.getCurrPath(req))) {
             fc.doFilter(req, rsp);
             return;
         }

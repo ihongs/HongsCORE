@@ -348,26 +348,24 @@ public class ActionHelper implements Cloneable
             String extn = subn;
 
             // 无类型的普通参数已在外部处理
-            if (name == null || name.isEmpty()
-            ||  type == null || type.isEmpty()
-            ||  extn == null || extn.isEmpty()) {
+            if (name == null
+            ||  type == null
+            ||  extn == null) {
                 continue;
             }
 
             // 空文件无伴随参数则将其设为空
             // 在修改的操作中表示将其置为空
-            if (size == 0) {
+            if (size ==  0  ) {
                 if (null == request.getParameter(name)) {
-                    Dict.setParam(rd, null, name);
+                    Dict.setParam  ( rd , null , name );
                 }
                 continue;
             }
 
             // 检查类型
             int pos  = type.indexOf(',');
-            if (pos == -1) {
-                type = "";
-            } else {
+            if (pos != -1) {
                 type = type.substring(0 , pos);
             }
             if (allowTypes != null && !allowTypes.contains(type)) {
@@ -380,15 +378,15 @@ public class ActionHelper implements Cloneable
             // 检查扩展
             pos  = extn.lastIndexOf('.');
             if (pos == -1) {
-                extn = "";
-            } else {
                 extn = extn.substring(1 + pos);
+            } else {
+                extn = "";
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsExpedient(0x1100, "Type '" +type+ "' is not allowed");
+                throw new HongsExpedient(0x1100, "Type '" +extn+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsExpedient(0x1100, "Type '" +type+ "' is denied");
+                throw new HongsExpedient(0x1100, "Type '" +extn+ "' is denied");
             }
 
             /**

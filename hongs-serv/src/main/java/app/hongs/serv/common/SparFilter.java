@@ -30,20 +30,19 @@ import org.xml.sax.SAXException;
  */
 public class SparFilter implements Filter {
 
-    private int         offset;
     private FilterCheck ignore;
 //  private Set<String> indexs;
+//  private int         offset;
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
-        this.offset = Core.BASE_PATH.length(  );
         this.ignore = new FilterCheck(
             cnf.getInitParameter("ignore-urls"),
             cnf.getInitParameter("attend-urls")
         );
+//      this.offset = Core.BASE_PATH.length(  );
 //      this.indexs = getUrlPatterns(cnf.getFilterName());
     }
-
 
     @Override
     public void destroy() {
@@ -82,27 +81,65 @@ public class SparFilter implements Filter {
         int    pos;
 
         // URL 总是指向索引文件
-        if (!url.endsWith("/")) {
-            src = new File (Core.BASE_PATH + url);
-        if (src.isDirectory( )) {
-            url += "/index.html";
-            src = new File (Core.BASE_PATH + url);
-        }} else {
-            url +=  "index.html";
-            src = new File (Core.BASE_PATH + url);
+        if (url.endsWith("/")) {
+            uri = url +  "index.html";
+            src = new File(Core.BASE_PATH + uri);
+            if (src.isFile()) {
+                fc.doFilter(req, rsp);
+                return;
+            }
+
+            /*
+            uri = url +  "index.jsp" ;
+            src = new File (Core.BASE_PATH + uri);
+            if (src.isFile()) {
+                fc.doFilter(req, rsp);
+                return;
+            }
+            */
+        } else {
+            src = new File(Core.BASE_PATH + url);
+            if (src.isFile()) {
+                fc.doFilter(req, rsp);
+                return;
+            }
+
+            uri = url + "/index.html";
+            src = new File(Core.BASE_PATH + uri);
+            if (src.isFile()) {
+                fc.doFilter(req, rsp);
+                return;
+            }
+
+            /*
+            uri = url + "/index.jsp" ;
+            src = new File(Core.BASE_PATH + uri);
+            if (src.isFile()) {
+                fc.doFilter(req, rsp);
+                return;
+            }
+            */
         }
 
         // 逐级向上查找索引文件
-        if (!src.exists () ) {
-            while ( 0 < (pos = url.lastIndexOf( "/" )) ) {
-                url = url.substring(0, pos);
-                uri = url  +  "/index.html";
-                src = new File(Core.BASE_PATH + uri );
-                if (src.exists( )) {
-                    req.getRequestDispatcher(uri).forward(req, rsp);
-                    return;
-                }
+        while ( 0 < (pos = url.lastIndexOf( "/" )) ) {
+            url = url.substring(0, pos);
+
+            uri = url + "/index.html";
+            src = new File(Core.BASE_PATH + uri );
+            if (src.isFile( )) {
+                req.getRequestDispatcher(uri).forward(req, rsp);
+                return;
             }
+
+            /*
+            uri = url + "/index.jsp" ;
+            src = new File(Core.BASE_PATH + uri );
+            if (src.isFile( )) {
+                req.getRequestDispatcher(uri).forward(req, rsp);
+                return;
+            }
+            */
         }
 
         fc.doFilter(req, rsp);

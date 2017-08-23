@@ -27,8 +27,8 @@ public class DataCaller extends Async<String> {
         if (inst == null) {
             CoreConfig conf = CoreConfig.getInstance("matrix");
             inst  = new DataCaller(
-                conf.getProperty("core.matrix.data.hook.max.tasks", Integer.MAX_VALUE),
-                conf.getProperty("core.matrix.data.hook.max.servs", 1));
+                conf.getProperty("core.matrix.data.caller.max.tasks", Integer.MAX_VALUE),
+                conf.getProperty("core.matrix.data.caller.max.servs", 1));
             Core.GLOBAL_CORE.put(name, inst);
         }
         return inst;
@@ -38,7 +38,7 @@ public class DataCaller extends Async<String> {
     public void run(String url) {
         try {
             String rsp = Remote.get(url);
-            String log = "GET: "+ url +" RSP: "+ Tool.indent(rsp.trim());
+            String log = "GET: "+ url +" RSP: "+ Tool.indent(rsp.trim( ));
             CoreLogger.getLogger (SPACE).info(ENVIR + log);
         } catch ( Exception | Error ex ) {
             String log = ex.getMessage();

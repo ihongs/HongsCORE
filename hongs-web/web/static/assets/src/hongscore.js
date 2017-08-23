@@ -2217,6 +2217,14 @@ function() {
     } else {
         nav.children('.back-crumb').show();
     }
+})
+.on("hidden.bs.modal",
+function() {
+    // 关闭模态框时, 为了保障滚动条有效,
+    // 如果存在多个, 必须将模态类加回去.
+    if ($("body .modal:visible").size()) {
+        $("body").addClass("modal-open");
+    }
 });
 
 $(function() {

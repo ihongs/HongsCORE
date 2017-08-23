@@ -9,7 +9,7 @@ import app.hongs.util.Remote;
 import app.hongs.util.Tool;
 
 /**
- * 数据更新钩子
+ * 数据更新通知队列
  * @author Hongs
  */
 public class DataCaller extends Async<String> {

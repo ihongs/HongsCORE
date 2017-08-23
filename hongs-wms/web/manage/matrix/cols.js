@@ -202,11 +202,18 @@ function saveConf(modal, field) {
 
     var fd = field.find("input,select,textarea,ul[data-fn]").first();
     var tr = modal.find(".detail-set tr").not(".hide");
+    var a  = fd[0].attributes;
+    for(var i = 0; i < a.length; i ++) {
+        var n = a[ i ].name;
+        if (/^data-/.test(n) == true ) {
+            fd.removeAttr(n);
+        }
+    }
     tr.each(function() {
         var n = $(this).find("[name=param_name]" ).val();
         var v = $(this).find("[name=param_value]").val();
-        if (!/^data-/.test(n)) {
-            n =  "data-" + n ;
+        if (/^data-/.test(n) == false) {
+            n = "data-" + n ;
         }
         fd.attr(n, v);
     });
@@ -295,10 +302,18 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         var type  = field["__type__"];
         var required = field["__required__"];
         var repeated = field["__repeated__"];
+
+        // 表单高级配置
+        if (name == "@") {
+            type  = "_";
+            text  = getTypeItem(wdgt, type).find("label span:first").text();
+        }
+        // 内部缺省字段, 禁止自行设置
         if (type == "hidden" || (type == "number"
         && (name == "ctime"  ||  name == "mtime"))) {
-            continue; // 内部缺省字段, 禁止自行设置
+            continue;
         }
+
         if (pre) {
             name  = pre + name;
         }
@@ -312,12 +327,12 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (group.size() == 0) {
             continue;
         }
-        if (type == "datetime" || type == "time" ) {
-            setItemType(group.find("input"), type);
-        }
         var label = group.find("label span:first,legend span:first");
         var input = group.find("input,select,textarea,ul[data-fn]" );
         label.text(text);
+        if (type == "datetime" || type == "time") {
+            setItemType(input, type);
+        }
         if (input.is( "[name]" )) {
             input.attr("name", name);
         }
@@ -422,7 +437,7 @@ $.fn.hsCols = function() {
         var item = $(this).closest(".form-group");
         if (item.is(".base-field")) {
             var name = item.attr("data-type");
-            if (targetz.find("[data-type="+name+"]").size() > 0) {
+            if (targetz.find("[data-type='"+ name +"']").size()) {
                 $.hsWarn("预定字段不可重复添加, 请检查已设字段");
                 return;
             }
@@ -445,6 +460,16 @@ $.fn.hsCols = function() {
              .empty( ).append(pane);
         modal.find( ".detail-set" ) // 详细设置区域
              .find("tr").not(".hide").remove();
+
+        // 表单设置只显示高级, 其他情况点到基础设置
+        var tabs = modal.find(".nav").first( );
+        if (type == '_') {
+            tabs.find("li:eq(1) a").click();
+            tabs.find("li:eq(0)"  ).hide( );
+        } else {
+            tabs.find("li:eq(0) a").click();
+            tabs.find("li"        ).show( );
+        }
 
         loadConf(modal, field);
         modal.modal( "show"  );

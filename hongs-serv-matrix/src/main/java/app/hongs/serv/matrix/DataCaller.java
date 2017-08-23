@@ -38,7 +38,7 @@ public class DataCaller extends Async<String> {
     public void run(String url) {
         try {
             String rsp = Remote.get(url);
-            String log =  "GET: " + url + " RSP: " + Tool.indent(rsp.trim());
+            String log = "GET: "+ url +" RSP: "+ Tool.indent(rsp.trim());
             CoreLogger.getLogger (SPACE).info(ENVIR + log);
         } catch ( Exception | Error ex ) {
             String log = ex.getMessage();

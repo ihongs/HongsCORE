@@ -188,11 +188,12 @@ function saveConf(modal, field) {
                 }
             } else
             if (attr === "type") {
-                setItemType(field.find(name) , $(this).val());
+               setItemType(field.find(name), $(this).val());
             } else
             if (attr !== "text") {
-                field.find(name).attr(attr, $(this).val());
-            } else {
+                field.find(name).attr(attr , $(this).val());
+            } else
+            {
                 field.find(name).text($(this).val());
             }
         } else {
@@ -200,25 +201,32 @@ function saveConf(modal, field) {
         }
     });
 
+    // 高级设置
     var fd = field.find("input,select,textarea,ul[data-fn]").first();
-    var tr = modal.find(".detail-set tr").not(".hide");
+    var tr = modal.find(".detail-set tr" ).not(".hide" );
     var a  = fd[0].attributes;
-    for(var i = 0; i < a.length; i ++) {
-        var n = a[ i ].name;
-        if (/^data-/.test(n) == true ) {
-            fd.removeAttr(n);
-        }
-    }
     tr.each(function() {
         var n = $(this).find("[name=param_name]" ).val();
         var v = $(this).find("[name=param_value]").val();
-        if (/^data-/.test(n) == false) {
-            n = "data-" + n ;
+        if (!/^data-/.test(n)) {
+            n = "data-"+n ;
         }
         fd.attr(n, v);
+        set[n] = true;
     });
+    for(var i = 0; i < a.length; i ++) {
+        var n = a[i].name ;
+        var v = a[i].value;
+        if (!/^data-/.test(n)) {
+            continue;
+        }
+        if (v != '' && set[n]) {
+            continue;
+        }
+        fd.removeAttr(n);
+    }
 
-    // 关联
+    // 关联路径
     if (fd.is("[data-ft=_fork]")) {
         fd.next()
           .attr("data-href", fd.attr("data-al"))
@@ -263,7 +271,11 @@ function gainFlds(fields, area) {
             }
         }
         if (name.substr(0, 1) === "-") {
-            name = "";
+            name  = "" ;
+        }
+        if (name == "@") {
+            type  = "" ;
+            text  = "" ;
         }
         if (input.is("select")) {
             var datalist = [];

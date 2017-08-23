@@ -164,9 +164,6 @@ public class Form extends Model {
             Map tdf = null;
             Map idf = null;
             Map fld ;
-            int idx = 0;
-            int idp = 0;
-            int tdp = 0;
 
             Iterator<Map> itr = flds.iterator();
             while (itr.hasNext()) {
@@ -176,31 +173,38 @@ public class Form extends Model {
                 } else
                 if (  "@".equals(fld.get("__name__"))) {
                     tdf = fld;
-                    tdp = idx;
+                    itr. remove (  );
                 } else
                 if ( "id".equals(fld.get("__name__"))) {
                     idf = fld;
-                    idp = idx;
+                    itr. remove (  );
                 } else
                 if (set.contains(fld.get("__name__"))) {
                     set. remove (fld.get("__name__"));
                 }
-                idx ++ ;
             }
 
-            // 移除基础属性, 表单的基础配置不需要设置这些属性
             if (tdf != null) {
+                flds.add(0, tdf);
+                // 去掉表单的基础属性
                 tdf.remove("__text__");
+                tdf.remove("__name__");
                 tdf.remove("__type__");
                 tdf.remove("__rule__");
-                tdf.remove("__repeated__");
                 tdf.remove("__required__");
+                tdf.remove("__repeated__");
+            }
+            if (idf != null) {
+                flds.add(1, idf);
+                // 去掉主键的基础属性
+                idf.remove("__required__");
+                idf.remove("__repeated__");
             }
 
             conf = Data.toString(flds);
             rd.put("conf", conf);
 
-            // 增加表配置项, 默认自动判别列举、排序、筛选字段
+            // 补全表配置项
             fld = Synt.mapOf(
                 "__text__", name,
                 "__name__", "@",
@@ -209,22 +213,24 @@ public class Form extends Model {
                 "siftable", "?",
                 "nameable", "?"
             );
-            flds.add(0, fld);
             if (tdf != null) {
                 fld .putAll(tdf);
-                flds.remove(tdp);
+                tdf .putAll(fld);
+            } else {
+                flds.add(0, fld);
             }
 
-            // 增加编号字段
+            // 补全编号字段
             fld = Synt.mapOf(
-                "__name__", "id",
                 "__text__", "ID",
+                "__name__", "id",
                 "__type__", "hidden"
             );
-            flds.add(1, fld);
             if (idf != null) {
                 fld .putAll(idf);
-                flds.remove(idp);
+                idf .putAll(fld);
+            } else {
+                flds.add(1, fld);
             }
 
             // 增加名称字段

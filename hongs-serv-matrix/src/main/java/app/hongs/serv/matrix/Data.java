@@ -10,6 +10,7 @@ import app.hongs.db.Model;
 import app.hongs.dh.search.SearchEntity;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
+import app.hongs.util.Tool;
 import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,23 +23,34 @@ import org.apache.lucene.document.Document;
  */
 public class Data extends SearchEntity {
 
-    /**
-     * 默认的配置目录
-     */
-    protected String base = "manage/data";
-
+    protected final String comf;
     protected final String conf;
     protected final String form;
+    protected long time = 0;
 
-    public Data(String path, String conf, String form) throws HongsException {
+    /**
+     * 数据实例基础构造方法
+     * @param path 数据存放路径
+     * @param comf 基础配置目录
+     * @param conf 当前配置目录
+     * @param form 表单配置名称
+     * @throws HongsException
+     */
+    public Data(String path, String comf, String conf, String form) throws HongsException {
         super(path);
-
+        this.comf = comf;
         this.conf = conf;
         this.form = form;
     }
 
+    /**
+     * 数据实例快捷构造方法
+     * @param conf 当前配置目录
+     * @param form 表单配置名称
+     * @throws HongsException
+     */
     public Data(String conf, String form) throws HongsException {
-        this("data/" + form, conf , form);
+        this("data/" + form, "manage/data/" + form, conf , form);
     }
 
     /**
@@ -78,7 +90,6 @@ public class Data extends SearchEntity {
         }
 
         Map fields, fieldx;
-        String comf = base + "/" + form;
 
         /**
          * 字段以 manage/data 的字段为基础
@@ -131,6 +142,7 @@ public class Data extends SearchEntity {
     public String add(Map rd) throws HongsException {
         String id = Core.newIdentity();
         save(id, rd);
+        call(id, "create");
         return id;
     }
 
@@ -143,6 +155,7 @@ public class Data extends SearchEntity {
     @Override
     public void put(String id, Map rd) throws HongsException {
         save(id, rd);
+        call(id, "update");
     }
 
     /**
@@ -154,6 +167,7 @@ public class Data extends SearchEntity {
     @Override
     public void set(String id, Map rd) throws HongsException {
         save(id, rd);
+        call(id, "update");
     }
 
     /**
@@ -164,6 +178,7 @@ public class Data extends SearchEntity {
     @Override
     public void del(String id) throws HongsException {
         save(id, null);
+        call(id, "delete");
     }
 
     public void save(String id, Map rd) throws HongsException {
@@ -171,6 +186,7 @@ public class Data extends SearchEntity {
         String   where = "`id`= ? AND `form_id`= ? AND `etime`= ?";
         Object[] param = new String[ ] { id , form , "0" };
         long     ctime = System.currentTimeMillis() / 1000;
+        time  =  ctime ;
 
         // 删除当前数据
         if (rd == null) {
@@ -307,6 +323,21 @@ public class Data extends SearchEntity {
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
         setDoc(id, doc);
+    }
+
+    public void call(String id, String act) throws HongsException {
+        String url = Synt.declare(getParams().get("callback"), "");
+        if ("".equals(url)) {
+            return;
+        }
+
+        url = Tool.inject(url, Synt.mapOf(
+            "id"    , id  ,
+            "action", act ,
+            "entity", form,
+            "time"  , time
+        ));
+        DataCaller.getInstance().add(url);
     }
 
     private Set<String> wdCols = null;

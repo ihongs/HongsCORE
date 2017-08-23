@@ -161,26 +161,47 @@ public class Form extends Model {
         if (conf != null && !"".equals(conf)) {
             flds = Synt.asList(Data.toObject(conf));
             Set set = Synt.setOf("name", "find", "cuid", "muid", "ctime", "mtime");
-            Map top = null;
+            Map tdf = null;
+            Map idf = null;
             Map fld ;
+            int idx = 0;
+            int idp = 0;
+            int tdp = 0;
 
-            Iterator<Map> it = flds.iterator(/***/);
-            while (it.hasNext()) {
-                fld = it.next();
-                if ("@".equals(fld.get("__name__"))) {
-                    it.remove();
-                    top = fld  ;
-                } else
-                if ( "".equals(fld.get("__name__"))) {
+            Iterator<Map> itr = flds.iterator();
+            while (itr.hasNext()) {
+                fld = itr.next();
+                if (   "".equals(fld.get("__name__"))) {
                     fld.put("__name__", Core.newIdentity());
+                } else
+                if (  "@".equals(fld.get("__name__"))) {
+                    tdf = fld;
+                    tdp = idx;
+                } else
+                if ( "id".equals(fld.get("__name__"))) {
+                    idf = fld;
+                    idp = idx;
                 } else
                 if (set.contains(fld.get("__name__"))) {
                     set. remove (fld.get("__name__"));
                 }
+                idx ++ ;
             }
 
+            // 移除基础属性, 表单的基础配置不需要设置这些属性
+            if (tdf != null) {
+                tdf.remove("__text__");
+                tdf.remove("__type__");
+                tdf.remove("__rule__");
+                tdf.remove("__repeated__");
+                tdf.remove("__required__");
+            }
+
+            conf = Data.toString(flds);
+            rd.put("conf", conf);
+
             // 增加表配置项, 默认自动判别列举、排序、筛选字段
-            Map txp = Synt.mapOf(
+            fld = Synt.mapOf(
                 "__text__", name,
                 "__name__", "@",
                 "listable", "?",
@@ -188,17 +209,23 @@ public class Form extends Model {
                 "siftable", "?",
                 "nameable", "?"
             );
-            flds.add(0, txp);
-            if (top != null) {
-                txp.putAll(top);
+            flds.add(0, fld);
+            if (tdf != null) {
+                fld .putAll(tdf);
+                flds.remove(tdp);
             }
 
             // 增加编号字段
-            flds.add(1, Synt.mapOf(
+            fld = Synt.mapOf(
                 "__name__", "id",
                 "__text__", "ID",
                 "__type__", "hidden"
-            ));
+            );
+            flds.add(1, fld);
+            if (idf != null) {
+                fld .putAll(idf);
+                flds.remove(idp);
+            }
 
             // 增加名称字段
             if (set.contains("name")) {
@@ -264,11 +291,8 @@ public class Form extends Model {
                     "default-create", "false"
                 ));
             }
-
-            conf = Data.toString(flds);
-            rd.put("conf", conf);
         } else {
-            rd.remove ( "conf" );
+            rd.remove("conf");
         }
 
         return flds;
@@ -444,7 +468,7 @@ public class Form extends Model {
                 }
             }
             // 可搜索指定存为搜索类型
-            if (Synt.asBool(fiel.get("findable"))) {
+            if (Synt.defoult(Synt.asBool(fiel.get("findable")), false)) {
                 fiel.put("lucene-type", "search");
             }
 

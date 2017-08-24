@@ -48,14 +48,14 @@ public final class Synt {
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
 
     /**
-     * 视为假的字符串有: 0,n,f,no,false 和 空字符串
+     * 视为假的字符串有: false,no,f,n,0 和 空字符串
      */
-    public  static final Pattern FAKE = Pattern.compile("^(|0|n|f|no|false)$", Pattern.CASE_INSENSITIVE);
+    public  static final Pattern FAKE = Pattern.compile("^(flase|no|f|n|0|)$", Pattern.CASE_INSENSITIVE);
 
     /**
-     * 视为真的字符串有: 1,y,t,yes,true
+     * 视为真的字符串有: true,yes,t,y,1
      */
-    public  static final Pattern TRUE = Pattern.compile( "^(1|y|t|yes|true)$", Pattern.CASE_INSENSITIVE);
+    public  static final Pattern TRUE = Pattern.compile("^(true|yes|t|y|1)$" , Pattern.CASE_INSENSITIVE);
 
     /**
      * 快速构建 List

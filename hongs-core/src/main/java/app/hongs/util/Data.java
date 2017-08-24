@@ -3,20 +3,24 @@ package app.hongs.util;
 import app.hongs.Core;
 import app.hongs.HongsError;
 
-import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.json.simple.parser.ContainerFactory;
 
 import java.io.Reader;
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.util.Map;
+import java.util.List;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Enumeration;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
+import java.util.LinkedHashMap;
 
 /**
  * JSON格式工具
@@ -54,7 +58,7 @@ public final class Data
   {
     try
     {
-      return JSONValue.parseWithException(str);
+      return new JSONParser().parse(str,CF);
     }
     catch (ParseException | IOException ex)
     {
@@ -71,7 +75,7 @@ public final class Data
   {
     try
     {
-      return JSONValue.parseWithException(str);
+      return new JSONParser().parse(str,CF);
     }
     catch (ParseException ex)
     {
@@ -514,6 +518,17 @@ public final class Data
         }
     }
 
+    private static final ContainerFactory CF = new ContainerFactory() {
+        @Override
+        public Map createObjectContainer() {
+            return new LinkedHashMap();
+        }
+        @Override
+        public List creatArrayContainer() {
+            return new ArrayList();
+        }
+    };
+    
   //** 编码 **/
   /*
   private final static String[] hex = {

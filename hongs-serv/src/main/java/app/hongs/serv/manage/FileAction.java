@@ -1,12 +1,10 @@
 package app.hongs.serv.manage;
 
-import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.dh.IAction;
@@ -19,11 +17,11 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.TreeSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.activation.MimetypesFileTypeMap;
@@ -456,10 +454,20 @@ public class FileAction implements IAction {
 
     private boolean isDenyFile(File file) {
         if (file.isDirectory()) {
-            return true;
+            return true ;
         }
-        CoreConfig  conf = CoreConfig.getInstance();
-            String  extn = file.getName().replaceFirst("^.*\\.", "");
+
+        String serv = System.getProperty("manage.serv.file");
+        if ( "no".equals(serv)) {
+            return true ;
+        }
+        if ("all".equals(serv)) {
+            return false;
+        }
+
+        String name = file.getName( );
+        String extn = name.replaceFirst("^.*\\.", "");
+        CoreConfig  conf = CoreConfig.getInstance(  );
         Set<String> extz = Synt.asTerms(conf.getProperty("fore.upload.deny.extns" ));
         Set<String> exts = Synt.asTerms(conf.getProperty("fore.upload.allow.extns"));
         return (null != extz &&  extz.contains(extn))

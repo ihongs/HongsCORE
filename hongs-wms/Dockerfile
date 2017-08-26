@@ -1,7 +1,7 @@
 # docker build -t hongs/hongs-wms:4.0 .
 # docker run hongs/hongs-wms:4.0
 
-FROM hongs/hongs-jdk:8
+FROM hongs/hongs-env:4.0
 
 EXPOSE 8080
 

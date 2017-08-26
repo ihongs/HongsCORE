@@ -50,7 +50,7 @@ public final class Synt {
     /**
      * 视为假的字符串有: false,no,f,n,0 和 空字符串
      */
-    public  static final Pattern FAKE = Pattern.compile("^(flase|no|f|n|0|)$", Pattern.CASE_INSENSITIVE);
+    public  static final Pattern FAKE = Pattern.compile("^(false|no|f|n|0|)$", Pattern.CASE_INSENSITIVE);
 
     /**
      * 视为真的字符串有: true,yes,t,y,1

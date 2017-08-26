@@ -16,7 +16,7 @@ then
     exit  1
 fi
 
-"$JAVA_PATH" $JAVA_OPTS \
+exec "$JAVA_PATH" $JAVA_OPTS \
  -classpath "$KLASSPATH"\
  -Dlog4j.configurationFile="$CORE_PATH/etc/_init_.log4j2.xml"\
  -Dlogs.dir="$CORE_PATH/var/log" \

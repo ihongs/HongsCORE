@@ -11,4 +11,4 @@ RUN chmod +x /opt/HongsWeb/bin/*
 
 RUN /opt/HongsWeb/bin/app system.setup
 
-CMD nohup /opt/HongsWeb/bin/app server.start --debug 1 2>&1 > /opt/HongsWeb/var/log/run.out
+CMD /opt/HongsWeb/bin/app server.start --debug 2

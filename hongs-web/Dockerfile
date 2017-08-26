@@ -1,5 +1,5 @@
 # docker build -t hongs/hongs-web:4.0 .
-# docker run hongs/hongs-web:4.0
+# docker run -p 80:8080 hongs/hongs-web:4.0
 
 FROM hongs/hongs-env:4.0
 

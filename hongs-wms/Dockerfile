@@ -11,4 +11,4 @@ RUN chmod +x /opt/HongsWMS/bin/*
 
 RUN /opt/HongsWMS/bin/app system.setup
 
-CMD nohup /opt/HongsWMS/bin/app server.start --debug 1 2>&1 > /opt/HongsWMS/var/log/run.out
+CMD rm -f /opt/HongsWMS/var/server/8080.pid && nohup /opt/HongsWMS/bin/app server.start --debug 1 2>&1 > /opt/HongsWMS/var/log/run.out &

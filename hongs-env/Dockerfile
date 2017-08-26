@@ -8,3 +8,5 @@ MAINTAINER Kevin Hongs <kevin.hongs@gmail.com>
 ADD jdk-8u131-linux-x64.tar.gz /opt/
 
 ENV JAVA_HOME /opt/jdk1.8.0_131
+
+RUN apt-get install language-pack-zh-han*

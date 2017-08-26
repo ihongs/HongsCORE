@@ -16,10 +16,10 @@ then
     exit  1
 fi
 
-exec "$JAVA_PATH" $JAVA_OPTS \
- -classpath "$KLASSPATH"\
- -Dlog4j.configurationFile="$CORE_PATH/etc/_init_.log4j2.xml"\
- -Dlogs.dir="$CORE_PATH/var/log" \
- -Dtmps.dir="$CORE_PATH/var/tmp" \
- app.hongs.cmdlet.CmdletRunner $@\
- --corepath "$CORE_PATH"
+exec "$JAVA_PATH" $JAVA_OPTS\
+  -classpath "$KLASSPATH"\
+  -Dlog4j.configurationFile="$CORE_PATH/etc/_init_.log4j2.xml"\
+  -Dlogs.dir="$CORE_PATH/var/log"\
+  -Dtmps.dir="$CORE_PATH/var/tmp"\
+  app.hongs.cmdlet.CmdletRunner $@\
+  --corepath "$CORE_PATH"

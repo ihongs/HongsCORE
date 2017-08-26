@@ -1,5 +1,5 @@
-# docker build -t hongs/hongs-env:4.0 .
-# docker run hongs/hongs-env:4.0
+# docker build -t hongs/hongs-env:0.4 .
+# docker run hongs/hongs-env:0.4
 
 FROM ubuntu:16.04
 

@@ -236,7 +236,7 @@
         openUrls: [
             ['<%=_module%>/<%=_entity%>/form.html?md=0',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?md=5&id={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?md=6&id={ID}',
              '.update', '@'],
             ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
              '.review', '@'],
@@ -284,7 +284,6 @@
     <%if ( "select".equals(_action)) {%>
     listobj._fill__fork = function(x, v, n, t) {
         hsListFillFork.call(this , x, v, n, t);
-        console.log(x.find("input"));
         x.find("input").attr("title", this._info.name);
     };
     <%} /*End If */%>

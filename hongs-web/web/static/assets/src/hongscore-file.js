@@ -297,7 +297,7 @@ function _hsSoloFile(box, show) {
     if (! fn || box.hasClass("pickmul")) {
         return;
     }
-    if (! /(\[\]|\.\.|\.$)/.test ( fn )) {
+    if (! box.data("repeated") && ! /(\[\]|\.\.|\.$)/.test( fn )) {
         box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
         box.removeClass("pickmul");
     } else {

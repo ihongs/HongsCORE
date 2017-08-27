@@ -10,8 +10,11 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -176,7 +179,7 @@ public class Unit extends Mtree {
             DOMSource      ds = new DOMSource(docm);
             StreamResult   sr = new StreamResult (
                                 new OutputStreamWriter(
-                                new FileOutputStream( file )));
+                                new FileOutputStream(file), "utf-8"));
 
             tr.setOutputProperty(OutputKeys.ENCODING, "utf-8");
             tr.setOutputProperty(OutputKeys.METHOD  , "xml"  );
@@ -191,6 +194,8 @@ public class Unit extends Mtree {
         } catch (TransformerException  e) {
             throw new HongsException.Common(e);
         } catch (FileNotFoundException e) {
+            throw new HongsException.Common(e);
+        } catch (UnsupportedEncodingException e) {
             throw new HongsException.Common(e);
         }
     }

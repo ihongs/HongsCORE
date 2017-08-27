@@ -15,6 +15,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -583,7 +584,7 @@ public class Form extends Model {
             DOMSource      ds = new DOMSource(docm);
             StreamResult   sr = new StreamResult (
                                 new OutputStreamWriter(
-                                new FileOutputStream( file )));
+                                new FileOutputStream(file), "utf-8"));
 
             tr.setOutputProperty(OutputKeys.ENCODING, "utf-8");
             tr.setOutputProperty(OutputKeys.METHOD  , "xml"  );
@@ -598,6 +599,8 @@ public class Form extends Model {
         } catch (TransformerException  e) {
             throw new HongsException.Common(e);
         } catch (FileNotFoundException e) {
+            throw new HongsException.Common(e);
+        } catch (UnsupportedEncodingException e) {
             throw new HongsException.Common(e);
         }
     }

@@ -1,13 +1,20 @@
 package app.hongs.action;
 
+import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.util.Dict;
 import java.util.Iterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * 选项补充助手
@@ -16,9 +23,12 @@ import java.util.Map;
 public class SelectHelper {
 
     private final Map<String, Map> enums;
+    private final Set<String>      files;
+    private final static Pattern   HREFP = Pattern.compile("^(\\w+:)?//[^/]*");
 
     public SelectHelper() {
         enums = new LinkedHashMap();
+        files = new LinkedHashSet();
     }
 
     public SelectHelper addEnum(String code, Map<String, String> opts) {
@@ -55,6 +65,11 @@ public class SelectHelper {
         return addEnum(code, opts);
     }
 
+    public SelectHelper addFile(String... code) {
+        files.addAll(Arrays.asList(code) );
+        return  this;
+    }
+
     public SelectHelper addEnumsByForm(String conf, String form) throws HongsException {
         FormSet cnf = FormSet.getInstance(conf);
         Map map = cnf.getForm(form);
@@ -72,15 +87,23 @@ public class SelectHelper {
             String  name = (String) et.getKey();
             String  type = (String) mt.get("__type__");
                     type = (String)tps.get(   type   ); // 类型别名转换
-            if (! "enum".equals(type)) {
-                continue;
+
+            if ("enum".equals(type)) {
+                String xonf = (String) mt.get("conf");
+                String xame = (String) mt.get("enum");
+                if (null == xonf || "".equals( xonf )) xonf = conf;
+                if (null == xame || "".equals( xame )) xame = name;
+                Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
+                enums.put(name, xnum);
+            } else
+            if ("file".equals(type)) {
+                String href = (String) mt.get("href");
+                if (href != null
+                && !href.startsWith("$")
+                && !HREFP.matcher(href ).find()) {
+                    files.add(name);
+                }
             }
-            String xonf = (String) mt.get("conf");
-            String xame = (String) mt.get("enum");
-            if (null == xonf || "".equals( xonf )) xonf = conf;
-            if (null == xame || "".equals( xame )) xame = name;
-            Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
-            enums.put(name, xnum);
         }
 
         return this;
@@ -106,11 +129,13 @@ public class SelectHelper {
             if (values.containsKey("info")) {
                 Map        info = (Map ) values.get("info");
                 injectText(info , enums);
+                injectAurl(info , null );
             }
             if (values.containsKey("list")) {
                 List<Map>  list = (List) values.get("list");
                 for (Map   info :  list) {
                 injectText(info , enums);
+                injectAurl(info , null );
                 }
             }
         }
@@ -122,6 +147,56 @@ public class SelectHelper {
 
     public void injectText(Map info) throws HongsException {
         injectText(info, enums);
+    }
+
+    public void injectAurl(Map info) throws HongsException {
+        injectAurl(info, null );
+    }
+
+    public void injectAurl(Map info, String href) throws HongsException {
+        String host,path;
+        if (href != null) {
+            Matcher m = HREFP.matcher(href);
+            if ( ! m.find ()) {
+                throw new HongsException.Common("Href must be [scheme:]//host[:port][/path]");
+            }
+            host = m.group();
+            int p  = m.end();
+            if (p  < href.length()) {
+                path = href.substring(m.end( ));
+                if ( ! path.endsWith (  "/"  )) {
+                    path += "/";
+                }
+            } else {
+                    path  = "/";
+            }
+        } else {
+            ActionHelper       hlp;
+            HttpServletRequest req;
+
+            hlp = (ActionHelper)Core.getInstance()
+              .got(ActionHelper.class.getName( ) );
+            if (null == hlp) {
+                return;
+            }
+
+            req = hlp.getRequest();
+            if (null == req) {
+                return;
+            }
+
+            int port;
+            port = req.getServerPort();
+            host = req.getServerName();
+            path = req.getContextPath()+ "/" ;
+            if (port == 80 && port == 443) {
+                host = req.getScheme() +"://"+ host ;
+            } else {
+                host = req.getScheme() +"://"+ host +":"+ port ;
+            }
+        }
+
+        injectAurl(info, files, host, path);
     }
 
     private void injectData(Map data, Map maps) throws HongsException {
@@ -169,6 +244,26 @@ public class SelectHelper {
         }
     }
 
+    private void injectAurl(Map info, Set keys, String host, String path) {
+        Iterator it = keys.iterator();
+        while (it.hasNext()) {
+            String   key = (String) it.next( );
+            Object   val = Dict.getParam(info, key);
+
+            if (val instanceof Collection) {
+                // 预置一个空列表, 规避无值导致客户端取文本节点出错
+                Dict.setParam(info, new ArrayList(), key + "_aurl");
+                for (Object vxl : (Collection) val) {
+                    vxl = hrefToAurl(vxl, host, path);
+                    Dict.setParam(info, vxl, key + "_aurl.");
+                }
+            } else {
+                    val = hrefToAurl(val, host, path);
+                    Dict.setParam(info, val, key + "_aurl" );
+            }
+        }
+    }
+
     /**
      * 将枚举代号转换为对应文本
      * 空值和空串不处理
@@ -193,6 +288,28 @@ public class SelectHelper {
         }
 
         return "";
+    }
+
+    /**
+     * 补全相对路径的域名和前缀
+     * @param val
+     * @return
+     */
+    private Object hrefToAurl(Object val, String host, String path) {
+        if (null == val || "".equals(val)) {
+            return  val;
+        }
+
+        String url  =  val.toString (   );
+        if (HREFP.matcher (url).find(   )) {
+            return  val;
+        } else
+        if (url.startsWith("/")) {
+            return  host + url;
+        } else
+        {
+            return  host + path + url;
+        }
     }
 
 }

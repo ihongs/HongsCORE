@@ -151,8 +151,8 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
+                    <ul class="pickbox" data-fn="-" data-ft="_file"></ul>
                     <input type="file" name="-" class="form-ignored invisible"/>
-                    <ul data-ft="_file" data-fn="-" class="pickbox"></ul>
                     <button class="btn btn-default form-control" type="button" data-toggle="hsFile"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                 </div>
                 <div class="form-group" data-type="image">
@@ -162,8 +162,8 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
+                    <ul class="pickbox" data-fn="-" data-ft="_file" data-size="100*100"></ul>
                     <input type="file" name="-" class="form-ignored invisible" accept="image/*" data-__rule__="Thumb"/>
-                    <ul data-ft="_file" data-fn="-" data-size="100*100" class="pickbox"></ul>
                     <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                 </div>
                 <div class="form-group" data-type="fork">
@@ -173,7 +173,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <ul data-ft="_fork" data-fn="-" class="pickbox"></ul>
+                    <ul class="pickbox" data-fn="-" data-ft="_fork"></ul>
                     <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="manage/matrix/form/pick.html" data-vk="id" data-tk="name"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
                 </div>
                 <div class="form-group">
@@ -460,10 +460,13 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="ul|required" value="required"/>必传
+                    <input type="checkbox" name="ul|data-required" value="required"/>必传
                 </label>
                 <label>
-                    <input type="checkbox" name="ul|repeated" value="required"/>多个
+                    <input type="checkbox" name="ul|data-repeated" value="required"/>多个
+                </label>
+                <label>
+                    <input type="checkbox" name="ul|data-listable" value="yes"/>列举
                 </label>
             </div>
         </div>
@@ -483,10 +486,10 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="ul|required" value="required"/>必选
+                    <input type="checkbox" name="ul|data-required" value="required"/>必选
                 </label>
                 <label>
-                    <input type="checkbox" name="ul|repeated" value="repeated"/>多个
+                    <input type="checkbox" name="ul|data-repeated" value="repeated"/>多个
                 </label>
                 <label>
                     <input type="checkbox" name="ul|data-listable" value="yes"/>列举

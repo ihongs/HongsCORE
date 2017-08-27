@@ -9,7 +9,7 @@ import app.hongs.db.Table;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.PrintWriter;
+import java.io.OutputStreamWriter;
 import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilder;
@@ -172,15 +172,17 @@ public class Unit extends Mtree {
 
         TransformerFactory tf = TransformerFactory.newInstance();
         try {
-            Transformer tr = tf.newTransformer();
-            DOMSource   ds = new DOMSource(docm);
+            Transformer    tr = tf.newTransformer();
+            DOMSource      ds = new DOMSource(docm);
+            StreamResult   sr = new StreamResult (
+                                new OutputStreamWriter(
+                                new FileOutputStream( file )));
+
             tr.setOutputProperty(OutputKeys.ENCODING, "utf-8");
             tr.setOutputProperty(OutputKeys.METHOD  , "xml"  );
             tr.setOutputProperty(OutputKeys.INDENT  , "yes"  );
             tr.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
 
-            PrintWriter  pw = new PrintWriter (new FileOutputStream(file));
-            StreamResult sr = new StreamResult( pw  );
             tr.transform(ds, sr);
         } catch (TransformerConfigurationException e) {
             throw new HongsException.Common(e);

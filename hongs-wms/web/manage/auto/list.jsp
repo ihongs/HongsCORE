@@ -236,7 +236,7 @@
         openUrls: [
             ['<%=_module%>/<%=_entity%>/form.html?md=0',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?md=6&id={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?md=5&id={ID}',
              '.update', '@'],
             ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
              '.review', '@'],

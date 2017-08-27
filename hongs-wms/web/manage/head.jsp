@@ -45,7 +45,8 @@
                      .append(makeMenu(subs, acti))
                      .append("</ul>");
                 menus.append("</li>");
-            } else {
+            } else
+            if (!href.startsWith(Core.BASE_HREF +"/manage/data/")) {
                 menus.append("<li class=\"")
                      .append(actc).append("\">" );
                 menus.append( "<a href=\"" )

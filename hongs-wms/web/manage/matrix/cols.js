@@ -72,7 +72,7 @@ function loadConf(modal, field) {
     var set = {};
 
     modal.find(".simple-set")
-         .find("input,select,textarea,ul[data-fn]")
+         .find("input,select,textarea")
          .each(function( ) {
         var name = $(this).attr("name") || $(this).attr("data-fn");
         var attr ;
@@ -109,15 +109,16 @@ function loadConf(modal, field) {
             } else
             if (attr !== "text") {
                 $(this).val(field.find(name).attr(attr));
-            } else {
+            } else
+            {
                 $(this).val(field.find(name).text());
             }
         } else {
-            $(this).val(field.find(name).text());
+                $(this).val(field.find(name).text());
         }
     });
 
-    var az = field.find("input,select,textarea,ul[data-fn]")[0].attributes;
+    var az = field.find("[data-fn], [name]")[0].attributes;
     var tb = modal.find(".detail-set tbody");
     var tp = tb.find(".hide");
     for(var i = 0; i < az.length; i ++) {
@@ -142,10 +143,10 @@ function loadConf(modal, field) {
  * @param {jQuery} field
  */
 function saveConf(modal, field) {
-    var set = {};
+    var set = {"data-fn": true, "data-ft": true};
 
     modal.find(".simple-set")
-         .find("input,select,textarea,ul[data-fn]")
+         .find("input,select,textarea")
          .each(function( ) {
         var name = $(this).attr("name") || $(this).attr("data-fn");
         var attr ;
@@ -202,8 +203,8 @@ function saveConf(modal, field) {
     });
 
     // 高级设置
-    var fd = field.find("input,select,textarea,ul[data-fn]").first();
-    var tr = modal.find(".detail-set tr" ).not(".hide" );
+    var fd = field.find("[data-fn], [name]").first();
+    var tr = modal.find(".detail-set tr").not( ".hide" );
     var a  = fd[0].attributes;
     tr.each(function() {
         var n = $(this).find("[name=param_name]" ).val();
@@ -228,7 +229,7 @@ function saveConf(modal, field) {
 
     // 关联路径
     if (fd.is("[data-ft=_fork]")) {
-        fd.next()
+        fd.siblings(  "button"  )
           .attr("data-href", fd.attr("data-al"))
           .attr("data-hrel", fd.attr("data-at"));
     }
@@ -241,41 +242,51 @@ function saveConf(modal, field) {
  */
 function gainFlds(fields, area) {
     area.find(".form-group").each(function() {
-        var label = $(this).find("label span:first,legend span:first");
-        var input = $(this).find("input,select,textarea,ul[data-fn]" );
+        var label = $(this).find("label span,legend span").first();
+        var input = $(this).find(   "[data-fn],[name]"   ).first();
         var text  = label.text();
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName").toLowerCase();
-        if ( $(this).is("[data-type=image") ) type = "image";
-        if (input.attr("data-ft") == "_fork") type = "fork";
-        var required = input.prop("required") ? "true" : "";
-        var repeated = input.prop("multiple") ? "true" : "";
+        var required = input.prop("required") || input.data("required") ? "true" : "";
+        var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "";
         var params   = {};
-        var a = input.get(0).attributes;
+
+        if (name == "@") {
+            type  = "" ;
+            text  = "" ;
+        } else
+        if (name.substr(0, 1) == "-") {
+            name  = "" ;
+        }
+
+        if ($(this).is("[data-type=fork" )) {
+            type = "fork" ;
+        } else
+        if ($(this).is("[data-type=image")) {
+            type = "image";
+            params["__rule__"] = "Thumb";
+        }
+
+        var a = input.get(0).attributes ;
         for(var i = 0; i < a.length; i ++) {
             var k = a[i].nodeName ;
             var v = a[i].nodeValue;
             if (v !== ""
             &&  k.substr(0,5) === "data-") {
-                if (k == "data-fn"
-                ||  k == "data-ft") {
+                if (k === "data-fn"
+                ||  k === "data-ft"
+                ||  k === "data-required"
+                ||  k === "data-repeated") {
                     continue;
                 }
-//              if (k == "data-datalist" ) {
+//              if (k === "data-datalist") {
 //                  v = JSON.stringify(prsDataList(v));
 //              }
                 if (/^data-.{3,}/.test(k)) {
-                    k = k.substring ( 5 );
+                    k = k.substring(5);
                 }
                 params[k] = v;
             }
-        }
-        if (name.substr(0, 1) === "-") {
-            name  = "" ;
-        }
-        if (name == "@") {
-            type  = "" ;
-            text  = "" ;
         }
         if (input.is("select")) {
             var datalist = [];
@@ -318,7 +329,9 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         // 表单高级配置
         if (name == "@") {
             type  = "_";
-            text  = getTypeItem(wdgt, type).find("label span:first").text();
+            text  = getTypeItem( wdgt, type )
+                          .find("label span")
+                          .first( ).text ( );
         }
         // 内部缺省字段, 禁止自行设置
         if (type == "hidden" || (type == "number"
@@ -339,8 +352,8 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (group.size() == 0) {
             continue;
         }
-        var label = group.find("label span:first,legend span:first");
-        var input = group.find("input,select,textarea,ul[data-fn]" );
+        var label = group.find("label span,legend span").first();
+        var input = group.find(   "[data-fn],[name]"   ).first();
         label.text(text);
         if (type == "datetime" || type == "time") {
             setItemType(input, type);
@@ -351,8 +364,15 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (input.is( "[data-fn]" )) {
             input.attr("data-fn", name);
         }
-        input.prop("required", !! required);
-        input.prop("multiple", !! repeated);
+
+        if (input.is("ul")) {
+            input.attr("data-required", required);
+            input.attr("data-repeated", repeated);
+        } else {
+            input.prop("required" , ! ! required);
+            input.prop("multiple" , ! ! repeated);
+        }
+
         for(var k in field  ) {
             if (/^_/.test(k)) {
                 continue;
@@ -365,33 +385,32 @@ function drawFlds(fields, area, wdgt, pre, suf) {
 //                  var datalist = JSON.parse(field["datalist"]) || [];
 //                  input.attr("data-datalist", strDataList(datalist));
                     input.attr("data-datalist", field[k] );
-                    continue;
+                } else {
+                    input.empty();
+                    var datalist = JSON.parse(field["datalist"]) || [];
+                    var selected = JSON.parse(field["selected"]) || [];
+                    for(var j = 0; j < datalist.length; j ++ ) {
+                        var a = datalist[j];
+                        var o = $("<option></option>");
+                        o.val(a[0]).text(a[1]).appendTo(input);
+                    }
+                    input.val(selected);
                 }
-                input.empty();
-                var datalist = JSON.parse(field["datalist"]) || [];
-                var selected = JSON.parse(field["selected"]) || [];
-                for(var j = 0; j < datalist.length; j ++ ) {
-                    var a = datalist[j];
-                    var o = $("<option></option>");
-                    o.val(a[0]).text(a[1]).appendTo(input);
-                }
-                input.val(selected);
                 continue;
+            }
+            if (/^data-/.test(k)) {
+                input.attr(k, field[k]);
+            } else {
+                input.attr("data-"+ k, field[k]);
             }
 
             // 关联参数以 data- 打头
             if (k === "data-al" ) {
-                input.next().attr("data-href", field[k]);
+                input.siblings("button").attr("data-href", field[k]);
             } else
             if (k === "data-at" ) {
-                input.next().attr("data-hrel", field[k]);
+                input.siblings("button").attr("data-hrel", field[k]);
             }
-            if (/^data-/.test(k)) {
-                input.attr(k, field[k]);
-                continue;
-            }
-
-            input.attr("data-" + k, field[k]);
         }
         area.append(group);
     }

@@ -238,7 +238,7 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
  */
 function hsFormFillPick(box, v, n, t) {
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
-    var mul = /(\[\]|\.\.|\.$)/.test(n); // a[b][]|a[][b]|a.b.|a..b 均表示多选
+    var mul = ! ! box.data( "repeated" ) || /(\[\]|\.\.|\.$)/.test( n ); // a[b][]|a[][b]|a.b.|a..b 均表示多选
 
     if (t == "info") {
         if (! v ) return ;

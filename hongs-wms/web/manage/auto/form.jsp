@@ -143,10 +143,12 @@
                     <%
                         String fm = _module;
                         String fn =  name  ;
-                        String kn =  name  ;
+                        String kn ;
+                        if (fn.endsWith( "." )) {
+                            fn = fn.substring(0, fn.length() - 1);
+                        }
                         if (fn.endsWith("_id")) {
-                            int  ln = fn.length() - 3;
-                            fn = fn.substring(0 , ln);
+                            fn = fn.substring(0, fn.length() - 3);
                             kn = fn;
                         } else {
                             kn = fn + "_data";

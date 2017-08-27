@@ -26,14 +26,14 @@
             }
 
             String actc = href.equals(acti) ? "active" : "";
-            href = Core.BASE_HREF +"/"+ href;
-            hrel = Core.BASE_HREF +"/"+ hrel;
 
             List<Map> subs = (List) menu.get( "menus" );
             if (subs != null && ! subs.isEmpty()) {
+                href  = Core.BASE_HREF +"/"+ href;
+                hrel  = Core.BASE_HREF +"/"+ hrel;
                 actc += " dropdown";
-                hrel += "\" data-toggle=\"dropdown\""  ;
-                hrel +=  " class=\"dropdown-toggle\""  ;
+                hrel += "\" data-toggle=\"dropdown\""
+                     +   " class=\"dropdown-toggle\""  ;
                 text += "<span class=\"caret\"></span>";
                 menus.append("<li class=\"")
                      .append(actc).append("\">" );
@@ -46,7 +46,9 @@
                      .append("</ul>");
                 menus.append("</li>");
             } else
-            if (!href.startsWith(Core.BASE_HREF +"/manage/data/")) {
+            if (!href.startsWith("common/menu.")) {
+                href  = Core.BASE_HREF +"/"+ href;
+                hrel  = Core.BASE_HREF +"/"+ hrel;
                 menus.append("<li class=\"")
                      .append(actc).append("\">" );
                 menus.append( "<a href=\"" )
@@ -131,7 +133,7 @@
             if (a.size() < 1 && g) {
                 a = menubar.find("li a").first( );
             }
-            
+
             if (a.size() > 0) {
                 h = a.attr("href");
                 l = a.data("href");

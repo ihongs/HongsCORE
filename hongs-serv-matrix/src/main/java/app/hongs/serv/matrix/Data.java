@@ -12,7 +12,10 @@ import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import org.apache.lucene.document.Document;
@@ -221,17 +224,17 @@ public class Data extends SearchEntity {
 
         // 合并新旧数据
         int i = 0;
-        Map<String,Map> fields = getFields (  );
+        Map<String,Map> fields = getFields();
         for(String fn : fields.keySet()) {
-            String fr = Synt.declare(rd.get(fn), "");
-            String fo = Synt.declare(dd.get(fn), "");
-            if (  "id".equals (fn)) {
-                dd.put(fn, id);
+            if (  "id". equals(fn)) {
+                dd.put(fn , id);
             } else
             if (rd.containsKey(fn)) {
-                dd.put(fn, fr);
+                Object fr = Synt.defoult(rd.get(fn), "");
+                Object fo = Synt.defoult(dd.get(fn), "");
+                dd.put(fn , fr);
 
-                if (!fr.equals(fo)
+                if (!equals(fr,fo)
                 &&  !fn.equals("muid" )
                 &&  !fn.equals("mtime")) {
                     i ++; // 需要排除修改环境数据
@@ -340,6 +343,10 @@ public class Data extends SearchEntity {
         DataCaller.getInstance().add(url);
     }
 
+    protected boolean equals(Object fo, Object fr) {
+        return fo.equals(fr);
+    }
+    
     private Set<String> wdCols = null;
     private Set<String> nmCols = null;
 

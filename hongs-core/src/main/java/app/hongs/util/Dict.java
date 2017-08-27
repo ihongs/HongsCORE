@@ -213,7 +213,7 @@ public final class Dict
 
   /**
    * 将 oth 追加到 map 中
-   * 与 Map.putAll 的不同在于: 本函数会将其子级的 Map 也进行合并
+   * 与 Map.putAll 的不同在于: 本函数会将其子级的 Map 和 Collection 也进行合并
    * @param map
    * @param oth
    */
@@ -225,11 +225,15 @@ public final class Dict
         Object v2 = e.getValue();
         Object v1 =  map.get(k2);
 
-        if (v1 instanceof Map && v2 instanceof Map) {
-            putAll((Map)v1, (Map)v2);
-        }
-        else {
-            map.put(k2, v2);
+        if (v1 instanceof Collection
+        &&  v2 instanceof Collection  ) {
+           ((Collection) v1).addAll((Collection) v2);
+        } else
+        if (v1 instanceof Map
+        &&  v2 instanceof Map  ) {
+            putAll((Map) v1 , (Map) v2);
+        } else {
+            map.put(k2 , v2);
         }
     }
   }

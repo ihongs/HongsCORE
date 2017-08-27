@@ -251,19 +251,19 @@ public class ActionHelper implements Cloneable
           }
         }
 
-        this.requestData = parseParam(request.getParameterMap());
+        requestData = parseParam(request.getParameterMap());
 
         if (rd != null)
         {
-          this.requestData.putAll(rd);
+          Dict.putAll(requestData, rd); // 深度合并参数
         }
       }
       finally
       {
         // 防止解析故障后再调用又出错
-        if (this.requestData == null)
+        if (this.requestData == null )
         {
-          this.requestData = new HashMap();
+            this.requestData  = new HashMap();
         }
       }
     }

@@ -130,13 +130,13 @@ public class SelectHelper {
             if (values.containsKey("info")) {
                 Map        info = (Map ) values.get("info");
                 injectText(info , enums);
-                SelectHelper.this.injectLink(info , null );
+                injectLink(info , null );
             }
             if (values.containsKey("list")) {
                 List<Map>  list = (List) values.get("list");
                 for (Map   info :  list) {
                 injectText(info , enums);
-                SelectHelper.this.injectLink(info , null );
+                injectLink(info , null );
                 }
             }
         }
@@ -151,7 +151,7 @@ public class SelectHelper {
     }
 
     public void injectLink(Map info) throws HongsException {
-        SelectHelper.this.injectLink(info, null );
+        injectLink(info, null );
     }
 
     public void injectLink(Map info, String link) throws HongsException {

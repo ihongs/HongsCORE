@@ -80,7 +80,7 @@ public class Unit extends Mtree {
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("text", name);
-        menu.setAttribute("href", prefix+"/"+id+"/");
+        menu.setAttribute("href", "common/menu.act?m=manage&x="+id);
 
         Element  incl;
 

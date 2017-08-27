@@ -11,4 +11,8 @@ ENV JAVA_HOME /opt/jdk1.8.0_131
 
 RUN apt-get -y update
 
-RUN apt-get -y install language-pack-zh-han*
+RUN apt-get -y install language-pack-en*
+
+RUN apt-get -y install language-pack-zh*
+
+ENV LANG en_US.UTF-8

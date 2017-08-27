@@ -11,11 +11,12 @@ import app.hongs.dh.IAction;
 import app.hongs.util.Synt;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Comparator;
 import java.util.ArrayList;
@@ -416,7 +417,9 @@ public class FileAction implements IAction {
 
     private String readFile(File file) {
         try (
-            BufferedReader br = new BufferedReader(new FileReader(file));
+              FileInputStream fi = new   FileInputStream(file);
+            InputStreamReader is = new InputStreamReader( fi , "utf-8");
+               BufferedReader br = new    BufferedReader( is );
         ) {
             StringBuilder  sb = new StringBuilder ( );
             char[]         bs;
@@ -438,8 +441,9 @@ public class FileAction implements IAction {
 
     private void saveFile(File file, String text) {
         try (
-            FileWriter fw = new FileWriter(file,false);
-            BufferedWriter bw = new BufferedWriter(fw);
+              FileOutputStream fo = new   FileOutputStream(file);
+            OutputStreamWriter os = new OutputStreamWriter( fo , "utf-8");
+                BufferedWriter bw = new     BufferedWriter( os );
         ) {
             bw.write(text);
         } catch (IOException ex) {

@@ -259,11 +259,10 @@ function gainFlds(fields, area) {
             name  = "" ;
         }
 
-        if ($(this).is("[data-type=fork" )) {
-            type = "fork" ;
-        } else
-        if ($(this).is("[data-type=image")) {
-            type = "image";
+        if (type =="ul") {
+            type  = $(this).data("type");
+        }
+        if (type =="image") {
             params["__rule__"] = "Thumb";
         }
 

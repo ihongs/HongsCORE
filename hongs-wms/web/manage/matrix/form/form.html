@@ -144,17 +144,6 @@
                     </label>
                     <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
                 </div>
-                <div class="form-group" data-type="file">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>文件</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <ul class="pickbox" data-fn="-" data-ft="_file"></ul>
-                    <input type="file" name="-" class="form-ignored invisible"/>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsFile"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
-                </div>
                 <div class="form-group" data-type="image">
                     <label class="control-label clearfix" style="display: block;">
                         <span>图片</span>
@@ -165,6 +154,17 @@
                     <ul class="pickbox" data-fn="-" data-ft="_file" data-size="100*100"></ul>
                     <input type="file" name="-" class="form-ignored invisible" accept="image/*"/>
                     <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
+                </div>
+                <div class="form-group" data-type="file">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>文件</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <ul class="pickbox" data-fn="-" data-ft="_file"></ul>
+                    <input type="file" name="-" class="form-ignored invisible"/>
+                    <button class="btn btn-default form-control" type="button" data-toggle="hsFile"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                 </div>
                 <div class="form-group" data-type="fork">
                     <label class="control-label clearfix" style="display: block;">
@@ -207,7 +207,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <input class="invisible" type="fork" name="cuid" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-editable="no" data-at="manage/member/user/list.act" data-ak="user" data-vk="id" data-tk="name"/>
+                    <input class="invisible" type="fork" name="cuid" data-verify-type="string" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-editable="no" data-at="manage/member/user/list" data-ak="user" data-vk="id" data-tk="name"/>
                 </div>
                 <div class="form-group base-field" data-type="muid">
                     <label class="control-label clearfix" style="display: block;">
@@ -216,7 +216,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <input class="invisible" type="fork" name="muid" data-default="=$uid" data-default-create="no" data-default-always="yes" data-editable="no" data-at="manage/member/user/list.act" data-ak="user" data-vk="id" data-tk="name"/>
+                    <input class="invisible" type="fork" name="muid" data-verify-type="string" data-default="=$uid" data-default-create="no" data-default-always="yes" data-editable="no" data-at="manage/member/user/list" data-ak="user" data-vk="id" data-tk="name"/>
                 </div>
                 <div class="form-group base-field" data-type="_">
                     <label class="control-label clearfix" style="display: block;">
@@ -404,7 +404,7 @@
                     <input type="checkbox" name="select|required" value="required"/>必选
                 </label>
                 <label>
-                    <input type="checkbox" name="select|data-repeated" value="yes"/>多选
+                    <input type="checkbox" name="select|multiple" value="multiple"/>多选
                 </label>
                 <label>
                     <input type="checkbox" name="select|data-listable" value="yes"/>列举
@@ -497,7 +497,7 @@
                 </label>
             </div>
         </div>
-        <div class="widget-pane widget-pane-ctime widget-pane-mtime">
+        <div class="widget-pane-cuid widget-pane-muid widget-pane widget-pane-ctime widget-pane-mtime">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>

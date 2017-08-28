@@ -109,9 +109,11 @@ public class SpreadHelper {
     }
 
     public void spread(List list) throws HongsException {
-        MergeMore  mm = new MergeMore (list);
-        ActionHelper  ah = ActionHelper.newInstance();
-        ah.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
+        MergeMore    mm = new  MergeMore  (  list  );
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
 
         for(Map.Entry et : items.entrySet()) {
             String fn = (String) et.getKey();

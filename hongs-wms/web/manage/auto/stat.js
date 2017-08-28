@@ -1,4 +1,4 @@
-/* global jQuery, echarts */
+/* global jQuery, echarts, HsForm, HsList */
 
 function HsStat (context , opts) {
     context = jQuery( context  );
@@ -388,22 +388,23 @@ HsStat.prototype = {
     }
 };
 
+jQuery.ajaxSetup ( { cache : true } );
+
 jQuery.fn.hsStat = function( opts ) {
   return this._hsModule(HsStat, opts);
 };
-
-jQuery.ajaxSetup ( { cache : true } );
 
 /**
  * 列表填充过滤选项
  */
 function hsListFillFilt(x, v, n, t) {
+    n = n.replace(/^ar\.0\./, ""  );
     if (t == "enum") {
-        n = n.replace(/^ar\.0\./, "");
-        return this._enum[n];
+        v = this._enum[n];
     } else {
-        return v;
+        v = this._info[n];
     }
+    return HsForm.prototype._fill__select.call(this, x, v,n, t);
 }
 
 /**

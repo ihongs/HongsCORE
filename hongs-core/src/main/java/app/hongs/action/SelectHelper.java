@@ -225,7 +225,7 @@ public class SelectHelper {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
                 Dict.setParam(info, new ArrayList(), key + "_text");
                 for (Object vxl : (Collection) val) {
-                    vxl = codeToText(map, val);
+                    vxl = codeToText(map, vxl);
                     Dict.setParam(info, vxl, key + "_text.");
                 }
             } else {

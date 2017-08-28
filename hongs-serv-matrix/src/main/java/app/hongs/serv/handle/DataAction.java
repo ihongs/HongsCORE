@@ -33,26 +33,33 @@ public class DataAction extends SearchAction {
     @Override
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        return Data.getInstance(mod, ent);
+        ActionRunner  runner  =  (ActionRunner)
+              helper.getAttribute(ActionRunner.class.getName());
+        return  Data.getInstance (runner.getModule(), runner.getEntity());
     }
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner)
     throws HongsException {
-        super.acting(helper , runner);
+        super.acting(helper, runner);
+
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+        Method met = runner.getMethod();
 
         // 绑定特制的表单
-        Method m = runner.getMethod();
-        if (m.isAnnotationPresent(Select.class)
-        ||  m.isAnnotationPresent(Spread.class)
-        ||  m.isAnnotationPresent(Verify.class)) {
+        if (met.isAnnotationPresent(Select.class)
+        ||  met.isAnnotationPresent(Spread.class)
+        ||  met.isAnnotationPresent(Verify.class)) {
             Data dat = (Data) getEntity(helper);
-            Map fcs = dat.getFields();
+            Map  fcs =  dat.getFields();
             helper.setAttribute("form:"+mod+"/"+ent+"."+ent, fcs);
         }
 
         // 放入当前用户ID
-        helper.getRequestData().put("cuid", helper.getSessibute(Cnst.UID_SES));
+        Object uid = helper.getSessibute(Cnst.UID_SES);
+        helper.getRequestData().put("user_id", uid);
+        helper.getRequestData().put("form_id", ent);
     }
 
 }

@@ -11,13 +11,11 @@ import app.hongs.dh.search.SearchEntity;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
-import java.io.File;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.io.File;
+import java.util.Collection;
 import org.apache.lucene.document.Document;
 
 /**
@@ -385,16 +383,22 @@ public class Data extends SearchEntity {
      */
     protected String getFind(Map dd) throws HongsException {
         StringBuilder nn = new StringBuilder();
-        Set < String> ns = getFindable();
-        for ( String  fn : ns  ) {
-            nn.append(dd.get(fn).toString( ) )
-              .append(' ');
+        Set < String> ns = getFindable( );
+        for ( String  fn : ns ) {
+              Object  fv = dd.get(fn);
+            if (fv == null) continue ;
+            if (fv instanceof Collection)
+            for (Object fw : (Collection) fv ) {
+                nn.append(fw).append(' ');
+            } else {
+                nn.append(fv).append(' ');
+            }
         }
-        String nm = nn.toString().trim();
+        String nm = nn.toString().trim( );
 
         if (! ns.contains("find")
         &&  ! ns.contains("id") ) {
-            return dd.get("id") +" "+ nm;
+            return dd.get("id") +" "+ nm ;
         } else {
             return nm;
         }
@@ -408,12 +412,18 @@ public class Data extends SearchEntity {
      */
     protected String getName(Map dd) throws HongsException {
         StringBuilder nn = new StringBuilder();
-        Set < String> ns = getNameable();
+        Set < String> ns = getNameable( );
         for ( String  fn : ns  ) {
-            nn.append(dd.get(fn).toString( ) )
-              .append(' ');
+              Object  fv = dd.get(fn);
+            if (fv == null) continue ;
+            if (fv instanceof Collection)
+            for (Object fw : (Collection) fv ) {
+                nn.append(fw).append(' ');
+            } else {
+                nn.append(fv).append(' ');
+            }
         }
-        String nm = nn.toString().trim();
+        String nm = nn.toString().trim( );
 
         if (! ns.contains("name")
         &&    99 < nm.length( ) ) {

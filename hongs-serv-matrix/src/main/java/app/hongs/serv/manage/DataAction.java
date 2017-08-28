@@ -56,21 +56,26 @@ public class DataAction extends SearchAction {
     @Override
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        return Data.getInstance(mod, ent);
+        ActionRunner  runner  =  (ActionRunner)
+              helper.getAttribute(ActionRunner.class.getName());
+        return  Data.getInstance (runner.getModule(), runner.getEntity());
     }
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner)
     throws HongsException {
-        super.acting(helper , runner);
+        super.acting(helper, runner);
+
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+        Method met = runner.getMethod();
 
         // 绑定特制的表单
-        Method m = runner.getMethod();
-        if (m.isAnnotationPresent(Select.class)
-        ||  m.isAnnotationPresent(Spread.class)
-        ||  m.isAnnotationPresent(Verify.class)) {
+        if (met.isAnnotationPresent(Select.class)
+        ||  met.isAnnotationPresent(Spread.class)
+        ||  met.isAnnotationPresent(Verify.class)) {
             Data dat = (Data) getEntity(helper);
-            Map fcs = dat.getFields();
+            Map  fcs =  dat.getFields();
             helper.setAttribute("form:"+mod+"/"+ent+"."+ent, fcs);
         }
 
@@ -119,6 +124,11 @@ public class DataAction extends SearchAction {
 
     @Action("revert/search")
     public void list(ActionHelper helper) throws HongsException {
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+
         Model   mo = DB.getInstance("matrix").getModel("data");
         Map     rd = helper.getRequestData( );
         Map     sd = mo.search(rd);
@@ -143,6 +153,11 @@ public class DataAction extends SearchAction {
     @Preset(conf="", form="")
     @CustomReplies
     public void export(ActionHelper helper) throws HongsException, IOException {
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+
         Data    sr = (Data) getEntity(helper);
         Map     rd = helper.getRequestData( );
                 rd = getReqMap(helper, sr, "export", rd);

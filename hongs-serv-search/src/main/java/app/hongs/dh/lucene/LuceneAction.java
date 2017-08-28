@@ -26,20 +26,17 @@ import java.util.Map;
 @Action()
 public class LuceneAction implements IAction, IActing {
 
-    protected String mod = null;
-    protected String ent = null;
-
     @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
-        String act;
-        act = runner.getHandle();
-        ent = runner.getEntity();
-        mod = runner.getModule();
+        String act = runner.getHandle();
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
 
         try {
             // 方便自动机处理
             if (FormSet.hasConfFile(mod + "/" + ent)) {
-                mod  =  mod + "/" + ent;
+                mod = mod + "/" + ent  ;
+                runner.setModule( mod );
             }
 
             // 下划线开头的为内部资源, 不直接对外开放
@@ -133,7 +130,9 @@ public class LuceneAction implements IAction, IActing {
      */
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        return LuceneRecord.getInstance(mod, ent);
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        return LuceneRecord.getInstance (runner.getModule(), runner.getEntity());
     }
 
     /**
@@ -175,31 +174,39 @@ public class LuceneAction implements IAction, IActing {
      */
     protected String getRspMsg(ActionHelper helper, IEntity ett, String opr, int num)
     throws HongsException {
-        CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.fill( mod );
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName(  ));
+        CoreLocale   locale = CoreLocale.getInstance().clone();
+
+        String mod = runner.getModule(   );
+        String ent = runner.getEntity(   );
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
-        if (! lang.containsKey(key)) {
-               key = "fore." + opr + ".success" ;
-            String tit = getTitle(lang);
-            return lang.translate(key, tit, cnt);
+
+        locale.fill(mod);
+        if ( ! locale.containsKey(key) ) {
+               key = "fore." + opr + ".success";
+            String tit = getTitle(locale,mod, ent);
+            return locale.translate(key, tit, cnt);
         } else {
-            return lang.translate(key, cnt /**/);
+            return locale.translate(key, /**/ cnt);
         }
     }
 
     /**
      * 获取实体标题, 用于 getRspMsg 中
-     * @param lang
+     * @param locale
+     * @param mod
+     * @param ent
      * @return
      * @throws HongsException
      */
-    protected String getTitle(CoreLocale lang) throws HongsException {
+    protected String getTitle(CoreLocale locale, String mod, String ent) throws HongsException {
         String  text;
         Map     item;
         do {
             // 先从表单取名字
-            item = getForm();
+            item = getForm(mod, ent);
             if (item != null  && item.containsKey(   "@"    )) {
                 item  = (Map   ) item.get(   "@"    );
             if (item != null  && item.containsKey("__text__")) {
@@ -209,7 +216,7 @@ public class LuceneAction implements IAction, IActing {
             }
 
             // 再从菜单取名字
-            item = getMenu();
+            item = getMenu(mod, ent);
             if (item != null  && item.containsKey(  "text"  )) {
                 text  = (String) item.get(  "text"  );
                 break;
@@ -219,10 +226,10 @@ public class LuceneAction implements IAction, IActing {
             text = "core.entity."+ent+".name";
         } while (false);
 
-        return lang.translate(text);
+        return locale.translate(text);
     }
 
-    private Map getForm() throws HongsException {
+    private Map getForm(String mod, String ent) throws HongsException {
         String  cuf  = FormSet.hasConfFile(mod + "/" + ent)
                        ? mod + "/" + ent : mod ;
         FormSet form = FormSet.getInstance(cuf);
@@ -237,7 +244,7 @@ public class LuceneAction implements IAction, IActing {
         }
     }
 
-    private Map getMenu() throws HongsException {
+    private Map getMenu(String mod, String ent) throws HongsException {
         String  cuf  = FormSet.hasConfFile(mod + "/" + ent)
                        ? mod + "/" + ent : mod ;
         NaviMap navi = NaviMap.getInstance(cuf);

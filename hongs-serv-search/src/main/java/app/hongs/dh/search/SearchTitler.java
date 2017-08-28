@@ -1,6 +1,7 @@
 package app.hongs.dh.search;
 
 import app.hongs.Cnst;
+import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -191,10 +192,12 @@ public class SearchTitler {
 
         // 获取结果
         ActionHelper ah = ActionHelper.newInstance();
-        ah.setAttribute("IN_FORK", true);
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
         ah.setRequestData(rd);
         new ActionRunner (ah, at).doInvoke();
-        Map sd  = ah.getResponseData(  );
+        Map sd  = ah.getResponseData( /**/ );
         List<Map> lz = (List) sd.get("list");
         if (lz == null) {
             return;

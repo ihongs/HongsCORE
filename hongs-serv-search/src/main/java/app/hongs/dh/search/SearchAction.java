@@ -30,17 +30,19 @@ public class SearchAction extends LuceneAction {
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+
         // 特别扩展的资源
-        ent = runner.getEntity();
-        mod = runner.getModule();
         if (sub.contains(ent)) {
-            int pos = mod.lastIndexOf("/");
-            ent = mod.substring(1+pos);
-            mod = mod.substring(0,pos);
+            int   pos;
+            pos = mod.lastIndexOf( "/");
+            ent = mod.substring(1+ pos);
+            mod = mod.substring(0, pos);
             runner.setEntity(ent);
             runner.setModule(mod);
         }
-        
+
         super.acting(helper, runner);
     }
 
@@ -72,6 +74,11 @@ public class SearchAction extends LuceneAction {
 
     @Action("counts/search")
     public void counts(ActionHelper helper) throws HongsException {
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
@@ -96,6 +103,11 @@ public class SearchAction extends LuceneAction {
 
     @Action("statis/search")
     public void statis(ActionHelper helper) throws HongsException {
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
+
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
@@ -121,7 +133,9 @@ public class SearchAction extends LuceneAction {
     @Override
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        return SearchEntity.getInstance(mod, ent);
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        return SearchEntity.getInstance (runner.getModule(), runner.getEntity());
     }
 
 }

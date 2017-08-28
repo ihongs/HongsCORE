@@ -904,7 +904,8 @@ function hsFmtDate(date, format) {
   }
 
   if (typeof(date) === "string") {
-    if ( /^\d+$/.test(date)) {
+    var d  =  Number (date);
+    if (!isNaN(d)) {
       date = parseInt(date);
     }
     else {
@@ -1021,13 +1022,13 @@ function hsFmtDate(date, format) {
  */
 function hsPrsDate(text, format) {
   if (!text) {
-    return new Date( 0  );
+    return  new Date(  0 );
   }
   if (typeof(text) === "number") {
-    return new Date(text);
+    return  new Date(text);
   }
   if (typeof(text) === "string") {
-    var x = parseInt(text);
+    var  x  = Number(text);
     if (!isNaN(x)) {
         return new Date(x);
     }
@@ -1042,8 +1043,8 @@ function hsPrsDate(text, format) {
   }
 
   var y, M, d, H = 0, m = 0, s = 0, S = 0, a = 0;
-  var fs = format.match(/\W+/);
-  var ws =   text.split(/\W+/);
+  var fs = format.split(/[\WTZ]+/);
+  var ws =   text.split(/[\WTZ]+/);
 
   for (var i = 0; i < fs.length; i ++) {
     if (ws[i] == null) continue;

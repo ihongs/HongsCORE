@@ -193,10 +193,10 @@
 
     function _makeInputs(fmt) {
         var box = $('<div class="input-group datebox"></div>');
-        var pat = /(\w+|\W+|'.*?')/g;
-        var wrd = /^\w+$/;
+        var pat = /([MdyHkKhmsSa]+|[^MdyHkKhmsSa']+|'.*?')/g;
+        var wrd = /^[MdyHkKhmsSa]+$/;
         var grp ;
-        while ((grp = pat.exec(fmt)) != null) {
+        while ((grp = pat.exec(fmt))!= null) {
             grp = grp[0];
             if (wrd.test(grp)) {
                 box.append(_makeGroups(grp));
@@ -231,6 +231,19 @@
                 break;
             }
 
+            // 也可以指定对象的类型
+            // 从当前语言配置中提取
+            switch (fmt) {
+                case "time":
+                    fmt = hsGetLang("time.format");
+                    break;
+                case "date":
+                    fmt = hsGetLang("date.format");
+                    break;
+                case "datetime" : case "" : case null :
+                    fmt = hsGetLang("datetime.format");
+            }
+
             inp.addClass("invisible");
             box = _makeInputs ( fmt );
             box.insertBefore  ( inp );
@@ -256,6 +269,79 @@
         inp.data("linked", box);
 
         inp.trigger ("change" );
+    };
+
+    $.fn.hsTime = function() {
+        if (this.data("linked")) {
+            return; // 跳过已初始化
+        }
+
+        var hide = $('<input type="hidden" class="form-ignored"/>');
+        var type = this.attr("type"   );
+        var kind = this.data("type"   );
+        var frmt = this.data("format" );
+        var patt = this.attr("pattern");
+        var that = this;
+
+        // 没指定则按类型的标准处理
+        if (!frmt || !patt) {
+            if (type == "time") {
+                frmt = "HH:mm" ;
+                patt = "\d{1,2}:\d{1,2}" ;
+            } else
+            if (type == "date") {
+                frmt = "yyyy-MM-dd";
+                patt = "\d{2,4}-\d{1,2}-\d{1,2}";
+            } else
+            {
+                frmt = "yyyy-MM-ddTHH:mm";
+                patt = "\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}";
+            }
+            this.data("format" , frmt);
+            this.attr("pattern", patt);
+        }
+
+        hide.attr("name", this.attr("name"));
+        this.attr("name", "" );
+        this.data("linked", hide);
+        hide.data("linked", this);
+        this.after(hide);
+
+        // 互相联动
+        hide.on("change", function() {
+            var v = $(this).val();
+            if (v == "") {
+                that.val("");
+                return ;
+            }
+
+            var d = hsFmtDate(v, frmt);
+            that.val(d);
+        });
+        this.on("change", function() {
+            var v = $(this).val();
+            if (v == "") {
+                hide.val("");
+                return ;
+            }
+
+            // 解析失败设为空
+            var d = hsPrsDate(v, frmt);
+            d = d.getTime( );
+            if (isNaN(d)
+            ||  0 === d) {
+                hide.val("");
+                return ;
+            }
+
+            // 可选择精确到秒
+            if (kind == "timestamp"
+            ||  kind == "datestamp") {
+                d = Math.round(d/1000);
+            }
+
+            hide.val(d);
+        });
     };
 
     // 处理大小月及闰年时日期的变化
@@ -378,6 +464,9 @@
     $(document).on("hsReady", function() {
         $(this).find("[data-toggle=hsDate]").each(function() {
             $(this).hsDate();
+        });
+        $(this).find("[data-toggle=hsTime]").each(function() {
+            $(this).hsTime();
         });
     });
 

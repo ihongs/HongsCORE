@@ -27,15 +27,11 @@ import java.util.Map;
 @Action("hongs/db")
 public class DBAction implements IAction, IActing {
 
-    protected String mod = null;
-    protected String ent = null;
-
     @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
-        String act;
-        act = runner.getHandle();
-        ent = runner.getEntity();
-        mod = runner.getModule();
+        String act = runner.getHandle();
+        String ent = runner.getEntity();
+        String mod = runner.getModule();
 
         try {
             // 下划线开头的为内部资源, 不直接对外开放
@@ -152,7 +148,10 @@ public class DBAction implements IAction, IActing {
      */
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
-        return DB.getInstance(mod).getModel(ent);
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        return DB.getInstance (runner.getModule( ))
+                 .getModel    (runner.getEntity( ));
     }
 
     /**
@@ -211,17 +210,23 @@ public class DBAction implements IAction, IActing {
      */
     protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
-        CoreLocale lang = CoreLocale.getInstance().clone( );
-        lang.fill( mod );
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName(  ));
+        CoreLocale   locale = CoreLocale.getInstance().clone();
+
+        String mod = runner.getModule(   );
+        String ent = runner.getEntity(   );
         String cnt = Integer.toString(num);
         String key = "fore." + opr + "." + ent + ".success";
-        if (! lang.containsKey(key)) {
-               key = "fore." + opr + ".success" ;
+
+        locale.fill(mod);
+        if ( ! locale.containsKey(key) ) {
+               key = "fore." + opr + ".success";
             Mview view =  new Mview(ett);
             String tit = view.getTitle();
-            return lang.translate(key, tit, cnt);
+            return locale.translate(key, tit, cnt);
         } else {
-            return lang.translate(key, cnt /**/);
+            return locale.translate(key, /**/ cnt);
         }
     }
 

@@ -220,7 +220,7 @@ public final class Synt {
      * 尝试转为数组
      * 可将 List,Set,Map 转为数组, 其他情况构建一个单一值的数组
      * @param val
-     * @return 
+     * @return
      */
     public static Object[] asArray(Object val) {
         if (val == null) {
@@ -244,7 +244,7 @@ public final class Synt {
      * 尝试转为 List
      * 可将 数组,Set,Map 转为 List, 其他情况构建一个单一值的 List
      * @param val
-     * @return 
+     * @return
      */
     public static List asList(Object val) {
         if (val == null) {
@@ -270,7 +270,7 @@ public final class Synt {
      * 尝试转为 Set
      * 可将 数组,List,Map 转为 Set, 其他情况构建一个单一值的 Set
      * @param val
-     * @return 
+     * @return
      */
     public static Set  asSet (Object val) {
         if (val == null) {
@@ -297,7 +297,7 @@ public final class Synt {
      * 非 Map 类型均会转换失败, 因 Map 转集合扔掉键即可,
      * 但无法从其他集合类型中得到明确的可以作为键的东西.
      * @param val
-     * @return 
+     * @return
      */
     public static Map  asMap (Object val) {
         if (val == null) {
@@ -316,7 +316,7 @@ public final class Synt {
      * 确定转为字符串
      * 数组和集合仅取第一个
      * @param val
-     * @return 
+     * @return
      */
     public static String asString(Object val) {
         val = asSingle(val);
@@ -331,7 +331,7 @@ public final class Synt {
      * 尝试转为整数
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
-     * @return 
+     * @return
      */
     public static Integer asInt(Object val) {
         val = asNumber(val);
@@ -358,7 +358,7 @@ public final class Synt {
      * 尝试转为长整型
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
-     * @return 
+     * @return
      */
     public static Long asLong(Object val) {
         val = asNumber(val);
@@ -385,7 +385,7 @@ public final class Synt {
      * 尝试转为浮点型
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
-     * @return 
+     * @return
      */
     public static Float asFloat(Object val) {
         val = asNumber(val);
@@ -412,7 +412,7 @@ public final class Synt {
      * 尝试转为双精度浮点型
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
-     * @return 
+     * @return
      */
     public static Double asDouble(Object val) {
         val = asNumber(val);
@@ -439,7 +439,7 @@ public final class Synt {
      * 尝试转为短整型
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
-     * @return 
+     * @return
      */
     public static Short asShort(Object val) {
         val = asNumber(val);
@@ -466,7 +466,7 @@ public final class Synt {
      * 尝试转为字节型
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳
      * @param val
-     * @return 
+     * @return
      */
     public static Byte asByte(Object val) {
         val = asNumber(val);
@@ -493,7 +493,7 @@ public final class Synt {
      * 尝试转为布尔型
      * 数组和集合仅取第一个, 日期类型取毫秒时间戳, 数字非零为 true
      * @param val
-     * @return 
+     * @return
      */
     public static Boolean asBool(Object val) {
         val = asNumber(val);
@@ -553,17 +553,21 @@ public final class Synt {
             return null;
         }
 
-        if (val instanceof Object[]) {
-            return ((Object[]) val)[0];
-        } else
-        if (val instanceof List) {
-            return ((List) val).get(0);
-        } else
-        if (val instanceof Set ) {
-            return ((Set ) val).toArray()[0];
-        } else
-        if (val instanceof Map ) {
-            return ((Map ) val).values().toArray()[0];
+        try {
+            if (val instanceof Object[]) {
+                return ((Object[]) val )[0];
+            } else
+            if (val instanceof List) {
+                return ((List) val ).get(0);
+            } else
+            if (val instanceof Set ) {
+                return ((Set ) val ).toArray()[0];
+            } else
+            if (val instanceof Map ) {
+                return ((Map ) val ).values( ).toArray()[0];
+            }
+        } catch (IndexOutOfBoundsException ex) {
+            return null;
         }
 
         return val;

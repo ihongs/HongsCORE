@@ -1465,10 +1465,12 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                         doc.add(f.got(k, w));
                     }
                 }
+                // 排序值不能存多个
                 if (s && a != null && !a.isEmpty()) {
-                    for (Object w: a) {
-                        doc.add(f.srt(k, w));
-                    }
+//                  for (Object w: a) {
+                        v = a.toArray()[ 0 ];
+                        doc.add(f.srt(k, v));
+//                  }
                 }
             } else
             {

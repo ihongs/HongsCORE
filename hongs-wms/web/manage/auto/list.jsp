@@ -70,18 +70,18 @@
                 <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
             <%} else if ("number".equals(type) || "range".equals(type)) {%>
                 <div class="input-group">
-                    <input type="number"    class="form-control" name="ar.0.<%=name%>!ge"/>
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="number"    class="form-control" name="ar.0.<%=name%>!le"/>
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le" />
                 </div>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge"/>
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge" data-toggle="hsTime" data-type="timestamp" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le"/>
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le" data-toggle="hsTime" data-type="timestamp" />
                 </div>
             <%} else {%>
-                <input type="text" class="form-control" name="ar.0.<%=name%>"/>
+                <input type="text" class="form-control" name="ar.0.<%=name%>" />
             <%} /*End If */%>
             </div>
         </div>

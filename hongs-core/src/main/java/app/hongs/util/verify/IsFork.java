@@ -91,7 +91,9 @@ public class IsFork extends Rule {
         }
 
         ActionHelper ah = ActionHelper.newInstance();
-        ah.setAttribute(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
 
         // 请求数据
         Map rd = new HashMap();

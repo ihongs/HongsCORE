@@ -119,7 +119,7 @@ public final class Cnst {
 
     //** 请求属性 **/
 
-    public static final String CORE_ATTR = "__HONGS_CORE__"; // 核心对象
+    public static final String CORE_ATTR = Core.class.getName();
 
     public static final String DATA_ATTR = "__HONGS_DATA__"; // 请求数据
 
@@ -129,9 +129,9 @@ public final class Cnst {
 
     public static final String ORIGIN_ATTR = "__ORIGIN_NAME__"; // 起源动作
 
-    public static final String UPLOAD_ATTR = "__UPLOAD_KEYS__"; // 上传参数(用于存放哪些参数是文件上传)
-
     public static final String UPDATE_ATTR = "__UPDATE_TIME__"; // 更新时间(当会话或属性改变时将被设置)
+
+    public static final String UPLOAD_ATTR = "__UPLOAD_PART__"; // 上传参数(用于存放哪些参数是文件上传)
 
     //** 数据模式 **/
 

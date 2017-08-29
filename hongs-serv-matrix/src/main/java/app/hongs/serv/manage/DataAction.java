@@ -135,15 +135,24 @@ public class DataAction extends SearchAction {
 
         // 详情数据转换
         if (sd.containsKey("info")) {
-            Map df = (Map) sd.get("info");
-            Map dt = (Map) app.hongs.util.Data.toObject((String) df.get("data"));
-            df.putAll(dt);
-            new SelectHelper()
-                .addEnumsByForm(mod, ent)
-                .select ( df , (short) 2);
-            new SpreadHelper()
-                .addItemsByForm(mod, ent)
-                .spread ( df );
+            Map df = (Map) sd.remove("info" );
+            Map dt = (Map) app.hongs.util.Data.toObject(
+                  (String) df.remove("data"));
+            sd.put("logs", df);
+            sd.put("info", dt);
+
+            // 补充枚举和关联
+            short md = Synt.defoult(Synt.asShort(rd.get("md")), (short) 0);
+            if (2 == ( 2 & md)) {
+                new SelectHelper()
+                    .addEnumsByForm(mod, ent)
+                    .select ( sd , (short) 2);
+            }
+            if (4 == ( 4 & md)) {
+                new SpreadHelper()
+                    .addItemsByForm(mod, ent)
+                    .spread ( sd );
+            }
         }
 
         helper.reply(sd);

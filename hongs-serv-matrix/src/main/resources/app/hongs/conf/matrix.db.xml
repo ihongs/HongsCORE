@@ -24,14 +24,14 @@ xsi:schemaLocation="http://hongs-core db.xsd">
                primaryKey="id">
             <assoc type="BLS_TO"
                    name="form"
-                   foreignKey="form_id"
-                   fields="id,name">
+                   foreignKey="form_id">
+                <param name="fields">id,name</param>
             </assoc>
             <assoc type="BLS_TO"
                    name="user"
                    foreignKey="user_id"
-                   fields="id,name"
                    tableName="member.user">
+                <param name="fields">id,name</param>
             </assoc>
         </table>
     </tables>

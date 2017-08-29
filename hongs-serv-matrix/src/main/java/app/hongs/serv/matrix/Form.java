@@ -479,8 +479,8 @@ public class Form extends Model {
                 fiel.put("lucene-type", "search");
             }
 
-            List<List<String>>             select = null;
             Map<String,Map<String,String>> preset = null;
+            List<List<String>>             select = null;
 
             //** 构建字段参数 **/
 
@@ -495,19 +495,26 @@ public class Form extends Model {
                 if (k.startsWith( "__" )) {
                     continue;
                 }
-                if (k.equals("datalist")) {
-                    Object o = Data.toObject((String) v);
-                    select = Synt.declare(o, List.class);
+                if (k.startsWith( ":"  )) {
+                    if (preset == null )  {
+                        preset =  new  LinkedHashMap();
+                    }
+                    String  l;
+                    if (n.equals( "@"  )) {
+                        int p=k.indexOf('.' );
+                        if (p == -1) continue;
+                        l = k.substring(1+ p);
+                        k = k.substring(0, p);
+                        k = id + k ;
+                    } else {
+                        l = k.substring(1   );
+                        k = n;
+                    }
+                    Dict.put(preset, v, k, l);
                     continue;
                 }
-                if (n.equals("@") && k.startsWith(":")) {
-                    if (preset == null) {
-                        preset  = new LinkedHashMap( );
-                    }
-                    int    p  = k.indexOf  ('.');
-                    String k0 = k.substring(0,p);
-                    String k1 = k.substring(1+p);
-                    Dict.put(preset, v , k0, k1);
+                if (k.equals("datalist")) {
+                    select = Synt.asList(Data.toObject(v) );
                     continue;
                 }
 
@@ -539,7 +546,7 @@ public class Form extends Model {
 
             if (preset != null) {
                 for(Map.Entry<String,Map<String,String>> et0 : preset.entrySet()) {
-                    n = id + et0.getKey();
+                    n = et0.getKey();
 
                     Element  anum = docm.createElement("enum" );
                     root.appendChild ( anum );

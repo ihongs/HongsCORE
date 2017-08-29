@@ -75,6 +75,11 @@
                     <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le" />
                 </div>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
+                <%
+                    if ("datetime".equals(type)) {
+                        type = "datetime-local";
+                    }
+                %>
                 <div class="input-group">
                     <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge" data-toggle="hsTime" data-type="timestamp" />
                     <span class="input-group-addon input-sm">~</span>

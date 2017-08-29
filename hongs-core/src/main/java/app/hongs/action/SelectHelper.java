@@ -12,7 +12,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
@@ -22,10 +21,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SelectHelper {
 
+    private final static  Pattern  LINKP = Pattern.compile("^\\$\\{?BASE_LINK\\}?");
+    private final static  Pattern  HREFP = Pattern.compile("^(\\w+:)?//");
+
     private final Map<String, Map> enums;
     private final Set<String>      files;
-    private final static Pattern   HREFP = Pattern.compile("^(\\w+:)?//[^/]*");
-    private final static Pattern   LINKP = Pattern.compile("^\\$\\{?BASE_LINK\\}?");
+
+    private String _host = null;
+    private String _path = null;
 
     public SelectHelper() {
         enums = new LinkedHashMap();
@@ -66,8 +69,33 @@ public class SelectHelper {
         return addEnum(code, opts);
     }
 
+    /**
+     * 添加文件路径字段, 会将对值补全为绝对链接
+     * @param code
+     * @return
+     */
     public SelectHelper addFile(String... code) {
         files.addAll(Arrays.asList(code) );
+        return  this;
+    }
+
+    /**
+     * 设置文件链接域名
+     * @param host 格式 scheme://domain[:port]
+     * @return
+     */
+    public SelectHelper setHost(String host) {
+        _host = host;
+        return  this;
+    }
+
+    /**
+     * 设置文件链接路径
+     * @param path 格式 /service/context/path/
+     * @return
+     */
+    public SelectHelper setPath(String path) {
+        _path = path;
         return  this;
     }
 
@@ -127,16 +155,20 @@ public class SelectHelper {
         }
 
         if (2 == (2 & action)) {
+            if (_host == null) _host = getHost();
+            if (_path == null) _path = getPath();
+
             if (values.containsKey("info")) {
                 Map        info = (Map ) values.get("info");
                 injectText(info , enums);
-                injectLink(info , null );
+                injectLink(info , files, _host, _path);
             }
+
             if (values.containsKey("list")) {
                 List<Map>  list = (List) values.get("list");
                 for (Map   info :  list) {
                 injectText(info , enums);
-                injectLink(info , null );
+                injectLink(info , files, _host, _path);
                 }
             }
         }
@@ -151,43 +183,9 @@ public class SelectHelper {
     }
 
     public void injectLink(Map info) throws HongsException {
-        injectLink(info, null );
-    }
-
-    public void injectLink(Map info, String link) throws HongsException {
-        String host,path;
-        if (link != null) {
-            Matcher m = HREFP.matcher(  link  );
-            if ( ! m.find ()) {
-                throw new HongsException.Common("Link must be [scheme:]//host[:port][/path]");
-            }
-            host = m.group();
-            int p  = m.end();
-            if (p  < link.length() ) {
-                path = link.substring(m.end( ));
-                if ( ! path.endsWith (  "/"  )) {
-                    path += "/";
-                }
-            } else {
-                    path  = "/";
-            }
-        } else {
-            HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
-            if ( r == null ) {
-                throw new HongsException.Common("Can not find http servlet request");
-            }
-            int port;
-            port = r.getServerPort();
-            host = r.getServerName();
-            path = r.getContextPath()+ "/" ;
-            if (port == 80 && port == 443) {
-                host = r.getScheme() +"://"+ host ;
-            } else {
-                host = r.getScheme() +"://"+ host +":"+ port ;
-            }
-        }
-
-        injectLink(info, files, host, path);
+        if (_host == null) _host = getHost( );
+        if (_path == null) _path = getPath( );
+        injectLink(info, files, _host, _path);
     }
 
     private void injectData(Map data, Map maps) throws HongsException {
@@ -301,6 +299,32 @@ public class SelectHelper {
         {
             return  host + path + url;
         }
+    }
+
+    private static String getHost() throws HongsException {
+        HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
+        if ( r == null ) {
+            throw new HongsException.Common("Can not find http servlet request");
+        }
+
+        int    port;
+        String host;
+        port = r.getServerPort();
+        host = r.getServerName();
+        if (port == 80 && port == 443) {
+            return r.getScheme() +"://"+ host ;
+        } else {
+            return r.getScheme() +"://"+ host +":"+ port ;
+        }
+    }
+
+    private static String getPath() throws HongsException {
+        HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
+        if ( r == null ) {
+            throw new HongsException.Common("Can not find http servlet request");
+        }
+
+        return r.getContextPath() + "/";
     }
 
 }

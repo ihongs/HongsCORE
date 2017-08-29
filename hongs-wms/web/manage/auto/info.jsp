@@ -21,7 +21,8 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            || !Synt.declare(info.get("editable"), true)) {
+            || (!Synt.declare(info.get("editable"), true )
+            &&  !Synt.declare(info.get("listable"), false))) {
                 continue ;
             }
 
@@ -29,6 +30,10 @@
             String  type = (String) info.get("__type__");
             String  kind ;
 
+            if (Synt.declare(info.get("__repeated__"), false)) {
+                name += ".";
+            }
+            
             if ("date".equals(type)) {
                 kind = "_date";
             } else
@@ -46,39 +51,39 @@
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
         <%} else if ("file".equals(type) || "upload".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
-                <%
-                    String size = "";
-                    String keep = "";
-                    kind =  "_file" ;
-                    if ("image".equals(type)) {
-                        kind =  "_view";
-                        size = Synt.declare( info.get("thumb-size"), "" );
-                        keep = Synt.declare( info.get("thumb-mode"), "" );
-                            if (! "keep".equals( keep )) {
-                                keep = "";
-                            }
-                            if (size.length() != 0) {
-                                Pattern pat = Pattern.compile("\\d+\\*\\d+");
-                                Matcher mat = pat.matcher(size);
-                                if (mat.matches( )) {
-                                    size = mat.group( );
-                                    // 限制最大宽度, 避免撑开容器
-                                    String[ ] wh = size.split("\\*");
-                                    int w = Synt.declare(wh[0], 300);
-                                    int h = Synt.declare(wh[1], 300);
-                                    if (w > 300) {
-                                        h = 300  * h / w;
-                                        w = 300;
-                                        size = w +"*"+ h;
-                                    }
-                                } else {
-                                    size = "100*100";
-                                }
-                            } else {
-                                size = "100*100";
-                            }
+            <%
+                String size = "";
+                String keep = "";
+                kind =  "_file" ;
+                if ("image".equals(type)) {
+                    kind =  "_view";
+                    size = Synt.declare( info.get("thumb-size"), "" );
+                    keep = Synt.declare( info.get("thumb-mode"), "" );
+                    if (! "keep".equals( keep )) {
+                        keep = "";
                     }
-                %>
+                    if (size.length() != 0) {
+                        Pattern pat = Pattern.compile("\\d+\\*\\d+");
+                        Matcher mat = pat.matcher(size);
+                        if (mat.matches( )) {
+                            size = mat.group( );
+                            // 限制最大宽度, 避免撑开容器
+                            String[ ] wh = size.split("\\*");
+                            int w = Synt.declare(wh[0], 300);
+                            int h = Synt.declare(wh[1], 300);
+                            if (w > 300) {
+                                h = 300  * h / w;
+                                w = 300;
+                                size = w +"*"+ h;
+                            }
+                        } else {
+                            size = "100*100";
+                        }
+                    } else {
+                        size = "100*100";
+                    }
+                }
+            %>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
@@ -86,21 +91,24 @@
                     <button type="button" data-toggle="hsFile" class="hide"></button>
                 </div>
             </div>
-            <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
-                <%
-                        String fn =  name  ;
-                        String kn =  name  ;
-                        if (fn.endsWith("_id")) {
-                            int  ln = fn.length() - 3;
-                            fn = fn.substring(0 , ln);
-                            kn = fn;
-                        } else {
-                            kn = fn + "_data";
-                        }
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                        String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                %>
+        <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
+            <%
+                String fn = name;
+                String kn ;
+                if (fn.endsWith( "." )) {
+                    fn = fn.substring(0, fn.length() - 1);
+                }
+                if (fn.endsWith("_id")) {
+                    int  ln = fn.length() - 3;
+                    fn = fn.substring(0 , ln);
+                    kn = fn;
+                } else {
+                    kn = fn + "_data";
+                }
+                String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
+            %>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
@@ -108,7 +116,7 @@
                     <button type="button" data-toggle="hsFork" class="hide"></button>
                 </div>
             </div>
-            <%} else {%>
+        <%} else {%>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
@@ -137,8 +145,8 @@
     });
 
     // 附加脚本
-    if (self.inMyForm) {
-        self.inMyForm( context );
+    if (self.inMyInfo) {
+        self.inMyInfo( context );
     }
 
     // 加载数据

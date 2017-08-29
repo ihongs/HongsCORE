@@ -63,14 +63,25 @@ function getFormInfo(id) {
 
 }
 
+var COLS_PATT_BASE = /^[a-z0-9\-_.:]+$/;    // 当作为标签属性时可以使用, 没有引起问题的特殊字符
+var COLS_PATT_DATA = /^data-/;              // 以 data 开头不用再加前缀, 如 data-tk, data-ak 等
+var COLS_PATT_DATL = /^data-.{3,}/;         // 长属性在写回时要去掉前缀
+var COLS_PATT_DATN = /^data-\d+?$/;         // 数字结尾要从属性值里取键
+var COLS_PATT_DATS = /^data-(?!fn|ft)/;     // 这两个很特殊需要特殊处理
+
 /**
  * 打开设置时载入字段配置
  * @param {jQuery} modal
  * @param {jQuery} field
  */
 function loadConf(modal, field) {
-    var set = {};
+    var fd = field.find("[data-fn], [name]").first();
+    var az = fd[0].attributes;
+    var tb = modal.find(".detail-set tbody");
+    var tp = tb.find(".hide");
+    var uz = {};
 
+    // 基础设置
     modal.find(".simple-set")
          .find("input,select,textarea")
          .each(function( ) {
@@ -80,9 +91,9 @@ function loadConf(modal, field) {
         if (pos !== -1) {
             attr = name.substring(pos + 1);
             name = name.substring(0 , pos);
-            set[attr] = true;
+            uz [attr] = true;
             if (attr === "datalist") {
-                var x = "";
+                var x =  "" ;
                 field.find(name).find("option").each(function() {
                     var s = $(this).prop("selected");
                     var t = $(this).text();
@@ -118,18 +129,21 @@ function loadConf(modal, field) {
         }
     });
 
-    var az = field.find("[data-fn], [name]")[0].attributes;
-    var tb = modal.find(".detail-set tbody");
-    var tp = tb.find(".hide");
+    // 高级设置
     for(var i = 0; i < az.length; i ++) {
         var x = az[i];
-        if (! /^data-(?!fn|ft)/.test(x.name) || set[x.name]) {
+        if (! COLS_PATT_DATS.test( x.name ) || uz[ x.name ]) {
             continue;
         }
         var tr = tp.clone().appendTo(tb).removeClass("hide");
         var pv =  x.value;
         var pn =  x.name ;
-        if (/^data-.{3,}/.test(pn)) {
+        if (COLS_PATT_DATN.test(pn)) {
+            var j = pv.indexOf("|");
+            pn = pv.substring (0,j);
+            pv = pv.substring (1+j);
+        } else
+        if (COLS_PATT_DATL.test(pn)) {
             pn = pn.substring ( 5 );
         }
         tr.find("[name=param_name]" ).val(pn);
@@ -143,8 +157,12 @@ function loadConf(modal, field) {
  * @param {jQuery} field
  */
 function saveConf(modal, field) {
-    var set = {"data-fn": true, "data-ft": true};
+    var uz = { "data-fn" : true, "data-ft" : true };
+    var fd = field.find("[data-fn],[name]").first();
+    var az = fd[0].attributes;
+    var I  = 0;
 
+    // 基础设置
     modal.find(".simple-set")
          .find("input,select,textarea")
          .each(function( ) {
@@ -154,7 +172,7 @@ function saveConf(modal, field) {
         if (pos !== -1) {
             attr = name.substring(pos + 1);
             name = name.substring(0 , pos);
-            set[attr] = true;
+            uz [attr] = true;
             if (attr === "datalist") {
                 var x = $(this).val().split(/[\r\n]/);
                 var n = field.find (name).empty( );
@@ -182,7 +200,7 @@ function saveConf(modal, field) {
                 }
             } else
             if ($(this).is(":checkbox")) {
-                if (/^data-/.test(attr)) {
+                if ( COLS_PATT_DATA .test(attr)) {
                     field.find(name).attr(attr, $(this).prop("checked") ? "true" : "" );
                 } else {
                     field.find(name).prop(attr, $(this).prop("checked"));
@@ -203,26 +221,33 @@ function saveConf(modal, field) {
     });
 
     // 高级设置
-    var fd = field.find("[data-fn], [name]").first();
-    var tr = modal.find(".detail-set tr").not( ".hide" );
-    var a  = fd[0].attributes;
-    tr.each(function() {
+    modal.find(".detail-set tr")
+         .not ( ".hide" )
+         .each(function() {
         var n = $(this).find("[name=param_name]" ).val();
         var v = $(this).find("[name=param_value]").val();
-        if (!/^data-/.test(n)) {
-            n = "data-"+n ;
+        if (! n || !v ) {
+            return;
         }
+        if (!COLS_PATT_BASE.test(n)) {
+            v = (n + "|" + v);
+            n = "data-"+(I++);
+        } else
+        if (!COLS_PATT_DATA.test(n)) {
+            n = "data-"+ n ;
+        }
+        fd.removeAttr(n);
         fd.attr(n, v);
-        set[n] = true;
+        uz[n] = true ;
     });
-    for(var i = 0; i < a.length; i ++) {
-        var n = a[i].name ;
-        var v = a[i].value;
-        if (!/^data-/.test(n)) {
-            continue;
-        }
-        if (v != '' && set[n]) {
-            continue;
+
+    // 清理遗留
+    for(var i = 0; i < az.length; i ++) {
+        var n = az[i].name ;
+        var v = az[i].value;
+        if (!COLS_PATT_DATA.test(n)
+        || (v &&uz[n]) ) {
+            continue ;
         }
         fd.removeAttr(n);
     }
@@ -281,8 +306,13 @@ function gainFlds(fields, area) {
 //              if (k === "data-datalist") {
 //                  v = JSON.stringify(prsDataList(v));
 //              }
-                if (/^data-.{3,}/.test(k)) {
-                    k = k.substring(5);
+                if (COLS_PATT_DATN.test(k)) {
+                    var j = v.indexOf("|");
+                    k = v.substring(0 , j);
+                    v = v.substring(1 + j);
+                } else
+                if (COLS_PATT_DATL.test(k)) {
+                    k = k.substring(5    );
                 }
                 params[k] = v;
             }
@@ -317,7 +347,7 @@ function gainFlds(fields, area) {
  * @param {jQuery} wdgt
  */
 function drawFlds(fields, area, wdgt, pre, suf) {
-    for(var i = 0; i < fields.length; i ++) {
+    for(var I = 0, i = 0; i < fields.length; i ++) {
         var field = fields[i];
         var text  = field["__text__"];
         var name  = field['__name__'];
@@ -372,8 +402,8 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             input.prop("multiple" , ! ! repeated);
         }
 
-        for(var k in field  ) {
-            if (/^_/.test(k)) {
+        for(var k in field) {
+            if (/^__/.test( k ) ) {
                 continue;
             }
             if (k === "selected") {
@@ -397,10 +427,15 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 }
                 continue;
             }
-            if (/^data-/.test(k)) {
+
+            if (COLS_PATT_DATA.test(k)) {
                 input.attr(k, field[k]);
-            } else {
+            } else
+            if (COLS_PATT_BASE.test(k)) {
                 input.attr("data-"+ k, field[k]);
+            } else
+            {
+                input.attr("data-"+(I++), k+"|"+field[k]);
             }
 
             // 关联参数以 data- 打头
@@ -427,8 +462,15 @@ $.fn.hsCols = function() {
 
     // 字段排序
     targetz.sortable({
-        items   : ".form-group",
-        sort    :   function() {
+        items : ".form-group",
+        sort  : function() {
+            $(this).removeClass("ui-state-default");
+        }
+    });
+    // 属性排序
+    modal.find(".detail-set table").sortable({
+        items : "tr",
+        sort  : function() {
             $(this).removeClass("ui-state-default");
         }
     });

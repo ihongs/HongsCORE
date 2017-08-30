@@ -11,10 +11,9 @@ CREATE TABLE `a_matrix_unit` (
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `snum` UNSIGNED INT(10) DEFAULT '0',
   `ctime` UNSIGNED INT(10) DEFAULT NULL,
   `mtime` UNSIGNED INT(10) DEFAULT NULL,
-  `boost` UNSIGNED INT(10) DEFAULT NULL,
+  `boost` UNSIGNED INT(10) DEFAULT '0',
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
@@ -36,10 +35,9 @@ CREATE TABLE `a_matrix_form` (
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
   `conf` TEXT NOT NULL,
-  `snum` UNSIGNED INT(10) DEFAULT '0',
   `ctime` UNSIGNED INT(10) DEFAULT NULL,
   `mtime` UNSIGNED INT(10) DEFAULT NULL,
-  `boost` UNSIGNED INT(10) DEFAULT NULL,
+  `boost` UNSIGNED INT(10) DEFAULT '0',
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`unit_id`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE

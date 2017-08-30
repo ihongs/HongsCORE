@@ -1,24 +1,57 @@
 <root>
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
-        <value code="listable" type="set">string,search,hidden,tel,url,email,text,textarea,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check,file,upload,image,audio,video,fork</value>
-        <value code="siftable" type="set">string,search,hidden,tel,url,email,text,date,time,datetime,number,range,color,slider,switch,enum,select,radio,check</value>
-        <value code="sortable" type="set">string,search,hidden,tel,url,email,text,date,time,datetime,number,range,color,slider,switch,sorted</value>
-        <value code="findable" type="set">string,search,hidden,tel,url,email,text,textarea</value>
+        <value code="listable" type="set">
+            string,text,search,hidden,tel,url,email,textarea,
+            number,range,color,
+            date,time,datetime,
+            enum,check,radio,select,
+            file,image,audio,video,
+            fork,pick,stored,
+            form,json,object
+        </value>
+        <value code="sortable" type="set">
+            string,text,search,hidden,tel,url,email,
+            number,range,color,
+            date,time,datetime,
+            enum,check,radio,select,
+            fork,pick,sorted
+        </value>
+        <value code="siftable" type="set">
+            string,text,search,hidden,tel,url,email,
+            number,range,color,
+            date,time,datetime,
+            enum,check,radio,select,
+            fork,pick
+        </value>
+        <value code="findable" type="set">
+            string,text,search,hidden,tel,url,email,textarea
+        </value>
         <!-- 下为 Matrix 特有 -->
-        <value code="nameable" type="set">string,text</value>
+        <value code="nameable" type="set">
+            string,text,search
+        </value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
-        <value code="string" type="set">string,hidden,text,textarea,tel,url,email,enum,select,radio,check,file,upload,image,video,audio,search,stored,fork</value>
-        <value code="number" type="set">number,range,color,slider,switch,sorted</value>
-        <value code="text"   type="set">string,text,textarea</value>
-        <value code="date"   type="set">date,time,datetime</value>
+        <value code="string" type="set">
+            string,text,search,hidden,tel,url,email,textarea,
+            enum,radio,check,select,
+            file,image,audio,video,
+            fork,pick,
+            form,json
+        </value>
+        <value code="number" type="set">
+            number,range,color
+        </value>
+        <value code="date"   type="set">
+            date,time,datetime
+        </value>
         <!-- 下为 Lucene 特有 -->
-        <value code="object" type="set">object,form,json</value>
-        <value code="stored" type="set">stored</value>
         <value code="search" type="set">search</value>
         <value code="sorted" type="set">sorted</value>
+        <value code="stored" type="set">stored</value>
+        <value code="object" type="set">object,form,json</value>
     </enum>
     <!-- 字段校验类型映射 -->
     <enum name="__types__">

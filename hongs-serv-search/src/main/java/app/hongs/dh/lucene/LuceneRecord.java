@@ -1210,14 +1210,14 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             return "search";
         }
 
-        ks = getSaveTypes("stored");
-        if (ks != null && ks.contains(t) ) {
-            return "stored";
-        }
-
         ks = getSaveTypes("sorted");
         if (ks != null && ks.contains(t) ) {
             return "sorted";
+        }
+
+        ks = getSaveTypes("stored");
+        if (ks != null && ks.contains(t) ) {
+            return "stored";
         }
 
         ks = getSaveTypes("object");

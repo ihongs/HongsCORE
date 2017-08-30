@@ -383,21 +383,16 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         }
         var label = group.find("label span,legend span").first();
         var input = group.find(   "[data-fn],[name]"   ).first();
-        label.text(text);
-        if (type == "datetime" || type == "time") {
-            setItemType(input, type);
+            label.text( text );
+        if (type == "date" || type == "time" || type == "datetime") {
+            input = setItemType(input, type); // 重设 type 需重建组件
         }
-        if (input.is( "[name]" )) {
-            input.attr("name", name);
-        }
-        if (input.is( "[data-fn]" )) {
+        if (input.is( "ul" ) ) {
             input.attr("data-fn", name);
-        }
-
-        if (input.is("ul")) {
             input.attr("data-required", required);
             input.attr("data-repeated", repeated);
         } else {
+            input.attr("name"   , name);
             input.prop("required" , ! ! required);
             input.prop("multiple" , ! ! repeated);
         }

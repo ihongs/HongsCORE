@@ -6,6 +6,7 @@ import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Mtree;
 import app.hongs.db.Table;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -94,7 +95,7 @@ public class Unit extends Mtree {
         // 单元下的表单
         rows = this.db.getTable("form").fetchCase( )
             .filter("unit_id = ? AND state > 0", id)
-            .select("id")
+            .select("id").orderBy( "boost DESC" )
             .all();
         for (Map row : rows) {
             String fid = row.get("id").toString();
@@ -130,7 +131,7 @@ public class Unit extends Mtree {
         // 全部一级单元
         rows = this.table.fetchCase( )
             .filter("pid = 0 AND state > 0")
-            .select("id")
+            .select("id").orderBy( "boost DESC" )
             .all();
         for (Map row : rows) {
             String uid = row.get("id").toString();
@@ -142,7 +143,7 @@ public class Unit extends Mtree {
         // 一级以下单元
         rows = this.table.fetchCase( )
             .filter("pid != 0 AND state > 0")
-            .select("id")
+            .select("id").orderBy( "boost DESC" )
             .all();
         for (Map row : rows) {
             String uid = row.get("id").toString();

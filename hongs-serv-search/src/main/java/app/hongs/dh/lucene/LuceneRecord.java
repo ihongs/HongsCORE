@@ -1421,8 +1421,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             } else
             if ("search".equals (t)) {
                 f = new SearchFiald();
-                q = false; // 文本类型自带筛选
-                s = false; // 文本类型无法排序
+                q = false; // 搜索类型自带筛选
+                s = false; // 搜索类型无法排序
             } else
             if ("object".equals (t)) {
                 f = new ObjectFiald();
@@ -1431,8 +1431,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             } else
             {
                 f = new StoredFiald();
-                q = false; // 对象类型无法筛选
-                s = false; // 对象类型无法排序
+                q = false; // 存储类型无法筛选
+                s = false; // 存储类型无法排序
             }
 
             doc.removeFields(k);

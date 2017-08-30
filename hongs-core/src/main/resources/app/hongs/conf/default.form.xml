@@ -63,34 +63,33 @@
         <value code="email">string</value>
         <value code="url">string</value>
         <value code="tel">string</value>
-        <value code="search">string</value><!-- Lucene 特有分词查询 -->
+        <value code="search">string</value><!-- Lucene 特指分词查询 -->
         <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
         <!-- Number -->
         <value code="number">number</value>
         <value code="range">number</value>
         <value code="color">number</value>
-        <value code="slider">number</value>
-        <value code="switch">number</value>
         <value code="sorted">number</value><!-- Lucene 特有仅能排序 -->
         <!-- Date -->
         <value code="date">date</value>
         <value code="time">date</value>
         <value code="datetime">date</value>
+        <!-- Enum -->
+        <value code="enum">enum</value>
+        <value code="check">enum</value>
+        <value code="radio">enum</value>
+        <value code="select">enum</value>
         <!-- File -->
         <value code="file">file</value>
-        <value code="upload">file</value>
         <value code="image">file</value>
         <value code="audio">file</value>
         <value code="video">file</value>
-        <!-- Enum -->
-        <value code="enum">enum</value>
-        <value code="select">enum</value>
-        <value code="radio">enum</value>
-        <value code="check">enum</value>
         <!-- Form -->
         <value code="form">form</value>
+        <value code="json">form</value>
         <!-- Fork -->
         <value code="fork">fork</value>
+        <value code="pick">fork</value>
     </enum>
     <!-- 文本校验正则映射 -->
     <enum name="__patts__">

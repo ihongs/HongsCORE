@@ -57,7 +57,7 @@ public class SearchHelper {
         resp.put( "info" , cnts );
 
         int         topz = Synt.declare(rd.get(Cnst.RN_KEY), 0);
-        Set<String> cntz = Synt.asTerms(rd.get(Cnst.RB_KEY)   );
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)   );
         Map<String, Map<String, Integer>> counts = new HashMap( );
         Map<String, Map<String, Integer>> countz = new HashMap( );
         Map<String, Set<String         >> countx = new HashMap();
@@ -317,7 +317,7 @@ public class SearchHelper {
         Map  cnts = new HashMap();
         resp.put( "info" , cnts );
 
-        Set<String> cntz = Synt.asTerms(rd.get(Cnst.RB_KEY));
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Map<String, Map<Minmax, Cntsum>> counts = new HashMap();
         Map<String, Set<Minmax        >> countx = new HashMap();
 
@@ -597,7 +597,7 @@ public class SearchHelper {
         }
 
         public Minmax(String s) {
-            Object[] a = Synt.asRange(s);
+            Object[] a = Synt.toRange(s);
             if (a == null) {
                 return;
             }

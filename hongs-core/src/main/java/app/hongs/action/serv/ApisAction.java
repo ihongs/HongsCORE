@@ -157,7 +157,7 @@ public class ApisAction
         Set conv  = null;
         if (_cnv != null && _cnv.length( ) != 0) {
             try {
-                conv = Synt.asTerms(_cnv );
+                conv = Synt.toTerms(_cnv );
             } catch (ClassCastException e) {
                 hlpr.error400 ( "Can not parse value for '!conv'" );
                 return;

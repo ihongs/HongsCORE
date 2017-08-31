@@ -304,13 +304,13 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         if (! caze.hasField()) {
-            field(caze, Synt.asTerms(rd.remove(Cnst.RB_KEY)));
+            field(caze, Synt.toTerms(rd.remove(Cnst.RB_KEY)));
         }
         if (! caze.hasOrder()) {
-            order(caze, Synt.asTerms(rd.remove(Cnst.OB_KEY)));
+            order(caze, Synt.toTerms(rd.remove(Cnst.OB_KEY)));
         }
 
-        /**/query(caze, Synt.asWords(rd.remove(Cnst.WD_KEY)));
+        /**/query(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
 
         where(caze, rd);
     }
@@ -500,7 +500,7 @@ public class AssocCase {
                     List sp = new ArrayList();
                     int i = 0;
                     for(Object v : ir) {
-                        Object[] a = Synt.asRange(v);
+                        Object[] a = Synt.toRange(v);
                         if (a != null) {
                             StringBuilder sd = new StringBuilder();
                             if (a[0] != null) {

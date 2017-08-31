@@ -14,6 +14,20 @@ import java.util.regex.Pattern;
 
 /**
  * 常用语法补充
+ *
+ * <p>
+ * asXxx,toXxx 都可以对类型进行转换,
+ * asXxx 不会对字符串按特别格式解析,
+ * toXxx 遇到字符串时尝试按格式解析, 如按分隔符拆解或解析 JSON.
+ * 但需要注意这两类方法都是转为对象, 尤其是基础类型要注意 null;
+ * 可加上 defoult, 或使用 declare, 类型明确时不推荐用后者.
+ * </p>
+ *
+ * <p>
+ * 创建的 List,Set,Map 为 ArayList,LinkedHashSet,LinkedHashMap.
+ * listOf 与 Arrays.asList 并不相同, 后者生成后不允许增删.
+ * </p>
+ *
  * @author Hongs
  */
 public final class Synt {
@@ -583,7 +597,7 @@ public final class Synt {
      * @param val
      * @return
      */
-    public static Set<String> asTerms(Object val) {
+    public static Set<String> toTerms(Object val) {
         if (val == null) {
             return null;
         }
@@ -609,7 +623,7 @@ public final class Synt {
      * @param val
      * @return
      */
-    public static Set<String> asWords(Object val) {
+    public static Set<String> toWords(Object val) {
         if (val == null) {
             return null;
         }
@@ -632,7 +646,7 @@ public final class Synt {
      * @param val
      * @return
      */
-    public static Object[] asRange(Object val) {
+    public static Object[] toRange(Object val) {
         if (val == null || "".equals(val)) {
             return null;
         }

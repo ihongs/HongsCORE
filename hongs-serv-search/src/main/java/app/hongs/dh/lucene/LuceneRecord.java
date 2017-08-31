@@ -929,7 +929,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         List<SortField> of = new LinkedList();
         Object xb = rd.get(Cnst.OB_KEY);
         Set<String> ob  =  xb  !=  null
-                  ? Synt.asTerms ( xb )
+                  ? Synt.toTerms ( xb )
                   : new LinkedHashSet();
 
         for (String fn: ob) {
@@ -1280,7 +1280,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             replies = null;
             return;
         }
-        replies = Synt.asTerms(rd.get(Cnst.RB_KEY));
+        replies = Synt.toTerms(rd.get(Cnst.RB_KEY));
     }
 
     protected boolean queried (BooleanQuery.Builder qb, String fn, Object fv) {
@@ -1625,7 +1625,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             BooleanQuery.Builder qay = new BooleanQuery.Builder();
 
             for(Object   o :  s) {
-                Object[] a = Synt.asRange(  o  );
+                Object[] a = Synt.toRange(  o  );
                 if (null  !=  a) {
                     n = a[0]; l = (boolean) a[2];
                     x = a[1]; g = (boolean) a[3];

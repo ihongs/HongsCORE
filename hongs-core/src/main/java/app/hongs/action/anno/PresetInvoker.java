@@ -42,7 +42,7 @@ public class PresetInvoker implements FilterInvoker {
 
         // 默认参数可完全由外部指定
         if (deft == null || deft.length == 0) {
-            Set<String> uzed = Synt.asTerms(helper.getParameter(Cnst.AB_KEY));
+            Set<String> uzed = Synt.toTerms(helper.getParameter(Cnst.AB_KEY));
             Set<String> used = new LinkedHashSet ();
             if (null != uzed && ! uzed.isEmpty ( )) {
                 for(String item : uzed) {

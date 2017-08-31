@@ -900,7 +900,7 @@ implements IEntity
     if (listable == null && !caze.hasField())
     {
       rb = rd.remove(Cnst.RB_KEY);
-      Set <String> sb = Synt.asTerms(rb);
+      Set <String> sb = Synt.toTerms(rb);
       if ( sb != null && !sb.isEmpty() )
       {
         field(caze,sb);

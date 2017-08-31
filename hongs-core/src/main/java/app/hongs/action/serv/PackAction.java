@@ -82,7 +82,7 @@ public class PackAction {
         boolean sw  = cnf.getProperty( "core.pack.call.enable" , false);
         String  ia  = cnf.getProperty( "core.pack.call.origin" );
         String  ip  = addr(req );
-        Set     ias = Synt.asTerms( ia );
+        Set     ias = Synt.toTerms( ia );
         if (ias == null || ias.isEmpty()) {
             ias  = new HashSet();
             ias.add("127.0.0.1");

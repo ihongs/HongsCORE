@@ -35,7 +35,7 @@ public class InfoAction {
         Map  rsp = new HashMap();
         Map  req = helper.getRequestData();
         long now = System.currentTimeMillis( );
-        Set  rb  = Synt.asTerms(req.get("rb"));
+        Set  rb  = Synt.toTerms(req.get("rb"));
 
         // 当前时间
         rsp.put("now_msec", now);

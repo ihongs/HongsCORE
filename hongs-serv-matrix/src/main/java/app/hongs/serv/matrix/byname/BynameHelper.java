@@ -105,12 +105,12 @@ public class BynameHelper {
             newData.put(Cnst.SR_KEY, in(subData));
         }
 
-        setData = Synt.asTerms(newData.get(Cnst.RB_KEY));
+        setData = Synt.toTerms(newData.get(Cnst.RB_KEY));
         if (setData != null) {
             newData.put(Cnst.RB_KEY, in(setData));
         }
 
-        setData = Synt.asTerms(newData.get(Cnst.OB_KEY));
+        setData = Synt.toTerms(newData.get(Cnst.OB_KEY));
         if (setData != null) {
             newData.put(Cnst.OB_KEY, in(setData));
         }

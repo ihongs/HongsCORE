@@ -232,7 +232,7 @@ public class AuthKit {
         // 重建会话
         if (sd != null) {
             Map<String,Object> xs = new HashMap();
-            Set<String> ks = Synt.asTerms(sesmk );
+            Set<String> ks = Synt.toTerms(sesmk );
             ks.add(Cnst.USL_SES);
             for(String  kn : ks) {
                 Object  kv = sd.getAttribute(kn );

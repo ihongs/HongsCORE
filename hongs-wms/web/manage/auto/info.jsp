@@ -50,7 +50,7 @@
         <%if ("hidden".equals(type)) {%>
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
-        <%} else if ("file".equals(type) || "upload".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
+        <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
             <%
                 String size = "";
                 String keep = "";
@@ -91,7 +91,7 @@
                     <button type="button" data-toggle="hsFile" class="hide"></button>
                 </div>
             </div>
-        <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
+        <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
             <%
                 String fn = name;
                 String kn ;

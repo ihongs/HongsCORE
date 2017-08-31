@@ -94,7 +94,7 @@
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("enum".equals(type) || "select".equals(type)) {%>
                     <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
-                <%} else if ("file".equals(type) || "upload".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
+                <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String extr = "";
                         String size = "";
@@ -139,7 +139,7 @@
                     <input type="file" name="<%=name%>" class="form-ignored invisible" <%=extr%>/>
                     <ul class="pickbox" data-ft="<%=ft%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>" <%=rqrd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
-                <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
+                <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
                         String fm = _module;
                         String fn =  name  ;

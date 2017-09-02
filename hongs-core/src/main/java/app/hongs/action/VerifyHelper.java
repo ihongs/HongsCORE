@@ -10,8 +10,9 @@ import app.hongs.util.verify.Repeated;
 import app.hongs.util.verify.Required;
 import app.hongs.util.verify.Rule;
 import app.hongs.util.verify.Verify;
-import java.util.HashMap;
 import java.util.Iterator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -38,9 +39,9 @@ public class VerifyHelper extends Verify {
     }
 
     public VerifyHelper addRulesByForm(String conf, String form, Map map) throws HongsException {
-        FormSet dfs = FormSet.getInstance("default");
-        Map tps  = dfs.getEnum("__types__");
-        Map pts  = dfs.getEnum("__patts__");
+        FormSet def = FormSet.getInstance("default");
+        Map tps = def.getEnum("__types__");
+        Map pts = def.getEnum("__patts__");
 
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
@@ -49,6 +50,10 @@ public class VerifyHelper extends Verify {
             Map     optz = (Map)  et.getValue();
             Map     opts =  new HashMap( optz );
             Object  o;
+
+            opts.put("__conf__", conf);
+            opts.put("__form__", form);
+            opts.put("__name__", code);
 
             o = opts.remove("defiant");
             if (o != null) {
@@ -106,54 +111,54 @@ public class VerifyHelper extends Verify {
                 }
             }
 
-            String rule = (String) opts.get("__rule__");
-            if (null == rule || "".equals(rule)) {
+            // 可设多个规则, 缺省情况按字符串处理
+            List<String> list = Synt.toList (opts.get("__rule__"));
+            if (list == null || list.isEmpty( )) {
                 String type = (String) opts.get("__type__");
+                String item =  tps.containsKey (   type   )
+                            ? (String)  tps.get(   type   )
+                            : "string";
 
-                // 类型映射
-                if ( tps.containsKey(/**/type )) {
-                    rule  =  tps.get(/**/type ).toString( );
-                } else {
-                    rule  =  "string";
-                }
-
-                // 预定正则
-                if ( pts.containsKey(/**/type )
+                // 类型正则
+                if ( pts.containsKey(   type   )
                 && !opts.containsKey("pattern")) {
-                    opts.put("pattern" , type );
+                    opts.put("pattern", type   );
                 }
 
-                // 将 patt 转换为 isType 规则名
-                String c = rule.substring(0, 1);
-                String n = rule.substring(   1);
-                rule = "Is"+c.toUpperCase()+ n ;
-            }
-            if (! rule.contains(".") ) {
-                rule = Rule.class.getPackage().getName()+"."+rule;
+                // 转为类名
+                String c = item.substring(0 , 1);
+                String n = item.substring(    1);
+                item = "Is"+c.toUpperCase() + n ;
+
+                list = Synt.listOf (item);
             }
 
-            Rule inst;
-            try {
-                inst = (Rule) (Class.forName(rule).newInstance());
-            }
-            catch (ClassNotFoundException ex) {
-                throw new HongsException(0x10f1, "Failed to get rule: "+rule+" in "+conf+":"+form, ex);
-            }
-            catch (InstantiationException ex) {
-                throw new HongsException(0x10f1, "Failed to get rule: "+rule+" in "+conf+":"+form, ex);
-            }
-            catch (IllegalAccessException ex) {
-                throw new HongsException(0x10f1, "Failed to get rule: "+rule+" in "+conf+":"+form, ex);
-            }
-            catch (ClassCastException ex) {
-                throw new HongsException(0x10f1, "Failed to get rule: "+rule+" in "+conf+":"+form, ex);
-            }
+            // 添加规则实例
+            for (String item : list) {
+                if (! item.contains(".")) {
+                    item = Rule.class.getPackage().getName()+"."+item;
+                }
 
-            opts.put("__conf__", conf);
-            opts.put("__form__", form);
-            opts.put("__name__", code);
-            inst.setParams(opts);
-            addRule(code , inst);
+                Rule rule;
+                try {
+                    rule = (Rule) (Class.forName(item).newInstance());
+                }
+                catch (ClassNotFoundException ex) {
+                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+                catch (InstantiationException ex) {
+                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+                catch (IllegalAccessException ex) {
+                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+                catch (ClassCastException ex) {
+                    throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
+                }
+
+                rule.setParams(opts);
+                addRule(code , rule);
+            }
         }
 
         return this;

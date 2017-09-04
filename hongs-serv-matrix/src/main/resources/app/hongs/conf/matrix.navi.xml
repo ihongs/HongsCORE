@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <menu text="模型矩阵" href="manage/matrix/" hrel="manage/matrix/unit/tree.html">
+    <menu text="模型矩阵" href="manage/matrix/">
         <role text="查看表单" name="manage/matrix/form/search">
             <depend>manage</depend>
             <depend>manage/matrix/unit/search</depend>

@@ -519,9 +519,14 @@ $.fn.hsCols = function() {
     // 打开设置
     targetz.on("click", ".glyphicon-info-sign", function() {
         field = $(this).closest(".form-group");
-        var type  = field.attr ( "data-type" );
-        var name  = getTypeName(widgets, type);
-        var pane  = getTypePane(context, type);
+        var tabs =  modal.find ( ".nav:first");
+        var type =  field.attr ( "data-type" );
+        var name = getTypeName (widgets, type);
+        var pane = getTypePane (context, type);
+        if (pane.size() === 0) {
+            pane = getTypePane (context, "no");
+        }
+
         modal.find("h4").text(name);
         modal.find( ".simple-set" ) // 基础设置区域
              .empty( ).append(pane);
@@ -529,7 +534,6 @@ $.fn.hsCols = function() {
              .find("tr").not(".hide").remove();
 
         // 表单设置只显示高级, 其他情况点到基础设置
-        var tabs = modal.find(".nav").first( );
         if (type == '_') {
             tabs.find("li:eq(1) a").click();
             tabs.find("li:eq(0)"  ).hide( );

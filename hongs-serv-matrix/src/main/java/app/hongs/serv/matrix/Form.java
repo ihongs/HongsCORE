@@ -475,7 +475,7 @@ public class Form extends Model {
                 }
             }
             // 可搜索指定存为搜索类型
-            if (Synt.defoult(Synt.asBool(fiel.get("findable")), false)) {
+            if (Synt.declare(fiel.get("findable"), false)) {
                 fiel.put("lucene-type", "search");
             }
 

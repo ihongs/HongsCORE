@@ -114,11 +114,14 @@ extends Model {
 
     protected void permit(String id, Map data) throws HongsException {
         // 加密密码
-        if (data.containsKey("password")
-        &&  data.containsKey("username")) {
-            data.put("password", AuthKit.getCrypt(
-                Synt.declare(data.get("password"), "")
-            ));
+        data.remove ("passcode");
+        if (data.containsKey("password")) {
+            String password = Synt.declare(data.get("password"), "");
+            String passcode = Core.newIdentity();
+            passcode = AuthKit.getCrypt(password + passcode);
+            password = AuthKit.getCrypt(password + passcode);
+            data.put("password", password);
+            data.put("passcode", passcode);
         }
 
         // 权限限制, 仅能赋予当前登录用户所有的权限

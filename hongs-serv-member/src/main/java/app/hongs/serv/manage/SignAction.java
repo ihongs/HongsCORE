@@ -33,7 +33,6 @@ public class SignAction {
         String place    = Synt.declare(ah.getParameter("place"), "public");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
-               password = AuthKit.getCrypt(password);
 
         DB        db = DB.getInstance("member");
         Table     tb = db.getTable("user");
@@ -42,14 +41,16 @@ public class SignAction {
 
         // 验证密码
         fc = new FetchCase( )
-            .from   (tb.tableName)
-            .select ("password, id, name, head, mtime, state")
-            .filter ("username = ? " , username);
+            .from   ( tb.tableName )
+            .select ( "password, passcode, id, name, head, mtime, state" )
+            .filter ( "username = ?" , username );
         ud = db.fetchLess(fc);
         if ( ud.isEmpty() ) {
             ah.reply(AuthKit.getWrong("username", "core.username.invalid"));
             return;
         }
+        password = AuthKit.getCrypt(
+              password    +    ud.get("passcode") );
         if (! password.equals( ud.get("password") )) {
             ah.reply(AuthKit.getWrong("passowrd", "core.password.invalid"));
             return;
@@ -62,13 +63,13 @@ public class SignAction {
         long   utime = Synt.declare(ud.get("mtime"), 0L) * 1000 ;
 
         // 验证状态
-        if (state != 1) {
+        if (1 != state) {
             ah.reply(AuthKit.getWrong("state" , "core.sign.state.invalid"));
             return;
         }
 
         // 验证区域
-        Set rs = RoleSet.getInstance(usrid);
+        Set rs = RoleSet.getInstance ( usrid );
         if (0 != place.length() && !rs.contains(place)) {
             ah.reply(AuthKit.getWrong("place" , "core.sign.place.invalid"));
             return;

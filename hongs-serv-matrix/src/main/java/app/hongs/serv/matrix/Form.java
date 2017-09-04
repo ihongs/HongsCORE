@@ -476,7 +476,9 @@ public class Form extends Model {
             }
             // 可搜索指定存为搜索类型
             if (Synt.declare(fiel.get("findable"), false)) {
-                fiel.put("lucene-type", "search");
+                if(!fiel.containsKey("lucnene-type")) {
+                    fiel.put("lucene-type", "search");
+                }
             }
 
             Map<String,Map<String,String>> preset = null;

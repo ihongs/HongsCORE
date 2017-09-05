@@ -30,7 +30,7 @@ import javax.servlet.http.Part;
  * @author Hongs
  */
 public class UploadHelper {
-    private String uploadTemp = "tmp";
+    private String uploadTemp = "${DATA_PATH}/tmp";
     private String uploadPath = "static/upload";
     private String uploadHref = "static/upload";
     private String resultName = null;
@@ -140,7 +140,7 @@ public class UploadHelper {
         path = Tool.inject(path, m );
 
         if (! new File(path).isAbsolute()) {
-            path = Core.DATA_PATH  + "/" + path;
+            path = Core.BASE_PATH  + "/" + path;
         }
 
         return path;

@@ -83,13 +83,13 @@ CREATE UNIQUE INDEX `UK_a_member_user_username` ON `a_member_user` (`username`);
 CREATE UNIQUE INDEX `UK_a_member_user_email` ON `a_member_user` (`email`);
 CREATE UNIQUE INDEX `UK_a_member_user_phone` ON `a_member_user` (`phone`);
 
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','老大 (管理员)',NULL,NULL,'1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODRZHR00KLJOEM','','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODSOGC00KGZCQK','','9BA587D4E465F45669F19AF20CA033D9','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','','9BA587D4E465F45669F19AF20CA033D9','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXZGVRBH000XHB0601','','9BA587D4E465F45669F19AF20CA033D9','d@abc.com','赵六 (研发主管)',NULL,NULL,'1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXZGWPZV002I1J1601','','9BA587D4E465F45669F19AF20CA033D9','e@abc.com','钱七 (运维主管)',NULL,NULL,'1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HY9XQN2L000WGH9Q01','','9BA587D4E465F45669F19AF20CA033D9','f@abc.com','孙八 (产品总监)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','老大 (管理员)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODRZHR00KLJOEM','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODSOGC00KGZCQK','9BA587D4E465F45669F19AF20CA033D9','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','9BA587D4E465F45669F19AF20CA033D9','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXZGVRBH000XHB0601','9BA587D4E465F45669F19AF20CA033D9','d@abc.com','赵六 (研发主管)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXZGWPZV002I1J1601','9BA587D4E465F45669F19AF20CA033D9','e@abc.com','钱七 (运维主管)',NULL,NULL,'1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HY9XQN2L000WGH9Q01','9BA587D4E465F45669F19AF20CA033D9','f@abc.com','孙八 (产品总监)',NULL,NULL,'1424075622230','1424075622230','0',1);
 
 --
 -- 用户所属部门

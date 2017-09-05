@@ -21,13 +21,21 @@ public class FileAction {
     public void create(ActionHelper helper) throws HongsException {
         Part   prt = (Part  ) helper.getRequestData().get("file");
         String uid = (String) helper.getSessibute( Cnst.UID_SES );
+        String ext =  prt .getSubmittedFileName();
         String fid =  Core.newIdentity();
+
+        int pos = ext.lastIndexOf( '.' );
+        if (pos > -1 ) {
+            ext = ext.substring(pos + 1);
+        } else {
+            ext = "" ;
+        }
 
         // 传到临时目录
         UploadHelper  uh = new UploadHelper( );
         uh.setUploadPath("static/upload/temp");
         uh.setUploadHref("static/upload/temp");
-        String name = uid+"-"+fid+".tmp";
+        String name = uid +"-"+ fid +"."+ ext ;
         String href = uh.getResultHref();
         uh.upload(prt, name);
 

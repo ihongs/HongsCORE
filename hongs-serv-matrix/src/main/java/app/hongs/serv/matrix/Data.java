@@ -7,6 +7,7 @@ import app.hongs.HongsExpedient;
 import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
+import app.hongs.db.Table;
 import app.hongs.dh.search.SearchEntity;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
@@ -133,6 +134,22 @@ public class Data extends SearchEntity {
         return fields;
     }
 
+    public Model getModel() throws HongsException {
+        String tn = Synt.declare(getParams().get("table.name"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getModel(tn);
+    }
+
+    public Table getTable() throws HongsException {
+        String tn = Synt.declare(getParams().get("table.name"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getTable(tn);
+    }
+
     /**
      * 添加文档
      * @param rd
@@ -183,30 +200,30 @@ public class Data extends SearchEntity {
     }
 
     public void save(String id, Map rd) throws HongsException {
-        Model    model = DB.getInstance("matrix").getModel("data");
-        String   where = "`id`= ? AND `form_id`= ? AND `etime`= ?";
+        Table    table = getTable();
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new String[ ] { id , form , "0" };
         long     ctime = System.currentTimeMillis() / 1000;
         time  =  ctime ;
 
         // 删除当前数据
         if (rd == null) {
-            Map ud = new HashMap();
-            ud.put("etime", ctime);
-            ud.put("state",   0  );
-            model.table.update(ud, where, param);
+            if (table != null) {
+                Map ud = new HashMap();
+                ud.put("etime", ctime);
+                ud.put("state",   0  );
+                table.update(ud, where, param);
+            }
 
             super.del(id);
 
             return;
         }
 
-        boolean saveToDb = !Synt.declare(getParams().get("dont.save.to.db"),false);
-
         // 获取旧的数据
         Map dd;
-        if (saveToDb) {
-            dd = model.table.fetchCase( )
+        if (table != null) {
+            dd = table.fetchCase( )
                     .filter(where, param)
                     .select("data,ctime")
                     .one();
@@ -250,22 +267,22 @@ public class Data extends SearchEntity {
 
         //** 保存到数据库 **/
 
-        if (saveToDb) {
+        if (table != null) {
             Map ud = new HashMap();
             ud.put("etime", ctime);
 
             Map nd = new HashMap();
             nd.put("ctime", ctime);
-            nd.put("etime", 0);
-            nd.put( "id" , id);
-            nd.put("form_id", rd.get( "form_id" ));
-            nd.put("user_id", rd.get( "user_id" ));
+            nd.put("etime",   0  );
+            nd.put(/**/ "id", id );
+            nd.put("form_id", rd.get("form_id"));
+            nd.put("user_id", rd.get("user_id"));
             nd.put("name", dd.get("name"));
             nd.put("note", rd.get("note"));
             nd.put("data", app.hongs.util.Data.toString(dd));
 
-            model.table.update(ud , where , param);
-            model.table.insert(nd);
+            table.update(ud, where, param);
+            table.insert(nd);
         }
 
         //** 保存到索引库 **/
@@ -282,11 +299,15 @@ public class Data extends SearchEntity {
 
         //** 获取旧的数据 **/
 
-        Model    model = DB.getInstance("matrix").getModel("data");
+        Table    table = getTable();
         String   where = "`id`= ? AND `form_id`= ? AND `ctime`= ?";
         Object[] param = new String [ ] { id , form , rtime + "" };
 
-        Map dd = model.table.fetchCase()
+        if (table == null) {
+            throw new HongsException(0x1100, "此资源不支持恢复");
+        }
+
+        Map dd = table.fetchCase( )
                 .filter (where, param)
                 .select ("data, name, etime")
                 .orderBy("ctime DESC")
@@ -309,12 +330,12 @@ public class Data extends SearchEntity {
 
         rd.put("ctime", ctime);
         rd.put("rtime", rtime);
-        rd.put("etime", 0);
+        rd.put("etime",   0  );
         rd.put("name" , dd.get("name"));
         rd.put("data" , dd.get("data"));
 
-        model.table.update(ud, where, param);
-        model.table.insert(rd);
+        table.update(ud , where, param);
+        table.insert(rd);
 
         //** 保存到索引库 **/
 
@@ -344,7 +365,7 @@ public class Data extends SearchEntity {
     protected boolean equals(Object fo, Object fr) {
         return fo.equals(fr);
     }
-    
+
     private Set<String> wdCols = null;
     private Set<String> nmCols = null;
 

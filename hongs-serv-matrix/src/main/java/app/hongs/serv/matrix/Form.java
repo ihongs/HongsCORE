@@ -462,10 +462,14 @@ public class Form extends Model {
 
             // 文件类型要指定上传路径
             if ("file".equals(types.get(t) )) {
-                if(!fiel.containsKey("path")
-                || !fiel.containsKey("href")) {
-                    fiel.put("path", "static/upload/data");
+                if(!fiel.containsKey("href")) {
                     fiel.put("href", "static/upload/data");
+                }
+                if(!fiel.containsKey("path")) {
+                    fiel.put("path", "static/upload/data");
+                }
+                if(!fiel.containsKey("temp")) {
+                    fiel.put("temp", "static/upload/temp");
                 }
             } else
             // 日期类型要指定存储格式
@@ -475,7 +479,7 @@ public class Form extends Model {
                 }
             }
             // 可搜索指定存为搜索类型
-            if (Synt.declare(fiel.get("findable"), false)) {
+            if (Synt.asBool(fiel.get("findable")) != true) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "search");
                 }

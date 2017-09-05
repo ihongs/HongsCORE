@@ -129,7 +129,8 @@ public class DataAction extends SearchAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
 
-        Model   mo = DB.getInstance("matrix").getModel("data");
+        Data    sr = (Data) getEntity(helper);
+        Model   mo = sr.getModel();
         Map     rd = helper.getRequestData( );
         Map     sd = mo.search(rd);
 

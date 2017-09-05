@@ -368,12 +368,12 @@ public final class Core
   public static byte DEBUG;
 
   /**
-   * WEB基础链接
+   * WEB基础链接, 注意: 不以斜杠结尾, 根链接为空串
    */
   public static String BASE_HREF = null;
 
   /**
-   * WEB顶级目录
+   * WEB顶级目录, 注意: 不以斜杠结尾, 其他同此规则
    */
   public static String BASE_PATH = null;
 

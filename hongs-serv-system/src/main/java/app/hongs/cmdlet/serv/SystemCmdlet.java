@@ -20,7 +20,6 @@ import java.io.PrintStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Calendar;
@@ -55,15 +54,14 @@ public class SystemCmdlet {
     private static final Pattern tinFmtPatt = Pattern.compile("^((\\d{2,4}/\\d{1,2}/\\d{1,2}T\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{2,4}/\\d{1,2}/\\d{1,2})|(\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{1,2}:\\d{1,2}))$");
 
     /**
-     * 设置命令(维护的别名)
+     * 设置命令
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("setup")
+    @Cmdlet( "setup" )
     public static void setup(String[] args) throws HongsException {
-        List<String> argz = new ArrayList();
-                     argz.add   ("_setup_");
-                     argz.addAll(Arrays.asList(args));
+        List<String> argz = Synt.listOf((Object[]) args);
+                     argz.add( 0, "setup" );
         serve(argz.toArray(new String[]{}));
     }
 
@@ -72,7 +70,7 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("serve")
+    @Cmdlet("__main__")
     public static void serve(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts ( args, "date:s" );

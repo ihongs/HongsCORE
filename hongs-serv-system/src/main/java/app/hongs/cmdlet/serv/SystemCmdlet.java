@@ -54,15 +54,27 @@ public class SystemCmdlet {
     private static final Pattern tinFmtPatt = Pattern.compile("^((\\d{2,4}/\\d{1,2}/\\d{1,2}T\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{2,4}/\\d{1,2}/\\d{1,2})|(\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{1,2}:\\d{1,2}))$");
 
     /**
+     * 维护命令
+     * @param args
+     * @throws HongsException
+     */
+    @Cmdlet( "serve" )
+    public static void serve(String[] args) throws HongsException {
+        List<String> argz = Synt.listOf((Object[]) args);
+                     argz.add( 0, "serve" );
+        exec( argz.toArray(new String[0]) );
+    }
+
+    /**
      * 设置命令
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("setup")
+    @Cmdlet( "setup" )
     public static void setup(String[] args) throws HongsException {
         List<String> argz = Synt.listOf((Object[]) args);
                      argz.add( 0, "setup" );
-        serve(argz.toArray(new String[]{}));
+        exec( argz.toArray(new String[0]) );
     }
 
     /**
@@ -70,8 +82,8 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("serve")
-    public static void serve(String[] args) throws HongsException {
+    @Cmdlet("__main__")
+    public static void exec (String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts ( args, "date:s" );
         args = ( String[] ) opts.remove("");

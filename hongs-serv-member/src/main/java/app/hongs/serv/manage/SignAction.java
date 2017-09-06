@@ -33,6 +33,7 @@ public class SignAction {
         String place    = Synt.declare(ah.getParameter("place"), "public");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
+        String passcode ;
 
         DB        db = DB.getInstance("member");
         Table     tb = db.getTable("user");
@@ -49,8 +50,8 @@ public class SignAction {
             ah.reply(AuthKit.getWrong("username", "core.username.invalid"));
             return;
         }
-        password = AuthKit.getCrypt(
-              password    +    ud.get("passcode") );
+        passcode=Synt.declare( ud.get("passcode"),"" );
+        password=AuthKit.getCrypt(password + passcode);
         if (! password.equals( ud.get("password") )) {
             ah.reply(AuthKit.getWrong("passowrd", "core.password.invalid"));
             return;

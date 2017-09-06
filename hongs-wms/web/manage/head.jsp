@@ -118,52 +118,52 @@
             </ul>
         </li>
     </ul>
-</div><!-- /.navbar-collapse -->
+</div>
 
 <script type="text/javascript">
     (function($) {
         var menubar = $("#main-menubar");
         var context = $("#main-context");
 
-        function initMenu (g) {
-            var a, b, h, l;
-            h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
-            a = menubar.find("a[href='"+ h +"']");
-            b = menubar;
-            if (a.size() < 1 && g) {
-                a = menubar.find("li a").first( );
-            }
-
-            if (a.size() > 0) {
-                h = a.attr("href");
-                l = a.data("href");
-                if (!l || l==='/') {
-                    a = a.closest("li").find("li a").first();
-                    if ( !h && g ) {
-                        b.trigger("loseMenu");
-                    } else {
-                        location.replace( h );
-                    }
-                    return;
-                }
-
-                context.hsLoad(l);
-                b.find("li").removeClass("active");
-                a.parents("li").addClass("active");
-            }
-        }
-
         $(function() {
-            var a = menubar.find( ".active" );
-            if (a.size() > 0) {
-                a.parents("li").addClass("active");
+            var a, b, h, l;
+
+            h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
+            a = menubar .find("a[href='"+ h +"']");
+            b = menubar ;
+
+            b.find ( "li" ).removeClass("active" );
+            a.parents ( "li" ).addClass("active" );
+
+            l = a.data("href");
+            if (l && l != '/') {
+                context .hsLoad(l);
                 return;
             }
 
-            initMenu(true );
+            h = menubar .find("li a").attr("href");
+            l = context .data("load");
+            if (! l ) {
+                location.replace( h );
+            }
         });
-        $(window).on("hashchange", function() {
-            initMenu(false);
+
+        $(window).on("hashchange" , function() {
+            var a, b, h, l;
+
+            h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
+            a = menubar .find("a[href='"+h+"']");
+            b = menubar ;
+
+            b.find ( "li" ).removeClass("active" );
+            a.parents ( "li" ).addClass("active" );
+
+            l = a.data("href");
+            if (l && l != '/') {
+                context .hsLoad(l);
+            } else {
+                location.assign(h);
+            }
         });
 
         $("#sign-out")

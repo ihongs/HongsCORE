@@ -58,7 +58,7 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet( "setup" )
+    @Cmdlet("setup")
     public static void setup(String[] args) throws HongsException {
         List<String> argz = Synt.listOf((Object[]) args);
                      argz.add( 0, "setup" );
@@ -70,7 +70,7 @@ public class SystemCmdlet {
      * @param args
      * @throws HongsException
      */
-    @Cmdlet("__main__")
+    @Cmdlet("serve")
     public static void serve(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts ( args, "date:s" );

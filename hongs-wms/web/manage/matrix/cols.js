@@ -358,13 +358,11 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         // 表单高级配置
         if (name == "@") {
             type  = "_";
-            text  = getTypeItem( wdgt, type )
-                          .find("label span")
-                          .first( ).text ( );
+            text  = getTypeItem(wdgt , type).find("label span").text();
         }
         // 内部缺省字段, 禁止自行设置
-        if (type == "hidden" || (type == "number"
-        && (name == "ctime"  ||  name == "mtime"))) {
+        if ((type == "number" && (name == "ctime" || name == "mtime"))
+        || ( type == "hidden" && (name == "cuid"  || name == "muid" || name == "id"))) {
             continue;
         }
 
@@ -374,18 +372,19 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         if (suf) {
             name  = name + suf;
         }
-        var group = getTypeItem(wdgt, name);
+        var group = getTypeItem(wdgt , name);
         if (group.size() == 0) {
-            group = getTypeItem(wdgt, type);
+            group = getTypeItem(wdgt , type);
         }
         if (group.size() == 0) {
-            continue;
+            group = getTypeItem(wdgt , "-" ).show();
         }
-        var label = group.find("label span,legend span").first();
-        var input = group.find(   "[data-fn],[name]"   ).first();
+        var label = group.find("label span,legend span").first( );
+        var input = group.find(   "[data-fn],[name]"   ).first( );
             label.text( text );
-        if (type == "date" || type == "time" || type == "datetime") {
-            input = setItemType(input, type); // 重设 type 需重建组件
+        if (type == "date" || type == "time" || type == "datetime"
+        ||  input.is("input[type='']")) {
+            input = setItemType(input, type);
         }
         if (input.is( "ul" ) ) {
             input.attr("data-fn", name);
@@ -524,7 +523,7 @@ $.fn.hsCols = function() {
         var name = getTypeName (widgets, type);
         var pane = getTypePane (context, type);
         if (pane.size() === 0) {
-            pane = getTypePane (context, "no");
+            pane = getTypePane (context, "-" );
         }
 
         modal.find("h4").text(name);
@@ -565,7 +564,10 @@ $.fn.hsCols = function() {
     // 日期类型
     modal.on("change", "[name='input|type']", function() {
         var type = $(this).val();
-        $(this).closest(".form-group").next().find("input").each(function() {
+        $(this).closest(".form-group")
+               .next   (".form-group")
+               .find   ("input")
+               .each   (function( ) {
             setItemType(this, type);
         });
     });

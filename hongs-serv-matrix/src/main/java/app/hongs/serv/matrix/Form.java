@@ -479,7 +479,7 @@ public class Form extends Model {
                 }
             }
             // 可搜索指定存为搜索类型
-            if (Synt.asBool(fiel.get("findable")) != true) {
+            if (Synt.declare(fiel.get("findable"), false)) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "search");
                 }

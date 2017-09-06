@@ -184,7 +184,7 @@ public class SystemCmdlet {
             String  t = e.getTagName();
 
             if ("cmdlet".equals(t)) {
-                SystemCmdlet.runCmd( e, dt, lg );
+                runCmd( e, dt, lg );
             } else
             if ("action".equals(t)) {
                 runAct( e, dt, lg );
@@ -283,7 +283,7 @@ public class SystemCmdlet {
             c = m.getTagName();
             s = m.getTextContent();
 
-            if ("act".equals(c)) {
+            if ("cmd".equals(c)) {
                 continue;
             }
             if ("arg".equals(c)) {

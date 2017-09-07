@@ -9,10 +9,11 @@
 <%
     String _action = Synt.declare(request.getAttribute("form.action"), "create");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
+    String _funcId = (_module + "_" + _entity + "_form").replace('/', '_');
 %>
 <!-- 表单 -->
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="row">
+<div id="<%=_pageId%>" class="<%=_action%>-form">
     <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
           method="POST" enctype="multipart/form-data">
         <%
@@ -192,12 +193,14 @@
         _url: "<%=_module%>/<%=_entity%>/search.act"
     });
 
-    // 附加脚本
-    if (self.inMyForm) {
-        self.inMyForm( context );
-    }
+    hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+        // 外部定制
+        if (window["in_<%=_funcId%>"]) {
+            window["in_<%=_funcId%>"](context, formobj);
+        }
 
-    // 加载数据
-    formobj.load(null, loadbox );
+        // 加载数据
+        formobj.load(null, loadbox);
+    });
 })( jQuery );
 </script>

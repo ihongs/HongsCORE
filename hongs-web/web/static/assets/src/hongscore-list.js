@@ -325,10 +325,10 @@ HsList.prototype = {
         switch (page.ern) {
             case  2 :
             case "2":
-                hsSetSeria(this._data, this.pageKey, 1);
                 this.pageBox.empty().append('<div class="alert alert-warning">'+(this._above_err || hsGetLang('list.above'))+'</div>');
                 this.listBox.hide( );
                 var that = this;
+                hsSetSeria(this._data, this.pageKey, 1);
                 setTimeout(function() {
                     that.load();
                 }, 5000);

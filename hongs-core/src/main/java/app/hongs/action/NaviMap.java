@@ -188,7 +188,7 @@ public class NaviMap
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new app.hongs.HongsException(0x10e0,
+            throw new HongsException(0x10e0,
                 "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'.");
         }
     }
@@ -347,13 +347,28 @@ public class NaviMap
       if ("import".equals(tagName2))
       {
         String impart = element2.getTextContent().trim();
-        NaviMap  conf = new NaviMap(impart);
-        paths.putAll(conf.paths);
-        menus.putAll(conf.menus);
-        roles.putAll(conf.roles);
-        actions.addAll(conf.actions);
-        imports.add (  impart  );
-        imports.addAll(conf.imports);
+        try
+        {
+          NaviMap  conf = new NaviMap(impart);
+          imports.add   (   impart   );
+          imports.addAll(conf.imports);
+          actions.addAll(conf.actions);
+          roles.putAll(conf.roles);
+          menus.putAll(conf.menus);
+          paths.putAll(conf.paths);
+        }
+        catch (HongsException ex )
+        {
+          // 找不到文件仅将错误写到日志
+          if (0x10e0 == ex.getErrno( ))
+          {
+            CoreLogger.error( ex );
+          }
+          else
+          {
+            throw ex;
+          }
+        }
       }
     }
   }

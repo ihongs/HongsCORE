@@ -793,11 +793,10 @@ function hsSetPms(uri, pms) {
     }   pms = hsSerialDic(pms);
     for(var n in pms) {
         var v  = pms[n];
-        if (typeof v === "array") {
-            hsSetParams(uri, n,v);
-        } else {
-            hsSetParam (uri, n,v);
-        }
+        if (typeof v === "array")
+            uri= hsSetParams(uri, n, v);
+        else
+            uri= hsSetParam (uri, n, v);
     }
     return  uri;
 }

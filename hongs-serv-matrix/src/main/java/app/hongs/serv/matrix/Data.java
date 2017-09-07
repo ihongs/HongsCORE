@@ -33,8 +33,8 @@ public class Data extends SearchEntity {
     /**
      * 数据实例基础构造方法
      * @param path 数据存放路径
-     * @param comf 基础配置目录
-     * @param conf 当前配置目录
+     * @param comf 基础配置文件
+     * @param conf 当前配置文件
      * @param form 表单配置名称
      * @throws HongsException
      */
@@ -47,12 +47,14 @@ public class Data extends SearchEntity {
 
     /**
      * 数据实例快捷构造方法
-     * @param conf 当前配置目录
+     * @param conf 当前配置文件
      * @param form 表单配置名称
      * @throws HongsException
      */
     public Data(String conf, String form) throws HongsException {
-        this("data/" + form, "manage/data/" + form, conf , form);
+        this(conf.replaceFirst("^.*?/data/",        "data/"),
+             conf.replaceFirst("^.*?/data/", "manage/data/"),
+             conf, form);
     }
 
     /**

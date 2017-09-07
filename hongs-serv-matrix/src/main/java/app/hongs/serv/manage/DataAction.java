@@ -15,7 +15,6 @@ import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
 import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
-import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.lucene.LuceneRecord.Loop;

@@ -15,7 +15,8 @@ CREATE TABLE `a_matrix_unit` (
   `mtime` UNSIGNED INT(10) DEFAULT NULL,
   `boost` UNSIGNED INT(10) DEFAULT '0',
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  FOREIGN KEY (`pid`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `IK_a_matrix_unit_unit` ON `a_matrix_unit` (`pid`);
@@ -43,6 +44,7 @@ CREATE TABLE `a_matrix_form` (
   FOREIGN KEY (`unit_id`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE
 );
 
+CREATE INDEX `IK_a_matrix_form_unit` ON `a_matrix_form` (`unit_id`);
 CREATE INDEX `IK_a_matrix_form_state` ON `a_matrix_form` (`state`);
 CREATE INDEX `IK_a_matrix_form_ctime` ON `a_matrix_form` (`ctime`);
 CREATE INDEX `IK_a_matrix_form_mtime` ON `a_matrix_form` (`mtime`);
@@ -64,10 +66,10 @@ CREATE TABLE `a_matrix_data` (
   `etime` UNSIGNED INT(10) DEFAULT NULL,
   `rtime` UNSIGNED INT(10) DEFAULT NULL, /* 从哪个时间点恢复 */
   `state` TINYINT(2) DEFAULT '1',
-  PRIMARY KEY (`id`,`form_id`,`etime`),
-  FOREIGN KEY (`form_id`) REFERENCES `a_matrix_form` (`id`) ON DELETE CASCADE
+  PRIMARY KEY (`id`,`form_id`,`etime`)
 );
 
+CREATE INDEX `IK_a_matrix_data_form` ON `a_matrix_data` (`form_id`);
 CREATE INDEX `IK_a_matrix_data_user` ON `a_matrix_data` (`user_id`);
 CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
 CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime`);

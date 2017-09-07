@@ -781,6 +781,27 @@ function hsFixUri(uri) {
 }
 
 /**
+ * 补充URI为其设置参数
+ * @param {type} uri
+ * @param {type} pms 可以是 hsSerialArr 或 .loadbox 节点
+ * @return {String} 完整的URI
+ */
+function hsSetPms(uri, pms) {
+    if (pms instanceof Element || pms instanceof jQuery) {
+        pms = jQuery(pms).closest(".loadbox");
+        pms = hsSerialArr(pms);
+    }   pms = hsSerialDic(pms);
+    for(var n in pms) {
+        var v  = pms[n];
+        if (typeof v === "array") {
+            hsSetParams(uri, n,v);
+        } else {
+            hsSetParam (uri, n,v);
+        }
+    }
+}
+
+/**
  * 补全URI为其设置参数
  * 注意: 参数必须是单个的, 对多个参数如 &a[]=$a&a[]=$a 只会设置两个一样的值
  * @param {String} uri

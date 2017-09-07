@@ -6,12 +6,12 @@
  * 在选择列表配置添加:
  * data-data-0="_fill__fork:(hsListFillFork)"
  * 在选择列表头部添加:
- * <td data-ft="_fork"><input type="checkbox" class="checkall"/></td>
+ * <td data-ft="_fork"><input type="checkbox" class="checkall" title="XX"/></td>
  * 在表单配置区域添加:
  * data-data-0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
  * <ul data-ft="_fork" data-fn="xx_id" data-ak="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
- * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/fork.html">Select...</button>
+ * <button type="button" data-toggle="hsFork" data-target="@" data-href="/xx/fork.html">选择</button>
  *
  * 注: 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
  **/
@@ -19,56 +19,45 @@
 /**
  * 选择控件
  * @param {String} url 要打开的选择页地址
- * @param {jQuery} tip 在哪打开
+ * @param {jQuery} bin 在哪打开
  * @param {jQuery} box 在哪填充
  * @param {Function} fil 填充函数
+ * @param {Function} fet 加载函数
  * @returns {jQuery}
  */
-jQuery.fn.hsPick = function(url, tip, box, fil) {
-    if (fil == undefined
-    &&  typeof url == "function") {
-        fil  = url;
-        url  = tip;
-        tip  = null;
-    } else if (url == undefined ) {
-        url  = tip;
-        tip  = null;
-    }
-
-    var form = box.closest(".HsForm" ).data("HsForm" ) || { };
-    var n    = box.attr("name") || box.attr("data-fn");
+jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var v    = { };
-    var vk   = box.attr("data-vk") ||  "id" ;
-    var tk   = box.attr("data-tk") || "name";
-    var mul  = /(\[\]|\.\.|\.$)/.test(n);
+    var n    = box.attr("data-fn" ) || box.attr("name");
+    var t    = box.attr("data-ft" ) || ""    ;
+    var vk   = box.attr("data-vk" ) || "id"  ;
+    var tk   = box.attr("data-tk" ) || "name";
+    var mul  = box.data("repeated") || /(\[\]|\.\.|\.$)/.test(n);
+    var frm  = box.closest( ".HsForm" ).data( "HsForm")  ||  { };
     var btn  = jQuery(this);
 
     if (! fil) {
         do {
-            fil = form["_fill_"+ n];
+            fil = frm["_fill_"+ n];
             if (fil) break;
 
-            var t;
-
-            t = box.attr("data-ft");
-            fil = form["_fill_"+ t];
-            if (fil) break;
-
-            t = box.attr("data-fn");
-            fil = form["_fill_"+ t];
+            fil = frm["_fill_"+ t];
             if (fil) break;
 
             fil = hsFormFillPick;
         } while (false);
     }
 
+    if (fet) {
+        fet(box, v, n );
+    } else
     if (box.is("input")) {
         var val = box.val( );
         var txt = btn.text();
         if (val) {
             v[val] = txt;
         }
-    } else {
+    } else
+    if (box.is("ul,ol")) {
         box.find("li").each(function() {
             var opt = jQuery(this);
             var val = opt.find(".pickval").val ();
@@ -77,8 +66,9 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
         });
     }
 
-    function pickItem(val, txt) {
+    function pickItem(val, txt, inf, chk ) {
         var evt = jQuery.Event("pickItem");
+        evt.target = chk;
         box.trigger( evt, arguments );
         if (evt.isDefaultPrevented()) {
             return false;
@@ -88,10 +78,10 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
             for( var  key  in  v )
                 delete v[key];
             if (txt !== undefined)
-                v[val] = txt ;
+                v[val]= [txt, inf];
         } else {
             if (txt !== undefined)
-                v[val] = txt ;
+                v[val]= [txt, inf];
             else
                 delete v[val];
         }
@@ -111,34 +101,35 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
         }
 
         var evt = jQuery.Event("pickBack");
-        box.trigger(evt, [v, tip]);
+        evt.target = bin;
+        box.trigger( evt, [v, n, t] );
         if (evt.isDefaultPrevented()) {
             return false;
         }
 
-        fil.call(form, box , v, n, "data");
+        fil.call(frm, box, v, n, "fork");
         box.trigger("change");
         return true;
     }
 
     function pickOpen() {
-        var tip = jQuery(this);
-        tip.data("pickData", v)
+        var bin = jQuery(this);
+        bin.data("pickData", v)
            .addClass("pickbox")
         .toggleClass("pickmul", mul)
-        .on("change"  , ".checkone", checks)
+        .on("change"  , ".checkone", select)
         .on("click"   , ".ensure"  , ensure)
         .on("saveBack", ".create"  , create);
         // 初始选中
-        tip.find(".checkone").val(Object.keys(v));
+        bin.find(".checkone").val(Object.keys(v));
     };
 
-    function checks() {
+    function select() {
         var chk = jQuery(this);
         if (chk.closest(".HsList").data("HsList")._info) {
             return;
         }
-        if (chk.closest(".openbox").is ( tip ) == false) {
+        if (chk.closest(".openbox").is ( bin ) == false) {
             return;
         }
 
@@ -165,19 +156,19 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
             var idx;
 
             idx = thd.find("[data-fn='"+tk+"']").index();
-            if (idx != -1) txt = tds.eq(idx).text( );
+            if (idx != -1) txt = tds.eq(idx).text();
             if (txt) break;
 
             idx = thd.find("[data-ft='"+tk+"']").index();
-            if (idx != -1) txt = tds.eq(idx).text( );
+            if (idx != -1) txt = tds.eq(idx).text();
             if (txt) break;
 
-            idx = thd.find(".name").index( );
-            if (idx != -1) txt = tds.eq(idx).text( );
+            idx = thd.find(".name" ).index();
+            if (idx != -1) txt = tds.eq(idx).text();
         }
         while (false);
 
-        if (pickItem( val, txt, inf  ) === false) {
+        if (pickItem(val, txt, inf, chk) === false) {
             chk.prop("checked", false);
             return false;
         }
@@ -185,7 +176,7 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
 
     function ensure() {
         var btn = jQuery(this);
-        if (! btn.closest(".openbox").is(tip)) {
+        if (! btn.closest(".openbox").is(bin)) {
             return;
         }
 
@@ -193,39 +184,39 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
             return false;
         }
 
-        tip.hsClose();
+        bin.hsClose();
         return false ;
     }
 
-    function create(evt, rst) {
+    function create(evt, rst ) {
         var btn = jQuery(this);
-        if (! btn.closest(".openbox").is(tip)) {
+        if (! btn.closest(".openbox").is(bin)) {
             return;
         }
 
-        if (! rst || ! rst.info /*||!rst.info[vk]*/) {
+        if (! rst || ! rst.info) {
             return false;
         }
-        if (! pickItem(rst.info[vk], rst.info[tk]) ) {
+        if (! pickItem(rst.info[vk], rst.info[tk], rst.info)) {
             return false;
         }
         if (! pickBack()) {
             return false;
         }
 
-        tip.hsClose();
+        bin.hsClose();
         return false ;
     }
 
-    if (tip) {
-        tip =  tip  .hsOpen(url);
+    if (bin) {
+        bin =  bin  .hsOpen(url);
     } else {
-        tip = jQuery.hsOpen(url);
+        bin = jQuery.hsOpen(url);
     }
-    pickOpen.call ( tip );
-    tip.data("rel", btn.closest(".openbox")[0]);
+    pickOpen.call ( bin );
+    bin.data("rel", btn.closest(".openbox")[0]);
 
-    return tip;
+    return bin;
 };
 
 /**
@@ -238,7 +229,7 @@ jQuery.fn.hsPick = function(url, tip, box, fil) {
  */
 function hsFormFillPick(box, v, n, t) {
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
-    var mul = ! ! box.data( "repeated" ) || /(\[\]|\.\.|\.$)/.test( n ); // a[b][]|a[][b]|a.b.|a..b 均表示多选
+    var mul = ! ! box.data( "repeated" ) || /(\[\]|\.\.|\.$)/.test( n );
 
     if (t == "info") {
         if (! v ) return ;
@@ -255,7 +246,7 @@ function hsFormFillPick(box, v, n, t) {
             var j = v[i];
             if (j[vk] !== undefined
             &&  j[tk] !== undefined) {
-              x[j[vk]] = j[tk];
+              x[j[vk]] = [j[tk] , j];
             }
         }
         v = x ;
@@ -263,22 +254,29 @@ function hsFormFillPick(box, v, n, t) {
         v = {};
     }
 
-    if (box.is("input") ) {
-        function reset(box, btn) {
-            var txt = btn.data("txt");
-            var cls = btn.data("cls");
-            box.val ( "");
-            btn.text(txt);
-            btn.attr( "class" , cls );
-        }
-        function inset(box, btn, val, txt) {
-            box.val (val);
-            btn.text(txt);
-            btn.addClass("btn-info" );
-            btn.append('<a href="javascript:;" class="close">&times;</a>');
-        }
+    function reset(btn, box) {
+        var txt = btn.data("txt");
+        var cls = btn.data("cls");
+        box.val ( "");
+        btn.text(txt);
+        btn.attr( "class" , cls );
+    }
+    function inset(btn, box, val, txt) {
+        box.val (val);
+        btn.text(txt);
+        btn.addClass("btn-info" );
+        btn.append('<a href="javascript:;" class="close">&times;</a>');
+    }
+    function putin(btn, box, val, txt) {
+        box.append(jQuery('<li class="btn btn-info form-control"></li>').attr( "title", txt )
+           .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
+           .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
+           .append(jQuery( '<span class="close pull-right">&times;</span>'))
+        );
+    }
 
-        if (! btn.data("pickInited"))  {
+    if (box.is("input") ) {
+        if (! btn.data("pickInited")) {
             btn.data("pickInited", 1);
             btn.data("txt", btn.text( ) );
             btn.data("cls", btn.attr("class"));
@@ -291,12 +289,13 @@ function hsFormFillPick(box, v, n, t) {
             });
         }
 
-        if (jQuery.isEmptyObject(v)) {
-            reset(box, btn);
-        } else
+        if (!jQuery.isEmptyObject(v)) {
         for(var val in v) {
-            var txt  = v[val];
-            inset(box, btn, val,txt);
+            var arr  = v[val];
+            var txt  = arr[0];
+            inset(btn, box, val, txt);
+        } } else {
+            reset(btn, box);
         }
     } else {
         if (! box.data("pickInited"))  {
@@ -318,20 +317,17 @@ function hsFormFillPick(box, v, n, t) {
             }
         }
 
-        if (jQuery.isEmptyObject(v)) {
-            btn.show();
-        } else if (! mul) {
-            btn.hide();
-        }
-
         box.empty().toggleClass("pickmul", mul);
+
+        if (!jQuery.isEmptyObject(v)) {
+            btn.hide();
+        } else if (! mul) {
+            btn.show();
+        }
         for(var val in v) {
-            var txt  = v[val];
-            box.append(jQuery('<li class="btn btn-info form-control"></li>').attr( "title", txt )
-               .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
-               .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
-               .append(jQuery( '<span class="close pull-right">&times;</span>'))
-            );
+            var arr  = v[val];
+            var txt  = arr[0];
+            putin(btn, box, val, txt);
         }
     }
 }
@@ -346,7 +342,7 @@ function hsFormFillPick(box, v, n, t) {
 function hsListFillPick(cel, v, n) {
     var box = cel.closest (".pickbox");
     var mul = box.hasClass( "pickmul");
-    var dat = box.data("pickData")||{};
+    var val = box.data("pickData")||{};
 
     // 单选还是多选
     if (! mul) {
@@ -361,7 +357,7 @@ function hsListFillPick(cel, v, n) {
     }
 
     // 判断是否选中
-    if (dat[v] !== undefined) {
+    if (val[v] !== undefined) {
         cel.find(".checkone").prop("checked", true).change( );
     }
 }
@@ -371,12 +367,12 @@ function hsListFillPick(cel, v, n) {
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
     function() {
         var url = $(this).attr("data-href") || $(this).attr("href");
-        var tip = $(this).attr("data-target");
+        var bin = $(this).attr("data-target");
         var box = $(this).attr("data-result");
 
         // 选择区域
-        if (tip) {
-            tip = $(this).hsFind(tip);
+        if (bin) {
+            bin = $(this).hsFind(bin);
         }
 
         // 填充区域
@@ -386,7 +382,7 @@ function hsListFillPick(cel, v, n) {
             box = $(this).siblings("[name],[data-fn]").not(".form-ignored");
         }
 
-        $(this).hsPick(url, tip, box);
+        $(this).hsPick(url, bin, box);
         return false;
     });
 })(jQuery);

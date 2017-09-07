@@ -3,6 +3,9 @@
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_base_.jsp"%>
+<%
+    String _pageId = (_module + "_" + _entity).replace('/', '-');
+%>
 <!doctype html>
 <html>
     <head>
@@ -23,8 +26,7 @@
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/manage.js"></script>
-        <script type="text/javascript" src="manage/auto/stat.js"></script>
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/mine.js"></script>
+        <script type="text/javascript" src="manage/auto/_base_.js"></script>
     </head>
     <body>
         <div id="notebox"></div>
@@ -41,5 +43,13 @@
                 <div class="row" data-load="manage/foot.jsp"></div>
             </div>
         </nav>
+        <script type="text/javascript">
+            hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+                // 外部定制
+                if (window["in_<%=_pageId%>"]) {
+                    window["in_<%=_pageId%>"](context);
+                }
+            });
+        </script>
     </body>
 </html>

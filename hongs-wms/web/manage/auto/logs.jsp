@@ -1,7 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_base_.jsp"%>
 <%
-    String _pageId = (_module + "-" + _entity + "-logs").replace('/', '-');
+    String _pageId = (_module + "_" + _entity + "_logs").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore.logs.title", _title)%></h2>
 <div id="<%=_pageId%>">

@@ -9,9 +9,10 @@
 <%
     String _action = Synt.declare(request.getAttribute("info.action"), "review");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
+    String _funcId = (_module + "_" + _entity + "_info").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>">
+<div id="<%=_pageId%>" class="<%=_action%>-info">
     <form action="" method="POST" enctype="multipart/form-data">
         <%
         Iterator it = _fields.entrySet().iterator();
@@ -144,12 +145,14 @@
         _url: "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act"
     });
 
-    // 附加脚本
-    if (self.inMyInfo) {
-        self.inMyInfo( context );
-    }
+    hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+        // 外部定制
+        if (window["in_<%=_funcId%>"]) {
+            window["in_<%=_funcId%>"](context, formobj);
+        }
 
-    // 加载数据
-    formobj.load(null, loadbox );
+        // 加载数据
+        formobj.load(null, loadbox);
+    });
 })( jQuery );
 </script>

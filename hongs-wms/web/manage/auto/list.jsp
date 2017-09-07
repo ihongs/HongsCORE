@@ -5,19 +5,19 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_more_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("list.action") , "list" );
-    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
-    String _confId = FormSet.hasConfFile(_module + "/" + _entity)
-                  || NaviMap.hasConfFile(_module + "/" + _entity)
-                   ?  _module + "/" + _entity : _module;
+    String _action = Synt.declare(request.getAttribute("list.action"), "normal");
+    String _pageId = (_module + "_" + _entity + "_" + _action).replace('/', '_');
+    
+    String _lang = "normal".equals(_action) ? "list" : _action;
+    String _conf = FormSet.hasConfFile(_module + "/" + _entity)
+                || NaviMap.hasConfFile(_module + "/" + _entity)
+                 ? _module + "/" + _entity : _module ;
 
-    StringBuilder RB = new StringBuilder("id");
-    if ( _action.equals("select") ) {
-        RB.append(",name");
-    }
+    StringBuilder _rb = new StringBuilder(   "id,name"   );
+    StringBuilder _ob = new StringBuilder("-mtime,-ctime");
 %>
-<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
-<div id="<%=_pageId%>" class="row">
+<h2><%=_locale.translate("fore."+ _lang +".title", _title)%></h2>
+<div id="<%=_pageId%>" class="<%=_action%>-list">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <%if ( "select".equals(_action)) {%>
@@ -119,8 +119,8 @@
             String rb;
 
             if ("number".equals(type)) {
-                String enumConf = Synt.defxult((String) info.get("conf"),_confId);
-                String enumName = Synt.defxult((String) info.get("enum"), name  );
+                String enumConf = Synt.defxult((String) info.get("conf"), _conf );
+                String enumName = Synt.defxult((String) info.get("enum"),  name );
                 Map    enumData ;
                 try {
                     enumData  = FormSet.getInstance(enumConf ).getEnum(enumName );
@@ -188,7 +188,7 @@
                         oc = "sortable";
                     }
 
-                    RB.append(',').append( name );
+                    _rb.append(',').append(name);
                 %>
                 <%if ("number".equals(type) || "range".equals(type)) {%>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=text%></th>
@@ -248,7 +248,7 @@
             ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
              '.revert', '@']
         ],
-        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=-mtime,-ctime&rb=<%=RB%>"
+        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=<%=_ob%>&rb=<%=_rb%>"
     });
 
     <%if (!"select".equals(_action)) {%>
@@ -285,11 +285,12 @@
     filtobj._fill__enum = function(x, v, n, t) {
         hsListFillFilt.call(this , x, v, n, t);
     };
-    <%} /*End If */%>
-    <%if ( "select".equals(_action)) {%>
+    <%} else {%>
     listobj._fill__fork = function(x, v, n, t) {
         hsListFillFork.call(this , x, v, n, t);
-        x.find("input").attr("title", this._info.name);
+        x.find("input")
+         .attr("title", this._info.name)
+         .data(         this._info     );
     };
     <%} /*End If */%>
 
@@ -323,12 +324,14 @@
         }, 500);
     });
 
-    // 附加脚本
-    if (self.inMyList) {
-        self.inMyList( context );
-    }
+    hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+        // 外部定制
+        if (window["<%=_pageId%>"]) {
+            window["<%=_pageId%>"](context, listobj);
+        }
 
-    // 加载数据
-    listobj.load(null, findbox );
+        // 加载数据
+        listobj.load(null, findbox);
+    });
 })(jQuery);
 </script>

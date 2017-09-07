@@ -395,10 +395,32 @@ jQuery.fn.hsStat = function( opts ) {
 };
 
 /**
+ * 定制脚本单次加载
+ */
+var _HsCust = {};
+function hsCust(link, func) {
+    if (_HsCust[link]) {
+        func();
+        return;
+    }
+    $.ajax({
+        url: hsFixUri(link),
+        async: true,
+        cache: true,
+        ifModified: true,
+        dataType: "script",
+        complete: function( ) {
+            _HsCust[link] = true;
+            func();
+        }
+    });
+}
+
+/**
  * 列表填充过滤选项
  */
 function hsListFillFilt(x, v, n, t) {
-    n = n.replace(/^ar\.0\./, ""  );
+    n = n.replace(/^ar\.\d\./ , "");
     if (t == "enum") {
         v = this._enum[n];
     } else {
@@ -452,17 +474,3 @@ S$.delete = function(req) {
     var url = S$.src() + "/delete.act";
     return S$.send(url, req);
 };
-
-/**
- * 误入空菜单时通知
- */
-$(document).on("loseMenu",function() {
-    $('#main-context').empty().append(
-        '<div class="alert alert-info"><p>'
-      + ':( 糟糕! 这里什么也没有, <a href="manage/">换个地方</a>瞧瞧去?'
-      + '</p></div>'
-    );
-    setTimeout(function() {
-        location.href = hsFixUri("manage/");
-    } , 3000);
-});

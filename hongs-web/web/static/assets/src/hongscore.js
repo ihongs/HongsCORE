@@ -799,6 +799,7 @@ function hsSetPms(uri, pms) {
             hsSetParam (uri, n,v);
         }
     }
+    return  uri;
 }
 
 /**

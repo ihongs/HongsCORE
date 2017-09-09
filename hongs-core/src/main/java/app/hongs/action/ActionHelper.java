@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -337,8 +336,8 @@ public class ActionHelper implements Cloneable
     //** 解析数据 **/
 
     try {
-        Map rd = new LinkedHashMap();
-        Map ud = new LinkedHashMap();
+        Map rd = new HashMap();
+        Map ud = new HashMap();
 
         for ( Part part : request.getParts( ) ) {
             long   size = part.getSize();
@@ -1175,7 +1174,7 @@ public class ActionHelper implements Cloneable
    * @return
    */
   public static final Map parseQuery(String s) {
-      Map<String, List<String>> a = new LinkedHashMap();
+      Map<String, List<String>> a = new HashMap();
       int j , i;
           j = 0;
 

@@ -136,6 +136,10 @@ public class Data extends SearchEntity {
         return fields;
     }
 
+    public String getFormId() {
+        return Synt.declare(getParams().get("form_id"), form );
+    }
+
     public Model getModel() throws HongsException {
         String tn = Synt.declare(getParams().get("table.name"), "matrix.data");
         if ("".equals(tn) || "none".equals(tn)) {
@@ -202,9 +206,10 @@ public class Data extends SearchEntity {
     }
 
     public void save(String id, Map rd) throws HongsException {
-        Table    table = getTable();
+        String   fid   = getFormId();
+        Table    table = getTable( );
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-        Object[] param = new String[ ] { id , form , "0" };
+        Object[] param = new String[]{id, fid, "0"};
         long     ctime = System.currentTimeMillis() / 1000;
         time  =  ctime ;
 
@@ -276,8 +281,8 @@ public class Data extends SearchEntity {
             Map nd = new HashMap();
             nd.put("ctime", ctime);
             nd.put("etime",   0  );
-            nd.put(/**/ "id", id );
-            nd.put("form_id", rd.get("form_id"));
+            nd.put(/***/"id", id );
+            nd.put("form_id", fid);
             nd.put("user_id", rd.get("user_id"));
             nd.put("name", dd.get("name"));
             nd.put("note", rd.get("note"));
@@ -301,9 +306,10 @@ public class Data extends SearchEntity {
 
         //** 获取旧的数据 **/
 
-        Table    table = getTable();
-        String   where = "`id`= ? AND `form_id`= ? AND `ctime`= ?";
-        Object[] param = new String [ ] { id , form , rtime + "" };
+        String   fid   = getFormId();
+        Table    table = getTable( );
+        String   where = "`id`=? AND `form_id`=? AND `ctime`=?" ;
+        Object[] param = new Object[] {id, fid, rtime};
 
         if (table == null) {
             throw new HongsException(0x1100, "此资源不支持恢复");
@@ -324,9 +330,6 @@ public class Data extends SearchEntity {
 
         //** 保存到数据库 **/
 
-        where = "`id` = ? AND `form_id` = ? AND `etime` = ?";
-        param = new Object[] {id, form, 0};
-
         Map ud = new HashMap();
         ud.put("etime", ctime);
 
@@ -336,6 +339,8 @@ public class Data extends SearchEntity {
         rd.put("name" , dd.get("name"));
         rd.put("data" , dd.get("data"));
 
+        where = "`id`=? AND `form_id`=? AND `etime`=?";
+        param = new Object[]{id, fid,0};
         table.update(ud , where, param);
         table.insert(rd);
 
@@ -350,15 +355,16 @@ public class Data extends SearchEntity {
     }
 
     public void call(String id, String act) throws HongsException {
-        String url = Synt.declare(getParams().get("callback"), "");
-        if ("".equals(url)) {
+        String url = (String) getParams().get("callback");
+        if (url == null || "".equals(url)) {
             return;
         }
 
-        url = Tool.inject(url, Synt.mapOf(
-            "id"    , id  ,
-            "action", act ,
-            "entity", form,
+        String fid = getFormId();
+        url = Tool.inject(url,Synt.mapOf(
+            "id"    , id ,
+            "action", act,
+            "entity", fid,
             "time"  , time
         ));
         DataCaller.getInstance().add(url);

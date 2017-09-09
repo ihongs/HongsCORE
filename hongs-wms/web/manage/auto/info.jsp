@@ -49,6 +49,7 @@
             }
         %>
         <%if ("hidden".equals(type)) {%>
+            <input type="hidden" name="<%=name%>"/>
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
         <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
@@ -142,10 +143,10 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _url: "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act"
+        _url : "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act"
     });
 
-    hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+    hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制
         if (window["in_<%=_funcId%>"]) {
             window["in_<%=_funcId%>"](context, formobj);

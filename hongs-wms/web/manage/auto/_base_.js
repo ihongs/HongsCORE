@@ -395,27 +395,6 @@ jQuery.fn.hsStat = function( opts ) {
 };
 
 /**
- * 定制脚本单次加载
- */
-var _HsCust = {};
-function hsCust(link, func) {
-    if (_HsCust[link] == 1) {
-        if ( func ) func( );
-    } else {
-    $.ajax({
-        url: hsFixUri(link),
-        async: true,
-        cache: true,
-        ifModified: true,
-        dataType: "script",
-        success : function( ) {
-            _HsCust[link] = 1;
-            if (func) func( );
-        }
-    }); }
-}
-
-/**
  * 列表填充过滤选项
  */
 function hsListFillFilt(x, v, n, t) {
@@ -447,7 +426,7 @@ S$.send = function(url, req) {
         url     : hsFixUri   (url),
         data    : hsSerialArr(req),
         success : function   (rst) {
-            rzt = hsResponObj(rst);
+            rzt = hsResponse (rst);
         },
         type    : "post",
         dataType: "json",

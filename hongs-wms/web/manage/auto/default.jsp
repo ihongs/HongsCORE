@@ -44,7 +44,7 @@
             </div>
         </nav>
         <script type="text/javascript">
-            hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+            hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
                 // 外部定制
                 if (window["in_<%=_funcId%>"]) {
                     window["in_<%=_funcId%>"]( );

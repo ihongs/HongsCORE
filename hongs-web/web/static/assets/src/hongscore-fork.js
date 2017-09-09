@@ -274,6 +274,12 @@ function hsFormFillPick(box, v, n, t) {
            .append(jQuery( '<span class="close pull-right">&times;</span>'))
         );
     }
+    function puton(btn, box, val, txt) {
+        box.append(jQuery('<li class="btn btn-link form-control"></li>').attr( "title", txt )
+           .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
+           .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
+        );
+    }
 
     if (box.is("input") ) {
         if (! btn.data("pickInited")) {
@@ -294,19 +300,19 @@ function hsFormFillPick(box, v, n, t) {
             var arr  = v[val];
             var txt  = arr[0];
             inset(btn, box, val, txt);
-        } } else {
-            reset(btn, box);
+        }} else {
+            reset(btn, box  );
         }
-    } else {
-        if (! box.data("pickInited"))  {
+    } else if ( ! box.is(".pickrol")) {
+        if (! box.data("pickInited")) {
             box.data("pickInited", 1);
             box.on("click", ".close", btn, function(evt) {
                 var opt = jQuery(this).closest("li");
                 var val = opt.find(":hidden").val( );
                 var btn = evt.data;
                 delete v[val];
+                btn.show (  );
                 opt.remove( );
-                btn.show  ( );
                 box.trigger("change");
                 return false ;
             });
@@ -328,6 +334,12 @@ function hsFormFillPick(box, v, n, t) {
             var arr  = v[val];
             var txt  = arr[0];
             putin(btn, box, val, txt);
+        }
+    } else {
+        for(var val in v) {
+            var arr  = v[val];
+            var txt  = arr[0];
+            puton(btn, box, val, txt);
         }
     }
 }
@@ -373,6 +385,8 @@ function hsListFillPick(cel, v, n) {
         // 选择区域
         if (bin) {
             bin = $(this).hsFind(bin);
+        } else {
+            bin = $(this).hsFind("@");
         }
 
         // 填充区域

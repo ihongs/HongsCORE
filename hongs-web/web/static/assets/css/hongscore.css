@@ -410,6 +410,12 @@ ul.pickbox {
 ul.pickmul > li.btn {
     margin-bottom: 5px;
 }
+ul.pickrol > li.btn {
+    color: #333333;
+    cursor: default;
+    padding-left: 0;
+    padding-right: 0;
+}
 ul.pickbox > li.btn {
     width: 100%;
     text-align: left;

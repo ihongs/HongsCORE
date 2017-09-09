@@ -325,7 +325,7 @@
         }, 500);
     });
 
-    hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+    hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制
         if (window["<%=_pageId%>"]) {
             window["<%=_pageId%>"](context, listobj);

@@ -190,10 +190,10 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _url: "<%=_module%>/<%=_entity%>/search.act"
+        _url : "<%=_module%>/<%=_entity%>/search.act"
     });
 
-    hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
+    hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制
         if (window["in_<%=_funcId%>"]) {
             window["in_<%=_funcId%>"](context, formobj);

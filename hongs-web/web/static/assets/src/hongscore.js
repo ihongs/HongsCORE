@@ -75,8 +75,29 @@ function H$() {
 
 /**
  * 依赖加载
- * jQuery.getScript 的补充方法, 仅加载一次;
- * 类似于 requirejs 的依赖场景, 无需预定义.
+ * 类似于 hsRequires, 不同的是这里顺序加载.
+ * @param {String|Array} url 依赖JS
+ * @param {Function} fun 就绪后执行
+ */
+function hsRequired(url, fun ) {
+    if (! jQuery.isArray(url)) {
+        url = [url];
+    }
+    var uri = [ url[ 0 ] ];
+    var urs = url.slice(1);
+    hsRequires( uri, function( ) {
+        if (urs.length) {
+            hsRequired(urs, fun);
+        } else if (fun) {
+            fun   (   );
+        }
+    });
+}
+
+/**
+ * 依赖加载
+ * jQuery.getScript 的补充方法, 仅加载一次,
+ * 类似于 requirejs 的依赖场景, 可异步加载.
  * @param {String|Array} url 依赖JS
  * @param {Function} fun 就绪后执行
  */

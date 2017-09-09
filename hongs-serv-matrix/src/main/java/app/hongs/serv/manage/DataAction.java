@@ -80,8 +80,7 @@ public class DataAction extends SearchAction {
 
         // 放入当前用户ID
         Object uid = helper.getSessibute(Cnst.UID_SES);
-        helper.getRequestData().put("user_id", uid);
-        helper.getRequestData().put("form_id", ent);
+        helper.getRequestData(  ).put("user_id" , uid);
     }
 
     /**
@@ -131,6 +130,8 @@ public class DataAction extends SearchAction {
         Data    sr = (Data) getEntity(helper);
         Model   mo = sr.getModel();
         Map     rd = helper.getRequestData( );
+        rd.remove("user_id");
+        rd.put   ("form_id" , sr.getFormId());
         Map     sd = mo.search(rd);
 
         // 详情数据转换

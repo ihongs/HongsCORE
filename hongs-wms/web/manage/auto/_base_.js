@@ -399,21 +399,20 @@ jQuery.fn.hsStat = function( opts ) {
  */
 var _HsCust = {};
 function hsCust(link, func) {
-    if (_HsCust[link]) {
-        func();
-        return;
-    }
+    if (_HsCust[link] == 1) {
+        if ( func ) func( );
+    } else {
     $.ajax({
         url: hsFixUri(link),
         async: true,
         cache: true,
         ifModified: true,
         dataType: "script",
-        complete: function( ) {
-            _HsCust[link] = true;
-            func();
+        success : function( ) {
+            _HsCust[link] = 1;
+            if (func) func( );
         }
-    });
+    }); }
 }
 
 /**

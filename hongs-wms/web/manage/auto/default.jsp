@@ -4,7 +4,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_base_.jsp"%>
 <%
-    String _pageId = (_module + "_" + _entity).replace('/', '-');
+    String _funcId = (_module + "_" + _entity).replace('/', '_');
 %>
 <!doctype html>
 <html>
@@ -46,8 +46,8 @@
         <script type="text/javascript">
             hsCust("<%=_module%>/<%=_entity%>/custom.js", function() {
                 // 外部定制
-                if (window["in_<%=_pageId%>"]) {
-                    window["in_<%=_pageId%>"](context);
+                if (window["in_<%=_funcId%>"]) {
+                    window["in_<%=_funcId%>"]( );
                 }
             });
         </script>

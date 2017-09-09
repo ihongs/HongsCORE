@@ -225,6 +225,7 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
+    var loadbox = context.closest(".loadbox");
     var statbox = context.find(".statbox");
     var filtbox = context.find(".filtbox");
     var formbox = context.find(".findbox");
@@ -331,7 +332,7 @@
         }
 
         // 加载数据
-        listobj.load(null, findbox);
+        listobj.load(hsSetPms(listobj._url, loadbox), findbox);
     });
 })(jQuery);
 </script>

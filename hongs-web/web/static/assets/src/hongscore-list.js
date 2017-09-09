@@ -204,7 +204,7 @@ HsList.prototype = {
         });
     },
     loadBack : function(rst) {
-        rst = hsResponObj(rst);
+        rst = hsResponse(rst);
         if (rst.ok === false) return;
 
         this.listBox.trigger("loadBack", [rst, this]);
@@ -427,7 +427,7 @@ HsList.prototype = {
         }
     },
     sendBack : function(btn, rst, data) {
-        rst = hsResponObj(rst, true);
+        rst = hsResponse(rst, 1);
         if (rst.ok) {
             if (rst.msg) {
                 this.note(rst.msg, "succ");

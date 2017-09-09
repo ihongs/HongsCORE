@@ -238,7 +238,7 @@ HsTree.prototype = {
         });
     },
     loadBack : function(rst, pid) {
-        rst = hsResponObj(rst);
+        rst = hsResponse(rst);
         if (rst.ok === false) return;
 
         this.treeBox.trigger("loadBack", [rst, pid, this]);
@@ -377,7 +377,7 @@ HsTree.prototype = {
         }
     },
     sendBack : function(btn, rst, data) {
-        rst = hsResponObj(rst, true);
+        rst = hsResponse(rst, 1);
         if (rst.ok) {
             if (rst.msg) {
                 this.note(rst.msg, "succ");

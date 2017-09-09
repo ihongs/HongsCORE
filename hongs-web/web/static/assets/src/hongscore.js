@@ -5,6 +5,8 @@ if (typeof(HsAUTH) === "undefined") HsAUTH = {};
 if (typeof(HsCONF) === "undefined") HsCONF = {};
 if (typeof(HsLANG) === "undefined") HsLANG = {};
 
+var HsDeps = {};
+
 /**
  * 快捷方式
  * 说明(首参数以下列字符开头的意义):
@@ -27,7 +29,6 @@ function H$() {
     case ':': return hsGetLang.apply(this, arguments);
     case '?': return hsChkUri .apply(this, arguments);
     case '/': return hsFixUri .apply(this, arguments);
-    case '&': // 同 #, 但 HTML 中较特殊, 逐步废弃
     case '#':
     case '@':
         if (arguments.length === 1) {
@@ -49,8 +50,8 @@ function H$() {
             else
                 return hsGetParam (arguments[1], arguments[0]);
         }
-    case '$':
     case '%':
+    case '$':
         var c = b === '$' ? window.sessionStorage : window.localStorage;
         if (typeof c === "undefined") {
             throw "H$: Does not support '"
@@ -73,13 +74,50 @@ function H$() {
 }
 
 /**
- * 标准化返回对象
+ * 依赖加载
+ * jQuery.getScript 的补充方法, 仅加载一次;
+ * 类似于 requirejs 的依赖场景, 无需预定义.
+ * @param {String|Array} url 依赖JS
+ * @param {Function} fun 就绪后执行
+ */
+function hsRequires(url , fun) {
+    if (typeof url != "array") {
+        url = [url];
+    }
+    var i = 0;
+    var j = 0;
+    var l = url.length;
+    while ( l >= ++ i ) {
+        var u  = hsFixUri(url[i]);
+        if(!HsDeps [u]) {
+        jQuery.ajax({
+            url  :  u ,
+            cache: true,
+            async: true,
+            ifModified : true,
+            dataType:"script",
+        success  : function( ) {
+            HsDeps [u] = true;
+            if (fun && l == ++ j) {
+                fun( );
+            }
+        }
+        });
+        } else {
+            if (fun && l == ++ j) {
+                fun( );
+            }
+        }
+    }
+}
+
+/**
+ * 响应数据
  * @param {Object|String|XHR} rst JSON对象/JSON文本或错误消息
- * @param {Boolean} qut 不显示消息
- * @param {Boolean} qxt 不进行跳转
+ * @param {Boolean} qut 1不显示消息, 2不执行跳转, 3彻底的静默
  * @return {Object}
  */
-function hsResponObj(rst, qut, qxt) {
+function hsResponse(rst, qut) {
     if (typeof (rst.responseText) !== "undefined") {
         rst  =  rst.responseText;
     }
@@ -139,18 +177,18 @@ function hsResponObj(rst, qut, qxt) {
             rst.msg =  "" ;
         }
 
-        // 服务接口要求跳转 (常为未登录或无权限)
-        if (! qxt) {
+        // 服务接口要求跳转(常为未登录或无权限)
+        if (! qut || ! (2 == (2 & qut))) {
             if (rst.ern && /^Er[34]\d+/i.test(rst.ern)) {
                 var url;
                 if (rst.err && /^Goto /i.test(rst.err)) {
                     url = jQuery.trim(rst.err.substring(5));
                 } else {
-                    url =  hsGetConf (rst.ern+".redirect" );
+                    url = hsGetConf(rst.ern + ".redirect" );
                 }
                 if (url !== undefined && url !== null)  {
                     if (rst.msg) {
-                        alert( rst.msg );
+                        alert(rst.msg);
                     }
                     if (url && url != '#') {
                         location.assign(hsFixUri(url));
@@ -162,8 +200,8 @@ function hsResponObj(rst, qut, qxt) {
             }
         }
 
-        // 成功失败消息处理 (失败则总是发出警告)
-        if (! qut) {
+        // 成功失败消息处理(失败则总是发出警告)
+        if (! qut || ! (1 == (1 & qut))) {
             if (rst.ok ) {
                 if (rst.msg) {
                     jQuery.hsNote(rst.msg, "succ");
@@ -185,6 +223,8 @@ function hsResponObj(rst, qut, qxt) {
     }
     return rst;
 }
+
+var hsResponObj = hsResponse; //兼容旧的命名
 
 /**
  * 序列化为数组, 供发往服务器(类似 jQuery.fn.serializeArray)
@@ -730,21 +770,6 @@ function hsGetLang(key, rep) {
 }
 
 /**
- * 偏移值转换为GMT时区
- * @param {Number} off
- * @return {String} 例如 -480 可转为 GMT+08:00
- */
-function hsGmtZone(off) {
-    var hur, min;
-    min = Math.abs(off);
-    hur = Math.floor(min / 60);
-    min = Math.floor(min % 60);
-    if (hur < 10) hur = "0" + hur;
-    if (min < 10) min = "0" + min;
-    return "GMT"+ (off > 0 ? "-" : "+") + hur + ":" + min;
-}
-
-/**
  * 检查URI是否有权访问
  * @param {String} uri
  * @return {Boolean} 是(true)否(false)有权访问
@@ -1139,6 +1164,21 @@ function hsPrsDate(text, format) {
   }
 
   return new Date(Date.parse(text2));
+}
+
+/**
+ * 偏移值转换为GMT时区
+ * @param {Number} off
+ * @return {String} 例如 -480 可转为 GMT+08:00
+ */
+function hsGmtZone(off) {
+    var hur, min;
+    min = Math.abs(off);
+    hur = Math.floor(min / 60);
+    min = Math.floor(min % 60);
+    if (hur < 10) hur = "0" + hur;
+    if (min < 10) min = "0" + min;
+    return "GMT"+ (off > 0 ? "-" : "+") + hur + ":" + min;
 }
 
 /**
@@ -2046,7 +2086,7 @@ Object.assign = function() {
 //** Global Events **/
 
 $(document).ajaxError(function(evt, xhr, cnf) {
-    var rst = hsResponObj(xhr);
+    var rst = hsResponse(xhr);
     if (typeof(cnf.funcName) === "undefined") {
         return;
     }

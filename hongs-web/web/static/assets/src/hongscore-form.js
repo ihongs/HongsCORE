@@ -102,7 +102,7 @@ HsForm.prototype = {
         });
     },
     loadBack : function(rst) {
-        rst = hsResponObj(rst);
+        rst = hsResponse(rst);
         if (rst["ok"] === false) return;
 
         this.formBox.trigger("loadBack", [rst, this]);
@@ -326,7 +326,7 @@ HsForm.prototype = {
         }
     },
     saveBack : function(rst) {
-        rst = hsResponObj(rst, true);
+        rst = hsResponse(rst, 1);
         if (rst.ok) {
             var evt = jQuery.Event("saveBack");
             this.formBox.trigger(evt, [rst, this]);

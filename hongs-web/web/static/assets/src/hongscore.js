@@ -5,7 +5,7 @@ if (typeof(HsAUTH) === "undefined") HsAUTH = {};
 if (typeof(HsCONF) === "undefined") HsCONF = {};
 if (typeof(HsLANG) === "undefined") HsLANG = {};
 
-var HsDeps = {};
+var _HsDeps = {};
 
 /**
  * 快捷方式
@@ -89,7 +89,7 @@ function hsRequires(url , fun) {
     var l = url.length;
     while ( l >= ++ i ) {
         var u  = hsFixUri(url[i-1]);
-        if(!HsDeps [u]) {
+        if(!_HsDeps[u]) {
         jQuery.ajax({
             url  :  u ,
             cache: true,
@@ -97,7 +97,7 @@ function hsRequires(url , fun) {
             ifModified : true,
             dataType:"script",
         success  : function( ) {
-            HsDeps [u] = true;
+            _HsDeps[u] = true;
             if (fun && l == ++ j) {
                 fun( );
             }

@@ -88,7 +88,7 @@ function hsRequires(url , fun) {
     var j = 0;
     var l = url.length;
     while ( l >= ++ i ) {
-        var u  = hsFixUri(url[i]);
+        var u  = hsFixUri(url[i-1]);
         if(!HsDeps [u]) {
         jQuery.ajax({
             url  :  u ,

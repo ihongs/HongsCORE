@@ -224,7 +224,16 @@ function hsResponse(rst, qut) {
     return rst;
 }
 
-var hsResponObj = hsResponse; //兼容旧的命名
+/**
+ *  hsResponse 旧版兼容
+ * @deprecated 日后移除
+ */
+function hsResponObj(rst, qut, qxt) {
+    var mod = 0;
+    if (qut) mod += 1;
+    if (qxt) mod += 2;
+    return hsResponse(rst, mod);
+}
 
 /**
  * 序列化为数组, 供发往服务器(类似 jQuery.fn.serializeArray)

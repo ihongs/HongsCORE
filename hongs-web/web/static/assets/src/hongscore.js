@@ -80,15 +80,15 @@ function H$() {
  * @param {String|Array} url 依赖JS
  * @param {Function} fun 就绪后执行
  */
-function hsRequires(url , fun) {
-    if (typeof url != "array") {
+function hsRequires(url, fun ) {
+    if (! jQuery.isArray(url)) {
         url = [url];
     }
     var i = 0;
     var j = 0;
     var l = url.length;
     while ( l >= ++ i ) {
-        var u  = hsFixUri(url[i-1]);
+        var u = hsFixUri(url[i-1]);
         if(!_HsDeps[u]) {
         jQuery.ajax({
             url  :  u ,

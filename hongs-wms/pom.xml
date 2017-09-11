@@ -78,6 +78,7 @@
                     <warSourceDirectory>web</warSourceDirectory>
                     <warSourceExcludes>
                         **/*-dev/**,
+                        **/build/**,
                         **/node_modules/**
                     </warSourceExcludes>
                     <packagingExcludes>

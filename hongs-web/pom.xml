@@ -38,7 +38,13 @@
                 <version>2.5</version>
                 <configuration>
                     <warSourceDirectory>web</warSourceDirectory>
-                    <packagingExcludes>WEB-INF/classes/app/**</packagingExcludes>
+                    <warSourceExcludes>
+                        **/*-dev/**,
+                        **/node_modules/**
+                    </warSourceExcludes>
+                    <packagingExcludes>
+                        WEB-INF/classes/app/**
+                    </packagingExcludes>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>
                     </archive>

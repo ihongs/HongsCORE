@@ -120,22 +120,6 @@ public class ActionRunner {
     }
 
     /**
-     * 获取当前方法名称
-     * @return
-     */
-    public String getMtdAnn() {
-        return method.getAnnotation(Action.class).value();
-    }
-
-    /**
-     * 获得当前资源名称
-     * @return
-     */
-    public String getClsAnn() {
-        return mclass.getAnnotation(Action.class).value();
-    }
-
-    /**
      * 执行动作方法
      * 会执行 action 方法上 annotation 指定的过滤器
      * @throws HongsException

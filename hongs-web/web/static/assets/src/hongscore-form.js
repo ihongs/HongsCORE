@@ -643,9 +643,13 @@ HsForm.prototype = {
         inp = this.getinput(inp);
 
         var grp = inp.closest(".form-group");
-        var blk = grp.find   (".help-block");
+        var blk = grp.find(   ".help-block");
+        var leb = grp.find(".control-label");
         if (blk.size() == 0) {
             blk = jQuery('<p class="help-block"></p>').appendTo(grp);
+            if (leb.hasClass(".form-control-static" )) {
+                blk.addClass( "form-control-static" );
+            }
         }
         if (err===undefined) {
             grp.removeClass("has-error");

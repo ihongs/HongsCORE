@@ -477,7 +477,14 @@ public class Form extends Model {
                 if(!fiel.containsKey("type")) {
                     fiel.put("type", "timestamp");
                 }
-            }
+            } else
+            // 选项表单要指定配置路径
+            if ("enum".equals(types.get(t) )
+            ||  "form".equals(types.get(t) )) {
+                if(!fiel.containsKey("conf")) {
+                    fiel.put("conf", prefix +"/"+ id);
+                }
+            } else
             // 可搜索指定存为搜索类型
             if (Synt.declare(fiel.get("findable"), false)) {
                 if(!fiel.containsKey("lucnene-type")) {

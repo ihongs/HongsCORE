@@ -20,8 +20,8 @@
         // 接收消息
         socket.onmessage = function(evt) {
             var dat = JSON.parse(evt.data);
-            dat = hsResponObj(dat);
-            if (! dat.ok ) return ;
+            dat = hsResponse(dat);
+            if (! dat.ok) return;
             dat = dat.info;
 
             var div = $('<div class="message"></div>');
@@ -42,8 +42,8 @@
         url: act,
         data: {"id" : uid},
         success: function(rst) {
-            rst = hsResponObj(rst);
-            if (! rst.ok ) return ;
+            rst = hsResponse(rst);
+            if (! rst.ok) return;
             rst = rst.info;
 
             socketInit(rst.id);

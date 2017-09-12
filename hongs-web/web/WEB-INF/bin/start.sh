@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Just for docker starts.
+
 PWD=$(cd `dirname $0`; pwd)
 CWD=`dirname $PWD`
 APP="$CWD/bin/app"

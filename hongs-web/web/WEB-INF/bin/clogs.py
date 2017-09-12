@@ -16,7 +16,7 @@ if  __name__ == "__main__":
         print "Another options:"
         print "  -n --name             Action or Cmdlet name"
         print "  -d --addr             Client IP address"
-        print "  -l --leve             Logs save level"
+        print "  -l --type             Logs type level"
         print "  -t --time             Logs time range"
         print "  -h --help             Show this msg"
 
@@ -30,7 +30,7 @@ if  __name__ == "__main__":
     lv = None
     tr = None
 
-    opts, args = getopt(sys.argv[1:], "n:a:l:t:h", ["name", "addr", "leve", "time", "help"])
+    opts, args = getopt(sys.argv[1:], "n:a:l:t:h", ["name", "addr", "type", "time", "help"])
     for n,v in opts:
         if  n in ("-n", "--name"):
             if  v.startswith('*')
@@ -46,7 +46,7 @@ if  __name__ == "__main__":
                 ip = re.compile(re.escape(".*"+v[ 1:]))
             else:
                 ip = re.compile(re.escape(v))
-        if  n in ("-l", "--leve"):
+        if  n in ("-l", "--type"):
             lv = v
         if  n in ("-t", "--time"):
             tr = v

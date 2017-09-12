@@ -169,7 +169,7 @@
                     <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
                 <%} /*End If */%>
                 </div>
-                <div class="col-sm-6 col-sm-offset-3 help-block"></div>
+                <div class="col-sm-3 help-block form-control-static"></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

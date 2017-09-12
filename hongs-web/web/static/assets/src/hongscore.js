@@ -97,7 +97,7 @@ function hsRequired(url, fun ) {
 /**
  * 依赖加载
  * jQuery.getScript 的补充方法, 仅加载一次,
- * 类似于 requirejs 的依赖场景, 可异步加载.
+ * 类似于 requirejs 的依赖场景, 但无需预定.
  * @param {String|Array} url 依赖JS
  * @param {Function} fun 就绪后执行
  */
@@ -113,8 +113,8 @@ function hsRequires(url, fun ) {
         if(!_HsDeps[u]) {
         jQuery.ajax({
             url  :  u ,
-            cache: true,
             async: true,
+            cache: true,
             ifModified : true,
             dataType:"script",
         success  : function( ) {
@@ -247,7 +247,7 @@ function hsResponse(rst, qut) {
 
 /**
  *  hsResponse 旧版兼容
- * @deprecated 日后移除
+ * @deprecated 即将移除
  */
 function hsResponObj(rst, qut, qxt) {
     var mod = 0;

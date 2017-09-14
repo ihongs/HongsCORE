@@ -41,6 +41,7 @@
                     <warSourceExcludes>
                         **/*-dev/**,
                         **/build/**,
+                        **/coverage/**,
                         **/node_modules/**
                     </warSourceExcludes>
                     <packagingExcludes>

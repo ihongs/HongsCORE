@@ -8,16 +8,16 @@ if (typeof(HsLANG) === "undefined") HsLANG = {};
 var _HsDeps = {};
 
 /**
- * 快捷方式
+ * 快捷获取
  * 说明(首参数以下列字符开头的意义):
- * .    获取配置
- * :    获取语言
- * ?    检查权限
- * /    补全路径
- * #    获取单个参数值, 第二个参数指定参数容器
- * @    获取多个参数值, 第二个参数指定参数容器
- * $    获取/设置会话存储, 第二个参数存在为设置, 第二个参数为null则删除
- * %    获取/设置本地存储, 第二个参数存在为设置, 第二个参数为null则删除
+ * . 获取配置
+ * : 获取语言
+ * ? 检查权限
+ * / 补全路径
+ * # 获取单个参数值, 第二个参数指定参数容器
+ * @ 获取多个参数值, 第二个参数指定参数容器
+ * % 获取/设置本地存储, 第二个参数存在为设置, 第二个参数为null则删除
+ * $ 获取/设置会话存储, 第二个参数存在为设置, 第二个参数为null则删除
  * @return {Mixed} 根据开头标识返回不同类型的数据
  */
 function H$() {
@@ -74,8 +74,7 @@ function H$() {
 }
 
 /**
- * 依赖加载
- * 类似于 hsRequires, 不同的是这里顺序加载.
+ * 依赖加载(顺序加载)
  * @param {String|Array} url 依赖JS
  * @param {Function} fun 就绪后执行
  */
@@ -83,8 +82,10 @@ function hsRequired(url, fun ) {
     if (! jQuery.isArray(url)) {
         url = [url];
     }
+
     var uri = [ url[ 0 ] ];
     var urs = url.slice(1);
+
     hsRequires( uri, function( ) {
         if (urs.length) {
             hsRequired(urs, fun);
@@ -95,9 +96,7 @@ function hsRequired(url, fun ) {
 }
 
 /**
- * 依赖加载
- * jQuery.getScript 的补充方法, 仅加载一次,
- * 类似于 requirejs 的依赖场景, 但无需预定.
+ * 依赖加载(异步加载)
  * @param {String|Array} url 依赖JS
  * @param {Function} fun 就绪后执行
  */
@@ -105,30 +104,49 @@ function hsRequires(url, fun ) {
     if (! jQuery.isArray(url)) {
         url = [url];
     }
+
     var i = 0;
     var j = 0;
     var l = url.length;
+    var h = document.head
+         || jQuery ("head") [0]
+         || document.documentElement;
+
     while ( l >= ++ i ) {
         var u = hsFixUri(url[i-1]);
-        if(!_HsDeps[u]) {
-        jQuery.ajax({
-            url  :  u ,
-            async: true,
-            cache: true,
-            ifModified : true,
-            dataType:"script",
-        success  : function( ) {
-            _HsDeps[u] = true;
-            if (fun && l == ++ j) {
+        if (_HsDeps[u]) {
+            if (fun && l == ++ j ) {
                 fun( );
             }
+            continue;
         }
-        });
+
+        // 在 head 里加 link 或 script 标签, 监听其加载事件, 最后就绪的回调
+        var n = document.createElement(/\.css$/.test (u) ? "link" : "script");
+        n.onload = n.onreadystatechange = ( function (n, u) {
+            return function( ) {
+                if (! n.readyState
+                ||  n.readyState == "loaded"
+                ||  n.readyState == "complete") {
+                    n.onload = n.onreadystatechange = null;
+                    _HsDeps[u] = true;
+                    if (fun && l == ++ j) {
+                        fun( );
+                    }
+                }
+            };
+        }) (n, u);
+        if (n.tagName == "SCRIPT") {
+            n.defer = false;
+            n.async = true ;
+            n.type  = "text/javascript";
+            n.src   = u ;
         } else {
-            if (fun && l == ++ j) {
-                fun( );
-            }
+            n.rel   = "stylesheet";
+            n.type  = "text/css"  ;
+            n.href  = u ;
         }
+        h.appendChild(n);
     }
 }
 

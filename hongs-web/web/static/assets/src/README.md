@@ -10,25 +10,22 @@
 ## 属性缩写:
 
     List:
+        data-pn     Page num 
         data-ob     Order by
-        data-pn     Page num
         data-fn     Field name
         data-ft     Field type
-        data-fl     Field fill info data
+        data-fl     Fill lambda // 填充取值
     Form:
-        data-pn     Param name
         data-fn     Field name
         data-ft     Field type
-        data-fl     Field fill info data
-        data-fe     Field fill enum data
+        data-fl     Fill lambda // 填充取值
+        data-dl     Data lambda // 填充选项
     Fork:
-        data-tk     Title key
-        data-vk     Value key
         data-ak     Assoc key
-        data-al     Assoc url // FormSet 内部用
-        data-at     Assoc act // FormSet 内部用
+        data-vk     Value key
+        data-tk     Title key
 
-data-fl,data-fd 的取值可以是数字或表达式, 参数可使用 form|list,this,v,n; 其他非缩写 data 属性通常可按字面意思理解, data-toggle,data-target 等属性意义同 bootstrap 中相关功能.
+data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-toggle,data-target 等的意义同 bootstrap 中相关功能.
 
 ## 环境加载
 

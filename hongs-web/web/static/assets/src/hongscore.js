@@ -1,11 +1,11 @@
 
-/* global self, eval, Element, encodeURIComponent, decodeURIComponent */
+/* global self, eval, Element, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
 
-if (typeof(HsAUTH) === "undefined") HsAUTH = {};
-if (typeof(HsCONF) === "undefined") HsCONF = {};
-if (typeof(HsLANG) === "undefined") HsLANG = {};
-
-var _HsDeps = {};
+if (!self.HsAUTH) self.HsAUTH = {};
+if (!self.HsCONF) self.HsCONF = {};
+if (!self.HsLANG) self.HsLANG = {};
+if (!self.HsREQS) self.HsREQS = {};
+if (!self.HsDEPS) self.HsDEPS = {};
 
 /**
  * 快捷获取
@@ -113,15 +113,19 @@ function hsRequires(url, fun ) {
          || document.documentElement;
 
     while ( l >= ++ i ) {
-        var u = hsFixUri(url[i-1]);
-        if (_HsDeps[u]) {
-            if (fun && l == ++ j ) {
+        var u = url[i - 1 ];
+        if (HsREQS [u]) {
+            u = HsREQS  [u];
+        }   u = hsFixUri(u);
+        if (HsDEPS [u]) {
+            if (fun && l == ++ j) {
                 fun( );
             }
-            continue;
+            continue  ;
         }
 
-        // 在 head 里加 link 或 script 标签, 监听其加载事件, 最后就绪的回调
+        // 在 head 加 link 或 script 标签
+        // 监听其加载事件, 全部完成时回调
         var n = document.createElement(/\.css$/.test (u) ? "link" : "script");
         n.onload = n.onreadystatechange = ( function (n, u) {
             return function( ) {
@@ -129,7 +133,7 @@ function hsRequires(url, fun ) {
                 ||  n.readyState == "loaded"
                 ||  n.readyState == "complete") {
                     n.onload = n.onreadystatechange = null;
-                    _HsDeps[u] = true;
+                    HsDEPS [u] = true;
                     if (fun && l == ++ j) {
                         fun( );
                     }

@@ -52,23 +52,11 @@ function HsForm (context , opts) {
     if (saveUrl) {
         saveUrl = hsFixPms(saveUrl, loadArr);
     }
+    initDat = initDat || loadDat || loadArr ;
 
-    /**
-     * 使用初始化数据填充表单
-     * 在打开表单窗口时, 可能指定一些参数(如父ID, 初始选中项等)
-     * 这时有必要将这些参数值填写入对应的表单项, 方便初始化过程
-     */
-    initDat = initDat ? hsSerialArr(initDat)
-          : ( loadDat ? hsSerialArr(loadDat)
-          : ( loadArr ) );
-    for(var i = 0; i < initDat.length; i ++) {
-        var n = initDat[i].name ;
-        var v = initDat[i].value;
-        if (n === idKey && v === "0" ) continue ;
-        formBox.find("[data-pn='"+n+"']").val(v).change();
-        formBox.find("[data-fn='"+n+"']").val(v).change();
-        formBox.find("[name='"+n+"']").not(":file,.form-ignored").val(v).change();
-    }
+    this.valiInit( /* */ );
+    this.saveInit(saveUrl);
+    this.fillInit(initDat);
 
     /**
      * 如果存在 id 或 md 则进行数据加载
@@ -81,9 +69,6 @@ function HsForm (context , opts) {
     } else {
         this.loadBack({ });
     }
-
-    this.valiInit( /* */ );
-    this.saveInit(saveUrl);
 }
 HsForm.prototype = {
     load     : function(url, data) {
@@ -133,16 +118,16 @@ HsForm.prototype = {
             }
             fns[n] = n;
             fts[n] = v.data("ft");
-                f  = v.data("fe");
+                f  = v.data("dl");
 
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
                     f = eval('(function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fe error: "+e);
+                    throw new Error("Parse form data-dl error: "+e);
                 }
-                v.data("fd",f);
+                v.data("dl",f);
             }
             if (f) {
                 fls [ n ] = f ;
@@ -212,7 +197,7 @@ HsForm.prototype = {
                 try {
                     f = eval('(function(form,v,n){return '+f+';})');
                 } catch (e) {
-                    throw new Error("Parse list data-fl error: "+e);
+                    throw new Error("Parse form data-fl error: "+e);
                 }
                 v.data("fl",f);
             }
@@ -275,6 +260,29 @@ HsForm.prototype = {
             }
         }
         delete this._info;
+    },
+    fillInit : function(data) {
+        /**
+         * 使用初始化数据填充表单
+         * 在打开表单窗口时, 可能指定一些参数(如父ID, 初始选中项等)
+         * 这时有必要将这些参数值填写入对应的表单项, 方便初始化过程
+         */
+        var box = this.formBox;
+        var arr =  hsSerialArr(data);
+        box.one("loadOver", function( ) {
+            for(var i = 0 ; i < arr.length ; i ++) {
+                var n = arr[i].name ;
+                var v = arr[i].value;
+                if (! v || (v == 0 && n == idKey)) {
+                    continue;
+                }
+                box.find  ("[name='" + n + "']" )
+                   .filter("input,select,button")
+                   .not   (":file,.form-ignored")
+                   .val   (v)
+                   .change( );
+            }
+        });
     },
 
     saveInit : function(act) {

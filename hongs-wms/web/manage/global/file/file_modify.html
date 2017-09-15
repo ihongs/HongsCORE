@@ -2,11 +2,12 @@
 <div id="global-file-file-modify"
      data-module="hsForm"
      data-save-url="manage/file/update.act"
-     data-load-url="manage/file/search.act?path=${path}&type=file&md=1">
+     data-load-url="manage/file/search.act?path=${path}&type=file&md=1"
+     data-init-data="{'dist':H$('#path',this)}">
     <form action="" method="POST">
-        <input type="hidden" name="type" data-pn="txt" />
-        <input type="hidden" name="path" data-pn="path"/>
-        <input type="hidden" name="dist" data-pn="path"/>
+        <input type="hidden" name="path"/>
+        <input type="hidden" name="dist"/>
+        <input type="hidden" name="type" value="file"/>
         <div class="form-group row">
             <label class="col-sm-3 control-label form-control-static text-right">文件名</label>
             <div class="col-sm-6">

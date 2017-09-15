@@ -3,9 +3,6 @@
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_base_.jsp"%>
-<%
-    String _funcId = (_module + "_" + _entity).replace('/', '_');
-%>
 <!doctype html>
 <html>
     <head>
@@ -43,13 +40,6 @@
                 <div class="row" data-load="manage/foot.jsp"></div>
             </div>
         </nav>
-        <script type="text/javascript">
-            hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
-                // 外部定制
-                if (window["in_<%=_funcId%>"]) {
-                    window["in_<%=_funcId%>"]( );
-                }
-            });
-        </script>
+        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
     </body>
 </html>

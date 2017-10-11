@@ -344,8 +344,8 @@ HsList.prototype = {
         }
 
         var i, p, t, pmin, pmax, that = this;
-        p = page.page ? parseInt(page.page) : 1 ;
-        t = page.pagecount ? parseInt(page.pagecount): 1;
+        p = page.page      ? parseInt(page.page     ) : 1;
+        t = page.pagecount ? parseInt(page.pagecount) : 1;
         pmin = p - Math.floor( this.pagsNum / 2 );
         if (pmin < 1) pmin = 1;
         pmax = pmin + this.pagsNum - 1;
@@ -686,7 +686,7 @@ function hsListFillNext(page) {
     }
 
     var btn = this.listBox.find("[data-pn]");
-    var p = page.page ? parseInt(page.page) : 1;
+    var p = page.page      ? parseInt(page.page     ) : 1;
     var t = page.pagecount ? parseInt(page.pagecount) : 1;
 
     // 添加翻页按钮
@@ -706,10 +706,12 @@ function hsListFillNext(page) {
 
     // 设置页码参数
     var pag = btn.filter(".page-curr a");
-    if (pag.size()) {
-        pag.text(p);
-    } else {
+    if (pag.size() === 0) {
         pag = btn.filter(".page-curr"  );
+    }
+    if (! page.uncertain) {
+        pag.text(p+"/"+t);
+    } else {
         pag.text(p);
     }
     if (p > 1) {
@@ -723,12 +725,12 @@ function hsListFillNext(page) {
     }
     if (p < t) {
         pag = btn.filter(".page-next").removeClass("disabled");
-        pag.filter("[data-pn]").attr("data-pn", p +1);
-        pag.find  ("[data-pn]").attr("data-pn", p +1);
+        pag.filter("[data-pn]").attr("data-pn", p+1);
+        pag.find  ("[data-pn]").attr("data-pn", p+1);
     } else {
         pag = btn.filter(".page-next").   addClass("disabled");
-        pag.filter("[data-pn]").attr("data-pn", t   );
-        pag.find  ("[data-pn]").attr("data-pn", t   );
+        pag.filter("[data-pn]").attr("data-pn", t  );
+        pag.find  ("[data-pn]").attr("data-pn", t  );
     }
 
     // 翻页点击事件

@@ -103,7 +103,7 @@ public class SparFilter implements Filter {
                 uri = url +"/"+ idx;
                 src = new File(Core.BASE_PATH + uri);
                 if (src.isFile()) {
-                    fc.doFilter(req, rsp);
+                    raq.getRequestDispatcher(uri).forward(req, rsp);
                     return;
                 }
             }

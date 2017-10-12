@@ -685,23 +685,26 @@ function hsListFillNext(page) {
             return;
     }
 
-    var btn = this.listBox.find("[data-pn]");
     var p = page.page      ? parseInt(page.page     ) : 1;
     var t = page.pagecount ? parseInt(page.pagecount) : 1;
 
     // 添加翻页按钮
+    var btn = this.pageBox.find("[data-pn]");
     if (btn.size() == 0) {
-        var box = jQuery('<ul class="pagination"></ul>').appendTo(this.pageBox);
-        box.append(jQuery(
+        this.pageBox
+        .append(jQuery(
+            '<ul class="pagination"></ul>'
+        )
+        .append(jQuery(
             '<li class="page-prev"><a href="javascript:;" data-pn="">'+hsGetLang('list.prev.page')+'</a></li>'
-        ));
-        box.append(jQuery(
+        ))
+        .append(jQuery(
             '<li class="page-curr active"><a href="javascript:;"></a></li>'
-        ));
-        box.append(jQuery(
+        ))
+        .append(jQuery(
             '<li class="page-next"><a href="javascript:;" data-pn="">'+hsGetLang('list.next.page')+'</a></li>'
-        ));
-        btn = this.listBox.find("[data-pn]");
+        )));
+        btn = this.pageBox.find("[data-pn]");
     }
 
     // 设置页码参数

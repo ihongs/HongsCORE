@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  * 应用程序接口
  *
  * <p>
- * REST 适配器, 可将不同 Method 请求转发到原有的 Action 方法:<br/>
+ * REST 适配器, 可将不同 Method 请求转发到原有的 Action 方法:
  * <pre>
  * GET      search, list or info
  * PUT      update, save
@@ -70,31 +70,41 @@ public class ApisAction
     }
 
     @Override
-    public void doGet(HttpServletRequest req, HttpServletResponse rsp)
+    protected void service(HttpServletRequest req, HttpServletResponse rsp)
+            throws ServletException, IOException {
+        if ("PATCH".equals(req.getMethod())) {
+            doPatch  (req, rsp); // 增加 PATCH 方法
+            return;
+        }
+        super.service(req, rsp);
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse rsp)
             throws IOException, ServletException {
         doAction(req, rsp, "search", "list", "info");
     }
 
     @Override
-    public void doPut(HttpServletRequest req, HttpServletResponse rsp)
+    protected void doPut(HttpServletRequest req, HttpServletResponse rsp)
             throws IOException, ServletException {
         doAction(req, rsp, "update", "save");
     }
 
     @Override
-    public void doPost(HttpServletRequest req, HttpServletResponse rsp)
+    protected void doPost(HttpServletRequest req, HttpServletResponse rsp)
             throws IOException, ServletException {
         doAction(req, rsp, "create", "save");
     }
 
 //  @Override
-    public void doPatch(HttpServletRequest req, HttpServletResponse rsp)
+    protected void doPatch(HttpServletRequest req, HttpServletResponse rsp)
             throws IOException, ServletException {
         doAction(req, rsp, "update", "save");
     }
 
     @Override
-    public void doDelete(HttpServletRequest req, HttpServletResponse rsp)
+    protected void doDelete(HttpServletRequest req, HttpServletResponse rsp)
             throws IOException, ServletException {
         doAction(req, rsp, "delete");
     }
@@ -212,14 +222,15 @@ public class ApisAction
         }
 
         String[]    ats = acl.split ( "/" );
-        String        m = mts [0];
         StringBuilder u = new StringBuilder();
         StringBuilder q = new StringBuilder();
+        String        m = mts [0];
+        String        w ;
 
         // 分解路径
         for(int i = 1; i < ats.length; i ++ ) {
             String  x  =  ats[ i ];
-            int p = x.indexOf('.');
+            int p = x.indexOf('!');
             if (p > 0) {
                 String n, v;
                 v = x.substring(1 + p);
@@ -253,14 +264,14 @@ public class ApisAction
             q = q.replace(0, 1, "?");
         }
         if (0 < u.length()) {
-            m = u.substring( 1 );
+            w = u.substring( 1 );
         } else {
-            m = u.toString (   );
+            w = u.toString (   );
         }
 
         // 逐个对比
         for(String x : mts) {
-            x = m + "/" + x ;
+            x = w + "/" + x ;
             if (atx.containsKey(x)) {
                 x = "/" + x + ".act" + q;
                 return    x ;
@@ -272,17 +283,18 @@ public class ApisAction
          * 可能是使用了 AutoFilter 的原因
          * 可尝试检查当前动作或方法
          */
-        for( /**/ String mtd : mts ) {
-        if (acl.endsWith("/" + mtd)) {
-            return "/"+acl+".act"+ q;
-        }}
-        if ("update".equals(mts[0])) {
+        for(String x : mts) {
+            if (acl.endsWith("/"+ x)) {
+                return "/"+ acl + ".act" + q;
+            }
+        }
+        if ("update".equals(m)) {
             return "/"+acl+"/update.act" + q;
         } else
-        if ("create".equals(mts[0])) {
+        if ("create".equals(m)) {
             return "/"+acl+"/create.act" + q;
         } else
-        if ("delete".equals(mts[0])) {
+        if ("delete".equals(m)) {
             return "/"+acl+"/delete.act" + q;
         } else
         {

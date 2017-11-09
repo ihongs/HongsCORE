@@ -128,11 +128,11 @@ public class SparFilter implements Filter {
             NodeList lst = doc.getElementsByTagName("welcome-file-list");
             for (int i = 0; i < lst.getLength(); i ++ ) {
                 Element ele = (Element) lst.item(i);
-                if (ele.getTextContent( ).equals("welcome-file")) {
-                    set.add ( ele.getTextContent());
+                if (ele.getTagName().equals("welcome-file")) {
+                    set.add( ele.getTextContent() );
                 }
             }
-        } catch (ParserConfigurationException ex ) {
+        } catch (ParserConfigurationException ex) {
             throw new ServletException(ex);
         } catch (SAXException ex) {
             throw new ServletException(ex);
@@ -141,6 +141,7 @@ public class SparFilter implements Filter {
         }
 
         if (set.isEmpty()) {
+            set.add("index.jsp" );
             set.add("index.html");
         }
 

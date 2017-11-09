@@ -605,20 +605,20 @@ HsList.prototype = {
  */
 function hsListFillItem(list) {
     var that = this;
-    var cb = this.context.find(".itembox:hidden:first");
+    var tt   = this.context.find(".itembox:hidden:first");
     var tr, td, n, t, v, f;
 
     // _keep_prev 无论何种情况都不清空之前的列表
     // _keep_void 当前数据为空时不清空之前的列表
     if (! this._keep_prev
     ||  !(this._keep_void && list.length == 0 )) {
-        this.listBox.children().not(cb).remove();
+        this.listBox.children().not(tt).remove();
     }
 
     this._list = list;
     for (var i = 0 ; i < list.length ; i ++) {
         this._info = list[i];
-        tr = cb.clone();
+        tr = tt.clone();
         tr.find("[data-fn],[data-ft],[data-fl]").each(function() {
             td = jQuery (this);
             n  = td.data("fn");

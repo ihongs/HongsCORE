@@ -186,7 +186,7 @@ public class FormSet
         Map items = new LinkedHashMap();
         this.parse(element2, items, null);
         forms.put(namz, items);
-      }
+      } else
       if ("enum".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
@@ -194,7 +194,7 @@ public class FormSet
         Map items = new LinkedHashMap();
         this.parse(element2, null, items);
         enums.put(namz, items);
-      }
+      } else
       if ("field".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
@@ -230,16 +230,14 @@ public class FormSet
         } else {
             items.put("__repeated__", "false");
         }
-      }
-      else
+      } else
       if ("param".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
         String typz = element2.getAttribute("type");
         String text = element2.getTextContent();
         forms.put(namz, parse(typz, text));
-      }
-      else
+      } else
       if ("value".equals(tagName2))
       {
         String namz = element2.getAttribute("code");

@@ -1,5 +1,6 @@
 package app.hongs.action;
 
+import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
@@ -47,9 +48,14 @@ public class PresetHelper {
     public PresetHelper addDefenseData(FormSet form, String... used)
     throws HongsException {
         for(String usen : used) {
-            Map data  = form.getEnum(usen);
-            if (data != null) {
-                addDefenseData( data );
+            try {
+                Map data  = form.getEnum(usen);
+                if (data != null) {
+                    addDefenseData(data);
+                }
+            } catch(HongsException drop) {
+                // Ignore enum data not exists.
+                CoreLogger.trace("Defense preset data missing, {}", drop.getError());
             }
         }
         return this;
@@ -58,9 +64,14 @@ public class PresetHelper {
     public PresetHelper addDefaultData(FormSet form, String... used)
     throws HongsException {
         for(String usen : used) {
-            Map data  = form.getEnum(usen);
-            if (data != null) {
-                addDefaultData( data );
+            try {
+                Map data  = form.getEnum(usen);
+                if (data != null) {
+                    addDefaultData(data);
+                }
+            } catch(HongsException drop) {
+                // Ignore enum data not exists.
+                CoreLogger.trace("Default preset data missing, {}", drop.getError());
             }
         }
         return this;
@@ -83,10 +94,10 @@ public class PresetHelper {
     throws HongsException {
         FormSet form = FormSet.getInstance(conf);
 
-        addDefenseData(form , name , ":defense");
-        addDefaultData(form , name , ":default");
+        addDefenseData(form , name + ":defense");
+        addDefaultData(form , name + ":default");
 
-        for (String usen : deft) {
+        for (String usen : defs) {
             if (name != null
             && (usen.startsWith( ":" )
             ||  usen.startsWith( "!" ))) {
@@ -123,7 +134,7 @@ public class PresetHelper {
 
     private void inject(Map r, Object x, String n, ActionHelper h) {
         x = decode( x, r, h );
-        if (null != x) {
+        if (null == x) {
             return;
         }
 
@@ -136,10 +147,9 @@ public class PresetHelper {
     }
 
     private void insert(Map r, Object x, String n, ActionHelper h) {
-        Object v;
-
-        v = Dict.getParam (r, n);
-        if (null != v) {
+        // 与 inject 的不同即在于此
+        // 如果对应数据已存在则跳过
+        if (null != Dict.getParam(r , n)) {
             return;
         }
 
@@ -196,13 +206,14 @@ public class PresetHelper {
                 }
             } else
             if (text.startsWith("(") && text.endsWith(")")) {
-                data = Data.toObject(text.substring(1, text.length() - 1));
+                text = text.substring(1,text.length( ) - 1);
+                data = Data.toObject (text);
             } else
             if (text.startsWith("{") && text.endsWith("}")) {
-                data = Data.toObject(text);
+                data = Data.toObject (text);
             } else
             if (text.startsWith("[") && text.endsWith("]")) {
-                data = Data.toObject(text);
+                data = Data.toObject (text);
             }
         }
 

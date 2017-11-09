@@ -9,7 +9,7 @@
 <%
     String _action = Synt.declare(request.getAttribute("info.action"), "review");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
-    String _funcId = (_module + "_" + _entity + "_info").replace('/', '_');
+    String _funcId = "in_"+(_module + "_" + _entity + "_info").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-info">
@@ -148,8 +148,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制
-        if (window["in_<%=_funcId%>"]) {
-            window["in_<%=_funcId%>"](context, formobj);
+        if (window["<%=_funcId%>"]) {
+            window["<%=_funcId%>"](context, formobj);
         }
 
         // 加载数据

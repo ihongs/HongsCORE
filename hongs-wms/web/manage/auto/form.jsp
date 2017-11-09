@@ -9,7 +9,7 @@
 <%
     String _action = Synt.declare(request.getAttribute("form.action"), "create");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
-    String _funcId = (_module + "_" + _entity + "_form").replace('/', '_');
+    String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
 %>
 <!-- 表单 -->
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
@@ -195,8 +195,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制
-        if (window["in_<%=_funcId%>"]) {
-            window["in_<%=_funcId%>"](context, formobj);
+        if (window["<%=_funcId%>"]) {
+            window["<%=_funcId%>"](context, formobj);
         }
 
         // 加载数据

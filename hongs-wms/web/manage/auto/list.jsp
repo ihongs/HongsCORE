@@ -7,6 +7,7 @@
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "normal");
     String _pageId = (_module + "_" + _entity + "_" + _action).replace('/', '_');
+    String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
     
     String _lang = "normal".equals(_action) ? "list" : _action;
     String _conf = FormSet.hasConfFile(_module + "/" + _entity)
@@ -327,8 +328,8 @@
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制
-        if (window["<%=_pageId%>"]) {
-            window["<%=_pageId%>"](context, listobj);
+        if (window["<%=_funcId%>"]) {
+            window["<%=_funcId%>"](context, listobj);
         }
 
         // 加载数据

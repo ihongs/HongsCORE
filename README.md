@@ -118,11 +118,10 @@
         - manage        系统管理区域
         - native        本地资源
         - public        公共资源
-            - caches    公共缓存目录
-            - upload    默认上传目录
         - static        静态资源
             - assets    前端常用组件
             - addons    前端扩展组件
+            - upload    默认上传目录
 
 ### 类库结构:
 

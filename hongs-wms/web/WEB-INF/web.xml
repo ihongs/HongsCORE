@@ -36,7 +36,7 @@
     <!-- Conf Servlet -->
     <servlet>
         <servlet-name>Conf</servlet-name>
-        <servlet-class>app.hongs.serv.common.BaseConfig</servlet-class>
+        <servlet-class>app.hongs.common.serv.BaseConfig</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Conf</servlet-name>

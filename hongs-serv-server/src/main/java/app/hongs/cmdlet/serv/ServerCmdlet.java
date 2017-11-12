@@ -123,6 +123,9 @@ public class ServerCmdlet {
         catch ( Exception e ) {
             throw new HongsException.Common(e);
         }
+        catch ( Error     e ) {
+            throw new HongsError    .Common(e);
+        }
     }
 
     private static class Stoper extends Thread {

@@ -1,5 +1,5 @@
 <root>
-    <rsname>!app.hongs.serv.auth.RoleSet</rsname>
+    <rsname>@normal</rsname>
     <menu text="前台" href="!handle">
         <role text="登录前台" name="handle">
             <action>handle</action>

@@ -47,7 +47,7 @@
     <!-- XSRF Filter -->
     <filter>
         <filter-name>XsrfFilter</filter-name>
-        <filter-class>app.hongs.serv.normal.XsrfFilter</filter-class>
+        <filter-class>app.hongs.normal.serv.XsrfFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
@@ -57,7 +57,7 @@
     <!-- SPAR Filter -->
     <filter>
         <filter-name>SparFilter</filter-name>
-        <filter-class>app.hongs.serv.normal.SparFilter</filter-class>
+        <filter-class>app.hongs.normal.serv.SparFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SparFilter</filter-name>
@@ -66,7 +66,7 @@
     <!-- Sess Filter -->
     <filter>
         <filter-name>SessFilter</filter-name>
-        <filter-class>app.hongs.serv.normal.SessFilter</filter-class>
+        <filter-class>app.hongs.normal.serv.SessFilter</filter-class>
         <init-param>
             <param-name>session-max-age</param-name>
             <param-value>604800</param-value>

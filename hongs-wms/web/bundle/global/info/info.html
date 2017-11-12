@@ -1,0 +1,51 @@
+<div id="bundle-info">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-tint" ></span> 系统负载</div>
+                <div class="panel-body sys-info-box" style="height:208px"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-fire" ></span> 运行状态</div>
+                <div class="panel-body run-info-box" style="height:208px"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-globe"></span> 网站目录</div>
+                <div class="panel-body base-dir-pie" style="height:208px"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-oil"  ></span> 数据目录</div>
+                <div class="panel-body data-dir-pie" style="height:208px"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-cog"  ></span> 配置目录</div>
+                <div class="panel-body conf-dir-pie" style="height:208px"></div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><span class="glyphicon glyphicon-off"  ></span> 系统目录</div>
+                <div class="panel-body core-dir-pie" style="height:208px"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="static/addons/echarts/echarts.js"></script>
+<script type="text/javascript" src="bundle/global/info/info.js"></script>
+<script type="text/javascript">
+    infoInit();
+    
+    $("#bundle-info .sys-info-box [data-fn]").css({
+        "overflow"     : "hidden",
+        "text-overflow": "ellipsis",
+        "white-space"  : "nowrap"
+    });
+</script>

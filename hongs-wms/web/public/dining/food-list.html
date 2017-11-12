@@ -1,0 +1,32 @@
+<div id="dining-food-list" class="dining-list container"
+     data-module="hsList"
+     data-load-url="handle/data/dining/food/search.act"
+     data-fill-list="(hsListFillItem)"
+     data-fill-page="(hsListFillNext)"
+     data-data-0="_fill_link:(hsDiningListFillLink)"
+     data-data-1="_fill_logo:(hsDiningListFillLogo)"
+     data-data-2="_fill_dail:(hsDiningListFillDail)">
+    <div class="listbox row">
+        <div class="itembox col-md-4" style="display: none;">
+            <div class="media">
+                <span class="badge to-cart pull-right" data-fn="dail">+</span>
+                <div class="media-left">
+                    <a href="#" data-fn="logo">
+                        <img class="media-object"/>
+                    </a>
+                </div>
+                <div class="media-body">
+                    <a href="#" data-fn="link">
+                        <h4 class="media-heading" data-fn="name"></h4>
+                        <span data-fn="price"></span>
+                        <p data-fn="note"></p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <ul class="pagebox pager">
+        <li class="page-prev"><a href="javascript:;" data-pn="">&laquo;</a></li>
+        <li class="page-next"><a href="javascript:;" data-pn="">更多&nbsp;&raquo;</a></li>
+    </ul>
+</div>

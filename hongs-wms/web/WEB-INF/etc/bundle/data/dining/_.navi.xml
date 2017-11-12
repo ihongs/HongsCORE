@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <menu href="common/menu.act?m=bundle&amp;x=dining" text="餐饮">
+        <import>bundle/data/dining/food</import>
+        <import>bundle/data/dining/bill</import>
+    </menu>
+    <rsname>@bundle</rsname>
+</root>

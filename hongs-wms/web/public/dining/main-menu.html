@@ -1,0 +1,76 @@
+<!-- 主菜单栏 -->
+<nav class="navbar navbar-default" id="main-menubar">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu-collapse" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">Brand</a>
+    </div>
+    <div class="collapse navbar-collapse" id="main-menu-collapse">
+      <ul class="nav navbar-nav" data-target="#main-context">
+        <li>
+            <a href="/public/dining/food"
+               data-patt="/public/dining/food/?"
+               data-href="public/dining/food-list.html">
+                Food
+            </a>
+            <a class="hide"
+               data-patt="/public/dining/food/(.+)" data-keys="id"
+               data-href="public/dining/food-info.html">
+                Food Info
+            </a>
+        </li>
+        <li>
+            <a href="/public/dining/cart"
+               data-patt="/public/dining/cart/?"
+               data-href="public/dining/cart-info.html">
+                Cart
+            </a>
+        </li>
+        <li>
+            <a href="/public/dining/bill"
+               data-patt="/public/dining/bill/?"
+               data-href="public/dining/bill-list.html">
+                Bill
+            </a>
+            <a class="hide"
+               data-patt="/public/dining/bill/(.+)" data-keys="id"
+               data-href="public/dining/bill-info.html">
+                Bill Info
+            </a>
+        </li>
+        <li>
+            <a href="/public/dining/user"
+               data-patt="/public/dining/user/?"
+               data-href="public/dining/user-info.html">
+                User
+            </a>
+        </li>
+      </ul>
+      <form class="navbar-form navbar-left">
+        <div class="form-group">
+          <input type="search" name="wd" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+      </form>
+    </div>
+  </div>
+</nav>
+<script type="text/javascript">
+    (function($) {
+        var menu = $("#main-menubar .navbar-nav");
+
+        menu.hsGoto(location.pathname);
+        if (menu.find(".active").size() == 0) {
+            menu.find("li a").first().click();
+        }
+
+        window.hsGoto = function(url, rep) {
+            menu.hsGoto(url, rep);
+        };
+    })(jQuery);
+</script>

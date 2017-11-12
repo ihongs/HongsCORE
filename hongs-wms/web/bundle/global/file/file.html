@@ -1,0 +1,78 @@
+<div id="global-file-list"
+     class="global-file-list"
+     data-module="hsList"
+     data-load-url="bundle/file/search.act?path=${path}&type=file&ob=name"
+     data-send-urls-0="['bundle/file/delete.act','.delete','您确定要删除此文件?']"
+     data-data-0="_fill_size: ( function(x, v) {return humanSize(v);} )"
+     data-data-1="_empty_err: 没有文件, 您可以添加文件, 或查看下级目录!">
+    <div>
+        <div class="toolbox btn-group">
+            <button type="button" class="create btn btn-default">新建文件</button>
+            <button type="button" class="modify for-choose btn btn-default">修改</button>
+            <button type="button" class="upload btn btn-default">上传</button>
+            <button type="button" class="dnload for-checks btn btn-default">下载</button>
+            <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+        </div>
+    </div>
+    <div class="listbox table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th data-fn="path[]" data-ft="_check" class="_check">
+                        <input type="checkbox" class="checkall" name="path[]"/>
+                    </th>
+                    <th data-fn="name" class="sortable">文件名</th>
+                    <th data-fn="size" class="sortable">大小</th>
+                    <th data-fn="type" class="sortable">类型</th>
+                    <th data-fn="mtime" data-ft="_htime" class="_htime sortable">修改时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="pagebox"></div>
+    <form class="invisible">
+        <input type="file" name="file"/>
+    </form>
+</div>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#global-file-list");
+
+        if (H$( "#path" , context) === '/' ) {
+            var toolBox = context.find(".toolbox");
+            var listBox = context.find(".listbox");
+            var pageBox = context.find(".pagebox");
+            context.removeAttr ( "data-load-url" );
+            toolBox.find(".btn").prop("disabled" , true);
+            listBox.hide( );
+            pageBox.empty().append('<div class="alert alert-warning">可管理网站、配置、数据等文件, 请先选择下级目录, 然后可对其下文件进行操作.</div>');
+        }
+        
+        context.on("click", ".create", function() {
+            var inst  = context.data("HsList");
+            var path  = H$( "#path", context );
+            inst.open($(this), $(this).hsFind("@"),
+            "bundle/global/file/file_create.html?path="+encodeURIComponent(path));
+        });
+        context.on("click", ".modify", function() {
+            var inst  = context.data("HsList");
+            var path  = inst.getOne ();
+            if (path == null) {
+                return;
+            }
+            var type  = path.closest("tr").find("td:eq(3)").text();
+            if (type !="txt") {
+                alert("抱歉, 暂不支持对非文本文件进行编辑");
+                return;
+            }
+            path = path.val();
+            inst.open($(this), $(this).hsFind("@"),
+            "bundle/global/file/file_modify.html?path="+encodeURIComponent(path));
+        });
+
+        context.on("click", ".upload,.dnload", function() {
+            alert("抱歉, 暂不支持上传和下载");
+        });
+    })(jQuery);
+</script>

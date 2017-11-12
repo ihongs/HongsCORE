@@ -1,0 +1,245 @@
+<div id="dining-cart-info" class="dining-list dining-cart container"
+     data-module="hsList"
+     data-load-url="handle/data/dining/food/search.act?rn=0"
+     data-fill-list="(hsListFillItem)"
+     data-data-0="_fill_link:(hsDiningListFillLink)"
+     data-data-1="_fill_logo:(hsDiningListFillLogo)"
+     data-data-2="_fill_dail:(hsDiningListFillDail)">
+    <div class="listbox row">
+        <div class="itembox col-md-4" style="display: none;">
+            <div class="media">
+                <span class="badge to-cart pull-right" data-fn="dail">+</span>
+                <div class="media-left">
+                    <a href="#" data-fn="logo">
+                        <img class="media-object"/>
+                    </a>
+                </div>
+                <div class="media-body">
+                    <a href="#" data-fn="link">
+                        <h4 class="media-heading" data-fn="name"></h4>
+                        <span data-fn="price"></span>
+                        <p data-fn="note"></p>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div>
+        <div>总价: <span data-fn="total_price"></span>元</div>
+        <div>原价: <span data-fn="total_worth"></span>元</div>
+        <div>优惠: <span data-fn="off"></span>元</div>
+    </div>
+</div>
+<div id="dining-cart-form" class="container"
+     data-module="hsForm"
+     data-save-url="handle/data/dining/bill/create.act">
+    <form>
+        <div class="form-group">
+            <label>支付方式</label>
+            <select name="" class="form-control">
+                <option>微信</option>
+                <option>支付宝</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>配送方式</label>
+            <select name="mode" class="form-control">
+                <option>堂食</option>
+                <option>外带</option>
+                <option>外卖</option>
+            </select>
+        </div>
+        <div>
+            <div class="form-group">
+                <label>姓名</label>
+                <input name="title" type="text" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label>电话</label>
+                <input name="phone" type="tel"  class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label>地址</label>
+                <input name="addr"  type="text" class="form-control"/>
+            </div>
+            <div class="form-group">
+                <label>地图</label>
+                <div class="map" style="height: 300px;"></div>
+            </div>
+            <input type="hidden" name="prov"/>
+            <input type="hidden" name="city"/>
+            <input type="hidden" name="posi"/>
+            <input type="hidden" name="lat_lng"/>
+        </div>
+        <div class="form-group">
+            <button type="submit" class="btn btn-primary">下一步</button>
+        </div>
+        <div class="ids">
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#dining-cart-info").removeAttr("id");
+        var formbox = $("#dining-cart-form").removeAttr("id");
+            formbox = formbox.find("form");
+        var itembox = formbox.find(".ids");
+        
+        // 查询菜单列表
+        var map = JSON.parse(H$("$dining.cart") || "{}");
+        var ids = [];
+        for(var k in map) {
+            ids.push({name: "id.", value: k});
+        }
+        if (! ids.length) {
+            ids.push({name: "id.", value: 0});
+        }
+        context.data("loadData", ids);
+
+        // 总价折扣统计
+        context.on("loadBack", function(evt, rst) {
+            var price = 0;
+            var worth = 0;
+            var map = JSON.parse(H$("$dining.cart") || "{}");
+            for(var i = 0; i < rst.list.length; i ++) {
+                var info = rst.list[i ];
+                var num  = map[info.id];
+                price += parseFloat(info.price) * num;
+                worth += parseFloat(info.worth) * num;
+            }
+            context.find("[data-fn=total_price]").text(price);
+            context.find("[data-fn=total_worth]").text(worth);
+            context.find("[data-fn=off]").text(worth - price);
+            if (worth == price) {
+                context.find("[data-fn=total_worth],[data-fn=off]").parent().hide();
+            }
+        });
+        
+        // 菜单一并提交
+        formbox.on("submit", function() {
+            itembox.empty( );
+            context.find(".itembox").not(":hidden").each(function() {
+                var id = $(this).data("id");
+                var count = $(this).find("[data-fn=dail]" ).text();
+                var price = $(this).find("[data-fn=price]").text();
+                itembox.append($('<input type="hidden"/>')
+                       .attr("name", "items["+id+"][food_id]")
+                       .val (id)
+                    );
+                itembox.append($('<input type="hidden"/>')
+                       .attr("name", "items["+id+"][count]")
+                       .val (count)
+                    );
+                itembox.append($('<input type="hidden"/>')
+                       .attr("name", "items["+id+"][price]")
+                       .val (price)
+                    );
+            });
+        });
+        
+        //** 地图 **/
+        
+        var addrInp = formbox.find("[name=addr]");
+        var provInp = formbox.find("[name=prov]");
+        var cityInp = formbox.find("[name=city]");
+        var distInp = formbox.find("[name=dist]");
+        var poisInp = formbox.find("[name=lat_lng]");
+        var areaBox = formbox.find(".map")[0];
+
+        var map = new qq.maps.Map(
+                  areaBox, { zoom: 14 });
+        var geo = new qq.maps.Geocoder();
+        var sea = new qq.maps.SearchService();
+        var mak ;
+
+        function setPos(pos) {
+            if (mak) {
+                mak.setMap ( null );
+            }
+            if (pos) {
+                map.setCenter (pos);
+                geo.getAddress(pos);
+                mak = new qq.maps.Marker({
+                    position : pos ,
+                    map      : map
+                });
+            } else {
+                // 没有地址则清空
+                provInp.val(""); cityInp.val("");
+                distInp.val(""); poisInp.val("");
+            }
+        }
+
+        // 点选地址
+        qq.maps.event.addListener(map, 'click', function(evt) {
+            addrInp.val ( "" ); // 点选总是重写地址输入框
+            setPos(evt.latLng);
+        });
+
+        // 地图回调
+        geo.setComplete(function(rst) {
+            rst = rst.detail;
+            if (! addrInp.val()) {
+                addrInp.val(rst.address);
+            }
+            provInp.val(rst.addressComponents.province);
+            cityInp.val(rst.addressComponents.city    );
+            distInp.val(rst.addressComponents.district);
+            poisInp.val(rst.location.lat+","+rst.location.lng);
+            // 错误提示
+            var formobj = formbox.closest(".HsForm").data("HsForm");
+            formobj.seterror( "map" );
+        });
+        sea.setComplete(function(rst) {
+            rst = rst.detail;
+            if (rst.pois && rst.pois.length) {
+                // 将结果转交给建议插件
+                suggestData = {value : rst.pois};
+                suggestOpts.data  =  suggestData;
+                suggestFunc(addrInp, suggestData, suggestOpts);
+            }
+        });
+
+        // 表单联动
+        poisInp.on("change", function() {
+            var pos = $(this).val();
+            if (pos) {
+                pos = pos.split(",", 2);
+                pos[0] = parseFloat(pos[0]);
+                pos[1] = parseFloat(pos[1]);
+                pos = new qq.maps.LatLng(pos[0], pos[1]);
+                setPos(pos);
+            }
+        }).change();
+
+        var suggestFunc;
+        var suggestOpts;
+        var suggestData;
+
+        // 地址搜索
+        addrInp.wrap('<div class="input-group"></div>').parent().append(
+                $('<div>'
+                + '<a  data-toggle="dropdown"></a>'
+                + '<ul class="dropdown-menu"></ul>'
+                + '</div>')
+            );
+        addrInp.bsSuggest({
+            showBtn         : false,
+            idField         :  "id",
+            keyField        :  "name" ,
+            searchFields    : ["name"],
+            effectiveFields : ["name"],
+            fnGetData       : function(keyword, $input$, display, options) {
+                if (keyword) {
+                    suggestFunc = display;
+                    suggestOpts = options;
+                    sea.search( keyword );
+                } else {
+                    setPos(null);
+                }
+            }
+        }).on("onSetSelectValue", function(evt, addr, data) {
+            setPos (data.latLng);
+        });
+    })(jQuery);
+</script>

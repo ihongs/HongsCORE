@@ -1,0 +1,19 @@
+
+
+#main-context {
+    margin-top: -21px;
+}
+
+.dining-list .pagebox {
+    margin-top:  0px;
+}
+.dining-list .itembox {
+    margin-top: 15px;
+}
+.dining-list .itembox .media-object {
+    width : 64px;
+    height: 64px;
+}
+.dining-list .itembox .media>.pull-right {
+    padding: 4px 7px;
+}

@@ -1,0 +1,52 @@
+<!-- 数量对话框 -->
+<div class="modal fade" id="cartbox">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <input type="number" name="num" value="0" class="form-control"/>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-link" data-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary to-item">确定</button>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+(function($) {
+    var context = $("#main-context");
+    var cartbox = $("#cartbox").removeAttr("id");
+
+    context.on("click", ".to-cart", function() {
+        var id  = $(this).data("id");
+        var map = JSON.parse(H$("$dining.cart") || "{}");
+        var num = map[id] || 0 ;
+        cartbox.find("input")
+            .data("td", $(this))
+            .data("id", id)
+            .val ("" + num);
+        cartbox.modal( "show" );
+    });
+    cartbox.on("click", ".to-item", function() {
+        var inp = cartbox.find("input");
+        var map = JSON.parse(H$("$dining.cart") || "{}");
+        var td  = inp.data("td");
+        var id  = inp.data("id");
+        var num = parseInt(inp.val());
+        if (num > 0) {
+            td.text( num );
+            map [id] = num;
+        } else {
+            td.text( "+" );
+            delete map[id];
+            if (td.closest(".dining-list")
+                       .is(".dining-cart")) {
+                td.closest(".itembox").remove();
+            }
+        }
+        map = JSON.stringify(map);
+        H$("$dining.cart", map);
+        cartbox.modal( "hide" );
+    });
+})(jQuery);
+</script>

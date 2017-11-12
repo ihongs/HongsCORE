@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <role name="!bundle/data/dining/food/item/search" text="查看套餐菜单">
+        <action>bundle/data/dining/food/item/search.act</action>
+    </role>
+    <role name="!bundle/data/dining/food/item/update" text="更新套餐菜单">
+        <action>bundle/data/dining/food/item/update.act</action>
+        <action>bundle/data/dining/food/item/create.act</action>
+        <action>bundle/data/dining/food/item/delete.act</action>
+        <depend>!bundle/data/dining/food/item/search</depend>
+    </role>
+</root>

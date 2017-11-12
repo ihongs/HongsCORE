@@ -1,4 +1,4 @@
-package app.hongs.serv.manage;
+package app.hongs.serv.bundle;
 
 import app.hongs.Core;
 import app.hongs.HongsException;
@@ -27,7 +27,7 @@ import java.util.Set;
  * 管理信息
  * @author Hongs
  */
-@Action("manage/info")
+@Action("bundle/info")
 public class InfoAction {
 
     @Action("search")

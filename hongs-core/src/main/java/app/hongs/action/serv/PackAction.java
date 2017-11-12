@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * !data  提供共同的参数
  * @author Hongs
  */
-@Action("common/pack")
+@Action("normal/pack")
 public class PackAction {
 
     private static final Pattern EXT_PAT = Pattern.compile("\\.(act|api)(#.*?)?$");

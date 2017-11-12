@@ -1,5 +1,6 @@
 package app.hongs.serv.member;
 
+import app.hongs.Cnst;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -41,21 +42,22 @@ public class DeptAction {
     @Action("info")
     public void getInfo(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
+        Map    rd = helper.getRequestData(  );
         String id = helper.getParameter("id");
-        String wr = helper.getParameter("-with-roles");
-        String ud = (String)helper.getSessibute("uid");
+        String wr = helper.getParameter("navi-conf");
+        String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
-        if ( id != null && id.length() != 0 ) {
+        if (id != null && id.length() != 0) {
             rd = model.getInfo(rd);
         } else {
             rd =  new  HashMap(  );
         }
 
-        if (Synt.declare(wr, false)) {
-            List rs =  ! "1".equals(ud) ?
-                    NaviMap.getInstance("bundle").getRoleTranslated(0, 0):
-                    NaviMap.getInstance("bundle").getRoleTranslated(0, 0, null);
+        // With all roles
+        if (wr != null && wr.length() != 0) {
+            List rs = !Cnst.ADM_UID.equals(ud) ?
+                    NaviMap.getInstance(wr).getRoleTranslated(0, 0):
+                    NaviMap.getInstance(wr).getRoleTranslated(0, 0, null);
             Dict.put(rd, rs, "enum", "roles..role");
         }
 

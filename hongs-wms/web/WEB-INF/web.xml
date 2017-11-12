@@ -86,7 +86,7 @@
         <filter-name>SessFilter</filter-name>
         <url-pattern>/bundle/*</url-pattern>
         <url-pattern>/handle/*</url-pattern>
-        <url-pattern>/comomn/*</url-pattern>
+        <url-pattern>/normal/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>

@@ -16,9 +16,9 @@
     <script type="text/javascript" src="static/assets/jquery-ui.min.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-    <script type="text/javascript" src="common/conf/default.js"></script>
-    <script type="text/javascript" src="common/lang/default.js"></script>
-    <script type="text/javascript" src="common/auth/handle.js" ></script>
+    <script type="text/javascript" src="normal/conf/default.js"></script>
+    <script type="text/javascript" src="normal/lang/default.js"></script>
+    <script type="text/javascript" src="normal/auth/handle.js" ></script>
     <script type="text/javascript" src="public/dining/index.js"></script>
     <!-- Map and address suggest -->
     <script type="text/javascript" src="//map.qq.com/api/js?v=2.exp"></script>

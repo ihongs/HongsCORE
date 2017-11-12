@@ -1,4 +1,4 @@
-package app.hongs.common.serv;
+package app.hongs.normal.serv;
 
 import app.hongs.Core;
 import app.hongs.HongsException;

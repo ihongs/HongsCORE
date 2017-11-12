@@ -1,4 +1,4 @@
-package app.hongs.common.serv;
+package app.hongs.normal.serv;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;
@@ -10,11 +10,11 @@ import app.hongs.cmdlet.anno.Cmdlet;
  * 简单数据存储
  * @author Hongs
  */
-@Cmdlet("common.record")
+@Cmdlet("normal.record")
 public class Record {
 
     private static IRecord getRecord() throws HongsException {
-        String cls = CoreConfig.getInstance().getProperty("core.common.record.model");
+        String cls = CoreConfig.getInstance().getProperty("core.normal.record.model");
         if (null == cls || 0 == cls.length()) {
                cls = JRecord.class.getName( );
         }

@@ -1,4 +1,4 @@
-package app.hongs.common.serv;
+package app.hongs.normal.serv;
 
 import app.hongs.action.ActionDriver;
 import app.hongs.action.serv.AuthAction;

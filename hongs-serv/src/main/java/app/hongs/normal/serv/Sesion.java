@@ -1,4 +1,4 @@
-package app.hongs.common.serv;
+package app.hongs.normal.serv;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;
@@ -24,7 +24,7 @@ import javax.servlet.http.HttpSessionContext;
  * 会话状态记录
  * @author Hongs
  */
-@Cmdlet("common.sesion")
+@Cmdlet("normal.sesion")
 public class Sesion implements HttpSession, AutoCloseable, Serializable {
 
     private transient boolean isNew = false;
@@ -306,7 +306,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     }
 
     private static IRecord<Sesion> getRecord() throws HongsException {
-        String cls = CoreConfig.getInstance( ).getProperty("core.common.sesion.model");
+        String cls = CoreConfig.getInstance( ).getProperty("core.normal.sesion.model");
         if (null == cls || 0 == cls.length() ) {
                cls = Recs.class.getName( );
 
@@ -324,7 +324,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     private static class Recs extends JRecord<Sesion> implements IRecord<Sesion> {
 
         public Recs() throws HongsException {
-            super(DB.getInstance("common").getTable("sesion"));
+            super(DB.getInstance("normal").getTable("sesion"));
         }
 
     }

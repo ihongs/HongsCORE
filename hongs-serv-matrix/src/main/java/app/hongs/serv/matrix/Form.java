@@ -40,7 +40,7 @@ import org.w3c.dom.Element;
  */
 public class Form extends Model {
 
-    protected String prefix = "manage/data";
+    protected String prefix = "bundle/data";
 
     public Form() throws HongsException {
         this(DB.getInstance("matrix").getTable("form"));
@@ -342,7 +342,7 @@ public class Form extends Model {
         // 会话
         role = docm.createElement("rsname");
         root.appendChild ( role );
-        role.appendChild ( docm.createTextNode( "@manage" ) );
+        role.appendChild ( docm.createTextNode( "@bundle" ) );
 
         // 查看
 

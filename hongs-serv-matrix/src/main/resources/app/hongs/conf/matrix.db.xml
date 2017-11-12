@@ -3,7 +3,7 @@
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
-    <config link="manage"/>
+    <config link="bundle"/>
     <tables>
         <table name="unit"
                tableName="a_matrix_unit"

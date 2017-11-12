@@ -53,7 +53,7 @@ public class Data extends SearchEntity {
      */
     public Data(String conf, String form) throws HongsException {
         this(conf.replaceFirst("^.*?/data/",        "data/"),
-             conf.replaceFirst("^.*?/data/", "manage/data/"),
+             conf.replaceFirst("^.*?/data/", "bundle/data/"),
              conf, form);
     }
 
@@ -96,7 +96,7 @@ public class Data extends SearchEntity {
         Map fields, fieldx;
 
         /**
-         * 字段以 manage/data 的字段为基础
+         * 字段以 bundle/data 的字段为基础
          * 但可在 handle/data 重设部分字段
          *
          * 配置文件不得放在资源包里面

@@ -1,4 +1,4 @@
-package app.hongs.common.serv;
+package app.hongs.normal.serv;
 
 import app.hongs.HongsException;
 import app.hongs.db.DB;
@@ -27,7 +27,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
     }
 
     public JRecord() throws HongsException {
-        this(DB.getInstance("common").getTable("record"));
+        this(DB.getInstance("normal").getTable("record"));
     }
 
     /**

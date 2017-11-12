@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <menu href="bundle/data/dining/food/" hrel="bundle/data/dining/food/main.html" text="菜品">
+        <role name="bundle/data/dining/food/search" text="查看菜品">
+            <action>bundle/data/dining/food/search.act</action>
+            <action>bundle/data/dining/food/stream.act</action>
+            <depend>!bundle/data/dining/food/item/search</depend>
+        </role>
+        <role name="bundle/data/dining/food/update" text="修改菜品">
+            <action>bundle/data/dining/food/update.act</action>
+            <depend>bundle/data/dining/food/search</depend>
+            <depend>!bundle/data/dining/food/item/update</depend>
+        </role>
+        <role name="bundle/data/dining/food/create" text="添加菜品">
+            <action>bundle/data/dining/food/create.act</action>
+            <depend>bundle/data/dining/food/search</depend>
+            <depend>!bundle/data/dining/food/item/update</depend>
+        </role>
+        <role name="bundle/data/dining/food/delete" text="删除菜品">
+            <action>bundle/data/dining/food/delete.act</action>
+            <depend>bundle/data/dining/food/search</depend>
+            <depend>!bundle/data/dining/food/item/update</depend>
+        </role>
+        <role name="bundle/data/dining/food/revert" text="恢复菜品">
+            <action>bundle/data/dining/food/revert/search.act</action>
+            <action>bundle/data/dining/food/revert/update.act</action>
+            <depend>bundle/data/dining/food/search</depend>
+            <depend>bundle/data/dining/food/update</depend>
+        </role>
+    </menu>
+    <import>bundle/data/dining/food/item</import>
+    <rsname>@bundle</rsname>
+</root>

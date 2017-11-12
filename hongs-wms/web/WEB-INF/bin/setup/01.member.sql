@@ -25,10 +25,10 @@ CREATE INDEX `IK_a_member_dept_mtime` ON `a_member_dept` (`mtime`);
 CREATE UNIQUE INDEX `UK_a_member_dept_name` ON `a_member_dept` (`name`,`pid`);
 
 INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('MANAGE','0','管理区','默认内部管理区域','1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('ADMINS','0','管理区','默认内部管理区域','1424075622230','1424075622230','0',1);
 INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('PUBLIC','0','公共区','默认注册到此区域','1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXSDROLE001REB0Q01','MANAGE','技术部','这是技术部','1424075622230','1424075622230','0',1);
-INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPRZ8Q5006II04J01','MANAGE','市场部','这是市场部','1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXSDROLE001REB0Q01','ADMINS','技术部','这是技术部','1424075622230','1424075622230','0',1);
+INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPRZ8Q5006II04J01','ADMINS','市场部','这是市场部','1424075622230','1424075622230','0',1);
 INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HY9XXIS5000T3DD501','HXSDROLE001REB0Q01','研发部','','1424075622230','1424075622230','0',1);
 INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPR7S3N00BWKOZ001','HXSDROLE001REB0Q01','运维部','','1424075622230','1424075622230','0',1);
 INSERT INTO `a_member_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPS1ROT007T1AG601','HYPRZ8Q5006II04J01','产品部','','1424075622230','1424075622230','0',1);
@@ -130,25 +130,25 @@ CREATE TABLE `a_member_user_role` (
 CREATE INDEX `IK_a_member_user_role_user` ON `a_member_user_role` (`user_id`);
 CREATE INDEX `IK_a_member_user_role_role` ON `a_member_user_role` (`role`);
 
-INSERT INTO `a_member_user_role` VALUES ('1','manage');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/global/info');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/global/file');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/user/search');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/user/create');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/user/update');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/user/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/search');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/create');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/update');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/member/dept/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/search');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/create');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/update');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/form/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/search');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/create');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/update');
-INSERT INTO `a_member_user_role` VALUES ('1','manage/matrix/unit/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/global/info');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/global/file');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/user/search');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/user/create');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/user/update');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/user/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/dept/search');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/dept/create');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/dept/update');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/member/dept/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/form/search');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/form/create');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/form/update');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/form/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/unit/search');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/unit/create');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/unit/update');
+INSERT INTO `a_member_user_role` VALUES ('1','bundle/matrix/unit/delete');
 
 --
 -- 用户关联账户

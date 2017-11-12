@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <form name="item">
+        <field name="@" repeated="" required="" rule="" text="套餐菜单" type="">
+            <param name="listable">?</param>
+            <param name="sortable">?</param>
+            <param name="siftable">?</param>
+            <param name="nameable">?</param>
+        </field>
+        <field name="id" repeated="" required="" rule="" text="ID" type="hidden"/>
+        <field name="unit_id" repeated="" required="true" rule="" text="套餐" type="fork">
+            <param name="listable">true</param>
+            <param name="form">food</param>
+            <param name="conf">bundle/data/dining/food</param>
+            <param name="data-at">bundle/auto/search!bundle/data/dining/food/search</param>
+            <param name="data-al">bundle/data/dining/food/list_fork.html</param>
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+        </field>
+        <field name="food_id" repeated="" required="true" rule="" text="菜品" type="fork">
+            <param name="listable">true</param>
+            <param name="form">food</param>
+            <param name="conf">bundle/data/dining/food</param>
+            <param name="data-at">bundle/auto/search!bundle/data/dining/food/search?rb=id,name,price</param>
+            <param name="data-al">bundle/data/dining/food/list_fork.html</param>
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+        </field>
+        <field name="price" repeated="" required="" rule="" text="单价" type="hidden"/>
+        <field name="count" repeated="" required="true" rule="" text="数量" type="number">
+            <param name="sortable">true</param>
+            <param name="listable">true</param>
+        </field>
+        <field name="name" repeated="" required="" rule="" text="" type="stored">
+            <param name="editable">false</param>
+        </field>
+        <field name="find" repeated="" required="" rule="" text="" type="search">
+            <param name="editable">false</param>
+            <param name="unstored">true</param>
+        </field>
+        <field name="cuid" repeated="" required="" rule="" text="" type="hidden">
+            <param name="editable">false</param>
+            <param name="default">=$uid</param>
+            <param name="default-always">true</param>
+            <param name="default-create">true</param>
+        </field>
+        <field name="muid" repeated="" required="" rule="" text="" type="hidden">
+            <param name="editable">false</param>
+            <param name="default">=$uid</param>
+            <param name="default-always">true</param>
+            <param name="default-create">false</param>
+        </field>
+        <field name="ctime" repeated="" required="" rule="" text="" type="number">
+            <param name="type">long</param>
+            <param name="editable">false</param>
+            <param name="default">=%now</param>
+            <param name="default-always">true</param>
+            <param name="default-create">true</param>
+        </field>
+        <field name="mtime" repeated="" required="" rule="" text="" type="number">
+            <param name="type">long</param>
+            <param name="editable">false</param>
+            <param name="default">=%now</param>
+            <param name="default-always">true</param>
+            <param name="default-create">false</param>
+        </field>
+    </form>
+</root>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <menu href="bundle/data/dining/bill/" hrel="bundle/data/dining/bill/main.html" text="餐牌">
+        <role name="bundle/data/dining/bill/search" text="查看餐牌">
+            <action>bundle/data/dining/bill/search.act</action>
+            <action>bundle/data/dining/bill/stream.act</action>
+            <depend>!bundle/data/dining/bill/item/search</depend>
+        </role>
+        <role name="bundle/data/dining/bill/update" text="修改餐牌">
+            <action>bundle/data/dining/bill/update.act</action>
+            <depend>bundle/data/dining/bill/search</depend>
+            <depend>!bundle/data/dining/bill/item/update</depend>
+        </role>
+        <role name="bundle/data/dining/bill/create" text="添加餐牌">
+            <action>bundle/data/dining/bill/create.act</action>
+            <depend>bundle/data/dining/bill/search</depend>
+            <depend>!bundle/data/dining/bill/item/update</depend>
+        </role>
+        <role name="bundle/data/dining/bill/delete" text="删除餐牌">
+            <action>bundle/data/dining/bill/delete.act</action>
+            <depend>bundle/data/dining/bill/search</depend>
+            <depend>!bundle/data/dining/bill/item/update</depend>
+        </role>
+        <role name="bundle/data/dining/bill/revert" text="恢复餐牌">
+            <action>bundle/data/dining/bill/revert/search.act</action>
+            <action>bundle/data/dining/bill/revert/update.act</action>
+            <depend>bundle/data/dining/bill/search</depend>
+            <depend>bundle/data/dining/bill/update</depend>
+        </role>
+    </menu>
+    <import>bundle/data/dining/bill/item</import>
+    <rsname>@bundle</rsname>
+</root>

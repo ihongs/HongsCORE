@@ -62,18 +62,18 @@ public class UserAction {
             rd =  new  HashMap(  );
         }
 
-        // Remove the password field, don't show password in page
-        Map info  = (Map) rd.get("info");
-        if (info != null) {
-            info.remove("password");
-        }
-
         // With all roles
         if (wr != null && wr.length() != 0) {
             List rs = !Cnst.ADM_UID.equals(ud) ?
                     NaviMap.getInstance(wr).getRoleTranslated(0, 0):
                     NaviMap.getInstance(wr).getRoleTranslated(0, 0, null);
             Dict.put(rd, rs, "enum", "roles..role");
+        }
+
+        // Remove the password field, don't show password in page
+        Map info  = (Map) rd.get("info");
+        if (info != null) {
+            info.remove("password");
         }
 
         helper.reply(rd);

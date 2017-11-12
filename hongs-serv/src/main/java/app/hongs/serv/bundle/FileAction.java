@@ -1,4 +1,4 @@
-package app.hongs.serv.manage;
+package app.hongs.serv.bundle;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;
@@ -31,7 +31,7 @@ import javax.activation.MimetypesFileTypeMap;
  * 文件管理
  * @author Hongs
  */
-@Action("manage/file")
+@Action("bundle/file")
 public class FileAction implements IAction {
 
     private static final Map<String, Byte> TYPE_SORT = new HashMap();
@@ -91,17 +91,17 @@ public class FileAction implements IAction {
         }
 
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.required"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.required"));
             return;
         }
         path = realPath(path);
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.error"));
             return;
         }
         file = new File(path);
         if (!file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exist"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.not.exist"));
             return;
         }
 
@@ -232,7 +232,7 @@ public class FileAction implements IAction {
             xxxx.put("mtime", file.lastModified());
             helper.reply( "", xxxx );
         } else {
-            helper.fault(lang.translate("core.serv.manage.file.unsupported"));
+            helper.fault(lang.translate("core.serv.bundle.file.unsupported"));
         }
     }
 
@@ -246,21 +246,21 @@ public class FileAction implements IAction {
         File   file;
 
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.required"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.required"));
             return;
         }
         path = realPath(path);
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.error"));
             return;
         }
         file = new File(path);
         if ( file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.exist"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.exist"));
             return;
         }
         if (isDenyFile(file)) {
-            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
+            helper.fault(lang.translate("core.serv.bundle.file.interdicted"  ));
             return;
         }
 
@@ -276,7 +276,7 @@ public class FileAction implements IAction {
             saveFile(file, text);
         } catch ( Exception ex ) {
             CoreLogger.error(ex);
-            helper.fault(lang.translate("core.serv.manage.file.create.failed"));
+            helper.fault(lang.translate("core.serv.bundle.file.create.failed"));
             return;
         }
 
@@ -298,21 +298,21 @@ public class FileAction implements IAction {
         }
 
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.required"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.required"));
             return;
         }
         path = realPath(path);
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.error"));
             return;
         }
         file = new File(path);
         if (!file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exist"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.not.exist"));
             return;
         }
         if (isDenyFile(file)) {
-            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
+            helper.fault(lang.translate("core.serv.bundle.file.interdicted"  ));
             return;
         }
 
@@ -320,20 +320,20 @@ public class FileAction implements IAction {
         if ( dist != null ) {
         dist = realPath(dist);
         if ( dist == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.error"));
             return;
         }
         dizt = new File(dist);
         if ( dizt.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.dist.is.exist"));
+            helper.fault(lang.translate("core.serv.bundle.file.dist.is.exist"));
             return;
         }
         if (isDenyFile(file)) {
-            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
+            helper.fault(lang.translate("core.serv.bundle.file.interdicted"  ));
             return;
         }
         if (!file.renameTo(dizt)) {
-            helper.fault(lang.translate("core.serv.manage.file.rename.failed"));
+            helper.fault(lang.translate("core.serv.bundle.file.rename.failed"));
             return;
         }
         if ( text == null ) {
@@ -347,7 +347,7 @@ public class FileAction implements IAction {
             saveFile(file, text);
         } catch ( Exception ex ) {
             CoreLogger.error(ex);
-            helper.fault(lang.translate("core.serv.manage.file.update.failed"));
+            helper.fault(lang.translate("core.serv.bundle.file.update.failed"));
             return;
         }
 
@@ -362,29 +362,29 @@ public class FileAction implements IAction {
         File   file;
 
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.required"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.required"));
             return;
         }
         path = realPath(path);
         if ( path == null ) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.error"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.error"));
             return;
         }
         file = new File(path);
         if (!file.exists()) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.exist"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.not.exist"));
             return;
         }
         if (isDenyDire(file)) {
-            helper.fault(lang.translate("core.serv.manage.file.path.is.not.empty"));
+            helper.fault(lang.translate("core.serv.bundle.file.path.is.not.empty"));
             return;
         }
         if (isDenyFile(file)) {
-            helper.fault(lang.translate("core.serv.manage.file.interdicted"  ));
+            helper.fault(lang.translate("core.serv.bundle.file.interdicted"  ));
             return;
         }
         if (!file.delete()) {
-            helper.fault(lang.translate("core.serv.manage.file.delete.failed"));
+            helper.fault(lang.translate("core.serv.bundle.file.delete.failed"));
             return;
         }
 
@@ -461,7 +461,7 @@ public class FileAction implements IAction {
             return true ;
         }
 
-        String serv = System.getProperty("manage.serv.file");
+        String serv = System.getProperty("bundle.serv.file");
         if ( "no".equals(serv)) {
             return true ;
         }

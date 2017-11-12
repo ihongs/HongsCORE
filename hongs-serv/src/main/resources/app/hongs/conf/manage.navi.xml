@@ -1,7 +1,0 @@
-<root>
-    <menu text="后台" href="common/menu.act?m=manage">
-        <role text="登录后台" name="manage">
-            <action>manage</action>
-        </role>
-    </menu>
-</root>

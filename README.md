@@ -76,7 +76,7 @@
 6. 刷新页面，右上菜单就能看到刚添加的单元
 7. 点击单元，顶部菜单有表单项，尝试操作吧
 
-现在，你可以在 manage/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
+现在，你可以在 bundle/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
     form.html        创建表单
@@ -114,9 +114,9 @@
         - sqlite        Sqlite本地数据库目录
         - lucene        Lucene本地索引库目录
     - web               前端文件(启动时可指定 --basepath,--basehref)
+        - common        通用配置数据
+        - bundle        系统管理区域
         - handle        公共处理区域
-        - manage        系统管理区域
-        - native        本地资源
         - public        公共资源
         - static        静态资源
             - assets    前端常用组件

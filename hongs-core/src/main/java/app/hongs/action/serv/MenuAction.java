@@ -16,11 +16,11 @@ import java.util.Map;
  * 参数 m 是导航配置名
  * 参数 n 是导航路径名
  * m 与 n 相同时省略 n
- * 对应的菜单节点的 href 写作 common/menu.act?m=XXX&n=XXX
+ * 对应的菜单节点的 href 写作 normal/menu.act?m=XXX&n=XXX
  *
  * @author Hong
  */
-@Action("common/menu")
+@Action("normal/menu")
 public class MenuAction {
 
     @Action("__main__")
@@ -29,7 +29,7 @@ public class MenuAction {
         String m = helper.getParameter("m"); // 配置名称
         String n = helper.getParameter("n"); // 活动区域
         String x = helper.getParameter("x"); // 附加标识
-        String u = "common/menu.act";
+        String u = "normal/menu.act";
 
         if (m == null || "".equals(m)) {
             m  = "default";
@@ -109,7 +109,7 @@ public class MenuAction {
                 continue;
             }
             if (href.startsWith("#")
-            ||  href.startsWith("common/menu.act?")) {
+            ||  href.startsWith("normal/menu.act?")) {
                 Map item  = et.getValue();
                 Map<String, Map> subs = (Map) item.get("menus");
                 if (subs != null && !subs.isEmpty()) {

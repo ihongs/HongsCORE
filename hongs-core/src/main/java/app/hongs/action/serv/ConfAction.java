@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * &lt;/servlet&gt;
  * &lt;servlet-mapping&gt;
  *   &lt;servlet-name&gt;JsConf&lt;/servlet-name&gt;
- *   &lt;url-pattern&gt;/common/conf/*&lt;/url-pattern&gt;
+ *   &lt;url-pattern&gt;/normal/conf/*&lt;/url-pattern&gt;
  * &lt;/servlet-mapping&gt;
  * </pre>
  *

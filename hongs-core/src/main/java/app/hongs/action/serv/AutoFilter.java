@@ -59,7 +59,7 @@ public class AutoFilter extends ActionDriver {
         action = cnf.getInitParameter("action-path");
         layout = cnf.getInitParameter("layout-path");
         if (action == null) {
-            action ="/common/auto";
+            action ="/normal/auto";
         }
         if (layout == null) {
             layout =  action;

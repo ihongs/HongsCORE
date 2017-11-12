@@ -1,4 +1,4 @@
-package app.hongs.serv.manage;
+package app.hongs.serv.bundle;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
@@ -36,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
  * 数据存储动作
  * @author Hongs
  */
-@Action("manage/auto")
+@Action("bundle/auto")
 public class DataAction extends SearchAction {
 
     public DataAction() {

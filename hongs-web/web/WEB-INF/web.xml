@@ -39,7 +39,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Conf</servlet-name>
-        <url-pattern>/common/conf/*</url-pattern>
+        <url-pattern>/normal/conf/*</url-pattern>
     </servlet-mapping>
     <!-- Lang Servlet -->
     <servlet>
@@ -48,7 +48,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Lang</servlet-name>
-        <url-pattern>/common/lang/*</url-pattern>
+        <url-pattern>/normal/lang/*</url-pattern>
     </servlet-mapping>
     <!-- Auth Servlet -->
     <servlet>
@@ -57,7 +57,7 @@
     </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>
-        <url-pattern>/common/auth/*</url-pattern>
+        <url-pattern>/normal/auth/*</url-pattern>
     </servlet-mapping>
     <!-- Session Sets -->
     <session-config>

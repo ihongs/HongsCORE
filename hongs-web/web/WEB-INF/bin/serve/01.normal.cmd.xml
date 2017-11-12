@@ -9,10 +9,10 @@
         action的server属性为yes时将通过HTTP服务调用
     //-->
     <cmdlet system="no">
-        <cmd>common.record.clean</cmd>
+        <cmd>normal.record.clean</cmd>
     </cmdlet>
     <cmdlet system="no">
-        <cmd>common.sesion.clean</cmd>
+        <cmd>normal.sesion.clean</cmd>
     </cmdlet>
     <!--
     <cmdlet system="no">

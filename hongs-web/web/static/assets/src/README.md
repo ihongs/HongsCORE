@@ -36,9 +36,9 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
     <script type="text/javascript" src="static/assets/jquery-ui.min.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-    <script type="text/javascript" src="common/conf/default.js"></script>
-    <script type="text/javascript" src="common/lang/default.js"></script>
-    <script type="text/javascript" src="common/auth/default.js"></script>
+    <script type="text/javascript" src="normal/conf/default.js"></script>
+    <script type="text/javascript" src="normal/lang/default.js"></script>
+    <script type="text/javascript" src="normal/auth/default.js"></script>
 
 注: 将以上代码加入 head 中, 注意 link 的 href 和 script 的 src 路径; 这里用 base 定义了基础路径, 以下的相对路径均基于此.
 

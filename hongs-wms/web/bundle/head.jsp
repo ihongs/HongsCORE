@@ -46,7 +46,7 @@
                      .append("</ul>");
                 menus.append("</li>");
             } else
-            if (!href.startsWith("common/menu.")) {
+            if (!href.startsWith("normal/menu.")) {
                 href  = Core.BASE_HREF +"/"+ href;
                 hrel  = Core.BASE_HREF +"/"+ hrel;
                 menus.append("<li class=\"")

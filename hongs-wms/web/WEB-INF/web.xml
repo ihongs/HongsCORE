@@ -36,18 +36,18 @@
     <!-- Conf Servlet -->
     <servlet>
         <servlet-name>Conf</servlet-name>
-        <servlet-class>app.hongs.common.serv.BaseConfig</servlet-class>
+        <servlet-class>app.hongs.normal.serv.BaseConfig</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Conf</servlet-name>
-        <url-pattern>/common/conf/*</url-pattern>
-        <url-pattern>/common/lang/*</url-pattern>
-        <url-pattern>/common/auth/*</url-pattern>
+        <url-pattern>/normal/conf/*</url-pattern>
+        <url-pattern>/normal/lang/*</url-pattern>
+        <url-pattern>/normal/auth/*</url-pattern>
     </servlet-mapping>
     <!-- XSRF Filter -->
     <filter>
         <filter-name>XsrfFilter</filter-name>
-        <filter-class>app.hongs.serv.common.XsrfFilter</filter-class>
+        <filter-class>app.hongs.serv.normal.XsrfFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
@@ -57,7 +57,7 @@
     <!-- SPAR Filter -->
     <filter>
         <filter-name>SparFilter</filter-name>
-        <filter-class>app.hongs.serv.common.SparFilter</filter-class>
+        <filter-class>app.hongs.serv.normal.SparFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SparFilter</filter-name>
@@ -66,7 +66,7 @@
     <!-- Sess Filter -->
     <filter>
         <filter-name>SessFilter</filter-name>
-        <filter-class>app.hongs.serv.common.SessFilter</filter-class>
+        <filter-class>app.hongs.serv.normal.SessFilter</filter-class>
         <init-param>
             <param-name>session-max-age</param-name>
             <param-value>604800</param-value>

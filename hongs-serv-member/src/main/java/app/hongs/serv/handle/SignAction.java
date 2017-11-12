@@ -18,7 +18,7 @@ import java.util.Map;
  * @author Hongs
  */
 @Action("handle/sign")
-public class SignAction extends app.hongs.serv.manage.SignAction {
+public class SignAction extends app.hongs.serv.bundle.SignAction {
 
     /**
      * 注册

@@ -1,4 +1,4 @@
-package app.hongs.serv.manage;
+package app.hongs.serv.bundle;
 
 import app.hongs.Cnst;
 import app.hongs.CoreLocale;
@@ -17,7 +17,7 @@ import java.util.Map;
  * 管理区我的信息
  * @author Hongs
  */
-@Action("manage/mine")
+@Action("bundle/mine")
 public class MineAction {
 
     @Action("info")

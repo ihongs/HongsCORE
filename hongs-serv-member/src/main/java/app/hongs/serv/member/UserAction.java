@@ -21,7 +21,7 @@ import java.util.Set;
  * 用户动作接口
  * @author Hongs
  */
-@Action("manage/member/user")
+@Action("bundle/member/user")
 public class UserAction {
 
     private final User model;

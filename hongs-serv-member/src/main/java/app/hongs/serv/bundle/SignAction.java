@@ -1,4 +1,4 @@
-package app.hongs.serv.manage;
+package app.hongs.serv.bundle;
 
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpSession;
  * 管理区登录操作
  * @author Hongs
  */
-@Action("manage/sign")
+@Action("bundle/sign")
 public class SignAction {
 
     /**

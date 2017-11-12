@@ -18,7 +18,7 @@ import java.util.Map;
  * 部门动作接口
  * @author Hongs
  */
-@Action("manage/member/dept")
+@Action("bundle/member/dept")
 public class DeptAction {
 
     private final Dept model;
@@ -54,8 +54,8 @@ public class DeptAction {
 
         if (Synt.declare(wr, false)) {
             List rs =  ! "1".equals(ud) ?
-                    NaviMap.getInstance("manage").getRoleTranslated(0, 0):
-                    NaviMap.getInstance("manage").getRoleTranslated(0, 0, null);
+                    NaviMap.getInstance("bundle").getRoleTranslated(0, 0):
+                    NaviMap.getInstance("bundle").getRoleTranslated(0, 0, null);
             Dict.put(rd, rs, "enum", "roles..role");
         }
 

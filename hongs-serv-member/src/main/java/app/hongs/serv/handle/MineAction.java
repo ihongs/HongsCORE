@@ -12,7 +12,7 @@ import java.util.Map;
  * @author Hongs
  */
 @Action("handle/mine")
-public class MineAction extends app.hongs.serv.manage.MineAction {
+public class MineAction extends app.hongs.serv.bundle.MineAction {
 
     @Action("sign/info")
     public void signInfo(ActionHelper ah) {

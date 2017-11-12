@@ -273,7 +273,7 @@ HsForm.prototype = {
             for(var i = 0 ; i < arr.length ; i ++) {
                 var n = arr[i].name ;
                 var v = arr[i].value;
-                if (! v || (v == 0 && n == idKey)) {
+                if (!v || (v == "0" && n == "id")) {
                     continue;
                 }
                 box.find  ("[name='" + n + "']" )

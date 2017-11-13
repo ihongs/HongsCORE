@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <form name="item">
+        <field name="@" text="餐牌菜单" repeated="" required="" rule="" type="">
+            <param name="callable">search</param>
+            <param name="listable">?</param>
+            <param name="sortable">?</param>
+            <param name="siftable">?</param>
+            <param name="nameable">?</param>
+        </field>
+    </form>
+</root>

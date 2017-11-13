@@ -21,7 +21,7 @@
             <param name="listable">true</param>
             <param name="form">food</param>
             <param name="conf">bundle/data/dining/food</param>
-            <param name="data-at">bundle/auto/search!bundle/data/dining/food/search?rb=id,name,price</param>
+            <param name="data-at">bundle/auto/search!bundle/data/dining/food/search?rb=id,name,price,picture</param>
             <param name="data-al">bundle/data/dining/food/list_fork.html</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>

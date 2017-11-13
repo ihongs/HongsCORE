@@ -1,6 +1,6 @@
 <div id="dining-bill-info" class="dining-info container"
-     data-module="hsForm"
-     data-load-url="handle/data/dining/bill/search.act?id=$id"
+     data-module="hsList"
+     data-load-url="handle/data/dining/bill/item/search.act?bill_id=$id&md=6&rn=0"
      data-fill-list="(hsListFillItem)"
      data-data-0="_fill_link:(hsDiningListFillLink)"
      data-data-1="_fill_logo:(hsDiningListFillLogo)">
@@ -29,29 +29,37 @@
         <div>优惠: <span data-fn="off"></span>元</div>
     </div>
 </div>
+<div id="dining-bill-form" class="container"
+     data-module="hsForm"
+     data-load-url="handle/data/dining/bill/search.act?id=$id">
+    <form>
+        <div class="form-group">
+            <label>姓名</label>
+            <span data-fn="title" class="form-control-static"></span>
+        </div>
+        <div class="form-group">
+            <label>电话</label>
+            <span data-fn="phone" class="form-control-static"></span>
+        </div>
+        <div class="form-group">
+            <label>地址</label>
+            <span data-fn="addr"  class="form-control-static"></span>
+        </div>
+    </form>
+</div>
 <script type="text/javascript">
     (function($) {
         var context = $("#dining-bill-info").removeAttr("id");
+        var formbox = $("#dining-bill-form").removeAttr("id");
         
-        // 总价折扣统计
-        context.on("loadBack", function(evt, rst) {
-            var price = 0;
-            var worth = 0;
-            var map = JSON.parse(H$("$dining.cart") || "{}");
+        context.on("loadBack", function(evt, rst) {console.log(rst)
             for(var i = 0; i < rst.list.length; i ++) {
-                var info = rst.list[i ];
-                var num  = map[info.id];
-                price += parseFloat(info.price) * num;
-                worth += parseFloat(info.worth) * num;
+                var info = rst.list[i];
+                info.food.picture = [""];
+                info.food.count = info.count;
+                rst.list[i] = info.food;
             }
-            context.find("[data-fn=total_price]").text(price);
-            context.find("[data-fn=total_worth]").text(worth);
-            context.find("[data-fn=off]").text(worth - price);
-            if (worth == price) {
-                context.find("[data-fn=total_worth],[data-fn=off]").parent().hide();
-            }
-            
-            rst.list = rst.foods;
+            console.log(rst)
         });
     })(jQuery);
 </script>

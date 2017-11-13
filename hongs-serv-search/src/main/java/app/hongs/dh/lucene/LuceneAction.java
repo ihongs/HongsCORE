@@ -17,7 +17,9 @@ import app.hongs.dh.IActing;
 import app.hongs.dh.IAction;
 import app.hongs.dh.IEntity;
 import app.hongs.util.Dict;
+import app.hongs.util.Synt;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Lucene 模型动作
@@ -33,7 +35,7 @@ public class LuceneAction implements IAction, IActing {
         String mod = runner.getModule();
 
         try {
-            // 方便自动机处理
+            // 探测实体是否为独占模块, 方便自动机处理
             if (FormSet.hasConfFile(mod + "/" + ent)) {
                 mod = mod + "/" + ent  ;
                 runner.setModule( mod );
@@ -45,8 +47,9 @@ public class LuceneAction implements IAction, IActing {
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
-            if (Dict.getValue( FormSet.getInstance( mod ).getForm( ent ),
-                false, "@", "deny.call." + act)) {
+            Map fa  = FormSet.getInstance (mod).getForm (ent);
+            Set ca  = Synt.toSet( Dict.getDepth( fa, "@", "callable" ) );
+            if (ca != null && !ca.contains(act)) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
         }

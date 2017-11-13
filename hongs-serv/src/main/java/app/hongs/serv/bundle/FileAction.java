@@ -66,7 +66,7 @@ public class FileAction implements IAction {
     @Action("search")
     public void search(ActionHelper helper) throws HongsException {
         MimetypesFileTypeMap nmap = new MimetypesFileTypeMap( );
-        CoreLocale lang = CoreLocale.getInstance("manage_serv");
+        CoreLocale lang = CoreLocale.getInstance("bundle_serv");
         String type = helper.getParameter("type");
         String path = helper.getParameter("path");
         String pxth = path;
@@ -239,7 +239,7 @@ public class FileAction implements IAction {
     @Override
     @Action("create")
     public void create(ActionHelper helper) throws HongsException {
-        CoreLocale lang = CoreLocale.getInstance("manage_serv");
+        CoreLocale lang = CoreLocale.getInstance("bundle_serv");
         String path = helper.getParameter("path");
         String type = helper.getParameter("type");
         String text = helper.getParameter("text");
@@ -286,7 +286,7 @@ public class FileAction implements IAction {
     @Override
     @Action("update")
     public void update(ActionHelper helper) throws HongsException {
-        CoreLocale lang = CoreLocale.getInstance("manage_serv");
+        CoreLocale lang = CoreLocale.getInstance("bundle_serv");
         String path = helper.getParameter("path");
         String dist = helper.getParameter("dist");
         String text = helper.getParameter("text");
@@ -357,7 +357,7 @@ public class FileAction implements IAction {
     @Override
     @Action("delete")
     public void delete(ActionHelper helper) throws HongsException {
-        CoreLocale lang = CoreLocale.getInstance("manage_serv");
+        CoreLocale lang = CoreLocale.getInstance("bundle_serv");
         String path = helper.getParameter("path");
         File   file;
 

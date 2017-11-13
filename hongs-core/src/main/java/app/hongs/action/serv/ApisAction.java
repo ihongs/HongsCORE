@@ -228,7 +228,7 @@ public class ApisAction
         String        w ;
 
         // 分解路径
-        for(int i = 1; i < ats.length; i ++ ) {
+        for(int i = 0; i < ats.length; i ++ ) {
             String  x  =  ats[ i ];
             int p = x.indexOf('!');
             if (p > 0) {
@@ -284,21 +284,22 @@ public class ApisAction
          * 可尝试检查当前动作或方法
          */
         for(String x : mts) {
-            if (acl.endsWith("/"+ x)) {
-                return "/"+ acl + ".act" + q;
+            if (w.endsWith("/" + x)) {
+                x = "/" + w + ".act" + q;
+                return    x ;
             }
         }
         if ("update".equals(m)) {
-            return "/"+acl+"/update.act" + q;
+            return "/" + w + "/update.act" + q;
         } else
         if ("create".equals(m)) {
-            return "/"+acl+"/create.act" + q;
+            return "/" + w + "/create.act" + q;
         } else
         if ("delete".equals(m)) {
-            return "/"+acl+"/delete.act" + q;
+            return "/" + w + "/delete.act" + q;
         } else
         {
-            return "/"+acl+"/search.act" + q;
+            return "/" + w + "/search.act" + q;
         }
     }
 

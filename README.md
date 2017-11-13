@@ -62,6 +62,7 @@
 注意[2]: 需要 JDK 而非 JRE(Java) 才能运行, 使用前请确保 JDK 已安装并加入 PATH 环境变量, 或设置 JAVA_HOME 环境变量为 jdk 的安装目录(Windows 必须设置). 在官网下载并使用安装程序安装的通常已自动设置好了.
 
 > JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+
 > MVN 下载地址: http://maven.apache.org/download.cgi
 
 ## 前端开发
@@ -154,11 +155,13 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 ### 请求规则
 
-支持 Content-Type 为 application/x-www-form-urlencoded, multipart/form-data 和 application/json 的请求, 组成结构为("+" 在 URL 中表示空格):
+支持 Content-Type 为 application/x-www-form-urlencoded, multipart/form-data 和 application/json 的请求, 组成结构为:
 
     f1=1&f2.!eq=2&f3.!in.=30&f3.!in.=31&t1.f4.!gt=abc&ob=-f5+f6&wd=Hello+world
 
-或兼容 PHP 的方式:
+以上 + 在 URL 中表示空格, 参数名 a.!b 也可以省略点写成 a!b 的形式.
+
+可兼容 PHP 的格式:
 
     f1=1&f2[!eq]=2&f3[!in][]=30&f3[!in][]=31&t1[f4][!gt]=abc&ob=-f5+f6&wd=Hello+world
 

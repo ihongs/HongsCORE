@@ -22,7 +22,7 @@
 6. 简单有效的动作权限解决方案;
 7. 与对应的 HongsCORE4JS(for Javascript) 配合实现高效 WEB 应用开发方案;
 8. 默认嵌入 jetty,sqlite,lucene 等库, 除 JDK 外无需安装其他软件即可运行;
-9. 内建有数据管理功能, 无需编程即可构建信息管理系统.
+9. 内含自助模块, 无需编程即可构建简单的信息管理系统.
 
 另见 [**更新日志**](UPDATE.md), 及 [**HongsCORE framework for Javascript**](hongs-web/web/static/assets/src/).
 
@@ -198,13 +198,13 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 有一些参数名具有特定意义, 如:
 
      pn     当前页码(page num)
-     rn     额定行数(rows cnt)
+     rn     额定行数(rows num)
+     md     查询模式(mode)
      wd     搜索字词(word)
-     ud     内置参数(used)
      ob     排序字段(order by)
      rb     需求字段(reply by)
      or     或查询(or)
-     ar     多组或(and)
+     ar     多组或(and or)
 
 请避免将这些参数作为字段名.
 
@@ -302,13 +302,9 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
     xxxxable           如同 field 中的同名参数, 但值为字段名称列表, * 表全部字段, ? 按类型判别
+    callable           告知 XxxAction 脚手架动作类, 限定可执行方法, 默认全部允许, ! 表全部禁止
     dont.append.fields 告知 Mview 自动追加表内字段
     dont.append.assocs 告知 Mview 自动追加关联字段
-    hide.create.button 告知视图不要显示创建按钮
-    hide.update.button 告知视图不要显示修改按钮
-    hide.delete.button 告知视图不要显示删除按钮
-    hide.checks.column 告知视图不要显示选择列
-    deny.call.ACTION_HANDLE 告知 DBAction 等"脚手架"处理器拒绝处理某些操作, 也可以通过权限控制
 
 另, 每个枚举(enum)可以有一个 code="\*" 的取值, 该取值用作"其他"选项, 当出现枚举中没有记录的值时, 将显示为"其他".
 

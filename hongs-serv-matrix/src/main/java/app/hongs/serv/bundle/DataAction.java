@@ -75,12 +75,13 @@ public class DataAction extends SearchAction {
         ||  met.isAnnotationPresent(Verify.class)) {
             Data dat = (Data) getEntity(helper);
             Map  fcs =  dat.getFields();
-            helper.setAttribute("form:"+mod+"/"+ent+"."+ent, fcs);
+            helper.setAttribute("form:"+ mod +"."+ ent, fcs);
         }
 
         // 放入当前用户ID
         Object uid = helper.getSessibute(Cnst.UID_SES);
-        helper.getRequestData(  ).put("user_id" , uid);
+        helper.getRequestData().put("user_id", uid);
+        helper.getRequestData().put("form_id", ent);
     }
 
     /**

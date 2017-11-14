@@ -237,24 +237,29 @@ public class ActionHelper implements Cloneable
 
       try
       {
-        Map rd = this.getRequestAttr(); // 可用属性传递
-        if (rd == null)
+        Map ad, rd;
+          ad = this.getRequestAttr(); // 可用属性传递
+        if (ct.startsWith("multipart/"))
         {
-          if (ct.startsWith("multipart/"))
-          {
-            rd = this.getRequestPart(); // 处理上传文件
-          }
-          else if (ct.endsWith( "/json" ))
-          {
-            rd = this.getRequestJson(); // 处理JSON数据
-          }
+          rd = this.getRequestPart(); // 处理上传文件
+        } else if (ct.endsWith("/json"))
+        {
+          rd = this.getRequestJson(); // 处理JSON数据
+        } else
+        {
+          rd = null;
         }
 
         requestData = parseParam(request.getParameterMap());
 
+        // 深度整合数据
         if (rd != null)
         {
-          Dict.putAll(requestData, rd); // 深度合并参数
+          Dict.putAll(requestData, rd);
+        }
+        if (ad != null)
+        {
+          Dict.putAll(requestData, ad);
         }
       }
       finally

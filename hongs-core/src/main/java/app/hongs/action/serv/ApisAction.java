@@ -5,7 +5,6 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.ActionRunner;
 import app.hongs.util.Data;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -24,16 +23,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 应用程序接口
+ * 应用接口类
  *
  * <p>
- * REST 适配器, 可将不同 Method 请求转发到原有的 Action 方法:
- * <pre>
- * GET      search, list or info
- * PUT      update, save
- * POST     create, save
- * DELETE   delete
- * </pre>
+ * 可将输入和输出数据按既定规则进行转换,
+ * 内部采用 INCLUDE 将数据转 ActsAction.
  * </p>
  *
  * <h3>web.xml配置:</h3>
@@ -72,53 +66,6 @@ public class ApisAction
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
-        if ("PATCH".equals(req.getMethod())) {
-            doPatch  (req, rsp); // 增加 PATCH 方法
-            return;
-        }
-        super.service(req, rsp);
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse rsp)
-            throws IOException, ServletException {
-        doAction(req, rsp, "search", "list", "info");
-    }
-
-    @Override
-    protected void doPut(HttpServletRequest req, HttpServletResponse rsp)
-            throws IOException, ServletException {
-        doAction(req, rsp, "update", "save");
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse rsp)
-            throws IOException, ServletException {
-        doAction(req, rsp, "create", "save");
-    }
-
-//  @Override
-    protected void doPatch(HttpServletRequest req, HttpServletResponse rsp)
-            throws IOException, ServletException {
-        doAction(req, rsp, "update", "save");
-    }
-
-    @Override
-    protected void doDelete(HttpServletRequest req, HttpServletResponse rsp)
-            throws IOException, ServletException {
-        doAction(req, rsp, "delete");
-    }
-
-    /**
-     * 将请求转发到动作处理器
-     * @param req
-     * @param rsp
-     * @param mts
-     * @throws ServletException
-     * @throws IOException
-     */
-    private void doAction(HttpServletRequest req, HttpServletResponse rsp, String... mts)
-            throws ServletException, IOException {
         String act = ActionDriver.getCurrPath(req);
         if (act == null || act.length() == 0) {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "API URI can not be empty.");
@@ -152,9 +99,7 @@ public class ApisAction
         }
 
         // 将请求转发到动作处理器
-        act = parseAct(act, mts);
-        req.getRequestDispatcher(act)
-              .include(req, rsp);
+        req.getRequestDispatcher(act).include( req , rsp );
 
         // 获取响应数据逐步格式化
         Map resp  = hlpr.getResponseData();
@@ -204,103 +149,6 @@ public class ApisAction
 
         if (scok) {
             rsp.setStatus( javax.servlet.http.HttpServletResponse.SC_OK );
-        }
-    }
-
-    private String parseAct(String act, String... mts) {
-        // 掐头去尾
-        String acl = act.substring( 1 );
-        int pos  = acl.lastIndexOf('.');
-        if (pos != -1) {
-            acl  = acl.substring(0,pos);
-        }
-
-        // 是否动作
-        Map atx = ActionRunner.getActions();
-        if (atx.containsKey( acl )) {
-            return "/" + acl + Cnst.ACT_EXT;
-        }
-
-        String[]    ats = acl.split ( "/" );
-        StringBuilder u = new StringBuilder();
-        StringBuilder q = new StringBuilder();
-        String        m = mts [0];
-        String        w ;
-
-        // 分解路径
-        for(int i = 0; i < ats.length; i ++ ) {
-            String  x  =  ats[ i ];
-            int p = x.indexOf('~');
-            if (p > 0) {
-                String n, v;
-                v = x.substring(1 + p);
-                x = x.substring(0 , p);
-
-                /**
-                 * 当这是最后一个参数时
-                 * 将 info 加到 list 前
-                 * 最后一个总是叫 id
-                 * 其他外键则叫 x_id
-                 */
-                if (i == ats.length - 1) {
-                    if ( "search".equals(m) ) {
-                        mts = new String[ ] {"search", "info", "list"};
-                    }
-                    n = Cnst.ID_KEY;
-                } else {
-                    n = x.replace('-', '_') + '_'
-                      + Cnst.ID_KEY;
-                }
-
-                q.append('&').append(n)
-                 .append('=').append(v);
-                u.append('/').append(x);
-            } else {
-                u.append('/').append(x);
-            }
-        }
-
-        // 微调字串
-        if (0 < q.length()) {
-            q = q.replace(0, 1, "?");
-        }
-        if (0 < u.length()) {
-            w = u.substring( 1 );
-        } else {
-            w = u.toString (   );
-        }
-
-        // 逐个对比
-        for(String x : mts) {
-            x = w + "/" + x ;
-            if (atx.containsKey(x)) {
-                x = "/" + x + Cnst.ACT_EXT + q;
-                return    x ;
-            }
-        }
-
-        /**
-         * 当已知的动作中无法匹配时
-         * 可能是使用了 AutoFilter 的原因
-         * 可尝试检查当前动作或方法
-         */
-        for(String x : mts) {
-            if (w.endsWith("/" + x)) {
-                x = "/" + w + Cnst.ACT_EXT + q;
-                return    x ;
-            }
-        }
-        if ("update".equals(m)) {
-            return "/" + w + "/update" + Cnst.ACT_EXT + q;
-        } else
-        if ("create".equals(m)) {
-            return "/" + w + "/create" + Cnst.ACT_EXT + q;
-        } else
-        if ("delete".equals(m)) {
-            return "/" + w + "/delete" + Cnst.ACT_EXT + q;
-        } else
-        {
-            return "/" + w + "/search" + Cnst.ACT_EXT + q;
         }
     }
 

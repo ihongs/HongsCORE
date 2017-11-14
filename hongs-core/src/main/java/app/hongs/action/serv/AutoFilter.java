@@ -88,14 +88,14 @@ public class AutoFilter extends ActionDriver {
 
         // 检查是否需要跳过
         if (ignore != null && ignore.ignore(url)) {
-            chain.doFilter(req , rsp);
+            chain.doFilter( req , rsp );
             return;
         }
 
-        if (url.endsWith(".api")) {
+        if (url.endsWith(Cnst.API_EXT)) {
                              // 接口不需要处理
         } else
-        if (url.endsWith(".act")) {
+        if (url.endsWith(Cnst.ACT_EXT)) {
             String act, ext; // 动作路径和扩展
             String src, met; // 资源路径和方法
             String uri;

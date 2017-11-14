@@ -1,5 +1,6 @@
 package app.hongs.cmdlet.serv;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -216,7 +217,7 @@ public class Common {
         Map<String, String> cok = data((String) opts.get("cookies"));
         String hst = System.getProperty("server.host" , "localhost");
         String pot = System.getProperty("server.port" ,   "8080"   );
-        String url = "http://" +hst+":"+pot+Core.BASE_HREF+"/"+act+".act";
+        String url = "http://"+ hst+":"+pot + Core.BASE_HREF +"/"+ act + Cnst.ACT_EXT;
 
         try {
             HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();

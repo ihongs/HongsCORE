@@ -1,5 +1,6 @@
 package app.hongs.action.serv;
 
+import app.hongs.Cnst;
 import app.hongs.CoreConfig;
 import app.hongs.HongsCause;
 import app.hongs.HongsException;
@@ -15,8 +16,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -26,15 +25,13 @@ import javax.servlet.http.HttpServletResponse;
  * 可一次调用多个动作
  * 批量执行后返回数据
  * 请求格式举例:
- * ACTION/NAME.api=PARAMS&ACTION/NAME2.act#0=PARAMS&ACTION/NAME2.act#1=PARAMS&!data=PARAMS
+ * ACTION/NAME.api=PARAMS&ACTION/NAME2.act!0=PARAMS&ACTION/NAME2.act!1=PARAMS&.data=PARAMS
  * PARAMS 为 JSON 或 URLEncoded 格式
  * !data  提供共同的参数
  * @author Hongs
  */
 @Action("normal/pack")
 public class PackAction {
-
-    private static final Pattern EXT_PAT = Pattern.compile("\\.(act|api)(#.*?)?$");
 
     @Action("__main__")
     public void pack(ActionHelper helper) {
@@ -47,15 +44,14 @@ public class PackAction {
         Map                 rap ;
         String              uri ;
         String              urx ;
-        Matcher             mat ;
 
         while (enu.hasMoreElements( )) {
-            uri = enu.nextElement(   );
-            mat = EXT_PAT.matcher(uri);
-            if (! mat.find()) {
+            uri = enu.nextElement (  );
+            urx = uri.replaceFirst("!.*", "");
+            if (! urx.endsWith(Cnst.ACT_EXT )
+            &&  ! urx.endsWith(Cnst.API_EXT)) {
                 continue;
             }
-            urx = uri.substring(0,mat.end(1));
 
             // 解析请求参数
             raq = data(req.getParameter(uri));
@@ -85,8 +81,8 @@ public class PackAction {
         Set     ias = Synt.toTerms( ia );
         if (ias == null || ias.isEmpty()) {
             ias  = new HashSet();
-            ias.add("127.0.0.1");
-            ias.add("0:0:0:0:0:0:0:1"  );
+            ias.add(    "127.0.0.1"    );
+            ias.add( "0:0:0:0:0:0:0:1" );
         }
         if (! sw ) {
             throw new HongsException(0x1100, "Illegal request!");
@@ -101,8 +97,9 @@ public class PackAction {
         helper.setSessionData(data(req.getParameter("session")));
         helper.setCookiesData(data(req.getParameter("cookies")));
         String uri = "/" + req.getParameter("act");
-        if ( ! uri.endsWith(".act") && ! uri.endsWith(".api")) {
-            uri += ".act";
+        if ( ! uri.endsWith(Cnst.ACT_EXT)
+          && ! uri.endsWith(Cnst.API_EXT) ) {
+            uri += Cnst.ACT_EXT;
         }
 
         call(helper, uri, req, rsp);

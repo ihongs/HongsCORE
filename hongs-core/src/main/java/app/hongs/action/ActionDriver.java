@@ -569,7 +569,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         String uri = (String) req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH);
         String suf = (String) req.getAttribute(RequestDispatcher.FORWARD_PATH_INFO);
         if (uri == null) {
-            uri = req.getServletPath();
+            uri  = req.getServletPath();
             suf  = req.getPathInfo();
         }
         if (suf != null) {
@@ -587,7 +587,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         for (String key : new String[] {
                   "X-Forwarded-For",
                   "Proxy-Client-IP",
-                "WL-Proxy-Client-IP"}) {
+               "WL-Proxy-Client-IP"} ) {
              String val = req.getHeader(key);
             if (val != null && val.length( )  !=  0 ) {
                 int pos = val.indexOf  (',');

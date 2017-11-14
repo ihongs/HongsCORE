@@ -218,7 +218,7 @@ public class ApisAction
         // 是否动作
         Map atx = ActionRunner.getActions();
         if (atx.containsKey( acl )) {
-            return "/"+acl+".act";
+            return "/" + acl + Cnst.ACT_EXT;
         }
 
         String[]    ats = acl.split ( "/" );
@@ -230,7 +230,7 @@ public class ApisAction
         // 分解路径
         for(int i = 0; i < ats.length; i ++ ) {
             String  x  =  ats[ i ];
-            int p = x.indexOf('!');
+            int p = x.indexOf('~');
             if (p > 0) {
                 String n, v;
                 v = x.substring(1 + p);
@@ -246,9 +246,10 @@ public class ApisAction
                     if ( "search".equals(m) ) {
                         mts = new String[ ] {"search", "info", "list"};
                     }
-                    n = /****/Cnst.ID_KEY;
+                    n = Cnst.ID_KEY;
                 } else {
-                    n = x+"_"+Cnst.ID_KEY;
+                    n = x.replace('-', '_') + '_'
+                      + Cnst.ID_KEY;
                 }
 
                 q.append('&').append(n)
@@ -273,7 +274,7 @@ public class ApisAction
         for(String x : mts) {
             x = w + "/" + x ;
             if (atx.containsKey(x)) {
-                x = "/" + x + ".act" + q;
+                x = "/" + x + Cnst.ACT_EXT + q;
                 return    x ;
             }
         }
@@ -285,21 +286,21 @@ public class ApisAction
          */
         for(String x : mts) {
             if (w.endsWith("/" + x)) {
-                x = "/" + w + ".act" + q;
+                x = "/" + w + Cnst.ACT_EXT + q;
                 return    x ;
             }
         }
         if ("update".equals(m)) {
-            return "/" + w + "/update.act" + q;
+            return "/" + w + "/update" + Cnst.ACT_EXT + q;
         } else
         if ("create".equals(m)) {
-            return "/" + w + "/create.act" + q;
+            return "/" + w + "/create" + Cnst.ACT_EXT + q;
         } else
         if ("delete".equals(m)) {
-            return "/" + w + "/delete.act" + q;
+            return "/" + w + "/delete" + Cnst.ACT_EXT + q;
         } else
         {
-            return "/" + w + "/search.act" + q;
+            return "/" + w + "/search" + Cnst.ACT_EXT + q;
         }
     }
 

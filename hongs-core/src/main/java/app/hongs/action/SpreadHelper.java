@@ -161,7 +161,7 @@ public class SpreadHelper {
                 at = at.substring(0 , ps).trim();
             }
             if (null != ap && !"".equals(ap)) {
-                ap = ap + ".act";
+                ap = ap + Cnst.ACT_EXT;
                 ah.setAttribute(Cnst.ACTION_ATTR,ap);
             }
             if (null != aq && !"".equals(aq)) {

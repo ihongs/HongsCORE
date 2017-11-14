@@ -105,6 +105,10 @@ public final class Cnst {
 
     public static final String PROP_EXT = ".prop"; // 属性配置
 
+    public static final String ACT_EXT  = ".act";
+
+    public static final String API_EXT  = ".api";
+
     //** 会话参数 **/
 
     public static final String  UID_SES =  "uid";

@@ -391,25 +391,25 @@ public class AuthFilter
   }
 
   private boolean isApi (HttpServletRequest req) {
-      return ActionDriver.getRealPath(req).endsWith(".api");
+      return ActionDriver.getRealPath(req).endsWith(Cnst.API_EXT);
   }
 
   private boolean isAjax(HttpServletRequest req) {
-      if (Synt.declare(req.getParameter(".ajax") , false )) {
-          return  true; // 为方便特殊情况下使用 POST, 可显式申明 AJAX
+      if (Synt.asBool(req.getParameter(".ajax") ) ) {
+          return  true; // 方便特殊情况 POST, 亦可显式申明 AJAX.
       }
       String x  = req.getHeader("X-Requested-With");
-      return x == null ? false : IS_AJAX.matcher(x).find( );
+      return x == null ? false : IS_AJAX.matcher(x).find();
   }
 
   private boolean isJson(HttpServletRequest req) {
       String a  = req.getHeader("Accept");
-      return a == null ? false : IS_JSON.matcher(a).find( );
+      return a == null ? false : IS_JSON.matcher(a).find();
   }
 
   private boolean isHtml(HttpServletRequest req) {
       String a  = req.getHeader("Accept");
-      return a == null ? false : IS_HTML.matcher(a).find( );
+      return a == null ? false : IS_HTML.matcher(a).find();
   }
 
 }

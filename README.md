@@ -305,7 +305,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
 
     xxxxable           如同 field 中的同名参数, 但值为字段名称列表, * 表全部字段, ? 按类型判别
-    callable           告知 XxxAction 脚手架动作类, 限定可执行方法, 默认全部允许, ! 表全部禁止
+    callable           告知 XxxAction 脚手架动作类, 限定可执行方法, 缺省全部允许, 为空全部禁止
     dont.append.fields 告知 Mview 自动追加表内字段
     dont.append.assocs 告知 Mview 自动追加关联字段
 

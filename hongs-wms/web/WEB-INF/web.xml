@@ -33,13 +33,27 @@
         <servlet-name>Apis</servlet-name>
         <url-pattern>*.api</url-pattern>
     </servlet-mapping>
-    <!-- Conf Servlet -->
+    <!-- Rest Servlet -->
     <servlet>
-        <servlet-name>Conf</servlet-name>
-        <servlet-class>app.hongs.normal.serv.BaseConfig</servlet-class>
+        <servlet-name>Rest</servlet-name>
+        <servlet-class>app.hongs.normal.serv.RestAction</servlet-class>
+        <multipart-config>
+            <max-file-size>10485760</max-file-size>
+            <max-request-size>20971520</max-request-size>
+            <file-size-threshold>5242880</file-size-threshold>
+        </multipart-config>
     </servlet>
     <servlet-mapping>
-        <servlet-name>Conf</servlet-name>
+        <servlet-name>Rest</servlet-name>
+        <url-pattern>/api/*</url-pattern>
+    </servlet-mapping>
+    <!-- Sacl Servlet -->
+    <servlet>
+        <servlet-name>Sacl</servlet-name>
+        <servlet-class>app.hongs.normal.serv.SaclAction</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>Sacl</servlet-name>
         <url-pattern>/normal/conf/*</url-pattern>
         <url-pattern>/normal/lang/*</url-pattern>
         <url-pattern>/normal/auth/*</url-pattern>
@@ -87,6 +101,7 @@
         <url-pattern>/bundle/*</url-pattern>
         <url-pattern>/handle/*</url-pattern>
         <url-pattern>/normal/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>

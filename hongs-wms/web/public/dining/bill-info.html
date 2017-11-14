@@ -1,4 +1,9 @@
-<div id="dining-bill-info" class="dining-info container"
+<ul class="nav nav-tabs" data-toggle="hsTabs">
+    <li><a href="javascript:;">清单</a></li>
+    <li><a href="javascript:;">配送及支付</a></li>
+</ul>
+<div class="panes">
+<div id="dining-bill-info" class="dining-list container"
      data-module="hsList"
      data-load-url="handle/data/dining/bill/item/search.act?bill_id=$id&md=6&rn=0"
      data-fill-list="(hsListFillItem)"
@@ -7,7 +12,9 @@
     <div class="listbox row">
         <div class="itembox col-md-4" style="display: none;">
             <div class="media">
-                <span class="badge to-cart pull-right" data-fn="dail">+</span>
+                <span class="badge to-cart pull-right">
+                    <b data-fn="count"></b>
+                </span>
                 <div class="media-left">
                     <a href="#" data-fn="logo">
                         <img class="media-object"/>
@@ -47,19 +54,19 @@
         </div>
     </form>
 </div>
+</div>
 <script type="text/javascript">
     (function($) {
         var context = $("#dining-bill-info").removeAttr("id");
         var formbox = $("#dining-bill-form").removeAttr("id");
         
-        context.on("loadBack", function(evt, rst) {console.log(rst)
+        context.on("loadBack", function(ev, rst) {
             for(var i = 0; i < rst.list.length; i ++) {
-                var info = rst.list[i];
-                info.food.picture = [""];
-                info.food.count = info.count;
-                rst.list[i] = info.food;
+                var row  = rst.list[i];
+                row.food.count = row.count;
+                row.food.wirth = row.price;
+                rst.list[i] = row.food;
             }
-            console.log(rst)
         });
     })(jQuery);
 </script>

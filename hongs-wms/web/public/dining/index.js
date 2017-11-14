@@ -123,9 +123,9 @@ function hsDiningListFillDail(ln) {
     var map = JSON.parse(H$("$dining.cart") || "{}");
     var num = map[id] || 0 ;
     if (num == 0) {
-        ln.text("+");
+        ln.text( "" );
     } else {
-        ln.text(num);
+        ln.text(num );
     }
     ln.data("id", id);
 }

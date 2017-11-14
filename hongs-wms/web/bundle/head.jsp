@@ -155,8 +155,8 @@
             a = menubar .find("a[href='"+h+"']");
             b = menubar ;
 
-            b.find ( "li" ).removeClass("active" );
-            a.parents ( "li" ).addClass("active" );
+            b.find("li").removeClass( "active" );
+            a.parents("li").addClass( "active" );
 
             l = a.data("href");
             if (l && l != '/') {

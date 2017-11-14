@@ -19,11 +19,12 @@
 
     context.on("click", ".to-cart", function() {
         var id  = $(this).data("id");
+        var td  = $(this).find("[data-fn=dail]");
         var map = JSON.parse(H$("$dining.cart") || "{}");
         var num = map[id] || 0 ;
         cartbox.find("input")
-            .data("td", $(this))
             .data("id", id)
+            .data("td", td)
             .val ("" + num);
         cartbox.modal( "show" );
     });
@@ -37,7 +38,7 @@
             td.text( num );
             map [id] = num;
         } else {
-            td.text( "+" );
+            td.text( ""  );
             delete map[id];
             if (td.closest(".dining-list")
                        .is(".dining-cart")) {

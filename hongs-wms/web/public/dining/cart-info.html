@@ -1,3 +1,8 @@
+<ul class="nav nav-tabs" data-toggle="hsTabs">
+    <li><a href="javascript:;">清单</a></li>
+    <li><a href="javascript:;">配送及支付</a></li>
+</ul>
+<div class="panes">
 <div id="dining-cart-info" class="dining-list dining-cart container"
      data-module="hsList"
      data-load-url="handle/data/dining/food/search.act?rn=0"
@@ -8,7 +13,10 @@
     <div class="listbox row">
         <div class="itembox col-md-4" style="display: none;">
             <div class="media">
-                <span class="badge to-cart pull-right" data-fn="dail">+</span>
+                <span class="badge to-cart pull-right">
+                    <i class="glyphicon glyphicon-shopping-cart"></i>
+                    <b data-fn="dail"></b>
+                </span>
                 <div class="media-left">
                     <a href="#" data-fn="logo">
                         <img class="media-object"/>
@@ -77,6 +85,7 @@
         <div class="ids">
         </div>
     </form>
+</div>
 </div>
 <script type="text/javascript">
     (function($) {

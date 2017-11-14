@@ -17,3 +17,10 @@
 .dining-list .itembox .media>.pull-right {
     padding: 4px 7px;
 }
+
+.dining-list .to-cart>b {
+    margin-left: 0.5em;
+}
+.dining-list .to-cart>b:empty {
+    margin-left: 0;
+}

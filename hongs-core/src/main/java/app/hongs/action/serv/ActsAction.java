@@ -33,7 +33,7 @@ import javax.servlet.http.HttpServletResponse;
  * &lt;/servlet&gt;
  * &lt;servlet-mapping&gt;
  *   &lt;servlet-name&gt;ActsAction&lt;/servlet-name&gt;
- *   &lt;url-pattern&gt;***.act&lt;/url-pattern&gt;
+ *   &lt;url-pattern&gt;*.act&lt;/url-pattern&gt;
  * &lt;/servlet-mapping&gt;
  * </pre>
  *

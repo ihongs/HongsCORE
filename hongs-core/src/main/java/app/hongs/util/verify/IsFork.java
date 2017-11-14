@@ -106,7 +106,7 @@ public class IsFork extends Rule {
         ah.setRequestData (rd);
         // 虚拟路径
         if (ap != null && ap.length() != 0) {
-            ah.setAttribute(Cnst.ACTION_ATTR, ap +".act");
+            ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
         }
         // 附加参数
         if (aq != null && aq.length() != 0) {

@@ -1,5 +1,6 @@
 package app.hongs.action.serv;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
@@ -29,7 +30,7 @@ public class MenuAction {
         String m = helper.getParameter("m"); // 配置名称
         String n = helper.getParameter("n"); // 活动区域
         String x = helper.getParameter("x"); // 附加标识
-        String u = "normal/menu.act";
+        String u = "normal/menu" + Cnst.ACT_EXT;
 
         if (m == null || "".equals(m)) {
             m  = "default";

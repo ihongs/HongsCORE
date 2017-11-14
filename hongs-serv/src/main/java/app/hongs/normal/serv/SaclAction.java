@@ -10,11 +10,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 通用基础外部配置接口
- * 将 ConfAction, LangAction, AuthAction 集合到一起
+ * 综合配置接口
+ * 将 AuthAction,ConfAction,LangAction, 集合到一起
  * @author Hongs
  */
-public class BaseConfig extends ActionDriver {
+public class SaclAction extends ActionDriver {
 
     ConfAction conf = new ConfAction();
     LangAction lang = new LangAction();

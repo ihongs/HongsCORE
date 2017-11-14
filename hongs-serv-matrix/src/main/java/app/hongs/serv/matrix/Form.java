@@ -353,11 +353,11 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search" + Cnst.ACT_EXT) );
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/stream.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/stream" + Cnst.ACT_EXT) );
 
         // 修改
 
@@ -368,7 +368,7 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update" + Cnst.ACT_EXT) );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
@@ -383,7 +383,7 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/create.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/create" + Cnst.ACT_EXT) );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
@@ -398,7 +398,7 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/delete.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/delete" + Cnst.ACT_EXT) );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );
@@ -413,11 +413,11 @@ public class Form extends Model {
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/search.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
 
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/update.act") );
+        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
 
         depn = docm.createElement("depend");
         role.appendChild ( depn );

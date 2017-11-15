@@ -27,7 +27,7 @@ import javax.servlet.http.HttpServletResponse;
  * 请求格式举例:
  * ACTION/NAME.api=PARAMS&ACTION/NAME2.act!0=PARAMS&ACTION/NAME2.act!1=PARAMS&.data=PARAMS
  * PARAMS 为 JSON 或 URLEncoded 格式
- * !data  提供共同的参数
+ * .data  提供共同的参数
  * @author Hongs
  */
 @Action("normal/more")

@@ -198,7 +198,7 @@ public class Common {
         helper.setSessionData(data( (String) opts.get("session")));
         helper.setCookiesData(data( (String) opts.get("cookies")));
 
-        ActionRunner runner = new ActionRunner( helper, args[0] );
+        ActionRunner runner = new ActionRunner( helper , args[0] );
         runner.doAction( );
 
         CmdletHelper.preview( helper.getResponseData() );
@@ -229,7 +229,7 @@ public class Common {
             conn.setRequestMethod ("POST");
 
             conn.setRequestProperty("Accept", "application/json,text/html,*/*;q=0.8");
-            conn.setRequestProperty("X-Requested-With","HongsCORE/0.3");
+            conn.setRequestProperty("X-Requested-With","HongsCORE/0.4");
 
             // 放入 cookie
             StringBuilder sb = new StringBuilder();

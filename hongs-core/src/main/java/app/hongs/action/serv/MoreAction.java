@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * !data  提供共同的参数
  * @author Hongs
  */
-@Action("normal/pack")
+@Action("normal/more")
 public class MoreAction {
 
     @Action("__main__")

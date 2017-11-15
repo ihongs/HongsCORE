@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 
 /**
  * 综合配置接口
- * 将 AuthAction,ConfAction,LangAction, 集合到一起
+ * 将 AuthAction,ConfAction,LangAction 集合到一起
  * @author Hongs
  */
 public class SaclAction extends ActionDriver {

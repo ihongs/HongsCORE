@@ -31,7 +31,7 @@ import javax.servlet.http.HttpServletResponse;
  * @author Hongs
  */
 @Action("normal/pack")
-public class PackAction {
+public class MoreAction {
 
     @Action("__main__")
     public void pack(ActionHelper helper) {

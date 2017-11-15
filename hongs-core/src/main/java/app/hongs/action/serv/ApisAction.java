@@ -6,6 +6,7 @@ import app.hongs.CoreConfig;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.util.Data;
+import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.io.IOException;
@@ -68,90 +69,113 @@ public class ApisAction
             throws ServletException, IOException {
         String act = ActionDriver.getCurrPath(req);
         if (act == null || act.length() == 0) {
-            rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "API URI can not be empty.");
+            rsp.sendError(HttpServletResponse.SC_NOT_FOUND,"URI can not be empty");
+            return;
+        }
+        int    dot;
+        dot  = act.lastIndexOf( "." );
+        act  = act.subSequence(0,dot)+Cnst.ACT_EXT;
+
+        ActionHelper  hlpr = ActionDriver.getWorkCore(req).get(ActionHelper.class);
+        Object _dat = Dict.getParam( hlpr.getRequestData(), dataKey );
+        Object _cnv = Dict.getParam( hlpr.getRequestData(), convKey );
+        String _wap = hlpr.getParameter( wrapKey );
+        String _sok = hlpr.getParameter( scokKey );
+
+        // 请求数据封装
+        Map data  = null;
+        if (_dat != null) {
+            try {
+                data = trnsData(_dat);
+            } catch (ClassCastException e) {
+                hlpr.error400( "Can not parse value for " + dataKey );
+                return;
+            }
+        }
+
+        // 数据转换策略
+        Set conv  = null;
+        if (_cnv != null) {
+            try {
+                conv = trnsConv(_cnv);
+            } catch (ClassCastException e) {
+                hlpr.error400( "Can not parse value for " + convKey );
+                return;
+            }
+        }
+
+        // 包裹返回数据
+        boolean wrap;
+        try {
+            wrap = Synt.declare(_wap , false );
+        } catch (ClassCastException e) {
+            hlpr.error400("Value for " + wrapKey + " can not be cast to boolean");
             return;
         }
 
-        ActionHelper hlpr = ActionDriver.getWorkCore(req).get(ActionHelper.class);
-
-        // 提取 API 特有的参数
-        String _dat  = req.getParameter(dataKey);
-        String _cnv  = req.getParameter(convKey);
-        String _wap  = req.getParameter(wrapKey);
-        String _sok  = req.getParameter(scokKey);
-
-        // 将请求数据处理之后传递
-        if (_dat != null && _dat.length( ) != 0) {
-            Map data;
-            try {
-                data = Synt.asMap(Data.toObject(_dat));
-            } catch (ClassCastException e) {
-                hlpr.error400("Can not parse value for '!data'");
-                return;
-            }
-            hlpr.getRequestData( )
-                .putAll (  data  );
+        // 状态总是 200
+        boolean scok;
+        try {
+            scok = Synt.declare(_sok , false );
+        } catch (ClassCastException e) {
+            hlpr.error400("Value for " + scokKey + " can not be cast to boolean");
+            return;
         }
 
-        // 指定转换则启用对象模式
-        if (_cnv != null && _cnv.length( ) != 0) {
+        // 额外请求数据
+        if (data != null && ! data.isEmpty() ) {
+            hlpr.getRequestData().putAll(data);
+        }
+        if (conv != null && ! conv.isEmpty() ) {
             Core.getInstance().put(Cnst.OBJECT_MODE, true);
         }
 
-        // 将请求转发到动作处理器
+        // 转发动作处理, 获取响应数据
         req.getRequestDispatcher(act).include( req , rsp );
-
-        // 获取响应数据逐步格式化
-        Map resp  = hlpr.getResponseData();
+        Map resp  = hlpr.getResponseData(/**/);
         if (resp == null) {
             return;
         }
 
-        //** 数据转换策略 **/
-
-        Set conv  = null;
-        if (_cnv != null && _cnv.length( ) != 0) {
-            try {
-                conv = Synt.toTerms(_cnv );
-            } catch (ClassCastException e) {
-                hlpr.error400 ( "Can not parse value for '!conv'" );
-                return;
-            }
-        }
-
-        if (conv != null) {
+        // 整理响应数据
+        if (conv != null && ! conv.isEmpty() ) {
             convData(resp, conv);
         }
-
-        //** 包裹返回数据 **/
-
-        boolean wrap;
-        try {
-            wrap = Synt.declare(_wap, false);
-        } catch (ClassCastException e) {
-            hlpr.error400("Value for '.wrap' can not be case to boolean");
-            return;
-        }
-
         if (wrap) {
-            wrapData(resp);
+            wrapData(resp  /**/);
         }
-
-        //** 状态总是 200 **/
-
-        boolean scok;
-        try {
-            scok = Synt.declare(_sok, false);
-        } catch (ClassCastException e) {
-            hlpr.error400("Value for '.scok' can not be case to boolean");
-            return;
-        }
-
         if (scok) {
-            rsp.setStatus( javax.servlet.http.HttpServletResponse.SC_OK );
+            rsp.setStatus(HttpServletResponse.SC_OK);
         }
     }
 
+    private static Set trnsConv(Object obj) {
+        return Synt.toTerms(obj);
+    }
+
+    private static Map trnsData(Object obj) {
+        if (obj == null || "".equals(obj) ) {
+            return new HashMap();
+        }
+        if (obj instanceof Map ) {
+            return ( Map ) obj ;
+        }
+        String str = Synt.declare(obj, "" );
+        Map map;
+        if (str.startsWith("{") && str.endsWith("}")) {
+            map = (  Map  ) Data.toObject(str);
+        } else {
+            map = ActionHelper.parseQuery(str);
+        }
+        return map;
+    }
+
+    /**
+     * 将非通用键值放到 data 下
+     * 通用键有: ok,ern,err,msg
+     * @param resp
+     * @throws ServletException
+     */
     public static void wrapData(Map resp) throws ServletException {
         Map    data;
         Object doto = resp.get("data");
@@ -169,13 +193,19 @@ public class ApisAction
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
             Object k = et.getKey();
-            if ( ! _API_RSP.contains( k )) {
+            if ( ! API_RSP.contains( k ) ) {
                 data.put(k, et.getValue());
                 it.remove();
             }
         }
     }
 
+    /**
+     * 将响应数据按规则进行转换
+     * 规则有: all2str,num2str,null2str,bool2num,bool2str,date2num,date2sec,flat.map,flat_map
+     * @param resp
+     * @param conv
+     */
     public static void convData(Map resp, Set<String> conv) {
         Conv cnvr = new Conv();
         boolean     all =  conv.contains( "all2str");
@@ -192,13 +222,13 @@ public class ApisAction
         resp.putAll(Synt.filter(resp , cnvr));
     }
 
-    private static final Set _API_RSP = new HashSet();
+    private static final Set API_RSP = new HashSet();
     static {
-        _API_RSP.add("ok");
-        _API_RSP.add("ern");
-        _API_RSP.add("err");
-        _API_RSP.add("msg");
-        _API_RSP.add("data");
+        API_RSP.add("ok");
+        API_RSP.add("ern");
+        API_RSP.add("err");
+        API_RSP.add("msg");
+        API_RSP.add("data");
     }
 
     private static class Conv implements Synt.Each {

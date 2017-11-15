@@ -8,14 +8,8 @@
             <param name="nameable">?</param>
         </field>
         <field name="id" repeated="" required="" rule="" text="ID" type="hidden"/>
-        <field name="bill_id" repeated="" required="true" rule="" text="餐牌" type="fork">
+        <field name="bill_id" repeated="" required="true" rule="" text="餐牌" type="text">
             <param name="listable">true</param>
-            <param name="form">bill</param>
-            <param name="conf">bundle/data/dining/bill</param>
-            <param name="data-at">bundle/auto/search!bundle/data/dining/bill/search</param>
-            <param name="data-al">bundle/data/dining/bill/list_fork.html</param>
-            <param name="data-vk">id</param>
-            <param name="data-tk">name</param>
         </field>
         <field name="food_id" repeated="" required="true" rule="" text="菜品" type="fork">
             <param name="listable">true</param>

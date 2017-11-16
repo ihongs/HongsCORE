@@ -71,7 +71,7 @@ public class SocketHelper extends ActionHelper {
     /**
      * 更新环境
      * @param core
-     * @param sess 
+     * @param sess
      */
     protected void updateHelper(Core core, Session sess) {
         Map prop = sess.getUserProperties( );
@@ -333,11 +333,15 @@ public class SocketHelper extends ActionHelper {
         return super.getOutputWriter();
     }
 
+    /**
+     * 客户端地址
+     * @return
+     */
     @Override
-    public String getClientName() {
-        InetSocketAddress rip  = (InetSocketAddress) getAttribute("javax.we‌​bsocket.endpoint.rem‌​oteAddress");
-        if (rip != null) {
-            return rip.getAddress().getHostAddress();
+    public String getClientAddr() {
+        InetSocketAddress rip  = (InetSocketAddress) getAttribute("javax.websocket.endpoint.remoteAddress");
+        if (rip != null ) {
+            return rip.getAddress( ).getHostAddress( );
         }
         return null;
     }
@@ -375,7 +379,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param url 
+     * @param url
      */
     @Override
     public void redirect(String url) {
@@ -384,7 +388,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param msg 
+     * @param msg
      */
     @Override
     public void error400(String msg) {
@@ -393,7 +397,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param msg 
+     * @param msg
      */
     @Override
     public void error401(String msg) {
@@ -402,7 +406,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param msg 
+     * @param msg
      */
     @Override
     public void error403(String msg) {
@@ -411,7 +415,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param msg 
+     * @param msg
      */
     @Override
     public void error404(String msg) {
@@ -420,7 +424,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param msg 
+     * @param msg
      */
     @Override
     public void error405(String msg) {
@@ -429,7 +433,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * @deprecated WebSocket 中不支持
-     * @param msg 
+     * @param msg
      */
     @Override
     public void error500(String msg) {

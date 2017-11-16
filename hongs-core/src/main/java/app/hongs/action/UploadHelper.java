@@ -39,7 +39,7 @@ public class UploadHelper {
     private Set<String> allowExtns = null;
 
 //  static {
-//      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getLocalizedSegment());
+//      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getClassName());
 //  }
 
     /**

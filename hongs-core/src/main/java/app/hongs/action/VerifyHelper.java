@@ -55,37 +55,29 @@ public class VerifyHelper extends Verify {
             opts.put("__form__", form);
             opts.put("__name__", code);
 
-            o = opts.remove("defiant");
+            o = opts.get   ("defiant");
             if (o != null) {
                 Rule rule = new Defiant();
-                Map  prms = new HashMap();
-                     rule.setParams(prms);
+                     rule.setParams(opts);
                 this.addRule( code, rule);
-                prms.put("defiant" , o  );
             }
 
-            o = opts.remove("default");
+            o = opts.get   ("default");
             if (o != null) {
                 Rule rule = new Default();
-                Map  prms = new HashMap();
-                     rule.setParams(prms);
+                     rule.setParams(opts);
                 this.addRule( code, rule);
-                prms.put("default" , o  );
-                if (opts.containsKey("default-create"))
-                    prms.put("default-create", opts.remove("default-create"));
-                if (opts.containsKey("default-always"))
-                    prms.put("default-always", opts.remove("default-always"));
             }
 
             o = opts.remove("__required__");
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
-                    Map  prms = new HashMap( );
-                         rule.setParams(prms );
+                         rule.setParams(opts );
                     this.addRule( code, rule );
                 } else {
                     Rule rule = new Optional();
+                         rule.setParams(opts );
                     this.addRule( code, rule );
                 }
             }
@@ -94,19 +86,11 @@ public class VerifyHelper extends Verify {
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
-                    Map  prms = new HashMap( );
-                         rule.setParams(prms );
+                         rule.setParams(opts );
                     this.addRule( code, rule );
-                    if (opts.containsKey( "defiant" ))
-                        prms.put( "defiant" , opts.remove( "defiant" ));
-                    if (opts.containsKey( "diverse" ))
-                        prms.put( "diverse" , opts.remove( "diverse" ));
-                    if (opts.containsKey("minrepeat"))
-                        prms.put("minrepeat", opts.remove("minrepeat"));
-                    if (opts.containsKey("maxrepeat"))
-                        prms.put("maxrepeat", opts.remove("maxrepeat"));
                 } else {
                     Rule rule = new NoRepeat();
+                         rule.setParams(opts );
                     this.addRule( code, rule );
                 }
             }

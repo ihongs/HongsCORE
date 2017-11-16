@@ -48,7 +48,7 @@ public class CoreLogger
         if (Core.ENVIR == 1) {
             ActionHelper h = (ActionHelper) Core.getInstance().got(ActionHelper.class.getName());
             if ( h != null ) {
-                String r= h.getClientName(   );
+                  String r = h.getClientAddr();
                 if ( r != null ) {
                     line.append(r).append(' ');
                 } else {
@@ -62,12 +62,12 @@ public class CoreLogger
         }
 
         // add Action Name
-        if (null   !=   Core.ACTION_NAME.get()) {
-            line.append(Core.ACTION_NAME.get())
-                .append(' ');
+        String r  = Core.ACTION_NAME.get();
+        if (   r != null   ) {
+            line.append( r ).append( ' ' );
         }
 
-        return  line.append( text ).toString( );
+        return line.append( text ).toString( );
     }
 
     /**

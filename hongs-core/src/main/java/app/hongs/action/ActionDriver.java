@@ -279,7 +279,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException {
-        Core.ACTION_NAME.set(getRealPath(req).substring(1));
+        Core.ACTION_NAME.set(getOriginPath(req).substring(1));
 
         Core.ACTION_TIME.set(System.currentTimeMillis());
 
@@ -354,19 +354,21 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     private void doFinish(Core core, ActionHelper hlpr, HttpServletRequest req) {
         try {
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                /**
+                 * 提取必要的客户相关标识
+                 * 以便判断用户和模拟登录
+                 */
                             req = hlpr.getRequest(/***/);
-                HttpSession ses =  req.getSession(false);
-
-                String sid;
-                String uid;
-                if (ses != null) {
-                    sid = ses.getId();
-                    uid = (String) ses.getAttribute(Cnst.UID_SES);
-                    if (uid != null && uid.length() != 0) {
-                        sid += " UID:"+uid;
-                    }
+                HttpSession ses = req .getSession(false);
+                Object      uid = hlpr.getSessibute(Cnst.UID_SES);
+                String      mem ;
+                if (ses == null ) {
+                    mem  =  "-" ;
                 } else {
-                        sid  = "[UNKNOWN]";
+                    mem  =  ses.getId();
+                }
+                if (uid != null ) {
+                    mem +=  " " + uid  ;
                 }
 
                 long time = System.currentTimeMillis(  ) - Core.ACTION_TIME.get();
@@ -376,8 +378,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
                     .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
                     .append("\r\n\tMethod      : ").append(req.getMethod( ))
-                    .append("\r\n\tRemote      : ").append(getRealAddr(req))
-                    .append("\r\n\tMember      : ").append(sid)
+                    .append("\r\n\tMember      : ").append(mem)
                     .append("\r\n\tObjects     : ").append(core.toString( ))
                     .append("\r\n\tRuntime     : ").append(Tool.humanTime( time ));
 
@@ -532,7 +533,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static final Core getWorkCore(HttpServletRequest req) {
+    public static final Core getActualCore(HttpServletRequest req) {
         Core core = (Core) req.getAttribute(Cnst.CORE_ATTR);
         if (core ==  null) {
             core  =  Core.GLOBAL_CORE ;
@@ -547,7 +548,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @param req
      * @return
      */
-    public static final String getCurrPath(HttpServletRequest req) {
+    public static final String getRecentPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(RequestDispatcher.INCLUDE_SERVLET_PATH);
         String suf = (String) req.getAttribute(RequestDispatcher.INCLUDE_PATH_INFO);
         if (uri == null) {
@@ -561,11 +562,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 获得真实的ServletPath
+     * 获得起源的ServletPath
      * @param req
      * @return
      */
-    public static final String getRealPath(HttpServletRequest req) {
+    public static final String getOriginPath(HttpServletRequest req) {
         String uri = (String) req.getAttribute(RequestDispatcher.FORWARD_SERVLET_PATH);
         String suf = (String) req.getAttribute(RequestDispatcher.FORWARD_PATH_INFO);
         if (uri == null) {
@@ -579,11 +580,16 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
-     * 获得真实的客户端IP
+     * 获得发起的客户端IP
      * @param req
      * @return
      */
-    public static final String getRealAddr(HttpServletRequest req) {
+    public static final String getClientAddr(HttpServletRequest req) {
+        String ip = (String)req.getAttribute(Cnst.CLIENT_ATTR);
+        if (null != ip) {
+            return  ip;
+        }
+
         // RFC 7239, 标准代理格式
         String h_0 = req.getHeader("Forwarded");
         if ( h_0 != null && h_0.length() != 0 ) {

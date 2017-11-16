@@ -522,27 +522,16 @@ public class ActionHelper implements Cloneable
    * 常为远程地址, 当虚拟请求时, 可能会返回空.
    * @return
    */
-  public String getClientName()
+  public String getClientAddr()
   {
-    if (this.request == null)
+    if (null != this.request)
     {
-      return null;
+      return  ActionDriver.getClientAddr(this.request/**/);
     }
-    return ActionDriver.getRealAddr(this.request);
-  }
-
-  /**
-   * 获得动作名称
-   * 常为请求路径, 当虚拟请求时, 返回虚拟路径
-   * @return
-   */
-  public String getActionName() {
-    String u = (String) getAttribute(Cnst.ACTION_ATTR);
-    if (u == null)
+    else
     {
-        u  = Core.ACTION_NAME.get();
+      return (String) this.getAttribute (Cnst.CLIENT_ATTR);
     }
-    return u;
   }
 
   /**

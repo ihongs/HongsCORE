@@ -120,7 +120,7 @@ public class TestTool extends TestCase {
     }
 
     /**
-     * @see app.hongs.action.ActionDriver getRealAddr
+     * @see app.hongs.action.ActionDriver getClientAddr
      * @param h_0
      * @return
      */

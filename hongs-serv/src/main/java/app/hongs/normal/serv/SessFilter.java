@@ -72,8 +72,8 @@ public class SessFilter implements Filter {
          * 对于嵌套相同过滤, 不在内部重复执行;
          * 如外部设置了忽略, 则跳过忽略的路径.
          */
-        if (inside != null &&  Synt.declare(raq.getAttribute(inside),false)
-        ||  ignore != null && ignore.ignore(ActionDriver.getCurrPath(raq))) {
+        if ((inside != null &&  Synt.declare(req.getAttribute(inside), false ))
+        ||  (ignore != null && ignore.ignore(ActionDriver.getRecentPath(raq)))) {
             flt.doFilter(req, rsp);
             return;
         }

@@ -27,7 +27,7 @@
 
         // 设置清单
         if (rd.containsKey("items")) {
-            Data data = Data.getInstance("hundle/data/dining/" + unit + "/item", "item");
+            Data data = Data.getInstance("handle/data/dining/" + unit + "/item", "item");
             if ("food".equals(unit)) {
                  unit = "unit";
             }

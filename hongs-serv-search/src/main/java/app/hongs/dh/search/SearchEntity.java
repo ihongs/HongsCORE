@@ -26,7 +26,7 @@ import org.apache.lucene.index.Term;
 public class SearchEntity extends LuceneRecord {
 
     protected String dbname = null;
-    
+
     public SearchEntity(String path, Map form) throws HongsException {
         super(path, form);
     }
@@ -70,7 +70,7 @@ public class SearchEntity extends LuceneRecord {
         if (null != dbname) {
             return  dbname;
         }
-        return getDataPath();
+        return getDataName();
     }
 
     @Override

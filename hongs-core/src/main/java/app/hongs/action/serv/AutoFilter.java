@@ -84,7 +84,7 @@ public class AutoFilter extends ActionDriver {
             throws IOException, ServletException {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
-        String url = ActionDriver.getCurrPath( req );
+        String url = ActionDriver.getRecentPath(req);
 
         // 检查是否需要跳过
         if (ignore != null && ignore.ignore(url)) {
@@ -171,6 +171,11 @@ public class AutoFilter extends ActionDriver {
                 boolean jsp = url.endsWith (".jsp" );
                 boolean htm = url.endsWith (".htm" )
                            || url.endsWith (".html");
+                String  uxl = null;
+                if (htm) {
+                    int pos = url.lastIndexOf( "." );
+                        uxl = url.substring(0 , pos);
+                }
 
                 for(String uri: getlays()) {
                     if (url.endsWith(uri)) {
@@ -182,9 +187,6 @@ public class AutoFilter extends ActionDriver {
                     }
                     if (htm) {
                         // xxx.htm => xxx.jsp
-                        String uxl;
-                        int  pos = url.lastIndexOf (".");
-                             uxl = url.substring(0, pos);
                         if ((uxl + ".jsp").endsWith(uri)) {
                             forward(req, rsp, url, layout + uri);
                             return;

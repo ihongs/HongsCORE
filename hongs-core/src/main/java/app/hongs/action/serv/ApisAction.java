@@ -67,16 +67,16 @@ public class ApisAction
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse rsp)
             throws ServletException, IOException {
-        String act = ActionDriver.getCurrPath(req);
+        String act = ActionDriver.getRecentPath(req);
         if (act == null || act.length() == 0) {
-            rsp.sendError(HttpServletResponse.SC_NOT_FOUND,"URI can not be empty");
+            rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "URI can not be empty" );
             return;
         }
         int    dot;
         dot  = act.lastIndexOf( "." );
         act  = act.subSequence(0,dot)+Cnst.ACT_EXT;
 
-        ActionHelper  hlpr = ActionDriver.getWorkCore(req).get(ActionHelper.class);
+        ActionHelper  hlpr = ActionDriver.getActualCore(req).get(ActionHelper.class);
         Object _dat = Dict.getParam( hlpr.getRequestData(), dataKey );
         Object _cnv = Dict.getParam( hlpr.getRequestData(), convKey );
         String _wap = hlpr.getParameter( wrapKey );

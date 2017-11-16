@@ -55,7 +55,7 @@ public class AuthAction
     rsp.addHeader("Pragma" , "no-cache");
     rsp.setHeader("Cache-Control", "no-cache");
 
-    Core core = ActionDriver.getWorkCore(req );
+    Core core = ActionDriver.getActualCore(req );
     ActionHelper helper = core.get(ActionHelper.class);
 
     String name = req.getPathInfo();

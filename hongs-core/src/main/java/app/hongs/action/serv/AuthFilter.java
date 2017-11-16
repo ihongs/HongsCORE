@@ -162,9 +162,9 @@ public class AuthFilter
   public void doFilter(Core core, ActionHelper hlpr, FilterChain chain)
     throws IOException, ServletException
   {
-    ServletRequest  req = hlpr.getRequest( );
-    ServletResponse rsp = hlpr.getResponse();
-    String act = ActionDriver.getCurrPath((HttpServletRequest) req);
+    HttpServletResponse rsp = hlpr.getResponse();
+    HttpServletRequest  req = hlpr.getRequest( );
+    String act = ActionDriver.getRecentPath(req);
 
     /**
      * 检查当前动作是否可以忽略
@@ -391,7 +391,7 @@ public class AuthFilter
   }
 
   private boolean isApi (HttpServletRequest req) {
-      return ActionDriver.getRealPath(req).endsWith(Cnst.API_EXT);
+      return ActionDriver.getOriginPath(req).endsWith(Cnst.API_EXT);
   }
 
   private boolean isAjax(HttpServletRequest req) {

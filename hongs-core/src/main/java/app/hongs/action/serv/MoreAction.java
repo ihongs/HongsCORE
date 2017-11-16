@@ -49,11 +49,11 @@ public class MoreAction {
 
         while (nms.hasMoreElements( )) {
             nm0 = nms.nextElement (  );
-            pos = nm0.indexOf("/");
+            pos = nm0.indexOf("~");
             if (0 > pos) continue ;
             nm1 = nm0.substring(0,pos);
-            uri = nm0.substring(  pos);
-            uri = uri  +  Cnst.ACT_EXT;
+            uri = nm0.substring(1+pos);
+            uri = "/"+uri+Cnst.ACT_EXT;
 
             // 解析请求参数
             re2 = data(re0.get( nm0 ));

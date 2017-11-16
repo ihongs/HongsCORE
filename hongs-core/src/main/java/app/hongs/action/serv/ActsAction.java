@@ -57,8 +57,8 @@ public class ActsAction
   public void service(HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException
   {
-    String act  = ActionDriver.getCurrPath(req);
-    Core   core = ActionDriver.getWorkCore(req);
+    String act  = ActionDriver.getRecentPath(req);
+    Core   core = ActionDriver.getActualCore(req);
     ActionHelper helper = core.get(ActionHelper.class);
     Core.THREAD_CORE.set( core );
 
@@ -115,7 +115,7 @@ public class ActsAction
       if (/**/ ls == null || ls.length == 0)
       {
         HttpServletRequest rq = helper.getRequest();
-        String rp = ActionDriver.getRealPath ( rq );
+        String rp = ActionDriver.getOriginPath(rq );
         String er = ex.getError(/****/);
         ex.setLocalizedOptions (er, rp);
       }

@@ -80,6 +80,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     private IndexReader   reader  = null ;
     private IndexWriter   writer  = null ;
     private String        dbpath  = null ;
+    private String        dbname  = null ;
     private Set<String>  replies  = null ;
 
     /**
@@ -107,14 +108,24 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         // 数据路径
         if (path != null) {
             Map m = new HashMap();
+            m.put("SERVER_ID", Core.SERVER_ID);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
-            m.put("SERVER_ID", Core.SERVER_ID);
             path = Tool.inject(path, m);
-            if (! new File(path).isAbsolute()) {
-               path = Core.DATA_PATH + "/lucene/" + path;
+            String root = Core.DATA_PATH + "/";
+            String name ;
+            if ( ! new File(path).isAbsolute()) {
+                name = "lucene/" + path;
+                path = root /**/ + name;
+            } else
+            if (/****/ path.startsWith( root )) {
+                name = path.substring ( root.length() );
+            } else
+            {
+                name = path;
             }
             this.dbpath = path;
+            this.dbname = name;
         }
 
         // 环境模式
@@ -168,6 +179,13 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             return  dbpath;
         }
         throw new NullPointerException("Data path is not set");
+    }
+
+    public String getDataName() {
+        if (null != dbname) {
+            return  dbname;
+        }
+        throw new NullPointerException("Data name is not set");
     }
 
     //** 实体方法 **/
@@ -640,7 +658,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Connect to lucene reader, data path: " + path);
+            CoreLogger.trace("Open the lucene reader from " + getDataName());
         }
     }
 
@@ -667,7 +685,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Connect to lucene writer, data path: " + path);
+            CoreLogger.trace("Open the lucene writer from " + getDataName());
         }
     }
 
@@ -718,7 +736,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Close lucene connection, data path: " + getDataPath());
+            CoreLogger.trace("Close the lucene handle for " + getDataName());
         }
     }
 

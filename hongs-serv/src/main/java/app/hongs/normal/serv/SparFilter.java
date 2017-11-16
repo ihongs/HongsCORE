@@ -56,7 +56,7 @@ public class SparFilter implements Filter {
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain fc)
     throws IOException, ServletException {
         HttpServletRequest raq = (HttpServletRequest) req;
-        String url = ActionDriver.getCurrPath ( raq );
+        String url = ActionDriver.getRecentPath (raq);
 
         if (null != raq.getHeader("X-Requested-With")
         ||  ignore.ignore (url) ) {

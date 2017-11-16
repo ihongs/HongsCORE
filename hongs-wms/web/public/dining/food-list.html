@@ -33,3 +33,12 @@
         <li class="page-next"><a href="javascript:;" data-pn="">更多&nbsp;&raquo;</a></li>
     </ul>
 </div>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#dining-food-list").removeAttr("id");
+        
+        context.on("loadBack", function(evt, rst) {
+            this._cart = JSON.parse(H$("$dining.cart")||"{}");
+        });
+    })(jQuery);
+</script>

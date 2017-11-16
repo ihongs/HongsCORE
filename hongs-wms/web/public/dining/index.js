@@ -119,13 +119,12 @@ function hsDiningListBillLogo(ln) {
 }
 
 function hsDiningListFillDail(ln) {
-    var id  = this._info.id;
-    var map = JSON.parse(H$("$dining.cart") || "{}");
-    var num = map[id] || 0 ;
+    var id  = this._info.id ;
+    var num = this._cart[id];
     if (num == 0) {
         ln.text( "" );
     } else {
         ln.text(num );
     }
-    ln.data("id", id);
+    ln.parent().data("id", id);
 }

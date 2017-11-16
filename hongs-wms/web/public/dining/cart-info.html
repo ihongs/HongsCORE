@@ -1,6 +1,6 @@
 <ul class="nav nav-tabs" data-toggle="hsTabs">
-    <li><a href="javascript:;">清单</a></li>
-    <li><a href="javascript:;">配送及支付</a></li>
+    <li><a href="javascript:;" class="cart-info-list-tab">清单</a></li>
+    <li><a href="javascript:;" class="cart-info-form-tab">配送</a></li>
 </ul>
 <div class="panes">
 <div id="dining-cart-info" class="dining-list dining-cart container"
@@ -36,6 +36,11 @@
         <div>总价: <span data-fn="total_price"></span>元</div>
         <div>原价: <span data-fn="total_worth"></span>元</div>
         <div>优惠: <span data-fn="off"></span>元</div>
+    </div>
+    <div class="form-group">
+        <button type="button" class="btn btn-primary">
+            我点好了, 下一步, 配送
+        </button>
     </div>
 </div>
 <div id="dining-cart-form" class="container"
@@ -80,7 +85,9 @@
             <input type="hidden" name="lat_lng"/>
         </div>
         <div class="form-group">
-            <button type="submit" class="btn btn-primary">下一步</button>
+            <button type="submit" class="btn btn-primary">
+                我设好了, 下一步, 下单
+            </button>
         </div>
         <div class="ids">
         </div>
@@ -95,9 +102,9 @@
         var itembox = formbox.find(".ids");
         
         // 查询菜单列表
-        var map = JSON.parse(H$("$dining.cart") || "{}");
+        var crt = JSON.parse(H$("$dining.cart") || "{}");
         var ids = [];
-        for(var k in map) {
+        for(var k in crt) {
             ids.push({name: "id.", value: k});
         }
         if (! ids.length) {
@@ -106,15 +113,17 @@
         context.data("loadData", ids);
 
         // 总价折扣统计
-        context.on("loadBack", function(evt, rst) {
+        context.on("loadBack", function(evt, rst, ths) {
+            ths._cart = crt;
             var price = 0;
             var worth = 0;
-            var map = JSON.parse(H$("$dining.cart") || "{}");
-            for(var i = 0; i < rst.list.length; i ++) {
+            for(var i = 0; i < rst.list.length; i ++ ) {
                 var info = rst.list[i ];
-                var num  = map[info.id];
-                price += parseFloat(info.price) * num;
-                worth += parseFloat(info.worth) * num;
+                var num  = crt[info.id];
+                if (num) {
+                    price += parseFloat(info.price) * num;
+                    worth += parseFloat(info.worth) * num;
+                }
             }
             context.find("[data-fn=total_price]").text(price);
             context.find("[data-fn=total_worth]").text(worth);
@@ -124,10 +133,20 @@
             }
         });
         
+        // 下一步
+        context.find(".btn-primary").click(function() {
+            $(this).closest( '.panes' ).prev( )
+                   .find('.cart-info-form-tab')
+                   .click();
+        });
+        
         // 菜单一并提交
         formbox.on("submit", function() {
             itembox.empty( );
-            context.find(".itembox").not(":hidden").each(function() {
+            context.find(".itembox").each(function( ) {
+                if ($(this).css("display") == "none") {
+                    return;
+                }
                 var id = $(this).data("id");
                 var count = $(this).find("[data-fn=dail]" ).text();
                 var price = $(this).find("[data-fn=price]").text();

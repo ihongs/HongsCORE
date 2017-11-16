@@ -175,7 +175,13 @@ public class Verify implements Veri {
             } catch (Wrong  w) {
                 // 设置字段标签和取值
                 if (w.getLocalizedSegment() == null) {
-                    w.setLocalizedSegment(( String ) rule.params.get("__text__"));
+                    String n = (String) rule.params.get("__text__");
+                    if  (  n == null  ) {
+                           n = (String) rule.params.get("__name__");
+                    if  (  n == null  ) {
+                           n =  name  ;
+                    }}
+                    w.setLocalizedSegment(n);
                 }
                 failed(wrongz, w , name);
                 data =  BLANK;

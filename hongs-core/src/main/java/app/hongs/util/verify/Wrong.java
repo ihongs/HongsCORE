@@ -47,7 +47,7 @@ public class Wrong extends HongsException {
     public String getLocalizedMessage() {
         CoreLocale trns = CoreLocale.getInstance(getLocalizedSection());
         if (null!= name && !"".equals(name)) {
-            return trns.translate(name) + " " +
+            return trns.translate(/**/name ) + ": " +
                    trns.translate(getError(), getLocalizedOptions());
         } else {
             return trns.translate(getError(), getLocalizedOptions());

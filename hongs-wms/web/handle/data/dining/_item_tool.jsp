@@ -11,17 +11,23 @@
 <%!
 
     public void doMyAction(String unit, String func) throws HongsException {
-        // 代理请求
         ActionHelper helper = Core.getInstance(ActionHelper.class);
-        new ActionRunner(helper, "bundle/auto/" + func).doAction();
-
         Map rd = helper.getRequestData( );
+        if ("create".equals(func)) {
+            rd.put("stat", "待付");
+        }
+
+        // 代理请求
+        new ActionRunner(helper, "handle/auto/" + func).doAction();
         Map sd = helper.getResponseData();
-        helper.reply(sd);
+                 helper.reply(sd );
+        if (! Synt.asBool(sd.get("ok")) ) {
+            return;
+        }
 
         // 设置清单
         if (rd.containsKey("items")) {
-            Data data = Data.getInstance("bundle/data/dining/" + unit + "/item", "item");
+            Data data = Data.getInstance("hundle/data/dining/" + unit + "/item", "item");
             if ("food".equals(unit)) {
                  unit = "unit";
             }

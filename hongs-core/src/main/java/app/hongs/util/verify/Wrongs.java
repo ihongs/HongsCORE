@@ -42,7 +42,7 @@ public class Wrongs extends HongsException {
             Wrong  w = (Wrong )  et.getValue();
             String n = (String)  et.getKey ( );
             String e = w.getLocalizedMessage();
-            errors.put(n, e);
+            errors.put ( n, e );
         }
         return errors;
     }

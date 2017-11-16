@@ -173,15 +173,12 @@ public class Verify implements Veri {
             try {
                 data = rule.verify(data);
             } catch (Wrong  w) {
-                // 设置字段标签和取值
-                if (w.getLocalizedSegment() == null) {
-                    String n = (String) rule.params.get("__text__");
-                    if  (  n == null  ) {
-                           n = (String) rule.params.get("__name__");
-                    if  (  n == null  ) {
-                           n =  name  ;
-                    }}
-                    w.setLocalizedSegment(n);
+                // 设置字段标签
+                if (w.getLocalizedCaption( ) == null) {
+                    w.setLocalizedCaption(Synt.defxult(
+                        (String) rule.params.get("__text__"),
+                        (String) rule.params.get("__name__"),
+                         name) );
                 }
                 failed(wrongz, w , name);
                 data =  BLANK;
@@ -268,14 +265,24 @@ public class Verify implements Veri {
         int n, c = data2.size();
         n = Synt.declare(params.get("minrepeat"), 0);
         if (n != 0 && c < n) {
-            failed(wrongz, new Wrong("fore.form.lt.minrepeat", String.valueOf(n), String.valueOf(c))
-                    .setLocalizedSegment((String) params.get("__text__")), name);
+            Wrong wrong = new Wrong("fore.form.lt.minrepeat",
+                    String.valueOf(n), String.valueOf(c))
+                .setLocalizedCaption ( Synt.defxult(
+                    (String) params.get ("__text__"),
+                    (String) params.get ("__name__"),
+                     name) );
+            failed(wrongz, wrong, name);
             return BLANK;
         }
         n = Synt.declare(params.get("maxrepeat"), 0);
         if (n != 0 && c > n) {
-            failed(wrongz, new Wrong("fore.form.gt.maxrepeat", String.valueOf(n), String.valueOf(c))
-                    .setLocalizedSegment((String) params.get("__text__")), name);
+            Wrong wrong = new Wrong("fore.form.lt.maxrepeat",
+                    String.valueOf(n), String.valueOf(c))
+                .setLocalizedCaption ( Synt.defxult(
+                    (String) params.get ("__text__"),
+                    (String) params.get ("__name__"),
+                     name) );
+            failed(wrongz, wrong, name);
             return BLANK;
         }
 

@@ -8,7 +8,7 @@ import app.hongs.HongsException;
  * @author Hongs
  */
 public class Wrong extends HongsException {
-    private String name = null;
+    private String text = null;
 
     public Wrong(Throwable cause, String desc, String... prms) {
         super(0x1100, desc, cause);
@@ -34,21 +34,21 @@ public class Wrong extends HongsException {
         return this;
     }
 
-    public Wrong  setLocalizedSegment(String name) {
-        this.name = name;
+    public Wrong  setLocalizedCaption(String text) {
+        this.text = text;
         return this;
     }
 
-    public String getLocalizedSegment() {
-        return name;
+    public String getLocalizedCaption() {
+        return text;
     }
 
     @Override
     public String getLocalizedMessage() {
         CoreLocale trns = CoreLocale.getInstance(getLocalizedSection());
-        if (null!= name && !"".equals(name)) {
-            return trns.translate(/**/name ) + ": " +
-                   trns.translate(getError(), getLocalizedOptions());
+        if (null!= text && 0 < text.length()) {
+            return trns.translate(text)
+            +": "+ trns.translate(getError(), getLocalizedOptions());
         } else {
             return trns.translate(getError(), getLocalizedOptions());
         }

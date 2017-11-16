@@ -1,9 +1,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.action.ActionDriver"%>
 <%
-    String _prefix = ActionDriver
-            .getRealPath(request)
-            .replaceAll ("(^/|/[^/]*$)", "");
+    String _prefix = ActionDriver.getOriginPath(request).replaceAll("(^/|/[^/]*$)","");
 %>
 <ol class="backable breadcrumb row hide" data-toggle="hsTabs">
     <li class="back-crumb dont-close pull-right">

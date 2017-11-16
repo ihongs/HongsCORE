@@ -15,7 +15,7 @@
     do {
         // 拆解路径
         int i;
-        _module = ActionDriver.getRealPath(request);
+        _module = ActionDriver.getOriginPath(request);
         i = _module.lastIndexOf('/');
         _module = _module.substring( 1, i );
         i = _module.lastIndexOf('/');
@@ -23,7 +23,7 @@
         _module = _module.substring( 0, i );
 
         // 获取语言
-        _locale = CoreLocale.getInstance( ).clone();
+        _locale = CoreLocale.getInstance( ).clone(  );
         _locale.fill(_module);
         _locale.fill(_module +"/"+ _entity);
 

@@ -106,7 +106,7 @@ public class Data extends SearchEntity {
             if (! new File(
                 Core.CONF_PATH + "/"+ conf + Cnst.FORM_EXT +".xml"
             ).exists()) {
-                throw new HongsExpedient(0x1104)
+                throw new HongsExpedient(0x1104, "Data form conf '" + conf + "' is not exists")
                     .setLocalizedOptions(conf);
             }
 
@@ -116,7 +116,7 @@ public class Data extends SearchEntity {
             if (! new File(
                 Core.CONF_PATH + "/"+ comf + Cnst.FORM_EXT +".xml"
             ).exists()) {
-                throw new HongsExpedient(0x1104)
+                throw new HongsExpedient(0x1104, "Data form conf '" + comf + "' is not exists")
                     .setLocalizedOptions(comf);
             }
 

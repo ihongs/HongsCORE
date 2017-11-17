@@ -293,34 +293,26 @@ HsForm.prototype = {
         var data = this.formBox;
         var that = this;
 
-        data.attr("action", hsFixUri( url ) );
+        data.attr("action", hsFixUri(url));
 
-        if ( mult && FormData === undefined ) {
-            if (  ! data.attr(  "target"  ) ) {
-                var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
-                var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
-                var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
-                data.append('<input type="hidden" name=".ajax" value="1"/>'); // 显式告知遵循 AJAX 方式
-                data.attr("target", name).before(frame);
-                frame.on ("load", function( ) {
-                    var doc = frame[0].contentDocument || frame[0].contentWindow.document;
-                    if (doc.location.href == "about:blank") return;
-                    var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, '' );
-                    that.saveBack(rst);
-                });
-            }
-        } else {
+        if (!mult) {
             data.on("submit", function( evt ) {
                 if (evt.isDefaultPrevented()) {
                     return;
                 }
                 evt.preventDefault();
+
+                var dat = hsAsFormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    return;
+                }
+
                 jQuery.hsAjax({
                     "url"         : url ,
+                    "data"        : dat ,
                     "type"        : type,
-                    "data"        : FormData === undefined || !mult ? data.serialize() : new FormData(data[0]),
-                    "contentType" : FormData === undefined || !mult ? enct : false,
-                    "processData" : FormData === undefined || !mult ? true : false,
                     "dataType"    : "json",
                     "funcName"    : "save",
                     "async"       : false,
@@ -331,6 +323,66 @@ HsForm.prototype = {
                     "error"       : function() { return false; }
                 });
             });
+        } else
+        if (self.FormData) {
+            data.on("submit", function( evt ) {
+                if (evt.isDefaultPrevented()) {
+                    return;
+                }
+                evt.preventDefault();
+
+                var dat = new FormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    return;
+                }
+
+                jQuery.hsAjax({
+                    "url"         : url ,
+                    "data"        : dat ,
+                    "type"        : type,
+                    "dataType"    : "json",
+                    "funcName"    : "save",
+                    "contentType" : false,
+                    "processData" : false,
+                    "async"       : false,
+                    "cache"       : false,
+                    "global"      : false,
+                    "context"     : that,
+                    "complete"    : that.saveBack,
+                    "error"       : function() { return false; }
+                });
+            });
+        } else
+        {
+            data.on("submit", function( evt ) {
+                if (evt.isDefaultPrevented()) {
+                    return;
+                }
+
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ null, that ] );
+                if (ext.isDefaultPrevented()) {
+                    evt.preventDefault();
+                    return;
+                }
+            });
+
+            if (  ! data.attr("target")  ) {
+                var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
+                var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
+                var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
+                data.attr("action", hsSetParam(url, ".ajax", "1")); // 显式申明 AJAX 方式;
+                data.attr("target", name );
+                frame.insertBefore( data );
+                frame.on ("load", function( ) {
+                    var doc = frame[0].contentDocument || frame[0].contentWindow.document;
+                    if (doc.location.href == "about:blank") return;
+                    var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
+                    that.saveBack(rst);
+                });
+            }
         }
     },
     saveBack : function(rst) {
@@ -986,6 +1038,36 @@ HsForm.prototype = {
         }
     }
 };
+
+/**
+ * 兼容 FormData
+ * 将表单转为类似 FormData 的数组结构
+ * 使其可执行类似 FormData 的常规操作
+ * @param {Array|String|Object|Element} data
+ * @return {Array}
+ */
+function hsAsFormData (data) {
+    data = hsSerialArr(data);
+    data["append"] = function(name, value) {
+        data.push( { name: name, value: value } );
+    };
+    data["set"   ] = function(name, value) {
+        hsSetSeria ( data, name, value );
+    };
+    data["delete"] = function(name) {
+        hsSetSerias( data, name, [] );
+    };
+    data["get"   ] = function(name) {
+        return hsGetSeria (name);
+    };
+    data["getAll"] = function(name) {
+        return hsGetSerias(name);
+    };
+    data["has"   ] = function(name) {
+        return hsGetSerias(name).length > 0;
+    };
+    return data;
+}
 
 jQuery.fn.hsForm = function(opts) {
     return this._hsModule(HsForm, opts);

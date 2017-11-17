@@ -1,5 +1,5 @@
 
-/* global self, eval, Element, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
+/* global self, eval, Element, FormData, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
 
 if (!self.HsAUTH) self.HsAUTH = {};
 if (!self.HsCONF) self.HsCONF = {};
@@ -268,7 +268,7 @@ function hsResponse(rst, qut) {
 }
 
 /**
- *  hsResponse 旧版兼容
+ * hsResponse  旧版兼容
  * @deprecated 即将移除
  */
 function hsResponObj(rst, qut, qxt) {
@@ -279,29 +279,82 @@ function hsResponObj(rst, qut, qxt) {
 }
 
 /**
+ * hsSerialDat 旧版兼容
+ * @deprecated 即将移除
+ */
+function hsSerialObj(obj) {
+    return hsSerialDat(obj);
+}
+
+/**
+ * 序列字典伪类, 可用于识别 hsSerialDic 处理的数据
+ */
+function HsSerialDic(obj) {
+    if (obj) jQuery.extend(this, obj);
+}
+
+/**
+ * 序列对象伪类, 可用于识别 hsSerialDat 处理的数据
+ */
+function HsSerialDat(obj) {
+    if (obj) jQuery.extend(this, obj);
+}
+
+/**
  * 序列化为数组, 供发往服务器(类似 jQuery.fn.serializeArray)
- * @param {String|Object|Array|Elements} obj
- * @param {Array}
+ * @param {Array|String|Object|Element|FormData} obj
+ * @return {Array}
  */
 function hsSerialArr(obj) {
     var arr = [];
-    var typ = !jQuery.isPlainObject(obj) ? jQuery.type(obj) : "objact";
+    var typ = jQuery.type( obj );
+    if (obj instanceof jQuery
+    ||  obj instanceof Element ) {
+        typ = "jquery";
+    } else
+    if (          self.FormData
+    &&  obj instanceof FormData) {
+        typ = "parts" ;
+    } else
+    if (obj instanceof HsSerialDic) {
+        typ = "serdic";
+    } else
+    if (obj instanceof HsSerialDat) {
+        typ = "serdat";
+    }
     switch (typ) {
-        case "undefined":
-            break;
         case "array" :
             arr = obj;
             break;
-        case "objact":
-            hsForEach(obj,function(val,key) {
+        case "parts" :
+            obj = obj.entries( );
+            for(var i = 0 ; i < obj.length ; i ++) {
+                arr.push({name: obj[i][0], value: obj[i][1]});
+            }
+            break;
+        case "object":
+            for(var key in obj) {
+                var vxl  = obj[key];
+                    arr.push({name: key, value: vxl});
+            }
+            break;
+        case "serdic":
+            hsForEach(obj, function(vxl, key) {
                 if (key.length > 0) {
-                    key = key.join('.'/**/);
-                    arr.push({name: key, value: val});
+                    key = /*1st*/key[0];
+                    arr.push({name: key, value: vxl});
                 }
             });
             break;
+        case "serdat":
+            hsForEach(obj, function(vxl, key) {
+                if (key.length > 0) {
+                    key = key.join('.');
+                    arr.push({name: key, value: vxl});
+                }
+            });
         case "string":
-            var ar1, ar2, key, val, i = 0;
+            var ar1, ar2, key, vxl, i = 0;
             ar1 = obj.split('#' , 2);
             if (ar1.length > 1) obj = ar1[0];
             ar1 = obj.split('?' , 2);
@@ -311,32 +364,34 @@ function hsSerialArr(obj) {
                 ar2 = ar1[i].split('=' , 2);
                 if (ar2.length > 1) {
                     key = decodeURIComponent (ar2[0]);
-                    val = decodeURIComponent (ar2[1]);
-                    arr.push({name: key, value: val});
+                    vxl = decodeURIComponent (ar2[1]);
+                    arr.push({name: key, value: vxl});
                 }
             }
             break;
-        case "object":
-            obj = jQuery( obj );
+        case "jquery":
+            obj = jQuery( obj  );
             if (obj.data("href")) {
-                arr = [];
                 var pos ;
                 var url = obj.data("href");
                 var dat = obj.data("data");
                 pos = url.indexOf("?");
                 if (pos != -1) {
-                    hsSerialMix(arr, hsSerialArr(url.substring(pos+1)));
+                    arr = hsSerialMix(arr, url.substring(pos+1));
                 }
                 pos = url.indexOf("#");
                 if (pos != -1) {
-                    hsSerialMix(arr, hsSerialArr(url.substring(pos+1)));
+                    arr = hsSerialMix(arr, url.substring(pos+1));
                 }
                 if (dat) {
-                    hsSerialMix(arr, hsSerialArr(dat));
+                    arr = hsSerialMix(arr, dat);
                 }
             } else {
                 arr = jQuery(obj).serializeArray();
             }
+            break;
+        case "undefined":
+        case "null":
             break;
         default:
             throw new Error("hsSerialArr: Unsupported type "+typ);
@@ -346,13 +401,13 @@ function hsSerialArr(obj) {
 
 /**
  * 序列化为字典, 供快速地查找(直接使用object-key获取数据)
- * @param {String|Object|Array|Elements} obj
+ * @param {Array|String|Object|Element|FormData} obj
  * @return {Object}
  */
 function hsSerialDic(obj) {
-    var arr = hsSerialArr(obj);
     var reg = /(\[\]|\.\.|\.$)/;
-    obj = {};
+    var arr = hsSerialArr(obj);
+    obj = new HsSerialDic(   );
     for(var i = 0 ; i < arr.length ; i ++) {
         var k = arr[i].name ;
         var v = arr[i].value;
@@ -374,12 +429,12 @@ function hsSerialDic(obj) {
 
 /**
  * 序列化为对象, 供进一步操作(可以使用hsGetValue获取数据)
- * @param {String|Object|Array|Elements} obj
+ * @param {Array|String|Object|Element|FormData} obj
  * @return {Object}
  */
-function hsSerialObj(obj) {
+function hsSerialDat(obj) {
     var arr = hsSerialArr(obj);
-    obj = {};
+    obj = new HsSerialDat(   );
     for(var i = 0; i < arr.length; i ++) {
         hsSetValue(obj, arr[i].name, arr[i].value);
     }
@@ -387,21 +442,23 @@ function hsSerialObj(obj) {
 }
 
 /**
- * 将 ar2 并入 arr 中, arr 和 ar2 必须都是 serializeArray 结构
- * @param {Array} arr
- * @param {Array} ar2
+ * 合并多组序列
+ * 类 jQuery.merge, 两点不同
+ * 1. 后面同名的会覆盖前面的
+ * 2. 返回新数组而非加到首个
+ * @param {Array|String|Object|Element|FormData} arr1, arr2, arr3...
+ * @returns {Array}
  */
-function hsSerialMix(arr, ar2) {
-    var map = {};
-    for(var i =  0, j = ar2.length  ; i < j; i ++) {
-        map[ar2[i].name] = 1 ;
+function hsSerialMix() {
+    if (arguments.length < 2) {
+        throw "hsSerialMix: No less than two arguments";
     }
-    for(var i = -1, j = arr.length-1; i < j; j --) {
-        if (map[arr[j].name]) {
-            arr.splice(j , 1);
-        }
+        var aro = hsSerialDic(arguments[0]);
+    for(var x = 1; x < arguments.length; x ++) {
+        var arx = hsSerialDic(arguments[x]);
+        jQuery.extend (aro, arx);
     }
-    return jQuery.merge(arr, ar2);
+    return hsSerialArr(aro);
 }
 
 /**
@@ -889,7 +946,7 @@ function hsFixPms(uri, pms) {
     if (pms instanceof Element || pms instanceof jQuery) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
-    }   pms = hsSerialObj(pms);
+    }   pms = hsSerialDat(pms);
     return uri.replace(/\$(\w+|\{.+?\})/gm , function(w) {
         if (w.substring(0 , 2) === "${") {
             w = w.substring(2, w.length -1);
@@ -1265,6 +1322,17 @@ function _bs2hsDF(format) {
 
 (function($) {
 
+// 为了特别区分才搞出来的 HsSerialDic 和 HsSerialDat
+// 仍需要被认为是基础对象
+$.jqPlainObject = $.isPlainObject;
+$.isPlainObject = function(obj) {
+    if (obj instanceof HsSerialDic
+    ||  obj instanceof HsSerialDat) {
+        return true;
+    }
+    return $.jqPlainObject(obj);
+};
+
 $.jqAjax = $.ajax;
 $.hsAjax = function(url, settings) {
     if (typeof(url) ===  "object") {
@@ -1295,7 +1363,7 @@ $.hsAjax = function(url, settings) {
                 ||  settings.data instanceof jQuery
                 ||  settings.data instanceof Element) {
                     var hsStringify = JSON.stringify;
-                    settings.data = hsSerialObj(settings.data);
+                    settings.data = hsSerialDat(settings.data);
                     settings.data = hsStringify(settings.data);
                 }
                 settings.contentType = "application/json; charset=UTF-8";

@@ -28,14 +28,14 @@ function HsList (context , opts) {
     this.pagsNum = hsGetValue(opts, "pagsKey", "");
 
     // 逐层解析分页数量
-    var arr = hsSerialMix(hsSerialArr(loadUrl), hsSerialArr(loadBox));
-    this.pagsNum = hsGetSeria(arr, this.pagsKey) || this.pagsNum;
+    var arr = hsSerialMix(loadUrl, loadBox);
     this.rowsNum = hsGetSeria(arr, this.rowsKey);
-    if (this.pagsNum == "") {
-        this.pagsNum = hsGetConf("pags.for.page", 5 );
-    }
+    this.pagsNum = hsGetSeria(arr, this.pagsKey) || this.pagsNum;
     if (this.rowsNum == "") {
         this.pagsNum = hsGetConf("pags.for.page", 20);
+    }
+    if (this.pagsNum == "") {
+        this.pagsNum = hsGetConf("pags.for.page", 5 );
     }
 
     this.context = context;
@@ -182,9 +182,9 @@ function HsList (context , opts) {
     //** 立即加载 **/
 
     if (loadUrl) {
-        loadDat = hsSerialMix(hsSerialArr(loadDat), hsSerialArr(findBox));
-        loadUrl = hsFixPms(loadUrl, loadBox);
-        this.load(loadUrl, loadDat);
+        loadUrl = hsFixPms   (loadUrl, loadBox);
+        loadDat = hsSerialMix(loadDat, findBox);
+        this.load(/*current*/ loadUrl, loadDat);
     }
 }
 HsList.prototype = {
@@ -402,7 +402,7 @@ HsList.prototype = {
     send     : function(btn, msg, url, data) {
         var that = this;
         var func = function() {
-        var dat2 = jQuery.extend({}, hsSerialObj(url), hsSerialObj(data||{}));
+        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         jQuery.hsAjax({
             "url"       : url,
             "data"      : data,
@@ -450,7 +450,7 @@ HsList.prototype = {
 
     open     : function(btn, box, url, data) {
         var that = this;
-        var dat2 = jQuery.extend({}, hsSerialObj(url), hsSerialObj(data||{}));
+        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         if (box) {
             box.hsOpen(url, data, function() {
                that.openBack(btn, jQuery( this ), dat2 );

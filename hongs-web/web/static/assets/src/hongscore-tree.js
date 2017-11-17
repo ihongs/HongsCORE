@@ -212,9 +212,9 @@ function HsTree (context , opts) {
     //** 立即加载 **/
 
     if (loadUrl) {
-        loadDat = hsSerialMix(hsSerialArr(loadDat), hsSerialArr(findBox));
-        loadUrl = hsFixPms  (  loadUrl, loadBox);
-        this.load(rootInfo.id, loadUrl, findBox);
+        loadUrl = hsFixPms   (loadUrl, loadBox);
+        loadDat = hsSerialMix(loadDat, findBox);
+        this.load(rootInfo.id,loadUrl, findBox);
     }
 }
 HsTree.prototype = {
@@ -352,7 +352,7 @@ HsTree.prototype = {
     send     : function(btn, msg, url, data) {
         var that = this;
         var func = function() {
-        var dat2 = jQuery.extend({}, hsSerialObj(url), hsSerialObj(data||{}));
+        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         jQuery.hsAjax({
             "url"       : url,
             "data"      : data,
@@ -405,7 +405,7 @@ HsTree.prototype = {
 
     open     : function(btn, box, url, data) {
         var that = this;
-        var dat2 = jQuery.extend({}, hsSerialObj(url), hsSerialObj(data||{}));
+        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         if (box) {
             box.hsOpen(url, data, function() {
                that.openBack(btn, jQuery( this ), dat2 );

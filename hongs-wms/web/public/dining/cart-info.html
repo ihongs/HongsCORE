@@ -89,8 +89,6 @@
                 我设好了, 立即下单吧
             </button>
         </div>
-        <div class="ids">
-        </div>
     </form>
 </div>
 </div>
@@ -112,6 +110,13 @@
         }
         context.data("loadData", ids);
 
+        // 下一步
+        context.find(".btn-primary").click(function() {
+            $(this).closest( '.panes' ).prev( )
+                   .find('.cart-info-form-tab')
+                   .click();
+        });
+        
         // 总价折扣统计
         context.on("loadBack", function(evt, rst, ths) {
             ths._cart = crt;
@@ -133,36 +138,28 @@
             }
         });
         
-        // 下一步
-        context.find(".btn-primary").click(function() {
-            $(this).closest( '.panes' ).prev( )
-                   .find('.cart-info-form-tab')
-                   .click();
-        });
-        
         // 菜单一并提交
-        formbox.on("submit", function() {
-            itembox.empty( );
+        formbox.on("willSave", function(evt, dat) {
+            var names =  [];
+            itembox.empty();
             context.find(".itembox").each(function( ) {
                 if ($(this).css("display") == "none") {
                     return;
                 }
                 var id = $(this).data("id");
+                var name  = $(this).find("[data-fn=name]" ).text();
                 var count = $(this).find("[data-fn=dail]" ).text();
                 var price = $(this).find("[data-fn=price]").text();
-                itembox.append($('<input type="hidden"/>')
-                       .attr("name", "items["+id+"][food_id]")
-                       .val (id)
-                    );
-                itembox.append($('<input type="hidden"/>')
-                       .attr("name", "items["+id+"][count]")
-                       .val (count)
-                    );
-                itembox.append($('<input type="hidden"/>')
-                       .attr("name", "items["+id+"][price]")
-                       .val (price)
-                    );
+                names.push(name);
+                dat.append("items["+id+"][food_id]", id );
+                dat.append("items["+id+"][count]", count);
+                dat.append("items["+id+"][price]", price);
             });
+            dat.append("name", names.join(", "));
+        });
+        
+        formbox.on("saveBack", function(evt, rst) {
+            console.log(rst.info);
         });
         
         //** 地图 **/

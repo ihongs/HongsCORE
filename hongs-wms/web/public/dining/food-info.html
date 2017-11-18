@@ -4,7 +4,9 @@
      data-data-0="_fill_dail:(hsDiningListFillDail)"
      data-data-1="_fill_picture:(hsFormFillView)">
     <div class="itembox">
-        <span class="badge to-cart pull-right" data-fn="dail">+</span>
+        <span class="badge to-cart pull-right">
+            <b data-fn="dail"></b>
+        </span>
         <span data-fn="price"></span>
     </div>
     <div class="form-group">
@@ -18,3 +20,12 @@
         <p  data-fn="content"></p>
     </div>
 </div>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#dining-food-info").removeAttr("id");
+        
+        context.on("loadBack",function(evt, rst, that) {
+            that._cart = JSON.parse(H$("$dining.cart")||"{}");
+        });
+    })(jQuery);
+</script>

@@ -263,10 +263,10 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
     }
 
     // 数量信息, 在 update,delete 动作返回
-    "rows": 操作行数
+    "size": 操作行数
 
     // 验证信息, 在 unique,exists 动作返回
-    "rows": 1真, 0假
+    "size": 1真, 0假
 
 在调用 API(REST) 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .wrap=1 可将全部返回数据放入 data 键下; 如加请求参数 .scok=1 则无论是否异常总是返回 200 状态; 可加请求参数 .conv=RULES 启用数据转换规则, RULES 取值可以为:
 

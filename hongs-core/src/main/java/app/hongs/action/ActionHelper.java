@@ -833,31 +833,15 @@ public class ActionHelper implements Cloneable
    * 返回操作行数
    * 针对 update,delete 等
    * @param msg
-   * @param rows
+   * @param size
    */
-  public void reply(String msg, int rows)
+  public void reply(String msg, int size)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
     }
-    map.put("rows", rows);
-    reply(map);
-  }
-
-  /**
-   * 返回审核状态
-   * 针对 unique,exists 等
-   * @param msg
-   * @param sure 对应 rows 的值 1,0
-   */
-  public void reply(String msg, boolean sure)
-  {
-    Map map = new HashMap();
-    if (null !=  msg) {
-        map.put("msg", msg);
-    }
-    map.put("rows", sure ? 1 : 0);
+    map.put("size", size);
     reply(map);
   }
 
@@ -871,6 +855,7 @@ public class ActionHelper implements Cloneable
     if (null !=  msg) {
         map.put("msg", msg);
     }
+    map.put("ok", true );
     reply(map);
   }
 
@@ -890,39 +875,21 @@ public class ActionHelper implements Cloneable
 
   /**
    * 返回错误信息
-   * @param msg
-   * @param ern
-   */
-  public void fault(String msg, String ern)
-  {
-    Map map = new HashMap();
-    if (null !=  msg) {
-        map.put("msg", msg);
-    }
-    if (null !=  ern) {
-        map.put("ern", ern);
-    }
-    map.put("ok", false);
-    reply(map);
-  }
-
-  /**
-   * 返回错误信息
-   * @param msg
    * @param ern
    * @param err
+   * @param msg
    */
-  public void fault(String msg, String ern, String err)
+  public void fault(String ern, String err, String msg)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
-    }
-    if (null !=  ern) {
-        map.put("ern", ern);
     }
     if (null !=  err) {
         map.put("err", err);
+    }
+    if (null !=  ern) {
+        map.put("ern", ern);
     }
     map.put("ok", false);
     reply(map);

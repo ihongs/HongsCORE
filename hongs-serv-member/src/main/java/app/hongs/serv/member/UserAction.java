@@ -138,8 +138,8 @@ public class UserAction {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
-        boolean rv = model.unique(rd,fc);
-        helper.reply("", rv);
+        boolean   rv = model.unique(rd, fc);
+        helper.reply( null, rv ? 1 : 0 );
     }
 
 }

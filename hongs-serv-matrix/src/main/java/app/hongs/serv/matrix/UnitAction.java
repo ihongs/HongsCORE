@@ -69,7 +69,7 @@ public class UnitAction {
     public void isUnique(ActionHelper helper)
     throws HongsException {
         boolean v = model.unique(helper.getRequestData());
-        helper.reply(null, v);
+        helper.reply(null, v ? 1 : 0);
     }
 
 }

@@ -75,7 +75,7 @@ public class FormAction {
     public void isUnique(ActionHelper helper)
     throws HongsException {
         boolean v = model.unique(helper.getRequestData());
-        helper.reply(null, v);
+        helper.reply(null, v ? 1 : 0);
     }
 
     @Action("fork/list")

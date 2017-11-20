@@ -155,7 +155,9 @@
                 dat.append("items["+id+"][count]", count);
                 dat.append("items["+id+"][price]", price);
             });
-            dat.append("name", names.join(", "));
+            var ttp = context.find("[data-fn=total_price]").text();
+            dat.append("name" , names.join(", "));
+            dat.append("total", ttp);
         });
         
         formbox.on("saveBack", function(evt, rst) {

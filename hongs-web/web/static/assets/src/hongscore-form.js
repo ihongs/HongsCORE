@@ -976,8 +976,8 @@ HsForm.prototype = {
                     if (rst["info"] !== undefined) {
                         ret = !jQuery.isEmptyObject(rst["info"]);
                     } else
-                    if (rst["rows"] !== undefined) {
-                        ret = rst["rows"] > 0 ? true :
+                    if (rst["size"] !== undefined) {
+                        ret = parseInt ( rst["size"] ) ? true   :
                             ( rst["msg" ] ? rst["msg"] : false );
                     } else {
                         ret = rst[ "ok" ] ? true :

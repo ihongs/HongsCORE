@@ -121,10 +121,10 @@ public class DBAction implements IAction, IActing {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "exists", req);
-        FetchCase c = new FetchCase( );
+        FetchCase c = new FetchCase();
         c.setOption("INCLUDE_REMOVED", Synt.declare(req.get("include-removed"), false));
         boolean val = ett.exists(req , c );
-        helper.reply(null, val);
+        helper.reply(null, val ? 1 : 0);
     }
 
     @Action("unique")
@@ -133,10 +133,10 @@ public class DBAction implements IAction, IActing {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "unique", req);
-        FetchCase c = new FetchCase( );
+        FetchCase c = new FetchCase();
         c.setOption("INCLUDE_REMOVED", Synt.declare(req.get("include-removed"), false));
         boolean val = ett.unique(req , c );
-        helper.reply(null, val);
+        helper.reply(null, val ? 1 : 0);
     }
 
     /**

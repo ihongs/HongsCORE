@@ -117,18 +117,18 @@ public class MoreAction {
                 String msg = ez.getLocalizedMessage();
                 String err = ez.getMessage();
                 String ern = "Ex"+Integer.toHexString(ez.getErrno());
-                helper.fault( msg, ern, err);
+                helper.fault(ern, err, msg);
             } else {
                 String msg = ex.getLocalizedMessage();
                 String err = ex.getMessage();
                 String ern = "Er500";
-                helper.fault( msg, ern, err);
+                helper.fault(ern, err, msg);
             }
         } catch (IOException ex) {
                 String msg = ex.getLocalizedMessage();
                 String err = ex.getMessage();
                 String ern = "Er500";
-                helper.fault( msg, ern, err);
+                helper.fault(ern, err, msg);
         }
         return  helper.getResponseData();
     }

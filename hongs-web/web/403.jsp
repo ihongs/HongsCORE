@@ -1,10 +1,10 @@
-<%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
 <%@page import="app.hongs.Cnst"%>
 <%@page import="app.hongs.Core"%>
 <%@page import="app.hongs.CoreLocale"%>
 <%@page import="java.io.PrintStream"%>
 <%@page import="java.io.ByteArrayOutputStream"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
 <%
     // 如果有内部返回, 则不要显示此页
     if (request.getAttribute(Cnst.RESP_ATTR) != null) {
@@ -26,9 +26,9 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
             #footbox.navbar, body, .jumbotron, .container
-                { background-color: #0071AD; color: #fff; border: 0; }
+                { background-color: #0071FF; color: #fff; border: 0; }
             #footbox blockquote
-                { background-color: #0071AD; color: #fff; }
+                { background-color: #0071FF; color: #fff; }
             h1, h3, pre
                 { font-weight: bold; }
             pre
@@ -39,7 +39,21 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
-                <h3><%=CoreLocale.getInstance().translate("core.error.no.power")%>! <a href="<%=request.getContextPath()%>/" style="color: #ace;"><%=CoreLocale.getInstance().translate("core.error.go.index")%></a>.</h3>
+                <p>
+                    <%
+                        Object msg = request.getAttribute("javax.servlet.error.message");
+                    %>
+                    <%if ( msg != null ) {%>
+                        <%=msg%>
+                    <%} else {%>
+                        <%=CoreLocale.getInstance().translate("core.error.no.power")%>
+                    <%} /*if*/%>
+                </p>
+                <p>
+                    <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
+                        <%=CoreLocale.getInstance().translate("core.error.to.index")%>
+                    </a>
+                </p>
             </div>
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">

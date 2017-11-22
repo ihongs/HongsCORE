@@ -19,8 +19,6 @@ import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -272,9 +270,9 @@ public class AuthFilter
     if ( 2 == type) {
         uri = Core.BASE_HREF;
         if (uri == null || uri.length() == 0) {
-            msg = lang.translate("core.error.wr.place");
+            msg = lang.translate("core.error.no.place");
         } else {
-            msg = lang.translate("core.error.wr.place.redirect");
+            msg = lang.translate("core.error.no.place.redirect");
         }
     } else
     if ( 3 == type) {
@@ -289,13 +287,13 @@ public class AuthFilter
         uri = this.loginPage;
         if (uri == null || uri.length() == 0) {
             if ( 0 == type) {
-                msg = lang.translate("core.error.to.login");
+                msg = lang.translate("core.error.un.login");
             } else {
                 msg = lang.translate("core.error.no.login");
             }
         } else {
             if ( 0 == type) {
-                msg = lang.translate("core.error.to.login.redirect");
+                msg = lang.translate("core.error.un.login.redirect");
             } else {
                 msg = lang.translate("core.error.no.login.redirect");
             }
@@ -395,8 +393,8 @@ public class AuthFilter
   }
 
   private boolean isAjax(HttpServletRequest req) {
-      if (Synt.asBool(req.getParameter(".ajax") ) ) {
-          return  true; // 方便特殊情况 POST, 亦可显式申明 AJAX.
+      if (Synt.declare(req.getParameter(".ajax") , false)) {
+          return  true;
       }
       String x  = req.getHeader("X-Requested-With");
       return x == null ? false : IS_AJAX.matcher(x).find();

@@ -16,6 +16,7 @@ import java.util.LinkedHashSet;
 import java.util.HashSet;
 import java.util.TreeSet;
 import java.util.Set;
+import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -52,6 +53,8 @@ public class AutoFilter extends ActionDriver {
 //  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
 //  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
+    private static final Pattern DENY_JSPS = Pattern.compile("/(@[^/]*|#[^/]*|_[^/]*|[^/]*\\.[^/]*)\\.jsp$");
+
     @Override
     public void init(FilterConfig cnf) throws ServletException {
         super.init(cnf);
@@ -85,10 +88,17 @@ public class AutoFilter extends ActionDriver {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
         String url = ActionDriver.getRecentPath(req);
+        String ref = ActionDriver.getOriginPath(req);
 
         // 检查是否需要跳过
         if (ignore != null && ignore.ignore(url)) {
             chain.doFilter( req , rsp );
+            return;
+        }
+
+        // 禁止访问动作脚本 , 避免绕过权限过滤
+        if (DENY_JSPS.matcher(ref).find()) {
+            rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "What the fuck do you want?");
             return;
         }
 

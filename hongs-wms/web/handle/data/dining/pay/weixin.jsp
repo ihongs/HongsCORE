@@ -143,8 +143,16 @@ String appsk  = conf.getProperty("bining.pay.weixin.appsk");
 float  price  = getPrice( billId );
 String nstr   = Core.newIdentity();
 String nurl   = "http://" + request.getServerName() + Core.BASE_HREF
-              + "/handle/dining/pay/weixin_notify.jsp";
+              + "/handle/data/dining/pay/weixin_notify.jsp";
 String addr   = ActionDriver.getClientAddr(request);
+
+Map<String, String> inf = Synt.mapOf(
+    "h5_info", Synt.mapOf(
+        "type", "Wap",
+        "wap_url" , "http://" + request.getServerName(),
+        "wap_name", ""
+    )
+);
 
 Map<String, String> xml = new TreeMap();
 xml.put("appid"             , appid);
@@ -155,8 +163,8 @@ xml.put("nonce_str"         , nstr);
 xml.put("notify_url"        , nurl);
 xml.put("spbill_create_ip"  , addr);
 xml.put("total_fee"         , Float.toString(price));
+xml.put("scene_info"        , app.hongs.util.Data.toString(inf));
 xml.put("trade_type"        , "MWEB");
-xml.put("scene_info"        , "");
 xml.put("attach"            , "");
 xml.put("body"              , "");
 
@@ -167,7 +175,7 @@ Map    rsp    = toMap(resp);
 ActionHelper helper = Core.getInstance(ActionHelper.class);
 if ("SUCCESS".equals(rsp.get("result_code") )
 &&  "SUCCESS".equals(rsp.get("return_code"))) {
-    helper.reply(Synt.mapOf("jump" , rsp.get("mweb_url")));
+    helper.reply( Synt.mapOf("href", rsp.get("mweb_url")));
 } else {
     helper.fault((String) rsp.get("return_msg"));
 }

@@ -3,7 +3,7 @@
 <%
     String _pageId = (_module + "_" + _entity + "_logs").replace('/', '_');
 %>
-<h2><%=_locale.translate("fore.logs.title", _title)%></h2>
+<h2><%=_locale.translate("fore.revert.title", _title)%></h2>
 <div id="<%=_pageId%>">
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">

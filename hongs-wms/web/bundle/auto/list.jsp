@@ -5,19 +5,18 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_init_more_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("list.action"), "normal");
+    String _action = Synt.declare(request.getAttribute("list.action"), "browse");
     String _pageId = (_module + "_" + _entity + "_" + _action).replace('/', '_');
     String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
     
-    String _lang = "normal".equals(_action) ? "list" : _action;
-    String _conf = FormSet.hasConfFile(_module + "/" + _entity)
-                || NaviMap.hasConfFile(_module + "/" + _entity)
-                 ? _module + "/" + _entity : _module ;
+    String _conf   = FormSet.hasConfFile(_module + "/" + _entity)
+                  || NaviMap.hasConfFile(_module + "/" + _entity)
+                   ? _module + "/" + _entity : _module ;
 
     StringBuilder _rb = new StringBuilder(   "id,name"   );
     StringBuilder _ob = new StringBuilder("-mtime,-ctime");
 %>
-<h2><%=_locale.translate("fore."+ _lang +".title", _title)%></h2>
+<h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div>
         <div class="toolbox col-md-8 btn-group">
@@ -30,6 +29,7 @@
             <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
             <button type="button" class="revert for-choose btn btn-warning" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
             <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="manual            btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book" ></span></button>
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
@@ -120,11 +120,11 @@
             String rb;
 
             if ("number".equals(type)) {
-                String enumConf = Synt.defxult((String) info.get("conf"), _conf );
-                String enumName = Synt.defxult((String) info.get("enum"),  name );
+                String enumConf = Synt.defxult((String) info.get("conf"),_conf);
+                String enumName = Synt.defxult((String) info.get("enum"), name);
                 Map    enumData ;
                 try {
-                    enumData  = FormSet.getInstance(enumConf ).getEnum(enumName );
+                    enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
                 } catch (HongsException ex) {
                     enumData  = null;
                 }
@@ -248,7 +248,9 @@
             ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
              '.review', '@'],
             ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
-             '.revert', '@']
+             '.revert', '@'],
+            ['<%=_module%>/<%=_entity%>/lore.html',
+             '.manual', '@']
         ],
         _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=<%=_ob%>&rb=<%=_rb%>"
     });

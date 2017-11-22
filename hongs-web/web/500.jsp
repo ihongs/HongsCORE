@@ -24,9 +24,9 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
             #footbox.navbar, body, .jumbotron, .container
-                { background-color: #0071AD; color: #fff; border: 0; }
+                { background-color: #8F0000; color: #fff; border: 0; }
             #footbox blockquote
-                { background-color: #0071AD; color: #fff; }
+                { background-color: #8F0000; color: #fff; }
             h1, h3, pre
                 { font-weight: bold; }
             pre
@@ -37,7 +37,7 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
-                <h3>
+                <p>
 <%
     String e  = exception.getLocalizedMessage();
     if (null == e) {
@@ -46,7 +46,7 @@
     e = e.replace("<", "&lt;").replace(">", "&gt;");
     out.print(e.trim());
 %>
-                </h3>
+                </p>
                 <% if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) { %>
                 <pre>
 <%

@@ -163,10 +163,10 @@
         // 支付
         formbox.on("saveBack", function(evt, rst) {
             if (rst.info.cost = "微信"  ) {
-                pay("handle/data/dining/pay/weixin.jsp?bill_id=" + rst.info.id);
+                pay("handle/data/dining/pay/weixin.act?bill_id=" + rst.info.id);
             } else
             if (rst.info.cost = "支付宝") {
-                pay("handle/data/dining/pay/alipay.jsp?bill_id=" + rst.info.id);
+                pay("handle/data/dining/pay/alipay.act?bill_id=" + rst.info.id);
             } else
             {
                 location.href = hsFixUri( "public/dining/bill/"  + rst.info.id);

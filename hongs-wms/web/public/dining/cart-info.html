@@ -160,10 +160,31 @@
             dat.append("total", ttp);
         });
         
+        // 支付
         formbox.on("saveBack", function(evt, rst) {
-            console.log(rst.info);
+            if (rst.info.cost = "微信"  ) {
+                pay("handle/data/dining/pay/weixin.jsp?bill_id=" + rst.info.id);
+            } else
+            if (rst.info.cost = "支付宝") {
+                pay("handle/data/dining/pay/alipay.jsp?bill_id=" + rst.info.id);
+            } else
+            {
+                location.href = hsFixUri( "public/dining/bill/"  + rst.info.id);
+            }
         });
         
+        function pay(url) {
+            $.get(hsFixUri(url),function(rst) {
+                if (rst.ok) {
+                    location.href = rst.href;
+                    return;
+                }
+                $.hsWarn(rst.msg, "erro", function() {
+                    location.href = hsFixUri("public/dining/bill/" + rst.info.id);
+                });
+            });
+        }
+            
         //** 地图 **/
         
         var addrInp = formbox.find("[name=addr]");

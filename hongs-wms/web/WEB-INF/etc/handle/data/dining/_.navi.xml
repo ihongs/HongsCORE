@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <role name="handle">
+        <action>handle/data/dining/pay/weixin.jsp</action>
+    </role>
+</root>

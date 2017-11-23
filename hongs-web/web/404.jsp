@@ -10,6 +10,20 @@
     if (request.getAttribute(Cnst.RESP_ATTR) != null) {
         return;
     }
+
+    String  text;
+    if (null == exception) {
+        exception = (Throwable) request.getAttribute("javax.servlet.error.message");
+    }
+    if (null != exception) {
+        text  = exception.getLocalizedMessage( );
+    } else {
+        text  = (String) request.getAttribute( "javax.servlet.error.message" );
+        if (null != text ) {
+            text  = CoreLocale.getInstance( ).translate("core.error.no.thing");
+        }
+    }
+    String  link  = CoreLocale.getInstance( ).translate("core.error.to.index");
 %>
 <!doctype html>
 <html>
@@ -39,21 +53,10 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
-                <p>
-                    <%
-                        Object msg = request.getAttribute("javax.servlet.error.message");
-                    %>
-                    <%if ( msg != null ) {%>
-                        <%=msg%>
-                    <%} else {%>
-                        <%=CoreLocale.getInstance().translate("core.error.no.thing")%>
-                    <%} /*if*/%>
-                </p>
-                <p>
-                    <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
-                        <%=CoreLocale.getInstance().translate("core.error.to.index")%>
-                    </a>
-                </p>
+                <p> <%=text%> </p>
+                <p><a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
+                    <%=link%>
+                </a></p>
             </div>
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">

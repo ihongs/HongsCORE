@@ -2,7 +2,7 @@
 <%@page import="java.io.File"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@include file="_init_base_.jsp"%>
+<%@include file="_base_.jsp"%>
 <!doctype html>
 <html>
     <head>

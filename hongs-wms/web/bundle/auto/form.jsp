@@ -5,7 +5,7 @@
 <%@page import="java.util.regex.Pattern"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@include file="_init_more_.jsp"%>
+<%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("form.action"), "create");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');

@@ -3,7 +3,7 @@
 <%@page import="java.util.Iterator"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@include file="_init_more_.jsp"%>
+<%@include file="_boot_.jsp"%>
 <%
     String _pageId = (_module + "_" + _entity + "_lore").replace('/', '_');
     

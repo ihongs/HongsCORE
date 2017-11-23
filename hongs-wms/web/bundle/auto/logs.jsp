@@ -1,5 +1,5 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@include file="_init_base_.jsp"%>
+<%@include file="_base_.jsp"%>
 <%
     String _pageId = (_module + "_" + _entity + "_logs").replace('/', '_');
 %>

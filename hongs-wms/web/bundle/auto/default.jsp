@@ -23,7 +23,7 @@
         <script type="text/javascript" src="normal/conf/default.js"></script>
         <script type="text/javascript" src="normal/lang/default.js"></script>
         <script type="text/javascript" src="normal/auth/bundle.js"></script>
-        <script type="text/javascript" src="bundle/auto/_base_.js"></script>
+        <script type="text/javascript" src="bundle/auto/_main_.js"></script>
     </head>
     <body>
         <div id="notebox"></div>

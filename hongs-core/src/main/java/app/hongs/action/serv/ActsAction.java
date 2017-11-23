@@ -109,7 +109,7 @@ public class ActsAction
     String msg ;
 
     // 外部异常, 不记录日志
-    if (ern >= 0x1100 && ern <= 0x1107)
+    if (ern >= 0x1100 && ern <= 0x1109)
     {
       String[] ls = ex.getLocalizedOptions();
       if (/**/ ls == null || ls.length == 0)
@@ -122,7 +122,7 @@ public class ActsAction
     }
     else
     // 服务异常, 交换且记录
-    if (ern >= 0x1108 && ern <= 0x110f)
+    if (ern >= 0x110a && ern <= 0x110f)
     {
         Throwable  tx  = ta ;
                    ta  = te ;
@@ -190,7 +190,7 @@ public class ActsAction
         ers = "Er405";
         helper.getResponse().setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
         break;
-      case 0x1108:
+      case 0x110e:
       case 0x110f:
       case HongsException.COMMON:
       case     HongsError.COMMON:

@@ -477,7 +477,7 @@ public class SearchHelper {
             Query q = that.getQuery(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("SearchRecord.counts: " +q.toString());
+                CoreLogger.debug("SearchRecord.statis: " +q.toString());
             }
 
             TopDocs docz = finder.search(q, 500);

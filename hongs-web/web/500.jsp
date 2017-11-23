@@ -1,12 +1,59 @@
 <%@page import="app.hongs.Cnst"%>
 <%@page import="app.hongs.Core"%>
+<%@page import="app.hongs.CoreLocale"%>
 <%@page import="java.io.PrintStream"%>
 <%@page import="java.io.ByteArrayOutputStream"%>
+<%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
+<%!
+    private static String escapePRE(String str) {
+        StringBuilder b = new StringBuilder();
+        int  l = str.length();
+        int  i = 0;
+        char c ;
+        while ( i < l) {
+            c = str.charAt(i);
+            switch (c) {
+              case '<': b.append("&lt;" ); break;
+              case '>': b.append("&gt;" ); break;
+              case '&': b.append("&amp;"); break;
+              default : b.append(c);
+            }
+            i ++;
+        }
+        return b.toString().replaceAll("(\r\n|\r|\n)", "\r\n");
+    }
+%>
 <%
     // 如果有内部返回, 则不要显示此页
     if (request.getAttribute(Cnst.RESP_ATTR) != null) {
         return;
+    }
+
+    String  text  = null ;
+    String  trac  = null ;
+    if (null == exception) {
+        exception = (Throwable) request.getAttribute("javax.servlet.error.message");
+    }
+    if (null != exception) {
+        text  = exception.getLocalizedMessage(   );
+        if (text == null ) {
+            text  = exception.getClass().getName();
+        }
+        // 调试模式输出异常栈以便检测
+        if (0 !=      Core.DEBUG
+        &&  1 == (1 & Core.DEBUG)
+        &&  2 != (2 & Core.DEBUG)
+        &&  8 != (8 & Core.DEBUG) ) {
+            ByteArrayOutputStream o = new ByteArrayOutputStream();
+            exception.printStackTrace(new PrintStream(o));
+            trac  = new  String(o.toByteArray(), "utf-8");
+        }
+    } else {
+        text  = (String) request.getAttribute("javax.servlet.error.message");
+        if (text == null ) {
+            text  = CoreLocale.getInstance( ).translate("core.error.unknwn");
+        }
     }
 %>
 <!doctype html>
@@ -37,27 +84,10 @@
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
-                <p>
-<%
-    String e  = exception.getLocalizedMessage();
-    if (null == e) {
-           e  = exception.getClass( ).getName();
-    }
-    e = e.replace("<", "&lt;").replace(">", "&gt;");
-    out.print(e.trim());
-%>
-                </p>
-                <% if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) { %>
-                <pre>
-<%
-    ByteArrayOutputStream o = new ByteArrayOutputStream();
-    exception.printStackTrace(new PrintStream( o ));
-    String x = new String(o.toByteArray(), "utf-8");
-    x = x.replace("<", "&lt;").replace(">", "&gt;");
-    out.println(x.trim());
-%>
-                </pre>
-                <% } // End If %>
+                <p>  <%=escapeXML(text.trim())%>  </p>
+                <%if (trac != null) {%>
+                <pre><%=escapePRE(trac.trim())%></pre>
+                <%}%>
             </div>
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">

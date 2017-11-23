@@ -28,7 +28,7 @@ import java.lang.reflect.InvocationTargetException;
  * 0x1103 无权访问
  * 0x1104 无此动作
  * 0x1105 非法请求
- * 0x1108 无法执行, 禁止访问或参数错误
+ * 0x110e 无法执行, 禁止访问或参数错误
  * 0x110f 注解链溢出
  * </pre>
  *
@@ -166,18 +166,18 @@ public class ActionRunner {
         try {
             method.invoke(object, helper);
         } catch (   IllegalAccessException e) {
-            throw new HongsException(0x1108, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new HongsException(0x110e, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch ( IllegalArgumentException e) {
-            throw new HongsException(0x1108, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new HongsException(0x110e, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
             Throwable  ex = e.getCause( );
             if (ex instanceof HongsError) {
-                throw (HongsError) ex;
+                throw (HongsError    ) ex;
             } else
             if (ex instanceof HongsException) {
                 throw (HongsException) ex;
             } else {
-                throw new HongsException(0x1108, ex);
+                throw new HongsException(0x110e, ex);
             }
         }
     }

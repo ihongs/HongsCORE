@@ -29,11 +29,13 @@
 <%@page import="javax.crypto.spec.SecretKeySpec"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
+private static final Pattern RESP_PATT = Pattern.compile("<([^>]+)><!\\[CDATA\\[(.*?)\\]\\]></[^>]+>", Pattern.DOTALL | Pattern.MULTILINE);
+
 private float getPrice(String billId) throws HongsException {
     if (billId == null || billId.length() == 0) {
-        throw new HongsException(0x1100, "bill_id required!");
+        throw new HongsException(0x1100, "bill_id required");
     }
-    Data mod = Data.getInstance("handle/dining/bill", "bill");
+    Data mod = Data.getInstance("handle/data/dining/bill", "bill");
     Map  row = mod.get(billId);
     if ( row == null || row.isEmpty()) {
         throw new HongsException(0x1100, "The bill does not exist.");
@@ -57,11 +59,13 @@ private String getText(Map<String, String> xml, String key) throws HongsExceptio
 private String getSign(Map<String, String> xml, String key) throws HongsException {
     StringBuilder sb = new StringBuilder();
     for (Map.Entry<String, String> one : xml.entrySet()) {
-        if (one.getValue().length() == 0) {
+        String nam = one.getKey(  );
+        String val = one.getValue();
+        if (val == null || val.length() == 0) {
             continue;
         }
-        sb.append("&").append(one.getKey(  ))
-          .append("=").append(one.getValue());
+        sb.append("&").append(nam)
+          .append("=").append(val);
     }
     sb.append("key").append("=").append(key);
     return md5(sb.toString());
@@ -87,9 +91,8 @@ private String post(String url, String req) throws HongsException {
 }
 
 private Map toMap(String str) {
-    Pattern pat = Pattern.compile("<(.*?)><!CDATA[(.*?)]></.*?>", Pattern.DOTALL | Pattern.MULTILINE);
-    Matcher mat = pat.matcher(str);
     Map     map = new HashMap();
+    Matcher mat = RESP_PATT.matcher ( str );
     while ( mat.find() ) {
         map.put(mat.group(1), mat.group(2));
     }
@@ -132,7 +135,7 @@ private String byte2hex16str(byte[] pzwd) {
 private static final byte[] HEX16 = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
 %>
 <%
-Properties conf = CoreConfig.getInstance("handle/dining/pay");
+Properties conf = CoreConfig.getInstance("handle/data/dining/pay");
 
 String apiUrl = conf.getProperty("bining.pay.weixin.api.url");
 String openId = request.getParameter("open_id");
@@ -169,7 +172,7 @@ xml.put("attach"            , "");
 xml.put("body"              , "");
 
 String text   = getText(xml, appsk);
-String resp   = post(apiUrl, text );
+String resp   = post(apiUrl, text );System.err.println(resp);
 Map    rsp    = toMap(resp);
 
 ActionHelper helper = Core.getInstance(ActionHelper.class);

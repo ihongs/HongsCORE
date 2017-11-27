@@ -54,7 +54,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   {
     try
     {
-      this._jspService(new HsRequest( req ), rsp);
+      this._jspService(new Request(req), rsp);
     }
     catch (ServletException ex)
     {
@@ -77,6 +77,9 @@ public class Pagelet extends ActionDriver implements HttpJspPage
             switch(((HongsCause)ax).getErrno()) {
                 case 0x1105:
                     rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
+                    return ;
+                case 0x1106:
+                    rsp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE , er);
                     return ;
                 case 0x1100:
                     rsp.sendError(HttpServletResponse.SC_BAD_REQUEST , er);
@@ -111,18 +114,21 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       int  i = 0;
       char c ;
       while ( i < l) {
-          c = str.charAt(i);
+           c = str.charAt(i ++);
           switch (c) {
             case '<': b.append("&lt;" ); break;
             case '>': b.append("&gt;" ); break;
             case '&': b.append("&amp;"); break;
-            case 10 : b.append("&#10;"); break; // 换行
-            case 13 : b.append("&#13;"); break; // 回车
             case 34 : b.append("&#34;"); break; // 双引号
             case 39 : b.append("&#39;"); break; // 单引号
-            default : b.append(c);
+            default :
+                if (c < 32) {
+                    b.append("&#")
+                     .append((int) c);
+                } else {
+                    b.append(/***/ c);
+                }
           }
-          i ++;
       }
       return b.toString();
   }
@@ -162,9 +168,9 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * 将非 GET,HEAD 转为 POST
    * 规避 JSP 不接受其他方法
    */
-  private static class HsRequest extends HttpServletRequestWrapper {
+  private static class Request extends HttpServletRequestWrapper {
 
-      public HsRequest(HttpServletRequest req) {
+      public Request(HttpServletRequest req) {
           super(req);
       }
 

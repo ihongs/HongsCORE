@@ -13,7 +13,7 @@
 
     String  text;
     if (null == exception) {
-        exception = (Throwable) request.getAttribute("javax.servlet.error.message");
+        exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
     }
     if (null != exception) {
         text  = exception.getLocalizedMessage( );

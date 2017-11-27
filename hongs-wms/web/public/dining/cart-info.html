@@ -163,25 +163,25 @@
         // 支付
         formbox.on("saveBack", function(evt, rst) {
             if (rst.info.cost = "微信"  ) {
-                pay("handle/data/dining/pay/weixin/create.act?bill_id=" + rst.info.id);
+                pay("handle/data/dining/pay/weixin/create.act?bill_id=", rst.info.id);
             } else
             if (rst.info.cost = "支付宝") {
-                pay("handle/data/dining/pay/alipay/create.act?bill_id=" + rst.info.id);
+                pay("handle/data/dining/pay/alipay/create.act?bill_id=", rst.info.id);
             } else
             {
-                location.href = hsFixUri( "public/dining/bill/"  + rst.info.id);
+                location.href = hsFixUri( "public/dining/bill/" + rst.info.id);
             }
         });
         
-        function pay(url) {
-            $.get(hsFixUri(url),function(rst) {
+        function pay(url, bid) {
+            $.get(hsFixUri(url + bid), function(rst) {
                 if (rst.ok) {
-                    H$("$dining.cart" , null);
-                    location.href = rst.href ;
+                    H$("$dining.cart", null);
+                    location.href = rst.href;
                     return;
                 }
                 $.hsWarn(rst.msg, "erro", function() {
-                    location.href = hsFixUri("public/dining/bill/" + rst.info.id);
+                    location.href = hsFixUri("public/dining/bill/" + bid);
                 });
             });
         }

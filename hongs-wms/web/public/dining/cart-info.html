@@ -162,6 +162,7 @@
         
         // 支付
         formbox.on("saveBack", function(evt, rst) {
+            H$("$dining.cart", null);
             if (rst.info.cost = "微信"  ) {
                 pay("handle/data/dining/pay/weixin/create.act?bill_id=", rst.info.id);
             } else
@@ -172,14 +173,11 @@
                 location.href = hsFixUri( "public/dining/bill/" + rst.info.id);
             }
         });
-        
         function pay(url, bid) {
             $.get(hsFixUri(url + bid), function(rst) {
                 if (rst.ok) {
-                    H$("$dining.cart", null);
                     location.href = rst.href;
-                    return;
-                }
+                } else
                 $.hsWarn(rst.msg, "erro", function() {
                     location.href = hsFixUri("public/dining/bill/" + bid);
                 });

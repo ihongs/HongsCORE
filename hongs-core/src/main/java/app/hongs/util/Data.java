@@ -468,7 +468,7 @@ public final class Data
         try {
             escape  (  sb  , s );
         } catch (IOException ex)  {
-            throw new HongsError.Common(ex);
+            throw new HongsError(0x42, "Can not write data for json", ex);
         }
     }
 

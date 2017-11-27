@@ -186,6 +186,10 @@ public class ActsAction
         ers = "Er404";
         helper.getResponse().setStatus(HttpServletResponse.SC_NOT_FOUND);
         break;
+      case 0x1106:
+        ers = "Er406";
+        helper.getResponse().setStatus(HttpServletResponse.SC_NOT_ACCEPTABLE);
+        break;
       case 0x1105:
         ers = "Er405";
         helper.getResponse().setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
@@ -199,7 +203,7 @@ public class ActsAction
         break;
       case HongsException.NOTICE:
       case     HongsError.NOTICE:
-        // 错误即代号
+        // 错误即代号;
         helper.getResponse().setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         break;
       default:

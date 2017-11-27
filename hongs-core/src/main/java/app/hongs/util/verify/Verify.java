@@ -35,7 +35,7 @@ import java.util.Set;
  * <h3>异常代码</h3>
  * <pre>
  * 代码区间 0x10f0~0x10ff
- * error.Ex10f0=规则格式错误
+ * Ex10f0=规则格式错误
  * </pre>
  */
 public class Verify implements Veri {

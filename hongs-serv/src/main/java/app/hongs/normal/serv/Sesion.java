@@ -155,10 +155,9 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         // 删除旧的数据
         if (sid != null) {
             try {
-                getRecord().del(sid);
-            }
-            catch (HongsException e) {
-                throw new HongsError.Common(e);
+                getRecord().del( sid );
+            } catch (HongsException e) {
+                throw e.toExpedient( );
             }
         }
 
@@ -300,8 +299,8 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
     public static Sesion getInstance(String id) {
         try {
             return getRecord().get(id);
-        } catch ( HongsException  ex ) {
-            throw new HongsError.Common(ex);
+        } catch (HongsException e) {
+            throw e.toExpedient( );
         }
     }
 

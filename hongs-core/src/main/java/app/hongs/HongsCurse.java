@@ -98,7 +98,7 @@ public class HongsCurse {
                 }
                 }
                 ckey = "fore.error";
-                dkey =  "" ;
+                dkey = "";
                 break;
             case HongsException.NOTICE:
             case     HongsError.NOTICE:
@@ -107,7 +107,7 @@ public class HongsCurse {
                 break;
             default:
                 ckey = "core.error";
-                dkey = "error." + codx;
+                dkey = codx;
         }
 
         if (null  !=  lang) {

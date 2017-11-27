@@ -21,7 +21,7 @@ import java.util.Map;
  * <h3>异常代码</h3>
  * <pre>
  * 代码区间 0x10f0~0x10ff
- * error.Ex10f1=找不到表单规则
+ * Ex10f1=找不到表单规则
  * </pre>
  *
  * @author Hongs

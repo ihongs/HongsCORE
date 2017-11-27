@@ -752,7 +752,7 @@ public class ActionHelper implements Cloneable
    */
   public static ActionHelper getInstance()
   {
-    throw new HongsError.Common("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
+    throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
   }
 
   /**

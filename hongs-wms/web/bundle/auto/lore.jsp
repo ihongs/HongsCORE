@@ -29,46 +29,146 @@
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_pageId%> listbox table-responsive">
     <fieldset>
-        <legend class="dropdown dropdown-toggle">列表 <span class="caret"></span></legend>
+        <legend class="dropdown dropdown-toggle">获取(列表和详情) <span class="caret"></span></legend>
         <div class="dropdown-body">
             <div class="form-group">
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
-    GET <%=Core.BASE_HREF%>/api/bundle/data/<%=_module%>
-    或 <%=Core.BASE_HREF%>/bundle/data/<%=_module%>/search.api
-    或 <%=Core.BASE_HREF%>/bundle/data/<%=_module%>/search.act
+<b>列表:</b>
+    GET <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.api
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act
+<b>详情:</b>
+    GET <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.api?id=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act?id=ID
                 </pre>
             </div>
             <div class="form-group">
                 <label class="control-label">参数</label>
                 <pre class="form-control-static">
     wd=搜索
-    md=模式, 0 仅要选项数据, 1 补全选项名称, 2 增加选项数据, 4 增加关联数据
     pn=分页, 从 1 开始
-    rn=条数
-    <%if (sortable.length() > 0) {%>ob=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序<%}%>
-    <%if (listable.length() > 0) {%>rb=列举, 取值 <%=listable.substring(1)%>, 逗号分隔, 字段前加 - 表示排除<%}%>
+    rn=条数, 默认 20 条
+    md=模式, 0 仅要选项数据, 1 补全选项名称, 2 增加选项数据, 4 增加关联数据
+<%if (sortable.length() > 0) {%>
+    ob=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序
+<%}%>
+<%if (listable.length() > 0) {%>
+    rb=列举, 取值 <%=listable.substring(1)%>, 逗号分隔, 字段前加 - 表示排除
+<%}%>
                 </pre>
             </div>
             <div class="form-gorup">
                 <label class="control-label">返回</label>
                 <pre class="form-control-static">
+<b>列表:</b>
     {
-        list: [{
+        "list": [{
             
         }],
-        enum: {
+        "enum": {
         },
-        page: {
-        }
-        // ....
+        "page": {
+        },
+        // ...
+    }
+<b>详情:</b>
+    {
+        "info": {
+            // 同 list 中的条目
+        },
+        // ...
     }
                 </pre>
             </div>
         </div>
     </fieldset>
     <fieldset>
-        <legend class="dropdown dropdown-toggle">其他</legend>
+        <legend class="dropdown dropdown-toggle">新增 <span class="caret"></span></legend>
+        <div class="dropdown-body">
+            <div class="form-group">
+                <label class="control-label">接口</label>
+                <pre class="form-control-static">
+    POST <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create.api
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create.act
+                </pre>
+            </div>
+            <div class="form-gorup">
+                <label class="control-label">请求</label>
+                <pre class="form-control-static">
+                </pre>
+            </div>
+            <div class="form-gorup">
+                <label class="control-label">响应</label>
+                <pre class="form-control-static">
+    {
+        "info": {
+            // 同 list 中的条目
+        },
+        // ...
+    }
+                </pre>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend class="dropdown dropdown-toggle">更新 <span class="caret"></span></legend>
+        <div class="dropdown-body">
+            <div class="form-group">
+                <label class="control-label">接口</label>
+                <pre class="form-control-static">
+    PUT|PATCH <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.api?id=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.act?id=ID
+                </pre>
+            </div>
+            <div class="form-gorup">
+                <label class="control-label">请求</label>
+                <pre class="form-control-static">
+                </pre>
+            </div>
+            <div class="form-gorup">
+                <label class="control-label">响应</label>
+                <pre class="form-control-static">
+    {
+        "rows": "更新的条数",
+        // ...
+    }
+                </pre>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend class="dropdown dropdown-toggle">删除 <span class="caret"></span></legend>
+        <div class="dropdown-body">
+            <div class="form-group">
+                <label class="control-label">接口</label>
+                <pre class="form-control-static">
+    DELETE <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.api?id=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.act?id=ID
+                </pre>
+            </div>
+            <div class="form-gorup">
+                <label class="control-label">请求</label>
+                <pre class="form-control-static">
+                </pre>
+            </div>
+            <div class="form-gorup">
+                <label class="control-label">响应</label>
+                <pre class="form-control-static">
+    {
+        "rows": "删除的条数",
+        // ...
+    }
+                </pre>
+            </div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend class="dropdown dropdown-toggle">其他 <span class="caret"></span></legend>
         <div class="dropdown-body">
             <div class="form-gorup">
                 <pre>
@@ -89,7 +189,12 @@
         var context = $("#<%=_pageId%>");
         
         context.find("pre").each(function() {
-            $(this).html($(this).html().replace(/(^[\r\n]+|[\r\n ]+$)/g, ''));
+            var html = $(this).html();
+            // 去除中间空行, 统一换行符号
+            html = html.replace(/(\r\n(\r\n)*|\r\r*|\n\n*)/g, "\r\n");
+            // 去除末尾空行
+            html = html.replace(/[\r\n ]+$/g, "");
+            $(this).html(html);
         });
     })(jQuery);
 </script>

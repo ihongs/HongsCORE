@@ -52,7 +52,7 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public Data(String conf, String form) throws HongsException {
-        this(conf.replaceFirst("^.*?/data/",        "data/"),
+        this(conf.replaceFirst("^.*?/data/", /*pre*/"data/"),
              conf.replaceFirst("^.*?/data/", "gerent/data/"),
              conf, form);
     }

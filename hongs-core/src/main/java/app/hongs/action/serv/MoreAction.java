@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  * .data  提供共同的参数
  * @author Hongs
  */
-@Action("normal/more")
+@Action("common/more")
 public class MoreAction {
 
     @Action("__main__")

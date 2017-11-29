@@ -1,13 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--DOCTYPE db SYSTEM ".db.dtd"-->
+<!--DOCTYPE db SYSTEM ".db.xsd"-->
 <!--
     Document   : default.db.xml
     Created on : March 11, 2010, 10:56 AM
     Author     : Hongs
     Description:
-        附加参数 select,filter,groups,having,orders,
-        用"."表示当前表, 用":"表示上级表,
-        仅当有设置join时可使用":"
 //-->
 
 <db xmlns="http://hongs-core"
@@ -19,6 +16,16 @@ xsi:schemaLocation="http://hongs-core db.xsd">
           autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
       </param>
   </source>
+  <!--
+  <source jdbc="com.mysql.jdbc.Driver"
+          name="jdbc:mysql://localhost:3306/test">
+      <param name="username">test</param>
+      <param name="password">test</param>
+      <param name="connectionProperties">
+          autoReconnect=true;useUnicode=true;characterEncoding=utf8;zeroDateTimeBehavior=convertToNull
+      </param>
+  </source>
+  //-->
   <!--
   <!== 外部数据源==>
   <origin jndi="命名接口"

@@ -115,9 +115,9 @@
         - sqlite        Sqlite本地数据库目录
         - lucene        Lucene本地索引库目录
     - web               前端文件(启动时可指定 --basepath,--basehref)
+        - common        通用配置数据
         - gerent        系统管理区域
         - global        应用处理区域
-        - common        通用配置数据
         - public        公共资源
         - static        静态资源
             - assets    前端常用组件

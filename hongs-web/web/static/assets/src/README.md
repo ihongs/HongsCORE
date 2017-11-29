@@ -36,9 +36,9 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
     <script type="text/javascript" src="static/assets/jquery-ui.min.js"></script>
     <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
     <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-    <script type="text/javascript" src="normal/conf/default.js"></script>
-    <script type="text/javascript" src="normal/lang/default.js"></script>
-    <script type="text/javascript" src="normal/auth/default.js"></script>
+    <script type="text/javascript" src="common/conf/default.js"></script>
+    <script type="text/javascript" src="common/lang/default.js"></script>
+    <script type="text/javascript" src="common/auth/default.js"></script>
 
 注: 将以上代码加入 head 中, 注意 link 的 href 和 script 的 src 路径; 这里用 base 定义了基础路径, 以下的相对路径均基于此.
 
@@ -46,10 +46,10 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
     <div id="member-user-list"
          data-module="hsList"
-         data-load-url="bundle/member/user/list.act?dept_id=${dept_id}"
-         data-send-urls-0="['bundle/member/user/delete.act','.delete','您确定要删除此用户?']"
-         data-open-urls-0="['bundle/member/user/form.html?dept_id=${dept_id}','.create','@']"
-         data-open-urls-1="['bundle/member/user/form.html?id={ID}'           ,'.modify','@']">
+         data-load-url="gerent/member/user/list.act?dept_id=${dept_id}"
+         data-send-urls-0="['gerent/member/user/delete.act','.delete','您确定要删除此用户?']"
+         data-open-urls-0="['gerent/member/user/form.html?dept_id=${dept_id}','.create','@']"
+         data-open-urls-1="['gerent/member/user/form.html?id={ID}'           ,'.modify','@']">
         <div>
             <div class="toolbox col-md-8 btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
@@ -86,11 +86,11 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
     <div id="member-dept-tree"
          data-module="hsTree"
-         data-load-url="bundle/member/dept/list.act"
-         data-send-urls-0="['bundle/member/dept/delete.act','.delete','您确定要删除此部门?']"
-         data-link-urls-0="['bundle/member/user/list.html?dept_id={ID}','.main-context']"
-         data-open-urls-0="['bundle/member/dept/form.html?pid={ID}','.create','@']"
-         data-open-urls-1="['bundle/member/dept/form.html?id={ID}' ,'.modify','@']"
+         data-load-url="gerent/member/dept/list.act"
+         data-send-urls-0="['gerent/member/dept/delete.act','.delete','您确定要删除此部门?']"
+         data-link-urls-0="['gerent/member/user/list.html?dept_id={ID}','.main-context']"
+         data-open-urls-0="['gerent/member/dept/form.html?pid={ID}','.create','@']"
+         data-open-urls-1="['gerent/member/dept/form.html?id={ID}' ,'.modify','@']"
          data-root-name="组织架构">
         <div class="toolbox btn-group">
             <button type="button" class="create btn btn-default">添加</button>
@@ -105,8 +105,8 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
     <h2>{DO}部门</h2>
     <div id="member-dept-form"
          data-module="hsForm"
-         data-load-url="bundle/member/dept/info.act"
-         data-save-url="bundle/member/dept/save.act">
+         data-load-url="gerent/member/dept/info.act"
+         data-save-url="gerent/member/dept/save.act">
         <form action="" method="POST">
             <input type="hidden" name="id"/>
             <input type="hidden" name="pid"/>

@@ -17,20 +17,22 @@ import java.util.Map;
  * 参数 m 是导航配置名
  * 参数 n 是导航路径名
  * m 与 n 相同时省略 n
- * 对应的菜单节点的 href 写作 normal/menu.act?m=XXX&n=XXX
+ * 对应的菜单节点的 href 写作 common/menu.act?m=XXX&n=XXX
  *
  * @author Hong
  */
-@Action("normal/menu")
+@Action("common/menu")
 public class MenuAction {
 
+    private static final String MENU_ACT_URI = "common/menu" + Cnst.ACT_EXT;
+    
     @Action("__main__")
     public void menu(ActionHelper helper)
     throws HongsException {
         String m = helper.getParameter("m"); // 配置名称
         String n = helper.getParameter("n"); // 活动区域
         String x = helper.getParameter("x"); // 附加标识
-        String u = "normal/menu" + Cnst.ACT_EXT;
+        String u = MENU_ACT_URI;
 
         if (m == null || "".equals(m)) {
             m  = "default";
@@ -110,7 +112,7 @@ public class MenuAction {
                 continue;
             }
             if (href.startsWith("#")
-            ||  href.startsWith("normal/menu.act?")) {
+            ||  href.startsWith(MENU_ACT_URI + "?")) {
                 Map item  = et.getValue();
                 Map<String, Map> subs = (Map) item.get("menus");
                 if (subs != null && !subs.isEmpty()) {

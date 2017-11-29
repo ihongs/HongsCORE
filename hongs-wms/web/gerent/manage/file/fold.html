@@ -15,12 +15,12 @@
     <div class="row"></div>
     <div class="row">
         <div class="col-md-3 side-context">
-            <div id="gerent-dirs-tree"
+            <div id="gerent-fold-tree"
                  data-module="hsTree"
                  data-load-url="gerent/file/search.act?type=dir"
                  data-send-urls-0="['gerent/file/delete.act','.delete','您确定要删除此目录?']"
-                 data-open-urls-0="['gerent/manage/file/dirs_create.html?path={ID}','.create','@']"
-                 data-open-urls-1="['gerent/manage/file/dirs_modify.html?path={ID}','.modify','@']"
+                 data-open-urls-0="['gerent/manage/file/fold_create.html?path={ID}','.create','@']"
+                 data-open-urls-1="['gerent/manage/file/fold_modify.html?path={ID}','.modify','@']"
                  data-id-key="path"
                  data-pid-key="path"
                  data-cnum-key="size"
@@ -40,7 +40,7 @@
 <script type="text/javascript" src="static/addons/md5/md5.min.js"></script>
 <script type="text/javascript">
     (function($) {
-        var context = $("#gerent-dirs-tree").removeAttr("id");
+        var context = $("#gerent-fold-tree").removeAttr("id");
         var pathMap = {"6666cd76f96956469e7be39d750cc7d9":"/"};
 
         // path 作为 ID 使用, 进行 md5 编码, 规避 jquery 选择器的语法问题

@@ -1,10 +1,10 @@
-<h2>修改目录</h2>
-<div id="manage-file-dirs-modify"
+<h2>添加目录</h2>
+<div id="manage-file-fold-create"
      data-module="hsForm"
-     data-save-url="gerent/file/update.act">
+     data-save-url="gerent/file/create.act">
     <form action="" method="POST">
         <input type="hidden" name="path"/>
-        <input type="hidden" name="type" value="dir" />
+        <input type="hidden" name="type" value="dir"/>
         <div class="row">
             <div class="col-md-6 center-block">
                 <div class="form-group">
@@ -12,7 +12,7 @@
                     <input type="text" name="name" class="form-control" required="required"/>
                 </div>
                 <div>
-                    <button type="submit" class="ensure btn btn-primary">改名</button>
+                    <button type="submit" class="ensure btn btn-primary">创建</button>
                     <button type="button" class="cancel btn btn-link"   >取消</button>
                 </div>
             </div>
@@ -21,16 +21,13 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#manage-file-dirs-modify").removeAttr("id");
-
-        context.find("[name=name]").val(H$("#path", context).replace(/^.*\//, ''));
+        var context = $("#manage-file-fold-create").removeAttr("id");
 
         context.find("form").on("submit", function(evt) {
             var inst = context.data("HsForm");
             var form = $(this);
             var data = {
-                dist : form.find("[name=path]").val().replace(/[^\/]+$/, '') + form.find("[name=name]").val(),
-                path : form.find("[name=path]").val(),
+                path : form.find("[name=path]").val() + "/" + form.find("[name=name]").val(),
                 type : "dir"
             };
             evt.preventDefault();

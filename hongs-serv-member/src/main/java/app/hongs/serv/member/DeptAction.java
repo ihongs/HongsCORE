@@ -19,7 +19,7 @@ import java.util.Map;
  * 部门动作接口
  * @author Hongs
  */
-@Action("bundle/member/dept")
+@Action("gerent/member/dept")
 public class DeptAction {
 
     private final Dept model;

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <menu text="系统信息" href="gerent/manage/info/">
+        <role text="系统信息" name="gerent/manage/info">
+            <depend>gerent</depend>
+            <action>gerent/info/search.act</action>
+        </role>
+    </menu>
+    <menu text="文件管理" href="gerent/manage/file/">
+        <role text="文件管理" name="gerent/manage/file">
+            <depend>gerent</depend>
+            <action>gerent/file/search.act</action>
+            <action>gerent/file/create.act</action>
+            <action>gerent/file/update.act</action>
+            <action>gerent/file/delete.act</action>
+        </role>
+    </menu>
+</root>

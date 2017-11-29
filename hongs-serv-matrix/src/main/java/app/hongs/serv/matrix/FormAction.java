@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-@Action("bundle/matrix/form")
+@Action("gerent/matrix/form")
 public class FormAction {
 
     protected final Form model;
@@ -128,8 +128,8 @@ public class FormAction {
                 item.put("__text__", pre+form.get("name"));
                 item.put("data-vk", "id");
                 item.put("data-tk", "name");
-                item.put("data-at", "bundle/data/"+form.get("id")+"/search");
-                item.put("data-al", "bundle/data/"+form.get("id")+"/list4fork.html");
+                item.put("data-at", "gerent/data/"+form.get("id")+"/search");
+                item.put("data-al", "gerent/data/"+form.get("id")+"/list4fork.html");
                 list.add( item );
             }
 

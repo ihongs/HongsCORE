@@ -1,7 +1,0 @@
-<root>
-    <menu text="后台" href="normal/menu.act?m=bundle">
-        <role text="登录后台" name="bundle">
-            <action>bundle</action>
-        </role>
-    </menu>
-</root>

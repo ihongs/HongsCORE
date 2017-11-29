@@ -1,0 +1,8 @@
+<root>
+    <rsname>@default</rsname>
+    <menu text="前台" href="!global">
+        <role text="登录前台" name="global">
+            <action>global</action>
+        </role>
+    </menu>
+</root>

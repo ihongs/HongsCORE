@@ -1,0 +1,93 @@
+<h2>{DO}用户</h2>
+<div id="member-user-form"
+     data-module="hsForm"
+     data-load-url="gerent/member/user/info.act?md=0&navi-conf=default"
+     data-save-url="gerent/member/user/save.act"
+     data-init-data="{'depts.0.dept_id':H$('#dept_id',this)}"
+     data-data-0="_fill_head:(hsFormFillView)">
+    <form action="" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id"/>
+        <input type="hidden" name="depts.0.dept_id"/>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label class="control-label">账号</label>
+                    <input type="text" name="username" class="form-control" required="required" data-unique="gerent/member/user/unique.act?id=${id}"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">口令</label>
+                    <input type="password" name="password" class="form-control" required="required" data-relate="passcode"/>
+                </div>
+                <div class="form-group">
+                    <input type="password" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">昵称</label>
+                    <input type="text" name="name" class="form-control" required="required" data-unique="gerent/member/user/unique.act?id=${id}"/>
+                </div>
+                <div class="form-group dont-close">
+                    <label class="control-label">头像</label>
+                    <input type="text" name="head" class="invisible form-ignored"/>
+                    <input type="file" name="head" class="invisible form-ignored" accept="image/*"/>
+                    <ul class="pickbox" data-fn="head" data-size="256*256" data-required="required"></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="hsView">请选择头像</button>
+                    <p class="help-block">缩略图比例 1:1, 推荐分辨率 64*64 到 256*256 (像素)</p>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">备注</label>
+                    <textarea name="note" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <h4>权限设置</h4>
+                <div class="form-group" data-fn="roles..role" data-ft="_checkset" data-vk="name" data-tk="text" data-vl="roles" data-tl="text">
+                </div>
+            </div>
+        </div>
+        <div>
+            <button type="submit" class="ensure btn btn-primary">提交</button>
+            <button type="button" class="cancel btn btn-link"   >取消</button>
+        </div>
+    </form>
+</div>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#member-user-form");
+
+        // 修改时口令变为选填
+        context.on("loadOver", function() {
+            if ($(this).find("[name=id]").val()) {
+                $(this).find(":password").removeAttr("required");
+            }
+        });
+
+        // 选择与之关联的权限
+        context.on("change", "[name='roles..role']", function() {
+            var area = $(this).closest(".form-group");
+            if ($(this).prop("checked")) {
+                var rels = $(this).data("rels");
+                if (rels) {
+                    for(var i = 0 ; i < rels.length ; i ++) {
+                        var r = rels[i];
+                        area.find("[value='"+r+"']:not(:checked)")
+                            .prop("checked", true).change();
+                    }
+                }
+            } else {
+                var r = $(this).val();
+                area.find(":checked:not(.checkall)" ).not(this)
+                    .each(function( ) {
+                    var rels = $(this).data( "rels" );
+                    if (rels && $.inArray( r, rels  ) !== -1  ) {
+                        $(this).prop("checked",false).change( );
+                    }
+                });
+            }
+        });
+    })(jQuery);
+    function hsGetParam (url, name) {
+    var val = hsGetParams(url, name);
+    if (val.length) return val.pop();
+    else            return "";
+}
+</script>

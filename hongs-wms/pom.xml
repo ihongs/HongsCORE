@@ -53,18 +53,11 @@
             <groupId>org.xerial</groupId>
             <version>3.8.11.2</version>
         </dependency>
-        <!--
         <dependency>
             <artifactId>mysql-connector-java</artifactId>
             <groupId>mysql</groupId>
             <version>5.1.39</version>
         </dependency>
-        <dependency>
-            <artifactId>postgresql</artifactId>
-            <groupId>postgresql</groupId>
-            <version>9.1-901-1.jdbc4</version>
-        </dependency>
-        //-->
     </dependencies>
     <build>
         <!--directory>bin</directory-->

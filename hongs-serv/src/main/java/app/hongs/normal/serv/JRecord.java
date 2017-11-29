@@ -43,7 +43,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
         try (
             Loop lp = table.db.query("SELECT `data` FROM `"
                     + table.tableName
-                    + "` WHERE id = ? AND (xtime > ? OR xtime == 0)"
+                    + "` WHERE id = ? AND (xtime > ? OR xtime = 0)"
             , 0,1, key, now);
         ) {
             ResultSet rs = lp.getReusltSet ();

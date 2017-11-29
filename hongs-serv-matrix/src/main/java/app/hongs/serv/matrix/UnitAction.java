@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author Hongs
  */
-@Action("bundle/matrix/unit")
+@Action("gerent/matrix/unit")
 public class UnitAction {
     
     protected final Unit model;

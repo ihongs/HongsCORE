@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <form name="bill">
+        <field name="@" repeated="" required="" rule="" text="餐牌" type="">
+            <param name="listable">?</param>
+            <param name="sortable">?</param>
+            <param name="siftable">?</param>
+            <param name="nameable">?</param>
+        </field>
+        <field name="id" repeated="" required="" rule="" text="ID" type="hidden"/>
+        <field name="name" repeated="" required="" rule="" text="名称" type="string">
+            <param name="editable">true</param>
+            <param name="listable">true</param>
+        </field>
+        <field name="find" repeated="" required="" rule="" text="搜索" type="search">
+            <param name="editable">false</param>
+            <param name="listable">false</param>
+            <param name="unstored">true</param>
+        </field>
+        <field name="total" repeated="" required="" rule="" text="实售价" type="number">
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+        </field>
+        <field name="stat" repeated="" required="true" rule="" text="订单状态" type="select">
+            <param name="conf">gerent/data/dining/bill</param>
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+            <param name="statable">true</param>
+            <param name="selected">["准备"]</param>
+        </field>
+        <field name="mode" repeated="" required="true" rule="" text="配送方式" type="select">
+            <param name="conf">gerent/data/dining/bill</param>
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+            <param name="statable">true</param>
+            <param name="selected">["堂食"]</param>
+        </field>
+        <field name="cost" repeated="" required="true" rule="" text="支付方式" type="select">
+            <param name="conf">gerent/data/dining/bill</param>
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+            <param name="statable">true</param>
+            <param name="selected">["现金"]</param>
+        </field>
+        <field name="note" repeated="" required="" rule="" text="特别要求" type="textarea"/>
+        <field name="memo" repeated="" required="" rule="" text="后台备注" type="textarea"/>
+        <field name="ctime" repeated="" required="" rule="" text="创建时间" type="datetime">
+            <param name="type">timestamp</param>
+            <param name="default">=%now</param>
+            <param name="default-create">true</param>
+            <param name="default-always">true</param>
+            <param name="editable">false</param>
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+        </field>
+        <field name="cuid" repeated="" required="" rule="" text="创建用户" type="fork">
+            <param name="default">=$uid</param>
+            <param name="default-create">true</param>
+            <param name="default-always">true</param>
+            <param name="editable">false</param>
+            <param name="listable">true</param>
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+            <param name="data-ak">user</param>
+            <param name="data-at">gerent/member/user/list</param>
+        </field>
+        <field name="J78N0MZL000NIYHT0" repeated="" required="" rule="" text="配送信息" type="line">
+            <param name="listable">no</param>
+        </field>
+        <field name="title" repeated="" required="" rule="" text="称谓" type="text">
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+        </field>
+        <field name="phone" repeated="" required="" rule="" text="电话" type="tel">
+            <param name="listable">true</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+        </field>
+        <field name="addr" repeated="" required="" rule="" text="地址" type="text">
+            <param name="listable">false</param>
+            <param name="sortable">true</param>
+            <param name="findable">true</param>
+            <param name="siftable">true</param>
+            <param name="lucene-type">search</param>
+        </field>
+        <field name="prov" repeated="" required="" rule="" text="省份" type="text">
+            <param name="listable">false</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+            <param name="statable">true</param>
+        </field>
+        <field name="city" repeated="" required="" rule="" text="城市" type="text">
+            <param name="listable">false</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+            <param name="statable">true</param>
+        </field>
+        <field name="dist" repeated="" required="" rule="" text="区县" type="text">
+            <param name="listable">false</param>
+            <param name="sortable">true</param>
+            <param name="siftable">true</param>
+            <param name="statable">true</param>
+        </field>
+        <field name="lat_lng" repeated="" required="" rule="" text="坐标" type="hidden">
+        </field>
+        <field name="J78TYMUU00E4LG5U0" repeated="" required="" rule="" text="发票信息" type="line">
+            <param name="listable">no</param>
+        </field>
+        <field name="company_name" repeated="" required="" rule="" text="抬头" type="text"/>
+        <field name="company_code" repeated="" required="" rule="" text="税号" type="text"/>
+        <field name="muid" repeated="" required="" rule="" text="" type="hidden">
+            <param name="default">=$uid</param>
+            <param name="default-always">true</param>
+            <param name="default-create">false</param>
+            <param name="editable">false</param>
+        </field>
+        <field name="mtime" repeated="" required="" rule="" text="" type="number">
+            <param name="type">long</param>
+            <param name="default">=%now</param>
+            <param name="default-always">true</param>
+            <param name="default-create">false</param>
+            <param name="editable">false</param>
+        </field>
+        <field name="J78TYMUU00E4LG5U1" repeated="" required="" rule="" text=" " type="line">
+            <param name="listable">no</param>
+        </field>
+    </form>
+    <enum name="stat">
+        <value code="待付">待支付</value>
+        <value code="已付">已支付</value>
+        <value code="准备">准备</value>
+        <value code="制作">制作中</value>
+        <value code="配送">配送中</value>
+        <value code="完成">完成</value>
+    </enum>
+    <enum name="mode">
+        <value code="堂食">堂食</value>
+        <value code="打包">打包</value>
+        <value code="外卖">外卖</value>
+    </enum>
+    <enum name="cost">
+        <value code="现金">现金</value>
+        <value code="信用卡">信用卡</value>
+        <value code="微信">微信</value>
+        <value code="支付宝">支付宝</value>
+    </enum>
+</root>

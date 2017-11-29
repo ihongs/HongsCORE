@@ -11,9 +11,9 @@ CREATE TABLE `a_matrix_unit` (
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `ctime` UNSIGNED INT(10) DEFAULT NULL,
-  `mtime` UNSIGNED INT(10) DEFAULT NULL,
-  `boost` UNSIGNED INT(10) DEFAULT '0',
+  `ctime` INTEGER(11) DEFAULT NULL,
+  `mtime` INTEGER(11) DEFAULT NULL,
+  `boost` INTEGER(11) DEFAULT '0',
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`pid`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE
@@ -36,9 +36,9 @@ CREATE TABLE `a_matrix_form` (
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
   `conf` TEXT NOT NULL,
-  `ctime` UNSIGNED INT(10) DEFAULT NULL,
-  `mtime` UNSIGNED INT(10) DEFAULT NULL,
-  `boost` UNSIGNED INT(10) DEFAULT '0',
+  `ctime` INTEGER(11) DEFAULT NULL,
+  `mtime` INTEGER(11) DEFAULT NULL,
+  `boost` INTEGER(11) DEFAULT '0',
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`unit_id`) REFERENCES `a_matrix_unit` (`id`) ON DELETE CASCADE
@@ -62,9 +62,9 @@ CREATE TABLE `a_matrix_data` (
   `name` VARCHAR(255) DEFAULT NULL,
   `note` VARCHAR(255) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,
-  `ctime` UNSIGNED INT(10) DEFAULT NULL,
-  `etime` UNSIGNED INT(10) DEFAULT NULL,
-  `rtime` UNSIGNED INT(10) DEFAULT NULL, /* 从哪个时间点恢复 */
+  `ctime` INTEGER(11) DEFAULT NULL,
+  `etime` INTEGER(11) DEFAULT NULL,
+  `rtime` INTEGER(11) DEFAULT NULL, /* 从哪个时间点恢复 */
   `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`,`form_id`,`etime`)
 );

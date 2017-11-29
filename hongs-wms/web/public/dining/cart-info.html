@@ -5,7 +5,7 @@
 <div class="panes">
 <div id="dining-cart-info" class="dining-list dining-cart container"
      data-module="hsList"
-     data-load-url="handle/data/dining/food/search.act?rn=0"
+     data-load-url="global/data/dining/food/search.act?rn=0"
      data-fill-list="(hsListFillItem)"
      data-data-0="_fill_link:(hsDiningListFillLink)"
      data-data-1="_fill_logo:(hsDiningListFillLogo)"
@@ -45,7 +45,7 @@
 </div>
 <div id="dining-cart-form" class="container"
      data-module="hsForm"
-     data-save-url="handle/data/dining/bill/create.act">
+     data-save-url="global/data/dining/bill/create.act">
     <form>
         <div class="form-group">
             <label>支付方式</label>
@@ -164,10 +164,10 @@
         formbox.on("saveBack", function(evt, rst) {
             H$("$dining.cart", null);
             if (rst.info.cost = "微信"  ) {
-                pay("handle/data/dining/pay/weixin/create.act?bill_id=", rst.info.id);
+                pay("global/data/dining/pay/weixin/create.act?bill_id=", rst.info.id);
             } else
             if (rst.info.cost = "支付宝") {
-                pay("handle/data/dining/pay/alipay/create.act?bill_id=", rst.info.id);
+                pay("global/data/dining/pay/alipay/create.act?bill_id=", rst.info.id);
             } else
             {
                 location.href = hsFixUri( "public/dining/bill/" + rst.info.id);

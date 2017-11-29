@@ -77,7 +77,7 @@
 6. 刷新页面，右上菜单就能看到刚添加的单元
 7. 点击单元，顶部菜单有表单项，尝试操作吧
 
-现在，你可以在 bundle/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
+现在，你可以在 gerent/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
     form.html        创建表单
@@ -115,9 +115,9 @@
         - sqlite        Sqlite本地数据库目录
         - lucene        Lucene本地索引库目录
     - web               前端文件(启动时可指定 --basepath,--basehref)
-        - bundle        系统管理区域
-        - handle        公共处理区域
-        - normal        标准配置数据
+        - gerent        系统管理区域
+        - global        应用处理区域
+        - common        通用配置数据
         - public        公共资源
         - static        静态资源
             - assets    前端常用组件
@@ -146,9 +146,9 @@
     xxx/foo.act         对应标记 @Action("xxx/foo") 的类下 @Action("__main__") 的方法
     xxx/foo.api         对应标记 @Action("xxx/foo") 的类下 @Action("search,create,update,delete") 的方法
                         这四种动作分别对应 HTTP METHOD: GET,POST,PUT,DELETE
-    normal/auth/name.js 读取 WBE-INF/conf/name.menu.xml 中 actions+session 的组合
-    normal/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置
-    normal/lang/name.js 读取 WEB-INF/conf/name_xx_XX.properties 中 fore.xxxx. 开头的配置
+    common/auth/name.js 读取 WBE-INF/conf/name.menu.xml 中 actions+session 的组合
+    common/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置
+    common/lang/name.js 读取 WEB-INF/conf/name_xx_XX.properties 中 fore.xxxx. 开头的配置
 
 action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果不指定则用类,方法名作为路径; 请在 etc/\_begin\_.properties 中设置 mount.serv 为 Action,Cmdlet 类, 或 xxx.foo.* 告知该包下存在 Action,Cmdlet 类, 多个类/包用";"分隔.
 最后3个路径, 将扩展名 .js 换成 .json 即可得到 JSON 格式的数据; 语言配置可在 name 后加语言区域标识, 如 example_zh_CN.js 为获取 example 的中文大陆简体的 js 格式的语言配置.

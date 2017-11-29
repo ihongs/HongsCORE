@@ -3,7 +3,7 @@
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://hongs-core db.xsd">
-    <config link="bundle"/>
+    <config link="gerent"/>
     <tables>
         <table name="user"
                tableName="a_member_user"

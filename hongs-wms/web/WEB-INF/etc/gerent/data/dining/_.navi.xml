@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<root>
-    <menu href="common/menu.act?m=gerent&amp;x=dining" text="餐饮">
-        <import>gerent/data/dining/food</import>
-        <import>gerent/data/dining/bill</import>
-    </menu>
-    <rsname>@gerent</rsname>
-</root>

@@ -1,0 +1,16 @@
+<root>
+    <rsname>@default</rsname>
+    <menu text="后台" href="common/menu.act?m=centra">
+        <role text="登录后台" name="centra">
+            <action>centra</action>
+        </role>
+        <menu text="通用" href="common/menu.act?m=centra&amp;x=base">
+            <menu text="首页" href="centra/#manage" hrel="centra/manage/main.html"></menu>
+            <import>manage</import>
+            <import>member</import>
+            <import>matrix</import>
+        </menu>
+        <import>centra/data/dining/_</import>
+        <import>centra/data</import>
+    </menu>
+</root>

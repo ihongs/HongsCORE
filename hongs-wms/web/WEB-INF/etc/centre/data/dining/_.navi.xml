@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<root>
+    <role name="centre">
+        <action>centre/data/dining/pay/weixin.act</action>
+        <action>centre/data/dining/pay/weixin_notify.act</action>
+    </role>
+</root>

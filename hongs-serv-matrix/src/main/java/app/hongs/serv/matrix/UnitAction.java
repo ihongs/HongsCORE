@@ -14,7 +14,7 @@ import java.util.Map;
  *
  * @author Hongs
  */
-@Action("gerent/matrix/unit")
+@Action("centra/matrix/unit")
 public class UnitAction {
     
     protected final Unit model;

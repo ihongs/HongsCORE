@@ -20,6 +20,8 @@
         data-ft     Field type
         data-fl     Fill lambda // 填充取值
         data-dl     Data lambda // 填充选项
+        data-vl     Value list  // checkset
+        data-tl     Title line  // checkset
     Fork:
         data-ak     Assoc key
         data-vk     Value key
@@ -46,10 +48,10 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
     <div id="member-user-list"
          data-module="hsList"
-         data-load-url="gerent/member/user/list.act?dept_id=${dept_id}"
-         data-send-urls-0="['gerent/member/user/delete.act','.delete','您确定要删除此用户?']"
-         data-open-urls-0="['gerent/member/user/form.html?dept_id=${dept_id}','.create','@']"
-         data-open-urls-1="['gerent/member/user/form.html?id={ID}'           ,'.modify','@']">
+         data-load-url="centra/member/user/list.act?dept_id=${dept_id}"
+         data-send-urls-0="['centra/member/user/delete.act','.delete','您确定要删除此用户?']"
+         data-open-urls-0="['centra/member/user/form.html?dept_id=${dept_id}','.create','@']"
+         data-open-urls-1="['centra/member/user/form.html?id={ID}'           ,'.modify','@']">
         <div>
             <div class="toolbox col-md-8 btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
@@ -86,11 +88,11 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
     <div id="member-dept-tree"
          data-module="hsTree"
-         data-load-url="gerent/member/dept/list.act"
-         data-send-urls-0="['gerent/member/dept/delete.act','.delete','您确定要删除此部门?']"
-         data-link-urls-0="['gerent/member/user/list.html?dept_id={ID}','.main-context']"
-         data-open-urls-0="['gerent/member/dept/form.html?pid={ID}','.create','@']"
-         data-open-urls-1="['gerent/member/dept/form.html?id={ID}' ,'.modify','@']"
+         data-load-url="centra/member/dept/list.act"
+         data-send-urls-0="['centra/member/dept/delete.act','.delete','您确定要删除此部门?']"
+         data-link-urls-0="['centra/member/user/list.html?dept_id={ID}','.main-context']"
+         data-open-urls-0="['centra/member/dept/form.html?pid={ID}','.create','@']"
+         data-open-urls-1="['centra/member/dept/form.html?id={ID}' ,'.modify','@']"
          data-root-name="组织架构">
         <div class="toolbox btn-group">
             <button type="button" class="create btn btn-default">添加</button>
@@ -105,8 +107,8 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
     <h2>{DO}部门</h2>
     <div id="member-dept-form"
          data-module="hsForm"
-         data-load-url="gerent/member/dept/info.act"
-         data-save-url="gerent/member/dept/save.act">
+         data-load-url="centra/member/dept/info.act"
+         data-save-url="centra/member/dept/save.act">
         <form action="" method="POST">
             <input type="hidden" name="id"/>
             <input type="hidden" name="pid"/>

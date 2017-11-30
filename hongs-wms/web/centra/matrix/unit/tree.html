@@ -1,0 +1,53 @@
+<ol class="backable breadcrumb row hide" data-toggle="hsTabs">
+    <li class="back-crumb dont-close pull-right">
+        <a href="javascript:;">
+            <i class="glyphicon glyphicon-remove-sign"></i>
+        </a>
+    </li>
+    <li class="home-crumb active">
+        <a href="javascript:;">
+            <i class="glyphicon glyphicon-folder-open"></i>
+            <b>单元和模块</b>
+        </a>
+    </li>
+</ol>
+<div class="backable panes">
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-3 side-context">
+            <div id="hongs-module-tree"
+                 data-module="hsTree"
+                 data-load-url="centra/matrix/unit/list.act?ob=-boost"
+                 data-send-urls-0="['centra/matrix/unit/delete.act','.delete','您确定要删除此单元?']"
+                 data-open-urls-0="['centra/matrix/unit/form.html?pid={ID}','.create','@']"
+                 data-open-urls-1="['centra/matrix/unit/form.html?id={ID}' ,'.modify','@']"
+                 data-link-urls-0="['centra/matrix/form/list.html?unit_id={ID}','*.main-context']"
+                 data-root-name="单元组成">
+                <div class="toolbox btn-group">
+                    <button type="button" class="create btn btn-default">添加</button>
+                    <button type="button" class="modify for-select btn btn-default">修改</button>
+                    <button type="button" class="delete for-select btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+                <div class="treebox"></div>
+            </div>
+        </div>
+        <div class="col-md-9 main-context"></div>
+    </div>
+</div>
+<script type="text/javascript">
+    (function($) {
+        var context = $('#hongs-module-tree');
+        
+        // 更新后重载菜单栏
+        context.on("saveBack sendBack", function(evt, rst, dat) {
+            var hst  = context.data("HsTree");
+            var pid  = hst.getPid  ( dat.id );
+            if (pid != "0") {
+                return;
+            }
+            $("#headbox [data-load] ").each( function( ) {
+                $(this).hsLoad($(this).attr("data-load"));
+            });
+        });
+    })(jQuery);
+</script>

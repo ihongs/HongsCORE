@@ -130,26 +130,26 @@ CREATE TABLE `a_member_user_role` (
 CREATE INDEX `IK_a_member_user_role_user` ON `a_member_user_role` (`user_id`);
 CREATE INDEX `IK_a_member_user_role_role` ON `a_member_user_role` (`role`);
 
-INSERT INTO `a_member_user_role` VALUES ('1','gerent');
-INSERT INTO `a_member_user_role` VALUES ('1','global');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/manage/info');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/manage/file');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/user/search');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/user/create');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/user/update');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/user/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/dept/search');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/dept/create');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/dept/update');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/member/dept/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/form/search');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/form/create');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/form/update');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/form/delete');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/unit/search');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/unit/create');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/unit/update');
-INSERT INTO `a_member_user_role` VALUES ('1','gerent/matrix/unit/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','centra');
+INSERT INTO `a_member_user_role` VALUES ('1','centre');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/manage/info');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/manage/file');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/user/search');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/user/create');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/user/update');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/user/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/dept/search');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/dept/create');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/dept/update');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/member/dept/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/form/search');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/form/create');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/form/update');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/form/delete');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/unit/search');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/unit/create');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/unit/update');
+INSERT INTO `a_member_user_role` VALUES ('1','centra/matrix/unit/delete');
 
 --
 -- 用户关联账户

@@ -15,8 +15,8 @@
         <field name="user" text="用户">
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
-            <param name="data-at">gerent/member/user/list</param>
-            <param name="data-al">gerent/member/user/pick.html</param>
+            <param name="data-at">centra/member/user/list</param>
+            <param name="data-al">centra/member/user/pick.html</param>
         </field>
     </form>
     <enum name="form_state">

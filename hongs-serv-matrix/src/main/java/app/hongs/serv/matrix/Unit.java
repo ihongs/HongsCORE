@@ -33,7 +33,7 @@ import org.w3c.dom.Element;
  */
 public class Unit extends Mtree {
 
-    protected String prefix = "gerent/data";
+    protected String prefix = "centra/data";
 
     public Unit() throws HongsException {
         this(DB.getInstance("matrix").getTable("unit"));
@@ -81,14 +81,14 @@ public class Unit extends Mtree {
         Element  menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("text", name);
-        menu.setAttribute("href", "common/menu.act?m=gerent&x="+id);
+        menu.setAttribute("href", "common/menu.act?m=centra&x="+id);
 
         Element  incl;
 
         // 会话
         incl = docm.createElement("rsname");
         root.appendChild ( incl );
-        incl.appendChild ( docm.createTextNode("@gerent") );
+        incl.appendChild ( docm.createTextNode("@centra") );
 
         List<Map> rows;
 
@@ -124,7 +124,7 @@ public class Unit extends Mtree {
         // 会话
         incl = docm.createElement("rsname");
         root.appendChild ( incl );
-        incl.appendChild ( docm.createTextNode("@gerent") );
+        incl.appendChild ( docm.createTextNode("@centra") );
 
         List<Map> rows;
 

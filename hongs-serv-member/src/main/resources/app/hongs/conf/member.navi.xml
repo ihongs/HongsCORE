@@ -1,38 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <menu text="用户管理" href="gerent/member/">
-        <role text="查看用户" name="gerent/member/user/search">
-            <depend>gerent</depend>
-            <depend>gerent/member/dept/search</depend>
-            <action>gerent/member/user/search.act</action>
+    <menu text="用户管理" href="centra/member/">
+        <role text="查看用户" name="centra/member/user/search">
+            <depend>centra</depend>
+            <depend>centra/member/dept/search</depend>
+            <action>centra/member/user/search.act</action>
         </role>
-        <role text="添加用户" name="gerent/member/user/create">
-            <depend>gerent/member/user/search</depend>
-            <action>gerent/member/user/create.act</action>
+        <role text="添加用户" name="centra/member/user/create">
+            <depend>centra/member/user/search</depend>
+            <action>centra/member/user/create.act</action>
         </role>
-        <role text="修改用户" name="gerent/member/user/update">
-            <depend>gerent/member/user/search</depend>
-            <action>gerent/member/user/update.act</action>
+        <role text="修改用户" name="centra/member/user/update">
+            <depend>centra/member/user/search</depend>
+            <action>centra/member/user/update.act</action>
         </role>
-        <role text="删除用户" name="gerent/member/user/delete">
-            <depend>gerent/member/user/search</depend>
-            <action>gerent/member/user/delete.act</action>
+        <role text="删除用户" name="centra/member/user/delete">
+            <depend>centra/member/user/search</depend>
+            <action>centra/member/user/delete.act</action>
         </role>
-        <role text="查看部门" name="gerent/member/dept/search">
-            <depend>gerent/member/user/search</depend>
-            <action>gerent/member/dept/search.act</action>
+        <role text="查看部门" name="centra/member/dept/search">
+            <depend>centra/member/user/search</depend>
+            <action>centra/member/dept/search.act</action>
         </role>
-        <role text="添加部门" name="gerent/member/dept/create">
-            <depend>gerent/member/dept/search</depend>
-            <action>gerent/member/dept/create.act</action>
+        <role text="添加部门" name="centra/member/dept/create">
+            <depend>centra/member/dept/search</depend>
+            <action>centra/member/dept/create.act</action>
         </role>
-        <role text="修改部门" name="gerent/member/dept/update">
-            <depend>gerent/member/dept/search</depend>
-            <action>gerent/member/dept/update.act</action>
+        <role text="修改部门" name="centra/member/dept/update">
+            <depend>centra/member/dept/search</depend>
+            <action>centra/member/dept/update.act</action>
         </role>
-        <role text="删除部门" name="gerent/member/dept/delete">
-            <depend>gerent/member/dept/search</depend>
-            <action>gerent/member/dept/delete.act</action>
+        <role text="删除部门" name="centra/member/dept/delete">
+            <depend>centra/member/dept/search</depend>
+            <action>centra/member/dept/delete.act</action>
         </role>
     </menu>
 </root>

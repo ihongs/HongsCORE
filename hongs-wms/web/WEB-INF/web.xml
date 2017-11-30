@@ -98,103 +98,103 @@
     </filter>
     <filter-mapping>
         <filter-name>SessFilter</filter-name>
+        <url-pattern>/centra/*</url-pattern>
+        <url-pattern>/centre/*</url-pattern>
         <url-pattern>/common/*</url-pattern>
-        <url-pattern>/gerent/*</url-pattern>
-        <url-pattern>/global/*</url-pattern>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
     <!-- Auth Filter -->
     <filter>
-        <filter-name>AuthFilter_Gerent</filter-name>
+        <filter-name>AuthFilter_Centra</filter-name>
         <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
-            <param-value>gerent</param-value>
+            <param-value>centra</param-value>
         </init-param>
         <init-param>
             <param-name>index-page</param-name>
-            <param-value>/gerent/index.html</param-value>
+            <param-value>/centra/index.html</param-value>
         </init-param>
         <init-param>
             <param-name>login-page</param-name>
-            <param-value>/gerent/login.html</param-value>
+            <param-value>/centra/login.html</param-value>
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
-                /gerent/sign/create.act;
-                /gerent/sign/delete.act;
-                /gerent/login.html;
+                /centra/sign/create.act;
+                /centra/sign/delete.act;
+                /centra/login.html;
             </param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter_Gerent</filter-name>
-        <url-pattern>/gerent/*</url-pattern>
+        <filter-name>AuthFilter_Centra</filter-name>
+        <url-pattern>/centra/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
     <filter>
-        <filter-name>AuthFilter_Global</filter-name>
+        <filter-name>AuthFilter_Centre</filter-name>
         <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
-            <param-value>global</param-value>
+            <param-value>centre</param-value>
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
-                /global/capt/create.act;
-                /global/sign/create.act;
-                /global/sign/delete.act;
+                /centre/capt/create.act;
+                /centre/sign/create.act;
+                /centre/sign/delete.act;
             </param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AuthFilter_Global</filter-name>
-        <url-pattern>/global/*</url-pattern>
+        <filter-name>AuthFilter_Centre</filter-name>
+        <url-pattern>/centre/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
     <!-- Auto Filter -->
     <filter>
-        <filter-name>AutoFilter_Gerent</filter-name>
+        <filter-name>AutoFilter_Centra</filter-name>
         <filter-class>app.hongs.action.serv.AutoFilter</filter-class>
         <init-param>
             <param-name>action-path</param-name>
-            <param-value>/gerent/auto</param-value>
+            <param-value>/centra/auto</param-value>
         </init-param>
         <init-param>
             <param-name>layout-path</param-name>
-            <param-value>/gerent/auto</param-value>
+            <param-value>/centra/auto</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AutoFilter_Gerent</filter-name>
-        <url-pattern>/gerent/data/*</url-pattern>
+        <filter-name>AutoFilter_Centra</filter-name>
+        <url-pattern>/centra/data/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>
     </filter-mapping>
     <filter>
-        <filter-name>AutoFilter_Global</filter-name>
+        <filter-name>AutoFilter_Centre</filter-name>
         <filter-class>app.hongs.action.serv.AutoFilter</filter-class>
         <init-param>
             <param-name>action-path</param-name>
-            <param-value>/global/auto</param-value>
+            <param-value>/centre/auto</param-value>
         </init-param>
         <init-param>
             <param-name>layout-path</param-name>
-            <param-value>/global/auto</param-value>
+            <param-value>/centre/auto</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-        <filter-name>AutoFilter_Global</filter-name>
-        <url-pattern>/global/data/*</url-pattern>
+        <filter-name>AutoFilter_Centre</filter-name>
+        <url-pattern>/centre/data/*</url-pattern>
         <dispatcher>REQUEST</dispatcher>
         <dispatcher>FORWARD</dispatcher>
         <dispatcher>INCLUDE</dispatcher>

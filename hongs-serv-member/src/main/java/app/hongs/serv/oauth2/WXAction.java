@@ -15,7 +15,7 @@ import java.util.Map;
  * 微信关联登录
  * @author Hongs
  */
-@Action("global/oauth2/wx")
+@Action("centre/oauth2/wx")
 public class WXAction {
 
     /**

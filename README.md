@@ -201,11 +201,12 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 有一些参数名具有特定意义, 如:
 
      pn     当前页码(page num)
+     gn     分组数量(pags num)
      rn     额定行数(rows num)
-     md     查询模式(mode)
      wd     搜索字词(word)
      ob     排序字段(order by)
-     rb     需求字段(reply by)
+     rb     响应字段(reply by)
+     ab     应用处理(apply by)
      or     或查询(or)
      ar     多组或(and or)
 
@@ -336,7 +337,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     etime   截止时间, DATETIME,TIMESTAMP,BIGINT,INTEGER, 用于仓库层记录数据的失效时间, 避免用作应用层的业务到期时间
     state   状态标识, TINYINT, 1正常, 0删除, 可增设其他状态值; 如果删除后需要恢复之前的状态, 请新增其他状态字段, 或使用负值标识删除.
 
-因字段名可用于 URL 中作为过滤参数, 而部分参数已有特殊含义, 字段取名时请尽量避开这些名称: pn,gn,rn,wd,md,ob,rb,or,ar, 比较简单的办法是避免取 2 个字母的字段名. 另, 在 Cnst 类和配置文件中可以重新定义这些名称, 但并不建议修改(我信奉少量的约定胜于过多的配置).
+因字段名可用于 URL 中作为过滤参数, 而部分参数已有特殊含义, 字段取名时请尽量避开这些名称: pn,gn,rn,wd,ob,rb,ab,or,ar, 比较简单的办法是避免取 2 个字母的字段名. 另, 在 Cnst 类和配置文件中可以重新定义这些名称, 但并不建议修改(我信奉少量的约定胜于过多的配置).
 
 # KEEP IT SIMPLE, STUPID!
 

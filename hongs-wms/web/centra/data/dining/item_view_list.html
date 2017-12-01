@@ -27,7 +27,7 @@
         var unitId  = H$(  "#" + unitFn , context  );
         
         var listobj = context.hsList({
-            _url: "centra/data/dining/"+unitTn+"/item/search.act?md=6&rn=0&"+unitFn+"="+unitId
+            _url: "centra/data/dining/"+unitTn+"/item/search.act?ab=_enum,_fork&rn=0&"+unitFn+"="+unitId
         });
         listobj.fillPage = function() {};
         listobj.fillList = function(lst) {

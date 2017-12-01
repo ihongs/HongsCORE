@@ -9,12 +9,13 @@ import app.hongs.action.SpreadHelper;
 import app.hongs.util.Synt;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 关联扩展处理器
  * <pre>
- * 参数含义:
- * md=4  表示要关联数据
+ * ab 参数含义:
+ * _fork 表示要关联数据
  * </pre>
  * @author Hongs
  */
@@ -29,14 +30,22 @@ public class SpreadInvoker implements FilterInvoker {
         byte     mode = ann.mode();
 
         if (mode == -1) {
-            mode = Synt.declare(helper.getParameter(Cnst.MD_KEY), (byte) -1);
+            Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
+            if (ab != null) {
+                if (ab.contains("_fork")) {
+                    mode += 1;
+                }
+                if (mode  > 0) {
+                    mode += 1;
+                }
+            }
         }
 
         // 执行动作
         chains.doAction();
         Map rsp = helper.getResponseData();
 
-        if (mode != -1 && 4 != (4 & mode)) {
+        if (-1 == mode || 1 != (1 & mode)) {
             return;
         }
 

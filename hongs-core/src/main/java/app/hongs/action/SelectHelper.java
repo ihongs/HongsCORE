@@ -3,10 +3,11 @@ package app.hongs.action;
 import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.util.Dict;
-import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -25,6 +26,7 @@ public class SelectHelper {
     private final static  Pattern  HREFP = Pattern.compile("^(\\w+:)?//");
 
     private final Map<String, Map> enums;
+    private final Set<String>      times;
     private final Set<String>      files;
 
     private String _host = null;
@@ -32,6 +34,7 @@ public class SelectHelper {
 
     public SelectHelper() {
         enums = new LinkedHashMap();
+        times = new LinkedHashSet();
         files = new LinkedHashSet();
     }
 
@@ -70,12 +73,22 @@ public class SelectHelper {
     }
 
     /**
+     * 添加日期时间字段, 会将值转换为标准时间戳
+     * @param code
+     * @return
+     */
+    public SelectHelper addTime(String... code) {
+        times.addAll(Arrays.asList(code));
+        return  this;
+    }
+
+    /**
      * 添加文件路径字段, 会将对值补全为绝对链接
      * @param code
      * @return
      */
     public SelectHelper addFile(String... code) {
-        files.addAll(Arrays.asList(code) );
+        files.addAll(Arrays.asList(code));
         return  this;
     }
 
@@ -99,13 +112,13 @@ public class SelectHelper {
         return  this;
     }
 
-    public SelectHelper addEnumsByForm(String conf, String form) throws HongsException {
+    public SelectHelper addItemsByForm(String conf, String form) throws HongsException {
         FormSet cnf = FormSet.getInstance(conf);
         Map map = cnf.getForm(form);
-        return addEnumsByForm(conf , map );
+        return addItemsByForm(conf , map );
     }
 
-    public SelectHelper addEnumsByForm(String conf, Map map) throws HongsException {
+    public SelectHelper addItemsByForm(String conf, Map map) throws HongsException {
         FormSet dfs = FormSet.getInstance("default");
         Map tps = dfs.getEnum("__types__");
 
@@ -125,11 +138,18 @@ public class SelectHelper {
                 Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
                 enums.put(name , xnum);
             } else
+            if ("date".equals(type)) {
+                String typa = (String) mt.get("type");
+                if (! "time"     .equals(typa )
+                &&  ! "timestamp".equals(typa)) {
+                    times.add(name);
+                }
+            } else
             if ("file".equals(type)) {
                 String href = (String) mt.get("href");
                 if (href != null
-                && !HREFP.matcher (href).find( )
-                && !LINKP.matcher (href).find()) {
+                && !HREFP.matcher(href).find( )
+                && !LINKP.matcher(href).find()) {
                     files.add(name);
                 }
             }
@@ -141,34 +161,43 @@ public class SelectHelper {
     /**
      * 填充
      * @param values 返回数据
-     * @param action 1 注入data, 2 添加text
+     * @param action 1 注入data, 2 添加text, 4 添加time, 8 添加link
      * @throws HongsException
      */
     public void select(Map values, short action) throws HongsException {
-        if (1 == (1 & action)) {
+        boolean withEnum = 1 == (1 & action);
+        boolean withText = 2 == (2 & action);
+        boolean withTime = 4 == (4 & action);
+        boolean withLink = 8 == (8 & action);
+
+        if (withEnum) {
             Map data = (Map ) values.get("enum");
             if (data == null) {
                 data =  new LinkedHashMap();
-                values.put("enum", data);
+                values.put("enum", data );
             }
-                injectData(data , enums);
+                injectData( data , enums);
         }
 
-        if (2 == (2 & action)) {
-            if (_host == null) _host = getHost();
-            if (_path == null) _path = getPath();
+        if (withText || withTime || withLink) {
+            if (withLink) {
+                if (_host == null) _host = getHost( );
+                if (_path == null) _path = getPath( );
+            }
 
             if (values.containsKey("info")) {
-                Map        info = (Map ) values.get("info");
-                injectText(info , enums);
-                injectLink(info , files, _host, _path);
+                     Map  info = (Map ) values.get("info");
+                if (withText) injectText(info, enums);
+                if (withTime) injectTime(info, times);
+                if (withLink) injectLink(info, files, _host, _path);
             }
 
             if (values.containsKey("list")) {
-                List<Map>  list = (List) values.get("list");
-                for (Map   info :  list) {
-                injectText(info , enums);
-                injectLink(info , files, _host, _path);
+                List<Map> list = (List) values.get("list");
+                for (Map  info :  list) {
+                if (withText) injectText(info, enums);
+                if (withTime) injectTime(info, times);
+                if (withLink) injectLink(info, files, _host, _path);
                 }
             }
         }
@@ -211,7 +240,7 @@ public class SelectHelper {
         }
     }
 
-    private void injectText(Map info, Map maps) throws HongsException {
+    private void injectText(Map info, Map maps) {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
@@ -223,12 +252,32 @@ public class SelectHelper {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
                 Dict.setParam(info, new ArrayList(), key + "_text");
                 for (Object vxl : (Collection) val) {
-                    vxl = codeToText(map, vxl);
+                    vxl = codeToText(vxl, map);
                     Dict.setParam(info, vxl, key + "_text.");
                 }
             } else {
-                    val = codeToText(map, val);
+                    val = codeToText(val, map);
                     Dict.setParam(info, val, key + "_text" );
+            }
+        }
+    }
+
+    private void injectTime(Map info, Set keys) {
+        Iterator it = keys.iterator();
+        while (it.hasNext()) {
+            String  key = (String) it.next();
+            Object  val = Dict.getParam(info, key);
+
+            if (val instanceof Collection) {
+                // 预置一个空列表, 规避无值导致客户端取文本节点出错
+                Dict.setParam(info, new ArrayList(), key + "_time");
+                for (Object vxl : (Collection) val) {
+                    vxl = dataToTime(vxl);
+                    Dict.setParam(info, vxl, key + "_time.");
+                }
+            } else {
+                    val = dataToTime(val);
+                    Dict.setParam(info, val, key + "_time" );
             }
         }
     }
@@ -236,8 +285,8 @@ public class SelectHelper {
     private void injectLink(Map info, Set keys, String host, String path) {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
-            String   key = (String) it.next( );
-            Object   val = Dict.getParam(info, key);
+            String  key = (String) it.next();
+            Object  val = Dict.getParam(info, key);
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
@@ -261,7 +310,7 @@ public class SelectHelper {
      * @param val
      * @return
      */
-    private Object codeToText(Map map, Object val) {
+    private Object codeToText(Object val, Map map) {
         if (null == val || "".equals(val)) {
             return  val;
         }
@@ -274,6 +323,23 @@ public class SelectHelper {
         val = map.get("*");
         if (null != val) {
             return  val;
+        }
+
+        return "";
+    }
+
+    /**
+     * 将字段值转换为对应时间戳
+     * @param val
+     * @return
+     */
+    private Object dataToTime(Object val ) {
+        if (null == val || "".equals(val)) {
+            return  val;
+        }
+
+        if (val instanceof Date) {
+            return ((Date) val ).getTime();
         }
 
         return "";

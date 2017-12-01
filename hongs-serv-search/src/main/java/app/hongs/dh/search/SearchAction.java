@@ -29,6 +29,14 @@ public class SearchAction extends LuceneAction {
     protected Set<String> sub = Synt.setOf("counts", "statis");
 
     @Override
+    public IEntity getEntity(ActionHelper helper)
+    throws HongsException {
+        ActionRunner runner = (ActionRunner)
+           helper.getAttribute(ActionRunner.class.getName());
+        return SearchEntity.getInstance (runner.getModule(), runner.getEntity());
+    }
+
+    @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
         String ent = runner.getEntity();
         String mod = runner.getModule();
@@ -82,21 +90,13 @@ public class SearchAction extends LuceneAction {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
-            rd = getReqMap (helper, sr, "counts", rd);
-        Map sd = sh.counts (rd);
-            sd = getRspMap (helper, sr, "counts", sd);
-//               sr.close  (  ); // 应用容器可自行关闭
+            rd = getReqMap(helper, sr, "counts", rd);
+        Map sd = sh.counts(rd);
+            sd = getRspMap(helper, sr, "counts", sd);
+//               sr.close (  ); // 应用容器可自行关闭
 
-        /**
-         * 追加枚举名称
-         */
-        Map xd = (Map) sd.get("info");
-       byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
-        if (md != 0 && xd != null && mod != null && ent != null) {
-            if (FormSet.hasConfFile( mod )) {
-                new SearchTitler(mod, ent).addTitle(xd , md);
-            }
-        }
+        // 增加标题
+        titled(rd, sd, mod, ent);
 
         helper.reply(sd);
     }
@@ -111,31 +111,45 @@ public class SearchAction extends LuceneAction {
         LuceneRecord sr = (LuceneRecord) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
-            rd = getReqMap (helper, sr, "statis", rd);
-        Map sd = sh.statis (rd);
-            sd = getRspMap (helper, sr, "statis", sd);
-//               sr.close  (  ); // 应用容器可自行关闭
+            rd = getReqMap(helper, sr, "statis", rd);
+        Map sd = sh.statis(rd);
+            sd = getRspMap(helper, sr, "statis", sd);
+//               sr.close (  ); // 应用容器可自行关闭
 
-        /**
-         * 追加枚举名称
-         */
-        Map xd = (Map) sd.get("info");
-       byte md = Synt.declare(helper.getParameter("md") , (byte) 0);
-        if (md != 0 && xd != null && mod != null && ent != null) {
-            if (FormSet.hasConfFile( mod )) {
-                new SearchTitler(mod, ent).addTitle(xd , md);
-            }
-        }
+        // 增加标题
+        titled(rd, sd, mod, ent);
 
         helper.reply(sd);
     }
 
-    @Override
-    public IEntity getEntity(ActionHelper helper)
-    throws HongsException {
-        ActionRunner runner = (ActionRunner)
-           helper.getAttribute(ActionRunner.class.getName());
-        return SearchEntity.getInstance (runner.getModule(), runner.getEntity());
+    /**
+     * 追加枚举和关联名称
+     * @param rd 请求数据
+     * @param sd 响应数据
+     * @param mod
+     * @param ent
+     */
+    protected void titled(Map rd, Map sd, String mod, String ent) throws HongsException {
+        if (mod== null || ent== null) {
+            return;
+        }
+
+        Set ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
+        Map xd = (Map) sd.get("info");
+        if (ab == null || xd == null) {
+            return;
+        }
+
+        byte md = 0;
+        if (ab.contains("_enum")) {
+            md += 1;
+        }
+        if (ab.contains("_fork")) {
+            md += 2;
+        }
+        if (md != 0 && FormSet.hasConfFile(mod)) {
+            new SearchTitler(mod, ent).addTitle(xd , md);
+        }
     }
 
 }

@@ -241,28 +241,28 @@
              '<%=_locale.translate("fore.delete.confirm", _title)%>']
         ],
         openUrls: [
-            ['<%=_module%>/<%=_entity%>/form.html?md=0',
+            ['<%=_module%>/<%=_entity%>/form.html?ab=!enum',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?md=5&id={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?ab=.enum,_fork&id={ID}',
              '.update', '@'],
-            ['<%=_module%>/<%=_entity%>/info.html?md=6&id={ID}',
+            ['<%=_module%>/<%=_entity%>/info.html?ab=_enum,_fork&id={ID}',
              '.review', '@'],
-            ['<%=_module%>/<%=_entity%>/logs.html?md=6&id={ID}',
+            ['<%=_module%>/<%=_entity%>/logs.html?ab=_enum,_fork&id={ID}',
              '.revert', '@'],
             ['<%=_module%>/<%=_entity%>/lore.html',
              '.manual', '@']
         ],
-        _url: "<%=_module%>/<%=_entity%>/search.act?md=6&ob=<%=_ob%>&rb=<%=_rb%>"
+        _url: "<%=_module%>/<%=_entity%>/search.act?ab=_enum,_fork&ob=<%=_ob%>&rb=<%=_rb%>"
     });
 
     <%if (!"select".equals(_action)) {%>
     var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/search.act?md=0"
+        _url: "<%=_module%>/<%=_entity%>/search.act?ab=!enum"
     });
 
     var statobj = context.hsStat({
-        surl: "<%=_module%>/<%=_entity%>/statis/search.act?md=1",
-        curl: "<%=_module%>/<%=_entity%>/counts/search.act?md=1"
+        surl: "<%=_module%>/<%=_entity%>/statis/search.act?ab=_enum",
+        curl: "<%=_module%>/<%=_entity%>/counts/search.act?ab=_enum"
     });
 
     if (filtbox.find(".form-group").size() == 2) {

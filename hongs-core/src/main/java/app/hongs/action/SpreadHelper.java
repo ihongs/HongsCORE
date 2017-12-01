@@ -196,7 +196,7 @@ public class SpreadHelper {
 
             // 获取结果
             ah.setRequestData(rd);
-            if (rd.containsKey(Cnst.MD_KEY)) {
+            if (rd.containsKey(Cnst.AB_KEY)) {
                 new ActionRunner(ah, at).doAction();
             } else {
                 new ActionRunner(ah, at).doInvoke();

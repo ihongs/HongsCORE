@@ -10,19 +10,23 @@ import app.hongs.util.verify.Wrongs;
 import app.hongs.util.Synt;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+import java.util.Set;
 import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
 
 /**
  * 数据校验处理器
  * <pre>
- * 参数含义:
- * md=1  一般错误结构
- * md=2  层级错误结构
- * 默认仅取第一个错误
- * 如果 action 不是 create/update
- * 则需通过参数 id 来判断是创建还是更新
- * 或设置 save 标识
+ * ab 参数含义:
+ * .errs 一般错误结构
+ * !errs 层级错误结构
  * </pre>
+ * <p>
+ * 默认仅取第一个错误,
+ * 如果当前动作名不是 create/update,
+ * 则通过 id 参数判断是否为更新操作;
+ * 或设置 save 标识符.
+ * </p>
+ * 
  * @author Hong
  */
 public class VerifyInvoker implements FilterInvoker {
@@ -39,14 +43,22 @@ public class VerifyInvoker implements FilterInvoker {
 
         // 准备数据
         Map<String, Object> dat = helper.getRequestData();
-        Object  id  = dat.get(Cnst.ID_KEY);
-        String  act = chains.getAction(  );
+        Object  id = dat.get(Cnst.ID_KEY);
+        String  at = chains.getAction(  );
         if (mode == -1) {
-            mode = Synt.declare(helper.getParameter(Cnst.MD_KEY), (byte) -1);
+            Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
+            if (ab != null) {
+                if (ab.contains(".errs")) {
+                    mode  = 1;
+                } else
+                if (ab.contains("!errs")) {
+                    mode  = 2;
+                }
+            }
         }
         if (mods == -1) {
-            mods = act.endsWith("/update") || (null != id && !"".equals(id))
-                   ? ( byte ) 1 : ( byte ) 0;
+            mods = at.endsWith("/update") || (null != id && !"".equals(id))
+                 ? (byte) 1 : (byte) 0;
         }
         boolean prp = mode <= 0 ;
         boolean upd = mods == 1 ;

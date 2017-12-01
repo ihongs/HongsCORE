@@ -39,10 +39,6 @@ public final class Cnst {
 
     public static final String WD_KEY =  "wd"; // 关键词    (Word)
 
-    public static final String MD_KEY =  "md"; // 模式参数  (Mode)
-
-    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
-
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
     public static final String GN_KEY =  "gn"; // 分页数量  (Pags num)
@@ -54,6 +50,8 @@ public final class Cnst {
     public static final String RB_KEY =  "rb"; // 应答字段  (Reply By)
 
     public static final String AB_KEY =  "ab"; // 应用约束  (Apply By)
+
+    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
 
     public static final String WR_KEY =  "wr"; // 附加约束  (Where)
 

@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import javax.servlet.http.HttpServletResponse;
 
 /**
@@ -144,16 +145,28 @@ public class DataAction extends SearchAction {
             sd.put("info", dt);
 
             // 补充枚举和关联
-            short md = Synt.defoult(Synt.asShort(rd.get("md")), (short) 0);
-            if (2 == ( 2 & md)) {
-                new SelectHelper()
-                    .addEnumsByForm(mod, ent)
-                    .select ( sd , (short) 2);
-            }
-            if (4 == ( 4 & md)) {
-                new SpreadHelper()
-                    .addItemsByForm(mod, ent)
-                    .spread ( sd );
+            Set ab = Synt.toTerms(rd.get( Cnst.AB_KEY ));
+            if (ab != null) {
+                byte md = 0;
+                if (ab.contains("_enum")) {
+                    md += 2;
+                }
+                if (ab.contains("_time")) {
+                    md += 4;
+                }
+                if (ab.contains("_link")) {
+                    md += 8;
+                }
+                if (md != 0) {
+                    new SelectHelper(  )
+                        .addItemsByForm(mod, ent)
+                        .select(sd , md);
+                }
+                if (ab.contains("_fork")) {
+                    new SpreadHelper(  )
+                        .addItemsByForm(mod, ent)
+                        .spread(sd /**/);
+                }
             }
         }
 

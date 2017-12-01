@@ -64,7 +64,7 @@
                     var id = tr.data("id");
                     var ct = tr.data("ctime");
                     this.open(ln, ln.hsFind("@"),
-                      "<%=_module%>/<%=_entity%>/info_logs.html?md=6&id="+id+"&ctime="+ct);
+                      "<%=_module%>/<%=_entity%>/info_logs.html?ab=_enum8&id="+id+"&ctime="+ct);
                 }, ".review"],
                 [function(ln) {
                     sendbox.data ("ln", ln);

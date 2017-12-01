@@ -15,18 +15,17 @@ import java.util.Set;
 
 /**
  * 预置补充处理器
- *
+ * <pre>
+ * ab 参数含义:
+ * _obj_ 将启用对象模式
+ * _str_ 将启用字串模式
+ * </pre>
  * <p>
  * 可使用 ab 参数将指定好的条件注入到 wr 数据中.
  * 这样可减少终端一些常规参数,
  * 并能在未来更方便地做出调整;
  * 如 ab=v1 附加版本 1 的参数.
  * </p>
- *
- * <pre>
- * 参数含义:
- * md=8  将启用对象模式
- * </pre>
  * @author Hong
  */
 public class PresetInvoker implements FilterInvoker {
@@ -46,6 +45,17 @@ public class PresetInvoker implements FilterInvoker {
             Set<String> used = new LinkedHashSet ();
             if (null != uzed && ! uzed.isEmpty ( )) {
                 for(String item : uzed) {
+                    if (item.startsWith("_" )
+                    ||  item.startsWith("." )
+                    ||  item.startsWith("!")) {
+                    if (item.equals("_obj_")) {
+                        Core.getInstance().put(Cnst.OBJECT_MODE, true);
+                    } else
+                    if (item.equals("_str_")) {
+                        Core.getInstance().put(Cnst.OBJECT_MODE,false);
+                    }
+                        continue;
+                    }
                     used.add("!"+ item);
                 }
                 deft  = used.toArray(new String[0]);
@@ -78,12 +88,6 @@ public class PresetInvoker implements FilterInvoker {
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10eb ) {
                 throw ex ;
             }
-        }
-
-        // 是否要求启用对象模式
-        byte mode = Synt.declare(helper.getParameter(Cnst.MD_KEY), (byte) -1);
-        if ( mode != -1 && 8 == (8 & mode) ) {
-            Core.getInstance().put(Cnst.OBJECT_MODE, true);
         }
 
         chains.doAction();

@@ -51,7 +51,7 @@ public class SelectInvoker implements FilterInvoker {
                 if (ab.contains("_link")) {
                     mode += 8;
                 }
-                if (mode  > 0) {
+                if (mode >= 0) {
                     mode += 1;
                 }
                 }

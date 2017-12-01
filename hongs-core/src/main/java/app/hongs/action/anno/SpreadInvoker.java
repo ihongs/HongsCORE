@@ -33,19 +33,15 @@ public class SpreadInvoker implements FilterInvoker {
             Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
             if (ab != null) {
                 if (ab.contains("_fork")) {
-                    mode += 1;
-                }
-                if (mode  > 0) {
-                    mode += 1;
+                    mode  = 1;
                 }
             }
         }
 
         // 执行动作
         chains.doAction();
-        Map rsp = helper.getResponseData();
-
-        if (-1 == mode || 1 != (1 & mode)) {
+        Map rsp  = helper.getResponseData();
+        if ( 01 != mode ) {
             return;
         }
 

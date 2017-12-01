@@ -24,16 +24,16 @@ import java.util.Set;
  *
  * <h3>URL参数说明:</h3>
  * <pre>
- * pid          获取pid 指定的一组节点
- * id[]         获取id[]指定的全部节点
- * md           4附带路径ID, 8附带路径信息
+ * id.       获取指定的节点
+ * pid       获取指定的下级
+ * path      1 附当前路径ID, 2 当前路径信息
  * </pre>
  *
  * <h3>JS请求参数组合:</h3>
  * <pre>
  * 获取层级: ?pid=xxx
- * 获取节点: ?id=xxx&md=8
- * 查找节点: ?wd=xxx&md=4
+ * 获取节点: ?id=xxx&path=2
+ * 查找节点: ?wd=xxx&path=1
  * </pre>
  *
  * @author Hong
@@ -58,6 +58,11 @@ public class Mtree extends Model
    */
   public String pidKey  = "pid";
 
+  /**
+   * 路径字段名
+   */
+  public String pathKey = "path";
+  
   /**
    * 名称字段名
    */
@@ -104,6 +109,7 @@ public class Mtree extends Model
     this.rootId  = Synt.defoult(table.getState("root.id"), "0");
     this.bidKey  = Synt.defoult(table.getField("bid" ), "bid" );
     this.pidKey  = Synt.defoult(table.getField("pid" ), "pid" );
+    this.pathKey = Synt.defoult(table.getField("path"), "path");
     this.nameKey = Synt.defoult(table.getField("name"), "name");
     this.noteKey = table.getField("note");
     this.typeKey = table.getField("type");
@@ -151,23 +157,23 @@ public class Mtree extends Model
         return info;
     }
 
-    byte   pth = Synt.declare(rd.get("md"),(byte)  0 );
-    String pid = Synt.declare(rd.get(this.pidKey), "");
+    byte   pth = Synt.declare(rd.get(this.pathKey), (byte) 0);
+    String pid = Synt.declare(rd.get(this.pidKey ), "" );
     if (pid.length() == 0)
     {
         pid = this.rootId;
     }
 
-    if (4 == (4 & pth))
+    if (pth == 1)
     {
       String id = (String) info.get(this.table.primaryKey);
-      info.put("path", this.getParentIds(id, pid));
+      info.put(this.pathKey, this.getParentIds(id, pid));
     }
     else
-    if (8 == (8 & pth))
+    if (pth == 2)
     {
       String id = (String) info.get(this.table.primaryKey);
-      info.put("path", this.getParents  (id, pid));
+      info.put(this.pathKey, this.getParents  (id, pid));
     }
 
     return info;
@@ -264,40 +270,40 @@ public class Mtree extends Model
         return data;
     }
 
-    byte   pth = Synt.declare(rd.get("md"),(byte)  0 );
-    String pid = Synt.declare(rd.get(this.pidKey), "");
+    byte   pth = Synt.declare(rd.get(this.pathKey), (byte) 0);
+    String pid = Synt.declare(rd.get(this.pidKey ), "" );
     if (pid.length() == 0)
     {
         pid = this.rootId;
     }
 
-    if (4 == (4 & pth))
+    if (pth == 1)
     {
       //List path = this.getParentIds(pid);
 
       Iterator it = list.iterator();
       while (it.hasNext())
       {
-        Map info = (Map)it.next();
+        Map  info = (Map) it.next();
         String id = (String)info.get(this.table.primaryKey);
-        List subPath = new ArrayList( /* path */ );
-        info.put("path", subPath);
+        List subPath = new ArrayList( );
+        info.put(this.pathKey, subPath);
 
         subPath.addAll(this.getParentIds(id, pid));
       }
     }
     else
-    if (8 == (8 & pth))
+    if (pth == 2)
     {
       //List path = this.getParents(pid);
 
       Iterator it = list.iterator();
       while (it.hasNext())
       {
-        Map info = (Map)it.next();
+        Map  info = (Map) it.next();
         String id = (String)info.get(this.table.primaryKey);
-        List subPath = new ArrayList( /* path */ );
-        info.put("path", subPath);
+        List subPath = new ArrayList( );
+        info.put(this.pathKey, subPath);
 
         subPath.addAll(this.getParents  (id, pid));
       }

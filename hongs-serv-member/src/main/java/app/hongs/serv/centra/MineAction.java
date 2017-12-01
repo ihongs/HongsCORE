@@ -33,7 +33,7 @@ public class MineAction {
     }
 
     @Action("update")
-    @Verify(conf="member", form="mine", save=1, tidy=true)
+    @Verify(conf="member", form="mine", make=1, trim=true)
     public void mineUpdate(ActionHelper ah)
     throws HongsException {
         Map rd = ah.getRequestData();

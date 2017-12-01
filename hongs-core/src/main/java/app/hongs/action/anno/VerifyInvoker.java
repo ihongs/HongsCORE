@@ -24,9 +24,8 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
  * 默认仅取第一个错误,
  * 如果当前动作名不是 create/update,
  * 则通过 id 参数判断是否为更新操作;
- * 或设置 save 标识符.
+ * 或设置 make 标识符.
  * </p>
- * 
  * @author Hong
  */
 public class VerifyInvoker implements FilterInvoker {
@@ -38,7 +37,7 @@ public class VerifyInvoker implements FilterInvoker {
         String  conf = ann.conf();
         String  form = ann.form();
         byte    mode = ann.mode();
-        byte    mods = ann.save();
+        byte    make = ann.make();
         boolean tidy = ann.tidy();
 
         // 准备数据
@@ -56,12 +55,13 @@ public class VerifyInvoker implements FilterInvoker {
                 }
             }
         }
-        if (mods == -1) {
-            mods = at.endsWith("/update") || (null != id && !"".equals(id))
-                 ? (byte) 1 : (byte) 0;
+        if (make == -1) {
+            make = at.endsWith("/update") || (null != id && !"".equals(id))
+                 ? ( byte ) 1:
+                   ( byte ) 0;
         }
         boolean prp = mode <= 0 ;
-        boolean upd = mods == 1 ;
+        boolean upd = make == 1 ;
 
         // 识别路径
         if (form.length() == 0) {

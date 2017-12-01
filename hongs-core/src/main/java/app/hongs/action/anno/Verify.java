@@ -16,6 +16,6 @@ public @interface Verify {
     String   conf() default "default";
     String   form() default "";
     byte     mode() default -1;
-    byte     make() default -1;
-    boolean  trim() default false;
+    byte     type() default -1;
+    byte     trim() default -1;
 }

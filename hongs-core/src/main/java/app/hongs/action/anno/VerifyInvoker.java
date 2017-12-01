@@ -21,11 +21,11 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
  * !errs 层级错误结构
  * </pre>
  * <p>
- * 默认仅取第一个错误,
- * 如果当前动作名不是 create/update,
- * 则通过 id 参数判断是否为更新操作;
- * 或设置 make 标识符.
- * </p>
+ 默认仅取第一个错误,
+ 如果当前动作名不是 create/update,
+ 则通过 id 参数判断是否为更新操作;
+ 或设置 type 标识符.
+ </p>
  * @author Hong
  */
 public class VerifyInvoker implements FilterInvoker {
@@ -37,8 +37,8 @@ public class VerifyInvoker implements FilterInvoker {
         String  conf = ann.conf();
         String  form = ann.form();
         byte    mode = ann.mode();
-        byte    make = ann.make();
-        boolean trim = ann.trim();
+        byte    type = ann.type();
+        byte    trim = ann.trim();
 
         // 准备数据
         Map<String, Object> dat = helper.getRequestData();
@@ -55,13 +55,14 @@ public class VerifyInvoker implements FilterInvoker {
                 }
             }
         }
-        if (make == -1) {
-            make = at.endsWith("/update") || (null != id && !"".equals(id))
+        if (type == -1) {
+            type = at.endsWith("/update") || (null != id && !"".equals(id))
                  ? ( byte ) 1:
                    ( byte ) 0;
         }
         boolean prp = mode <= 0 ;
-        boolean upd = make == 1 ;
+        boolean upd = type == 1 ;
+        boolean cln = trim == 1 ;
 
         // 识别路径
         if (form.length() == 0) {
@@ -87,7 +88,7 @@ public class VerifyInvoker implements FilterInvoker {
             ver.isPrompt(prp);
             ver.isUpdate(upd);
             Map vls = ver.verify(dat);
-            if (trim) dat.clear (   );
+            if (cln)  dat.clear (   );
             dat.putAll(  vls);
         } catch (Wrongs  err) {
             dat = err.toReply(prp ? 0 : mode);

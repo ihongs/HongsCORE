@@ -38,7 +38,7 @@ public class VerifyInvoker implements FilterInvoker {
         String  form = ann.form();
         byte    mode = ann.mode();
         byte    make = ann.make();
-        boolean tidy = ann.tidy();
+        boolean trim = ann.trim();
 
         // 准备数据
         Map<String, Object> dat = helper.getRequestData();
@@ -87,7 +87,7 @@ public class VerifyInvoker implements FilterInvoker {
             ver.isPrompt(prp);
             ver.isUpdate(upd);
             Map vls = ver.verify(dat);
-            if (tidy) dat.clear (   );
+            if (trim) dat.clear (   );
             dat.putAll(  vls);
         } catch (Wrongs  err) {
             dat = err.toReply(prp ? 0 : mode);

@@ -94,9 +94,9 @@
     <!-- 文本校验正则映射 -->
     <enum name="__patts__">
         <value code="id" ><![CDATA[^\\w{1,20}$]]></value>
-        <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>
-        <value code="url"><![CDATA[^([a-z]+:)?//[^\s]+$]]></value>
         <value code="tel"><![CDATA[^(\+[1-9])?\d\d{2,}$]]></value>
+        <value code="url"><![CDATA[^([a-z]+:)?//[^\s]+$]]></value>
+        <value code="email"><![CDATA[^\w+([+-.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$]]></value>
         <value code="color"><![CDATA[^#[0-9A-Fa-f]{6}$]]></value>
         <value code="datetime"><![CDATA[^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}]]></value>
         <value code="date"><![CDATA[^\d{2,4}-\d{1,2}-\d{1,2}]]></value>

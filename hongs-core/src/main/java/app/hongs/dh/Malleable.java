@@ -11,6 +11,12 @@ import java.util.Set;
 
 /**
  * 表单应用
+ * 
+ * 对表单中 @ 区域的 xxxxable 配置项,
+ * 其取值为 ? 将根据字段的类型来判别,
+ * 如取值为 * 表示当前全部字段都可用.
+ * 默认情况需检查字段自身的 xxxxable.
+ *
  * @author Hongs
  */
 public class Malleable {

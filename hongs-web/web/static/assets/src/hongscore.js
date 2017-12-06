@@ -118,6 +118,7 @@ function hsRequires(url, fun ) {
             u = HsREQS  [u];
         }   u = hsFixUri(u);
         if (HsDEPS [u]) {
+            HsDEPS [u] += 1;
             if (fun && l == ++ j) {
                 fun( );
             }
@@ -129,11 +130,11 @@ function hsRequires(url, fun ) {
         var n = document.createElement(/\.css$/.test (u) ? "link" : "script");
         n.onload = n.onreadystatechange = ( function (n, u) {
             return function( ) {
-                if (! n.readyState
+                if ( ! n.readyState
                 ||  n.readyState == "loaded"
                 ||  n.readyState == "complete") {
                     n.onload = n.onreadystatechange = null;
-                    HsDEPS [u] = true;
+                    HsDEPS [u] = 1;
                     if (fun && l == ++ j) {
                         fun( );
                     }

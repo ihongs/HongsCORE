@@ -122,8 +122,9 @@
 
 <script type="text/javascript">
     (function($) {
-        var menubar = $("#main-menubar");
         var context = $("#main-context");
+        var menubar = $("#main-menubar");
+        var userbar = $("#user-menubar");
 
         $(function() {
             var a, b, h, l;
@@ -165,6 +166,24 @@
                 location.assign(h);
             }
         });
+
+        /*
+        var badge = userbar.find(".badge" );
+        var timer = setInterval (function() {
+            if (! badge.is(":visible")) {
+                clearInterval( timer );
+                return;
+            }
+            $.ajax({
+                url     : hsFixUri("centre/medium/suggest/search.act?unit=message"),
+                type    : "GET" ,
+                dataType: 'JSON',
+                complete: function(rst) {
+                    badge.text(rst.size ? rst.size : "");
+                }
+            });
+        }, 10000);
+        */
 
         $("#sign-out")
             .click(function() {

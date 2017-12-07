@@ -267,6 +267,7 @@ public class SearchHelper {
 
                             for(IndexableField vol : vals) {
                                 String   val = vol.stringValue();
+                                         val = getValue( val,k );
                                 if (cntc.containsKey(val)) {
                                     cntc.put(val , cntc.get(val) + 1);
                                 }
@@ -283,6 +284,7 @@ public class SearchHelper {
 
                             for(IndexableField vol : vals) {
                                 String   val = vol.stringValue();
+                                         val = getValue( val,k );
                                 if (cntc.containsKey(val)) {
                                     cntc.put(val , cntc.get(val) + 1);
                                 } else
@@ -497,6 +499,7 @@ public class SearchHelper {
                             F : for (IndexableField x: vals) {
                                 double v = x.numericValue( )
                                             . doubleValue( );
+                                       v =    getValue(v, k);
                                 for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
                                     Minmax m = mc.getKey ( );
 
@@ -539,6 +542,26 @@ public class SearchHelper {
         }
 
         return total;
+    }
+
+    /**
+     * 为可能的特殊数据分组留有余地
+     * @param v
+     * @param k
+     * @return
+     */
+    protected String getValue(String v, String k) {
+        return v;
+    }
+
+    /**
+     * 为可能的特殊数据处理留有余地
+     * @param v
+     * @param k
+     * @return
+     */
+    protected double getValue(double v, String k) {
+        return v;
     }
 
     // jdk 1.7 加上这个后排序不会报错

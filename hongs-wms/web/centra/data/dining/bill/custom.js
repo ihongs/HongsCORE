@@ -153,6 +153,7 @@ function in_centra_data_dining_bill_form(context, formobj) {
             zoom: 14
         });
         var geo = new qq.maps.Geocoder();
+        var cit = new qq.maps.CityService();
         var sea = new qq.maps.SearchService();
         var mak ;
 
@@ -174,11 +175,37 @@ function in_centra_data_dining_bill_form(context, formobj) {
             }
         }
 
+        function getPos(fun) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+            function (rst) {
+                fun  (rst.coords.latitude, rst.coords.longitude);
+            },
+            function (err) {
+                throw new Error("Can not get current position!");
+            }
+            );
+            } else {
+                throw new Error("Can not get current position.");
+            }
+        }
+
         // 点选地址
         qq.maps.event.addListener(map, 'click', function(evt) {
             addrInp.val ( "" ); // 点选总是重写地址输入框
             setPos(evt.latLng);
         });
+
+        // 当前位置
+        cit.setComplete(function(rst) {
+            map.setCenter(rst.detail.latLng); // 转入本市
+            getPos(function(lat, lng) {
+                if(! addrInp.val( ) ) {
+                    setPos(new qq.maps.LatLng(lat, lng));
+                }
+            });
+        });
+        cit.searchLocalCity( );
 
         // 地图回调
         geo.setComplete(function(rst) {

@@ -168,10 +168,16 @@ public class SearchTitler {
             lw.add(lx);
         }
 
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
+
         // 查询结构
         Map rd = new HashMap();
         Set rb = new HashSet();
-        int ps = at.indexOf("?");
+        int ps ;
+        ps = at.indexOf("?");
         if (ps > -1) {
             String aq;
             aq = at.substring(1 + ps).trim();
@@ -184,6 +190,16 @@ public class SearchTitler {
                 }
             }
         }
+        ps = at.indexOf("!");
+        if (ps > -1) {
+            String ap;
+            ap = at.substring(1 + ps).trim();
+            at = at.substring(0 , ps).trim();
+            if (!"".equals(ap)) {
+                ap = ap + Cnst.ACT_EXT;
+                ah.setAttribute(Cnst.ACTION_ATTR,ap);
+            }
+        }
         rb.add(vk);
         rb.add(tk);
         rd.put(Cnst.RN_KEY, 0 );
@@ -191,10 +207,6 @@ public class SearchTitler {
         rd.put(Cnst.ID_KEY, lm.keySet());
 
         // 获取结果
-        ActionHelper ah = ActionHelper.newInstance();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
         ah.setRequestData(rd);
         new ActionRunner (ah, at).doInvoke();
         Map sd  = ah.getResponseData( /**/ );

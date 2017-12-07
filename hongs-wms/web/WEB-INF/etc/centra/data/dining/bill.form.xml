@@ -48,26 +48,39 @@
         </field>
         <field name="note" repeated="" required="" rule="" text="特别要求" type="textarea"/>
         <field name="memo" repeated="" required="" rule="" text="后台备注" type="textarea"/>
+        <field name="cuid" repeated="" required="" rule="" text="创建用户" type="fork">
+            <param name="default">=$uid</param>
+            <param name="default-create">true</param>
+            <param name="default-always">true</param>
+            <param name="editable">false</param>
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+            <param name="data-ak">user</param>
+            <param name="data-at">centra/member/user/list</param>
+        </field>
+        <field name="muid" repeated="" required="" rule="" text="修改用户" type="fork">
+            <param name="default">=$uid</param>
+            <param name="default-always">true</param>
+            <param name="default-create">false</param>
+            <param name="editable">false</param>
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+            <param name="data-ak">user</param>
+            <param name="data-at">centra/member/user/list</param>
+        </field>
         <field name="ctime" repeated="" required="" rule="" text="创建时间" type="datetime">
             <param name="type">timestamp</param>
             <param name="default">=%now</param>
             <param name="default-create">true</param>
             <param name="default-always">true</param>
             <param name="editable">false</param>
-            <param name="listable">true</param>
-            <param name="sortable">true</param>
-            <param name="siftable">true</param>
         </field>
-        <field name="cuid" repeated="" required="" rule="" text="创建用户" type="fork">
-            <param name="default">=$uid</param>
-            <param name="default-create">true</param>
+        <field name="mtime" repeated="" required="" rule="" text="修改时间" type="datetime">
+            <param name="type">long</param>
+            <param name="default">=%now</param>
             <param name="default-always">true</param>
+            <param name="default-create">false</param>
             <param name="editable">false</param>
-            <param name="listable">true</param>
-            <param name="data-vk">id</param>
-            <param name="data-tk">name</param>
-            <param name="data-ak">user</param>
-            <param name="data-at">centra/member/user/list</param>
         </field>
         <field name="J78N0MZL000NIYHT0" repeated="" required="" rule="" text="配送信息" type="line">
             <param name="listable">no</param>
@@ -114,19 +127,6 @@
         </field>
         <field name="company_name" repeated="" required="" rule="" text="抬头" type="text"/>
         <field name="company_code" repeated="" required="" rule="" text="税号" type="text"/>
-        <field name="muid" repeated="" required="" rule="" text="" type="hidden">
-            <param name="default">=$uid</param>
-            <param name="default-always">true</param>
-            <param name="default-create">false</param>
-            <param name="editable">false</param>
-        </field>
-        <field name="mtime" repeated="" required="" rule="" text="" type="number">
-            <param name="type">long</param>
-            <param name="default">=%now</param>
-            <param name="default-always">true</param>
-            <param name="default-create">false</param>
-            <param name="editable">false</param>
-        </field>
         <field name="J78TYMUU00E4LG5U1" repeated="" required="" rule="" text=" " type="line">
             <param name="listable">no</param>
         </field>

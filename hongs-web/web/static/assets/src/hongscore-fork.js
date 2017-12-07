@@ -228,8 +228,10 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  * @returns {undefined}
  */
 function hsFormFillPick(box, v, n, t) {
+    if (n == undefined) n = box.data("fn");
+    var mul = !!  box.data(  "repeated"  )
+              || /(\[\]|\.\.|\.$)/.test(n);
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
-    var mul = ! ! box.data( "repeated" ) || /(\[\]|\.\.|\.$)/.test( n );
 
     if (t == "info") {
         if (! v ) return ;
@@ -239,8 +241,8 @@ function hsFormFillPick(box, v, n, t) {
         if (!mul) v = [v];
     }
     if (jQuery.isArray(v)) {
-        var vk = box.attr("data-vk") ||  "id" ;
         var tk = box.attr("data-tk") || "name";
+        var vk = box.attr("data-vk") ||  "id" ;
         var x  = {};
         for(var i = 0; i < v.length; i++) {
             var j = v[i];

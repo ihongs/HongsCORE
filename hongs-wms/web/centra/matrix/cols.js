@@ -59,8 +59,17 @@ function setItemType(input, type) {
     return newInput;
 }
 
-function getFormInfo(id) {
-
+function getFormInfo(id, func) {
+    $.ajax({
+        url : hsFixUri("centra/matrix/form/info.act?rb=id,name&id="+id),
+        type: "GET",
+        dataType: "JSON",
+        success : function(rs) {
+            if  (     rs.info) {
+                func (rs.info);
+            }
+        }
+    });
 }
 
 var COLS_PATT_BASE = /^[a-z0-9\-_.:]+$/;    // 当作为标签属性时可以使用, 没有引起问题的特殊字符
@@ -130,6 +139,7 @@ function loadConf(modal, field) {
     });
 
     // 高级设置
+    var fc, fn;
     for(var i = 0; i < az.length; i ++) {
         var x = az[i];
         if (! COLS_PATT_DATS.test( x.name ) || uz[ x.name ]) {
@@ -148,7 +158,18 @@ function loadConf(modal, field) {
         }
         tr.find("[name=param_name]" ).val(pn);
         tr.find("[name=param_value]").val(pv);
+        // 给下方关联用
+        if (pn == "conf") fc = pv;
+        if (pn == "form") fn = pv;
     }
+
+    // 关联设置
+    var ul = modal.find(".simple-set [data-ft=_pick]");
+    if (fn && ul.size ()) getFormInfo(fn, function(rs) {
+        var ds = {};
+        ds[ rs.id ] = [rs.name];
+        hsFormFillPick(ul, ds );
+    });
 }
 
 /**
@@ -573,22 +594,16 @@ $.fn.hsCols = function() {
     });
 
     // 关联选项
-    var datas = {};
-    modal.on("pickItem", "[data-ft=_pick]", function() {
-        if (arguments[3]) {
-            datas[arguments[1]] = arguments[3];
-        } else {
-            delete datas[arguments[1]];
-        }
-    });
-    modal.on( "change" , "[data-ft=_pick]", function() {
-        var  id  = $( this ).find( "input" ).val();
-        var  tb  = modal.find(".detail-set tbody");
-        var  tp  = tb.find(".hide");
-        var data = datas[id];
-        if (data) {
-            for(var k in data) {
-                var v  = data[k];
+    modal.on("pickBack", function(ev, items) {
+        var tb = modal.find(".detail-set tbody");
+        var tp =    tb.find(".hide");
+        if (items) {
+            for(var k in items) {
+                items  = items[k][1];
+                break;
+            }
+            for(var k in items) {
+                var v  = items[k];
                 var tr = tb
                    .find   ("[name=param_name]")
                    .filter (function() {return $(this).val() == k;})

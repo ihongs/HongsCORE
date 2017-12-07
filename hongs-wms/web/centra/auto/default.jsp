@@ -24,6 +24,10 @@
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centra.js" ></script>
         <script type="text/javascript" src="centra/auto/_main_.js" ></script>
+        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
+        <script type="text/javascript">
+            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/custom.js"]=1;
+        </script>
     </head>
     <body>
         <div id="notebox"></div>
@@ -40,6 +44,5 @@
                 <div class="row" data-load="centra/foot.jsp"></div>
             </div>
         </nav>
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
     </body>
 </html>

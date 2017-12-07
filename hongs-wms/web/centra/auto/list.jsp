@@ -8,7 +8,7 @@
     String _action = Synt.declare(request.getAttribute("list.action"), "browse");
     String _pageId = (_module + "_" + _entity + "_" + _action).replace('/', '_');
     String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
-    
+
     String _conf   = FormSet.hasConfFile(_module + "/" + _entity)
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
@@ -48,7 +48,7 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible row bg-info" style="margin-left: 0; margin-right: 0">
+    <form class="findbox filtbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
         <div class="form-group"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -65,7 +65,7 @@
             }
         %>
         <div class="form-group form-group-sm row">
-            <label class="col-sm-3 form-control-static control-label text-right" style="color:#eee;"><%=text%></label>
+            <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
@@ -86,6 +86,30 @@
                     <span class="input-group-addon input-sm">~</span>
                     <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le" data-toggle="hsTime" data-type="timestamp" />
                 </div>
+            <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
+                <%
+                    String fm = _module;
+                    String fn =  name  ;
+                    String kn ;
+                    if (fn.endsWith( "." )) {
+                        fn = fn.substring(0, fn.length() - 1);
+                    }
+                    if (fn.endsWith("_id")) {
+                        fn = fn.substring(0, fn.length() - 3);
+                        kn = fn;
+                    } else {
+                        kn = fn + "_data";
+                    }
+                    String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                    String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                    String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
+                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :
+                              ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
+                        +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
+                        +"/list_fork.html";
+                %>
+                <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else {%>
                 <input type="text" class="form-control" name="ar.0.<%=name%>" />
             <%} /*End If */%>
@@ -101,7 +125,7 @@
         </div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible row bg-info" style="margin-left: 0; margin-right: 0">
+    <form class="findbox statbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
         <div class="clearfix" style="padding: 5px;">
         <%
         Iterator it3 = _fields.entrySet().iterator();
@@ -201,14 +225,40 @@
                     <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=text%></th>
                 <%} else if ("email".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_email" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("file".equals(type) ||  "url".equals(type)) {%>
+                <%} else if ("url".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%>"><%=text%></th>
+                <%} else if ("file".equals(type) ||  "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                    <th data-fn="<%=name%>_text" <%=ob%> class="<%=oc%>"><%=text%></th>
+                    <%
+                        if (name.endsWith( "." )) {
+                            name = name.substring(0, name.length() - 1);
+                        }
+                        if (name.endsWith("_id")) {
+                            name = name.substring(0, name.length() - 3);
+                        } else {
+                            name = name + "_text";
+                        }
+                    %>
+                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
                     <%
-                        if (info.get("data-ak") != null) name  = (String) info.get("data-ak");
-                        if (info.get("data-tk") != null) name +=   "."  + info.get("data-tk");
+                        if (name.endsWith( "." )) {
+                            name = name.substring(0, name.length() - 1);
+                        }
+                        if (name.endsWith("_id")) {
+                            name = name.substring(0, name.length() - 3);
+                        } else {
+                            name = name + "_data";
+                        }
+                        String subn = "name";
+                        if (info.get("data-ak") != null) {
+                            name = (String) info.get("data-ak");
+                        }
+                        if (info.get("data-tk") != null) {
+                            subn = (String) info.get("data-tk");
+                        }
+                        name = name + "." + subn;
                     %>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if (!"primary".equals(info.get("primary")) && !"foreign".equals(info.get("foreign"))) {%>
@@ -262,7 +312,7 @@
 
     var statobj = context.hsStat({
         surl: "<%=_module%>/<%=_entity%>/statis/search.act?ab=_enum",
-        curl: "<%=_module%>/<%=_entity%>/counts/search.act?ab=_enum"
+        curl: "<%=_module%>/<%=_entity%>/counts/search.act?ab=_enum,_fork"
     });
 
     if (filtbox.find(".form-group").size() == 2) {

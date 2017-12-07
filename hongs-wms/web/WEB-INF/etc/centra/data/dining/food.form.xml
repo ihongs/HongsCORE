@@ -48,7 +48,7 @@
             <param name="lucene-type">search</param>
         </field>
         <field name="picture" repeated="true" required="" rule="Thumb" text="图片" type="image">
-            <param name="size">200*200</param>
+            <param name="size">300*300</param>
             <param name="href">static/upload/data</param>
             <param name="path">static/upload/data</param>
             <param name="temp">static/upload/temp</param>

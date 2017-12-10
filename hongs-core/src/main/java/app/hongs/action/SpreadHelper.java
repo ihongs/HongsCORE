@@ -120,7 +120,8 @@ public class SpreadHelper {
             Map    mt = (Map ) et.getValue();
 
             // 建立映射
-            Map<Object, List> ms = mm.mapped( fn );
+            String uk = (String) mt.get("data-uk");
+            Map ms = mm.mapped ( uk!=null? uk:fn );
             if (ms.isEmpty() ) {
                 continue;
             }

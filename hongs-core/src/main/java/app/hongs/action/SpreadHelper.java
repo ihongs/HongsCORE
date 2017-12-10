@@ -121,7 +121,10 @@ public class SpreadHelper {
 
             // 建立映射
             String uk = (String) mt.get("data-uk");
-            Map ms = mm.mapped ( uk!=null? uk:fn );
+            if (null == uk || "".equals(uk)) {
+                uk = fn ;
+            }
+            Map<Object, List> ms = mm.mapped( uk );
             if (ms.isEmpty() ) {
                 continue;
             }

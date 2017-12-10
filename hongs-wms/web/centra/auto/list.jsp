@@ -108,7 +108,7 @@
                         +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                         +"/list_fork.html";
                 %>
-                <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                <ul  class="pickbox" data-ft="_fork" data-fn="ar.0.<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else {%>
                 <input type="text" class="form-control" name="ar.0.<%=name%>" />
@@ -373,6 +373,9 @@
         filtbox.addClass("invisible");
     });
     filtbox.find(":reset" ).click(function() {
+        filtbox.find("[data-ft=_fork]").each(function() {
+            hsFormFillFork($(this), {});
+        });
         setTimeout(function() {
             filtbox.find( ":submit").click();
         }, 500);

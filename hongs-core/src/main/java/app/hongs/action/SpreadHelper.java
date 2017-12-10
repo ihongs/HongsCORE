@@ -117,7 +117,7 @@ public class SpreadHelper {
 
         for(Map.Entry et : items.entrySet()) {
             String fn = (String) et.getKey();
-            Map    mt = (Map ) et.getValue();
+            Map    mt = (Map) et.getValue( );
 
             // 建立映射
             String uk = (String) mt.get("data-uk");
@@ -125,7 +125,7 @@ public class SpreadHelper {
                 uk = fn ;
             }
             Map<Object, List> ms = mm.mapped( uk );
-            if (ms.isEmpty() ) {
+            if (ms.isEmpty()) {
                 continue;
             }
 

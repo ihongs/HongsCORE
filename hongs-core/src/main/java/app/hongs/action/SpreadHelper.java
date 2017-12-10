@@ -119,22 +119,21 @@ public class SpreadHelper {
             String fn = (String) et.getKey();
             Map    mt = (Map) et.getValue( );
 
-            // 建立映射
-            String uk = (String) mt.get("data-uk");
+            String uk = (String) mt.get("data-uk"); // 外键字段
             if (null == uk || "".equals(uk)) {
                 uk = fn ;
             }
+
+            // 建立映射
             Map<Object, List> ms = mm.mapped( uk );
             if (ms.isEmpty()) {
                 continue;
             }
 
-            String at = (String) mt.get("data-at"); // 关联动作路径
-            String ak = (String) mt.get("data-ak"); // 数据放入此下
             String vk = (String) mt.get("data-vk"); // 关联字段
             String tk = (String) mt.get("data-tk"); // 名称字段
-
-            // 查询路径
+            String ak = (String) mt.get("data-ak"); // 数据放入此下
+            String at = (String) mt.get("data-at"); // 关联动作路径
             if (null == ak || "".equals(ak)) {
                 if (fn.endsWith("_id")) {
                     int  ln = fn.length()-3;

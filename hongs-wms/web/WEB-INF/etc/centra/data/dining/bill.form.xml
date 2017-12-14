@@ -76,7 +76,7 @@
             <param name="editable">false</param>
         </field>
         <field name="mtime" repeated="" required="" rule="" text="修改时间" type="datetime">
-            <param name="type">long</param>
+            <param name="type">timestamp</param>
             <param name="default">=%now</param>
             <param name="default-always">true</param>
             <param name="default-create">false</param>

@@ -60,7 +60,7 @@ CREATE TABLE `a_matrix_data` (
   `form_id` CHAR(20) NOT NULL,
   `user_id` CHAR(20) NOT NULL,
   `name` VARCHAR(255) DEFAULT NULL,
-  `note` VARCHAR(255) DEFAULT NULL,
+  `memo` VARCHAR(255) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,
   `ctime` INTEGER(11) DEFAULT NULL,
   `etime` INTEGER(11) DEFAULT NULL,

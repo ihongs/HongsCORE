@@ -15,6 +15,7 @@
         <module>hongs-serv-search</module>
         <module>hongs-serv-member</module>
         <module>hongs-serv-matrix</module>
+        <module>hongs-serv-medium</module>
         <module>hongs-web</module>
         <module>hongs-wms</module>
     </modules>

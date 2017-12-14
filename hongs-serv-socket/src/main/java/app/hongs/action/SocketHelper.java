@@ -1,5 +1,6 @@
 package app.hongs.action;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
@@ -51,7 +52,7 @@ import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainer
  *          }
  *      }
  *  }
- *  // 并将此类名(含包名)加入 _init_.properties 中 jetty.sock 值
+ *  // 并将此类名(含包名)加入 _.properties 中 jetty.sock 值
  * </code>
  *
  * @author Hongs
@@ -465,7 +466,7 @@ public class SocketHelper extends ActionHelper {
 
     /**
      * WebSocket 加载器
-     * 使用 _init_.properties 设置 mouse.serv 来告知 ServletContext 要加载哪些 WebSocket 类
+     * 使用 _.properties 设置 mouse.serv 来告知 ServletContext 要加载哪些 WebSocket 类
      * 多个类名使用分号";"分隔
      */
     static public class Loader implements ServerCmdlet.Initer {
@@ -479,7 +480,8 @@ public class SocketHelper extends ActionHelper {
                 throw new HongsError.Common(ex);
             }
 
-            String pkgx  = CoreConfig.getInstance( "_init_" ).getProperty("jetty.sock");
+            String pkgx  = CoreConfig.getInstance(Cnst.INIT_NAME)
+                                     .getProperty( "jetty.sock" );
             if  (  pkgx != null ) {
                 String[]   pkgs = pkgx.split(";");
                 for(String pkgn : pkgs) {

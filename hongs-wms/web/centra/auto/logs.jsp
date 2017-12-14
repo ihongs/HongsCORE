@@ -10,7 +10,7 @@
             <thead>
                 <tr>
                     <th data-fn="name">名称</th>
-                    <th data-fn="note">备注</th>
+                    <th data-fn="memo">备注</th>
                     <th data-fn="user.name">操作人员</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="_htime" data-fl="v*1000" class="_htime">截止时间</th>
@@ -39,7 +39,7 @@
             <h4 class="modal-title">确定恢复到此版本吗?</h4>
           </div>
           <div class="modal-body">
-            <input  type="text" name="note" placeholder="备注" class="form-control"/>
+            <input  type="text" name="memo" placeholder="备注" class="form-control"/>
           </div>
           <div class="modal-footer">
             <button type="button" class="btn btn-primary">确定</button>
@@ -64,7 +64,7 @@
                     var id = tr.data("id");
                     var ct = tr.data("ctime");
                     this.open(ln, ln.hsFind("@"),
-                      "<%=_module%>/<%=_entity%>/info_logs.html?ab=_enum8&id="+id+"&ctime="+ct);
+                      "<%=_module%>/<%=_entity%>/info_logs.html?ab=_enum,_fork&id="+id+"&ctime="+ct);
                 }, ".review"],
                 [function(ln) {
                     sendbox.data ("ln", ln);
@@ -80,14 +80,14 @@
         
         sendbox.modal({show: false});
         sendbox.on("click", ".btn-primary", function() {
-            var nt = sendbox.find("[name=note]").val();
+            var nt = sendbox.find("[name=memo]").val();
             var ln = sendbox.data("ln");
             var tr = ln.closest("tr");
             var id = tr.data("id");
             var rt = tr.data("ctime");
             listObj.send(
                 ln, "", "<%=_module%>/<%=_entity%>/revert/update.act",
-                { id: id, note: nt, rtime: rt }
+                { id: id, memo: nt, rtime: rt }
             );
             sendbox.modal("hide");
         });

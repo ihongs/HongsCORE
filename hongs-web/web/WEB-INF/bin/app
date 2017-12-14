@@ -18,7 +18,7 @@ fi
 
 exec "$JAVA_PATH" $JAVA_OPTS\
   -classpath "$KLASSPATH"\
-  -Dlog4j.configurationFile="$CORE_PATH/etc/_init_.log4j2.xml"\
+  -Dlog4j.configurationFile="$CORE_PATH/etc/log.xml"\
   -Dlogs.dir="$CORE_PATH/var/log"\
   -Dtmps.dir="$CORE_PATH/var/tmp"\
   app.hongs.cmdlet.CmdletRunner $@\

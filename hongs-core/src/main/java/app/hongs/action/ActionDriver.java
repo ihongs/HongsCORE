@@ -120,11 +120,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             //** 系统属性配置 **/
 
             CoreConfig cnf;
-            cnf = CoreConfig.getInstance(/*deft*/);
+            cnf = CoreConfig.getInstance(/* default */ );
             Core.SERVER_ID = cnf.getProperty("core.server.id", "0" );
             Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
-            cnf = CoreConfig.getInstance("_init_");
+            cnf = CoreConfig.getInstance(Cnst.INIT_NAME);
 
             // 用于替换下面系统属性中的变量
             Map m = new HashMap();
@@ -231,13 +231,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         HttpServletResponse rsq = (HttpServletResponse) rsp;
 
         ActionHelper hlpr;
-        Core core = (Core) req.getAttribute(Cnst.CORE_ATTR);
+        Core core = (Core) req.getAttribute(Core.class.getName());
         if ( core == null) {
             /**
              * 外层调用
              */
             core = Core.getInstance( );
-            req.setAttribute(Cnst.CORE_ATTR, core );
+            req.setAttribute ( Core.class.getName(), core );
             hlpr = new ActionHelper( req, rsq );
             core.put ( ActionHelper.class.getName(), hlpr );
 
@@ -489,7 +489,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             } catch (Exception e) {
                 CoreLogger.error( e );
             }
-            req.removeAttribute(Cnst.CORE_ATTR);
+            req.removeAttribute(Core.class.getName());
             Core.THREAD_CORE.remove();
             Core.ACTION_TIME.remove();
             Core.ACTION_ZONE.remove();
@@ -534,7 +534,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @return
      */
     public static final Core getActualCore(HttpServletRequest req) {
-        Core core = (Core) req.getAttribute(Cnst.CORE_ATTR);
+       Core core  = (Core) req.getAttribute(Core.class.getName());
         if (core ==  null) {
             core  =  Core.GLOBAL_CORE ;
         } else {

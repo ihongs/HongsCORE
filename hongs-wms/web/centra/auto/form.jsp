@@ -118,7 +118,7 @@
                             if (size.length() != 0) {
                                 Pattern pat = Pattern.compile("\\d+\\*\\d+");
                                 Matcher mat = pat.matcher(size);
-                                if (mat.matches( )) {
+                                if (mat.find()) {
                                     size = mat.group( );
                                     // 限制最大宽度, 避免撑开容器
                                     String[ ] wh = size.split("\\*");

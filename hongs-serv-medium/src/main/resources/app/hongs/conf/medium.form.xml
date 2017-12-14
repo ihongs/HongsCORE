@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <form name="comment">
+        <field name="link">
+            <param name="conf">medium</param>
+            <param name="enum">comment_link</param>
+        </field>
+    </form>
+    <enum name="comment_link">
+        <value code="message">消息</value>
+        <value code="article">文章</value>
+    </enum>
+
+    <form name="dissent">
+        <field name="link">
+            <param name="conf">medium</param>
+            <param name="enum">dissent_link</param>
+        </field>
+        <field name="cause" type="enum">
+            <param name="conf">medium</param>
+            <param name="enum">dissent_cause</param>
+        </field>
+    </form>
+    <enum name="dissent_link">
+        <value code="article">文章</value>
+        <value code="comment">评论</value>
+    </enum>
+    <enum name="dissent_cause">
+        <value code="1">虚假信息</value>
+        <value code="2">敏感信息</value>
+        <value code="3">淫秽色情</value>
+        <value code="4">人身攻击</value>
+        <value code="*">其他</value>
+    </enum>
+
+    <form name="endorse">
+        <field name="link">
+            <param name="conf">medium</param>
+            <param name="enum">endorse_link</param>
+        </field>
+    </form>
+    <enum name="endorse_link">
+        <value code="article">文章</value>
+        <value code="comment">评论</value>
+    </enum>
+
+    <form name="impress">
+        <field name="link">
+            <param name="conf">medium</param>
+            <param name="enum">impress_link</param>
+        </field>
+    </form>
+    <enum name="impress_link">
+        <value code="article">文章</value>
+    </enum>
+
+    <form name="statist">
+        <field name="link">
+            <param name="conf">medium</param>
+            <param name="enum">statist_link</param>
+        </field>
+    </form>
+    <enum name="statist_link">
+        <value code="article">文章</value>
+    </enum>
+
+    <form name="suggest">
+        <field name="unit">
+            <param name="conf">medium</param>
+            <param name="enum">suggest_unit</param>
+        </field>
+    </form>
+    <enum name="suggest_unit">
+        <value code="message">消息</value>
+    </enum>
+</root>

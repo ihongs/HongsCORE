@@ -1,5 +1,6 @@
 package app.hongs.cmdlet.serv;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsError;
@@ -74,15 +75,15 @@ public class ServerCmdlet {
         server.setHandler    (webapp);
 
         // 外部配置
-        CoreConfig c = CoreConfig.getInstance("_init_");
+        CoreConfig c = CoreConfig.getInstance(Cnst.INIT_NAME);
         for(Map.Entry  t : c.entrySet( )) {
             String k = (String) t.getKey  ();
             String v = (String) t.getValue();
             if (k.startsWith("jetty.attr.")) {
-                webapp.setAttribute(k.substring(11), v);
+                webapp.setAttribute    ( k.substring(11), v );
             } else
             if (k.startsWith("jetty.init.")) {
-                webapp.setInitParameter(k.substring(11), v);
+                webapp.setInitParameter( k.substring(11), v );
             }
         }
 

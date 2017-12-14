@@ -146,7 +146,7 @@ String appsk  = conf.getProperty("bining.pay.weixin.appsk");
 float  price  = getPrice( billId );
 String nstr   = Core.newIdentity();
 String nurl   = "http://" + request.getServerName() + Core.BASE_HREF
-              + "/centre/data/dining/pay/weixin_notify.jsp";
+              + "/centre/data/dining/pay/weixin/update.act";
 String addr   = ActionDriver.getClientAddr(request);
 
 Map<String, String> inf = Synt.mapOf(
@@ -172,7 +172,7 @@ xml.put("attach"            , "");
 xml.put("body"              , "");
 
 String text   = getText(xml, appsk);
-String resp   = post(apiUrl, text );System.err.println(resp);
+String resp   = post(apiUrl, text );
 Map    rsp    = toMap(resp);
 
 ActionHelper helper = Core.getInstance(ActionHelper.class);

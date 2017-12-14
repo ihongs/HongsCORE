@@ -285,7 +285,7 @@ public class Data extends SearchEntity {
             nd.put("form_id", fid);
             nd.put("user_id", rd.get("user_id"));
             nd.put("name", dd.get("name"));
-            nd.put("note", rd.get("note"));
+            nd.put("memo", rd.get("memo"));
             nd.put("data", app.hongs.util.Data.toString(dd));
 
             table.update(ud, where, param);

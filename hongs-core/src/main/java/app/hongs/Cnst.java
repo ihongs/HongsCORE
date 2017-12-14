@@ -119,9 +119,11 @@ public final class Cnst {
 
     public static final String  ADM_GID =  "0";
 
-    //** 请求属性 **/
+    //** 启动配置 **/
 
-    public static final String CORE_ATTR = Core.class.getName();
+    public static final String INIT_NAME = "defines"; // 启动配置名称
+
+    //** 请求属性 **/
 
     public static final String DATA_ATTR = "__HONGS_DATA__"; // 请求数据
 

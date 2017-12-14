@@ -1,5 +1,6 @@
 package app.hongs.cmdlet;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
@@ -188,9 +189,10 @@ public class CmdletRunner
 
     /** 系统属性配置 **/
 
-    CoreConfig cnf = CoreConfig.getInstance( );
+    CoreConfig cnf;
+    cnf = CoreConfig.getInstance(/* default */ );
     Core.SERVER_ID = cnf.getProperty("core.server.id", "0");
-    cnf   = CoreConfig.getInstance( "_init_" );
+    cnf = CoreConfig.getInstance(Cnst.INIT_NAME);
 
     Map m = new HashMap();
     m.put("SERVER_ID", Core.SERVER_ID);

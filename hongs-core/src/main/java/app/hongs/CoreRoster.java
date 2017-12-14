@@ -76,8 +76,8 @@ public class CoreRoster {
             ACTIONS = new HashMap();
             CMDLETS = new HashMap();
             String[] pkgs = CoreConfig
-                    .getInstance(  "_init_"  )
-                    .getProperty("mount.serv")
+                    .getInstance(Cnst.INIT_NAME)
+                    .getProperty( "mount.serv" )
                     .split(";");
             addServ(ACTIONS, CMDLETS, pkgs);
         } finally {

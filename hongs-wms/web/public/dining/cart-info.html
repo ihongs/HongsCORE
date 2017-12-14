@@ -176,11 +176,16 @@
         function pay(url, bid) {
             $.get(hsFixUri(url + bid), function(rst) {
                 if (rst.ok) {
-                    location.href = rst.href;
-                } else
-                $.hsWarn(rst.msg, "erro", function() {
-                    location.href = hsFixUri("public/dining/bill/" + bid);
-                });
+                    if (rst.html) {
+                        document.innerHTML = rst.html;
+                    } else {
+                        location.href = rst.href;
+                    }
+                } else {
+                    $.hsWarn(rst.msg, "erro", function() {
+                        location.href = hsFixUri("public/dining/bill/" + bid);
+                    });
+                }
             });
         }
             

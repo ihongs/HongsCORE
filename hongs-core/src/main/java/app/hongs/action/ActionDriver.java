@@ -135,9 +135,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             m.put("DATA_PATH", Core.DATA_PATH);
 
             // 启动系统属性
-            for (Map.Entry et : cnf.entrySet( )) {
-                String k = (String)et.getKey(  );
-                String v = (String)et.getValue();
+            for(Map.Entry et : cnf.entrySet()) {
+                String k = (String) et.getKey  ();
+                String v = (String) et.getValue();
                 if (k.startsWith("envir.")) {
                     k = k.substring(6  );
                     v = Tool.inject(v,m);
@@ -147,9 +147,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             // 调试系统属性
-            for (Map.Entry et : cnf.entrySet()) {
-                String k = (String)et.getKey ( );
-                String v = (String)et.getValue();
+            for(Map.Entry et : cnf.entrySet()) {
+                String k = (String) et.getKey  ();
+                String v = (String) et.getValue();
                 if (k.startsWith("debug.")) {
                     k = k.substring(6  );
                     v = Tool.inject(v,m);

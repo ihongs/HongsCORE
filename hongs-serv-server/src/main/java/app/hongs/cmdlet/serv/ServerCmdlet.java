@@ -97,7 +97,7 @@ public class ServerCmdlet {
             if (k.startsWith("jetty.attr.")) {
                 webapp.setAttribute    ( k.substring(11), v );
             } else
-            if (k.startsWith("jetty.init.")) {
+            if (k.startsWith("jetty.para.")) {
                 webapp.setInitParameter( k.substring(11), v );
             }
         }

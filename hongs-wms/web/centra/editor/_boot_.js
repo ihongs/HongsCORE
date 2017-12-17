@@ -84,7 +84,6 @@ function setWriter(node, func) {
                   || $(this).data (  "type"  );
                 md = getModeByName( md ) || md;
             var cm = CodeMirror.fromTextArea(this, {
-                lineSeparator : "\r\n",
                 lineNumbers : true,
                 readOnly : ro,
                 mode : md

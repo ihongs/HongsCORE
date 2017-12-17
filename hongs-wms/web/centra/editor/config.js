@@ -28,11 +28,23 @@
             'indent', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
             'link', 'blockquote', 'inserttable', 'insertimage', 'insertvideo', 'attachment', '|',
             'removeformat', 'pasteplain', 'preview', 'print', '|',
-            'paragraph', 'insertcode'
+            'paragraph', 'fontsize', 'fontfamily'//, 'insertcode'
         ]]
         , shortcutMenu: [
             "bold", "italic", "underline", 'strikethrough',
             "forecolor", "backcolor", "insertorderedlist", "insertunorderedlist"
+        ]
+        ,'fontfamily':[
+            { label:'',name:'yahei',val:'微软雅黑,Microsoft YaHei'},
+            { label:'',name:'songti',val:'宋体,SimSun'},
+            { label:'',name:'kaiti',val:'楷体,SimKai'},
+            { label:'',name:'heiti',val:'黑体,SimHei'},
+            { label:'',name:'lishu',val:'隶书,SimLi'},
+            { label:'',name:'andaleMono',val:'andale mono'},
+            { label:'',name:'arial',val:'arial,helvetica,sans-serif'},
+            { label:'',name:'arialBlack',val:'arial black,avant garde'},
+            { label:'',name:'impact',val:'impact,chicago'},
+            { label:'',name:'timesNewRoman',val:'times new roman'}
         ]
         , insertcode: {
             'plain':'Plain Text',

@@ -136,6 +136,10 @@ function loadConf(modal, field) {
         } else {
                 $(this).val(field.find(name).text());
         }
+        
+        if ($(this).is("[name='textarea|data-type']")) {
+            $(this).change();
+        }
     });
 
     // 高级设置
@@ -591,6 +595,14 @@ $.fn.hsCols = function() {
                .each   (function( ) {
             setItemType(this, type);
         });
+    });
+    
+    modal.on("change", "[name='textarea|data-type']", function() {
+        var type = $(this).val();
+        $(this).closest(".form-group")
+               .next   (".form-group")
+               .toggle (type==="code")
+               .val    (type);
     });
 
     // 关联选项

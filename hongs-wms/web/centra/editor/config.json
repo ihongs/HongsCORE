@@ -1,7 +1,7 @@
 {
     "imageActionName": "uploadimage",
     "imageFieldName": "upfile",
-    "imagePathFormat": "/upload/medium/image/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
+    "imagePathFormat": "/static/upload/image/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
     "imageMaxSize": 2048000,
     "imageAllowFiles": [
         ".png", ".gif", ".bmp", ".jpg", ".jpeg"
@@ -12,7 +12,7 @@
 
     "videoActionName": "uploadvideo",
     "videoFieldName": "upfile",
-    "videoPathFormat": "/upload/medium/video/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
+    "videoPathFormat": "/static/upload/video/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
     "videoMaxSize": 102400000,
     "videoAllowFiles": [
         ".mp4", ".ogv", ".wmv", ".avi", ".flv", ".mov", ".mkv", ".mpg", ".mpeg", ".webm", ".rmvb", ".rm"
@@ -20,7 +20,7 @@
 
     "voiceActionName": "uploadvoice",
     "voiceFieldName": "upfile",
-    "voicePathFormat": "/upload/medium/voice/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
+    "voicePathFormat": "/static/upload/voice/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
     "voiceMaxSize": 102400000,
     "voiceAllowFiles": [
         ".mp3", ".ogg", ".wma", ".wav", ".mid", ".aac", ".ape", ".asf"
@@ -28,7 +28,7 @@
 
     "fileActionName": "uploadfile",
     "fileFieldName": "upfile",
-    "filePathFormat": "/upload/medium/file/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
+    "filePathFormat": "/static/upload/file/{yyyy}{mm}{dd}/{yyyy}-{mm}-{dd}_{hh}:{ii}:{ss}_{rand:6}",
     "fileMaxSize": 102400000,
     "fileAllowFiles": [
         ".png", ".gif", ".bmp", ".jpg", ".jpeg",
@@ -39,7 +39,7 @@
     ],
 
     "imageManagerActionName": "listimage",
-    "imageManagerListPath": "/upload/medium/image/",
+    "imageManagerListPath": "/static/upload/image/",
     "imageManagerListSize": 20,
     "imageManagerAllowFiles": [
         ".png", ".gif", ".bmp", ".jpg", ".jpeg"
@@ -47,21 +47,21 @@
     "imageManagerInsertAlign": "none",
 
     "videoManagerActionName": "listvideo",
-    "videoManagerListPath": "/upload/medium/video/",
+    "videoManagerListPath": "/static/upload/video/",
     "videoManagerListSize": 10,
     "videoManagerAllowFiles": [
         ".mp4", ".ogv", ".wmv", ".avi", ".flv", ".mov", ".mkv", ".mpg", ".mpeg", ".webm", ".rmvb", ".rm"
     ],
 
     "voiceManagerActionName": "listvoice",
-    "voiceManagerListPath": "/upload/medium/voice/",
+    "voiceManagerListPath": "/static/upload/voice/",
     "voiceManagerListSize": 30,
     "voiceManagerAllowFiles": [
         ".mp3", ".ogg", ".wma", ".wav", ".mid", ".aac", ".ape", ".asf"
     ],
 
     "fileManagerActionName": "listfile",
-    "fileManagerListPath": "/upload/medium/",
+    "fileManagerListPath": "/static/upload/",
     "fileManagerListSize": 20,
     "fileManagerAllowFiles": [
         ".png", ".gif", ".bmp", ".jpg", ".jpeg",

@@ -56,7 +56,20 @@
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
                 <%if ("textarea".equals(type)) {%>
-                    <textarea class="form-control" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%>></textarea>
+                    <%
+                        String typa = (String) info.get("type");
+                        String mode = (String) info.get("mode");
+                        if (null != typa &&!"".equals(typa)) {
+                            rqrd += " data-type=\"" + typa + "\"";
+                        if (null != mode &&!"".equals(mode)) {
+                            rqrd += " data-mode=\"" + mode + "\"";
+                        }
+                            rqrd += " style=\"width:100%; height:15em; border:0;\"";
+                        } else {
+                            rqrd += " class=\"form-control\" style=\"height:5em;\"";
+                        }
+                    %>
+                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%>></textarea>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
                     <%
                         String extr = "";
@@ -198,6 +211,40 @@
         if (window["<%=_funcId%>"]) {
             window["<%=_funcId%>"](context, formobj);
         }
+
+        // 特殊控件
+        context.on("loadOver", function(evt, rst) {
+            var editor = context.find("textarea[data-type=html]");
+            var writer = context.find("textarea[data-type=code]");
+            writer.wrap('<div style="border:1px #ccc solid;"></div>');
+            if (editor.size() || writer.size()) {
+                hsRequires([
+                    "centra/editor/_boot_.js"
+                ], function() {
+                    if (editor.size()) {
+                        setEditor(editor);
+                    }
+                    if (writer.size()) {
+                        setWriter(writer);
+                    }
+                });
+            }
+        });
+        context.on("willSave", function(evt, dat) {
+            if (self.synEditor) {
+                synEditor(context.find("textarea[data-type]"));
+                // 将同步后的结果加入到待保存数据
+                if (dat)
+                context.find("textarea[data-type]").each(function() {
+                    dat.set ($(this).attr( "name" ), $(this).val());
+                });
+            }
+        });
+        loadbox.on("hsClose" , function(evt /**/) {
+            if (self.desEditor) {
+                desEditor(context.find("textarea[data-type]"));
+            }
+        });
 
         // 加载数据
         formobj.load(null, loadbox);

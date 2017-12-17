@@ -34,7 +34,7 @@
             if (Synt.declare(info.get("__repeated__"), false)) {
                 name += ".";
             }
-            
+
             if ("date".equals(type)) {
                 kind = "_date";
             } else
@@ -46,6 +46,19 @@
             } else
             {
                 kind = "_review";
+            }
+
+            // 文本域可能被应用上富文本、源代码等
+            if ("textarea".equals(type)) {
+                String typa = (String) info.get("type");
+                String mode = (String) info.get("mode");
+                if ("html".equals(typa)) {
+                    kind = "_html";
+                } else
+                if ("code".equals(typa)) {
+                    type =  "code";
+                    kind = "_code\" data-type=\""+typa+"\" data-mode=\""+mode;
+                }
             }
         %>
         <%if ("hidden".equals(type)) {%>
@@ -117,6 +130,13 @@
                     <button type="button" data-toggle="hsFork" class="hide"></button>
                 </div>
             </div>
+        <%} else if ("code".equals(type)) {%>
+            <div class="form-group row">
+                <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
+                <div class="col-sm-6">
+                    <textarea  data-fn="<%=name%>" data-ft="<%=kind%>"></textarea>
+                </div>
+            </div>
         <%} else {%>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
@@ -150,6 +170,25 @@
         if (window["<%=_funcId%>"]) {
             window["<%=_funcId%>"](context, formobj);
         }
+
+        // 特殊控件
+        context.on("loadOver", function() {
+            var reader = context.find("[data-type=code]");
+            if (reader.size()) {
+                hsRequires([
+                    "centra/editor/_boot_.js"
+                ], function() {
+                    reader.attr( "readonly", "readonly" )
+                          .css ( "height"  , "0"        );
+                    setWriter(reader);
+                });
+            }
+        });
+        loadbox.on("hsClose" , function() {
+            if (self.desEditor) {
+                desEditor(context.find("[data-type=code]"));
+            }
+        });
 
         // 加载数据
         formobj.load(null, loadbox);

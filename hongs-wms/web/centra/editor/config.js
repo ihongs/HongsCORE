@@ -29,7 +29,6 @@
             'link', 'blockquote', 'inserttable', 'insertimage', 'insertvideo', 'attachment', '|',
             'removeformat', 'pasteplain', 'preview', 'print', '|',
             'paragraph', 'insertcode'
-
         ]]
         , shortcutMenu: [
             "bold", "italic", "underline", 'strikethrough',

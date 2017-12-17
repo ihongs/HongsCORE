@@ -22,14 +22,12 @@
         , initialFrameWidth: '100%'
         , initialStyle  : "body{margin:10px 18px;font-size:15px;font-family:'Open Sans','Helvetica Neue',Helvetica,Arial,STHeiti,'Microsoft Yahei',sans-serif;}"
         , toolbars: [[
-            'source', 'fullscreen',
-            'bold', 'italic', 'underline', 'strikethrough',
-            'forecolor', 'backcolor', 'insertorderedlist', 'insertunorderedlist',
-            'lineheight', 'rowspacingtop', 'rowspacingbottom',
-            'indent', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify',
-            'link', 'blockquote', 'inserttable',
-            'insertimage', '', 'insertvideo', 'attachment',
-            'removeformat', 'pasteplain', 'preview', 'print',
+            'source', 'fullscreen', '|',
+            'bold', 'italic', 'underline', 'strikethrough', 'forecolor', 'backcolor', '|',
+            'insertorderedlist', 'insertunorderedlist', 'lineheight', 'rowspacingtop', 'rowspacingbottom',
+            'indent', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
+            'link', 'blockquote', 'inserttable', 'insertimage', 'insertvideo', 'attachment', '|',
+            'removeformat', 'pasteplain', 'preview', 'print', '|',
             'paragraph', 'insertcode'
 
         ]]

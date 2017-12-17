@@ -11,6 +11,7 @@ var EXTN_TO_MODE = {
     groovy      : "groovy",
     md          : "markdown",
     protobuf    : "protobuf",
+    json        : "javascript",
     js          : "javascript",
     ls          : "livescript",
     properties  : "properties",

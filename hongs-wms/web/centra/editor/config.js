@@ -3,7 +3,7 @@
 
     window.UEDITOR_CONFIG = {
         UEDITOR_HOME_URL: URL
-        , serverUrl     : HsCONF.BASE_HREF + "/centra/data/docket/ueditor/upload.jsp"
+        , serverUrl     : HsCONF.BASE_HREF + "/centra/editor/upload.jsp"
         , iframeCssUrl  : HsCONF.BASE_HREF + "/static/assets/css/bootstrap.min.css"
         , imageUrlPrefix: HsCONF.BASE_HREF
         , videoUrlPrefix: HsCONF.BASE_HREF

@@ -439,6 +439,28 @@
                 <input class="form-control" type="text" name="textarea|placeholder" value=""/>
             </div>
             <div class="form-group">
+                <label class="control-label">类型</label>
+                <select class="form-control" name="textarea|data-type">
+                    <option value="">文本</option>
+                    <option value="html">富文本</option>
+                    <option value="code">源代码</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">格式</label>
+                <select class="form-control" name="textarea|data-mode">
+                    <option value="html">html</option>
+                    <option value="css">css</option>
+                    <option value="js">js</option>
+                    <option value="py">py</option>
+                    <option value="sh">sh</option>
+                    <option value="md">md</option>
+                    <option value="lua">lua</option>
+                    <option value="sql">sql</option>
+                    <option value="xml">xml</option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label class="control-label">长度范围</label>
                 <div class="control-group">
                     <input class="form-control" type="number" name="textarea|minlength" value="" style="display: inline-block; width: 8em;"/>

@@ -130,9 +130,8 @@ CREATE INDEX `IK_a_medium_statist_ctime` ON `a_medium_statist` (`ctime`);
 CREATE INDEX `IK_a_medium_statist_mtime` ON `a_medium_statist` (`mtime`);
 CREATE INDEX `IK_a_medium_statist_comment_count` ON `a_medium_statist` (`comment_count`);
 CREATE INDEX `IK_a_medium_statist_dissent_count` ON `a_medium_statist` (`dissent_count`);
-CREATE INDEX `IK_a_medium_statist_endorse_count` ON `a_medium_statist` (`endorse_count`);
-CREATE INDEX `IK_a_medium_statist_undorse_count` ON `a_medium_statist` (`undorse_count`);
 CREATE INDEX `IK_a_medium_statist_impress_count` ON `a_medium_statist` (`impress_count`);
+CREATE INDEX `IK_a_medium_statist_endorse_count` ON `a_medium_statist` (`endorse_count`);
 CREATE INDEX `IK_a_medium_statist_endorse_score` ON `a_medium_statist` (`endorse_score`);
 CREATE UNIQUE INDEX `UK_a_medium_statist_link` ON `a_medium_statist` (`link`,`link_id`);
 

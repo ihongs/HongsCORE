@@ -28,7 +28,7 @@ function HsList (context , opts) {
     this.pagsNum = hsGetValue(opts, "pagsKey", "");
 
     // 逐层解析分页数量
-    var arr = hsSerialMix(loadUrl, loadBox);
+    var arr = hsMixSerias(loadUrl, loadBox);
     this.rowsNum = hsGetSeria(arr, this.rowsKey);
     this.pagsNum = hsGetSeria(arr, this.pagsKey) || this.pagsNum;
     if (this.rowsNum == "") {
@@ -183,7 +183,7 @@ function HsList (context , opts) {
 
     if (loadUrl) {
         loadUrl = hsFixPms   (loadUrl, loadBox);
-        loadDat = hsSerialMix(loadDat, findBox);
+        loadDat = hsMixSerias(loadDat, findBox);
         this.load(/*current*/ loadUrl, loadDat);
     }
 }

@@ -39,8 +39,9 @@ function HsTree (context , opts) {
     this.context = context;
     this.loadBox = loadBox;
     this.treeBox = treeBox;
-    this._url  = "";
     this._pid  = "";
+    this._url  = "";
+    this._data = [];
 
     if (opts) for ( var k in opts ) {
         if ('_'===k.substring(0, 1)
@@ -213,7 +214,7 @@ function HsTree (context , opts) {
 
     if (loadUrl) {
         loadUrl = hsFixPms   (loadUrl, loadBox);
-        loadDat = hsSerialMix(loadDat, findBox);
+        loadDat = hsMixSerias(loadDat, findBox);
         this.load(rootInfo.id,loadUrl, findBox);
     }
 }

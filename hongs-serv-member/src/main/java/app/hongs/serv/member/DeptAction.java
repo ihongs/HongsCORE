@@ -9,6 +9,7 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.db.DB;
 import app.hongs.db.util.FetchCase;
+import app.hongs.serv.auth.RoleMap;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.util.HashMap;
@@ -56,8 +57,8 @@ public class DeptAction {
         // With all roles
         if (wr != null && wr.length() != 0) {
             List rs = !Cnst.ADM_UID.equals(ud) ?
-                    NaviMap.getInstance(wr).getRoleTranslated(0, 0):
-                    NaviMap.getInstance(wr).getRoleTranslated(0, 0, null);
+                new RoleMap(NaviMap.getInstance(wr)).getRoleTranslated():
+                new RoleMap(NaviMap.getInstance(wr)).getRoleTranslates();
             Dict.put(rd, rs, "enum", "roles..role");
         }
 

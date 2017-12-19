@@ -96,19 +96,19 @@ public class NaviMap
   private final String name;
 
   /**
-   * 页面路径信息
+   * 菜单层级信息
    */
-  public Map<String, List> paths;
+  public Map<String, Map> menus;
 
   /**
-   * 页面层级信息
+   * 菜单检索信息
    */
-  public Map<String, Map > menus;
+  public Map<String, Map> manus;
 
   /**
    * 全部分组信息
    */
-  public Map<String, Map > roles;
+  public Map<String, Map> roles;
 
   /**
    * 全部动作
@@ -221,16 +221,16 @@ public class NaviMap
       throw new HongsException(0x10e1, "Parse '"+name+Cnst.NAVI_EXT+".xml error'", ex);
     }
 
-    this.paths = new HashMap();
     this.menus = new LinkedHashMap();
-    this.roles = new LinkedHashMap();
+    this.manus = new HashMap();
+    this.roles = new HashMap();
     this.actions = new HashSet();
     this.imports = new HashSet();
 
-    this.parse(root, this.paths, this.menus, this.roles, this.imports, this.actions, new HashSet(), new ArrayList());
+    this.parse(root, this.menus, this.manus, this.roles, this.imports, this.actions, new HashSet());
   }
 
-  private void parse(Element element, Map paths, Map menus, Map roles, Set imports, Set actions, Set depends, List path)
+  private void parse(Element element, Map menus, Map manus, Map roles, Set imports, Set actions, Set depends)
     throws HongsException
   {
     if (!element.hasChildNodes())
@@ -251,7 +251,7 @@ public class NaviMap
       Element element2 = (Element)node;
       String  tagName2 = element2.getTagName();
 
-      if (path == null
+      if (imports == null
       && !"action".equals(tagName2)
       && !"depend".equals(tagName2)
       )
@@ -266,6 +266,7 @@ public class NaviMap
         String href = element2.getAttribute("href");
         if (href == null) href = "";
         menus.put(href , menu2);
+        manus.put(href , menu2);
 
         String hrel = element2.getAttribute("hrel");
         if (hrel == null) hrel = "";
@@ -279,15 +280,11 @@ public class NaviMap
         if (text == null) text = "";
         menu2.put("text", text );
 
-        List path2 = new ArrayList(path);
-        path2.add(menu2);
-        paths.put(href, path2);
-
         Map menus2 = new LinkedHashMap();
         Set roles2 = new LinkedHashSet();
 
         // 获取下级页面和权限
-        this.parse(element2, paths, menus2, roles, imports, actions, roles2, path2);
+        this.parse(element2, menus2, manus, roles, imports, actions, roles2);
 
         if (!menus2.isEmpty())
         {
@@ -315,7 +312,7 @@ public class NaviMap
         Set depends2 = new HashSet();
 
         // 获取下级动作和依赖
-        this.parse(element2, null, null, null, null, actions2, depends2, null);
+        this.parse(element2, null, null, null, null, actions2, depends2);
 
         if (!actions2.isEmpty())
         {
@@ -355,7 +352,7 @@ public class NaviMap
           actions.addAll(conf.actions);
           roles.putAll(conf.roles);
           menus.putAll(conf.menus);
-          paths.putAll(conf.paths);
+          manus.putAll(conf.manus);
         }
         catch (HongsException ex )
         {
@@ -394,10 +391,7 @@ public class NaviMap
    */
   public Map getMenu(String name)
   {
-    List path  = this.paths.get(name);
-    if ( path == null) return null;
-    int  last  = path.size() - 1;
-    return (Map) path.get (last);
+    return this.manus.get ( name);
   }
 
   /**
@@ -599,80 +593,76 @@ public class NaviMap
     return lang;
   }
 
+  /**
+   * 获取全部角色
+   * @return 
+   */
   public List<Map> getRoleTranslates() {
-      return getRoleTranslates(0, 0);
+      return getRoleTranslated(0, null);
   }
 
+  public List<Map> getRoleTranslates(int d) {
+      return getRoleTranslated(d, null);
+  }
+
+  /**
+   * 获取当前用户有权的角色
+   * @return
+   * @throws HongsException 
+   */
   public List<Map> getRoleTranslated()
   throws HongsException {
-      return getRoleTranslated(0, 0);
-  }
-
-  public List<Map> getRoleTranslated(Set<String> rolez) {
-      return getRoleTranslated(0, 0, rolez);
-  }
-
-  /**
-   * 获取权限列表(与当前权限无关)
-   * @param index
-   * @param depth
-   * @return
-   */
-  public List<Map> getRoleTranslates(int index, int depth)  {
-      return getRoleTranslated(index, depth, null );
-  }
-
-  /**
-   * 获取权限列表(与当前权限有关)
-   * @param index
-   * @param depth
-   * @return
-   * @throws app.hongs.HongsException
-   */
-  public List<Map> getRoleTranslated(int index, int depth)
-  throws HongsException {
-      Set<String> rolez = getRoleSet();
-      if (null == rolez) rolez = new HashSet();
-      return getRoleTranslated(index, depth, rolez);
-  }
-
-  /**
-   * 获取权限列表(与指定权限有关)
-   * @param index
-   * @param depth
-   * @param rolez 指定权限
-   * @return
-   */
-  public List<Map> getRoleTranslated(int index, int depth, Set<String> rolez) {
-      Map menuz = menus;
-      if (  0  != index) {
-          List <Map> menux = new ArrayList(menus.values( ) );
-          if (menux.isEmpty()) {
-              return menux ;
-          }
-          menuz = (Map) (menux.get(index - 1)).get("menus" );
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
       }
+      return getRoleTranslated(0, rolez);
+  }
+
+  public List<Map> getRoleTranslated(int d)
+  throws HongsException {
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
+      }
+      return getRoleTranslated(d, rolez);
+  }
+
+  public List<Map> getRoleTranslated(int d, Set<String> rolez) {
       CoreLocale lang = getCurrTranslator();
-      return getRoleTranslated(menuz, rolez, lang, depth, 0);
+      return getRoleTranslated(menus, rolez, lang, d, 0);
   }
 
-  public List<Map> getRoleTranslates(String name, int depth) {
-      return getRoleTranslated(name, depth, null);
+  public List<Map> getRoleTranslates(String name) {
+      return getRoleTranslated(name, 0, null);
   }
 
-  public List<Map> getRoleTranslated(String name, int depth)
+  public List<Map> getRoleTranslates(String name, int d) {
+      return getRoleTranslated(name, d, null);
+  }
+
+  public List<Map> getRoleTranslated(String name)
   throws HongsException {
-      Set role =   getRoleSet();
-      if (role == null) {
-          role =  new HashSet();
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
       }
-      return getRoleTranslated(name, depth, role);
+      return getRoleTranslated(name, 0, rolez);
   }
 
-  public List<Map> getRoleTranslated(String name, int depth, Set<String> rolez) {
-      CoreLocale lang= getCurrTranslator();
+  public List<Map> getRoleTranslated(String name, int d)
+  throws HongsException {
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
+      }
+      return getRoleTranslated(name, d, rolez);
+  }
+
+  public List<Map> getRoleTranslated(String name, int d, Set<String> rolez) {
+      CoreLocale lang= getCurrTranslator( /***/ );
       Map menu = (Map) getMenu(name).get("menus");
-      return getRoleTranslated(menu, rolez, lang, depth, 0);
+      return getRoleTranslated(menu, rolez, lang, d, 0);
   }
 
   protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
@@ -741,83 +731,76 @@ public class NaviMap
       return list;
   }
 
-  public List<Map> getMenuTranslates()
-  throws HongsException {
-      return getMenuTranslates(1, 1);
+  /**
+   * 获取全部菜单
+   * @return 
+   */
+  public List<Map> getMenuTranslates() {
+      return getMenuTranslated(1, null );
   }
 
+  public List<Map> getMenuTranslates(int d) {
+      return getMenuTranslated(d, null );
+  }
+
+  /**
+   * 获取当前用户有权的菜单
+   * @return
+   * @throws HongsException 
+   */
   public List<Map> getMenuTranslated()
   throws HongsException {
-      return getMenuTranslated(1, 1);
-  }
-
-  public List<Map> getMenuTranslated(Set<String> rolez) {
-      return getMenuTranslated(1, 1, rolez);
-  }
-
-  /**
-   * 获取菜单列表(与当前请求无关)
-   * @param index
-   * @param depth
-   * @return
-   * @throws app.hongs.HongsException
-   */
-  public List<Map> getMenuTranslates(int index, int depth)
-  throws HongsException {
-      return getMenuTranslated(index, depth, null );
-  }
-
-  /**
-   * 获取菜单列表(与当前请求相关)
-   * @param index
-   * @param depth
-   * @return
-   * @throws app.hongs.HongsException
-   */
-  public List<Map> getMenuTranslated(int index, int depth)
-  throws HongsException {
-      Set<String> rolez = getRoleSet();
-      if (null == rolez)  rolez = new HashSet(/**/);
-      return getMenuTranslated(index, depth, rolez);
-  }
-
-  /**
-   * 获取菜单列表(与当前请求相关)
-   * @param index
-   * @param depth
-   * @param rolez
-   * @return
-   */
-  public List<Map> getMenuTranslated(int index, int depth, Set<String> rolez) {
-      Map menuz = menus;
-      if (  0  != index) {
-          List <Map> menux = new ArrayList(menus.values( ) );
-          if (menux.isEmpty()) {
-              return menux ;
-          }
-          menuz = (Map) (menux.get(index - 1)).get("menus" );
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
       }
+      return getMenuTranslated(1, rolez);
+  }
+
+  public List<Map> getMenuTranslated(int d)
+  throws HongsException {
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
+      }
+      return getMenuTranslated(d, rolez);
+  }
+
+  public List<Map> getMenuTranslated(int depth, Set<String> rolez) {
       CoreLocale lang = getCurrTranslator();
-      return getMenuTranslated(menuz, rolez, lang, depth, 0);
+      return getMenuTranslated(menus, rolez, lang, depth, 0);
   }
 
-  public List<Map> getMenuTranslates(String name, int depth) {
-      return getMenuTranslated(name, depth, null);
+  public List<Map> getMenuTranslates(String name) {
+      return getMenuTranslated(name, 1, null);
   }
 
-  public List<Map> getMenuTranslated(String name, int depth)
+  public List<Map> getMenuTranslates(String name, int d) {
+      return getMenuTranslated(name, d, null);
+  }
+
+  public List<Map> getMenuTranslated(String name)
   throws HongsException {
-      Set role =  getRoleSet();
-      if (role == null) {
-          role = new HashSet();
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
       }
-      return getMenuTranslated(name, depth, role);
+      return getMenuTranslated(name, 1, rolez);
   }
 
-  public List<Map> getMenuTranslated(String name, int depth, Set<String> rolez) {
-      CoreLocale lang= getCurrTranslator();
+  public List<Map> getMenuTranslated(String name, int d)
+  throws HongsException {
+      Set rolez =   getRoleSet();
+      if (rolez == null) {
+          rolez =  new HashSet();
+      }
+      return getMenuTranslated(name, d, rolez);
+  }
+
+  public List<Map> getMenuTranslated(String name, int d, Set<String> rolez) {
+      CoreLocale lang= getCurrTranslator( /***/ );
       Map menu = (Map) getMenu(name).get("menus");
-      return getMenuTranslated(menu, rolez, lang, depth, 0);
+      return getMenuTranslated(menu, rolez, lang, d, 0);
   }
 
   protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {

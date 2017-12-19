@@ -382,10 +382,11 @@ public class Data extends SearchEntity {
         if (null != wdCols) {
             return  wdCols;
         }
-        if (Dict.getValue(getFields(), true, "find", "editable")) {
-            wdCols = Synt.setOf  (  "find"  );
+        Map fs = (Map) getFields().get("find");
+        if (fs != null && Synt.declare(fs.get("editable"), true)) {
+            wdCols =  Synt.setOf  (  "find"  );
         } else {
-            wdCols = getCaseNames("findable");
+            wdCols =  getCaseNames("findable");
             wdCols.remove("find");
         }
         return wdCols;
@@ -395,10 +396,11 @@ public class Data extends SearchEntity {
         if (null != nmCols) {
             return  nmCols;
         }
-        if (Dict.getValue(getFields(), true, "name", "editable")) {
-            nmCols = Synt.setOf  (  "name"  );
+        Map fs = (Map) getFields().get("name");
+        if (fs != null && Synt.declare(fs.get("editable"), true)) {
+            nmCols =  Synt.setOf  (  "name"  );
         } else {
-            nmCols = getCaseNames("nameable");
+            nmCols =  getCaseNames("nameable");
             nmCols.remove("name");
         }
         return nmCols;

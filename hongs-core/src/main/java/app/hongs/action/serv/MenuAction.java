@@ -25,7 +25,7 @@ import java.util.Map;
 public class MenuAction {
 
     private static final String MENU_ACT_URI = "common/menu" + Cnst.ACT_EXT;
-    
+
     @Action("__main__")
     public void menu(ActionHelper helper)
     throws HongsException {
@@ -77,30 +77,26 @@ public class MenuAction {
     throws HongsException {
         String m = helper.getParameter("m");
         String n = helper.getParameter("n");
-        String level = helper.getParameter("l");
-        String depth = helper.getParameter("d");
+        String d = helper.getParameter("d");
+        List   l;
+        int    b;
 
-        int l, d;
-        if (m  == null || m .length() == 0) {
+        if (m == null || m.length() == 0) {
             m  = "default";
         }
-        if (level == null || level.length() == 0) {
-            l = 1;
+        if (d != null && d.length() != 0) {
+            b  = Integer.parseInt(d);
         } else {
-            l = Integer.parseInt(level);
+            b  = 1;
         }
-        if (depth == null || depth.length() == 0) {
-            d = 1;
+        if (n != null && n.length() != 0) {
+            l  = NaviMap.getInstance(m).getMenuTranslated(n, b);
         } else {
-            d = Integer.parseInt(depth);
+            l  = NaviMap.getInstance(m).getMenuTranslated(   b);
         }
-
-        List list = n != null && n.length() != 0
-                  ? NaviMap.getInstance(m).getMenuTranslated(n, d)
-                  : NaviMap.getInstance(m).getMenuTranslated(l, d);
 
         Map data = new HashMap();
-        data.put( "list", list );
+        data.put( "list", l );
         helper.reply(data);
     }
 

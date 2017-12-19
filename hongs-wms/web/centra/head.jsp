@@ -65,7 +65,7 @@
     ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
 
     NaviMap curr = NaviMap.getInstance("centra");
-    List    menu = curr.getMenuTranslated(1 , 2);
+    List    menu = curr.getMenuTranslated("common/menu.act?m=centra", 2);
 
     String  acti = helper.getParameter("active");
     String  name = (String) helper.getSessibute("uname");

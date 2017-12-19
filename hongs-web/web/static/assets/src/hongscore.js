@@ -342,7 +342,7 @@ function hsSerialArr(obj) {
         case "serdic":
             hsForEach(obj, function(vxl, key) {
                 if (key.length > 0) {
-                    key = /*1st*/key[0];
+                    key = key     [ 0 ];
                     arr.push({name: key, value: vxl});
                 }
             });
@@ -378,14 +378,14 @@ function hsSerialArr(obj) {
                 var dat = obj.data("data");
                 pos = url.indexOf("?");
                 if (pos != -1) {
-                    arr = hsSerialMix(arr, url.substring(pos+1));
+                    arr = hsMixSerias(arr, url.substring(pos+1));
                 }
                 pos = url.indexOf("#");
                 if (pos != -1) {
-                    arr = hsSerialMix(arr, url.substring(pos+1));
+                    arr = hsMixSerias(arr, url.substring(pos+1));
                 }
                 if (dat) {
-                    arr = hsSerialMix(arr, dat);
+                    arr = hsMixSerias(arr, dat);
                 }
             } else {
                 arr = jQuery(obj).serializeArray();
@@ -401,29 +401,16 @@ function hsSerialArr(obj) {
 }
 
 /**
- * 序列化为字典, 供快速地查找(直接使用object-key获取数据)
+ * 序列化为字典, 供快速地查找(直接使用Object-Key获取数据)
  * @param {Array|String|Object|Element|FormData} obj
  * @return {Object}
  */
 function hsSerialDic(obj) {
-    var reg = /(\[\]|\.\.|\.$)/;
     var arr = hsSerialArr(obj);
     obj = new HsSerialDic(   );
-    for(var i = 0 ; i < arr.length ; i ++) {
-        var k = arr[i].name ;
-        var v = arr[i].value;
-        if (k.length == 0) continue;
-//      k = k.replace(/\]\[/g, ".")
-//           .replace(/\[/   , ".")
-//           .replace(/\]/   , "" );
-        if (reg.test( k )) { // a.b. a..b a[]b a[] 都是数组
-            if (obj[k]===undefined) {
-                obj[k]=[ ];
-            }
-            obj[k].push(v);
-        } else {
-            obj[k]    = v ;
-        }
+    for(var i = 0; i < arr.length; i ++) {
+        var keys = _hsGetDkeys(arr[i].name );
+        _hsSetPoint(obj, keys, arr[i].value);
     }
     return  obj;
 }
@@ -437,9 +424,40 @@ function hsSerialDat(obj) {
     var arr = hsSerialArr(obj);
     obj = new HsSerialDat(   );
     for(var i = 0; i < arr.length; i ++) {
-        hsSetValue(obj, arr[i].name, arr[i].value);
+        var keys = _hsGetPkeys(arr[i].name );
+        _hsSetPoint(obj, keys, arr[i].value);
     }
     return obj;
+}
+
+/**
+ * 兼容 FormData
+ * 将表单转为类似 FormData 的数组结构
+ * 使其可执行类似 FormData 的常规操作
+ * @param {Array|String|Object|Element} data
+ * @return {Array}
+ */
+function hsAsFormData (data) {
+    data = hsSerialArr(data);
+    data["append"] = function(name, value) {
+        data.push( { name: name, value: value } );
+    };
+    data["set"   ] = function(name, value) {
+        hsSetSeria ( data, name, value );
+    };
+    data["delete"] = function(name) {
+        hsSetSerias( data, name, [] );
+    };
+    data["get"   ] = function(name) {
+        return hsGetSeria (name);
+    };
+    data["getAll"] = function(name) {
+        return hsGetSerias(name);
+    };
+    data["has"   ] = function(name) {
+        return hsGetSerias(name).length > 0;
+    };
+    return data;
 }
 
 /**
@@ -450,9 +468,9 @@ function hsSerialDat(obj) {
  * @param {Array|String|Object|Element|FormData} arr1, arr2, arr3...
  * @returns {Array}
  */
-function hsSerialMix() {
+function hsMixSerias() {
     if (arguments.length < 2) {
-        throw "hsSerialMix: No less than two arguments";
+        throw "hsMixSerias: No less than two arguments";
     }
         var aro = hsSerialDic(arguments[0]);
     for(var x = 1; x < arguments.length; x ++) {
@@ -675,6 +693,14 @@ function _hsGetDapth(lst, keys, def, pos) {
         return col;
     } else {
         return def;
+    }
+}
+
+function _hsGetDkeys(path) {
+    if (/(\[\]|\.\.|\.$)/.test(path)) {
+        return [path , null];
+    } else {
+        return [path];
     }
 }
 
@@ -1929,12 +1955,11 @@ $.fn.hsInit = function(cnf) {
         for(var k in cnf) {
             var v =  cnf[k];
             switch (k) {
-                case "modal":
-                    v = "modal-" + v ;
-                    a.find(".modal-dialog").addClass(v);
-                    break;
                 case "title":
-                    a.find(".modal-title" ).text/**/(v);
+                    a.find(".modal-title" ).text( v );
+                    break;
+                case "modal":
+                    a.find(".modal-dialog").addClass("modal-" + v);
                     break;
             }
         }

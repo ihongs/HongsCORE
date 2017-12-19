@@ -1039,36 +1039,6 @@ HsForm.prototype = {
     }
 };
 
-/**
- * 兼容 FormData
- * 将表单转为类似 FormData 的数组结构
- * 使其可执行类似 FormData 的常规操作
- * @param {Array|String|Object|Element} data
- * @return {Array}
- */
-function hsAsFormData (data) {
-    data = hsSerialArr(data);
-    data["append"] = function(name, value) {
-        data.push( { name: name, value: value } );
-    };
-    data["set"   ] = function(name, value) {
-        hsSetSeria ( data, name, value );
-    };
-    data["delete"] = function(name) {
-        hsSetSerias( data, name, [] );
-    };
-    data["get"   ] = function(name) {
-        return hsGetSeria (name);
-    };
-    data["getAll"] = function(name) {
-        return hsGetSerias(name);
-    };
-    data["has"   ] = function(name) {
-        return hsGetSerias(name).length > 0;
-    };
-    return data;
-}
-
 jQuery.fn.hsForm = function(opts) {
     return this._hsModule(HsForm, opts);
 };

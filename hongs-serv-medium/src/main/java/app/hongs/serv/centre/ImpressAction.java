@@ -93,10 +93,10 @@ public class ImpressAction extends DBAction {
             req.put("sess_id", null);
         }
         if ("delete".equals(opr)) {
-            req.put(Cnst.WR_KEY, Synt.mapOf(
+            req.put(Cnst.AR_KEY, Synt.mapOf("", Synt.mapOf(
                 "user_id" , uid,
                 "state"   , 1
-            ));
+            )));
         }
         return req;
     }

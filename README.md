@@ -200,15 +200,17 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 有一些参数名具有特定意义, 如:
 
+     id     主键值
+     wd     关键词
      pn     当前页码(page num)
      gn     分组数量(pags num)
      rn     额定行数(rows num)
-     wd     搜索字词(word)
+     cb     响应回调(callback)
      ob     排序字段(order by)
-     rb     响应字段(reply by)
-     ab     应用处理(apply by)
-     or     或查询(or)
-     ar     多组或(and or)
+     rb     响应字段(reply with)
+     ab     应用处理(apply with)
+     or     或查询  (or)
+     ar     多组或  (and)
 
 请避免将这些参数作为字段名.
 

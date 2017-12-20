@@ -227,18 +227,15 @@ implements IEntity
         ids.add   ( idz.toString());
     }
 
-    Map dat = new HashMap(rd);
+    Map dat = new HashMap( rd );
     dat.remove(this.table.primaryKey);
 
     // 检查是否可更新
-    FetchCase fc = caze != null ? caze.clone() : fetchCase ( );
-    Map wh = Synt.declare( rd.get(Cnst.WR_KEY), new HashMap());
-        fc.setOption("MODEL_METHOD", "update");
-        wh.put (this.table.primaryKey, ids);
-    this.filter(fc , wh );
-    if (this.table.fetchLess(fc).isEmpty()) {
-        throw new HongsException(0x1097, "Can not update for ids: "+ids);
-    }
+    FetchCase fc = caze != null
+                 ? caze.clone()
+                 : fetchCase ();
+    fc.setOption("MODEL_METHOD","update");
+    permit(fc , rd , ids);
 
     for (String id : ids)
     {
@@ -288,15 +285,12 @@ implements IEntity
         ids.add   ( idz.toString());
     }
 
-    // 检查是否可删除
-    FetchCase fc = caze != null ? caze.clone() : fetchCase ( );
-    Map wh = Synt.declare( rd.get(Cnst.WR_KEY), new HashMap());
-        fc.setOption("MODEL_METHOD", "delete");
-        wh.put (this.table.primaryKey, ids);
-    this.filter(fc , wh );
-    if (this.table.fetchLess(fc).isEmpty()) {
-        throw new HongsException(0x1097, "Can not delete for ids: "+ids);
-    }
+    // 检查是否可更新
+    FetchCase fc = caze != null
+                 ? caze.clone()
+                 : fetchCase ();
+    fc.setOption("MODEL_METHOD","delete");
+    permit(fc , rd , ids);
 
     for (String id : ids)
     {
@@ -809,7 +803,69 @@ implements IEntity
   //** 辅助过滤方法 **/
 
   /**
-   * "查询"过滤
+   * 操作确认
+   *
+   * <pre>
+   * 作用于 update,delete 上
+   *
+   * 如需添加过滤条件, 请重写此方法;
+   * 有不可操作的行时, 通过 caze 上的 MODEL_METHOD 来区分异常:
+   * update 对应 0x1096
+   * delete 对应 0x1097
+   * 其他的 对应 0x1098
+   * 描述为 Can not update|delete|search by id: ID1, ID2, IDn
+   * </pre>
+   *
+   * @param caze
+   * @param rd
+   * @param id
+   * @throws HongsException
+   */
+  protected void permit(FetchCase caze, Map rd, Set id)
+    throws HongsException
+  {
+    Map wh = new HashMap();
+    if (rd.containsKey(Cnst.AR_KEY)) {
+        wh.put(Cnst.AR_KEY, rd.get(Cnst.AR_KEY));
+    }
+    if (rd.containsKey(Cnst.OR_KEY)) {
+        wh.put(Cnst.OR_KEY, rd.get(Cnst.OR_KEY));
+    }
+    if (wh.isEmpty()) {
+        return;
+    }
+
+    // 组织查询
+    wh.put(table.primaryKey, id);
+    wh.put(Cnst.RB_KEY, Synt.setOf(table.primaryKey));
+    caze.use(db).from ( table.tableName, table.name );
+    caze.setOption("OBJECT_MODE", false);
+        filter( caze, wh );
+    Set xd = new HashSet();
+    for (Map row : caze.oll () ) {
+        xd.add(row.get(table.primaryKey).toString( ));
+    }
+
+    // 对比数量, 取出多余的部分作为错误消息抛出
+    if (xd.size() != id.size() ) {
+        Set    zd = new HashSet(id);
+               zd . removeAll  (xd);
+        String er = zd.toString(  );
+        String mm = caze.getOption("MODEL_METHOD","");
+        if ("update".equals(mm)) {
+            throw new HongsException(0x1096, "Can not update by id: " + er);
+        } else
+        if ("delete".equals(mm)) {
+            throw new HongsException(0x1097, "Can not delete by id: " + er);
+        } else
+        {
+            throw new HongsException(0x1098, "Can not search by id: " + er);
+        }
+    }
+  }
+
+  /**
+   * 查询过滤
    *
    * <pre>
    * 作用于getPage,getList上
@@ -928,7 +984,7 @@ implements IEntity
      * @param caze
      * @param rb
      */
-    protected final void field(FetchCase caze, Set<String> rb) {
+    protected final void field(FetchCase caze, Set rb) {
         if (rb == null) {
             rb =  new HashSet();
         }
@@ -970,18 +1026,19 @@ implements IEntity
             fs.add(fn);
         }
 
-        for(String fn : rb) {
-            if (fn.startsWith("-") ) {
-                fn = fn.substring(1);
+        for(Object fo : rb) {
+            String fn = fo.toString();
+            if (fn.startsWith("-")) {
+                fn = fn.substring (1);
                 xc = ec;
             } else {
                 xc = ic;
             }
 
-            if (cf.containsKey(fn) ) {
+            if (cf.containsKey(fn)) {
                 xc.addAll(cf.get(fn));
             } else
-            if (af.containsKey(fn) ) {
+            if (af.containsKey(fn)) {
                 xc.add(fn);
 
                 // 排除时, 先在包含中增加全部

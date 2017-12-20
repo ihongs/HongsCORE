@@ -628,8 +628,8 @@ public class AssocMore {
             where2.append(" AND `").append(k).append("` = ?");
         }
         where3 = where2.toString( );
-
         List ids = new ArrayList( );
+        String sql = "SELECT `" + table.primaryKey + "` FROM `" + table.tableName + "` WHERE " + where2;
 
         // 状态键值, 2015/12/15
         String rstat = table.getField( "state" );
@@ -649,7 +649,6 @@ public class AssocMore {
             }
             params3 = params2.toArray( );
 
-            String sql = "SELECT `" + table.primaryKey + "` FROM `" + table.tableName + "` WHERE " + where2;
             Map<String, Object> one = table.db.fetchOne( sql , params3 );
             if (!one.isEmpty())
             {

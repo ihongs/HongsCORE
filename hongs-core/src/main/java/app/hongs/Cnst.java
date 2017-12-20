@@ -45,21 +45,19 @@ public final class Cnst {
 
     public static final String RN_KEY =  "rn"; // 每页行数  (Rows num)
 
-    public static final String OB_KEY =  "ob"; // 排序字段  (Order By)
+    public static final String OB_KEY =  "ob"; // 排序字段  (Order by)
 
-    public static final String RB_KEY =  "rb"; // 应答字段  (Reply By)
+    public static final String RB_KEY =  "rb"; // 应答字段  (Reply with)
 
-    public static final String AB_KEY =  "ab"; // 应用约束  (Apply By)
+    public static final String AB_KEY =  "ab"; // 应用约束  (Apply with)
 
     public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
 
-    public static final String WR_KEY =  "wr"; // 附加约束  (Where)
+    public static final String OR_KEY =  "or"; // 或条件    (Or)
 
-    public static final String OR_KEY =  "or"; // 或关系    (Or)
+    public static final String AR_KEY =  "ar"; // 与条件    (And)
 
-    public static final String AR_KEY =  "ar"; // 与或      (And Or)
-
-    public static final String SR_KEY =  "sr"; // 可或      (Lucene 特有)
+    public static final String SR_KEY =  "sr"; // 可条件    (Lucene 特有)
 
     //** 关系符号 **/
 

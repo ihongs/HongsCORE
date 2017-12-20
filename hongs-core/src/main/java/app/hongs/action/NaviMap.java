@@ -452,17 +452,11 @@ public class NaviMap
     return as;
   }
 
-  /**
-   * 获取单元和动作
-   * @param roles
-   * @param auths
-   * @param names
-   */
-  public void getRoleAuths(Map roles, Set auths, String... names)
+  protected void getRoleAuths(Map roles, Set auths, String... names)
   {
-    for (String n : names)
+    for  (String n : names)
     {
-      Map role = this.roles.get(n);
+      Map role = getRole(n);
       if (role == null || roles.containsKey(n))
       {
         continue;
@@ -766,9 +760,9 @@ public class NaviMap
       return getMenuTranslated(d, rolez);
   }
 
-  public List<Map> getMenuTranslated(int depth, Set<String> rolez) {
+  public List<Map> getMenuTranslated(int d, Set<String> rolez) {
       CoreLocale lang = getCurrTranslator();
-      return getMenuTranslated(menus, rolez, lang, depth, 0);
+      return getMenuTranslated(menus, rolez, lang, d, 0);
   }
 
   public List<Map> getMenuTranslates(String name) {

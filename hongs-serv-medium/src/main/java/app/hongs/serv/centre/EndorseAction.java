@@ -117,7 +117,9 @@ public class EndorseAction extends DBAction {
         req = super.getReqMap( helper, ett, opr, req );
         req.put("user_id" , uid);
         if ("delete".equals(opr)) {
-            req.put(Cnst.WR_KEY, Synt.mapOf("user_id", uid));
+            req.put(Cnst.AR_KEY, Synt.mapOf("", Synt.mapOf(
+                "user_id" , uid
+            )));
         }
         return req;
     }

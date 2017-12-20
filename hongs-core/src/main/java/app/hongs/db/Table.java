@@ -181,7 +181,7 @@ public class Table
 
     // 默认不查询已经删除的记录
     if (rstat != null && rflag != null
-    && !caze.hasOption("INCLUDE_REMOVED"))
+    && !caze.getOption("INCLUDE_REMOVED" , false))
     {
       caze.filter("`"+name+"`.`" + rstat +"` != ?", rflag);
     }

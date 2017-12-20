@@ -128,20 +128,22 @@ extends Model {
         if (data.containsKey( "roles"  )) {
             data.put("rtime", System.currentTimeMillis() / 1000);
             List list = Synt.asList(data.get( "roles" ));
-            AuthKit.clnRoles(list,  id );
+            AuthKit.cleanUserRoles (list, id);
             if ( list.isEmpty() ) {
-                throw new HongsException.Notice("分组设置错误, 请重试");
+                throw new HongsException.Notice("权限设置错误, 请重试");
             }
+            data.put("roles", list);
         }
 
         // 部门限制, 仅能指定当前登录用户下属的部门
         if (data.containsKey( "depts"  )) {
             data.put("rtime", System.currentTimeMillis() / 1000);
             List list = Synt.asList(data.get( "depts" ));
-            AuthKit.clnDepts(list,  id );
+            AuthKit.cleanUserDepts (list, id);
             if ( list.isEmpty() ) {
                 throw new HongsException.Notice("部门设置错误, 请重试");
             }
+            data.put("depts", list);
         }
 
         permit(id);
@@ -161,13 +163,13 @@ extends Model {
         }
 
         // 超级管理组可操作任何用户
-        Set set = AuthKit.getDepts(uid);
+        Set set = AuthKit.getUserDepts(uid);
         if (set.contains(Cnst.ADM_GID)) {
             return;
         }
 
         // 仅能操作下级部门的用户
-        Set cur = AuthKit.getDepts( id);
+        Set cur = AuthKit.getUserDepts( id);
         Set cld ; Dept dpt = new Dept();
         for(Object gid : set) {
             cld = new HashSet(dpt.getChildIds((String) gid, true));
@@ -176,7 +178,7 @@ extends Model {
             }
         }
 
-        throw new HongsException.Notice("您无权操作ID为 "+id+"的用户");
+        throw new HongsException.Notice("您无权操作 ID 为 "+id+" 的用户");
     }
 
 }

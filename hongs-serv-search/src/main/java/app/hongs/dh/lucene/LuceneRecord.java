@@ -319,11 +319,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     @Override
     public int update(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        Map         wh  = Synt.declare(rd.get(Cnst.WR_KEY), new HashMap());
+        permit (rd, ids , 0x1096);
         for(String  id  : ids) {
-            if(!permit(wh,id)) {
-                throw new HongsException(0x1096, "Can not update for id '"+id+"'");
-            }
             put(id, rd  );
         }
         return ids.size();
@@ -338,11 +335,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     @Override
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        Map         wh  = Synt.declare(rd.get(Cnst.WR_KEY), new HashMap());
+        permit (rd, ids , 0x1097);
         for(String  id  : ids) {
-            if(!permit(wh,id)) {
-                throw new HongsException(0x1097, "Can not delete for id '"+id+"'");
-            }
             del(id /**/ );
         }
         return ids.size();
@@ -350,26 +344,55 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
     /**
      * 确保操作合法
-     * @param wh
-     * @param id
-     * @return
+     * @param rd
+     * @param ids
+     * @param ern
      * @throws HongsException
      */
-    protected boolean permit(Map wh, String id) throws HongsException {
-        if (id == null || "".equals(id)) {
-            throw new NullPointerException("Param id for permit can not be empty");
+    protected void permit(Map rd, Set ids, int ern) throws HongsException {
+        if (rd  == null) {
+            throw new NullPointerException( "rd can not be null" );
         }
-        if (wh == null) {
-            throw new NullPointerException("Param wh for permit can not be null.");
+        if (ids == null || ids.isEmpty()) {
+            throw new NullPointerException("ids can not be empty");
         }
-        Set<String> rb ;
-        wh = new HashMap(wh);
-        rb = new HashSet(  );
-        rb.add( "id"  );
-        wh.put(Cnst.ID_KEY, id);
-        wh.put(Cnst.RB_KEY, rb);
-        wh = getOne(wh);
-        return wh != null && !wh.isEmpty();
+
+        Map wh = new HashMap();
+        if (rd.containsKey(Cnst.AR_KEY)) {
+            wh.put(Cnst.AR_KEY, rd.get(Cnst.AR_KEY));
+        }
+        if (rd.containsKey(Cnst.OR_KEY)) {
+            wh.put(Cnst.OR_KEY, rd.get(Cnst.OR_KEY));
+        }
+        if (wh.isEmpty()) {
+            return;
+        }
+
+        // 组织查询
+        wh.put(Cnst.ID_KEY, ids);
+        wh.put(Cnst.RB_KEY, Cnst.ID_KEY);
+        Set idz = new HashSet( );
+        Loop rs = search(rd,0,0);
+        while  (  rs.hasNext() ) {
+            Map ro = rs.next();
+            idz.add( ro.get(Cnst.ID_KEY).toString());
+        }
+
+        // 对比数量, 取出多余的部分作为错误消息抛出
+        if (ids.size( ) != idz.size( ) ) {
+            Set    zd = new HashSet(ids);
+                   zd . removeAll  (idz);
+            String er = zd.toString(  );
+            if (ern == 0x1096) {
+                throw new HongsException(ern, "Can not update by id: " + er);
+            } else
+            if (ern == 0x1097) {
+                throw new HongsException(ern, "Can not delete by id: " + er);
+            } else
+            {
+                throw new HongsException(ern, "Can not search by id: " + er);
+            }
+        }
     }
 
     //** 模型方法 **/

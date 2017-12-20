@@ -45,7 +45,7 @@ public class DeptAction {
     throws HongsException {
         Map    rd = helper.getRequestData(  );
         String id = helper.getParameter("id");
-        String wr = helper.getParameter("navi-conf");
+        String nc = helper.getParameter("navi-conf");
         String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
         if (id != null && id.length() != 0) {
@@ -55,10 +55,10 @@ public class DeptAction {
         }
 
         // With all roles
-        if (wr != null && wr.length() != 0) {
+        if (nc != null && nc.length() != 0) {
             List rs = !Cnst.ADM_UID.equals(ud) ?
-                new RoleMap(NaviMap.getInstance(wr)).getRoleTranslated():
-                new RoleMap(NaviMap.getInstance(wr)).getRoleTranslates();
+                new RoleMap(NaviMap.getInstance(nc)).getRoleTranslated():
+                new RoleMap(NaviMap.getInstance(nc)).getRoleTranslates();
             Dict.put(rd, rs, "enum", "roles..role");
         }
 

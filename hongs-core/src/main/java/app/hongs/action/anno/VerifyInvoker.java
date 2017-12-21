@@ -56,9 +56,13 @@ public class VerifyInvoker implements FilterInvoker {
             }
         }
         if (type == -1) {
-            type = at.endsWith("/update") || (null != id && !"".equals(id))
-                 ? ( byte ) 1:
-                   ( byte ) 0;
+            Boolean up = Synt.asBool(helper.getAttribute(Cnst.UPDATE_MODE));
+            if (up == null) {
+                type = at.endsWith("/update") || (null!=id&&!"".equals(id))
+                          ? (byte) 1 : (byte) 0;
+            } else {
+                type = up ? (byte) 1 : (byte) 0;
+            }
         }
         boolean prp = mode <= 0 ;
         boolean upd = type == 1 ;

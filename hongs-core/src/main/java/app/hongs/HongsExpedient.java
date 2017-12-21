@@ -43,7 +43,7 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     public HongsException toException() {
         return new HongsException(this.getErrno(), this.getError(), this)
              .setLocalizedOptions(this.getLocalizedOptions())
-             .setLocalizedSection(this.getLocalizedSection());
+             .setLocalizedContext(this.getLocalizedContext());
     }
 
     @Override
@@ -72,8 +72,8 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     }
 
     @Override
-    public String getLocalizedSection() {
-        return that.getLocalizedSection();
+    public String getLocalizedContext() {
+        return that.getLocalizedContext();
     }
 
     @Override
@@ -82,8 +82,8 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     }
 
     @Override
-    public HongsExpedient setLocalizedSection(String lang) {
-        that.setLocalizedSection(lang);
+    public HongsExpedient setLocalizedContext(String lang) {
+        that.setLocalizedContext(lang);
         return this;
     }
 

@@ -12,13 +12,13 @@ public class Wrong extends HongsException {
 
     public Wrong(Throwable cause, String desc, String... prms) {
         super(0x1100, desc, cause);
-        this.setLocalizedSection("default");
+        this.setLocalizedContext("default");
         this.setLocalizedOptions(   prms  );
     }
 
     public Wrong(String desc, String... prms) {
         super(0x1100, desc  /**/ );
-        this.setLocalizedSection("default");
+        this.setLocalizedContext("default");
         this.setLocalizedOptions(   prms  );
     }
 
@@ -29,8 +29,8 @@ public class Wrong extends HongsException {
     }
 
     @Override
-    public Wrong  setLocalizedSection(String name) {
-        super.setLocalizedSection(name);
+    public Wrong  setLocalizedContext(String name) {
+        super.setLocalizedContext(name);
         return this;
     }
 
@@ -45,7 +45,7 @@ public class Wrong extends HongsException {
 
     @Override
     public String getLocalizedMessage() {
-        CoreLocale trns = CoreLocale.getInstance(getLocalizedSection());
+        CoreLocale trns = CoreLocale.getInstance(getLocalizedContext());
         if (null!= text && 0 < text.length()) {
             return trns.translate(text)
             +": "+ trns.translate(getError(), getLocalizedOptions());

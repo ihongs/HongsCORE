@@ -16,13 +16,13 @@ public class Wrongs extends HongsException {
 
     public Wrongs(Map<String,Wrong> wrongs) {
         super(0x1100 , "fore.form.invalid"); // 0x1100 对应 HTTP 400 错误
-        this.setLocalizedSection("default");
+        this.setLocalizedContext("default");
         this.wrongs = wrongs;
     }
 
     @Override
-    public Wrongs setLocalizedSection(String    name) {
-        super.setLocalizedSection(name);
+    public Wrongs setLocalizedContext(String    name) {
+        super.setLocalizedContext(name);
         return this;
     }
 

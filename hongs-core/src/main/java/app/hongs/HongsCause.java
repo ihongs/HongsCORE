@@ -17,11 +17,11 @@ public interface HongsCause
 
     public String getLocalizedMessage();
 
-    public String getLocalizedSection();
+    public String getLocalizedContext();
 
     public String[] getLocalizedOptions();
 
-    public HongsCause setLocalizedSection(String lang);
+    public HongsCause setLocalizedContext(String lang);
 
     public HongsCause setLocalizedOptions(String... opts);
 

@@ -133,7 +133,7 @@ public class HongsCurse {
      * 获取翻译章节(模块语言)
      * @return
      */
-    public String getLocalizedSection() {
+    public String getLocalizedContext() {
         return this.lang;
     }
 
@@ -149,7 +149,7 @@ public class HongsCurse {
      * 设置翻译章节(模块语言)
      * @param lang
      */
-    public void setLocalizedSection(String lang) {
+    public void setLocalizedContext(String lang) {
         this.lang = lang;
     }
 

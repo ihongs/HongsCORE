@@ -36,6 +36,7 @@ public class DeptAction {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
+        fc.setOption("INCLUDE_PARENTS", Synt.declare(rd.get("include-parents"), false));
         rd = model.getList(rd, fc);
         helper.reply(rd);
     }

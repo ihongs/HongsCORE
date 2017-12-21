@@ -8,6 +8,7 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
+import app.hongs.serv.member.Dept;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Wrong;
 import app.hongs.util.verify.Wrongs;
@@ -63,7 +64,7 @@ public class AuthKit {
         Map e  = new HashMap();
         CoreLocale   lang  =  CoreLocale.getInstance ("member") ;
         if (k != null && ! "".equals(k)) {
-            m.put(k, new Wrong(w).setLocalizedSection("member"));
+            m.put(k, new Wrong(w).setLocalizedContext("member"));
             e.put("errs", new Wrongs(m).getErrors());
             e.put("msg" , lang.translate(w));
         } else {
@@ -223,35 +224,31 @@ public class AuthKit {
         // Nothing todo.
     }
 
-    /**
-     * 检查并清理不合规的权限设置数据
-     * 操作人员无法增减自己没有的权限
-     * @param list 权限设置数据
-     * @param uid  用户ID
-     * @throws HongsException
-     */
-    public static void cleanUserRoles(List<Map> list, String uid) throws HongsException {
-        if ("1".equals(Core.getInstance(ActionHelper.class).getSessibute("uid"))) {
-            return; // 超级管理员可以更改任何人的权限, 即使自己没有
+    public static Set getUserDepts(String uid) throws HongsException {
+        Table rel = DB.getInstance("member").getTable("user_dept");
+        List<Map> lst = rel.fetchCase()
+            .filter ("user_id = ?",uid)
+            .select ("dept_id")
+            .all    ();
+        Set set = new HashSet();
+        for(Map row : lst) {
+            set.add(row.get("dept_id"));
         }
+        return set;
+    }
 
-            Set urs = RoleSet.getInstance(   );
-        if (uid != null) {
-            Set crs = RoleSet.getInstance(uid);
-            Set xrs = new HashSet();
-            xrs.addAll(crs);
-            xrs.addAll(urs);
-            urs = xrs;
+    public static Set getMoreDepts(String uid) throws HongsException {
+        Table rel = DB.getInstance("member").getTable("user_dept");
+        List<Map> lst = rel.fetchCase()
+            .filter ("user_id = ?",uid)
+            .select ("dept_id")
+            .all    ();
+        Set set = new HashSet();
+        Dept dp = new Dept   ();
+        for(Map row : lst) {
+            set.addAll(dp.getChildIds((String)row.get("dept_id"), true));
         }
-
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            Map    rm = (Map   ) it.next( );
-            String rn = (String) rm.get ("role");
-            if (! urs.contains ( rn)) {
-                it.remove();
-            }
-        }
+        return set;
     }
 
     /**
@@ -262,13 +259,14 @@ public class AuthKit {
      * @throws HongsException
      */
     public static void cleanUserDepts(List<Map> list, String uid) throws HongsException {
-        if ("1".equals(Core.getInstance(ActionHelper.class).getSessibute("uid"))) {
+        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
+        if (Cnst.ADM_UID.equals(cid)) {
             return; // 超级管理员可以更改任何人的部门, 即使自己没有
         }
 
-            Set uds = getUserDepts(null);
+            Set uds = getMoreDepts(cid);
         if (uid != null) {
-            Set xds = getUserDepts(uid );
+            Set xds = getUserDepts(uid);
             xds.addAll(uds);
             uds = xds;
         }
@@ -283,20 +281,45 @@ public class AuthKit {
         }
     }
 
-    public static Set getUserDepts(String uid) throws HongsException {
-        if (uid == null) {
-            uid = (String) Core.getInstance ( ActionHelper.class )
-                               .getSessibute( Cnst.UID_SES /***/ );
+    /**
+     * 检查并清理不合规的权限设置数据
+     * 操作人员无法增减自己没有的权限
+     * @param list 权限设置数据
+     * @param uid  用户ID
+     * @throws HongsException
+     */
+    public static void cleanUserRoles(List<Map> list, String uid) throws HongsException {
+        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
+        if (Cnst.ADM_UID.equals(cid)) {
+            return; // 超级管理员可以更改任何人的权限, 即使自己没有
         }
 
-        Table rel = DB.getInstance("member").getTable("user_dept");
+            Set urs = getUserRoles(cid);
+        if (uid != null) {
+            Set xrs = getUserRoles(uid);
+            xrs.addAll(urs);
+            urs = xrs;
+        }
+
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            Map    rm = (Map   ) it.next( );
+            String rn = (String) rm.get ("role");
+            if (! urs.contains ( rn)) {
+                it.remove();
+            }
+        }
+    }
+
+    public static Set getUserRoles(String uid) throws HongsException {
+        Table rel = DB.getInstance("member").getTable("user_role");
         List<Map> lst = rel.fetchCase()
             .filter ("user_id = ?",uid)
-            .select ("dept_id")
+            .select ("role"   )
             .all    ();
         Set set = new HashSet();
         for(Map row : lst) {
-            set.add(row.get("dept_id"));
+            set.add(row.get("role"));
         }
         return set;
     }
@@ -309,13 +332,14 @@ public class AuthKit {
      * @throws HongsException
      */
     public static void cleanDeptRoles(List<Map> list, String gid) throws HongsException {
-        if ("1".equals(Core.getInstance(ActionHelper.class).getSessibute("uid"))) {
-            return; // 超级管理员可以更改任何人的权限, 即使自己没有
+        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
+        if (Cnst.ADM_UID.equals(cid)) {
+            return; // 超级管理员可以更改任何组的权限, 即使自己没有
         }
 
-            Set urs = getDeptRoles(null);
+            Set urs = RoleSet.getInstance();  // 额外的权限也可给组
         if (gid != null) {
-            Set xrs = getDeptRoles(gid );
+            Set xrs = getDeptRoles(gid);
             xrs.addAll(urs);
             urs = xrs;
         }
@@ -331,10 +355,6 @@ public class AuthKit {
     }
 
     public static Set getDeptRoles(String gid) throws HongsException {
-        if (gid == null) {
-          return RoleSet.getInstance( );
-        }
-
         Table rel = DB.getInstance("member").getTable("dept_role");
         List<Map> lst = rel.fetchCase()
             .filter ("dept_id = ?",gid)

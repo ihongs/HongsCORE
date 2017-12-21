@@ -48,7 +48,7 @@ extends Mtree {
 
     @Override
     public int del(String id, FetchCase caze) throws HongsException {
-        permit( id ,(String) null);
+        permit( id , null);
 
         return super.del(id, caze);
     }
@@ -77,7 +77,25 @@ extends Mtree {
     @Override
     protected void filter(FetchCase caze, Map req)
     throws HongsException {
-        super.filter(caze, req);
+        /**
+         * 默认情况下不包含上级部门
+         * 此时顶级需取用户所在部门
+         */
+        if (!caze.getOption(  "INCLUDE_PARENTS"  ,  false  )
+        && "getList".equals(caze.getOption("MODEL_METHOD"))) {
+            Object  id = req.get( "id");
+            Object pid = req.get("pid");
+            if (id == null && "0".equals( pid )) {
+                ActionHelper helper = Core.getInstance(ActionHelper.class);
+                String uid = (String) helper.getSessibute ( Cnst.UID_SES );
+                if (!Cnst.ADM_UID.equals( uid )) {
+                Set set = AuthKit.getUserDepts(uid);
+                if (!set.contains(Cnst.ADM_GID)) {
+                    req.put( "id", set);
+                }}
+                req.remove ("pid"/***/);
+            }
+        }
 
         /**
          * 如果有指定user_id
@@ -91,63 +109,71 @@ extends Mtree {
                 .on     ("`users`.`dept_id` = `dept`.`id`")
                 .filter ("`users`.`user_id` IN (?)",userId);
         }
+
+        super.filter(caze, req);
     }
 
     protected void permit(String id, Map data) throws HongsException {
-        // 权限限制, 仅能赋予当前登录用户所有的权限
-        if (data.containsKey( "roles" )) {
-            data.put("rtime", System.currentTimeMillis() / 1000);
-            List list = Synt.asList(data.get( "roles" ));
-            AuthKit.cleanDeptRoles(list,  id );
-            if ( list.isEmpty() ) {
-                throw new HongsException.Notice("分组设置错误, 请重试");
+      String pid  = null;
+
+        if (data != null) {
+            // 权限限制, 仅能赋予当前登录用户所有的权限
+            if (data.containsKey( "roles" )) {
+                data.put("rtime", System.currentTimeMillis() / 1000);
+                List list = Synt.asList(data.get( "roles" ));
+                AuthKit.cleanDeptRoles (list, id);
+                if ( list.isEmpty() ) {
+                    throw new HongsException
+                        .Notice("ex.member.user.dept.error")
+                        .setLocalizedContext("member");
+                }
+                data.put("roles", list);
             }
-            data.put("roles", list);
+
+            // 部门限制, 默认顶级, 是否可操作在下方判断
+            pid = Synt.declare(data.get("pid"), "");
+            if ("".equals(pid)) pid = Cnst.ADM_GID ;
         }
 
-        // 部门限制, 仅能指定当前登录用户下属的部门
-        String pid = Synt.declare ( data.get("pid"), "");
-
-        permit(id, pid);
-    }
-
-    protected void permit(String id, String pid)
-    throws HongsException {
         if (id == null && pid == null) {
-            throw new NullPointerException("id and pid can not all be null");
+            throw new NullPointerException("id and pid cannot be all null");
         }
-
-        // 超级管理员可操作任何部门
-        ActionHelper helper = Core.getInstance(ActionHelper.class);
-        String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-        if (Cnst.ADM_UID.equals( uid )) {
-            return;
-        }
-
-        // 超级管理组可操作任何部门
-        Set set = AuthKit.getUserDepts(uid);
-        if (set.contains(Cnst.ADM_GID)) {
-            return;
-        }
-
-        // 仅能操作下级部门
-        Set cld ; Dept dpt = new Dept();
-        for(Object gid : set) {
-            cld = new HashSet(dpt.getChildIds((String) gid, true));
-            if ( null != pid) {
-            if (gid.  equals (pid)) {
+        if (id != null || pid != null) {
+            // 超级管理员可操作任何部门
+            ActionHelper helper = Core.getInstance(ActionHelper.class);
+            String uid = (String) helper.getSessibute ( Cnst.UID_SES );
+            if (Cnst.ADM_UID.equals( uid )) {
                 return;
             }
-            if (cld.contains (pid)) {
-                return;
-            }}
-            if ( null !=  id) {
-            if (cld.contains ( id)) {
-                return;
-            }}
-        }
 
-        throw new HongsException.Notice("您无权操作 ID 为 "+id+" 的部门");
+            // 超级管理组可操作任何部门
+            Set set = AuthKit.getUserDepts(uid);
+            if (set.contains(Cnst.ADM_GID)
+            && !Cnst.ADM_GID.equals(  id )) {
+                return;
+            }
+
+            // 仅能操作下级部门
+            Set cld ; Dept dpt = new Dept();
+            for(Object gid : set) {
+                cld = new HashSet(dpt.getChildIds((String) gid, true));
+                if ( null != pid) {
+                if (gid.  equals(pid)) {
+                    return; // 可以管理自己所在部门的下级
+                }
+                if (cld.contains(pid)) {
+                    return;
+                }}
+                if ( null !=  id) {
+                if (cld.contains( id)) {
+                    return;
+                }}
+            }
+
+            throw new HongsException
+                .Notice("ex.member.user.unit.error")
+                .setLocalizedContext("member");
+        }
     }
 
 }

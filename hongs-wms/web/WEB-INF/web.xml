@@ -129,6 +129,10 @@
             <param-value>/centra/login.html</param-value>
         </init-param>
         <init-param>
+            <param-name>expire-time</param-name>
+            <param-value>28800</param-value>
+        </init-param>
+        <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;

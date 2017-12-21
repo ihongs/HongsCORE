@@ -40,11 +40,17 @@ public class RestAction extends ApisAction {
                 super.service( req, rsp );
                 break;
             case METHOD_POST  :
+                req.setAttribute(Cnst.UPDATE_MODE, false);
                 reset(req, ACTION_POST  );
                 super.service( req, rsp );
                 break;
             case METHOD_PUT   :
+                req.setAttribute(Cnst.UPDATE_MODE, false);
+                reset(req, ACTION_PATCH );
+                super.service( req, rsp );
+                break;
             case METHOD_PATCH :
+                req.setAttribute(Cnst.UPDATE_MODE, true );
                 reset(req, ACTION_PATCH );
                 super.service( req, rsp );
                 break;

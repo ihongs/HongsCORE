@@ -42,7 +42,7 @@
         <servlet-name>Apis</servlet-name>
         <url-pattern>*.api</url-pattern>
     </servlet-mapping>
-    <!-- Rest Servlet -->
+    <!-- REST Servlet -->
     <servlet>
         <servlet-name>Rest</servlet-name>
         <servlet-class>app.hongs.normal.serv.RestAction</servlet-class>
@@ -56,7 +56,7 @@
         <servlet-name>Rest</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
-    <!-- Sacl Servlet -->
+    <!-- SACL Servlet -->
     <servlet>
         <servlet-name>Sacl</servlet-name>
         <servlet-class>app.hongs.normal.serv.SaclAction</servlet-class>

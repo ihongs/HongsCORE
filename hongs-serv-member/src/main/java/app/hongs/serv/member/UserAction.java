@@ -38,12 +38,14 @@ public class UserAction {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
+        fc.setOption("INCLUDE_PARENTS", Synt.declare(rd.get("include-parents"), false));
         rd = model.getList(rd, fc);
 
         // Remove the password field, don't show password in page
         List<Map> list = (List) rd.get("list");
         for (Map  info :  list) {
             info.remove("password");
+            info.remove("passcode");
         }
 
         helper.reply(rd);
@@ -75,6 +77,7 @@ public class UserAction {
         Map info  = (Map) rd.get("info");
         if (info != null) {
             info.remove("password");
+            info.remove("passcode");
         }
 
         helper.reply(rd);
@@ -90,6 +93,7 @@ public class UserAction {
         // Ignore empty password in update
         if ("".equals(rd.get("password"))) {
             rd.remove("password");
+            rd.remove("passcode");
         }
 
         String id = model.set(rd);

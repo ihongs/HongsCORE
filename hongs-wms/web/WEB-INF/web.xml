@@ -210,7 +210,7 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>43200</session-timeout>
+        <session-timeout>28800</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>

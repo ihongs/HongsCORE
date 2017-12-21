@@ -91,12 +91,12 @@
         <filter-name>SessFilter</filter-name>
         <filter-class>app.hongs.normal.serv.SessFilter</filter-class>
         <init-param>
-            <param-name>session-max-age</param-name>
+            <param-name>session-timeout</param-name>
             <param-value>604800</param-value>
         </init-param>
         <init-param>
             <param-name>cookie-max-age</param-name>
-            <param-value>604800</param-value>
+            <param-value>28800</param-value>
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
@@ -127,10 +127,6 @@
         <init-param>
             <param-name>login-page</param-name>
             <param-value>/centra/login.html</param-value>
-        </init-param>
-        <init-param>
-            <param-name>expire-time</param-name>
-            <param-value>28800</param-value>
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>

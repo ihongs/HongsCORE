@@ -130,7 +130,7 @@ public class SessAccess extends HttpServletRequestWrapper {
 
             if (xes != null) {
                 ServletContext cont = getServletContext();
-                xes.setMaxInactiveInterval(flt.SEXP);
+                xes.setMaxInactiveInterval(flt.SSEX);
                 xes.setServletContext(cont);
                 xes.setServletRequest(this);
 
@@ -138,7 +138,7 @@ public class SessAccess extends HttpServletRequestWrapper {
                 xid  = xes.getId();
 
                 // 会话期的 Cookie 无需更新
-                if (ses.isNew() || flt.CEXP > 0) {
+                if (ses.isNew() || flt.SSCX > 0) {
                     setCookie();
                 }
             }
@@ -147,7 +147,7 @@ public class SessAccess extends HttpServletRequestWrapper {
                 xid  = ses.getId();
 
                 // 会话变更 Cookie 需要更新
-//              if (ses.isNew() || flt.CEXP > 0) {
+//              if (ses.isNew() || flt.SSCX > 0) {
                     setCookie();
 //              }
             }
@@ -171,8 +171,8 @@ public class SessAccess extends HttpServletRequestWrapper {
         Cookie cok = new Cookie(flt.SSCN, xid);
         cok.setHttpOnly  (true);
         cok.setPath  (flt.SSCP);
-        if (flt.CEXP > 0 ) {
-        cok.setMaxAge(flt.CEXP);
+        if (flt.SSCX > 0 ) {
+        cok.setMaxAge(flt.SSCX);
         }
         rsp.addCookie(cok);
     }

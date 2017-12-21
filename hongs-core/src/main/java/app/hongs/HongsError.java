@@ -64,8 +64,8 @@ public class HongsError extends Error implements HongsCause {
     }
 
     @Override
-    public String getLocalizedSection() {
-        return that.getLocalizedSection();
+    public String getLocalizedContext() {
+        return that.getLocalizedContext();
     }
 
     @Override
@@ -74,8 +74,8 @@ public class HongsError extends Error implements HongsCause {
     }
 
     @Override
-    public HongsError setLocalizedSection(String lang) {
-        that.setLocalizedSection(lang);
+    public HongsError setLocalizedContext(String lang) {
+        that.setLocalizedContext(lang);
         return this;
     }
 

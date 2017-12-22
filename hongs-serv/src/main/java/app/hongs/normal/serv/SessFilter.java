@@ -22,11 +22,12 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class SessFilter implements Filter {
 
-    protected String SSRN = "SSID"; // 会话请求参数名称
-    protected String SSCN = "SSID"; // 会话 Cookie 键名
-    protected String SSCP =     ""; // 会话 Cookie 路径
-    protected int    SSCX =     -1; // 过期 Cookie (秒)
-    protected int    SSEX =  86400; // 会话过期时间(秒)
+    protected String SSRA = ".ssid"; // 会话请求属性名称
+    protected String SSRN = ".ssid"; // 会话请求参数名称
+    protected String SSCN =  "SSID"; // 会话 Cookie 键名
+    protected String SSCP =      ""; // 会话 Cookie 路径
+    protected int    SSCX =      -1; // 过期 Cookie (秒)
+    protected int    SSEX =   86400; // 会话过期时间(秒)
 
     private String      inside = null; // 过滤器标识
     private FilterCheck ignore = null; // 待忽略用例
@@ -35,6 +36,9 @@ public class SessFilter implements Filter {
     public void init(FilterConfig fc)
     throws ServletException {
         String fn;
+
+        fn = fc.getInitParameter("request-attr");
+        if (fn != null) SSRA = fn;
 
         fn = fc.getInitParameter("request-name");
         if (fn != null) SSRN = fn;

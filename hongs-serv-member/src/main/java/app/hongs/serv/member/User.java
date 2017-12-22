@@ -110,9 +110,9 @@ extends Model {
                 if (!Cnst.ADM_UID.equals( uid )) {
                 Set set = AuthKit.getUserDepts(uid);
                 if (!set.contains(Cnst.ADM_GID)) {
-                    req.put("id", uid);
+                    req.put   ("id", uid);
+                    req.remove("dept_id");
                 }}
-                req.remove ("dept_id");
             }
         }
 
@@ -180,7 +180,7 @@ extends Model {
                 return;
             }
 
-            // 超级管理组可操作任何用户
+            // 超级管理组可操作任何用户(除超级用户)
             Set set = AuthKit.getUserDepts(uid);
             if (set.contains(Cnst.ADM_GID)
             && !Cnst.ADM_UID.equals(  id )) {

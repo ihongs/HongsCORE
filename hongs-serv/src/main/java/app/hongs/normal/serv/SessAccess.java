@@ -57,7 +57,7 @@ public class SessAccess extends HttpServletRequestWrapper {
             do {
                 String id;
 
-                id = (String) this.getAttribute(flt.SSRN);
+                id = (String) this.getAttribute(flt.SSRA);
                 if (id != null && id.length() != 0) {
                     sid = id;
                     frm = 8 ;

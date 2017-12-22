@@ -92,8 +92,8 @@ extends Mtree {
                 Set set = AuthKit.getUserDepts(uid);
                 if (!set.contains(Cnst.ADM_GID)) {
                     req.put( "id", set);
+                    req.remove( "pid" );
                 }}
-                req.remove ("pid"/***/);
             }
         }
 
@@ -133,6 +133,23 @@ extends Mtree {
             // 部门限制, 默认顶级, 是否可操作在下方判断
             pid = Synt.declare(data.get("pid"), "");
             if ("".equals(pid)) pid = Cnst.ADM_GID ;
+        } else {
+            // 删除限制, 如果部门下有用户则中止当前操作
+            User user = new User();
+            List list = user.table.fetchMore(
+                user.fetchCase()
+                    .gotJoin("depts")
+                    .from   ("a_member_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`depts`.`user_id` = `user`.`id`")
+                    .filter ("`depts`.`dept_id` = ?"    , id  )
+                    .limit  (1)
+            );
+            if (list.size()!=0) {
+                throw new HongsException
+                    .Notice("ex.member.dept.have.users")
+                    .setLocalizedContext("member");
+            }
         }
 
         if (id == null && pid == null) {
@@ -146,7 +163,7 @@ extends Mtree {
                 return;
             }
 
-            // 超级管理组可操作任何部门
+            // 超级管理组可操作任何部门(除顶级部门)
             Set set = AuthKit.getUserDepts(uid);
             if (set.contains(Cnst.ADM_GID)
             && !Cnst.ADM_GID.equals(  id )) {
@@ -171,7 +188,7 @@ extends Mtree {
             }
 
             throw new HongsException
-                .Notice("ex.member.user.unit.error")
+                .Notice("ex.member.dept.unit.error")
                 .setLocalizedContext("member");
         }
     }

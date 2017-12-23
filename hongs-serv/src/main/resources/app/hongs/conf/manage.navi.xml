@@ -7,9 +7,13 @@
         </role>
     </menu>
     <menu text="文件管理" href="centra/manage/file/">
-        <role text="文件管理" name="centra/manage/file">
+        <role text="文件查看" name="centra/manage/file">
             <depend>centra</depend>
             <action>centra/file/search.act</action>
+        </role>
+        <role text="文件操作" name="centra/manage/fils">
+            <depend>centra</depend>
+            <depend>centra/manage/file</depend>
             <action>centra/file/create.act</action>
             <action>centra/file/update.act</action>
             <action>centra/file/delete.act</action>

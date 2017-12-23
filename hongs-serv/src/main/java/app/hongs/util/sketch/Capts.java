@@ -231,7 +231,7 @@ public class Capts {
         float  sr = cc.getProperty("core.capts.size.ratio", 0.40f);
         float  fr = cc.getProperty("core.capts.font.ratio", 0.80f);
         float  mr = cc.getProperty("core.capts.mend.ratio", 0.10f);
-        float  xr = cc.getProperty("core.capts.mask.ratio", 0.05f);
+        float  xr = cc.getProperty("core.capts.mask.ratio", 0.02f);
         int    w  = (int) ((float) h * sr * (cn + 1));
 
         char[] cd = cs.toCharArray();

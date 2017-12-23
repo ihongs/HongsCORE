@@ -135,8 +135,13 @@ public class Capts {
         }
 
         for(int i  = 0; i < codeCount; i ++) {
+            /**
+             * medRatio 就是误差系数
+             * 实际可能偏大, 需要缩减尺寸,
+             * 修正高度误差, 避免超出画布.
+             */
             int fn = rd.nextInt ( fs - fz  ) + fz  ;
-            int fe = (  int  )  ( fn * mendRatio  ); // 误差修正, 避免字超大出界!
+            int fe = (  int  )  ( fn * mendRatio  );
             int j  = rd.nextInt ( fontDict.length );
             String ss = String.valueOf(fontDict[j]);
             sb.append(ss);

@@ -225,14 +225,14 @@ public class Capts {
         // 获取配置
         CoreConfig  cc = CoreConfig.getInstance();
         String ff = cc.getProperty("core.capts.font.file", "!Capts.ttf");
-        String cs = cc.getProperty("core.capts.code.dict", "3456789ABCDEFGHJKMNPQRSTUVWXY");
+        String cs = cc.getProperty("core.capts.code.dict", "1234567890");
         int    cn = cc.getProperty("core.capts.code.count", 4);
         int    mn = cc.getProperty("core.capts.mask.count", 8);
         float  sr = cc.getProperty("core.capts.size.ratio", 0.40f);
         float  fr = cc.getProperty("core.capts.font.ratio", 0.80f);
         float  mr = cc.getProperty("core.capts.mend.ratio", 0.10f);
-        float  xr = cc.getProperty("core.capts.mask.ratio", 0.02f);
-        int    w  = (int) ((float) h * sr * (cn + 1));
+        float  xr = cc.getProperty("core.capts.mask.ratio", 0.05f);
+        int    w  = (int) ((float) h * sr * (cn + 1) ) ;
 
         char[] cd = cs.toCharArray();
         Color  bc = "".equals(b) ? new Color(0xffffff) : new Color(Integer.parseInt(b, 16));

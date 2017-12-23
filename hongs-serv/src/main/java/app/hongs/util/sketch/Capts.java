@@ -136,7 +136,7 @@ public class Capts {
 
         for(int i  = 0; i < codeCount; i ++) {
             /**
-             * medRatio 就是误差系数
+             * medRatio 是字号误差系数
              * 实际可能偏大, 需要缩减尺寸,
              * 修正高度误差, 避免超出画布.
              */

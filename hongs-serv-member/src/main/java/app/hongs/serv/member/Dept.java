@@ -159,32 +159,30 @@ extends Mtree {
             // 超级管理员可操作任何部门
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-            if (Cnst.ADM_UID.equals( uid )) {
+            if (Cnst.ADM_UID.equals(uid )) {
                 return;
             }
 
-            // 超级管理组可操作任何部门(除顶级部门)
-            Set set = AuthKit.getUserDepts(uid);
-            if (set.contains(Cnst.ADM_GID)
-            && !Cnst.ADM_GID.equals(  id )) {
+            // 超级管理组可操作任何部门
+            // 但禁止操作顶级部门
+            Set cur = AuthKit.getUserDepts(uid);
+            if (cur.contains(Cnst.ADM_GID)
+            && !Cnst.ADM_GID.equals( id )) {
                 return;
             }
 
-            // 仅能操作下级部门
-            Set cld ; Dept dpt = new Dept();
-            for(Object gid : set) {
-                cld = new HashSet(dpt.getChildIds((String) gid, true));
-                if ( null != pid) {
-                if (gid.  equals(pid)) {
-                    return; // 可以管理自己所在部门的下级
+            // 仅可以操作下级部门
+            for (Object gid : cur) {
+                Set cld = new HashSet(this.getChildIds((String) gid, true));
+                if (  null != pid
+                && (gid.  equals(pid)
+                ||  cld.contains(pid))) {
+                    return;
                 }
-                if (cld.contains(pid)) {
+                if (  null !=  id
+                &&  cld.contains( id) ) {
                     return;
-                }}
-                if ( null !=  id) {
-                if (cld.contains( id)) {
-                    return;
-                }}
+                }
             }
 
             throw new HongsException

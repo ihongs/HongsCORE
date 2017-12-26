@@ -176,27 +176,31 @@ extends Model {
             // 超级管理员可操作任何用户
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-            if (Cnst.ADM_UID.equals( uid )) {
+            if (Cnst.ADM_UID.equals(uid )) {
                 return;
             }
 
-            // 超级管理组可操作任何用户(除超级用户)
-            Set set = AuthKit.getUserDepts(uid);
-            if (set.contains(Cnst.ADM_GID)
-            && !Cnst.ADM_UID.equals(  id )) {
+            // 可以操作自己
+            if (uid.equals(id)) {
+                return;
+            }
+
+            // 超级管理组可操作任何用户
+            // 除了顶级部门和超级管理员
+            Set cur = AuthKit.getUserDepts(uid);
+            Set tar = AuthKit.getUserDepts( id);
+            if (cur.contains(Cnst.ADM_GID)
+            && !tar.contains(Cnst.ADM_GID)
+            && !Cnst.ADM_UID.equals( id )) {
                 return;
             }
 
             // 仅可以操作下级部门的用户
-            if (uid.equals( id )) {
-                return; // 但可操作自己
-            }
-            Set cur = AuthKit.getUserDepts( id);
-            Set cld ; Dept dpt = new Dept();
-            for(Object gid : set) {
-                cld = new HashSet(dpt.getChildIds((String) gid, true));
-                cld.retainAll( cur );
-                if (! cld.isEmpty( )) {
+            Dept dept = new Dept();
+            for (Object gid : cur) {
+                Set cld = new HashSet(dept.getChildIds((String) gid, true));
+                cld.retainAll(tar);
+                if(!cld.isEmpty()) {
                     return;
                 }
             }

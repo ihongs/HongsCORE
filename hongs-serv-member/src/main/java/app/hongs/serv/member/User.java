@@ -100,8 +100,8 @@ extends Model {
          * 默认情况下不包含上级部门
          * 此时顶级仅需列出当前用户
          */
-        if (!caze.getOption(  "INCLUDE_PARENTS"  ,  false  )
-        && "getList".equals(caze.getOption("MODEL_METHOD"))) {
+        if (!caze.getOption(  "INCLUDE_PARENTS" , false   )
+        && "getList".equals(caze.getOption("MODEL_START"))) {
             Object  id = req.get(/***/"id");
             Object pid = req.get("dept_id");
             if (id == null && "0".equals( pid )) {

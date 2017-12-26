@@ -349,27 +349,29 @@ public class Form extends Model {
     protected void insertAuthRole(String id) throws HongsException {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-        Table  tab = db.getTable ("role");
-        Table  usr = db.getTable ("user");
+        Table  tab = db.getTable((String)table.getParams().get("role.table"));
+        Table  usr = db.getTable((String)table.getParams().get("user.table"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/search"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/create"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/update"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/delete"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/revert"));
-        usr.filter("`id` = ?", uid)
-           .update(Synt.mapOf("rtime", System.currentTimeMillis( ) / 1000));
+        usr.update(Synt.mapOf("rtime", System.currentTimeMillis()/1000), "`id` = ?",uid);
     }
 
     protected void deleteAuthRole(String id) throws HongsException {
-        Table  tab = db.getTable ("role");
-        Set    rns = Synt. setOf (
+        ActionHelper helper = Core.getInstance(ActionHelper.class);
+        String uid = (String) helper.getSessibute ( Cnst.UID_SES );
+        Table  tab = db.getTable((String)table.getParams().get("role.table"));
+        Table  usr = db.getTable((String)table.getParams().get("user.table"));
+        tab.remove("`role` IN (?)",Synt.setOf(
             prefix + "/" + id + "/search",
             prefix + "/" + id + "/create",
             prefix + "/" + id + "/update",
             prefix + "/" + id + "/delete",
             prefix + "/" + id + "/revert"
-        );
-        tab.remove("`role` IN (?)", rns );
+        ));
+        usr.update(Synt.mapOf("rtime", System.currentTimeMillis()/1000), "`id` = ?",uid);
     }
 
     protected void deleteFormMenu(String id) {

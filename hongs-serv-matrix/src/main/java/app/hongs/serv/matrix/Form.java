@@ -350,22 +350,26 @@ public class Form extends Model {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
         Table  tab = db.getTable ("role");
+        Table  usr = db.getTable ("user");
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/search"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/create"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/update"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/delete"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/revert"));
+        usr.filter("id = ?", uid)
+           .update(Synt.mapOf("rtime", System.currentTimeMillis() / 1000));
     }
 
     protected void deleteAuthRole(String id) throws HongsException {
         Table  tab = db.getTable ("role");
-        tab.remove("role IN (?)", Synt.setOf(
+        Set    rns = Synt. setOf (
             prefix + "/" + id + "/search",
             prefix + "/" + id + "/create",
             prefix + "/" + id + "/update",
             prefix + "/" + id + "/delete",
             prefix + "/" + id + "/revert"
-        ));
+        );
+        tab.remove("role IN (?)", rns);
     }
 
     protected void deleteFormMenu(String id) {

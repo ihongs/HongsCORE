@@ -34,5 +34,8 @@ xsi:schemaLocation="http://hongs-core db.xsd">
                 <param name="fields">id,name</param>
             </assoc>
         </table>
+        <table name="role"
+               tableName="member.user_role">
+        </table>
     </tables>
 </db>

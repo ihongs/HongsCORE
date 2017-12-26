@@ -357,7 +357,7 @@ public class Form extends Model {
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/delete"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/revert"));
         usr.filter("`id` = ?", uid)
-           .update(Synt.mapOf("rtime", System.currentTimeMillis() / 1000));
+           .update(Synt.mapOf("rtime", System.currentTimeMillis( ) / 1000));
     }
 
     protected void deleteAuthRole(String id) throws HongsException {

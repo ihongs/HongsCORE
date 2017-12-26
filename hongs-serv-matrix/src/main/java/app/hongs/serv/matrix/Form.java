@@ -349,29 +349,70 @@ public class Form extends Model {
     protected void insertAuthRole(String id) throws HongsException {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-        Table  tab = db.getTable((String)table.getParams().get("role.table"));
-        Table  usr = db.getTable((String)table.getParams().get("user.table"));
-        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/search"));
-        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/create"));
-        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/update"));
-        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/delete"));
-        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/revert"));
-        usr.update(Synt.mapOf("rtime", System.currentTimeMillis()/1000), "`id` = ?",uid);
+        String tan ;
+        
+        // 写入权限
+        tan = (String) table.getParams().get("role.table");
+        if (tan != null) {
+            Table tab = db.getTable(tan);
+            tab.insert(Synt.mapOf(
+                "user_id", uid,
+                "role"   , prefix + "/" + id + "/search"
+            ));
+            tab.insert(Synt.mapOf(
+                "user_id", uid,
+                "role"   , prefix + "/" + id + "/create"
+            ));
+            tab.insert(Synt.mapOf(
+                "user_id", uid,
+                "role"   , prefix + "/" + id + "/update"
+            ));
+            tab.insert(Synt.mapOf(
+                "user_id", uid,
+                "role"   , prefix + "/" + id + "/delete"
+            ));
+            tab.insert(Synt.mapOf(
+                "user_id", uid,
+                "role"   , prefix + "/" + id + "/revert"
+            ));
+        }
+        
+        // 更新缓存(通过改变权限更新时间)
+        tan = (String) table.getParams().get("user.table");
+        if (tan != null) {
+            Table tab = db.getTable(tan);
+            tab.update(Synt.mapOf(
+                "rtime", System.currentTimeMillis() / 1000
+            ) , "`id` = ?" , uid );
+        }
     }
 
     protected void deleteAuthRole(String id) throws HongsException {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-        Table  tab = db.getTable((String)table.getParams().get("role.table"));
-        Table  usr = db.getTable((String)table.getParams().get("user.table"));
-        tab.remove("`role` IN (?)",Synt.setOf(
-            prefix + "/" + id + "/search",
-            prefix + "/" + id + "/create",
-            prefix + "/" + id + "/update",
-            prefix + "/" + id + "/delete",
-            prefix + "/" + id + "/revert"
-        ));
-        usr.update(Synt.mapOf("rtime", System.currentTimeMillis()/1000), "`id` = ?",uid);
+        String tan;
+        
+        // 删除权限
+        tan = (String) table.getParams().get("role.table");
+        if (tan != null) {
+            Table tab = db.getTable(tan);
+            tab.remove("`role` IN (?)", Synt.setOf(
+                prefix + "/" + id + "/search",
+                prefix + "/" + id + "/create",
+                prefix + "/" + id + "/update",
+                prefix + "/" + id + "/delete",
+                prefix + "/" + id + "/revert"
+            ));
+        }
+        
+        // 更新缓存(通过改变权限更新时间)
+        tan = (String) table.getParams().get("user.table");
+        if (tan != null) {
+            Table tab = db.getTable(tan);
+            tab.update(Synt.mapOf(
+                "rtime", System.currentTimeMillis() / 1000
+            ) , "`id` = ?" , uid );
+        }
     }
 
     protected void deleteFormMenu(String id) {

@@ -144,13 +144,17 @@ implements IEntity
   public Map search(Map rd, FetchCase caze)
     throws HongsException
   {
-    Object id = rd.get(this.table.primaryKey);
-    if (id == null || id instanceof Map || id instanceof Collection) {
-      return  this.getList(rd, caze);
-    } else if (!"".equals (id)) {
-      return  this.getInfo(rd, caze);
+    Object id = rd.get ( Cnst.ID_KEY );
+    if (id == null) {
+        id =  rd.get(table.primaryKey);
+    }
+    if (id == null
+    ||  id instanceof Map
+    ||  id instanceof Collection
+    ||  id instanceof Object [ ]) {
+        return getList(rd , caze);
     } else {
-      return  new HashMap (  );
+        return getInfo(rd , caze);
     }
   }
 
@@ -212,7 +216,7 @@ implements IEntity
   public int update(Map rd, FetchCase caze)
     throws HongsException
   {
-    Object idz = rd.get(Cnst.ID_KEY);
+    Object idz = rd.get ( Cnst.ID_KEY );
     if (idz == null) {
         idz =  rd.get(table.primaryKey);
     }
@@ -234,7 +238,7 @@ implements IEntity
     FetchCase fc = caze != null
                  ? caze.clone()
                  : fetchCase ();
-    fc.setOption("MODEL_METHOD","update");
+    fc.setOption("MODEL_START", "update");
     permit(fc , rd , ids);
 
     for (String id : ids)
@@ -289,7 +293,7 @@ implements IEntity
     FetchCase fc = caze != null
                  ? caze.clone()
                  : fetchCase ();
-    fc.setOption("MODEL_METHOD","delete");
+    fc.setOption("MODEL_START", "delete");
     permit(fc , rd , ids);
 
     for (String id : ids)
@@ -581,7 +585,7 @@ implements IEntity
 
     // 调用filter进行过滤
     caze = caze != null ? caze.clone() : fetchCase();
-    caze.setOption("MODEL_METHOD", "get");
+    caze.setOption("MODEL_START", "get");
     this.filter(caze , rd);
 
     return this.table.fetchLess(caze);
@@ -602,7 +606,7 @@ implements IEntity
 
     // 调用filter进行过滤
     caze = caze != null ? caze.clone() : fetchCase();
-    caze.setOption("MODEL_METHOD", "getOne");
+    caze.setOption("MODEL_START", "getOne");
     this.filter(caze , rd);
 
     return this.table.fetchLess(caze);
@@ -623,7 +627,7 @@ implements IEntity
 
     // 调用filter进行过滤
     caze = caze != null ? caze.clone() : fetchCase();
-    caze.setOption("MODEL_METHOD", "getAll");
+    caze.setOption("MODEL_START", "getAll");
     this.filter(caze , rd);
 
     return this.table.fetchMore(caze);
@@ -667,7 +671,7 @@ implements IEntity
       rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
     }
 
-    caze.setOption("MODEL_METHOD", "getInfo");
+    caze.setOption("MODEL_START", "getInfo");
     this.filter(caze, rd);
 
     Map info = table.fetchLess(caze);
@@ -725,7 +729,7 @@ implements IEntity
       rd.put(table.primaryKey, rd.get(Cnst.ID_KEY));
     }
 
-    caze.setOption("MODEL_METHOD", "getList");
+    caze.setOption("MODEL_START", "getList");
     this.filter(caze, rd);
 
     // 获取页码, 默认为第一页
@@ -809,7 +813,7 @@ implements IEntity
    * 作用于 update,delete 上
    *
    * 如需添加过滤条件, 请重写此方法;
-   * 有不可操作的行时, 通过 caze 上的 MODEL_METHOD 来区分异常:
+   * 有不可操作的行时, 通过 caze 上的 MODEL_START 来区分异常:
    * update 对应 0x1096
    * delete 对应 0x1097
    * 其他的 对应 0x1098
@@ -851,7 +855,7 @@ implements IEntity
         Set    zd = new HashSet(id);
                zd . removeAll  (xd);
         String er = zd.toString(  );
-        String mm = caze.getOption("MODEL_METHOD","");
+        String mm = caze.getOption("MODEL_START", "");
         if ("update".equals(mm)) {
             throw new HongsException(0x1096, "Can not update by id: " + er);
         } else
@@ -907,8 +911,8 @@ implements IEntity
      * 默认只连接 LEFT,INNER,RIGHT 的表(常规关联均可)
      */
     if (null == caze.getOption("ASSOCS")
-    && ("getAll" .equals(caze.getOption("MODEL_METHOD"))
-    ||  "getList".equals(caze.getOption("MODEL_METHOD"))
+    && ("getAll" .equals(caze.getOption("MODEL_START"))
+    ||  "getList".equals(caze.getOption("MODEL_START"))
     )) {
       if (null == caze.getOption("ASSOC_TYPES"))
       {

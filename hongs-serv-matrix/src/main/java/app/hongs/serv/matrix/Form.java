@@ -356,7 +356,7 @@ public class Form extends Model {
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/update"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/delete"));
         tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/revert"));
-        usr.filter("id = ?", uid)
+        usr.filter("`id` = ?", uid)
            .update(Synt.mapOf("rtime", System.currentTimeMillis() / 1000));
     }
 
@@ -369,7 +369,7 @@ public class Form extends Model {
             prefix + "/" + id + "/delete",
             prefix + "/" + id + "/revert"
         );
-        tab.remove("role IN (?)", rns);
+        tab.remove("`role` IN (?)", rns );
     }
 
     protected void deleteFormMenu(String id) {

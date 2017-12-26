@@ -3,7 +3,9 @@ package app.hongs.serv.matrix;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.action.ActionHelper;
 import app.hongs.action.FormSet;
+import app.hongs.action.NaviMap;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
 import app.hongs.db.Table;
@@ -16,6 +18,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -51,53 +54,17 @@ public class Form extends Model {
         super(table);
     }
 
-    /**
-     * 添加/修改记录
-     *
-     * @param rd
-     * @return 记录ID
-     * @throws app.hongs.HongsException
-     */
-    @Override
-    public int add(String id, Map rd) throws HongsException {
-        List<Map> flds = parseConf(rd);
-        String    name = (String)  rd.get("name");
-
-        int an = superAdd (id,  rd );
-
-        // 建立表单配置
-        if (flds != null) {
-            updateFormConf(id, flds);
-        }
-
-        // 建立菜单配置
-        if (name != null) {
-            updateFormMenu(id, name);
-        }
-
-        // 更新频道菜单
-        String unitId = (String) rd.get( "unit_id" );
-        String unitNm = (String) db.getTable("unit")
-                .filter ("id = ?", unitId)
-                .select ("name")
-                .one    ()
-                .get    ("name");
-        updateUnitMenu(unitId, unitNm);
-
-        return an;
-    }
-
     @Override
     public int put(String id, Map rd) throws HongsException {
-        List<Map> flds = parseConf(rd);
-        String    name = (String)  rd.get("name");
+        List<Map> fds = parseConf(rd);
+        String   name = (String)  rd.get( "name" );
 
         // 冻结意味着手动修改了配置
         // 再操作可能会冲掉自定配置
         if (!rd.containsKey("state")
         &&  !fetchCase()
             .field("id")
-            .where("id = ? AND state = ?", id, 2)
+            .where("id = ? AND state = ?", id, 2 )
             .one  (    )
             .isEmpty(  )) {
             throw new HongsException(0x1100, "表单已冻结, 禁止操作");
@@ -106,14 +73,46 @@ public class Form extends Model {
         int an = superPut (id,  rd );
 
         // 建立表单配置
-        if (flds != null) {
-            updateFormConf(id, flds);
+        if (fds != null) {
+            updateFormConf(id,  fds);
         }
 
         // 建立菜单配置
         if (name != null) {
             updateFormMenu(id, name);
         }
+
+        return an;
+    }
+
+    @Override
+    public int add(String id, Map rd) throws HongsException {
+        List<Map> fds = parseConf(rd);
+        String   name = (String) rd.get( "name"    );
+        String unitId = (String) rd.get( "unit_id" );
+        String unitNm = (String) db.getTable("unit")
+                .filter ("id = ?", unitId)
+                .select ("name")
+                .one    ()
+                .get    ("name");
+
+        int an = superAdd (id,  rd );
+
+        // 建立表单配置
+        if (fds != null) {
+            updateFormConf(id,  fds);
+        }
+
+        // 建立菜单配置
+        if (name != null) {
+            updateFormMenu(id, name);
+        }
+
+        // 更新单元菜单
+        updateUnitMenu(unitId, unitNm);
+
+        // 添加表单权限
+        insertAuthRole(id);
 
         return an;
     }
@@ -139,6 +138,9 @@ public class Form extends Model {
 
         // 更新单元菜单
         updateUnitMenu(unitId, unitNm);
+
+        // 删除表单权限
+        deleteAuthRole(id);
 
         return n;
     }
@@ -303,6 +305,67 @@ public class Form extends Model {
         }
 
         return flds;
+    }
+
+    @Override
+    protected void filter(FetchCase caze, Map rd) throws HongsException {
+        super.filter(caze, rd);
+
+        // 超级管理员不做限制
+        ActionHelper helper = Core.getInstance (ActionHelper.class);
+        String uid = ( String ) helper.getSessibute( Cnst.UID_SES );
+        if (Cnst.ADM_UID.equals(uid)) {
+            return;
+        }
+
+        String  pm = prefix + "/";
+        String  mm = caze.getOption("MODEL_START", "");
+        if ("getList".equals(mm)
+        ||  "getInfo".equals(mm)) {
+            mm = "/search";
+        } else
+        if ("update" .equals(mm)
+        ||  "delete" .equals(mm)) {
+            mm = "/" + mm ;
+        } else {
+            return; // 非常规动作不限制
+        }
+
+        // 从权限串中取表单ID
+        NaviMap nm = NaviMap.getInstance(prefix);
+        Set<String> ra = nm.getRoleSet( );
+        Set<String> rs = new   HashSet( );
+        for (String rn : ra) {
+            if (rn.startsWith(pm)
+            &&  rn.  endsWith(mm)) {
+                rs.add(rn.substring(pm.length(), rn.length() - mm.length()));
+            }
+        }
+
+        // 限制为有权限的表单
+        caze.where("`"+table.name+"`.`id` IN (?)", rs);
+    }
+
+    protected void insertAuthRole(String id) throws HongsException {
+        ActionHelper helper = Core.getInstance(ActionHelper.class);
+        String uid = (String) helper.getSessibute ( Cnst.UID_SES );
+        Table  tab = db.getTable ("role");
+        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/search"));
+        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/create"));
+        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/update"));
+        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/delete"));
+        tab.insert(Synt.mapOf("user_id", uid, "role", prefix + "/" + id + "/revert"));
+    }
+
+    protected void deleteAuthRole(String id) throws HongsException {
+        Table  tab = db.getTable ("role");
+        tab.remove("role IN (?)", Synt.setOf(
+            prefix + "/" + id + "/search",
+            prefix + "/" + id + "/create",
+            prefix + "/" + id + "/update",
+            prefix + "/" + id + "/delete",
+            prefix + "/" + id + "/revert"
+        ));
     }
 
     protected void deleteFormMenu(String id) {

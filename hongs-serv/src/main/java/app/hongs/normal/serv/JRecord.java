@@ -78,8 +78,6 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
      */
     @Override
     public void set(String key, T val, long exp) throws HongsException {
-        long now = System.currentTimeMillis() / 1000;
-
         // 序列化值
         byte[] arr;
         try (
@@ -94,16 +92,23 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             throw new HongsException.Common(ex);
         }
 
+        long now = System.currentTimeMillis() / 1000;
+
 //      table.db.open( );
         table.db.ready();
 
         try (
             PreparedStatement ps = table.db.prepareStatement(
-                 "DELETE FROM `" + table.tableName + "` WHERE id = ?"
+                      "UPDATE `" + table.tableName + "` SET data= ?, xtime= ?, mtime= ? WHERE id = ?"
             );
         ) {
-            ps.setString(1, key);
-            ps.executeUpdate(  );
+            ps.setString(4, key);
+            ps.setBytes (1, arr);
+            ps.setLong  (2, exp);
+            ps.setLong  (3, now);
+            if(ps.executeUpdate( ) > 0) {
+               return;
+            }
         }
         catch (SQLException ex ) {
             throw new HongsException.Common(ex);
@@ -118,7 +123,9 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.setBytes (2, arr);
             ps.setLong  (3, exp);
             ps.setLong  (4, now);
-            ps.executeUpdate(  );
+            if(ps.executeUpdate( ) > 0) {
+               return;
+            }
         }
         catch (SQLException ex ) {
             throw new HongsException.Common(ex);
@@ -186,7 +193,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepareStatement(
-                 "DELETE FROM `" + table.tableName + "` WHERE xtime <= ? AND xtime != ?"
+                 "DELETE FROM `" + table.tableName + "` WHERE xtime <= ? AND xtime != 0"
             );
         ) {
             ps.setLong  (1, exp);

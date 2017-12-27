@@ -125,20 +125,21 @@ public class Unit extends Mtree {
             Map<String, Map> menus2 = (Map) menu.get("menus");
             Set<String/***/> roles2 = (Set) menu.get("roles");
             hasSub = hasOne = false;
-            if (menus2 != null && !menus2.isEmpty() && !hasSub && !hasOne) {
+            if (menus2 != null && !menus2.isEmpty() /* Check sub menus */ ) {
                 hasSub  = getSubUnits (menus2, roles, units );
             } else {
-                hasOne  = true;
+                hasOne  = true ;
             }
-            if (roles2 != null && !roles2.isEmpty() && !hasSub && !hasOne) {
+            if (roles2 != null && !roles2.isEmpty() && (!hasSub || hasOne)) {
+                hasOne  = false;
             for(String rn : roles2) {
             if (roles.contains(rn)) {
-                hasOne  = true;
+                hasOne  = true ;
                 break;
             }}
             }
             if (hasSub || hasOne  ) {
-                hasRol  = true;
+                hasRol  = true ;
                 keyMat  = UNIT_ID_RG.matcher(subEnt.getKey());
                 if (keyMat.find()) units.add(keyMat.group(1));
             }

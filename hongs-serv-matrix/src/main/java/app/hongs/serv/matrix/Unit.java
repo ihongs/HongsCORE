@@ -116,35 +116,34 @@ public class Unit extends Mtree {
     private final Pattern UNIT_ID_RG = Pattern.compile("x=(.*)");
 
     private boolean getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
-        if (menus.isEmpty( )) {
-            return true;
-        }
         boolean hasRol = false;
         boolean hasSub ;
+        boolean hasOne ;
         Matcher keyMat ;
         for(Map.Entry<String, Map> subEnt : menus.entrySet()) {
             Map<String, Object> menu = subEnt.getValue();
             Map<String, Map> menus2 = (Map) menu.get("menus");
             Set<String/***/> roles2 = (Set) menu.get("roles");
-            hasSub = false;
-            if (menus2 != null && ! hasSub) {
-                hasSub = getSubUnits ( menus2, roles, units );
+            hasSub = hasOne = false;
+            if (menus2 != null && !menus2.isEmpty() && !hasSub && !hasOne) {
+                hasSub  = getSubUnits (menus2, roles, units );
+            } else {
+                hasOne  = true;
             }
-            if (roles2 != null && ! hasSub) {
-                for    (String rn : roles2) {
-                    if (roles.contains(rn)) {
-                        hasSub = true;
-                        break;
-                    }
-                }
+            if (roles2 != null && !roles2.isEmpty() && !hasSub && !hasOne) {
+            for(String rn : roles2) {
+            if (roles.contains(rn)) {
+                hasOne  = true;
+                break;
+            }}
             }
-            if (hasSub) {
-                hasRol = true;
-                keyMat = UNIT_ID_RG.matcher(subEnt.getKey( ));
-                if (keyMat.find())units.add(keyMat.group (1));
+            if (hasSub || hasOne  ) {
+                hasRol  = true;
+                keyMat  = UNIT_ID_RG.matcher(subEnt.getKey());
+                if (keyMat.find()) units.add(keyMat.group(1));
             }
         }
-        return hasRol;
+        return  hasRol ;
     }
 
     public void updateUnitMenu(String id, String name) throws HongsException {

@@ -343,7 +343,7 @@ public class Form extends Model {
         }
 
         // 限制为有权限的表单
-        caze.where("`"+table.name+"`.`id` IN (?)", rs);
+        caze.filter("`"+table.name+"`.`id` IN (?)", rs);
     }
 
     protected void insertAuthRole(String id) throws HongsException {

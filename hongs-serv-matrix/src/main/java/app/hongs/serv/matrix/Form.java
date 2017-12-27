@@ -318,8 +318,7 @@ public class Form extends Model {
             return;
         }
 
-        String  pm = prefix + "/";
-        String  mm = caze.getOption("MODEL_START", "");
+        String  mm = caze.getOption("MODEL_START" , "");
         if ("getList".equals(mm)
         ||  "getInfo".equals(mm)) {
             mm = "/search";
@@ -333,6 +332,7 @@ public class Form extends Model {
 
         // 从权限串中取表单ID
         NaviMap nm = NaviMap.getInstance(prefix);
+        String  pm = prefix + "/";
         Set<String> ra = nm.getRoleSet( );
         Set<String> rs = new   HashSet( );
         for (String rn : ra) {

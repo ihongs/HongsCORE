@@ -3,17 +3,24 @@ package app.hongs.serv.matrix;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.action.ActionHelper;
+import app.hongs.action.NaviMap;
 import app.hongs.db.DB;
 import app.hongs.db.Mtree;
 import app.hongs.db.Table;
+import app.hongs.db.util.FetchCase;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -70,6 +77,74 @@ public class Unit extends Mtree {
         }
 
         return an;
+    }
+
+    @Override
+    protected void filter(FetchCase caze, Map rd) throws HongsException {
+        super.filter(caze, rd);
+
+        // 超级管理员不做限制
+        ActionHelper helper = Core.getInstance (ActionHelper.class);
+        String uid = ( String ) helper.getSessibute( Cnst.UID_SES );
+        if (Cnst.ADM_UID.equals(uid)) {
+            return;
+        }
+
+        String  mm = caze.getOption("MODEL_START" , "");
+        if ("getList".equals(mm)
+        ||  "getInfo".equals(mm)) {
+//          mm = "/search";
+        } else
+        if ("update" .equals(mm)
+        ||  "delete" .equals(mm)) {
+//          mm = "/" + mm ;
+        } else {
+            return; // 非常规动作不限制
+        }
+
+        // 从导航表中取单元ID
+        NaviMap navi = NaviMap.getInstance(prefix);
+        Map<String, Map> ms = navi.menus;
+        Set<String> rs = navi.getRoleSet();
+        Set<String> us = /**/new HashSet();
+        getSubUnits(ms , rs , us );
+
+        // 限制为有权限的单元
+        caze.filter("`"+table.name+"`.`id` IN (?)", us);
+    }
+
+    private final Pattern UNIT_ID_RG = Pattern.compile("x=(.*)");
+
+    private boolean getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
+        if (menus.isEmpty( )) {
+            return true;
+        }
+        boolean hasRol = false;
+        boolean hasSub ;
+        Matcher keyMat ;
+        for(Map.Entry<String, Map> subEnt : menus.entrySet()) {
+            Map<String, Object> menu = subEnt.getValue();
+            Map<String, Map> menus2 = (Map) menu.get("menus");
+            Set<String/***/> roles2 = (Set) menu.get("roles");
+            hasSub = false;
+            if (menus2 != null && ! hasSub) {
+                hasSub = getSubUnits ( menus2, roles, units );
+            }
+            if (roles2 != null && ! hasSub) {
+                for    (String rn : roles2) {
+                    if (roles.contains(rn)) {
+                        hasSub = true;
+                        break;
+                    }
+                }
+            }
+            if (hasSub) {
+                hasRol = true;
+                keyMat = UNIT_ID_RG.matcher(subEnt.getKey( ));
+                if (keyMat.find())units.add(keyMat.group (1));
+            }
+        }
+        return hasRol;
     }
 
     public void updateUnitMenu(String id, String name) throws HongsException {

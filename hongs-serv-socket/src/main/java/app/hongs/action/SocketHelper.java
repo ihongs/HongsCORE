@@ -122,9 +122,15 @@ public class SocketHelper extends ActionHelper {
 
         String name  =  sess.getRequestURI( ).getPath( );
         if (Core.BASE_HREF.length() +1 <= name.length()) {
-            Core.ACTION_NAME.set(name.substring(Core.BASE_HREF.length( ) +1));
+            Core.ACTION_NAME.set(name.substring(Core.BASE_HREF.length() +1));
         } else {
-            throw new HongsError.Common( "Wrong web socket uri: "+ name);
+            throw new HongsError.Common("Wrong web socket uri: "+name );
+        }
+
+        InetSocketAddress addr = (InetSocketAddress)
+            getAttribute( "javax.websocket.endpoint.remoteAddress" );
+        if (addr != null) {
+            Core.ACTION_NAME.set(addr.getAddress().getHostAddress());
         }
 
         CoreConfig conf = core.get(CoreConfig.class);
@@ -278,8 +284,9 @@ public class SocketHelper extends ActionHelper {
         HttpSession hsess = getHttpSession();
         if (null != hsess) {
             return  hsess.getAttribute(name);
+        } else {
+            return  null ;
         }
-        return null;
     }
 
     /**
@@ -293,11 +300,40 @@ public class SocketHelper extends ActionHelper {
         HttpSession hsess = getHttpSession();
         if (null != hsess) {
         if (null != value) {
-            hsess.   setAttribute(name, value);
+            hsess.setAttribute(name , value);
         } else {
             hsess.removeAttribute(name);
-        }
-        }
+        }}
+    }
+
+    /**
+     * @deprecated 不支持 Cookie
+     * @param name
+     * @return
+     */
+    @Override
+    public String getCookibute(String  name) {
+        throw new UnsupportedOperationException("Can not get cookie in web socket");
+    }
+
+    /**
+     * @deprecated 不支持 Cookie
+     * @param name
+     * @param value
+     */
+    @Override
+    public void setCookibute(String name, String value) {
+        throw new UnsupportedOperationException("Can not set cookie in web socket");
+    }
+
+    /**
+     * @deprecated 不支持 Cookie
+     * @param name
+     * @param value
+     */
+    @Override
+    public void setCookibute(String name, String value, int life, String path, String host, boolean httpOnly, boolean secuOnly) {
+        throw new UnsupportedOperationException("Can not set cookie in web socket");
     }
 
     /**
@@ -332,19 +368,6 @@ public class SocketHelper extends ActionHelper {
             }
         }
         return super.getOutputWriter();
-    }
-
-    /**
-     * 客户端地址
-     * @return
-     */
-    @Override
-    public String getClientAddr() {
-        InetSocketAddress rip  = (InetSocketAddress) getAttribute("javax.websocket.endpoint.remoteAddress");
-        if (rip != null ) {
-            return rip.getAddress( ).getHostAddress( );
-        }
-        return null;
     }
 
     /**

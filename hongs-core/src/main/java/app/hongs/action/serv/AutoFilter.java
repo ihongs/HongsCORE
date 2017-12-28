@@ -6,6 +6,7 @@ import app.hongs.HongsError;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
+import app.hongs.action.ChoiceHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CustomReplies;
 import java.io.File;
@@ -46,10 +47,10 @@ public class AutoFilter extends ActionDriver {
 
     private String action;
     private String layout;
-    private FilterCheck ignore = null;
-    private Set<String> layset = null;
-    private Set<String> actset = null;
-    private Set<String> cstset = null;
+    private ChoiceHelper ignore = null;
+    private Set<String>  layset = null;
+    private Set<String>  actset = null;
+    private Set<String>  cstset = null;
 //  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
 //  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
@@ -69,7 +70,7 @@ public class AutoFilter extends ActionDriver {
         }
 
         // 获取不包含的URL
-        this.ignore = new FilterCheck(
+        this.ignore = new ChoiceHelper(
             cnf.getInitParameter("ignore-urls"),
             cnf.getInitParameter("attend-urls")
         );

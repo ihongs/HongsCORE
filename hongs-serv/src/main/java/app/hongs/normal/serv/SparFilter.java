@@ -2,7 +2,7 @@ package app.hongs.normal.serv;
 
 import app.hongs.Core;
 import app.hongs.action.ActionDriver;
-import app.hongs.action.ActionDriver.FilterCheck;
+import app.hongs.action.ChoiceHelper;
 import app.hongs.util.Synt;
 import java.io.File;
 import java.io.IOException;
@@ -29,12 +29,12 @@ import org.xml.sax.SAXException;
  */
 public class SparFilter implements Filter {
 
-    private FilterCheck ignore;
-    private Set<String> access;
+    private ChoiceHelper ignore;
+    private Set<String>  access;
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
-        ignore = new FilterCheck(
+        ignore = new ChoiceHelper(
             cnf.getInitParameter("ignore-urls"),
             cnf.getInitParameter("attend-urls")
         );

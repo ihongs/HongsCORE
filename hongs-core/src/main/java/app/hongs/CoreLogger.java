@@ -1,10 +1,9 @@
 package app.hongs;
 
-import app.hongs.action.ActionHelper;
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.io.PrintStream;
+import java.io.ByteArrayOutputStream;
 
 /**
  * 日志记录工具
@@ -45,29 +44,24 @@ public class CoreLogger
         StringBuilder line = new StringBuilder();
 
         // add IP Address
-        if (Core.ENVIR == 1) {
-            ActionHelper h = (ActionHelper) Core.getInstance().got(ActionHelper.class.getName());
-            if ( h != null ) {
-                  String r = h.getClientAddr();
-                if ( r != null ) {
-                    line.append(r).append(' ');
-                } else {
-                    line.append("UNKNOW ");
-                }
-            } else {
-                line.append("ACTION ");
-            }
+        String a = Core.CLIENT_ADDR.get();
+        if ( a != null ) {
+            line.append(a).append(' ');
         } else {
-           line.append("CMDLET ");
+            if (Core.ENVIR == 0) {
+                line.append("CMDLET ");
+            } else {
+                line.append("UNKNOW ");
+            }
         }
 
         // add Action Name
-        String r  = Core.ACTION_NAME.get();
-        if (   r != null   ) {
-            line.append( r ).append( ' ' );
+        String n = Core.ACTION_NAME.get();
+        if ( n != null ) {
+            line.append(n).append(' ');
         }
 
-        return line.append( text ).toString( );
+        return line.append(text).toString();
     }
 
     /**

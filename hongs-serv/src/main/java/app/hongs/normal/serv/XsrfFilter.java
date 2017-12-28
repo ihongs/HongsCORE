@@ -1,7 +1,7 @@
 package app.hongs.normal.serv;
 
 import app.hongs.action.ActionDriver;
-import app.hongs.action.ActionDriver.FilterCheck;
+import app.hongs.action.ChoiceHelper;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import java.util.regex.Matcher;
@@ -23,13 +23,13 @@ public class XsrfFilter implements Filter {
 
     private static final Pattern DOMAIN = Pattern.compile("^(?:\\w+\\:)?//(.+?)(?:\\:\\d+)?/");
 
-    private String      inside = null; // 过滤器标识
-    private FilterCheck ignore = null; // 待忽略用例
+    private String       inside = null; // 过滤器标识
+    private ChoiceHelper ignore = null; // 待忽略用例
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
-        ignore = new FilterCheck(
+        ignore = new ChoiceHelper(
             fc.getInitParameter("ignore-urls"),
             fc.getInitParameter("attend-urls")
         );

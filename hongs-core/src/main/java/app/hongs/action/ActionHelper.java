@@ -518,23 +518,6 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 获取客户标识
-   * 常为远程地址, 当虚拟请求时, 可能会返回空.
-   * @return
-   */
-  public String getClientAddr()
-  {
-    if (null != this.request)
-    {
-      return  ActionDriver.getClientAddr(this.request/**/);
-    }
-    else
-    {
-      return (String) this.getAttribute (Cnst.CLIENT_ATTR);
-    }
-  }
-
-  /**
    * 获取请求参数
    * @param name
    * @return 当前请求参数

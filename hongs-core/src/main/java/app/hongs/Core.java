@@ -452,6 +452,12 @@ public final class Core
          =  new InheritableThreadLocal();
 
   /**
+   * 客户地址标识
+   */
+  public static InheritableThreadLocal<String> CLIENT_ADDR
+         =  new InheritableThreadLocal();
+
+  /**
    * 获取核心对象
    * @return 核心对象
    */

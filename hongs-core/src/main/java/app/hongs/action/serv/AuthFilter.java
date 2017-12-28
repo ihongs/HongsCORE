@@ -7,6 +7,7 @@ import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.ChoiceHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.util.Synt;
 import java.io.IOException;
@@ -68,7 +69,7 @@ public class AuthFilter
   /**
    * 不包含的URL
    */
-  private FilterCheck ignoreCase = null;
+  private ChoiceHelper ignore = null;
 
   /**
    * 环境检测正则
@@ -139,7 +140,7 @@ public class AuthFilter
     /**
      * 获取不包含的URL
      */
-    this.ignoreCase = new FilterCheck(
+    this.ignore = new ChoiceHelper(
         config.getInitParameter("ignore-urls"),
         config.getInitParameter("attend-urls")
     );
@@ -150,10 +151,10 @@ public class AuthFilter
   {
     super.destroy();
 
-    siteMap    = null;
-    indexPage  = null;
-    loginPage  = null;
-    ignoreCase = null;
+    siteMap   = null;
+    indexPage = null;
+    loginPage = null;
+    ignore    = null;
   }
 
   @Override
@@ -167,7 +168,7 @@ public class AuthFilter
     /**
      * 检查当前动作是否可以忽略
      */
-    if (ignoreCase != null && ignoreCase.ignore(act)) {
+    if (ignore != null && ignore.ignore(act)) {
         chain.doFilter(req, rsp);
         return;
     }
@@ -264,23 +265,26 @@ public class AuthFilter
   {
     CoreLocale lang = core.get(CoreLocale.class);
     HttpServletRequest req = hlpr.getRequest(  );
+    boolean ia = isApi(req) || isAjax(req) || isJson(req);
     String uri;
     String msg;
 
     if ( 2 == type) {
         uri = Core.BASE_HREF;
-        if (uri == null || uri.length() == 0) {
-            msg = lang.translate("core.error.no.place");
+        if (uri == null || uri.length() == 0 || ia) {
+            uri =  null;
+            msg =  lang.translate("core.error.no.place");
         } else {
-            msg = lang.translate("core.error.no.place.redirect");
+            msg =  lang.translate("core.error.no.place.redirect");
         }
     } else
     if ( 3 == type) {
         uri = this.indexPage;
-        if (uri == null || uri.length() == 0) {
-            msg = lang.translate("core.error.no.power");
+        if (uri == null || uri.length() == 0 || ia) {
+            uri =  null;
+            msg =  lang.translate("core.error.no.power");
         } else {
-            msg = lang.translate("core.error.no.power.redirect");
+            msg =  lang.translate("core.error.no.power.redirect");
         }
     } else
     {
@@ -303,9 +307,6 @@ public class AuthFilter
             String src = null;
             String qry ;
 
-            if (isApi (req)) {
-                // API 模式无需返回地址
-            } else
             if (isAjax(req)) {
                 src =  req.getHeader("Referer")
                     .replaceFirst("^\\w+://[^/]+","");
@@ -333,18 +334,20 @@ public class AuthFilter
         }
     }
 
-    if (isApi(req) || isAjax(req) || isJson(req)) {
+    if (ia) {
         Map rsp = new HashMap();
-            rsp.put("ok",false);
-            rsp.put("msg", msg);
-            rsp.put("ern", "Er40"+type);
-        if (uri != null && uri.length() != 0) {
-            rsp.put("err", "Goto "+uri);
-        }
-
-        if (type == 1 ) {
+        rsp.put("ok" , false);
+        rsp.put("msg",  msg );
+        rsp.put("ern", "Er40"+type);
+        if (type == 1 || type == 0) {
+            if (uri != null && uri.length() != 0) {
+                rsp.put("err", "Goto "+uri);
+            }
             hlpr.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         } else {
+            if (uri != null && uri.length() != 0) {
+                rsp.put("err", "Link "+uri);
+            }
             hlpr.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN   );
         }
 

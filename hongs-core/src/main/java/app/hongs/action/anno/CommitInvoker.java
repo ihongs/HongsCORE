@@ -3,6 +3,7 @@ package app.hongs.action.anno;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.dh.ITrnsct;
@@ -48,6 +49,9 @@ public class CommitInvoker implements FilterInvoker {
                     }
                 }
 
+                if (ex instanceof HongsExpedient) {
+                    throw (HongsExpedient) ex ;
+                } else
                 if (ex instanceof HongsException) {
                     throw (HongsException) ex ;
                 }

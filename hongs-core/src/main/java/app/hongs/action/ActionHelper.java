@@ -532,7 +532,7 @@ public class ActionHelper implements Cloneable
     if (o instanceof Map )
     {
       o = new ArrayList(((Map) o).values());
-    }
+    } else
     if (o instanceof Set )
     {
       o = new ArrayList(((Set) o));

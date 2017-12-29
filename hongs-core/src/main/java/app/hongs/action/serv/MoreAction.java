@@ -24,9 +24,9 @@ import javax.servlet.http.HttpServletResponse;
  * 可一次调用多个动作
  * 批量执行后返回数据
  * 请求格式举例:
- * NAME1/ACTION/PATH1=PARAMS&NAME2/ACTION/PATH2=PARAMS
+ * KEY.act=ACTION/PATH&KEY.req=PARAMS
  * PARAMS 为 JSON 或 URLEncoded 格式
- * .data  提供共同的参数
+ * .data  提供全部请求动作共同的参数
  * @author Hongs
  */
 @Action("common/more")
@@ -42,29 +42,28 @@ public class MoreAction {
         Map                 re2 ;
         Map                 rs0 = new HashMap();
         Map                 rs1 ;
-        String              nm0 ;
-        String              nm1 ;
+        String              key ;
         String              uri ;
-        int                 pos ;
 
-        while (nms.hasMoreElements( )) {
-            nm0 = nms.nextElement (  );
-            pos = nm0.indexOf("~");
-            if (0 > pos) continue ;
-            nm1 = nm0.substring(0,pos);
-            uri = nm0.substring(1+pos);
-            uri = "/"+uri+Cnst.ACT_EXT;
+        while (nms.hasMoreElements(  )) {
+            key = nms.nextElement (  );
+            if( ! key.endsWith(".act")) {
+                continue;
+            }
 
             // 解析请求参数
-            re2 = data(re0.get( nm0 ));
-            rs1 = new HashMap();
-            rs1.putAll(re1);
-            rs1.putAll(re2);
-            helper.setRequestData(rs1);
+            uri = helper.getParameter(key);
+            uri = "/" + uri + Cnst.ACT_EXT;
+            key = key.substring( 0, key.length() - 4 );
+            re2 = data(Dict.getParam(re0, key+".req"));
 
             // 代理执行动作
+            rs1 = new HashMap();
+            rs1.putAll(  re1  );
+            rs1.putAll(  re2  );
+            helper.setRequestData ( rs1     );
             rs1 = call(helper, uri, req, rsp);
-            rs0.put (nm1 , rs1);
+            Dict  .setParam  ( rs0, rs1, key);
         }
 
         helper.reply(rs0);

@@ -90,10 +90,10 @@ response.setHeader("ETag", id +":"+ xtime );
     </style>
 </head>
 <body>
-    <div class="invisible">
+    <div class="invisible" style="max-width: 842px;">
         <img src="<%=info.get("logo")%>"/>
     </div>
-    <div class="container">
+    <div class="container" style="max-width: 842px;">
         <h1><%=info.get("name")%></h1>
         <p style="text-align:center;">
             <%=mtime%>
@@ -101,16 +101,17 @@ response.setHeader("ETag", id +":"+ xtime );
         <div>
             <%=info.get("body")%>
         </div>
-        <p>
-            <hr/>
-        </p>
+        <hr/>
         <div>
-            <span id="endorse-score">
+            <span id="endorse-score" style="padding-right: 1em;">
             <%for (int i = 0; i < 5; i ++) {%>
             <a href="javascript:;" class="glyphicon glyphicon-star-empty" data-score="<%=(i+1)%>"></a>
             <%} /*End for*/%>
             </span>
-            <span>共有<span id="impress-count">1</span>人浏览, <span id="endorse-count">0</span>人评分. <a href="javascript:;" data-toggle="modal" data-target="#dissent-modal">举报</a></span>
+            <span id="impress-count">1</span>人浏览,
+            <span id="endorse-count">0</span>人评分,
+            <span id="comment-count">0</span>条评论.
+            <a href="javascript:;"><span data-toggle="modal" data-target="#dissent-modal">举报</span></a>
         </div>
         <div>
             <div id="comment-list"
@@ -120,7 +121,13 @@ response.setHeader("ETag", id +":"+ xtime );
                  data-fill-page="(hsListFillNext)"
                  data-data-0="keep_prev:true">
                 <div class="itembox" style="display: none;">
-                    <h4><span data-fn="user.name"></span> <sub data-fn="ctime"></sub></h4>
+                    <input type="hidden" name="id"/>
+                    <input type="hidden" name="user_id"/>
+                    <h6>
+                        <span data-fn="user.name"></span>
+                        <span data-fn="ctime" data-ft="_htime" data-fl="v*1000" style="color:#666;padding:0 1em;"></span>
+                        <a href="javascript:;"><span data-toggle="modal" data-target="#comment-modal">回复</span></a>
+                    </h6>
                     <p data-fn="note"></p>
                 </div>
                 <div class="listbox">
@@ -136,7 +143,7 @@ response.setHeader("ETag", id +":"+ xtime );
     <div id="comment-modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form id="comment-form" method="post" action="centre/medium/comment/create.act?link=<%=ln%>&link_id=<%=id%>&ab=.errs">
+                <form id="comment-form" method="post" action="centre/medium/comment/create.act?link=<%=ln%>&link_id=<%=id%>&ab=.errs" class="loadbox">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">评论</h4>
@@ -152,10 +159,10 @@ response.setHeader("ETag", id +":"+ xtime );
                         </div>
                         <div class="form-group row" style="margin-bottom: 0;">
                             <div class="col-sm-6">
-                                <input type="text" name="captcode" value="" placeholder="验证码" class="form-control" required="required" autocomplete="off"/>
+                                <input type="text" name="capt" value="" placeholder="验证码" class="form-control" required="required" autocomplete="off"/>
                             </div>
                             <div class="col-sm-6">
-                                <img src="" onclick="this.src='centre/capt/create.act?b=ffffff&f=222222&h=43&_='+Math.random()" class="capt-img" style="width: 86px; height: 43px;" title="点我..."/>
+                                <img src="" onclick="this.src='centre/capt/create.act?b=ffffff&f=222222&h=43&_='+Math.random()" class="capt-img" style="width: 86px; height: 43px;" title="点我, 点我, 点我..."/>
                             </div>
                             <div class="col-sm-12 help-block"></div>
                         </div>
@@ -172,7 +179,7 @@ response.setHeader("ETag", id +":"+ xtime );
     <div id="dissent-modal" class="modal fade" tabindex="-1" role="dialog">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
-                <form id="dissent-form" method="post" action="centre/medium/dissent/create.act?link=<%=ln%>&link_id=<%=id%>&ab=.errs">
+                <form id="dissent-form" method="post" action="centre/medium/dissent/create.act?link=<%=ln%>&link_id=<%=id%>&ab=.errs" class="loadbox">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                         <h4 class="modal-title">举报</h4>
@@ -198,10 +205,10 @@ response.setHeader("ETag", id +":"+ xtime );
                         </div>
                         <div class="form-group row" style="margin-bottom: 0;">
                             <div class="col-sm-6">
-                                <input type="text" name="captcode" value="" placeholder="验证码" class="form-control" required="required" autocomplete="off"/>
+                                <input type="text" name="capt" value="" placeholder="验证码" class="form-control" required="required" autocomplete="off"/>
                             </div>
                             <div class="col-sm-6">
-                                <img src="" onclick="this.src='centre/capt/create.act?b=ffffff&f=222222&h=43&_='+Math.random()" class="capt-img" style="width: 86px; height: 43px;" title="点我..."/>
+                                <img src="" onclick="this.src='centre/capt/create.act?b=ffffff&f=222222&h=43&_='+Math.random()" class="capt-img" style="width: 86px; height: 43px;" title="点我, 点我, 点我..."/>
                             </div>
                             <div class="col-sm-12 help-block"></div>
                         </div>
@@ -234,6 +241,7 @@ response.setHeader("ETag", id +":"+ xtime );
                                             / parseFloat(stat.endorse_count));
                         $("#impress-count").text(stat.impress_count);
                         $("#endorse-count").text(stat.endorse_count);
+                        $("#comment-count").text(stat.comment_count);
                         for (var i = 0; i < star; i ++) {
                             $("#endorse-score")
                                 .find ("[data-score='"+(i + 1)+"']")

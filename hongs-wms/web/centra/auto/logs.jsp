@@ -1,3 +1,4 @@
+<%@page import="app.hongs.Cnst"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <%
@@ -57,14 +58,14 @@
         var sendbox = context.find(".sendbox");
         
         var listObj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?id!eq=\${id}&ob=-ctime&rb=-data,user.*",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.<%=Cnst.EQ_REL%>=\${id}&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
             openUrls: [
                 [function(ln) {
                     var tr = ln.closest("tr");
                     var id = tr.data("id");
                     var ct = tr.data("ctime");
                     this.open(ln, ln.hsFind("@"),
-                      "<%=_module%>/<%=_entity%>/info_logs.html?ab=_enum,_fork&id="+id+"&ctime="+ct);
+                      "<%=_module%>/<%=_entity%>/info_logs.html?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.ID_KEY%>="+id+"&ctime="+ct);
                 }, ".review"],
                 [function(ln) {
                     sendbox.data ("ln", ln);

@@ -1,3 +1,4 @@
+<%@page import="app.hongs.Cnst"%>
 <%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
@@ -71,9 +72,9 @@
                 <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
             <%} else if ("number".equals(type) || "range".equals(type)) {%>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.LE_REL%>" />
                 </div>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <%
@@ -82,9 +83,9 @@
                     }
                 %>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!ge" data-toggle="hsTime" data-type="timestamp" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="timestamp" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>!le" data-toggle="hsTime" data-type="timestamp" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="timestamp" />
                 </div>
             <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
@@ -291,28 +292,28 @@
              '<%=_locale.translate("fore.delete.confirm", _title)%>']
         ],
         openUrls: [
-            ['<%=_module%>/<%=_entity%>/form.html?ab=!enum',
+            ['<%=_module%>/<%=_entity%>/form.html?<%=Cnst.AB_KEY%>=!enum',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?ab=.enum,_fork&id={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?<%=Cnst.AB_KEY%>=.enum,_fork&<%=Cnst.ID_KEY%>={ID}',
              '.update', '@'],
-            ['<%=_module%>/<%=_entity%>/info.html?ab=_enum,_fork&id={ID}',
+            ['<%=_module%>/<%=_entity%>/info.html?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.ID_KEY%>={ID}',
              '.review', '@'],
-            ['<%=_module%>/<%=_entity%>/logs.html?ab=_enum,_fork&id={ID}',
+            ['<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.ID_KEY%>={ID}',
              '.revert', '@'],
             ['<%=_module%>/<%=_entity%>/lore.html',
              '.manual', '@']
         ],
-        _url: "<%=_module%>/<%=_entity%>/search.act?ab=_enum,_fork&ob=<%=_ob%>&rb=<%=_rb%>"
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>"
     });
 
     <%if (!"select".equals(_action)) {%>
     var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/search.act?ab=!enum"
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum"
     });
 
     var statobj = context.hsStat({
-        surl: "<%=_module%>/<%=_entity%>/statis/search.act?ab=_enum",
-        curl: "<%=_module%>/<%=_entity%>/counts/search.act?ab=_enum,_fork"
+        surl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.AB_KEY%>=_enum",
+        curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
     if (filtbox.find(".form-group").size() == 2) {

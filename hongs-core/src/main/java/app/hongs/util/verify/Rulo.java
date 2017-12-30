@@ -3,7 +3,7 @@ package app.hongs.util.verify;
 import app.hongs.HongsException;
 
 /**
- *
+ * 规则包裹
  * @author Hongs
  */
 public class Rulo extends Rule {

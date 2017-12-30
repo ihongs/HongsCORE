@@ -3,7 +3,6 @@ package app.hongs.serv.centre;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Assign;
 import app.hongs.action.anno.CommitSuccess;
@@ -11,9 +10,8 @@ import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.db.DBAction;
 import app.hongs.db.Model;
-import app.hongs.db.Table;
-import app.hongs.serv.medium.LinkRecord;
-import app.hongs.serv.medium.Statist;
+import app.hongs.serv.medium.Mlink;
+import app.hongs.serv.medium.Mstat;
 import app.hongs.util.Synt;
 import java.util.Map;
 
@@ -24,21 +22,6 @@ import java.util.Map;
 @Action("centre/medium/endorse")
 @Assign(conf="medium", name="endorse")
 public class EndorseAction extends DBAction {
-
-    String link  ;
-    String linkId;
-
-    @Override
-    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
-        link   = helper.getParameter("link"   );
-        linkId = helper.getParameter("link_id");
-        if (link   == null) {
-            throw new HongsException(0x1100, "link required");
-        }
-        if (linkId == null) {
-            throw new HongsException(0x1100, "link_id required");
-        }
-    }
 
     @Override
     public void isExists(ActionHelper helper) {
@@ -60,7 +43,7 @@ public class EndorseAction extends DBAction {
     @Override
     public void update(ActionHelper helper)
     throws HongsException {
-        LinkRecord ett = (LinkRecord) getEntity(helper);
+        Mlink ett = (Mlink) getEntity(helper);
         Map    req = getReqMap(helper, ett, "update", helper.getRequestData());
         String uid = (String) req.get("user_id");
         String aid = ett.getLinkId();
@@ -73,10 +56,10 @@ public class EndorseAction extends DBAction {
                 .one( );
 
         if (row != null && ! row.isEmpty()) {
-            Object id = row.get("id");
             int sv = Synt.declare(req.get("score"), 1);
             int sc = Synt.declare(row.get("score"), 1);
             int st = Synt.declare(row.get("state"), 1);
+            Object id = row.get(   "id"   );
             helper.setAttribute("ln_id",id);
             helper.setAttribute("score",sc);
             if (sv != 0) {
@@ -104,7 +87,13 @@ public class EndorseAction extends DBAction {
     @Override
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
-        LinkRecord model = (LinkRecord) DB.getInstance("medium").getModel("endorse");
+        String link, linkId;
+        link   = helper.getParameter("link"   );
+        linkId = helper.getParameter("link_id");
+        if (link == null || linkId == null) {
+            throw new HongsException(0x1100, "link and link_id required");
+        }
+        Mlink model = (Mlink) DB.getInstance("medium").getModel("endorse");
         model.setLink  (link  );
         model.setLinkId(linkId);
         return model;
@@ -128,25 +117,23 @@ public class EndorseAction extends DBAction {
     protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         if (num == 0) {
-            return "操作失败";
+            return "评分完成";
         }
 
-        LinkRecord ext = (LinkRecord) ett;
-        String lnk = ext.getLink(  );
-        String lid = ext.getLinkId();
-        int oldSco = Synt.declare (helper.getAttribute("score"), 0);
-        int newSco = Synt.declare (helper.getParameter("score"), 1);
+        Mstat sta  = (Mstat) ett.db.getModel("statist");
+        int oldSco = Synt.declare(helper.getAttribute("score"), 0);
+        int newSco = Synt.declare(helper.getParameter("score"), 1);
 
         if ("create".equals(opr)) {
-            Statist.create(lnk, lid, "endorse_count", num);
-            Statist.update(lnk, lid, "endorse_score", newSco - oldSco);
+            sta.add("endorse_count", num);
+            sta.put("endorse_score", newSco - oldSco);
             return "评分成功";
-        } else
+        }
         if ("delete".equals(opr)) {
             int unm = 0 - num;
-            Statist.update(lnk, lid, "endorse_count", unm);
-            Statist.update(lnk, lid, "endorse_score", newSco - oldSco);
-            return "取消评分成功";
+            sta.put("endorse_count", unm);
+            sta.put("endorse_score", newSco - oldSco);
+            return "取消评分";
         }
 
         return super.getRspMsg(helper, ett, opr, num);

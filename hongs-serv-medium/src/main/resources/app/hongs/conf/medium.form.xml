@@ -7,8 +7,8 @@
         </field>
     </form>
     <enum name="comment_link">
-        <value code="message">消息</value>
         <value code="article">文章</value>
+        <value code="discuss">讨论</value>
     </enum>
 
     <form name="dissent">
@@ -23,6 +23,7 @@
     </form>
     <enum name="dissent_link">
         <value code="article">文章</value>
+        <value code="discuss">讨论</value>
         <value code="comment">评论</value>
     </enum>
     <enum name="dissent_cause">
@@ -38,9 +39,15 @@
             <param name="conf">medium</param>
             <param name="enum">endorse_link</param>
         </field>
+        <field name="score" text="评分" type="number">
+            <param name="type">int</param>
+            <param name="min">0</param>
+            <param name="min">5</param>
+        </field>
     </form>
     <enum name="endorse_link">
         <value code="article">文章</value>
+        <value code="discuss">讨论</value>
         <value code="comment">评论</value>
     </enum>
 
@@ -52,6 +59,7 @@
     </form>
     <enum name="impress_link">
         <value code="article">文章</value>
+        <value code="discuss">讨论</value>
     </enum>
 
     <form name="statist">
@@ -62,15 +70,6 @@
     </form>
     <enum name="statist_link">
         <value code="article">文章</value>
-    </enum>
-
-    <form name="suggest">
-        <field name="unit">
-            <param name="conf">medium</param>
-            <param name="enum">suggest_unit</param>
-        </field>
-    </form>
-    <enum name="suggest_unit">
-        <value code="message">消息</value>
+        <value code="discuss">讨论</value>
     </enum>
 </root>

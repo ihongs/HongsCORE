@@ -37,26 +37,26 @@
                 <pre class="form-control-static">
 <b>列表:</b>
     GET <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.api
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>
 <b>详情:</b>
     GET <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.api?<%=Cnst.ID_KEY%>=ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                 </pre>
             </div>
             <div class="form-group">
                 <label class="control-label">参数</label>
                 <pre class="form-control-static">
-    wd=搜索
-    pn=分页, 从 1 开始
-    rn=条数, 默认 20 条
-    ab=模式, !enum 仅要选项数据, .enum 增加选项数据, _enum 补全选项名称, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据
+    <%=Cnst.WD_KEY%>=搜索
+    <%=Cnst.PN_KEY%>=分页, 从 1 开始
+    <%=Cnst.RN_KEY%>=条数, 默认 20 条
+    <%=Cnst.AB_KEY%>=模式, !enum 仅要选项数据, .enum 增加选项数据, _enum 补全选项名称, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据
 <%if (sortable.length() > 0) {%>
-    ob=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序
+    <%=Cnst.OB_KEY%>=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序
 <%}%>
 <%if (listable.length() > 0) {%>
-    rb=列举, 取值 <%=listable.substring(1)%>, 逗号分隔, 字段前加 - 表示排除
+    <%=Cnst.RB_KEY%>=列举, 取值 <%=listable.substring(1)%>, 逗号分隔, 字段前加 - 表示排除
 <%}%>
                 </pre>
             </div>
@@ -92,8 +92,8 @@
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
     POST <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create.api
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create.act
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.API_EXT%>
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.ACT_EXT%>
                 </pre>
             </div>
             <div class="form-gorup">
@@ -121,8 +121,8 @@
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
     PUT|PATCH <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.api?<%=Cnst.ID_KEY%>=ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.act?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                 </pre>
             </div>
             <div class="form-gorup">
@@ -148,8 +148,8 @@
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
     DELETE <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.api?<%=Cnst.ID_KEY%>=ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.act?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                 </pre>
             </div>
             <div class="form-gorup">
@@ -173,7 +173,7 @@
         <div class="dropdown-body">
             <div class="form-gorup">
                 <pre>
-    /api 和 .api 接口可以使用 .conv,.call 等参数, .act 接口是基础.
+    /api 和 <%=Cnst.API_EXT%> 接口可以使用 .conv,.call 等参数, <%=Cnst.ACT_EXT%> 接口是基础.
                 </pre>
             </div>
         </div>

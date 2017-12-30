@@ -677,11 +677,11 @@ function hsListFillNext(page) {
     switch (page.ern) {
         case  1 :
         case "1":
-            jQuery.hsNote(this._above_err || hsGetLang('list.empty'), "erro");
+            this.note(this._empty_err || hsGetLang('list.empty'), "erro");
             return;
         case  2 :
         case "2":
-            jQuery.hsNote(this._above_err || hsGetLang('list.above'), "erro");
+            this.note(this._above_err || hsGetLang('list.above'), "erro");
             return;
     }
 

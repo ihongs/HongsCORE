@@ -93,7 +93,7 @@ public class AssocCase {
 
         NOLS.add(Cnst.AI_REL);
         NOLS.add(Cnst.OI_REL);
-        NOLS.add(Cnst.OR_REL);
+        NOLS.add(Cnst.OE_REL);
         NOLS.add(Cnst.WT_REL);
 
         FUNC.add(Cnst.PN_KEY);
@@ -450,7 +450,7 @@ public class AssocCase {
             Object fv = Dict.getParam(rd , kn);
 
             if (null == fv || "".equals( fv )) {
-                continue; // 忽略空串, 但可以用 xxx.!eq= 查询空串
+                continue; // 忽略空串, 但可以用 xx.eq= 查询空串
             }
 
             if (fv instanceof Map) {
@@ -484,6 +484,17 @@ public class AssocCase {
                         caze.filter(fn+" "+rn+ " ?" , rv);
                     } else {
                         CoreLogger.trace(AssocCase.class.getName()+": Can not set "+fn+" "+rn+" Collection");
+                    }
+                }
+
+                // 空值判断语句
+                if (fm.containsKey(Cnst.IS_REL)) {
+                    String rv = Synt.asString(fm.remove(Cnst.IS_REL));
+                    if ("NULL".equalsIgnoreCase(rv)) {
+                        caze.filter(fn + " IS NULL");
+                    } else
+                    if ("FILL".equalsIgnoreCase(rv)) {
+                        caze.filter(fn + " IS NOT NULL");
                     }
                 }
 
@@ -557,7 +568,7 @@ public class AssocCase {
                     }
                 }
 
-                // 清除空字符串, 如想要 IN ('') 可使用 !in 操作符
+                // 清除空字符串, 如想要 IN ('') 可使用 xx.in=
                 fm.remove("");
 
                 // 如果还有剩余, 就当做 IN 来处理

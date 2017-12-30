@@ -3,7 +3,6 @@ package app.hongs.serv.centre;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Assign;
 import app.hongs.action.anno.CommitSuccess;
@@ -11,8 +10,8 @@ import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.db.DBAction;
 import app.hongs.db.Model;
-import app.hongs.serv.medium.LinkRecord;
-import app.hongs.serv.medium.Statist;
+import app.hongs.serv.medium.Mlink;
+import app.hongs.serv.medium.Mstat;
 import app.hongs.util.Synt;
 import java.util.Map;
 
@@ -23,22 +22,7 @@ import java.util.Map;
 @Action("centre/medium/endorse")
 @Assign(conf="medium", name="impress")
 public class ImpressAction extends DBAction {
-    
-    String link  ;
-    String linkId;
 
-    @Override
-    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
-        link   = helper.getParameter("link"   );
-        linkId = helper.getParameter("link_id");
-        if (link   == null) {
-            throw new HongsException(0x1100, "link required");
-        }
-        if (linkId == null) {
-            throw new HongsException(0x1100, "link_id required");
-        }
-    }
-    
     @Override
     public void isExists(ActionHelper helper) {
 
@@ -64,16 +48,22 @@ public class ImpressAction extends DBAction {
     throws HongsException {
         try {
             super.create(helper);
-            helper.reply("谢谢到访");
+            helper.reply("欢迎光临");
         } catch (HongsException ex ) {
-            helper.reply("浏览过了");
+            helper.reply("谢谢光临");
         }
     }
 
     @Override
     protected Model  getEntity(ActionHelper helper)
     throws HongsException {
-        LinkRecord model = (LinkRecord) DB.getInstance("medium").getModel("impress");
+        String link, linkId;
+        link   = helper.getParameter("link"   );
+        linkId = helper.getParameter("link_id");
+        if (link == null || linkId == null) {
+            throw new HongsException(0x1100, "link and link_id required");
+        }
+        Mlink model = (Mlink) DB.getInstance("medium").getModel("impress");
         model.setLink  (link  );
         model.setLinkId(linkId);
         return model;
@@ -108,12 +98,10 @@ public class ImpressAction extends DBAction {
             return "操作失败";
         }
 
-        LinkRecord ext = (LinkRecord) ett;
-        String lnk = ext.getLink  ( );
-        String lid = ext.getLinkId( );
+        Mstat sta = (Mstat) ett.db.getModel("statist");
 
         if ("create".equals(opr)) {
-            Statist.create(lnk, lid, "impress_count", num);
+            sta.add("impress_count", num);
             return "记录成功";
         }
 

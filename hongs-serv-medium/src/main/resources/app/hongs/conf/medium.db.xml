@@ -3,30 +3,27 @@
     <config link="centra"/>
     <tables>
         <table name="statist" tableName="a_medium_statist" primaryKey="id"
-               model="app.hongs.serv.medium.LinkRecord">
+               model="app.hongs.serv.medium.Mlink">
         </table>
         <table name="comment" tableName="a_medium_comment" primaryKey="id"
-               model="app.hongs.serv.medium.LinkRecord">
+               model="app.hongs.serv.medium.Mlink">
             <assoc type="BLS_TO" name="mate" tableName="member.user" foreignKey="mate_id" fields="id,name,head"></assoc>
             <assoc type="BLS_TO" name="user" tableName="member.user" foreignKey="user_id" fields="id,name,head"></assoc>
         </table>
         <table name="dissent" tableName="a_medium_dissent" primaryKey="id"
-               model="app.hongs.serv.medium.LinkRecord">
+               model="app.hongs.serv.medium.Mlink">
             <assoc type="BLS_TO" name="user" tableName="member.user" foreignKey="user_id" fields="id,name,head"></assoc>
         </table>
         <table name="endorse" tableName="a_medium_endorse" primaryKey="id"
-               model="app.hongs.serv.medium.LinkRecord">
+               model="app.hongs.serv.medium.Mlink">
             <assoc type="BLS_TO" name="user" tableName="member.user" foreignKey="user_id" fields="id,name,head"></assoc>
         </table>
         <table name="impress" tableName="a_medium_impress" primaryKey="id"
-               model="app.hongs.serv.medium.LinkRecord">
+               model="app.hongs.serv.medium.Mlink">
             <assoc type="BLS_TO" name="user" tableName="member.user" foreignKey="user_id" fields="id,name,head"></assoc>
         </table>
         <table name="statist" tableName="a_medium_statist" primaryKey="id"
-               model="app.hongs.serv.medium.LinkRecord">
-        </table>
-        <table name="suggest" tableName="a_medium_suggest" primaryKey="id">
-            <assoc type="BLS_TO" name="user" tableName="member.user" foreignKey="user_id" fields="id,name,head"></assoc>
+               model="app.hongs.serv.medium.Mstat">
         </table>
     </tables>
 </root>

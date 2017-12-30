@@ -24,10 +24,10 @@ import java.util.Set;
  * <pre>
  *  values = new Verify()
  *      .addRule("f1", (v, r)->{
- *          return v != null ? v : BLANK;
+ *          return v != null ? v : Rule.BLANK;
  *      })
  *      .addRule("f2", (v, r)->{
- *          return v != null ? v : EMPTY;
+ *          return v != null ? v : Rule.EMPTY;
  *      })
  *      .verify(values);
  * </pre>

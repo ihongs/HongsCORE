@@ -35,7 +35,7 @@ public class PermitInvoker implements FilterInvoker {
         if (conf.startsWith("$")) {
             conf = conf.substring(1);
             if (conf.length( ) == 0) {
-                conf = Cnst.USL_SES ;
+                conf = Cnst.SAE_SES ;
             }
 
             Object uid = helper.getSessibute(Cnst.UID_SES);

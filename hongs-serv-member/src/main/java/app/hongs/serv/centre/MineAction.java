@@ -20,8 +20,8 @@ public class MineAction extends app.hongs.serv.centra.MineAction {
         String     sk = CoreConfig.getInstance().getProperty("core.api.ssid");
         sd.put(sk, ah.getRequest().getRequestedSessionId());
         sd.put(Cnst.UID_SES, ah.getSessibute(Cnst.UID_SES));
-        sd.put(Cnst.UST_SES, ah.getSessibute(Cnst.UST_SES));
-        sd.put(Cnst.USL_SES, ah.getSessibute(Cnst.USL_SES));
+        sd.put(Cnst.STM_SES, ah.getSessibute(Cnst.STM_SES));
+        sd.put(Cnst.SAE_SES, ah.getSessibute(Cnst.SAE_SES));
         sd.put("appid", ah.getSessibute("appid"));
         sd.put("uname", ah.getSessibute("uname"));
         sd.put("uhead", ah.getSessibute("uhead"));

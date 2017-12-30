@@ -111,9 +111,9 @@ public final class Cnst {
 
     public static final String  UID_SES =  "uid";
 
-    public static final String  UST_SES =  "ust"; // 最后访问时间
+    public static final String  STM_SES =  "SIGN_TIME"; // 最后访问时间
 
-    public static final String  USL_SES =  "usl"; // 已登录的区域
+    public static final String  SAE_SES =  "SIGN_AREA"; // 已登录的区域
 
     public static final String  ADM_UID =  "1";
 

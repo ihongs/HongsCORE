@@ -98,7 +98,7 @@ public class AuthKit {
         if (sd != null) {
             Map<String,Object> xs = new HashMap();
             Set<String> ks = Synt.toTerms(sesmk );
-            ks.add(Cnst.USL_SES);
+            ks.add(Cnst.SAE_SES);
             for(String  kn : ks) {
                 Object  kv = sd.getAttribute(kn );
                 if ( null != kv) xs.put( kn, kv );
@@ -115,14 +115,14 @@ public class AuthKit {
 
         // 设置会话
         if (place != null && 0 < place.length()) {
-            Set s  = Synt.asSet(sd.getAttribute(Cnst.USL_SES));
+            Set s  = Synt.asSet(sd.getAttribute(Cnst.SAE_SES));
             if (s == null) {
                 s  = new HashSet();
             }   s.add  (  place  );
             s.retainAll( RoleSet.getInstance( usrid ) ); // 仅保留拥有的区域
-            sd.setAttribute(Cnst.USL_SES, s);
+            sd.setAttribute(Cnst.SAE_SES, s);
         }
-        sd.setAttribute(Cnst.UST_SES, stime);
+        sd.setAttribute(Cnst.STM_SES, stime);
         sd.setAttribute(Cnst.UID_SES, usrid);
         sd.setAttribute("appid", appid);
         sd.setAttribute("uname", uname);
@@ -131,7 +131,7 @@ public class AuthKit {
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(Cnst.UST_SES, stime);
+        rd.put(Cnst.STM_SES, stime);
         rd.put(Cnst.UID_SES, usrid);
         rd.put("appid", appid);
         rd.put("place", place);

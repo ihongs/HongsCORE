@@ -32,15 +32,19 @@
             <param name="path">static/upload/data</param>
             <param name="temp">static/upload/temp</param>
         </field>
-        <field name="body" text="内容" type="stored">
+        <field name="body" text="内容" type="textarea">
             <param name="listable">false</param>
+            <param name="findable">false</param>
+            <param name="siftable">false</param>
+            <param name="sortable">false</param>
+            <param name="type">html</param>
         </field>
         <field name="deny_comment" text="允许评论" type="enum">
             <param name="listable">false</param>
             <param name="conf">centra/data/docket/news</param>
             <param name="enum">onoff</param>
         </field>
-        <field name="deny_endorse" text="允许赞踩" type="enum">
+        <field name="deny_endorse" text="允许评分" type="enum">
             <param name="listable">false</param>
             <param name="conf">centra/data/docket/news</param>
             <param name="enum">onoff</param>

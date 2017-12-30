@@ -3,6 +3,15 @@
     <menu text="前台" href="!centre">
         <role text="登录前台" name="centre">
             <action>centre</action>
+            <!-- medium -->
+            <action>centre/medium/comment/create.act</action>
+            <action>centre/medium/comment/delete.act</action>
+            <action>centre/medium/dissent/create.act</action>
+            <action>centre/medium/dissent/delete.act</action>
+            <action>centre/medium/endorse/create.act</action>
+            <action>centre/medium/endorse/update.act</action>
+            <action>centre/medium/endorse/delete.act</action>
+            <action>centre/medium/impress/create.act</action>
         </role>
     </menu>
 </root>

@@ -9,3 +9,12 @@ function in_centra_data_docket_news_list(context) {
            .before('<th data-fn="statist.endorse_score" data-fl="v||0">得分</th>')
            .remove();
 }
+
+function in_centra_data_docket_news_form(context) {
+    var text = context.find("[data-type=html]");
+    var area = text.parent();
+    var help = area.next(  ).insertBefore(area);
+    text.height("50em");
+    area.removeClass("col-sm-6").addClass("col-sm-12");
+    help.removeClass("col-sm-3").addClass("col-sm-9" );
+}

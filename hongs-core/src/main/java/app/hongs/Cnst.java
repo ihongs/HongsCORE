@@ -53,7 +53,7 @@ public final class Cnst {
 
     public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
 
-    public static final String OR_KEY =  "or"; // 或条件    (Or)
+    public static final String OR_KEY =  "or"; // 或条件    (Or )
 
     public static final String AR_KEY =  "ar"; // 与条件    (And)
 
@@ -61,33 +61,35 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String EQ_REL = "!eq"; // 等于
+    public static final String IS_REL =  "is"; // 是否为空  (NULL , FILL)
 
-    public static final String NE_REL = "!ne"; // 不等于
+    public static final String EQ_REL =  "eq"; // 等于
 
-    public static final String LT_REL = "!lt"; // 小于
+    public static final String NE_REL =  "ne"; // 不等于
 
-    public static final String LE_REL = "!le"; // 小于或等于
+    public static final String LT_REL =  "lt"; // 小于
 
-    public static final String GT_REL = "!gt"; // 大于
+    public static final String LE_REL =  "le"; // 小于或等于
 
-    public static final String GE_REL = "!ge"; // 大于或等于
+    public static final String GT_REL =  "gt"; // 大于
 
-    public static final String RG_REL = "!rg"; // 区间
+    public static final String GE_REL =  "ge"; // 大于或等于
 
-    public static final String IR_REL = "!ir"; // 区间集
+    public static final String RG_REL =  "rg"; // 区间
 
-    public static final String IN_REL = "!in"; // 包含
+    public static final String IR_REL =  "ir"; // 区间集
 
-    public static final String NI_REL = "!ni"; // 不包含    (Not in)
+    public static final String IN_REL =  "in"; // 包含
 
-    public static final String AI_REL = "!ai"; // 全包含    (All in, Lucene 特有)
+    public static final String NI_REL =  "ni"; // 不包含    (Not in)
 
-    public static final String OI_REL = "!oi"; // 或包含    (Or  in, Lucene 特有)
+    public static final String AI_REL =  "ai"; // 全包含    (All in, Lucene 特有)
 
-    public static final String OR_REL = "!or"; // 或等于    (Or    , Lucene 特有)
+    public static final String OI_REL =  "oi"; // 或包含    (Or  in, Lucene 特有)
 
-    public static final String WT_REL = "!wt"; // 权重      (        Lucene 特有)
+    public static final String OE_REL =  "oe"; // 或等于    (Or  eq, Lucene 特有)
+
+    public static final String WT_REL =  "wt"; // 权重      (        Lucene 特有)
 
     //** 配置扩展 **/
 

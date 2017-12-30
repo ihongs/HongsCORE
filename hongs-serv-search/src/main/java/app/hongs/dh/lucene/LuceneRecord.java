@@ -908,7 +908,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                     // 将条件整理为: +(fn1:xxx fn2:xxx)
 
                     Map fw = new HashMap(  );
-                    fw.put(Cnst.OR_REL , fv);
+                    fw.put(Cnst.OE_REL , fv);
                     BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
                     for(String fk : fs) {
@@ -1531,20 +1531,20 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      * 组织查询条件
      *
      * 操作符:
-     * !eq 等于
-     * !ne 不等于
-     * !lt 小于
-     * !le 小于或等于
-     * !gt 大于
-     * !ge 大于或等于
-     * !rg 区间
-     * !in 包含
-     * !ni 不包含
+     *  eq 等于
+     *  ne 不等于
+     *  lt 小于
+     *  le 小于或等于
+     *  gt 大于
+     *  ge 大于或等于
+     *  rg 区间
+     *  in 包含
+     *  ni 不包含
      * 以下为 Lucene 特有的操作符:
-     * !or 或匹配, 有则优先
-     * !oi 或包含, 有则优先
-     * !ai 全包含, 此为目标真子集
-     * !wt 优先度, 设定查询的权重
+     *  oe 或匹配, 有则优先
+     *  oi 或包含, 有则优先
+     *  ai 全包含, 此为目标真子集
+     *  wt 优先度, 设定查询的权重
      * 注意: 默认情况下查询参数不给值则忽略, 如果指定了操作符则匹配空串
      *
      * @param qry
@@ -1614,8 +1614,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
         }
 
-        if (m.containsKey(Cnst.OR_REL)) {
-            Object n = m.remove(Cnst.OR_REL);
+        if (m.containsKey(Cnst.OE_REL)) {
+            Object n = m.remove(Cnst.OE_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.SHOULD);
         }
 
@@ -1646,6 +1646,22 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             Set a = Synt.declare(m.remove(Cnst.OI_REL), new HashSet());
             for(Object x : a) {
                 qry.add(q.get(k, x), BooleanClause.Occur.SHOULD);
+            }
+        }
+
+        if (m.containsKey(Cnst.IS_REL)) {
+            String a = Synt.asString(m.remove(Cnst.IS_REL));
+            SearchQuery p = new SearchQuery( );
+            p.analyzer(new StandardAnalyzer());
+            p.advanceAnalysisInUse(   true   );
+            if ("FILL".equalsIgnoreCase(a)) {
+                qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST);
+            } else
+            if ("NULL".equalsIgnoreCase(a)) {
+                qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST_NOT);
+            } else
+            if ("FINE".equalsIgnoreCase(a)) {
+                qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.SHOULD);
             }
         }
 
@@ -1710,7 +1726,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
         //** 其他包含 **/
 
-        m.remove(""); // 想 IN ('') 必须明确指定 xxx!in=''
+        m.remove(""); // 想 IN ('') 必须明确指定 xxx.in=''
         if (!m.isEmpty()) {
             s =  new  HashSet( );
             s.addAll(m.values());

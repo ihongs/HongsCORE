@@ -382,6 +382,7 @@ public final class Dict
    * 参考自 Javascript 和 PHP 的语法,
    * Javascript 方括号里面用的是变量,
    * 而 PHP 对象键并不支持点符号写法.
+   * 2017/12/30 "!" 的写法已彻底取消.
    * </pre>
    *
    * @param path
@@ -416,6 +417,7 @@ public final class Dict
     while (end < len ) {
         pnt = path.charAt(end);
         switch ( pnt ) {
+            /*
             case '!' :
                 if (fkh) {
                     break; // [] 内可以用 !
@@ -425,6 +427,7 @@ public final class Dict
                     beg  = end;
                 }
                 break;
+            */
             case '.' :
                 if (fkh) {
                     break; // [] 内可以用 .

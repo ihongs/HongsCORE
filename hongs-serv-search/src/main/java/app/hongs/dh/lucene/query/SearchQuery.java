@@ -2,6 +2,7 @@ package app.hongs.dh.lucene.query;
 
 import app.hongs.HongsExpedient;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
@@ -52,13 +53,13 @@ public class SearchQuery implements IQuery {
     @Override
     public Query get(String k, Object v) {
         try {
-            QueryParser qp = new QueryParser(k, ana);
+            QueryParser qp = new QueryParser(k, ana != null ? ana : new StandardAnalyzer());
 
-            String s = v.toString( );
-            if (des == null || !des) {
+            String s = v.toString ( );
+            if (des == null || !des ) {
                 s = QueryParser.escape(s);
             }
-            if (and != null &&  and) {
+            if (and != null &&  and ) {
                 qp.setDefaultOperator (QueryParser.AND_OPERATOR);
             }
             if (epi != null) qp.setEnablePositionIncrements(epi);
@@ -81,4 +82,5 @@ public class SearchQuery implements IQuery {
         Query   q2 = TermRangeQuery.newStringRange(k, n2, x2, l, g);
         return  q2;
     }
+
 }

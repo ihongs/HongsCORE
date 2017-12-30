@@ -7,10 +7,8 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.util.Data;
-import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import java.io.IOException;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,9 +22,9 @@ import javax.servlet.http.HttpServletResponse;
  * 可一次调用多个动作
  * 批量执行后返回数据
  * 请求格式举例:
- * KEY.act=ACTION/PATH&KEY.req=PARAMS
+ * a.KEY=ACTION&e.KEY=PARAMS&foo=bar
  * PARAMS 为 JSON 或 URLEncoded 格式
- * .data  提供全部请求动作共同的参数
+ * 其他参数为共用参数
  * @author Hongs
  */
 @Action("common/more")
@@ -36,37 +34,34 @@ public class MoreAction {
     public void pack(ActionHelper helper) {
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
-        Enumeration<String> nms = req.getParameterNames();
-        Map                 re0 = helper.getRequestData();
-        Map                 re1 = data(Dict.getDepth(re0, "", "data"));
-        Map                 re2 ;
-        Map                 rs0 = new HashMap();
-        Map                 rs1 ;
-        String              key ;
-        String              uri ;
+        Map<String, Object> re0 = helper.getRequestData( );
+        Map<String, String> acs = Synt.asMap(re0.get("a"));
+        Map<String, Object> res = Synt.asMap(re0.get("e"));
+        Map<String, Object> rs0 = new HashMap();
+        Map                 re1;
+        Map                 rs1;
+        String              key;
+        String              uri;
 
-        while (nms.hasMoreElements(  )) {
-            key = nms.nextElement (  );
-            if( ! key.endsWith(".act")) {
-                continue;
-            }
-
-            // 解析请求参数
-            uri = helper.getParameter(key);
-            uri = "/" + uri + Cnst.ACT_EXT;
-            key = key.substring( 0, key.length() - 4 );
-            re2 = data(Dict.getParam(re0, key+".req"));
-
-            // 代理执行动作
-            rs1 = new HashMap();
-            rs1.putAll(  re1  );
-            rs1.putAll(  re2  );
-            helper.setRequestData ( rs1     );
-            rs1 = call(helper, uri, req, rsp);
-            Dict  .setParam  ( rs0, rs1, key);
+        if (acs == null) {
+            acs = new HashMap();
+        }
+        if (res == null) {
+            res = new HashMap();
         }
 
-        helper.reply(rs0);
+        for(Map.Entry<String, String> et : acs.entrySet()) {
+            key = et.getKey(  );
+            uri = et.getValue();
+            re1 = new HashMap(re0);
+            uri = "/" + uri + Cnst.ACT_EXT;
+            re1.putAll(data(res.get(key)));
+            helper.setRequestData(  re1  );
+            rs1 = call(helper,uri,req,rsp);
+            rs0.put (key, rs1 );
+        }
+
+        helper.reply(/**/ rs0 );
     }
 
     @Action("call")

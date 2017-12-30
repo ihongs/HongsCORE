@@ -1,3 +1,4 @@
+<%@page import="app.hongs.Cnst"%>
 <%@page import="app.hongs.Core"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
@@ -40,8 +41,8 @@
     或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act
 <b>详情:</b>
     GET <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.api?id=ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act?id=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.api?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search.act?<%=Cnst.ID_KEY%>=ID
                 </pre>
             </div>
             <div class="form-group">
@@ -120,8 +121,8 @@
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
     PUT|PATCH <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.api?id=ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.act?id=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.api?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update.act?<%=Cnst.ID_KEY%>=ID
                 </pre>
             </div>
             <div class="form-gorup">
@@ -147,8 +148,8 @@
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
     DELETE <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.api?id=ID
-    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.act?id=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.api?<%=Cnst.ID_KEY%>=ID
+    或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete.act?<%=Cnst.ID_KEY%>=ID
                 </pre>
             </div>
             <div class="form-gorup">

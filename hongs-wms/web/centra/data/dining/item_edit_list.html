@@ -110,7 +110,7 @@
 
         var params = "";
         if (unitTn == "food") {
-            params = "?boost!ge=0&type!ne=套餐&id!ne="+unitId;
+            params = "?boost.ge=0&type.ne=套餐&id.ne="+unitId;
         }
         context.on("click", ".remove", function() {
             $(this).closest("tr").remove();

@@ -503,8 +503,8 @@ public class SocketHelper extends ActionHelper {
                 throw new HongsError.Common(ex);
             }
 
-            String pkgx  = CoreConfig.getInstance(Cnst.INIT_NAME)
-                                     .getProperty( "apply.sock" );
+            String pkgx  = CoreConfig.getInstance("defines"   )
+                                     .getProperty("apply.sock");
             if  (  pkgx != null ) {
                 String[]   pkgs = pkgx.split(";");
                 for(String pkgn : pkgs) {

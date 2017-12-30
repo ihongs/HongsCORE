@@ -76,10 +76,10 @@ public class CoreRoster {
             ACTIONS = new HashMap();
             CMDLETS = new HashMap();
             String[] pkgs = CoreConfig
-                    .getInstance(Cnst.INIT_NAME)
-                    .getProperty( "mount.serv" )
+                    .getInstance("defines"   )
+                    .getProperty("mount.serv")
                     .split(";");
-            addServ(ACTIONS, CMDLETS, pkgs);
+            addServ(ACTIONS , CMDLETS , pkgs );
         } finally {
             wlock.unlock();
         }

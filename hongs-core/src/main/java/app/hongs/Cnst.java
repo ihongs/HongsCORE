@@ -37,7 +37,7 @@ public final class Cnst {
 
     public static final String ID_KEY =  "id"; // 编号
 
-    public static final String WD_KEY =  "wd"; // 关键词    (Word)
+    public static final String WD_KEY =  "wd"; // 查询      (Word)
 
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
@@ -118,10 +118,6 @@ public final class Cnst {
     public static final String  ADM_UID =  "1";
 
     public static final String  ADM_GID =  "0";
-
-    //** 启动配置 **/
-
-    public static final String INIT_NAME = "defines"; // 启动配置名称
 
     //** 请求属性 **/
 

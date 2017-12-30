@@ -190,9 +190,9 @@ public class CmdletRunner
     /** 系统属性配置 **/
 
     CoreConfig cnf;
-    cnf = CoreConfig.getInstance(/* default */ );
+    cnf = CoreConfig.getInstance(/*default*/);
     Core.SERVER_ID = cnf.getProperty("core.server.id", "0");
-    cnf = CoreConfig.getInstance(Cnst.INIT_NAME);
+    cnf = CoreConfig.getInstance( "defines" );
 
     Map m = new HashMap();
     m.put("SERVER_ID", Core.SERVER_ID);

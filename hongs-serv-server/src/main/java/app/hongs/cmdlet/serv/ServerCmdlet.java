@@ -90,7 +90,7 @@ public class ServerCmdlet {
         server.setHandler    (webapp);
 
         // 外部配置
-        CoreConfig c = CoreConfig.getInstance(Cnst.INIT_NAME);
+        CoreConfig c = CoreConfig.getInstance("defines");
         for(Map.Entry  t : c.entrySet( )) {
             String k = (String) t.getKey  ();
             String v = (String) t.getValue();
@@ -238,8 +238,8 @@ public class ServerCmdlet {
 
         @Override
         public void init(ServletContextHandler context) {
-            String pkgx  = CoreConfig.getInstance(Cnst.INIT_NAME)
-                                     .getProperty( "apply.serv" );
+            String pkgx  = CoreConfig.getInstance("defines"   )
+                                     .getProperty("apply.serv");
             if  (  pkgx != null ) {
                 String[]   pkgs = pkgx.split(";");
                 for(String pkgn : pkgs) {

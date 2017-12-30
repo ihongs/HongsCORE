@@ -87,15 +87,26 @@ public class Verify implements Veri {
     }
 
     /**
-     * 利用 Rune 的 Func 接口可使用 Java8 函数式方法
+     * 设置规则
      * @param name
      * @param rule
      * @return
      */
-    public Verify addRule(String name, Func... rule) {
-        for (  Func rune : rule  ) {
-            addRule(name , new Rune(rune));
-        }
+    @Override
+    public Verify setRule(String name, Rulx... rule) {
+        setRule(name, Rulo.toRules(rule));
+        return this;
+    }
+
+    /**
+     * 添加规则
+     * @param name
+     * @param rule
+     * @return
+     */
+    @Override
+    public Verify addRule(String name, Rulx... rule) {
+        addRule(name, Rulo.toRules(rule));
         return this;
     }
 
@@ -299,27 +310,6 @@ public class Verify implements Veri {
             Wrong  e = et.getValue( );
             wrongz.put(name+"."+n, e);
         }
-    }
-
-    public static interface Func {
-
-        public Object run(Object value, Rule rule);
-
-    }
-
-    public class Rune extends Rule {
-
-      private final Func func;
-
-        public Rune(Func func) {
-            this.func  = func;
-        }
-
-        @Override
-        public Object verify(Object value) throws Wrong, Wrongs, HongsException {
-            return func.run (value, this );
-        }
-
     }
 
 }

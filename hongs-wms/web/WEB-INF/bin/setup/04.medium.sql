@@ -134,24 +134,3 @@ CREATE INDEX `IK_a_medium_statist_impress_count` ON `a_medium_statist` (`impress
 CREATE INDEX `IK_a_medium_statist_endorse_count` ON `a_medium_statist` (`endorse_count`);
 CREATE INDEX `IK_a_medium_statist_endorse_score` ON `a_medium_statist` (`endorse_score`);
 CREATE UNIQUE INDEX `UK_a_medium_statist_link` ON `a_medium_statist` (`link`,`link_id`);
-
---
--- 状态
---
-
-DROP TABLE IF EXISTS `a_medium_suggest`;
-CREATE TABLE `a_medium_suggest` (
-  `id` CHAR(20) NOT NULL,
-  `user_id` CHAR(20) NOT NULL,
-  `unit` CHAR(20) NOT NULL,
-  `count` INTEGER(11) DEFAULT '0' , /* 未处理的数量 */
-  `rtime` INTEGER(11) DEFAULT NULL, /* 最后读取时间 */
-  `mtime` INTEGER(11) DEFAULT NULL, /* 最后更新时间 */
-  PRIMARY KEY (`id`)
-);
-
-CREATE INDEX `IK_a_medium_suggest_user` ON `a_medium_suggest` (`user_id`);
-CREATE INDEX `IK_a_medium_suggest_unit` ON `a_medium_suggest` (`unit`);
-CREATE INDEX `IK_a_medium_suggest_rtime` ON `a_medium_suggest` (`rtime`);
-CREATE INDEX `IK_a_medium_suggest_mtime` ON `a_medium_suggest` (`mtime`);
-CREATE UNIQUE INDEX `UK_a_medium_suggest_link` ON `a_medium_suggest` (`unit`,`user_id`);

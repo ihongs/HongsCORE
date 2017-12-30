@@ -1,9 +1,11 @@
 package app.hongs.serv.medium;
 
 import app.hongs.HongsException;
-import app.hongs.action.FormSet;
 import app.hongs.db.Table;
+import app.hongs.db.util.FetchCase;
 import app.hongs.util.Synt;
+import java.util.Collection;
+import java.util.Map;
 
 /**
  *
@@ -20,10 +22,26 @@ public class Mstat extends Mlink {
         CTIME = Synt.declare(table.getParams().get("field.ctime"), "ctime");
     }
 
-    protected boolean allows(String link) throws HongsException {
-        return FormSet.getInstance(db.name)
-                      .getEnum( table.name + "_link" )
-                      .containsKey(   link);
+    @Override
+    public Map search(Map rd, FetchCase caze)
+      throws HongsException
+    {
+        /**
+         * 一个关联只有一组状态
+         * 故如发现查的单一关联
+         * 则可视为查询状态详情
+         */
+        Object lnk = Synt.defoult(getLink(  ), rd.get(LINK   ));
+        Object lid = Synt.defoult(getLinkId(), rd.get(LINK_ID));
+        if (lnk != null
+        &&  lid != null
+        &&!(lid instanceof Map)
+        &&!(lid instanceof Collection)
+        &&!(lid instanceof Object[ ])) {
+            return getInfo (rd, caze);
+        }
+
+        return super.search(rd, caze);
     }
 
     /**
@@ -38,7 +56,7 @@ public class Mstat extends Mlink {
     throws HongsException {
         String lnk = getLink(  );
         String lid = getLinkId();
-        if (lid == null || lid.equals("") || !allows(lnk)) {
+        if (lid == null || lid.length() == 0) {
             return -1;
         }
 
@@ -65,7 +83,7 @@ public class Mstat extends Mlink {
     throws HongsException {
         String lnk = getLink(  );
         String lid = getLinkId();
-        if (lid == null || lid.equals("") || !allows(lnk)) {
+        if (lid == null || lid.length() == 0) {
             return -1;
         }
 

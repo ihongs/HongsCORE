@@ -3,6 +3,7 @@ package app.hongs.serv.centre;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Assign;
 import app.hongs.action.anno.CommitSuccess;
@@ -19,7 +20,7 @@ import java.util.Map;
  *
  * @author Hongs
  */
-@Action("centre/medium/endorse")
+@Action("centre/medium/impress")
 @Assign(conf="medium", name="impress")
 public class ImpressAction extends DBAction {
 
@@ -98,11 +99,15 @@ public class ImpressAction extends DBAction {
             return "操作失败";
         }
 
-        Mstat sta = (Mstat) ett.db.getModel("statist");
-
+        Mstat  sta = (Mstat) ett.db.getModel("statist");
+        Map    ena = FormSet.getInstance( "medium" )
+                            .getEnum("statist_link");
+        String lnk = sta.getLink( );
+        if (ena.containsKey(lnk)) {
         if ("create".equals(opr)) {
             sta.add("impress_count", num);
             return "记录成功";
+        }
         }
 
         return super.getRspMsg(helper, ett, opr, num);

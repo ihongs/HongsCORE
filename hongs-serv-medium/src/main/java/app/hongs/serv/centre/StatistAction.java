@@ -12,7 +12,7 @@ import app.hongs.db.DBAction;
 @Action("centre/medium/statist")
 @Assign(conf="medium", name="statist")
 public class StatistAction extends DBAction {
-    
+
     @Override
     public void isExists(ActionHelper helper) {
 

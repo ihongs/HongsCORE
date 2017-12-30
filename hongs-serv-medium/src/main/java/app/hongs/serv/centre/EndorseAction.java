@@ -3,6 +3,7 @@ package app.hongs.serv.centre;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Assign;
 import app.hongs.action.anno.CommitSuccess;
@@ -120,10 +121,13 @@ public class EndorseAction extends DBAction {
             return "评分完成";
         }
 
-        Mstat sta  = (Mstat) ett.db.getModel("statist");
-        int oldSco = Synt.declare(helper.getAttribute("score"), 0);
-        int newSco = Synt.declare(helper.getParameter("score"), 1);
-
+        Mstat  sta = (Mstat) ett.db.getModel("statist");
+        Map    ena = FormSet.getInstance( "medium" )
+                            .getEnum("statist_link");
+        String lnk = sta.getLink( );
+        if (ena.containsKey(lnk)) {
+            int oldSco = Synt.declare(helper.getAttribute("score"), 0);
+            int newSco = Synt.declare(helper.getParameter("score"), 1);
         if ("create".equals(opr)) {
             sta.add("endorse_count", num);
             sta.put("endorse_score", newSco - oldSco);
@@ -134,6 +138,7 @@ public class EndorseAction extends DBAction {
             sta.put("endorse_count", unm);
             sta.put("endorse_score", newSco - oldSco);
             return "取消评分";
+        }
         }
 
         return super.getRspMsg(helper, ett, opr, num);

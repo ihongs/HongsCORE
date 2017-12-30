@@ -3,6 +3,7 @@ package app.hongs.serv.centre;
 import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
+import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Assign;
 import app.hongs.action.anno.CommitSuccess;
@@ -14,10 +15,12 @@ import app.hongs.serv.medium.Mlink;
 import app.hongs.serv.medium.Mstat;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Capts;
+import app.hongs.util.verify.Wrongs;
 import java.util.Map;
+import java.util.Set;
 
 /**
- *
+ * 评论动作
  * @author Hongs
  */
 @Action("centre/medium/dissent")
@@ -44,9 +47,21 @@ public class DissentAction extends DBAction {
     public void create(ActionHelper helper)
     throws HongsException {
         // 举报必须要验证码
-        new app.hongs.util.verify.Verify( )
-           .addRule( "capt" , new Capts ())
-           .verify(helper.getRequestData());
+        Map rd = helper.getRequestData();
+        try {
+            new app.hongs.util.verify.Verify()
+               .addRule("capt" , new Capts( ))
+               .verify (  rd  );
+        }
+        catch (Wrongs wr) {
+           byte md = 0;
+            Set ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
+            if (ab.contains(".errs")) md = 1;
+           else
+            if (ab.contains("!errs")) md = 2;
+            helper.reply( wr.toReply( md ) );
+            return;
+        }
 
         try {
             super.create(helper);
@@ -96,8 +111,11 @@ public class DissentAction extends DBAction {
             return "操作失败";
         }
 
-        Mstat sta = (Mstat) ett.db.getModel("statist");
-
+        Mstat  sta = (Mstat) ett.db.getModel("statist");
+        Map    ena = FormSet.getInstance( "medium" )
+                            .getEnum("statist_link");
+        String lnk = sta.getLink( );
+        if (ena.containsKey(lnk)) {
         if ("create".equals(opr)) {
             sta.add("dissent_count", num);
             return "举报成功";
@@ -106,6 +124,7 @@ public class DissentAction extends DBAction {
             int unm = 0 - num;
             sta.put("dissent_count", unm);
             return "取消举报";
+        }
         }
 
         return super.getRspMsg(helper, ett, opr, num);

@@ -42,7 +42,7 @@
         <field name="score" text="评分" type="number">
             <param name="type">int</param>
             <param name="min">0</param>
-            <param name="min">5</param>
+            <param name="max">5</param>
         </field>
     </form>
     <enum name="endorse_link">

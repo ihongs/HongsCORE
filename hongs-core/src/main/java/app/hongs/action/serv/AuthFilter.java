@@ -177,10 +177,10 @@ public class AuthFilter
      * 判断当前用户是否登录超时
      */
     if (exp != 0) {
-        long tim = Synt.declare(hlpr.getSessibute(Cnst.UST_SES), 0L);
+        long tim = Synt.declare(hlpr.getSessibute(Cnst.STM_SES), 0L);
         long now = System.currentTimeMillis() / 1000;
         if ( now - tim < exp) {
-            hlpr.setSessibute ( Cnst.UST_SES , now );
+            hlpr.setSessibute (Cnst.STM_SES , now );
         } else {
             doFailed ( core, hlpr, (byte) 0 );
             return;
@@ -250,8 +250,8 @@ public class AuthFilter
              * 必须在指定区域再次登录
              * 登录时会将区域写入会话
              */
-            Set usp = (Set) hlpr.getSessibute(Cnst.USL_SES);
-            if (usp == null || ! usp.contains(aut)) {
+            Set sae = (Set) hlpr.getSessibute(Cnst.SAE_SES);
+            if (sae == null || ! sae.contains(aut)) {
                 doFailed(core, hlpr, (byte) 1); // 登录区域
                 return;
             }

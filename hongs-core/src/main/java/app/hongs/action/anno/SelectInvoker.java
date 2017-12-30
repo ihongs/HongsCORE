@@ -16,7 +16,7 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * :enum 表示不需要执行, ab将被重置为.enum
+ * !enum 表示不需要执行, ab将被重置为.enum
  * .enum 表示要选项数据
  * _enum 表示加选项文本
  * _time 表示加数字时间

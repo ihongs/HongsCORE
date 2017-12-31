@@ -166,7 +166,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
 
   /**
    * 将非 GET,HEAD 转为 POST
-   * 规避 JSP 不接受其他方法
+   * 规避 JSP 拒绝处理的问题
    */
   private static class Request extends HttpServletRequestWrapper {
 

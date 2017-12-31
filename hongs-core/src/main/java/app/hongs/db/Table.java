@@ -616,21 +616,17 @@ public class Table
        */
       if (values.containsKey(namc))
       {
-        // 空串被视为null
-        if ("".equals(value))
-            value =  null;
-
-        if (value == null
-        && (Boolean)column.get("required"))
+        if ((value == null || value.equals( "" ))
+        && (Boolean) column.get(   "required"  ))
         {
           throw nullException(namc);
         }
       }
       else
       {
-        if (isNew == true
-        && (Boolean)column.get("required" )
-        &&!(Boolean)column.get("autoIncrement"))
+        if ( isNew
+        && (Boolean) column.get(   "required"   )
+        &&!(Boolean) column.get("autoIncrement"))
         {
           throw nullException(namc);
         }

@@ -17,11 +17,19 @@
             <param name="findable">true</param>
             <param name="nameable">true</param>
         </field>
-        <field name="note" text="宣传语" type="search">
+        <field name="author" text="作者" type="string">
+            <param name="listable">false</param>
+            <param name="findable">true</param>
+        </field>
+        <field name="source" text="来源" type="string">
             <param name="listable">false</param>
             <param name="findable">true</param>
         </field>
         <field name="find" text="关键词" type="search">
+            <param name="listable">false</param>
+            <param name="findable">true</param>
+        </field>
+        <field name="note" text="宣传语" type="search">
             <param name="listable">false</param>
             <param name="findable">true</param>
         </field>

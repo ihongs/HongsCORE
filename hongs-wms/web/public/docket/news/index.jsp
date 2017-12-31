@@ -64,11 +64,14 @@ String mtime = dfmt.format(mdate);
 String htime = hfmt.format(mdate);
 response.setHeader("Last-Modified", htime );
 response.setHeader("ETag", id +":"+ xtime );
+
+String author = (String) info.get("author");
+String source = (String) info.get("source");
 %>
 <!doctype html>
 <html>
 <head>
-    <title><%=info.get("name")%></title>
+    <title><%=escapeXML((String) info.get("name"))%></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="<%=escapeXML((String) info.get("find"))%>">
@@ -87,54 +90,70 @@ response.setHeader("ETag", id +":"+ xtime );
     <script type="text/javascript" src="common/lang/default.js"></script>
     <style type="text/css">
         h1 {text-align: center;}
+        .container>p>span+span {margin-left: 1em;}
+        .comment-list .listbox p {white-space: pre-line;}
     </style>
 </head>
 <body>
-    <div class="invisible" style="max-width: 842px;">
+    <div class="invisible">
         <img src="<%=info.get("logo")%>"/>
     </div>
-    <div class="container" style="max-width: 842px;">
-        <h1><%=info.get("name")%></h1>
-        <p style="text-align:center;">
-            <%=mtime%>
+    <div class="container">
+        <h1><%=escapeXML((String) info.get("name"))%></h1>
+        <p class="text-center">
+            <span><%=mtime%></span>
+        <%if (author != null && !author.equals("")) {%>
+            <span>作者: <%=escapeXML(author)%></span>
+        <%} /*End if*/%>
+        <%if (source != null && !source.equals("")) {%>
+            <span>来源: <%=escapeXML(source)%></span>
+        <%} /*End if*/%>
         </p>
-        <div>
-            <%=info.get("body")%>
-        </div>
-        <hr/>
-        <div>
-            <span id="endorse-score" style="padding-right: 1em;">
-            <%for (int i = 0; i < 5; i ++) {%>
-            <a href="javascript:;" class="glyphicon glyphicon-star-empty" data-score="<%=(i+1)%>"></a>
-            <%} /*End for*/%>
-            </span>
-            <span id="impress-count">1</span>人浏览,
-            <span id="endorse-count">0</span>人评分,
-            <span id="comment-count">0</span>条评论.
-            <a href="javascript:;"><span data-toggle="modal" data-target="#dissent-modal">举报</span></a>
-        </div>
-        <div>
-            <div id="comment-list"
-                 data-module="hsList"
-                 data-load-url="centre/medium/comment/search.act?link=<%=ln%>&link_id=<%=id%>"
-                 data-fill-list="(hsListFillItem)"
-                 data-fill-page="(hsListFillNext)"
-                 data-data-0="keep_prev:true">
-                <div class="itembox" style="display: none;">
-                    <input type="hidden" name="id"/>
-                    <input type="hidden" name="user_id"/>
-                    <h6>
-                        <span data-fn="user.name"></span>
-                        <span data-fn="ctime" data-ft="_htime" data-fl="v*1000" style="color:#666;padding:0 1em;"></span>
-                        <a href="javascript:;"><span data-toggle="modal" data-target="#comment-modal">回复</span></a>
-                    </h6>
-                    <p data-fn="note"></p>
+        <div class="row">
+            <div class="col-md-8">
+                <%=info.get("body")%>
+            </div>
+            <div class="col-md-4">
+                <!-- 评分打星 -->
+                <div style="margin-bottom: 2em;">
+                    <span id="endorse-score" style="padding-right: 0.5em;">
+                    <%for (int i = 0; i < 5; i ++) {%>
+                        <a href="javascript:;" class="glyphicon glyphicon-star-empty" data-score="<%=(i+1)%>"></a>
+                    <%} /*End for*/%>
+                    </span>
+                    <span id="impress-count">1</span>人浏览,
+                    <span id="endorse-count">0</span>人评分.
+                    <a href="javascript:;" ><span data-toggle="modal" data-target="#dissent-modal">举报</span></a>
                 </div>
-                <div class="listbox">
-                </div>
-                <div class="pagebox">
-                    <butotn type="button" class="btn btn-primary send-note" data-toggle="modal" data-target="#comment-modal">添加评论</butotn>
-                    <button type="button" class="btn btn-success page-next" data-pn="" style="margin-left: 1em;">更多</button>
+                <!-- 评论列表 -->
+                <div id="comment-list"
+                     data-module="hsList"
+                     data-load-url="centre/medium/comment/search.act?link=<%=ln%>&link_id=<%=id%>"
+                     data-fill-list="(hsListFillItem)"
+                     data-fill-page="(hsListFillNext)"
+                     style=" padding: 0.5em; background: #eee;">
+                    <div class="itembox" style="display: none;">
+                        <input type="hidden" name="id"      data-fn="id"      data-fl="$(this).val(v) && undefined"/>
+                        <input type="hidden" name="user_id" data-fn="user_id" data-fl="$(this).val(v) && undefined"/>
+                        <h6>
+                            <span data-fn="user.name" data-fl="list._info.mate.name ? v+' 回复 '+list._info.mate.name : v"></span>
+                            <span data-fn="ctime" data-ft="_htime" data-fl="v*1000" style="color:#666;padding:0 1em;"></span>
+                            <a href="javascript:;"><span data-toggle="modal" data-target="#comment-modal">回复</span></a>
+                        </h6>
+                        <p data-fn="note"></p>
+                    </div>
+                    <div class="listbox">
+                    </div>
+                    <div class="pagebox">
+                        <button type="button" class="btn btn-sm btn-primary send-note" data-toggle="modal" data-target="#comment-modal">添加评论</button>
+                        <button type="button" class="btn btn-sm btn-default page-prev" data-pn="" style="margin-left: 0.25em;" >
+                            <span class="glyphicon glyphicon-backward"></span>
+                        </button>
+                        <button type="button" class="btn btn-sm btn-default page-next" data-pn="" style="margin-left: 0.20em;" >
+                            <span class="glyphicon glyphicon-forward" ></span>
+                        </button>
+                        <span class="btn btn-sm btn-link" style="text-decoration: none;">页码: <span class="page-curr" data-pn=""></span></span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -270,21 +289,43 @@ response.setHeader("ETag", id +":"+ xtime );
             });
 
             // 没有评论时不要弹出错误
-            $("#comment-list").on("loadBack", function(evt, rst) {
+            $("#comment-list" ).on("loadBack", function(evt, rst) {
                 if (rst.page.ern == 1 && rst.page.page == 1) {
                     rst.page.ern =  0;
                 }
             });
 
+            // 评论成功后切到最后一页
+            $("#comment-modal").on("saveBack", function(evt, rst) {
+                var listobj = $("#comment-list").data("HsList");
+                hsSetSeria(listobj._data, "pn", "-1");
+                listobj.load( );
+            });
+
             // 模态框打开时重取验证码
             $("#comment-modal,#dissent-modal").on("show.bs.modal", function() {
-                $(this).find( "form" ).hsForm(  );
+                $(this).find( "form" ).hsForm();
                 $(this).find(".capt-img").click();
                 $(this).find("[name=note]").val("");
-                $(this).find("[name=cpat]").val("");
+                $(this).find("[name=capt]").val("");
                 $(this).find("[name=cause]").val("1");
             });
-            
+
+            // 回复时带上留言相关的ID
+            $(document).on("click", '[data-target="#comment-modal"]', function() {
+                var prevIdInp = $("#comment-modal").find("[name=prev_id]");
+                var mateIdInp = $("#comment-modal").find("[name=mate_id]");
+                if ($(this).parent( ).is("a")) {
+                    var box = $(this).closest(".itembox");
+                    var pid = box.find("[name=id]").val();
+                    var mid = box.find("[name=user_id]" ).val();
+                    prevIdInp.val(pid);
+                    mateIdInp.val(mid);
+                } else {
+                    prevIdInp.val("" );
+                    mateIdInp.val("" );
+                }
+            });
         })(jQuery);
     </script>
 </body>

@@ -41,9 +41,9 @@ public final class Cnst {
 
     public static final String WD_KEY =  "wd"; // 查询      (Word)
 
-    public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
-
     public static final String GN_KEY =  "gn"; // 分页数量  (Pags num)
+
+    public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
     public static final String RN_KEY =  "rn"; // 每页行数  (Rows num)
 
@@ -77,21 +77,21 @@ public final class Cnst {
 
     public static final String GE_REL =  "ge"; // 大于或等于
 
-    public static final String RG_REL =  "rg"; // 区间
+    public static final String AT_REL =  "at"; // 区间
 
-    public static final String IR_REL =  "ir"; // 区间集
+    public static final String ON_REL =  "on"; // 多区间
 
     public static final String IN_REL =  "in"; // 包含
 
-    public static final String NI_REL =  "ni"; // 不包含    (Not in)
+    public static final String NI_REL =  "ni"; // 不包含
 
-    public static final String AI_REL =  "ai"; // 全包含    (All in, Lucene 特有)
+    public static final String AI_REL =  "ai"; // 全包含    (Lucene 特有,  must  in)
 
-    public static final String OI_REL =  "oi"; // 或包含    (Or  in, Lucene 特有)
+    public static final String OI_REL =  "oi"; // 可包含    (Lucene 特有, should in)
 
-    public static final String OE_REL =  "oe"; // 或等于    (Or  eq, Lucene 特有)
+    public static final String OE_REL =  "oe"; // 可等于    (Lucene 特有, should be)
 
-    public static final String WT_REL =  "wt"; // 权重      (        Lucene 特有)
+    public static final String WT_REL =  "wt"; // 权重      (Lucene 特有, weight of)
 
     //** 配置扩展 **/
 

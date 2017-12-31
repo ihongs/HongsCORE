@@ -1537,13 +1537,13 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      *  le 小于或等于
      *  gt 大于
      *  ge 大于或等于
-     *  rg 区间
+     *  on 区间
      *  in 包含
      *  ni 不包含
      * 以下为 Lucene 特有的操作符:
-     *  oe 或匹配, 有则优先
-     *  oi 或包含, 有则优先
      *  ai 全包含, 此为目标真子集
+     *  oi 可包含, 有则优先
+     *  oe 可等于, 有则优先
      *  wt 优先度, 设定查询的权重
      * 注意: 默认情况下查询参数不给值则忽略, 如果指定了操作符则匹配空串
      *
@@ -1619,15 +1619,6 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             qry.add(q.get(k, n), BooleanClause.Occur.SHOULD);
         }
 
-        if (m.containsKey(Cnst.IN_REL)) { // In
-            BooleanQuery.Builder qay = new BooleanQuery.Builder();
-            Set a = Synt.declare(m.remove(Cnst.IN_REL), new HashSet());
-            for(Object x : a) {
-                qay.add(q.get(k, x), BooleanClause.Occur.SHOULD);
-            }
-            qry.add(qay.build(), BooleanClause.Occur.MUST);
-        }
-
         if (m.containsKey(Cnst.AI_REL)) { // All In
             Set a = Synt.declare(m.remove(Cnst.AI_REL), new HashSet());
             for(Object x : a) {
@@ -1642,11 +1633,20 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             }
         }
 
-        if (m.containsKey(Cnst.OI_REL)) { // Or In
+        if (m.containsKey(Cnst.OI_REL)) { // May In
             Set a = Synt.declare(m.remove(Cnst.OI_REL), new HashSet());
             for(Object x : a) {
                 qry.add(q.get(k, x), BooleanClause.Occur.SHOULD);
             }
+        }
+
+        if (m.containsKey(Cnst.IN_REL)) { // In
+            BooleanQuery.Builder qay = new BooleanQuery.Builder();
+            Set a = Synt.declare(m.remove(Cnst.IN_REL), new HashSet());
+            for(Object x : a) {
+                qay.add(q.get(k, x), BooleanClause.Occur.SHOULD);
+            }
+            qry.add(qay.build(), BooleanClause.Occur.MUST );
         }
 
         if (m.containsKey(Cnst.IS_REL)) {
@@ -1671,11 +1671,11 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         boolean l, g;
         Set s = null;
 
-        if (m.containsKey(Cnst.RG_REL)) {
-            s = Synt.setOf(m.remove(Cnst.RG_REL));
+        if (m.containsKey(Cnst.AT_REL)) {
+            s = Synt.setOf(m.remove(Cnst.AT_REL));
         } else
-        if (m.containsKey(Cnst.IR_REL)) {
-            s = Synt.asSet(m.remove(Cnst.IR_REL));
+        if (m.containsKey(Cnst.ON_REL)) {
+            s = Synt.asSet(m.remove(Cnst.ON_REL));
         }
 
         if (s != null && !s.isEmpty( )) {

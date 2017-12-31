@@ -386,11 +386,11 @@ public class SearchHelper {
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
-                if (vm.containsKey (Cnst.RG_REL)) {
-                    vs = Synt.setOf(vm.get(Cnst.RG_REL));
+                if (vm.containsKey (Cnst.AT_REL)) {
+                    vs = Synt.setOf(vm.get(Cnst.AT_REL));
                 } else
-                if (vm.containsKey (Cnst.IR_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.IR_REL));
+                if (vm.containsKey (Cnst.ON_REL)) {
+                    vs = Synt.asSet(vm.get(Cnst.ON_REL));
                 }
             }
 

@@ -1671,8 +1671,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         boolean l, g;
         Set s = null;
 
-        if (m.containsKey(Cnst.AT_REL)) {
-            s = Synt.setOf(m.remove(Cnst.AT_REL));
+        if (m.containsKey(Cnst.RN_REL)) {
+            s = Synt.setOf(m.remove(Cnst.RN_REL));
         } else
         if (m.containsKey(Cnst.ON_REL)) {
             s = Synt.asSet(m.remove(Cnst.ON_REL));

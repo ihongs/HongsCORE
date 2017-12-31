@@ -77,7 +77,7 @@ public final class Cnst {
 
     public static final String GE_REL =  "ge"; // 大于或等于
 
-    public static final String AT_REL =  "at"; // 区间
+    public static final String RN_REL =  "rn"; // 区间
 
     public static final String ON_REL =  "on"; // 多区间
 

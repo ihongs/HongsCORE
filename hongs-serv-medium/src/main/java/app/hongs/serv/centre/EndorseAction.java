@@ -65,15 +65,18 @@ public class EndorseAction extends DBAction {
             helper.setAttribute("score",sc);
             if (sv != 0) {
                 // 恢复或更新评分记录
-                row.clear();
-                row.put("state", 1 );
-                row.put("score", sv);
-                int an = ett.table
-                   .filter("id = ?", id)
-                   .limit (  1  )
-                   .update( row );
+                int an  = 0 ;
+                if (sv != sc) {
+                    row.clear();
+                    row.put("state", 1 );
+                    row.put("score", sv);
+                    an = ett.table
+                       .filter("id = ?",id)
+                       .limit ( 1 )
+                       .update(row);
+                }
 
-                helper.reply(getRspMsg(helper, ett, "create", an));
+                helper.reply(getRspMsg(helper, ett, "update", an));
             } else
             if (st == 0) {
                 helper.fault("已取消过了");
@@ -121,22 +124,30 @@ public class EndorseAction extends DBAction {
             return "评分完成";
         }
 
+        Mlink  lin = (Mlink) ett;
         Mstat  sta = (Mstat) ett.db.getModel("statist");
         Map    ena = FormSet.getInstance( "medium" )
                             .getEnum("statist_link");
-        String lnk = sta.getLink( );
+        String lnk = lin.getLink(  );
+        String lid = lin.getLinkId();
+               sta.setLink   ( lnk );
+               sta.setLinkId ( lid );
         if (ena.containsKey(lnk)) {
-            int oldSco = Synt.declare(helper.getAttribute("score"), 0);
-            int newSco = Synt.declare(helper.getParameter("score"), 1);
+            int  c = Synt.declare(helper.getParameter("score"), 1);
+            int  o = Synt.declare(helper.getAttribute("score"), 0);
+        if ("update".equals(opr)) {
+            sta.put("endorse_score", c-o);
+            return "更新评分";
+        }
         if ("create".equals(opr)) {
             sta.add("endorse_count", num);
-            sta.put("endorse_score", newSco - oldSco);
+            sta.put("endorse_score", c-o);
             return "评分成功";
         }
         if ("delete".equals(opr)) {
             int unm = 0 - num;
             sta.put("endorse_count", unm);
-            sta.put("endorse_score", newSco - oldSco);
+            sta.put("endorse_score", c-o);
             return "取消评分";
         }
         }

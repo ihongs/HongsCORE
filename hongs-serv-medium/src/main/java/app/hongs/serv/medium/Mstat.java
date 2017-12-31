@@ -1,5 +1,6 @@
 package app.hongs.serv.medium;
 
+import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.db.Table;
 import app.hongs.db.util.FetchCase;
@@ -56,7 +57,7 @@ public class Mstat extends Mlink {
     throws HongsException {
         String lnk = getLink(  );
         String lid = getLinkId();
-        if (lid == null || lid.length() == 0) {
+        if (lnk == null || lid == null || lid.length() == 0) {
             return -1;
         }
 
@@ -65,7 +66,7 @@ public class Mstat extends Mlink {
         String sql;
         now =  System.currentTimeMillis() / 1000;
 
-        sql = "UPDATE `"+table.tableName+"` SET `"+col+"` = `"+col+"` + "+num+", `"+MTIME+"` = "+now+" WHERE `"+LINK+"` = ? AND `"+LINK_ID+"` = ? ";
+        sql = "UPDATE `"+table.tableName+"` SET `"+col+"` = `"+col+"` + "+num+",`"+MTIME+"` = "+now+" WHERE `" + LINK + "` = ? AND `" + LINK_ID + "` = ? ";
         ret =  db.updates(sql, lnk, lid);
 
         return ret;
@@ -83,7 +84,7 @@ public class Mstat extends Mlink {
     throws HongsException {
         String lnk = getLink(  );
         String lid = getLinkId();
-        if (lid == null || lid.length() == 0) {
+        if (lnk == null || lid == null || lid.length() == 0) {
             return -1;
         }
 
@@ -92,13 +93,13 @@ public class Mstat extends Mlink {
         String sql;
         now =  System.currentTimeMillis() / 1000;
 
-        sql = "UPDATE `"+table.tableName+"` SET `"+col+"` = `"+col+"` + "+num+", `"+MTIME+"` = "+now+" WHERE `"+LINK+"` = ? AND `"+LINK_ID+"` = ? ";
+        sql = "UPDATE `"+table.tableName+"` SET `"+col+"` = `"+col+"` + "+num+",`"+MTIME+"` = "+now+" WHERE `" + LINK + "` = ? AND `" + LINK_ID + "` = ? ";
         ret =  db.updates(sql, lnk, lid);
 
         if (ret > 0) return ret;
 
-        sql = "INSERT INTO `"+table.tableName+"` (`"+LINK+"`,`"+LINK_ID+"`,`"+CTIME+"`,`"+MTIME+"`,`"+col+"`) VALUES (?,?,"+num+","+now+","+now+")";
-        ret =  db.updates(sql, lnk, lid);
+        sql = "INSERT INTO `"+table.tableName+"` (`"+LINK+"`,`"+LINK_ID+"`,`id`,`"+MTIME+"`,`"+CTIME+"`,`"+col+"`) VALUES (?,?,?,"+now+","+now+","+num+")";
+        ret =  db.updates(sql, lnk, lid, Core.newIdentity());
 
         return ret;
     }

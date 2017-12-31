@@ -77,11 +77,11 @@ public class ImpressAction extends DBAction {
         Object uid = helper.getSessibute(Cnst.UID_SES);
         req = super.getReqMap( helper, ett, opr, req );
         if (uid == null) {
-            req.put("user_id", null);
-            req.put("sess_id", sid );
+            req.put("user_id", "" );
+            req.put("sess_id", sid);
         } else {
-            req.put("user_id", uid );
-            req.put("sess_id", null);
+            req.put("user_id", uid);
+            req.put("sess_id", "" );
         }
         if ("delete".equals(opr)) {
             req.put(Cnst.AR_KEY, Synt.mapOf("", Synt.mapOf(
@@ -99,10 +99,14 @@ public class ImpressAction extends DBAction {
             return "操作失败";
         }
 
+        Mlink  lin = (Mlink) ett;
         Mstat  sta = (Mstat) ett.db.getModel("statist");
         Map    ena = FormSet.getInstance( "medium" )
                             .getEnum("statist_link");
-        String lnk = sta.getLink( );
+        String lnk = lin.getLink(  );
+        String lid = lin.getLinkId();
+               sta.setLink   ( lnk );
+               sta.setLinkId ( lid );
         if (ena.containsKey(lnk)) {
         if ("create".equals(opr)) {
             sta.add("impress_count", num);

@@ -102,11 +102,15 @@ public class CommentAction extends DBAction {
         if (num <= 0) {
             return "操作失败";
         }
-        
+
+        Mlink  lin = (Mlink) ett;
         Mstat  sta = (Mstat) ett.db.getModel("statist");
         Map    ena = FormSet.getInstance( "medium" )
                             .getEnum("statist_link");
-        String lnk = sta.getLink( );
+        String lnk = lin.getLink(  );
+        String lid = lin.getLinkId();
+               sta.setLink   ( lnk );
+               sta.setLinkId ( lid );
         if (ena.containsKey(lnk)) {
         if ("create".equals(opr)) {
             sta.add("comment_count", num);

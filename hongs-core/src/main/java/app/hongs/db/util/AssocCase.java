@@ -92,8 +92,8 @@ public class AssocCase {
         RELS.put(Cnst.NI_REL, "NOT IN");
 
         NOLS.add(Cnst.AI_REL);
-        NOLS.add(Cnst.OI_REL);
-        NOLS.add(Cnst.OE_REL);
+        NOLS.add(Cnst.SI_REL);
+        NOLS.add(Cnst.SE_REL);
         NOLS.add(Cnst.WT_REL);
 
         FUNC.add(Cnst.PN_KEY);

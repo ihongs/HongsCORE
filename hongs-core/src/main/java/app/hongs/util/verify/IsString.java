@@ -27,9 +27,9 @@ public class IsString extends Rule {
             str = str.trim();
         }
         if (Synt.declare(params.get("clean"), false)) {
-            str = Tool.cleanNL (str);
+            str = Tool.cleanSC (str);
             str = Tool.clearEL (str);
-            str = Tool.clearSC (str);
+            str = Tool.cleanNL (str);
         }
 
         // 长度限制

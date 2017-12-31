@@ -396,6 +396,20 @@ public final class Tool
 
   //** 清理 **/
 
+  private static final String NL = "\r\n";
+  private static final String SC = "[ \\f\\t\\v\\x0b\\u3000]+";
+
+  /**
+   * 清理换行, 将'\r'和'\n'统一为'\r\n'
+   * @param str
+   * @return 新串
+   */
+  public static String cleanNL(String str)
+  {
+    return Pattern.compile("(\\r\\n|\\r|\\n)")
+                  .matcher(str).replaceAll(NL);
+  }
+
   /**
    * 清除换行
    * @param str
@@ -423,13 +437,12 @@ public final class Tool
    * @param str
    * @return 新串
    */
-  public static String clearSC(String str)
+  public static String cleanSC(String str)
   {
     Pattern pat;
-    final String  scx  =  "[ \\f\\t\\v\\x0b\\u3000]+";
-    pat = Pattern.compile("(^"+ scx + "|" + scx +"$)", Pattern.MULTILINE);
+    pat = Pattern.compile("(^"+ SC + "|" + SC +"$)", Pattern.MULTILINE);
     str = pat.matcher(str).replaceAll("" );
-    pat = Pattern.compile(      scx      );
+    pat = Pattern.compile(      SC       );
     str = pat.matcher(str).replaceAll(" ");
     return  str;
   }

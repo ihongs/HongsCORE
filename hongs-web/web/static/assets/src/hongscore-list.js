@@ -708,9 +708,9 @@ function hsListFillNext(page) {
     }
 
     // 设置页码参数
-    var pag = btn.filter(".page-curr a");
+    var pag = this.pageBox.find(".page-curr a");
     if (pag.size() === 0) {
-        pag = btn.filter(".page-curr"  );
+        pag = this.pageBox.find(".page-curr"  );
     }
     if (! page.uncertain) {
         pag.text(p+"/"+t);
@@ -737,11 +737,15 @@ function hsListFillNext(page) {
     }
 
     // 翻页点击事件
-    if (! this.listBox.data("inited")) {
+    if (! this.pageBox.data("inited")) {
+        this.pageBox.data("inited", 1);
         var that = this;
-        this.listBox.on("click", "[data-pn]", function(evt) {
-            hsSetSeria(that._data, that.pageKey, jQuery(this).attr("data-pn"));
-            evt.preventDefault();
+        this.pageBox.on("click", "[data-pn]", function(evt) {
+            evt.preventDefault( );
+            var pk = that.pageKey;
+            var pn = jQuery(this)
+                      .data("pn");
+            hsSetSeria(that._data, pk, pn);
             that.load();
         });
     }

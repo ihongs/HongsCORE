@@ -500,11 +500,11 @@ public class AssocCase {
 
                 // 数值区间查询
                 Set ir = null;
-                if (fm.containsKey(Cnst.RG_REL)) {
-                    ir = Synt.setOf(fm.remove(Cnst.RG_REL));
+                if (fm.containsKey(Cnst.AT_REL)) {
+                    ir = Synt.setOf(fm.remove(Cnst.AT_REL));
                 } else
-                if (fm.containsKey(Cnst.IR_REL)) {
-                    ir = Synt.asSet(fm.remove(Cnst.IR_REL));
+                if (fm.containsKey(Cnst.ON_REL)) {
+                    ir = Synt.asSet(fm.remove(Cnst.ON_REL));
                 }
                 if (ir != null && !ir.isEmpty()) {
                     StringBuilder sb = new StringBuilder( );

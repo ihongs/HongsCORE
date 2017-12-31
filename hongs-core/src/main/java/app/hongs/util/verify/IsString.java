@@ -3,6 +3,7 @@ package app.hongs.util.verify;
 import app.hongs.HongsException;
 import app.hongs.action.FormSet;
 import app.hongs.util.Synt;
+import app.hongs.util.Tool;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -20,6 +21,16 @@ public class IsString extends Rule {
     @Override
     public Object verify(Object value) throws Wrong, HongsException {
         String str = Synt.declare(value, "");
+
+        // 文本清理
+        if (Synt.declare(params.get("strip"), false)) {
+            str = str.trim();
+        }
+        if (Synt.declare(params.get("clean"), false)) {
+            str = Tool.cleanNL (str);
+            str = Tool.clearEL (str);
+            str = Tool.clearSC (str);
+        }
 
         // 长度限制
         int len;

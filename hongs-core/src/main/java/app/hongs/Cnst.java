@@ -41,6 +41,8 @@ public final class Cnst {
 
     public static final String WD_KEY =  "wd"; // 查询      (Word)
 
+    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
+
     public static final String GN_KEY =  "gn"; // 分页数量  (Pags num)
 
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
@@ -52,8 +54,6 @@ public final class Cnst {
     public static final String RB_KEY =  "rb"; // 应答字段  (Reply with)
 
     public static final String AB_KEY =  "ab"; // 应用约束  (Apply with)
-
-    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
 
     public static final String OR_KEY =  "or"; // 或条件    (Or )
 

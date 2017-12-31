@@ -88,8 +88,8 @@ CREATE UNIQUE INDEX `UK_a_medium_endorse_link` ON `a_medium_endorse` (`link`,`li
 DROP TABLE IF EXISTS `a_medium_impress`;
 CREATE TABLE `a_medium_impress` (
   `id` CHAR(20) NOT NULL,
-  `sess_id` CHAR(64) DEFAULT NULL,
-  `user_id` CHAR(20) DEFAULT NULL,
+  `sess_id` CHAR(64) DEFAULT '',
+  `user_id` CHAR(20) DEFAULT '',
   `link_id` CHAR(20) NOT NULL,
   `link` CHAR(20) NOT NULL,
   `ctime` INTEGER(11) DEFAULT NULL,

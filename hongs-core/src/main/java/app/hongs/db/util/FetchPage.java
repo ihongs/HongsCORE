@@ -3,6 +3,7 @@ package app.hongs.db.util;
 import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
+import app.hongs.util.Synt;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -78,22 +79,27 @@ public final class FetchPage
     }
   }
 
+  /**
+   * 设置页码
+   * 1 为首页, 0 视为 1, 可用负数逆向推算,
+   * 如果可能为负数则建议先于其他参数设置.
+   * @param page
+   * @throws HongsException
+   */
   public void setPage(int page) throws HongsException
   {
-    if (page <  0)
-    {
-      this.getPage( );
-      int pc = (Integer) this.info.get("pagecount");
-      int pn = page + 1;
-      while (pn <  0)
-      {
-        pn = pn + pc;
-      }
-      page = pn;
-    } else
-    if (page == 0)
-    {
-      page = 1 ;
+    if (page <  0) {
+        getPage( ); // 获取分页信息
+        Integer O = (  Integer  )
+            info.get("pagecount");
+        if (O == null || O == 0 ) {
+            O = 1;
+        }
+        page += O;
+        page += 1;
+    }
+    if (page <= 0) {
+        page  = 1;
     }
     this.page = page;
   }
@@ -211,7 +217,7 @@ public final class FetchPage
    * 检查是否有启用分组
    * 同时清空排序和查询
    * @param caze
-   * @return 
+   * @return
    */
   private boolean clnSort(FetchCase caze) {
     boolean gos = caze.hasGroup();

@@ -763,7 +763,7 @@ implements IEntity
     {
       caze.from (table.tableName , table.name );
       FetchPage fp = new FetchPage(caze, table);
-      fp.setPage(page != 0 ? page : 1);
+      fp.setPage(page);
       fp.setPags(Math.abs(pags));
       fp.setRows(Math.abs(rows));
 

@@ -908,7 +908,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
                     // 将条件整理为: +(fn1:xxx fn2:xxx)
 
                     Map fw = new HashMap(  );
-                    fw.put(Cnst.OE_REL , fv);
+                    fw.put(Cnst.SE_REL , fv);
                     BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
                     for(String fk : fs) {
@@ -1541,10 +1541,10 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      *  in 包含
      *  ni 不包含
      * 以下为 Lucene 特有的操作符:
-     *  ai 全包含, 此为目标真子集
-     *  oi 可包含, 有则优先
-     *  oe 可等于, 有则优先
      *  wt 优先度, 设定查询的权重
+     *  ai 全包含, 此为目标真子集
+     *  si 可包含, 有则优先
+     *  se 可等于, 有则优先
      * 注意: 默认情况下查询参数不给值则忽略, 如果指定了操作符则匹配空串
      *
      * @param qry
@@ -1614,8 +1614,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
         }
 
-        if (m.containsKey(Cnst.OE_REL)) {
-            Object n = m.remove(Cnst.OE_REL);
+        if (m.containsKey(Cnst.SE_REL)) {
+            Object n = m.remove(Cnst.SE_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.SHOULD);
         }
 
@@ -1633,8 +1633,8 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             }
         }
 
-        if (m.containsKey(Cnst.OI_REL)) { // May In
-            Set a = Synt.declare(m.remove(Cnst.OI_REL), new HashSet());
+        if (m.containsKey(Cnst.SI_REL)) { // May In
+            Set a = Synt.declare(m.remove(Cnst.SI_REL), new HashSet());
             for(Object x : a) {
                 qry.add(q.get(k, x), BooleanClause.Occur.SHOULD);
             }
@@ -1654,13 +1654,13 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             SearchQuery p = new SearchQuery( );
             p.analyzer(new StandardAnalyzer());
             p.advanceAnalysisInUse(   true   );
-            if ("FILL".equalsIgnoreCase(a)) {
+            if ("FILL".equalsIgnoreCase(a) ) {
                 qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST);
             } else
-            if ("NULL".equalsIgnoreCase(a)) {
+            if ("NULL".equalsIgnoreCase(a) ) {
                 qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST_NOT);
             } else
-            if ("FINE".equalsIgnoreCase(a)) {
+            if ("FINE".equalsIgnoreCase(a) ) {
                 qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.SHOULD);
             }
         }

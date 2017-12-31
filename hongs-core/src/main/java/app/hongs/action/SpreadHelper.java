@@ -195,7 +195,10 @@ public class SpreadHelper {
                 rd.put(Cnst.RB_KEY, rb);
                 rd.put(Cnst.RN_KEY, 0 );
             }
-            rd.put(Cnst.ID_KEY, ms.keySet());
+            if (null != vk && !"".equals(vk)) {
+                vk =   Cnst.ID_KEY; // 未指定 vk,tk 时与其 ID 做关联
+            }
+            rd.put(vk, ms.keySet());
 
             // 获取结果
             ah.setRequestData(rd);

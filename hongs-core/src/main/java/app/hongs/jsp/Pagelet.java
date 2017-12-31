@@ -175,7 +175,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       }
 
       public String getMathod() {
-          return    super.getMethod();
+          return super.getMethod();
       }
 
       @Override

@@ -168,12 +168,16 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * 将非 GET,HEAD 转为 POST
    * 规避 JSP 拒绝处理的问题
    */
-  private static class Request extends HttpServletRequestWrapper {
+  public static class Request extends HttpServletRequestWrapper {
 
       public Request(HttpServletRequest req) {
           super(req);
       }
 
+      /**
+       * 获取真实的方法名
+       * @return 
+       */
       public String getMathod() {
           return super.getMethod();
       }

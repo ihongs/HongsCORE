@@ -145,6 +145,24 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
+   * 转义JS文本
+   * @param str
+   * @return
+   */
+  public static String escapeJSS(String str) {
+      return Data.doEscape (str);
+  }
+
+  /**
+   * 编码JS对象
+   * @param obj
+   * @return
+   */
+  public static String encodeJSO(Object obj) {
+      return Data.toString (obj);
+  }
+
+  /**
    * 编码URL文本
    * @param str
    * @return
@@ -170,24 +188,6 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       } catch (UnsupportedEncodingException ex ) {
           throw  new HongsExpedient.Common( ex );
       }
-  }
-
-  /**
-   * 转义JS文本
-   * @param str
-   * @return
-   */
-  public static String escapeJSS(String str) {
-      return Data.doEscape(str);
-  }
-
-  /**
-   * 编码JS对象
-   * @param obj
-   * @return
-   */
-  public static String encodeJSO(Object obj) {
-      return Data.toString(obj);
   }
 
   /**

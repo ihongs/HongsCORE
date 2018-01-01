@@ -5,7 +5,7 @@
             <param name="listable">?</param>
             <param name="fitrable">?</param>
             <param name="sortable">?</param>
-            <param name="srchable">word,name,note,tags,author,source</param>
+            <param name="srchable" type="set">word,name,note,tags,author,source</param>
         </field>
         <field name="id" text="ID" type="hidden"/>
         <field name="type" text="类型" type="enum" required="Y">
@@ -67,11 +67,7 @@
         </field>
         <field name="word" text="搜索" type="search">
             <param name="editable">false</param>
-            <param name="viewable">false</param>
-            <param name="listable">false</param>
-            <param name="fitrable">false</param>
-            <param name="sortable">false</param>
-            <param name="srchable">true</param>
+            <param name="unstored">true</param>
         </field>
         <field name="cuid" text="创建" type="fork">
             <param name="default">=$uid</param>

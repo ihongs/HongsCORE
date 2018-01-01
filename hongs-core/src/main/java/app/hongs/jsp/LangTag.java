@@ -70,7 +70,7 @@ public class LangTag extends TagSupport implements DynamicAttributes {
           str = Pagelet.escapeXML (str);
         }
         else if ("url".equals(this.esc)) {
-          str = Pagelet.escapeURL (str);
+          str = Pagelet.encodeURL (str);
         }
         else if ("jss".equals(this.esc)) {
           str = Pagelet.escapeJSS (str);

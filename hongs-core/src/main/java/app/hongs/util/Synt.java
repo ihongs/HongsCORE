@@ -765,9 +765,6 @@ public final class Synt {
         if (Byte.class.isAssignableFrom(cls)) {
             val = asByte(val);
         } else
-        if (Number.class.isAssignableFrom(cls)) {
-            val = asDouble(val);
-        } else
         if (Boolean.class.isAssignableFrom(cls)) {
             val = asBool(val);
         }

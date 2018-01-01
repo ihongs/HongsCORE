@@ -207,12 +207,12 @@ public class Mview extends Model {
 
         Set<String> listColz = new LinkedHashSet();
         Set<String> sortColz = new LinkedHashSet();
-        Set<String> findColz = new LinkedHashSet();
-        Set<String> siftColz = new LinkedHashSet();
+        Set<String> srchColz = new LinkedHashSet();
+        Set<String> fitrColz = new LinkedHashSet();
         Set<String> listTypz = new HashSet();
         Set<String> sortTypz = new HashSet();
-        Set<String> findTypz = new HashSet();
-        Set<String> siftTypz = new HashSet();
+        Set<String> srchTypz = new HashSet();
+        Set<String> fitrTypz = new HashSet();
 
 
         able = params.get("listable");
@@ -237,26 +237,26 @@ public class Mview extends Model {
             sortColz = Synt.toSet(able);
         }
 
-        able = params.get("findable");
+        able = params.get("srchable");
         if ("?".equals(able)) {
-            findTypz = Synt.toSet(cases.get("findable"));
+            srchTypz = Synt.toSet(cases.get("srchable"));
         } else
         if ("*".equals(able)) {
-            findColz = names;
+            srchColz = names;
         } else
         {
-            findColz = Synt.toSet(able);
+            srchColz = Synt.toSet(able);
         }
 
-        able = params.get("siftable");
+        able = params.get("fitrable");
         if ("?".equals(able)) {
-            siftTypz = Synt.toSet(cases.get("siftable"));
+            fitrTypz = Synt.toSet(cases.get("fitrable"));
         } else
         if ("*".equals(able)) {
-            siftColz = names;
+            fitrColz = names;
         } else
         {
-            siftColz = Synt.toSet(able);
+            fitrColz = Synt.toSet(able);
         }
 
         //** 检查列举、排序等参数 **/
@@ -305,31 +305,31 @@ public class Mview extends Model {
                 }
             }
 
-            if (field.containsKey("findable")) {
-                if (Synt.declare(field.get("findable"), false)) {
-                    findColz.add(fn);
+            if (field.containsKey("srchable")) {
+                if (Synt.declare(field.get("srchable"), false)) {
+                    srchColz.add(fn);
                 }
             } else {
-                if (findTypz.contains(ft)) {
-                    findColz.add(fn);
-                    field.put("findable", "yes");
+                if (srchTypz.contains(ft)) {
+                    srchColz.add(fn);
+                    field.put("srchable", "yes");
                 } else
-                if (findColz.contains(fn)) {
-                    field.put("findable", "yes");
+                if (srchColz.contains(fn)) {
+                    field.put("srchable", "yes");
                 }
             }
 
-            if (field.containsKey("siftable")) {
-                if (Synt.declare(field.get("siftable"), false)) {
-                    siftColz.add(fn);
+            if (field.containsKey("fitrable")) {
+                if (Synt.declare(field.get("fitrable"), false)) {
+                    fitrColz.add(fn);
                 }
             } else {
-                if (siftTypz.contains(ft)) {
-                    siftColz.add(fn);
-                    field.put("siftable", "yes");
+                if (fitrTypz.contains(ft)) {
+                    fitrColz.add(fn);
+                    field.put("fitrable", "yes");
                 } else
-                if (siftColz.contains(fn)) {
-                    field.put("siftable", "yes");
+                if (fitrColz.contains(fn)) {
+                    field.put("fitrable", "yes");
                 }
             }
         }
@@ -342,11 +342,11 @@ public class Mview extends Model {
         if (!sortColz.isEmpty()) {
             sortable = sortColz.toArray(new String[]{});
         }
-        if (!findColz.isEmpty()) {
-            findable = findColz.toArray(new String[]{});
+        if (!srchColz.isEmpty()) {
+            srchable = srchColz.toArray(new String[]{});
         }
-        if (!siftColz.isEmpty()) {
-            siftable = siftColz.toArray(new String[]{});
+        if (!fitrColz.isEmpty()) {
+            fitrable = fitrColz.toArray(new String[]{});
         }
 
         return fields;

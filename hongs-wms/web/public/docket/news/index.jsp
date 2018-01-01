@@ -74,7 +74,7 @@ String source = (String) info.get("source");
     <title><%=escapeXML((String) info.get("name"))%></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="<%=escapeXML((String) info.get("find"))%>">
+    <meta name="keywords" content="<%=escapeXML((String) info.get("word"))%>">
     <meta name="description" content="<%=escapeXML((String) info.get("note"))%>">
     <base href="<%=request.getContextPath()%>/" target="_blank"/>
     <link rel="icon" type="image/x-icon" href="favicon.ico"/>

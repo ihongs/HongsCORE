@@ -269,7 +269,7 @@ public class Data extends SearchEntity {
         }
 
         dd.put("name", getName(dd));
-        dd.put("find", getFind(dd));
+        dd.put("word", getWord(dd));
 
         //** 保存到数据库 **/
 
@@ -377,16 +377,16 @@ public class Data extends SearchEntity {
     private Set<String> nmCols = null;
 
     @Override
-    public Set<String> getFindable() {
+    public Set<String> getSrchable() {
         if (null != wdCols) {
             return  wdCols;
         }
-        Map fs = (Map) getFields().get("find");
+        Map fs = (Map) getFields().get("word");
         if (fs != null && Synt.declare(fs.get("editable"), true)) {
-            wdCols =  Synt.setOf  (  "find"  );
+            wdCols =  Synt.setOf  (  "word"  );
         } else {
-            wdCols =  getCaseNames("findable");
-            wdCols.remove("find");
+            wdCols =  getCaseNames("srchable");
+            wdCols.remove("word");
         }
         return wdCols;
     }
@@ -411,9 +411,9 @@ public class Data extends SearchEntity {
      * @return
      * @throws HongsException
      */
-    protected String getFind(Map dd) throws HongsException {
+    protected String getWord(Map dd) throws HongsException {
         StringBuilder nn = new StringBuilder();
-        Set < String> ns = getFindable( );
+        Set < String> ns = getSrchable( );
         for ( String  fn : ns ) {
               Object  fv = dd.get(fn);
             if (fv == null) continue ;
@@ -426,7 +426,7 @@ public class Data extends SearchEntity {
         }
         String nm = nn.toString().trim( );
 
-        if (! ns.contains("find")
+        if (! ns.contains("word")
         &&  ! ns.contains("id") ) {
             return dd.get("id") +" "+ nm ;
         } else {

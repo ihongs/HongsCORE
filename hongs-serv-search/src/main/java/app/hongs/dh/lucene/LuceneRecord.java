@@ -862,7 +862,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             if (m == null) {
                 continue;
             }
-            if (siftable(m)==false) {
+            if (fitrable(m)==false) {
                 continue;
             }
 
@@ -900,7 +900,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         if (rd.containsKey(Cnst.WD_KEY)) {
             Object fv = rd.get (Cnst.WD_KEY);
                    fv = Synt.declare(fv, "");
-            Set<String> fs = getFindable(  );
+            Set<String> fs = getSrchable(  );
 
             if (fv != null && !"".equals(fv)) {
                 if (fs.size() > 1) {
@@ -1291,9 +1291,9 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
         return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
-    protected boolean siftable(Map fc) {
+    protected boolean fitrable(Map fc) {
         String name = Synt.declare(fc.get("__name__"), "");
-        return getSiftable().contains(name) || Cnst.ID_KEY.equals(name);
+        return getFitrable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
     protected boolean repeated(Map fc) {
@@ -1422,7 +1422,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             IField  f ;
             String  t = datatype(m);
             boolean s = sortable(m);
-            boolean q = siftable(m);
+            boolean q = fitrable(m);
             boolean u = unstored(m);
             boolean r = repeated(m);
             boolean g = true; // 是否要存储, 数值类型过滤与存储是分离的, 故其等同于 !unstored

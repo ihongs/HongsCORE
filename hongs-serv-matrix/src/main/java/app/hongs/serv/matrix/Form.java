@@ -164,7 +164,7 @@ public class Form extends Model {
 
         if (conf != null && !"".equals(conf)) {
             flds = Synt.asList(Data.toObject(conf));
-            Set set = Synt.setOf("name", "find", "cuid", "muid", "ctime", "mtime");
+            Set set = Synt.setOf("name", "word", "cuid", "muid", "ctime", "mtime");
             Map tdf = null;
             Map idf = null;
             Map fld ;
@@ -213,7 +213,7 @@ public class Form extends Model {
                 "__name__", "@",
                 "listable", "?",
                 "sortable", "?",
-                "siftable", "?",
+                "fitrable", "?",
                 "nameable", "?"
             );
             if (tdf != null) {
@@ -246,9 +246,9 @@ public class Form extends Model {
             }
 
             // 增加搜索字段
-            if (set.contains("find")) {
+            if (set.contains("word")) {
                 flds.add(Synt.mapOf(
-                    "__name__", "find",
+                    "__name__", "word",
                     "__type__", "search",
                     "editable", "false" ,
                     "unstored", "true"
@@ -596,7 +596,7 @@ public class Form extends Model {
                 }
             } else
             // 可搜索指定存为搜索类型
-            if (Synt.declare(fiel.get("findable"), false) ) {
+            if (Synt.declare(fiel.get("srchable"), false) ) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "search");
                 }
@@ -605,7 +605,7 @@ public class Form extends Model {
             // 字串还需不可筛选和排序
             if ("textarea".equals( t )
             || ("string"  .equals( types.get(t) )
-            && !Synt.declare(fiel.get("siftable"), false)
+            && !Synt.declare(fiel.get("fitrable"), false)
             && !Synt.declare(fiel.get("sortable"), false))) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "stored");

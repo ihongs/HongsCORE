@@ -17,14 +17,14 @@
             enum,check,radio,select,
             fork,pick,sorted
         </value>
-        <value code="siftable" type="set">
+        <value code="fitrable" type="set">
             string,search,text,hidden,email,url,tel,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,
             fork,pick
         </value>
-        <value code="findable" type="set">
+        <value code="srchable" type="set">
             string,search,text,hidden,email,url,tel,textarea
         </value>
         <!-- 下为 Matrix 特有 -->

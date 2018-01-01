@@ -4,15 +4,15 @@
         <field name="@" repeated="" required="" rule="" text="菜品" type="">
             <param name="listable">?</param>
             <param name="sortable">?</param>
-            <param name="siftable">?</param>
+            <param name="fitrable">?</param>
             <param name="nameable">?</param>
         </field>
         <field name="id" repeated="" required="" rule="" text="ID" type="hidden"/>
         <field name="name" repeated="" required="true" rule="" text="名称" type="text">
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="findable">true</param>
-            <param name="siftable">true</param>
+            <param name="srchable">true</param>
+            <param name="fitrable">true</param>
             <param name="lucene-type">search</param>
         </field>
         <field name="type" repeated="" required="true" rule="" text="类别" type="select">
@@ -20,16 +20,16 @@
             <param name="sortable">true</param>
             <param name="statable">true</param>
             <param name="listable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="selected">["热菜"]</param>
         </field>
         <field name="worth" repeated="" required="" rule="" text="原价" type="number">
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="sortable">true</param>
             <param name="listable">true</param>
         </field>
         <field name="price" repeated="" required="true" rule="" text="售价" type="number">
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="sortable">true</param>
             <param name="listable">true</param>
         </field>
@@ -40,11 +40,11 @@
             <param name="selected">["份"]</param>
         </field>
         <field name="summary" repeated="" required="" rule="" text="简介" type="text">
-            <param name="findable">true</param>
+            <param name="srchable">true</param>
             <param name="lucene-type">search</param>
         </field>
         <field name="content" repeated="" required="" rule="" text="详情" type="textarea">
-            <param name="findable">true</param>
+            <param name="srchable">true</param>
             <param name="lucene-type">search</param>
         </field>
         <field name="picture" repeated="true" required="" rule="Thumb" text="图片" type="image">
@@ -63,7 +63,7 @@
             <param name="sortable">true</param>
             <param name="statable">true</param>
             <param name="listable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="selected">["正常"]</param>
         </field>
         <field name="ctime" repeated="" required="" rule="" text="创建时间" type="datetime">
@@ -74,7 +74,7 @@
             <param name="editable">no</param>
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
         </field>
         <field name="mtime" repeated="" required="" rule="" text="修改时间" type="datetime">
             <param name="type">timestamp</param>
@@ -84,9 +84,9 @@
             <param name="editable">no</param>
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
         </field>
-        <field name="find" repeated="" required="" rule="" text="" type="search">
+        <field name="word" repeated="" required="" rule="" text="" type="search">
             <param name="editable">false</param>
             <param name="unstored">true</param>
         </field>

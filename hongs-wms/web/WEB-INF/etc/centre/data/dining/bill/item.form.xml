@@ -5,7 +5,7 @@
             <param name="callable">search</param>
             <param name="listable">?</param>
             <param name="sortable">?</param>
-            <param name="siftable">?</param>
+            <param name="fitrable">?</param>
             <param name="nameable">?</param>
         </field>
     </form>

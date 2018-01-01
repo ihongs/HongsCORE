@@ -109,12 +109,13 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeXML(String str) {
+      if (str == null) return "";
       StringBuilder b = new StringBuilder( );
-      int  l = str.length();
+      int  l = str.length(     );
       int  i = 0;
       char c ;
-      while ( i < l) {
-           c = str.charAt(i ++);
+      while( l >  i) {
+           c = str.charAt(i ++ );
           switch (c) {
             case '<': b.append("&lt;" ); break;
             case '>': b.append("&gt;" ); break;
@@ -139,6 +140,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeURL(String str) {
+      if (str == null) return "";
       try {
           return URLEncoder.encode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {

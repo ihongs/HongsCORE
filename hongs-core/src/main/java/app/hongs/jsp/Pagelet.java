@@ -5,6 +5,7 @@ import app.hongs.HongsExpedient;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.util.Data;
+import app.hongs.util.Tool;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.io.IOException;
@@ -105,14 +106,23 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
-   * 转义XML/HTML文本 (escapeXML的别名称)
+   * @see Tool.escape 引用
    * @param str
-   * @return 
+   * @return
+   */
+  public static String quotes(String str) {
+      return Tool.escape(str);
+  }
+
+  /**
+   * @see escapeXML 的别名
+   * @param str
+   * @return
    */
   public static String escape(String str) {
-      return escapeXML(str);
+      return   escapeXML(str);
   }
-  
+
   /**
    * 转义XML/HTML文本
    * @param str
@@ -202,7 +212,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
 
       /**
        * 获取真实的方法名
-       * @return 
+       * @return
        */
       public String getMathod() {
           return super.getMethod();

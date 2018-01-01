@@ -1,5 +1,3 @@
-<%@page import="java.util.TimeZone"%>
-<%@page import="java.util.Locale"%>
 <%@page import="app.hongs.Core"%>
 <%@page import="app.hongs.HongsException"%>
 <%@page import="app.hongs.action.ActionHelper"%>
@@ -7,8 +5,11 @@
 <%@page import="app.hongs.db.DB"%>
 <%@page import="app.hongs.serv.matrix.Data"%>
 <%@page import="app.hongs.util.Synt"%>
-<%@page import="java.util.Date"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.util.Set"%>
+<%@page import="java.util.Date"%>
+<%@page import="java.util.Locale"%>
+<%@page import="java.util.TimeZone"%>
 <%@page import="java.text.SimpleDateFormat"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
@@ -67,15 +68,22 @@ response.setHeader("ETag", id +":"+ xtime );
 
 String author = (String) info.get("author");
 String source = (String) info.get("source");
+
+// 把标签串起来作为关键词
+Set<String>   ts = Synt.declare(info.get("tags"), Set.class);
+StringBuilder wd = new StringBuilder();
+if (null  !=  wd)  for(String tx : ts) {
+    wd.append(tx).append(",");
+}   info.put ("word", wd.toString( ) );
 %>
 <!doctype html>
 <html>
 <head>
-    <title><%=escape((String) info.get("name"))%></title>
+    <title><%=escape((String)info.get("name"))%></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="<%=escape((String) info.get("tags"))%>">
-    <meta name="description" content="<%=escape((String) info.get("note"))%>">
+    <meta name="keywords" content="<%=escape((String)info.get("word"))%>">
+    <meta name="description" content="<%=escape((String)info.get("note"))%>">
     <base href="<%=request.getContextPath()%>/" target="_blank"/>
     <link rel="icon" type="image/x-icon" href="favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>

@@ -5,33 +5,40 @@
             <param name="listable">?</param>
             <param name="siftable">?</param>
             <param name="sortable">?</param>
+            <param name="findable">find,name,note,tags,author,source</param>
         </field>
         <field name="id" text="ID" type="hidden"/>
-        <field name="type" text="类型" type="enum">
+        <field name="type" text="类型" type="enum" required="Y">
             <param name="conf">centra/data/docket/news</param>
             <param name="enum">news_type</param>
             <param name="listable">true</param>
         </field>
-        <field name="name" text="标题" type="string" required="yes">
+        <field name="name" text="标题" type="string" required="Y">
             <param name="listable">true</param>
             <param name="findable">true</param>
             <param name="nameable">true</param>
+            <param name="maxlength">500</param>
         </field>
         <field name="author" text="作者" type="string">
             <param name="listable">false</param>
             <param name="findable">true</param>
+            <param name="maxlength">100</param>
         </field>
         <field name="source" text="来源" type="string">
             <param name="listable">false</param>
             <param name="findable">true</param>
+            <param name="maxlength">100</param>
         </field>
-        <field name="find" text="关键词" type="search">
+        <field name="note" text="简介" type="search">
             <param name="listable">false</param>
             <param name="findable">true</param>
+            <param name="maxlength">500</param>
         </field>
-        <field name="note" text="宣传语" type="search">
+        <field name="tags" text="标签" type="string" repeated="Y">
             <param name="listable">false</param>
             <param name="findable">true</param>
+            <param name="maxlength">50</param>
+            <param name="maxrepeat">50</param>
         </field>
         <field name="logo" text="图标" type="image" rule="Thumb">
             <param name="listable">false</param>
@@ -46,6 +53,7 @@
             <param name="siftable">false</param>
             <param name="sortable">false</param>
             <param name="type">html</param>
+            <param name="lucene-type">stored</param>
         </field>
         <field name="deny_comment" text="允许评论" type="enum">
             <param name="listable">false</param>
@@ -56,6 +64,14 @@
             <param name="listable">false</param>
             <param name="conf">centra/data/docket/news</param>
             <param name="enum">onoff</param>
+        </field>
+        <field name="find" text="搜索" type="search">
+            <param name="editable">false</param>
+            <param name="viewable">false</param>
+            <param name="listable">false</param>
+            <param name="siftable">false</param>
+            <param name="sortable">false</param>
+            <param name="findable">true</param>
         </field>
         <field name="cuid" text="创建" type="fork">
             <param name="default">=$uid</param>

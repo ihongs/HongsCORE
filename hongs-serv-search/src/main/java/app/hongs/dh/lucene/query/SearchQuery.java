@@ -77,10 +77,7 @@ public class SearchQuery implements IQuery {
     }
     @Override
     public Query get(String k, Object n, Object x, boolean l, boolean g) {
-        String  n2 = n.toString();
-        String  x2 = x.toString();
-        Query   q2 = TermRangeQuery.newStringRange(k, n2, x2, l, g);
-        return  q2;
+        throw new HongsExpedient(0x1100, "Field "+k+" does not suported interval queries.");
     }
 
 }

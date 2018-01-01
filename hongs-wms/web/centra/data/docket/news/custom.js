@@ -25,7 +25,7 @@ function in_centra_data_docket_news_form(context) {
     var text = context.find("[data-type=html]");
     var area = text.parent();
     var help = area.next(  ).insertBefore(area);
-    text.height("25em");
+    text.height("10em");
     help.removeClass("col-sm-3").addClass("col-sm-6");
     area.removeClass("col-sm-6").addClass("col-sm-8").addClass("col-sm-offset-2");
 }

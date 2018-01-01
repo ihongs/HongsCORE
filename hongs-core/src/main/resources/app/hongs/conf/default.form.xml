@@ -2,7 +2,7 @@
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
         <value code="listable" type="set">
-            string,text,search,hidden,email,url,tel,textarea,
+            string,search,text,hidden,email,url,tel,textarea,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,
@@ -11,31 +11,31 @@
             form,json,object
         </value>
         <value code="sortable" type="set">
-            string,text,search,hidden,email,url,tel,
+            string,search,text,hidden,email,url,tel,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,
             fork,pick,sorted
         </value>
         <value code="siftable" type="set">
-            string,text,search,hidden,email,url,tel,
+            string,search,text,hidden,email,url,tel,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,
             fork,pick
         </value>
         <value code="findable" type="set">
-            string,text,search,hidden,email,url,tel,textarea
+            string,search,text,hidden,email,url,tel,textarea
         </value>
         <!-- 下为 Matrix 特有 -->
         <value code="nameable" type="set">
-            string,text,search
+            string,search,text
         </value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
         <value code="string" type="set">
-            string,text,search,hidden,email,url,tel,textarea,
+            string,search,text,hidden,email,url,tel,textarea,
             enum,radio,check,select,
             file,image,audio,video,
             fork,pick,
@@ -84,12 +84,12 @@
         <value code="image">file</value>
         <value code="audio">file</value>
         <value code="video">file</value>
-        <!-- Form -->
-        <value code="form">form</value>
-        <value code="json">form</value>
         <!-- Fork -->
         <value code="fork">fork</value>
         <value code="pick">fork</value>
+        <!-- Form -->
+        <value code="form">form</value>
+        <value code="json">json</value>
     </enum>
     <!-- 文本校验正则映射 -->
     <enum name="__patts__">

@@ -600,6 +600,12 @@ public class Form extends Model {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "search");
                 }
+            } else
+            // 文本框禁搜则为存储类型
+            if ("textarea".equals(t)) {
+                if(!fiel.containsKey("lucnene-type")) {
+                    fiel.put("lucene-type", "stored");
+                }
             }
 
             Map<String,Map<String,String>> preset = null;

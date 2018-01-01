@@ -768,7 +768,7 @@ public class AssocCase {
         Map af = new LinkedHashMap();
 
         /**
-         * 此处未将 FINDTABLE 设为当前所有字段
+         * 此处未将 SRCHTABLE 设为当前所有字段
          * 模糊搜索比较特殊
          * 文本类型字段才行
          * 并不便于自动指派

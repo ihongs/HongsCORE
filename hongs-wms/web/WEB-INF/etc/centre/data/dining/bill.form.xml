@@ -4,7 +4,7 @@
         <field name="@" text="餐牌" repeated="" required="" rule="" type="">
             <param name="listable">?</param>
             <param name="sortable">?</param>
-            <param name="siftable">?</param>
+            <param name="fitrable">?</param>
             <param name="nameable">?</param>
         </field>
     </form>

@@ -192,7 +192,7 @@ public class Malleable {
         } else {
             // 可在表参数区直接给出
             // 专用类型无需特别设置
-            if ("findable".equals(x)) {
+            if ("srchable".equals(x)) {
                 fts = new HashSet( );
                 fts.add("search");
             } else
@@ -252,11 +252,11 @@ public class Malleable {
      * 获取可搜索的字段
      * @return
      */
-    public Set<String> getFindable() {
+    public Set<String> getSrchable() {
         if (null != wdColz) {
             return  wdColz;
         }
-        wdColz = getCaseNames("findable");
+        wdColz = getCaseNames("srchable");
         return wdColz;
     }
 
@@ -264,11 +264,11 @@ public class Malleable {
      * 获取可过滤的字段
      * @return
      */
-    public Set<String> getSiftable() {
+    public Set<String> getFitrable() {
         if (null != whColz) {
             return  whColz;
         }
-        whColz = getCaseNames("siftable");
+        whColz = getCaseNames("fitrable");
         return whColz;
     }
 

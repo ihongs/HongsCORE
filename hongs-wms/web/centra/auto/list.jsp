@@ -34,7 +34,7 @@
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
-            <input type="search" name="find" class="form-control input-search"/>
+            <input type="search" name="word" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="btn btn-default search" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
             <%if (!"select".equals(_action)) {%>
@@ -61,7 +61,7 @@
             String  text = (String) info.get("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            || !Synt.declare(info.get("siftable"), false)) {
+            || !Synt.declare(info.get("fitrable"), false)) {
                 continue;
             }
         %>

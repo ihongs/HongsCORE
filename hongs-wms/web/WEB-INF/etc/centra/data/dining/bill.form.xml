@@ -4,7 +4,7 @@
         <field name="@" repeated="" required="" rule="" text="餐牌" type="">
             <param name="listable">?</param>
             <param name="sortable">?</param>
-            <param name="siftable">?</param>
+            <param name="fitrable">?</param>
             <param name="nameable">?</param>
         </field>
         <field name="id" repeated="" required="" rule="" text="ID" type="hidden"/>
@@ -12,7 +12,7 @@
             <param name="editable">true</param>
             <param name="listable">true</param>
         </field>
-        <field name="find" repeated="" required="" rule="" text="搜索" type="search">
+        <field name="word" repeated="" required="" rule="" text="搜索" type="search">
             <param name="editable">false</param>
             <param name="listable">false</param>
             <param name="unstored">true</param>
@@ -20,13 +20,13 @@
         <field name="total" repeated="" required="" rule="" text="实售价" type="number">
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
         </field>
         <field name="stat" repeated="" required="true" rule="" text="订单状态" type="select">
             <param name="conf">centra/data/dining/bill</param>
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="statable">true</param>
             <param name="selected">["准备"]</param>
         </field>
@@ -34,7 +34,7 @@
             <param name="conf">centra/data/dining/bill</param>
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="statable">true</param>
             <param name="selected">["堂食"]</param>
         </field>
@@ -42,7 +42,7 @@
             <param name="conf">centra/data/dining/bill</param>
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="statable">true</param>
             <param name="selected">["现金"]</param>
         </field>
@@ -88,36 +88,36 @@
         <field name="title" repeated="" required="" rule="" text="称谓" type="text">
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
         </field>
         <field name="phone" repeated="" required="" rule="" text="电话" type="tel">
             <param name="listable">true</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
         </field>
         <field name="addr" repeated="" required="" rule="" text="地址" type="text">
             <param name="listable">false</param>
             <param name="sortable">true</param>
-            <param name="findable">true</param>
-            <param name="siftable">true</param>
+            <param name="srchable">true</param>
+            <param name="fitrable">true</param>
             <param name="lucene-type">search</param>
         </field>
         <field name="prov" repeated="" required="" rule="" text="省份" type="text">
             <param name="listable">false</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="statable">true</param>
         </field>
         <field name="city" repeated="" required="" rule="" text="城市" type="text">
             <param name="listable">false</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="statable">true</param>
         </field>
         <field name="dist" repeated="" required="" rule="" text="区县" type="text">
             <param name="listable">false</param>
             <param name="sortable">true</param>
-            <param name="siftable">true</param>
+            <param name="fitrable">true</param>
             <param name="statable">true</param>
         </field>
         <field name="lat_lng" repeated="" required="" rule="" text="坐标" type="hidden">

@@ -4,7 +4,7 @@
         <field name="@" repeated="" required="" rule="" text="餐牌菜单" type="">
             <param name="listable">?</param>
             <param name="sortable">?</param>
-            <param name="siftable">?</param>
+            <param name="fitrable">?</param>
             <param name="nameable">?</param>
         </field>
         <field name="id" repeated="" required="" rule="" text="ID" type="hidden"/>
@@ -28,7 +28,7 @@
         <field name="name" repeated="" required="" rule="" text="" type="stored">
             <param name="editable">false</param>
         </field>
-        <field name="find" repeated="" required="" rule="" text="" type="search">
+        <field name="word" repeated="" required="" rule="" text="" type="search">
             <param name="editable">false</param>
             <param name="unstored">true</param>
         </field>

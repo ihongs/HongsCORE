@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * </pre>
  * <p>
  * allow 所传值可用 Table.getParams() 或 FormSet.getForm().get("@")
- * 所得到的 Map 里面的 listable,sortable,findable,siftable 等来设置,
+ * 所得到的 Map 里面的 listable,sortable,srchable,fitrable 等来设置,
  * 同时提供了 allow(Table), allow(Model) 两个快捷方法自动读取并设置;
  * </p>
  *
@@ -57,11 +57,11 @@ public class AssocCase {
     /**
      * 可模糊搜索, 用于 FetchCase 的 Option
      */
-    public  static final String  FINDABLE = "FINDABLE";
+    public  static final String  SRCHABLE = "SRCHABLE";
     /**
      * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
-    public  static final String  SIFTABLE = "SIFTABLE";
+    public  static final String  FITRABLE = "FITRABLE";
     /**
      * 可存储字段, 用于 FetchCase 的 Option, 为设置则取 LISTABLE
      */
@@ -126,11 +126,11 @@ public class AssocCase {
     /**
      * 自定义许可字段
      * <pre>
-     * fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
-     * fs 仅给一个常量 DENY 表示禁用 an 的 allow 设置,
-     * fs 不给值或给空串同样表示禁用 an 的 allow 设置,
-     * 清除后非 LISTABLE,FINDABLE 即可继承 LISTABLE;
-     * </pre>
+ fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
+ fs 仅给一个常量 DENY 表示禁用 an 的 allow 设置,
+ fs 不给值或给空串同样表示禁用 an 的 allow 设置,
+ 清除后非 LISTABLE,SRCHABLE 即可继承 LISTABLE;
+ </pre>
      * <pre>
      * <b>字段的首字符:</b>
      *   - 相对 LISTABLE 删减字段,
@@ -239,7 +239,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "sortable", "findable", "siftable", "saveable"};
+        String[] ks = new String[] {"listable", "sortable", "srchable", "fitrable", "saveable"};
         for(String k : ks) {
             Object s = fc.get( k );
             if (null == s) {
@@ -410,7 +410,7 @@ public class AssocCase {
     private void query(FetchCase caze, Set<String> wd) {
         if (wd == null || wd.isEmpty()) return;
 
-        Map<String, String> af = allow(FINDABLE);
+        Map<String, String> af = allow(SRCHABLE);
         int  i = 0;
         int  l = wd.size( ) * af.size( );
         Object[]      ab = new Object[l];
@@ -442,7 +442,7 @@ public class AssocCase {
     private void where(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
-        Map<String, String> af = allow(SIFTABLE);
+        Map<String, String> af = allow(FITRABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
@@ -652,7 +652,7 @@ public class AssocCase {
 
         // 搜索字段不能从列举继承
         if (af == null && !LISTABLE.equals(on)
-                       && !FINDABLE.equals(on)) {
+                       && !SRCHABLE.equals(on)) {
             af =  allow(LISTABLE);
         }
         if (af == null) {
@@ -749,11 +749,11 @@ public class AssocCase {
         if (model.sortable != null) {
             allow(SORTABLE, model.sortable);
         }
-        if (model.findable != null) {
-            allow(FINDABLE, model.findable);
+        if (model.srchable != null) {
+            allow(SRCHABLE, model.srchable);
         }
-        if (model.siftable != null) {
-            allow(SIFTABLE, model.siftable);
+        if (model.fitrable != null) {
+            allow(FITRABLE, model.fitrable);
         }
 
         return this;
@@ -775,7 +775,7 @@ public class AssocCase {
          */
         bufs.put(LISTABLE, af);
         bufs.put(SORTABLE, af);
-        bufs.put(SIFTABLE, af);
+        bufs.put(FITRABLE, af);
 
         String name = Synt.defoult(
                that.getName( ) , table.name , table.tableName);

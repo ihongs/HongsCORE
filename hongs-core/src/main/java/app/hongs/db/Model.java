@@ -83,12 +83,12 @@ implements IEntity
   /**
    * 可搜索的字段
    */
-  public String[] findable = null;
+  public String[] srchable = null;
 
   /**
    * 可过滤的字段
    */
-  public String[] siftable = null;
+  public String[] fitrable = null;
 
   /**
    * 构造方法
@@ -113,10 +113,10 @@ implements IEntity
     if (cs != null) this.listable = cs.split(",");
     cs = (String) ps.get("sortable");
     if (cs != null) this.sortable = cs.split(",");
-    cs = (String) ps.get("findable");
-    if (cs != null) this.findable = cs.split(",");
-    cs = (String) ps.get("siftable");
-    if (cs != null) this.siftable = cs.split(",");
+    cs = (String) ps.get("srchable");
+    if (cs != null) this.srchable = cs.split(",");
+    cs = (String) ps.get("fitrable");
+    if (cs != null) this.fitrable = cs.split(",");
   }
 
   //** 标准动作方法 **/
@@ -888,7 +888,7 @@ implements IEntity
    * 3) 按照wd参数设置模糊查询,
    *    多关键词搜索: wd=x+y+z;
    *    指定字段搜索: wd.a=x或wd.a.b=y, 同样适用上面的规则,
-   *    a.b为搜索关联表, 注意: a,a.b必须在findCols中有指定;
+   *    a.b为搜索关联表, 注意: a,a.b必须在srchable中有指定;
    * 4) 如果有字段名相同的参数则获取与之对应的记录,
    *    可以在字段名后跟.加上!gt,!lt,!ge,!le,!ne分别表示&gt;,&lt;,&ge;,&le;,&ne;
    * 5) 如果有子表.字段名相同的参数则获取与之对应的记录,

@@ -10,7 +10,7 @@ import java.util.Map;
 public class Required extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
-        if (value  ==  null ) {
+        if (null  ==  value ) {
             if (helper.isUpdate()) {
                 return BLANK;
             }

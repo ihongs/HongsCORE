@@ -232,7 +232,7 @@ public class Verify implements Veri {
         if (Synt.declare(params.get("diverse"), false)) {
             data2 = new LinkedHashSet();
         } else {
-            data2 = new ArrayList(/**/);
+            data2 = new  ArrayList   ();
         }
 
         // 将后面的规则应用于每一个值

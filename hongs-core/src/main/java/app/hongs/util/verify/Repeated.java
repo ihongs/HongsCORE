@@ -15,7 +15,6 @@ public class Repeated extends Rule {
         if (value == null) {
             return new Object[0];
         }
-        // 字符串则检查是否要拆分
         if (value instanceof String/**/) {
             String s = Synt.declare(params.get("split"), "");
             if (s.length() != 0) {

@@ -16,9 +16,9 @@ public class Repeated extends Rule {
             return new Object[0];
         }
         if (value instanceof String/**/) {
-            String s = Synt.declare(params.get("split"), String.class);
+           String s= Synt. asString(params.get("split"));
             if (s != null) {
-                return ((String) value ).split( s , -1);
+                return ((String) value ).split( s , -1 );
             }
         }
         if (value instanceof Object[ ] ) {

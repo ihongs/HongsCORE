@@ -104,6 +104,15 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
+   * 转义XML/HTML文本 (escapeXML的别名称)
+   * @param str
+   * @return 
+   */
+  public static String escape(String str) {
+      return escapeXML(str);
+  }
+  
+  /**
    * 转义XML/HTML文本
    * @param str
    * @return

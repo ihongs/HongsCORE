@@ -854,7 +854,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             String fn = (String) e.getKey();
 
             // 自定义查询
-            if (queried(qr, fn, fv )) {
+            if (queried (qr, fn, fv )) {
                 continue;
             }
 
@@ -862,7 +862,7 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             if (m == null) {
                 continue;
             }
-            if (fitrable(m)==false) {
+            if (fitrable(m) == false ) {
                 continue;
             }
 
@@ -1294,6 +1294,11 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
     protected boolean fitrable(Map fc) {
         String name = Synt.declare(fc.get("__name__"), "");
         return getFitrable().contains(name) || Cnst.ID_KEY.equals(name);
+    }
+
+    protected boolean srchable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getFitrable().contains(name);
     }
 
     protected boolean repeated(Map fc) {

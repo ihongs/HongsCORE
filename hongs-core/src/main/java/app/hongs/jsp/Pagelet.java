@@ -55,9 +55,9 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   {
     try
     {
-      this._jspService(new Request(req), rsp);
+      this._jspService( new Request(req) , rsp );
     }
-    catch (ServletException ex)
+    catch (ServletException|RuntimeException ex)
     {
         /**
          * 异常处理
@@ -74,8 +74,8 @@ public class Pagelet extends ActionDriver implements HttpJspPage
             req.setAttribute("javax.servlet.error.message"  , er);
             req.setAttribute("javax.servlet.error.exception", ax);
             req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
-            if (  (  ax instanceof HongsCause))
-            switch(((HongsCause)ax).getErrno()) {
+            if (  (  ax instanceof HongsCause ))
+            switch(((HongsCause) ax).getErrno()) {
                 case 0x1105:
                     rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
                     return ;

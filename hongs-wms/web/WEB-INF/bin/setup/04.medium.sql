@@ -15,7 +15,7 @@ CREATE TABLE `a_medium_comment` (
   `note` TEXT NOT NULL,
   `ctime` INTEGER(11) DEFAULT NULL,
   `mtime` INTEGER(11) DEFAULT NULL,
-  `state` TINYINT(2) DEFAULT '1', /* 1 未读, 2 已读 */
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 
@@ -41,8 +41,8 @@ CREATE TABLE `a_medium_dissent` (
   `note` TEXT DEFAULT NULL,
   `ctime` INTEGER(11) DEFAULT NULL,
   `mtime` INTEGER(11) DEFAULT NULL,
-  `cause` TINYINT(2) DEFAULT '0', /* 1 虚假, 2 敏感 */
-  `state` TINYINT(2) DEFAULT '1', /* 1 待理, 2 已理 */
+  `cause` TINYINT(2) DEFAULT '1',
+  `state` TINYINT(2) DEFAULT '1',
   PRIMARY KEY (`id`)
 );
 

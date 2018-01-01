@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
+    <!-- 评论 -->
     <form name="comment">
-        <field name="link">
+        <field name="note" type="string" required="">
+            <param name="clean">yes</param>
+            <param name="minlength">2</param>
+            <param name="maxlength">140</param>
+        </field>
+        <field name="link" type="enum">
             <param name="conf">medium</param>
             <param name="enum">comment_link</param>
         </field>
@@ -11,8 +17,14 @@
         <value code="discuss">讨论</value>
     </enum>
 
+    <!-- 举报 -->
     <form name="dissent">
-        <field name="link">
+        <field name="note" type="string">
+            <param name="clean">yes</param>
+            <param name="minlength">2</param>
+            <param name="maxlength">140</param>
+        </field>
+        <field name="link" type="enum">
             <param name="conf">medium</param>
             <param name="enum">dissent_link</param>
         </field>
@@ -20,7 +32,15 @@
             <param name="conf">medium</param>
             <param name="enum">dissent_cause</param>
         </field>
+        <field name="state" type="enum">
+            <param name="conf">medium</param>
+            <param name="enum">dissent_state</param>
+        </field>
     </form>
+    <enum name="dissent_href">
+        <value code="comment">public/docket/comment/${id}</value>
+        <value code="article">public/docket/news/${id}</value>
+    </enum>
     <enum name="dissent_link">
         <value code="article">文章</value>
         <value code="discuss">讨论</value>
@@ -33,7 +53,14 @@
         <value code="4">人身攻击</value>
         <value code="*">其他</value>
     </enum>
+    <enum name="dissent_state">
+        <value code="1">待处理</value>
+        <value code="2">属实</value>
+        <value code="3">诬陷</value>
+        <value code="4">无聊</value>
+    </enum>
 
+    <!-- 打分 -->
     <form name="endorse">
         <field name="link">
             <param name="conf">medium</param>
@@ -51,6 +78,7 @@
         <value code="comment">评论</value>
     </enum>
 
+    <!-- 到访 -->
     <form name="impress">
         <field name="link">
             <param name="conf">medium</param>
@@ -62,6 +90,7 @@
         <value code="discuss">讨论</value>
     </enum>
 
+    <!-- 统计 -->
     <form name="statist">
         <field name="link">
             <param name="conf">medium</param>

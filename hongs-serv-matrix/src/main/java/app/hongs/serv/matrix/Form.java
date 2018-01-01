@@ -596,13 +596,17 @@ public class Form extends Model {
                 }
             } else
             // 可搜索指定存为搜索类型
-            if (Synt.declare(fiel.get("findable"), false)) {
+            if (Synt.declare(fiel.get("findable"), false) ) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "search");
                 }
             } else
-            // 文本框禁搜则为存储类型
-            if ("textarea".equals(t)) {
+            // 文本禁搜索则为存储类型
+            // 字串还需不可筛选和排序
+            if ("textarea".equals( t )
+            || ("string"  .equals( types.get(t) )
+            && !Synt.declare(fiel.get("siftable"), false)
+            && !Synt.declare(fiel.get("sortable"), false))) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "stored");
                 }

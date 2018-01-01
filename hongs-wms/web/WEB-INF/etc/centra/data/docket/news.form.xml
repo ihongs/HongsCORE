@@ -39,6 +39,7 @@
             <param name="srchable">true</param>
             <param name="maxlength">50</param>
             <param name="maxrepeat">50</param>
+            <param name="split">,</param>
         </field>
         <field name="logo" text="图标" type="image" rule="Thumb">
             <param name="listable">false</param>

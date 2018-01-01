@@ -57,27 +57,37 @@
                 <div class="col-sm-6">
                 <%if ("textarea".equals(type)) {%>
                     <%
+                        String extr = "";
                         String typa = (String) info.get("type");
                         String mode = (String) info.get("mode");
                         if (null != typa &&!"".equals(typa)) {
-                            rqrd += " data-type=\"" + typa + "\"";
+                            extr += " data-type=\"" + typa + "\"";
                         if (null != mode &&!"".equals(mode)) {
-                            rqrd += " data-mode=\"" + mode + "\"";
+                            extr += " data-mode=\"" + mode + "\"";
                         }
-                            rqrd += " style=\"width:100%; height:15em; border:0;\"";
+                            extr += " style=\"width:100%; height:15em; border:0;\"";
                         } else {
-                            rqrd += " class=\"form-control\" style=\"height:5em;\"";
+                            extr += " class=\"form-control\" style=\"height:5em;\"";
                         }
                     %>
-                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%>></textarea>
+                    <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%><%=extr%>></textarea>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
                     <%
                         String extr = "";
+                        if (!"".equals(rptd)) {
+                            String s = Synt.asString(info.get("split"));
+                            if (null !=  s  ) {
+                                extr += " data-fl=\"v?v.join('"+quotes(s)+"'):''\"";
+                                name  = name.substring(0 , -1+ name.length());
+                                info.remove ("maxlength");
+                                info.remove ( "pattern" );
+                            }
+                        }
                         if ("string".equals(type)) type = "text";
                         if (info.containsKey("size")) extr += " size=\""+info.get("size").toString()+"\"";
                         if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
                         if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
-                        if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
+                        if (info.containsKey( "pattern" )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
                 <%} else if ("number".equals(type) || "range".equals(type)) {%>
@@ -92,7 +102,7 @@
                     <%
                         String fomt = Synt.declare(info.get("format"),  type      );
                         String typa = Synt.declare(info.get( "type" ), "timestamp");
-                        String extr = " data-type=\""+typa+"\" data-format=\""+fomt+"\"";
+                        String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\"";
                         if (info.containsKey("min" )) extr += " data-min=\""+info.get("min").toString()+"\"";
                         if (info.containsKey("max" )) extr += " data-max=\""+info.get("max").toString()+"\"";
                         if ("time".equals(typa) || "date".equals(typa)) {
@@ -179,7 +189,7 @@
                     <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
                 <%} else {%>
-                    <input class="form-control" <%="type=\""+type+"\" name=\""+name+"\" "+rqrd%>/>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" <%=rqrd%> <%=rptd%>/>
                 <%} /*End If */%>
                 </div>
                 <div class="col-sm-3 help-block form-control-static"></div>

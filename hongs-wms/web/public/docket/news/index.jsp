@@ -71,11 +71,11 @@ String source = (String) info.get("source");
 <!doctype html>
 <html>
 <head>
-    <title><%=escapeXML((String) info.get("name"))%></title>
+    <title><%=escape((String) info.get("name"))%></title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="keywords" content="<%=escapeXML((String) info.get("word"))%>">
-    <meta name="description" content="<%=escapeXML((String) info.get("note"))%>">
+    <meta name="keywords" content="<%=escape((String) info.get("tags"))%>">
+    <meta name="description" content="<%=escape((String) info.get("note"))%>">
     <base href="<%=request.getContextPath()%>/" target="_blank"/>
     <link rel="icon" type="image/x-icon" href="favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
@@ -99,14 +99,14 @@ String source = (String) info.get("source");
         <img src="<%=info.get("logo")%>"/>
     </div>
     <div class="container">
-        <h1><%=escapeXML((String) info.get("name"))%></h1>
+        <h1><%=escape((String) info.get("name"))%></h1>
         <p class="text-center">
             <span><%=mtime%></span>
         <%if (author != null && !author.equals("")) {%>
-            <span>作者: <%=escapeXML(author)%></span>
+            <span>作者: <%=escape(author)%></span>
         <%} /*End if*/%>
         <%if (source != null && !source.equals("")) {%>
-            <span>来源: <%=escapeXML(source)%></span>
+            <span>来源: <%=escape(source)%></span>
         <%} /*End if*/%>
         </p>
         <div class="row">

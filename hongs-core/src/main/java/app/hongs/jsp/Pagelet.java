@@ -6,6 +6,7 @@ import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.util.Data;
 import java.net.URLEncoder;
+import java.net.URLDecoder;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import javax.servlet.ServletException;
@@ -144,14 +145,28 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
-   * 转义URL文本
+   * 编码URL文本
    * @param str
    * @return
    */
-  public static String escapeURL(String str) {
+  public static String encodeURL(String str) {
       if (str == null) return "";
       try {
           return URLEncoder.encode(str, "UTF-8");
+      } catch (UnsupportedEncodingException ex ) {
+          throw  new HongsExpedient.Common( ex );
+      }
+  }
+
+  /**
+   * 解码URL文本
+   * @param str
+   * @return
+   */
+  public static String decodeURL(String str) {
+      if (str == null) return "";
+      try {
+          return URLDecoder.decode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
           throw  new HongsExpedient.Common( ex );
       }
@@ -167,7 +182,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
-   * 转为JS对象
+   * 编码JS对象
    * @param obj
    * @return
    */

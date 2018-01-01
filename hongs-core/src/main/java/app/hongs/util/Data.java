@@ -466,9 +466,14 @@ public final class Data
 
     private static void excape(Appendable sb, String s) {
         try {
-            escape  (  sb  , s );
-        } catch (IOException ex)  {
-            throw new HongsError(0x42, "Can not write data for json", ex);
+            if (s == null) {
+                sb.append("");
+            } else {
+                escape(sb, s);
+            }
+        }
+        catch (IOException e)  {
+            throw new HongsError(0x42, "Can not write data for json", e);
         }
     }
 

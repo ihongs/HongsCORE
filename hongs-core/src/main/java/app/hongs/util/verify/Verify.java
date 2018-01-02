@@ -20,7 +20,7 @@ import java.util.Set;
  * 数据校验助手
  * @author Hongs
  *
- * Java8 中利用 Rulx 使用函数式, 可简化代码, 如:
+ * <p>Java8 中利用 Ruly 使用函数式, 可简化代码, 如:</p>
  * <pre>
  *  values = new Verify()
  *      .addRule("f1", (v, r)->{
@@ -93,8 +93,8 @@ public class Verify implements Veri {
      * @return
      */
     @Override
-    public Verify setRule(String name, Rulx... rule) {
-        setRule(name, Rulo.toRules(rule));
+    public Verify setRule(String name, Ruly... rule) {
+        setRule(name, Rule.toRules(rule));
         return this;
     }
 
@@ -105,8 +105,8 @@ public class Verify implements Veri {
      * @return
      */
     @Override
-    public Verify addRule(String name, Rulx... rule) {
-        addRule(name, Rulo.toRules(rule));
+    public Verify addRule(String name, Ruly... rule) {
+        addRule(name, Rule.toRules(rule));
         return this;
     }
 

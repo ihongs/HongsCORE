@@ -9,30 +9,78 @@ import java.util.Map;
  * @author Hongs
  */
 public abstract class Rule {
+
     /**
-     * 返回此对象将被抛弃, 后续处理器会被跳过
+     * 跳过此值, 有错则可中止
      */
     public static final Object BLANK = Synt.LOOP.NEXT;
+    /**
+     * 立即终止, 抛弃后续校验
+     */
     public static final Object BREAK = Synt.LOOP.LAST;
+    /**
+     * 空值null
+     */
     public static final Object EMPTY = null;
 
-    public Map params = null;
-    public Map values = null;
-    public Map cleans = null;
-    public Verify helper;
+    /**
+     * 校验参数
+     */
+    public Map  params = null;
+    /**
+     * 原始的请求数据
+     */
+    public Map  values = null;
+    /**
+     * 通过校验的数据
+     */
+    public Map  cleans = null;
+    /**
+     * 校验助手
+     */
+    public Veri helper ;
 
-    public void setParams(Map params) {
+    public void setParams(Map  params) {
         this.params = params;
     }
-    public void setValues(Map values) {
+    public void setValues(Map  values) {
         this.values = values;
     }
-    public void setCleans(Map cleans) {
+    public void setCleans(Map  cleans) {
         this.cleans = cleans;
     }
-    public void setHelper(Verify helper) {
+    public void setHelper(Veri helper) {
         this.helper = helper;
     }
 
     public abstract Object verify(Object value) throws Wrong, Wrongs, HongsException;
+
+    /**
+     * 批量将 Ruly 包装为 Rule
+     * @param rule
+     * @return
+     */
+    public final static Rule[] toRules(Ruly... rule) {
+        Rule[] list = new Rule [rule.length];
+        for (int i= 0; i< rule.length; i++ ) {
+            list[i] = new Wrap (rule [ i ] );
+        }
+        return list;
+    }
+
+    private final static class Wrap extends Rule {
+
+      private final Ruly ruly;
+
+        public Wrap(Ruly ruly) {
+            this.ruly  = ruly;
+        }
+
+        @Override
+        public  Object  verify(Object value) throws Wrong, Wrongs, HongsException {
+            return ruly.verify(value, this );
+        }
+
+    }
+
 }

@@ -24,8 +24,8 @@ public interface Veri {
     public Map<String,List<Rule>> getRules();
     public Veri     setRule (String name, Rule... rule);
     public Veri     addRule (String name, Rule... rule);
-    public Veri     setRule (String name, Rulx... rule);
-    public Veri     addRule (String name, Rulx... rule);
+    public Veri     setRule (String name, Ruly... rule);
+    public Veri     addRule (String name, Ruly... rule);
 
     /**
      * 校验数据

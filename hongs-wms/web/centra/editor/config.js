@@ -28,7 +28,7 @@
             'indent', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
             'paragraph', 'fontsize', 'fontfamily', '|',
             'link', 'blockquote', 'inserttable', 'map', 'insertimage', 'insertvideo', 'attachment', '|',
-            'removeformat', 'formatmatch', 'pasteplain', 'preview', 'print'
+            'removeformat', 'formatmatch', 'searchreplace', 'pasteplain', 'preview', 'print'
         ]]
         , shortcutMenu: [
             "bold", "italic", "underline", 'strikethrough',

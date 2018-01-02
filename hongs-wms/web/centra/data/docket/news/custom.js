@@ -4,9 +4,8 @@ function in_centra_data_docket_news_list(context) {
            .before('<th data-fn="statist.impress_count" data-fl="v||0">浏览</th>')
            .before('<th data-fn="statist.comment_count" data-fl="v||0">评论</th>')
            .before('<th data-fn="statist.dissent_count" data-fl="v||0">举报</th>')
-           .before('<th data-fn="statist.endorse_count" data-fl="v||0">赞</th>')
-           .before('<th data-fn="statist.undorse_count" data-fl="v||0">踩</th>')
-           .before('<th data-fn="statist.endorse_score" data-fl="v||0">得分</th>')
+           .before('<th data-fn="statist.endorse_count" data-fl="v||0">参评</th>')
+           .before('<th data-fn="statist.endorse_score" data-fl="v||0">总分</th>')
            .remove();
 
    // 查看直接打开文章页面
@@ -34,6 +33,8 @@ function in_centra_data_docket_news_form(context) {
         "static/addons/bootstrap-tagsinput/tagsinput.min.js",
         "static/addons/bootstrap-tagsinput/css/tagsinput.min.css"
     ], function() {
-        context.find("[name=tags]").tagsinput();
+        context.find("[name=tags]")
+               .attr("data-toggle" , "tagsinput")
+               .parent().hsReady( );
     });
 }

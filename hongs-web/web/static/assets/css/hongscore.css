@@ -4,14 +4,14 @@
  * 版本: 2017/06/30 23:39
  */
 
-html, body, label, input, select, button, textarea {
-    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,STHeiti,"Microsoft Yahei",sans-serif;
+html, body, label, input, button, select, textarea {
+    font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
 }
 h1, h2, h3, h4, h5, h6 {
-    font-family: "Open Sans","Helvetica Neue",Helvetica,Arial,STHeiti,"Microsoft Yahei",sans-serif;
+    font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
 }
-pre, code, var, dfn, kbd {
-    font-family: Consolas,Menlo,Monaco,"Courier New",monospace;
+code, pre, var, dfn, kbd {
+    font-family: "Courier New",Monaco,Menlo,monospace;
 }
 
 fieldset {

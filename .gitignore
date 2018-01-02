@@ -1,11 +1,9 @@
 /target
 /*/target
-/HongsCORE
-/HongsCORE-*
 /*/lib/*.jar
-**/WEB-INF/classes
 **/WEB-INF/lib
 **/WEB-INF/var
+**/WEB-INF/classes
 
 desktop.ini
 .DS_Store

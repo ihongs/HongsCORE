@@ -20,54 +20,31 @@
         , saveInterval  : 0
         , enableAutoSave: false
         , initialFrameWidth: '100%'
-        , initialStyle  : "body{margin:10px 18px;font-size:15px;font-family:'Open Sans','Helvetica Neue',Helvetica,Arial,STHeiti,'Microsoft Yahei',sans-serif;}"
+        , initialStyle  : "body{margin:10px 18px;font-size:15px;font-family:'Microsoft Yahei','Helvetica Neue','Open Sans',Helvetica,Tahoma,Arial,sans-serif;}"
         , toolbars: [[
-            'source', 'fullscreen', '|',
+            'fullscreen', 'source', '|',
             'bold', 'italic', 'underline', 'strikethrough', 'forecolor', 'backcolor', '|',
-            'insertorderedlist', 'insertunorderedlist', 'lineheight', 'rowspacingtop', 'rowspacingbottom',
+            'insertorderedlist', 'insertunorderedlist', 'lineheight', 'rowspacingtop', 'rowspacingbottom', '|',
             'indent', 'justifyleft', 'justifycenter', 'justifyright', 'justifyjustify', '|',
-            'link', 'blockquote', 'inserttable', 'insertimage', 'insertvideo', 'attachment', '|',
-            'removeformat', 'pasteplain', 'preview', 'print', '|',
-            'paragraph', 'fontsize', 'fontfamily'//, 'insertcode'
+            'paragraph', 'fontsize', 'fontfamily', '|',
+            'link', 'blockquote', 'inserttable', 'map', 'insertimage', 'insertvideo', 'attachment', '|',
+            'removeformat', 'formatmatch', 'pasteplain', 'preview', 'print'
         ]]
         , shortcutMenu: [
             "bold", "italic", "underline", 'strikethrough',
             "forecolor", "backcolor", "insertorderedlist", "insertunorderedlist"
         ]
-        ,'fontfamily':[
+        , fontfamily: [
             { label:'',name:'yahei',val:'微软雅黑,Microsoft YaHei'},
-            { label:'',name:'songti',val:'宋体,SimSun'},
-            { label:'',name:'kaiti',val:'楷体,SimKai'},
-            { label:'',name:'heiti',val:'黑体,SimHei'},
+            { label:'',name:'songti',val:'宋体,SimSun,STSong'},
+            { label:'',name:'kaiti',val:'楷体,SimKai,STHeiti'},
+            { label:'',name:'heiti',val:'黑体,SimHei,STKaiti'},
             { label:'',name:'lishu',val:'隶书,SimLi'},
-            { label:'',name:'andaleMono',val:'andale mono'},
-            { label:'',name:'arial',val:'arial,helvetica,sans-serif'},
-            { label:'',name:'arialBlack',val:'arial black,avant garde'},
-            { label:'',name:'impact',val:'impact,chicago'},
-            { label:'',name:'timesNewRoman',val:'times new roman'}
+            { label:'Sans Serif',name:'sans-serif',val:'sans-serif'},
+            { label:     'Serif',name:     'serif',val:     'serif'},
+            { label:'Monospace' ,name:'monospace' ,val:'monospace' }
         ]
-        , insertcode: {
-            'plain':'Plain Text',
-            'js':'Javascript',
-            'java':'Java',
-            'cpp':'C/C++',
-            'php':'PHP',
-            'python':'Python',
-            'ruby':'Ruby',
-            'pl':'Perl',
-            'c#':'C#',
-            'vb':'Vb',
-            'scala':'Scala',
-            'groovy':'Groovy',
-            'delphi':'Delphi',
-            'erlang':'Erlang',
-            'html':'Html',
-            'xml':'Xml',
-            'css':'Css',
-            'sql':'Sql',
-            'bash':'Bash/Shell',
-            'ps':'PowerShell'
-        }
+        , fontsize: [10, 11, 12, 14, 16, 18, 20, 24, 36, 48, 60]
     };
 
 })();

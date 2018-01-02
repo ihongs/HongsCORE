@@ -2,9 +2,9 @@
 /*/target
 /HongsCORE
 /HongsCORE-*
-**/WEB-INF/classes
-**/WEB-INF/lib
-**/WEB-INF/var
+/*/WEB-INF/classes
+/*/WEB-INF/lib
+/*/WEB-INF/var
 
 desktop.ini
 .DS_Store
@@ -12,6 +12,7 @@ desktop.ini
 .idea
 *.iml
 *.iws
+*.jar
 nbproject
 nbactions*
 nb-configuration.xml

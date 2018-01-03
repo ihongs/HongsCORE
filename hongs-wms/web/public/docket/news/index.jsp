@@ -29,8 +29,8 @@ Map  info ;
 // 更新判断
 if (ms != null) {
     info = news.getOne(Synt.mapOf(
-            "rb", Synt.setOf("mtime"),
-            "id", id
+        "rb", Synt.setOf("mtime"),
+        "id", id
     ));
     if (info == null || info.isEmpty()) {
         throw new HongsException(0x1104, "Not found !");
@@ -72,7 +72,7 @@ String source = (String) info.get("source");
 // 把标签串起来作为关键词
 Set<String>   ts = Synt.declare(info.get("tags"), Set.class);
 StringBuilder wd = new StringBuilder();
-if (null  !=  wd)  for(String tx : ts) {
+if (null  !=  ts)  for(String tx : ts) {
     wd.append(tx).append(",");
 }   info.put ("word", wd.toString( ) );
 %>
@@ -84,7 +84,7 @@ if (null  !=  wd)  for(String tx : ts) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="keywords" content="<%=escape((String)info.get("word"))%>">
     <meta name="description" content="<%=escape((String)info.get("note"))%>">
-    <base href="<%=request.getContextPath()%>/" target="_blank"/>
+    <base href="<%=request.getContextPath()%>/"/>
     <link rel="icon" type="image/x-icon" href="favicon.ico"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
@@ -97,9 +97,28 @@ if (null  !=  wd)  for(String tx : ts) {
     <script type="text/javascript" src="common/conf/default.js"></script>
     <script type="text/javascript" src="common/lang/default.js"></script>
     <style type="text/css">
-        h1 {text-align: center;}
-        .container>p>span+span {margin-left: 1em;}
-        .comment-list .listbox p {white-space: pre-line;}
+        h1 {
+            text-align: center;
+        }
+        .container >p> span+span {
+            margin-left: 1em;
+        }
+        #comment-list .listbox p {
+            white-space: pre-line;
+        }
+        #star-list {
+            margin-bottom: 1.2em;
+        }
+        #tags-list {
+            margin-bottom: 1.2em;
+            padding-bottom: -3px;
+        }
+        #tags-list .label {
+            margin-bottom: 3px;
+            margin-right: 3px;
+            font-size: 1em;
+            display: inline-block;
+        }
     </style>
 </head>
 <body>
@@ -123,7 +142,7 @@ if (null  !=  wd)  for(String tx : ts) {
             </div>
             <div class="col-md-4">
                 <!-- 评分打星 -->
-                <div style="margin-bottom: 2em;">
+                <div id="star-list">
                     <span id="endorse-score" style="padding-right: 0.5em;">
                     <%for (int i = 0; i < 5; i ++) {%>
                         <a href="javascript:;" class="glyphicon glyphicon-star-empty" data-score="<%=(i+1)%>"></a>
@@ -133,6 +152,15 @@ if (null  !=  wd)  for(String tx : ts) {
                     <span id="endorse-count">0</span>人评分.
                     <a href="javascript:;" ><span data-toggle="modal" data-target="#dissent-modal">举报</span></a>
                 </div>
+                <%if (ts != null && !ts.isEmpty()) {%>
+                <!-- 标签分类 -->
+                <div id="tags-list">
+                    <span class="label label-default">标签:</span>
+                    <%for (String tn : ts) {%>
+                    <a href="public/docket/news/tags/<%=encodeURL(tn)%>" class="label label-info"><%=escape(tn)%></a>
+                    <%} /*End for*/%>
+                </div>
+                <%} /*End if */%>
                 <!-- 评论列表 -->
                 <div id="comment-list"
                      data-module="hsList"
@@ -140,6 +168,7 @@ if (null  !=  wd)  for(String tx : ts) {
                      data-fill-list="(hsListFillItem)"
                      data-fill-page="(hsListFillNext)"
                      style=" padding: 0.5em; background: #eee;">
+                    <h4>评论:</h4>
                     <div class="itembox" style="display: none;">
                         <input type="hidden" name="id"      data-fn="id"      data-fl="$(this).val(v) && undefined"/>
                         <input type="hidden" name="user_id" data-fn="user_id" data-fl="$(this).val(v) && undefined"/>

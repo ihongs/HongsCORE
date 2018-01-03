@@ -448,12 +448,12 @@ public final class Tool
   }
 
   /**
-   * 清理XML
-   * 该实现并不严谨, 对于复杂的XML(包含CDATA等)不推荐使用
+   * 清理XML标签
+   * 该实现并不严谨, 不建议用于处理含 CDATA 等的 XML 文档
    * @param str
    * @return 新串
    */
-  public static String cleanXML(String str)
+  public static String stripTags(String str)
   {
     Pattern pat;
     pat = Pattern.compile("<!--.*?-->", Pattern.DOTALL);
@@ -466,19 +466,23 @@ public final class Tool
   }
 
   /**
-   * 清理HTM
-   * 该实现并不严谨, 对于复杂的HTM(包含JSCSS等)不推荐使用
+   * 清理HTM脚本
+   * 该实现并不严谨, 仅清理可被利用的 iframe/script/style
    * @param str
    * @return 新串
    */
-  public static String cleanHTM(String str)
+  public static String stripCros(String str)
   {
     Pattern pat;
-    pat = Pattern.compile("<script.*?>.*?</script>", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    pat = Pattern.compile("(<iframe.*?/>|<iframe.*?>.*?</iframe>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     str = pat.matcher(str).replaceAll("" );
-    pat = Pattern.compile( "<style.*?>.*?</style>" , Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    pat = Pattern.compile("(<script.*?/>|<script.*?>.*?</script>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
     str = pat.matcher(str).replaceAll("" );
-    return  cleanXML (str);
+    pat = Pattern.compile("(<style.*?/>|<style.*?>.*?</style>)", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    str = pat.matcher(str).replaceAll("" );
+    pat = Pattern.compile("(\\son\\w+=('.*?'|\".*?\"))", Pattern.DOTALL | Pattern.CASE_INSENSITIVE);
+    str = pat.matcher(str).replaceAll("" );
+    return  str;
   }
 
   //** 格式 **/

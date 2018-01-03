@@ -94,7 +94,7 @@ public class Verify implements Veri {
      */
     @Override
     public Verify setRule(String name, Ruly... rule) {
-        setRule(name, Rule.toRules(rule));
+        setRule(name, Rule.wrap(rule));
         return this;
     }
 
@@ -106,7 +106,7 @@ public class Verify implements Veri {
      */
     @Override
     public Verify addRule(String name, Ruly... rule) {
-        addRule(name, Rule.toRules(rule));
+        addRule(name, Rule.wrap(rule));
         return this;
     }
 

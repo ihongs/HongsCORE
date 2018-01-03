@@ -60,7 +60,7 @@ public abstract class Rule {
      * @param rule
      * @return
      */
-    public final static Rule[] toRules(Ruly... rule) {
+    final static public Rule[] wrap(Ruly... rule) {
         Rule[] list = new Rule [rule.length];
         for (int i= 0; i< rule.length; i++ ) {
             list[i] = new Wrap (rule [ i ] );
@@ -68,9 +68,9 @@ public abstract class Rule {
         return list;
     }
 
-    private final static class Wrap extends Rule {
+    final static private class Wrap extends Rule  {
 
-      private final Ruly ruly;
+      final private Ruly ruly;
 
         public Wrap(Ruly ruly) {
             this.ruly  = ruly;

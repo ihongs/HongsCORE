@@ -165,8 +165,9 @@ function in_centra_data_dining_bill_form(context, formobj) {
                 map.setCenter (pos);
                 geo.getAddress(pos);
                 mak = new qq.maps.Marker({
+                    map      : map ,
                     position : pos ,
-                    map      : map
+                    draggable: true
                 });
             } else {
                 // 没有地址则清空
@@ -192,8 +193,10 @@ function in_centra_data_dining_bill_form(context, formobj) {
 
         // 点选地址
         qq.maps.event.addListener(map, 'click', function(evt) {
-            addrInp.val ( "" ); // 点选总是重写地址输入框
-            setPos(evt.latLng);
+            if(!addrInp.data("changed")) {
+                addrInp.val ("");
+            }
+            setPos( evt.latLng );
         });
 
         // 当前位置
@@ -205,7 +208,7 @@ function in_centra_data_dining_bill_form(context, formobj) {
                 }
             });
         });
-        cit.searchLocalCity( );
+        cit.searchLocalCity();
 
         // 地图回调
         geo.setComplete(function(rst) {
@@ -262,12 +265,15 @@ function in_centra_data_dining_bill_form(context, formobj) {
                 if (keyword) {
                     suggestFunc = display;
                     suggestOpts = options;
-                    sea.search( keyword );
+                     sea.search ( keyword );
+                    addrInp.data("changed", true);
                 } else {
+                    addrInp.removeData("changed");
                     setPos(null);
                 }
             }
         }).on("onSetSelectValue", function(evt, addr, data) {
+            addrInp.removeData("changed");
             setPos (data.latLng);
         });
     });

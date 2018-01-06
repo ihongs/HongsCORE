@@ -213,8 +213,9 @@
                 map.setCenter (pos);
                 geo.getAddress(pos);
                 mak = new qq.maps.Marker({
+                    map      : map ,
                     position : pos ,
-                    map      : map
+                    draggable: true
                 });
             } else {
                 // 没有地址则清空
@@ -240,7 +241,9 @@
 
         // 点选地址
         qq.maps.event.addListener(map, 'click', function(evt) {
-            addrInp.val ( "" ); // 点选总是重写地址输入框
+            if(!addrInp.data("changed")) {
+                addrInp.val ("");
+            }
             setPos(evt.latLng);
         });
 
@@ -312,12 +315,15 @@
                 if (keyword) {
                     suggestFunc = display;
                     suggestOpts = options;
-                    sea.search( keyword );
+                    sea.search  ( keyword );
+                    addrInp.data("changed", true);
                 } else {
+                    addrInp.removeData("changed");
                     setPos(null);
                 }
             }
         }).on("onSetSelectValue", function(evt, addr, data) {
+            addrInp.removeData("changed");
             setPos (data.latLng);
         });
     })(jQuery);

@@ -106,21 +106,12 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   }
 
   /**
-   * @see Tool.escape 引用
-   * @param str
-   * @return
-   */
-  public static String quotes(String str) {
-      return Tool.escape(str);
-  }
-
-  /**
    * @see escapeXML 的别名
    * @param str
    * @return
    */
   public static String escape(String str) {
-      return   escapeXML(str);
+      return escapeXML(str);
   }
 
   /**
@@ -152,6 +143,16 @@ public class Pagelet extends ActionDriver implements HttpJspPage
           }
       }
       return b.toString();
+  }
+
+  /**
+   * 转义引号
+   * @param str
+   * @return
+   */
+  public static String escapeQTS(String str) {
+      if (str == null) return "";
+      return Tool.  escape (str);
   }
 
   /**

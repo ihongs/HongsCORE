@@ -77,8 +77,8 @@
                         if (!"".equals(rptd)) {
                             String s = Synt.asString(info.get("split"));
                             if (null !=  s  ) {
-                                extr += " data-fl=\"v?v.join('"+quotes(s)+"'):''\"";
-                                name  = name.substring(0 , -1+ name.length());
+                                extr += " data-fl=\"v?v.join('"+escape(s)+"'):''\"";
+                                name  = name.substring( 0, name.length( )-1 );
                                 info.remove ("maxlength");
                                 info.remove ( "pattern" );
                             }

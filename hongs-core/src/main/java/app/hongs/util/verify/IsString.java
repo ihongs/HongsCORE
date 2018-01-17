@@ -14,6 +14,8 @@ import java.util.regex.Pattern;
  *  maxlength   最大长度
  *  minlength   最短长度
  *  pattern     校验正则, 可使用 default.form.xml 里的 _patt_ 下预定好的正则, 如 email,url
+ *  strip       为 true 则清理首尾空字符
+ *  clean       为 true 则清理空白空行等
  * </pre>
  * @author Hongs
  */
@@ -27,6 +29,7 @@ public class IsString extends Rule {
             str = str.trim();
         }
         if (Synt.declare(params.get("clean"), false)) {
+            str = Tool.clearSC (str);
             str = Tool.cleanSC (str);
             str = Tool.clearEL (str);
             str = Tool.cleanNL (str);

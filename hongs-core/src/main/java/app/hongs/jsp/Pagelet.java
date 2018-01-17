@@ -121,32 +121,11 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    */
   public static String escapeXML(String str) {
       if (str == null) return "";
-      StringBuilder b = new StringBuilder( );
-      int  l = str.length(     );
-      int  i = 0;
-      char c ;
-      while( l >  i) {
-           c = str.charAt(i ++ );
-          switch (c) {
-            case '<': b.append("&lt;" ); break;
-            case '>': b.append("&gt;" ); break;
-            case '&': b.append("&amp;"); break;
-            case 34 : b.append("&#34;"); break; // 双引号
-            case 39 : b.append("&#39;"); break; // 单引号
-            default :
-                if (c < 32) {
-                    b.append("&#")
-                     .append((int) c);
-                } else {
-                    b.append(/***/ c);
-                }
-          }
-      }
-      return b.toString();
+      return Tool.  escXML (str);
   }
 
   /**
-   * 转义引号
+   * 转义单双引号
    * @param str
    * @return
    */

@@ -396,18 +396,51 @@ public final class Tool
 
   //** 清理 **/
 
-  private static final String NL = "\r\n";
-  private static final String SC = "[ \\f\\t\\v\\x0b\\u3000]+";
+  /**
+   * 转义XML标签
+   * 仅对 &lt;&gt;&amp; 及单双引号、特殊字符(回车、换行、制表等)进行转义
+   * @param str
+   * @return
+   */
+  public static String escXML(String str)
+  {
+      StringBuilder b = new StringBuilder();
+      char c ;
+      int  i = 0;
+      int  l = str.length(/**/);
+      while( l >  i) {
+           c = str.charAt(i ++);
+          switch (c) {
+            case '<': b.append("&lt;" ); break;
+            case '>': b.append("&gt;" ); break;
+            case '&': b.append("&amp;"); break;
+            case 34 : b.append("&#34;"); break; // 双引号
+            case 39 : b.append("&#39;"); break; // 单引号
+            default :
+                if (c < 32) {
+                    b.append("&#")
+                     .append((int) c);
+                } else {
+                    b.append(/***/ c);
+                }
+          }
+      }
+      return b.toString();
+  }
+
+  private static final Pattern NL_PAT = Pattern.compile("(\\r\\n|\\r|\\n)");
+  private static final Pattern EL_PAT = Pattern.compile("^\\s*$", Pattern.MULTILINE);
+  private static final Pattern SC_PAT = Pattern.compile(  "[ \\f\\t\\v\\x0b\\u3000]+"  , Pattern.MULTILINE);
+  private static final Pattern XC_PAT = Pattern.compile("(^[ \\f\\t\\v\\x0b\\u3000]+|[ \\f\\t\\v\\x0b\\u3000]+$)", Pattern.MULTILINE);
 
   /**
-   * 清理换行, 将'\r'和'\n'统一为'\r\n'
+   * 统一换行
    * @param str
    * @return 新串
    */
   public static String cleanNL(String str)
   {
-    return Pattern.compile("(\\r\\n|\\r|\\n)")
-                  .matcher(str).replaceAll(NL);
+    return NL_PAT.matcher(str).replaceAll("\r\n");
   }
 
   /**
@@ -417,8 +450,7 @@ public final class Tool
    */
   public static String clearNL(String str)
   {
-    return Pattern.compile("(\\r\\n|\\r|\\n)")
-                  .matcher(str).replaceAll("");
+    return NL_PAT.matcher(str).replaceAll(  ""  );
   }
 
   /**
@@ -428,23 +460,27 @@ public final class Tool
    */
   public static String clearEL(String str)
   {
-    return Pattern.compile("^\\s*$", Pattern.MULTILINE)
-                  .matcher(str).replaceAll("");
+    return EL_PAT.matcher(str).replaceAll(  ""  );
   }
 
   /**
-   * 清理空白
+   * 清除首尾空白(含全角)
+   * @param str
+   * @return
+   */
+  public static String clearSC(String str)
+  {
+    return XC_PAT.matcher(str).replaceAll(  ""  );
+  }
+
+  /**
+   * 合并多个空白(含全角)
    * @param str
    * @return 新串
    */
   public static String cleanSC(String str)
   {
-    Pattern pat;
-    pat = Pattern.compile("(^"+ SC + "|" + SC +"$)", Pattern.MULTILINE);
-    str = pat.matcher(str).replaceAll("" );
-    pat = Pattern.compile(      SC       );
-    str = pat.matcher(str).replaceAll(" ");
-    return  str;
+    return SC_PAT.matcher(str).replaceAll(  " " );
   }
 
   /**

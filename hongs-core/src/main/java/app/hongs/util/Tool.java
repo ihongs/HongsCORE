@@ -434,13 +434,13 @@ public final class Tool
   private static final Pattern XC_PAT = Pattern.compile("(^[ \\f\\t\\v\\x0b\\u3000]+|[ \\f\\t\\v\\x0b\\u3000]+$)", Pattern.MULTILINE);
 
   /**
-   * 统一换行
+   * 清除空行
    * @param str
    * @return 新串
    */
-  public static String cleanNL(String str)
+  public static String clearEL(String str)
   {
-    return NL_PAT.matcher(str).replaceAll("\r\n");
+    return EL_PAT.matcher(str).replaceAll(  ""  );
   }
 
   /**
@@ -454,13 +454,13 @@ public final class Tool
   }
 
   /**
-   * 清除空行
+   * 统一换行
    * @param str
    * @return 新串
    */
-  public static String clearEL(String str)
+  public static String cleanNL(String str)
   {
-    return EL_PAT.matcher(str).replaceAll(  ""  );
+    return NL_PAT.matcher(str).replaceAll("\r\n");
   }
 
   /**

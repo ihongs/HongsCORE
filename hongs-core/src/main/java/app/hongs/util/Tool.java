@@ -396,38 +396,6 @@ public final class Tool
 
   //** 清理 **/
 
-  /**
-   * 转义XML标签
-   * 仅对 &lt;&gt;&amp; 及单双引号、特殊字符(回车、换行、制表等)进行转义
-   * @param str
-   * @return
-   */
-  public static String escXML(String str)
-  {
-      StringBuilder b = new StringBuilder();
-      char c ;
-      int  i = 0;
-      int  l = str.length(/**/);
-      while( l >  i) {
-           c = str.charAt(i ++);
-          switch (c) {
-            case '<': b.append("&lt;" ); break;
-            case '>': b.append("&gt;" ); break;
-            case '&': b.append("&amp;"); break;
-            case 34 : b.append("&#34;"); break; // 双引号
-            case 39 : b.append("&#39;"); break; // 单引号
-            default :
-                if (c < 32) {
-                    b.append("&#")
-                     .append((int) c);
-                } else {
-                    b.append(/***/ c);
-                }
-          }
-      }
-      return b.toString();
-  }
-
   private static final Pattern NL_PAT = Pattern.compile("(\\r\\n|\\r|\\n)");
   private static final Pattern EL_PAT = Pattern.compile("^\\s*$", Pattern.MULTILINE);
   private static final Pattern SC_PAT = Pattern.compile(  "[ \\f\\t\\v\\x0b\\u3000]+"  , Pattern.MULTILINE);

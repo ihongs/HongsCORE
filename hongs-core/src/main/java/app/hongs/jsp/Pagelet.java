@@ -5,7 +5,6 @@ import app.hongs.HongsExpedient;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.util.Data;
-import app.hongs.util.Tool;
 import java.net.URLEncoder;
 import java.net.URLDecoder;
 import java.io.IOException;
@@ -120,18 +119,28 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeXML(String str) {
-      if (str == null) return "";
-      return Tool.  escXML (str);
-  }
-
-  /**
-   * 转义单双引号
-   * @param str
-   * @return
-   */
-  public static String escapeQTS(String str) {
-      if (str == null) return "";
-      return Tool.  escape (str);
+      StringBuilder b = new StringBuilder( );
+      char c ;
+      int  i = 0;
+      int  l = str.length(/**/);
+      while( l >  i) {
+           c = str.charAt(i ++);
+          switch (c) {
+            case '<': b.append("&lt;" ); break;
+            case '>': b.append("&gt;" ); break;
+            case '&': b.append("&amp;"); break;
+            case 34 : b.append("&#34;"); break; // 双引号
+            case 39 : b.append("&#39;"); break; // 单引号
+            default :
+                if (c < 32) {
+                    b.append("&#")
+                     .append((int) c);
+                } else {
+                    b.append(/***/ c);
+                }
+          }
+      }
+      return b.toString();
   }
 
   /**

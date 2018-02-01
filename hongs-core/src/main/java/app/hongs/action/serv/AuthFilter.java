@@ -250,11 +250,12 @@ public class AuthFilter
              * 必须在指定区域再次登录
              * 登录时会将区域写入会话
              */
+            if (loginPage != null) {
             Set sae = (Set) hlpr.getSessibute(Cnst.SAE_SES);
             if (sae == null || ! sae.contains(aut)) {
                 doFailed(core, hlpr, (byte) 1); // 登录区域
                 return;
-            }
+            }}
         }
     }
 

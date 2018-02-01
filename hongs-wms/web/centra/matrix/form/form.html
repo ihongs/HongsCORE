@@ -59,6 +59,7 @@
             </div>
         </div>
 
+        <!-- 备选字段 -->
         <div class="col-sm-6" style="background: #f8f8f8; padding-top: 15px;">
             <form class="widget-form" onsubmit="return false;">
                 <div class="form-group" data-type="line">
@@ -69,6 +70,38 @@
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </legend>
                     <input type="line" name="-" style="display: none;" data-listable="no"/>
+                </div>
+                <div class="form-group base-field" data-type="name">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>名称</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="name" type="text" placeholder="请输入..."/>
+                </div>
+                <div class="form-group base-field" data-type="note">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>简介</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="note" type="text" placeholder="请输入..."/>
+                </div>
+                <div class="form-group base-field" data-type="word">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>关键字</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <input class="form-control" name="word" type="text" placeholder="请输入..."/>
+                </div>
+                <div class="form-group">
+                    <legend class="clearfix" data-valtype="text">
+                        <span>自定字段</span>
+                    </legend>
                 </div>
                 <div class="form-group" data-type="text">
                     <label class="control-label clearfix" style="display: block;">
@@ -179,7 +212,7 @@
                 </div>
                 <div class="form-group">
                     <legend class="clearfix" data-valtype="text">
-                        <span>内置环境字段</span>
+                        <span>系统字段</span>
                     </legend>
                 </div>
                 <div class="form-group base-field" data-type="ctime">
@@ -240,13 +273,14 @@
         </div>
     </div>
 
+    <!-- 基础设置 -->
     <div style="display:none;">
         <div class="widget-pane widget-pane-line">
             <div class="form-group">
                 <input class="form-control" type="text" name="span:first" value=""/>
             </div>
         </div>
-        <div class="widget-pane widget-pane-text">
+        <div class="widget-pane widget-pane-text widget-pane-name widget-pane-note widget-pane-word">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>

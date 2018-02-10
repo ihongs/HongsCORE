@@ -85,25 +85,14 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
 
     /**
      * 构造方法
-     * @param path 存储路径, 可覆盖 getDataPath
      * @param form 字段配置, 可覆盖 getFields
+     * @param path 存储路径, 可覆盖 getDataPath
+     * @param name 存储名称, 可覆盖 getDataName
      * @throws HongsException
      */
-    public LuceneRecord(String path, Map form)
+    public LuceneRecord(Map form, String path, String name)
     throws HongsException {
         super.setFields(form);
-
-        // 可以在表单配置中指定数据路径
-        if (form != null) {
-            Map c = (Map) form.get("@");
-            if (c!= null) {
-                String p;
-                p = (String) c.get("data-path");
-                if (null != p && 0 < p.length()) {
-                    path  = p;
-                }
-            }
-        }
 
         // 数据路径
         if (path != null) {
@@ -113,20 +102,27 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             m.put("DATA_PATH", Core.DATA_PATH);
             path = Tool.inject(path, m);
             String root = Core.DATA_PATH + "/";
-            String name ;
-            if ( ! new File(path).isAbsolute()) {
-                name = "lucene/" + path;
-                path = root /**/ + name;
-            } else
-            if (/****/ path.startsWith( root )) {
-                name = path.substring ( root.length() );
+            if (name != null) {
+                if ( !  new  File(path).isAbsolute( ) ) {
+                    path = "lucene/" + path;
+                    path = root + path;
+                }
             } else
             {
-                name = path;
+                if ( !  new  File(path).isAbsolute( ) ) {
+                    name = "lucene/" + path;
+                    path = root + name;
+                } else
+                if (path.startsWith(root)) {
+                    name = path.substring(root.length());
+                } else
+                {
+                    name = path;
+                }
             }
-            this.dbpath = path;
-            this.dbname = name;
         }
+        this.dbpath = path;
+        this.dbname = name;
 
         // 环境模式
         CoreConfig  conf = CoreConfig.getInstance( );
@@ -138,14 +134,9 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
             conf.getProperty("core.in.object.mode", false));
     }
 
-    public LuceneRecord(String path)
+    public LuceneRecord(Map form)
     throws HongsException {
-        this(path, null);
-    }
-
-    public LuceneRecord(  Map  form)
-    throws HongsException {
-        this(null, form);
+        this(form, null, null);
     }
 
     /**
@@ -159,19 +150,33 @@ public class LuceneRecord extends Malleable implements IEntity, ITrnsct, Cloneab
      * @throws HongsException
      */
     public static LuceneRecord getInstance(String conf, String form) throws HongsException {
-        LuceneRecord  inst;
-        Core   core = Core.getInstance();
-        String name = LuceneRecord.class.getName( ) + ":" +  conf + "." + form;
-        if ( ! core.containsKey( name )) {
-            String path = conf + "/" +  form;
-            String canf = FormSet.hasConfFile(path) ? path : conf ;
-            Map    farm = FormSet.getInstance(canf).getForm( form);
-            inst =  new LuceneRecord(path , farm);
-            core.put( name, inst );
+        String code = LuceneRecord.class.getName() +":"+ conf +"."+ form;
+        Core   core = Core.getInstance( );
+        if ( ! core.containsKey( code ) ) {
+            String path = conf +"/"+ form;
+            String name = conf +"."+ form;
+            String cxnf = FormSet.hasConfFile(path)? path : conf ;
+            Map    fxrm = FormSet.getInstance(cxnf).getForm(form);
+
+            // 表单配置中可指定数据路径
+            Map c = (Map) fxrm.get("@");
+            if (c!= null) {
+                String p;
+                p = (String) c.get("data-path");
+                if (null != p && 0 < p.length()) {
+                    path  = p;
+                }
+                p = (String) c.get("data-name");
+                if (null != p && 0 < p.length()) {
+                    name  = p;
+                }
+            }
+
+            LuceneRecord inst = new LuceneRecord(fxrm, path,name);
+            core.put( code, inst ) ; return inst ;
         } else {
-            inst =  (LuceneRecord) core.got(name);
+            return  (LuceneRecord) core.got(code);
         }
-        return inst;
     }
 
     public String getDataPath() {

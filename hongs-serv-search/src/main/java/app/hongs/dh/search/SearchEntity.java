@@ -25,18 +25,12 @@ import org.apache.lucene.index.Term;
  */
 public class SearchEntity extends LuceneRecord {
 
-    protected String dbname = null;
-
-    public SearchEntity(String path, Map form) throws HongsException {
-        super(path, form);
+    public SearchEntity(Map form, String path, String name) throws HongsException {
+        super(form, path, name);
     }
 
-    public SearchEntity(String path) throws HongsException {
-        this (path, null);
-    }
-
-    public SearchEntity(  Map  form) throws HongsException {
-        this (null, form);
+    public SearchEntity(Map form) throws HongsException {
+        this (form, null, null);
     }
 
     /**
@@ -50,32 +44,38 @@ public class SearchEntity extends LuceneRecord {
      * @throws HongsException
      */
     public static SearchEntity getInstance(String conf, String form) throws HongsException {
-        SearchEntity  inst;
-        Core   core = Core.getInstance();
-        String name = SearchEntity.class.getName( ) + ":" +  conf + "." + form;
-        if ( ! core.containsKey( name )) {
-            String path = conf + "/" + form;
-            String canf = FormSet.hasConfFile(path) ? path : conf ;
-            Map    farm = FormSet.getInstance(canf).getForm( form);
-            inst =  new SearchEntity(path , farm);
-            inst.dbname = conf + "." + form;
-            core.put( name, inst );
-        } else {
-            inst =  (SearchEntity) core.got(name);
-        }
-        return inst;
-    }
+        String code = SearchEntity.class.getName() +":"+ conf +"."+ form;
+        Core   core = Core.getInstance( );
+        if ( ! core.containsKey( code ) ) {
+            String path = conf +"/"+ form;
+            String name = conf +"."+ form;
+            String cxnf = FormSet.hasConfFile(path)? path : conf ;
+            Map    fxrm = FormSet.getInstance(cxnf).getForm(form);
 
-    public String getBaseName() {
-        if (null != dbname) {
-            return  dbname;
+            // 表单配置中可指定数据路径
+            Map c = (Map) fxrm.get("@");
+            if (c!= null) {
+                String p;
+                p = (String) c.get("data-path");
+                if (null != p && 0 < p.length()) {
+                    path  = p;
+                }
+                p = (String) c.get("data-name");
+                if (null != p && 0 < p.length()) {
+                    name  = p;
+                }
+            }
+
+            SearchEntity inst = new SearchEntity(fxrm, path,name);
+            core.put( code, inst ) ; return inst ;
+        } else {
+            return  (SearchEntity) core.got(code);
         }
-        return getDataName();
     }
 
     @Override
     public void addDoc(final Document doc) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getBaseName();
+        final String key = SearchEntity.class.getName() + ":" + getDataName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {
@@ -91,7 +91,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getBaseName();
+        final String key = SearchEntity.class.getName() + ":" + getDataName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {
@@ -107,7 +107,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void delDoc(final String id) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getBaseName();
+        final String key = SearchEntity.class.getName() + ":" + getDataName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {

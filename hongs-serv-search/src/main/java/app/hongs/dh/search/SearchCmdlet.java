@@ -3,7 +3,6 @@ package app.hongs.dh.search;
 import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.FormSet;
 import app.hongs.action.VerifyHelper;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.anno.Cmdlet;
@@ -37,7 +36,7 @@ public class SearchCmdlet {
         String conf = Synt.asString(opts.remove("conf"));
         String name = Synt.asString(opts.remove("name"));
         ActionHelper ah = Core.getInstance(ActionHelper.class);
-        LuceneRecord so = new LuceneRecord(conf+"/"+name, FormSet.getInstance(conf).getForm(name));
+        LuceneRecord so = LuceneRecord.getInstance(conf, name);
         Map req = ah.getRequestData();
         req.putAll(opts);
         Map rsp = so.search (req);
@@ -56,7 +55,7 @@ public class SearchCmdlet {
         String name = Synt.asString(opts.remove("name"));
         List<String> ds = Synt.asList(opts.remove("id"));
         ActionHelper ah = Core.getInstance(ActionHelper.class);
-        LuceneRecord so = new LuceneRecord(conf+"/"+name, FormSet.getInstance(conf).getForm(name));
+        LuceneRecord so = LuceneRecord.getInstance(conf, name);
         Map  rd = ah.getRequestData();
 
         if (!rd.isEmpty()) {

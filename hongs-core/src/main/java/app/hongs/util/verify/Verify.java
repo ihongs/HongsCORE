@@ -150,16 +150,17 @@ public class Verify implements Veri {
 
             data = verify(rulez, data, name, values, cleans, wrongz);
 
+            if (prompt && ! wrongz.isEmpty()) {
+                break;
+            } else
             if (data == BREAK) {
-                    break;
+                break;
             } else
             if (data == BLANK) {
-                if (prompt && ! wrongz.isEmpty()) {
-                    break;
-                }
-            } else {
-                Dict.setParam(cleans, data, name);
+                continue;
             }
+
+            Dict.setParam(cleans, data, name);
         }
 
         if (!wrongz.isEmpty()) {

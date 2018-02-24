@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 表单应用
+ * 表单支撑工具
  * 
  * 对表单中 @ 区域的 xxxxable 配置项,
  * 其取值为 ? 将根据字段的类型来判别,
@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class Malleable {
+public class JoistBean {
 
     private Map fieldz = null;
     private Map fsavez = null;
@@ -57,14 +57,14 @@ public class Malleable {
      * 获取字段配置
      * 如需覆盖, 可参考以下代码:
      * <code>
-  try {
-      return super.getFields();
-  }
-  catch (NullPointerException) {}
-  // TODO: 自行获取 fields
-  setFields(fields);
-  return fields;
- </code>
+    try {
+        return super.getFields();
+    }
+    catch (NullPointerException) {}
+    // TODO: 自行获取 fields
+    setFields(fields);
+    return fields;
+     * </code>
      * @return
      */
     public Map getFields() {

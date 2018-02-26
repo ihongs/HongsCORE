@@ -71,7 +71,7 @@ import org.apache.lucene.store.FSDirectory;
  *
  * @author Hongs
  */
-public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, Cloneable, AutoCloseable {
+public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoCloseable {
 
     protected boolean TRNSCT_MODE = false;
     protected boolean OBJECT_MODE = false;
@@ -765,15 +765,6 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
             CoreLogger.trace("Close the lucene handle for " + getDataName());
-        }
-    }
-
-    @Override
-    public LuceneRecord clone() {
-        try {
-            return (LuceneRecord) super.clone();
-        } catch (CloneNotSupportedException ex) {
-            throw new InternalError(ex.getMessage());
         }
     }
 

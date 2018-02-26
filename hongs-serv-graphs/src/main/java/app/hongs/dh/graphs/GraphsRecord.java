@@ -1,7 +1,9 @@
 package app.hongs.dh.graphs;
 
+import static app.hongs.Cnst.ID_KEY;
 import app.hongs.Cnst;
 import app.hongs.Core;
+import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
@@ -9,7 +11,6 @@ import app.hongs.dh.ITrnsct;
 import app.hongs.dh.JoistBean;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
-import static app.hongs.Cnst.ID_KEY;
 
 import java.io.File;
 import java.util.Collection;
@@ -18,34 +19,54 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.neo4j.graphdb.Direction;
-import org.neo4j.graphdb.DynamicLabel;
-import org.neo4j.graphdb.DynamicRelationshipType;
-import org.neo4j.graphdb.GraphDatabaseService;
-import org.neo4j.graphdb.Node;
+import org.neo4j.graphdb.Node ;
 import org.neo4j.graphdb.Label;
+import org.neo4j.graphdb.Direction;
 import org.neo4j.graphdb.Relationship;
 import org.neo4j.graphdb.RelationshipType;
 import org.neo4j.graphdb.Result;
 import org.neo4j.graphdb.Transaction;
+import org.neo4j.graphdb.GraphDatabaseService;
 import org.neo4j.graphdb.factory.GraphDatabaseFactory;
+import org.neo4j.graphdb.index.Index;
+import org.neo4j.graphdb.index.IndexHits;
+import org.neo4j.graphdb.index.IndexManager;
+import org.neo4j.graphdb.DynamicLabel;
+import org.neo4j.graphdb.DynamicRelationshipType;
 
 /**
  * 图存储模型
  * @author Hongs
  */
-public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneable, AutoCloseable {
+public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, AutoCloseable {
 
+    /**
+     * 关系类型
+     */
     public static final String RT_KEY = "type";
+    /**
+     * 关系方向, 0 出, 1 进
+     */
     public static final String RD_KEY = "dirn";
+    /**
+     * 标签
+     */
     public static final String LABELS = "_label_";
+    /**
+     * 关系
+     */
     public static final String RELATS = "_relat_";
+    /**
+     * 清理标识, 1 清理属性, 2 清理标签, 3 清理关系
+     */
     public static final String CLEANS = "_clean_";
 
-    private static final Pattern KEYEXP = Pattern.compile("^[a-z]{2}$"       , Pattern.CASE_INSENSITIVE);
-    private static final Pattern FLDEXP = Pattern.compile("^[a-z][a-z0-9_]+$", Pattern.CASE_INSENSITIVE);
+    private static final Pattern CQLEXP = Pattern.compile("\\$\\w+");
+    private static final Pattern KEYEXP = Pattern.compile("^[a-z]{2}$"      , Pattern.CASE_INSENSITIVE);
+    private static final Pattern FLDEXP = Pattern.compile("^[^0-9_\\-]\\w+$", Pattern.CASE_INSENSITIVE);
     private static final String[ ] RELS = new String[] {
             Cnst.EQ_REL, " = " , Cnst.NE_REL, " <> ",
             Cnst.LT_REL, " < " , Cnst.LE_REL, " <= ",
@@ -146,9 +167,16 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         throw new NullPointerException("Data name is not set");
     }
 
+    /**
+     * 获取图数据库对象
+     * @return
+     */
     public GraphDatabaseService getDB() {
         if (db == null) {
             db = new GraphDatabaseFactory().newEmbeddedDatabase(new File(dbpath));
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Open the graph database from " + getDataName());
+            }
         }
         return db;
     }
@@ -158,6 +186,9 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         if (db != null) {
             db.shutdown();
             db  = null;
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Close the graph database for " + getDataName());
+            }
         }
     }
 
@@ -184,9 +215,15 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         }
     }
 
+    /**
+     * 查询
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
     @Override
     public Map search(Map rd) throws HongsException {
-        Map<String, Map   > fls = getFields(  );
+        Map<String, Map   > fds = getFields(  );
         Map<String, Object> pms = new HashMap();
         StringBuilder cql = new StringBuilder();
         StringBuilder whr = new StringBuilder();
@@ -215,22 +252,26 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         }
 
         // 条件
-        for(Map.Entry et : pms.entrySet()) {
+        for(Object ot : rd.entrySet()) {
+            Map.Entry et = (Map.Entry) ot;
             String fn = Synt.asString(et.getKey());
-            Object fv = et.getValue();
-            if (2 >= fn .length()
-            &&!fls.containsKey(fn)) {
-                continue;
-            }
-            if (LABELS.equals (fn)
+
+            // 明确存在的或符合命名的
+            // 才可以作为字段筛选条件
+            if (
+             ! fds.containsKey(fn)
+            && (LABELS.equals (fn)
             ||  RELATS.equals (fn)
             ||  CLEANS.equals (fn)
             || !FLDEXP.matcher(fn)
-                      .matches(  )) {
+                      .matches())) {
                 continue;
             }
+
+            Object fv;
             fn = "n."+fn;
-            if (fv instanceof Map ) {
+            fv = et.getValue();
+            if (fv instanceof Map) {
                 fi = _cqlRl(whr, pms, fn, ( Map ) fv, fi );
             } else
             if (fv instanceof Collection
@@ -247,9 +288,15 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
                .append(whr);
         }
 
+        // 总数
+        StringBuilder xql = new StringBuilder();
+        xql.append( cql.toString ( ) )
+           .append(" RETURN count(*)");
+
         // 排序
         StringBuilder obs = new StringBuilder();
         Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
+        if (null != ob )
         for(String  fn : ob ) {
             boolean de = fn.startsWith("-");
             if (de) fn = fn.substring ( 1 )
@@ -267,6 +314,7 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         // 返回
         StringBuilder rbs = new StringBuilder();
         Set<String> rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        if (null != rb && ! rb.contains( "*" ))
         for(String  fn : rb ) {
             fn = "n." + fn ;
             rbs.append( fn  )
@@ -292,76 +340,151 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
             cql.append(" LIMIT ").append(rn);
         }
 
-        // 总数
-        StringBuilder xql = new StringBuilder();
-        xql.append("MATCH (n) WHERE ")
-           .append(whr)
-           .append(" RETURN count(*)");
+        // 供调试用的日志
+        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            CoreLogger.debug("GraphsRecord.search: "+_cqlBn(cql.toString(), pms));
+        }
 
         // 获取结果和分页
         GraphDatabaseService db = getDB();
         Map sd  = new HashMap();
         if (pn != 0) {
-            Result rst = db.execute(cql.toString(), pms);
-            sd.put("list", _toList(rst, rb/**/));
+            String sql = xql.toString();
+            Result rst = db.execute( sql, pms );
+            sd.put("list", toList(rst, rb/**/));
         }
         if (rn != 0) {
-            Result rst = db.execute(xql.toString(), pms);
-            sd.put("page", _toPage(rst, rn, pn));
+            String sql = xql.toString();
+            Result rst = db.execute( sql, pms );
+            sd.put("page", toPage(rst, rn, pn));
         }
-        return  sd;
+        return sd;
     }
 
+    /**
+     * 新建
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
     @Override
     public Map create(Map rd) throws HongsException {
-        String  id = Core.newIdentity();
-        rd.put (ID_KEY, id);
-        setNode(id, rd);
-        return  rd;
+        String id = add(rd);
+        rd.put(ID_KEY , id);
+        return rd;
     }
 
+    /**
+     * 修改(可批量)
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
     @Override
     public int update(Map rd) throws HongsException {
         Map rd2 = new HashMap(rd);
-        Set ids = Synt.asSet (rd.remove(ID_KEY));
+        Set ids = Synt.asSet (rd2.remove(ID_KEY));
         for(Object od : ids) {
             String id = Synt.asString(od);
-            Node node = getNode(id);
-            if ( node == null) {
+            try {
+                set(id, rd2);
+            }
+            catch (NullPointerException ex) {
                 throw new HongsException(0x1104, "Can not udpate for id: "+id);
             }
-            setNode(node, rd2);
         }
         return ids.size();
     }
 
+    /**
+     * 删除(可批量)
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
     @Override
     public int delete(Map rd) throws HongsException {
         Set ids = Synt.asSet (rd.get (ID_KEY));
         for(Object od : ids) {
             String id = Synt.asString(od);
-            Node node = getNode(id);
-            if ( node == null) {
+            try {
+                del(id);
+            }
+            catch (NullPointerException ex) {
                 throw new HongsException(0x1104, "Can not delete for id: "+id);
             }
-            delNode(node);
         }
         return ids.size();
     }
 
-    protected Node getNode(String id) {
-        return null;
-    }
-
-    protected void delNode(String id) {
+    /**
+     * 获取
+     * @param id
+     * @return
+     */
+    public  Map get(String id) {
        Node node = getNode(id);
-        if (node != null) {
-            delNode(node);
+        if (node == null) {
+            return  new HashMap();
         }
-        throw new NullPointerException("Can not del node '"+id+"', it is not exists");
+        return toInfo(node, null);
     }
 
-    protected void delNode(Node node) {
+    /**
+     * 新建
+     * @param info
+     * @return
+     */
+    public String add(Map info) {
+        String id = Core.newIdentity();
+        Node node = db.createNode();
+        info.put(ID_KEY, id);
+        setNode (node, info);
+        return id;
+    }
+
+    /**
+     * 修改
+     * @param id
+     * @param info
+     */
+    public void set(String id, Map info) {
+       Node node = getNode(id);
+        if (node == null) {
+            throw new NullPointerException("Can not set node '"+id+"', it is not exists");
+        }
+        setNode(node, info);
+    }
+
+    /**
+     * 删除
+     * @param id
+     */
+    public void del(String id) {
+       Node node = getNode(id);
+        if (node == null) {
+            throw new NullPointerException("Can not del node '"+id+"', it is not exists");
+        }
+        delNode(node);
+    }
+
+    /**
+     * 获取节点
+     * @param id
+     * @return
+     */
+    public Node getNode(String id) {
+        IndexManager    idx = getDB().index();
+        Index    <Node> ids = idx.forNodes(ID_KEY);
+        IndexHits<Node> nds = ids.get(ID_KEY , id);
+        return nds.getSingle();
+    }
+
+    /**
+     * 删除节点
+     * @param node
+     */
+    public void delNode(Node node) {
         Iterable <Relationship> rels = node.getRelationships(Direction.INCOMING);
         if (rels != null)
         for(Relationship relo : rels) {
@@ -370,13 +493,12 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
             node.delete();
     }
 
-    protected void setNode(String id, Map info) {
-        Node node = db.createNode();
-        info.put(ID_KEY, id);
-        setNode (node, info);
-    }
-
-    protected void setNode(Node node, Map info) {
+    /**
+     * 设置节点
+     * @param node
+     * @param info
+     */
+    public void setNode(Node node, Map info) {
         Map<String, Map> fields = getFields(  );
 
         // 清除旧属性
@@ -411,9 +533,14 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
                     Map    fv3 = Synt.asMap(fv2);
                     String fid = Synt.asString (fv3.get(ID_KEY));
                     String ftp = Synt.asString (fv3.get(RT_KEY));
-                    Node   nod =    getNode(fid);
+                    Node   nod =   getNode (fid);
                     RelationshipType rtp = DynamicRelationshipType.withName(ftp);
-                    Relationship     rel = node.createRelationshipTo ( nod, rtp);
+                    Relationship     rel;
+                    if ( 0 == Synt.declare (fv3.get(RD_KEY), 0)) {
+                        rel = node.createRelationshipTo(nod , rtp);
+                    } else {
+                        rel = nod .createRelationshipTo(node, rtp);
+                    }
                     // 关系属性
                     for(Object ot3 : fv3.entrySet()) {
                         Map.Entry et3 = (Map.Entry)ot3;
@@ -440,6 +567,21 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
             if (CLEANS.equals(fn)) {
                 // continue;
             } else
+            if (ID_KEY.equals(fn)) {
+                /**
+                 * ID 需要强制添加索引
+                 * ID 改变时清除旧索引
+                 */
+                Object id = node.getProperty(ID_KEY);
+                if (fv != null && !fv.equals(id)) {
+                    IndexManager idx = node.getGraphDatabase().index();
+                    Index <Node> ids = idx .forNodes( ID_KEY );
+                    node.setProperty(fn,fv);
+                    ids .add   (node,fn,fv);
+                if (id != null) {
+                    ids .remove(node,fn,id);
+                }}
+            } else
             if (fields.containsKey(fn)
             || (fn != null && 0 != fn.length()
             && (fc == null || ! ignored(fc) ))
@@ -465,7 +607,7 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
           || "Ignore".equals (fc.get("rule"));
     }
 
-    //** 辅助工具方法 **/
+    //** 查询辅助方法 **/
 
     private int _cqlEq(StringBuilder xql, Map pms, String n, String r, Object v, int i) {
         pms.put(""+ i, v);
@@ -512,27 +654,88 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         return i;
     }
 
-    private Map _toPage(Result rst, int rn, int pn) {
-        int tr = 0;
-        int tp = 0;
-        if (rst.hasNext() ) {
-            Map  ro = rst.next( );
-            tr = Synt.asInt(ro.get("count(*)"));
-            tp = (int) Math.ceil((float) tr/rn);
-        }
+    private String _cqlBn(String cql, Map pms) {
+        Matcher matcher = CQLEXP.matcher( cql);
+        StringBuffer sb = new StringBuffer(  );
+        String       st;
+        Object       so;
 
-        Map page = new HashMap( );
-        page.put("totalrows", tr);
-        page.put("totlapage", tp);
-        page.put("rows", rn);
-        page.put("page", pn);
-        page.put("ern" , rn > 0 ? 1 : 0);
-        return page;
+        while (matcher.find()) {
+            st = matcher.group(2);
+            if (st == null) {
+                st = matcher.group(3);
+            }
+            if (pms.containsKey(st)) {
+                so = pms.get(st );
+                if ( so != null )
+                st = Tool.escape(so.toString());
+                else
+                st = "";
+            } else {
+                st = "";
+            }
+            st = matcher.group(1) + st;
+            st = Matcher.quoteReplacement(st);
+            matcher.appendReplacement(sb, st);
+        }
+        matcher.appendTail(sb);
+
+        return sb.toString(  );
     }
 
-    private List<Map> _toList(Result rst, Set rb) {
+    protected Map toInfo(Node nod, Set<String> rb) {
         boolean withLabs = rb == null || rb.contains(LABELS);
-        boolean withRels = rb == null || rb.contains(RELATS);
+        boolean withRel0 = rb == null || rb.contains(RELATS) || rb.contains(RELATS+"0");
+        boolean withRel1 = rb == null || rb.contains(RELATS) || rb.contains(RELATS+"1");
+        Map row = new HashMap();
+
+        // 属性
+        Iterable <String> it;
+        if (rb == null || rb.contains( "*")) {
+            it =  nod.getPropertyKeys();
+        } else {
+            it =  rb ;
+        }
+        for(String  fn  : it) {
+            row.put(fn, nod.getProperty(fn));
+        }
+
+        // 标签
+        if (withLabs) {
+           List labs = new LinkedList();
+            for(Label lab : nod.getLabels()) {
+                labs.add( lab.name( ) );
+            }
+            row.put(LABELS, labs);
+        }
+
+        // 关系
+        if (withRel0 || withRel1) {
+           List rels = new LinkedList();
+            if (withRel0)
+            for(Relationship rel : nod.getRelationships(Direction.OUTGOING)) {
+                Map ral = new HashMap(rel.getAllProperties());
+                ral.put(RD_KEY, 0);
+                ral.put(RT_KEY, rel.getType().name());
+                ral.put(ID_KEY, rel.getEndNode(  ).getProperty(ID_KEY));
+            }
+            if (withRel1)
+            for(Relationship rel : nod.getRelationships(Direction.INCOMING)) {
+                Map ral = new HashMap(rel.getAllProperties());
+                ral.put(RD_KEY, 1);
+                ral.put(RT_KEY, rel.getType().name());
+                ral.put(ID_KEY, rel.getStartNode().getProperty(ID_KEY));
+            }
+            row.put(RELATS, rels);
+        }
+
+        return row;
+    }
+
+    protected List<Map> toList(Result rst, Set rb) {
+        boolean withLabs = rb == null || rb.contains(LABELS);
+        boolean withRel0 = rb == null || rb.contains(RELATS) || rb.contains(RELATS+"0");
+        boolean withRel1 = rb == null || rb.contains(RELATS) || rb.contains(RELATS+"1");
         List list = new LinkedList();
 
         while (rst.hasNext()) {
@@ -551,14 +754,16 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
                 }
 
                 // 关系
-                if (withRels) {
+                if (withRel0 || withRel1) {
                    List rels = new LinkedList();
+                    if (withRel0)
                     for(Relationship rel : nod.getRelationships(Direction.OUTGOING)) {
                         Map ral = new HashMap(rel.getAllProperties());
                         ral.put(RD_KEY, 0);
                         ral.put(RT_KEY, rel.getType().name());
                         ral.put(ID_KEY, rel.getEndNode(  ).getProperty(ID_KEY));
                     }
+                    if (withRel1)
                     for(Relationship rel : nod.getRelationships(Direction.INCOMING)) {
                         Map ral = new HashMap(rel.getAllProperties());
                         ral.put(RD_KEY, 1);
@@ -572,6 +777,24 @@ public class GraphsRecord extends JoistBean implements IEntity, ITrnsct, Cloneab
         }
 
         return list;
+    }
+
+    protected Map toPage(Result rst, int rn, int pn) {
+        int tr = 0;
+        int tp = 0;
+        if (rst.hasNext() ) {
+            Map  ro = rst.next( );
+            tr = Synt.asInt(ro.get("count(*)"));
+            tp = (int) Math.ceil((float) tr/rn);
+        }
+
+        Map page = new HashMap( );
+        page.put("totalrows", tr);
+        page.put("totlapage", tp);
+        page.put("rows", rn);
+        page.put("page", pn);
+        page.put("ern" , rn > 0 ? 1 : 0);
+        return page;
     }
 
 }

@@ -20,9 +20,9 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>neo4j</artifactId>
-            <groupId>org.neo4j</groupId>
-            <version>3.3.1</version>
+            <artifactId>neo4j-java-driver</artifactId>
+            <groupId>org.neo4j.driver</groupId>
+            <version>1.5.1</version>
         </dependency>
     </dependencies>
 </project>

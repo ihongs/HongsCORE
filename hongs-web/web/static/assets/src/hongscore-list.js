@@ -74,7 +74,11 @@ function HsList (context , opts) {
         var cks;
         if (-1 != jQuery.inArray(listBox[0], n.parents())) {
             cks = that.getRow(n);
-        } else {
+        } else
+        if (n.hasClass("for-choose")) {
+            cks = that.getOne( );
+        } else
+        {
             cks = that.getAll( );
         }
         if (cks == null) return ;
@@ -129,18 +133,25 @@ function HsList (context , opts) {
             return;
         }
 
-        if (0 <= u.indexOf("{ID}")) {
-            var sid;
-            if (0 <= jQuery.inArray(listBox[0], n.parents())) {
-                sid = that.getRow(n);
+        if (-1 != u.indexOf ("{ID}")) {
+            var cks;
+            if (-1 != jQuery.inArray(listBox[0], n.parents())) {
+                cks = that.getRow(n);
+            } else
+            if (n.hasClass("for-choose")) {
+                cks = that.getOne( );
+            } else
+            {
+                cks = that.getAll( );
             }
-            else {
-                sid = that.getOne( );
-            }
-            if (sid == null) return ;
-            sid = sid.val( );
+            if (cks == null) return ;
 
-            u  = u.replace("{ID}", encodeURIComponent( sid ));
+            var idv , ids  = [   ];
+            cks.each(function(cko) {
+                idv = cko.val(   );
+                ids.push (encodeURIComponent(idv));
+            });
+            u = u.replace("{ID}", "," . join(ids));
         }
 
         u = hsFixPms(u, loadBox);

@@ -1,3 +1,16 @@
+*.class binary
+*.jar binary
+*.png binary
+*.gif binary
+*.jpg binary
+*.bmp binary
+*.swf binary
+*.svg binary
+*.eot binary
+*.ttf binary
+*.woff binary
+*.woff2 binary
+
 *.js linguist-language=Java
 *.css linguist-language=Java
 *.html linguist-language=Java

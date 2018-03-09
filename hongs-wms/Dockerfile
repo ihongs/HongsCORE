@@ -8,7 +8,7 @@ EXPOSE 8080
 # Schedule tasks
 ADD crontab    /var/spool/cron/crontabs/root
 RUN chown root /var/spool/cron/crontabs/root
-RUN chmod 600  /var/spool/cron/crontabs/root
+RUN chmod 0600 /var/spool/cron/crontabs/root
 
 ADD target/HongsWMS /opt/HongsWMS
 RUN chmod +x /opt/HongsWMS/bin/*

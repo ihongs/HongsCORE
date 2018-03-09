@@ -5,7 +5,8 @@
             <param name="listable">?</param>
             <param name="fitrable">?</param>
             <param name="sortable">?</param>
-            <param name="srchable" type="set">word,name,note,tags,author,source</param>
+            <param name="nameable" type="set">name</param>
+            <param name="srchable" type="set">name,note,word,author,source</param>
         </field>
         <field name="id" text="ID" type="hidden"/>
         <field name="type" text="类型" type="enum" required="Y">
@@ -16,7 +17,6 @@
         <field name="name" text="标题" type="string" required="Y">
             <param name="listable">true</param>
             <param name="srchable">true</param>
-            <param name="nameable">true</param>
             <param name="maxlength">500</param>
         </field>
         <field name="author" text="作者" type="string">

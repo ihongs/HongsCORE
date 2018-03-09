@@ -262,6 +262,10 @@ public class ActionHelper implements Cloneable
           Dict.putAll(requestData, ad);
         }
       }
+      catch (HongsError er)
+      {
+        throw new HongsExpedient(0x1100 , er);
+      }
       finally
       {
         // 防止解析故障后再调用又出错

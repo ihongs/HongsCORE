@@ -179,9 +179,9 @@ public final class Dict
    */
   public static Object get(Map map, Object def, Object... keys)
   {
-    if (map == null)
+    if (map  == null)
     {
-      throw new HongsError(0x45, "`map` can not be null" );
+      throw new NullPointerException("`map` can not be null");
     }
 
     return get(map, def, keys, 0);
@@ -195,17 +195,17 @@ public final class Dict
    */
   public static void put(Map map, Object val, Object... keys)
   {
-    if (map == null)
+    if (map  == null)
     {
-      throw new HongsError(0x46, "`map` can not be null" );
+      throw new NullPointerException("`map` can not be null");
     }
     if (keys.length ==  0)
     {
-      throw new HongsError(0x47,"`keys` can not be empty");
+      throw new HongsError( 0x47 , "`keys` can not be empty");
     }
     if (keys[0] == null || keys[0] instanceof Integer)
     {
-      throw new HongsError(0x48,"first key can not be null or integer");
+      throw new HongsError( 0x48 , "First key can not be null or ints, but it is " + keys[0]);
     }
 
     put(map, val, keys, 0);
@@ -389,7 +389,7 @@ public final class Dict
    */
   public static Object[] splitKeys(String path) {
     if (path == null) {
-        throw new NullPointerException("path can not be null");
+        throw new NullPointerException("`path` can not be null");
     }
 
     /**
@@ -443,7 +443,7 @@ public final class Dict
                 break;
             case '[' :
                 if (fkh) {
-                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+                    throw new HongsError(0x46, "Syntax error at " + end + " in " + path);
                 }
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
@@ -452,14 +452,14 @@ public final class Dict
                     lst.add( "" );
                 } else
                 if (']' != path.charAt(beg - 1)) { // 规避 a[b][c] 中的 ][
-                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+                    throw new HongsError(0x46, "Syntax error at " + end + " in " + path);
                 }
                 beg  = end + 1;
                 fkh  = true;
                 break;
             case ']' :
                 if (! fkh) {
-                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+                    throw new HongsError(0x46, "Syntax error at " + end + " in " + path);
                 }
                 if (beg != end) {
                     lst.add(path.substring(beg, end));
@@ -468,7 +468,7 @@ public final class Dict
                     lst.add(null);
                 } else
 //              if ('[' != path.charAt(beg - 1)) { // 这种情况其实并不存在
-                    throw new RuntimeException("Syntax error at " + end + " in " + path);
+                    throw new HongsError(0x46, "Syntax error at " + end + " in " + path);
 //              }
                 beg  = end + 1;
                 fkh  = false;

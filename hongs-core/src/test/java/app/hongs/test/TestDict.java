@@ -138,12 +138,9 @@ public class TestDict extends TestCase {
     }
     
     public void testSplitKeys() {
-        Object[] a = new Object[ ] {"", "a", "b", "c", "d", "!e", "!f", "g", "!h", null, "x.y!z", "def", null};
-//      Object[] b = Dict.splitKeys(".a.b[c][d].!e!f[g]!h[][x.y!z].def[]");
-//      Object[] c = Dict.splitKeys(".a.b[c][d].!e!f[g]!h[][x.y!z].def." );
-        // 2017/12/31 不再特殊处理感叹号
-        Object[] b = Dict.splitKeys(".a.b[c][d].!e.!f[g].!h[][x.y!z].def[]");
-        Object[] c = Dict.splitKeys(".a.b[c][d].!e.!f[g].!h[][x.y!z].def." );
+        Object[] a = new Object[ ] {"", "a", "b", "c", "d", ":e", ":f", "g", ":h", null, "x.y:z", "def", null};
+        Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");
+        Object[] c = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def." );
         app.hongs.util.Data.print(a);
         app.hongs.util.Data.print(b);
         app.hongs.util.Data.print(c);

@@ -13,4 +13,4 @@ desktop.ini
 *.iws
 nbproject
 nbactions*
-nb-configuration.xml
+nb-config*

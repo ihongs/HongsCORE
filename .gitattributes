@@ -1,0 +1,27 @@
+*.js linguist-language=Java
+*.css linguist-language=Java
+*.html linguist-language=Java
+
+*.class binary
+*.jar binary
+*.war binary
+*.zip binary
+*.tar binary
+*.gz binary
+
+*.png binary
+*.gif binary
+*.jpg binary
+*.bmp binary
+
+*.mp3 binary
+*.mp4 binary
+*.avi binary
+*.flv binary
+*.swf binary
+
+*.svg binary
+*.eot binary
+*.ttf binary
+*.woff binary
+*.woff2 binary

@@ -75,11 +75,11 @@
         </dependency>
         <!-- Alipay SDK, https://docs.open.alipay.com/54/103419 -->
         <dependency>
-            <groupId>alipay</groupId>
             <artifactId>alipay-sdk</artifactId>
-            <version>20171201160035</version>
+            <groupId>alipay</groupId>
+            <version>20180309170622</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/lib/alipay-sdk-java20171201160035.jar</systemPath>
+            <systemPath>${project.basedir}/lib/alipay-sdk-java20180309170622.jar</systemPath>
         </dependency>
     </dependencies>
     <build>

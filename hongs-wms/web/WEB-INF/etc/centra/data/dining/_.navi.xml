@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<root>
-    <menu href="common/menu.act?m=centra&amp;x=dining" text="餐饮">
-        <import>centra/data/dining/food</import>
-        <import>centra/data/dining/bill</import>
-    </menu>
-    <rsname>@centra</rsname>
-</root>

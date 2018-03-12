@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<root>
-    <role name="centre">
-        <action>centre/data/dining/pay/weixin/create.act</action>
-        <action>centre/data/dining/pay/weixin/update.act</action>
-        <action>centre/data/dining/pay/alipay/create.act</action>
-        <action>centre/data/dining/pay/alipay/update.act</action>
-    </role>
-</root>

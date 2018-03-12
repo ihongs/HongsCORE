@@ -1,5 +1,5 @@
 
-/* global self */
+/* global self, Element */
 
 /**
  * 树型组件
@@ -71,7 +71,7 @@ function HsTree (context , opts) {
 
         var sid;
         if (-1 != jQuery.inArray(treeBox[0], n.parents())) {
-            sid = that.getId (n);
+            sid = that.getCid(n);
         } else {
             sid = that.getSid( );
         }
@@ -129,21 +129,18 @@ function HsTree (context , opts) {
             return;
         }
 
-        if (0 <= u.indexOf("{ID}")) {
-            var sid;
-            if (0 <= jQuery.inArray(treeBox[0], n.parents())) {
-                sid = that.getId (n);
-            }
-            else {
-                sid = that.getSid( );
-            }
-            if (sid == null) return ;
-
-            u  = u.replace("{ID}", encodeURIComponent( sid ));
+        var sid;
+        if (-1 != jQuery.inArray(treeBox[0], n.parents())) {
+            sid = that.getCid(n);
+        } else {
+            sid = that.getSid( );
         }
+        if (sid == null) return ;
 
+        var dat = {};
+        dat[that.idKey] =  sid  ;
         u = hsFixPms(u, loadBox);
-        that.open( n, m, u );
+        that.open(n, m, u, dat );
     }
 
     if (openUrls) jQuery.each(openUrls, function(i, a) {
@@ -405,6 +402,20 @@ HsTree.prototype = {
     },
 
     open     : function(btn, box, url, data) {
+        // 如果 URL 里有 {ID} 则替换之
+        if ( -1 != url.indexOf( "{ID}" )) {
+            var ids = [ ];
+            for(var i = 0; i < data.length; i ++) {
+                var o =  data [ i ];
+                if (o instanceof Element ) {
+                    o = jQuery( o ).val( );
+                }
+                ids.push(encodeURIComponent( o ));
+            }
+            url  = url.replace( "{ID}" , ids.join(",") );
+            data = undefined;
+        }
+
         var that = this;
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         if (box) {
@@ -485,6 +496,9 @@ HsTree.prototype = {
     },
     getPid   : function(id) {
         return this.getId(this.getPnode(id));
+    },
+    getCid   : function(nd) {
+        return this.getId(nd.closest(".tree-node"));
     },
     getSid   : function() {
         return this.getId(this.treeBox.find(".tree-curr"));

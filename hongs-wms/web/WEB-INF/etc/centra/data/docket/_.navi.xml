@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8" standalone="no"?>
-<root>
-    <menu href="common/menu.act?m=centra&amp;x=docket" text="文章">
-        <import>centra/data/docket/news</import>
-    </menu>
-    <rsname>@centra</rsname>
-</root>

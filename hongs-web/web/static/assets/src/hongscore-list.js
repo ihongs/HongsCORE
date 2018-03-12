@@ -1,5 +1,5 @@
 
-/* global self */
+/* global self, Element */
 
 /**
  * 列表组件
@@ -71,20 +71,11 @@ function HsList (context , opts) {
             return;
         }
 
-        var cks;
-        if (-1 != jQuery.inArray(listBox[0], n.parents())) {
-            cks = that.getRow(n);
-        } else
-        if (n.hasClass("for-choose")) {
-            cks = that.getOne( );
-        } else
-        {
-            cks = that.getAll( );
-        }
-        if (cks == null) return ;
+        var c = that.getIds(n);
+        if (c == null) return ;
 
         u = hsFixPms(u, loadBox);
-        that.send(n, m, u, cks );
+        that.send   (n, m, u, c);
     }
 
     if (sendUrls) jQuery.each(sendUrls, function(i, a) {
@@ -133,29 +124,11 @@ function HsList (context , opts) {
             return;
         }
 
-        if (-1 != u.indexOf ("{ID}")) {
-            var cks;
-            if (-1 != jQuery.inArray(listBox[0], n.parents())) {
-                cks = that.getRow(n);
-            } else
-            if (n.hasClass("for-choose")) {
-                cks = that.getOne( );
-            } else
-            {
-                cks = that.getAll( );
-            }
-            if (cks == null) return ;
-
-            var idv , ids  = [   ];
-            cks.each(function(cko) {
-                idv = cko.val(   );
-                ids.push (encodeURIComponent(idv));
-            });
-            u = u.replace("{ID}", "," . join(ids));
-        }
+        var c = that.getIds(n);
+        if (c == null) return ;
 
         u = hsFixPms(u, loadBox);
-        that.open(n, m, u /**/ );
+        that.open   (n, m, u, c);
     }
 
     if (openUrls) jQuery.each(openUrls, function(i, a) {
@@ -460,6 +433,20 @@ HsList.prototype = {
     },
 
     open     : function(btn, box, url, data) {
+        // 如果 URL 里有 {ID} 则替换之
+        if ( -1 != url.indexOf( "{ID}" )) {
+            var ids = [ ];
+            for(var i = 0; i < data.length; i ++) {
+                var o =  data [ i ];
+                if (o instanceof Element ) {
+                    o = jQuery( o ).val( );
+                }
+                ids.push(encodeURIComponent( o ));
+            }
+            url  = url.replace( "{ID}" , ids.join(",") );
+            data = undefined;
+        }
+
         var that = this;
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         if (box) {
@@ -520,6 +507,20 @@ HsList.prototype = {
                 .closest("tr,.itembox")
                 .find   ( ".checkone" )
                 .filter ( ":checkbox,:radio,:hidden" );
+    },
+    getIds   : function(o) {
+        if (jQuery.inArray (this.listBox[0], jQuery(o).parents()) != -1) {
+            return this.getRow(o);
+        }
+        else if (jQuery(o).hasClass("for-choose")) {
+            return this.getOne( );
+        }
+        else if (jQuery(o).hasClass("for-checks")) {
+            return this.getAll( );
+        }
+        else {
+            return [];
+        }
     },
 
     // /** 填充函数 **/

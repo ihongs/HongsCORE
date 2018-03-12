@@ -49,16 +49,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>hongs-serv-graphs</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <artifactId>hongs-serv-medium</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <artifactId>hongs-ueditor</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>1.1.2</version>
@@ -72,14 +62,6 @@
             <artifactId>mysql-connector-java</artifactId>
             <groupId>mysql</groupId>
             <version>5.1.39</version>
-        </dependency>
-        <!-- Alipay SDK, https://docs.open.alipay.com/54/103419 -->
-        <dependency>
-            <artifactId>alipay-sdk</artifactId>
-            <groupId>alipay</groupId>
-            <version>20180309170622</version>
-            <scope>system</scope>
-            <systemPath>${project.basedir}/lib/alipay-sdk-java20180309170622.jar</systemPath>
         </dependency>
     </dependencies>
     <build>

@@ -10,8 +10,6 @@
             <import>member</import>
             <import>matrix</import>
         </menu>
-        <import>centra/data/docket/_</import>
-        <import>centra/data/dining/_</import>
         <import>centra/data</import>
     </menu>
 </root>

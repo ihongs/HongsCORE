@@ -4,6 +4,7 @@
 **/WEB-INF/lib
 **/WEB-INF/var
 **/WEB-INF/classes
+/hongs-env/jdk*
 
 desktop.ini
 .DS_Store

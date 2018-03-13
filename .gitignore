@@ -7,6 +7,7 @@
 /hongs-env/jdk*
 
 desktop.ini
+Thumbs.db
 .DS_Store
 .project
 .idea

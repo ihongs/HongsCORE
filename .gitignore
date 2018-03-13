@@ -13,6 +13,8 @@ Thumbs.db
 .idea
 *.iml
 *.iws
+*.pyc
+*.pyo
 nbproject
 nbactions*
 nb-config*

@@ -13,6 +13,7 @@ ENV LANG en_US.UTF-8
 
 RUN touch /var/log/cron.log
 
-ADD jdk-* /opt/jdk
-ENV JAVA_HOME /opt/jdk
+ADD jdk* /opt/
+RUN  mv  /opt/jdk* /opt/jdk
+ENV      JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin

@@ -13,6 +13,6 @@ ENV LANG en_US.UTF-8
 
 RUN touch /var/log/cron.log
 
-ADD jdk-8u131-linux-x64.tar.gz /opt/
-ENV JAVA_HOME /opt/jdk1.8.0_131
+ADD jdk-* /opt/jdk
+ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin

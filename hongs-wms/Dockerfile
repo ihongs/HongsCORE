@@ -5,13 +5,12 @@ FROM hongs/hongs-env:0.4
 
 EXPOSE 8080
 
-# Schedule tasks
-ADD crontab    /var/spool/cron/crontabs/root
-RUN chown root /var/spool/cron/crontabs/root
-RUN chmod 0600 /var/spool/cron/crontabs/root
-
 ADD target/HongsWMS /opt/HongsWMS
-RUN chmod +x /opt/HongsWMS/bin/*
-RUN /opt/HongsWMS/bin/app system.setup
+ADD env/supervisord.conf /etc/supervisord.conf
+ADD env/crontabs /var/spool/cron/crontabs/root
+RUN chmod 600    /var/spool/cron/crontabs/root &&\
+    chmod 755 -R /opt/HongsWMS/bin &&\
+    chmod 777 -R /opt/HongsWMS/var &&\
+    /opt/HongsWMS/bin/app system.setup --debug 13
 
-CMD ["/opt/HongsWMS/bin/start.sh"]
+CMD ["/usr/bin/supervisord"]

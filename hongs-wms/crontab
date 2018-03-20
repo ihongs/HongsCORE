@@ -1,2 +1,0 @@
-
-1 0 * * * /opt/HongsWMS/bin/app system.serve --debug 2 >> /dev/null 2>&1

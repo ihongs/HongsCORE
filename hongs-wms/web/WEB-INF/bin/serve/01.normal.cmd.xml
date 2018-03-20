@@ -34,7 +34,7 @@
             {abc:"def", xyz:123}
         </session>
         <cookies>
-            @bin/_daily_/root.cookie
+            @bin/serve/root.cookie
         </cookies>
     </action>
     //-->

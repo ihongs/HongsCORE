@@ -136,7 +136,7 @@ public class IsDate extends Rule {
     }
 
     private long getTime(String tim, long now) throws HongsException {
-        Matcher mat = Pattern.compile("^([+-])?(\\d+)$").matcher(tim);
+        Matcher mat = Pattern.compile("^([+\\-])?(\\d+)$").matcher(tim);
         if (!mat.matches()) {
             throw new HongsException.Common("Can not recognize time '"+tim+"'.");
         }

@@ -38,8 +38,19 @@ public class Default extends Rule {
         value = params.get("default");
         String  def = Synt.declare(value, "").trim();
 
+        // 动作选项
+        if (def.equals("=%zone")) {
+            return Core.ACTION_ZONE.get();
+        }
+        if (def.equals("=%lang")) {
+            return Core.ACTION_LANG.get();
+        }
+        if (def.equals("=%addr")) {
+            return Core.CLIENT_ADDR.get();
+        }
+
         // 默认时间
-        Matcher mat = Pattern.compile("^=%now(([+-])(\\d+))?$").matcher(def);
+        Matcher mat = Pattern.compile("^=%now(([+\\-])(\\d+))?$").matcher(def);
         if (mat.matches()) {
             Date now = new Date();
             if (mat.group(1) != null) {

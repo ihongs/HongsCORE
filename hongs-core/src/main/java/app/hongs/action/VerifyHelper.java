@@ -99,20 +99,24 @@ public class VerifyHelper extends Verify {
             List<String> list = Synt.toList (opts.get("__rule__"));
             if (list == null || list.isEmpty( )) {
                 String type = (String) opts.get("__type__");
-                String item =  tps.containsKey (   type   )
-                            ? (String)  tps.get(   type   )
-                            : "string";
-
-                // 类型正则
-                if ( pts.containsKey(   type   )
-                && !opts.containsKey("pattern")) {
-                    opts.put("pattern", type   );
+                String item ;
+                if (tps.containsKey(type)) {
+                    // 类名转换
+                    item = ( String ) tps.get(type);
+                    String c = item.substring(0, 1);
+                    String n = item.substring(   1);
+                    item = "Is"+c.toUpperCase()+ n ;
+                } else
+                if (pts.containsKey(type)) {
+                    // 类型正则
+                    opts.put( "pattern", type );
+                    item = "IsString";
+                } else
+                if ( ! "@" .equals (code)) {
+                    item = "IsString";
+                } else {
+                    item =   "Ignore";
                 }
-
-                // 转为类名
-                String c = item.substring(0 , 1);
-                String n = item.substring(    1);
-                item = "Is"+c.toUpperCase() + n ;
 
                 list = Synt.listOf (item);
             }

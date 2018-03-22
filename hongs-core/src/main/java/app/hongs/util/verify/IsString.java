@@ -14,8 +14,8 @@ import java.util.regex.Pattern;
  *  maxlength   最大长度
  *  minlength   最短长度
  *  pattern     校验正则, 可使用 default.form.xml 里的 _patt_ 下预定好的正则, 如 email,url
- *  strip       为 true 则清理首尾空字符
- *  clean       为 true 则清理空白空行等
+ *  strim       为 true 则清理首尾空字符
+ *  strip       为 true 则清理空白空行等
  * </pre>
  * @author Hongs
  */
@@ -25,14 +25,14 @@ public class IsString extends Rule {
         String str = Synt.declare(value, "");
 
         // 文本清理
-        if (Synt.declare(params.get("strip"), false)) {
+        if (Synt.declare(params.get("strim"), false)) {
             str = str.trim();
         }
-        if (Synt.declare(params.get("clean"), false)) {
-            str = Tool.clearSC (str);
-            str = Tool.cleanSC (str);
-            str = Tool.clearEL (str);
-            str = Tool.cleanNL (str);
+        if (Synt.declare(params.get("strip"), false)) {
+            str = Tool.clearSC (str); // 清除首尾空白
+            str = Tool.cleanSC (str); // 合并多个空白
+            str = Tool.clearEL (str); // 清除空行
+            str = Tool.cleanNL (str); // 统一换行
         }
 
         // 长度限制

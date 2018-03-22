@@ -32,10 +32,10 @@ public class IsNumber extends Rule {
                 num = Synt.declare(value, 0L);
             } else
             if ("float".equals(type)) {
-                num = Synt.declare(value, 0.0 );
+                num = Synt.declare(value, 0F);
             } else {
                type = "double";
-                num = Synt.declare(value, 0.0D);
+                num = Synt.declare(value, 0D);
             }
         } catch (ClassCastException er) {
             throw new Wrong("fore.form.conv.to."+type+".failed");

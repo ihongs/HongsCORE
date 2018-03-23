@@ -46,12 +46,12 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
 ## HsList 列表组件的用法
 
-    <div id="member-user-list"
+    <div id="master-user-list"
          data-module="hsList"
-         data-load-url="centra/member/user/list.act?dept_id=${dept_id}"
-         data-send-urls-0="['centra/member/user/delete.act','.delete','您确定要删除此用户?']"
-         data-open-urls-0="['centra/member/user/form.html?dept_id=${dept_id}','.create','@']"
-         data-open-urls-1="['centra/member/user/form.html?id={ID}'           ,'.modify','@']">
+         data-load-url="centra/master/user/list.act?dept_id=${dept_id}"
+         data-send-urls-0="['centra/master/user/delete.act','.delete','您确定要删除此用户?']"
+         data-open-urls-0="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']"
+         data-open-urls-1="['centra/master/user/form.html?id={ID}'           ,'.modify','@']">
         <div>
             <div class="toolbox col-md-8 btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
@@ -86,13 +86,13 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
 ## HsTree 树型组件的用法
 
-    <div id="member-dept-tree"
+    <div id="master-dept-tree"
          data-module="hsTree"
-         data-load-url="centra/member/dept/list.act"
-         data-send-urls-0="['centra/member/dept/delete.act','.delete','您确定要删除此部门?']"
-         data-link-urls-0="['centra/member/user/list.html?dept_id={ID}','.main-context']"
-         data-open-urls-0="['centra/member/dept/form.html?pid={ID}','.create','@']"
-         data-open-urls-1="['centra/member/dept/form.html?id={ID}' ,'.modify','@']"
+         data-load-url="centra/master/dept/list.act"
+         data-send-urls-0="['centra/master/dept/delete.act','.delete','您确定要删除此部门?']"
+         data-link-urls-0="['centra/master/user/list.html?dept_id={ID}','.main-context']"
+         data-open-urls-0="['centra/master/dept/form.html?pid={ID}','.create','@']"
+         data-open-urls-1="['centra/master/dept/form.html?id={ID}' ,'.modify','@']"
          data-root-name="组织架构">
         <div class="toolbox btn-group">
             <button type="button" class="create btn btn-default">添加</button>
@@ -105,10 +105,10 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 ## HsForm 表单组件的用法
 
     <h2>{DO}部门</h2>
-    <div id="member-dept-form"
+    <div id="master-dept-form"
          data-module="hsForm"
-         data-load-url="centra/member/dept/info.act"
-         data-save-url="centra/member/dept/save.act">
+         data-load-url="centra/master/dept/info.act"
+         data-save-url="centra/master/dept/save.act">
         <form action="" method="POST">
             <input type="hidden" name="id"/>
             <input type="hidden" name="pid"/>

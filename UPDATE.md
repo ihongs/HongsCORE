@@ -1,6 +1,8 @@
 
 # 更新日志
 
+* 2018/03/23 hongs-serv-member 模块更名为 hongs-serv-master,
+* 2018/03/22 hongs-serv-socket,hongs-serv-graphs,hongs-serv-medium 等模块从基础版中移除
 * 2018/03/03 增加图数据支持(Neo4j)
 * 2017/12/30 去掉查询条件的关系代号中的前缀"!"
 * 2017/11/12 将全部 manage 更名为 centra, handle 更名为 centre, 增加小型外卖系统示例

@@ -130,22 +130,23 @@
             var a, b, h, l;
 
             h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
-            a = menubar .find("a[href='"+ h +"']");
+            a = menubar .find("a[href='"+h+"']");
             b = menubar ;
 
-            b.find ( "li" ).removeClass("active" );
-            a.parents ( "li" ).addClass("active" );
+            b.find("li").removeClass( "active" );
+            a.parents("li").addClass( "active" );
 
             l = a.data("href");
+            b = context .data("load");
+            h = menubar .find("li a")
+                        .attr("href");
+            if (b && l == hsFixUri(b)) {
+                return; // 已有预载
+            }
             if (l && l != '/') {
                 context .hsLoad(l);
-                return;
-            }
-
-            h = menubar .find("li a").attr("href");
-            l = context .data("load");
-            if (! l ) {
-                location.replace( h );
+            } else if (  !b  ) {
+                location.assign(h);
             }
         });
 

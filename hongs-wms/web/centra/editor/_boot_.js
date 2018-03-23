@@ -49,6 +49,14 @@ function setEditor(node, func) {
     });
 }
 
+function forMarker(func) {
+    
+}
+
+function setMarker(node, func) {
+    
+}
+
 function forWriter(func) {
     hsRequires([
         "static/addons/codemirror/codemirror.js",

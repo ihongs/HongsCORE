@@ -38,7 +38,9 @@
             </div>
         </nav>
         <div id="bodybox">
-            <div class="container" id="main-context"><%=_locale.translate("fore.loading")%></div>
+            <div class="container" id="main-context" data-load="<%=_module%>/<%=_entity%>/main.html">
+                <%=_locale.translate("fore.loading")%>
+            </div>
         </div>
         <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
             <div class="container">

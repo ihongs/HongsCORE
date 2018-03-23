@@ -1,5 +1,5 @@
 <h2>{DO}单元</h2>
-<div id="member-unit-form"
+<div id="matrix-unit-form"
      data-module="hsForm"
      data-load-url="centra/matrix/unit/info.act?id=${id}"
      data-save-url="centra/matrix/unit/save.act"
@@ -37,37 +37,3 @@
         </div>
     </form>
 </div>
-<script type="text/javascript">
-    (function($) {
-        // 修改时口令变为选填
-        $("#member_user_form").on("loadOver", function() {
-            if ($(this).find("[name=id]").val()) {
-                $(this).find(":password").removeAttr("required");
-            }
-        });
-        
-        // 选择与之关联的权限
-        $("#member_user_form").on("change", "[name='roles..role']", function() {
-            var area = $(this).closest(".form-group");
-            if ($(this).prop("checked")) {
-                var rels = $(this).data("rels");
-                if (rels) {
-                    for(var i = 0 ; i < rels.length ; i ++) {
-                        var r = rels[i];
-                        area.find("[value='"+r+"']:not(:checked)")
-                            .prop("checked", true).change();
-                    }
-                }
-            } else {
-                var r = $(this).val();
-                area.find(":checked:not(.checkall)" ).not(this)
-                    .each(function( ) {
-                    var rels = $(this).data( "rels" );
-                    if (rels && $.inArray( r, rels  ) !== -1  ) {
-                        $(this).prop("checked",false).change( );
-                    }
-                });
-            }
-        });
-    })(jQuery);
-</script>

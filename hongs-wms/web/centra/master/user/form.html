@@ -1,8 +1,8 @@
 <h2>{DO}用户</h2>
-<div id="member-user-form"
+<div id="master-user-form"
      data-module="hsForm"
-     data-load-url="centra/member/user/info.act?ab=!enum&navi-conf=default"
-     data-save-url="centra/member/user/save.act"
+     data-load-url="centra/master/user/info.act?ab=!enum&navi-conf=default"
+     data-save-url="centra/master/user/save.act"
      data-init-data="{'depts.0.dept_id':H$('#dept_id',this)}"
      data-data-0="_fill_head:(hsFormFillView)">
     <form action="" method="POST" enctype="multipart/form-data">
@@ -12,7 +12,7 @@
             <div class="col-md-6">
                 <div class="form-group">
                     <label class="control-label">账号</label>
-                    <input type="text" name="username" class="form-control" required="required" data-unique="centra/member/user/unique.act?id=${id}"/>
+                    <input type="text" name="username" class="form-control" required="required" data-unique="centra/master/user/unique.act?id=${id}"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">口令</label>
@@ -23,7 +23,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">昵称</label>
-                    <input type="text" name="name" class="form-control" required="required" data-unique="centra/member/user/unique.act?id=${id}"/>
+                    <input type="text" name="name" class="form-control" required="required" data-unique="centra/master/user/unique.act?id=${id}"/>
                 </div>
                 <div class="form-group dont-close">
                     <label class="control-label">头像</label>
@@ -52,7 +52,7 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#member-user-form");
+        var context = $("#master-user-form");
 
         // 修改时口令变为选填
         context.on("loadOver", function() {

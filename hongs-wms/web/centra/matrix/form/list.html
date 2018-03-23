@@ -1,4 +1,4 @@
-<div id="hongs-module-list"
+<div id="matrix-form-list"
      data-module="hsList"
      data-load-url="centra/matrix/form/list.act?unit_id=${unit_id}&ob=-boost&ab=_enum"
      data-send-urls-0="['centra/matrix/form/delete.act','.delete','您确定要删除此表单?']"
@@ -51,9 +51,9 @@
 
 <script type="text/javascript">
     (function($) {
-        var context = $('#hongs-module-list');
+        var context = $('#matrix-form-list');
         var loadBox = context.closest(".loadbox");
-        var unitId  = H$("#unit_id", loadBox);
+        var unitId = H$("#unit_id", loadBox);
         if (unitId == "" || unitId == "0") {
             context.find(".create" ).prop("disabled", true);
             context.find(".findbox").find("input,button").prop("disabled", true);

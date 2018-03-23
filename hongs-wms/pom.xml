@@ -39,7 +39,7 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>hongs-serv-member</artifactId>
+            <artifactId>hongs-serv-master</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
         </dependency>

@@ -1,4 +1,4 @@
-package app.hongs.serv.member;
+package app.hongs.serv.master;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
@@ -24,7 +24,7 @@ extends Model {
 
     public User()
     throws HongsException {
-        this(DB.getInstance("member").getTable("user"));
+        this(DB.getInstance("master").getTable("user"));
     }
 
     public User(Table table)
@@ -63,7 +63,7 @@ extends Model {
         Set<String> roles = new HashSet();
         Set<String> depts = new HashSet();
 
-        asoc = this.db.getTable("a_member_user_dept");
+        asoc = this.db.getTable("a_master_user_dept");
         caze = this.fetchCase();
         caze.select(asoc.name+".dept_id")
             .filter(asoc.name+".user_id = ?", userId);
@@ -72,7 +72,7 @@ extends Model {
             depts.add((String) row.get("dept_id"));
         }
 
-        asoc = this.db.getTable("a_member_dept_role");
+        asoc = this.db.getTable("a_master_dept_role");
         caze = this.fetchCase();
         caze.select(asoc.name+".role")
             .filter(asoc.name+".dept_id = ?", depts );
@@ -81,7 +81,7 @@ extends Model {
             roles.add((String) row.get("role"));
         }
 
-        asoc = this.db.getTable("a_member_user_role");
+        asoc = this.db.getTable("a_master_user_role");
         caze = this.fetchCase();
         caze.select(asoc.name+".role")
             .filter(asoc.name+".user_id = ?", userId);
@@ -118,12 +118,12 @@ extends Model {
 
         /**
          * 如果有指定dept_id
-         * 则关联a_member_user_dept来约束范围
+         * 则关联a_master_user_dept来约束范围
          */
         Object deptId = req.get("dept_id");
         if (null != deptId && ! "".equals(deptId)) {
             caze.gotJoin("depts")
-                .from   ("a_member_user_dept")
+                .from   ("a_master_user_dept")
                 .by     (FetchCase.INNER)
                 .on     ("`depts`.`user_id` = `user`.`id`")
                 .filter ("`depts`.`dept_id` = ?" , deptId );
@@ -141,8 +141,8 @@ extends Model {
                 AuthKit.cleanUserRoles (list, id);
                 if ( list.isEmpty() ) {
                     throw new HongsException
-                        .Notice("ex.member.user.role.error")
-                        .setLocalizedContext("member");
+                        .Notice("ex.master.user.role.error")
+                        .setLocalizedContext("master");
                 }
                 data.put("roles", list);
             }
@@ -154,8 +154,8 @@ extends Model {
                 AuthKit.cleanUserDepts (list, id);
                 if ( list.isEmpty() ) {
                     throw new HongsException
-                        .Notice("ex.member.user.dept.error")
-                        .setLocalizedContext("member");
+                        .Notice("ex.master.user.dept.error")
+                        .setLocalizedContext("master");
                 }
                 data.put("depts", list);
             }
@@ -206,8 +206,8 @@ extends Model {
             }
 
             throw new HongsException
-                .Notice("ex.member.user.unit.error")
-                .setLocalizedContext("member");
+                .Notice("ex.master.user.unit.error")
+                .setLocalizedContext("master");
         }
     }
 

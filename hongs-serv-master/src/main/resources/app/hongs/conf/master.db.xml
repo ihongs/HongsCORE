@@ -6,9 +6,9 @@ xsi:schemaLocation="http://hongs-core db.xsd">
     <config link="centra"/>
     <tables>
         <table name="user"
-               tableName="a_member_user"
+               tableName="a_master_user"
                primaryKey="id"
-               model="app.hongs.serv.member.User">
+               model="app.hongs.serv.master.User">
             <assoc type="HAS_MANY"
                    name="roles"
                    tableName="user_role"
@@ -28,23 +28,23 @@ xsi:schemaLocation="http://hongs-core db.xsd">
             </assoc>
         </table>
         <table name="dept"
-               tableName="a_member_dept"
+               tableName="a_master_dept"
                primaryKey="id"
-               model="app.hongs.serv.member.Dept">
+               model="app.hongs.serv.master.Dept">
             <assoc type="HAS_MANY"
                    name="roles"
                    tableName="dept_role"
                    foreignKey="dept_id"/>
         </table>
         <table name="user_sign"
-               tableName="a_member_user_sign"/>
+               tableName="a_master_user_sign"/>
         <table name="user_open"
-               tableName="a_member_user_open"/>
+               tableName="a_master_user_open"/>
         <table name="user_dept"
-               tableName="a_member_user_dept"/>
+               tableName="a_master_user_dept"/>
         <table name="user_role"
-               tableName="a_member_user_role"/>
+               tableName="a_master_user_role"/>
         <table name="dept_role"
-               tableName="a_member_dept_role"/>
+               tableName="a_master_dept_role"/>
     </tables>
 </db>

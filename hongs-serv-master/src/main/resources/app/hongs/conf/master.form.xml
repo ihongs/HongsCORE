@@ -13,8 +13,8 @@
             <param name="defiant"></param>
         </field>
         <field name="head" rule="Thumb">
-            <param name="href">static/upload/member/head</param>
-            <param name="path">static/upload/member/head</param>
+            <param name="href">static/upload/master/head</param>
+            <param name="path">static/upload/master/head</param>
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
             <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
@@ -31,8 +31,8 @@
         <field name="name" required="yes">
         </field>
         <field name="head" rule="Thumb">
-            <param name="href">static/upload/member/head</param>
-            <param name="path">static/upload/member/head</param>
+            <param name="href">static/upload/master/head</param>
+            <param name="path">static/upload/master/head</param>
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
             <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>

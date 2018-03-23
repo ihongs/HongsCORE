@@ -27,7 +27,7 @@ public class SignAction {
      * @throws HongsException
      */
     @Action("create")
-    @Verify(conf="member",form="sign")
+    @Verify(conf="master",form="sign")
     public void signCreate(ActionHelper ah) throws HongsException {
         String appid    = Synt.declare(ah.getParameter("appid"), "_WEB_" );
         String place    = Synt.declare(ah.getParameter("place"), "public");
@@ -35,7 +35,7 @@ public class SignAction {
         String password = Synt.declare(ah.getParameter("password"), "");
         String passcode ;
 
-        DB        db = DB.getInstance("member");
+        DB        db = DB.getInstance("master");
         Table     tb = db.getTable("user");
         FetchCase fc;
         Map       ud;

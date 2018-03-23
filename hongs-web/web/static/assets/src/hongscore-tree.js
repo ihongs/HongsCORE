@@ -407,9 +407,9 @@ HsTree.prototype = {
             var i, idz, ids = [ /**/ ];
             idz  = hsSerialArr( data );
             for(i=0; i<idz.length; i++) {
-                ids.push(encodeURIComponent(idz[i]));
+                ids.push(encodeURIComponent(idz[i].value));
             }
-            url  = url.replace("{ID}",ids.join(","));
+            url  = url.replace("{ID}" , ids.join(  ","  ));
             data = undefined;
         }
 

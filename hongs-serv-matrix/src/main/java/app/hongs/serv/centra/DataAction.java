@@ -1,7 +1,6 @@
 package app.hongs.serv.centra;
 
 import app.hongs.Cnst;
-import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
@@ -85,36 +84,12 @@ public class DataAction extends SearchAction {
         helper.getRequestData().put("form_id", ent);
     }
 
-    /**
-     * 后台总是能指定 id, 有则更新, 无则添加
-     * @param helper
-     * @throws HongsException
-     */
-    @Action("save")
-    @Preset(conf="", form="", deft={":create"})
-    @Verify(conf="", form="")
-    @CommitSuccess
-    public void save(ActionHelper helper) throws HongsException {
-        String  id = (String) helper.getParameter("id");
-        if (id == null || "".equals(id)) {
-            id  = Core.newIdentity (  );
-        }
-
-        Data    sr = (Data) getEntity(helper);
-        Map     rd = helper.getRequestData( );
-                rd = getReqMap(helper, sr, "update", rd);
-                sr.set(id, rd);
-        String  ss = getRspMsg(helper, sr, "update", 1 );
-
-        helper.reply(ss, Synt.mapOf("id",id));
-    }
-
     @Action("revert/update")
     @CommitSuccess
     public void redo(ActionHelper helper) throws HongsException {
-        String  id = (String) helper.getParameter("id");
-        if (id == null || "".equals(id)) {
-            throw new HongsException(0x1100, "id required");
+        String  id = helper.getParameter(Cnst.ID_KEY);
+        if ( null == id || "".equals(id)) {
+            throw new HongsException(0x1100, "id required" );
         }
         Data    sr = (Data) getEntity(helper);
         Map     rd = helper.getRequestData( );

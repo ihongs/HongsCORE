@@ -8,7 +8,7 @@ import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.serv.auth.AuthKit;
-import app.hongs.serv.member.User;
+import app.hongs.serv.master.User;
 import app.hongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,11 +26,11 @@ public class SignAction extends app.hongs.serv.centra.SignAction {
      * @throws app.hongs.HongsException
      */
     @Action("user/create")
-    @Preset(conf="member", form="mine")
-    @Verify(conf="member", form="mine")
+    @Preset(conf="master", form="mine")
+    @Verify(conf="master", form="mine")
     public void userCreate(ActionHelper ah) throws HongsException {
         Map  rd = ah.getRequestData();
-        User uo = (User) DB.getInstance( "member" ).getModel( "user" );
+        User uo = (User) DB.getInstance( "master" ).getModel( "user" );
         Map  sd = uo.create  (  rd  );
 
         // 提取登录信息
@@ -67,7 +67,7 @@ public class SignAction extends app.hongs.serv.centra.SignAction {
             return;
         }
 
-        User user = (User) DB.getInstance("member").getModel("user") ;
+        User user = (User) DB.getInstance("master").getModel("user") ;
         user.del(uuid);
 
         signDelete(ah);

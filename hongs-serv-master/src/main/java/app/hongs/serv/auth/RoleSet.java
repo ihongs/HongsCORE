@@ -36,7 +36,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
 
         n = Core.DATA_PATH
           + File.separator + "serial"
-          + File.separator + "member"
+          + File.separator + "master"
           + File.separator + "role"
           + File.separator + Tool.splitPath(userId);
         f = new  File(n + ".ser");
@@ -56,7 +56,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         int       rt;
         int       st;
 
-        db = DB.getInstance("member");
+        db = DB.getInstance("master");
 
         tb = db.getTable("user");
         fc = new FetchCase( )
@@ -109,7 +109,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         FetchCase fc;
         List<Map> rz;
 
-        db = DB.getInstance("member");
+        db = DB.getInstance("master");
 
         //** 查询用户权限 **/
 

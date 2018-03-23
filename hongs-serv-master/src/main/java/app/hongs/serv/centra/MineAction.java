@@ -9,7 +9,7 @@ import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
 import app.hongs.serv.auth.AuthKit;
-import app.hongs.serv.member.UserAction;
+import app.hongs.serv.master.UserAction;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,7 +21,7 @@ import java.util.Map;
 public class MineAction {
 
     @Action("info")
-    @Preset(conf="member", form="mine")
+    @Preset(conf="master", form="mine")
     public void mineInfo(ActionHelper ah)
     throws HongsException {
         Map rd = ah.getRequestData();
@@ -33,7 +33,7 @@ public class MineAction {
     }
 
     @Action("update")
-    @Verify(conf="member", form="mine", type=1, trim=1)
+    @Verify(conf="master", form="mine", type=1, trim=1)
     public void mineUpdate(ActionHelper ah)
     throws HongsException {
         Map rd = ah.getRequestData();
@@ -57,7 +57,7 @@ public class MineAction {
             xd.put("ok", false);
             xd.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
             if (po != null && !"".equals(po)) {
-                Map row = DB.getInstance("member").getTable ("user").fetchCase( )
+                Map row = DB.getInstance("master").getTable ("user").fetchCase( )
                     .filter("id = ?", id)
                     .select( "password" )
                     .one();

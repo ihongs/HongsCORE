@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <menu text="用户管理" href="centra/master/">
+        <role text="查看用户" name="centra/master/user/search">
+            <depend>centra</depend>
+            <depend>centra/master/dept/search</depend>
+            <action>centra/master/user/search.act</action>
+        </role>
+        <role text="添加用户" name="centra/master/user/create">
+            <depend>centra/master/user/search</depend>
+            <action>centra/master/user/create.act</action>
+        </role>
+        <role text="修改用户" name="centra/master/user/update">
+            <depend>centra/master/user/search</depend>
+            <action>centra/master/user/update.act</action>
+        </role>
+        <role text="删除用户" name="centra/master/user/delete">
+            <depend>centra/master/user/search</depend>
+            <action>centra/master/user/delete.act</action>
+        </role>
+        <role text="查看部门" name="centra/master/dept/search">
+            <depend>centra/master/user/search</depend>
+            <action>centra/master/dept/search.act</action>
+        </role>
+        <role text="添加部门" name="centra/master/dept/create">
+            <depend>centra/master/dept/search</depend>
+            <action>centra/master/dept/create.act</action>
+        </role>
+        <role text="修改部门" name="centra/master/dept/update">
+            <depend>centra/master/dept/search</depend>
+            <action>centra/master/dept/update.act</action>
+        </role>
+        <role text="删除部门" name="centra/master/dept/delete">
+            <depend>centra/master/dept/search</depend>
+            <action>centra/master/dept/delete.act</action>
+        </role>
+    </menu>
+</root>

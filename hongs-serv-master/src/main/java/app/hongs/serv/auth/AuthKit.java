@@ -8,7 +8,7 @@ import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
-import app.hongs.serv.member.Dept;
+import app.hongs.serv.master.Dept;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Wrong;
 import app.hongs.util.verify.Wrongs;
@@ -62,9 +62,9 @@ public class AuthKit {
     public static Map getWrong(String k, String w) throws HongsException {
         Map m  = new HashMap();
         Map e  = new HashMap();
-        CoreLocale   lang  =  CoreLocale.getInstance ("member") ;
+        CoreLocale   lang  =  CoreLocale.getInstance ("master") ;
         if (k != null && ! "".equals(k)) {
-            m.put(k, new Wrong(w).setLocalizedContext("member"));
+            m.put(k, new Wrong(w).setLocalizedContext("master"));
             e.put("errs", new Wrongs(m).getErrors());
             e.put("msg" , lang.translate(w));
         } else {
@@ -92,7 +92,7 @@ public class AuthKit {
     throws HongsException {
         HttpSession sd = ah.getRequest().getSession(false);
         long     stime = System.currentTimeMillis() / 1000;
-        String   sesmk = CoreConfig.getInstance( "member").getProperty("core.keep.sess", ""); // 登录时哪些会话数据需要保留
+        String   sesmk = CoreConfig.getInstance( "master").getProperty("core.keep.sess", ""); // 登录时哪些会话数据需要保留
 
         // 重建会话
         if (sd != null) {
@@ -141,7 +141,7 @@ public class AuthKit {
         rd.put("sesid", sesid);
 
         // 记录登录
-        DB    db = DB.getInstance("member");
+        DB    db = DB.getInstance("master");
         Table tb = db.getTable("user_sign");
         tb.remove("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
         Map ud = new HashMap();
@@ -170,7 +170,7 @@ public class AuthKit {
             String place, String appid, String opnid,
             String uname, String uhead,  long  utime)
     throws HongsException {
-        DB    db = DB.getInstance("member");
+        DB    db = DB.getInstance("master");
         Table tb = db.getTable("user_open");
         Map   ud = tb.fetchCase()
                      .filter("`opnid` =? AND `appid` = ?", opnid, appid)
@@ -212,7 +212,7 @@ public class AuthKit {
 
     public static void signOut(HttpSession ss) throws HongsException {
         // 清除登录
-        DB.getInstance("member")
+        DB.getInstance("master")
           .getTable("user_sign")
           .remove("`sesid` = ?", ss.getId());
 
@@ -225,7 +225,7 @@ public class AuthKit {
     }
 
     public static Set getUserDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("member").getTable("user_dept");
+        Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
             .filter ("user_id = ?",uid)
             .select ("dept_id")
@@ -238,7 +238,7 @@ public class AuthKit {
     }
 
     public static Set getMoreDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("member").getTable("user_dept");
+        Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
             .filter ("user_id = ?",uid)
             .select ("dept_id")
@@ -312,7 +312,7 @@ public class AuthKit {
     }
 
     public static Set getUserRoles(String uid) throws HongsException {
-        Table rel = DB.getInstance("member").getTable("user_role");
+        Table rel = DB.getInstance("master").getTable("user_role");
         List<Map> lst = rel.fetchCase()
             .filter ("user_id = ?",uid)
             .select ("role"   )
@@ -355,7 +355,7 @@ public class AuthKit {
     }
 
     public static Set getDeptRoles(String gid) throws HongsException {
-        Table rel = DB.getInstance("member").getTable("dept_role");
+        Table rel = DB.getInstance("master").getTable("dept_role");
         List<Map> lst = rel.fetchCase()
             .filter ("dept_id = ?",gid)
             .select ("role"   )

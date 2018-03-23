@@ -1,4 +1,4 @@
-package app.hongs.serv.member;
+package app.hongs.serv.master;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
@@ -24,7 +24,7 @@ extends Mtree {
 
     public Dept()
     throws HongsException {
-        this(DB.getInstance("member").getTable("dept"));
+        this(DB.getInstance("master").getTable("dept"));
     }
 
     public Dept(Table table)
@@ -62,7 +62,7 @@ extends Mtree {
         List<Map>   rows;
         Set<String> roles = new HashSet();
 
-        asoc = this.db.getTable("a_member_dept_role");
+        asoc = this.db.getTable("a_master_dept_role");
         caze = this.fetchCase();
         caze.select(asoc.name+".role")
             .filter(asoc.name+".dept_id = ?", deptId);
@@ -99,12 +99,12 @@ extends Mtree {
 
         /**
          * 如果有指定user_id
-         * 则关联a_member_user_dept来约束范围
+         * 则关联a_master_user_dept来约束范围
          */
         Object userId = req.get("user_id");
         if (null != userId && ! "".equals(userId)) {
             caze.gotJoin("users")
-                .from   ("a_member_user_dept")
+                .from   ("a_master_user_dept")
                 .by     (FetchCase.INNER)
                 .on     ("`users`.`dept_id` = `dept`.`id`")
                 .filter ("`users`.`user_id` IN (?)",userId);
@@ -124,8 +124,8 @@ extends Mtree {
                 AuthKit.cleanDeptRoles (list, id);
                 if ( list.isEmpty() ) {
                     throw new HongsException
-                        .Notice("ex.member.user.dept.error")
-                        .setLocalizedContext("member");
+                        .Notice("ex.master.user.dept.error")
+                        .setLocalizedContext("master");
                 }
                 data.put("roles", list);
             }
@@ -139,7 +139,7 @@ extends Mtree {
             List list = user.table.fetchMore(
                 user.fetchCase()
                     .gotJoin("depts")
-                    .from   ("a_member_user_dept")
+                    .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` = ?"    , id  )
@@ -147,8 +147,8 @@ extends Mtree {
             );
             if (list.size()!=0) {
                 throw new HongsException
-                    .Notice("ex.member.dept.have.users")
-                    .setLocalizedContext("member");
+                    .Notice("ex.master.dept.have.users")
+                    .setLocalizedContext("master");
             }
         }
 
@@ -186,8 +186,8 @@ extends Mtree {
             }
 
             throw new HongsException
-                .Notice("ex.member.dept.unit.error")
-                .setLocalizedContext("member");
+                .Notice("ex.master.dept.unit.error")
+                .setLocalizedContext("master");
         }
     }
 

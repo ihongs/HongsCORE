@@ -1,0 +1,68 @@
+<ol class="backable breadcrumb row hide" data-toggle="hsTabs">
+    <li class="back-crumb dont-close pull-right">
+        <a href="javascript:;">
+            <i class="glyphicon glyphicon-remove-sign"></i>
+        </a>
+    </li>
+    <li class="home-crumb active">
+        <a href="javascript:;">
+            <i class="glyphicon glyphicon-folder-open"></i>
+            <b>部门及用户</b>
+        </a>
+    </li>
+</ol>
+<div class="backable panes">
+    <div class="row"></div>
+    <div class="row">
+        <div class="col-md-3 side-context">
+            <div id="master-dept-tree"
+                 data-module="hsTree"
+                 data-load-url="centra/master/dept/list.act"
+                 data-send-urls-0="['centra/master/dept/delete.act','.delete','您确定要删除此部门?']"
+                 data-open-urls-0="['centra/master/dept/form.html?pid={ID}','.create','@']"
+                 data-open-urls-1="['centra/master/dept/form.html?id={ID}' ,'.modify','@']"
+                 data-link-urls-0="['centra/master/user/list.html?dept_id={ID}','*.main-context']"
+                 data-root-name="组织架构">
+                <div class="toolbox btn-group">
+                    <button type="button" class="create btn btn-default">添加</button>
+                    <button type="button" class="modify for-select btn btn-default">修改</button>
+                    <button type="button" class="delete for-select btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+                </div>
+                <div class="treebox"></div>
+            </div>
+        </div>
+        <div class="col-md-9 main-context"></div>
+        <script type="text/javascript">
+        /*
+        (function($) {
+            var treebox = $(".side-context");
+            var listbox = $(".main-context");
+
+            listbox.on("loadOver", function() {
+                listbox.find(".listbox tbody tr")
+                .draggable({
+                    revert: "invalid",
+                    helper: "clone",
+                    opactiy: 0.5
+                });
+            });
+            treebox.on("loadOver", function() {
+                treebox.find(".tree-node")
+                .draggable({
+                    revert: "invalid",
+                    opacity: 0.5
+                })
+                .droppable({
+                    accept: function(tr) {
+                        console.log(tr);
+                    },
+                    drop: function(ev, ui) {
+                        console.log(ev, ui)
+                    }
+                });
+            });
+        })(jQuery);
+        */
+        </script>
+    </div>
+</div>

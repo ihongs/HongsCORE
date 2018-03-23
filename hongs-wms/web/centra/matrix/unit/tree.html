@@ -15,7 +15,7 @@
     <div class="row"></div>
     <div class="row">
         <div class="col-md-3 side-context">
-            <div id="hongs-module-tree"
+            <div id="matrix-unit-tree"
                  data-module="hsTree"
                  data-load-url="centra/matrix/unit/list.act?ob=-boost"
                  data-send-urls-0="['centra/matrix/unit/delete.act','.delete','您确定要删除此单元?']"
@@ -36,7 +36,7 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $('#hongs-module-tree');
+        var context = $('#matrix-unit-tree');
         
         // 更新后重载菜单栏
         context.on("saveBack sendBack", function(evt, rst, dat) {

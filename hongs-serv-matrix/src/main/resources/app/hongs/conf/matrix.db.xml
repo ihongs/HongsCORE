@@ -18,8 +18,8 @@ xsi:schemaLocation="http://hongs-core db.xsd">
                    name="unit"
                    foreignKey="unit_id">
             </assoc>
-            <param name="user.table">member.user</param>
-            <param name="role.table">member.user_role</param>
+            <param name="user.table">master.user</param>
+            <param name="role.table">master.user_role</param>
         </table>
         <table name="data"
                tableName="a_matrix_data"
@@ -32,7 +32,7 @@ xsi:schemaLocation="http://hongs-core db.xsd">
             <assoc type="BLS_TO"
                    name="user"
                    foreignKey="user_id"
-                   tableName="member.user">
+                   tableName="master.user">
                 <param name="fields">id,name</param>
             </assoc>
         </table>

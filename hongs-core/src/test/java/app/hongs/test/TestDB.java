@@ -87,13 +87,13 @@ public class TestDB {
         assertEquals(vali, caze.toString());
         
         caze = new FetchCase(FetchCase.CLEVER);
-        caze.from   ("a_member_user", "user")
+        caze.from   ("a_master_user", "user")
             .filter ("state != 1 AND dept_id IN (?)", 1)
-            .join   ("a_member_user_dept", "depts")
+            .join   ("a_master_user_dept", "depts")
             .on     ("user_id = :user_id")
             .by     (FetchCase.LEFT)
             .filter ("dept_id IN (?)", 10);
-        vali = "SELECT `user`.* FROM `a_member_user` AS `user` LEFT JOIN `a_member_user_dept` AS `depts` ON `depts`.user_id = `user`.user_id WHERE `user`.state != 1 AND `user`.dept_id IN (1) AND `depts`.dept_id IN (10)";
+        vali = "SELECT `user`.* FROM `a_master_user` AS `user` LEFT JOIN `a_master_user_dept` AS `depts` ON `depts`.user_id = `user`.user_id WHERE `user`.state != 1 AND `user`.dept_id IN (1) AND `depts`.dept_id IN (10)";
         System.out.println(vali);
         System.out.println(caze.toString());
         assertEquals(vali, caze.toString());

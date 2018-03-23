@@ -403,16 +403,13 @@ HsTree.prototype = {
 
     open     : function(btn, box, url, data) {
         // 如果 URL 里有 {ID} 则替换之
-        if ( -1 != url.indexOf( "{ID}" )) {
-            var ids = [ ];
-            for(var i = 0; i < data.length; i ++) {
-                var o =  data [ i ];
-                if (o instanceof Element ) {
-                    o = jQuery( o ).val( );
-                }
-                ids.push(encodeURIComponent( o ));
+        if ( -1 != url.indexOf("{ID}")) {
+            var i, idz, ids = [ /**/ ];
+            idz  = hsSerialArr( data );
+            for(i=0; i<idz.length; i++) {
+                ids.push(encodeURIComponent(idz[i]));
             }
-            url  = url.replace( "{ID}" , ids.join(",") );
+            url  = url.replace("{ID}",ids.join(","));
             data = undefined;
         }
 

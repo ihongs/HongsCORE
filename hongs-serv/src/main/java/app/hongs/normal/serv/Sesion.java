@@ -161,14 +161,14 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
             }
         }
 
-        // 重建新的 ID
-        String  id = Core.newIdentity();
+        // 重新构建的ID
+        String id = Core.newIdentity();
         if (req != null) {
-            String s = ActionDriver.getClientAddr((HttpServletRequest) req);
-            if (s != null && 0 != s.length()) {
-                id = id+"#"+s;
-            }
-        }
+        String ip = ActionDriver.getClientAddr((HttpServletRequest) req);
+        if (ip  != null) {
+            id  +=  ip  ;
+        }}
+
         return Digest.md5(id);
     }
 

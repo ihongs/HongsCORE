@@ -166,7 +166,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         if (req != null) {
         String ip = ActionDriver.getClientAddr((HttpServletRequest) req);
         if (ip  != null) {
-            id  +=  ":" + ip ;
+            id  +=  "@" + ip ;
         }}
 
         return Digest.md5(id);

@@ -1,11 +1,11 @@
 package app.hongs.util.verify;
 
 import app.hongs.util.Synt;
-import app.hongs.util.Tool;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 多值约束
@@ -42,17 +42,15 @@ public class Repeated extends Rule {
         throw  new Wrong("fore.form.repeated");
     }
 
-    private String[] s(String v ) throws Wrong {
-        String s;
-        s = Synt.declare(params.get("split"), String.class);
-        if (s != null ) {
-            if (Synt.declare(params.get("strip"), false)) {
-                v = Tool.clearSC(v);
+    private String[] s(String v) throws Wrong {
+        String s = Synt.declare(params.get("split"), String.class);
+        if (s != null) {
+            Set<String> t = Synt.toSet(params.get("strip"));
+            if (t != null
+            &&  t.contains("trim")) {
+                v = v.trim( /**/ );
             }
-            if (Synt.declare(params.get("strim"), false)) {
-                v = v. trim (/***/);
-            }
-            return  v.split (s, -1);
+            return v.split( s,-1 );
         }
         throw  new Wrong("fore.form.repeated");
     }

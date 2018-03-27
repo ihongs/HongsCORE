@@ -5,6 +5,7 @@ import app.hongs.action.FormSet;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Pattern;
 
 /**
@@ -25,14 +26,20 @@ public class IsString extends Rule {
         String str = Synt.declare(value, "");
 
         // 文本清理
-        if (Synt.declare(params.get("strim"), false)) {
-            str = str.trim();
-        }
-        if (Synt.declare(params.get("strip"), false)) {
-            str = Tool.clearSC (str); // 清除首尾空白
-            str = Tool.cleanSC (str); // 合并多个空白
-            str = Tool.clearEL (str); // 清除空行
-            str = Tool.cleanNL (str); // 统一换行
+        Set<String> sa = Synt.toSet(params.get("strip"));
+        if (sa != null) {
+            if (sa.contains("cros")) {
+                str = Tool.stripTags(str); // 清除脚本
+            }
+            if (sa.contains("tags")) {
+                str = Tool.stripTags(str); // 清除标签
+            }
+            if (sa.contains("ends")) {
+                str = Tool.stripEnds(str); // 首尾清理(含全角)
+            }
+            if (sa.contains("trim")) {
+                str = str.trim();
+            }
         }
 
         // 长度限制

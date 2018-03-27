@@ -396,63 +396,23 @@ public final class Tool
 
   //** 清理 **/
 
-  private static final Pattern NL_PAT = Pattern.compile("(\\r\\n|\\r|\\n)");
-  private static final Pattern EL_PAT = Pattern.compile("^\\s*$", Pattern.MULTILINE);
-  private static final Pattern SC_PAT = Pattern.compile(  "[ \\f\\t\\v\\x0b\\u3000]+"  , Pattern.MULTILINE);
-  private static final Pattern XC_PAT = Pattern.compile("(^[ \\f\\t\\v\\x0b\\u3000]+|[ \\f\\t\\v\\x0b\\u3000]+$)", Pattern.MULTILINE);
-
   /**
-   * 清除空行
+   * 清理首尾空格
    * @param str
-   * @return 新串
+   * @return 
    */
-  public static String clearEL(String str)
+  public static String stripEnds(String str)
   {
-    return EL_PAT.matcher(str).replaceAll(  ""  );
+    Pattern pat;
+    pat = Pattern.compile("^[\\h\\v]+" );
+    str = pat.matcher(str).replaceAll("" );
+    pat = Pattern.compile( "[\\h\\v]+$");
+    str = pat.matcher(str).replaceAll("" );
+    return  str;
   }
 
   /**
-   * 清除换行
-   * @param str
-   * @return 新串
-   */
-  public static String clearNL(String str)
-  {
-    return NL_PAT.matcher(str).replaceAll(  ""  );
-  }
-
-  /**
-   * 统一换行
-   * @param str
-   * @return 新串
-   */
-  public static String cleanNL(String str)
-  {
-    return NL_PAT.matcher(str).replaceAll("\r\n");
-  }
-
-  /**
-   * 清除首尾空白(含全角)
-   * @param str
-   * @return
-   */
-  public static String clearSC(String str)
-  {
-    return XC_PAT.matcher(str).replaceAll(  ""  );
-  }
-
-  /**
-   * 合并多个空白(含全角)
-   * @param str
-   * @return 新串
-   */
-  public static String cleanSC(String str)
-  {
-    return SC_PAT.matcher(str).replaceAll(  " " );
-  }
-
-  /**
-   * 清理XML标签
+   * 清理标签代码
    * 该实现并不严谨, 不建议用于处理含 CDATA 等的 XML 文档
    * @param str
    * @return 新串
@@ -470,7 +430,7 @@ public final class Tool
   }
 
   /**
-   * 清理HTM脚本
+   * 清理脚本代码
    * 该实现并不严谨, 仅清理可被利用的 iframe/script/style
    * @param str
    * @return 新串

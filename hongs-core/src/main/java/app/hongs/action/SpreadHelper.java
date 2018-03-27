@@ -164,8 +164,13 @@ public class SpreadHelper {
                 at = at.substring(0 , ps).trim();
             }
             if (null != ap && !"".equals(ap)) {
-                ap = ap + Cnst.ACT_EXT;
-                ah.setAttribute(Cnst.ACTION_ATTR,ap);
+                if (ActionRunner.getActions()
+                            .containsKey(ap)) {
+                    at = ap ; // 自动行为方法可能被定制开发
+                } else {
+                    ap = ap + Cnst.ACT_EXT; // 别忘了后缀名
+                    ah.setAttribute(Cnst.ACTION_ATTR, ap );
+                }
             }
             if (null != aq && !"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {

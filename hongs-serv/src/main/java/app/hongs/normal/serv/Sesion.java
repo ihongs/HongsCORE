@@ -2,7 +2,6 @@ package app.hongs.normal.serv;
 
 import app.hongs.Core;
 import app.hongs.CoreConfig;
-import app.hongs.HongsError;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
 import app.hongs.cmdlet.CmdletHelper;

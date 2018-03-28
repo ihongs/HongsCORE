@@ -4,7 +4,9 @@ import app.hongs.util.Synt;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -26,39 +28,49 @@ public class Repeated extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
         if (value == null) {
-            return new ArrayList ( 0 );
+            return new ArrayList ( ) ;
         }
-        if (value instanceof String  ) {
-            return Arrays.asList(s((String) value));
+        if (value instanceof String) {
+            String v = (String) value;
+            String s ;
+
+            // 普通拆分
+            s = Synt.declare(params.get("divorce"), String.class);
+            if (s != null) {
+                List<String> a = new ArrayList(  );
+                int e , b = 0;
+                while ((e = v.indexOf(s, b)) > -1) {
+                    a.add(v.substring(b, e));
+                    b = b + s.length (    ) ;
+                }   a.add(v.substring(b   ));
+                return  a;
+            }
+
+            // 正则拆分
+            s = Synt.declare(params.get( "split" ), String.class);
+            if (s != null) {
+                List<String> a = new ArrayList(  );
+                Matcher m = Pattern.compile(  s  )
+                                   .matcher(  v  );
+                int e , b = 0;
+                while ( m.find ()) {
+                    e = m.start();
+                    a.add(v.substring(b, e));
+                    b = m.end  ();
+                }   a.add(v.substring(b   ));
+                return  a;
+            }
+
+            throw  new Wrong("fore.form.repeated");
         }
         if (value instanceof Object[]) {
-            return Arrays.asList((Object[]) value );
+            return Arrays.asList((Object[]) value);
         }
         if (value instanceof Collection) {
             return value;
         }
         if (value instanceof Map) {
             return value;
-        }
-        throw  new Wrong("fore.form.repeated");
-    }
-
-    /**
-     * 拆解字符串
-     * @param v
-     * @return
-     * @throws Wrong 
-     */
-    private String[] s (String v) throws Wrong {
-        String s;
-        s = Synt.declare(params.get("divorce"), String.class);
-        if (s != null) {
-            s  = Pattern.quote(s);
-            return v.split(s, -1);
-        }
-        s = Synt.declare(params.get( "split" ), String.class);
-        if (s != null) {
-            return v.split(s,-1);
         }
         throw  new Wrong("fore.form.repeated");
     }

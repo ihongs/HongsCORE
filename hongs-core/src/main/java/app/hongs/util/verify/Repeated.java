@@ -5,7 +5,7 @@ import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * 多值约束
@@ -14,7 +14,8 @@ import java.util.Set;
  *  maxrepeat   最大数量
  *  minrepeat   最小数量
  *  defiant     需要忽略的取值列表
- *  deverse     为 true 则执行去重
+ *  diverse     为 true 则执行去重
+ *  divorce     按此给出的分隔来拆分字串
  *  split       按此给出的正则来拆分字串
  *  strim       为 true 则清理首尾空字符(仅当有 split 时有效)
  *  strip       为 true 则清理首尾含全角(仅当有 split 时有效)
@@ -42,15 +43,22 @@ public class Repeated extends Rule {
         throw  new Wrong("fore.form.repeated");
     }
 
-    private String[] s(String v) throws Wrong {
-        String s = Synt.declare(params.get("split"), String.class);
+    /**
+     * 拆解字符串
+     * @param v
+     * @return
+     * @throws Wrong 
+     */
+    private String[] s (String v) throws Wrong {
+        String s;
+        s = Synt.declare(params.get("divorce"), String.class);
         if (s != null) {
-            Set<String> t = Synt.toSet(params.get("strip"));
-            if (t != null
-            &&  t.contains("trim")) {
-                v = v.trim( /**/ );
-            }
-            return v.split( s,-1 );
+            s  = Pattern.quote(s);
+            return v.split(s, -1);
+        }
+        s = Synt.declare(params.get( "split" ), String.class);
+        if (s != null) {
+            return v.split(s,-1);
         }
         throw  new Wrong("fore.form.repeated");
     }

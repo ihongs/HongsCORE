@@ -63,7 +63,7 @@ public class Repeated extends Rule {
 
             throw  new Wrong("fore.form.repeated");
         }
-        if (value instanceof Object[]) {
+        if (value instanceof Object [] ) {
             return Arrays.asList((Object[]) value);
         }
         if (value instanceof Collection) {

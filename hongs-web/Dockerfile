@@ -1,14 +1,30 @@
 # docker build -t hongs/hongs-web:0.4 .
 # docker run -p 80:8080 hongs/hongs-web:0.4
 
-FROM hongs/hongs-env:0.4
+FROM ubuntu:16.04
+
+MAINTAINER Kevin_Hongs kevin.hongs@gmail.com
 
 EXPOSE 8080
 
-ADD target/HongsWeb /opt/HongsWeb
-ADD env/supervisord.conf /etc/supervisord.conf
-ADD env/crontabs /var/spool/cron/crontabs/root
-RUN chmod 600    /var/spool/cron/crontabs/root &&\
+ENV LANG en_US.UTF-8
+ENV JAVA_HOME /opt/jdk
+ENV PATH $PATH:$JAVA_HOME/bin
+
+ADD env/apt-sources.list /etc/apt/sources.list
+ADD evn/supervisord.conf /etc/supervisord.conf
+ADD env/sys-crontab.list /var/spool/cron/crontabs/root
+ADD env/jdk*        /opt/
+ADD target/HongsWeb /opt/
+
+RUN apt-get -y update &&\
+    apt-get -y install language-pack-en* &&\
+    apt-get -y install language-pack-zh* &&\
+    apt-get -y install supervisor  &&\
+    apt-get -y install cron &&\
+    touch /var/log/cron.log &&\
+    mv    /opt/jd* /opt/jdk &&\
+    chmod 600    /var/spool/cron/crontabs/root &&\
     chmod 755 -R /opt/HongsWeb/bin &&\
     chmod 777 -R /opt/HongsWeb/var &&\
     /opt/HongsWeb/bin/app system.setup --debug 13

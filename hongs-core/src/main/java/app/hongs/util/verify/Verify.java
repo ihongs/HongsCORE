@@ -265,7 +265,7 @@ public class Verify implements Veri {
                     (String) rule.params.get("__name__"),
                      name) ) ;
             }
-            failed(wrongz, w , name);
+            failed(wrongz, w , name );
             return  BLANK;
         }
 

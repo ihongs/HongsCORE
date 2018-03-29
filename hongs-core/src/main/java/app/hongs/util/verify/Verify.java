@@ -5,16 +5,13 @@ import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import static app.hongs.util.verify.Rule.BREAK;
 import static app.hongs.util.verify.Rule.BLANK;
+import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
 
 /**
  * 数据校验助手
@@ -190,7 +187,7 @@ public class Verify implements Veri {
                     w.setLocalizedCaption(Synt.defxult(
                         (String) rule.params.get("__text__"),
                         (String) rule.params.get("__name__"),
-                         name) );
+                         name) ) ;
                 }
                 failed(wrongz, w , name);
                 data =  BLANK;
@@ -209,40 +206,25 @@ public class Verify implements Veri {
 
             if (rule instanceof Repeated) {
                 List<Rule> rulex = rulez.subList(i, rulez.size());
-                data = repeat(rulex, data, name, values, wrongz, cleans, rule.params);
+                data = repeat(rulex, data, name, values, wrongz, cleans, (Repeated) rule);
                 break;
             }
         }
         return  data ;
     }
 
-    private Object repeat(List<Rule> rulez, Object data, String name, Map values, Map cleans, Map wrongz, Map params)
+    private Object repeat(List<Rule> rulez, Object data, String name, Map values, Map cleans, Map wrongz, Repeated rule)
     throws HongsException {
-        // 可设置 defiant   为某个要忽略的值
-        // 页面加 hidden    值设为要忽略的值
-        // 此时如 check     全部未选代表清空
-        // 默认对 null/空串 忽略
-        Set d  =  Synt . toSet(params.get( "defiant" ));
-        if (d  == null || d.isEmpty( )) {
-            d  =  new  HashSet();
-            d.add ("");
-        }
-
-        // 是否必须不同的值
-        Collection data2;
-        if (Synt.declare(params.get("diverse"), false)) {
-            data2 = new LinkedHashSet();
-        } else {
-            data2 = new  ArrayList   ();
-        }
+        Collection data2 = rule.getContext();
+        Collection skips = rule.getDefiant();
 
         // 将后面的规则应用于每一个值
         if (data instanceof Collection) {
             int i3 = -1;
-            for(Object data3  :  ( Collection ) data  ) {
+            for(Object data3 :  ( Collection )  data  ) {
                 i3 += 1;
 
-                if (data3 == null || d.contains(data3)) {
+                if (data3 == null || skips.contains(data3)) {
                     continue;
                 }
 
@@ -259,7 +241,7 @@ public class Verify implements Veri {
                 Map.Entry e3 = (Map.Entry) i3;
                 Object data3 = e3.getValue( );
 
-                if (data3 == null || d.contains(data3)) {
+                if (data3 == null || skips.contains(data3)) {
                     continue;
                 }
 
@@ -273,29 +255,18 @@ public class Verify implements Veri {
             }
         }
 
-        // 多个值的数量限制
-        int n, c = data2.size();
-        n = Synt.declare(params.get("minrepeat"), 0);
-        if (n != 0 && c < n) {
-            Wrong wrong = new Wrong("fore.form.lt.minrepeat",
-                    String.valueOf(n), String.valueOf(c))
-                .setLocalizedCaption ( Synt.defxult(
-                    (String) params.get ("__text__"),
-                    (String) params.get ("__name__"),
-                     name) );
-            failed(wrongz, wrong, name);
-            return BLANK;
-        }
-        n = Synt.declare(params.get("maxrepeat"), 0);
-        if (n != 0 && c > n) {
-            Wrong wrong = new Wrong("fore.form.lt.maxrepeat",
-                    String.valueOf(n), String.valueOf(c))
-                .setLocalizedCaption ( Synt.defxult(
-                    (String) params.get ("__text__"),
-                    (String) params.get ("__name__"),
-                     name) );
-            failed(wrongz, wrong, name);
-            return BLANK;
+        // 完成后还需再次校验一下结果
+        try {
+            rule.verify(data2);
+        } catch (Wrong  w) {
+            if (w.getLocalizedCaption( ) == null) {
+                w.setLocalizedCaption(Synt.defxult(
+                    (String) rule.params.get("__text__"),
+                    (String) rule.params.get("__name__"),
+                     name) ) ;
+            }
+            failed(wrongz, w , name);
+            return  BLANK;
         }
 
         return data2;

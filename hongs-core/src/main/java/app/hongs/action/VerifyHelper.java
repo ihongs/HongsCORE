@@ -24,6 +24,18 @@ import java.util.Map;
  * Ex10f1=找不到表单规则
  * </pre>
  *
+ * <h3>特别注意</h3>
+ * <p>
+ * 在 form.xml 中,
+ * 既无 type 也无 rule 则 type="string".
+ * 无 required 时默认启用 Optional 规则,
+ * 无 repeated 时默认启用 NoRepeat 规则,
+ * 但 required=""表示既无 Required 也无 Optional,
+ * 同 repeated=""表示既无 Repeated 也无 NoRepeat.
+ * 依此规则 type="form" 或 rule 有 IsForm,Intact,
+ * 或其他可接受集合类型取值时务必加上repeated="".
+ * </p>
+ *
  * @author Hongs
  */
 public class VerifyHelper extends Verify {

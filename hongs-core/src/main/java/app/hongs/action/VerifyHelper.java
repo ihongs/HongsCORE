@@ -27,7 +27,7 @@ import java.util.Map;
  * <h3>特别注意</h3>
  * <p>
  * 在 form.xml 中,
- * 既无 type 也无 rule 则 type="string".
+ * 无 type 也无 rule 则同 type="string".
  * 无 required 时默认启用 Optional 规则,
  * 无 repeated 时默认启用 NoRepeat 规则,
  * 但 required=""表示既无 Required 也无 Optional,

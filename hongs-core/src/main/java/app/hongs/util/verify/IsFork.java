@@ -57,8 +57,8 @@ public class IsFork extends Rule {
 
         String at = Synt.declare(params.get("data-at" ), "");
         String vk = Synt.declare(params.get("data-vk" ), "");
-        String cl = Synt.declare(params.get("conf"    ), "");
-        String fl = Synt.declare(params.get("form"    ), "");
+        String cl = Synt.declare(params.get(  "conf"  ), "");
+        String fl = Synt.declare(params.get(  "form"  ), "");
         String ck = Synt.declare(params.get("__conf__"), "");
         String fk = Synt.declare(params.get("__name__"), "");
         String ap = null;

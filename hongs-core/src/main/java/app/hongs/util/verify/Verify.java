@@ -143,9 +143,9 @@ public class Verify implements Veri {
         for(Map.Entry<String, List<Rule>> et : rules.entrySet()) {
             List<Rule> rulez = et.getValue();
             String     name  = et.getKey(  );
-            Object     data  = Dict.getParam(values, name );
+            Object     data  = Dict.getParam(values, name);
 
-            data = verify(rulez, data, name, values, cleans, wrongz);
+            data = Verify.this.verify(values, cleans, wrongz, data, name, rulez);
 
             if (prompt && ! wrongz.isEmpty()) {
                 break;
@@ -167,7 +167,7 @@ public class Verify implements Veri {
         return cleans;
     }
 
-    private Object verify(List<Rule> rulez, Object data, String name, Map values, Map cleans, Map wrongz) throws HongsException {
+    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Rule> rulez) throws HongsException {
         int i =0;
         for (Rule  rule  :  rulez) {
             i ++;
@@ -206,14 +206,14 @@ public class Verify implements Veri {
 
             if (rule instanceof Repeated) {
                 List<Rule> rulex = rulez.subList(i, rulez.size());
-                data = repeat(rulex, data, name, values, wrongz, cleans, (Repeated) rule);
+                data = verify(values, cleans, wrongz, data, name, rulex, (Repeated) rule);
                 break;
             }
         }
         return  data ;
     }
 
-    private Object repeat(List<Rule> rulez, Object data, String name, Map values, Map cleans, Map wrongz, Repeated rule)
+    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Rule> rulez, Repeated rule)
     throws HongsException {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
@@ -229,7 +229,7 @@ public class Verify implements Veri {
                 }
 
                 String name3 = name + "[" + i3 + "]";
-                data3 = verify(rulez, data3, name3, values, cleans, wrongz);
+                data3 = Verify.this.verify(values, cleans, wrongz, data3, name3, rulez);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -246,7 +246,7 @@ public class Verify implements Veri {
                 }
 
                 String name3 = name + "." + e3.getKey();
-                data3 = verify(rulez, data3, name3, values, cleans, wrongz);
+                data3 = Verify.this.verify(values, cleans, wrongz, data3, name3, rulez);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -273,7 +273,7 @@ public class Verify implements Veri {
     }
 
     public static void failed(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
-        wrongz.put(name, wrong);
+            wrongz.put(name  , wrong);
     }
 
     public static void failed(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {

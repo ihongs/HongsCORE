@@ -62,14 +62,14 @@ public final class Synt {
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
 
     /**
-     * 视为假的字符串有: False, No, Off, F, N, O, 0
-     */
-    public  static final Pattern FAKE = Pattern.compile("(|0|O|N|F|NO|OFF|FALSE)", Pattern.CASE_INSENSITIVE);
-
-    /**
      * 视为真的字符串有: True , Yes, On, T, Y, I, 1
      */
     public  static final Pattern TRUE = Pattern.compile( "(1|I|Y|T|ON|YES|TRUE)" , Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 视为假的字符串有: False, No, Off, F, N, O, 0
+     */
+    public  static final Pattern FAKE = Pattern.compile("(|0|O|N|F|NO|OFF|FALSE)", Pattern.CASE_INSENSITIVE);
 
     /**
      * 快速构建 List

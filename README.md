@@ -39,17 +39,20 @@
 
     # 获取并构建系统
     git clone https://github.com/ihongs/HongsCORE.git
-    cd ../HongsCORE*
-    mvn clean compile package
-
-    # 此时已建立目标系统 hongs-web-cms/target/HongsWeb 和 hongs-web-ims/target/HongsWMS
-    # 其中 HongsWMS 为管理系统, HongsWeb 为基础前端
-    # 可根据需要, 拷贝到您需要的地方
+    cd  HongsCORE
+    mvn compile
+    mvn package
 
     # 设置和启动系统
-    cd HongsWMS
+    cd  hongs-serv-xxx/target/HongsXXX
     bin/app system.setup
     bin/app server.start
+
+    # hongs-serv-web/target/HongsWeb 为基础系统, 仅包含基本的应用服务和前端组件等;
+    # hongs-serv-wms/target/HongsWMS 为管理系统, 拥有全功能的用户管理和自助模块等.
+    # 编译出现 "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-dependency-plugin:2.9:copy-dependencies (compile) on project hongs-web"
+    # 不要着急, 只需继续执行 package 然后重新执行 compile 和 package.
+    # 以上两个包内都放有 Dockerfile 可轻松构建容器镜像, 搭建虚拟系统.
 
 加 --debug 1 可开启调试输出模式, 可在控制台(命令行)显示执行过程(调试信息), server:start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
 

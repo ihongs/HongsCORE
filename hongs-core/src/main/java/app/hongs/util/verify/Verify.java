@@ -272,16 +272,16 @@ public class Verify implements Veri {
         return data2;
     }
 
-    public static void failed(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
-            wrongz.put(name  , wrong);
-    }
-
     public static void failed(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {
         for (Map.Entry<String, Wrong> et : wrongs.getWrongs().entrySet()) {
             String n = et.getKey(   );
             Wrong  e = et.getValue( );
             wrongz.put(name+"."+n, e);
         }
+    }
+
+    public static void failed(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
+            wrongz.put(name  , wrong);
     }
 
 }

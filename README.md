@@ -60,9 +60,8 @@
 
 注意[2]: 需要 JDK 而非 JRE(Java) 才能运行, 使用前请确保 JDK 已安装并加入 PATH 环境变量, 或设置 JAVA_HOME 环境变量为 jdk 的安装目录(Windows 必须设置). 在官网下载并使用安装程序安装的通常已自动设置好了.
 
-> JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
-
-> MVN 下载地址: http://maven.apache.org/download.cgi
+    JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
+    MVN 下载地址: http://maven.apache.org/download.cgi
 
 ## 前端开发
 

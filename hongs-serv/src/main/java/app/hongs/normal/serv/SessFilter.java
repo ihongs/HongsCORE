@@ -3,7 +3,7 @@ package app.hongs.normal.serv;
 import app.hongs.Core;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
-import app.hongs.action.ChoiceHelper;
+import app.hongs.action.PasserHelper;
 import app.hongs.util.Synt;
 import java.io.IOException;
 import javax.servlet.Filter;
@@ -30,7 +30,7 @@ public class SessFilter implements Filter {
     protected int    SSEX =   86400; // 会话过期时间(秒)
 
     private String       inside = null; // 过滤器标识
-    private ChoiceHelper ignore = null; // 待忽略用例
+    private PasserHelper ignore = null; // 待忽略用例
 
     @Override
     public void init(FilterConfig fc)
@@ -60,7 +60,7 @@ public class SessFilter implements Filter {
         }
 
         inside = SessFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
-        ignore = new ChoiceHelper(
+        ignore = new PasserHelper(
             fc.getInitParameter("ignore-urls"),
             fc.getInitParameter("attend-urls")
         );

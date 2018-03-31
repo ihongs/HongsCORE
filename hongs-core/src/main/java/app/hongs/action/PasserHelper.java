@@ -9,7 +9,7 @@ import java.util.Set;
  * 排除或选择部分需要处理的路径
  * @author Hongs
  */
-public class ChoiceHelper {
+public class PasserHelper {
 
     protected Set<String>[] ignoreUrls;
     protected Set<String>[] attendUrls;
@@ -19,7 +19,7 @@ public class ChoiceHelper {
      * @param ignoreUrls 待忽略的路径
      * @param attendUrls 需处理的路径
      */
-    public ChoiceHelper(String[] ignoreUrls, String[] attendUrls) {
+    public PasserHelper(String[] ignoreUrls, String[] attendUrls) {
         this.ignoreUrls = check( ignoreUrls );
         this.attendUrls = check( attendUrls );
     }
@@ -30,7 +30,7 @@ public class ChoiceHelper {
      * @param ignoreUrls 待忽略的路径
      * @param attendUrls 需处理的路径
      */
-    public ChoiceHelper(String   ignoreUrls, String   attendUrls) {
+    public PasserHelper(String   ignoreUrls, String   attendUrls) {
         this.ignoreUrls = check( ignoreUrls );
         this.attendUrls = check( attendUrls );
     }

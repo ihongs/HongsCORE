@@ -989,7 +989,8 @@ public class ActionHelper implements Cloneable
         if ( fun != null && fun.length() != 0 ) {
             if (fun.startsWith(   "top.")
             ||  fun.startsWith("parent.")
-            ||  fun.startsWith("opener.") ) {
+            ||  fun.startsWith("opener.") 
+            ||  fun.startsWith("frames.") ) {
                 if ( ! this.response.isCommitted()) {
                     this.response.setCharacterEncoding("UTF-8");
                     this.response.setContentType( "text/html" );

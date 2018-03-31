@@ -1020,8 +1020,8 @@ public class ActionHelper implements Cloneable
 
                 Data.append(out, this.responseData);
         }
-    } catch ( IOException e ) {
-        throw new HongsError(0x32, "Can not send to client", e);
+    } catch (IOException e ) {
+      throw new HongsError (0x32, "Can not send to client.", e);
     }
 
     this.responseData = null;

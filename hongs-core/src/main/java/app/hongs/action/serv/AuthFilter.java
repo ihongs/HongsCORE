@@ -7,7 +7,7 @@ import app.hongs.CoreLocale;
 import app.hongs.HongsException;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
-import app.hongs.action.ChoiceHelper;
+import app.hongs.action.PasserHelper;
 import app.hongs.action.NaviMap;
 import app.hongs.util.Synt;
 import java.io.IOException;
@@ -69,7 +69,7 @@ public class AuthFilter
   /**
    * 不包含的URL
    */
-  private ChoiceHelper ignore = null;
+  private PasserHelper ignore = null;
 
   /**
    * 环境检测正则
@@ -140,7 +140,7 @@ public class AuthFilter
     /**
      * 获取不包含的URL
      */
-    this.ignore = new ChoiceHelper(
+    this.ignore = new PasserHelper(
         config.getInitParameter("ignore-urls"),
         config.getInitParameter("attend-urls")
     );

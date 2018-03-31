@@ -1004,7 +1004,7 @@ public class ActionHelper implements Cloneable
             } else {
                 if ( ! this.response.isCommitted()) {
                     this.response.setCharacterEncoding("UTF-8");
-                    this.response.setContentType("text/javascript");
+                    this.response.setContentType( "text/javascript");
                 }
 
                 out.append( fun);
@@ -1013,15 +1013,15 @@ public class ActionHelper implements Cloneable
                 out.append(");");
             }
         } else {
-            if ( ! this.response.isCommitted()) {
-                this.response.setCharacterEncoding("UTF-8");
-                this.response.setContentType("application/json");
-            }
+                if ( ! this.response.isCommitted()) {
+                    this.response.setCharacterEncoding("UTF-8");
+                    this.response.setContentType("application/json");
+                }
 
-            Data.append(out, this.responseData);
+                Data.append(out, this.responseData);
         }
     } catch ( IOException e ) {
-        throw new HongsError(0x32, "Can not send to client.", e);
+        throw new HongsError(0x32, "Can not send to client", e);
     }
 
     this.responseData = null;

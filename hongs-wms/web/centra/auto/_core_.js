@@ -1,5 +1,70 @@
 /* global jQuery, echarts, HsForm, HsList */
 
+/**
+ * 获取当前模块对象
+ */
+function S$() {
+    var context = $(".HsList,.HsForm").filter(":visible:first");
+    return context.data("HsList")
+        || context.data("HsForm");
+}
+S$.src  = function() {
+    return (S$()._url || location.pathname)
+        .replace(/\?.*/, '')
+        .replace(/\/[^\/]+$/, '');
+};
+S$.send = function(url, req) {
+    var rzt;
+    $.hsAjax({
+        url     : hsFixUri   (url),
+        data    : hsSerialArr(req),
+        success : function   (rst) {
+            rzt = hsResponse (rst);
+        },
+        type    : "post",
+        dataType: "json",
+        async   : false ,
+        cache   : false ,
+        global  : false
+    });
+    return  rzt ;
+};
+S$.search = function(req) {
+    var url = S$.src() + "/search.act";
+    return S$.send(url, req);
+};
+S$.create = function(req) {
+    var url = S$.src() + "/create.act";
+    return S$.send(url, req);
+};
+S$.update = function(req) {
+    var url = S$.src() + "/update.act";
+    return S$.send(url, req);
+};
+S$.delete = function(req) {
+    var url = S$.src() + "/delete.act";
+    return S$.send(url, req);
+};
+
+/**
+ * 列表填充过滤选项
+ */
+function hsListFillFilt(x, v, n, t) {
+    n = n.replace(/^ar\.\d\./ , "");
+    if (t == "enum") {
+        v = this._enum[n];
+    } else {
+        v = this._info[n];
+    }
+    return HsForm.prototype._fill__select.call(this, x, v,n, t);
+}
+
+/**
+ * 列表统计筛选组件
+ * @param {jQuery|Element} context
+ * @param {Object} opts
+ * @return {HsStat}
+ */
 function HsStat (context , opts) {
     context = jQuery( context  );
     context.data("HsStat", this);
@@ -57,7 +122,6 @@ function HsStat (context , opts) {
         formbox.find(":submit:first").click();
     });
 }
-
 HsStat.prototype = {
     load: function () {
         this.statis();
@@ -392,63 +456,4 @@ jQuery.ajaxSetup ( { cache : true } );
 
 jQuery.fn.hsStat = function( opts ) {
   return this._hsModule(HsStat, opts);
-};
-
-/**
- * 列表填充过滤选项
- */
-function hsListFillFilt(x, v, n, t) {
-    n = n.replace(/^ar\.\d\./ , "");
-    if (t == "enum") {
-        v = this._enum[n];
-    } else {
-        v = this._info[n];
-    }
-    return HsForm.prototype._fill__select.call(this, x, v,n, t);
-}
-
-/**
- * 获取当前模块对象
- */
-function S$() {
-    var context = $(".HsList,.HsForm").filter(":visible:first");
-    return context.data("HsList")
-        || context.data("HsForm");
-}
-S$.src  = function() {
-    return (S$()._url || location.pathname)
-        .replace(/\?.*/, '')
-        .replace(/\/[^\/]+$/, '');
-};
-S$.send = function(url, req) {
-    var rzt;
-    $.hsAjax({
-        url     : hsFixUri   (url),
-        data    : hsSerialArr(req),
-        success : function   (rst) {
-            rzt = hsResponse (rst);
-        },
-        type    : "post",
-        dataType: "json",
-        async   : false ,
-        cache   : false ,
-        global  : false
-    });
-    return  rzt ;
-};
-S$.search = function(req) {
-    var url = S$.src() + "/search.act";
-    return S$.send(url, req);
-};
-S$.create = function(req) {
-    var url = S$.src() + "/create.act";
-    return S$.send(url, req);
-};
-S$.update = function(req) {
-    var url = S$.src() + "/update.act";
-    return S$.send(url, req);
-};
-S$.delete = function(req) {
-    var url = S$.src() + "/delete.act";
-    return S$.send(url, req);
 };

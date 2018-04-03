@@ -21,95 +21,103 @@
         suffix      : []
     };
 
-    $(document).on("click", "[data-toggle=datetimepicker]", function() {
-        if ($(this).data("datetimepicker")) {
-            return;
-        }
-
-        var that = $(this);
-        var attr;
-        var opts;
-
-        var mrep = function(v) {
-            if (!/^(\{.*\})$/.test( v ) ) {
-                    v  = '{'+v+'}' ;
+    $.fn.hsDateInput = function() {
+        $(this).each ( function() {
+            if ($(this).data("datetimepicker")) {
+                return;
             }
-            return  eval('('+v+')');
-        };
 
-        // 基础配置
-        attr = that.attr( "data-config" );
-        if (attr) {
-            opts = mrep.call(this , attr);
-        } else {
-            opts = {};
-        }
-        if (opts.autoclose === undefined) {
-            opts.autoclose  =  true;
-        }
-        if (opts.todayBtn  === undefined) {
-            opts.todayBtn   =  true;
-        }
-        if (opts.todayHighlight === undefined) {
-            opts.todayHighlight  =  true;
-        }
+            var that = $(this);
+            var attr;
+            var opts;
 
-        // 获取格式
-        attr = that.attr("data-format" );
-        if (attr) {
-            opts.format = _hs2bsDF(attr);
-        } else
-        if (that.is(".input-date")) {
-            opts.format = _hs2bsDF(hsGetLang("date.format"));
-        } else
-        if (that.is(".input-time")) {
-            opts.format = _hs2bsDF(hsGetLang("time.format"));
-        } else
-        {
-            opts.format = _hs2bsDF(hsGetLang("datetime.format"));
-        }
+            var mrep = function(v) {
+                if (!/^(\{.*\})$/.test( v ) ) {
+                        v  = '{'+v+'}' ;
+                }
+                return  eval('('+v+')');
+            };
 
-        // 获取位置
-        attr = that.attr("data-position");
-        if (attr) {
-            opts.pickerPosition  =  attr ;
-        }
-
-        // 根据格式选择视图
-        if (/p/i.test(opts.format)) {
-            opts.showMeridian = true;
-        }
-        if (/i/ .test(opts.format)) {
-            opts.startView = 0;
-            opts.minView = 0;
-            if (!/[md]/.test(opts.format)) {
-            if (!/[Hh]/.test(opts.format)) {
-                opts.maxView = 0;
+            // 基础配置
+            attr = that.attr( "data-config" );
+            if (attr) {
+                opts = mrep.call(this , attr);
             } else {
-                opts.maxView = 1;
-            } }
-        } else
-        if (/h/i.test(opts.format)) {
-            opts.startView = 1;
-            opts.minView = 1;
-            if (!/[md]/.test(opts.format)) {
-                opts.maxView = 1;
+                opts = {};
             }
-        } else
-        if (/d/ .test(opts.format)) {
-            opts.startView = 2;
-            opts.minView = 2;
-        } else
-        if (/m/ .test(opts.format)) {
-            opts.startView = 3;
-            opts.minView = 3;
-        } else
-        if (/y/ .test(opts.format)) {
-            opts.startView = 4;
-            opts.minView = 4;
-        }
+            if (opts.autoclose === undefined) {
+                opts.autoclose  =  true;
+            }
+            if (opts.todayBtn  === undefined) {
+                opts.todayBtn   =  true;
+            }
+            if (opts.todayHighlight === undefined) {
+                opts.todayHighlight  =  true;
+            }
 
-        that.datetimepicker( opts );
-        that.datetimepicker("show");
+            // 获取格式
+            attr = that.attr("data-format" );
+            if (attr) {
+                opts.format = _hs2bsDF(attr);
+            } else
+            if (that.is(".input-date")) {
+                opts.format = _hs2bsDF(hsGetLang("date.format"));
+            } else
+            if (that.is(".input-time")) {
+                opts.format = _hs2bsDF(hsGetLang("time.format"));
+            } else
+            {
+                opts.format = _hs2bsDF(hsGetLang("datetime.format"));
+            }
+
+            // 获取位置
+            attr = that.attr("data-position");
+            if (attr) {
+                opts.pickerPosition  =  attr ;
+            }
+
+            // 根据格式选择视图
+            if (/p/i.test(opts.format)) {
+                opts.showMeridian = true;
+            }
+            if (/i/ .test(opts.format)) {
+                opts.startView = 0;
+                opts.minView = 0;
+                if (!/[md]/.test(opts.format)) {
+                if (!/[Hh]/.test(opts.format)) {
+                    opts.maxView = 0;
+                } else {
+                    opts.maxView = 1;
+                } }
+            } else
+            if (/h/i.test(opts.format)) {
+                opts.startView = 1;
+                opts.minView = 1;
+                if (!/[md]/.test(opts.format)) {
+                    opts.maxView = 1;
+                }
+            } else
+            if (/d/ .test(opts.format)) {
+                opts.startView = 2;
+                opts.minView = 2;
+            } else
+            if (/m/ .test(opts.format)) {
+                opts.startView = 3;
+                opts.minView = 3;
+            } else
+            if (/y/ .test(opts.format)) {
+                opts.startView = 4;
+                opts.minView = 4;
+            }
+
+            that.datetimepicker( opts );
+            that.datetimepicker("show");
+        });
+        return  this;
+    };
+
+    $(document).on("cursor", "[data-toggle=dateinput],[data-toggle=datetimepicker]",
+    function( ) {
+        $(this).hsDateInput();
     });
-}(jQuery));
+})(jQuery);

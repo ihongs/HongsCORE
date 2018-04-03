@@ -8,8 +8,8 @@
         return;
     }
 
-    $(document).on("hsReady", function() {
-        $(this).find("[data-toggle=tagsinput]").each(function() {
+    $.fn.hsTagsInput = function() {
+        $(this).each ( function() {
             if ($(this).data("tagsinput")) {
                 return;
             }
@@ -44,5 +44,10 @@
                 ti.add($(this).val(), !0);
             });
         });
+        return  this;
+    };
+
+    $(document).on("hsReady", function() {
+        $(this).find("[data-toggle=tagsinput]").hsTagsInput();
     });
 })(jQuery);

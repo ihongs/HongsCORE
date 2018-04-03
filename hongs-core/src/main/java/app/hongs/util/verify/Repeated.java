@@ -50,7 +50,7 @@ public class Repeated extends Rule {
                 int e , b = 0;
                 while ((e = v.indexOf(s, b)) > -1) {
                     a.add(v.substring(b, e));
-                    b = b + s.length (    ) ;
+                    b = e + s.length (    ) ;
                 }   a.add(v.substring(b   ));
                 return  a;
             }

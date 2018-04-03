@@ -315,7 +315,7 @@ function hsSerialArr(obj) {
     } else
     if (          self.FormData
     &&  obj instanceof FormData) {
-        typ = "parts" ;
+        typ = "fordat" ;
     } else
     if (obj instanceof HsSerialDic) {
         typ = "serdic";
@@ -327,30 +327,32 @@ function hsSerialArr(obj) {
         case "array" :
             arr = obj;
             break;
-        case "parts" :
-            obj = obj.entries( );
-            for(var i = 0 ; i < obj.length ; i ++) {
-                arr.push({name: obj[i][0], value: obj[i][1]});
-            }
-            break;
         case "object":
             for(var key in obj) {
-                var vxl  = obj[key];
-                    arr.push({name: key, value: vxl});
+                var vxl  = obj[ key];
+                arr.push({name: key, value: vxl});
+            }
+            break;
+        case "fordat":
+            obj = obj.entries();
+            for(var i = 0; i < obj.length; i ++ ) {
+                var key  = obj[i][0];
+                var vxl  = obj[i][1];
+                arr.push({name: key, value: vxl});
             }
             break;
         case "serdic":
             hsForEach(obj, function(vxl, key) {
-                if (key.length > 0) {
-                    key = key     [ 0 ];
+                if (key.length) {
+                    key  = key/***/[ 0 ];
                     arr.push({name: key, value: vxl});
                 }
             });
             break;
         case "serdat":
             hsForEach(obj, function(vxl, key) {
-                if (key.length > 0) {
-                    key = key.join('.');
+                if (key.length) {
+                    key  = key.join('.');
                     arr.push({name: key, value: vxl});
                 }
             });

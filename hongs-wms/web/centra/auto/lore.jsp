@@ -187,7 +187,7 @@
 </style>
 <script type="text/javascript">
     (function($) {
-        var context = $("#<%=_pageId%>");
+        var context = $("#<%=_pageId%>").removeAttr("id");
         
         context.find("pre").each(function() {
             var html = $(this).html();

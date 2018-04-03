@@ -23,7 +23,8 @@
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centra.js" ></script>
-        <script type="text/javascript" src="centra/auto/_main_.js" ></script>
+        <script type="text/javascript" src="centra/auto/_core_.js" ></script>
+        <script type="text/javascript" src="centra/auto/_edit_.js"></script>
         <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
         <script type="text/javascript">
             HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/custom.js"]=1;

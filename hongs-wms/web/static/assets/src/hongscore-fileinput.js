@@ -27,10 +27,10 @@
             removeTitle : hsGetLang('file.remove'),
             uploadTitle : hsGetLang('file.upload'),
 
-            indicatorNewTitle     : 'Not uploaded yet',
-            indicatorLoadingTitle : 'Uploading ...',
-            indicatorSuccessTitle : 'Uploaded',
-            indicatorErrorTitle   : 'Upload Error'
+            indicatorNewTitle     : 'Not uploaded',
+            indicatorLoadingTitle : 'Uploading...',
+            indicatorSuccessTitle : 'Uploaded !!!',
+            indicatorErrorTitle   : 'Upload error'
         },
 
         msgLoading              : 'Loading file {index} of {files} &hellip;',
@@ -59,9 +59,9 @@
 
     $.extend($.fn.fileinput.defaults, $.fn.fileinputLocales.en);
 
-    var initialPreview = function(opts, vals, name) {
+    var initialPreview = function(type, vals, name) {
         var f;
-        switch (opts.previewFileType) {
+        switch (type) {
             case "image":
                 f = function(u) {
                     return '<img src="'+u+'" class="file-preview-image">';
@@ -89,16 +89,15 @@
                 break;
         }
 
-        var i = 0 , j = vals.length;
-        for ( ; i < j ; i ++ ) {
+        for (var i = 0, j = vals.length; i < j; i ++) {
             vals[i] = f(vals[i])+'<input type="hidden" name="'+name+'" value="'+vals[i]+'"/>';
         }
         return vals;
     };
 
-    $(document).on("hsReady", function() {
-        $(this).find("[data-toggle=fileinput]").each(function() {
-            if ($(this).data("fileinput")) {
+    $.fn.hsFileInput = function() {
+        $(this).each ( function() {
+            if ($(this).data( "fileinput" )) {
                 return;
             }
 
@@ -157,35 +156,27 @@
             // 初始配置
             attr = that.attr("data-value");
             if (attr) {
-                opts.initialPreview = initialPreview(opts, attr.split(","), that.attr("name"));
+                opts.initialPreview = initialPreview(opts.previewFileType, attr.split(","), that.attr("name"));
             }
 
+            that.removeAttr ("data-value");
             that.removeClass("input-file");
             that.fileinput(opts);
-        });
-    });
 
-    $(document).on("loadOver", ".HsForm", function() {
-        $(this).find("[data-toggle=fileinput]").each(function() {
-            if(!$(this).data("fileinput")) {
-                return;
-            }
-
-            var that = $(this);
-            var opts = {};
-            var attr;
-
-            attr = that.attr("data-type" );
-            if (attr) {
-                opts.previewFileType = attr ;
-            }
-
+            // 重载取值
+            that.on("change" , function( ) {
             attr = that.attr("data-value");
-            if (attr) {
-                opts.initialPreview  = initialPreview(opts, attr.split(","), that.attr("name"));
+            if (attr != undefined) {
+                var  optz = {/**/};
+                optz.initialPreview = initialPreview(opts.previewFileType, attr.split(","), that.attr("name"));
+                that.fileinput("refresh", optz);
             }
-
-            that.fileinput("refresh" , opts);
+            });
         });
+        return  this;
+    };
+
+    $(document).on("hsReady", function() {
+        $(this).find("[data-toggle=fileinput]").hsFileInput();
     });
 })(jQuery);

@@ -207,7 +207,8 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
-    var loadbox = context.closest( ".loadbox" );
+    var loadbox = context.closest(".loadbox");
+    var formbox = context.find("form");
 
     var formobj = context.hsForm({
         _fill__fork: hsFormFillFork,
@@ -223,46 +224,10 @@
         }
 
         // 特殊控件
-        context.on("loadOver", function(evt, rst) {
-            var editor = context.find("textarea[data-type=html]");
-            var marker = context.find("textarea[data-type=mark]");
-            var writer = context.find("textarea[data-type=code]");
-            if (editor.size() || marker.size() || writer.size() ) {
-                writer.wrap('<div style="border:1px #ccc solid;"></div>');
-                hsRequires ([
-                    "centra/editor/_boot_.js"
-                ], function() {
-                    if (editor.size()) {
-                        setEditor(editor);
-                    }
-                    if (marker.size()) {
-                        setMarker(marker);
-                    }
-                    if (writer.size()) {
-                        setWriter(writer);
-                    }
-                });
-            }
-        });
-        context.on("willSave", function(evt, dat) {
-            if (self.synEditor) {
-                synEditor(context.find("textarea[data-type]"));
-                // 将同步后的结果加入到待保存数据
-                if (dat)  context.find("textarea[data-type]")
-                    .each(function( ) {
-                        dat.set($(this).attr("name"),
-                                $(this).val (   )  );
-                    });
-            }
-        });
-        loadbox.on("hsClose" , function(evt, dat) {
-            if (self.desEditor) {
-                desEditor(context.find("textarea[data-type]"));
-            }
-        });
+        setFormItems( formbox , loadbox);
 
         // 加载数据
-        formobj.load(null, loadbox);
+        formobj.load(undefined, loadbox);
     });
 })( jQuery );
 </script>

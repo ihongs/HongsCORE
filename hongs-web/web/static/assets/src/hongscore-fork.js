@@ -11,7 +11,7 @@
  * data-data-0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
  * <ul data-ft="_fork" data-fn="xx_id" data-ak="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
- * <button type="button" data-toggle="hsFork" data-target="@" data-href="/xx/fork.html">选择</button>
+ * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/pick.html">Picks</button>
  *
  * 注: 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
  **/
@@ -297,13 +297,13 @@ function hsFormFillPick(box, v, n, t) {
             });
         }
 
-        if (!jQuery.isEmptyObject(v)) {
+        if ( jQuery.isEmptyObject(v)) {
+            reset(btn, box  );
+        } else
         for(var val in v) {
             var arr  = v[val];
             var txt  = arr[0];
             inset(btn, box, val, txt);
-        }} else {
-            reset(btn, box  );
         }
     } else if ( ! box.is(".pickrol")) {
         if (! box.data("pickInited")) {
@@ -327,10 +327,10 @@ function hsFormFillPick(box, v, n, t) {
 
         box.empty().toggleClass("pickmul", mul);
 
-        if (!jQuery.isEmptyObject(v)) {
-            btn.hide();
-        } else if (! mul) {
+        if ( jQuery.isEmptyObject(v)) {
             btn.show();
+        } else if (! mul) {
+            btn.hide();
         }
         for(var val in v) {
             var arr  = v[val];

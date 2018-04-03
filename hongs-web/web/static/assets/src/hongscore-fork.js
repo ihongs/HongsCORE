@@ -11,7 +11,7 @@
  * data-data-0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
  * <ul data-ft="_fork" data-fn="xx_id" data-ak="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
- * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/pick.html">Picks</button>
+ * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/pick.html"> ... </button>
  *
  * 注: 2015/11/30 原 hsPick 更名为 hsFork (Hong's Foreign Key kit)
  **/
@@ -107,29 +107,34 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return false;
         }
 
-        fil.call(frm, box, v, n, "fork");
-        box.trigger("change");
+        // 填充数据
+        fil.call   ( frm, box, v, n );
+        box.trigger(    "change"    );
         return true;
     }
 
     function pickOpen() {
-        var bin = jQuery(this);
-        bin.data("pickData", v)
-           .addClass("pickbox")
-        .toggleClass("pickmul", mul)
+        var evt = jQuery.Event("pickOpen");
+        evt.target = bin;
+        box.trigger( evt, [v, n, t] );
+
+        bin.addClass("pickbox")
+        .toggleClass("pickmul", mul )
         .on("change"  , ".checkone", select)
         .on("click"   , ".ensure"  , ensure)
         .on("saveBack", ".create"  , create);
-        // 初始选中
-        bin.find(".checkone").val(Object.keys(v));
+
+        bin.data("pickData", v)
+        bin.data("rel", btn.closest(".openbox")[0]);
+        bin.find( ".checkone" ).val(Object.keys(v));
     };
 
     function select() {
         var chk = jQuery(this);
-        if (chk.closest(".HsList").data("HsList")._info) {
+        if (chk.closest(".HsList" ).data("HsList")._info) {
             return;
         }
-        if (chk.closest(".openbox").is ( bin ) == false) {
+        if (chk.closest(".openbox"). is ( bin ) !== true) {
             return;
         }
 
@@ -142,12 +147,9 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
                 break;
             }
 
-            // 获取代表名称
+            // 获取选项名称和附加信息
             txt = chk.attr( "title" );
-
-            // 获取附加信息
             inf = chk.hsData( );
-
             if (txt) break;
 
             // 选项中没有指定则尝试从当前行的其他位置获取
@@ -194,10 +196,10 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return;
         }
 
-        if (! rst || ! rst.info) {
-            return false;
-        }
-        if (! pickItem(rst.info[vk], rst.info[tk], rst.info)) {
+        rst = ! rst ? {}
+            : ( rst.info ? rst.info
+            : ( rst.list ? rst.list[0] : {} ));
+        if (! pickItem(rst[vk], rst[tk], rst)) {
             return false;
         }
         if (! pickBack()) {
@@ -213,8 +215,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     } else {
         bin = jQuery.hsOpen(url);
     }
-    pickOpen.call ( bin );
-    bin.data("rel", btn.closest(".openbox")[0]);
+    pickOpen();
 
     return bin;
 };
@@ -267,17 +268,17 @@ function hsFormFillPick(box, v, n, t) {
         box.val (val);
         btn.text(txt);
         btn.addClass("btn-info" );
-        btn.append('<a href="javascript:;" class="close">&times;</a>');
+        btn.append(jQuery( '<span class="close pull-right">&times;</span>'));
     }
     function putin(btn, box, val, txt) {
-        box.append(jQuery('<li class="btn btn-info form-control"></li>').attr( "title", txt )
+        box.append(jQuery('<li class="btn btn-info form-control"></li>').attr("title" , txt )
            .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
            .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
            .append(jQuery( '<span class="close pull-right">&times;</span>'))
         );
     }
     function puton(btn, box, val, txt) {
-        box.append(jQuery('<li class="btn btn-link form-control"></li>').attr( "title", txt )
+        box.append(jQuery('<li class="btn btn-link form-control"></li>').attr("title" , txt )
            .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
            .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
         );

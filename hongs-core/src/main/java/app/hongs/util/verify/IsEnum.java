@@ -30,10 +30,11 @@ public class IsEnum extends Rule {
             name = Synt.declare(params.get("__name__"), "");
         }
 
-        Map data = FormSet.getInstance(conf).getEnum(name);
+        Map data = FormSet.getInstance(conf).getEnum (name);
         if (! data.containsKey( value.toString() ) ) {
             throw new Wrong("fore.form.not.in.enum");
         }
+
         return  value;
     }
 }

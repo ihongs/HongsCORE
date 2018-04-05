@@ -458,8 +458,9 @@ function hsAsFormData (data) {
         return hsGetSerias(name);
     };
     data["has"   ] = function(name) {
-        return hsGetSerias(name).length > 0;
+        return hsGetSerias(name).length ;
     };
+    data.entriez = data.entries ;
     data.entries = function() {
         var j, i = 0, x = {
             next : function() {
@@ -481,6 +482,25 @@ function hsAsFormData (data) {
         return x;
     };
     return  data;
+}
+
+/**
+ * 转为 FormData
+ * @param {Array|String|Object|Element} data
+ * @return {Array|FormData}
+ */
+function hsToFormData (data) {
+    var ents;
+    if (self.FormData) {
+        ents = new FormData(    );
+        data = hsSerialArr (data);
+        for(var i = 0 ; i < data.length ; i  ++   ) {
+            ents.append(data[i].name,data[i].value);
+        }
+    } else {
+        ents = hsAsFormData(data);
+    }
+    return  ents;
 }
 
 /**

@@ -269,25 +269,6 @@ function hsResponse(rst, qut) {
 }
 
 /**
- * hsResponse  旧版兼容
- * @deprecated 即将移除
- */
-function hsResponObj(rst, qut, qxt) {
-    var mod = 0;
-    if (qut) mod += 1;
-    if (qxt) mod += 2;
-    return hsResponse(rst, mod);
-}
-
-/**
- * hsSerialDat 旧版兼容
- * @deprecated 即将移除
- */
-function hsSerialObj(obj) {
-    return hsSerialDat(obj);
-}
-
-/**
  * 序列字典伪类, 可用于识别 hsSerialDic 处理的数据
  */
 function HsSerialDic(obj) {

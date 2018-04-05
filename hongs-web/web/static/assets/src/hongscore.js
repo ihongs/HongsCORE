@@ -416,7 +416,7 @@ function HsSerialDat(obj) {
 
 /**
  * 兼容 FormData
- * 将表单转为类似 FormData 的数组结构
+ * 将表单转为类似 FormData 的数据结构
  * 使其可执行类似 FormData 的常规操作
  * @param {Array|String|Object|Element} data
  * @return {Array}
@@ -467,6 +467,8 @@ function hsAsFormData (data) {
 
 /**
  * 转为 FormData
+ * 尝试将数据转为 FormData 的数据结构
+ * 不行则转为兼容 FormData 的数组形式
  * @param {Array|String|Object|Element} data
  * @return {Array|FormData}
  */

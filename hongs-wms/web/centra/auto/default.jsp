@@ -32,7 +32,7 @@
     </head>
     <body>
         <div id="notebox"></div>
-        <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <nav id="headbox" class="navbar navbar-default navbar-fixed-top   " role="navigation">
             <div class="container">
                 <div class="row" data-load="centra/head.jsp"></div>
             </div>
@@ -42,7 +42,7 @@
                 <%=_locale.translate("fore.loading")%>
             </div>
         </div>
-        <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
+        <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom" role="navigation">
             <div class="container">
                 <div class="row" data-load="centra/foot.jsp"></div>
             </div>

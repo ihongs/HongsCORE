@@ -51,12 +51,33 @@ S$.delete = function(req) {
  */
 function hsListFillFilt(x, v, n, t) {
     n = n.replace(/^ar\.\d\./ , "");
-    if (t == "enum") {
-        v = this._enum[n];
+    if (t != "enum") {
+        v  = this._info[n];
     } else {
-        v = this._info[n];
+        v  = this._enum[n];
+
+        /**
+         * 列表的初始条件是空的
+         * 如果选项没有设置空值
+         * 需要补充一个空的选项
+         */
+        var vk = x.attr("data-vk") || 0;
+        var tk = x.attr("data-tk") || 1;
+        var ek = true;
+        for(var i = 0; i < v.length; i ++) {
+            var k = hsGetValue(v[i], vk  );
+            if (k == '') {
+                ek = false ; break ;
+            }
+        }
+        if (ek) {
+            var a = $.isArray(v) ? [] : {};
+            a[vk] =  "" ;
+            a[tk] =  "" ;
+            v.unshift(a);
+        }
     }
-    return HsForm.prototype._fill__select.call(this, x, v,n, t);
+    return HsForm.prototype._fill__select.call(this, x, v, n, t);
 }
 
 /**

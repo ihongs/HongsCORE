@@ -335,7 +335,6 @@
             statobj.load();
         }
     });
-    statbox.data("changed", true);
 
     filtobj._fill__enum = function(x, v, n, t) {
         hsListFillFilt.call(this , x, v, n, t);

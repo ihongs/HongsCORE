@@ -81,16 +81,9 @@ function HsStat (context , opts) {
     var  findbox = this.findbox;
     var  toolbox = context.find(".toolbox");
 
-    hsRequires("static/addons/echarts/echarts.js", function() {
-        statbox.find("[data-type=counts],[data-type=statis]")
-               .each(function() {
-            var box = $(this).find(".chartbox")[0];
-            var obj = echarts.init(box);
-            $(this).data("echart", obj);
-        });
-    });
-
     //** 条件改变时重载图表 **/
+
+    statbox.data("changed", statbox.is(".invisible"));
 
     toolbox.on("saveBack", function() {
         if (statbox.is(".invisible")) {
@@ -124,11 +117,25 @@ function HsStat (context , opts) {
     });
 }
 HsStat.prototype = {
-    load: function () {
-        this.statis();
-        this.counts();
+    load: function() {
+        var that    = this;
+        var statbox = this.statbox;
+        hsRequires("static/addons/echarts/echarts.js", function() {
+            statbox.find("[data-type=counts],[data-type=statis]")
+                   .each(function() {
+                var sta =  $(  this  );
+                if(!sta.data("echart")) {
+                    var box = sta.find(".chartbox");
+                    var obj = echarts.init(box[0] );
+                    sta.data("echart", obj);
+                }
+            });
+
+            that.statis();
+            that.counts();
+        });
     },
-    
+
     statis: function(rb) {
         var that = this;
         var url  = this.surl;

@@ -156,7 +156,8 @@
 <script type="text/javascript">
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
-    var loadbox = context.closest( ".loadbox" );
+    var loadbox = context.closest(".loadbox");
+    var formbox = context.find("form");
 
     var formobj = context.hsForm({
         _fill__fork: hsFormFillFork,
@@ -172,26 +173,10 @@
         }
 
         // 特殊控件
-        context.on("loadOver", function() {
-            var reader = context.find("[data-type=code]");
-            if (reader.size()) {
-                hsRequires([
-                    "centra/editor/_boot_.js"
-                ], function() {
-                    reader.attr( "readonly", "readonly" )
-                          .css ( "height"  , "0"        );
-                    setWriter(reader);
-                });
-            }
-        });
-        loadbox.on("hsClose" , function() {
-            if (self.desEditor) {
-                desEditor(context.find("[data-type=code]"));
-            }
-        });
+        setInfoItems( formbox , loadbox);
 
         // 加载数据
-        formobj.load(null, loadbox);
+        formobj.load(undefined, loadbox);
     });
 })( jQuery );
 </script>

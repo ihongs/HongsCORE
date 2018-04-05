@@ -459,7 +459,14 @@ function hsAsFormData (data) {
     data["has"   ] = function(name) {
         return hsGetSerias(name).length > 0;
     };
-    return data;
+    data["entries"]= function( ) {
+        /**/ var a = [];
+        for( var i = 0 ; i < data.length ; i ++ ) {
+            a.push([data[i].name, data[i].value]);
+        }
+        return a;
+    };
+    return  data;
 }
 
 /**

@@ -364,8 +364,8 @@
     });
     findbox.find(".export").click(function() {
         var url = "<%=_module%>/<%=_entity%>/stream.act?";
-        var req = formbox.serialize( );
-        window.open(url+req, "_blank");
+        var req = formbox.serialize();
+        window.open(url+req,"_blank");
     });
     findbox.find(".search").click(function() {
         filtbox.addClass("invisible");

@@ -460,26 +460,7 @@ function hsAsFormData (data) {
     data["has"   ] = function(name) {
         return hsGetSerias(name).length > 0;
     };
-    data["entries"]= function( ) {
-        var x, i = 0;
-        return {
-            next : function( ) {
-                if (i < data.length) {
-                    x = data[ i ++ ];
-                    return {
-                        value: [x.name, x.value],
-                        done : false
-                    };
-                } else {
-                    return {
-                        value: null,
-                        done : true
-                    };
-                }
-            }
-        };
-    };
-    return  data;
+    return data;
 }
 
 /**

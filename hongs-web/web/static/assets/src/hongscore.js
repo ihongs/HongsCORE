@@ -1,5 +1,5 @@
 
-/* global self, eval, Element, FormData, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
+/* global self, eval, Symbol, Element, FormData, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
 
 if (!self.HsAUTH) self.HsAUTH = {};
 if (!self.HsCONF) self.HsCONF = {};
@@ -460,7 +460,27 @@ function hsAsFormData (data) {
     data["has"   ] = function(name) {
         return hsGetSerias(name).length > 0;
     };
-    return data;
+    data.entries = function() {
+        var j, i = 0, x = {
+            next : function() {
+                if (i < data.length) {
+                    j = data[ i ++ ];
+                    return {
+                        value: [j.name, j.value],
+                        done : false
+                    };
+                } else {
+                    return {
+                        value: undefined,
+                        done : true
+                    };
+                }
+            }
+        };
+        if (self.Symbol) x[Symbol.iterator] = function() { return x; };
+        return x;
+    };
+    return  data;
 }
 
 /**

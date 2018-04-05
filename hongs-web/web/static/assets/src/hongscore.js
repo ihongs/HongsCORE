@@ -283,6 +283,36 @@ function HsSerialDat(obj) {
 }
 
 /**
+ * 序列化为字典, 供快速地查找(直接使用Object-Key获取数据)
+ * @param {Array|String|Object|Element|FormData} obj
+ * @return {Object}
+ */
+function hsSerialDic(obj) {
+    var arr = hsSerialArr(obj);
+    obj = new HsSerialDic(   );
+    for(var i = 0; i < arr.length; i ++) {
+        var keys = _hsGetDkeys(arr[i].name );
+        _hsSetPoint(obj, keys, arr[i].value);
+    }
+    return  obj;
+}
+
+/**
+ * 序列化为对象, 供进一步操作(可以使用hsGetValue获取数据)
+ * @param {Array|String|Object|Element|FormData} obj
+ * @return {Object}
+ */
+function hsSerialDat(obj) {
+    var arr = hsSerialArr(obj);
+    obj = new HsSerialDat(   );
+    for(var i = 0; i < arr.length; i ++) {
+        var keys = _hsGetPkeys(arr[i].name );
+        _hsSetPoint(obj, keys, arr[i].value);
+    }
+    return obj;
+}
+
+/**
  * 序列化为数组, 供发往服务器(类似 jQuery.fn.serializeArray)
  * @param {Array|String|Object|Element|FormData} obj
  * @return {Array}
@@ -382,36 +412,6 @@ function hsSerialArr(obj) {
             throw new Error("hsSerialArr: Unsupported type "+typ);
     }
     return  arr;
-}
-
-/**
- * 序列化为字典, 供快速地查找(直接使用Object-Key获取数据)
- * @param {Array|String|Object|Element|FormData} obj
- * @return {Object}
- */
-function hsSerialDic(obj) {
-    var arr = hsSerialArr(obj);
-    obj = new HsSerialDic(   );
-    for(var i = 0; i < arr.length; i ++) {
-        var keys = _hsGetDkeys(arr[i].name );
-        _hsSetPoint(obj, keys, arr[i].value);
-    }
-    return  obj;
-}
-
-/**
- * 序列化为对象, 供进一步操作(可以使用hsGetValue获取数据)
- * @param {Array|String|Object|Element|FormData} obj
- * @return {Object}
- */
-function hsSerialDat(obj) {
-    var arr = hsSerialArr(obj);
-    obj = new HsSerialDat(   );
-    for(var i = 0; i < arr.length; i ++) {
-        var keys = _hsGetPkeys(arr[i].name );
-        _hsSetPoint(obj, keys, arr[i].value);
-    }
-    return obj;
 }
 
 /**

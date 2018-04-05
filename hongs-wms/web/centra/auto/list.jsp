@@ -49,7 +49,7 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+    <form class="findbox fitrbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
         <div class="form-group"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -279,7 +279,7 @@
     var context = $("#<%=_pageId%>").removeAttr("id");
     var loadbox = context.closest(".loadbox");
     var statbox = context.find(".statbox");
-    var filtbox = context.find(".filtbox");
+    var fitrbox = context.find(".fitrbox");
     var formbox = context.find(".findbox");
     var findbox = formbox.eq(0);
 
@@ -307,7 +307,7 @@
     });
 
     <%if (!"select".equals(_action)) {%>
-    var filtobj = filtbox.hsForm({
+    var filtobj = fitrbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum"
     });
 
@@ -316,16 +316,16 @@
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
-    if (filtbox.find(".form-group").size() == 2) {
+    if (fitrbox.find(".form-group").size() == 2) {
         findbox.find(".filter").remove();
     }
     if (statbox.find( ".col-md-6" ).size() == 0) {
         findbox.find(".statis").remove();
     }
 
-    filtbox.on("opened", function() {
-        if (filtbox.data("fetched") != true) {
-            filtbox.data("fetched"  ,  true);
+    fitrbox.on("opened", function() {
+        if (fitrbox.data("fetched") != true) {
+            fitrbox.data("fetched"  ,  true);
             filtobj.load();
         }
     });
@@ -350,9 +350,9 @@
 
     // 管理动作
     findbox.find(".filter").click(function() {
-        filtbox.toggleClass("invisible");
-        if (!filtbox.is("invisible")) {
-            filtbox.trigger("opened");
+        fitrbox.toggleClass("invisible");
+        if (!fitrbox.is("invisible")) {
+            fitrbox.trigger("opened");
         }
     });
     findbox.find(".statis").click(function() {
@@ -367,17 +367,17 @@
         window.open(url+req,"_blank");
     });
     findbox.find(".search").click(function() {
-        filtbox.addClass("invisible");
+        fitrbox.addClass("invisible");
     });
-    filtbox.find(":submit").click(function() {
-        filtbox.addClass("invisible");
+    fitrbox.find(":submit").click(function() {
+        fitrbox.addClass("invisible");
     });
-    filtbox.find(":reset" ).click(function() {
-        filtbox.find("[data-ft=_fork]").each(function() {
+    fitrbox.find(":reset" ).click(function() {
+        fitrbox.find("[data-ft=_fork]").each(function() {
             hsFormFillFork($(this), {});
         });
         setTimeout(function() {
-            filtbox.find( ":submit").click();
+            fitrbox.find( ":submit").click();
         }, 500);
     });
 

@@ -329,16 +329,17 @@ function hsSerialArr(obj) {
             break;
         case "object":
             for(var key in obj) {
-                var vxl  = obj[ key];
+                var vxl  = obj[ key ];
                 arr.push({name: key, value: vxl});
             }
             break;
         case "fordat":
             obj = obj.entries();
-            for(var i = 0; i < obj.length; i ++ ) {
-                var key  = obj[i][0];
-                var vxl  = obj[i][1];
-                arr.push({name: key, value: vxl});
+            while  (  true  ) {
+                var vxl  = obj.next();
+                if (vxl.done)  break ;
+                    vxl  = vxl.value ;
+                arr.push({name:vxl[0], value:vxl[1]});
             }
             break;
         case "serdic":
@@ -460,11 +461,23 @@ function hsAsFormData (data) {
         return hsGetSerias(name).length > 0;
     };
     data["entries"]= function( ) {
-        /**/ var a = [];
-        for( var i = 0 ; i < data.length ; i ++ ) {
-            a.push([data[i].name, data[i].value]);
-        }
-        return a;
+        var x, i = 0;
+        return {
+            next : function( ) {
+                if (i < data.length) {
+                    x = data[ i ++ ];
+                    return {
+                        value: [x.name, x.value],
+                        done : false
+                    };
+                } else {
+                    return {
+                        value: null,
+                        done : true
+                    };
+                }
+            }
+        };
     };
     return  data;
 }

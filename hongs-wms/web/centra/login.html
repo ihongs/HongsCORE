@@ -68,9 +68,9 @@
                 $("#sign-in-form").on("saveBack", function() {
                     var r = hsGetParam( location.href, "r" );
                     if (r) {
-                        location.href = hsFixUri(r);
+                        location.replace(hsFixUri(r));
                     } else {
-                        location.href = "/centra/" ;
+                        location.replace("/centra/" );
                     }
                 });
             })(jQuery);

@@ -74,22 +74,23 @@ function HsStat (context , opts) {
     this.curl = opts.curl;
     this.context = context;
     this.statbox = context.find(".statbox");
-    this.formbox = context.find(".findbox");
+    this.findbox = context.find(".findbox");
 
-    this.statbox
-        .find("[data-type=counts],[data-type=statis]")
-        .each(function( ) {
-        var box = $(this).find(".chartbox")[0];
-        var obj = echarts.init(box);
-        $(this).data("echart", obj);
+    var  statobj = this;
+    var  statbox = this.statbox;
+    var  findbox = this.findbox;
+    var  toolbox = context.find(".toolbox");
+
+    hsRequires("static/addons/echarts/echarts.js", function() {
+        statbox.find("[data-type=counts],[data-type=statis]")
+               .each(function() {
+            var box = $(this).find(".chartbox")[0];
+            var obj = echarts.init(box);
+            $(this).data("echart", obj);
+        });
     });
 
     //** 条件改变时重载图表 **/
-
-    var statobj = this;
-    var statbox = this.statbox;
-    var formbox = this.formbox;
-    var toolbox = context.find(".toolbox");
 
     toolbox.on("saveBack", function() {
         if (statbox.is(".invisible")) {
@@ -102,7 +103,7 @@ function HsStat (context , opts) {
         }
     });
 
-    formbox.on( "submit" , function() {
+    findbox.on( "submit" , function() {
         if (statbox.is(".invisible")) {
             statbox.data("changed", true );
         } else {
@@ -119,7 +120,7 @@ function HsStat (context , opts) {
         } else {
             $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
         }
-        formbox.find(":submit:first").click();
+        findbox.find(":submit:first").click();
     });
 }
 HsStat.prototype = {
@@ -133,7 +134,7 @@ HsStat.prototype = {
         var url  = this.surl;
         var context = this.context;
         var statbox = this.statbox;
-        var formbox = this.formbox;
+        var findbox = this.findbox;
 
         if ( ! rb ) {
             rb = [];
@@ -148,7 +149,7 @@ HsStat.prototype = {
 
         $.ajax({
             url : url + rb.join( "" ),
-            data: formbox.serialize(),
+            data: findbox.serialize(),
             dataType: "json",
             success: function(rst) {
                 for (var k in rst.info) {
@@ -173,7 +174,7 @@ HsStat.prototype = {
         var url  = this.curl;
         var context = this.context;
         var statbox = this.statbox;
-        var formbox = this.formbox;
+        var findbox = this.findbox;
 
         if ( ! rb ) {
             rb = [];
@@ -188,7 +189,7 @@ HsStat.prototype = {
 
         $.ajax({
             url : url + rb.join( "" ),
-            data: formbox.serialize(),
+            data: findbox.serialize(),
             dataType: "json",
             success: function(rst) {
                 for (var k in rst.info) {

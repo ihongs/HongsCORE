@@ -32,7 +32,30 @@ function setFormItems(formbox, loadbox) {
                         $(this).val (   )  );
             });
     });
-    loadbox.on("hsClose" , function(evt, dat) {
+    loadbox.on("hsClose" , function(evt, und) {
+        desEditor(formbox.find("textarea[data-type]"));
+    });
+}
+
+function setInfoItems(formbox, loadbox) {
+    formbox.on("loadOver", function(evt, rst) {
+        var inp;
+
+        // 编辑器
+        inp = formbox.find("textarea[data-type=mark]");
+        if (inp.size()) {
+            inp.attr("readonly", "readonly")
+               .css ("height", "0");
+            setMarker(inp);
+        }
+        inp = formbox.find("textarea[data-type=code]");
+        if (inp.size()) {
+            inp.attr("readonly", "readonly")
+               .css ("height", "0");
+            setMirror(inp);
+        }
+    });
+    loadbox.on("hsClose" , function(evt, und) {
         desEditor(formbox.find("textarea[data-type]"));
     });
 }
@@ -146,8 +169,8 @@ function forMirror(func) {
             "static/addons/codemirror/mode/properties/properties.js",
             "static/addons/codemirror/mode/javascript/javascript.js",
             "static/addons/codemirror/mode/livescript/livescript.js",
-            "static/addons/codemirror/mode/htmlmixed/htmlmixed.js",
             "static/addons/codemirror/mode/multiplex/multiplex.js",
+            "static/addons/codemirror/mode/htmlmixed/htmlmixed.js",
             "static/addons/codemirror/mode/htmlembedded/htmlembedded.js"
         ] , func);
     });

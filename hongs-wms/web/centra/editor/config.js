@@ -4,7 +4,6 @@
     window.UEDITOR_CONFIG = {
         UEDITOR_HOME_URL: URL
         , serverUrl     : HsCONF.BASE_HREF + "/centra/editor/upload.jsp"
-        , iframeCssUrl  : HsCONF.BASE_HREF + "/static/assets/css/bootstrap.min.css"
         , imageUrlPrefix: HsCONF.BASE_HREF
         , videoUrlPrefix: HsCONF.BASE_HREF
         , fileUrlPrefix : HsCONF.BASE_HREF
@@ -15,9 +14,10 @@
         , langPath      : URL + "lang/"
         , theme         : 'default'
         , themePath     : URL + "themes/"
+        , iframeCssUrl  : URL + "themes/iframe.css"
         , topOffset     : 50
         , maximumWords  : 65535
-        , saveInterval  : 0
+        , saveInterval  :  0
         , enableAutoSave: false
         , initialFrameWidth: '100%'
         , initialStyle  : "body{margin:10px 18px;font-size:15px;font-family:'Microsoft Yahei','Helvetica Neue','Open Sans',Helvetica,Tahoma,Arial,sans-serif;}"

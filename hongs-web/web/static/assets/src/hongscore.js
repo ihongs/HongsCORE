@@ -443,7 +443,7 @@ function hsAsFormData (data) {
     };
     data.entriez = data.entries ;
     data.entries = function() {
-        var j, i = 0, x = {
+        var j, i = 0 , x = {
             next : function() {
                 if (i < data.length) {
                     j = data[ i ++ ];

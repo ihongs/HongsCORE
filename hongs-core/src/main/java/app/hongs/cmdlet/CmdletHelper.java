@@ -351,8 +351,8 @@ public class CmdletHelper
   public static void progres(int n, int ok)
   {
     String notes = String.format("Ok(%d)", ok);
-    float  scale = (float)ok / n * 100;
-    CmdletHelper.progres(notes, scale);
+    float  scale = (float) ok / n * 100;
+    CmdletHelper.progres(notes , scale);
   }
 
   /**
@@ -364,8 +364,8 @@ public class CmdletHelper
   public static void progres(int n, int ok, int er)
   {
     String notes = String.format("Ok(%d) Er(%d)", ok, er);
-    float  scale = (float)(er + ok) / n * 100;
-    CmdletHelper.progres(notes, scale);
+    float  scale = (float) (er + ok) / n * 100;
+    CmdletHelper.progres(notes , scale);
   }
 
   /**
@@ -376,13 +376,16 @@ public class CmdletHelper
    */
   public static void progres(long t, int n, int ok)
   {
-    float  scale = (float)ok / n * 100;
-    t = System.currentTimeMillis() - t;
-    float  left1 = t / scale * 100 - t;
-    String left2 = Tool.humanTime((long) left1);
-    String left3 = String.format("Ok(%d) ETA: %s",
-                                     ok, left2);
-    CmdletHelper.progres(left3, scale);
+    String notes ;
+    float  scale = (float) ok / n * 100;
+    t = System.currentTimeMillis() - t ;
+    if (n != ok) {
+        t = (long) (t / scale *100 - t);
+        notes = String.format("Ok(%d) ET: %s", ok, Tool.humanTime(t));
+    } else {
+        notes = String.format("Ok(%d) TT: %s", ok, Tool.humanTime(t));
+    }
+    CmdletHelper.progres(notes , scale);
   }
 
   /**
@@ -394,13 +397,16 @@ public class CmdletHelper
    */
   public static void progres(long t, int n, int ok, int er)
   {
-    float  scale = (float)( er + ok ) / n * 100;
-    t = System.currentTimeMillis() - t;
-    float  left1 = t / scale * 100 - t;
-    String left2 = Tool.humanTime((long) left1);
-    String left3 = String.format("Ok(%d) Er(%d) ETA: %s",
-                                 ok, er, left2);
-    CmdletHelper.progres(left3, scale);
+    String notes ;
+    float  scale = (float) (er + ok) / n * 100;
+    t = System.currentTimeMillis() - t ;
+    if (n != ok + er) {
+        t = (long) (t / scale *100 - t);
+        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Tool.humanTime(t));
+    } else {
+        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Tool.humanTime(t));
+    }
+    CmdletHelper.progres(notes , scale);
   }
 
   /**

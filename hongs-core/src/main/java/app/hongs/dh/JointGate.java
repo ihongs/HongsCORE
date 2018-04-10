@@ -22,7 +22,7 @@ import java.util.Set;
  * 表单通用接口
  *
  * 通过重写 getEntity 提供实体对象,
- * 亦可重写 getReqMap 等改进出数据.
+ * 亦可重写 getReqMap 等来修改数据.
  *
  * @author Hongs
  */
@@ -181,19 +181,23 @@ abstract public class JointGate implements IActing, IAction {
         locale.fill(mod);
         if ( ! locale.containsKey(key) ) {
                key = "fore." + opr + ".success";
-            String tit = getName(locale, mod, ent);
-            return locale.translate(key, tit, cnt);
+               ent = getName(locale,ett, mod, ent);
+            return locale.translate(key, ent, cnt);
         } else {
             return locale.translate(key, /**/ cnt);
         }
     }
 
-    private String getName(CoreLocale locale, String mod, String ent) throws HongsException {
+    private String getName(CoreLocale locale, IEntity ett, String mod, String ent) throws HongsException {
         String  text;
         Map     item;
         do {
             // 先从表单取名字
-            item = getForm(mod, ent);
+            if ( ett instanceof IVolume ) {
+                item  = (( IVolume ) ett).getFields();
+            } else {
+                item  = getForm(mod, ent);
+            }
             if (item != null  && item.containsKey(   "@"    )) {
                 item  = (Map   ) item.get(   "@"    );
             if (item != null  && item.containsKey("__text__")) {
@@ -217,25 +221,32 @@ abstract public class JointGate implements IActing, IAction {
     }
 
     private Map getForm(String mod, String ent) throws HongsException {
-        String  cuf  = FormSet.hasConfFile(mod + "/" + ent)
-                       ? mod + "/" + ent : mod ;
-        FormSet form = FormSet.getInstance(cuf);
         try {
-            return form.getFormTranslated (ent);
-        } catch (HongsException ex ) {
-        if (ex.getErrno() == 0x10ea) {
-            return null;
-        } else {
-            throw  ex  ;
+            String  cuf  = FormSet.hasConfFile(mod+"/"+ent)
+                               ? mod+"/"+ent : mod ;
+            FormSet form = FormSet.getInstance(cuf);
+            return  form.getForm(ent);
+        } catch ( HongsException ex ) {
+        if (ex.getErrno() != 0x10e8
+        ||  ex.getErrno() != 0x10ea ) {
+            throw   ex  ;
         }
+            return  null;
         }
     }
 
     private Map getMenu(String mod, String ent) throws HongsException {
-        String  cuf  = FormSet.hasConfFile(mod + "/" + ent)
-                       ? mod + "/" + ent : mod ;
-        NaviMap navi = NaviMap.getInstance(cuf);
-        return  navi.getMenu(mod+"/"+ent+"/" );
+        try {
+            String  cuf  = FormSet.hasConfFile(mod+"/"+ent)
+                               ? mod+"/"+ent : mod ;
+            NaviMap navi = NaviMap.getInstance(cuf);
+            return  navi.getMenu(mod+"/"+ent + "/");
+        } catch ( HongsException ex ) {
+        if (ex.getErrno() != 0x10e0 ) {
+            throw   ex  ;
+        }
+            return  null;
+        }
     }
 
 }

@@ -485,14 +485,14 @@ HsTree.prototype = {
 
     getId    : function(id) {
         if (typeof(id) === "object")
-            return this.getId(id.attr("id"));
+            return this.getId ( id.attr("id"));
         else  if  (id)
-            return id.toString().substr(10 );
+            return id.toString().substring(10);
         else
             return "";
     },
     getPid   : function(id) {
-        return this.getId(this.getPnode(id));
+        return this.getId(this.getPnode( id ));
     },
     getCid   : function(nd) {
         return this.getId(nd.closest(".tree-node"));

@@ -214,6 +214,16 @@
                         oc = "sortable";
                     }
 
+                    // Unix 时间戳类需乘 1000 以转换为毫秒
+                    if ( "datetime".equals(type)
+                    ||       "date".equals(type)
+                    ||       "time".equals(type)) {
+                        Object typa = info.get ( "type" );
+                    if ("timestamp".equals(typa)
+                    ||  "datestamp".equals(typa)) {
+                        ob += " data-fl=\"!v?v:v*1000\"" ;
+                    }}
+
                     _rb.append(',').append(name);
                 %>
                 <%if ("number".equals(type) || "range".equals(type)) {%>

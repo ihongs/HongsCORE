@@ -22,8 +22,6 @@ import java.util.regex.Pattern;
  *  diverse     为 true 则执行去重
  *  divorce     按此给出的分隔来拆分字串
  *  split       按此给出的正则来拆分字串
- *  strim       为 true 则清理首尾空字符(仅当有 split 时有效)
- *  strip       为 true 则清理首尾含全角(仅当有 split 时有效)
  * </pre>
  * @author Hongs
  */

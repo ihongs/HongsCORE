@@ -66,8 +66,8 @@ function HsForm (context , opts) {
     && (hsGetParam(loadUrl, idKey)
     ||  hsGetParam(loadUrl, abKey))) {
         this.load (loadUrl, loadDat || loadArr );
-    } else if (!this._url) {
-        this.loadBack({ });
+    } else if (! this._url) {
+        this.loadBack( {} );
     }
 }
 HsForm.prototype = {

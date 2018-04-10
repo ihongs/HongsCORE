@@ -90,9 +90,10 @@
                         if (info.containsKey( "pattern" )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
-                <%} else if ("number".equals(type) || "range".equals(type)) {%>
+                <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                     <%
                         String extr = "";
+                        if ("sorted".equals(type)) type = "number";
                         if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
                         if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
                         if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";

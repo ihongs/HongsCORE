@@ -219,7 +219,7 @@
                         Object typa = info.get ( "type" );
                     if ("timestamp".equals(typa)
                     ||  "datestamp".equals(typa)) {
-                        ob += " data-fl=\"!v?v:v*1000\"" ;
+                        ob += " data-fl=\"!v?v:v* 1000\"";
                     }}
 
                     _rb.append(',').append(name);

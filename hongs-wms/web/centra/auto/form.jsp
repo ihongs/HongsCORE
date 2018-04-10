@@ -120,37 +120,34 @@
                     <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
-                        String extr = "";
-                        String size = "";
-                        String keep = "";
-                        String ft =  "_file";
-                        String fm = "hsFile";
-                        if (info.containsKey("type")) {
-                            extr += " accept=\""+info.get("type").toString()+"\"";
+                        String kind =  "_file";
+                        String mode = "hsFile";
+                        String typa = (String) info.get("type");
+                        if (typa != null && typa.length() != 0) {
+                            typa += " accept=\"" + typa + "\"" ;
                         } else {
-                            extr += " accept=\""+type+"/*\"";
+                            typa += " accept=\"" + type +"/*\"";
                         }
                         if ("image".equals(type)) {
-                            ft =  "_view";
-                            fm = "hsView";
-                            size = Synt.declare( info.get("thumb-size"), "");
-                            keep = Synt.declare( info.get("thumb-mode"), "");
-                            if (! "keep".equals( keep )) {
+                            kind =  "_view";
+                            mode = "hsView";
+                            String size = Synt.declare( info.get("thumb-size"), "");
+                            String keep = Synt.declare( info.get("thumb-mode"), "");
+                            if (! "keep".equals(keep)) {
                                 keep = "";
                             }
-                            if (size.length() != 0) {
-                                Pattern pat = Pattern.compile("\\d+\\*\\d+");
-                                Matcher mat = pat.matcher(size);
-                                if (mat.find()) {
-                                    size = mat.group( );
+                            if (size.length( ) != 0  ) {
+                                Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
+                                if ( m.find( ) ) {
                                     // 限制最大宽度, 避免撑开容器
-                                    String[ ] wh = size.split("\\*");
-                                    int w = Synt.declare(wh[0], 300);
-                                    int h = Synt.declare(wh[1], 300);
+                                    int w = Synt.declare(m.group(1), 300);
+                                    int h = Synt.declare(m.group(2), 300);
                                     if (w > 300) {
                                         h = 300  * h / w;
                                         w = 300;
                                         size = w +"*"+ h;
+                                    } else {
+                                        size = m.group();
                                     }
                                 } else {
                                     size = "100*100";
@@ -158,24 +155,25 @@
                             } else {
                                 size = "100*100";
                             }
+                            kind += "\" data-size=\""+size+"\" data-keep=\""+keep+"\"";
                         }
                     %>
-                    <input type="file" name="<%=name%>" class="form-ignored invisible" <%=extr%>/>
-                    <ul class="pickbox" data-ft="<%=ft%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=fm%>"><%=_locale.translate("fore.file.browse")%></button>
+                    <input type="file" name="<%=name%>" class="form-ignored invisible" <%=typa%>/>
+                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
                 <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
+                        String kind =  "_fork";
+                        String mode = "hsFork";
                         String fm = _module;
                         String fn =  name  ;
-                        String kn ;
                         if (fn.endsWith( "." )) {
                             fn = fn.substring(0, fn.length() - 1);
                         }
+                        String kn = fn +"_data";
                         if (fn.endsWith("_id")) {
                             fn = fn.substring(0, fn.length() - 3);
                             kn = fn;
-                        } else {
-                            kn = fn + "_data";
                         }
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
@@ -184,10 +182,12 @@
                                   ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
                             +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                             +"/list_fork.html";
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
+                        mode += "\" data-href=\""+al+"\" data-target=\"@\"";
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
-                    <ul class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
                 <%} else {%>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" <%=rqrd%> <%=rptd%>/>
                 <%} /*End If */%>

@@ -91,15 +91,13 @@
                 <%
                     String fm = _module;
                     String fn =  name  ;
-                    String kn ;
                     if (fn.endsWith( "." )) {
                         fn = fn.substring(0, fn.length() - 1);
                     }
+                    String kn = fn +"_data";
                     if (fn.endsWith("_id")) {
                         fn = fn.substring(0, fn.length() - 3);
                         kn = fn;
-                    } else {
-                        kn = fn + "_data";
                     }
                     String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                     String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";

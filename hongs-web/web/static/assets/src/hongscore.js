@@ -1107,31 +1107,26 @@ function hsFmtNum(num, len, dec, sep, dot) {
  * @return {String}
  */
 function hsFmtDate(date, format) {
-  if (date === undefined) {
-    return "";
-  }
-
-  if (typeof(date) === "string") {
-    var d  =  Number (date);
-    if (!isNaN(d)) {
-      date = parseInt(date);
-    }
-    else {
-      date = Date.parse(date.replace(/-/g, "/").replace(/\.\d+$/, ""));
-    }
+  if (date === undefined
+  ||  date === null
+  ||  date === '') {
+      return   '';
   }
 
   if (typeof(date) === "number") {
-    if (date == 0) {
-      return "" ;
-    }
-    if (date <= 2147483647) {
-      date = date * 1000 ;
-    }
     date = new Date(date);
-  }
+  } else
+  if (typeof(date) === "string") {
+  if (!isNaN(Number(date))) {
+    date = parseInt(date);
+    date = new Date(date);
+  } else {
+    // 整理成 yyyy/MM/dd HH:mm:ss 的格式, 并尝试去解析它.
+    date = date.replace(/-/g, "/").replace(/\.\d+$/, "");
+    date = Date.parse( date );
+  }}
 
-  var y = date.getFullYear();
+  var y = date.getFullYear( );
   var M = date.getMonth();
   var d = date.getDate( );
   var H = date.getHours();
@@ -1702,13 +1697,17 @@ $.fn.hsLoad = function(url, data, complete) {
      * 则不传递任何参数到服务端
      */
     var pos;
-    pos = url.indexOf(/***/"#");
+    pos = url.indexOf( "#" );
     if (pos != -1) {
-        url = url.substring(0, pos);
+        url = url.substring(0 , pos);
     }
-    pos = url.indexOf(".html?");
-    if (pos != -1 && !hsGetParam(url, '_') && !hsGetSeria(dat, '_')) {
-        url = url.substring(0, pos + 5);
+    if (/\.html$|\.html\?/.test(url)
+    && !hsGetParam(url,"_" )
+    && !hsGetSeria(dat,"_")) {
+    pos = url.indexOf( "?" );
+    if (pos != -1) {
+        url = url.substring(0 , pos);
+    }
         dat = undefined;
     } else
     if (dat.length == 0) {
@@ -2126,8 +2125,8 @@ $.fn.hsFind = function(selr) {
     }
     var elem = this;
     selr = $.trim(selr);
-    var flag = selr.charAt(0);
-    var salr = selr.substr(1);
+    var flag = selr.charAt   (0);
+    var salr = selr.substring(1);
     salr = $.trim(salr);
     switch (flag) {
         case '!':

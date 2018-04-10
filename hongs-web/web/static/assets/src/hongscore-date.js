@@ -120,7 +120,7 @@
 
     function _makeGroups(grp) {
         var len = grp.length;
-        var flg = grp.substr(0, 1);
+        var flg = grp.substring(0, 1);
         switch (flg) {
             case 'a':
                 if (len >= 4) {

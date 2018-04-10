@@ -35,30 +35,33 @@
                 name += ".";
             }
 
-            if ("date".equals(type)) {
-                kind = "_date";
+            if ("datetime".equals(type)
+            ||      "date".equals(type)
+            ||      "time".equals(type)) {
+                // 日期类需注意 Unix 时间戳需要乘 1000
+                String typa = (String) info.get("type");
+                if ("timestamp".equals(typa)
+                ||  "datestamp".equals(typa)) {
+                    kind = "_" + type + "\" data-fl=\" ! v ? v : v * 1000\" ";
+                } else {
+                    kind = "_" + type;
+                }
             } else
-            if ("time".equals(type)) {
-                kind = "_time";
-            } else
-            if ("datetime".equals(type)) {
-                kind = "_datetime";
-            } else
-            {
-                kind = "_review";
-            }
-
-            // 文本域可能被应用上富文本、源代码等
             if ("textarea".equals(type)) {
+                // 文本域可能被应用上富文本、源代码等
                 String typa = (String) info.get("type");
                 String mode = (String) info.get("mode");
+                if ("code".equals(typa)) {
+                    kind = "_code\" data-type=\""+typa+"\" data-mode=\""+mode;
+                    type =  "code";
+                } else
                 if ("html".equals(typa)) {
                     kind = "_html";
-                } else
-                if ("code".equals(typa)) {
-                    type =  "code";
-                    kind = "_code\" data-type=\""+typa+"\" data-mode=\""+mode;
+                } else {
+                    kind = "_review";
                 }
+            } else {
+                    kind = "_review";
             }
         %>
         <%if ("hidden".equals(type)) {%>
@@ -67,29 +70,26 @@
             <legend class="form-group"><%=text%></legend>
         <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
             <%
-                String size = "";
-                String keep = "";
-                kind =  "_file" ;
+                kind = "_file";
                 if ("image".equals(type)) {
-                    kind =  "_view";
-                    size = Synt.declare( info.get("thumb-size"), "" );
-                    keep = Synt.declare( info.get("thumb-mode"), "" );
-                    if (! "keep".equals( keep )) {
-                        keep = "";
+                    kind = "_view";
+                    String size = Synt.declare (info.get("thumb-size"), "");
+                    String keep = Synt.declare (info.get("thumb-mode"), "");
+                    if (! "keep".equals(keep)) {
+                        keep = "" ;
                     }
-                    if (size.length() != 0) {
-                        Pattern pat = Pattern.compile("\\d+\\*\\d+");
-                        Matcher mat = pat.matcher(size);
-                        if (mat.find()) {
-                            size = mat.group( );
+                    if (size.length( ) != 0  ) {
+                        Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
+                        if ( m.find( ) ) {
                             // 限制最大宽度, 避免撑开容器
-                            String[ ] wh = size.split("\\*");
-                            int w = Synt.declare(wh[0], 300);
-                            int h = Synt.declare(wh[1], 300);
+                            int w = Synt.declare(m.group(1), 300);
+                            int h = Synt.declare(m.group(2), 300);
                             if (w > 300) {
                                 h = 300  * h / w;
                                 w = 300;
                                 size = w +"*"+ h;
+                            } else {
+                                size = m.group();
                             }
                         } else {
                             size = "100*100";
@@ -97,36 +97,37 @@
                     } else {
                         size = "100*100";
                     }
+                    kind += "\" data-size=\""+size+"\" data-keep=\""+keep+"\"";
                 }
             %>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
-                    <ul class="pickbox pickrol" data-ft="<%=kind%>" data-fn="<%=name%>" data-size="<%=size%>" data-keep="<%=keep%>"></ul>
+                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFile" class="hide"></button>
                 </div>
             </div>
         <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
             <%
+                kind =  "_fork" ;
                 String fn = name;
-                String kn ;
                 if (fn.endsWith( "." )) {
                     fn = fn.substring(0, fn.length() - 1);
                 }
+                String kn = fn +"_data";
                 if (fn.endsWith("_id")) {
                     fn = fn.substring(0, fn.length() - 3);
                     kn = fn;
-                } else {
-                    kn = fn + "_data";
                 }
                 String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                 String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                 String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
+                kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
             %>
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
-                    <ul class="pickbox pickrol" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
+                    <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>
                 </div>
             </div>
@@ -134,7 +135,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
-                    <textarea  data-fn="<%=name%>" data-ft="<%=kind%>"></textarea>
+                    <textarea readonly="readonly"  data-fn="<%=name%>" data-ft="<%=kind%>"></textarea>
                 </div>
             </div>
         <%} else {%>

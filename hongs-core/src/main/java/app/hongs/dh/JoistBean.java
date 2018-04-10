@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class JoistBean {
+public class JoistBean implements IVolume {
 
     private Map fieldz = null;
     private Map fsavez = null;
@@ -67,6 +67,7 @@ public class JoistBean {
      * </code>
      * @return
      */
+    @Override
     public Map getFields() {
         if (null != fieldz) {
             return  fieldz;
@@ -79,6 +80,7 @@ public class JoistBean {
      * 默认来自字段配置的 @ 项
      * @return
      */
+    @Override
     public Map getParams() {
         return Synt.declare(getFields().get("@"), new HashMap());
     }

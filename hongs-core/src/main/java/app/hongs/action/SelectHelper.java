@@ -2,6 +2,7 @@ package app.hongs.action;
 
 import app.hongs.Core;
 import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.util.Dict;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -180,16 +181,11 @@ public class SelectHelper {
         }
 
         if (withText || withTime || withLink) {
-            if (withLink) {
-                if (_host == null) _host = getHost( );
-                if (_path == null) _path = getPath( );
-            }
-
             if (values.containsKey("info")) {
                      Map  info = (Map ) values.get("info");
                 if (withText) injectText(info, enums);
                 if (withTime) injectTime(info, times);
-                if (withLink) injectLink(info, files, _host, _path);
+                if (withLink) injectLink(info, files);
             }
 
             if (values.containsKey("list")) {
@@ -197,7 +193,7 @@ public class SelectHelper {
                 for (Map  info :  list) {
                 if (withText) injectText(info, enums);
                 if (withTime) injectTime(info, times);
-                if (withLink) injectLink(info, files, _host, _path);
+                if (withLink) injectLink(info, files);
                 }
             }
         }
@@ -212,9 +208,7 @@ public class SelectHelper {
     }
 
     public void injectLink(Map info) throws HongsException {
-        if (_host == null) _host = getHost( );
-        if (_path == null) _path = getPath( );
-        injectLink(info, files, _host, _path);
+        injectLink(info, files);
     }
 
     private void injectData(Map data, Map maps) throws HongsException {
@@ -282,7 +276,11 @@ public class SelectHelper {
         }
     }
 
-    private void injectLink(Map info, Set keys, String host, String path) {
+    private void injectLink(Map info, Set keys) {
+        // 默认从当前请求中提取主机和路径前缀
+        if (_host == null) _host = getHost();
+        if (_path == null) _path = getPath();
+
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
@@ -292,11 +290,11 @@ public class SelectHelper {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
                 Dict.setParam(info, new ArrayList(), key + "_link");
                 for (Object vxl : (Collection) val) {
-                    vxl = hrefToLink(vxl, host, path);
+                    vxl = hrefToLink(vxl);
                     Dict.setParam(info, vxl, key + "_link.");
                 }
             } else {
-                    val = hrefToLink(val, host, path);
+                    val = hrefToLink(val);
                     Dict.setParam(info, val, key + "_link" );
             }
         }
@@ -315,17 +313,17 @@ public class SelectHelper {
             return  val;
         }
 
-        val = map.get(val);
-        if (null != val) {
-            return  val;
+        Object vxl;
+        vxl = map.get(val);
+        if (null != vxl) {
+            return  vxl;
+        }
+        vxl = map.get("*");
+        if (null != vxl) {
+            return  vxl;
         }
 
-        val = map.get("*");
-        if (null != val) {
-            return  val;
-        }
-
-        return "";
+        return val;
     }
 
     /**
@@ -340,9 +338,13 @@ public class SelectHelper {
 
         if (val instanceof Date) {
             return ((Date) val ).getTime();
+        } else
+        if (val instanceof Long) {
+            return  val;
+        } else
+        {
+            return  0  ;
         }
-
-        return "";
     }
 
     /**
@@ -350,7 +352,7 @@ public class SelectHelper {
      * @param val
      * @return
      */
-    private Object hrefToLink(Object val, String host, String path) {
+    private Object hrefToLink(Object val ) {
         if (null == val || "".equals(val)) {
             return  val;
         }
@@ -360,17 +362,17 @@ public class SelectHelper {
             return  val;
         } else
         if (url.startsWith("/")) {
-            return  host + url;
+            return _host + url;
         } else
         {
-            return  host + path + url;
+            return _host +_path + url;
         }
     }
 
-    private static String getHost() throws HongsException {
+    private static String getHost() {
         HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
         if ( r == null ) {
-            throw new HongsException.Common("Can not find http servlet request");
+            throw new HongsExpedient.Common("Can not find http servlet request");
         }
 
         int    port;
@@ -384,10 +386,10 @@ public class SelectHelper {
         }
     }
 
-    private static String getPath() throws HongsException {
+    private static String getPath() {
         HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
         if ( r == null ) {
-            throw new HongsException.Common("Can not find http servlet request");
+            throw new HongsExpedient.Common("Can not find http servlet request");
         }
 
         return r.getContextPath() + "/";

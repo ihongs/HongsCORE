@@ -34,6 +34,9 @@
             if (Synt.declare(info.get("__repeated__"), false)) {
                 name += ".";
             }
+            if (    "enum".equals(type)) {
+                name += "_text";
+            }
 
             if ("datetime".equals(type)
             ||      "date".equals(type)

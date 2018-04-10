@@ -348,6 +348,20 @@
     };
     <%} /*End If */%>
 
+    // 创建时将关联 ID 往表单页传递
+    listobj.open = function(btn, box, url, data) {
+        if (btn.is(".create")) {
+                data  = [];
+                var d = hsSerialArr( loadbox );
+            for(var i = 0; i < d.length; i ++) {
+                if (/_id$/.test( d[i].name ) ) {
+                    data.push( d[i] );
+                }
+            }
+        }
+        HsList.prototype.open.call(this, btn, box, url, data);
+    };
+
     // 管理动作
     findbox.find(".filter").click(function() {
         fitrbox.toggleClass("invisible");

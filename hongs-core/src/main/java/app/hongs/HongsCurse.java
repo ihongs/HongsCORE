@@ -83,7 +83,7 @@ public class HongsCurse {
         codx = "Ex"+Integer.toHexString(code);
         desx = desc != null ? desc : "" /**/ ;
         optx = opts != null ? opts : new String[]{};
-        trns = CoreLocale.getInstance("defence").clone();
+        trns = CoreLocale.getInstance("defects").clone();
 
         // 0x10,0x1000 为通用一般异常代号
         // 0x11,0x1001 使用消息作为语言键

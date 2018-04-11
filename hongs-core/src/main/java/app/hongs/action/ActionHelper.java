@@ -978,7 +978,7 @@ public class ActionHelper implements Cloneable
     if (fun == null || fun.isEmpty( ) ) {
         fun  = getParameter( CoreConfig
               .getInstance ()
-              .getProperty ("core.act.call" , "callback") );
+              .getProperty ("core.callback", "callback") );
     }
 
     // 默认的数据输出为格式为 JSON 和 JSONP

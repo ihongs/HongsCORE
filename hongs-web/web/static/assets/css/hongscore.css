@@ -139,6 +139,14 @@ legend {
     margin-right : 4px;
 }
 
+/** jquery-ui-sort-hand **/
+.ui-droppable-handle,
+.ui-draggable-handle,
+.ui-sortable-handle {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+
 /** 布局 **/
 
 #notebox {

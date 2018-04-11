@@ -70,9 +70,9 @@ public class DBAction implements IAction, IActing {
     }
 
     @Action("create")
-    @Preset(conf="", form="", deft={":create"})
-    @Select(conf="", form="", mode=2)
+    @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
+    @Select(conf="", form="")
     @CommitSuccess
     @Override
     public void create(ActionHelper helper)
@@ -87,7 +87,7 @@ public class DBAction implements IAction, IActing {
     }
 
     @Action("update")
-    @Preset(conf="", form="", deft={":update"})
+    @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
     @CommitSuccess
     @Override
@@ -102,7 +102,7 @@ public class DBAction implements IAction, IActing {
     }
 
     @Action("delete")
-    @Preset(conf="", form="", deft={":delete"})
+    @Preset(conf="", form="", defs={":defence"})
     @CommitSuccess
     @Override
     public void delete(ActionHelper helper)

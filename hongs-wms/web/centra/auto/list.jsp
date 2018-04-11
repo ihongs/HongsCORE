@@ -302,11 +302,11 @@
         openUrls: [
             ['<%=_module%>/<%=_entity%>/form.html?<%=Cnst.AB_KEY%>=!enum',
              '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?<%=Cnst.AB_KEY%>=.enum,_fork&<%=Cnst.ID_KEY%>={ID}',
+            ['<%=_module%>/<%=_entity%>/form_edit.html?<%=Cnst.ID_KEY%>={ID}',
              '.update', '@'],
-            ['<%=_module%>/<%=_entity%>/info.html?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.ID_KEY%>={ID}',
+            ['<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
              '.review', '@'],
-            ['<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.ID_KEY%>={ID}',
+            ['<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
              '.revert', '@'],
             ['<%=_module%>/<%=_entity%>/lore.html',
              '.manual', '@']

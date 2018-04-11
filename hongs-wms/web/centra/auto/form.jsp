@@ -1,3 +1,4 @@
+<%@page import="app.hongs.Cnst"%>
 <%@page import="app.hongs.util.Dict"%>
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
@@ -215,7 +216,7 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _url : "<%=_module%>/<%=_entity%>/search.act"
+        _url : "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=<%="create".equals(_action)?"!enum":".enum,_fork"%>"
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {

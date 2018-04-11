@@ -16,7 +16,7 @@
         </a>
     </li>
 </ol>
-<div class="backable panes">
-    <div class="row"></div>
-    <div class="row" data-load="<%=_prefix%>/list.html"></div>
+<div class="backable panes row">
+    <div></div>
+    <div data-load="<%=_prefix%>/list.html"></div>
 </div>

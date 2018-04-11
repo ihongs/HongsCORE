@@ -28,7 +28,8 @@
     }
 %>
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
-<div id="<%=_pageId%>" class="<%=_pageId%> listbox table-responsive">
+<div id="<%=_pageId%>" class="lore-info">
+    <div class="listbox table-responsive">
     <fieldset>
         <legend class="dropdown dropdown-toggle">获取(列表和详情) <span class="caret"></span></legend>
         <div class="dropdown-body">
@@ -178,9 +179,10 @@
             </div>
         </div>
     </fieldset>
+    </div>
 </div>
 <style type="text/css">
-    .<%=_pageId%> pre {
+    .lore-info pre {
         white-space: pre-wrap;
         word-wrap: break-word;
     }

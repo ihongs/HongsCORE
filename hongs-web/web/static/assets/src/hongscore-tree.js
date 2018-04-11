@@ -227,7 +227,6 @@ HsTree.prototype = {
             "type"      : "POST",
             "dataType"  : "json",
             "funcName"  : "load",
-            "async"     : false,
             "cache"     : false,
             "context"   : this,
             "success"   : function(rst) {
@@ -352,15 +351,14 @@ HsTree.prototype = {
         var func = function() {
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
         jQuery.hsAjax({
-            "url"       : url,
+            "url"       : url ,
             "data"      : data,
             "type"      : "POST",
             "dataType"  : "json",
             "funcName"  : "send",
-            "async"     : false,
             "cache"     : false,
             "context"   : that,
-            "trigger"   : btn,
+            "trigger"   : btn ,
             "success"   : function(rst) {
                 this.sendBack(btn, rst, dat2);
             }

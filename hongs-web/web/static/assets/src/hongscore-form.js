@@ -80,7 +80,6 @@ HsForm.prototype = {
             "type"      : "POST",
             "dataType"  : "json",
             "funcName"  : "load",
-            "async"     : false,
             "cache"     : false,
             "context"   : this,
             "success"   : this.loadBack
@@ -315,9 +314,9 @@ HsForm.prototype = {
                     "type"        : type,
                     "dataType"    : "json",
                     "funcName"    : "save",
-                    "async"       : false,
+//                  "contentType" : false,
+//                  "processData" : false,
                     "cache"       : false,
-                    "global"      : false,
                     "context"     : that,
                     "complete"    : that.saveBack,
                     "error"       : function() { return false; }
@@ -346,9 +345,7 @@ HsForm.prototype = {
                     "funcName"    : "save",
                     "contentType" : false,
                     "processData" : false,
-                    "async"       : false,
                     "cache"       : false,
-                    "global"      : false,
                     "context"     : that,
                     "complete"    : that.saveBack,
                     "error"       : function() { return false; }
@@ -961,15 +958,16 @@ HsForm.prototype = {
                           .val ( ) || "";
             });
             jQuery.hsAjax({
-                "url": url,
-                "data": data,
-                "type": "POST",
+                "url"     : url ,
+                "data"    : data,
+                "type"    : "POST",
                 "dataType": "json",
                 "funcName": "vali",
-                "async": false,
-                "cache": false,
-                "context": this,
-                "success": function(rst) {
+                "async"   : false,
+                "cache"   : false,
+                "global"  : false,
+                "context" : this,
+                "success" : function(rst) {
                     if (rst["list"] !== undefined) {
                         ret = rst["list"].length > 0;
                     } else

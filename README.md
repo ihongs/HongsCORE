@@ -165,7 +165,6 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 会转成 JSON 结构:
 
-    ```json
     {
         "f1": 1,
         "f2": {
@@ -185,7 +184,6 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
         "ob": "-f5 f6",
         "wd": "Hello world"
     }
-    ```
 
 其中 eq 这样的标识为过滤操作符, 其含义为:
 
@@ -230,7 +228,6 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则跳转到 URL. 其他数据通常有:
 
-    ```javascript
     // 列表信息, 在 search,list 动作返回
     "list": [
         {
@@ -273,7 +270,6 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
 
     // 验证信息, 在 unique,exists 动作返回
     "size": 1真, 0假
-    ```
 
 在调用 API(REST) 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .wrap=1 可将全部返回数据放入 data 键下; 如加请求参数 .scok=1 则无论是否异常总是返回 200 状态; 可加请求参数 .conv=RULES 启用数据转换规则, RULES 取值可以为:
 

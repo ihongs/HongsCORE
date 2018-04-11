@@ -157,13 +157,11 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
     f1=1&f2:eq=2&f3:in.=30&f3:in.=31&t1.f4:rg=18,55&ob=-f5+f6&wd=Hello+world
 
-以上 + 在 URL 中表示空格.
-
-可兼容 PHP 格式:
+在 URL 中 + 表示空格. 可兼容 PHP 的格式:
 
     f1=1&f2[:eq]=2&f3[:in][]=30&f3[:in][]=31&t1[f4][:rg]=18,55&ob=-f5+f6&wd=Hello+world
 
-会转成 JSON 结构:
+此 URL 查询语句会转换成如下 JSON 的结构:
 
     {
         "f1": 1,

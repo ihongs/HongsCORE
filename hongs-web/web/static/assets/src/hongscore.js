@@ -1113,18 +1113,24 @@ function hsFmtDate(date, format) {
       return   '';
   }
 
-  if (typeof(date) === "number") {
-    date = new Date(date);
-  } else
   if (typeof(date) === "string") {
-  if (!isNaN(Number(date))) {
-    date = parseInt(date);
-    date = new Date(date);
-  } else {
-    // 整理成 yyyy/MM/dd HH:mm:ss 的格式, 并尝试去解析它.
-    date = date.replace(/-/g, "/").replace(/\.\d+$/, "");
-    date = Date.parse( date );
-  }}
+    if (  isNaN(Number (date) )) {
+      // 整理成 yyyy/MM/dd HH:mm:ss 的格式, 并尝试解析它
+      var text = date ;
+      date = date.replace(/-/g, "/").replace(/t/i, " ");
+      date = date.replace(/(\.\d+\s*$|\s+$|^\s+)/g, "");
+      date = Date.parse(date);
+      if (isNaN( date )) {
+          return text ;
+      }
+    } else {
+      date = parseInt(date);
+    }
+  }
+
+  if (typeof(date) === "number") {
+      date = new Date(date);
+  }
 
   var y = date.getFullYear( );
   var M = date.getMonth();
@@ -1932,9 +1938,9 @@ $.fn.hsTadd = function(ref) {
     var tab = box.find("[data-hrel='"+ref+"']").closest("li");
     var pne = $(box.data("tabs")).children().eq(tab.index( ));
     if (! tab.length) {
-        tab = $('<li><a href="javascript:;"><span class="title"></span><span class="close">&times;</span></a></li>');
-        pne = $('<div></div>').appendTo(box.data("panes"));
-        tab.appendTo(box).find('a').attr('data-hrel', ref);
+        tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>');
+        pne = $('<div></div>' ).appendTo( box.data("panes") );
+        tab.appendTo(box).find('a').attr( 'data-hrel' , ref );
     }
     return [tab, pne];
 };

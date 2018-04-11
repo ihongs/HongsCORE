@@ -86,7 +86,7 @@ public class DataAction extends SearchAction {
 
     @Action("revert/update")
     @CommitSuccess
-    public void redo(ActionHelper helper) throws HongsException {
+    public void revert(ActionHelper helper) throws HongsException {
         String  id = helper.getParameter(Cnst.ID_KEY);
         if ( null == id || "".equals(id)) {
             throw new HongsException(0x1100, "id required" );
@@ -98,7 +98,7 @@ public class DataAction extends SearchAction {
     }
 
     @Action("revert/search")
-    public void list(ActionHelper helper) throws HongsException {
+    public void review(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
         String ent = runner.getEntity();

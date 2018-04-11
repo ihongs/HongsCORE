@@ -155,35 +155,37 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 支持 Content-Type 为 application/x-www-form-urlencoded, multipart/form-data 和 application/json 的请求, 组成结构为:
 
-    f1=1&f2.eq=2&f3.in.=30&f3.in.=31&t1.f4.gt=abc&ob=-f5+f6&wd=Hello+world
+    f1=1&f2:eq=2&f3:in.=30&f3:in.=31&t1.f4:rg=18,55&ob=-f5+f6&wd=Hello+world
 
 以上 + 在 URL 中表示空格.
 
-可兼容 PHP 的格式:
+可兼容 PHP 格式:
 
-    f1=1&f2[eq]=2&f3[in][]=30&f3[in][]=31&t1[f4][gt]=abc&ob=-f5+f6&wd=Hello+world
+    f1=1&f2[:eq]=2&f3[:in][]=30&f3[:in][]=31&t1[f4][:rg]=18,55&ob=-f5+f6&wd=Hello+world
 
 会转成 JSON 结构:
 
+    ```json
     {
         "f1": 1,
         "f2": {
-            "eq": 2
+            ":eq": 2
         },
         "f3": {
-            "in": [
+            ":in": [
                 30,
                 31
             ]
         },
         "t1": {
             "f4": {
-                "gt": "abc"
+                ":rg": "18,55"
             }
         },
         "ob": "-f5 f6",
         "wd": "Hello world"
     }
+    ```
 
 其中 eq 这样的标识为过滤操作符, 其含义为:
 
@@ -228,6 +230,7 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则跳转到 URL. 其他数据通常有:
 
+    ```javascript
     // 列表信息, 在 search,list 动作返回
     "list": [
         {
@@ -270,6 +273,7 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
 
     // 验证信息, 在 unique,exists 动作返回
     "size": 1真, 0假
+    ```
 
 在调用 API(REST) 时, 可将所有请求数据采用 JSON 或 URLEncode 编码放入 .data 参数传递; 如加请求参数 .wrap=1 可将全部返回数据放入 data 键下; 如加请求参数 .scok=1 则无论是否异常总是返回 200 状态; 可加请求参数 .conv=RULES 启用数据转换规则, RULES 取值可以为:
 

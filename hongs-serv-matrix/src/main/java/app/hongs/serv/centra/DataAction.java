@@ -241,7 +241,7 @@ public class DataAction extends SearchAction {
         if (v instanceof Collection) {
             StringBuilder sb = new StringBuilder();
             for(Object x : ((Collection) v)) {
-                x = escape(v, es);
+                x =escape(x ,es);
                 sb.append( "," ).append( x );
             }
             v = sb.substring(1, sb.length());

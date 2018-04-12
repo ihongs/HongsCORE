@@ -59,7 +59,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>HongsCORE::Login</title>
+        <title>500 Error</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="<%=request.getContextPath()%>/favicon.ico"/>
@@ -81,6 +81,7 @@
         </style>
     </head>
     <body>
+        <!--MSG: <%=escapeXML(text.trim())%>-->
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>

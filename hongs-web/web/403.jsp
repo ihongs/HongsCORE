@@ -28,7 +28,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>HongsCORE::Login</title>
+        <title>403 Error</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="icon" type="image/x-icon" href="favicon.ico"/>
@@ -50,12 +50,13 @@
         </style>
     </head>
     <body>
+        <!--MSG: <%=escapeXML(text)%>-->
         <div class="jumbotron">
             <div class="container">
                 <h1>: (</h1>
-                <p> <%=text%> </p>
+                <p> <%=escapeXML(text)%> </p>
                 <p><a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
-                    <%=link%>
+                    <%=escapeXML(link)%>
                 </a></p>
             </div>
         </div>

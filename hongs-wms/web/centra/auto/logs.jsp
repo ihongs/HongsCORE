@@ -12,12 +12,12 @@
                 <tr>
                     <th data-fn="name">名称</th>
                     <th data-fn="memo">备注</th>
-                    <th data-fn="user.name">操作人员</th>
+                    <th data-fn="user.name" style="width: 6.5em;">操作人员</th>
                     <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
                     <th data-fn="state" data-ft="stat" style="width:4em;">状态</th>
-                    <th data-fn="" data-ft="_admin" style="width:8em;">
+                    <th data-fn="" data-ft="_admin" style="width: 6.5em;">
                         操作
                         <div class="invisible">
                             <a href="javascript:;" class="review">详情</a>

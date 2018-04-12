@@ -176,20 +176,31 @@ function hsResponse(rst, qut) {
             }
         } else
         if (rst.charAt(0) === '<') {
-            // 某些时候服务器可能出错, 返回错误消息的页面
-            // 需清理其中的超文本代码, 以供输出简洁的消息
+            /*
+             * 某些时候服务器可能出错, 返回错误消息的页面
+             * 需清理其中的超文本代码, 以供输出简洁的消息
+             */
+            var ern, err, msg, mat;
+            mat = /<!--ERN:\s*(.+?)\s*-->/.exec(rst);
+            if (mat) ern = mat [1];
+            mat = /<!--ERR:\s*(.+?)\s*-->/.exec(rst);
+            if (mat) err = mat [1];
+            mat = /<!--MSG:\s*(.+?)\s*-->/.exec(rst);
+            if (mat) msg = mat [1];
+            else     msg = rst
+                .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, "") // 清除内嵌框架
+                .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "") // 清除脚本代码
+                .replace(/<style[\s\S]*?>[\s\S]*?<\/style>/gi, "")   // 清除样式代码
+                .replace(/<!--[\s\S]*?-->/g, "") // 清除注释
+                .replace(/<[^>]*?>/g, " ")       // 清除标签
+                .replace(/&[^&;]*;/g, " ")       // 清除符号
+                .replace(/[\f\t\v]/g, " ")       // 清理空白
+                .replace( /[ ]{2,}/g, " ")       // 清理空白
+                .replace( /^\s*$/gm , "" );      // 清除空行
             rst = {
-                "msg": rst
-                    .replace(/<script.*?>.*?<\/script>/gmi, "")  // 清除脚本代码
-                    .replace(/<style.*?>.*?<\/style>/gmi, "")    // 清除样式代码
-                    .replace(/<!--.*?-->/gm, "")                 // 清除注释
-                    .replace(/<[^>]*?>/gm , " ")                 // 清除标签
-                    .replace(/&[^&;]*;/gm , " ")                 // 清除符号
-                    .replace(/^\s*$/gm, "")                      // 清除空行
-                    .replace(/[ \f\t\v]+/g, " ")                 // 清理多余空白
-                    .replace(/(^[ \f\t\v]+|[ \f\t\v]+$)/gm, ""), // 清理首尾空白
-                "err":  "" ,
-                "ern":  "" ,
+                "msg": msg ,
+                "err": err ,
+                "ern": ern ,
                 "ok" : false
             };
         } else {

@@ -38,8 +38,24 @@
             </div>
         </nav>
         <div id="bodybox">
-            <div class="container" id="main-context" data-load="<%=_module%>/<%=_entity%>/main.html">
-                <%=_locale.translate("fore.loading")%>
+            <div class="container">
+                <ol class="backable breadcrumb row hide" data-toggle="hsTabs">
+                    <li class="back-crumb dont-close pull-right">
+                        <a href="javascript:;">
+                            <i class="glyphicon glyphicon-remove-sign"></i>
+                        </a>
+                    </li>
+                    <li class="home-crumb active">
+                        <a href="javascript:;">
+                            <i class="glyphicon glyphicon-folder-open"></i>
+                            <b></b>
+                        </a>
+                    </li>
+                </ol>
+                <div class="backable panes row">
+                    <div></div>
+                    <div data-load="<%=_module%>/<%=_entity%>/list.html"></div>
+                </div>
             </div>
         </div>
         <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">

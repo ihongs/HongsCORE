@@ -445,14 +445,13 @@ public class Form extends Model {
         root.appendChild ( menu );
         menu.setAttribute("text", name);
         menu.setAttribute("href", prefix+"/"+id+"/");
-        menu.setAttribute("hrel", prefix+"/"+id+"/main.html");
 
         Element  role, actn, depn;
 
         // 会话
         role = docm.createElement("rsname");
         root.appendChild ( role );
-        role.appendChild ( docm.createTextNode( "@centra" ) );
+        role.appendChild ( docm.createTextNode("@centra"));
 
         // 查看
 

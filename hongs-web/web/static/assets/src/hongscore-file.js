@@ -76,10 +76,10 @@
         $(this).before($(this).clone().val(''));
         var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
         var div =$('<li class="preview"></li>').css({
-            width: w + 'px', height: h + 'px', overflow:'hidden'
+            width: w + 'px', height: h + 'px', overflow: 'hidden'
         } ).append(this)
            .append(img )
-           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+           .append('<a href="javascript:;" class="close">&times</a>');
         box.append(div );
         return div;
     };
@@ -100,10 +100,10 @@
         var box =$(this);
         var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
         var div =$('<li class="preview"></li>').css({
-            width: w + 'px', height: h + 'px', overflow:'hidden'
-        } ).append($('<input type="hidden" />').attr( "name", nam ).val( src ) )
+            width: w + 'px', height: h + 'px', overflow: 'hidden'
+        } ).append($('<input type="hidden"/>' ).attr("name", nam).val(src))
            .append(img )
-           .append('<a href="javascript:;" class="close pull-right">&times</a>');
+           .append('<a href="javascript:;" class="close">&times</a>');
         box.append(div );
         return div ;
     };

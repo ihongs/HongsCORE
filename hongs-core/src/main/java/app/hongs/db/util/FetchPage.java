@@ -3,7 +3,6 @@ package app.hongs.db.util;
 import app.hongs.HongsException;
 import app.hongs.db.DB;
 import app.hongs.db.Table;
-import app.hongs.util.Synt;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
@@ -187,15 +186,16 @@ public final class FetchPage
     FetchCase  caze2 = this.caze.clone().limit(limit);
     if(clnSort(caze2))
     {
-      sql    =   "SELECT COUNT(1) AS __count__ FROM ("
-             + caze2.getSQL( )+") AS __table__" ;
-      params = caze2.getParams( );
+      caze2.field("1");
+      sql    = caze2.getSQL(   );
+      params = caze2.getParams();
+      sql    = "SELECT COUNT(1) AS __count__ FROM (" + sql +") AS __table__";
     }
     else
     {
-      caze2.field( "COUNT(1) AS __count__");
-      sql    = caze2.getSQL(/**/);
-      params = caze2.getParams( );
+      caze2.field("COUNT(1) AS __count__" );
+      sql    = caze2.getSQL(   );
+      params = caze2.getParams();
     }
 
     // 计算总行数及总页数

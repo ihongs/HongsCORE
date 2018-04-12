@@ -441,32 +441,34 @@ ul.pickbox > li.btn span {
     display: none;
 }
 .preview .close {
-    font-size: 18px;
+    font-size : 18px;
     text-align: center;
     line-height: 1.5em;
-    border-radius: 0.75em;
-    box-shadow: 0 0 1em #000;
     width : 1.5em;
     height: 1.5em;
+    border-radius: 0.75em;
+    box-shadow: 0 0 1em #000;
+    background: #eee;
 }
 
 .preview {
-    float: left;
-    margin: 0 0 5px 5px;
-    border: 1px solid #ccc;
-    overflow: hidden;
     position: relative;
+    overflow: hidden;
+    margin: 0px 5px 5px 0px;
+    border: 1px solid #ccc ;
+    float : left;
 }
 .preview a {
-    top: 0;
-    right: 0;
-    padding: 0;
-    margin: 7px 7px 0 0;
-    border: 1px solid #888;
-    background: #eee;
     position: absolute;
+    padding: 0;
+    margin : 0;
+    right: 7px;
+    top  : 7px;
 }
 .preview img {
+    position: absolute;
+}
+.preview input {
     position: absolute;
 }
 

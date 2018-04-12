@@ -30,7 +30,6 @@
             <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
             <button type="button" class="revert for-choose btn btn-warning" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
             <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
-            <button type="button" class="manual            btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book" ></span></button>
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
@@ -280,7 +279,12 @@
             </tbody>
         </table>
     </div>
-    <div class="pagebox"></div>
+    <div class="row">
+        <div class="pagebox col-md-8"></div>
+        <div class="helpbox col-md-4 text-right pull-right">
+            <button type="button" class="btn btn-default manual" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"></span></button>
+        </div>
+    </div>
 </div>
 <script type="text/javascript">
 (function($) {

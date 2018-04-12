@@ -34,7 +34,7 @@
             <%} // End If %>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">
-            <input type="search" name="word" class="form-control input-search"/>
+            <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="btn btn-default search" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
             <%if (!"select".equals(_action)) {%>
@@ -384,9 +384,7 @@
         }
     });
     findbox.find(".export").click(function() {
-        var url = "<%=_module%>/<%=_entity%>/stream.act?";
-        var req = formbox.serialize();
-        window.open(url+req,"_blank");
+        location.replace("<%=_module%>/<%=_entity%>/stream.act?" + formbox.serialize());
     });
     findbox.find(".search").click(function() {
         fitrbox.addClass("invisible");
@@ -399,8 +397,8 @@
             hsFormFillFork($(this), {});
         });
         setTimeout(function() {
-            fitrbox.find( ":submit").click();
-        }, 500);
+            fitrbox.find(":submit").click( );
+        } , 500);
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {

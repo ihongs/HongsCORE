@@ -170,7 +170,7 @@
         <legend class="dropdown dropdown-toggle">其他 <span class="caret"></span></legend>
         <div class="dropdown-body">
             <div class="form-gorup">
-                <pre class="form-control-static">
+                <pre>
 <%=Cnst.ACT_EXT%> 是基础接口; <%=Cnst.API_EXT%> 和 /api 接口可使用 .conv,.data,.wrap,.scok 等特殊参数. 除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET,POST,PUT,DELETE. 
                 </pre>
             </div>

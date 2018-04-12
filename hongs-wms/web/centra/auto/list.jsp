@@ -282,7 +282,7 @@
     <div class="row">
         <div class="pagebox col-md-8"></div>
         <div class="helpbox col-md-4 text-right pull-right">
-            <button type="button" class="btn btn-default manual" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"></span></button>
+            <button type="button" class="btn btn-info manual" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"></span></button>
         </div>
     </div>
 </div>
@@ -312,7 +312,7 @@
              '.review', '@'],
             ['<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
              '.revert', '@'],
-            ['<%=_module%>/<%=_entity%>/lore.html',
+            ['<%=_module%>/<%=_entity%>/lore_page.html',
              '.manual', '@']
         ],
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>"

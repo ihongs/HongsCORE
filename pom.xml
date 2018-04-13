@@ -14,7 +14,6 @@
         <module>hongs-serv-search</module>
         <module>hongs-serv-master</module>
         <module>hongs-serv-matrix</module>
-        <module>hongs-ueditor</module>
         <module>hongs-web</module>
         <module>hongs-wms</module>
     </modules>

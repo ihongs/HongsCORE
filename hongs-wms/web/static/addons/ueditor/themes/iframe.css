@@ -1,8 +1,0 @@
-/*可以在这里添加你自己的css*/
-
-@import url("../../../assets/css/bootstrap.min.css");
-@import url("../../../assets/css/hongscore.min.css");
-
-img {
-    max-width: 100%;
-}

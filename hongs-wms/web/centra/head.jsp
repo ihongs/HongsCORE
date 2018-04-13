@@ -124,28 +124,33 @@
     (function($) {
         var context = $("#main-context");
         var menubar = $("#main-menubar");
-        var userbar = $("#user-menubar");
+//      var userbar = $("#user-menubar");
 
         $(function() {
             var a, b, h, l;
 
             h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
             a = menubar .find("a[href='"+h+"']");
+            h = menubar .find("a").attr("href" );
             b = menubar ;
 
             b.find("li").removeClass( "active" );
             a.parents("li").addClass( "active" );
 
-            l = a.data("href");
-            b = context .data("load");
-            h = menubar .find("li a")
-                        .attr("href");
-            if (b && l == hsFixUri(b)) {
-                return; // 已有预载
+            /**
+             * 容器不存在或容器已预载,
+             * 则无需重复载入内容页面;
+             * 没有则最终转向首个链接.
+             */
+            if (context .size() === 0
+            ||  context .data("load")) {
+                return;
             }
+
+            l = a.data("href");
             if (l && l != '/') {
                 context .hsLoad(l);
-            } else if (  !b  ) {
+            } else if ( !  l ) {
                 location.assign(h);
             }
         });

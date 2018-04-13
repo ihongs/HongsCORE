@@ -1,5 +1,5 @@
 
-/* global UE, CodeMirror */
+/* global HsLANG, CodeMirror */
 
 function setFormItems(formbox, loadbox) {
     formbox.on("loadOver", function(evt, rst) {
@@ -64,8 +64,8 @@ function setInfoItems(formbox, loadbox) {
 
 function forDateInput(func) {
     hsRequires([
-        "static/addons/bootstrap-datetimepicker/datetimepicker.min.js",
-        "static/addons/bootstrap-datetimepicker/css/datetimepicker.min.css"
+        "static/addons/bootstrap-datetimepicker/css/datetimepicker.min.css",
+        "static/addons/bootstrap-datetimepicker/datetimepicker.min.js"
     ] , func);
 }
 
@@ -77,8 +77,8 @@ function forSuggInput(func) {
 
 function forFileInput(func) {
     hsRequires([
-        "static/addons/bootstrap-fileinput/fileinput.min.js",
-        "static/addons/bootstrap-fileinput/css/fileinput.min.css"
+        "static/addons/bootstrap-fileinput/css/fileinput.min.css",
+        "static/addons/bootstrap-fileinput/fileinput.min.js"
     ] , func);
 }
 
@@ -91,8 +91,8 @@ function setFileInput(node, func) {
 
 function forTagsInput(func) {
     hsRequires([
-        "static/addons/bootstrap-tagsinput/tagsinput.min.js",
-        "static/addons/bootstrap-tagsinput/css/tagsinput.min.css"
+        "static/addons/bootstrap-tagsinput/css/tagsinput.min.css",
+        "static/addons/bootstrap-tagsinput/tagsinput.min.js"
     ] , func);
 }
 
@@ -122,57 +122,70 @@ function desEditor(node) {
 }
 
 function forEditor(func) {
-    hsRequired([
-        "centra/editor/config.js",
-        "static/addons/ueditor/ueditor.all.min.js"
+    hsRequires([
+        "static/addons/summernote/summernote.min.css",
+        "static/addons/summernote/summernote.min.js"
+    ],function() {
+    hsRequires([
+        "static/addons/summernote/lang/summernote-"+HsLANG['lang'].replace('_', '-')+".js"
     ] , func);
+    });
 }
 
 function setEditor(node, func) {
     forEditor(function() {
         node.each(function() {
-            var id = $(this).attr("id");
-            var ue = UE.getEditor( id );
-            $(this).data("UE", ue);
-            $(this).data("destroy", function() {
-                ue .destroy(  );
+            $(this).summernote({
+                toolbar: [
+                    ['base', ['bold' , 'italic' , 'underline' , 'strikethrough']],
+                    ['font', ['color', 'height' , 'fontsize']],
+                    ['para', ['paragraph', 'ul' , 'ol'  ]],
+                    ['list', ['table', 'picture', 'link']]
+                ],
+                height: $(this).height(),
+                lang: "zh-CN"
+            });
+
+            // 默认无背景色
+            $(this).siblings(".note-editor")
+                   .find(".note-current-color-button")
+                   .attr( "data-backcolor", "inherit")
+                   .find( "i" )
+                   .css("background-color", "inherit");
+
+            // 关闭时需销毁
+            var that = this;
+            $(this).data("destroy",function() {
+                $(that).summernote("destroy");
             });
         });
         func && func.call(node);
     });
 }
 
-function forMarker(func) {
-
-}
-
-function setMarker(node, func) {
-
-}
-
 function forMirror(func) {
     hsRequires([
-        "static/addons/codemirror/codemirror.js",
-        "static/addons/codemirror/codemirror.css"
-    ] , function() {
-        hsRequires([
-            "static/addons/codemirror/mode/css/css.js",
-            "static/addons/codemirror/mode/jsx/jsx.js",
-            "static/addons/codemirror/mode/xml/xml.js",
-            "static/addons/codemirror/mode/sql/sql.js",
-            "static/addons/codemirror/mode/lua/lua.js",
-            "static/addons/codemirror/mode/shell/shell.js",
-            "static/addons/codemirror/mode/python/python.js",
-            "static/addons/codemirror/mode/groovy/groovy.js",
-            "static/addons/codemirror/mode/markdown/markdown.js",
-            "static/addons/codemirror/mode/protobuf/protobuf.js",
-            "static/addons/codemirror/mode/properties/properties.js",
-            "static/addons/codemirror/mode/javascript/javascript.js",
-            "static/addons/codemirror/mode/livescript/livescript.js",
-            "static/addons/codemirror/mode/multiplex/multiplex.js",
-            "static/addons/codemirror/mode/htmlmixed/htmlmixed.js",
-            "static/addons/codemirror/mode/htmlembedded/htmlembedded.js"
-        ] , func);
+        "static/addons/codemirror/codemirror.min.js",
+        "static/addons/codemirror/codemirror.min.css"
+    ],function() {
+    hsRequires([
+        "static/addons/codemirror/mode/css/css.js",
+        "static/addons/codemirror/mode/jsx/jsx.js",
+        "static/addons/codemirror/mode/xml/xml.js",
+        "static/addons/codemirror/mode/sql/sql.js",
+        "static/addons/codemirror/mode/lua/lua.js",
+        "static/addons/codemirror/mode/shell/shell.js",
+        "static/addons/codemirror/mode/python/python.js",
+        "static/addons/codemirror/mode/groovy/groovy.js",
+        "static/addons/codemirror/mode/markdown/markdown.js",
+        "static/addons/codemirror/mode/protobuf/protobuf.js",
+        "static/addons/codemirror/mode/properties/properties.js",
+        "static/addons/codemirror/mode/javascript/javascript.js",
+        "static/addons/codemirror/mode/livescript/livescript.js",
+        "static/addons/codemirror/mode/multiplex/multiplex.js",
+        "static/addons/codemirror/mode/htmlmixed/htmlmixed.js",
+        "static/addons/codemirror/mode/htmlembedded/htmlembedded.js"
+    ] , func);
     });
 }
 

@@ -34,12 +34,12 @@
         <div id="notebox"></div>
         <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
-                <div class="row" data-load="centra/head.jsp"></div>
+                <div class="row" data-load="centra/head.jsp?active=<%=encodeURL(request.getContextPath()+"/"+_module+"/"+_entity+"/")%>"></div>
             </div>
         </nav>
         <div id="bodybox">
             <div class="container">
-                <ol class="backable breadcrumb row hide" data-toggle="hsTabs">
+                <ol class="breadcrumb paths row hide" data-toggle="hsTabs">
                     <li class="back-crumb dont-close pull-right">
                         <a href="javascript:;">
                             <i class="glyphicon glyphicon-remove-sign"></i>
@@ -52,7 +52,7 @@
                         </a>
                     </li>
                 </ol>
-                <div class="backable panes row">
+                <div class="panes paths row">
                     <div></div>
                     <div data-load="<%=_module%>/<%=_entity%>/list.html"></div>
                 </div>

@@ -18,8 +18,6 @@ function setFormItems(formbox, loadbox) {
         // 编辑器
         inp = formbox.find("textarea[data-type=html]");
         if (inp.size()) setEditor(inp);
-        inp = formbox.find("textarea[data-type=mark]");
-        if (inp.size()) setMarker(inp);
         inp = formbox.find("textarea[data-type=code]");
         if (inp.size()) setMirror(inp);
     });

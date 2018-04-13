@@ -42,7 +42,7 @@ function setInfoItems(formbox, loadbox) {
         var inp;
 
         // 编辑器
-        inp = formbox.find("textarea[data-type=mark]");
+        inp = formbox.find("textarea[data-type=html]");
         if (inp.size()) {
             inp.attr("readonly", "readonly")
                .css ("height", "0");

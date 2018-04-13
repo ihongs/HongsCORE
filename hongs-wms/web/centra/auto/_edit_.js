@@ -214,8 +214,7 @@ function setMirror(node, func) {
                 cw.height("auto");
             }
             cw.css( {
-                border  : "1px solid #d4d4d4",
-               "border-radius": "4px"
+                border  : "1px solid #a9a9a9"
             });
 
             $(this).css({

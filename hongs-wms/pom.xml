@@ -49,11 +49,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>hongs-ueditor</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <version>1.1.2</version>
-        </dependency>
-        <dependency>
             <artifactId>sqlite-jdbc</artifactId>
             <groupId>org.xerial</groupId>
             <version>3.8.11.2</version>

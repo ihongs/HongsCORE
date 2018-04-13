@@ -2447,13 +2447,19 @@ function(evt) {
     $(this).data("vals", vals);
     $(this).val ( vals );
 })
+/*
+.on("click", ".home-crumb a",
+function() {
+    // Nothing todo.
+})
+*/
 .on("click", ".back-crumb a",
 function() {
     var nav = $(this).closest ('.breadcrumb');
     nav.find('li:last a').hsClose();
     nav.find('li:last a').  click();
 })
-.on("hsReady hsRecur", ".backable.panes",
+.on("hsReady hsRecur", ".paths.panes",
 function() {
     var nav = $(this).siblings('.breadcrumb') || $(this).data("tabs");
     if (nav.children().not('.back-crumb,.home-crumb').size( )) {

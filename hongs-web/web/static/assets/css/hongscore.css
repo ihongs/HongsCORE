@@ -153,6 +153,9 @@ textarea.form-control {
 }
 
 /* summernote */
+.note-editor.panel {
+    margin-bottom: 0px;
+}
 .note-toolbar-wrapper .note-toolbar .note-para .dropdown-menu {
     width: 222px;
 }

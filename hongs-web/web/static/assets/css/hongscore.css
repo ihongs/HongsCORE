@@ -14,11 +14,14 @@ code, pre, var, dfn, kbd {
     font-family: "Courier New",Monaco,Menlo,monospace;
 }
 
+legend {
+    margin-bottom: 0;
+}
 fieldset {
     margin-bottom: 15px;
 }
-legend {
-    margin-bottom: 0;
+textarea {
+    resize: none;
 }
 
 /** Bootstrap 调整 **/
@@ -40,26 +43,10 @@ legend {
     margin-bottom: 15px;
 }
 
-/* 可后退的导航条 */
-.breadcrumb.backable > li + li.back-crumb:before,
-.breadcrumb.backable > li + li.home-crumb:before {
-    content: "";
-}
-.breadcrumb.backable > li + li.home-crumb:before {
-    padding: 0 ;
-}
-.breadcrumb.backable > li.back-crumb i,
-.breadcrumb.backable > li.home-crumb i {
-    color: #666;
-}
-.breadcrumb.backable > li.home-crumb i {
-    margin-right: 0.5em;
-}
-
 .nav .close,
 .btn .close {
-    margin-top: -7.5px;
     margin-right: -15px;
+    margin-top: -7.5px;
     padding: 0 6px 0 6px;
 }
 .nav .close {
@@ -90,7 +77,9 @@ legend {
 .form-control {
     line-height: 1.42857143;
 }
- textarea.form-control,
+textarea.form-control {
+    min-height: 126px;
+}
 .form-control[multiple] {
     min-height: 126px;
 }
@@ -126,7 +115,31 @@ legend {
     padding-right: 15px;
 }
 
-/** bootstrap-fileinput **/
+/** 可后退的导航条 **/
+
+.breadcrumb.paths > li + li.back-crumb:before,
+.breadcrumb.paths > li + li.home-crumb:before {
+    content: "";
+}
+.breadcrumb.paths > li + li.home-crumb:before {
+    padding: 0 ;
+}
+.breadcrumb.paths > li.back-crumb i,
+.breadcrumb.paths > li.home-crumb i {
+    color: #666;
+}
+.breadcrumb.paths > li.home-crumb i {
+    margin-right: 0.5em;
+}
+
+/** 其他的组件调整 **/
+
+/* bootstrap-tagsinput */
+.bootstrap-tagsinput.form-control {
+    border-radius: 0;
+}
+
+/* bootstrap-fileinput */
 .file-preview-frame .file-preview-image,
 .file-preview-frame video,
 .file-preview-frame audio,
@@ -139,10 +152,15 @@ legend {
     margin-right : 4px;
 }
 
-/** jquery-ui-sort-hand **/
-.ui-droppable-handle,
+/* summernote */
+.note-toolbar-wrapper .note-toolbar .note-para .dropdown-menu {
+    width: 222px;
+}
+
+/* jquery-ui */
+.ui-sortable-handle,
 .ui-draggable-handle,
-.ui-sortable-handle {
+.ui-droppable-handle {
 	-ms-touch-action: none;
 	touch-action: none;
 }
@@ -162,14 +180,14 @@ legend {
 .alert-body > p:nth-last-child(1) {
     margin: 0;
 }
-.alert-body > p.warn3 {
-    white-space: pre-wrap;
+.alert-body > p button {
+    margin: 0 0.5em;
 }
 .alert-body > p.warn4 {
     text-align: right;
 }
-.alert-body > p button {
-    margin: 0 0.5em;
+.alert-body > p.warn3 {
+    white-space: pre-wrap;
 }
 
 #headbox .uhead {

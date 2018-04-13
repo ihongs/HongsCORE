@@ -1,4 +1,4 @@
-<ol class="backable breadcrumb row hide" data-toggle="hsTabs">
+<ol class="breadcrumb paths row hide" data-toggle="hsTabs">
     <li class="back-crumb dont-close pull-right">
         <a href="javascript:;">
             <i class="glyphicon glyphicon-remove-sign"></i>
@@ -11,9 +11,13 @@
         </a>
     </li>
 </ol>
-<div class="backable panes row">
+<div class="panes paths row">
     <div></div>
     <div>
+        <div class="col-md-12 alert alert-warning alert-dismissible">
+            <button type="button" class="close" data-dismiss="alert"><span>&times;</span></button>
+            <p><b>注意!</b> 由于演示数据是静态的, 请求返回并不会有变化, 会使树节点 ID 重复而出错, 故请不要展开下级; 如已点过展开, 请刷新.</p>
+        </div>
         <div class="col-md-3 side-context">
             <div id="medium-section-tree"
                  data-module="hsTree"
@@ -33,11 +37,5 @@
             </div>
         </div>
         <div class="col-md-9 main-context"></div>
-        <div class="col-md-12 alert alert-warning alert-dismissible">
-            <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-            <p style="padding: 2px 0px 2px 5px;">
-            <strong>注意!</strong> 由于演示数据是静态的, 请求返回并不会有变化, 会使树节点 ID 重复而出错, 故请不要展开下级; 如已点过展开, 请刷新.
-            </p>
-        </div>
     </div>
 </div>

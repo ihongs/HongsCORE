@@ -1,6 +1,5 @@
 package app.hongs.cmdlet;
 
-import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLocale;
@@ -151,8 +150,10 @@ public class CmdletRunner
   {
     Map<String, Object> opts;
     opts = CmdletHelper.getOpts(args,
-         "debug:i", "corepath:s", "confpath:s", "datapath:s",
-      "basepath:s", "basehref:s", "language:s", "timezone:s"
+           "debug:i" , "corepath:s" ,
+        "confpath:s" , "datapath:s" ,
+        "basepath:s" , "basehref:s" ,
+        "language:s" , "timezone:s"
     );
     args = (String[]) opts.get("");
 
@@ -222,6 +223,14 @@ public class CmdletRunner
             v = Tool.inject(v,m);
             System.setProperty(k,v);
         }
+    }
+    }
+
+    // 也可以在系统属性中设置基础路径, 2018/04/14
+    if (Core.BASE_HREF.length() == 0 ) {
+        String u = System.getenv("base.href");
+    if (u != null && u.length() != 0 ) {
+        Core.BASE_HREF = u;
     }
     }
 

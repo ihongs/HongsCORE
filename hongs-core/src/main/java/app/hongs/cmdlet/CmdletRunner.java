@@ -30,7 +30,7 @@ import java.util.TimeZone;
  *
  * <h3>配置选项:</h3>
  * <pre>
- * core.server.id         服务ID
+ * server.id              服务ID
  * core.language.probing  自动识别语言
  * core.language.default  默认语言类型
  * </pre>
@@ -190,10 +190,8 @@ public class CmdletRunner
 
     /** 系统属性配置 **/
 
-    CoreConfig cnf;
-    cnf = CoreConfig.getInstance("default");
-    Core.SERVER_ID = cnf.getProperty("core.server.id", "0");
-    cnf = CoreConfig.getInstance("defines");
+    CoreConfig cnf = CoreConfig.getInstance("defines");
+    Core.SERVER_ID = cnf.getProperty("server.id", "0");
 
     Map m = new HashMap();
     m.put("SERVER_ID", Core.SERVER_ID);
@@ -236,7 +234,7 @@ public class CmdletRunner
 
     /** 实例属性配置 **/
 
-    cnf = CoreConfig.getInstance();
+    cnf = CoreConfig.getInstance("default");
 
     String act = null;
     if (args.length > 0 )

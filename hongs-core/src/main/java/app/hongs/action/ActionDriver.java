@@ -44,7 +44,7 @@ import javax.servlet.http.Part;
  *
  * <h3>配置选项:</h3>
  * <pre>
- * core.server.id         服务ID
+ * server.id              服务ID
  * core.language.probing  探测语言
  * core.language.default  默认语言
  * core.timezone.probing  探测时区
@@ -117,12 +117,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             //** 系统属性配置 **/
 
-            CoreConfig cnf;
-            cnf = CoreConfig.getInstance(/*default*/);
-            Core.SERVER_ID = cnf.getProperty("core.server.id", "0" );
-            Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
-            Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
-            cnf = CoreConfig.getInstance( "defines" );
+            CoreConfig cnf = CoreConfig.getInstance("defines");
+            Core.SERVER_ID = cnf.getProperty("server.id", "0");
 
             // 用于替换下面系统属性中的变量
             Map m = new HashMap();
@@ -155,6 +151,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 }
             }
             }
+
+            // 设置默认语言
+            cnf = CoreConfig.getInstance("default");
+            Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
+            Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
         }
 
         // 调一下 ActionRunner 来加载动作

@@ -20,13 +20,13 @@ import javax.servlet.http.Part;
  * <pre>
  * 规则参数:
  *  pass-source yes|no 是否跳过资源链接(存在有"/"的字符)
- *  pass-remote yes|no 是否跳过远程链接("http://"等开头)
+ *  pass-remote yes|no 是否跳过远程链接(开头为"http://")
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
- *  href 上传文件链接, 可用变量 $BASE_HREF, $BASE_LINK 等, 后者带域名前缀
+ *  href 上传文件链接, 可用变量 $BASE_HREF, $FULL_HREF 等, 后者带域名前缀
  *  type 文件类型限制, 逗号分隔 (Mime-Type)
  *  extn 扩展名称限制, 逗号分隔
  * </pre>

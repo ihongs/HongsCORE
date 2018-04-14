@@ -23,8 +23,8 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SelectHelper {
 
-    private final static  Pattern  LINKP = Pattern.compile("^\\$\\{?BASE_LINK\\}?");
-    private final static  Pattern  HREFP = Pattern.compile("^(\\w+:)?//");
+    private final static  Pattern  HOSTP = Pattern.compile( "^(\\w+:)?//" );
+    private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?FULL_");
 
     private final Map<String, Map> enums;
     private final Set<String>      times;
@@ -149,8 +149,8 @@ public class SelectHelper {
             if ("file".equals(type)) {
                 String href = (String) mt.get("href");
                 if (href != null
-                && !HREFP.matcher(href).find( )
-                && !LINKP.matcher(href).find()) {
+                && !HOSTP.matcher(href).find( )
+                && !FULLP.matcher(href).find()) {
                     files.add(name);
                 }
             }
@@ -358,7 +358,7 @@ public class SelectHelper {
         }
 
         String url  =  val.toString (   );
-        if (HREFP.matcher (url).find(   )) {
+        if (HOSTP.matcher (url).find(   )) {
             return  val;
         } else
         if (url.startsWith("/")) {

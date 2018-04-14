@@ -163,22 +163,22 @@ public class UploadHelper {
 
     private String getResultHref(String href) {
         // 如果环境中没给则尝试从请求中提取
-        String CURR_BASE_LINK = System.getenv("base.url");
-        if ( ( CURR_BASE_LINK == null || CURR_BASE_LINK.length() == 0)) {
+        String CURR_FULL_HREF = System.getenv ("full.href");
+        if ( ( CURR_FULL_HREF == null || CURR_FULL_HREF.length() == 0)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
-            String hp = helper.getRequest().getScheme(  );
+            String hp = helper.getRequest().getScheme(    );
             String hn = helper.getRequest().getServerName();
             int    pt = helper.getRequest().getServerPort();
-            CURR_BASE_LINK  = hp + "://"+ hn;
+            CURR_FULL_HREF  = hp + "://"+ hn;
             if (pt != 80 && pt != 443) {
-            CURR_BASE_LINK += /**/ ":"  + pt;
+            CURR_FULL_HREF += /**/ ":"  + pt;
             }
-            CURR_BASE_LINK += Core.BASE_HREF;
+            CURR_FULL_HREF += Core.BASE_HREF;
         }
 
         Map m = new HashMap();
         m.put("BASE_HREF", Core.BASE_HREF);
-        m.put("BASE_LINK", CURR_BASE_LINK);
+        m.put("FULL_HREF", CURR_FULL_HREF);
         href = Tool.inject(href, m );
         return href;
     }

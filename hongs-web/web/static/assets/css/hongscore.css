@@ -25,17 +25,23 @@ legend {
 }
 
 /* 优化文件上传样式 */
-::-ms-browse,
-::-webkit-file-upload-button {
+::-ms-browse {
     background : inherit;
     color      : inherit;
-    font-weight: bold;
     font-family: inherit;
     font-size  : inherit;
     line-height: inherit;
+}
+::-webkit-file-upload-button {
+    background : inherit;
+    color      : inherit;
+    font-family: inherit;
+    font-size  : inherit;
+    line-height: inherit;
+    font-weight: bold;
     padding: 0;
-    border : 0;
-    margin : 0;
+    border: 0;
+    margin: 0;
 }
 
 /** Bootstrap 调整 **/

@@ -4,24 +4,38 @@
  * 版本: 2017/06/30 23:39
  */
 
-html, body, label, input, button, select, textarea {
+html, body, p, h1, h2, h3, h4, h5, h6, ul, ol, table {
     font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
 }
-h1, h2, h3, h4, h5, h6 {
+label, input, button, select, textarea {
     font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
 }
 code, pre, var, dfn, kbd {
     font-family: "Courier New",Monaco,Menlo,monospace;
 }
 
-legend {
-    margin-bottom: 0;
+textarea {
+    resize: none;
 }
 fieldset {
     margin-bottom: 15px;
 }
-textarea {
-    resize: none;
+legend {
+    margin-bottom:  0px;
+}
+
+/* 优化文件上传样式 */
+::-ms-browse,
+::-webkit-file-upload-button {
+    background : inherit;
+    color      : inherit;
+    font-weight: bold;
+    font-family: inherit;
+    font-size  : inherit;
+    line-height: inherit;
+    padding: 0;
+    border : 0;
+    margin : 0;
 }
 
 /** Bootstrap 调整 **/
@@ -77,21 +91,23 @@ textarea {
 .form-control {
     line-height: 1.42857143;
 }
+select.form-control[multiple],
 textarea.form-control {
-    min-height: 126px;
+    min-height: 8.4em;
 }
-.form-control[multiple] {
-    min-height: 126px;
+.form-control[disabled] {
+    background: #eee;
+    cursor: default;
 }
 .form-control[readonly] {
     background: #fff;
     cursor: default;
 }
-.dropdown-toggle {
-    cursor: pointer;
-}
 .btn .glyphicon {
     font-size: 85%;
+}
+.dropdown-toggle {
+    cursor: pointer;
 }
 
 .clearfix > li,
@@ -156,7 +172,15 @@ textarea.form-control {
 .note-editor.panel {
     margin-bottom: 0px;
 }
-.note-toolbar-wrapper .note-toolbar .note-para .dropdown-menu {
+.note-editor .note-btn i {
+    display : inline-block;
+}
+.note-editor .note-btn .note-current-fontsize,
+.note-editor .note-btn .note-current-fontname {
+    vertical-align: middle;
+}
+.note-editor .note-popover .note-para .dropdown-menu,
+.note-editor .note-toolbar .note-para .dropdown-menu {
     width: 222px;
 }
 

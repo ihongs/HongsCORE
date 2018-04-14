@@ -508,8 +508,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     protected void doFilter(Core core, ActionHelper hlpr, FilterChain chn)
     throws ServletException, IOException {
-        chn.doFilter((ServletRequest ) hlpr.getRequest ( ),
-                     (ServletResponse) hlpr.getResponse());
+        chn.doFilter(hlpr.getRequest(), hlpr.getResponse());
     }
 
     /**
@@ -520,9 +519,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @throws ServletException
      * @throws IOException
      */
-    protected void doAction(Core core, ActionHelper hlpr )
+    protected void doAction(Core core, ActionHelper hlpr)
     throws ServletException, IOException {
-        service( hlpr.getRequest( ), hlpr.getResponse( ) );
+        service(/**/ hlpr.getRequest(), hlpr.getResponse());
     }
 
     //** 静态工具函数 **/

@@ -178,7 +178,7 @@ public class CmdletRunner
     }
 
     // 项目 url 须以 / 开头, 如有缺失则自动补全
-    if (Core.BASE_HREF.length() != 0 ) {
+    if (Core.BASE_HREF.length( ) != 0) {
         if (Core.BASE_HREF.startsWith("/") == false) {
             Core.BASE_HREF = "/" + Core.BASE_HREF  ;
         }
@@ -229,7 +229,7 @@ public class CmdletRunner
     // 也可以在系统属性中设置基础路径, 2018/04/14
     if (!opts.containsKey("basehref")) {
         String u = System.getProperty("base.url");
-    if (u != null && u.length() != 0 ) {
+    if (u != null && u.length( ) != 0) {
         Core.BASE_HREF = u;
     }
     }

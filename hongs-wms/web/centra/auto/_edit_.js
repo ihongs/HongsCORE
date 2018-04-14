@@ -124,10 +124,13 @@ function forEditor(func) {
         "static/addons/summernote/summernote.min.css",
         "static/addons/summernote/summernote.min.js"
     ],function() {
+    if (HsLANG['lang'] != 'en_US') {
     hsRequires([
         "static/addons/summernote/lang/summernote-"+HsLANG['lang'].replace('_', '-')+".js"
-    ] , func);
-    });
+    ] , func );
+    } else {
+        func();
+    }});
 }
 
 function setEditor(node, func) {
@@ -141,7 +144,7 @@ function setEditor(node, func) {
                     ['list', ['table', 'picture', 'link']]
                 ],
                 height: $(this).height(),
-                lang: "zh-CN"
+                lang: HsLANG['lang'].replace('_', '-')
             });
 
             // 默认无背景色
@@ -183,7 +186,7 @@ function forMirror(func) {
         "static/addons/codemirror/mode/multiplex/multiplex.js",
         "static/addons/codemirror/mode/htmlmixed/htmlmixed.js",
         "static/addons/codemirror/mode/htmlembedded/htmlembedded.js"
-    ] , func);
+    ] , func );
     });
 }
 

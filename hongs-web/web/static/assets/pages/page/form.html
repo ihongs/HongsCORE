@@ -74,6 +74,13 @@
                     <label class="control-label">备注</label>
                     <textarea name="note" class="form-control"/></textarea>
                 </div>
+                <div class="form-group">
+                    <label class="control-label">标准文件上传</label>
+                    <input type="file" name="base_file" class="form-control"/>
+                    <div class="checkbox">
+                        <label><input type="checkbox" name="base_file" value=""/> 清除旧的文件</label>
+                    </div>
+                </div>
                 <div>
                     <button type="submit" class="ensure btn btn-primary">提交</button>
                     <button type="button" class="cancel btn btn-link"   >取消</button>

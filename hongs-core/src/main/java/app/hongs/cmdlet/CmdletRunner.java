@@ -228,7 +228,7 @@ public class CmdletRunner
 
     // 也可以在系统属性中设置基础路径, 2018/04/14
     if (Core.BASE_HREF.length() == 0 ) {
-        String u = System.getenv("base.href");
+        String u = System.getenv("base.url");
     if (u != null && u.length() != 0 ) {
         Core.BASE_HREF = u;
     }

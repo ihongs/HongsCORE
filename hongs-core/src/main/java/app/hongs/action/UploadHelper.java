@@ -163,7 +163,7 @@ public class UploadHelper {
 
     private String getResultHref(String href) {
         // 如果环境中没给则尝试从请求中提取
-        String CURR_FULL_HREF = System.getenv ("full.href");
+        String CURR_FULL_HREF = System.getenv( "full.url" );
         if ( ( CURR_FULL_HREF == null || CURR_FULL_HREF.length() == 0)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String hp = helper.getRequest().getScheme(    );

@@ -156,6 +156,14 @@ textarea.form-control {
 
 /** 其他的组件调整 **/
 
+/* jquery-ui */
+.ui-sortable-handle,
+.ui-draggable-handle,
+.ui-droppable-handle {
+	-ms-touch-action: none;
+	touch-action: none;
+}
+
 /* bootstrap-tagsinput */
 .bootstrap-tagsinput.form-control {
     border-radius: 0;
@@ -190,12 +198,17 @@ textarea.form-control {
     width: 222px;
 }
 
-/* jquery-ui */
-.ui-sortable-handle,
-.ui-draggable-handle,
-.ui-droppable-handle {
-	-ms-touch-action: none;
-	touch-action: none;
+/* codemirror */
+.CodeMirror.form-control,
+.CodeMirror.form-control-static {
+    background: #fefefe;
+    padding: 0;
+}
+.CodeMirror.form-control        .CodeMirror-lines {
+    padding: 11px 0 11px 0;
+}
+.CodeMirror.form-control-static .CodeMirror-lines {
+    padding: 12px 0 12px 0;
 }
 
 /** 布局 **/

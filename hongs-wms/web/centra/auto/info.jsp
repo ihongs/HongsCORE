@@ -65,7 +65,8 @@
                     type =  "text";
                     kind = "_html";
                 } else {
-                    kind = "\" data-type=\""+typa+"\" data-mode=\""+mode;
+                    type =   typa ;
+                    kind = "_text\" data-type=\""+typa+"\" data-mode=\""+mode;
                 }
             }
         %>
@@ -132,6 +133,8 @@
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>
+                <%} else if ("code".equals(type)) {%>
+                    <pre class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></pre>
                 <%} else {%>
                     <p class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></p>
                 <%} /*End If */%>

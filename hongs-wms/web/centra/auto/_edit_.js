@@ -40,18 +40,10 @@ function setInfoItems(formbox, loadbox) {
         var inp;
 
         // 编辑器
-        inp = formbox.find("textarea[data-type=html]");
-        if (inp.size()) {
-            inp.attr("readonly", "readonly")
-               .css ("height", "0");
-            setMarker(inp);
-        }
         inp = formbox.find("textarea[data-type=code]");
-        if (inp.size()) {
-            inp.attr("readonly", "readonly")
-               .css ("height", "0");
-            setMirror(inp);
-        }
+        if (inp.size()) setMirror(inp);
+        inp = formbox.find(/**/ "pre[data-type=code]");
+        if (inp.size()) setMirror(inp);
     });
     loadbox.on("hsClose" , function(evt, und) {
         desEditor(formbox.find("textarea[data-type]"));
@@ -193,45 +185,43 @@ function forMirror(func) {
 function setMirror(node, func) {
     forMirror(function() {
         node.each(function() {
-            var ro = $(this).attr ("readonly");
-                ro = !! ro;
-            var md = $(this).data (  "mode"  )
-                  || $(this).data (  "type"  );
-                md = getModeByName(    md    );
-            var cm = CodeMirror.fromTextArea(this, {
-                lineNumbers : true,
-                readOnly : ro,
-                mode : md
-            });
+            var cm ;
+            var md = $(this).data ("mode")
+                  || $(this).data ("type");
+                md = getModeByName(  md  );
+            if ($( this ).is("textarea") ) {
+                cm = CodeMirror.fromTextArea(this, {
+                     lineNumbers: true,
+                     readOnly: $( this ).prop("readonly") && "nocursor",
+                     mode: md
+                });
 
-            // 容器高度
-            var cw = $(cm.getWrapperElement());
-            var ht = $(this).height();
-            if (ht) {
-                cw.height(  ht  );
-            } else  {
-                cw.find( ".CodeMirror-scroll")
-                  .height("auto");
-                cw.height("auto");
+                var cw = $(cm.getWrapperElement());
+                cw.addClass( "form-control" );
+                cw.height  ($(this).height());
+
+                $(this).addClass("invisible");
+                $(this).data("CM", cm);
+                $(this).data("destroy", function() {
+                    cm .toTextArea(  );
+                });
+                $(this).data("synchro", function() {
+                    cm .save(  );
+                });
+            } else {
+                cm = CodeMirror($(this).parent()[0], {
+                     value: $(this).text(),
+                     lineNumbers: true,
+                     readOnly: true,
+                     mode: md
+                });
+
+                var cw = $(cm.getWrapperElement());
+                cw.addClass("form-control-static");
+                cw.height  ("auto");
+
+                $( this ).remove( );
             }
-            cw.css( {
-                border  : "1px solid #a9a9a9"
-            });
-
-            $(this).css({
-                height  : "0",
-                border  : "0",
-                margin  : "0",
-                padding : "0",
-                overflow: "hidden"
-            });
-            $(this).data("CM", cm);
-            $(this).data("destroy", function() {
-                cm .toTextArea(  );
-            });
-            $(this).data("synchro", function() {
-                cm .save(  );
-            });
         });
         func && func.call(node);
     });

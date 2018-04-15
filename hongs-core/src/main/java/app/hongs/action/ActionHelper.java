@@ -314,12 +314,6 @@ public class ActionHelper implements Cloneable
   final Map getRequestPart() {
     CoreConfig conf = CoreConfig.getInstance();
 
-    // 是否仅登录用户可上传
-    if (conf.getProperty("core.upload.auth.needs", false)
-    &&  null  ==  getSessibute  (Cnst.UID_SES)) {
-        throw new HongsExpedient(0x1100, "Multipart is not supported");
-    }
-
     String x;
     Set<String> allowTypes = null;
     x = conf.getProperty("fore.upload.allow.types", null);
@@ -973,12 +967,14 @@ public class ActionHelper implements Cloneable
     }
 
     // 检查是否有 JSONP 的回调函数
-    String fun;
-    fun = getParameter(Cnst.CB_KEY);
-    if (fun == null || fun.isEmpty( ) ) {
-        fun  = getParameter( CoreConfig
-              .getInstance ()
-              .getProperty ("core.callback", "callback") );
+    String fun = null;
+    if (request != null) {
+        fun = request.getParameter (Cnst.CB_KEY);
+        if (fun == null || fun.isEmpty())
+            fun  = request.getParameter (
+                CoreConfig.getInstance( )
+                          .getProperty("core.callback", "callback")
+            );
     }
 
     // 默认的数据输出为格式为 JSON 和 JSONP
@@ -989,7 +985,7 @@ public class ActionHelper implements Cloneable
         if ( fun != null && fun.length() != 0 ) {
             if (fun.startsWith(   "top.")
             ||  fun.startsWith("parent.")
-            ||  fun.startsWith("opener.") 
+            ||  fun.startsWith("opener.")
             ||  fun.startsWith("frames.") ) {
                 if ( ! this.response.isCommitted()) {
                     this.response.setCharacterEncoding("UTF-8");

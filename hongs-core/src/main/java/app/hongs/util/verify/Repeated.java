@@ -20,8 +20,8 @@ import java.util.regex.Pattern;
  *  minrepeat   最小数量
  *  defiant     需要忽略的取值列表
  *  diverse     为 true 则执行去重
- *  divorce     按此给出的分隔来拆分字串
  *  split       按此给出的正则来拆分字串
+ *  slice       按此给出的分隔来拆分字串
  * </pre>
  * @author Hongs
  */
@@ -41,29 +41,29 @@ public class Repeated extends Rule {
             String v = (String) value;
             String s ;
 
-            // 普通拆分
-            s = Synt.declare(params.get("divorce"), String.class);
-            if (s != null) {
-                List<String> a = new ArrayList(  );
-                int e , b = 0;
-                while ((e = v.indexOf(s, b)) > -1) {
-                    a.add(v.substring(b, e));
-                    b = e + s.length (    ) ;
-                }   a.add(v.substring(b   ));
-                return  a;
-            }
-
             // 正则拆分
-            s = Synt.declare(params.get( "split" ), String.class);
+            s = Synt.declare(params.get("split"), String.class);
             if (s != null) {
-                List<String> a = new ArrayList(  );
-                Matcher m = Pattern.compile(  s  )
-                                   .matcher(  v  );
+                List<String> a = new ArrayList();
+                Matcher m = Pattern.compile( s )
+                                   .matcher( v );
                 int e , b = 0;
                 while ( m.find ()) {
                     e = m.start();
                     a.add(v.substring(b, e));
                     b = m.end  ();
+                }   a.add(v.substring(b   ));
+                return  a;
+            }
+
+            // 普通拆分
+            s = Synt.declare(params.get("slice"), String.class);
+            if (s != null) {
+                List<String> a = new ArrayList();
+                int e , b = 0;
+                while ((e = v.indexOf(s, b))>-1) {
+                    a.add(v.substring(b, e));
+                    b = e + s.length (    ) ;
                 }   a.add(v.substring(b   ));
                 return  a;
             }

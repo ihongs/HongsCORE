@@ -196,10 +196,10 @@ function setMirror(node, func) {
                     });
 
                     var cw = $(cm.getWrapperElement());
-                    cw.addClass("form-control" );
-                    cw.height  ( that.height() );
+                    cw.addClass("form-control");
+                    cw.height  ( that.height());
 
-                    that.addClass( "invisible" );
+                    that.addClass ("invisible");
                     that.data("CM", cm);
                     that.data("destroy", function() {
                         cm.toTextArea();

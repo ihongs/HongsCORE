@@ -191,9 +191,9 @@ function setMirror(node, func) {
                 md = getModeByName(  md  );
             if ($( this ).is("textarea") ) {
                 cm = CodeMirror.fromTextArea(this, {
+                     mode       : md,
                      lineNumbers: true,
-                     readOnly: $( this ).prop("readonly") && "nocursor",
-                     mode: md
+                     readOnly   : $(this).prop("readonly") && "nocursor"
                 });
 
                 var cw = $(cm.getWrapperElement());
@@ -210,10 +210,10 @@ function setMirror(node, func) {
                 });
             } else {
                 cm = CodeMirror($(this).parent()[0], {
-                     value: $(this).text(),
+                     mode       : md,
                      lineNumbers: true,
-                     readOnly: true,
-                     mode: md
+                     readOnly   : "nocursor",
+                     value      : $(this).text()
                 });
 
                 var cw = $(cm.getWrapperElement());

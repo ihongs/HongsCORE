@@ -165,8 +165,8 @@ function setEditor(node, func) {
 
 function forMirror(func, mode) {
     hsRequires([
-        "static/addons/codemirror/codemirror.min.js",
-        "static/addons/codemirror/codemirror.min.css"
+        "static/addons/codemirror/codemirror.min.css",
+        "static/addons/codemirror/codemirror.min.js"
     ] , function() {
         if (mode ) {
             hsRequires([

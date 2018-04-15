@@ -36,11 +36,8 @@
             String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
-            if (text != null) text = _locale.translate(text);
-
             if (!"".equals(rptd)) {
-                rptd += " size=\"3\"";
-                name += ".";
+                name = name + "." ;
             }
         %>
         <%if ("hidden".equals(type)) {%>
@@ -76,13 +73,11 @@
                     <%
                         String extr = "";
                         if (!"".equals(rptd)) {
-                            String s = Synt.asString(info.get("split"));
-                            if (null !=  s  ) {
-                                extr += " data-fl=\"v?v.join('"+escape(s)+"'):''\"";
-                                name  = name.substring( 0, name.length( )-1 );
-                                info.remove ("maxlength");
-                                info.remove ( "pattern" );
-                            }
+                            name  = name.substring(0, name.length() - 1);
+                            extr += " data-toggle=\"tagsinput\"";
+                            info.remove("minlength");
+                            info.remove("maxlength");
+                            info.remove( "pattern" );
                         }
                         if ("string".equals(type)) type = "text";
                         if (info.containsKey("size")) extr += " size=\""+info.get("size").toString()+"\"";
@@ -108,9 +103,9 @@
                         if (info.containsKey("min" )) extr += " data-min=\""+info.get("min").toString()+"\"";
                         if (info.containsKey("max" )) extr += " data-max=\""+info.get("max").toString()+"\"";
                         if ("time".equals(typa) || "date".equals(typa)) {
-                            extr += " data-fl=\"v ? v : new Date().getTime()\"";
+                            extr += " data-fl=\"v ? v : new Date().getTime()\""     ;
                         } else {
-                            extr += " data-fl=\"v ? v : new Date().getTime() / 1000\"";
+                            extr += " data-fl=\"v ? v : new Date().getTime()/1000\"";
                         }
                     %>
                     <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
@@ -119,6 +114,9 @@
                 <%} else if ("radio".equals(type)) {%>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("enum".equals(type) || "select".equals(type)) {%>
+                    <%
+                        if (!"".equals(rptd)) rptd += " size=\"3\"";
+                    %>
                     <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%

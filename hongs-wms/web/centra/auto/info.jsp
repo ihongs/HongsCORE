@@ -32,10 +32,6 @@
             String  type = (String) info.get("__type__");
             String  kind = "_review";
 
-//          if (Synt.declare(info.get("__repeated__"), false)) {
-//              name += ".";
-//          }
-
             if (  "select".equals(type)
             ||     "check".equals(type)
             ||     "radio".equals(type)

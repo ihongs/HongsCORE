@@ -316,6 +316,7 @@ HsForm.prototype = {
                     "funcName"    : "save",
 //                  "contentType" : false,
 //                  "processData" : false,
+                    "global"      : false,
                     "async"       : false,
                     "cache"       : false,
                     "context"     : that,
@@ -346,6 +347,7 @@ HsForm.prototype = {
                     "funcName"    : "save",
                     "contentType" : false,
                     "processData" : false,
+                    "global"      : false,
                     "async"       : false,
                     "cache"       : false,
                     "context"     : that,
@@ -969,7 +971,8 @@ HsForm.prototype = {
                 "cache"   : false,
                 "global"  : false,
                 "context" : this,
-                "success" : function(rst) {
+                "complete": function(rst) {
+                    rst = hsResponse(rst);
                     if (rst["list"] !== undefined) {
                         ret = rst["list"].length > 0;
                     } else
@@ -983,7 +986,8 @@ HsForm.prototype = {
                         ret = rst[ "ok" ] ? true :
                             ( rst["msg" ] ? rst["msg"] : false );
                     }
-                }
+                },
+                "error" : function( ) { ret = false; }
             });
             return ret;
         },

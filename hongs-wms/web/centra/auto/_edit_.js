@@ -219,8 +219,9 @@ function setMirror(node, func) {
                     cw.addClass("form-control-static");
                     cw.height  ("auto");
 
-                    that.text  (  ""  );
-                    that.hide  (      );
+                    that.data("CM", cm);
+                    that.text( "" );
+                    that.hide(    );
                 }
                 func && func.call(node);
             });

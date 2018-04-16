@@ -86,7 +86,7 @@
         <span class="icon-bar"></span>
     </button>
     <a href="<%=Core.BASE_HREF%>/centra/" class="navbar-brand" style="font-size: 16px;">
-        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="margin: -3px 6px 0 0; border-radius: 8px; box-shadow: 0px 0px 8px 2px #cc0000;"/></span>
+        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 3px; margin-top: -3px;"/></span>
         <span style="color:#833">H</span>
         <span style="color:#722">o</span>
         <span style="color:#611">n</span>

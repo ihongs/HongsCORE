@@ -20,7 +20,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div>
-        <div class="toolbox col-md-8 btn-group">
+        <div class="toolbox col-sm-6 btn-group">
             <%if ( "select".equals(_action)) {%>
             <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
@@ -32,14 +32,15 @@
             <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
-        <form class="findbox col-md-4 input-group" action="" method="POST">
+        <form class="findbox col-sm-6 input-group" action="" method="POST">
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
             <span class="input-group-btn">
-                <button type="submit" class="btn btn-default search" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
+                <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
             <%if (!"select".equals(_action)) {%>
-                <button type="button" class="btn btn-default filter" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                <button type="button" class="btn btn-default statis" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
-                <button type="button" class="btn btn-default export" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-save"  ></span></button>
+                <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
+                <button type="button" class="export btn btn-default" title="<%=_locale.translate("fore.export", _title)%>"><span class="glyphicon glyphicon-save"  ></span></button>
+                <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
             <%} // End If %>
             </span>
         </form>
@@ -168,7 +169,7 @@
                 type = "counts";
             }
         %>
-        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="col-md-6" style="padding: 5px;">
+        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-md-6" style="padding: 5px;">
             <div class="clearfix" style="background: #fff;">
                 <div class="col-sm-3 checkbox" style="height: 250px; overflow: hidden; overflow-y: auto;"></div>
                 <div class="col-sm-9 chartbox" style="height: 250px; margin: 10px 0; border-left: 1px dotted #ccc;"></div>
@@ -279,11 +280,7 @@
             </tbody>
         </table>
     </div>
-    <div class="row">
-        <div class="pagebox col-md-8"></div>
-        <div class="helpbox col-md-4 text-right pull-right">
-            <button type="button" class="btn btn-info manual" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"></span></button>
-        </div>
+    <div class="pagebox">
     </div>
 </div>
 <script type="text/javascript">
@@ -331,7 +328,7 @@
     if (fitrbox.find(".form-group").size() == 2) {
         findbox.find(".filter").remove();
     }
-    if (statbox.find( ".col-md-6" ).size() == 0) {
+    if (statbox.find(".stat-group").size() == 0) {
         findbox.find(".statis").remove();
     }
 

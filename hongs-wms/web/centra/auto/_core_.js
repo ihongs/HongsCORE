@@ -47,21 +47,6 @@ S$.delete = function(req) {
 };
 
 /**
- * 分页栏加按钮优化
- */
-var _hsListFillPage = HsList.prototype.fillPage;
-HsList.prototype.fillPage = function(page) {
-    if (/col-\w+-\d+/.test(this.pageBox.attr("class"))) {
-        if (page.ern && page.ern !== "0" ) {
-            this.pageBox.css("width","100%");
-        } else {
-            this.pageBox.css("width",  ""  );
-        }
-    }
-    _hsListFillPage.call(this, page);
-};
-
-/**
  * 列表填充过滤选项
  */
 function hsListFillFilt(x, v, n, t) {

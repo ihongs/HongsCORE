@@ -85,8 +85,8 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" style="font-size: 15px; font-weight: bolder;" href="<%=Core.BASE_HREF%>/centra/">
-        <span style="color:#f00;" class="glyphicon glyphicon-fire"></span>
+    <a href="<%=Core.BASE_HREF%>/centra/" class="navbar-brand" style="font-size: 16px;">
+        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="margin: -3px 6px 0 0; border-radius: 8px; box-shadow: 0px 0px 8px 2px #cc0000;"/></span>
         <span style="color:#833">H</span>
         <span style="color:#722">o</span>
         <span style="color:#611">n</span>

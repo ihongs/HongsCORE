@@ -179,6 +179,7 @@ HsStat.prototype = {
             url : url + rb.join( "" ),
             data: findbox.serialize(),
             dataType: "json",
+            cache  : true,
             success: function(rst) {
                 for (var k in rst.info) {
                      if (k == "__total__") continue;
@@ -219,6 +220,7 @@ HsStat.prototype = {
             url : url + rb.join( "" ),
             data: findbox.serialize(),
             dataType: "json",
+            cache  : true,
             success: function(rst) {
                 for (var k in rst.info) {
                      if (k == "__total__") continue;
@@ -481,8 +483,6 @@ HsStat.prototype = {
     }
 };
 
-jQuery.ajaxSetup ( { cache : true } );
-
-jQuery.fn.hsStat = function( opts ) {
+jQuery.fn.hsStat = function(opts) {
   return this._hsModule(HsStat, opts);
 };

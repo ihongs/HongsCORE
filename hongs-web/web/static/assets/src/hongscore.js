@@ -2427,7 +2427,7 @@ function(evt) {
 })
 .on("click", "select[multiple]",
 function(evt) {
-    if (evt.shiftKey || evt.ctrlKey || evt.altKey) {
+    if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
         return;
     }
     var vals = $(this).data("vals") || [];

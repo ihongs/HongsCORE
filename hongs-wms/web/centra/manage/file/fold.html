@@ -85,8 +85,10 @@
             box.find(".for-select").prop("disabled", rid == nid || /^\/.*?\/$/.test(pre));
 
             var prm = encodeURIComponent(pre);
-            var url = "centra/manage/file/file.html?path="+prm+"&type=file";
-            context.closest(".row").children(".main-context").hsLoad( url );
+            var url = "centra/manage/file/file.html?type=file&path="+prm;
+            context.closest (".side-context")
+                   .siblings(".main-context")
+                   .hsLoad  ( url );
         });
     })(jQuery);
 </script>

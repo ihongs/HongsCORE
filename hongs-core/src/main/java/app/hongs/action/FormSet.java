@@ -204,18 +204,20 @@ public class FormSet
         forms.put(namz, items);
 
         items.put("__name__", namz);
+        String namx = namz;
+
+        namz = element2.getAttribute("type");
+        items.put("__type__", namz);
+        String typx = namz;
+
+        namz = element2.getAttribute("rule");
+        items.put("__rule__", namz);
 
         namz = element2.getAttribute("text");
         items.put("__text__", namz);
 
         namz = element2.getAttribute("hint");
         items.put("__hint__", namz);
-
-        namz = element2.getAttribute("type");
-        items.put("__type__", namz);
-
-        namz = element2.getAttribute("rule");
-        items.put("__rule__", namz);
 
         if (element2.hasAttribute("required")) {
             namz = element2.getAttribute("required");
@@ -229,6 +231,31 @@ public class FormSet
             items.put("__repeated__",  namz  );
         } else {
             items.put("__repeated__", "false");
+        }
+
+        /**
+         * 预优化
+         * 枚举类型和关联类型缺失配置路径时可自动补上
+         * 需注意, 规避解析默认表单配置时引起无限递归
+         */
+        if (!"default".equals(name)) {
+            typx = (String) FormSet.getInstance().getEnum("types").get(typx);
+            if ("fork".equals(typx)) {
+                if (! items.containsKey("form")) {
+                    items.put("form", namx.replace("_id", ""));
+                }
+                if (! items.containsKey("conf")) {
+                    items.put("conf", name);
+                }
+            } else
+            if ("enum".equals(typx)) {
+                if (! items.containsKey("enum")) {
+                    items.put("enum", namx);
+                }
+                if (! items.containsKey("conf")) {
+                    items.put("conf", name);
+                }
+            }
         }
       } else
       if ("param".equals(tagName2))

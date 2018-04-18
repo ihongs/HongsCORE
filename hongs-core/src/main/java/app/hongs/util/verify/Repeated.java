@@ -20,8 +20,9 @@ import java.util.regex.Pattern;
  *  minrepeat   最小数量
  *  defiant     需要忽略的取值列表
  *  diverse     为 true 则执行去重
+ *  striped     为 true 则合成一串
  *  split       按此给出的正则来拆分字串
- *  slice       按此给出的分隔来拆分字串
+ *  slice       按此给出的分隔来拆分字串, 或按此分隔符在最终做合并
  * </pre>
  * @author Hongs
  */
@@ -101,6 +102,24 @@ public class Repeated extends Rule {
             throw new Wrong("fore.form.lt.maxrepeat",
                     String.valueOf(n), String.valueOf(c));
         }
+
+        // 将结果集串连起来
+        if (Synt.declare(params.get("striped"), false)) {
+            String s = Synt.declare(params.get("slice"), ",");
+            StringBuilder b = new StringBuilder();
+            for(  Object v : value  ) {
+                b.append(s).append(v);
+            }
+            if (b.length( )  !=  0  ) {
+            if (s.length( )  !=  0  ) {
+                return b.substring( s.length( ) );
+            }
+                return b. toString( );
+            } else {
+                return "";
+            }
+        }
+
         return value;
     }
 
@@ -112,7 +131,7 @@ public class Repeated extends Rule {
     public Collection getContext() {
         // 是否必须不同的值
         Collection context;
-        if (Synt.declare(params.get("diverse"), false )) {
+        if (Synt.declare(params.get("diverse"), false)) {
             context =  new LinkedHashSet();
         } else {
             context =  new  ArrayList   ();
@@ -130,7 +149,7 @@ public class Repeated extends Rule {
         // 页面加 hidden    值设为要忽略的值
         // 此时如 check     全部未选代表清空
         // 默认对 null/空串 忽略
-        Set ignores =  Synt.toSet(params.get("defiant"));
+        Set ignores = Synt.toSet(params.get("defiant"));
         if (ignores == null || ignores.isEmpty()) {
             ignores =  new  HashSet( );
             ignores.add("");

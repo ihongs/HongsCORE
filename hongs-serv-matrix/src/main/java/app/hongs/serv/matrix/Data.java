@@ -11,11 +11,12 @@ import app.hongs.db.Table;
 import app.hongs.dh.search.SearchEntity;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
+
+import java.io.File;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
-import java.io.File;
-import java.util.Collection;
 import org.apache.lucene.document.Document;
 
 /**
@@ -35,9 +36,8 @@ public class Data extends SearchEntity {
      * @param comf 基础配置文件
      * @param conf 当前配置文件
      * @param form 表单配置名称
-     * @throws HongsException
      */
-    public Data(String path, String comf, String conf, String form) throws HongsException {
+    public Data(String path, String comf, String conf, String form) {
         super(null, path, conf+"."+form);
         this.comf = comf;
         this.conf = conf;
@@ -48,9 +48,8 @@ public class Data extends SearchEntity {
      * 数据实例快捷构造方法
      * @param conf 当前配置文件
      * @param form 表单配置名称
-     * @throws HongsException
      */
-    public Data(String conf, String form) throws HongsException {
+    public Data(String conf, String form) {
         this(conf.replaceFirst("^(centre|centra)/", ""),
              conf.replaceFirst("^(centre)/", "centra/"),
              conf, form);
@@ -62,9 +61,8 @@ public class Data extends SearchEntity {
      * @param conf
      * @param form
      * @return
-     * @throws HongsException
      */
-    public static Data getInstance(String conf, String form) throws HongsException {
+    public static Data getInstance(String conf, String form) {
         Data   inst;
         Core   core = Core.getInstance();
         String name = Data.class.getName() +":"+ conf +":"+ form;

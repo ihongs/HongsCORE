@@ -20,8 +20,9 @@
         </field>
     </form>
     <enum name="form_state">
-        <value code="1">正常</value>
-        <value code="2">冻结</value>
+        <value code="1">内部</value>
+        <value code="2">开放</value>
+        <value code="3">冻结</value>
         <value code="0">删除</value>
     </enum>
 </root>

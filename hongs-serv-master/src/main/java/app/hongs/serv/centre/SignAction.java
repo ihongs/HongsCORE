@@ -17,7 +17,7 @@ import java.util.Map;
  * 登录动作
  * @author Hongs
  */
-@Action("centra/sign")
+@Action("centre/sign")
 public class SignAction extends app.hongs.serv.centra.SignAction {
 
     /**
@@ -43,13 +43,13 @@ public class SignAction extends app.hongs.serv.centra.SignAction {
         // 赋予公共权限
         sd = new HashMap();
         sd.put("user_id",  usrid  );
-        sd.put("role"   , "public");
+        sd.put("role"   , "centre");
         uo.db.getTable("user_role").insert(sd);
 
         // 加入公共部门
         sd = new HashMap();
         sd.put("user_id",  usrid  );
-        sd.put("dept_id", "PUBLIC");
+        sd.put("dept_id", "CENTRE");
         uo.db.getTable("user_dept").insert(sd);
 
         ah.reply(AuthKit.userSign(ah, null, appid, usrid, uname, uhead, utime));

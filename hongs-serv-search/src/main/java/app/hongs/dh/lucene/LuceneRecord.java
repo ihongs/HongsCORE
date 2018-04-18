@@ -855,7 +855,8 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             if (m == null) {
                 continue;
             }
-            if (fitrable(m) == false ) {
+            if (fitrable(m) == false
+            &&  srchable(m) == false ) {
                 continue;
             }
 

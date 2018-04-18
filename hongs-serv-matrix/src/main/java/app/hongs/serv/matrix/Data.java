@@ -14,6 +14,7 @@ import app.hongs.util.Tool;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -120,7 +121,7 @@ public class Data extends SearchEntity {
             fieldx = FormSet.getInstance(comf).getForm(form);
 
             // 补充上额外的字段设置
-            fieldx = new HashMap( fieldx );
+            fieldx = new LinkedHashMap(fieldx);
             fieldx.putAll( fields );
             fields = fieldx;
         }

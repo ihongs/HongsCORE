@@ -136,10 +136,9 @@ public class Mview extends Model {
 
             // 最后配置取名字
             title = "fore.form."+ db.name +"."+ table.name +"@";
-            title = getLocale( ).translate(title);
         } while (false);
 
-        return   title ;
+        return getLocale().translate(title);
 
         /*
         String sql = "SHOW TABLE STATUS WHERE name = ?";

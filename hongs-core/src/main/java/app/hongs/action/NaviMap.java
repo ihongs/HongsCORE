@@ -265,19 +265,19 @@ public class NaviMap
 
         String href = element2.getAttribute("href");
         if (href == null) href = "";
-        menus.put(href , menu2);
-        manus.put(href , menu2);
+        menus.put( href , menu2);
+        manus.put( href , menu2);
 
         String hrel = element2.getAttribute("hrel");
-        if (hrel == null) hrel = "";
+        if (hrel != null)
         menu2.put("hrel", hrel );
 
         String icon = element2.getAttribute("icon");
-        if (icon == null) icon = "";
+        if (icon != null)
         menu2.put("icon", icon );
 
         String text = element2.getAttribute("text");
-        if (text == null) text = "";
+        if (text != null)
         menu2.put("text", text );
 
         Map menus2 = new LinkedHashMap();
@@ -305,7 +305,7 @@ public class NaviMap
         roles.put( namz , role2);
 
         String text = element2.getAttribute("text");
-        if (text == null) text = "";
+        if (text != null)
         role2.put("text", text );
 
         Set actions2 = new HashSet();
@@ -350,9 +350,44 @@ public class NaviMap
           imports.add   (   impart   );
           imports.addAll(conf.imports);
           actions.addAll(conf.actions);
-          roles.putAll(conf.roles);
           menus.putAll(conf.menus);
           manus.putAll(conf.manus);
+
+          /**
+           * 深度合并
+           * 角色同名视为追加权限设置
+           * 故需要将下级权限合并过来
+           * 不采用 Dict.putAll 为避免 name 被覆盖
+           */
+          for(Map.Entry<String, Map> et : conf.roles.entrySet()) {
+              String  namz = et.getKey(  );
+              Map     srol = et.getValue();
+              Map     crol = (Map) roles.get(namz);
+
+              if (crol != null) {
+                  Set sact, cact;
+
+                  sact = (Set) srol.get("actions");
+                  cact = (Set) crol.get("actions");
+                  if (sact != null) {
+                  if (cact != null) {
+                      cact.addAll(sact);
+                  } else {
+                      crol.put("actions", sact);
+                  }}
+
+                  sact = (Set) srol.get("depends");
+                  cact = (Set) crol.get("depends");
+                  if (sact != null) {
+                  if (cact != null) {
+                      cact.addAll(sact);
+                  } else {
+                      crol.put("depends", sact);
+                  }}
+              } else {
+                  roles.put(namz, srol);
+              }
+          }
         }
         catch (HongsException ex )
         {
@@ -589,7 +624,7 @@ public class NaviMap
 
   /**
    * 获取全部角色
-   * @return 
+   * @return
    */
   public List<Map> getRoleTranslates() {
       return getRoleTranslated(0, null);
@@ -602,7 +637,7 @@ public class NaviMap
   /**
    * 获取当前用户有权的角色
    * @return
-   * @throws HongsException 
+   * @throws HongsException
    */
   public List<Map> getRoleTranslated()
   throws HongsException {
@@ -727,7 +762,7 @@ public class NaviMap
 
   /**
    * 获取全部菜单
-   * @return 
+   * @return
    */
   public List<Map> getMenuTranslates() {
       return getMenuTranslated(1, null );
@@ -740,7 +775,7 @@ public class NaviMap
   /**
    * 获取当前用户有权的菜单
    * @return
-   * @throws HongsException 
+   * @throws HongsException
    */
   public List<Map> getMenuTranslated()
   throws HongsException {

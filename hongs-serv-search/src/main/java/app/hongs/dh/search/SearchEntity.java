@@ -25,11 +25,11 @@ import org.apache.lucene.index.Term;
  */
 public class SearchEntity extends LuceneRecord {
 
-    public SearchEntity(Map form, String path, String name) throws HongsException {
+    public SearchEntity(Map form, String path, String name) {
         super(form, path, name);
     }
 
-    public SearchEntity(Map form) throws HongsException {
+    public SearchEntity(Map form) {
         this (form, null, null);
     }
 

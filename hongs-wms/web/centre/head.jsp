@@ -6,6 +6,7 @@
 <%@page import="app.hongs.util.Synt"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.util.Set"%>
 <%@page import="java.util.regex.Pattern"%>
 <%@page extends="app.hongs.jsp.Pagelet"%>
 <%!
@@ -64,8 +65,10 @@
 <%
     ActionHelper helper = (ActionHelper) Core.getInstance(ActionHelper.class);
 
-    NaviMap curr = NaviMap.getInstance("centra");
-    List    menu = curr.getMenuTranslated("common/menu.act?m=centra", 2);
+    NaviMap curr = NaviMap.getInstance("centre");
+    Set     role = curr.getRoleSet();
+    if(null == role) role = Synt.setOf("public");
+    List    menu = curr.getMenuTranslated("common/menu.act?m=centre",2, role);
 
     String  acti = helper.getParameter("active");
     String  name = (String) helper.getSessibute("uname");
@@ -85,7 +88,7 @@
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
     </button>
-    <a href="<%=Core.BASE_HREF%>/centra/" class="navbar-brand" style="font-size: 16px;">
+    <a href="<%=Core.BASE_HREF%>/centre/" class="navbar-brand" style="font-size: 16px;">
         <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 3px; margin-top: -3px;"/></span>
         <span style="color:#833">H</span>
         <span style="color:#722">o</span>
@@ -192,17 +195,17 @@
 
         $("#sign-out")
             .click(function() {
-                $.get(hsFixUri("centra/sign/delete.act"), function() {
-                    location.assign(hsFixUri( "centra/login.html" ));
+                $.get(hsFixUri("centre/sign/delete.act"), function() {
+                    location.assign(hsFixUri( "centre/login.html" ));
                 });
             });
         $("#user-set")
             .click(function() {
-                $.hsOpen("centra/manage/mime.html");
+                $.hsOpen("centre/manage/mime.html");
             });
         $("#note-msg")
             .click(function() {
-                $.hsOpen("centra/manage/note.html");
+                $.hsOpen("centre/manage/note.html");
             });
     })(jQuery);
 </script>

@@ -40,9 +40,10 @@
         <blockquote style="line-height:1em;"><b>使用帮助</b></blockquote>
         <ul>
             <li>请选择单元来管理表单，无单元请先添加单元；</li>
-            <li>顶层下可指定一级菜单，其下表单为二级菜单；</li>
-            <li>二层及以下的单元将作为内部数据不加入菜单。</li>
-            <li>设好表单后需到用户管理中分配权限方可进入，</li>
+            <li>顶层下单元为一级菜单，其下表单为二级菜单；</li>
+            <li>二层及以下的单元将作为内部数据不显示菜单。</li>
+            <li>添加表单后需要刷新当前页面才能看到其菜单，</li>
+            <li>可在用户管理中将权限分配给其他用户或部门。</li>
             <li>祝您使用顺利！</li>
         </ul>
         <p style="height:1em;"></p>
@@ -55,11 +56,19 @@
         var loadBox = context.closest(".loadbox");
         var unitId = H$("#unit_id", loadBox);
         if (unitId == "" || unitId == "0") {
-            context.find(".create" ).prop("disabled", true);
-            context.find(".findbox").find("input,button").prop("disabled", true);
+            context.find(".alert").show( );
             context.find(".listbox").addClass("invisible");
             context.find(".pagebox").addClass("invisible");
-            context.find(".alert").show();
+            context.find(".toolbox").find("input,button").prop("disabled", true);
+            context.find(".findbox").find("input,button").prop("disabled", true);
+        } else {
+            // 标红冻结的行
+            context.data("_fill_state_text", function(td, v) {
+                if (this._info.state == 3) {
+                    td.closest("tr").css("color", "#ff0000");
+                }
+                return v;
+            });
         }
     })(jQuery);
 </script>

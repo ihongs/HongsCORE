@@ -430,15 +430,16 @@ public class Form extends Model {
     }
 
     protected void updateUnitMenu(String id) throws HongsException {
-        Unit   unit = new Unit(   );
-        String name = Synt.declare(unit.table
-              .filter ("id=?" , id)
-              .select ("name")
-              .one    (      )
-              .get    ("name"), "");
-
-        unit.updateUnitMenu(id, name);
-        unit.updateRootMenu(        );
+        Unit unit = new Unit();
+        if ("0".equals(id)) {
+            String name = Synt.declare(unit.table
+                  .filter ("id=?" , id  )
+                  .select ("name")
+                  .one    (      )
+                  .get    ("name"), ""  );
+            unit.updateUnitMenu(id, name);
+        }
+            unit.updateRootMenu(        );
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
@@ -571,7 +572,7 @@ public class Form extends Model {
         actn = docm.createElement("action");
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
-        
+
         saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 

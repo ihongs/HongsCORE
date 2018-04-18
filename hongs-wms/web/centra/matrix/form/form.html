@@ -23,6 +23,15 @@
                     </div>
                     <div class="form-group">
                         <label class="control-label clearfix" style="display: block">
+                            <span>状态</span>
+                        </label>
+                        <select class="form-control" name="state">
+                            <option value="1">内部</option>
+                            <option value="2">开放</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label clearfix" style="display: block">
                             <span>备注</span>
                         </label>
                         <textarea class="form-control" name="note"></textarea>
@@ -78,7 +87,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <input class="form-control" name="name" type="text" placeholder="请输入..." required="required" data-nameable="true" data-srchable="true"/>
+                    <input class="form-control" name="name" type="text" placeholder="请输入..." required="required" data-listable="true" data-nameable="true" data-srchable="true"/>
                 </div>
                 <div class="form-group base-field" data-type="note">
                     <label class="control-label clearfix" style="display: block;">

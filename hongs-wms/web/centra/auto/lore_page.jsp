@@ -89,7 +89,7 @@
             <div class="form-group">
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
-<b>POST</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
+<b>ADD|POST</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.API_EXT%>
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.ACT_EXT%>
                 </pre>
@@ -118,7 +118,7 @@
             <div class="form-group">
                 <label class="control-label">接口</label>
                 <pre class="form-control-static">
-<b>PUT</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+<b>PUT|PATCH</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                 </pre>

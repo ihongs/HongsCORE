@@ -80,8 +80,8 @@ CREATE INDEX `IK_a_master_user_mtime` ON `a_master_user` (`mtime`);
 CREATE INDEX `IK_a_master_user_state` ON `a_master_user` (`state`);
 CREATE INDEX `IK_a_master_user_username` ON `a_master_user` (`username`);
 CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);
-CREATE UNIQUE INDEX `UK_a_master_user_email` ON `a_master_user` (`email`);
-CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
+-- CREATE UNIQUE INDEX `UK_a_master_user_email` ON `a_master_user` (`email`);
+-- CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
 
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','老大 (管理员)',NULL,NULL,'1424075622','1424075622','0',1);
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODRZHR00KLJOEM','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);

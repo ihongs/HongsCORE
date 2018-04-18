@@ -34,6 +34,7 @@ CREATE TABLE `a_matrix_form` (
   `id` CHAR(20) NOT NULL,
   `unit_id` CHAR(20) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
+  `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
   `conf` TEXT NOT NULL,
   `ctime` INTEGER(11) DEFAULT NULL,

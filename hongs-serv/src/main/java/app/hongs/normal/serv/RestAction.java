@@ -20,6 +20,7 @@ import javax.servlet.http.HttpServletResponse;
 public class RestAction extends ApisAction {
 
     private static final String   METHOD_GET    = "GET";
+    private static final String   METHOD_ADD    = "ADD";
     private static final String   METHOD_PUT    = "PUT";
     private static final String   METHOD_POST   = "POST";
     private static final String   METHOD_PATCH  = "PATCH";
@@ -39,16 +40,13 @@ public class RestAction extends ApisAction {
                 reset(req, ACTION_GET   );
                 super.service( req, rsp );
                 break;
+            case METHOD_ADD   :
             case METHOD_POST  :
                 req.setAttribute(Cnst.UPDATE_MODE, false);
                 reset(req, ACTION_POST  );
                 super.service( req, rsp );
                 break;
             case METHOD_PUT   :
-                req.setAttribute(Cnst.UPDATE_MODE, false);
-                reset(req, ACTION_PATCH );
-                super.service( req, rsp );
-                break;
             case METHOD_PATCH :
                 req.setAttribute(Cnst.UPDATE_MODE, true );
                 reset(req, ACTION_PATCH );

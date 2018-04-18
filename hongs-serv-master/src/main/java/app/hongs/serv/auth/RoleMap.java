@@ -5,6 +5,7 @@ import app.hongs.HongsException;
 import app.hongs.action.NaviMap;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -42,10 +43,12 @@ public class RoleMap {
     }
 
     public  List<Map> getRoleTranslated(Set<String> rolez) {
-        return getRoleTranslated(navi.menus, rolez, lang, new StringBuilder(), 0, 0);
+        Set  <String> namez  =  new HashSet(      );
+        StringBuilder path   =  new StringBuilder();
+        return getRoleTranslated(navi.menus, rolez, namez, lang, path, 0, 0);
     }
 
-    private List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, StringBuilder path, int j, int i) {
+    private List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, Set<String> namez, CoreLocale lang, StringBuilder path, int j, int i) {
       List<Map> list = new ArrayList( );
 
       if (null == menus||(j != 0 && j <= i)) {
@@ -62,19 +65,23 @@ public class RoleMap {
           String h = (String) item.getKey();
           String t = (String) v.get("text");
           if (t == null || t.length() == 0) {
-              t = "core.role."+name2Prop(h);
+              t = "core.menu."+name2Prop(h);
           }
           t = lang.translate(t);
           b = new StringBuilder(path)
                 .append (" / ")
                 .append (  t  );
 
-          List<Map> rolz = new ArrayList();
-          List<Map> subz = getRoleTranslated(m, rolez, lang, b, j, i + 1);
+          if (r != null) {
+          List<Map> rolz = new ArrayList( );
 
-          if (r != null) for (String n : (Set<String>) r) {
-              if (rolez != null && ! rolez.contains(n)  ) {
-                  continue;
+          for(String n : ( Set<String> ) r) {
+              if (rolez != null
+              && !rolez.contains(n)) {
+                  continue; // 无权
+              }
+              if (namez.contains(n)) {
+                  continue; // 重名
               }
 
               Map    o = navi.getRole(n);
@@ -83,8 +90,10 @@ public class RoleMap {
 
               // 没有指定 text 则用 name 获取
               if (s == null || s.length() == 0) {
-                  s = "core.role."+name2Prop(n);
+//                s = "core.role."+name2Prop(n);
+                  continue; // 没名字干脆隐藏
               }
+              namez.add(n);
 
               Map role = new HashMap();
               role.put("name", n);
@@ -105,14 +114,16 @@ public class RoleMap {
               menu.put("icon", d);
               list.add(menu);
           }
+          }
 
-          // 拉平下级
+          // 获取下级并拉平
+          List<Map> subz = getRoleTranslated(m, rolez, namez, lang, b, j, i + 1);
           if (! subz.isEmpty()) {
               list.addAll(subz);
           }
       }
 
-      return list;
+      return  list;
   }
 
   /**

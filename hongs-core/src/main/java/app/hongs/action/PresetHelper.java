@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
  */
 public class PresetHelper {
 
-    private final Pattern INJ_PAT = Pattern.compile("\\(\\$(request|context|session|cookies|mapping)\\.([a-zA-Z0-9_]+)(?:\\.([a-zA-Z0-9_\\.]+))?\\)");
+    private final Pattern INJ_PAT = Pattern.compile("\\(\\$(request|context|session|cookies|mapping)\\.([a-zA-Z0-9_]+)(?:\\.([a-zA-Z0-9_\\.]+))?(?:\\|\\|(.*?))?\\)");
     private final Map<String, Object> defenseData;
     private final Map<String, Object> defaultData;
 
@@ -181,6 +181,7 @@ public class PresetHelper {
                 String s = mat.group(1);
                 String n = mat.group(2);
                 String k = mat.group(3);
+                String x = mat.group(4);
 
                 if ("request".equals(s)) {
                     data = help.getRequestData().get(n);
@@ -205,6 +206,11 @@ public class PresetHelper {
                     } else {
                         data = null;
                     }
+                }
+                
+                // 默认值
+                if (x != null && data == null) {
+                    data = Data.toObject(x);
                 }
             } else
             if (text.startsWith("(") && text.endsWith(")")) {

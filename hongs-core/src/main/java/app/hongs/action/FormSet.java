@@ -239,7 +239,7 @@ public class FormSet
          * 需注意, 规避解析默认表单配置时引起无限递归
          */
         if (!"default".equals(name)) {
-            typx = (String) FormSet.getInstance().getEnum("types").get(typx);
+            typx = (String) getInstance().getEnum("__types__").get(typx);
             if ("fork".equals(typx)) {
                 if (! items.containsKey("form")) {
                     items.put("form", namx.replace("_id", ""));

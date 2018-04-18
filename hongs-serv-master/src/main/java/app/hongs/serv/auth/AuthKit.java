@@ -197,13 +197,13 @@ public class AuthKit {
             // 赋予公共权限
             ud  =  new HashMap( );
             ud.put("user_id",  usrid  );
-            ud.put("role"   , "public");
+            ud.put("role"   , "centre");
             db.getTable("user_role").insert(ud );
 
             // 加入公共部门
             ud  =  new HashMap( );
             ud.put("user_id",  usrid  );
-            ud.put("dept_id", "PUBLIC");
+            ud.put("dept_id", "CENTRE");
             db.getTable("user_dept").insert(ud );
         }
 

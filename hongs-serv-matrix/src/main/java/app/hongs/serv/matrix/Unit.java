@@ -11,9 +11,9 @@ import app.hongs.db.Table;
 import app.hongs.db.util.FetchCase;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
 import java.util.List;
@@ -40,7 +40,8 @@ import org.w3c.dom.Element;
  */
 public class Unit extends Mtree {
 
-    protected String prefix = "centra/data";
+    protected String centra = "centra/data";
+    protected String centre = "centre/data";
 
     public Unit() throws HongsException {
         this(DB.getInstance("matrix").getTable("unit"));
@@ -53,7 +54,7 @@ public class Unit extends Mtree {
 
     @Override
     public int add(String id, Map rd) throws HongsException {
-        int an = super.add(id, rd);
+        int n = super.add(id, rd);
 
         // 建立菜单配置
         String name = (String) rd.get("name");
@@ -62,21 +63,32 @@ public class Unit extends Mtree {
             updateRootMenu(        );
         }
 
-        return an;
+        return n;
     }
 
     @Override
     public int put(String id, Map rd) throws HongsException {
-        int an = super.put(id, rd);
+        int n = super.put(id, rd);
 
-        // 建立菜单配置
+        // 更新菜单配置
         String name = (String) rd.get("name");
         if (name != null && !"".equals(name)) {
             updateUnitMenu(id, name);
             updateRootMenu(        );
         }
 
-        return an;
+        return n;
+    }
+
+    @Override
+    public int del(String id) throws HongsException {
+        int n = super.del(id);
+
+        // 更新菜单配置
+        deleteUnitMenu(id);
+        updateRootMenu(  );
+
+        return n;
     }
 
     @Override
@@ -103,7 +115,7 @@ public class Unit extends Mtree {
         }
 
         // 从导航表中取单元ID
-        NaviMap navi = NaviMap.getInstance(prefix);
+        NaviMap navi = NaviMap.getInstance(centra);
         Map<String, Map> ms = navi.menus;
         Set<String> rs = navi.getRoleSet();
         Set<String> us = /**/new HashSet();
@@ -147,25 +159,35 @@ public class Unit extends Mtree {
         return  hasRol ;
     }
 
-    public void updateUnitMenu(String id, String name) throws HongsException {
-        Document docm = makeDocument();
+    public void deleteUnitMenu(String id) {
+        File fo;
 
-        Element  root = docm.createElement("root");
+        fo = new File(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml");
+        if (fo.exists()) fo.delete();
+    }
+
+    public void updateUnitMenu(String id, String name) throws HongsException {
+        List<Map> rows;
+        Document  docm;
+        Element   root, menu, incl;
+
+        docm = makeDocument();
+
+        root = docm.createElement("root");
         docm.appendChild ( root );
 
-        Element  menu = docm.createElement("menu");
+        menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("text", name);
         menu.setAttribute("href", "common/menu.act?m=centra&x="+id);
-
-        Element  incl;
 
         // 会话
         incl = docm.createElement("rsname");
         root.appendChild ( incl );
         incl.appendChild ( docm.createTextNode("@centra") );
-
-        List<Map> rows;
 
         // 单元下的表单
         rows = this.db.getTable("form").fetchCase( )
@@ -176,58 +198,124 @@ public class Unit extends Mtree {
             String fid = row.get("id").toString();
             incl = docm.createElement( "import" );
             menu.appendChild( incl );
-            incl.appendChild( docm.createTextNode(prefix+"/"+fid) );
+            incl.appendChild(docm.createTextNode(centra+"/"+fid) );
         }
 
-        // 保存
-        saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.NAVI_EXT+".xml", docm);
-    }
+        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
 
-    public void updateRootMenu() throws HongsException {
-        Document docm = makeDocument();
+        //** 公开的表单 **/
 
-        Element  root = docm.createElement("root");
+        docm = makeDocument();
+
+        root = docm.createElement("root");
         docm.appendChild ( root );
 
-        Element  menu = docm.createElement("menu");
+        menu = docm.createElement("menu");
         root.appendChild ( menu );
-        menu.setAttribute("text", "");
-        menu.setAttribute("href", "!"+ prefix+"/");
-
-        Element  incl;
+        menu.setAttribute("text", name);
+        menu.setAttribute("href", "common/menu.act?m=centra&x="+id);
 
         // 会话
         incl = docm.createElement("rsname");
         root.appendChild ( incl );
         incl.appendChild ( docm.createTextNode("@centra") );
 
-        List<Map> rows;
-
-        // 全部一级单元
-        rows = this.table.fetchCase( )
-            .filter("pid = 0 AND state > 0")
+        // 单元下的表单
+        rows = this.db.getTable("form").fetchCase( )
+            .filter("unit_id = ? AND state = 2", id)
             .select("id").orderBy( "boost DESC" )
             .all();
+        for (Map row : rows) {
+            String fid = row.get("id").toString();
+            incl = docm.createElement( "import" );
+            menu.appendChild( incl );
+            incl.appendChild( docm.createTextNode(centre+"/"+fid) );
+        }
+
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+    }
+
+    public void updateRootMenu() throws HongsException {
+        List<Map> rows, subs;
+        Document  docm;
+        Element   root, menu, incl;
+
+        rows = this.table.fetchCase( )
+            .filter("pid  = 0 AND state > 0")
+            .select("id").orderBy( "boost DESC" )
+            .all();
+        subs = this.table.fetchCase( )
+            .filter("pid != 0 AND state > 0")
+            .select("id").orderBy( "boost DESC" )
+            .all();
+        
+        docm = makeDocument();
+
+        root = docm.createElement("root");
+        docm.appendChild ( root );
+
+        menu = docm.createElement("menu");
+        root.appendChild ( menu );
+        menu.setAttribute("text", "");
+        menu.setAttribute("href", "!"+ centra+"/");
+
+        // 会话
+        incl = docm.createElement("rsname");
+        root.appendChild ( incl );
+        incl.appendChild ( docm.createTextNode("@centra") );
+
+        // 全部一级单元
         for (Map row : rows) {
             String uid = row.get("id").toString();
             incl = docm.createElement( "import" );
             root.appendChild( incl );
-            incl.appendChild( docm.createTextNode(prefix+"/"+uid) );
+            incl.appendChild(docm.createTextNode(centra+"/"+uid) );
         }
 
         // 一级以下单元
-        rows = this.table.fetchCase( )
-            .filter("pid != 0 AND state > 0")
-            .select("id").orderBy( "boost DESC" )
-            .all();
-        for (Map row : rows) {
+        for (Map row : subs) {
             String uid = row.get("id").toString();
             incl = docm.createElement( "import" );
             menu.appendChild( incl );
-            incl.appendChild( docm.createTextNode(prefix+"/"+uid) );
+            incl.appendChild(docm.createTextNode(centra+"/"+uid) );
         }
 
-        saveDocument(Core.CONF_PATH+"/"+prefix+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+centra+Cnst.NAVI_EXT+".xml", docm);
+
+        //** 公开的表单 **/
+
+        docm = makeDocument();
+
+        root = docm.createElement("root");
+        docm.appendChild ( root );
+
+        menu = docm.createElement("menu");
+        root.appendChild ( menu );
+        menu.setAttribute("text", "");
+        menu.setAttribute("href", "!"+ centre+"/");
+
+        // 会话
+        incl = docm.createElement("rsname");
+        root.appendChild ( incl );
+        incl.appendChild ( docm.createTextNode("@centra") );
+
+        // 全部一级单元
+        for (Map row : rows) {
+            String uid = row.get("id").toString();
+            incl = docm.createElement( "import" );
+            root.appendChild( incl );
+            incl.appendChild( docm.createTextNode(centre+"/"+uid) );
+        }
+
+        // 一级以下单元
+        for (Map row : subs) {
+            String uid = row.get("id").toString();
+            incl = docm.createElement( "import" );
+            menu.appendChild( incl );
+            incl.appendChild( docm.createTextNode(centre+"/"+uid) );
+        }
+
+        saveDocument(Core.CONF_PATH+"/"+centre+Cnst.NAVI_EXT+".xml", docm);
     }
 
     private Document makeDocument() throws HongsException {

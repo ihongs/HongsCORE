@@ -13,17 +13,18 @@ import app.hongs.db.util.FetchCase;
 import app.hongs.util.Data;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -43,7 +44,8 @@ import org.w3c.dom.Element;
  */
 public class Form extends Model {
 
-    protected String prefix = "centra/data";
+    protected String centra = "centra/data";
+    protected String centre = "centre/data";
 
     public Form() throws HongsException {
         this(DB.getInstance("matrix").getTable("form"));
@@ -56,93 +58,91 @@ public class Form extends Model {
 
     @Override
     public int put(String id, Map rd) throws HongsException {
-        List<Map> fds = parseConf(rd);
-        String   name = (String)  rd.get( "name" );
+        String stat = Synt.asString(rd.get("state"));
+        String name = Synt.asString(rd.get("name" ));
+        String stax = get(id, "state");
+        String namx = get(id, "name" );
+        List   conf = parseConf(rd);
 
         // 冻结意味着手动修改了配置
         // 再操作可能会冲掉自定配置
-        if (!rd.containsKey("state")
-        &&  !fetchCase()
-            .field("id")
-            .where("id = ? AND state = ?", id, 2 )
-            .one  (    )
-            .isEmpty(  )) {
-            throw new HongsException(0x1100, "表单已冻结, 禁止操作");
+        if (stat == null) {
+            if ("3".equals(stax)) {
+                throw new HongsException(0x1100, "表单冻结, 禁止操作");
+            }
+            if ("0".equals(stax)) {
+                throw new HongsException(0x1104, "表单缺失, 无法操作");
+            }
         }
 
-        int an = superPut (id,  rd );
+        int n  = superPut(id, rd);
+        if (n != 0) {
+            // 用旧数据补全
+            if (stat == null && name != null) {
+                stat  = stax;
+            }
+            if (name == null && stat != null) {
+                name  = namx;
+            }
 
-        // 建立表单配置
-        if (fds != null) {
-            updateFormConf(id,  fds);
+            // 更新配置文件
+            if (conf != null || stat != null) {
+                updateFormConf(id, stat,conf);
+            }
+            if (name != null || stat != null) {
+                updateFormMenu(id, stat,name);
+            }
+            if (stat != null) {
+                updateUnitMenu(get(id, "unit_id"));
+            }
         }
-
-        // 建立菜单配置
-        if (name != null) {
-            updateFormMenu(id, name);
-        }
-
-        return an;
+        return  n;
     }
 
     @Override
     public int add(String id, Map rd) throws HongsException {
-        List<Map> fds = parseConf(rd);
-        String   name = (String) rd.get( "name"    );
-        String unitId = (String) rd.get( "unit_id" );
-        String unitNm = (String) db.getTable("unit")
-                .filter ("id = ?", unitId)
-                .select ("name")
-                .one    ()
-                .get    ("name");
+        String ud = Synt.asString(rd.get("unit_id"));
+        String stat = Synt.asString(rd.get("state"));
+        String name = Synt.asString(rd.get("name" ));
+        List   conf = parseConf(rd);
 
-        int an = superAdd (id,  rd );
+        int n  = superAdd(id, rd);
+        if (n != 0) {
+            // 更新配置文件
+            updateFormConf(id, stat, conf);
+            updateFormMenu(id, stat, name);
 
-        // 建立表单配置
-        if (fds != null) {
-            updateFormConf(id,  fds);
+            // 更新单元菜单
+            updateUnitMenu(ud);
+
+            // 添加表单权限
+            insertAuthRole(id);
         }
 
-        // 建立菜单配置
-        if (name != null) {
-            updateFormMenu(id, name);
-        }
-
-        // 更新单元菜单
-        updateUnitMenu(unitId, unitNm);
-
-        // 添加表单权限
-        insertAuthRole(id);
-
-        return an;
+        return  n;
     }
 
     @Override
     public int del(String id, FetchCase fc) throws HongsException {
-        String unitId = (String) db.getTable("form")
-                .filter ("id = ?", id)
-                .select ("unit_id")
-                .one    ()
-                .get    ("unit_id");
-        String unitNm = (String) db.getTable("unit")
-                .filter ("id = ?", unitId)
-                .select ("name")
-                .one    ()
-                .get    ("name");
+        String ud = get(id, "unit_id");
 
-        int n = super.del(id,fc);
+        int n  = superDel(id, fc);
+        if (n != 0) {
+            // 删除配置文件
+            deleteFormConf(id);
+            deleteFormMenu(id);
 
-        // 删除配置文件
-        deleteFormConf(id);
-        deleteFormMenu(id);
+            // 更新单元菜单
+            updateUnitMenu(ud);
 
-        // 更新单元菜单
-        updateUnitMenu(unitId, unitNm);
-
-        // 删除表单权限
-        deleteAuthRole(id);
-
+            // 删除表单权限
+            deleteAuthRole(id);
+        }
         return n;
+    }
+
+    private String get(String id, String fn) throws HongsException {
+        return Synt.declare(table.filter("id=?", id).select(fn).one().get(fn), "");
     }
 
     protected final int superAdd(String id, Map rd) throws HongsException {
@@ -331,8 +331,8 @@ public class Form extends Model {
         }
 
         // 从权限串中取表单ID
-        NaviMap nm = NaviMap.getInstance(prefix);
-        String  pm = prefix + "/";
+        NaviMap nm = NaviMap.getInstance(centra);
+        String  pm = centra + "/";
         Set<String> ra = nm.getRoleSet( );
         Set<String> rs = new   HashSet( );
         for (String rn : ra) {
@@ -350,33 +350,28 @@ public class Form extends Model {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
         String tan ;
-        
+
         // 写入权限
         tan = (String) table.getParams().get("role.table");
         if (tan != null) {
             Table tab = db.getTable(tan);
-            tab.insert(Synt.mapOf(
-                "user_id", uid,
-                "role"   , prefix + "/" + id + "/search"
+            tab.insert(Synt.mapOf("user_id", uid,
+                "role"   , centra + "/" + id + "/search"
             ));
-            tab.insert(Synt.mapOf(
-                "user_id", uid,
-                "role"   , prefix + "/" + id + "/create"
+            tab.insert(Synt.mapOf("user_id", uid,
+                "role"   , centra + "/" + id + "/create"
             ));
-            tab.insert(Synt.mapOf(
-                "user_id", uid,
-                "role"   , prefix + "/" + id + "/update"
+            tab.insert(Synt.mapOf("user_id", uid,
+                "role"   , centra + "/" + id + "/update"
             ));
-            tab.insert(Synt.mapOf(
-                "user_id", uid,
-                "role"   , prefix + "/" + id + "/delete"
+            tab.insert(Synt.mapOf("user_id", uid,
+                "role"   , centra + "/" + id + "/delete"
             ));
-            tab.insert(Synt.mapOf(
-                "user_id", uid,
-                "role"   , prefix + "/" + id + "/revert"
+            tab.insert(Synt.mapOf("user_id", uid,
+                "role"   , centra + "/" + id + "/revert"
             ));
         }
-        
+
         // 更新缓存(通过改变权限更新时间)
         tan = (String) table.getParams().get("user.table");
         if (tan != null) {
@@ -391,20 +386,19 @@ public class Form extends Model {
         ActionHelper helper = Core.getInstance(ActionHelper.class);
         String uid = (String) helper.getSessibute ( Cnst.UID_SES );
         String tan;
-        
+
         // 删除权限
         tan = (String) table.getParams().get("role.table");
         if (tan != null) {
             Table tab = db.getTable(tan);
-            tab.remove("`role` IN (?)", Synt.setOf(
-                prefix + "/" + id + "/search",
-                prefix + "/" + id + "/create",
-                prefix + "/" + id + "/update",
-                prefix + "/" + id + "/delete",
-                prefix + "/" + id + "/revert"
+            tab.remove("`role` IN (?)", Synt.setOf(centra + "/" + id + "/search",
+                centra + "/" + id + "/create",
+                centra + "/" + id + "/update",
+                centra + "/" + id + "/delete",
+                centra + "/" + id + "/revert"
             ));
         }
-        
+
         // 更新缓存(通过改变权限更新时间)
         tan = (String) table.getParams().get("user.table");
         if (tan != null) {
@@ -416,37 +410,50 @@ public class Form extends Model {
     }
 
     protected void deleteFormMenu(String id) {
-        File fo = new File(Core.CONF_PATH +"/"+ prefix +"/"+ id + Cnst.FORM_EXT +".xml");
-        if (fo.exists()) {
-            fo.delete();
-        }
+        File fo;
+
+        fo = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.FORM_EXT +".xml");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.FORM_EXT +".xml");
+        if (fo.exists()) fo.delete();
     }
 
     protected void deleteFormConf(String id) {
-        File fo = new File(Core.CONF_PATH +"/"+ prefix +"/"+ id + Cnst.NAVI_EXT +".xml");
-        if (fo.exists()) {
-            fo.delete();
-        }
+        File fo;
+
+        fo = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".xml");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.NAVI_EXT +".xml");
+        if (fo.exists()) fo.delete();
     }
 
-    protected void updateUnitMenu(String id, String name) throws HongsException {
-        Unit un = new Unit();
-        un.updateUnitMenu(id, name);
-        un.updateRootMenu(        );
+    protected void updateUnitMenu(String id) throws HongsException {
+        Unit   unit = new Unit(   );
+        String name = Synt.declare(unit.table
+              .filter ("id=?" , id)
+              .select ("name")
+              .one    (      )
+              .get    ("name"), "");
+
+        unit.updateUnitMenu(id, name);
+        unit.updateRootMenu(        );
     }
 
-    protected void updateFormMenu(String id, String name) throws HongsException {
-        Document docm = makeDocument();
+    protected void updateFormMenu(String id, String stat, String name) throws HongsException {
+        Document docm;
+        Element  root, menu, role, actn, depn;
 
-        Element  root = docm.createElement("root");
+        docm = makeDocument();
+
+        root = docm.createElement("root");
         docm.appendChild ( root );
 
-        Element  menu = docm.createElement("menu");
+        menu = docm.createElement("menu");
         root.appendChild ( menu );
-        menu.setAttribute("text", name);
-        menu.setAttribute("href", prefix+"/"+id+"/");
-
-        Element  role, actn, depn;
+        menu.setAttribute("text",  name );
+        menu.setAttribute("href", centra+"/"+id+"/");
 
         // 会话
         role = docm.createElement("rsname");
@@ -454,93 +461,121 @@ public class Form extends Model {
         role.appendChild ( docm.createTextNode("@centra"));
 
         // 查看
-
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/search");
+        role.setAttribute("name", centra+"/"+id+"/search");
         role.setAttribute("text", "查看"+name);
-
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search" + Cnst.ACT_EXT) );
-
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/search" + Cnst.ACT_EXT) );
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/stream" + Cnst.ACT_EXT) );
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/stream" + Cnst.ACT_EXT) );
 
         // 修改
-
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/update");
+        role.setAttribute("name", centra+"/"+id+"/update");
         role.setAttribute("text", "修改"+name);
-
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update" + Cnst.ACT_EXT) );
-
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/update" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
 
         // 添加
-
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/create");
+        role.setAttribute("name", centra+"/"+id+"/create");
         role.setAttribute("text", "添加"+name);
-
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/create" + Cnst.ACT_EXT) );
-
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/create" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
 
         // 删除
-
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/delete");
+        role.setAttribute("name", centra+"/"+id+"/delete");
         role.setAttribute("text", "删除"+name);
-
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/delete" + Cnst.ACT_EXT) );
-
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/delete" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
 
         // 恢复
-
         role = docm.createElement("role");
         menu.appendChild ( role );
-        role.setAttribute("name", prefix+"/"+id+"/revert");
+        role.setAttribute("name", centra+"/"+id+"/revert");
         role.setAttribute("text", "恢复"+name);
-
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
-
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(prefix+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
-
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/search") );
-
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(prefix+"/"+id+"/update") );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/update") );
 
-        // 保存
-        saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+
+        //** 对外开放 **/
+
+        if (!"2".equals(stat)) {
+            File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml");
+            if ( fo.exists() ) {
+                 fo.delete() ;
+            }
+            return;
+        }
+
+        docm = makeDocument();
+
+        root = docm.createElement("root");
+        docm.appendChild ( root );
+
+        menu = docm.createElement("menu");
+        root.appendChild ( menu );
+        menu.setAttribute("text",  name );
+        menu.setAttribute("href", centre+"/"+id+"/");
+
+        // 会话
+        role = docm.createElement("rsname");
+        root.appendChild ( role );
+        role.appendChild ( docm.createTextNode("@centre"));
+
+        // 公共读取权限
+        role = docm.createElement("role");
+        menu.appendChild ( role );
+        role.setAttribute("name", "public");
+
+        // 增删改必须登录
+        role = docm.createElement("role");
+        menu.appendChild ( role );
+        role.setAttribute("name", "centre");
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(centre+"/"+id+"/create" + Cnst.ACT_EXT) );
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(centre+"/"+id+"/update" + Cnst.ACT_EXT) );
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
+        
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 
-    protected void updateFormConf(String id, List<Map> conf) throws HongsException {
+    protected void updateFormConf(String id, String stat, List<Map> conf) throws HongsException {
         Document docm = makeDocument();
 
         Element  root = docm.createElement("root");
@@ -591,7 +626,7 @@ public class Form extends Model {
             if ("enum".equals(types.get(t) )
             ||  "form".equals(types.get(t) )) {
                 if(!fiel.containsKey("conf")) {
-                    fiel.put("conf", prefix +"/"+ id);
+                    fiel.put("conf", centra +"/"+ id);
                 }
             } else
             // 可搜索指定存为搜索类型
@@ -693,7 +728,48 @@ public class Form extends Model {
             }
         }
 
-        saveDocument(Core.CONF_PATH+"/"+prefix+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.FORM_EXT+".xml", docm);
+
+        //** 对外开放 **/
+
+        if (!"2".equals(stat)) {
+            File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml");
+            if ( fo.exists() ) {
+                 fo.delete() ;
+            }
+            return;
+        }
+
+        docm = makeDocument();
+
+        root = docm.createElement("root");
+        docm.appendChild ( root );
+
+        form = docm.createElement("form");
+        root.appendChild ( form );
+        form.setAttribute("name" , id);
+
+        Element  defs, defi;
+
+        // 保护写接口
+        defs = docm.createElement("enum");
+        root.appendChild ( defs );
+        defs.setAttribute("name", id+":defence");
+        defi = docm.createElement("value");
+        defs.appendChild ( defi );
+        defi.setAttribute("code", "cuid");
+        defi.appendChild ( docm.createTextNode("($session.uid)"));
+
+        // 我所创建的
+        defs = docm.createElement("enum");
+        root.appendChild ( defs );
+        defs.setAttribute("name", id+"!created");
+        defi = docm.createElement("value");
+        defs.appendChild ( defi );
+        defi.setAttribute("code", "cuid");
+        defi.appendChild ( docm.createTextNode("($session.uid)"));
+
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
     }
 
     private Document makeDocument() throws HongsException {

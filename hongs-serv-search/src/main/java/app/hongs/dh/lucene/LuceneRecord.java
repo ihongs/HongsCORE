@@ -88,10 +88,8 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
      * @param form 字段配置, 可覆盖 getFields
      * @param path 存储路径, 可覆盖 getDataPath
      * @param name 存储名称, 可覆盖 getDataName
-     * @throws HongsException
      */
-    public LuceneRecord(Map form, String path, String name)
-    throws HongsException {
+    public LuceneRecord(Map form, String path, String name) {
         super.setFields(form);
 
         // 数据路径
@@ -134,8 +132,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             conf.getProperty("core.in.object.mode", false));
     }
 
-    public LuceneRecord(Map form)
-    throws HongsException {
+    public LuceneRecord(Map form) {
         this(form, null, null);
     }
 

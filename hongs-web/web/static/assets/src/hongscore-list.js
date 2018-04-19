@@ -336,9 +336,8 @@ HsList.prototype = {
         pmin = pmax - this.pagsNum + 1;
         if (pmin < 1) pmin = 1;
 
-        var pbox = jQuery('<ul class="pagination"></ul>').appendTo(this.pageBox);
-        var btns = pbox;//jQuery('<ul class="pagination pull-left" ></ul>').appendTo(this.pageBox);
-        var nums = pbox;//jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
+        var nums = jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
+        var btns = jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
         if (1 < p) {
             btns.append(jQuery('<li class="page-prev"><a href="javascript:;" data-pn="'+(p-1)+'" title="'+hsGetLang("list.prev.page")+'">&lsaquo;</a></li>'));
@@ -368,9 +367,9 @@ HsList.prototype = {
             btns.append(jQuery('<li class="page-next disabled"><a href="javascript:;" title="'+hsGetLang("list.next.page")+'">&rsaquo;</a></li>'));
         }
 
-        // 页码不确定则不在末页显示为更多
-        if (page.uncertain && t == pmax + 1) {
-            nums.find(".page-last").addClass("page-more").find("a").html("&hellip;");
+        // 页码不确定时末页标为更多
+        if (page.uncertain && t == 1 + pmax) {
+            btns.find(".page-last").addClass("page-more");
         }
 
         this.pageBox.show();//.addClass("clearfix");

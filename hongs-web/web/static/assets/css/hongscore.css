@@ -315,7 +315,7 @@ textarea.form-control {
 .pagebox .pagination {
     margin: 0;
 }
-.pagebox .page-more {
+.pagebox .page-more a {
     color: #e38027;
 }
 

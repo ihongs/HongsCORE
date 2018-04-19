@@ -23,10 +23,9 @@
     <form name="mine">
         <field name="username" required="yes">
         </field>
-        <field name="passolde" required="yes">
+        <field name="passolde">
         </field>
         <field name="password">
-            <param name="defiant"></param>
         </field>
         <field name="name" required="yes">
         </field>

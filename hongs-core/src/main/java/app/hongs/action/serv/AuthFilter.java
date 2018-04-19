@@ -270,15 +270,6 @@ public class AuthFilter
     String uri;
     String msg;
 
-    if ( 2 == type) {
-        uri = Core.BASE_HREF;
-        if (uri == null || uri.length() == 0 || ia) {
-            uri =  null;
-            msg =  lang.translate("core.error.no.place");
-        } else {
-            msg =  lang.translate("core.error.no.place.redirect");
-        }
-    } else
     if ( 3 == type) {
         uri = this.indexPage;
         if (uri == null || uri.length() == 0 || ia) {
@@ -286,6 +277,15 @@ public class AuthFilter
             msg =  lang.translate("core.error.no.power");
         } else {
             msg =  lang.translate("core.error.no.power.redirect");
+        }
+    } else
+    if ( 2 == type) {
+        uri = this.loginPage;
+        if (uri == null || uri.length() == 0 || ia) {
+            uri =  null;
+            msg =  lang.translate("core.error.no.place");
+        } else {
+            msg =  lang.translate("core.error.no.place.redirect");
         }
     } else
     {
@@ -365,7 +365,7 @@ public class AuthFilter
          * 则从全局错误跳转构建响应代码
          */
 
-        if (uri == null && uri.length() == 0) {
+        if (uri == null || uri.length() == 0) {
             uri  = core.get(CoreConfig.class)
                        .getProperty("fore.Er40"+ type +".redirect");
         if (uri == null || uri.length() == 0) {

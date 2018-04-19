@@ -54,9 +54,9 @@ public class PresetInvoker implements FilterInvoker {
                     if (item.equals("_str_")) {
                         Core.getInstance().put(Cnst.OBJECT_MODE,false);
                     }
-                        continue;
+                    } else {
+                        used.add("." + item);
                     }
-                    used.add("!"+ item);
                 }
                 deft  = used.toArray(new String[0]);
             }

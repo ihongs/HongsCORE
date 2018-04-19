@@ -534,8 +534,8 @@ HsForm.prototype = {
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         var vl = inp.attr("data-vl"); if(!vl) vl = 0; // Value List
         var tl = inp.attr("data-tl"); if(!tl) tl = 1; // Title Line
-        var bc = this._fill__checkset_body_class || "checkbox";
-        var ic = this._fill__checkset_item_class || "col-md-6";
+        var bc = inp.attr("data-body-class") || "checkbox";
+        var ic = inp.attr("data-item-class") || "col-xs-6";
 
         if (v !== undefined) {
         for(var i = 0; i < v.length; i ++) {

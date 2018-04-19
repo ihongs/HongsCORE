@@ -7,6 +7,7 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.DB;
+import app.hongs.db.util.FetchCase;
 import app.hongs.serv.auth.AuthKit;
 import app.hongs.serv.master.User;
 import app.hongs.util.Synt;
@@ -71,6 +72,27 @@ public class SignAction extends app.hongs.serv.centra.SignAction {
         user.del(uuid);
 
         signDelete(ah);
+    }
+
+    /**
+     * 检查
+     * @param ah
+     * @throws HongsException
+     */
+    @Action("user/unique")
+    public void userUnique(ActionHelper ah) throws HongsException {
+        User user = (User) DB.getInstance("master").getModel("user") ;
+        Map  data = ah . getRequestData( );
+        FetchCase caze = user.fetchCase( );
+
+        // 密码等不可检测
+        String  n = (String) data.get("n");
+        if ("password".equals( n ) || "passcode".equals( n )) {
+            throw new HongsException(0x1100, "Colume " + n + " is not allowed");
+        }
+
+        boolean v = user.unique(data,caze);
+        ah.reply(null, v ? 1 : 0 );
     }
 
 }

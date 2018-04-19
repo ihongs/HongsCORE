@@ -114,9 +114,13 @@
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
+                <%if (role.contains("centre")) {%>
                 <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
+                <%} else {%>
+                <li><a href="javascript:;" id="sign-in" ><%=CoreLocale.getInstance().translate("fore.login" )%></a></li>
+                <%} /*End If*/%>
             </ul>
         </li>
     </ul>
@@ -193,6 +197,10 @@
         }, 10000);
         */
 
+        $("#sign-in" )
+            .click(function() {
+                    location.assign(hsFixUri( "centre/login.html" ));
+            });
         $("#sign-out")
             .click(function() {
                 $.get(hsFixUri("centre/sign/delete.act"), function() {

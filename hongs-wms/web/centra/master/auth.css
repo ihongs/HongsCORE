@@ -1,0 +1,10 @@
+
+.form-group fieldset legend {
+    font-size: 14px;
+}
+.form-group fieldset .checkall {
+    margin-right: 0.50em;
+}
+.form-group fieldset .checkbox {
+    padding-left: 1.25em;
+}

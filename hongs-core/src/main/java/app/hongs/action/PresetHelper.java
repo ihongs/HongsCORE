@@ -13,7 +13,7 @@ import java.util.regex.Pattern;
 /**
  * 预置数据助手
  * xxx:xxx 为内部预置数据, :default为默认补充, :defense为全局强制, :defence为变更强制.
- * xxx!xxx 为外部打包数据, 例如传参 ab=ios10 可对应 !ios10 的数据, 即针对特定参数打包,
+ * xxx.xxx 为外部打包数据, 例如传参 ab=ios10 可对应 .ios10 的数据, 即针对特定参数打包,
  * @author Hongs
  */
 public class PresetHelper {
@@ -102,7 +102,7 @@ public class PresetHelper {
         for (String usen : defs) {
             if (name != null
             && (usen.startsWith( ":" )
-            ||  usen.startsWith( "!" ))) {
+            ||  usen.startsWith( "." ))) {
                 usen  = name  +  usen ;
             }
             addDefenseData(form, usen);
@@ -111,7 +111,7 @@ public class PresetHelper {
         for (String usen : deft) {
             if (name != null
             && (usen.startsWith( ":" )
-            ||  usen.startsWith( "!" ))) {
+            ||  usen.startsWith( "." ))) {
                 usen  = name  +  usen ;
             }
             addDefaultData(form, usen);

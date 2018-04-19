@@ -362,7 +362,7 @@ implements IEntity
     // 是否缺少n或v参数
     if (!rd.containsKey("n") || !rd.containsKey("v"))
     {
-      throw new HongsException(0x109a, "Param n or v can not be empty");
+      throw new HongsException(0x109a, "Param n or v can not be empty" );
     }
 
     String n = (String) rd.get("n");

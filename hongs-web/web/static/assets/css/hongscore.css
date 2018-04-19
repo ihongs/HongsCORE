@@ -315,6 +315,9 @@ textarea.form-control {
 .pagebox .pagination {
     margin: 0;
 }
+.pagebox .page-more {
+    color: #e38027;
+}
 
 .listbox .table thead {
     font-weight: bold;

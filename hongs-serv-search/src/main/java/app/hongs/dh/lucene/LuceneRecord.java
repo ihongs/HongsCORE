@@ -374,7 +374,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         wh.put(Cnst.ID_KEY, ids);
         wh.put(Cnst.RB_KEY, Cnst.ID_KEY);
         Set idz = new HashSet( );
-        Loop rs = search(rd,0,0);
+        Loop rs = search(wh,0,0);
         while  (  rs.hasNext() ) {
             Map ro = rs.next();
             idz.add( ro.get(Cnst.ID_KEY).toString());

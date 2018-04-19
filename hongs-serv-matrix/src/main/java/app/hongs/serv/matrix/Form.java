@@ -430,18 +430,7 @@ public class Form extends Model {
     }
 
     protected void updateUnitMenu(String id) throws HongsException {
-        Unit   unit = new Unit(   );
-        
-        if ("0".equals(id)) {
-            String name = Synt.declare(unit.table
-                  .filter ("id=?" , id)
-                  .select ("name")
-                  .one    (      )
-                  .get    ("name"), "");
-
-            unit.updateUnitMenu(id, name);
-        }
-        unit.updateRootMenu(        );
+        new Unit().updateMenus();
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
@@ -574,7 +563,7 @@ public class Form extends Model {
         actn = docm.createElement("action");
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
-        
+
         saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 
@@ -760,16 +749,16 @@ public class Form extends Model {
         defs.setAttribute("name", id+":defence");
         defi = docm.createElement("value");
         defs.appendChild ( defi );
-        defi.setAttribute("code", "cuid");
+        defi.setAttribute("code", Cnst.AR_KEY+".x.cuid");
         defi.appendChild ( docm.createTextNode("($session.uid)"));
 
         // 我所创建的
         defs = docm.createElement("enum");
         root.appendChild ( defs );
-        defs.setAttribute("name", id+"!created");
+        defs.setAttribute("name", id+".created");
         defi = docm.createElement("value");
         defs.appendChild ( defi );
-        defi.setAttribute("code", "cuid");
+        defi.setAttribute("code", Cnst.AR_KEY+".x.cuid");
         defi.appendChild ( docm.createTextNode("($session.uid)"));
 
         saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);

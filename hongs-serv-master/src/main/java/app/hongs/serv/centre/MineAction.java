@@ -11,7 +11,7 @@ import java.util.Map;
  * 我的信息
  * @author Hongs
  */
-@Action("centra/mine")
+@Action("centre/mine")
 public class MineAction extends app.hongs.serv.centra.MineAction {
 
     @Action("sign/info")

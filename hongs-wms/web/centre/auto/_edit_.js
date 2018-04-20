@@ -149,7 +149,7 @@ function setEditor(node, func) {
                             data.append("file.",files[i]);
                         }
                         $.ajax({
-                            url     : hsFixUri("centre/medium/upload/image/create.act"),
+                            url     : hsFixUri("centre/upload/image.jsp"),
                             data    :  data ,
                             type    : "POST",
                             dataType: "json",

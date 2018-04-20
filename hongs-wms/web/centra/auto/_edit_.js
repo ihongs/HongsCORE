@@ -142,6 +142,28 @@ function setEditor(node, func) {
                     ['para', ['paragraph', 'ul' , 'ol'  ]],
                     ['list', ['table', 'picture', 'link']]
                 ],
+                callbacks: {
+                    onImageUpload: function(files) {
+                        var data  = new FormData();
+                        for(var i = 0 ; i < files.length ; i ++) {
+                            data.append("file.",files[i]);
+                        }
+                        $.ajax({
+                            url     : hsFixUri("centra/medium/upload/image/create.act"),
+                            data    :  data ,
+                            type    : "POST",
+                            dataType: "json",
+                            cache      : false,
+                            contentType: false,
+                            processData: false,
+                            success : function(data) {
+                                for(var i = 0 ; i < data.file.length ; i ++) {
+                                    $(that).summernote("insertImage" , data.file[ i ] );
+                                }
+                            }
+                        });
+                    }
+                },
                 height: $(this).height(),
                 lang: HsLANG['lang'].replace('_', '-')
             });

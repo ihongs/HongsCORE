@@ -39,6 +39,7 @@ public class UserAction {
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
         fc.setOption("INCLUDE_PARENTS", Synt.declare(rd.get("include-parents"), false));
+        fc.setOption("INCLUDE_DEPTIDS", Synt.declare(rd.get("include-deptids"), false));
         rd = model.getList(rd, fc);
 
         // Remove the password field, don't show password in page

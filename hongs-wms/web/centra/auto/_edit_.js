@@ -149,7 +149,7 @@ function setEditor(node, func) {
                             data.append("file.",files[i]);
                         }
                         $.ajax({
-                            url     : hsFixUri("centra/upload/image.jsp"),
+                            url     : hsFixUri("centra/data/upload/image/create.act"),
                             data    :  data ,
                             type    : "POST",
                             dataType: "json",
@@ -158,7 +158,7 @@ function setEditor(node, func) {
                             processData: false,
                             success : function(data) {
                                 for(var i = 0 ; i < data.file.length ; i ++) {
-                                    $(that).summernote("insertImage" , data.file[ i ] );
+                                    $(that).summernote("insertImage" , data.file[i] );
                                 }
                             }
                         });

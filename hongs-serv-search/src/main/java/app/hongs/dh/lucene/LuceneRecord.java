@@ -260,6 +260,10 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         int limit = rn * maxPn + 1;
         int minRn = rn * (pn - 1 );
         int maxRn = rn + minRn;
+        // 数量太少的话没必要估算
+        if (limit < 1001) {
+            limit = 1001;
+        }
 
         // 获取列表
         List list = getAll(rd, limit, minRn, maxRn);

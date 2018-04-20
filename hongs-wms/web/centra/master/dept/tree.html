@@ -33,36 +33,9 @@
         </div>
         <div class="col-md-9 main-context"></div>
         <script type="text/javascript">
-        /*
         (function($) {
-            var treebox = $(".side-context");
-            var listbox = $(".main-context");
-
-            listbox.on("loadOver", function() {
-                listbox.find(".listbox tbody tr")
-                .draggable({
-                    revert: "invalid",
-                    helper: "clone",
-                    opactiy: 0.5
-                });
-            });
-            treebox.on("loadOver", function() {
-                treebox.find(".tree-node")
-                .draggable({
-                    revert: "invalid",
-                    opacity: 0.5
-                })
-                .droppable({
-                    accept: function(tr) {
-                        console.log(tr);
-                    },
-                    drop: function(ev, ui) {
-                        console.log(ev, ui)
-                    }
-                });
-            });
-        })(jQuery);
-        */
+            hsUserMove($(".side-context"), $(".main-context"));
+        })( jQuery );
         </script>
     </div>
 </div>

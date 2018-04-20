@@ -336,48 +336,64 @@ HsList.prototype = {
         pmin = pmax - this.pagsNum + 1;
         if (pmin < 1) pmin = 1;
 
-        var nums = jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
-        var btns = jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
+        var pbox = jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
+        var qbox = jQuery( '<p class="page-count pull-right"></p>' ).appendTo(this.pageBox);
+        var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
+        var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (1 < p) {
-            btns.append(jQuery('<li class="page-prev"><a href="javascript:;" data-pn="'+(p-1)+'" title="'+hsGetLang("list.prev.page")+'">&lsaquo;</a></li>'));
+        if (page.uncertain && t == 1 + pmax) {
+            qbox.text(hsGetLang("list.page.unfo", page));
         } else {
-            btns.append(jQuery('<li class="page-prev disabled"><a href="javascript:;" title="'+hsGetLang("list.prev.page")+'">&lsaquo;</a></li>'));
+            qbox.text(hsGetLang("list.page.info", page));
         }
 
-        if (1 < pmin) {
-            btns.append(jQuery('<li class="page-home"><a href="javascript:;" data-pn="'+1+'" title="'+1+'">&laquo;</a></li>'));
+        if (1 < p) {
+            btns.append(jQuery('<li class="page-prev"><a href="javascript:;" data-pn="'+(p-1)+'" title="'+hsGetLang("list.prev.pagi")+'">&laquo;</a></li>'));
         } else {
-            btns.append(jQuery('<li class="page-home disabled"><a href="javascript:;" title="'+1+'">&laquo;</a></li>'));
+            btns.append(jQuery('<li class="page-prev disabled"><a href="javascript:;" title="'+hsGetLang("list.prev.page")+'">&laquo;</a></li>'));
         }
 
         for(i = pmin; i < pmax + 1; i ++) {
-            nums.append(jQuery('<li class="page-link'+(i === p ? ' active' : '')+'"><a href="javascript:;" data-pn="'+i+'" title="'+i+'">'+i+'</a></li>'));
-        }
-
-        if (t > pmax) {
-            btns.append(jQuery('<li class="page-last"><a href="javascript:;" data-pn="'+t+'" title="'+t+'">&raquo;</a></li>'));
-        } else {
-            btns.append(jQuery('<li class="page-last disabled"><a href="javascript:;" title="'+t+'">&raquo;</a></li>'));
+            nums.append(jQuery('<li class="page-link'+(i==p ? ' page-curr active':'')+'"><a href="javascript:;" data-pn="'+i+'">'+i+'</a></li>'));
         }
 
         if (t > p) {
-            btns.append(jQuery('<li class="page-next"><a href="javascript:;" data-pn="'+(p+1)+'" title="'+hsGetLang("list.next.page")+'">&rsaquo;</a></li>'));
+            btns.append(jQuery('<li class="page-next"><a href="javascript:;" data-pn="'+(p+1)+'" title="'+hsGetLang("list.next.pagi")+'">&raquo;</a></li>'));
         } else {
-            btns.append(jQuery('<li class="page-next disabled"><a href="javascript:;" title="'+hsGetLang("list.next.page")+'">&rsaquo;</a></li>'));
+            btns.append(jQuery('<li class="page-next disabled"><a href="javascript:;" title="'+hsGetLang("list.next.page")+'">&raquo;</a></li>'));
         }
 
-        // 页码不确定时末页标为更多
-        if (page.uncertain && t == 1 + pmax) {
-            btns.find(".page-last").addClass("page-more");
-        }
-
-        this.pageBox.show();//.addClass("clearfix");
-        this.pageBox.find("[data-pn="+p+"]").addClass("page-curr");
-        this.pageBox.find("[data-pn]").on("click", function( evt ) {
-            hsSetSeria(that._data, that.pageKey, jQuery(this).attr("data-pn"));
-            evt.preventDefault();
-            that.load();
+        var tm = null;
+        var go = function(p) {
+            if ( tm ) clearTimeout(tm);
+            hsSetSeria(that._data, that.pageKey, p);
+            that.load ( );
+        };
+        var to = function(p) {
+            if ( tm ) clearTimeout(tm);
+            tm = setTimeout(function() {
+                go(p);
+            } , 500 );
+        };
+        this.pageBox.find(".page-link a").on("click", function(ev) {
+            go(jQuery(this).attr("data-pn"));
+            ev.preventDefault();
+        });
+        this.pageBox.find(".page-prev a").on("click", function(ev) {
+            to(jQuery(this).attr("data-pn"));
+            ev.preventDefault();
+        });
+        this.pageBox.find(".page-next a").on("click", function(ev) {
+            to(jQuery(this).attr("data-pn"));
+            ev.preventDefault();
+        });
+        this.pageBox.find(".page-prev a").on("dblclick", function(ev) {
+            go(1);
+            ev.preventDefault();
+        });
+        this.pageBox.find(".page-next a").on("dblclick", function(ev) {
+            go(t);
+            ev.preventDefault();
         });
     },
 
@@ -705,7 +721,7 @@ function hsListFillNext(page) {
     if (btn.size() == 0) {
         this.pageBox
         .append(jQuery(
-            '<ul class="pagination"></ul>'
+            '<ul class="pager"></ul>'
         )
         .append(jQuery(
             '<li class="page-prev"><a href="javascript:;" data-pn="">'+hsGetLang('list.prev.page')+'</a></li>'

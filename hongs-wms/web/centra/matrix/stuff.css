@@ -13,3 +13,11 @@
 .cols-form .target-form .glyphicon.glyphicon-info-sign,
 .cols-form .target-form .glyphicon.glyphicon-remove-sign
     {display: inline-block;}
+
+div[data-type=form],
+div[data-type=unit] {
+    background: #eee;
+    border : 1px dotted #000;
+    padding: 0px 5px;
+    opacity: 0.5;
+}

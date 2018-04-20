@@ -280,7 +280,7 @@
             </tbody>
         </table>
     </div>
-    <div class="pagebox">
+    <div class="pagebox clearfix">
     </div>
 </div>
 <script type="text/javascript">

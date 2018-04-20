@@ -629,3 +629,108 @@ $.fn.hsCols = function() {
         }
     });
 };
+
+//** 单元和表单互移动 **/
+
+function hsFormMove(treebox, listbox) {
+    listbox.on("loadOver", function(evt, rst, mod) {
+        var uid = hsGetParam(mod._url , "unit_id");
+        listbox.find(".listbox tbody tr")
+        .draggable({
+            opactiy: 0.5,
+            revert: "invalid",
+            helper: function() {
+                var fid = $(this).find("td:eq(0) input").val ();
+                var txt = $(this).find("td:eq(1)"      ).text();
+                return $('<div data-type="form"></div>')
+                        .data("form_id" , fid)
+                        .data("unit_id" , uid)
+                        .append(txt);
+            }
+        });
+    });
+
+    treebox.on("loadOver", function(evt, rst, mod) {
+        treebox.find(".tree-node" /***/ )
+        .draggable({
+            opacity: 0.5,
+            revert: "invalid",
+            helper: function() {
+                return $('<div data-type="unit"></div>')
+                        .text( $(this).children("table")
+                        .find( ".tree-name" ).text( )  );
+            }
+        });
+
+        treebox.find(".tree-node table" )
+        .droppable({
+            drop: function(ev, ui) {
+                var pid = $(this).parent().attr("id").substring(10);
+                if (ui.helper.data("type") == "unit") {
+                    var did = ui.draggable.attr("id").substring(10);
+                    var req = { id : did, pid : pid };
+                    $.hsWarn(
+                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
+                        "您确定将此单元移到新单元下吗?",
+                        {
+                            "label": "移动",
+                            "click": function() {
+                                $.ajax({
+                                    url     : hsFixUri("centra/matrix/unit/save.act"),
+                                    data    : hsSerialArr(req),
+                                    type    : "POST",
+                                    dataType: "JSON",
+                                    cache   : false,
+                                    global  : false,
+                                    success : function(rst) {
+                                        rst = hsResponse(rst);
+                                        if (rst.ok) {
+                                            var mod = treebox.find(".HsTree").data("HsTree");
+                                            mod.load(mod.getPid(did));
+                                            mod.load(pid);
+                                        }
+                                    }
+                                });
+                            }
+                        },
+                        {
+                            "label": "取消",
+                            "class": "btn-link"
+                        }
+                    );
+                } else {
+                    var fid = ui.helper.data("form_id");
+                    var req = {id: fid, "unit_id": pid};
+                    $.hsWarn(
+                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
+                        "您确定将此表单移到新单元下吗?",
+                        {
+                            "label": "移动",
+                            "click": function() {
+                                $.ajax({
+                                    url     : hsFixUri("centra/matrix/form/save.act"),
+                                    data    : hsSerialArr(req),
+                                    type    : "POST",
+                                    dataType: "JSON",
+                                    cache   : false,
+                                    global  : false,
+                                    success : function(rst) {
+                                        rst = hsResponse(rst);
+                                        if (rst.ok) {
+                                            var mod = listbox.find(".HsList").data("HsList");
+                                            mod.load();
+                                        }
+                                    }
+                                });
+                            }
+                        },
+                        {
+                            "label": "取消",
+                            "class": "btn-link"
+                        }
+                    );
+                }
+            }
+        });
+    });
+}

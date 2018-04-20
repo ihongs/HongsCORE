@@ -4,8 +4,8 @@
         <field name="file" type="image" rule="Thumb" required="yes" repeated="yes">
             <param name="thumb-extn">jpg</param>
             <param name="extn">jpg,gif,png,bmp,jpeg</param>
-            <param name="path">${BASE_PATH}/static/upload/medium/image</param>
-            <param name="href">${BASE_HREF}/static/upload/medium/image</param>
+            <param name="path">${BASE_PATH}/static/upload/image</param>
+            <param name="href">${BASE_HREF}/static/upload/image</param>
         </field>
     </form>
 </root>

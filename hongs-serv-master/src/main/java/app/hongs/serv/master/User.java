@@ -10,6 +10,7 @@ import app.hongs.db.Model;
 import app.hongs.db.Table;
 import app.hongs.serv.auth.AuthKit;
 import app.hongs.util.Synt;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,35 @@ extends Model {
         permit( id , null);
 
         return super.del(id, caze);
+    }
+
+    @Override
+    public Map getList(Map rd, FetchCase caze) throws HongsException {
+        rd = super.getList(rd, caze);
+
+        // Add all depts for every user
+        if (caze.getOption("INCLUDE_DEPTIDS" , false)) {
+            List<Map> list = ( List ) rd.get( "list" );
+            List<Map> rows ;
+            if (list != null) {
+                Map<String, Map> maps = new HashMap( );
+                for ( Map info : list ) {
+                    String uid = info.get(/**/ "id").toString();
+                    info.put("dept_ids",new HashSet());
+                    maps.put(uid, info);
+                }
+                rows = db.getTable("user_dept").fetchCase( )
+                    .filter("user_id IN (?)", maps.keySet())
+                    .all();
+                for ( Map dept : rows ) {
+                    String uid = dept.get("user_id").toString();
+                    String did = dept.get("dept_id").toString();
+                    ((Set) maps.get(uid).get("dept_ids")).add(did);
+                }
+            }
+        }
+
+        return rd;
     }
 
     public Set<String> getRoles(String userId)

@@ -308,17 +308,19 @@ HsList.prototype = {
         switch (page.ern) {
             case  2 :
             case "2":
-                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._above_err || hsGetLang('list.above'))+'</div>');
+                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                        + (this._above_err || hsGetLang('list.above')) + '</div>');
                 this.listBox.hide( );
                 var that = this;
-                hsSetSeria(this._data, this.pageKey, 1);
+                hsSetSeria(this._data, this.pageKey);
                 setTimeout(function() {
                     that.load();
                 }, 5000);
                 return;
             case  1 :
             case "1":
-                this.pageBox.empty().append('<div class="alert alert-warning">'+(this._empty_err || hsGetLang('list.empty'))+'</div>');
+                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                        + (this._empty_err || hsGetLang('list.empty')) + '</div>');
                 this.listBox.hide( );
                 return;
             default :

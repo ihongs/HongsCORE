@@ -121,6 +121,12 @@
 
 <script type="text/javascript">
     (function($) {
+        // 宽度低于 768 则固定为 768, 避免错位
+        if ($(window).width( ) < 768) {
+            var vp = $("meta[name=viewport]");
+            vp.attr("content", vp.attr("content").replace("device-width", "768"));
+        }
+
         var context = $("#main-context");
         var menubar = $("#main-menubar");
 //      var userbar = $("#user-menubar");

@@ -36,21 +36,6 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $('#matrix-unit-tree');
-        
-        // 更新后重载菜单栏
-        context.on("saveBack sendBack", function(evt, rst, dat) {
-            var hst  = context.data("HsTree");
-            var pid  = hst.getPid  ( dat.id );
-            if (pid != "0") {
-                return;
-            }
-            $("#headbox [data-load] ").each( function( ) {
-                $(this).hsLoad($(this).attr("data-load"));
-            });
-        });
-        
-        // 移动
         hsFormMove($(".side-context"), $(".main-context"));
     })(jQuery);
 </script>

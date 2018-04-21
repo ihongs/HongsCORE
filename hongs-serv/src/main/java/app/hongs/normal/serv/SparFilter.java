@@ -42,7 +42,7 @@ public class SparFilter implements Filter {
         // 索引文件列表
         access = Synt.toSet(cnf.getInitParameter("index-file"));
         if (access == null) {
-            access  = getWelcomeFileList();
+            access  = getWelcomeFileList(cnf.getServletContext().getContextPath());
         }
     }
 
@@ -112,12 +112,16 @@ public class SparFilter implements Filter {
         fc.doFilter(req, rsp);
     }
 
-    private static Set<String> getWelcomeFileList() throws ServletException {
+    private static Set<String> getWelcomeFileList(String WEBDIR) throws ServletException {
         Set<String> set = new LinkedHashSet();
 
         try {
-            File xml = new File(Core.CONF_PATH + "/web.xml");
-            if (!xml.exists()) {
+            File xml;
+            if (Core.CORE_PATH == null) {
+                 xml = new File(WEBDIR + "/WEB-INF/web.xml");
+            } else {
+                 xml = new File(Core.CONF_PATH + "/web.xml");
+            if (!xml.exists())
                  xml = new File(Core.CORE_PATH + "/web.xml");
             }
 

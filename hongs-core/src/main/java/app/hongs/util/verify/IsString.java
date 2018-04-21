@@ -15,8 +15,7 @@ import java.util.regex.Pattern;
  *  maxlength   最大长度
  *  minlength   最短长度
  *  pattern     校验正则, 可使用 default.form.xml 里的 _patt_ 下预定好的正则, 如 email,url
- *  strim       为 true 则清理首尾空字符
- *  strip       为 true 则清理空白空行等
+ *  strip       文本清理: trim 首尾, cros 脚本, tags 标签, ends 首尾(含全角), 可逗号隔多个
  * </pre>
  * @author Hongs
  */
@@ -37,7 +36,7 @@ public class IsString extends Rule {
             if (sa.contains("ends")) {
                 str = Tool.stripEnds(str); // 首尾清理(含全角)
             }
-            if (sa.contains("trim")) {
+            if (sa.contains("trim") || sa.contains("true")) {
                 str = str.trim();
             }
         }

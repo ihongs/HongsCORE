@@ -3,6 +3,7 @@
     <menu text="后台" href="common/menu.act?m=centra">
         <role text="登录后台" name="centra">
             <action>centra</action>
+            <action>centra/data/upload/image/create.act</action>
         </role>
         <menu text="通用" href="common/menu.act?m=centra&amp;x=base">
             <menu text="首页" href="centra/#manage" hrel="centra/manage/main.html"></menu>

@@ -87,6 +87,7 @@ public class ServerCmdlet {
         webapp.setContextPath (Core.BASE_HREF);
         webapp.setResourceBase(Core.BASE_PATH);
         webapp.setParentLoaderPriority( true );
+        webapp.setThrowUnavailableOnStartupException ( true ); // 缺了这个启动时异常看不到
         server.setHandler    (webapp);
 
         // 外部配置

@@ -826,17 +826,16 @@ abstract public class Link
       else
       if (obj instanceof Number)
       {
-        str = obj.toString();
+        str = Tool.toNumStr((Number) obj);
       }
       else
       {
-        str = obj.toString();
-        str = quoteValue(str);
+        str = quoteValue(obj.toString( ));
       }
 
       sql.replace(pos, pos + 1, str);
 
-      pos += str.length() - 1;
+      pos += str.length( ) - 1;
       num += 1;
     }
 

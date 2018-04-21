@@ -440,6 +440,9 @@ public class NaviMap
 
     for (String namz : names) {
         Map menu = getMenu(namz);
+        if (menu == null) {
+            throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
+        }
 
         // 此方法主要用在判断菜单能否可以进入
         // 通常的是判断其拥有任一个角色即有效
@@ -689,9 +692,12 @@ public class NaviMap
   }
 
   public List<Map> getRoleTranslated(String name, int d, Set<String> rolez) {
-      CoreLocale lang= getCurrTranslator( /***/ );
-      Map menu = (Map) getMenu(name).get("menus");
-      return getRoleTranslated(menu, rolez, lang, d, 0);
+      CoreLocale lang= getCurrTranslator();
+      Map menu = getMenu(name);
+      if (menu == null) {
+          throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
+      }
+      return getRoleTranslated((Map) menu.get("menus"), rolez, lang, d, 0 );
   }
 
   protected List<Map> getRoleTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {
@@ -827,9 +833,12 @@ public class NaviMap
   }
 
   public List<Map> getMenuTranslated(String name, int d, Set<String> rolez) {
-      CoreLocale lang= getCurrTranslator( /***/ );
-      Map menu = (Map) getMenu(name).get("menus");
-      return getMenuTranslated(menu, rolez, lang, d, 0);
+      CoreLocale lang= getCurrTranslator();
+      Map menu = getMenu(name);
+      if (menu == null) {
+          throw new NullPointerException("Menu for href '"+name+"' is not in "+this.name);
+      }
+      return getMenuTranslated((Map) menu.get("menus"), rolez, lang, d, 0 );
   }
 
   protected List<Map> getMenuTranslated(Map<String, Map> menus, Set<String> rolez, CoreLocale lang, int j, int i) {

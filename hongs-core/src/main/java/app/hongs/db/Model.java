@@ -985,10 +985,12 @@ implements IEntity
 
     /**
      * 绑定许可字段
-     * @param caze
-     * @param rb
+     * @param caze  查询用例
+     * @param rb    排序字段, 结构 { FIELD1, FIELD2... }, 前跟 - 号表示逆序
+     * @throws app.hongs.HongsException
      */
-    protected final void field(FetchCase caze, Set rb) {
+    protected final void field(FetchCase caze, Set rb)
+    throws HongsException {
         if (rb == null) {
             rb =  new HashSet();
         }
@@ -1086,10 +1088,12 @@ implements IEntity
     /**
      * 提取许可字段
      * @param caze  查询用例
-     * @param af    结果字段, 返回结构: { KEY: [FIELD, ALIAS, FetchCase]... }
+     * @param af    返回字段, 结构: { KEY: [FIELD, ALIAS, FetchCase]... }
+     * @throws app.hongs.HongsException
      */
-    protected final void allow(FetchCase caze, Map af) {
-        String name = Synt.defoult( caze.getName(), table.name, table.tableName);
+    protected final void allow(FetchCase caze, Map af)
+    throws HongsException {
+        String name = Synt.defoult(caze.getName(), table.name, table.tableName);
         allow( table, table, table.getAssocs( ), table.getParams( )
              , caze, name, null , null, af );
     }
@@ -1107,7 +1111,8 @@ implements IEntity
      * @param al    字段集合, 结构: {参数: [字段, 别名, 查询用例]}
      */
     private void allow(Table table, Table assoc, Map ac, Map pc,
-            FetchCase caze, String tn, String qn, String pn, Map al) {
+        FetchCase caze, String tn, String qn, String pn, Map al)
+    throws HongsException {
         String tx, ax, az;
         tx = "`"+tn+"`." ;
 
@@ -1191,7 +1196,7 @@ implements IEntity
                 throw e.toExemption(  );
             }
             if (null == assoc) {
-                throw new HongsExemption(0x1039,
+                throw new HongsException(0x1039,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

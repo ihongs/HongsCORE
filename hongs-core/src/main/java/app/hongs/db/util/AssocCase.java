@@ -851,7 +851,7 @@ public class AssocCase {
                 throw e.toExpedient(  );
             }
             if (null == assoc) {
-                throw new HongsExpedient.Common(
+                throw new HongsExpedient(0x1039,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

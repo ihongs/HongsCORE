@@ -3,6 +3,8 @@ package app.hongs.action.serv;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsError;
+import app.hongs.HongsException;
+import app.hongs.HongsExpedient;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
@@ -247,7 +249,7 @@ public class AutoFilter extends ActionDriver {
                               .get(action.substring(1) + "/search")
                               .getMclass( );
         } catch ( NullPointerException ex ) {
-            throw new HongsError(0x3e,
+            throw new HongsExpedient(0x1130,
                  "Auto action '" + action.substring(1) + "/search' is not exists", ex);
         }
 
@@ -299,11 +301,11 @@ public class AutoFilter extends ActionDriver {
 
         File dir = new File(Core.BASE_PATH + layout);
         if (!dir.exists( )) {
-            throw new HongsError(0x3f,
+            throw new HongsExpedient(0x1131,
                  "Auto layout '" + layout.substring(1) + "' is not exists");
         }
         if (!dir.isDirectory()) {
-            throw new HongsError(0x3f,
+            throw new HongsExpedient(0x1131,
                  "Auto layout '" + layout.substring(1) + "' is not a directory");
         }
 

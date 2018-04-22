@@ -1,7 +1,7 @@
 <%@page import="app.hongs.CoreLocale"%>
 <%@page import="app.hongs.HongsError"%>
 <%@page import="app.hongs.HongsException"%>
-<%@page import="app.hongs.HongsExpedient"%>
+<%@page import="app.hongs.HongsExemption"%>
 <%@page import="app.hongs.action.ActionDriver"%>
 <%@page import="app.hongs.action.FormSet"%>
 <%@page import="app.hongs.action.NaviMap"%>
@@ -57,7 +57,7 @@
             _locale.fill (  _module  );
             _locale.fill (  _modulx  );
             break;
-        } catch (HongsExpedient ex) {
+        } catch (HongsExemption ex) {
             if (ex.getErrno() != 0x1104) {
                 throw ex;
             }

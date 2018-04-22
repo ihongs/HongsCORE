@@ -47,13 +47,13 @@ abstract public class JointGate implements IActing, IAction {
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
-            Map fa  = FormSet.getInstance (mod).getForm (ent);
+            Map fa  = FormSet.getInstance(mod).getForm(ent);
             Set ca  = Synt.toSet( Dict.getDepth( fa, "@", "callable" ) );
-            if (ca != null && !ca.contains(act)) {
+            if (ca != null && ! ca.contains(act) ) {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
         }
-        catch (HongsException|HongsExemption ex) {
+        catch (HongsException | HongsExemption ex) {
             int ec  = ex.getErrno( );
             if (ec != 0x10e8 && ec != 0x10ea) {
                 throw ex;

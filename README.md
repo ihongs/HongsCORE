@@ -130,7 +130,8 @@
     app.hongs.db        关系数据模型
     app.hongs.dh        文档处理组件
     app.hongs.jsp       JSP 工具
-    app.hongs.util      工具
+    app.hongs.util      辅助工具
+    app.hongs.serv      服务组件
 
 以上仅列举了主要的包, 更多框架信息请参考 API 文档.
 

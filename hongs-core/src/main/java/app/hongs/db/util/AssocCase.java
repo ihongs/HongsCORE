@@ -3,7 +3,7 @@ package app.hongs.db.util;
 import app.hongs.Cnst;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.db.Model;
 import app.hongs.db.Table;
 import app.hongs.util.Dict;
@@ -851,7 +851,7 @@ public class AssocCase {
                 throw e.toExpedient(  );
             }
             if (null == assoc) {
-                throw new HongsExpedient(0x1039,
+                throw new HongsExemption(0x1039,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

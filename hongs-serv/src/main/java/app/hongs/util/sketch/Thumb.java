@@ -1,6 +1,6 @@
 package app.hongs.util.sketch;
 
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
@@ -101,9 +101,9 @@ public class Thumb {
             if (str.length() == 8) {
                 return setColor(new Color(c , true ) );
             }
-            throw new HongsExpedient.Common("Unable to parse color value: "+str);
+            throw new HongsExemption.Common("Unable to parse color value: "+str);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            throw new HongsExpedient.Common("Unable to parse color value: "+str);
+            throw new HongsExemption.Common("Unable to parse color value: "+str);
         }
     }
 
@@ -143,7 +143,7 @@ public class Thumb {
             case "bottom right" :
                 return setAlign(Positions.BOTTOM_RIGHT );
             default:
-                throw new HongsExpedient.Common("Unsupported place value: "+str);
+                throw new HongsExemption.Common("Unsupported place value: "+str);
         }
     }
 

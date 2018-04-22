@@ -5,7 +5,7 @@ import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
@@ -798,7 +798,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         try {
             writer.commit(  );
         } catch (IOException ex) {
-            throw new HongsExpedient(0x102c, ex);
+            throw new HongsExemption(0x102c, ex);
         }
     }
 
@@ -814,7 +814,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         try {
             writer.rollback();
         } catch (IOException ex) {
-            throw new HongsExpedient(0x102d, ex);
+            throw new HongsExemption(0x102d, ex);
         }
     }
 
@@ -1840,7 +1840,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
                 }
                 return i < h;
             } catch (IOException ex) {
-                throw new HongsExpedient.Common(ex);
+                throw new HongsExemption.Common(ex);
             }
         }
 
@@ -1854,7 +1854,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
                 Document dox = reader.document( doc.doc );
                 return that.doc2Map(dox);
             } catch (IOException ex) {
-                throw new HongsExpedient.Common(ex);
+                throw new HongsExemption.Common(ex);
             }
         }
 

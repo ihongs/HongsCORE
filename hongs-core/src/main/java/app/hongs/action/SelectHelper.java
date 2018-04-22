@@ -2,7 +2,7 @@ package app.hongs.action;
 
 import app.hongs.Core;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.util.Dict;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -372,7 +372,7 @@ public class SelectHelper {
     private static String getHost() {
         HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
         if ( r == null ) {
-            throw new HongsExpedient.Common("Can not find http servlet request");
+            throw new HongsExemption.Common("Can not find http servlet request");
         }
 
         int    port;
@@ -389,7 +389,7 @@ public class SelectHelper {
     private static String getPath() {
         HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
         if ( r == null ) {
-            throw new HongsExpedient.Common("Can not find http servlet request");
+            throw new HongsExemption.Common("Can not find http servlet request");
         }
 
         return r.getContextPath() + "/";

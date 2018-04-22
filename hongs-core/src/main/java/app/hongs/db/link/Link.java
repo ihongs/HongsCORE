@@ -4,7 +4,7 @@ import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.dh.ITrnsct;
 import app.hongs.util.Synt;
 import app.hongs.util.Tool;
@@ -156,7 +156,7 @@ abstract public class Link
             connection.setAutoCommit(false);
         }
     } catch (SQLException ex) {
-        throw new HongsExpedient(0x102b, ex);
+        throw new HongsExemption(0x102b, ex);
     }
   }
 
@@ -174,7 +174,7 @@ abstract public class Link
             connection.commit(  );
         }
     } catch (SQLException ex) {
-        throw new HongsExpedient(0x102c, ex);
+        throw new HongsExemption(0x102c, ex);
     }
   }
 
@@ -192,7 +192,7 @@ abstract public class Link
             connection.rollback();
         }
     } catch (SQLException ex) {
-        throw new HongsExpedient(0x102d, ex);
+        throw new HongsExemption(0x102d, ex);
     }
   }
 

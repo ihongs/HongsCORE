@@ -1,7 +1,7 @@
 package app.hongs.jsp;
 
 import app.hongs.HongsCause;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.ActionHelper;
 import app.hongs.util.Data;
@@ -171,7 +171,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLEncoder.encode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw  new HongsExpedient.Common( ex );
+          throw  new HongsExemption.Common( ex );
       }
   }
 
@@ -185,7 +185,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       try {
           return URLDecoder.decode(str, "UTF-8");
       } catch (UnsupportedEncodingException ex ) {
-          throw  new HongsExpedient.Common( ex );
+          throw  new HongsExemption.Common( ex );
       }
   }
 

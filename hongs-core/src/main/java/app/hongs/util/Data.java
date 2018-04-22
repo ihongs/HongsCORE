@@ -1,7 +1,7 @@
 package app.hongs.util;
 
 import app.hongs.Core;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -62,7 +62,7 @@ public final class Data
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsExpedient(0x50, "Can not parse data by json", ex);
+      throw new HongsExemption(0x50, "Can not parse data by json", ex);
     }
   }
 
@@ -79,7 +79,7 @@ public final class Data
     }
     catch (ParseException ex)
     {
-      throw new HongsExpedient(0x1150, "Can not parse data by json", ex);
+      throw new HongsExemption(0x1150, "Can not parse data by json", ex);
     }
   }
 
@@ -144,7 +144,7 @@ public final class Data
     }
     catch (IOException ex)
     {
-      throw new HongsExpedient(0x1151, "Can not write data for json", ex);
+      throw new HongsExemption(0x1151, "Can not write data for json", ex);
     }
   }
 
@@ -473,7 +473,7 @@ public final class Data
             }
         }
         catch (IOException e)  {
-            throw new HongsExpedient(0x1151, "Can not write data for json", e);
+            throw new HongsExemption(0x1151, "Can not write data for json", e);
         }
     }
 

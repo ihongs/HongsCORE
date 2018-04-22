@@ -4,7 +4,7 @@ import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.CoreConfig;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.db.util.FetchCase;
 import app.hongs.db.util.FetchPage;
 import app.hongs.db.util.AssocCase;
@@ -1191,7 +1191,7 @@ implements IEntity
                 throw e.toExpedient(  );
             }
             if (null == assoc) {
-                throw new HongsExpedient(0x1039,
+                throw new HongsExemption(0x1039,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

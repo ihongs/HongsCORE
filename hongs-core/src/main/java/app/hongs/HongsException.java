@@ -3,7 +3,7 @@ package app.hongs;
 /**
  * 通用异常类
  *
- * 与 HongsExpedient 不同, 必须 throws
+ * 与 HongsExemption 不同, 必须 throws
  *
  * <h3>取值范围:</h3>
  * <pre>
@@ -40,8 +40,8 @@ public class HongsException extends Exception implements HongsCause {
         this(code, null, null);
     }
 
-    public HongsExpedient toExpedient() {
-        return new HongsExpedient(this.getErrno(), this.getError(), this)
+    public HongsExemption toExpedient() {
+        return new HongsExemption(this.getErrno(), this.getError(), this)
              .setLocalizedOptions(this.getLocalizedOptions())
              .setLocalizedContext(this.getLocalizedContext());
     }

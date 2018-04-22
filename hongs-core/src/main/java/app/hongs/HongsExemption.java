@@ -13,11 +13,11 @@ package app.hongs;
  *
  * @author Hongs
  */
-public class HongsExpedient extends RuntimeException implements HongsCause {
+public class HongsExemption extends RuntimeException implements HongsCause {
 
     protected final HongsCurse that;
 
-    public HongsExpedient(int errno, String error, Throwable cause) {
+    public HongsExemption(int errno, String error, Throwable cause) {
         super(cause);
 
         that = new HongsCurse(errno, error, this);
@@ -28,15 +28,15 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
         }
     }
 
-    public HongsExpedient(int code, Throwable cause) {
+    public HongsExemption(int code, Throwable cause) {
         this(code, cause.getMessage(), cause);
     }
 
-    public HongsExpedient(int code, String desc) {
+    public HongsExemption(int code, String desc) {
         this(code, desc, null);
     }
 
-    public HongsExpedient(int code) {
+    public HongsExemption(int code) {
         this(code, null, null);
     }
 
@@ -82,13 +82,13 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     }
 
     @Override
-    public HongsExpedient setLocalizedContext(String lang) {
+    public HongsExemption setLocalizedContext(String lang) {
         that.setLocalizedContext(lang);
         return this;
     }
 
     @Override
-    public HongsExpedient setLocalizedOptions(String... opts) {
+    public HongsExemption setLocalizedOptions(String... opts) {
         that.setLocalizedOptions(opts);
         return this;
     }
@@ -100,7 +100,7 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     /**
      * 常规错误(无需错误代码)
      */
-    public static class Common extends HongsExpedient {
+    public static class Common extends HongsExemption {
         public Common(String error, Throwable cause) {
             super(COMMON, error, cause);
         }
@@ -115,7 +115,7 @@ public class HongsExpedient extends RuntimeException implements HongsCause {
     /**
      * 通告错误(无需错误代码)
      */
-    public static class Notice extends HongsExpedient {
+    public static class Notice extends HongsExemption {
         public Notice(String desc, Throwable cause) {
             super(NOTICE, desc, cause);
         }

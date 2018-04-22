@@ -3,7 +3,7 @@ package app.hongs.dh.search;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.action.FormSet;
 import app.hongs.dh.lucene.LuceneRecord;
 import app.hongs.util.Block;
@@ -83,7 +83,7 @@ public class SearchEntity extends LuceneRecord {
             iw.addDocument (doc);
             iw.commit();
         } catch (IOException ex) {
-            throw new HongsExpedient.Common(ex);
+            throw new HongsExemption.Common(ex);
         } finally {
             loc.unlock();
         }
@@ -99,7 +99,7 @@ public class SearchEntity extends LuceneRecord {
             iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
             iw.commit();
         } catch (IOException ex) {
-            throw new HongsExpedient.Common(ex);
+            throw new HongsExemption.Common(ex);
         } finally {
             loc.unlock();
         }
@@ -115,7 +115,7 @@ public class SearchEntity extends LuceneRecord {
             iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
             iw.commit();
         } catch (IOException ex) {
-            throw new HongsExpedient.Common(ex);
+            throw new HongsExemption.Common(ex);
         } finally {
             loc.unlock();
         }

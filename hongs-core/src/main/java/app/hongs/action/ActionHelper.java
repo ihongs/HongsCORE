@@ -653,7 +653,7 @@ public class ActionHelper implements Cloneable
             try {
               return URLDecoder.decode(ce.getValue(), "UTF-8");
             } catch (UnsupportedEncodingException e) {
-              throw  new  HongsExpedient.Common ( e);
+              throw  new  HongsExpedient(0x1111 , e);
             }
           }
         }
@@ -1134,7 +1134,7 @@ public class ActionHelper implements Cloneable
               k = s.substring(i, j);
               k = URLDecoder.decode(k, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsExpedient.Common ( ex);
+              throw new HongsExpedient(0x1111 , ex);
           }
           if (j < s.length() && s.charAt(j) == '=') {
               j++;
@@ -1150,7 +1150,7 @@ public class ActionHelper implements Cloneable
               v = s.substring(i, j);
               v = URLDecoder.decode(v, "UTF-8");
           } catch (UnsupportedEncodingException ex) {
-              throw new HongsExpedient.Common ( ex);
+              throw new HongsExpedient(0x1111 , ex);
           }
           if (j < s.length() && s.charAt(j) == '&') {
               j++;

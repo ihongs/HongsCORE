@@ -1,7 +1,7 @@
 package app.hongs.util;
 
 import app.hongs.Core;
-import app.hongs.HongsError;
+import app.hongs.HongsExpedient;
 
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -38,10 +38,10 @@ import java.util.LinkedHashMap;
  * 故将其修改成该 Data 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
  * </p>
  *
- * <h3>错误代码</h3>
+ * <h3>异常代码</h3>
  * <pre>
- * 0x41 解析JSON数据失败
- * 0x42 写入JSON数据失败
+ * 0x1150 解析JSON数据失败
+ * 0x1151 写入JSON数据失败
  * </pre>
  *
  * @author Hongs
@@ -62,7 +62,7 @@ public final class Data
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsError(0x41, "Can not parse data by json", ex);
+      throw new HongsExpedient(0x50, "Can not parse data by json", ex);
     }
   }
 
@@ -79,7 +79,7 @@ public final class Data
     }
     catch (ParseException ex)
     {
-      throw new HongsError(0x41, "Can not parse data by json", ex);
+      throw new HongsExpedient(0x1150, "Can not parse data by json", ex);
     }
   }
 
@@ -144,7 +144,7 @@ public final class Data
     }
     catch (IOException ex)
     {
-      throw new HongsError(0x42, "Can not write data for json", ex);
+      throw new HongsExpedient(0x1151, "Can not write data for json", ex);
     }
   }
 
@@ -473,7 +473,7 @@ public final class Data
             }
         }
         catch (IOException e)  {
-            throw new HongsError(0x42, "Can not write data for json", e);
+            throw new HongsExpedient(0x1151, "Can not write data for json", e);
         }
     }
 

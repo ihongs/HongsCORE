@@ -989,8 +989,7 @@ implements IEntity
      * @param rb    排序字段, 结构 { FIELD1, FIELD2... }, 前跟 - 号表示逆序
      * @throws app.hongs.HongsException
      */
-    protected final void field(FetchCase caze, Set rb)
-    throws HongsException {
+    protected final void field(FetchCase caze, Set rb) {
         if (rb == null) {
             rb =  new HashSet();
         }
@@ -1091,8 +1090,7 @@ implements IEntity
      * @param af    返回字段, 结构: { KEY: [FIELD, ALIAS, FetchCase]... }
      * @throws app.hongs.HongsException
      */
-    protected final void allow(FetchCase caze, Map af)
-    throws HongsException {
+    protected final void allow(FetchCase caze, Map af) {
         String name = Synt.defoult(caze.getName(), table.name, table.tableName);
         allow( table, table, table.getAssocs( ), table.getParams( )
              , caze, name, null , null, af );
@@ -1111,8 +1109,7 @@ implements IEntity
      * @param al    字段集合, 结构: {参数: [字段, 别名, 查询用例]}
      */
     private void allow(Table table, Table assoc, Map ac, Map pc,
-        FetchCase caze, String tn, String qn, String pn, Map al)
-    throws HongsException {
+        FetchCase caze, String tn, String qn, String pn, Map al) {
         String tx, ax, az;
         tx = "`"+tn+"`." ;
 
@@ -1196,7 +1193,7 @@ implements IEntity
                 throw e.toExemption(  );
             }
             if (null == assoc) {
-                throw new HongsException(0x1039,
+                throw new HongsExemption(0x1039,
                     "Can not get table '"+ rn +"' in DB '"+ table.db.name +"'"
                 );
             }

@@ -62,7 +62,7 @@ public final class Data
     }
     catch (ParseException | IOException ex)
     {
-      throw new HongsExemption(0x50, "Can not parse data by json", ex);
+      throw new HongsExemption(0x1150, "Can not parse data by json", ex);
     }
   }
 

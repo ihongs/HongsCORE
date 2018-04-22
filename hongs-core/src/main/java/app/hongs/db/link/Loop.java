@@ -114,7 +114,7 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
             getTypeDict();
         } catch (HongsException ex ) {
             this.close( );
-            throw  ex.toExpedient( );
+            throw  ex.toExemption( );
         }
 
         // 获取行内每列数据

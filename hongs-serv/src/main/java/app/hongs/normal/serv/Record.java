@@ -31,7 +31,7 @@ public class Record {
             return getRecord( ).get(key);
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 
@@ -46,7 +46,7 @@ public class Record {
             getRecord( ).set(key, val, exp);
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 
@@ -62,7 +62,7 @@ public class Record {
             getRecord( ).set(key, val, exp);
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 
@@ -76,7 +76,7 @@ public class Record {
             getRecord( ).set(key, exp);
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 
@@ -91,7 +91,7 @@ public class Record {
             getRecord( ).set(key, exp);
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 
@@ -104,7 +104,7 @@ public class Record {
             getRecord().del( key );
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 
@@ -117,7 +117,7 @@ public class Record {
             getRecord().del( exp );
         }
         catch (HongsException ex ) {
-            throw ex.toExpedient();
+            throw ex.toExemption();
         }
     }
 

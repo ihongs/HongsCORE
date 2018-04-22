@@ -816,7 +816,7 @@ public class AssocCase {
                 al.put(k , f);
             }
         } catch (HongsException e ) {
-            throw e.toExpedient(  );
+            throw e.toExemption(  );
         }
 
         if (ac == null || ac.isEmpty()) {
@@ -848,7 +848,7 @@ public class AssocCase {
             try {
                 assoc = table.db.getTable(rn);
             } catch (HongsException e ) {
-                throw e.toExpedient(  );
+                throw e.toExemption(  );
             }
             if (null == assoc) {
                 throw new HongsExemption(0x1039,

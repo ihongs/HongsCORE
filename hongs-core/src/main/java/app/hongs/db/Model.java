@@ -1151,7 +1151,7 @@ implements IEntity
                 al.put(k , new Object[] {f, l, caze});
             }
         } catch (HongsException e ) {
-            throw e.toExpedient(  );
+            throw e.toExemption(  );
         }
 
         if (ac == null || ac.isEmpty()) {
@@ -1188,7 +1188,7 @@ implements IEntity
                 assoc = table.db.getTable(rn);
                 caxe  = caze .   gotJoin (tn);
             } catch (HongsException e ) {
-                throw e.toExpedient(  );
+                throw e.toExemption(  );
             }
             if (null == assoc) {
                 throw new HongsExemption(0x1039,

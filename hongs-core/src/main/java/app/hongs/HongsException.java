@@ -40,7 +40,7 @@ public class HongsException extends Exception implements HongsCause {
         this(code, null, null);
     }
 
-    public HongsExemption toExpedient() {
+    public HongsExemption toExemption() {
         return new HongsExemption(this.getErrno(), this.getError(), this)
              .setLocalizedOptions(this.getLocalizedOptions())
              .setLocalizedContext(this.getLocalizedContext());

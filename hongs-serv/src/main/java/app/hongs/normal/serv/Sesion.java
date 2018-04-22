@@ -156,7 +156,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
             try {
                 getRecord().del( sid );
             } catch (HongsException e) {
-                throw e.toExpedient( );
+                throw e.toExemption( );
             }
         }
 
@@ -299,7 +299,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         try {
             return getRecord().get(id);
         } catch (HongsException e) {
-            throw e.toExpedient( );
+            throw e.toExemption( );
         }
     }
 

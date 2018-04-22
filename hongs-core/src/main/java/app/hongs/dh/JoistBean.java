@@ -101,7 +101,7 @@ public class JoistBean implements IVolume {
             }
             return  fsavez;
         } catch (HongsException e) {
-            throw e.toExpedient( );
+            throw e.toExemption( );
         }
     }
 
@@ -121,7 +121,7 @@ public class JoistBean implements IVolume {
             }
             return  fcasez;
         } catch (HongsException e) {
-            throw e.toExpedient( );
+            throw e.toExemption( );
         }
     }
 

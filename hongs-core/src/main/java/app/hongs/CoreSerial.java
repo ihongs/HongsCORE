@@ -450,11 +450,11 @@ public abstract class CoreSerial
       }
       catch (IllegalAccessException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(0x10dc, e);
       }
       catch (IllegalArgumentException e)
       {
-        throw new HongsException(0x10da, e);
+        throw new HongsException(0x10dc, e);
       }
     }
   }

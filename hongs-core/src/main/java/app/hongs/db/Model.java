@@ -987,7 +987,6 @@ implements IEntity
      * 绑定许可字段
      * @param caze  查询用例
      * @param rb    排序字段, 结构 { FIELD1, FIELD2... }, 前跟 - 号表示逆序
-     * @throws app.hongs.HongsException
      */
     protected final void field(FetchCase caze, Set rb) {
         if (rb == null) {
@@ -1088,12 +1087,12 @@ implements IEntity
      * 提取许可字段
      * @param caze  查询用例
      * @param af    返回字段, 结构: { KEY: [FIELD, ALIAS, FetchCase]... }
-     * @throws app.hongs.HongsException
      */
     protected final void allow(FetchCase caze, Map af) {
-        String name = Synt.defoult(caze.getName(), table.name, table.tableName);
-        allow( table, table, table.getAssocs( ), table.getParams( )
-             , caze, name, null , null, af );
+        String name = Synt.defoult(
+               caze.getName( ) , table.name , table.tableName );
+        allow( table,table, table.getAssocs(),table.getParams()
+             , caze , name, null , null, af );
     }
 
     /**

@@ -1,7 +1,7 @@
 package app.hongs;
 
 /**
- * 通用异常类
+ * 通用免责类
  *
  * 与 HongsException 不同, 无需 throws;
  *

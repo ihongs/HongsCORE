@@ -1,7 +1,7 @@
 package app.hongs.cmdlet;
 
 import app.hongs.CoreLogger;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsError;
 import app.hongs.util.Data;
 import app.hongs.util.Tool;
 import java.util.ArrayList;
@@ -253,8 +253,8 @@ public class CmdletHelper
         trs += pre + hlp.replaceAll("\\n", pre);
       }
 
-      throw new HongsExpedient(0x1120, msg)
-                . setLocalizedOptions( trs);
+      throw new HongsError(0x3e, msg)
+            .setLocalizedOptions(trs);
     } else if (hlp != null && args.length == 0) {
       System.err.println(hlp.replaceAll("\\n",pre));
       System.exit(0);

@@ -24,7 +24,7 @@ public class HongsExemption extends RuntimeException implements HongsCause {
 
         if (errno < 0x1000) {
             throw new HongsError(0x22,
-                "Expedient code must be greater than 0xFFF(4095).");
+                "Exemption code must be greater than 0xFFF(4095).");
         }
     }
 

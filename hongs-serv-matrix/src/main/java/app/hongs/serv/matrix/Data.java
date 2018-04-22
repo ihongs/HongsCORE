@@ -126,7 +126,7 @@ public class Data extends SearchEntity {
             fields = fieldx;
         }
         } catch (HongsException ex) {
-            throw ex.toExpedient( );
+            throw ex.toExemption( );
         }
 
         setFields(fields);

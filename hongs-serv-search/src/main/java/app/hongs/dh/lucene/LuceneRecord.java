@@ -1801,7 +1801,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
                 finder = that.getFinder();
                 reader = that.getReader();
             } catch ( HongsException ex ) {
-                throw ex.toExpedient(   );
+                throw ex.toExemption(   );
             }
         }
 

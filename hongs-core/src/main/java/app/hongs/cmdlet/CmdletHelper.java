@@ -253,7 +253,7 @@ public class CmdletHelper
         trs += pre + hlp.replaceAll("\\n", pre);
       }
 
-      throw new HongsExpedient(0x112c, msg)
+      throw new HongsExpedient(0x1120, msg)
                 . setLocalizedOptions( trs);
     } else if (hlp != null && args.length == 0) {
       System.err.println(hlp.replaceAll("\\n",pre));

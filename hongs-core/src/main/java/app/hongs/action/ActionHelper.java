@@ -130,7 +130,7 @@ public class ActionHelper implements Cloneable
     }
     catch (UnsupportedEncodingException ex)
     {
-      throw new HongsError(0x31, "Can not set encoding.", ex);
+      throw new HongsExpedient(0x1111, "Can not set encoding.", ex);
     }
 
     this.outputStream = null;
@@ -160,7 +160,7 @@ public class ActionHelper implements Cloneable
     }
     catch (UnsupportedEncodingException ex)
     {
-      throw new HongsError(0x31, "Can not set encoding.", ex);
+      throw new HongsExpedient(0x1111, "Can not set encoding.", ex);
     }
 
     this.outputStream = null;
@@ -429,9 +429,9 @@ public class ActionHelper implements Cloneable
     } catch (IllegalStateException e) {
         throw new HongsExpedient(0x1100, e); // 上传受限, 如大小超标
     } catch (ServletException e) {
-        throw new HongsExpedient(0x1110, e);
+        throw new HongsExpedient(0x1113, e);
     } catch (IOException e) {
-        throw new HongsExpedient(0x1110, e);
+        throw new HongsExpedient(0x1113, e);
     }
   }
 
@@ -463,7 +463,7 @@ public class ActionHelper implements Cloneable
 
   /**
    * 获取响应输出
-   * 注意: 当为虚拟请求时, 可能抛 HongsError, 错误码 0x32
+   * 注意: 当为虚拟请求时, 可能抛 HongsExpedient, 错误码 0x1110
    * @return 响应输出
    */
   public OutputStream getOutputStream()
@@ -480,17 +480,17 @@ public class ActionHelper implements Cloneable
       }
       catch (IOException ex)
       {
-        throw new HongsError(0x32, "Can not get output stream.", ex);
+        throw new HongsExpedient(0x1110, "Can not get output stream.", ex);
       }
     } else
     {
-        throw new HongsError(0x32, "Can not get output stream."/**/);
+        throw new HongsExpedient(0x1110, "Can not get output stream."/**/);
     }
   }
 
   /**
    * 获取响应输出
-   * 注意: 当为虚拟请求时, 可能抛 HongsError, 错误码 0x32
+   * 注意: 当为虚拟请求时, 可能抛 HongsExpedient, 错误码 0x1110
    * @return 响应输出
    */
   public Writer getOutputWriter()
@@ -507,11 +507,11 @@ public class ActionHelper implements Cloneable
       }
       catch (IOException ex)
       {
-        throw new HongsError(0x32, "Can not get output writer.", ex);
+        throw new HongsExpedient(0x1110, "Can not get output writer.", ex);
       }
     } else
     {
-        throw new HongsError(0x32, "Can not get output writer."/**/);
+        throw new HongsExpedient(0x1110, "Can not get output writer."/**/);
     }
   }
 
@@ -909,7 +909,7 @@ public class ActionHelper implements Cloneable
     try {
         out.write(txt);
     } catch (IOException e)  {
-      throw new HongsError(0x32, "Can not send to client.", e);
+      throw new HongsExpedient(0x1110, "Can not send to client.", e);
     }
   }
 
@@ -1018,7 +1018,7 @@ public class ActionHelper implements Cloneable
                 Data.append(out, this.responseData);
         }
     } catch (IOException e ) {
-      throw new HongsError (0x32, "Can not send to client.", e);
+      throw new HongsExpedient(0x1110, "Can not send to client.", e);
     }
 
     this.responseData = null;

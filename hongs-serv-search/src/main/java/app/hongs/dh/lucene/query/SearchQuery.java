@@ -1,6 +1,6 @@
 package app.hongs.dh.lucene.query;
 
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -72,12 +72,12 @@ public class SearchQuery implements IQuery {
             Query  q2 = qp.parse(s);
             return q2 ;
         } catch (ParseException ex) {
-            throw new HongsExpedient.Common(ex);
+            throw new HongsExemption.Common(ex);
         }
     }
     @Override
     public Query get(String k, Object n, Object x, boolean l, boolean g) {
-        throw new HongsExpedient(0x1100, "Field "+k+" does not suported interval queries.");
+        throw new HongsExemption(0x1100, "Field "+k+" does not suported interval queries.");
     }
 
 }

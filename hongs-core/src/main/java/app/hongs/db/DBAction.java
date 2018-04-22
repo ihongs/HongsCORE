@@ -3,7 +3,7 @@ package app.hongs.db;
 import app.hongs.Cnst;
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
@@ -47,7 +47,7 @@ public class DBAction implements IAction, IActing {
                 throw new HongsException(0x1100, "Unsupported Request.");
             }
         }
-        catch (HongsException|HongsExpedient ex) {
+        catch (HongsException|HongsExemption ex) {
             int ec  = ex.getErrno( );
             if (ec != 0x10e8 && ec != 0x10ea) {
                 throw ex;

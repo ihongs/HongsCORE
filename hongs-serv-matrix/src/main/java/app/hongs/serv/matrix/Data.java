@@ -3,7 +3,7 @@ package app.hongs.serv.matrix;
 import app.hongs.Cnst;
 import app.hongs.Core;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.action.FormSet;
 import app.hongs.db.DB;
 import app.hongs.db.Model;
@@ -104,7 +104,7 @@ public class Data extends SearchEntity {
             if (! new File(
                 Core.CONF_PATH + "/"+ conf + Cnst.FORM_EXT +".xml"
             ).exists()) {
-                throw new HongsExpedient(0x1104, "Data form conf '" + conf + "' is not exists")
+                throw new HongsExemption(0x1104, "Data form conf '" + conf + "' is not exists")
                     .setLocalizedOptions(conf);
             }
 
@@ -114,7 +114,7 @@ public class Data extends SearchEntity {
             if (! new File(
                 Core.CONF_PATH + "/"+ comf + Cnst.FORM_EXT +".xml"
             ).exists()) {
-                throw new HongsExpedient(0x1104, "Data form conf '" + comf + "' is not exists")
+                throw new HongsExemption(0x1104, "Data form conf '" + comf + "' is not exists")
                     .setLocalizedOptions(comf);
             }
 

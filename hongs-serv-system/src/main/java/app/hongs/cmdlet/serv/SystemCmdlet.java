@@ -3,7 +3,7 @@ package app.hongs.cmdlet.serv;
 import app.hongs.Core;
 import app.hongs.CoreLogger;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.cmdlet.CmdletHelper;
 import app.hongs.cmdlet.CmdletRunner;
 import app.hongs.cmdlet.anno.Cmdlet;
@@ -536,7 +536,7 @@ public class SystemCmdlet {
 
             return null;
         } catch (ParseException ex) {
-            throw new HongsExpedient.Common(ex);
+            throw new HongsExemption.Common(ex);
         }
     }
 

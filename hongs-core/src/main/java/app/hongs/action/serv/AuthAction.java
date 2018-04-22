@@ -3,7 +3,7 @@ package app.hongs.action.serv;
 import app.hongs.Core;
 import app.hongs.HongsError;
 import app.hongs.HongsException;
-import app.hongs.HongsExpedient;
+import app.hongs.HongsExemption;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionDriver;
 import app.hongs.action.NaviMap;
@@ -94,7 +94,7 @@ public class AuthAction
 
       s = Data.toString(datamap);
     }
-    catch (HongsException | HongsExpedient | HongsError ex) {
+    catch (HongsException | HongsExemption | HongsError ex) {
       if (ex.getErrno() == 0x10e0) {
         helper.error404(ex.getMessage());
       } else {

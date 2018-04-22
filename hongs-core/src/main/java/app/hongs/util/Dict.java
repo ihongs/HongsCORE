@@ -1,6 +1,5 @@
 package app.hongs.util;
 
-import app.hongs.HongsError;
 import app.hongs.HongsExpedient;
 
 import java.util.Arrays;
@@ -202,11 +201,11 @@ public final class Dict
     }
     if (keys.length ==  0)
     {
-      throw new HongsExpedient(0x115a, "Must have one or more keys");
+      throw new HongsExpedient(0x1159, "Keys required, but empty gives");
     }
     if (keys[0] == null || keys[0] instanceof Integer)
     {
-      throw new HongsExpedient(0x115b, "First key can not be null or ints, but it is " + keys[0]);
+      throw new HongsExpedient(0x1159, "First key can not be null or ints, but it is " + keys[0]);
     }
 
     put(map, val, keys, 0);

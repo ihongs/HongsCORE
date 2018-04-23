@@ -238,33 +238,6 @@ public class Table
   }
 
   /**
-   * 查询数据
-   * 同 fetchCase().select(field)
-   * @param field
-   * @return
-   * @throws HongsException
-   */
-  public FetchCase select(String field)
-    throws HongsException
-  {
-    return  fetchCase(  ).select(field);
-  }
-
-  /**
-   * 过滤数据
-   * 同 fetchCase().filter(where, params)
-   * @param where
-   * @param params
-   * @return
-   * @throws HongsException
-   */
-  public FetchCase filter(String where, Object... params)
-    throws HongsException
-  {
-    return  fetchCase(  ).filter(where, params);
-  }
-
-  /**
    * 插入数据
    * @param values
    * @return 插入条数

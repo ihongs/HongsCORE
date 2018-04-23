@@ -83,63 +83,63 @@ public class FetchCase
   protected List<Object>        vparams;
   protected Map<String,Object>  options;
 
-  protected Set<  FetchCase  >  joinSet;
+  protected Set<FetchCase>      joinSet;
   protected String              joinName;
   protected String              joinExpr;
   protected byte                joinType;
 
-  public    static final byte   NONE  = 0;
-  public    static final byte   INNER = 1;
-  public    static final byte   LEFT  = 2;
-  public    static final byte   RIGHT = 3;
-  public    static final byte   FULL  = 4;
-  public    static final byte   CROSS = 5;
+  public static final byte NONE   = 0;
+  public static final byte INNER  = 1;
+  public static final byte LEFT   = 2;
+  public static final byte RIGHT  = 3;
+  public static final byte FULL   = 4;
+  public static final byte CROSS  = 5;
 
-  public    static final byte  STRICT = 2;
-  public    static final byte  CLEVER = 3;
-  public    static final byte  OBJECT = 4;
+  public static final byte STRICT = 2;
+  public static final byte CLEVER = 3;
+  public static final byte OBJECT = 4;
 
   /**
    * 字段可能的前导字符
    */
-  static final Pattern preField = Pattern
+  static final Pattern PRE_FIELD = Pattern
           .compile("^\\s*,\\s*" /***/ , Pattern.CASE_INSENSITIVE);
 
   /**
    * 条件可能的前导字符
    */
-  static final Pattern preWhere = Pattern
+  static final Pattern PRE_WHERE = Pattern
           .compile("^\\s*(AND|OR)\\s+", Pattern.CASE_INSENSITIVE);
 
   /**
    * 查找列名加关联层级名
    */
-  static final Pattern sqlAlias = Pattern
+  static final Pattern SQL_ALIAS = Pattern
           .compile("([:!]|['`\\w\\)]\\s+)?(?:(\\w+)|`(\\w+)`)(\\s*(?:,?$))");
 
   /**
    * 上级表或保留名标识符
    */
-  static final Pattern sqlPoint = Pattern
+  static final Pattern SQL_POINT = Pattern
           .compile( "\".*?\"|'.*?'|[:!](?=`.*?`|\\w+|\\*)" );
 
   /**
    * 查找与字段相关的元素, 如果存在字符串内含单引号将无法正确处理
    */
-  static final Pattern sqlField = Pattern
+  static final Pattern SQL_FIELD = Pattern
           .compile("(\".*?\"|'.*?'|`.*?`|\\w+|\\*|\\))\\s*");
 
   /**
    * 后面不跟字段可跟别名, \\d 换成 \\w 则仅处理被 '`' 包裹的字段
    */
-  static final Pattern sqlFieldBeforeAlias = Pattern
+  static final Pattern SQL_FIELD_BEFORE_ALIAS = Pattern
           .compile("AS|END|NULL|TRUE|FALSE|\\)|\\d.*"
                          , Pattern.CASE_INSENSITIVE);
 
   /**
    * 后面可跟字段的关键词
    */
-  static final Pattern sqlFieldBeforeWords = Pattern
+  static final Pattern SQL_FIELD_BEFORE_WORDS = Pattern
           .compile("IS|IN|ON|OR|AND|NOT|TOP|CASE|WHEN|THEN|ELSE|LIKE|ESCAPE|BETWEEN|DISTINCT"
                          , Pattern.CASE_INSENSITIVE);
 
@@ -171,10 +171,10 @@ public class FetchCase
     this.groups     = new StringBuilder();
     this.havins     = new StringBuilder();
     this.orders     = new StringBuilder();
-    this.limits     = new  int  [ 0 ];
+    this.limits     = new int [ 0 ];
     this.wparams    = new ArrayList();
     this.vparams    = new ArrayList();
-    this.options    = new  HashMap ();
+    this.options    = new HashMap();
     this.joinSet    = new LinkedHashSet();
     this.joinType   = NONE;
     this.joinExpr   = null;
@@ -577,7 +577,7 @@ public class FetchCase
     if (f.length() != 0)
     {
       sql.append( " " )
-         .append(preField.matcher(f).replaceFirst(""));
+         .append(PRE_FIELD.matcher(f).replaceFirst(""));
     }
     else
     {
@@ -593,28 +593,28 @@ public class FetchCase
     if (w.length() != 0)
     {
       sql.append(" WHERE " )
-         .append(preWhere.matcher(w).replaceFirst(""));
+         .append(PRE_WHERE.matcher(w).replaceFirst(""));
     }
 
     // 分组
     if (g.length() != 0)
     {
       sql.append(" GROUP BY ")
-         .append(preField.matcher(g).replaceFirst(""));
+         .append(PRE_FIELD.matcher(g).replaceFirst(""));
     }
 
     // 过滤
     if (h.length() != 0)
     {
       sql.append(" HAVING ")
-         .append(preWhere.matcher(h).replaceFirst(""));
+         .append(PRE_WHERE.matcher(h).replaceFirst(""));
     }
 
     // 排序
     if (o.length() != 0)
     {
       sql.append(" ORDER BY ")
-         .append(preField.matcher(o).replaceFirst(""));
+         .append(PRE_FIELD.matcher(o).replaceFirst(""));
     }
 
     // 限额, 不同库不同方式, 就不在此处理了
@@ -890,7 +890,7 @@ public class FetchCase
    */
   private static CharSequence fixSQLAliaz(CharSequence s, String an)
   {
-      Matcher m = sqlAlias.matcher(s);
+      Matcher m = SQL_ALIAS.matcher(s);
       String  n ;
 
       if (m.find()) {
@@ -923,9 +923,9 @@ public class FetchCase
    */
   protected static CharSequence fixSQLField(CharSequence s, String tn, String pn)
   {
-      StringBuffer b = new StringBuffer( );
-      StringBuffer f = new StringBuffer(s);
-      Matcher      m = sqlField.matcher(f);
+      StringBuffer b = new StringBuffer ( );
+      StringBuffer f = new StringBuffer (s);
+      Matcher      m = SQL_FIELD.matcher(f);
       String       z = "`"+ tn +"`.$0";
       String       x ;
 
@@ -980,11 +980,11 @@ public class FetchCase
           && (k == i || f.charAt(j) == ')')) {
               // 跳过乘号且不偏移, COUNT (*) 也要跳过
           } else
-          if (sqlFieldBeforeAlias.matcher(x).matches()) {
+          if (SQL_FIELD_BEFORE_ALIAS.matcher(x).matches()) {
               // 跳过别名和数字等
               k  = j;
           } else
-          if (sqlFieldBeforeWords.matcher(x).matches()) {
+          if (SQL_FIELD_BEFORE_WORDS.matcher(x).matches()) {
               // 跳过保留字不偏移
           } else
           if (k == i) {
@@ -1002,9 +1002,9 @@ public class FetchCase
   }
 
   private static CharSequence fixSQLPoint(CharSequence s, String sn, String pn) {
-      StringBuffer b = new StringBuffer( );
-      StringBuffer f = new StringBuffer(s);
-      Matcher      m = sqlPoint.matcher(f);
+      StringBuffer b = new StringBuffer ( );
+      StringBuffer f = new StringBuffer (s);
+      Matcher      m = SQL_POINT.matcher(f);
       pn  = "`" + pn + "`.";
 
       while (m.find()) {
@@ -1411,7 +1411,7 @@ public class FetchCase
     }
 
     // 删除条件中字段上的表名
-    String where = preWhere.matcher( wheres ).replaceFirst( "" );
+    String where = PRE_WHERE.matcher ( wheres ).replaceFirst("");
            where = delSQLTable(where );
 
     return _db_.delete(tableName, /**/ where, wparams.toArray());
@@ -1430,7 +1430,7 @@ public class FetchCase
     }
 
     // 删除条件中字段上的表名
-    String where = preWhere.matcher( wheres ).replaceFirst( "" );
+    String where = PRE_WHERE.matcher ( wheres ).replaceFirst("");
            where = delSQLTable(where );
 
     return _db_.update(tableName, dat, where, wparams.toArray());

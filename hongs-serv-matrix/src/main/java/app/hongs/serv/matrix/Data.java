@@ -16,6 +16,7 @@ import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import org.apache.lucene.document.Document;
@@ -155,91 +156,108 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 添加文档
+     * 创建记录
      * @param rd
-     * @return ID
+     * @return id,name等(由dispCols指定)
      * @throws HongsException
      */
     @Override
-    public String add(Map rd) throws HongsException {
+    public Map create(Map rd) throws HongsException {
+        long ct = System.currentTimeMillis() / 1000;
+             rd.put("ctime" , ct);
         String id = Core.newIdentity();
-        save(id, rd);
-        call(id, "create");
-        return id;
+        save ( id , rd );
+        call ( id , "create", ct);
+
+        Set<String> fs = getListable();
+        if (null != fs && ! fs.isEmpty( )) {
+            Map sd = new LinkedHashMap( );
+            for(String fn : fs) {
+                if ( ! fn.contains( "." )) {
+                    sd.put( fn, rd.get(fn) );
+                }
+            }
+            sd.put(Cnst.ID_KEY, id);
+            return sd;
+        } else {
+            rd.put(Cnst.ID_KEY, id);
+            return rd;
+        }
     }
 
     /**
-     * 修改文档(局部更新)
-     * @param id
+     * 更新记录
      * @param rd
+     * @return
      * @throws HongsException
      */
     @Override
-    public void put(String id, Map rd) throws HongsException {
-        save(id, rd);
-        call(id, "update");
+    public int update(Map rd) throws HongsException {
+        long ct = System.currentTimeMillis() / 1000;
+             rd.put("ctime" , ct);
+        Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
+        permit (rd, ids , 0x1096);
+        for(String  id  : ids) {
+           save(id, rd  );
+           call(id, "update", ct);
+        }
+        return ids.size();
     }
 
     /**
-     * 设置文档(无则添加)
-     * @param id
+     * 删除记录
      * @param rd
+     * @return
      * @throws HongsException
      */
     @Override
-    public void set(String id, Map rd) throws HongsException {
-        save(id, rd);
-        call(id, "update");
-    }
-
-    /**
-     * 删除文档
-     * @param id
-     * @throws HongsException
-     */
-    @Override
-    public void del(String id) throws HongsException {
-        save(id, null);
-        call(id, "delete");
+    public int delete(Map rd) throws HongsException {
+        long ct = System.currentTimeMillis() / 1000;
+             rd.put("ctime" , ct);
+        Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
+        permit (rd, ids , 0x1097);
+        for(String  id  : ids) {
+           drop(id, rd  );
+           call(id, "delete", ct);
+        }
+        return ids.size();
     }
 
     public void save(String id, Map rd) throws HongsException {
-        String   fid   = getFormId();
         Table    table = getTable( );
+        String   fid   = getFormId();
+        String   uid   = (String) rd.get( "user_id" );
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-        Object[] param = new String[]{id, fid, "0"};
-        long     ctime = System.currentTimeMillis() / 1000;
-        time  =  ctime ;
-
-        // 删除当前数据
-        if (rd == null) {
-            if (table != null) {
-                Map ud = new HashMap();
-                ud.put("etime", ctime);
-                ud.put("state",   0  );
-                table.update(ud, where, param);
-            }
-
-            super.del(id);
-
-            return;
-        }
+        Object[] param = new  String [ ] { id , fid , "0"};
+        long     ctime = Synt.declare(rd.get("ctime"), 0L);
 
         // 获取旧的数据
-        Map dd;
-        if (table != null) {
-            dd = table.fetchCase( )
-                    .filter(where, param)
-                    .select("data,ctime")
+        Map dd = get( id );
+        if (! dd.isEmpty()) {
+            if (table != null) {
+                Map od = table.fetchCase()
+                    .filter( where, param)
+                    .select("ctime")
                     .one();
-            if(!dd.isEmpty()) {
-                if (ctime <= Synt.declare ( dd.get( "ctime" ) , 0L ) ) {
-                    throw new HongsException(0x1100, "等会儿, 不要急");
+                if (! od.isEmpty( )) {
+                    if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
+                        throw new HongsException(0x1100, "等会儿, 不要急");
+                    }
                 }
-                dd = (Map) app.hongs.util.Data.toObject(dd.get("data").toString());
             }
         } else {
-            dd = get( id );
+            if (table != null) {
+                Map od = table.fetchCase()
+                    .filter( where, param)
+                    .select("ctime, data")
+                    .one();
+                if (! od.isEmpty( )) {
+                    if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
+                        throw new HongsException(0x1100, "等会儿, 不要急");
+                    }
+                    dd = (Map) app.hongs.util.Data.toObject(od.get("data").toString());
+                }
+            }
         }
 
         // 合并新旧数据
@@ -281,9 +299,9 @@ public class Data extends SearchEntity {
             nd.put("etime",   0  );
             nd.put(/***/"id", id );
             nd.put("form_id", fid);
-            nd.put("user_id", rd.get("user_id"));
-            nd.put("name", dd.get("name"));
+            nd.put("user_id", uid);
             nd.put("memo", rd.get("memo"));
+            nd.put("name", dd.get("name"));
             nd.put("data", app.hongs.util.Data.toString(dd));
 
             table.update(ud, where, param);
@@ -298,8 +316,53 @@ public class Data extends SearchEntity {
         setDoc(id, doc);
     }
 
+    public void drop(String id, Map rd) throws HongsException {
+        Table    table = getTable( );
+        String   fid   = getFormId();
+        String   uid   = (String) rd.get( "user_id" );
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        Object[] param = new  String [ ] { id , fid , "0"};
+        long     ctime = Synt.declare(rd.get("ctime"), 0L);
+
+        /** 记录到数据库 **/
+
+        if (table != null) {
+            Map dd = table.fetchCase()
+                .filter( where, param)
+                .select("ctime, state, data, name")
+                .one();
+            if (dd.isEmpty()) {
+                throw new HongsException(0x1104, "原始记录不存在");
+            }
+            if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
+                throw new HongsException(0x1100, "等会儿, 不要急");
+            }
+
+            Map ud = new HashMap();
+            ud.put("etime", ctime);
+
+            Map nd = new HashMap();
+            nd.put("ctime", ctime);
+            nd.put("etime",   0  );
+            ud.put("state",   0  );
+            nd.put(/***/"id", id );
+            nd.put("form_id", fid);
+            nd.put("user_id", uid);
+            nd.put("memo", rd.get("memo"));
+            nd.put("name", dd.get("name"));
+            nd.put("data", dd.get("data"));
+
+            table.update(ud, where, param);
+            table.insert(nd);
+        }
+
+        //** 从索引库删除 **/
+
+        delDoc(id);
+    }
+
     public void redo(String id, Map rd) throws HongsException {
-        long ctime = System.currentTimeMillis() / 1000;
+        long ctime = Synt.declare(rd.get("ctime"), 0L);
         long rtime = Synt.declare(rd.get("rtime"), 0L);
 
         //** 获取旧的数据 **/
@@ -352,7 +415,7 @@ public class Data extends SearchEntity {
         setDoc(id, doc);
     }
 
-    public void call(String id, String act) throws HongsException {
+    public void call(String id, String act, long now) throws HongsException {
         String url = (String) getParams().get("callback");
         if (url == null || "".equals(url)) {
             return;
@@ -363,7 +426,7 @@ public class Data extends SearchEntity {
             "id"    , id ,
             "action", act,
             "entity", fid,
-            "time"  , time
+            "time"  , now
         ));
         DataCaller.getInstance().add(url);
     }

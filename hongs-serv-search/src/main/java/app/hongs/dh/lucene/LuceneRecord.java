@@ -299,14 +299,14 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public Map create(Map rd) throws HongsException {
-        String id = add(rd);
+        String  id = add( rd);
         Set<String> fs = getListable();
-        if (fs != null && !fs.isEmpty()) {
-            Map sd = new LinkedHashMap();
-            for(String  fn : getListable()) {
-            if (  !  fn.contains( "." )) {
-                sd.put( fn , rd.get(fn));
-            }
+        if (null != fs && ! fs.isEmpty( )) {
+            Map sd = new LinkedHashMap( );
+            for(String fn : fs) {
+                if ( ! fn.contains( "." )) {
+                    sd.put( fn, rd.get(fn) );
+                }
             }
             sd.put(Cnst.ID_KEY, id);
             return sd;

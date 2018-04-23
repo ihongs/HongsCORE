@@ -45,13 +45,13 @@ public class TestDB {
             .select ("CONCAT(f1, `f2`, t1.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT f1)) AS c1")
             .select ("'xyz' AS a1, 45.6 AS !a2, 78.9 AS !`a3`")
             .filter ("f1 = ? AND f2 IN (?) AND `f3` LIKE ?", 123, 456, "abc")
-            .orderBy("`f1`, f2 DESC, !a2 ASC, !`a3` DESC")
+            .assort ("`f1`, f2 DESC, !a2 ASC, !`a3` DESC")
             .join   ("table2", "t2").on("`t1_id` = :`id`")
             .select ("f1, `f2` , t2.f3, t2.`f4` , `t2`.f5, `t2`.`f6`")
             .select ("CONCAT(f1, `f2`, t2.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT f1)) AS c1")
             .select ("'xyz' AS a1, 45.6 AS !a2, 78.9 AS !`a3`")
             .filter ("f1 = ? AND f2 IN (?) AND `f3` LIKE ?", 123, 456, "abc")
-            .orderBy("`f1`, f2 DESC, !a2 ASC, !`a3` DESC");
+            .assort ("`f1`, f2 DESC, !a2 ASC, !`a3` DESC");
         vali = "SELECT `t1`.f1, `t1`.`f2` , t1.f3, t1.`f4` , `t1`.f5, `t1`.`f6`, CONCAT(`t1`.f1, `t1`.`f2`, t1.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t1`.f1)) AS c1, 'xyz' AS a1, 45.6 AS a2, 78.9 AS `a3` , `t2`.`f1` AS `t2.f1`, `t2`.`f2` AS `t2.f2` , t2.`f3` AS `t2.f3`, t2.`f4` AS `t2.f4` , `t2`.`f5` AS `t2.f5`, `t2`.`f6` AS `t2.f6`, CONCAT(`t2`.f1, `t2`.`f2`, t2.f3, 12.3, 'ab.c', COUNT(*), COUNT(DISTINCT `t2`.f1)) AS `t2.c1`, 'xyz' AS `t2.a1`, 45.6 AS a2, 78.9 AS `a3` FROM `table1` AS `t1` INNER JOIN `table2` AS `t2` ON `t2`.`t1_id` = `t1`.`id` WHERE `t1`.f1 = 123 AND `t1`.f2 IN (456) AND `t1`.`f3` LIKE 'abc' AND `t2`.f1 = 123 AND `t2`.f2 IN (456) AND `t2`.`f3` LIKE 'abc' ORDER BY `t1`.`f1`, `t1`.f2 DESC, a2 ASC, `a3` DESC , `t2`.`f1`, `t2`.f2 DESC, a2 ASC, `a3` DESC";
         System.out.println(vali);
         System.out.println(caze.toString());

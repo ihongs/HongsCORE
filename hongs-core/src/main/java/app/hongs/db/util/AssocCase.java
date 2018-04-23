@@ -399,11 +399,11 @@ public class AssocCase {
             if (! af.containsKey(fn)) {
                 continue;
             }
-            fn = af.get (fn);
+            fn = af.get( fn );
             if (desc && !fn.endsWith(" DESC")) {
                 fn += " DESC";
             }
-            caze.orderBy(fn);
+            caze.assort( fn );
         }
     }
 

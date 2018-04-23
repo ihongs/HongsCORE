@@ -377,9 +377,9 @@ public class Data extends SearchEntity {
         }
 
         Map dd = table.fetchCase( )
-                .filter (where, param)
-                .select ("data, name, etime")
-                .orderBy("ctime DESC")
+                .filter(where, param)
+                .select("data, name, etime")
+                .assort("ctime DESC")
                 .one();
 
         if (dd.isEmpty()) {

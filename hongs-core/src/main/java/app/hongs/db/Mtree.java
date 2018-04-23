@@ -500,7 +500,7 @@ public class Mtree extends Model
     {
       if (this.snumKey != null)
       {
-        caze.orderBy("`"
+        caze.assort("`"
             + this.table.name
             +"`.`"
             + this.snumKey
@@ -508,7 +508,7 @@ public class Mtree extends Model
       } else
       if (this.cnumKey != null)
       {
-        caze.orderBy("(CASE WHEN `"
+        caze.assort("(CASE WHEN `"
             + this.table.name
             + "`.`"
             + this.cnumKey

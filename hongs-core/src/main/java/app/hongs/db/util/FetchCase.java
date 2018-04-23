@@ -30,8 +30,8 @@ import java.util.regex.Pattern;
  * limit        LIMIT     start, limit
  *
  * 注意:
- * field ,where ,group  ,havin ,order   为设置方法, 将清空原值;
- * select,filter,groupBy,having,orderBy 为追加方法, 保留原设值;
+ * field, where, group, havin, order  为设置方法, 将清空原值;
+ * select,filter,gather,having,assort 为追加方法, 保留原设值;
  * 如果 CLEVER_MODE 开启, !打头的不加表别名, :的将加上级表别名;
  * 避免 CLEVER_MODE 下使用较复杂的语句, 仅对常规语句有做过测试;
  * </pre>
@@ -295,7 +295,7 @@ public class FetchCase
   {
     this.groups.setLength(0);
     if ( field != null && field.length() != 0) {
-        groupBy( field );
+        gather(field);
     }
     return this;
   }
@@ -325,7 +325,7 @@ public class FetchCase
   {
     this.orders.setLength(0);
     if ( field != null && field.length() != 0) {
-        orderBy( field );
+        assort(field);
     }
     return this;
   }
@@ -384,7 +384,7 @@ public class FetchCase
    * @param field
    * @return 当前实例
    */
-  public FetchCase groupBy(String field)
+  public FetchCase gather(String field)
   {
     this.groups.append(", ").append(field);
     return this;
@@ -408,7 +408,7 @@ public class FetchCase
    * @param field
    * @return 当前实例
    */
-  public FetchCase orderBy(String field)
+  public FetchCase assort(String field)
   {
     this.orders.append(", ").append(field);
     return this;

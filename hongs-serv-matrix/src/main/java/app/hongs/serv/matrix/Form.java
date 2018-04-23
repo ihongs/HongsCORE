@@ -142,7 +142,7 @@ public class Form extends Model {
     }
 
     private String get(String id, String fn) throws HongsException {
-        return Synt.declare(table.filter("id=?", id).select(fn).one().get(fn), "");
+        return Synt.declare(table.fetchCase().filter("id = ?", id).select(fn).one().get(fn), "");
     }
 
     protected final int superAdd(String id, Map rd) throws HongsException {

@@ -543,7 +543,9 @@ ul.pickbox > li.btn span {
 }
 
 .datebox.input-group .form-control {
-    width: auto
+    width: auto;
+    padding-left: 3px;
+    padding-right: 3px;
 }
 .datebox.input-group .input-group-addon {
     width: auto;

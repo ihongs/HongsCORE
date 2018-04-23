@@ -106,18 +106,18 @@ public class FormAction {
 
     public void getForkList(Table ft, Table ut, List list, String pid, String pre) throws HongsException {
         Loop units = pid == null
-                   ? ut
+                   ? ut.fetchCase()
                 .select("`"+ut.name+"`.`id`, `"+ut.name+"`.`name`")
                 .filter("`"+ut.name+"`.`pid` IS NULL")
                 .oll()
-                   : ut
+                   : ut.fetchCase()
                 .select("`"+ut.name+"`.`id`, `"+ut.name+"`.`name`")
                 .filter("`"+ut.name+"`.`pid` = ?",pid)
                 .oll();
         while ( units.hasNext(  ) ) {
             Map unit = units.next();
 
-            Loop forms = ft
+            Loop forms = ft.fetchCase()
                 .select("`"+ft.name+"`.`id`, `"+ft.name+"`.`name`")
                 .filter("`"+ft.name+"`.unit_id" , pid)
                 .oll();

@@ -202,9 +202,9 @@ public class Unit extends Mtree {
 
         rows = this.db.getTable("form")
             .fetchCase()
-            .filter ("unit_id = ? AND state > 0",id)
-            .select ("id, state" )
-            .orderBy("boost DESC")
+            .filter("unit_id = ? AND state > 0",id)
+            .select("id, state" )
+            .assort("boost DESC")
             .all( );
         for ( Map  row : rows ) {
             String fid = row.get( "id"  ).toString();
@@ -234,9 +234,9 @@ public class Unit extends Mtree {
 
         rows = this.table
             .fetchCase()
-            .filter ("pid = ? AND state > 0", id)
-            .select ("id, name"  )
-            .orderBy("boost DESC")
+            .filter("pid = ? AND state > 0", id)
+            .select("id, name"  )
+            .assort("boost DESC")
             .all( );
 
         for ( Map  row : rows ) {
@@ -284,9 +284,9 @@ public class Unit extends Mtree {
 
         rows = this.table
             .fetchCase()
-            .filter ("pid = ? AND state > 0", id)
-            .select ("id, name"  )
-            .orderBy("boost DESC")
+            .filter("pid = ? AND state > 0", id)
+            .select("id, name"  )
+            .assort("boost DESC")
             .all( );
 
         for ( Map  row : rows ) {

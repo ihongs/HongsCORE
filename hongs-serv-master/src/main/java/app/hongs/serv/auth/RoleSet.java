@@ -80,7 +80,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         fc = new FetchCase( )
                 .from   (tb.tableName, tb.name)
                 .select (tb.name+".rtime, "+tb.name+".state")
-                .orderBy(tb.name+".rtime DESC");
+                .assort (tb.name+".rtime DESC");
               fc.join   (td.tableName, td.name)
                 .on     (td.name+".dept_id = "+tb.name+".id")
                 .filter (td.name+".user_id = ?", userId);

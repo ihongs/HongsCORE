@@ -531,19 +531,19 @@ ul.pickbox > li.btn span {
     -moz-appearance: none;
     -webkit-appearance: none;
 }
-.datebox.input-group .form-control {
-    width : auto;
-    height: 41px;
-    border: 0;
-    box-shadow: none;
-    padding-left: 4px;
-    padding-right: 4px;
-}
 .datebox.input-group .input-group-addon {
     width : auto;
     height: 41px;
     border: 0;
     background: #fff;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+.datebox.input-group .form-control {
+    width : auto;
+    height: 41px;
+    border: 0;
+    box-shadow: none;
     padding-left: 4px;
     padding-right: 4px;
 }
@@ -578,11 +578,13 @@ ul.pickbox > li.btn span {
     border : 0;
     width  : 0;
 }
+input[type=file].form-control {
+    padding: 10px 13px;
+}
 /** 修复 firefox 中 input 上传按钮不可调问题 **/
 @-moz-document url-prefix() {
 input[type=file].form-control {
-    padding: 0;
-    margin : 0;
+    padding:  0px  0px;
 }
 }
 

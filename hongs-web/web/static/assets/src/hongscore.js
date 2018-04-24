@@ -499,7 +499,7 @@ function hsToFormData (data) {
         data = data.prop("elements") || data;
     } else
     if (data instanceof  Array  ) {
-        // 可能已是数据集了, 无需再去做处理了
+        // 可能已是数据集了, 没有必要重复处理
     } else {
         data = hsSerialArr (data);
     }

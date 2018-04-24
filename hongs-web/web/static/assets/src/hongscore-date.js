@@ -204,6 +204,7 @@
                 box.append(_makeAddons(grp));
             }
         }
+        box.append(_makeAddons("").css("width", "100%")); // 占位撑长
         return box;
     }
 

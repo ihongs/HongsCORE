@@ -224,7 +224,7 @@ HsList.prototype = {
             f = th.data( "fl" );
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(list,v,n){return '+f+';})');
+                    f = eval('(null||function(list,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse list data-fl error: "+e);
                 }
@@ -662,7 +662,7 @@ function hsListFillItem(list) {
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(list,v,n){return '+f+';})');
+                    f = eval('(null||function(list,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse list data-fl error: "+e);
                 }

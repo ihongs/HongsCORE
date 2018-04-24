@@ -510,23 +510,23 @@ function hsToFormData (data) {
         if (! item.name) {
             continue;
         }
-        if (item.tagName == "SELECT") {
-            var a = item.options;
+        if (item.type == "file" ) {
+            var a = item.files;
             var j = 0 , k = 0 ;
             for(; j < a.length; j ++) {
-                if (! a[j].selected ) { continue }
-                form.append(item.name, a[j].value);
+                form.append(item.name, a[j] /**/ );
                 k += 1;
             }
             if (k == 0) {
                 form.append(item.name, "" );
             }
         } else
-        if (item.type == "file" ) {
-            var a = item.files;
+        if (item.tagName == "SELECT") {
+            var a = item.options;
             var j = 0 , k = 0 ;
             for(; j < a.length; j ++) {
-                form.append(item.name, a[j] /**/ );
+                if (! a[j].selected ) { continue }
+                form.append(item.name, a[j].value);
                 k += 1;
             }
             if (k == 0) {

@@ -493,7 +493,7 @@ function hsToFormData (data) {
         return data;
     }
     if (data instanceof Element ) {
-        data = data.elements;
+        data = data.elements || [data];
     } else
     if (data instanceof jQuery  ) {
         data = data.prop("elements") || data;

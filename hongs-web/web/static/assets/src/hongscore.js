@@ -481,7 +481,7 @@ function hsAsFormData (data) {
 /**
  * 构建 FormData
  * 尝试将表单转为 FormData 的数据结构
- * 部分浏览器发空文件可能引发一些问题, 如 Safari
+ * 特别对空文件在 Safari 中引发的问题
  * @param {Array|String|Object|Element} data
  * @return {FormData}
  */

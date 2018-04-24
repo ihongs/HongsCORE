@@ -287,19 +287,21 @@ function hsResponse(rst, qut) {
 function hsSerialArr(obj) {
     var arr = [];
     var typ = jQuery.type( obj );
-    if (obj instanceof jQuery
-    ||  obj instanceof Element ) {
-        typ = "jquery";
-    } else
-    if (          self.FormData
-    &&  obj instanceof FormData) {
-        typ = "fordat" ;
-    } else
-    if (obj instanceof HsSerialDic) {
-        typ = "serdic";
-    } else
-    if (obj instanceof HsSerialDat) {
-        typ = "serdat";
+    if (typ == "object" || typ == "array") {
+        if (obj instanceof jQuery
+        ||  obj instanceof Element ) {
+            typ = "jquery";
+        } else
+        if (       window .FormData
+        &&  obj instanceof FormData) {
+            typ = "fordat";
+        } else
+        if (obj instanceof HsSerialDic) {
+            typ = "serdic";
+        } else
+        if (obj instanceof HsSerialDat) {
+            typ = "serdat";
+        }
     }
     switch (typ) {
         case "array" :
@@ -1847,7 +1849,7 @@ $.fn.hsReady = function() {
         $(this).hsOpen($(this).attr("data-open"), $(this).attr("data-data"));
     });
     box.find("[data-eval]").each(function() {
-        eval('(function(){' + $(this).attr("data-eval") + '})').call( this );
+        eval('(false||function(){'+ $(this).attr("data-eval") +'})').call(this);
     });
 
     return box;
@@ -2091,7 +2093,7 @@ $.fn.hsData = function() {
     };
     this.each( function( ) {
         var a = this.attributes;
-        if (a === undefined ) {
+        if (! a ) {
             return;
         }
         var j = a.length;
@@ -2315,7 +2317,7 @@ function() {
             continue;
         }
         if (typeof(f) !== "function" ) {
-            f = eval('(function(event) {'+ f +'})');
+            f = eval( '(null||function(event){' + f + '})' );
         }
         n = n.substring(2, 3).toLowerCase() + n.substring(3);
         evs[n] = f;

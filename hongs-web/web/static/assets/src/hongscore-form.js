@@ -122,7 +122,7 @@ HsForm.prototype = {
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(form,v,n){return '+f+';})');
+                    f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse form data-dl error: "+e);
                 }
@@ -194,7 +194,7 @@ HsForm.prototype = {
             // 解析填充方法
             if (f && typeof f != "function") {
                 try {
-                    f = eval('(function(form,v,n){return '+f+';})');
+                    f = eval('(null||function(form,v,n){return '+f+';})');
                 } catch (e) {
                     throw new Error("Parse form data-fl error: "+e);
                 }

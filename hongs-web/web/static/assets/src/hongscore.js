@@ -506,8 +506,8 @@ function hsToFormData (data) {
 
     var form = new FormData( );
     for(var i = 0; i < data.length; i ++) {
-        var item = data[i];
-        if (! item.name) {
+        var item   =   data[i];
+        if (item.disabled || ! item.name) {
             continue;
         }
         if (item.type == "file" ) {

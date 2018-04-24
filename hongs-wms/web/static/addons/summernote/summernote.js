@@ -5898,7 +5898,7 @@ var LinkDialog = /** @class */ (function () {
         var body = [
             '<div class="form-group note-form-group">',
             "<label class=\"note-form-label\">" + this.lang.link.textToDisplay + "</label>",
-            '<input class="note-link-text form-control note-form-control  note-input" type="text" />',
+            '<input class="note-link-text form-control note-form-control note-input" type="text" />',
             '</div>',
             '<div class="form-group note-form-group">',
             "<label class=\"note-form-label\">" + this.lang.link.url + "</label>",

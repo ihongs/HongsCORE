@@ -24,26 +24,6 @@ legend {
     margin-bottom:  0px;
 }
 
-/* 优化文件上传样式 */
-::-ms-browse {
-    background : inherit;
-    color      : inherit;
-    font-family: inherit;
-    font-size  : inherit;
-    line-height: inherit;
-}
-::-webkit-file-upload-button {
-    background : inherit;
-    color      : inherit;
-    font-family: inherit;
-    font-size  : inherit;
-    line-height: inherit;
-    padding: 0;
-    border: 0;
-    margin: 0;
-    width: 0;
-}
-
 /** Bootstrap 调整 **/
 
 .invisible {
@@ -542,18 +522,68 @@ ul.pickbox > li.btn span {
     position: absolute;
 }
 
+.datebox.input-group {
+    border: 1px solid #ccc;
+    padding-left: 14px;
+}
+.datebox.input-group select {
+    appearance: none;
+    -moz-appearance: none;
+    -webkit-appearance: none;
+}
 .datebox.input-group .form-control {
-    width: auto;
-    padding-left: 3px;
-    padding-right: 3px;
+    width : auto;
+    height: 41px;
+    border: 0;
+    box-shadow: none;
+    padding-left: 4px;
+    padding-right: 4px;
 }
 .datebox.input-group .input-group-addon {
-    width: auto;
-    color: #333;
-    border: 0px;
+    width : auto;
+    height: 41px;
+    border: 0;
     background: #fff;
-    padding-left: 5px;
-    padding-right: 5px;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+/** 修复 firefox 中 select 内总有 4px 的问题 **/
+@-moz-document url-prefix() {
+.datebox.input-group .form-control {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+}
+
+/* 优化文件上传样式 */
+::-ms-browse {
+    background : inherit;
+    color      : inherit;
+    font-family: inherit;
+    font-size  : inherit;
+    line-height: inherit;
+    padding: 0;
+    margin : 0;
+    border : 0;
+    width  : 0;
+}
+::-webkit-file-upload-button {
+    background : inherit;
+    color      : inherit;
+    font-family: inherit;
+    font-size  : inherit;
+    line-height: inherit;
+    padding: 0;
+    margin : 0;
+    border : 0;
+    width  : 0;
+}
+/** 修复 firefox 中 input 上传按钮不可调问题 **/
+@-moz-document url-prefix() {
+input[type=file].form-control {
+    padding: 0;
+    margin : 0;
+}
 }
 
 /** 适配 **/

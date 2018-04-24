@@ -332,7 +332,7 @@ HsForm.prototype = {
                 }
                 evt.preventDefault();
 
-                var dat = new FormData( data [0] );
+                var dat = hsToFormData( data [0] );
                 var ext = jQuery.Event("willSave");
                 data.trigger(ext, [ dat , that ] );
                 if (ext.isDefaultPrevented()) {

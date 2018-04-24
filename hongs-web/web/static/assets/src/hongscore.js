@@ -1,5 +1,5 @@
 
-/* global self, eval, Symbol, Element, FormData, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
+/* global self, eval, Symbol, Element, FormData, File, encodeURIComponent, decodeURIComponent, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
 
 if (!self.HsAUTH) self.HsAUTH = {};
 if (!self.HsCONF) self.HsCONF = {};
@@ -479,24 +479,70 @@ function hsAsFormData (data) {
 }
 
 /**
- * 转为 FormData
- * 尝试将数据转为 FormData 的数据结构
- * 不行则转为兼容 FormData 的数组形式
- * @param {Array|String|Object|Element} data
- * @return {Array|FormData}
+ * 构建 FormData
+ * 尝试将表单转为 FormData 的数据结构
+ * 部分浏览器发空文件可能引发一些问题, 如 Safari
+ * @param {type} data
+ * @return {FormData}
  */
 function hsToFormData (data) {
-    var ents;
-    if (self.FormData) {
-        ents = new FormData(    );
-        data = hsSerialArr (data);
-        for(var i = 0 ; i < data.length ; i  ++   ) {
-            ents.append(data[i].name,data[i].value);
-        }
-    } else {
-        ents = hsAsFormData(data);
+    if (data == null) {
+        return new FormData( );
     }
-    return  ents;
+    if (data instanceof FormData) {
+        return data;
+    }
+    if (data instanceof Element ) {
+        data = data.elements;
+    } else
+    if (data instanceof jQuery  ) {
+        data = data.prop("elements") || data;
+    } else
+    if (data instanceof  Array  ) {
+        // 可能已是数据集了, 无需再去做处理了
+    } else {
+        data = hsSerialArr (data);
+    }
+
+    var form = new FormData( );
+    for(var i = 0; i < data.length; i ++) {
+        var item = data[i];
+        if (! item.name) {
+            continue;
+        }
+        if (item.tagName == "SELECT") {
+            var a = item.options;
+            var j = 0 , k = 0 ;
+            for(; j < a.length; j ++) {
+                if (! a[j].selected ) { continue };
+                form.append(item.name, a[j].value);
+                k += 1;
+            }
+            if (k == 0) {
+                form.append(item.name, "" );
+            }
+        } else
+        if (item.type == "file") {
+            var a = item.files;
+            var j = 0 , k = 0 ;
+            for(; j < a.length; j ++) {
+                form.append(item.name, a[j] /**/ );
+                k += 1;
+            }
+            if (k == 0) {
+                form.append(item.name, "" );
+            }
+        } else
+        if (item.type == "radio"
+        ||  item.type == "checkbox") {
+            if (item.checked) {
+                form.append(item.name, item.value);
+            }
+        } else {
+            form.append(item.name, item.value);
+        }
+    }
+    return  form;
 }
 
 /**
@@ -581,13 +627,11 @@ function hsSetSeria (arr, name, value) {
  * @return {Array}
  */
 function hsGetParams(url, name) {
-    name = encodeURIComponent(name).replace('.', '\\.');
-    var reg = new RegExp("[\\?&]"+name+"=([^&]*)", "g");
-    var arr = null;
-    var val = [];
-    while (true) {
-        arr = reg.exec(url);
-        if ( arr === null ) break;
+    name = encodeURIComponent ( name );
+    var nam = name.replace('.', '\\.');
+    var reg = new RegExp("[\\?&]"+ nam +"=([^&]*)", "g");
+    var arr = null, val = [  ];
+    while ((arr = reg.exec(url))) {
         val.push(decodeURIComponent(arr[1]));
     }
     return val;
@@ -600,11 +644,11 @@ function hsGetParams(url, name) {
  * @param {Array} value
  */
 function hsSetParams(url, name, value) {
-    name = encodeURIComponent(name).replace('.', '\\.');
-    var reg = new RegExp("[\\?&]"+name+"=([^&]*)", "g");
+    name = encodeURIComponent ( name );
+    var nam = name.replace('.', '\\.');
+    var reg = new RegExp("[\\?&]"+ nam +"=([^&]*)", "g");
     url = url.replace(reg, "");
-    for (var i = 0; i < value.length; i ++)
-    {
+    for(var i = 0; i < value.length; i ++) {
         url += "&"+name+"="+encodeURIComponent(value[i]);
     }
     if (url.indexOf("?") < 0 ) {

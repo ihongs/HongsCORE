@@ -514,7 +514,7 @@ function hsToFormData (data) {
             var a = item.options;
             var j = 0 , k = 0 ;
             for(; j < a.length; j ++) {
-                if (! a[j].selected ) { continue };
+                if (! a[j].selected ) { continue }
                 form.append(item.name, a[j].value);
                 k += 1;
             }
@@ -522,7 +522,7 @@ function hsToFormData (data) {
                 form.append(item.name, "" );
             }
         } else
-        if (item.type == "file") {
+        if (item.type == "file" ) {
             var a = item.files;
             var j = 0 , k = 0 ;
             for(; j < a.length; j ++) {
@@ -534,10 +534,9 @@ function hsToFormData (data) {
             }
         } else
         if (item.type == "radio"
-        ||  item.type == "checkbox") {
-            if (item.checked) {
-                form.append(item.name, item.value);
-            }
+        ||  item.type == "checkbox" ) {
+            if (! item.checked ) { continue; }
+            form.append(item.name, item.value);
         } else {
             form.append(item.name, item.value);
         }

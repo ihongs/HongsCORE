@@ -37,22 +37,24 @@ public class Wrongs extends HongsException {
     }
 
     public Map<String, String> getErrors() {
+        String lo = getLocalizedContext( );
         Map<String, String> errors = new LinkedHashMap();
         for (Map.Entry et : wrongs.entrySet()) {
-            Wrong  w = (Wrong )  et.getValue();
-            String n = (String)  et.getKey ( );
-            String e = w.getLocalizedMessage();
+            Wrong  w = (Wrong ) et.getValue( );
+            String n = (String) et.getKey  ( );
+            String e = w.setLocalizedContext(lo).getLocalizedMistake();
             errors.put ( n, e );
         }
         return errors;
     }
 
     public Map<String, Object> getErrmap() {
+        String lo = getLocalizedContext( );
         Map<String, Object> errors = new LinkedHashMap();
         for (Map.Entry et : wrongs.entrySet()) {
-            Wrong  w = (Wrong )  et.getValue();
-            String n = (String)  et.getKey ( );
-            String e = w.getLocalizedMessage();
+            Wrong  w = (Wrong ) et.getValue( );
+            String n = (String) et.getKey  ( );
+            String e = w.setLocalizedContext(lo).getLocalizedMistake();
             Dict.setParam(errors, e, n);
         }
         return errors;
@@ -60,11 +62,14 @@ public class Wrongs extends HongsException {
 
     @Override
     public String getLocalizedMessage() {
-        StringBuilder sb = new StringBuilder ();
-        for ( String  er : getErrors().values()) {
-            sb.append(er).append("\r\n");
+        String lo = getLocalizedContext( );
+        StringBuilder  sb = new StringBuilder( );
+        for (Map.Entry et : wrongs.entrySet()) {
+            Wrong  w = (Wrong ) et.getValue( );
+            String e = w.setLocalizedContext(lo).getLocalizedMessage();
+            sb.append(e).append("\r\n");
         }
-        return sb.toString( ).trim();
+        return sb.toString().trim( );
     }
 
     @Override

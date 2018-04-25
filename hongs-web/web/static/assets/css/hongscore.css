@@ -473,6 +473,10 @@ ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
 }
+ul.pickbox > li.btn span.glyphicon {
+    margin-top   : 1px;
+    margin-right : 5px;
+}
 ul.pickmul > li.btn {
     margin-bottom: 5px;
 }
@@ -484,26 +488,17 @@ ul.pickrol > li.btn-info {
     background   : transparent;
     box-shadow   : none;
 }
-ul.pickrol > li.btn-info .glyphicon {
-    margin: 1px 5px 0 0;
-}
-.pickbox:after {
-    clear: both;
-    content: " ";
-    display: table;
-}
 .pickrol .close {
-    display: none;
+    display      : none;
 }
 .preview .close {
-    font-size : 18px;
-    text-align: center;
-    line-height: 1.5em;
-    width : 1.5em;
-    height: 1.5em;
-    border-radius: 0.75em;
-    box-shadow: 0 0 1em #000;
-    background: #eee;
+    width        : 1.2em;
+    height       : 1.2em;
+    line-height  : 1.1em;
+    border-radius: 0.6em;
+    text-align   : center;
+    box-shadow   : 0 0 0.5em #000;
+    background   : #eee;
 }
 
 .preview {

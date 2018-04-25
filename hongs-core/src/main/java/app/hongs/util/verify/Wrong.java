@@ -43,6 +43,11 @@ public class Wrong extends HongsException {
         return text;
     }
 
+    public String getLocalizedMistake() {
+        CoreLocale trns = CoreLocale.getInstance(getLocalizedContext());
+        return trns.translate(getError(), getLocalizedOptions());
+    }
+
     @Override
     public String getLocalizedMessage() {
         CoreLocale trns = CoreLocale.getInstance(getLocalizedContext());

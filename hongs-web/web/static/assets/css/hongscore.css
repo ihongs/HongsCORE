@@ -489,16 +489,16 @@ ul.pickrol > li.btn-info {
     box-shadow   : none;
 }
 .pickrol .close {
-    display      : none;
+    display: none;
 }
 .preview .close {
-    width        : 1.2em;
-    height       : 1.2em;
+    width : 1.2em;
+    height: 1.2em;
     line-height  : 1.1em;
     border-radius: 0.6em;
-    text-align   : center;
-    box-shadow   : 0 0 0.5em #000;
-    background   : #eee;
+    text-align: center;
+    box-shadow: 0 0 0.5em #000;
+    background: #eee;
 }
 
 .preview {

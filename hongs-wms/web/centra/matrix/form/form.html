@@ -87,7 +87,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <input class="form-control" name="name" type="text" placeholder="请输入..." required="required" data-listable="true" data-nameable="true" data-srchable="true"/>
+                    <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-srchable="true" data-nameable="true" required="required"/>
                 </div>
                 <div class="form-group base-field" data-type="note">
                     <label class="control-label clearfix" style="display: block;">
@@ -96,16 +96,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <input class="form-control" name="note" type="text" placeholder="请输入..." data-srchable="true"/>
-                </div>
-                <div class="form-group base-field" data-type="word">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>搜索</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="word" type="text" placeholder="请输入..." data-srchable="true"/>
+                    <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-srchable="true"/>
                 </div>
                 <div class="form-group base-field" data-type="tags">
                     <label class="control-label clearfix" style="display: block;">
@@ -114,7 +105,18 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <input class="form-control" name="tags" type="text" placeholder="请输入..." data-fitrable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
+                    <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-fitrable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
+                </div>
+                <div class="form-group base-field" data-type="logo">
+                    <label class="control-label clearfix" style="display: block;">
+                        <span>图标</span>
+                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                    </label>
+                    <ul class="pickbox" data-fn="logo" data-ft="_file" data-thumb-size="300*300" data-listable="true" data-__type__="image" data-__rule__="Thumb"></ul>
+                    <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
+                    <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                 </div>
                 <div class="form-group">
                     <legend class="clearfix" data-valtype="text">
@@ -202,7 +204,7 @@
                         <span class="glyphicon glyphicon-info-sign pull-right"></span>
                         <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                     </label>
-                    <ul class="pickbox" data-fn="-" data-ft="_file" data-size="100*100"></ul>
+                    <ul class="pickbox" data-fn="-" data-ft="_file" data-thumb-size="300*300"></ul>
                     <input type="file" name="-" class="form-ignored invisible" accept="image/*"/>
                     <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                 </div>

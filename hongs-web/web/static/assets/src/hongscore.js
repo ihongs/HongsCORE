@@ -486,14 +486,17 @@ function hsAsFormData (data) {
  * @return {FormData}
  */
 function hsToFormData (data) {
-    if (data == null) {
-        return new FormData( );
-    }
+    var form = new FormData( );
+
+    // 自适应输入数据类型, 支持不同来源的数据
+    if (! data ) {
+        return form;
+    } else
     if (data instanceof FormData) {
         return data;
-    }
+    } else
     if (data instanceof Element ) {
-        data = data.elements || [data];
+        data = data.elements  ||  [  data  ];
     } else
     if (data instanceof jQuery  ) {
         data = data.prop("elements") || data;
@@ -502,33 +505,25 @@ function hsToFormData (data) {
         data = hsSerialArr (data);
     }
 
-    var form = new FormData( );
     for(var i = 0; i < data.length; i ++) {
-        var item   =   data[i];
+        var item = data[i];
         if (item.disabled || ! item.name) {
             continue;
         }
         if (item.type == "file" ) {
-            var a = item.files;
-            var j = 0 , k = 0 ;
-            for(; j < a.length; j ++) {
-                form.append(item.name, a[j] /**/ );
-                k += 1;
+            var a =  item.files ;
+            if (a.length  ==  0 ) {
+                form.append( item.name ,  "" );
             }
-            if (k == 0) {
-                form.append(item.name, "" );
+            for(var j = 0; j < a.length; j ++) {
+                form.append( item.name , a[j]);
             }
         } else
         if (item.tagName == "SELECT") {
             var a = item.options;
-            var j = 0 , k = 0 ;
-            for(; j < a.length; j ++) {
-                if (! a[j].selected ) { continue }
-                form.append(item.name, a[j].value);
-                k += 1;
-            }
-            if (k == 0) {
-                form.append(item.name, "" );
+            for(var j = 0; j < a.length; j ++) {
+            if (! a[j].selected) { continue; }
+            form.append(item.name, a[j].value);
             }
         } else
         if (item.type == "radio"

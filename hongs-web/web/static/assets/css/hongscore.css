@@ -483,10 +483,10 @@ ul.pickmul > li.btn {
 ul.pickrol > li.btn-info {
     padding-right: 0px;
     padding-left : 0px;
-           color : inherit;
-    border-color : transparent;
-    background   : transparent;
-    box-shadow   : none;
+    color: inherit;
+    border-color: transparent;
+    background  : transparent;
+    box-shadow  : none;
 }
 .pickrol .close {
     display: none;
@@ -494,9 +494,9 @@ ul.pickrol > li.btn-info {
 .preview .close {
     width : 1.2em;
     height: 1.2em;
-    line-height  : 1.1em;
-    border-radius: 0.6em;
     text-align: center;
+    line-height: 1.1em;
+    border-radius: 50%;
     box-shadow: 0 0 0.5em #000;
     background: #eee;
 }

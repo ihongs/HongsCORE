@@ -230,8 +230,9 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  */
 function hsFormFillPick(box, v, n, t) {
     if (n == undefined) n = box.data("fn");
-    var mul = !!  box.data(  "repeated"  )
-              || /(\[\]|\.\.|\.$)/.test(n);
+    var mul = box.is  (".pickmul")
+           || box.data("repeated")
+           || /(\[\]|\.\.|\.$)/.test(  n );
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 
     if (t == "info") {
@@ -278,7 +279,7 @@ function hsFormFillPick(box, v, n, t) {
         );
     }
     function puton(btn, box, val, txt) {
-        box.append(jQuery('<li class="btn btn-link form-control"></li>').attr("title" , txt )
+        box.append(jQuery('<li class="btn btn-info form-control"></li>').attr("title" , txt )
            .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
            .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
         );

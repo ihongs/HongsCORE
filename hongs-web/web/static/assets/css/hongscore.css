@@ -465,15 +465,6 @@ ul.pickbox {
     padding-left : 0;
     margin-bottom: 0;
 }
-ul.pickmul > li.btn {
-    margin-bottom: 5px;
-}
-ul.pickrol > li.btn {
-    color: #333333;
-    cursor: default;
-    padding-left: 0;
-    padding-right: 0;
-}
 ul.pickbox > li.btn {
     width: 100%;
     text-align: left;
@@ -481,6 +472,20 @@ ul.pickbox > li.btn {
 ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
+}
+ul.pickmul > li.btn {
+    margin-bottom: 5px;
+}
+ul.pickrol > li.btn-info {
+    padding-right: 0px;
+    padding-left : 0px;
+           color : inherit;
+    border-color : transparent;
+    background   : transparent;
+    box-shadow   : none;
+}
+ul.pickrol > li.btn-info .glyphicon {
+    margin: 1px 5px 0 0;
 }
 .pickbox:after {
     clear: both;

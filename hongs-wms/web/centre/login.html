@@ -34,17 +34,17 @@
                     <span style="color:#fdd">E&nbsp;</span>
                     <span data-i18n="welcome2">management information systems. Please login...</span></p>
                 <div class="row">
-                    <form action="centre/sign/create.act" data-module="hsForm" class="col-lg-6" id="sign-in-form">
+                    <form action="centre/sign/create.act?ab=.errs" data-module="hsForm" class="col-lg-6" id="sign-in-form">
                         <input type="hidden" name="place" value="centre"/>
                         <div class="form-group">
-                            <input name="username" type="text" value="abc@def.cn" placeholder="input.username" class="form-control i18n" required="required"/>
+                            <input name="username" type="text" value="abc@def.cn" placeholder="username" class="form-control i18n" required="required"/>
                         </div>
                         <div class="form-group">
-                            <input name="password" type="password" value="123456" placeholder="input.password" class="form-control i18n" required="required"/>
+                            <input name="password" type="password" value="123456" placeholder="password" class="form-control i18n" required="required"/>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-6">
-                                <input name="captcode" type="text" value="" placeholder="验证码" class="form-control i18n" required="required" autocomplete="off"/>
+                                <input name="captcode" type="text" value="" placeholder="captcode" class="form-control i18n" required="required" autocomplete="off"/>
                             </div>
                             <div class="col-sm-6">
                                 <img src="centre/capt/create.act?b=222222&f=cccccc&h=43" onclick="this.src='centre/capt/create.act?b=222222&f=cccccc&h=43&_='+Math.random()" title="看不清? 点一下换一个."/>
@@ -60,7 +60,7 @@
         </div>
         <nav id="footbox" class="navbar">
             <div class="container">
-                <blockquote><p>Copyleft &copy; 2015 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="static/power.html" target="_blank">others</a>.</small></p></blockquote>
+                <blockquote><p>Copyleft &copy; 2015 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="power.html" target="_blank">others</a>.</small></p></blockquote>
             </div>
         </nav>
         <script type="text/javascript">

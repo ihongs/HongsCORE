@@ -4,7 +4,7 @@
 <%
     String _pageId = (_module + "_" + _entity + "_logs").replace('/', '_');
 %>
-<h2><%=_locale.translate("fore.revert.title", _title)%></h2>
+<h2><%=_locale.translate("fore.record.title", _title)%></h2>
 <div id="<%=_pageId%>" class="logs-list">
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
@@ -65,6 +65,14 @@
                 return ! time || time == '0' ? '-' : this._fill__htime(td, time * 1000);
             }
         });
+
+        // 权限检查
+        if (! hsChkUri("<%=_module%>/<%=_entity%>/revert/update.act")) {
+            var btn = context.find(".revert");
+            var spn = btn.siblings(  "span" );
+            btn.remove();
+            spn.remove();
+        }
 
         context.on("click", ".review", function() {
             var lo = context.hsFind ("@" );

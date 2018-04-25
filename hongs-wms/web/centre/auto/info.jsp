@@ -74,9 +74,7 @@
             <div class="form-group row">
                 <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-sm-6">
-                <%if ("textarea".equals(type)) {%>
-                    <textarea readonly="readonly"  data-fn="<%=name%>" data-ft="<%=kind%>"></textarea>
-                <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
+                <%if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         kind = "_file";
                         if ("image".equals(type)) {
@@ -114,9 +112,6 @@
                     <%
                         kind =  "_fork" ;
                         String fn = name;
-                        if (fn.endsWith( "." )) {
-                            fn = fn.substring(0, fn.length() - 1);
-                        }
                         String kn = fn +"_data";
                         if (fn.endsWith("_id")) {
                             fn = fn.substring(0, fn.length() - 3);
@@ -126,10 +121,13 @@
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
+                        if (Synt.declare(info.get("__repeated__"), false)) {
+                            kind  += " data-repeated=\"true\"";
+                        }
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>
-                <%} else if ("code".equals(type)) {%>
+                <%} else if ("code".equals(type) || "mark".equals(type)) {%>
                     <pre class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></pre>
                 <%} else {%>
                     <p class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></p>

@@ -292,6 +292,12 @@
     var formbox = context.find(".findbox");
     var findbox = formbox.eq(0);
 
+    // 权限控制
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").hide();
+
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({

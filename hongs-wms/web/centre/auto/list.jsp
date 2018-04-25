@@ -289,6 +289,12 @@
     var formbox = context.find(".findbox");
     var findbox = formbox.eq(0);
 
+    // 权限控制
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").hide();
+
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
@@ -303,11 +309,7 @@
             ['<%=_module%>/<%=_entity%>/form_edit.html?<%=Cnst.ID_KEY%>={ID}',
              '.update', '@'],
             ['<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
-             '.review', '@'],
-            ['<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
-             '.revert', '@'],
-            ['<%=_module%>/<%=_entity%>/lore_page.html',
-             '.manual', '@']
+             '.review', '@']
         ],
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>"
     });

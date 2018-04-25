@@ -110,27 +110,61 @@
                     %>
                     <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
                 <%} else if ("check".equals(type)) {%>
+                    <%if ("".equals(rqrd)) {%>
+                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <%} /* End if */%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("radio".equals(type)) {%>
+                    <%if ("".equals(rqrd)) {%>
+                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <%} /* End if */%>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>"></div>
                 <%} else if ("enum".equals(type) || "select".equals(type)) {%>
-                    <%
-                        if (!"".equals(rptd)) rptd += " size=\"3\"";
-                    %>
+                    <%if ("".equals(rqrd) && !"".equals(rptd)) {%>
+                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <%} /* End if */%>
                     <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
+                <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
+                    <%
+                        String kind =  "_fork";
+                        String mode = "hsFork";
+                        String fm = _module;
+                        String fn =  name  ;
+                        if (! "".equals(rptd) ) {
+                            rptd  = "data-repeated=\"repeated\"" ;
+                            fn = fn.substring(0, fn.length() - 1);
+                        }
+                        String kn = fn +"_data";
+                        if (fn.endsWith("_id")) {
+                            fn = fn.substring(0, fn.length() - 3);
+                            kn = fn;
+                        }
+                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
+                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
+                        String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
+                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :
+                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
+                            +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
+                            +"/list_fork.html";
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
+                        mode += "\" data-href=\""+al+"\" data-target=\"@\"";
+                    %>
+                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
+                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
+                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
-                        String kind =  "_file";
                         String mode = "hsFile";
+                        String kind =  "_file";
                         String typa = (String) info.get("type");
                         if (typa != null && typa.length() != 0) {
-                            typa += " accept=\"" + typa + "\"" ;
+                            typa  = " accept=\"" + typa + "\"" ;
                         } else {
-                            typa += " accept=\"" + type +"/*\"";
+                            typa  = " accept=\"" + type +"/*\"";
                         }
                         if ("image".equals(type)) {
-                            kind =  "_view";
-                            mode = "hsView";
+                            mode  = "hsView";
+                            kind  =  "_view";
                             String size = Synt.declare( info.get("thumb-size"), "");
                             String keep = Synt.declare( info.get("thumb-mode"), "");
                             if (! "keep".equals(keep)) {
@@ -161,33 +195,6 @@
                     <input type="file" name="<%=name%>" class="form-ignored invisible" <%=typa%>/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
-                <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
-                    <%
-                        String kind =  "_fork";
-                        String mode = "hsFork";
-                        String fm = _module;
-                        String fn =  name  ;
-                        if (fn.endsWith( "." )) {
-                            fn = fn.substring(0, fn.length() - 1);
-                        }
-                        String kn = fn +"_data";
-                        if (fn.endsWith("_id")) {
-                            fn = fn.substring(0, fn.length() - 3);
-                            kn = fn;
-                        }
-                        String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
-                        String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
-                        String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :
-                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
-                            +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
-                            +"/list_fork.html";
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
-                        mode += "\" data-href=\""+al+"\" data-target=\"@\"";
-                    %>
-                    <input type="hidden" name="<%=name%>" class="form-ignored"/>
-                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
-                    <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
                 <%} else {%>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" <%=rqrd%> <%=rptd%>/>
                 <%} /*End If */%>

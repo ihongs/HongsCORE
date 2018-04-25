@@ -430,7 +430,7 @@ public class Form extends Model {
     }
 
     protected void updateUnitMenu(String id) throws HongsException {
-        new Unit().updateMenus();
+        new Unit().updateMenus( );
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
@@ -500,6 +500,18 @@ public class Form extends Model {
         role.appendChild ( depn );
         depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
 
+        // 回看
+        role = docm.createElement("role");
+        menu.appendChild ( role );
+        role.setAttribute("name", centra+"/"+id+"/review");
+        role.setAttribute("text", "回看"+name);
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
+        depn = docm.createElement("depend");
+        role.appendChild ( depn );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
+
         // 恢复
         role = docm.createElement("role");
         menu.appendChild ( role );
@@ -507,16 +519,13 @@ public class Form extends Model {
         role.setAttribute("text", "恢复"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
         actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/update") );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/update") );
+        depn.appendChild (docm.createTextNode(centra+"/"+id+"/review") );
 
         saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
 

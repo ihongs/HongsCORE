@@ -465,6 +465,11 @@ ul.pickbox {
     padding-left : 0;
     margin-bottom: 0;
 }
+ul.pickbox:after {
+    clear: both;
+    content: "";
+    display: table;
+}
 ul.pickbox > li.btn {
     width: 100%;
     text-align: left;

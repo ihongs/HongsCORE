@@ -481,8 +481,8 @@ ul.pickmul > li.btn {
     margin-bottom: 5px;
 }
 ul.pickrol > li.btn-info {
-    padding-right: 0px;
     padding-left : 0px;
+    padding-right: 0px;
     color: inherit;
     border-color: transparent;
     background  : transparent;

@@ -53,7 +53,7 @@ public class SignAction {
         passcode=Synt.declare( ud.get("passcode"),"" );
         password=AuthKit.getCrypt(password + passcode);
         if (! password.equals( ud.get("password") )) {
-            ah.reply(AuthKit.getWrong("passowrd", "core.password.invalid"));
+            ah.reply(AuthKit.getWrong("password", "core.password.invalid"));
             return;
         }
 

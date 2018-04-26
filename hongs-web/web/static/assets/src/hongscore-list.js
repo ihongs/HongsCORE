@@ -274,9 +274,12 @@ HsList.prototype = {
                 n  = th.data("fn");
                 t  = th.data("ft");
                 f  = th.data("fl");
+                if (n !== undefined) {
                 v  = hsGetValue(list[i], n);
                 if (v === undefined) {
                     v  =  list[i][n];
+                }} else {
+                    v  =  undefined ;
                 }
 
                 // 调节
@@ -515,10 +518,7 @@ HsList.prototype = {
         }
     },
     getRow   : function(o) {
-        return jQuery(o)
-                .closest("tr,.itembox")
-                .find   ( ".checkone" )
-                .filter ( ":checkbox,:radio,:hidden" );
+        return jQuery(o).closest("tr,.itembox").find(".checkone,.rowid");
     },
     getIds   : function(o) {
         if (jQuery.inArray (this.listBox[0], jQuery(o).parents()) != -1) {
@@ -654,9 +654,12 @@ function hsListFillItem(list) {
             n  = td.data("fn");
             t  = td.data("ft");
             f  = td.data("fl");
+            if (n !== undefined) {
             v  = hsGetValue(list[i], n);
             if (v === undefined) {
                 v  =  list[i][n];
+            }} else {
+                v  =  undefined ;
             }
 
             // 解析填充方法

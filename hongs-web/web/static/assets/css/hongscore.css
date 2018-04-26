@@ -77,6 +77,9 @@ legend {
 .form-control {
     line-height: 1.42857143;
 }
+.btn .glyphicon {
+    font-size: 85%;
+}
 select.form-control[multiple],
 textarea.form-control {
     min-height: 8.4em;
@@ -89,16 +92,8 @@ textarea.form-control {
     background: #fff;
     cursor: default;
 }
-.btn .glyphicon {
-    font-size: 85%;
-}
 .dropdown-toggle {
     cursor: pointer;
-}
-
-.clearfix > li,
-.clearfix > div {
-    float: left;
 }
 
 .center-block {

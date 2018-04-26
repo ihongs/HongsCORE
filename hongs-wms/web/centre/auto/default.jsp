@@ -24,6 +24,7 @@
         <script type="text/javascript" src="common/auth/centre.js" ></script>
         <script type="text/javascript" src="centre/auto/_core_.js" ></script>
         <script type="text/javascript" src="centre/auto/_edit_.js" ></script>
+        <script type="text/javascript" src="centre/mine/sign/info.act?cb=hsWithUserInfo"></script>
         <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
         <script type="text/javascript">
             HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/custom.js"]=1;

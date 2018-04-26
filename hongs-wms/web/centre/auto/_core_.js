@@ -47,6 +47,22 @@ S$.delete = function(req) {
 };
 
 /**
+ * 登记用户会话信息
+ */
+function hsWithUserInfo(rst) {
+    window.HsUSER = rst.info;
+}
+
+/**
+ * 列表填充分页按钮
+ */
+function hsListFillMore(pag) {
+    HsList.prototype.fillPage.call(this, pag);
+    this.pageBox.find(".page-count").remove();
+    this.pageBox.find(".pagination").removeClass("pull-left");
+}
+
+/**
  * 列表填充过滤选项
  */
 function hsListFillFilt(x, v, n, t) {

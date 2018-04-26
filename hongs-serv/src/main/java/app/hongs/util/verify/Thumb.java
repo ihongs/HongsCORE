@@ -28,8 +28,8 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  */
 public class Thumb extends IsFile {
 
-    Pattern TEST_PATT = Pattern.compile("^.*?:(\\d+)([\\*/])(\\d+)");
-    
+    Pattern TEST_PATT = Pattern.compile( "(\\d+)([\\*/])(\\d+)" );
+
     @Override
     public String checks(String href, String path) throws Wrong {
         String extn = Synt.declare(params.get("thumb-extn" ), "jpg");
@@ -87,7 +87,7 @@ public class Thumb extends IsFile {
             BufferedImage img = ImageIO.read(new File(pth));
             int w = img.getWidth ();
             int h = img.getHeight();
-            
+
             mat = TEST_PATT.matcher(suf);
             if (mat.matches()) {
                 String sc = mat.group(2);
@@ -108,7 +108,7 @@ public class Thumb extends IsFile {
             } else {
                 throw new Wrong("Thumb size config can not be used for test mode");
             }
-            
+
             mod = ""; // 尺寸匹配则
         }
 
@@ -121,7 +121,8 @@ public class Thumb extends IsFile {
         pre = pth.replaceFirst("\\.[^\\.]+$","");
         prl = url.replaceFirst("\\.[^\\.]+$","");
 
-        if (suf.contains(":")
+        if (suf.contains("*")
+        ||  suf.contains("/")
         ||  suf.contains(",")) {
 
             String[] sia = suf.split (",");
@@ -137,11 +138,15 @@ public class Thumb extends IsFile {
              * 除号为仅按比例裁剪.
              */
             try {
-                String[] arr;
-                siz = siz.trim (  );
-                arr = siz.split(":", 2);
-                suf = arr[0].trim();
-                siz = arr[1].trim();
+                String[ ] arr;
+                siz = siz.trim();
+                if (/***/ siz.contains(":")) {
+                    arr = siz.split( ":" , 2 );
+                    suf = arr[0].trim();
+                    siz = arr[1].trim();
+                } else {
+                    suf = "" ;
+                }
                 if (rat = siz.contains("/")) {
                     arr = siz.split( "/" , 2 );
                 } else {
@@ -149,24 +154,20 @@ public class Thumb extends IsFile {
                 }
                 w   = Integer.parseInt(arr[0]);
                 h   = Integer.parseInt(arr[1]);
-            } catch (IndexOutOfBoundsException ex) {
-                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
-            } catch (/**/NumberFormatException ex) {
-                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H or Suffix:Scale");
+            } catch ( IndexOutOfBoundsException | NumberFormatException e ) {
+                throw new Wrong("Wrong thumb size `"+siz+"`. Usage: Suffix:W*H Suffix:W/H W*H W/H");
             }
 
             /**
              * 第一个或比例有了变化,
              * 才需要特别去裁剪铺贴.
              */
-            if (bld != null && scl != w / h) {
-                bld  = Thumbnails.of(bld.asBufferedImage());
+            if (bld == null || scl != w / h) {
+                bld = make(src, col, pos, mod, w, h, !rat);
+                scl = w / h;
             } else {
-                bld  = make(src, col, pos, mod, w, h);
-                scl  =  (w / h);
-            }
-            if (! rat) {
-                bld.size(w , h);
+                bld = Thumbnails.of(bld.asBufferedImage());
+                if (! rat) bld.size(w, h);
             }
 
             // 保存到文件
@@ -198,7 +199,7 @@ public class Thumb extends IsFile {
         };
     }
 
-    private Builder make(String pth, String col, String pos, String mod, int w, int h) throws IOException {
+    private Builder make(String pth, String col, String pos, String mod, int w, int h, boolean f) throws IOException {
         app.hongs.util.sketch.Thumb thb = new app.hongs.util.sketch.Thumb(pth);
 
         // 设置背景颜色
@@ -209,13 +210,13 @@ public class Thumb extends IsFile {
 
         // 拼贴或者裁剪
         if ("keep".equals(mod)) {
-            return thb.keep(w, h);
+            return thb.keep(w, h, f);
         } else
         if ("pick".equals(mod)) {
-            return thb.pick(w, h);
+            return thb.pick(w, h, f);
         } else
         {
-            return thb.make().scale(1);
+            return thb.size(w, h, f);
         }
     }
 

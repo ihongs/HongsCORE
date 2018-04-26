@@ -300,12 +300,8 @@
     };
 
     // 我创建的
-    context.find("[name='ar.0.cuid']")
-           .val ( HsUSER.uid)
-           .change(function() {
-        $(this).closest (".checkbox")
-               .siblings( ":submit" )
-               .click   ( );
+    context.find("[name='ar.0.cuid']").val( HsUSER.uid ).change( function() {
+        $(this).closest(".form-control-static").siblings(":submit").click();
     });
 
     // 创建时将关联 ID 往表单页传递

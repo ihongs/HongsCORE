@@ -14,24 +14,19 @@
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
 
-    StringBuilder _rb = new StringBuilder(   "id,name"   );
+    StringBuilder _rb = new StringBuilder("id,name,note,logo,tags,cuid");
     StringBuilder _ob = new StringBuilder("-mtime,-ctime");
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div>
-        <div class="toolbox col-sm-6 btn-group">
+        <form class="findbox col-sm-6 col-sm-offset-3 input-group" action="" method="POST">
+            <span class="input-group-btn">
             <%if ( "select".equals(_action)) {%>
-            <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
+                <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
-            <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
-            <%if (!"select".equals(_action)) {%>
-            <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
-            <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
-            <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
-            <%} // End If %>
-        </div>
-        <form class="findbox col-sm-6 input-group" action="" method="POST">
+                <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
+            </span>
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
@@ -46,8 +41,8 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox fitrbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
-        <div class="form-group"></div>
+    <form class="findbox fitrbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+        <div class="form-group clearfix"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -62,7 +57,7 @@
                 continue;
             }
         %>
-        <div class="form-group form-group-sm row">
+        <div class="form-group form-group-sm clearfix">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
@@ -112,16 +107,20 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm row">
+        <div class="form-group form-group-sm clearfix">
             <div class="col-sm-6 col-sm-offset-3">
-                <button type="submit" class="btn btn-default">过滤</button>
+                <button type="submit" class="btn btn-sm btn-default">过滤</button>
                 <span style="padding:0.1em;"></span>
-                <button type="reset"  class="btn btn-default">重置</button>
+                <button type="reset"  class="btn btn-sm btn-default">重置</button>
+                <div class="form-control-static" style="display: inline-block;">
+                    <label><input type="checkbox" name="ar.0.cuid" value=""/> 我创建的</label>
+                </div>
             </div>
         </div>
+        <div class="form-group clearfix"></div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+    <form class="findbox statbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
         <div class="clearfix" style="padding: 5px;">
         <%
         Iterator it3 = _fields.entrySet().iterator();
@@ -177,107 +176,33 @@
     </form>
     <%} /*End If */%>
     <!-- 列表 -->
-    <div class="listbox table-responsive">
-        <table class="table table-hover table-striped">
-            <thead>
-                <tr>
-                    <th data-fn="id[]" data-ft="<%if ("select".equals(_action)) {%>_fork<%} else {%>_check<%}%>" class="_check">
-                        <input type="checkbox" class="checkall" name="id[]"/>
-                    </th>
-                <%
-                Iterator it = _fields.entrySet().iterator();
-                while (it.hasNext()) {
-                    Map.Entry et = (Map.Entry) it.next();
-                    Map     info = (Map ) et.getValue();
-                    String  name = (String) et.getKey();
-                    String  type = (String) info.get("__type__");
-                    String  text = (String) info.get("__text__");
-
-                    if ("@".equals(name) || "hidden".equals(type)
-                    || !Synt.declare(info.get("listable"), false)) {
-                        continue;
-                    }
-
-                    String ob = "";
-                    String oc = "";
-                    if (Synt.declare(info.get("sortable"), false)) {
-                        ob = (String)info.get("data-ob" );
-                        if (ob == null) {
-                            ob = name;
-                        }
-                        ob = "data-ob=\""+ob+"\"";
-                        oc = "sortable";
-                    }
-
-                    // Unix 时间戳类需乘 1000 以转换为毫秒
-                    if ( "datetime".equals(type)
-                    ||       "date".equals(type)
-                    ||       "time".equals(type)) {
-                        Object typa = info.get ( "type" );
-                    if ("timestamp".equals(typa)
-                    ||  "datestamp".equals(typa)) {
-                        ob += " data-fl=\"!v?v:v* 1000\"";
-                    }}
-
-                    _rb.append(',').append(name);
-                %>
-                <%if ("number".equals(type) || "range".equals(type)) {%>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=text%></th>
-                <%} else if ("datetime".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> datetime"><%=text%></th>
-                <%} else if ("date".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> date"><%=text%></th>
-                <%} else if ("time".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=text%></th>
-                <%} else if ("email".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_email" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("url".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("file".equals(type) ||  "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                    <%
-                        if (name.endsWith( "." )) {
-                            name = name.substring(0, name.length() - 1);
-                        }
-                        if (name.endsWith("_id")) {
-                            name = name.substring(0, name.length() - 3);
-                        } else {
-                            name = name + "_text";
-                        }
-                    %>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("pick".equals(type) || "fork".equals(type)) {%>
-                    <%
-                        if (name.endsWith( "." )) {
-                            name = name.substring(0, name.length() - 1);
-                        }
-                        if (name.endsWith("_id")) {
-                            name = name.substring(0, name.length() - 3);
-                        } else {
-                            name = name + "_data";
-                        }
-                        String subn = "name";
-                        if (info.get("data-ak") != null) {
-                            name = (String) info.get("data-ak");
-                        }
-                        if (info.get("data-tk") != null) {
-                            subn = (String) info.get("data-tk");
-                        }
-                        name = name + "." + subn;
-                    %>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if (!"primary".equals(info.get("primary")) && !"foreign".equals(info.get("foreign"))) {%>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} /*End If */%>
-                <%} /*End For*/%>
-                </tr>
-            </thead>
-            <tbody>
-            </tbody>
-        </table>
+    <div class="itembox col-md-4" style="display: none; padding: 0 7.5px; margin: 0 0 15px 0;">
+        <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && null"/>
+        <div style="padding: 10px; border: 1px solid #ccc; box-shadow: 0 0 5px #ccc;">
+            <div style="display: table; width: 100%;">
+                <div style="display: table-row;">
+                    <div style="display: table-cell; vertical-align: top; width: 100px;">
+                        <div class="review" style="height: 100px; overflow: hidden; cursor: pointer; padding-right: 0px;">
+                            <div data-fn="logo" style="color: #000;"></div>
+                        </div>
+                    </div>
+                    <div style="display: table-cell; vertical-align: top;">
+                        <div class="review" style="height: 100px; overflow: hidden; cursor: pointer; padding-left: 10px;">
+                            <div data-fn="name" style="color: #444;"></div>
+                            <div data-fn="note" style="color: #888;"></div>
+                        </div>
+                        <div class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px;">
+                            <button type="button" class="btn btn-xs btn-primary update"><span class="glyphicon glyphicon-pencil"></span></button>
+                            <button type="button" class="btn btn-xs btn-danger  delete"><span class="glyphicon glyphicon-trash "></span></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="pagebox clearfix">
+    <div class="listbox clearfix" style="margin: 0px -7.5px;">
+    </div>
+    <div class="pagebox clearfix" style="text-align: center;">
     </div>
 </div>
 <script type="text/javascript">
@@ -324,12 +249,12 @@
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
-    if (fitrbox.find(".form-group").size() == 2) {
+    if (fitrbox.find(".form-group").size() == 3) {
         findbox.find(".filter").remove();
     }
-    if (statbox.find(".stat-group").size() == 0) {
+//  if (statbox.find(".stat-group").size() == 0) {
         findbox.find(".statis").remove();
-    }
+//  }
 
     fitrbox.on("opened", function() {
         if (fitrbox.data("fetched") != true) {
@@ -355,6 +280,33 @@
          .data(         this._info     );
     };
     <%} /*End If */%>
+
+    // 填充卡片
+    listobj.fillList = hsListFillItem;
+    listobj.fillPage = hsListFillMore;
+    listobj._fill_logo = function(d, v, n) {
+        d.css({
+            "width" : "100px",
+            "height": "100px",
+            "background-size": "cover",
+            "background-image": "url("+v+")",
+            "background-repeat": "no-repeat",
+            "background-position": "center center"
+        });
+        // 如果是当前用户创建的则可以操作
+        if (HsUSER.uid == this._info.cuid) {
+            d.closest(".itembox").find(".btn-group").show();
+        }
+    };
+
+    // 我创建的
+    context.find("[name='ar.0.cuid']")
+           .val ( HsUSER.uid)
+           .change(function() {
+        $(this).closest (".checkbox")
+               .siblings( ":submit" )
+               .click   ( );
+    });
 
     // 创建时将关联 ID 往表单页传递
     listobj.open = function(btn, box, url, data) {

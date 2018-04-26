@@ -19,7 +19,7 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div>
+    <div class="clearfix">
         <div class="toolbox col-sm-6 btn-group">
             <%if ( "select".equals(_action)) {%>
             <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
@@ -49,8 +49,8 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox fitrbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
-        <div class="form-group"></div>
+    <form class="findbox fitrbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+        <div class="form-group clearfix"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -65,7 +65,7 @@
                 continue;
             }
         %>
-        <div class="form-group form-group-sm row">
+        <div class="form-group form-group-sm clearfix">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
@@ -115,16 +115,17 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm row">
+        <div class="form-group form-group-sm clearfix">
             <div class="col-sm-6 col-sm-offset-3">
                 <button type="submit" class="btn btn-default">过滤</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>
             </div>
         </div>
+        <div class="form-group clearfix"></div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible row" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+    <form class="findbox statbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
         <div class="clearfix" style="padding: 5px;">
         <%
         Iterator it3 = _fields.entrySet().iterator();
@@ -331,7 +332,7 @@
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
-    if (fitrbox.find(".form-group").size() == 2) {
+    if (fitrbox.find(".form-group").size() == 3) {
         findbox.find(".filter").remove();
     }
     if (statbox.find(".stat-group").size() == 0) {

@@ -35,7 +35,7 @@ function HsForm (context , opts) {
         } else
         if ('@'===k.substring(0,1)) {
             var n = k.substring(1);
-            this.rules["[name="+n+"],[data-fn="+n+"]"] = opts[k];
+            this.rules["[name="+n+"]"] = opts[k];
         } else
         if ('$'===k.substring(0,1)) {
             this.rules[k.substring(1)] = opts[k];
@@ -103,7 +103,7 @@ HsForm.prototype = {
     },
     fillEnum : function(envm) {
         var fds, fns, fts, fls, i, n, t, v, f;
-        fds = this.formBox.find("[data-fn],select[name]")
+        fds = this.formBox.find("[data-fn],input[name],select[name],textarea[name]")
                           .not ('.form-ignored');
         fns = { }; fts = { }; fls = { };
         for(i = 0; i < fds.length; i ++) {

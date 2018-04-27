@@ -1567,10 +1567,9 @@ $.hsWarn = function(msg, typ, yes, not) {
     var btt = $('<h4></h4>');
     var btu = $( '<p></p>' );
     var btn = $( '<p></p>' );
-    var tit;
+    var foc = 0;
     var fns;
     var end;
-    var foc = 0;
 
     // 参数检查
     if (typeof typ === "string") {
@@ -1583,29 +1582,25 @@ $.hsWarn = function(msg, typ, yes, not) {
     }
 
     switch (typ) {
-        case 'info':
-            div.addClass("alert-info"   );
-            tit = hsGetLang("info.title");
-            break;
         case 'succ':
-            div.addClass("alert-success");
-            tit = hsGetLang("succ.title");
+            div.addClass("alert-success"); typ = "";
             break;
         case 'warn':
-            div.addClass("alert-warning");
-            tit = hsGetLang("warn.title");
+            div.addClass("alert-warning"); typ = "";
             break;
         case 'erro':
-            div.addClass("alert-danger" );
-            tit = hsGetLang("erro.title");
+            div.addClass("alert-danger" ); typ = "";
+            break;
+        case 'info':
+            div.addClass("alert-info"   ); typ = "";
             break;
         default:
             div.addClass("alert-info"   );
-            tit = typ;
             break;
     }
-    btt.text(tit);
     box.text(msg);
+    btt.text(msg);
+    btu.text(typ);
 
     // 操作按钮
     for(var i = 0; i < fns.length; i ++ )  {
@@ -1657,6 +1652,9 @@ $.hsWarn = function(msg, typ, yes, not) {
             if (v["title"] !== undefined) {
                 btt.text (v["title"]);
             }
+            if (v["notes"] !== undefined) {
+                btu.text (v["notes"]);
+            }
             if (v["class"] !== undefined) {
                 div.addClass (v["class"]);
             }
@@ -1677,9 +1675,9 @@ $.hsWarn = function(msg, typ, yes, not) {
         div.append(wrp);
 
         // 重新布局
-        btu.append(box.contents());
         btu.addClass("warn3");
         btn.addClass("warn4");
+        box.empty (   );
         box.append(btt);
         box.append(btu);
         box.append(btn);

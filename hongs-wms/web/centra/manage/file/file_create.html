@@ -27,6 +27,7 @@
         var context = $("#manage-file-file-create").removeAttr("id");
 
         context.data("_fill_text", function(inp, val) {
+            if (!val) return;
             var name = this._info.name;
             var mode = getModeByName(name);
             if (/\.properties$/.test(name)) {

@@ -197,15 +197,15 @@
         }, 10000);
         */
 
-        $("#sign-in" )
-            .click(function() {
-                    location.assign(hsFixUri( "centre/login.html" ));
-            });
         $("#sign-out")
             .click(function() {
                 $.get(hsFixUri("centre/sign/delete.act"), function() {
-                    location.assign(hsFixUri( "centre/login.html" ));
+                    location.reload();
                 });
+            });
+        $("#sign-in" )
+            .click(function() {
+                $.hsOpen("centre/manage/sign.html");
             });
         $("#user-set")
             .click(function() {

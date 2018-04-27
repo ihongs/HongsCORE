@@ -1,4 +1,4 @@
-/* global jQuery, echarts, HsForm, HsList */
+/* global jQuery, echarts, HsForm, HsList, hsListFillFork */
 
 /**
  * 获取当前模块对象
@@ -45,6 +45,25 @@ S$.delete = function(req) {
     var url = S$.src() + "/delete.act";
     return S$.send(url, req);
 };
+
+/**
+ * 列表填充分页按钮
+ */
+function hsListFillMore(pag) {
+    HsList.prototype.fillPage.call(this, pag);
+    this.pageBox.find(".page-count").remove();
+    this.pageBox.find(".pagination").removeClass("pull-left");
+}
+
+/**
+ * 筛选列表填充数据
+ */
+function hsListFillSele(x, v, n) {
+    hsListFillFork.call(this, x, v , n );
+        x.find("input")
+         .attr("title", this._info.name)
+         .data(         this._info     );
+}
 
 /**
  * 列表填充过滤选项

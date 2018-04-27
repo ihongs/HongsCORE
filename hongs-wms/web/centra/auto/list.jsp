@@ -65,7 +65,7 @@
                 continue;
             }
         %>
-        <div class="form-group form-group-sm clearfix">
+        <div class="filt-group form-group form-group-sm clearfix">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
@@ -332,7 +332,7 @@
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
-    if (fitrbox.find(".form-group").size() == 3) {
+    if (fitrbox.find(".filt-group").size() == 0) {
         findbox.find(".filter").remove();
     }
     if (statbox.find(".stat-group").size() == 0) {
@@ -352,16 +352,9 @@
         }
     });
 
-    filtobj._fill__enum = function(x, v, n, t) {
-        hsListFillFilt.call(this , x, v, n, t);
-    };
+    filtobj._fill__enum = hsListFillFilt;
     <%} else {%>
-    listobj._fill__fork = function(x, v, n, t) {
-        hsListFillFork.call(this , x, v, n, t);
-        x.find("input")
-         .attr("title", this._info.name)
-         .data(         this._info     );
-    };
+    listobj._fill__fork = hsListFillSele;
     <%} /*End If */%>
 
     // 创建时将关联 ID 往表单页传递

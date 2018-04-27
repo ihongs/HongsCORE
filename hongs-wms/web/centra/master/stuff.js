@@ -41,7 +41,7 @@ function hsUserMove(treebox, listbox) {
                     var did = ui.draggable.attr("id").substring(10);
                     var req = { id : did, pid : pid };
                     $.hsWarn(
-                        "", "您确定将此部门移到新部门下吗?",
+                        "您确定将此部门移到新部门下吗?",
                         {
                             "label": "移动",
                             "click": function() {
@@ -73,8 +73,8 @@ function hsUserMove(treebox, listbox) {
                     var did = ui.helper.data("dept_id" );
                     var dis = ui.helper.data("dept_ids");
                     $.hsWarn(
-                        "移动操作将取消此用户与前部门的关联, 增挂就是他可以既在新部门又在旧部门.",
                         "您需要将用户移动到新部门, 还是增挂到新部门?",
+                        "移动操作将取消此用户与前部门的关联, 增挂就是他可以既在新部门又在旧部门.",
                         {
                             "label": "移动",
                             "click": function() {

@@ -1,4 +1,4 @@
-/* global jQuery, echarts, HsForm, HsList */
+/* global jQuery, echarts, HsForm, HsList, hsListFillFork */
 
 /**
  * 获取当前模块对象
@@ -63,6 +63,16 @@ function hsListFillMore(pag) {
 }
 
 /**
+ * 筛选列表填充数据
+ */
+function hsListFillSele(x, v, n) {
+    hsListFillFork.call(this, x, v , n );
+        x.find("input")
+         .attr("title", this._info.name)
+         .data(         this._info     );
+}
+
+/**
  * 列表填充过滤选项
  */
 function hsListFillFilt(x, v, n, t) {
@@ -94,6 +104,42 @@ function hsListFillFilt(x, v, n, t) {
         }
     }
     return HsForm.prototype._fill__select.call(this, x, v, n, t);
+}
+
+/**
+ * 列表预设排序选项
+ */
+function hsListInitSort(x, v, n, t) {
+    if ( t != "enum") return;
+    var inp = x;
+    var sel = x.next().find("select");
+    var chk = x.next().find( "input");
+    // 没有可排序的字段就不显示此项
+    if (sel.children().size( ) === 1) {
+        sel.closest ( ".form-group" ).remove();
+        return;
+    }
+    x.next( ).change(function() {
+        if (sel.find("option" ).first().is(":selected")) {
+            chk.prop("checked" , false);
+            chk.prop("disabled", true );
+        } else {
+            chk.prop("disabled", false);
+        }
+        inp.val((chk.prop("checked")?"-":"")+sel.val( ));
+    });
+    /*
+    if (sel.find("[value=mtime]").size()) {
+        chk.prop("checked", true);
+        sel.val ( "mtime");
+        inp.val ("-mtime");
+    } else
+    if (sel.find("[value=ctime]").size()) {
+        chk.prop("checked", true);
+        sel.val ( "ctime");
+        inp.val ("-ctime");
+    }
+    */
 }
 
 /**

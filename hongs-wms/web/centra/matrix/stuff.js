@@ -670,8 +670,8 @@ function hsFormMove(treebox, listbox) {
                     var did = ui.draggable.attr("id").substring(10);
                     var req = { id : did, pid : pid };
                     $.hsWarn(
-                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
                         "您确定将此单元移到新单元下吗?",
+                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
                         {
                             "label": "移动",
                             "click": function() {
@@ -702,8 +702,8 @@ function hsFormMove(treebox, listbox) {
                     var fid = ui.helper.data("form_id");
                     var req = {id: fid, "unit_id": pid};
                     $.hsWarn(
-                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
                         "您确定将此表单移到新单元下吗?",
+                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
                         {
                             "label": "移动",
                             "click": function() {

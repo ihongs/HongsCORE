@@ -57,7 +57,7 @@
                 continue;
             }
         %>
-        <div class="form-group form-group-sm clearfix">
+        <div class="filt-group form-group form-group-sm clearfix">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
@@ -108,8 +108,37 @@
         </div>
         <%} /*End For*/%>
         <div class="form-group form-group-sm clearfix">
+            <label class="col-sm-3 form-control-static control-label text-right">排序</label>
+            <div class="col-sm-6">
+                <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
+                <div class="input-group input-group-sm">
+                    <select class="form-control">
+                        <option value="<%=_ob%>"></option>
+        <%
+        Iterator it4 = _fields.entrySet().iterator();
+        while (it4.hasNext()) {
+            Map.Entry et = (Map.Entry) it4.next();
+            Map     info = (Map ) et.getValue();
+            String  name = (String) et.getKey();
+            String  text = (String) info.get("__text__");
+            
+            if ("@".equals(name) || "id".equals(name)
+            || !Synt.declare(info.get("sortable"), false)) {
+                continue;
+            }
+        %>
+                        <option value="<%=name%>"><%=text%></option>
+        <%} /* End if */%>
+                    </select>
+                    <span class="input-group-addon">
+                        <input type="checkbox" value="-" disabled="disabled"/> 逆序
+                    </span> 
+                </div>
+            </div>
+        </div>
+        <div class="form-group form-group-sm clearfix">
             <div class="col-sm-6 col-sm-offset-3">
-                <button type="submit" class="btn btn-sm btn-default">过滤</button>
+                <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
                 <div class="form-control-static" style="display: inline-block;">
@@ -181,19 +210,21 @@
         <div style="padding: 10px; border: 1px solid #ccc; box-shadow: 0 0 5px #ccc;">
             <div style="display: table; width: 100%;">
                 <div style="display: table-row;">
-                    <div style="display: table-cell; vertical-align: top; width: 100px;">
-                        <div class="review" style="height: 100px; overflow: hidden; cursor: pointer; padding-right: 0px;">
-                            <div data-fn="logo" style="color: #000;"></div>
+                    <%if (_fields.containsKey("logo")) {%>
+                    <div style="display: table-cell; vertical-align: top; padding: 1px; width: 106px; border: 1px solid #eee;">
+                        <div class="review" style="height: 104px; overflow: hidden; cursor: pointer;">
+                            <div data-fn="logo" style="width: 100%; height: 100%;"></div>
                         </div>
                     </div>
-                    <div style="display: table-cell; vertical-align: top;">
-                        <div class="review" style="height: 100px; overflow: hidden; cursor: pointer; padding-left: 10px;">
+                    <%} /*End if */%>
+                    <div style="display: table-cell; vertical-align: top; padding: 0px 0px 0px 10px;">
+                        <div class="review" style="height: 106px; overflow: hidden; cursor: pointer;">
                             <div data-fn="name" style="color: #444;"></div>
                             <div data-fn="note" style="color: #888;"></div>
                         </div>
-                        <div class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px;">
-                            <button type="button" class="btn btn-xs btn-primary update"><span class="glyphicon glyphicon-pencil"></span></button>
-                            <button type="button" class="btn btn-xs btn-danger  delete"><span class="glyphicon glyphicon-trash "></span></button>
+                        <div data-fn="cuid" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
+                            <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-tasks"></span></button>
+                            <button type="button" class="btn btn-xs btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </div>
                 </div>
@@ -215,10 +246,8 @@
     var findbox = formbox.eq(0);
 
     // 权限控制
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide()
+           && context.find("[name='ar.0.cuid']").closest(".form-control-static").remove();
 
     //** 列表、搜索表单 **/
 
@@ -249,7 +278,7 @@
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
-    if (fitrbox.find(".form-group").size() == 3) {
+    if (fitrbox.find(".filt-group").size() == 0) {
         findbox.find(".filter").remove();
     }
 //  if (statbox.find(".stat-group").size() == 0) {
@@ -269,40 +298,27 @@
         }
     });
 
-    filtobj._fill__enum = function(x, v, n, t) {
-        hsListFillFilt.call(this , x, v, n, t);
-    };
+    filtobj._fill__sort = hsListInitSort;
+    filtobj._fill__enum = hsListFillFilt;
     <%} else {%>
-    listobj._fill__fork = function(x, v, n, t) {
-        hsListFillFork.call(this , x, v, n, t);
-        x.find("input")
-         .attr("title", this._info.name)
-         .data(         this._info     );
-    };
+    listobj._fill__fork = hsListFillSele;
     <%} /*End If */%>
 
     // 填充卡片
     listobj.fillList = hsListFillItem;
     listobj.fillPage = hsListFillMore;
-    listobj._fill_logo = function(d, v, n) {
-        d.css({
-            "width" : "100px",
-            "height": "100px",
-            "background-size": "cover",
-            "background-image": "url("+v+")",
-            "background-repeat": "no-repeat",
-            "background-position": "center center"
-        });
-        // 如果是当前用户创建的则可以操作
-        if (HsUSER.uid == this._info.cuid) {
-            d.closest(".itembox").find(".btn-group").show();
-        }
+    listobj._fill_cuid = function(d, v) {
+        d.toggle( v == HsUSER.uid );
     };
-
-    // 我创建的
-    context.find("[name='ar.0.cuid']").val( HsUSER.uid ).change( function() {
-        $(this).closest(".form-control-static").siblings(":submit").click();
-    });
+    listobj._fill_logo = function(d, v) {
+        if (!v) return ;
+        d.css ( {
+            "background-size"    : "cover",
+            "background-repeat"  : "no-repeat",
+            "background-position": "center center",
+            "background-image"   : "url("+v+")"
+        });
+    };
 
     // 创建时将关联 ID 往表单页传递
     listobj.open = function(btn, box, url, data) {
@@ -347,6 +363,14 @@
         setTimeout(function() {
             fitrbox.find(":submit").click( );
         } , 500);
+    });
+
+    // 我创建的
+    context.find("[name='ar.0.cuid']")
+           .val ( HsUSER.uid)
+           .change(function() {
+        $(this).closest (".form-control-static")
+               .siblings( ":submit"  ).click(  );
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {

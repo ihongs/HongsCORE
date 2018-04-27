@@ -216,7 +216,7 @@ public class Thumb extends IsFile {
             return thb.pick(w, h, f);
         } else
         {
-            return thb.size(w, h, f);
+            return thb.size(w, h, false); // 不对图片进行裁剪或者补充, 那只可能缩放到一定尺寸内
         }
     }
 

@@ -13,6 +13,7 @@ import java.util.Map;
  */
 public class Wrongs extends HongsException {
   protected final Map<String,Wrong> wrongs ;
+  protected CoreLocale lang = null;
 
     public Wrongs(Map<String,Wrong> wrongs) {
         super(0x1100 , "fore.form.invalid"); // 0x1100 对应 HTTP 400 错误
@@ -21,14 +22,20 @@ public class Wrongs extends HongsException {
     }
 
     @Override
-    public Wrongs setLocalizedContext(String    name) {
-        super.setLocalizedContext(name);
+    public Wrongs setLocalizedOptions(String...  opts) {
+        super.setLocalizedOptions(opts);
         return this;
     }
 
     @Override
-    public Wrongs setLocalizedOptions(String... opts) {
-        super.setLocalizedOptions(opts);
+    public Wrongs setLocalizedContext(String     name) {
+        super.setLocalizedContext(name);
+        this.lang = null;
+        return this;
+    }
+
+    public Wrongs setLocalizedContext(CoreLocale lang) {
+        this.lang = lang;
         return this;
     }
 
@@ -37,24 +44,30 @@ public class Wrongs extends HongsException {
     }
 
     public Map<String, String> getErrors() {
-        String lo = getLocalizedContext( );
+        if (null== lang) {
+            lang = CoreLocale.getInstance(getLocalizedContext());
+        }
         Map<String, String> errors = new LinkedHashMap();
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong ) et.getValue( );
+                   w.setLocalizedContext(lang);
             String n = (String) et.getKey  ( );
-            String e = w.setLocalizedContext(lo).getLocalizedMistake();
+            String e = w.getLocalizedMistake();
             errors.put ( n, e );
         }
         return errors;
     }
 
     public Map<String, Object> getErrmap() {
-        String lo = getLocalizedContext( );
+        if (null== lang) {
+            lang = CoreLocale.getInstance(getLocalizedContext());
+        }
         Map<String, Object> errors = new LinkedHashMap();
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong ) et.getValue( );
+                   w.setLocalizedContext(lang);
             String n = (String) et.getKey  ( );
-            String e = w.setLocalizedContext(lo).getLocalizedMistake();
+            String e = w.getLocalizedMistake();
             Dict.setParam(errors, e, n);
         }
         return errors;
@@ -62,11 +75,14 @@ public class Wrongs extends HongsException {
 
     @Override
     public String getLocalizedMessage() {
-        String lo = getLocalizedContext( );
+        if (null== lang) {
+            lang = CoreLocale.getInstance(getLocalizedContext());
+        }
         StringBuilder  sb = new StringBuilder( );
         for (Map.Entry et : wrongs.entrySet()) {
             Wrong  w = (Wrong ) et.getValue( );
-            String e = w.setLocalizedContext(lo).getLocalizedMessage();
+                   w.setLocalizedContext(lang);
+            String e = w.getLocalizedMessage();
             sb.append(e).append("\r\n");
         }
         return sb.toString().trim( );

@@ -189,7 +189,7 @@
             .click(function() {
                 $.hsWarn(
                    "您确定要退出登录吗?",
-                   "点击确定将离开系统, 点击取消可继续使用. 感谢您的关注!",
+                   "点击“确定”将离开系统, 点击“取消”可继续使用. 感谢您的使用, 住您工作顺利!",
                    function() {
                     $.get(hsFixUri("centra/sign/delete.act"), function() {
                         location.assign(hsFixUri( "centra/login.html" ));

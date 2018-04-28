@@ -65,13 +65,12 @@
         </nav>
         <script type="text/javascript">
             (function($) {
-                $("#sign-in-form").on("saveBack", function() {
-                    var r = hsGetParam( location.href, "r" );
-                    if (r) {
-                        location.replace(hsFixUri(r));
-                    } else {
-                        location.replace("/centre/" );
-                    }
+                var context = $("#sign-in-form" ).removeAttr("id");
+                context.on("saveFail", function() {
+                    context.find( "img" ).click();
+                });
+                context.on("saveBack", function() {
+                    location.replace(hsFixUri(hsGetParam(location.href, "r") || "centre/"));
                 });
             })(jQuery);
         </script>

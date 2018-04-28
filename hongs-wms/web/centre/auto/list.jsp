@@ -196,8 +196,8 @@
         %>
         <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-md-6" style="padding: 5px;">
             <div class="clearfix" style="background: #fff;">
-                <div class="col-sm-3 checkbox" style="height: 250px; overflow: hidden; overflow-y: auto;"></div>
-                <div class="col-sm-9 chartbox" style="height: 250px; margin: 10px 0; border-left: 1px dotted #ccc;"></div>
+                <div class="col-sm-3 checkbox" style="height: 250px; overflow: auto;"></div>
+                <div class="col-sm-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
             </div>
         </div>
         <%} /*End For*/%>

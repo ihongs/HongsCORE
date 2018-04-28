@@ -20,7 +20,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div class="clearfix">
-        <div class="toolbox col-sm-6 btn-group">
+        <div class="toolbox col-xs-6 btn-group">
             <%if ( "select".equals(_action)) {%>
             <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
@@ -32,7 +32,7 @@
             <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
-        <form class="findbox col-sm-6 input-group" action="" method="POST">
+        <form class="findbox col-xs-6 input-group" action="" method="POST">
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
@@ -66,8 +66,8 @@
             }
         %>
         <div class="filt-group form-group form-group-sm clearfix">
-            <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
-            <div class="col-sm-6">
+            <label class="col-xs-3 form-control-static control-label text-right"><%=text%></label>
+            <div class="col-xs-6">
             <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
             <%} else if ("number".equals(type) || "range".equals(type)) {%>
@@ -116,7 +116,7 @@
         </div>
         <%} /*End For*/%>
         <div class="form-group form-group-sm clearfix">
-            <div class="col-sm-6 col-sm-offset-3">
+            <div class="col-xs-6 col-xs-offset-3">
                 <button type="submit" class="btn btn-default">过滤</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>
@@ -170,10 +170,10 @@
                 type = "counts";
             }
         %>
-        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-md-6" style="padding: 5px;">
+        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-xs-6" style="padding: 5px;">
             <div class="clearfix" style="background: #fff;">
-                <div class="col-sm-3 checkbox" style="height: 250px; overflow: hidden; overflow-y: auto;"></div>
-                <div class="col-sm-9 chartbox" style="height: 250px; margin: 10px 0; border-left: 1px dotted #ccc;"></div>
+                <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
+                <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
             </div>
         </div>
         <%} /*End For*/%>

@@ -8,6 +8,8 @@
         <link rel="icon" type="image/x-icon" href="favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
+        <link rel="stylesheet" type="text/css" href="centra/head.css"/>
+        <link rel="stylesheet" type="text/css" href="centra/master/util.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
@@ -17,23 +19,18 @@
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
-        <script type="text/javascript" src="centra/master/stuff.js"></script>
-        <link rel="stylesheet" type="text/css" href="centra/master/stuff.css"/>
+        <script type="text/javascript" src="centra/master/util.js" ></script>
     </head>
     <body>
         <div id="notebox"></div>
-        <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="row" data-load="centra/head.jsp"></div>
+        <div id="context">
+            <div id="headbox">
+                <div id="menu-context" data-load="centra/head.jsp"></div>
             </div>
-        </nav>
-        <div id="bodybox">
-            <div id="main-context" class="container" data-load="centra/master/dept/tree.html">加载中...</div>
+            <div id="bodybox">
+                <div id="main-context" class="container-fluid"
+                     data-load="centra/master/dept/tree.html"> ... </div>
+            </div>
         </div>
-        <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
-            <div class="container">
-                <div class="row" data-load="centra/foot.jsp"></div>
-            </div>
-        </nav>
     </body>
 </html>

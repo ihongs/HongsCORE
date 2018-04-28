@@ -31,17 +31,16 @@
             if (subs != null && ! subs.isEmpty()) {
                 href  = Core.BASE_HREF +"/"+ href;
                 hrel  = Core.BASE_HREF +"/"+ hrel;
-                actc += " dropdown";
-                hrel += "\" data-toggle=\"dropdown\""
-                     +   " class=\"dropdown-toggle\""  ;
-                text += "<span class=\"caret\"></span>";
+                actc += "";
+                hrel += "";
+                text += "";
                 menus.append("<li class=\"")
                      .append(actc).append("\">" );
                 menus.append( "<a href=\"" )
                      .append(href).append("\" data-href=\"")
                      .append(hrel).append("\">" )
                      .append(text).append("</a>");
-                menus.append("<ul class=\"dropdown-menu\">")
+                menus.append("<ul class=\"\">")
                      .append(makeMenu(subs, acti))
                      .append("</ul>");
                 menus.append("</li>");
@@ -78,15 +77,9 @@
     }
 %>
 
-<div class="navbar-header">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
-    <a href="<%=Core.BASE_HREF%>/centra/" class="navbar-brand" style="font-size: 16px;">
-        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 3px; margin-top: -3px;"/></span>
+<div style="margin-bottom: 15px;">
+    <a href="<%=Core.BASE_HREF%>/centra/" class="btn">
+        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 4px; margin-top: -2px;"/></span>
         <span style="color:#833">H</span>
         <span style="color:#722">o</span>
         <span style="color:#611">n</span>
@@ -97,36 +90,31 @@
         <span style="color:#fcc">R</span>
         <span style="color:#fdd">E</span>
     </a>
+    <a href="javascript:;" class="btn" id="menu-laq">&laquo;</a>
+    <a href="javascript:;" class="btn" id="menu-raq">&raquo;</a>
 </div>
 
-<div class="collapse navbar-collapse" id="main-collapse">
-    <ul class="nav navbar-nav navbar-left " id="main-menubar">
+<div class="menubox clearfix">
+    <ul id="main-menubar">
         <%=makeMenu(menu, acti)%>
     </ul>
-    <ul class="nav navbar-nav navbar-right" id="user-menubar">
-        <li class="dropdown">
-            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                <span class="uhead" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
-                <span class="badge"></span>
-                <span class="caret"></span>
-            </a>
-            <ul class="dropdown-menu" role="menu">
-                <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
-            </ul>
-        </li>
+</div>
+
+<hr style="border-top: 1px dotted #eeeeee;"/>
+
+<div class="menubox clearfix">
+    <ul id="user-menubar">
+        <li><a href="javascript:;" id="user-set"><span class="glyphicon glyphicon-user"   ></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.modify") %></a></li>
+        <li><a href="javascript:;" id="sign-out"><span class="glyphicon glyphicon-log-out"></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.logout") %></a></li>
     </ul>
 </div>
+
+<p style="color: #eee; font-size: 12px; margin-left: 18px;">
+    Powered by <a href="https://github.com/ihongs/HongsCORE" style="color: #eee;" target="_blank">HongsCORE</a>.
+</p>
 
 <script type="text/javascript">
     (function($) {
-        // 宽度低于 768 则固定为 768, 避免错位
-        if ($(window).width( ) < 768) {
-            var vp = $("meta[name=viewport]");
-            vp.attr("content", vp.attr("content").replace("device-width", "768"));
-        }
-
         var context = $("#main-context");
         var menubar = $("#main-menubar");
 //      var userbar = $("#user-menubar");
@@ -148,7 +136,8 @@
              * 没有则最终转向首个链接.
              */
             if (context .size() === 0
-            ||  context .data("load")) {
+            ||  context .data("load")
+            ||  context .children().size()) {
                 return;
             }
 
@@ -198,9 +187,14 @@
 
         $("#sign-out")
             .click(function() {
-                $.get(hsFixUri("centra/sign/delete.act"), function() {
-                    location.assign(hsFixUri( "centra/login.html" ));
-                });
+                $.hsWarn(
+                   "您确定要退出登录吗?",
+                   "点击确定将离开系统, 点击取消可继续使用. 感谢您的关注!",
+                   function() {
+                    $.get(hsFixUri("centra/sign/delete.act"), function() {
+                        location.assign(hsFixUri( "centra/login.html" ));
+                    });
+                }, function() {});
             });
         $("#user-set")
             .click(function() {
@@ -210,5 +204,27 @@
             .click(function() {
                 $.hsOpen("centra/manage/note.html");
             });
+
+        // 菜单隐藏和显示
+        $("#menu-raq").appendTo(document.body)
+            .click(function() {
+                $('#headbox' ).show();
+                $("#menu-raq").hide();
+            });
+        $("#menu-laq")
+            .click(function() {
+                $('#headbox' ).hide();
+                $("#menu-raq").show();
+            });
+
+        // 菜单折叠和展开
+        menubar.find("li:not(.active)>ul" ).hide( );
+        menubar.on("click", "a", function() {
+            var ul = $(this).next();
+            if (ul.size( ) ) {
+                ul.toggle( );
+                return false;
+            }
+        });
     })(jQuery);
 </script>

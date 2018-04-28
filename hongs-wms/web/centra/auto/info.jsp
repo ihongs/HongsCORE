@@ -72,8 +72,8 @@
             <legend class="form-group"><%=text%></legend>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-sm-3 control-label form-control-static text-right"><%=text%></label>
-                <div class="col-sm-6">
+                <label class="col-xs-3 control-label form-control-static text-right"><%=text%></label>
+                <div class="col-xs-6">
                 <%if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         kind = "_file";
@@ -137,7 +137,7 @@
         <%} /*End if */%>
         <%} /*End For*/%>
         <div class="form-group row">
-            <div class="col-sm-6 col-sm-offset-3">
+            <div class="col-xs-6 col-xs-offset-3">
                 <button type="button" class="cancel btn btn-primary">返回</button>
             </div>
         </div>

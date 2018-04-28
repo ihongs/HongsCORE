@@ -53,7 +53,7 @@
             var inst  = context.data("HsList");
             var path  = H$( "#path", context );
             inst.open($(this), $(this).hsFind("@"),
-            "centra/manage/file/file_create.html?path="+encodeURIComponent(path));
+            "centra/manage/file/file_form.html?path="+encodeURIComponent(path));
         });
         context.on("click", ".modify", function() {
             var inst  = context.data("HsList");
@@ -68,7 +68,7 @@
             }
             path = path.val();
             inst.open($(this), $(this).hsFind("@"),
-            "centra/manage/file/file_modify.html?path="+encodeURIComponent(path));
+            "centra/manage/file/file_edit.html?path="+encodeURIComponent(path));
         });
 
         context.on("click", ".upload,.dnload", function() {

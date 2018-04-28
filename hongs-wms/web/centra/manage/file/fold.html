@@ -37,7 +37,6 @@
         <div class="col-xs-9 main-context"></div>
     </div>
 </div>
-<script type="text/javascript" src="static/addons/md5/md5.min.js"></script>
 <script type="text/javascript">
     (function($) {
         var context = $("#centra-fold-tree").removeAttr ("id");
@@ -72,7 +71,7 @@
             return HsTree.prototype.send.call(this, btn, msg, url, data);
         });
         context.data("open", function(btn, box, url, data) {
-            url = hsSetParam(url,"path",pathMap[hsGetParam(url,"path")]);
+            data.path = pathMap[data.path];
             return HsTree.prototype.open.call(this, btn, box, url, data);
         });
         context.on("treeSelect", function(evt, nid, obj) {

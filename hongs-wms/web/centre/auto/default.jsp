@@ -6,7 +6,7 @@
 <!doctype html>
 <html>
     <head>
-        <title>HongsCORE::<%=_title%></title>
+        <title><%=_title%></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">
@@ -27,7 +27,7 @@
         <script type="text/javascript" src="centre/mine/sign/info.act?cb=hsWithUserInfo"></script>
         <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
         <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/custom.js"]=1;
+            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/custom.js"] = 1;
             HsDEPS["__COMMITED__"] = 1;
         </script>
     </head>

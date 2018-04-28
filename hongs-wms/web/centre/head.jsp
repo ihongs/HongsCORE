@@ -108,20 +108,20 @@
     </ul>
     <ul class="nav navbar-nav navbar-right" id="user-menubar">
         <li class="dropdown">
+            <%if (role.contains("centre")) {%>
             <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
                 <span class="uhead" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
                 <span class="badge"></span>
                 <span class="caret"></span>
             </a>
             <ul class="dropdown-menu" role="menu">
-                <%if (role.contains("centre")) {%>
                 <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
-                <%} else {%>
-                <li><a href="javascript:;" id="sign-in" ><%=CoreLocale.getInstance().translate("fore.login" )%></a></li>
-                <%} /*End If*/%>
             </ul>
+            <%} else {%>
+            <a href="javascript:;" id="sign-in"><%=CoreLocale.getInstance().translate("fore.login")%></a>
+            <%} /*End If*/%>
         </li>
     </ul>
 </div>

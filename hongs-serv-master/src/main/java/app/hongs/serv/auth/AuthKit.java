@@ -60,15 +60,17 @@ public class AuthKit {
      * @throws HongsException
      */
     public static Map getWrong(String k, String w) throws HongsException {
-        Map m  = new HashMap();
+        CoreLocale l = CoreLocale.getInstance("master");
         Map e  = new HashMap();
-        CoreLocale   lang  =  CoreLocale.getInstance ("master") ;
-        if (k != null && ! "".equals(k)) {
-            m.put(k, new Wrong(w).setLocalizedContext("master"));
-            e.put("errs", new Wrongs(m).getErrors());
-            e.put("msg" , lang.translate(w));
+        if (k != null && ! "".equals( k )) {
+        Map m  = new HashMap();
+            m.put( k ,    new Wrong ( w ));
+            e.put("errs", new Wrongs( m )
+                .setLocalizedContext( l )
+                .getErrors( ));
+            e.put("msg", l.translate( w ));
         } else {
-            e.put("msg" , lang.translate(w));
+            e.put("msg", l.translate( w ));
         }
         e.put("ok", false);
         return e;

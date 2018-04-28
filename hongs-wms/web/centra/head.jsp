@@ -109,7 +109,7 @@
     </ul>
 </div>
 
-<p style="color: #eee; font-size: 12px; margin-left: 18px;">
+<p style="color: #eeeeee; font-size: 12px; margin-left: 18px;">
     Powered by <a href="https://github.com/ihongs/HongsCORE" style="color: #eee;" target="_blank">HongsCORE</a>.
 </p>
 

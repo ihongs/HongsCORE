@@ -9,6 +9,7 @@ import app.hongs.HongsException;
  */
 public class Wrong extends HongsException {
     private String text = null;
+    private CoreLocale lang = null;
 
     public Wrong(Throwable cause, String desc, String... prms) {
         super(0x1100, desc, cause);
@@ -23,18 +24,24 @@ public class Wrong extends HongsException {
     }
 
     @Override
-    public Wrong  setLocalizedOptions(String... opts) {
+    public Wrong  setLocalizedOptions(String...  opts) {
         super.setLocalizedOptions(opts);
         return this;
     }
 
     @Override
-    public Wrong  setLocalizedContext(String name) {
+    public Wrong  setLocalizedContext(String     name) {
         super.setLocalizedContext(name);
+        this.lang = null;
         return this;
     }
 
-    public Wrong  setLocalizedCaption(String text) {
+    public Wrong  setLocalizedContext(CoreLocale lang) {
+        this.lang = lang;
+        return this;
+    }
+
+    public Wrong  setLocalizedCaption(String     text) {
         this.text = text;
         return this;
     }
@@ -44,18 +51,22 @@ public class Wrong extends HongsException {
     }
 
     public String getLocalizedMistake() {
-        CoreLocale trns = CoreLocale.getInstance(getLocalizedContext());
-        return trns.translate(getError(), getLocalizedOptions());
+        if (null== lang) {
+            lang = CoreLocale.getInstance(getLocalizedContext());
+        }
+        return lang.translate(getError(), getLocalizedOptions());
     }
 
     @Override
     public String getLocalizedMessage() {
-        CoreLocale trns = CoreLocale.getInstance(getLocalizedContext());
+        if (null== lang) {
+            lang = CoreLocale.getInstance(getLocalizedContext());
+        }
         if (null!= text && 0 < text.length()) {
-            return trns.translate(text)
-            +": "+ trns.translate(getError(), getLocalizedOptions());
+            return lang.translate(text)
+            +": "+ lang.translate(getError(), getLocalizedOptions());
         } else {
-            return trns.translate(getError(), getLocalizedOptions());
+            return lang.translate(getError(), getLocalizedOptions());
         }
     }
 

@@ -33,7 +33,7 @@
                          ? NaviMap.getInstance(_module+"/"+_entity)
                          : NaviMap.getInstance(_module);
             Map menu;
-            menu  = site.getMenu(_module +"/" +_entity);
+            menu  = site.getMenu(_module +"/"+ _entity+"/");
             if (menu != null) {
                     _title  = (String) menu.get("text");
                 if (_title != null) {

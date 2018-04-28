@@ -1,4 +1,4 @@
-<ol class="breadcrumb paths row hide" data-toggle="hsTabs">
+<ol class="breadcrumb paths hide row" data-toggle="hsTabs">
     <li class="back-crumb dont-close pull-right">
         <a href="javascript:;">
             <i class="glyphicon glyphicon-remove-sign"></i>
@@ -11,16 +11,16 @@
         </a>
     </li>
 </ol>
-<div class="panes paths row">
+<div class="panes paths">
     <div></div>
     <div>
-        <div class="col-md-3 side-context">
+        <div class="col-xs-3 side-context">
             <div id="centra-fold-tree"
                  data-module="hsTree"
                  data-load-url="centra/file/search.act?type=dir"
                  data-send-urls-0="['centra/file/delete.act','.delete','您确定要删除此目录?']"
-                 data-open-urls-0="['centra/manage/file/fold_create.html?path={ID}','.create','@']"
-                 data-open-urls-1="['centra/manage/file/fold_modify.html?path={ID}','.modify','@']"
+                 data-open-urls-0="['centra/manage/file/fold_form.html?path={ID}','.create','@']"
+                 data-open-urls-1="['centra/manage/file/fold_edit.html?path={ID}','.modify','@']"
                  data-id-key="path"
                  data-pid-key="path"
                  data-cnum-key="size"
@@ -34,7 +34,7 @@
                 <div class="treebox"></div>
             </div>
         </div>
-        <div class="col-md-9 main-context"></div>
+        <div class="col-xs-9 main-context"></div>
     </div>
 </div>
 <script type="text/javascript" src="static/addons/md5/md5.min.js"></script>

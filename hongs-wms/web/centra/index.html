@@ -3,11 +3,11 @@
     <head>
         <title>HongsCORE::管理系统</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="../">
         <link rel="icon" type="image/x-icon" href="favicon.ico"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
+        <link rel="stylesheet" type="text/css" href="centra/head.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
@@ -20,18 +20,13 @@
     </head>
     <body>
         <div id="notebox"></div>
-        <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
-                <div class="row" data-load="centra/head.jsp"></div>
+        <div id="context">
+            <div id="headbox">
+                <div id="menu-context" data-load="centra/head.jsp"></div>
             </div>
-        </nav>
-        <div id="bodybox">
-            <div class="container" id="main-context">加载中...</div>
+            <div id="bodybox">
+                <div id="main-context" class="container-fluid" >...</div>
+            </div>
         </div>
-        <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
-            <div class="container">
-                <div class="row" data-load="centra/foot.jsp"></div>
-            </div>
-        </nav>
     </body>
 </html>

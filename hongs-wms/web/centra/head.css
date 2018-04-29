@@ -39,12 +39,12 @@ html, body {
 
 #menu-laq:hover,
 #menu-raq:hover {
-    background: #888;
+    background: #090909;
 }
 #menu-laq {
     width: 15px;
-    color: #900;
-    background: #222;
+    color: #fff;
+    background: #222222;
     text-align: center;
     padding-left : 0;
     padding-right: 0;
@@ -53,7 +53,7 @@ html, body {
 #menu-raq {
     width: 15px;
     color: #fff;
-    background: #222;
+    background: #222222;
     text-align: center;
     padding-left : 0;
     padding-right: 0;
@@ -81,12 +81,14 @@ html, body {
 .menubox li a  {
     display: block;
     color: #eeeeee;
+    background : #222222;
     border-left: 2px solid #222222;
 }
 .menubox li.active > a {
     display: block;
-    color: #990000;
-    border-left: 2px solid #990000;
+    color: #ff8888;
+    background : #090909;
+    border-left: 2px solid #ff8888;
 }
 
 #user-menubar li a {
@@ -95,6 +97,11 @@ html, body {
 
 .breadcrumb.paths {
     line-height: 27px
+}
+
+.statbox .checkbox label {
+    font-size: 12px;
+    display: block;
 }
 
 .manage-file-list .pagination,

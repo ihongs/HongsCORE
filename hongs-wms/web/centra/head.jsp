@@ -77,7 +77,7 @@
     }
 %>
 
-<div style="margin-bottom: 15px;">
+<div style="margin-bottom: 30px;">
     <a href="<%=Core.BASE_HREF%>/centra/" class="btn">
         <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 4px; margin-top: -2px;"/></span>
         <span style="color:#833">H</span>
@@ -109,8 +109,8 @@
     </ul>
 </div>
 
-<p style="color: #eeeeee; font-size: 12px; margin-left: 18px;">
-    Powered by <a href="https://github.com/ihongs/HongsCORE" style="color: #eee;" target="_blank">HongsCORE</a>.
+<p style="color: #444; font-size: 12px; margin-left: 18px;">
+    Powered by <a href="https://github.com/ihongs/HongsCORE" style="color: #444;" target="_blank">HongsCORE</a>
 </p>
 
 <script type="text/javascript">

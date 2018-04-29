@@ -233,13 +233,19 @@
                     <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> date"><%=text%></th>
                 <%} else if ("time".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=text%></th>
+                <%} else if (  "url".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("email".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_email" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("url".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("file".equals(type) ||  "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%>"><%=text%></th>
-                <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_email" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("image".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_image" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("video".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_video" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("audio".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_audio" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("file".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_files" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
+                <%} else if ("enum".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
                     <%
                         if (name.endsWith( "." )) {
                             name = name.substring(0, name.length() - 1);
@@ -356,6 +362,14 @@
     <%} else {%>
     listobj._fill__fork = hsListFillSele;
     <%} /*End If */%>
+
+    // 链接填充, 支持多值, 占格子窄
+    listobj._fill__ulink = hsListWrapOpen("link");
+    listobj._fill__files = hsListWrapOpen("file");
+    listobj._fill__email = hsListWrapOpen("email");
+    listobj._fill__image = hsListWrapOpen("image");
+    listobj._fill__video = hsListWrapOpen("video");
+    listobj._fill__audio = hsListWrapOpen("audio");
 
     // 创建时将关联 ID 往表单页传递
     listobj.open = function(btn, box, url, data) {

@@ -115,12 +115,12 @@ function hsListFillOpen(x, v, n, t) {
         }
     }
     switch (t) {
-        case "email": t = "glyphicon glyphicon-envelope"   ; break;
-        case "image": t = "glyphicon glyphicon-picture"    ; break;
-        case "video": t = "glyphicon glyphicon-play-circle"; break;
-        case "audio": t = "glyphicon glyphicon-play-circle"; break;
-        case "file" : t = "glyphicon glyphicon-file"       ; break;
-        default:      t = "glyphicon glyphicon-link"       ; break;
+        case "email": t = "glyphicon glyphicon-envelope"; break;
+        case "image": t = "glyphicon glyphicon-picture" ; break;
+        case "video": t = "glyphicon glyphicon-play"    ; break;
+        case "audio": t = "glyphicon glyphicon-play"    ; break;
+        case "file" : t = "glyphicon glyphicon-file"    ; break;
+        default:      t = "glyphicon glyphicon-link"    ; break;
     }
 
     $('<a target="_blank"><span class="'+t+'"></span></a>')

@@ -223,7 +223,7 @@
                             <div data-fn="note" style="color: #888;"></div>
                         </div>
                         <div data-fn="cuid" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
-                            <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-tasks"></span></button>
+                            <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                             <button type="button" class="btn btn-xs btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </div>

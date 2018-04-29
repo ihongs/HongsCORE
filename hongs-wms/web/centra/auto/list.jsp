@@ -39,7 +39,7 @@
             <%if (!"select".equals(_action)) {%>
                 <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                 <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
-                <button type="button" class="export btn btn-default" title="<%=_locale.translate("fore.export", _title)%>"><span class="glyphicon glyphicon-save"  ></span></button>
+                <button type="button" class="export btn btn-default" title="<%=_locale.translate("fore.export", _title)%>"><span class="glyphicon glyphicon-export"></span></button>
                 <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
             <%} // End If %>
             </span>

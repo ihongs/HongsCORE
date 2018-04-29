@@ -40,7 +40,7 @@
         </nav>
         <div id="bodybox">
             <div class="container">
-                <ol class="breadcrumb paths row hide" data-toggle="hsTabs">
+                <ol class="breadcrumb paths hide row" data-toggle="hsTabs">
                     <li class="back-crumb dont-close pull-right">
                         <a href="javascript:;">
                             <i class="glyphicon glyphicon-remove-sign"></i>
@@ -53,7 +53,7 @@
                         </a>
                     </li>
                 </ol>
-                <div class="panes paths row">
+                <div class="panes paths">
                     <div></div>
                     <div data-load="<%=_module%>/<%=_entity%>/list.html"></div>
                 </div>

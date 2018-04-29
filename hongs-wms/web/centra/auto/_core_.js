@@ -100,6 +100,48 @@ function hsListFillFilt(x, v, n, t) {
 }
 
 /**
+ * 列表填充打开链接
+ */
+function hsListFillOpen(x, v, n, t) {
+    if (v === undefined || v.length === 0) {
+        return  ;
+    }
+    if (!$.isArray(v)) {
+        v  = [v];
+    }
+    if (t === "email") {
+        for(var i = 0; i < v.length; i ++) {
+            v[i] = "mailto:" + v[i];
+        }
+    }
+    switch (t) {
+        case "email": t = "glyphicon glyphicon-envelope"   ; break;
+        case "image": t = "glyphicon glyphicon-picture"    ; break;
+        case "video": t = "glyphicon glyphicon-play-circle"; break;
+        case "audio": t = "glyphicon glyphicon-play-circle"; break;
+        case "file" : t = "glyphicon glyphicon-file"       ; break;
+        default:      t = "glyphicon glyphicon-link"       ; break;
+    }
+
+    $('<a target="_blank"><span class="'+t+'"></span></a>')
+    .attr("href", v[0]).appendTo(x).click(function() {
+        for(var i = 0; i < v.length; i ++) {
+            window.open( v[i] , "_blank" );
+        }
+        return false;
+    });
+}
+
+/**
+ * 列表填充链接包装
+ */
+function hsListWrapOpen(t) {
+    return function (x, v, n) {
+         hsListFillOpen(x, v, n, t);
+    };
+}
+
+/**
  * 列表统计筛选组件
  * @param {jQuery|Element} context
  * @param {Object} opts

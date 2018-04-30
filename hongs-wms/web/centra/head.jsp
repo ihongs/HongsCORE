@@ -77,7 +77,7 @@
     }
 %>
 
-<div style="margin-bottom: 30px;">
+<div style="margin-bottom: 30px; position: relative;">
     <a href="<%=Core.BASE_HREF%>/centra/" class="btn">
         <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 4px; margin-top: -2px;"/></span>
         <span style="color:#833">H</span>

@@ -37,30 +37,33 @@ html, body {
     height: 100%;
 }
 
-#menu-laq:hover,
-#menu-raq:hover {
-    background: #090909;
-}
 #menu-laq {
     width: 15px;
     color: #fff;
-    background: #222222;
+    background: #222;
     text-align: center;
     padding-left : 0;
     padding-right: 0;
-    float: right;
+    position: absolute;
+    display : block;
+    right: 0;
+    top  : 0;
 }
 #menu-raq {
     width: 15px;
     color: #fff;
-    background: #222222;
+    background: #222;
     text-align: center;
     padding-left : 0;
     padding-right: 0;
-    display: none;
     position: fixed;
-    left: 0;
-    top : 0;
+    display : none ;
+    left : 0;
+    top  : 0;
+}
+#menu-laq:hover,
+#menu-raq:hover {
+    background: #090909;
 }
 
 .menubox ul {

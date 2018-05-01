@@ -19,7 +19,7 @@ html, body {
 #headbox {
     display: table-cell;
     vertical-align: top;
-    background: #222222;
+    background: #181818;
     min-width: 150px;
     max-width: 300px;
     width: 15%;
@@ -99,7 +99,7 @@ html, body {
 }
 
 .breadcrumb.paths {
-    line-height: 27px
+    line-height: 27px;
 }
 
 .statbox .checkbox label {

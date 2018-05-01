@@ -95,6 +95,13 @@ textarea.form-control {
 .dropdown-toggle {
     cursor: pointer;
 }
+.dropdown-omit a {
+    width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    word-break : normal;
+    white-space: nowrap;
+}
 
 .center-block {
     float: none;

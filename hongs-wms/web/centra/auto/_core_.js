@@ -103,33 +103,50 @@ function hsListFillFilt(x, v, n, t) {
  * 列表填充打开链接
  */
 function hsListFillOpen(x, v, n, t) {
-    if (v === undefined || v.length === 0) {
-        return  ;
+    if (!v || !v.length) {
+        return ;
     }
-    if (!$.isArray(v)) {
-        v  = [v];
-    }
-    if (t === "email") {
-        for(var i = 0; i < v.length; i ++) {
-            v[i] = "mailto:" + v[i];
-        }
-    }
-    switch (t) {
-        case "email": t = "glyphicon glyphicon-envelope"; break;
-        case "image": t = "glyphicon glyphicon-picture" ; break;
-        case "video": t = "glyphicon glyphicon-play"    ; break;
-        case "audio": t = "glyphicon glyphicon-play"    ; break;
-        case "file" : t = "glyphicon glyphicon-file"    ; break;
-        default:      t = "glyphicon glyphicon-link"    ; break;
+    if (!$.isArray( v )) {
+        v = [v];
     }
 
-    $('<a target="_blank"><span class="'+t+'"></span></a>')
-    .attr("href", v[0]).appendTo(x).click(function() {
+    switch  (t) {
+        case "email": n = "glyphicon glyphicon-envelope"; break;
+        case "image": n = "glyphicon glyphicon-picture" ; break;
+        case "video": n = "glyphicon glyphicon-play"    ; break;
+        case "audio": n = "glyphicon glyphicon-play"    ; break;
+        case "file" : n = "glyphicon glyphicon-file"    ; break;
+        default:      n = "glyphicon glyphicon-link"    ; break;
+    }
+
+    if (v.length == 1) {
+        var a = $('<a href="" target="_blank"></a>');
+        a.attr("href", t === "email" ? "mailto:" + v[0] : v[0]);
+        a.append('<span class="'+n+'"></span>');
+        x.append(a);
+    } else {
+        var a = $('<a href="javascript:;" data-toggle="dropdown"></a>');
+        var u = $('<ul class="dropdown-menu"></ul>');
+        var l = $('<li class="dropdown-omit"></li>');
+        a.append('<span class="'+n+'"></span>');
+        x.append(a);
+        x.append(u);
+        x.addClass("dropdown");
         for(var i = 0; i < v.length; i ++) {
-            window.open( v[i] , "_blank" );
+            var txt, url;
+            if (t === "email") {
+                url = "mailto:"+ v[i];
+                txt = v[i];
+            } else {
+                txt = v[i].replace(/[?#].*/, '')
+                          .replace( /.*\// , '');
+                url = v[i];
+            }
+            var b = $('<a target="_blank"></a>')
+                    .attr("href", url).text(txt);
+            u.append(l.clone( ).append(b));
         }
-        return false;
-    });
+    }
 }
 
 /**

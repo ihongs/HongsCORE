@@ -78,7 +78,7 @@ legend {
     line-height: 1.42857143;
 }
 .btn .glyphicon {
-    font-size: 85%;
+    font-size: 12px;
 }
 select.form-control[multiple],
 textarea.form-control {
@@ -168,12 +168,14 @@ textarea.form-control {
 .note-editor.panel {
     margin-bottom: 0px;
 }
-.note-editor .note-btn i {
-    display : inline-block;
+.note-editor .note-btn i,
+.note-editor .note-btn span {
+    display: inline-block;
 }
 .note-editor .note-btn .note-current-fontsize,
 .note-editor .note-btn .note-current-fontname {
     vertical-align: middle;
+    margin: -1px 0;
 }
 .note-editor .note-popover .note-para .dropdown-menu,
 .note-editor .note-toolbar .note-para .dropdown-menu {
@@ -495,17 +497,19 @@ ul.pickrol > li.btn-info {
     background  : transparent;
     box-shadow  : none;
 }
+.pickrol .glyphicon,
 .pickrol .close {
     display: none;
 }
 .preview .close {
-    width : 1.2em;
-    height: 1.2em;
+    width : 27px;
+    height: 27px;
+    padding : 2.25px;
+    padding-top: 1px;
+    background: #eee;
     text-align: center;
-    line-height: 1.1em;
     border-radius: 50%;
     box-shadow: 0 0 0.5em #000;
-    background: #eee;
 }
 
 .preview {

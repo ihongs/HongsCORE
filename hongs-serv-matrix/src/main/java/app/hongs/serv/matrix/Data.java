@@ -230,6 +230,7 @@ public class Data extends SearchEntity {
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new  String [ ] { id , fid , "0"};
         long     ctime = Synt.declare(rd.get("ctime"), 0L);
+        if (0 == ctime) ctime = System.currentTimeMillis()/1000;
 
         // 获取旧的数据
         Map dd = get( id );
@@ -323,6 +324,7 @@ public class Data extends SearchEntity {
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new  String [ ] { id , fid , "0"};
         long     ctime = Synt.declare(rd.get("ctime"), 0L);
+        if (0 == ctime) ctime = System.currentTimeMillis()/1000;
 
         /** 记录到数据库 **/
 
@@ -362,26 +364,24 @@ public class Data extends SearchEntity {
     }
 
     public void redo(String id, Map rd) throws HongsException {
-        long ctime = Synt.declare(rd.get("ctime"), 0L);
-        long rtime = Synt.declare(rd.get("rtime"), 0L);
+        Table    table = getTable( );
+        String   fid   = getFormId();
+        String   uid   = (String) rd.get( "user_id" );
+        String   where = "`id`=? AND `form_id`=? AND `ctime`=?";
+        long     rtime = Synt.declare(rd.get("rtime"), 0L);
+        long     ctime = Synt.declare(rd.get("ctime"), 0L);
+        Object[] param = new Object [ ] { id, fid, rtime };
+        if (0 == ctime) ctime = System.currentTimeMillis()/1000;
 
         //** 获取旧的数据 **/
-
-        String   fid   = getFormId();
-        Table    table = getTable( );
-        String   where = "`id`=? AND `form_id`=? AND `ctime`=?" ;
-        Object[] param = new Object[] {id, fid, rtime};
 
         if (table == null) {
             throw new HongsException(0x1100, "此资源不支持恢复");
         }
-
-        Map dd = table.fetchCase( )
-                .filter(where, param)
-                .select("data, name, etime")
-                .assort("ctime DESC")
-                .one();
-
+        Map dd = table.fetchCase()
+            .filter( where, param)
+            .select("etime, state, data, name")
+            .one();
         if (dd.isEmpty()) {
             throw new HongsException(0x1100, "恢复数据源不存在");
         }
@@ -397,6 +397,8 @@ public class Data extends SearchEntity {
         rd.put("ctime", ctime);
         rd.put("rtime", rtime);
         rd.put("etime",   0  );
+        rd.put("form_id", fid);
+        rd.put("user_id", uid);
         rd.put("name" , dd.get("name"));
         rd.put("data" , dd.get("data"));
 

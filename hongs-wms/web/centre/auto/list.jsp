@@ -121,7 +121,7 @@
             Map     info = (Map ) et.getValue();
             String  name = (String) et.getKey();
             String  text = (String) info.get("__text__");
-            
+
             if ("@".equals(name) || "id".equals(name)
             || !Synt.declare(info.get("sortable"), false)) {
                 continue;
@@ -132,7 +132,7 @@
                     </select>
                     <span class="input-group-addon">
                         <input type="checkbox" value="-" disabled="disabled"/> 逆序
-                    </span> 
+                    </span>
                 </div>
             </div>
         </div>
@@ -372,6 +372,26 @@
         $(this).closest (".form-control-static")
                .siblings( ":submit"  ).click(  );
     });
+
+    /**
+     * 因详情页可能被分享
+     * 故为其分配特定 URL
+     * History 处理较麻烦
+     * 暂不支持返回和前进
+     */
+    context.on("openBack", ".review", function(ev, box, req) {
+            location.replace(location.pathname +"#"+ req.id);
+        box.on("hsClose", function() {
+            location.replace(location.pathname +"#");
+        });
+    });
+    var mt = /^#(\w+)/.exec(location.hash);
+    if (mt) {
+        var url = "<%=_module%>/<%=_entity%>/info.html";
+        var box = context.hsFind("@");
+        var btn = context.hsFind(".review").first( );
+        listobj.open(btn, box, url, { id : mt[1] } );
+    }
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
         // 外部定制

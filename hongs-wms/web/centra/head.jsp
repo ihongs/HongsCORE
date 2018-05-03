@@ -110,7 +110,7 @@
 </div>
 
 <p style="color: #444; font-size: 12px; margin-left: 18px;">
-    Powered by <a href="https://github.com/ihongs/HongsCORE" style="color: #444;" target="_blank">HongsCORE</a> and <a href="<%=Core.BASE_HREF%>/power.html">others</a>.
+    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #444;">HongsCORE</a>
 </p>
 
 <script type="text/javascript">

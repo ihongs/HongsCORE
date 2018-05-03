@@ -8,9 +8,9 @@
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
         <!--[if glt IE8.0]>
-        <script type="text/javascript" src="addons/respond/respond.min.js"></script>
+        <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
-        <script type="text/javascript" src="assets/jquery.min.js"></script>
+        <script type="text/javascript" src="static/assets/jquery.min.js"></script>
     </head>
     <body>
         <div class="jumbotron" style="margin-top: 2em; background-color: #222; color: #ccc;">
@@ -89,30 +89,21 @@
                     </div>
                 </div>
                 <p>&nbsp;</p>
-                <p><strong>Thanks for sharing those selfless people in the world, sharp tools make good work.</strong></p>
+                <p>And <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>. <strong>Sharp tools make good work.</strong></p>
             </div>
         </div>
-        <nav id="footbox" class="navbar">
-            <div class="container">
-                <blockquote><p>Copyleft &copy; 2018 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="power.html" target="_blank">others</a>.</small></p></blockquote>
-            </div>
-        </nav>
         <script type="text/javascript">
             (function() {
-                var colors = [
-                    "#222222", "#222224", "#222244", "#222444", "#224444", "#244444",
-                    "#444444", "#444442", "#444422", "#444222", "#442222", "#422222",
-                    "#222222"
-                ];
+                var colors = ["#CCCCCC", "#FFAAAA", "#CCCCCC", "#FFAAAA", "#CCCCCC"];
                 var colori = 1;
                 var colorx = function() {
-                    $(".jumbotron").css("background-color", colors[colori]);
+                    $(".jumbotron").css("color" , colors[colori]);
                     if (colori  > colors.length - 2) {
                         colori  = 0;
-                        setTimeout(colorx, 5000);
+                        setTimeout(colorx, 2000);
                     } else {
                         colori += 1;
-                        setTimeout(colorx, 50);
+                        setTimeout(colorx, 50  );
                     }
                 };
                 colorx();

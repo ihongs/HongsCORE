@@ -136,7 +136,7 @@ function loadConf(modal, field) {
         } else {
                 $(this).val(field.find(name).text());
         }
-        
+
         if ($(this).is("[name='textarea|data-type']")) {
             $(this).change();
         }
@@ -534,10 +534,15 @@ $.fn.hsCols = function() {
             }
         }
 
-        index = index + 1;
         field = $(this).closest(".form-group").clone();
-        field.find("[name=-]").attr("name", "-"+index);
-        targetz.append(field );
+        targetz.append( field);
+
+        // 立即打开自定字段设置
+        var input = field.find ("[name='-']" );
+        if (input.size() != 0) {
+            input.attr("name", "-"+(index ++));
+            field.find(".glyphicon-info-sign").click();
+        }
     });
 
     // 打开设置
@@ -596,7 +601,7 @@ $.fn.hsCols = function() {
             setItemType(this, type);
         });
     });
-    
+
     modal.on("change", "[name='textarea|data-type']", function() {
         var type = $(this).val();
         $(this).closest(".form-group")

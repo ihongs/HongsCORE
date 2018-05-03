@@ -49,7 +49,7 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox fitrbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+    <form class="findbox fitrbox invisible">
         <div class="form-group clearfix"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -125,7 +125,7 @@
         <div class="form-group clearfix"></div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+    <form class="findbox statbox invisible">
         <div class="clearfix" style="padding: 5px;">
         <%
         Iterator it3 = _fields.entrySet().iterator();

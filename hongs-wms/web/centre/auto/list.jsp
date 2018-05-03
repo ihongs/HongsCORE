@@ -20,7 +20,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div>
-        <form class="findbox col-sm-6 col-sm-offset-3 input-group" action="" method="POST">
+        <form class="findbox input-group col-xs-6 col-xs-offset-3" action="" method="POST">
             <span class="input-group-btn">
             <%if ( "select".equals(_action)) {%>
                 <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>

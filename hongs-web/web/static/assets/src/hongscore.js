@@ -1779,23 +1779,23 @@ $.fn.hsOpen = function(url, data, complete) {
     var ref;
     var tab;
 
-    if (prt.is(".panes")) {
+    if (prt.is(".labs")) {
         prt = prt.data("tabs");
         prt = prt.hsTadd(url );
         tab = prt[0];
         prt = prt[1];
     } else
-    if (prt.is(".tabs" )) {
+    if (prt.is(".tabs")) {
         prt = prt.hsTadd(url );
         tab = prt[0];
         prt = prt[1];
     } else
-    if (prt.parent().is(".panes")) {
-        tab = prt.parent().data("tabs" ).children().eq(prt.index());
+    if (prt.parent().is(".labs")) {
+        tab = prt.parent().data("tabs").children().eq(prt.index());
     } else
-    if (prt.parent().is(".tabs" )) {
+    if (prt.parent().is(".tabs")) {
         tab = prt;
-        prt = prt.parent().data("panes").children().eq(tab.index());
+        prt = prt.parent().data("labs").children().eq(tab.index());
     }
 
     if (tab) {
@@ -1893,12 +1893,12 @@ $.fn.hsClose = function() {
     var box = $(this);
     var tab;
 
-    if (prt.parent().is(".panes")) {
-        tab = prt.parent().data("tabs" ).children().eq(prt.index());
+    if (prt.parent().is(".labs")) {
+        tab = prt.parent().data("tabs").children().eq(prt.index());
     } else
-    if (prt.parent().is(".tabs" )) {
+    if (prt.parent().is(".tabs")) {
         tab = prt;
-        prt = prt.parent().data("panes").children().eq(tab.index());
+        prt = prt.parent().data("labs").children().eq(tab.index());
         box = prt.children( ".openbox" ); // Get the following boxes
     }
 
@@ -1961,18 +1961,18 @@ $.fn.hsTabs = function(rel) {
     if (! rel) {
         rel = box.attr("data-target");
         if (rel) {
-            rel = box.hsFind  ( rel );
-            /***/ rel.addClass( "panes");
+            rel = box.hsFind(rel);
         } else {
-            rel = box.siblings(".panes");
+            rel = box.next( );
         }
     }
-    box.addClass( "tabs" );
-    rel.data( "tabs", box);
-    box.data("panes", rel);
+    box.addClass( "tabs");
+    box.data("labs", rel);
+    rel.addClass( "labs");
+    rel.data("tabs", box);
 
     var act = box.children(".active" );
-    if (act.size() === 0 ) {
+    if (act.size() === 0) {
         act = box.children("li:first");
     }
     act.children("a").click();
@@ -1986,8 +1986,8 @@ $.fn.hsTadd = function(ref) {
     var pne = $(box.data("tabs")).children().eq(tab.index( ));
     if (! tab.length) {
         tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>');
-        pne = $('<div></div>' ).appendTo( box.data("panes") );
-        tab.appendTo(box).find('a').attr( 'data-hrel' , ref );
+        pne = $('<div></div>').appendTo( box.data( "labs" ) );
+        tab.appendTo(box).find( 'a' ).attr('data-hrel' , ref);
     }
     return [tab, pne];
 };
@@ -2043,10 +2043,10 @@ $.fn.hsInit = function(cnf) {
         }
         a.modal();
     } else
-    if (box.parent(".panes").size()
-    ||  box.parent().parent(".panes").size()) {
-        var a = box.closest(".panes>*");
-            a = box.closest(".panes"  )
+    if (box.parent(".labs").size()
+    ||  box.parent().parent(".labs").size()) {
+        var a = box.closest(".labs>*" );
+            a = box.closest(".labs")
                    .data("tabs").children( ).eq(a.index());
         for(var k in cnf) {
             var v =  cnf[k];
@@ -2187,7 +2187,7 @@ $.fn.hsFind = function(selr) {
         case '@':
             do {
                 var x;
-                x = elem.closest( ".panes" );
+                x = elem.closest(".labs");
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".openbox");
                 if (x.size()) { elem = x; break; }
@@ -2426,7 +2426,7 @@ function() {
     var ths = $(this);
     var tab = ths.parent();
     var nav = tab.parent();
-    var pns = nav.data("panes");
+    var pns = nav.data("labs");
     var pne = pns ? pns.children().eq(tab.index()) : $();
     if (tab.is(".dont-close")
     ||  tab.is(".back-crumb")) {
@@ -2495,7 +2495,7 @@ function() {
     nav.find('li:last a').hsClose();
     nav.find('li:last a').  click();
 })
-.on("hsReady hsRecur", ".paths.panes",
+.on("hsReady hsRecur", ".labs.laps",
 function() {
     var nav = $(this).siblings('.breadcrumb') || $(this).data("tabs");
     if (nav.children().not('.back-crumb,.home-crumb').size( )) {

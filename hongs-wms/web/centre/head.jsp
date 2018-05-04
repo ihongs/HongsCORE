@@ -197,15 +197,20 @@
         }, 10000);
         */
 
+        $("#sign-in" )
+            .click(function() {
+                var r = location.pathname + location.search + location.hash;
+                <%if ( Core.BASE_HREF.length( ) != 0 ) {%>
+                    r = r.substring( <%=Core.BASE_HREF.length( )%> );
+                <%} /*End if */%>
+                    r = encodeURIComponent( r );
+                location.replace(hsFixUri("centre/login.html?r="+r));
+            });
         $("#sign-out")
             .click(function() {
                 $.get(hsFixUri("centre/sign/delete.act"), function() {
                     location.reload();
                 });
-            });
-        $("#sign-in" )
-            .click(function() {
-                $.hsOpen("centre/manage/sign.html");
             });
         $("#user-set")
             .click(function() {

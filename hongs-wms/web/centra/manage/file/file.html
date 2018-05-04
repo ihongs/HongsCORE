@@ -5,8 +5,8 @@
      data-send-urls-0="['centra/file/delete.act','.delete','您确定要删除此文件?']"
      data-data-0="_fill_size: ( function(x, v) {return humanSize(v);} )"
      data-data-1="_empty_err: 没有文件, 您可以添加文件, 或查看下级目录!">
-    <div>
-        <div class="toolbox btn-group">
+    <div class="clearfix">
+        <div class="toolbox col-xs-12 btn-group">
             <button type="button" class="create btn btn-default">新建文件</button>
             <button type="button" class="modify for-choose btn btn-default">修改</button>
             <button type="button" class="upload btn btn-default">上传</button>
@@ -31,6 +31,24 @@
         </table>
     </div>
     <div class="pagebox"></div>
+    <div class="alert" style="margin-top:-15.75px; display:none;">
+        <h2>使用帮助</h2>
+        <p><br/></p>
+        <p style="line-height: 2em; margin-bottom: 1em;">
+            可管理网站、配置、数据等文件，
+            首先请选择需要管理的一级目录，
+            然后即可操作其下的文件或目录。
+        </p>
+        <p style="line-height: 2em; margin-bottom: 1em;">
+            仅支持查看和编辑常规文本文件，
+            但禁止操作服务端可运行的文件，
+            务必谨慎修改配置或数据等文件。
+        </p>
+        <p style="line-height: 2em;">
+            <b>祝您使用顺利！</b>
+        </p>
+        <p><br/></p>
+    </div>
     <form class="invisible">
         <input type="file" name="file"/>
     </form>
@@ -46,7 +64,8 @@
             context.removeAttr ( "data-load-url" );
             toolBox.find(".btn").prop("disabled" , true);
             listBox.hide( );
-            pageBox.empty().append('<div class="alert alert-warning">可管理网站、配置、数据等文件, 请先选择下级目录, 然后可对其下文件进行操作.</div>');
+            pageBox.hide( );
+            context.find(".alert").show();
         }
         
         context.on("click", ".create", function() {

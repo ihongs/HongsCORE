@@ -5,10 +5,16 @@
     {font-size: 15px;}
 .cols-form .form-group ul
     {padding-left: 0;}
-.cols-form .record-form .glyphicon,
+.cols-form .widget-form  ul,
+.cols-form .widget-form  input,
+.cols-form .widget-form .form-control
+    {display: none;}
+.cols-form .target-form .control-label
+    {cursor : move;}
+.cols-form .widget-form .glyphicon,
 .cols-form .target-form .glyphicon,
-.cols-form .widget-form .glyphicon
-    {display: none; color: #aaa; margin: 4px 0 0 8px;}
+.cols-form .record-form .glyphicon
+    {display: none; margin: 4px 0 0 8px; cursor: pointer; color: #2780E3;}
 .cols-form .widget-form .glyphicon.glyphicon-plus-sign,
 .cols-form .target-form .glyphicon.glyphicon-info-sign,
 .cols-form .target-form .glyphicon.glyphicon-remove-sign

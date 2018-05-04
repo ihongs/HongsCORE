@@ -37,17 +37,17 @@
                     <form action="centra/sign/create.act?ab=.errs" data-module="hsForm" class="col-lg-6" id="sign-in-form">
                         <input type="hidden" name="place" value="centra"/>
                         <div class="form-group">
-                            <input name="username" type="text" value="abc@def.cn" placeholder="username" class="form-control i18n" required="required"/>
+                            <input name="username" type="text"     value="" placeholder="username" class="form-control i18n" required="required"/>
                         </div>
                         <div class="form-group">
-                            <input name="password" type="password" value="123456" placeholder="password" class="form-control i18n" required="required"/>
+                            <input name="password" type="password" value="" placeholder="password" class="form-control i18n" required="required"/>
                         </div>
                         <div class="form-group row">
                             <div class="col-sm-6">
                                 <input name="captcode" type="text" value="" placeholder="captcode" class="form-control i18n" required="required" autocomplete="off"/>
                             </div>
                             <div class="col-sm-6">
-                                <img src="centre/capt/create.act?b=222222&f=cccccc&h=43" onclick="this.src='centre/capt/create.act?b=222222&f=cccccc&h=43&_='+Math.random()" title="看不清? 点一下换一个."/>
+                                <img src="" alt="" class="hide" title="看不清? 点一下换一个."/>
                             </div>
                             <div class="col-sm-12 help-block"></div>
                         </div>
@@ -66,12 +66,27 @@
         <script type="text/javascript">
             (function($) {
                 var context = $("#sign-in-form" ).removeAttr("id");
-                context.on("saveFail", function() {
-                    context.find("[name=captcode]").val("");
-                    context.find( "img" ).click();
-                });
+
+                // 表单
                 context.on("saveBack", function() {
                     location.replace(hsFixUri(hsGetParam(location.href, "r") || "centra/"));
+                });
+                context.on("saveFail", function() {
+                    context.find( "img" ).click();
+                    context.find("[name=captcode]").val("");
+                });
+
+                // 验证
+                context.find(".form-group img").click(function() {
+                    $(this).attr("src", "centre/capt/create.act?b=222222&f=cccccc&h=43&_="
+                    + Math.random( ));
+                });
+                context.find("[name=captcode]").focus(function() {
+                    var img = $(this).closest(".form-group").find("img");
+                    if (img.attr("src") == "" ) {
+                        img.attr("class" , "" )
+                           .click(  );
+                    }
                 });
             })(jQuery);
         </script>

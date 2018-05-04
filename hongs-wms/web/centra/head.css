@@ -22,7 +22,7 @@ html, body {
     background: #282828;
     min-width: 150px;
     max-width: 300px;
-    width: 15%;
+    width: 12.5%;
 }
 #bodybox {
     display: table-cell;
@@ -66,23 +66,26 @@ html, body {
     background: #090909;
 }
 
-#user-menubar li a {
-    font-size: 12px;
+#main-menubar li a {
+    font-weight: bolder;
+}
+#user-menubar li a,
+#main-menubar li li a {
+    font-weight: normal;
+}
+
+.menubox li a {
+    font-weight: bolder;
+    padding: 6px 4px 6px 15px;
+}
+.menubox li li a {
+    font-weight: normal;
+    padding: 6px 4px 6px 30px;
 }
 .menubox ul {
     margin-left: 0;
     padding-left: 0;
     list-style: none;
-}
-.menubox li a {
-    font-size: 15px;
-    line-height: 17px;
-    padding: 6px 4px 6px 15px;
-}
-.menubox li li a {
-    font-size: 12px;
-    line-height: 14px;
-    padding: 4px 4px 4px 30px;
 }
 .menubox li a  {
     display: block;

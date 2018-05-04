@@ -67,6 +67,7 @@
             (function($) {
                 var context = $("#sign-in-form" ).removeAttr("id");
                 context.on("saveFail", function() {
+                    context.find("[name=captcode]").val("");
                     context.find( "img" ).click();
                 });
                 context.on("saveBack", function() {

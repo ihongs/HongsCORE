@@ -240,6 +240,15 @@
                             <span>系统字段</span>
                         </legend>
                     </div>
+                    <div class="form-group" data-type="state">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>状态</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="enum" name="state" data-default="1" data-editable="no" data-:1="正常"/>
+                    </div>
                     <div class="form-group base-field" data-type="ctime">
                         <label class="control-label clearfix" style="display: block;">
                             <span>创建时间</span>
@@ -602,7 +611,7 @@
                 </label>
             </div>
         </div>
-        <div class="widget-pane widget-pane-cuid widget-pane-muid widget-pane-ctime widget-pane-mtime">
+        <div class="widget-pane widget-pane-cuid widget-pane-muid widget-pane-ctime widget-pane-mtime widget-pane-state">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>

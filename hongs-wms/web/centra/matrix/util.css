@@ -9,7 +9,8 @@
 .cols-form .widget-form  input,
 .cols-form .widget-form .form-control
     {display: none;}
-.cols-form .target-form .control-label
+.cols-form .target-form .control-label,
+.cols-form .detail-set  .ui-sortable-handle
     {cursor : move;}
 .cols-form .widget-form .glyphicon,
 .cols-form .target-form .glyphicon,

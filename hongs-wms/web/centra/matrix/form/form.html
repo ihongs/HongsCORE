@@ -36,11 +36,6 @@
                         </label>
                         <textarea class="form-control" name="note"></textarea>
                     </div>
-                    <div class="form-group">
-                        <div class="form-control-static">
-                            点击备选字段上的“+”符号可将字段加入
-                        </div>
-                    </div>
                     <div class="invisible">
                         <button type="submit"/>
                     </div>
@@ -48,6 +43,11 @@
             </div>
             <div data-module="hsForm">
                 <form class="target-form">
+                    <div class="form-group" data-type="line">
+                        <legend class="clearfix" data-valtype="text">
+                            <span>表单字段</span>
+                        </legend>
+                    </div>
                     <div class="target-area"></div>
                     <div class="form-group clearfix">
                         <div class="pull-left" >
@@ -295,6 +295,13 @@
                         <input class="invisible" type="" name="-"/>
                     </div>
                 </form>
+            </div>
+            <div class="col-xs-12">
+                <hr/>
+                点击<span class="glyphicon glyphicon-plus-sign"></span>将字段加入表单,
+                点击<span class="glyphicon glyphicon-info-sign"></span>可设置详细参数,
+                点击<span class="glyphicon glyphicon-remove-sign"></span>从表单移除字段.
+                <br/><br/>
             </div>
         </div>
     </div>

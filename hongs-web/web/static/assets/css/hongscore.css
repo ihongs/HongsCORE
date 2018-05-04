@@ -78,7 +78,7 @@ legend {
     line-height: 1.42857143;
 }
 .btn .glyphicon {
-    font-size: 12px;
+    font-size : 0.8em;
 }
 select.form-control[multiple],
 textarea.form-control {

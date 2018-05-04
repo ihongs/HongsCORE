@@ -659,19 +659,19 @@ public class Form extends Model {
                 if (k.startsWith("__")) {
                     continue;
                 }
-                if (k.startsWith( "." )
-                ||  k.startsWith( ":")) {
+                if (k.startsWith( "." )   // 外部预置数据
+                ||  k.startsWith( ":")) { // 内部预置数据
                     if (preset == null) {
                         preset =  new  LinkedHashMap();
                     }
                     String  l;
-                    if (n.equals( "@")) {
+                    if (n.equals( "@")) { // 表单预置数据
                         int p = k.indexOf('.', 1);
                         if (p == -1) continue;
                         l = k.substring(1+ p);
                         k = k.substring(0, p);
                         k = id + k ;
-                    } else {
+                    } else {              // 一般枚举选项
                         l = k.substring(1   );
                         k = n;
                     }

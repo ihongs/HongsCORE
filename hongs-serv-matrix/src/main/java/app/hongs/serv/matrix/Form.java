@@ -653,19 +653,20 @@ public class Form extends Model {
                 String k = (String) et.getKey(  );
                 String v = (String) et.getValue();
 
-                if (k== null || v== null) {
+                if (k==null || v==null) {
                     continue;
                 }
-                if (k.startsWith( "__" )) {
+                if (k.startsWith("__")) {
                     continue;
                 }
-                if (k.startsWith( ":"  )) {
-                    if (preset == null )  {
+                if (k.startsWith( "." )
+                ||  k.startsWith( ":")) {
+                    if (preset == null) {
                         preset =  new  LinkedHashMap();
                     }
                     String  l;
-                    if (n.equals( "@"  )) {
-                        int p=k.indexOf('.' );
+                    if (n.equals( "@")) {
+                        int p = k.indexOf('.', 1);
                         if (p == -1) continue;
                         l = k.substring(1+ p);
                         k = k.substring(0, p);

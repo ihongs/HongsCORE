@@ -1,7 +1,7 @@
 <h2>{DO}表单</h2>
 <div id="matrix-form-form" class="cols-form" data-module="hsCols">
     <div class="clearfix">
-        <div class="col-xs-6">
+        <div class="col-xs-6" style="padding-left: 0;">
             <div data-module="hsForm"
                  data-load-url="centra/matrix/form/info.act?id=${id}"
                  data-save-url="centra/matrix/form/save.act">
@@ -36,6 +36,11 @@
                         </label>
                         <textarea class="form-control" name="note"></textarea>
                     </div>
+                    <div class="form-group">
+                        <div class="form-control-static">
+                            点击备选字段上的“+”符号可将字段加入
+                        </div>
+                    </div>
                     <div class="invisible">
                         <button type="submit"/>
                     </div>
@@ -43,11 +48,6 @@
             </div>
             <div data-module="hsForm">
                 <form class="target-form">
-                    <div class="form-group" data-type="line">
-                        <legend class="clearfix" data-valtype="text">
-                            <span>点击备选字段上的“+”符号可将字段加入</span>
-                        </legend>
-                    </div>
                     <div class="target-area"></div>
                     <div class="form-group clearfix">
                         <div class="pull-left" >
@@ -69,227 +69,233 @@
         </div>
 
         <!-- 备选字段 -->
-        <div class="col-xs-6" style="background: #f8f8f8; padding-top: 15px;">
-            <form class="widget-form" onsubmit="return false;">
-                <div class="form-group" data-type="line">
-                    <legend class="clearfix" data-valtype="text">
-                        <span>分隔</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </legend>
-                    <input type="line" name="-" style="display: none;" data-listable="no"/>
-                </div>
-                <div class="form-group base-field" data-type="name">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>名称</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-srchable="true" data-nameable="true" required="required"/>
-                </div>
-                <div class="form-group base-field" data-type="note">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>简介</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-srchable="true"/>
-                </div>
-                <div class="form-group base-field" data-type="tags">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>标签</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-fitrable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
-                </div>
-                <div class="form-group base-field" data-type="logo">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>图标</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <ul class="pickbox" data-fn="logo" data-ft="_file" data-thumb-size="300*300" data-thumb-mode="pick" data-listable="true" data-__type__="image" data-__rule__="Thumb"></ul>
-                    <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
-                </div>
-                <div class="form-group">
-                    <legend class="clearfix" data-valtype="text">
-                        <span>自定字段</span>
-                    </legend>
-                </div>
-                <div class="form-group" data-type="text">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>单行文本</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="-" type="text" placeholder="请输入..."/>
-                </div>
-                <div class="form-group" data-type="email">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>邮箱</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="-" type="email" placeholder="请输入电子邮箱"/>
-                </div>
-                <div class="form-group" data-type="url">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>网址</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="-" type="url" placeholder="请输入链接地址"/>
-                </div>
-                <div class="form-group" data-type="tel">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>电话</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="-" type="tel" placeholder="请输入电话号码"/>
-                </div>
-                <div class="form-group" data-type="number">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>数字</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="-" type="number" placeholder="请输入数字"/>
-                </div>
-                <div class="form-group" data-type="date">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>日期</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="form-control" name="-" type="date"/>
-                </div>
-                <div class="form-group" data-type="textarea">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>多行文本</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
-                </div>
-                <div class="form-group" data-type="select">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>选项</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <select class="form-control" name="-" style="min-height: auto; max-height: 4em;">
-                        <option value="">--请选择--</option>
-                    </select>
-                </div>
-                <div class="form-group" data-type="image">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>图片</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <ul class="pickbox" data-fn="-" data-ft="_file" data-thumb-size="300*300" data-thumb-mode="pick"></ul>
-                    <input type="file" name="-" class="form-ignored invisible" accept="image/*"/>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
-                </div>
-                <div class="form-group" data-type="file">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>文件</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <ul class="pickbox" data-fn="-" data-ft="_file"></ul>
-                    <input type="file" name="-" class="form-ignored invisible"/>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsFile"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
-                </div>
-                <div class="form-group" data-type="fork">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>关联</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <ul class="pickbox" data-fn="-" data-ft="_fork"></ul>
-                    <input type="text" name="-" class="form-ignored invisible"/>
-                    <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="centra/matrix/form/pick.html" data-vk="id" data-tk="name"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
-                </div>
-                <div class="form-group">
-                    <legend class="clearfix" data-valtype="text">
-                        <span>系统字段</span>
-                    </legend>
-                </div>
-                <div class="form-group base-field" data-type="ctime">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>创建时间</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="=%now" data-default-create="yes" data-default-always="yes" data-editable="no"/>
-                </div>
-                <div class="form-group base-field" data-type="mtime">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>修改时间</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="=%now" data-default-create="no" data-default-always="yes" data-editable="no"/>
-                </div>
-                <div class="form-group base-field" data-type="cuid">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>创建用户</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="invisible" type="fork" name="cuid" data-verify-type="string" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-editable="no" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
-                </div>
-                <div class="form-group base-field" data-type="muid">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>修改用户</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="invisible" type="fork" name="muid" data-verify-type="string" data-default="=$uid" data-default-create="no" data-default-always="yes" data-editable="no" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
-                </div>
-                <div class="form-group base-field" data-type="_">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>表单设置</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="invisible" type="" name="@"/>
-                </div>
-                <div class="form-group base-field" data-type="-" style="display: none;">
-                    <label class="control-label clearfix" style="display: block;">
-                        <span>自定字段</span>
-                        <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                        <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                    </label>
-                    <input class="invisible" type="" name="-"/>
-                </div>
-            </form>
+        <div class="col-xs-6" style="padding-top: 15px; background: #f5f5f5;">
+            <div class="col-xs-6">
+                <form class="widget-form" onsubmit="return false;">
+                    <div class="form-group" data-type="line">
+                        <legend class="clearfix" data-valtype="text">
+                            <span>分隔</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </legend>
+                        <input type="line" name="-" style="display: none;" data-listable="no"/>
+                    </div>
+                    <div class="form-group" data-type="text">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>文本</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="-" type="text" placeholder="请输入..."/>
+                    </div>
+                    <div class="form-group" data-type="email">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>邮箱</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="-" type="email" placeholder="请输入电子邮箱"/>
+                    </div>
+                    <div class="form-group" data-type="url">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>网址</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="-" type="url" placeholder="请输入链接地址"/>
+                    </div>
+                    <div class="form-group" data-type="tel">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>电话</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="-" type="tel" placeholder="请输入电话号码"/>
+                    </div>
+                    <div class="form-group" data-type="number">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>数字</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="-" type="number" placeholder="请输入数字"/>
+                    </div>
+                    <div class="form-group" data-type="date">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>日期</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="-" type="date"/>
+                    </div>
+                    <div class="form-group" data-type="select">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>选项</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <select class="form-control" name="-" style="min-height: auto; max-height: 4em;">
+                            <option value="">--请选择--</option>
+                        </select>
+                    </div>
+                    <div class="form-group" data-type="textarea">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>多行文本</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
+                    </div>
+                    <div class="form-group" data-type="image">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>图片</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <ul class="pickbox" data-fn="-" data-ft="_file" data-thumb-size="300*300" data-thumb-mode="pick"></ul>
+                        <input type="file" name="-" class="form-ignored invisible" accept="image/*"/>
+                        <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
+                    </div>
+                    <div class="form-group" data-type="file">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>文件</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <ul class="pickbox" data-fn="-" data-ft="_file"></ul>
+                        <input type="file" name="-" class="form-ignored invisible"/>
+                        <button class="btn btn-default form-control" type="button" data-toggle="hsFile"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
+                    </div>
+                    <div class="form-group" data-type="fork">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>关联</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <ul class="pickbox" data-fn="-" data-ft="_fork"></ul>
+                        <input type="text" name="-" class="form-ignored invisible"/>
+                        <button class="btn btn-default form-control" type="button" data-toggle="hsPick" data-target="@" data-href="centra/matrix/form/pick.html" data-vk="id" data-tk="name"><i class="glyphicon glyphicon-th-list"></i>选择...</button>
+                    </div>
+                </form>
+            </div>
+            <div class="col-xs-6">
+                <form class="widget-form" onsubmit="return false;">
+                    <div class="form-group">
+                        <legend class="clearfix" data-valtype="text">
+                            <span>常用字段</span>
+                        </legend>
+                    </div>
+                    <div class="form-group base-field" data-type="name">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>名称</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-srchable="true" data-nameable="true" required="required"/>
+                    </div>
+                    <div class="form-group base-field" data-type="note">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>简介</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-srchable="true"/>
+                    </div>
+                    <div class="form-group base-field" data-type="tags">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>标签</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-fitrable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
+                    </div>
+                    <div class="form-group base-field" data-type="logo">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>图标</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <ul class="pickbox" data-fn="logo" data-ft="_file" data-thumb-size="300*300" data-thumb-mode="pick" data-listable="true" data-__type__="image" data-__rule__="Thumb"></ul>
+                        <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
+                        <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
+                    </div>
+                    <div class="form-group">
+                        <legend class="clearfix" data-valtype="text">
+                            <span>系统字段</span>
+                        </legend>
+                    </div>
+                    <div class="form-group base-field" data-type="ctime">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>创建时间</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="=%now" data-default-create="yes" data-default-always="yes" data-editable="no"/>
+                    </div>
+                    <div class="form-group base-field" data-type="mtime">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>修改时间</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="=%now" data-default-create="no" data-default-always="yes" data-editable="no"/>
+                    </div>
+                    <div class="form-group base-field" data-type="cuid">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>创建用户</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="fork" name="cuid" data-verify-type="string" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-editable="no" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
+                    </div>
+                    <div class="form-group base-field" data-type="muid">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>修改用户</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="fork" name="muid" data-verify-type="string" data-default="=$uid" data-default-create="no" data-default-always="yes" data-editable="no" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
+                    </div>
+                    <div class="form-group base-field" data-type="_">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>表单设置</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="" name="@"/>
+                    </div>
+                    <div class="form-group base-field" data-type="-" style="display: none;">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>自定字段</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="" name="-"/>
+                    </div>
+                </form>
+            </div>
         </div>
     </div>
 

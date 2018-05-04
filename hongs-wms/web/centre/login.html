@@ -20,41 +20,93 @@
     <body>
         <div class="jumbotron" style="margin-top: 2em; background-color: #222; color: #ccc;">
             <div class="container">
-                <h1 data-i18n="welcome0">Hello!</h1>
-                <p> <span data-i18n="welcome1">Welcome to</span>
-                    <!--<span style="color:#f08" class="glyphicon glyphicon-fire"></span>-->
-                    <span style="color:#f00">&nbsp;H</span>
-                    <span style="color:#f22">o</span>
-                    <span style="color:#f44">n</span>
-                    <span style="color:#f66">g</span>
-                    <span style="color:#f88">s</span>
-                    <span style="color:#faa">C</span>
-                    <span style="color:#fbb">O</span>
-                    <span style="color:#fcc">R</span>
-                    <span style="color:#fdd">E&nbsp;</span>
-                    <span data-i18n="welcome2">management information systems. Please login...</span></p>
-                <div class="row">
-                    <form action="centre/sign/create.act?ab=.errs" data-module="hsForm" class="col-lg-6" id="sign-in-form">
-                        <input type="hidden" name="place" value="centre"/>
-                        <div class="form-group">
-                            <input name="username" type="text" value="abc@def.cn" placeholder="username" class="form-control i18n" required="required"/>
-                        </div>
-                        <div class="form-group">
-                            <input name="password" type="password" value="123456" placeholder="password" class="form-control i18n" required="required"/>
-                        </div>
-                        <div class="form-group row">
-                            <div class="col-sm-6">
-                                <input name="captcode" type="text" value="" placeholder="captcode" class="form-control i18n" required="required" autocomplete="off"/>
+                <ol class="row nav nav-tabs" style="padding-left: 25%;" data-toggle="hsTabs">
+                    <li style="margin-left: 21px;"><a href="javascrpit:;" data-hash="#in">登录</a></li>
+                    <li style="margin-left: 21px;"><a href="javascript:;" data-hash="#on">注册</a></li>
+                </ol>
+                <div class="labs">
+                    <div>
+                        <form action="centre/sign/create.act?ab=.errs" data-module="hsForm" id="sign-in-form" class="form-horizontal">
+                            <input type="hidden" name="place" value="centre"/>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">用户名</label>
+                                <div class="col-sm-6">
+                                    <input name="username" type="text"     value="" class="form-control" required="required"/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
                             </div>
-                            <div class="col-sm-6">
-                                <img src="centre/capt/create.act?b=222222&f=cccccc&h=43" onclick="this.src='centre/capt/create.act?b=222222&f=cccccc&h=43&_='+Math.random()" title="看不清? 点一下换一个."/>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">密　码</label>
+                                <div class="col-sm-6">
+                                    <input name="password" type="password" value="" class="form-control" required="required"/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
                             </div>
-                            <div class="col-sm-12 help-block"></div>
-                        </div>
-                        <div>
-                            <button type="submit" class="btn btn-primary btn-lg" data-i18n="login">Sign in Now</button>
-                        </div>
-                    </form>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">验证码</label>
+                                <div class="col-sm-3">
+                                    <input name="captcode" type="text"     value="" class="form-control" required="required" autocomplete="off"/>
+                                </div>
+                                <div class="col-sm-3">
+                                    <img src="" alt="" class="hide" title="看不清? 点一下换一个."/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <button type="submit" class="btn btn-lg btn-primary">立即登录</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div>
+                        <form action="centre/sign/user/create.act?ab=.errs" data-module="hsForm" id="sign-on-form" class="form-horizontal">
+                            <input type="hidden" name="place" value="centre"/>
+                            <div class="form-group riw">
+                                <label class="col-sm-3 control-label">名　称</label>
+                                <div class="col-sm-6">
+                                    <input name="name"     type="text"     value="" class="form-control" required="required"/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">用户名</label>
+                                <div class="col-sm-6">
+                                    <input name="username" type="text"     value="" class="form-control" required="required" data-unique="centre/sign/user/unique.act"/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">密　码</label>
+                                <div class="col-sm-6">
+                                    <input name="password" type="password" value="" class="form-control" required="required" data-relate="passcode" placeholder="请输入密码"/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">　　　</label>
+                                <div class="col-sm-6">
+                                    <input name="passcode" type="password" value="" class="form-control" required="required" data-repeat="password" placeholder="请重复密码"/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
+                            </div>
+                            <div class="form-group row">
+                                <label class="col-sm-3 control-label">验证码</label>
+                                <div class="col-sm-3">
+                                    <input name="captcode" type="text"     value="" class="form-control" required="required" autocomplete="off"/>
+                                </div>
+                                <div class="col-sm-3">
+                                    <img src="" alt="" class="hide" title="看不清? 点一下换一个."/>
+                                </div>
+                                <div class="col-sm-3 help-block form-control-static"></div>
+                            </div>
+                            <div class="form-group row">
+                                <div class="col-sm-6 col-sm-offset-3">
+                                    <button type="submit" class="btn btn-lg btn-primary">开始注册</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -65,14 +117,38 @@
         </nav>
         <script type="text/javascript">
             (function($) {
-                var context = $("#sign-in-form" ).removeAttr("id");
-                context.on("saveFail", function() {
-                    context.find("[name=captcode]").val("");
-                    context.find( "img" ).click();
-                });
+                var context = $("#sign-in-form,#sign-on-form").removeAttr("id");
+
+                // 表单
                 context.on("saveBack", function() {
                     location.replace(hsFixUri(hsGetParam(location.href, "r") || "centre/"));
                 });
+                context.on("saveFail", function() {
+                    context.find( "img" ).click();
+                    context.find("[name=captcode]").val("");
+                });
+
+                // 验证
+                context.find(".form-group img").click(function() {
+                    $(this).attr("src", "centre/capt/create.act?b=222222&f=cccccc&h=43&_="
+                    + Math.random( ));
+                });
+                context.find("[name=captcode]").focus(function() {
+                    var img = $(this).closest(".form-group").find("img");
+                    if (img.attr("src") == "" ) {
+                        img.attr("class" , "" )
+                           .click(  );
+                    }
+                });
+
+                // 页签
+                $("[data-hash]").click(function() {
+                     location.hash = $(this).attr("data-hash");
+                });
+                if ( location.hash ) {
+                    $( '[data-hash="' + location.hash + '"]' )
+                          .parent( ).attr( "class", "active" );
+                }
             })(jQuery);
         </script>
     </body>

@@ -115,6 +115,18 @@ function loadConf(modal, field) {
                     }
                     x += t + "\r\n";
                 });
+                field.find(name).find( "input").each(function() {
+                    var s = $(this).prop( "checked");
+                    var t = $(this).next().text();
+                    var v = $(this).val ();
+                    if (s) {
+                        x +=   "!!";
+                    }
+                    if (t !== v) {
+                        x += v+"::";
+                    }
+                    x += t + "\r\n";
+                });
                 $(this).val(x);
             } else
             if ($(this).is(":checkbox")) {
@@ -219,9 +231,20 @@ function saveConf(modal, field) {
                           ? $.trim(z[1])
                           : v;
                     // 选项
-                    var o = $('<option></option>');
-                    o.prop("selected", s === true);
-                    o.text(t).val(v).appendTo( n );
+                    if (n.is("select") ) {
+                        var o = $('<option></option>');
+                        o.prop("selected", s === true);
+                        o.text(t).val(v).appendTo( n );
+                    } else {
+                        var o = $('<input type="'+(n.is(".checkbox")?"checkbox":"radio")+'"/>');
+                        var w = $( '<label></label>' );
+                        var s = $(  '<span></span>'  );
+                        o.prop( "checked", s === true);
+                        o.attr("name", n.data( "fn" ));
+                        o.val (v).appendTo( w );
+                        s.text(t).appendTo( w );
+                        w.appendTo( n );
+                    }
                 }
             } else
             if ($(this).is(":checkbox")) {
@@ -309,7 +332,8 @@ function gainFlds(fields, area) {
             name  = "" ;
         }
 
-        if (type =="ul") {
+        if (type == "ul"
+        ||  type == "div" ) {
             type  = $(this).data("type");
         }
         if (type =="image") {
@@ -342,12 +366,25 @@ function gainFlds(fields, area) {
                 params[k] = v;
             }
         }
-        if (input.is("select")) {
+        if (input.is("select") ) {
             var datalist = [];
             var selected = [];
             input.find("option").each(function() {
                 datalist.push([$(this).val(), $(this).text()]);
                 if ($(this).prop("selected")) {
+                selected.push( $(this).val());
+                }
+            });
+            input.change();
+            params["datalist"] = JSON.stringify(datalist);
+            params["selected"] = JSON.stringify(selected);
+        } else
+        if (input.is(".check") ) {
+            var datalist = [];
+            var selected = [];
+            input.find( "input").each(function() {
+                datalist.push([$(this).val(), $(this).next().text()]);
+                if ($(this).prop( "checked")) {
                 selected.push( $(this).val());
                 }
             });
@@ -411,7 +448,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         ||  input.is("input[type='']")) {
             input = setItemType(input, type);
         }
-        if (input.is( "ul" ) ) {
+        if (input.is("ul,div")) {
             input.attr("data-fn", name);
             input.attr("data-required", required);
             input.attr("data-repeated", repeated);
@@ -429,11 +466,12 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 continue;
             }
             if (k === "datalist") {
-                if (input.is("input")) {
+                if (input.is( "input")) {
 //                  var datalist = JSON.parse(field["datalist"]) || [];
 //                  input.attr("data-datalist", strDataList(datalist));
                     input.attr("data-datalist", field[k] );
-                } else {
+                } else
+                if (input.is("select")) {
                     input.empty();
                     var datalist = JSON.parse(field["datalist"]) || [];
                     var selected = JSON.parse(field["selected"]) || [];
@@ -443,6 +481,22 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                         o.val(a[0]).text(a[1]).appendTo(input);
                     }
                     input.val(selected);
+                } else {
+                    input.empty();
+                    var datalist = JSON.parse(field["datalist"]) || [];
+                    var selected = JSON.parse(field["selected"]) || [];
+                    var ct = input.is(".radio") ? "radio" : "checkbox";
+                    for(var j = 0; j < datalist.length; j ++ ) {
+                        var a = datalist[j];
+                        var o = $('<input type="' + ct + '">');
+                        var w = $('<label></label>');
+                        var s = $( '<span></span>' );
+                        o.attr("name" , input.attr("data-fn"));
+                        o.val (a[0]).appendTo(w);
+                        s.text(a[1]).appendTo(w);
+                        w.appendTo(input);
+                    }
+                    input.find(":"+ct).val(selected);
                 }
                 continue;
             }
@@ -525,23 +579,26 @@ $.fn.hsCols = function() {
     // 添加字段
     widgets.on("click", ".glyphicon-plus-sign", function() {
         // 预定字段不能重复添加
-        var item = $(this).closest(".form-group");
-        if (item.is(".base-field")) {
-            var name = item.attr("data-type");
-            if (targetz.find("[data-type='"+ name +"']").size()) {
-                $.hsWarn("预定字段不可重复添加, 请检查已设字段");
-                return;
-            }
-        }
+        var group = $(this).closest(".form-group");
+        if (group.is(".base-field")) {
+            group = targetz.find("[data-type='"+group.attr("data-type")+"']");
+        if (group.size( )  !==  0  ) {
+            $.hsWarn("此字段不可重复添加, 请检查已设字段");
+            return;
+        }}
 
-        field = $(this).closest(".form-group").clone();
-        targetz.append( field);
+        field = $(this).closest(".form-group")
+                .clone( ).appendTo ( targetz );
 
         // 立即打开自定字段设置
-        var input = field.find ("[name='-']" );
-        if (input.size() != 0) {
-            input.attr("name", "-"+(index ++));
-            field.find(".glyphicon-info-sign").click();
+        var input = field.find("[name='-'],[data-fn='-']");
+        if (input.size()) {
+            index ++;
+            input.filter("[name='-']"   )
+                 .attr  ( "name"   , "-" + index);
+            input.filter("[data-fn='-']")
+                 .attr  ( "data-fn", "-" + index);
+            field.find  (".glyphicon-info-sign" ).click( );
         }
     });
 

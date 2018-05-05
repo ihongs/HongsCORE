@@ -282,6 +282,7 @@ var EXTN_TO_MODE = {
     ls          : ["livescript", "livescript"],
     coffee      : ["coffeescript", "coffeescript"],
     jsx         : ["jsx", "jsx"],
+    vue         : ["vue", "vue"],
     /* XML 家族 */
     xml         : ["xml", "xml"],
     xsd         : ["xml", "xml"],
@@ -289,9 +290,11 @@ var EXTN_TO_MODE = {
     htm         : ["htmlmixed", "text/html"],
     jsp         : ["htmlembedded", "text/jsp" ],
     asp         : ["htmlembedded", "text/aspx"],
-    /* 脚本 */
-    ps1         : ["powershell", "powershell"],
-    sh          : ["shell", "shell"],
+    /* 其他程序 */
+    go          : ["go", "go"],
+    dart        : ["dart", "dart"],
+    rust        : ["rust", "rust"],
+    swift       : ["swift", "swift"],
     py          : ["python", "python"],
     rb          : ["ruby", "ruby"],
     pl          : ["perl", "perl"],
@@ -299,15 +302,13 @@ var EXTN_TO_MODE = {
     php         : ["php", "php"],
     lua         : ["lua", "lua"],
     sql         : ["sql", "sql"],
-    /* 其他 */
-    go          : ["go", "go"],
-    dart        : ["dart", "dart"],
-    rust        : ["rust", "rust"],
-    swift       : ["swift", "swift"],
+    sh          : ["shell", "shell"],
+    ps1         : ["powershell", "powershell"],
+    /* 其他代码 */
     css         : ["css", "css"],
     scss        : ["css", "text/x-scss"],
     less        : ["css", "text/x-less"],
     md          : ["markdown", "markdown"],
-    protobuf    : ["protobuf", "protobuf"],
+    proto       : ["protobuf", "protobuf"],
     properties  : ["properties", "properties"]
 };

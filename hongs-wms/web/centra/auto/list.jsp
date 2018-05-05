@@ -68,9 +68,7 @@
         <div class="filt-group form-group form-group-sm clearfix">
             <label class="col-xs-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-xs-6">
-            <%if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
-                <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
-            <%} else if ("number".equals(type) || "range".equals(type)) {%>
+            <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
                     <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" />
                     <span class="input-group-addon input-sm">~</span>
@@ -109,6 +107,8 @@
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="ar.0.<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+            <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+                <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
             <%} else {%>
                 <input type="text" class="form-control" name="ar.0.<%=name%>" />
             <%} /*End If */%>

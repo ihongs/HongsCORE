@@ -438,15 +438,7 @@
                 <input class="form-control" type="text" name="input|placeholder" value=""/>
             </div>
             <div class="form-group">
-                <label class="control-label">类型</label>
-                <select class="form-control" name="input|type">
-                    <option value="number">数字</option>
-                    <option value="range">区间</option>
-                    <option value="color">颜色</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label class="control-label">范围</label>
+                <label class="control-label">取值范围</label>
                 <div class="control-group">
                     <input class="form-control" type="number" name="input|min" value="" style="display: inline-block; width: 8em;"/>
                     <span>&nbsp;~&nbsp;</span>
@@ -484,7 +476,7 @@
             </div>
             <input type="hidden" name="input|data-type" value="timestamp"/>
             <div class="form-group">
-                <label class="control-label">类型</label>
+                <label class="control-label">精度类型</label>
                 <select class="form-control" name="input|type">
                     <option value="datetime">日期时间</option>
                     <option value="date">日期</option>
@@ -492,7 +484,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="control-label">范围</label>
+                <label class="control-label">取值范围</label>
                 <div class="control-group">
                     <input class="form-control" type="datetime" name="input|mindate" value="" style="display: inline-block; width: 10em;"/>
                     <span>&nbsp;~&nbsp;</span>
@@ -585,7 +577,7 @@
                 <input class="form-control" type="text" name="textarea|placeholder" value=""/>
             </div>
             <div class="form-group">
-                <label class="control-label">类型</label>
+                <label class="control-label">内容类型</label>
                 <select class="form-control" name="textarea|data-type">
                     <option value="">文本</option>
                     <option value="html">富文本</option>
@@ -593,17 +585,28 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="control-label">格式</label>
+                <label class="control-label">代码格式</label>
                 <select class="form-control" name="textarea|data-mode">
-                    <option value="html">html</option>
-                    <option value="css">css</option>
-                    <option value="js">js</option>
-                    <option value="py">py</option>
-                    <option value="sh">sh</option>
-                    <option value="md">md</option>
-                    <option value="lua">lua</option>
-                    <option value="sql">sql</option>
-                    <option value="xml">xml</option>
+                    <option value="html">Html</option>
+                    <option value="xml">XML</option>
+                    <option value="css">CSS</option>
+                    <option value="js">Javascript</option>
+                    <option value="ts">Typescript</option>
+                    <option value="c">C</option>
+                    <option value="cs">C#</option>
+                    <option value="cpp">C++</option>
+                    <option value="m">Objective-C</option>
+                    <option value="java">Java</option>
+                    <option value="scala">Scala</option>
+                    <option value="groovy">Groovy</option>
+                    <option value="kotlin">Kotlin</option>
+                    <option value="py">Python</option>
+                    <option value="sh">Shell</option>
+                    <option value="lua">Lua</option>
+                    <option value="sql">SQL</option>
+                    <option value="md">Markdown</option>
+                    <option value="protobuf">Protobuf</option>
+                    <option value="properties">Properties</option>
                 </select>
             </div>
             <div class="form-group">

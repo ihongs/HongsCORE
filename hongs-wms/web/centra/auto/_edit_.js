@@ -204,17 +204,18 @@ function setMirror(node, func) {
     forMirror(function() {
         node.each(function() {
             var that = $(this);
+            var read = $(this).prop ("readonly") && "nocursor";
             var mode = $(this).data ("mode")
                   ||   $(this).data ("type");
                 mode = getModeByName( mode );
             hsRequires([
-                "static/addons/codemirror/mode/"+mode+"/"+mode+".js"
+                "static/addons/codemirror/mode/"+mode[0]+"/"+mode[0]+".js"
             ] , function() {
                 if (that.is("textarea")) {
                     var cm = CodeMirror.fromTextArea(that[0], {
-                        mode        : mode,
-                        lineNumbers : true,
-                        readOnly    : that.prop("readonly") && "nocursor"
+                        mode        : mode[1],
+                        readOnly    : read,
+                        lineNumbers : true
                     });
 
                     var cw = $(cm.getWrapperElement());
@@ -253,32 +254,60 @@ function setMirror(node, func) {
 
 function getModeByName(name) {
     if (name) {
-        name = name.replace(/.*\./ , '' );
-        return EXTN_TO_MODE[name] || name;
+        name = name.replace(/.*\./, '');
+        return EXTN_TO_MODE[name]
+            || [name , name];
     } else {
-        return name;
+        return [name , name];
     }
 }
 
 var EXTN_TO_MODE = {
-    jsx         : "jsx",
-    css         : "css",
-    xml         : "xml",
-    xsd         : "xml",
-    tld         : "xml",
-    sql         : "sql",
-    lua         : "lua",
-    sh          : "shell",
-    py          : "python",
-    groovy      : "groovy",
-    md          : "markdown",
-    protobuf    : "protobuf",
-    json        : "javascript",
-    js          : "javascript",
-    ls          : "livescript",
-    properties  : "properties",
-    html        : "htmlmixed",
-    htm         : "htmlmixed",
-    jsp         : "htmlembedded",
-    ejs         : "htmlembedded"
+    /* C   家族 */
+    h           : ["clike", "text/x-c"],
+    c           : ["clike", "text/x-c"],
+    cpp         : ["clike", "text/x-c++src"],
+    cs          : ["clike", "text/x-csharp"],
+    mm          : ["clike", "text/x-objectivec"],
+    m           : ["clike", "text/x-objectivec"],
+    /* JVM 家族 */
+    java        : ["clike", "text/x-java"],
+    scala       : ["clike", "text/x-scala"],
+    kotlin      : ["clike", "text/x-kotlin"],
+    groovy      : ["groovy", "groovy"],
+    /* JS  家族 */
+    json        : ["javascript", "application/json"],
+    js          : ["javascript", "text/javascript"],
+    ts          : ["javascript", "text/typescrpit"],
+    ls          : ["livescript", "livescript"],
+    coffee      : ["coffeescript", "coffeescript"],
+    jsx         : ["jsx", "jsx"],
+    /* XML 家族 */
+    xml         : ["xml", "xml"],
+    xsd         : ["xml", "xml"],
+    html        : ["htmlmixed", "text/html"],
+    htm         : ["htmlmixed", "text/html"],
+    jsp         : ["htmlembedded", "text/jsp" ],
+    asp         : ["htmlembedded", "text/aspx"],
+    /* 脚本 */
+    ps1         : ["powershell", "powershell"],
+    sh          : ["shell", "shell"],
+    py          : ["python", "python"],
+    rb          : ["ruby", "ruby"],
+    pl          : ["perl", "perl"],
+    pm          : ["perl", "perl"],
+    php         : ["php", "php"],
+    lua         : ["lua", "lua"],
+    sql         : ["sql", "sql"],
+    /* 其他 */
+    go          : ["go", "go"],
+    dart        : ["dart", "dart"],
+    rust        : ["rust", "rust"],
+    swift       : ["swift", "swift"],
+    css         : ["css", "css"],
+    scss        : ["css", "text/x-scss"],
+    less        : ["css", "text/x-less"],
+    md          : ["markdown", "markdown"],
+    protobuf    : ["protobuf", "protobuf"],
+    properties  : ["properties", "properties"]
 };

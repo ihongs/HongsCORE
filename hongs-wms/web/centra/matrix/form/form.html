@@ -153,7 +153,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <div class="check checkbox" data-fn="-" data-ft="_radio" data-__repeated__="yes">
+                        <div class="check checkbox" data-fn="-" data-ft="_radio" data-repeated="yes">
                             <label><input type="checkbox" name="-" value="1"/><span>选项1</span></label>
                             <label><input type="checkbox" name="-" value="2"/><span>选项2</span></label>
                         </div>
@@ -165,7 +165,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <div class="check radio" data-fn="-" data-ft="_radio" data-__repeated__="no">
+                        <div class="check radio" data-fn="-" data-ft="_radio" data-repeated="no">
                             <label><input type="radio" name="-" value="1"/><span>选项1</span></label>
                             <label><input type="radio" name="-" value="2"/><span>选项2</span></label>
                         </div>
@@ -438,7 +438,15 @@
                 <input class="form-control" type="text" name="input|placeholder" value=""/>
             </div>
             <div class="form-group">
-                <label class="control-label">取值范围</label>
+                <label class="control-label">类型</label>
+                <select class="form-control" name="input|type">
+                    <option value="number">数字</option>
+                    <option value="range">区间</option>
+                    <option value="color">颜色</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label class="control-label">范围</label>
                 <div class="control-group">
                     <input class="form-control" type="number" name="input|min" value="" style="display: inline-block; width: 8em;"/>
                     <span>&nbsp;~&nbsp;</span>
@@ -548,9 +556,10 @@
                 <label class="control-label">选项列表</label>
                 <textarea class="form-control" name=".check|datalist" placeholder="一行一条,格式: 文本 或 取值::文本, 以!!打头的为默认选中"></textarea>
             </div>
+            <input type="hidden" name=".check|data-repeated" value=""/>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name=".check|required" value="required"/>必选
+                    <input type="checkbox" name=".check|data-required" value="yes"/>必选
                 </label>
                 <label>
                     <input type="checkbox" name=".check|data-listable" value="yes"/>列举

@@ -1,6 +1,4 @@
 var EXTN_TO_MODE = {
-    jsx         : "jsx",
-    css         : "css",
     xml         : "xml",
     xsd         : "xml",
     tld         : "xml",
@@ -11,14 +9,18 @@ var EXTN_TO_MODE = {
     groovy      : "groovy",
     md          : "markdown",
     protobuf    : "protobuf",
-    json        : "javascript",
-    js          : "javascript",
-    ls          : "livescript",
     properties  : "properties",
+    jsx         : "jsx",
+    js          : "text/javascript",
+    ts          : "text/typescript",
+    json        : "application/json",
+    css         : "css",
+    less        : "text/x-less",
+    scss        : "text/x-scss",
     html        : "htmlmixed",
     htm         : "htmlmixed",
     jsp         : "htmlembedded",
-    ejs         : "htmlembedded"
+    asp         : "htmlembedded"
 };
 
 // 代码模式

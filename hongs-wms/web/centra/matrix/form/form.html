@@ -137,7 +137,7 @@
                     </div>
                     <div class="form-group" data-type="select">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>选项</span>
+                            <span>选择</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
@@ -146,9 +146,33 @@
                             <option value="">--请选择--</option>
                         </select>
                     </div>
+                    <div class="form-group" data-type="check">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>复选框</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <div class="check checkbox" data-fn="-" data-ft="_radio" data-__repeated__="yes">
+                            <label><input type="checkbox" name="-" value="1"/><span>选项1</span></label>
+                            <label><input type="checkbox" name="-" value="2"/><span>选项2</span></label>
+                        </div>
+                    </div>
+                    <div class="form-group" data-type="radio">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>单选框</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <div class="check radio" data-fn="-" data-ft="_radio" data-__repeated__="no">
+                            <label><input type="radio" name="-" value="1"/><span>选项1</span></label>
+                            <label><input type="radio" name="-" value="2"/><span>选项2</span></label>
+                        </div>
+                    </div>
                     <div class="form-group" data-type="textarea">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>多行文本</span>
+                            <span>文本域</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
@@ -248,6 +272,15 @@
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
                         <input class="invisible" type="enum" name="state" data-default="1" data-editable="no" data-:1="正常"/>
+                    </div>
+                    <div class="form-group base-field" data-type="boost">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>权重</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="invisible" type="number" name="boost" data-type="long" data-default="0" data-sortable="yes" data-editable="no"/>
                     </div>
                     <div class="form-group base-field" data-type="ctime">
                         <label class="control-label clearfix" style="display: block;">
@@ -503,6 +536,33 @@
                 </label>
                 <label>
                     <input type="checkbox" name="select|data-statable" value="yes"/>统计
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-check widget-pane-radio">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">选项列表</label>
+                <textarea class="form-control" name=".check|datalist" placeholder="一行一条,格式: 文本 或 取值::文本, 以!!打头的为默认选中"></textarea>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name=".check|required" value="required"/>必选
+                </label>
+                <label>
+                    <input type="checkbox" name=".check|data-listable" value="yes"/>列举
+                </label>
+                <label>
+                    <input type="checkbox" name=".check|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name=".check|data-fitrable" value="yes"/>筛选
+                </label>
+                <label>
+                    <input type="checkbox" name=".check|data-statable" value="yes"/>统计
                 </label>
             </div>
         </div>

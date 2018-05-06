@@ -16,9 +16,14 @@ var EXTN_TO_MODE = {
     py          : "python",
     rb          : "ruby",
     pl          : "perl",
+    php         : "php",
     ps1         : "powershell",
+    bat         : "powershell",
+    cmd         : "powershell",
     md          : "markdown",
     proto       : "protobuf",
+    ini         : "properties",
+    cnf         : "properties",
     properties  : "properties"
 };
 

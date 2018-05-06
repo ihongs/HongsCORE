@@ -92,22 +92,5 @@
                 <p>And <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>. <strong>Sharp tools make good work.</strong></p>
             </div>
         </div>
-        <script type="text/javascript">
-            (function() {
-                var colors = ["#CCCCCC", "#FF0000", "#CCCCCC", "#FF0000", "#CCCCCC"];
-                var colori = 1;
-                var colorx = function() {
-                    $(".jumbotron").css("color" , colors[colori]);
-                    if (colori  > colors.length - 2) {
-                        colori  = 0;
-                        setTimeout(colorx, 2000);
-                    } else {
-                        colori += 1;
-                        setTimeout(colorx, 200 );
-                    }
-                };
-                colorx();
-            })(jQuery);
-        </script>
     </body>
 </html>

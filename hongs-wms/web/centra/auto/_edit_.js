@@ -274,13 +274,10 @@ var EXTN_TO_MODE = {
     java        : ["clike", "text/x-java"],
     scala       : ["clike", "text/x-scala"],
     kotlin      : ["clike", "text/x-kotlin"],
-    groovy      : ["groovy", "groovy"],
     /* JS  家族 */
     json        : ["javascript", "application/json"],
     js          : ["javascript", "text/javascript"],
     ts          : ["javascript", "text/typescrpit"],
-    ls          : ["livescript", "livescript"],
-    coffee      : ["coffeescript", "coffeescript"],
     jsx         : ["jsx", "jsx"],
     vue         : ["vue", "vue"],
     /* XML 家族 */
@@ -288,13 +285,9 @@ var EXTN_TO_MODE = {
     xsd         : ["xml", "xml"],
     html        : ["htmlmixed", "text/html"],
     htm         : ["htmlmixed", "text/html"],
-    jsp         : ["htmlembedded", "text/jsp" ],
     asp         : ["htmlembedded", "text/aspx"],
+    jsp         : ["htmlembedded", "text/jsp" ],
     /* 其他程序 */
-    go          : ["go", "go"],
-    dart        : ["dart", "dart"],
-    rust        : ["rust", "rust"],
-    swift       : ["swift", "swift"],
     py          : ["python", "python"],
     rb          : ["ruby", "ruby"],
     pl          : ["perl", "perl"],
@@ -304,11 +297,15 @@ var EXTN_TO_MODE = {
     sql         : ["sql", "sql"],
     sh          : ["shell", "shell"],
     ps1         : ["powershell", "powershell"],
+    bat         : ["powershell", "powershell"],
+    cmd         : ["powershell", "powershell"],
     /* 其他代码 */
     css         : ["css", "css"],
     scss        : ["css", "text/x-scss"],
     less        : ["css", "text/x-less"],
     md          : ["markdown", "markdown"],
     proto       : ["protobuf", "protobuf"],
+    ini         : ["properties", "properties"],
+    cnf         : ["properties", "properties"],
     properties  : ["properties", "properties"]
 };

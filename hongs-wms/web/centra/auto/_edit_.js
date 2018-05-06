@@ -274,6 +274,8 @@ var EXTN_TO_MODE = {
     java        : ["clike", "text/x-java"],
     scala       : ["clike", "text/x-scala"],
     kotlin      : ["clike", "text/x-kotlin"],
+    groovy      : ["groovy", "groovy"],
+    gradle      : ["groovy", "groovy"],
     /* JS  家族 */
     json        : ["javascript", "application/json"],
     js          : ["javascript", "text/javascript"],

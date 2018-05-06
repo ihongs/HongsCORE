@@ -26,8 +26,8 @@ function setFormItems(formbox, loadbox) {
         // 将同步后的结果加入到待保存数据
         if ( dat )formbox.find("textarea[data-type]")
             .each(function( ) {
-                dat.set($(this).attr("name"),
-                        $(this).val (   )  );
+                dat.set( $(this).attr("name"),
+                         $(this).val (   )  );
             });
     });
     loadbox.on("hsClose" , function(evt, und) {

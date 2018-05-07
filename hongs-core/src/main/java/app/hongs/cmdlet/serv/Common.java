@@ -198,10 +198,8 @@ public class Common {
         helper.setSessionData(data( (String) opts.get("session")));
         helper.setCookiesData(data( (String) opts.get("cookies")));
 
-        ActionRunner runner = new ActionRunner( helper , args[0] );
-        runner.doAction( );
-
-        CmdletHelper.preview( helper.getResponseData() );
+        new ActionRunner(helper , args[0]).doAction( );
+        CmdletHelper.preview(helper.getResponseData());
     }
 
     @Cmdlet("call-action")

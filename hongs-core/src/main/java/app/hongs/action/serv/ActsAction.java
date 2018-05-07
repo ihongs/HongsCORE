@@ -77,10 +77,9 @@ public class ActsAction
     // 获取并执行动作
     try
     {
-      ActionRunner runner = new ActionRunner(helper, act);
-      runner.doAction(  );
+      new ActionRunner(helper,act).doAction();
     }
-    catch (ClassCastException ex)
+    catch (ClassCastException ex )
     {
       senderr(helper, new HongsException(0x1100, ex)); // 类型转换失败按 400 错误处理
     }

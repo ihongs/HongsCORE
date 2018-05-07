@@ -35,8 +35,8 @@ import java.lang.reflect.InvocationTargetException;
  * @author Hong
  */
 public class ActionRunner {
-    private int    idx = 0;
-    private String action ;
+    private int idx = -1 ;
+    private String action;
     private final Object   object;
     private final Method   method;
     private final Class<?> mclass;
@@ -71,8 +71,6 @@ public class ActionRunner {
         if (null != a) {
             this.action += a.value();
         }
-
-        init();
     }
 
     public ActionRunner(ActionHelper helper, String action)
@@ -88,19 +86,6 @@ public class ActionRunner {
         this.method = mt.getMethod();
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
-
-        init();
-    }
-
-    private void init()
-    throws HongsException {
-        // Regist the runner
-        helper.setAttribute(ActionRunner.class.getName(), this);
-
-        // Initialize action
-        if (object instanceof app.hongs.dh.IActing) {
-           ((app.hongs.dh.IActing) object).acting(helper, this);
-        }
     }
 
     /**
@@ -125,6 +110,10 @@ public class ActionRunner {
      * @throws HongsException
      */
     public void doAction() throws HongsException {
+        if ( idx  < 0) {
+             idx  = 0 ;
+            doInvite();
+        } else
         // 如果超出链长度, 则终止执行
         if ( idx  >  annarr.length) {
             throw new HongsException(0x110f, "Action annotation out of index: "
@@ -163,6 +152,11 @@ public class ActionRunner {
      * @throws HongsException
      */
     public void doInvoke() throws HongsException {
+        if ( idx  < 0) {
+             idx  = 0 ;
+            doInvite();
+        }
+
         try {
             method.invoke(object, helper);
         } catch (   IllegalAccessException e) {
@@ -179,6 +173,22 @@ public class ActionRunner {
             } else {
                 throw new HongsException(0x110e, ex);
             }
+        }
+    }
+
+    /**
+     * 执行初始方法
+     * 会执行 acting 方法, doAction,doInvoke 内已调
+     * @throws HongsException
+     */
+    public void doInvite()
+    throws HongsException {
+        // Regist the runner
+        helper.setAttribute(ActionRunner.class.getName(), this);
+
+        // Initialize action
+        if (object instanceof app.hongs.dh.IActing) {
+           ((app.hongs.dh.IActing) object).acting(helper, this);
         }
     }
 

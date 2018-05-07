@@ -44,19 +44,27 @@ public class MenuAction {
             u += "&x=" + x;
         }
 
+        /**
+         * Fixed in 2018/05/07
+         * 重要修正:
+         * 某些菜单可能根本就没规定权限,
+         * 如果对当前这级菜单做权限检查,
+         * 可能因其他菜单要权限而被阻止,
+         * 故必须放弃预判当前菜单的权限.
+         * 因此这种菜单下不得有设 roles.
+         */
+
         // 检查是否有可以进入的下级菜单
-        NaviMap site = NaviMap.getInstance(m);
-        if (site.chkMenu(u) ) {
-            String  href  ;
-            Map<String, Map> menu = site.getMenu(u);
+        NaviMap site  =  NaviMap.getInstance(m);
+        Map<String, Map> menu = site.getMenu(u);
+        String  href  ;
+        if (menu != null) {
+            menu  = menu.get("menus");
             if (menu != null) {
-                menu  = menu.get(  "menus"  );
-                if (menu != null) {
-                    href  = getRedirect(site, menu);
-                    if (href != null) {
-                        helper.redirect(Core.BASE_HREF + "/" + href);
-                        return;
-                    }
+                href  = getRedirect(site, menu);
+                if (href != null) {
+                    helper.redirect(Core.BASE_HREF + "/" + href);
+                    return;
                 }
             }
         }

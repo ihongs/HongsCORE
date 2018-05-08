@@ -1036,12 +1036,23 @@ public class ActionHelper implements Cloneable
   }
 
   /**
+   * 301重定向
+   * @param url
+   */
+  public void relocate(String url)
+  {
+    this.response.setStatus(HttpServletResponse.SC_MOVED_PERMANENTLY);
+    this.response.setHeader("Location", url);
+    this.responseData = null;
+  }
+
+  /**
    * 400错误请求
    * @param msg
    */
   public void error400(String msg)
   {
-    this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST );
+    this.response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
     this.responseData = null;
     this.print(msg);
   }

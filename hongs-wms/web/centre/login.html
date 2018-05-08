@@ -20,6 +20,8 @@
     <body>
         <div class="jumbotron" style="margin-top: 2em; background-color: #222; color: #ccc;">
             <div class="container">
+                <h1>欢迎!</h1>
+                <p> <br/> </p>
                 <ol class="row nav nav-tabs" style="padding-left: 25%;" data-toggle="hsTabs">
                     <li style="margin-left: 21px;"><a href="javascrpit:;" data-hash="#in">登录</a></li>
                     <li style="margin-left: 21px;"><a href="javascript:;" data-hash="#on">注册</a></li>
@@ -142,12 +144,15 @@
                 });
 
                 // 页签
-                $("[data-hash]").click(function() {
-                     location.hash = $(this).attr("data-hash");
+                $("[data-hash]").click(function( ) {
+                    location.replace(
+                        location.pathname +
+                        location.search   +
+                        $(this).attr("data-hash"));
                 });
-                if ( location.hash ) {
-                    $( '[data-hash="' + location.hash + '"]' )
-                          .parent( ).attr( "class", "active" );
+                if (location.hash) {
+                    $('[data-hash="' + location.hash + '"]')
+                        .parent( ).attr( "class", "active" );
                 }
             })(jQuery);
         </script>

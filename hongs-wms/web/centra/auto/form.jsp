@@ -114,16 +114,19 @@
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
+                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("radio".equals(type)) {%>
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */%>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
+                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("enum".equals(type) || "select".equals(type)) {%>
                     <%if ("".equals(rqrd) && !"".equals(rptd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */%>
                     <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
+                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
                         String kind =  "_fork";
@@ -152,6 +155,7 @@
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String mode = "hsFile";
@@ -195,8 +199,9 @@
                     <input type="file" name="<%=name%>" class="form-ignored invisible" <%=typa%>/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
+                    <div class="text-muted"><%=hint%></div>
                 <%} else {%>
-                    <input class="form-control" type="<%=type%>" name="<%=name%>" <%=rqrd%> <%=rptd%>/>
+                    <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%> <%=rptd%>/>
                 <%} /*End If */%>
                 </div>
                 <div class="col-xs-3 help-block form-control-static"></div>

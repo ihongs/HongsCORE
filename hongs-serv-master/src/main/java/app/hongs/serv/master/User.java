@@ -59,23 +59,27 @@ extends Model {
         rd = super.getList(rd, caze);
 
         // Add all depts for every user
-        if (caze.getOption("INCLUDE_DEPTIDS" , false)) {
+        byte incs = caze.getOption("WITH_DEPTS", (byte) 0 );
+        if ( incs > 0 ) {
             List<Map> list = ( List ) rd.get( "list" );
-            List<Map> rows ;
             if (list != null) {
                 Map<String, Map> maps = new HashMap( );
                 for ( Map info : list ) {
-                    String uid = info.get(/**/ "id").toString();
-                    info.put("dept_ids",new HashSet());
+                    String uid = info.get("id").toString( );
+                    info.put( "depts" , new HashSet());
                     maps.put(uid, info);
                 }
-                rows = db.getTable("user_dept").fetchCase( )
-                    .filter("user_id IN (?)", maps.keySet())
-                    .all();
+                caze = db.getTable("user_dept").fetchCase()
+                        .filter("user_id IN (?)",maps.keySet());
+                if (incs == 2) {
+                    caze.join(db.getTable("dept").tableName,
+                        "dept", "user_dept.dept_id = dept.id" )
+                        .select("user_id,dept.*");
+                }
+                List<Map> rows = caze.all();
                 for ( Map dept : rows ) {
-                    String uid = dept.get("user_id").toString();
-                    String did = dept.get("dept_id").toString();
-                    ((Set) maps.get(uid).get("dept_ids")).add(did);
+                    String uid = dept.remove("user_id").toString();
+                    ((Set) maps.get(uid).get("depts") ).add(dept );
                 }
             }
         }

@@ -1,12 +1,12 @@
 <h2>选择用户</h2>
 <div id="master-user-pick"
      data-module="hsList"
-     data-load-url="centra/master/user/list.act"
+     data-load-url="centra/master/user/list.act?with-depts=2"
      data-load-data="(this.closest('.loadbox'))"
      data-data-0="_fill__fork:(hsListFillFork)">
     <div>
         <div class="toolbox col-xs-9 btn-group">
-            <button type="button" class="ensure btn btn-primary">选择用户</button>
+            <button type="button" class="ensure btn btn-primary">确认选择</button>
         </div>
         <form class="findbox col-xs-3 input-group" action="" method="POST">
             <input type="search" name="wd" class="form-control input-search"/>
@@ -32,5 +32,5 @@
             <tbody></tbody>
         </table>
     </div>
-    <div class="pagebox"></div>
+    <div class="pagebox clearfix"></div>
 </div>

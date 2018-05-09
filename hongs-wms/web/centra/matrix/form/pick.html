@@ -2,10 +2,10 @@
 <div id="matrix-form-pick"
      data-module="hsList"
      data-load-url="centra/matrix/form/list.act">
-    <div>
+    <div class="clearfix">
         <div class="toolbox col-xs-8 btn-group">
-            <button type="button" class="ensure btn btn-default">选择表单</button>
-            <button type="button" class="cancel btn btn-link">取消</button>
+            <button type="button" class="ensure btn btn-primary">确认选择</button>
+            <button type="button" class="inside btn btn-link"   >预置资源</button>
         </div>
         <form class="findbox col-xs-4 input-group" action="" method="POST">
             <input type="search" name="wd" class="form-control input-search"/>
@@ -23,14 +23,15 @@
                     </th>
                     <th data-fn="name" class="sortable">名称</th>
                     <th data-fn="unit.name" class="sortable">单元</th>
-                    <th data-fn="mtime" data-ft="_htime" class="_htime sortable">修改时间</th>
-                    <th data-fn="ctime" data-ft="_htime" class="_htime sortable">创建时间</th>
+                    <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
+                    <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
     </div>
-    <div class="pagebox"></div>
+    <div class="pagebox clearfix"  ></div>
+    <div class="forkbox radio hide"></div>
 </div>
 <script type="text/javascript">
 (function($) {
@@ -50,5 +51,44 @@
             "data-tk": "name"
         });
     });
+
+    // 切换预定义资源和自定义资源
+    context.find(".inside").click(function() {
+        var box = context.find( ".forkbox" );
+        var fnd = context.find( ".findbox" );
+        var lst = context.find( ".listbox,.pagebox");
+        if (box.is(".hide")) {
+            box.removeClass("hide");
+            lst.addClass   ("hide");
+            context.find(".inside").text("自定资源");
+            fnd.find("butotn,input").prop("disabled", true );
+        } else {
+            box.addClass   ("hide");
+            lst.removeClass("hide");
+            context.find(".inside").text("预置资源");
+            fnd.find("button,input").prop("disabled", false);
+        }
+    });
+
+    // 系统内预定义额外可关联资源
+    if (window.getFormList) {
+        window.getFormList("with-base", function(list) {
+            var box = context.find(".forkbox");
+            for(var i = 0; i < list.length; i ++) {
+                var row = list[i];
+                var lab = $('<label></label>');
+                var spn = $( '<span></span>' );
+                hsListFillFork.call(this, lab, row.__name__, "id[]");
+                var chk =lab.find(".checkone");
+                spn.text(/*****/ row.__text__);
+                chk.attr("title",row.__text__);
+                chk.data( row );
+                lab.append(spn);
+                box.append(lab);
+            }
+        });
+    } else {
+        context.find(".inside").hide();
+    }
 })(jQuery);
 </script>

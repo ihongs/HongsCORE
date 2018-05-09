@@ -1,6 +1,6 @@
 <div id="master-user-list"
      data-module="hsList"
-     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&ob=-mtime&include-deptids=1"
+     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&ob=-mtime&with-depts=1"
      data-open-urls-0="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']"
      data-open-urls-1="['centra/master/user/form.html?id={ID}','.modify','@']"
      data-send-urls-0="['centra/master/user/delete.act','.delete','您确定要删除此用户?']">
@@ -80,7 +80,11 @@
                 });
             }
             // 用户所属的所有部门
-            c.closest("tr").data("dept_ids" , this._info.dept_ids);
+            var deptIds = [];
+            for(var i = 0; i < this._info.detps; i ++) {
+                deptIds.push(this._info.depts.dept_id);
+            }
+            c.closest("tr").data("dept_ids" , deptIds);
         });
     })(jQuery);
 </script>

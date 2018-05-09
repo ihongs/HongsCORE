@@ -12,6 +12,48 @@ function getTypePane(context, type) {
     return context.find(".widget-pane-"+type).first().clone();
 }
 
+function setItemType(input, type) {
+    input = jQuery(input);
+    var oldAttrs = input[0].attributes;
+    var newInput = jQuery('<input type="'+type+'"/>');
+    for(var i = 0; i < oldAttrs.length; i ++ ) {
+        var attrValue = oldAttrs[i].nodeValue;
+        var attrName  = oldAttrs[i].nodeName ;
+        if (attrName != "type") {
+            newInput.attr(attrName, attrValue);
+        }
+    }
+    input.before(newInput);
+    input.remove( );
+    return newInput;
+}
+
+function getFormInfo(id, func) {
+    $.ajax({
+        url : hsFixUri("centra/matrix/form/fork/info.act?rb=id,name&id="+id),
+        type: "GET",
+        dataType: "JSON",
+        success : function(rs) {
+            if  (     rs.info) {
+                func (rs.info);
+            }
+        }
+    });
+}
+
+function getFormList(ab, func) {
+    $.ajax({
+        url : hsFixUri("centra/matrix/form/fork/list.act?ab="+ab),
+        type: "GET",
+        dataType: "JSON",
+        success : function(rs) {
+            if  (     rs.list) {
+                func (rs.list);
+            }
+        }
+    });
+}
+
 function prsDataList(s) {
     var a = [];
     var x = s.split(/[\r\n]/);
@@ -41,35 +83,6 @@ function strDataList(a) {
         x.push ( v);
     }
     return x.join("\r\n");
-}
-
-function setItemType(input, type) {
-    input = jQuery(input);
-    var oldAttrs = input[0].attributes;
-    var newInput = jQuery('<input type="'+type+'"/>');
-    for(var i = 0; i < oldAttrs.length; i ++ ) {
-        var attrValue = oldAttrs[i].nodeValue;
-        var attrName  = oldAttrs[i].nodeName ;
-        if (attrName != "type") {
-            newInput.attr(attrName, attrValue);
-        }
-    }
-    input.before(newInput);
-    input.remove( );
-    return newInput;
-}
-
-function getFormInfo(id, func) {
-    $.ajax({
-        url : hsFixUri("centra/matrix/form/info.act?rb=id,name&id="+id),
-        type: "GET",
-        dataType: "JSON",
-        success : function(rs) {
-            if  (     rs.info) {
-                func (rs.info);
-            }
-        }
-    });
 }
 
 var COLS_PATT_BASE = /^[a-z0-9\-_.:]+$/;    // 当作为标签属性时可以使用, 没有引起问题的特殊字符

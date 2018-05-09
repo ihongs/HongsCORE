@@ -11,18 +11,20 @@
             <param name="enum">form_state</param>
         </field>
     </form>
-    <form name="form_fork">
-        <field name="user" text="用户">
-            <param name="data-vk">id</param>
-            <param name="data-tk">name</param>
-            <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html</param>
-        </field>
-    </form>
     <enum name="form_state">
         <value code="1">内部</value>
         <value code="2">开放</value>
         <value code="3">冻结</value>
         <value code="0">删除</value>
     </enum>
+    <form name="form_forks">
+        <field name="user" text="用户">
+            <param name="data-form">user</param>
+            <param name="data-conf">master</param>
+            <param name="data-vk">id</param>
+            <param name="data-tk">name</param>
+            <param name="data-at">centra/master/user/list</param>
+            <param name="data-al">centra/master/user/pick.html</param>
+        </field>
+    </form>
 </root>

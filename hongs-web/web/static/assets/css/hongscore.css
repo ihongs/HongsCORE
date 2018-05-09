@@ -43,25 +43,22 @@ legend {
     margin-bottom: 15px;
 }
 
-.nav .close,
 .btn .close {
     margin-right: -15px;
     margin-top: -7.5px;
-    padding: 0 6px 0 6px;
+    padding: 0 6px;
 }
 .nav .close {
-    color: #666;
-    float: none;
+    margin-right: -15px;
+    margin-top: -6.5px;
+    padding: 0 6px;
+    vertical-align: middle;
     display: inline-block;
-    vertical-align: top;
+    float: none;
+    color: #666;
 }
 .breadcrumb .close {
     display: none;
-}
-.form-group .close,
-.form-group .close:hover,
-.form-group .close:focus {
-    color: #666;
 }
 .btn.btn-default .close,
 .btn.btn-primary .close,
@@ -70,6 +67,11 @@ legend {
 .btn.btn-danger .close,
 .btn.btn-info .close {
     color: #eee;
+}
+.form-group .close,
+.form-group .close:hover,
+.form-group .close:focus {
+    color: #666;
 }
 
 .btn,

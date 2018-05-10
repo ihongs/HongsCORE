@@ -76,3 +76,21 @@ CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
 CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime`);
 CREATE INDEX `IK_a_matrix_data_etime` ON `a_matrix_data` (`etime`);
 CREATE INDEX `IK_a_matrix_data_rtime` ON `a_matrix_data` (`rtime`);
+
+--
+-- 预定内置关联资源
+--
+
+INSERT INTO a_matrix_unit (`id`, `pid`, `name`, `icon`, `note`, `ctime`, `mtime`, `boost`, `state`)
+VALUES ('-', NULL, '内置', '', '', 0, 0, 0, 1);
+
+INSERT INTO a_matrix_form (`id`, `unit_id`, `name`, `icon`, `note`, `conf`, `ctime`, `mtime`, `boost`, `state`)
+VALUES ('user', '-', '用户', '', '', '{
+    "form":"user",
+    "conf":"master",
+    "data-vk":"id",
+    "data-tk":"name",
+    "data-at":"centra/master/user/list",
+    "data-al":"centra/master/user/pick.html"
+}', 0, 0, 0, 3);
+

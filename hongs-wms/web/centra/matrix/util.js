@@ -30,25 +30,12 @@ function setItemType(input, type) {
 
 function getFormInfo(id, func) {
     $.ajax({
-        url : hsFixUri("centra/matrix/form/fork/info.act?rb=id,name&id="+id),
+        url : hsFixUri("centra/matrix/form/info.act?rb=id,name&id="+id),
         type: "GET",
         dataType: "JSON",
         success : function(rs) {
             if  (     rs.info) {
                 func (rs.info);
-            }
-        }
-    });
-}
-
-function getFormList(ab, func) {
-    $.ajax({
-        url : hsFixUri("centra/matrix/form/fork/list.act?ab="+ab),
-        type: "GET",
-        dataType: "JSON",
-        success : function(rs) {
-            if  (     rs.list) {
-                func (rs.list);
             }
         }
     });

@@ -17,14 +17,4 @@
         <value code="3">冻结</value>
         <value code="0">删除</value>
     </enum>
-    <form name="form_forks">
-        <field name="user" text="用户">
-            <param name="data-form">user</param>
-            <param name="data-conf">master</param>
-            <param name="data-vk">id</param>
-            <param name="data-tk">name</param>
-            <param name="data-at">centra/master/user/list</param>
-            <param name="data-al">centra/master/user/pick.html</param>
-        </field>
-    </form>
 </root>

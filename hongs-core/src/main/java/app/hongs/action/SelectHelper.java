@@ -211,7 +211,7 @@ public class SelectHelper {
         injectLink(info, files);
     }
 
-    private void injectData(Map data, Map maps) throws HongsException {
+    private void injectData(Map data, Map maps) {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();

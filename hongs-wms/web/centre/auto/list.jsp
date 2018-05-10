@@ -20,7 +20,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div class="clearfix">
-        <form class="findbox input-group col-xs-6 col-xs-offset-3" action="" method="POST">
+        <form class="findbox input-group col-sm-6 col-sm-offset-3" action="" method="POST">
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>

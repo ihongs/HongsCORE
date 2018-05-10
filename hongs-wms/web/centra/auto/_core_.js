@@ -47,15 +47,6 @@ S$.delete = function(req) {
 };
 
 /**
- * 列表填充分页按钮
- */
-function hsListFillMore(pag) {
-    HsList.prototype.fillPage.call(this, pag);
-    this.pageBox.find(".page-count").remove();
-    this.pageBox.find(".pagination").removeClass("pull-left");
-}
-
-/**
  * 筛选列表填充数据
  */
 function hsListFillSele(x, v, n) {

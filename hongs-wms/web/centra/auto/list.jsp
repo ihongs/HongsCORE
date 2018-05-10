@@ -314,7 +314,7 @@
              '<%=_locale.translate("fore.delete.confirm", _title)%>']
         ],
         openUrls: [
-            ['<%=_module%>/<%=_entity%>/form.html?<%=Cnst.AB_KEY%>=!enum',
+            ['<%=_module%>/<%=_entity%>/form.html?<%=Cnst.AB_KEY%>=!enum&'+$.param(hsSerialArr(loadbox)),
              '.create', '@'],
             ['<%=_module%>/<%=_entity%>/form_edit.html?<%=Cnst.ID_KEY%>={ID}',
              '.update', '@'],
@@ -371,30 +371,16 @@
     listobj._fill__video = hsListWrapOpen("video");
     listobj._fill__audio = hsListWrapOpen("audio");
 
-    // 创建时将关联 ID 往表单页传递
-    listobj.open = function(btn, box, url, data) {
-        if (btn.is(".create")) {
-                data  = [];
-                var d = hsSerialArr( loadbox );
-            for(var i = 0; i < d.length; i ++) {
-                if (/_id$/.test( d[i].name ) ) {
-                    data.push( d[i] );
-                }
-            }
-        }
-        HsList.prototype.open.call(this, btn, box, url, data);
-    };
-
     // 管理动作
     findbox.find(".filter").click(function() {
         fitrbox.toggleClass("invisible");
-        if (!fitrbox.is("invisible")) {
+        if (! fitrbox.is("invisible")) {
             fitrbox.trigger("opened");
         }
     });
     findbox.find(".statis").click(function() {
         statbox.toggleClass("invisible");
-        if (!statbox.is("invisible")) {
+        if (! statbox.is("invisible")) {
             statbox.trigger("opened");
         }
     });

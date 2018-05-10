@@ -23,14 +23,51 @@ import java.util.Set;
  */
 public class SearchTitler {
 
-    protected final String conf;
-    protected final String form;
     protected Map<String, Map<String, String>> enums = null;
     protected Map<String, Map<String, String>> forks = null;
 
-    public SearchTitler(String conf, String form) {
-        this.conf = conf;
-        this.form = form;
+    public SearchTitler() {
+        enums = new HashMap();
+        forks = new HashMap();
+    }
+
+    public SearchTitler addEnum(String code, Map<String, String> opts) {
+        enums.put(code, opts);
+        return this;
+    }
+
+    public SearchTitler addFork(String code, Map<String, String> opts) {
+        forks.put(code, opts);
+        return this;
+    }
+
+    public SearchTitler addItemsByForm(String conf, String form)
+    throws HongsException {
+        return addItemsByForm(conf, FormSet.getInstance(conf).getForm(form));
+    }
+
+    public SearchTitler addItemsByForm(String conf, Map<String, Map> fields)
+    throws HongsException {
+        Map<String, String> fts = FormSet.getInstance().getEnum("__types__");
+        for(Map.Entry<String, Map> et:fields.entrySet()) {
+            Map    fc = et.getValue();
+            String fn = et.getKey(  );
+            String ft = (String) fc.get("__type__");
+                   ft = fts.get( ft );
+            if (  "enum".equals( ft )
+            ||    "date".equals( ft )
+            ||  "number".equals( ft )) {
+                String xc = Synt.defxult(( String ) fc.get("conf"), conf);
+                String xn = Synt.defxult(( String ) fc.get("enum"),   fn);
+                Map    fe = FormSet.getInstance(xc).getEnumTranslated(xn);
+                enums.put(fn, fe);
+            } else
+            if (  "fork".equals( ft )) {
+                forks.put(fn, fc);
+            }
+        }
+
+        return this;
     }
 
     /**
@@ -40,35 +77,6 @@ public class SearchTitler {
      * @throws HongsException
      */
     public void addTitle(Map info, byte md) throws HongsException {
-        if (1 != (1 & md) && 2 != (2 & md)) {
-            return;
-        }
-
-        if (enums == null || forks == null) {
-            enums =  new HashMap();
-            forks =  new HashMap();
-            Map<String, Map> fields = FormSet.getInstance( conf ).getForm( form );
-            Map<String, String> fts = FormSet.getInstance( ).getEnum("__types__");
-
-            for(Map.Entry<String, Map> et:fields.entrySet()) {
-                Map    fc = et.getValue();
-                String fn = et.getKey(  );
-                String ft = (String) fc.get("__type__");
-                       ft = fts.get( ft );
-                if (  "enum".equals( ft )
-                ||    "date".equals( ft )
-                ||  "number".equals( ft )) {
-                    String xc = Synt.defxult(( String ) fc.get("conf"), conf);
-                    String xn = Synt.defxult(( String ) fc.get("enum"),   fn);
-                    Map    fe = FormSet.getInstance(xc).getEnumTranslated(xn);
-                    enums.put(fn, fe);
-                } else
-                if (  "fork".equals( ft )) {
-                    forks.put(fn, fc);
-                }
-            }
-        }
-
         addTitle(
             info,
             1 == (1 & md) ? enums : new HashMap(),
@@ -85,7 +93,7 @@ public class SearchTitler {
      * @param forks
      * @throws HongsException
      */
-    public void addTitle(Map info,
+    protected void addTitle(Map info,
             Map<String, Map<String, String>> enums,
             Map<String, Map<String, String>> forks)
             throws HongsException {

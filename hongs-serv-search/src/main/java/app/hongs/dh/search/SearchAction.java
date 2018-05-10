@@ -4,7 +4,6 @@ import app.hongs.Cnst;
 import app.hongs.HongsException;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
-import app.hongs.action.FormSet;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
@@ -96,7 +95,7 @@ public class SearchAction extends LuceneAction {
 //               sr.close (  ); // 应用容器可自行关闭
 
         // 增加标题
-        titled(rd, sd, mod, ent);
+        titled(mod, sr.getFields(), rd, sd);
 
         helper.reply(sd);
     }
@@ -117,23 +116,20 @@ public class SearchAction extends LuceneAction {
 //               sr.close (  ); // 应用容器可自行关闭
 
         // 增加标题
-        titled(rd, sd, mod, ent);
+        titled(mod, sr.getFields(), rd, sd);
 
         helper.reply(sd);
     }
 
     /**
      * 追加枚举和关联名称
+     * @param mod
+     * @param fs 字段配置
      * @param rd 请求数据
      * @param sd 响应数据
-     * @param mod
-     * @param ent
+     * @throws app.hongs.HongsException
      */
-    protected void titled(Map rd, Map sd, String mod, String ent) throws HongsException {
-        if (mod== null || ent== null) {
-            return;
-        }
-
+    protected void titled(String mod, Map fs, Map rd, Map sd) throws HongsException {
         Set ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
         Map xd = (Map) sd.get("info");
         if (ab == null || xd == null) {
@@ -147,8 +143,10 @@ public class SearchAction extends LuceneAction {
         if (ab.contains("_fork")) {
             md += 2;
         }
-        if (md != 0 && FormSet.hasConfFile(mod)) {
-            new SearchTitler(mod, ent).addTitle(xd , md);
+        if (md != 0) {
+            new SearchTitler()
+            .addItemsByForm (mod, fs)
+            .addTitle       (xd , md);
         }
     }
 

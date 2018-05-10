@@ -5,7 +5,6 @@
     <div class="clearfix">
         <div class="toolbox col-xs-8 btn-group">
             <button type="button" class="ensure btn btn-primary">确认选择</button>
-            <button type="button" class="inside btn btn-link"   >预置资源</button>
         </div>
         <form class="findbox col-xs-4 input-group" action="" method="POST">
             <input type="search" name="wd" class="form-control input-search"/>
@@ -30,65 +29,31 @@
             <tbody></tbody>
         </table>
     </div>
-    <div class="pagebox clearfix"  ></div>
-    <div class="forkbox radio hide"></div>
+    <div class="pagebox clearfix"></div>
 </div>
 <script type="text/javascript">
 (function($) {
     var context = $("#matrix-form-pick");
 
     // 附加关联所需的额外配置参数
-    context.data("_fill__fork", function(cel, v, n) {
+    context.data("_fill__fork", function(cel,v,n) {
         hsListFillFork.call(this, cel, v, n);
         var chk =  cel.find(  ".checkone"  );
-        chk.data({
-             form    :                 this._info.id,
-             conf    : "centra/data/"+ this._info.id,
-            "data-at": "centra/auto/search!" // 虚拟路径需要代理
-                     + "centra/data/"+ this._info.id +"/search",
-            "data-al": "centra/data/"+ this._info.id +"/list_fork.html",
-            "data-vk": "id" ,
-            "data-tk": "name"
-        });
-    });
-
-    // 切换预定义资源和自定义资源
-    context.find(".inside").click(function() {
-        var box = context.find( ".forkbox" );
-        var fnd = context.find( ".findbox" );
-        var lst = context.find( ".listbox,.pagebox");
-        if (box.is(".hide")) {
-            box.removeClass("hide");
-            lst.addClass   ("hide");
-            context.find(".inside").text("自定资源");
-            fnd.find("butotn,input").prop("disabled", true );
+        var dat ;
+        if (this._info.unit_id === "-" ) {
+            dat = eval("("+ this._info.conf +")");
         } else {
-            box.addClass   ("hide");
-            lst.removeClass("hide");
-            context.find(".inside").text("预置资源");
-            fnd.find("button,input").prop("disabled", false);
+            dat = {
+                 form    :                 this._info.id,
+                 conf    : "centra/data/"+ this._info.id,
+                "data-at": "centra/auto/search!" // 虚拟路径需要代理
+                         + "centra/data/"+ this._info.id +"/search",
+                "data-al": "centra/data/"+ this._info.id +"/list_fork.html",
+                "data-vk": "id" ,
+                "data-tk": "name"
+            };
         }
+        chk.data(dat);
     });
-
-    // 系统内预定义额外可关联资源
-    if (window.getFormList) {
-        window.getFormList("with-base", function(list) {
-            var box = context.find(".forkbox");
-            for(var i = 0; i < list.length; i ++) {
-                var row = list[i];
-                var lab = $('<label></label>');
-                var spn = $( '<span></span>' );
-                hsListFillFork.call(this, lab, row.__name__, "id[]");
-                var chk =lab.find(".checkone");
-                spn.text(/*****/ row.__text__);
-                chk.attr("title",row.__text__);
-                chk.data( row );
-                lab.append(spn);
-                box.append(lab);
-            }
-        });
-    } else {
-        context.find(".inside").hide();
-    }
 })(jQuery);
 </script>

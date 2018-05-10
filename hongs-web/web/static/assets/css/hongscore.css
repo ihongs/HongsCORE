@@ -176,6 +176,7 @@ textarea.form-control {
 .note-editor .note-btn .note-current-fontsize,
 .note-editor .note-btn .note-current-fontname {
     margin: -1px 0 0 0;
+    line-height: 1.1em;
     text-align: center;
     vertical-align: middle;
 }

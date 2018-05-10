@@ -381,6 +381,7 @@ public class CmdletHelper
         notes = String.format("Ok(%d) ET: -" , ok);
     } else
     if (n == ok) {
+        t = System.currentTimeMillis() - t;
         notes = String.format("Ok(%d) TT: %s", ok, Tool.humanTime(t));
     } else {
         t = System.currentTimeMillis() - t;
@@ -405,6 +406,7 @@ public class CmdletHelper
         notes = String.format("Ok(%d) Er(%d) ET: -" , ok, er);
     } else
     if (n == ok + er) {
+        t = System.currentTimeMillis() - t;
         notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Tool.humanTime(t));
     } else {
         t = System.currentTimeMillis() - t;

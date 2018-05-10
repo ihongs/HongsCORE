@@ -310,7 +310,7 @@ public class AssocCase {
             order(caze, Synt.toTerms(rd.remove(Cnst.OB_KEY)));
         }
 
-        /**/query(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
+        query(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
 
         where(caze, rd);
     }

@@ -80,6 +80,7 @@ public class SearchAction extends LuceneAction {
     }
 
     @Action("counts/search")
+    @Preset(conf="", form="")
     public void counts(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
@@ -101,6 +102,7 @@ public class SearchAction extends LuceneAction {
     }
 
     @Action("statis/search")
+    @Preset(conf="", form="")
     public void statis(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());

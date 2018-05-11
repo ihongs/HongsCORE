@@ -201,10 +201,10 @@
             .click(function() {
                 var r = location.pathname + location.search + location.hash;
                 <%if ( Core.BASE_HREF.length( ) != 0 ) {%>
-                    r = r.substring( <%=Core.BASE_HREF.length( )%> );
+                    r = r.substring( <%=Core.BASE_HREF.length()%> );
                 <%} /*End if */%>
                     r = encodeURIComponent( r );
-                location.replace(hsFixUri("centre/login.html?r="+r));
+                location.assign(hsFixUri("centre/login.html?r="+r));
             });
         $("#sign-out")
             .click(function() {

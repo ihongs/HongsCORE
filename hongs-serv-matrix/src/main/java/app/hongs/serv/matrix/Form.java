@@ -753,6 +753,19 @@ public class Form extends Model {
 
         Element  defs, defi;
 
+        // 全局性保护
+        defs = docm.createElement("enum");
+        root.appendChild ( defs );
+        defs.setAttribute("name", id+":defense");
+        defi = docm.createElement("value");
+        defs.appendChild ( defi );
+        defi.setAttribute("code", Cnst.AR_KEY);
+        defi.appendChild ( docm.createTextNode("(null)"));
+        defi = docm.createElement("value");
+        defs.appendChild ( defi );
+        defi.setAttribute("code", Cnst.OR_KEY);
+        defi.appendChild ( docm.createTextNode("(null)"));
+
         // 保护写接口
         defs = docm.createElement("enum");
         root.appendChild ( defs );

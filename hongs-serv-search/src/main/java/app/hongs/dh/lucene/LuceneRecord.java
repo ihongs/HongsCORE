@@ -921,19 +921,10 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             }
         }
 
-        // 或条件
-        if (rd.containsKey(Cnst.OR_KEY)) {
-            BooleanQuery.Builder qx = new BooleanQuery.Builder( );
-            Set<Map> set = Synt.asSet(rd.get(Cnst.OR_KEY));
-            for(Map  map : set) {
-                qx.add(getQuery(map), BooleanClause.Occur.SHOULD);
-            }
-            qr.add(qx.build(), BooleanClause.Occur.MUST);
-        }
-
         // 附条件
         if (rd.containsKey(Cnst.SR_KEY)) {
             Set<Map> set = Synt.asSet(rd.get(Cnst.SR_KEY));
+            if (set != null && ! set.isEmpty())
             for(Map  map : set) {
                 qr.add(getQuery(map), BooleanClause.Occur.SHOULD);
             }
@@ -942,8 +933,21 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         // 并条件
         if (rd.containsKey(Cnst.AR_KEY)) {
             Set<Map> set = Synt.asSet(rd.get(Cnst.AR_KEY));
+            if (set != null && ! set.isEmpty())
             for(Map  map : set) {
-                qr.add(getQuery(map), BooleanClause.Occur.MUST);
+                qr.add(getQuery(map), BooleanClause.Occur.MUST  );
+            }
+        }
+
+        // 或条件
+        if (rd.containsKey(Cnst.OR_KEY)) {
+            Set<Map> set = Synt.asSet(rd.get(Cnst.OR_KEY));
+            if (set != null && ! set.isEmpty()) {
+            BooleanQuery.Builder qx = new BooleanQuery.Builder( );
+            for(Map  map : set) {
+                qx.add(getQuery(map), BooleanClause.Occur.SHOULD);
+            }
+                qr.add(qx.build(   ), BooleanClause.Occur.MUST  );
             }
         }
 

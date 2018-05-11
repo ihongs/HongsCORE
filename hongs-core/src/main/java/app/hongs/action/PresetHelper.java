@@ -134,46 +134,16 @@ public class PresetHelper {
         }
     }
 
-    private void inject(Map r, Object x, String n, ActionHelper h) {
-        x = decode( x, r, h );
-        if (null == x) {
-            return;
-        }
-
-        if (x instanceof Map) {
-            Map y = (Map) x;
-            Dict.setParams(r, y, n);
-        } else {
-            Dict.setParam (r, x, n);
-        }
-    }
-
-    private void insert(Map r, Object x, String n, ActionHelper h) {
+    private void insert(Map reqd, Object data, String code, ActionHelper help) {
         // 与 inject 的不同即在于此
-        // 如果对应数据已存在则跳过
-        if (null != Dict.getParam(r , n)) {
-            return;
-        }
-
-        x = decode( x, r, h );
-        if (null == x) {
-            return;
-        }
-
-        if (x instanceof Map) {
-            Map y = (Map) x;
-            Dict.setParams(r, y, n);
-        } else {
-            Dict.setParam (r, x, n);
+        // 对应数据不存在才需要设置
+        if (null == Dict.getParam(reqd , code)) {
+            inject( reqd , data , code , help );
         }
     }
 
-    private Object decode(Object data, Map reqd, ActionHelper help) {
-        if (data == null) {
-            return  data;
-        }
-
-        if (data instanceof String) {
+    private void inject(Map reqd, Object data, String code, ActionHelper help) {
+        if (data != null && data instanceof String) {
             String text = ((String) data ).trim();
             Matcher mat = INJ_PAT.matcher( text );
 
@@ -207,10 +177,14 @@ public class PresetHelper {
                         data = null;
                     }
                 }
-                
-                // 默认值
-                if (x != null && data == null) {
-                    data = Data.toObject(x);
+
+                // 默认值, 没取到则跳过
+                if (data == null) {
+                    if(x == null) {
+                        return  ;
+                    } else {
+                        data = Data.toObject(x);
+                    }
                 }
             } else
             if (text.startsWith("(") && text.endsWith(")")) {
@@ -225,7 +199,7 @@ public class PresetHelper {
             }
         }
 
-        return  data;
+        Dict.setParam( reqd, data, code );
     }
 
 }

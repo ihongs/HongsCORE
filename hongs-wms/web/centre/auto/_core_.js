@@ -313,6 +313,13 @@ HsCate.prototype = {
         var text  = box.data("text");
         var box2  = box.empty();
 
+        if (data.length == 0) {
+            box.closest(".form-group").hide();
+            return;
+        } else {
+            box.closest(".form-group").show();
+        }
+
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');
         var title = $('<span></span>')
@@ -336,6 +343,13 @@ HsCate.prototype = {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.empty();
+
+        if (data.length == 0) {
+            box.closest(".form-group").hide();
+            return;
+        } else {
+            box.closest(".form-group").show();
+        }
 
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');

@@ -15,7 +15,7 @@ function forMapsInput(func) {
     ], func);
 }
 
-function in_maps_info(context) {
+function in_maps_info(context, formobj) {
     withQQMap(function() {
         var addrInp = context.find("[data-fn=addr]");
         var provInp = context.find("[data-fn=prov]");

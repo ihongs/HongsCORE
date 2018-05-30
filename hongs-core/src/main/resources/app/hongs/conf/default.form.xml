@@ -5,23 +5,24 @@
             string,search,text,hidden,email,url,tel,textarea,
             number,range,color,
             date,time,datetime,
-            enum,check,radio,select,
+            enum,check,radio,select,type,
             file,image,audio,video,
             fork,pick,stored,
-            form,json,object
+            form,part,object,
+            json
         </value>
         <value code="sortable" type="set">
             string,search,text,hidden,email,url,tel,
             number,range,color,
             date,time,datetime,
-            enum,check,radio,select,
-            fork,pick,sorted
+            enum,check,radio,select,type,
+            sorted
         </value>
         <value code="fitrable" type="set">
             string,search,text,hidden,email,url,tel,
             number,range,color,
             date,time,datetime,
-            enum,check,radio,select,
+            enum,check,radio,select,type,
             fork,pick
         </value>
         <value code="srchable" type="set">
@@ -36,10 +37,10 @@
     <enum name="__saves__">
         <value code="string" type="set">
             string,search,text,hidden,email,url,tel,textarea,
-            enum,radio,check,select,
+            enum,radio,check,select,type,
             file,image,audio,video,
             fork,pick,
-            form,json
+            form,part
         </value>
         <value code="number" type="set">
             number,range,color
@@ -51,7 +52,7 @@
         <value code="search" type="set">search</value>
         <value code="sorted" type="set">sorted</value>
         <value code="stored" type="set">stored</value>
-        <value code="object" type="set">object,form,json</value>
+        <value code="object" type="set">object,json,form,part</value>
     </enum>
     <!-- 字段校验类型映射 -->
     <enum name="__types__">
@@ -79,6 +80,7 @@
         <value code="check">enum</value>
         <value code="radio">enum</value>
         <value code="select">enum</value>
+        <value code="type">enum</value><!-- enum 的别名 -->
         <!-- File -->
         <value code="file">file</value>
         <value code="image">file</value>
@@ -86,9 +88,11 @@
         <value code="video">file</value>
         <!-- Fork -->
         <value code="fork">fork</value>
-        <value code="pick">fork</value>
+        <value code="pick">fork</value><!-- fork 的别名 -->
         <!-- Form -->
         <value code="form">form</value>
+        <value code="part">form</value><!-- form 的别名 -->
+        <!-- 其他 -->
         <value code="json">json</value>
     </enum>
     <!-- 文本校验正则映射 -->

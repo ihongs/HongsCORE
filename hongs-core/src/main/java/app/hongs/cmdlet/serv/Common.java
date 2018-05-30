@@ -55,7 +55,7 @@ public class Common {
             String v = et.getValue();
             a.put(k, v);
             j = k.length();
-            if (i < j && j < 31) {
+            if (i < j && j < 39) {
                 i = j;
             }
         }
@@ -82,7 +82,7 @@ public class Common {
             String v = et.getValue();
             a.put(k, v);
             j = k.length();
-            if (i < j && j < 31) {
+            if (i < j && j < 39) {
                 i = j;
             }
         }
@@ -100,7 +100,7 @@ public class Common {
 
     @Cmdlet("show-cmdlets")
     public static void showCmdlets(String[] args) {
-        Map<String, String> a = new TreeMap(new PropComparator());
+        Map<String, String> a = new TreeMap(new PathComparator('.'));
         int i = 0, j;
 
         for (Map.Entry<String, Method> et : CmdletRunner.getCmdlets().entrySet()) {
@@ -108,7 +108,7 @@ public class Common {
             Method v = et.getValue();
             a.put( k, v.getDeclaringClass().getName()+"."+v.getName() );
             j = k.length();
-            if (i < j && j < 31) {
+            if (i < j && j < 39) {
                 i = j;
             }
         }
@@ -126,7 +126,7 @@ public class Common {
 
     @Cmdlet("show-actions")
     public static void showActions(String[] args) {
-        Map<String, String> a = new TreeMap(new PropComparator());
+        Map<String, String> a = new TreeMap(new PathComparator('/'));
         int i = 0, j;
 
         for (Map.Entry<String, Mathod> et : ActionRunner.getActions().entrySet()) {
@@ -134,7 +134,7 @@ public class Common {
             Mathod v = et.getValue();
             a.put( k, v.toString() );
             j = k.length();
-            if (i < j && j < 31) {
+            if (i < j && j < 39) {
                 i = j;
             }
         }
@@ -325,7 +325,42 @@ public class Common {
     private static class PropComparator implements Comparator<String> {
         @Override
         public int compare(String s1, String s2) {
-            return s1.compareTo(s2);
+            return s1.compareTo ( s2 );
+        }
+    }
+
+    private static class PathComparator implements Comparator<String> {
+        final char SP;
+        public PathComparator(char sp) {
+            SP  =  sp;
+        }
+        @Override
+        public int compare(String s1, String s2) {
+            int p1 = 0;
+            int p2 = 0;
+            while (true) {
+                p1 = s1.indexOf(SP, p1);
+                p2 = s2.indexOf(SP, p2);
+                if (p1 == p2) {
+                    if (p1 == -1) {
+                        return s1.compareTo( s2 );
+                    }
+                  String s3 =  s1.substring(0,p1);
+                  String s4 =  s2.substring(0,p2);
+                    int cp  =  s3.compareTo( s4 );
+                    if (cp !=  0) {
+                        return cp;
+                    }
+                }
+                if (p1 == -1) {
+                   return -1;
+                }
+                if (p2 == -1) {
+                   return  1;
+                }
+                p1 ++;
+                p2 ++;
+            }
         }
     }
 

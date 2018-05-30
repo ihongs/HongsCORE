@@ -236,11 +236,22 @@ public class FormSet
         /**
          * 预优化
          * 枚举类型和关联类型缺失配置路径时可自动补上
-         * 需注意, 规避解析默认表单配置时引起无限递归
+         * 注意规避解析默认表单配置时可能引起无限递归
          */
         if (!"default".equals(name)) {
             typx = (String) getInstance().getEnum("__types__").get(typx);
             if ("fork".equals(typx)) {
+                if (! items.containsKey("data-at")
+                &&  ! items.containsKey("data-al")) {
+                if (! items.containsKey("form")) {
+                    items.put("form", namx.replace("_id", ""));
+                }
+                if (! items.containsKey("conf")) {
+                    items.put("conf", name);
+                }
+                }
+            } else
+            if ("form".equals(typx)) {
                 if (! items.containsKey("form")) {
                     items.put("form", namx.replace("_id", ""));
                 }

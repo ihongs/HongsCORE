@@ -25,11 +25,12 @@ import java.util.regex.Pattern;
  */
 public class Mview extends Model {
 
-    private CoreLocale locale = null;
-    private Map        fields = null;
-    private String     txkey  = null;
-    private String     title  = null;
-
+    private CoreLocale  locale = null;
+    private Map         fields = null;
+    private Set<String> lscols = null;
+    private String      txkey  = null;
+    private String      title  = null;
+    
     /**
      * 构造方法
      *
@@ -84,7 +85,7 @@ public class Mview extends Model {
         /**
          * 寻找第一个非隐藏的字符串字段
          */
-        for(String name : listable) {
+        for(String name : lscols) {
             Map    item = flds.get(name);
             if ( item == null ) continue;
             String type = (String) item.get ("__type__");
@@ -213,7 +214,6 @@ public class Mview extends Model {
         Set<String> srchTypz = new HashSet();
         Set<String> fitrTypz = new HashSet();
 
-
         able = params.get("listable");
         if ("?".equals(able)) {
             listTypz = Synt.toSet(cases.get("listable"));
@@ -335,20 +335,32 @@ public class Mview extends Model {
 
         //** 填充对应的模型属性值 **/
 
-        if (!listColz.isEmpty()) {
-            listable = listColz.toArray(new String[]{});
+        Map ps = table.getParams();
+        if (! ps.containsKey("listable") && ! listColz.isEmpty()) {
+            ps.put("listable", join(listColz));
         }
-        if (!sortColz.isEmpty()) {
-            sortable = sortColz.toArray(new String[]{});
+        if (! ps.containsKey("sortable") && ! sortColz.isEmpty()) {
+            ps.put("sortable", join(sortColz));
         }
-        if (!srchColz.isEmpty()) {
-            srchable = srchColz.toArray(new String[]{});
+        if (! ps.containsKey("srchable") && ! srchColz.isEmpty()) {
+            ps.put("srchable", join(srchColz));
         }
-        if (!fitrColz.isEmpty()) {
-            fitrable = fitrColz.toArray(new String[]{});
+        if (! ps.containsKey("fitrable") && ! fitrColz.isEmpty()) {
+            ps.put("fitrable", join(fitrColz));
         }
+        
+        lscols = listColz;
 
         return fields;
+    }
+
+    private String join(Set<String> fs) {
+        StringBuilder sb = new StringBuilder();
+        for ( String  fn : fs ) {
+            sb.append(fn).append(",");
+        }
+        sb.setLength(sb.length() - 1);
+        return sb.toString();
     }
 
     private void addTableFields() throws HongsException {

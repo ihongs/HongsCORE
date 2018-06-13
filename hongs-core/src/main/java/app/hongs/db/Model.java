@@ -71,26 +71,6 @@ implements IEntity
   public Table table;
 
   /**
-   * 可列举的字段
-   */
-  public String[] listable = null;
-
-  /**
-   * 可排序的字段
-   */
-  public String[] sortable = null;
-
-  /**
-   * 可搜索的字段
-   */
-  public String[] srchable = null;
-
-  /**
-   * 可过滤的字段
-   */
-  public String[] fitrable = null;
-
-  /**
    * 构造方法
    *
    * 需指定该模型对应的表对象.
@@ -106,17 +86,6 @@ implements IEntity
   {
     this.table = table;
     this.db = table.db;
-
-    Map  ps = table.getParams();
-    String cs;
-    cs = (String) ps.get("listable");
-    if (cs != null) this.listable = cs.split(",");
-    cs = (String) ps.get("sortable");
-    if (cs != null) this.sortable = cs.split(",");
-    cs = (String) ps.get("srchable");
-    if (cs != null) this.srchable = cs.split(",");
-    cs = (String) ps.get("fitrable");
-    if (cs != null) this.fitrable = cs.split(",");
   }
 
   //** 标准动作方法 **/
@@ -162,33 +131,31 @@ implements IEntity
    * 创建记录
    *
    * @param rd
-   * @return 记录ID
+   * @return 新增数据
    * @throws HongsException
    */
   @Override
   public Map create(Map rd)
     throws HongsException
   {
-    String[] cf = listable;
-    String id = add(rd);
-    if (cf  ==  null  ) {
-        cf = (String[]) table.getFields().keySet().toArray(new String[]{});
-    }
-    if (cf.length == 0) {
-        rd.put(table.primaryKey, id);
-        return rd;
-    } else {
-        Map sd = new LinkedHashMap();
-        sd.put(table.primaryKey, id);
-        if (null != listable) {
-            for(String fn: listable) {
-            if ( ! fn.contains(".")) {
-                sd.put(fn, rd.get(fn));
-            }
-            }
-        }
-        return sd;
-    }
+    return this.create(rd, null);
+  }
+
+  /**
+   * 创建记录
+   *
+   * @param rd
+   * @param caze
+   * @return 新增数据
+   * @throws HongsException
+   */
+  public Map create(Map rd, FetchCase caze)
+    throws HongsException
+  {
+    String    id = add( rd );
+    FetchCase fc = caze != null ? caze.clone() : fetchCase();
+    fc.filter ( "`" + this.table.primaryKey + "` = ?" , id );
+    return getInfo(rd, caze);
   }
 
   /**
@@ -957,7 +924,8 @@ implements IEntity
      * 这可为非 JOIN 关联的用例指定查询字段
      */
     Object rb  = null ;
-    if (listable == null && !caze.hasField())
+    if (! caze.hasField ()
+    &&  !table.getParams().containsKey("listable"))
     {
       rb = rd.remove(Cnst.RB_KEY);
       Set <String> sb = Synt.toTerms(rb);

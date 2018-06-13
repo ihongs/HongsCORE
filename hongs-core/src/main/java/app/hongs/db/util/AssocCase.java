@@ -63,7 +63,15 @@ public class AssocCase {
      */
     public  static final String  FITRABLE = "FITRABLE";
     /**
-     * 可存储字段, 用于 FetchCase 的 Option, 为设置则取 LISTABLE
+     * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 SRCHABLE
+     */
+    public  static final String  LIKEABLE = "LIKEABLE";
+    /**
+     * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 FITRABLE
+     */
+    public  static final String  RATEABLE = "RATEABLE";
+    /**
+     * 可存储字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  SAVEABLE = "SAVEABLE";
     /**
@@ -78,9 +86,9 @@ public class AssocCase {
     private static final Pattern ANPT = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
     private static final Pattern CNPT = Pattern.compile("^[\\w]+$");
 
-    private static final Map<String, String> RELS = new HashMap(  );
-    private static final Set<String  /**/  > NOLS = new HashSet(  );
-    private static final Set<String  /**/  > FUNC = new HashSet(  );
+    private static final Map<String, String> RELS = new HashMap();
+    private static final Set<String  /**/  > NOLS = new HashSet();
+    private static final Set<String  /**/  > FUNC = new HashSet();
     static {
         RELS.put(Cnst.EQ_REL, "=" );
         RELS.put(Cnst.NE_REL, "!=");
@@ -90,6 +98,8 @@ public class AssocCase {
         RELS.put(Cnst.LE_REL, "<=");
         RELS.put(Cnst.IN_REL, "IN");
         RELS.put(Cnst.NI_REL, "NOT IN");
+        RELS.put(Cnst.CQ_REL, "LIKE");
+        RELS.put(Cnst.NC_REL, "NOT LIKE");
 
         NOLS.add(Cnst.AI_REL);
         NOLS.add(Cnst.SI_REL);
@@ -443,6 +453,8 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FITRABLE);
+        Map<String, String> rf = allow(RATEABLE);
+        Map<String, String> sf = allow(LIKEABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
@@ -460,24 +472,55 @@ public class AssocCase {
                 // 处理关系符号
                 for(Map.Entry<String, String> el : RELS.entrySet()) {
                     String rl = el.getKey(  );
+                    String rn = el.getValue();
                     Object rv = fm.remove(rl);
                     if (rv == null) continue ;
-                    String rn = el.getValue();
-
-                    // 区间边界为空串表示无限
-                    if (Cnst.GT_REL.equals(rl)
-                    ||  Cnst.GE_REL.equals(rl)
-                    ||  Cnst.LT_REL.equals(rl)
-                    ||  Cnst.LE_REL.equals(rl)) {
-                        if ("".equals(rv)) {
-                            continue;
-                        }
-                    }
 
                     if (Cnst.IN_REL.equals(rl)
                     ||  Cnst.NI_REL.equals(rl)) {
                         caze.filter(fn+" "+rn+" (?)", rv);
+                        continue;
                     } else
+                    if (Cnst.GT_REL.equals(rl)
+                    ||  Cnst.GE_REL.equals(rl)) {
+                        // 区间为空串表示无限
+                        if ("".equals(rv)
+                        && !rf.containsKey(fn)) {
+                            continue;
+                        }
+                    } else
+                    if (Cnst.LT_REL.equals(rl)
+                    ||  Cnst.LE_REL.equals(rl)) {
+                        // 区间为空串表示无限
+                        if ("".equals(rv)
+                        && !rf.containsKey(fn)) {
+                            continue;
+                        }
+                    } else
+                    if (Cnst.CQ_REL.equals(rl)
+                    ||  Cnst.NC_REL.equals(rl)) {
+                        // 包含为空串表示不限
+                        if ("".equals(rv)
+                        && !sf.containsKey(fn)) {
+                            continue;
+                        }
+
+                        // 转义待查词, 避开通配符, 以防止歧义
+                        Set  <String> ws = Synt.toWords ( rv );
+                        List <String> wb = new ArrayList(    );
+                        StringBuilder sb = new StringBuilder();
+                        sb.append("(");
+                        for(String wd : ws) {
+                            sb.append(fn).append(" ").append(rn)
+                              .append(  " ? ESCAPE '/' AND "   );
+                            wb.add("%" + Tool.escape(wd, "/%_[]", "/") + "%");
+                        }
+                        sb.setLength(sb.length() - 5);
+                        sb.append(")");
+                        caze.filter(sb.toString(), wb.toArray());
+                        continue;
+                    }
+
                     if (!(rv instanceof Map)
                     &&  !(rv instanceof Set)
                     &&  !(rv instanceof Collection)) {
@@ -651,12 +694,31 @@ public class AssocCase {
         }
 
         // 搜索字段不能从列举继承
-        if (af == null && !LISTABLE.equals(on)
-                       && !SRCHABLE.equals(on)) {
-            af =  allow(LISTABLE);
-        }
+        // 包含字段可以从搜索继承
         if (af == null) {
-            af =  new  HashMap( );
+            if (LISTABLE.equals(on)
+            ||  SRCHABLE.equals(on)) {
+                af = new HashMap(  );
+            } else
+            if (LIKEABLE.equals(on)) {
+                af = allow(SRCHABLE);
+                if (af == null) {
+                af = allow(FITRABLE);
+                if (af == null) {
+                    af =  new HashMap();
+                }}
+            } else
+            if (RATEABLE.equals(on)) {
+                af = allow(FITRABLE);
+                if (af == null) {
+                    af =  new HashMap();
+                }
+            } else {
+                af = allow(LISTABLE);
+                if (af == null) {
+                    af =  new HashMap();
+                }
+            }
         }
 
         if (SAVEABLE.equals(on) ) {
@@ -743,19 +805,6 @@ public class AssocCase {
     public AssocCase allow(Model model) {
         allow(model.table);
 
-        if (model.listable != null) {
-            allow(LISTABLE, model.listable);
-        }
-        if (model.sortable != null) {
-            allow(SORTABLE, model.sortable);
-        }
-        if (model.srchable != null) {
-            allow(SRCHABLE, model.srchable);
-        }
-        if (model.fitrable != null) {
-            allow(FITRABLE, model.fitrable);
-        }
-
         return this;
     }
 
@@ -765,21 +814,35 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Table table) {
-        Map af = new LinkedHashMap();
-
-        /**
-         * 此处未将 SRCHTABLE 设为当前所有字段
-         * 模糊搜索比较特殊
-         * 文本类型字段才行
-         * 并不便于自动指派
-         */
-        bufs.put(LISTABLE, af);
-        bufs.put(SORTABLE, af);
-        bufs.put(FITRABLE, af);
-
-        String name = Synt.defoult(
-               that.getName( ) , table.name , table.tableName);
-        allow(table, table, table.getAssocs(), name, null, af);
+        String cs;
+        Map ps = table.getParams();
+        cs = (String) ps.get("sortable");
+        if (cs != null) allow(SORTABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("srchable");
+        if (cs != null) allow(SRCHABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("fitrable");
+        if (cs != null) allow(FITRABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("likeable");
+        if (cs != null) allow(LIKEABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("rateable");
+        if (cs != null) allow(RATEABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("saveable");
+        if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("listable");
+        if (cs != null) allow(LISTABLE, cs.trim().split("\\s*,\\s*"));
+        else {
+            /**
+             * 此处未将 SRCHTABLE 设为当前所有字段
+             * 模糊搜索比较特殊
+             * 文本类型字段才行
+             * 并不便于自动指派
+             */
+            Map af = new LinkedHashMap();
+            String name = Synt.defoult(
+                   that.getName( ) , table.name , table.tableName);
+            allow(table, table, table.getAssocs(), name, null, af);
+            bufs.put(LISTABLE, af);
+        }
 
         return this;
     }

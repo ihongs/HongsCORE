@@ -66,26 +66,16 @@ html, body {
     background: #090909;
 }
 
-#main-menubar li a {
-    font-weight: bolder;
+.menubox ul {
+    list-style: none;
+    margin : 0;
+    padding: 0;
 }
-#user-menubar li a,
-#main-menubar li li a {
-    font-weight: normal;
-}
-
 .menubox li a {
-    font-weight: bolder;
     padding: 6px 4px 6px 15px;
 }
 .menubox li li a {
-    font-weight: normal;
     padding: 6px 4px 6px 30px;
-}
-.menubox ul {
-    margin-left: 0;
-    padding-left: 0;
-    list-style: none;
 }
 .menubox li a  {
     display: block;
@@ -98,6 +88,10 @@ html, body {
     color: #ff8888;
     background: #090909;
     border-left: 2px solid #ff8888;
+}
+.menubox li .caret {
+    float: right;
+    margin: 9px 0 8px 0;
 }
 
 .toolbox,

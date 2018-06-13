@@ -29,11 +29,9 @@
 
             List<Map> subs = (List) menu.get( "menus" );
             if (subs != null && ! subs.isEmpty()) {
+                text += "<span class=\"caret\"></span>";
                 href  = Core.BASE_HREF +"/"+ href;
                 hrel  = Core.BASE_HREF +"/"+ hrel;
-                actc += "";
-                hrel += "";
-                text += "";
                 menus.append("<li class=\"")
                      .append(actc).append("\">" );
                 menus.append( "<a href=\"" )

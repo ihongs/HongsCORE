@@ -59,6 +59,10 @@ public final class Cnst {
 
     public static final String NE_REL = ":ne"; // 不等于
 
+    public static final String CQ_REL = ":cq"; // 包含
+
+    public static final String NC_REL = ":nc"; // 不包含
+
     public static final String LT_REL = ":lt"; // 小于
 
     public static final String LE_REL = ":le"; // 小于或等于

@@ -1220,6 +1220,24 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
     }
 
     /**
+     * 设置搜索项
+     * @param fc 字段配置
+     * @param sq 搜索对象
+     * @throws HongsException 
+     */
+    protected void setSearcher(Map fc, SearchQuery sq) throws HongsException {
+        sq.analyzer   (getAnalyser (fc));
+        sq.phraseSlop (Synt.asInt  (fc.get("lucene-parser-phraseSlop" )));
+        sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-parser-fuzzyPreLen")));
+        sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-parser-fuzzyMinSim")));
+        sq.advanceAnalysisInUse(Synt.asBool(fc.get("lucene-parser-advanceAnalysisInUse")));
+        sq.defaultOperatorIsAnd(Synt.asBool(fc.get("lucene-parser-defaultOperatorIsAnd")));
+        sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parser-allowLeadingWildcard")));
+        sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parser-lowercaseExpandedTerms")));
+        sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parser-enablePositionIncrements")));
+    }
+
+    /**
      * 获取类型变体
      * 返回的类型有
      * int
@@ -1566,17 +1584,20 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             m = new HashMap();
             m.putAll((Map) v);
         } else {
-            if (null==v || "".equals(v)) {
+            if (null== v || "".equals(v)) {
                 return ;
             }
             m = new HashMap();
-            if (v instanceof Collection) {
+            if (v instanceof Collection ) {
                 Collection c = (Collection) v;
                     c.remove("");
                 if (c.isEmpty()) {
                     return;
                 }
                 m.put(Cnst.IN_REL, c);
+            } else
+            if (q instanceof SearchQuery) {
+                m.put(Cnst.CQ_REL, v);
             } else
             {
                 m.put(Cnst.EQ_REL, v);
@@ -1587,36 +1608,32 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         if (q instanceof SearchQuery) {
             Map<String, Map> fields = getFields( );
             Map         fc = ( Map ) fields.get(k);
-            SearchQuery sq = ( SearchQuery ) q;
-            sq.analyzer(getAnalyzer( fc ));
-
-            // 额外的一些细微配置
-            sq.phraseSlop (Synt.asInt  (fc.get("lucene-parser-phraseSlop" )));
-            sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-parser-fuzzyPreLen")));
-            sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-parser-fuzzyMinSim")));
-            sq.advanceAnalysisInUse(Synt.asBool(fc.get("lucene-parser-advanceAnalysisInUse")));
-            sq.defaultOperatorIsAnd(Synt.asBool(fc.get("lucene-parser-defaultOperatorIsAnd")));
-            sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parser-allowLeadingWildcard")));
-            sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parser-lowercaseExpandedTerms")));
-            sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parser-enablePositionIncrements")));
+            setSearcher(fc, (SearchQuery) q);
         }
 
-        float bst = 1F;
+        float                bst = 1.0F;
         BooleanQuery.Builder src = null;
         if (m.containsKey(Cnst.WT_REL)) {
-            Object n = m.remove(Cnst.WT_REL);
-            bst = Synt.declare (n , 1F);
             src = qry;
             qry = new BooleanQuery.Builder();
+            bst = Synt.declare(m.remove(Cnst.WT_REL), bst);
         }
 
         if (m.containsKey(Cnst.EQ_REL)) {
             Object n = m.remove(Cnst.EQ_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.MUST);
+        } else
+        if (m.containsKey(Cnst.CQ_REL)) {
+            Object n = m.remove(Cnst.CQ_REL);
+            qry.add(q.get(k, n), BooleanClause.Occur.MUST);
         }
 
         if (m.containsKey(Cnst.NE_REL)) {
             Object n = m.remove(Cnst.NE_REL);
+            qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
+        } else
+        if (m.containsKey(Cnst.NC_REL)) {
+            Object n = m.remove(Cnst.NC_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
         }
 

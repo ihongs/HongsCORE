@@ -62,7 +62,7 @@ public class Mtree extends Model
    * 路径字段名
    */
   public String pathKey = "path";
-  
+
   /**
    * 名称字段名
    */
@@ -124,9 +124,9 @@ public class Mtree extends Model
    * 当临时动态从 Model 取 Mtree 时可使用此构造方法
    * 然后可动态将 rootId,nameKey 等关键字段重新设置
    *
-   * 需要注意的是:
-   * 如果 model 中覆盖了 add,put,del和filter 等
-   * 调用 Mtree 中相同方法并不会使用此 model 的
+   * 特别注意:
+   * 如果 model 中覆盖了 add,put,del 和 filter 等等
+   * 调用 Mtree 中相同方法并不会使用此 model 的方法
    *
    * @param model
    * @throws HongsException
@@ -1093,13 +1093,12 @@ public class Mtree extends Model
          * 是为了总是将 mtree 放入到模型库中管理,
          * 可以避免当前 model 关联的模型再关联回来时重复构造.
          */
-        if (model instanceof Mtree) {
-            mtree  = ( Mtree ) model ;
-            core.put (name , mtree);
+        if (model instanceof  Mtree) {
+            mtree = ( Mtree ) model ;
         } else {
-            mtree  = new Mtree(model);
-            core.put (name , mtree);
+            mtree = new Mtree(model);
         }
+        core.put(name , mtree);
 
         return mtree;
     }

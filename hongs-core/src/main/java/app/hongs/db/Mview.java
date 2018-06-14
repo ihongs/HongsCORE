@@ -30,7 +30,7 @@ public class Mview extends Model {
     private Set<String> lscols = null;
     private String      txkey  = null;
     private String      title  = null;
-    
+
     /**
      * 构造方法
      *
@@ -46,10 +46,13 @@ public class Mview extends Model {
     /**
      * 构造方法
      *
-     * 注意:
-     * 如果 model 中覆盖了 add,put,del和filter 等
-     * 调用 Mview 中相同方法并不会使用此 model 的
-     * 同时 model 中的 listable,sortable 等也不变
+     * 同 Mtree(Table)
+     * 当临时动态从 Model 取 Mtree 时可使用此构造方法
+     * 然后可以使用 getTitle,getFields 等提取表单信息
+     *
+     * 特别注意:
+     * 如果 model 中覆盖了 add,put,del 和 filter 等等
+     * 调用 Mview 中相同方法并不会使用此 model 的方法
      *
      * @param model
      * @throws HongsException
@@ -82,13 +85,18 @@ public class Mview extends Model {
         Map<String,  Map  > flds = getFields();
         Map<String, String> typs = FormSet.getInstance().getEnum("__types__");
 
+        if (flds.containsKey("name")) {
+            return "name";
+        }
+
         /**
          * 寻找第一个非隐藏的字符串字段
          */
         for(String name : lscols) {
             Map    item = flds.get(name);
             if ( item == null ) continue;
-            String type = (String) item.get ("__type__");
+            String type = (String) item.get("__type__");
+            if ( type == null ) continue;
             String kind = typs.get(type);
             if ("string".equals(kind)
             && !"stored".equals(type)
@@ -205,14 +213,14 @@ public class Mview extends Model {
         names.remove("@");
         Object able;
 
-        Set<String> listColz = new LinkedHashSet();
-        Set<String> sortColz = new LinkedHashSet();
-        Set<String> srchColz = new LinkedHashSet();
-        Set<String> fitrColz = new LinkedHashSet();
         Set<String> listTypz = new HashSet();
         Set<String> sortTypz = new HashSet();
         Set<String> srchTypz = new HashSet();
         Set<String> fitrTypz = new HashSet();
+        Set<String> listColz = new LinkedHashSet();
+        Set<String> sortColz = new LinkedHashSet();
+        Set<String> srchColz = new LinkedHashSet();
+        Set<String> fitrColz = new LinkedHashSet();
 
         able = params.get("listable");
         if ("?".equals(able)) {
@@ -337,29 +345,29 @@ public class Mview extends Model {
 
         Map ps = table.getParams();
         if (! ps.containsKey("listable") && ! listColz.isEmpty()) {
-            ps.put("listable", join(listColz));
+            ps.put("listable", implode(listColz));
         }
         if (! ps.containsKey("sortable") && ! sortColz.isEmpty()) {
-            ps.put("sortable", join(sortColz));
+            ps.put("sortable", implode(sortColz));
         }
         if (! ps.containsKey("srchable") && ! srchColz.isEmpty()) {
-            ps.put("srchable", join(srchColz));
+            ps.put("srchable", implode(srchColz));
         }
         if (! ps.containsKey("fitrable") && ! fitrColz.isEmpty()) {
-            ps.put("fitrable", join(fitrColz));
+            ps.put("fitrable", implode(fitrColz));
         }
-        
+
         lscols = listColz;
 
         return fields;
     }
 
-    private String join(Set<String> fs) {
+    private String implode(Set<String> fs) {
         StringBuilder sb = new StringBuilder();
         for ( String  fn : fs ) {
             sb.append(fn).append(",");
         }
-        sb.setLength(sb.length() - 1);
+        sb.setLength (sb.length() -1);
         return sb.toString();
     }
 
@@ -598,13 +606,12 @@ public class Mview extends Model {
          * 是为了总是将 mview 放入到模型库中管理,
          * 可以避免当前 model 关联的模型再关联回来时重复构造.
          */
-        if (model instanceof Mview) {
-            mview  = ( Mview ) model ;
-            core.put (name , mview);
+        if (model instanceof  Mview) {
+            mview = ( Mview ) model ;
         } else {
-            mview  = new Mview(model);
-            core.put (name , mview);
+            mview = new Mview(model);
         }
+        core.put(name , mview);
 
         return mview;
     }

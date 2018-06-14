@@ -224,9 +224,8 @@ public class DBAction implements IAction, IActing {
         locale.fill(mod);
         if ( ! locale.containsKey(key) ) {
                key = "fore." + opr + ".success";
-            Mview view =  new Mview(ett);
-            String tit = view.getTitle();
-            return locale.translate(key, tit, cnt);
+               ent = new Mview(ett).getTitle( );
+            return locale.translate(key, ent, cnt);
         } else {
             return locale.translate(key, /**/ cnt);
         }

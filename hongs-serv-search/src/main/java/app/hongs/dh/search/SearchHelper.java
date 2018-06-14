@@ -214,7 +214,7 @@ public class SearchHelper {
             cntlst.put(k, l);
         }
 
-        for (Map.Entry<String, Map<String, Integer>> et : countz.entrySet()) {
+        for (Map.Entry<String, Map<String, Integer>>  et : countz.entrySet()) {
             String k = et.getKey();
             List<Map.Entry<String, Integer>> l = new ArrayList(et.getValue().entrySet());
             List<Map.Entry<String, Integer>> a = cntlst.get(k);
@@ -439,14 +439,14 @@ public class SearchHelper {
 
         Map<String, List<Map.Entry<Minmax, Cntsum>>> cntlst = new HashMap();
 
-        for (Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
+        for (Map.Entry<String, Map<Minmax, Cntsum>>  et : counts.entrySet()) {
             String k = et.getKey();
             List<Map.Entry<Minmax, Cntsum>> l = new ArrayList(et.getValue().entrySet());
             List<Map.Entry<Minmax, Cntsum>> a = cntlst.get(k);
             if ( null != a ) {
                 l.addAll(a );
             }
-            Collections.sort(l, new Sortes( ));
+            Collections.sort( l, new Sortes());
             cntlst.put(k, l);
         }
 
@@ -573,7 +573,10 @@ public class SearchHelper {
         @Override
         public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
             int i1 = o1.getValue(), i2 = o2.getValue();
-            return i1 == i2 ? 0 : ( i2 > i1 ? 1 : -1 );
+            if (i1 > i2) return -1;
+            if (i1 < i2) return  1;
+            // 数量一致时按取值排, 避免限定后顺序变化
+            return o1.getKey().compareTo(o2.getKey() );
         }
     }
 
@@ -586,7 +589,7 @@ public class SearchHelper {
             if  (  k2.covers()  ) return  1;
 
             Cntsum x1 = o1.getValue(), x2 = o2.getValue();
-            return x1.cnt != x2.cnt ? (x2.cnt > x2.cnt ? 1 : -1)
+            return x1.cnt != x2.cnt ? (x2.cnt > x1.cnt ? 1 : -1)
                 : (x1.sum != x2.sum ? (x2.sum > x1.sum ? 1 : -1) : 0 );
         }
     }

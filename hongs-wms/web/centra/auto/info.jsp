@@ -45,7 +45,7 @@
                 String typa = (String) info.get("type");
                 if ("timestamp".equals(typa)
                 ||  "datestamp".equals(typa)) {
-                    kind =  "_" + type + "\" data-fl=\"!v ?v :v *1000\"";
+                    kind =  "_" + type + "\" data-fl=\"!v ?v :v *1000";
                 } else {
                     kind =  "_" + type;
                 }
@@ -103,7 +103,7 @@
                             } else {
                                 size = "100*100";
                             }
-                            kind += "\" data-size=\""+size+"\" data-keep=\""+keep+"\"";
+                            kind += "\" data-size=\""+size+"\" data-keep=\""+keep;
                         }
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
@@ -120,9 +120,9 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
                         if (Synt.declare(info.get("__repeated__"), false)) {
-                            kind  += " data-repeated=\"true\"";
+                            kind  += "\" data-repeated=\"true";
                         }
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
@@ -130,7 +130,7 @@
                 <%} else if ("code".equals(type) || "mark".equals(type)) {%>
                     <pre class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></pre>
                 <%} else {%>
-                    <p class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></p>
+                    <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>
                 </div>
             </div>

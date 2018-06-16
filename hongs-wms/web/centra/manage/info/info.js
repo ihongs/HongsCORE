@@ -107,120 +107,96 @@
         var option = {
             tooltip: {
                 trigger: 'axis',
-                formatter: function (params) {
-                    params = params[0];
-                    var date = new Date(params.name);
-                    return date.getDate() + '/' + (date.getMonth() + 1) + '/' + date.getFullYear() + ' : ' + params.value[1];
-                },
                 axisPointer: {
-                    animation: false
+                    type: 'cross',
+                    animation: false,
+                    label: {
+                        backgroundColor: '#505765'
+                    }
                 }
             },
             grid: {
                 top: 15,
-                left: 15,
-                right: 15,
-                bottom: 15
+                left: 30,
+                right: 30,
+                bottom: 30
             },
             xAxis: {
-                show: false,
-                type: 'time',
-                splitLine: {
-                    show: false
-                }
+                type : 'category',
+                boundaryGap : false,
+                axisLine: {onZero: false},
+                data: []
             },
-            yAxis: {
-                show: false,
+            yAxis: [{
+                name: "负载",
                 type: 'value',
-                splitLine: {
-                    show: false
-                }
-            },
+                max : 10
+            },{
+                name: "内存",
+                type: 'value',
+                max : 100
+            }],
             series: [{
+                name: '负载(＊)',
                 type: 'line',
+                yAxisIndex: 0,
                 showSymbol: false,
                 hoverAnimation: false,
                 data: [],
-                itemStyle: {
+                lineStyle: {
                     normal: {
-                        color: '#d5d5d5'
+                        width: 1
                     }
                 },
                 areaStyle: {
+                    normal: {}
+                }
+            }, {
+                name: '内存(％)',
+                type: 'line',
+                yAxisIndex: 1,
+                showSymbol: false,
+                hoverAnimation: false,
+                data: [],
+                lineStyle: {
                     normal: {
-                        color: '#bbddff'
+                        width: 1
                     }
                 },
-                markLine: {
-                    silent: true,
-                    symbol: "",
-                    label: {
-                        "normal": {
-                            "position": "start"
-                        }
-                    },
-                    data: [{
-                        yAxis: 0
-                    }, {
-                        yAxis: 1
-                    }, {
-                        yAxis: 2
-                    }, {
-                        yAxis: 3
-                    }, {
-                        yAxis: 4
-                    }, {
-                        yAxis: 5
-                    }]
+                areaStyle: {
+                    normal: {}
                 }
-            }],
-            visualMap: {
-                show: false,
-                pieces: [{
-                    gt: 0,
-                    lte: 1,
-                    color: '#096'
-                }, {
-                    gt: 1,
-                    lte: 2,
-                    color: '#ffde33'
-                }, {
-                    gt: 2,
-                    lte: 3,
-                    color: '#ff9933'
-                }, {
-                    gt: 3,
-                    lte: 4,
-                    color: '#cc0033'
-                }, {
-                    gt: 4,
-                    lte: 5,
-                    color: '#660099'
-                }, {
-                    gt: 5,
-                    color: '#7e0023'
-                }],
-                outOfRange: {
-                    color: '#999'
-                }
-            }
+            }]
         };
-        
+
+        var listX = option.xAxis.data;
+        var list0 = option.series[0].data;
+        var list1 = option.series[1].data;
+        for(var i = 0; i < 60; i ++) {
+            listX.push("");
+            list0.push(0 );
+            list1.push(0 );
+        }
+
         addSysOption(option, data, ctime);
-        
+
         return option;
     }
-    
+
     function addSysOption(opts, data, ctime) {
-        ctime = hsFmtDate(ctime, "yyyy/MM/dd HH:mm:ss");
-        var list = opts.series[0].data;
-        list.push({
-            value: [ctime, data.load[0]],
-            name :  ctime
-        });
-        if (list.length > 60) {
-            list.shift();
-        }
+        var list;
+
+        list = opts.xAxis.data;
+        list.shift();
+        list.push ( hsFmtDate(ctime, "mm:ss") );
+
+        list = opts.series[0].data;
+        list.shift();
+        list.push ( data.load[0] );
+
+        list = opts.series[1].data;
+        list.shift();
+        list.push ( Math.round((data.size[0] - data.free[0]) / data.size[0] * 100 * 1000) / 1000 );
     }
 
     function getRunOption(data, ctime) {
@@ -246,7 +222,7 @@
                     splitNumber:10,
                     axisLine: {            // 坐标轴线
                         lineStyle: {       // 属性lineStyle控制线条样式
-                            color: [[0.1, '#228822'],[0.5, '#ff8800'],[1.0, '#ff4400']], 
+                            color: [[0.1, '#228822'],[0.5, '#ff8800'],[1.0, '#ff4400']],
                             width: 10
                         }
                     },
@@ -338,7 +314,7 @@
                     splitNumber:4,
                     axisLine: {            // 坐标轴线
                         lineStyle: {       // 属性lineStyle控制线条样式
-                            color: [[0.25, '#228b22'],[0.75, '#48b'],[1, '#ff4500']], 
+                            color: [[0.25, '#228b22'],[0.75, '#48b'],[1, '#ff4500']],
                             width: 8
                         }
                     },
@@ -384,7 +360,7 @@
                     splitNumber:4,
                     axisLine: {            // 坐标轴线
                         lineStyle: {       // 属性lineStyle控制线条样式
-                            color: [[0.25, '#228b22'],[0.75, '#48b'],[1, '#ff4500']], 
+                            color: [[0.25, '#228b22'],[0.75, '#48b'],[1, '#ff4500']],
                             width: 8
                         }
                     },
@@ -415,7 +391,7 @@
                 }
             ]
         };
-        
+
         addRunOption(option, data, ctime);
 
         return option;
@@ -512,7 +488,7 @@
                         success: function(rst) {
                             addSysOption(sysOpts, rst.info.run_info, rst.info.now_msec);
                             sysChart.setOption(sysOpts, true);
-                            
+
                             addRunOption(runOpts, rst.info.run_info, rst.info.now_msec);
                             runChart.setOption(runOpts, true);
                         }

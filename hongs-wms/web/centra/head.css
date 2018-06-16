@@ -71,13 +71,21 @@ html, body {
     margin : 0;
     padding: 0;
 }
+.menubox li {
+    font-size: 15px;
+    margin: 1px 0;
+}
+.menubox li li {
+    font-size: 13px;
+    margin: 1px 0;
+}
 .menubox li a {
     padding: 6px 4px 6px 15px;
 }
 .menubox li li a {
     padding: 6px 4px 6px 30px;
 }
-.menubox li a  {
+.menubox li a {
     display: block;
     color: #eeeeee;
     background: #222222;

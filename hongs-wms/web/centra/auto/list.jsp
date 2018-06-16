@@ -274,7 +274,10 @@
                         if (info.get("data-tk") != null) {
                             subn = (String) info.get("data-tk");
                         }
-                        name = name + "." + subn;
+                        if (Synt.declare(info.get("__repeated__"), false)) {
+                            name = name + "." ;
+                        }
+                        name = name +"."+ subn;
                     %>
                     <th data-fn="<%=name%>" <%=ob%> class="<%=oc%>"><%=text%></th>
                 <%} else if (!"primary".equals(info.get("primary")) && !"foreign".equals(info.get("foreign"))) {%>

@@ -28,19 +28,20 @@
 jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var v    = { };
     var n    = box.attr("data-fn" ) || box.attr("name");
-    var t    = box.attr("data-ft" ) || ""    ;
+    var t    = box.attr("data-ft" ) || box.attr("type");
     var vk   = box.attr("data-vk" ) || "id"  ;
     var tk   = box.attr("data-tk" ) || "name";
-    var mul  = box.data("repeated") || /(\[\]|\.\.|\.$)/.test(n);
-    var frm  = box.closest( ".HsForm" ).data( "HsForm")  ||  { };
+    var mul  = box.data("repeated") || box.is( ".pickmul" )
+                               || /(\[\]|\.\.|\.$)/.test(n);
+    var foo  = box.closest(".HsForm").data("HsForm") || { };
     var btn  = jQuery(this);
 
     if (! fil) {
         do {
-            fil = frm["_fill_"+ n];
+            fil = foo["_fill_"+ n];
             if (fil) break;
 
-            fil = frm["_fill_"+ t];
+            fil = foo["_fill_"+ t];
             if (fil) break;
 
             fil = hsFormFillPick;
@@ -108,7 +109,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
 
         // 填充数据
-        fil.call   ( frm, box, v, n );
+        fil.call   ( foo, box, v, n );
         box.trigger(    "change"    );
         return true;
     }
@@ -230,8 +231,8 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  */
 function hsFormFillPick(box, v, n, t) {
     if (n == undefined) n = box.data("fn");
-    var mul = box.is  (".pickmul")
-           || box.data("repeated")
+    var mul = box.data("repeated")
+           || box.is  (".pickmul")
            || /(\[\]|\.\.|\.$)/.test(  n );
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 

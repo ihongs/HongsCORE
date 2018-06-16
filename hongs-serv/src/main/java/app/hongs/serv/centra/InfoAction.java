@@ -92,9 +92,9 @@ public class InfoAction {
             rsp.put("run_info", inf);
 
             inf.put("load" , new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("size" , new Object[] {siz, Tool.humanSize(max), "全部"});
+            inf.put("size" , new Object[] {siz, Tool.humanSize(siz), "全部"});
             inf.put("free" , new Object[] {fre, Tool.humanSize(fre), "空闲"});
-            inf.put("dist" , new Object[] {max, Tool.humanSize(fre), "可用"});
+            inf.put("dist" , new Object[] {max, Tool.humanSize(max), "可用"});
             inf.put("used" , new Object[] {use, Tool.humanSize(use), "已用"});
             inf.put("uses" , new Object[] {stk, Tool.humanSize(stk), "非堆"});
         }

@@ -1083,9 +1083,9 @@ function hsXhr4Progress(msg) {
             var tal = ev.total ;
             var snt = ev.loaded;
             pct = Math.ceil(100* snt / tal);
-            bar.attr( "aria-valuenow", pct)
-               .css ( "width"  , pct + "%")
-               .text(            pct + "%");
+            bar.attr ("aria-valuenow", pct)
+               .css  ( "width" , pct + "%")
+               .text (/*alert*/  pct + "%");
         }, false);
         xhr.addEventListener('load', function( ) {
             mod.modal("hide");

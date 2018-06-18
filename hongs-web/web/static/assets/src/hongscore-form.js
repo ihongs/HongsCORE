@@ -1067,10 +1067,7 @@ function hsXhr4Progress(msg) {
     var xhr = $.ajaxSettings.xhr();
     if (xhr.upload) {
         msg = msg || hsGetLang( "form.sending" );
-        msg = '<div>' + msg + '</div>'
-            + '<div class="progress">'
-            + '<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">0%</div>'
-            + '</div>';
+        msg = '<div class="text-center">' + msg + '</div><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">0%</div></div>';
         var box = $.hsWarn("", "", function(){});
                   box.find(".warnbox").html(msg);
         var bar = box.find(".progress-bar");

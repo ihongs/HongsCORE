@@ -1223,7 +1223,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
      * 设置搜索项
      * @param fc 字段配置
      * @param sq 搜索对象
-     * @throws HongsException 
+     * @throws HongsException
      */
     protected void setSearcher(Map fc, SearchQuery sq) throws HongsException {
         sq.analyzer   (getAnalyser (fc));
@@ -1264,6 +1264,10 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         Set <String> ks;
 
         //** 先查特有的 **/
+
+        if (srchable(fc)) {
+            return "search";
+        }
 
         ks = getSaveTypes("search");
         if (ks != null && ks.contains(t) ) {

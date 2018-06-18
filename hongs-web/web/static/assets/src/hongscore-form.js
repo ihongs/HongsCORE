@@ -1075,20 +1075,17 @@ function hsXhr4Progress(msg) {
                   box.find(".warnbox").html(msg);
         var bar = box.find(".progress-bar");
         var mod = box.closest(  ".modal"  );
+        var pct = 0;
         xhr.upload.addEventListener('progress', function(ev) {
-            if (! ev.lengthComputable) {
+            if (pct>=100 ||!ev.lengthComputable) {
                 return;
             }
             var tal = ev.total ;
             var snt = ev.loaded;
-            var pct = Math.ceil(100 * snt / tal);
-            bar.attr("aria-valuenow", pct )
-               .css ("width", pct + "%")
-               .text(         pct + "%");
-            if (pct < 100 ) {
-                return;
-            }
-            mod.modal("hide");
+            pct = Math.ceil(100* snt / tal);
+            bar.attr( "aria-valuenow", pct)
+               .css ( "width"  , pct + "%")
+               .text(            pct + "%");
         }, false);
         xhr.addEventListener('load', function( ) {
             mod.modal("hide");

@@ -1317,7 +1317,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
 
     protected boolean srchable(Map fc) {
         String name = Synt.declare(fc.get("__name__"), "");
-        return getFitrable().contains(name);
+        return getSrchable().contains(name);
     }
 
     protected boolean repeated(Map fc) {

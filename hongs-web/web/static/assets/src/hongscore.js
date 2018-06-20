@@ -1687,13 +1687,13 @@ $.hsWarn = function(msg, typ, yes, not) {
         div.removeClass("alert-dismissable");
 
         // 垂直居中
-        mod.on("shown.bs.modal", function() {
+        mod.on("shown.bs.modal", function( ) {
             var wh =$(window).height();
             var mh = div.outerHeight();
             if (wh > mh) {
-                mh = Math.floor((wh - mh) / 2);
-                div.css("margin-top", mh+"px");
-                mod.css("padding-right","0px"); // 去掉模态框BS设的15像素右补丁
+                mh = Math.floor((wh - mh) / 2 );
+                div.css("margin-top", mh+ "px");
+                mod.css("padding-right", "0px"); // 去掉模态框BS设的15像素右补丁
             }
         });
 
@@ -1701,12 +1701,16 @@ $.hsWarn = function(msg, typ, yes, not) {
         $.support.transition = undefined;
 
         // 按钮聚焦, 方便用户使用键盘快速默认操作
-        setTimeout( function() {
-            btn.find("button").eq(foc)[0].focus();
+        setTimeout( function( ) {
+            var fox = btn.find("button").eq(foc);
+            if (fox.size() > 0) {
+                fox[0].focus( );
+            } else {
+                box[0].focus( );
+            }
         }, 500);
-    } else {
-        $(":focus").blur();
     }
+    $(":focus").blur();
 
     btn.on( "click","button", function() {
         mod.modal("hide");
@@ -1759,25 +1763,26 @@ $.hsXhup = function(msg) {
  */
 $.hsXhwp = function(msg, xhr, xhu) {
     var stt = new Date( ).getTime( ) / ( 1000 );
-    var box = $.hsWarn("", "", function( ) { });
-    var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>');
-    var bas = $('<div class="progress"></div>').append(bar);
-    var tit = $('<h4 class="text-center"> </h4>').text(msg);
-    var etc = $(' <p class="text-center"> </p> ').text(".");
-    var mod = box.closest(".modal" );
+    var box = $.hsWarn(msg, " ", function() {});
+    var bax = $('<div class="progress"></div>');
+    var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>').appendTo(bax);
+    var etx = box.find   (".warn3" );
+    var etc = box.find   (".warn4" );
     var alt = box.closest(".alert" );
+    var mod = box.closest(".modal" );
     var pct = 0;
     var rtt = 0;
 
-    // 组装零部件并对样式进行微调
-    bar.css ( "width",  "100%"  );
-    bas.css ("margin", "0.5em 0");
-    alt.css ("background", "rgba(0,0,0,0.5)");
-    box.find(".warnbox").empty( ).append(tit).append(bas).append(etc);
+    etx.empty().append(bax);
+    etc.empty().text("...");
+    alt.addClass("progbox");
+    delete box;
+    delete bax;
+    delete etx;
+    delete alt;
 
-    // 监听进度和完成事件更新进度
     xhr.addEventListener(  "load"  , function(   ) {
-        mod.modal(  "hide"  );
+        mod.modal("hide");
     } , false);
     xhu.addEventListener("progress", function(evt) {
         if (pct >= 100 || ! evt.lengthComputable ) {

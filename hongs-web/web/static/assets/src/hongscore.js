@@ -1791,18 +1791,21 @@ $.hsXhwp = function(msg, xhr, xhu) {
 
         var tal  = evt.total ;
         var snt  = evt.loaded;
-        var ctt  = new Date().getTime() / 1000 - stt;
-        pct = Math.ceil( (100 * snt) / (tal * 1.0) );
-        rtt = Math.ceil( (100 - pct) * (ctt / pct) );
+        var ctt  = new Date().getTime( )/1000 - stt;
+        pct  = Math.ceil((100 * snt) / (0.0 + tal));
+        rtt  = Math.ceil((100 - pct) * (ctt / pct));
 
         // 剩余时间文本表示, 时:分:秒
         snt  =  "" ;
         ctt  = Math.floor(rtt /3600);
-        if (0< ctt) rtt = rtt %3600 ;
+        if ( 0<ctt) rtt  =rtt %3600 ;
+        if (10>ctt) snt += "0";
         snt += ctt + ":";
         ctt  = Math.floor(rtt / 60 );
-        if (0< ctt) rtt = rtt % 60  ;
+        if ( 0<ctt) rtt  =rtt % 60  ;
+        if (10>ctt) snt += "0";
         snt += ctt + ":";
+        if (10>rtt) snt += "0";
         snt += rtt ;
 
         bar.attr("aria-valuenow", pct);

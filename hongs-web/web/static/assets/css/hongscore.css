@@ -472,6 +472,16 @@ textarea.form-control {
 
 /** 其他 **/
 
+.progbox.alert{
+    background: rgba(0, 0, 0, 0.5);
+}
+.progbox .progress {
+    margin: 0 0;
+}
+.progbox .progress-bar {
+    width: 100%;
+}
+
 ul.pickbox {
     padding-left : 0;
     margin-bottom: 0;

@@ -74,7 +74,7 @@ HsForm.prototype = {
     load     : function(url, data) {
         if (url ) this._url  = url;
         if (data) this._data = hsSerialArr(data);
-        jQuery.hsAjax({
+        this.ajax({
             "url"       : this._url ,
             "data"      : this._data,
             "type"      : "POST",
@@ -964,7 +964,7 @@ HsForm.prototype = {
                           .not ( ".form-ignored" )
                           .val ( ) || "";
             });
-            jQuery.hsAjax({
+            this.ajax({
                 "url"     : url ,
                 "data"    : data,
                 "type"    : "POST",
@@ -1045,51 +1045,6 @@ HsForm.prototype = {
         }
     }
 };
-
-/**
- * 带上传进度条的表单提交方法
- * @param {String} cnf 配置项
- */
-function hsAjaxProgress(cnf) {
-    var msg = hsGetLang(this.rmsgs["form.sending"] || "form.sending");
-    cnf.xhr = function (   ) {  return  hsXhr4Progress  (  msg  );  };
-    cnf.cache = false;
-    cnf.async = true ;
-  return jQuery.hsAjax (cnf);
-}
-
-/**
- * 带上传进度条的异步通讯对象
- * @param {String} msg 提示语
- * @return {jqXHR}
- */
-function hsXhr4Progress(msg) {
-    var xhr = $.ajaxSettings.xhr();
-    if (xhr.upload) {
-        msg = msg || hsGetLang( "form.sending" );
-        msg = '<div class="text-center">' + msg + '</div><div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="min-width: 2em;">0%</div></div>';
-        var box = $.hsWarn("", "", function(){});
-                  box.find(".warnbox").html(msg);
-        var bar = box.find(".progress-bar");
-        var mod = box.closest(  ".modal"  );
-        var pct = 0;
-        xhr.upload.addEventListener('progress', function(ev) {
-            if (pct>=100 ||!ev.lengthComputable) {
-                return;
-            }
-            var tal = ev.total ;
-            var snt = ev.loaded;
-            pct = Math.ceil(100* snt / tal);
-            bar.attr ("aria-valuenow", pct)
-               .css  ( "width" , pct + "%")
-               .text (/*alert*/  pct + "%");
-        }, false);
-        xhr.addEventListener('load', function( ) {
-            mod.modal("hide");
-        }, false);
-    }
-    return xhr;
-}
 
 jQuery.fn.hsForm = function(opts) {
     return this._hsModule(HsForm, opts);

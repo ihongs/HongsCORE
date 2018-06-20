@@ -125,16 +125,6 @@ textarea.form-control {
     padding-right: 15px;
 }
 
-.warnbox .progress {
-    margin: 8px 0;
-    height: 15px;
-    line-height: 15px;
-}
-.warnbox .progress-bar {
-    height: 15px;
-    line-height: 15px;
-}
-
 /** 可后退的导航条 **/
 
 .breadcrumb.laps > li + li.back-crumb:before,

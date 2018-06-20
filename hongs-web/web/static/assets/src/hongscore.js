@@ -1726,6 +1726,86 @@ $.hsWarn = function(msg, typ, yes, not) {
     return  div;
 };
 
+/**
+ * 带加载进度条的异步通讯方法
+ * @param {String} msg 提示语
+ * @return {Function} xhr回调
+ */
+$.hsXhrp = function(msg) {
+    return function(   ) {
+        var xhr = $.ajaxSettings.xhr();
+        $.hsXhwp( /**/ msg, xhr, xhr );
+        return xhr;
+    };
+};
+/**
+ * 带上传进度条的异步通讯方法
+ * @param {String} msg 提示语
+ * @return {Function} xhr回调
+ */
+$.hsXhup = function(msg) {
+    return function(   ) {
+        var xhr = $.ajaxSettings.xhr();
+        var xhu = xhr.upload ||  xhr  ;
+        $.hsXhwp( /**/ msg, xhr, xhu );
+        return xhr;
+    };
+};
+/**
+ * 为异步通讯对象包装上进度条
+ * @param {String} msg 提示语
+ * @param {XMLHttpRequest} xhr
+ * @param {XMLHttpRequestUpload} xhu
+ */
+$.hsXhwp = function(msg, xhr, xhu) {
+    var stt = new Date( ).getTime( ) / ( 1000 );
+    var box = $.hsWarn("", "", function( ) { });
+    var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>');
+    var bas = $('<div class="progress"></div>').append(bar);
+    var tit = $('<h4 class="text-center"> </h4>').text(msg);
+    var etc = $(' <p class="text-center"> </p> ').text(".");
+    var mod = box.closest(".modal" );
+    var alt = box.closest(".alert" );
+    var pct = 0;
+    var rtt = 0;
+
+    // 组装零部件并对样式进行微调
+    bar.css ( "width",  "100%"  );
+    bas.css ("margin", "0.5em 0");
+    alt.css ("background", "rgba(0,0,0,0.5)");
+    box.find(".warnbox").empty( ).append(tit).append(bas).append(etc);
+
+    // 监听进度和完成事件更新进度
+    xhr.addEventListener(  "load"  , function(   ) {
+        mod.modal(  "hide"  );
+    } , false);
+    xhu.addEventListener("progress", function(evt) {
+        if (pct >= 100 || ! evt.lengthComputable ) {
+            return;
+        }
+
+        var tal  = evt.total ;
+        var snt  = evt.loaded;
+        var ctt  = new Date().getTime() / 1000 - stt;
+        pct = Math.ceil( (100 * snt) / (tal * 1.0) );
+        rtt = Math.ceil( (100 - pct) * (ctt / pct) );
+
+        // 剩余时间文本表示, 时:分:秒
+        snt  =  "" ;
+        ctt  = Math.floor(rtt /3600);
+        if (0< ctt) rtt = rtt %3600 ;
+        snt += ctt + ":";
+        ctt  = Math.floor(rtt / 60 );
+        if (0< ctt) rtt = rtt % 60  ;
+        snt += ctt + ":";
+        snt += rtt ;
+
+        bar.attr("aria-valuenow", pct);
+        bar.css ( "width" , pct + "%");
+        etc.text(  pct  + "% -" + snt);
+    } , false);
+};
+
 $.fn.jqLoad = $.fn.load ;
 $.fn.hsLoad = function(url, data, complete) {
     if ( $.isFunction(  data  )) {

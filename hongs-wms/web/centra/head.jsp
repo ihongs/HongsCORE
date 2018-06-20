@@ -216,8 +216,11 @@
             });
 
         // 菜单折叠和展开
-        menubar.find("li:not(.active)>ul" ).hide( );
+        menubar.find("li>ul" ).hide();
+        menubar.find("li.active>ul").show();
+        menubar.find("li.active>a" ).addClass("dropup");
         menubar.on("click", "a", function() {
+            $(this).toggleClass( "dropup" );
             var ul = $(this).next();
             if (ul.size( ) ) {
                 ul.toggle( );

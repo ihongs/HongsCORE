@@ -221,7 +221,7 @@ HsTree.prototype = {
         if (url ) this._url  = url;
         if (data) this._data = hsSerialArr(data);
       hsSetSeria( this._data, this.pidKey, this._pid );
-        jQuery.hsAjax({
+        this.ajax({
             "url"       : this._url ,
             "data"      : this._data,
             "type"      : "POST",
@@ -350,7 +350,7 @@ HsTree.prototype = {
         var that = this;
         var func = function() {
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
-        jQuery.hsAjax({
+        this.ajax({
             "url"       : url ,
             "data"      : data,
             "type"      : "POST",
@@ -443,6 +443,9 @@ HsTree.prototype = {
         });
     },
 
+    ajax : function() {
+        jQuery.hsAjax.apply(self, arguments);
+    },
     note : function() {
         jQuery.hsNote.apply(self, arguments);
     },

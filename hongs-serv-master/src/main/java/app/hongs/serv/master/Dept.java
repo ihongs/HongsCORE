@@ -136,16 +136,13 @@ extends Mtree {
         } else {
             // 删除限制, 如果部门下有用户则中止当前操作
             User user = new User();
-            List list = user.table.fetchMore(
-                user.fetchCase()
-                    .gotJoin("depts")
-                    .from   ("a_master_user_dept")
-                    .by     (FetchCase.INNER)
-                    .on     ("`depts`.`user_id` = `user`.`id`")
-                    .filter ("`depts`.`dept_id` = ?"    , id  )
-                    .limit  (1)
-            );
-            if (list.size()!=0) {
+            List list = user.table.fetchCase()
+                .join  (user.db.getTable("user_dept").tableName , "depts" ,
+                        "`depts`.`user_id` = `user`.`id`", FetchCase.INNER)
+                .filter("`depts`.`dept_id` = ?", id )
+                .limit (1)
+                .all   ( );
+            if (!list.isEmpty() ) {
                 throw new HongsException
                     .Notice("ex.master.dept.have.users")
                     .setLocalizedContext("master");

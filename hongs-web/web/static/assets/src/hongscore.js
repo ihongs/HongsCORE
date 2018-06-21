@@ -1776,7 +1776,6 @@ $.hsXhwp = function(msg, xhr, xhu) {
     etx.empty().append(bax);
     etc.empty().text("...");
     alt.addClass("progbox");
-    bar.css("width","100%");
     delete box;
     delete bax;
     delete etx;

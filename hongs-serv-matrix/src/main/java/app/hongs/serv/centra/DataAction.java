@@ -228,7 +228,7 @@ public class DataAction extends SearchAction {
         }
     }
 
-    protected String escape(Object v, Map es) {
+    protected String escape(Object v, Map e) {
         if (v == null) {
             return "";
         }
@@ -239,24 +239,30 @@ public class DataAction extends SearchAction {
             return Tool.toNumStr((Number) v);
         }
         if (v instanceof Collection) {
-            StringBuilder sb = new StringBuilder();
-            for(Object x : ((Collection) v)) {
-                x =escape(x ,es);
-                sb.append( "," ).append( x );
+            Collection c = ( Collection ) v ;
+            if (c.isEmpty( )) {
+                return "";
             }
-            v = sb.substring(1, sb.length());
+            StringBuilder  s = new StringBuilder();
+            for(Object x : c) {
+                s.append(",").append(escape(x, e));
+            }
+            v = s.substring (1);
         } else
-        if (es != null) {
-            Object x = es.get(v);
+        if (e != null) {
+            Object x = e.get(v);
             if (x == null) {
-                x = es.get ("*");
+                x =  e.get("*");
             if (x == null) {
-                x = v;
+                x =  v;
             }
             }
             v = x;
         }
-        return v.toString().replace("\"", "\"\"").replace("\r\n", "\n");
+        // CSV 文本特殊处理
+        return v.toString( )
+                .replace ("\"", "\"\"")
+                .replace ("\r\n", "\n");
     }
 
 }

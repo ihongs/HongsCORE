@@ -1776,10 +1776,8 @@ $.hsXhwp = function(msg, xhr, xhu) {
     etx.empty().append(bax);
     etc.empty().text("...");
     alt.addClass("progbox");
-    delete box;
-    delete bax;
-    delete etx;
-    delete alt;
+    delete box; delete bax ;
+    delete etx; delete alt ;
 
     xhr.addEventListener(  "load"  , function(   ) {
         mod.modal("hide");

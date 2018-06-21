@@ -1225,16 +1225,18 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
      * @param sq 搜索对象
      * @throws HongsException
      */
-    protected void setSearcher(Map fc, SearchQuery sq) throws HongsException {
+    protected void setParser(Map fc, SearchQuery sq) throws HongsException {
         sq.analyzer   (getAnalyser (fc));
-        sq.phraseSlop (Synt.asInt  (fc.get("lucene-parser-phraseSlop" )));
-        sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-parser-fuzzyPreLen")));
-        sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-parser-fuzzyMinSim")));
-        sq.advanceAnalysisInUse(Synt.asBool(fc.get("lucene-parser-advanceAnalysisInUse")));
-        sq.defaultOperatorIsAnd(Synt.asBool(fc.get("lucene-parser-defaultOperatorIsAnd")));
-        sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parser-allowLeadingWildcard")));
-        sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parser-lowercaseExpandedTerms")));
-        sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parser-enablePositionIncrements")));
+        sq.lightMatch (Synt.asBool (fc.get("lucene-light-match")));
+        sq.smartParse (Synt.asBool (fc.get("lucene-smart-parse")));
+        sq.phraseSlop (Synt.asInt  (fc.get("lucene-parse-phraseSlop" )));
+        sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-parse-fuzzyPreLen")));
+        sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-parse-fuzzyMinSim")));
+        sq.analyzeRangeTerms(Synt.asBool(fc.get("lucene-parse-analyzeRangeTerms")));
+        sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parse-allowLeadingWildcard")));
+        sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parse-lowercaseExpandedTerms")));
+        sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parse-enablePositionIncrements")));
+        sq.autoGeneratePhraseQueries(Synt.asBool(fc.get("lucene-parse-autoGeneratePhraseQueries")));
     }
 
     /**
@@ -1612,7 +1614,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         if (q instanceof SearchQuery) {
             Map<String, Map> fields = getFields( );
             Map         fc = ( Map ) fields.get(k);
-            setSearcher(fc, (SearchQuery) q);
+            setParser(  fc , ( SearchQuery )  q  );
         }
 
         float                bst = 1.0F;
@@ -1678,9 +1680,10 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
 
         if (m.containsKey(Cnst.IS_REL)) {
             String a = Synt.asString(m.remove(Cnst.IS_REL));
-            SearchQuery p = new SearchQuery( );
-            p.analyzer(new StandardAnalyzer());
-            p.advanceAnalysisInUse(   true   );
+            SearchQuery  p = new SearchQuery ( );
+            p.analyzer  (new StandardAnalyzer());
+            p.smartParse(true );
+            p.lightMatch(false);
             if ("FILL".equalsIgnoreCase(a) ) {
                 qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST);
             } else

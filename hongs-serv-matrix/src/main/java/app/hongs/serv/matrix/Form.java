@@ -608,13 +608,13 @@ public class Form extends Model {
             // 文件类型要指定上传路径
             if ("file".equals(types.get(t) )) {
                 if(!fiel.containsKey("href")) {
-                    fiel.put("href", "static/upload/data");
+                    fiel.put("href", "static/upload/data/"+ id);
                 }
                 if(!fiel.containsKey("path")) {
-                    fiel.put("path", "static/upload/data");
+                    fiel.put("path", "static/upload/data/"+ id);
                 }
                 if(!fiel.containsKey("temp")) {
-                    fiel.put("temp", "static/upload/temp");
+                    fiel.put("temp", "static/upload/temp/"+ id);
                 }
             } else
             // 日期类型要指定存储格式

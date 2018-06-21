@@ -14,8 +14,8 @@
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
 
-    StringBuilder _ob = new StringBuilder("-boost,-mtime,-ctime");
-    StringBuilder _rb = new StringBuilder("id,name,note,logo,tags,cuid");
+    StringBuilder _ob = new StringBuilder("-,-boost,-mtime,-ctime");
+    StringBuilder _rb = new StringBuilder("id,name,note,logo,cuid");
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">

@@ -107,7 +107,7 @@
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="ar.0.<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
-            <%} else if ("enum".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
+            <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
             <%} else {%>
                 <input type="text" class="form-control" name="ar.0.<%=name%>" />
@@ -245,7 +245,7 @@
                     <th data-fn="<%=name%>" data-ft="_audio" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("file".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_files" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
-                <%} else if ("enum".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
+                <%} else if ("enum".equals(type) || "type".equals(type) || "check".equals(type) || "radio".equals(type) || "select".equals(type)) {%>
                     <%
                         if (name.endsWith( "." )) {
                             name = name.substring(0, name.length() - 1);

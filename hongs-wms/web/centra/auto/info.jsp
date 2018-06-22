@@ -35,6 +35,7 @@
             if (  "select".equals(type)
             ||     "check".equals(type)
             ||     "radio".equals(type)
+            ||      "type".equals(type)
             ||      "enum".equals(type)) {
                 name += "_text";
             } else

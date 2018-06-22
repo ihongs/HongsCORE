@@ -77,9 +77,9 @@
         <value code="datetime">date</value>
         <!-- Enum -->
         <value code="enum">enum</value>
+        <value code="select">enum</value>
         <value code="check">enum</value>
         <value code="radio">enum</value>
-        <value code="select">enum</value>
         <value code="type">enum</value><!-- enum 的别名 -->
         <!-- File -->
         <value code="file">file</value>

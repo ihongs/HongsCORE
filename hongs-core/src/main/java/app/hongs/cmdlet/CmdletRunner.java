@@ -125,6 +125,10 @@ public class CmdletRunner
     }
     finally
     {
+      /**
+       * 已存在退出清理了
+       * 执行关闭时再出错
+       * 可能导致线程异常
       try
       {
           core.close ( );
@@ -134,6 +138,7 @@ public class CmdletRunner
           CoreLogger.error(er);
           System.exit(5);
       }
+      */
 
       /**
        * 输出总的运行时间

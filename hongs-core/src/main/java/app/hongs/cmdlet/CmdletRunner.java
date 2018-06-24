@@ -129,8 +129,7 @@ public class CmdletRunner
        */
       if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
       {
-          CmdletHelper.println("Total exec time: "
-          +(Tool.humanTime(System.currentTimeMillis()-Core.STARTS_TIME)));
+        CmdletHelper.println("Total exec time: "+(Tool.humanTime(System.currentTimeMillis() - Core.STARTS_TIME)));
       }
     }
   }

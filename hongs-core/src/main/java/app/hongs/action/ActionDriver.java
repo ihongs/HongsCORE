@@ -61,6 +61,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     private boolean INIT = false;
 
     /**
+     * 关闭表示, 为 true 表示有初始化, 需要承担全局清理
+     */
+    private boolean SHUT = false;
+
+    /**
      * 初始化 Filter
      * @param conf
      * @throws ServletException
@@ -92,9 +97,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         } else {
             return;
         }
-        INIT= true;
 
+        INIT= true;
         if (Core.BASE_HREF == null) {
+        SHUT= true;
+
             System.setProperty("file.encoding", "UTF-8");
 
             /** 核心属性配置 **/
@@ -191,6 +198,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 .append("\r\n\tObjects     : ").append(core.toString())
                 .append("\r\n\tRuntime     : ").append(Tool.humanTime(time))
                 .toString());
+        }
+
+        if (! SHUT) {
+            return;
         }
 
         try {

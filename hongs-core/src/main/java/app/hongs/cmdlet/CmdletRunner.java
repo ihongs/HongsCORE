@@ -122,16 +122,6 @@ public class CmdletRunner
       CoreLogger.error(error);
       System.exit(4);
     }
-    finally
-    {
-      /**
-       * 输出运行时间
-       */
-      if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
-      {
-        CmdletHelper.println("Total exec time: "+(Tool.humanTime(System.currentTimeMillis() - Core.STARTS_TIME)));
-      }
-    }
   }
 
   public static String[] init(String[] args)
@@ -312,11 +302,18 @@ public class CmdletRunner
       @Override
       public void run ()
       {
+        // 销毁内部资源
         Core.THREAD_CORE
                 .get(  )
                 .close();
         Core.GLOBAL_CORE
                 .close();
+
+        // 输出运行时间
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
+        {
+          CmdletHelper.println("Total exec time: "+(Tool.humanTime(System.currentTimeMillis() - Core.STARTS_TIME)));
+        }
       }
     });
 

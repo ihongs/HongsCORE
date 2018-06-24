@@ -319,7 +319,7 @@ public class CmdletRunner
     Core.getInstance( ).put(ActionHelper.class.getName( ), hlpr);
     hlpr.updateOutput (System.out , new PrintWriter(System.out));
 
-    // Clean instatnces fis core at exit
+    // Clean instatnces in core at exit
     Runtime.getRuntime().addShutdownHook(new Thread()
     {
       @Override

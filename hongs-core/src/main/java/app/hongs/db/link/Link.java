@@ -838,7 +838,8 @@ abstract public class Link
   }
 
   @Override
-  protected void finalize() throws Throwable
+  protected void finalize()
+    throws Throwable
   {
     try {
       this .close();

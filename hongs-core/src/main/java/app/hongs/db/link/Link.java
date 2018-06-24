@@ -841,7 +841,7 @@ abstract public class Link
   protected void finalize() throws Throwable
   {
     try {
-       this.close(   );
+      this.close();
     } finally {
       super.finalize();
     }

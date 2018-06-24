@@ -65,16 +65,6 @@ abstract public class Link
   public abstract Connection open()
     throws HongsException;
 
-  @Override
-  protected void finalize() throws Throwable
-  {
-    try {
-       this.close(   );
-    } finally {
-      super.finalize();
-    }
-  }
-
   /**
    * 关闭连接
    */
@@ -844,6 +834,16 @@ abstract public class Link
       throw new HongsException(0x1051,
         "The number of '?' and the number of parameters are inconsistent."
         + " ?s: " + num + " params: " + params.size() + " SQL: " + sql);
+    }
+  }
+
+  @Override
+  protected void finalize() throws Throwable
+  {
+    try {
+       this.close(   );
+    } finally {
+      super.finalize();
     }
   }
 

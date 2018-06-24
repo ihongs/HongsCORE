@@ -125,8 +125,7 @@ public class CmdletRunner
     finally
     {
       /**
-       * 输出总的运行时间
-       * 并清除参数及核心
+       * 输出运行时间
        */
       if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
       {

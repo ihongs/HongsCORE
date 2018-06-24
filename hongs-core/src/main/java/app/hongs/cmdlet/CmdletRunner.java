@@ -47,10 +47,9 @@ public class CmdletRunner
   {
     args = init(args);
 
-    Core  core = Core.getInstance();
-    String act = Core.ACTION_NAME.get(  );
-
-    if (null == act || act.length() == 0)
+    // 提取动作
+    String act = Core.ACTION_NAME.get( );
+    if (null == act || act.length() < 1)
     {
       System.err.println("ERROR: Cmdlet name can not be empty.");
       System.exit(2);
@@ -58,8 +57,8 @@ public class CmdletRunner
     }
 
     // 获取方法
-    Method method = getCmdlets().get(act);
-    if (null == method)
+    Method met = getCmdlets().get( act );
+    if (null == met)
     {
       System.err.println("ERROR: Cmdlet "+act+" is not exists.");
       System.exit(2);
@@ -74,7 +73,7 @@ public class CmdletRunner
         CmdletHelper.println("Starting...");
       }
 
-      method.invoke(null, new Object[] { args } );
+      met.invoke(null, new Object[] {args});
 
       if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
       {
@@ -83,12 +82,12 @@ public class CmdletRunner
     }
     catch (   IllegalAccessException ex)
     {
-      CoreLogger.error("Illegal access for method '"+method.getClass().getName()+"."+method.getName()+"(String[]).");
+      CoreLogger.error("Illegal access for method '"+met.getClass().getName()+"."+met.getName()+"(String[]).");
       System.exit(3);
     }
     catch ( IllegalArgumentException ex)
     {
-      CoreLogger.error("Illegal params for method '"+method.getClass().getName()+"."+method.getName()+"(String[]).");
+      CoreLogger.error("Illegal params for method '"+met.getClass().getName()+"."+met.getName()+"(String[]).");
       System.exit(3);
     }
     catch (InvocationTargetException ex)
@@ -125,21 +124,6 @@ public class CmdletRunner
     }
     finally
     {
-      /**
-       * 已存在退出清理了
-       * 执行关闭时再出错
-       * 可能导致线程异常
-      try
-      {
-          core.close ( );
-      }
-      catch (Throwable er)
-      {
-          CoreLogger.error(er);
-          System.exit(5);
-      }
-      */
-
       /**
        * 输出总的运行时间
        * 并清除参数及核心

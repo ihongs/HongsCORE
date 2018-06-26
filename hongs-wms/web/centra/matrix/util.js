@@ -324,12 +324,12 @@ function gainFlds(fields, area) {
         var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "";
         var params   = {};
 
+        if (name.substr(0, 1) == "-") {
+            name  = "-";
+        } else
         if (name == "@") {
             type  = "" ;
             text  = "" ;
-        } else
-        if (name.substr(0, 1) == "-") {
-            name  = "" ;
         }
 
         if (type == "ul"

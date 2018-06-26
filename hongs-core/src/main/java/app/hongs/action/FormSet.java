@@ -198,7 +198,7 @@ public class FormSet
       if ("field".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
-        if (namz == null) namz = "";
+        if (namz == null || "".equals(namz)) namz = "@"; // 表单参数总叫 @
         Map items = new LinkedHashMap();
         this.parse(element2, items, null);
         forms.put(namz, items);

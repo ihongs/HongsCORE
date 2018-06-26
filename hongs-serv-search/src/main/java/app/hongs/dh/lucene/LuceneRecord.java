@@ -1335,23 +1335,20 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
     }
 
     protected boolean ignored (Map fc) {
-        return "".equals(fc.get("__name__"))
-          ||  "@".equals(fc.get("__name__"))
-          || "Ignore".equals(fc.get("rule"));
+        return "@".equals(fc.get("__name__"))
+            || "" .equals(fc.get("__name__"))
+            || "" .equals(fc.get("__type__"))
+            || "Ignore".equals (fc.get(  "rule"  ));
     }
 
     protected boolean replied (Map fc) {
         return replies == null
-          ||   replies.isEmpty (/* ignore empty */)
-          ||   replies.contains(fc.get("__name__"));
+            || replies.isEmpty (/* ignore empty */)
+            || replies.contains(fc.get("__name__"));
     }
 
     public final void replies (Map rd) {
-        if (  rd   == null) {
-            replies = null;
-            return;
-        }
-        replies = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        replies = rd == null ? null : Synt.toTerms(rd.get(Cnst.RB_KEY));
     }
 
     protected boolean queried (BooleanQuery.Builder qb, String fn, Object fv) {

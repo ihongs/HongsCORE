@@ -172,7 +172,7 @@ public class Form extends Model {
             Iterator<Map> itr = flds.iterator();
             while (itr.hasNext()) {
                 fld = itr.next();
-                if (   "".equals(fld.get("__name__"))) {
+                if (  "-".equals(fld.get("__name__"))) {
                     fld.put("__name__", Core.newIdentity());
                 } else
                 if (  "@".equals(fld.get("__name__"))) {
@@ -210,7 +210,6 @@ public class Form extends Model {
             // 补全表配置项
             fld = Synt.mapOf(
                 "__text__", name,
-                "__name__", "@",
                 "listable", "?",
                 "sortable", "?",
                 "fitrable", "?",

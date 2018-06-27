@@ -154,7 +154,7 @@
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView,
-        _url : "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
+        _url : "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=_enum,_fork"
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {

@@ -266,11 +266,11 @@ public class JoistBean implements IVolume {
      * 获取可过滤的字段
      * @return
      */
-    public Set<String> getFitrable() {
+    public Set<String> getFindable() {
         if (null != whColz) {
             return  whColz;
         }
-        whColz = getCaseNames("fitrable");
+        whColz = getCaseNames("findable");
         return whColz;
     }
 

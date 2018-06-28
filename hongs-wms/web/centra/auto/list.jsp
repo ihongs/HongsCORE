@@ -61,7 +61,7 @@
             String  text = (String) info.get("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            || !Synt.declare(info.get("fitrable"), false)) {
+            || !Synt.declare(info.get("findable"), false)) {
                 continue;
             }
         %>

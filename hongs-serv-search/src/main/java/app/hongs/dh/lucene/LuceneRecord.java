@@ -859,7 +859,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             if (m == null) {
                 continue;
             }
-            if (fitrable(m) == false ) {
+            if (findable(m) == false ) {
                 continue;
             }
 
@@ -1316,9 +1316,9 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
-    protected boolean fitrable(Map fc) {
+    protected boolean findable(Map fc) {
         String name = Synt.declare(fc.get("__name__"), "");
-        return getFitrable().contains(name) || Cnst.ID_KEY.equals(name);
+        return getFindable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
     protected boolean srchable(Map fc) {
@@ -1449,7 +1449,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             IField  f ;
             String  t = datatype(m);
             boolean s = sortable(m);
-            boolean q = fitrable(m);
+            boolean q = findable(m);
             boolean u = unstored(m);
             boolean r = repeated(m);
             boolean g = true; // 是否要存储, 数值类型过滤与存储是分离的, 故其等同于 !unstored

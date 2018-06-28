@@ -211,7 +211,7 @@ public class Form extends Model {
                 "__text__", name,
                 "listable", "?",
                 "sortable", "?",
-                "fitrable", "?",
+                "findable", "?",
                 "nameable", "?"
             );
             if (tdf != null) {

@@ -255,9 +255,9 @@ public class Mview extends Model {
             srchColz = Synt.toSet(able);
         }
 
-        able = params.get("fitrable");
+        able = params.get("findable");
         if ("?".equals(able)) {
-            fitrTypz = Synt.toSet(cases.get("fitrable"));
+            fitrTypz = Synt.toSet(cases.get("findable"));
         } else
         if ("*".equals(able)) {
             fitrColz = names;
@@ -326,17 +326,17 @@ public class Mview extends Model {
                 }
             }
 
-            if (field.containsKey("fitrable")) {
-                if (Synt.declare(field.get("fitrable"), false)) {
+            if (field.containsKey("findable")) {
+                if (Synt.declare(field.get("findable"), false)) {
                     fitrColz.add(fn);
                 }
             } else {
                 if (fitrTypz.contains(ft)) {
                     fitrColz.add(fn);
-                    field.put("fitrable", "yes");
+                    field.put("findable", "yes");
                 } else
                 if (fitrColz.contains(fn)) {
-                    field.put("fitrable", "yes");
+                    field.put("findable", "yes");
                 }
             }
         }
@@ -353,8 +353,8 @@ public class Mview extends Model {
         if (! ps.containsKey("srchable") && ! srchColz.isEmpty()) {
             ps.put("srchable", implode(srchColz));
         }
-        if (! ps.containsKey("fitrable") && ! fitrColz.isEmpty()) {
-            ps.put("fitrable", implode(fitrColz));
+        if (! ps.containsKey("findable") && ! fitrColz.isEmpty()) {
+            ps.put("findable", implode(fitrColz));
         }
 
         lscols = listColz;

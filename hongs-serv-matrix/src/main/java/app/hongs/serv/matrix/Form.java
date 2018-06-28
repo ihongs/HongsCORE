@@ -238,8 +238,9 @@ public class Form extends Model {
             if (set.contains("name")) {
                 flds.add(Synt.mapOf(
                     "__name__", "name",
-                    "__type__", "stored",
-                    "editable", "false"
+                    "__type__", "hidden",
+                    "lucene-type", "stored",
+                    "readonly", "true"
                 ));
             }
 
@@ -247,55 +248,54 @@ public class Form extends Model {
             if (set.contains("word")) {
                 flds.add(Synt.mapOf(
                     "__name__", "word",
-                    "__type__", "search",
-                    "editable", "false" ,
+                    "__type__", "hidden",
+                    "lucene-type", "search",
+                    "readonly", "true",
                     "unstored", "true"
                 ));
             }
 
             // 增加用户字段
-            if (set.contains("cuid")) {
-                flds.add(Synt.mapOf(
-                    "__name__", "cuid",
-                    "__type__", "hidden",
-                    "editable", "false" ,
-                    "default" , "=$uid" ,
-                    "default-always", "true",
-                    "default-create", "true"
-                ));
-            }
             if (set.contains("muid")) {
                 flds.add(Synt.mapOf(
                     "__name__", "muid",
                     "__type__", "hidden",
-                    "editable", "false" ,
+                    "readonly", "true",
                     "default" , "=$uid" ,
-                    "default-always", "true",
-                    "default-create", "false"
+                    "default-always", "true"
                 ));
             }
-
-            // 增加时间字段
-            if (set.contains("ctime")) {
+            if (set.contains("cuid")) {
                 flds.add(Synt.mapOf(
-                    "__name__", "ctime" ,
-                    "__type__", "datetime",
-                      "type"  , "timestamp" ,
-                    "editable", "false" ,
-                    "default" , "=%now" ,
+                    "__name__", "cuid",
+                    "__type__", "hidden",
+                    "readonly", "true",
+                    "default" , "=$uid" ,
                     "default-always", "true",
                     "default-create", "true"
                 ));
             }
+
+            // 增加时间字段
             if (set.contains("mtime")) {
                 flds.add(Synt.mapOf(
                     "__name__", "mtime" ,
                     "__type__", "datetime",
                       "type"  , "timestamp" ,
-                    "editable", "false" ,
+                    "readonly", "true",
+                    "default" , "=%now" ,
+                    "default-always", "true"
+                ));
+            }
+            if (set.contains("ctime")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "ctime" ,
+                    "__type__", "datetime",
+                      "type"  , "timestamp" ,
+                    "readonly", "true",
                     "default" , "=%now" ,
                     "default-always", "true",
-                    "default-create", "false"
+                    "default-create", "true"
                 ));
             }
         } else {

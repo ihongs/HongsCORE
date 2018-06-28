@@ -249,7 +249,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "sortable", "srchable", "fitrable", "saveable"};
+        String[] ks = new String[] {"listable", "sortable", "srchable", "fitrable"};
         for(String k : ks) {
             Object s = fc.get( k );
             if (null == s) {

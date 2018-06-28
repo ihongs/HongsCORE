@@ -270,7 +270,7 @@ public class Form extends Model {
                     "__name__", "cuid",
                     "__type__", "hidden",
                     "readonly", "true",
-                    "default" , "=$uid" ,
+                    "default" , "=$uid",
                     "default-always", "true",
                     "default-create", "true"
                 ));
@@ -293,7 +293,7 @@ public class Form extends Model {
                     "__type__", "datetime",
                       "type"  , "timestamp" ,
                     "readonly", "true",
-                    "default" , "=%now" ,
+                    "default" , "=%now",
                     "default-always", "true",
                     "default-create", "true"
                 ));

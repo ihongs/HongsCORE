@@ -18,7 +18,7 @@
             enum,check,radio,select,type,
             sorted
         </value>
-        <value code="fitrable" type="set">
+        <value code="findable" type="set">
             string,search,text,hidden,email,url,tel,
             number,range,color,
             date,time,datetime,

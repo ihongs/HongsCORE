@@ -78,7 +78,7 @@
                 <div class="checkbox" style="margin: 6px 0px; font-size: 13px; line-height: 1.5;" data-name="<%=name%>" data-type="<%=type%>" data-rb="<%=rb%>"></div>
             </div>
         </div>
-        <%} else if (Synt.declare(info.get("fitrable"), false)) {%>
+        <%} else if (Synt.declare(info.get("findable"), false)) {%>
         <div class="filt-group form-group form-group-sm clearfix">
             <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-sm-6">

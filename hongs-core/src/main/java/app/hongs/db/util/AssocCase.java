@@ -38,7 +38,7 @@ import java.util.regex.Pattern;
  * </pre>
  * <p>
  * allow 所传值可用 Table.getParams() 或 FormSet.getForm().get("@")
- * 所得到的 Map 里面的 listable,sortable,srchable,fitrable 等来设置,
+ * 所得到的 Map 里面的 listable,sortable,srchable,findable 等来设置,
  * 同时提供了 allow(Table), allow(Model) 两个快捷方法自动读取并设置;
  * </p>
  *
@@ -61,13 +61,13 @@ public class AssocCase {
     /**
      * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
-    public  static final String  FITRABLE = "FITRABLE";
+    public  static final String  FINDABLE = "FINDABLE";
     /**
      * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 SRCHABLE
      */
     public  static final String  LIKEABLE = "LIKEABLE";
     /**
-     * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 FITRABLE
+     * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 FINDABLE
      */
     public  static final String  RATEABLE = "RATEABLE";
     /**
@@ -249,7 +249,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "sortable", "srchable", "fitrable"};
+        String[] ks = new String[] {"listable", "sortable", "srchable", "findable"};
         for(String k : ks) {
             Object s = fc.get( k );
             if (null == s) {
@@ -452,7 +452,7 @@ public class AssocCase {
     private void where(FetchCase caze, Map rd) {
         if (rd == null || rd.isEmpty()) return;
 
-        Map<String, String> af = allow(FITRABLE);
+        Map<String, String> af = allow(FINDABLE);
         Map<String, String> rf = allow(RATEABLE);
         Map<String, String> sf = allow(LIKEABLE);
 
@@ -703,13 +703,13 @@ public class AssocCase {
             if (LIKEABLE.equals(on)) {
                 af = allow(SRCHABLE);
                 if (af == null) {
-                af = allow(FITRABLE);
+                af = allow(FINDABLE);
                 if (af == null) {
                     af =  new HashMap();
                 }}
             } else
             if (RATEABLE.equals(on)) {
-                af = allow(FITRABLE);
+                af = allow(FINDABLE);
                 if (af == null) {
                     af =  new HashMap();
                 }
@@ -820,8 +820,8 @@ public class AssocCase {
         if (cs != null) allow(SORTABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("srchable");
         if (cs != null) allow(SRCHABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("fitrable");
-        if (cs != null) allow(FITRABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("findable");
+        if (cs != null) allow(FINDABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("likeable");
         if (cs != null) allow(LIKEABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("rateable");

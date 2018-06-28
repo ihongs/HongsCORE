@@ -164,7 +164,7 @@ public class Form extends Model {
 
         if (conf != null && !"".equals(conf)) {
             flds = Synt.asList(Data.toObject(conf));
-            Set set = Synt.setOf("name", "word", "cuid", "muid", "ctime", "mtime");
+            Set set = Synt.setOf("name", "word", "cuser", "muser", "ctime", "mtime");
             Map tdf = null;
             Map idf = null;
             Map fld ;
@@ -256,18 +256,18 @@ public class Form extends Model {
             }
 
             // 增加用户字段
-            if (set.contains("muid")) {
+            if (set.contains("muser")) {
                 flds.add(Synt.mapOf(
-                    "__name__", "muid",
+                    "__name__", "muser",
                     "__type__", "hidden",
                     "readonly", "true",
                     "default" , "=$uid" ,
                     "default-always", "true"
                 ));
             }
-            if (set.contains("cuid")) {
+            if (set.contains("cuser")) {
                 flds.add(Synt.mapOf(
-                    "__name__", "cuid",
+                    "__name__", "cuser",
                     "__type__", "hidden",
                     "readonly", "true",
                     "default" , "=$uid",
@@ -770,7 +770,7 @@ public class Form extends Model {
         defs.setAttribute("name", id+":defence");
         defi = docm.createElement("value");
         defs.appendChild ( defi );
-        defi.setAttribute("code", Cnst.AR_KEY+".x.cuid");
+        defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
         defi.appendChild ( docm.createTextNode("($session.uid)"));
 
         // 我所创建的
@@ -779,7 +779,7 @@ public class Form extends Model {
         defs.setAttribute("name", id+".created");
         defi = docm.createElement("value");
         defs.appendChild ( defi );
-        defi.setAttribute("code", Cnst.AR_KEY+".x.cuid");
+        defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
         defi.appendChild ( docm.createTextNode("($session.uid)"));
 
         saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);

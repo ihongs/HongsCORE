@@ -274,7 +274,7 @@ public class Data extends SearchEntity {
                 dd.put(fn , fr);
 
                 if (!equals(fr,fo)
-                &&  !fn.equals("muid" )
+                &&  !fn.equals("muser" )
                 &&  !fn.equals("mtime")) {
                     i ++; // 需要排除修改环境数据
                 }

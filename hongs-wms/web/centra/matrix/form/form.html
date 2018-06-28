@@ -300,23 +300,23 @@
                         </label>
                         <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="=%now" data-default-create="no"  data-default-always="yes" data-readonly="yes"/>
                     </div>
-                    <div class="form-group base-field" data-type="cuid">
+                    <div class="form-group base-field" data-type="cuser">
                         <label class="control-label clearfix" style="display: block;">
                             <span>创建用户</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="fork" name="cuid" data-verify-type="string" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
+                        <input class="invisible" type="fork" name="cuser" data-verify-type="string" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
                     </div>
-                    <div class="form-group base-field" data-type="muid">
+                    <div class="form-group base-field" data-type="muser">
                         <label class="control-label clearfix" style="display: block;">
                             <span>修改用户</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="fork" name="muid" data-verify-type="string" data-default="=$uid" data-default-create="no"  data-default-always="yes" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
+                        <input class="invisible" type="fork" name="muser" data-verify-type="string" data-default="=$uid" data-default-create="no"  data-default-always="yes" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
                     </div>
                     <div class="form-group base-field" data-type="_">
                         <label class="control-label clearfix" style="display: block;">
@@ -701,7 +701,7 @@
                 </label>
             </div>
         </div>
-        <div class="widget-pane widget-pane-cuid widget-pane-muid widget-pane-ctime widget-pane-mtime widget-pane-state">
+        <div class="widget-pane widget-pane-cuser widget-pane-muser widget-pane-ctime widget-pane-mtime widget-pane-state">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>

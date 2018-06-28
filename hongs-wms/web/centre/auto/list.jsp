@@ -14,8 +14,8 @@
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
 
-    StringBuilder _ob = new StringBuilder("-,-boost,-mtime,-ctime");
-    StringBuilder _rb = new StringBuilder("id,name,note,logo,cuid");
+    StringBuilder _ob = new StringBuilder( "-,-boost,-mtime,-ctime");
+    StringBuilder _rb = new StringBuilder("id,name,note,logo,cuser");
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
@@ -165,7 +165,7 @@
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
                 <div class="form-control-static" style="display: inline-block;">
-                    <label><input type="checkbox" name="cuid" value=""/> 我创建的</label>
+                    <label><input type="checkbox" name="cuser" value=""/> 我创建的</label>
                 </div>
             </div>
         </div>
@@ -189,7 +189,7 @@
                             <div data-fn="name" style="color: #444;"></div>
                             <div data-fn="note" style="color: #888;"></div>
                         </div>
-                        <div data-fn="cuid" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
+                        <div data-fn="cuser" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
                             <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                             <button type="button" class="btn btn-xs btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
@@ -214,7 +214,7 @@
 
     // 权限控制
     if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide()
-                && context.find("[name='cuid']").closest(".form-control-static").remove();
+                && context.find("[name='cuser']").closest(".form-control-static").remove();
 
     //** 列表、搜索表单 **/
 
@@ -236,7 +236,7 @@
         fillList    : hsListFillItem,
         fillPage    : hsListFillMore,
         _fill_logo  : hsListFillLogo,
-        _fill_cuid  : hsListShowBtns
+        _fill_cuser  : hsListShowBtns
     });
 
     var filtobj = fitrbox.hsForm({
@@ -286,7 +286,7 @@
     });
 
     // 我创建的
-    context.find("[name='cuid']")
+    context.find("[name='cuser']")
            .val (  HsUSER.uid   )
            .change(function() {
         $(this).closest (".form-control-static")

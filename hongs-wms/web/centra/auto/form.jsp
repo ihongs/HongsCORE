@@ -25,7 +25,7 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            || !Synt.declare(info.get("editable"), true)) {
+            ||  Synt.declare(info.get("readonly"), false)) {
                 continue ;
             }
 

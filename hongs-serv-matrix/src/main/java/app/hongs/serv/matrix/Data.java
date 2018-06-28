@@ -446,7 +446,7 @@ public class Data extends SearchEntity {
             return  wdCols;
         }
         Map fs = (Map) getFields().get("word");
-        if (fs != null && Synt.declare(fs.get("editable"), true)) {
+        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
             wdCols =  Synt.setOf  (  "word"  );
         } else {
             wdCols =  getCaseNames("srchable");
@@ -460,7 +460,7 @@ public class Data extends SearchEntity {
             return  nmCols;
         }
         Map fs = (Map) getFields().get("name");
-        if (fs != null && Synt.declare(fs.get("editable"), true)) {
+        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
             nmCols =  Synt.setOf  (  "name"  );
         } else {
             nmCols =  getCaseNames("nameable");

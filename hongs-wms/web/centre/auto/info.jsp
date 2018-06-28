@@ -23,8 +23,7 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            || (!Synt.declare(info.get("editable"), true )
-            &&  !Synt.declare(info.get("listable"), false))) {
+            || !Synt.declare(info.get("readonly"), true)) {
                 continue ;
             }
 
@@ -68,7 +67,7 @@
             }
         %>
         <%if ("hidden".equals(type)) {%>
-            <input type="hidden" name="<%=name%>"/>
+            <!--input type="hidden" name="<%=name%>"/-->
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
         <%} else {%>

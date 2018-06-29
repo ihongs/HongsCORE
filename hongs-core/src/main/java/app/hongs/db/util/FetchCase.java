@@ -1376,12 +1376,12 @@ public class FetchCase
          Map  ro ;
 
     try (Loop rs = select()) {
-        while ( ( ro = rs.next() ) != null ) {
-           ra.add(ro);
+        while (( ro = rs.next( ) ) != null ) {
+            ra.add( ro );
         }
     }
 
-    return ra;
+    return  ra;
   }
 
   /**

@@ -1372,13 +1372,13 @@ public class FetchCase
    * @throws HongsException
    */
   public List getAll() throws HongsException {
-    List<Map> ra = new ArrayList();
+    List<Map> ra = new ArrayList( );
          Map  ro ;
 
     try (Loop rs = select()) {
-        while (( ro = rs.next( ) ) != null ) {
-            ra.add( ro );
-        }
+    while ( ( ro = rs.next() ) != null ) {
+       ra.add(ro);
+    }
     }
 
     return  ra;

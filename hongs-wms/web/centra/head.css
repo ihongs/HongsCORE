@@ -28,13 +28,26 @@ html, body {
     display: table-cell;
     vertical-align: top;
 }
+#main-context {
+    overflow: auto;
+    height: 100%;
+}
 #menu-context {
     overflow: auto;
     height: 100%;
 }
-#main-context {
-    overflow: auto;
-    height: 100%;
+
+#menu-context .btn {
+    color: #eee;
+}
+#user-menubar a  {
+    color: #aaa;
+}
+#user-menubar li {
+    font-size: 13px;
+}
+#main-menubar li li {
+    font-size: 13px;
 }
 
 #menu-laq {
@@ -72,12 +85,7 @@ html, body {
     padding: 0;
 }
 .menubox li {
-    font-size: 15px;
-    margin: 1px 0;
-}
-.menubox li li {
-    font-size: 13px;
-    margin: 1px 0;
+    margin : 1px 0;
 }
 .menubox li a {
     padding: 6px 4px 6px 15px;

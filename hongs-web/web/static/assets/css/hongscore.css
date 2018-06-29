@@ -220,11 +220,31 @@ textarea.form-control {
 .alert-body > p button {
     margin: 0 0.5em;
 }
-.alert-body > p.warn4 {
-    text-align: right;
+.alert-body > p.warn-btns {
+    text-align : right;
 }
-.alert-body > p.warn3 {
+.alert-body > p.warn-text {
     white-space: pre-wrap;
+}
+
+#notebox .alert {
+    opacity: 0.8;
+}
+.modal > .alert {
+    color: #eeeeee;
+    background: rgba( 24, 24, 24,0.8);
+}
+.modal > .alert.alert-info {
+    background: rgba(153, 84,187,0.8);
+}
+.modal > .alert.alert-danger {
+    background: rgba(255,  0, 57,0.8);
+}
+.modal > .alert.alert-warning {
+    background: rgba(255,117, 24,0.8);
+}
+.modal > .alert.alert-success {
+    background: rgba( 63,182, 24,0.8);
 }
 
 #headbox .uhead {
@@ -625,12 +645,12 @@ input[type=file].form-control {
         left  :  50% ;
     }
     .modal > .alert,
-    .modal   .warn2 {
+    .alert > .warnbox {
         margin: 0  auto ;
         width : 600px;
     }
-    .modal > .warn1 {
-        width : 100% ;
+    .modal > .warnbag {
         border-radius: 0;
+        width : 100% ;
     }
 }

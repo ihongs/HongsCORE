@@ -239,7 +239,7 @@ public class Data extends SearchEntity {
                 Map od = table.fetchCase()
                     .filter( where, param)
                     .select("ctime")
-                    .one();
+                    .getOne( );
                 if (! od.isEmpty( )) {
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
                         throw new HongsException(0x1100, "等会儿, 不要急");
@@ -251,7 +251,7 @@ public class Data extends SearchEntity {
                 Map od = table.fetchCase()
                     .filter( where, param)
                     .select("ctime, data")
-                    .one();
+                    .getOne();
                 if (! od.isEmpty( )) {
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
                         throw new HongsException(0x1100, "等会儿, 不要急");
@@ -332,7 +332,7 @@ public class Data extends SearchEntity {
             Map dd = table.fetchCase()
                 .filter( where, param)
                 .select("ctime, state, data, name")
-                .one();
+                .getOne( );
             if (dd.isEmpty()) {
                 throw new HongsException(0x1104, "原始记录不存在");
             }
@@ -381,7 +381,7 @@ public class Data extends SearchEntity {
         Map dd = table.fetchCase()
             .filter( where, param)
             .select("etime, state, data, name")
-            .one();
+            .getOne( );
         if (dd.isEmpty()) {
             throw new HongsException(0x1100, "恢复数据源不存在");
         }

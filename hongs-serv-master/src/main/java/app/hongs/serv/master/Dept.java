@@ -141,7 +141,7 @@ extends Mtree {
                         "`depts`.`user_id` = `user`.`id`", FetchCase.INNER)
                 .filter("`depts`.`dept_id` = ?", id )
                 .limit (1)
-                .all   ( );
+                .getAll( );
             if (!list.isEmpty() ) {
                 throw new HongsException
                     .Notice("ex.master.dept.have.users")

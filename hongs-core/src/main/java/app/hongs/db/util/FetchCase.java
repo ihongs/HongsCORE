@@ -1353,7 +1353,7 @@ public class FetchCase
    * @return
    * @throws HongsException
    */
-  public Loop oll() throws HongsException {
+  public Loop select() throws HongsException {
     if (_db_ == null) {
       throw new HongsException(0x10b6);
     }
@@ -1371,17 +1371,17 @@ public class FetchCase
    * @return
    * @throws HongsException
    */
-  public List all() throws HongsException {
-    List<Map<String, Object>> ra = new ArrayList();
-         Map<String, Object>  ro  ;
+  public List getAll() throws HongsException {
+    List<Map> ra = new ArrayList();
+         Map  ro ;
 
-    try (Loop rs = oll()) {
-        while ((ro = rs.next()) != null ) {
-            ra.add( ro );
+    try (Loop rs = select()) {
+        while ( ( ro = rs.next() ) != null ) {
+           ra.add(ro);
         }
     }
 
-    return  ra;
+    return ra;
   }
 
   /**
@@ -1389,13 +1389,12 @@ public class FetchCase
    * @return
    * @throws HongsException
    */
-  public Map  one() throws HongsException {
+  public Map  getOne() throws HongsException {
     this.limit(1);
 
-    try (Loop rs = oll()) {
-        Map<String, Object> ro = rs.next();
-        if (null == ro) ro = new HashMap();
-        return ro;
+    try (Loop rs = select()) {
+         Map  ro = rs.next();
+       return ro != null ? ro : new HashMap();
     }
   }
 

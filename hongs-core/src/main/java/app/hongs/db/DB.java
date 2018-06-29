@@ -299,7 +299,7 @@ public class DB
   public Loop queryMore(FetchCase caze)
     throws HongsException
   {
-    return caze.use(this).oll();
+    return caze.use(this).select();
   }
 
   /**
@@ -312,7 +312,7 @@ public class DB
   public List fetchMore(FetchCase caze)
     throws HongsException
   {
-    return caze.use(this).all();
+    return caze.use(this).getAll();
   }
 
   /**
@@ -325,12 +325,12 @@ public class DB
   public Map  fetchLess(FetchCase caze)
     throws HongsException
   {
-    return caze.use(this).one();
+    return caze.use(this).getOne();
   }
 
   /**
    * 调用 FetchCase 构建查询
-   * 可用 all , one 得到结果, 以及 delete, update 等操作数据
+   * 可用 getAll , getOne 得到结果, 以及 delete, update 等操作数据
    * @return 绑定了 db 的查询对象
    */
   public FetchCase fetchCase()

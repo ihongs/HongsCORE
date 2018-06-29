@@ -205,7 +205,7 @@ public class Unit extends Mtree {
             .filter("unit_id = ? AND state > 0",id)
             .select("id, state" )
             .assort("boost DESC")
-            .all( );
+            .getAll( );
         for ( Map  row : rows ) {
             String fid = row.get( "id"  ).toString();
             String sta = row.get("state").toString();
@@ -237,7 +237,7 @@ public class Unit extends Mtree {
             .filter("pid = ? AND state > 0", id)
             .select("id, name"  )
             .assort("boost DESC")
-            .all( );
+            .getAll( );
 
         for ( Map  row : rows ) {
             String pid = row.get( "id" ).toString();
@@ -287,7 +287,7 @@ public class Unit extends Mtree {
             .filter("pid = ? AND state > 0", id)
             .select("id, name"  )
             .assort("boost DESC")
-            .all( );
+            .getAll( );
 
         for ( Map  row : rows ) {
             String pid = row.get( "id" ).toString();

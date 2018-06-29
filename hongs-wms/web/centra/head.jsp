@@ -98,7 +98,7 @@
     </ul>
 </div>
 
-<hr style="margin-top: 11px; border-top: 1px dotted #eeeeee;"/>
+<hr style="margin-top: 21px; border-top: 1px dotted #aaaaaa;" />
 
 <div class="menubox clearfix">
     <ul id="user-menubar">

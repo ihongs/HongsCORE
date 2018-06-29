@@ -1565,7 +1565,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     var mod = $('<div class="modal fade in"></div>').append(div);
     var box = div.find(".warnbox");
     var btt = $('<h4></h4>');
-    var btu = $( '<p></p>' );
+    var btx = $( '<p></p>' );
     var btn = $( '<p></p>' );
     var foc = 0;
     var fns;
@@ -1594,13 +1594,10 @@ $.hsWarn = function(msg, typ, yes, not) {
         case 'info':
             div.addClass("alert-info"   ); typ = "";
             break;
-        default:
-            div.addClass("alert-info"   );
-            break;
     }
     box.text(msg);
     btt.text(msg);
-    btu.text(typ);
+    btx.text(typ);
 
     // 操作按钮
     for(var i = 0; i < fns.length; i ++ )  {
@@ -1653,7 +1650,7 @@ $.hsWarn = function(msg, typ, yes, not) {
                 btt.text (v["title"]);
             }
             if (v["notes"] !== undefined) {
-                btu.text (v["notes"]);
+                btx.text (v["notes"]);
             }
             if (v["class"] !== undefined) {
                 div.addClass (v["class"]);
@@ -1667,23 +1664,17 @@ $.hsWarn = function(msg, typ, yes, not) {
         ini.keyboard = false ;
         ini.backdrop = "static";
 
-        // 外围包裹
-        var wrp = $('<div></div>');
-        wrp.append(div.contents());
-        div.addClass("warn1");
-        wrp.addClass("warn2");
-        div.append(wrp);
-
         // 重新布局
-        btu.addClass("warn3");
-        btn.addClass("warn4");
+        div.addClass("warnbag");
+        btx.addClass("warn-text");
+        btn.addClass("warn-btns");
         box.empty (   );
         box.append(btt);
-        box.append(btu);
+        box.append(btx);
         box.append(btn);
 
         // 隐藏关闭
-        div.find(".close").hide( );
+        div.find(".close").hide();
         div.removeClass("alert-dismissable");
 
         // 垂直居中

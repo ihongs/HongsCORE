@@ -53,14 +53,14 @@ public class MineAction {
         if (pw != null && !"".equals(pw)) {
             Map xd = new HashMap();
             Map ed = new HashMap();
+            xd.put("ok",false);
             xd.put("errs", ed);
-            xd.put("ok", false);
             xd.put("msg", CoreLocale.getInstance().translate("fore.form.invalid"));
             if (po != null && !"".equals(po)) {
                 Map row = DB.getInstance("master").getTable ("user").fetchCase( )
                     .filter("id = ?", id)
                     .select( "password" )
-                    .one();
+                    .getOne( );
                 po = AuthKit.getCrypt(po);
                 if (! po.equals(row.get("password")) ) {
                     ed.put("passolde", "旧密码不正确");

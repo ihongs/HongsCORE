@@ -76,7 +76,7 @@ extends Model {
                         "dept", "user_dept.dept_id = dept.id" )
                         .select("user_id,dept.*");
                 }
-                List<Map> rows = caze.all();
+                List<Map> rows = caze.getAll( );
                 for ( Map dept : rows ) {
                     String uid = dept.remove("user_id").toString();
                     ((Set) maps.get(uid).get("depts") ).add(dept );

@@ -177,7 +177,7 @@ public class AuthKit {
         Map   ud = tb.fetchCase()
                      .filter("`opnid` =? AND `appid` = ?", opnid, appid)
                      .select("`user_id`")
-                     .one   (   );
+                     .getOne(   );
 
         // 记录关联
         String usrid;
@@ -229,9 +229,9 @@ public class AuthKit {
     public static Set getUserDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
-            .filter ("user_id = ?",uid)
-            .select ("dept_id")
-            .all    ();
+            .filter("user_id = ?", uid)
+            .select("dept_id" )
+            .getAll();
         Set set = new HashSet();
         for(Map row : lst) {
             set.add(row.get("dept_id"));
@@ -242,11 +242,11 @@ public class AuthKit {
     public static Set getMoreDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
-            .filter ("user_id = ?",uid)
-            .select ("dept_id")
-            .all    ();
+            .filter("user_id = ?", uid)
+            .select("dept_id" )
+            .getAll();
         Set set = new HashSet();
-        Dept dp = new Dept   ();
+        Dept dp = new Dept();
         for(Map row : lst) {
             set.addAll(dp.getChildIds((String)row.get("dept_id"), true));
         }
@@ -316,9 +316,9 @@ public class AuthKit {
     public static Set getUserRoles(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("user_role");
         List<Map> lst = rel.fetchCase()
-            .filter ("user_id = ?",uid)
-            .select ("role"   )
-            .all    ();
+            .filter("user_id = ?",uid)
+            .select("role"    )
+            .getAll();
         Set set = new HashSet();
         for(Map row : lst) {
             set.add(row.get("role"));
@@ -359,9 +359,9 @@ public class AuthKit {
     public static Set getDeptRoles(String gid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("dept_role");
         List<Map> lst = rel.fetchCase()
-            .filter ("dept_id = ?",gid)
-            .select ("role"   )
-            .all    ();
+            .filter("dept_id = ?", gid)
+            .select("role"    )
+            .getAll();
         Set set = new HashSet();
         for(Map row : lst) {
             set.add(row.get("role"));

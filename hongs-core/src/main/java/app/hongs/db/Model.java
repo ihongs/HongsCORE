@@ -811,9 +811,9 @@ implements IEntity
     wh.put(Cnst.RB_KEY, Synt.setOf(table.primaryKey));
     caze.use(db).from ( table.tableName, table.name );
     caze.setOption("OBJECT_MODE", false);
-        filter( caze, wh );
+    this.filter(caze , wh);
     Set xd = new HashSet();
-    for (Map row : caze.oll () ) {
+    for(Map row : caze.select()) {
         xd.add(row.get(table.primaryKey).toString( ));
     }
 

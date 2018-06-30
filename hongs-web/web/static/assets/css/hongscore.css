@@ -638,7 +638,7 @@ input[type=file].form-control {
 
 /** 适配 **/
 
-@media (min-width: 600px) {
+@media (min-width: 630px) {
     #notebox {
         margin: 0 -300px;
         width : 600px;

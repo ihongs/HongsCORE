@@ -209,6 +209,7 @@ textarea.form-control {
     position: fixed;
     display: none;
     z-index: 1040;
+    width: 100%;
     left: 0;
     top: 0;
 }

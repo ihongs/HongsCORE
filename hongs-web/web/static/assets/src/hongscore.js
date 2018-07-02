@@ -1757,8 +1757,8 @@ $.hsXhwp = function(msg, xhr, xhu) {
     var box = $.hsWarn(msg, " ", function() {});
     var bax = $('<div class="progress"></div>');
     var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>').appendTo(bax);
-    var etx = box.find   (".warn3" );
-    var etc = box.find   (".warn4" );
+    var etx = box.find(".warn-text");
+    var etc = box.find(".warn-btns");
     var alt = box.closest(".alert" );
     var mod = box.closest(".modal" );
     var pct = 0;

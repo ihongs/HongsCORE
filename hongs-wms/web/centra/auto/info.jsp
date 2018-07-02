@@ -55,7 +55,7 @@
                 String typa = (String) info.get("type");
                 String mode = (String) info.get("mode");
                 if (typa == null || typa.length() == 0) {
-                    type =  "text";
+                    type =  "area";
                 } else
                 if ("html".equals(typa)) {
                     type =  "text";
@@ -127,6 +127,8 @@
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>
+                <%} else if ("area".equals(type)) {%>
+                    <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>" style="white-space: pre-wrap;"></div>
                 <%} else if ("code".equals(type) || "mark".equals(type)) {%>
                     <pre class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></pre>
                 <%} else {%>

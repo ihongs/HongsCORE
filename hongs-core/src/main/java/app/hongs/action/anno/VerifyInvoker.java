@@ -88,7 +88,7 @@ public class VerifyInvoker implements FilterInvoker {
             }
 
             VerifyHelper ver = new VerifyHelper();
-            ver.addRulesByForm(conf, form, data );
+            ver.addRulesByForm (conf, form, data);
             ver.isPrompt(prp);
             ver.isUpdate(upd);
             Map vls = ver.verify(dat);

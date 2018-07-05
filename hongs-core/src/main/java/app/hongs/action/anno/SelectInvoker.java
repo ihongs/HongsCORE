@@ -102,9 +102,9 @@ public class SelectInvoker implements FilterInvoker {
                 data  = FormSet.getInstance(conf).getForm(form);
             }
 
-            SelectHelper sup;
-            sup = new SelectHelper().addItemsByForm( data );
-            sup.select ( rsp, mode );
+            SelectHelper sel = new SelectHelper();
+            sel.addItemsByForm (conf, form, data);
+            sel.select ( rsp, mode );
         } catch (HongsException  ex) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {

@@ -112,7 +112,7 @@
                     <%
                         kind =  "_fork" ;
                         String fn = name;
-                        String kn = fn +"_data";
+                        String kn = fn +"_fork";
                         if (fn.endsWith("_id")) {
                             fn = fn.substring(0, fn.length() - 3);
                             kn = fn;

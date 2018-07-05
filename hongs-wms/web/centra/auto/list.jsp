@@ -92,7 +92,7 @@
                     if (fn.endsWith( "." )) {
                         fn = fn.substring(0, fn.length() - 1);
                     }
-                    String kn = fn +"_data";
+                    String kn = fn +"_fork";
                     if (fn.endsWith("_id")) {
                         fn = fn.substring(0, fn.length() - 3);
                         kn = fn;
@@ -265,7 +265,7 @@
                         if (name.endsWith("_id")) {
                             name = name.substring(0, name.length() - 3);
                         } else {
-                            name = name + "_data";
+                            name = name + "_fork";
                         }
                         String subn = "name";
                         if (info.get("data-ak") != null) {

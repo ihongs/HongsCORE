@@ -46,8 +46,8 @@ public class VerifyHelper extends Verify {
     }
 
     public VerifyHelper addRulesByForm(Map map) throws HongsException {
-        String conf = Dict.getValue(map, "", "@", "conf");
-        String form = Dict.getValue(map, "", "@", "name");
+        String conf = Dict.getValue(map, "default", "@", "conf");
+        String form = Dict.getValue(map, "default", "@", "name");
         return addRulesByForm(conf, form , map);
     }
 

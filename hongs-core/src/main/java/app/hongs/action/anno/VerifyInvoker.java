@@ -21,10 +21,10 @@ import static javax.servlet.http.HttpServletResponse.SC_BAD_REQUEST;
  * !errs 层级错误结构
  * </pre>
  * <p>
- 默认仅取第一个错误,
- 如果当前动作名不是 create/update,
- 则通过 id 参数判断是否为更新操作;
- 或设置 type 标识符.
+ * 默认仅取第一个错误,
+ * 如果当前动作名不是 create/update,
+ * 则通过 id 参数判断是否为更新操作;
+ * 或设置 type 标识符.
  </p>
  * @author Hong
  */

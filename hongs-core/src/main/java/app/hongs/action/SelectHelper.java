@@ -114,14 +114,23 @@ public class SelectHelper {
         return  this;
     }
 
-    public SelectHelper addItemsByForm(String conf, String form) throws HongsException {
-        return addItemsByForm(FormSet.getInstance(conf).getForm(form));
+    public SelectHelper addItemsByForm(Map fs ) throws HongsException {
+        String conf = Dict.getValue( fs, "default", "@", "conf");
+        String form = Dict.getValue( fs, "unknown", "@", "form");
+        return addItemsByForm( conf, form, fs );
     }
 
-    public SelectHelper addItemsByForm(Map map) throws HongsException {
-        Map ts = FormSet.getInstance("default").getEnum( "__types__" );
-        String conf = Dict.getValue ( map , "default" , "@" , "conf" );
-        Iterator it = map.entrySet().iterator();
+    public SelectHelper addItemsByForm(String conf, String form) throws HongsException {
+        Map fs = FormSet.getInstance(conf /**/)
+                        .getForm    (form /**/);
+        return addItemsByForm( conf, form, fs );
+    }
+
+    public SelectHelper addItemsByForm(String conf, String form, Map fs) throws HongsException {
+        Map ts = FormSet.getInstance("default")
+                        .getEnum ( "__types__");
+        Iterator it = fs.entrySet().iterator( );
+
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry)it.next();
             Map       mt = (Map ) et.getValue();

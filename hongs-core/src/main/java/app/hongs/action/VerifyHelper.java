@@ -45,24 +45,25 @@ public class VerifyHelper extends Verify {
         super();
     }
 
-    public VerifyHelper addRulesByForm(Map map) throws HongsException {
-        String conf = Dict.getValue(map, "default", "@", "conf");
-        String form = Dict.getValue(map, "unknown", "@", "name");
-        return addRulesByForm(conf, form , map);
+    public VerifyHelper addRulesByForm(Map fs ) throws HongsException {
+        String conf = Dict.getValue( fs, "default", "@", "conf");
+        String form = Dict.getValue( fs, "unknown", "@", "form");
+        return addRulesByForm( conf, form, fs );
     }
 
     public VerifyHelper addRulesByForm(String conf, String form) throws HongsException {
-        Map    map  = FormSet.getInstance(conf)
-                             .getForm/**/(form);
-        return addRulesByForm(conf, form , map);
+        Map fs = FormSet.getInstance(conf /**/)
+                        .getForm    (form /**/);
+        return addRulesByForm( conf, form, fs );
     }
 
-    public VerifyHelper addRulesByForm(String conf, String form, Map map) throws HongsException {
-        FormSet def = FormSet.getInstance("default");
-        Map tps = def.getEnum("__types__");
-        Map pts = def.getEnum("__patts__");
+    public VerifyHelper addRulesByForm(String conf, String form, Map fs) throws HongsException {
+        FormSet  formSet;
+        formSet= FormSet.getInstance("default");
+        Map ts = formSet.getEnum ( "__types__");
+        Map ps = formSet.getEnum ( "__patts__");
+        Iterator it = fs.entrySet().iterator( );
 
-        Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry)it.next();
             String  name = (String) et.getKey();
@@ -79,14 +80,14 @@ public class VerifyHelper extends Verify {
             if (o != null) {
                 Rule rule = new Defiant();
                      rule.setParams(opts);
-                this.addRule(name, rule);
+                this.addRule(name , rule);
             }
 
             o = opts.get   ("default");
             if (o != null) {
                 Rule rule = new Default();
                      rule.setParams(opts);
-                this.addRule(name, rule);
+                this.addRule(name , rule);
             }
 
             o = opts.remove("__required__");
@@ -94,11 +95,11 @@ public class VerifyHelper extends Verify {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
                          rule.setParams(opts );
-                    this.addRule(name, rule );
+                    this.addRule(name , rule );
                 } else {
                     Rule rule = new Optional();
                          rule.setParams(opts );
-                    this.addRule(name, rule );
+                    this.addRule(name , rule );
                 }
             }
 
@@ -107,11 +108,11 @@ public class VerifyHelper extends Verify {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
                          rule.setParams(opts );
-                    this.addRule(name, rule );
+                    this.addRule(name , rule );
                 } else {
                     Rule rule = new NoRepeat();
                          rule.setParams(opts );
-                    this.addRule(name, rule );
+                    this.addRule(name , rule );
                 }
             }
 
@@ -120,16 +121,16 @@ public class VerifyHelper extends Verify {
             if (list == null || list.isEmpty( )) {
                 String type = (String) opts.get("__type__");
                 String item ;
-                if (tps.containsKey(type)) {
+                if (ts.containsKey(type)) {
                     // 类名转换
-                    item = ( String ) tps.get(type);
+                    item = ( String ) ts.get (type);
                     String c = item.substring(0, 1);
                     String n = item.substring(   1);
                     item = "Is"+c.toUpperCase()+ n ;
                 } else
-                if (pts.containsKey(type)) {
+                if (ps.containsKey(type)) {
                     // 类型正则
-                    opts.put (  "pattern"  ,  type);
+                    opts.put( "pattern", type );
                     item = "IsString";
                 } else {
                     item = "IsString";

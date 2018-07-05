@@ -133,7 +133,7 @@ public class MergeMore
   public Map<Object, List> maping(boolean deep, String... keys)
   {
     Map<Object, List> map = new HashMap();
-    maping(map, rows, true, keys);
+    maping(map, rows, deep, keys);
     return map;
   }
 

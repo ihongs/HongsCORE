@@ -1,76 +1,87 @@
 package app.hongs.action;
 
+import app.hongs.Cnst;
 import app.hongs.Core;
+import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.HongsExemption;
+import app.hongs.dh.MergeMore;
+import app.hongs.util.Data;
 import app.hongs.util.Dict;
-import java.util.ArrayList;
+import app.hongs.util.Synt;
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
 import java.util.Iterator;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Date;
 import java.util.regex.Pattern;
 import javax.servlet.http.HttpServletRequest;
 
 /**
  * 选项补充助手
+ * 可针对表单的 enum,form,fork,file,date 类字段进行数据补全和关联
  * @author Hong
  */
 public class SelectHelper {
+
+    public  final static short ENUM = (short)  1;
+    public  final static short TEXT = (short)  2;
+    public  final static short FORM = (short)  4;
+    public  final static short FORK = (short)  8;
+    public  final static short LINK = (short) 16;
+    public  final static short TIME = (short) 32;
 
     private final static  Pattern  HOSTP = Pattern.compile( "^(\\w+:)?//" );
     private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?FULL_");
 
     private final Map<String, Map> enums;
-    private final Set<String>      times;
-    private final Set<String>      files;
+    private final Map<String, Map> forms;
+    private final Map<String, Map> forks;
+    private final Set<String     > files;
+    private final Set<String     > dates;
 
     private String _host = null;
     private String _path = null;
 
     public SelectHelper() {
         enums = new LinkedHashMap();
-        times = new LinkedHashSet();
+        forms = new LinkedHashMap();
+        forks = new LinkedHashMap();
         files = new LinkedHashSet();
+        dates = new LinkedHashSet();
     }
 
-    public SelectHelper addEnum(String code, Map<String, String> opts) {
-        enums.put(code, opts);
+    public SelectHelper addEnum(String code, Map vals) {
+        enums.put(code, vals);
         return this;
     }
 
-    public SelectHelper addEnum(String code, String[][] arrs) {
-        Map<String, String> opts = new LinkedHashMap();
-        int i = 0;
-        for(String[] arr : arrs) {
-            if (arr.length == 1) {
-                String j = String.valueOf(++i);
-                opts.put(j /**/, arr[0]);
-            } else {
-                opts.put(arr[0], arr[1]);
-            }
-        }
-        return addEnum(code, opts);
+    public SelectHelper addForm(String code, Map flds) {
+        forms.put(code, flds);
+        return this;
     }
 
-    public SelectHelper addEnum(String code, String ... args) {
-        Map<String, String> opts = new LinkedHashMap();
-        int i = 0;
-        for(String   arg : args) {
-            String[] arr = arg.split("::" , 2); // 拆分
-            if (arr.length == 1) {
-                String j = String.valueOf(++i);
-                opts.put(j /**/, arr[0]);
-            } else {
-                opts.put(arr[0], arr[1]);
-            }
-        }
-        return addEnum(code, opts);
+    public SelectHelper addFork(String code, Map prms) {
+        forks.put(code, prms);
+        return this;
+    }
+
+    /**
+     * 添加文件路径字段, 会将值补全为完整的链接
+     * @param code
+     * @return
+     */
+    public SelectHelper addFile(String... code) {
+        files.addAll(Arrays.asList(code));
+        return  this;
     }
 
     /**
@@ -78,18 +89,8 @@ public class SelectHelper {
      * @param code
      * @return
      */
-    public SelectHelper addTime(String... code) {
-        times.addAll(Arrays.asList(code));
-        return  this;
-    }
-
-    /**
-     * 添加文件路径字段, 会将对值补全为绝对链接
-     * @param code
-     * @return
-     */
-    public SelectHelper addFile(String... code) {
-        files.addAll(Arrays.asList(code));
+    public SelectHelper addDate(String... code) {
+        dates.addAll(Arrays.asList(code));
         return  this;
     }
 
@@ -114,22 +115,19 @@ public class SelectHelper {
     }
 
     public SelectHelper addItemsByForm(String conf, String form) throws HongsException {
-        FormSet cnf = FormSet.getInstance(conf);
-        Map map = cnf.getForm(form);
-        return addItemsByForm(conf , map );
+        return addItemsByForm(FormSet.getInstance(conf).getForm(form));
     }
 
-    public SelectHelper addItemsByForm(String conf, Map map) throws HongsException {
-        FormSet dfs = FormSet.getInstance("default");
-        Map tps = dfs.getEnum("__types__");
-
+    public SelectHelper addItemsByForm(Map map) throws HongsException {
+        Map ts = FormSet.getInstance("default").getEnum( "__types__" );
+        String conf = Dict.getValue ( map , "default" , "@" , "conf" );
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry)it.next();
             Map       mt = (Map ) et.getValue();
             String  name = (String) et.getKey();
             String  type = (String) mt.get("__type__");
-                    type = (String)tps.get(   type   ); // 类型别名转换
+                    type = (String) ts.get(   type   ); // 类型别名转换
 
             if ("enum".equals(type)) {
                 String xonf = (String) mt.get("conf");
@@ -139,12 +137,25 @@ public class SelectHelper {
                 Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
                 enums.put(name , xnum);
             } else
-            if ("date".equals(type)) {
-                String typa = (String) mt.get("type");
-                if (! "time"     .equals(typa )
-                &&  ! "timestamp".equals(typa)) {
-                    times.add(name);
+            if ("form".equals(type)) {
+                String xonf = (String) mt.get("conf");
+                String xame = (String) mt.get("enum");
+                if (null == xonf || "".equals( xonf)) xonf = conf;
+                if (null == xame || "".equals( xame)) xame = name;
+                Map xnum = FormSet.getInstance(xonf).getForm/*Origin*/(xame);
+                forms.put(name , xnum);
+            } else
+            if ("fork".equals(type)) {
+                Map xnum = new HashMap(mt);
+                if ( ! mt.containsKey("data-at")) {
+                    if (! mt.containsKey("form")) {
+                        xnum.put("form" , name.replace("_id",""));
+                    }
+                    if (! mt.containsKey("conf")) {
+                        xnum.put("conf" , conf);
+                    }
                 }
+                forks.put(name , xnum);
             } else
             if ("file".equals(type)) {
                 String href = (String) mt.get("href");
@@ -153,6 +164,13 @@ public class SelectHelper {
                 && !FULLP.matcher(href).find()) {
                     files.add(name);
                 }
+            } else
+            if ("date".equals(type)) {
+                String typa = (String) mt.get("type");
+                if (! "time"     .equals(typa )
+                &&  ! "timestamp".equals(typa)) {
+                    dates.add(name);
+                }
             }
         }
 
@@ -160,66 +178,300 @@ public class SelectHelper {
     }
 
     /**
-     * 填充
+     * 数据填充
      * @param values 返回数据
-     * @param action 1 注入data, 2 添加text, 4 添加time, 8 添加link
-     * @throws HongsException
+     * @param action 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
-    public void select(Map values, short action) throws HongsException {
-        boolean withEnum = 1 == (1 & action);
-        boolean withText = 2 == (2 & action);
-        boolean withTime = 4 == (4 & action);
-        boolean withLink = 8 == (8 & action);
+    public void select(Map values, short action) {
+        boolean withEnum = ENUM == (ENUM&action);
+        boolean withText = TEXT == (TEXT&action);
+        boolean withForm = FORM == (FORM&action);
+        boolean withFork = FORK == (FORK&action);
+        boolean withLink = LINK == (LINK&action);
+        boolean withTime = TIME == (TIME&action);
 
+        // 附带枚举数据
         if (withEnum) {
-            Map data = (Map ) values.get("enum");
+            /**/ Map  data = (Map ) values.get("enum");
             if (data == null) {
-                data =  new LinkedHashMap();
-                values.put("enum", data );
-            }
-                injectData( data , enums);
+                data  = new LinkedHashMap();
+                values.put( "enum" , data );
+            }   injectData(  data  , enums);
         }
 
+        // 补全额外数据
         if (withText || withTime || withLink) {
-            if (values.containsKey("info")) {
-                     Map  info = (Map ) values.get("info");
-                if (withText) injectText(info, enums);
-                if (withTime) injectTime(info, times);
-                if (withLink) injectLink(info, files);
+            /**/ Map  info = (Map ) values.get("info");
+            List<Map> list = (List) values.get("list");
+            if (info != null) {
+                if (withText) injectText(info , enums);
+                if (withTime) injectTime(info , dates);
+                if (withLink) injectLink(info , files);
+            }
+            if (list != null) for ( Map  item : list ) {
+                if (withText) injectText(item , enums);
+                if (withTime) injectTime(item , dates);
+                if (withLink) injectLink(item , files);
+            }
+        }
+
+        // 补全关联数据
+        if (withFork) {
+            /**/ Map  info = (Map ) values.get("info");
+            List<Map> list = (List) values.get("list");
+            if (info != null) injectFork(info);
+            if (list != null) injectFork(list);
+        }
+
+        // 递归下级表单
+        if (withForm) {
+            inject(values , ( short ) (action - FORM));
+        }
+    }
+
+    /**
+     * 深度补充
+     * @param values 返回数据
+     * @param action 1 注入data, 2 添加text, 4 添加time, 8 添加link, 16 添加fork, 32 添加form
+     */
+    public void inject(Map values, short action) {
+        List<Map> list = new LinkedList();
+        if (values.containsKey("info")) {
+            list.add   ((Map ) values.get("info"));
+        }
+        if (values.containsKey("list")) {
+            list.addAll((List) values.get("list"));
+        }
+
+        Map xnum = null;
+        if (1 == (1 & action)) {
+            xnum  = (Map) values.get("enum");
+            if (xnum == null) {
+                xnum  = new LinkedHashMap( );
+                values.put("enum", xnum );
+            }
+        }
+
+        // 数据映射整理
+        Map<String, List> maps = new HashMap();
+        for(String fn : forms.keySet()) {
+            maps.put( fn , new LinkedList( ) );
+        }
+        for( Map info : list ) {
+        for(String fn : forms.keySet()) {
+            Object fv = info.get(fn);
+            if (fv instanceof List ) {
+                maps.get(fn).addAll((List) fv);
+            } else {
+                maps.get(fn).add(fv);
+            }
+        }}
+
+        // 向下递归补充
+        for(Map.Entry<String, Map> et : forms.entrySet()) {
+            String  fn = et.getKey(  );
+            Map fields = et.getValue();
+            Map valuez = new HashMap();
+            Map anum   = new HashMap();
+            valuez.put( "enum", anum );
+            valuez.put( "list", maps.get(fn) );
+
+            try {
+                new SelectHelper()
+                    . addItemsByForm( fields )
+                    . select( valuez, action );
+            } catch (HongsException e) {
+                throw e.toExemption( );
             }
 
-            if (values.containsKey("list")) {
-                List<Map> list = (List) values.get("list");
-                for (Map  info :  list) {
-                if (withText) injectText(info, enums);
-                if (withTime) injectTime(info, times);
-                if (withLink) injectLink(info, files);
-                }
+            // 将枚举向上并
+            if (xnum != null && !anum.isEmpty())
+            for(Object ot2 : anum.entrySet( )) {
+                Map.Entry et2 = (Map.Entry) ot2;
+                Object fn2 = et2.getKey(  );
+                Object fv2 = et2.getValue();
+                xnum.put(fn +"."+ fn2, fv2);
             }
         }
     }
 
-    public void injectData(Map data) throws HongsException {
+    public void injectData(Map data) {
         injectData(data, enums);
     }
 
-    public void injectText(Map info) throws HongsException {
+    public void injectText(Map info) {
         injectText(info, enums);
     }
 
-    public void injectLink(Map info) throws HongsException {
+    public void injectTime(Map info) {
+        injectLink(info, dates);
+    }
+
+    public void injectLink(Map info) {
         injectLink(info, files);
     }
 
+    public void injectFork(Map info) {
+        injectFork(Synt.listOf(info));
+    }
+
+    public void injectText(List<Map> list) {
+        for (Map info : list) {
+            injectText( info, enums );
+        }
+    }
+
+    public void injectTime(List<Map> list) {
+        for (Map info : list) {
+            injectTime(info, dates );
+        }
+    }
+
+    public void injectLink(List<Map> list) {
+        for (Map info : list) {
+            injectLink( info, files );
+        }
+    }
+
+    public void injectFork(List<Map> list) {
+        MergeMore    mm = new  MergeMore  (  list  );
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
+
+        for(Map.Entry et : forks.entrySet()) {
+            Map    mt = (Map) et.getValue( );
+            String fn = (String) et.getKey();
+
+            String uk = (String) mt.get("data-uk"); // 外键字段
+            if (null == uk || "".equals(uk)) {
+                   uk = fn ;
+            }
+
+            // 建立映射
+            Map<Object, List> ms = mm.mapped( uk );
+            if (ms.isEmpty()) {
+                continue;
+            }
+
+            String vk = (String) mt.get("data-vk"); // 关联字段
+            String tk = (String) mt.get("data-tk"); // 名称字段
+            String ak = (String) mt.get("data-ak"); // 数据放入此下
+            String at = (String) mt.get("data-at"); // 关联动作路径
+            if (null == ak || "".equals(ak)) {
+                if (fn.endsWith("_id")) {
+                    int  ln = fn.length()-3;
+                    ak = fn.substring(0,ln);
+                } else {
+                    ak = fn + "_fork";
+                }
+            }
+            if (null == at || "".equals(at)) {
+                String c = (String) mt.get("conf");
+                String f = (String) mt.get("form");
+                at  =  c + "/" + f + "/search";
+            }
+
+            // 查询结构
+            String ap = null;
+            String aq = null;
+            Map rd,sd ;
+            Set rb;
+            int ps;
+            ps = at.indexOf('?');
+            if (ps > -1) {
+                aq = at.substring(1 + ps).trim();
+                at = at.substring(0 , ps).trim();
+            }
+            ps = at.indexOf('!');
+            if (ps > -1) {
+                ap = at.substring(1 + ps).trim();
+                at = at.substring(0 , ps).trim();
+            }
+            if (null != ap && !"".equals(ap)) {
+                if (ActionRunner.getActions()
+                            .containsKey(ap)) {
+                    at = ap ; // 自动行为方法可能被定制开发
+                } else {
+                    ap = ap + Cnst.ACT_EXT; // 别忘了后缀名
+                    ah.setAttribute(Cnst.ACTION_ATTR, ap );
+                }
+            }
+            if (null != aq && !"".equals(aq)) {
+                if (aq.startsWith("{") && aq.endsWith("}")) {
+                    rd = (  Map  ) Data.toObject(aq);
+                } else {
+                    rd = ActionHelper.parseQuery(aq);
+                }
+                if (!rd.containsKey(Cnst.RB_KEY)) {
+                    rd.put(Cnst.RB_KEY, "-" );
+                }
+                if (!rd.containsKey(Cnst.RN_KEY)) {
+                    rd.put(Cnst.RN_KEY,  0  );
+                }
+            } else
+            if (null != vk && !"".equals(vk )
+            &&  null != tk && !"".equals(tk)) {
+                rd = new HashMap();
+                rb = new HashSet();
+                rb.add( vk);
+                rb.add( tk);
+                rd.put(Cnst.RB_KEY, rb);
+                rd.put(Cnst.RN_KEY, 0 );
+            } else {
+                rd = new HashMap();
+                rb = new HashSet();
+                rb.add("-");
+                rd.put(Cnst.RB_KEY, rb);
+                rd.put(Cnst.RN_KEY, 0 );
+            }
+
+            // 关联约束
+            // 没有指定 vk 时与 id 进行关联
+            if (null == vk || "".equals(vk)) {
+                vk = Cnst . ID_KEY ;
+            }
+            rd.put(vk, ms.keySet());
+
+            // 获取结果
+            // 关联出错应在测试期发现并解决
+            // 故仅记录到日志而无需对外抛出
+            ah.setRequestData( rd );
+            try {
+                if (rd.containsKey(Cnst.AB_KEY)) {
+                    new ActionRunner(ah, at).doAction();
+                } else {
+                    new ActionRunner(ah, at).doInvoke();
+                }
+            } catch (HongsException|HongsExemption ex ) {
+                CoreLogger.error( ex );
+                continue;
+            }
+            List<Map> ls;
+            sd = ah.getResponseData( );
+            ls = (List) sd.get("list");
+            if (null == ls) {
+                continue;
+            }
+
+            // 整合数据
+            boolean rp = Synt.declare(mt.get("__repeated__"), false);
+            if (rp) {
+                mm.append(ls, ms, vk, ak);
+            } else {
+                mm.extend(ls, ms, vk, ak);
+            }
+        }
+    }
+
     private void injectData(Map data, Map maps) {
-        Iterator it = maps.entrySet().iterator();
+        Iterator it = maps.entrySet( ).iterator( );
         while (it.hasNext()) {
-            Map.Entry et = (Map.Entry) it.next();
-            String   key = (String)  et.getKey();
-            Map      map = (Map)   et.getValue();
-            List     lst = new ArrayList();
-//          Dict.setParam(data, lst, key );
-            data.put(key, lst); // 不要放太深层级
+            Map.Entry et = (Map.Entry) it.next ( );
+            Map    map = (Map) et.getValue();
+            Object key = /***/ et.getKey(  );
+            List   lst = new ArrayList();
 
             Iterator i = map.entrySet().iterator();
             while (i.hasNext()) {
@@ -231,6 +483,8 @@ public class SelectHelper {
                 a.add( v );
                 lst.add(a);
             }
+
+            data.put(key, lst);
         }
     }
 

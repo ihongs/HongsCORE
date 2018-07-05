@@ -6,13 +6,11 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
 import app.hongs.action.SelectHelper;
-import app.hongs.action.SpreadHelper;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.action.anno.CustomReplies;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
-import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
 import app.hongs.db.Model;
 import app.hongs.dh.IEntity;
@@ -71,7 +69,6 @@ public class DataAction extends SearchAction {
 
         // 绑定特制的表单
         if (met.isAnnotationPresent(Select.class)
-        ||  met.isAnnotationPresent(Spread.class)
         ||  met.isAnnotationPresent(Verify.class)) {
             Data dat = (Data) getEntity(helper);
             Map  fcs =  dat.getFields();
@@ -123,24 +120,12 @@ public class DataAction extends SearchAction {
             Set ab = Synt.toTerms(rd.get( Cnst.AB_KEY ));
             if (ab != null) {
                 byte md = 0;
-                if (ab.contains("_enum")) {
-                    md += 2;
-                }
-                if (ab.contains("_time")) {
-                    md += 4;
-                }
-                if (ab.contains("_link")) {
-                    md += 8;
-                }
+                if (ab.contains("_enum")) md += SelectHelper.TEXT;
+                if (ab.contains("_time")) md += SelectHelper.TIME;
+                if (ab.contains("_link")) md += SelectHelper.LINK;
+                if (ab.contains("_fork")) md += SelectHelper.FORK;
                 if (md != 0) {
-                    new SelectHelper(  )
-                        .addItemsByForm(mod, ent)
-                        .select(sd , md);
-                }
-                if (ab.contains("_fork")) {
-                    new SpreadHelper(  )
-                        .addItemsByForm(mod, ent)
-                        .spread(sd /**/);
+                    new SelectHelper().addItemsByForm(mod, ent).select(sd, md);
                 }
             }
         }

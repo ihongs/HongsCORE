@@ -6,7 +6,6 @@ import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Select;
-import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.search.SearchAction;
@@ -49,7 +48,6 @@ public class DataAction extends SearchAction {
 
         // 绑定特制的表单
         if (met.isAnnotationPresent(Select.class)
-        ||  met.isAnnotationPresent(Spread.class)
         ||  met.isAnnotationPresent(Verify.class)) {
             Data dat = (Data) getEntity(helper);
             Map  fcs =  dat.getFields();

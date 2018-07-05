@@ -67,7 +67,7 @@
             }
         %>
         <%if ("hidden".equals(type)) {%>
-            <!--input type="hidden" name="<%=name%>" /-->
+            <input type="hidden" name="<%=name%>"/>
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
         <%} else {%>

@@ -11,7 +11,6 @@ import app.hongs.action.anno.Action;
 import app.hongs.action.anno.CommitSuccess;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
-import app.hongs.action.anno.Spread;
 import app.hongs.action.anno.Verify;
 import app.hongs.util.Dict;
 import app.hongs.util.Synt;
@@ -65,7 +64,6 @@ abstract public class JointGate implements IActing, IAction {
     @Action("search")
     @Preset(conf="", form="")
     @Select(conf="", form="")
-    @Spread(conf="", form="")
     public void search(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
@@ -80,7 +78,6 @@ abstract public class JointGate implements IActing, IAction {
     @Preset(conf="", form="", deft={":defence"})
     @Verify(conf="", form="")
     @Select(conf="", form="")
-    @Spread(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);

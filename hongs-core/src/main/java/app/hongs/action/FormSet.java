@@ -240,20 +240,9 @@ public class FormSet
          */
         if (!"default".equals(name)) {
             typx = (String) getInstance().getEnum("__types__").get(typx);
-            if ("fork".equals(typx)) {
-                if (! items.containsKey("data-at")
-                &&  ! items.containsKey("data-al")) {
-                if (! items.containsKey("form")) {
-                    items.put("form", namx.replace("_id", ""));
-                }
-                if (! items.containsKey("conf")) {
-                    items.put("conf", name);
-                }
-                }
-            } else
-            if ("form".equals(typx)) {
-                if (! items.containsKey("form")) {
-                    items.put("form", namx.replace("_id", ""));
+            if ( "@"  .equals(namz)) {
+                if (! items.containsKey("name")) {
+                    items.put("name", element.getAttribute("name"));
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
@@ -265,6 +254,25 @@ public class FormSet
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
+                }
+            } else
+            if ("form".equals(typx)) {
+                if (! items.containsKey("form")) {
+                    items.put("form", namx.replace("_id", ""));
+                }
+                if (! items.containsKey("conf")) {
+                    items.put("conf", name);
+                }
+            } else
+            if ("fork".equals(typx)) {
+                if (! items.containsKey("data-at")
+                &&  ! items.containsKey("data-al")) {
+                if (! items.containsKey("form")) {
+                    items.put("form", namx.replace("_id", ""));
+                }
+                if (! items.containsKey("conf")) {
+                    items.put("conf", name);
+                }
                 }
             }
         }

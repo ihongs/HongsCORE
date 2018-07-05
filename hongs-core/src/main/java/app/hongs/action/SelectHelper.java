@@ -180,7 +180,7 @@ public class SelectHelper {
     /**
      * 数据填充
      * @param values 返回数据
-     * @param action 使用常量 ENUM,TEXT 等, 可用或运算传多个值
+     * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
     public void select(Map values, short action) {
         boolean withEnum = ENUM == (ENUM&action);
@@ -223,7 +223,9 @@ public class SelectHelper {
             if (list != null) injectFork(list);
         }
 
-        // 递归下级表单
+        // 填充下级表单
+        // 为规避因循环依赖导致故障
+        // 限制填充规则为仅向下一层
         if (withForm) {
             inject(values , ( short ) (action - FORM));
         }
@@ -232,7 +234,7 @@ public class SelectHelper {
     /**
      * 深度补充
      * @param values 返回数据
-     * @param action 1 注入data, 2 添加text, 4 添加time, 8 添加link, 16 添加fork, 32 添加form
+     * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
     public void inject(Map values, short action) {
         List<Map> list = new LinkedList();

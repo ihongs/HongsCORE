@@ -64,13 +64,13 @@ public class SelectHelper {
         return this;
     }
 
-    public SelectHelper addForm(String code, Map flds) {
-        forms.put(code, flds);
+    public SelectHelper addForm(String code, Map fies) {
+        forms.put(code, fies);
         return this;
     }
 
-    public SelectHelper addFork(String code, Map prms) {
-        forks.put(code, prms);
+    public SelectHelper addFork(String code, Map pars) {
+        forks.put(code, pars);
         return this;
     }
 

@@ -7,7 +7,6 @@ import app.hongs.action.ActionRunner;
 import app.hongs.action.anno.Action;
 import app.hongs.action.anno.Preset;
 import app.hongs.action.anno.Select;
-import app.hongs.action.anno.Spread;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.lucene.LuceneAction;
 import app.hongs.dh.lucene.LuceneRecord;
@@ -56,7 +55,6 @@ public class SearchAction extends LuceneAction {
     @Action("search")
     @Preset(conf="", form="")
     @Select(conf="", form="")
-    @Spread(conf="", form="")
     @Override
     public void search(ActionHelper helper) throws HongsException {
         /**

@@ -40,16 +40,22 @@ public class SelectInvoker implements FilterInvoker {
                     mode  = 0;
                 } else {
                 if (ab.contains(".enum")) {
-                    mode += 1;
+                    mode += SelectHelper.ENUM;
                 }
                 if (ab.contains("_enum")) {
-                    mode += 2;
+                    mode += SelectHelper.TEXT;
                 }
                 if (ab.contains("_time")) {
-                    mode += 4;
+                    mode += SelectHelper.TIME;
                 }
                 if (ab.contains("_link")) {
-                    mode += 8;
+                    mode += SelectHelper.LINK;
+                }
+                if (ab.contains("_fork")) {
+                    mode += SelectHelper.FORK;
+                }
+                if (ab.contains("!form")) {
+                    mode += SelectHelper.FORM;
                 }
                 if (mode >= 0) {
                     mode += 1;
@@ -95,7 +101,7 @@ public class SelectInvoker implements FilterInvoker {
             }
 
             SelectHelper sup;
-            sup = new SelectHelper().addItemsByForm(conf, data);
+            sup = new SelectHelper().addItemsByForm( data );
             sup.select ( rsp, mode );
         } catch (HongsException  ex) {
             int  ec  = ex.getErrno();

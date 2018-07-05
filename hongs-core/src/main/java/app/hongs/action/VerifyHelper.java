@@ -66,6 +66,7 @@ public class VerifyHelper extends Verify {
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry)it.next();
             String  name = (String) et.getKey();
+            if ( "@".equals(name) ) {continue;}
             Map     optz = (Map)  et.getValue();
             Map     opts =  new HashMap( optz );
             Object  o;
@@ -130,11 +131,8 @@ public class VerifyHelper extends Verify {
                     // 类型正则
                     opts.put( "pattern", type );
                     item = "IsString";
-                } else
-                if ( ! "@" .equals (name)) {
-                    item = "IsString";
                 } else {
-                    item =   "Ignore";
+                    item = "IsString";
                 }
 
                 list = Synt.listOf (item);

@@ -21,6 +21,8 @@ import java.util.Set;
  * _enum 表示加选项文本
  * _time 表示加数字时间
  * _link 表示加完整链接
+ * _fork 表示加关联数据
+ * !form 表示处理子表单
  * </pre>
  * @author Hong
  */

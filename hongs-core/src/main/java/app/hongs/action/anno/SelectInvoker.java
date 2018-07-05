@@ -22,7 +22,7 @@ import java.util.Set;
  * _time 表示加数字时间
  * _link 表示加完整链接
  * _fork 表示加关联数据
- * !form 表示处理子表单
+ * .form 表示处理子表单
  * </pre>
  * @author Hong
  */
@@ -56,7 +56,7 @@ public class SelectInvoker implements FilterInvoker {
                 if (ab.contains("_fork")) {
                     mode += SelectHelper.FORK;
                 }
-                if (ab.contains("!form")) {
+                if (ab.contains(".form")) {
                     mode += SelectHelper.FORM;
                 }
                 if (mode >= 0) {

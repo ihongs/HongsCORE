@@ -147,13 +147,14 @@ public class SelectHelper {
             } else
             if ("fork".equals(type)) {
                 Map xnum = new HashMap(mt);
-                if ( ! mt.containsKey("data-at")) {
-                    if (! mt.containsKey("form")) {
-                        xnum.put("form" , name.replace("_id",""));
-                    }
-                    if (! mt.containsKey("conf")) {
-                        xnum.put("conf" , conf);
-                    }
+                if (! mt.containsKey("data-at" )
+                &&  ! mt.containsKey("data-al")) {
+                if (! mt.containsKey("form")) {
+                    xnum.put("form" , name.replace( "_id" , "" ));
+                }
+                if (! mt.containsKey("conf")) {
+                    xnum.put("conf" , conf);
+                }
                 }
                 forks.put(name , xnum);
             } else

@@ -65,27 +65,27 @@ public class VerifyHelper extends Verify {
         Iterator it = map.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry)it.next();
-            String  code = (String) et.getKey();
+            String  name = (String) et.getKey();
             Map     optz = (Map)  et.getValue();
             Map     opts =  new HashMap( optz );
             Object  o;
 
             opts.put("__conf__", conf);
             opts.put("__form__", form);
-            opts.put("__name__", code);
+            opts.put("__name__", name);
 
             o = opts.get   ("defiant");
             if (o != null) {
                 Rule rule = new Defiant();
                      rule.setParams(opts);
-                this.addRule( code, rule);
+                this.addRule(name, rule);
             }
 
             o = opts.get   ("default");
             if (o != null) {
                 Rule rule = new Default();
                      rule.setParams(opts);
-                this.addRule( code, rule);
+                this.addRule(name, rule);
             }
 
             o = opts.remove("__required__");
@@ -93,11 +93,11 @@ public class VerifyHelper extends Verify {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
                          rule.setParams(opts );
-                    this.addRule( code, rule );
+                    this.addRule(name, rule );
                 } else {
                     Rule rule = new Optional();
                          rule.setParams(opts );
-                    this.addRule( code, rule );
+                    this.addRule(name, rule );
                 }
             }
 
@@ -106,11 +106,11 @@ public class VerifyHelper extends Verify {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
                          rule.setParams(opts );
-                    this.addRule( code, rule );
+                    this.addRule(name, rule );
                 } else {
                     Rule rule = new NoRepeat();
                          rule.setParams(opts );
-                    this.addRule( code, rule );
+                    this.addRule(name, rule );
                 }
             }
 
@@ -131,7 +131,7 @@ public class VerifyHelper extends Verify {
                     opts.put( "pattern", type );
                     item = "IsString";
                 } else
-                if ( ! "@" .equals (code)) {
+                if ( ! "@" .equals (name)) {
                     item = "IsString";
                 } else {
                     item =   "Ignore";
@@ -164,7 +164,7 @@ public class VerifyHelper extends Verify {
                 }
 
                 rule.setParams(opts);
-                addRule(code , rule);
+                addRule(name , rule);
             }
         }
 

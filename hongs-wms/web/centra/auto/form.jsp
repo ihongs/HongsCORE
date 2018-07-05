@@ -136,7 +136,7 @@
                             rptd  = "data-repeated=\"repeated\"" ;
                             fn = fn.substring(0, fn.length() - 1);
                         }
-                        String kn = fn+"_fork";
+                        String kn = fn +"_fork";
                         if (fn.endsWith("_id")) {
                             fn = fn.substring(0, fn.length() - 3);
                             kn = fn;

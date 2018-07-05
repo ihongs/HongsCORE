@@ -124,6 +124,7 @@ public class DataAction extends SearchAction {
                 if (ab.contains("_time")) md += SelectHelper.TIME;
                 if (ab.contains("_link")) md += SelectHelper.LINK;
                 if (ab.contains("_fork")) md += SelectHelper.FORK;
+                if (ab.contains("_form")) md += SelectHelper.FORM;
                 if (md != 0) {
                     new SelectHelper().addItemsByForm(mod, ent).select(sd, md);
                 }

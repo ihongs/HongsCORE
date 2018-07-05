@@ -129,7 +129,7 @@ public class VerifyHelper extends Verify {
                 } else
                 if (pts.containsKey(type)) {
                     // 类型正则
-                    opts.put( "pattern", type );
+                    opts.put (  "pattern"  ,  type);
                     item = "IsString";
                 } else {
                     item = "IsString";

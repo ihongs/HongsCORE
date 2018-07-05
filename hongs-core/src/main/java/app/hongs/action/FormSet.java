@@ -265,7 +265,7 @@ public class FormSet
                 }
             } else
             if ("fork".equals(typx)) {
-                if (! items.containsKey("data-at")
+                if (! items.containsKey("data-at" )
                 &&  ! items.containsKey("data-al")) {
                 if (! items.containsKey("form")) {
                     items.put("form", namx.replace("_id", ""));

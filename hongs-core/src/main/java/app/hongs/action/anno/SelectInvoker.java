@@ -105,7 +105,7 @@ public class SelectInvoker implements FilterInvoker {
             SelectHelper sel = new SelectHelper();
             sel.addItemsByForm (conf, form, data);
             sel.select ( rsp, mode );
-        } catch (HongsException  ex) {
+        } catch (HongsException ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {
                 throw  ex;

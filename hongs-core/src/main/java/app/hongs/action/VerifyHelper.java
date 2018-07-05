@@ -1,6 +1,7 @@
 package app.hongs.action;
 
 import app.hongs.HongsException;
+import app.hongs.util.Dict;
 import app.hongs.util.Synt;
 import app.hongs.util.verify.Default;
 import app.hongs.util.verify.Defiant;
@@ -44,10 +45,16 @@ public class VerifyHelper extends Verify {
         super();
     }
 
+    public VerifyHelper addRulesByForm(Map map) throws HongsException {
+        String conf = Dict.getValue(map, "", "@", "conf");
+        String form = Dict.getValue(map, "", "@", "name");
+        return addRulesByForm(conf, form , map);
+    }
+
     public VerifyHelper addRulesByForm(String conf, String form) throws HongsException {
-        FormSet cnf = FormSet.getInstance(conf);
-        Map map  = cnf.getForm(form);
-        return  addRulesByForm(conf, form, map);
+        Map    map  = FormSet.getInstance(conf)
+                             .getForm/**/(form);
+        return addRulesByForm(conf, form , map);
     }
 
     public VerifyHelper addRulesByForm(String conf, String form, Map map) throws HongsException {

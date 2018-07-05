@@ -148,10 +148,10 @@ public class SelectHelper {
             } else
             if ("form".equals(type)) {
                 String xonf = (String) mt.get("conf");
-                String xame = (String) mt.get("enum");
-                if (null == xonf || "".equals( xonf)) xonf = conf;
-                if (null == xame || "".equals( xame)) xame = name;
-                Map xnum = FormSet.getInstance(xonf).getForm/*Origin*/(xame);
+                String xame = (String) mt.get("form");
+                if (null == xonf || "".equals( xonf )) xonf = conf;
+                if (null == xame || "".equals( xame )) xame = name;
+                Map xnum = FormSet.getInstance(xonf).getForm/*Normal*/(xame);
                 forms.put(name , xnum);
             } else
             if ("fork".equals(type)) {
@@ -159,7 +159,7 @@ public class SelectHelper {
                 if (! mt.containsKey("data-at" )
                 &&  ! mt.containsKey("data-al")) {
                 if (! mt.containsKey("form")) {
-                    xnum.put("form" , name.replace( "_id" , "" ));
+                    xnum.put("form" , name.replace("_id", "")); // 去除其后缀
                 }
                 if (! mt.containsKey("conf")) {
                     xnum.put("conf" , conf);
@@ -448,7 +448,6 @@ public class SelectHelper {
 
             // 获取结果
             // 关联出错应在测试期发现并解决
-            // 故仅记录到日志而无需对外抛出
             ah.setRequestData( rd );
             try {
                 if (rd.containsKey(Cnst.AB_KEY)) {
@@ -456,9 +455,8 @@ public class SelectHelper {
                 } else {
                     new ActionRunner(ah, at).doInvoke();
                 }
-            } catch (HongsException|HongsExemption ex ) {
-                CoreLogger.error( ex );
-                continue;
+            } catch (HongsException e) {
+                throw e.toExemption( );
             }
             List<Map> ls;
             sd = ah.getResponseData( );

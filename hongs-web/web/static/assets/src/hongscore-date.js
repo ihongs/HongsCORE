@@ -208,6 +208,9 @@
         return box;
     }
 
+    /**
+     * 日期时间选择, 用下拉列表构建
+     */
     $.fn.hsDate = function() {
         if (this.data("linked")) {
             return; // 跳过已初始化
@@ -272,6 +275,9 @@
         inp.trigger ("change" );
     };
 
+    /**
+     * 日期时间输入, 用原生控件构建
+     */
     $.fn.hsTime = function() {
         if (this.data("linked")) {
             return; // 跳过已初始化
@@ -398,7 +404,10 @@
             case "date":
                 fmt = hsGetLang("date.format");
                 break;
-            case "datetime" : case "" : case null :
+            case "datetime":
+                fmt = hsGetLang("datetime.format");
+                break;
+            default : if (! fmt)
                 fmt = hsGetLang("datetime.format");
         }
 
@@ -441,7 +450,9 @@
             case "date":
                 fmt = hsGetLang("date.format");
                 break;
-            case "datetime" : case "" : case null :
+            case "datetime":
+                fmt = hsGetLang("datetime.format");
+            default : if (! fmt)
                 fmt = hsGetLang("datetime.format");
         }
 

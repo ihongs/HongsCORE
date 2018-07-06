@@ -289,7 +289,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="=%now" data-default-create="yes" data-default-always="yes" data-readonly="yes"/>
+                        <input class="invisible" type="datetime" name="ctime" data-type="timestamp" data-default="=%now" data-deforce="create" data-readonly="yes"/>
                     </div>
                     <div class="form-group base-field" data-type="mtime">
                         <label class="control-label clearfix" style="display: block;">
@@ -298,7 +298,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="=%now" data-default-create="no"  data-default-always="yes" data-readonly="yes"/>
+                        <input class="invisible" type="datetime" name="mtime" data-type="timestamp" data-default="=%now" data-deforce="always" data-readonly="yes"/>
                     </div>
                     <div class="form-group base-field" data-type="cuser">
                         <label class="control-label clearfix" style="display: block;">
@@ -307,7 +307,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="fork" name="cuser" data-verify-type="string" data-default="=$uid" data-default-create="yes" data-default-always="yes" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
+                        <input class="invisible" type="fork" name="cuser" data-verify-type="string" data-default="=$uid" data-deforce="create" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
                     </div>
                     <div class="form-group base-field" data-type="muser">
                         <label class="control-label clearfix" style="display: block;">
@@ -316,7 +316,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="fork" name="muser" data-verify-type="string" data-default="=$uid" data-default-create="no"  data-default-always="yes" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
+                        <input class="invisible" type="fork" name="muser" data-verify-type="string" data-default="=$uid" data-deforce="always" data-readonly="yes" data-at="centra/master/user/list" data-al="centra/master/user/pick.html" data-ak="user" data-vk="id" data-tk="name"/>
                     </div>
                     <div class="form-group base-field" data-type="_">
                         <label class="control-label clearfix" style="display: block;">

@@ -2,7 +2,6 @@ package app.hongs.action;
 
 import app.hongs.Cnst;
 import app.hongs.Core;
-import app.hongs.CoreLogger;
 import app.hongs.HongsException;
 import app.hongs.HongsExemption;
 import app.hongs.dh.MergeMore;
@@ -32,12 +31,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class SelectHelper {
 
-    public  final static short ENUM = (short)  1;
-    public  final static short TEXT = (short)  2;
-    public  final static short FORM = (short)  4;
-    public  final static short FORK = (short)  8;
-    public  final static short LINK = (short) 16;
-    public  final static short TIME = (short) 32;
+    public  final static  byte ENUM =  1;
+    public  final static  byte TEXT =  2;
+    public  final static  byte FORM =  4;
+    public  final static  byte FORK =  8;
+    public  final static  byte LINK = 16;
+    public  final static  byte TIME = 32;
 
     private final static  Pattern  HOSTP = Pattern.compile( "^(\\w+:)?//" );
     private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?FULL_");
@@ -59,38 +58,56 @@ public class SelectHelper {
         dates = new LinkedHashSet();
     }
 
-    public SelectHelper addEnum(String code, Map vals) {
-        enums.put(code, vals);
+    /**
+     * 添加枚举选项
+     * @param name
+     * @param vals {value_code: value}
+     * @return
+     */
+    public SelectHelper addEnum(String name, Map vals) {
+        enums.put(name, vals);
         return this;
     }
 
-    public SelectHelper addForm(String code, Map fies) {
-        forms.put(code, fies);
+    /**
+     * 添加子表字段
+     * @param name
+     * @param fies {field_name: param}
+     * @return
+     */
+    public SelectHelper addForm(String name, Map fies) {
+        forms.put(name, fies);
         return this;
     }
 
-    public SelectHelper addFork(String code, Map pars) {
-        forks.put(code, pars);
+    /**
+     * 添加关联参数
+     * @param name
+     * @param pars {param_name: value}
+     * @return
+     */
+    public SelectHelper addFork(String name, Map pars) {
+        forks.put(name, pars);
         return this;
     }
 
     /**
      * 添加文件路径字段, 会将值补全为完整的链接
-     * @param code
+     * @param name
      * @return
      */
-    public SelectHelper addFile(String... code) {
-        files.addAll(Arrays.asList(code));
+    public SelectHelper addFile(String... name) {
+        files.addAll(Arrays.asList(name));
         return  this;
     }
 
     /**
      * 添加日期时间字段, 会将值转换为标准时间戳
-     * @param code
+     * @param name
      * @return
      */
-    public SelectHelper addDate(String... code) {
-        dates.addAll(Arrays.asList(code));
+    public SelectHelper addDate(String... name) {
+        dates.addAll(Arrays.asList(name));
         return  this;
     }
 
@@ -192,13 +209,13 @@ public class SelectHelper {
      * @param values 返回数据
      * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
-    public void select(Map values, short action) {
-        boolean withEnum = ENUM == (ENUM&action);
-        boolean withText = TEXT == (TEXT&action);
-        boolean withForm = FORM == (FORM&action);
-        boolean withFork = FORK == (FORK&action);
-        boolean withLink = LINK == (LINK&action);
-        boolean withTime = TIME == (TIME&action);
+    public void select(Map values, byte action) {
+        boolean withEnum = ENUM == (ENUM & action);
+        boolean withText = TEXT == (TEXT & action);
+        boolean withForm = FORM == (FORM & action);
+        boolean withFork = FORK == (FORK & action);
+        boolean withLink = LINK == (LINK & action);
+        boolean withTime = TIME == (TIME & action);
 
         // 附带枚举数据
         if (withEnum) {
@@ -237,7 +254,7 @@ public class SelectHelper {
         // 为规避因循环依赖导致故障
         // 限制填充规则为仅向下一层
         if (withForm) {
-            inject(values , ( short ) (action - FORM));
+            inject( values , ( byte ) (action - FORM));
         }
     }
 
@@ -246,7 +263,7 @@ public class SelectHelper {
      * @param values 返回数据
      * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
-    public void inject(Map values, short action) {
+    public void inject(Map values, byte action) {
         List<Map> list = new LinkedList();
         if (values.containsKey("info")) {
             list.add   ((Map ) values.get("info"));
@@ -386,10 +403,11 @@ public class SelectHelper {
             }
 
             // 查询结构
-            String ap = null;
-            String aq = null;
-            Map rd,sd ;
-            Set rb;
+            String ap = null; // 虚拟动作路径, 作为目标路径
+            String aq = null; // 关联请求参数, 转为请求数据
+            Map rd;           // 关联请求数据
+            Map sd;           // 关联结果数据
+            Set rb;           // 关联结果字段
             int ps;
             ps = at.indexOf('?');
             if (ps > -1) {
@@ -405,16 +423,16 @@ public class SelectHelper {
                 if (ActionRunner.getActions()
                             .containsKey(ap)) {
                     at = ap ; // 自动行为方法可能被定制开发
-                } else {
-                    ap = ap + Cnst.ACT_EXT; // 别忘了后缀名
-                    ah.setAttribute(Cnst.ACTION_ATTR, ap );
                 }
+                ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
+            } else {
+                ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
             }
             if (null != aq && !"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {
-                    rd = (  Map  ) Data.toObject(aq);
+                    rd = (  Map  ) Data.toObject( aq );
                 } else {
-                    rd = ActionHelper.parseQuery(aq);
+                    rd = ActionHelper.parseQuery( aq );
                 }
                 if (!rd.containsKey(Cnst.RB_KEY)) {
                     rd.put(Cnst.RB_KEY, "-" );

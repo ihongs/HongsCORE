@@ -850,7 +850,7 @@ HsForm.prototype = {
                 pn = new RegExp(pn);
             }
             if (! pn.test(val)) {
-               return this.geterror(inp, "form.is.not.match");
+                return this.geterror(inp, "form.is.not.match");
             }
             return true;
         },
@@ -901,23 +901,30 @@ HsForm.prototype = {
             }
             return true;
         },
+        "[type=color],.input-color" : function(val, inp) {
+            if (!val) return true; // 规避非 required 的情况
+            if (!/^#[0-9A-Fa-f]{6}$/.test(val)) {
+                return this.geterror(inp, "form.is.not.color");
+            }
+            return true;
+        },
         "[type=email],.input-email" : function(val, inp) {
             if (!val) return true; // 规避非 required 的情况
-            if (!/^([a-z0-9_\.\-\+]+)@([\da-z\.\-]+)\.([a-z\.]{2,6})$/i.test(val)) {
+            if (!/^\w+([-.]\w+)*@\w+([-.]\w+)*$/.test(val)) {
                 return this.geterror(inp, "form.is.not.email");
             }
             return true;
         },
         "[type=url],.input-url" : function(val, inp) {
             if (!val) return true; // 规避非 required 的情况
-            if (!/^https?:\/\/[\da-z\.\-]+\.[a-z\.]{2,6}(:\d+)?(\/[^\s]*)?$/i.test(val)) {
+            if (!/^([a-z]+:)?\/\/[^\s]+$/.test(val)) {
                 return this.geterror(inp, "form.is.not.url");
             }
             return true;
         },
         "[type=tel],.input-tel" : function(val, inp) {
             if (!val) return true; // 规避非 required 的情况
-            if (!/^(\+\d{1,3})?\d{3,}$/i.test(val)) {
+            if (!/^(\+\d{1,3})?\d{3,15}$/.test(val)) {
                 return this.geterror(inp, "form.is.not.tel");
             }
             return true;

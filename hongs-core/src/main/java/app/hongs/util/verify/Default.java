@@ -12,21 +12,25 @@ import java.util.regex.Pattern;
  * <pre>
  * 规则参数:
  *  default 默认值, 可使用 =@请求参数 =$会话属性, =%应用属性, =%now+-偏移毫秒
- *  default-create yes|no 仅创建的时候设置
- *  default-always yes|no 无论有没有都设置
+ *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时
  * </pre>
  * @author Hongs
  */
 public class Default extends Rule {
     @Override
     public Object verify(Object value) {
-        if ( Synt.declare(params.get("default-create"), false)) {
-            if (helper.isUpdate()) {
+        Object force = params.get("deforce");
+        if ( "update".equals(force)) {
+            if (helper.isUpdate() != true) {
                 return BLANK;
             }
-        }
-
-        if (!Synt.declare(params.get("default-always"), false)) {
+        } else
+        if ( "create".equals(force)) {
+            if (helper.isUpdate() == true) {
+                return BLANK;
+            }
+        } else
+        if (!"always".equals(force)) {
             if (helper.isUpdate() && value == null) {
                 return BLANK;
             }

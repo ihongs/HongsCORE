@@ -266,8 +266,8 @@ public class Form extends Model {
                     "__name__", "muser",
                     "__type__", "hidden",
                     "readonly", "true",
-                    "default" , "=$uid" ,
-                    "default-always", "true"
+                    "default" , "=$uid",
+                    "deforce" , "always"
                 ));
             }
             if (set.contains("cuser")) {
@@ -276,31 +276,29 @@ public class Form extends Model {
                     "__type__", "hidden",
                     "readonly", "true",
                     "default" , "=$uid",
-                    "default-always", "true",
-                    "default-create", "true"
+                    "deforce" , "create"
                 ));
             }
 
             // 增加时间字段
             if (set.contains("mtime")) {
                 flds.add(Synt.mapOf(
-                    "__name__", "mtime" ,
+                    "__name__", "mtime",
                     "__type__", "datetime",
-                      "type"  , "timestamp" ,
+                      "type"  , "timestamp",
                     "readonly", "true",
-                    "default" , "=%now" ,
-                    "default-always", "true"
+                    "default" , "=%now",
+                    "deforce" , "always"
                 ));
             }
             if (set.contains("ctime")) {
                 flds.add(Synt.mapOf(
-                    "__name__", "ctime" ,
+                    "__name__", "ctime",
                     "__type__", "datetime",
-                      "type"  , "timestamp" ,
+                      "type"  , "timestamp",
                     "readonly", "true",
                     "default" , "=%now",
-                    "default-always", "true",
-                    "default-create", "true"
+                    "deforce" , "create"
                 ));
             }
         } else {

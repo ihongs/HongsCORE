@@ -13,6 +13,8 @@
 .idea
 .project
 .settings
+.classpath
+.factorypath
 nbproject
 nbactions*
 nb-config*

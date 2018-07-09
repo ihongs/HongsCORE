@@ -154,11 +154,11 @@ HsForm.prototype = {
                 v  = f.call(i, this, v, n, t);
             }
             // 填充
-            if (n && this["_fill_"+n] !== undefined) {
-                v  = this["_fill_"+n].call(this, i, v, n, "enum");
+            if (n && this["_prep_"+n] !== undefined) {
+                v  = this["_prep_"+n].call(this, i, v, n);
             } else
-            if (t && this["_fill_"+t] !== undefined) {
-                v  = this["_fill_"+t].call(this, i, v, n, "enum");
+            if (t && this["_prep"+t] !== undefined) {
+                v  = this["_prep"+t].call(this, i, v, n);
             }
             // 无值不理会
             if (!v && v !== 0 && v !== "") {
@@ -166,9 +166,9 @@ HsForm.prototype = {
             }
 
             if (i.is("select")) {
-                this._fill__select(i, v, n, "enum");
+                this._prep__select(i, v, n);
             } else {
-                this._fill__review(i, v, n, "enum");
+                this._prep__review(i, v, n);
             }
         }
         delete this._enum;
@@ -230,10 +230,10 @@ HsForm.prototype = {
             }
             // 填充
             if (n && this["_fill_"+n] !== undefined) {
-                v  = this["_fill_"+n].call(this, i, v, n, "info");
+                v  = this["_fill_"+n].call(this, i, v, n);
             } else
             if (t && this["_fill_"+t] !== undefined) {
-                v  = this["_fill_"+t].call(this, i, v, n, "info");
+                v  = this["_fill_"+t].call(this, i, v, n);
             }
             // 无值不理会
             if (!v && v !== 0 && v !== "") {
@@ -428,13 +428,8 @@ HsForm.prototype = {
         jQuery.hsWarn.apply(self, arguments);
     },
 
-    _fill__review : function(inp, v, n, t) {
-        // 枚举
-        if (t === "enum" ) {
-            inp.data("enum", v );
-            return v;
-        }
-        var a = inp.data("enum");
+    _fill__review : function(inp, v, n) {
+        var a = inp.data("data");
         if (a) {
             var k = inp.attr("data-vk"); if (! k) k = 0;
             var t = inp.attr("data-tk"); if (! t) t = 1;
@@ -467,7 +462,7 @@ HsForm.prototype = {
                 c = i;
                 e = v[i];
                 if ( jQuery.isPlainObject(e)
-                ||   jQuery.isArray(e)) {
+                ||   jQuery.isArray( e ) ) {
                     c = e[k];
                     e = e[t];
                 }
@@ -490,8 +485,11 @@ HsForm.prototype = {
 
         return v;
     },
-    _fill__select : function(inp, v, n, t) {
-        if (t !== "enum")  return v;
+    _prep__review : function(inp, v, n) {
+        inp.data( "data", v );
+        return v;
+    },
+    _prep__select : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
@@ -504,8 +502,7 @@ HsForm.prototype = {
         }
         inp.change().click(); // multiple 必须触发 click 才初始化
     },
-    _fill__radio : function(inp, v, n, t) {
-        if (t !== "enum") return v;
+    _prep__radio : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
@@ -517,8 +514,7 @@ HsForm.prototype = {
         }
         inp.find(":radio").first().change();
     },
-    _fill__check : function(inp, v, n, t) {
-        if (t !== "enum") return v;
+    _prep__check : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
@@ -530,9 +526,7 @@ HsForm.prototype = {
         }
         inp.find(":checkbox").first().change();
     },
-    _fill__checkset : function(inp, v, n, t) {
-        if (t !== "enum") return v;
-
+    _prep__checkset : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         var vl = inp.attr("data-vl"); if(!vl) vl = 0; // Value List

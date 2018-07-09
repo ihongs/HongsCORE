@@ -125,7 +125,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         .on("click"   , ".ensure"  , ensure)
         .on("saveBack", ".create"  , create);
 
-        bin.data("pickData", v)
+        bin.data("pickData", v);
         bin.data("rel", btn.closest(".openbox")[0]);
         bin.find( ".checkone" ).val(Object.keys(v));
     };
@@ -229,20 +229,23 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  * @param {String} t
  * @returns {undefined}
  */
-function hsFormFillPick(box, v, n, t) {
+function hsFormFillPick(box, v, n) {
     if (n == undefined) n = box.data("fn");
+    var rol = box.data("readonly")
+           || box.is  (".pickorl");
     var mul = box.data("repeated")
            || box.is  (".pickmul")
            || /(\[\]|\.\.|\.$)/.test(  n );
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 
-    if (t == "info") {
-        if (! v ) return ;
-        var tn = box.attr("data-ak") || n.replace(/_id$/, "");
+    // 表单初始化载入时需从关联数据提取选项对象
+    if (this._info) {
+        var tn = box.attr("data-ak") || "data";
         v = hsGetValue(this._info, tn);
         if (! v ) return ;
         if (!mul) v = [v];
     }
+
     if (jQuery.isArray(v)) {
         var tk = box.attr("data-tk") || "name";
         var vk = box.attr("data-vk") ||  "id" ;
@@ -308,7 +311,7 @@ function hsFormFillPick(box, v, n, t) {
             var txt  = arr[0];
             inset(btn, box, val, txt);
         }
-    } else if ( ! box.is(".pickrol")) {
+    } else if ( ! rol ) {
         if (! box.data("pickInited")) {
             box.data("pickInited", 1);
             box.on("click", ".close", btn, function(evt) {
@@ -321,7 +324,7 @@ function hsFormFillPick(box, v, n, t) {
                 box.trigger("change");
                 return false ;
             });
-            if (! mul) {
+            if (! mul ) {
                 box.on("click", null, btn, function(evt) {
                     evt.data.click();
                 });

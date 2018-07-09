@@ -19,7 +19,7 @@
         data-fn     Field name
         data-ft     Field type
         data-fl     Fill lambda // 填充取值
-        data-dl     Data lambda // 填充选项
+        data-dl     Data lambda // 预置选项
         data-vl     Value list  // checkset
         data-tl     Title line  // checkset
     Fork:

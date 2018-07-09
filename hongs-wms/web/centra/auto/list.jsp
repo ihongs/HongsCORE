@@ -361,6 +361,7 @@
         }
     });
 
+    filtobj._prep__enum = hsListPrepFilt;
     filtobj._fill__enum = hsListFillFilt;
     <%} else {%>
     listobj._fill__fork = hsListFillSele;

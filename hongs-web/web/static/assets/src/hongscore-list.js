@@ -540,10 +540,11 @@ HsList.prototype = {
 
     // /** 填充函数 **/
 
-    _fill__admin : function(td, v, n, t) {
-        this.listBox.find('thead [data-fn="'+n+'"],thead [data-ft="'+t+'"]').first()
-            .find( ".invisible" ).clone( ).removeClass( "invisible" ).appendTo( td );
-          td.hsInit().find("input:hidden").val(v);
+    _fill__admin : function(td, v, n) {
+        this.listBox.find( 'thead th,thead td' ).eq(td.index( ))
+            .find(".invisible").clone().removeClass("invisible")
+            .appendTo(td);
+        td.hsInit( ).find("input:hidden").val(v);
         return false;
     },
     _fill__check : function(td, v, n) {

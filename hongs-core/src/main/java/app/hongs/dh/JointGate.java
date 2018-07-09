@@ -34,15 +34,19 @@ abstract public class JointGate implements IActing, IAction {
         String mod = runner.getModule();
 
         try {
-            // 探测实体是否为独占模块, 方便自动机处理
-            if (FormSet.hasConfFile(mod + "/" + ent)) {
-                mod = mod + "/" + ent  ;
+            // 探测实体是否为独占模块, 方便作自动处理
+            if (FormSet.hasConfFile( mod +"/"+ ent )) {
+                mod = ( mod +"/"+ ent );
                 runner.setModule( mod );
+            } else
+            // 拒绝独占模块的另一路径, 防止权限被绕过
+            if (mod.endsWith("/"+ ent )) {
+                throw new HongsException(0x1100, "Unsupported Request!");
             }
 
             // 下划线开头的为内部资源, 不直接对外开放
-            if (ent.startsWith("_")) {
-                throw new HongsException(0x1100, "Unsupported Request!");
+            if (ent.startsWith  ( "_" )) {
+                throw new HongsException(0x1100, "Unsupported Request.");
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在

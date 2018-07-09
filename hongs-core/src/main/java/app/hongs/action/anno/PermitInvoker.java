@@ -63,13 +63,13 @@ public class PermitInvoker implements FilterInvoker {
 
         // 识别路径
         if (conf.length() == 0) {
-            String form;
-            form = chains.getEntity();
+//          String form;
+//          form = chains.getEntity();
             conf = chains.getModule();
-            // 照顾 Module Action 的配置规则
-            if (NaviMap.hasConfFile(conf+"/"+form)) {
-                conf = conf+"/"+form ;
-            }
+            // 照顾 Module Action 的配置规则. 2018/7/7 改为完全由外部预判
+//          if (NaviMap.hasConfFile(conf+"/"+form)) {
+//              conf = conf+"/"+form ;
+//          }
         }
 
         NaviMap map = NaviMap.getInstance(conf);

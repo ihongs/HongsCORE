@@ -12,6 +12,7 @@
 *.iws
 .idea
 .project
+.settings
 nbproject
 nbactions*
 nb-config*

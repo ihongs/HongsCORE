@@ -35,9 +35,19 @@ public class DBAction implements IAction, IActing {
         String mod = runner.getModule();
 
         try {
-            // 下划线开头的为内部资源, 不直接对外开放
-            if (ent.startsWith("_")) {
+            // 探测实体是否为独占模块, 方便作自动处理
+            if (FormSet.hasConfFile( mod +"/"+ ent )) {
+                mod = ( mod +"/"+ ent );
+                runner.setModule( mod );
+            } else
+            // 拒绝独占模块的另一路径, 防止权限被绕过
+            if (mod.endsWith("/"+ ent )) {
                 throw new HongsException(0x1100, "Unsupported Request!");
+            }
+
+            // 下划线开头的为内部资源, 不直接对外开放
+            if (ent.startsWith  ( "_" )) {
+                throw new HongsException(0x1100, "Unsupported Request.");
             }
 
             // 判断是否禁用了当前动作, 忽略表单不存在
@@ -55,10 +65,10 @@ public class DBAction implements IAction, IActing {
         }
     }
 
+    @Override
     @Action("search")
     @Preset(conf="", form="")
     @Select(conf="", form="")
-    @Override
     public void search(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);
@@ -69,12 +79,12 @@ public class DBAction implements IAction, IActing {
         helper.reply(rsp);
     }
 
+    @Override
     @Action("create")
-    @Preset(conf="", form="", defs={":defence"})
+    @Preset(conf="", form="", deft={":defence"})
     @Verify(conf="", form="")
     @Select(conf="", form="")
     @CommitSuccess
-    @Override
     public void create(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);
@@ -86,11 +96,11 @@ public class DBAction implements IAction, IActing {
         helper.reply(msg, rsp);
     }
 
+    @Override
     @Action("update")
-    @Preset(conf="", form="", defs={":defence"})
+    @Preset(conf="", form="", deft={":defence"})
     @Verify(conf="", form="")
     @CommitSuccess
-    @Override
     public void update(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);
@@ -101,10 +111,10 @@ public class DBAction implements IAction, IActing {
         helper.reply(msg, num);
     }
 
-    @Action("delete")
-    @Preset(conf="", form="", defs={":defence"})
-    @CommitSuccess
     @Override
+    @Action("delete")
+    @Preset(conf="", form="", deft={":defence"})
+    @CommitSuccess
     public void delete(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);

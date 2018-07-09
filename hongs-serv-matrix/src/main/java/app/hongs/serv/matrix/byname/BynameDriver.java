@@ -28,10 +28,10 @@ public class BynameDriver implements FilterInvoker {
         }
         if (conf.length() == 0) {
             conf = chains.getModule();
-            // 照顾 Module Action 的配置规则
-            if (FormSet.hasConfFile(conf+"/"+form)) {
-                conf = conf+"/"+form ;
-            }
+            // 照顾 Module Action 的配置规则. 2018/7/7 改为完全由外部预判
+//          if (FormSet.hasConfFile(conf+"/"+form)) {
+//              conf = conf+"/"+form ;
+//          }
         }
 
         // 准备转换

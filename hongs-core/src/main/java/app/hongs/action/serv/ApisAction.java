@@ -49,9 +49,7 @@ public class ApisAction
   extends  ActionDriver
 {
     private String dataKey;
-    private String convKey;
-    private String wrapKey;
-    private String scokKey;
+    private String modeKey;
 
     @Override
     public void init(ServletConfig conf) throws ServletException {
@@ -59,9 +57,7 @@ public class ApisAction
 
         CoreConfig cc = CoreConfig.getInstance( );
         dataKey  = cc.getProperty("core.api.data", ".data"); // 请求数据
-        convKey  = cc.getProperty("core.api.conv", ".conv"); // 转换策略
-        wrapKey  = cc.getProperty("core.api.wrap", ".wrap"); // 包裹数据
-        scokKey  = cc.getProperty("core.api.scok", ".scok"); // 无错误码
+        modeKey  = cc.getProperty("core.api.mode", ".mode"); // 封装模式
     }
 
     @Override
@@ -78,9 +74,7 @@ public class ApisAction
 
         ActionHelper  hlpr = ActionDriver.getActualCore(req).get(ActionHelper.class);
         Object _dat = Dict.getParam( hlpr.getRequestData(), dataKey );
-        Object _cnv = Dict.getParam( hlpr.getRequestData(), convKey );
-        String _wap = hlpr.getParameter( wrapKey );
-        String _sok = hlpr.getParameter( scokKey );
+        Object _mod = Dict.getParam( hlpr.getRequestData(), modeKey );
 
         // 请求数据封装
         Map data  = null;
@@ -94,58 +88,42 @@ public class ApisAction
         }
 
         // 数据转换策略
-        Set conv  = null;
-        if (_cnv != null) {
+        Set mode  = null;
+        if (_mod != null) {
             try {
-                conv = trnsConv(_cnv);
+                mode = trnsConv(_mod);
             } catch (ClassCastException e) {
-                hlpr.error400( "Can not parse value for " + convKey );
+                hlpr.error400( "Can not parse value for " + modeKey );
                 return;
             }
         }
 
-        // 包裹返回数据
-        boolean wrap;
-        try {
-            wrap = Synt.declare(_wap , false );
-        } catch (ClassCastException e) {
-            hlpr.error400("Value for " + wrapKey + " can not be cast to boolean");
-            return;
-        }
-
-        // 状态总是 200
-        boolean scok;
-        try {
-            scok = Synt.declare(_sok , false );
-        } catch (ClassCastException e) {
-            hlpr.error400("Value for " + scokKey + " can not be cast to boolean");
-            return;
-        }
-
         // 额外请求数据
-        if (data != null && ! data.isEmpty() ) {
+        if (data != null && !data.isEmpty()) {
             hlpr.getRequestData().putAll(data);
         }
-        if (conv != null && ! conv.isEmpty() ) {
+        if (mode != null && !mode.isEmpty()) {
             Core.getInstance().put(Cnst.OBJECT_MODE, true);
         }
 
         // 转发动作处理, 获取响应数据
         req.getRequestDispatcher(act).include( req , rsp );
-        Map resp  = hlpr.getResponseData(/**/);
+        Map resp  = hlpr.getResponseData();
         if (resp == null) {
             return;
         }
 
         // 整理响应数据
-        if (conv != null && ! conv.isEmpty() ) {
-            convData(resp, conv);
-        }
-        if (wrap) {
-            wrapData(resp  /**/);
-        }
-        if (scok) {
-            rsp.setStatus(HttpServletResponse.SC_OK);
+        if (mode != null) {
+            if ( !  mode.isEmpty( ) )  {
+                convData(resp, mode );
+            }
+            if (mode.contains("wrap")) {
+                wrapData(resp  /**/ );
+            }
+            if (mode.contains("scok")) {
+                rsp.setStatus( HttpServletResponse.SC_OK );
+            }
         }
     }
 
@@ -207,6 +185,13 @@ public class ApisAction
      * @param conv
      */
     public static void convData(Map resp, Set<String> conv) {
+        // 如果没指定转换方法则不需要处理
+        Set cnvs = new HashSet (API_CNV);
+            cnvs.retainAll(conv);
+        if (cnvs.isEmpty()) {
+            return;
+        }
+
         Conv cnvr = new Conv();
         boolean     all =  conv.contains( "all2str");
         cnvr.all  = all ?  new  Conv2Str( ) : new Conv2Obj( ) ;
@@ -229,6 +214,19 @@ public class ApisAction
         API_RSP.add("err");
         API_RSP.add("msg");
         API_RSP.add("data");
+    }
+
+    private static final Set API_CNV = new HashSet();
+    static {
+        API_CNV.add("all2str");
+        API_CNV.add("num2str");
+        API_CNV.add("null2str");
+        API_CNV.add("bool2str");
+        API_CNV.add("bool2num");
+        API_CNV.add("date2num");
+        API_CNV.add("date2sec");
+        API_CNV.add("flat.map");
+        API_CNV.add("flat_map");
     }
 
     private static class Conv implements Synt.Each {

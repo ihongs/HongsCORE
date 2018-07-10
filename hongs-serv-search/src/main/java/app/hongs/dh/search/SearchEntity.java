@@ -56,12 +56,12 @@ public class SearchEntity extends LuceneRecord {
             Map c = (Map) fxrm.get("@");
             if (c!= null) {
                 String p;
-                p = (String) c.get("data-path");
-                if (null != p && 0 < p.length()) {
+                p = (String) c.get("db-path");
+                if (null != p && p.length() != 0) {
                     path  = p;
                 }
-                p = (String) c.get("data-name");
-                if (null != p && 0 < p.length()) {
+                p = (String) c.get("db-name");
+                if (null != p && p.length() != 0) {
                     name  = p;
                 }
             }
@@ -75,7 +75,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void addDoc(final Document doc) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getDataName();
+        final String key = SearchEntity.class.getName() + ":" + getDbName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {
@@ -91,7 +91,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getDataName();
+        final String key = SearchEntity.class.getName() + ":" + getDbName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {
@@ -107,7 +107,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void delDoc(final String id) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getDataName();
+        final String key = SearchEntity.class.getName() + ":" + getDbName();
         Block.Locker loc = Block.getLocker(key);
         loc.lock();
         try {

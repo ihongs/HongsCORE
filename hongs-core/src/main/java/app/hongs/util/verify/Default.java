@@ -60,10 +60,10 @@ public class Default extends Rule {
            Date now = new Date();
             String flag = mat.group(1);
             String plus = mat.group(2);
-            if ( "time".equals(flag) ) {
+            if (flag.length() == 4) {// time 字串长度
                 now.setTime(Core.ACTION_TIME.get( ));
             }
-            if (  null != plus  ) {
+            if (plus != null) {
                Long msc = Long.valueOf(plus.substring(1));
                 if ("+".equals(plus.substring(0,1))) {
                     now.setTime(now.getTime() + msc);

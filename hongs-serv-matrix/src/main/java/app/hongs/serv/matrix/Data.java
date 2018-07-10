@@ -34,13 +34,14 @@ public class Data extends SearchEntity {
 
     /**
      * 数据实例基础构造方法
-     * @param path 数据存放路径
-     * @param comf 基础配置文件
      * @param conf 当前配置文件
      * @param form 表单配置名称
+     * @param comf 基础配置文件
+     * @param path 数据存放路径
+     * @param name 数据标识名称
      */
-    public Data(String path, String comf, String conf, String form) {
-        super(null, path, conf+"."+form);
+    protected Data(String conf, String form, String comf, String path, String name) {
+        super(null, path, name);
         this.comf = comf;
         this.conf = conf;
         this.form = form;
@@ -52,9 +53,10 @@ public class Data extends SearchEntity {
      * @param form 表单配置名称
      */
     public Data(String conf, String form) {
-        this(conf.replaceFirst("^(centre|centra)/", ""),
-             conf.replaceFirst("^(centre)/", "centra/"),
-             conf, form);
+        this( conf  ,  form
+            , conf.replaceFirst("^(centre)/", "centra/")
+            , conf.replaceFirst("^(centre|centra)/", "")
+            , conf+"."+form );
     }
 
     /**
@@ -375,18 +377,21 @@ public class Data extends SearchEntity {
 
         //** 获取旧的数据 **/
 
-        if (table == null) {
-            throw new HongsException(0x1100, "此资源不支持恢复");
+        if (table != null) {
+            throw new HongsException(0x1100, "资源不支持恢复");
         }
         Map dd = table.fetchCase()
             .filter( where, param)
             .select("etime, state, data, name")
             .getOne( );
         if (dd.isEmpty()) {
-            throw new HongsException(0x1100, "恢复数据源不存在");
+            throw new HongsException(0x1100, "起源记录不存在");
         }
-        if (Synt.declare(dd.get("etime"), 0L) == 0L) {
-            throw new HongsException(0x1100, "活跃数据不可操作");
+        if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
+            throw new HongsException(0x1100, "已经是最新记录");
+        }
+        if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
+            throw new HongsException(0x1100, "等会儿, 不要急");
         }
 
         //** 保存到数据库 **/

@@ -184,10 +184,10 @@ public class JoistBean implements IVolume {
             if (!"*".equals(o)) {
                 return Synt.toSet(o);
             } else {
-                Set fns = getFields().keySet();
-                fns = new LinkedHashSet( fns );
-                fns.remove("@");
-                return fns ;
+                Set fs = getFields().keySet();
+                fs = new LinkedHashSet ( fs );
+                fs.remove("@");
+                return fs;
             }}
 
             fts = getCaseTypes(x);

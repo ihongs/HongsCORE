@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * 默认取值
  * <pre>
  * 规则参数:
- *  default 默认值, 可使用 =@请求参数 =$会话属性, =%应用属性, =%now+-偏移毫秒
+ *  default 默认值, 可使用 =@别名字段 =$会话属性, =%应用属性, =%now+-偏移毫秒
  *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时
  * </pre>
  * @author Hongs
@@ -72,14 +72,9 @@ public class Default extends Rule {
             return  now;
         }
 
-        // 别名属性
+        // 别名字段
         if (def.startsWith("=@")) {
-            def= def.substring(2);
-            Object val;
-            val= Dict.get(cleans, BLANK, def);
-            if ( val  !=  null  ) return val ;
-            val= Dict.get(values, BLANK, def);
-            return val;
+            return Dict.get(cleans, BLANK, def.substring(2));
         }
 
         // 会话属性

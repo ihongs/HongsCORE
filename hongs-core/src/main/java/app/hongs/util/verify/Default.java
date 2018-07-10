@@ -63,7 +63,7 @@ public class Default extends Rule {
             if ( "time".equals(flag) ) {
                 now.setTime(Core.ACTION_TIME.get( ));
             }
-            if (null != plus) {
+            if (  null != plus  ) {
                Long msc = Long.valueOf(plus.substring(1));
                 if ("+".equals(plus.substring(0,1))) {
                     now.setTime(now.getTime() + msc);

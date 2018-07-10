@@ -58,11 +58,11 @@ public class Default extends Rule {
         Matcher mat = NOW.matcher(def);
         if (mat.matches()) {
            Date now = new Date();
-            if (mat.group(1).equals("time") ) {
-                now.setTime( Core.ACTION_TIME.get());
+            if ( "time".equals(mat.group(1))) {
+                now.setTime(Core.ACTION_TIME.get( ));
             }
-            if (mat.group(2) != null) {
-               Long msc = Synt.declare( mat.group(4), 0L );
+            if (null != mat.group(2)) {
+               Long msc = Synt.declare(mat.group(4) , 0L);
                 if ("+".equals(mat.group(3))) {
                     now.setTime(now.getTime() + msc);
                 } else {
@@ -74,7 +74,7 @@ public class Default extends Rule {
 
         // 别名字段
         if (def.startsWith("=@")) {
-            return Dict.get(cleans,BLANK,def.substring(2));
+            return Dict.get(cleans, BLANK, Dict.splitKeys(def.substring(2)));
         }
 
         // 会话属性

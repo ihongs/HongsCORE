@@ -86,8 +86,8 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
     /**
      * 构造方法
      * @param form 字段配置, 可覆盖 getFields
-     * @param path 存储路径, 可覆盖 getDataPath
-     * @param name 存储名称, 可覆盖 getDataName
+     * @param path 存储路径, 可覆盖 getDbPath
+     * @param name 存储名称, 可覆盖 getDbName
      */
     public LuceneRecord(Map form, String path, String name) {
         super.setFields(form);
@@ -159,12 +159,12 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             Map c = (Map) fxrm.get("@");
             if (c!= null) {
                 String p;
-                p = (String) c.get("data-path");
-                if (null != p && 0 < p.length()) {
+                p = (String) c.get("db-path");
+                if (null != p && p.length() != 0) {
                     path  = p;
                 }
-                p = (String) c.get("data-name");
-                if (null != p && 0 < p.length()) {
+                p = (String) c.get("db-name");
+                if (null != p && p.length() != 0) {
                     name  = p;
                 }
             }
@@ -174,20 +174,6 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         } else {
             return  (LuceneRecord) core.got(code);
         }
-    }
-
-    public String getDataPath() {
-        if (null != dbpath) {
-            return  dbpath;
-        }
-        throw new NullPointerException("Data path is not set");
-    }
-
-    public String getDataName() {
-        if (null != dbname) {
-            return  dbname;
-        }
-        throw new NullPointerException("Data name is not set");
     }
 
     //** 实体方法 **/
@@ -665,7 +651,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             return;
         }
 
-        String path = getDataPath();
+        String path = getDbPath();
 
         try {
             // 索引目录不存在则先写入一个并删除
@@ -687,7 +673,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Open the lucene reader from " + getDataName());
+            CoreLogger.trace("Open the lucene reader from " + getDbName());
         }
     }
 
@@ -700,7 +686,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
             return;
         }
 
-        String path = getDataPath();
+        String path = getDbPath();
 
         try {
             IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
@@ -714,7 +700,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Open the lucene writer from " + getDataName());
+            CoreLogger.trace("Open the lucene writer from " + getDbName());
         }
     }
 
@@ -765,7 +751,7 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
         }
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Close the lucene handle for " + getDataName());
+            CoreLogger.trace("Close the lucene handle for " + getDbName());
         }
     }
 
@@ -819,6 +805,20 @@ public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoClo
     }
 
     //** 底层方法 **/
+
+    public String getDbPath() {
+        if (null != dbpath) {
+            return  dbpath;
+        }
+        throw new NullPointerException("DB path is not set");
+    }
+
+    public String getDbName() {
+        if (null != dbname) {
+            return  dbname;
+        }
+        throw new NullPointerException("DB name is not set");
+    }
 
     public IndexSearcher getFinder() throws HongsException {
         init();

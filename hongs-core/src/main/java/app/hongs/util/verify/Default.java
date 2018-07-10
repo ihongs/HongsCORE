@@ -62,7 +62,7 @@ public class Default extends Rule {
                 now.setTime( Core.ACTION_TIME.get());
             }
             if (mat.group(2) != null) {
-               Long msc = Synt.declare( mat.group(4), 0L );
+               Long msc = Synt.declare( mat.group(4),  0L  );
                 if ("+".equals(mat.group(3))) {
                     now.setTime(now.getTime() + msc);
                 } else {

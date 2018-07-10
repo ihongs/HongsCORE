@@ -1,8 +1,9 @@
 package app.hongs.util.verify;
 
 import app.hongs.Core;
-import app.hongs.util.Synt;
 import app.hongs.action.ActionHelper;
+import app.hongs.util.Synt;
+import app.hongs.util.Dict;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -54,12 +55,15 @@ public class Default extends Rule {
         }
 
         // 默认时间
-        Matcher mat = Pattern.compile("^=%now(([+\\-])(\\d+))?$").matcher(def);
+        Matcher mat = NOW.matcher(def);
         if (mat.matches()) {
-            Date now = new Date();
-            if (mat.group(1) != null) {
-                Long msc = Synt.declare(mat.group(2), 0L);
-                if ("+".equals(mat.group(1))) {
+           Date now = new Date();
+            if (mat.group(1).equals("time") ) {
+                now.setTime( Core.ACTION_TIME.get());
+            }
+            if (mat.group(2) != null) {
+               Long msc = Synt.declare( mat.group(4), 0L );
+                if ("+".equals(mat.group(3))) {
                     now.setTime(now.getTime() + msc);
                 } else {
                     now.setTime(now.getTime() - msc);
@@ -71,7 +75,11 @@ public class Default extends Rule {
         // 别名属性
         if (def.startsWith("=@")) {
             def= def.substring(2);
-            return cleans.containsKey(def) ? cleans.get(def) : values.get(def);
+            Object val;
+            val= Dict.get(cleans, BLANK, def);
+            if ( val  !=  null  ) return val ;
+            val= Dict.get(values, BLANK, def);
+            return val;
         }
 
         // 会话属性
@@ -86,4 +94,6 @@ public class Default extends Rule {
 
         return  value;
     }
+
+    private static final Pattern NOW = Pattern.compile ("^=%(time|now)([+\\-]\\d+)?$");
 }

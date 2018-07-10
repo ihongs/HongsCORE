@@ -58,12 +58,14 @@ public class Default extends Rule {
         Matcher mat = NOW.matcher(def);
         if (mat.matches()) {
            Date now = new Date();
-            if ( "time".equals(mat.group(1))) {
+            String flag = mat.group(1);
+            String plus = mat.group(2);
+            if ( "time".equals(flag) ) {
                 now.setTime(Core.ACTION_TIME.get( ));
             }
-            if (null != mat.group(2)) {
-               Long msc = Synt.declare(mat.group(4) , 0L);
-                if ("+".equals(mat.group(3))) {
+            if (null != plus) {
+               Long msc = Long.valueOf(plus.substring(1));
+                if ("+".equals(plus.substring(0,1))) {
                     now.setTime(now.getTime() + msc);
                 } else {
                     now.setTime(now.getTime() - msc);

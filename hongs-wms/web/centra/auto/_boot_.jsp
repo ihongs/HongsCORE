@@ -49,7 +49,7 @@
         // 通过表单配置获取字段、标题
         try {
             String _modulx = FormSet.hasConfFile(_module + "/" + _entity)
-                      ?  _module + "/" + _entity : _entity ;
+                      ?  _module + "/" + _entity : _module ;
             Data data = Data.getInstance(_modulx , _entity);
             _fields = data.getFields();
             _title  = Synt.declare(data.getParams().get("__text__"), "" );

@@ -85,7 +85,10 @@ html, body {
     padding: 0;
 }
 .menubox li {
-    margin : 1px 0;
+    margin : 8px 0;
+}
+.menubox li li {
+    margin : 2px 0;
 }
 .menubox li a {
     padding: 6px 4px 6px 15px;
@@ -96,18 +99,21 @@ html, body {
 .menubox li a {
     display: block;
     color: #eeeeee;
-    background: #222222;
-    border-left: 2px solid #222222;
+    background: #242424;
+    border-left: 2px solid #242424;
 }
 .menubox li.active > a {
     display: block;
     color: #ff8888;
-    background: #090909;
+    background: #202020;
     border-left: 2px solid #ff8888;
 }
+.menubox li :hover {
+    background: #202020;
+}
 .menubox li .caret {
-    float: right;
-    margin: 9px 0 8px 0;
+    float : right;
+    margin: 9px 0;
 }
 
 .toolbox,

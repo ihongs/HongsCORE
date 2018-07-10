@@ -20,6 +20,7 @@ import java.util.Set;
  * 规则参数:
  *  conf    配置名, 默认为当前配置
  *  form    表单名, 默认同 field.name
+ *  checked 不管存在否, 按 string 或 number 检查
  *  data-at 关联动作名
  *  data-vk 关联取值键
  * </pre>
@@ -32,9 +33,9 @@ public class IsFork extends Rule {
             return   null; // 允许为空
         }
 
-        String vl = Synt.declare(params.get("verify-type"), "");
-        if("any".equals(vl)) {
-            return value;
+        String vl = Synt.declare(params.get("checked" ), "");
+        if(   "any".equals(vl)) {
+            return  value ;
         } else
         if("number".equals(vl)) {
             IsNumber rl;
@@ -105,11 +106,17 @@ public class IsFork extends Rule {
         rd.put(Cnst.ID_KEY,id);
         ah.setRequestData (rd);
         // 虚拟路径
-        if (ap != null && ap.length() != 0) {
+        if (ap != null && !"".equals(ap)) {
+            if (ActionRunner.getActions()
+                        .containsKey(ap)) {
+                at = ap ; // 自动行为方法可能被定制开发
+            }
             ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
+        } else {
+            ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
         }
         // 附加参数
-        if (aq != null && aq.length() != 0) {
+        if (aq != null && !"".equals(aq)) {
             if (aq.startsWith("{") && aq.endsWith("}")) {
                 rd.putAll( ( Map )  Data.toObject(aq));
             } else {

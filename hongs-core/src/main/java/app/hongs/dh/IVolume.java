@@ -7,8 +7,9 @@ import java.util.Map;
  * @author Hongs
  */
 public interface IVolume {
-    
+
     public Map getFields();
+
     public Map getParams();
-    
+
 }

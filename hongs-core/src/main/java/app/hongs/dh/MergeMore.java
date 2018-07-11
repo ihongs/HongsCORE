@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 /**
- * 合并列表
+ * 列表合并工具
  * @author Hongs
  */
 public class MergeMore

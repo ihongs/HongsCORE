@@ -399,7 +399,7 @@ public final class Tool
   /**
    * 清理首尾空格
    * @param str
-   * @return 
+   * @return
    */
   public static String stripEnds(String str)
   {
@@ -452,35 +452,47 @@ public final class Tool
   //** 格式 **/
 
   /**
-   * 友好的时间格式(精确到秒)
+   * 友好的时间格式
    * @param time 毫秒数
-   * @return 最大到天, 最小到秒
+   * @return 最大到w 注意: 已带单位, 毫秒作为小数部分
    */
   public static String humanTime(long time)
   {
     StringBuilder sb = new StringBuilder( );
-    int n;
+    int item;
 
-    n = (int) Math.floor(time / 604800000);
-    if (n > 0) {  time = time % 604800000;
-      sb.append(n).append("w");
-    }
-    n = (int) Math.floor(time / 86400000);
-    if (n > 0) {  time = time % 86400000;
-      sb.append(n).append("d");
-    }
-    n = (int) Math.floor(time / 3600000);
-    if (n > 0) {  time = time % 3600000;
-      sb.append(n).append("h");
-    }
-    n = (int) Math.floor(time / 60000);
-    if (n > 0) {  time = time % 60000;
-      sb.append(n).append("m");
+    item = (int) Math.floor(time / 604800000);
+    if (item > 0) {  time = time % 604800000;
+        sb.append(item).append("w");
     }
 
-    float m = (float) time / 1000 ;
-    if (0 != m || 0 == sb.length()) {
-      sb.append(m).append("s");
+    item = (int) Math.floor(time / 86400000);
+    if (item > 0) {  time = time % 86400000;
+        sb.append(item).append("d");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0d");
+    }
+
+    item = (int) Math.floor(time / 3600000);
+    if (item > 0) {  time = time % 3600000;
+        sb.append(item).append("h");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0h");
+    }
+
+    item = (int) Math.floor(time / 60000);
+    if (item > 0) {  time = time % 60000;
+        sb.append(item).append("m");
+    } else
+    if (time > 0 && 0 < sb.length()) {
+        sb.append("0m");
+    }
+
+    float last = (float) time/1000 ;
+    if (last > 0 || 0== sb.length()) {
+        sb.append(last).append("s");
     }
 
     return sb.toString();
@@ -494,28 +506,39 @@ public final class Tool
   public static String humanSize(long size)
   {
     StringBuilder sb = new StringBuilder( );
-    int n;
+    int item;
 
-    n = (int) Math.floor(size / 1099511627776L);
-    if (n > 0) {  size = size % 1099511627776L;
-      sb.append(n).append("T");
-    }
-    n = (int) Math.floor(size / 1073741824);
-    if (n > 0) {  size = size % 1073741824;
-      sb.append(n).append("G");
-    }
-    n = (int) Math.floor(size / 1048576);
-    if (n > 0) {  size = size % 1048576;
-      sb.append(n).append("M");
-    }
-    n = (int) Math.floor(size / 1024);
-    if (n > 0) {  size = size % 1024;
-      sb.append(n).append("K");
+    item = (int) Math.floor(size / 0x10000000000L);
+    if (item > 0) {  size = size % 0x10000000000L;
+        sb.append(item).append("T");
     }
 
-    n = (int) size;
-    if (0 != n || 0 == sb.length()) {
-      sb.append(n);
+    item = (int) Math.floor(size / 0x40000000);
+    if (item > 0) {  size = size % 0x40000000;
+        sb.append(item).append("G");
+    } else
+    if (size > 0 && 0 < sb.length()) {
+        sb.append("0G");
+    }
+
+    item = (int) Math.floor(size / 0x100000);
+    if (item > 0) {  size = size % 0x100000;
+        sb.append(item).append("M");
+    } else
+    if (size > 0 && 0 < sb.length()) {
+        sb.append("0M");
+    }
+
+    item = (int) Math.floor(size / 0x400);
+    if (item > 0) {  size = size % 0x400;
+        sb.append(item).append("K");
+    } else
+    if (size > 0 && 0 < sb.length()) {
+        sb.append("0K");
+    }
+
+    if (size > 0 || 0== sb.length()) {
+        sb.append(size);
     }
 
     return sb.toString();

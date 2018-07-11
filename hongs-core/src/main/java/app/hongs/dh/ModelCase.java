@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 表单支撑工具
+ * 表单模型通用配置
  *
  * 对表单中 @ 区域的 xxxxable 配置项,
  * 其取值为 ? 将根据字段的类型来判别,
@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class JoistBean implements IVolume {
+public class ModelCase implements IVolume {
 
     private Map fieldz = null;
     private Map fsavez = null;

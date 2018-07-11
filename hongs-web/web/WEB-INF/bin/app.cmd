@@ -10,7 +10,7 @@ call "%JAVA_PATH%" %JAVA_OPTS%^
   -Dlog4j.configurationFile="\\%CORE_PATH%\etc\log.xml"^
   -Dlogs.dir="\\%CORE_PATH%\var\log"^
   -Dtmps.dir="\\%CORE_PATH%\tmp\log"^
-  app.hongs.cmdlet.CmdletRunner %*^
+  foo.hongs.cmdlet.CmdletRunner %*^
   --corepath "%CORE_PATH%"
 
 @echo on

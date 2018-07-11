@@ -1,4 +1,4 @@
-<%@page import="app.hongs.Core"%>
+<%@page import="foo.hongs.Core"%>
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
 <%@page trimDirectiveWhitespaces="true"%>

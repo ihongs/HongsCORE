@@ -17,7 +17,7 @@
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
-        <servlet-class>app.hongs.action.serv.ActsAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.ActsAction</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>
             <max-request-size>20971520</max-request-size>
@@ -31,7 +31,7 @@
     <!-- Apis Servlet -->
     <servlet>
         <servlet-name>Apis</servlet-name>
-        <servlet-class>app.hongs.action.serv.ApisAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.ApisAction</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>
             <max-request-size>20971520</max-request-size>
@@ -45,7 +45,7 @@
     <!-- REST Servlet -->
     <servlet>
         <servlet-name>Rest</servlet-name>
-        <servlet-class>app.hongs.normal.serv.RestAction</servlet-class>
+        <servlet-class>foo.hongs.normal.serv.RestAction</servlet-class>
         <multipart-config>
             <max-file-size>10485760</max-file-size>
             <max-request-size>20971520</max-request-size>
@@ -59,7 +59,7 @@
     <!-- SACL Servlet -->
     <servlet>
         <servlet-name>Sacl</servlet-name>
-        <servlet-class>app.hongs.normal.serv.SaclAction</servlet-class>
+        <servlet-class>foo.hongs.normal.serv.SaclAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Sacl</servlet-name>
@@ -70,7 +70,7 @@
     <!-- XSRF Filter -->
     <filter>
         <filter-name>XsrfFilter</filter-name>
-        <filter-class>app.hongs.normal.serv.XsrfFilter</filter-class>
+        <filter-class>foo.hongs.normal.serv.XsrfFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>XsrfFilter</filter-name>
@@ -80,7 +80,7 @@
     <!-- SPAR Filter -->
     <filter>
         <filter-name>SparFilter</filter-name>
-        <filter-class>app.hongs.normal.serv.SparFilter</filter-class>
+        <filter-class>foo.hongs.normal.serv.SparFilter</filter-class>
     </filter>
     <filter-mapping>
         <filter-name>SparFilter</filter-name>
@@ -89,7 +89,7 @@
     <!-- Sess Filter -->
     <filter>
         <filter-name>SessFilter</filter-name>
-        <filter-class>app.hongs.normal.serv.SessFilter</filter-class>
+        <filter-class>foo.hongs.normal.serv.SessFilter</filter-class>
         <init-param>
             <param-name>session-timeout</param-name>
             <param-value>604800</param-value>
@@ -115,7 +115,7 @@
     <!-- Auth Filter -->
     <filter>
         <filter-name>AuthFilter_Centra</filter-name>
-        <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
+        <filter-class>foo.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
             <param-value>centra</param-value>
@@ -151,7 +151,7 @@
     </filter-mapping>
     <filter>
         <filter-name>AuthFilter_Centre</filter-name>
-        <filter-class>app.hongs.action.serv.AuthFilter</filter-class>
+        <filter-class>foo.hongs.action.serv.AuthFilter</filter-class>
         <init-param>
             <param-name>config-name</param-name>
             <param-value>centre</param-value>
@@ -176,7 +176,7 @@
     <!-- Auto Filter -->
     <filter>
         <filter-name>AutoFilter_Centra</filter-name>
-        <filter-class>app.hongs.action.serv.AutoFilter</filter-class>
+        <filter-class>foo.hongs.action.serv.AutoFilter</filter-class>
         <init-param>
             <param-name>action-path</param-name>
             <param-value>/centra/auto</param-value>
@@ -195,7 +195,7 @@
     </filter-mapping>
     <filter>
         <filter-name>AutoFilter_Centre</filter-name>
-        <filter-class>app.hongs.action.serv.AutoFilter</filter-class>
+        <filter-class>foo.hongs.action.serv.AutoFilter</filter-class>
         <init-param>
             <param-name>action-path</param-name>
             <param-value>/centre/auto</param-value>

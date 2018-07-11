@@ -1,8 +1,8 @@
-<%@page import="app.hongs.Cnst"%>
-<%@page import="app.hongs.util.Dict"%>
-<%@page import="app.hongs.util.Synt"%>
+<%@page import="foo.hongs.Cnst"%>
+<%@page import="foo.hongs.util.Dict"%>
+<%@page import="foo.hongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
-<%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page extends="foo.hongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%

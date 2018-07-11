@@ -26,7 +26,7 @@
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
-        <servlet-class>app.hongs.action.serv.ActsAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.ActsAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Acts</servlet-name>
@@ -35,7 +35,7 @@
     <!-- Apis Servlet -->
     <servlet>
         <servlet-name>Apis</servlet-name>
-        <servlet-class>app.hongs.action.serv.ApisAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.ApisAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Apis</servlet-name>
@@ -44,7 +44,7 @@
     <!-- Conf Servlet -->
     <servlet>
         <servlet-name>Conf</servlet-name>
-        <servlet-class>app.hongs.action.serv.ConfAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.ConfAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Conf</servlet-name>
@@ -53,7 +53,7 @@
     <!-- Lang Servlet -->
     <servlet>
         <servlet-name>Lang</servlet-name>
-        <servlet-class>app.hongs.action.serv.LangAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.LangAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Lang</servlet-name>
@@ -62,7 +62,7 @@
     <!-- Auth Servlet -->
     <servlet>
         <servlet-name>Auth</servlet-name>
-        <servlet-class>app.hongs.action.serv.AuthAction</servlet-class>
+        <servlet-class>foo.hongs.action.serv.AuthAction</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>Auth</servlet-name>

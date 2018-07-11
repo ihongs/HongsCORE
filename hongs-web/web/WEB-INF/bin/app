@@ -21,5 +21,5 @@ exec "$JAVA_PATH" $JAVA_OPTS\
   -Dlog4j.configurationFile="$CORE_PATH/etc/log.xml"\
   -Dlogs.dir="$CORE_PATH/var/log"\
   -Dtmps.dir="$CORE_PATH/var/tmp"\
-  app.hongs.cmdlet.CmdletRunner $@\
+  foo.hongs.cmdlet.CmdletRunner $@\
   --corepath "$CORE_PATH"

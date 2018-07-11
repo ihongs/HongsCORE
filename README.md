@@ -124,14 +124,14 @@
 
 ### 类库结构:
 
-    app.hongs           核心
-    app.hongs.action    动作支持
-    app.hongs.cmdlet    命令支持
-    app.hongs.db        关系数据模型
-    app.hongs.dh        文档处理组件
-    app.hongs.jsp       JSP 工具
-    app.hongs.util      辅助工具
-    app.hongs.serv      服务组件
+    foo.hongs           核心
+    foo.hongs.action    动作支持
+    foo.hongs.cmdlet    命令支持
+    foo.hongs.db        关系数据模型
+    foo.hongs.dh        文档处理组件
+    foo.hongs.jsp       JSP 工具
+    foo.hongs.util      辅助工具
+    foo.hongs.serv      服务组件
 
 以上仅列举了主要的包, 更多框架信息请参考 API 文档.
 

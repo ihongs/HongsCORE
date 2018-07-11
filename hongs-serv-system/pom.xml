@@ -5,7 +5,7 @@
     <artifactId>hongs-serv-system</artifactId>
     <parent>
         <artifactId>hongs-base</artifactId>
-        <groupId>app.hongs</groupId>
+        <groupId>foo.hongs</groupId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>

@@ -1,5 +1,5 @@
 <root>
-    <rsname>!app.hongs.serv.auth.RoleSet</rsname>
+    <rsname>!foo.hongs.serv.auth.RoleSet</rsname>
     <import>centra</import>
     <import>centre</import>
 </root>

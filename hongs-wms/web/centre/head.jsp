@@ -1,14 +1,14 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
-<%@page import="app.hongs.Core"%>
-<%@page import="app.hongs.CoreLocale"%>
-<%@page import="app.hongs.action.ActionHelper"%>
-<%@page import="app.hongs.action.NaviMap"%>
-<%@page import="app.hongs.util.Synt"%>
+<%@page import="foo.hongs.Core"%>
+<%@page import="foo.hongs.CoreLocale"%>
+<%@page import="foo.hongs.action.ActionHelper"%>
+<%@page import="foo.hongs.action.NaviMap"%>
+<%@page import="foo.hongs.util.Synt"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page import="java.util.regex.Pattern"%>
-<%@page extends="app.hongs.jsp.Pagelet"%>
+<%@page extends="foo.hongs.jsp.Pagelet"%>
 <%!
     StringBuilder makeMenu(List<Map> list, String acti) {
         StringBuilder menus = new StringBuilder();

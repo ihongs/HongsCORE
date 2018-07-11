@@ -4,7 +4,7 @@
     <packaging>pom</packaging>
     <name>Hong's Base</name>
     <artifactId>hongs-base</artifactId>
-    <groupId>app.hongs</groupId>
+    <groupId>foo.hongs</groupId>
     <version>0.4-SNAPSHOT</version>
     <modules>
         <module>hongs-core</module>

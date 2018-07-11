@@ -2,6 +2,6 @@
 
 set CORE_PATH=%~DP0\..
 
-"%CORE_PATH%\bin\app.cmd" server.start $@
+"%CORE_PATH%\bin\foo.cmd" server.start $@
 
 @echo on

@@ -2,6 +2,6 @@
 
 set CORE_PATH=%~DP0\
 
-"%CORE_PATH%\bin\app.cmd" system.setup $@
+"%CORE_PATH%\bin\foo.cmd" system.setup $@
 
 @echo on

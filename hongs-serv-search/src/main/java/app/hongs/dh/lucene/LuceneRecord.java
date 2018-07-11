@@ -152,8 +152,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if ( ! core.containsKey( code ) ) {
             String path = conf +"/"+ form;
             String name = conf +"."+ form;
-            String cxnf = FormSet.hasConfFile(path)? path : conf ;
-            Map    fxrm = FormSet.getInstance(cxnf).getForm(form);
+            Map    fxrm = FormSet.getInstance(conf).getForm(form);
 
             // 表单配置中可指定数据路径
             Map c = (Map) fxrm.get("@");

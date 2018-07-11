@@ -32,20 +32,22 @@ abstract public class ModelGate implements IActing, IAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
 
-        // 模块内隐藏或同名实体不可访问
+        /**
+         * 配置内用表单参数 callable 可指定许可的动作;
+         * 配置内下划线开头的表单不允许从外部直接访问;
+         * 实体表单名与模块名相同的路径必须省略表单名,
+         * 这是为了避免由于多个路径导致权限过滤被绕开,
+         * 这种情况需重设模块名告知后续程序正确配置名.
+         */
+
         if (ent.startsWith("_") || mod.endsWith("/" + ent)) {
             throw new HongsException(0x1100, "Unsupported Request!");
         }
 
-        /**
-         * 尝试获取实体对应的表单配置项
-         * 没有则继续查找模块同名的实体
-         * 后者则在原模块名后追加实体名
-         */
-        Map fa = null;
+        Map fs = null;
         do {
             try {
-                fa = FormSet.getInstance(mod).getForm(ent);
+                fs = FormSet.getInstance(mod).getForm(ent);
                 break;
             } catch ( HongsException ex) {
             if (ex.getErrno() != 0x10e8
@@ -56,7 +58,7 @@ abstract public class ModelGate implements IActing, IAction {
             String mad = ( mod+"/"+ent );
 
             try {
-                fa = FormSet.getInstance(mad).getForm(ent);
+                fs = FormSet.getInstance(mad).getForm(ent);
                 runner.setModule ( mad );
             } catch ( HongsException ex) {
             if (ex.getErrno() != 0x10e8
@@ -64,12 +66,11 @@ abstract public class ModelGate implements IActing, IAction {
                 throw ex;
             }}
         } while (false) ;
-        if (fa == null) {
+        if (fs == null) {
             return;
         }
 
-        // 表单配置可对动作进行访问限制
-        Set ca  = Synt.toSet( Dict.getDepth( fa, "@", "callable" ) );
+        Set ca  = Synt.toSet( Dict.get( fs , null, "@", "callable"));
         if (ca != null && !ca.contains(act)) {
             throw new HongsException(0x1100, "Unsupported Request.");
         }

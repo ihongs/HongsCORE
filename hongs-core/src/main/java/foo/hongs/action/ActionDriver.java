@@ -172,11 +172,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             CoreLogger.debug(new StringBuilder("...")
                 .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
                 .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
+                .append("\r\n\tBASE_HREF   : ").append(Core.BASE_HREF)
+                .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
                 .append("\r\n\tCORE_PATH   : ").append(Core.CORE_PATH)
                 .append("\r\n\tCONF_PATH   : ").append(Core.CONF_PATH)
                 .append("\r\n\tDATA_PATH   : ").append(Core.DATA_PATH)
-                .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
-                .append("\r\n\tBASE_HREF   : ").append(Core.BASE_HREF)
                 .toString());
         }
     }

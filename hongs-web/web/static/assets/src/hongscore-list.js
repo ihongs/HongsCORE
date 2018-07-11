@@ -406,7 +406,7 @@ HsList.prototype = {
         var that = this;
         var func = function() {
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
-        this.ajax({
+        that.ajax({
             "url"       : url ,
             "data"      : data,
             "type"      : "POST",

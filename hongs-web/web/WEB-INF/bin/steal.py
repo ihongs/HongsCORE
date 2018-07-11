@@ -12,7 +12,7 @@ import sys
 
 if  __name__ == "__main__":
     def cmd_help():
-        print "Usage: | clogs.py REGEXP"
+        print "Usage: | steal.py REGEXP"
         print "Another options:"
         print "  -n --name             Action or Cmdlet name"
         print "  -d --addr             Client IP address"

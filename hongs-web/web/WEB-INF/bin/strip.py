@@ -106,7 +106,7 @@ def hsPtime(tm):
 
 if  __name__ == "__main__":
     def cmd_help():
-        print "Usage: clean.py DIR_NAME EXP_TIME"
+        print "Usage: strip.py DIR_NAME EXP_TIME"
         print "EXP_TIME format:"
         print "  2015/12/17T12:34:56   Before this time"
         print "  1234567890            Before this timestamp"

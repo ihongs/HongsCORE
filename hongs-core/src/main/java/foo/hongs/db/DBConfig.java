@@ -98,7 +98,7 @@ public class DBConfig
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
-           : "app/hongs/conf/"  + name + Cnst.DB_EXT + ".xml";
+           : "foo/hongs/conf/"  + name + Cnst.DB_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {

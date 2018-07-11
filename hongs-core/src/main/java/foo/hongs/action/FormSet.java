@@ -123,7 +123,7 @@ public class FormSet
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-           : "app/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
+           : "foo/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if ( null == is )
         {
@@ -452,7 +452,7 @@ public class FormSet
 
     fn = name.contains(".")
       || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-       : "app/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
+       : "foo/hongs/conf/"  + name + Cnst.FORM_EXT + ".xml";
     return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
   }
 

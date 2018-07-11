@@ -9,7 +9,7 @@ import app.hongs.HongsExemption;
 import app.hongs.action.FormSet;
 import app.hongs.dh.IEntity;
 import app.hongs.dh.ITrnsct;
-import app.hongs.dh.JoistBean;
+import app.hongs.dh.ModelCase;
 import app.hongs.dh.lucene.field.*;
 import app.hongs.dh.lucene.query.*;
 import app.hongs.dh.lucene.value.*;
@@ -71,7 +71,7 @@ import org.apache.lucene.store.FSDirectory;
  *
  * @author Hongs
  */
-public class LuceneRecord extends JoistBean implements IEntity, ITrnsct, AutoCloseable {
+public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoCloseable {
 
     protected boolean TRNSCT_MODE = false;
     protected boolean OBJECT_MODE = false;

@@ -2,7 +2,6 @@ package app.hongs.dh;
 
 import app.hongs.CoreLocale;
 import app.hongs.HongsException;
-import app.hongs.HongsExemption;
 import app.hongs.action.ActionHelper;
 import app.hongs.action.ActionRunner;
 import app.hongs.action.FormSet;
@@ -18,14 +17,14 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 表单通用接口
+ * 表单模型通用接口
  *
  * 通过重写 getEntity 提供实体对象,
  * 亦可重写 getReqMap 等来修改数据.
  *
  * @author Hongs
  */
-abstract public class JointGate implements IActing, IAction {
+abstract public class ModelGate implements IActing, IAction {
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
@@ -33,34 +32,46 @@ abstract public class JointGate implements IActing, IAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
 
-        try {
-            // 探测实体是否为独占模块, 方便作自动处理
-            if (FormSet.hasConfFile( mod +"/"+ ent )) {
-                mod = ( mod +"/"+ ent );
-                runner.setModule( mod );
-            } else
-            // 拒绝独占模块的另一路径, 防止权限被绕过
-            if (mod.endsWith("/"+ ent )) {
-                throw new HongsException(0x1100, "Unsupported Request!");
-            }
-
-            // 下划线开头的为内部资源, 不直接对外开放
-            if (ent.startsWith  ( "_" )) {
-                throw new HongsException(0x1100, "Unsupported Request.");
-            }
-
-            // 判断是否禁用了当前动作, 忽略表单不存在
-            Map fa  = FormSet.getInstance(mod).getForm(ent);
-            Set ca  = Synt.toSet( Dict.getDepth( fa, "@", "callable" ) );
-            if (ca != null && ! ca.contains(act) ) {
-                throw new HongsException(0x1100, "Unsupported Request.");
-            }
+        // 模块内隐藏或同名实体不可访问
+        if (ent.startsWith("_") || mod.endsWith("/" + ent)) {
+            throw new HongsException(0x1100, "Unsupported Request!");
         }
-        catch (HongsException | HongsExemption ex) {
-            int ec  = ex.getErrno( );
-            if (ec != 0x10e8 && ec != 0x10ea) {
+
+        /**
+         * 尝试获取实体对应的表单配置项
+         * 没有则继续查找模块同名的实体
+         * 后者则在原模块名后追加实体名
+         */
+        Map fa = null;
+        do {
+            try {
+                fa = FormSet.getInstance(mod).getForm(ent);
+                break;
+            } catch ( HongsException ex) {
+            if (ex.getErrno() != 0x10e8
+            &&  ex.getErrno() != 0x10ea) {
                 throw ex;
-            }
+            }}
+
+            String mad = ( mod+"/"+ent );
+
+            try {
+                fa = FormSet.getInstance(mad).getForm(ent);
+                runner.setModule ( mad );
+            } catch ( HongsException ex) {
+            if (ex.getErrno() != 0x10e8
+            &&  ex.getErrno() != 0x10ea) {
+                throw ex;
+            }}
+        } while (false) ;
+        if (fa == null) {
+            return;
+        }
+
+        // 表单配置可对动作进行访问限制
+        Set ca  = Synt.toSet( Dict.getDepth( fa, "@", "callable" ) );
+        if (ca != null && !ca.contains(act)) {
+            throw new HongsException(0x1100, "Unsupported Request.");
         }
     }
 

@@ -7,14 +7,14 @@ import app.hongs.action.anno.Action;
 import app.hongs.dh.IActing;
 import app.hongs.dh.IAction;
 import app.hongs.dh.IEntity;
-import app.hongs.dh.JointGate;
+import app.hongs.dh.ModelGate;
 
 /**
  * Lucene 模型动作
  * @author Hongs
  */
 @Action()
-public class LuceneAction extends JointGate implements IAction, IActing {
+public class LuceneAction extends ModelGate implements IAction, IActing {
 
     /**
      * 获取模型对象

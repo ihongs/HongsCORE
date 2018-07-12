@@ -6,7 +6,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
-import io.github.ihongs.util.Block;
+import io.github.ihongs.util.thread.Block;
 
 import java.io.IOException;
 import java.util.Map;

@@ -6,7 +6,7 @@ import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
-import io.github.ihongs.util.Clses;
+import io.github.ihongs.util.Classes;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -330,7 +330,7 @@ public class ServerCmdlet {
             if (pkgn.endsWith(".**")) {
                 pkgn = pkgn.substring(0, pkgn.length() - 3);
                 try {
-                    clss = Clses.getClassNames(pkgn, true );
+                    clss = Classes.getClassNames(pkgn, true );
                 } catch (IOException ex) {
                     throw new HongsError.Common("Can not load package '" + pkgn + "'.", ex);
                 }
@@ -341,7 +341,7 @@ public class ServerCmdlet {
             if (pkgn.endsWith(".*" )) {
                 pkgn = pkgn.substring(0, pkgn.length() - 2);
                 try {
-                    clss = Clses.getClassNames(pkgn, false);
+                    clss = Classes.getClassNames(pkgn, false);
                 } catch (IOException ex) {
                     throw new HongsError.Common("Can not load package '" + pkgn + "'.", ex);
                 }

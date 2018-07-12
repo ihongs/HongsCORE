@@ -3,7 +3,7 @@ package io.github.ihongs;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
-import io.github.ihongs.util.Clses;
+import io.github.ihongs.util.Classes;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
@@ -189,7 +189,7 @@ public class CoreRoster {
         if (pkgn.endsWith(".**")) {
             pkgn = pkgn.substring(0, pkgn.length() - 3);
             try {
-                clss = Clses.getClassNames(pkgn, true );
+                clss = Classes.getClassNames(pkgn, true );
             } catch (IOException ex) {
                 throw new HongsError( 0x3a , "Can not load package '" + pkgn + "'.", ex);
             }
@@ -200,7 +200,7 @@ public class CoreRoster {
         if (pkgn.endsWith(".*" )) {
             pkgn = pkgn.substring(0, pkgn.length() - 2);
             try {
-                clss = Clses.getClassNames(pkgn, false);
+                clss = Classes.getClassNames(pkgn, false);
             } catch (IOException ex) {
                 throw new HongsError( 0x3a , "Can not load package '" + pkgn + "'.", ex);
             }

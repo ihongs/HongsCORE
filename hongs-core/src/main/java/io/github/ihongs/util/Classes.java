@@ -17,7 +17,7 @@ import java.util.jar.JarFile;
  * </p>
  * @author Hongs
  */
-public final class Clses {
+public final class Classes {
 
     /**
      * 通过包名获取类名集合

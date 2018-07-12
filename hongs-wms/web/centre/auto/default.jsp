@@ -1,6 +1,6 @@
-<%@page import="foo.hongs.Core"%>
+<%@page import="io.github.ihongs.Core"%>
 <%@page import="java.io.File"%>
-<%@page extends="foo.hongs.jsp.Pagelet"%>
+<%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <!doctype html>

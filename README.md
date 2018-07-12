@@ -124,14 +124,14 @@
 
 ### 类库结构:
 
-    foo.hongs           核心
-    foo.hongs.action    动作支持
-    foo.hongs.cmdlet    命令支持
-    foo.hongs.db        关系数据模型
-    foo.hongs.dh        文档处理组件
-    foo.hongs.jsp       JSP 工具
-    foo.hongs.util      辅助工具
-    foo.hongs.serv      服务组件
+    io.github.ihongs            核心
+    io.github.ihongs.action     动作支持
+    io.github.ihongs.cmdlet     命令支持
+    io.github.ihongs.db         关系数据模型
+    io.github.ihongs.dh         文档处理组件
+    io.github.ihongs.jsp        JSP 工具
+    io.github.ihongs.util       辅助工具
+    io.github.ihongs.serv       服务组件
 
 以上仅列举了主要的包, 更多框架信息请参考 API 文档.
 
@@ -139,11 +139,11 @@
 
 ### 路径映射
 
-    xxx.foo.bar         对应标记 @Cmdlet("xxx.foo") 的类下 @Cmdlet("bar") 的方法
-    xxx.foo             对应标记 @Cmdlet("xxx.foo") 的类下 @Cmdlet("__main__") 的方法
-    xxx/foo/bar.act     对应标记 @Action("xxx/foo") 的类下 @Action("bar") 的方法
-    xxx/foo.act         对应标记 @Action("xxx/foo") 的类下 @Action("__main__") 的方法
-    xxx/foo.api         对应标记 @Action("xxx/foo") 的类下 @Action("search,create,update,delete") 的方法
+    foo.bar.xxx         对应标记 @Cmdlet("fop.bar") 的类下 @Cmdlet("xxx") 的方法
+    foo.bar             对应标记 @Cmdlet("foo.bar") 的类下 @Cmdlet("__main__") 的方法
+    foo/bar/xxx.act     对应标记 @Action("foo/bar") 的类下 @Action("xxx") 的方法
+    foo/bar.act         对应标记 @Action("foo/bar") 的类下 @Action("__main__") 的方法
+    api/foo/bar         对应标记 @Action("foo/bar") 的类下 @Action("search,create,update,delete") 的方法
                         这四种动作分别对应 HTTP METHOD: GET,POST,PUT,DELETE
     common/auth/name.js 读取 WBE-INF/conf/name.menu.xml 中 actions+session 的组合
     common/conf/name.js 读取 WEB-INF/conf/name.properties 中 fore.xxxx. 开头的配置

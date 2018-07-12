@@ -6,7 +6,7 @@
     <artifactId>hongs-serv</artifactId>
     <parent>
         <artifactId>hongs-base</artifactId>
-        <groupId>foo.hongs</groupId>
+        <groupId>io.github.ihongs</groupId>
         <version>0.4-SNAPSHOT</version>
     </parent>
     <properties>

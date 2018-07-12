@@ -1,4 +1,4 @@
-<%@page import="foo.hongs.Cnst"%>
+<%@page import="io.github.ihongs.Cnst"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <%

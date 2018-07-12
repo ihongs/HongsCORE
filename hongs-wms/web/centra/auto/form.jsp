@@ -1,10 +1,10 @@
-<%@page import="foo.hongs.Cnst"%>
-<%@page import="foo.hongs.util.Dict"%>
-<%@page import="foo.hongs.util.Synt"%>
+<%@page import="io.github.ihongs.Cnst"%>
+<%@page import="io.github.ihongs.util.Dict"%>
+<%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.Iterator"%>
 <%@page import="java.util.regex.Matcher"%>
 <%@page import="java.util.regex.Pattern"%>
-<%@page extends="foo.hongs.jsp.Pagelet"%>
+<%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%

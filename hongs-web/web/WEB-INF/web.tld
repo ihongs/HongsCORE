@@ -5,7 +5,7 @@
   <uri>/hongs.tag</uri>
   <tag>
     <name>auth</name>
-    <tag-class>foo.hongs.jsp.AuthTag</tag-class>
+    <tag-class>io.github.ihongs.jsp.AuthTag</tag-class>
     <body-content>JSP</body-content>
     <attribute>
       <name>conf</name>
@@ -38,7 +38,7 @@
   </tag>
   <tag>
     <name>conf</name>
-    <tag-class>foo.hongs.jsp.ConfTag</tag-class>
+    <tag-class>io.github.ihongs.jsp.ConfTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <name>load</name>
@@ -63,7 +63,7 @@
   </tag>
   <tag>
     <name>lang</name>
-    <tag-class>foo.hongs.jsp.LangTag</tag-class>
+    <tag-class>io.github.ihongs.jsp.LangTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <name>load</name>
@@ -84,7 +84,7 @@
   </tag>
   <tag>
     <name>nuid</name>
-    <tag-class>foo.hongs.jsp.NuidTag</tag-class>
+    <tag-class>io.github.ihongs.jsp.NuidTag</tag-class>
     <body-content>empty</body-content>
     <attribute>
       <name>sid</name>

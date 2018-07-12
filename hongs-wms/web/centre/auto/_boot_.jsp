@@ -1,15 +1,15 @@
-<%@page import="foo.hongs.CoreLocale"%>
-<%@page import="foo.hongs.HongsError"%>
-<%@page import="foo.hongs.HongsException"%>
-<%@page import="foo.hongs.HongsExemption"%>
-<%@page import="foo.hongs.action.ActionDriver"%>
-<%@page import="foo.hongs.action.FormSet"%>
-<%@page import="foo.hongs.action.NaviMap"%>
-<%@page import="foo.hongs.db.DB"%>
-<%@page import="foo.hongs.db.Mview"%>
-<%@page import="foo.hongs.serv.matrix.Data"%>
-<%@page import="foo.hongs.util.Dict"%>
-<%@page import="foo.hongs.util.Synt"%>
+<%@page import="io.github.ihongs.CoreLocale"%>
+<%@page import="io.github.ihongs.HongsError"%>
+<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.HongsExemption"%>
+<%@page import="io.github.ihongs.action.ActionDriver"%>
+<%@page import="io.github.ihongs.action.FormSet"%>
+<%@page import="io.github.ihongs.action.NaviMap"%>
+<%@page import="io.github.ihongs.db.DB"%>
+<%@page import="io.github.ihongs.db.Mview"%>
+<%@page import="io.github.ihongs.serv.matrix.Data"%>
+<%@page import="io.github.ihongs.util.Dict"%>
+<%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%

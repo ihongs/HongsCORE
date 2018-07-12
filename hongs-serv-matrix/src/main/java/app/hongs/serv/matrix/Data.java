@@ -377,7 +377,7 @@ public class Data extends SearchEntity {
 
         //** 获取旧的数据 **/
 
-        if (table != null) {
+        if (table == null) {
             throw new HongsException(0x1100, "资源不支持恢复");
         }
         Map dd = table.fetchCase()

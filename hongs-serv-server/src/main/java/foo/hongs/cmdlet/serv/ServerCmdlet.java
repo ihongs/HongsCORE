@@ -1,6 +1,5 @@
 package foo.hongs.cmdlet.serv;
 
-import foo.hongs.Cnst;
 import foo.hongs.Core;
 import foo.hongs.CoreConfig;
 import foo.hongs.HongsError;

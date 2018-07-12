@@ -373,13 +373,8 @@ public class SelectHelper {
             Map    mt = (Map) et.getValue( );
             String fn = (String) et.getKey();
 
-            String uk = (String) mt.get("data-uk"); // 外键字段
-            if (null == uk || "".equals(uk)) {
-                   uk = fn ;
-            }
-
             // 建立映射
-            Map<Object, List> ms = mm.mapped( uk );
+            Map<Object, List> ms = mm.mapped( fn );
             if (ms.isEmpty()) {
                 continue;
             }

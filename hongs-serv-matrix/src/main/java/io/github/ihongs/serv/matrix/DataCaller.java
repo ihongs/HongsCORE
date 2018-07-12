@@ -4,9 +4,9 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Async;
-import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Remote;
+import io.github.ihongs.util.thread.Async;
 
 /**
  * 数据更新通知队列

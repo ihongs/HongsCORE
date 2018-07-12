@@ -1,7 +1,7 @@
 package io.github.ihongs;
 
-import io.github.ihongs.util.Block;
-import io.github.ihongs.util.Block.Larder;
+import io.github.ihongs.util.thread.Block;
+import io.github.ihongs.util.thread.Block.Larder;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;

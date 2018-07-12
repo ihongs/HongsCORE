@@ -1,4 +1,4 @@
-package io.github.ihongs.util;
+package io.github.ihongs.util.thread;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
@@ -132,7 +132,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
                 try {
                     data = async.tasks.take();
                 } catch (InterruptedException e) {
-                    Thread.currentThread( ).interrupt( );
+                    Thread.currentThread().interrupt();
                     break;
                 }
 

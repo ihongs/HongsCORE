@@ -4,7 +4,7 @@
 
 PWD=$(cd `dirname $0`; pwd)
 CWD=`dirname $PWD`
-APP="$CWD/bin/foo"
+APP="$CWD/bin/hco"
 PID="$CWD/var/server/8080.pid"
 
 # Make sure the process is stoped, and pid file is removed

@@ -1,4 +1,4 @@
-<%@page import="foo.hongs.Core"%>
+<%@page import="io.github.ihongs.Core"%>
 <%@page contentType="text/html"%>
 <%@page pageEncoding="UTF-8"%>
 <%@page trimDirectiveWhitespaces="true"%>

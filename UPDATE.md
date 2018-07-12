@@ -1,7 +1,7 @@
 
 # 更新日志
 
-* 2018/07/12 将包名 app.hongs 更名为 foo.hongs, 启动脚本名更名为 foo 和 bar
+* 2018/07/12 将包名 app.hongs 更名为 io.github.ihongs, 启动脚本名更名为 foo 和 bar
 * 2018/04/14 彻底移除 ueditor js 和 jsp,java 组件, 改用 summernote 提供富文本编辑的功能
 * 2018/03/23 hongs-serv-member 模块更名为 hongs-serv-master,
 * 2018/03/22 hongs-serv-socket,hongs-serv-graphs,hongs-serv-medium 等模块从基础版中移除

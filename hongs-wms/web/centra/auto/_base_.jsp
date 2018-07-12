@@ -1,9 +1,9 @@
-<%@page import="foo.hongs.HongsException"%>
-<%@page import="foo.hongs.CoreLocale"%>
-<%@page import="foo.hongs.action.ActionDriver"%>
-<%@page import="foo.hongs.action.FormSet"%>
-<%@page import="foo.hongs.action.NaviMap"%>
-<%@page import="foo.hongs.util.Dict"%>
+<%@page import="io.github.ihongs.HongsException"%>
+<%@page import="io.github.ihongs.CoreLocale"%>
+<%@page import="io.github.ihongs.action.ActionDriver"%>
+<%@page import="io.github.ihongs.action.FormSet"%>
+<%@page import="io.github.ihongs.action.NaviMap"%>
+<%@page import="io.github.ihongs.util.Dict"%>
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%

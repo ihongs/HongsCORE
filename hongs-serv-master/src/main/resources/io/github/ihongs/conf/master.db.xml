@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<db xmlns="http://hongs-core"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://hongs-core db.xsd">
+    <config link="centra"/>
+    <tables>
+        <table name="user"
+               tableName="a_master_user"
+               primaryKey="id"
+               model="io.github.ihongs.serv.master.User">
+            <param name="srchable">name,note</param>
+            <assoc type="HAS_MANY"
+                   name="roles"
+                   tableName="user_role"
+                   foreignKey="user_id"/>
+            <assoc type="HAS_MORE"
+                   name="depts"
+                   tableName="user_dept"
+                   foreignKey="user_id">
+                <assoc type="BLS_TO"
+                       name="dept"
+                       foreignKey="dept_id">
+                    <assoc type="HAS_MANY"
+                           name="roles"
+                           tableName="dept_role"
+                           foreignKey="dept_id"/>
+                </assoc>
+            </assoc>
+        </table>
+        <table name="dept"
+               tableName="a_master_dept"
+               primaryKey="id"
+               model="io.github.ihongs.serv.master.Dept">
+            <param name="srchable">name,note</param>
+            <assoc type="HAS_MANY"
+                   name="roles"
+                   tableName="dept_role"
+                   foreignKey="dept_id"/>
+        </table>
+        <table name="user_sign"
+               tableName="a_master_user_sign"/>
+        <table name="user_open"
+               tableName="a_master_user_open"/>
+        <table name="user_dept"
+               tableName="a_master_user_dept"/>
+        <table name="user_role"
+               tableName="a_master_user_role"/>
+        <table name="dept_role"
+               tableName="a_master_dept_role"/>
+    </tables>
+</db>

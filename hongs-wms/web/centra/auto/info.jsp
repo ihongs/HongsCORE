@@ -43,11 +43,15 @@
             ||      "time".equals(type)) {
                 // 日期类需注意 Unix 时间戳需要乘 1000
                 String typa = (String) info.get("type");
-                if ("timestamp".equals(typa)
-                ||  "datestamp".equals(typa)) {
-                    kind =  "_" + type + "\" data-fl=\"!v ?v :v *1000";
-                } else {
+                if (text == null || text.length() == 0) {
+                    type =  "hidden"  ;
+                } else
+                if (typa == null || typa.length() == 0
+                ||  "date".equals(typa)
+                ||  "time".equals(typa)) {
                     kind =  "_" + type;
+                } else {
+                    kind =  "_" + type + "\" data-fl=\"!v ?v :v *1000";
                 }
             } else
             if ("textarea".equals(type)) {

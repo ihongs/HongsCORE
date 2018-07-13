@@ -2,7 +2,7 @@
 
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://hongs-core db.xsd">
+xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
     <config link="centra"/>
     <tables>
         <table name="unit"

@@ -135,7 +135,7 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
                 /centra/sign/create.act;
                 /centra/sign/delete.act;
                 /centra/login.html;
@@ -159,7 +159,7 @@
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
-                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
                 /centre/capt/create.act;
                 /centre/sign/create.act;
                 /centre/sign/delete.act;

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <db xmlns="http://hongs-core"
 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://hongs-core db.xsd">
+xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
   <source link="default"/>
   <tables>
       <table name="record" tableName="a_normal_record" primaryKey="id"/>

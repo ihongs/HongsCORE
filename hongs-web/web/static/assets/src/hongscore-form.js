@@ -157,8 +157,8 @@ HsForm.prototype = {
             if (n && this["_prep_"+n] !== undefined) {
                 v  = this["_prep_"+n].call(this, i, v, n);
             } else
-            if (t && this["_prep"+t] !== undefined) {
-                v  = this["_prep"+t].call(this, i, v, n);
+            if (t && this["_prep_"+t] !== undefined) {
+                v  = this["_prep_"+t].call(this, i, v, n);
             }
             // 无值不理会
             if (!v && v !== 0 && v !== "") {

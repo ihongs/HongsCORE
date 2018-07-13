@@ -128,7 +128,7 @@
     io.github.ihongs.action     动作支持
     io.github.ihongs.cmdlet     命令支持
     io.github.ihongs.db         关系数据模型
-    io.github.ihongs.dh         文档处理组件
+    io.github.ihongs.dh         数据仓库组件
     io.github.ihongs.jsp        JSP 工具
     io.github.ihongs.util       辅助工具
     io.github.ihongs.serv       服务组件

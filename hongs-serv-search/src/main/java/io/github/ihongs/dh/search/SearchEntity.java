@@ -9,6 +9,7 @@ import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.thread.Block;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
@@ -24,6 +25,8 @@ import org.apache.lucene.index.Term;
  * @author Hongs
  */
 public class SearchEntity extends LuceneRecord {
+
+    private static final Map<String, IndexWriter> WRITERS = new HashMap();
 
     public SearchEntity(Map form, String path, String name) {
         super(form, path, name);
@@ -73,51 +76,69 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
+    public IndexWriter getWriter() throws HongsException {
+        final String kn = SearchEntity.class.getName() + ":" + getDbName();
+        IndexWriter  iw = WRITERS.get (kn);
+        if (iw == null) {
+            iw = super.getWriter();
+            WRITERS.put ( kn, iw );
+        }
+        return iw;
+    }
+
+    @Override
     public void addDoc(final Document doc) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getDbName();
-        Block.Locker loc = Block.getLocker(key);
-        loc.lock();
+        final String kn = SearchEntity.class.getName() + ":" + getDbName();
+        Block.Locker lk = Block.getLocker(kn);
+        lk.lock();
         try {
-            IndexWriter iw = this.getWriter(  );
+            IndexWriter iw = getWriter ( );
             iw.addDocument (doc);
             iw.commit();
         } catch (IOException ex) {
             throw new HongsExemption.Common(ex);
         } finally {
-            loc.unlock();
+            lk.unlock();
         }
     }
 
     @Override
     public void setDoc(final String id, final Document doc) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getDbName();
-        Block.Locker loc = Block.getLocker(key);
-        loc.lock();
+        final String kn = SearchEntity.class.getName() + ":" + getDbName();
+        Block.Locker lk = Block.getLocker(kn);
+        lk.lock();
         try {
-            IndexWriter iw = this.getWriter(  );
+            IndexWriter iw = getWriter ( );
             iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
             iw.commit();
         } catch (IOException ex) {
             throw new HongsExemption.Common(ex);
         } finally {
-            loc.unlock();
+            lk.unlock();
         }
     }
 
     @Override
     public void delDoc(final String id) throws HongsException {
-        final String key = SearchEntity.class.getName() + ":" + getDbName();
-        Block.Locker loc = Block.getLocker(key);
-        loc.lock();
+        final String kn = SearchEntity.class.getName() + ":" + getDbName();
+        Block.Locker lk = Block.getLocker(kn);
+        lk.lock();
         try {
-            IndexWriter iw = this.getWriter(  );
+            IndexWriter iw = getWriter ( );
             iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
             iw.commit();
         } catch (IOException ex) {
             throw new HongsExemption.Common(ex);
         } finally {
-            loc.unlock();
+            lk.unlock();
         }
+    }
+
+    @Override
+    public void close() {
+        final String kn = SearchEntity.class.getName() + ":" + getDbName();
+        super . close();
+        WRITERS.remove(kn);
     }
 
 }

@@ -119,6 +119,7 @@ public class Pagelet extends ActionDriver implements HttpJspPage
    * @return
    */
   public static String escapeXML(String str) {
+      if (str == null) return "";
       StringBuilder b = new StringBuilder( );
       char c ;
       int  i = 0;

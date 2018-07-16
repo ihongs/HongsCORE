@@ -142,7 +142,7 @@ public class Data extends SearchEntity {
     }
 
     public Model getModel() throws HongsException {
-        String tn = Synt.declare(getParams().get("table.name"), "matrix.data");
+        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
         if ("".equals(tn) || "none".equals(tn)) {
             return null;
         }
@@ -150,7 +150,7 @@ public class Data extends SearchEntity {
     }
 
     public Table getTable() throws HongsException {
-        String tn = Synt.declare(getParams().get("table.name"), "matrix.data");
+        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
         if ("".equals(tn) || "none".equals(tn)) {
             return null;
         }

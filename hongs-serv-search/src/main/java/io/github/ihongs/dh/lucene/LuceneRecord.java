@@ -708,49 +708,61 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void close() {
-        if (writer != null) {
-            // 默认退出时提交
-            if (TRNSCT_MODE) {
-                try {
-                    try {
-                        commit();
-                    } catch (Error er) {
-                        revert();
-                        throw er;
-                    }
-                } catch (Error e) {
-                    CoreLogger.error(e);
-                }
-            }
-
-            // 退出时合并索引
-            try {
-                writer.maybeMerge();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            }
-
-            try {
-                writer.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                writer = null;
-            }
-        }
-
-        if (reader != null) {
-            try {
-                reader.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                reader = null;
-            }
-        }
+        closeReader();
+        closeWriter();
 
         if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
             CoreLogger.trace("Close the lucene handle for " + getDbName());
+        }
+    }
+
+    private void closeReader() {
+        if (reader == null) {
+            return;
+        }
+
+        try {
+            reader.close();
+        } catch (IOException x) {
+            CoreLogger.error(x);
+        } finally {
+            reader  = null;
+        }
+    }
+
+    private void closeWriter() {
+        if (writer == null || !writer.isOpen()) {
+            writer  = null;
+            return;
+        }
+
+        // 默认退出时提交
+        if (TRNSCT_MODE) {
+            try {
+            try {
+                commit();
+            } catch (Error er ) {
+                revert();
+                throw er;
+            }
+            } catch (Error er ) {
+                CoreLogger.error(er);
+            }
+        }
+
+        // 退出时合并索引
+        try {
+            writer.maybeMerge();
+        } catch (IOException x) {
+            CoreLogger.error(x);
+        }
+
+        try {
+            writer.close();
+        } catch (IOException x) {
+            CoreLogger.error(x);
+        } finally {
+            writer = null ;
         }
     }
 

@@ -13,7 +13,6 @@ import javax.servlet.ServletException;
 import javax.servlet.jsp.HttpJspPage;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpServletRequestWrapper;
 
 /**
  * 抽象JSP类
@@ -25,28 +24,21 @@ import javax.servlet.http.HttpServletRequestWrapper;
  *
  * @author Hongs
  */
-public class Pagelet extends ActionDriver implements HttpJspPage
+abstract public class Pagelet extends ActionDriver implements HttpJspPage
 {
 
   ActionHelper helper = null;
 
   @Override
-  public void  jspInit()
+  public void jspInit()
   {
     throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
-  public void  jspDestroy()
+  public void jspDestroy()
   {
     throw new UnsupportedOperationException("Not supported yet.");
-  }
-
-  @Override
-  public void _jspService(HttpServletRequest req, HttpServletResponse rsp)
-    throws ServletException, IOException
-  {
-    rsp.getWriter().close();
   }
 
   @Override
@@ -55,52 +47,77 @@ public class Pagelet extends ActionDriver implements HttpJspPage
   {
     try
     {
-      this._jspService( new Request(req) , rsp );
+      this._jspService(req, rsp);
     }
-    catch (ServletException|RuntimeException ex)
+    catch (ServletException ex )
     {
-        /**
-         * 异常处理
-         */
-        Throwable  ax = ex.getCause();
-        String     er ;
-        if (ax == null) {
-            er = ex.getLocalizedMessage();
-            req.setAttribute("javax.servlet.error.message"  , er);
-            req.setAttribute("javax.servlet.error.exception", ex);
-            req.setAttribute("javax.servlet.error.exception_type", ex.getClass().getName());
-        } else {
-            er = ax.getLocalizedMessage();
-            req.setAttribute("javax.servlet.error.message"  , er);
-            req.setAttribute("javax.servlet.error.exception", ax);
-            req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
-            if (  (  ax instanceof HongsCause ))
-            switch(((HongsCause) ax).getErrno()) {
-                case 0x1105:
-                    rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
-                    return ;
-                case 0x1106:
-                    rsp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE , er);
-                    return ;
-                case 0x1100:
-                    rsp.sendError(HttpServletResponse.SC_BAD_REQUEST , er);
-                    return ;
-                case 0x1101:
-                    rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, er);
-                    return ;
-                case 0x1102:
-                    rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
-                    return ;
-                case 0x1103:
-                    rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
-                    return ;
-                case 0x1104:
-                    rsp.sendError(HttpServletResponse.SC_NOT_FOUND, er);
-                    return ;
-            }
+        Throwable ax = ex.getCause();
+        if (ax == null) { ax = ex; }
+        String er = ax.getLocalizedMessage( );
+        int eo = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
+        req.setAttribute("javax.servlet.error.message"  , er);
+        req.setAttribute("javax.servlet.error.exception", ax);
+        req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
+        switch (eo) {
+            case 0x1100:
+                rsp.sendError(HttpServletResponse.SC_BAD_REQUEST , er);
+                break;
+            case 0x1101:
+                rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, er);
+                break;
+            case 0x1102:
+                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
+                break;
+            case 0x1103:
+                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
+                break;
+            case 0x1104:
+                rsp.sendError(HttpServletResponse.SC_NOT_FOUND, er);
+                break;
+            case 0x1106:
+                rsp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE , er);
+                break;
+            case 0x1105:
+                rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
+                break;
+            default:
+                rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
         }
-        rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
         throw ex;
+    }
+    catch (RuntimeException ax )
+    {
+        String er = ax.getLocalizedMessage( );
+        int eo = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
+        req.setAttribute("javax.servlet.error.message"  , er);
+        req.setAttribute("javax.servlet.error.exception", ax);
+        req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
+        switch (eo) {
+            case 0x1100:
+                rsp.sendError(HttpServletResponse.SC_BAD_REQUEST , er);
+                break;
+            case 0x1101:
+                rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, er);
+                break;
+            case 0x1102:
+                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
+                break;
+            case 0x1103:
+                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
+                break;
+            case 0x1104:
+                rsp.sendError(HttpServletResponse.SC_NOT_FOUND, er);
+                break;
+            case 0x1106:
+                rsp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE , er);
+                break;
+            case 0x1105:
+                rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
+                break;
+            default:
+                rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
+        }
+        throw ax;
     }
   }
 
@@ -188,37 +205,6 @@ public class Pagelet extends ActionDriver implements HttpJspPage
       } catch (UnsupportedEncodingException ex ) {
           throw  new HongsExemption.Common( ex );
       }
-  }
-
-  /**
-   * 将非 GET,HEAD 转为 POST
-   * 规避 JSP 拒绝处理的问题
-   */
-  public static class Request extends HttpServletRequestWrapper {
-
-      public Request(HttpServletRequest req) {
-          super(req);
-      }
-
-      /**
-       * 获取真实的方法名
-       * @return
-       */
-      public String getMathod() {
-          return super.getMethod();
-      }
-
-      @Override
-      public String getMethod() {
-          // 使 JSP 可处理 REST 所有方法
-          String mathod = getMathod();
-          if (! "GET".equals(mathod )
-          ||  !"HEAD".equals(mathod)) {
-              return "POST";
-          }
-          return mathod;
-      }
-
   }
 
 }

@@ -98,26 +98,29 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             m.put("SERVER_ID", Core.SERVER_ID);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
+            String root;
+            root = Core.DATA_PATH + "/lucene/";
             path = Tool.inject(path, m);
-            String root = Core.DATA_PATH + "/";
-            if (name != null) {
-                if ( !  new  File(path).isAbsolute( ) ) {
-                    path = "lucene/" + path;
-                    path = root + path;
-                }
-            } else
-            {
-                if ( !  new  File(path).isAbsolute( ) ) {
-                    name = "lucene/" + path;
-                    path = root + name;
-                } else
+            if (! new File(path).isAbsolute()) {
+                path  = root + path;
+            }
+            if (name == null) {
                 if (path.startsWith(root)) {
                     name = path.substring(root.length());
+                } else
+                if (path.startsWith(Core.DATA_PATH+"/")) {
+                    name = path.substring(Core.DATA_PATH.length()+1);
+                } else
+                if (path.startsWith(Core.CORE_PATH+"/")) {
+                    name = path.substring(Core.CORE_PATH.length()+1);
                 } else
                 {
                     name = path;
                 }
             }
+        } else
+        if (name != null) {
+            path  = Core.DATA_PATH +"/lucene/"+ name;
         }
         this.dbpath = path;
         this.dbname = name;
@@ -818,17 +821,17 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     //** 底层方法 **/
 
     public String getDbPath() {
-        if (null != dbpath) {
-            return  dbpath;
+        if (dbpath == null) {
+            throw new NullPointerException("DB path is not set");
         }
-        throw new NullPointerException("DB path is not set");
+        return dbpath;
     }
 
     public String getDbName() {
-        if (null != dbname) {
-            return  dbname;
+        if (dbname == null) {
+            throw new NullPointerException("DB name is not set");
         }
-        throw new NullPointerException("DB name is not set");
+        return dbname;
     }
 
     public IndexSearcher getFinder() throws HongsException {

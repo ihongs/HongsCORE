@@ -336,7 +336,8 @@ public class Data extends SearchEntity {
                 .select("ctime, state, data, name")
                 .getOne( );
             if (dd.isEmpty()) {
-                throw new HongsException(0x1104, "原始记录不存在");
+                 delDoc( id ); return; // 规避关系库没有而搜索库有
+//              throw new HongsException(0x1104, "原始记录不存在");
             }
             if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
                 throw new HongsException(0x1100, "等会儿, 不要急");

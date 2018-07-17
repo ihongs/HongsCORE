@@ -164,8 +164,8 @@
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
-                <div class="form-control-static owner" style="display:inline-block;">
-                <label><input type="checkbox" name="cuser" value=""/>我创建的</label>
+                <div class="form-control-static owner" style="display: inline-block;">
+                    <label><input type="checkbox" name="cuser"/> 我创建的</label>
                 </div>
             </div>
         </div>

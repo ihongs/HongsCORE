@@ -164,8 +164,8 @@
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
-                <div class="form-control-static" style="display: inline-block;">
-                    <label><input type="checkbox" name="cuser" value=""/> 我创建的</label>
+                <div class="form-control-static owner" style="display:inline-block;">
+                <label><input type="checkbox" name="cuser" value=""/>我创建的</label>
                 </div>
             </div>
         </div>
@@ -213,8 +213,8 @@
     var findbox = formbox.eq(0);
 
     // 权限控制
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide()
-                && context.find("[name='cuser']").closest(".form-control-static").remove();
+    if (!hsChkUri("centre")) context.find(".owner").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide();
 
     //** 列表、搜索表单 **/
 
@@ -287,7 +287,7 @@
 
     // 我创建的
     context.find("[name='cuser']")
-           .val (  HsUSER.uid   )
+           .val (HsUSER.uid )
            .change(function() {
         $(this).closest (".form-control-static")
                .siblings( ":submit"  ).click(  );

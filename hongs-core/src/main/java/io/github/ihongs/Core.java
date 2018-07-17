@@ -139,46 +139,45 @@ public final class Core
       return;
     }
 
-    Iterator it;
-
     /**
-     * 先执行 close 再执行 remove 就
-     * 不会因 close 里用到了其他对象而导致失败了
+     * 为解决 close 内引用到其他对象,
+     * 采用先 close 后 remove 的方式;
+     * 为规避 ConcurrentModificationException,
+     * 下面的过程用遍历数组而非迭代循环的方式.
      */
 
-    it = this.entrySet().iterator( );
-    while (it.hasNext())
+    Object[] a = this.values().toArray();
+    for (int i = 0; i < a.length; i ++ )
     {
-      Map.Entry  et = (Map.Entry) it.next( );
-      Object object =  et.getValue();
+      Object o = a[i];
       try
       {
-        if (object instanceof AutoCloseable)
+        if ( o instanceof AutoCloseable)
         {
-          ((AutoCloseable) object).close(  );
+          ((AutoCloseable) o).close(   );
         } else
-        if (object instanceof Closeable)
+        if ( o instanceof Closeable)
         {
-          ((Closeable) object).close(  );
+          ((Closeable) o).close(   );
         }
       }
-      catch (Throwable ta)
+      catch (Throwable e)
       {
-        ta.printStackTrace( System.err );
+        e.printStackTrace ( System.err );
       }
     }
 
-    it = this.entrySet().iterator( );
-    while (it.hasNext())
+    Iterator i = this.entrySet().iterator();
+    while  ( i.hasNext( ) )
     {
-      Map.Entry  et = (Map.Entry) it.next( );
-      Object object =  et.getValue();
-      if (object instanceof GlobalSingleton
-      ||  object instanceof ThreadSingleton)
+      Entry  e = (Entry)i.next();
+      Object o =  e . getValue();
+      if (o instanceof GlobalSingleton
+      ||  o instanceof ThreadSingleton )
       {
-         continue;
+        continue;
       }
-      it.remove();
+      i.remove();
     }
   }
 

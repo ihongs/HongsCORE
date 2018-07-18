@@ -7,7 +7,6 @@
  * 注: 2017/06/22 增加简单日期选择控件
  */
 
-
 (function($) {
 
     function _addzero(num, len) {

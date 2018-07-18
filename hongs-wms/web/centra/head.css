@@ -37,10 +37,17 @@ html, body {
     height: 100%;
 }
 
-#menu-context .btn {
+#main-context>.tabs {
+    margin-bottom: 0;
+}
+#main-context>.labs {
+    margin-top: 15px;
+}
+
+#menu-context a {
     color: #eee;
 }
-#user-menubar a  {
+#user-menubar a {
     color: #aaa;
 }
 #user-menubar li {
@@ -116,14 +123,6 @@ html, body {
     margin: 9px 0;
 }
 
-.toolbox,
-.fitrbox,
-.statbox {
-    background: #f5f5f5;
-}
-.laps li {
-    line-height: 27px;
-}
 .statbox .checkbox label {
     line-height: 21px;
     font-size: 12px;

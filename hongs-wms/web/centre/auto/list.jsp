@@ -160,12 +160,15 @@
             </div>
         </div>
         <div class="form-group form-group-sm clearfix">
-            <div class="col-sm-6 col-sm-offset-3">
+            <div class="col-xs-6 col-sm-offset-3">
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
                 <div class="form-control-static owner" style="display: inline-block;">
-                    <label><input type="checkbox" name="cuser"/> 我创建的</label>
+                    <label>
+                        <input type="checkbox" name="cuser" style="margin-right:1em;">
+                        <span> 我创建的 </span>
+                    </label>
                 </div>
             </div>
         </div>
@@ -189,7 +192,7 @@
                             <div data-fn="name" style="color: #444;"></div>
                             <div data-fn="note" style="color: #888;"></div>
                         </div>
-                        <div data-ft="user" data-fn="cuser" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
+                        <div data-ft="edit" data-fn="cuser" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
                             <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                             <button type="button" class="btn btn-xs btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
@@ -236,7 +239,7 @@
         fillList    : hsListFillItem,
         fillPage    : hsListFillMore,
         _fill_logo  : hsListFillLogo,
-        _fill_user  : hsListShowBtns
+        _fill_edit  : hsListShowEdit
     });
 
     var filtobj = fitrbox.hsForm({
@@ -286,12 +289,10 @@
     });
 
     // 我创建的
-    context.find("[name='cuser']")
-           .val (HsUSER.uid )
-           .change(function() {
+    fitrbox.find(".owner").change(function() {
         $(this).closest (".form-control-static")
-               .siblings( ":submit"  ).click(  );
-    });
+               .siblings(":submit").click( );
+    }).val ( HsUSER.uid );
 
     /**
      * 因详情页可能被分享
@@ -301,16 +302,16 @@
      */
     context.on("openBack", ".review", function(ev, box, req) {
             location.replace(location.pathname +"#"+ req.id);
-        box.on("hsClose", function() {
+        box.on("hsClose" , function() {
             location.replace(location.pathname +"#");
         });
     });
-    var mt = /^#(\w+)/.exec(location.hash);
-    if (mt) {
+    var mat = /^#(\w+)/.exec(location.hash);
+    if (mat) {
         var url = "<%=_module%>/<%=_entity%>/info.html";
         var box = context.hsFind("@");
         var btn = context.hsFind(".review").first( );
-        listobj.open(btn, box, url, { id : mt[1] } );
+        listobj.open(btn, box, url, { id: mat[1] } );
     }
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {

@@ -572,6 +572,7 @@ ul.pickrol > li.btn-info {
 }
 
 .datebox.input-group {
+    background-color: #fff;
     border: 1px solid #ccc;
     padding-left: 14px;
 }
@@ -581,7 +582,7 @@ ul.pickrol > li.btn-info {
     -webkit-appearance: none;
 }
 .datebox.input-group .clear {
-    color : #eee;
+    color : #ccc;
 }
 .datebox.input-group .clear:hover {
     color : #888;

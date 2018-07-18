@@ -75,6 +75,13 @@
         box.find("[data-date]").each(function() {
             var flg = $( this ).data( "date" );
             var val = parseInt($(this).val( ));
+            // 值被清空时则自动选中第一个日历项
+            if (isNaN( val )) {
+                var opt;
+                opt = $(this).children().eq(0);
+                val = parseInt(opt.val());
+                opt.prop("selected",true);
+            }
             switch (flg) {
                 case 'LM':
                 case 'SM':
@@ -251,6 +258,17 @@
             inp.addClass("invisible");
             box = _makeInputs ( fmt );
             box.insertBefore  ( inp );
+            
+            /**
+             * 非必填需增加取消按钮
+             */
+            if (!inp.attr("required")
+            &&  !inp.data("required")) {
+                box.find('.input-group-addon')
+                   .last()
+                   .css ("text-align","right")
+                   .html('<span class="clear glyphicon glyphicon-remove-circle"></span>');
+            }
 
             /**
              * 输入框组是不可嵌套的
@@ -458,18 +476,26 @@
 
         /**
          * 根据 type 确定精度
-         * 空为 0, 可规避异常
+         * 缺失则将选项置为空
          */
         if (!isNaN(num)
         && (typ == "timestamp"
         ||  typ == "datestamp")) {
             val =  num * 1000  ;
-        } else
-        if (val == "" ) {
-            val =  0  ;
+        }
+        if (! val ) {
+            box.find( "select" )
+               .val ( "" );
+            inp.val ( "" );
+            return;
         }
 
         _setdate(box, hsPrsDate(val, fmt));
+    });
+
+    // 清除已选中的
+    $(document).on("click", ".datebox .clear", function() {
+        $(this).closest(".datebox").find("select").val("");
     });
 
     // 加载就绪后自动初始化日期控件

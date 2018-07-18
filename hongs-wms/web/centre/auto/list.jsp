@@ -95,9 +95,9 @@
                     }
                 %>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="timestamp" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="timestamp" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                 </div>
             <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
@@ -160,7 +160,7 @@
             </div>
         </div>
         <div class="form-group form-group-sm clearfix">
-            <div class="col-xs-6 col-sm-offset-3">
+            <div class="col-sm-6 col-sm-offset-3">
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>

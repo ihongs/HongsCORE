@@ -101,11 +101,12 @@
                         String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\"";
                         if (info.containsKey("min" )) extr += " data-min=\""+info.get("min").toString()+"\"";
                         if (info.containsKey("max" )) extr += " data-max=\""+info.get("max").toString()+"\"";
+                        if ( ! "" .equals(rqrd) ) {
                         if ("time".equals(typa) || "date".equals(typa)) {
                             extr += " data-fl=\"v ? v : new Date().getTime()\""     ;
                         } else {
                             extr += " data-fl=\"v ? v : new Date().getTime()/1000\"";
-                        }
+                        }}
                     %>
                     <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
                 <%} else if ("check".equals(type)) {%>

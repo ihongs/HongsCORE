@@ -121,3 +121,33 @@
         $(this).hsDateInput();
     });
 })(jQuery);
+
+/**
+ * HongsCORE日期格式转Bootstrap日期格式
+ * @param {String} format
+ * @return {String)
+ */
+function _hs2bsDF(format) {
+  return format.replace(/a/g , 'P')
+               .replace(/m/g , 'i')
+               .replace(/M/g , 'm')
+               // 交换 H h
+               .replace(/H/g , 'x')
+               .replace(/h/g , 'H')
+               .replace(/x/g , 'h');
+}
+
+/**
+ * Bootstrap日期格式转HongsCORE日期格式
+ * @param {String} format
+ * @return {String)
+ */
+function _bs2hsDF(format) {
+  return format.replace(/m/g , 'M')
+               .replace(/i/g , 'm')
+               .replace(/P/gi, 'a')
+               // 交换 H h
+               .replace(/H/g , 'x')
+               .replace(/h/g , 'H')
+               .replace(/x/g , 'h');
+}

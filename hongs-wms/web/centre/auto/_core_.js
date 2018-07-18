@@ -1,4 +1,4 @@
-/* global jQuery, echarts, HsForm, HsList, hsListFillFork */
+/* global jQuery, echarts, HsForm, HsList, HsUSER */
 
 /**
  * 获取当前模块对象
@@ -47,26 +47,34 @@ S$.delete = function(req) {
 };
 
 /**
- * 登记用户会话信息
- */
-function hsWithUserInfo(rst) {
-    window.HsUSER = rst.info;
-}
-
-/**
  * 列表填充分页按钮
  */
-function hsListFillMore(pag) {
-    HsList.prototype.fillPage.call(this, pag);
-    this.pageBox.find(".page-count").remove();
+function hsListFillMore(page) {
+    HsList.prototype.fillPage.call(this, page);
+    this.pageBox.find(".page-count").remove( );
     this.pageBox.find(".pagination").removeClass("pull-left");
 }
 
 /**
- * 依据权限显示按钮
+ * 登记用户会话信息
  */
-function hsListShowBtns(d, v) {
-    d.toggle(v && v == HsUSER.uid);
+function hsWithUserInfo(resp) {
+    window.HsUSER = resp.info || { };
+}
+
+/**
+ * 依据权限开放编辑
+ */
+function hsListShowEdit(d, v) {
+    if (v) {
+        if (v.uid !== undefined) {
+            v = v.uid;
+        } else
+        if (v. id !== undefined) {
+            v = v. id;
+        }
+    }
+    d.toggle(!!(v && v == HsUSER.uid));
 }
 
 /**
@@ -80,16 +88,6 @@ function hsListFillLogo(d, v) {
         "background-position": "center center",
         "background-image"   : "url(" + v + ")"
     });
-}
-
-/**
- * 筛选列表填充数据
- */
-function hsListFillSele(x, v, n) {
-    hsListFillFork.call(this, x, v , n );
-        x.find("input")
-         .attr("title", this._info.name)
-         .data(         this._info     );
 }
 
 /**

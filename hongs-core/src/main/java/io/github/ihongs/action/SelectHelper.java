@@ -373,8 +373,10 @@ public class SelectHelper {
             Map    mt = (Map) et.getValue( );
             String fn = (String) et.getKey();
 
-            // 建立映射
+            // 建立映射, 清除空值可避免不必要的查询
             Map<Object, List> ms = mm.mapped( fn );
+            ms.remove(  ""  );
+            ms.remove( null );
             if (ms.isEmpty()) {
                 continue;
             }

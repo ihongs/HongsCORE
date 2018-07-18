@@ -93,7 +93,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("create")
-    @Preset(conf="", form="", deft={":defence"})
+    @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
     @Select(conf="", form="")
     @CommitSuccess
@@ -110,7 +110,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("update")
-    @Preset(conf="", form="", deft={":defence"})
+    @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void update(ActionHelper helper)
@@ -125,7 +125,7 @@ public class DBAction implements IAction, IActing {
 
     @Override
     @Action("delete")
-    @Preset(conf="", form="", deft={":defence"})
+    @Preset(conf="", form="", defs={":defence"})
     @CommitSuccess
     public void delete(ActionHelper helper)
     throws HongsException {

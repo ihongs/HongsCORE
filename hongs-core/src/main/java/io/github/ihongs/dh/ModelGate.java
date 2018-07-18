@@ -91,7 +91,7 @@ abstract public class ModelGate implements IActing, IAction {
 
     @Override
     @Action("create")
-    @Preset(conf="", form="", deft={":defence"})
+    @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
     @Select(conf="", form="")
     @CommitSuccess
@@ -107,7 +107,7 @@ abstract public class ModelGate implements IActing, IAction {
 
     @Override
     @Action("update")
-    @Preset(conf="", form="", deft={":defence"})
+    @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
     @CommitSuccess
     public void update(ActionHelper helper) throws HongsException {
@@ -121,7 +121,7 @@ abstract public class ModelGate implements IActing, IAction {
 
     @Override
     @Action("delete")
-    @Preset(conf="", form="", deft={":defence"})
+    @Preset(conf="", form="", defs={":defence"})
     @CommitSuccess
     public void delete(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);

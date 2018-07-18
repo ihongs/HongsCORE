@@ -580,6 +580,12 @@ ul.pickrol > li.btn-info {
     -moz-appearance: none;
     -webkit-appearance: none;
 }
+.datebox.input-group .clear {
+    color : #eee;
+}
+.datebox.input-group .clear:hover {
+    color : #888;
+}
 .datebox.input-group .input-group-addon {
     width : auto;
     height: 41px;

@@ -189,7 +189,7 @@
                             <div data-fn="name" style="color: #444;"></div>
                             <div data-fn="note" style="color: #888;"></div>
                         </div>
-                        <div data-fn="cuser" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
+                        <div data-ft="user" data-fn="cuser" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
                             <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                             <button type="button" class="btn btn-xs btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
@@ -236,7 +236,7 @@
         fillList    : hsListFillItem,
         fillPage    : hsListFillMore,
         _fill_logo  : hsListFillLogo,
-        _fill_cuser  : hsListShowBtns
+        _fill_user  : hsListShowBtns
     });
 
     var filtobj = fitrbox.hsForm({

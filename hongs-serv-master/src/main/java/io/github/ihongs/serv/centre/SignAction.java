@@ -32,7 +32,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     public void userCreate(ActionHelper ah) throws HongsException {
         Map  rd = ah.getRequestData();
         User uo = (User) DB.getInstance( "master" ).getModel( "user" );
-        Map  sd = uo.create  (  rd  );
+        Map  sd = (Map ) uo.create (rd).get("info");
 
         // 提取登录信息
         String usrid = Synt.declare(sd.get(  "id" ), "");

@@ -149,7 +149,7 @@ public class AuthFilter
   @Override
   public void destroy()
   {
-    super.destroy();
+    super.destroy( );
 
     siteMap   = null;
     indexPage = null;
@@ -168,62 +168,58 @@ public class AuthFilter
     /**
      * 检查当前动作是否可以忽略
      */
-    if (ignore != null && ignore.ignore(act)) {
+    if (ignore != null && ignore.ignore( act ) ) {
         chain.doFilter(req, rsp);
         return;
     }
 
     /**
      * 判断当前用户是否登录超时
+     * 未超时且是调试模式
+     * 对超级管理员无限制
      */
-    if (exp != 0) {
-        long tim = Synt.declare(hlpr.getSessibute(Cnst.STM_SES), 0L);
-        long now = System.currentTimeMillis() / 1000;
-        if ( now - tim < exp) {
-            hlpr.setSessibute (Cnst.STM_SES , now );
-        } else {
-            doFailed ( core, hlpr, (byte) 0 );
-            return;
+    Set <String> authset;
+    long stm = Synt.declare(hlpr.getSessibute(Cnst.STM_SES), 0L);
+    long now = System.currentTimeMillis() / 1000;
+    if ( exp == 0 || exp > now - stm ) {
+        hlpr.setSessibute ( Cnst.STM_SES , now );
+
+        if (Core.DEBUG > 0) {
+            String uid = Synt.asString(hlpr.getSessibute(Cnst.UID_SES));
+            if ( Cnst.ADM_UID.equals(uid)) {
+                chain.doFilter( req, rsp );
+                return;
+            }
         }
-    }
 
-    /**
-     * 调试模式超级管理员无限制
-     */
-    if (Core.DEBUG > 0) {
-      String uid = Synt.declare(hlpr.getSessibute(Cnst.UID_SES), "");
-        if ( uid!= null && uid.equals(Cnst.ADM_UID)) {
-            chain.doFilter(req , rsp );
-            return;
+        try {
+            authset = siteMap.getAuthSet();
+        } catch (HongsException ex) {
+            throw new ServletException(ex);
         }
+    } else {
+        authset = null;
+        stm = -1;
     }
 
-    // 获取详细会话集合
-    Set<String> authset;
-    try {
-        authset = siteMap.getAuthSet();
-    } catch (HongsException e) {
-        throw new ServletException(e );
-    }
-
-    // 权限动作无前导/
+    // 权限动作无前导杠
+    // 附带上协议方法名
     if (act.startsWith( "/" )) {
         act = act.substring(1);
     }
-    // 附带上协议方法
     String amt = act + "|" + hlpr.getRequest().getMethod();
 
     if (null == authset) {
         if (null != loginPage) {
-            doFailed(core, hlpr, (byte) 1); // 没有登录
+            doFailed(core, hlpr, (byte) (stm < 0 ? 0 : 1)); // 没有登录
             return;
         }
         if (siteMap.actions.contains(act)) {
-            doFailed(core, hlpr, (byte) 3); // 需要权限
+            doFailed(core, hlpr, (byte) (stm < 0 ? 0 : 3)); // 需要权限
             return;
         }
         if (siteMap.actions.contains(amt)) {
-            doFailed(core, hlpr, (byte) 3); // 需要权限(带方法)
+            doFailed(core, hlpr, (byte) (stm < 0 ? 0 : 3)); // 需要权限(带方法)
             return;
         }
     } else {
@@ -292,12 +288,14 @@ public class AuthFilter
         uri = this.loginPage;
         if (uri == null || uri.length() == 0) {
             if ( 0 == type) {
+                type  =  1;
                 msg = lang.translate("core.error.un.login");
             } else {
                 msg = lang.translate("core.error.no.login");
             }
         } else {
             if ( 0 == type) {
+                type  =  1;
                 msg = lang.translate("core.error.un.login.redirect");
             } else {
                 msg = lang.translate("core.error.no.login.redirect");
@@ -339,17 +337,17 @@ public class AuthFilter
         Map rsp = new HashMap();
         rsp.put("ok" , false);
         rsp.put("msg",  msg );
-        rsp.put("ern", "Er40"+type);
-        if (type == 1 || type == 0) {
-            if (uri != null && uri.length() != 0) {
-                rsp.put("err", "Goto "+uri);
-            }
-            hlpr.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        } else {
+        rsp.put("ern", "Er40" + type);
+        if (type == 3) {
             if (uri != null && uri.length() != 0) {
                 rsp.put("err", "Link "+uri);
             }
             hlpr.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN   );
+        } else {
+            if (uri != null && uri.length() != 0) {
+                rsp.put("err", "Goto "+uri);
+            }
+            hlpr.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         }
 
         /**
@@ -378,17 +376,17 @@ public class AuthFilter
         rep.put("msg", msg);
         String err = lang.translate("core.redirect.html", rep /**/);
 
-        if (type == 1 ) {
-            hlpr.error401(err);
-        } else {
+        if (type == 3) {
             hlpr.error403(err);
+        } else {
+            hlpr.error401(err);
         }
 
         // 禁止缓存
         HttpServletResponse rsp = hlpr.getResponse();
         rsp.addHeader("Cache-Control", "no-cache");
-        rsp.setHeader("Pragma", "no-cache");
-        rsp.setDateHeader("Expires", 0);
+        rsp.setHeader(    "Pragma"   , "no-cache");
+        rsp.setDateHeader("Expires"  ,  0  );
     }
   }
 

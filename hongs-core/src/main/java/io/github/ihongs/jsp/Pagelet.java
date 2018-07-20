@@ -51,73 +51,40 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     }
     catch (ServletException ex )
     {
-        Throwable ax = ex.getCause();
-        if (ax == null) { ax = ex; }
-        String er = ax.getLocalizedMessage( );
+        Throwable ax = ex.getCause( );
+        if (ax == null) { ax = ex ; }
         int eo = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
-        req.setAttribute("javax.servlet.error.message"  , er);
-        req.setAttribute("javax.servlet.error.exception", ax);
-        req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
         switch (eo) {
             case 0x1100:
-                rsp.sendError(HttpServletResponse.SC_BAD_REQUEST , er);
+                eo = HttpServletResponse.SC_BAD_REQUEST ;
                 break;
             case 0x1101:
-                rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, er);
+                eo = HttpServletResponse.SC_UNAUTHORIZED;
                 break;
             case 0x1102:
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
+                eo = HttpServletResponse.SC_FORBIDDEN;
                 break;
             case 0x1103:
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
+                eo = HttpServletResponse.SC_FORBIDDEN;
                 break;
             case 0x1104:
-                rsp.sendError(HttpServletResponse.SC_NOT_FOUND, er);
+                eo = HttpServletResponse.SC_NOT_FOUND;
                 break;
             case 0x1106:
-                rsp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE , er);
+                eo = HttpServletResponse.SC_NOT_ACCEPTABLE;
                 break;
             case 0x1105:
-                rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
+                eo = HttpServletResponse.SC_METHOD_NOT_ALLOWED;
                 break;
             default:
-                rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
+                eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
         }
-        throw ex;
-    }
-    catch (RuntimeException ax )
-    {
-        String er = ax.getLocalizedMessage( );
-        int eo = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
-        req.setAttribute("javax.servlet.error.message"  , er);
-        req.setAttribute("javax.servlet.error.exception", ax);
+        String  er = ax.getLocalizedMessage();
+        req.setAttribute("javax.servlet.error.status_code"   , eo);
+        req.setAttribute("javax.servlet.error.message"       , er);
+        req.setAttribute("javax.servlet.error.exception"     , ax);
         req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
-        switch (eo) {
-            case 0x1100:
-                rsp.sendError(HttpServletResponse.SC_BAD_REQUEST , er);
-                break;
-            case 0x1101:
-                rsp.sendError(HttpServletResponse.SC_UNAUTHORIZED, er);
-                break;
-            case 0x1102:
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
-                break;
-            case 0x1103:
-                rsp.sendError(HttpServletResponse.SC_FORBIDDEN, er);
-                break;
-            case 0x1104:
-                rsp.sendError(HttpServletResponse.SC_NOT_FOUND, er);
-                break;
-            case 0x1106:
-                rsp.sendError(HttpServletResponse.SC_NOT_ACCEPTABLE , er);
-                break;
-            case 0x1105:
-                rsp.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, er);
-                break;
-            default:
-                rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
-        }
-        throw ax;
+        rsp.sendError(eo, er);
     }
   }
 

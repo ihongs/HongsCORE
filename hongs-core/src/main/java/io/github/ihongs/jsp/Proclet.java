@@ -51,31 +51,15 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
     {
       this._jspService(new Request(req), rsp);
     }
-    catch (ServletException ex)
+    catch (ServletException ex )
     {
+        ActionHelper ah = ActionDriver.getActualCore(req).get(ActionHelper.class);
         Throwable ax = ex.getCause( );
+        if (ax == null) { ax = ex ; }
         if (ax instanceof HongsCause) {
-            senderr(ActionDriver.getActualCore(req).get(ActionHelper.class),(HongsCause)ax);
+            senderr(ah , (HongsCause) ax);
         } else {
-            String er = ex.getLocalizedMessage( );
-            req.setAttribute("javax.servlet.error.message"  , er);
-            req.setAttribute("javax.servlet.error.exception", ex);
-            req.setAttribute("javax.servlet.error.exception_type", ex.getClass().getName());
-            rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
-            throw ex;
-        }
-    }
-    catch (RuntimeException ax)
-    {
-        if (ax instanceof HongsCause) {
-            senderr(ActionDriver.getActualCore(req).get(ActionHelper.class),(HongsCause)ax);
-        } else {
-            String er = ax.getLocalizedMessage( );
-            req.setAttribute("javax.servlet.error.message"  , er);
-            req.setAttribute("javax.servlet.error.exception", ax);
-            req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
-            rsp.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR, er);
-            throw ax;
+            senderr(ah , 0x110e, "" , ax.getMessage(), ax.getLocalizedMessage( ));
         }
     }
   }

@@ -236,6 +236,14 @@
     </jsp-config>
     <!-- Another Sets -->
     <error-page>
+        <error-code>400</error-code>
+        <location>/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>401</error-code>
+        <location>/403.jsp</location>
+    </error-page>
+    <error-page>
         <error-code>403</error-code>
         <location>/403.jsp</location>
     </error-page>
@@ -244,17 +252,25 @@
         <location>/404.jsp</location>
     </error-page>
     <error-page>
-       <error-code>500</error-code>
-       <location>/500.jsp</location>
+        <error-code>405</error-code>
+        <location>/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>406</error-code>
+        <location>/500.jsp</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/500.jsp</location>
     </error-page>
     <!--
     <error-page>
-       <exception-type>java.lang.Exception</exception-type>
-       <location>/500.jsp</location>
+        <exception-type>java.lang.Exception</exception-type>
+        <location>/500.jsp</location>
     </error-page>
     <error-page>
-       <exception-type>javax.servle.ServletException</exception-type>
-       <location>/500.jsp</location>
+        <exception-type>javax.servle.ServletException</exception-type>
+        <location>/500.jsp</location>
     </error-page>
     //-->
     <icon>

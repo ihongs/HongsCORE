@@ -214,12 +214,26 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             return data;
         }
 
+        // 获取页码
+        int pn = 1;
+        if (rd.containsKey(Cnst.PN_KEY)) {
+            pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if (pn < 0) pn = 0;
+        }
+
         // 获取行数, 默认依从配置
         int rn;
         if (rd.containsKey(Cnst.RN_KEY)) {
-            rn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
+            rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); if (rn < 0) rn = 0;
         } else {
             rn = CoreConfig.getInstance().getProperty("fore.rows.per.page", Cnst.RN_DEF);
+        }
+
+        // 获取链数, 默认依从配置
+        int gn;
+        if (rd.containsKey(Cnst.GN_KEY)) {
+            gn = Synt.declare(rd.get(Cnst.GN_KEY), 1); if (gn < 1) gn = 1;
+        } else {
+            gn = CoreConfig.getInstance().getProperty("fore.pags.for.page", Cnst.GN_DEF);
         }
 
         // 指定行数 0, 则走 getAll
@@ -230,53 +244,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             return data;
         }
 
-        // 获取链数, 默认依从配置
-        int gn;
-        if (rd.containsKey(Cnst.GN_KEY)) {
-            gn = Synt.declare(rd.get(Cnst.GN_KEY), 0);
+        // 指定页码 0, 仅获取分页
+        if (pn == 0) {
+            return getPage(rd, rn, gn, 1 );
         } else {
-            gn = CoreConfig.getInstance().getProperty("fore.pags.for.page", Cnst.GN_DEF);
+            return getList(rd, rn, gn, pn);
         }
-
-        // 获取页码, 计算查询区间
-        int pn = Synt.declare(rd.get(Cnst.PN_KEY), 1);
-        if (pn < 1) pn = 1;
-        if (gn < 1) gn = 1;
-        int minPn = pn - (gn / 2 );
-        if (minPn < 1)   minPn = 1;
-        int maxPn = gn + minPn - 1;
-        int limit = rn * maxPn + 1;
-        int minRn = rn * (pn - 1 );
-        int maxRn = rn + minRn;
-        // 数量太少的话没必要估算
-        if (limit < 1001) {
-            limit = 1001;
-        }
-
-        // 获取列表
-        List list = getAll(rd, limit, minRn, maxRn);
-        int rc = (int) list.remove(0);
-        int pc = (int) Math.ceil( (double) rc / rn);
-
-        // 记录分页
-        Map  resp = new HashMap();
-        Map  page = new HashMap();
-        resp.put("list", list);
-        resp.put("page", page);
-        page.put("page", pn);
-        page.put("pags", gn);
-        page.put("rows", rn);
-        page.put("pagecount", pc);
-        page.put("rowscount", rc);
-        page.put("uncertain", rc == limit); // 为 true 表示总数不确定
-        if (rc == 0) {
-            page.put("ern", 1);
-        } else
-        if (list.isEmpty()) {
-            page.put("ern", 2);
-        }
-
-        return  resp;
     }
 
     /**
@@ -529,30 +502,71 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return list;
     }
 
-    /**
-     * 获取部分文档
-     * @param rd
-     * @param total 总数限制
-     * @param begin 起始位置
-     * @param end   结束位置(不含), 给定 0 则取到最后
-     * @return      首位为实际总数, 请用 .poll() 取出
-     * @throws HongsException
-     */
-    public List getAll(Map rd, int total, int begin, int end) throws HongsException {
-        Loop roll = search(rd, begin, total - begin);
-        List list = new LinkedList();
-        int  idx  = begin ;
-        if ( end == 0 ) {
-             end  = total - begin;
+    private Map getPage(Map rd, int rn, int gn, int pn) throws HongsException {
+        Loop roll = search( rd, 0 , rn * gn  * 10 + 1 );
+        int  rc   = roll . size();
+        int  pc   = ( int ) Math.ceil((double) rc / rn);
+
+        Map  resp = new HashMap();
+        Map  page = new HashMap();
+        page.put("rowscount", rc);
+        page.put("pagecount", pc);
+        page.put("rows", rn);
+        page.put("pags", gn);
+        page.put("page", pn);
+        resp.put("page", page);
+
+        if (rc == 0) {
+            page.put("ern", 1);
         }
-        list.add( roll.size(  ) );
+
+        return resp;
+    }
+
+    private Map getList(Map rd, int rn, int gn, int pn) throws HongsException {
+        // 获取页码, 计算查询区间
+        int minPn = pn - (gn / 2);
+        if (minPn < 1)   minPn=1 ;
+        int maxPn = gn + minPn-1 ;
+        int totRn = rn * maxPn+1 ;
+        int minRn = rn * (pn - 1);
+        int maxRn = rn + minRn   ;
+        // 数量太少的话没必要估算
+        if (totRn < gn * rn * 10 + 1) {
+            totRn = gn * rn * 10 + 1;
+        }
+
+        Loop roll = search( rd, minRn , totRn - minRn );
+        int  rc   = roll . size();
+        int  pc   = ( int ) Math.ceil((double) rc / rn);
+
+        // 提取分页片段
+        List list = new LinkedList( );
         while  (  roll.hasNext()) {
             list.add(roll.next());
-            if (  ++idx >= end  ) {
+            if (maxRn < minRn ++) {
                 break ;
             }
         }
-        return list;
+
+        Map  resp = new HashMap();
+        Map  page = new HashMap();
+        page.put("rowscount", rc);
+        page.put("pagecount", pc);
+        page.put("rows", rn);
+        page.put("pags", gn);
+        page.put("page", pn);
+        resp.put("page", page);
+        resp.put("list", list);
+
+        if (rc == 0) {
+            page.put("ern", 1);
+        } else
+        if (list.isEmpty()) {
+            page.put("ern", 2);
+        }
+
+        return  resp;
     }
 
     /**
@@ -1899,11 +1913,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         /**
          * 获取命中总数
- 注意:
- 初始化时 y 参数为 0 (即获取全部命中)
- 则在全部循环完后获取到的数值才是对的
- 但其实此时完全可以直接计算循环的次数
- 此方法主要用于分页时获取查询命中总量
+         * 注意:
+         * 初始化时 y 参数为 0 (即获取全部命中)
+         * 则在全部循环完后获取到的数值才是对的
+         * 但其实此时完全可以直接计算循环的次数
+         * 此方法主要用于分页时获取查询命中总量
          * @return
          */
         public int size() {

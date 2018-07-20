@@ -20,9 +20,9 @@ import java.util.Set;
  * 规则参数:
  *  conf    配置名, 默认为当前配置
  *  form    表单名, 默认同 field.name
- *  checked 不管存在否, 按 string 或 number 检查
  *  data-at 关联动作名
  *  data-vk 关联取值键
+ *  pass-id 跳过像ID的
  * </pre>
  * @author Hongs
  */
@@ -33,27 +33,13 @@ public class IsFork extends Rule {
             return   null; // 允许为空
         }
 
-        String vl = Synt.declare(params.get("checked" ), "");
-        if(   "any".equals(vl)) {
-            return  value ;
-        } else
-        if("number".equals(vl)) {
-            IsNumber rl;
-            rl = new IsNumber( );
-            rl.setHelper(helper);
-            rl.setParams(params);
-            rl.setValues(values);
-            rl.setCleans(cleans);
-            return rl.verify(value);
-        } else
-        if("string".equals(vl)) {
-            IsString rl;
-            rl = new IsString( );
-            rl.setHelper(helper);
-            rl.setParams(params);
-            rl.setValues(values);
-            rl.setCleans(cleans);
-            return rl.verify(value);
+        // 如果像 id 一样只是基本字符组成则跳过
+        // 也可通过直接通过 rule 参数不做此检查
+        if (Synt.declare(params.get("pass-id"), false)) {
+            String sv = value.toString( );
+            if (sv.matches("^[\\w\\-]+$")) {
+                return value;
+            }
         }
 
         String at = Synt.declare(params.get("data-at" ), "");
@@ -98,9 +84,10 @@ public class IsFork extends Rule {
 
         // 请求数据
         Map rd = new HashMap();
-        Set rb = Synt.setOf ( vk  );
-        Set id = Synt.asSet (value);
-        rb.add(vk);
+        Set rb = new HashSet();
+        Set id = new HashSet();
+        rb.add(vk   );
+        rb.add(value);
         rd.put(Cnst.RN_KEY, 0);
         rd.put(Cnst.RB_KEY,rb);
         rd.put(Cnst.ID_KEY,id);
@@ -132,13 +119,17 @@ public class IsFork extends Rule {
         List<Map> ls = (List) sd.get("list");
 
         // 对比结果
-        Set vs = Synt.asSet(value);
         Set us = new HashSet();
         if ( null != ls) {
         for(Map um : ls) {
             us.add(um.get(vk));
         }}
-        if (vs.size() != us.size() || !vs.containsAll(us)) {
+        /**
+         * 2018/07/20
+         * 删除了条件 !id.containsAll(us)
+         * 通常列表有数据就表示数据已存在
+         */
+        if (id.size() != us.size()) {
             throw new Wrong("fore.form.is.not.exists", fl);
         }
 

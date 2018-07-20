@@ -152,10 +152,25 @@ implements IEntity
   public Map create(Map rd, FetchCase caze)
     throws HongsException
   {
-    String    id = add( rd );
-    FetchCase fc = caze != null ? caze.clone() : fetchCase();
-    fc.filter ( "`" + this.table.primaryKey + "` = ?" , id );
-    return getInfo(rd, caze);
+    String id = add( rd );
+
+    // 组织反查条件
+    FetchCase fc = caze != null
+                 ? caze.clone()
+                 : fetchCase ();
+    fc.setOption("MODEL_START", "create");
+    fc.filter("`"+ this.table.primaryKey +"` = ?", id);
+
+    // 附加外部参数
+    Map xd = new HashMap();
+    if (rd.containsKey(Cnst.RB_KEY)) {
+        xd.put(Cnst.RB_KEY, rd.get(Cnst.RB_KEY));
+    }
+    if (rd.containsKey(Cnst.AB_KEY)) {
+        xd.put(Cnst.AB_KEY, rd.get(Cnst.AB_KEY));
+    }
+
+    return getInfo(xd, fc);
   }
 
   /**

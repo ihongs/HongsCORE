@@ -217,13 +217,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         // 获取页码
         int pn = 1;
         if (rd.containsKey(Cnst.PN_KEY)) {
-            pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if (pn < 0) pn = 0;
+            pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if ( pn < 0 ) pn = Math.abs( pn );
         }
 
         // 获取行数, 默认依从配置
         int rn;
         if (rd.containsKey(Cnst.RN_KEY)) {
-            rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); if (rn < 0) rn = 0;
+            rn = Synt.declare(rd.get(Cnst.RN_KEY), 0); if ( rn < 0 ) rn = Math.abs( rn );
         } else {
             rn = CoreConfig.getInstance().getProperty("fore.rows.per.page", Cnst.RN_DEF);
         }
@@ -231,7 +231,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         // 获取链数, 默认依从配置
         int gn;
         if (rd.containsKey(Cnst.GN_KEY)) {
-            gn = Synt.declare(rd.get(Cnst.GN_KEY), 1); if (gn < 1) gn = 1;
+            gn = Synt.declare(rd.get(Cnst.GN_KEY), 1); if ( gn < 0 ) gn = Math.abs( gn );
         } else {
             gn = CoreConfig.getInstance().getProperty("fore.pags.for.page", Cnst.GN_DEF);
         }
@@ -245,6 +245,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
 
         // 指定页码 0, 仅获取分页
+        if (gn == 0) {
+            gn =  1;
+        }
         if (pn == 0) {
             return getPage(rd, rn, gn, 1 );
         } else {

@@ -133,24 +133,24 @@ function hsListPrepFilt(x, v, n) {
 /**
  * 列表预设排序选项
  */
-function hsListInitSort(x, v, n, t) {
-    if ( t != "enum") return;
+function hsListInitSort(x, v, n) {
     var inp = x;
-    var sel = x.next().find("select");
-    var chk = x.next().find( "input");
+    var sel = x.next().find("select").eq(0);
+    var chk = x.next().find("select").eq(1);
     // 没有可排序的字段就不显示此项
-    if (sel.children().size( ) === 1) {
-        sel.closest ( ".form-group" ).remove();
+    if (sel.children().size() < 2) {
+        sel.closest(".form-group").remove();
         return;
     }
-    x.next( ).change(function() {
-        if (sel.find("option" ).first().is(":selected")) {
-            chk.prop("checked" , false);
-            chk.prop("disabled", true );
+    chk.addClass ("invisible");
+    x.next().change(function() {
+        if (sel.find("option").first().prop("selected") /**/) {
+            chk.find("option").first().prop("selected", true);
+            chk.toggleClass("invisible", true );
         } else {
-            chk.prop("disabled", false);
+            chk.toggleClass("invisible", false);
         }
-        inp.val((chk.prop("checked")?"-":"")+sel.val( ));
+        inp.val(chk.val() + sel.val());
     });
     /*
     if (sel.find("[value=mtime]").size()) {
@@ -333,12 +333,13 @@ HsCate.prototype = {
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
             if (v[0] == "" || v[2] == 0) continue;
-            label = $('<label></label>');
+            label = $('<label></label>')
+                .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
                 .attr("name" , name+":on.")
                 .attr("value", v[0]);
             title = $('<span></span>')
-                .text(v[1]+" ["+ v[2] +"]");
+                .text(v[1]);
             label.append(check).append(title).appendTo(box2);
         }
     },
@@ -370,7 +371,7 @@ HsCate.prototype = {
                 .attr("name" , name+":in.")
                 .attr("value", v[0]);
             title = $('<span></span>')
-                .text(v[1]+" ["+ v[2] +"]");
+                .text(v[1]);
             label.append(check).append(title).appendTo(box2);
         }
     }

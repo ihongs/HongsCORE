@@ -20,7 +20,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div class="clearfix">
-        <form class="findbox input-group col-sm-6 col-sm-offset-3" action="" method="POST">
+        <form class="findbox input-group col-md-6 col-md-offset-3" action="" method="POST">
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
@@ -44,8 +44,8 @@
         <%if ("@".equals(name) || "id".equals(name)) {%>
         <%} else if (Synt.declare(info.get("statable"), false)) {%>
         <div class="stat-group form-group form-group-sm clearfix">
-            <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
-            <div class="col-sm-6">
+            <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
+            <div class="col-md-6 col-sm-8">
                 <%
                     String rb;
                     if ("number".equals(type)) {
@@ -80,8 +80,8 @@
         </div>
         <%} else if (Synt.declare(info.get("findable"), false)) {%>
         <div class="filt-group form-group form-group-sm clearfix">
-            <label class="col-sm-3 form-control-static control-label text-right"><%=text%></label>
-            <div class="col-sm-6">
+            <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
+            <div class="col-md-6 col-sm-8">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
                     <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
@@ -131,11 +131,11 @@
         <%} /*End If */%>
         <%} /*End For*/%>
         <div class="form-group form-group-sm clearfix">
-            <label class="col-sm-3 form-control-static control-label text-right">排序</label>
-            <div class="col-sm-6">
+            <label class="col-md-3 col-sm-2 form-control-static control-label text-right">排序</label>
+            <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
-                <div class="input-group input-group-sm">
-                    <select class="form-control">
+                <div>
+                    <select class="form-control" style="width: auto; display: inline-block;">
                         <option value="<%=_ob%>"></option>
         <%
         Iterator it4 = _fields.entrySet().iterator();
@@ -143,7 +143,7 @@
             Map.Entry et = (Map.Entry) it4.next();
             Map     info = (Map ) et.getValue();
             String  name = (String) et.getKey();
-            String  text = (String) info.get("__text__");
+            String  text = (String) info.get ("__text__");
 
             if ("@".equals(name) || "id".equals(name)
             || !Synt.declare(info.get("sortable"), false)) {
@@ -151,22 +151,23 @@
             }
         %>
                         <option value="<%=name%>"><%=text%></option>
-        <%} /* End for*/%>
+        <%} /*End for*/%>
                     </select>
-                    <span class="input-group-addon">
-                        <input type="checkbox" value="-" disabled="disabled"/> 逆序
-                    </span>
+                    <select class="form-control" style="width: auto; display: inline-block;">
+                        <option value="" >正序</option>
+                        <option value="-">逆序</option>
+                    </select>
                 </div>
             </div>
         </div>
         <div class="form-group form-group-sm clearfix">
-            <div class="col-sm-6 col-sm-offset-3">
+            <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
                 <div class="form-control-static owner" style="display: inline-block;">
                     <label>
-                        <input type="checkbox" name="cuser" style="margin-right:1em;">
+                        <input name="cuser" type="checkbox" style=" margin: 4px 8px;">
                         <span> 我创建的 </span>
                     </label>
                 </div>
@@ -175,7 +176,7 @@
         <div class="form-group clearfix"></div>
     </form>
     <!-- 列表 -->
-    <div class="itembox col-md-4" style="display: none; padding: 0 7.5px; margin: 0 0 15px 0;">
+    <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px; margin: 0 0 15px 0;">
         <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && null"/>
         <div style="padding: 10px; border: 1px solid #ccc; box-shadow: 0 0 5px #ccc;">
             <div style="display: table; width: 100%;">

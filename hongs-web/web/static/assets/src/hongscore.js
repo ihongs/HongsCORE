@@ -1544,11 +1544,14 @@ $.hsWarn = function(msg, typ, yes, not) {
     // 参数检查
     if (typeof typ === "string") {
         fns = Array.prototype.slice.call(arguments, 2);
-    } else {
+    } else
+    if (typeof msg === "string") {
         fns = Array.prototype.slice.call(arguments, 1);
-        not =  yes ;
-        yes =  typ ;
         typ ='info';
+    } else {
+        fns = Array.prototype.slice.call(arguments, 0);
+        typ =  ''  ;
+        msg =  ''  ;
     }
 
     switch (typ) {

@@ -8,6 +8,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -225,8 +226,8 @@ public class SearchTitler {
 
         // 整合数据
         for ( Map  ro : lz) {
-            String lv = Synt.declare(ro.get(vk), "");
-            String lt = Synt.declare(ro.get(tk), "");
+            String lv = Dict.getParam(ro, "", vk);
+            String lt = Dict.getParam(ro, "", tk);
 
             List<Object[]> lw = lm.get(lv);
             if  (  null != lw )

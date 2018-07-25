@@ -8,7 +8,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%
-    String _action = Synt.declare(request.getAttribute("form.action"), "create");
+    String _action = Synt.declare(request.getAttribute("form.action"), "update");
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
 %>
@@ -223,10 +223,10 @@
     var formbox = context.find("form");
 
     var formobj = context.hsForm({
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=<%="create".equals(_action)?"!enum":".enum,_fork,.form"%>",
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
-        _fill__view: hsFormFillView,
-        _url : "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=<%="create".equals(_action)?"!enum":".enum,_fork,.form"%>"
+        _fill__view: hsFormFillView
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {

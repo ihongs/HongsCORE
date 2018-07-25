@@ -232,7 +232,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
 function hsFormFillPick(box, v, n) {
     if (n == undefined) n = box.data("fn");
     var rol = box.data("readonly")
-           || box.is  (".pickorl");
+           || box.is  (".pickrol");
     var mul = box.data("repeated")
            || box.is  (".pickmul")
            || /(\[\]|\.\.|\.$)/.test(  n );
@@ -240,8 +240,8 @@ function hsFormFillPick(box, v, n) {
 
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {
-        var tn = box.attr("data-ak") || "data";
-        v = hsGetValue(this._info, tn);
+        var ak = box.attr("data-ak") || "data";
+        v = this._info[ak] || hsGetValue(this._info, ak);
         if (! v ) return ;
         if (!mul) v = [v];
     }
@@ -249,15 +249,17 @@ function hsFormFillPick(box, v, n) {
     if (jQuery.isArray(v)) {
         var tk = box.attr("data-tk") || "name";
         var vk = box.attr("data-vk") ||  "id" ;
-        var x  = {};
+        var v2 = {};
         for(var i = 0; i < v.length; i++) {
-            var j = v[i];
-            if (j[vk] !== undefined
-            &&  j[tk] !== undefined) {
-              x[j[vk]] = [j[tk] , j];
+            var j = v[ i];
+            var v3= j[vk] || hsGetValue(j, vk);
+            var t3= j[tk] || hsGetValue(j, tk);
+            if (v3 !== undefined
+            &&  t3 !== undefined) {
+                v2[v3] = [t3 , j];
             }
         }
-        v = x ;
+        v = v2;
     } else if (! jQuery.isPlainObject(v)) {
         v = {};
     }

@@ -311,24 +311,24 @@
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
         sendUrls: [
-            ['<%=_module%>/<%=_entity%>/delete.act',
-             '.delete',
-             '<%=_locale.translate("fore.delete.confirm", _title)%>']
+            [ '<%=_module%>/<%=_entity%>/delete.act',
+              '.delete',
+              '<%=_locale.translate("fore.delete.confirm", _title)%>' ]
         ],
         openUrls: [
-            ['<%=_module%>/<%=_entity%>/form.html?<%=Cnst.AB_KEY%>=!enum&'+$.param(hsSerialArr(loadbox)),
-             '.create', '@'],
-            ['<%=_module%>/<%=_entity%>/form_edit.html?<%=Cnst.ID_KEY%>={ID}',
-             '.update', '@'],
-            ['<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
-             '.review', '@'],
-            ['<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
-             '.revert', '@'],
-            ['<%=_module%>/<%=_entity%>/lore_page.html',
-             '.manual', '@']
-        ],
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>"
+            [ '<%=_module%>/<%=_entity%>/form_adds.html?'+$.param(hsSerialArr(loadbox)),
+              '.create', '@' ],
+            [ '<%=_module%>/<%=_entity%>/form.html?<%=Cnst.ID_KEY%>={ID}',
+              '.update', '@' ],
+            [ '<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
+              '.review', '@' ],
+            [ '<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
+              '.revert', '@' ],
+            [ '<%=_module%>/<%=_entity%>/lore_page.html',
+              '.manual', '@' ]
+        ]
     });
 
     <%if (!"select".equals(_action)) {%>

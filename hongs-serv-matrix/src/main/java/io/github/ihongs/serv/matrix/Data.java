@@ -166,7 +166,7 @@ public class Data extends SearchEntity {
     @Override
     public Map create(Map rd) throws HongsException {
         long ct = System.currentTimeMillis() / 1000;
-             rd.put("ctime" , ct);
+             rd.put("_time" , ct);
         String id = Core.newIdentity();
         save ( id , rd );
         call ( id , "create", ct);
@@ -196,7 +196,7 @@ public class Data extends SearchEntity {
     @Override
     public int update(Map rd) throws HongsException {
         long ct = System.currentTimeMillis() / 1000;
-             rd.put("ctime" , ct);
+             rd.put("_time" , ct);
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1096);
         for(String  id  : ids) {
@@ -215,7 +215,7 @@ public class Data extends SearchEntity {
     @Override
     public int delete(Map rd) throws HongsException {
         long ct = System.currentTimeMillis() / 1000;
-             rd.put("ctime" , ct);
+             rd.put("_time" , ct);
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1097);
         for(String  id  : ids) {
@@ -231,7 +231,7 @@ public class Data extends SearchEntity {
         String   uid   = (String) rd.get( "user_id" );
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new  String [ ] { id , fid , "0"};
-        long     ctime = Synt.declare(rd.get("ctime"), 0L);
+        long     ctime = Synt.declare(rd.get("_time"), 0L);
         if (0 == ctime) ctime = System.currentTimeMillis()/1000;
 
         // 获取旧的数据
@@ -325,7 +325,7 @@ public class Data extends SearchEntity {
         String   uid   = (String) rd.get( "user_id" );
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new  String [ ] { id , fid , "0"};
-        long     ctime = Synt.declare(rd.get("ctime"), 0L);
+        long     ctime = Synt.declare(rd.get("_time"), 0L);
         if (0 == ctime) ctime = System.currentTimeMillis()/1000;
 
         /** 记录到数据库 **/

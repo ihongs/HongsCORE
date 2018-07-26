@@ -24,9 +24,10 @@ public class FileAction {
         String ext =  prt .getSubmittedFileName();
         String fid =  Core.newIdentity();
 
+        // 取文件扩展名
         int pos = ext.lastIndexOf( '.' );
         if (pos > -1 ) {
-            ext = ext.substring(pos + 1);
+            ext = ext.substring  ( pos );
         } else {
             ext = "" ;
         }
@@ -35,22 +36,24 @@ public class FileAction {
         UploadHelper  uh = new UploadHelper( );
         uh.setUploadPath("static/upload/temp");
         uh.setUploadHref("static/upload/temp");
-        String name = uid +"-"+ fid +"."+ ext ;
         String href = uh.getResultHref();
+        String name = (uid + "-" + fid );
         uh.upload(prt, name);
 
         // 组织绝对路径
-        HttpServletRequest sr = helper.getRequest();
-        String host = sr.getServerName();
-        int    port = sr.getServerPort();
-        if (port != 80 && port != 443) {
-            host += ":" + port;
+        String link = System.getProperty("server.host");
+        if (link == null || link.length () == 0 ) {
+            HttpServletRequest sr = helper.getRequest();
+            link = sr.getScheme()+"://"+sr.getServerName();
+            int port  = sr.getServerPort();
+            if (port != 80 && port != 443) {
+                link += ":" + port;
+            }
         }
-        String link = sr.getScheme ( ) +"://"+ host
-                    + sr.getContextPath()+"/"+ href;
+        link += Core.BASE_HREF +"/"+ href ;
 
-        helper.reply("", Synt.mapOf(
-            "name", name,
+        helper.reply("" , Synt.mapOf(
+            "name", name + ext,
             "href", href,
             "link", link
         ));

@@ -124,11 +124,29 @@ public class UploadHelper {
     }
 
     private void setResultName(String name, String extn) {
-        String famc = Tool.splitPath( name );
-        if (extn != null && !extn.equals("")) {
-            famc += "." + extn;
+        /**
+         * 当文件名含点和斜杠时将作为完整文件名
+         * 当文件名以点结尾表示同上但需加扩展名
+         * 默认情况下会把文件等分拆解成多级目录
+         */
+        if (name.endsWith(".")) {
+            int l = name.length ( ) - 1 ;
+            name  = name.substring(0, l);
+        } else
+        if (name.contains(".")
+        ||  name.contains("/")) {
+            extn  = null;
+        } else
+        {
+            name  = Tool.splitPath(name);
         }
-        this.resultName = famc;
+
+        if (extn != null
+        &&  extn.length() != 0) {
+            name += "." + extn;
+        }
+
+        this.resultName = name;
     }
 
     private String getUploadTemp(String path) {

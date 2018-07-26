@@ -1,12 +1,15 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.URLConnection;
@@ -24,9 +27,10 @@ import javax.servlet.http.Part;
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
+ *  keep-naming yes|no 保持原文件名, 为规避非法文件名会对其做 UrlEncode
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
- *  href 上传文件链接, 可用变量 $BASE_HREF, $FULL_HREF 等, 后者带域名前缀
+ *  href 上传文件链接, 可用变量 $BASE_HREF, $FULL_HREF 等, 后者包含域名
  *  type 文件类型限制, 逗号分隔 (Mime-Type)
  *  extn 扩展名称限制, 逗号分隔
  * </pre>
@@ -100,11 +104,14 @@ public class IsFile extends Rule {
         if (y != null) hlpr.setAllowExtns(y);
 
         if (value instanceof Part) {
-            hlpr.upload((Part) value);
+            Part part =(Part) value;
+            hlpr.upload(part, toname(part.getSubmittedFileName( )));
         } else
         if (value instanceof File) {
-            hlpr.upload((File) value);
-        } else {
+            File file =(File) value;
+            hlpr.upload(file, toname(file.getName( ) ));
+        } else
+        {
             hlpr.upload(value.toString());
         }
 
@@ -228,6 +235,23 @@ public class IsFile extends Rule {
      */
     protected String checks(String href, String path) throws Wrong {
         return href;
+    }
+
+    private String toname(String name) {
+        if (Synt.declare (params.get("keep-naming"), false)) {
+            return encode(/****/ name);
+        } else {
+            return Core.newIdentity( );
+        }
+    }
+
+    private String encode(String name) {
+        try {
+            name = URLEncoder.encode(name,"UTF-8");
+        } catch (UnsupportedEncodingException ex ) {
+            throw  new HongsExemption.Common( ex );
+        }
+        return Tool.splitPn36(Core.newIdentity( )) + "/" + name;
     }
 
 }

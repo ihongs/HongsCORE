@@ -18,7 +18,7 @@ function HsForm (context , opts) {
     var loadDat  = hsGetValue(opts, "loadData");
     var initDat  = hsGetValue(opts, "initData");
     var idKey    = hsGetValue(opts, "idKey", "id"); // id参数名, 用于判断编辑还是创建
-    var abKey    = hsGetValue(opts, "mdKey", "ab"); // ab参数名, 用于判断是否要枚举表
+    var abKey    = hsGetValue(opts, "abKey", "ab"); // ab参数名, 用于判断是否要枚举表
 
     if (!formBox.length) formBox = context;
 
@@ -397,7 +397,7 @@ HsForm.prototype = {
             this.loadBox.hsClose(  );
 
             // 完成提示
-            if ( rst.msg) {
+            if ( rst.msg ) {
                 this.note(rst.msg, "succ");
             }
         } else {
@@ -405,15 +405,15 @@ HsForm.prototype = {
             this.formBox.trigger(evt, [rst, this]);
             if (evt.isDefaultPrevented( )) return ;
 
+            // 字段校验
+            this.seterror(rst.errs || { });
+
             // 错误提示
-            if (rst.errs) {
-                this.seterror ( rst.errs );
-            } else
-            if (!rst.msg) {
-                 rst.msg= hsGetLang('error.unkwn');
-            }
-            if ( rst.msg) {
+            if ( rst.msg ) {
                 this.warn(rst.msg, "warn");
+            } else
+            if (!rst.errs) {
+                this.warn(hsGetLang('error.unkwn'));
             }
         }
     },

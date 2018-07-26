@@ -2,6 +2,7 @@ package io.github.ihongs.cmdlet.serv;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
@@ -14,14 +15,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.ObjectInputStream;
+import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.lang.reflect.Method;
@@ -205,49 +206,39 @@ public class Common {
     @Cmdlet("call-action")
     public static void callAction(String[] args) throws HongsException {
         Map<String, Object> opts;
-        opts = CmdletHelper.getOpts (args ,
+        opts = CmdletHelper.getOpts(args ,
             "request:s", "cookies:s"
         );
-        args = ( String[] ) opts.get( "" );
+        args = (String[ ]) opts.get( "" );
 
-        String act = args[0];
         String req = text((String) opts.get("request"));
-        Map<String, String> cok = data((String) opts.get("cookies"));
-        String hst = System.getProperty("server.host" , "localhost");
-        String pot = System.getProperty("server.port" ,   "8080"   );
-        String url = "http://"+ hst+":"+pot + Core.BASE_HREF +"/"+ act + Cnst.ACT_EXT;
+        String cok = cook((String) opts.get("cookies"));
+        String url = System.getProperty("native.host", "http://localhost:8080")
+                   + Core.BASE_HREF + "/" + args[ 0 ] + Cnst.ACT_EXT ;
 
         try {
-            HttpURLConnection conn = (HttpURLConnection)new URL(url).openConnection();
+            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
+            conn.setDoInput        ( true );
+            conn.setDoOutput       ( true );
+            conn.setUseCaches      ( false);
+            conn.setConnectTimeout (  0   );
+            conn.setRequestMethod  ("POST");
+            conn.setRequestProperty("Cookie", cok);
+            conn.setRequestProperty("Accept", "application/json,text/html,*/*;q=0.8" );
+            conn.setRequestProperty("Content-Type", req.startsWith("{") && req.endsWith("}")
+                                                    ? "application/json" : "application/x-www-form-urlencoded" );
+            conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
 
-            conn.setDoInput  ( true );
-            conn.setDoOutput ( true );
-            conn.setUseCaches( false);
-            conn.setConnectTimeout(0);
-            conn.setRequestMethod ("POST");
+            String         ln;
+            PrintWriter    pw;
+            BufferedReader br;
 
-            conn.setRequestProperty("Accept", "application/json,text/html,*/*;q=0.8");
-            conn.setRequestProperty("X-Requested-With","HongsCORE/0.4");
-
-            // 放入 cookie
-            StringBuilder sb = new StringBuilder();
-            for (Map.Entry<String, String> et : cok.entrySet()) {
-                sb.append( URLEncoder.encode( et.getKey(  ), "UTF-8" ));
-                sb.append("=");
-                sb.append( URLEncoder.encode( et.getValue(), "UTF-8" ));
-                sb.append(";");
-            }
-            conn.setRequestProperty("Cookie", sb.toString());
-
-            PrintWriter   out = new PrintWriter(conn.getOutputStream());
-            out.print(req);
-            out.flush(   );
-
-            BufferedReader in = new BufferedReader(
-                          new InputStreamReader(conn.getInputStream()));
-            String  line;
-            while ((line = in.readLine()) != null) {
-                System.out.print( line );
+            pw = new PrintWriter   (                      conn.getOutputStream());
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            pw.print(req);
+            pw.flush(   );
+            while ( (ln = br.readLine()) != null ) {
+                System.out.print ( ln );
             }
         } catch (UnsupportedEncodingException ex ) {
             throw new HongsException.Common(ex);
@@ -278,6 +269,23 @@ public class Common {
             throw new HongsException.Common("Can not find " + path, ex);
         } catch (IOException ex) {
             throw new HongsException.Common("Can not read " + path, ex);
+        }
+    }
+
+    private static String cook(String text) throws HongsException {
+        try {
+            Map<String, String> cd =  data( text );
+            StringBuilder ck = new StringBuilder();
+            for (Map.Entry<String, String> et : cd.entrySet()) {
+                ck.append( URLEncoder.encode( et.getKey(  ), "UTF-8" ));
+                ck.append("=");
+                ck.append( URLEncoder.encode( et.getValue(), "UTF-8" ));
+                ck.append(";");
+            }
+            return ck.toString();
+        }
+        catch (UnsupportedEncodingException ex) {
+            throw new HongsException.Common(ex);
         }
     }
 

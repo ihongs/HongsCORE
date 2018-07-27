@@ -50,12 +50,6 @@ html, body {
 #user-menubar a {
     color: #aaa;
 }
-#user-menubar li {
-    font-size: 13px;
-}
-#main-menubar li li {
-    font-size: 13px;
-}
 
 #menu-laq {
     background: #222;

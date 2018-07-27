@@ -66,7 +66,7 @@ public class PasserHelper {
         // 扩展名
         if ( ! uris[1].isEmpty() ) {
             if (poz != -1 && poz > pos) {
-                String suf = uri.substring(1 + pos);
+                String suf = uri.substring(1 + poz);
                 if (uris[1].contains (suf)) {
                     return true;
                 }

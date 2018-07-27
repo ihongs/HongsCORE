@@ -1,7 +1,7 @@
 /**
  * HongsCORE 后台布局
  * 作者: 黄弘<kevin.hongs@gmail.com>
- * 版本: 2018/04/28 00:10
+ * 版本: 2018/07/27 23:00
  */
 
 html, body {
@@ -19,7 +19,7 @@ html, body {
 #headbox {
     display: table-cell;
     vertical-align: top;
-    background: #282828;
+    background: #373a3c;
     min-width: 150px;
     max-width: 300px;
     width: 12.5%;
@@ -52,16 +52,16 @@ html, body {
 }
 
 #menu-laq {
-    background: #222;
-    color     : #fff;
+    background: #333;
+    color     : #eee;
     position: absolute;
     display : block;
     right: 0;
     top  : 0;
 }
 #menu-raq {
-    background: #fff;
-    color     : #222;
+    background: #eee;
+    color     : #333;
     position: fixed;
     display : none ;
     left : 0;
@@ -78,7 +78,7 @@ html, body {
 }
 #menu-laq:hover,
 #menu-raq:hover {
-    background: #666;
+    background: #444;
     color     : #ddd;
 }
 
@@ -88,35 +88,36 @@ html, body {
     padding: 0;
 }
 .menubox li {
-    margin : 8px 0;
+    margin : 6px 0;
 }
 .menubox li li {
-    margin : 2px 0;
+    margin : 1px 0;
 }
 .menubox li a {
-    padding: 6px 4px 6px 15px;
+    padding: 6px 4px 6px 13px;
 }
 .menubox li li a {
-    padding: 6px 4px 6px 30px;
+    padding: 6px 4px 6px 26px;
 }
 .menubox li a {
     display: block;
-    color: #eeeeee;
-    background: #242424;
-    border-left: 2px solid #242424;
+    background: #373a3c;
+    border-left: 2px solid #202020;
 }
-.menubox li.active > a {
-    display: block;
-    color: #ff8888;
-    background: #202020;
-    border-left: 2px solid #ff8888;
+.menubar li a:hover {
+    background: #313436;
 }
-.menubox li :hover {
-    background: #202020;
+.menubox li.acting a {
+    background: #313436;
+    border-left: 2px solid #202020;
+}
+.menubox li.active a {
+    background: #313436;
+    border-left: 2px solid #ea0000;
 }
 .menubox li .caret {
     float : right;
-    margin: 9px 0;
+    margin: 7px 0;
 }
 
 .statbox .checkbox label {

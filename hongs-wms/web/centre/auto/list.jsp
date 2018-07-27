@@ -178,7 +178,7 @@
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px; margin: 0 0 15px 0;">
         <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && null"/>
-        <div style="padding: 10px; border: 1px solid #eee; box-shadow: 0 0 5px #ccc; border-radius: 4px;">
+        <div style="padding: 10px; border: 1px solid #eee; box-shadow: 0 1px 1px #eee; border-radius: 4px;">
             <div style="display: table; width: 100%;">
                 <div style="display: table-row;">
                     <%if (_fields.containsKey("logo")) {%>

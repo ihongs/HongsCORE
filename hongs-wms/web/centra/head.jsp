@@ -107,8 +107,8 @@
     </ul>
 </div>
 
-<p style="color: #444; font-size: 12px; margin-left: 18px;">
-    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #444;">HongsCORE</a>
+<p style="color: #666; font-size: 12px; margin-left: 18px;">
+    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #844;">HongsCORE</a>
 </p>
 
 <script type="text/javascript">
@@ -125,8 +125,10 @@
             h = menubar .find("a").attr("href" );
             b = menubar ;
 
+            b.find("li").removeClass( "acting" );
             b.find("li").removeClass( "active" );
-            a.parents("li").addClass( "active" );
+            a.parents("li").addClass( "acting" );
+            a.closest("li").addClass( "active" );
 
             /**
              * 容器不存在或容器已预载,
@@ -154,8 +156,10 @@
             a = menubar .find("a[href='"+h+"']");
             b = menubar ;
 
+            b.find("li").removeClass( "acting" );
             b.find("li").removeClass( "active" );
-            a.parents("li").addClass( "active" );
+            a.parents("li").addClass( "acting" );
+            a.closest("li").addClass( "active" );
 
             l = a.data("href");
             if (l && l != '/') {
@@ -217,11 +221,11 @@
 
         // 菜单折叠和展开
         menubar.find("li>ul" ).hide();
-        menubar.find("li.active>ul").show();
-        menubar.find("li.active>a" ).addClass("dropup");
+        menubar.find("li.acting>ul").show();
+        menubar.find("li.acting>a" ).addClass("dropup");
         menubar.on("click", "a", function() {
             $(this).toggleClass( "dropup" );
-            var ul = $(this).next();
+            var ul = $(this).next(  );
             if (ul.size( ) ) {
                 ul.toggle( );
                 return false;

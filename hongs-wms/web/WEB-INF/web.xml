@@ -103,6 +103,12 @@
             <param-value>28800</param-value>
         </init-param>
         <init-param>
+            <param-name>attend-urls</param-name>
+            <param-value>
+                /common/auth/*;/common/lang/*
+            </param-value>
+        </init-param>
+        <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp

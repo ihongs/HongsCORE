@@ -28,8 +28,8 @@
             <%if (!"select".equals(_action)) {%>
             <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
             <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
-            <button type="button" class="revert for-choose btn btn-warning" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
-            <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
+            <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
         <form class="findbox col-xs-6 input-group" action="" method="POST">
@@ -303,10 +303,10 @@
     var findbox = formbox.eq(0);
 
     // 权限控制
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").hide();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").remove();
 
     //** 列表、搜索表单 **/
 

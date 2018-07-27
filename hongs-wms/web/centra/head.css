@@ -58,32 +58,34 @@ html, body {
 }
 
 #menu-laq {
-    width: 15px;
-    color: #fff;
     background: #222;
-    text-align: center;
-    padding-left : 0;
-    padding-right: 0;
+    color     : #fff;
     position: absolute;
     display : block;
     right: 0;
     top  : 0;
 }
 #menu-raq {
-    width: 15px;
-    color: #fff;
-    background: #222;
-    text-align: center;
-    padding-left : 0;
-    padding-right: 0;
+    background: #fff;
+    color     : #222;
     position: fixed;
     display : none ;
     left : 0;
     top  : 0;
 }
+#menu-laq,
+#menu-raq {
+    width: 15px;
+    padding-left : 0;
+    padding-right: 0;
+    border-width : 0;
+    border-radius: 0;
+    text-align: center;
+}
 #menu-laq:hover,
 #menu-raq:hover {
-    background: #090909;
+    background: #666;
+    color     : #ddd;
 }
 
 .menubox ul {

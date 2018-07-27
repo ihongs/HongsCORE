@@ -549,12 +549,11 @@ ul.pickrol > li.btn-info {
     display: none;
 }
 .preview .close {
-    width : 27px;
-    height: 27px;
-    padding : 2.25px;
-    padding-top: 1px;
-    background: #eee;
+    width : 24px;
+    height: 24px;
+    line-height : 21px;
     text-align: center;
+    background: #eee;
     border-radius: 50%;
     box-shadow: 0 0 0.5em #000;
 }

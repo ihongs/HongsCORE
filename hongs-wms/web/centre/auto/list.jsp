@@ -178,7 +178,7 @@
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px; margin: 0 0 15px 0;">
         <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && null"/>
-        <div style="padding: 10px; border: 1px solid #ccc; box-shadow: 0 0 5px #ccc;">
+        <div style="padding: 10px; border: 1px solid #eee; box-shadow: 0 0 5px #ccc; border-radius: 4px;">
             <div style="display: table; width: 100%;">
                 <div style="display: table-row;">
                     <%if (_fields.containsKey("logo")) {%>
@@ -217,8 +217,8 @@
     var findbox = formbox.eq(0);
 
     // 权限控制
-    if (!hsChkUri("centre")) context.find(".owner").hide();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").hide();
+    if (!hsChkUri("centre")) context.find(".owner").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
 
     //** 列表、搜索表单 **/
 

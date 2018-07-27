@@ -41,6 +41,11 @@ legend {
     max-height: 0;
 }
 
+.navbar-toggle,
+.navbar-default .navbar-toggle {
+    border-color: transparent;
+}
+
 .nav-tabs,
 .nav-pills,
 .breadcrumb {
@@ -127,19 +132,22 @@ textarea.form-control {
 
 /** 可后退的导航条 **/
 
-.breadcrumb.laps > li + li.back-crumb:before,
-.breadcrumb.laps > li + li.home-crumb:before {
-    content: "";
+.breadcrumb.laps {
+    background: #ffffff;
+}
+.breadcrumb.laps > li.home-crumb i {
+    margin-right: 0.5em;
+}
+.breadcrumb.laps > li.home-crumb i ,
+.breadcrumb.laps > li.back-crumb i {
+    color: #666;
 }
 .breadcrumb.laps > li + li.home-crumb:before {
     padding: 0 ;
 }
-.breadcrumb.laps > li.back-crumb i,
-.breadcrumb.laps > li.home-crumb i {
-    color: #666;
-}
-.breadcrumb.laps > li.home-crumb i {
-    margin-right: 0.5em;
+.breadcrumb.laps > li + li.home-crumb:before ,
+.breadcrumb.laps > li + li.back-crumb:before {
+    content: "";
 }
 
 /** 其他的组件调整 **/
@@ -154,7 +162,7 @@ textarea.form-control {
 
 /* bootstrap-tagsinput */
 .bootstrap-tagsinput.form-control {
-    border-radius: 0;
+    /*border-radius: 0;*/
 }
 
 /* bootstrap-fileinput */
@@ -249,17 +257,17 @@ textarea.form-control {
 }
 
 #headbox .uhead {
-    width : 32px;
-    height: 32px;
+    width : 29px;
+    height: 29px;
     margin-top   : -6px;
     margin-bottom: -9px;
-    border-radius: 32px;
+    border-radius: 29px;
     display: inline-block;
     background-position: center;
     background-repeat: no-repeat;
 }
 #headbox .badge {
-    margin-top  : -32px;
+    margin-top  : -29px;
     margin-left : -8px;
     margin-right: -8px;
 }
@@ -267,7 +275,7 @@ textarea.form-control {
 #footbox.navbar {
     margin-top: 0;
     margin-bottom: 0;
-    min-height: 40px;
+    min-height: 32px;
     background: #fff;
     border-top-color: #fff;
     border-bottom-color: #fff;
@@ -286,8 +294,8 @@ textarea.form-control {
 }
 
 #bodybox {
-    margin-top   : 65px; /* 顶部菜单 */
-    margin-bottom: 62px; /* 底部通栏 */
+    margin-top   : 58px; /* 顶部菜单 */
+    margin-bottom: 50px; /* 底部通栏 */
 }
 
 .main-context,
@@ -330,8 +338,8 @@ textarea.form-control {
 }
 .pagebox .page-count {
     margin: 0;
-    padding:11px 18px;
-    line-height: 21px;
+    padding: 9px 13px;
+    line-height: 18px;
 }
 
 .listbox .table thead {
@@ -574,7 +582,8 @@ ul.pickrol > li.btn-info {
 .datebox.input-group {
     background-color: #fff;
     border: 1px solid #ccc;
-    padding-left: 14px;
+    border-radius: 4px;
+    padding-left: 12px;
 }
 .datebox.input-group select {
     appearance: none;
@@ -589,7 +598,6 @@ ul.pickrol > li.btn-info {
 }
 .datebox.input-group .input-group-addon {
     width : auto;
-    height: 41px;
     border: 0;
     background: #fff;
     padding-left: 4px;
@@ -597,7 +605,6 @@ ul.pickrol > li.btn-info {
 }
 .datebox.input-group .form-control {
     width : auto;
-    height: 41px;
     border: 0;
     box-shadow: none;
     padding-left: 4px;

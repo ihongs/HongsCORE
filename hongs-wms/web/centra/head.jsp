@@ -75,7 +75,7 @@
     }
 %>
 
-<div style="margin-bottom: 30px; position: relative;">
+<div style="margin-bottom: 26px; position: relative;">
     <a href="<%=Core.BASE_HREF%>/centra/" class="btn">
         <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 4px; margin-top: -2px;"/></span>
         <span style="color:#833">H</span>
@@ -98,7 +98,7 @@
     </ul>
 </div>
 
-<hr style="margin-top: 21px; border-top: 1px dotted #aaaaaa;" />
+<hr style="margin-top: 18px; border-top: 1px dotted #aaaaaa;" />
 
 <div class="menubox clearfix">
     <ul id="user-menubar">
@@ -107,7 +107,7 @@
     </ul>
 </div>
 
-<p style="color: #666; font-size: 12px; margin-left: 18px;">
+<p style="color: #666; font-size: 12px; margin: 26px 15px;">
     Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #844;">HongsCORE</a>
 </p>
 

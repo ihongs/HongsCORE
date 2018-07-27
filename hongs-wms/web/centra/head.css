@@ -102,7 +102,7 @@ html, body {
 .menubox li a {
     display: block;
     background: #373a3c;
-    border-left: 2px solid #202020;
+    border-left: 2px solid #373a3c;
 }
 .menubar li a:hover {
     background: #313436;

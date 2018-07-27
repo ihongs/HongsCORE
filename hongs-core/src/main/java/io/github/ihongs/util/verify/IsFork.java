@@ -86,11 +86,13 @@ public class IsFork extends Rule {
         Map rd = new HashMap();
         Set rb = new HashSet();
         Set id = new HashSet();
+        id.add(value);
         rb.add(vk   );
-        rb.add(value);
-        rd.put(Cnst.RN_KEY, 0);
-        rd.put(Cnst.RB_KEY,rb);
+        rb.add(Cnst.ID_KEY);
         rd.put(Cnst.ID_KEY,id);
+        rd.put(Cnst.RB_KEY,rb);
+        rd.put(Cnst.RN_KEY, 0);
+        rd.put(Cnst.PN_KEY, 1);
         ah.setRequestData (rd);
 
         // 附加参数
@@ -119,19 +121,23 @@ public class IsFork extends Rule {
         List<Map> ls = (List) sd.get("list");
 
         // 对比结果
+        if (ls == null || ls.isEmpty( )) {
+            throw new Wrong("fore.form.is.not.exists", fl);
+        }
+        /**
+         * 2018/07/20
+         * 只要有结果就代表存在
+         */
+        /*
         Set us = new HashSet();
         if ( null != ls) {
         for(Map um : ls) {
             us.add(um.get(vk));
         }}
-        /**
-         * 2018/07/20
-         * 删除了条件 !id.containsAll(us)
-         * 通常列表有数据就表示数据已存在
-         */
-        if (id.size() != us.size()) {
+        if (id.size() != us.size() && !id.containsAll(us)) {
             throw new Wrong("fore.form.is.not.exists", fl);
         }
+        */
 
         return value;
     }

@@ -98,7 +98,7 @@
     </ul>
 </div>
 
-<hr style="margin-top: 18px; border-top: 1px dotted #666;"/>
+<hr style="margin-top: 18px; border-top: 1px dashed #666;"/>
 
 <div class="menubox clearfix">
     <ul id="user-menubar">
@@ -107,7 +107,7 @@
     </ul>
 </div>
 
-<p style="color: #666; margin: 13px 15px;">
+<p style="color: #666; font-size: 11px; margin: 13px 15px;">
     Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #844;">HongsCORE</a>
 </p>
 

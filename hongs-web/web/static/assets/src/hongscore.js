@@ -1547,7 +1547,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     } else
     if (typeof msg === "string") {
         fns = Array.prototype.slice.call(arguments, 1);
-        typ ='info';
+        typ ='warn';
     } else {
         fns = Array.prototype.slice.call(arguments, 0);
         typ =  ''  ;

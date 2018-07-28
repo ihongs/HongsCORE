@@ -1472,6 +1472,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             String k = (String)e.getKey();
             Object v = Dict.getParam(map , k);
 
+            doc.removeFields(k);
+
             if (null == v
             ||  ignored(m)) {
                 continue;
@@ -1498,19 +1500,23 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 u =  true ;
             }
 
-            if (   "int".equals (t)) {
+            /**
+             * 数值和搜索及对象类型
+             * 空串没有意义不作储存
+             */
+            if (   "int".equals (t)) { if ("".equals(v)) continue;
                 f = new IntField( );
                 g = !u;
             } else
-            if (  "long".equals (t)) {
+            if (  "long".equals (t)) { if ("".equals(v)) continue;
                 f = new LongField();
                 g = !u;
             } else
-            if ( "float".equals (t)) {
+            if ( "float".equals (t)) { if ("".equals(v)) continue;
                 f = new FloatField();
                 g = !u;
             } else
-            if ("double".equals (t)) {
+            if ("double".equals (t)) { if ("".equals(v)) continue;
                 f = new DoubleField();
                 g = !u;
             } else
@@ -1518,12 +1524,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 f = new StringFiald();
                 q = false; // 字符类型自带筛选
             } else
-            if ("search".equals (t)) {
+            if ("search".equals (t)) { if ("".equals(v)) continue;
                 f = new SearchFiald();
                 q = false; // 搜索类型自带筛选
                 s = false; // 搜索类型无法排序
             } else
-            if ("object".equals (t)) {
+            if ("object".equals (t)) { if ("".equals(v)) continue;
                 f = new ObjectFiald();
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
@@ -1533,8 +1539,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 q = false; // 存储类型无法筛选
                 s = false; // 存储类型无法排序
             }
-
-            doc.removeFields(k);
 
             if (r) {
                 if (g) {

@@ -10,11 +10,11 @@ import org.apache.lucene.document.StoredField;
  */
 public class ObjectFiald implements IField {
     @Override
-    public Field got(String k, Object v) {
+    public Field whr(String k, Object v) {
         return null; // 对象类型无法用于排序, 无法增加排序字段
     }
     @Override
-    public Field srt(String k, Object v) {
+    public Field odr(String k, Object v) {
         return null; // 对象类型无法用于排序, 无法增加排序字段
     }
     @Override

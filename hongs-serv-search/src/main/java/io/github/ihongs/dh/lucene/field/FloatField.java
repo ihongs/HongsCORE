@@ -16,11 +16,11 @@ public class FloatField implements IField {
         return new StoredField (  k, Synt.declare(v, 0F));
     }
     @Override
-    public Field got(String k, Object v) {
+    public Field whr(String k, Object v) {
         return new FloatPoint(":"+k, Synt.declare(v, 0L));
     }
     @Override
-    public Field srt(String k, Object v) {
+    public Field odr(String k, Object v) {
         return new FloatDocValuesField("."+k, Synt.declare(v, 0.0F));
     }
 }

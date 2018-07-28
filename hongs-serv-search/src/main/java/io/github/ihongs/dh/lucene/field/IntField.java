@@ -16,11 +16,11 @@ public class IntField implements IField {
         return new StoredField( k, Synt.declare(v, 0));
     }
     @Override
-    public Field got(String k, Object v) {
+    public Field whr(String k, Object v) {
         return new IntPoint(":"+k, Synt.declare(v, 0));
     }
     @Override
-    public Field srt(String k, Object v) {
+    public Field odr(String k, Object v) {
         return new NumericDocValuesField("."+k, Synt.declare(v, 0));
     }
 }

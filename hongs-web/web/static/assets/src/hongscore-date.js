@@ -257,17 +257,15 @@
             inp.addClass("invisible");
             box = _makeInputs ( fmt );
             box.insertBefore  ( inp );
-            
+
             /**
-             * 非必填需增加取消按钮
+             * 当前时间和取消设置等
              */
-            if (!inp.attr("required")
-            &&  !inp.data("required")) {
-                box.find('.input-group-addon')
-                   .last()
-                   .css ("text-align","right")
-                   .html('<span class="clear glyphicon glyphicon-remove-circle"></span>');
-            }
+            box.find('.input-group-addon')
+               .last()
+               .css ("text-align","right")
+               .html('<span class="today glyphicon glyphicon-time  "></span>'
+                    +'<span class="clear glyphicon glyphicon-remove"></span>');
 
             /**
              * 输入框组是不可嵌套的
@@ -492,9 +490,23 @@
         _setdate(box, hsPrsDate(val, fmt));
     });
 
-    // 清除已选中的
+    // 设为当前时间
+    $(document).on("click", ".datebox .today", function() {
+        var inp = $(this).closest(".datebox").data("linked");
+        var typ = inp.data("type");
+        var now = new Date( );
+        if (typ == "timestamp"
+        ||  typ == "datestamp" ) {
+            inp.val(now.getTime( ) / 1000);
+        } else {
+            inp.val(now.getTime());
+        }
+        inp.change();
+    });
+
+    // 清除所有选项
     $(document).on("click", ".datebox .clear", function() {
-        $(this).closest(".datebox").find("select").val("");
+        $(this).closest(".datebox").find("select").val( "" );
     });
 
     // 加载就绪后自动初始化日期控件

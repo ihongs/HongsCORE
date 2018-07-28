@@ -22,6 +22,10 @@ import java.util.regex.Pattern;
 public class IsString extends Rule {
     @Override
     public Object verify(Object value) throws Wrong, HongsException {
+        if (value == null) {
+            return   null; // 允许为空
+        }
+
         String str = Synt.declare(value, "");
 
         // 文本清理

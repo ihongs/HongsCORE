@@ -1,7 +1,7 @@
 /**
  * HongsCORE 公共样式
  * 作者: 黄弘<kevin.hongs@gmail.com>
- * 版本: 2018/07/28 17:30
+ * 版本: 2018/07/28 22:10
  */
 
 html, body, p, h1, h2, h3, h4, h5, h6, ul, ol, table {
@@ -86,9 +86,10 @@ legend {
 .btn,
 .btn span,
 .form-control {
-    line-height: 1.42857143;
+    line-height : 1.42857143;
 }
 .btn .glyphicon {
+    margin-right: 8px;
     font-size : 0.8em;
 }
 select.form-control[multiple],
@@ -503,16 +504,6 @@ div.bootstrap-tagsinput.form-control {
 
 /** 其他 **/
 
-.progbox.alert{
-    background: rgba(0, 0, 0, 0.5);
-}
-.progbox .progress {
-    margin: 0 0;
-}
-.progbox .progress-bar {
-    width: 100%;
-}
-
 ul.pickbox {
     padding: 0;
     margin : 0;
@@ -522,6 +513,9 @@ ul.pickbox:after {
     content: "";
     display: table;
 }
+ul.pickbox > li {
+    float: left;
+}
 ul.pickbox > li.btn {
     width: 100%;
     text-align: left;
@@ -530,56 +524,55 @@ ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
 }
-ul.pickbox > li.btn span.glyphicon {
-    margin-top   : 1px;
-    margin-right : 5px;
-}
 ul.pickmul > li.btn {
-    margin-bottom: 5px;
+    margin-bottom: 1px;
 }
-ul.pickrol > li.btn-info {
-    padding-left : 0px;
+ul.pickrol > li.btn {
+    margin-bottom: 0px;
     padding-right: 0px;
-    color: inherit;
-    border-color: transparent;
-    background  : transparent;
-    box-shadow  : none;
+    padding-left : 0px;
 }
-.pickrol .glyphicon,
-.pickrol .close {
-    display: none;
-}
-.preview .close {
-    width : 24px;
-    height: 24px;
-    line-height : 22px;
-    text-align: center;
-    background: #eee;
-    border-radius: 50%;
-    box-shadow: 0 0 0.5em #000;
+ul.pickrol .close {
+    display: none ;
 }
 
 .preview {
     position: relative;
-    overflow: hidden;
-    box-shadow: 0 0 0.2em #000;
-	border-radius: 4px;
-    border: 0px;
-    margin: 1px;
-    float : left;
 }
-.preview a {
-    position: absolute;
-    padding: 0;
-    margin : 0;
-    right: 7px;
-    top  : 7px;
-}
+.preview a ,
 .preview img {
     position: absolute;
 }
-.preview input {
-    position: absolute;
+.preview {
+    padding: 0px;
+    border : 0px;
+    margin : 1px;
+	border-radius: 4px;
+    box-shadow: 0 0 0.2em #000;
+}
+.preview .close {
+    top   :  7px;
+    right :  7px;
+    width : 24px;
+    height: 24px;
+    border-radius: 50%;
+    line-height : 21px;
+    text-align: center;
+    box-shadow: 0 0 0.2em #000;
+}
+.preview:hover
+.preview .close:hover {
+    box-shadow: 0 0 0.5em #000;
+}
+
+.progbox.alert {
+    background: rgba(0, 0, 0, 0.5);
+}
+.progbox .progress {
+    margin: 0 0;
+}
+.progbox .progress-bar {
+    width: 100%;
 }
 
 .datebox.input-group {

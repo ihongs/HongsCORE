@@ -14,10 +14,13 @@ import java.util.Set;
 
 /**
  * 唯一规则
+ * 
  * <pre>
  * 规则参数:
- *  data-ut 查询动作名, 末尾可添加'#其他参与唯一的字段'
+ *  data-ut 查询动作名, 末尾可添加 #其他参与唯一的字段
+ *  diverse 并非用在这, 而是被用于 Repeated 中去除重复
  * </pre>
+ *
  * @author Hongs
  */
 public class Diverse extends Rule {

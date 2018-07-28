@@ -149,8 +149,8 @@
                                   ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
                             +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                             +"/list_fork.html";
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\"";
-                        mode += "\" data-href=\""+al+"\" data-target=\"@\"";
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
+                        mode += "\" data-href=\""+al+"\" data-target=\"@";
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
@@ -193,7 +193,7 @@
                             } else {
                                 size = "100*100";
                             }
-                            kind += "\" data-size=\""+size+"\" data-keep=\""+keep+"\"";
+                            kind += "\" data-size=\""+size+"\" data-keep=\""+keep;
                         }
                     %>
                     <input type="file" name="<%=name%>" class="form-ignored invisible" <%=typa%>/>

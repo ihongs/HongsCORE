@@ -24,6 +24,10 @@ public abstract class Rule {
     public static final Object EMPTY = null;
 
     /**
+     * 是否有值
+     */
+    public boolean is_set = false;
+    /**
      * 校验参数
      */
     public Map  params = null;

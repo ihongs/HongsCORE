@@ -38,6 +38,12 @@ public class Default extends Rule {
             if (!"".equals(value) && value != null) {
                 return value;
             }
+        } else
+        if ( "blanks".equals(force)) {
+            if ( "".equals(value) || value == null) {
+            if (is_set || ! helper.isUpdate() /**/) {
+                return null ;
+            }}
         }
 
         value = params.get("default");

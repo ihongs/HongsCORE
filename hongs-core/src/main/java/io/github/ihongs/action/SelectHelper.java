@@ -37,10 +37,12 @@ public class SelectHelper {
     public  final static  byte FORK =  8;
     public  final static  byte LINK = 16;
     public  final static  byte TIME = 32;
+    public  final static  byte DEFS = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile( "^(\\w+:)?//" );
     private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?FULL_");
 
+    private final Map<String, Object> defts;
     private final Map<String, Map> enums;
     private final Map<String, Map> forms;
     private final Map<String, Map> forks;
@@ -51,11 +53,23 @@ public class SelectHelper {
     private String _path = null;
 
     public SelectHelper() {
+        defts = new LinkedHashMap();
         enums = new LinkedHashMap();
         forms = new LinkedHashMap();
         forks = new LinkedHashMap();
         files = new LinkedHashSet();
         dates = new LinkedHashSet();
+    }
+
+    /**
+     * 添加默认取值
+     * @param name
+     * @param val
+     * @return
+     */
+    public SelectHelper addDefs(String name, Object val) {
+        defts.put(name, val );
+        return this;
     }
 
     /**
@@ -155,6 +169,12 @@ public class SelectHelper {
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 
+            if (mt.containsKey("default")
+            &&  mt.containsKey("deforce")
+            &&  "blanks".equals(mt.get("deforce"))) {
+                defts.put(name, mt.get("default"));
+            }
+
             if ("enum".equals(type)) {
                 String xonf = (String) mt.get("conf");
                 String xame = (String) mt.get("enum");
@@ -216,6 +236,7 @@ public class SelectHelper {
         boolean withFork = FORK == (FORK & action);
         boolean withLink = LINK == (LINK & action);
         boolean withTime = TIME == (TIME & action);
+        boolean withDeft = DEFS == (DEFS & action);
 
         // 附带枚举数据
         if (withEnum) {
@@ -227,15 +248,17 @@ public class SelectHelper {
         }
 
         // 补全额外数据
-        if (withText || withTime || withLink) {
+        if (withText || withTime || withLink || withDeft) {
             /**/ Map  info = (Map ) values.get("info");
             List<Map> list = (List) values.get("list");
             if (info != null) {
+                if (withDeft) injectDefs(info , defts);
                 if (withText) injectText(info , enums);
                 if (withTime) injectTime(info , dates);
                 if (withLink) injectLink(info , files);
             }
             if (list != null) for ( Map  item : list ) {
+                if (withDeft) injectDefs(info , defts);
                 if (withText) injectText(item , enums);
                 if (withTime) injectTime(item , dates);
                 if (withLink) injectLink(item , files);
@@ -324,6 +347,10 @@ public class SelectHelper {
         }
     }
 
+    public void injectDefs(Map info) {
+        injectDefs(info, defts);
+    }
+
     public void injectData(Map data) {
         injectData(data, enums);
     }
@@ -342,24 +369,6 @@ public class SelectHelper {
 
     public void injectFork(Map info) {
         injectFork(Synt.listOf(info));
-    }
-
-    public void injectText(List<Map> list) {
-        for (Map info : list) {
-            injectText( info, enums );
-        }
-    }
-
-    public void injectTime(List<Map> list) {
-        for (Map info : list) {
-            injectTime(info, dates );
-        }
-    }
-
-    public void injectLink(List<Map> list) {
-        for (Map info : list) {
-            injectLink( info, files );
-        }
     }
 
     public void injectFork(List<Map> list) {
@@ -575,6 +584,20 @@ public class SelectHelper {
             } else {
                     val = hrefToLink(val);
                     Dict.setParam(info, val, key + "_link" );
+            }
+        }
+    }
+
+    private void injectDefs(Map info, Map defs) {
+        Iterator it = defs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry) it.next();
+            String   key = (String)  et.getKey();
+            Object   def =         et.getValue();
+            Object   val = Dict.getParam(info, key);
+
+            if (val == null || val.equals("")) {
+                Dict.setParam(info, def, key);
             }
         }
     }

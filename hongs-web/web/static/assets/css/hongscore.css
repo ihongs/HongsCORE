@@ -1,7 +1,7 @@
 /**
  * HongsCORE 公共样式
  * 作者: 黄弘<kevin.hongs@gmail.com>
- * 版本: 2018/07/27 23:30
+ * 版本: 2018/07/28 17:30
  */
 
 html, body, p, h1, h2, h3, h4, h5, h6, ul, ol, table {
@@ -514,8 +514,8 @@ div.bootstrap-tagsinput.form-control {
 }
 
 ul.pickbox {
-    padding-left : 0;
-    margin-bottom: 0;
+    padding: 0;
+    margin : 0;
 }
 ul.pickbox:after {
     clear: both;
@@ -562,8 +562,10 @@ ul.pickrol > li.btn-info {
 .preview {
     position: relative;
     overflow: hidden;
-    margin: 0px 5px 5px 0px;
-    border: 1px solid #ccc ;
+    box-shadow: 0 0 0.2em #000;
+	border-radius: 4px;
+    border: 0px;
+    margin: 1px;
     float : left;
 }
 .preview a {

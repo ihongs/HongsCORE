@@ -20,7 +20,7 @@ import java.util.Set;
  * </pre>
  * @author Hongs
  */
-public class IsUnique extends Rule {
+public class Diverse extends Rule {
 
     @Override
     public Object verify(Object value) throws Wrongs, HongsException {

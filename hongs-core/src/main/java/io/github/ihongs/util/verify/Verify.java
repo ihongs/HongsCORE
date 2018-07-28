@@ -143,9 +143,9 @@ public class Verify implements Veri {
         for(Map.Entry<String, List<Rule>> et : rules.entrySet()) {
             List<Rule> rulez = et.getValue();
             String     name  = et.getKey(  );
-            Object     data  = Dict.getParam(values, name);
+            Object     data  = Dict.get(values, BLANK, Dict.splitKeys(name));
 
-            data = Verify.this.verify(values, cleans, wrongz, data, name, rulez);
+            data = verify(values, cleans, wrongz, data, name, rulez);
 
             if (prompt && ! wrongz.isEmpty()) {
                 break;
@@ -178,9 +178,10 @@ public class Verify implements Veri {
             rule.setValues(values);
             rule.setCleans(cleans);
             rule.setHelper( this );
+            rule.is_set = data != BLANK;
 
             try {
-                data = rule.verify(data);
+                data = rule.verify(rule.is_set? data : null);
             } catch (Wrong  w) {
                 // 设置字段标签
                 if (w.getLocalizedCaption( ) == null) {
@@ -229,7 +230,7 @@ public class Verify implements Veri {
                 }
 
                 String name3 = name + "[" + i3 + "]";
-                data3 = Verify.this.verify(values, cleans, wrongz, data3, name3, rulez);
+                data3 = verify(values, cleans, wrongz, data3, name3, rulez);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -246,7 +247,7 @@ public class Verify implements Veri {
                 }
 
                 String name3 = name + "." + e3.getKey();
-                data3 = Verify.this.verify(values, cleans, wrongz, data3, name3, rulez);
+                data3 = verify(values, cleans, wrongz, data3, name3, rulez);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {

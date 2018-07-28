@@ -59,7 +59,7 @@ public class Unit extends Mtree {
         int n = super.add(id, rd);
 
         // 建立菜单配置
-        Unit.this.updateMenus();
+        updateMenus();
 
         return n;
     }
@@ -69,7 +69,7 @@ public class Unit extends Mtree {
         int n = super.put(id, rd);
 
         // 更新菜单配置
-        Unit.this.updateMenus();
+        updateMenus();
 
         return n;
     }
@@ -79,7 +79,7 @@ public class Unit extends Mtree {
         int n = super.del(id);
 
         // 更新菜单配置
-        Unit.this.updateMenus();
+        updateMenus();
 
         return n;
     }

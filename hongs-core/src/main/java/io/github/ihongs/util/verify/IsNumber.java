@@ -15,6 +15,10 @@ import io.github.ihongs.util.Synt;
 public class IsNumber extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
+        if (value == null || "".equals(value)) {
+            return   null; // 允许为空
+        }
+
         // 类型转换
         String type = Synt.declare(params.get("type"), "");
         Number  num ;

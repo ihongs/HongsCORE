@@ -16,11 +16,11 @@ public class DoubleField implements IField {
         return new StoredField(    k, Synt.declare(v, 0D));
     }
     @Override
-    public Field got(String k, Object v) {
+    public Field whr(String k, Object v) {
         return new DoublePoint(":"+k, Synt.declare(v, 0L));
     }
     @Override
-    public Field srt(String k, Object v) {
+    public Field odr(String k, Object v) {
         return new DoubleDocValuesField("."+k, Synt.declare(v, 0.0D));
     }
 }

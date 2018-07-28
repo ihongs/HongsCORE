@@ -1561,14 +1561,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 Set a = Synt.asSet(v);
                 if (q && a != null && !a.isEmpty()) {
                     for (Object w: a) {
-                        doc.add(f.got(k, w));
+                        doc.add(f.whr(k, w));
                     }
                 }
                 // 排序值不能存多个
                 if (s && a != null && !a.isEmpty()) {
 //                  for (Object w: a) {
                         v = a.toArray()[ 0 ];
-                        doc.add(f.srt(k, v));
+                        doc.add(f.odr(k, v));
 //                  }
                 }
             } else
@@ -1576,10 +1576,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 doc.add(f.get( k, v, u));
 
                 if (q) {
-                    doc.add(f.got(k, v));
+                    doc.add(f.whr(k, v));
                 }
                 if (s) {
-                    doc.add(f.srt(k, v));
+                    doc.add(f.odr(k, v));
                 }
             }
         }

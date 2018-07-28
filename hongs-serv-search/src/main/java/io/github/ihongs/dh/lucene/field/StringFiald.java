@@ -12,11 +12,11 @@ import org.apache.lucene.util.BytesRef;
  */
 public class StringFiald implements IField {
     @Override
-    public Field got(String k, Object v) {
+    public Field whr(String k, Object v) {
         return null; // 字符类型本身即可用于过滤, 无需额外增加过滤字段
     }
     @Override
-    public Field srt(String k, Object v) {
+    public Field odr(String k, Object v) {
         return new SortedDocValuesField("."+k, new BytesRef(v.toString()));
     }
     @Override

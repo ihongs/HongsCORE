@@ -53,7 +53,7 @@ legend {
 }
 
 .btn .close {
-    margin-right: -15px;
+    margin-right: -13px;
     margin-top: -7.5px;
     padding: 0 6px;
 }
@@ -86,10 +86,9 @@ legend {
 .btn,
 .btn span,
 .form-control {
-    line-height : 1.42857143;
+    line-height: 1.42857143;
 }
 .btn .glyphicon {
-    margin-right: 8px;
     font-size : 0.8em;
 }
 select.form-control[multiple],
@@ -116,7 +115,7 @@ textarea.form-control {
 }
 
 .center-block {
-    float: none;
+    float  : none;
 }
 .help-block:empty {
     display: none;
@@ -125,10 +124,12 @@ textarea.form-control {
     margin-top: 0;
     margin-bottom: 0;
 }
-
 .radio    label ,
 .checkbox label {
-    padding-right: 15px;
+    margin-right: 1.0em;
+}
+.btn .glyphicon {
+    margin-right: 0.5em;
 }
 
 /** 可后退的导航条 **/
@@ -258,52 +259,8 @@ div.bootstrap-tagsinput.form-control {
 .modal > .alert.alert-success {
     background: rgba( 0 ,152, 1 ,0.8);
 }
-
-#headbox .uhead {
-    width : 29px;
-    height: 29px;
-    margin-top   : -6px;
-    margin-bottom: -9px;
-    border-radius: 29px;
-    display: inline-block;
-    background-position: center;
-    background-repeat: no-repeat;
-}
-#headbox .badge {
-    margin-top  : -29px;
-    margin-left : -8px;
-    margin-right: -8px;
-}
-
-#footbox.navbar {
-    margin-top: 0;
-    margin-bottom: 0;
-    min-height: 32px;
-    background: #fff;
-    border-top-color: #fff;
-    border-bottom-color: #fff;
-}
-#footbox blockquote {
-    background: #f8f8f8;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-#footbox blockquote p {
-    font-size: 10px;
-}
-#footbox blockquote small {
-    padding-left: 0.5em; text-align: right;
-    display: inline-block;
-}
-
-#bodybox {
-    margin-top   : 58px; /* 顶部菜单 */
-    margin-bottom: 50px; /* 底部通栏 */
-}
-
-.main-context ,
-.side-context {
-    padding: 0;
+.modal-header .close {
+    margin-top: 2px;
 }
 
 .labs>*>h1,
@@ -315,13 +272,46 @@ div.bootstrap-tagsinput.form-control {
     display: none;
 }
 
+#headbox .uhead {
+    width : 29px;
+    height: 29px;
+    border-radius: 50% ;
+    margin-bottom: -9px;
+    margin-top   : -6px;
+    display: inline-block;
+    background-position : center;
+    background-repeat: no-repeat;
+}
+
+#footbox.navbar {
+    background: #fcfcfc;
+    min-height: 32px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+#footbox blockquote {
+    font-size : 10px;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+#bodybox {
+    margin-top: 58px;    /* 顶部菜单 */
+    margin-bottom: 50px; /* 底部通栏 */
+}
+
+.main-context ,
+.side-context {
+    padding: 0;
+}
+
 /** 列表 **/
 
 .listbox ,
 .pagebox ,
 .toolbox ,
 .findbox {
-    margin-bottom: 15.75px
+    margin-bottom: 15px;
 }
 .toolbox.invisible ,
 .findbox.invisible {
@@ -337,16 +327,11 @@ div.bootstrap-tagsinput.form-control {
 .pagebox .alert,
 .pagebox .pager,
 .pagebox .pagination {
-    margin: 0;
+    margin : 0;
 }
 .pagebox .page-count {
-    margin: 0;
+    margin : 0;
     padding: 9px 13px;
-    line-height: 18px;
-}
-
-.listbox .table thead {
-    font-weight: bold;
 }
 
 .listbox ._admin,
@@ -372,19 +357,19 @@ div.bootstrap-tagsinput.form-control {
     cursor: pointer;
 }
 .listbox thead .sort-ico {
+    display: inline-block;
     position: relative;
     top: 1px;
-    display: inline-block;
     font-family: 'Glyphicons Halflings';
     font-style: normal;
     font-weight: 400;
-    line-height: 1;
+    line-height: 1em;
     -webkit-font-smoothing: antialiased;
 }
 .listbox thead .sort-ico:before {
     color: #2780e3;
     font-size: 0.8em;
-    margin-left:0.5em;
+    margin-left: 0.5em;
 }
 .listbox thead .sort-a-z .sort-ico:before {
     content: "\e151";
@@ -421,26 +406,26 @@ div.bootstrap-tagsinput.form-control {
 /** 树形 **/
 
 .tree-list {
-    margin-left: 13px;
+    margin-left: 1em;
     border-left: 1px dotted #eee;
 }
 .treebox:hover .tree-list {
     border-left: 1px dotted #ccc;
 }
 .tree-node {
+    line-height: 2.2em;
     cursor: pointer;
-    line-height: 30px;
 }
 .tree-root {
-    border-left: 0;
-    margin-left: 0;
     padding-left: 0;
+    border-left : 0;
+    margin-left : 0;
 }
 .tree-node table,
 .tree-node table td {
+    margin: 0 4px;
     border: 0;
     border-spacing: 0;
-    margin: 0 4px;
 }
 .tree-curr>table,
 .tree-curr>table td {
@@ -523,6 +508,11 @@ ul.pickbox > li.btn {
 ul.pickbox > li.btn span {
     float: left;
     overflow: hidden;
+}
+ul.pickbox > li.btn span.picktxt {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 90%;
 }
 ul.pickmul > li.btn {
     margin-bottom: 1px;

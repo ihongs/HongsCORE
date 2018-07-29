@@ -10,6 +10,9 @@ html, body, p, h1, h2, h3, h4, h5, h6, ul, ol, table {
 label, input, button, select, textarea {
     font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
 }
+.btn, .tooltip, .popover {
+    font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
+}
 code, pre, var, dfn, kbd {
     font-family: "Courier New",Monaco,Menlo,monospace;
 }
@@ -83,6 +86,7 @@ textarea {
     line-height: 1.42857143;
 }
 .btn .glyphicon {
+    margin-top: 0.10em;
     font-size : 0.80em;
 }
 select.form-control[multiple],
@@ -519,6 +523,11 @@ ul.pickrol > li.btn {
     margin-bottom: 0px;
     padding-right: 0px;
     padding-left : 0px;
+    box-shadow   : none;
+    font-weight  : inherit;
+    border-color : transparent;
+    background   : transparent;
+    color: inherit;
 }
 ul.pickrol .close {
     display: none ;

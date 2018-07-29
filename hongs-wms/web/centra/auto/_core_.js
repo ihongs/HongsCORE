@@ -106,6 +106,7 @@ function hsListFillOpen(x, v, n, t) {
     if (!$.isArray( v )) {
         v = [v];
     }
+    x.addClass("dont-check"); // 点击链接不要选中行
 
     switch  (t) {
         case "email": n = "glyphicon glyphicon-envelope"; break;
@@ -153,12 +154,6 @@ function hsListFillOpen(x, v, n, t) {
         u.appendTo(m.find(".modal-body"));
         m.find("h4").text("点击打开..." );
         m.css ("text-align", "left");
-        m.click(function(e) {
-            if (! $(e.target).is(".close,span")) {
-                e.preventDefault(  );
-                e.stopPropagation( );
-            }
-        });
         a.click(function( ) {
             m.modal("show");
         });

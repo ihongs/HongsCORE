@@ -794,13 +794,15 @@ jQuery.fn.hsList = function(opts) {
 
 (function($) {
     $(document)
-    .on("click", ".listbox tbody td",
+    .on("click" , ".listbox tbody td",
     function(evt) {
-        // 当点击表格列时单选
         // 工具按钮有三类, 打开|打开选中|发送选中
         // 打开选中只能选一行, 发送选中可以选多行
-        // 但是复选框太小不方便操作, 故让点击单元格即单选该行, 方便操作
-        if($(evt.target).closest("a,input,textarea,select,button").size()) return;
+        // 复选框太小不便操作, 当点击表格列时单选
+        if ($(evt.target).is("a,input,textarea,button,select,option")
+        ||  $(this).is(".dont-check")) {
+            return;
+        }
         var tr = $(this).closest("tr");
         var ck = tr.find(".checkone" );
         if (this  !=  ck.closest("td")[0])

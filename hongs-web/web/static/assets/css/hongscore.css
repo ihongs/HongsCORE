@@ -104,13 +104,6 @@ textarea.form-control {
 .dropdown-toggle {
     cursor: pointer;
 }
-.dropdown-more a {
-    width: 100%;
-    display : block ;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
 fieldset>.dropdown-body ,
 fieldset>.dropdown-menu {
     margin-top: -10px;

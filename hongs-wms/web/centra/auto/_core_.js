@@ -123,8 +123,8 @@ function hsListFillOpen(x, v, n, t) {
         x.append(a);
     } else {
         var a = $('<a href="javascript:;" data-toggle="dropdown"></a>');
-        var u = $('<ul class="dropdown-menu"></ul>');
-        var l = $('<li class="dropdown-omit"></li>');
+        var u = $('<ul class="dropdown-menu dropdown-more"></ul>');
+        var l = $('<li></li>');
         a.append('<span class="'+n+'"></span>');
         x.append(a);
         x.append(u);

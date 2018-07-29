@@ -17,12 +17,6 @@ code, pre, var, dfn, kbd {
 textarea {
     resize: none;
 }
-fieldset {
-    margin-bottom: 15px;
-}
-legend {
-    margin-bottom:  0px;
-}
 
 /** Bootstrap 调整 **/
 
@@ -89,14 +83,14 @@ legend {
     line-height: 1.42857143;
 }
 .btn .glyphicon {
-    font-size : 0.8em;
+    font-size : 0.80em;
 }
 select.form-control[multiple],
 textarea.form-control {
-    min-height: 8.4em;
+    min-height: 8.48em;
 }
 .form-control[disabled] {
-    background: #eee;
+    background: #ddd;
     cursor: default;
 }
 .form-control[readonly] {
@@ -106,12 +100,16 @@ textarea.form-control {
 .dropdown-toggle {
     cursor: pointer;
 }
-.dropdown-omit a {
-    width: 160px;
+.dropdown-more a {
+    width: 100%;
+    display : block ;
     overflow: hidden;
-    text-overflow: ellipsis;
-    word-break : normal;
     white-space: nowrap;
+    text-overflow: ellipsis;
+}
+fieldset>.dropdown-body ,
+fieldset>.dropdown-menu {
+    margin-top: -10px;
 }
 
 .center-block {

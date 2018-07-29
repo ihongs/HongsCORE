@@ -538,12 +538,12 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var u = v[ i ][vl];
             var s = v[ i ][tl];
-            var set = jQuery('<fieldset>'
-                            +'<legend class="dropdown-toggle">'
-                            +'<input type="checkbox" class="checkall dropdown-deny"/>'
-                            +'&nbsp;<span></span><b class="caret"></b>'
+            var set = jQuery('<fieldset class=" dropup ">'
+                            +'<legend class=" dropdown-toggle ">'
+                            +'<input type="checkbox" class="dropdown-deny checkall"/>'
+                            +'<span></span><b class="caret"></b>'
                             +'</legend>'
-                            +'<div class="dropdown-body '+bc+'"></div>'
+                            +'<div class=" dropdown-body clearfix ' + bc + ' "></div>'
                             +'</fieldset>');
             set.find("span").first().text(s);
             inp.append(set );
@@ -551,7 +551,8 @@ HsForm.prototype = {
 
             for(var j = 0; j < u.length; j ++) {
                 var w = u[ j ];
-                var lab = jQuery('<label class="'+ic+'"><input type="checkbox"/>'
+                var lab = jQuery('<label class="'+ ic +'">'
+                                +'<input type="checkbox"/>'
                                 +'<span></span></label>');
                 lab.find("input").attr("name", n).data(w)
                                  .val (hsGetValue(w, vk));

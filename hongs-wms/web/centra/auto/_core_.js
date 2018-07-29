@@ -117,32 +117,51 @@ function hsListFillOpen(x, v, n, t) {
     }
 
     if (v.length == 1) {
-        var a = $('<a href="" target="_blank"></a>');
+        var a = $('<a target="_blank" '+'><span class="'+n+'"></span></a>');
         a.attr("href", t === "email" ? "mailto:" + v[0] : v[0]);
-        a.append('<span class="'+n+'"></span>');
-        x.append(a);
+        a.appendTo(x);
     } else {
-        var a = $('<a href="javascript:;" data-toggle="dropdown"></a>');
-        var u = $('<ul class="dropdown-menu dropdown-more"></ul>');
+        var a = $('<a href="javascript:;"><span class="'+n+'"></span></a>');
+        var m = $('<div class="modal fade" role="dialog" tabindex="-1">'
+                + '<div class="modal-dialog modal-sm " role="document">'
+                + '<div class="modal-content">'
+                + '<div class="modal-header ">'
+                + '<button type="button" class="close" data-dismiss="modal">'
+                + '<span >&times;</span></button>'
+                + '<h4  class="modal-title"></h4>'
+                + '</div>'
+                + '<div class="modal-body">'
+                + '</div></div></div></div>');
+        var u = $('<ul></ul>');
         var l = $('<li></li>');
-        a.append('<span class="'+n+'"></span>');
-        x.append(a);
-        x.append(u);
-        x.addClass("dropdown");
+        a.appendTo(x);
+        m.appendTo(x);
         for(var i = 0; i < v.length; i ++) {
             var txt, url;
             if (t === "email") {
                 url = "mailto:"+ v[i];
                 txt = v[i];
             } else {
+                url = v[i];
                 txt = v[i].replace(/[?#].*/, '')
                           .replace( /.*\// , '');
-                url = v[i];
             }
-            var b = $('<a target="_blank"></a>')
-                    .attr("href", url).text(txt);
-            u.append(l.clone( ).append(b));
+            var b = $('<a target="_blank"></a>');
+            b.attr("href", url).text(txt);
+            u.append(l.clone().append(b));
         }
+        u.appendTo(m.find(".modal-body"));
+        m.find("h4").text("点击打开..." );
+        m.css ("text-align", "left");
+        m.click(function(e) {
+            if (! $(e.target).is(".close,span")) {
+                e.preventDefault(  );
+                e.stopPropagation( );
+            }
+        });
+        a.click(function( ) {
+            m.modal("show");
+        });
     }
 }
 

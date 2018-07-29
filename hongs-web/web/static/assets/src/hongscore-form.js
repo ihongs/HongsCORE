@@ -538,7 +538,7 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var u = v[ i ][vl];
             var s = v[ i ][tl];
-            var set = jQuery('<fieldset class=" dropup ">'
+            var set = jQuery('<fieldset>'
                             +'<legend class=" dropdown-toggle ">'
                             +'<input type="checkbox" class="dropdown-deny checkall"/>'
                             +'<span></span><b class="caret"></b>'

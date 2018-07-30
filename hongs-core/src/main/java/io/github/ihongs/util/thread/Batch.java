@@ -41,7 +41,7 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
      * @param timeout   间隔此毫秒时间后开始执行
      * @param sizeout   缓冲区长度达此数量后执行
      * @param diverse   是否去重(缓冲类型): true 为 Set, false 为 List
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     protected Batch(String name, int maxTasks, int maxServs, int timeout, int sizeout, boolean diverse) throws HongsException {
         servs = Executors.newCachedThreadPool(  );

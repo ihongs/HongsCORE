@@ -352,7 +352,7 @@ public class DB
    * 快速取 FetchCase
    * @param tableName 内部表名
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public FetchCase with (String tableName)
     throws HongsException

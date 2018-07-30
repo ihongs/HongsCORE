@@ -83,7 +83,7 @@ public final class FetchPage
    * 1 为首页, 0 视为 1, 可用负数逆向推算,
    * 如果可能为负数则建议先于其他参数设置.
    * @param page
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public void setPage(int page) throws HongsException
   {

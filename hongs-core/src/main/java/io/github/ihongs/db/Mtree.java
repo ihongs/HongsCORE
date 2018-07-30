@@ -129,7 +129,7 @@ public class Mtree extends Model
    * 调用 Mtree 中相同方法并不会使用此 model 的方法
    *
    * @param model
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public Mtree(Model model)
     throws HongsException
@@ -1069,7 +1069,7 @@ public class Mtree extends Model
      *
      * @param model
      * @return
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     public static Mtree getInstance(Model model) throws HongsException {
         Map    core  = model.db.modelObjects;

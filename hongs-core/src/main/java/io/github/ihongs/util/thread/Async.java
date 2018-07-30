@@ -31,7 +31,7 @@ public abstract class Async<T> extends CoreSerial implements AutoCloseable {
      * @param name      任务集名称, 退出时保存现有任务待下次启动时执行, 为 null 则不保存
      * @param maxTasks  最多容纳的任务数量
      * @param maxServs  最多可用的线程数量
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     protected Async(String name, int maxTasks, int maxServs) throws HongsException {
         servs = Executors.newCachedThreadPool(  );

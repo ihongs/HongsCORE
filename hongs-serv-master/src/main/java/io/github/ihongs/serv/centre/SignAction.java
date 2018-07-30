@@ -77,7 +77,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 检查
      * @param ah
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     @Action("user/unique")
     public void userUnique(ActionHelper ah) throws HongsException {

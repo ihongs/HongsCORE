@@ -98,7 +98,7 @@ public abstract class BaseComparator extends SimpleFieldComparator<Long> {
      * 取得并转化数据
      * @param d 文档索引
      * @return
-     * @throws java.io.IOException
+     * @throws IOException
      */
     protected abstract long worth(int d) throws IOException;
 

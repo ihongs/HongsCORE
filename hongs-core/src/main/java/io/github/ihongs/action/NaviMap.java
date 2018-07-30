@@ -641,7 +641,7 @@ public class NaviMap
   /**
    * 获取当前用户有权的角色
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public List<Map> getRoleTranslated()
   throws HongsException {
@@ -782,7 +782,7 @@ public class NaviMap
   /**
    * 获取当前用户有权的菜单
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public List<Map> getMenuTranslated()
   throws HongsException {

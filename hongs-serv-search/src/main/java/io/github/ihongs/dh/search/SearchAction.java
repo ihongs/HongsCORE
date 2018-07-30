@@ -127,7 +127,7 @@ public class SearchAction extends LuceneAction {
      * @param fs 字段配置
      * @param rd 请求数据
      * @param sd 响应数据
-     * @throws io.github.ihongs.HongsException
+     * @throws HongsException
      */
     protected void titled(String mod, Map fs, Map rd, Map sd) throws HongsException {
         Set ab = Synt.toTerms(rd.get(Cnst.AB_KEY));

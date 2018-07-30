@@ -10,6 +10,7 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Assign;
 import io.github.ihongs.action.anno.Filter;
 import io.github.ihongs.action.anno.FilterInvoker;
+import io.github.ihongs.dh.IActing;
 
 import java.util.Map;
 import java.lang.annotation.Annotation;
@@ -187,8 +188,8 @@ public class ActionRunner {
         helper.setAttribute(ActionRunner.class.getName(), this);
 
         // Initialize action
-        if (object instanceof io.github.ihongs.dh.IActing) {
-           ((io.github.ihongs.dh.IActing) object).acting(helper, this);
+        if (object instanceof IActing ) {
+           ( ( IActing ) object ).acting( helper, this );
         }
     }
 

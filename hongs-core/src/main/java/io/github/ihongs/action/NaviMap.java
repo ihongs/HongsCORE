@@ -5,6 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import java.io.File;
 import java.io.FileInputStream;
@@ -612,15 +613,15 @@ public class NaviMap
     try {
       lang = CoreLocale.getInstance(name).clone();
     }
-    catch (io.github.ihongs.HongsError e) {
-      if  (  e.getErrno() != 0x2a) {
+    catch (HongsError e) {
+      if  (e.getErrno( ) != 0x2a) {
         throw e;
       }
-      // 语言文件不存在则拿一个空代替
-      lang  = new CoreLocale(null);
+      lang = new CoreLocale(null);
     }
-    for (  String namz : imports ) {
-        lang.fill(namz);
+    // 需加载所有下级菜单语言资源
+    for ( String namz : imports ) {
+      lang.fill (namz);
     }
     return lang;
   }

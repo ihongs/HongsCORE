@@ -90,7 +90,7 @@ public class PresetHelper {
      * @param deft 默认值
      * @param defs 防御值
      * @return
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     public PresetHelper addItemsByForm(String conf, String name, String[] deft, String[] defs)
     throws HongsException {

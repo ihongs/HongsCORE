@@ -24,7 +24,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 注册
      * @param ah
-     * @throws io.github.ihongs.HongsException
+     * @throws HongsException
      */
     @Action("user/create")
     @Preset(conf="master", form="mine")
@@ -77,7 +77,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 检查
      * @param ah
-     * @throws io.github.ihongs.HongsException
+     * @throws HongsException
      */
     @Action("user/unique")
     public void userUnique(ActionHelper ah) throws HongsException {

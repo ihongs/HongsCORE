@@ -1,7 +1,6 @@
 package io.github.ihongs;
 
 import io.github.ihongs.util.Tool;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.io.File;
@@ -18,7 +17,7 @@ import java.io.File;
  * <h3>配置选项:</h3>
  * <pre>
  * core.load.locale.once  为true则仅加载一次, 为false由Core控制
- * core.langauge.link.xx  语言链接, xx为语言, 如:link.zh=zh_CN
+ * core.langauge.link.xx  语言链接, xx为语言, 如:link.zh=zh_cn
  * </pre>
  *
  * @author Hongs
@@ -342,26 +341,28 @@ public class CoreLocale
   /**
    * 从HEAD串中获取支持的语言
    * @param lang
-   * @return 语言标识, 如zh,zh_CN, 不存在为null
+   * @return 语言标识, 如zh,zh_cn, 不存在为null
    */
   public static String getAcceptLanguage(String lang)
   {
-    CoreConfig conf = Core.getInstance(CoreConfig.class);
-    String[]   arr1 = lang.replace('-' , '_').split(",");
+    CoreConfig conf = CoreConfig.getInstance();
+    String     sups = "," + conf.getProperty("core.language.support", "zh_cn") + ",";
+    String[]   arr1 = lang.toLowerCase(   )
+                          .replace('-','_')
+                          .split  (  ","  );
     String[]   arr2;
-    int        p;
 
-    for (int i = 0; i < arr1.length; i ++)
+    for (int i = 0; i < arr1.length; i ++ )
     {
       arr2 = arr1[i].split(";" , 2);
       lang = arr2[0];
-      if (CoreLocale.hasAcceptLanguage(lang))
+      if (sups.contains("," + lang + ",") )
       {
         return lang;
       }
 
       lang = conf.getProperty("core.language.like." + lang);
-      if (CoreLocale.hasAcceptLanguage(lang))
+      if (sups.contains("," + lang + ",") )
       {
         return lang;
       }
@@ -370,21 +371,17 @@ public class CoreLocale
        * 如果语言字串中带有"_"符号, 则按"_"拆分去后面部分,
        * 检查其是否是允许的语种.
        */
+      if (arr2[0].indexOf('_') < 0) continue;
 
-      if ( arr2[0].indexOf('_')<0)
-      {
-        continue;
-      }
-
-      arr2 = arr2[0].split("_", 2);
+      arr2 = arr2[0].split("_" , 2);
       lang = arr2[0];
-      if (CoreLocale.hasAcceptLanguage(lang))
+      if (sups.contains("," + lang + ",") )
       {
         return lang;
       }
 
       lang = conf.getProperty("core.language.like." + lang);
-      if (CoreLocale.hasAcceptLanguage(lang))
+      if (sups.contains("," + lang + ",") )
       {
         return lang;
       }
@@ -400,10 +397,10 @@ public class CoreLocale
    */
   public static boolean hasAcceptLanguage(String lang)
   {
-    CoreConfig conf = CoreConfig.getInstance();
-    String x = conf.getProperty("core.language.support",
-               conf.getProperty("core.language.default", "zh"));
-    return /**/Arrays.asList( x.split( "," ) ).contains( lang );
+    String sups = CoreConfig
+        .getInstance( /**/ )
+        .getProperty("core.language.support", "zh_cn");
+    return (","+ sups +"," ).contains( ","+ lang +",");
   }
 
   /**

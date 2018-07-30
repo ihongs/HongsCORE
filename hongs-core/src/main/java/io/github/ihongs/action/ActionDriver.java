@@ -161,7 +161,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
             // 设置默认语言
             cnf = CoreConfig.getInstance("default");
-            Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
+            Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_cn"));
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
         }
 
@@ -320,7 +320,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-        Core.ACTION_LANG.set(conf.getProperty("core.language.default","zh_CN"));
+        Core.ACTION_LANG.set(conf.getProperty("core.language.default","zh_cn"));
         if (conf.getProperty("core.language.probing", false)) {
             /**
              * 语言可以记录到Session/Cookies里

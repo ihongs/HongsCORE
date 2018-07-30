@@ -266,12 +266,12 @@ public class CmdletRunner
         lang = CoreLocale.getAcceptLanguage(lang);
         if (lang == null)
         {
-          lang = cnf.getProperty("core.language.default", "zh_CN");
+          lang = cnf.getProperty("core.language.default", "zh_cn");
         }
       }
       else
       {
-          lang = cnf.getProperty("core.language.default", "zh_CN");
+          lang = cnf.getProperty("core.language.default", "zh_cn");
       }
     }
     else

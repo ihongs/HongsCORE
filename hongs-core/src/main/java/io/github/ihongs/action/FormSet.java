@@ -128,7 +128,7 @@ public class FormSet
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if ( null == is )
         {
-            throw new io.github.ihongs.HongsException(0x10e8,
+            throw new HongsException(0x10e8,
                 "Can not find the config file '" + name + Cnst.FORM_EXT + ".xml'.");
         }
     }

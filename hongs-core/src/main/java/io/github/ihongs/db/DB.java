@@ -245,11 +245,11 @@ public class DB
 
       if (!source.containsKey("jdbc"))
       {
-        throw new   io.github.ihongs.HongsException(0x1023, "Can not find jdbc in source");
+        throw new HongsException(0x1023, "Can not find jdbc in source");
       }
       if (!source.containsKey("name"))
       {
-        throw new   io.github.ihongs.HongsException(0x1023, "Can not find name in source");
+        throw new HongsException(0x1023, "Can not find name in source");
       }
 
       String mode = (String)source.get("jdbc");
@@ -401,7 +401,7 @@ public class DB
 
     if (!this.tableConfigs.containsKey(tableName))
     {
-      throw new io.github.ihongs.HongsException(0x1039, "Can not find config for table '"+this.name+"."+tableName+"'.");
+      throw new HongsException(0x1039, "Can not find config for table '"+this.name+"."+tableName+"'.");
     }
 
     /**
@@ -458,7 +458,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103a, ex);
+      throw new HongsException(0x103a, ex);
     }
 
     /**
@@ -471,11 +471,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103b, ex);
+      throw new HongsException(0x103b, ex);
     }
     catch (SecurityException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103b, ex);
+      throw new HongsException(0x103b, ex);
     }
 
     /**
@@ -488,19 +488,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103c, ex);
+      throw new HongsException(0x103c, ex);
     }
     catch (IllegalAccessException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103c, ex);
+      throw new HongsException(0x103c, ex);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103c, ex);
+      throw new HongsException(0x103c, ex);
     }
     catch (InvocationTargetException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103c, ex);
+      throw new HongsException(0x103c, ex);
     }
 
     this.tableObjects.put(tableName, tobj);
@@ -536,7 +536,7 @@ public class DB
 
     if (!this.tableConfigs.containsKey(tableName))
     {
-      throw new io.github.ihongs.HongsException(0x1039, "Can not find config for table '"+this.name+"."+tableName+"'.");
+      throw new HongsException(0x1039, "Can not find config for table '"+this.name+"."+tableName+"'.");
     }
 
     /**
@@ -580,7 +580,7 @@ public class DB
     }
     catch (ClassNotFoundException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103d, ex);
+      throw new HongsException(0x103d, ex);
     }
 
     /**
@@ -593,11 +593,11 @@ public class DB
     }
     catch (NoSuchMethodException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103e, ex);
+      throw new HongsException(0x103e, ex);
     }
     catch (SecurityException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103e, ex);
+      throw new HongsException(0x103e, ex);
     }
 
     /**
@@ -610,19 +610,19 @@ public class DB
     }
     catch (InstantiationException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103f, ex);
+      throw new HongsException(0x103f, ex);
     }
     catch (IllegalAccessException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103f, ex);
+      throw new HongsException(0x103f, ex);
     }
     catch (IllegalArgumentException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103f, ex);
+      throw new HongsException(0x103f, ex);
     }
     catch (InvocationTargetException ex)
     {
-      throw new io.github.ihongs.HongsException(0x103f, ex);
+      throw new HongsException(0x103f, ex);
     }
 
     this.modelObjects.put(tableName, mobj);

@@ -136,7 +136,7 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
      * 设置过期
      * @param key
      * @param exp
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     @Override
     public void set(String key, long exp) throws HongsException {

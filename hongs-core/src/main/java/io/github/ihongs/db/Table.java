@@ -349,7 +349,7 @@ public class Table
    * @param where
    * @param params
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public int delete(String where, Object... params)
     throws HongsException
@@ -388,7 +388,7 @@ public class Table
    * 获取特殊字段名
    * @param field
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public String getField(String field)
     throws HongsException
@@ -908,7 +908,7 @@ public class Table
    * @param tnam
    * @param pkey
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public static Table newInstance(DB db, String name, String tnam, String pkey)
     throws HongsException
@@ -927,7 +927,7 @@ public class Table
    * @param name
    * @param pkey
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public static Table newInstance(DB db, String name, String pkey)
     throws HongsException
@@ -940,7 +940,7 @@ public class Table
    * @param db
    * @param name
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public static Table newInstance(DB db, String name)
     throws HongsException

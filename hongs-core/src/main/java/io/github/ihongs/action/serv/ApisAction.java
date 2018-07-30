@@ -152,7 +152,7 @@ public class ApisAction
      * 将非通用键值放到 data 下
      * 通用键有: ok,ern,err,msg
      * @param resp
-     * @throws ServletException
+     * @throws javax.servlet.ServletException
      */
     public static void wrapData(Map resp) throws ServletException {
         Map    data;

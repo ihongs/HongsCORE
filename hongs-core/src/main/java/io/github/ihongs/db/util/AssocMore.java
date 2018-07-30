@@ -144,7 +144,7 @@ public class AssocMore {
    * @param caze   查询体
    * @param assocs 关联配置
    * @return 结果列表
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public static List fetchMore
     (Table table, FetchCase caze, Map assocs)
@@ -607,7 +607,7 @@ public class AssocMore {
      * @param keys   判断改变的键
      * @param where  更新/删除范围
      * @param params where 的参数
-     * @throws HongsException
+     * @throws io.github.ihongs.HongsException
      */
     public static void updateMore(
         Table        table,

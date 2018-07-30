@@ -94,7 +94,7 @@ implements IEntity
    * 综合提取方法
    * @param rd
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   @Override
   public Map search(Map rd)
@@ -108,7 +108,7 @@ implements IEntity
    * @param rd
    * @param caze
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public Map search(Map rd, FetchCase caze)
     throws HongsException
@@ -132,7 +132,7 @@ implements IEntity
    *
    * @param rd
    * @return 新增数据
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   @Override
   public Map create(Map rd)
@@ -147,7 +147,7 @@ implements IEntity
    * @param rd
    * @param caze
    * @return 新增数据
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public Map create(Map rd, FetchCase caze)
     throws HongsException
@@ -392,7 +392,7 @@ implements IEntity
    * 有 id 则修改, 无 id 则添加
    * @param rd
    * @return
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public String set(Map rd)
     throws HongsException
@@ -447,7 +447,7 @@ implements IEntity
    * @param id
    * @param rd
    * @return 添加条数
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   public int add(String id, Map rd)
     throws HongsException
@@ -805,7 +805,7 @@ implements IEntity
    * @param caze
    * @param rd
    * @param id
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   protected void permit(FetchCase caze, Map rd, Set id)
     throws HongsException

@@ -392,7 +392,7 @@ public abstract class CoreSerial
   /**
    * 从当前对象获取属性写入缓存
    * @param map
-   * @throws HongsException
+   * @throws io.github.ihongs.HongsException
    */
   protected void save(Map<String, Object> map)
     throws HongsException

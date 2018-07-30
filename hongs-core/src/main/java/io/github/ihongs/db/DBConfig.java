@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Data;
 import java.io.File;
@@ -102,7 +103,7 @@ public class DBConfig
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new io.github.ihongs.HongsError(0x2a,
+            throw new HongsError(0x2a,
                 "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'.");
         }
     }
@@ -162,7 +163,7 @@ public class DBConfig
     Element root = doc.getDocumentElement();
     if (!root.hasChildNodes())
     {
-      throw new io.github.ihongs.HongsException(0x1065, "Can not find root element in config document.");
+      throw new HongsException(0x1065, "Can not find root element in config document.");
     }
 
     String attr;
@@ -270,15 +271,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1063, ex);
+      throw new  HongsException(0x1063, ex);
     }
     catch (SAXException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1063, ex);
+      throw new  HongsException(0x1063, ex);
     }
-    catch (IOException ex)
+    catch ( IOException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1067, ex);
+      throw new  HongsException(0x1067, ex);
     }
 
     return new DBConfig(doc);
@@ -303,15 +304,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1063, ex);
+      throw new  HongsException(0x1063, ex);
     }
     catch (SAXException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1063, ex);
+      throw new  HongsException(0x1063, ex);
     }
-    catch (IOException ex)
+    catch ( IOException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1069, ex);
+      throw new  HongsException(0x1069, ex);
     }
 
     return new DBConfig(doc);
@@ -336,15 +337,15 @@ public class DBConfig
     }
     catch (ParserConfigurationException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1063, ex);
+      throw new  HongsException(0x1063, ex);
     }
     catch (SAXException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1063, ex);
+      throw new  HongsException(0x1063, ex);
     }
-    catch (IOException ex)
+    catch ( IOException ex)
     {
-      throw new io.github.ihongs.HongsException(0x1069, ex);
+      throw new  HongsException(0x1069, ex);
     }
 
     return new DBConfig(doc);

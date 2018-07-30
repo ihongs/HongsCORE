@@ -128,8 +128,8 @@ public class CoreConfig
   {
     try {
         this.load(name);
-    } catch (io.github.ihongs.HongsError e) {
-        if  (  e.getErrno() != 0x2a) {
+    } catch (HongsError e) {
+        if  (e.getErrno( ) != 0x2a) {
             throw e;
         }
     }

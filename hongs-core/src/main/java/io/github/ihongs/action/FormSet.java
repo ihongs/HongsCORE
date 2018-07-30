@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreSerial;
+import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Synt;
@@ -380,11 +381,11 @@ public class FormSet
     try {
       return CoreLocale.getInstance(name);
     }
-    catch (io.github.ihongs.HongsError e) {
-      if  (  e.getErrno() != 0x2a) {
+    catch (HongsError e) {
+      if  (e.getErrno( ) != 0x2a) {
         throw e;
       }
-      return CoreLocale.getInstance("default");
+      return new CoreLocale(null);
     }
   }
 

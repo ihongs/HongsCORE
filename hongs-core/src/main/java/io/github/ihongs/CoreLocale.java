@@ -272,7 +272,7 @@ public class CoreLocale
     {
       return null;
     }
-    if (!dlng.equals(lang) && hasAcceptLanguage(name, dlng))
+    if (!dlng.equals(lang) && hasLangFile(name, dlng))
     {
       return new CoreLocale(name, dlng);
     }
@@ -287,7 +287,7 @@ public class CoreLocale
     {
       return null;
     }
-    if (!dlng.equals(lang) && hasAcceptLanguage(name, dlng))
+    if (!dlng.equals(lang) && hasLangFile(name, dlng))
     {
       return new CoreLocale(name, dlng);
     }
@@ -306,7 +306,7 @@ public class CoreLocale
     {
       return null;
     }
-    if (!dlng.equals(lang) && hasAcceptLanguage(name, dlng))
+    if (!dlng.equals(lang) && hasLangFile(name, dlng))
     {
       return new CoreLocale(name, dlng);
     }
@@ -321,7 +321,7 @@ public class CoreLocale
     {
       return null;
     }
-    if (!dlng.equals(lang) && hasAcceptLanguage(name, dlng))
+    if (!dlng.equals(lang) && hasLangFile(name, dlng))
     {
       return new CoreLocale(name, dlng);
     }
@@ -336,6 +336,24 @@ public class CoreLocale
     }
 
     return null;
+  }
+
+  private static boolean hasLangFile(String name, String lang)
+  {
+    String path;
+
+    path = Core.CONF_PATH+ File.separator + lang + "_" + lang;
+    if ((new File(path +".prop.xml"  )).exists())
+    {
+      return true;
+    }
+    if ((new File(path +".properties")).exists())
+    {
+      return true;
+    }
+
+    path = Cnst.CONF_RES + name + "_" + lang + ".properties";
+    return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
   }
 
   private static String getBaseLang(String lang)
@@ -398,43 +416,6 @@ public class CoreLocale
     }
 
     return null;
-  }
-
-  /**
-   * 检查服务器是否存在该语言资源
-   * @param lang
-   * @return 存在为true, 反之为false
-   */
-  public static boolean hasAcceptLanguage(String lang)
-  {
-    String sups = CoreConfig
-        .getInstance( /**/ )
-        .getProperty("core.language.support", "zh_CN");
-    return (","+ sups +"," ).contains( ","+ lang +",");
-  }
-
-  /**
-   * 检查服务器是否存在该语言资源
-   * @param name
-   * @param lang
-   * @return 存在为true, 反之为false
-   */
-  public static boolean hasAcceptLanguage(String name, String lang)
-  {
-    String path;
-
-    path = Core.CONF_PATH+File.separator + lang + "_" + lang;
-    if ((new File(path +".prop.xml"  )).exists())
-    {
-      return true;
-    }
-    if ((new File(path +".properties")).exists())
-    {
-      return true;
-    }
-
-    path = Cnst.CONF_RES + name + "_" + lang + ".properties";
-    return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
   }
 
 }

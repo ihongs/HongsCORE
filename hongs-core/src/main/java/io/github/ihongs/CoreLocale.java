@@ -17,7 +17,7 @@ import java.io.File;
  * <h3>配置选项:</h3>
  * <pre>
  * core.load.locale.once  为true则仅加载一次, 为false由Core控制
- * core.langauge.link.xx  语言链接, xx为语言, 如:link.zh=zh_cn
+ * core.langauge.link.xx  语言链接, xx为语言, 如:link.zh=zh_CN
  * </pre>
  *
  * @author Hongs
@@ -338,24 +338,34 @@ public class CoreLocale
     return null;
   }
 
+  private static String getBaseLang(String lang)
+  {
+    int p  = lang.indexOf( "_" );
+    if (p != -1) {
+      return lang.substring(0 , p).toLowerCase()
+        +"_"+lang.substring(1 + p).toUpperCase();
+    } else {
+      return lang.toLowerCase( );
+    }
+  }
+
   /**
    * 从HEAD串中获取支持的语言
    * @param lang
-   * @return 语言标识, 如zh,zh_cn, 不存在为null
+   * @return 语言标识, 如zh,zh_CN, 不存在为null
    */
   public static String getAcceptLanguage(String lang)
   {
     CoreConfig conf = CoreConfig.getInstance();
-    String     sups = "," + conf.getProperty("core.language.support", "zh_cn") + ",";
-    String[]   arr1 = lang.toLowerCase(   )
-                          .replace('-','_')
+    String     sups = "," + conf.getProperty("core.language.support", "zh_CN") + ",";
+    String[]   arr1 = lang.replace('-','_')
                           .split  (  ","  );
-    String[]   arr2;
+    String[]   arr2 ;
 
     for (int i = 0; i < arr1.length; i ++ )
     {
       arr2 = arr1[i].split(";" , 2);
-      lang = arr2[0];
+      lang = getBaseLang  (arr2[0]);
       if (sups.contains("," + lang + ",") )
       {
         return lang;
@@ -371,10 +381,10 @@ public class CoreLocale
        * 如果语言字串中带有"_"符号, 则按"_"拆分去后面部分,
        * 检查其是否是允许的语种.
        */
-      if (arr2[0].indexOf('_') < 0) continue;
+      if (arr2[0].contains("_")) continue ;
 
       arr2 = arr2[0].split("_" , 2);
-      lang = arr2[0];
+      lang = getBaseLang  (arr2[0]);
       if (sups.contains("," + lang + ",") )
       {
         return lang;
@@ -399,7 +409,7 @@ public class CoreLocale
   {
     String sups = CoreConfig
         .getInstance( /**/ )
-        .getProperty("core.language.support", "zh_cn");
+        .getProperty("core.language.support", "zh_CN");
     return (","+ sups +"," ).contains( ","+ lang +",");
   }
 
@@ -413,7 +423,7 @@ public class CoreLocale
   {
     String path;
 
-    path = Core.CONF_PATH + File.separator +"default_"+ lang;
+    path = Core.CONF_PATH+File.separator + lang + "_" + lang;
     if ((new File(path +".prop.xml"  )).exists())
     {
       return true;
@@ -424,7 +434,7 @@ public class CoreLocale
     }
 
     path = Cnst.CONF_RES + name + "_" + lang + ".properties";
-    return null != CoreConfig.class.getClassLoader().getResourceAsStream(path);
+    return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
   }
 
 }

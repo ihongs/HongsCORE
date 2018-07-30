@@ -18,7 +18,7 @@ if(!window.HsCONF)window.HsCONF={};$.extend(window.HsCONF,{
 
 //** 演示语言 **/
 if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
-	"lang":"zh_cn",
+	"lang":"zh_CN",
 	"zone":"GMT-8",
 	"error.label":"错误($0)",
 	"error.unkwn":"未知的错误",

@@ -78,8 +78,8 @@
 现在，你可以在 centra/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
-    form.html        创建表单
-    form_edit.html   编辑表单
+    form.html        编辑表单
+    form_adds.html   创建表单
     list.html        列表区块
     list_fork.html   选择区块
 

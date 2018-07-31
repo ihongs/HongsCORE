@@ -43,25 +43,21 @@ textarea {
     border-color: transparent;
 }
 
-.nav-tabs,
+.nav-tabs ,
 .nav-pills,
 .breadcrumb {
     margin-bottom: 15px;
 }
 
-.btn .close {
-    margin-right: -13px;
-    margin-top: -7.5px;
-    padding: 0 6px;
-}
 .nav .close {
     margin-right: -15px;
     margin-top: -6.5px;
     padding: 0 6px;
-    vertical-align: middle;
-    display: inline-block;
-    float: none;
-    color: #666;
+}
+.btn .close {
+    margin-right: -11px;
+    margin-top: -2.5px;
+    padding: 0 2px;
 }
 .breadcrumb .close {
     display: none;
@@ -80,18 +76,15 @@ textarea {
     color: #666;
 }
 
-.btn,
-.btn span,
 .form-control {
-    line-height: 1.42857143;
+    height: auto;
 }
-.btn .glyphicon {
-    margin-top: 0.10em;
-    font-size : 0.80em;
+select.form-control {
+    height: 2.76923077em;
 }
-select.form-control[multiple],
-textarea.form-control {
-    min-height: 8.46em;
+textarea.form-control ,
+.form-control[multiple] {
+    min-height: 8.4615em;
 }
 .form-control[disabled] {
     background: #ddd;
@@ -119,12 +112,9 @@ fieldset>.dropdown-menu {
     margin-top: 0;
     margin-bottom: 0;
 }
-.radio    label ,
-.checkbox label {
+.checkbox  label ,
+.radio     label {
     margin-right: 1.0em;
-}
-.btn .glyphicon {
-    margin-right: 0.5em;
 }
 
 /** 可后退的导航条 **/

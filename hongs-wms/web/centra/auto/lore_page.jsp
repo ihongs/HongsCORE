@@ -53,12 +53,12 @@
                     <td><%=info.get("__type__")%></td>
                     <td><%=info.get("__text__")%></td>
                     <td>
-                        <%if (Synt.declare(info.get("__required__"), false)) {%><span class="badge" style="margin-right: 2px;">必填</span><%}%>
-                        <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="badge" style="margin-right: 2px;">多值</span><%}%>
-                        <%if (Synt.declare(info.get(  "listable"  ), false)) {%><span class="badge" style="margin-right: 2px;">列举</span><%}%>
-                        <%if (Synt.declare(info.get(  "sortable"  ), false)) {%><span class="badge" style="margin-right: 2px;">排序</span><%}%>
-                        <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="badge" style="margin-right: 2px;">筛选</span><%}%>
-                        <%if (Synt.declare(info.get(  "statable"  ), false)) {%><span class="badge" style="margin-right: 2px;">统计</span><%}%>
+                        <%if (Synt.declare(info.get("__required__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">必填</span><%}%>
+                        <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">多值</span><%}%>
+                        <%if (Synt.declare(info.get(  "listable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">列举</span><%}%>
+                        <%if (Synt.declare(info.get(  "sortable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">排序</span><%}%>
+                        <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">筛选</span><%}%>
+                        <%if (Synt.declare(info.get(  "statable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">统计</span><%}%>
                     </td>
                 </tr>
             <%} /*End For*/%>

@@ -220,7 +220,9 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-gorup">
                     <p>
                         <%=Cnst.ACT_EXT%> 是基础接口;
-                        <%=Cnst.API_EXT%> 和 /api 接口可使用 .conv,.data,.wrap,.scok 等特殊参数.
+                        <%=Cnst.API_EXT%>,/api 接口可使用 .data,.mode 特殊参数,
+                        .data 用于集中传输主要数据, .mode 用于对数据做特殊处理,
+                        .mode 可选值有 wrap,scok,all2str,num2str,null2str,bool2num,bool2str,date2num,date2sec,flat.map,flat_map.
                         除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET,POST,PUT,DELETE 等方法.
                     </p>
                 </div>

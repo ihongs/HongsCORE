@@ -39,6 +39,7 @@ public class DataAction extends SearchAction {
 
     public DataAction() {
         sub.add("revert");
+        sub.add("stream");
     }
 
     /**
@@ -134,7 +135,7 @@ public class DataAction extends SearchAction {
         helper.reply(sd);
     }
 
-    @Action("stream")
+    @Action("stream/search")
     @Preset(conf="", form="")
     @CustomReplies
     public void export(ActionHelper helper) throws HongsException, IOException {

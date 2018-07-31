@@ -463,7 +463,13 @@ public class Form extends Model {
         actn.appendChild (docm.createTextNode(centra+"/"+id+"/search" + Cnst.ACT_EXT) );
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/stream" + Cnst.ACT_EXT) );
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/counts/search" + Cnst.ACT_EXT) );
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/statis/search" + Cnst.ACT_EXT) );
+        actn = docm.createElement("action");
+        role.appendChild ( actn );
+        actn.appendChild (docm.createTextNode(centra+"/"+id+"/stream/search" + Cnst.ACT_EXT) );
 
         // 修改
         role = docm.createElement("role");

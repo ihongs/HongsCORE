@@ -12,7 +12,7 @@
                 <tr>
                     <th data-fn="name">名称</th>
                     <th data-fn="memo">备注</th>
-                    <th data-fn="user.name" style="width: 6.5em;">操作人员</th>
+                    <th data-fn="user.name" style="width: 8.5em;">操作人员</th>
                     <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>

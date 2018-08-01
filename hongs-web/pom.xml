@@ -45,7 +45,7 @@
                         **/node_modules/**
                     </warSourceExcludes>
                     <packagingExcludes>
-                        WEB-INF/classes/app/**
+                        WEB-INF/classes/io/github/ihongs/**
                     </packagingExcludes>
                     <archive>
                         <addMavenDescriptor>false</addMavenDescriptor>

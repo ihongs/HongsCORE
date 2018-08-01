@@ -7,10 +7,10 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _pageId = (_module + "_" + _entity + "_lore").replace('/', '_');
-    
+
     StringBuilder listable = new StringBuilder();
     StringBuilder sortable = new StringBuilder();
-    
+
     Iterator it = _fields.entrySet().iterator();
     while (it.hasNext()) {
         Map.Entry et = (Map.Entry)it.next();
@@ -20,7 +20,7 @@
         if ("@".equals(name)) {
             continue;
         }
-        
+
             listable.append(",").append(name);
         if (Synt.declare(info.get("sortable"), false)) {
             sortable.append(",").append(name);
@@ -220,10 +220,12 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-gorup">
                     <p>
                         <%=Cnst.ACT_EXT%> 是基础接口;
-                        <%=Cnst.API_EXT%>,/api 接口可使用 .data,.mode 特殊参数,
-                        .data 用于集中传输主要数据, .mode 用于对数据做特殊处理,
-                        .mode 可选值有 wrap,scok,all2str,num2str,null2str,bool2num,bool2str,date2num,date2sec,flat.map,flat_map.
-                        除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET,POST,PUT,DELETE 等方法.
+                        <%=Cnst.API_EXT%> 及 /api 接口可用 .data 和 .mode 参数,
+                        .data 用于集中发送主要数据, .mode 用于对响应做特殊处理,
+                        .mode 可选值有: wrap, scok, all2str, num2str, null2str,
+                        bool2num, bool2str, date2num, date2sec, flat.map, flat_map.
+                        除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET, POST, PUT, DELETE 等方法;
+                        另 /api 路径可包含当前资源和上级资源 ID, 但规则与 REST 略有不同, 是用 ~ID 而非 /ID 形式.
                     </p>
                 </div>
             </div>
@@ -239,7 +241,7 @@ id=ID 或 id.=ID1&id.=ID2...
 <script type="text/javascript">
     (function($) {
         var context = $("#<%=_pageId%>").removeAttr("id");
-        
+
         context.find("pre").each(function() {
             var html = $(this).html();
             // 去除中间空行, 统一换行符号

@@ -169,6 +169,7 @@
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <exclude name="classes/" />
                                         <exclude name="web.*" />
+                                        <exclude name="*.war" />
                                     </fileset>
                                     <fileset dir="${basedir}/../hongs-serv-system">
                                         <include name="*.bat" />
@@ -180,7 +181,6 @@
                                 <copy todir="${project.build.directory}/${released.name}/lib">
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <include name="classes/" />
-                                        <exclude name="*.war" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}/etc">

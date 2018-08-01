@@ -137,6 +137,7 @@
                                 <copy todir="${project.build.directory}/${released.name}/lib">
                                     <fileset dir="${project.build.directory}/${project.build.finalName}/WEB-INF">
                                         <include name="classes/" />
+                                        <exclude name="*.war" />
                                     </fileset>
                                 </copy>
                                 <copy todir="${project.build.directory}/${released.name}/etc">

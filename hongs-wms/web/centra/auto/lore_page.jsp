@@ -227,6 +227,12 @@ id=ID 或 id.=ID1&id.=ID2...
                         除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET, POST, PUT, DELETE 等方法;
                         另 /api 路径可包含当前资源和上级资源 ID, 但规则与 REST 略有不同, 是用 ~ID 而非 /ID 形式.
                     </p>
+                    <p>
+                        字段类型命名采用 HTML 的表单控件类型, 如 text,number,select,textarea 等,
+                        另有一些 H5 的类型如 tel,url,email,date,datetime(实为datetime-local) 等.
+                        还有一些自定义的类型, 如: string 同 text, enum 同 select,
+                        fork/pick 表示关联, form/part 表示内联.
+                    </p>
                 </div>
             </div>
         </fieldset>

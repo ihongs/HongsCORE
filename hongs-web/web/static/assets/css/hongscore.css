@@ -38,11 +38,6 @@ textarea {
     max-height: 0;
 }
 
-.navbar-toggle,
-.navbar-default .navbar-toggle {
-    border-color: transparent;
-}
-
 .nav-tabs ,
 .nav-pills,
 .breadcrumb {
@@ -94,6 +89,12 @@ textarea.form-control ,
     background: #fff;
     cursor: default;
 }
+
+.navbar-default
+.navbar-toggle ,
+.navbar-toggle {
+    border-color: transparent;
+}
 .dropdown-toggle {
     cursor: pointer;
 }
@@ -112,6 +113,7 @@ fieldset>.dropdown-menu {
     margin-top: 0;
     margin-bottom: 0;
 }
+
 .checkbox  label ,
 .radio     label {
     margin-right: 1.0em;

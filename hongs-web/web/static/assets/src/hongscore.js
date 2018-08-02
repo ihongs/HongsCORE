@@ -12,10 +12,9 @@ if (!self.HsDEPS) self.HsDEPS = {};
  * 说明(首参数以下列字符开头的意义):
  * . 获取配置
  * : 获取语言
- * ? 检查权限
  * / 补全路径
- * # 获取单个参数值, 第二个参数指定参数容器
- * @ 获取多个参数值, 第二个参数指定参数容器
+ * ? 检查权限
+ * & 获取参数, 第二个参数指定容器, 当键含有[]或..或.结尾时返回为数组
  * % 获取/设置本地存储, 第二个参数存在为设置, 第二个参数为null则删除
  * $ 获取/设置会话存储, 第二个参数存在为设置, 第二个参数为null则删除
  * @return {Mixed} 根据开头标识返回不同类型的数据
@@ -27,25 +26,23 @@ function H$() {
     switch (b) {
     case '.': return hsGetConf.apply(this, arguments);
     case ':': return hsGetLang.apply(this, arguments);
-    case '?': return hsChkUri .apply(this, arguments);
     case '/': return hsFixUri .apply(this, arguments);
-    case '#':
-    case '@':
+    case '?': return hsChkUri .apply(this, arguments);
+    case '&':
         if (arguments.length === 1) {
             arguments.length  =  2;
             arguments[1] = location.href;
         }
         if (typeof(arguments[1]) !== "string") {
             if (!jQuery.isArray(arguments[1])) {
-                var lb = jQuery(arguments[1]).closest(".loadbox");
-                arguments[1] = hsSerialArr(lb);
+                arguments[1]= hsSerialArr(jQuery(arguments[1]).closest(".loadbox"));
             }
-            if (b === '@')
+            if (/(\[\]|\.\.|\.$)/.test(arguments[0]))
                 return hsGetSerias(arguments[1], arguments[0]);
             else
                 return hsGetSeria (arguments[1], arguments[0]);
         } else {
-            if (b === '@')
+            if (/(\[\]|\.\.|\.$)/.test(arguments[0]))
                 return hsGetParams(arguments[1], arguments[0]);
             else
                 return hsGetParam (arguments[1], arguments[0]);
@@ -2070,7 +2067,7 @@ $.fn.hsInit = function(cnf) {
         cnf.title = h.text();
     }
     if (cnf.title) {
-        cnf.title = H$("#id" , box )?
+        cnf.title = hsGetSeria(hsSerialArr(box.closest( ".loadbox" )), "id") ?
             cnf.title.replace('{DO}', cnf.update || hsGetLang("form.update")):
             cnf.title.replace('{DO}', cnf.create || hsGetLang("form.create"));
     }

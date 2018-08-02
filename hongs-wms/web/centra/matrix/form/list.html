@@ -62,7 +62,7 @@
     (function($) {
         var context = $('#matrix-form-list');
         var loadBox = context.closest(".loadbox");
-        var unitId = H$("#unit_id", loadBox);
+        var unitId = H$("&unit_id", loadBox);
         if (unitId == "" || unitId == "0") {
             context.find(".alert").show( );
             context.find(".listbox").addClass("invisible");

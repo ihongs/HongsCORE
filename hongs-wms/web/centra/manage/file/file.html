@@ -57,7 +57,7 @@
     (function($) {
         var context = $("#manage-file-list");
 
-        if (H$( "#path" , context) === '/' ) {
+        if (H$( "&path" , context) === '/' ) {
             var toolBox = context.find(".toolbox");
             var listBox = context.find(".listbox");
             var pageBox = context.find(".pagebox");
@@ -70,7 +70,7 @@
         
         context.on("click", ".create", function() {
             var inst  = context.data("HsList");
-            var path  = H$( "#path", context );
+            var path  = H$( "&path", context );
             inst.open($(this), $(this).hsFind("@"),
             "centra/manage/file/file_form.html?path="+encodeURIComponent(path));
         });

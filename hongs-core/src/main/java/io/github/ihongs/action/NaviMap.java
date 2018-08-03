@@ -140,8 +140,14 @@ public class NaviMap
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.NAVI_EXT + ".ser");
-    return ! xmlFile.exists(   ) || ! serFile.exists(   )
-          || xmlFile.lastModified() > serFile.lastModified();
+    if ( xmlFile.exists() && serFile.exists() )
+    {
+      return xmlFile.lastModified() > serFile.lastModified();
+    }
+    else
+    {
+      return xmlFile.exists(); // 配置文件缺失则可能在资源里.
+    }
   }
 
   @Override
@@ -265,21 +271,19 @@ public class NaviMap
         Map menu2 = new HashMap();
 
         String href = element2.getAttribute("href");
-        if (href == null) href = "";
-        menus.put( href , menu2);
-        manus.put( href , menu2);
+        if (href == null) href = "" ;
+
+        menus.put( href , menu2 );
+        manus.put( href , menu2 );
 
         String hrel = element2.getAttribute("hrel");
-        if (hrel != null)
-        menu2.put("hrel", hrel );
+        if (hrel != null) menu2.put( "hrel", hrel );
 
         String icon = element2.getAttribute("icon");
-        if (icon != null)
-        menu2.put("icon", icon );
+        if (icon != null) menu2.put( "icon", icon );
 
         String text = element2.getAttribute("text");
-        if (text != null)
-        menu2.put("text", text );
+        if (text != null) menu2.put( "text", text );
 
         Map menus2 = new LinkedHashMap();
         Set roles2 = new LinkedHashSet();
@@ -299,15 +303,20 @@ public class NaviMap
       else
       if ("role".equals(tagName2))
       {
-        Map role2 = new HashMap();
-
         String namz = element2.getAttribute("name");
-        if (namz == null) namz = "";
-        roles.put( namz , role2);
+        if (namz == null) namz = "" ;
+
+        // 角色可以复用和补充
+        Map role2 ;
+        if (roles.containsKey(namz)) {
+            role2 = (Map) roles.get( namz );
+        } else {
+            role2 =  new  HashMap( );
+            roles.put( namz, role2 );
+        }
 
         String text = element2.getAttribute("text");
-        if (text != null)
-        role2.put("text", text );
+        if (text != null) role2.put( "text", text );
 
         Set actions2 = new HashSet();
         Set depends2 = new HashSet();
@@ -351,8 +360,8 @@ public class NaviMap
           imports.add   (   impart   );
           imports.addAll(conf.imports);
           actions.addAll(conf.actions);
-          menus.putAll(conf.menus);
-          manus.putAll(conf.manus);
+            menus.putAll(conf.menus  );
+            manus.putAll(conf.manus  );
 
           /**
            * 深度合并

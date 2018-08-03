@@ -72,7 +72,7 @@ public class DBConfig
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.DB_EXT + ".ser");
-    if (xmlFile.exists())
+    if ( xmlFile.exists( ) )
     {
       return xmlFile.lastModified() > serFile.lastModified();
     }

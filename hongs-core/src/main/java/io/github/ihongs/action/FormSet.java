@@ -105,7 +105,14 @@ public class FormSet
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
-    return xmlFile.exists() && xmlFile.lastModified() > serFile.lastModified();
+    if ( xmlFile.exists( ) )
+    {
+      return xmlFile.lastModified() > serFile.lastModified();
+    }
+    else
+    {
+      return false;
+    }
   }
 
   @Override

@@ -306,17 +306,21 @@ public class NaviMap
         String namz = element2.getAttribute("name");
         if (namz == null) namz = "" ;
 
-        // 角色可以复用和补充
+        /**
+         * 角色可以服用和补充
+         * 角色标签文本为可选
+         */
         Map role2 ;
         if (roles.containsKey(namz)) {
-            role2 = (Map) roles.get( namz );
+            role2 = (Map) roles.get(namz);
         } else {
             role2 =  new  HashMap( );
-            roles.put( namz, role2 );
+            role2.put("text",  ""  );
+            roles.put( namz , role2);
         }
-
-        String text = element2.getAttribute("text");
-        if (text != null) role2.put( "text", text );
+        if (element2.hasAttribute("text")) {
+            role2.put("text", element2.getAttribute("text"));
+        }
 
         Set actions2 = new HashSet();
         Set depends2 = new HashSet();

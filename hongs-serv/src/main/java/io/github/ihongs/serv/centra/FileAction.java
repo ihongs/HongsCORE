@@ -243,18 +243,19 @@ public class FileAction implements IAction {
         String path = helper.getParameter("path");
         String type = helper.getParameter("type");
         String text = helper.getParameter("text");
+        String real;
         File   file;
 
         if ( path == null ) {
             helper.fault(lang.translate("core.manage.file.path.required"));
             return;
         }
-        path = realPath(path);
-        if ( path == null ) {
+        real = realPath(path);
+        if ( real == null ) {
             helper.fault(lang.translate("core.manage.file.path.is.error"));
             return;
         }
-        file = new File(path);
+        file = new File(real);
         if ( file.exists()) {
             helper.fault(lang.translate("core.manage.file.path.is.exist"));
             return;
@@ -266,7 +267,7 @@ public class FileAction implements IAction {
 
         // 创建目录
         if ("dir".equals(type)) {
-            new File(path).mkdirs();
+             file.mkdirs(  );
             helper.reply("");
             return;
         }
@@ -334,9 +335,6 @@ public class FileAction implements IAction {
         }
         if (!file.renameTo(dizt)) {
             helper.fault(lang.translate("core.manage.file.rename.failed"));
-            return;
-        }
-        if ( text == null ) {
             return;
         }
         file = dizt;
@@ -446,6 +444,9 @@ public class FileAction implements IAction {
     }
 
     private void saveFile(File file, String text) {
+        if (null ==  text) { // 不给内容则不必写
+            return;
+        }
         try (
               FileOutputStream fo = new   FileOutputStream(file);
             OutputStreamWriter os = new OutputStreamWriter( fo , "utf-8");
@@ -464,15 +465,15 @@ public class FileAction implements IAction {
 
     private boolean isDenyFile(File file) {
         if (file.isDirectory()) {
-            return true ;
+            return false;
         }
 
         String serv = System.getProperty("manage.file");
-        if ( "no".equals(serv)) {
-            return true ;
-        }
         if ("all".equals(serv)) {
             return false;
+        }
+        if ( "no".equals(serv)) {
+            return true ;
         }
 
         String name = file.getName( );

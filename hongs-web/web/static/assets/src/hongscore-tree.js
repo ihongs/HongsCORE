@@ -391,11 +391,11 @@ HsTree.prototype = {
         btn.trigger(evt , [rst, data, this]);
         if (evt.isDefaultPrevented()) return;
 
-        if (data[this.idKey ] !== undefined) {
-            this.load(this.getPid(data[this.idKey])); // 更新
-        }
         if (data[this.pidKey] !== undefined) {
             this.load(/* Moved */ data[this.pidKey]); // 移动
+        }
+        if (data[this.idKey ] !== undefined) {
+            this.load(this.getPid(data[this.idKey])); // 更新
         }
     },
 
@@ -432,12 +432,16 @@ HsTree.prototype = {
             var ext = jQuery.Event( "saveBack" );
             ext.relatedTarget = evt.target;
             ext.relatedHsInst = rel /****/;
-            btn.trigger(evt , [rst, data, that]);
-            if (evt.isDefaultPrevented()) return;
+            btn.trigger(ext , [rst, data, that]);
+            if (ext.isDefaultPrevented()) return;
 
+            if (data[that.pidKey] !== undefined) {
+                that.load(/* Saved */ data[that.pidKey]); // 更新
+            } else
             if (data[that.idKey ] !== undefined) {
                 that.load(that.getPid(data[that.idKey])); // 修改
-            } else {
+            } else
+            {
                 that.load(that.getSid(/* Current id */)); // 添加
             }
         });

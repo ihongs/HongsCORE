@@ -76,6 +76,18 @@
             data.path = pathMap[data.path];
             return HsTree.prototype.open.call(this, btn, box, url, data);
         });
+        context.on("saveBack sendBack", function(evt, rd, sd, obj) {
+            if ($(evt.target).is(".modify,.delete")) {
+                obj.load(obj.getPid( obj.getSid() ));
+                evt.preventDefault ( );
+                return false;
+            } else
+            if ($(evt.target).is(".create")) {
+                obj.load(obj.getSid());
+                evt.preventDefault ( );
+                return false;
+            }
+        });
         context.on("treeSelect", function(evt, nid, obj) {
             evt.stopPropagation(  );
 

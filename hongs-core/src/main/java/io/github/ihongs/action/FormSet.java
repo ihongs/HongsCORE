@@ -111,7 +111,7 @@ public class FormSet
     }
     else
     {
-      return false;
+      return false; // 为减少判断逻辑对 jar 文件不做变更对比.
     }
   }
 

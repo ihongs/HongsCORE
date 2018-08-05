@@ -146,7 +146,7 @@ public class NaviMap
     }
     else
     {
-      return xmlFile.exists(); // 配置文件缺失则可能在资源里.
+      return xmlFile.exists(); // 为减少运算不去检查资源文件.
     }
   }
 

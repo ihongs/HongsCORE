@@ -138,7 +138,7 @@ public class Data extends SearchEntity {
     }
 
     public String getFormId() {
-        return Synt.declare(getParams().get("form_id"), form );
+        return Synt.declare(getParams().get("form_id"),form);
     }
 
     public Model getModel() throws HongsException {
@@ -165,11 +165,10 @@ public class Data extends SearchEntity {
      */
     @Override
     public Map create(Map rd) throws HongsException {
-        long ct = System.currentTimeMillis() / 1000;
-             rd.put("_time" , ct);
+        long ct = System.currentTimeMillis() / 1000 ;
         String id = Core.newIdentity();
-        save ( id , rd );
-        call ( id , "create", ct);
+        save ( ct , id , rd );
+        call ( ct , id , "create" );
 
         Set<String> fs = getListable();
         if (null != fs && ! fs.isEmpty( )) {
@@ -195,13 +194,12 @@ public class Data extends SearchEntity {
      */
     @Override
     public int update(Map rd) throws HongsException {
-        long ct = System.currentTimeMillis() / 1000;
-             rd.put("_time" , ct);
+        long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1096);
         for(String  id  : ids) {
-           save(id, rd  );
-           call(id, "update", ct);
+           save(ct, id  , rd );
+           call(ct, id, "update");
         }
         return ids.size();
     }
@@ -214,25 +212,48 @@ public class Data extends SearchEntity {
      */
     @Override
     public int delete(Map rd) throws HongsException {
-        long ct = System.currentTimeMillis() / 1000;
-             rd.put("_time" , ct);
+        long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1097);
         for(String  id  : ids) {
-           drop(id, rd  );
-           call(id, "delete", ct);
+           drop(ct, id  , rd );
+           call(ct, id, "delete");
         }
         return ids.size();
     }
 
-    public void save(String id, Map rd) throws HongsException {
+    /**
+     * 恢复记录
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public int revert(Map rd) throws HongsException {
+        if ( ! rd.containsKey(Cnst.ID_KEY)) {
+            throw new HongsException( 0x1100, Cnst.ID_KEY + " required!" );
+        }
+        if ( ! rd.containsKey(  "rtime"  )) {
+            throw new HongsException( 0x1100, "rtime required!" );
+        }
+
+        long ct = System.currentTimeMillis() / 1000 ;
+        String id = (String ) rd.get ( Cnst.ID_KEY );
+        permit(rd , Synt.setOf (id), 0x1096);
+        redo ( ct , id , rd );
+        call ( ct , id , "revert" );
+        return 1;
+    }
+
+    public void save(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-        Object[] param = new  String [ ] { id , fid , "0"};
-        long     ctime = Synt.declare(rd.get("_time"), 0L);
-        if (0 == ctime) ctime = System.currentTimeMillis()/1000;
+        Object[] param = new String[] { id, fid, "0"};
+
+        if (uid == null) {
+            throw new NullPointerException("user_id required!");
+        }
 
         // 获取旧的数据
         Map dd = get( id );
@@ -275,7 +296,7 @@ public class Data extends SearchEntity {
                 Object fo = Synt.defoult(dd.get(fn), "");
                 dd.put(fn , fr);
 
-                if (!equals(fr,fo)
+                if (!equals(fr, fo, fn )
                 &&  !fn.equals("muser" )
                 &&  !fn.equals("mtime")) {
                     i ++; // 需要排除修改环境数据
@@ -319,14 +340,16 @@ public class Data extends SearchEntity {
         setDoc(id, doc);
     }
 
-    public void drop(String id, Map rd) throws HongsException {
+    public void drop(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-        Object[] param = new  String [ ] { id , fid , "0"};
-        long     ctime = Synt.declare(rd.get("_time"), 0L);
-        if (0 == ctime) ctime = System.currentTimeMillis()/1000;
+        Object[] param = new String[] { id, fid, "0"};
+
+        if (uid == null) {
+            throw new NullPointerException("user_id required!");
+        }
 
         /** 记录到数据库 **/
 
@@ -366,15 +389,17 @@ public class Data extends SearchEntity {
         delDoc(id);
     }
 
-    public void redo(String id, Map rd) throws HongsException {
+    public void redo(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
-        String   where = "`id`=? AND `form_id`=? AND `ctime`=?";
         long     rtime = Synt.declare(rd.get("rtime"), 0L);
-        long     ctime = Synt.declare(rd.get("ctime"), 0L);
+        String   where = "`id`=? AND `form_id`=? AND `ctime`=?";
         Object[] param = new Object [ ] { id, fid, rtime };
-        if (0 == ctime) ctime = System.currentTimeMillis()/1000;
+
+        if (uid == null) {
+            throw new NullPointerException("user_id required!");
+        }
 
         //** 获取旧的数据 **/
 
@@ -423,23 +448,22 @@ public class Data extends SearchEntity {
         setDoc(id, doc);
     }
 
-    public void call(String id, String act, long now) throws HongsException {
+    public void call(long xtime, String id, String on) throws HongsException {
         String url = (String) getParams().get("callback");
         if (url == null || "".equals(url)) {
             return;
         }
 
         String fid = getFormId();
-        url = Tool.inject(url,Synt.mapOf(
-            "id"    , id ,
-            "action", act,
-            "entity", fid,
-            "time"  , now
+        url = Tool.inject(url,Synt.mapOf("form_id", fid ,
+            "id"     , id,
+            "time"   , xtime,
+            "type"   , on
         ));
         DataCaller.getInstance().add(url);
     }
 
-    protected boolean equals(Object fo, Object fr) {
+    protected boolean equals(Object fr, Object fo, String fn) {
         return fo.equals(fr);
     }
 

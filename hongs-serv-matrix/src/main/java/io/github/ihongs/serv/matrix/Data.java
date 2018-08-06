@@ -287,7 +287,7 @@ public class Data extends SearchEntity {
         // 合并新旧数据
         int i = 0;
         Map<String,Map> fields = getFields();
-        for(String fn : fields.keySet()) {
+        for(String fn : fields.keySet( )) {
             if (  "id". equals(fn)) {
                 dd.put(fn , id);
             } else
@@ -296,9 +296,7 @@ public class Data extends SearchEntity {
                 Object fo = Synt.defoult(dd.get(fn), "");
                 dd.put(fn , fr);
 
-                if (!equals(fr, fo, fn )
-                &&  !fn.equals("muser" )
-                &&  !fn.equals("mtime")) {
+                if (! saveSkip(fn,fr,fo)) {
                     i ++; // 需要排除修改环境数据
                 }
             }
@@ -463,8 +461,19 @@ public class Data extends SearchEntity {
         DataCaller.getInstance().add(url);
     }
 
-    protected boolean equals(Object fr, Object fo, String fn) {
-        return fo.equals(fr);
+    /**
+     * 保存中跳过的字段或取值
+     * 当返回 true 时跳过检查,
+     * 如都是 true 则不做更新.
+     * @param fn
+     * @param fr
+     * @param fo
+     * @return
+     */
+    protected boolean saveSkip(String fn, Object fr, Object fo) {
+        return "muser".equals(fn)
+            || "mtime".equals(fn)
+            || fo.equals(fr);
     }
 
     private Set<String> wdCols = null;

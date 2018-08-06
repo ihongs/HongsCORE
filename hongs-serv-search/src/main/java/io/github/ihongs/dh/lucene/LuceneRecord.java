@@ -730,10 +730,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public void close() {
         closeReader();
         closeWriter();
-
-        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Close the lucene handle for " + getDbName());
-        }
     }
 
     private void closeReader() {
@@ -747,6 +743,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             CoreLogger.error(x);
         } finally {
             reader  = null;
+        }
+
+        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+            CoreLogger.trace("Close the lucene reader for " + getDbName());
         }
     }
 
@@ -783,6 +783,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             CoreLogger.error(x);
         } finally {
             writer = null ;
+        }
+
+        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+            CoreLogger.trace("Close the lucene writer for " + getDbName());
         }
     }
 

@@ -85,14 +85,10 @@ public class DataAction extends SearchAction {
     @Action("revert/update")
     @CommitSuccess
     public void revert(ActionHelper helper) throws HongsException {
-        String  id = helper.getParameter(Cnst.ID_KEY);
-        if ( null == id || "".equals(id)) {
-            throw new HongsException(0x1100, "id required" );
-        }
-        Data    sr = (Data) getEntity(helper);
-        Map     rd = helper.getRequestData( );
-        sr.redo(id , rd);
-        helper.reply("");
+        Data  sr = (Data) getEntity(helper);
+        Map   rd = helper.getRequestData( );
+            sr.revert(rd);
+        helper.reply ("");
     }
 
     @Action("revert/search")

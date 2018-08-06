@@ -169,23 +169,29 @@ public class PresetHelper {
                     data = reqd.get (n);
                 }
 
+                // 下级键, 可向深层提取
                 if (k != null) {
-                    Map  d   = Synt.asMap   (data);
-                    if ( d  != null) {
-                        data = Dict.getParam(d, k);
-                    } else {
-                        data = null;
+                    if (data != null) {
+                        data  = Dict.getParam(Synt.asMap(data), k);
                     }
                 }
 
                 // 默认值, 没取到则跳过
-                if (data == null) {
-                    if(x == null) {
-                        return  ;
-                    } else {
-                        data = Data.toObject(x);
+                if (x != null) {
+                    if (data == null) {
+                        data  = Data.toObject(x);
+                    }
+                } else {
+                    if (data == null) {
+                        return;
                     }
                 }
+            } else
+            if (text.equalsIgnoreCase("(VOID)")) {
+                /**/ return;
+            } else
+            if (text.equalsIgnoreCase("(NULL)")) {
+                data = null;
             } else
             if (text.startsWith("(") && text.endsWith(")")) {
                 text = text.substring(1,text.length( ) - 1);

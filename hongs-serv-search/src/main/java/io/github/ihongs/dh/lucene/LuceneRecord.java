@@ -33,30 +33,30 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.document.Document;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.document.Document;
-import org.apache.lucene.index.DirectoryReader;
-import org.apache.lucene.index.IndexableField;
-import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriterConfig;
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
-import org.apache.lucene.store.Directory;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.Directory;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.Term;
 
 /**
  * Lucene 记录模型
@@ -661,65 +661,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     //** 事务方法 **/
 
-    /**
-     * 初始化读操作
-     * @throws HongsException
-     */
-    public void init() throws HongsException {
-        if (reader != null) {
-            return;
-        }
-
-        String path = getDbPath();
-
+    @Override
+    protected void finalize() throws Throwable {
         try {
-            // 索引目录不存在则先写入一个并删除
-            if (! ( new File(path)).exists( )) {
-                String id = Core.newIdentity();
-                Map rd = new HashMap( );
-                rd.put(Cnst.ID_KEY, id);
-                addDoc(map2Doc(rd));
-                delDoc(id);
-                commit(  );
-            }
-
-            Directory dir = FSDirectory.open(Paths.get(path));
-
-            reader = DirectoryReader.open(dir);
-            finder = new IndexSearcher(reader);
-        } catch (IOException x) {
-            throw new HongsException.Common(x);
-        }
-
-        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Open the lucene reader from " + getDbName());
-        }
-    }
-
-    /**
-     * 连接写数据库
-     * @throws HongsException
-     */
-    public void open() throws HongsException {
-        if (writer != null && writer.isOpen()) {
-            return;
-        }
-
-        String path = getDbPath();
-
-        try {
-            IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-            iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-
-            Directory dir = FSDirectory.open(Paths.get(path));
-
-            writer = new IndexWriter(dir, iwc);
-        } catch (IOException x) {
-            throw new HongsException.Common(x);
-        }
-
-        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Open the lucene writer from " + getDbName());
+           this.close(   );
+        } finally {
+          super.finalize();
         }
     }
 
@@ -728,74 +675,57 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void close() {
-        closeReader();
-        closeWriter();
-    }
-
-    private void closeReader() {
-        if (reader == null) {
-            return;
-        }
-
-        try {
-            reader.close();
-        } catch (IOException x) {
-            CoreLogger.error(x);
-        } finally {
-            reader  = null;
-        }
-
-        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Close the lucene reader for " + getDbName());
-        }
-    }
-
-    private void closeWriter() {
-        if (writer == null || !writer.isOpen()) {
-            writer  = null;
-            return;
-        }
-
-        // 默认退出时提交
-        if (TRNSCT_MODE) {
+        if (reader != null ) {
             try {
-            try {
-                commit();
-            } catch (Error er ) {
-                revert();
-                throw er;
+                reader.close();
+            } catch (IOException ex) {
+                CoreLogger.error(ex);
+            } finally {
+                reader = null ;
             }
-            } catch (Error er ) {
-                CoreLogger.error(er);
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Close the lucene reader for " + getDbName());
             }
         }
 
-        // 退出时合并索引
-        try {
-            writer.maybeMerge();
-        } catch (IOException x) {
-            CoreLogger.error(x);
-        }
+        if (writer != null ) {
+        if (writer.isOpen()) {
+            // 默认退出时提交
+            if (TRNSCT_MODE) {
+                try {
+                try {
+                    commit();
+                } catch (Error er ) {
+                    revert();
+                    throw er;
+                }
+                } catch (Error er ) {
+                    CoreLogger.error(er);
+                }
+            }
 
-        try {
-            writer.close();
-        } catch (IOException x) {
-            CoreLogger.error(x);
-        } finally {
-            writer = null ;
-        }
+            // 退出时合并索引
+            try {
+                writer.maybeMerge();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            }
 
-        if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-            CoreLogger.trace("Close the lucene writer for " + getDbName());
-        }
-    }
+            try {
+                writer.close();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            } finally {
+                writer = null ;
+            }
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-           this.close(   );
-        } finally {
-          super.finalize();
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Close the lucene writer for " + getDbName());
+            }
+        } else {
+            /**/writer = null ;
+        }
         }
     }
 
@@ -856,17 +786,52 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     public IndexSearcher getFinder() throws HongsException {
-        init();
+        if (finder == null) {
+            finder  = new IndexSearcher(getReader());
+        }
         return finder;
     }
 
     public IndexReader getReader() throws HongsException {
-        init();
+        if (reader == null) {
+            String path = getDbPath();
+
+            try {
+                if (! new File(path ).exists(  )) new File(path ).mkdirs(  );
+
+                Directory dir = FSDirectory.open(Paths.get(path));
+
+                reader = DirectoryReader.open(dir);
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Start the lucene reader for "+getDbName());
+            }
+        }
         return reader;
     }
 
     public IndexWriter getWriter() throws HongsException {
-        open();
+        if (writer == null || writer.isOpen() == false ) {
+            String path = getDbPath();
+
+            try {
+                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+
+                Directory dir = FSDirectory.open(Paths.get(path));
+
+                writer = new IndexWriter(dir, iwc);
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Start the lucene writer for "+getDbName());
+            }
+        }
         return writer;
     }
 

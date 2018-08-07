@@ -86,74 +86,65 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public IndexWriter getWriter() throws HongsException {
         String dn = /***/ getDbName(  );
-        String kn = SearchWriter.class.getName() + ":" + dn;
-        Locker lk = Block.getLocker(kn);
-        Larder ld = Block.getLarder(Closer.class.getName());
+        String kn = SearchWriter.class.getName() + ":" + dn ;
+        Larder ld = Block.getLarder(Closer.class.getName( ));
 
-        lk.lock();
+        /**
+         * 依次检查当前对象和全部空间是否存在 SearchWriter,
+         * 需从全局获取时调 SearchWriter.open 计数,
+         * 当前实例退出时调 SearchWriter.exit 减掉,
+         * 计数归零可被回收.
+         */
+
+        ld.lockr();
         try {
-            /**
-             * 依次检查当前对象和全部空间是否存在 SearchWriter,
-             * 需从全局获取时调 SearchWriter.open 计数,
-             * 当前实例退出时调 SearchWriter.exit 减掉,
-             * 计数归零可被回收.
-             */
-
-            ld.lockr();
-            try {
-                if (WRITOR != null) {
-    //              WRITOR.conn(  );
-                    return  WRITOR.open();
-                }
-                WRITOR = (SearchWriter) Core.GLOBAL_CORE.get(kn);
-                if (WRITOR != null) {
-                    WRITOR.conn(  );
-                    return  WRITOR.open();
-                }
-            } finally {
-                ld.unlockr( );
+            if (WRITOR != null) {
+//              WRITOR.conn(  );
+                return  WRITOR.open();
             }
-
-            ld.lockw();
-            try {
-                IndexWriter writer ;
-                String path = getDbPath();
-
-                try {
-                    IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-
-                    Directory dir = FSDirectory.open(Paths.get(path));
-
-                    writer = new IndexWriter(dir, iwc);
-                } catch (IOException x) {
-                    throw new HongsException.Common(x);
-                }
-
-                WRITOR = new SearchWriter(writer , dn);
-                Core . GLOBAL_CORE . put (kn , WRITOR);
-
-                return writer;
-            } finally {
-                ld.unlockw( );
+            WRITOR = (SearchWriter) Core.GLOBAL_CORE.get(kn);
+            if (WRITOR != null) {
+                WRITOR.conn(  );
+                return  WRITOR.open();
             }
         } finally {
-            lk.unlock();
+            ld.unlockr( );
+        }
+
+        ld.lockw();
+        try {
+            IndexWriter writer ;
+            String path = getDbPath();
+
+            try {
+                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+
+                Directory dir = FSDirectory.open(Paths.get(path));
+
+                writer = new IndexWriter(dir, iwc);
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+
+            WRITOR = new SearchWriter(writer , dn);
+            Core . GLOBAL_CORE . put (kn , WRITOR);
+
+            return writer;
+        } finally {
+            ld.unlockw( );
         }
     }
 
     @Override
     public void addDoc(Document doc) throws HongsException {
-        Locker lk = lock();
-        try {
-            IndexWriter iw = getWriter();
+        IndexWriter iw = getWriter();
+        synchronized (iw) {
             try {
                 iw.addDocument (doc);
             } catch (IOException ex) {
                 throw new HongsException.Common(ex);
             }
-        } finally {
-            lk.unlock();
         }
 
         if (!TRNSCT_MODE) {
@@ -163,16 +154,13 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void setDoc(String id, Document doc) throws HongsException {
-        Locker lk = lock();
-        try {
-            IndexWriter iw = getWriter();
+        IndexWriter iw = getWriter();
+        synchronized (iw) {
             try {
                 iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
             } catch (IOException ex) {
                 throw new HongsException.Common(ex);
             }
-        } finally {
-            lk.unlock();
         }
 
         if (!TRNSCT_MODE) {
@@ -182,16 +170,13 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void delDoc(String id) throws HongsException {
-        Locker lk = lock();
-        try {
-            IndexWriter iw = getWriter();
+        IndexWriter iw = getWriter();
+        synchronized (iw) {
             try {
                 iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
             } catch (IOException ex) {
                 throw new HongsException.Common(ex);
             }
-        } finally {
-            lk.unlock();
         }
 
         if (!TRNSCT_MODE) {
@@ -209,16 +194,13 @@ public class SearchEntity extends LuceneRecord {
         }
         TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
 
-        Locker lk = lock();
-        try {
-            IndexWriter iw = WRITOR.open();
+        IndexWriter iw = WRITOR.open();
+        synchronized (iw) {
             try {
                 iw.commit(  );
             } catch (IOException ex) {
                 throw new HongsExemption(0x102c, ex);
             }
-        } finally {
-            lk.unlock();
         }
     }
 
@@ -232,16 +214,13 @@ public class SearchEntity extends LuceneRecord {
         }
         TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
 
-        Locker lk = lock();
-        try {
-            IndexWriter iw = WRITOR.open();
+        IndexWriter iw = WRITOR.open();
+        synchronized (iw) {
             try {
                 iw.rollback();
             } catch (IOException ex) {
                 throw new HongsExemption(0x102d, ex);
             }
-        } finally {
-            lk.unlock();
         }
     }
 
@@ -267,12 +246,9 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-        Locker lk = lock();
-        try {
-            WRITOR.exit( );
-            WRITOR = null ;
-        } finally {
-            lk.unlock();
+        synchronized (WRITOR.open()) {
+            WRITOR.exit();
+            WRITOR = null;
         }
     }
 

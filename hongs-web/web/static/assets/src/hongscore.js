@@ -1081,11 +1081,17 @@ function hsFmtNum(num, len, dec, sep, dot) {
     dot = ".";
   }
 
+  // 正负符号
+  var sym = parseFloat(num);
+  if (isNaN( sym )) {
+      return num ;
+  }
+  num = ( Math.abs( sym ) );
+  sym = sym < 0 ? "-" : "" ;
+
   // 四舍五入
-  var o = parseInt(num);
-  if (isNaN(o) ) o = 0 ;
   var p = Math.pow(10, dec);
-  num = ( Math.round(o * p) / p ).toString();
+  num = ( Math.round(num * p) / p).toString();
 
   var a = num.split(".", 2);
   if (a.length < 2) {
@@ -1094,13 +1100,13 @@ function hsFmtNum(num, len, dec, sep, dot) {
   var n = a[0];
   var d = a[1];
 
-  // 右侧补零
+  // 整数位补零
   var nl = n.length;
   for (var i = nl; i < len; i ++) {
     n = "0" + n;
   }
 
-  // 左侧补零
+  // 小数位补零
   var dl = d.length;
   for (var j = dl; j < dec; j ++) {
     d = d + "0";
@@ -1111,28 +1117,28 @@ function hsFmtNum(num, len, dec, sep, dot) {
 
   // 添加分隔符
   if (sep) {
-    var k, s = "";
+    var k, s  = "";
     // 整数部分从右往左每3位分割
     while (n != "") {
-      k = n.length - 3;
-      s = n.substring(k);
-      n = n.substring(0, k);
-      num = s + sep + num;
+      k = (n.length - 3);
+      s = n.substring( k );
+      n = n.substring(0,k);
+      num = s + sep + num ;
     }
     // 整数部分扔掉最右边一位
     if (num) {
       k = num.length - 1;
-      num = num.substring(0, k);
+      num = num.substring(0,k);
     }
     // 小数部分从左往右每3位分割
     while (d != "") {
-      s = d.substring(0, 3);
-      d = d.substring(3);
-      dec = dec + sep + s;
+      s = d.substring(0,3);
+      d = d.substring( 3 );
+      dec = dec + sep + s ;
     }
     // 小数部分扔掉最左边一位
     if (dec) {
-      dec = dec.substring(1);
+      dec = dec.substring( 1 );
     }
   }
   else {
@@ -1141,7 +1147,7 @@ function hsFmtNum(num, len, dec, sep, dot) {
   }
 
   // 组合整数位和小数位
-  return num + dot + dec;
+  return sym + num + dot + dec;
 }
 
 /**

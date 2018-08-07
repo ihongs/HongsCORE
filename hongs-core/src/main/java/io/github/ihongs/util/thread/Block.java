@@ -92,6 +92,26 @@ public final class Block {
             loxk.unlock();
         }
 
+        // 可自动关闭的全局对象
+        Larder lard = getLarder(Closer.class.getName());
+        lard.lockw();
+        try {
+            Iterator<Map.Entry<String, Object>> it = Core.GLOBAL_CORE.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String , Object> et = it.next();
+                Object inst = et.getValue();
+                if (inst instanceof Closer) {
+                Closer clos = (Closer) inst;
+                if (clos.closeable( )) {
+                    clos.close();
+                    it.remove( );
+                }
+                }
+            }
+        } finally {
+            lard.unlockw();
+        }
+
         return ct;
     }
 
@@ -307,6 +327,18 @@ public final class Block {
         public void unlock() {
             lock.unlockw();
         }
+    }
+
+    /**
+     * 可自动关闭的容器
+     */
+    public static interface Closer extends AutoCloseable {
+
+        public boolean closeable();
+
+        @Override
+        public void close();
+
     }
 
 }

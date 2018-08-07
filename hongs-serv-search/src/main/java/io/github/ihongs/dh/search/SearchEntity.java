@@ -10,13 +10,12 @@ import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.thread.Block;
 import io.github.ihongs.util.thread.Block.Locker;
+import io.github.ihongs.util.thread.Block.Larder;
+import io.github.ihongs.util.thread.Block.Closer;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -99,33 +98,39 @@ public class SearchEntity extends LuceneRecord {
              */
 
             if (WRITOR != null) {
-//              WRITOR.open(  );
-                return  WRITOR.conn();
+//              WRITOR.conn(  );
+                return WRITOR.open();
             }
-            WRITOR = (SearchWriter) Core.GLOBAL_CORE.get(kn);
+            WRITOR = (SearchWriter) Core.GLOBAL_CORE.get ( kn );
             if (WRITOR != null) {
-                WRITOR.open(  );
-                return  WRITOR.conn();
+                WRITOR.conn(  );
+                return WRITOR.open();
             }
 
-            String path = getDbPath();
-            IndexWriter writer;
-
+            Larder ld = Block.getLarder(Closer.class.getName());
+            ld.lockw();
             try {
-                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                String path = getDbPath();
+                IndexWriter writer;
 
-                Directory dir = FSDirectory.open(Paths.get(path));
+                try {
+                    IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
-                writer = new IndexWriter(dir, iwc);
-            } catch (IOException x) {
-                throw new HongsException.Common(x);
+                    Directory dir = FSDirectory.open(Paths.get(path));
+
+                    writer = new IndexWriter(dir, iwc);
+                } catch (IOException x) {
+                    throw new HongsException.Common(x);
+                }
+
+                WRITOR = new SearchWriter(writer , dn);
+                Core . GLOBAL_CORE . put (kn , WRITOR);
+
+                return writer;
+            } finally {
+                ld.unlockw( );
             }
-
-            WRITOR = new SearchWriter(writer , dn);
-            Core . GLOBAL_CORE . put (kn , WRITOR);
-
-            return WRITOR.conn();
         } finally {
             lk.unlock();
         }
@@ -200,7 +205,7 @@ public class SearchEntity extends LuceneRecord {
 
         Locker lk = lock();
         try {
-            IndexWriter iw = WRITOR.conn();
+            IndexWriter iw = WRITOR.open();
             try {
                 iw.commit(  );
             } catch (IOException ex) {
@@ -223,7 +228,7 @@ public class SearchEntity extends LuceneRecord {
 
         Locker lk = lock();
         try {
-            IndexWriter iw = WRITOR.conn();
+            IndexWriter iw = WRITOR.open();
             try {
                 iw.rollback();
             } catch (IOException ex) {
@@ -273,7 +278,7 @@ public class SearchEntity extends LuceneRecord {
         return lk;
     }
 
-    private static class SearchWriter implements AutoCloseable {
+    private static class SearchWriter implements Closer {
 
         private IndexWriter writer;
         private String dbname;
@@ -288,15 +293,11 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-        public IndexWriter conn() {
+        public IndexWriter open() {
             return this.writer;
         }
 
-        public int  calc() {
-            return  c ;
-        }
-
-        public void open() {
+        public void conn() {
 //          if (c >= 0) {
                 c += 1;
 //          }
@@ -306,6 +307,11 @@ public class SearchEntity extends LuceneRecord {
             if (c >= 1) {
                 c -= 1;
             }
+        }
+
+        @Override
+        public boolean closeable( ) {
+            return  c == 0;
         }
 
         @Override
@@ -330,37 +336,6 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-    }
-
-    /**
-     * 自启一个定时任务,
-     * 每隔一段时间清理,
-     * 如设为  0 不清理,
-     * 默认为 10 分钟
-     */
-    static {
-        long time = Long.parseLong(
-                System.getProperty(Block.class.getName()
-                        + ".cleans.period" , "600000" ));
-        if ( time > 0 ) // 明确设为 0 则不清理
-        new Timer(Block.class.getName()+".cleans", true)
-        .schedule(new TimerTask() {
-            @Override
-            public void run() {
-                Iterator i = Core.GLOBAL_CORE.entrySet().iterator();
-                while  ( i.hasNext() ) {
-                    Map.Entry e = ( Map.Entry ) i.next();
-                    Object    o = e.getValue( );
-                    if (o instanceof SearchWriter) {
-                        SearchWriter w = (SearchWriter)o;
-                        if (w.calc(  ) == 0 ) {
-                            w.close( );
-                            i.remove();
-                        }
-                    }
-                }
-            }
-        }, time, time);
     }
 
 }

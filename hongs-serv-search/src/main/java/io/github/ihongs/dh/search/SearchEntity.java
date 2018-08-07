@@ -280,15 +280,15 @@ public class SearchEntity extends LuceneRecord {
 
     private static class SearchWriter implements Closer {
 
-        private IndexWriter writer;
-        private String dbname;
+        private IndexWriter  writer;
+        private final String dbname;
         private int c = 1;
 
         public SearchWriter(IndexWriter writer, String dbname) {
             this.writer = writer;
             this.dbname = dbname;
 
-            if (0 < Core.DEBUG && 4 != ( 4 & Core.DEBUG )) {
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                 CoreLogger.trace("Start the lucene writer for " + dbname);
             }
         }

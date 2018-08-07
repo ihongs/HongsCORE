@@ -12,6 +12,7 @@ import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
 
+import org.apache.lucene.document.Document;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -19,7 +20,6 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import org.apache.lucene.document.Document;
 
 /**
  * 数据存储模型

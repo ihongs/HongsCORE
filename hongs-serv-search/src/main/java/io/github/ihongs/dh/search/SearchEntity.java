@@ -91,6 +91,13 @@ public class SearchEntity extends LuceneRecord {
         Locker lk = Block.getLocker(kn);
         lk.lock();
         try {
+            /**
+             * 依次检查当前对象和全部空间是否存在 SearchWriter,
+             * 需从全局获取时调 SearchWriter.open 计数,
+             * 当前实例退出时调 SearchWriter.exit 减掉,
+             * 计数归零可被回收.
+             */
+
             if (WRITOR != null) {
 //              WRITOR.open(  );
                 return  WRITOR.conn();

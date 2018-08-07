@@ -86,8 +86,10 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public IndexWriter getWriter() throws HongsException {
         String dn = /***/ getDbName(  );
-        String kn = SearchWriter.class.getName() + ":" + dn ;
+        String kn = SearchWriter.class.getName() + ":" + dn;
         Locker lk = Block.getLocker(kn);
+        Larder ld = Block.getLarder(Closer.class.getName());
+
         lk.lock();
         try {
             /**
@@ -97,21 +99,25 @@ public class SearchEntity extends LuceneRecord {
              * 计数归零可被回收.
              */
 
-            if (WRITOR != null) {
-//              WRITOR.conn(  );
-                return WRITOR.open();
-            }
-            WRITOR = (SearchWriter) Core.GLOBAL_CORE.get ( kn );
-            if (WRITOR != null) {
-                WRITOR.conn(  );
-                return WRITOR.open();
+            ld.lockr();
+            try {
+                if (WRITOR != null) {
+    //              WRITOR.conn(  );
+                    return  WRITOR.open();
+                }
+                WRITOR = (SearchWriter) Core.GLOBAL_CORE.get(kn);
+                if (WRITOR != null) {
+                    WRITOR.conn(  );
+                    return  WRITOR.open();
+                }
+            } finally {
+                ld.unlockr( );
             }
 
-            Larder ld = Block.getLarder(Closer.class.getName());
             ld.lockw();
             try {
+                IndexWriter writer ;
                 String path = getDbPath();
-                IndexWriter writer;
 
                 try {
                     IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());

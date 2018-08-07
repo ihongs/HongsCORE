@@ -92,12 +92,12 @@ public class SearchEntity extends LuceneRecord {
         lk.lock();
         try {
             if (WRITOR != null) {
-//              WRITOR.open(  ); // 不计数
+//              WRITOR.open(  );
                 return  WRITOR.conn();
             }
             WRITOR = (SearchWriter) Core.GLOBAL_CORE.get(kn);
             if (WRITOR != null) {
-                WRITOR.open(  ); // 需计数
+                WRITOR.open(  );
                 return  WRITOR.conn();
             }
 

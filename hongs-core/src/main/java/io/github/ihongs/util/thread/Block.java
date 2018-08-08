@@ -299,7 +299,7 @@ public final class Block {
 
         @Override
         public void lock() {
-            synchronized (this) {
+            synchronized(this) {
                 cite ++;
             }
             lock.lock();
@@ -307,7 +307,7 @@ public final class Block {
 
         @Override
         public void unlock() {
-            synchronized (this) {
+            synchronized(this) {
                 cite --;
             }
             lock.unlock();

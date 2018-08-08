@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -38,8 +40,15 @@ public final class Block {
         .schedule(new TimerTask() {
             @Override
             public void run() {
+                int n;
+
+                n = closes();
+                if (Core.DEBUG > 0) {
+                    CoreLogger.trace("Closed " + n +" object(s)");
+                }
+
                 if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
-                    int n = cleans();
+                    n = cleans();
                     if (Core.DEBUG > 0) {
                         CoreLogger.trace("Cleared "+n+" lock(s)");
                     }
@@ -53,12 +62,42 @@ public final class Block {
     }
 
     /**
+     * 关闭
+     * @return 关闭数量
+     */
+    public static int closes() {
+        Lock loxk = getWriter(Closer.class.getName());
+        int  ct = 0;
+
+        loxk.lock();
+        try {
+            Iterator<Map.Entry<String,Object>> it = Core.GLOBAL_CORE.entrySet().iterator();
+            while (it.hasNext()) {
+                Map.Entry<String, Object> et = it.next();
+                Object inst = et.getValue();
+                if (inst instanceof Closer) {
+                Closer clos = (Closer) inst;
+                if (clos.closeable( )) {
+                    clos.close();
+                    it.remove( );
+                    ct ++;
+                }
+                }
+            }
+        } finally {
+            loxk.unlock();
+        }
+
+        return ct;
+    }
+
+    /**
      * 清理
      * @return 清理数量
      */
     public static int cleans() {
         Lock loxk;
-        int ct = 0;
+        int  ct = 0;
 
         loxk = ST_LOCKR.writeLock();
         loxk.lock();
@@ -90,26 +129,6 @@ public final class Block {
             }
         } finally {
             loxk.unlock();
-        }
-
-        // 可自动关闭的全局对象
-        Larder lard = getLarder(Closer.class.getName( ));
-        lard.lockw();
-        try {
-            Iterator<Map.Entry<String,Object>> it = Core.GLOBAL_CORE.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Object> et = it.next();
-                Object inst = et.getValue();
-                if (inst instanceof Closer) {
-                Closer clos = (Closer) inst;
-                if (clos.closeable( )) {
-                    clos.close();
-                    it.remove( );
-                }
-                }
-            }
-        } finally {
-            lard.unlockw();
         }
 
         return ct;
@@ -226,31 +245,6 @@ public final class Block {
     }
 
     /**
-     * 基础锁
-     * 对 ReentrantLock 的封装
-     */
-    public static final class Locker {
-        private final ReentrantLock lock = new ReentrantLock();
-        private int cite = 0;
-
-        private Locker(){} // 避免外部 new
-
-        public void lock() {
-            synchronized (this) {
-                cite ++;
-            }
-            lock.lock();
-        }
-
-        public void unlock() {
-            synchronized (this) {
-                cite --;
-            }
-            lock.unlock();
-        }
-    }
-
-    /**
      * 读写锁
      * 对 ReadWriteLock 的封装
      */
@@ -290,22 +284,91 @@ public final class Block {
     }
 
     /**
+     * 基础锁
+     * 对 ReentrantLock 的封装
+     */
+    public static final class Locker implements Lock {
+        private final ReentrantLock lock = new ReentrantLock();
+        private int cite = 0;
+
+        private Locker(){} // 避免外部 new
+
+        @Override
+        public void lock() {
+            synchronized (this) {
+                cite ++;
+            }
+            lock.lock();
+        }
+
+        @Override
+        public void unlock() {
+            synchronized (this) {
+                cite --;
+            }
+            lock.unlock();
+        }
+
+        @Override
+        public boolean tryLock() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public boolean tryLock(long time, TimeUnit unit) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void lockInterruptibly() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Condition newCondition() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+    }
+
+    /**
      * 读锁
      * 对 ReadWriteLock.readLock 的封装
      */
-    public static final class Reader {
+    public static final class Reader implements Lock {
         private final  Larder lock;
 
         private Reader(Larder lock) {
             this.lock = lock;
         }
 
+        @Override
         public void lock() {
             lock.lockr();
         }
 
+        @Override
         public void unlock() {
             lock.unlockr();
+        }
+
+        @Override
+        public boolean tryLock() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public boolean tryLock(long time, TimeUnit unit) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void lockInterruptibly() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Condition newCondition() {
+            throw new UnsupportedOperationException("Not supported.");
         }
     }
 
@@ -313,19 +376,41 @@ public final class Block {
      * 写锁
      * 对 ReadWriteLock.writeLock 的封装
      */
-    public static final class Writer {
+    public static final class Writer implements Lock {
         private final  Larder lock;
 
         private Writer(Larder lock) {
             this.lock = lock;
         }
 
+        @Override
         public void lock() {
             lock.lockw();
         }
 
+        @Override
         public void unlock() {
             lock.unlockw();
+        }
+
+        @Override
+        public boolean tryLock() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public boolean tryLock(long time, TimeUnit unit) {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public void lockInterruptibly() {
+            throw new UnsupportedOperationException("Not supported.");
+        }
+
+        @Override
+        public Condition newCondition() {
+            throw new UnsupportedOperationException("Not supported.");
         }
     }
 

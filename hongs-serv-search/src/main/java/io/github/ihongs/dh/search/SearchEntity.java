@@ -84,7 +84,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public IndexWriter getWriter() throws HongsException {
-        String dn = /***/ getDbName(  );
+        String dn = getDbName();
         String kn = SearchWriter.class.getName() + ":" + dn ;
         Larder ld = Block.getLarder(Closer.class.getName( ));
 
@@ -101,7 +101,7 @@ public class SearchEntity extends LuceneRecord {
 //              WRITOR.conn(  );
                 return  WRITOR.open();
             }
-            WRITOR = (SearchWriter) Core.GLOBAL_CORE.get(kn);
+            WRITOR = (SearchWriter) Core.GLOBAL_CORE.got(kn);
             if (WRITOR != null) {
                 WRITOR.conn(  );
                 return  WRITOR.open();

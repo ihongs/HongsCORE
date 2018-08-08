@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.analysis;
+package io.github.ihongs.dh.search.ticker;
 
 import java.io.IOException;
 import org.apache.lucene.analysis.CharacterUtils;

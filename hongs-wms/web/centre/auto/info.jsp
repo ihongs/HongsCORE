@@ -54,7 +54,8 @@
                     kind =  "_" + type + "\" data-fl=\"!v ?v :v *1000";
                 }
             } else
-            if ("textarea".equals(type)) {
+            if ("textarea".equals(type)
+            ||  "textview".equals(type)) {
                 // 文本域可能被应用上富文本、源代码等
                 String typa = (String) info.get("type");
                 String mode = (String) info.get("mode");

@@ -2,7 +2,7 @@
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
         <value code="listable" type="set">
-            string,search,text,hidden,email,url,tel,textarea,
+            string,search,text,hidden,email,url,tel,textarea,textview,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
@@ -16,6 +16,7 @@
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
+            fork,pick,
             sorted
         </value>
         <value code="findable" type="set">
@@ -36,7 +37,7 @@
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
         <value code="string" type="set">
-            string,search,text,hidden,email,url,tel,textarea,
+            string,search,text,hidden,email,url,tel,textarea,textview,
             enum,radio,check,select,type,
             file,image,audio,video,
             fork,pick,
@@ -61,6 +62,7 @@
         <value code="hidden">string</value>
         <value code="text">string</value>
         <value code="textarea">string</value>
+        <value code="textview">string</value>
         <value code="email">string</value>
         <value code="url">string</value>
         <value code="tel">string</value>

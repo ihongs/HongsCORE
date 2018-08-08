@@ -797,7 +797,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             String path = getDbPath();
 
             try {
-                if (! new File(path ).exists(  )) new File(path ).mkdirs(  );
+                if (! new File(path).exists()) {
+                      new File(path).mkdirs();
+                      getWriter () ; commit();
+                }
 
                 Directory dir = FSDirectory.open(Paths.get(path));
 

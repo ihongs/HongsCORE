@@ -63,12 +63,12 @@ public final class Block {
         loxk = ST_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String, Locker>> it = ST_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String,Locker>> it = ST_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , Locker> et = it.next();
+                Map.Entry<String, Locker> et = it.next();
                 Locker lock = et.getValue();
                 if (lock.cite <= 0) {
-                    it.remove();
+                    it.remove( );
                     ct ++;
                 }
             }
@@ -79,12 +79,12 @@ public final class Block {
         loxk = RW_LOCKR.writeLock();
         loxk.lock();
         try {
-            Iterator<Map.Entry<String, Larder>> it = RW_LOCKS.entrySet().iterator();
+            Iterator<Map.Entry<String,Larder>> it = RW_LOCKS.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , Larder> et = it.next();
+                Map.Entry<String, Larder> et = it.next();
                 Larder lock = et.getValue();
                 if (lock.cite <= 0) {
-                    it.remove();
+                    it.remove( );
                     ct ++;
                 }
             }
@@ -93,12 +93,12 @@ public final class Block {
         }
 
         // 可自动关闭的全局对象
-        Larder lard = getLarder(Closer.class.getName());
+        Larder lard = getLarder(Closer.class.getName( ));
         lard.lockw();
         try {
-            Iterator<Map.Entry<String, Object>> it = Core.GLOBAL_CORE.entrySet().iterator();
+            Iterator<Map.Entry<String,Object>> it = Core.GLOBAL_CORE.entrySet().iterator();
             while (it.hasNext()) {
-                Map.Entry<String , Object> et = it.next();
+                Map.Entry<String, Object> et = it.next();
                 Object inst = et.getValue();
                 if (inst instanceof Closer) {
                 Closer clos = (Closer) inst;

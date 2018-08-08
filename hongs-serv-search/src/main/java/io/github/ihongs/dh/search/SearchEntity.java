@@ -252,14 +252,6 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
-    private Block.Locker lock() {
-        String kn = SearchWriter.class.getName()
-                  + ":" + getDbName(  );
-        Locker lk = Block.getLocker(kn);
-        lk.lock();
-        return lk;
-    }
-
     private static class SearchWriter implements Closer {
 
         private final IndexWriter writer;

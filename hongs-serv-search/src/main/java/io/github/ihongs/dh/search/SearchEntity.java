@@ -225,8 +225,8 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
-    public void close() {
-        super.close();
+    public void close( ) {
+        super . close( );
 
         if (WRITOR == null) {
             return;
@@ -262,9 +262,9 @@ public class SearchEntity extends LuceneRecord {
 
     private static class SearchWriter implements Closer {
 
-        private IndexWriter  writer;
-        private final String dbname;
-        private int c = 1;
+        private final IndexWriter writer;
+        private final      String dbname;
+        private   int             c = 1 ;
 
         public SearchWriter(IndexWriter writer, String dbname) {
             this.writer = writer;
@@ -279,15 +279,19 @@ public class SearchEntity extends LuceneRecord {
             return this.writer;
         }
 
-        public void conn() {
-//          if (c >= 0) {
-                c += 1;
-//          }
+        public void conn( ) {
+            synchronized (writer) {
+//              if (c >= 0) {
+                    c += 1;
+//              }
+            }
         }
 
-        public void exit() {
-            if (c >= 1) {
-                c -= 1;
+        public void exit( ) {
+            synchronized (writer) {
+                if (c >= 1) {
+                    c -= 1;
+                }
             }
         }
 
@@ -305,12 +309,11 @@ public class SearchEntity extends LuceneRecord {
                 CoreLogger.error(x);
             }
 
+            // 关闭后外部移除
             try {
                 writer.close();
             } catch (IOException x) {
                 CoreLogger.error(x);
-            } finally {
-                writer = null ;
             }
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {

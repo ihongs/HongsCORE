@@ -179,6 +179,15 @@
                         </label>
                         <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
                     </div>
+                    <div class="form-group" data-type="textview">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>富文本</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
+                    </div>
                     <div class="form-group" data-type="image">
                         <label class="control-label clearfix" style="display: block;">
                             <span>图片</span>
@@ -577,9 +586,34 @@
                 <input class="form-control" type="text" name="textarea|placeholder" value=""/>
             </div>
             <div class="form-group">
+                <label class="control-label">长度范围</label>
+                <div class="control-group">
+                    <input class="form-control" type="number" name="textarea|minlength" value="" style="display: inline-block; width: 8em;"/>
+                    <span>&nbsp;~&nbsp;</span>
+                    <input class="form-control" type="number" name="textarea|maxlength" value="" style="display: inline-block; width: 8em;"/>
+                </div>
+            </div>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" name="textarea|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="textarea|data-srchable" value="yes"/>搜索
+                </label>
+            </div>
+        </div>
+        <div class="widget-pane widget-pane-textview">
+            <div class="form-group">
+                <label class="control-label">字段名称</label>
+                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
+            </div>
+            <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="textarea|placeholder" value=""/>
+            </div>
+            <div class="form-group">
                 <label class="control-label">内容类型</label>
                 <select class="form-control" name="textarea|data-type">
-                    <option value="">文本</option>
                     <option value="html">富文本</option>
                     <option value="code">源代码</option>
                 </select>

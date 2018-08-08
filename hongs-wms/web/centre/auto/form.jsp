@@ -52,7 +52,7 @@
             <div class="form-group row">
                 <label class="col-md-3 col-sm-2 control-label form-control-static text-right"><%=text%></label>
                 <div class="col-md-6 col-sm-8">
-                <%if ("textarea".equals(type)) {%>
+                <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String extr = "";
                         String typa = (String) info.get("type");

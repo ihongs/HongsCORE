@@ -4,10 +4,8 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
-import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.thread.Block;
 import io.github.ihongs.util.thread.Block.Larder;
 import io.github.ihongs.util.thread.Block.Closer;
@@ -27,7 +25,7 @@ import org.apache.lucene.store.FSDirectory;
  * 搜索记录
  *
  * 增加写锁避免同时写入导致失败
- * 注意: 此类的对象无法使用事务
+ * 注意: 采用此类则无法使用事务
  *
  * @author Hongs
  */
@@ -98,12 +96,10 @@ public class SearchEntity extends LuceneRecord {
         ld.lockr();
         try {
             if (WRITOR != null) {
-//              WRITOR.conn(  );
-                return  WRITOR.open();
+                return  WRITOR.conn();
             }
             WRITOR = (SearchWriter) Core.GLOBAL_CORE.got(kn);
             if (WRITOR != null) {
-                WRITOR.conn(  );
                 return  WRITOR.open();
             }
         } finally {
@@ -136,18 +132,30 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
+    public void close() {
+        super . close();
+
+        if (WRITOR == null) {
+            return;
+        }
+
+        synchronized (
+            WRITOR.conn( )) {
+            WRITOR.exit( );
+            WRITOR  = null;
+        }
+    }
+
+    @Override
     public void addDoc(Document doc) throws HongsException {
         IndexWriter iw = getWriter();
         synchronized (iw) {
             try {
                 iw.addDocument (doc);
+                iw.commit();
             } catch (IOException ex) {
                 throw new HongsException.Common(ex);
             }
-        }
-
-        if (!TRNSCT_MODE) {
-            commit();
         }
     }
 
@@ -157,13 +165,10 @@ public class SearchEntity extends LuceneRecord {
         synchronized (iw) {
             try {
                 iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
+                iw.commit();
             } catch (IOException ex) {
                 throw new HongsException.Common(ex);
             }
-        }
-
-        if (!TRNSCT_MODE) {
-            commit();
         }
     }
 
@@ -173,81 +178,10 @@ public class SearchEntity extends LuceneRecord {
         synchronized (iw) {
             try {
                 iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
+                iw.commit();
             } catch (IOException ex) {
                 throw new HongsException.Common(ex);
             }
-        }
-
-        if (!TRNSCT_MODE) {
-            commit();
-        }
-    }
-
-    /**
-     * 提交更改
-     */
-    @Override
-    public void commit() {
-        if (WRITOR == null) {
-            return;
-        }
-        TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
-
-        IndexWriter iw = WRITOR.open();
-        synchronized (iw) {
-            try {
-                iw.commit(  );
-            } catch (IOException ex) {
-                throw new HongsExemption(0x102c, ex);
-            }
-        }
-    }
-
-    /**
-     * 回滚操作
-     */
-    @Override
-    public void revert() {
-        if (WRITOR == null) {
-            return;
-        }
-        TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
-
-        IndexWriter iw = WRITOR.open();
-        synchronized (iw) {
-            try {
-                iw.rollback();
-            } catch (IOException ex) {
-                throw new HongsExemption(0x102d, ex);
-            }
-        }
-    }
-
-    @Override
-    public void close( ) {
-        super . close( );
-
-        if (WRITOR == null) {
-            return;
-        }
-
-        // 默认退出时提交
-        if (TRNSCT_MODE) {
-            try {
-            try {
-                commit();
-            } catch (Error er ) {
-                revert();
-                throw er;
-            }
-            } catch (Error er ) {
-                CoreLogger.error(er);
-            }
-        }
-
-        synchronized (WRITOR.open()) {
-            WRITOR.exit();
-            WRITOR = null;
         }
     }
 
@@ -266,29 +200,25 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-        public IndexWriter open() {
+        public IndexWriter conn() {
+//          c += 0;
             return  writer;
         }
 
-        public void conn () {
-            synchronized (writer) {
-//              if (c >= 0) {
-                    c += 1;
-//              }
-            }
+        public IndexWriter open() {
+            c += 1;
+            return  writer;
         }
 
-        public void exit () {
-            synchronized (writer) {
-                if (c >= 1) {
-                    c -= 1;
-                }
+        public void exit() {
+            if (c >= 1) {
+                c -= 1;
             }
         }
 
         @Override
         public boolean closeable( ) {
-            return  c <= 0 || ! writer.isOpen();
+            return c <= 0 || !writer.isOpen();
         }
 
         @Override

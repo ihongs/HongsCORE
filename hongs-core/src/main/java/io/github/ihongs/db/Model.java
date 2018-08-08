@@ -152,14 +152,7 @@ implements IEntity
   public Map create(Map rd, FetchCase caze)
     throws HongsException
   {
-    String id = add( rd );
-
-    // 组织反查条件
-    FetchCase fc = caze != null
-                 ? caze.clone()
-                 : fetchCase ();
-    fc.setOption("MODEL_START", "create");
-    fc.filter("`"+ this.table.primaryKey +"` = ?", id);
+    String id = add(rd);
 
     // 附加外部参数
     Map xd = new HashMap();
@@ -170,7 +163,15 @@ implements IEntity
         xd.put(Cnst.AB_KEY, rd.get(Cnst.AB_KEY));
     }
 
-    return getInfo(xd, fc);
+    // 组织反查条件
+    FetchCase fc = caze != null
+                 ? caze.clone()
+                 : fetchCase ();
+    fc.where("`" + table.primaryKey + "`=?", id);
+    fc.setOption("MODEL_START", "create");
+    filter(fc , xd);
+
+    return table.fetchLess (fc);
   }
 
   /**
@@ -213,8 +214,8 @@ implements IEntity
         ids.add   ( idz.toString());
     }
 
-    Map dat = new HashMap( rd );
-    dat.remove(this.table.primaryKey);
+    Map xd = new HashMap ( rd );
+    xd.remove(table.primaryKey);
 
     // 检查是否可更新
     FetchCase fc = caze != null
@@ -225,7 +226,7 @@ implements IEntity
 
     for (String id : ids)
     {
-      this.put( id , dat);
+      this.put( id , xd );
     }
 
     return ids.size();
@@ -280,7 +281,7 @@ implements IEntity
 
     for (String id : ids)
     {
-      this.del( id ,caze);
+      this.del( id , fc );
     }
 
     return ids.size();

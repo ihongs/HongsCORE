@@ -267,10 +267,10 @@ public class SearchEntity extends LuceneRecord {
         }
 
         public IndexWriter open() {
-            return this.writer;
+            return  writer;
         }
 
-        public void conn( ) {
+        public void conn () {
             synchronized (writer) {
 //              if (c >= 0) {
                     c += 1;
@@ -278,7 +278,7 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-        public void exit( ) {
+        public void exit () {
             synchronized (writer) {
                 if (c >= 1) {
                     c -= 1;
@@ -288,11 +288,15 @@ public class SearchEntity extends LuceneRecord {
 
         @Override
         public boolean closeable( ) {
-            return  c == 0;
+            return  c <= 0 || ! writer.isOpen();
         }
 
         @Override
         public void close() {
+            if (! writer.isOpen() ) {
+                return;
+            }
+
             // 退出时合并索引
             try {
                 writer.maybeMerge();

@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search.analysis;
+package io.github.ihongs.dh.search.ticker;
 
 import java.util.Map;
 import org.apache.lucene.analysis.Tokenizer;

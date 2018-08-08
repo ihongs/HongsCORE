@@ -17,7 +17,8 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 /**
  * 全局资源锁
  *
- * 注意: 以下均不支持 tryLock, lockInterruptibly
+ * 每隔一段时间自动清理锁, 以及释放可以关闭的对象;
+ * 注意: 以下锁均不支持 tryLock/lockInterruptibly.
  *
  * @author Hongs
  */

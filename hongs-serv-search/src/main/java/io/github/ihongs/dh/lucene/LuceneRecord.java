@@ -797,10 +797,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             String path = getDbPath();
 
             try {
-                if (! new File(path).exists()) {
-                      new File(path).mkdirs();
-                      getWriter () ; commit();
-                }
+                // 目录不存在需开写并提交从而建立索引
+                // 否则会抛出: IndexNotFoundException
+                if (! new File(path).exists())
+                    getWriter (    ).commit();
 
                 Directory dir = FSDirectory.open(Paths.get(path));
 

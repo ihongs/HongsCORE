@@ -252,7 +252,7 @@ public final class Block {
      * 读写锁
      * 对 ReadWriteLock 的封装
      */
-    public static final class Larder {
+    public static final class Larder implements ReadWriteLock {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
         private int cite = 0;
 
@@ -284,6 +284,16 @@ public final class Block {
                 cite --;
             }
             lock.writeLock().unlock();
+        }
+
+        @Override
+        public Lock  readLock() {
+            return new Reader(this);
+        }
+
+        @Override
+        public Lock writeLock() {
+            return new Writer(this);
         }
     }
 

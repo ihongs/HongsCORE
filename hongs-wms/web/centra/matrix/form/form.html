@@ -177,7 +177,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
+                        <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="在此输入内容..."></textarea>
                     </div>
                     <div class="form-group" data-type="textview">
                         <label class="control-label clearfix" style="display: block;">
@@ -186,7 +186,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" placeholder="请输入..."></textarea>
+                        <textarea class="form-control" name="-" style="min-height: 4em; height: 4em; resize: none;" data-type="html" data-mode=""></textarea>
                     </div>
                     <div class="form-group" data-type="image">
                         <label class="control-label clearfix" style="display: block;">
@@ -619,7 +619,7 @@
                 </select>
             </div>
             <div class="form-group">
-                <label class="control-label">代码格式</label>
+                <label class="control-label">内容格式</label>
                 <select class="form-control" name="textarea|data-mode">
                     <option value=""></option>
                     <!-- C   家族 -->
@@ -641,22 +641,22 @@
                     <!-- XML 家族 -->
                     <option value="xml">XML</option>
                     <option value="html">Html</option>
+                    <option value="md">Markdown</option>
                     <option value="jsp">JSP</option>
                     <option value="asp">ASP</option>
                     <!-- 其他程序 -->
-                    <option value="sql">SQL</option>
                     <option value="php">PHP</option>
                     <option value="lua">Lua</option>
-                    <option value="py" >Python</option>
-                    <option value="rb" >Ruby</option>
-                    <option value="pl" >Perl</option>
-                    <option value="sh" >Shell</option>
+                    <option value="py">Python</option>
+                    <option value="rb">Ruby</option>
+                    <option value="pl">Perl</option>
+                    <option value="sh">Shell</option>
                     <option value="ps1">PowerShell</option>
                     <!-- 其他代码 -->
+                    <option value="sql">SQL</option>
                     <option value="css">CSS</option>
                     <option value="scss">SCSS</option>
                     <option value="less">LESS</option>
-                    <option value="md" >Markdown</option>
                     <option value="proto">Protobuf</option>
                     <option value="properties">Properties</option>
                 </select>

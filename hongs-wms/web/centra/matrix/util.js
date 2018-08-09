@@ -333,10 +333,11 @@ function gainFlds(fields, area) {
         }
 
         if (type == "ul"
-        ||  type == "div" ) {
+        ||  type == "div"
+        ||  type == "textarea") {
             type  = $(this).data("type");
         }
-        if (type =="image") {
+        if (type == "image") {
             params["__rule__"] = "Thumb";
         }
 

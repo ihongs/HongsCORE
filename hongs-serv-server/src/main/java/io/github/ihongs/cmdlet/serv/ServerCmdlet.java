@@ -196,7 +196,7 @@ public class ServerCmdlet {
         @Override
         public void init(ServletContextHandler sc) {
             CoreConfig cc = CoreConfig.getInstance("defines");
-                String dn = cc.getProperty("jetty.servlet.context.path", "server" + File.separator + "sess");
+                String dn = cc.getProperty("jetty.servlet.context.path", "server" + File.separator + "temp");
                 File   dh = new File(dn);
                 if ( ! dh.isAbsolute() ) {
                        dn = Core.DATA_PATH + File.separator + dn ;

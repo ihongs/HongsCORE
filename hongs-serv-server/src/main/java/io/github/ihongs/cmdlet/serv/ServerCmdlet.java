@@ -195,14 +195,21 @@ public class ServerCmdlet {
 
         @Override
         public void init(ServletContextHandler sc) {
-            File dh = new File(Core.DATA_PATH + File.separator + "server"+ File.separator + "temp");
-            if (!dh.exists()) {
-                 dh.mkdirs();
-            }
-            sc.setAttribute("javax.servlet.context.tempdir", dh);
+            CoreConfig cc = CoreConfig.getInstance("defines");
+                String dn = cc.getProperty("jetty.servlet.context.path", "server" + File.separator + "sess");
+                File   dh = new File(dn);
+                if ( ! dh.isAbsolute() ) {
+                       dn = Core.DATA_PATH + File.separator + dn ;
+                       dh = new File(dn);
+                }
+                if ( ! dh.exists() /**/) {
+                       dh.mkdirs();
+                }
+
+            sc.setAttribute("javax.servlet.context.tempdir" , dh);
             sc.setAttribute("org.eclipse.jetty.containerInitializers",
               Arrays.asList(new ContainerInitializer(new JettyJasperInitializer(),null)));
-            sc.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
+            sc.setAttribute(InstanceManager.class.getName( ),new SimpleInstanceManager());
         }
 
     }
@@ -218,7 +225,7 @@ public class ServerCmdlet {
                 String mt = cc.getProperty("jetty.session.manager.type", "hash");
 
             if ("hash".equals(mt)) {
-                String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess" /**/ );
+                String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess");
                 File   dh = new File(dn);
                 if ( ! dh.isAbsolute() ) {
                        dn = Core.DATA_PATH + File.separator + dn ;
@@ -242,7 +249,7 @@ public class ServerCmdlet {
             } else
             if ("jdbs".equals(mt)) {
                 String dh = cc.getProperty("jetty.session.manager.jdbc", "org.sqlite.JDBC|jdbc:sqlite:default.db");
-                int dp = dh.indexOf ("|"); if ( 0 > dp ) throw new HongsError.Common("Wrong session manager type");
+                int dp = dh.indexOf ("|"); if ( 0 > dp ) throw new HongsError.Common("Wrong session manager jdbc");
                 JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());
                 im.setDriverInfo( dh.substring( 0 , dp ), dh.substring( 1 + dp ) );
                 im.setWorkerName( Core.SERVER_ID );
@@ -260,7 +267,7 @@ public class ServerCmdlet {
                 }
             } else
             {
-                throw new HongsError.Common("Can not support session manager type " + mt);
+                throw new HongsError.Common("Unsupported session manager: " + mt );
             }
         }
 

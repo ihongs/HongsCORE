@@ -618,7 +618,7 @@ function hsSetSeria (arr, name, value) {
 function hsGetParams(url, name) {
     name = encodeURIComponent ( name );
     var nam = name.replace('.', '\\.');
-    var reg = new RegExp("[\\?&]"+ nam +"=([^&#]*)", "g");
+    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
     var arr = null, val = [  ];
     while ((arr = reg.exec(url))) {
         val.push(decodeURIComponent(arr[1]));
@@ -635,10 +635,10 @@ function hsGetParams(url, name) {
 function hsSetParams(url, name, value) {
     name = encodeURIComponent ( name );
     var nam = name.replace('.', '\\.');
-    var reg = new RegExp("[\\?&]"+ nam +"=([^&#]*)", "g");
+    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
     url = url.replace(reg, "");
     for(var i = 0; i < value.length; i ++) {
-        url+= "&"+ name +"="+encodeURIComponent(value[i]);
+        url+= "&"+ name +"="+ encodeURIComponent(value[i]);
     }
     if (url.indexOf("?") < 0 ) {
         url = url.replace("&", "?");

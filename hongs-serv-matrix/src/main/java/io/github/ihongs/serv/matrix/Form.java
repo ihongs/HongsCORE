@@ -46,6 +46,7 @@ public class Form extends Model {
 
     protected String centra = "centra/data";
     protected String centre = "centre/data";
+    protected String upload = "static/upload/data";
 
     public Form() throws HongsException {
         this(DB.getInstance("matrix").getTable("form"));
@@ -612,22 +613,19 @@ public class Form extends Model {
             s = Synt.declare(fiel.get("__repeated__"), "");
             item.setAttribute("repeated", s);
 
-            // 文件类型要指定上传路径
-            if ("file".equals(types.get(t) )) {
-                if(!fiel.containsKey("href")) {
-                    fiel.put("href", "static/upload/data/"+ id);
-                }
-                if(!fiel.containsKey("path")) {
-                    fiel.put("path", "static/upload/data/"+ id);
-                }
-                if(!fiel.containsKey("temp")) {
-                    fiel.put("temp", "static/upload/temp/"+ id);
-                }
-            } else
             // 日期类型要指定存储格式
             if ("date".equals(types.get(t) )) {
                 if(!fiel.containsKey("type")) {
                     fiel.put("type", "timestamp");
+                }
+            } else
+            // 文件类型要指定上传路径
+            if ("file".equals(types.get(t) )) {
+                if(!fiel.containsKey("href")) {
+                    fiel.put("href", upload +"/"+ id);
+                }
+                if(!fiel.containsKey("path")) {
+                    fiel.put("path", upload +"/"+ id);
                 }
             } else
             // 选项表单要指定配置路径

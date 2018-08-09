@@ -37,6 +37,9 @@ import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.eclipse.jetty.server.session.HashSessionManager;
+import org.eclipse.jetty.server.session.HashSessionIdManager;
+import org.eclipse.jetty.server.session.JDBCSessionManager;
+import org.eclipse.jetty.server.session.JDBCSessionIdManager;
 import org.eclipse.jetty.servlet.FilterHolder;
 import org.eclipse.jetty.servlet.ServletHolder;
 
@@ -211,21 +214,53 @@ public class ServerCmdlet {
 
         @Override
         public void init(ServletContextHandler sc) {
-            File dh = new File(Core.DATA_PATH + File.separator + "server"+ File.separator + "sess");
-            if (!dh.exists()) {
-                 dh.mkdirs();
-            }
-            try {
-                HashSessionManager sm = new HashSessionManager();
-    //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
-    //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
-    //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
-                sm.setStoreDirectory( dh );
-                /**/SessionHandler sh = new SessionHandler( sm );
-                sc.setSessionHandler( sh );
-            }
-            catch (IOException e) {
-                throw new HongsError.Common(e);
+            CoreConfig cc = CoreConfig.getInstance("defines");
+                String mt = cc.getProperty("jetty.session.manager.type", "hash");
+
+            if ("hash".equals(mt)) {
+                String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess" /**/ );
+                File   dh = new File(dn);
+                if ( ! dh.isAbsolute() ) {
+                       dn = Core.DATA_PATH + File.separator + dn ;
+                       dh = new File(dn);
+                }
+                if ( ! dh.exists() /**/) {
+                       dh.mkdirs();
+                }
+
+                try {
+                    HashSessionManager sm = new HashSessionManager();
+        //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
+        //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
+        //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
+                    sm.setStoreDirectory( dh );
+                    /**/SessionHandler sh = new SessionHandler( sm );
+                    sc.setSessionHandler( sh );
+                } catch (IOException e) {
+                    throw new HongsError.Common(e);
+                }
+            } else
+            if ("jdbs".equals(mt)) {
+                String dh = cc.getProperty("jetty.session.manager.jdbc", "org.sqlite.JDBC|jdbc:sqlite:default.db");
+                int    dp = dh.indexOf ( "|" );
+                JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());
+                im.setDriverInfo( dh.substring( 0 , dp ), dh.substring( 1 + dp ) );
+                im.setWorkerName( Core.SERVER_ID );
+
+                try {
+                    JDBCSessionManager sm = new JDBCSessionManager();
+        //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
+        //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
+        //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
+                    sm.setSessionIdManager(im);
+                    /**/SessionHandler sh = new SessionHandler( sm );
+                    sc.setSessionHandler( sh );
+                } catch (  Exception e) {
+                    throw new HongsError.Common(e);
+                }
+            } else
+            {
+                throw new HongsError.Common("Can not support session manager type " + mt);
             }
         }
 

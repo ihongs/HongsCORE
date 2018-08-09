@@ -217,7 +217,7 @@ public class ServerCmdlet {
     /**
      * 会话初始器
      */
-    public static class Sesion implements Initer {
+    public static class Swaper implements Initer {
 
         @Override
         public void init(ServletContextHandler sc) {
@@ -399,5 +399,11 @@ public class ServerCmdlet {
         }
 
     }
+
+    /**
+     * @see Swaper
+     * @deprecated 改用 Swaper
+     */
+    public static class Sesion extends Swaper {}
 
 }

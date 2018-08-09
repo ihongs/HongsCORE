@@ -319,19 +319,22 @@ function gainFlds(fields, area) {
         var input = $(this).find(   "[data-fn],[name]"   ).first();
         var text  = label.text();
         var name  = input.attr("name") || input.attr("data-fn");
-        var type  = input.attr("type") || input.prop("tagName").toLowerCase();
+        var type  = input.attr("type") || input.prop("tagName");
+        var hint  = input.attr("placeholder");
         var required = input.prop("required") || input.data("required") ? "true" : "";
         var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "";
         var params   = {};
 
-        if (name.substr(0, 1) == "-") {
+        if (name.substr(0, 1) === "-") {
             name  = "-";
         } else
         if (name == "@") {
             type  = "" ;
             text  = "" ;
+            hint  = "" ;
         }
 
+            type  = type.toLowerCase ( );
         if (type == "ul"
         ||  type == "div"
         ||  type == "textarea") {
@@ -394,9 +397,10 @@ function gainFlds(fields, area) {
             params["selected"] = JSON.stringify(selected);
         }
         fields.push($.extend({
-            "__text__": text,
             "__name__": name,
             "__type__": type,
+            "__text__": text,
+            "__hint__": hint,
             "__required__": required,
             "__repeated__": repeated
         }, params));
@@ -412,9 +416,10 @@ function gainFlds(fields, area) {
 function drawFlds(fields, area, wdgt, pre, suf) {
     for(var I = 0, i = 0; i < fields.length; i ++) {
         var field = fields[i];
-        var text  = field["__text__"];
         var name  = field['__name__'];
         var type  = field["__type__"];
+        var text  = field["__text__"];
+        var hint  = field["__hint__"];
         var required = field["__required__"];
         var repeated = field["__repeated__"];
 
@@ -457,6 +462,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             input.attr("name"   , name);
             input.prop("required" , ! ! required);
             input.prop("multiple" , ! ! repeated);
+            input.attr("placeholder"  ,   hint  );
         }
 
         for(var k in field) {

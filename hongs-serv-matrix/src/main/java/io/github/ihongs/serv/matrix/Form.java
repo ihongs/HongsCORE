@@ -638,13 +638,15 @@ public class Form extends Model {
                 }
             } else
             // 可搜索指定存为搜索类型
-            if (Synt.declare(fiel.get("srchable") , false)) {
+            if ("search".equals(t)
+            ||  Synt.declare(fiel.get("srchable"), false)) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "search");
                 }
             } else
             // 文本禁搜索则为存储类型
-            if ("stored".equals(t) || "textarea".equals(t)) {
+            if ("stored".equals(t)
+            ||"textarea".equals(t) ||"textview".equals(t)) {
                 if(!fiel.containsKey("lucnene-type")) {
                     fiel.put("lucene-type", "stored");
                 }

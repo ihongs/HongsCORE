@@ -247,7 +247,7 @@ public class ServerCmdlet {
                     throw new HongsError.Common(e);
                 }
             } else
-            if ("jdbs".equals(mt)) {
+            if ("jdbc".equals(mt)) {
                 String dh = cc.getProperty("jetty.session.manager.jdbc", "org.sqlite.JDBC|jdbc:sqlite:default.db");
                 int dp = dh.indexOf ("|"); if ( 0 > dp ) throw new HongsError.Common("Wrong session manager jdbc");
                 JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());

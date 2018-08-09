@@ -242,7 +242,7 @@ public class ServerCmdlet {
             } else
             if ("jdbs".equals(mt)) {
                 String dh = cc.getProperty("jetty.session.manager.jdbc", "org.sqlite.JDBC|jdbc:sqlite:default.db");
-                int    dp = dh.indexOf ( "|" );
+                int dp = dh.indexOf ("|"); if ( 0 > dp ) throw new HongsError.Common("Wrong session manager type");
                 JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());
                 im.setDriverInfo( dh.substring( 0 , dp ), dh.substring( 1 + dp ) );
                 im.setWorkerName( Core.SERVER_ID );

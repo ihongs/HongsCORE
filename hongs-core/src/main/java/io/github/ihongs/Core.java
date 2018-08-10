@@ -97,7 +97,7 @@ public final class Core
   }
 
   /**
-   * 不支持 get(Object), 仅支持 got(String),get(String|Class)
+   * 弃用 get(Object), 请用 got(String),get(String|Class)
    *
    * @param name
    * @return 抛出异常, 为避歧义禁用之
@@ -112,7 +112,7 @@ public final class Core
   }
 
   /**
-   * 不支持 clear, 可使用 close, 将会在结束时自动销毁对象
+   * 不支持 clear, 可使用 close, 后者在退出时自动销毁对象
    *
    * @throws UnsupportedOperationException 总是抛出此异常
    * @deprecated
@@ -125,10 +125,7 @@ public final class Core
   }
 
   /**
-   * 销毁核心
-
- Deletable 会执行其 close
- Singleton 对象不会被移除
+   * 关闭并清空
    */
   @Override
   public void close()
@@ -139,37 +136,40 @@ public final class Core
     }
 
     /**
-     * 为解决 close 内引用到其他对象,
-     * 采用先 close 后 remove 的方式;
      * 为规避 ConcurrentModificationException,
      * 只能采用遍历数组而非迭代循环的方式进行.
+     * 不要让 Closeable, Singleton 进入非全局.
      */
 
     Object[] a = this.values().toArray();
     for (int i = 0; i < a.length; i ++ )
     {
-      Object o = a[i];
+      Object o = a [i];
       try
       {
-        if (o instanceof Closeable)
-        {
-          Closeable c = (Closeable) o;
-        if (c.closeable())
-        {
-            c.close();
-        }
-            continue ;
-        }
-
         if (o instanceof AutoCloseable )
         {
-          ((AutoCloseable) o).close();
+           ((AutoCloseable) o ).close( );
         }
       }
-      catch (Throwable x)
+      catch ( Throwable x )
       {
-        x.printStackTrace(System.err);
+        x.printStackTrace ( System.err );
       }
+    }
+
+    // 关闭后清空
+    super.clear();
+  }
+
+  /**
+   * 关闭和删除 Closeable
+   */
+  public void cloze()
+  {
+    if (this.isEmpty())
+    {
+      return;
     }
 
     Iterator i = this.entrySet().iterator();
@@ -179,25 +179,19 @@ public final class Core
       Object o =  e . getValue();
       try
       {
-        if (o instanceof Singleton)
-        {
-          continue;
-        }
-
         if (o instanceof Closeable)
         {
           Closeable c = (Closeable) o;
-        if (c.closeable() == false)
+        if (c.closeable() )
         {
-          continue;
+            c.close( );
+            i.remove();
         }
         }
-
-        i.remove();
       }
-      catch (Throwable x)
+      catch ( Throwable x )
       {
-        x.printStackTrace(System.err);
+        x.printStackTrace ( System.err );
       }
     }
   }
@@ -229,7 +223,7 @@ public final class Core
       } else
       if (ob instanceof Closeable)
       {
-        sb.append("[D]");
+        sb.append("[Z]");
       } else
       if (ob instanceof AutoCloseable)
       {
@@ -601,49 +595,6 @@ public final class Core
 
     core.put(name, inst);
     return inst;
-  }
-
-  /**
-   * 关闭并删除全局对象
-   * 但仅清理 Closeable
-   * 故不同于 close
-   */
-  public static void closes( )
-  {
-    synchronized (GLOBAL_CORE) {
-        Core core = Core.GLOBAL_CORE;
-
-        Object[] a = core.values().toArray();
-        for (int i = 0; i < a.length; i ++ ) {
-            Object  o = a[i];
-            try {
-                if (o instanceof Core.Closeable) {
-                    Core.Closeable c = (Core.Closeable) o;
-                    if (c.closeable()) {
-                        c.close( );
-                    }
-                }
-            } catch (Throwable ex) {
-                ex.printStackTrace(System.err);
-            }
-        }
-
-        Iterator i = core.entrySet().iterator();
-        while (i.hasNext()) {
-            Map.Entry e = (Map.Entry) i.next( );
-            Object  o = e.getValue();
-            try {
-                if (o instanceof Core.Closeable) {
-                    Core.Closeable c = (Core.Closeable) o;
-                    if (c.closeable()) {
-                        i.remove();
-                    }
-                }
-            } catch (Throwable ex) {
-                ex.printStackTrace(System.err);
-            }
-        }
-    }
   }
 
   //** 核心接口 **/

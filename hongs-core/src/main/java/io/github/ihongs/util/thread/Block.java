@@ -374,11 +374,11 @@ public final class Block {
         public boolean closeable( ) {
             if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
                 int n  =  cleans( );
-                if (Core.DEBUG > 0) {
+                if (0 != Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                     CoreLogger.trace("Cleared "+n+" lock(s)");
                 }
             } else {
-                if (Core.DEBUG > 0) {
+                if (0 != Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                     CoreLogger.trace( "No locks be cleared" );
                 }
             }

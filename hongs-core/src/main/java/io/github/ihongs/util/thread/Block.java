@@ -30,6 +30,12 @@ public final class Block {
     private static final Map<String, Larder> RW_LOCKS = new HashMap();
 
     /**
+     * 读写全局计数关闭对象时
+     * 务必用此锁限定存取过程
+     */
+    public  static final Larder CLOSER = new Larder();
+
+    /**
      * 自启一个定时任务,
      * 每隔一段时间清理,
      * 如设为  0 不清理,
@@ -70,7 +76,7 @@ public final class Block {
      * @return 关闭数量
      */
     public static int closes() {
-        Lock loxk = getWriter(Closer.class.getName());
+        Lock loxk = CLOSER.writeLock();
         int  ct = 0;
 
         loxk.lock();
@@ -79,8 +85,8 @@ public final class Block {
             while (it.hasNext()) {
                 Map.Entry<String, Object> et = it.next();
                 Object inst = et.getValue();
-                if (inst instanceof Closer) {
-                Closer clos = (Closer) inst;
+                if (inst instanceof Closeable) {
+                Closeable clos = (Closeable) inst;
                 if (clos.closeable( )) {
                     clos.close();
                     it.remove( );
@@ -429,9 +435,9 @@ public final class Block {
     }
 
     /**
-     * 可自动关闭的容器
+     * 可询问关闭的容器, 通常关闭后被删除
      */
-    public static interface Closer extends AutoCloseable {
+    public static interface Closeable extends AutoCloseable {
 
         public boolean closeable();
 

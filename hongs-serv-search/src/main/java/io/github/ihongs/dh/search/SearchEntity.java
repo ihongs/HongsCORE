@@ -8,7 +8,7 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.thread.Block;
 import io.github.ihongs.util.thread.Block.Larder;
-import io.github.ihongs.util.thread.Block.Closer;
+import io.github.ihongs.util.thread.Block.Closeable;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -82,9 +82,9 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public IndexWriter getWriter() throws HongsException {
-        String dn = getDbName();
+        Larder ld = Block.CLOSER;
+        String dn = getDbName( );
         String kn = SearchWriter.class.getName() + ":" + dn ;
-        Larder ld = Block.getLarder(Closer.class.getName( ));
 
         /**
          * 依次检查当前对象和全部空间是否存在 SearchWriter,
@@ -185,7 +185,7 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
-    private static class SearchWriter implements Closer {
+    private static class SearchWriter implements Closeable, Core.GlobalSingleton {
 
         private final IndexWriter writer;
         private final      String dbname;

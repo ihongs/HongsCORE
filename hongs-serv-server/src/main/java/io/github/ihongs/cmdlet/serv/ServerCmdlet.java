@@ -276,46 +276,53 @@ public class ServerCmdlet {
         private void setSidMgr(JDBCSessionIdManager im, String dh) {
             DBConfig conf;
             try {
-                conf = new DBConfig(dh);
-            } catch (HongsException ex) {
-                throw  new HongsError.Common(ex);
+                conf= new DBConfig(dh);
+            } catch (HongsException e) {
+                throw new HongsError.Common(e);
             }
 
-            if (conf.source != null && !conf.source.isEmpty()) {
-                String dn, dx; Map  dp;
-                dh = (String) conf.source.get("jdbc");
-                dn = (String) conf.source.get("name");
-                dp = ( Map  ) conf.source.get("info");
-
-                // 拼接链接参数
-                if (dp != null && !dp.isEmpty()) {
-                    StringBuilder sb = new StringBuilder();
-                    if (dp.containsKey("username")) {
-                        sb.append(/**/"&user=").append(dp.get("username"));
-                    }
-                    if (dp.containsKey("password")) {
-                        sb.append("&password=").append(dp.get("password"));
-                    }
-                    if (dp.containsKey("connectionProperties")) {
-                        dx = (String ) dp.get("connectionProperties");
-                        sb.append("&").append( dx.replace(';', '&') );
-                    }
-                    if (sb.length() > 0) {
-                        dn = dn + "?" + sb.substring ( 1 );
-                    }
-                }
-
-                im.setDriverInfo(dh, dn);
+            if (conf.link != null && conf.link.length( ) != 0) {
+                setSidMgr(im, conf.link);
             } else
             if (conf.origin != null && !conf.origin.isEmpty()) {
                 dh = (String) conf.origin.get("name");
+                dh = ( dh + getUrlPms ( conf.origin));
                 im.setDatasourceName(dh);
             } else
-            if (conf.link != null && conf.link.length( ) != 0) {
-                setSidMgr(im, conf.link);
+            if (conf.source != null && !conf.source.isEmpty()) {
+                String dn ;
+                dn = (String) conf.source.get("jdbc");
+                dh = (String) conf.source.get("name");
+                dh = ( dh + getUrlPms ( conf.source));
+                im.setDriverInfo(dn, dh);
             } else {
                 throw new HongsError.Common("Wrong session manager jdbc!");
             }
+        }
+
+        public String getUrlPms(Map dc) {
+            Map dp = (Map) dc.get( "info" );
+            if (dp == null || dp.isEmpty()) {
+                return "";
+            }
+
+            // 拼接用户名密码
+            StringBuilder sb = new StringBuilder();
+            if (dp.containsKey("username")) {
+                sb.append("&user="/**/).append(dp.get("username"));
+            }
+            if (dp.containsKey("password")) {
+                sb.append("&password=").append(dp.get("password"));
+            }
+            if (dp.containsKey("connectionProperties")) {
+                sb.append("&").append(((String)dp.get("connectionProperties")).replace(';','&'));
+            }
+            if (sb.length(   ) != 0 ) {
+                sb.setCharAt (0, '?');
+                return sb.toString( );
+            }
+
+            return "";
         }
 
     }

@@ -281,7 +281,7 @@ public class ServerCmdlet {
                 throw new HongsError.Common(e);
             }
 
-            if (conf.link != null && conf.link.length( ) != 0) {
+            if (conf.link != null && conf.link.length() != 0 ) {
                 setSidMgr(im, conf.link);
             } else
             if (conf.origin != null && !conf.origin.isEmpty()) {
@@ -290,11 +290,12 @@ public class ServerCmdlet {
                 im.setDatasourceName(dh);
             } else
             if (conf.source != null && !conf.source.isEmpty()) {
-                String dn ;
-                dn = (String) conf.source.get("jdbc");
+                String dt ;
+                dt = (String) conf.source.get("jdbc");
                 dh = (String) conf.source.get("name");
+                dh = ( DBConfig.fixSourceName( dh  ));
                 dh = ( dh + getUrlPms ( conf.source));
-                im.setDriverInfo(dn, dh);
+                im.setDriverInfo(dt, dh);
             } else {
                 throw new HongsError.Common("Wrong session manager jdbc!");
             }

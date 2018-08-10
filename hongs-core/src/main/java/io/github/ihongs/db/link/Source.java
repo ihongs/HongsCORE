@@ -3,9 +3,7 @@ package io.github.ihongs.db.link;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Tool;
-import org.apache.commons.dbcp2.BasicDataSource;
-import java.io.File;
+import io.github.ihongs.db.DBConfig;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -14,6 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import org.apache.commons.dbcp2.BasicDataSource;
 
 /**
  * 私有连接池
@@ -75,25 +74,11 @@ public class Source extends Link {
             sourceLock.readLock( ).unlock();
         }
 
-        // SQLite 数据路径处理
-        if (name.startsWith("jdbc:sqlite:")) {
-            String jurl = name.substring(12);
-            Map injt = new HashMap();
-            injt.put("CORE_PATH", Core.CORE_PATH);
-            injt.put("CONF_PATH", Core.CONF_PATH);
-            injt.put("DATA_PATH", Core.DATA_PATH);
-            jurl = Tool.inject(jurl , injt);
-            if(!new File(jurl).isAbsolute()) {
-                jurl = Core.DATA_PATH +"/sqlite/"+ jurl;
-            }
-            if(!new File(jurl).getParentFile().exists()) {
-                new File(jurl).getParentFile().mkdirs();
-            }
-            name = "jdbc:sqlite:"+ jurl;
-        }
-
         sourceLock.writeLock( ).lock( );
         try {
+            // 补全文件型库路径.
+            name = DBConfig.fixSourceName(name);
+
             pool = new BasicDataSource( );
             sourcePool.put ( namc , pool);
             pool.setDriverClassName(jdbc);
@@ -108,10 +93,12 @@ public class Source extends Link {
 
             // 连接属性
             if (info.containsKey("connectionProperties")) {
-                pool.setConnectionProperties(info.getProperty("connectionProperties").trim().replace("&", ";"));
+                String   prms = info.getProperty("connectionProperties").trim().replace("&",";");
+                pool.setConnectionProperties(prms);
             }
-            if (info.containsKey("connectionInitSqls")) {
-                pool.setConnectionInitSqls(Arrays.asList(info.getProperty("connectionInitSqls").trim().split("\\s*;\\s*")));
+            if (info.containsKey("connectionInitSqls"  )) {
+                String[] sqls = info.getProperty("connectionInitSqls").trim().split("\\s*;\\s*");
+                pool.setConnectionInitSqls(Arrays.asList(sqls));
             }
 
             // 基础设置

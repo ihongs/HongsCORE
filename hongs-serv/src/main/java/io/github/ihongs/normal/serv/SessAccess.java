@@ -130,7 +130,7 @@ public class SessAccess extends HttpServletRequestWrapper {
 
             if (xes != null) {
                 ServletContext cont = getServletContext();
-                xes.setMaxInactiveInterval(flt.SSEX);
+                xes.setMaxInactiveInterval(flt.SSRX);
                 xes.setServletContext(cont);
                 xes.setServletRequest(this);
 

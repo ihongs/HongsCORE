@@ -27,7 +27,7 @@ public class SessFilter implements Filter {
     protected String SSCN =  "SSID"; // 会话 Cookie 键名
     protected String SSCP =      ""; // 会话 Cookie 路径
     protected int    SSCX =      -1; // 过期 Cookie (秒)
-    protected int    SSEX =   86400; // 会话过期时间(秒)
+    protected int    SSRX =   86400; // 会话过期时间(秒)
 
     private String       inside = null; // 过滤器标识
     private PasserHelper ignore = null; // 待忽略用例
@@ -52,8 +52,8 @@ public class SessFilter implements Filter {
         fn = fc.getInitParameter( "cookie-max-age");
         if (fn != null) SSCX = Integer.parseInt(fn);
 
-        fn = fc.getInitParameter("session-timeout");
-        if (fn != null) SSEX = Integer.parseInt(fn);
+        fn = fc.getInitParameter( "record-max-age");
+        if (fn != null) SSRX = Integer.parseInt(fn);
 
         if (! SSCP.startsWith("/")) {
             SSCP = Core.BASE_HREF + "/" + SSCP;

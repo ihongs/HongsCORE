@@ -95,12 +95,12 @@
         <filter-name>SessFilter</filter-name>
         <filter-class>io.github.ihongs.normal.serv.SessFilter</filter-class>
         <init-param>
-            <param-name>session-timeout</param-name>
-            <param-value>604800</param-value>
+            <param-name>record-max-age</param-name>
+            <param-value>604800</param-value><!--7 days-->
         </init-param>
         <init-param>
             <param-name>cookie-max-age</param-name>
-            <param-value>28800</param-value>
+            <param-value>28800</param-value><!--8 hours-->
         </init-param>
         <init-param>
             <param-name>attend-urls</param-name>
@@ -228,12 +228,12 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>28800</session-timeout>
+        <session-timeout>43200</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>
             <name>XXID</name>
-            <max-age>0</max-age>
+            <max-age>604800</max-age>
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

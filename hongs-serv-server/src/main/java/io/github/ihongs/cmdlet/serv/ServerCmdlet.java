@@ -6,6 +6,7 @@ import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.db.DBConfig;
 import io.github.ihongs.util.thread.Classes;
 
 import java.io.File;
@@ -196,78 +197,124 @@ public class ServerCmdlet {
         @Override
         public void init(ServletContextHandler sc) {
             CoreConfig cc = CoreConfig.getInstance("defines");
-                String dn = cc.getProperty("jetty.servlet.context.path", "server" + File.separator + "temp");
-                File   dh = new File(dn);
-                if ( ! dh.isAbsolute() ) {
-                       dn = Core.DATA_PATH + File.separator + dn ;
-                       dh = new File(dn);
-                }
-                if ( ! dh.exists() /**/) {
-                       dh.mkdirs();
-                }
+            String dn = cc.getProperty("jetty.servlet.context.path", "server" + File.separator + "temp");
+            File   dh = new File(dn);
+            if ( ! dh.isAbsolute() ) {
+                   dn = Core.DATA_PATH + File.separator + dn ;
+                   dh = new File(dn);
+            }
+            if ( ! dh.exists() /**/) {
+                   dh.mkdirs();
+            }
 
-            sc.setAttribute("javax.servlet.context.tempdir" , dh);
+            sc.setAttribute("javax.servlet.context.tempdir", dh);
             sc.setAttribute("org.eclipse.jetty.containerInitializers",
               Arrays.asList(new ContainerInitializer(new JettyJasperInitializer(),null)));
-            sc.setAttribute(InstanceManager.class.getName( ),new SimpleInstanceManager());
+            sc.setAttribute(InstanceManager.class.getName(), new SimpleInstanceManager());
         }
 
     }
 
     /**
-     * 会话初始器
+     * 会话初始器(存文件)
+     */
+    public static class Snaper implements Initer {
+
+        @Override
+        public void init(ServletContextHandler sc) {
+            CoreConfig cc = CoreConfig.getInstance("defines");
+            String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess");
+            File   dh = new File(dn);
+            if ( ! dh.isAbsolute() ) {
+                   dn = Core.DATA_PATH + File.separator + dn ;
+                   dh = new File(dn);
+            }
+            if ( ! dh.exists() /**/) {
+                   dh.mkdirs();
+            }
+
+            try {
+                HashSessionManager sm = new HashSessionManager();
+    //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
+    //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
+    //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
+                sm.setStoreDirectory( dh );
+                /**/SessionHandler sh = new SessionHandler( sm );
+                sc.setSessionHandler( sh );
+            } catch (IOException e) {
+                throw new HongsError.Common(e);
+            }
+        }
+    }
+
+    /**
+     * 会话初始器(数据库)
      */
     public static class Swaper implements Initer {
 
         @Override
         public void init(ServletContextHandler sc) {
             CoreConfig cc = CoreConfig.getInstance("defines");
-                String mt = cc.getProperty("jetty.session.manager.type", "hash");
+            String dh = cc.getProperty("jetty.session.manager.db", "default" );
+            JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());
+            im.setWorkerName( Core.SERVER_ID );
+            setSidMgr(im, dh);
 
-            if ("hash".equals(mt)) {
-                String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess");
-                File   dh = new File(dn);
-                if ( ! dh.isAbsolute() ) {
-                       dn = Core.DATA_PATH + File.separator + dn ;
-                       dh = new File(dn);
-                }
-                if ( ! dh.exists() /**/) {
-                       dh.mkdirs();
+            try {
+                JDBCSessionManager sm = new JDBCSessionManager();
+    //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
+    //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
+    //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
+                sm.setSessionIdManager(im);
+                /**/SessionHandler sh = new SessionHandler( sm );
+                sc.setSessionHandler( sh );
+            } catch (  Exception e) {
+                throw new HongsError.Common(e);
+            }
+        }
+
+        private void setSidMgr(JDBCSessionIdManager im, String dh) {
+            DBConfig conf;
+            try {
+                conf = new DBConfig(dh);
+            } catch (HongsException ex) {
+                throw  new HongsError.Common(ex);
+            }
+
+            if (conf.source != null && !conf.source.isEmpty()) {
+                String dn, dx; Map  dp;
+                dh = (String) conf.source.get("jdbc");
+                dn = (String) conf.source.get("name");
+                dp = ( Map  ) conf.source.get("info");
+
+                // 拼接链接参数
+                if (dp != null && !dp.isEmpty()) {
+                    StringBuilder sb = new StringBuilder();
+                    if (dp.containsKey("username")) {
+                        sb.append(/**/"&user=").append(dp.get("username"));
+                    }
+                    if (dp.containsKey("password")) {
+                        sb.append("&password=").append(dp.get("password"));
+                    }
+                    if (dp.containsKey("connectionProperties")) {
+                        dx = (String ) dp.get("connectionProperties");
+                        sb.append("&").append( dx.replace(';', '&') );
+                    }
+                    if (sb.length() > 0) {
+                        dn = dn + "?" + sb.substring ( 1 );
+                    }
                 }
 
-                try {
-                    HashSessionManager sm = new HashSessionManager();
-        //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
-        //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
-        //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
-                    sm.setStoreDirectory( dh );
-                    /**/SessionHandler sh = new SessionHandler( sm );
-                    sc.setSessionHandler( sh );
-                } catch (IOException e) {
-                    throw new HongsError.Common(e);
-                }
+                im.setDriverInfo(dh, dn);
             } else
-            if ("jdbc".equals(mt)) {
-                String dh = cc.getProperty("jetty.session.manager.jdbc", "org.sqlite.JDBC|jdbc:sqlite:default.db");
-                int dp = dh.indexOf ("|"); if ( 0 > dp ) throw new HongsError.Common("Wrong session manager jdbc");
-                JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());
-                im.setDriverInfo( dh.substring( 0 , dp ), dh.substring( 1 + dp ) );
-                im.setWorkerName( Core.SERVER_ID );
-
-                try {
-                    JDBCSessionManager sm = new JDBCSessionManager();
-        //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
-        //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
-        //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
-                    sm.setSessionIdManager(im);
-                    /**/SessionHandler sh = new SessionHandler( sm );
-                    sc.setSessionHandler( sh );
-                } catch (  Exception e) {
-                    throw new HongsError.Common(e);
-                }
+            if (conf.origin != null && !conf.origin.isEmpty()) {
+                dh = (String) conf.origin.get("name");
+                im.setDatasourceName(dh);
             } else
-            {
-                throw new HongsError.Common("Unsupported session manager: " + mt );
+            if (conf.link != null && conf.link.length( ) != 0) {
+                setSidMgr(im, conf.link);
+            } else {
+                throw new HongsError.Common("Wrong session manager jdbc!");
             }
         }
 

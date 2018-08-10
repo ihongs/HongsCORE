@@ -137,9 +137,9 @@ public class DBConfig
 
   public Map<String, Map> tableConfigs;
 
-  public Map<String, String> source;
+  public Map source;
 
-  public Map<String, String> origin;
+  public Map origin;
 
   private static Set<String> tableAttrs = new HashSet(
   Arrays.asList( new String[] {

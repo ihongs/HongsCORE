@@ -86,7 +86,7 @@ public final class Block {
                 Map.Entry<String, Object> et = it.next();
                 Object inst = et.getValue();
                 if (inst instanceof Closeable) {
-                Closeable clos = (Closeable) inst;
+                  Closeable clos = (Closeable) inst;
                 if (clos.closeable( )) {
                     clos.close();
                     it.remove( );

@@ -449,8 +449,8 @@ public class ServerCmdlet {
 
     /**
      * @see Swaper
-     * @deprecated 改用 Swaper
+     * @deprecated 改用 Snaper
      */
-    public static class Sesion extends Swaper {}
+    public static class Sesion extends Snaper {}
 
 }

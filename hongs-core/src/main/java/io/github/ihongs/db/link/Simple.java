@@ -3,13 +3,10 @@ package io.github.ihongs.db.link;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Tool;
-import java.io.File;
+import io.github.ihongs.db.DBConfig;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -60,22 +57,8 @@ public class Simple extends Link {
             throws SQLException, ClassNotFoundException {
         Class.forName(jdbc);
 
-        // SQLite 数据路径处理
-        if (name.startsWith("jdbc:sqlite:")) {
-            String jurl = name.substring(12);
-            Map injt = new HashMap();
-            injt.put("CORE_PATH", Core.CORE_PATH);
-            injt.put("CONF_PATH", Core.CONF_PATH);
-            injt.put("DATA_PATH", Core.DATA_PATH);
-            jurl = Tool.inject(jurl , injt);
-            if(!new File(jurl).isAbsolute()) {
-                jurl = Core.DATA_PATH +"/sqlite/"+ jurl;
-            }
-            if(!new File(jurl).getParentFile().exists()) {
-                new File(jurl).getParentFile().mkdirs();
-            }
-            name = "jdbc:sqlite:"+ jurl;
-        }
+        // 补全文件型库路径;
+        name = DBConfig.fixSourceName( name );
 
         if (info != null && ! info.isEmpty()) {
             if (info.containsKey("username")) {

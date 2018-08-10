@@ -7,6 +7,7 @@ import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -554,19 +555,49 @@ public class DBConfig
   private static String getAttribute(Element element, String name, String def)
   {
     String text = element.getAttribute(name);
-    return text != null && text.length() != 0 ? text : def ;
+    return text != null && text.length() > 0 ? text : def;
   }
 
   private static void getProperties(Element element, Properties info) {
-      NodeList list = element.getElementsByTagName("param");
-      for (int i = 0, j = list.getLength( ); i < j; i += 1) {
-          Element item = (Element) list.item(i);
-          String n = item.getAttribute("name" );
-          String v = item.getTextContent( );
-          if ( v  != null ) {
-              info.setProperty(n, v.trim());
-          }
-      }
+    NodeList list = element.getElementsByTagName("param");
+    for (int i = 0, j = list.getLength( ); i < j; i += 1) {
+        Element item = (Element) list.item(i);
+        String n = item.getAttribute("name" );
+        String v = item.getTextContent( );
+        if ( v  != null ) {
+            info.setProperty(n, v.trim());
+        }
+    }
+  }
+
+  /**
+   * 补全驱动路径
+   * @param name
+   * @return
+   */
+  public static String fixSourceName(String name) {
+    // Sqlite 相对路径补全
+    if (name.startsWith("jdbc:sqlite:")) {
+        name = name.substring( 12 );
+
+        // 使用变量
+        Map  opts  =  new HashMap();
+        opts.put("SERVER_ID", Core.SERVER_ID);
+        opts.put("CORE_PATH", Core.CORE_PATH);
+        opts.put("CONF_PATH", Core.CONF_PATH);
+        opts.put("DATA_PATH", Core.DATA_PATH);
+        name = Tool.inject( name, opts );
+
+        if(!new File(name).isAbsolute()) {
+            name = Core.DATA_PATH +"/sqlite/"+ name;
+        }
+        if(!new File(name).getParentFile().exists()) {
+            new File(name).getParentFile().mkdirs();
+        }
+        name = "jdbc:sqlite:"+ name;
+    }
+
+    return name;
   }
 
   /** 源 **/

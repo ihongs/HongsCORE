@@ -5,4 +5,4 @@
 JAVA_OPTS="$JAVA_OPTS -Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=8787 "
 CURR_PATH=$(cd `dirname $0`; pwd)
 export JAVA_OPTS
-sh "$CURR_PATH/hco" $@
+sh "$CURR_PATH/hdo" $@

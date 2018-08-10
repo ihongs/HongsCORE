@@ -135,6 +135,15 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
+    protected void finalize() throws Throwable {
+        try {
+            this  .   close();
+        } finally {
+            super .finalize();
+        }
+    }
+
+    @Override
     public void addDoc(Document doc) throws HongsException {
         IndexWriter iw = getWriter();
         synchronized (iw) {

@@ -178,12 +178,20 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             new TimerTask() {
                 @Override
                 public void run() {
-                    Core.closes();
+                    synchronized(Core.GLOBAL_CORE) {
+                        Core.GLOBAL_CORE.cloze ( );
+
+                        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                            CoreLogger.debug( "Global core objects: "
+                                        + Core.GLOBAL_CORE.toString()
+                            );
+                        }
+                    }
                 }
             } , time, time);
         }
 
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug(new StringBuilder("...")
                 .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
                 .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
@@ -205,7 +213,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             return;
         }
 
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             Core core = Core.GLOBAL_CORE;
             long time = System.currentTimeMillis() - Core.STARTS_TIME;
             CoreLogger.debug(new StringBuilder("...")

@@ -12,10 +12,12 @@ import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -165,8 +167,21 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
         }
 
-        // 调一下 ActionRunner 来加载动作
+        // 调用一下可预加载动作类
         ActionRunner.getActions();
+
+        // 设置全局清理的计划任务
+        long time = Long.parseLong(
+             System.getProperty(Core.class.getName() + ".closes.period", "600000"));
+        if ( time > 0 ) {
+            new Timer(Core.class.getName() + ".closes", true).schedule(
+            new TimerTask() {
+                @Override
+                public void run() {
+                    Core.closes();
+                }
+            } , time, time);
+        }
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug(new StringBuilder("...")

@@ -6,9 +6,6 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
-import io.github.ihongs.util.thread.Block;
-import io.github.ihongs.util.thread.Block.Larder;
-import io.github.ihongs.util.thread.Block.Closeable;
 
 import java.io.IOException;
 import java.nio.file.Paths;
@@ -82,10 +79,6 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public IndexWriter getWriter() throws HongsException {
-        Larder ld = Block.CLOSER;
-        String dn = getDbName( );
-        String kn = SearchWriter.class.getName() + ":" + dn ;
-
         /**
          * 依次检查当前对象和全部空间是否存在 SearchWriter,
          * 需从全局获取时调 SearchWriter.open 计数,
@@ -93,22 +86,20 @@ public class SearchEntity extends LuceneRecord {
          * 计数归零可被回收.
          */
 
-        ld.lockr();
-        try {
             if (WRITOR != null) {
                 return  WRITOR.conn();
             }
+
+        synchronized (Core.GLOBAL_CORE) {
+            String dn = getDbName();
+            String kn = SearchWriter.class.getName()+":"+dn ;
             WRITOR = (SearchWriter) Core.GLOBAL_CORE.got(kn);
+
             if (WRITOR != null) {
                 return  WRITOR.open();
             }
-        } finally {
-            ld.unlockr( );
-        }
 
-        ld.lockw();
-        try {
-            IndexWriter writer ;
+            IndexWriter writer;
             String path = getDbPath();
 
             try {
@@ -126,8 +117,6 @@ public class SearchEntity extends LuceneRecord {
             Core . GLOBAL_CORE . put (kn , WRITOR);
 
             return writer;
-        } finally {
-            ld.unlockw( );
         }
     }
 
@@ -139,8 +128,7 @@ public class SearchEntity extends LuceneRecord {
             return;
         }
 
-        synchronized (
-            WRITOR.conn( )) {
+        synchronized (Core.GLOBAL_CORE) {
             WRITOR.exit( );
             WRITOR  = null;
         }
@@ -185,7 +173,7 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
-    private static class SearchWriter implements Closeable, Core.GlobalSingleton {
+    private static class SearchWriter implements Core.Closeable, Core.Singleton {
 
         private final IndexWriter writer;
         private final      String dbname;

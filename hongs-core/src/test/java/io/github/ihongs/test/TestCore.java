@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  *
@@ -30,6 +31,21 @@ public class TestCore {
     public void tearDown() {
     }
 
+    @Test
+    public void testLock1() {
+        Object o = new Object();
+        synchronized (o) {
+            System.out.println("1");
+            testLock2(o);
+        }
+    }
+    
+    public void testLock2(Object o) {
+        synchronized (o) {
+            System.out.println("2");
+        }
+    }
+    
     // TODO add test methods here.
     // The methods must be annotated with annotation @TestCore. For example:
     //

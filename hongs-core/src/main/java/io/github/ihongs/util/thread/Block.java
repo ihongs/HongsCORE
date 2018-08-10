@@ -87,7 +87,7 @@ public final class Block {
                 Object inst = et.getValue();
                 if (inst instanceof Closeable) {
                   Closeable clos = (Closeable) inst;
-                if (clos.closeable( )) {
+                if (clos.closeable()) {
                     clos.close();
                     it.remove( );
                     ct ++;

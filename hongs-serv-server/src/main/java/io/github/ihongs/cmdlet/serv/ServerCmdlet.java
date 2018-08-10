@@ -300,7 +300,7 @@ public class ServerCmdlet {
             }
         }
 
-        public String getUrlPms(Map dc) {
+        private String getUrlPms(Map dc) {
             Map dp = (Map) dc.get( "info" );
             if (dp == null || dp.isEmpty()) {
                 return "";

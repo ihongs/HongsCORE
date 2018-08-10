@@ -1,6 +1,5 @@
 package io.github.ihongs;
 
-import java.io.Closeable;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,8 +21,8 @@ import java.lang.reflect.InvocationTargetException;
  * </p>
  *
  * <p>
- * 注意: 这不是线程安全的,
- * THREAD_CORE 是 ThreadLocal 的,
+ * 注意: 这不是线程安全的, 请自行加锁.
+ * THREAD_CORE 被包装成了 ThreadLocal,
  * 实例在单一线程内使用并没有什么问题,
  * 如果跨线程使用则可能有线程安全问题;
  * GLOBAL_CORE 可全局使用, 需小心对待.
@@ -127,9 +126,9 @@ public final class Core
 
   /**
    * 销毁核心
-   *
-   * AutoCloseabe 和 Closeable 对象会执行其 close 方法
-   * GlobalSingleton 和 ThreadSingleton 对象不会被移除
+
+ Deletable 会执行其 close
+ Singleton 对象不会被移除
    */
   @Override
   public void close()
@@ -143,7 +142,7 @@ public final class Core
      * 为解决 close 内引用到其他对象,
      * 采用先 close 后 remove 的方式;
      * 为规避 ConcurrentModificationException,
-     * 下面的过程用遍历数组而非迭代循环的方式.
+     * 只能采用遍历数组而非迭代循环的方式进行.
      */
 
     Object[] a = this.values().toArray();
@@ -152,18 +151,24 @@ public final class Core
       Object o = a[i];
       try
       {
-        if ( o instanceof AutoCloseable)
+        if (o instanceof Closeable)
         {
-          ((AutoCloseable) o).close(   );
-        } else
-        if ( o instanceof Closeable)
+          Closeable c = (Closeable) o;
+        if (c.closeable())
         {
-          ((Closeable) o).close(   );
+            c.close();
+        }
+            continue ;
+        }
+
+        if (o instanceof AutoCloseable )
+        {
+          ((AutoCloseable) o).close();
         }
       }
-      catch (Throwable e)
+      catch (Throwable x)
       {
-        e.printStackTrace ( System.err );
+        x.printStackTrace(System.err);
       }
     }
 
@@ -172,12 +177,28 @@ public final class Core
     {
       Entry  e = (Entry)i.next();
       Object o =  e . getValue();
-      if (o instanceof GlobalSingleton
-      ||  o instanceof ThreadSingleton )
+      try
       {
-        continue;
+        if (o instanceof Singleton)
+        {
+          continue;
+        }
+
+        if (o instanceof Closeable)
+        {
+          Closeable c = (Closeable) o;
+        if (c.closeable() == false)
+        {
+          continue;
+        }
+        }
+
+        i.remove();
       }
-      i.remove();
+      catch (Throwable x)
+      {
+        x.printStackTrace(System.err);
+      }
     }
   }
 
@@ -202,13 +223,17 @@ public final class Core
     for(Map.Entry<String, Object> et : entrySet())
     {
       Object ob = et.getValue();
-      if (ob instanceof GlobalSingleton)
+      if (ob instanceof Singleton)
       {
-        sb.append("[G]");
+        sb.append("[S]");
       } else
-      if (ob instanceof ThreadSingleton)
+      if (ob instanceof Closeable)
       {
-        sb.append("[T]");
+        sb.append("[D]");
+      } else
+      if (ob instanceof AutoCloseable)
+      {
+        sb.append("[C]");
       }
       sb.append(et.getKey()).append( ", ");
     }
@@ -276,7 +301,7 @@ public final class Core
          * 如果该对象被声明成全局单例,
          * 则将其放入顶层核心区
          */
-        if (object instanceof GlobalSingleton)
+        if (object instanceof Singleton)
         {
           core.put(name, object);
         }
@@ -319,7 +344,7 @@ public final class Core
          * 如果该对象被声明成全局单例,
          * 则将其放入顶层核心区
          */
-        if (object instanceof GlobalSingleton)
+        if (object instanceof Singleton)
         {
           core.put(name, object);
         }
@@ -578,18 +603,64 @@ public final class Core
     return inst;
   }
 
+  /**
+   * 关闭并删除全局对象
+   * 但仅清理 Closeable
+   * 故不同于 close
+   */
+  public static void closes( )
+  {
+    synchronized (GLOBAL_CORE) {
+        Core core = Core.GLOBAL_CORE;
+
+        Object[] a = core.values().toArray();
+        for (int i = 0; i < a.length; i ++ ) {
+            Object  o = a[i];
+            try {
+                if (o instanceof Core.Closeable) {
+                    Core.Closeable c = (Core.Closeable) o;
+                    if (c.closeable()) {
+                        c.close( );
+                    }
+                }
+            } catch (Throwable ex) {
+                ex.printStackTrace(System.err);
+            }
+        }
+
+        Iterator i = core.entrySet().iterator();
+        while (i.hasNext()) {
+            Map.Entry e = (Map.Entry) i.next( );
+            Object  o = e.getValue();
+            try {
+                if (o instanceof Core.Closeable) {
+                    Core.Closeable c = (Core.Closeable) o;
+                    if (c.closeable()) {
+                        i.remove();
+                    }
+                }
+            } catch (Throwable ex) {
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+  }
+
   //** 核心接口 **/
 
   /**
-   * 全局唯一
-   * 实现此接口, 则在全局范围内仅构造一次(常驻进程, 通过Core.getInstance获取)
+   * 可关闭的
+   * 实现此接口, 会询问是否可关闭, 关闭后将会被删除
    */
-  public static interface GlobalSingleton {}
+  static public interface Closeable extends AutoCloseable
+  {
+         public  boolean  closeable ();
+  }
 
   /**
-   * 线程唯一
-   * 实现此接口, 则在线程范围内仅构造一次(常驻线程, 通过Core.getInstance获取)
+   * 单例模式
+   * 实现此接口, 则在全局范围内仅构造一次(常驻进程, 通过Core.getInstance获取)
    */
-  public static interface ThreadSingleton {}
+  static public interface Singleton {}
 
 }

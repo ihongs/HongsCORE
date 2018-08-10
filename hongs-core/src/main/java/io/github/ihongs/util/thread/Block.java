@@ -5,8 +5,6 @@ import io.github.ihongs.CoreLogger;
 import java.util.Iterator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
@@ -30,75 +28,10 @@ public final class Block {
     private static final Map<String, Larder> RW_LOCKS = new HashMap();
 
     /**
-     * 读写全局计数关闭对象时
-     * 务必用此锁限定存取过程
-     */
-    public  static final Larder CLOSER = new Larder();
-
-    /**
-     * 自启一个定时任务,
-     * 每隔一段时间清理,
-     * 如设为  0 不清理,
-     * 默认为 10 分钟
+     * 加入全局定时清理
      */
     static {
-        long time = Long.parseLong(
-                System.getProperty(Block.class.getName()
-                        + ".cleans.period" , "600000" ));
-        if ( time > 0 ) // 明确设为 0 则不清理
-        new Timer(Block.class.getName()+".cleans", true)
-        .schedule(new TimerTask() {
-            @Override
-            public void run() {
-                int n;
-
-                n = closes();
-                if (Core.DEBUG > 0) {
-                    CoreLogger.trace("Closed " + n +" object(s)");
-                }
-
-                if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
-                    n = cleans();
-                    if (Core.DEBUG > 0) {
-                        CoreLogger.trace("Cleared "+n+" lock(s)");
-                    }
-                } else {
-                    if (Core.DEBUG > 0) {
-                        CoreLogger.trace( "No locks be cleared" );
-                    }
-                }
-            }
-        }, time, time);
-    }
-
-    /**
-     * 关闭
-     * @return 关闭数量
-     */
-    public static int closes() {
-        Lock loxk = CLOSER.writeLock();
-        int  ct = 0;
-
-        loxk.lock();
-        try {
-            Iterator<Map.Entry<String,Object>> it = Core.GLOBAL_CORE.entrySet().iterator();
-            while (it.hasNext()) {
-                Map.Entry<String, Object> et = it.next();
-                Object inst = et.getValue();
-                if (inst instanceof Closeable) {
-                  Closeable clos = (Closeable) inst;
-                if (clos.closeable()) {
-                    clos.close();
-                    it.remove( );
-                    ct ++;
-                }
-                }
-            }
-        } finally {
-            loxk.unlock();
-        }
-
-        return ct;
+        Core.GLOBAL_CORE.put( Cleans.class.getName( ) , new Cleans());
     }
 
     /**
@@ -434,16 +367,23 @@ public final class Block {
         }
     }
 
-    /**
-     * 可询问关闭的容器, 通常关闭后被删除
-     */
-    public static interface Closeable extends AutoCloseable {
-
-        public boolean closeable();
-
+    private static class Cleans implements Core.Closeable, Core.Singleton {
         @Override
-        public void close();
-
+        public void close() {}
+        @Override
+        public boolean closeable( ) {
+            if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
+                int n  =  cleans( );
+                if (Core.DEBUG > 0) {
+                    CoreLogger.trace("Cleared "+n+" lock(s)");
+                }
+            } else {
+                if (Core.DEBUG > 0) {
+                    CoreLogger.trace( "No locks be cleared" );
+                }
+            }
+            return false;
+        }
     }
 
 }

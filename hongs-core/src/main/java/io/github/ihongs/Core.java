@@ -25,7 +25,8 @@ import java.lang.reflect.InvocationTargetException;
  * THREAD_CORE 被包装成了 ThreadLocal,
  * 实例在单一线程内使用并没有什么问题,
  * 如果跨线程使用则可能有线程安全问题;
- * GLOBAL_CORE 可全局使用, 需小心对待.
+ * GLOBAL_CORE 可全局使用, 需小心对待,
+ * Closeable,Singleton 类别放入非全局.
  * </p>
  *
  * <h3>静态属性:</h3>
@@ -138,7 +139,6 @@ public final class Core
     /**
      * 为规避 ConcurrentModificationException,
      * 只能采用遍历数组而非迭代循环的方式进行.
-     * 不要让 Closeable, Singleton 进入非全局.
      */
 
     Object[] a = this.values().toArray();

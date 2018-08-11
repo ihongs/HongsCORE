@@ -204,7 +204,7 @@
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%> <%=rptd%>/>
                 <%} /*End If */%>
                 </div>
-                <div class="col-md-3 col-sm-8 col-sm-offset-2 help-block form-control-static"></div>
+                <div class="col-md-3 col-md-offset-0 col-sm-8 col-sm-offset-2 help-block form-control-static"></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

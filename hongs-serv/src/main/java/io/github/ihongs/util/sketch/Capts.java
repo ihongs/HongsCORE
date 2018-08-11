@@ -217,7 +217,14 @@ public class Capts {
         }
     }
 
-    public static Capts captcha(int h, String b, String f, String e) {
+    /**
+     * 生成验证码
+     * @param h 图片高(px)
+     * @param b 背景色
+     * @param f 前景色
+     * @return 
+     */
+    public static Capts captcha(int h, String b, String f) {
         if (h < 24 || h > 96) {
             throw new HongsExemption(0x1100, "h must be 24~96 (px)");
         }
@@ -235,8 +242,8 @@ public class Capts {
         int    w  = (int) ((float) h * sr * (cn + 1) ) ;
 
         char[] cd = cs.toCharArray();
-        Color  bc = "".equals(b) ? new Color(0xffffff) : new Color(Integer.parseInt(b, 16));
-        Color  fc = "".equals(f) ? new Color(0x000000) : new Color(Integer.parseInt(f, 16));
+        Color  bc = "".equals(b) ? new Color(0xffffff00, true) : new Color(Integer.parseInt(b, 16));
+        Color  fc = "".equals(f) ? new Color(0x000000ff, true) : new Color(Integer.parseInt(f, 16));
 
         // 构建实例
         Capts vc = new Capts( );

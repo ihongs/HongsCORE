@@ -179,13 +179,13 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 @Override
                 public void run() {
                     synchronized(Core.GLOBAL_CORE) {
-                        Core.GLOBAL_CORE.cloze ( );
-
                         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
                             CoreLogger.debug( "Global core objects: "
                                         + Core.GLOBAL_CORE.toString()
                             );
                         }
+                        
+                        Core.GLOBAL_CORE.cloze();
                     }
                 }
             } , time, time);

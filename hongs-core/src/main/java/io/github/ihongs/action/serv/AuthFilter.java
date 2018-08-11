@@ -197,6 +197,7 @@ public class AuthFilter
         } catch (HongsException ex) {
             throw new ServletException(ex);
         }
+        stm = 0;
     }
 
     // 权限动作无前导杠

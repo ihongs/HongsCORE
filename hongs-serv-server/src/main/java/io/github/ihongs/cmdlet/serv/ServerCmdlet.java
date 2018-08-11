@@ -315,9 +315,13 @@ public class ServerCmdlet {
             if (dp.containsKey("password")) {
                 sb.append("&password=").append(dp.get("password"));
             }
+            // Jetty 采用序列化存储, 无特别数据类型,
+            // 附加参数会反而被作为库名部分导致错误.
+            /*
             if (dp.containsKey("connectionProperties")) {
                 sb.append("&").append(((String)dp.get("connectionProperties")).replace(';','&'));
             }
+            */
             if (sb.length(   ) != 0 ) {
                 sb.setCharAt (0, '?');
                 return sb.toString( );

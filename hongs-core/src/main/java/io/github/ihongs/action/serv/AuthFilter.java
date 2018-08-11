@@ -178,8 +178,8 @@ public class AuthFilter
      * 未超时且是调试模式
      * 对超级管理员无限制
      */
-    Set <String> authset;
-    long stm = Synt.declare(hlpr.getSessibute(Cnst.STM_SES), 0L);
+    Set <String> authset = null;
+    long stm = Synt.declare ( hlpr.getSessibute ( Cnst.STM_SES ) , 0L );
     long now = System.currentTimeMillis() / 1000;
     if ( exp == 0 || exp > now - stm ) {
         hlpr.setSessibute ( Cnst.STM_SES , now );
@@ -197,9 +197,6 @@ public class AuthFilter
         } catch (HongsException ex) {
             throw new ServletException(ex);
         }
-    } else {
-        authset = null;
-        stm = -1;
     }
 
     // 权限动作无前导杠
@@ -211,15 +208,15 @@ public class AuthFilter
 
     if (null == authset) {
         if (null != loginPage) {
-            doFailed(core, hlpr, (byte) (stm < 0 ? 0 : 1)); // 没有登录
+            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 1)); // 没有登录
             return;
         }
         if (siteMap.actions.contains(act)) {
-            doFailed(core, hlpr, (byte) (stm < 0 ? 0 : 3)); // 需要权限
+            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 3)); // 需要权限
             return;
         }
         if (siteMap.actions.contains(amt)) {
-            doFailed(core, hlpr, (byte) (stm < 0 ? 0 : 3)); // 需要权限(带方法)
+            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 3)); // 需要权限(带方法)
             return;
         }
     } else {

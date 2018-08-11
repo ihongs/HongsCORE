@@ -102,7 +102,7 @@ public class Capts {
     }
 
     public void newCapt() {
-        buff = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        buff = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
 
         int fw = width / (1 + codeCount);            // 单位宽度
         int ls = (int) ((float) height * maskRatio); // 干扰线框
@@ -239,11 +239,11 @@ public class Capts {
         float  fr = cc.getProperty("core.capts.font.ratio", 0.80f);
         float  mr = cc.getProperty("core.capts.mend.ratio", 0.10f);
         float  xr = cc.getProperty("core.capts.mask.ratio", 0.05f);
-        int    w  = (int) ((float) h * sr * (cn + 1) ) ;
+        int    w  = (int) ((float) h * sr * (cn + 1));
 
         char[] cd = cs.toCharArray();
-        Color  bc = "".equals(b) ? new Color(0xffffff00, true) : new Color(Integer.parseInt(b, 16));
-        Color  fc = "".equals(f) ? new Color(0x000000ff, true) : new Color(Integer.parseInt(f, 16));
+        Color  bc = "".equals(b) ? new Color(0xffffff, true ) : new Color(Integer.parseInt(b, 16));
+        Color  fc = "".equals(f) ? new Color(0x000000, false) : new Color(Integer.parseInt(f, 16));
 
         // 构建实例
         Capts vc = new Capts( );

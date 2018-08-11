@@ -219,11 +219,17 @@ public final class Core
       Object ob = et.getValue();
       if (ob instanceof Singleton)
       {
-        sb.append("[S]");
-      } else
       if (ob instanceof Closeable)
       {
         sb.append("[Z]");
+      } else
+      {
+        sb.append("[S]");
+      }
+      } else
+      if (ob instanceof Closeable)
+      {
+        sb.append("[D]");
       } else
       if (ob instanceof AutoCloseable)
       {

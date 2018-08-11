@@ -99,7 +99,7 @@ public final class Cnst {
 
     public static final String PROP_EXT = ".prop"; // 属性配置
 
-    public static final String CONF_RES = "io/github/ihongs/conf/"; // 配置资源
+    public static final String CONF_RES = "io/github/ihongs/config/"; // 配置资源
 
     public static final String  ACT_EXT = ".act";
 

@@ -255,9 +255,12 @@ public class ServerCmdlet {
         @Override
         public void init(ServletContextHandler sc) {
             CoreConfig cc = CoreConfig.getInstance("defines");
-            String dh = cc.getProperty("jetty.session.manager.db", "default" );
-            JDBCSessionIdManager im = new JDBCSessionIdManager(sc.getServer());
-            im.setWorkerName( Core.SERVER_ID );
+            String dh = cc.getProperty( "jetty.session.manager.db", "default" );
+            Server sv = sc.getServer();
+            JDBCSessionIdManager im = new JDBCSessionIdManager(sv);
+            sv.setAttribute ("jdbcIdMgr",im);
+            im.setWorkerName(Core.SERVER_ID);
+            im.setScavengeInterval(60);
             setSidMgr(im, dh);
 
             try {

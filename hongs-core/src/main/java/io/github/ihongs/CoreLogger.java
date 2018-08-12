@@ -49,8 +49,8 @@ public class CoreLogger
             line.append( a )
                 .append(' ');
         } else {
-            line.append('@')
-                .append(Thread.currentThread().getName())
+            line.append('#')
+                .append(Thread.currentThread().getId(  ))
                 .append(' ');
         }
 
@@ -60,7 +60,8 @@ public class CoreLogger
             line.append( n )
                 .append(' ');
         } else {
-            line.append('-')
+            line.append('@')
+                .append(Thread.currentThread().getName())
                 .append(' ');
         }
 

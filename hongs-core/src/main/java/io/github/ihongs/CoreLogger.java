@@ -49,9 +49,9 @@ public class CoreLogger
             line.append(a).append(' ');
         } else {
             if (Core.ENVIR == 0) {
-                line.append("CMDLET ");
+                line.append( "LOCAL ");
             } else {
-                line.append("UNKNOW ");
+                line.append( "INNER ");
             }
         }
 

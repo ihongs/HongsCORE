@@ -136,6 +136,9 @@ public class ServerCmdlet {
         // 停止机制
         Runtime.getRuntime( ).addShutdownHook(new Stoper(server, ppid));
 
+        // 缺省名称
+        Core.ACTION_NAME.remove();
+
         try {
             server.start();
             server.join( );

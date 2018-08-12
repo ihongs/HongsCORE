@@ -45,7 +45,7 @@ public class CoreLogger
 
         // add IP Address
         String a = Core.CLIENT_ADDR.get();
-        if (a == null) {
+        if (a != null) {
             line.append( a )
                 .append(' ');
         } else {
@@ -60,7 +60,8 @@ public class CoreLogger
             line.append( n )
                 .append(' ');
         } else {
-            line.append('-');
+            line.append('-')
+                .append(' ');
         }
 
         return line.append(text).toString();

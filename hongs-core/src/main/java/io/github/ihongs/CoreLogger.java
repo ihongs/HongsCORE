@@ -45,20 +45,22 @@ public class CoreLogger
 
         // add IP Address
         String a = Core.CLIENT_ADDR.get();
-        if ( a != null ) {
-            line.append(a).append(' ');
+        if (a == null) {
+            line.append( a )
+                .append(' ');
         } else {
-            if (Core.ENVIR == 0) {
-                line.append( "LOCAL ");
-            } else {
-                line.append( "INNER ");
-            }
+            line.append('@')
+                .append(Thread.currentThread().getName())
+                .append(' ');
         }
 
         // add Action Name
         String n = Core.ACTION_NAME.get();
-        if ( n != null ) {
-            line.append(n).append(' ');
+        if (n != null) {
+            line.append( n )
+                .append(' ');
+        } else {
+            line.append('-');
         }
 
         return line.append(text).toString();

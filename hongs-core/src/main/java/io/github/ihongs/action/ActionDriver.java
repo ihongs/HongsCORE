@@ -184,7 +184,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                                         + Core.GLOBAL_CORE.toString()
                             );
                         }
-                        
+
                         Core.GLOBAL_CORE.cloze();
                     }
                 }
@@ -394,26 +394,28 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                             req = hlpr.getRequest(/***/);
                 HttpSession ses = req .getSession(false);
                 Object      uid = hlpr.getSessibute(Cnst.UID_SES);
-                String      mem ;
-                if (ses == null ) {
-                    mem  =  "-" ;
+                String      mem;
+                String      tim;
+                if (uid != null) {
+                    mem  =  uid.toString( );
+                } else
+                if (ses != null) {
+                    mem  =  "$"+ses.getId();
                 } else {
-                    mem  =  ses.getId();
+                    mem  =  "-";
                 }
-                if (uid != null ) {
-                    mem +=  " " + uid  ;
-                }
+                tim = Tool.humanTime ( System.currentTimeMillis() - Core.ACTION_TIME.get() );
 
-                long time = System.currentTimeMillis(  ) - Core.ACTION_TIME.get();
                 StringBuilder sb = new StringBuilder("...");
                   sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
                     .append("\r\n\tACTION_TIME : ").append(Core.ACTION_TIME.get())
                     .append("\r\n\tACTION_LANG : ").append(Core.ACTION_LANG.get())
                     .append("\r\n\tACTION_ZONE : ").append(Core.ACTION_ZONE.get())
-                    .append("\r\n\tMethod      : ").append(req.getMethod( ))
+                    .append("\r\n\tMethod      : ").append(req.getMethod())
                     .append("\r\n\tMember      : ").append(mem)
-                    .append("\r\n\tObjects     : ").append(core.toString( ))
-                    .append("\r\n\tRuntime     : ").append(Tool.humanTime( time ));
+                    .append("\r\n\tThread      : ").append(Thread.currentThread().getName())
+                    .append("\r\n\tRuntime     : ").append(tim)
+                    .append("\r\n\tObjects     : ").append(core.toString());
 
                 /**
                  * 显示请求报头及输入输出

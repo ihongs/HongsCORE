@@ -778,10 +778,13 @@ function hsListFillNext(page) {
         this.pageBox.data("inited", 1);
         var that = this;
         this.pageBox.on("click", "[data-pn]", function(evt) {
-            evt.preventDefault( );
-            var pk = that.pageKey;
-            var pn = jQuery(this)
-                      .data("pn");
+            evt.preventDefault ( );
+            var po = jQuery (this);
+            var pn = po.data("pn");
+            var pk = that.pageKey ;
+            if (po.prop( "disabled" )) {
+                return;
+            }
             hsSetSeria(that._data, pk, pn);
             that.load();
         });

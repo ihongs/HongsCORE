@@ -32,7 +32,7 @@
             <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
-        <form class="findbox col-xs-6 input-group" action="" method="POST">
+        <form class="findbox col-xs-6 input-group">
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
@@ -49,7 +49,7 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox fitrbox invisible">
+    <form class="findbox fitrbox panel invisible">
         <div class="form-group clearfix"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -115,10 +115,10 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm clearfix">
+        <div class="form-group form-group-sm clearfix" style="margin: 0 0">
             <div class="col-xs-6 col-xs-offset-3">
                 <button type="submit" class="btn btn-default">过滤</button>
-                <span style="padding:0.1em;"></span>
+                <span style="padding: 0.1em;"></span>
                 <button type="reset"  class="btn btn-default">重置</button>
             </div>
         </div>
@@ -171,7 +171,7 @@
             }
         %>
         <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-xs-6" style="padding: 5px;">
-            <div class="clearfix" style="background: #fff;">
+            <div class="panel clearfix">
                 <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
                 <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
             </div>

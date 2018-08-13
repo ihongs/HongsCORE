@@ -2040,7 +2040,7 @@ $.fn.hsTadd = function(ref) {
     var box = $(this);
     var tab;
     var pne;
-    if (ref === undefined ) {
+    if (! ref || ! box.find("[data-hrel='"+ref+"']").size() ) {
         tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>')
                               .appendTo( box  );
         pne = $('<div></div>').appendTo( box.data( "labs" ) );

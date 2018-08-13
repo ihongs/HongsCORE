@@ -2041,7 +2041,8 @@ $.fn.hsTadd = function(ref) {
     var tab;
     var pne;
     if (ref === undefined ) {
-        tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>');
+        tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>')
+                              .appendTo( box  );
         pne = $('<div></div>').appendTo( box.data( "labs" ) );
     } else {
         tab = box.find("[data-hrel='"+ref+"']").closest("li");

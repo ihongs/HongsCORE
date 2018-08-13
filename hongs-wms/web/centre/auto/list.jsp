@@ -19,24 +19,26 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div class="row"><div class="col-md-6 col-sm-8 center-block">
+    <div class="row">
+    <div class="col-md-6 col-sm-8 center-block">
         <div style="display: table; width: 100%;">
-            <div style="display: table-cell; width: 15px; vertical-align: middle;">
-                <div class="toolbox btn-group">
-                    <button type="button" class="create btn btn-primary" style="margin-right: 15px;"><%=_locale.translate("fore.create", _title)%></button>
-                </div>
-            </div>
-            <div style="display: table-cell; width: 100%; vertical-align: middle;">
-                <form class="findbox input-group">
-                    <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
-                    <span class="input-group-btn">
-                        <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
-                        <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                    </span>
-                </form>
+        <div style="display: table-cell; width: 15px; vertical-align: middle;">
+            <div class="toolbox btn-group">
+                <button type="button" class="create btn btn-primary" style="margin-right: 15px;"><%=_locale.translate("fore.create", _title)%></button>
             </div>
         </div>
-    </div></div>
+        <div style="display: table-cell; width: 100%; vertical-align: middle;">
+            <form class="findbox input-group">
+                <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
+                <span class="input-group-btn">
+                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                </span>
+            </form>
+        </div>
+        </div>
+    </div>
+    </div>
     <!-- 筛选 -->
     <form class="findbox fitrbox statbox panel invisible">
         <div class="form-group clearfix"></div>

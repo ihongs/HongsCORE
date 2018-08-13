@@ -63,7 +63,7 @@ public class ServerCmdlet {
 
         // 检查进程
         if (ppid.exists() == true ) {
-            System.err.println("ERROR: The server did not exit (normally).");
+            System.err.println("ERROR: The server has not exit, or did not exit normally.");
             System.exit(126);
             return;
         }

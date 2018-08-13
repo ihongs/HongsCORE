@@ -1832,14 +1832,19 @@ $.fn.hsOpen = function(url, data, complete) {
     var tab;
     var bak;
 
+    /**
+     * 获取标签页或面包屑的导航条和对应的区块;
+     * 可后退的导航条可打开多个相同链接的页面,
+     * 即 hsTadd(undefined), 这将总是新加页签.
+     */
     if (prt.is(".labs")) {
         prt = prt.data("tabs");
-        prt = prt.hsTadd(prt.is(".laps") ? null : url); // 导航条可打开相同 URL
+        prt = prt.hsTadd(prt.is(".laps") ? undefined : url);
         tab = prt[0];
         prt = prt[1];
     } else
     if (prt.is(".tabs")) {
-        prt = prt.hsTadd(prt.is(".laps") ? null : url); // 导航条可打开相同 URL
+        prt = prt.hsTadd(prt.is(".laps") ? undefined : url);
         tab = prt[0];
         prt = prt[1];
     } else
@@ -2032,14 +2037,15 @@ $.fn.hsTabs = function(rel) {
     return box;
 };
 $.fn.hsTadd = function(ref) {
-    if (! ref) ref='';
     var box = $(this);
-    var tab = box.find("[data-hrel='"+ref+"']").closest("li");
-    var pne = $(box.data("tabs")).children().eq(tab.index( ));
-    if (! tab.length) {
+    var tab;
+    var pne;
+    if (ref === undefined ) {
         tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>');
         pne = $('<div></div>').appendTo( box.data( "labs" ) );
-        tab.appendTo(box).find( 'a' ).attr('data-hrel' , ref);
+    } else {
+        tab = box.find("[data-hrel='"+ref+"']").closest("li");
+        pne = $(box.data("tabs")).children().eq(tab.index( ));
     }
     return [tab, pne];
 };

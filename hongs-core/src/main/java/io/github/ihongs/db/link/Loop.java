@@ -171,4 +171,10 @@ public class Loop implements Iterable<Map>, Iterator<Map>, AutoCloseable {
         throw new UnsupportedOperationException("Not supported remove in this loop.");
     }
 
+    @Override
+    protected void finalize() throws Throwable {
+        this .close(   );
+        super.finalize();
+    }
+
 }

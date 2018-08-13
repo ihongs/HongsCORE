@@ -19,18 +19,26 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div class="clearfix">
-        <form class="findbox input-group col-md-6 col-md-offset-3" action="" method="POST">
-            <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
-            <span class="input-group-btn">
-                <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
-                <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                <button type="button" class="create btn btn-primary" title="<%=_locale.translate("fore.create", _title)%>"><span class="glyphicon glyphicon-plus  "></span></button>
-            </span>
-        </form>
-    </div>
+    <div class="row"><div class="col-md-6 col-sm-8 center-block">
+        <div style="display: table; width: 100%;">
+            <div style="display: table-cell; width: 15px; vertical-align: middle;">
+                <div class="toolbox btn-group">
+                    <button type="button" class="create btn btn-primary" style="margin-right: 15px;"><%=_locale.translate("fore.create", _title)%></button>
+                </div>
+            </div>
+            <div style="display: table-cell; width: 100%; vertical-align: middle;">
+                <form class="findbox input-group">
+                    <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
+                    <span class="input-group-btn">
+                        <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
+                        <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                    </span>
+                </form>
+            </div>
+        </div>
+    </div></div>
     <!-- 筛选 -->
-    <form class="findbox fitrbox statbox invisible" style="background-color: #EEE; margin-left: 0; margin-right: 0">
+    <form class="findbox fitrbox statbox panel invisible">
         <div class="form-group clearfix"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -160,17 +168,17 @@
                 </div>
             </div>
         </div>
-        <div class="form-group form-group-sm clearfix">
+        <div class="form-group form-group-sm clearfix" style="margin-bottom: 0px">
             <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
-                <div class="form-control-static owner" style="display: inline-block;">
+                <span class="form-control-static owner" style="vertical-align: middle;">
                     <label>
-                        <input name="cuser" type="checkbox" style=" margin: 4px 8px;">
-                        <span> 我创建的 </span>
+                        <input name="cuser" type="checkbox" style="margin-right: 5px;"/>
+                        <span>我创建的</span>
                     </label>
-                </div>
+                </span>
             </div>
         </div>
         <div class="form-group clearfix"></div>
@@ -178,11 +186,11 @@
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px; margin: 0 0 15px 0;">
         <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && null"/>
-        <div style="padding: 10px; border: 1px solid #eee; box-shadow: 0 1px 1px #eee; border-radius: 4px;">
+        <div class="panel" style="padding: 10px; margin: 0px;">
             <div style="display: table; width: 100%;">
                 <div style="display: table-row;">
                     <%if (_fields.containsKey("logo")) {%>
-                    <div style="display: table-cell; vertical-align: top; padding: 1px; width: 106px; border: 1px solid #eee;">
+                    <div style="display: table-cell; vertical-align: top; padding: 1px; width:106px;">
                         <div class="review" style="height: 104px; overflow: hidden; cursor: pointer;">
                             <div data-fn="logo" style="width: 100%; height: 100%;"></div>
                         </div>
@@ -193,9 +201,9 @@
                             <div data-fn="name" style="color: #444;"></div>
                             <div data-fn="note" style="color: #888;"></div>
                         </div>
-                        <div data-ft="edit" data-fn="cuser" class="btn-group" style="display: none; position: absolute; right: 7.5px; bottom: 0px; opacity: 0.5;">
-                            <button type="button" class="btn btn-xs btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
-                            <button type="button" class="btn btn-xs btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
+                        <div data-ft="edit" data-fn="cuser" class="btn-group" style="position: absolute; right: 7.5px; bottom: 0.0px; opacity: 0.7; display: none;">
+                            <button type="button" class="btn btn-sm btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
+                            <button type="button" class="btn btn-sm btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                         </div>
                     </div>
                 </div>

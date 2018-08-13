@@ -150,7 +150,7 @@
                             +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                             +"/list_fork.html";
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
-                        mode += "\" data-href=\""+al+"\" data-target=\"@";
+                        mode += "\" data-target=\"@\" data-href=\""+al;
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>

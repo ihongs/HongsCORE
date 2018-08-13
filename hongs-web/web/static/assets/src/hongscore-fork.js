@@ -395,8 +395,6 @@ function hsListFillPick(cel, v, n) {
         // 选择区域
         if (bin) {
             bin = $(this).hsFind(bin);
-        } else {
-            bin = $(this).hsFind("@");
         }
 
         // 填充区域

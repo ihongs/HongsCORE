@@ -1829,30 +1829,30 @@ $.fn.hsLoad = function(url, data, complete) {
 $.fn.hsOpen = function(url, data, complete) {
     var prt = $(this);
     var box;
-    var ref;
     var tab;
+    var bak;
 
     if (prt.is(".labs")) {
         prt = prt.data("tabs");
-        prt = prt.hsTadd(url );
+        prt = prt.hsTadd(prt.is(".laps") ? null : url); // 导航条可打开相同 URL
         tab = prt[0];
         prt = prt[1];
     } else
     if (prt.is(".tabs")) {
-        prt = prt.hsTadd(url );
+        prt = prt.hsTadd(prt.is(".laps") ? null : url); // 导航条可打开相同 URL
         tab = prt[0];
         prt = prt[1];
     } else
-    if (prt.parent().is(".labs")) {
-        tab = prt.parent().data("tabs").children().eq(prt.index());
-    } else
     if (prt.parent().is(".tabs")) {
         tab = prt;
-        prt = prt.parent().data("labs").children().eq(tab.index());
+        prt = prt.parent().data( "labs").children().eq(tab.index());
+    } else
+    if (prt.parent().is(".labs")) {
+        tab = prt.parent().data( "tabs").children().eq(prt.index());
     }
 
     if (tab) {
-        ref = tab.parent().children( ).filter(".active");
+        bak = tab.parent().children( ).filter(".active");
         tab.show( ).find("a").click( );
         if (tab.find("a b,a span").size()) {
             tab.find("a b,a span").not(".close")
@@ -1867,13 +1867,13 @@ $.fn.hsOpen = function(url, data, complete) {
             prt.empty();
         }
     } else {
-        ref = $('<div class="openbak"></div>').hide()
-            .append( prt.contents() ).appendTo( prt );
+        bak = $('<div class="openbak"></div>').hide()
+            .append(prt.contents( )).appendTo ( prt );
     }
 
     box = $('<div class="openbox"></div>')
-          .appendTo(prt).data("ref", ref );
-    box.hsLoad( url, data, complete );
+          .appendTo(prt).data("hrev", bak);
+    box.hsLoad(url , data, complete);
     return box;
 };
 $.fn.hsReady = function() {
@@ -1946,13 +1946,13 @@ $.fn.hsClose = function() {
     var box = $(this);
     var tab;
 
-    if (prt.parent().is(".labs")) {
-        tab = prt.parent().data("tabs").children().eq(prt.index());
-    } else
     if (prt.parent().is(".tabs")) {
         tab = prt;
         prt = prt.parent().data("labs").children().eq(tab.index());
-        box = prt.children( ".openbox" ); // Get the following boxes
+        box = prt.children(".openbox" ); // Get the following boxes
+    } else
+    if (prt.parent().is(".labs")) {
+        tab = prt.parent().data("tabs").children().eq(prt.index());
     }
 
     // 触发事件
@@ -1963,8 +1963,7 @@ $.fn.hsClose = function() {
 
     // 恢复标签
     if (tab) {
-        var idx = box.data("ref") ? box.data("ref").index() : 0;
-//      tab.parent().children().eq(idx).find( "a" ).click() ;
+        var idx = box.data("hrev") ? box.data("hrev").index() : 0;
         var tbs = tab.parent().children();
         var pns = prt.parent().children();
         var tb2 = tbs.eq(idx);
@@ -1980,11 +1979,11 @@ $.fn.hsClose = function() {
         pn2.trigger("hsRecur"); // 触发重现事件
     } else
     // 恢复内容
-    if (box.data( "ref" )) {
-        var ref  = box.data("ref");
-        prt.append(ref.contents());
+    if (box.data("hrev")) {
+        var bak =  box.data("hrev");
+        prt.append(bak.contents( ));
         box.remove();
-        ref.remove();
+        bak.remove();
         prt.trigger("hsRecur"); // 触发重现事件
     } else
     // 关闭浮窗

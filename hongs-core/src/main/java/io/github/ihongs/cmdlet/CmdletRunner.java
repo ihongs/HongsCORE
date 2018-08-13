@@ -68,17 +68,7 @@ public class CmdletRunner
     // 执行方法
     try
     {
-      if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
-      {
-        CmdletHelper.println("Starting...");
-      }
-
       met.invoke(null, new Object[] {args});
-
-      if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
-      {
-        CmdletHelper.println("Finished!!!");
-      }
     }
     catch (   IllegalAccessException ex)
     {
@@ -121,6 +111,17 @@ public class CmdletRunner
 
       CoreLogger.error(error);
       System.exit(4);
+    }
+    finally
+    {
+      /**
+       * 销毁内部资源
+       */
+      Core.THREAD_CORE
+            .get ( )
+            .close();
+      Core.GLOBAL_CORE
+            .close();
     }
   }
 
@@ -295,27 +296,6 @@ public class CmdletRunner
     ActionHelper hlpr = new ActionHelper(null, null, null, null);
     Core.getInstance( ).put(ActionHelper.class.getName( ), hlpr);
     hlpr.updateOutput (System.out , new PrintWriter(System.out));
-
-    // Clean instatnces for core at exit
-    Runtime.getRuntime().addShutdownHook(new Thread()
-    {
-      @Override
-      public void run ()
-      {
-        // 销毁内部资源
-        Core.THREAD_CORE
-                .get(  )
-                .close();
-        Core.GLOBAL_CORE
-                .close();
-
-        // 输出运行时间
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))
-        {
-          CmdletHelper.println("Total exec time: "+(Tool.humanTime(System.currentTimeMillis() - Core.STARTS_TIME)));
-        }
-      }
-    });
 
     return args;
   }

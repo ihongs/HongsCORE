@@ -4,7 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DBConfig;
 import io.github.ihongs.util.thread.Classes;
@@ -64,22 +63,29 @@ public class ServerCmdlet {
 
         // 检查进程
         if (ppid.exists() == true ) {
-            CmdletHelper.println("Process already exists!");
+            System.err.println("ERROR: The server did not exit (normally).");
+            System.exit(126);
             return;
         }
         if (ppcd.exists() == false) {
             ppcd.mkdirs();
         }
-        try {
-            String     pid = ManagementFactory.getRuntimeMXBean()
-                            .getName().split("@" , 2)[0];
-            FileWriter dip = new  FileWriter(ppid, true);
-            dip.write( pid );
-            dip.close(     );
-        }
-        catch (IOException e) {
+        try (
+            FileWriter fw  = new FileWriter( ppid, true );
+        ) {
+            fw.write(ManagementFactory.getRuntimeMXBean()
+                        .getName( ).split( "@", 2 )[ 0 ]);
+            fw.close(  );
+        } catch (IOException e) {
             throw new HongsException.Common(e);
         }
+
+        /**
+         * 取消名称
+         * 日志中将记录各独立的线程名
+         * 以便于区分不同的非动作任务
+         */
+        Core.ACTION_NAME.remove();
 
         // 构建应用
         Server        server;
@@ -133,20 +139,16 @@ public class ServerCmdlet {
             }
         }
 
-        // 停止机制
-        Runtime.getRuntime( ).addShutdownHook(new Stoper(server, ppid));
+        // 中止机制
+        Runtime.getRuntime().addShutdownHook(new Stoper(server, ppid));
 
-        // 缺省名称
-        Core.ACTION_NAME.remove();
-
+        // 启动服务
         try {
             server.start();
             server.join( );
-        }
-        catch ( Exception e ) {
+        } catch (Exception e) {
             throw new HongsException.Common(e);
-        }
-        catch ( Error     e ) {
+        } catch (Error     e) {
             throw new HongsError    .Common(e);
         }
     }

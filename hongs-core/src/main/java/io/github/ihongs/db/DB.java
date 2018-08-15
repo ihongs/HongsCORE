@@ -1,16 +1,13 @@
 package io.github.ihongs.db;
 
 import io.github.ihongs.db.util.FetchCase;
-import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.link.Link;
 import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.db.link.Origin;
 import io.github.ihongs.db.link.Source;
-import io.github.ihongs.util.Synt;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -28,11 +25,6 @@ import java.lang.reflect.InvocationTargetException;
  * 当需要库对象时, 一般情况可调用其工厂方法getInstance获取;
  * 当需要扩展类时, 请从DB继承并实现一个无参getInstance方法.
  * </p>
- *
- * <h3>配置选项:</h3>
- * <pre>
- * core.load.db.[dbName].once 为true则仅加载一次
- * </pre>
  *
  * <h3>异常代码:</h3>
  * <pre>
@@ -652,65 +644,26 @@ public class DB
   public static DB getInstance(String name)
     throws HongsException
   {
-    DB db;
-    do
-    {
+    String cn = DB.class.getName() +":"+ name;
 
-    String key = DB.class.getName() + ":" + name;
-
-    Core core = Core.THREAD_CORE.get();
-    if ( core.containsKey(key))
+    Core core = Core.getInstance();
+    if ( core.containsKey(cn))
     {
-      db =  (DB) core.get(key);
-      break;
+      return (DB)core.get(cn);
     }
 
-    Core gore = Core.GLOBAL_CORE;
-    if ( gore.containsKey(key))
+    DBConfig cc = new DBConfig(name);
+    if (cc.dbClass != null
+    &&  cc.dbClass.length(  ) != 0 )
     {
-      db =  (DB) gore.get(key);
-      break;
-    }
-
-    /**
-     * 如果存在dbClass描述则调用对应类来获取实例
-     */
-
-    DBConfig cf = new DBConfig (name);
-
-    if (cf.dbClass != null && cf.dbClass.length() != 0)
-    {
-      db = (DB)Core.getInstance(cf.dbClass);
+      return (DB)Core.getInstance(cc.dbClass);
     }
     else
     {
-      db = new DB(cf);
+      DB db = new DB(cc);
+      core.put( cn , db);
+      return  db ;
     }
-
-    /**
-     * 如有设置dbName的单次加载则将其放入静态映射
-     */
-
-    CoreConfig conf = Core.getInstance(CoreConfig.class);
-    if (conf.getProperty("core.load.db."+name+".once", false))
-    {
-      gore.put(key, db);
-    }
-    else
-    {
-      core.put(key, db);
-    }
-
-    db.OBJECT_MODE = conf.getProperty("core.in.object.mode", false);
-    db.TRNSCT_MODE = conf.getProperty("core.in.trnsct.mode", false);
-
-    }
-    while (false);
-
-    db.OBJECT_MODE = Synt.declare(Core.getInstance().got(Cnst.OBJECT_MODE), db.OBJECT_MODE);
-    db.TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), db.TRNSCT_MODE);
-
-    return db;
   }
 
   /**

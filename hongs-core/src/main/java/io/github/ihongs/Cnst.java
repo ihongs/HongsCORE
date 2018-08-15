@@ -139,8 +139,4 @@ public final class Cnst {
 
     public static final String UPDATE_MODE = "__UPDATE_MODE__"; // 增补模式
 
-    //** 资源路径 **/
-
-    public static final String CONF_ROOT = "io/github/ihongs/config"; // 配置资源
-
 }

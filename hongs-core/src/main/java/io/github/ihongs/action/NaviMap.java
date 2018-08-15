@@ -184,14 +184,14 @@ public class NaviMap
 
     try
     {
-        fn = Core.CONF_PATH + File.separator + name + Cnst.NAVI_EXT + ".xml";
+        fn = Core.CONF_PATH +"/"+ name + Cnst.NAVI_EXT + ".xml";
         is = new FileInputStream(fn);
     }
     catch (FileNotFoundException ex)
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
-           : Cnst.CONF_RES/***/ + name + Cnst.NAVI_EXT + ".xml";
+           : Cnst.CONF_ROOT +"/"+ name + Cnst.NAVI_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
@@ -928,24 +928,21 @@ public class NaviMap
   //** 工厂方法 **/
 
   public static boolean hasConfFile(String name) {
-    String fn;
+    String fn = "/serial/";
 
-    fn = Core.DATA_PATH
-       + File.separator + "serial"
-       + File.separator + name + Cnst.NAVI_EXT + ".ser";
+    fn = Core.DATA_PATH +fn + name + Cnst.NAVI_EXT + ".ser";
     if (new File(fn).exists()) {
         return true;
     }
 
-    fn = Core.CONF_PATH
-       + File.separator + name + Cnst.NAVI_EXT + ".xml";
+    fn = Core.CONF_PATH +"/"+ name + Cnst.NAVI_EXT + ".xml";
     if (new File(fn).exists()) {
         return true;
     }
 
     fn = name.contains(".")
       || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
-       : Cnst.CONF_RES/***/ + name + Cnst.NAVI_EXT + ".xml";
+       : Cnst.CONF_ROOT +"/"+ name + Cnst.NAVI_EXT + ".xml";
     return null != NaviMap.class.getClassLoader().getResourceAsStream(fn);
   }
 

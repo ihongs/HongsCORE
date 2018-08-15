@@ -73,8 +73,9 @@ import org.apache.lucene.index.Term;
  */
 public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoCloseable {
 
-    protected boolean TRNSCT_MODE = false;
     protected boolean OBJECT_MODE = false;
+    protected boolean TRNSCT_MODE = false;
+    protected final  boolean TRNSCT_BASE ;
 
     private IndexSearcher finder  = null ;
     private IndexReader   reader  = null ;
@@ -127,12 +128,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         // 环境模式
         CoreConfig  conf = CoreConfig.getInstance( );
-        this.TRNSCT_MODE = Synt.declare(
-            Core.getInstance().got(Cnst.TRNSCT_MODE),
-            conf.getProperty("core.in.trnsct.mode", false));
         this.OBJECT_MODE = Synt.declare(
             Core.getInstance().got(Cnst.OBJECT_MODE),
             conf.getProperty("core.in.object.mode", false));
+        this.TRNSCT_MODE = Synt.declare(
+            Core.getInstance().got(Cnst.TRNSCT_MODE),
+            conf.getProperty("core.in.trnsct.mode", false));
+        this.TRNSCT_BASE = this.TRNSCT_MODE;
     }
 
     public LuceneRecord(Map form) {
@@ -678,8 +680,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (reader != null ) {
             try {
                 reader.close();
-            } catch (IOException ex) {
-                CoreLogger.error(ex);
+            } catch (IOException x) {
+                CoreLogger.error(x);
             } finally {
                 reader = null ;
             }
@@ -696,12 +698,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 try {
                 try {
                     commit();
-                } catch (Error er ) {
+                } catch (Throwable e) {
                     revert();
-                    throw er;
+                    throw e ;
                 }
-                } catch (Error er ) {
-                    CoreLogger.error(er);
+                } catch (Throwable e) {
+                    CoreLogger.error(e);
                 }
             }
 
@@ -742,12 +744,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void commit() {
+        TRNSCT_MODE = TRNSCT_BASE;
         if (writer == null) {
             return;
         }
-        TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
         try {
-            writer.commit(  );
+            writer.commit ( );
         } catch (IOException ex) {
             throw new HongsExemption(0x102c, ex);
         }
@@ -758,10 +760,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void revert() {
+        TRNSCT_MODE = TRNSCT_BASE;
         if (writer == null) {
             return;
         }
-        TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
         try {
             writer.rollback();
         } catch (IOException ex) {

@@ -1095,7 +1095,12 @@ function hsFmtNum(num, len, dec, sep, dot) {
 
   var a = num.split(".", 2);
   if (a.length < 2) {
-    a[1] = dec ?  "0" : "" ;
+    if (  dec  > 0) {
+      a[1] = "0";
+    } else {
+      a[1] = "" ;
+      dot  = "" ;
+    }
   }
   var n = a[0];
   var d = a[1];

@@ -4,11 +4,14 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
@@ -21,14 +24,15 @@ import org.apache.lucene.store.FSDirectory;
 /**
  * 搜索记录
  *
- * 增加写锁避免同时写入导致失败
- * 注意: 采用此类则无法使用事务
+ * 增加写锁避免同时写入导致失败,
+ * 默认退出时才会真的进行写操作.
  *
  * @author Hongs
  */
 public class SearchEntity extends LuceneRecord {
 
-    private  SearchWriter WRITOR = null;
+    private SearchWriter WRITER = null;
+    private final List<SearchTrnsct> WRITES = new LinkedList();
 
     public SearchEntity(Map form, String path, String name) {
         super(form , path , name);
@@ -86,17 +90,17 @@ public class SearchEntity extends LuceneRecord {
          * 计数归零可被回收.
          */
 
-            if (WRITOR != null) {
-                return  WRITOR.conn();
+            if (WRITER != null) {
+                return  WRITER.conn();
             }
 
         synchronized (Core.GLOBAL_CORE) {
             String dn = getDbName();
             String kn = SearchWriter.class.getName()+":"+dn ;
-            WRITOR = (SearchWriter) Core.GLOBAL_CORE.got(kn);
+            WRITER = (SearchWriter) Core.GLOBAL_CORE.got(kn);
 
-            if (WRITOR != null) {
-                return  WRITOR.open();
+            if (WRITER != null) {
+                return  WRITER.open();
             }
 
             IndexWriter writer;
@@ -113,72 +117,123 @@ public class SearchEntity extends LuceneRecord {
                 throw new HongsException.Common(x);
             }
 
-            WRITOR = new SearchWriter(writer , dn);
-            Core . GLOBAL_CORE . put (kn , WRITOR);
+            WRITER = new SearchWriter(writer , dn);
+            Core . GLOBAL_CORE . put (kn , WRITER);
 
             return writer;
         }
     }
 
     @Override
-    public void close() {
-        super . close();
+    public void close( ) {
+        super . close( );
 
-        if (WRITOR == null) {
-            return;
+        if (TRNSCT_MODE) {
+            try {
+            try {
+                commit();
+            } catch (Throwable e) {
+                revert();
+                throw e ;
+            }
+            } catch (Throwable e) {
+                CoreLogger.error(e);
+            }
         }
 
+        if (WRITER != null) {
         synchronized (Core.GLOBAL_CORE) {
-            WRITOR.exit( );
-            WRITOR  = null;
+            WRITER.exit( );
+            WRITER  = null;
+        }}
+    }
+
+    @Override
+    public void commit() {
+        super . commit();
+        
+        if (WRITES.isEmpty()) {
+            return;
+        }
+        try {
+            IndexWriter iw = getWriter();
+            synchronized (iw) {
+                // 此处才会是真的更新文档
+                for (SearchTrnsct st : WRITES) {
+                    switch (st.type) {
+                        case ADD: iw.   addDocument (         st.doc); break;
+                        case SET: iw.updateDocument (st.term, st.doc); break;
+                        case DEL: iw.deleteDocuments(st.term        ); break;
+                    }
+                }
+                iw.commit(  );
+            }
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        } catch (   IOException ex) {
+            throw new HongsExemption(0x102d, ex);
+        } finally {
+            WRITES.clear();
         }
     }
 
     @Override
-    protected void finalize() throws Throwable {
+    public void revert() {
+        super . revert();
+        
+        if (WRITES.isEmpty()) {
+            return;
+        }
         try {
-            this  .   close();
+            IndexWriter iw = getWriter();
+            synchronized (iw) {
+                iw.rollback();
+            }
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        } catch (   IOException ex) {
+            throw new HongsExemption(0x102d, ex);
         } finally {
-            super .finalize();
+            WRITES.clear();
         }
     }
 
     @Override
     public void addDoc(Document doc) throws HongsException {
-        IndexWriter iw = getWriter();
-        synchronized (iw) {
-            try {
-                iw.addDocument (doc);
-                iw.commit();
-            } catch (IOException ex) {
-                throw new HongsException.Common(ex);
-            }
+        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.ADD, null, doc));
+        if (!TRNSCT_MODE) {
+            commit();
         }
     }
 
     @Override
     public void setDoc(String id, Document doc) throws HongsException {
-        IndexWriter iw = getWriter();
-        synchronized (iw) {
-            try {
-                iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
-                iw.commit();
-            } catch (IOException ex) {
-                throw new HongsException.Common(ex);
-            }
+        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.SET, new Term(Cnst.ID_KEY, id), doc ));
+        if (!TRNSCT_MODE) {
+            commit();
         }
     }
 
     @Override
     public void delDoc(String id) throws HongsException {
-        IndexWriter iw = getWriter();
-        synchronized (iw) {
-            try {
-                iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
-                iw.commit();
-            } catch (IOException ex) {
-                throw new HongsException.Common(ex);
-            }
+        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.DEL, new Term(Cnst.ID_KEY, id), null));
+        if (!TRNSCT_MODE) {
+            commit();
+        }
+    }
+
+    private static class SearchTrnsct {
+
+        public enum  TYPE {ADD,SET,DEL};
+
+        public final TYPE     type;
+        public final Term     term;
+        public final Document doc ;
+
+        public SearchTrnsct(TYPE type, Term term, Document dm) {
+            this.type = type;
+            this.term = term;
+            this.doc  = dm  ;
         }
     }
 

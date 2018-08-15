@@ -142,5 +142,5 @@ public final class Cnst {
     //** 资源路径 **/
 
     public static final String CONF_ROOT = "io/github/ihongs/config"; // 配置资源
-    
+
 }

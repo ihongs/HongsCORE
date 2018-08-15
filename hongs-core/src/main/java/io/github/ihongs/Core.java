@@ -392,6 +392,11 @@ public final class Core
   public static byte DEBUG;
 
   /**
+   * 服务编号, 可用于分布式场景下防止产生重复的 ID
+   */
+  public static String SERVER_ID = "0" ;
+
+  /**
    * WEB基础链接, 注意: 不以斜杠结尾, 根链接为空串
    */
   public static String BASE_HREF = null;
@@ -417,9 +422,9 @@ public final class Core
   public static String DATA_PATH;
 
   /**
-   * 服务器编号
+   * 默认配置资源路径
    */
-  public static String SERVER_ID;
+  public static final String CONF_PACK = "io/github/ihongs/config" ;
 
   /**
    * 系统启动时间

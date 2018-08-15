@@ -352,7 +352,7 @@ public class CoreLocale
       return true;
     }
 
-    path = Cnst.CONF_ROOT+ "/" + name +"_"+ lang + ".properties";
+    path = Core.CONF_PACK+ "/" + name +"_"+ lang + ".properties";
     return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
   }
 

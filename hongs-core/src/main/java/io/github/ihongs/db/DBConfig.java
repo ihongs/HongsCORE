@@ -100,7 +100,7 @@ public class DBConfig
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
-           : Cnst.CONF_ROOT +"/"+ name + Cnst.DB_EXT + ".xml";
+           : Core.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {

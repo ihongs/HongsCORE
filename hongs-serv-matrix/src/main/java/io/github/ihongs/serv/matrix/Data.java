@@ -2,6 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
@@ -16,6 +17,7 @@ import org.apache.lucene.document.Document;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -453,12 +455,31 @@ public class Data extends SearchEntity {
         }
 
         String fid = getFormId();
-        url = Tool.inject(url,Synt.mapOf("form_id", fid ,
-            "id"     , id,
-            "time"   , xtime,
-            "type"   , on
+        url = Tool.inject(url,Synt.mapOf(
+            "form_id", fid,
+            "id"     , id ,
+            "type"   , on ,
+            "time"   , xtime
         ));
-        DataCaller.getInstance().add(url);
+
+        dcUrls.add(url);
+    }
+
+    @Override
+    public void close() {
+        super . close();
+
+        // 离开时通知第三方
+        try {
+            DataCaller dc = DataCaller.getInstance();
+            for(String du : dcUrls) {
+                dc.add(du);
+            }
+        } catch (HongsException e ) {
+            throw e.toExemption(  );
+        } finally {
+            dcUrls.clear();
+        }
     }
 
     /**
@@ -476,6 +497,7 @@ public class Data extends SearchEntity {
             || fo.equals(fr);
     }
 
+    private final Set<String> dcUrls = new LinkedHashSet();
     private Set<String> wdCols = null;
     private Set<String> nmCols = null;
 

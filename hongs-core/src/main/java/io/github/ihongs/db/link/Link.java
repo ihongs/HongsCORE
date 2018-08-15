@@ -2,6 +2,7 @@ package io.github.ihongs.db.link;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
@@ -9,16 +10,16 @@ import io.github.ihongs.dh.ITrnsct;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.Statement;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -32,14 +33,19 @@ abstract public class Link
 {
 
   /**
-   * 是否为事务模式(即不会自动提交)
-   */
-  public boolean TRNSCT_MODE;
-
-  /**
    * 是否为对象模式(即获取的是对象)
    */
-  public boolean OBJECT_MODE;
+  protected boolean OBJECT_MODE;
+
+  /**
+   * 是否为事务模式(即不会自动提交)
+   */
+  protected boolean TRNSCT_MODE;
+
+  /**
+   * 初始的事务模式
+   */
+  private final boolean TRNSCT_BASE;
 
   /**
    * 库名
@@ -55,6 +61,22 @@ abstract public class Link
     throws HongsException
   {
     this.name = name;
+
+    // 是否为对象模式
+    Object ox  = Core.getInstance().got(Cnst.OBJECT_MODE);
+    if ( ( ox != null  &&  Synt.declare( ox , false  )  )
+    ||     CoreConfig.getInstance().getProperty("core.in.object.mode", false)) {
+        OBJECT_MODE = true;
+    }
+
+    // 是否要开启事务
+    Object tr  = Core.getInstance().got(Cnst.TRNSCT_MODE);
+    if ( ( tr != null  &&  Synt.declare( tr , false  )  )
+    ||     CoreConfig.getInstance().getProperty("core.in.trnsct.mode", false)) {
+        TRNSCT_MODE = true;
+    }
+
+    TRNSCT_BASE = TRNSCT_MODE;
   }
 
   /**
@@ -156,7 +178,7 @@ abstract public class Link
   @Override
   public void commit()
   {
-    TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
+    TRNSCT_MODE = TRNSCT_BASE;
     try {
         if (connection != null
         && !connection.isClosed()
@@ -174,7 +196,7 @@ abstract public class Link
   @Override
   public void revert()
   {
-    TRNSCT_MODE = Synt.declare(Core.getInstance().got(Cnst.TRNSCT_MODE), false);
+    TRNSCT_MODE = TRNSCT_BASE;
     try {
         if (connection != null
         && !connection.isClosed()
@@ -427,7 +449,7 @@ abstract public class Link
   public List fetchAll(String sql, Object... params)
     throws HongsException
   {
-    List<Map<String, Object>> rows = new ArrayList();
+    List<Map<String, Object>> rows = new LinkedList();
          Map<String, Object>  row  ;
 
     try (Loop rs = query(sql, 0, 0, params))
@@ -454,7 +476,7 @@ abstract public class Link
     try (Loop rs = query(sql, 0, 1, params))
     {
         Map<String , Object> row = rs.next();
-        if (row == null) row = new HashMap();
+        if (row == null) row = new LinkedHashMap( );
         return row;
     }
   }
@@ -740,8 +762,7 @@ abstract public class Link
         // 加一个空参数防止语法错误
         if (set.isEmpty())
         {
-          set = new HashSet();
-          set.add( null );
+          set = Arrays.asList((Object)  null);
         }
 
         // 从第二个参数开始补充问号

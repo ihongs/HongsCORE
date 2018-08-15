@@ -1072,7 +1072,7 @@ function hsFmtNum(num, len, dec, sep, dot) {
     len = 0;
   }
   if (typeof(dec) === "undefined") {
-    dec = 2;
+    dec = 0;
   }
   if (typeof(sep) === "undefined") {
     sep = ",";
@@ -1095,7 +1095,7 @@ function hsFmtNum(num, len, dec, sep, dot) {
 
   var a = num.split(".", 2);
   if (a.length < 2) {
-    a[1] = "0";
+    a[1] = dec ?  "0" : "" ;
   }
   var n = a[0];
   var d = a[1];

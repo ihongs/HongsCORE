@@ -124,14 +124,14 @@ public class FormSet
 
     try
     {
-        fn = Core.CONF_PATH + File.separator + name + Cnst.FORM_EXT + ".xml";
+        fn = Core.CONF_PATH +"/"+ name + Cnst.FORM_EXT + ".xml";
         is = new FileInputStream(fn);
     }
     catch (FileNotFoundException ex)
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-           : Cnst.CONF_RES/***/ + name + Cnst.FORM_EXT + ".xml";
+           : Cnst.CONF_ROOT +"/"+ name + Cnst.FORM_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if ( null == is )
         {
@@ -443,24 +443,21 @@ public class FormSet
   //** 工厂方法 **/
 
   public static boolean hasConfFile(String name) {
-    String fn;
+    String fn = "/serial/";
 
-    fn = Core.DATA_PATH
-       + File.separator + "serial"
-       + File.separator + name + Cnst.FORM_EXT + ".ser";
+    fn = Core.DATA_PATH +fn + name + Cnst.FORM_EXT + ".ser";
     if (new File(fn).exists()) {
         return true;
     }
 
-    fn = Core.CONF_PATH
-       + File.separator + name + Cnst.FORM_EXT + ".xml";
+    fn = Core.CONF_PATH +"/"+ name + Cnst.FORM_EXT + ".xml";
     if (new File(fn).exists()) {
         return true;
     }
 
     fn = name.contains(".")
       || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-       : Cnst.CONF_RES/***/ + name + Cnst.FORM_EXT + ".xml";
+       : Cnst.CONF_ROOT +"/"+ name + Cnst.FORM_EXT + ".xml";
     return null != FormSet.class.getClassLoader().getResourceAsStream(fn);
   }
 

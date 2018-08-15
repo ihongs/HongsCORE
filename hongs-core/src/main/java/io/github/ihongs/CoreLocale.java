@@ -342,7 +342,7 @@ public class CoreLocale
   {
     String path;
 
-    path = Core.CONF_PATH+ File.separator + lang + "_" + lang;
+    path = Core.CONF_PATH+ "/" + lang +"_"+ lang;
     if ((new File(path +".prop.xml"  )).exists())
     {
       return true;
@@ -352,7 +352,7 @@ public class CoreLocale
       return true;
     }
 
-    path = Cnst.CONF_RES + name + "_" + lang + ".properties";
+    path = Cnst.CONF_ROOT+ "/" + name +"_"+ lang + ".properties";
     return CoreConfig.class.getClassLoader().getResourceAsStream(path) != null;
   }
 

@@ -93,14 +93,14 @@ public class DBConfig
 
     try
     {
-        fn = Core.CONF_PATH + File.separator + name + Cnst.DB_EXT + ".xml";
+        fn = Core.CONF_PATH +"/"+ name + Cnst.DB_EXT + ".xml";
         is = new FileInputStream(fn);
     }
     catch (FileNotFoundException ex)
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
-           : Cnst.CONF_RES/***/ + name + Cnst.DB_EXT + ".xml";
+           : Cnst.CONF_ROOT +"/"+ name + Cnst.DB_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {

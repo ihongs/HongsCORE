@@ -74,7 +74,7 @@ public class CoreConfig
     // 资源中的作为默认配置
     fn = name.contains(".")
       || name.contains("/") ? name + ".properties"
-       : Cnst.CONF_RES/***/ + name + ".properties";
+       : Cnst.CONF_ROOT +"/"+ name + ".properties";
     is = this.getClass().getClassLoader().getResourceAsStream(fn);
     ld = is != null;
     if ( ld )  try {

@@ -304,7 +304,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException {
         Map dat  = hlpr.getResponseData();
         if (dat != null) {
-            req .setAttribute(Cnst.RESP_ATTR, dat);
+            req .setAttribute(Cnst.RESPON_ATTR, dat);
             hlpr.updateHelper( req, rsp );
             hlpr.responed();
         }
@@ -440,7 +440,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 if (cf.getProperty("core.debug.action.results", false)) {
                     Map xd  = hlpr.getResponseData();
                     if (xd == null) {
-                        xd  = (Map) req.getAttribute(Cnst.RESP_ATTR);
+                        xd  = (Map) req.getAttribute(Cnst.RESPON_ATTR);
                     }
                     if (xd != null && !xd.isEmpty()) {
                         sb.append("\r\n\tResults     : ")

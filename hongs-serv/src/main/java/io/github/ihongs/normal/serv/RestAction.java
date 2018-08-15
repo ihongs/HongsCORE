@@ -136,7 +136,7 @@ public class RestAction extends ApisAction {
 
         // 路径参数
         if (!dat.isEmpty()) {
-            req.setAttribute(Cnst.DATA_ATTR, dat);
+            req.setAttribute(Cnst.REQUES_ATTR, dat);
         }
 
         // 逐个对比

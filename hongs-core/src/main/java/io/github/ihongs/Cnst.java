@@ -117,10 +117,6 @@ public final class Cnst {
 
     //** 请求属性 **/
 
-    public static final String DATA_ATTR = "__HONGS_DATA__"; // 请求数据
-
-    public static final String RESP_ATTR = "__HONGS_RESP__"; // 响应数据
-
     public static final String ACTION_ATTR = "__ACTION_NAME__"; // 动作名称
 
     public static final String ORIGIN_ATTR = "__ORIGIN_NAME__"; // 起源动作
@@ -130,6 +126,10 @@ public final class Cnst {
     public static final String UPDATE_ATTR = "__UPDATE_TIME__"; // 更新时间(当会话或属性改变时将被设置)
 
     public static final String UPLOAD_ATTR = "__UPLOAD_PART__"; // 上传参数(用于存放哪些参数是文件上传)
+
+    public static final String REQUES_ATTR = "__REQUES_DATA__"; // 请求数据
+
+    public static final String RESPON_ATTR = "__RESPON_DATA__"; // 响应数据
 
     //** 数据模式 **/
 

@@ -286,7 +286,7 @@ public class ActionHelper implements Cloneable
     // 特殊类型可用 Filter 预解析
     // 无法转换则报 HTTP 400 错误
     try {
-        return (Map) request.getAttribute(Cnst.DATA_ATTR);
+        return (Map) request.getAttribute(Cnst.REQUES_ATTR);
     }
     catch (ClassCastException ex) {
         throw new HongsExemption(0x1100, ex);

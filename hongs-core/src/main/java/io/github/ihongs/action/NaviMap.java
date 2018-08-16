@@ -7,6 +7,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.util.thread.Block;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -129,8 +130,45 @@ public class NaviMap
   public NaviMap(String name)
     throws HongsException
   {
-    this.name = name;
-    this.init(name + Cnst.NAVI_EXT);
+    this. name = name ;
+    this.initial(name);
+  }
+
+  private void initial(String name)
+    throws HongsException
+  {
+    File file = new File(Core.DATA_PATH
+              + File.separator + "serial"
+              + File.separator + name + Cnst.NAVI_EXT + ".ser");
+
+    //* 加锁读写 */
+
+    Block.Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name + Cnst.NAVI_EXT);
+
+    lock.lockr();
+    try {
+      if (file.exists() && !expired(name)) {
+          load(file);
+          // 子菜单有过期则重新导入全部数据
+          R : {
+              for( String namz : imports ) {
+              if (expired(namz)) {
+                  break R;
+              }}
+              return;
+          }
+      }
+    } finally {
+      lock.unlockr();
+    }
+
+    lock.lockw();
+    try {
+      imports ();
+      save(file);
+    } finally {
+      lock.unlockw();
+    }
   }
 
   protected boolean expired(String name)
@@ -148,31 +186,6 @@ public class NaviMap
     {
       return xmlFile.exists(); // 为减少运算不去检查资源文件.
     }
-  }
-
-  @Override
-  protected boolean expired(long time)
-  throws HongsException
-  {
-    // 检查当前文件
-    if (expired(name))
-    {
-        return  true ;
-    }
-
-    File serFile = new File(Core.DATA_PATH
-                 + File.separator + "serial"
-                 + File.separator + name + Cnst.NAVI_EXT + ".ser");
-    load(serFile);
-
-    // 检查引入文件
-    for(String  namz : imports)
-    {
-    if (expired(namz))
-    {
-        return  true ;
-    }
-    }   return  false;
   }
 
   @Override

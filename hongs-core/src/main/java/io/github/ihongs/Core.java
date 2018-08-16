@@ -387,7 +387,7 @@ public final class Core
 
   /**
    * 调试级别(0 静默, 1 输出, 2 日志, 4 禁止Trace, 8 禁止Debug)
-   * 注意: 错误总是会记录日志
+   * 注意: 错误总是会记录日志, 故生产环境中设为 0
    */
   public static byte DEBUG;
 

@@ -34,17 +34,17 @@ public class RoleSet extends CoreSerial implements Set<String> {
         String n;
         File   f;
 
-        n = Core.DATA_PATH
-          + File.separator + "serial"
-          + File.separator + "master"
+        n = File.separator + "master"
           + File.separator + "role"
           + File.separator + Tool.splitPath(userId);
-        f = new  File(n + ".ser");
+        f = new  File(Core.DATA_PATH
+          + File.separator + "serial"
+          + n + ".ser");
 
         if (f.exists()) {
-            this.load(f, 0); // 从文件加载
+            this.init(n, f, 0); // 从文件加载
         } else {
-            this.load(f, 1); // 从库表加载
+            this.init(n, f, 1); // 从库表加载
             return;
         }
 
@@ -71,7 +71,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
             return;
         }
         if (rt > rtime) { // 从库表加载
-            load(f, 1);
+            init(n, f, 1);
             return;
         }
 
@@ -95,7 +95,8 @@ public class RoleSet extends CoreSerial implements Set<String> {
             return;
         }
         if (rt > rtime) { // 从库表加载
-            load(f, 1 );
+            init(n, f, 1);
+//          return;
         }
     }
 

@@ -152,7 +152,7 @@ public abstract class CoreSerial
         path = Core.DATA_PATH + File.separator + "serial";
     }
     File file = new File(path + File.separator + name + ".ser");
-    this.load(file, time + file.lastModified( ));
+    this.init(name, file, time + file.lastModified( ));
   }
 
   /**
@@ -170,7 +170,7 @@ public abstract class CoreSerial
         path = Core.DATA_PATH + File.separator + "serial";
     }
     File file = new File(path + File.separator + name + ".ser");
-    this.load(file, date!=null?date.getTime():0);
+    this.init(name, file, date!=null?date.getTime():0);
   }
 
   protected final void init(String name, long time)
@@ -192,19 +192,14 @@ public abstract class CoreSerial
   }
 
   /**
-   * 加载方法
+   * 加载或引入数据
    * @param file
    * @param time
    * @throws io.github.ihongs.HongsException
    */
-  protected final void load(File file, long time)
+  protected final void init(String name, File file, long time)
     throws HongsException
   {
-    // 用路径作为锁标识, 适当地缩短其长度
-    String name = file.getAbsolutePath( );
-    if (/****/ name.startsWith(Core.DATA_PATH + "/serial/")) {
-        name = name.substring (Core.DATA_PATH.length() + 8);
-    }
     Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name);
 
     lock.lockr();

@@ -412,7 +412,6 @@ public class SelectHelper {
             String ap = null; // 虚拟动作路径, 作为目标路径
             String aq = null; // 关联请求参数, 转为请求数据
             Map rd;           // 关联请求数据
-            Map sd;           // 关联结果数据
             Set rb;           // 关联结果字段
             int ps;
             ps = at.indexOf('?');
@@ -482,7 +481,8 @@ public class SelectHelper {
             } catch (HongsException e) {
                 throw e.toExemption( );
             }
-            List<Map> ls;
+            Map  sd;
+            List <Map > ls;
             sd = ah.getResponseData( );
             ls = (List) sd.get("list");
             if (null == ls) {

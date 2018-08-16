@@ -459,8 +459,4 @@ public abstract class CoreSerial
     }
   }
 
-  private class Loaded {
-      public boolean loaded = false;
-  }
-
 }

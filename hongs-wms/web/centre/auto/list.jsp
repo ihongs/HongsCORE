@@ -128,9 +128,10 @@
                               ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
                         +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                         +"/list_fork.html";
+                    al = al.replace("centra", "centre").replace("list_fork", "pick");
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
-                <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
+                <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="<%=name%>" data-ft="_enum"></select>
             <%} else {%>
@@ -188,12 +189,12 @@
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px 15.0px 7.5px;" >
         <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v)&&null"/>
-        <div class="panel panel-default" style="margin: 0; padding: 0 ;">
+        <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
                 <%if (_fields.containsKey("logo")) {%>
                 <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
                     <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
-                        <div data-fn="logo" style="width:100px; height:100px; margin-right:10px;"></div>
+                        <div data-fn="logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
                     </div>
                 </div>
                 <%} /*End if */%>
@@ -202,7 +203,7 @@
                         <div data-fn="name" style="color: #444;"></div>
                         <div data-fn="note" style="color: #888;"></div>
                     </div>
-                    <div data-ft="edit" data-fn="cuser" class="btn-group" style="position: absolute; right: 7.5px; bottom: 0.0px; opacity: 0.7; display: none;">
+                    <div data-ft="edit" data-fn="cuser" class="btn-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
                         <button type="button" class="btn btn-sm btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                         <button type="button" class="btn btn-sm btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                     </div>

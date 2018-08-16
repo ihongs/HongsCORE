@@ -184,7 +184,7 @@ public class AuthFilter
     if ( exp == 0 || exp > now - stm ) {
         hlpr.setSessibute ( Cnst.STM_SES , now );
 
-        if (Core.DEBUG != 0 ) {
+        if (Core.DEBUG > 0) {
             String uid = Synt.asString(hlpr.getSessibute(Cnst.UID_SES));
             if ( Cnst.ADM_UID.equals(uid)) {
                 chain.doFilter( req, rsp );

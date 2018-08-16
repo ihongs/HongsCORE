@@ -1,4 +1,4 @@
-package io.github.ihongs.util.thread;
+package io.github.ihongs.util;
 
 import java.io.File;
 import java.io.IOException;

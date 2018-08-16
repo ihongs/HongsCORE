@@ -317,8 +317,6 @@ public abstract class CoreSerial
     }
   }
 
-  /** 保护方法 **/
-
   /**
    * 从缓存获取属性写入当前对象
    * @param map

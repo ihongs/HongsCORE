@@ -16,7 +16,7 @@
     </cmdlet>
     <!--
     <cmdlet system="no">
-        <cmd>abc.def:xyz</cmd>
+        <cmd>abc.def.xyz</cmd>
         <arg>{{yyyy/MM/dd|-1w}}</arg>
         <arg opt="opt1">123</arg>
         <arg opt="opt2">456</arg>

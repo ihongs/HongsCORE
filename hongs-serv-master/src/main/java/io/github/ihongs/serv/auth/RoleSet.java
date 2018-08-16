@@ -31,15 +31,14 @@ public class RoleSet extends CoreSerial implements Set<String> {
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;
 
-        String n;
-        File   f;
+        String  n;
+        File    f;
 
-        n = File.separator + "master"
-          + File.separator + "role"
-          + File.separator + Tool.splitPath(userId);
-        f = new  File(Core.DATA_PATH
-          + File.separator + "serial"
-          + n + ".ser");
+        n = "master/role/" + Tool.splitPath(userId);
+        f = new File(Core.DATA_PATH
+              + File.separator + "serial"
+              + File.separator + n+".ser"
+        );
 
         if (f.exists()) {
             this.init(n, f, 0); // 从文件加载

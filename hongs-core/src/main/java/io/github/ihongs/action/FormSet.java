@@ -78,7 +78,7 @@ public class FormSet
   extends CoreSerial
 {
 
-  private final String name;
+  protected transient String name;
 
   /**
    * 表单集合
@@ -94,7 +94,7 @@ public class FormSet
     throws HongsException
   {
     this.name = name;
-    this.init(name + Cnst.FORM_EXT);
+    this.init ( name + Cnst.FORM_EXT );
   }
 
   @Override

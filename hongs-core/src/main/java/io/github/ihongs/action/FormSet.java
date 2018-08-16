@@ -93,7 +93,7 @@ public class FormSet
   public FormSet(String name)
     throws HongsException
   {
-    this.name = name;
+    this.name = name ;
     this.init ( name + Cnst.FORM_EXT );
   }
 

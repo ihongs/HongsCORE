@@ -21,7 +21,7 @@ import java.util.Map;
  *
  * <p>
  * 非 transient,static,final 的属性可以被持久化存储;
- * 特殊情况可重载 save(data) 和 load(data) 来自定义.
+ * 特殊情况可重载 load(Object) 以及 save() 自行处理.
  * </p>
  *
  * <h3>特别注意:</h3>

@@ -200,32 +200,30 @@ public abstract class CoreSerial
   protected final void load(File file, long time)
     throws HongsException
   {
-      // 用路径作为锁标识, 适当地缩短其长度
-      String name = file.getAbsolutePath();
-      if (/****/ name.startsWith(Core.DATA_PATH + "/serial/")) {
-          name = name.substring (Core.DATA_PATH.length() + 8);
-      }
-      Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name);
+    // 用路径作为锁标识, 适当地缩短其长度
+    String name = file.getAbsolutePath( );
+    if (/****/ name.startsWith(Core.DATA_PATH + "/serial/")) {
+        name = name.substring (Core.DATA_PATH.length() + 8);
+    }
+    Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name);
 
-      lock.lockr();
-      try {
-          if (file.exists() && !expired(time)) {
-              load(file);
-              return;
-          }
+    lock.lockr();
+    try {
+      if (file.exists() && !expired(time)) {
+          load(file);
+          return;
       }
-      finally {
-          lock.unlockr();
-      }
+    } finally {
+      lock.unlockr();
+    }
 
-      lock.lockw();
-      try {
-          imports( );
-          save(file);
-      }
-      finally {
-          lock.unlockw();
-      }
+    lock.lockw();
+    try {
+      imports ();
+      save(file);
+    } finally {
+      lock.unlockw();
+    }
   }
 
   /**

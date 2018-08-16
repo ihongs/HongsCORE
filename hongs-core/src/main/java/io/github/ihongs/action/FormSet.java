@@ -371,15 +371,21 @@ public class FormSet
   }
 
   public Map getEnum(String name) throws HongsException {
+    if (name != null && name.startsWith("@")) {
+        return (Map) Core.getInstance(name.substring(1));
+    }
     if (!enums.containsKey(name)) {
-        throw  new HongsException(0x10eb, "Enum "+name+" in "+this.name+" is not exists");
+        throw new HongsException(0x10eb, "Enum "+name+" in "+this.name+" is not exists");
     }
     return enums.get(name);
   }
 
   public Map getForm(String name) throws HongsException {
+    if (name != null && name.startsWith("@")) {
+        return (Map) Core.getInstance(name.substring(1));
+    }
     if (!forms.containsKey(name)) {
-        throw  new HongsException(0x10ea, "Form "+name+" in "+this.name+" is not exists");
+        throw new HongsException(0x10ea, "Form "+name+" in "+this.name+" is not exists");
     }
     return forms.get(name);
   }
@@ -396,10 +402,11 @@ public class FormSet
     }
   }
 
-  public Map getEnumTranslated(String namc) {
-    Map items = enums.get(namc);
+  public Map getEnumTranslated(String namc)
+    throws HongsException
+  {
+    Map items = getEnum(namc);
     Map itemz = new LinkedHashMap();
-    if (items == null) return itemz;
     CoreLocale lang = getCurrTranslator();
     itemz.putAll(items);
     for(Object o : itemz.entrySet()) {
@@ -419,7 +426,6 @@ public class FormSet
   {
     Map items = getForm(namc);
     Map itemz = new LinkedHashMap();
-    if (items == null) return itemz;
     CoreLocale lang = getCurrTranslator();
     for(Object o : items.entrySet()) {
       Map.Entry e = (Map.Entry) o;

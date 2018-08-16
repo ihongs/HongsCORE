@@ -244,8 +244,7 @@ public abstract class CoreSerial
       {
         fis = new   FileInputStream(file);
         ois = new ObjectInputStream(fis );
-        Map map = (Map) ois.readObject( );
-        load( map );
+        load(ois.readObject());
       }
       finally
       {
@@ -296,9 +295,7 @@ public abstract class CoreSerial
       {
         fos = new   FileOutputStream(file);
         oos = new ObjectOutputStream(fos );
-        Map map = new HashMap();
-        save( map );
-        oos.writeObject ( map );
+        oos.writeObject(save());
         oos.flush();
       }
       finally
@@ -319,14 +316,15 @@ public abstract class CoreSerial
 
   /**
    * 从缓存获取属性写入当前对象
-   * @param map
+   * @param obj
    * @throws io.github.ihongs.HongsException
    */
-  protected void load(Map<String, Object> map)
+  protected void load(Object obj)
     throws HongsException
   {
-    Field[] fields;
+    Map     map = ( Map ) obj ;
     Class   clazz = getClass();
+    Field[] fields;
 
     // 设置所有公共字段
     fields = clazz.getFields();
@@ -389,14 +387,15 @@ public abstract class CoreSerial
 
   /**
    * 从当前对象获取属性写入缓存
-   * @param map
+   * @return
    * @throws io.github.ihongs.HongsException
    */
-  protected void save(Map<String, Object> map)
+  protected Object save()
     throws HongsException
   {
-    Field[] fields;
+    Map     map =new HashMap();
     Class   clazz = getClass();
+    Field[] fields;
 
     // 提取所有公共字段
     fields = clazz.getFields();
@@ -455,6 +454,8 @@ public abstract class CoreSerial
         throw new HongsException(0x10dc, e);
       }
     }
+
+    return map;
   }
 
 }

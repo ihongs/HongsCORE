@@ -31,8 +31,8 @@ public class RoleSet extends CoreSerial implements Set<String> {
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;
 
-        String  n;
-        File    f;
+        String n;
+        File   f;
 
         n = Core.DATA_PATH
           + File.separator + "serial"

@@ -121,13 +121,13 @@ public final class Data
 
   /**
    * 将Java对象输出到指定输出流
-   * 非调试环境将会启用紧凑模式
+   * 非开发环境将会启用紧凑模式
    * @param obj
    * @param out
    */
   public static void append(Appendable out, Object obj)
   {
-    Data.append(out, obj, Core.DEBUG == 0);
+    Data.append(out, obj, Core.DEBUG > 0 && Core.DEBUG < 4);
   }
 
   /**

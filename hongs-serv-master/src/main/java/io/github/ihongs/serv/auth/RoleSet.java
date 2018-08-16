@@ -24,9 +24,9 @@ import java.util.Set;
  */
 public class RoleSet extends CoreSerial implements Set<String> {
 
-    public String       userId;
-    public Set<String>  roles;
-    public int          rtime;
+    public /**/String userId;
+    public Set<String> roles;
+    public int         rtime;
 
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;

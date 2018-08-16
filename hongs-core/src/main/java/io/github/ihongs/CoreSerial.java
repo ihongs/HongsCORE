@@ -197,7 +197,7 @@ public abstract class CoreSerial
    * @param time
    * @throws io.github.ihongs.HongsException
    */
-  protected void load(final File file, final long time)
+  protected final void load(File file, long time)
     throws HongsException
   {
       // 用路径作为锁标识, 适当地缩短其长度

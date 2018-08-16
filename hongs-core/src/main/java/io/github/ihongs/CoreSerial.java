@@ -20,8 +20,8 @@ import java.util.Map;
  * 本地缓存工具
  *
  * <p>
- * 非 transient,static,final 的属性可以被持久化存储;
- * 特殊情况可重载 load(Object) 以及 save() 自行处理.
+ * 不是 transient,static,final 的属性可被持久化存储;
+ * 特殊情况可重载 load(Object) 及 save() 自定义处理.
  * </p>
  *
  * <h3>特别注意:</h3>

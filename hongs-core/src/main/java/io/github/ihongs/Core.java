@@ -117,8 +117,8 @@ abstract public class Core
   /**
    * 线程核心对象
    */
-  public static ThreadLocal<Core> THREAD_CORE
-         =  new ThreadLocal() {
+  public static final ThreadLocal<Core> THREAD_CORE
+                = new ThreadLocal() {
       @Override
       protected Core initialValue() {
             return new Simple ();
@@ -137,32 +137,32 @@ abstract public class Core
   /**
    * 动作开始时间
    */
-  public static InheritableThreadLocal< Long > ACTION_TIME
-         =  new InheritableThreadLocal();
+  public static final InheritableThreadLocal< Long > ACTION_TIME
+                = new InheritableThreadLocal();
 
   /**
    * 动作时区标识
    */
-  public static InheritableThreadLocal<String> ACTION_ZONE
-         =  new InheritableThreadLocal();
+  public static final InheritableThreadLocal<String> ACTION_ZONE
+                = new InheritableThreadLocal();
 
   /**
    * 动作语言标识
    */
-  public static InheritableThreadLocal<String> ACTION_LANG
-         =  new InheritableThreadLocal();
+  public static final InheritableThreadLocal<String> ACTION_LANG
+                = new InheritableThreadLocal();
 
   /**
    * 动作路径标识
    */
-  public static InheritableThreadLocal<String> ACTION_NAME
-         =  new InheritableThreadLocal();
+  public static final InheritableThreadLocal<String> ACTION_NAME
+                = new InheritableThreadLocal();
 
   /**
    * 客户地址标识
    */
-  public static InheritableThreadLocal<String> CLIENT_ADDR
-         =  new InheritableThreadLocal();
+  public static final InheritableThreadLocal<String> CLIENT_ADDR
+                = new InheritableThreadLocal();
 
   /**
    * 获取核心对象

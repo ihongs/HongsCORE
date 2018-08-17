@@ -40,7 +40,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * CONF_PATH 配置文件存放目录
  * DATA_PATH 数据文件存放目录
  * SERVER_ID 服务器ID (依附于 Core.getUniqueId())
- * 注: 以上属性需要在 Servlet/Filter/Cmdlet 等初始化时进行设置.
+ * 注: 以上属性需要在 Servlet/Filter/Cmdlet 等初始化时进行设置. 为保持简单, 整个容器是开放的 , 留意勿被恶意修改.
  * </pre>
  *
  * <h3>错误代码:</h3>

@@ -7,12 +7,13 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Tool;
 import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.thread.Async;
+import java.util.function.Supplier;
 
 /**
  * 数据更新通知队列
  * @author Hongs
  */
-public class DataCaller extends Async<String> {
+public class DataCaller extends Async<String> implements Core.Singleton {
 
     private static final String SPACE = "hongs.log.matrix.data.call" ;
     private static final String ENVIR =    "INSIDE matrix.data.call ";
@@ -22,16 +23,21 @@ public class DataCaller extends Async<String> {
     }
 
     public static DataCaller getInstance() throws HongsException {
-        String name =  DataCaller.class.getName();
-        DataCaller inst = (DataCaller) Core.GLOBAL_CORE.got(name);
-        if (inst == null) {
-            CoreConfig conf = CoreConfig.getInstance("matrix");
-            inst  = new DataCaller(
-                conf.getProperty("core.matrix.data.caller.max.tasks", Integer.MAX_VALUE),
-                conf.getProperty("core.matrix.data.caller.max.servs", 1));
-            Core.GLOBAL_CORE.put(name, inst);
-        }
-        return inst;
+        return Core.GLOBAL_CORE.get(DataCaller.class.getName(),
+        new Supplier<DataCaller> () {
+            @Override
+            public DataCaller get() {
+                CoreConfig conf = CoreConfig.getInstance("matrix");
+                try {
+                    return new DataCaller(
+                        conf.getProperty("core.matrix.data.caller.max.tasks", Integer.MAX_VALUE),
+                        conf.getProperty("core.matrix.data.caller.max.servs", 1)
+                    );
+                } catch (HongsException x) {
+                    throw x.toExemption( );
+                }
+            }
+        });
     }
 
     @Override

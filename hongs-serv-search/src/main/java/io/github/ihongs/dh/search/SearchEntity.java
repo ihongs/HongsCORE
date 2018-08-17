@@ -237,7 +237,7 @@ public class SearchEntity extends LuceneRecord {
         }
     }
 
-    private static class SearchWriter implements Core.Closeable, Core.Singleton {
+    private static class SearchWriter implements AutoCloseable, Core.Cleanable, Core.Singleton {
 
         private final IndexWriter writer;
         private final      String dbname;
@@ -269,7 +269,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         @Override
-        public boolean closeable( ) {
+        public boolean cleanable( ) {
             return c <= 0 || !writer.isOpen();
         }
 

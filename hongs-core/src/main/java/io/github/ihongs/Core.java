@@ -179,7 +179,6 @@ public final class Core
       }
     }
 
-    // 关闭后清空
     super.clear();
   }
 
@@ -189,12 +188,38 @@ public final class Core
   @Override
   public void close()
   {
-    this.clear();
+    if (this.isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     */
+
+    Object[] a = this.values().toArray();
+    for (int i = 0; i < a.length; i ++ )
+    {
+      Object o = a [i];
+      try
+      {
+        if (o instanceof AutoCloseable )
+        {
+           ((AutoCloseable) o ).close( );
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+
+    super.clear();
   }
 
   @Override
-  protected void finalize()
-  throws Throwable
+  protected void finalize() throws Throwable
   {
     try
     {

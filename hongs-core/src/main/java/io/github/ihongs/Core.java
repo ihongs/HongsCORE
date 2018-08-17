@@ -100,11 +100,6 @@ abstract public class Core
   public static String DATA_PATH = null;
 
   /**
-   * 默认配置资源路径
-   */
-  public static final String CONF_PACK = "io/github/ihongs/config" ;
-
-  /**
    * 系统启动时间
    */
   public static final long STARTS_TIME = System.currentTimeMillis();

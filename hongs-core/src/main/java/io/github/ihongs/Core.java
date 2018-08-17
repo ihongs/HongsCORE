@@ -83,13 +83,15 @@ public class Core
     }
 
     T   inst = newInstance (klass);
+
     if (inst instanceof Singleton)
     {
-        this.put( name, inst );
+        core.put( name, inst );
     } else
     {
-        core.put( name, inst );
+        this.put( name, inst );
     }
+
     return inst;
   }
 
@@ -112,14 +114,16 @@ public class Core
       return    core.got(name);
     }
 
-    Object inst =newInstance(name);
+    Object inst = newInstance( name );
+
     if (inst instanceof Singleton)
     {
-        this.put( name, inst );
+        core.put( name, inst );
     } else
     {
-        core.put( name, inst );
+        this.put( name, inst );
     }
+
     return inst;
   }
 

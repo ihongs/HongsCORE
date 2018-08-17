@@ -13,6 +13,7 @@ import java.nio.file.Paths;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexWriter;
@@ -90,38 +91,46 @@ public class SearchEntity extends LuceneRecord {
          * 计数归零可被回收.
          */
 
-            if (WRITER != null) {
-                return  WRITER.conn();
-            }
-
-        synchronized (Core.GLOBAL_CORE) {
-            String dn = getDbName();
-            String kn = SearchWriter.class.getName()+":"+dn ;
-            WRITER = (SearchWriter) Core.GLOBAL_CORE.got(kn);
-
-            if (WRITER != null) {
-                return  WRITER.open();
-            }
-
-            IndexWriter writer;
-            String path = getDbPath();
-
-            try {
-                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-
-                Directory dir = FSDirectory.open(Paths.get(path));
-
-                writer = new IndexWriter(dir, iwc);
-            } catch (IOException x) {
-                throw new HongsException.Common(x);
-            }
-
-            WRITER = new SearchWriter(writer , dn);
-            Core . GLOBAL_CORE . put (kn , WRITER);
-
-            return writer;
+        if (WRITER != null) {
+            return  WRITER.conn();
         }
+
+        final String path = getDbPath();
+        final String name = getDbName();
+        final String key  = SearchWriter.class.getName( )+":"+name;
+        WRITER = (SearchWriter) Core.GLOBAL_CORE.got(key);
+
+        if (WRITER != null) {
+            return  WRITER.open();
+        }
+
+        try {
+        WRITER = Core.GLOBAL_CORE.set(key, new Supplier<SearchWriter>() {
+            @Override
+            public SearchWriter get() {
+                IndexWriter writer;
+
+                try {
+                    IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+
+                    Directory dir = FSDirectory.open( Paths.get(path) );
+
+                    writer = new IndexWriter(dir, iwc);
+                } catch (IOException x ) {
+                    throw new HongsExemption.Common(x);
+                } catch (HongsException x) {
+                    throw x.toExemption( );
+                }
+
+                return new SearchWriter(writer , name);
+            }
+        });
+        } catch (HongsExemption x) {
+            throw x.toException( );
+        }
+
+        return WRITER.conn();
     }
 
     @Override
@@ -142,10 +151,9 @@ public class SearchEntity extends LuceneRecord {
         }
 
         if (WRITER != null) {
-        synchronized (Core.GLOBAL_CORE) {
             WRITER.exit( );
             WRITER  = null;
-        }}
+        }
     }
 
     @Override
@@ -252,16 +260,19 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
+//      synchronized
         public IndexWriter conn() {
 //          c += 0;
             return  writer;
         }
 
+        synchronized
         public IndexWriter open() {
             c += 1;
             return  writer;
         }
 
+        synchronized
         public void exit() {
             if (c >= 1) {
                 c -= 1;

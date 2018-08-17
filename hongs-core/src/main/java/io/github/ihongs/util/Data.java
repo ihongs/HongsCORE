@@ -127,7 +127,7 @@ public final class Data
    */
   public static void append(Appendable out, Object obj)
   {
-    Data.append(out, obj, Core.DEBUG > 0 );
+    Data.append(out, obj, 0 == Core.DEBUG);
   }
 
   /**

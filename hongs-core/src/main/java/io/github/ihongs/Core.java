@@ -259,10 +259,6 @@ public class Core
       {
         sb.append('C');
       }
-      if (ob instanceof Globalize)
-      {
-        sb.append('G');
-      }
       if (ob instanceof Singleton)
       {
         sb.append('S');

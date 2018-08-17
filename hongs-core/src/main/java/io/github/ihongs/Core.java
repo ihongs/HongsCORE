@@ -5,8 +5,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.TimeZone;
 import java.util.Locale;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.function.Supplier;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -56,234 +54,10 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author Hongs
  */
-public class Core
+abstract public class Core
      extends HashMap<String, Object>
   implements AutoCloseable
 {
-
-  /**
-   * 获取类对应的唯一对象
-   *
-   * @param <T> 返回类型同请求类型
-   * @param klass [包.]类名.class
-   * @return 唯一对象
-   */
-  public <T> T get(Class<T> klass)
-  {
-    String name = klass.getName( );
-    Core   core = Core.GLOBAL_CORE;
-
-    if (this.containsKey(name))
-    {
-      return (T)this.got(name);
-    }
-    if (core.containsKey(name))
-    {
-      return (T)core.got(name);
-    }
-
-    T   inst = newInstance (klass);
-
-    if (inst instanceof Singleton)
-    {
-        core.put( name, inst );
-    } else
-    {
-        this.put( name, inst );
-    }
-
-    return inst;
-  }
-
-  /**
-   * 获取名对应的唯一对象
-   *
-   * @param name [包路径.]类名
-   * @return 唯一对象
-   */
-  public Object get(String name)
-  {
-    Core   core = Core.GLOBAL_CORE;
-
-    if (this.containsKey(name))
-    {
-      return    this.got(name);
-    }
-    if (core.containsKey(name))
-    {
-      return    core.got(name);
-    }
-
-    Object inst = newInstance( name );
-
-    if (inst instanceof Singleton)
-    {
-        core.put( name, inst );
-    } else
-    {
-        this.put( name, inst );
-    }
-
-    return inst;
-  }
-
-  /**
-   * 调用原始 get 方法
-   *
-   * @param name
-   * @return 唯一对象, 不存在则返回空
-   */
-  public Object got(String name)
-  {
-    return super.get(name);
-  }
-
-  /**
-   * 弃用 get(Object), 请用 got(String),get(String|Class)
-   *
-   * @param name
-   * @return 抛出异常, 为避歧义禁用之
-   * @throws UnsupportedOperationException 总是抛出此异常
-   * @deprecated
-   */
-  @Override
-  public Object get(Object name)
-  {
-    throw new UnsupportedOperationException(
-      "May cause an error on 'get(Object)', use 'got(String)' or 'get(String|Class)'");
-  }
-
-  /**
-   * 清理可关闭的
-   */
-  public void clean()
-  {
-    if (this.isEmpty())
-    {
-      return;
-    }
-
-    Iterator i = this.entrySet().iterator();
-    while  ( i.hasNext( ) )
-    {
-      Entry  e = (Entry)i.next();
-      Object o =  e . getValue();
-      try
-      {
-        if (o instanceof Cleanable)
-        {
-          Cleanable c = (Cleanable) o;
-        if (c.cleanable ())
-        {
-        if (o instanceof AutoCloseable )
-        {
-           ((AutoCloseable) c ).close( );
-        }
-            i.remove();
-        }
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
-  }
-
-  /**
-   * 关闭后清空
-   */
-  @Override
-  public void clear()
-  {
-    if (this.isEmpty())
-    {
-      return;
-    }
-
-    /**
-     * 为规避 ConcurrentModificationException,
-     * 只能采用遍历数组而非迭代循环的方式进行.
-     */
-
-    Object[] a = this.values().toArray();
-    for (int i = 0; i < a.length; i ++ )
-    {
-      Object o = a [i];
-      try
-      {
-        if (o instanceof AutoCloseable )
-        {
-           ((AutoCloseable) o ).close( );
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
-
-    super.clear();
-  }
-
-  @Override
-  public void close()
-  {
-    clear();
-  }
-
-  @Override
-  protected void finalize() throws Throwable
-  {
-    try {
-      close();
-    } finally {
-      super.finalize();
-    }
-  }
-
-  @Override
-  public String toString()
-  {
-    StringBuilder sb = new StringBuilder();
-    for(Map.Entry<String, Object> et : entrySet())
-    {
-        sb.append('[');
-      int ln = sb.length();
-      Object ob = et.getValue();
-      if (ob instanceof AutoCloseable)
-      {
-        sb.append('A');
-      }
-      if (ob instanceof Cleanable)
-      {
-        sb.append('C');
-      }
-      if (ob instanceof Singleton)
-      {
-        sb.append('S');
-      }
-      if (ln < sb.length() )
-      {
-        sb.append(']');
-      } else {
-        sb.setLength(ln - 1);
-      }
-      sb.append(et.getKey()).append(", ");
-    }
-
-    // 去掉尾巴上多的逗号
-    int sl = sb.length();
-    if (sl > 0 )
-    {
-      sb.setLength(sl-2);
-    }
-
-    return sb.toString();
-  }
-
-  //** 静态属性及方法 **/
-
   /**
    * 运行环境(0 Cmd , 1 Web )
    */
@@ -318,12 +92,12 @@ public class Core
   /**
    * 配置文件存放目录
    */
-  public static String CONF_PATH;
+  public static String CONF_PATH = null;
 
   /**
    * 数据文件存放目录
    */
-  public static String DATA_PATH;
+  public static String DATA_PATH = null;
 
   /**
    * 默认配置资源路径
@@ -338,7 +112,7 @@ public class Core
   /**
    * 全局核心对象
    */
-  public static final  Globalize  GLOBAL_CORE = new Globalize(/**/);
+  public static final Core GLOBAL_CORE = new Global();
 
   /**
    * 线程核心对象
@@ -347,7 +121,7 @@ public class Core
          =  new ThreadLocal() {
       @Override
       protected Core initialValue() {
-            return new Core();
+            return new Simple( );
       }
       @Override
       public void remove() {
@@ -422,27 +196,28 @@ public class Core
     return getInstance().get(name);
   }
 
-  public static <T>T newInstance(Class<T> klass)
+  public static <T>T newInstance(Class<T> clas)
   {
     try
     {
       // 获取工厂方法
-      Method method = klass.getMethod("getInstance", new Class[] {});
+      java.lang.reflect.Method method;
+      method =  clas.getMethod("getInstance", new Class [] {});
 
       // 获取工厂对象
       try
       {
-        return (T) method.invoke(null, new Object[] {});
+        return  ( T )   method.invoke( null , new Object[] {});
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsError(0x27, "Can not build "+klass.getName(), ex);
+        throw new HongsError(0x27, "Can not build "+clas.getName(), ex);
       }
-      catch (IllegalArgumentException  ex)
+      catch (IllegalArgumentException ex)
       {
-        throw new HongsError(0x27, "Can not build "+klass.getName(), ex);
+        throw new HongsError(0x27, "Can not build "+clas.getName(), ex);
       }
-      catch (InvocationTargetException ex)
+      catch (java.lang.reflect.InvocationTargetException  ex )
       {
         Throwable ta = ex.getCause();
 
@@ -452,7 +227,7 @@ public class Core
             throw ( StackOverflowError ) ta ;
         }
 
-        throw new HongsError(0x27, "Can not build "+klass.getName(), ta);
+        throw new HongsError(0x27, "Can not build "+clas.getName(), ta);
       }
     }
     catch (NoSuchMethodException ez)
@@ -460,11 +235,11 @@ public class Core
       // 获取标准对象
       try
       {
-        return klass.newInstance();
+        return clas.newInstance();
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsError(0x28, "Can not build "+klass.getName(), ex);
+        throw new HongsError(0x28, "Can not build "+clas.getName(), ex);
       }
       catch (InstantiationException ex)
       {
@@ -476,12 +251,12 @@ public class Core
             throw ( StackOverflowError ) ta ;
         }
 
-        throw new HongsError(0x28, "Can not build "+klass.getName(), ex);
+        throw new HongsError(0x28, "Can not build "+clas.getName(), ex);
       }
     }
     catch (SecurityException se)
     {
-        throw new HongsError(0x26, "Can not build "+klass.getName(), se);
+        throw new HongsError(0x26, "Can not build "+clas.getName(), se);
     }
   }
 
@@ -592,52 +367,288 @@ public class Core
     return inst;
   }
 
-  //** 核心接口 **/
+  //** 核心方法 **/
 
   /**
-   * 单例模式
-   * 实现此接口, 则在全局环境唯一, 常驻且仅构造一次
+   * 获取名对应的唯一对象
+   *
+   * @param key [包路径.]类名
+   * @return 唯一对象
    */
-  static public interface Singleton {}
+  abstract public Object get(String key);
 
   /**
-   * 可关闭的
-   * 实现此接口, 会询问是否可清理, 许可则会被删除掉
+   * 获取类对应的唯一对象
+   *
+   * @param <T> 返回类型同请求类型
+   * @param cls [包.]类.class
+   * @return 唯一对象
    */
-  static public interface Cleanable
+  abstract public <T>T get(Class<T> cls);
+
+  /**
+   * 获取实例, 无则构建
+   * @param <T>
+   * @param key
+   * @param fun
+   * @return 会执行 fun 进行构建, 当没有对象时
+   */
+  abstract public <T>T get(String key, Supplier<T> fun);
+
+  /**
+   * 写入实例, 过程加锁
+   * @param <T>
+   * @param key
+   * @param fun
+   * @return 不同于 put 返回旧的, 这里返回新的
+   */
+  abstract public <T>T set(String key, Supplier<T> fun);
+
+  /**
+   * 调用原始 get 方法
+   *
+   * @param name
+   * @return 唯一对象, 不存在则返回空
+   */
+  public Object got(String name)
   {
-         public  boolean  cleanable ();
+    return super.get(name);
+  }
+
+  /**
+   * 弃用 get(Object), 请用 got(String),get(String|Class)
+   *
+   * @param name
+   * @return 抛出异常, 为避歧义禁用之
+   * @throws UnsupportedOperationException
+   * @deprecated
+   */
+  @Override
+  public Object get(Object name)
+  {
+    throw new UnsupportedOperationException(
+      "May cause an error on 'get(Object)', use 'got(String)' or 'get(String|Class)'");
+  }
+
+  /**
+   * 关闭后清空
+   */
+  @Override
+  public void clear()
+  {
+    if (this.isEmpty())
+    {
+      return;
+    }
+
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     */
+
+    Object[] a = this.values().toArray();
+    for (int i = 0; i < a.length; i ++ )
+    {
+      Object o = a [i];
+      try
+      {
+        if (o instanceof AutoCloseable )
+        {
+           ((AutoCloseable) o ).close( );
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+
+    super.clear();
+  }
+
+  /**
+   * 清理可关闭的
+   */
+  public void clean()
+  {
+    if (this.isEmpty())
+    {
+      return;
+    }
+
+    Iterator i = this.entrySet().iterator();
+    while  ( i.hasNext( ) )
+    {
+      Entry  e = (Entry)i.next();
+      Object o =  e . getValue();
+      try
+      {
+        if (o instanceof Cleanable)
+        {
+          Cleanable c = (Cleanable) o;
+        if (c.cleanable ())
+        {
+        if (o instanceof AutoCloseable )
+        {
+           ((AutoCloseable) c ).close( );
+        }
+            i.remove();
+        }
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
+  }
+
+  @Override
+  public void close()
+  {
+      clear();
+  }
+
+  @Override
+  protected void finalize() throws Throwable
+  {
+    try {
+      close();
+    } finally {
+      super.finalize();
+    }
+  }
+
+  @Override
+  public String toString()
+  {
+    StringBuilder sb = new StringBuilder();
+    for(Map.Entry<String, Object> et : entrySet())
+    {
+        sb.append('[');
+      int ln = sb.length();
+      Object ob = et.getValue();
+      if (ob instanceof AutoCloseable)
+      {
+        sb.append('A');
+      }
+      if (ob instanceof Cleanable)
+      {
+        sb.append('C');
+      }
+      if (ob instanceof Singleton)
+      {
+        sb.append('S');
+      }
+      if (ln < sb.length() )
+      {
+        sb.append(']');
+      } else {
+        sb.setLength(ln - 1);
+      }
+      sb.append(et.getKey()).append(", ");
+    }
+
+    // 去掉尾巴上多的逗号
+    int sl = sb.length();
+    if (sl > 0 )
+    {
+      sb.setLength(sl-2);
+    }
+
+    return sb.toString();
+  }
+
+  private static class Simple extends Core
+  {
+
+    @Override
+    public Object get(String name)
+    {
+      Core   core = Core.GLOBAL_CORE;
+      if (this.containsKey(name))
+      {
+        return    this.got(name);
+      }
+      if (core.containsKey(name))
+      {
+        return    core.got(name);
+      }
+
+      Object inst = newInstance( name );
+      if (inst instanceof Singleton)
+      {
+          core.put( name, inst );
+      } else
+      {
+          this.put( name, inst );
+      }
+      return inst;
+    }
+
+    @Override
+    public <T>T get(Class<T> clas)
+    {
+      String name = clas.getName(  );
+      Core   core = Core.GLOBAL_CORE;
+      if (this.containsKey(name))
+      {
+        return (T)this.got(name);
+      }
+      if (core.containsKey(name))
+      {
+        return (T)core.got(name);
+      }
+
+      T   inst = newInstance( clas );
+      if (inst instanceof Singleton)
+      {
+          core.put( name, inst );
+      } else
+      {
+          this.put( name, inst );
+      }
+      return inst;
+    }
+
+    @Override
+    public <T>T get(String key, Supplier<T> fun)
+    {
+      Object abj=super.got(key);
+      if (null != abj)
+      return  (T) abj;
+
+      T obj = fun.get( );
+      super.put(key,obj);
+      return  obj;
+    }
+
+    @Override
+    public <T>T set(String key, Supplier<T> fun)
+    {
+      T obj = fun.get( );
+      super.put(key,obj);
+      return  obj;
+    }
+
   }
 
   /**
    * 全局容器
    * 带锁的容器, 内部采用了读写锁, 并对写过程可包裹
    */
-  static public   class   Globalize extends Core
+  private static class Global extends Core
   {
-  final private ReadWriteLock LOCK = new ReentrantReadWriteLock();
+  private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 
     @Override
-    public <T>T get(Class<T> cls)
+    public Object got(String key)
     {
-      String key = cls.getName( );
-
       LOCK.readLock( ).lock();
       try {
-      if  (super.containsKey(key)) {
-        return (T) super.got(key);
-      }
+        return super.got(key);
       } finally {
         LOCK.readLock( ).unlock();
-      }
-
-      LOCK.writeLock().lock();
-      try {
-        T  obj = newInstance(cls);
-        super.put( key, obj );
-        return obj;
-      } finally {
-        LOCK.writeLock().unlock();
       }
     }
 
@@ -664,13 +675,61 @@ public class Core
     }
 
     @Override
-    public Object got(String key)
+    public <T>T get(Class<T> cls)
+    {
+      String key = cls.getName( );
+
+      LOCK.readLock( ).lock();
+      try {
+      if  (super.containsKey(key)) {
+        return (T) super.got(key);
+      }
+      } finally {
+        LOCK.readLock( ).unlock();
+      }
+
+      LOCK.writeLock().lock();
+      try {
+        T  obj = newInstance(cls);
+        super.put( key, obj );
+        return obj;
+      } finally {
+        LOCK.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public <T>T get(String key, Supplier<T> fun)
     {
       LOCK.readLock( ).lock();
       try {
-        return super.got(key);
+        Object obj=super.got(key);
+        if (null != obj)
+        return  (T) obj;
       } finally {
         LOCK.readLock( ).unlock();
+      }
+
+      LOCK.writeLock().lock();
+      try {
+        T obj = fun.get( );
+        super.put(key,obj);
+        return  obj;
+      } finally {
+        LOCK.writeLock().unlock();
+      }
+    }
+
+    @Override
+    public <T>T set(String key, Supplier<T> fun)
+    {
+      LOCK.writeLock().lock();
+      try {
+        T obj = fun.get( );
+        super.put(key,obj);
+        return  obj;
+      } finally {
+        LOCK.writeLock().unlock();
       }
     }
 
@@ -680,25 +739,6 @@ public class Core
       LOCK.writeLock().lock();
       try {
         return super.put(key,obj);
-      } finally {
-        LOCK.writeLock().unlock();
-      }
-    }
-
-    /**
-     * 写入实例, 过程加锁
-     * @param <T>
-     * @param key
-     * @param fun
-     * @return 不同于 put 返回旧的, 这里返回新的
-     */
-    public <T>T set(String key, Supplier<T> fun)
-    {
-      LOCK.writeLock().lock();
-      try {
-        T obj = fun . get ( );
-        super.put( key, obj );
-        return  obj ;
       } finally {
         LOCK.writeLock().unlock();
       }
@@ -727,5 +767,22 @@ public class Core
     }
 
   }
+
+  //** 核心接口 **/
+
+  /**
+   * 可关闭的
+   * 实现此接口, 会询问是否可清理, 许可则会被删除掉
+   */
+  static public interface Cleanable
+  {
+         public  boolean  cleanable ();
+  }
+
+  /**
+   * 单例模式
+   * 实现此接口, 则在全局环境唯一, 常驻且仅构造一次
+   */
+  static public interface Singleton {}
 
 }

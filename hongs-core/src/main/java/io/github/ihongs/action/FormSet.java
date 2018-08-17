@@ -468,15 +468,15 @@ public class FormSet
   }
 
   public static FormSet getInstance(String name) throws HongsException {
-      String key = FormSet.class.getName() + ":" + name;
+      String cn = FormSet.class.getName() + ":" + name;
       Core core = Core.getInstance();
       FormSet inst;
-      if (core.containsKey(key)) {
-          inst = (FormSet)core.get(key);
+      if (core.containsKey(cn)) {
+          inst = (FormSet) core.get( cn );
       }
       else {
-          inst = new FormSet(name);
-          core.put( key, inst );
+          inst = new FormSet( name );
+          core.put( cn , inst );
       }
       return inst;
   }

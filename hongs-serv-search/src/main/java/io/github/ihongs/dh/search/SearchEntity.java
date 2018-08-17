@@ -92,45 +92,47 @@ public class SearchEntity extends LuceneRecord {
          */
 
         if (WRITER != null) {
-            return  WRITER.conn();
+            return  WRITER.conn( );
         }
 
         final String path = getDbPath();
         final String name = getDbName();
-        final String key  = SearchWriter.class.getName( )+":"+name;
-        WRITER = (SearchWriter) Core.GLOBAL_CORE.got(key);
-
-        if (WRITER != null) {
-            return  WRITER.open();
-        }
+        final boolean[] b = new boolean[] {false};
 
         try {
-        WRITER = Core.GLOBAL_CORE.set(key, new Supplier<SearchWriter>() {
-            @Override
-            public SearchWriter get() {
-                IndexWriter writer;
+            WRITER = Core.GLOBAL_CORE.get (SearchWriter.class.getName() + ":" + name,
+            new Supplier<SearchWriter> () {
+                @Override
+                public SearchWriter get() {
+                    IndexWriter writer;
+                    b[0] = true;
 
-                try {
-                    IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                    iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+                    try {
+                        IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                        iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
-                    Directory dir = FSDirectory.open( Paths.get(path) );
+                        Directory dir = FSDirectory.open(Paths.get(path));
 
-                    writer = new IndexWriter(dir, iwc);
-                } catch (IOException x ) {
-                    throw new HongsExemption.Common(x);
-                } catch (HongsException x) {
-                    throw x.toExemption( );
+                        writer = new IndexWriter(dir, iwc);
+                    } catch (IOException x ) {
+                        throw new HongsExemption.Common(x);
+                    } catch (HongsException x) {
+                        throw x.toExemption( );
+                    }
+
+                    return new SearchWriter(writer , name);
                 }
-
-                return new SearchWriter(writer , name);
-            }
-        });
+            });
         } catch (HongsExemption x) {
             throw x.toException( );
         }
 
-        return WRITER.conn();
+        // 首次进入无需计数
+        if ( b[0] ) {
+            return  WRITER.conn( );
+        } else {
+            return  WRITER.open( );
+        }
     }
 
     @Override
@@ -159,7 +161,7 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public void commit() {
         super . commit();
-        
+
         if (WRITES.isEmpty()) {
             return;
         }
@@ -188,7 +190,7 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public void revert() {
         super . revert();
-        
+
         if (WRITES.isEmpty()) {
             return;
         }

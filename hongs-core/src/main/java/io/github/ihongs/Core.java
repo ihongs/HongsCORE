@@ -635,6 +635,12 @@ public final class Core
   //** 核心接口 **/
 
   /**
+   * 单例模式
+   * 实现此接口, 则在全局环境唯一, 常驻且仅构造一次
+   */
+  static public interface Singleton {}
+
+  /**
    * 可关闭的
    * 实现此接口, 会询问是否可清理, 许可则会被删除掉
    */
@@ -642,11 +648,5 @@ public final class Core
   {
          public  boolean  cleanable ();
   }
-
-  /**
-   * 单例模式
-   * 实现此接口, 则在全局环境唯一, 常驻且仅构造一次
-   */
-  static public interface Singleton {}
 
 }

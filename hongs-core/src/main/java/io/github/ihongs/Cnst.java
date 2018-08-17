@@ -139,4 +139,8 @@ public final class Cnst {
 
     public static final String UPDATE_MODE = "__UPDATE_MODE__"; // 增补模式
 
+    //** 系统路径 **/
+
+    public static final String CONF_PACK = "io/github/ihongs/config" ;
+
 }

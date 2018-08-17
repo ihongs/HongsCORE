@@ -204,7 +204,7 @@ public class NaviMap
     {
         fn = name.contains(".")
           || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
-           : Core.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml";
+           : Cnst.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml";
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
@@ -955,7 +955,7 @@ public class NaviMap
 
     fn = name.contains(".")
       || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
-       : Core.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml";
+       : Cnst.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml";
     return null != NaviMap.class.getClassLoader().getResourceAsStream(fn);
   }
 

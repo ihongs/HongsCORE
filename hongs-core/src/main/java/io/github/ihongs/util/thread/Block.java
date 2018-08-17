@@ -39,8 +39,9 @@ public final class Block {
      * @return 清理数量
      */
     public static int cleans() {
-        Lock loxk;
+        long tt = System.currentTimeMillis() - 60000;
         int  ct = 0;
+        Lock loxk  ;
 
         loxk = ST_LOCKR.writeLock();
         loxk.lock();
@@ -49,7 +50,7 @@ public final class Block {
             while (it.hasNext()) {
                 Map.Entry<String, Locker> et = it.next();
                 Locker lock = et.getValue();
-                if (lock.cite <= 0) {
+                if (lock.cite <= 0 && lock.time <= tt) {
                     it.remove( );
                     ct ++;
                 }
@@ -65,7 +66,7 @@ public final class Block {
             while (it.hasNext()) {
                 Map.Entry<String, Larder> et = it.next();
                 Larder lock = et.getValue();
-                if (lock.cite <= 0) {
+                if (lock.cite <= 0 && lock.time <= tt) {
                     it.remove( );
                     ct ++;
                 }
@@ -193,7 +194,8 @@ public final class Block {
      */
     public static final class Larder implements ReadWriteLock {
         private final ReadWriteLock lock = new ReentrantReadWriteLock();
-        private int cite = 0;
+        private long  time = 0;
+        private  int  cite = 0;
 
         private Larder() {} // 避免外部 new
 
@@ -207,6 +209,7 @@ public final class Block {
         public void unlockr() {
             synchronized (this) {
                 cite --;
+                time = System.currentTimeMillis();
             }
             lock.readLock().unlock();
         }
@@ -221,6 +224,7 @@ public final class Block {
         public void unlockw() {
             synchronized (this) {
                 cite --;
+                time = System.currentTimeMillis();
             }
             lock.writeLock().unlock();
         }
@@ -242,7 +246,8 @@ public final class Block {
      */
     public static final class Locker implements Lock {
         private final ReentrantLock lock = new ReentrantLock();
-        private int cite = 0;
+        private long  time = 0;
+        private  int  cite = 0;
 
         private Locker(){} // 避免外部 new
 
@@ -258,6 +263,7 @@ public final class Block {
         public void unlock() {
             synchronized(this) {
                 cite --;
+                time = System.currentTimeMillis();
             }
             lock.unlock();
         }

@@ -172,21 +172,19 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
         // 设置全局清理的计划任务
         long time = Long.parseLong(
-             System.getProperty("core.global.cleans.period","600000"));
+             System.getProperty("core.global.cleans.period", "600000"));
         if ( time > 0 ) {
             new Timer ("core.global.cleans", true).schedule(
             new TimerTask() {
                 @Override
                 public void run() {
-                    synchronized(Core.GLOBAL_CORE) {
-                        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
-                            CoreLogger.debug( "Global core objects: "
-                                        + Core.GLOBAL_CORE.toString( )
-                            );
-                        }
-
-                        Core.GLOBAL_CORE.clean();
+                    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+                        CoreLogger.debug( "Global core objects: "
+                                    + Core.GLOBAL_CORE.toString( )
+                        );
                     }
+
+                    Core.GLOBAL_CORE.clean();
                 }
             } , time, time);
         }

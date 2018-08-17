@@ -251,6 +251,7 @@ public class SearchEntity extends LuceneRecord {
 
         private final IndexWriter writer;
         private final      String dbname;
+        private  long             t = 0 ;
         private   int             c = 1 ;
 
         public SearchWriter(IndexWriter writer, String dbname) {
@@ -279,11 +280,14 @@ public class SearchEntity extends LuceneRecord {
             if (c >= 1) {
                 c -= 1;
             }
+            t = System.currentTimeMillis();
         }
 
         @Override
         public boolean cleanable( ) {
-            return c <= 0 || !writer.isOpen();
+            // 全部退出超过 1 分钟或已断开, 则可以清理了
+            return (c <= 0 && t <= System.currentTimeMillis() - 60000)
+             || ! writer.isOpen() ;
         }
 
         @Override

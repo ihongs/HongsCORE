@@ -431,7 +431,7 @@ abstract public class Core
   }
 
   /**
-   * 清理可关闭的
+   * 可关闭清理
    */
   public void clean()
   {

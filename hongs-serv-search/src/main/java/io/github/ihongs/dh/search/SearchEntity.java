@@ -287,12 +287,12 @@ public class SearchEntity extends LuceneRecord {
         public boolean cleanable( ) {
             // 全部退出超过 1 分钟或已断开, 则可以清理了
             return (c <= 0 && t <= System.currentTimeMillis() - 60000)
-             || ! writer.isOpen() ;
+             || ! writer.isOpen( );
         }
 
         @Override
         public void close() {
-            if (! writer.isOpen() ) {
+            if (! writer.isOpen( )) {
                 return;
             }
 

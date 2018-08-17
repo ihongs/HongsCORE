@@ -26,7 +26,7 @@ import java.lang.reflect.InvocationTargetException;
  * 实例在单一线程内使用并没有什么问题,
  * 如果跨线程使用则可能有线程安全问题;
  * GLOBAL_CORE 可全局使用, 需小心对待,
- * Closeable,Singleton 类别放入非全局.
+ * Cleanable,Singleton 类别放入非全局.
  * </p>
  *
  * <h3>静态属性:</h3>
@@ -129,12 +129,15 @@ public final class Core
       Object o =  e . getValue();
       try
       {
-        if (o instanceof Closeable)
+        if (o instanceof Cleanable)
         {
-          Closeable c = (Closeable) o;
-        if (c.closeable() )
+          Cleanable c = (Cleanable) o;
+        if (c.cleanable ())
         {
-            c.close( );
+        if (o instanceof AutoCloseable )
+        {
+           ((AutoCloseable) c ).close( );
+        }
             i.remove();
         }
         }
@@ -240,7 +243,7 @@ public final class Core
       Object ob = et.getValue();
       if (ob instanceof Singleton)
       {
-      if (ob instanceof Closeable)
+      if (ob instanceof Cleanable)
       {
         sb.append("[Z]");
       } else
@@ -248,7 +251,7 @@ public final class Core
         sb.append("[S]");
       }
       } else
-      if (ob instanceof Closeable)
+      if (ob instanceof Cleanable)
       {
         sb.append("[D]");
       } else
@@ -633,16 +636,16 @@ public final class Core
 
   /**
    * 可关闭的
-   * 实现此接口, 会询问是否可关闭, 关闭后将会被删除
+   * 实现此接口, 会询问是否可清理, 许可则会被删除掉
    */
-  static public interface Closeable extends AutoCloseable
+  static public interface Cleanable
   {
-         public  boolean  closeable ();
+         public  boolean  cleanable ();
   }
 
   /**
    * 单例模式
-   * 实现此接口, 则在全局范围内仅构造一次(常驻进程, 通过Core.getInstance获取)
+   * 实现此接口, 则在全局环境唯一, 常驻且仅构造一次
    */
   static public interface Singleton {}
 

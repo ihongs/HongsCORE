@@ -168,7 +168,7 @@ abstract public class Core
    * 获取核心对象
    * @return 核心对象
    */
-  public static Core getInstance()
+  public static final Core getInstance()
   {
     return THREAD_CORE.get();
   }
@@ -180,7 +180,7 @@ abstract public class Core
    * @param clas
    * @return 类的对象
    */
-  public static <T>T getInstance(Class<T> clas)
+  public static final <T>T getInstance(Class<T> clas)
   {
     return getInstance().get(clas);
   }
@@ -191,12 +191,12 @@ abstract public class Core
    * @param name
    * @return 类的对象
    */
-  public static Object getInstance(String name)
+  public static final Object getInstance(String name)
   {
     return getInstance().get(name);
   }
 
-  public static <T>T newInstance(Class<T> clas)
+  public static final <T>T newInstance(Class<T> clas)
   {
     try
     {
@@ -260,7 +260,7 @@ abstract public class Core
     }
   }
 
-  public static Object newInstance(String name)
+  public static final Object newInstance(String name)
   {
     Class klass;
 
@@ -287,7 +287,7 @@ abstract public class Core
    * @param svid 服务器ID
    * @return 唯一标识
    */
-  public static String newIdentity(String svid)
+  public static final String newIdentity(String svid)
   {
     long n;
 
@@ -319,7 +319,7 @@ abstract public class Core
    *
    * @return 唯一标识
    */
-  public static String newIdentity()
+  public static final String newIdentity()
   {
     return Core.newIdentity(Core.SERVER_ID);
   }
@@ -328,7 +328,7 @@ abstract public class Core
    * 获取语言地区
    * @return
    */
-  public static Locale getLocality()
+  public static final Locale getLocality()
   {
     Core     core = Core.getInstance();
     String   name = Locale.class.getName();
@@ -352,7 +352,7 @@ abstract public class Core
    * 获取当前时区
    * @return
    */
-  public static TimeZone getTimezone()
+  public static final TimeZone getTimezone()
   {
     Core     core = Core.getInstance();
     String   name = TimeZone.class.getName();
@@ -559,7 +559,7 @@ abstract public class Core
     return sb.toString();
   }
 
-  private static class Simple extends Core
+  private static final class Simple extends Core
   {
 
     @Override
@@ -637,7 +637,7 @@ abstract public class Core
    * 全局容器
    * 带锁的容器, 内部采用了读写锁, 并对写过程可包裹
    */
-  private static class Global extends Core
+  private static final class Global extends Core
   {
   private final ReadWriteLock LOCK = new ReentrantReadWriteLock();
 

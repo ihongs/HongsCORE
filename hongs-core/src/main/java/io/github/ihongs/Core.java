@@ -113,23 +113,44 @@ public final class Core
   }
 
   /**
-   * 不支持 clear, 可使用 close, 后者在退出时自动销毁对象
-   *
-   * @throws UnsupportedOperationException 总是抛出此异常
-   * @deprecated
+   * 清理可关闭的
    */
-  @Override
-  public void clear()
+  public void clean()
   {
-    throw new UnsupportedOperationException(
-      "May cause an error on 'clear', use the 'close'");
+    if (this.isEmpty())
+    {
+      return;
+    }
+
+    Iterator i = this.entrySet().iterator();
+    while  ( i.hasNext( ) )
+    {
+      Entry  e = (Entry)i.next();
+      Object o =  e . getValue();
+      try
+      {
+        if (o instanceof Closeable)
+        {
+          Closeable c = (Closeable) o;
+        if (c.closeable() )
+        {
+            c.close( );
+            i.remove();
+        }
+        }
+      }
+      catch ( Throwable x )
+      {
+        x.printStackTrace ( System.err );
+      }
+    }
   }
 
   /**
-   * 关闭并清空
+   * 关闭后清空
    */
   @Override
-  public void close()
+  public void clear()
   {
     if (this.isEmpty())
     {
@@ -163,37 +184,12 @@ public final class Core
   }
 
   /**
-   * 关闭和删除 Closeable
+   * 关闭并清空
    */
-  public void cloze()
+  @Override
+  public void close()
   {
-    if (this.isEmpty())
-    {
-      return;
-    }
-
-    Iterator i = this.entrySet().iterator();
-    while  ( i.hasNext( ) )
-    {
-      Entry  e = (Entry)i.next();
-      Object o =  e . getValue();
-      try
-      {
-        if (o instanceof Closeable)
-        {
-          Closeable c = (Closeable) o;
-        if (c.closeable() )
-        {
-            c.close( );
-            i.remove();
-        }
-        }
-      }
-      catch ( Throwable x )
-      {
-        x.printStackTrace ( System.err );
-      }
-    }
+    this.clear();
   }
 
   @Override

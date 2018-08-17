@@ -75,11 +75,11 @@ public class Core
 
     if (this.containsKey(name))
     {
-      return (T)this.get(name);
+      return (T)this.got(name);
     }
     if (core.containsKey(name))
     {
-      return (T)core.get(name);
+      return (T)core.got(name);
     }
 
     T   inst = newInstance (klass);
@@ -105,11 +105,11 @@ public class Core
 
     if (this.containsKey(name))
     {
-      return    this.get(name);
+      return    this.got(name);
     }
     if (core.containsKey(name))
     {
-      return    core.get(name);
+      return    core.got(name);
     }
 
     Object inst =newInstance(name);
@@ -624,9 +624,9 @@ public class Core
 
       LOCK.readLock( ).lock();
       try {
-        if (this.containsKey(key)) {
-          return (T)this.get(key);
-        }
+      if  (super.containsKey(key)) {
+        return (T) super.got(key);
+      }
       } finally {
         LOCK.readLock( ).unlock();
       }
@@ -646,9 +646,9 @@ public class Core
     {
       LOCK.readLock( ).lock();
       try {
-        if (this.containsKey(key)) {
-          return    this.get(key);
-        }
+      if  (super.containsKey(key)) {
+        return     super.got(key);
+      }
       } finally {
         LOCK.readLock( ).unlock();
       }

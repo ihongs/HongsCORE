@@ -121,7 +121,7 @@ abstract public class Core
          =  new ThreadLocal() {
       @Override
       protected Core initialValue() {
-            return new Simple( );
+            return new Simple ();
       }
       @Override
       public void remove() {

@@ -193,6 +193,7 @@ public abstract class CoreSerial
 
   /**
    * 加载或引入数据
+   * @param name
    * @param file
    * @param time
    * @throws io.github.ihongs.HongsException

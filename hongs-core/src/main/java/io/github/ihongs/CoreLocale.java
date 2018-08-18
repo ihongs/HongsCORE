@@ -86,7 +86,7 @@ public class CoreLocale
     {
       that.fill(name);
     }
-    super.load(name + "_" + this.lang);
+     super.load(name + "_" + this.lang);
   }
 
   /**

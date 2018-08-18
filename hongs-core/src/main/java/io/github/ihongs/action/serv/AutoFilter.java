@@ -104,22 +104,13 @@ public class AutoFilter extends ActionDriver {
         }
 
         if (url.endsWith(Cnst.API_EXT)) {
-                             // 接口不需要处理
-        } else
-        if (url.endsWith(Cnst.ACT_EXT)) {
-            String act, ext; // 动作路径和扩展
-            String src, met; // 资源路径和方法
+            String src; // 资源路径
             String uri;
             int    pos;
 
             try {
-                pos = url.lastIndexOf('.');
-                ext = url.substring(  pos);
-                act = url.substring(1,pos);
-
-                pos = act.lastIndexOf('/');
-                met = act.substring(1+pos);
-                src = act.substring(0,pos);
+                pos = url.lastIndexOf('/');
+                src = url.substring(0,pos);
             } catch (IndexOutOfBoundsException ex) {
                 // 如果无法拆分则直接跳过
                 chain.doFilter ( req, rsp);
@@ -127,6 +118,38 @@ public class AutoFilter extends ActionDriver {
             }
 
             // 检查是否有特定动作脚本
+            uri = "/"+ src + "/_apis_.jsp";
+            if (new File(Core.BASE_PATH+ uri).exists()) {
+                include ( req, rsp, url, uri);
+            }
+        } else
+        if (url.endsWith(Cnst.ACT_EXT)) {
+            String act; // 动作路径
+            String src; // 资源路径
+//          String met; // 动作方法
+            String uri;
+            int    pos;
+
+            try {
+                pos = url.lastIndexOf('.');
+                act = url.substring(1,pos);
+
+                pos = act.lastIndexOf('/');
+                src = act.substring(0,pos);
+//              met = act.substring(1+pos);
+            } catch (IndexOutOfBoundsException ex) {
+                // 如果无法拆分则直接跳过
+                chain.doFilter ( req, rsp);
+                return;
+            }
+
+            // 检查是否有特定动作脚本
+            uri = "/"+ src + "/_acts_.jsp";
+            if (new File(Core.BASE_PATH+ uri).exists()) {
+                include ( req, rsp, url, uri);
+            }
+            // 废弃, 仅用 _acts_ 处理
+            /*
             uri = "/"+ src +"/@"+ met +".jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
@@ -137,6 +160,7 @@ public class AutoFilter extends ActionDriver {
                 forward ( req, rsp, url, uri);
                 return;
             }
+            */
 
             if (!ActionRunner.getActions().containsKey(act)) {
                 // 检查是否有重写动作脚本 (废弃, 动作归动作)
@@ -163,9 +187,9 @@ public class AutoFilter extends ActionDriver {
                 for(String axt: getacts()) {
                     if (act.endsWith(axt)) {
                         if (cstset.contains(axt)) {
-                            forward(req, rsp, url, action + axt + ext);
+                            forward(req, rsp, url, action + axt + Cnst.ACT_EXT);
                         } else {
-                            include(req, rsp, url, action + axt + ext);
+                            include(req, rsp, url, action + axt + Cnst.ACT_EXT);
                         }
                         return;
                     }

@@ -141,6 +141,6 @@ public final class Cnst {
 
     //** 系统路径 **/
 
-    public static final String CONF_PACK = "io/github/ihongs/config" ;
+    public static final String CONF_PACK = "io/github/ihongs/config";
 
 }

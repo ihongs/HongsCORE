@@ -40,7 +40,7 @@ public final class Block {
      * @return 清理数量
      */
     public static int cleans() {
-        long tt = System.currentTimeMillis() - Cnst.CC_DEF;
+        long tt = System.currentTimeMillis() - 60000;
         int  ct = 0;
         Lock loxk  ;
 

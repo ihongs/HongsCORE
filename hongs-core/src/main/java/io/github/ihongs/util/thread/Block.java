@@ -1,6 +1,5 @@
 package io.github.ihongs.util.thread;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import java.util.Iterator;

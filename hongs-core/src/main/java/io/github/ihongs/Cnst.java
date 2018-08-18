@@ -25,8 +25,6 @@ public final class Cnst {
 
     public static final int    CL_DEF =   -1 ; // 默认生命周期(秒, Cookie)
 
-    public static final long   CC_DEF = 60000; // 清理失效延时(毫秒, 1 分)
-    
     //** 查询参数 **/
 
     public static final String ID_KEY =  "id"; // 编号

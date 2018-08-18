@@ -1,5 +1,6 @@
 package io.github.ihongs.util.thread;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import java.util.Iterator;
@@ -39,7 +40,7 @@ public final class Block {
      * @return 清理数量
      */
     public static int cleans() {
-        long tt = System.currentTimeMillis() - 60000;
+        long tt = System.currentTimeMillis() - Cnst.CC_DEF;
         int  ct = 0;
         Lock loxk  ;
 

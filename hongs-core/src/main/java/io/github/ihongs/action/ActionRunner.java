@@ -66,7 +66,7 @@ public class ActionRunner {
         if (null != a) {
             this.action  = a.value()+"/";
         } else {
-            this.action  = /*******/ "/";
+            this.action  = /*basic*/ "/";
         }
         a = this.method.getAnnotation(Action.class);
         if (null != a) {

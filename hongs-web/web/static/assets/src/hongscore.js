@@ -508,7 +508,7 @@ function hsToFormData (data) {
             continue;
         }
         if (item.type == "file" ) {
-            var a =  item.files ;
+            var a = item. filez || item. files; // 由于 files 只读, 自定义文件写入 filez
             if (a.length  ==  0 ) {
                 form.append( item.name ,  "" );
             }

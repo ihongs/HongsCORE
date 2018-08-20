@@ -121,18 +121,19 @@
         this.each(function() {
             var that = this;
             if (window.FileReader) {
-                var fr = new FileReader( );
-                fr.onloadend = function(e) {
-                    cal.call(that, e.target.result);
-                };  cal.call(that);
-                $.each( this.files, function(i, fo) {
-                    fr.readAsDataURL( fo );
+                $.each(this.files, function(i, fo) {
+                    var fr = new FileReader( );
+                    fr.onloadend = function(e) {
+                        cal.call(that, fo , e.target.result);
+                    };
+                    fr.readAsDataURL ( fo );
                 });
-            } else
-            if (this.getAsDataURL) {
-                cal.call(that, that.getAsDataURL());
+            } else if (this.files) {
+                $.each(this.files, function(i, fo) {
+                    cal.call(that, fo, fo.getAsDataURL ( ) );
+                });
             } else {
-                cal.call(that, that.value);
+                cal.call(that , null , that.value);
             }
         });
         return this;
@@ -265,6 +266,7 @@
         if (! inp.data("picked")) {
             inp.data("picked", 1);
             var box = inp.siblings(".pickbox");
+            var mul = inp.prop("multiple" );
             var  k  = box.data("keep");
             var  w  = box.data("size");
             var  h  = w.split ("*", 2);
@@ -272,21 +274,35 @@
             var tmp = $('<input type="hidden"/>')
                   .attr("name", inp.attr("name"));
             inp.on("change", function( ) {
-            inp.hsReadFile ( function(src) {
+                var iup = mul ? inp.clone().val("") : inp;
+            inp.hsReadFile ( function(val , src ) {
                    _hsSoloFile(box, false);
+                /**
+                 * 多选模式下尝试自定义传递,
+                 * 将文件对象绑定到扩展属性,
+                 * 通过 hsToFormData 来上传.
+                 */
+            if (mul) {
+                var iup = inp.clone( );
+                iup[0].filez = [ val ];
+                iup.val( "" );
+                inp.val( "" );
+                iup.hsPickView(box, src, w, h, k);
+            } else {
                 inp.hsPickView(box, src, w, h, k);
+            }
                 /**
                  * 因为 hsReadFile 是异步的,
                  * 插一个输入项规避校验失败;
                  * 但是如果不加延时直接移除,
                  * 还是会导致校验时检测不到,
-                 * 原因尚不清楚
+                 * 原因尚不清楚.
                  */
                 setTimeout ( function( ) {
-                    tmp.remove( );
+                   tmp.remove();
                 }, 500);
             });
-                box.append( tmp );
+                box.append(tmp);
             });
         }
         inp.click();

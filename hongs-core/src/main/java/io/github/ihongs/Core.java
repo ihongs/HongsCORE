@@ -22,11 +22,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  * </p>
  *
  * <p>
- * 注意: 这不是线程安全的, 请自行加锁.
  * THREAD_CORE 被包装成了 ThreadLocal,
  * 实例在单一线程内使用并没有什么问题,
  * 如果跨线程使用则可能有线程安全问题;
- * GLOBAL_CORE 可全局使用, 需小心对待,
+ * GLOBAL_CORE 用于存放全局对象和参数,
+ * 对读写等过程有加锁, 但仍需小心对待.
  * Cleanable,Singleton 类别放入非全局.
  * </p>
  *
@@ -554,6 +554,10 @@ abstract public class Core
     return sb.toString();
   }
 
+  /**
+   * 简单容器
+   * 非线程安全, 未对任何过程加锁, 作线程内共享对象
+   */
   private static final class Simple extends Core
   {
 

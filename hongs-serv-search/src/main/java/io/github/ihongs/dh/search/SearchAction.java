@@ -133,7 +133,7 @@ public class SearchAction extends LuceneAction {
         Set ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
         Map xd = (Map) sd.get("info");
         if (ab == null || xd == null) {
-            return;
+            return ;
         }
 
         byte md = 0;
@@ -143,10 +143,11 @@ public class SearchAction extends LuceneAction {
         if (ab.contains("_fork")) {
             md += 2;
         }
+
         if (md != 0) {
-            new SearchTitler()
-            .addItemsByForm (mod, fs)
-            .addTitle       (xd , md);
+            new SearchTitler(  )
+             .addItemsByForm(fs)
+             .addTitle( xd , md);
         }
     }
 

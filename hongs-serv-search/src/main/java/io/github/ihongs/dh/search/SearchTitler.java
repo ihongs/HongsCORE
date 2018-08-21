@@ -42,29 +42,50 @@ public class SearchTitler {
         return this;
     }
 
-    public SearchTitler addItemsByForm(String conf, String form)
-    throws HongsException {
-        return addItemsByForm(conf, FormSet.getInstance(conf).getForm(form));
+    public SearchTitler addItemsByForm(Map fs ) throws HongsException  {
+        String conf = Dict.getValue( fs, "default", "@", "conf");
+        String form = Dict.getValue( fs, "unknown", "@", "form");
+        return addItemsByForm( conf, form, fs );
     }
 
-    public SearchTitler addItemsByForm(String conf, Map<String, Map> fields)
+    public SearchTitler addItemsByForm(String conf, String form)
     throws HongsException {
-        Map<String, String> fts = FormSet.getInstance().getEnum("__types__");
-        for(Map.Entry<String, Map> et:fields.entrySet()) {
-            Map    fc = et.getValue();
-            String fn = et.getKey(  );
-            String ft = (String) fc.get("__type__");
-                   ft = fts.get( ft );
-            if (  "enum".equals( ft )
-            ||    "date".equals( ft )
-            ||  "number".equals( ft )) {
-                String xc = Synt.defxult(( String ) fc.get("conf"), conf);
-                String xn = Synt.defxult(( String ) fc.get("enum"),   fn);
-                Map    fe = FormSet.getInstance(xc).getEnumTranslated(xn);
-                enums.put(fn, fe);
+        Map fs = FormSet.getInstance(conf /**/)
+                        .getForm    (form /**/);
+        return addItemsByForm( conf, form, fs );
+    }
+
+    public SearchTitler addItemsByForm(String conf, String form, Map<String, Map> fs)
+    throws HongsException {
+        Map ts = FormSet.getInstance("default")
+                        .getEnum ( "__types__");
+        Iterator it = fs.entrySet().iterator( );
+
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry)it.next();
+            Map       mt = (Map ) et.getValue();
+            String  name = (String) et.getKey();
+            String  type = (String) mt.get("__type__");
+                    type = (String) ts.get(   type   ); // 类型别名转换
+
+            if ("enum".equals(type)
+            ||  "date".equals(type)
+            ||"number".equals(type)) {
+                String xc = Synt.defxult( (String) mt.get("conf") , conf);
+                String xn = Synt.defxult( (String) mt.get("enum") , name);
+                Map    fe ;
+                try {
+                       fe = FormSet.getInstance(xc).getEnumTranslated(xn);
+                } catch ( HongsException ex) {
+                if (ex.getErrno() == 0x10eb) {
+                    continue;
+                } else {
+                    throw ex;
+                }}
+                enums.put(name, fe);
             } else
-            if (  "fork".equals( ft )) {
-                forks.put(fn, fc);
+            if ("fork".equals(type)) {
+                forks.put(name, mt);
             }
         }
 

@@ -1,6 +1,6 @@
 <div id="matrix-form-list"
      data-module="hsList"
-     data-load-url="centra/matrix/form/list.act?unit_id=${unit_id}&ob=-boost&ab=_enum"
+     data-load-url="centra/matrix/form/list.act?unit_id=${unit_id}&amp;ob=-boost&amp;ab=_enum"
      data-send-urls-0="['centra/matrix/form/delete.act','.delete','您确定要删除此表单?']"
      data-open-urls-0="['centra/matrix/form/form.html?unit_id=${unit_id}','.create','@']"
      data-open-urls-1="['centra/matrix/form/form.html?id={ID}'           ,'.modify','@']">
@@ -62,7 +62,7 @@
     (function($) {
         var context = $('#matrix-form-list');
         var loadBox = context.closest(".loadbox");
-        var unitId = H$("&unit_id", loadBox);
+        var unitId = H$("@unit_id", loadBox);
         if (unitId == "" || unitId == "0") {
             context.find(".alert").show( );
             context.find(".listbox").addClass("invisible");

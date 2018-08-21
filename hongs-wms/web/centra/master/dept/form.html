@@ -1,7 +1,7 @@
 <h2>{DO}部门</h2>
 <div id="master-dept-form"
      data-module="hsForm"
-     data-load-url="centra/master/dept/info.act?ab=!enum&navi-conf=default"
+     data-load-url="centra/master/dept/info.act?ab=!enum&amp;navi-conf=default"
      data-save-url="centra/master/dept/save.act">
     <form action="" method="POST">
         <input type="hidden" name="id"/>
@@ -38,7 +38,7 @@
     (function($) {
         var context = $("#master-dept-form");
 
-        if (H$("&id", context) === "CENTRE") {
+        if (H$("@id", context) === "CENTRE") {
             context.find(".base-info, .form-btns").addClass("center-block");
             context.find(".role-info").before(
                 '<input type="hidden"'

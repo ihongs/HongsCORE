@@ -120,7 +120,8 @@
     $.fn.hsReadFile = function(cal) {
         this.each(function() {
             var that = this;
-            if (window.FileReader) {
+            if (this.files ) {
+            if (window.FileReader ) {
                 $.each(this.files, function(i, fo) {
                     var fr = new FileReader( );
                     fr.onloadend = function(e) {
@@ -128,10 +129,11 @@
                     };
                     fr.readAsDataURL ( fo );
                 });
-            } else if (this.files) {
+            } else {
                 $.each(this.files, function(i, fo) {
                     cal.call(that, fo, fo.getAsDataURL ( ) );
                 });
+            }
             } else {
                 cal.call(that , null , that.value);
             }
@@ -274,8 +276,7 @@
             var tmp = $('<input type="hidden"/>')
                   .attr("name", inp.attr("name"));
             inp.on("change", function( ) {
-                var iup = mul ? inp.clone().val("") : inp;
-            inp.hsReadFile ( function(val , src ) {
+            inp.hsReadFile ( function( val, src ) {
                    _hsSoloFile(box, false);
                 /**
                  * 多选模式下尝试自定义传递,
@@ -295,12 +296,11 @@
                  * 因为 hsReadFile 是异步的,
                  * 插一个输入项规避校验失败;
                  * 但是如果不加延时直接移除,
-                 * 还是会导致校验时检测不到,
-                 * 原因尚不清楚.
+                 * 还是会导致校验时检测不到.
                  */
                 setTimeout ( function( ) {
                    tmp.remove();
-                }, 500);
+                }, 100);
             });
                 box.append(tmp);
             });

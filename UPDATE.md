@@ -1,7 +1,7 @@
 
 # 更新日志
 
-* 2018/08/12 分离全局和线程内 Core 的实现, 全局 Core 内增加统一读写锁, 取消外部附加的全局同步和读写锁
+* 2018/08/12 分离全局和线程内 Core 的实现, 全局 Core 内增加统一读写锁, 取消外部分散的全局同步和读写锁
 * 2018/07/12 将包名 app.hongs 更名为 io.github.ihongs, 启动脚本名更名为 hco 和 hdb
 * 2018/04/14 彻底移除 ueditor js 和 jsp,java 组件, 改用 summernote 提供富文本编辑的功能
 * 2018/03/23 hongs-serv-member 模块更名为 hongs-serv-master,

@@ -1,10 +1,10 @@
 <h2>{DO}用户</h2>
 <div id="master-user-form"
      data-module="hsForm"
-     data-load-url="centra/master/user/info.act?ab=!enum&navi-conf=default"
+     data-load-url="centra/master/user/info.act?ab=!enum&amp;navi-conf=default"
      data-save-url="centra/master/user/save.act"
-     data-init-data="{'depts.0.dept_id':H$('&dept_id',this)}"
-     data-data-0="_fill_head:(hsFormFillView)">
+     data-data-0="_fill_head: (hsFormFillView) "
+     data-init-data="{'depts.0.dept_id': H$('@dept_id', this)}">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id"/>
         <input type="hidden" name="depts.0.dept_id"/>

@@ -28,7 +28,8 @@ function H$() {
     case ':': return hsGetLang.apply(this, arguments);
     case '/': return hsFixUri .apply(this, arguments);
     case '?': return hsChkUri .apply(this, arguments);
-    case '&':
+    case '@':
+    case '&': // 因在 html 中为特殊符号, 为避麻烦弃用
         if (arguments.length === 1) {
             arguments.length  =  2;
             arguments[1] = location.href;

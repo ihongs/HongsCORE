@@ -23,7 +23,7 @@
     (function($) {
         var context = $("#manage-file-fold-modify").removeAttr("id");
 
-        context.find("[name=name]").val(H$("&path", context).replace(/^.*\//, ''));
+        context.find("[name=name]").val(H$("@path", context).replace(/^.*\//, ''));
 
         context.find("form").on("submit", function(evt) {
             var inst = context.data("HsForm");

@@ -453,7 +453,7 @@ HsForm.prototype = {
 
         // 标签
         if (inp.is("ul")) {
-            var v = inp.attr("data-vk"); if (! k) k = 0;
+            var k = inp.attr("data-vk"); if (! k) k = 0;
             var t = inp.attr("data-tk"); if (! t) t = 1;
             var i, c, e;
             inp.empty();
@@ -851,15 +851,29 @@ HsForm.prototype = {
         },
         "[maxlength],[data-maxlength]" : function(val, inp) {
             var max = inp.attr("maxlength") || inp.attr("data-maxlength");
-            if (val.length > max) {
+            if (max < val.length) {
                 return this.geterror(inp, "form.gt.maxlength", [max]);
             }
             return true;
         },
         "[minlength],[data-minlength]" : function(val, inp) {
             var min = inp.attr("minlength") || inp.attr("data-minlength");
-            if (val.length < min) {
+            if (min > val.length) {
                 return this.geterror(inp, "form.lt.minlength", [min]);
+            }
+            return true;
+        },
+        "[maxrepeat],[data-maxrepeat]" : function(val, inp) {
+            var max = inp.attr("maxrepeat") || inp.attr("data-maxrepeat");
+            if (max < inp.find("[type=hidden],:checked,:selected,:file,:text").size()) {
+                return this.geterror(inp, "form.gt.maxrepeat", [max]);
+            }
+            return true;
+        },
+        "[minrepeat],[data-minrepeat]" : function(val, inp) {
+            var min = inp.attr("minrepeat") || inp.attr("data-minrepeat");
+            if (min > inp.find("[type=hidden],:checked,:selected,:file,:text").size()) {
+                return this.geterror(inp, "form.lt.minrepeat", [min]);
             }
             return true;
         },

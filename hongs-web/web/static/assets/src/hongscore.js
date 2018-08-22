@@ -2270,12 +2270,12 @@ $.fn.hsFind = function(selr) {
                 if (x.size()) { elem = x; break; }
                 elem = $(document);
             } while (false);
-            return salr ? $(salr, elem) : elem;
+            return salr ? $(salr, elem) : elem ;
         case '^':
             elem = elem.parent();
             var a = salr.split(';' , 2);
-            if (! a[0]) elem = elem.closest(a[0]);
-            if (! a[1]) elem = elem.hsFind (a[1]);
+            if (a[0]) elem = elem.closest(a[0]);
+            if (a[1]) elem = elem.hsFind (a[1]);
             return elem;
         case '>':
             return elem.children(salr);
@@ -2292,7 +2292,13 @@ $.fn.hsFind = function(selr) {
         case '#':
             return $(selr);
         default : // .:[
-            return elem.find(selr);
+            /**
+             * 往下找不到节点时,
+             * 则尝试在全局搜索.
+             */
+            elem = elem.find(selr);
+            return elem.size(    )
+                 ? elem : $ (selr);
     }
 };
 $.fn._hsTarget = $.fn.hsFind; // 兼容旧版命名
@@ -2424,7 +2430,7 @@ function() {
 
     url = hsFixPms(url, this);
     if (box) {
-        box = btn.hsFind(box)
+        box = btn.hsFind(box, true)
                  .hsOpen(url, dat, evs.hsReady);
     } else {
         box =   $.hsOpen(url, dat, evs.hsReady);

@@ -272,18 +272,17 @@ HsTree.prototype = {
             if (nod.length == 0) {
                 nod = jQuery('<div class="tree-node"></div>');
                 nod.attr("id", "tree-node-"+id );
-            }
-            else {
+            } else {
                 nod.find("table:first").empty( );
                 pid2 = this.getPid(nod);
                 lst2 = nod.closest(".tree-list");
-                if (pid2 != pid) lsts[pid2] = lst2;
+                if (pid2 != pid) lsts[pid2]=lst2;
             }
             nod.prependTo(lst);
             this.fillInfo(list[i], nod);
         }
         for(i in lsts) {
-            this.fillCnum(list.length, lsts[i]);
+            this.fillCnum(list.length , lsts[i]);
         }
     },
     fillInfo : function(info, nod) {
@@ -307,16 +306,11 @@ HsTree.prototype = {
         if (typeof(this.cnumKey) !== "undefined") {
             n = hsGetValue(info , this.cnumKey);
             tab.find(".tree-cnum").text(n);
-            if (n)
-                nod.addClass("tree-fold");
-        }
+        if (n) {
+            nod.addClass("tree-fold");
+        }}
         else {
-                nod.addClass("tree-fold");
-        }
-
-        if (! t) t = "info";
-        if (typeof(this["_fill_"+t]) !== "undefined") {
-            this["_fill_"+t].call(this, tab, info);
+            nod.addClass("tree-fold");
         }
 
         tab.prependTo(nod);
@@ -327,17 +321,18 @@ HsTree.prototype = {
 
         if (typeof(cnum) === "undefined")
             cnum  = arr.length;
-        if (cnum != arr.length)
+        if (cnum != arr.length) {
             for (var i = arr.length-1; i > cnum-1; i --) {
-                jQuery(arr[i]).remove();
+                jQuery (arr[i]).remove( );
             }
+        }
 
-        if (cnum != 0)
+        if (cnum != 0) {
             nod.find(".tree-cnum").text(cnum.toString());
-        else {
+        } else {
             nod.find(".tree-cnum").hide();
-            nod.removeClass("tree-fold")
-               .removeClass("tree-open");
+            nod.removeClass( "tree-fold")
+               .removeClass( "tree-open");
         }
     },
 

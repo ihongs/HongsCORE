@@ -151,7 +151,7 @@ HsForm.prototype = {
 
             // 调节
             if (f) {
-                v  = f.call(i, this, v, n, t);
+                v  = f.call(i[0], this, v, n);
             }
             // 填充
             if (n && this["_prep_"+n] !== undefined) {
@@ -226,7 +226,7 @@ HsForm.prototype = {
 
             // 调节
             if (f) {
-                v  = f.call(i, this, v, n, t);
+                v  = f.call(i[0], this, v, n);
             }
             // 填充
             if (n && this["_fill_"+n] !== undefined) {
@@ -429,35 +429,44 @@ HsForm.prototype = {
     },
 
     _fill__review : function(inp, v, n) {
+        if (v === undefined) {
+            return v;
+        }
+
+        // 枚举
         var a = inp.data("data");
         if (a) {
             var k = inp.attr("data-vk"); if (! k) k = 0;
             var t = inp.attr("data-tk"); if (! t) t = 1;
-            var i, c, e, m = { };
-            var x = inp.is("ul") ? '<li></li>' : '<span></span>';
-            inp.empty().removeData("enum");
+            var x = inp.is("ul,ol") ? '<li></li>': '<span></span>';
+            var i, c, e;
+            var m = { };
+            inp.empty();
             if (! jQuery.isArray(v)) {
                 v =  [v];
             }
             for(i = 0; i < a.length; i ++) {
                 e = a[i];
-                m[e[k]]=e[t];
+                m[e[k]] = e[t];
             }
             for(i = 0; i < v.length; i ++) {
                 c = v[i];
-                e = m[v[i] ];
+                e = m[ v [i] ];
                 inp.append(jQuery(x).text(e)).attr("data-code", c);
             }
             return;
         }
 
         // 标签
-        if (inp.is("ul")) {
+        if (inp.is("ul,ol")) {
             var k = inp.attr("data-vk"); if (! k) k = 0;
             var t = inp.attr("data-tk"); if (! t) t = 1;
+            var x = '<li></li>';
             var i, c, e;
             inp.empty();
-            var x = '<li></li>';
+            if (! jQuery.isArray(v)) {
+                v =  [v];
+            }
             for(i = 0; i < v.length; i ++) {
                 c = i;
                 e = v[i];
@@ -607,7 +616,7 @@ HsForm.prototype = {
     },
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;
-        td.html(v); return false;
+        jQuery(td).html( v );return false;
     },
 
     valiInit : function() {

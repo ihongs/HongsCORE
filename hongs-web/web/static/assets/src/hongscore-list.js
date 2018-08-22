@@ -284,7 +284,7 @@ HsList.prototype = {
 
                 // 调节
                 if (f) {
-                    v  = f.call(td, this, v, n);
+                    v  = f.call(td[0], this, v, n);
                 }
                 // 填充
                 if (n && this["_fill_"+n] !== undefined) {
@@ -544,7 +544,7 @@ HsList.prototype = {
         this.listBox.find( 'thead th,thead td' ).eq(td.index( ))
             .find(".invisible").clone().removeClass("invisible")
             .appendTo(td);
-        td.hsInit( ).find("input:hidden").val(v);
+        jQuery(td).hsInit().find("input:hidden").val(v);
         return false;
     },
     _fill__check : function(td, v, n) {
@@ -627,7 +627,7 @@ HsList.prototype = {
     },
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;
-        td.html(v); return false;
+        jQuery(td).html( v );return false;
     }
 };
 
@@ -678,7 +678,7 @@ function hsListFillItem(list) {
 
             // 调整
             if (f) {
-                v  = f.call(td, that, v, n);
+                v  = f.call(td[0], that, v, n);
             }
             // 填充
             if (n && that["_fill_"+n] !== undefined) {

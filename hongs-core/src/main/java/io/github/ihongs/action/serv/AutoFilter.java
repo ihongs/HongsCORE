@@ -121,6 +121,7 @@ public class AutoFilter extends ActionDriver {
             uri = "/"+ src + "/_apis_.jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
+                return;
             }
         } else
         if (url.endsWith(Cnst.ACT_EXT)) {
@@ -147,6 +148,7 @@ public class AutoFilter extends ActionDriver {
             uri = "/"+ src + "/_acts_.jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
+                return;
             }
             // 废弃, 仅用 _acts_ 处理
             /*

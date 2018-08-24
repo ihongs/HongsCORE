@@ -7,7 +7,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" isErrorPage="true" trimDirectiveWhitespaces="true"%>
 <%
     // 如果有内部返回, 则不要显示此页
-    if (request.getAttribute(Cnst.RESP_ATTR) != null) {
+    if (null != request.getAttribute(Cnst.RESPON_ATTR)) {
         return;
     }
 

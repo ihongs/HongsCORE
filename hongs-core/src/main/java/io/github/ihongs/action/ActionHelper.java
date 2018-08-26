@@ -287,8 +287,7 @@ public class ActionHelper implements Cloneable
     // 无法转换则报 HTTP 400 错误
     try {
         return (Map) request.getAttribute(Cnst.REQUES_ATTR);
-    }
-    catch (ClassCastException ex) {
+    } catch ( ClassCastException ex) {
         throw new HongsExemption(0x1100, ex);
     }
   }
@@ -298,12 +297,19 @@ public class ActionHelper implements Cloneable
    * @return
    */
   final Map getRequestJson() {
+    // 协议报文内容为空则不必理会
+    // 解析失败则报 HTTP 400 错误
+    if (request.getContentLength() < 1 ) {
+        return null;
+    }
     try {
-        return (Map) Data.toObject(request.getReader());
-    } catch ( HongsError er) {
-        throw new HongsExemption(0x1100, er.getCause());
+        return (Map) Data.toObject ( request.getReader( ) );
     } catch (IOException ex) {
         throw new HongsExemption(0x1114, ex);
+    } catch ( /**/HongsExemption ex) {
+        throw new HongsExemption(0x1100, ex);
+    } catch ( ClassCastException ex) {
+        throw new HongsExemption(0x1100, ex);
     }
   }
 

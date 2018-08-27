@@ -96,8 +96,8 @@ public class WXAction {
 
         url = "https://graph.qq.com/user/get_user_info";
         req = new HashMap();
-        req.put("openid", opnId);
-        req.put("access_token", token);
+        req.put("openid"        , opnId);
+        req.put("access_token"  , token);
         rsp = ConnKit.retrieve(url, req);
 
         err = Synt.declare(rsp.get("errcode"), 0);
@@ -112,7 +112,7 @@ public class WXAction {
         req.put("name" , rsp.get("nickname"));
         req.put("head" , rsp.get("headimgurl"));
 
-        return null;
+        return req;
     }
 
 }

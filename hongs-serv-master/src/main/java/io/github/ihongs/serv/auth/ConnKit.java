@@ -19,8 +19,12 @@ public class ConnKit {
      * @throws HongsException
      */
     public static Map retrieve(String url, Map<String, Object> req)
-            throws HongsException {
-        return Remote.parseData(Remote.post(url, req));
+    throws HongsException {
+        if (req != null ) {
+            return Remote.parseData(Remote.post(url, req));
+        } else {
+            return Remote.parseData(Remote.get (url     ));
+        }
     }
 
     /**
@@ -32,7 +36,7 @@ public class ConnKit {
      * @throws HongsException
      */
     public static void redirect(ActionHelper helper)
-            throws HongsException {
+    throws HongsException {
         String k;
         String v;
         CoreConfig cc = CoreConfig.getInstance("oauth2");

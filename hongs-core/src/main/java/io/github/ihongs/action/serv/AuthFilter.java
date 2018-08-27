@@ -16,6 +16,7 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -77,6 +78,8 @@ public class AuthFilter
   private final Pattern IS_HTML = Pattern.compile( "text/(html|plain)" );
   private final Pattern IS_JSON = Pattern.compile("(text|application)/(x-)?(json|javascript)");
   private final Pattern IS_AJAX = Pattern.compile("(AJAX|XMLHTTP)" , Pattern.CASE_INSENSITIVE);
+
+  private final Pattern RM_HOST = Pattern.compile("^\\w+://[^/]+" ); // 去除路径上的域名端口等.
 
   @Override
   public void init(FilterConfig config)
@@ -213,11 +216,11 @@ public class AuthFilter
             return;
         }
         if (siteMap.actions.contains(act)) {
-            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 3)); // 需要权限
+            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 1)); // 需要权限
             return;
         }
         if (siteMap.actions.contains(amt)) {
-            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 3)); // 需要权限(带方法)
+            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 1)); // 需要权限(带方法)
             return;
         }
     } else {
@@ -260,7 +263,7 @@ public class AuthFilter
   {
     CoreLocale lang = core.get(CoreLocale.class);
     HttpServletRequest req = hlpr.getRequest(  );
-    boolean ia = isApi(req) || isAjax(req) || isJson(req);
+    boolean ia = isApi(req) || isAjax(req) || isJson(req) || isJsop(req);
     String uri;
     String msg;
 
@@ -299,14 +302,25 @@ public class AuthFilter
                 msg = lang.translate("core.error.no.login.redirect");
             }
 
-            /** 追加来源路径, 以便登录后跳回 **/
+            /**
+             * 追加来源路径, 登录后跳回.
+             *
+             * WEB 正常发起的异步请求等,
+             * Referer 总是当前页面 URL.
+             * APP 和小程序可能不带这个.
+             */
 
             String src = null;
             String qry ;
 
             if (isAjax(req)) {
-                src =  req.getHeader("Referer")
-                    .replaceFirst("^\\w+://[^/]+","");
+                src =  req.getHeader("Referer");
+                if (src != null && src.length() != 0) {
+                    Matcher mat = RM_HOST.matcher(src);
+                    if (mat.find()) {
+                        src = src.substring(mat.end());
+                    }
+                }
             } else
             if (isHtml(req)) {
                 src =  req.getRequestURI( );
@@ -394,7 +408,7 @@ public class AuthFilter
 
   private boolean isAjax(HttpServletRequest req) {
       if (Synt.declare(req.getParameter(".ajax") , false)) {
-          return  true;
+          return  true ; // 使用 iframe 提交通过此参数标识.
       }
       String x  = req.getHeader("X-Requested-With");
       return x == null ? false : IS_AJAX.matcher(x).find();
@@ -408,6 +422,20 @@ public class AuthFilter
   private boolean isHtml(HttpServletRequest req) {
       String a  = req.getHeader("Accept");
       return a == null ? false : IS_HTML.matcher(a).find();
+  }
+
+  private boolean isJsop(HttpServletRequest req) {
+      String c = CoreConfig.getInstance().getProperty("core.callback", "callback");
+      c = req.getParameter(c);
+      if (c != null && c.length() != 0) {
+          return true;
+      }
+      c = Cnst.CB_KEY;
+      c = req.getParameter(c);
+      if (c != null && c.length() != 0) {
+          return true;
+      }
+      return false;
   }
 
 }

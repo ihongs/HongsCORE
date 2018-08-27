@@ -973,26 +973,26 @@ public class ActionHelper implements Cloneable
     }
 
     // 检查是否有 JSONP 的回调函数
-    String fun = null;
+    String  fun  = null;
     if (request != null) {
         fun = request.getParameter (Cnst.CB_KEY);
-        if (fun == null || fun.isEmpty())
+        if (fun == null) {
             fun  = request.getParameter (
                 CoreConfig.getInstance( )
                           .getProperty("core.callback", "callback")
             );
+        }
     }
 
-    // 默认的数据输出为格式为 JSON 和 JSONP
+    // 默认的数据输出为格式为 JSON
     // 有指定回调函数名则使用 JSONP
-    // 当函数名以 top,parent,opener 开头表示以 frame,iframe 等方式提交
-    // 此情况下需将回调包裹上 HTML.
+    // 特殊前缀则返回嵌 JS 的 XHTML
     try {
-        if ( fun != null && fun.length() != 0 ) {
+        if (fun != null && fun.length() > 0) {
             if (fun.startsWith(   "top.")
             ||  fun.startsWith("parent.")
             ||  fun.startsWith("opener.")
-            ||  fun.startsWith("frames.") ) {
+            ||  fun.startsWith("frames.")  ) {
                 if ( ! this.response.isCommitted()) {
                     this.response.setCharacterEncoding("UTF-8");
                     this.response.setContentType( "text/html" );

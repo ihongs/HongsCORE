@@ -1,6 +1,5 @@
 package io.github.ihongs.util;
 
-import io.github.ihongs.util.Data;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import java.io.File;
@@ -210,6 +209,20 @@ public final class Remote {
      * @throws HongsException
      */
     public static void download(String url, File file) throws HongsException {
+        download(url, null, null, file);
+    }
+
+    /**
+     * 简单下载文件
+     *
+     * @param url
+     * @param data
+     * @param head
+     * @param file
+     * @throws HongsException
+     */
+    public static void download(String url, Map<String, Object> data, Map<String, String> head, File file)
+            throws HongsException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
         }
@@ -217,7 +230,20 @@ public final class Remote {
         HttpRequestBase http = null;
         try {
             // 构建 HTTP 请求对象
-            http = new HttpGet();
+            if (data == null) {
+                http = new HttpGet( );
+            } else {
+                http = new HttpPost();
+                HttpEntityEnclosingRequest htte = (HttpEntityEnclosingRequest) http;
+                htte.setEntity( buildPost( data ) );
+            }
+
+            // 设置报头
+            if (head != null) {
+                for(Map.Entry<String, String> et : head.entrySet()) {
+                    http.setHeader( et.getKey( ) , et.getValue( ) );
+                }
+            }
 
             // 执行请求
             http.setURI(new URI(url));
@@ -235,6 +261,11 @@ public final class Remote {
             if (sta <= 199 || sta >= 400) {
                 String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
                 throw  new StatusException(sta, url, txt);
+            }
+
+            File dir = file.getParentFile ();
+            if (!dir.exists()) {
+                 dir.mkdirs();
             }
 
             // 保存文件

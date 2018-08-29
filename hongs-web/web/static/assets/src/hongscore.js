@@ -925,21 +925,6 @@ function hsForEach(data, func) {
 }
 
 /**
- * 获取配置
- * @param {String} key
- * @param {String} def 默认值
- * @return {String} 获取到的配置, 如果没有则取默认值
- */
-function hsGetConf(key, def) {
-    if (typeof(HsCONF[key]) !== "undefined") {
-        return HsCONF[key];
-    }
-    else {
-        return def;
-    }
-}
-
-/**
  * 获取语言
  * @param {String} key
  * @param {Object|Array} rep 替换参数, {a:1,b:2} 或 [1,2]
@@ -979,17 +964,42 @@ function hsGetLang(key, rep) {
 }
 
 /**
- * 检查URI是否有权访问
- * @param {String} uri
- * @return {Boolean} 是(true)否(false)有权访问
+ * 获取配置
+ * @param {String} key
+ * @param {String} def 默认值
+ * @return {String} 获取到的配置, 如果没有则取默认值
  */
-function hsChkUri(uri) {
-    if (typeof(HsAUTH[uri]) !== "undefined") {
-        return HsAUTH[uri];
+function hsGetConf(key, def) {
+    if (typeof(HsCONF[key]) !== "undefined") {
+        return HsCONF[key];
+    }
+    else {
+        return def;
+    }
+}
+
+/**
+ * 检查权限
+ * @param {String} act
+ * @return {Boolean} 是(true)否(false)有权访问某动作
+ */
+function hsGetAuth(act) {
+    if (typeof(HsAUTH[act]) !== "undefined") {
+        return HsAUTH[act];
     }
     else {
         return true;
     }
+}
+
+/**
+ * 检查URI是否有权访问
+ * @param {String} uri
+ * @return {Boolean} 是否有权
+ */
+function hsChkUri(uri) {
+    uri  = uri.replace(/[?#].*/, '');
+    return hsGetAuth(uri) !== false ;
 }
 
 /**

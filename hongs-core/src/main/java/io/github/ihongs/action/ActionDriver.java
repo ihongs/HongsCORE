@@ -579,6 +579,21 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     }
 
     /**
+     * 获取当前的服务网址
+     * @param req
+     * @return
+     */
+    public static final String getSchemeHost(HttpServletRequest req) {
+        String link  = req.getScheme() + "://"
+                     + req.getServerName();
+        int    port  = req.getServerPort();
+        if  (  port != 80 && port != 443 ) {
+               link += ":" + port ;
+        }
+        return link ;
+    }
+
+    /**
      * 获得当前的ServletPath
      * @param req
      * @return

@@ -186,10 +186,12 @@ public class UploadHelper {
             help  = /**/  Core  .getInstance  (ActionHelper.class);
             host  = ActionDriver.getSchemeHost(help.getRequest( ));
         }
+        String hrel = host+Core.BASE_HREF ;
 
         Map m = new HashMap();
-        m.put("BASE_HREF", /**/ Core.BASE_HREF);
-        m.put("FULL_HREF", host+Core.BASE_HREF);
+        m.put("BASE_HREF", Core.BASE_HREF);
+        m.put("SERV_HREF", hrel);
+        m.put("SERV_HREF", host);
         href = Tool.inject(href, m );
         return href;
     }

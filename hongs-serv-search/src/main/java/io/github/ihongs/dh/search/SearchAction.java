@@ -137,7 +137,7 @@ public class SearchAction extends LuceneAction {
         }
 
         byte md = 0;
-        if (ab.contains("_enum")) {
+        if (ab.contains("_text")) {
             md += 1;
         }
         if (ab.contains("_fork")) {

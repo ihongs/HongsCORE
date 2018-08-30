@@ -117,7 +117,7 @@ public class DataAction extends SearchAction {
             Set ab = Synt.toTerms(rd.get( Cnst.AB_KEY ));
             if (ab != null) {
                 byte md = 0;
-                if (ab.contains("_enum")) md += SelectHelper.TEXT;
+                if (ab.contains("_text")) md += SelectHelper.TEXT;
                 if (ab.contains("_time")) md += SelectHelper.TIME;
                 if (ab.contains("_link")) md += SelectHelper.LINK;
                 if (ab.contains("_fork")) md += SelectHelper.FORK;

@@ -38,7 +38,7 @@ public class SelectHelper {
     public  final static  byte DEFS = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
-    private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?SER");
+    private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");
 
     private final Map<String, Object> defts;
     private final Map<String, Map> enums;
@@ -206,7 +206,7 @@ public class SelectHelper {
                 String href = (String) mt.get("href");
                 if (href != null
                 && !HOSTP.matcher(href).find( )
-                && !FULLP.matcher(href).find()) {
+                && !SERVP.matcher(href).find()) {
                     files.add(name);
                 }
             } else

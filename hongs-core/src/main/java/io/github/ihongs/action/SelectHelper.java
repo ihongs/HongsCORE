@@ -38,7 +38,7 @@ public class SelectHelper {
     public  final static  byte DEFS = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
-    private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?FUL");
+    private final static  Pattern  FULLP = Pattern.compile("^\\$\\{?SER");
 
     private final Map<String, Object> defts;
     private final Map<String, Map> enums;

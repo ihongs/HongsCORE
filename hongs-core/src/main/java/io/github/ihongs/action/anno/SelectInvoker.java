@@ -44,7 +44,8 @@ public class SelectInvoker implements FilterInvoker {
                 if (ab.contains(".enum")) {
                     mode += SelectHelper.ENUM;
                 }
-                if (ab.contains("_enum")) {
+                if (ab.contains("_enum" ) // 兼容旧名称
+                ||  ab.contains("_text")) {
                     mode += SelectHelper.TEXT;
                 }
                 if (ab.contains("_time")) {

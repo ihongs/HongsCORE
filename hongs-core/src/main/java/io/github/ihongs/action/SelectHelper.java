@@ -3,7 +3,6 @@ package io.github.ihongs.action;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Dict;
@@ -22,7 +21,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Date;
 import java.util.regex.Pattern;
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * 选项补充助手
@@ -566,8 +564,17 @@ public class SelectHelper {
 
     private void injectLink(Map info, Set keys) {
         // 默认从当前请求中提取主机和路径前缀
-        if (_host == null) _host = getHost();
-        if (_path == null) _path = getPath();
+        if (_path == null) {
+            _path  = Core.BASE_HREF + "/";
+        }
+        if (_host == null) {
+            _host  = System.getProperty("server.host");
+            if (_host == null || _host.length() == 0 ) {
+                ActionHelper  _help  ;
+                _help  = /**/  Core  .getInstance  (ActionHelper.class);
+                _host  = ActionDriver.getSchemeHost(_help.getRequest());
+            }
+        }
 
         Iterator it = keys.iterator();
         while (it.hasNext()) {
@@ -669,32 +676,6 @@ public class SelectHelper {
         {
             return _host +_path + url;
         }
-    }
-
-    private static String getHost() {
-        HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
-        if ( r == null ) {
-            throw new HongsExemption.Common("Can not find http servlet request");
-        }
-
-        int    port;
-        String host;
-        port = r.getServerPort();
-        host = r.getServerName();
-        if (port == 80 && port == 443) {
-            return r.getScheme() +"://"+ host ;
-        } else {
-            return r.getScheme() +"://"+ host +":"+ port ;
-        }
-    }
-
-    private static String getPath() {
-        HttpServletRequest r = Core.getInstance(ActionHelper.class).getRequest();
-        if ( r == null ) {
-            throw new HongsExemption.Common("Can not find http servlet request");
-        }
-
-        return r.getContextPath() + "/";
     }
 
 }

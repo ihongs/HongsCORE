@@ -30,7 +30,7 @@ import javax.servlet.http.Part;
  *  keep-naming yes|no 保持原文件名, 为规避非法文件名会对其做 UrlEncode
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
- *  href 上传文件链接, 可用变量 $BASE_HREF, $FULL_HREF 等, 后者包含域名
+ *  href 上传文件链接, 可用变量 $BASE_HREF, $SERV_HREF 等, 后者包含域名
  *  type 文件类型限制, 逗号分隔 (Mime-Type)
  *  extn 扩展名称限制, 逗号分隔
  * </pre>

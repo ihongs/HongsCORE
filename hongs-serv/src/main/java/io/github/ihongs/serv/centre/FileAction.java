@@ -3,10 +3,13 @@ package io.github.ihongs.serv.centre;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Synt;
+import java.util.LinkedList;
+import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
@@ -19,44 +22,48 @@ public class FileAction {
 
     @Action("create")
     public void create(ActionHelper helper) throws HongsException {
-        Part   prt = (Part  ) helper.getRequestData().get("file");
-        String uid = (String) helper.getSessibute( Cnst.UID_SES );
-        String ext =  prt .getSubmittedFileName();
-        String fid =  Core.newIdentity();
+        String uid = ( String )  helper.getSessibute  ( Cnst.UID_SES );
+        List  fils = Synt.asList(helper.getRequestData( ).get("file"));
+        List  list = new LinkedList();
 
-        // 取文件扩展名
-        int pos = ext.lastIndexOf( '.' );
-        if (pos > -1 ) {
-            ext = ext.substring  ( pos );
-        } else {
-            ext = "" ;
-        }
+        for(Object  item  : fils) {
+        if (item instanceof Part) {
+            Part  part = (Part) item ;
+            String ext =  part.getSubmittedFileName();
+            String nid =  Core.newIdentity();
 
-        // 传到临时目录
-        UploadHelper  uh = new UploadHelper( );
-        uh.setUploadPath("static/upload/temp");
-        uh.setUploadHref("static/upload/temp");
-        String href = uh.getResultHref();
-        String name = (uid + "-" + fid );
-        uh.upload(prt, name);
-
-        // 组织绝对路径
-        String link = System.getProperty("server.host");
-        if (link == null || link.length () == 0 ) {
-            HttpServletRequest sr = helper.getRequest();
-            link = sr.getScheme()+"://"+sr.getServerName();
-            int port  = sr.getServerPort();
-            if (port != 80 && port != 443) {
-                link += ":" + port;
+            // 取文件扩展名
+            int pos = ext.lastIndexOf( '.' );
+            if (pos > -1 ) {
+                ext = ext.substring  ( pos );
+            } else {
+                ext = "" ;
             }
-        }
-        link += Core.BASE_HREF +"/"+ href ;
 
-        helper.reply("" , Synt.mapOf(
-            "name", name + ext,
-            "href", href,
-            "link", link
-        ));
+            // 传到临时目录
+            UploadHelper  uh = new UploadHelper();
+            uh.setUploadPath("static/upload/tmp");
+            uh.setUploadHref("static/upload/tmp");
+            String href = uh.getResultHref();
+            String name = uid +"-"+ nid +".";
+            uh.upload(part, name);
+
+            // 组织绝对路径
+            String link = System.getProperty("server.host");
+            if (link == null || link.length () == 0 ) {
+                HttpServletRequest sr = helper.getRequest();
+                link = ActionDriver.getSchemeHost(sr);
+            }
+            link = link + Core.BASE_HREF + "/" + href;
+
+            list.add(Synt.mapOf(
+                "name", name + ext,
+                "href", href,
+                "link", link
+            ));
+        }}
+
+        helper.reply(Synt.mapOf("list", list));
     }
 
 }

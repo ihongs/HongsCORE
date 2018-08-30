@@ -187,7 +187,7 @@
         <div class="form-group clearfix"></div>
     </form>
     <!-- 列表 -->
-    <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px 15.0px 7.5px;" >
+    <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px 15px 7.5px;">
         <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v)&&null"/>
         <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
@@ -232,7 +232,7 @@
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
         sendUrls: [
             [ '<%=_module%>/<%=_entity%>/delete.act',
               '.delete',
@@ -259,8 +259,8 @@
     });
 
     var statobj = context.hsCate({
-        surl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.AB_KEY%>=_enum",
-        curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_enum,_fork"
+        surl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     fitrbox.on("opened", function() {

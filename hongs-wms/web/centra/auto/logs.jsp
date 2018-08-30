@@ -56,7 +56,7 @@
         var context = $('#<%=_pageId%>').removeAttr("id");
         var sendbox = context.find(".sendbox");
         var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.AB_KEY%>=_enum,_fork&<%=Cnst.RB_KEY%>=-data,user.*&<%=Cnst.OB_KEY%>=-ctime",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.AB_KEY%>=_text,_fork&<%=Cnst.RB_KEY%>=-data,user.*&<%=Cnst.OB_KEY%>=-ctime",
             _fill_stat: function( td , stat) {
                 td.parent().data(this._info);
                 return ! stat || stat == '0' ? "删除" : "正常";
@@ -79,7 +79,7 @@
             var tr = $(this).closest("tr");
             var id =      tr.data(   "id");
             var ct =      tr.data("ctime");
-            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_logs.html?<%=Cnst.AB_KEY%>=_enum,_fork", {id: id, ctime: ct});
+            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_logs.html?<%=Cnst.AB_KEY%>=_text,_fork", {id: id, ctime: ct});
         });
 
         sendbox.on("click", ".ensure", function() {

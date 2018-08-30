@@ -30,7 +30,7 @@ import javax.servlet.http.Part;
  * @author Hongs
  */
 public class UploadHelper {
-    private String uploadTemp = "${DATA_PATH}/tmp";
+    private String uploadTemp = "${BASE_PATH}/static/upload/tmp";
     private String uploadPath = "static/upload";
     private String uploadHref = "static/upload";
     private String resultName = null;
@@ -180,23 +180,16 @@ public class UploadHelper {
     }
 
     private String getResultHref(String href) {
-        // 如果环境中没给则尝试从请求中提取
-        String CURR_FULL_HREF = System.getProperty( "full.url" );
-        if ( ( CURR_FULL_HREF == null || CURR_FULL_HREF.length() == 0)) {
-            ActionHelper helper = Core.getInstance(ActionHelper.class);
-            String hp = helper.getRequest().getScheme(    );
-            String hn = helper.getRequest().getServerName();
-            int    pt = helper.getRequest().getServerPort();
-            CURR_FULL_HREF  = hp + "://"+ hn;
-            if (pt != 80 && pt != 443) {
-            CURR_FULL_HREF += /**/ ":"  + pt;
-            }
-            CURR_FULL_HREF += Core.BASE_HREF;
+        String host = System.getProperty("server.host");
+        if (host == null || host.length()!=0) {
+            ActionHelper  help  ;
+            help  = /**/  Core  .getInstance  (ActionHelper.class);
+            host  = ActionDriver.getSchemeHost(help.getRequest( ));
         }
 
         Map m = new HashMap();
-        m.put("BASE_HREF", Core.BASE_HREF);
-        m.put("FULL_HREF", CURR_FULL_HREF);
+        m.put("BASE_HREF", /**/ Core.BASE_HREF);
+        m.put("FULL_HREF", host+Core.BASE_HREF);
         href = Tool.inject(href, m );
         return href;
     }

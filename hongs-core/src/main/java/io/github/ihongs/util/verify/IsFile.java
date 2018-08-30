@@ -68,6 +68,13 @@ public class IsFile extends Rule {
             do {
                 String x;
                 // 如果是本地路径则不再下载
+                x = System.getProperty("server.host");
+                if (x != null && !"".equals(x)) {
+                    if (u.startsWith(x)) {
+                        value = u;
+                        break ;
+                    }
+                }
                 x = (String) params.get("href");
                 if (x != null && !"".equals(x)) {
                     if (u.startsWith(x)) {
@@ -78,7 +85,7 @@ public class IsFile extends Rule {
                 // 如果有临时目录则下载到这
                 x = (String) params.get("temp");
                 if (x == null ||  "".equals(x)) {
-                    x = Core.DATA_PATH + File.separator + "tmp";
+                    x = Core.BASE_PATH + "/static/upload/tmp";
                 }
                 value = stores(value.toString(), x);
             } while(false);
@@ -89,8 +96,8 @@ public class IsFile extends Rule {
 
         UploadHelper hlpr = new UploadHelper();
         String href, path;
-        String   x;
-        String[] y;
+        String   x ;
+        String[] y ;
 
         x = (String) params.get("temp");
         if (x != null) hlpr.setUploadTemp(x);

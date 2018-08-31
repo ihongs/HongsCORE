@@ -35,7 +35,7 @@ public class WBAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "wb", appId, opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }
@@ -57,7 +57,7 @@ public class WBAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "wb", appId, opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }

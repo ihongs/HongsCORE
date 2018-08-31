@@ -40,7 +40,7 @@ public class QQAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "wx", appId, opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "qq", opnId, name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }
@@ -67,7 +67,7 @@ public class QQAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "wx", appId, opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "qq", opnId, name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }

@@ -22,31 +22,25 @@ public class FileAction {
 
     @Action("create")
     public void create(ActionHelper helper) throws HongsException {
-        String uid = ( String )  helper.getSessibute  ( Cnst.UID_SES );
-        List  fils = Synt.asList(helper.getRequestData( ).get("file"));
-        List  list = new LinkedList();
+        List  list = new  LinkedList ();
+        List  fils = Synt.asList (helper.getRequestData( ).get("file") );
+        String uid = Synt.declare(helper.getSessibute(Cnst.UID_SES),"0");
+        String nid = Core.newIdentity();
+        String fmt = "%0"+ String.valueOf ( fils.size( ) ).length()+"d" ;
+        int    idx = 0;
 
-        for(Object  item  : fils) {
+        for(Object item  :  fils) {
         if (item instanceof Part) {
-            Part  part = (Part) item ;
-            String ext =  part.getSubmittedFileName();
-            String nid =  Core.newIdentity();
-
-            // 取文件扩展名
-            int pos = ext.lastIndexOf( '.' );
-            if (pos > -1 ) {
-                ext = ext.substring  ( pos );
-            } else {
-                ext = "" ;
-            }
+            Part   part  = (Part) item;
+            String name  = ( uid +"-"+ nid ) +"-"+
+            String.format  ( fmt , + + idx ) +".";
 
             // 传到临时目录
             UploadHelper  uh = new UploadHelper();
             uh.setUploadPath("static/upload/tmp");
             uh.setUploadHref("static/upload/tmp");
-            String href = uh.getResultHref();
-            String name = uid +"-"+ nid +".";
-            uh.upload(part, name);
+            name = uh.upload(part,name).getName();
+            String href = uh . getResultHref(   );
 
             // 组织绝对路径
             String link = System.getProperty("server.host");
@@ -57,7 +51,7 @@ public class FileAction {
             link = link + Core.BASE_HREF + "/" + href;
 
             list.add(Synt.mapOf(
-                "name", name + ext,
+                "name", name,
                 "href", href,
                 "link", link
             ));

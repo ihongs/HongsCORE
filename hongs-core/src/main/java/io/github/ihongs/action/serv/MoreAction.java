@@ -58,6 +58,22 @@ public class MoreAction {
             re1.putAll(data(res.get(key)));
             helper.setRequestData(  re1  );
             rs1 = call(helper,uri,req,rsp);
+
+            // 首个错误作为全局错误
+            if (!Synt.declare(rs1.get("ok"), true)
+                && !rs0.containsKey("ok" )) {
+                rs0.put("ok", false);
+                if (rs1.containsKey("ern")) {
+                    rs0.put("ern", rs1.get("ern"));
+                }
+                if (rs1.containsKey("err")) {
+                    rs0.put("err", rs1.get("err"));
+                }
+                if (rs1.containsKey("msg")) {
+                    rs0.put("msg", rs1.get("msg"));
+                }
+            }
+
             rs0.put (key, rs1 );
         }
 

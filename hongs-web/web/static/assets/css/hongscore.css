@@ -77,9 +77,10 @@ textarea {
 select.form-control {
     height: 2.76923077em;
 }
+textview.form-control ,
 textarea.form-control ,
-.form-control[multiple] {
-    min-height: 8.4615em;
+select.form-control[multiple] {
+    height: 8.30769231em;
 }
 .form-control[disabled] {
     background: #ddd;

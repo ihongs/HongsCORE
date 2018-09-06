@@ -180,7 +180,7 @@ public class UploadHelper {
     }
 
     private String getResultHref(String href) {
-        String host = System.getProperty("server.host");
+        String host = System.getProperty("host.url");
         if (host == null || host.length()!=0) {
             ActionHelper  help  ;
             help  = /**/  Core  .getInstance  (ActionHelper.class);

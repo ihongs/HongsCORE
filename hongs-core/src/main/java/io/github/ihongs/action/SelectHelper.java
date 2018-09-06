@@ -568,8 +568,8 @@ public class SelectHelper {
             _path  = Core.BASE_HREF + "/";
         }
         if (_host == null) {
-            _host  = System.getProperty("server.host");
-            if (_host == null || _host.length() == 0 ) {
+            _host  = System.getProperty( "host.url" );
+            if (_host == null || _host.length() == 0) {
                 ActionHelper  _help  ;
                 _help  = /**/  Core  .getInstance  (ActionHelper.class);
                 _host  = ActionDriver.getSchemeHost(_help.getRequest());

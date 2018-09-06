@@ -313,9 +313,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
 
     private void doLaunch(Core core, ActionHelper hlpr, HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException {
-        Core.ACTION_TIME.set(System.currentTimeMillis/**/( ));
-        Core.CLIENT_ADDR.set(getClientAddr(req)/*Remote IP*/);
+        Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
+        Core.CLIENT_ADDR.set(getClientAddr(req));
 
         CoreConfig conf = core.get(CoreConfig.class);
 

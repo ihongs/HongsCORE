@@ -191,7 +191,7 @@ public class UploadHelper {
         Map m = new HashMap();
         m.put("BASE_HREF", Core.BASE_HREF);
         m.put("SERV_HREF", hrel);
-        m.put("SERV_HREF", host);
+        m.put("SERV_HOST", host);
         href = Tool.inject(href, m );
         return href;
     }

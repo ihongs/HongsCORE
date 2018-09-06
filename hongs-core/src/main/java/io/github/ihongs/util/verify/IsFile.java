@@ -68,7 +68,7 @@ public class IsFile extends Rule {
             do {
                 String x;
                 // 如果是本地路径则不再下载
-                x = System.getProperty("server.host");
+                x = System.getProperty("host.url");
                 if (x != null && !"".equals(x)) {
                     if (u.startsWith(x)) {
                         value = u;

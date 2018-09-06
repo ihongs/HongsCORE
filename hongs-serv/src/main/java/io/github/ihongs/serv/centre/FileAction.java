@@ -10,7 +10,6 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Synt;
 import java.util.LinkedList;
 import java.util.List;
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.Part;
 
 /**
@@ -49,12 +48,11 @@ public class FileAction {
             uh.upload(part, name);
 
             // 组织绝对路径
-            String link = System.getProperty("server.host");
-            if (link == null || link.length () == 0 ) {
-                HttpServletRequest sr = helper.getRequest();
-                link = ActionDriver.getSchemeHost(sr);
+            String link = System.getProperty("host.url");
+            if (link == null || link.length ( )  ==  0 ) {
+                link  = ActionDriver.getSchemeHost(helper.getRequest());
             }
-            link = link + Core.BASE_HREF + "/" + href;
+            link = link + Core.BASE_HREF +  "/"  + href ;
 
             list.add(Synt.mapOf(
                 "name", name + ext,

@@ -75,7 +75,7 @@ abstract public class Core
   public static String SERVER_ID = "0" ;
 
   /**
-   * WEB基础链接, 注意: 不以斜杠开头, 不以斜杠结尾
+   * WEB基础链接, 注意: 不以斜杠结尾, 默认为空字串
    */
   public static String BASE_HREF = null;
 

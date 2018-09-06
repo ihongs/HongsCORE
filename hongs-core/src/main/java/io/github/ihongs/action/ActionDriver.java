@@ -620,6 +620,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @return
      */
     public static final String getSchemeHost(HttpServletRequest req) {
+        String item = (String) req.getAttribute(Cnst.SCHEME_ATTR);
+        if (null != item) {
+            return  item;
+        }
+
         String prot;
         String host;
         int    port;
@@ -629,7 +634,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         port = req.getServerPort();
 
         // RFC 7239, 标准代理格式
-        String item = req.getHeader("Forwarded");
+        item = req.getHeader("Forwarded");
         if (null != item) {
             String  line;
             int beg = 0 , end, sep;
@@ -688,9 +693,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      * @return
      */
     public static final String getClientAddr(HttpServletRequest req) {
-        String ip = (String)req.getAttribute(Cnst.CLIENT_ATTR);
-        if (null != ip) {
-            return  ip;
+        String addr = (String) req.getAttribute(Cnst.CLIENT_ATTR);
+        if (null != addr) {
+            return  addr;
         }
 
         // RFC 7239, 标准代理格式
@@ -798,7 +803,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     /**
      * 执行动作代理
      */
-    public static  interface  DriverProxy {
+    public static interface DriverProxy {
 
         public void doDriver(Core core, ActionHelper hlpr) throws ServletException, IOException;
 

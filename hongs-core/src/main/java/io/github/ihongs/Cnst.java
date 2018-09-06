@@ -121,6 +121,8 @@ public final class Cnst {
 
     public static final String ORIGIN_ATTR = "__ORIGIN_NAME__"; // 起源动作
 
+    public static final String SCHEME_ATTR = "__SCHEME_HOST__"; // 服务前缀
+
     public static final String CLIENT_ATTR = "__CLIENT_ADDR__"; // 客户地址
 
     public static final String UPDATE_ATTR = "__UPDATE_TIME__"; // 更新时间(当会话或属性改变时将被设置)

@@ -160,7 +160,7 @@ abstract public class Core
                 = new InheritableThreadLocal();
 
   /**
-   * 客户地址标识
+   * 服务网址前缀
    */
   public static final InheritableThreadLocal<String> SCHEME_HOST
                 = new InheritableThreadLocal();

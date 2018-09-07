@@ -546,12 +546,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         int  pc   = ( int ) Math.ceil((double) rc / rn);
 
         // 提取分页片段
-        List list = new LinkedList( );
-        while  (  roll.hasNext()) {
-            list.add(roll.next());
-            if (maxRn < minRn ++) {
-                break ;
-            }
+        List list = new LinkedList();
+        while ( maxRn > minRn ++
+          && roll . hasNext (/**/) ) {
+             list . add(roll.next());
         }
 
         Map  resp = new HashMap();

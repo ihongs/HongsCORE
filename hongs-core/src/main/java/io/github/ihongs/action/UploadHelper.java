@@ -180,12 +180,7 @@ public class UploadHelper {
     }
 
     private String getResultHref(String href) {
-        String host = System.getProperty("host.url");
-        if (host == null || host.length()!=0) {
-            ActionHelper  help  ;
-            help  = /**/  Core  .getInstance  (ActionHelper.class);
-            host  = ActionDriver.getSchemeHost(help.getRequest( ));
-        }
+        String host = Core.SCHEME_HOST.get( );
         String hrel = host+Core.BASE_HREF ;
 
         Map m = new HashMap();

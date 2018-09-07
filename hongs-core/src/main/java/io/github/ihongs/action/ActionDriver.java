@@ -165,6 +165,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             cnf = CoreConfig.getInstance("default");
             Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
+
+            // 默认服务前缀
+            Core.SCHEME_HOST.set(System.getProperty("host.url", "http://localhost:8080"));
         }
 
         // 调用一下可预加载动作类
@@ -315,6 +318,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
+
+        if (null==System.getProperty("host.url"))
+        Core.SCHEME_HOST.set(getSchemeHost(req));
         Core.CLIENT_ADDR.set(getClientAddr(req));
 
         CoreConfig conf = core.get(CoreConfig.class);

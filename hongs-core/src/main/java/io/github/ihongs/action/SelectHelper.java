@@ -563,17 +563,11 @@ public class SelectHelper {
     }
 
     private void injectLink(Map info, Set keys) {
-        // 默认从当前请求中提取主机和路径前缀
         if (_path == null) {
-            _path  = Core.BASE_HREF + "/";
+            _path  = Core.BASE_HREF + ("/");
         }
         if (_host == null) {
-            _host  = System.getProperty( "host.url" );
-            if (_host == null || _host.length() == 0) {
-                ActionHelper  _help  ;
-                _help  = /**/  Core  .getInstance  (ActionHelper.class);
-                _host  = ActionDriver.getSchemeHost(_help.getRequest());
-            }
+            _host  = Core.SCHEME_HOST.get();
         }
 
         Iterator it = keys.iterator();

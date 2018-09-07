@@ -48,11 +48,7 @@ public class FileAction {
             uh.upload(part, name);
 
             // 组织绝对路径
-            String link = System.getProperty("host.url");
-            if (link == null || link.length ( )  ==  0 ) {
-                link  = ActionDriver.getSchemeHost(helper.getRequest());
-            }
-            link = link + Core.BASE_HREF +  "/"  + href ;
+            String link = Core.SCHEME_HOST.get() + Core.BASE_HREF + "/" + href;
 
             list.add(Synt.mapOf(
                 "name", name + ext,

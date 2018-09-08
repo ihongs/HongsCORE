@@ -206,11 +206,13 @@ public class CmdletRunner
 
     // 也可以在系统属性中设置基础路径, 2018/04/14
     if (!opts.containsKey("basehref")) {
-        String u = System.getProperty("base.url");
-    if (u != null && u.length( ) != 0) {
-        Core.BASE_HREF = u;
-    }
-    }
+        String  u  = System.getProperty("base.uri");
+    if (null != u && u.length() != 0 ) {
+        Core.BASE_HREF = u ;
+    }}
+
+    // 预设服务前缀后动作中无需再获取, 2018/09/07
+    Core.SCHEME_HOST.set(System.getProperty("host.url", "http://localhost:8080"));
 
     /** 实例属性配置 **/
 

@@ -207,14 +207,18 @@ public class Common {
     public static void callAction(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts(args ,
-            "request:s", "cookies:s"
+            "request:s", "cookies:s", "port:i"
         );
         args = (String[ ]) opts.get( "" );
 
+        if (args.length == 0) {
+            System.err.println("Action name required!\r\nUsage: ACTION_NAME --request QUERY_STRING --cookies QUERY_STRING --port PORT");
+            return;
+        }
+
         String req = text((String) opts.get("request"));
         String cok = cook((String) opts.get("cookies"));
-        String url = System.getProperty("native.host", "http://localhost:8080")
-                   + Core.BASE_HREF + "/" + args[ 0 ] + Cnst.ACT_EXT ;
+        String url = Core.SCHEME_HOST.get()+ Core.BASE_HREF+ "/"+args[0]+ Cnst.ACT_EXT;
 
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();

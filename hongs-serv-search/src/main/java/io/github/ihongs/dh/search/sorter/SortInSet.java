@@ -49,6 +49,7 @@ public class SortInSet extends FieldComparatorSource {
                 BytesRef br = originalValues.get(d);
                 String   fv = br.utf8ToString( );
                 Long     bs = map.get ( fv );
+
                 if (null != bs) {
                     return  bs;
                 } else {

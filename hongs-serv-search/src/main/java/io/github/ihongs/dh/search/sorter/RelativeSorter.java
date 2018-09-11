@@ -38,16 +38,18 @@ public class RelativeSorter extends FieldComparatorSource {
 
         @Override
         protected long worth(int d) {
-            BytesRef br = originalValues.get(d);
-            String   fv = br.utf8ToString( );
-            if (0 == fv.length()) {
-                return Long.MAX_VALUE;
+            try {
+                BytesRef br = originalValues.get(d);
+                String   fv = br.utf8ToString( );
+                long     fx = Long.parseLong(fv);
+                if (dist <  fx) {
+                    return  fx - dist;
+                } else {
+                    return  dist - fx;
+                }
             }
-            long     fx = Long.parseLong(fv);
-            if (fx > dist) {
-                return fx - dist;
-            } else {
-                return dist - fx;
+            catch (NullPointerException | NumberFormatException ex) {
+                return Long.MAX_VALUE;
             }
         }
     }

@@ -1,6 +1,5 @@
 package io.github.ihongs.dh.search.sorter;
 
-import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -46,16 +45,18 @@ public class SortInSet extends FieldComparatorSource {
 
         @Override
         protected long worth(int d) {
-            BytesRef br = originalValues.get(d);
-            String   fv = br.utf8ToString( );
-            if (0 == fv.length()) {
-                return 0L;
+            try {
+                BytesRef br = originalValues.get(d);
+                String   fv = br.utf8ToString( );
+                Long     bs = map.get ( fv );
+                if (null != bs) {
+                    return  bs;
+                } else {
+                    return  0L;
+                }
             }
-            Long     bs = map.get ( fv );
-            if (null== bs) {
+            catch (NullPointerException ex ) {
                 return 0L;
-            } else {
-                return bs;
             }
         }
 

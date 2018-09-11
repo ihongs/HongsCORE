@@ -1,7 +1,7 @@
 package io.github.ihongs.dh.search.sorter;
 
 import java.io.IOException;
-import org.apache.lucene.index.BinaryDocValues;
+import org.apache.lucene.index.LeafReader;
 import org.apache.lucene.index.LeafReaderContext;
 import org.apache.lucene.search.SimpleFieldComparator;
 
@@ -11,56 +11,49 @@ import org.apache.lucene.search.SimpleFieldComparator;
  */
 public abstract class BaseComparator extends SimpleFieldComparator<Long> {
 
-    protected final String    name;
-    protected       long      top ;
-    protected       long      bot ;
-    protected final long [  ] comparedValues;
-    protected BinaryDocValues originalValues;
+    protected final String name;
+    protected final long[] vals;
+    protected       long   top ;
+    protected       long   bot ;
 
     public BaseComparator(String name, int hits) {
-        this.name = name;
-        comparedValues = new long[hits];
+        this.name = name ;
+        this.vals = new long[hits] ;
     }
 
     @Override
-    protected void doSetNextReader(LeafReaderContext lrc) throws IOException {
-        originalValues = lrc.reader().getSortedDocValues(name);
+    protected void doSetNextReader ( LeafReaderContext c) throws IOException {
+        doSetNextReader(c.reader());
     }
 
-    @Override
-    public void setTopValue(Long t) {
-        top  = t;
-    }
+    protected abstract void doSetNextReader(LeafReader r) throws IOException;
 
-    @Override
-    public void setBottom(int i) {
-        bot  = comparedValues[i];
-    }
+    protected abstract long toGetCurrDvalue(    int    d) throws IOException;
 
     @Override
     public Long value (int i ) {
-        return comparedValues[i];
+        return vals[i];
     }
 
     @Override
-    public void copy  (int i , int d ) {
-        comparedValues[i] = worth( d );
+    public void copy  (int i , int d ) throws IOException {
+        vals[i] = toGetCurrDvalue( d );
     }
 
     @Override
     public int compare(int i0, int i1) {
-        if (comparedValues[i0] < comparedValues[i1]) {
+        if (vals[i0] < vals[i1]) {
             return -1;
         }
-        if (comparedValues[i0] > comparedValues[i1]) {
+        if (vals[i0] > vals[i1]) {
             return  1;
         }
         return 0;
     }
 
     @Override
-    public int compareTop   (int d) {
-        long dist = worth(d);
+    public int compareTop   (int d) throws IOException {
+        long dist = toGetCurrDvalue(d);
         if (top < dist) {
             return -1;
         }
@@ -71,8 +64,8 @@ public abstract class BaseComparator extends SimpleFieldComparator<Long> {
     }
 
     @Override
-    public int compareBottom(int d) {
-        long dist = worth(d);
+    public int compareBottom(int d) throws IOException {
+        long dist = toGetCurrDvalue(d);
         if (bot < dist) {
             return -1;
         }
@@ -82,12 +75,14 @@ public abstract class BaseComparator extends SimpleFieldComparator<Long> {
         return 0;
     }
 
-    /**
-     * 取得并转化数据
-     * @param d 文档索引
-     * @return
-     * @throws IOException
-     */
-    protected abstract long worth(int d);
+    @Override
+    public void setBottom  (int  i) {
+        bot = vals[i];
+    }
+
+    @Override
+    public void setTopValue(Long t) {
+        top = /**/ t ;
+    }
 
 }

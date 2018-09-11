@@ -1,8 +1,11 @@
 package io.github.ihongs.dh.search.sorter;
 
+import java.io.IOException;
+import org.apache.lucene.index.DocValues;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.NumericDocValues;
 import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
-import org.apache.lucene.util.BytesRef;
 
 /**
  * 相对值排序器
@@ -30,27 +33,32 @@ public class RelativeSorter extends FieldComparatorSource {
     static public class Comparator extends BaseComparator {
 
         long dist;
+        NumericDocValues docs;
 
         public Comparator(String name, int hits, long dist) {
             super(name, hits);
-            this.dist = dist;
+            this.dist = dist ;
         }
 
         @Override
-        protected long worth(int d) {
-            try {
-                BytesRef br = originalValues.get(d);
-                String   fv = br.utf8ToString( );
-                long     fx = Long.parseLong(fv);
+        protected void doSetNextReader (LeafReader r)
+        throws IOException {
+            docs = DocValues.getNumeric(r, name);
+        }
 
-                if (fx > dist) {
+        @Override
+        protected long toGetCurrDvalue ( int d )
+        throws IOException {
+            try {
+                long fx = docs.get(d);
+                if ( fx > dist) {
                     return fx - dist ;
                 } else
                 {
                     return dist - fx ;
                 }
             }
-            catch (NullPointerException | NumberFormatException ex) {
+            catch (NullPointerException ex) {
                 return Long.MAX_VALUE;
             }
         }

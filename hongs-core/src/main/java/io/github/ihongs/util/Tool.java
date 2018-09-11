@@ -330,23 +330,25 @@ public final class Tool
    * @param vars
    * @return 注入后的文本
    */
-  public static String inject(String str, Map<String, String> vars) {
+  public static String inject(String str, Map vars) {
       Matcher matcher = IJ_PAT.matcher(str);
-      StringBuffer sb = new StringBuffer();
+      StringBuffer sb = new StringBuffer( );
+      Object       ob;
       String       st;
 
-      while (matcher.find()) {
-          st = matcher.group(2);
+      while  ( matcher.find() ) {
+              st  = matcher.group(2);
           if (st == null) {
-              st = matcher.group(3);
+              st  = matcher.group(3);
           }
-          if (vars.containsKey(st)) {
-              st = vars.get(st);
-              if ( st == null )
-              st = "";
+
+              ob  = vars.get(  st  );
+          if (ob != null) {
+              st  = ob.toString (  );
           } else {
-              st = "";
+              st  = "";
           }
+
           st = matcher.group(1) + st;
           st = Matcher.quoteReplacement(st);
           matcher.appendReplacement(sb, st);
@@ -362,16 +364,15 @@ public final class Tool
    * @param vars
    * @return 注入后的文本
    */
-  public static String inject(String str, List<String> vars)
+  public static String inject(String str, List vars)
   {
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
      */
-      Map<String, String> rep2 = new HashMap();
+      Map rep2 = new HashMap();
       for (int i = 0; i < vars.size(); i ++) {
-          rep2.put(String.valueOf(i), vars.get(i));
+          rep2.put(String.valueOf(i) , vars.get(i) );
       }
-
       return inject(str, rep2);
   }
 
@@ -386,11 +387,10 @@ public final class Tool
     /**
      * 将语句中替换$n或${n}为指定的文字, n从0开始
      */
-      Map<String, String> rep2 = new HashMap();
+      Map rep2 = new HashMap();
       for (int i = 0; i < vars.length; i ++) {
-          rep2.put(String.valueOf(i), vars[i]);
+          rep2.put(String.valueOf(i) , vars[i] );
       }
-
       return inject(str, rep2);
   }
 

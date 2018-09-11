@@ -48,18 +48,18 @@ public class IntervalSorter extends FieldComparatorSource {
 
                 // 区间外为正值, 仅计算绝对值
                 if (fx > dist) {
-                    return fx - dist;
+                    return fx - dist ;
                 } else
                 if (fy < dist) {
-                    return dist - fy;
+                    return dist - fy ;
                 }
 
                 // 区间内为负值, 比外面都优先
                 if (fy - dist > dist - fx) {
-                    return fx - dist;
+                    return fx - dist ;
                 } else
                 {
-                    return dist - fy;
+                    return dist - fy ;
                 }
             }
             catch (NullPointerException | NumberFormatException | IndexOutOfBoundsException ex) {

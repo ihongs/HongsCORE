@@ -55,11 +55,11 @@ public class SortInSet extends FieldComparatorSource {
         }
 
         @Override
-        protected long toGetCurrDvalue(int d) {
+        protected long toGetCurrDvalue( int d ) {
             try {
-                BytesRef br = docs.get(d);
+                BytesRef br = docs.get( d );
                 String   v  = br.utf8ToString();
-                Long     bs = dist.get(v);
+                Long     bs = dist.get( v );
                 if (null != bs) {
                     return  bs;
                 } else {

@@ -16,12 +16,12 @@ import org.apache.lucene.util.BytesRef;
  */
 public class SortByDis extends FieldComparatorSource {
 
-    long o;
-    long a;
+    float o;
+    float a;
 
     public SortByDis(float o, float a) {
-        this.o = (long) (o * 10000000);
-        this.a = (long) (a * 10000000);
+        this.o = o;
+        this.a = a;
     }
 
     @Override
@@ -36,12 +36,12 @@ public class SortByDis extends FieldComparatorSource {
 
     static public class Comparator extends BaseComparator {
 
-        long o;
-        long a;
+        float o;
+        float a;
         BinaryDocValues docs ;
 //      static double EARTH_WIDTH = 6371000 * 2; // 地球直径(米)
 
-        public Comparator(String name, int hits, long o, long a) {
+        public Comparator(String name, int hits, float o, float a) {
             super(name, hits);
             this.o = o;
             this.a = a;
@@ -60,8 +60,8 @@ public class SortByDis extends FieldComparatorSource {
                 BytesRef br = docs.get( d );
                 String   fv = br.utf8ToString();
                 String[] xy = fv.split("," , 2);
-                long     fo = Long.parseLong(xy[0]);
-                long     fa = Long.parseLong(xy[1]);
+                float    fo = Float.parseFloat(xy[0]);
+                float    fa = Float.parseFloat(xy[1]);
 
                 fo = Math.abs(fo - o);
                 fa = Math.abs(fa - a);

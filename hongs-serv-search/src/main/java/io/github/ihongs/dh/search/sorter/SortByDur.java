@@ -26,7 +26,7 @@ public class SortByDur extends FieldComparatorSource {
 
     @Override
     public String toString() {
-        return "Distance("+ x +","+ y +")";
+        return "Duration("+ x +","+ y +")";
     }
 
     @Override

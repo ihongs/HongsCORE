@@ -42,11 +42,7 @@ public class RelativeSorter extends FieldComparatorSource {
                 BytesRef br = originalValues.get(d);
                 String   fv = br.utf8ToString( );
                 long     fx = Long.parseLong(fv);
-                if (dist <  fx) {
-                    return  fx - dist;
-                } else {
-                    return  dist - fx;
-                }
+                return Math.abs(fx - dist);
             }
             catch (NullPointerException | NumberFormatException ex) {
                 return Long.MAX_VALUE;

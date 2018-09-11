@@ -4,6 +4,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Tool;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -46,8 +47,29 @@ public class Default extends Rule {
             }}
         }
 
-        value = params.get("default");
+        value = params.get( "default" ) ;
         String  def = Synt.declare(value, "").trim();
+        String  bef = 2 <= def.length() ? def.substring(0, 2) : "";
+
+        // 拼接字段
+        if (bef.equals("=~")) {
+            return Tool.inject(def.substring(2), cleans );
+        }
+
+        // 别名字段
+        if (bef.equals("=@")) {
+            return Dict.get(cleans, BLANK, Dict.splitKeys(def.substring(2)));
+        }
+
+        // 会话属性
+        if (bef.equals("=$")) {
+            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
+        }
+
+        // 应用属性
+        if (bef.equals("=#")) {
+            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
+        }
 
         // 动作选项
         if (def.equals("=%zone")) {
@@ -78,21 +100,6 @@ public class Default extends Rule {
                 }
             }
             return  now;
-        }
-
-        // 别名字段
-        if (def.startsWith("=@")) {
-            return Dict.get(cleans, BLANK, Dict.splitKeys(def.substring(2)));
-        }
-
-        // 会话属性
-        if (def.startsWith("=$")) {
-            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
-        }
-
-        // 应用属性
-        if (def.startsWith("=%")) {
-            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
         }
 
         return  value;

@@ -19,24 +19,36 @@ public class RelativeSorter extends FieldComparatorSource {
 
     @Override
     public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
-        return new Comparator(fn, rv, nh, dist);
+        return new Comparator(fn, nh, dist);
+    }
+
+    @Override
+    public String toString() {
+        return "Relative("+ dist + ")";
     }
 
     static public class Comparator extends BaseComparator {
 
         long dist;
 
-        public Comparator(String name, boolean desc, int hits, long dist) {
-            super(name, desc, hits);
+        public Comparator(String name, int hits, long dist) {
+            super(name, hits);
             this.dist = dist;
         }
 
         @Override
         protected long worth(int d) {
             BytesRef br = originalValues.get(d);
-            String   fv = br.utf8ToString(  );
-            long     fx = Long.parseLong (fv);
-            return Math.abs(fx - dist);
+            String   fv = br.utf8ToString( );
+            if (0 == fv.length()) {
+                return Long.MAX_VALUE;
+            }
+            long     fx = Long.parseLong(fv);
+            if (fx > dist) {
+                return fx - dist;
+            } else {
+                return dist - fx;
+            }
         }
     }
 

@@ -62,7 +62,7 @@ import org.apache.lucene.index.Term;
  * Lucene 记录模型
  *
  * 可选字段配置参数:
- *  lucene-type         Lucene 字段类型(string,search,stored,int,long,float,double)
+ *  lucene-type         Lucene 字段类型(string,search,stored,sorted,int,long,float,double)
  *  lucene-tokenizer    Lucene 分词器类
  *  lucene-char-filter  存储时使用的 CharFilter  类
  *  lucene-token-filter 存储时使用的 TokenFilter 类
@@ -406,7 +406,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            replies(null);
+            setReps(null);
             Map md = doc2Map(doc);
             md.putAll(rd);rd = md;
             doc =  new Document();
@@ -436,7 +436,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            replies(null);
+            setReps(null);
             Map md = doc2Map(doc);
             md.putAll(rd);rd = md;
         }
@@ -470,7 +470,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Map get(String id) throws HongsException {
         Document doc = getDoc(id);
         if ( doc != null) {
-            replies(null);
+            setReps(null);
             return doc2Map( doc );
         } else {
             return new HashMap( );
@@ -583,7 +583,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Loop search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
-                  replies (rd);
+                  setReps (rd);
         Loop  r = new Loop(this, q, s, begin, limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
@@ -854,7 +854,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             String fn = (String) e.getKey();
 
             // 自定义查询
-            if (queried (qr, fn, fv )) {
+            if (queried ( rd, fn, fv, qr )) {
                 continue;
             }
 
@@ -995,7 +995,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (rv) fn = fn.substring ( 1 );
 
             // 自定义排序
-            if (sorted(of, fn, rv)) {
+            if (sorted ( rd, fn, rv, of ) ) {
                 continue;
             }
 
@@ -1047,6 +1047,18 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
 
         return new Sort(of.toArray(new SortField[0]));
+    }
+
+    /**
+     * 返回字段
+     * @param rd 
+     */
+    public void setReps(Map rd) {
+        if ( rd  == null) {
+          replies = null; // 默认情况返回全部设定的字段.
+        } else {
+          replies = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        }
     }
 
     //** 底层工具 **/
@@ -1350,15 +1362,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             || replies.contains(fc.get("__name__"));
     }
 
-    public final void replies (Map rd) {
-        replies = rd == null ? null : Synt.toTerms(rd.get(Cnst.RB_KEY));
-    }
-
-    protected boolean queried (BooleanQuery.Builder qb, String fn, Object fv) {
+    protected boolean queried (Map rd, String fn, Object fv, BooleanQuery.Builder qb) {
         return false;
     }
 
-    protected boolean sorted  (List <  SortField  > sf, String fn, boolean r) {
+    protected boolean sorted  (Map rd, String fn, boolean r, List <  SortField  > sf) {
         return false;
     }
 

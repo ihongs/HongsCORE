@@ -11,7 +11,7 @@ import org.apache.lucene.util.BytesRef;
  * @author Hongs
  */
 public class DistanceSorter extends FieldComparatorSource {
-    
+
     long x;
     long y;
 
@@ -21,8 +21,13 @@ public class DistanceSorter extends FieldComparatorSource {
     }
 
     @Override
+    public String toString() {
+        return "Distance("+ x +"," + y + ")";
+    }
+
+    @Override
     public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
-        return new Comparator(fn, rv, nh, x, y);
+        return new Comparator(fn, nh, x, y);
     }
 
     static public class Comparator extends BaseComparator {
@@ -30,19 +35,25 @@ public class DistanceSorter extends FieldComparatorSource {
         long x;
         long y;
 
-        public Comparator(String name, boolean desc, int hits, long x, long y) {
-            super(name, desc, hits);
+        public Comparator(String name, int hits, long x, long y) {
+            super(name, hits);
             this.x = x;
             this.y = y;
         }
 
         @Override
         protected long worth(int d) {
-            BytesRef bytesRef = originalValues.get(d);
-            String   fv = bytesRef.utf8ToString();
-            String[] xy = fv.split(",");
+            BytesRef br = originalValues.get(d);
+            String   fv = br.utf8ToString();
+            if (0 == fv.length()) {
+                return  Long.MAX_VALUE ;
+            }
+
+            String[] xy = fv.split (",", 2);
             long     fx = Long.parseLong(xy[0]);
             long     fy = Long.parseLong(xy[1]);
+
+            // 三角函数求弦, 仅作平面计算
                      fx = Math.abs (fx - x);
                      fy = Math.abs (fy - y);
             return (long) Math.sqrt(fx * fx + fy * fy);

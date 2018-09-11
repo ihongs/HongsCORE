@@ -8,37 +8,39 @@ import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 
 /**
- * 区间近邻排序
- * 用法 new SortField("开始字段,结束字段", new IntervalSorter(DIST), DESC)
+ * 平面距离排序
+ * 用法 new SortField("横标字段,纵标字段", new DurationSorter(横标,纵标), DESC)
  * @author Hongs
  */
-public class IntervalSorter extends FieldComparatorSource {
+public class DurationSorter extends FieldComparatorSource {
 
-    long dist;
+    long x, y;
 
-    public IntervalSorter(long dist) {
-        this.dist = dist;
+    public DurationSorter(long x, long y) {
+        this.x = x;
+        this.y = y;
     }
 
     @Override
     public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
-        return new Comparator(fn, nh, dist);
+        return new Comparator(fn, nh, x, y);
     }
 
     @Override
     public String toString() {
-        return "Interval("+ dist + ")";
+        return "Duration("+ x +","+ y + ")";
     }
 
     static public class Comparator extends BaseComparator {
 
-        long dist;
+        long x, y;
         NumericDocValues doc0;
         NumericDocValues doc1;
 
-        public Comparator(String name, int hits, long dist) {
+        public Comparator(String name, int hits, long x, long y) {
             super(name, hits);
-            this.dist = dist ;
+            this.x = x;
+            this.y = y;
         }
 
         @Override
@@ -56,21 +58,10 @@ public class IntervalSorter extends FieldComparatorSource {
                 long fx = doc0.get(d);
                 long fy = doc1.get(d);
 
-                // 区间外为正值, 仅计算绝对值
-                if ( fx > dist) {
-                    return  fx - dist;
-                } else
-                if ( fy < dist) {
-                    return  dist - fy;
-                }
-
-                // 区间内为负值, 比外面都优先
-                if ( fy - dist > dist - fx) {
-                    return  fx - dist;
-                } else
-                {
-                    return  dist - fy;
-                }
+                // 三角函数求弦
+                fx = Math.abs(fx - x);
+                fy = Math.abs(fy - y);
+                return (long) Math.sqrt(fx * fx + fy * fy);
             }
             catch (NullPointerException ex) {
                 return Long.MAX_VALUE;

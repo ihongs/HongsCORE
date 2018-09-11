@@ -50,7 +50,7 @@ public class IntervalSorter extends FieldComparatorSource {
         }
 
         @Override
-        protected long toGetCurrDvalue ( int d )
+        protected long toGetCurrDvalue (int  d)
         throws IOException {
             try {
                 long fx = doc0.get(d);

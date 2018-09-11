@@ -39,30 +39,31 @@ public class IntervalSorter extends FieldComparatorSource {
 
         @Override
         protected long worth(int d) {
-            BytesRef br = originalValues.get(d);
-            String   fv = br.utf8ToString();
-            if (0 == fv.length()) {
-                return  Long.MAX_VALUE ;
+            try {
+                BytesRef br = originalValues.get(d);
+                String   fv = br.utf8ToString();
+                String[] xy = fv.split (",", 2);
+                long     fx = Long.parseLong(xy[0]);
+                long     fy = Long.parseLong(xy[1]);
+
+                // 区间外为正值, 仅计算绝对值
+                if (fx > dist) {
+                    return fx - dist;
+                } else
+                if (fy < dist) {
+                    return dist - fy;
+                }
+
+                // 区间内为负值, 比外面都优先
+                if (fy - dist > dist - fx) {
+                    return fx - dist;
+                } else
+                {
+                    return dist - fy;
+                }
             }
-
-            String[] xy = fv.split (",", 2);
-            long     fx = Long.parseLong(xy[0]);
-            long     fy = Long.parseLong(xy[1]);
-
-            // 区间外为正值, 仅计算绝对值
-            if (fx > dist) {
-                return fx - dist;
-            } else
-            if (fy < dist) {
-                return dist - fy;
-            }
-
-            // 区间内为负值, 比外面都优先
-            if (fy - dist > dist - fx) {
-                return fx - dist;
-            } else
-            {
-                return dist - fy;
+            catch (NullPointerException | NumberFormatException | IndexOutOfBoundsException ex) {
+                return Long.MAX_VALUE;
             }
         }
     }

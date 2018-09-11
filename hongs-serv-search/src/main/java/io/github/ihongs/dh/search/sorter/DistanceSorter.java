@@ -43,20 +43,21 @@ public class DistanceSorter extends FieldComparatorSource {
 
         @Override
         protected long worth(int d) {
-            BytesRef br = originalValues.get(d);
-            String   fv = br.utf8ToString();
-            if (0 == fv.length()) {
-                return  Long.MAX_VALUE ;
+            try {
+                BytesRef br = originalValues.get(d);
+                String   fv = br.utf8ToString();
+                String[] xy = fv.split (",", 2);
+                long     fx = Long.parseLong(xy[0]);
+                long     fy = Long.parseLong(xy[1]);
+
+                // 三角函数求弦, 仅作平面计算
+                         fx = Math.abs (fx - x);
+                         fy = Math.abs (fy - y);
+                return (long) Math.sqrt(fx * fx + fy * fy);
             }
-
-            String[] xy = fv.split (",", 2);
-            long     fx = Long.parseLong(xy[0]);
-            long     fy = Long.parseLong(xy[1]);
-
-            // 三角函数求弦, 仅作平面计算
-                     fx = Math.abs (fx - x);
-                     fy = Math.abs (fy - y);
-            return (long) Math.sqrt(fx * fx + fy * fy);
+            catch (NullPointerException | NumberFormatException | IndexOutOfBoundsException ex) {
+                return Long.MAX_VALUE;
+            }
         }
     }
 

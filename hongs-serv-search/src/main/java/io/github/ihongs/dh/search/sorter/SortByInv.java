@@ -10,7 +10,7 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 区间近邻排序
- * 用法 new SortField(FIELD_NAME, new SortByItv(DIST), DESC)
+ * 用法 new SortField(FIELD_NAME, new SortByInv(DIST), DESC)
  * 字段取值 B,E
  * @author Hongs
  */

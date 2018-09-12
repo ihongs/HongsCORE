@@ -14,11 +14,18 @@ import org.apache.lucene.search.FieldComparatorSource;
  */
 public class DistanceSorter extends FieldComparatorSource {
 
-    float o, a;
+    final float  o;
+    final float  a;
+    final  long  w;
 
     public DistanceSorter(float o, float a) {
+        this(o , a, 12756000L); // 地球直径(米)
+    }
+    
+    public DistanceSorter(float o, float a, long w) {
         this.o = o;
         this.a = a;
+        this.w = w;
     }
 
     @Override
@@ -28,20 +35,22 @@ public class DistanceSorter extends FieldComparatorSource {
 
     @Override
     public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
-        return new Comparator(fn, nh, o, a);
+        return new Comparator(fn, nh, o, a, w);
     }
 
     static public class Comparator extends BaseComparator {
 
-        float a, o;
+        final float  o;
+        final float  a;
+        final  long  w;
         NumericDocValues doc0;
         NumericDocValues doc1;
-//      static double EARTH_WIDTH = 6371000 * 2; // 地球直径(米)
 
-        public Comparator(String name, int hits, float o, float a) {
+        public Comparator(String name, int hits, float o, float a, long w) {
             super(name, hits);
             this.o = o;
             this.a = a;
+            this.w = w;
         }
 
         @Override

@@ -14,7 +14,7 @@ import org.apache.lucene.search.FieldComparatorSource;
  */
 public class DurationSorter extends FieldComparatorSource {
 
-    long x, y;
+    final long x, y;
 
     public DurationSorter(long x, long y) {
         this.x = x;
@@ -33,7 +33,7 @@ public class DurationSorter extends FieldComparatorSource {
 
     static public class Comparator extends BaseComparator {
 
-        long x, y;
+        final long x, y;
         NumericDocValues doc0;
         NumericDocValues doc1;
 

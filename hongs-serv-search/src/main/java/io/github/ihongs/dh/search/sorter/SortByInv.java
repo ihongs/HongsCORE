@@ -14,11 +14,11 @@ import org.apache.lucene.util.BytesRef;
  * 字段取值 B,E
  * @author Hongs
  */
-public class SortByItv extends FieldComparatorSource {
+public class SortByInv extends FieldComparatorSource {
 
     long dist;
 
-    public SortByItv(long dist) {
+    public SortByInv(long dist) {
         this.dist = dist;
     }
 

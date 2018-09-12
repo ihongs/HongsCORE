@@ -14,7 +14,7 @@ import org.apache.lucene.search.FieldComparatorSource;
  */
 public class RelativeSorter extends FieldComparatorSource {
 
-    long dist;
+    final long dist;
 
     public RelativeSorter(long dist) {
         this.dist = dist;
@@ -32,7 +32,7 @@ public class RelativeSorter extends FieldComparatorSource {
 
     static public class Comparator extends BaseComparator {
 
-        long dist;
+        final long dist;
         NumericDocValues docs;
 
         public Comparator(String name, int hits, long dist) {

@@ -19,7 +19,7 @@ import org.apache.lucene.util.BytesRef;
  */
 public class SortInSet extends FieldComparatorSource {
 
-    private final Map<String, Long> dist;
+    final Map <String, Long> dist ;
 
     public SortInSet(Collection<String> vals) {
         long  i  = 0 - vals.size();
@@ -41,7 +41,7 @@ public class SortInSet extends FieldComparatorSource {
 
     private static class Comparator extends BaseComparator {
 
-        private final Map<String, Long> dist ;
+        final Map <String, Long> dist;
         BinaryDocValues docs ;
 
         public Comparator(String name, int hits, Map<String, Long> dist) {

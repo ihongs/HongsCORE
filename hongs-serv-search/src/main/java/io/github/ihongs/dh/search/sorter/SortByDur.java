@@ -16,8 +16,7 @@ import org.apache.lucene.util.BytesRef;
  */
 public class SortByDur extends FieldComparatorSource {
 
-    long x;
-    long y;
+    final long x, y;
 
     public SortByDur(long x, long y) {
         this.x = x;
@@ -36,8 +35,7 @@ public class SortByDur extends FieldComparatorSource {
 
     static public class Comparator extends BaseComparator {
 
-        long x;
-        long y;
+        final long x, y;
         BinaryDocValues docs ;
 
         public Comparator(String name, int hits, long x, long y) {

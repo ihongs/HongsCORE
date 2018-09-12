@@ -16,7 +16,7 @@ import org.apache.lucene.util.BytesRef;
  */
 public class SortByInv extends FieldComparatorSource {
 
-    long dist;
+    final long dist;
 
     public SortByInv(long dist) {
         this.dist = dist;
@@ -34,7 +34,7 @@ public class SortByInv extends FieldComparatorSource {
 
     static public class Comparator extends BaseComparator {
 
-        long dist;
+        final long dist;
         BinaryDocValues docs ;
 
         public Comparator(String name, int hits, long dist) {

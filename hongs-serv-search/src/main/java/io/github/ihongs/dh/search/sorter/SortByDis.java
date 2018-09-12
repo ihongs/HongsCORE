@@ -16,12 +16,18 @@ import org.apache.lucene.util.BytesRef;
  */
 public class SortByDis extends FieldComparatorSource {
 
-    float o;
-    float a;
+    final float  o;
+    final float  a;
+    final  long  w;
 
     public SortByDis(float o, float a) {
+        this(o , a, 12756000L); // 地球直径(米)
+    }
+
+    public SortByDis(float o, float a, long w) {
         this.o = o;
         this.a = a;
+        this.w = w;
     }
 
     @Override
@@ -31,20 +37,21 @@ public class SortByDis extends FieldComparatorSource {
 
     @Override
     public FieldComparator<?> newComparator(String fn, int nh, int sp, boolean rv) {
-        return new Comparator(fn, nh, o, a);
+        return new Comparator(fn, nh, o, a, w);
     }
 
     static public class Comparator extends BaseComparator {
 
-        float o;
-        float a;
+        final float  o;
+        final float  a;
+        final  long  w;
         BinaryDocValues docs ;
-//      static double EARTH_WIDTH = 6371000 * 2; // 地球直径(米)
 
-        public Comparator(String name, int hits, float o, float a) {
+        public Comparator(String name, int hits, float o, float a, long w) {
             super(name, hits);
             this.o = o;
             this.a = a;
+            this.w = w;
         }
 
         @Override
@@ -68,7 +75,7 @@ public class SortByDis extends FieldComparatorSource {
                 double h = Math.sin(fo / 2);
                 double v = Math.sin(fa / 2);
                 v  = Math.asin(Math.sqrt(Math.cos(fa) * Math.cos(a) * (h * h) + (v * v)));
-                return (long) v; // return (long) (v * EARTH_WIDTH);
+                return (long) (v * w);
             }
             catch (NullPointerException | NumberFormatException | IndexOutOfBoundsException ex) {
                 return Long.MAX_VALUE;

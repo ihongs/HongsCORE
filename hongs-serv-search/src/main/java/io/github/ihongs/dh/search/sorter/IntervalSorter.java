@@ -14,7 +14,7 @@ import org.apache.lucene.search.FieldComparatorSource;
  */
 public class IntervalSorter extends FieldComparatorSource {
 
-    long dist;
+    final long dist;
 
     public IntervalSorter(long dist) {
         this.dist = dist;
@@ -32,7 +32,7 @@ public class IntervalSorter extends FieldComparatorSource {
 
     static public class Comparator extends BaseComparator {
 
-        long dist;
+        final long dist;
         NumericDocValues doc0;
         NumericDocValues doc1;
 

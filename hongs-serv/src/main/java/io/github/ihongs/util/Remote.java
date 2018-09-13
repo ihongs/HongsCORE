@@ -22,19 +22,20 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpDelete;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.entity.mime.HttpMultipartMode;
 import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 
 /**
@@ -44,6 +45,8 @@ import org.apache.http.protocol.HTTP;
 public final class Remote {
 
     public static enum METHOD { GET, PUT, POST, PATCH, DELETE };
+
+    public static enum FORMAT { JSON, FORM, PART };
 
     /**
      * 简单远程请求
@@ -58,7 +61,7 @@ public final class Remote {
      */
     public static String get (String url)
             throws HongsException {
-        return request(METHOD.GET , url, null, null, false);
+        return request(METHOD.GET , FORMAT.FORM, url, null, null);
     }
 
     /**
@@ -76,7 +79,7 @@ public final class Remote {
      */
     public static String get (String url, Map<String, Object> data)
             throws HongsException {
-        return request(METHOD.GET , url, data, null, false);
+        return request(METHOD.GET , FORMAT.FORM, url, data, null);
     }
 
     /**
@@ -95,7 +98,7 @@ public final class Remote {
      */
     public static String post(String url, Map<String, Object> data)
             throws HongsException {
-        return request(METHOD.POST, url, data, null, false);
+        return request(METHOD.POST, FORMAT.FORM, url, data, null);
     }
 
     /**
@@ -114,21 +117,33 @@ public final class Remote {
      */
     public static String part(String url, Map<String, Object> data)
             throws HongsException {
-        return request(METHOD.POST, url, data, null, true );
+        return request(METHOD.POST, FORMAT.PART, url, data, null);
+    }
+
+    /**
+     * 简单文件下载
+     *
+     * @param url
+     * @param file
+     * @throws HongsException
+     */
+    public static void save(String url, File file)
+            throws HongsException {
+        request(METHOD.GET , FORMAT.FORM, url, null, null, file);
     }
 
     /**
      * 简单远程请求
      *
      * @param type
+     * @param kind
      * @param url
      * @param data
      * @param head
-     * @param multipart
      * @return
      * @throws HongsException
      */
-    public static String request(METHOD type, String url, Map<String, Object> data, Map<String, String> head, boolean multipart)
+    public static String request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head)
             throws HongsException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
@@ -149,9 +164,13 @@ public final class Remote {
             if (data != null) {
                 if (http instanceof HttpEntityEnclosingRequest) {
                     HttpEntityEnclosingRequest htte = (HttpEntityEnclosingRequest) http;
-                    if (multipart) {
+                    if (kind == FORMAT.JSON) {
+                        htte.setEntity(buildJson(data));
+                    } else
+                    if (kind == FORMAT.PART) {
                         htte.setEntity(buildPart(data));
-                    } else {
+                    } else
+                    {
                         htte.setEntity(buildPost(data));
                     }
                 } else {
@@ -202,26 +221,17 @@ public final class Remote {
     }
 
     /**
-     * 简单下载文件
+     * 简单下载请求
      *
-     * @param url
-     * @param file
-     * @throws HongsException
-     */
-    public static void download(String url, File file) throws HongsException {
-        download(url, null, null, file);
-    }
-
-    /**
-     * 简单下载文件
-     *
+     * @param type
+     * @param kind
      * @param url
      * @param data
      * @param head
      * @param file
      * @throws HongsException
      */
-    public static void download(String url, Map<String, Object> data, Map<String, String> head, File file)
+    public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, File file)
             throws HongsException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
@@ -230,12 +240,35 @@ public final class Remote {
         HttpRequestBase http = null;
         try {
             // 构建 HTTP 请求对象
-            if (data == null) {
-                http = new HttpGet( );
-            } else {
-                http = new HttpPost();
-                HttpEntityEnclosingRequest htte = (HttpEntityEnclosingRequest) http;
-                htte.setEntity( buildPost( data ) );
+            switch (type) {
+                case DELETE: http = new HttpDelete(); break;
+                case PATCH : http = new HttpPatch( ); break;
+                case POST  : http = new HttpPost(  ); break;
+                case PUT   : http = new HttpPut(   ); break;
+                default    : http = new HttpGet(   ); break;
+            }
+
+            // 设置报文
+            if (data != null) {
+                if (http instanceof HttpEntityEnclosingRequest) {
+                    HttpEntityEnclosingRequest htte = (HttpEntityEnclosingRequest) http;
+                    if (kind == FORMAT.JSON) {
+                        htte.setEntity(buildJson(data));
+                    } else
+                    if (kind == FORMAT.PART) {
+                        htte.setEntity(buildPart(data));
+                    } else
+                    {
+                        htte.setEntity(buildPost(data));
+                    }
+                } else {
+                    String qry = EntityUtils.toString(buildPost(data), "UTF-8");
+                    if (url.indexOf('?') == -1) {
+                        url += "?" + qry;
+                    } else {
+                        url += "&" + qry;
+                    }
+                }
             }
 
             // 设置报头
@@ -263,6 +296,7 @@ public final class Remote {
                 throw  new StatusException(sta, url, txt);
             }
 
+            // 建立目录
             File dir = file.getParentFile ();
             if (!dir.exists()) {
                  dir.mkdirs();
@@ -290,7 +324,7 @@ public final class Remote {
         }
     }
 
-    private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$");
+    private static final Pattern JSONP = Pattern.compile("^\\w+\\s*\\((.*)\\)\\s*;?$", Pattern.DOTALL);
 
     /**
      * 解析响应数据
@@ -322,6 +356,29 @@ public final class Remote {
             throw  new UnsupportedOperationException("Unsupported html: "+ resp);
         } else {
             return ActionHelper.parseQuery(resp);
+        }
+    }
+
+    /**
+     * 构建JSON实体
+     *
+     * 讲数据处理成JSON格式,
+     * Content-Type: application/json; charset=utf-8
+     *
+     * @param data
+     * @return
+     * @throws HongsException
+     */
+    public static HttpEntity buildJson(Map<String, Object> data)
+            throws HongsException {
+        try {
+            StringEntity enti = new StringEntity(Data.toString(data));
+            enti.setContentType("application/json");
+            enti.setContentEncoding ( "UTIF-8" );
+            return enti;
+        }
+        catch ( UnsupportedEncodingException ex) {
+            throw new HongsException.Common (ex);
         }
     }
 
@@ -476,7 +533,7 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super( "Error request " + url, cause );
+            super("Fail to request "+ url, cause);
 
             this.url = url;
 

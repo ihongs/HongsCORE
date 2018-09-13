@@ -599,7 +599,7 @@ public final class Tool
       }
       StringBuilder path = new StringBuilder();
       for (; i < j; i += 4 ) {
-          path.append(name.substring(i, i+ 2))
+          path.append(name.substring(i, i+ 4))
               .append( "/" ); // 不用 File.separator, 规避 Windows 下造成困扰
       }   path.append(name );
       return path.toString();

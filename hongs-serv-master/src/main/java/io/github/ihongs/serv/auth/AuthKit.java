@@ -6,6 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.master.Dept;
@@ -174,20 +175,34 @@ public class AuthKit {
     throws HongsException {
         DB    db = DB.getInstance("master");
         Table tb = db.getTable("user_open");
+        Table ub = db.getTable("user");
         Map   ud = tb.fetchCase()
-                     .filter("`opnid` =? AND `appid` = ?", opnid, appid)
-                     .select("`user_id`")
+                     .from(tb.tableName, "o")
+                     .join(ub.tableName, "u", "`u`.`id` = `o`.`user_id`")
+                     .filter("`opnid` = ? AND `appid` = ?", opnid, appid)
+                     .select("`o`.`user_id`, `u`.`name`, `u`.`head`")
                      .getOne(   );
 
         // 记录关联
         String usrid;
         if (ud != null && !ud.isEmpty()) {
             usrid = ud.get("user_id").toString();
+            uname = (String) ud.get("name");
+            uhead = (String) ud.get("head");
         } else {
+            // 校验及下载头像
+            VerifyHelper vh = new VerifyHelper();
+            vh.addRulesByForm("master" , "user");
+            vh.isPrompt(true);
+            vh.isUpdate(true);
+
             ud  =  new HashMap( );
             ud.put("name", uname);
             ud.put("head", uhead);
+            ud  =   vh.verify(ud);
             usrid = db.getModel("user").add(ud );
+            uname = (String) ud.get("name");
+            uhead = (String) ud.get("head");
 
             // 第三方登录项
             ud  =  new HashMap( );

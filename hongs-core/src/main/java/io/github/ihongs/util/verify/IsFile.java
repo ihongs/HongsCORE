@@ -1,6 +1,7 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.util.Synt;
@@ -172,14 +173,34 @@ public class IsFile extends Rule {
             ins = cnn.getInputStream( );
 
             // 从响应头中获取到名称
-            String name = cnn.getHeaderField("Content-Disposition");
-            Pattern pat = Pattern.compile("filename=\"(.*?)\"");
-            Matcher mat = pat.matcher( name );
-            if (mat.find()) {
-                name = mat.group(1);
-            } else {
+            String name;
+            do {
+                Pattern pat;
+                Matcher mat;
+
+                name = cnn.getHeaderField("Content-Disposition");
+                if (name != null) {
+                    pat = Pattern.compile("filename=\"(.*?)\"" );
+                    mat = pat.matcher(name);
+                    if (mat.find()) {
+                        name = mat.group(1);
+                        break;
+                    }
+                }
+
+                name = cnn.getHeaderField("Content-Type");
+                if (name != null) {
+                    pat = Pattern.compile( "^\\w+/\\w+" );
+                    mat = pat.matcher(name);
+                    if (mat.find()) {
+                        name = mat.group(0).replace( "/" , "." );
+                        break;
+                    }
+                }
+
                 name = cnn.getURL().getPath();
             }
+            while (false);
 
             // 重组名称避免无法存储
             int i  = name.lastIndexOf( '/' );
@@ -188,9 +209,20 @@ public class IsFile extends Rule {
             }
             int j  = name.lastIndexOf( '.' );
             if (j != -1) {
-                name = URLEncoder.encode(name.substring(i , j), "UTF-8")
+                String extn;
+                extn = name.substring(j + 1);
+                name = name.substring(0 , j);
+
+                // 检查扩展名
+                CoreConfig c = CoreConfig.getInstance( "default" );
+                String d = c.getProperty("fore.upload.deny.extns");
+                if (Synt.toTerms(d).contains(extn)) {
+                    throw new Wrong("fore.form.upload.failed");
+                }
+
+                name = URLEncoder.encode(name, "UTF-8")
                      + "."
-                     + URLEncoder.encode(name.substring(j + 1), "UTF-8");
+                     + URLEncoder.encode(extn, "UTF-8");
             } else {
                 name = URLEncoder.encode(name, "UTF-8");
             }

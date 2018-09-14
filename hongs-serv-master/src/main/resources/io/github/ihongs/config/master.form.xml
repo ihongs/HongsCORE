@@ -9,8 +9,7 @@
         </field>
     </form>
     <form name="user">
-        <field name="password">
-            <param name="defiant"></param>
+        <field name="name" required="yes">
         </field>
         <field name="head" rule="Thumb">
             <param name="href">static/upload/master/head</param>
@@ -18,6 +17,7 @@
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
             <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
+            <param name="down-remote">yes</param>
         </field>
     </form>
     <form name="mine">
@@ -35,6 +35,7 @@
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
             <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
+            <param name="down-remote">yes</param>
         </field>
     </form>
     <enum name="mine:defense">

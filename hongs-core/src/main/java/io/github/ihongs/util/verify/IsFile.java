@@ -198,7 +198,7 @@ public class IsFile extends Rule {
                     }
                 }
 
-                name = cnn.getURL().getPath();
+                name = cnn.getURL().getPath().replaceAll("[\\?#].*", "");
             }
             while (false);
 

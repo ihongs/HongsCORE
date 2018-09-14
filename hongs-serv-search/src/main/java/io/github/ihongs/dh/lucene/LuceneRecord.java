@@ -682,6 +682,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 CoreLogger.error(x);
             } finally {
                 reader = null ;
+                finder = null ;
             }
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {

@@ -367,9 +367,20 @@ public class Data extends SearchEntity {
 
             Map ud = new HashMap();
             ud.put("etime", ctime);
-            ud.put("state",   0  );
+
+            Map nd = new HashMap();
+            nd.put("ctime", ctime);
+            nd.put("etime",   0  );
+            nd.put("state",   0  );
+            nd.put(/***/"id", id );
+            nd.put("form_id", fid);
+            nd.put("user_id", uid);
+            nd.put("memo", rd.get("memo"));
+            nd.put("name", dd.get("name"));
+            nd.put("data",  "{}" );
 
             table.update(ud, where, param);
+            table.insert(nd);
         }
 
         //** 从索引库删除 **/
@@ -382,8 +393,10 @@ public class Data extends SearchEntity {
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
         long     rtime = Synt.declare(rd.get("rtime"), 0L);
-        String   where = "`id`=? AND `form_id`=? AND `ctime`=?";
-        Object[] param = new Object [ ] { id, fid, rtime };
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        Object[] param = new String[] { id, fid, "0"};
+        String   wher2 = "`id`=? AND `form_id`=? AND `ctime`=?";
+        Object[] para2 = new String[] { id, fid, ""+rtime};
 
         if (uid == null) {
             throw new NullPointerException("user_id required!");
@@ -395,11 +408,14 @@ public class Data extends SearchEntity {
             throw new HongsException(0x1100, "资源不支持恢复");
         }
         Map dd = table.fetchCase()
-            .filter( where, param)
+            .filter( wher2, para2)
             .select("etime, state, data, name")
             .getOne( );
         if (dd.isEmpty()) {
             throw new HongsException(0x1100, "起源记录不存在");
+        }
+        if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+            throw new HongsException(0x1100, "禁操作终止记录");
         }
         if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
             throw new HongsException(0x1100, "已经是最新记录");
@@ -421,8 +437,6 @@ public class Data extends SearchEntity {
         rd.put("name" , dd.get("name"));
         rd.put("data" , dd.get("data"));
 
-        where = "`id`=? AND `form_id`=? AND `etime`=?";
-        param = new Object[]{id, fid,0};
         table.update(ud , where, param);
         table.insert(rd);
 

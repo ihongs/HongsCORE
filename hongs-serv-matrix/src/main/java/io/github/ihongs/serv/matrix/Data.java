@@ -367,20 +367,9 @@ public class Data extends SearchEntity {
 
             Map ud = new HashMap();
             ud.put("etime", ctime);
-
-            Map nd = new HashMap();
-            nd.put("ctime", ctime);
-            nd.put("etime",   0  );
             ud.put("state",   0  );
-            nd.put(/***/"id", id );
-            nd.put("form_id", fid);
-            nd.put("user_id", uid);
-            nd.put("memo", rd.get("memo"));
-            nd.put("name", dd.get("name"));
-            nd.put("data", dd.get("data"));
 
             table.update(ud, where, param);
-            table.insert(nd);
         }
 
         //** 从索引库删除 **/

@@ -32,6 +32,7 @@ public class Data extends SearchEntity {
     protected final String conf;
     protected final String form;
     protected long time = 0;
+    protected int  fect = 0;
 
     /**
      * 数据实例基础构造方法
@@ -198,11 +199,12 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1096);
+        fect = 0;
         for(String  id  : ids) {
            save(ct, id  , rd );
            call(ct, id, "update");
         }
-        return ids.size();
+        return fect;
     }
 
     /**
@@ -216,11 +218,12 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1097);
+        fect = 0;
         for(String  id  : ids) {
            drop(ct, id  , rd );
            call(ct, id, "delete");
         }
-        return ids.size();
+        return fect;
     }
 
     /**
@@ -230,19 +233,13 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public int revert(Map rd) throws HongsException {
-        if ( ! rd.containsKey(Cnst.ID_KEY)) {
-            throw new HongsException( 0x1100, Cnst.ID_KEY + " required!" );
-        }
-        if ( ! rd.containsKey(  "rtime"  )) {
-            throw new HongsException( 0x1100, "rtime required!" );
-        }
-
         long ct = System.currentTimeMillis() / 1000 ;
-        String id = (String ) rd.get ( Cnst.ID_KEY );
-        permit(rd , Synt.setOf (id), 0x1096);
-        redo ( ct , id , rd );
-        call ( ct , id , "revert" );
-        return 1;
+        String id = ( String ) rd.get( Cnst.ID_KEY );
+        permit(rd , Synt.setOf(id), 0x1096 );
+        fect = 0;
+        redo(ct, id,  rd /**/);
+        call(ct, id, "revert");
+        return fect;
     }
 
     public void save(long ctime, String id, Map rd) throws HongsException {
@@ -337,6 +334,8 @@ public class Data extends SearchEntity {
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
         setDoc(id, doc);
+        
+        fect ++;
     }
 
     public void drop(long ctime, String id, Map rd) throws HongsException {
@@ -359,10 +358,11 @@ public class Data extends SearchEntity {
                 .getOne( );
             if (dd.isEmpty()) {
                  delDoc( id ); return; // 规避关系库没有而搜索库有
-//              throw new HongsException(0x1104, "原始记录不存在");
+//              throw new HongsException(0x1104, "找不到原始记录");
             }
             if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
-                throw new HongsException(0x1100, "禁操作删除标记");
+                 delDoc( id ); return; // 删除是幂等的允许重复调用
+//              throw new HongsException(0x1100, "禁操作删除记录");
             }
             if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
                 throw new HongsException(0x1100, "等会儿, 不要急");
@@ -389,6 +389,8 @@ public class Data extends SearchEntity {
         //** 从索引库删除 **/
 
         delDoc(id);
+        
+        fect ++;
     }
 
     public void redo(long ctime, String id, Map rd) throws HongsException {
@@ -403,6 +405,9 @@ public class Data extends SearchEntity {
 
         if (uid == null) {
             throw new NullPointerException("user_id required!");
+        }
+        if (rtime == 0L) {
+            throw new NullPointerException( "rtime required!" );
         }
 
         //** 获取旧的数据 **/
@@ -449,6 +454,8 @@ public class Data extends SearchEntity {
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
         setDoc(id, doc);
+        
+        fect ++;
     }
 
     public void call(long xtime, String id, String on) throws HongsException {

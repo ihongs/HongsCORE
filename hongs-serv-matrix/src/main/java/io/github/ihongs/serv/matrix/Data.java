@@ -355,11 +355,14 @@ public class Data extends SearchEntity {
         if (table != null) {
             Map dd = table.fetchCase()
                 .filter( where, param)
-                .select("ctime, state, data, name")
+                .select("ctime, state, name")
                 .getOne( );
             if (dd.isEmpty()) {
                  delDoc( id ); return; // 规避关系库没有而搜索库有
 //              throw new HongsException(0x1104, "原始记录不存在");
+            }
+            if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+                throw new HongsException(0x1100, "禁操作删除标记");
             }
             if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
                 throw new HongsException(0x1100, "等会儿, 不要急");
@@ -409,13 +412,12 @@ public class Data extends SearchEntity {
         }
         Map dd = table.fetchCase()
             .filter( wher2, para2)
-            .select("etime, state, data, name")
             .getOne( );
         if (dd.isEmpty()) {
-            throw new HongsException(0x1100, "起源记录不存在");
+            throw new HongsException(0x1100, "找不到恢复起源");
         }
         if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
-            throw new HongsException(0x1100, "禁操作终止记录");
+            throw new HongsException(0x1100, "禁操作删除记录");
         }
         if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
             throw new HongsException(0x1100, "已经是最新记录");
@@ -429,16 +431,15 @@ public class Data extends SearchEntity {
         Map ud = new HashMap();
         ud.put("etime", ctime);
 
-        rd.put("ctime", ctime);
-        rd.put("rtime", rtime);
-        rd.put("etime",   0  );
-        rd.put("form_id", fid);
-        rd.put("user_id", uid);
-        rd.put("name" , dd.get("name"));
-        rd.put("data" , dd.get("data"));
+        dd.put("ctime", ctime);
+        dd.put("rtime", rtime);
+        dd.put("etime",   0  );
+        dd.put("form_id", fid);
+        dd.put("user_id", uid);
+        dd.put("memo" , rd.get("memo"));
 
         table.update(ud , where, param);
-        table.insert(rd);
+        table.insert(dd);
 
         //** 保存到索引库 **/
 

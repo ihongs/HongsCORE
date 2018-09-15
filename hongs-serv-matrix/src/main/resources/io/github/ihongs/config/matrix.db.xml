@@ -27,6 +27,7 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                tableName="a_matrix_data"
                primaryKey="id">
             <param name="srchable">name,memo</param>
+            <param name="check.value">false</param>
             <assoc type="BLS_TO"
                    name="form"
                    foreignKey="form_id">

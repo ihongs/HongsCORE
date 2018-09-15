@@ -31,8 +31,6 @@ public class Data extends SearchEntity {
     protected final String comf;
     protected final String conf;
     protected final String form;
-    protected long time = 0;
-    protected int  fect = 0;
 
     /**
      * 数据实例基础构造方法
@@ -199,9 +197,9 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1096);
-        fect = 0;
+        int fect = 0;
         for(String  id  : ids) {
-           save(ct, id  , rd );
+           fect += save(ct, id, rd);
            call(ct, id, "update");
         }
         return fect;
@@ -218,9 +216,9 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1097);
-        fect = 0;
+        int fect = 0;
         for(String  id  : ids) {
-           drop(ct, id  , rd );
+           fect += drop(ct, id, rd);
            call(ct, id, "delete");
         }
         return fect;
@@ -236,13 +234,20 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         String id = ( String ) rd.get( Cnst.ID_KEY );
         permit(rd , Synt.setOf(id), 0x1096 );
-        fect = 0;
-        redo(ct, id,  rd /**/);
+        int fect = redo(ct, id,  rd /**/);
         call(ct, id, "revert");
         return fect;
     }
 
-    public void save(long ctime, String id, Map rd) throws HongsException {
+    /**
+     * 保存记录
+     * @param ctime
+     * @param id
+     * @param rd
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    public int save(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
@@ -301,8 +306,8 @@ public class Data extends SearchEntity {
         }
 
         // 无更新不存储
-        if (i == 0) {
-            return;
+        if (i  ==  0) {
+            return 0;
         }
 
         dd.put("name", getName(dd));
@@ -334,11 +339,19 @@ public class Data extends SearchEntity {
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
         setDoc(id, doc);
-        
-        fect ++;
+
+        return 1;
     }
 
-    public void drop(long ctime, String id, Map rd) throws HongsException {
+    /**
+     * 删除记录
+     * @param ctime
+     * @param id
+     * @param rd
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    public int drop(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
@@ -357,11 +370,11 @@ public class Data extends SearchEntity {
                 .select("ctime, state, name")
                 .getOne( );
             if (dd.isEmpty()) {
-                 delDoc( id ); return; // 规避关系库没有而搜索库有
+                 delDoc( id ); return 0; // 规避关系库无而搜索库有
 //              throw new HongsException(0x1104, "找不到原始记录");
             }
             if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
-                 delDoc( id ); return; // 删除是幂等的允许重复调用
+                 delDoc( id ); return 0; // 删除是幂等的可重复调用
 //              throw new HongsException(0x1100, "禁操作删除记录");
             }
             if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
@@ -389,11 +402,19 @@ public class Data extends SearchEntity {
         //** 从索引库删除 **/
 
         delDoc(id);
-        
-        fect ++;
+
+        return 1;
     }
 
-    public void redo(long ctime, String id, Map rd) throws HongsException {
+    /**
+     * 恢复记录
+     * @param ctime
+     * @param id
+     * @param rd
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
+    public int redo(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
@@ -415,20 +436,24 @@ public class Data extends SearchEntity {
         if (table == null) {
             throw new HongsException(0x1100, "资源不支持恢复");
         }
+        Map ld = table.fetchCase()
+            .filter( where, param)
+            .select("ctime")
+            .getOne( );
+        if ( Synt.declare ( ld.get("ctime"), 0L )  >=  ctime ) {
+            throw new HongsException(0x1100, "等会儿, 不要急");
+        }
         Map dd = table.fetchCase()
             .filter( wher2, para2)
             .getOne( );
         if (dd.isEmpty()) {
             throw new HongsException(0x1100, "找不到恢复起源");
         }
-        if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
-            throw new HongsException(0x1100, "禁操作删除记录");
-        }
         if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
             throw new HongsException(0x1100, "已经是最新记录");
         }
-        if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
-            throw new HongsException(0x1100, "等会儿, 不要急");
+        if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+            throw new HongsException(0x1100, "禁操作删除记录");
         }
 
         //** 保存到数据库 **/
@@ -454,14 +479,14 @@ public class Data extends SearchEntity {
         dd.put(Cnst.ID_KEY, id);
         docAdd(doc, dd);
         setDoc(id, doc);
-        
-        fect ++;
+
+        return 1;
     }
 
-    public void call(long xtime, String id, String on) throws HongsException {
+    public int call(long xtime, String id, String on) throws HongsException {
         String url = (String) getParams().get("callback");
         if (url == null || "".equals(url)) {
-            return;
+            return 0;
         }
 
         String fid = getFormId();
@@ -473,6 +498,8 @@ public class Data extends SearchEntity {
         ));
 
         dcUrls.add(url);
+
+        return 1;
     }
 
     @Override

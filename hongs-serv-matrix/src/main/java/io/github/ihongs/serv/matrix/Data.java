@@ -483,6 +483,14 @@ public class Data extends SearchEntity {
         return 1;
     }
 
+    /**
+     * 外部回调
+     * @param xtime
+     * @param id
+     * @param on
+     * @return 有回调为 1, 无回调为 0
+     * @throws HongsException 
+     */
     public int call(long xtime, String id, String on) throws HongsException {
         String url = (String) getParams().get("callback");
         if (url == null || "".equals(url)) {

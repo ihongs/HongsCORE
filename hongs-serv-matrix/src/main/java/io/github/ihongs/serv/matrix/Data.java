@@ -194,15 +194,15 @@ public class Data extends SearchEntity {
      */
     @Override
     public int update(Map rd) throws HongsException {
+        int  cn = 0;
         long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1096);
-        int fect = 0;
         for(String  id  : ids) {
-           fect += save(ct, id, rd);
+           cn += save(ct, id, rd);
            call(ct, id, "update");
         }
-        return fect;
+        return  cn;
     }
 
     /**
@@ -213,15 +213,15 @@ public class Data extends SearchEntity {
      */
     @Override
     public int delete(Map rd) throws HongsException {
+        int  cn = 0;
         long ct = System.currentTimeMillis() / 1000 ;
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1097);
-        int fect = 0;
         for(String  id  : ids) {
-           fect += drop(ct, id, rd);
+           cn += drop(ct, id, rd);
            call(ct, id, "delete");
         }
-        return fect;
+        return  cn;
     }
 
     /**
@@ -234,9 +234,9 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         String id = ( String ) rd.get( Cnst.ID_KEY );
         permit(rd , Synt.setOf(id), 0x1096 );
-        int fect = redo(ct, id,  rd /**/);
+        int  cn = redo(ct, id, rd);
         call(ct, id, "revert");
-        return fect;
+        return cn;
     }
 
     /**

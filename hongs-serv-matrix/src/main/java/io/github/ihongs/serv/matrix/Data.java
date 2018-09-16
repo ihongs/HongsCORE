@@ -251,8 +251,8 @@ public class Data extends SearchEntity {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new String[] { id, fid, "0"};
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
         if (uid == null) {
             throw new NullPointerException("user_id required!");
@@ -355,8 +355,8 @@ public class Data extends SearchEntity {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new String[] { id, fid, "0"};
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
         if (uid == null) {
             throw new NullPointerException("user_id required!");
@@ -418,11 +418,11 @@ public class Data extends SearchEntity {
         Table    table = getTable( );
         String   fid   = getFormId();
         String   uid   = (String) rd.get( "user_id" );
-        long     rtime = Synt.declare(rd.get("rtime"), 0L);
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
         Object[] param = new String[] { id, fid, "0"};
-        String   wher2 = "`id`=? AND `form_id`=? AND `ctime`=?";
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        long     rtime = Synt.declare(rd.get("rtime"), 0L);
         Object[] para2 = new String[] { id, fid, ""+rtime};
+        String   wher2 = "`id`=? AND `form_id`=? AND `ctime`=?";
 
         if (uid == null) {
             throw new NullPointerException("user_id required!");

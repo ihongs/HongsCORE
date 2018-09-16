@@ -63,7 +63,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     private boolean INIT = false;
 
     /**
-     * 关闭表示, 为 true 表示有初始化, 需要承担全局清理
+     * 关闭标识, 为 true 表示有初始化, 需要承担全局清理
      */
     private boolean SHUT = false;
 

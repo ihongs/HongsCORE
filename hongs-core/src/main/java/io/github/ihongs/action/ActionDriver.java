@@ -60,12 +60,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     /**
      * 首位标识, 为 true 表示最先执行，负责初始化和清理
      */
-    private boolean INIT = false;
+    private boolean FIRST = false;
 
     /**
      * 关闭标识, 为 true 表示有初始化, 需要承担全局清理
      */
-    private boolean SHUT = false;
+    private boolean SETUP = false;
 
     /**
      * 初始化 Filter
@@ -100,9 +100,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             return;
         }
 
-        INIT= true;
+        FIRST=true;
         if (Core.BASE_HREF == null) {
-        SHUT= true;
+        SETUP=true;
 
             System.setProperty("file.encoding", "UTF-8");
 
@@ -213,7 +213,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     @Override
     public void destroy () {
-        if (! INIT) {
+        if (!FIRST) {
             return;
         }
 
@@ -227,7 +227,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 .toString());
         }
 
-        if (! SHUT) {
+        if (!SETUP) {
             return;
         }
 

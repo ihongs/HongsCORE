@@ -62,8 +62,10 @@ public class MoreAction {
                 re1 = new HashMap( re0 );
                 uri = uri + Cnst.ACT_EXT;
                 re1.putAll(data(das.get(key)));
-                helper.setRequestData(  re1  );
                 Core.ACTION_NAME.set (  uri  );
+                helper.setRequestData(  re1  );
+                helper.setAttribute( Cnst.ACTION_ATTR, null );
+                helper.setAttribute( Cnst.ORIGIN_ATTR, null );
                 rs1 = call(helper, uri, req, rsp);
 
                 // 首个错误作为全局错误

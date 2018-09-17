@@ -1,9 +1,11 @@
 package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Data;
@@ -36,48 +38,56 @@ public class MoreAction {
         HttpServletResponse rsp = helper.getResponse();
         Map<String, Object> re0 = helper.getRequestData( );
         Map<String, String> acs = Synt.asMap(re0.get("a"));
-        Map<String, Object> res = Synt.asMap(re0.get("e"));
-        Map<String, Object> rs0 = new HashMap();
+        Map<String, Object> das = Synt.asMap(re0.get("d"));
         Map                 re1;
+        Map                 rs0;
         Map                 rs1;
         String              key;
         String              uri;
+        String              act;
 
         if (acs == null) {
             acs = new HashMap();
         }
-        if (res == null) {
-            res = new HashMap();
+        if (das == null) {
+            das = new HashMap();
         }
+            rs0 = new HashMap();
+            act = Core.ACTION_NAME.get();
 
-        for(Map.Entry<String, String> et : acs.entrySet()) {
-            key = et.getKey(  );
-            uri = et.getValue();
-            re1 = new HashMap(re0);
-            uri = "/" + uri + Cnst.ACT_EXT;
-            re1.putAll(data(res.get(key)));
-            helper.setRequestData(  re1  );
-            rs1 = call(helper,uri,req,rsp);
+        try {
+            for(Map.Entry<String, String> et : acs.entrySet()) {
+                key = et.getKey(  );
+                uri = et.getValue();
+                re1 = new HashMap( re0 );
+                uri = uri + Cnst.ACT_EXT;
+                re1.putAll(data(das.get(key)));
+                helper.setRequestData(  re1  );
+                Core.ACTION_NAME.set (  uri  );
+                rs1 = call(helper, uri, req, rsp);
 
-            // 首个错误作为全局错误
-            if (!Synt.declare(rs1.get("ok"), true)
-                && !rs0.containsKey("ok" )) {
-                rs0.put("ok", false);
-                if (rs1.containsKey("ern")) {
-                    rs0.put("ern", rs1.get("ern"));
+                // 首个错误作为全局错误
+                if (!Synt.declare(rs1.get("ok"), true)
+                    && !rs0.containsKey("ok" )) {
+                    rs0.put("ok", false);
+                    if (rs1.containsKey("ern")) {
+                        rs0.put("ern", rs1.get("ern"));
+                    }
+                    if (rs1.containsKey("err")) {
+                        rs0.put("err", rs1.get("err"));
+                    }
+                    if (rs1.containsKey("msg")) {
+                        rs0.put("msg", rs1.get("msg"));
+                    }
                 }
-                if (rs1.containsKey("err")) {
-                    rs0.put("err", rs1.get("err"));
-                }
-                if (rs1.containsKey("msg")) {
-                    rs0.put("msg", rs1.get("msg"));
-                }
+
+                rs0.put(key, rs1);
             }
-
-            rs0.put (key, rs1 );
+        } finally {
+            Core.ACTION_NAME.set(act);
         }
 
-        helper.reply(/**/ rs0 );
+        helper.reply(rs0);
     }
 
     @Action("call")
@@ -89,7 +99,7 @@ public class MoreAction {
         // 许可及IP白名单
         boolean sw  = cnf.getProperty( "core.call.more.enable" , false);
         String  ia  = cnf.getProperty( "core.call.more.allows" );
-        String  ip  = addr( req );
+        String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (ias == null || ias.isEmpty()) {
             ias =  new  HashSet();
@@ -111,16 +121,22 @@ public class MoreAction {
         helper.setSessionData(data(map.get("session")));
         helper.setCookiesData(data(map.get("cookies")));
 
-        String uri = "/"+ map.get("act") + Cnst.ACT_EXT;
+        String act = Core.ACTION_NAME.get();
+        String uri = map.get("act") + Cnst.ACT_EXT;
 
-        call(helper, uri, req, rsp);
+        try {
+            Core.ACTION_NAME.set(uri);
+            call(helper, uri,req,rsp);
+        } finally {
+            Core.ACTION_NAME.set(act);
+        }
     }
 
     private Map call(ActionHelper helper, String uri,
             HttpServletRequest req, HttpServletResponse rsp) {
         helper.reply( new HashMap() );
         try {
-            req.getRequestDispatcher(uri).include(req, rsp);
+            req.getRequestDispatcher("/"+uri).include(req, rsp);
         } catch (ServletException ex) {
             if (ex.getCause( ) instanceof HongsCause) {
                 HongsCause ez = (HongsCause) ex.getCause( );
@@ -158,32 +174,6 @@ public class MoreAction {
             map = ActionHelper.parseQuery(str);
         }
         return map;
-    }
-
-    private String addr(HttpServletRequest req) throws HongsException {
-        /**
-         * 代理会有安全隐患
-         * 故不支持使用代理
-         */
-        String ip;
-        ip = req.getHeader(     "Forwarded"    );
-        if (ip != null && ip.length () != 0) {
-            throw new HongsException(0x1100, "Illegal request!");
-        }
-        ip = req.getHeader(   "X-Forwarded-For");
-        if (ip != null && ip.length () != 0) {
-            throw new HongsException(0x1100, "Illegal request!");
-        }
-        ip = req.getHeader(   "Proxy-Client-IP");
-        if (ip != null && ip.length () != 0) {
-            throw new HongsException(0x1100, "Illegal request!");
-        }
-        ip = req.getHeader("WL-Proxy-Client-IP");
-        if (ip != null && ip.length () != 0) {
-            throw new HongsException(0x1100, "Illegal request!");
-        }
-        ip = req.getRemoteAddr();
-        return ip;
     }
 
 }

@@ -138,7 +138,7 @@ public class MoreAction {
             HttpServletRequest req, HttpServletResponse rsp) {
         helper.reply( new HashMap() );
         try {
-            req.getRequestDispatcher("/"+uri).include(req, rsp);
+            req.getRequestDispatcher("/" + uri).include(req, rsp);
         } catch (ServletException ex) {
             if (ex.getCause( ) instanceof HongsCause) {
                 HongsCause ez = (HongsCause) ex.getCause( );

@@ -36,10 +36,11 @@ public class WXAction {
 
         Map info = getUserInfo(code, appId, appSk);
         String  opnId = (String) info.get("opnid");
+        String  opuId = (String) info.get("opuid");
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "wx", opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "wx", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }
@@ -62,10 +63,11 @@ public class WXAction {
 
         Map info = getUserInfo(code, appId, appSk);
         String  opnId = (String) info.get("opnid");
+        String  opuId = (String) info.get("opuid");
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "wx", opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "wx", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }
@@ -78,6 +80,7 @@ public class WXAction {
         String url;
         String token;
         String opnId;
+        String opuId;
 
         url = "https://api.weixin.qq.com/sns/oauth2/access_token";
         req = new HashMap();
@@ -104,11 +107,12 @@ public class WXAction {
         if (err != 0) {
             throw new HongsException.Common("Get user info error\r\n"+Data.toString(rsp));
         }
-        opnId = Synt.declare(rsp.get("unionid"), opnId);
+        opuId = (String) rsp.get("unionid");
 
         req = new HashMap();
         req.put("appid", "wx" );
         req.put("opnid", opnId);
+        req.put("opuid", opuId);
         req.put("name" , rsp.get("nickname"));
         req.put("head" , rsp.get("headimgurl"));
 

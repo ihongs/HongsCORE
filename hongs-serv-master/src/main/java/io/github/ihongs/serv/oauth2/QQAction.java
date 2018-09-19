@@ -37,10 +37,11 @@ public class QQAction {
 
         Map info = getUserInfo(code, appId, appSk, rurl, false);
         String  opnId = (String) info.get("opnid");
+        String  opuId = (String) info.get("opuid");
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "qq", opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }
@@ -64,10 +65,11 @@ public class QQAction {
 
         Map info = getUserInfo(code, appId, appSk, rurl, true );
         String  opnId = (String) info.get("opnid");
+        String  opuId = (String) info.get("opuid");
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "qq", opnId, name, head, System.currentTimeMillis());
+        AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
         ConnKit.redirect(helper);
     }
@@ -80,6 +82,7 @@ public class QQAction {
         String url;
         String token;
         String opnId;
+        String opuId;
 
         url = inQQ
             ? "https://graph.z.qq.com/moc2/token"
@@ -122,11 +125,12 @@ public class QQAction {
         if (err != 0) {
             throw new HongsException.Common("Get user info error\r\n"+Data.toString(rsp));
         }
-        opnId = Synt.declare(rsp.get("unionid"), opnId);
+        opuId = (String) rsp.get("unionid");
 
         req = new HashMap();
         req.put("appid", "qq" );
         req.put("opnid", opnId);
+        req.put("opuid", opuId);
         req.put("name" , rsp.get("nickname"));
         req.put("head" , rsp.get("figureurl_qq_2"));
 

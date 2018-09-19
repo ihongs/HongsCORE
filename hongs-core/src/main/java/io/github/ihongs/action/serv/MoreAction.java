@@ -55,23 +55,31 @@ public class MoreAction {
             rs0 = new HashMap();
             act = Core.ACTION_NAME.get();
 
+        Wrap wrap = new Wrap( helper );
+        Core core = Core.getInstance();
+        core.put(ActionHelper.class.getName(), wrap);
+
         try {
             for(Map.Entry<String, String> et : acs.entrySet()) {
                 key = et.getKey(  );
                 uri = et.getValue();
-                re1 = new HashMap( re0 );
                 uri = uri + Cnst.ACT_EXT;
-                re1.putAll(data(das.get(key)));
-                Core.ACTION_NAME.set (  uri  );
-                helper.setRequestData(  re1  );
-                helper.setAttribute( Cnst.ACTION_ATTR, null );
-                helper.setAttribute( Cnst.ORIGIN_ATTR, null );
-                rs1 = call(helper, uri, req, rsp);
+                re1 = new HashMap( re0 );
+                re1.putAll( data ( das.get (key) ) );
 
-                // 首个错误作为全局错误
-                if (!Synt.declare(rs1.get("ok"), true)
-                    && !rs0.containsKey("ok" )) {
-                    rs0.put("ok", false);
+                Core.ACTION_NAME.set ( uri );
+                wrap.setRequestData  ( re1 );
+                wrap.setAttribute(Cnst.ACTION_ATTR, null);
+                wrap.setAttribute(Cnst.ORIGIN_ATTR, null);
+                wrap.reply((Map) null );
+                call( wrap, uri , req , rsp);
+                rs1 = wrap.getResponseData();
+                rs0 . put ( key , rs1 );
+
+                if (rs1 != null
+                && !rs0.containsKey("ok")
+                && !Synt.declare(rs1.get("ok"), true)) {
+                    rs0.put("ok" , false);
                     if (rs1.containsKey("ern")) {
                         rs0.put("ern", rs1.get("ern"));
                     }
@@ -82,11 +90,10 @@ public class MoreAction {
                         rs0.put("msg", rs1.get("msg"));
                     }
                 }
-
-                rs0.put(key, rs1);
             }
         } finally {
             Core.ACTION_NAME.set(act);
+            core.put(ActionHelper.class.getName(), helper);
         }
 
         helper.reply(rs0);
@@ -94,7 +101,7 @@ public class MoreAction {
 
     @Action("call")
     public void call(ActionHelper helper) throws HongsException {
-        CoreConfig          cnf = CoreConfig.getInstance( );
+        CoreConfig          cnf = CoreConfig.getInstance();
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
 
@@ -134,9 +141,8 @@ public class MoreAction {
         }
     }
 
-    private Map call(ActionHelper helper, String uri,
+    private void call(ActionHelper helper, String uri,
             HttpServletRequest req, HttpServletResponse rsp) {
-        helper.reply( new HashMap() );
         try {
             req.getRequestDispatcher("/" + uri).include(req, rsp);
         } catch (ServletException ex) {
@@ -145,20 +151,19 @@ public class MoreAction {
                 String msg = ez.getLocalizedMessage();
                 String err = ez.getMessage();
                 String ern = "Ex"+Integer.toHexString(ez.getErrno());
-                helper.fault(ern, err, msg);
+                helper.fault(ern, err, msg );
             } else {
                 String msg = ex.getLocalizedMessage();
                 String err = ex.getMessage();
                 String ern = "Er500";
-                helper.fault(ern, err, msg);
+                helper.fault(ern, err, msg );
             }
         } catch (IOException ex) {
                 String msg = ex.getLocalizedMessage();
                 String err = ex.getMessage();
                 String ern = "Er500";
-                helper.fault(ern, err, msg);
+                helper.fault(ern, err, msg );
         }
-        return  helper.getResponseData();
     }
 
     private Map data(Object obj) {
@@ -176,6 +181,19 @@ public class MoreAction {
             map = ActionHelper.parseQuery(str);
         }
         return map;
+    }
+
+    private static class Wrap extends ActionHelper {
+
+        public Wrap(ActionHelper helper) {
+            super(helper.getRequest(), helper.getResponse());
+        }
+
+        @Override
+        public void responed() {
+            // Nothing to do
+        }
+
     }
 
 }

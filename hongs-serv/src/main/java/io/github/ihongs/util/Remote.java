@@ -374,7 +374,7 @@ public final class Remote {
         try {
             StringEntity enti = new StringEntity(Data.toString(data));
             enti.setContentType("application/json");
-            enti.setContentEncoding ( "UTIF-8" );
+            enti.setContentEncoding("UTF-8");
             return enti;
         }
         catch ( UnsupportedEncodingException ex) {

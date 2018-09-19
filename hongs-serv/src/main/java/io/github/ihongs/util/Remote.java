@@ -371,8 +371,8 @@ public final class Remote {
     public static HttpEntity buildJson(Map<String, Object> data)
             throws HongsException {
         StringEntity enti = new StringEntity(Data.toString(data), "UTF-8");
-        enti.setContentType( "application/json" );
-        enti.setContentEncoding("UTF-8");
+                     enti.setContentType/**/("application/json");
+                     enti.setContentEncoding("UTF-8");
         return enti;
     }
 

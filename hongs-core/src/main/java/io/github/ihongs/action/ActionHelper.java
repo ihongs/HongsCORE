@@ -733,13 +733,20 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * ActionHelper 必须在 ActionDriver,CmdletRunner 初始化后才能用
+   * 获取实例
+   * 必须要在 ActionDriver 等容器初始化后使用,
+   * 否则抛出 UnsupportedOperationException
    * @return
-   * @deprecated
    */
   public static ActionHelper getInstance()
   {
-    throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
+    Core   core = Core.getInstance();
+    String inst = ActionHelper.class.getName();
+    if (core.containsKey(inst)) {
+        return ((ActionHelper) core.got(inst));
+    } else {
+        throw new UnsupportedOperationException("Please use the ActionHelper in the coverage of the ActionDriver or CmdletRunner inside");
+    }
   }
 
   /**
@@ -785,6 +792,7 @@ public class ActionHelper implements Cloneable
    */
   public void reply(Map map)
   {
+    if( map != null ) {
     if(!map.containsKey("ok" )) {
         map.put("ok", true);
     }
@@ -796,6 +804,7 @@ public class ActionHelper implements Cloneable
     }
     if(!map.containsKey("msg")) {
         map.put("msg", "" );
+    }
     }
     this.responseData = map;
   }
@@ -993,7 +1002,8 @@ public class ActionHelper implements Cloneable
             ||  fun.startsWith("parent.")
             ||  fun.startsWith("opener.")
             ||  fun.startsWith("frames.")  ) {
-                if ( ! this.response.isCommitted()) {
+                if (this.response != null
+                && !this.response.isCommitted( )) {
                     this.response.setCharacterEncoding("UTF-8");
                     this.response.setContentType( "text/html" );
                 }
@@ -1005,7 +1015,8 @@ public class ActionHelper implements Cloneable
                 out.append(");");
                 out.append("</script>");
             } else {
-                if ( ! this.response.isCommitted()) {
+                if (this.response != null
+                && !this.response.isCommitted( )) {
                     this.response.setCharacterEncoding("UTF-8");
                     this.response.setContentType( "text/javascript");
                 }
@@ -1016,7 +1027,8 @@ public class ActionHelper implements Cloneable
                 out.append(");");
             }
         } else {
-                if ( ! this.response.isCommitted()) {
+                if (this.response != null
+                && !this.response.isCommitted( )) {
                     this.response.setCharacterEncoding("UTF-8");
                     this.response.setContentType("application/json");
                 }

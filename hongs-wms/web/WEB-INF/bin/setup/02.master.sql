@@ -40,7 +40,7 @@ INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`s
 DROP TABLE IF EXISTS `a_master_dept_role`;
 CREATE TABLE `a_master_dept_role` (
   `dept_id` CHAR(20) NOT NULL,
-  `role` VARCHAR(100) NOT NULL,
+  `role` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`dept_id`,`role`),
   FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`)
 );

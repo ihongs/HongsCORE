@@ -7,9 +7,9 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.Charset;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -36,7 +36,6 @@ import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.entity.mime.content.ContentBody;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.http.protocol.HTTP;
 
 /**
  * 远程请求工具
@@ -371,15 +370,10 @@ public final class Remote {
      */
     public static HttpEntity buildJson(Map<String, Object> data)
             throws HongsException {
-        try {
-            StringEntity enti = new StringEntity(Data.toString(data));
-            enti.setContentType("application/json");
-            enti.setContentEncoding( "utf-8" );
-            return enti;
-        }
-        catch (UnsupportedEncodingException e) {
-            throw new HongsException.Common(e);
-        }
+        StringEntity enti = new StringEntity(Data.toString(data), "UTF-8");
+        enti.setContentType( "application/json" );
+        enti.setContentEncoding("UTF-8");
+        return enti;
     }
 
     /**
@@ -419,7 +413,7 @@ public final class Remote {
             }
         }
         try {
-            return new UrlEncodedFormEntity(pair, HTTP.UTF_8);
+            return new UrlEncodedFormEntity(pair, "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
             throw new HongsException.Common(e);

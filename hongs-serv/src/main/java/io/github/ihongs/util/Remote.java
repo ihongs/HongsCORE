@@ -129,7 +129,7 @@ public final class Remote {
      */
     public static void save(String url, File file)
             throws HongsException {
-        request(METHOD.GET , FORMAT.FORM, url, null, null, file);
+        request( METHOD.GET , FORMAT.FORM, url, null, null, file);
     }
 
     /**

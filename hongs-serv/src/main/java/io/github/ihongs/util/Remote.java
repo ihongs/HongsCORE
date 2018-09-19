@@ -374,11 +374,11 @@ public final class Remote {
         try {
             StringEntity enti = new StringEntity(Data.toString(data));
             enti.setContentType("application/json");
-            enti.setContentEncoding("UTF-8");
+            enti.setContentEncoding( "UTF-8" );
             return enti;
         }
-        catch ( UnsupportedEncodingException ex) {
-            throw new HongsException.Common (ex);
+        catch (UnsupportedEncodingException e) {
+            throw new HongsException.Common(e);
         }
     }
 
@@ -421,8 +421,8 @@ public final class Remote {
         try {
             return new UrlEncodedFormEntity(pair, HTTP.UTF_8);
         }
-        catch ( UnsupportedEncodingException ex) {
-            throw  new HongsException.Common(ex);
+        catch (UnsupportedEncodingException e) {
+            throw new HongsException.Common(e);
         }
     }
 

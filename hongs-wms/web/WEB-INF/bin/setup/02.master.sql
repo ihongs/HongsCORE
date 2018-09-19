@@ -152,18 +152,6 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/update');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/delete');
 
 --
--- 用户关联账户
---
-
-DROP TABLE IF EXISTS `a_master_user_link`;
-CREATE TABLE `a_master_user_link` (
-  `user_id` CHAR(20) NOT NULL,
-  `link_id` CHAR(20) NOT NULL,
-  PRIMARY KEY (`user_id`,`link_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
-);
-
---
 -- 用户登录关联
 --
 

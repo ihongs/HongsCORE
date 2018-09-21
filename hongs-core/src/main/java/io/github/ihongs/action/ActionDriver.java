@@ -161,13 +161,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
             }
 
+            // 默认服务前缀
+            if (System.getProperty("site.url") != null ) {
+                Core.SCHEME_HOST.set(System.getProperty("site.url"));
+            }
+
             // 设置默认语言
             cnf = CoreConfig.getInstance("default");
             Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
-
-            // 默认服务前缀
-            Core.SCHEME_HOST.set(System.getProperty("host.url", "http://localhost:8080"));
         }
 
         // 调用一下可预加载动作类
@@ -177,22 +179,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.GLOBAL_CORE.clear ();
 
         // 设置全局清理的计划任务
-        long time = Long.parseLong(
-             System.getProperty("core.global.cleans.period", "600000"));
+        long time = Synt.declare(System.getProperty("core.gc.time"), 600000);
         if ( time > 0 ) {
-            new Timer ("core.global.cleans", true).schedule(
-            new TimerTask() {
-                @Override
-                public void run() {
-                    if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
-                        CoreLogger.debug( "Global core objects: "
-                                    + Core.GLOBAL_CORE.toString( )
-                        );
-                    }
-
-                    Core.GLOBAL_CORE.clean();
-                }
-            } , time, time);
+            new Timer("core.gc", true )
+            .schedule(new DriverTimer(), time, time);
         }
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
@@ -319,7 +309,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
 
-        if (null==System.getProperty("host.url"))
+        if (null==System.getProperty("site.url"))
         Core.SCHEME_HOST.set(getSchemeHost(req));
         Core.CLIENT_ADDR.set(getClientAddr(req));
 
@@ -429,9 +419,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                  * 这对调试程序非常有帮助
                  */
 
-                CoreConfig cf = CoreConfig.getInstance();
-
-                if (cf.getProperty("core.debug.action.request", false)) {
+                if (Synt.declare(System.getProperty("show.request"), false)) {
                     Map rd  = null;
                     try {
                         rd  = hlpr.getRequestData();
@@ -444,7 +432,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     }
                 }
 
-                if (cf.getProperty("core.debug.action.results", false)) {
+                if (Synt.declare(System.getProperty("show.results"), false)) {
                     Map xd  = hlpr.getResponseData();
                     if (xd == null) {
                         xd  = (Map) req.getAttribute(Cnst.RESPON_ATTR);
@@ -455,7 +443,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     }
                 }
 
-                if (cf.getProperty("core.debug.action.session", false) && ses != null) {
+                if (Synt.declare(System.getProperty("show.session"), false) && ses != null) {
                   Map         map = new HashMap();
                   Enumeration<String> nms = ses.getAttributeNames();
                   while (nms.hasMoreElements()) {
@@ -468,7 +456,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                 }
 
-                if (cf.getProperty("core.debug.action.context", false)) {
+                if (Synt.declare(System.getProperty("show.context"), false)) {
                   Map         map = new HashMap();
                   Enumeration<String> nms = req.getAttributeNames();
                   while (nms.hasMoreElements()) {
@@ -481,7 +469,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                 }
 
-                if (cf.getProperty("core.debug.action.headers", false)) {
+                if (Synt.declare(System.getProperty("show.headers"), false)) {
                   Map         map = new HashMap();
                   Enumeration<String> nms = req.getHeaderNames();
                   while (nms.hasMoreElements()) {
@@ -494,7 +482,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                 }
 
-                if (cf.getProperty("core.debug.action.cookies", false)) {
+                if (Synt.declare(System.getProperty("show.cookies"), false)) {
                   Map         map = new HashMap();
                   Cookie[]    cks = req.getCookies();
                   for (Cookie cke : cks) {
@@ -804,6 +792,22 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             host += ":" + port;
         }
         return prot+"://"+host;
+    }
+
+    /**
+     * 清理计划任务
+     */
+    private static final class DriverTimer extends TimerTask {
+
+        @Override
+        public void run() {
+            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                CoreLogger.debug( "Global core objects: "
+              + Core.GLOBAL_CORE.toString());
+            }
+                Core.GLOBAL_CORE.clean(/**/);
+        }
+
     }
 
     /**

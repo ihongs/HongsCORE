@@ -62,7 +62,7 @@ public class ServerCmdlet {
         File   ppcd = ppid.getParentFile( );
 
         // 检查进程
-        if (ppid.exists() == true ) {
+        if (ppid.exists() != false) {
             System.err.println("ERROR: The server has not exit, or did not exit normally.");
             System.exit(126);
             return;
@@ -79,6 +79,9 @@ public class ServerCmdlet {
         } catch (IOException e) {
             throw new HongsException.Common(e);
         }
+
+        // 域名端口
+        Core.SCHEME_HOST.set( System.getProperty( "site.url", "http://localhost:"+ port ) );
 
         /**
          * 取消名称

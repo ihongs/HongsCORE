@@ -123,7 +123,7 @@ public class Record {
 
     /**
      * 清除过期的数据
-     * @param args 
+     * @param args
      */
     @Cmdlet("clean")
     public static void clean(String[] args) {
@@ -136,14 +136,14 @@ public class Record {
 
     /**
      * 预览存储的数据
-     * @param args 
+     * @param args
      */
     @Cmdlet("check")
     public static void check(String[] args) {
         if (args.length == 0) {
           CmdletHelper.println("Record ID required");
         }
-        CmdletHelper.preview(get(args[0]) );
+          CmdletHelper.preview( get ( args [ 0 ] ) );
     }
 
 }

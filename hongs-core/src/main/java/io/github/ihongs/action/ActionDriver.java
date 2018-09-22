@@ -552,7 +552,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
      */
     protected void doAction(Core core, ActionHelper hlpr)
     throws ServletException, IOException {
-        service(/**/ hlpr.getRequest(), hlpr.getResponse());
+        /**/ service(hlpr.getRequest(), hlpr.getResponse());
     }
 
     //** 静态工具函数 **/

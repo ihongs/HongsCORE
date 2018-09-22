@@ -325,7 +325,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             if (zone == null || zone.length() == 0) {
                    zone = (String) hlpr.getCookibute(sess);
             if (zone == null || zone.length() == 0) {
-                   zone = req.getHeader(/*Cur*/"Timezone");
+                   zone = req.getHeader( /***/ "Timezone");
             }
             }
 

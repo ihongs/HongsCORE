@@ -15,8 +15,6 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.TimeZone;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -181,8 +179,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         // 设置全局清理的计划任务
         long time = Synt.declare(System.getProperty("core.gc.time"), 600000);
         if ( time > 0 ) {
-            new Timer("core.gc", true )
-            .schedule(new DriverTimer(), time, time);
+             new java.util.Timer("core.gc"/**/, true)
+            .schedule( new DriverTimer(), time, time);
         }
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
@@ -797,12 +795,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     /**
      * 清理计划任务
      */
-    private static final class DriverTimer extends TimerTask {
+    private static final class DriverTimer extends java.util.TimerTask {
 
         @Override
         public void run() {
-            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug( "Global core objects: "
+            if ( 0 != Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+                CoreLogger.debug( "CORE global object: "
               + Core.GLOBAL_CORE.toString());
             }
                 Core.GLOBAL_CORE.clean(/**/);

@@ -44,30 +44,39 @@ public class CmdletRunner implements Runnable
   private final String   cmd ;
   private final String[] args;
 
-  public CmdletRunner(String   cmd ,
-                      String[] args)
+  public CmdletRunner(Method   mat ,
+                      String   cwd ,
+                      String[] argz)
   {
-    this.cmd  = cmd  ;
-    this.args = args ;
-    this.met  = getCmdlets()
-              . get  ( cmd );
+    met  = mat ;
+    cmd  = cwd ;
+    args = argz;
+  }
+
+  public CmdletRunner(String   cwd ,
+                      String[] argz)
+  {
+    met  = getCmdlets(  ).get( cwd );
+    cmd  = cwd ;
+    args = argz;
   }
 
   public CmdletRunner(String[] argz)
   {
-    int l = argz.length;
-    if (l == 0) {
-        cmd  = null/**/;
-        args = new String[0];
-    } else
-    if (l == 1) {
-        cmd  = argz [0];
-        args = new String[0];
-    } else {
-        cmd  = argz [0];
-        args = Arrays.copyOfRange(argz, 1, l);
+    int  l = argz.length;
+    switch (l) {
+    case 0 :
+        throw new HongsExemption.Common("Cmdlet name can not be empty.");
+    case 1 :
+        cmd  = argz[0];
+        met  = getCmdlets().get(cmd);
+        args = new String[] { /**/ };
+        break;
+    default:
+        cmd  = argz[0];
+        met  = getCmdlets().get(cmd);
+        args = Arrays.copyOfRange(argz, 1,l);
     }
-        met  = getCmdlets(/*CMD*/).get( cmd );
   }
 
   @Override

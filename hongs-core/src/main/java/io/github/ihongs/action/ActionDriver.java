@@ -184,15 +184,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         long time = Synt.declare(System.getProperty( "core.gc.time" ), 600000 );
         if ( time > 0 ) {
              new Timer("core.gc", true )
-            .schedule( new DriverTimer(), time, time);
+            .schedule (new DriverTimer(), time, time);
         }
 
         // 启动后需立即执行的任务
         String ss = CoreConfig.getInstance("defines").getProperty("start.serv");
-        if (ss != null) for (String st:ss.split(";")) {
-            st = st.trim(  );
-            if ( st.length() == 0 )  {  continue ;  }
-            new CmdletRunner(ss.split("\\s+")).run( );
+        if (ss != null) for (String sn:ss.split(";")) {
+            sn = sn.trim( ); if ( 0 != sn.length( ) )
+            new CmdletRunner(sn.split("\\s+")).run( );
         }
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {

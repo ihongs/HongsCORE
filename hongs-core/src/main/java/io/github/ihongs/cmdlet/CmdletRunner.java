@@ -17,13 +17,11 @@ import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Locale;
 import java.util.TimeZone;
+import java.util.Locale;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 外壳程序启动器
@@ -39,8 +37,56 @@ import java.util.TimeZone;
  *
  * @author Hongs
  */
-public class CmdletRunner
+public class CmdletRunner implements Runnable
 {
+
+  private final Method   met ;
+  private final String   cmd ;
+  private final String[] args;
+
+  public CmdletRunner(String   cmd ,
+                      String[] args)
+  {
+    this.cmd  = cmd  ;
+    this.args = args ;
+    this.met  = getCmdlets()
+              . get  ( cmd );
+  }
+
+  public CmdletRunner(String[] argz)
+  {
+    int l = argz.length;
+    if (l == 0) {
+        cmd  = null/**/;
+        args = new String[0];
+    } else
+    if (l == 1) {
+        cmd  = argz [0];
+        args = new String[0];
+    } else {
+        cmd  = argz [0];
+        args = Arrays.copyOfRange(argz, 1, l);
+    }
+        met  = getCmdlets(/*CMD*/).get( cmd );
+  }
+
+  @Override
+  public void run()
+  {
+    Core.ACTION_NAME.set( cmd );
+    Core.ACTION_TIME.set(System.currentTimeMillis());
+    try {
+        met.invoke(null , new Object[]{args});
+    } catch (   IllegalAccessException ex) {
+        CoreLogger.error("Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
+    } catch ( IllegalArgumentException ex) {
+        CoreLogger.error("Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
+    } catch (InvocationTargetException ex) {
+        CoreLogger.error(ex.getCause());
+    } finally {
+        Core.THREAD_CORE.get().close( );
+    }
+  }
 
   public static void main(String[] args)
     throws IOException, HongsException
@@ -72,12 +118,12 @@ public class CmdletRunner
     }
     catch (   IllegalAccessException ex)
     {
-      CoreLogger.error("Illegal access for method '"+met.getClass().getName()+"."+met.getName()+"(String[]).");
+      CoreLogger.error("Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
       System.exit(3);
     }
     catch ( IllegalArgumentException ex)
     {
-      CoreLogger.error("Illegal params for method '"+met.getClass().getName()+"."+met.getName()+"(String[]).");
+      CoreLogger.error("Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
       System.exit(3);
     }
     catch (InvocationTargetException ex)
@@ -219,13 +265,17 @@ public class CmdletRunner
 
     cnf = CoreConfig.getInstance("default");
 
-    String act = null;
-    if (args.length > 0 )
+    String  act = null ;
+    int l = args.length;
+    if (l > 1)
     {
-      List<String> argz = new ArrayList();
-      argz.addAll(Arrays.asList( args ) );
-      act  = argz.remove( 0 );
-      args = argz.toArray(new String[0] );
+      act  = args[0];
+      args = Arrays.copyOfRange(args, 1, l);
+    } else
+    if (l > 0)
+    {
+      act  = args[0];
+      args = new String [] {};
     }
     Core.ACTION_NAME.set(act);
 

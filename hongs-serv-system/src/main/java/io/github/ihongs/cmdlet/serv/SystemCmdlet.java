@@ -390,15 +390,12 @@ public class SystemCmdlet {
 
     private static void runLet(String[] cs, Logger lg) {
         try {
-            CmdletRunner.main(cs);
+            new CmdletRunner(cs).run();
         }
-        catch (IOException ex) {
+        catch (Exception ex) {
             lg.error(ex);
         }
-        catch (  Exception ex) {
-            lg.error(ex);
-        }
-        catch (  Error/**/ ex) {
+        catch (Error ex) {
             lg.error(ex);
         }
     }

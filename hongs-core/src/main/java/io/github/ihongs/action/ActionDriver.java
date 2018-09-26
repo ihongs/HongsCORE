@@ -187,11 +187,11 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             .schedule(new DriverTimer(), time, time );
         }
 
-        // 清空全局好准备重新开始
-        Core.GLOBAL_CORE.clear ();
-
         // 调用一下可预加载动作类
         ActionRunner.getActions();
+
+        // 清空全局好准备重新开始
+        Core.GLOBAL_CORE.clear ();
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug(new StringBuilder("...")

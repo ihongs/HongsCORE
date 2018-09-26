@@ -169,21 +169,9 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             // 设置默认语言
-            cnf = CoreConfig.getInstance("default");
+              cnf = CoreConfig.getInstance("default");
             Core.ACTION_LANG.set(cnf.getProperty("core.language.default", "zh_CN"));
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
-        }
-
-        // 调用一下可预加载动作类
-        ActionRunner.getActions();
-
-        // 清空全局好准备重新开始
-        Core.GLOBAL_CORE.clear ();
-
-        // 设置全局清理的计划任务
-        long time = Synt.declare(System.getProperty ( "core.gc.time" ), 600000);
-        if ( time > 0 ) { new Timer("core.gc", true )
-            .schedule(new DriverTimer(), time, time );
         }
 
         // 启动后需立即执行的任务
@@ -192,6 +180,18 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             sn = sn.trim( ); if ( 0 != sn.length( ) )
             new CmdletRunner(sn.split("\\s+")).run( );
         }
+
+        // 设置全局清理的计划任务
+        long time = Synt.declare(System.getProperty ( "core.gc.time" ), 600000);
+        if ( time > 0 ) { new Timer("core.gc", true )
+            .schedule(new DriverTimer(), time, time );
+        }
+
+        // 清空全局好准备重新开始
+        Core.GLOBAL_CORE.clear ();
+
+        // 调用一下可预加载动作类
+        ActionRunner.getActions();
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug(new StringBuilder("...")

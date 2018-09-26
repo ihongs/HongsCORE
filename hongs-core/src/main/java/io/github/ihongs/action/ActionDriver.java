@@ -6,6 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
@@ -180,10 +181,18 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
         Core.GLOBAL_CORE.clear ();
 
         // 设置全局清理的计划任务
-        long time = Synt.declare(System.getProperty("core.gc.time"), 600000);
+        long time = Synt.declare(System.getProperty( "core.gc.time" ), 600000 );
         if ( time > 0 ) {
              new Timer("core.gc", true )
             .schedule( new DriverTimer(), time, time);
+        }
+
+        // 启动后需立即执行的任务
+        String ss = CoreConfig.getInstance("defines").getProperty("start.serv");
+        if (ss != null) for (String st:ss.split(";")) {
+            st = st.trim(  );
+            if ( st.length() == 0 )  {  continue ;  }
+            new CmdletRunner(ss.split("\\s+")).run( );
         }
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {

@@ -100,7 +100,10 @@ public class CmdletRunner implements Runnable
   public static void main(String[] args)
     throws IOException, HongsException
   {
-    args = init(args);
+    if (Core.CORE_PATH == null)
+    {
+      args = init(args);
+    }
 
     // 提取动作
     String act = Core.ACTION_NAME.get( );

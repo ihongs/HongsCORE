@@ -44,23 +44,6 @@ public class CmdletRunner implements Runnable
   private final String   cmd ;
   private final String[] args;
 
-  public CmdletRunner(Method   mat ,
-                      String   cwd ,
-                      String[] argz)
-  {
-    met  = mat ;
-    cmd  = cwd ;
-    args = argz;
-  }
-
-  public CmdletRunner(String   cwd ,
-                      String[] argz)
-  {
-    met  = getCmdlets(  ).get( cwd );
-    cmd  = cwd ;
-    args = argz;
-  }
-
   public CmdletRunner(String[] argz)
   {
     int  l = argz.length;
@@ -75,7 +58,7 @@ public class CmdletRunner implements Runnable
     default:
         cmd  = argz[0];
         met  = getCmdlets().get(cmd);
-        args = Arrays.copyOfRange(argz, 1,l);
+        args = Arrays.copyOfRange(argz, 1, l);
     }
   }
 

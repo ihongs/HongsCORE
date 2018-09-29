@@ -49,7 +49,7 @@ public class CmdletRunner implements Runnable
     int  l = argz.length;
     switch (l) {
     case 0 :
-        throw new HongsExemption.Common("Cmdlet name can not be empty.");
+        throw new HongsExemption.Common("Must be more then one args.");
     case 1 :
         cmd  = argz[0];
         met  = getCmdlets().get(cmd);

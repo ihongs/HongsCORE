@@ -80,9 +80,6 @@ public class ServerCmdlet {
             throw new HongsException.Common(e);
         }
 
-        // 域名端口
-        Core.SCHEME_HOST.set( System.getProperty( "site.url", "http://localhost:"+ port ) );
-
         /**
          * 取消名称
          * 日志中将记录各独立的线程名

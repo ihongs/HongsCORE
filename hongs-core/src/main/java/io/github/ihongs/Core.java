@@ -75,6 +75,11 @@ abstract public class Core
   public static String SERVER_ID = "0" ;
 
   /**
+   * WEB基础域名, 注意: 不以斜杠结尾, 协议域名端口
+   */
+  public static String SITE_HREF = null;
+
+  /**
    * WEB基础链接, 注意: 不以斜杠结尾, 默认为空字串
    */
   public static String BASE_HREF = null;
@@ -157,12 +162,6 @@ abstract public class Core
    * 客户地址标识
    */
   public static final InheritableThreadLocal<String> CLIENT_ADDR
-                = new InheritableThreadLocal();
-
-  /**
-   * 服务网址前缀
-   */
-  public static final InheritableThreadLocal<String> SCHEME_HOST
                 = new InheritableThreadLocal();
 
   /**

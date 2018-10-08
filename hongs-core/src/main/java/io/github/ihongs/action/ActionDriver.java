@@ -163,10 +163,15 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
             }
 
-            // 默认服务前缀
+            // 默认域名前缀
             if (System.getProperty("site.url") != null ) {
-                Core.SCHEME_HOST.set(System.getProperty("site.url"));
+                Core.SITE_HREF = System.getProperty("site.url");
             }
+            /*
+            if (System.getProperty("base.uri") != null ) {
+                Core.BASE_HREF = System.getProperty("base.uri");
+            }
+            */
 
             // 设置默认语言
               cnf = CoreConfig.getInstance("default");
@@ -316,10 +321,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
+        Core.CLIENT_ADDR.set(getClientAddr(req)/* Current */);
 
-        if (null==System.getProperty("site.url"))
-        Core.SCHEME_HOST.set(getSchemeHost(req));
-        Core.CLIENT_ADDR.set(getClientAddr(req));
+        // 外部没有指定域名则在首次访问时进行设置(非线程安全)
+        if (Core.SITE_HREF == null || Core.SITE_HREF.length() == 0) {
+            Core.SITE_HREF = getSchemeHost(req);
+        }
 
         CoreConfig conf = core.get(CoreConfig.class);
 

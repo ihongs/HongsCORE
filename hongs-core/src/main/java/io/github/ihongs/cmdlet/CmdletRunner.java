@@ -171,9 +171,10 @@ public class CmdletRunner implements Runnable
   {
     Map<String, Object> opts;
     opts = CmdletHelper.getOpts(args,
-           "debug:i" , "corepath:s" ,
-        "confpath:s" , "datapath:s" ,
-        "basepath:s" , "basehref:s" ,
+           "debug:i" ,
+        "corepath:s" , "confpath:s" ,
+        "datapath:s" , "basepath:s" ,
+        "basehref:s" , "sitehref:s" ,
         "language:s" , "timezone:s"
     );
     args = (String[]) opts.get("");
@@ -191,6 +192,7 @@ public class CmdletRunner implements Runnable
     Core.DATA_PATH = Synt.declare(opts.get("datapath"), Core.CORE_PATH + File.separator + "var");
     Core.BASE_PATH = Synt.declare(opts.get("basepath"), Core.CORE_PATH + File.separator + "web");
     Core.BASE_HREF = Synt.declare(opts.get("basehref"), "");
+    Core.BASE_HREF = Synt.declare(opts.get("sitehref"), "");
 
     // 如果 web 目录不存在, 则视为在 WEB-INF 下
     File bp = new File(Core.BASE_PATH);
@@ -252,8 +254,9 @@ public class CmdletRunner implements Runnable
     }
 
     // 预设服务前缀后动作中无需再获取, 2018/09/07
-    if (System.getProperty("site.url") != null ) {
-        Core.SCHEME_HOST.set(System.getProperty("site.url"));
+    if (! opts.containsKey("sitehref")
+    &&  System.getProperty("site.url") != null ) {
+        Core.SITE_HREF = System.getProperty("site.url");
     }
 
     /** 实例属性配置 **/

@@ -218,7 +218,7 @@ public class Common {
 
         String req = text((String) opts.get("request"));
         String cok = cook((String) opts.get("cookies"));
-        String url = Core.SCHEME_HOST.get()+ Core.BASE_HREF+ "/"+args[0]+ Cnst.ACT_EXT;
+        String url = Core.SITE_HREF + Core.BASE_HREF + "/" + args[0] + Cnst.ACT_EXT;
 
         try {
             HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();

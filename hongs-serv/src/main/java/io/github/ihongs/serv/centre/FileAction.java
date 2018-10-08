@@ -42,7 +42,7 @@ public class FileAction {
             String href = uh . getResultHref(   );
 
             // 组织绝对路径
-            String link = Core.SCHEME_HOST.get() + Core.BASE_HREF + "/" + href;
+            String link = Core.SITE_HREF + Core.BASE_HREF + "/" + href;
 
             list.add(Synt.mapOf(
                 "name", name,

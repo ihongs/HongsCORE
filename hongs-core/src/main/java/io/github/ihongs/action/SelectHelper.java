@@ -135,7 +135,7 @@ public class SelectHelper {
 
     /**
      * 设置文件链接路径
-     * @param path 格式 /service/context/path/
+     * @param path 格式 /service/context/path
      * @return
      */
     public SelectHelper setPath(String path) {
@@ -564,10 +564,10 @@ public class SelectHelper {
 
     private void injectLink(Map info, Set keys) {
         if (_path == null) {
-            _path  = Core.BASE_HREF + ("/");
+            _path  = Core.BASE_HREF;
         }
         if (_host == null) {
-            _host  = Core.SCHEME_HOST.get();
+            _host  = Core.SITE_HREF;
         }
 
         Iterator it = keys.iterator();
@@ -668,7 +668,7 @@ public class SelectHelper {
             return _host + url;
         } else
         {
-            return _host +_path + url;
+            return _host +_path +"/"+ url;
         }
     }
 

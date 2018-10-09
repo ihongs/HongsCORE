@@ -9,14 +9,14 @@ import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.util.Synt;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,10 +34,11 @@ import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
+import org.slf4j.Logger;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
@@ -173,7 +174,7 @@ public class SystemCmdlet {
                 fxs.add (fu);
         }
 
-        Logger lgr = new Logger();
+        Looker lgr = new Looker();
         String act = Core.ACTION_NAME.get();
         long   now = Core.ACTION_TIME.get();
 
@@ -207,7 +208,7 @@ public class SystemCmdlet {
         }
     }
 
-    private static void runCmd(Date dt, File fo, Logger lg) throws HongsException {
+    private static void runCmd(Date dt, File fo, Looker lg) throws HongsException {
         Document doc;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -305,8 +306,7 @@ public class SystemCmdlet {
         }
     }
 
-    private static void runSql(Element e, Date dt, Logger lg)
-            throws HongsException {
+    private static void runSql(Element e, Date dt, Looker lg) {
         String d = Synt.declare(e.getAttribute("db"), "defalut");
         List<String> a = new ArrayList();
 
@@ -342,10 +342,14 @@ public class SystemCmdlet {
             }
         }
 
-        DB.getInstance(d).execute(q, a.toArray());
+        try {
+            DB.getInstance(d).execute( q, a.toArray() );
+        } catch (HongsException ex ) {
+            lg.error(ex);
+        }
     }
 
-    private static void runCmd(Element e, Date dt, Logger lg) {
+    private static void runCmd(Element e, Date dt, Looker lg) {
         boolean system = Synt.declare(e.getAttribute("system"), false);
         List<String> a = new ArrayList();
 
@@ -395,7 +399,7 @@ public class SystemCmdlet {
         }
     }
 
-    private static void runAct(Element e, Date dt, Logger lg) {
+    private static void runAct(Element e, Date dt, Looker lg) {
         boolean server = Synt.declare(e.getAttribute("server"), false);
         List<String> a = new ArrayList();
         if (server) {
@@ -445,7 +449,7 @@ public class SystemCmdlet {
         runLet(a.toArray(new String[0]), lg);
     }
 
-    private static void runCmd(String[] cs, Logger lg) {
+    private static void runCmd(String[] cs, Looker lg) {
         // 命令路径相对当前 bin 目录
         String  c = cs[0];
         if (!(new File(c).isAbsolute())) {
@@ -479,7 +483,7 @@ public class SystemCmdlet {
         }
     }
 
-    private static void runLet(String[] cs, Logger lg) {
+    private static void runLet(String[] cs, Looker lg) {
         try {
             new CmdletRunner(cs).run();
         }
@@ -628,11 +632,11 @@ public class SystemCmdlet {
         }
     }
 
-    private static class Logger {
-        org.slf4j.Logger lgr;
-                  String env;
+    private static class Looker {
+        Logger lgr;
+        String env;
 
-        Logger() {
+        Looker() {
             String spc;
             spc = CoreLogger.space("hongs.out");
             lgr = CoreLogger.getLogger(spc);

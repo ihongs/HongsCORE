@@ -15,4 +15,4 @@ then
   sleep 3
 fi
 
-exec "$APP" server.start --debug 2
+exec "$APP" server.start --DEBUG 2

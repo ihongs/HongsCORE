@@ -26,6 +26,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
@@ -77,6 +80,43 @@ public class SystemCmdlet {
         exec( argz.toArray(new String[0]) );
     }
 
+    @Cmdlet( "crond" )
+    public static void crond(String[] args) throws HongsException {
+        ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
+        Calendar cal = Calendar.getInstance();
+        long now = System.currentTimeMillis();
+
+        cal.setTimeInMillis(now);
+        cal.set(Calendar.MILLISECOND,0);
+
+        // 每分钟执行
+        if (new File(Core.CONF_PATH+"/bin/crond/min.cmd.xml").exists()) {
+            cal.set(Calendar.SECOND, 0);
+            cal.add(Calendar.MINUTE, 1);
+            ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
+                "system", "crond/min.cmd.xml"
+            }), cal.getTimeInMillis() - now + 1, 1000 * 60, TimeUnit.MILLISECONDS);
+        }
+
+        // 每小时执行
+        if (new File(Core.CONF_PATH+"/bin/crond/hur.cmd.xml").exists()) {
+            cal.set(Calendar.MINUTE, 0);
+            cal.add(Calendar.HOUR  , 1);
+            ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
+                "system", "crond/hur.cmd.xml"
+            }), cal.getTimeInMillis() - now + 1, 1000 * 60 * 60, TimeUnit.MILLISECONDS);
+        }
+
+        // 每天都执行
+        if (new File(Core.CONF_PATH+"/bin/crond/day.cmd.xml").exists()) {
+            cal.set(Calendar.HOUR  , 0);
+            cal.add(Calendar.DATE  , 1);
+            ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
+                "system", "crond/day.cmd.xml"
+            }), cal.getTimeInMillis() - now + 1, 1000 * 60 * 60 * 24, TimeUnit.MILLISECONDS);
+        }
+    }
+
     /**
      * 维护命令
      * @param args
@@ -115,12 +155,20 @@ public class SystemCmdlet {
             File[] fus = fu. listFiles();
             for (File fo : fus) {
                 if (! fo.isFile()
-                || fo.getName().startsWith(".")) {
+                || fo.getName().startsWith("." )
+                || fo.getName().startsWith("!")) {
                     continue;
                 }
                 fxs.add (fo);
             }
-            Collections.sort(fxs, new Sorter( ));
+            Collections.sort(fxs, new Comparator<File>() {
+                @Override
+                public int compare ( File f1 , File f2 ) {
+                    String n1 = f1.getName( );
+                    String n2 = f2.getName( );
+                    return n1.compareTo( n2 );
+                }
+            });
         } else {
                 fxs.add (fu);
         }
@@ -141,7 +189,7 @@ public class SystemCmdlet {
 
             try {
                 if ("cmd.xml".equals(ext)) {
-                    SystemCmdlet.runCmd(dt , fo , lgr);
+                    runCmd(dt , fo , lgr);
                 } else
                 if (/**/"sql".equals(ext)) {
                     runSql(dt , fo , ent);
@@ -183,6 +231,9 @@ public class SystemCmdlet {
             Element e = ( Element ) n ;
             String  t = e.getTagName();
 
+            if ("runsql".equals(t)) {
+                runSql( e, dt, lg );
+            } else
             if ("cmdlet".equals(t)) {
                 runCmd( e, dt, lg );
             } else
@@ -254,6 +305,46 @@ public class SystemCmdlet {
         }
     }
 
+    private static void runSql(Element e, Date dt, Logger lg)
+            throws HongsException {
+        String d = Synt.declare(e.getAttribute("db"), "defalut");
+        List<String> a = new ArrayList();
+
+        String c, s, q;
+        NodeList  x;
+        Element   m;
+
+        // 获取命令
+        x = e.getElementsByTagName("sql");
+        if (x.getLength() == 0) {
+            throw new Error( "Wrong sql: " + e );
+        }
+        m = (Element) x.item(0);
+        q = m.getTextContent( );
+
+        // 获取参数
+        x = e.getChildNodes( );
+        for (int j = 0; j < x.getLength(); j ++) {
+            Node u = x.item(j);
+            if ( u.getNodeType() != Node.ELEMENT_NODE ) {
+                continue;
+            }
+
+            m = (Element) u;
+            c = m.getTagName();
+            s = m.getTextContent();
+
+            if ("sql".equals(c)) {
+                continue;
+            }
+            if (s != null) {
+                a.add(repTim(s, dt ) );
+            }
+        }
+
+        DB.getInstance(d).execute(q, a.toArray());
+    }
+
     private static void runCmd(Element e, Date dt, Logger lg) {
         boolean system = Synt.declare(e.getAttribute("system"), false);
         List<String> a = new ArrayList();
@@ -272,7 +363,7 @@ public class SystemCmdlet {
         a.add(s);
 
         // 获取参数
-        x = e.getChildNodes();
+        x = e.getChildNodes( );
         for (int j = 0; j < x.getLength(); j ++) {
             Node u = x.item(j);
             if ( u.getNodeType() != Node.ELEMENT_NODE ) {
@@ -327,7 +418,7 @@ public class SystemCmdlet {
         a.add(s);
 
         // 获取参数
-        x = e.getChildNodes();
+        x = e.getChildNodes( );
         for (int j = 0; j < x.getLength(); j ++) {
             Node u = x.item(j);
             if ( u.getNodeType() != Node.ELEMENT_NODE ) {

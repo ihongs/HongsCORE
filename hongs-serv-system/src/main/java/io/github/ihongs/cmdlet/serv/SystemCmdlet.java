@@ -338,7 +338,7 @@ public class SystemCmdlet {
                 continue;
             }
             if (s != null) {
-                a.add(repTim(s, dt ) );
+                a.add(repTim(s, dt));
             }
         }
 
@@ -385,10 +385,10 @@ public class SystemCmdlet {
                 c = m.getAttribute("opt");
             }
             if (c != null) {
-                a.add("--" + c + "--");
+                a.add("--" + c /**/);
             }
             if (s != null) {
-                a.add(repTim(s, dt ) );
+                a.add(repTim(s, dt));
             }
         }
 
@@ -402,6 +402,7 @@ public class SystemCmdlet {
     private static void runAct(Element e, Date dt, Looker lg) {
         boolean server = Synt.declare(e.getAttribute("server"), false);
         List<String> a = new ArrayList();
+
         if (server) {
             a.add ("common.call-action"); // 在服务端执行
         } else {
@@ -439,10 +440,10 @@ public class SystemCmdlet {
                 c = m.getAttribute("opt");
             }
             if (c != null) {
-                a.add("--" + c /***/ );
+                a.add("--" + c /**/);
             }
             if (s != null) {
-                a.add(repTim(s, dt ) );
+                a.add(repTim(s, dt));
             }
         }
 

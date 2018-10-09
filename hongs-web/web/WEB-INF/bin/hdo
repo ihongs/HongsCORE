@@ -22,4 +22,4 @@ exec "$JAVA_PATH" $JAVA_OPTS\
   -Dlogs.dir="$CORE_PATH/var/log"\
   -Dtmps.dir="$CORE_PATH/var/tmp"\
   io.github.ihongs.cmdlet.CmdletRunner $@\
-  --corepath "$CORE_PATH"
+  --COREPATH "$CORE_PATH"

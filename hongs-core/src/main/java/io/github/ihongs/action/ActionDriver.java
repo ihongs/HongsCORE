@@ -20,6 +20,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -164,14 +166,18 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
 
             // 默认域名前缀
-            if (System.getProperty("site.url") != null ) {
-                Core.SITE_HREF = System.getProperty("site.url");
+            String su = System.getProperty ("serv.url");
+            if (null != su) {
+                Pattern pattern = Pattern.compile( "^[^/]*//[^/]+" );
+                Matcher matcher = pattern.matcher( su );
+                if (matcher.find()) {
+                    Core.BASE_HREF = su.substring(0 + matcher.end());
+                    Core.SITE_HREF = su.substring(0 , matcher.end());
+                } else {
+                    Core.BASE_HREF = su;
+                    Core.SITE_HREF = "";
+                }
             }
-            /*
-            if (System.getProperty("base.uri") != null ) {
-                Core.BASE_HREF = System.getProperty("base.uri");
-            }
-            */
 
             // 设置默认语言
               cnf = CoreConfig.getInstance("default");
@@ -202,11 +208,12 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             CoreLogger.debug(new StringBuilder("...")
                 .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
                 .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
-                .append("\r\n\tBASE_HREF   : ").append(Core.BASE_HREF)
-                .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
                 .append("\r\n\tCORE_PATH   : ").append(Core.CORE_PATH)
                 .append("\r\n\tCONF_PATH   : ").append(Core.CONF_PATH)
                 .append("\r\n\tDATA_PATH   : ").append(Core.DATA_PATH)
+                .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
+                .append("\r\n\tSERV_HREF   : ").append(Core.SITE_HREF)
+                                               .append(Core.BASE_HREF)
                 .toString());
         }
     }
@@ -321,10 +328,10 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
     throws ServletException {
         Core.ACTION_TIME.set(System.currentTimeMillis(/***/));
         Core.ACTION_NAME.set(getOriginPath(req).substring(1));
-        Core.CLIENT_ADDR.set(getClientAddr(req)/* Current */);
+        Core.CLIENT_ADDR.set(getClientAddr(req) /* IP4,6 */ );
 
-        // 外部没有指定域名则在首次访问时进行设置(非线程安全)
-        if (Core.SITE_HREF == null || Core.SITE_HREF.length() == 0) {
+        // 外部没有指定网站域名则在首次请求时进行设置(非线程安全)
+        if (Core.SITE_HREF==null || Core.SITE_HREF.isEmpty()) {
             Core.SITE_HREF = getSchemeHost(req);
         }
 

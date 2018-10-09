@@ -37,5 +37,8 @@
             @bin/serve/root.cookie
         </cookies>
     </action>
+    <runsql db="default">
+        <sql>DELETE xxx WHERE state = 0 AND mtime &lt; '{{yyyy/MM/dd|-1w}}'</sql>
+    </runsql>
     //-->
 </root>

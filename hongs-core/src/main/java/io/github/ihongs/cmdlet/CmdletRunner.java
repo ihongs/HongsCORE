@@ -22,6 +22,8 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 外壳程序启动器
@@ -49,7 +51,7 @@ public class CmdletRunner implements Runnable
     int  l = argz.length;
     switch (l) {
     case 0 :
-        throw new HongsExemption.Common("Must be more then one args.");
+        throw new HongsExemption.Common("Must be more than one args.");
     case 1 :
         cmd  = argz[0];
         met  = getCmdlets().get(cmd);
@@ -83,10 +85,7 @@ public class CmdletRunner implements Runnable
   public static void main(String[] args)
     throws IOException, HongsException
   {
-    if (Core.CORE_PATH == null)
-    {
-      args = init(args);
-    }
+    args = init(args);
 
     // 提取动作
     String act = Core.ACTION_NAME.get( );
@@ -171,11 +170,10 @@ public class CmdletRunner implements Runnable
   {
     Map<String, Object> opts;
     opts = CmdletHelper.getOpts(args,
-           "debug:i" ,
-        "corepath:s" , "confpath:s" ,
-        "datapath:s" , "basepath:s" ,
-        "basehref:s" , "sitehref:s" ,
-        "language:s" , "timezone:s"
+           "DEBUG:i" , "COREPATH:s" ,
+        "CONFPATH:s" , "DATAPATH:s" ,
+        "BASEPATH:s" , "BASEHREF:s" ,
+        "LANGUAGE:s" , "TIMEZONE:s"
     );
     args = (String[]) opts.get("");
 
@@ -185,30 +183,17 @@ public class CmdletRunner implements Runnable
     /** 核心属性配置 **/
 
     Core.ENVIR = 0;
-    Core.DEBUG = Synt.declare(opts.get("debug") , (byte) 0);
-    Core.CORE_PATH = Synt.declare(opts.get("corepath"), System.getProperty("user.dir"));
+    Core.DEBUG = Synt.declare(opts.get("DEBUG") , (byte) 0);
+    Core.CORE_PATH = Synt.declare(opts.get("COREPATH"), System.getProperty("user.dir"));
     Core.CORE_PATH = new File(Core.CORE_PATH).getAbsolutePath();
-    Core.CONF_PATH = Synt.declare(opts.get("confpath"), Core.CORE_PATH + File.separator + "etc");
-    Core.DATA_PATH = Synt.declare(opts.get("datapath"), Core.CORE_PATH + File.separator + "var");
-    Core.BASE_PATH = Synt.declare(opts.get("basepath"), Core.CORE_PATH + File.separator + "web");
-    Core.BASE_HREF = Synt.declare(opts.get("basehref"), "");
-    Core.BASE_HREF = Synt.declare(opts.get("sitehref"), "");
+    Core.CONF_PATH = Synt.declare(opts.get("CONFPATH"), Core.CORE_PATH + File.separator + "etc");
+    Core.DATA_PATH = Synt.declare(opts.get("DATAPATH"), Core.CORE_PATH + File.separator + "var");
+    Core.BASE_PATH = Synt.declare(opts.get("BASEPATH"), Core.CORE_PATH + File.separator + "web");
 
     // 如果 web 目录不存在, 则视为在 WEB-INF 下
     File bp = new File(Core.BASE_PATH);
     if (!bp.exists()) {
-        Core.BASE_PATH = bp.getParentFile ( ).getParent ( );
-    }
-
-    // 项目 url 须以 / 开头, 如有缺失则自动补全
-    if (Core.BASE_HREF.length( ) != 0) {
-        if (Core.BASE_HREF.startsWith("/") == false) {
-            Core.BASE_HREF = "/" + Core.BASE_HREF  ;
-        }
-        if (Core.BASE_HREF.  endsWith("/") == true ) {
-            Core.BASE_HREF = Core.BASE_HREF.substring(0 ,
-                             Core.BASE_HREF.length() -1);
-        }
+       Core.BASE_PATH = bp.getParent();
     }
 
     /** 系统属性配置 **/
@@ -247,16 +232,22 @@ public class CmdletRunner implements Runnable
     }
     }
 
-    // 也可以在系统属性中设置基础路径, 2018/04/14
-    if (! opts.containsKey("basehref")
-    &&  System.getProperty("base.uri") != null ) {
-        Core.BASE_HREF = System.getProperty("base.uri");
-    }
+    /** 提取网址前缀 **/
 
-    // 预设服务前缀后动作中无需再获取, 2018/09/07
-    if (! opts.containsKey("sitehref")
-    &&  System.getProperty("site.url") != null ) {
-        Core.SITE_HREF = System.getProperty("site.url");
+    String su = Synt.defoult((String) opts.get( "BASEHREF" ), System.getProperty("serv.url"));
+    if (null != su) {
+        Pattern pattern = Pattern.compile( "^[^/]*//[^/]+" );
+        Matcher matcher = pattern.matcher( su );
+        if (matcher.find()) {
+            Core.BASE_HREF = su.substring(0 + matcher.end());
+            Core.SITE_HREF = su.substring(0 , matcher.end());
+        } else {
+            Core.BASE_HREF = su;
+            Core.SITE_HREF = "";
+        }
+    } else {
+            Core.BASE_HREF = "";
+            Core.SITE_HREF = "";
     }
 
     /** 实例属性配置 **/
@@ -278,9 +269,9 @@ public class CmdletRunner implements Runnable
     Core.ACTION_NAME.set(act);
 
     String zone = null;
-    if (opts.containsKey("timezone"))
+    if (opts.containsKey("TIMEZONE"))
     {
-      zone = (String)opts.get("timezone");
+      zone = (String) opts.get ("TIMEZONE");
     }
     if (zone == null || zone.length() == 0)
     {
@@ -296,9 +287,9 @@ public class CmdletRunner implements Runnable
     Core.ACTION_ZONE.set(zone);
 
     String lang = null;
-    if (opts.containsKey("language"))
+    if (opts.containsKey("LANGUAGE"))
     {
-      lang = (String)opts.get("language");
+      lang = (String) opts.get ("LANGUAGE");
     }
     if (lang == null || lang.length() == 0)
     {

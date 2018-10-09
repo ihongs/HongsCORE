@@ -11,9 +11,9 @@ ENV LANG en_US.UTF-8
 ENV JAVA_HOME /opt/jdk
 ENV PATH $PATH:$JAVA_HOME/bin
 
-ADD env/apt-sources.list /etc/apt/sources.list
 ADD evn/supervisord.conf /etc/supervisord.conf
-ADD env/sys-crontab.list /var/spool/cron/crontabs/root
+ADD env/apt-sources.list /etc/apt/sources.list
+ADD env/spo-crontab.list /var/spool/cron/crontabs/root
 ADD env/jdk*        /opt/
 ADD target/HongsWMS /opt/
 
@@ -27,6 +27,6 @@ RUN apt-get -y update &&\
     chmod 600    /var/spool/cron/crontabs/root &&\
     chmod 755 -R /opt/HongsWMS/bin &&\
     chmod 777 -R /opt/HongsWMS/var &&\
-    /opt/HongsWMS/bin/app system.setup --debug 13
+    /opt/HongsWMS/bin/hdo system.setup --DEBUG 13
 
 CMD ["/usr/bin/supervisord"]

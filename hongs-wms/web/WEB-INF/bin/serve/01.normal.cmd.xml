@@ -24,21 +24,21 @@
     </cmdlet>
     <action server="no">
         <act>abc/def/xyz</act>
-        <request>
+        <arg opt="request">
             abc=def&xyz=123&time={{%s|-1d}}
-        </request>
-        <context>
-            {abc:"def", xyz:123}
-        </context>
-        <session>
-            {abc:"def", xyz:123}
-        </session>
-        <cookies>
+        </arg>
+        <arg opt="cookies">
             @bin/serve/root.cookie
-        </cookies>
+        </arg>
     </action>
     <runsql db="default">
-        <sql>DELETE xxx WHERE state = 0 AND mtime &lt; '{{yyyy/MM/dd|-1w}}'</sql>
+        <sql>
+        <![CDATA[
+            DELETE xxx WHERE state = ? AND mtime > ?
+        ]]>
+        </sql>
+        <arg>0</arg>
+        <arg>{{%s|-1d}}</arg>
     </runsql>
     //-->
 </root>

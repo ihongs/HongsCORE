@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<root>
+    <cmdlet system="no">
+        <cmd>common.drop-dir</cmd>
+        <arg>{{$DATA_PATH}}</arg>
+    </cmdlet>
+    <cmdlet system="no">
+        <cmd>common.make-dir</cmd>
+        <arg>{{$DATA_PATH}}</arg>
+    </cmdlet>
+</root>

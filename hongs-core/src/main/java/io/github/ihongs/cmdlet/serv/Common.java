@@ -38,6 +38,16 @@ import java.util.Map;
 @Cmdlet("common")
 public class Common {
 
+    @Cmdlet("drop-dir")
+    public static void dropDir(String[] args) {
+        new Dirs(args[0]).rmdirs();
+    }
+
+    @Cmdlet("make-dir")
+    public static void makeDir(String[] args) {
+        new Dirs(args[0]).mkdirs();
+    }
+
     @Cmdlet("make-uid")
     public static void makeUID(String[] args) {
         String sid =  args.length > 0 ? args[0] : Core.SERVER_ID;
@@ -199,8 +209,22 @@ public class Common {
         helper.setSessionData(data( (String) opts.get("session")));
         helper.setCookiesData(data( (String) opts.get("cookies")));
 
-        new ActionRunner(helper , args[0]).doAction( );
-        CmdletHelper.preview(helper.getResponseData());
+        Object  origin = helper . getAttribute( Cnst.ACTION_ATTR );
+        String  target = args [ 0 ];
+        String  action = args [ 0 ];
+        int p = action.indexOf('!');
+        if (p > 0) {
+            target = action.substring(1 + p);
+            action = action.substring(0 , p);
+        }
+
+        try {
+            helper.setAttribute(Cnst.ACTION_ATTR , target);
+            new ActionRunner( helper, action ).doAction( );
+            CmdletHelper.preview(helper.getResponseData());
+        } finally {
+            helper.setAttribute(Cnst.ACTION_ATTR , origin);
+        }
     }
 
     @Cmdlet("call-action")
@@ -332,6 +356,30 @@ public class Common {
         }
 
         return data;
+    }
+
+    private static class Dirs {
+        private final File dir;
+        public Dirs(String dir) {
+            this.dir = new File(dir);
+        }
+        public boolean mkdirs() {
+            return this.dir.mkdirs();
+        }
+        public boolean rmdirs() {
+            if (dir.exists ( )) {
+                delete(dir);
+                return true;
+            }
+            return false;
+        }
+        public void delete(File dir) {
+            if (dir.isDirectory ( )) {
+            for(File   one : dir.listFiles()) {
+                delete(one);
+            }}
+            dir.delete(   );
+        }
     }
 
     private static class PropComparator implements Comparator<String> {

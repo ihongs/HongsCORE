@@ -1,6 +1,7 @@
 package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
@@ -26,10 +27,10 @@ public class DataImport {
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
+        long dt = Core.ACTION_TIME .get(      );
         Data dr = Data.getInstance( conf,form );
-        long dt = System.currentTimeMillis (  );
         VerifyHelper vh = new VerifyHelper (  );
-        vh.addRulesByForm(conf, form);
+             vh . addRulesByForm  ( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }

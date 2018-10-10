@@ -1,4 +1,4 @@
-package io.github.ihongs.dh.search;
+package io.github.ihongs.dh.lucene;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
@@ -7,15 +7,16 @@ import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.util.Synt;
+
 import java.util.List;
 import java.util.Map;
 
 /**
- * 索引命令
+ * Lucene 索引命令
  * @author Hongs
  */
 @Cmdlet()
-public class SearchCmdlet {
+public class LuceneCmdlet {
 
     @Cmdlet("search")
     public void search(String[] args) throws HongsException {
@@ -33,7 +34,7 @@ public class SearchCmdlet {
 
         String conf = Synt.asString(opts.remove("conf"));
         String name = Synt.asString(opts.remove("name"));
-        SearchEntity so = SearchEntity.getInstance(conf, name);
+        LuceneRecord so = LuceneRecord.getInstance(conf, name);
         Map rsp = so.search(opts);
         CmdletHelper.preview(rsp);
     }
@@ -49,7 +50,7 @@ public class SearchCmdlet {
         String conf = Synt.asString(opts.remove("conf"));
         String name = Synt.asString(opts.remove("name"));
         List<String> ds = Synt.asList(opts.remove("id"));
-        SearchEntity so = SearchEntity.getInstance(conf, name);
+        LuceneRecord so = LuceneRecord.getInstance(conf, name);
 
         try {
             so.begin ( );
@@ -78,7 +79,7 @@ public class SearchCmdlet {
         String conf = Synt.asString(opts.remove("conf"));
         String name = Synt.asString(opts.remove("name"));
         List<String> ds = Synt.asList(opts.remove("id"));
-        SearchEntity so = SearchEntity.getInstance(conf, name);
+        LuceneRecord so = LuceneRecord.getInstance(conf, name);
 
         VerifyHelper vh = new VerifyHelper();
         vh.addRulesByForm(conf, name);
@@ -113,7 +114,7 @@ public class SearchCmdlet {
 
         String conf = Synt.asString(opts.remove("conf"));
         String name = Synt.asString(opts.remove("name"));
-        SearchEntity so = SearchEntity.getInstance(conf, name);
+        LuceneRecord so = LuceneRecord.getInstance(conf, name);
 
         VerifyHelper vh = new VerifyHelper();
         vh.addRulesByForm(conf, name);

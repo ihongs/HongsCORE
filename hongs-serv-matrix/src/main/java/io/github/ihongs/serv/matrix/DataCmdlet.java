@@ -13,11 +13,11 @@ import java.util.Map;
  * 数据导入命令
  * @author hong
  */
-@Cmdlet()
-public class DataImport {
+@Cmdlet("matrix/data")
+public class DataCmdlet {
 
-    @Cmdlet("__main__")
-    public static void exec(String[] args) throws HongsException {
+    @Cmdlet("save")
+    public static void save(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",

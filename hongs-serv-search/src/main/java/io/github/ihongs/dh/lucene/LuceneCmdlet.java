@@ -19,7 +19,7 @@ import java.util.Map;
 public class LuceneCmdlet {
 
     @Cmdlet("search")
-    public void search(String[] args) throws HongsException {
+    public static void search(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -40,7 +40,7 @@ public class LuceneCmdlet {
     }
 
     @Cmdlet("delete")
-    public void delete(String[] args) throws HongsException {
+    public static void delete(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -69,7 +69,7 @@ public class LuceneCmdlet {
     }
 
     @Cmdlet("update")
-    public void update(String[] args) throws HongsException {
+    public static void update(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
@@ -106,7 +106,7 @@ public class LuceneCmdlet {
     }
 
     @Cmdlet("create")
-    public void create(String[] args) throws HongsException {
+    public static void create(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s"

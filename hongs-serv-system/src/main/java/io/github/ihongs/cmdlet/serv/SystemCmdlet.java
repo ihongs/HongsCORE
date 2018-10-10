@@ -156,20 +156,13 @@ public class SystemCmdlet {
             File[] fus = fu. listFiles();
             for (File fo : fus) {
                 if (! fo.isFile()
-                || fo.getName().startsWith("." )
+                || fo.getName().startsWith(".")
                 || fo.getName().startsWith("!")) {
                     continue;
                 }
                 fxs.add (fo);
             }
-            Collections.sort(fxs, new Comparator<File>() {
-                @Override
-                public int compare ( File f1 , File f2 ) {
-                    String n1 = f1.getName( );
-                    String n2 = f2.getName( );
-                    return n1.compareTo( n2 );
-                }
-            });
+            Collections.sort(fxs, new Sorter());
         } else {
                 fxs.add (fu);
         }

@@ -19,8 +19,9 @@ import net.coobird.thumbnailator.geometry.Positions;
  * 增加背景颜色设置, 规避 png 转 jpg 后透明部分成黑色,
  * 增加贴图方位设置, 截取等操作后可指定源图停靠的方位,
  * 类似 Thumbnails.Builder 的 sourceRegion 方法.
+ * 这里的 make, size, pick, keep 均会创建新图片,
  * 需注意 made 仅仅是 Thumbnails.of(src) 的别名,
- * 而其他 make, size, pick, keep 均会创建新的图.
+ * 另注意 made, make 并未设定尺寸, 需自行 scale.
  *
  * @author Hongs
  */
@@ -174,7 +175,7 @@ public class Thumb {
         if (f) {
             return  bud.forceSize  (w,h);
         } else {
-            return  bud;
+            return  bud.scale(1);
         }
     }
 
@@ -209,7 +210,7 @@ public class Thumb {
         if (f) {
             return  bud.forceSize  (w,h);
         } else {
-            return  bud;
+            return  bud.scale(1);
         }
     }
 

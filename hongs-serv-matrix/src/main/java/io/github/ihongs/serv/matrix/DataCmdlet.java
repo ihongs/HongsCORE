@@ -147,14 +147,9 @@ public class DataCmdlet {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
-        String user = (String) opts.get("user");
-        long dt = Core.ACTION_TIME .get(      );
         Data dr = Data.getInstance( conf,form );
         VerifyHelper vh = new VerifyHelper (  );
              vh . addRulesByForm  ( conf,form );
-        if (user == null) {
-            user  = Cnst.ADM_UID;
-        }
 
         String[] dats = (String[]) opts.get("");
         if (dats.length < 1) {

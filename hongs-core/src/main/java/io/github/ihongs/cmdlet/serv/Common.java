@@ -203,27 +203,39 @@ public class Common {
             return;
         }
 
-        ActionHelper helper = Core.getInstance(ActionHelper.class);
-        helper.setRequestData(data( (String) opts.get("request")));
-        helper.setContextData(data( (String) opts.get("context")));
-        helper.setSessionData(data( (String) opts.get("session")));
-        helper.setCookiesData(data( (String) opts.get("cookies")));
+        ActionHelper helper = new ActionHelper(
+            data((String) opts.get("request")),
+            data((String) opts.get("context")),
+            data((String) opts.get("session")),
+            data((String) opts.get("cookies"))
+        );
 
-        Object  origin = helper . getAttribute( Cnst.ACTION_ATTR );
         String  target = args [ 0 ];
         String  action = args [ 0 ];
         int p = action.indexOf('!');
         if (p > 0) {
-            target = action.substring(1 + p);
-            action = action.substring(0 , p);
-        }
+            target = action.substring( 1 + p );
+            action = action.substring( 0 , p );
+        if (ActionRunner.getActions().containsKey(target)) {
+            action = target;
+        }}
+
+        // 放入全局以便跨层读取
+        String cn = ActionHelper.class.getName( );
+        Core   co = Core.getInstance();
+        Object ah = co.got(cn);
+        co.put ( cn , helper );
 
         try {
             helper.setAttribute(Cnst.ACTION_ATTR , target);
             new ActionRunner( helper, action ).doAction( );
             CmdletHelper.preview(helper.getResponseData());
         } finally {
-            helper.setAttribute(Cnst.ACTION_ATTR , origin);
+            if (ah  !=  null ) {
+                co.put(cn, ah);
+            } else {
+                co.remove( cn);
+            }
         }
     }
 

@@ -75,6 +75,12 @@ public class SystemCmdlet {
         List<String> argz = Synt.listOf((Object[]) args);
                      argz.add( 0, "serve" );
         exec( argz.toArray(new String[0]) );
+
+        /**
+         * 完成立即退出
+         * 规避中间有启动服务导致结束后卡住
+         */
+        System.exit(0);
     }
 
     /**
@@ -87,6 +93,12 @@ public class SystemCmdlet {
         List<String> argz = Synt.listOf((Object[]) args);
                      argz.add( 0, "setup" );
         exec( argz.toArray(new String[0]) );
+
+        /**
+         * 完成立即退出
+         * 规避中间有启动服务导致结束后卡住
+         */
+        System.exit(0);
     }
 
     @Cmdlet( "crond" )
@@ -213,8 +225,8 @@ public class SystemCmdlet {
         Document doc;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
-            DocumentBuilder dbn = dbf.newDocumentBuilder();
-            doc = dbn.parse(fo);
+            DocumentBuilder  dbn = dbf.newDocumentBuilder();
+            doc = dbn.parse( fo );
         } catch (ParserConfigurationException ex) {
             throw new HongsException.Common(ex);
         } catch (SAXException ex) {
@@ -223,8 +235,9 @@ public class SystemCmdlet {
             throw new HongsException.Common(ex);
         }
 
-        NodeList l = doc.getChildNodes ();
-        for (int i = 0; i < l.getLength(); i ++) {
+        NodeList l = doc.getDocumentElement()
+                        .getChildNodes ();
+        for (int i = 0; i < l.getLength(); i ++ ) {
             Node n = l.item(i);
             if ( n.getNodeType() != Node.ELEMENT_NODE ) {
                 continue;
@@ -338,7 +351,7 @@ public class SystemCmdlet {
             if ("sql".equals(c)) {
                 continue;
             }
-            if (s != null) {
+            if (s != null && s.length() > 0) {
                 a.add(repTim(s, dt));
             }
         }
@@ -385,10 +398,10 @@ public class SystemCmdlet {
             if ("arg".equals(c)) {
                 c = m.getAttribute("opt");
             }
-            if (c != null) {
+            if (c != null && c.length() > 0) {
                 a.add("--" + c /**/);
             }
-            if (s != null) {
+            if (s != null && s.length() > 0) {
                 a.add(repTim(s, dt));
             }
         }
@@ -440,10 +453,10 @@ public class SystemCmdlet {
             if ("arg".equals(c)) {
                 c = m.getAttribute("opt");
             }
-            if (c != null) {
+            if (c != null && c.length() > 0) {
                 a.add("--" + c /**/);
             }
-            if (s != null) {
+            if (s != null && s.length() > 0) {
                 a.add(repTim(s, dt));
             }
         }

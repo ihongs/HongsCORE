@@ -36,14 +36,14 @@ public class CommitInvoker implements FilterInvoker {
                 chains.doAction();
 
                 // 提交
-                for(Object o : core.values()) {
+                for(Object o : core.values().toArray()) {
                     if (o instanceof ITrnsct) {
                         ((ITrnsct) o).commit();
                     }
                 }
             } catch (Throwable ex) {
                 // 回滚
-                for(Object o : core.values()) {
+                for(Object o : core.values().toArray()) {
                     if (o instanceof ITrnsct) {
                         ((ITrnsct) o).revert();
                     }

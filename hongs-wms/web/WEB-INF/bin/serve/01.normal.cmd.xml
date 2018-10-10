@@ -25,7 +25,7 @@
     <action server="no">
         <act>abc/def/xyz</act>
         <arg opt="request">
-            abc=def&xyz=123&time={{%s|-1d}}
+            abc=def&xyz=123&time={{t|-1d}}
         </arg>
         <arg opt="cookies">
             @bin/serve/root.cookie
@@ -38,7 +38,7 @@
         ]]>
         </sql>
         <arg>0</arg>
-        <arg>{{%s|-1d}}</arg>
+        <arg>{{t|-1d}}</arg>
     </runsql>
     //-->
 </root>

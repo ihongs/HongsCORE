@@ -57,6 +57,14 @@ public class SystemCmdlet {
     private static final Pattern timFmtPatt = Pattern.compile("([\\-\\+])(\\d+Y)?(\\d+M)?(\\d+w)?(\\d+d)?(\\d+h)?(\\d+m)?(\\d+s)?$");
     private static final Pattern tinFmtPatt = Pattern.compile("^((\\d{2,4}/\\d{1,2}/\\d{1,2}T\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{2,4}/\\d{1,2}/\\d{1,2})|(\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{1,2}:\\d{1,2}))$");
 
+    private static final Map<String, String> CORE_PATH_REPS = Synt.mapOf(
+        "SERVER_ID", Core.SERVER_ID,
+        "BASE_PATH", Core.BASE_PATH,
+        "CORE_PATH", Core.CORE_PATH,
+        "CONF_PATH", Core.CONF_PATH,
+        "DATA_PATH", Core.DATA_PATH
+    );
+
     /**
      * 维护命令
      * @param args
@@ -506,10 +514,16 @@ public class SystemCmdlet {
 
             // 时间格式
             mxp = mxt.group(1);
-            if ("%S".equals(mxp)) {
-                mxp = String.valueOf(dst.getTime());
+            if (mxp.startsWith("$")) {
+                mxp = CORE_PATH_REPS.get (mxp.substring(1));
             } else
-            if ("%s".equals(mxp)) {
+            if (mxp.startsWith("%")) {
+                mxp = System.getProperty (mxp.substring(1));
+            } else
+            if ("T".equals(mxp)) {
+                mxp = String.valueOf(dst.getTime( ) /***/ );
+            } else
+            if ("t".equals(mxp)) {
                 mxp = String.valueOf(dst.getTime( ) / 1000);
             } else
             {

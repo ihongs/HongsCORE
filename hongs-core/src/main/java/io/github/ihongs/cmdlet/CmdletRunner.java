@@ -210,9 +210,10 @@ public class CmdletRunner implements Runnable
            "DEBUG:i" , "COREPATH:s" ,
         "CONFPATH:s" , "DATAPATH:s" ,
         "BASEPATH:s" , "BASEHREF:s" ,
-        "LANGUAGE:s" , "TIMEZONE:s"
+        "LANGUAGE:s" , "TIMEZONE:s" ,
+        "!U", "!A"
     );
-    args = (String[]) opts.get("");
+    args = ( String[] ) opts.get("");
 
     Core.THREAD_CORE.set(Core.GLOBAL_CORE);
     Core.ACTION_TIME.set(Core.STARTS_TIME);

@@ -170,11 +170,7 @@ public class SearchEntity extends LuceneRecord {
             synchronized (iw) {
                 // 此处才会是真的更新文档
                 for (SearchTrnsct st : WRITES) {
-                    switch (st.type) {
-                        case ADD: iw.   addDocument (         st.doc); break;
-                        case SET: iw.updateDocument (st.term, st.doc); break;
-                        case DEL: iw.deleteDocuments(st.term        ); break;
-                    }
+                st.update(iw);
                 }
                 iw.commit(  );
             }
@@ -234,16 +230,23 @@ public class SearchEntity extends LuceneRecord {
 
     private static class SearchTrnsct {
 
-        public enum  TYPE {ADD,SET,DEL};
-
-        public final TYPE     type;
-        public final Term     term;
-        public final Document doc ;
+        public  enum  TYPE     {ADD, SET, DEL};
+        private final TYPE     type;
+        private final Term     term;
+        private final Document docu;
 
         public SearchTrnsct(TYPE type, Term term, Document dm) {
             this.type = type;
             this.term = term;
-            this.doc  = dm  ;
+            this.docu = dm  ;
+        }
+
+        public void update (IndexWriter iw) throws IOException {
+            switch( type ) {
+                case ADD: iw.   addDocument (      docu); break;
+                case SET: iw.updateDocument (term, docu); break;
+                case DEL: iw.deleteDocuments(term      ); break;
+            }
         }
     }
 

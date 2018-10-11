@@ -75,12 +75,6 @@ public class SystemCmdlet {
         List<String> argz = Synt.listOf((Object[]) args);
                      argz.add( 0, "serve" );
         exec( argz.toArray(new String[0]) );
-
-        /**
-         * 完成立即退出
-         * 规避中间有启动服务导致结束后卡住
-         */
-        System.exit(0);
     }
 
     /**
@@ -93,12 +87,6 @@ public class SystemCmdlet {
         List<String> argz = Synt.listOf((Object[]) args);
                      argz.add( 0, "setup" );
         exec( argz.toArray(new String[0]) );
-
-        /**
-         * 完成立即退出
-         * 规避中间有启动服务导致结束后卡住
-         */
-        System.exit(0);
     }
 
     /**
@@ -463,7 +451,7 @@ public class SystemCmdlet {
 
     private static void runLet(String[] cs, Looker lg) {
         try {
-            new CmdletRunner(cs).run();
+            CmdletRunner.exec(cs);
         }
         catch (Exception ex) {
             lg.error(ex);

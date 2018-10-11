@@ -143,8 +143,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             m.put("SERVER_ID", Core.SERVER_ID);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
-            path  = Tool.inject(  path  , m  );
-            if ( ! new File(path).isAbsolute())
+            path  = Tool.inject(path, m);
+            if (! new File(path).isAbsolute())
             path  = Core.DATA_PATH + "/lucene/" + path;
 
             LuceneRecord inst = new LuceneRecord (fxrm,path,name);

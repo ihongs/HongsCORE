@@ -109,27 +109,27 @@ public class CmdletRunner implements Runnable
     int c = 0;
     try
     {
-      exec( init( args ) );
+      exec(init(args) );
     }
-    catch ( HongsError es)
+    catch (Throwable e)
     {
-      CoreLogger.error(es);
-      switch (es.getErrno())
+      if ( Core.DEBUG  !=  0)
       {
-        case 0x42: c = 2; break;
-        case 0x43: c = 3; break;
-        default  : c = 4; break;
+        CoreLogger.error  (e);
       }
-    }
-    catch ( Exception  ex)
-    {
-      CoreLogger.error(ex);
-      c = 4;
-    }
-    catch ( Error      er)
-    {
-      CoreLogger.error(er);
-      c = 5;
+      else
+      {
+        System.err.println(e.getLocalizedMessage());
+      }
+      if (e instanceof HongsError)
+      {
+        switch (  (  ( HongsError) e  ).getErrno())
+        {
+          case 0x42: c = 2; break;
+          case 0x43: c = 3; break;
+          default  : c = 4; break;
+        }
+      }
     }
     finally
     {
@@ -200,7 +200,7 @@ public class CmdletRunner implements Runnable
    * 命令启动初始化
    * @param args
    * @return
-   * @throws IOException 
+   * @throws IOException
    */
   public static String[] init(String[] args)
     throws IOException

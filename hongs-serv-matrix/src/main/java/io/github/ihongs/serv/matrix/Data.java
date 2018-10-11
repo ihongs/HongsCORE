@@ -28,35 +28,18 @@ import java.util.Set;
  */
 public class Data extends SearchEntity {
 
-    protected final String comf;
     protected final String conf;
     protected final String form;
 
     /**
      * 数据实例基础构造方法
      * @param conf 当前配置文件
-     * @param form 表单配置名称
-     * @param comf 基础配置文件
-     * @param path 数据存放路径
-     * @param name 数据标识名称
+     * @param form 当前表单名称
      */
-    protected Data(String conf, String form, String comf, String path, String name) {
-        super(null, path, name);
-        this.comf = comf;
+    protected Data(String conf, String form) {
+        super(null, null, null);
         this.conf = conf;
         this.form = form;
-    }
-
-    /**
-     * 数据实例快捷构造方法
-     * @param conf 当前配置文件
-     * @param form 表单配置名称
-     */
-    public Data(String conf, String form) {
-        this( conf  ,  form
-            , conf.replaceFirst("^(centre)/", "centra/")
-            , conf.replaceFirst("^(centre|centra)/", "")
-            , conf+"."+form );
     }
 
     /**
@@ -91,10 +74,8 @@ public class Data extends SearchEntity {
         try {
             return super.getFields();
         } catch (NullPointerException ex) {
-            // Nothing todo
+            // Nothing to do
         }
-
-        Map fields, fieldx;
 
         /**
          * 字段以 centra/data 的字段为基础
@@ -103,38 +84,71 @@ public class Data extends SearchEntity {
          * 配置文件不得放在资源包里面
          * 此处会校验表单文件是否存在
          */
+
+        Map fields;
         try {
-            if (! new File(
-                Core.CONF_PATH + "/"+ conf + Cnst.FORM_EXT +".xml"
-            ).exists()) {
+            fields = FormSet.getInstance(conf).getForm(form);
+        } catch (HongsException ex) {
+            if (ex.getErrno() == 0x10e8
+            ||  ex.getErrno() == 0x10ea) {
                 throw new HongsExemption(0x1104, "Data form conf '" + conf + "' is not exists")
                     .setLocalizedOptions(conf);
+            } else {
+                throw ex.toExemption();
             }
+        }
 
-            fields = FormSet.getInstance(conf).getForm(form);
+        String comf;
+        if (conf.startsWith("centre/")) {
+            comf = "centra/" + conf.substring(7);
+        } else {
+            setFields(fields);
+            return    fields ;
+        }
 
-        if (! comf.equals(conf)) {
-            if (! new File(
-                Core.CONF_PATH + "/"+ comf + Cnst.FORM_EXT +".xml"
-            ).exists()) {
-                throw new HongsExemption(0x1104, "Data form conf '" + comf + "' is not exists")
-                    .setLocalizedOptions(comf);
-            }
-
+        Map fieldx;
+        try {
             fieldx = FormSet.getInstance(comf).getForm(form);
 
             // 补充上额外的字段设置
             fieldx = new LinkedHashMap(fieldx);
             fieldx.putAll( fields );
             fields = fieldx;
-        }
         } catch (HongsException ex) {
-            throw ex.toExemption( );
+            if (ex.getErrno() == 0x10e8
+            ||  ex.getErrno() == 0x10ea) {
+//              throw new HongsExemption(0x1104, "Data form conf '" + conf + "' is not exists")
+//                  .setLocalizedOptions(conf);
+            } else {
+                throw ex.toExemption();
+            }
         }
 
         setFields(fields);
+        return    fields ;
+    }
 
-        return fields;
+    @Override
+    public String getDbPath() {
+        String path = conf.replaceFirst("^(centre|centra)/", "") +"/"+ form ;
+        path = Synt.declare(getParams().get("db-path"),path);
+
+        // 进一步处理路径
+        Map m = new HashMap();
+        m.put("SERVER_ID", Core.SERVER_ID);
+        m.put("CORE_PATH", Core.CORE_PATH);
+        m.put("DATA_PATH", Core.DATA_PATH);
+        path = Tool.inject(path, m);
+        if ( ! new File(path).isAbsolute())
+        path = Core.DATA_PATH + "/lucene/" + path;
+
+        return path;
+    }
+
+    @Override
+    public String getDbName() {
+        String name = conf.replaceFirst("^(centre|centra)/", "") +"/"+ form ;
+        return Synt.declare(getParams().get("db-name"),name);
     }
 
     public String getFormId() {
@@ -489,7 +503,7 @@ public class Data extends SearchEntity {
      * @param id
      * @param on
      * @return 有回调为 1, 无回调为 0
-     * @throws HongsException 
+     * @throws HongsException
      */
     public int call(long xtime, String id, String on) throws HongsException {
         String url = (String) getParams().get("callback");

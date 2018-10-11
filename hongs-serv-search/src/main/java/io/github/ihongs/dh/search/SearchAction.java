@@ -7,9 +7,10 @@ import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Select;
+import io.github.ihongs.dh.IActing;
+import io.github.ihongs.dh.IAction;
 import io.github.ihongs.dh.IEntity;
-import io.github.ihongs.dh.lucene.LuceneAction;
-import io.github.ihongs.dh.lucene.LuceneRecord;
+import io.github.ihongs.dh.ModelGate;
 import io.github.ihongs.util.Synt;
 
 import java.util.ArrayList;
@@ -22,7 +23,7 @@ import java.util.Set;
  * @author Hongs
  */
 @Action()
-public class SearchAction extends LuceneAction {
+public class SearchAction extends ModelGate implements IAction, IActing {
 
     protected Set<String> sub = Synt.setOf("counts", "statis");
 
@@ -85,7 +86,7 @@ public class SearchAction extends LuceneAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
 
-        LuceneRecord sr = (LuceneRecord) getEntity(helper);
+        SearchEntity sr = (SearchEntity) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
             rd = getReqMap(helper, sr, "counts", rd);
@@ -107,7 +108,7 @@ public class SearchAction extends LuceneAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
 
-        LuceneRecord sr = (LuceneRecord) getEntity(helper);
+        SearchEntity sr = (SearchEntity) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
             rd = getReqMap(helper, sr, "statis", rd);

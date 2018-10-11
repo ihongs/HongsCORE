@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.util.Synt;
@@ -34,8 +33,6 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get(      );
         Data dr = Data.getInstance( conf,form );
-        VerifyHelper vh = new VerifyHelper (  );
-             vh . addRulesByForm  ( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }
@@ -44,7 +41,6 @@ public class DataCmdlet {
         for(String text : dats) {
             String id ;
             Map  data = data(text);
-            data = vh.verify(data);
             id = (String) data.get(Cnst.ID_KEY);
             data.put("form_id", form);
             data.put("user_id", user);
@@ -69,21 +65,18 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get(      );
         Data dr = Data.getInstance( conf,form );
-        VerifyHelper vh = new VerifyHelper (  );
-             vh . addRulesByForm  ( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }
 
         String[] dats = (String[]) opts.get("");
         if (dats.length < 2) {
-            CmdletHelper.println("Need FIND DATA");
+            CmdletHelper.println("Need FIND DATA.");
             return;
         }
 
         Map rd = data(dats[0]);
         Map sd = data(dats[1]);
-            sd = vh.verify(sd);
         sd.put("form_id",form);
         sd.put("user_id",user);
         sd.put("memo"   ,memo);
@@ -111,8 +104,6 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get(      );
         Data dr = Data.getInstance( conf,form );
-        VerifyHelper vh = new VerifyHelper (  );
-             vh . addRulesByForm  ( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }
@@ -125,7 +116,6 @@ public class DataCmdlet {
 
         Map rd = data(dats[0]);
         Map sd = new HashMap();
-        //  sd = vh.verify(sd);
         sd.put("form_id",form);
         sd.put("user_id",user);
         sd.put("memo"   ,memo);
@@ -148,8 +138,6 @@ public class DataCmdlet {
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
         Data dr = Data.getInstance( conf,form );
-        VerifyHelper vh = new VerifyHelper (  );
-             vh . addRulesByForm  ( conf,form );
 
         String[] dats = (String[]) opts.get("");
         if (dats.length < 1) {

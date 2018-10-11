@@ -109,20 +109,20 @@ public class Data extends SearchEntity {
         Map fieldx;
         try {
             fieldx = FormSet.getInstance(comf).getForm(form);
+
+            // 补充上额外的字段设置
+            fieldx = new LinkedHashMap(fieldx);
+            fieldx.putAll( fields );
+            fields = fieldx;
         } catch (HongsException ex) {
             if (ex.getErrno() == 0x10e8
             ||  ex.getErrno() == 0x10ea) {
-                throw new HongsExemption(0x1104, "Data form conf '" + comf + "' is not exists")
-                    .setLocalizedOptions(conf);
+//              throw new HongsExemption(0x1104, "Data form conf '" + comf + "' is not exists")
+//                  .setLocalizedOptions(conf);
             } else {
                 throw ex.toExemption();
             }
         }
-
-        // 补充上额外的字段设置
-        fieldx  = new LinkedHashMap(fieldx);
-        fieldx.putAll(fields);
-        fields  = fieldx ;
 
         setFields(fields);
         return    fields ;

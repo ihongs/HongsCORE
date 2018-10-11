@@ -24,6 +24,7 @@ public class DataCmdlet {
             "form=s",
             "user:s",
             "memo:s",
+            "!A",
             "?Usage: import --conf CONF_NAME --form FORM_NAME DATA DATA ..."
         });
 
@@ -56,6 +57,7 @@ public class DataCmdlet {
             "form=s",
             "user:s",
             "memo:s",
+            "!A",
             "?Usage: update --conf CONF_NAME --form FORM_NAME FIND DATA"
         });
 
@@ -95,6 +97,7 @@ public class DataCmdlet {
             "form=s",
             "user:s",
             "memo:s",
+            "!A",
             "?Usage: delete --conf CONF_NAME --form FORM_NAME FIND_TERM"
         });
 
@@ -132,6 +135,7 @@ public class DataCmdlet {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
+            "!A",
             "?Usage: search --conf CONF_NAME --form FORM_NAME FIND_TERM"
         });
 

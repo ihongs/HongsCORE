@@ -3,7 +3,6 @@ package io.github.ihongs.dh.lucene;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.util.Synt;
@@ -73,7 +72,8 @@ public class LuceneCmdlet {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
             "conf=s",
             "form=s",
-            "id*s"
+            "id*s",
+            "!A"
         }); args = (String[]) opts.get("");
 
         String conf = Synt.asString(opts.remove("conf"));
@@ -81,13 +81,7 @@ public class LuceneCmdlet {
         List<String> ds = Synt.asList(opts.remove("id"));
         LuceneRecord so = LuceneRecord.getInstance(conf, name);
 
-        VerifyHelper vh = new VerifyHelper();
-        vh.addRulesByForm(conf, name);
-        vh.isPrompt(true);
-        vh.isUpdate(true);
-
         Map rd = data(args[0]);
-            rd = vh.verify(rd);
 
         try {
             so.begin ( );
@@ -109,16 +103,13 @@ public class LuceneCmdlet {
     public static void create(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[ ] {
             "conf=s",
-            "form=s"
+            "form=s",
+            "!A"
         }); args = (String[]) opts.get("");
 
         String conf = Synt.asString(opts.remove("conf"));
         String name = Synt.asString(opts.remove("name"));
         LuceneRecord so = LuceneRecord.getInstance(conf, name);
-
-        VerifyHelper vh = new VerifyHelper();
-        vh.addRulesByForm(conf, name);
-        vh.isPrompt(true);
 
         String id;
         Map    rd;
@@ -126,8 +117,7 @@ public class LuceneCmdlet {
         try {
             so.begin ( );
             for (String rt : args) {
-                rd =    data  (rt);
-                rd = vh.verify(rd);
+                rd = data(rt);
                 id = (String)  rd.get(Cnst.ID_KEY);
                 if (id != null && id.length() > 0) {
                     so.set(id, rd);

@@ -194,7 +194,7 @@ public class Common {
     public static void execAction(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts(args ,
-            "request:s", "context:s", "session:s", "cookies:s"
+            "request:s", "context:s", "session:s", "cookies:s", "!A"
         );
         args = (String[ ]) opts.get( "" );
 
@@ -243,7 +243,7 @@ public class Common {
     public static void callAction(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts(args ,
-            "request:s", "cookies:s", "port:i"
+            "request:s", "cookies:s", "!A"
         );
         args = (String[ ]) opts.get( "" );
 

@@ -6,8 +6,6 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsError;
-import io.github.ihongs.HongsException;
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
@@ -43,31 +41,49 @@ public class CmdletRunner implements Runnable
 {
 
   private final Method   met ;
-  private final String   cmd ;
+  private final String   act ;
   private final String[] args;
 
-  public CmdletRunner(String[] argz)
+  public CmdletRunner(String[] args)
   {
-    int  l = argz.length;
-    switch (l) {
-    case 0 :
-        throw new HongsExemption.Common("Must be more than one args.");
-    case 1 :
-        cmd  = argz[0];
-        met  = getCmdlets().get(cmd);
-        args = new String[] { /**/ };
-        break;
-    default:
-        cmd  = argz[0];
-        met  = getCmdlets().get(cmd);
-        args = Arrays.copyOfRange(argz, 1, l);
+    String  act = null ;
+    int l = args.length;
+    if (l == 1)
+    {
+      act  = args[0];
+      args = new String[0];
+    } else
+    if (l  > 1)
+    {
+      act  = args[0];
+      args = Arrays.copyOfRange(args, 1, l);
     }
+
+    // 提取动作
+    if (null == act || act.length() < 1)
+    {
+      throw new HongsError(0x42, "Cmdlet name can not be empty.");
+    }
+
+    // 获取方法
+    Method met = getCmdlets().get( act );
+    if (null == met)
+    {
+      throw new HongsError(0x42, "Cmdlet "+act+" is not exists.");
+    }
+
+    this.met  = met ;
+    this.act  = act ;
+    this.args = args;
   }
 
+  /**
+   * 后台任务
+   */
   @Override
   public void run()
   {
-    Core.ACTION_NAME.set( cmd );
+    Core.ACTION_NAME.set( act );
     Core.ACTION_TIME.set(System.currentTimeMillis());
     try {
         met.invoke(null , new Object[]{args});
@@ -76,33 +92,89 @@ public class CmdletRunner implements Runnable
     } catch ( IllegalArgumentException ex) {
         CoreLogger.error("Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
     } catch (InvocationTargetException ex) {
-        CoreLogger.error(ex.getCause());
+        CoreLogger.error( ex.getCause( ) );
     } finally {
-        Core.THREAD_CORE.get().close( );
+        Core.THREAD_CORE.get( ).close( );
     }
   }
 
+  /**
+   * 外部执行
+   * @param args
+   * @throws IOException
+   */
   public static void main(String[] args)
-    throws IOException, HongsException
+    throws IOException
   {
-    args = init(args);
+    int c = 0;
+    try
+    {
+      exec( init( args ) );
+    }
+    catch ( HongsError es)
+    {
+      CoreLogger.error(es);
+      switch (es.getErrno())
+      {
+        case 0x42: c = 2; break;
+        case 0x43: c = 3; break;
+        default  : c = 4; break;
+      }
+    }
+    catch ( Exception  ex)
+    {
+      CoreLogger.error(ex);
+      c = 4;
+    }
+    catch ( Error      er)
+    {
+      CoreLogger.error(er);
+      c = 5;
+    }
+    finally
+    {
+      Core.THREAD_CORE
+            .get ( )
+            .close();
+      Core.GLOBAL_CORE
+            .close();
+
+      System.exit(c);
+    }
+  }
+
+  /**
+   * 内部执行
+   * @param args
+   * @throws IOException
+   */
+  public static void exec(String[] args)
+    throws IOException
+  {
+    String  act = null ;
+    int l = args.length;
+    if (l == 1)
+    {
+      act  = args[0];
+      args = new String[0];
+    } else
+    if (l  > 1)
+    {
+      act  = args[0];
+      args = Arrays.copyOfRange(args, 1, l);
+    }
 
     // 提取动作
-    String act = Core.ACTION_NAME.get( );
     if (null == act || act.length() < 1)
     {
-      System.err.println("ERROR: Cmdlet name can not be empty.");
-      System.exit(2);
-      return;
+      throw new HongsError(0x42, "Cmdlet name can not be empty.");
     }
 
     // 获取方法
     Method met = getCmdlets().get( act );
     if (null == met)
     {
-      System.err.println("ERROR: Cmdlet "+act+" is not exists.");
-      System.exit(2);
-      return;
+      throw new HongsError(0x42, "Cmdlet "+act+" is not exists.");
     }
 
     // 执行方法
@@ -112,61 +184,26 @@ public class CmdletRunner implements Runnable
     }
     catch (   IllegalAccessException ex)
     {
-      CoreLogger.error("Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
-      System.exit(3);
+      throw new HongsError(0x43, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
     }
     catch ( IllegalArgumentException ex)
     {
-      CoreLogger.error("Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).");
-      System.exit(3);
+      throw new HongsError(0x43, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
     }
     catch (InvocationTargetException ex)
     {
-      Throwable ta = ex.getCause();
-
-      if  ( 0 < Core.DEBUG )
-      {
-        CoreLogger.error(ta);
-        return;
-      }
-
-      /**
-       * 构建错误消息
-       */
-      String error = ta.getLocalizedMessage();
-      if (! (ta instanceof HongsException)
-      &&  ! (ta instanceof HongsExemption)
-      &&  ! (ta instanceof HongsError  ) )
-      {
-        CoreLocale lang = Core.getInstance(CoreLocale.class);
-        if (error == null || error.length() == 0)
-        {
-          error = lang.translate("core.error.unkwn", ta.getClass().getName());
-        }
-        else
-        {
-          error = lang.translate("core.error.label", ta.getClass().getName()) + ": " + error;
-        }
-      }
-
-      CoreLogger.error(error);
-      System.exit(4);
-    }
-    finally
-    {
-      /**
-       * 销毁内部资源
-       */
-      Core.THREAD_CORE
-            .get ( )
-            .close();
-      Core.GLOBAL_CORE
-            .close();
+      throw new HongsError(0x44, ex.getCause());
     }
   }
 
+  /**
+   * 命令启动初始化
+   * @param args
+   * @return
+   * @throws IOException 
+   */
   public static String[] init(String[] args)
-    throws IOException, HongsException
+    throws IOException
   {
     Map<String, Object> opts;
     opts = CmdletHelper.getOpts(args,
@@ -179,6 +216,7 @@ public class CmdletRunner implements Runnable
 
     Core.THREAD_CORE.set(Core.GLOBAL_CORE);
     Core.ACTION_TIME.set(Core.STARTS_TIME);
+    Core.ACTION_NAME.set(args.length != 0 ? args[0] : null);
 
     /** 核心属性配置 **/
 
@@ -253,20 +291,6 @@ public class CmdletRunner implements Runnable
     /** 实例属性配置 **/
 
     cnf = CoreConfig.getInstance("default");
-
-    String  act = null ;
-    int l = args.length;
-    if (l > 1)
-    {
-      act  = args[0];
-      args = Arrays.copyOfRange(args, 1, l);
-    } else
-    if (l > 0)
-    {
-      act  = args[0];
-      args = new String [] {};
-    }
-    Core.ACTION_NAME.set(act);
 
     String zone = null;
     if (opts.containsKey("TIMEZONE"))

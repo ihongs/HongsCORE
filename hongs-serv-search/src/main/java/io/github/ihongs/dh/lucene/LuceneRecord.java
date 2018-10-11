@@ -99,26 +99,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             m.put("SERVER_ID", Core.SERVER_ID);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
-            String root;
-            root = Core.DATA_PATH + "/lucene/";
-            path = Tool.inject(path, m);
-            if (! new File(path).isAbsolute()) {
-                path  = root + path;
-            }
-            if (name == null) {
-                if (path.startsWith(root)) {
-                    name = path.substring(root.length());
-                } else
-                if (path.startsWith(Core.DATA_PATH+"/")) {
-                    name = path.substring(Core.DATA_PATH.length()+1);
-                } else
-                if (path.startsWith(Core.CORE_PATH+"/")) {
-                    name = path.substring(Core.CORE_PATH.length()+1);
-                } else
-                {
-                    name = path;
-                }
-            }
+            path  = Tool.inject(path, m);
+            if (! new File(path).isAbsolute())
+            path  = Core.DATA_PATH +"/lucene/"+ path;
         } else
         if (name != null) {
             path  = Core.DATA_PATH +"/lucene/"+ name;
@@ -135,10 +118,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             Core.getInstance().got(Cnst.TRNSCT_MODE),
             conf.getProperty("core.in.trnsct.mode", false));
         this.TRNSCT_BASE = this.TRNSCT_MODE;
-    }
-
-    public LuceneRecord(Map form) {
-        this(form, null, null);
     }
 
     /**
@@ -1052,7 +1031,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     /**
      * 返回字段
-     * @param rd 
+     * @param rd
      */
     public void setReps(Map rd) {
         if ( rd  == null) {

@@ -101,43 +101,6 @@ public class SystemCmdlet {
         System.exit(0);
     }
 
-    @Cmdlet( "crond" )
-    public static void crond(String[] args) throws HongsException {
-        ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
-        Calendar cal = Calendar.getInstance();
-        long now = System.currentTimeMillis();
-
-        cal.setTimeInMillis   (  now  );
-        cal.set(Calendar.MILLISECOND,1);
-
-        // 每分钟执行
-            cal.set(Calendar.SECOND, 0);
-        if (new File(Core.CONF_PATH+"/bin/crond/min.cmd.xml").exists()) {
-            cal.add(Calendar.MINUTE, 1);
-            ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
-                "system", "crond/min.cmd.xml"
-            }), cal.getTimeInMillis() - now, 1000 * 60          , TimeUnit.MILLISECONDS);
-        }
-
-        // 每小时执行
-            cal.set(Calendar.MINUTE, 0);
-        if (new File(Core.CONF_PATH+"/bin/crond/hur.cmd.xml").exists()) {
-            cal.add(Calendar.HOUR  , 1);
-            ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
-                "system", "crond/hur.cmd.xml"
-            }), cal.getTimeInMillis() - now, 1000 * 60 * 60     , TimeUnit.MILLISECONDS);
-        }
-
-        // 每天都执行
-            cal.set(Calendar.HOUR  , 0);
-        if (new File(Core.CONF_PATH+"/bin/crond/day.cmd.xml").exists()) {
-            cal.add(Calendar.DATE  , 1);
-            ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
-                "system", "crond/day.cmd.xml"
-            }), cal.getTimeInMillis() - now, 1000 * 60 * 60 * 24, TimeUnit.MILLISECONDS);
-        }
-    }
-
     /**
      * 维护命令
      * @param args
@@ -651,6 +614,47 @@ public class SystemCmdlet {
         } catch (ParseException ex) {
             throw new HongsExemption.Common(ex);
         }
+    }
+
+    public  static class Schedu implements Runnable {
+
+        @Override
+        public void run() {
+            ScheduledExecutorService ses = Executors.newScheduledThreadPool(3);
+            Calendar cal = Calendar.getInstance();
+            long now = System.currentTimeMillis();
+
+            cal.setTimeInMillis   (  now  );
+            cal.set(Calendar.MILLISECOND,1);
+
+            // 每分钟执行
+                cal.set(Calendar.SECOND, 0);
+            if (new File(Core.CONF_PATH+"/bin/crond/min.cmd.xml").exists()) {
+                cal.add(Calendar.MINUTE, 1);
+                ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
+                    "system", "crond/min.cmd.xml"
+                }), cal.getTimeInMillis() - now, 1000 * 60          , TimeUnit.MILLISECONDS);
+            }
+
+            // 每小时执行
+                cal.set(Calendar.MINUTE, 0);
+            if (new File(Core.CONF_PATH+"/bin/crond/hur.cmd.xml").exists()) {
+                cal.add(Calendar.HOUR  , 1);
+                ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
+                    "system", "crond/hur.cmd.xml"
+                }), cal.getTimeInMillis() - now, 1000 * 60 * 60     , TimeUnit.MILLISECONDS);
+            }
+
+            // 每天都执行
+                cal.set(Calendar.HOUR  , 0);
+            if (new File(Core.CONF_PATH+"/bin/crond/day.cmd.xml").exists()) {
+                cal.add(Calendar.DATE  , 1);
+                ses.scheduleAtFixedRate(new CmdletRunner(new String[] {
+                    "system", "crond/day.cmd.xml"
+                }), cal.getTimeInMillis() - now, 1000 * 60 * 60 * 24, TimeUnit.MILLISECONDS);
+            }
+        }
+
     }
 
     private static class Looker {

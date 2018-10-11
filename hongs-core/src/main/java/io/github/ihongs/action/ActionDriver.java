@@ -5,8 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsExemption;
-import io.github.ihongs.cmdlet.CmdletRunner;
+import io.github.ihongs.HongsError;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
@@ -185,24 +184,32 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             Core.ACTION_ZONE.set(cnf.getProperty("core.timezone.default", "GMT-8"));
         }
 
-        // 启动后需立即执行的任务
-        String ss = CoreConfig.getInstance("defines").getProperty("start.serv");
-        if (ss != null) for (String sn:ss.split(";")) {
-            sn = sn.trim( ); if ( 0 != sn.length( ) )
-            new CmdletRunner(sn.split("\\s+")).run( );
-        }
-
-        // 设置全局清理的计划任务
-        long time = Synt.declare(System.getProperty ( "core.gc.time" ), 600000);
-        if ( time > 0 ) { new Timer("core.gc", true )
-            .schedule(new DriverTimer(), time, time );
-        }
-
         // 调用一下可预加载动作类
         ActionRunner.getActions();
 
         // 清空全局好准备重新开始
         Core.GLOBAL_CORE.clear ();
+
+        // 设置全局清理的计划任务
+        long time = Synt.declare( System.getProperty("core.gc.time") , 600000 );
+        if ( time > 0 ) { new Timer("core.gc", true )
+            .schedule(new DriverTimer(), time, time );
+        }
+
+        // 启动后需立即执行的任务
+        String ss = CoreConfig.getInstance("defines").getProperty("start.task");
+        if (ss != null) for (String sn:ss.split(";")) {
+            sn = sn.trim( ); if ( 0 != sn.length( ) )
+            try {
+                ( (Runnable) Class.forName (sn).newInstance() ).run( );
+            } catch (ClassNotFoundException ex) {
+                throw new  ServletException(ex);
+            } catch (InstantiationException ex) {
+                throw new  ServletException(ex);
+            } catch (IllegalAccessException ex) {
+                throw new  ServletException(ex);
+            }
+        }
 
         if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug(new StringBuilder("...")
@@ -444,8 +451,8 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 if (Synt.declare(System.getProperty("show.request"), false)) {
                     Map rd  = null;
                     try {
-                        rd  = hlpr.getRequestData();
-                    } catch ( HongsExemption  ex  ) {
+                        rd  = hlpr.getRequestData( );
+                    } catch ( RuntimeException ex  ) {
                         CoreLogger.debug(ex.getMessage());
                     }
                     if (rd != null && !rd.isEmpty()) {

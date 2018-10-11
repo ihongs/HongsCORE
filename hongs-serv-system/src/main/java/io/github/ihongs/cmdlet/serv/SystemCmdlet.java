@@ -97,7 +97,7 @@ public class SystemCmdlet {
     @Cmdlet("__main__")
     public static void exec (String[] args) throws HongsException {
         Map<String, Object> opts;
-        opts = CmdletHelper.getOpts ( args, "date:s" );
+        opts = CmdletHelper.getOpts(args, "date:s", "!A");
         args = ( String[] ) opts.remove("");
         if ( 0 == args.length ) {
             System.err.println("Serve name required!");

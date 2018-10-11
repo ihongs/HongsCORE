@@ -5,6 +5,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
+import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Synt;
@@ -113,22 +114,23 @@ public class CmdletRunner implements Runnable
     }
     catch (Throwable e)
     {
-      if ( Core.DEBUG  !=  0)
+      if (e instanceof HongsCause)
       {
-        CoreLogger.error  (e);
+        switch (((HongsCause) e).getErrno())
+        {
+          case 0x42: c = 2; break;
+          case 0x43: c = 3; break;
+          case 0x44: e = e.getCause();
+          default  : c = 4;
+        }
+      } else {   c = 5;   }
+      if (Core.DEBUG  != 0)
+      {
+        CoreLogger.error(e);
       }
       else
       {
         System.err.println(e.getLocalizedMessage());
-      }
-      if (e instanceof HongsError)
-      {
-        switch (  (  ( HongsError) e  ).getErrno())
-        {
-          case 0x42: c = 2; break;
-          case 0x43: c = 3; break;
-          default  : c = 4; break;
-        }
       }
     }
     finally

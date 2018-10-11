@@ -45,10 +45,5 @@ public class TestCore {
             System.out.println("2");
         }
     }
-    
-    // TODO add test methods here.
-    // The methods must be annotated with annotation @TestCore. For example:
-    //
-    // @Test
-    // public void hello() {}
+
 }

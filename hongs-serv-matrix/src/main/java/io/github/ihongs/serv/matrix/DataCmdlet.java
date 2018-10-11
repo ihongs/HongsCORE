@@ -15,7 +15,7 @@ import java.util.Map;
  * 数据导入命令
  * @author hong
  */
-@Cmdlet("matrix/data")
+@Cmdlet("matrix.data")
 public class DataCmdlet {
 
     @Cmdlet("import")
@@ -51,6 +51,8 @@ public class DataCmdlet {
             data.put("memo", memo);
             dr.save (dt, id, data);
         }
+
+        dr.commit();
     }
 
     @Cmdlet("update")
@@ -93,6 +95,8 @@ public class DataCmdlet {
             String id = (String) od.get(Cnst.ID_KEY) ;
             dr.save (dt,id,sd);
         }
+
+        dr.commit();
     }
 
     @Cmdlet("delete")
@@ -135,6 +139,8 @@ public class DataCmdlet {
             String id = (String) od.get(Cnst.ID_KEY) ;
             dr.drop (dt,id,sd);
         }
+
+        dr.commit();
     }
 
     @Cmdlet("search")

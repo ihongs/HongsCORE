@@ -130,7 +130,7 @@ public class Data extends SearchEntity {
 
     @Override
     public String getDbPath() {
-        String path = conf.replaceFirst("^(centre|centra)/", "") +"/"+ form ;
+        String path = conf.replaceFirst("^(centre|centra)/" , "") +"/"+ form;
         path = Synt.declare(getParams().get("db-path"),path);
 
         // 进一步处理路径
@@ -147,7 +147,7 @@ public class Data extends SearchEntity {
 
     @Override
     public String getDbName() {
-        String name = conf.replaceFirst("^(centre|centra)/", "") +"/"+ form ;
+        String name = conf.replaceFirst("^(centre|centra)/" , "") +"/"+ form;
         return Synt.declare(getParams().get("db-name"),name);
     }
 

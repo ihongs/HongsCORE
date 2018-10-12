@@ -164,9 +164,10 @@ public class Common {
     @Cmdlet("view-serial")
     public static void viewSerial(String[] args) throws HongsException {
         if (args.length == 0) {
-            System.out.println(
+            System.err.println(
                   "Usage: common:view-serial serial/file/path\r\n\t"
                 + "Just for CoreSerial or Collection object.");
+            return;
         }
 
         File fio = new File(args[0]);
@@ -199,7 +200,10 @@ public class Common {
         args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
-            System.err.println("Action name required!\r\nUsage: ACTION_NAME --request QUERY_STRING --cookies QUERY_STRING --session QUERY_STRING --context QUERY_STRING");
+            System.err.println(
+                  "Usage: ACTION_NAME [--request DATA] [--cookies DATA] [--session DATA] [--context DATA]\r\n\t"
+                + "DATA can be JSON or URL search string."
+            );
             return;
         }
 
@@ -248,7 +252,10 @@ public class Common {
         args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
-            System.err.println("Action name required!\r\nUsage: ACTION_NAME --request QUERY_STRING --cookies QUERY_STRING --port PORT");
+            System.err.println(
+                  "Usage: ACTION_NAME [--request DATA] [--cookies DATA]"
+                + "DATA can be JSON or URL search string."
+            );
             return;
         }
 

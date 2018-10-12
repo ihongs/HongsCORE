@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * 数据导入命令
+ * 数据操作命令
  * @author hong
  */
 @Cmdlet("matrix.data")
@@ -38,6 +38,7 @@ public class DataCmdlet {
             user  = Cnst.ADM_UID;
         }
 
+        int i  = 0;
         String[] dats = (String[]) opts.get("");
         for(String text : dats) {
             String id ;
@@ -46,8 +47,10 @@ public class DataCmdlet {
             data.put("form_id", form);
             data.put("user_id", user);
             data.put("memo", memo);
-            dr.save (dt, id, data);
+            i += dr.save(dt,id, data);
         }
+
+        CmdletHelper.println("Import "+i+" item(s) to "+dr.getDbName());
     }
 
     @Cmdlet("update")
@@ -84,10 +87,13 @@ public class DataCmdlet {
         sd.put("memo"   ,memo);
         rd.put(Cnst.RB_KEY , Synt.setOf(Cnst.ID_KEY));
 
+        int i  = 0;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY) ;
-            dr.save (dt,id,sd);
+            i += dr.save(dt, id, sd);
         }
+
+        CmdletHelper.println("Update "+i+" item(s) in "+dr.getDbName());
     }
 
     @Cmdlet("delete")
@@ -124,10 +130,13 @@ public class DataCmdlet {
         sd.put("memo"   ,memo);
         rd.put(Cnst.RB_KEY , Synt.setOf(Cnst.ID_KEY));
 
+        int i  = 0;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY) ;
-            dr.drop (dt,id,sd);
+            i += dr.drop(dt, id, sd);
         }
+
+        CmdletHelper.println("Delete "+i+" item(s) in "+dr.getDbName());
     }
 
     @Cmdlet("search")

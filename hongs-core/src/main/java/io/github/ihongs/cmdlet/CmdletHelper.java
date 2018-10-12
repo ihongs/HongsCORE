@@ -3,6 +3,7 @@ package io.github.ihongs.cmdlet;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
 import java.util.ArrayList;
 import java.util.Formatter;
@@ -21,6 +22,14 @@ import java.util.regex.Pattern;
  */
 public class CmdletHelper
 {
+
+  /**
+   * 参数处理正则
+   */
+  private static final Pattern RP = Pattern.compile("^([\\w\\.\\-\\|]*)(=|:|\\+|\\*)([sifb]|\\/(.+)\\/(i)?( .*)?)$");
+  private static final Pattern BP = Pattern.compile("^(false|true|yes|no|y|n|1|0)$", Pattern.CASE_INSENSITIVE);
+  private static final Pattern FP = Pattern.compile("^\\d+(\\.\\d+)?$");
+  private static final Pattern IP = Pattern.compile("^\\d+$");
 
   /**
    * 错误消息集合
@@ -56,18 +65,12 @@ public class CmdletHelper
     List<String>        newArgs = new ArrayList();
     Set<String>         reqOpts = new LinkedHashSet();
     Set<String>         errMsgs = new LinkedHashSet();
-    Pattern  p = Pattern.compile("^([\\w\\.\\-\\|]*)(=|:|\\+|\\*)([sifb]|\\/(.+)\\/(i)?( .*)?)$");
-    Pattern bp = Pattern.compile("^(true|false|yes|no|y|n|1|0)$", Pattern.CASE_INSENSITIVE);
-    Pattern tp = Pattern.compile("^(true|yes|y|1)$", Pattern.CASE_INSENSITIVE);
-    Pattern fp = Pattern.compile("^\\d+(\\.\\d+)?$");
-    Pattern ip = Pattern.compile("^\\d+$");
     boolean ub = true ; // 禁止未知参数
     boolean vb = true ; // 禁止匿名参数
     String hlp = null ; // 命令使用帮助
-    String pre = "\r\n\t";
 
     for (String chk : chks) {
-      Matcher m = p.matcher(chk);
+      Matcher m = RP.matcher(chk);
 
       if (!m.find()) {
         if (chk.equals("!U")) {
@@ -83,7 +86,7 @@ public class CmdletHelper
             continue;
         }
 
-        // 0号错误
+        // 规则错误
         errMsgs.add(GETERRS[0].replace("%chk", chk));
         continue;
       }
@@ -140,26 +143,26 @@ public class CmdletHelper
                     char type = (Character) chk[1];
 
                     switch (type) {
+                        case 'b':
+                            if (!BP.matcher(arg).matches()) {
+                                errMsgs.add(GETERRS[6].replace("%opt", name));
+                                continue;
+                            }
+                            val = Synt.asBool(arg);
+                            break;
                         case 'i':
-                            if (!ip.matcher(arg).matches()) {
+                            if (!IP.matcher(arg).matches()) {
                                 errMsgs.add(GETERRS[4].replace("%opt", name));
                                 continue;
                             }
                             val = Long.parseLong(arg);
                             break;
                         case 'f':
-                            if (!fp.matcher(arg).matches()) {
+                            if (!FP.matcher(arg).matches()) {
                                 errMsgs.add(GETERRS[5].replace("%opt", name));
                                 continue;
                             }
                             val = Double.parseDouble(arg);
-                            break;
-                        case 'b':
-                            if (!bp.matcher(arg).matches()) {
-                                errMsgs.add(GETERRS[6].replace("%opt", name));
-                                continue;
-                            }
-                            val = tp.matcher( arg ).matches();
                             break;
                         case 'r':
                             Pattern rp  = (Pattern) chk[2];
@@ -192,7 +195,7 @@ public class CmdletHelper
                         }
                     }
                 } else if (ub) {
-                    // 出现未知参数
+                    // 未知参数
                     errMsgs.add(GETERRS[8].replace("%opt", name));
                 } else {
                     newArgs.add(args[i]);
@@ -230,24 +233,25 @@ public class CmdletHelper
                     W:while (i < args.length - 1) {
                         Object val ;
                         String arg = args [i + 1];
-                        if (arg.startsWith("\\")) {
-                            arg= arg.substring(1);
-                        } else
                         if (arg.startsWith("--")) {
+                            if (vals == null || vals.isEmpty()) { // 缺少取值
+                                errMsgs.add(GETERRS[2].replace("%opt", name));
+                            }
                             break;
+                        } else {
+                            i ++ ;
                         }
-                        i ++;
 
                         switch (type) {
                             case 'i':
-                                if (!ip.matcher(arg).matches()) {
+                                if (!IP.matcher(arg).matches()) {
                                     errMsgs.add(GETERRS[4].replace("%opt", name));
                                     continue;
                                 }
                                 val = Long.parseLong(arg);
                                 break;
                             case 'f':
-                                if (!fp.matcher(arg).matches()) {
+                                if (!FP.matcher(arg).matches()) {
                                     errMsgs.add(GETERRS[5].replace("%opt", name));
                                     continue;
                                 }
@@ -277,14 +281,14 @@ public class CmdletHelper
                         }
                     }
                 } else if (ub) {
-                    // 出现未知参数
+                    // 未知参数
                     errMsgs.add(GETERRS[8].replace("%opt", name));
                 } else {
                     newArgs.add(args[i]);
                 }
             }
         } else if (vb) {
-            // 出现匿名参数
+            // 匿名参数
             errMsgs.add(GETERRS[9]);
         } else {
             newArgs.add(args[i]);
@@ -295,27 +299,24 @@ public class CmdletHelper
       if (!newOpts.containsKey(name)) {
         Set<String> err = new LinkedHashSet();
         err.add(GETERRS[1].replace("%opt", name));
-        err.addAll(errMsgs);
-        errMsgs  =  err;
+        err.addAll( errMsgs );
+        errMsgs  =  err ;
       }
     }
 
     if (!errMsgs.isEmpty()) {
       StringBuilder err = new StringBuilder();
       for ( String  msg : errMsgs ) {
-        err.append(pre).append(msg);
+        err.append("\r\n\t").append(msg);
       }
-      String msg = err.toString(  );
-      String trs = msg;
-      if (null  != hlp) {
-        trs += pre + hlp.replaceAll("\\n", pre);
+      if  ( null != hlp ) {
+        err.append("\r\n\t").append(hlp);
       }
+      hlp = err.toString();
 
-      throw new HongsError(0x3e, msg)
-            .setLocalizedOptions(trs);
+      throw  new HongsError(0x3e, hlp).setLocalizedOptions(hlp);
     } else if (hlp != null && args.length == 0) {
-      System.err.println(hlp.replaceAll("\\n",pre));
-      System.exit(0);
+      throw  new HongsError(0x3f, hlp).setLocalizedOptions(hlp);
     }
 
     // 把剩余的参数放进去

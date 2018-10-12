@@ -42,7 +42,7 @@ public class TestSynt extends TestCase {
                 "--enable",
                 "--number=123",
                 "--regexp", "abc",
-                "--repeat", "def", "\\--xyz", "--",
+                "--repeat", "def", "--", "--repeat=--xyz",
                 "--others", "456", "789"
             },
             "enable:b",

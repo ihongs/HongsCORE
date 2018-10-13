@@ -498,18 +498,18 @@ public class SelectHelper {
     }
 
     private void injectData(Map data, Map maps) {
-        Iterator it = maps.entrySet( ).iterator( );
+        Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
-            Map.Entry et = (Map.Entry) it.next ( );
-            Map    map = (Map) et.getValue();
-            Object key = /***/ et.getKey(  );
-            List   lst = new ArrayList();
+            Map.Entry et = (Map.Entry) it.next();
+            String   key = (String)  et.getKey();
+            Map      map = (Map)   et.getValue();
+            List     lst = new ArrayList();
 
             Iterator i = map.entrySet().iterator();
             while (i.hasNext()) {
                 Map.Entry e = (Map.Entry) i.next();
-                Object k  = e.getKey(  );
-                Object v  = e.getValue();
+                Object k = e.getKey (  );
+                Object v = e.getValue( );
                 List a = new ArrayList();
                 a.add( k );
                 a.add( v );
@@ -520,13 +520,35 @@ public class SelectHelper {
         }
     }
 
+    private void injectDefs(Map info, Map defs) {
+        Iterator it = defs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry) it.next();
+            String   key = (String)  et.getKey();
+            Object   def =         et.getValue();
+            Object   val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+
+            if (val == Synt.LOOP.NEXT) {
+                continue;
+            }
+
+            if (val == null || val.equals("")) {
+                Dict.setParam(info, def, key);
+            }
+        }
+    }
+
     private void injectText(Map info, Map maps) {
         Iterator it = maps.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
-            Object   val = Dict.getParam(info, key);
+            Object   val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+
+            if (val == Synt.LOOP.NEXT) {
+                continue;
+            }
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
@@ -546,7 +568,11 @@ public class SelectHelper {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
-            Object  val = Dict.getParam(info, key);
+            Object  val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+
+            if (val == Synt.LOOP.NEXT) {
+                continue;
+            }
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
@@ -573,7 +599,11 @@ public class SelectHelper {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
-            Object  val = Dict.getParam(info, key);
+            Object  val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+
+            if (val == Synt.LOOP.NEXT) {
+                continue;
+            }
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
@@ -585,20 +615,6 @@ public class SelectHelper {
             } else {
                     val = hrefToLink(val);
                     Dict.setParam(info, val, key + "_link" );
-            }
-        }
-    }
-
-    private void injectDefs(Map info, Map defs) {
-        Iterator it = defs.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry et = (Map.Entry) it.next();
-            String   key = (String)  et.getKey();
-            Object   def =         et.getValue();
-            Object   val = Dict.getParam(info, key);
-
-            if (val == null || val.equals("")) {
-                Dict.setParam(info, def, key);
             }
         }
     }

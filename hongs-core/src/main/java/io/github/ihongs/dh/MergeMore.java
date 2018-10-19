@@ -164,6 +164,41 @@ public class MergeMore
   }
 
   /**
+   * 补全默认值
+   * 可在 extend rows 之后执行
+   * @param raw 默认值
+   * @param map 映射表
+   */
+  public void filled(Map raw, Map<Object, List> map)
+  {
+    if (raw == null) {
+        raw  = new HashMap();
+    }
+
+    for (Map.Entry<Object,List> lr : map.entrySet())
+    {
+      List<Map> lst = lr.getValue();
+      for (Map  row : lst)
+      {
+        for (Object ot : raw.entrySet())
+        {
+          Map.Entry et = (Map.Entry) ot;
+          Object ek = et.getKey(  );
+          if (! row.containsKey(ek)) {
+          Object ev = et.getValue();
+            row.put(ek , ev);
+          }
+        }
+      }
+    }
+  }
+
+  public void filled(Map raw, String key)
+  {
+    filled(raw, mapped(key));
+  }
+
+  /**
    * 一对一关联
    * @param iter 数据迭代
    * @param map 映射表
@@ -217,36 +252,6 @@ public class MergeMore
   }
 
   /**
-   * 补全一对一
-   * 可在 extend rows 之后执行
-   * @param map 映射表
-   * @param raw 默认值
-   * @param sub 子键, 为空并到行
-   */
-  public void extend(Map<Object, List> map, Map raw, String sub)
-  {
-    if (raw == null) {
-        raw  = new HashMap();
-    }
-
-    for (Map.Entry<Object, List> t : map.entrySet())
-    {
-      List<Map> lst = t.getValue();
-      for (Map  row : lst)
-      {
-        if ( sub == null )
-        {
-          raw.putAll (row);
-          row.putAll (raw);
-        } else
-        if (! row.containsKey(sub)) {
-          row.put( sub, raw );
-        }
-      }
-    }
-  }
-
-  /**
    * 一对多关联
    * @param iter 数据迭代
    * @param map 映射表
@@ -297,32 +302,6 @@ public class MergeMore
   public void append(List<Map> rows, String key, String col, String sub)
   {
     append(rows, mapped ( key ), col, sub);
-  }
-
-  /**
-   * 补全一对多
-   * 可在 append rows 之后执行
-   * @param map 映射表
-   * @param lzt 默认值
-   * @param sub 子键, 不可以为空
-   */
-  public void append(Map<Object, List> map, List lzt, String sub)
-  {
-    if (lzt == null) {
-        lzt  = new ArrayList();
-    }
-
-    for (Map.Entry<Object, List> t : map.entrySet())
-    {
-      List<Map> lst = t.getValue();
-      for (Map  row : lst)
-      {
-        if (! row.containsKey(sub))
-        {
-          row.put(sub,lzt);
-        }
-      }
-    }
   }
 
 }

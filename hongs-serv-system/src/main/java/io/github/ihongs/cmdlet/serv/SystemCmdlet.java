@@ -43,19 +43,29 @@ import org.xml.sax.SAXException;
 
 /**
  * 管理命令
+ *
+ * <p>
+ * 除了通过命令执行内部命令和 SQL,
+ * 还可添加以下启动项启用计划任务:<br/>
+ * io.github.ihongs.cmdlet.serv.SystemCmdlet.Schedu<br/>
+ * bin/crond 下以下文件为任务设置:<br/>
+ * </p>
+ * <pre>
+ * min.cmd.xml 每分钟0秒执行
+ * hur.cmd.xml 每小时0分执行
+ * day.cmd.xml 每天的0时执行
+ * </pre>
+ *
  * @author Hongs
  */
 @Cmdlet("system")
 public class SystemCmdlet {
 
-    private static final Pattern filNamPatt = Pattern.compile("^(.+?\\.)?(.*?)\\.(sql|cmd\\.xml)$"); // 文件
-
-    private static final Pattern sqlDnmPatt = Pattern.compile("--\\s*(DB|DT):\\s*(\\S+)");           // 配置
-    private static final Pattern sqlCmnPatt = Pattern.compile("--.*?[\r\n]");                        // 注释
-
-    private static final Pattern timVarPatt = Pattern.compile("\\{\\{(.+?)(\\|(.+?))?\\}\\}");
-    private static final Pattern timFmtPatt = Pattern.compile("([\\-\\+])(\\d+Y)?(\\d+M)?(\\d+w)?(\\d+d)?(\\d+h)?(\\d+m)?(\\d+s)?$");
-    private static final Pattern tinFmtPatt = Pattern.compile("^((\\d{2,4}/\\d{1,2}/\\d{1,2}T\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{2,4}/\\d{1,2}/\\d{1,2})|(\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{1,2}:\\d{1,2}))$");
+    private static final Pattern SQL_CMN_PAT = Pattern.compile("--.*?[\r\n]");
+    private static final Pattern SQL_SET_PAT = Pattern.compile("--\\s*(\\S+):\\s*(\\S+)");
+    private static final Pattern TIM_VAR_PAT = Pattern.compile("\\{\\{(.+?)(\\|(.+?))?\\}\\}");
+    private static final Pattern TIM_FMT_PAT = Pattern.compile("([\\-\\+])(\\d+Y)?(\\d+M)?(\\d+w)?(\\d+d)?(\\d+h)?(\\d+m)?(\\d+s)?$");
+    private static final Pattern TIN_FMT_PAT = Pattern.compile("^((\\d{2,4}/\\d{1,2}/\\d{1,2}T\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{2,4}/\\d{1,2}/\\d{1,2})|(\\d{1,2}:\\d{1,2}:\\d{1,2})|(\\d{1,2}:\\d{1,2}))$");
 
     private static final Map<String, String> CORE_PATH_REPS = Synt.mapOf(
         "SERVER_ID", Core.SERVER_ID,
@@ -143,31 +153,92 @@ public class SystemCmdlet {
         long   now = Core.ACTION_TIME.get();
 
         // 逐个执行
-        for (File fo : fxs) {
-            Matcher met = filNamPatt.matcher(fo.getName());
-            if (  ! met.matches() ) {
-                continue;
-            }
-
-            String  ent = met.group(2).trim();
-            String  ext = met.group(3).trim();
-
+        for ( File fo : fxs ) {
+            String fm = fo.getName();
             try {
-                if ("cmd.xml".equals(ext)) {
-                    runCmd(dt , fo , lgr);
+                if (fm.endsWith(".sql"/**/)) {
+                    runSql(dt, fo /**/);
                 } else
-                if (/**/"sql".equals(ext)) {
-                    runSql(dt , fo , ent);
+                if (fm.endsWith(".cmd.xml")) {
+                    runCmd(dt, fo, lgr);
                 }
             } catch (Exception ex) {
                 lgr.error(ex);
-            } catch (Error/**/ ex) {
+            } catch (Error     ex) {
                 lgr.error(ex);
             } finally {
                 // 放回名称和开始时间
                 // 避免时间或日志模糊
                 Core.ACTION_NAME.set(act);
                 Core.ACTION_TIME.set(now);
+            }
+        }
+    }
+
+    private static void runSql(Date dt, File fo)
+            throws HongsException {
+        // 读取代码
+        String sql;
+        byte[] buf;
+        try {
+            FileInputStream in = new FileInputStream(fo);
+            buf = new byte [in.available()];
+                            in.read( buf ) ;
+            sql = new String(buf, "UTF-8") ;
+        } catch (FileNotFoundException ex) {
+            throw new HongsException.Common(ex);
+        } catch (IOException ex) {
+            throw new HongsException.Common(ex);
+        }
+
+        // 解析配置
+        Date    dzt = null;
+        String  dbn = null;
+        Matcher mat = SQL_SET_PAT.matcher(sql);
+        while ( mat.find() ) {
+            String key = mat.group(1);
+            if ("DB".equals(key)) {
+                dbn = /****/ mat.group(2).trim(/***/);
+            } else
+            if ("DT".equals(key)) {
+                dzt = getTim(mat.group(2).trim(), dt);
+            }
+        }
+        if (dzt == null) {
+            dzt  = dt;
+        }
+        if (dbn == null) {
+            dbn  = fo.getName()
+                     .replaceFirst("\\.[^\\.]+$", "")  // 去掉扩展名
+                     .replaceFirst("^[^\\.]+\\.", ""); // 去掉前缀名
+        }
+
+        // 清理注释
+        sql = SQL_CMN_PAT.matcher(sql).replaceAll("");
+
+        // 设置时间
+        sql = repTim ( sql, dzt );
+
+        CmdletHelper.println("Run '" + fo.getName() + "' for '" + dbn + "'");
+
+        // 逐条执行
+        String[] a = sql.split(";\\s*[\r\n]");
+        DB   db = DB.getInstance(dbn);
+        long st = System.currentTimeMillis( );
+        int  al = a.length;
+        int  ok = 0;
+        int  er = 0;
+        for(String s : a) {
+            s = s.trim( );
+            try {
+                if (0 < s.length()) {
+                    db.execute( s );
+                }
+                CmdletHelper.progres(st, al, ++ok, er);
+            } catch (HongsException ex) {
+                CmdletHelper.progres(st, al, ok, ++er);
+                CmdletHelper.progred( );
+                throw ex;
             }
         }
     }
@@ -211,66 +282,6 @@ public class SystemCmdlet {
         }
     }
 
-    private static void runSql(Date dt, File fo, String fn)
-            throws HongsException {
-        // 读取代码
-        String sql;
-        byte[] buf;
-        try {
-            FileInputStream in = new FileInputStream(fo);
-            buf = new byte [in.available()];
-                            in.read( buf ) ;
-            sql = new String(buf, "UTF-8") ;
-        } catch (FileNotFoundException ex) {
-            throw new HongsException.Common(ex);
-        } catch (IOException ex) {
-            throw new HongsException.Common(ex);
-        }
-
-        // 解析配置
-        Date    dzt = dt;
-        String  dbn = fn;
-        Matcher mat = sqlDnmPatt.matcher(sql);
-        while ( mat.find() ) {
-            String key = mat.group(1);
-            if ("DB".equals(key)) {
-                dbn = mat.group(2).trim();
-            } else
-            if ("DT".equals(key)) {
-                dzt = getTim(mat.group(2).trim(),dt);
-            }
-        }
-
-        // 清理注释
-        sql = sqlCmnPatt.matcher(sql).replaceAll("");
-
-        // 设置时间
-        sql = repTim ( sql, dzt );
-
-        CmdletHelper.println("Run '" + fo.getName() + "' for '" + dbn + "'");
-
-        // 逐条执行
-        String[] a = sql.split(";\\s*[\r\n]");
-        DB   db = DB.getInstance(dbn);
-        long st = System.currentTimeMillis( );
-        int  al = a.length;
-        int  ok = 0;
-        int  er = 0;
-        for(String s : a) {
-            s = s.trim( );
-            try {
-                if (0 < s.length()) {
-                    db.execute( s );
-                }
-                CmdletHelper.progres(st, al, ++ok, er);
-            } catch (HongsException ex) {
-                CmdletHelper.progres(st, al, ok, ++er);
-                CmdletHelper.progred( );
-                throw ex;
-            }
-        }
-    }
-
     private static void runSql(Element e, Date dt, Looker lg) {
         String d = Synt.declare(e.getAttribute("db"), "defalut");
         List<String> a = new ArrayList();
@@ -286,6 +297,7 @@ public class SystemCmdlet {
         }
         m = (Element) x.item(0);
         q = m.getTextContent( );
+        q = repTim(q, dt);
 
         // 获取参数
         x = e.getChildNodes( );
@@ -463,7 +475,7 @@ public class SystemCmdlet {
 
     private static String repTim(String ss, Date dt) {
         StringBuffer buf = new   StringBuffer(  );
-        Matcher      mxt = timVarPatt.matcher(ss);
+        Matcher      mxt = TIM_VAR_PAT.matcher(ss);
         String       mxp ;
         Date         dst ;
 
@@ -502,7 +514,7 @@ public class SystemCmdlet {
     }
 
     private static Date getTim(String ds, Date dt) {
-        Matcher mzt = timFmtPatt.matcher(ds);
+        Matcher mzt = TIM_FMT_PAT.matcher(ds);
         String  mzp ;
 
         if (mzt.find()) {
@@ -570,7 +582,7 @@ public class SystemCmdlet {
     }
 
     private static Date getTin(String ds, Date dt) {
-        Matcher dm = tinFmtPatt.matcher(ds);
+        Matcher dm = TIN_FMT_PAT.matcher(ds);
         if (! dm.matches()) {
             return getTim(ds, dt);
         }

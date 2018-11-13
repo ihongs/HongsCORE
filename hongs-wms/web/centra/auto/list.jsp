@@ -225,14 +225,14 @@
 
                     _rb.append(',').append(name);
                 %>
-                <%if ("number".equals(type) || "range".equals(type)) {%>
-                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> text-right"><%=text%></th>
-                <%} else if ("datetime".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> datetime"><%=text%></th>
+                <%if ("number".equals(type) || "range".equals(type) || "color".equals(type)) {%>
+                    <th data-fn="<%=name%>" <%=ob%> class="<%=oc%> numerial text-right"><%=text%></th>
                 <%} else if ("date".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_date" <%=ob%> class="<%=oc%> date"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_date"  <%=ob%> class="<%=oc%> numerial date"><%=text%></th>
                 <%} else if ("time".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_time" <%=ob%> class="<%=oc%> time"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_time"  <%=ob%> class="<%=oc%> numerial time"><%=text%></th>
+                <%} else if ("datetime".equals(type)) {%>
+                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> numerial datetime"><%=text%></th>
                 <%} else if (  "url".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("email".equals(type)) {%>

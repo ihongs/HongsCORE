@@ -346,24 +346,30 @@ div.bootstrap-tagsinput.form-control {
 }
 .listbox thead .sort-ico {
     display: inline-block;
-    position: relative;
-    top: 1px;
-    font-family: 'Glyphicons Halflings';
-    font-style: normal;
-    font-weight: 400;
-    line-height: 1em;
-    -webkit-font-smoothing: antialiased;
-}
-.listbox thead .sort-ico:before {
     color: #2780e3;
     font-size: 0.8em;
-    margin-left: 0.5em;
+    font-weight: 400;
+    font-style: normal;
+    font-family: 'Glyphicons Halflings';
+    -webkit-font-smoothing: antialiased;
 }
-.listbox thead .sort-a-z .sort-ico:before {
+.listbox thead .sort-asc .sort-ico ,
+.listbox thead .sort-esc .sort-ico {
+    top: 1px;
+    margin-left: 0.5em;
+    position: relative;
+}
+.listbox thead .sort-asc .sort-ico:before {
     content: "\e151";
 }
-.listbox thead .sort-z-a .sort-ico:before {
+.listbox thead .sort-esc .sort-ico:before {
     content: "\e152";
+}
+.listbox thead .sort-asc.numerial .sort-ico:before {
+    content: "\e153";
+}
+.listbox thead .sort-esc.numerial .sort-ico:before {
+    content: "\e154";
 }
 
 /** 旧的三角排序符 **/

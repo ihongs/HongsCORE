@@ -233,31 +233,9 @@ HsList.prototype = {
 
             // 排序处理
             if (th.hasClass("sortable")) {
-                if (th.find(".sort-ico").size() == 0) {
-                    var that = this;
-                    th.append('<span class="sort-ico"></span>');
-                    th.click(function( ) {
-                        var td = jQuery ( this );
-                        var fn = td.attr("data-ob") || td.attr("data-fn");
-                        var sn = null;
-                        if ( td.hasClass("sort-a-z")) {
-                            sn = "-"+fn;
-                        } else
-                        if (!td.hasClass("sort-z-a")) {
-                            sn =     fn;
-                        }
-                        hsSetSeria(that._data, that.sortKey, sn );
-                        that.load();
-                    });
-                }
-                var fn = th.attr("data-ob") || th.attr("data-fn");
-                 th.removeClass("sort-a-z sort-z-a");
-                if (sn ==     fn) {
-                    th.addClass("sort-a-z");
-                } else
-                if (sn == '-'+fn) {
-                    th.addClass("sort-z-a");
-                }
+                var fn = th.attr("data-ob" )
+                      || th.attr("data-fn" );
+                this._fill__sort(th, sn, fn);
             }
         }
 
@@ -628,6 +606,33 @@ HsList.prototype = {
     _fill__html : function(td, v, n) {
         if (v === undefined) return v;
         jQuery(td).html( v );return false;
+    },
+
+    _fill__sort : function(th, s, n) {
+        if (th.find(".sort-ico").size() === 0) {
+            var  that = this ;
+            th.click( function() {
+                var s = null ;
+                if (!!th.hasClass("sort-asc")) {
+                    s = "-"+n;
+                } else
+                if (! th.hasClass("sort-esc")) {
+                    s = /**/n;
+                }
+                hsSetSeria(that._data, that.sortKey, s);
+//              hsSetSeria(that._data, that.pageKey, 1);
+                that.load ( );
+            });
+            th.append('<span class="sort-ico"></span>');
+        }
+
+        th .removeClass( "sort-asc sort-esc" );
+        if (s === /**/n) {
+            th.addClass( "sort-asc" );
+        } else
+        if (s === '-'+n) {
+            th.addClass( "sort-esc" );
+        }
     }
 };
 
@@ -722,12 +727,16 @@ function hsListFillNext(page) {
             return;
     }
 
-    var p = page.page      ? parseInt(page.page     ) : 1;
-    var t = page.pagecount ? parseInt(page.pagecount) : 1;
+    var r = page.rows ? parseInt(page.rows) : 20;
+    var p = page.page ? parseInt(page.page) : 1 ;
+    var t = page.pagecount ? parseInt(page.pagecount)
+        : ( page.rowscount == 0 ? p - 1
+        : ( page.rowscount == r ? p + 1
+        : p ) );
 
     // 添加翻页按钮
     var btn = this.pageBox.find("[data-pn]");
-    if (btn.size() == 0) {
+    if (btn.size() === 0) {
         this.pageBox
         .append(jQuery(
             '<ul class="pager"></ul>'
@@ -755,20 +764,20 @@ function hsListFillNext(page) {
         pag.text(p);
     }
     if (p > 1) {
-        pag = btn.filter(".page-prev").removeClass("disabled");
+        pag = btn.closest(".page-prev").removeClass("disabled");
         pag.filter("[data-pn]").attr("data-pn", p-1);
         pag.find  ("[data-pn]").attr("data-pn", p-1);
     } else {
-        pag = btn.filter(".page-prev").   addClass("disabled");
+        pag = btn.closest(".page-prev").   addClass("disabled");
         pag.filter("[data-pn]").attr("data-pn", 1  );
         pag.find  ("[data-pn]").attr("data-pn", 1  );
     }
     if (p < t) {
-        pag = btn.filter(".page-next").removeClass("disabled");
+        pag = btn.closest(".page-next").removeClass("disabled");
         pag.filter("[data-pn]").attr("data-pn", p+1);
         pag.find  ("[data-pn]").attr("data-pn", p+1);
     } else {
-        pag = btn.filter(".page-next").   addClass("disabled");
+        pag = btn.closest(".page-next").   addClass("disabled");
         pag.filter("[data-pn]").attr("data-pn", t  );
         pag.find  ("[data-pn]").attr("data-pn", t  );
     }

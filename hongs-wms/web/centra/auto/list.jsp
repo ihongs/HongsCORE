@@ -49,7 +49,7 @@
     if (!"select".equals(_action)) {
     %>
     <!-- 筛选 -->
-    <form class="findbox fitrbox panel invisible">
+    <form class="findbox filtbox panel invisible">
         <div class="form-group clearfix"></div>
         <%
         Iterator it2 = _fields.entrySet().iterator();
@@ -297,10 +297,9 @@
 (function($) {
     var context = $("#<%=_pageId%>").removeAttr("id");
     var loadbox = context.closest(".loadbox");
+    var findbox = context.find(".findbox");
+    var filtbox = context.find(".filtbox");
     var statbox = context.find(".statbox");
-    var fitrbox = context.find(".fitrbox");
-    var formbox = context.find(".findbox");
-    var findbox = formbox.eq(0);
 
     // 权限控制
     if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
@@ -333,7 +332,7 @@
     });
 
     <%if (!"select".equals(_action)) {%>
-    var filtobj = fitrbox.hsForm({
+    var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum"
     });
 
@@ -342,16 +341,16 @@
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    if (fitrbox.find(".filt-group").size() == 0) {
+    if (filtbox.find(".filt-group").size() == 0) {
         findbox.find(".filter").remove();
     }
     if (statbox.find(".stat-group").size() == 0) {
         findbox.find(".statis").remove();
     }
 
-    fitrbox.on("opened", function() {
-        if (fitrbox.data("fetched") != true) {
-            fitrbox.data("fetched"  ,  true);
+    filtbox.on("opened", function() {
+        if (filtbox.data("fetched") != true) {
+            filtbox.data("fetched"  ,  true);
             filtobj.load();
         }
     });
@@ -378,9 +377,9 @@
 
     // 管理动作
     findbox.find(".filter").click(function() {
-        fitrbox.toggleClass("invisible");
-        if (! fitrbox.is("invisible")) {
-            fitrbox.trigger("opened");
+        filtbox.toggleClass("invisible");
+        if (! filtbox.is("invisible")) {
+            filtbox.trigger("opened");
         }
     });
     findbox.find(".statis").click(function() {
@@ -390,20 +389,20 @@
         }
     });
     findbox.find(".export").click(function() {
-        location.replace("<%=_module%>/<%=_entity%>/stream/search.act?" + formbox.serialize());
+        location.replace("<%=_module%>/<%=_entity%>/stream/search.act?" + findbox.serialize());
     });
     findbox.find(".search").click(function() {
-        fitrbox.addClass("invisible");
+        filtbox.addClass("invisible");
     });
-    fitrbox.find(":submit").click(function() {
-        fitrbox.addClass("invisible");
+    filtbox.find(":submit").click(function() {
+        filtbox.addClass("invisible");
     });
-    fitrbox.find(":reset" ).click(function() {
-        fitrbox.find("[data-ft=_fork]").each(function() {
+    filtbox.find(":reset" ).click(function() {
+        filtbox.find("[data-ft=_fork]").each(function() {
             hsFormFillFork($(this), {});
         });
         setTimeout(function() {
-            fitrbox.find(":submit").click( );
+            filtbox.find(":submit").click( );
         } , 500);
     });
 

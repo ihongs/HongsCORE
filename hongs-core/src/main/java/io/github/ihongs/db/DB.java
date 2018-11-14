@@ -365,6 +365,30 @@ public class DB
   }
 
   /**
+   * 获得对应的完整表名
+   * @param name
+   * @return
+   */
+  public String getTableName(String name)
+  {
+    Map cnf = this.tableConfigs.get(name);
+    if (cnf == null) {
+        return null;
+    }
+
+    if (cnf.containsKey("tableName")) {
+        name = (String) cnf.get("tableName");
+    }
+    if (this.tablePrefix != null) {
+        name = this.tablePrefix + name;
+    }
+    if (this.tableSuffix != null) {
+        name = name + this.tableSuffix;
+    }
+    return name;
+  }
+
+  /**
    * 通过表名获取表对象
    * 表名可以为"库名.表名"
    * @param tableName table 对象的 name

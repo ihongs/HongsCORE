@@ -39,7 +39,7 @@
     <div class="pagebox"></div>
 
     <div class="modal in" style="z-index: 99999; display: none;">
-        <div class="modal-dialog  modal-lg">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
@@ -79,12 +79,14 @@
                     viewImg.modal("show");
                 });
             }
-            // 用户所属的所有部门
+
+            // 用户所属的全部部门, 用于拖拽挂职到其他部门
             var deptIds = [];
-            for(var i = 0; i < this._info.detps; i ++) {
-                deptIds.push(this._info.depts.dept_id);
+            if (this._info.depts)
+            for(var i= 0; i< this._info.depts.length;i++) {
+                deptIds.push(this._info.depts[i].dept_id);
             }
-            c.closest("tr").data("dept_ids" , deptIds);
+            c.closest( "tr" ).data( "dept_ids" , deptIds);
         });
     })(jQuery);
 </script>

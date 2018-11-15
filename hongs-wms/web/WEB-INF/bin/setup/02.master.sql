@@ -29,9 +29,6 @@ INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`s
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRE','0','公共区','默认注册到此区域','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXSDROLE001REB0Q01','CENTRA','技术部','这是技术部','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPRZ8Q5006II04J01','CENTRA','市场部','这是市场部','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HY9XXIS5000T3DD501','HXSDROLE001REB0Q01','研发部','','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPR7S3N00BWKOZ001','HXSDROLE001REB0Q01','运维部','','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPS1ROT007T1AG601','HYPRZ8Q5006II04J01','产品部','','1424075622','1424075622','0',1);
 
 --
 -- 部门拥有角色
@@ -83,13 +80,10 @@ CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);
 -- CREATE UNIQUE INDEX `UK_a_master_user_email` ON `a_master_user` (`email`);
 -- CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
 
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','老大 (管理员)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','超级管理员',NULL,NULL,'1424075622','1424075622','0',1);
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODRZHR00KLJOEM','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODSOGC00KGZCQK','9BA587D4E465F45669F19AF20CA033D9','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','9BA587D4E465F45669F19AF20CA033D9','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXZGVRBH000XHB0601','9BA587D4E465F45669F19AF20CA033D9','d@abc.com','赵六 (研发主管)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXZGWPZV002I1J1601','9BA587D4E465F45669F19AF20CA033D9','e@abc.com','钱七 (运维主管)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HY9XQN2L000WGH9Q01','9BA587D4E465F45669F19AF20CA033D9','f@abc.com','孙八 (产品总监)',NULL,NULL,'1424075622','1424075622','0',1);
 
 --
 -- 用户所属部门
@@ -108,12 +102,9 @@ CREATE INDEX `IK_a_master_user_dept_user` ON `a_master_user_dept` (`user_id`);
 CREATE INDEX `IK_a_master_user_dept_dept` ON `a_master_user_dept` (`dept_id`);
 
 INSERT INTO `a_master_user_dept` VALUES ('1','0');
-INSERT INTO `a_master_user_dept` VALUES ('01I2ODRZHR00KLJOEM','0');
+INSERT INTO `a_master_user_dept` VALUES ('01I2ODRZHR00KLJOEM','CENTRA');
 INSERT INTO `a_master_user_dept` VALUES ('01I2ODSOGC00KGZCQK','HXSDROLE001REB0Q01');
 INSERT INTO `a_master_user_dept` VALUES ('HXNZ0OLR00297H9H01','HYPRZ8Q5006II04J01');
-INSERT INTO `a_master_user_dept` VALUES ('HXZGVRBH000XHB0601','HY9XXIS5000T3DD501');
-INSERT INTO `a_master_user_dept` VALUES ('HXZGWPZV002I1J1601','HYPR7S3N00BWKOZ001');
-INSERT INTO `a_master_user_dept` VALUES ('HY9XQN2L000WGH9Q01','HYPS1ROT007T1AG601');
 
 --
 -- 用户所属角色

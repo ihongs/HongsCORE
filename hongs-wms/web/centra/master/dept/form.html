@@ -48,13 +48,6 @@
             context.find(".role-info").remove();
         }
 
-        // 修改时口令变为选填
-        context.on("loadOver", function() {
-            if ($(this).find("[name=id]").val()) {
-                $(this).find(":password").removeAttr("required");
-            }
-        });
-
         // 选择与之关联的权限
         context.on("change", "[name='roles..role']", function() {
             var area = $(this).closest(".form-group");

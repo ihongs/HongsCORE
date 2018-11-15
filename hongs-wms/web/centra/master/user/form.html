@@ -65,10 +65,22 @@
     (function($) {
         var context = $("#master-user-form");
 
-        // 修改时口令变为选填
-        context.on("loadOver", function() {
+        context.on("loadOver", function(ev , rd) {
+            // 修改时口令选填
             if ($(this).find("[name=id]").val()) {
                 $(this).find(":password").removeAttr("required");
+            }
+
+            // 写入所在的部门
+            if (rd.info.depts  &&  rd.info.depts.length) {
+                var p = context.find("[name='depts.0.dept_id']");
+                for(var i = 0; i < rd.info.depts.length; i ++) {
+                    $('<input type="hidden" />')
+                        .insertBefore(p)
+                        .attr("name", 'depts.'+i+'.dept_id')
+                        .val ( rd.info.depts [ i ].dept_id );
+                }
+                p.remove();
             }
         });
 
@@ -96,9 +108,4 @@
             }
         });
     })(jQuery);
-    function hsGetParam (url, name) {
-    var val = hsGetParams(url, name);
-    if (val.length) return val.pop();
-    else            return "";
-}
 </script>

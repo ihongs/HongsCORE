@@ -81,9 +81,9 @@ CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);
 -- CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
 
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','超级管理员',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODRZHR00KLJOEM','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('01I2ODSOGC00KGZCQK','9BA587D4E465F45669F19AF20CA033D9','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','9BA587D4E465F45669F19AF20CA033D9','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODRZHR00KLJOEM01','9BA587D4E465F45669F19AF20CA033D9','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODSOGC00KGZCQK01','9BA587D4E465F45669F19AF20CA033D9','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
 
 --
 -- 用户所属部门
@@ -102,9 +102,9 @@ CREATE INDEX `IK_a_master_user_dept_user` ON `a_master_user_dept` (`user_id`);
 CREATE INDEX `IK_a_master_user_dept_dept` ON `a_master_user_dept` (`dept_id`);
 
 INSERT INTO `a_master_user_dept` VALUES ('1','0');
-INSERT INTO `a_master_user_dept` VALUES ('01I2ODRZHR00KLJOEM','CENTRA');
-INSERT INTO `a_master_user_dept` VALUES ('01I2ODSOGC00KGZCQK','HXSDROLE001REB0Q01');
-INSERT INTO `a_master_user_dept` VALUES ('HXNZ0OLR00297H9H01','HYPRZ8Q5006II04J01');
+INSERT INTO `a_master_user_dept` VALUES ('HXNZ0OLR00297H9H01','CENTRA');
+INSERT INTO `a_master_user_dept` VALUES ('I2ODRZHR00KLJOEM01','HXSDROLE001REB0Q01');
+INSERT INTO `a_master_user_dept` VALUES ('I2ODSOGC00KGZCQK01','HYPRZ8Q5006II04J01');
 
 --
 -- 用户所属角色

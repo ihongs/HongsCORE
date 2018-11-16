@@ -91,8 +91,14 @@ public class UserAction {
     throws HongsException {
         Map rd = helper.getRequestData();
 
+        // Forbid empty dept ids in update
+        Set ds = Synt.asSet(rd.get("depts"));
+        if (ds.isEmpty() || (ds.size() == 1 && ds.contains(""))) {
+            throw new HongsException(0x1100 , "Dept ids can not be empty!");
+        }
+
         // Ignore empty password in update
-        if ("".equals(rd.get("password"))) {
+        if ("".equals( rd.get("password") )) {
             rd.remove("password");
             rd.remove("passcode");
         }
@@ -119,7 +125,7 @@ public class UserAction {
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
 
         // 不能删除自己和超级管理员
-        Set rs = Synt.asSet(rd.get(model.table.primaryKey));
+        Set rs = Synt.asSet( rd.get( model.table.primaryKey ) );
         if (rs != null) {
             if (rs.contains(helper.getSessibute(Cnst.UID_SES))) {
                 helper.fault("不能删除当前登录用户");

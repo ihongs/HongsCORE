@@ -8,6 +8,7 @@
         <div class="toolbox col-xs-8 btn-group">
             <button type="button" class="create btn btn-default">创建用户</button>
             <button type="button" class="modify for-choose btn btn-default">修改</button>
+            <button type="button" class="remove for-choose btn btn-warning" title="移除"><span class="glyphicon glyphicon-erase"></span></button>
             <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
         <form class="findbox col-xs-4 input-group" action="" method="POST">
@@ -88,5 +89,35 @@
             }
             c.closest( "tr" ).data( "dept_ids" , deptIds);
         });
+
+        context.on("click", ".remove", function( ) {
+            var listobj = context.data( "HsList" );
+            var ck  = listobj.getOne();
+            if (ck === null)  return  ;
+            var tr  = ck.closest("tr");
+            var uid = ck.val (  );
+            var dis = tr.data("dept_ids").slice(0);
+            var did = H$("&dept_id", listobj._url);
+
+            del(dis , did);
+            if (dis.length === 0) {
+                listobj.warn("这是此用户唯一的部门, 不能再移除了.");
+                return;
+            }
+
+            listobj.send( $(this),
+                "您确定移出此用户?", "centra/master/user/save.act",
+                new HsSerialDic({id: uid, "depts..dept_id": dis})
+            );
+        });
+
+        function del(arr, val) {
+            for(var i = 0; i < arr.length; i ++) {
+                if (arr[i] === val) {
+                    arr.splice(i,1);
+                    break;
+                }
+            }
+        }
     })(jQuery);
 </script>

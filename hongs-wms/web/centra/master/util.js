@@ -71,10 +71,10 @@ function hsUserMove(treebox, listbox) {
                 } else {
                     var uid = ui.helper.data("user_id" );
                     var did = ui.helper.data("dept_id" );
-                    var dis = ui.helper.data("dept_ids");
+                    var dis = ui.helper.data("dept_ids").slice(0);
                     $.hsWarn(
-                        "您需要将用户移动到新部门, 还是增挂到新部门?",
-                        "移动操作将取消此用户与前部门的关联, 增挂就是他可以既在新部门又在旧部门.",
+                        "您需要将用户移动到新部门, 还是移补或增挂到新部门?",
+                        "移动操作将取消此用户与前部门的关联, 移补操作退出当前部门但保留其他关联, 增挂就是他可以既在新部门又在旧部门.",
                         {
                             "label": "移动",
                             "click": function() {
@@ -98,8 +98,32 @@ function hsUserMove(treebox, listbox) {
                             }
                         },
                         {
+                            "label": "移补",
+                            "click": function() {
+                                del( dis, did );
+                                dis.push( pid );
+                                var req = new HsSerialDic({id: uid, "depts..dept_id": dis});
+                                $.ajax({
+                                    url     : hsFixUri("centra/master/user/save.act"),
+                                    data    : hsSerialArr(req),
+                                    type    : "POST",
+                                    dataType: "JSON",
+                                    cache   : false,
+                                    global  : false,
+                                    success : function(rst) {
+                                        rst = hsResponse(rst);
+                                        if (rst.ok) {
+                                            var mod = listbox.find(".HsList").data("HsList");
+                                            mod.load();
+                                        }
+                                    }
+                                });
+                            }
+                        },
+                        {
                             "label": "增挂",
                             "click": function() {
+//                              del( dis, did );
                                 dis.push( pid );
                                 var req = new HsSerialDic({id: uid, "depts..dept_id": dis});
                                 $.ajax({
@@ -128,16 +152,13 @@ function hsUserMove(treebox, listbox) {
             }
         });
     });
-}
 
-/*
-function removeOne(arr, val) {
-    for(var i = 0; i < arr.length; i ++) {
-        if (arr[ i ] == val) {
-            arr.splice(i, 1);
-            break;
+    function del(arr, val) {
+        for(var i = 0; i < arr.length; i ++) {
+            if (arr[i] === val) {
+                arr.splice(i,1);
+                break;
+            }
         }
     }
-    return  arr;
 }
-*/

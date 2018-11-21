@@ -152,8 +152,9 @@ function hsListFillOpen(x, v, n, t) {
             u.append(l.clone().append(b));
         }
         u.appendTo(m.find(".modal-body"));
-        m.find("h4").text("点击打开..." );
-        m.css ("text-align", "left");
+        u.css("font-family", "monospace");
+        m.css("text-align" , "left" /**/);
+        m.find("h4").text("单击链接打开:");
         a.click(function( ) {
             m.modal("show");
         });

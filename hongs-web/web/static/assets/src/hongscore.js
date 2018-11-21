@@ -239,16 +239,19 @@ function hsResponse(rst, qut) {
                 } else {
                     url = hsGetConf(rst.ern + ".redirect" );
                 }
-                if (url !== undefined && url !== null)  {
-                    if (rst.msg) {
-                        alert(rst.msg);
+                if (url !== null && url !== undefined ) {
+                    if (! self.HsGone) {
+                          self.HsGone = true;
+                        if ( rst.msg ) {
+                            alert( rst.msg );
+                        }
+                        if (url && url != '#') {
+                            location.assign( hsFixUri(url));
+                        } else {
+                            location.reload( );
+                        }
                     }
-                    if (url && url != '#') {
-                        location.assign(hsFixUri(url));
-                    } else {
-                        location.reload( );
-                    }
-                    throw new Error(rst.err);
+                    throw new Error( rst.err );
                 }
             }
         }

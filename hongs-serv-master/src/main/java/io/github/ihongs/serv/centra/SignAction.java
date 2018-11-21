@@ -1,15 +1,19 @@
 package io.github.ihongs.serv.centra;
 
+import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.util.FetchCase;
+import io.github.ihongs.normal.serv.Record;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.auth.RoleSet;
 import io.github.ihongs.util.Synt;
+import java.util.Calendar;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.HttpSession;
@@ -30,7 +34,7 @@ public class SignAction {
     @Verify(conf="master",form="sign")
     public void signCreate(ActionHelper ah) throws HongsException {
         String appid    = Synt.declare(ah.getParameter("appid"), "_WEB_" );
-        String place    = Synt.declare(ah.getParameter("place"), "public");
+        String place    = Synt.declare(ah.getParameter("place"), "centre");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
         String passcode ;
@@ -39,8 +43,11 @@ public class SignAction {
         Table     tb = db.getTable("user");
         FetchCase fc;
         Map       ud;
+        String    id;
+        int       tt;
+        int       rt;
 
-        // 验证密码
+        // 检查账号
         fc = new FetchCase( )
             .from   ( tb.tableName )
             .select ( "password, passcode, id, name, head, mtime, state" )
@@ -50,11 +57,45 @@ public class SignAction {
             ah.reply(AuthKit.getWrong("username", "core.username.invalid"));
             return;
         }
+
+        // 重试限制
+        CoreConfig cc = CoreConfig.getInstance ("master");
+        if (cc.getProperty("core.sign.retry.locks", "ip").equals("ip")) {
+            id = Core.CLIENT_ADDR.get();
+        } else {
+            id = (String) ud.get ("id");
+        }
+        tt = Synt.declare(cc.getProperty( "core.sign.retry.times" ), 5);
+        rt = Synt.declare(Record.get ( "core.sign.retry.times."+id), 0);
+        if (rt >= tt) {
+            ah.reply(AuthKit.getWrong("password", "core.password.timeout"));
+            ah.getResponseData().put("total_times", tt  );
+            ah.getResponseData().put("retry_times", rt  );
+            return;
+        }
+
+        // 校验密码
         passcode=Synt.declare( ud.get("passcode"),"" );
         password=AuthKit.getCrypt(password + passcode);
         if (! password.equals( ud.get("password") )) {
             ah.reply(AuthKit.getWrong("password", "core.password.invalid"));
+            ah.getResponseData().put("total_times", tt  );
+            ah.getResponseData().put("retry_times", rt+1);
+
+            // 记录错误次数
+            Calendar ca;
+            long     et;
+            ca = Calendar.getInstance(Core.getTimezone());
+            ca.setTimeInMillis( Core.ACTION_TIME.get( ) );
+            ca.set(Calendar.MILLISECOND, 999);
+            ca.set(Calendar.HOUR_OF_DAY, 23 );
+            ca.set(Calendar.MINUTE, 59);
+            ca.set(Calendar.SECOND, 59);
+            et = ca.getTimeInMillis() / 1000 ;
+            Record.put ("core.sign.retry.times."+id, rt+1, et+1);
             return;
+        } else {
+            Record.del ("core.sign.retry.times."+id /* Clear */);
         }
 
         String usrid = (String) ud.get( "id" );

@@ -160,6 +160,7 @@ CREATE TABLE `a_master_user_open` (
 CREATE INDEX `IK_a_master_user_open_user` ON `a_master_user_open` (`user_id`);
 CREATE INDEX `IK_a_master_user_open_appid` ON `a_master_user_open` (`appid`);
 CREATE INDEX `IK_a_master_user_open_opnid` ON `a_master_user_open` (`opnid`);
+CREATE UNIQUE INDEX `UK_a_master_user_open_id` ON `a_master_user_open` (`appid`, `opnid`);
 
 --
 -- 用户登录凭证
@@ -178,3 +179,4 @@ CREATE TABLE `a_master_user_sign` (
 CREATE INDEX `IK_a_master_user_sign_user` ON `a_master_user_sign` (`user_id`);
 CREATE INDEX `IK_a_master_user_sign_appid` ON `a_master_user_sign` (`appid`);
 CREATE INDEX `IK_a_master_user_sign_sesid` ON `a_master_user_sign` (`sesid`);
+CREATE UNIQUE INDEX `UK_a_master_user_sign_id` ON `a_master_user_sign` (`appid`, `sesid`);

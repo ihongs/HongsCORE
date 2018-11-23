@@ -550,6 +550,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
             req.removeAttribute(Core.class.getName());
             Core.THREAD_CORE.remove();
+            Core.CLIENT_ADDR.remove();
             Core.ACTION_TIME.remove();
             Core.ACTION_ZONE.remove();
             Core.ACTION_LANG.remove();

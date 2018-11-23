@@ -40,8 +40,7 @@
     # 获取并构建系统
     git clone https://github.com/ihongs/HongsCORE.git
     cd  HongsCORE
-    mvn compile
-    mvn package
+    mvn clean package
 
     # 设置和启动系统
     cd  hongs-serv-xxx/target/HongsXXX
@@ -50,11 +49,9 @@
 
     # hongs-serv-web/target/HongsWeb 为基础系统, 仅包含基本的应用服务和前端组件等;
     # hongs-serv-wms/target/HongsWMS 为管理系统, 拥有全功能的用户管理和自助模块等.
-    # 编译出现 "[ERROR] Failed to execute goal org.apache.maven.plugins:maven-dependency-plugin:2.9:copy-dependencies (compile) on project hongs-web"
-    # 不要着急, 只需继续执行 package 然后重新执行 compile 和 package.
     # 以上两个包内都放有 Dockerfile 可轻松构建容器镜像, 搭建虚拟系统.
 
-加 --DEBUG 1 可开启调试输出模式, 可在控制台(命令行)显示执行过程(调试信息), server:start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
+加 --DEBUG 1 可开启调试输出模式, 可在控制台(命令行)显示执行过程(调试信息), server.start 命令可跟数字表示启动端口, 默认 8080 端口. 同时为 windows 用户提供了 setup.bat 和 start.bat 两个快捷命令来执行以上同等任务, windows 用户只需双击即可.
 
 注意[1]: 退出运行应该用 Ctrl+C 而不应当直接关闭命令窗口, 后者可能导致直接死掉而无法执行退出清理, 再次启动需要删除 var/server 下端口对应的 .pid 文件才行.
 
@@ -75,7 +72,7 @@
 6. 刷新页面，右上菜单就能看到刚添加的单元
 7. 点击单元，顶部菜单有表单项，尝试操作吧
 
-现在，你可以在 centra/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
+现在，你可以在 centra/data 或 centre/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
     form.html        编辑表单
@@ -83,7 +80,7 @@
     list.html        列表区块
     list_fork.html   选择区块
 
-一个简单的方法是通过 http://localhost:8080/mytest/form.html 这样的 url 来获取 html 文件, 然后存下来后在这个基础上改. 以后会增加一个按钮来比较方便的固化这个 html. 如不想使用原页面体系可在构建的 default.html 中按自定规则编码。
+一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。
 
 ## 后端开发
 

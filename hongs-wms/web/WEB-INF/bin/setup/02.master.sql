@@ -81,9 +81,9 @@ CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);
 -- CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
 
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','超级管理员',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','9BA587D4E465F45669F19AF20CA033D9','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODRZHR00KLJOEM01','9BA587D4E465F45669F19AF20CA033D9','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODSOGC00KGZCQK01','9BA587D4E465F45669F19AF20CA033D9','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODRZHR00KLJOEM01','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODSOGC00KGZCQK01','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
 
 --
 -- 用户所属部门

@@ -114,7 +114,7 @@ function hsListFillOpen(x, v, n, t) {
         case "video": n = "glyphicon glyphicon-play"    ; break;
         case "audio": n = "glyphicon glyphicon-play"    ; break;
         case "file" : n = "glyphicon glyphicon-file"    ; break;
-        default:      n = "glyphicon glyphicon-link"    ; break;
+        default     : n = "glyphicon glyphicon-link"    ; break;
     }
 
     if (v.length == 1) {

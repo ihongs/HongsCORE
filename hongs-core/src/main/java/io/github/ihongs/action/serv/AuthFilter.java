@@ -269,7 +269,7 @@ public class AuthFilter
 
     if ( 3 == type) {
         uri = this.indexPage;
-        if (uri == null || uri.length() == 0 || ia) {
+        if (uri == null || uri.length() == 0) {
             uri =  null;
             msg =  lang.translate("core.error.no.power");
         } else {
@@ -278,7 +278,7 @@ public class AuthFilter
     } else
     if ( 2 == type) {
         uri = this.loginPage;
-        if (uri == null || uri.length() == 0 || ia) {
+        if (uri == null || uri.length() == 0) {
             uri =  null;
             msg =  lang.translate("core.error.no.place");
         } else {
@@ -403,7 +403,9 @@ public class AuthFilter
   }
 
   private boolean isApi (HttpServletRequest req) {
-      return ActionDriver.getOriginPath(req).endsWith(Cnst.API_EXT);
+      String act = ActionDriver.getOriginPath(req);
+      return act.endsWith(Cnst.API_EXT)
+          || act.startsWith( "/api/"  );
   }
 
   private boolean isAjax(HttpServletRequest req) {

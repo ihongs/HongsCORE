@@ -327,7 +327,12 @@
         this.attr("name", "" );
         this.data("linked", hide);
         hide.data("linked", this);
-        this.after(hide);
+        // 避免在 input-group 中影响圆边角
+        if (this.index () < 1) {
+            this.after (hide );
+        } else {
+            this.before(hide );
+        }
 
         // 互相联动
         hide.on("change", function() {

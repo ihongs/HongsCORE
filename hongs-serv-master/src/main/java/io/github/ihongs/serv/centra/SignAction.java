@@ -61,9 +61,9 @@ public class SignAction {
         // 重试限制
         CoreConfig cc = CoreConfig.getInstance ("master");
         if (cc.getProperty("core.sign.retry.locks", "ip").equals("ip")) {
-            id = Core.CLIENT_ADDR.get();
+            id =  Core.CLIENT_ADDR.get();
         } else {
-            id = (String) ud.get ("id");
+            id = (String) ud.get( "id" );
         }
         tt = Synt.declare(cc.getProperty( "core.sign.retry.times" ), 5);
         rt = Synt.declare(Record.get ( "core.sign.retry.times."+id), 0);
@@ -87,7 +87,6 @@ public class SignAction {
             long     et;
             ca = Calendar.getInstance(Core.getTimezone());
             ca.setTimeInMillis( Core.ACTION_TIME.get( ) );
-            ca.set(Calendar.MILLISECOND, 999);
             ca.set(Calendar.HOUR_OF_DAY, 23 );
             ca.set(Calendar.MINUTE, 59);
             ca.set(Calendar.SECOND, 59);

@@ -44,7 +44,8 @@ public class SignAction {
         FetchCase fc;
         Map       ud;
         String    id;
-        int       tt;
+        String    tt;
+        int       at;
         int       rt;
 
         // 检查账号
@@ -60,18 +61,21 @@ public class SignAction {
 
         // 重试限制
         CoreConfig cc = CoreConfig.getInstance ("master");
-        if (cc.getProperty("core.sign.retry.locks", "ip").equals("ip")) {
-            id =  Core.CLIENT_ADDR.get();
-        } else {
-            id = (String) ud.get( "id" );
+        tt = Synt.declare(cc.getProperty("core.sign.retry.token"),"");
+        at = Synt.declare(cc.getProperty("core.sign.retry.times"), 5);
+        switch (tt) {
+            case "id": id = (String) ud.get ("id"); break;
+            case "ip": id = Core.CLIENT_ADDR.get(); break;
+            default  : id = ud.get("id") +"-"+ Core.CLIENT_ADDR.get();
         }
-        tt = Synt.declare(cc.getProperty( "core.sign.retry.times" ), 5);
-        rt = Synt.declare(Record.get ( "core.sign.retry.times."+id), 0);
-        if (rt >= tt) {
+        rt = Synt.declare(Record.get ( "sign.retry.times." + id ), 0);
+        if (rt >= at) {
             ah.reply(AuthKit.getWrong("password", "core.password.timeout"));
-            ah.getResponseData().put("total_times", tt  );
-            ah.getResponseData().put("retry_times", rt  );
+            ah.getResponseData( ).put("allow_times" , at);
+            ah.getResponseData( ).put("retry_times" , rt);
             return;
+        } else {
+            rt ++ ;
         }
 
         // 校验密码
@@ -79,8 +83,8 @@ public class SignAction {
         password=AuthKit.getCrypt(password + passcode);
         if (! password.equals( ud.get("password") )) {
             ah.reply(AuthKit.getWrong("password", "core.password.invalid"));
-            ah.getResponseData().put("total_times", tt  );
-            ah.getResponseData().put("retry_times", rt+1);
+            ah.getResponseData( ).put("allow_times" , at);
+            ah.getResponseData( ).put("retry_times" , rt);
 
             // 记录错误次数
             Calendar ca;
@@ -91,10 +95,10 @@ public class SignAction {
             ca.set(Calendar.MINUTE, 59);
             ca.set(Calendar.SECOND, 59);
             et = ca.getTimeInMillis() / 1000 ;
-            Record.put ("core.sign.retry.times."+id, rt+1, et+1);
+            Record.put ("sign.retry.times."+id,rt+1,et+1);
             return;
         } else {
-            Record.del ("core.sign.retry.times."+id /* Clear */);
+            Record.del ("sign.retry.times."+id/*Remove*/);
         }
 
         String usrid = (String) ud.get( "id" );

@@ -261,13 +261,14 @@ public class AuthFilter
 
   private void doFailed(Core core, ActionHelper hlpr, byte type)
   {
+    HttpServletResponse rsp = hlpr.getResponse();
+    HttpServletRequest  req = hlpr.getRequest( );
     CoreLocale lang = core.get(CoreLocale.class);
-    HttpServletRequest req = hlpr.getRequest(  );
-    boolean ia = isApi(req) || isAjax(req) || isJson(req) || isJsop(req);
-    String uri;
-    String msg;
+    String  uri ;
+    String  msg ;
 
-    if ( 3 == type) {
+    switch (type) {
+    case 3 :
         uri = this.indexPage;
         if (uri == null || uri.length() == 0) {
             uri =  null;
@@ -275,8 +276,8 @@ public class AuthFilter
         } else {
             msg =  lang.translate("core.error.no.power.redirect");
         }
-    } else
-    if ( 2 == type) {
+    break  ;
+    case 2 :
         uri = this.loginPage;
         if (uri == null || uri.length() == 0) {
             uri =  null;
@@ -284,8 +285,8 @@ public class AuthFilter
         } else {
             msg =  lang.translate("core.error.no.place.redirect");
         }
-    } else
-    {
+    break  ;
+    default:
         uri = this.loginPage;
         if (uri == null || uri.length() == 0) {
             if ( 0 == type) {
@@ -345,60 +346,57 @@ public class AuthFilter
         }
     }
 
-    if (ia) {
-        Map rsp = new HashMap();
-        rsp.put("ok" , false);
-        rsp.put("msg",  msg );
-        rsp.put("ern", "Er40" + type);
-        if (type == 3) {
-            if (uri != null && uri.length() != 0) {
-                rsp.put("err", "Link "+uri);
-            }
-            hlpr.getResponse().setStatus(HttpServletResponse.SC_FORBIDDEN   );
-        } else {
-            if (uri != null && uri.length() != 0) {
-                rsp.put("err", "Goto "+uri);
-            }
-            hlpr.getResponse().setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+    if (isApi(req) || isAjax(req) || isJson(req) || isJsop(req)) {
+        Map rep = new HashMap();
+        rep.put( "ok"  , false);
+        rep.put( "msg" ,  msg );
+        rep.put( "ern" , "Er40" + type);
+        if (uri != null && uri.length() != 0) {
+        rep.put( "err" , "Goto "+ uri );
         }
 
-        /**
-         * 必须调用 responed 立即输出
-         * 用以应对 forward  后输出失败的问题
-         */
-        hlpr.reply(rsp);
+        // 错误状态
+        if (type == 3) {
+            rsp.setStatus(HttpServletResponse.SC_FORBIDDEN   );
+        } else {
+            rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
+        // forward 后可能会失效
+        // 必须立即输出错误信息
+        hlpr.reply(rep);
         hlpr.responed();
     } else {
         /**
-         * 有时候如果客户从收藏夹或历史记录打开了一个没有权限的页
-         * 如果此区域没有提供跳转的路径
+         * 如果从收藏或历史打开一个页面
+         * 而此区域兵没有提供跳转的路径
          * 则从全局错误跳转构建响应代码
          */
-
         if (uri == null || uri.length() == 0) {
-            uri  = core.get(CoreConfig.class)
+            uri =  core.get(CoreConfig.class)
                        .getProperty("fore.Er40"+ type +".redirect");
         if (uri == null || uri.length() == 0) {
-            uri  = Core.BASE_HREF +"/";
+            uri =  Core.BASE_HREF +"/";
         }}
 
-        Map<String, String> rep = new HashMap();
-        rep.put("urt", Core.BASE_HREF);
-        rep.put("uri", uri);
-        rep.put("msg", msg);
+        Map rep = new HashMap();
+        rep.put( "msg" ,  msg );
+        rep.put( "uri" ,  uri );
+        rep.put( "urt" , Core.BASE_HREF );
         String err = lang.translate("core.redirect.html", rep /**/);
 
+        // 禁止缓存
+        rsp.addHeader("Cache-Control", "no-cache");
+        rsp.setHeader(    "Pragma"   , "no-cache");
+        rsp.setDateHeader("Max-Age"  , 0);
+        rsp.setDateHeader("Expires"  , 0);
+
+        // 错误消息
         if (type == 3) {
             hlpr.error403(err);
         } else {
             hlpr.error401(err);
         }
-
-        // 禁止缓存
-        HttpServletResponse rsp = hlpr.getResponse();
-        rsp.addHeader("Cache-Control", "no-cache");
-        rsp.setHeader(    "Pragma"   , "no-cache");
-        rsp.setDateHeader("Expires"  ,  0  );
     }
   }
 

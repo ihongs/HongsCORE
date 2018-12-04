@@ -10,10 +10,10 @@ CREATE TABLE `a_master_dept` (
   `pid` CHAR(20) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
-  `ctime` INTEGER(11) DEFAULT NULL,
-  `mtime` INTEGER(11) DEFAULT NULL,
-  `rtime` INTEGER(11) DEFAULT NULL,
-  `state` TINYINT(2) DEFAULT '1',
+  `ctime` INTEGER UNSIGNED DEFAULT NULL,
+  `mtime` INTEGER UNSIGNED DEFAULT NULL,
+  `rtime` INTEGER UNSIGNED DEFAULT NULL,
+  `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`pid`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
 );
@@ -58,17 +58,17 @@ CREATE TABLE `a_master_user` (
   `name` VARCHAR(200) DEFAULT NULL,
   `head` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `ctime` INTEGER(11) DEFAULT NULL,
-  `mtime` INTEGER(11) DEFAULT NULL,
-  `rtime` INTEGER(11) DEFAULT NULL, /* 权限最后更新时间 */
-  `state` TINYINT(2) DEFAULT '1',
+  `ctime` INTEGER UNSIGNED DEFAULT NULL,
+  `mtime` INTEGER UNSIGNED DEFAULT NULL,
+  `rtime` INTEGER UNSIGNED DEFAULT NULL, /* 权限最后更新时间 */
+  `state` TINYINT DEFAULT '1',
   /* 扩展字段 */
   `organ` VARCHAR(200) DEFAULT NULL,
   `title` VARCHAR(200) DEFAULT NULL,
   `email` VARCHAR(200) DEFAULT NULL,
   `phone` VARCHAR(20 ) DEFAULT NULL,
-  `email_checked` TINYINT(1) DEFAULT '0',
-  `phone_checked` TINYINT(1) DEFAULT '0',
+  `email_checked` TINYINT DEFAULT '0',
+  `phone_checked` TINYINT DEFAULT '0',
   PRIMARY KEY (`id`)
 );
 
@@ -152,7 +152,7 @@ CREATE TABLE `a_master_user_open` (
   `user_id` CHAR(20) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `opnid` VARCHAR(100) NOT NULL,
-  `ctime` INTEGER(11) DEFAULT NULL,
+  `ctime` INTEGER UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
 );
@@ -171,7 +171,7 @@ CREATE TABLE `a_master_user_sign` (
   `user_id` CHAR(20) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `sesid` VARCHAR(100) NOT NULL,
-  `ctime` INTEGER(11) DEFAULT NULL,
+  `ctime` INTEGER UNSIGNED DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
 );

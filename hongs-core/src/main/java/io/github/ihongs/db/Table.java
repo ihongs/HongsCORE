@@ -7,6 +7,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.AssocMore;
 import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.Tool;
 import java.sql.Types;
 import java.sql.Date;
 import java.sql.Time;
@@ -616,17 +617,28 @@ public class Table
         continue;
       }
 
-      String valueStr = value.toString().trim();
+      /**
+       * Double型如果直接用toString
+       * 则可能为科学计数法
+       * 会使校验的正则失效
+       */
+      String valueStr;
+      if (value instanceof Number ) {
+        valueStr = Tool .toNumStr((Number) value);
+      } else {
+        valueStr = value.toString().trim();
+      }
 
       int type = (Integer)column.get("type" );
       int size = (Integer)column.get("size" );
       int scle = (Integer)column.get("scale");
 
-      // 判断字符串类型
-      if (type == Types.CHAR  || type == Types.VARCHAR  || type == Types.LONGVARCHAR
-       || type == Types.NCHAR || type == Types.NVARCHAR || type == Types.LONGNVARCHAR)
-      {
-        // 判断长度, 多字节的字符统统被记为 2
+      switch (type) {
+      // 判断字串类型
+      case Types.CHAR : case Types.VARCHAR : case Types.LONGVARCHAR :
+      case Types.NCHAR: case Types.NVARCHAR: case Types.LONGNVARCHAR:
+      if (0 < size) {// 不限长为 0, 数值类型亦同此
+        // 多字节字符长度统统记为 2, 依此计算总长度
         int l  = 0, i , c;
         for(i  = 0; i < valueStr.length(); i ++)
         {
@@ -637,77 +649,54 @@ public class Table
             l += 2;
           }
         }
+
         if (l > size && 0 < size)
         {
           throw sizeException(namc, valueStr, size);
         }
 
         mainValues.put(namc, valueStr);
+        break;
+      } else {
+        mainValues.put(namc, valueStr);
+        break;
       }
 
-      // 判断整型数值
-      else if (type == Types.INTEGER || type == Types.TINYINT || type == Types.SMALLINT || type == Types.BIGINT)
+      // 判断数字类型
+      case Types.INTEGER: case Types.TINYINT: case Types.BIGINT: case Types.SMALLINT:
+      case Types.NUMERIC: case Types.DECIMAL: case Types.DOUBLE: case Types.FLOAT   :
       {
-        if (!valueStr.matches("^[\\-+]?[0-9]+(\\.0+)?$"))
+        double valueNum ;
+        try
         {
-          throw intgrException(namc, valueStr);
+          valueNum = Synt.asDouble(value);
+        }
+        catch (ClassCastException ex)
+        {
+          throw numeException (namc, valueStr);
+        }
+        if (0 > valueNum && (Boolean) column.get("unsigned"))
+        {
+          throw unsiException (namc, valueStr);
         }
 
-        if ((Boolean)column.get("unsigned") && valueStr.startsWith("-"))
-        {
-          throw usngdException(namc, valueStr);
-        }
-
-        /**
-         * 取数字的绝对值(去负号), 便于检查长度
-         */
-        DecimalFormat df = new DecimalFormat ("#");
-        double valueNum  = Double.parseDouble(valueStr);
-        String valueStr2 = df.format(Math.abs(valueNum));
-
-        // 判断精度
-        if (valueStr2.length() > size)
-        {
-          throw sizeException(namc, valueStr, size);
-        }
-
-        mainValues.put(namc, valueNum);
-      }
-
-      // 判断非整型数值
-      else if (type == Types.NUMERIC || type == Types.DECIMAL || type == Types.DOUBLE || type == Types.FLOAT)
-      {
-        if (!valueStr.matches("^[\\-+]?[0-9]+(\\.[0-9]+)?$"))
-        {
-          throw floatException(namc, valueStr);
-        }
-
-        if ((Boolean)column.get("unsigned") && valueStr.startsWith("-"))
-        {
-          throw usngdException(namc, valueStr);
-        }
-
-        // 判断小数位数, 填充小数位
-        StringBuilder sb = new StringBuilder();
-        sb.append("#.#");
+        // 计算位数, 填充小数位
+        StringBuilder bf = new StringBuilder();
+          bf.append("#.#");
         for (int i = 0; i < scle; i ++)
-          sb.append('#');
-        String sbs = sb.toString();
+          bf.append( '#' );
 
-        /**
-         * 取数字的绝对值(去负号), 便于检查长度
-         */
-        DecimalFormat df = new DecimalFormat (sbs);
-        double valueNum  = Double.parseDouble(valueStr);
-        String valueStr2 = df.format(Math.abs(valueNum));
+        // 取绝对值, 以便算长度
+        DecimalFormat df = new DecimalFormat(bf.toString());
+        String valueStr2 = df.format( Math.abs( valueNum ));
 
-        int dotPos = valueStr2.indexOf('.');
-        if (dotPos == -1)
+        int dotPos = valueStr2.indexOf ( '.' );
+        if (dotPos < 0)
         {
           /**
-           * 判断精度
+           * 判断精度, 0 表示不限
            */
-          if (valueStr2.length() > size)
+          if (size > 0 && size < valueStr2.length())
           {
             throw sizeException(namc, valueStr, size);
           }
@@ -728,27 +717,28 @@ public class Table
           }
 
           /**
-           * 判断精度
+           * 判断精度, 0 表示不限
            */
-          if (allLen > size)
+          if (size > 0 && size < allLen)
           {
             throw sizeException(namc, valueStr, size);
           }
 
           /**
-           * 判断小数
+           * 判断小数,-1 表示不限
            */
-          if (subLen > scle)
+          if (scle >-1 && scle < subLen)
           {
             throw scleException(namc, valueStr, scle);
           }
         }
 
         mainValues.put(namc, valueNum);
+        break;
       }
 
       // 判断日期类型
-      else if (type == Types.DATE)
+      case Types.DATE:
       {
         if (value instanceof Date || value instanceof java.util.Date)
         {
@@ -756,8 +746,8 @@ public class Table
         }
         else if (valueStr.matches("^\\d+$"))
         {
-          long valueNum = Long.parseLong(valueStr) ;
-          mainValues.put( namc, new Date(valueNum));
+          long valueNum = Long.parseLong(valueStr);
+          mainValues.put(namc, new Date(valueNum));
         }
         else
         {
@@ -774,13 +764,14 @@ public class Table
           }
           catch (ParseException ex)
           {
-            throw datetimeException(namc , valueStr , dateFormat);
+            throw dateException(namc, valueStr, dateFormat);
           }
         }
+        break;
       }
 
       // 判断时间类型
-      else if (type == Types.TIME)
+      case Types.TIME:
       {
         if (value instanceof Time || value instanceof java.util.Date)
         {
@@ -806,13 +797,14 @@ public class Table
           }
           catch (ParseException ex)
           {
-            throw datetimeException(namc , valueStr , timeFormat);
+            throw dateException(namc, valueStr, timeFormat);
           }
         }
+        break;
       }
 
       // 判断时间戳或日期时间类型
-      else if (type == Types.TIMESTAMP)
+      case Types.TIMESTAMP:
       {
         if (value instanceof Timestamp || value instanceof java.util.Date)
         {
@@ -838,16 +830,16 @@ public class Table
           }
           catch (ParseException ex)
           {
-            throw datetimeException(namc , valueStr , datetimeFormat);
+            throw dateException(namc, valueStr, datetimeFormat);
           }
         }
+        break;
       }
 
       // 其他类型则直接放入(推荐建库时采用上面有校验的类型)
-      else
-      {
+      default:
         mainValues.put(namc, value);
-      }
+      } // End switch.
     }
 
     return mainValues;
@@ -857,40 +849,35 @@ public class Table
 
   private HongsException nullException(String name) {
     String error = "Value for column '"+name+"' can not be NULL";
-    return validateException(0x1089, error, name);
+    return valiException(0x1089, error, name);
   }
 
   private HongsException sizeException(String name, String value, int size) {
     String error = "Value for column '"+name+"'("+value+") must be a less than "+size;
-    return validateException(0x108a, error, name, value, String.valueOf(size));
+    return valiException(0x108a, error, name, value, String.valueOf(size));
   }
 
   private HongsException scleException(String name, String value, int scle) {
     String error = "Scale for column '"+name+"'("+value+") must be a less than "+scle;
-    return validateException(0x108b, error, name, value, String.valueOf(scle));
+    return valiException(0x108b, error, name, value, String.valueOf(scle));
   }
 
-  private HongsException floatException(String name, String value) {
-    String error = "Value for column '"+name+"'("+value+") is not a float number";
-    return validateException(0x108c, error, name, value);
+  private HongsException numeException(String name, String value) {
+    String error = "Value for column '"+name+"'("+value+") must be a standard number";
+    return valiException(0x108d, error, name, value);
   }
 
-  private HongsException intgrException(String name, String value) {
-    String error = "Value for column '"+name+"'("+value+") is not a integer number";
-    return validateException(0x108d, error, name, value);
-  }
-
-  private HongsException usngdException(String name, String value) {
+  private HongsException unsiException(String name, String value) {
     String error = "Value for column '"+name+"'("+value+") must be a unsigned number";
-    return validateException(0x108e, error, name, value);
+    return valiException(0x108e, error, name, value);
   }
 
-  private HongsException datetimeException(String name, String value, String format) {
-    String error = "Format for column '"+name+"'("+value+") must like this '"+format+"'";
-    return validateException(0x108f, error, name, value, format);
+  private HongsException dateException(String name, String value, String format) {
+    String error = "Value for column '"+name+"'("+value+") must like '"+ format + "'";
+    return valiException(0x108f, error, name, value, format);
   }
 
-  private HongsException validateException(int code, String error, String fieldName, String... otherParams)
+  private HongsException valiException(int code, String error, String fieldName, String... otherParams)
   {
     List<String> trans = new ArrayList(/**/);
     trans.add(db.name+"."+name);

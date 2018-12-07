@@ -5,7 +5,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsError;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;

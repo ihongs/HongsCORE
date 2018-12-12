@@ -6,7 +6,7 @@
 
 DROP TABLE IF EXISTS `a_normal_record`;
 CREATE TABLE `a_normal_record` (
-    `id` VARCHAR(96) NOT NULL,
+    `id` VARCHAR(80) NOT NULL,
     `data`  BLOB NOT NULL,
     `xtime` INTEGER UNSIGNED DEFAULT 0,
     `mtime` INTEGER UNSIGNED DEFAULT 0,
@@ -22,7 +22,7 @@ CREATE INDEX `IK_a_normal_record_mtime` ON `a_normal_record` (`mtime`);
 
 DROP TABLE IF EXISTS `a_normal_sesion`;
 CREATE TABLE `a_normal_sesion` (
-    `id` VARCHAR(96) NOT NULL,
+    `id` VARCHAR(80) NOT NULL,
     `data`  BLOB NOT NULL,
     `xtime` INTEGER UNSIGNED DEFAULT 0,
     `mtime` INTEGER UNSIGNED DEFAULT 0,

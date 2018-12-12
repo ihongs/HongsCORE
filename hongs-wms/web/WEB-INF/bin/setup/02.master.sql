@@ -6,8 +6,8 @@
 
 DROP TABLE IF EXISTS `a_master_dept`;
 CREATE TABLE `a_master_dept` (
-  `id` CHAR(20) NOT NULL,
-  `pid` CHAR(20) DEFAULT NULL,
+  `id` CHAR(14) NOT NULL,
+  `pid` CHAR(14) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
   `ctime` INTEGER UNSIGNED DEFAULT NULL,
@@ -27,8 +27,8 @@ CREATE UNIQUE INDEX `UK_a_master_dept_name` ON `a_master_dept` (`name`,`pid`);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRA','0','管理区','默认内部管理区域','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRE','0','公共区','默认注册到此区域','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXSDROLE001REB0Q01','CENTRA','技术部','这是技术部','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPRZ8Q5006II04J01','CENTRA','市场部','这是市场部','1424075622','1424075622','0',1);
+INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXSDROLE1REB0Q','CENTRA','技术部','这是技术部','1424075622','1424075622','0',1);
+INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPRZ8Q56II04J','CENTRA','市场部','这是市场部','1424075622','1424075622','0',1);
 
 --
 -- 部门拥有角色
@@ -36,7 +36,7 @@ INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`s
 
 DROP TABLE IF EXISTS `a_master_dept_role`;
 CREATE TABLE `a_master_dept_role` (
-  `dept_id` CHAR(20) NOT NULL,
+  `dept_id` CHAR(14) NOT NULL,
   `role` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`dept_id`,`role`),
   FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`)
@@ -51,7 +51,7 @@ CREATE INDEX `IK_a_master_dept_role_role` ON `a_master_dept_role` (`role`);
 
 DROP TABLE IF EXISTS `a_master_user`;
 CREATE TABLE `a_master_user` (
-  `id` CHAR(20) NOT NULL,
+  `id` CHAR(14) NOT NULL,
   `passcode` VARCHAR(128) DEFAULT NULL, /* 密码校验码 */
   `password` VARCHAR(128) DEFAULT NULL,
   `username` VARCHAR(200) DEFAULT NULL,
@@ -81,9 +81,9 @@ CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);
 -- CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
 
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','超级管理员',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR00297H9H01','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODRZHR00KLJOEM01','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
-INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODSOGC00KGZCQK01','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXNZ0OLR297H9H','a@abc.com','张三 (总经理)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODRZHRKLJOEM','b@abc.com','李四 (技术总监)',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('I2ODSOGCKGZCQK','c@abc.com','王五 (市场总监)',NULL,NULL,'1424075622','1424075622','0',1);
 
 --
 -- 用户所属部门
@@ -91,8 +91,8 @@ INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime
 
 DROP TABLE IF EXISTS `a_master_user_dept`;
 CREATE TABLE `a_master_user_dept` (
-  `user_id` CHAR(20) NOT NULL,
-  `dept_id` CHAR(20) NOT NULL,
+  `user_id` CHAR(14) NOT NULL,
+  `dept_id` CHAR(14) NOT NULL,
   PRIMARY KEY (`user_id`,`dept_id`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
@@ -102,9 +102,9 @@ CREATE INDEX `IK_a_master_user_dept_user` ON `a_master_user_dept` (`user_id`);
 CREATE INDEX `IK_a_master_user_dept_dept` ON `a_master_user_dept` (`dept_id`);
 
 INSERT INTO `a_master_user_dept` VALUES ('1','0');
-INSERT INTO `a_master_user_dept` VALUES ('HXNZ0OLR00297H9H01','CENTRA');
-INSERT INTO `a_master_user_dept` VALUES ('I2ODRZHR00KLJOEM01','HXSDROLE001REB0Q01');
-INSERT INTO `a_master_user_dept` VALUES ('I2ODSOGC00KGZCQK01','HYPRZ8Q5006II04J01');
+INSERT INTO `a_master_user_dept` VALUES ('HXNZ0OLR297H9H','CENTRA');
+INSERT INTO `a_master_user_dept` VALUES ('I2ODRZHRKLJOEM','HXSDROLE1REB0Q');
+INSERT INTO `a_master_user_dept` VALUES ('I2ODSOGCKGZCQK','HYPRZ8Q56II04J');
 
 --
 -- 用户所属角色
@@ -112,7 +112,7 @@ INSERT INTO `a_master_user_dept` VALUES ('I2ODSOGC00KGZCQK01','HYPRZ8Q5006II04J0
 
 DROP TABLE IF EXISTS `a_master_user_role`;
 CREATE TABLE `a_master_user_role` (
-  `user_id` CHAR(20) NOT NULL,
+  `user_id` CHAR(14) NOT NULL,
   `role` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`user_id`,`role`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
@@ -149,7 +149,7 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/delete');
 
 DROP TABLE IF EXISTS `a_master_user_open`;
 CREATE TABLE `a_master_user_open` (
-  `user_id` CHAR(20) NOT NULL,
+  `user_id` CHAR(14) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `opnid` VARCHAR(100) NOT NULL,
   `ctime` INTEGER UNSIGNED DEFAULT NULL,
@@ -168,7 +168,7 @@ CREATE UNIQUE INDEX `UK_a_master_user_open_id` ON `a_master_user_open` (`appid`,
 
 DROP TABLE IF EXISTS `a_master_user_sign`;
 CREATE TABLE `a_master_user_sign` (
-  `user_id` CHAR(20) NOT NULL,
+  `user_id` CHAR(14) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `sesid` VARCHAR(100) NOT NULL,
   `ctime` INTEGER UNSIGNED DEFAULT NULL,

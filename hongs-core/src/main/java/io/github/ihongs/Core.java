@@ -281,7 +281,7 @@ abstract public class Core
    * 新建唯一标识
    *
    * 36进制的12位字串(不包括服务器ID),
-   * 至少支持到"2059/01/01 00:00:00".
+   * 可以支持到"2059/04/26 01:38:27".
    * 取值范围: 0~9A~Z
    *
    * @param svid 服务器ID
@@ -291,19 +291,19 @@ abstract public class Core
   {
     long n;
 
-    n = System.currentTimeMillis( );
+    n = System.currentTimeMillis();
     String time = String.format("%8s", Long.toString(n, 36));
 
     n = Thread.currentThread().getId();
-    String trid = String.format("%4s", Long.toString(n, 36));
+    String trid = String.format("%2s", Long.toString(n, 36));
 
-    n = (long) ( Math.random() * 1679615); //36^4-1
-    String rand = String.format("%4s", Long.toString(n, 36));
+    n = (long) ( Math.random() * 36 * 36 );
+    String rand = String.format("%2s", Long.toString(n, 36));
 
     // 确保位数不超限量
     if (time.length() > 8) time = time.substring(time.length() - 8);
-    if (trid.length() > 4) trid = trid.substring(trid.length() - 4);
-    if (rand.length() > 4) rand = rand.substring(rand.length() - 4);
+    if (trid.length() > 2) trid = trid.substring(trid.length() - 2);
+    if (rand.length() > 2) rand = rand.substring(rand.length() - 2);
 
     return new StringBuilder()
         .append(time).append(trid)

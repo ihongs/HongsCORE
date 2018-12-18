@@ -29,11 +29,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>hongs-serv-system</artifactId>
-            <groupId>${project.groupId}</groupId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <artifactId>hongs-serv-search</artifactId>
             <groupId>${project.groupId}</groupId>
             <version>${project.version}</version>
@@ -143,8 +138,8 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.18.1</version>
                 <configuration>
                     <skip>true</skip>

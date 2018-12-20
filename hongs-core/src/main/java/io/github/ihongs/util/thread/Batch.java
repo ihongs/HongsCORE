@@ -201,11 +201,15 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
                         try {
                             batch.run(cache);
                         } catch (Throwable e) {
-                            ByteArrayOutputStream b = new ByteArrayOutputStream();
-                            e.printStackTrace(new PrintStream(b));
                             String n = batch.getClass().getName();
-                            String s = /**/b.toString();
-                            CoreLogger.getLogger(n).error(s);
+                            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                                ByteArrayOutputStream b;
+                                   b = new  ByteArrayOutputStream(  );
+                                e.printStackTrace(new PrintStream(b));
+                                CoreLogger.getLogger(n).error(b. toString ());
+                            } else {
+                                CoreLogger.getLogger(n).error(e.getMessage());
+                            }
                         }
                         cache.clear();
                     }
@@ -214,11 +218,15 @@ public abstract class Batch<T> extends CoreSerial implements AutoCloseable {
                         try {
                             batch.run(cache);
                         } catch (Throwable e) {
-                            ByteArrayOutputStream b = new ByteArrayOutputStream();
-                            e.printStackTrace(new PrintStream(b));
                             String n = batch.getClass().getName();
-                            String s = /**/b.toString();
-                            CoreLogger.getLogger(n).error(s);
+                            if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+                                ByteArrayOutputStream b;
+                                   b = new  ByteArrayOutputStream(  );
+                                e.printStackTrace(new PrintStream(b));
+                                CoreLogger.getLogger(n).error(b. toString ());
+                            } else {
+                                CoreLogger.getLogger(n).error(e.getMessage());
+                            }
                         }
                         cache.clear();
                     }

@@ -14,7 +14,7 @@ import java.security.NoSuchAlgorithmException;
  * 消息摘要工具
  * @author Hongs
  */
-public class Digest {
+public final class Digest {
 
     private static final char[] DIGITS = {
         '0', '1', '2', '3', '4', '5', '6', '7',
@@ -31,7 +31,7 @@ public class Digest {
 
     /**
      * 指定算法
-     * @param type MD5,SHA
+     * @param type MD5,SHA-1,SHA-256
      */
     public Digest(String type) {
         try {

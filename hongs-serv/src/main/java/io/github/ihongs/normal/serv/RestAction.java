@@ -30,7 +30,7 @@ public class RestAction extends ApisAction {
     private static final String[] ACTION_GOT    = new String[] {"search", "info", "list"};
     private static final String[] ACTION_POST   = new String[] {"create", "save"};
     private static final String[] ACTION_PATCH  = new String[] {"update", "save"};
-    private static final String[] ACTION_DELETE = new String[] {"delete"};
+    private static final String[] ACTION_DELETE = new String[] {"delete", "drop"};
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse rsp)

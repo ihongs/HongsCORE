@@ -290,28 +290,18 @@ abstract public class Core
    */
   public static final String newIdentity(String svid)
   {
-    long n;
+    long trid = Thread.currentThread(  ).getId(  )  %  1296L; // 36^2
+    long time = System.currentTimeMillis () % 2821109907456L; // 36^8
+    int  rand = ThreadLocalRandom.current().nextInt(1679616); // 36^4
 
-    n = System.currentTimeMillis ();
-    String time = String.format("%8s", Long.toString(n , 36));
-    if(8 < time.length()) time = time.substring(time.length() - 8);
-
-    n = Thread.currentThread( ).getId( );
-    String trid = String.format("%2s", Long.toString(n , 36));
-    if(2 < trid.length()) trid = trid.substring(trid.length() - 2);
-
-    n = ThreadLocalRandom.current().nextLong(1679616/*36^4*/);
-    String rand = String.format("%4s", Long.toString(n , 36));
-//  if(4 < rand.length()) rand = rand.substring(rand.length() - 4);
-
-//  svid = String.format("%2s", svid);
-//  if(2 < svid.length()) svid = svid.substring(trid.length() - 2);
-
-    return new StringBuilder()
-        .append(time).append(rand)
-        .append(trid).append(svid)
-        .toString().toUpperCase( )
-        .replace ( ' ' , '0' );
+    return  String.format(
+            "%8s%4s%2s%2s",
+            Long.toString(time, 36),
+            Long.toString(rand, 36),
+            Long.toString(trid, 36),
+            svid
+        ).replace(' ','0')
+         .toUpperCase(   );
   }
 
   /**

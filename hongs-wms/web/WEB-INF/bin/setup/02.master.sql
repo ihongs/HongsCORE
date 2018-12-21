@@ -27,8 +27,8 @@ CREATE UNIQUE INDEX `UK_a_master_dept_name` ON `a_master_dept` (`name`,`pid`);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRA','0','管理区','默认内部管理区域','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRE','0','公共区','默认注册到此区域','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HXSDROLE1REB0Q00','CENTRA','技术部','这是技术部','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HYPRZ8Q56II04J00','CENTRA','市场部','这是市场部','1424075622','1424075622','0',1);
+INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HONGZHSHJISHZU00','CENTRA','技术组','技术组负责系统维护','1424075622','1424075622','0',1);
+INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HONGZHSHYUYNZU00','CENTRA','运营组','运营组负责平台操作','1424075622','1424075622','0',1);
 
 --
 -- 部门拥有角色

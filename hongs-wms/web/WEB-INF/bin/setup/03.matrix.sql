@@ -6,8 +6,8 @@
 
 DROP TABLE IF EXISTS `a_matrix_unit`;
 CREATE TABLE `a_matrix_unit` (
-  `id` CHAR(14) NOT NULL,
-  `pid` CHAR(14) DEFAULT NULL,
+  `id` CHAR(16) NOT NULL,
+  `pid` CHAR(16) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
@@ -31,8 +31,8 @@ CREATE UNIQUE INDEX `UK_a_matrix_unit_name` ON `a_matrix_unit` (`name`,`pid`);
 
 DROP TABLE IF EXISTS `a_matrix_form`;
 CREATE TABLE `a_matrix_form` (
-  `id` CHAR(14) NOT NULL,
-  `unit_id` CHAR(14) NOT NULL,
+  `id` CHAR(16) NOT NULL,
+  `unit_id` CHAR(16) NOT NULL,
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
@@ -57,8 +57,8 @@ CREATE UNIQUE INDEX `UK_a_matrix_form_name` ON `a_matrix_form` (`name`,`unit_id`
 
 DROP TABLE IF EXISTS `a_matrix_data`;
 CREATE TABLE `a_matrix_data` (
-  `id` CHAR(14) NOT NULL,
-  `form_id` CHAR(14) NOT NULL,
+  `id` CHAR(16) NOT NULL,
+  `form_id` CHAR(16) NOT NULL,
   `user_id` CHAR(20) NOT NULL,
   `name` VARCHAR(255) DEFAULT NULL,
   `memo` VARCHAR(255) DEFAULT NULL,

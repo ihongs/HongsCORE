@@ -6,8 +6,8 @@
 
 DROP TABLE IF EXISTS `a_master_dept`;
 CREATE TABLE `a_master_dept` (
-  `id` CHAR(14) NOT NULL,
-  `pid` CHAR(14) DEFAULT NULL,
+  `id` CHAR(16) NOT NULL,
+  `pid` CHAR(16) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
   `ctime` INTEGER UNSIGNED DEFAULT NULL,
@@ -36,7 +36,7 @@ INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`s
 
 DROP TABLE IF EXISTS `a_master_dept_role`;
 CREATE TABLE `a_master_dept_role` (
-  `dept_id` CHAR(14) NOT NULL,
+  `dept_id` CHAR(16) NOT NULL,
   `role` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`dept_id`,`role`),
   FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`)
@@ -51,7 +51,7 @@ CREATE INDEX `IK_a_master_dept_role_role` ON `a_master_dept_role` (`role`);
 
 DROP TABLE IF EXISTS `a_master_user`;
 CREATE TABLE `a_master_user` (
-  `id` CHAR(14) NOT NULL,
+  `id` CHAR(16) NOT NULL,
   `passcode` VARCHAR(128) DEFAULT NULL, /* 密码校验码 */
   `password` VARCHAR(128) DEFAULT NULL,
   `username` VARCHAR(200) DEFAULT NULL,
@@ -91,8 +91,8 @@ INSERT INTO `a_master_user` (`id`,`username`,`name`,`head`,`note`,`ctime`,`mtime
 
 DROP TABLE IF EXISTS `a_master_user_dept`;
 CREATE TABLE `a_master_user_dept` (
-  `user_id` CHAR(14) NOT NULL,
-  `dept_id` CHAR(14) NOT NULL,
+  `user_id` CHAR(16) NOT NULL,
+  `dept_id` CHAR(16) NOT NULL,
   PRIMARY KEY (`user_id`,`dept_id`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE,
   FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
@@ -112,7 +112,7 @@ INSERT INTO `a_master_user_dept` VALUES ('I2ODSOGCKGZCQK','HYPRZ8Q56II04J');
 
 DROP TABLE IF EXISTS `a_master_user_role`;
 CREATE TABLE `a_master_user_role` (
-  `user_id` CHAR(14) NOT NULL,
+  `user_id` CHAR(16) NOT NULL,
   `role` VARCHAR(80) NOT NULL,
   PRIMARY KEY (`user_id`,`role`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
@@ -149,7 +149,7 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/delete');
 
 DROP TABLE IF EXISTS `a_master_user_open`;
 CREATE TABLE `a_master_user_open` (
-  `user_id` CHAR(14) NOT NULL,
+  `user_id` CHAR(16) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `opnid` VARCHAR(100) NOT NULL,
   `ctime` INTEGER UNSIGNED DEFAULT NULL,
@@ -168,7 +168,7 @@ CREATE UNIQUE INDEX `UK_a_master_user_open_id` ON `a_master_user_open` (`appid`,
 
 DROP TABLE IF EXISTS `a_master_user_sign`;
 CREATE TABLE `a_master_user_sign` (
-  `user_id` CHAR(14) NOT NULL,
+  `user_id` CHAR(16) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `sesid` VARCHAR(100) NOT NULL,
   `ctime` INTEGER UNSIGNED DEFAULT NULL,

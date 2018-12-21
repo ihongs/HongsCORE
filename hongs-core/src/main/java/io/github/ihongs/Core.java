@@ -281,7 +281,7 @@ abstract public class Core
   /**
    * 新建唯一标识
    *
-   * 36进制的12位字串(不包括服务器ID),
+   * 36进制的16位字串(服务器ID占两位),
    * 可以支持到"2059/04/26 01:38:27".
    * 取值范围: 0~9A~Z
    *
@@ -305,6 +305,7 @@ abstract public class Core
     if (time.length() > 8) time = time.substring(time.length() - 8);
     if (trid.length() > 2) trid = trid.substring(trid.length() - 2);
     if (rand.length() > 4) rand = rand.substring(rand.length() - 4);
+//  if (svid.length() > 2) svid = svid.substring(trid.length() - 2);
 
     return new StringBuilder()
         .append(time).append(rand)

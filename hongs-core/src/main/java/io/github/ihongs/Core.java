@@ -292,20 +292,20 @@ abstract public class Core
   {
     long n;
 
-    n = System.currentTimeMillis();
-    String time = String.format("%8s", Long.toString( n, 36 ));
+    n = System.currentTimeMillis ();
+    String time = String.format("%8s", Long.toString(n , 36));
+    if(8 < time.length()) time = time.substring(time.length() - 8);
 
-    n = Thread.currentThread().getId();
-    String trid = String.format("%2s", Long.toString( n, 36 ));
+    n = Thread.currentThread( ).getId( );
+    String trid = String.format("%2s", Long.toString(n , 36));
+    if(2 < trid.length()) trid = trid.substring(trid.length() - 2);
 
-    n = ThreadLocalRandom.current().nextInt(1679615); // 36^4-1
-    String rand = String.format("%4s", Long.toString( n, 36 ));
+    n = ThreadLocalRandom.current().nextLong(1679616/*36^4*/);
+    String rand = String.format("%4s", Long.toString(n , 36));
+//  if(4 < rand.length()) rand = rand.substring(rand.length() - 4);
 
-    // 确保位数不超限量
-    if (time.length() > 8) time = time.substring(time.length() - 8);
-    if (trid.length() > 2) trid = trid.substring(trid.length() - 2);
-    if (rand.length() > 4) rand = rand.substring(rand.length() - 4);
-//  if (svid.length() > 2) svid = svid.substring(trid.length() - 2);
+//  svid = String.format("%2s", svid);
+//  if(2 < svid.length()) svid = svid.substring(trid.length() - 2);
 
     return new StringBuilder()
         .append(time).append(rand)

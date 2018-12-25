@@ -6,9 +6,11 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * 数据操作命令
@@ -16,6 +18,85 @@ import java.util.Map;
  */
 @Cmdlet("matrix.data")
 public class DataCmdlet {
+
+    @Cmdlet("revert")
+    public static void synchr(String[] args) throws HongsException {
+        Map opts = CmdletHelper.getOpts(args, new String[] {
+            "conf=s",
+            "form=s",
+            "user:s",
+            "memo:s",
+            "time:i",
+            "!A",
+            "?Usage: update --conf CONF_NAME --form FORM_NAME ID_0 ID_1 ..."
+        });
+
+        String conf = (String) opts.get("conf");
+        String form = (String) opts.get("form");
+        String user = (String) opts.get("user");
+        String memo = (String) opts.get("memo");
+        long ct = Synt.declare(opts.get("time"), 0L);
+        long dt = Core.ACTION_TIME .get(      );
+        Data dr = Data.getInstance( conf,form );
+        if (user == null) {
+            user  = Cnst.ADM_UID;
+        }
+
+        Map sd = new HashMap();
+        sd.put("form_id",form);
+        sd.put("user_id",user);
+        sd.put("memo"   ,memo);
+
+        int  c = 0; // 操作总数
+        int  i = 0; // 变更计数
+
+        Set<String> ds = Synt.asSet (opts.get(""));
+        FetchCase   fc = dr.getTable().fetchCase();
+            fc.filter("form_id = ?", form);
+        if (ct != 0) {
+            fc.filter("ctime <= ?" ,  ct );
+            fc.assort("ctime DESC");
+            fc.gather("id");
+        } else {
+            fc.filter("etime = 0" );
+        }
+        if (! ds.isEmpty()) {
+            fc.filter("id IN ( ? )",  ds );
+            c = ds.size ( );
+        } else {
+            c = Synt.declare(
+                fc.clone ()
+                  .select("COUNT(*) AS c")
+                  .getOne()
+                  .get("c")
+                , 0);
+        }
+
+        CmdletHelper.progres(dt, c,i);
+
+        for(Map od : fc.select( )) {
+            String id = ( String ) od.get( Cnst.ID_KEY );
+            if (Synt.declare(od.get("state"), 1 ) <= 0 ) {
+                dr.del (/**/ id /**/);
+            } else
+            if (Synt.declare(od.get("etime"), 0L) == 0L) {
+                od = Synt.toMap (od.get( "data"));
+                dr.set (/**/ id, od );
+            } else {
+                sd.put ("rtime", od.get("ctime"));
+                dr.redo( dt, id, sd );
+            }
+            ds.remove(id);
+            CmdletHelper.progres(dt, c, ++ i);
+        }
+        for(String id:ds) {
+            dr.del   (id);
+            CmdletHelper.progres(dt, c, ++ i);
+        }
+
+        CmdletHelper.progred();
+        CmdletHelper.println("Revert "+i+" item(s) in "+dr.getDbName());
+    }
 
     @Cmdlet("import")
     public static void impart(String[] args) throws HongsException {
@@ -44,6 +125,10 @@ public class DataCmdlet {
             String id ;
             Map  data = data(text);
             id = (String) data.get(Cnst.ID_KEY);
+            if (id == null) { //
+                id  = Core.newIdentity( );
+                data.put(Cnst.ID_KEY, id);
+            }
             data.put("form_id", form);
             data.put("user_id", user);
             data.put("memo", memo);

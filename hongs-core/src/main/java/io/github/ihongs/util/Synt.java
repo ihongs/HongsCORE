@@ -139,7 +139,7 @@ public final class Synt {
 
     /**
      * 尝试转为 List
-     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * 与 asList 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
      * @param val
      * @return
      */
@@ -167,7 +167,7 @@ public final class Synt {
 
     /**
      * 尝试转为 Set
-     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * 与 asSet 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
      * @param val
      * @return
      */
@@ -197,7 +197,7 @@ public final class Synt {
 
     /**
      * 尝试转为 Map
-     * 与 asArray 的不同在于当 val 是字符串时, 尝试解析 JSON 或拆分逗号冒号
+     * 与 asMap 的不同在于当 val 是字符串时, 尝试解析 JSON 或拆分逗号冒号
      * @param val
      * @return
      */

@@ -196,9 +196,9 @@ public class FetchCase
    * 用于 clone 和 copy
    * @param caze 源用例
    * @param opts 新选项
-   * @param flat 浅拷贝
+   * @param deep 深拷贝
    */
-  protected FetchCase(FetchCase caze, Map opts, boolean flat)
+  protected FetchCase(FetchCase caze, Map opts, boolean deep)
   {
     if (caze == null) {
       throw new NullPointerException("Param caze can not be null");
@@ -207,6 +207,7 @@ public class FetchCase
       throw new NullPointerException("Param opts can not be null");
     }
 
+    this._db_       = caze._db_;
     this.name       = caze.name;
     this.tableName  = caze.tableName;
     this.fields     = new StringBuilder(caze.fields);
@@ -223,8 +224,8 @@ public class FetchCase
     this.joinExpr   = caze.joinExpr;
     this.joinName   = caze.joinName;
 
-    if ( ! flat ) for ( FetchCase caxe : caze.joinSet ) {
-      this.joinSet.add(new FetchCase(caxe, opts, flat));
+    if (deep) for(/**/FetchCase caxe : caze.joinSet) {
+      joinSet.add(new FetchCase(caxe , opts , deep));
     }
   }
 
@@ -1320,7 +1321,7 @@ public class FetchCase
   @Override
   public FetchCase clone()
   {
-    return new FetchCase(this, new HashMap(this.options), false);
+    return new FetchCase(this, new HashMap(this.options), true );
   }
 
   /**
@@ -1330,7 +1331,7 @@ public class FetchCase
    */
   public FetchCase klone()
   {
-    return new FetchCase(this, new HashMap(this.options), true );
+    return new FetchCase(this, new HashMap(this.options), false);
   }
 
   //** 串联 **/

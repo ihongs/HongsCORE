@@ -285,19 +285,11 @@ public class SystemCmdlet {
     private static void runSql(Element e, Date dt, Looker lg) {
         String d = Synt.declare(e.getAttribute("db"), "defalut");
         List<String> a = new ArrayList();
+        List<String> b = new ArrayList();
 
-        String c, s, q;
+        String c, s;
         NodeList  x;
         Element   m;
-
-        // 获取命令
-        x = e.getElementsByTagName("sql");
-        if (x.getLength() == 0) {
-            throw new Error( "Wrong sql: " + e );
-        }
-        m = (Element) x.item(0);
-        q = m.getTextContent( );
-        q = repTim(q, dt);
 
         // 获取参数
         x = e.getChildNodes( );
@@ -311,17 +303,22 @@ public class SystemCmdlet {
             c = m.getTagName();
             s = m.getTextContent();
 
-            if ("sql".equals(c)) {
-                continue;
-            }
             if (s != null && s.length() > 0) {
-                a.add(repTim(s, dt));
+                if ("arg".equals(c)) {
+                    a.add(repTim(s, dt));
+                } else {
+                    b.add(repTim(s, dt));
+                }
             }
         }
 
         try {
-            DB.getInstance(d).execute( q, a.toArray() );
-        } catch (HongsException ex ) {
+            DB db = DB.getInstance(d);
+            Object[] p = a.toArray( );
+            for (  String  q : b) {
+                db.execute(q , p);
+            }
+        } catch (HongsException ex) {
             lg.error(ex);
         }
     }

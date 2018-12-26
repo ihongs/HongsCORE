@@ -237,10 +237,12 @@ public class SystemCmdlet {
                 CmdletHelper.progres(st, al, ++ok, er);
             } catch (HongsException ex) {
                 CmdletHelper.progres(st, al, ok, ++er);
-                CmdletHelper.progred( );
-                throw ex;
+                if (Core.DEBUG > 0) {
+                    throw ex;
+                }
             }
         }
+        CmdletHelper.progred();
     }
 
     private static void runCmd(Date dt, File fo, Looker lg) throws HongsException {
@@ -661,8 +663,8 @@ public class SystemCmdlet {
         Looker() {
             String spc;
             spc = CoreLogger.space("hongs.out");
-            lgr = CoreLogger.getLogger(spc);
-            env = CoreLogger.envir("");
+            env = CoreLogger.envir( "" /*env*/);
+            lgr = CoreLogger.getLogger(  spc  );
         }
 
         void print(String msg) {
@@ -676,7 +678,7 @@ public class SystemCmdlet {
         void error(Throwable  err) {
             ByteArrayOutputStream buf = new ByteArrayOutputStream();
             err.printStackTrace ( new PrintStream(buf));
-            lgr.error( buf.toString() );
+            lgr.error(buf.toString());
         }
     }
 

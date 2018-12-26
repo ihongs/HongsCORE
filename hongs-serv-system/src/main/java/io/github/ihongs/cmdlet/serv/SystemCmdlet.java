@@ -234,13 +234,11 @@ public class SystemCmdlet {
                 if (0 < s.length()) {
                     db.execute( s );
                 }
-                CmdletHelper.progres(st, al, ++ok, er);
+                CmdletHelper.progres(st, al, ++ok,er);
             } catch (HongsException ex) {
-                CmdletHelper.progres(st, al, ok, ++er);
+                CmdletHelper.progres(st, al, ok,++er);
                 if (Core.DEBUG > 0) {
-                    if (al > ok+er) {
-                        CmdletHelper.progred();
-                    }
+                    CmdletHelper.progred(al, ok + er);
                     throw ex;
                 }
             }

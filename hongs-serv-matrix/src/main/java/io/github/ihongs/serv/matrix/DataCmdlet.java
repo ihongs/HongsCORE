@@ -93,8 +93,10 @@ public class DataCmdlet {
             dr.del   (id);
             CmdletHelper.progres(dt, c, ++ i);
         }
+        if (c > i) {
+            CmdletHelper.progred();
+        }
 
-        CmdletHelper.progred();
         CmdletHelper.println("Revert "+i+" item(s) in "+dr.getDbName());
     }
 

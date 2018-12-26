@@ -238,11 +238,13 @@ public class SystemCmdlet {
             } catch (HongsException ex) {
                 CmdletHelper.progres(st, al, ok, ++er);
                 if (Core.DEBUG > 0) {
+                    if (al > ok+er) {
+                        CmdletHelper.progred();
+                    }
                     throw ex;
                 }
             }
         }
-        CmdletHelper.progred();
     }
 
     private static void runCmd(Date dt, File fo, Looker lg) throws HongsException {

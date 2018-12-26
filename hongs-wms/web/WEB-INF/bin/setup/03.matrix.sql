@@ -59,7 +59,7 @@ DROP TABLE IF EXISTS `a_matrix_data`;
 CREATE TABLE `a_matrix_data` (
   `id` CHAR(16) NOT NULL,
   `form_id` CHAR(16) NOT NULL,
-  `user_id` CHAR(20) NOT NULL,
+  `user_id` CHAR(16) NOT NULL,
   `name` VARCHAR(255) DEFAULT NULL,
   `memo` VARCHAR(255) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,

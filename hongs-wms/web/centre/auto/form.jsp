@@ -12,7 +12,6 @@
     String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_form").replace('/', '_');
 %>
-<!-- 表单 -->
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-form">
     <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
@@ -68,7 +67,7 @@
                         }
                     %>
                     <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%><%=extr%>></textarea>
-                <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
+                <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
                         if (!"".equals(rptd)) {
@@ -99,8 +98,8 @@
                         String fomt = Synt.declare(info.get("format"),  type      );
                         String typa = Synt.declare(info.get( "type" ), "timestamp");
                         String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\"";
-                        if (info.containsKey("min" )) extr += " data-min=\""+info.get("min").toString()+"\"";
-                        if (info.containsKey("max" )) extr += " data-max=\""+info.get("max").toString()+"\"";
+                        if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
+                        if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
                         if ( ! "" .equals(rqrd) ) {
                         if ("time".equals(typa) || "date".equals(typa)) {
                             extr += " data-fl=\"v ? v : new Date().getTime()\""     ;
@@ -129,8 +128,8 @@
                     <div class="text-muted"><%=hint%></div>
                 <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
-                        String kind =  "_fork";
                         String mode = "hsFork";
+                        String kind =  "_fork";
                         String fm = _module;
                         String fn =  name  ;
                         if (! "".equals(rptd) ) {
@@ -151,7 +150,7 @@
                             +"/pick.html";
                         al = al.replace("centra", "centre").replace("list_fork", "pick");
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
-                        mode += "\" data-toggle=\"\" data-href=\""+al;
+                        mode += "\" data-href=\""+al;
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
@@ -162,10 +161,8 @@
                         String mode = "hsFile";
                         String kind =  "_file";
                         String typa = (String) info.get("type");
-                        if (typa != null && typa.length() != 0) {
-                            typa  = " accept=\"" + typa + "\"" ;
-                        } else {
-                            typa  = " accept=\"" + type +"/*\"";
+                        if (typa == null || typa.length() == 0) {
+                            typa  = type +"/*";
                         }
                         if ("image".equals(type)) {
                             mode  = "hsView";
@@ -197,8 +194,8 @@
                             kind += "\" data-size=\""+size+"\" data-keep=\""+keep;
                         }
                     %>
-                    <input type="file" name="<%=name%>" class="form-ignored invisible" <%=typa%>/>
-                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
+                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
+                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
                     <div class="text-muted"><%=hint%></div>
                 <%} else {%>

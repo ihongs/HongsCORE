@@ -14,7 +14,8 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-info">
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="" onsubmit="return false"
+          method="POST" enctype="multipart/form-data">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -23,7 +24,7 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            || !Synt.declare(info.get("readonly"), true)) {
+            ||  Synt.declare(info.get("invisble"), false)) {
                 continue ;
             }
 
@@ -31,44 +32,34 @@
             String  type = (String) info.get("__type__");
             String  kind = "_review";
 
-            if (  "select".equals(type)
-            ||     "check".equals(type)
-            ||     "radio".equals(type)
-            ||      "type".equals(type)
-            ||      "enum".equals(type)) {
-                name += "_text";
-            } else
             if ("datetime".equals(type)
             ||      "date".equals(type)
             ||      "time".equals(type)) {
                 // 日期类需注意 Unix 时间戳需要乘 1000
                 String typa = (String) info.get("type");
                 if (text == null || text.length() == 0) {
-                    type =  "hidden"  ;
+                    type  = "hidden"  ;
                 } else
                 if (typa == null || typa.length() == 0
                 ||  "date".equals(typa)
                 ||  "time".equals(typa)) {
-                    kind =  "_" + type;
+                    kind  = "_" + type;
                 } else {
-                    kind =  "_" + type + "\" data-fl=\"!v ?v :v *1000";
+                    kind  = "_" + type;
+                    kind += "\" data-fl=\"!v?v:v*1000" ;
                 }
             } else
-            if ("textarea".equals(type)
-            ||  "textview".equals(type)) {
-                // 文本域可能被应用上富文本、源代码等
-                String typa = (String) info.get("type");
-                String mode = (String) info.get("mode");
-                if (typa == null || typa.length() == 0) {
-                    type =  "area";
-                } else
-                if ("html".equals(typa)) {
-                    type =  "text";
-                    kind = "_html";
-                } else {
-                    type =   typa ;
-                    kind = "_text\" data-type=\""+typa+"\" data-mode=\""+mode;
-                }
+            if (  "select".equals(type)
+            ||     "check".equals(type)
+            ||     "radio".equals(type)
+            ||      "type".equals(type)
+            ||      "enum".equals(type)) {
+                // 选项类字段在查看页仅需读取其文本即可
+                name += "_text";
+            }
+            if (Synt.declare(info.get("__repeated__"), false)) {
+                // 为与表单一致而对多值字段的名称后加点
+                name += "."/**/;
             }
         %>
         <%if ("hidden".equals(type)) {%>
@@ -117,6 +108,9 @@
                     <%
                         kind =  "_fork" ;
                         String fn = name;
+                        if (fn.endsWith( "." )) {
+                            fn = fn.substring(0, fn.length() - 1);
+                        }
                         String kn = fn +"_fork";
                         if (fn.endsWith("_id")) {
                             fn = fn.substring(0, fn.length() - 3);
@@ -132,10 +126,22 @@
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>
-                <%} else if ("area".equals(type)) {%>
-                    <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>" style="white-space: pre-wrap;"></div>
-                <%} else if ("code".equals(type) || "mark".equals(type)) {%>
-                    <pre class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></pre>
+                <%} else if ("textaera".equals(type) || "textview".equals(type)) {%>
+                    <%
+                        String typa = (String) info.get("type");
+                        String mode = (String) info.get("mode");
+                    %>
+                    <%       if ("code".equals(typa)) {%>
+                        <pre class="form-control-static" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
+                    <%} else if ("html".equals(typa)) {%>
+                        <div class="form-control-static" data-fn="<%=name%>" data-ft="_html" style="white-space: normal ;"></div>
+                <%} else {%>
+                        <div class="form-control-static" data-fn="<%=name%>" data-ft="_text" style="white-space:pre-wrap;"></div>
+                    <%}%>
+                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
+                    <div class="form-control-static"><a class="a-<%=type%>" data-fn="<%=name%>" data-ft="<%=kind%>"></a></div>
+                <%} else if (name.endsWith(".")) {%>
+                    <ul class="pickbox pickrol pickmul" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>

@@ -1011,20 +1011,20 @@ function hsChkUri(uri) {
  * @return {String} 完整的URI
  */
 function hsFixUri(uri) {
-    if (/^(\w+:\/\/|\/|\.\/|\.\.\/)/.test(uri) === false) {
-        var pre  = HsCONF["BASE_HREF"];
-        if (pre == undefined) {
-            pre  = jQuery("base").attr("href");
-        if (pre != undefined) {
-            pre  = pre.replace(  /\/$/  ,  '');
-            HsCONF["BASE_HREF"] = pre;
-        }
-        }
-        return pre +"/"+ uri;
+    if (uri === undefined || uri === null /**/) {
+        return "" ;
     }
-    else {
+    if (/^(\w+:\/\/|\/|\.\/|\.\.\/)/.test(uri)) {
         return uri;
     }
+    var pre  = HsCONF["BASE_HREF"];
+    if (pre === undefined) {
+        pre  = jQuery("base").attr("href");
+    if (pre !== undefined) {
+        pre  = pre.replace( /\/$/ ,  ''  );
+        HsCONF["BASE_HREF"] = pre ;
+    }}
+    return pre +"/"+ uri;
 }
 
 /**
@@ -2274,7 +2274,7 @@ $.fn.hsFind = function(selr) {
                 elem = $(document);
             } while (false);
             return salr ? $(salr, elem) : elem;
-        case '%':
+        case '&':
             do {
                 var x;
                 x = elem.closest(".loadbox");

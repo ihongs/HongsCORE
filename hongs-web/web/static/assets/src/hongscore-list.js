@@ -607,6 +607,10 @@ HsList.prototype = {
         if (v === undefined) return v;
         jQuery(td).html( v );return false;
     },
+    _fill__text : function(td, v, n) {
+        if (v === undefined) return v;
+        jQuery(td).text( v );return false;
+    },
 
     _fill__sort : function(th, s, n) {
         if (th.find(".sort-ico").size() === 0) {

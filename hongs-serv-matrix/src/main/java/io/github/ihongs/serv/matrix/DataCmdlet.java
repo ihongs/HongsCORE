@@ -28,7 +28,7 @@ public class DataCmdlet {
             "memo:s",
             "time:i",
             "!A",
-            "?Usage: update --conf CONF_NAME --form FORM_NAME ID_0 ID_1 ..."
+            "?Usage: update --conf CONF_NAME --form FORM_NAME [--time TIMESTAMP] ID0 ID1 ..."
         });
 
         String conf = (String) opts.get("conf");

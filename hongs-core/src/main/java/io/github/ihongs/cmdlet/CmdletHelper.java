@@ -53,7 +53,7 @@ public class CmdletHelper
   /**
    * 解析参数
    * 本函数遵循 Perl 的 Getopt::Long 解析规则
-   * 同时也遵循 Congigure 类似的参数的解析规则
+   * 同时也遵循 Configure 类似的参数的解析规则
    * @param args
    * @param chks
    * @return

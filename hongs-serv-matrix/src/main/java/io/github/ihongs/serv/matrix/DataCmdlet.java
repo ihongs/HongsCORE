@@ -20,7 +20,7 @@ import java.util.Set;
 public class DataCmdlet {
 
     @Cmdlet("revert")
-    public static void synchr(String[] args) throws HongsException {
+    public static void revert(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",

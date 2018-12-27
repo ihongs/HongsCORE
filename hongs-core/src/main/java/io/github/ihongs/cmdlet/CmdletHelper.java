@@ -65,29 +65,26 @@ public class CmdletHelper
     List<String>        newArgs = new ArrayList();
     Set<String>         reqOpts = new LinkedHashSet();
     Set<String>         errMsgs = new LinkedHashSet();
-    boolean ub = true ; // 禁止未知参数
-    boolean vb = true ; // 禁止匿名参数
-    String hlp = null ; // 命令使用帮助
+    String hlp = null; // 命令使用帮助
+    boolean vb = true; // 禁止匿名参数
+    boolean ub = true; // 禁止未知参数
 
     for (String chk : chks) {
       Matcher m = RP.matcher(chk);
 
       if (!m.find()) {
-        if (chk.equals("!U")) {
-            ub = false; // 可含未知参数
-            continue;
+        if (chk.startsWith("?") ) {
+            hlp= chk.substring(1);
         } else
-        if (chk.equals("!A")) {
-            vb = false; // 可含匿名参数
-            continue;
+        if (chk.equals("!A") || chk.equals("!Anonymous")) {
+            vb = false;
         } else
-        if (chk.startsWith("?")) {
-            hlp = chk.substring(1);
-            continue;
+        if (chk.equals("!U") || chk.equals("!Undefined")) {
+            ub = false;
+        } else
+        {
+            errMsgs.add(GETERRS[0].replace("%chk" , chk));
         }
-
-        // 规则错误
-        errMsgs.add(GETERRS[0].replace("%chk", chk));
         continue;
       }
 

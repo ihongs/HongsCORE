@@ -2,7 +2,7 @@
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
         <value code="listable" type="set">
-            string,search,text,hidden,email,url,tel,textarea,textview,
+            string,search,text,hidden,email,url,tel,sms,textarea,textview,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
@@ -12,7 +12,7 @@
             json
         </value>
         <value code="sortable" type="set">
-            string,search,text,hidden,email,url,tel,
+            string,search,text,hidden,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
@@ -20,14 +20,14 @@
             sorted
         </value>
         <value code="findable" type="set">
-            string,search,text,hidden,email,url,tel,
+            string,search,text,hidden,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
             fork,pick
         </value>
         <value code="srchable" type="set">
-            string,search,text,hidden,email,url,tel,textarea
+            string,search,text,textarea,email,tel,sms
         </value>
         <!-- 下为 Matrix 特有 -->
         <value code="nameable" type="set">
@@ -37,7 +37,7 @@
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
         <value code="string" type="set">
-            string,search,text,hidden,email,url,tel,textarea,textview,
+            string,search,text,hidden,email,url,tel,sms,textarea,textview,
             enum,radio,check,select,type,
             file,image,audio,video,
             fork,pick,
@@ -66,6 +66,7 @@
         <value code="email">string</value>
         <value code="url">string</value>
         <value code="tel">string</value>
+        <value code="sms">string</value>
         <value code="search">string</value><!-- Lucene 特指分词查询 -->
         <value code="stored">string</value><!-- Lucene 特有仅存不查 -->
         <!-- Number -->
@@ -99,7 +100,8 @@
     </enum>
     <!-- 文本校验正则映射 -->
     <enum name="__patts__">
-        <value code="id" ><![CDATA[^[0-9A-Za-z\-_]{1,20}$]]></value>
+        <value code="id" ><![CDATA[^[0-9A-Za-z\-_]{1,18}$]]></value>
+        <value code="sms"><![CDATA[^(\+\d{1,3})?\d{3,15}$]]></value>
         <value code="tel"><![CDATA[^(\+\d{1,3})?\d{3,15}$]]></value>
         <value code="url"><![CDATA[^([a-z]+:)?\/\/[^\s]+$]]></value>
         <value code="email"><![CDATA[^\w+([-.]\w+)*@\w+([-.]\w+)*$]]></value>

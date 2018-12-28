@@ -482,7 +482,7 @@ HsForm.prototype = {
 
         // 链接,图片,视频,音频
         if (inp.is("a,img,video,audio")) {
-            v = hsFixUri(v);
+            v = v ? hsFixUri( v ) : "";
             inp.filter("a:empty").text( v );
             inp.filter("a").attr("href", v);
             inp.filter("a.a-email").attr("href", "mailto:"+v);

@@ -123,14 +123,14 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         .toggleClass("pickmul", mul )
         .on("change"  , ".checkone", select)
         .on("click"   , ".ensure"  , ensure)
-        .on("saveBack", ".create"  , create);
+        .on("saveBack", ".create"  , ensure);
 
         bin.data("pickData", v);
         bin.data("rel", btn.closest(".openbox")[0]);
         bin.find( ".checkone" ).val(Object.keys(v));
     };
 
-    function select() {
+    function select () {
         var chk = jQuery(this);
         if (chk.closest(".HsList" ).data("HsList")._info) {
             return;
@@ -172,37 +172,30 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         while (false);
 
         if (pickItem(val, txt, inf, chk) === false) {
-            chk.prop("checked", false);
+            chk.prop( "checked", false );
             return false;
         }
     }
 
-    function ensure() {
+    function ensure (evt, rst) {
         var btn = jQuery(this);
         if (! btn.closest(".openbox").is(bin)) {
             return;
         }
 
-        if (! pickBack()) {
-            return false;
-        }
-
-        bin.hsClose();
-        return false ;
-    }
-
-    function create(evt, rst ) {
-        var btn = jQuery(this);
-        if (! btn.closest(".openbox").is(bin)) {
-            return;
-        }
-
-        rst = ! rst ? {}
-            : ( rst.info ? rst.info
-            : ( rst.list ? rst.list[0] : {} ));
+        /**
+         * 当添加完成后
+         * 会通过参数给到新加的信息
+         * 立即加入已选并完成此操作
+         */
+        if (rst) {
+            rst = rst.info ? rst.info
+              : ( rst.list ? rst.list [0]:{ });
         if (! pickItem(rst[vk], rst[tk], rst)) {
             return false;
         }
+        }
+
         if (! pickBack()) {
             return false;
         }

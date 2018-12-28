@@ -282,7 +282,7 @@ abstract public class Core
    * 新建唯一标识
    *
    * 36进制的16位字串(服务器ID占两位),
-   * 可以支持到"2059/04/26 01:38:27".
+   * 可以支持到"2101/01/17 18:48:27".
    * 取值范围: 0~9A~Z
    *
    * @param svid 服务器ID
@@ -290,9 +290,10 @@ abstract public class Core
    */
   public static final String newIdentity(String svid)
   {
-    long trid = Thread.currentThread(  ).getId(  )  %  1296L; // 36^2
-    long time = System.currentTimeMillis () % 2821109907456L; // 36^8
+    long time = System.currentTimeMillis ()- 1314320040000L ; // 2011/08/26, 溜溜的生日
+    long trid = Thread.currentThread     (). getId ()%1296L ; // 36^2
     int  rand = ThreadLocalRandom.current().nextInt(1679616); // 36^4
+         time = time % 2821109907456L;                        // 36^8
 
     return  String.format(
             "%8s%4s%2s%2s",

@@ -10,26 +10,26 @@
 ## 属性缩写:
 
     List:
-        data-pn     Page num 
-        data-ob     Order by
-        data-fn     Field name
-        data-ft     Field type
-        data-fl     Fill lambda // 填充取值
+        data-pn     Page num    页码序号
+        data-ob     Order by    排序字段
+        data-fn     Field name  字段名称
+        data-ft     Field type  字段类型
+        data-fl     Fill lambda 填充取值
     Form:
-        data-fn     Field name
-        data-ft     Field type
-        data-fl     Fill lambda // 填充取值
-        data-dl     Data lambda // 预置选项
+        data-fn     Field name  字段名称
+        data-ft     Field type  字段类型
+        data-fl     Fill lambda 填充取值
+        data-dl     Data lambda 预置选项
     Fork:
-        data-ak     Assoc key
-        data-vk     Value key
-        data-tk     Title key
+        data-ak     Assoc key   关联数据键
+        data-vk     Value key   关联数据取值键
+        data-tk     Title key   关联数据标题键
     Form checkbox:
-        data-vk     Value key
-        data-tk     Title key
+        data-vk     Value key   选项数据取值键
+        data-tk     Title key   选项数据标签键
     Form checkset:
-        data-vl     Value leg
-        data-tl     Title leg
+        data-vl     Value leg   子项数据取值键
+        data-tl     Title leg   子项数据标题键
 
 data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-toggle,data-target 等的意义同 bootstrap 中相关功能.
 

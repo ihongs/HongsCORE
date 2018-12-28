@@ -287,8 +287,8 @@ function hsResponse(rst, qut) {
  */
 function hsSerialArr(obj) {
     var arr = [];
-    var typ = jQuery.type( obj );
-    if (typ == "object" || typ == "array") {
+    var typ = jQuery.type(obj);
+    if (typ == "array" || typ == "object") {
         if (obj instanceof jQuery
         ||  obj instanceof Element ) {
             typ = "jquery";
@@ -1037,10 +1037,12 @@ function hsSetPms(uri, pms) {
     }   pms = hsSerialDic(pms);
     for(var n in pms) {
         var v  = pms[n];
-        if (typeof v === "array")
+        if (jQuery.isArray(v)) {
             uri= hsSetParams(uri, n, v);
-        else
+        }
+        else {
             uri= hsSetParam (uri, n, v);
+        }
     }
     return  uri;
 }

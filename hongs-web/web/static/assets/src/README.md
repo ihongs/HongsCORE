@@ -20,17 +20,22 @@
         data-ft     Field type
         data-fl     Fill lambda // 填充取值
         data-dl     Data lambda // 预置选项
-        data-vl     Value list  // checkset
-        data-tl     Title line  // checkset
     Fork:
         data-ak     Assoc key
         data-vk     Value key
         data-tk     Title key
+    Form checkbox:
+        data-vk     Value key
+        data-tk     Title key
+    Form checkset:
+        data-vl     Value leg
+        data-tl     Title leg
 
 data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-toggle,data-target 等的意义同 bootstrap 中相关功能.
 
 ## 环境加载
 
+```html
     <base href="../">
     <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
     <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
@@ -41,11 +46,13 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
     <script type="text/javascript" src="common/conf/default.js"></script>
     <script type="text/javascript" src="common/lang/default.js"></script>
     <script type="text/javascript" src="common/auth/default.js"></script>
+```
 
 注: 将以上代码加入 head 中, 注意 link 的 href 和 script 的 src 路径; 这里用 base 定义了基础路径, 以下的相对路径均基于此.
 
 ## HsList 列表组件的用法
 
+```html
     <div id="master-user-list"
          data-module="hsList"
          data-load-url="centra/master/user/list.act?dept_id=${dept_id}"
@@ -83,9 +90,11 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
         </div>
         <div class="pagebox"></div>
     </div>
+```
 
 ## HsTree 树型组件的用法
 
+```html
     <div id="master-dept-tree"
          data-module="hsTree"
          data-load-url="centra/master/dept/list.act"
@@ -101,9 +110,11 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
         </div>
         <div class="treebox"></div>
    </div>
+```
 
 ## HsForm 表单组件的用法
 
+```html
     <h2>{DO}部门</h2>
     <div id="master-dept-form"
          data-module="hsForm"
@@ -130,3 +141,4 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
             </div>
         </form>
     </div>
+```

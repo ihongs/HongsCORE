@@ -1011,9 +1011,6 @@ function hsChkUri(uri) {
  * @return {String} 完整的URI
  */
 function hsFixUri(uri) {
-    if (uri === undefined || uri === null /**/) {
-        return "" ;
-    }
     if (/^(\w+:\/\/|\/|\.\/|\.\.\/)/.test(uri)) {
         return uri;
     }
@@ -1024,7 +1021,7 @@ function hsFixUri(uri) {
         pre  = pre.replace( /\/$/ ,  ''  );
         HsCONF["BASE_HREF"] = pre ;
     }}
-    return pre +"/"+ uri;
+    return pre + "/" + (uri || "");
 }
 
 /**

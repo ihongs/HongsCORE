@@ -1,6 +1,5 @@
 package io.github.ihongs.dh.lucene.field;
 
-import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
 
@@ -19,6 +18,6 @@ public class SearchFiald implements IField {
     }
     @Override
     public Field get(String k, Object v, boolean u) {
-        return new TextField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES);
+        return new   TextField(k, v != null ? v.toString() : "", u ? Field.Store.NO : Field.Store.YES);
     }
 }

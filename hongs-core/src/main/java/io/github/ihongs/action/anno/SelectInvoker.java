@@ -33,47 +33,51 @@ public class SelectInvoker implements FilterInvoker {
         Select   ann  = (Select) anno;
         String   conf = ann.conf();
         String   form = ann.form();
-        byte     mode = ann.mode();
+        byte     adds = ann.adds();
 
-        if (mode == -1) {
+        if (adds == 0) {
             Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
             if (ab != null) {
                 if (ab.contains("!enum")) {
-                    mode  = 0;
+                    if (ab.contains(".form")) {
+                        adds  = -5;
+                    } else {
+                        adds  = -1;
+                    }
                 } else {
-                if (ab.contains(".enum")) {
-                    mode += SelectHelper.ENUM;
-                }
-                if (ab.contains("_enum" ) // 兼容旧名称
-                ||  ab.contains("_text")) {
-                    mode += SelectHelper.TEXT;
-                }
-                if (ab.contains("_time")) {
-                    mode += SelectHelper.TIME;
-                }
-                if (ab.contains("_link")) {
-                    mode += SelectHelper.LINK;
-                }
-                if (ab.contains("_fork")) {
-                    mode += SelectHelper.FORK;
-                }
-                if (ab.contains(".form")) {
-                    mode += SelectHelper.FORM;
-                }
-                if (mode >= 0) {
-                    mode += 1;
-                }
+                    if (ab.contains(".enum")) {
+                        adds += SelectHelper.ENUM;
+                    }
+                    if (ab.contains("_enum" ) // 兼容旧名称
+                    ||  ab.contains("_text")) {
+                        adds += SelectHelper.TEXT;
+                    }
+                    if (ab.contains("_time")) {
+                        adds += SelectHelper.TIME;
+                    }
+                    if (ab.contains("_link")) {
+                        adds += SelectHelper.LINK;
+                    }
+                    if (ab.contains("_fork")) {
+                        adds += SelectHelper.FORK;
+                    }
+                    if (ab.contains(".form")) {
+                        adds += SelectHelper.FORM;
+                    }
+                    if (adds >= 0) {
+                        adds += 1;
+                    }
                 }
             }
         }
 
-        // 为 0 则不执行, 仅取 enum 数据
+        // 为负则不执行, 仅取选项数据
         Map rsp;
-        if (mode ==  0) {
-            mode =   1;
+        if (adds <  0 ) {
+            adds=(byte)(0-adds);
             rsp = new HashMap();
         } else
-        if (mode == -1) {
+        if (adds == 0 ) {
             chains.doAction(  );
             return;
         } else {
@@ -105,7 +109,7 @@ public class SelectInvoker implements FilterInvoker {
 
             SelectHelper sel = new SelectHelper();
             sel.addItemsByForm (conf, form, data);
-            sel.select ( rsp, mode );
+            sel.select (rsp, adds );
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {

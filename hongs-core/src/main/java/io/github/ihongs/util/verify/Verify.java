@@ -258,7 +258,7 @@ public class Verify implements Veri {
 
         // 完成后还需再次校验一下结果
         try {
-            rule.verify(data2);
+            rule.remedy(data2);
         } catch (Wrong  w) {
             if (w.getLocalizedCaption( ) == null) {
                 w.setLocalizedCaption(Synt.defxult(

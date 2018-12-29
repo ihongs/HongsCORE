@@ -89,7 +89,7 @@ public class Repeated extends Rule {
      * @return
      * @throws Wrong
      */
-    public Object verify(Collection value) throws Wrong {
+    public Object remedy(Collection value) throws Wrong {
         // 多个值的数量限制
         int n, c = value.size();
         n = Synt.declare(params.get("minrepeat"), 0);

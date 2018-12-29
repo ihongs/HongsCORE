@@ -414,7 +414,7 @@ HsList.prototype = {
             if (rst.msg) {
                 this.warn(rst.msg, "warning");
             } else {
-                this.warn(hsGetLang('.error.unkwn'), 'warning');
+                this.warn(hsGetLang('error.unkwn'), 'danger');
             }
             return;
         }

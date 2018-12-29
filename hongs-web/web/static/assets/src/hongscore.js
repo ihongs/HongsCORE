@@ -266,7 +266,7 @@ function hsResponse(rst, qut) {
                 if (rst.msg) {
                     jQuery.hsWarn(rst.msg, "warning");
                 } else {
-                    jQuery.hsWarn(hsGetLang('error.unkwn'), "warning");
+                    jQuery.hsWarn(hsGetLang('error.unkwn'), "danger");
                 }
             }
         }
@@ -1568,11 +1568,11 @@ $.hsWarn = function(msg, typ, yes, not) {
     } else
     if (typeof msg === "string") {
         fns = Array.prototype.slice.call(arguments, 1);
-        typ ='info';
+        typ ='warning';
     } else {
         fns = Array.prototype.slice.call(arguments, 0);
-        typ =  ''  ;
-        msg =  ''  ;
+        typ = '' ;
+        msg = '' ;
     }
 
     switch (typ) {
@@ -1676,9 +1676,9 @@ $.hsWarn = function(msg, typ, yes, not) {
             var wh =$(window).height();
             var mh = div.outerHeight();
             if (wh > mh) {
-                mh = Math.floor((wh - mh) / 2 );
-                div.css("margin-top", mh+ "px");
-                mod.css("padding-right", "0px"); // 去掉模态框BS设的15像素右补丁
+                mh = Math.floor((wh - mh) / 2);
+                div.css("margin-top", mh+"px");
+                mod.css("padding"   ,   "0px"); // 去掉模态框BS设的15像素右补丁
             }
         });
 

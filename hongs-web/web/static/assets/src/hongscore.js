@@ -260,13 +260,13 @@ function hsResponse(rst, qut) {
         if (! qut || ! (1 == (1 & qut))) {
             if (rst.ok ) {
                 if (rst.msg) {
-                    jQuery.hsNote(rst.msg, "succ");
+                    jQuery.hsNote(rst.msg, "success");
                 }
             } else {
                 if (rst.msg) {
-                    jQuery.hsWarn(rst.msg, "warn");
+                    jQuery.hsWarn(rst.msg, "warning");
                 } else {
-                    jQuery.hsWarn(hsGetLang('error.unkwn'), "warn");
+                    jQuery.hsWarn(hsGetLang('error.unkwn'), "warning");
                 }
             }
         }
@@ -1491,7 +1491,7 @@ $.hsOpen = function(url, data, complete) {
     div.modal();
     return  box;
 };
-$.hsNote = function(msg, typ, yes, sec) {
+$.hsNote = function(msg, typ, end, sec) {
     var div = $('<div class="alert alert-dismissable fade in">'
               + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
               + '<div class="alert-body notebox" ></div></div>');
@@ -1499,8 +1499,8 @@ $.hsNote = function(msg, typ, yes, sec) {
 
     // 参数检查
     if (typeof typ !== "string") {
-        sec =  yes ;
-        yes =  typ ;
+        sec =  end ;
+        end =  typ ;
         typ ='info';
     }
 
@@ -1508,14 +1508,14 @@ $.hsNote = function(msg, typ, yes, sec) {
         case 'info':
             div.addClass("alert-info"   );
             break;
-        case 'succ':
+        case 'danger' :
+            div.addClass("alert-danger" );
+            break;
+        case 'success':
             div.addClass("alert-success");
             break;
-        case 'warn':
+        case 'warning':
             div.addClass("alert-warning");
-            break;
-        case 'erro':
-            div.addClass("alert-danger" );
             break;
     }
 
@@ -1541,8 +1541,8 @@ $.hsNote = function(msg, typ, yes, sec) {
         if (ctr.children( ).size( ) <= 1 ) {
             ctr.hide( );
         }
-        if (yes) {
-            yes(evt);
+        if (end) {
+            end(evt);
         }
         div.remove();
     });
@@ -1568,7 +1568,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     } else
     if (typeof msg === "string") {
         fns = Array.prototype.slice.call(arguments, 1);
-        typ ='warn';
+        typ ='info';
     } else {
         fns = Array.prototype.slice.call(arguments, 0);
         typ =  ''  ;
@@ -1576,17 +1576,17 @@ $.hsWarn = function(msg, typ, yes, not) {
     }
 
     switch (typ) {
-        case 'succ':
-            div.addClass("alert-success"); typ = "";
-            break;
-        case 'warn':
-            div.addClass("alert-warning"); typ = "";
-            break;
-        case 'erro':
-            div.addClass("alert-danger" ); typ = "";
-            break;
         case 'info':
             div.addClass("alert-info"   ); typ = "";
+            break;
+        case 'danger' :
+            div.addClass("alert-danger" ); typ = "";
+            break;
+        case 'warning':
+            div.addClass("alert-warning"); typ = "";
+            break;
+        case 'success':
+            div.addClass("alert-success"); typ = "";
             break;
     }
     box.text(msg);

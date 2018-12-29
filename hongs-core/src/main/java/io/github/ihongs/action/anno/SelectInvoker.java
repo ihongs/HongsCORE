@@ -64,9 +64,6 @@ public class SelectInvoker implements FilterInvoker {
                     if (ab.contains(".form")) {
                         adds += SelectHelper.FORM;
                     }
-                    if (adds >= 0) {
-                        adds += 1;
-                    }
                 }
             }
         }

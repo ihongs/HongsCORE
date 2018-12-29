@@ -17,10 +17,6 @@ code, pre, var, dfn, kbd {
     font-family: "Courier New",Monaco,Menlo,monospace;
 }
 
-textarea {
-    resize: none;
-}
-
 /** Bootstrap 调整 **/
 
 .invisible {
@@ -77,10 +73,12 @@ textarea {
 select.form-control {
     height: 2.76923077em;
 }
-textview.form-control ,
-textarea.form-control ,
 select.form-control[multiple] {
     height: 8.30769231em;
+}
+textarea.form-control {
+    height: 8.30769231em;
+    resize: vertical;
 }
 .form-control[disabled] {
     background: #ddd;
@@ -347,9 +345,9 @@ div.bootstrap-tagsinput.form-control {
 .listbox .datetime {
     width: 10em;
 }
-.listbox .id {
+.listbox td.id {
     width: 10em;
-    font-family: Consolas,Menlo,Monaco,"Courier New",monospace;
+    font-family: "Courier New",Monaco,Menlo,monospace;
 }
 
 .listbox thead .sortable {

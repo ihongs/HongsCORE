@@ -242,21 +242,21 @@ div.bootstrap-tagsinput.form-control {
     opacity: 0.8;
 }
 .modal > .alert {
-    /****/ color: #eeeeee;
-    border-color: #373a3c;
-    background: rgba( 53, 56, 58,0.8);
+    color: #eeeeee;
+    border-color: #606262;
+    background: #2e2f2faa;
 }
 .modal > .alert.alert-info {
-    background: rgba( 0 ,149,203,0.8);
+    background: #029acfcc;
 }
 .modal > .alert.alert-danger  {
-    background: rgba(221,121, 0 ,0.8);
+    background: #d9230fcc;
 }
 .modal > .alert.alert-warning {
-    background: rgba(164, 37,154,0.8);
+    background: #79377ccc;
 }
 .modal > .alert.alert-success {
-    background: rgba( 0 ,152, 1 ,0.8);
+    background: #469408cc;
 }
 .modal-header .close {
     margin-top: 2px;

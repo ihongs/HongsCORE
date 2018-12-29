@@ -258,7 +258,7 @@ public class Verify implements Veri {
 
         // 完成后还需再次校验一下结果
         try {
-            rule.remedy(data2);
+            data = rule.remedy(data2);
         } catch (Wrong  w) {
             if (w.getLocalizedCaption( ) == null) {
                 w.setLocalizedCaption(Synt.defxult(
@@ -267,10 +267,10 @@ public class Verify implements Veri {
                      name) ) ;
             }
             failed(wrongz, w , name );
-            return  BLANK;
+            return BLANK ;
         }
 
-        return data2;
+        return  data ;
     }
 
     public static void failed(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {

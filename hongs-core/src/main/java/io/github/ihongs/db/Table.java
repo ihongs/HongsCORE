@@ -433,7 +433,7 @@ public class Table
    */
   protected Object getDtval(String name, long time)
   {
-    int type = (Integer) ((Map) this.fields.get(name) ).get("type");
+    int type = (Integer) ((Map) fields.get(name)).get("type");
     switch (type)
     {
       case Types.DATE:

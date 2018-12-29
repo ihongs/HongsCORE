@@ -1,6 +1,5 @@
 package io.github.ihongs.dh.lucene.field;
 
-import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.SortedDocValuesField;
 import org.apache.lucene.document.StringField;
@@ -17,10 +16,10 @@ public class StringFiald implements IField {
     }
     @Override
     public Field odr(String k, Object v) {
-        return new SortedDocValuesField("."+k, new BytesRef(v.toString()));
+        return new SortedDocValuesField("."+k, new BytesRef(v != null ? v.toString() : ""));
     }
     @Override
     public Field get(String k, Object v, boolean u) {
-        return new StringField(k, Synt.declare(v, ""), u ? Field.Store.NO : Field.Store.YES);
+        return new StringField(k, v != null ? v.toString() : "", u ? Field.Store.NO : Field.Store.YES);
     }
 }

@@ -18,6 +18,6 @@ public class StoredFiald implements IField {
     }
     @Override
     public Field get(String k, Object v, boolean u) {
-        return new StoredField(k, v.toString());
+        return new StoredField(k, v != null ? v.toString() : "");
     }
 }

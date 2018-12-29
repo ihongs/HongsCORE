@@ -398,25 +398,23 @@ HsList.prototype = {
             }
         });
         } ;
-        if (msg) {
-            this.warn(msg, function() {
-                func();
-            } , null );
+        if (!msg) {
+            func( );
         } else {
-            /**/func();
+            this.warn(msg, "warning", func, null);
         }
     },
     sendBack : function(btn, rst, data) {
         rst = hsResponse(rst, 1);
         if (rst.ok) {
             if (rst.msg) {
-                this.note(rst.msg, "succ");
+                this.note(rst.msg, "success");
             }
         } else {
             if (rst.msg) {
-                this.warn(rst.msg, "warn");
+                this.warn(rst.msg, "warning");
             } else {
-                this.warn(hsGetLang('.error.unkwn'), 'warn');
+                this.warn(hsGetLang('.error.unkwn'), 'warning');
             }
             return;
         }
@@ -723,11 +721,11 @@ function hsListFillNext(page) {
     switch (page.ern) {
         case  1 :
         case "1":
-            this.note(this._empty_err || hsGetLang('list.empty'), "erro");
+            this.note(this._empty_err || hsGetLang('list.empty'), "warning");
             return;
         case  2 :
         case "2":
-            this.note(this._above_err || hsGetLang('list.above'), "erro");
+            this.note(this._above_err || hsGetLang('list.above'), "warning");
             return;
     }
 

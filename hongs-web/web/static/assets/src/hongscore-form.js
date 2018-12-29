@@ -398,7 +398,7 @@ HsForm.prototype = {
 
             // 完成提示
             if ( rst.msg ) {
-                this.note(rst.msg, "succ");
+                this.note(rst.msg, "success" );
             }
         } else {
             var evt = jQuery.Event("saveFail");
@@ -410,10 +410,10 @@ HsForm.prototype = {
 
             // 错误提示
             if ( rst.msg ) {
-                this.warn(rst.msg, "warn");
+                this.warn(rst.msg, "warning" );
             } else
             if (!rst.errs) {
-                this.warn(hsGetLang('error.unkwn'));
+                this.warn(hsGetLang('error.unkwn'), "warning");
             }
         }
     },
@@ -660,7 +660,7 @@ HsForm.prototype = {
                     .not (".form-ignored")
                     .each( function( ) {
             var inp = jQuery(this);
-            var nam = inp.attr("name")||inp.attr("data-fn" );
+            var nam = inp.attr("name")||inp.attr("data-fn");
             if (!nam) return true ;
             if (inps[nam] === undefined) {
                 inps[nam] = inp;
@@ -675,7 +675,7 @@ HsForm.prototype = {
             }
         }
         if ( !  vali ) {
-           this.warn(hsGetLang('form.invalid'), "warn");
+           this.warn(hsGetLang('form.invalid'), "warning");
         }
         return  vali;
     },

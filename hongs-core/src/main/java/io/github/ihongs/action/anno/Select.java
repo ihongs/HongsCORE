@@ -15,5 +15,5 @@ import java.lang.annotation.Target;
 public @interface Select {
     String   conf() default "default";
     String   form() default "";
-    byte     mode() default -1;
+    byte     adds() default 0 ;
 }

@@ -132,12 +132,17 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"":""
 });
 
-//** 演示代码, 规避因静态演示数据的固定ID问题导致树节点故障 **/
+//** 演示处理 **/
 (function($) {
     var j = 0;
     $(document).on("loadBack", ".HsTree", function(evt, rst) {
         for(var i = 0; i < rst.list.length; i ++) {
             rst.list[i].id = j ++;
+        }
+    });
+    $(document).on("loadBack", ".HsForm", function(evt, rst) {
+        if (!H$("@id", this)) {
+            rst.info = {};
         }
     });
 })(jQuery);

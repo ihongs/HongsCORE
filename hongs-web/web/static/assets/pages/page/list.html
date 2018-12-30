@@ -3,11 +3,13 @@
      data-load-url="data/search.json"
      data-send-urls-0="['data/create.json','.delete','您确定要删除此文章?']"
      data-open-urls-0="['page/form.html'        ,'.create','@']"
-     data-open-urls-1="['page/form.html?id={ID}','.modify','@']">
+     data-open-urls-1="['page/form.html?id={ID}','.modify','@']"
+     data-open-urls-2="['page/info.html?id={ID}','.review','@']">
     <div>
         <div class="toolbox col-md-8 btn-group">
             <button type="button" class="create btn btn-default">创建文章</button>
             <button type="button" class="modify for-choose btn btn-default">修改</button>
+            <button type="button" class="review for-choose btn btn-default">查看</button>
             <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
         </div>
         <form class="findbox col-md-4 input-group" action="" method="POST">

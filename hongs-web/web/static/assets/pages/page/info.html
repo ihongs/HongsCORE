@@ -1,0 +1,71 @@
+<h2>查看文章</h2>
+<div id="medium-article-form"
+     data-module="hsForm"
+     data-load-url="('data/search.json?ab='+(H$('@id',this)?'.enum':'!enum'))"
+     data-save-url="('data/create.json')"
+     data-init-data="{'sections.0.sect_id':H$('@sect_id',this)}"
+     data-data-0="_fill__fork:(hsFormFillFork)"
+     data-data-1="_fill__file:(hsFormFillFile)"
+     data-data-2="_fill__view:(hsFormFillView)">
+    <form action="" method="POST" enctype="multipart/form-data">
+        <input type="hidden" name="id"/>
+        <input type="hidden" name="sections.0.sect_id" data-vb="sect_id"/>
+        <input type="hidden" name="type" value="default"/>
+        <input type="hidden" name="temp" value="default"/>
+        <input type="hidden" name="kind" value="html"/>
+        <input type="hidden" name="stave" value="0"/>
+        <div class="row">
+            <div class="col-md-6 center-block">
+                <div class="form-group">
+                    <label class="control-label">名称</label>
+                    <div class="form-control-static" data-fn="name"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">备注</label>
+                    <div class="form-control-static" data-fn="note" style="white-space: pre-line;"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">类型</label>
+                    <div class="form-control-static" data-fn="type_text"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">权限</label>
+                    <div class="form-control-static" data-fn="auth_text"></div>
+                </div>
+                <div class="form-group dont-close">
+                    <label class="control-label">日期</label>
+                    <div class="form-control-static">
+                        <span>从</span>
+                        <span data-fn="mtime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
+                    </div>
+                    <div class="form-control-static">
+                        <span>到</span>
+                        <span data-fn="ctime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
+                    </div>
+                    <div class="help-block"></div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">关联</label>
+                    <ul class="pickbox pickrol" data-ft="_fork" data-fn="sect_id" data-ak="section" data-tk="name" data-vk="id"></ul>
+                </div>
+                <div class="form-group dont-close">
+                    <label class="control-label">文件</label>
+                    <ul class="pickbox pickrol" data-ft="_file" data-fn="file."></ul>
+                </div>
+                <div class="form-group dont-close">
+                    <label class="control-label">图片</label>
+                    <ul class="pickbox pickrol" data-ft="_view" data-fn="snap." data-size="100*100"></ul>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">标准文件上传</label>
+                    <div class="form-control-static">
+                        <a data-fn="base_file" data-ft="_review" target="_blank"></a>
+                    </div>
+                </div>
+                <div>
+                    <button type="button" class="cancel btn btn-primary">关闭</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

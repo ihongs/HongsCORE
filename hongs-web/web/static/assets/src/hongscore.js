@@ -1909,7 +1909,7 @@ $.fn.hsReady = function() {
 
     // 输入类
     box.find("input"/*class*/).each(function() {
-        $(this).addClass("input-" + $(this).attr("type"));
+        $(this).addClass("input-"+$(this).attr("type"));
     });
 
     // 折叠栏

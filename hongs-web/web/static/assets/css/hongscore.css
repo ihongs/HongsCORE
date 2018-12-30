@@ -553,9 +553,10 @@ ul.pickrol .close {
     right :  7px;
     width : 24px;
     height: 24px;
-    border-radius: 50%;
     line-height : 21px;
     text-align: center;
+    background: silver;
+    border-radius: 50%;
     box-shadow: 0 0 0.2em #000;
 }
 .preview:hover

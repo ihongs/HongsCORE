@@ -21,14 +21,15 @@
             "mtime": 1460780299,
             "ctime": 1460780299,
             "word": "哇哈哈 哟嘻嘻",
-            "note": "要一步一步往上爬, 在最高点乘着叶片往前飞",
-            "snap": "../img/head_icon.jpg",
+            "note": "我要一步一步往上爬, 在最高点乘着叶片往前飞",
+            "type": ["1" , "2"],
+            "type_text": ["类型1", "类型2"],
+            "auth": ["endorse"],
+            "auth_text": ["允许打分"],
             "sect_id": "a",
-            "section": {
-                "id": "a",
-                "name": "分类1"
-            },
-            "file" : ["abc.png", "def.png"]
+            "section": {"id": "a", "name": "分类1"},
+            "file": [ "abc.png", "def.png" ],
+            "snap": ["../img/head_icon.jpg"]
         },
         {
             "id": "2",

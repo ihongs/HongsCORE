@@ -73,11 +73,11 @@ code, pre, var, dfn, kbd {
 select.form-control {
     height: 2.76923077em;
 }
-select.form-control[multiple] {
-    height: 8.30769231em;
-}
+select.form-control[multiple],
 textarea.form-control {
     height: 8.30769231em;
+    min-height:  8.30769231em;
+    max-height: 16.61538462em;
     resize: vertical;
 }
 .form-control[disabled] {

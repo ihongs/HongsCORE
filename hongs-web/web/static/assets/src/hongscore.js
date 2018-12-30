@@ -2535,6 +2535,18 @@ function() {
     tab.show().addClass("active");
     pne.show().trigger("hsRecur");
 })
+.on("click", ".back-crumb a",
+function() {
+    var nav = $(this).closest ('.breadcrumb');
+    nav.find('li:last a').hsClose();
+    nav.find('li:last a').  click();
+})
+/*
+.on("click", ".home-crumb a",
+function() {
+    // Nothing todo.
+})
+*/
 .on("click", ".dropdown-toggle",
 function(evt) {
     if ($(evt.target).is(".dropdown-deny")) return;
@@ -2544,39 +2556,23 @@ function(evt) {
     cont.toggleClass( "dropup" );
     body.toggleClass("invisible", !cont.is(".dropup"));
 })
-.on("click", "select[multiple]",
+.on("change","select[multiple]",
 function(evt) {
     if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
         return;
     }
     var vals = $(this).data("vals") || [];
-    var valz = $(this).val();
-    if (!valz || valz.length === 0) {
-        vals = [];
-    } else {
-        $.each(valz, function(x, v) {
-            var i = $.inArray(v, vals);
-            if (i >= 0) {
-                vals.splice(i,1);
-            } else {
-                vals.push  ( v );
-            }
-        });
-    }
+    var valz = $(this).val ( /**/ ) || [];
+    $.each(valz, function(x, v    ) {
+        var i = $.inArray(v, vals );
+        if (i < 0) {
+            vals.push  ( v );
+        } else {
+            vals.splice(i,1);
+        }
+    });
     $(this).data("vals", vals);
     $(this).val ( vals );
-})
-/*
-.on("click", ".home-crumb a",
-function() {
-    // Nothing todo.
-})
-*/
-.on("click", ".back-crumb a",
-function() {
-    var nav = $(this).closest ('.breadcrumb');
-    nav.find('li:last a').hsClose();
-    nav.find('li:last a').  click();
 })
 .on("hsReady hsRecur", ".labs.laps",
 function() {

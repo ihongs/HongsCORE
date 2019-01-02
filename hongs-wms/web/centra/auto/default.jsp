@@ -24,10 +24,10 @@
         <script type="text/javascript" src="common/auth/centra.js" ></script>
         <script type="text/javascript" src="centra/auto/_core_.js" ></script>
         <script type="text/javascript" src="centra/auto/_edit_.js" ></script>
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/custom.js"></script>
+        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/__init__.js"></script>
         <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/custom.js"] = 1;
-            HsDEPS["__COMMITED__"] = 1;
+            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/__init__.js"]=1;
+            HsDEPS["__INIT__"]=1;
         </script>
     </head>
     <body>

@@ -315,7 +315,7 @@
             location.replace(location.pathname +"#");
         });
     });
-    var mat = /^#(\w+)/.exec(location.hash);
+    var mat= /^#(\w+)$/.exec(location.hash);
     if (mat) {
         var url = "<%=_module%>/<%=_entity%>/info.html";
         var box = context.hsFind("@");

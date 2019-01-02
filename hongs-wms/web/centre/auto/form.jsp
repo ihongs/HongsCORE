@@ -227,7 +227,7 @@
         _fill__view: hsFormFillView
     });
 
-    hsRequires("<%=_module%>/<%=_entity%>/custom.js", function() {
+    hsRequires("<%=_module%>/<%=_entity%>/__init__.js", function() {
         // 外部定制
         if (window["<%=_funcId%>"]) {
             window["<%=_funcId%>"](context, formobj);

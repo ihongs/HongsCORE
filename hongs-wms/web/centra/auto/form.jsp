@@ -42,7 +42,7 @@
             <input type="hidden" name="<%=name%>" value="<%="form_id".equals(name)?_entity:""%>"/>
         <%} else if ("line".equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
-        <%} else if ("checkbag".equals(type)) {%>
+        <%} else if ("checkset".equals(type)) {%>
             <fieldset>
                 <legend><%=text%></legend>
                 <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>

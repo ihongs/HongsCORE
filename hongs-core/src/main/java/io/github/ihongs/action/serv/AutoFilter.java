@@ -132,7 +132,7 @@ public class AutoFilter extends ActionDriver {
             }
 
             // 检查是否有特定动作脚本
-            uri = "/"+ src + "/_main_.jsp";
+            uri = "/" + src + "/__main__.jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
                 return;

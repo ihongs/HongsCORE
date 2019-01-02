@@ -54,7 +54,7 @@ public class AutoFilter extends ActionDriver {
 //  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
 //  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
-    private static final Pattern DENY_JSPS = Pattern.compile("/([_@#\\$\\.][^/]*|[^/]*\\.[^/]*)\\.jsp$");
+    private static final Pattern DENY_JSPS = Pattern.compile("(/[_#$@]|\\.)[^/]*\\.jsp$");
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {
@@ -97,32 +97,19 @@ public class AutoFilter extends ActionDriver {
             return;
         }
 
-        // 禁止访问动作脚本 , 避免绕过权限过滤
+        // 禁止访问动作脚本, 避免绕过权限过滤
         if (DENY_JSPS.matcher(ref).find()) {
             rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "What the fuck do you want?");
             return;
         }
 
         if (url.endsWith(Cnst.API_EXT)) {
-            String src; // 资源路径
-            String uri;
-            int    pos;
-
-            try {
-                pos = url.lastIndexOf('/');
-                src = url.substring(0,pos);
-            } catch (IndexOutOfBoundsException ex) {
-                // 如果无法拆分则直接跳过
-                chain.doFilter ( req, rsp);
-                return;
-            }
-
-            // 检查是否有特定动作脚本
-            uri = "/"+ src + "/_apis_.jsp";
-            if (new File(Core.BASE_PATH+ uri).exists()) {
-                include ( req, rsp, url, uri);
-                return;
-            }
+            /**
+             * 为避免一个动作有多种路径,
+             * 这很可能导致权限校验歧义,
+             * 故这里不用做类似下方处理;
+             * 上方的 DENY_JSPS 同此理.
+             */
         } else
         if (url.endsWith(Cnst.ACT_EXT)) {
             String act; // 动作路径
@@ -145,19 +132,19 @@ public class AutoFilter extends ActionDriver {
             }
 
             // 检查是否有特定动作脚本
-            uri = "/"+ src + "/_acts_.jsp";
+            uri = "/"+ src + "/_main_.jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
                 return;
             }
-            // 废弃, 仅用 _acts_ 处理
+            // 废弃, 仅用以上方式处理
             /*
-            uri = "/"+ src +"/@"+ met +".jsp";
+            uri = "/"+ src +"/#"+ met +".jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 include ( req, rsp, url, uri);
                 return;
             }
-            uri = "/"+ src +"/#"+ met +".jsp";
+            uri = "/"+ src +"/$"+ met +".jsp";
             if (new File(Core.BASE_PATH+ uri).exists()) {
                 forward ( req, rsp, url, uri);
                 return;
@@ -165,7 +152,7 @@ public class AutoFilter extends ActionDriver {
             */
 
             if (!ActionRunner.getActions().containsKey(act)) {
-                // 检查是否有重写动作脚本 (废弃, 动作归动作)
+                // 检查是否有重写动作脚本 (废弃, 动作的归动作)
                 /*
                 getlays();
                 for(Map.Entry<String, String> et : cstmap.entrySet()) {
@@ -365,15 +352,15 @@ public class AutoFilter extends ActionDriver {
             }
 
             /**
-             * @,# 都表示这是一个动作脚步
-             * @ 为 include, # 为 forward
+             * #,$ 都表示这是一个动作脚步
+             * # 为 include, $ 为 forward
              */
-//          if (fn.startsWith ("@")) {
+//          if (fn.startsWith ("#")) {
 //              int    l  = fn.lastIndexOf(".");
 //              String ln = fn.substring(1 , l);
 //              cstmap.put( dn + ln , dn + fn );
 //          } else
-//          if (fn.startsWith ("#")) {
+//          if (fn.startsWith ("$")) {
 //              int    l  = fn.lastIndexOf(".");
 //              String ln = fn.substring(1 , l);
 //              cxtmap.put( dn + ln , dn + fn );

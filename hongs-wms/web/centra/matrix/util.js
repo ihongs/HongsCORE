@@ -621,16 +621,21 @@ $.fn.hsCols = function() {
         }
 
         modal.find("h4").text(name);
-        modal.find( ".simple-set" ) // 基础设置区域
+        modal.find( ".simple-set" ) // 基础设置区
              .empty( ).append(pane);
-        modal.find( ".detail-set" ) // 详细设置区域
+        modal.find( ".detail-set" ) // 详细设置区
              .find("tr").not(".hide").remove();
 
-        // 表单设置只显示高级, 其他情况点到基础设置
+        // 表单设置只显示高级, 分隔栏仅需基础设置
         if (type == '_') {
             tabs.find("li:eq(1) a").click();
             tabs.find("li:eq(0)"  ).hide( );
-        } else {
+        } else
+        if (type == 'splitbar') {
+            tabs.find("li:eq(0) a").click();
+            tabs.find("li:eq(1)"  ).hide( );
+        } else
+        {
             tabs.find("li:eq(0) a").click();
             tabs.find("li"        ).show( );
         }

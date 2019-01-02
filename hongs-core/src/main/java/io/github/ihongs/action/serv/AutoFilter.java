@@ -54,7 +54,7 @@ public class AutoFilter extends ActionDriver {
 //  private Map<String, String> cstmap = null; // 可 inlucde 的动作脚本
 //  private Map<String, String> cxtmap = null; // 可 forward 的动作脚本
 
-    private static final Pattern DENY_JSPS = Pattern.compile("(/_|\\.)[^/]*\\.jsp$");
+    private static final Pattern DENY_JSPS = Pattern.compile("(/_|\\.)[^/]*\\.jsp$"); // [_#$]
 
     @Override
     public void init(FilterConfig cnf) throws ServletException {

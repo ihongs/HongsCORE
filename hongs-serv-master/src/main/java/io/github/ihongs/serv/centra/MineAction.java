@@ -32,9 +32,9 @@ public class MineAction {
         ua.getInfo(ah);
     }
 
-    @Action("update")
+    @Action("save")
     @Verify(conf="master", form="mine", type=1, trim=1)
-    public void mineUpdate(ActionHelper ah)
+    public void mineSave(ActionHelper ah)
     throws HongsException {
         Map rd = ah.getRequestData();
         String id = (String) ah.getSessibute(Cnst.UID_SES);

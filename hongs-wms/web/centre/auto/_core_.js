@@ -56,13 +56,6 @@ function hsListFillMore(page) {
 }
 
 /**
- * 登记用户会话信息
- */
-function hsWithUserInfo(resp) {
-    window.HsUSER = resp.info || { };
-}
-
-/**
  * 依据权限开放编辑
  */
 function hsListShowEdit(d, v) {
@@ -74,7 +67,7 @@ function hsListShowEdit(d, v) {
             v = v. id;
         }
     }
-    d.toggle(!!(v && v == HsUSER.uid));
+    d.toggle(!!(v && HsUSER && v == HsUSER.uid));
 }
 
 /**

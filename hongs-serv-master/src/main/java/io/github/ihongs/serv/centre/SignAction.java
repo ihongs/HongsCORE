@@ -59,16 +59,17 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     /**
      * 注销
      * @param ah
+     * @throws HongsException
      */
     @Action("user/delete")
     public void userDelete(ActionHelper ah) throws HongsException {
         String uuid = (String) ah.getSessibute(Cnst.UID_SES);
         if (null == uuid) {
-            ah.reply(AuthKit.getWrong(null, "core.sign.off.invalid"));
+            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
             return;
         }
 
-        User user = (User) DB.getInstance("master").getModel("user") ;
+        User user = (User) DB.getInstance("master").getModel("user");
         user.del(uuid);
 
         signDelete(ah);
@@ -81,14 +82,14 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      */
     @Action("user/unique")
     public void userUnique(ActionHelper ah) throws HongsException {
-        User user = (User) DB.getInstance("master").getModel("user") ;
+        User user = (User) DB.getInstance("master").getModel("user");
         Map  data = ah . getRequestData( );
         FetchCase caze = user.fetchCase( );
 
         // 密码等不可检测
         String  n = (String) data.get("n");
-        if ("password".equals( n ) || "passcode".equals( n )) {
-            throw new HongsException(0x1100, "Colume " + n + " is not allowed");
+        if ("id".equals( n ) || "password".equals(n) || "passcode".equals(n)) {
+            throw new HongsException(0x1100, "Colume "+ n +" is not allowed");
         }
 
         boolean v = user.unique(data,caze);

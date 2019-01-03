@@ -93,14 +93,15 @@ public class AuthKit {
             String place, String appid, String usrid,
             String uname, String uhead,  long  utime)
     throws HongsException {
-        HttpSession sd = ah.getRequest().getSession(false);
         long     stime = System.currentTimeMillis() / 1000;
-        String   sesmk = CoreConfig.getInstance( "master").getProperty("core.keep.sess", ""); // 登录时哪些会话数据需要保留
+        HttpSession sd = ah.getRequest().getSession(false);
 
-        // 重建会话
+        // 重建会话, 检查登录时哪些会话数据需要保留
         if (sd != null) {
+            Set<String> ks = Synt. toTerms    (
+                       CoreConfig.getInstance ( "master" )
+                                 .getProperty ("core.keep.sess",""));
             Map<String,Object> xs = new HashMap();
-            Set<String> ks = Synt.toTerms(sesmk );
             ks.add(Cnst.SAE_SES);
             for(String  kn : ks) {
                 Object  kv = sd.getAttribute(kn );
@@ -116,42 +117,43 @@ public class AuthKit {
         }
         String   sesid = sd.getId();
 
-        // 设置会话
-        if (place != null && 0 < place.length()) {
-            Set s  = Synt.asSet(sd.getAttribute(Cnst.SAE_SES));
-            if (s == null) {
-                s  = new HashSet();
-            }   s.add  (  place  );
-            s.retainAll( RoleSet.getInstance( usrid ) ); // 仅保留拥有的区域
-            sd.setAttribute(Cnst.SAE_SES, s);
+        // 登录区域
+        Set sarea  = Synt.asSet(sd.getAttribute(Cnst.SAE_SES));
+        if (sarea == null) {
+            sarea  = new  HashSet();
         }
-        sd.setAttribute(Cnst.STM_SES, stime);
+        if (place != null
+        &&  place.isEmpty( )
+        &&  RoleSet.getInstance(usrid).contains(place)) {
+            sarea.add(place);
+        }
+
+        // 设置会话
         sd.setAttribute(Cnst.UID_SES, usrid);
-        sd.setAttribute("appid", appid);
+        sd.setAttribute(Cnst.SAE_SES, sarea);
+        sd.setAttribute(Cnst.STM_SES, stime);
         sd.setAttribute("uname", uname);
         sd.setAttribute("uhead", uhead);
         sd.setAttribute("utime", utime);
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(Cnst.STM_SES, stime);
         rd.put(Cnst.UID_SES, usrid);
+        rd.put("sesid", sesid);
         rd.put("appid", appid);
-        rd.put("place", place);
         rd.put("uname", uname);
         rd.put("uhead", uhead);
         rd.put("utime", utime);
-        rd.put("sesid", sesid);
+        rd.put("stime", stime);
 
         // 记录登录
-        DB    db = DB.getInstance("master");
-        Table tb = db.getTable("user_sign");
-        tb.remove("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
         Map ud = new HashMap();
-        ud.put("user_id", usrid);
+        ud.put("user_id"   , usrid);
         ud.put("sesid", sesid);
         ud.put("appid", appid);
         ud.put("ctime", stime);
+        Table  tb = DB.getInstance("master").getTable("user_sign");
+        tb.remove("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
         tb.insert(ud);
 
         return rd;
@@ -189,6 +191,7 @@ public class AuthKit {
             usrid = ud.get("user_id").toString();
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
+            utime = Synt.asLong(ud.get("mtime")); // 信息更新时间
         } else {
             // 校验及下载头像
             VerifyHelper vh = new VerifyHelper();

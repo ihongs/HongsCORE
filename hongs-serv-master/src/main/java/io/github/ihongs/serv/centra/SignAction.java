@@ -120,7 +120,8 @@ public class SignAction {
             return;
         }
 
-        ah.reply(AuthKit.userSign(ah, place, appid, usrid, uname, uhead, utime));
+        Map sd = AuthKit.userSign(ah, place, appid, usrid, uname, uhead, utime);
+        ah.reply ( "" , sd);
     }
 
     /**

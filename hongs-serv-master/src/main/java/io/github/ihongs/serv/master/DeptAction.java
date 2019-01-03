@@ -50,9 +50,9 @@ public class DeptAction {
         String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
         if (id != null && id.length() != 0) {
-            rd = model.getInfo(rd);
+            rd  = model.getInfo(rd);
         } else {
-            rd =  new  HashMap(  );
+            rd  =  new  HashMap(  );
         }
 
         // With all roles

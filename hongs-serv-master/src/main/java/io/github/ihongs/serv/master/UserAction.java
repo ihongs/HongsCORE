@@ -61,9 +61,9 @@ public class UserAction {
         String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
         if (id != null && id.length() != 0) {
-            rd = model.getInfo(rd);
+            rd  = model.getInfo(rd);
         } else {
-            rd =  new  HashMap(  );
+            rd  =  new  HashMap(  );
         }
 
         // With all roles
@@ -89,14 +89,7 @@ public class UserAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData( );
-
-        // Forbid empty dept ids in update
-        if (rd.containsKey  (  "depts"  )) {
-        Set ds = Synt.asSet (rd.get ("depts"));
-        if (ds.isEmpty() || (ds.size() == 1 && ds.contains(""))) {
-            throw new HongsException(0x1100, "Dept ids can not be empty!");
-        }}
+        Map rd = helper.getRequestData();
 
         // Ignore empty password in update
         if ("".equals(rd.get("password"))) {

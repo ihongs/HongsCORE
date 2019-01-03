@@ -98,16 +98,25 @@ extends Mtree {
         }
 
         /**
-         * 如果有指定user_id
-         * 则关联a_master_user_dept来约束范围
+         * 如果有指定 user_id
+         * 则关联 a_master_user_dept 来约束范围
+         * 当其为横杠时表示取那些没有关联的部门
          */
         Object userId = req.get("user_id");
         if (null != userId && ! "".equals(userId)) {
-            caze.gotJoin("users")
-                .from   ("a_master_user_dept")
-                .by     (FetchCase.INNER)
-                .on     ("`users`.`dept_id` = `dept`.`id`")
-                .filter ("`users`.`user_id` IN (?)",userId);
+            if ( "-".equals ( userId)) {
+                caze.gotJoin("users")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`users`.`dept_id` = `dept`.`id`")
+                    .filter ("`users`.`user_id` IS NULL" /**/ );
+            } else {
+                caze.gotJoin("users")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`users`.`dept_id` = `dept`.`id`")
+                    .filter ("`users`.`user_id` IN (?)",userId);
+            }
         }
 
         super.filter(caze, req);

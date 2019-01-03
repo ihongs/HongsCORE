@@ -151,16 +151,25 @@ extends Model {
         }
 
         /**
-         * 如果有指定dept_id
-         * 则关联a_master_user_dept来约束范围
+         * 如果有指定 dept_id
+         * 则关联 a_master_user_dept 来约束范围
+         * 当其为横杠时表示取那些没有关联的用户
          */
         Object deptId = req.get("dept_id");
         if (null != deptId && ! "".equals(deptId)) {
-            caze.gotJoin("depts")
-                .from   ("a_master_user_dept")
-                .by     (FetchCase.INNER)
-                .on     ("`depts`.`user_id` = `user`.`id`")
-                .filter ("`depts`.`dept_id` = ?" , deptId );
+            if ( "-".equals ( deptId)) {
+                caze.gotJoin("depts")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`depts`.`user_id` = `user`.`id`")
+                    .filter ("`depts`.`dept_id` IS NULL" /**/ );
+            } else {
+                caze.gotJoin("depts")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`depts`.`user_id` = `user`.`id`")
+                    .filter ("`depts`.`dept_id` IN (?)",deptId);
+            }
         }
 
         super.filter(caze, req);

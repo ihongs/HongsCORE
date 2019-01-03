@@ -89,16 +89,17 @@ public class UserAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
+        Map rd = helper.getRequestData( );
 
         // Forbid empty dept ids in update
-        Set ds = Synt.asSet(rd.get("depts"));
+        if (rd.containsKey  (  "depts"  )) {
+        Set ds = Synt.asSet (rd.get ("depts"));
         if (ds.isEmpty() || (ds.size() == 1 && ds.contains(""))) {
-            throw new HongsException(0x1100 , "Dept ids can not be empty!");
-        }
+            throw new HongsException(0x1100, "Dept ids can not be empty!");
+        }}
 
         // Ignore empty password in update
-        if ("".equals( rd.get("password") )) {
+        if ("".equals(rd.get("password"))) {
             rd.remove("password");
             rd.remove("passcode");
         }

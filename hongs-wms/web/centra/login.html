@@ -73,6 +73,9 @@
 
                 // 表单
                 context.on("saveBack", function(ev, rd, md) {
+                    delete rd.info.appid;
+                    delete rd.info.sesid;
+                    window.HsUSER = rd.info;
                     location.replace(hsFixUri(hsGetParam(location.href, "r") || "centra/"));
                 });
                 context.on("saveFail", function(ev, rd, md) {

@@ -76,7 +76,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     }
 
     /**
-     * 检查重复
+     * 查重
      * @param ah
      * @throws HongsException
      */

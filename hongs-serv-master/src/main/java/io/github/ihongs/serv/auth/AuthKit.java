@@ -182,7 +182,7 @@ public class AuthKit {
                      .from(tb.tableName, "o")
                      .join(ub.tableName, "u", "`u`.`id` = `o`.`user_id`")
                      .filter("`opnid` = ? AND `appid` = ?", opnid, appid)
-                     .select("`o`.`user_id`, `u`.`name`, `u`.`head`")
+                     .select("`o`.`user_id`, `u`.`name`, `u`.`head`, `u`.`mtime`")
                      .getOne(   );
 
         // 记录关联
@@ -191,7 +191,7 @@ public class AuthKit {
             usrid = ud.get("user_id").toString();
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
-            utime = Synt.asLong(ud.get("mtime")); // 信息更新时间
+            utime = Synt.declare(ud.get("mtime"), utime); // 信息更新时间
         } else {
             // 校验及下载头像
             VerifyHelper vh = new VerifyHelper();

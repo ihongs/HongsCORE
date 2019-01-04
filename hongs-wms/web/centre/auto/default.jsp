@@ -24,10 +24,10 @@
         <script type="text/javascript" src="common/auth/centre.js" ></script>
         <script type="text/javascript" src="centre/auto/_core_.js" ></script>
         <script type="text/javascript" src="centre/auto/_edit_.js" ></script>
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/__init__.js"></script>
+        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/defines.js"></script>
         <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/__init__.js"] = 1;
-            HsDEPS["__INIT__"]=1;
+            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;
+            HsDEPS["__DEFINED__"]=1;
         </script>
     </head>
     <body>

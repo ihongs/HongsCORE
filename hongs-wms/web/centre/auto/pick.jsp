@@ -77,7 +77,7 @@
 
     // 简单分页, 选择条目
 
-    hsRequires("<%=_module%>/<%=_entity%>/__init__.js", function() {
+    hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
         if (window["<%=_funcId%>"]) {
             window["<%=_funcId%>"](context, listobj);

@@ -24,7 +24,7 @@ public class Record {
     /**
      * 获取数据
      * @param key
-     * @return 可使用 Synt.declare 来的到所需类型的数据
+     * @return 可用 Synt.declare 辅助得到所需类型
      */
     public static Object get(String key) {
         try {

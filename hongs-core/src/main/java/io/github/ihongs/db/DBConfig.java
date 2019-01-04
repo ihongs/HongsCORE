@@ -246,11 +246,6 @@ public class DBConfig
         this.tableConfigs = DBConfig.getTables(element);
       }
     }
-
-    if ( 0 < Core.DEBUG  &&  8 != (8 & Core.DEBUG))
-    {
-      CoreLogger.debug(Data.toString(tableConfigs));
-    }
   }
 
   /**

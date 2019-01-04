@@ -301,7 +301,7 @@
     filtbox.find(".owner").change(function() {
         $(this).closest (".form-control-static")
                .siblings(":submit").click( );
-    }).val ( HsUSER.uid );
+    }).val(HsCUID);
 
     /**
      * 因详情页可能被分享

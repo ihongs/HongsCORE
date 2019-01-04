@@ -1,6 +1,16 @@
 /* global jQuery, echarts, HsForm, HsList, hsListFillFork */
 
 /**
+ * 设置当前用户ID
+ */
+if (hsChkUri('centre')) {
+    window.HsCUID = H$('%HsCUID');
+} else {
+    window.HsCUID = undefined;
+    H$ ( '%HsCUID', null/**/);
+}
+
+/**
  * 获取当前模块对象
  */
 function S$() {

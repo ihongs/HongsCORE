@@ -1,4 +1,14 @@
-/* global jQuery, echarts, HsForm, HsList, HsUSER */
+/* global jQuery, echarts, HsForm, HsList, HsCUID */
+
+/**
+ * 设置当前用户ID
+ */
+if (hsChkUri('centre')) {
+    window.HsCUID = H$('%HsCUID');
+} else {
+    window.HsCUID = undefined;
+    H$ ( '%HsCUID', null/**/);
+}
 
 /**
  * 获取当前模块对象
@@ -67,7 +77,7 @@ function hsListShowEdit(d, v) {
             v = v. id;
         }
     }
-    d.toggle(!!(v && HsUSER && v == HsUSER.uid));
+    d.toggle( v && v == HsCUID );
 }
 
 /**

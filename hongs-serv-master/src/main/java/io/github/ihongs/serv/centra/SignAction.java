@@ -31,7 +31,7 @@ public class SignAction {
      * @throws HongsException
      */
     @Action("create")
-    @Verify(conf="master",form="sign")
+    @Verify(conf="master", form="sign")
     public void signCreate(ActionHelper ah) throws HongsException {
         String appid    = Synt.declare(ah.getParameter("appid"), "_WEB_" );
         String place    = Synt.declare(ah.getParameter("place"), "centre");

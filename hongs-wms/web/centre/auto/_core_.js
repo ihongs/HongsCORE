@@ -1,13 +1,13 @@
-/* global jQuery, echarts, HsForm, HsList, HsCUID */
+/* global self, echarts, jQuery, HsForm, HsList, HsCUID */
 
 /**
  * 设置当前用户ID
  */
 if (hsChkUri('centre')) {
-    window.HsCUID = H$('%HsCUID');
+    self.HsCUID = H$('%HsCUID');
 } else {
-    window.HsCUID = undefined;
-    H$ ( '%HsCUID', null/**/);
+    delete self.HsCUID ;
+    H$('%HsCUID', null);
 }
 
 /**

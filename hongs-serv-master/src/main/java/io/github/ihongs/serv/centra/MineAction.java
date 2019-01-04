@@ -39,12 +39,10 @@ public class MineAction {
         Map rd = ah.getRequestData();
         String id = (String) ah.getSessibute(Cnst.UID_SES);
 
-        // 禁止危险修改
+        // 禁止危险修改. 这是以防万一, 其实校验已经做过限制了
         rd.put( "id", id );
+        rd.remove("depts");
         rd.remove("roles");
-        rd.remove("rtime");
-        rd.remove("mtime");
-        rd.remove("ctime");
         rd.remove("state");
 
         // 验证原始密码

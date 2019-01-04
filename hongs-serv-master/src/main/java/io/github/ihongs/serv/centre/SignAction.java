@@ -1,13 +1,13 @@
 package io.github.ihongs.serv.centre;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.master.User;
 import io.github.ihongs.util.Synt;
@@ -22,6 +22,23 @@ import java.util.Map;
 public class SignAction extends io.github.ihongs.serv.centra.SignAction {
 
     /**
+     * 登录
+     * @param ah
+     * @throws HongsException
+     */
+    @Action("create")
+    @Verify(conf="master", form="sign")
+    @Override
+    public void signCreate(ActionHelper ah) throws HongsException {
+        CoreConfig cc = CoreConfig.getInstance("master");
+        if(!cc.getProperty("core.public.sign.open",true)) {
+            throw new HongsException(0x1104,"Sign in is not allowed!");
+        }
+
+        super.signCreate(ah);
+    }
+
+    /**
      * 注册
      * @param ah
      * @throws HongsException
@@ -30,8 +47,13 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     @Preset(conf="master", form="mine")
     @Verify(conf="master", form="mine")
     public void userCreate(ActionHelper ah) throws HongsException {
-        Map  rd = ah.getRequestData();
+        CoreConfig cc = CoreConfig.getInstance("master");
+        if(!cc.getProperty("core.public.regs.open",true)) {
+            throw new HongsException(0x1104,"Sign on is not allowed!");
+        }
+
         User uo = (User) DB.getInstance( "master" ).getModel( "user" );
+        Map  rd = ah.getRequestData(  );
         Map  sd = (Map ) uo.create (rd);
 
         // 提取登录信息
@@ -40,20 +62,21 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         String uhead = Synt.declare(sd.get( "head"), "");
         long   utime = Synt.declare(sd.get("mtime"), 0L) * 1000;
         String appid = Synt.declare(ah.getParameter("appid"), "_WEB_");
+        String place = Synt.declare(ah.getParameter("place"),"centre");
 
         // 赋予公共权限
         sd = new HashMap();
-        sd.put("user_id",  usrid  );
-        sd.put("role"   , "centre");
+        sd.put("user_id", usrid);
+        sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));
         uo.db.getTable("user_role").insert(sd);
 
         // 加入公共部门
         sd = new HashMap();
-        sd.put("user_id",  usrid  );
-        sd.put("dept_id", "CENTRE");
+        sd.put("user_id", usrid);
+        sd.put("dept_id", cc.getProperty("core.public.regs.dept", "CENTRE"));
         uo.db.getTable("user_dept").insert(sd);
 
-        ah.reply(AuthKit.userSign(ah, null, appid, usrid, uname, uhead, utime));
+        ah.reply(AuthKit.userSign(ah, place, appid, usrid, uname, uhead, utime));
     }
 
     /**
@@ -63,16 +86,15 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      */
     @Action("user/delete")
     public void userDelete(ActionHelper ah) throws HongsException {
-        String uuid = (String) ah.getSessibute(Cnst.UID_SES);
-        if (null == uuid) {
-            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
+        String id = (String) ah.getSessibute(Cnst.UID_SES);
+        if (id == null) {
+            ah.reply(AuthKit.getWrong("","core.sign.phase.invalid"));
             return;
         }
 
         User user = (User) DB.getInstance("master").getModel("user");
-        user.del(uuid);
-
-        signDelete(ah);
+        user. del (id); // 删除当前用户
+        signDelete(ah); // 消除登录状态
     }
 
     /**
@@ -83,17 +105,9 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     @Action("user/unique")
     public void userUnique(ActionHelper ah) throws HongsException {
         User user = (User) DB.getInstance("master").getModel("user");
-        Map  data = ah . getRequestData( );
-        FetchCase caze = user.fetchCase( );
-
-        // 密码等不可检测
-        String  n = (String) data.get("n");
-        if ("id".equals( n ) || "password".equals(n) || "passcode".equals(n)) {
-            throw new HongsException(0x1100, "Colume "+ n +" is not allowed");
-        }
-
-        boolean v = user.unique(data,caze);
-        ah.reply(null, v ? 1 : 0 );
+        Map  data =  ah.getRequestData();
+        boolean v =  user.unique( data );
+        ah.reply  (  null,  v ? 1 : 0  );
     }
 
 }

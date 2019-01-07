@@ -5,7 +5,7 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Default;
 import io.github.ihongs.util.verify.Defiant;
-import io.github.ihongs.util.verify.NoRepeat;
+import io.github.ihongs.util.verify.Ordinary;
 import io.github.ihongs.util.verify.Optional;
 import io.github.ihongs.util.verify.Repeated;
 import io.github.ihongs.util.verify.Required;
@@ -30,9 +30,9 @@ import java.util.Map;
  * 在 form.xml 中,
  * 无 type 也无 rule 则同 type="string".
  * 无 required 时默认启用 Optional 规则,
- * 无 repeated 时默认启用 NoRepeat 规则,
+ * 无 repeated 时默认启用 Ordinary 规则,
  * 但 required=""表示既无 Required 也无 Optional,
- * 同 repeated=""表示既无 Repeated 也无 NoRepeat.
+ * 同 repeated=""表示既无 Repeated 也无 Ordinary.
  * 依此规则 type="form" 或 rule 有 IsForm,Intact,
  * 或其他可接受集合类型取值时务必加上repeated="".
  * </p>
@@ -110,7 +110,7 @@ public class VerifyHelper extends Verify {
                          rule.setParams(opts );
                     this.addRule(name , rule );
                 } else {
-                    Rule rule = new NoRepeat();
+                    Rule rule = new Ordinary();
                          rule.setParams(opts );
                     this.addRule(name , rule );
                 }

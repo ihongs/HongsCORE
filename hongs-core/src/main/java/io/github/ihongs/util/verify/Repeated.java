@@ -71,16 +71,16 @@ public class Repeated extends Rule {
 
             throw  new Wrong("fore.form.repeated");
         }
-        if (value instanceof Object[ ] ) {
-            return Arrays.asList((Object[]) value);
+        if (value instanceof Map) {
+            return value;
         }
         if (value instanceof Collection) {
             return value;
         }
-        if (value instanceof Map) {
-            return value;
+        if (value instanceof Object[ ] ) {
+            return Arrays.asList((Object[]) value);
         }
-        throw  new Wrong("fore.form.repeated");
+            throw  new Wrong("fore.form.repeated");
     }
 
     /**

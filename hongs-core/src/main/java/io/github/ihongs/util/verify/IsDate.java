@@ -115,6 +115,12 @@ public class IsDate extends Rule {
                 // Nothing to do.
             }
 
+            // Web 的 datetime-local 等
+            // 时间精确到分需要补充零秒
+            if (str.matches("(.*\\D)?\\d+:\\d+") ) {
+                str += ":00";
+            }
+
             // 按指定格式解析日期字符串
             // 要精确时间的可以使用偏移
             try {

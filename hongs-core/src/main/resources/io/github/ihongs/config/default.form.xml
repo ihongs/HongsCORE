@@ -158,10 +158,9 @@
         <field name="more" text="必填" type="text" required="yes">
         </field>
         <field name="more" text="重复" type="text" repeated="yes">
-            <param name="defiant"></param>
-            <param name="diverse"></param>
-            <param name="minrepeat"></param>
-            <param name="maxrepeat"></param>
+            <param name="diverse">yes</param>
+            <param name="minrepeat">0</param>
+            <param name="maxrepeat">6</param>
         </field>
         <field name="more" text="默认" type="text">
             <param name="default">%now,$uid</param>

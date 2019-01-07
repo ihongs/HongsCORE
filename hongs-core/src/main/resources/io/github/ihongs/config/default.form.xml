@@ -2,7 +2,8 @@
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
         <value code="listable" type="set">
-            string,search,text,hidden,email,url,tel,sms,textarea,textview,
+            string,stored,search,hidden,text,email,url,tel,sms,
+            textarea,textview,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
@@ -12,22 +13,22 @@
             json
         </value>
         <value code="sortable" type="set">
-            string,search,text,hidden,email,url,tel,sms,
+            string,sorted,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
-            fork,pick,
-            sorted
+            fork,pick
         </value>
         <value code="findable" type="set">
-            string,search,text,hidden,email,url,tel,sms,
+            string,search,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
             fork,pick
         </value>
         <value code="srchable" type="set">
-            string,search,text,textarea,email,tel,sms
+            string,search,hidden,text,email,tel,sms,
+            textarea
         </value>
         <!-- 下为 Matrix 特有 -->
         <value code="nameable" type="set">
@@ -37,11 +38,13 @@
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
         <value code="string" type="set">
-            string,search,text,hidden,email,url,tel,sms,textarea,textview,
+            string,search,hidden,text,email,url,tel,sms,
+            textarea,textview,
             enum,radio,check,select,type,
             file,image,audio,video,
             fork,pick,
-            form,part
+            form,part,
+            json
         </value>
         <value code="number" type="set">
             number,range,color
@@ -50,10 +53,12 @@
             date,time,datetime
         </value>
         <!-- 下为 Lucene 特有 -->
+        <value code="object" type="set">
+            object,form,part,json
+        </value>
         <value code="search" type="set">search</value>
         <value code="sorted" type="set">sorted</value>
         <value code="stored" type="set">stored</value>
-        <value code="object" type="set">object,json,form,part</value>
     </enum>
     <!-- 字段校验类型映射 -->
     <enum name="__types__">
@@ -95,8 +100,6 @@
         <!-- Form -->
         <value code="form">form</value>
         <value code="part">form</value><!-- form 的别名 -->
-        <!-- 其他 -->
-        <value code="json">json</value>
     </enum>
     <!-- 文本校验正则映射 -->
     <enum name="__patts__">

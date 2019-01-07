@@ -11,7 +11,7 @@ import java.util.Set;
  * 单值约束
  * @author Hongs
  */
-public class NoRepeat extends Rule {
+public class Ordinary extends Rule {
     @Override
     public Object verify(Object value) throws Wrong {
         if (value instanceof Map) {
@@ -22,7 +22,7 @@ public class NoRepeat extends Rule {
              */
             try {
             FormSet fields = FormSet.getInstance ();
-            Object  type   = params.get/**/  ( "__type__"  );
+             Object type   = params.get/**/  ( "__type__"  );
                 Map saves  = fields.getEnum  ( "__saves__" );
                 Set types  = Synt.toSet(saves.get("object"));
                 if (types != null && type != null
@@ -33,13 +33,13 @@ public class NoRepeat extends Rule {
                 throw new Wrong(ex.getMessage( ));
             }
 
-            throw new Wrong("fore.form.norepeat");
+            throw new Wrong("fore.form.ordinary");
         }
         if (value instanceof Collection) {
-            throw new Wrong("fore.form.norepeat");
+            throw new Wrong("fore.form.ordinary");
         }
         if (value instanceof Object[ ] ) {
-            throw new Wrong("fore.form.norepeat");
+            throw new Wrong("fore.form.ordinary");
         }
         return value;
     }

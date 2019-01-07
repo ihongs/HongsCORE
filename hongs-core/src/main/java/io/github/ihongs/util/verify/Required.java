@@ -19,13 +19,13 @@ public class Required extends Rule {
         if ("".equals(value)) {
             throw new Wrong("fore.form.required");
         }
-        if ((value instanceof Object[ ] ) && ((Object[ ] ) value).length==0) {
+        if ((value instanceof Map) && ((Map) value).isEmpty()) {
             throw new Wrong("fore.form.required");
         }
         if ((value instanceof Collection) && ((Collection) value).isEmpty()) {
             throw new Wrong("fore.form.required");
         }
-        if ((value instanceof Map ) && ((Map ) value).isEmpty()) {
+        if ((value instanceof Object[ ] ) && ((Object[ ] ) value).length==0) {
             throw new Wrong("fore.form.required");
         }
         return value;

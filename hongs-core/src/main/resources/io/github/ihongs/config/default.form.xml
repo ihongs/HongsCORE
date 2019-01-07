@@ -116,7 +116,7 @@
     <!--
     <enum name="demo-enum">
         <value code="1">名称1</value>
-        <value code="1">名称2</value>
+        <value code="2">名称2</value>
     </enum>
     <form name="demo-form">
         <field name="str" text="文本" type="text,textarea,hidden,search,tel,url,email">
@@ -147,11 +147,11 @@
             <param name="conf"></param>
             <param name="enum">demo-enum</param>
         </field>
-        <field name="form" text="外键" type="fork">
+        <field name="form" text="关联" type="fork,pick">
             <param name="conf"></param>
             <param name="form">demo-form</param>
         </field>
-        <field name="form" text="表单" type="form">
+        <field name="form" text="表单" type="form,part">
             <param name="conf"></param>
             <param name="form">demo-form</param>
         </field>
@@ -165,7 +165,7 @@
         </field>
         <field name="more" text="默认" type="text">
             <param name="default">%now,$uid</param>
-            <param name="deforce">always,create,update</param>
+            <param name="deforce">create,update,always,blanks</param>
         </field>
     </form>
     //-->

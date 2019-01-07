@@ -82,12 +82,17 @@ public class Mview extends Model {
             return  txkey;
         }
 
-        Map<String,  Map  > flds = getFields();
-        Map<String, String> typs = FormSet.getInstance().getEnum("__types__");
+        Map<String, Map   > flds = getFields();
 
+        /**
+         * 有名称字段直接返回该字段即可
+         */
         if (flds.containsKey("name")) {
             return "name";
         }
+
+        Map<String, String> typs = FormSet.getInstance()
+                                 . getEnum ("__types__");
 
         /**
          * 寻找第一个非隐藏的字符串字段
@@ -95,11 +100,11 @@ public class Mview extends Model {
         for(String name : lscols) {
             Map    item = flds.get(name);
             if ( item == null ) continue;
-            String type = (String) item.get("__type__");
+            String type = (String) item.get("__type__" );
             if ( type == null ) continue;
             String kind = typs.get(type);
+
             if ("string".equals(kind)
-            && !"stored".equals(type)
             && !"hidden".equals(type)
             && !Cnst.ID_KEY.equals(type)) {
                 txkey = name;

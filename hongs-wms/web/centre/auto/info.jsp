@@ -131,7 +131,7 @@
                         String typa = (String) info.get("type");
                         String mode = (String) info.get("mode");
                     %>
-                    <%       if ("code".equals(typa)) {%>
+                    <%  /**/ if ("code".equals(typa)) {%>
                         <pre class="form-control-static" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
                     <%} else if ("html".equals(typa)) {%>
                         <div class="form-control-static" data-fn="<%=name%>" data-ft="_html" style="white-space: normal ;"></div>

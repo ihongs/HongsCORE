@@ -433,57 +433,56 @@ HsForm.prototype = {
             return v;
         }
 
-        // 枚举
-        var a = inp.data("data");
-        if (a) {
-            var k = inp.attr("data-vk"); if (! k) k = 0;
-            var t = inp.attr("data-tk"); if (! t) t = 1;
-            var x = inp.is("ul,ol") ? '<li></li>': '<span></span>';
-            var i, c, e;
+        // 枚举,列表,选项,标签
+        if (inp.is("ul,ol")) {
+            var k = inp.attr("data-vk") || 0;
+            var t = inp.attr("data-tk") || 1;
+            var a = inp.data("data") || [];
+            var x = jQuery('<li></li>');
             var m = { };
-            inp.empty();
+            var i, c, e;
+
+            x.attr("class", inp.attr("data-item-class"));
+            x.attr("style", inp.attr("data-item-style"));
+            inp.empty( );
+
             if (! jQuery.isArray(v)) {
                 v =  [v];
             }
+
+            // 构建枚举映射
             for(i = 0; i < a.length; i ++) {
-                e = a[i];
-                m[e[k]] = e[t];
+                c = a[i];
+                m [ c[t] ]  =  c[k];
             }
+
+            // 写入列表选项
             for(i = 0; i < v.length; i ++) {
                 c = v[i];
-                e = m[ v [i] ];
-                inp.append(jQuery(x).text(e)).attr("data-code", c);
-            }
-            return;
-        }
-
-        // 标签
-        if (inp.is("ul,ol")) {
-            var k = inp.attr("data-vk"); if (! k) k = 0;
-            var t = inp.attr("data-tk"); if (! t) t = 1;
-            var x = '<li></li>';
-            var i, c, e;
-            inp.empty();
-            if (! jQuery.isArray(v)) {
-                v =  [v];
-            }
-            for(i = 0; i < v.length; i ++) {
-                c = i;
-                e = v[i];
-                if ( jQuery.isPlainObject(e)
-                ||   jQuery.isArray( e ) ) {
-                    c = e[k];
-                    e = e[t];
+                if (jQuery.isPlainObject (c)
+                ||  jQuery.isArray (c) ) {
+                    e = c[t];
+                    c = c[k];
+                } else {
+                    e = m[c];
+                    if (e === undefined) {
+                        e = c;
+                    }
                 }
-                inp.append(jQuery(x).text(e)).attr("data-code", c);
+
+                x.text(/* label */  e);
+                x.attr(  "title"  , e);
+                x.attr("data-code", c);
+                inp.append(x.clone( ));
             }
+
             return;
         }
 
         // 链接,图片,视频,音频
         if (inp.is("a,img,video,audio")) {
             v = v ? hsFixUri( v ) : "";
-            inp.filter("a:empty").text( v );
+            inp.filter("a:empty").text(  v);
             inp.filter("a").attr("href", v);
             inp.filter("a.a-email").attr("href", "mailto:"+v);
             inp.filter("a.a-tel").attr("href", "tel:"+v);
@@ -495,7 +494,7 @@ HsForm.prototype = {
         return v;
     },
     _prep__review : function(inp, v, n) {
-        inp.data( "data", v );
+        inp.data( "data" , v );
         return v;
     },
     _prep__select : function(inp, v, n) {

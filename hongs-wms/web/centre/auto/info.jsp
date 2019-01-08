@@ -135,13 +135,13 @@
                         <pre class="form-control-static" data-fn="<%=name%>" data-ft="_text" data-type="<%=typa%>" data-mode="<%=mode%>"></pre>
                     <%} else if ("html".equals(typa)) {%>
                         <div class="form-control-static" data-fn="<%=name%>" data-ft="_html" style="white-space: normal ;"></div>
-                <%} else {%>
+                    <%} else {%>
                         <div class="form-control-static" data-fn="<%=name%>" data-ft="_text" style="white-space:pre-wrap;"></div>
                     <%}%>
-                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type)) {%>
+                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <div class="form-control-static"><a class="a-<%=type%>" data-fn="<%=name%>" data-ft="<%=kind%>"></a></div>
-                <%} else if (name.endsWith(".")) {%>
-                    <ul class="pickbox pickrol pickmul" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
+                <%} else if ( name.endsWith(".")) {%>
+                    <ul  class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>" data-item-class="label" data-item-style="font-size: 100%; font-weight: normal;" style="padding: 5px 0px; line-height: 2em;"></ul>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>

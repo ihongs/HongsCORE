@@ -113,6 +113,21 @@ fieldset>.dropdown-menu {
     margin-bottom: 0;
 }
 
+ p.label-list ,
+ul.label-list ,
+ol.label-list {
+    padding: 0;
+    margin: -0.3em 0;
+    line-height: 2em;
+    list-style: none;
+}
+.label-list .label {
+    font-size : 100%;
+    font-weight: normal;
+    margin-right: 0.5em;
+    display: inline-block;
+}
+
 .checkbox  label ,
 .radio     label {
     margin-right: 1.0em;

@@ -2458,7 +2458,7 @@ function() {
         });
     }
 })
-.on("click", "[data-toggle=hsClose],.close,.cloze,.cancel",
+.on("click", "[data-toggle=hsClose],.close,.cancel",
 function() {
     var box;
     var ths = $(this);
@@ -2537,16 +2537,14 @@ function() {
 })
 .on("click", ".back-crumb a",
 function() {
-    var nav = $(this).closest ('.breadcrumb');
+    var nav = $(this).closest('.breadcrumb');
     nav.find('li:last a').hsClose();
     nav.find('li:last a').  click();
 })
-/*
 .on("click", ".home-crumb a",
 function() {
-    // Nothing todo.
+    // Nothing to do...
 })
-*/
 .on("click", ".dropdown-toggle",
 function(evt) {
     if ($(evt.target).is(".dropdown-deny")) return;

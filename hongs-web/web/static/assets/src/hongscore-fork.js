@@ -219,7 +219,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  * @param {jQuery} box
  * @param {Object} v
  * @param {String} n
- * @param {String} t
  * @returns {undefined}
  */
 function hsFormFillPick(box, v, n) {

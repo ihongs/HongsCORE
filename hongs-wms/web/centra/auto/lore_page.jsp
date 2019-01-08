@@ -97,7 +97,7 @@
 <%}%>
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
 <b>列表:</b> {
@@ -138,13 +138,13 @@
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/create<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">请求</label>
                     <pre class="form-control-static">
 字段名=字段值...
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
@@ -168,14 +168,14 @@
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">请求</label>
                     <pre class="form-control-static">
 id=ID 或 id.=ID1&id.=ID2...
 字段名=字段值...
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
@@ -197,13 +197,13 @@ id=ID 或 id.=ID1&id.=ID2...
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">请求</label>
                     <pre class="form-control-static">
 id=ID 或 id.=ID1&id.=ID2...
                     </pre>
                 </div>
-                <div class="form-gorup">
+                <div class="form-group">
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
@@ -217,7 +217,7 @@ id=ID 或 id.=ID1&id.=ID2...
         <fieldset>
             <legend class="dropdown dropdown-toggle">其他 <span class="caret"></span></legend>
             <div class="dropdown-body">
-                <div class="form-gorup">
+                <div class="form-group">
                     <p>
                         <%=Cnst.ACT_EXT%> 是基础接口;
                         <%=Cnst.API_EXT%> 及 /api 接口可用 .data 和 .mode 参数,

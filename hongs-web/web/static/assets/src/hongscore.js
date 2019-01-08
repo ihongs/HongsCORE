@@ -2003,8 +2003,8 @@ $.fn.hsClose = function() {
     } else
     // 恢复内容
     if (box.data("hrev")) {
-        var bak =  box.data("hrev");
-        prt.append(bak.contents( ));
+        var bak =  box.data( "hrev" );
+        prt.append(bak.contents ( ) );
         box.remove();
         bak.remove();
         prt.trigger("hsRecur"); // 触发重现事件
@@ -2442,7 +2442,7 @@ function() {
 
     url = hsFixPms(url, this);
     if (box) {
-        box = btn.hsFind(box, true)
+        box = btn.hsFind(box)
                  .hsOpen(url, dat, evs.hsReady);
     } else {
         box =   $.hsOpen(url, dat, evs.hsReady);
@@ -2458,7 +2458,13 @@ function() {
         });
     }
 })
-.on("click", "[data-toggle=hsClose],.close,.cancel",
+.on("cilck", "[data-toggle=exit]",
+function() {
+    var sel = $(this).attr("data-target");
+    var box = $(this).hsFind (sel || "@");
+    box.hsClose( );
+})
+.on("click", ".close,.cancel",
 function() {
     var box;
     var ths = $(this);

@@ -433,12 +433,24 @@ HsForm.prototype = {
             return v;
         }
 
+        // 链接,图片,视频,音频
+        if (inp.is("a,img,video,audio")) {
+            v = v ? hsFixUri( v ) : "";
+            inp.filter("a:empty").text(  v );
+            inp.filter("a").attr("href", v );
+            inp.filter("a.a-email").attr("href", "mailto:"+v);
+            inp.filter("a.a-tel").attr("href", "tel:"+v);
+            inp.filter("a.a-sms").attr("href", "sms:"+v);
+            inp.filter("img,video,audio").attr("src", v);
+            return;
+        }
+
         // 枚举,列表,选项,标签
-        if (inp.is("ul,ol")) {
+        if (inp.is("ul,ol,.label-list")) {
             var k = inp.attr("data-vk") || 0;
             var t = inp.attr("data-tk") || 1;
-            var a = inp.data("data") || [];
-            var x = jQuery('<li></li>');
+            var a = inp.data("data")  ||  [];
+            var x = jQuery( inp.is("ul,ol") ? '<li></li>' : '<span></span>' );
             var m = { };
             var i, c, e;
 
@@ -476,18 +488,6 @@ HsForm.prototype = {
                 inp.append(x.clone( ));
             }
 
-            return;
-        }
-
-        // 链接,图片,视频,音频
-        if (inp.is("a,img,video,audio")) {
-            v = v ? hsFixUri( v ) : "";
-            inp.filter("a:empty").text(  v);
-            inp.filter("a").attr("href", v);
-            inp.filter("a.a-email").attr("href", "mailto:"+v);
-            inp.filter("a.a-tel").attr("href", "tel:"+v);
-            inp.filter("a.a-sms").attr("href", "sms:"+v);
-            inp.filter("img,video,audio").attr("src", v);
             return;
         }
 

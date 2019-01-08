@@ -77,7 +77,7 @@ select.form-control[multiple],
 textarea.form-control {
     height: 8.30769231em;
     min-height:  8.30769231em;
-    max-height: 16.61538462em;
+    max-height: 49.84615386em;
     resize: vertical;
 }
 .form-control[disabled] {

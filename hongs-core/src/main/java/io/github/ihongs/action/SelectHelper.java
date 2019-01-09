@@ -256,7 +256,7 @@ public class SelectHelper {
                 if (withLink) injectLink(info , files);
             }
             if (list != null) for ( Map  item : list ) {
-                if (withDeft) injectDefs(info , defts);
+                if (withDeft) injectDefs(item , defts);
                 if (withText) injectText(item , enums);
                 if (withTime) injectTime(item , dates);
                 if (withLink) injectLink(item , files);
@@ -295,26 +295,31 @@ public class SelectHelper {
 
         Map xnum = null;
         if (1 == (1 & action)) {
-            xnum  = (Map) values.get("enum");
-            if (xnum == null) {
-                xnum  = new LinkedHashMap( );
-                values.put("enum", xnum );
+            xnum = (Map) values.get("enum");
+            if (xnum == null ) {
+                xnum  = new LinkedHashMap();
+                values.put( "enum" , xnum );
             }
         }
 
         // 数据映射整理
         Map<String, List> maps = new HashMap();
         for(String fn : forms.keySet()) {
-            maps.put( fn , new LinkedList( ) );
+            /**/maps.put(fn, new LinkedList());
         }
         for( Map info : list ) {
         for(String fn : forms.keySet()) {
             Object fv = info.get(fn);
-            if (fv instanceof List ) {
-                maps.get(fn).addAll((List) fv);
-            } else {
+            if (fv  !=  null ) {
+            if (fv instanceof Object[ ] ) {
+                maps.get(fn).addAll(Arrays.asList((Object[]) fv));
+            } else
+            if (fv instanceof Collection) {
+                maps.get(fn).addAll((Collection) fv);
+            } else
+            {
                 maps.get(fn).add(fv);
-            }
+            }}
         }}
 
         // 向下递归补充

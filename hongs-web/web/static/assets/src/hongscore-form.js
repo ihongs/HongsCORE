@@ -429,8 +429,9 @@ HsForm.prototype = {
     },
 
     _fill__review : function(inp, v, n) {
-        if (v === undefined) {
-            return v;
+        if (v === undefined
+        ||  v === null) {
+            return;
         }
 
         // 链接,图片,视频,音频
@@ -491,11 +492,11 @@ HsForm.prototype = {
             return;
         }
 
-        return v;
+        return  v ;
     },
     _prep__review : function(inp, v, n) {
-        inp.data( "data" , v );
-        return v;
+        inp.data("data", v);
+        return  v ;
     },
     _prep__select : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -508,7 +509,7 @@ HsForm.prototype = {
             opt.val(k).text(t).data("data", v[i]);
             inp.append(opt);
         }
-        inp.change().click(); // multiple 必须触发 click 才初始化
+        inp.click().change(); // multiple 必须触发 click 才初始化
     },
     _prep__radio : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;

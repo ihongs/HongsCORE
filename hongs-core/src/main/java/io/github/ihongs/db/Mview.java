@@ -166,11 +166,22 @@ public class Mview extends Model {
     }
 
     /**
+     * 设置当前语言资源
+     * @param locale 
+     */
+    public void setLocale(CoreLocale locale) {
+      this.locale = locale;
+    }
+
+    /**
      * 获取当前语言资源
      * @return
      */
-    public final CoreLocale getLocale() {
-        if (locale != null) return locale;
+    public CoreLocale getLocale() {
+        if (null != locale) {
+            return  locale;
+        }
+        
         locale = CoreLocale.getInstance().clone();
         locale.fill( db.name );
         locale.fill( db.name + "/" + table.name );

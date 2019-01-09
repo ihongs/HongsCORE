@@ -224,7 +224,7 @@ id=ID 或 id.=ID1&id.=ID2...
                         .data 用于集中发送主要数据, .mode 用于对响应做特殊处理,
                         .mode 可选值有: wrap, scok, all2str, num2str, null2str,
                         bool2num, bool2str, date2num, date2sec, flat.map, flat_map.
-                        除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET, POST, PUT, DELETE 等方法;
+                        除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET, POST 等方法名;
                         另 /api 路径可包含当前资源和上级资源 ID, 但规则与 REST 略有不同, 是用 =ID 而非 /ID 形式.
                     </p>
                     <p>

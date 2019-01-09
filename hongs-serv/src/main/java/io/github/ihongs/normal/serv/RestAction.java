@@ -98,7 +98,7 @@ public class RestAction extends ApisAction {
         // 分解路径
         for(int i = 0; i < ats.length; i ++ ) {
             String  x  =  ats[ i ];
-            int p = x.indexOf('~');
+            int p = x.indexOf('=');
             if (p > 0) {
                 String n, v;
                 v = x.substring(1 + p);

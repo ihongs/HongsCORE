@@ -68,8 +68,8 @@
             <legend class="form-group"><%=text%></legend>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-md-3 col-sm-2 control-label form-control-static text-right"><%=text%></label>
-                <div class="col-md-6 col-sm-10">
+                <label class="col-md-3 col-sm-4 control-label form-control-static text-right"><%=text%></label>
+                <div class="col-md-6 col-sm-8">
                 <%if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         kind = "_file";
@@ -139,7 +139,7 @@
                         <div class="form-control-static" data-fn="<%=name%>" data-ft="_text" style="white-space:pre-wrap;"></div>
                     <%}%>
                 <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
-                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank" ></a></div>
+                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank" style="" title=""></a></div>
                 <%} else if ( name.endsWith(".")) {%>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="label-list" data-item-class="label-info label"></p></div>
                 <%} else {%>
@@ -150,7 +150,7 @@
         <%} /*End if */%>
         <%} /*End For*/%>
         <div class="form-group row">
-            <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
+            <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-4">
                 <button type="button" class="cancel btn btn-default">返回</button>
             </div>
         </div>

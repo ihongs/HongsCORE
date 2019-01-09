@@ -35,7 +35,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"menu.title":"菜单",
 	"loading":"加载中...",
 	"opening":"打开中...",
-	"ensure":"确定",
+	"commit":"确定",
 	"cancel":"取消",
 	"logout":"注销",
 

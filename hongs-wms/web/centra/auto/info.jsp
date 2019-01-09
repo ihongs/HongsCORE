@@ -139,7 +139,7 @@
                         <div class="form-control-static" data-fn="<%=name%>" data-ft="_text" style="white-space:pre-wrap;"></div>
                     <%}%>
                 <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
-                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank" ></a></div>
+                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank" style="" title=""></a></div>
                 <%} else if ( name.endsWith(".")) {%>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="label-list" data-item-class="label-info label"></p></div>
                 <%} else {%>
@@ -151,7 +151,7 @@
         <%} /*End For*/%>
         <div class="form-group row">
             <div class="col-xs-6 col-xs-offset-3">
-                <button type="button" class="cancel btn btn-default">返回</button>
+                <button type="button" class="cancel btn btn-primary">返回</button>
             </div>
         </div>
     </form>

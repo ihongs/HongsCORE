@@ -1603,7 +1603,7 @@ $.hsWarn = function(msg, typ, yes, not) {
                 v = {
                     "click": v,
                     "class": "btn-primary",
-                    "label": hsGetLang("ensure")
+                    "label": hsGetLang("commit")
                 };
             } else
             if (i == 1) {

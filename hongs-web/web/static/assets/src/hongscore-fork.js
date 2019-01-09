@@ -122,8 +122,8 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         bin.addClass("pickbox")
         .toggleClass("pickmul", mul )
         .on("change"  , ".checkone", select)
-        .on("click"   , ".ensure"  , ensure)
-        .on("saveBack", ".create"  , ensure);
+        .on("click"   , ".commit"  , commit)
+        .on("saveBack", ".create"  , commit);
 
         bin.data("pickData", v);
         bin.data("rel", btn.closest(".openbox")[0]);
@@ -177,7 +177,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
     }
 
-    function ensure (evt, rst) {
+    function commit (evt, rst) {
         var btn = jQuery(this);
         if (! btn.closest(".openbox").is(bin)) {
             return;

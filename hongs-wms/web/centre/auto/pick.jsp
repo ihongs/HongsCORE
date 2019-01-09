@@ -50,7 +50,7 @@
     <div style="display: table; width: 100%;">
         <div style="display: table-cell; width: 100%; vertical-align: middel;">
             <div class="toolbox" style="margin-bottom: 0;">
-                <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select")%></button>
+                <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select")%></button>
                 <button type="button" class="cancel btn btn-link   "><%=_locale.translate("fore.cancel")%></button>
             </div>
         </div>

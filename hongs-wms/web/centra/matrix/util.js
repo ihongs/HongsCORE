@@ -572,7 +572,7 @@ $.fn.hsCols = function() {
         drawFlds(conf, targetz, widgets);
     });
     // 字段保存
-    targets.on("click", ".ensure", function() {
+    targets.on("click", ".commit", function() {
         var conf = [];
         gainFlds(conf, targetz, widgets);
         records.find("[name=conf]").val(JSON.stringify(conf));
@@ -583,6 +583,7 @@ $.fn.hsCols = function() {
     targetz.on("click", ".glyphicon-remove-sign", function() {
         $(this).closest(".form-group").remove();
     });
+
     // 添加字段
     widgets.on("click", ".glyphicon-plus-sign", function() {
         // 预定字段不能重复添加

@@ -22,7 +22,7 @@
     <div class="clearfix">
         <div class="toolbox col-xs-6 btn-group">
             <%if ( "select".equals(_action)) {%>
-            <button type="button" class="ensure btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
+            <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
             <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
             <%if (!"select".equals(_action)) {%>

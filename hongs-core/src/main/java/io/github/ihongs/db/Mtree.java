@@ -1077,14 +1077,14 @@ public class Mtree extends Model
         Object minst = core.get( name );
         Mtree  mtree ;
 
-        if (minst != null && minst instanceof Mview) {
+        if (minst != null && minst instanceof Mtree) {
             return ( Mtree ) minst ;
         }
 
         name  = name +":Mtree";
         minst = core.get(name);
 
-        if (minst != null && minst instanceof Mview) {
+        if (minst != null && minst instanceof Mtree) {
             return ( Mtree ) minst ;
         }
 

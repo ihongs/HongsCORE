@@ -77,7 +77,7 @@
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>
 <br/>
-<b>详情: GET</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+<b>详情: GET</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/search<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
@@ -163,7 +163,7 @@
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>PUT|PATCH</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+<b>PUT|PATCH</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/update<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
@@ -192,7 +192,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<b>DELETE</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>~ID
+<b>DELETE</b> <%=Core.BASE_HREF%>/api/<%=_module%>/<%=_entity%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.API_EXT%>?<%=Cnst.ID_KEY%>=ID
 或 <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/delete<%=Cnst.ACT_EXT%>?<%=Cnst.ID_KEY%>=ID
                     </pre>
@@ -225,7 +225,7 @@ id=ID 或 id.=ID1&id.=ID2...
                         .mode 可选值有: wrap, scok, all2str, num2str, null2str,
                         bool2num, bool2str, date2num, date2sec, flat.map, flat_map.
                         除 /api 接口外均不限 HTTP 方法, 可以任意使用 GET, POST, PUT, DELETE 等方法;
-                        另 /api 路径可包含当前资源和上级资源 ID, 但规则与 REST 略有不同, 是用 ~ID 而非 /ID 形式.
+                        另 /api 路径可包含当前资源和上级资源 ID, 但规则与 REST 略有不同, 是用 =ID 而非 /ID 形式.
                     </p>
                     <p>
                         字段类型命名采用 HTML 的表单控件类型, 如 text,number,select,textarea 等,

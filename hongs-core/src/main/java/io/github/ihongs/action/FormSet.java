@@ -412,13 +412,10 @@ public class FormSet
     CoreLocale lang = getCurrTranslator();
     itemz.putAll(items);
     for(Object o : itemz.entrySet()) {
-      Map.Entry e = (Map.Entry) o ;
-      String    k = (String) e.getKey(  );
+      Map.Entry e = (Map.Entry) o;
+//    String    k = (String) e.getKey(  );
       String    n = (String) e.getValue();
-      if (n == null || "".equals(n)) {
-          n = "enum."+ namc +"."+k;
-      }
-      e.setValue( lang.translate(n));
+      e.setValue(lang.translate(n));
     }
     return itemz;
   }
@@ -437,9 +434,9 @@ public class FormSet
       String    h = (String) m.get("__hint__");
       Map       u = new LinkedHashMap();
       u.putAll( m );
-      if (n == null || "".equals(n)) {
-          n = "form."+ namc +"."+k;
-      }   u.put("__text__", lang.translate(n));
+      if (n != null ||!"".equals(n)) {
+          u.put("__text__", lang.translate(n));
+      }
       if (h != null &&!"".equals(n)) {
           u.put("__hint__", lang.translate(h));
       }

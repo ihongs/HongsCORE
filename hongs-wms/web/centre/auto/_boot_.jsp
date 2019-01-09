@@ -41,7 +41,7 @@
              */
             do {
                 try {
-                    _fields = FormSet.getInstance(name).getForm(_entity);
+                    _fields = FormSet.getInstance(name).getFormTranslated(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 0x10e8
                     ||  ex.getErrno() != 0x10ea) {
@@ -57,7 +57,7 @@
                 }
 
                 try{
-                    _fieldx = FormSet.getInstance(name).getForm(_entity);
+                    _fieldx = FormSet.getInstance(name).getFormTranslated(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 0x10e8
                     ||  ex.getErrno() != 0x10ea) {

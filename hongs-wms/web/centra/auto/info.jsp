@@ -69,7 +69,7 @@
         <%} else {%>
             <div class="form-group row">
                 <label class="col-xs-3 control-label form-control-static text-right"><%=text%></label>
-                <div class="col-xs-6">
+                <div class="col-xs-9">
                 <%if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         kind = "_file";
@@ -150,7 +150,7 @@
         <%} /*End if */%>
         <%} /*End For*/%>
         <div class="form-group row">
-            <div class="col-xs-6 col-xs-offset-3">
+            <div class="col-xs-9 col-xs-offset-3">
                 <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
             </div>
         </div>

@@ -151,7 +151,7 @@
         <%} /*End For*/%>
         <div class="form-group row">
             <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-4">
-                <button type="button" class="cancel btn btn-default">返回</button>
+                <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
             </div>
         </div>
     </form>

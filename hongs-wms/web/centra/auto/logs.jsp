@@ -44,7 +44,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-info commit" data-dismiss="modal">确定</button>
-                    <button type="button" class="btn btn-link closed" data-dismiss="modal">取消</button>
+                    <button type="button" class="btn btn-link closes" data-dismiss="modal">取消</button>
                 </div>
             </div>
         </div>

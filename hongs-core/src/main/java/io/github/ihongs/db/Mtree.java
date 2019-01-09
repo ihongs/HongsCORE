@@ -2,7 +2,6 @@ package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.FetchMore;
 import io.github.ihongs.util.Synt;

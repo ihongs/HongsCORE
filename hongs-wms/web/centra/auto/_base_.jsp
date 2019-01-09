@@ -1,18 +1,16 @@
-<%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.CoreLocale"%>
+<%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
-<%@page import="io.github.ihongs.action.FormSet"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
-<%@page import="io.github.ihongs.util.Dict"%>
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
+    String     _title = "";
     String     _module;
     String     _entity;
-    String     _title ;
     CoreLocale _locale;
 
-    do {
+    {
         // 拆解路径
         int i;
         _module = ActionDriver.getOriginPath(request);
@@ -27,13 +25,12 @@
         _locale.fill(_module);
         _locale.fill(_module +"/"+ _entity);
 
-        // 从菜单中提取标题
-        try {
-            NaviMap site = NaviMap.hasConfFile(_module+"/"+_entity)
-                         ? NaviMap.getInstance(_module+"/"+_entity)
-                         : NaviMap.getInstance(_module);
+        // 查找标题
+        String[] a= {_module +"/"+ _entity , _module , "centre"};
+        for (String name : a) try {
+            NaviMap site = NaviMap.getInstance ( name );
             Map menu;
-            menu  = site.getMenu(_module +"/"+ _entity+"/");
+            menu  = site.getMenu(_module +"/"+ _entity +"/");
             if (menu != null) {
                     _title  = (String) menu.get("text");
                 if (_title != null) {
@@ -50,33 +47,10 @@
                 }
             }
         } catch (HongsException ex) {
+            // 忽略配置文件缺失的异常情况
             if (ex.getErrno() != 0x10e0) {
                 throw ex ;
             }
         }
-
-        // 没有则从表单提取
-        try {
-            FormSet fset = FormSet.hasConfFile(_module+"/"+_entity)
-                         ? FormSet.getInstance(_module+"/"+_entity)
-                         : FormSet.getInstance(_module);
-            Map form;
-            form  = fset.getForm(_entity);
-            if (form != null) {
-                    _title  = (String) Dict.get( form , null, "@", "__text__" );
-                if (_title != null) {
-                    _title  = _locale.translate(_title);
-                    break;
-                }
-            }
-        } catch (HongsException ex) {
-            if (ex.getErrno() != 0x10e8
-            &&  ex.getErrno() != 0x10ea) {
-                throw ex ;
-            }
-        }
-
-        _title  = "" ;
     }
-    while (false);
 %>

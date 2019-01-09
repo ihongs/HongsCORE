@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <root>
-    <menu text="用户管理" href="centra/master/">
+    <menu text="用户单元" href="centra/master/">
         <role text="查看用户" name="centra/master/user/search">
             <depend>centra</depend>
             <depend>centra/master/dept/search</depend>

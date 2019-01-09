@@ -72,9 +72,10 @@ public class Data extends SearchEntity {
     @Override
     public Map getFields() {
         try {
-            return super.getFields();
-        } catch (NullPointerException ex) {
-            // Nothing to do
+            return super.getFields(/**/);
+        } catch (NullPointerException e) {
+            // 使用超类来管理字段集合
+            // 拿不到就走下面流程填充
         }
 
         /**
@@ -84,44 +85,47 @@ public class Data extends SearchEntity {
          * 配置文件不得放在资源包里面
          * 此处会校验表单文件是否存在
          */
-
-        Map fields;
-        try {
-            fields = FormSet.getInstance(conf).getForm(form);
-        } catch (HongsException ex) {
-            if (ex.getErrno() == 0x10e8
-            ||  ex.getErrno() == 0x10ea) {
-                throw new HongsExemption(0x1104, "Data form conf '" + conf + "' is not exists")
-                    .setLocalizedOptions(conf);
-            } else {
-                throw ex.toExemption();
+        Map fields = null;
+        Map fieldx = null;
+        String cnf = conf;
+        do {
+            try {
+                fields = FormSet.getInstance(cnf).getForm(form);
+            } catch (HongsException ex) {
+                if (ex.getErrno() != 0x10e8
+                &&  ex.getErrno() != 0x10ea) {
+                    throw ex.toExemption();
+                }
+                break;
             }
-        }
 
-        String comf;
-        if (conf.startsWith("centre/")) {
-            comf = "centra/" + conf.substring(7);
-        } else {
-            setFields(fields);
-            return    fields ;
-        }
+            if (cnf.startsWith("centre/")) {
+                cnf = "centra/"+ cnf.substring(7);
+            } else {
+                break;
+            }
 
-        Map fieldx;
-        try {
-            fieldx = FormSet.getInstance(comf).getForm(form);
+            try {
+                fieldx = FormSet.getInstance(cnf).getForm(form);
+            } catch (HongsException ex) {
+                if (ex.getErrno() != 0x10e8
+                &&  ex.getErrno() != 0x10ea) {
+                    throw ex.toExemption();
+                }
+                break;
+            }
 
-            // 补充上额外的字段设置
+            // 注意:
+            // 1. 不可破坏原始配置
+            // 2. 当前的覆盖后台的
             fieldx = new LinkedHashMap(fieldx);
-            fieldx.putAll( fields );
-            fields = fieldx;
-        } catch (HongsException ex) {
-            if (ex.getErrno() == 0x10e8
-            ||  ex.getErrno() == 0x10ea) {
-//              throw new HongsExemption(0x1104, "Data form conf '" + comf + "' is not exists")
-//                  .setLocalizedOptions(conf);
-            } else {
-                throw ex.toExemption();
-            }
+            fieldx.putAll(fields);
+            fields = fieldx ;
+        }   while  ( false );
+
+        if ( null == fields) {
+            throw new HongsExemption(0x1104, "Data form conf '" + conf + "' is not exists")
+                .setLocalizedOptions(conf);
         }
 
         setFields(fields);

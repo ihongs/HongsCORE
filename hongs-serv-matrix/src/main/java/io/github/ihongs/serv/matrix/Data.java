@@ -64,16 +64,28 @@ public class Data extends SearchEntity {
 
     /**
      * 获取字段
-     * 当表单不在管理区域时
-     * 会用当前表单覆盖管理表单
+     * 另一方法非常可能需要覆盖,
+     * 故提供此方法以便从基类调,
+     * 未设时抛出 NullPointerException
+     * @return 
+     */
+    protected final Map gotFields() {
+        return  super . getFields();
+    }
+
+    /**
+     * 获取字段
+     * 当前表单不在管理区之内时,
+     * 会用当前表单覆盖管理表单,
      * 配置文件不存在则抛出异常 0x1104
      * @return
      */
     @Override
     public Map getFields() {
         try {
-            return super.getFields(/**/);
-        } catch (NullPointerException e) {
+            return gotFields();
+        }
+        catch (NullPointerException ex) {
             // 使用超类来管理字段集合
             // 拿不到就走下面流程填充
         }
@@ -178,7 +190,7 @@ public class Data extends SearchEntity {
     /**
      * 创建记录
      * @param rd
-     * @return id,name等(由dispCols指定)
+     * @return id,name等(可由listable指定)
      * @throws HongsException
      */
     @Override

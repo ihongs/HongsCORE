@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * 数据表基础类
+ * 表基础类
  *
  * <p>
  * 请总是用DB.getTable("Table_Name")来获取表对象

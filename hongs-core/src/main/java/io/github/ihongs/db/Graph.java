@@ -38,7 +38,7 @@ import java.util.Set;
  *
  * @author Hong
  */
-public class Mtree extends Model
+public class Graph extends Model
 {
 
   /**
@@ -100,7 +100,7 @@ public class Mtree extends Model
    * @param table
    * @throws io.github.ihongs.HongsException
    */
-  public Mtree(Table table)
+  public Graph(Table table)
     throws HongsException
   {
     super( table );
@@ -131,7 +131,7 @@ public class Mtree extends Model
    * @param model
    * @throws io.github.ihongs.HongsException
    */
-  public Mtree(Model model)
+  public Graph(Model model)
     throws HongsException
   {
     this ( model.table );

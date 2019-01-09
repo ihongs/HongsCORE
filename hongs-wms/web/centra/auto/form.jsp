@@ -205,7 +205,7 @@
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <div class="form-group row">
+        <div class="form-group row" style="border-top: 1px solid white; padding-top: 1em;">
             <div class="col-xs-6 col-xs-offset-3">
                 <button type="submit" class="commit btn btn-primary"><%=_locale.translate("fore.commit")%></button>
                 <button type="button" class="cancel btn btn-link"   ><%=_locale.translate("fore.cancel")%></button>

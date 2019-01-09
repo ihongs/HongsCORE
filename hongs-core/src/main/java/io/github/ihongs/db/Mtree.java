@@ -2,6 +2,7 @@ package io.github.ihongs.db;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.FetchMore;
 import io.github.ihongs.util.Synt;
@@ -784,12 +785,9 @@ public class Mtree extends Model
             + this.cnumKey +
             "` = ?" +
             " WHERE `"
-            + this.table.primaryKey
-            + "` = ?";
-    List params = new ArrayList();
-    params.add(num);
-    params.add(id);
-    this.db.execute(sql, params);
+            + this.table.primaryKey +
+            "` = ?";
+    this.db.execute(sql, num, id);
   }
 
   public void chgChildsNum(String id, int off)
@@ -811,9 +809,7 @@ public class Mtree extends Model
             " WHERE `"
             + this.table.primaryKey +
             "` = ?";
-    List params = new ArrayList();
-    params.add(id);
-    this.db.execute(sql, params);
+    this.db.execute(sql, id);
   }
 
   //** 排序号相关 **/
@@ -910,10 +906,7 @@ public class Mtree extends Model
             " WHERE `"
             + this.table.primaryKey +
             "` = ?";
-    List params = new ArrayList();
-    params.add(num);
-    params.add(id);
-    this.db.execute(sql, params);
+    this.db.execute(sql, num, id);
   }
 
   public void chgSerialNum(String id, int off)
@@ -947,9 +940,7 @@ public class Mtree extends Model
             " WHERE `"
             + this.table.primaryKey +
             "` = ?";
-    List params = new ArrayList();
-    params.add(id);
-    this.db.execute(sql, params);
+    this.db.execute(sql, id);
   }
 
   public void chgSerialNum(String pid, int off, int pos1, int pos2)
@@ -967,16 +958,6 @@ public class Mtree extends Model
       pos2 = pos3;
     }
 
-    String sqlAnd = "";
-    if (pos1 > -1)
-    {
-      sqlAnd += " AND `"+this.snumKey+"` >= "+pos1;
-    }
-    if (pos2 > -1)
-    {
-      sqlAnd += " AND `"+this.snumKey+"` <= "+pos2;
-    }
-
     String sql = "UPDATE `"
             + this.table.tableName +
             "` SET `"
@@ -987,16 +968,26 @@ public class Mtree extends Model
             + (off > 0 ? "+ "+off : "- "+Math.abs(off)) +
             " WHERE `"
             + this.pidKey +
-            "` = ?"
-            + sqlAnd;
-    List params = new ArrayList();
-    params.add(pid);
-    this.db.execute(sql, params);
+            "` = ?";
+
+    if (pos1 > -1)
+    {
+      sql += " AND `"+this.snumKey+"` >= "+pos1;
+    }
+    if (pos2 > -1)
+    {
+      sql += " AND `"+this.snumKey+"` <= "+pos2;
+    }
+
+    this.db.execute(sql, pid);
   }
 
-  //** 检查及修复 **/
-
-  public void checkAndRepair(String pid)
+  /**
+   * 检查并修复下级数量和序号
+   * @param pid
+   * @throws HongsException
+   */
+  public void chkChildsNum(String pid)
     throws HongsException
   {
     String sql;
@@ -1009,10 +1000,12 @@ public class Mtree extends Model
             " FROM  `"      +this.table.tableName   +"`"+
             " WHERE `"      +this.pidKey            +"` = '"+pid+"'"+
             " GROUP BY `"   +this.pidKey            +"`";
-      Map row = this.db.fetchOne(sql);
-      if (!row.isEmpty())
+      List<Map> rows = this.db.fetch(sql, 0, 1);
+      Iterator<Map> it = rows.iterator();
+      while (it . hasNext())
       {
-        num = Synt.declare(row.get("_count_") , num);
+        Map row = it.next( );
+        num = Synt.declare ( row.get( "_count_" ), num );
         sql = "UPDATE `"    +this.table.tableName   +"`"+
               "  SET  `"    +this.cnumKey           +"` = '"+num+"'"+
               " WHERE `"    +this.table.primaryKey  +"` = '"+pid+"'";
@@ -1026,81 +1019,33 @@ public class Mtree extends Model
             " FROM  `"      +this.table.tableName   +"`"+
             " WHERE `"      +this.pidKey            +"` = '"+pid+"'"+
             " ORDER BY `"   +this.snumKey           +"`";
-      List rows = this.db.fetchAll(sql);
-      if (!rows.isEmpty())
+      List<Map> rows = this.db.fetch(sql, 0, 0);
+      Iterator<Map> it = rows.iterator();
+      while (it . hasNext())
       {
-        Iterator it = rows.iterator();
-        while (it.hasNext())
-        {
-          Map row = (Map)it.next();
-          cid = row.get(this.table.primaryKey).toString();
-          sql = "UPDATE `"  +this.table.tableName   +"`"+
-                "  SET  `"  +this.snumKey           +"` = '"+num+"'"+
-                " WHERE `"  +this.table.primaryKey  +"` = '"+cid+"'";
-          this.db.execute(/**/sql);
-          this.checkAndRepair(cid);
-          num ++;
-        }
+        Map row = it.next( );
+        cid = row.get(this.table.primaryKey).toString( );
+        sql = "UPDATE `"    +this.table.tableName   +"`"+
+              "  SET  `"    +this.snumKey           +"` = '"+num+"'"+
+              " WHERE `"    +this.table.primaryKey  +"` = '"+cid+"'";
+        this.db.execute(sql);
+
+        // 向下递归
+        num  =  num  +  1;
+        chkChildsNum(cid);
       }
     }
     else
     {
-      List cids = this.getChildIds(pid);
-      if (!cids.isEmpty())
+      List<String> cids = this.getChildIds(pid);
+      Iterator<String> it = cids.iterator (   );
+      while (it.hasNext())
       {
-        Iterator it = cids.iterator();
-        while (it.hasNext())
-        {
-          cid = (String) it.next();
-          this.checkAndRepair(cid);
-        }
+        // 向下递归
+        cid  =  it.next();
+        chkChildsNum(cid);
       }
     }
   }
-
-  public void checkAndRepair()
-    throws HongsException
-  {
-    this.checkAndRepair(this.rootId);
-  }
-
-    /**
-     * 此方法用于获取和构建树形模型唯一对象
-     *
-     * @param model
-     * @return
-     * @throws io.github.ihongs.HongsException
-     */
-    public static Mtree getInstance(Model model) throws HongsException {
-        Map    core  = model.db.modelObjects;
-        String name  = model.table.name;
-        Object minst = core.get( name );
-        Mtree  mtree ;
-
-        if (minst != null && minst instanceof Mtree) {
-            return ( Mtree ) minst ;
-        }
-
-        name  = name +":Mtree";
-        minst = core.get(name);
-
-        if (minst != null && minst instanceof Mtree) {
-            return ( Mtree ) minst ;
-        }
-
-        /**
-         * 不在开始检查 model 的类型,
-         * 是为了总是将 mtree 放入到模型库中管理,
-         * 可以避免当前 model 关联的模型再关联回来时重复构造.
-         */
-        if (model instanceof  Mtree) {
-            mtree = ( Mtree ) model ;
-        } else {
-            mtree = new Mtree(model);
-        }
-        core.put(name , mtree);
-
-        return mtree;
-    }
 
 }

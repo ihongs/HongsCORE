@@ -233,6 +233,10 @@ id=ID 或 id.=ID1&id.=ID2...
                         还有一些自定义的类型, 如: string 同 text, enum 同 select,
                         fork/pick 表示关联, form/part 表示内联.
                     </p>
+                    <p>
+                        如果已经开放公共访问, 则开放接口只需将上述路径的前缀 <%=Core.BASE_HREF%>/centra/ 更换为 <%=Core.BASE_HREF%>/centre/ 即可, 其他部分不变.
+                        管理和开放接口可定制, 有作特殊处理则可能细节稍有不同.
+                    </p>
                 </div>
             </div>
         </fieldset>

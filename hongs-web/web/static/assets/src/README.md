@@ -134,7 +134,7 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
                         <textarea name="note" class="form-control"></textarea>
                     </div>
                     <div>
-                        <button type="submit" class="ensure btn btn-primary">提交</button>
+                        <button type="submit" class="commit btn btn-primary">提交</button>
                         <button type="button" class="cancel btn btn-default">取消</button>
                     </div>
                 </div>

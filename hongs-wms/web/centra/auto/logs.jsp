@@ -43,7 +43,7 @@
                     <input name="memo" type="text" class="form-control" placeholder="备注"/>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-info ensure" data-dismiss="modal">确定</button>
+                    <button type="button" class="btn btn-info commit" data-dismiss="modal">确定</button>
                     <button type="button" class="btn btn-link closed" data-dismiss="modal">取消</button>
                 </div>
             </div>
@@ -82,7 +82,7 @@
             listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_logs.html?<%=Cnst.AB_KEY%>=_text,_fork", {id: id, ctime: ct});
         });
 
-        sendbox.on("click", ".ensure", function() {
+        sendbox.on("click", ".commit", function() {
             var mt = sendbox.find("input").val ();
             var tr = sendbox.data(   "tr");
             var id =      tr.data(   "id");

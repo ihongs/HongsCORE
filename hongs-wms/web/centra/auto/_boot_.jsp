@@ -2,6 +2,7 @@
 <%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
+<%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
@@ -40,7 +41,7 @@
              */
             do {
                 try {
-                    _fields = FormSet.getInstance(name).getFormTranslated(_entity);
+                    _fields = FormSet.getInstance(name).getForm(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 0x10e8
                     &&  ex.getErrno() != 0x10ea) {
@@ -56,7 +57,7 @@
                 }
 
                 try{
-                    _fieldx = FormSet.getInstance(name).getFormTranslated(_entity);
+                    _fieldx = FormSet.getInstance(name).getForm(_entity);
                 } catch (HongsException ex) {
                     if (ex.getErrno() != 0x10e8
                     &&  ex.getErrno() != 0x10ea) {

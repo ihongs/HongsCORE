@@ -235,22 +235,22 @@ public class DBAction implements IAction, IActing {
     protected String getRspMsg(ActionHelper helper, Model ett, String opr, int num)
     throws HongsException {
         ActionRunner runner = (ActionRunner)
-           helper.getAttribute(ActionRunner.class.getName(  ));
-        CoreLocale   locale = CoreLocale.getInstance().clone();
+           helper.getAttribute(ActionRunner.class.getName());
 
         String mod = runner.getModule(   );
         String ent = runner.getEntity(   );
         String cnt = Integer.toString(num);
-        String key = "fore." + opr + "." + ent + ".success";
 
-        locale.fill(mod);
-        if ( ! locale.containsKey(key) ) {
-               key = "fore." + opr + ".success";
-               ent = new Mview(ett).getTitle( );
-            return locale.translate(key, ent, cnt);
-        } else {
-            return locale.translate(key, /**/ cnt);
+        CoreLocale locale = CoreLocale.getInstance().clone();
+        locale.fill(    mod    );
+        locale.fill(mod+"/"+ent);
+
+        String key = "fore."+opr+"."+ent+".success";
+        if (!locale.containsKey(key)) {
+               key = "fore."+opr/**/+/**/".success";
         }
+
+        return locale.translate(key , cnt);
     }
 
 }

@@ -416,7 +416,7 @@ public class FormSet
       String    k = (String) e.getKey(  );
       String    n = (String) e.getValue();
       if (n == null || "".equals(n)) {
-          n = "fore.enum."+name+"."+namc+"."+k;
+          n = "enum."+ namc +"."+k;
       }
       e.setValue( lang.translate(n));
     }
@@ -438,7 +438,7 @@ public class FormSet
       Map       u = new LinkedHashMap();
       u.putAll( m );
       if (n == null || "".equals(n)) {
-          n = "fore.form."+name+"."+namc+"."+k;
+          n = "form."+ namc +"."+k;
       }   u.put("__text__", lang.translate(n));
       if (h != null &&!"".equals(n)) {
           u.put("__hint__", lang.translate(h));

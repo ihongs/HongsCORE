@@ -3,7 +3,7 @@
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="java.util.Map"%>
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
     String     _title = "";
     String     _module;

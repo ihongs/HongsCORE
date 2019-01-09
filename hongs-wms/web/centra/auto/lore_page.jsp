@@ -88,7 +88,7 @@
 <b><%=Cnst.WD_KEY%></b>=搜索
 <b><%=Cnst.PN_KEY%></b>=分页, 从 1 开始
 <b><%=Cnst.RN_KEY%></b>=条数, 默认 20 条
-<b><%=Cnst.AB_KEY%></b>=模式, !enum 仅要选项数据, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 递归子级表单(适用 form/part 类型)
+<b><%=Cnst.AB_KEY%></b>=模式, !enum 仅要选项数据, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
 <%if (sortable.length() > 0) {%>
 <b><%=Cnst.OB_KEY%></b>=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序
 <%}%>

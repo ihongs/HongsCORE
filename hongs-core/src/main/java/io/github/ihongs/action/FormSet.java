@@ -70,6 +70,8 @@ import org.xml.sax.SAXException;
  * 区间: 0x10e8~0x10ef
  * 0x10e8 配置文件不存在
  * 0x10e9 解析文件失败
+ * 0x10ea 表单不存在
+ * 0x10eb 枚举不存在
  * </pre>
  *
  * @author Hongs

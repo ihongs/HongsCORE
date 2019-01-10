@@ -20,10 +20,10 @@ import java.util.LinkedHashMap;
  * <p>Java8 中利用 Ruly 使用函数式, 可简化代码, 如:</p>
  * <pre>
  *  values = new Verify()
- *      .addRule("f1", (v, r)->{
+ *      .addRule("f1", (v, w)->{
  *          return v != null ? v : Rule.BLANK;
  *      })
- *      .addRule("f2", (v, r)->{
+ *      .addRule("f2", (v, w)->{
  *          return v != null ? v : Rule.EMPTY;
  *      })
  *      .verify(values);

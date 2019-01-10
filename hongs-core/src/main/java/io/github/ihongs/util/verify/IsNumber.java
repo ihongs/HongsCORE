@@ -14,17 +14,17 @@ import io.github.ihongs.util.Synt;
  */
 public class IsNumber extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong {
-        if (value == null || "".equals(value)) {
+    public Object verify(Object value, Verity watch) throws Wrong {
+        if (value == null) {
             return   null; // 允许为空
         }
 
         // 类型转换
-        String type = Synt.declare(params.get("type"), "");
+        String type = Synt.declare(getParam("type"), "");
         Number  num ;
         try {
             if ( "byte".equals(type)) {
-                num = Synt.declare(value, ( byte) 0);
+                num = Synt.declare(value, (byte ) 0);
             } else
             if ("short".equals(type)) {
                 num = Synt.declare(value, (short) 0);
@@ -47,18 +47,18 @@ public class IsNumber extends Rule {
 
         // 取值范围
         Double m;
-        m = Synt.asDouble(params.get("min"));
+        m = Synt.asDouble(getParam("min"));
         if (m != null && m > num.doubleValue()) {
             throw new Wrong("fore.form.lt.min", Double.toString(m));
         }
-        m = Synt.asDouble(params.get("max"));
+        m = Synt.asDouble(getParam("max"));
         if (m != null && m < num.doubleValue()) {
             throw new Wrong("fore.form.lt.max", Double.toString(m));
         }
 
         // 小数位数
         Short  s;
-        s = Synt.asShort(params.get("scale"));
+        s = Synt.asShort(getParam("scale"));
         if (s != null && s > 0) {
             double n = num.doubleValue() - num.longValue();
             n  = n * Math.pow ( 10 , s );

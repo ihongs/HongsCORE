@@ -26,21 +26,21 @@ import java.util.Set;
 public class Diverse extends Rule {
 
     @Override
-    public Object verify(Object value) throws Wrongs, HongsException {
+    public Object verify(Object value, Verity watch) throws Wrongs, HongsException {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
 
-        String at = Synt.declare(params.get("data-ut" ), "");
-        String ck = Synt.declare(params.get("__conf__"), "");
-        String fk = Synt.declare(params.get("__form__"), "");
-        String nk = Synt.declare(params.get("__name__"), "");
+        String at = Synt.declare(getParam("data-ut" ), "");
+        String ck = Synt.declare(getParam("__conf__"), "");
+        String fk = Synt.declare(getParam("__form__"), "");
+        String nk = Synt.declare(getParam("__name__"), "");
         String ap = null;
         String aq = null;
         String ad = null;
 
         if ("".equals(at)) {
-            at = ck + "/" + fk + "/search" ;
+            at = ck + "/" + fk + "/search";
         } else {
             // 尝试解析附加参数
             int ps;
@@ -73,8 +73,8 @@ public class Diverse extends Rule {
         rd.put(Cnst.RN_KEY, 1);
         rd.put(Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY));
         rd.put(nk , value);
-        if (helper.isUpdate( )) { // 更新需排除当前记录
-            Object vo = values.get (Cnst.ID_KEY);
+        if (watch.isUpdate( )) { // 更新需排除当前记录
+            Object vo = watch.getValues().get(Cnst.ID_KEY);
             Map ne = new HashMap( );
             ne.put(Cnst.NE_REL, vo);
             rd.put(Cnst.ID_KEY, ne);
@@ -84,7 +84,7 @@ public class Diverse extends Rule {
         if (ad != null && !"".equals(ad)) {
             Set<String> ks = Synt.toTerms ( ad );
             if (null != ks) for (String kn: ks ) {
-                rd.put( kn , values.get(kn)/**/);
+                rd.put( kn, watch.getValues().get(kn));
             }
         }
         if (aq != null && !"".equals(aq)) {

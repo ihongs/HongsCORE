@@ -6,7 +6,7 @@ package io.github.ihongs.util.verify;
  */
 public class Optional extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong {
+    public Object verify(Object value, Verity watch) throws Wrong {
         if (null != value) {
             return  value;
         } else {

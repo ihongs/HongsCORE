@@ -1,7 +1,5 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.util.verify.Rule;
-import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.action.ActionHelper;
@@ -17,12 +15,12 @@ import io.github.ihongs.util.Synt;
 public class Capts extends Rule {
 
     @Override
-    public Object verify(Object value) throws Wrong {
+    public Object verify(Object value, Verity watch) throws Wrong {
         ActionHelper ah = Core.getInstance(ActionHelper.class);
-        String ss = Synt.declare(params.get("capts-sess"),
+        String ss = Synt.declare(getParam("capts-sess"),
             CoreConfig.getInstance()
                       .getProperty("core.capts.sess", "capt"));
-        long   xt = Synt.declare(params.get("capts-time"),
+        long   xt = Synt.declare(getParam("capts-time"),
             CoreConfig.getInstance()
                       .getProperty("core.capts.time",  600L ));
         String cc = Synt.declare(ah.getSessibute(ss + "_code"), "");

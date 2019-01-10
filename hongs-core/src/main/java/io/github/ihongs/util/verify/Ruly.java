@@ -8,6 +8,15 @@ import io.github.ihongs.HongsException;
  */
 public interface Ruly {
     
-    public Object verify(Object value, Rule rule) throws Wrong, Wrongs, HongsException;
+    /**
+     * 校验
+     * @param value
+     * @param watch
+     * @return
+     * @throws Wrong
+     * @throws Wrongs
+     * @throws HongsException 
+     */
+    public Object verify(Object value, Verity watch) throws Wrong, Wrongs, HongsException;
 
 }

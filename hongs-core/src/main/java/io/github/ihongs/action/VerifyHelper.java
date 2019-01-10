@@ -79,14 +79,14 @@ public class VerifyHelper extends Verify {
             o = opts.get   ("defiant");
             if (o != null) {
                 Rule rule = new Defiant();
-                rule.params (opts);
+                rule.config (opts);
                 this.addRule(name , rule);
             }
 
             o = opts.get   ("default");
             if (o != null) {
                 Rule rule = new Default();
-                rule.params (opts);
+                rule.config (opts);
                 this.addRule(name , rule);
             }
 
@@ -94,11 +94,11 @@ public class VerifyHelper extends Verify {
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
-                    rule.params (opts);
+                    rule.config (opts);
                     this.addRule(name , rule );
                 } else {
                     Rule rule = new Optional();
-                         rule.params(opts );
+                    rule.config (opts);
                     this.addRule(name , rule );
                 }
             }
@@ -107,11 +107,11 @@ public class VerifyHelper extends Verify {
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
-                    rule.params (opts);
+                    rule.config (opts);
                     this.addRule(name , rule );
                 } else {
                     Rule rule = new Ordinary();
-                    rule.params (opts);
+                    rule.config (opts);
                     this.addRule(name , rule );
                 }
             }
@@ -162,7 +162,7 @@ public class VerifyHelper extends Verify {
                     throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
 
-                rule.params (opts);
+                rule.config (opts);
                 this.addRule(name, rule);
             }
         }

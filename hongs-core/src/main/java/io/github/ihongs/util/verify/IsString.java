@@ -21,7 +21,7 @@ import java.util.regex.Pattern;
  */
 public class IsString extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong, HongsException {
+    public Object verify(Object value, Verity watch) throws Wrong, HongsException {
         if (value == null) {
             return   null; // 允许为空
         }
@@ -29,7 +29,7 @@ public class IsString extends Rule {
         String str = Synt.declare(value, "");
 
         // 文本清理
-        Set<String> sa = Synt.toSet(params.get("strip"));
+        Set<String> sa = Synt.toSet(getParam("strip"));
         if (sa != null) {
             if (sa.contains("cros")) {
                 str = Tool.stripTags(str); // 清除脚本
@@ -47,11 +47,11 @@ public class IsString extends Rule {
 
         // 长度限制
         int len;
-        len = Synt.declare(params.get("minlength"), 0);
+        len = Synt.declare(getParam("minlength"), 0);
         if (len > 0 && len > str.length()) {
             throw new Wrong("fore.form.lt.minlength", Integer.toString(len));
         }
-        len = Synt.declare(params.get("maxlength"), 0);
+        len = Synt.declare(getParam("maxlength"), 0);
         if (len > 0 && len < str.length()) {
             throw new Wrong("fore.form.lt.maxlength", Integer.toString(len));
         }
@@ -62,8 +62,8 @@ public class IsString extends Rule {
 
         // 正则匹配
         Map<String,String> pats = FormSet.getInstance().getEnum("__patts__");
-        String patt  = Synt.declare(params.get("pattern"), "");
-        String patp  = pats.get(patt);
+        String patt  = Synt.asString(getParam("pattern"));
+        String patp  = pats.get (patt);
         if (   patp != null ) {
             if (!Pattern.compile(patp).matcher(str).matches()) {
                 throw new Wrong("fore.form.is.not."+patt);

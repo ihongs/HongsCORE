@@ -141,7 +141,7 @@ public class Verify implements Veri {
     }
 
     private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez) throws HongsException {
-        Verity  veri = new Verity(this, values,cleans, data != BLANK);
+        Verity  veri = new Verity(this, values, cleans, data != BLANK);
         if (! veri.isValued()) {
                 data = null;
         }

@@ -9,12 +9,21 @@ import java.util.Map;
  */
 public interface Veri {
 
+    /**
+     * @return 更新时为 true
+     */
     public boolean isUpdate();
+
+    /**
+     * @return 速断则为 true
+     */
     public boolean isPrompt();
+
     /**
      * @param update 为 true 则不存在的值跳过而不去校验
      */
     public void isUpdate(boolean update);
+
     /**
      * @param prompt 为 true 则第一个错误发生时退出校验
      */

@@ -1,7 +1,5 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.util.verify.IsFile;
-import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.util.Synt;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -34,12 +32,12 @@ public class Thumb extends IsFile {
 
     @Override
     public String checks(String href, String path) throws Wrong {
-        String extn = Synt.declare(params.get("thumb-extn" ), "jpg");
-        String size = Synt.declare(params.get("thumb-size" ), "");
-        String mode = Synt.declare(params.get("thumb-mode" ), "");
-        String col  = Synt.declare(params.get("thumb-color"), "");
-        String pos  = Synt.declare(params.get("thumb-align"), "");
-        int    idx  = Synt.declare(params.get("thumb-index"), 0 );
+        String extn = Synt.declare(getParam("thumb-extn" ), "jpg");
+        String size = Synt.declare(getParam("thumb-size" ), "");
+        String mode = Synt.declare(getParam("thumb-mode" ), "");
+        String col  = Synt.declare(getParam("thumb-color"), "");
+        String pos  = Synt.declare(getParam("thumb-align"), "");
+        int    idx  = Synt.declare(getParam("thumb-index"), 0 );
 
         try {
             return exec(path, href, extn, size, mode, col, pos)[1][idx];

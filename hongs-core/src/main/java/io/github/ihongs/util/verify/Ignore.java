@@ -6,7 +6,7 @@ package io.github.ihongs.util.verify;
  */
 public class Ignore extends Rule {
     @Override
-    public Object verify(Object value) {
+    public Object verify(Object value, Verity watch) {
         return BLANK;
     }
 }

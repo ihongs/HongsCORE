@@ -30,11 +30,12 @@ public class Repeated extends Rule {
     /**
      * 前置校验
      * @param value
+     * @param watch
      * @return
      * @throws Wrong
      */
     @Override
-    public Object verify(Object value) throws Wrong {
+    public Object verify(Object value, Verity watch) throws Wrong {
         if (value == null) {
             return new ArrayList ( ) ;
         }
@@ -43,7 +44,7 @@ public class Repeated extends Rule {
             String s ;
 
             // 正则拆分
-            s = Synt.declare(params.get("split"), String.class);
+            s = Synt.asString(getParam("split"));
             if (s != null) {
                 List<String> a = new ArrayList();
                 Matcher m = Pattern.compile( s )
@@ -58,7 +59,7 @@ public class Repeated extends Rule {
             }
 
             // 普通拆分
-            s = Synt.declare(params.get("slice"), String.class);
+            s = Synt.asString(getParam("slice"));
             if (s != null) {
                 List<String> a = new ArrayList();
                 int e , b = 0;
@@ -92,20 +93,20 @@ public class Repeated extends Rule {
     public Object remedy(Collection value) throws Wrong {
         // 多个值的数量限制
         int n, c = value.size();
-        n = Synt.declare(params.get("minrepeat"), 0);
+        n = Synt.declare(getParam("minrepeat"), 0);
         if (n != 0 && c < n) {
             throw new Wrong("fore.form.lt.minrepeat",
-                    String.valueOf(n), String.valueOf(c));
+                    String.valueOf(n), String.valueOf(c) );
         }
-        n = Synt.declare(params.get("maxrepeat"), 0);
+        n = Synt.declare(getParam("maxrepeat"), 0);
         if (n != 0 && c > n) {
             throw new Wrong("fore.form.lt.maxrepeat",
-                    String.valueOf(n), String.valueOf(c));
+                    String.valueOf(n), String.valueOf(c) );
         }
 
         // 将结果集串连起来
-        if (Synt.declare(params.get("striped"), false)) {
-            String s = Synt.declare(params.get("slice"), ",");
+        if (Synt.declare(getParam("striped"), false)) {
+            String s = Synt.declare(getParam("slice"),",");
             StringBuilder b = new StringBuilder();
             for(  Object v : value  ) {
                 b.append(s).append(v);
@@ -131,7 +132,7 @@ public class Repeated extends Rule {
     public Collection getContext() {
         // 是否必须不同的值
         Collection context;
-        if (Synt.declare(params.get("diverse"), false)) {
+        if (Synt.declare(getParam("diverse"), false)) {
             context =  new LinkedHashSet();
         } else {
             context =  new  ArrayList   ();
@@ -149,9 +150,9 @@ public class Repeated extends Rule {
         // 页面加 hidden    值设为要忽略的值
         // 此时如 check     全部未选代表清空
         // 默认对 null/空串 忽略
-        Set ignores = Synt.toSet(params.get("defiant"));
+        Set ignores = Synt.toSet(getParam("defiant"));
         if (ignores == null || ignores.isEmpty()) {
-            ignores =  new  HashSet( );
+            ignores =  new HashSet();
             ignores.add("");
         }
         return ignores;

@@ -39,7 +39,7 @@ import javax.servlet.http.Part;
  */
 public class IsFile extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong {
+    public Object verify(Object value, Verity watch) throws Wrong {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
@@ -47,7 +47,7 @@ public class IsFile extends Rule {
         if (value instanceof String) {
 
         // 跳过资源路径
-        if (Synt.declare(params.get("pass-source"), false)) {
+        if (Synt.declare(getParam("pass-source"), false)) {
             String u = value.toString( );
             if (u.indexOf( '/' ) != -1 ) {
                 return value;
@@ -55,7 +55,7 @@ public class IsFile extends Rule {
         }
 
         // 跳过远程地址
-        if (Synt.declare(params.get("pass-remote"), false)) {
+        if (Synt.declare(getParam("pass-remote"), false)) {
             String u = value.toString( );
             if (u.matches("^\\w+://.*")) {
                 return value;
@@ -63,7 +63,7 @@ public class IsFile extends Rule {
         }
 
         // 下载远程文件
-        if (Synt.declare(params.get("down-remote"), false)) {
+        if (Synt.declare(getParam("down-remote"), false)) {
             String u = value.toString( );
             if (u.matches("^\\w+://.*")) {
             do {
@@ -76,7 +76,7 @@ public class IsFile extends Rule {
                         break ;
                     }
                 }
-                x = (String) params.get("href");
+                x = (String) getParam("href");
                 if (x != null && !"".equals(x)) {
                     if (u.startsWith(x)) {
                         value = u;
@@ -84,7 +84,7 @@ public class IsFile extends Rule {
                     }
                 }
                 // 如果有临时目录则下载到这
-                x = (String) params.get("temp");
+                x = (String) getParam("temp");
                 if (x == null ||  "".equals(x)) {
                     x = Core.BASE_PATH + "/static/upload/tmp";
                 }
@@ -100,15 +100,15 @@ public class IsFile extends Rule {
         String   x ;
         String[] y ;
 
-        x = (String) params.get("temp");
+        x = (String) getParam("temp");
         if (x != null) hlpr.setUploadTemp(x);
-        x = (String) params.get("path");
+        x = (String) getParam("path");
         if (x != null) hlpr.setUploadPath(x);
-        x = (String) params.get("href");
+        x = (String) getParam("href");
         if (x != null) hlpr.setUploadHref(x);
-        y = (String[]) Synt.toArray(params.get("type"));
+        y = (String[]) Synt.toArray(getParam("type"));
         if (y != null) hlpr.setAllowTypes(y);
-        y = (String[]) Synt.toArray(params.get("extn"));
+        y = (String[]) Synt.toArray(getParam("extn"));
         if (y != null) hlpr.setAllowExtns(y);
 
         if (value instanceof Part) {
@@ -134,10 +134,10 @@ public class IsFile extends Rule {
         if ( ! href.equals(value) ) {
             x = checks(href , path);
             if ( ! href.equals(x) ) {
-                if (Synt.declare(params.get("keep-origin"), false)) {
+                if (Synt.declare(getParam("keep-origin"), false)) {
                     // Keep to return origin href
                 } else
-                if (Synt.declare(params.get("drop-origin"), false)) {
+                if (Synt.declare(getParam("drop-origin"), false)) {
                     new File(path).delete();
                     href = x;
                 } else {
@@ -277,20 +277,22 @@ public class IsFile extends Rule {
     }
 
     private String toname(String name) {
-        if (Synt.declare (params.get("keep-naming"), false)) {
-            return encode(/****/ name);
+        if (Synt.declare ( getParam("keep-naming"), false)) {
+            String path;
+            path = Core.newIdentity(  );
+            return Tool.splitPn36(path)
+                   + "/" + encode(name);
         } else {
-            return Core.newIdentity( );
+            return Core.newIdentity(  );
         }
     }
 
     private String encode(String name) {
         try {
-            name = URLEncoder.encode(name,"UTF-8");
+            return URLEncoder.encode(name,"UTF-8");
         } catch (UnsupportedEncodingException ex ) {
             throw  new HongsExemption.Common( ex );
         }
-        return Tool.splitPn36(Core.newIdentity( )) + "/" + name;
     }
 
 }

@@ -1,6 +1,5 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Synt;
 import java.util.Map;
 
@@ -8,52 +7,64 @@ import java.util.Map;
  * 规则基类
  * @author Hongs
  */
-public abstract class Rule {
+public abstract class Rule implements Ruly {
 
     /**
      * 跳过此值, 有错则可中止
      */
     public static final Object BLANK = Synt.LOOP.NEXT;
+
     /**
      * 立即终止, 抛弃后续校验
      */
     public static final Object BREAK = Synt.LOOP.LAST;
+
     /**
      * 空值null
      */
     public static final Object EMPTY = null;
 
-    /**
-     * 校验参数
-     */
-    public Map  params = null;
-    /**
-     * 原始的请求数据
-     */
-    public Map  values = null;
-    /**
-     * 通过校验的数据
-     */
-    public Map  cleans = null;
-    /**
-     * 校验助手
-     */
-    public Veri helper = null;
-    /**
-     * 是否有值
-     */
-    public boolean valued = false;
+   private Map params = null  ;
 
     /**
      * 设置校验参数
      * @param params
-     * @return
+     * @return 
      */
-    public final Rule params(Map params) {
-        this.params = params;
+    public final Rule config(Map params) {
+        this . params = params;
         return this;
     }
 
-    public abstract Object verify(Object value) throws Wrong, Wrongs, HongsException;
+    /**
+     * 获取单个参数
+     * @param key
+     * @return 
+     */
+    public final Object getParam(String key) {
+        return params != null ? params.get(key): null;
+    }
+
+    /**
+     * 获取单个参数, 缺失则返回默认值
+     * @param <T>
+     * @param key
+     * @param def
+     * @return 
+     */
+    public final <T> T  getParam(String key, T def) {
+        return Synt.declare(getParam(key), def);
+    }
+
+    /**
+     * 获取单个参数, 断言为指定的类型
+     * @param <T>
+     * @param key
+     * @param cls
+     * @return 
+     */
+    public final <T> T  getParam(String key, Class<T> cls) {
+        return Synt.declare(getParam(key), cls);
+    }
 
 }

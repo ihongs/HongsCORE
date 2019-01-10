@@ -28,26 +28,26 @@ import java.util.Set;
  */
 public class IsFork extends Rule {
     @Override
-    public Object verify(Object value) throws Wrongs, HongsException {
+    public Object verify(Object value, Verity watch) throws Wrongs, HongsException {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
 
         // 如果像 id 一样只是基本字符组成则跳过
         // 也可通过直接通过 rule 参数不做此检查
-        if (Synt.declare(params.get("pass-id"), false)) {
+        if (Synt.declare(getParam("pass-id"), false)) {
             String sv = value.toString( );
             if (sv.matches("^[\\w\\-]+$")) {
                 return value;
             }
         }
 
-        String at = Synt.declare(params.get("data-at" ), "");
-        String vk = Synt.declare(params.get("data-vk" ), "");
-        String cl = Synt.declare(params.get(  "conf"  ), "");
-        String fl = Synt.declare(params.get(  "form"  ), "");
-        String ck = Synt.declare(params.get("__conf__"), "");
-        String fk = Synt.declare(params.get("__name__"), "");
+        String at = Synt.declare(getParam("data-at" ), "");
+        String vk = Synt.declare(getParam("data-vk" ), "");
+        String cl = Synt.declare(getParam(  "conf"  ), "");
+        String fl = Synt.declare(getParam(  "form"  ), "");
+        String ck = Synt.declare(getParam("__conf__"), "");
+        String fk = Synt.declare(getParam("__name__"), "");
         String ap = null;
         String aq = null;
 

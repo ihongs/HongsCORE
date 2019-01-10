@@ -15,15 +15,16 @@ import java.util.Set;
  */
 public class Defiant extends Rule {
     @Override
-    public Object verify(Object value) {
-        Object prm = params.get("defiant");
-        Set    def ;
-        if ("".equals(prm)) {
+    public Object verify(Object value, Verity watch) {
+        Object ant = getParam("defiant");
+        if (ant == null) return value;
+        Set def ;
+        if (ant . equals    ("" )) {
             def = Synt.setOf("" );
         } else {
-            def = Synt.toSet(prm);
+            def = Synt.toSet(ant);
         }
-        if (null != value && ! def.contains(value)) {
+        if (null != value && ! def.contains( value )) {
             return  value;
         } else {
             return  EMPTY;

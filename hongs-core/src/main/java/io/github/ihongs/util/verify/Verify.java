@@ -3,8 +3,8 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
-import static io.github.ihongs.util.verify.Rule.BREAK;
 import static io.github.ihongs.util.verify.Rule.BLANK;
+import static io.github.ihongs.util.verify.Rule.BREAK;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -37,7 +37,7 @@ import java.util.LinkedHashMap;
  */
 public class Verify implements Veri {
 
-    private final Map<String, List<Rule>> rules;
+    private final Map<String, List<Ruly>> rules;
     private boolean update;
     private boolean prompt;
 
@@ -49,7 +49,7 @@ public class Verify implements Veri {
      * 获取规则
      * @return
      */
-    public Map<String, List<Rule>> getRules() {
+    public Map<String, List<Ruly>> getRules() {
         return rules ;
     }
 
@@ -59,7 +59,7 @@ public class Verify implements Veri {
      * @param rule
      * @return
      */
-    public Verify setRule(String name, Rule... rule) {
+    public Verify setRule(String name, Ruly... rule) {
         rules.put(name , Arrays.asList(rule));
         return this;
     }
@@ -70,35 +70,13 @@ public class Verify implements Veri {
      * @param rule
      * @return
      */
-    public Verify addRule(String name, Rule... rule) {
+    public Verify addRule(String name, Ruly... rule) {
         List rulez = rules.get(name);
         if (rulez == null) {
             rulez =  new ArrayList();
             rules.put( name, rulez );
         }
         rulez.addAll(Arrays.asList(rule));
-        return this;
-    }
-
-    /**
-     * 设置规则
-     * @param name
-     * @param rule
-     * @return
-     */
-    public Verify setRule(String name, Ruly... rule) {
-        setRule(name, Rula.wrap(rule));
-        return this;
-    }
-
-    /**
-     * 添加规则
-     * @param name
-     * @param rule
-     * @return
-     */
-    public Verify addRule(String name, Ruly... rule) {
-        addRule(name, Rula.wrap(rule));
         return this;
     }
 
@@ -135,8 +113,8 @@ public class Verify implements Veri {
             values =  new HashMap();
         }
 
-        for(Map.Entry<String, List<Rule>> et : rules.entrySet()) {
-            List<Rule> rulez = et.getValue();
+        for(Map.Entry<String , List<Ruly>> et : rules.entrySet()) {
+            List<Ruly> rulez = et.getValue();
             String     name  = et.getKey(  );
             Object     data  = Dict.get(values, BLANK, Dict.splitKeys(name));
 
@@ -162,29 +140,27 @@ public class Verify implements Veri {
         return cleans;
     }
 
-    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Rule> rulez) throws HongsException {
+    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez) throws HongsException {
         int i =0;
-        for(Rule rule : rulez) {
+        for(Ruly rule : rulez) {
             i ++;
 
-            rule.values = values;
-            rule.cleans = cleans;
-            rule.helper = this  ;
-            rule.valued = data != BLANK;
-
-            // 规避可能的取参时空指针异常
-            if  ( null == rule.params )
-            rule.params = new HashMap();
+            Verity veri = new Verity(this, values, cleans, data != BLANK);
 
             try {
-                data = rule.verify(rule.valued? data : null);
+                data = rule.verify(! veri.isValued() ? null : data, veri);
             } catch (Wrong  w) {
                 // 设置字段标签
                 if (w.getLocalizedCaption( ) == null) {
-                    w.setLocalizedCaption(Synt.defxult(
-                        (String) rule.params.get("__text__"),
-                        (String) rule.params.get("__name__"),
-                         name) ) ;
+                    if (rule instanceof Rule) {
+                        Rule r = (Rule) rule ;
+                        w.setLocalizedCaption(Synt.defxult(
+                                Synt.asString(r.getParam("__text__")),
+                                Synt.asString(r.getParam("__name__")),
+                                              name) );
+                    } else {
+                        w.setLocalizedCaption(name);
+                    }
                 }
                 failed(wrongz, w , name);
                 data =  BLANK;
@@ -202,7 +178,7 @@ public class Verify implements Veri {
             }
 
             if (rule instanceof Repeated) {
-                List<Rule> rulex = rulez.subList(i, rulez.size());
+                List<Ruly> rulex = rulez.subList(i, rulez.size());
                 data = verify(values, cleans, wrongz, data, name, rulex, (Repeated) rule);
                 break;
             }
@@ -210,7 +186,7 @@ public class Verify implements Veri {
         return  data ;
     }
 
-    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Rule> rulez, Repeated rule)
+    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez, Repeated rule)
     throws HongsException {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
@@ -256,11 +232,14 @@ public class Verify implements Veri {
         try {
             return rule.remedy(data2);
         } catch (Wrong  w) {
-            if (w.getLocalizedCaption( ) == null) {
+            if (rule instanceof Rule) {
+                Rule r = (Rule) rule ;
                 w.setLocalizedCaption(Synt.defxult(
-                    (String) rule.params.get("__text__"),
-                    (String) rule.params.get("__name__"),
-                     name) ) ;
+                        Synt.asString(r.getParam("__text__")),
+                        Synt.asString(r.getParam("__name__")),
+                                      name) );
+            } else {
+                w.setLocalizedCaption(name);
             }
             failed(wrongz, w , name );
             return BLANK ;

@@ -27,17 +27,17 @@ import java.util.regex.Pattern;
  */
 public class IsDate extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong, HongsException {
+    public Object verify(Object value, Verity watch) throws Wrong, HongsException {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
 
-        String typa = Synt.declare(params.get("__type__"), "");
-        String type = Synt.declare(params.get(  "type"  ), "");
+        String typa = Synt.declare(getParam("__type__"), "");
+        String type = Synt.declare(getParam(  "type"  ), "");
 
         // 日期格式
-        int     off = Synt.declare(params.get( "offset" ), 0 );
-        String  fmt = Synt.declare(params.get( "format" ), "");
+        int     off = Synt.declare(getParam( "offset" ), 0 );
+        String  fmt = Synt.declare(getParam( "format" ), "");
         String  fwt =  fmt ;
         if ( "".equals(fmt)) {
             fwt = CoreLocale.getInstance().getProperty("core.default." + typa + ".format");
@@ -46,11 +46,11 @@ public class IsDate extends Rule {
             }
         }
 
-        Date day = getDate( value, typa, type, fwt, off );
+        Date day = getDate(value, typa, type, fwt, off);
 
         // 区间校验
-        String  min = Synt.declare(params.get(   "min"  ), "");
-        String  max = Synt.declare(params.get(   "max"  ), "");
+        String  min = Synt.declare(getParam(  "min"   ), "");
+        String  max = Synt.declare(getParam(  "max"   ), "");
         long now = new Date().getTime();
         if (!"".equals(min)) {
             long tim = getTime(min, now);

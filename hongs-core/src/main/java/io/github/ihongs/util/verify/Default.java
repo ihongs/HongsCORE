@@ -19,15 +19,15 @@ import java.util.regex.Pattern;
  */
 public class Default extends Rule {
     @Override
-    public Object verify(Object value) {
-        Object force = params.get("deforce");
+    public Object verify(Object value, Verity watch) {
+        Object force = getParam("deforce");
         if ("create".equals(force)) {
-            if (helper.isUpdate( ) == true ) {
+            if (watch.isUpdate() == true ) {
                 return BLANK;
             }
         } else
         if ("update".equals(force)) {
-            if (helper.isUpdate( ) == false) {
+            if (watch.isUpdate() == false) {
                 return BLANK;
             }
         } else
@@ -41,7 +41,7 @@ public class Default extends Rule {
             if (! "".equals(value) && value != null) {
                 return value;
             }
-            if (helper.isUpdate( ) && ! valued) {
+            if (watch.isUpdate() && ! watch.isValued()) {
                 return BLANK;
             }
         } else {
@@ -53,25 +53,25 @@ public class Default extends Rule {
             if (! "".equals(value) && value != null) {
                 return value;
             }
-            if (helper.isUpdate( ) && ! valued) {
+            if (watch.isUpdate() && ! watch.isValued()) {
                 return BLANK;
             } else {
-                return null ;
+                return EMPTY;
             }
         }}
 
-        Object val = params.get("default");
+        Object val = getParam("default");
         String def = val != null ? val.toString(  ).trim(  ) : "";
         String bef = def.length() >= 2 ? def.substring(0, 2) : "";
 
         // 拼接字段
         if (bef.equals("=~")) {
-            return Tool.inject(def.substring(2), cleans);
+            return Tool.inject(def.substring(2), watch.getCleans());
         }
 
         // 别名字段
         if (bef.equals("=@")) {
-            return Dict.get(cleans, BLANK, Dict.splitKeys(def.substring(2)));
+            return Dict.getParam(watch.getCleans(), BLANK, def.substring(2));
         }
 
         // 会话属性

@@ -16,18 +16,18 @@ import java.util.Map;
  */
 public class IsEnum extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong, HongsException {
+    public Object verify(Object value, Verity watch) throws Wrong, HongsException {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
 
-        String conf = Synt.asString(params.get("conf"));
-        String name = Synt.asString(params.get("enum"));
+        String conf = Synt.asString(getParam("conf"));
+        String name = Synt.asString(getParam("enum"));
         if (conf == null || "".equals(conf)) {
-            conf = Synt.declare(params.get("__conf__"), "");
+            conf = Synt.asString(getParam("__conf__"));
         }
         if (name == null || "".equals(name)) {
-            name = Synt.declare(params.get("__name__"), "");
+            name = Synt.asString(getParam("__name__"));
         }
 
         Map data = FormSet.getInstance(conf).getEnum (name);

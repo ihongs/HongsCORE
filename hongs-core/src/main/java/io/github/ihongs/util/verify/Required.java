@@ -9,9 +9,9 @@ import java.util.Map;
  */
 public class Required extends Rule {
     @Override
-    public Object verify(Object value) throws Wrong {
+    public Object verify(Object value, Verity watch) throws Wrong {
         if (null  ==  value ) {
-            if (helper.isUpdate()) {
+            if (watch.isUpdate()) {
                 return BLANK;
             }
             throw new Wrong("fore.form.required");

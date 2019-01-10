@@ -54,7 +54,7 @@
         </value>
         <!-- 下为 Lucene 特有 -->
         <value code="object" type="set">
-            object,form,part,json
+            object,json,form,part
         </value>
         <value code="search" type="set">search</value>
         <value code="sorted" type="set">sorted</value>

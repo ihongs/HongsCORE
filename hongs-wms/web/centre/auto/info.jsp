@@ -138,9 +138,11 @@
                     <%} else {%>
                         <div class="form-control-static" data-fn="<%=name%>" data-ft="_text" style="white-space:pre-wrap;"></div>
                     <%}%>
-                <%} else if ("email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
-                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank" style="" title=""></a></div>
-                <%} else if ( name.endsWith(".")) {%>
+                <%} else if ("tel".equals(type) || "sms".equals(type) || "email".equals(type)) {%>
+                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>"></a></div>
+                <%} else if ("url".equals(type)) {%>
+                    <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank"></a></div>
+                <%} else if (name.endsWith(".")) {%>
                     <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="label-list" data-item-class="label-info label"></p></div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>

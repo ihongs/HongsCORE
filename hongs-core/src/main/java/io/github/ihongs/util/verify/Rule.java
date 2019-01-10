@@ -24,10 +24,6 @@ public abstract class Rule {
     public static final Object EMPTY = null;
 
     /**
-     * 是否有值
-     */
-    public boolean is_set = false;
-    /**
      * 校验参数
      */
     public Map  params = null;
@@ -42,49 +38,22 @@ public abstract class Rule {
     /**
      * 校验助手
      */
-    public Veri helper ;
+    public Veri helper = null;
+    /**
+     * 是否有值
+     */
+    public boolean valued = false;
 
-    public void setParams(Map  params) {
+    /**
+     * 设置校验参数
+     * @param params
+     * @return
+     */
+    public final Rule params(Map params) {
         this.params = params;
-    }
-    public void setValues(Map  values) {
-        this.values = values;
-    }
-    public void setCleans(Map  cleans) {
-        this.cleans = cleans;
-    }
-    public void setHelper(Veri helper) {
-        this.helper = helper;
+        return this;
     }
 
     public abstract Object verify(Object value) throws Wrong, Wrongs, HongsException;
-
-    /**
-     * 批量将 Ruly 包装为 Rule
-     * @param rule
-     * @return
-     */
-    final static public Rule[] wrap(Ruly... rule) {
-        Rule[] list = new Rule [rule.length];
-        for (int i= 0; i< rule.length; i++ ) {
-            list[i] = new Wrap (rule [ i ] );
-        }
-        return list;
-    }
-
-    final static private class Wrap extends Rule  {
-
-      final private Ruly ruly;
-
-        public Wrap(Ruly ruly) {
-            this.ruly  = ruly;
-        }
-
-        @Override
-        public  Object  verify(Object value) throws Wrong, Wrongs, HongsException {
-            return ruly.verify(value, this );
-        }
-
-    }
 
 }

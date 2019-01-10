@@ -49,7 +49,6 @@ public class Verify implements Veri {
      * 获取规则
      * @return
      */
-    @Override
     public Map<String, List<Rule>> getRules() {
         return rules ;
     }
@@ -60,7 +59,6 @@ public class Verify implements Veri {
      * @param rule
      * @return
      */
-    @Override
     public Verify setRule(String name, Rule... rule) {
         rules.put(name , Arrays.asList(rule));
         return this;
@@ -72,7 +70,6 @@ public class Verify implements Veri {
      * @param rule
      * @return
      */
-    @Override
     public Verify addRule(String name, Rule... rule) {
         List rulez = rules.get(name);
         if (rulez == null) {
@@ -89,7 +86,6 @@ public class Verify implements Veri {
      * @param rule
      * @return
      */
-    @Override
     public Verify setRule(String name, Ruly... rule) {
         setRule(name, Rula.wrap(rule));
         return this;
@@ -101,7 +97,6 @@ public class Verify implements Veri {
      * @param rule
      * @return
      */
-    @Override
     public Verify addRule(String name, Ruly... rule) {
         addRule(name, Rula.wrap(rule));
         return this;

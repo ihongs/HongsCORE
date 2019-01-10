@@ -2,7 +2,6 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Tool;
 import java.util.Date;
@@ -22,38 +21,52 @@ public class Default extends Rule {
     @Override
     public Object verify(Object value) {
         Object force = params.get("deforce");
-        if ( "update".equals(force)) {
-            if (helper.isUpdate() != true) {
+        if ("create".equals(force)) {
+            if (helper.isUpdate( ) == true ) {
                 return BLANK;
             }
         } else
-        if ( "create".equals(force)) {
-            if (helper.isUpdate() == true) {
+        if ("update".equals(force)) {
+            if (helper.isUpdate( ) == false) {
                 return BLANK;
             }
         } else
-        if (!"always".equals(force)) {
-            if (helper.isUpdate() && value == null) {
-                return BLANK;
-            }
-            if (!"".equals(value) && value != null) {
+        if ("always".equals(force) == false) { // 非 always
+        if ("blanks".equals(force) == false) { // 非 blanks
+            /**
+             * 一般情况
+             * 空串空值将设为默认值
+             * 更新时没赋值将会跳过
+             */
+            if (! "".equals(value) && value != null) {
                 return value;
             }
-        } else
-        if ( "blanks".equals(force)) {
-            if ( "".equals(value) || value == null) {
-            if (is_set || ! helper.isUpdate() /**/) {
+            if (helper.isUpdate( ) && ! valued) {
+                return BLANK;
+            }
+        } else {
+            /**
+             * 留空模式
+             * 空串空值将设为空对象
+             * 更新时没赋值也会跳过
+             */
+            if (! "".equals(value) && value != null) {
+                return value;
+            }
+            if (helper.isUpdate( ) && ! valued) {
+                return BLANK;
+            } else {
                 return null ;
-            }}
-        }
+            }
+        }}
 
-        value = params.get( "default" ) ;
-        String  def = Synt.declare(value, "").trim();
-        String  bef = 2 <= def.length() ? def.substring(0, 2) : "";
+        Object val = params.get("default");
+        String def = val != null ? val.toString(  ).trim(  ) : "";
+        String bef = def.length() >= 2 ? def.substring(0, 2) : "";
 
         // 拼接字段
         if (bef.equals("=~")) {
-            return Tool.inject(def.substring(2), cleans );
+            return Tool.inject(def.substring(2), cleans);
         }
 
         // 别名字段
@@ -69,6 +82,11 @@ public class Default extends Rule {
         // 应用属性
         if (bef.equals("=#")) {
             return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
+        }
+
+        // 新唯一ID
+        if (def.equals("=%id")) {
+            return Core.newIdentity();
         }
 
         // 动作选项
@@ -102,7 +120,7 @@ public class Default extends Rule {
             return  now;
         }
 
-        return  value;
+            return  val;
     }
 
     private static final Pattern NOW = Pattern.compile ("^=%(time|now)([+\\-]\\d+)?$");

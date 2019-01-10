@@ -32,16 +32,24 @@ import java.util.regex.Pattern;
  */
 public final class Synt {
 
+    /**
+     * LOOP.NEXT 跳过此项
+     * LOOP.LAST 跳出循环
+     */
+    public static enum LOOP {
+
+        NEXT, LAST;
+
+        @Override
+        public String toString() {
+            return "";
+        }
+
+    };
+
     private static final Number  ZERO = 0 ;
     private static final String  EMPT = "";
     private static final Boolean FALS = false;
-
-    /**
-     * Each.run 或 EachLeaf.run 里
-     * 返回 LOOP.NEXT 跳过此项
-     * 返回 LOOP.LAST 跳出循环
-     */
-    public  static  enum LOOP  { NEXT , LAST };
 
     private static final Pattern SEXP = Pattern.compile("\\s*,\\s*");
     private static final Pattern MEXP = Pattern.compile("\\s*:\\s*");

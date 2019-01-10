@@ -26,7 +26,7 @@
         _locale.fill(_module +"/"+ _entity);
 
         // 查找标题
-        String[] a= {_module +"/"+ _entity , _module , "centre"};
+        String[] a= {_module +"/"+ _entity , _module , "centra"};
         for (String name : a) try {
             NaviMap site = NaviMap.getInstance ( name );
             Map menu;

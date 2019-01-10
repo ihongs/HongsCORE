@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * <h3>URL参数说明:</h3>
  * <pre>
- * id.       获取指定的节点
+ * id        获取指定的节点
  * pid       获取指定的下级
  * path      1 附当前路径ID, 2 当前路径信息
  * </pre>

@@ -10,13 +10,16 @@ import java.util.Map;
 public class Required extends Rule {
     @Override
     public Object verify(Object value, Verity watch) throws Wrong {
-        if (null  ==  value ) {
-            if (watch.isUpdate()) {
-                return BLANK;
-            }
+        // 更新而未给值则跳过
+        if (watch.isUpdate( )
+        && !watch.isValued()) {
+            return  BLANK;
+        }
+
+        if (value ==  null  ) {
             throw new Wrong("fore.form.required");
         }
-        if ("".equals(value)) {
+        if (value.equals("")) {
             throw new Wrong("fore.form.required");
         }
         if ((value instanceof Map) && ((Map) value).isEmpty()) {
@@ -28,6 +31,7 @@ public class Required extends Rule {
         if ((value instanceof Object[ ] ) && ((Object[ ] ) value).length==0) {
             throw new Wrong("fore.form.required");
         }
+
         return value;
     }
 }

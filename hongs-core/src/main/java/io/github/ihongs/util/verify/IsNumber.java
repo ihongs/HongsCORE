@@ -58,7 +58,7 @@ public class IsNumber extends Rule {
 
         // 小数位数
         Short  s;
-        s = Synt.asShort(getParam("scale"));
+        s = Synt.asShort (getParam("scale"));
         if (s != null && s > 0) {
             double n = num.doubleValue() - num.longValue();
             n  = n * Math.pow ( 10 , s );

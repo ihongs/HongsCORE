@@ -1,7 +1,6 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.HongsException;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -10,22 +9,16 @@ import java.util.Map;
  */
 public interface Veri {
 
-    public boolean  isUpdate();
-    public boolean  isPrompt();
+    public boolean isUpdate();
+    public boolean isPrompt();
     /**
      * @param update 为 true 则不存在的值跳过而不去校验
      */
-    public void     isUpdate(boolean update);
+    public void isUpdate(boolean update);
     /**
      * @param prompt 为 true 则第一个错误发生时退出校验
      */
-    public void     isPrompt(boolean prompt);
-
-    public Map<String,List<Rule>> getRules();
-    public Veri     setRule (String name, Rule... rule);
-    public Veri     addRule (String name, Rule... rule);
-    public Veri     setRule (String name, Ruly... rule);
-    public Veri     addRule (String name, Ruly... rule);
+    public void isPrompt(boolean prompt);
 
     /**
      * 校验数据
@@ -35,6 +28,6 @@ public interface Veri {
      * @throws Wrongs
      * @throws HongsException
      */
-    public Map      verify  (Map values) throws Wrongs, HongsException;
+    public Map verify(Map values) throws Wrongs, HongsException;
 
 }

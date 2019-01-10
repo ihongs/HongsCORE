@@ -24,12 +24,12 @@ public abstract class Rule implements Ruly {
      */
     public static final Object EMPTY = null;
 
-   private Map params = null  ;
+    private Map params = null ;
 
     /**
      * 设置校验参数
      * @param params
-     * @return 
+     * @return
      */
     public final Rule config(Map params) {
         this . params = params;
@@ -39,7 +39,7 @@ public abstract class Rule implements Ruly {
     /**
      * 获取单个参数
      * @param key
-     * @return 
+     * @return
      */
     public final Object getParam(String key) {
         return params != null ? params.get(key): null;
@@ -50,7 +50,7 @@ public abstract class Rule implements Ruly {
      * @param <T>
      * @param key
      * @param def
-     * @return 
+     * @return
      */
     public final <T> T  getParam(String key, T def) {
         return Synt.declare(getParam(key), def);
@@ -61,7 +61,7 @@ public abstract class Rule implements Ruly {
      * @param <T>
      * @param key
      * @param cls
-     * @return 
+     * @return
      */
     public final <T> T  getParam(String key, Class<T> cls) {
         return Synt.declare(getParam(key), cls);

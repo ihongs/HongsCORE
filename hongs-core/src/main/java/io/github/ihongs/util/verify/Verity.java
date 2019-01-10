@@ -26,19 +26,19 @@ public class Verity {
     }
 
     /**
-     * 是否为更新模式, 同 Veri.isUpdate
-     * @return
-     */
-    public boolean  isUpdate() {
-        return veri.isUpdate();
-    }
-
-    /**
      * 是否为速断模式, 同 Veri.isPrompt
      * @return
      */
     public boolean  isPrompt() {
         return veri.isPrompt();
+    }
+
+    /**
+     * 是否为更新模式, 同 Veri.isUpdate
+     * @return
+     */
+    public boolean  isUpdate() {
+        return veri.isUpdate();
     }
 
     /**

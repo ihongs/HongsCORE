@@ -38,7 +38,7 @@ import java.util.Set;
  *
  * @author Hong
  */
-public class Graph extends Model
+public class Grade extends Model
 {
 
   /**
@@ -100,7 +100,7 @@ public class Graph extends Model
    * @param table
    * @throws io.github.ihongs.HongsException
    */
-  public Graph(Table table)
+  public Grade(Table table)
     throws HongsException
   {
     super( table );
@@ -131,7 +131,7 @@ public class Graph extends Model
    * @param model
    * @throws io.github.ihongs.HongsException
    */
-  public Graph(Model model)
+  public Grade(Model model)
     throws HongsException
   {
     this ( model.table );

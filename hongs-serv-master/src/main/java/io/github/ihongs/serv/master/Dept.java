@@ -5,7 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.Graph;
+import io.github.ihongs.db.Grade;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
@@ -20,7 +20,7 @@ import java.util.Set;
  * @author Hongs
  */
 public class Dept
-extends Graph {
+extends Grade {
 
     public Dept()
     throws HongsException {

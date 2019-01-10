@@ -141,14 +141,17 @@ public class Verify implements Veri {
     }
 
     private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez) throws HongsException {
+        Verity  veri = new Verity(this, values,cleans, data != BLANK);
+        if (! veri.isValued()) {
+                data = null;
+        }
+
         int i =0;
         for(Ruly rule : rulez) {
             i ++;
 
-            Verity veri = new Verity(this, values, cleans, data != BLANK);
-
             try {
-                data = rule.verify(! veri.isValued() ? null : data, veri);
+                data = rule.verify(data,veri);
             } catch (Wrong  w) {
                 // 设置字段标签
                 if (w.getLocalizedCaption( ) == null) {

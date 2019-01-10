@@ -91,7 +91,7 @@ public class Verify implements Veri {
      */
     @Override
     public Verify setRule(String name, Ruly... rule) {
-        setRule(name, Rule.wrap(rule));
+        setRule(name, Rula.wrap(rule));
         return this;
     }
 
@@ -103,7 +103,7 @@ public class Verify implements Veri {
      */
     @Override
     public Verify addRule(String name, Ruly... rule) {
-        addRule(name, Rule.wrap(rule));
+        addRule(name, Rula.wrap(rule));
         return this;
     }
 
@@ -169,19 +169,20 @@ public class Verify implements Veri {
 
     private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Rule> rulez) throws HongsException {
         int i =0;
-        for (Rule  rule  :  rulez) {
+        for(Rule rule : rulez) {
             i ++;
 
-            if (rule.params==null) {
-                rule.setParams(new HashMap());
-            }
-            rule.setValues(values);
-            rule.setCleans(cleans);
-            rule.setHelper( this );
-            rule.is_set = data != BLANK;
+            rule.values = values;
+            rule.cleans = cleans;
+            rule.helper = this  ;
+            rule.valued = data != BLANK;
+
+            // 规避可能的取参时空指针异常
+            if  ( null == rule.params )
+            rule.params = new HashMap();
 
             try {
-                data = rule.verify(rule.is_set? data : null);
+                data = rule.verify(rule.valued? data : null);
             } catch (Wrong  w) {
                 // 设置字段标签
                 if (w.getLocalizedCaption( ) == null) {

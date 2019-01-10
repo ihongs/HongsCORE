@@ -79,14 +79,14 @@ public class VerifyHelper extends Verify {
             o = opts.get   ("defiant");
             if (o != null) {
                 Rule rule = new Defiant();
-                     rule.setParams(opts);
+                rule.params (opts);
                 this.addRule(name , rule);
             }
 
             o = opts.get   ("default");
             if (o != null) {
                 Rule rule = new Default();
-                     rule.setParams(opts);
+                rule.params (opts);
                 this.addRule(name , rule);
             }
 
@@ -94,11 +94,11 @@ public class VerifyHelper extends Verify {
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
-                         rule.setParams(opts );
+                    rule.params (opts);
                     this.addRule(name , rule );
                 } else {
                     Rule rule = new Optional();
-                         rule.setParams(opts );
+                         rule.params(opts );
                     this.addRule(name , rule );
                 }
             }
@@ -107,11 +107,11 @@ public class VerifyHelper extends Verify {
             if (! "".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
-                         rule.setParams(opts );
+                    rule.params (opts);
                     this.addRule(name , rule );
                 } else {
                     Rule rule = new Ordinary();
-                         rule.setParams(opts );
+                    rule.params (opts);
                     this.addRule(name , rule );
                 }
             }
@@ -136,7 +136,7 @@ public class VerifyHelper extends Verify {
                     item = "IsString";
                 }
 
-                list = Synt.listOf (item);
+                list = Synt.listOf(item);
             }
 
             // 添加规则实例
@@ -162,8 +162,8 @@ public class VerifyHelper extends Verify {
                     throw new HongsException(0x10f1, "Failed to get rule: "+item+" in "+conf+":"+form, ex);
                 }
 
-                rule.setParams(opts);
-                addRule(name , rule);
+                rule.params (opts);
+                this.addRule(name, rule);
             }
         }
 

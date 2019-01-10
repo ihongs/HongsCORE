@@ -6,7 +6,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.Graph;
+import io.github.ihongs.db.Grade;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
 
@@ -38,7 +38,7 @@ import org.w3c.dom.Element;
  * 单元模型
  * @author Hongs
  */
-public class Unit extends Graph {
+public class Unit extends Grade {
 
     protected String centra = "centra/data";
     protected String centre = "centre/data";

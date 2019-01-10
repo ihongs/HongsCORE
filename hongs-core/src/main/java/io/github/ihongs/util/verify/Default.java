@@ -14,6 +14,7 @@ import java.util.regex.Pattern;
  * 规则参数:
  *  default 默认值, 可使用 =@别名字段 =$会话属性, =%应用属性, =%now+-偏移毫秒
  *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时
+ *  deforce 还可设为 blanks, 此时为空则返回空值, 可用 SelectHelper 在读时补全
  * </pre>
  * @author Hongs
  */

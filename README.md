@@ -316,9 +316,9 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 字段名推荐:
 
-    id      主键, CHAR(20)
-    pid     父键, CHAR(20)
-    xx_id   外键, CHAR(20), xx为关联表缩写
+    id      主键, CHAR(16)
+    pid     父键, CHAR(16)
+    xx_id   外键, CHAR(16), xx为关联表缩写
     mtime   修改时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     ctime   创建时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     etime   截止时间, DATETIME,TIMESTAMP,BIGINT,INTEGER, 用于仓库层记录数据的失效时间, 避免用作应用层的业务到期时间

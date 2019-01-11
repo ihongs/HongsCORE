@@ -1,5 +1,6 @@
 package io.github.ihongs.test;
 
+import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Dict;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -91,8 +92,6 @@ public class TestDict extends TestCase {
         List   y;
         Set    z;
 
-        //Data.dumps(dict);
-
         x = Dict.get(dict, null, "sub1", "key1");
         assertEquals("xx", x);
 
@@ -107,6 +106,8 @@ public class TestDict extends TestCase {
         x = Dict.get(dict, null, "sub1", "sub3", null, "a");
         y = new ArrayList(); y.add(1); y.add(2);
         assertEquals(y, x);
+
+        //io.github.ihongs.cmdlet.CmdletHelper.preview(dict);
     }
 
     @Test
@@ -134,18 +135,19 @@ public class TestDict extends TestCase {
         x = Dict.get(dict, null, "sub1", "sub3", null, "a");
         assertEquals(y, x);
 
-        //io.github.ihongs.util.Data.print(dict);
+        //io.github.ihongs.cmdlet.CmdletHelper.preview(dict);
     }
-    
+
+    @Test
     public void testSplitKeys() {
         Object[] a = new Object[ ] {"", "a", "b", "c", "d", ":e", ":f", "g", ":h", null, "x.y:z", "def", null};
         Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");
         Object[] c = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def." );
-        io.github.ihongs.util.Data.print(a);
-        io.github.ihongs.util.Data.print(b);
-        io.github.ihongs.util.Data.print(c);
-        assertTrue( Arrays.equals(a, b) );
-        assertTrue( Arrays.equals(a, c) );
+        System.out.println(Data.toString(a));
+        System.out.println(Data.toString(b));
+        System.out.println(Data.toString(c));
+        assertTrue(Arrays.equals(a, b));
+        assertTrue(Arrays.equals(a, c));
     }
 
 }

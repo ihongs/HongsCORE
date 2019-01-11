@@ -15,11 +15,8 @@ import io.github.ihongs.util.Synt;
  */
 public class IsForm extends Rule {
     @Override
-    public Object verify(Object value, Verity helper) throws Wrongs, HongsException {
-        if (value == null || "".equals(value)) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri helper) throws Wrong {
         String conf = Synt.asString(getParam("conf"));
         String name = Synt.asString(getParam("form"));
         if (conf == null || "".equals(conf)) {
@@ -29,10 +26,14 @@ public class IsForm extends Rule {
             name = Synt.asString(getParam("__name__"));
         }
 
-        VerifyHelper hlpr = new VerifyHelper();
-        hlpr.addRulesByForm(conf, name );
-        hlpr.isUpdate(helper.isUpdate());
-        hlpr.isPrompt(helper.isPrompt());
-        return hlpr.verify (Synt.asMap(value));
+        try {
+            VerifyHelper hlpr = new VerifyHelper();
+            hlpr.addRulesByForm(conf, name );
+            hlpr.isUpdate(helper.isUpdate());
+            hlpr.isPrompt(helper.isPrompt());
+            return hlpr.verify (Synt.asMap(value));
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        }
     }
 }

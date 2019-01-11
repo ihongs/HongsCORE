@@ -39,11 +39,8 @@ import javax.servlet.http.Part;
  */
 public class IsFile extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
-        if (value == null || "".equals(value)) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri watch) throws Wrong {
         if (value instanceof String) {
 
         // 跳过资源路径

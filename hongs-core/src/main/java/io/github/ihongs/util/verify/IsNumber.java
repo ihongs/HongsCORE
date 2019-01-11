@@ -14,11 +14,8 @@ import io.github.ihongs.util.Synt;
  */
 public class IsNumber extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
-        if (value == null) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri watch) throws Wrong {
         // 类型转换
         String type = Synt.declare(getParam("type"), "");
         Number  num ;

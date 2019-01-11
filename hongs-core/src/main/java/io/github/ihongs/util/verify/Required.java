@@ -9,11 +9,11 @@ import java.util.Map;
  */
 public class Required extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
+    public Object verify(Object value, Veri watch) throws Wrong {
         // 更新而未给值则跳过
         if (watch.isUpdate( )
-        && !watch.isValued()) {
-            return  BLANK;
+        &&  value == UNDEF  ) {
+            return   BLANK  ;
         }
 
         if (value ==  null  ) {

@@ -21,11 +21,8 @@ import java.util.regex.Pattern;
  */
 public class IsString extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong, HongsException {
-        if (value == null) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoUndef
+    public Object verify(Object value, Veri watch) throws Wrong {
         String str = Synt.declare(value, "");
 
         // 文本清理
@@ -61,15 +58,20 @@ public class IsString extends Rule {
         }
 
         // 正则匹配
-        Map<String,String> pats = FormSet.getInstance().getEnum("__patts__");
-        String patt  = Synt.asString(getParam("pattern"));
-        String patp  = pats.get (patt);
-        if (   patp != null ) {
-            if (!Pattern.compile(patp).matcher(str).matches()) {
+        Map<String,String> pats;
+        try {
+            pats = FormSet.getInstance().getEnum("__patts__");
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        }
+        String patt  = Synt.asString  (  getParam("pattern"));
+        String patl  = pats.get (patt);
+        if (patl != null && patl.length() != 0) {
+            if (!Pattern.compile(patl).matcher(str).matches()) {
                 throw new Wrong("fore.form.is.not."+patt);
             }
         } else
-        if (!"".equals(patt)) {
+        if (patt != null && patt.length() != 0) {
             if (!Pattern.compile(patt).matcher(str).matches()) {
                 throw new Wrong("fore.form.is.not.match");
             }

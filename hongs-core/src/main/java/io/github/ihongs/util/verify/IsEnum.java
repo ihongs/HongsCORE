@@ -16,7 +16,8 @@ import java.util.Map;
  */
 public class IsEnum extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong, HongsException {
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri watch) throws Wrong {
         if (value == null || "".equals(value)) {
             return   null; // 允许为空
         }
@@ -30,7 +31,12 @@ public class IsEnum extends Rule {
             name = Synt.asString(getParam("__name__"));
         }
 
-        Map data = FormSet.getInstance(conf).getEnum (name);
+        Map data;
+        try {
+            data = FormSet.getInstance(conf).getEnum(name);
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        }
         if (! data.containsKey( value.toString() ) ) {
             throw new Wrong("fore.form.not.in.enum");
         }

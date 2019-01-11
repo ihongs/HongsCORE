@@ -20,7 +20,7 @@ import java.util.regex.Pattern;
  */
 public class Default extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) {
+    public Object verify(Object value, Veri watch) {
         Object force = getParam("deforce");
         if ("create".equals(force)) {
             if (watch.isUpdate() == true ) {
@@ -39,10 +39,10 @@ public class Default extends Rule {
              * 空串空值将设为默认值
              * 更新时没赋值将会跳过
              */
-            if (! "".equals(value) && value != null) {
+            if (value != null && !"".equals(value)) {
                 return value;
             }
-            if (watch.isUpdate() && ! watch.isValued()) {
+            if (value != UNDEF && watch.isUpdate()) {
                 return BLANK;
             }
         } else {
@@ -51,10 +51,10 @@ public class Default extends Rule {
              * 空串空值将设为空对象
              * 更新时没赋值也会跳过
              */
-            if (! "".equals(value) && value != null) {
+            if (value != null && !"".equals(value)) {
                 return value;
             }
-            if (watch.isUpdate() && ! watch.isValued()) {
+            if (value != UNDEF && watch.isUpdate()) {
                 return BLANK;
             } else {
                 return null ;
@@ -72,7 +72,7 @@ public class Default extends Rule {
 
         // 别名字段
         if (bef.equals("=@")) {
-            return Dict.getParam(watch.getCleans(), BLANK, def.substring(2));
+            return Dict.get(watch.getCleans(), BLANK, Dict.splitKeys(def.substring(2)));
         }
 
         // 会话属性

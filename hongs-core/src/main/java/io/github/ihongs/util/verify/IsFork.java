@@ -28,11 +28,8 @@ import java.util.Set;
  */
 public class IsFork extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrongs, HongsException {
-        if (value == null || "".equals(value)) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri watch) throws Wrong {
         // 如果像 id 一样只是基本字符组成则跳过
         // 也可通过直接通过 rule 参数不做此检查
         if (Synt.declare(getParam("pass-id"), false)) {
@@ -115,29 +112,19 @@ public class IsFork extends Rule {
             ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
         }
 
-        // 获取结果
-        new ActionRunner(ah , at).doInvoke();
-        Map       sd = ah.getResponseData( );
-        List<Map> ls = (List) sd.get("list");
+        // 执行动作
+        try {
+            new ActionRunner(ah,at).doInvoke();
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        }
 
         // 对比结果
-        if (ls == null || ls.isEmpty( )) {
+        Map  sd = ah.getResponseData( );
+        List ls = (List) sd.get("list");
+        if ( ls == null || ls.isEmpty()) {
             throw new Wrong("fore.form.is.not.exists", fl);
         }
-        /**
-         * 2018/07/20
-         * 只要有结果就代表存在
-         */
-        /*
-        Set us = new HashSet();
-        if ( null != ls) {
-        for(Map um : ls) {
-            us.add(um.get(vk));
-        }}
-        if (id.size() != us.size() && !id.containsAll(us)) {
-            throw new Wrong("fore.form.is.not.exists", fl);
-        }
-        */
 
         return value;
     }

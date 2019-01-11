@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class Ordinary extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
+    public Object verify(Object value, Veri watch) throws Wrong {
         if (value instanceof Map) {
             /**
              * 对象类型的字段要放行

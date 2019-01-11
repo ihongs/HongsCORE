@@ -1,9 +1,9 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
-import java.util.Collection;
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
  * </pre>
  * @author Hongs
  */
-public class Repeated extends Rule {
+public class Repeated extends Rule implements Rulx {
     /**
      * 前置校验
      * @param value
@@ -35,18 +35,22 @@ public class Repeated extends Rule {
      * @throws Wrong
      */
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
-        if (value == null) {
-            return new ArrayList ( ) ;
+    public Object verify(Object value, Veri watch) throws Wrong {
+        if (value == UNDEF) {
+            return   value;
         }
+        if (value == null ) {
+            return new LinkedList( ) ;
+        }
+
         if (value instanceof String) {
             String v = (String) value;
             String s ;
 
             // 正则拆分
-            s = Synt.asString(getParam("split"));
+            s = Synt.asString( getParam("split") );
             if (s != null) {
-                List<String> a = new ArrayList();
+                List<String> a = new LinkedList( );
                 Matcher m = Pattern.compile( s )
                                    .matcher( v );
                 int e , b = 0;
@@ -59,9 +63,9 @@ public class Repeated extends Rule {
             }
 
             // 普通拆分
-            s = Synt.asString(getParam("slice"));
+            s = Synt.asString( getParam("slice") );
             if (s != null) {
-                List<String> a = new ArrayList();
+                List<String> a = new LinkedList( );
                 int e , b = 0;
                 while ((e = v.indexOf(s, b))>-1) {
                     a.add(v.substring(b, e));
@@ -87,10 +91,12 @@ public class Repeated extends Rule {
     /**
      * 最终校准
      * @param value
+     * @param watch
      * @return
      * @throws Wrong
      */
-    public Object remedy(Collection value) throws Wrong {
+    @Override
+    public Object remedy(Collection value, Veri watch) throws Wrong {
         // 多个值的数量限制
         int n, c = value.size();
         n = Synt.declare(getParam("minrepeat"), 0);
@@ -129,13 +135,14 @@ public class Repeated extends Rule {
      * 注意: 不得返回 null
      * @return
      */
+    @Override
     public Collection getContext() {
         // 是否必须不同的值
         Collection context;
-        if (Synt.declare(getParam("diverse"), false)) {
+        if (Synt.declare(getParam("diverse") , false)) {
             context =  new LinkedHashSet();
         } else {
-            context =  new  ArrayList   ();
+            context =  new LinkedList(   );
         }
         return context;
     }
@@ -145,14 +152,15 @@ public class Repeated extends Rule {
      * 注意: 不得返回 null
      * @return
      */
+    @Override
     public Collection getDefiant() {
         // 可设置 defiant   为某个要忽略的值
         // 页面加 hidden    值设为要忽略的值
         // 此时如 check     全部未选代表清空
         // 默认对 null/空串 忽略
-        Set ignores = Synt.toSet(getParam("defiant"));
+        Set ignores =  Synt.toSet(getParam("defiant"));
         if (ignores == null || ignores.isEmpty()) {
-            ignores =  new HashSet();
+            ignores =  new HashSet(  );
             ignores.add("");
         }
         return ignores;

@@ -26,11 +26,8 @@ import java.util.Set;
 public class Diverse extends Rule {
 
     @Override
-    public Object verify(Object value, Verity watch) throws Wrongs, HongsException {
-        if (value == null || "".equals(value)) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri watch) throws Wrong {
         String at = Synt.declare(getParam("data-ut" ), "");
         String ck = Synt.declare(getParam("__conf__"), "");
         String fk = Synt.declare(getParam("__form__"), "");
@@ -106,11 +103,15 @@ public class Diverse extends Rule {
             ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
         }
 
-        // 获取结果
-        new ActionRunner(ah , at).doInvoke();
-        Map       sd = ah.getResponseData( );
+        // 执行动作
+        try {
+            new ActionRunner(ah,at).doInvoke();
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        }
 
         // 判断记录是否存在
+        Map sd  = ah.getResponseData();
         if (sd.containsKey("list")) {
            List list = (List) sd.get("list");
             if (list == null || list.isEmpty()) {
@@ -137,6 +138,7 @@ public class Diverse extends Rule {
                 return value;
             }
         }
+        
         throw new Wrong("fore.form.is.not.unique");
     }
 

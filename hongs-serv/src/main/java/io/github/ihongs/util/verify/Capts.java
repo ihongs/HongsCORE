@@ -15,7 +15,7 @@ import io.github.ihongs.util.Synt;
 public class Capts extends Rule {
 
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
+    public Object verify(Object value, Veri watch) throws Wrong {
         ActionHelper ah = Core.getInstance(ActionHelper.class);
         String ss = Synt.declare(getParam("capts-sess"),
             CoreConfig.getInstance()

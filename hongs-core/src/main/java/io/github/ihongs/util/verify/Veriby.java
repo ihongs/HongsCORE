@@ -3,7 +3,7 @@ package io.github.ihongs.util.verify;
 import java.util.Map;
 
 /**
- * 规则助手
+ * 校验过程助手
  *
  * 此对象用于记录那些规则之外的数据,
  * 如正在校验的进出数据和校验器状态,
@@ -11,48 +11,41 @@ import java.util.Map;
  *
  * @author Hongs
  */
-public class Verity {
+public class Veriby implements Veri {
 
-    private final Veri veri ;
+    private final Verify ver;
     private final Map values;
     private final Map cleans;
-    private final boolean valued;
 
-    public Verity(Veri veri , Map values, Map cleans, boolean valued) {
-        this.veri   =  veri ;
+    public Veriby(Verify ver, Map values, Map cleans) {
+        this.ver    =    ver;
         this.values = values;
         this.cleans = cleans;
-        this.valued = valued;
     }
 
     /**
-     * 是否为速断模式, 同 Veri.isPrompt
+     * 是否为速断模式, 同 Verify.isPrompt
      * @return
      */
-    public boolean  isPrompt() {
-        return veri.isPrompt();
+    @Override
+    public boolean isPrompt() {
+        return ver.isPrompt();
     }
 
     /**
-     * 是否为更新模式, 同 Veri.isUpdate
+     * 是否为更新模式, 同 Verify.isUpdate
      * @return
      */
-    public boolean  isUpdate() {
-        return veri.isUpdate();
-    }
-
-    /**
-     * 是否有值
-     * @return
-     */
-    public boolean  isValued() {
-        return valued;
+    @Override
+    public boolean isUpdate() {
+        return ver.isUpdate();
     }
 
     /**
      * 原始数据
      * @return
      */
+    @Override
     public Map getValues() {
         return values;
     }
@@ -61,6 +54,7 @@ public class Verity {
      * 清洁数据
      * @return
      */
+    @Override
     public Map getCleans() {
         return cleans;
     }

@@ -53,6 +53,11 @@ public class TestSynt extends TestCase {
             "!A"
         );
         System.out.println(Data.toString(opts));
+        
+        String a = new String("");
+        String b = new String("");
+        String c = a;
+        System.out.println("a == b: " + (a == b) + " a == c: " + (a == c) + " a equals b: " + (a.equals(b)));
     }
 
     @Test

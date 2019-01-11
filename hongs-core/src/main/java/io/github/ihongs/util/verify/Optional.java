@@ -6,12 +6,12 @@ package io.github.ihongs.util.verify;
  */
 public class Optional extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong {
+    public Object verify(Object value, Veri watch) throws Wrong {
         // 未给值则跳过此项目
-        if (watch.isValued()) {
-            return  value;
+        if (value == UNDEF) {
+            return   BLANK;
         } else {
-            return  BLANK;
+            return   value;
         }
     }
  }

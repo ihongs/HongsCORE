@@ -3,7 +3,7 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.Core;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -27,11 +27,8 @@ import java.util.regex.Pattern;
  */
 public class IsDate extends Rule {
     @Override
-    public Object verify(Object value, Verity watch) throws Wrong, HongsException {
-        if (value == null || "".equals(value)) {
-            return   null; // 允许为空
-        }
-
+    @Rule.NoEmpty
+    public Object verify(Object value, Veri watch) throws Wrong {
         String typa = Synt.declare(getParam("__type__"), "");
         String type = Synt.declare(getParam(  "type"  ), "");
 
@@ -42,7 +39,7 @@ public class IsDate extends Rule {
         if ( "".equals(fmt)) {
             fwt = CoreLocale.getInstance().getProperty("core.default." + typa + ".format");
             if (fwt == null) {
-                throw new HongsException.Common("Can not recognize date type '"+typa+"'.");
+                throw new HongsExemption.Common("Can not recognize date type '"+typa+"'.");
             }
         }
 
@@ -141,10 +138,10 @@ public class IsDate extends Rule {
         throw new Wrong("fore.form.is.not."+ typa);
     }
 
-    private long getTime(String tim, long now) throws HongsException {
+    private long getTime(String tim, long now) {
         Matcher mat = Pattern.compile("^([+\\-])?(\\d+)$").matcher(tim);
         if (!mat.matches()) {
-            throw new HongsException.Common("Can not recognize time '"+tim+"'.");
+            throw new HongsExemption.Common("Can not recognize time '"+tim+"'.");
         }
         long    msc = Synt.declare(mat.group(2), 0L);
         String  sym = mat.group(1);

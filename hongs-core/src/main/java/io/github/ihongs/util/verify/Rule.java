@@ -19,12 +19,7 @@ public abstract class Rule implements Ruly {
      */
     public static final Object BREAK = Synt.LOOP.LAST;
 
-    /**
-     * 空值null
-     */
-    public static final Object EMPTY = null;
-
-    private Map params = null ;
+    private Map params = null;
 
     /**
      * 设置校验参数

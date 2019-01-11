@@ -57,7 +57,7 @@ public class Default extends Rule {
             if (watch.isUpdate() && ! watch.isValued()) {
                 return BLANK;
             } else {
-                return EMPTY;
+                return null ;
             }
         }}
 

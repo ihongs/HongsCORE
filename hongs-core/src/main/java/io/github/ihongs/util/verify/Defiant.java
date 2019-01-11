@@ -27,7 +27,7 @@ public class Defiant extends Rule {
         if (null != value && ! def.contains( value )) {
             return  value;
         } else {
-            return  EMPTY;
+            return  null ;
         }
     }
 }

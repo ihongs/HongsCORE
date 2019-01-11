@@ -78,7 +78,7 @@
             if (_fields != null) {
                 _params  = (Map) _fields.get ( "@" );
                 if (_params != null) {
-                    _title   = (String) _fields.get("__text__");
+                    _title   = (String) _params.get("__text__");
                 if (_title  == null) {
                     _title   =  "" ;
                 }}

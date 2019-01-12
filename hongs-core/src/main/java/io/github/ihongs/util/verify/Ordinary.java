@@ -14,14 +14,28 @@ import java.util.Set;
 public class Ordinary extends Rule {
     @Override
     public Object verify(Object value, Veri watch) throws Wrong {
+        /**
+         * 数组和集合要取第一个
+         * 这样可以将其直接用于 Servlet 的 ParameterMap
+         */
+        if (value instanceof Object [ ]) {
+            Object [ ] a  = (Object [ ]) value;
+            return a.length > 0 ? a [0] : null;
+        }
+        if (value instanceof Collection) {
+            Collection c  = (Collection) value;
+            Object [ ] a  =  c.toArray();
+            return a.length > 0 ? a [0] : null;
+        }
+        
+        /**
+         * 对象类型的字段要放行
+         * 至于下层是否多组取值
+         * 只能在后面另行检验了
+         */
         if (value instanceof Map) {
-            /**
-             * 对象类型的字段要放行
-             * 至于下层是否多组取值
-             * 只能在后面另行检验了
-             */
             try {
-            FormSet fields = FormSet.getInstance ();
+            FormSet fields = FormSet.getInstance();
              Object type   = /****/ getParam ( "__type__"  );
                 Map saves  = fields.getEnum  ( "__saves__" );
                 Set types  = Synt.toSet(saves.get("object"));
@@ -29,18 +43,13 @@ public class Ordinary extends Rule {
                 &&  types.contains ( type )) {
                     return value;
                 }
-            } catch (HongsException ex) {
-                throw new Wrong(ex.getMessage( ));
+            } catch ( HongsException ex) {
+                throw ex.toExemption(  );
             }
 
-            throw new Wrong("fore.form.ordinary");
+            throw new Wrong ("fore.form.ordinary");
         }
-        if (value instanceof Collection) {
-            throw new Wrong("fore.form.ordinary");
-        }
-        if (value instanceof Object[ ] ) {
-            throw new Wrong("fore.form.ordinary");
-        }
+
         return value;
     }
 }

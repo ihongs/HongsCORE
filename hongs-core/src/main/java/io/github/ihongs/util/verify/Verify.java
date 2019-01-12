@@ -150,7 +150,7 @@ public class Verify {
         for(Ruly rule : rulez) {
             i ++ ;
 
-            data = verify(wrongz, rule, veri, name, data);
+            data = verify( wrongz, rule, veri, name, data );
             if (data == BLANK) {
                 break;
             }

@@ -63,7 +63,7 @@
 
     JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
     MVN 下载地址: http://maven.apache.org/download.cgi
-    OpenJDK 下载: http://jdk.java.net/10/
+    OpenJDK 地址: http://jdk.java.net/10/
 
 ## 定制开发
 

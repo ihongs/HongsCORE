@@ -16,7 +16,7 @@ public class Ordinary extends Rule {
     public Object verify(Object value, Veri watch) throws Wrong {
         /**
          * 数组和集合要取第一个
-         * 这样可以将其直接用于 Servlet 的 ParameterMap
+         * 这样处理就可以适用于 Servlet 的 ParameterMap
          */
         if (value instanceof Object [ ]) {
             Object [ ] a  = (Object [ ]) value;
@@ -30,8 +30,8 @@ public class Ordinary extends Rule {
         
         /**
          * 对象类型的字段要放行
-         * 至于下层是否多组取值
-         * 只能在后面另行检验了
+         * 至于实际仍是多组取值
+         * 在这里就没办法分辨了
          */
         if (value instanceof Map) {
             try {

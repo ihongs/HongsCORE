@@ -16,7 +16,7 @@ import java.util.LinkedHashMap;
  * 数据校验助手
  * @author Hongs
  *
- * <p>Java8 中使用函数式, 可简化代码, 如:</p>
+ * <p>Java 8 中用函数式可简化代码:</p>
  * <pre>
  *  values = new Verify()
  *      .addRule("f1", (v, w)->{

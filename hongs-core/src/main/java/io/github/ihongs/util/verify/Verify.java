@@ -1,12 +1,9 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import static io.github.ihongs.util.verify.Rule.BLANK;
 import static io.github.ihongs.util.verify.Rule.BREAK;
-import static io.github.ihongs.util.verify.Rule.UNDEF;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,7 +111,7 @@ public class Verify {
             String     name  = et.getKey(  );
             Object     data  ;
 
-            data = Dict.get( values, UNDEF, Dict.splitKeys( name ) );
+            data = Dict.get( values, BLANK, Dict.splitKeys( name ) );
 
             data = verify(values, cleans, wrongz, data, name, rulez);
 
@@ -125,9 +122,6 @@ public class Verify {
                 break;
             } else
             if (data == BLANK) {
-                continue;
-            } else
-            if (data == UNDEF) {
                 continue;
             }
 
@@ -143,7 +137,13 @@ public class Verify {
 
     private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez)
     throws Wrongs {
-        Veriby veri = new Veriby ( this, values, cleans );
+        Veriby      veri ;
+        if (data == BLANK) {
+            data  = null ;
+            veri  = new Veriby(this, values, cleans, false);
+        } else {
+            veri  = new Veriby(this, values, cleans, true );
+        }
 
         int i = 0;
         int j =  rulez. size();
@@ -216,27 +216,6 @@ public class Verify {
     }
 
     private Object verify(Map wrongz, Ruly rule, Veri veri, String name, Object data) {
-        // 通过方法注解预先排除特定值
-        Method m;
-        try {
-            m = rule.getClass().getMethod("verify", Object.class, Veri.class);
-        } catch (NoSuchMethodException|SecurityException e) {
-            throw new HongsExemption.Common(e);
-        }
-        if (m.isAnnotationPresent(Rule.NoUndef.class)) {
-            if (data == null || data == UNDEF) {
-                return  data;
-            }
-        }
-        if (m.isAnnotationPresent(Rule.NoEmpty.class)) {
-            if (data == null || data == UNDEF) {
-                return  data;
-            }
-            if (data.equals( "" )) {
-                return  null;
-            }
-        }
-
         try {
             return rule.verify(data,veri);
         } catch (Wrong  w) {

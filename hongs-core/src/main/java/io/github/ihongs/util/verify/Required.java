@@ -10,13 +10,12 @@ import java.util.Map;
 public class Required extends Rule {
     @Override
     public Object verify(Object value, Veri watch) throws Wrong {
-        // 更新而未给值则跳过
-        if (watch.isUpdate( )
-        &&  value == UNDEF  ) {
-            return   BLANK  ;
-        }
-
-        if (value ==  null  ) {
+        if (value == null) {
+            // 更新而未给值则跳过
+            if (watch.isUpdate( )
+            && !watch.isValued()) {
+                return  BLANK;
+            }
             throw new Wrong("fore.form.required");
         }
         if (value.equals("")) {

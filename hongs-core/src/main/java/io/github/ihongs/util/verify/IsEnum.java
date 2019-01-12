@@ -16,10 +16,10 @@ import java.util.Map;
  */
 public class IsEnum extends Rule {
     @Override
-    @Rule.NoEmpty
     public Object verify(Object value, Veri watch) throws Wrong {
-        if (value == null || "".equals(value)) {
-            return   null; // 允许为空
+        // 跳过空值和空串
+        if (null == value || "".equals(value)) {
+            return  null;
         }
 
         String conf = Synt.asString(getParam("conf"));

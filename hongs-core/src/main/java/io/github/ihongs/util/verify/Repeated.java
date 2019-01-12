@@ -35,11 +35,10 @@ public class Repeated extends Rule implements Rulx {
      */
     @Override
     public Object verify(Object value, Veri watch) throws Wrong {
-        if (value == UNDEF) {
-            return   value;
-        }
-        if (value == null ) {
-            return new LinkedList( ) ;
+        if (value == null) {
+            return watch.isValued()
+                 ? new LinkedList()
+                 : BLANK;
         }
 
         if (value instanceof String) {

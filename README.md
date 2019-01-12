@@ -35,7 +35,7 @@
 
 ## 类库依赖
 
-适用 Java 版本 JDK 1.6 及以上, 推荐使用 1.8; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; Javascript 默认以来 jQuery,jQueryUI,Bootstrap 等, 更多请查看 [**Powered By**](hongs-web/web/power.html).
+适用 Java 版本 JDK 1.6 及以上, 推荐使用 1.8; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; Javascript 及 CSS 部分默认依赖 jQuery,jQueryUI,Bootstrap 等, 更多参见 [**Powered By**](hongs-web/web/power.html).
 
 ## 使用方法
 

@@ -1,7 +1,6 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,18 +73,20 @@ public class Repeated extends Rule implements Rulx {
                 return  a;
             }
 
-            throw  new Wrong("fore.form.repeated");
+            throw new Wrong ("fore.form.repeated");
         }
-        if (value instanceof Map) {
+
+        if (value instanceof Object [ ]) {
             return value;
         }
         if (value instanceof Collection) {
             return value;
         }
-        if (value instanceof Object[ ] ) {
-            return Arrays.asList((Object[]) value);
+        if (value instanceof Map) {
+            return value;
         }
-            throw  new Wrong("fore.form.repeated");
+
+            throw new Wrong ("fore.form.repeated");
     }
 
     /**

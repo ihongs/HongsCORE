@@ -19,7 +19,7 @@ import java.util.LinkedHashMap;
  * 数据校验助手
  * @author Hongs
  *
- * <p>Java8 中利用 Ruly 使用函数式, 可简化代码, 如:</p>
+ * <p>Java8 中使用函数式, 可简化代码, 如:</p>
  * <pre>
  *  values = new Verify()
  *      .addRule("f1", (v, w)->{
@@ -172,6 +172,9 @@ public class Verify {
         Collection skips = rule.getDefiant();
 
         // 将后面的规则应用于每一个值
+        if (data instanceof Object [ ]) {
+            data = Arrays.asList (data);
+        }
         if (data instanceof Collection) {
             int i3 = -1;
             for(Object data3 :  ( Collection )  data  ) {

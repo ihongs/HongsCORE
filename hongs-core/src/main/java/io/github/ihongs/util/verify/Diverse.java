@@ -14,7 +14,7 @@ import java.util.Set;
 
 /**
  * 唯一规则
- * 
+ *
  * <pre>
  * 规则参数:
  *  data-ut 查询动作名, 末尾可添加 #其他参与唯一的字段
@@ -26,8 +26,12 @@ import java.util.Set;
 public class Diverse extends Rule {
 
     @Override
-    @Rule.NoEmpty
     public Object verify(Object value, Veri watch) throws Wrong {
+        // 跳过空值和空串
+        if (null == value || "".equals(value)) {
+            return  null;
+        }
+
         String at = Synt.declare(getParam("data-ut" ), "");
         String ck = Synt.declare(getParam("__conf__"), "");
         String fk = Synt.declare(getParam("__form__"), "");
@@ -138,7 +142,7 @@ public class Diverse extends Rule {
                 return value;
             }
         }
-        
+
         throw new Wrong("fore.form.is.not.unique");
     }
 

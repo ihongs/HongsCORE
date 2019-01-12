@@ -21,8 +21,12 @@ import java.util.regex.Pattern;
  */
 public class IsString extends Rule {
     @Override
-    @Rule.NoUndef
     public Object verify(Object value, Veri watch) throws Wrong {
+        // 跳过空值
+        if (null == value) {
+            return  value;
+        }
+
         String str = Synt.declare(value, "");
 
         // 文本清理

@@ -33,6 +33,10 @@
 > 被授权人义务：
 > 在软件和软件的副本中都必须包含版权声明和许可声明。
 
+## 类库依赖
+
+适用 Java 版本 JDK 1.6 及以上, 推荐使用 1.8; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; Javascript 默认以来 jQuery,jQueryUI,Bootstrap 等, 更多请查看 [**Powered By**](hongs-web/web/power.html).
+
 ## 使用方法
 
 请先安装 JDK 和 Maven, 然后进入您的工作目录, 按以下流程执行命令:
@@ -60,35 +64,42 @@
     JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
     MVN 下载地址: http://maven.apache.org/download.cgi
 
-## 前端开发
+## 定制开发
+
+### 前端开发
 
 如果你是一位前端开发人员，别去想什么 Node.js,MongoDB 等 javascript 一统前后端的方案了, 你应该做的就是把体验做好, 神马增/删/改/查/接口/权限就不用费劲考虑了, 你只需:
 
-1. 登录系统，点击右上角菜单，进入"模块管理"
+1. 登录系统，点击右上角菜单，进入"模型矩阵"
 2. 点击左侧单元区的添加，输入名称等，点击下方提交即创建了一个单元
-3. 点击选中刚创建的单元，点击右边列表上方的创建按钮，输入表单名称
+3. 单击选中刚创建的单元，点击右边列表上方的创建按钮，输入表单名称
 4. 点击右侧列表的"+"可添添加字段，点击字段右上的"i"可以设置字段
 5. 完成后点击保存按钮，一个表单就设置好了
-6. 刷新页面，右上菜单就能看到刚添加的单元
-7. 点击单元，顶部菜单有表单项，尝试操作吧
+6. 刷新页面，左侧菜单就能看到刚添加的单元
+7. 展开单元，点击进入对应模块，尝试操作吧
 
 现在，你可以在 centra/data 或 centre/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
+    defines.js       过程干预定制脚本（默认是空的）
     form.html        编辑表单
     form_adds.html   创建表单
     list.html        列表区块
     list_fork.html   选择区块
 
-一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。
+一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。您可以使用内置的 JS 框架和组件继续开发，这很简单(见 [**HongsCORE4JS**](hongs-web/web/static/assets/src/) 和 [**HongsCORE4JS Demo**](hongs-web/web/static/assets/src/pages/))，通过 defines.js 可微调大部分的细节。但也可以覆盖 default.html 完全定制整个页面，这样您可以随意选择自己习惯的 JS 和 CSS 库。
 
-## 后端开发
+如果觉得上述定制还不够随心所欲，可以在 /public 或 /static 目录下建立自己的前端子项目，用 Vue 或 React 等进行开发。需要注意，/public 下会追溯 index.html，这对那些用到 Route 的前端项目非常有利，而 /static 下默认并不支持。可以修改 /index.jsp 将网站根路径跳转到定制的子项目路径。
 
-> 与前端类似，在设置好模块后，可根据实际情况对特定请求动作覆盖开发，后续详细补充
+### 后端开发
 
-## 类库依赖
+后端与前端一样简单，如果只是小改、补充，可用 jsp 充当动作脚本，即写即用，无需编译和重启；亦可编译特定的 java 动作程序、模型程序对下层过程进行完全定制。
 
-适用 Java 版本 JDK 1.6 及以上, 推荐使用 1.7; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; 亦可参见 [**Powered By**](hongs-web/web/power.html).
+一个表单资源默认有 search,create,update,delete 四个接口，具体输入输出方式参考下方 [运行规则](#运行规则) 章节。
+
+一个动作脚本即前端定制谈到的表单 ID 目录下的 \__main\__.jsp 文件，如果此文件存在，则对应资源的所有更新改查等操作均会转到此处，但仍然可以通过 ActionRunner 调用原始的动作程序，这时 \__main\__.jsp 充当一个过滤器的角色，可以通过 ActionHelper 对输入输出数据进行改写。
+
+想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra (后台的叫 centra 公共的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("centra/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，而其对应的访问路径是通过 @Action 注解来定义的。
 
 ## 文件体系
 

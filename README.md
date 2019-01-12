@@ -98,7 +98,7 @@
 
 一个表单资源默认有 search,create,update,delete 四个接口，具体输入输出方式参考下方 [运行规则](#运行规则) 章节。
 
-一个动作脚本即前端定制谈到的表单 ID 目录下的 \__main\__.jsp 文件，如果此文件存在，则对应资源的所有更新改查等操作均会转到此处，但仍然可以通过 ActionRunner 调用原始的动作程序，这时 \__main\__.jsp 充当一个过滤器的角色，可以通过 ActionHelper 对输入输出数据进行改写。
+一个动作脚本即前端定制谈到的表单 ID 目录下的 \_\_main\_\_.jsp 文件，如果此文件存在，则对应资源的所有更新改查等操作均会转到此处，但仍然可以通过 ActionRunner 调用原始的动作程序，这时 \_\_main\_\_.jsp 充当一个过滤器的角色，可以通过 ActionHelper 对输入输出数据进行改写。
 
 想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra (后台的叫 centra 公共的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("centra/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，而其对应的访问路径是通过 @Action 注解来定义的。
 

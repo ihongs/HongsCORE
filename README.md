@@ -6,7 +6,7 @@
 * 技术支持: kevin.hongs@gmail.com
 
 **HongsCORE** 即 **Hong's Common Object Requesting Engine**, 通用对象请求引擎, 拼凑的有些生硬. 在设计第一个原型框架时(PHP 版 2006 年), 我买了一台 Intel Core CPU 的笔记本电脑, 当时随意的给她取了个名字叫 Core, 后来觉得名字应该更有意义才扩展成了以上缩写.
-另一个原因是: 从最初的 PHP 版一直到现在的 Java 版, 我都有设计一个核心工厂类, 主要作用就是用于请求和管理唯一对象, 实现  Singleton (单例模式), 在需要某个对象时只管请求, 使对象的使用效率更高. 具体到这个 Java 版本中, 利用了 ThreadLocal, 和 Tomcat,Jetty 等 Servlet 容器的单实例多线程特性来实现行之有效的单例模式(按实际情况分为全局单例和线程单例).
+另一个原因是: 从最初的 PHP 版一直到现在的 Java 版, 我都有设计一个核心工厂类, 主要作用就是用于请求和管理唯一对象, 实现  Singleton (单例模式), 在需要某个对象时只管请求, 使对象的使用效率更高. 具体到这个 Java 版本中, 利用了 ThreadLocal, 和 Tomcat,Jetty 等 Servlet 容器的单实例多线程特性来实现行之有效的单例模式 (根据实际情况分为全局单例和线程单例).
 
 ## 特性概叙
 

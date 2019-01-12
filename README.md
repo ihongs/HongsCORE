@@ -87,7 +87,7 @@
     list.html        列表区块
     list_fork.html   选择区块
 
-一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。您可以使用内置的 JS 框架和组件继续开发，这很简单(见 [**HongsCORE4JS**](hongs-web/web/static/assets/src/) 和 [**HongsCORE4JS Demo**](hongs-web/web/static/assets/src/pages/))，通过 defines.js 可微调大部分的细节。但也可以覆盖 default.html 完全定制整个页面，这样您可以随意选择自己习惯的 JS 和 CSS 库。
+一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。您可以使用内置的 JS 框架和组件继续开发，这很简单(见 [**HongsCORE4JS**](hongs-web/web/static/assets/src/) 和 [**HongsCORE4JS Demo**](hongs-web/web/static/assets/pages/))，通过 defines.js 可微调大部分的细节。但也可以覆盖 default.html 完全定制整个页面，这样您可以随意选择自己习惯的 JS 和 CSS 库。
 
 如果觉得上述定制还不够随心所欲，可以在 /public 或 /static 目录下建立自己的前端子项目，用 Vue 或 React 等进行开发。需要注意，/public 下会追溯 index.html，这对那些用到 Route 的前端项目非常有利，而 /static 下默认并不支持。可以修改 /index.jsp 将网站根路径跳转到定制的子项目路径。
 

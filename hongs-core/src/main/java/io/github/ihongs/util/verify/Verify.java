@@ -16,6 +16,13 @@ import java.util.LinkedHashMap;
  * 数据校验助手
  * @author Hongs
  *
+ * <p>
+ * 校验过程中的状态全部通过参数传递,
+ * 如果绑定的规则内也不存储过程状态,
+ * 那就是整体线程安全的,
+ * 可以一次构建反复使用.
+ * </p>
+ *
  * <p>Java 8 中用函数式可简化代码:</p>
  * <pre>
  *  values = new Verify()
@@ -113,7 +120,7 @@ public class Verify {
 
             data = Dict.get( values, BLANK, Dict.splitKeys( name ) );
 
-            data = verify(values, cleans, wrongz, data, name, rulez);
+            data = verify(values, cleans, wrongz, rulez, name, data);
 
             if (prompt && ! wrongz.isEmpty()) {
                 break;
@@ -135,7 +142,7 @@ public class Verify {
         return cleans;
     }
 
-    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez)
+    private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data)
     throws Wrongs {
         Veriby      veri ;
         if (data == BLANK) {
@@ -150,7 +157,7 @@ public class Verify {
         for(Ruly rule : rulez) {
             i ++ ;
 
-            data = verify( wrongz, rule, veri, name, data );
+            data = verify( wrongz, veri, rule, name, data );
             if (data == BLANK) {
                 break;
             }
@@ -159,14 +166,14 @@ public class Verify {
             }
 
             if (rule instanceof Rulx) {
-                data = verify(values, cleans, wrongz, data, name, rulez.subList(i, j), (Rulx) rule, veri);
+                data = verify(values, cleans, wrongz, rulez.subList(i, j), name, data, veri, (Rulx) rule);
                 break;
             }
         }
         return  data ;
     }
 
-    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez, Rulx rule, Veri veri)
+    private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data, Veri veri, Rulx rule)
     throws Wrongs {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
@@ -185,7 +192,7 @@ public class Verify {
                 }
 
                 String name3 = name + "[" + i3 + "]";
-                data3 = verify(values, cleans, wrongz, data3, name3, rulez);
+                data3 = verify(values, cleans, wrongz, rulez, name3, data3);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -202,7 +209,7 @@ public class Verify {
                 }
 
                 String name3 = name + "." + e3.getKey();
-                data3 = verify(values, cleans, wrongz, data3, name3, rulez);
+                data3 = verify(values, cleans, wrongz, rulez, name3, data3);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -212,10 +219,10 @@ public class Verify {
         }
 
         // 完成后还需再次校验一下结果
-        return  remedy(wrongz, rule, veri, name, data2);
+        return  remedy(wrongz, veri, rule, name, data2);
     }
 
-    private Object verify(Map wrongz, Ruly rule, Veri veri, String name, Object data) {
+    private Object verify(Map wrongz, Veri veri, Ruly rule, String name, Object data) {
         try {
             return rule.verify(data,veri);
         } catch (Wrong  w) {
@@ -239,7 +246,7 @@ public class Verify {
         }
     }
 
-    private Object remedy(Map wrongz, Rulx rule, Veri veri, String name, Collection data) {
+    private Object remedy(Map wrongz, Veri veri, Rulx rule, String name, Collection data) {
         try {
             return rule.remedy(data,veri);
         } catch (Wrong  w) {

@@ -102,6 +102,18 @@
 
 想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra (后台的叫 centra 公共的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("centra/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，而其对应的访问路径是通过 @Action 注解来定义的。
 
+### 开发理念
+
+顺便说一下此系统的设计理念。迄今为止，我做了上十年的 OLTP/OLAP 开发，大部分时候就是面对数据结构来回的倒腾，因此，我就想为什么我要重复的写这些增删改查呢？这么多的业务逻辑有什么底层共性吗？万变不离其宗的宇宙终极规律我是没发现，但只要把应用范围缩小到一个特定的范围，**一般情况自动处理，特殊情况可以干预**，那么就能从占工作量大半的业务逻辑中抽身出来，从而可以去处理更多特别的事情。
+
+按照这个指导思想，想象流程就是从一个数据结构转换成另一个数据结构，数据流亦即结构流。比如从 URL `x?a=123&b[]=456&b[]=789` 转换成数据结构 `{a:123, b: [456,789]}` 再转成查询语句 `SELECT * FROM x WHERE a = 123 AND b IN (456, 789)`。把这个道理在扩大一点，如果在服务器这边拥有一个资源 x 的描述文件(scheme)，据此进行结构翻译（转换），那么这个概念还可以扩展到 HTML 的表单、列表、详情展示等。对这个 scheme 进一步丰富，还可以处理资源的关联、输入的校验、输出的处理等等。
+
+在这套系统里，这个 scheme 文件有两种：一是早期围绕关系数据库做的 [.db.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.db.xml)，结合数据库的表结构，来描述资源模型；另一个是后定义的 [.form.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.form.xml) 配置，旨在完整的描述数据结构、枚举数据、校验规则，这主要是受到 Protobuf 的启发。后者衍生出了针对 lucene 的模型, 亦可用于 neo4j,mongodb 等。
+
+正确的解释并查询是一方面，但也需要在正确的存储后才能保障，故校验规则是这套体系里非常重要的部分。与别的校验框架理念并不相同，别人可能只在意数据能不能被许可往下传递，而这个系统更关注如何向下传递需要的数据。比如：传递过来一个文件，在这套系统并不仅仅关心这个文件的格式、尺寸对不对，更要处理存到哪里、如何组织 URL，如果是图片，可能还要按自定规则处理成缩略图。[Verify](hongs-core/src/main/java/io/github/ihongs/util/verify/Verify.java) 是校验入口，通过同包下的其他 Rule 类进行校验，也支持函数式的方式快速自定规则；另外利用 [VerifyHelper](hongs-core/src/main/java/io/github/ihongs/action/VerifyHelper.java) 可以将 .form.xml 中的设置"翻译"成实际的校验规则。
+
+这部分要细说不太容易讲清，日后另行发文章详细讨论。
+
 ## 文件体系
 
 ### 目录结构:

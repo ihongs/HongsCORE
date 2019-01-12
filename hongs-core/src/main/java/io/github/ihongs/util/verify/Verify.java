@@ -59,7 +59,7 @@ public class Verify {
      * @return
      */
     public Verify setRule(String name, Ruly... rule) {
-        rules.put(name, new ArrayList(Arrays.asList(rule)));
+        rules.put(name , new ArrayList(Arrays.asList(rule)));
         return this;
     }
 
@@ -75,7 +75,7 @@ public class Verify {
             rulez.addAll(Arrays.asList(rule));
             return   this;
         }
-        rules.put(name, new ArrayList(Arrays.asList(rule)));
+        rules.put(name , new ArrayList(Arrays.asList(rule)));
         return this;
     }
 

@@ -142,6 +142,17 @@ public class Verify {
         return cleans;
     }
 
+    /**
+     * 校验单个字段的值
+     * @param values
+     * @param cleans
+     * @param wrongz
+     * @param rulez
+     * @param name
+     * @param data
+     * @return
+     * @throws Wrongs
+     */
     private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data)
     throws Wrongs {
         Veriby      veri ;
@@ -173,6 +184,19 @@ public class Verify {
         return  data ;
     }
 
+    /**
+     * 校验字段的多个值
+     * @param values
+     * @param cleans
+     * @param wrongz
+     * @param rulez
+     * @param name
+     * @param data
+     * @param veri
+     * @param rule
+     * @return
+     * @throws Wrongs
+     */
     private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data, Veri veri, Rulx rule)
     throws Wrongs {
         Collection data2 = rule.getContext();
@@ -222,6 +246,15 @@ public class Verify {
         return  remedy(wrongz, veri, rule, name, data2);
     }
 
+    /**
+     * 校验取值
+     * @param wrongz
+     * @param veri
+     * @param rule
+     * @param name
+     * @param data
+     * @return
+     */
     private Object verify(Map wrongz, Veri veri, Ruly rule, String name, Object data) {
         try {
             return rule.verify(data,veri);
@@ -238,14 +271,23 @@ public class Verify {
                     w.setLocalizedCaption(name);
                 }
             }
-            failed(wrongz, w , name);
+            fail(wrongz, w, name);
             return BLANK;
-        } catch (Wrongs w) {
-            failed(wrongz, w , name);
+        } catch (Wrongs  w) {
+            fail(wrongz, w, name);
             return BLANK;
         }
     }
 
+    /**
+     * 校准集合
+     * @param wrongz
+     * @param veri
+     * @param rule
+     * @param name
+     * @param data
+     * @return
+     */
     private Object remedy(Map wrongz, Veri veri, Rulx rule, String name, Collection data) {
         try {
             return rule.remedy(data,veri);
@@ -262,15 +304,21 @@ public class Verify {
                     w.setLocalizedCaption(name);
                 }
             }
-            failed(wrongz, w , name);
+            fail(wrongz, w, name);
             return BLANK;
-        } catch (Wrongs w) {
-            failed(wrongz, w , name);
+        } catch (Wrongs  w) {
+            fail(wrongz, w, name);
             return BLANK;
         }
     }
 
-    public static void failed(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {
+    /**
+     * 记录下层多个错误
+     * @param wrongz
+     * @param wrongs
+     * @param name
+     */
+    public static void fail(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {
         for (Map.Entry<String, Wrong> et : wrongs.getWrongs().entrySet()) {
             String n = et.getKey(   );
             Wrong  e = et.getValue( );
@@ -278,7 +326,13 @@ public class Verify {
         }
     }
 
-    public static void failed(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
+    /**
+     * 记录现发现的错误
+     * @param wrongz
+     * @param wrong
+     * @param name
+     */
+    public static void fail(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
             wrongz.put(name  , wrong);
     }
 

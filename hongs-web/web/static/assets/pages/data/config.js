@@ -28,6 +28,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 
 	"loading":"加载中...",
 	"opening":"打开中...",
+	"ensure":"确定",
 	"cancel":"取消",
 	"commit":"提交",
 	"create":"创建",

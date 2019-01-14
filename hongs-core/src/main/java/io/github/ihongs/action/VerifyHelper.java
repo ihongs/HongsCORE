@@ -154,10 +154,10 @@ public class VerifyHelper extends Verify {
             // 添加规则实例
             for(String item : list) {
                 item = item.trim();
-                if ( item.length() == 0) {
+                if ( item.length() == 0 ) {
                     continue;
                 }
-                if (!item.contains(".")) {
+                if (! item.contains(".")) {
                     item = Rule.class.getPackage().getName()+"."+item;
                 }
 

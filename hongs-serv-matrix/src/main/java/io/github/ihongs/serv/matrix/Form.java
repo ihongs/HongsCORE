@@ -607,11 +607,11 @@ public class Form extends Model {
             t = (String) fiel.get("__type__");
             if (t != null) item.setAttribute("type", t);
             s = (String) fiel.get("__rule__");
-            if (s != null) item.setAttribute("rule", s);
+            if (s != null && s.length() != 0) item.setAttribute("rule", s);
             s = (String) fiel.get("__required__");
-            if (s != null) item.setAttribute("required", s);
+            if (s != null && s.length() != 0) item.setAttribute("required", s);
             s = (String) fiel.get("__repeated__");
-            if (s != null) item.setAttribute("repeated", s);
+            if (s != null && s.length() != 0) item.setAttribute("repeated", s);
 
             // 日期类型要指定存储格式
             if ("date".equals(types.get(t) )) {

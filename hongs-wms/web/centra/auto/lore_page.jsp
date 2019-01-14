@@ -179,7 +179,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "rows": "更新的条数",
+    "size": "更新的条数",
     // ...
 }
                     </pre>
@@ -207,7 +207,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">响应</label>
                     <pre class="form-control-static">
 {
-    "rows": "删除的条数",
+    "size": "删除的条数",
     // ...
 }
                     </pre>

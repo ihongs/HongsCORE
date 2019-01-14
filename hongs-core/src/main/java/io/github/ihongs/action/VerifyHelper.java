@@ -78,7 +78,8 @@ public class VerifyHelper extends Verify {
              * 需要一个方式可以跳脱 required 和 repeated 限制.
              */
             String  ruls = (String) opts.remove("__rule__");
-            boolean skip = ruls.startsWith("$");
+            boolean skip = ruls  != null
+                        && ruls.startsWith("$");
             if(skip)ruls = ruls.substring ( 1 );
 
             opts.put("__conf__", conf);

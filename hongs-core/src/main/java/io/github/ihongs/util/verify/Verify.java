@@ -1,12 +1,9 @@
 package io.github.ihongs.util.verify;
 
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import static io.github.ihongs.util.verify.Rule.BLANK;
 import static io.github.ihongs.util.verify.Rule.BREAK;
-import static io.github.ihongs.util.verify.Rule.UNDEF;
-import java.lang.reflect.Method;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -19,7 +16,14 @@ import java.util.LinkedHashMap;
  * 数据校验助手
  * @author Hongs
  *
- * <p>Java8 中利用 Ruly 使用函数式, 可简化代码, 如:</p>
+ * <p>
+ * 校验过程中的状态全部通过参数传递,
+ * 如果绑定的规则内也不存储过程状态,
+ * 那就是整体线程安全的,
+ * 可以一次构建反复使用.
+ * </p>
+ *
+ * <p>Java 8 中用函数式可简化代码:</p>
  * <pre>
  *  values = new Verify()
  *      .addRule("f1", (v, w)->{
@@ -62,7 +66,7 @@ public class Verify {
      * @return
      */
     public Verify setRule(String name, Ruly... rule) {
-        rules.put(name, new ArrayList(Arrays.asList(rule)));
+        rules.put(name , new ArrayList(Arrays.asList(rule)));
         return this;
     }
 
@@ -78,7 +82,7 @@ public class Verify {
             rulez.addAll(Arrays.asList(rule));
             return   this;
         }
-        rules.put(name, new ArrayList(Arrays.asList(rule)));
+        rules.put(name , new ArrayList(Arrays.asList(rule)));
         return this;
     }
 
@@ -114,9 +118,9 @@ public class Verify {
             String     name  = et.getKey(  );
             Object     data  ;
 
-            data = Dict.get( values, UNDEF, Dict.splitKeys( name ) );
+            data = Dict.get( values, BLANK, Dict.splitKeys( name ) );
 
-            data = verify(values, cleans, wrongz, data, name, rulez);
+            data = verify(values, cleans, wrongz, rulez, name, data);
 
             if (prompt && ! wrongz.isEmpty()) {
                 break;
@@ -125,9 +129,6 @@ public class Verify {
                 break;
             } else
             if (data == BLANK) {
-                continue;
-            } else
-            if (data == UNDEF) {
                 continue;
             }
 
@@ -141,16 +142,33 @@ public class Verify {
         return cleans;
     }
 
-    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez)
+    /**
+     * 校验单个字段的值
+     * @param values
+     * @param cleans
+     * @param wrongz
+     * @param rulez
+     * @param name
+     * @param data
+     * @return
+     * @throws Wrongs
+     */
+    private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data)
     throws Wrongs {
-        Veriby veri = new Veriby ( this, values, cleans );
+        Veriby      veri ;
+        if (data == BLANK) {
+            data  = null ;
+            veri  = new Veriby(this, values, cleans, false);
+        } else {
+            veri  = new Veriby(this, values, cleans, true );
+        }
 
         int i = 0;
         int j =  rulez. size();
         for(Ruly rule : rulez) {
             i ++ ;
 
-            data = verify(wrongz, rule, veri, name, data);
+            data = verify( wrongz, veri, rule, name, data );
             if (data == BLANK) {
                 break;
             }
@@ -159,19 +177,35 @@ public class Verify {
             }
 
             if (rule instanceof Rulx) {
-                data = verify(values, cleans, wrongz, data, name, rulez.subList(i, j), (Rulx) rule, veri);
+                data = verify(values, cleans, wrongz, rulez.subList(i, j), name, data, veri, (Rulx) rule);
                 break;
             }
         }
         return  data ;
     }
 
-    private Object verify(Map values, Map cleans, Map wrongz, Object data, String name, List<Ruly> rulez, Rulx rule, Veri veri)
+    /**
+     * 校验字段的多个值
+     * @param values
+     * @param cleans
+     * @param wrongz
+     * @param rulez
+     * @param name
+     * @param data
+     * @param veri
+     * @param rule
+     * @return
+     * @throws Wrongs
+     */
+    private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data, Veri veri, Rulx rule)
     throws Wrongs {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
 
         // 将后面的规则应用于每一个值
+        if (data instanceof Object [ ]) {
+            data = Arrays.asList (data);
+        }
         if (data instanceof Collection) {
             int i3 = -1;
             for(Object data3 :  ( Collection )  data  ) {
@@ -182,7 +216,7 @@ public class Verify {
                 }
 
                 String name3 = name + "[" + i3 + "]";
-                data3 = verify(values, cleans, wrongz, data3, name3, rulez);
+                data3 = verify(values, cleans, wrongz, rulez, name3, data3);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -199,7 +233,7 @@ public class Verify {
                 }
 
                 String name3 = name + "." + e3.getKey();
-                data3 = verify(values, cleans, wrongz, data3, name3, rulez);
+                data3 = verify(values, cleans, wrongz, rulez, name3, data3);
                 if (data3 !=  BLANK) {
                     data2.add(data3);
                 } else if (prompt && !wrongz.isEmpty()) {
@@ -209,31 +243,19 @@ public class Verify {
         }
 
         // 完成后还需再次校验一下结果
-        return  remedy(wrongz, rule, veri, name, data2);
+        return  remedy(wrongz, veri, rule, name, data2);
     }
 
-    private Object verify(Map wrongz, Ruly rule, Veri veri, String name, Object data) {
-        // 通过方法注解预先排除特定值
-        Method m;
-        try {
-            m = rule.getClass().getMethod("verify", Object.class, Veri.class);
-        } catch (NoSuchMethodException|SecurityException e) {
-            throw new HongsExemption.Common(e);
-        }
-        if (m.isAnnotationPresent(Rule.NoUndef.class)) {
-            if (data == null || data == UNDEF) {
-                return  data;
-            }
-        }
-        if (m.isAnnotationPresent(Rule.NoEmpty.class)) {
-            if (data == null || data == UNDEF) {
-                return  data;
-            }
-            if (data.equals( "" )) {
-                return  null;
-            }
-        }
-
+    /**
+     * 校验取值
+     * @param wrongz
+     * @param veri
+     * @param rule
+     * @param name
+     * @param data
+     * @return
+     */
+    private Object verify(Map wrongz, Veri veri, Ruly rule, String name, Object data) {
         try {
             return rule.verify(data,veri);
         } catch (Wrong  w) {
@@ -249,15 +271,24 @@ public class Verify {
                     w.setLocalizedCaption(name);
                 }
             }
-            failed(wrongz, w , name);
+            fail(wrongz, w, name);
             return BLANK;
-        } catch (Wrongs w) {
-            failed(wrongz, w , name);
+        } catch (Wrongs  w) {
+            fail(wrongz, w, name);
             return BLANK;
         }
     }
 
-    private Object remedy(Map wrongz, Rulx rule, Veri veri, String name, Collection data) {
+    /**
+     * 校准集合
+     * @param wrongz
+     * @param veri
+     * @param rule
+     * @param name
+     * @param data
+     * @return
+     */
+    private Object remedy(Map wrongz, Veri veri, Rulx rule, String name, Collection data) {
         try {
             return rule.remedy(data,veri);
         } catch (Wrong  w) {
@@ -273,15 +304,21 @@ public class Verify {
                     w.setLocalizedCaption(name);
                 }
             }
-            failed(wrongz, w , name);
+            fail(wrongz, w, name);
             return BLANK;
-        } catch (Wrongs w) {
-            failed(wrongz, w , name);
+        } catch (Wrongs  w) {
+            fail(wrongz, w, name);
             return BLANK;
         }
     }
 
-    public static void failed(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {
+    /**
+     * 记录下层多个错误
+     * @param wrongz
+     * @param wrongs
+     * @param name
+     */
+    public static void fail(Map<String, Wrong> wrongz, Wrongs wrongs, String name) {
         for (Map.Entry<String, Wrong> et : wrongs.getWrongs().entrySet()) {
             String n = et.getKey(   );
             Wrong  e = et.getValue( );
@@ -289,7 +326,13 @@ public class Verify {
         }
     }
 
-    public static void failed(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
+    /**
+     * 记录现发现的错误
+     * @param wrongz
+     * @param wrong
+     * @param name
+     */
+    public static void fail(Map<String, Wrong> wrongz, Wrong  wrong , String name) {
             wrongz.put(name  , wrong);
     }
 

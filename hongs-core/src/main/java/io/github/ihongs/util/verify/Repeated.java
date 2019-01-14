@@ -1,7 +1,6 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,11 +35,10 @@ public class Repeated extends Rule implements Rulx {
      */
     @Override
     public Object verify(Object value, Veri watch) throws Wrong {
-        if (value == UNDEF) {
-            return   value;
-        }
-        if (value == null ) {
-            return new LinkedList( ) ;
+        if (value == null) {
+            return watch.isValued()
+                 ? new LinkedList()
+                 : BLANK;
         }
 
         if (value instanceof String) {
@@ -74,18 +72,20 @@ public class Repeated extends Rule implements Rulx {
                 return  a;
             }
 
-            throw  new Wrong("fore.form.repeated");
+            throw new Wrong ("fore.form.repeated");
         }
-        if (value instanceof Map) {
+
+        if (value instanceof Object [ ]) {
             return value;
         }
         if (value instanceof Collection) {
             return value;
         }
-        if (value instanceof Object[ ] ) {
-            return Arrays.asList((Object[]) value);
+        if (value instanceof Map) {
+            return value;
         }
-            throw  new Wrong("fore.form.repeated");
+
+            throw new Wrong ("fore.form.repeated");
     }
 
     /**

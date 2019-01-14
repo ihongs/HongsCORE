@@ -27,8 +27,12 @@ import java.util.regex.Pattern;
  */
 public class IsDate extends Rule {
     @Override
-    @Rule.NoEmpty
     public Object verify(Object value, Veri watch) throws Wrong {
+        // 跳过空值和空串
+        if (null == value || "".equals(value)) {
+            return  null;
+        }
+
         String typa = Synt.declare(getParam("__type__"), "");
         String type = Synt.declare(getParam(  "type"  ), "");
 

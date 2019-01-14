@@ -15,7 +15,7 @@ import org.junit.Test;
  *
  * @author Hongs
  */
-public class TestSynt extends TestCase {
+public class TestCmdletHelper extends TestCase {
 
     @BeforeClass
     public static void setUpClass() {
@@ -53,20 +53,6 @@ public class TestSynt extends TestCase {
             "!A"
         );
         System.out.println(Data.toString(opts));
-        
-        String a = new String("");
-        String b = new String("");
-        String c = a;
-        System.out.println("a == b: " + (a == b) + " a == c: " + (a == c) + " a equals b: " + (a.equals(b)));
-    }
-
-    @Test
-    public void testDeclare() {
-        String str;
-
-        str = "1.23e9";
-        long num = Synt.declare(str, 0L);
-        System.out.println(num);
     }
 
 }

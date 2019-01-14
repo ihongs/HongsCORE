@@ -15,8 +15,12 @@ import io.github.ihongs.util.Synt;
  */
 public class IsForm extends Rule {
     @Override
-    @Rule.NoEmpty
     public Object verify(Object value, Veri helper) throws Wrong {
+        // 跳过空值和空串
+        if (null == value || "".equals(value)) {
+            return  null;
+        }
+
         String conf = Synt.asString(getParam("conf"));
         String name = Synt.asString(getParam("form"));
         if (conf == null || "".equals(conf)) {

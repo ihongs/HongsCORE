@@ -16,11 +16,13 @@ public class Veriby implements Veri {
     private final Verify ver;
     private final Map values;
     private final Map cleans;
+    private final boolean valued;
 
-    public Veriby(Verify ver, Map values, Map cleans) {
+    public Veriby(Verify ver, Map values, Map cleans, boolean valued) {
         this.ver    =    ver;
         this.values = values;
         this.cleans = cleans;
+        this.valued = valued;
     }
 
     /**
@@ -41,6 +43,20 @@ public class Veriby implements Veri {
         return ver.isUpdate();
     }
 
+    /**
+     * 是否外部有赋值
+     *
+     * 因 Java 缺少 undefined,
+     * 而 null 无法再细分类型,
+     * 像 Optional,Required,Default 等是需要区分的.
+     * 
+     * @return 
+     */
+    @Override
+    public boolean isValued() {
+        return valued;
+    }
+    
     /**
      * 原始数据
      * @return

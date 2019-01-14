@@ -70,7 +70,7 @@ public class VerifyHelper extends Verify {
             Object  o;
 
             /**
-             * 一般情况下谈到的字段,
+             * 一般情况下的字段属性,
              * 要么是选填要么是必填,
              * 要么是单值要么是多值;
              * 但有时候可能要自定义,

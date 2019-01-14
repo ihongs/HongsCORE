@@ -1,10 +1,6 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Target;
 import java.util.Map;
 
 /**
@@ -23,26 +19,7 @@ public abstract class Rule implements Ruly {
      */
     public static final Object BREAK = Synt.LOOP.LAST;
 
-    /**
-     * 未定义值, 结束时将抛弃
-     */
-    public static final Object UNDEF = new String("");
-
-    /**
-     * 断言校验值不为 UNDEF 或 null
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public @interface NoUndef {}
-
-    /**
-     * 同 NoUndef 且空串时返回 null
-     */
-    @Retention(RetentionPolicy.RUNTIME)
-    @Target({ElementType.METHOD})
-    public @interface NoEmpty {}
-
-    private Map params = null;
+   private Map params = null;
 
     /**
      * 设置校验参数

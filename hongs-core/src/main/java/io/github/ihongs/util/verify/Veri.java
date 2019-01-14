@@ -19,6 +19,11 @@ public interface Veri {
     public boolean isPrompt();
 
     /**
+     * @return 有给值为 true
+     */
+    public boolean isValued();
+
+    /**
      * @return 待验证的数据
      */
     public Map getValues();

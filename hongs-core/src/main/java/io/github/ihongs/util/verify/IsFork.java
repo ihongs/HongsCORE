@@ -28,8 +28,12 @@ import java.util.Set;
  */
 public class IsFork extends Rule {
     @Override
-    @Rule.NoEmpty
     public Object verify(Object value, Veri watch) throws Wrong {
+        // 跳过空值和空串
+        if (null == value || "".equals(value)) {
+            return  null;
+        }
+
         // 如果像 id 一样只是基本字符组成则跳过
         // 也可通过直接通过 rule 参数不做此检查
         if (Synt.declare(getParam("pass-id"), false)) {

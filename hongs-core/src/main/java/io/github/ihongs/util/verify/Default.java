@@ -39,10 +39,10 @@ public class Default extends Rule {
              * 空串空值将设为默认值
              * 更新时没赋值将会跳过
              */
-            if (value != null && !"".equals(value)) {
+            if (value != null && !"".equals( value ) ) {
                 return value;
             }
-            if (value != UNDEF && watch.isUpdate()) {
+            if (watch.isUpdate() && !watch.isValued()) {
                 return BLANK;
             }
         } else {
@@ -51,10 +51,10 @@ public class Default extends Rule {
              * 空串空值将设为空对象
              * 更新时没赋值也会跳过
              */
-            if (value != null && !"".equals(value)) {
+            if (value != null && !"".equals( value ) ) {
                 return value;
             }
-            if (value != UNDEF && watch.isUpdate()) {
+            if (watch.isUpdate() && !watch.isValued()) {
                 return BLANK;
             } else {
                 return null ;

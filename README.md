@@ -1,12 +1,12 @@
 # HongsCORE framework for Java
 
-* 文档版本: 17.06.17
-* 软件版本: 0.4.0-20170617
+* 文档版本: 19.01.12
+* 软件版本: 0.4.0-20190112
 * 设计作者: 黄弘(Kevin Hongs)
 * 技术支持: kevin.hongs@gmail.com
 
 **HongsCORE** 即 **Hong's Common Object Requesting Engine**, 通用对象请求引擎, 拼凑的有些生硬. 在设计第一个原型框架时(PHP 版 2006 年), 我买了一台 Intel Core CPU 的笔记本电脑, 当时随意的给她取了个名字叫 Core, 后来觉得名字应该更有意义才扩展成了以上缩写.
-另一个原因是: 从最初的 PHP 版一直到现在的 Java 版, 我都有设计一个核心工厂类, 主要作用就是用于请求和管理唯一对象, 实现  Singleton (单例模式), 在需要某个对象时只管请求, 使对象的使用效率更高. 具体到这个 Java 版本中, 利用了 ThreadLocal, 和 Tomcat,Jetty 等 Servlet 容器的单实例多线程特性来实现行之有效的单例模式.
+另一个原因是: 从最初的 PHP 版一直到现在的 Java 版, 我都有设计一个核心工厂类, 主要作用就是用于请求和管理唯一对象, 实现  Singleton (单例模式), 在需要某个对象时只管请求, 使对象的使用效率更高. 具体到这个 Java 版本中, 利用了 ThreadLocal, 和 Tomcat,Jetty 等 Servlet 容器的单实例多线程特性来实现行之有效的单例模式 (根据实际情况分为全局单例和线程单例).
 
 ## 特性概叙
 
@@ -32,6 +32,10 @@
 
 > 被授权人义务：
 > 在软件和软件的副本中都必须包含版权声明和许可声明。
+
+## 类库依赖
+
+适用 Java 版本 JDK 1.6 及以上, 推荐使用 1.8; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; Javascript 及 CSS 部分默认依赖 jQuery,jQueryUI,Bootstrap 等, 更多参见 [**Powered By**](hongs-web/web/power.html).
 
 ## 使用方法
 
@@ -59,36 +63,56 @@
 
     JDK 下载地址: http://www.oracle.com/technetwork/java/javase/downloads/index.html
     MVN 下载地址: http://maven.apache.org/download.cgi
+    OpenJDK 地址: http://jdk.java.net/10/
 
-## 前端开发
+## 定制开发
+
+### 前端开发
 
 如果你是一位前端开发人员，别去想什么 Node.js,MongoDB 等 javascript 一统前后端的方案了, 你应该做的就是把体验做好, 神马增/删/改/查/接口/权限就不用费劲考虑了, 你只需:
 
-1. 登录系统，点击右上角菜单，进入"模块管理"
+1. 登录系统，点击右上角菜单，进入"模型矩阵"
 2. 点击左侧单元区的添加，输入名称等，点击下方提交即创建了一个单元
-3. 点击选中刚创建的单元，点击右边列表上方的创建按钮，输入表单名称
+3. 单击选中刚创建的单元，点击右边列表上方的创建按钮，输入表单名称
 4. 点击右侧列表的"+"可添添加字段，点击字段右上的"i"可以设置字段
 5. 完成后点击保存按钮，一个表单就设置好了
-6. 刷新页面，右上菜单就能看到刚添加的单元
-7. 点击单元，顶部菜单有表单项，尝试操作吧
+6. 刷新页面，左侧菜单就能看到刚添加的单元
+7. 展开单元，点击进入对应模块，尝试操作吧
 
 现在，你可以在 centra/data 或 centre/data 目录下添加一个以表单 ID 为名的目录，在其下添加以下文件即可重建页面体系：
 
     default.html     引导页面
+    defines.js       过程干预定制脚本（默认是空的）
     form.html        编辑表单
     form_adds.html   创建表单
     list.html        列表区块
     list_fork.html   选择区块
 
-一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。
+一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。您可以使用内置的 JS 框架和组件继续开发，这很简单(见 [**HongsCORE4JS**](hongs-web/web/static/assets/src/) 和 [**HongsCORE4JS Demo**](hongs-web/web/static/assets/pages/))，通过 defines.js 可微调大部分的细节。但也可以覆盖 default.html 完全定制整个页面，这样您可以随意选择自己习惯的 JS 和 CSS 库。
 
-## 后端开发
+如果觉得上述定制还不够随心所欲，可以在 /public 或 /static 目录下建立自己的前端子项目，用 Vue 或 React 等进行开发。需要注意，/public 下会追溯 index.html，这对那些用到 Route 的前端项目非常有利，而 /static 下默认并不支持。可以修改 /index.jsp 将网站根路径跳转到定制的子项目路径。
 
-> 与前端类似，在设置好模块后，可根据实际情况对特定请求动作覆盖开发，后续详细补充
+### 后端开发
 
-## 类库依赖
+后端与前端一样简单，如果只是小改、补充，可用 jsp 充当动作脚本，即写即用，无需编译和重启；亦可编译特定的 java 动作程序、模型程序对下层过程进行完全定制。
 
-适用 Java 版本 JDK 1.6 及以上, 推荐使用 1.7; Java 库依赖情况请参见各个 module 中 pom.xml 的 dependencies 部分; 亦可参见 [**Powered By**](hongs-web/web/power.html).
+一个表单资源默认有 search,create,update,delete 四个接口，具体输入输出方式参考下方 [运行规则](#运行规则) 章节。
+
+一个动作脚本即前端定制谈到的表单 ID 目录下的 \_\_main\_\_.jsp 文件，如果此文件存在，则对应资源的所有更新改查等操作均会转到此处，但仍然可以通过 ActionRunner 调用原始的动作程序，这时 \_\_main\_\_.jsp 充当一个过滤器的角色，可以通过 ActionHelper 对输入输出数据进行改写。
+
+想通过 java 进行更深入的定制开发也很简单，在包 io.github.ihongs.serv.centra (后台的叫 centra 公共的叫 centre) 下新建一个 Action 类，如 XxxAction.java，此类至少要提供一个公共的无参构造方法（不写就是默认有），通过类的注解 @Action("centra/xxx") 定义表单资源路径，通过方法注解 @Action("search") 定义动作路径名称。事实上这个类所在的包并非必须要是 io.github.ihongs.serv.centra 和 io.github.ihongs.serv.centre，只是默认会扫描这两个包而已，也可以通过 etc/defines.properties 中在 mount.serv 下增加包和类名，而其对应的访问路径是通过 @Action 注解来定义的。
+
+### 开发理念
+
+顺便说一下此系统的设计理念。迄今为止，我做了上十年的 OLTP/OLAP 开发，大部分时候就是面对数据结构来回的倒腾，因此，我就想为什么我要重复的写这些增删改查呢？这么多的业务逻辑有什么底层共性吗？万变不离其宗的宇宙终极规律我是没发现，但只要把应用范围缩小到一个特定的范围，**一般情况自动处理，特殊情况可以干预**，那么就能从占工作量大半的业务逻辑中抽身出来，从而可以去处理更多特别的事情。
+
+按照这个指导思想，想象流程就是从一个数据结构转换成另一个数据结构，数据流亦即结构流。比如从 URL `x?a=123&b[]=456&b[]=789` 转换成数据结构 `{a:123, b: [456,789]}` 再转成查询语句 `SELECT * FROM x WHERE a = 123 AND b IN (456, 789)`。把这个道理再扩大一点，如果在服务器这边拥有一个资源 x 的描述文件(scheme)，据此进行结构翻译（转换），那么这个概念还可以扩展到 HTML 的表单、列表、详情展示等。对这个 scheme 进一步丰富，还可以处理资源的关联、输入的校验、输出的处理等等。
+
+在这套系统里，这个 scheme 文件有两种：一是早期围绕关系数据库做的 [.db.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.db.xml)，结合数据库的表结构，来描述资源模型；另一个是后定义的 [.form.xml](hongs-core/src/main/resources/io/github/ihongs/config/default.form.xml) 配置，旨在完整的描述数据结构、枚举数据、校验规则，这主要是受到 Protobuf 的启发。后者衍生出了针对 lucene 的模型, 亦可用于 neo4j,mongodb 等。
+
+正确的解释并查询是一方面，但也需要在正确的存储后才能保障，故校验规则是这套体系里非常重要的部分。与别的校验框架理念并不相同，别人可能只在意数据能不能被许可往下传递，而这个系统更关注如何向下传递需要的数据。比如：传递过来一个文件，在这套系统并不仅仅关心这个文件的格式、尺寸对不对，更要处理存到哪里、如何组织 URL，如果是图片，可能还要按自定规则处理成缩略图。[Verify](hongs-core/src/main/java/io/github/ihongs/util/verify/Verify.java) 是校验入口，通过同包下的其他 Rule 类进行校验，也支持函数式的方式快速自定规则；另外利用 [VerifyHelper](hongs-core/src/main/java/io/github/ihongs/action/VerifyHelper.java) 可以将 .form.xml 中的设置"翻译"成实际的校验规则。
+
+这部分不太容易讲清，日后另行发文详细讨论。
 
 ## 文件体系
 
@@ -316,9 +340,9 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 字段名推荐:
 
-    id      主键, CHAR(20)
-    pid     父键, CHAR(20)
-    xx_id   外键, CHAR(20), xx为关联表缩写
+    id      主键, CHAR(16)
+    pid     父键, CHAR(16)
+    xx_id   外键, CHAR(16), xx为关联表缩写
     mtime   修改时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     ctime   创建时间, DATETIME,TIMESTAMP,BIGINT,INTEGER
     etime   截止时间, DATETIME,TIMESTAMP,BIGINT,INTEGER, 用于仓库层记录数据的失效时间, 避免用作应用层的业务到期时间

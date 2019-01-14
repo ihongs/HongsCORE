@@ -31,10 +31,8 @@ import java.util.Map;
  * 无 type 也无 rule 则同 type="string".
  * 无 required 时默认启用 Optional 规则,
  * 无 repeated 时默认启用 Ordinary 规则,
- * 但 required=""表示既无 Required 也无 Optional,
- * 同 repeated=""表示既无 Repeated 也无 Ordinary.
- * 依此规则 type="form" 或 rule 有 IsForm,Intact,
- * 或其他可接受集合类型取值时务必加上repeated="".
+ * 但 required="$" 表既无 Required 也无 Optional,
+ * 同 repeated="$" 表既无 Repeated 也无 Ordinary.
  * </p>
  *
  * @author Hongs
@@ -91,7 +89,7 @@ public class VerifyHelper extends Verify {
             }
 
             o = opts.remove("__required__");
-            if (! "".equals(o)) {
+            if (!"$".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
                     rule.config (opts);
@@ -104,7 +102,7 @@ public class VerifyHelper extends Verify {
             }
 
             o = opts.remove("__repeated__");
-            if (! "".equals(o)) {
+            if (!"$".equals(o)) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
                     rule.config (opts);

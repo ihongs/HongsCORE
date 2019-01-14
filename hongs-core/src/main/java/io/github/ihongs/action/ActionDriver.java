@@ -129,7 +129,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             //** 系统属性配置 **/
 
             Properties cnf = CoreConfig.getInstance("defines");
-            Core.SERVER_ID = cnf.getProperty("server.id","00");
+            Core.SERVER_ID = cnf.getProperty("server.id", "0");
 
             // 用于替换下面系统属性中的变量
             Map m = new HashMap();

@@ -321,8 +321,8 @@ function gainFlds(fields, area) {
         var name  = input.attr("name") || input.attr("data-fn");
         var type  = input.attr("type") || input.prop("tagName");
         var hint  = input.attr("placeholder");
-        var required = input.prop("required") || input.data("required") ? "true" : "";
-        var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "";
+        var required = input.prop("required") || input.data("required") ? "true" : "false";
+        var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "false";
         var params   = {};
 
         if (name.substr(0, 1) === "-") {

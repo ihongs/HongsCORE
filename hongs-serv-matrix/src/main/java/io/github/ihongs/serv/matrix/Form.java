@@ -597,21 +597,21 @@ public class Form extends Model {
         Map types = FormSet.getInstance().getEnum("__types__");
 
         for (Map fiel: conf) {
-            Element  item  = docm.createElement( "field" );
+            Element item = docm.createElement("field" );
             form.appendChild ( item );
             String s, n, t;
             s = (String) fiel.get("__text__");
-            item.setAttribute("text", s);
+            if (s != null) item.setAttribute("text", s);
             n = (String) fiel.get("__name__");
-            item.setAttribute("name", n);
+            if (n != null) item.setAttribute("name", n);
             t = (String) fiel.get("__type__");
-            item.setAttribute("type", t);
+            if (t != null) item.setAttribute("type", t);
             s = (String) fiel.get("__rule__");
-            item.setAttribute("rule", s);
-            s = Synt.declare(fiel.get("__required__"), "");
-            item.setAttribute("required", s);
-            s = Synt.declare(fiel.get("__repeated__"), "");
-            item.setAttribute("repeated", s);
+            if (s != null) item.setAttribute("rule", s);
+            s = (String) fiel.get("__required__");
+            if (s != null) item.setAttribute("required", s);
+            s = (String) fiel.get("__repeated__");
+            if (s != null) item.setAttribute("repeated", s);
 
             // 日期类型要指定存储格式
             if ("date".equals(types.get(t) )) {
@@ -699,7 +699,7 @@ public class Form extends Model {
             //** 构建枚举列表 **/
 
             if (select != null) {
-                Element  anum = docm.createElement("enum" );
+                Element anum = docm.createElement( "enum" );
                 root.appendChild ( anum );
                 anum.setAttribute("name" , n);
 

@@ -240,7 +240,7 @@ public class CmdletRunner implements Runnable
     /** 系统属性配置 **/
 
     CoreConfig cnf = CoreConfig.getInstance("defines");
-    Core.SERVER_ID = cnf.getProperty("server.id","00");
+    Core.SERVER_ID = cnf.getProperty("server.id", "0");
 
     Map m = new HashMap();
     m.put("SERVER_ID", Core.SERVER_ID);

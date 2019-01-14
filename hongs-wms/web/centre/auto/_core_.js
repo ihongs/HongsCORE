@@ -3,11 +3,11 @@
 /**
  * 设置当前用户ID
  */
-if (hsChkUri('centre') ) {
-    window.HsCUID = H$ ('%HsCUID');
+if (hsChkUri('centre')) {
+    window.HsCUID = H$('%HsCUID');
 } else {
-    delete window.HsCUID;
-    H$ ('%HsCUID', null);
+    window.HsCUID = null ;
+    H$ ( '%HsCUID', null);
 }
 
 /**

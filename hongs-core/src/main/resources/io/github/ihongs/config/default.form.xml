@@ -114,11 +114,19 @@
         <value code="time"><![CDATA[^\d{1,2}:\d{1,2}-\d{1,2}]]></value>
     </enum>
     <!--
-    <enum name="demo-enum">
-        <value code="1">名称1</value>
-        <value code="2">名称2</value>
-    </enum>
+        以下 form 的 field 节点上的属性,
+        name="@" 表示当前表单扩展配置(@ like Current), 不提供即为 @
+        required="$" 跳过必填选填校验($ like Skip), 不提供默认为选填
+        required="$" 跳过多值单值校验($ like Skip), 不提供默认为单值
+    //-->
+    <!--
     <form name="demo-form">
+        <field text="示例">
+            <param name="listable">?</param>
+            <param name="sortable">?</param>
+            <param name="findable">?</param>
+            <param name="nameable">?</param>
+        </field>
         <field name="str" text="文本" type="text,textarea,hidden,search,tel,url,email">
             <param name="minlength">100</param>
             <param name="maxlength">500</param>
@@ -167,5 +175,9 @@
             <param name="deforce">create,update,always,blanks</param>
         </field>
     </form>
+    <enum name="demo-enum">
+        <value code="1">名称1</value>
+        <value code="2">名称2</value>
+    </enum>
     //-->
 </root>

@@ -189,14 +189,6 @@ public class FormSet
       Element element2 = (Element)node;
       String  tagName2 = element2.getTagName();
 
-      if ("form".equals(tagName2))
-      {
-        String namz = element2.getAttribute("name");
-        if (namz == null) namz = "";
-        Map items = new LinkedHashMap();
-        this.parse(element2, items, null);
-        forms.put(namz, items);
-      } else
       if ("enum".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
@@ -205,10 +197,19 @@ public class FormSet
         this.parse(element2, null, items);
         enums.put(namz, items);
       } else
-      if ("field".equals(tagName2))
+      if ("form".equals(tagName2))
       {
         String namz = element2.getAttribute("name");
-        if (namz == null || "".equals(namz)) namz = "@"; // 表单参数缺省总叫 @
+        if (namz == null) namz = "";
+        Map items = new LinkedHashMap();
+        this.parse(element2, items, null);
+        forms.put(namz, items);
+      } else
+      if ("field".equals(tagName2))
+      {
+        String namz = element2.hasAttribute("name")
+                    ? element2.getAttribute("name")
+                    : "@"; // 缺省为当前表单扩展配置
         Map items = new LinkedHashMap();
         this.parse(element2, items, null);
         forms.put(namz, items);

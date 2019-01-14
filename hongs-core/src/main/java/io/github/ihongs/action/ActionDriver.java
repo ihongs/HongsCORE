@@ -210,18 +210,17 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             }
         }
 
-        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-            CoreLogger.debug(new StringBuilder("...")
-                .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
-                .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
-                .append("\r\n\tCORE_PATH   : ").append(Core.CORE_PATH)
-                .append("\r\n\tCONF_PATH   : ").append(Core.CONF_PATH)
-                .append("\r\n\tDATA_PATH   : ").append(Core.DATA_PATH)
-                .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
-                .append("\r\n\tSERV_HREF   : ").append(Core.SITE_HREF)
-                                               .append(Core.BASE_HREF)
-                .toString());
-        }
+        CoreLogger.getLogger(2 == (2 & Core.DEBUG) ? "hongs.log" : "hongs.out")
+                  .info(new StringBuilder("Http server is starting.")
+            .append("\r\n\tDEBUG       : ").append(Core.DEBUG)
+            .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
+            .append("\r\n\tCORE_PATH   : ").append(Core.CORE_PATH)
+            .append("\r\n\tCONF_PATH   : ").append(Core.CONF_PATH)
+            .append("\r\n\tDATA_PATH   : ").append(Core.DATA_PATH)
+            .append("\r\n\tBASE_PATH   : ").append(Core.BASE_PATH)
+            .append("\r\n\tSERV_HREF   : ").append(Core.SITE_HREF)
+                                           .append(Core.BASE_HREF)
+            .toString());
     }
 
     /**
@@ -233,15 +232,14 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
             return;
         }
 
-        if (0 != Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-            Core core = Core.GLOBAL_CORE;
-            long time = System.currentTimeMillis() - Core.STARTS_TIME;
-            CoreLogger.debug(new StringBuilder("...")
-                .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
-                .append("\r\n\tObjects     : ").append(core.toString())
-                .append("\r\n\tRuntime     : ").append(Tool.humanTime(time))
-                .toString());
-        }
+        Core core = Core.GLOBAL_CORE;
+        long time = System.currentTimeMillis() - Core.STARTS_TIME;
+        CoreLogger.getLogger(2 == (2 & Core.DEBUG) ? "hongs.log" : "hongs.out")
+                  .info(new StringBuilder("Http server has stopped.")
+            .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
+            .append("\r\n\tObjects     : ").append(core.toString (    ))
+            .append("\r\n\tRuntime     : ").append(Tool.humanTime(time))
+            .toString());
 
         if (!SETUP) {
             return;

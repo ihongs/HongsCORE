@@ -114,10 +114,9 @@
         <value code="time"><![CDATA[^\d{1,2}:\d{1,2}-\d{1,2}]]></value>
     </enum>
     <!--
-        以下 form 的 field 节点上的属性,
-        name="@" 表示当前表单扩展配置(@ like Current), 不提供即为 @
-        required="$" 跳过必填选填校验($ like Skip), 不提供默认为选填
-        required="$" 跳过多值单值校验($ like Skip), 不提供默认为单值
+        form 的 field 节点上的属性,
+        name 为 @ 表示当前表单扩展配置, 不设置即为 @,
+        rule 以 $ 开头则跳过校验 required,required.
     //-->
     <!--
     <form name="demo-form">

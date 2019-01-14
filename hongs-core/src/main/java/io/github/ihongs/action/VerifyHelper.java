@@ -28,11 +28,10 @@ import java.util.Map;
  * <h3>特别注意</h3>
  * <p>
  * 在 form.xml 中,
- * 无 type 也无 rule 则同 type="string".
+ * 无 type 也无 rule 则同 type="string",
  * 无 required 时默认启用 Optional 规则,
  * 无 repeated 时默认启用 Ordinary 规则,
- * 但 required="$" 表既无 Required 也无 Optional,
- * 同 repeated="$" 表既无 Repeated 也无 Ordinary.
+ * 但 rule 以 $ 开头则完全使用自定义规则, 不理会上述定义.
  * </p>
  *
  * @author Hongs
@@ -70,6 +69,18 @@ public class VerifyHelper extends Verify {
             Map     opts =  new HashMap( optz );
             Object  o;
 
+            /**
+             * 一般情况下谈到的字段,
+             * 要么是选填要么是必填,
+             * 要么是单值要么是多值;
+             * 但有时候可能要自定义,
+             * 比如希望是有序的列表,
+             * 需要一个方式可以跳脱 required 和 repeated 限制.
+             */
+            String  ruls = (String) opts.remove("__rule__");
+            boolean skip = ruls.startsWith("$");
+            if(skip)ruls = ruls.substring ( 1 );
+
             opts.put("__conf__", conf);
             opts.put("__form__", form);
             opts.put("__name__", name);
@@ -89,7 +100,7 @@ public class VerifyHelper extends Verify {
             }
 
             o = opts.remove("__required__");
-            if (!"$".equals(o)) {
+            if (! skip) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
                     rule.config (opts);
@@ -102,7 +113,7 @@ public class VerifyHelper extends Verify {
             }
 
             o = opts.remove("__repeated__");
-            if (!"$".equals(o)) {
+            if (! skip) {
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
                     rule.config (opts);
@@ -115,8 +126,8 @@ public class VerifyHelper extends Verify {
             }
 
             // 可设多个规则, 缺省情况按字符串处理
-            List<String> list = Synt.toList (opts.get("__rule__"));
-            if (list == null || list.isEmpty( )) {
+            String[] list;
+            if (ruls == null || ruls.length() == 0) {
                 String type = (String) opts.get("__type__");
                 String item ;
                 if (ts.containsKey(type)) {
@@ -134,12 +145,18 @@ public class VerifyHelper extends Verify {
                     item = "IsString";
                 }
 
-                list = Synt.listOf(item);
+                list = new String[]{item};
+            } else {
+                list = ruls.split("[,;]");
             }
 
             // 添加规则实例
-            for (String item : list) {
-                if (! item.contains(".")) {
+            for(String item : list) {
+                item = item.trim();
+                if ( item.length() == 0) {
+                    continue;
+                }
+                if (!item.contains(".")) {
                     item = Rule.class.getPackage().getName()+"."+item;
                 }
 

@@ -126,8 +126,9 @@ public class VerifyHelper extends Verify {
             }
 
             // 可设多个规则, 缺省情况按字符串处理
-            String[] list;
-            if (ruls == null || ruls.length() == 0) {
+            String [ ] list ;
+            if (  ruls == null  ||  ruls.length(  ) == 0  ) {
+            if (! skip) {
                 String type = (String) opts.get("__type__");
                 String item ;
                 if (ts.containsKey(type)) {
@@ -146,6 +147,9 @@ public class VerifyHelper extends Verify {
                 }
 
                 list = new String[]{item};
+            } else {
+                list = new String[]{/**/};
+            }
             } else {
                 list = ruls.split("[,;]");
             }

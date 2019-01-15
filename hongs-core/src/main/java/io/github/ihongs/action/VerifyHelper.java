@@ -29,8 +29,9 @@ import java.util.Map;
  * 在 form.xml 中,
  * 无 type 也无 rule 则同 type="string",
  * 无 required 时默认启用 Optional 规则,
- * 无 repeated 时默认启用 Ordinary 规则,
- * 但 rule 以 $ 开头则完全使用自定义规则, 不理会上述定义.
+ * 无 repeated 时默认启用 Ordinary 规则;
+ * 但 rule 以 $ 开头则完全使用自定义规则,
+ * 也不自动绑定 default 和 defiant 规则.
  * </p>
  *
  * @author Hongs

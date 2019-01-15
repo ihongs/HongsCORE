@@ -41,7 +41,7 @@ public class IsForm extends Rule {
          */
         Set <String> flag = Synt.toTerms(getParam("form-in"));
         if (flag != null) {
-            if (flag.contains("craete")) {
+            if (flag.contains("create")) {
                 hlpr.isUpdate(false);
             } else
             if (flag.contains("update")) {

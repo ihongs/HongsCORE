@@ -15,7 +15,7 @@ import io.github.ihongs.util.Synt;
  */
 public class IsForm extends Rule {
     @Override
-    public Object verify(Object value, Veri helper) throws Wrong {
+    public Object verify(Object value, Veri helper) throws Wrong, Wrongs {
         // 跳过空值和空串
         if (null == value || "".equals(value)) {
             return  null;
@@ -30,14 +30,14 @@ public class IsForm extends Rule {
             name = Synt.asString(getParam("__name__"));
         }
 
+        VerifyHelper hlpr = new VerifyHelper();
+        hlpr.isUpdate(helper.isUpdate());
+        hlpr.isPrompt(helper.isPrompt());
         try {
-            VerifyHelper hlpr = new VerifyHelper();
-            hlpr.addRulesByForm(conf, name );
-            hlpr.isUpdate(helper.isUpdate());
-            hlpr.isPrompt(helper.isPrompt());
-            return hlpr.verify (Synt.asMap(value));
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
+            hlpr.addRulesByForm ( conf, name );
+        } catch ( HongsException ex) {
+            throw ex.toExemption(  );
         }
+        return  hlpr.verify(Synt.asMap(value));
     }
 }

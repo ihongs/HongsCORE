@@ -6,7 +6,6 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
-//import org.apache.lucene.search.TermRangeQuery;
 
 /**
  *
@@ -60,32 +59,44 @@ public class SearchQuery implements IQuery {
 
     @Override
     public Query get(String k, Object v) {
+        QueryParser qp = new QueryParser(k, ana != null ? ana : new StandardAnalyzer());
+
+        /**
+         * 无法给字段存 null,
+         * 故字段无值即 null,
+         * 那么可以利用 Lucene 语法查空区间.
+         */
+        String s;
+        if (v == null) {
+            des= true;
+            s =  "[* TO *]" ;
+        } else {
+            s = v.toString();
+        }
+
+        // 是否转义
+        if (des == null || !des) {
+            s = QueryParser.escape(s);
+        }
+
+        // 词间关系
+        if (dor == null || !dor) {
+            qp.setDefaultOperator(QueryParser.AND_OPERATOR);
+        } else {
+            qp.setDefaultOperator(QueryParser. OR_OPERATOR);
+        }
+
+        // 其他设置
+        if (phr != null) qp.setPhraseSlop       (phr);
+        if (fms != null) qp.setFuzzyMinSim      (fms);
+        if (fpl != null) qp.setFuzzyPrefixLength(fpl);
+        if (art != null) qp.setAnalyzeRangeTerms(art);
+        if (alw != null) qp.setAllowLeadingWildcard     (alw);
+        if (let != null) qp.setLowercaseExpandedTerms   (let);
+        if (epi != null) qp.setEnablePositionIncrements (epi);
+        if (agp != null) qp.setAutoGeneratePhraseQueries(agp);
+
         try {
-            QueryParser qp = new QueryParser(k, ana != null ? ana : new StandardAnalyzer());
-
-            // 是否转义
-            String s = v.toString( );
-            if (des == null || !des) {
-                s = QueryParser.escape (s);
-            }
-
-            // 词间关系
-            if (dor == null || !dor) {
-                qp.setDefaultOperator(QueryParser.AND_OPERATOR);
-            } else {
-                qp.setDefaultOperator(QueryParser. OR_OPERATOR);
-            }
-
-            // 其他设置
-            if (phr != null) qp.setPhraseSlop       (phr);
-            if (fms != null) qp.setFuzzyMinSim      (fms);
-            if (fpl != null) qp.setFuzzyPrefixLength(fpl);
-            if (art != null) qp.setAnalyzeRangeTerms(art);
-            if (alw != null) qp.setAllowLeadingWildcard     (alw);
-            if (let != null) qp.setLowercaseExpandedTerms   (let);
-            if (epi != null) qp.setEnablePositionIncrements (epi);
-            if (agp != null) qp.setAutoGeneratePhraseQueries(agp);
-
             Query  q2 = qp.parse(s);
             return q2 ;
         } catch (ParseException ex) {

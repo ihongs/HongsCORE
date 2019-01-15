@@ -1665,20 +1665,16 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             qry.add(qay.build(), BooleanClause.Occur.MUST );
         }
 
-        if (m.containsKey(Cnst.IS_REL)) {
+        if (m.containsKey(Cnst.IS_REL)) { // Is
             String a = Synt.asString(m.remove(Cnst.IS_REL));
-            SearchQuery  p = new SearchQuery ( );
-            p.analyzer  (new StandardAnalyzer());
-            p.smartParse(true );
-            p.lightMatch(false);
-            if ("FILL".equalsIgnoreCase(a) ) {
-                qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST);
+            if ("FILL".equalsIgnoreCase(a)) {
+                qry.add(new SearchQuery().get(k, null), BooleanClause.Occur.MUST);
             } else
-            if ("NULL".equalsIgnoreCase(a) ) {
-                qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.MUST_NOT);
+            if ("NULL".equalsIgnoreCase(a)) {
+                qry.add(new SearchQuery().get(k, null), BooleanClause.Occur.MUST_NOT);
             } else
-            if ("FINE".equalsIgnoreCase(a) ) {
-                qry.add(p.get(k, "[* TO *]"), BooleanClause.Occur.SHOULD);
+            if ("FINE".equalsIgnoreCase(a)) {
+                qry.add(new SearchQuery().get(k, null), BooleanClause.Occur.SHOULD);
             }
         }
 

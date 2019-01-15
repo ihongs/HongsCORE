@@ -77,30 +77,30 @@ public class VerifyHelper extends Verify {
              * 需要一个方式可以跳脱 required 和 repeated 限制.
              */
             String  ruls = (String) opts.remove("__rule__");
-            boolean skip = ruls  != null
-                        && ruls.startsWith("$");
-            if(skip)ruls = ruls.substring ( 1 );
+            boolean skip = ruls != null && ruls.startsWith("$");
 
             opts.put("__conf__", conf);
             opts.put("__form__", form);
             opts.put("__name__", name);
 
-            o = opts.get   ("defiant");
-            if (o != null) {
-                Rule rule = new Defiant();
-                rule.config (opts);
-                this.addRule(name , rule);
-            }
+            if (skip) {
+                ruls = ruls.substring( 1 );
+            } else {
+                o = opts.get   ("defiant");
+                if (o != null) {
+                    Rule rule = new Defiant();
+                    rule.config (opts);
+                    this.addRule(name , rule);
+                }
 
-            o = opts.get   ("default");
-            if (o != null) {
-                Rule rule = new Default();
-                rule.config (opts);
-                this.addRule(name , rule);
-            }
+                o = opts.get   ("default");
+                if (o != null) {
+                    Rule rule = new Default();
+                    rule.config (opts);
+                    this.addRule(name , rule);
+                }
 
-            o = opts.remove("__required__");
-            if (! skip) {
+                o = opts.remove("__required__");
                 if (Synt.declare(o, false)) {
                     Rule rule = new Required();
                     rule.config (opts);
@@ -110,10 +110,8 @@ public class VerifyHelper extends Verify {
                     rule.config (opts);
                     this.addRule(name , rule );
                 }
-            }
 
-            o = opts.remove("__repeated__");
-            if (! skip) {
+                o = opts.remove("__repeated__");
                 if (Synt.declare(o, false)) {
                     Rule rule = new Repeated();
                     rule.config (opts);
@@ -130,8 +128,7 @@ public class VerifyHelper extends Verify {
             if (ruls == null || ruls.length() == 0) {
             if (skip) {
                 continue ; // 完全跳过其他的校验
-            }
-            else {
+            } else {
                 String type = (String) opts.get("__type__");
                 String item ;
                 if (ts.containsKey(type)) {
@@ -150,8 +147,8 @@ public class VerifyHelper extends Verify {
                 }
 
                 list = new String[]{item};
-            } }
-            else {
+            }
+            } else {
                 list = ruls.split("[,;]");
             }
 

@@ -42,8 +42,6 @@ public class VerifyInvoker implements FilterInvoker {
 
         // 准备数据
         Map<String, Object> dat = helper.getRequestData();
-        Object  id = dat.get(Cnst.ID_KEY);
-        String  at = chains.getAction(  );
         if (mode == -1) {
             Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
             if (ab != null) {
@@ -58,10 +56,13 @@ public class VerifyInvoker implements FilterInvoker {
         if (type == -1) {
             Boolean up = Synt.asBool(helper.getAttribute(Cnst.UPDATE_MODE));
             if (up == null) {
-                type = at.endsWith("/update") || (null!=id&&!"".equals(id))
-                          ? (byte) 1 : (byte) 0;
+                Object hd = chains.getHandle(  );
+                Object id = dat.get(Cnst.ID_KEY);
+                type = /***/ "update".equals(hd)
+                  || (null!=id && !"".equals(id))
+                          ? (byte) 1 : (byte) 0 ;
             } else {
-                type = up ? (byte) 1 : (byte) 0;
+                type = up ? (byte) 1 : (byte) 0 ;
             }
         }
         boolean prp = mode <= 0 ;

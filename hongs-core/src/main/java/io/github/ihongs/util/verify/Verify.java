@@ -125,10 +125,10 @@ public class Verify {
             if (prompt && ! wrongz.isEmpty()) {
                 break;
             } else
-            if (data == BREAK) {
+            if (BREAK == data) {
                 break;
             } else
-            if (data == BLANK) {
+            if (BLANK == data) {
                 continue;
             }
 
@@ -169,10 +169,10 @@ public class Verify {
             i ++ ;
 
             data = verify( wrongz, veri, rule, name, data );
-            if (data == BLANK) {
+            if (BREAK == data) {
                 break;
             }
-            if (data == BREAK) {
+            if (BLANK == data) {
                 break;
             }
 
@@ -215,13 +215,20 @@ public class Verify {
                     continue;
                 }
 
-                String name3 = name + "[" + i3 + "]";
+                String name3 = name + "[" + i3 + "]" ;
                 data3 = verify(values, cleans, wrongz, rulez, name3, data3);
-                if (data3 !=  BLANK) {
-                    data2.add(data3);
-                } else if (prompt && !wrongz.isEmpty()) {
-                    return BLANK;
+
+                if (prompt && !wrongz.isEmpty()) {
+                    return BREAK;
                 }
+                if (BREAK == data3) {
+                    return BREAK;
+                }
+                if (BLANK == data3) {
+                    continue;
+                }
+
+                data2.add(data3);
             }
         } else if (data instanceof Map) {
             for(Object i3 : ( ( Map ) data).entrySet()) {
@@ -234,11 +241,18 @@ public class Verify {
 
                 String name3 = name + "." + e3.getKey();
                 data3 = verify(values, cleans, wrongz, rulez, name3, data3);
-                if (data3 !=  BLANK) {
-                    data2.add(data3);
-                } else if (prompt && !wrongz.isEmpty()) {
-                    return BLANK;
+
+                if (prompt && !wrongz.isEmpty()) {
+                    return BREAK;
                 }
+                if (BREAK == data3) {
+                    return BREAK;
+                }
+                if (BLANK == data3) {
+                    continue;
+                }
+
+                data2.add(data3);
             }
         }
 

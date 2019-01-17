@@ -3,13 +3,10 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.util.Synt;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.Map;
 
 /**
  * 多值约束

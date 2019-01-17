@@ -23,15 +23,15 @@ public class IsString extends Rule {
     @Override
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值
-        if (null== value) {
-            return AVOID;
+        if (null == value) {
+            return  AVOID;
         }
 
         String str = Synt.declare(value, "");
 
         // 文本清理
         Set<String> sa = Synt.toSet(getParam("strip"));
-        if (sa != null) {
+        if (null != sa) {
             if (sa.contains("cros")) {
                 str = Tool.stripTags(str); // 清除脚本
             }

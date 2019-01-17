@@ -90,9 +90,7 @@ public class VerifyInvoker implements FilterInvoker {
 
             VerifyHelper ver = new VerifyHelper();
             ver.addRulesByForm (conf, form, data);
-            ver.isPrompt(prp);
-            ver.isUpdate(upd);
-            Map vls = ver.verify(dat);
+            Map vls = ver.verify(dat, upd, prp);
             if (cln)  dat.clear (   );
             dat.putAll(  vls);
         } catch (Wrongs  err) {

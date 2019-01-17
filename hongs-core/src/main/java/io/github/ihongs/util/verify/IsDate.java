@@ -27,10 +27,10 @@ import java.util.regex.Pattern;
  */
 public class IsDate extends Rule {
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
-        if (null == value || "".equals(value)) {
-            return  null;
+        if (null== value || "".equals(value)) {
+            return AVOID;
         }
 
         String typa = Synt.declare(getParam("__type__"), "");

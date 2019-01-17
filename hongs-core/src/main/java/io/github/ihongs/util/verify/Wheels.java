@@ -11,52 +11,21 @@ import java.util.Map;
  *
  * @author Hongs
  */
-public class Veriby implements Veri {
+public class Wheels implements Wheel {
 
-    private final Verify ver;
     private final Map values;
     private final Map cleans;
-    private final boolean valued;
+    private final boolean update;
+    private final boolean prompt;
+    private       boolean valued;
 
-    public Veriby(Verify ver, Map values, Map cleans, boolean valued) {
-        this.ver    =    ver;
+    public Wheels(Map values, Map cleans, boolean update, boolean prompt) {
         this.values = values;
         this.cleans = cleans;
-        this.valued = valued;
+        this.update = update;
+        this.prompt = prompt;
     }
 
-    /**
-     * 是否为速断模式, 同 Verify.isPrompt
-     * @return
-     */
-    @Override
-    public boolean isPrompt() {
-        return ver.isPrompt();
-    }
-
-    /**
-     * 是否为更新模式, 同 Verify.isUpdate
-     * @return
-     */
-    @Override
-    public boolean isUpdate() {
-        return ver.isUpdate();
-    }
-
-    /**
-     * 是否外部有赋值
-     *
-     * 因 Java 缺少 undefined,
-     * 而 null 无法再细分类型,
-     * 像 Optional,Required,Default 等是需要区分的.
-     * 
-     * @return 
-     */
-    @Override
-    public boolean isValued() {
-        return valued;
-    }
-    
     /**
      * 原始数据
      * @return
@@ -73,6 +42,46 @@ public class Veriby implements Veri {
     @Override
     public Map getCleans() {
         return cleans;
+    }
+
+    /**
+     * 是否为更新模式
+     * @return
+     */
+    @Override
+    public boolean isUpdate() {
+        return update;
+    }
+
+    /**
+     * 是否为速断模式
+     * @return
+     */
+    @Override
+    public boolean isPrompt() {
+        return prompt;
+    }
+
+    /**
+     * 是否外部有赋值
+     *
+     * 因 Java 缺少 undefined,
+     * 而 null 无法再细分类型,
+     * 像 Optional,Required,Default 等是需要区分的.
+     *
+     * @return
+     */
+    @Override
+    public boolean isValued() {
+        return valued;
+    }
+
+    /**
+     * 设置是否有赋值
+     * @param valued
+     */
+    public void isValued(boolean valued) {
+        this.valued = valued;
     }
 
 }

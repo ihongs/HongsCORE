@@ -2,8 +2,6 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
-import static io.github.ihongs.util.verify.Rule.BLANK;
-import static io.github.ihongs.util.verify.Rule.BREAK;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import static io.github.ihongs.util.verify.Rule.BLANK;
+import static io.github.ihongs.util.verify.Rule.AVOID;
 
 /**
  * 数据校验助手
@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
  *          return v != null ? v : Rule.BLANK;
  *      })
  *      .addRule("f2", (v, w)->{
- *          return v != null ? v : Rule.BREAK;
+ *          return v != null ? v : Rule.AVOID;
  *      })
  *      .verify(values);
  * </pre>
@@ -86,49 +86,35 @@ public class Verify {
         return this;
     }
 
-    public boolean isUpdate() {
-        return update;
-    }
-    public boolean isPrompt() {
-        return prompt;
-    }
-    public void isUpdate(boolean update) {
-        this.update = update;
-    }
-    public void isPrompt(boolean prompt) {
-        this.prompt = prompt;
-    }
-
     /**
      * 校验数据
      * @param values
+     * @param update
+     * @param prompt
      * @return
      * @throws Wrongs
      */
-    public Map verify(Map values) throws Wrongs {
-        Map<String, Wrong > wrongz = new LinkedHashMap();
+    public Map verify(Map values, boolean update, boolean prompt) throws Wrongs {
+        if (values == null) values = new HashMap();
         Map<String, Object> cleans = new LinkedHashMap();
+        Map<String, Wrong > wrongz = new LinkedHashMap();
+        Wheels veriby = new Wheels(values, cleans, update,prompt);
 
-        if (values == null) {
-            values =  new HashMap();
-        }
-
-        for(Map.Entry<String , List<Ruly>> et : rules.entrySet() ) {
+        for(Map.Entry<String , List<Ruly>> et : rules.entrySet()) {
             List<Ruly> rulez = et.getValue();
             String     name  = et.getKey(  );
             Object     data  ;
 
-            data = Dict.get( values, BLANK, Dict.splitKeys( name ) );
-
-            data = verify(values, cleans, wrongz, rulez, name, data);
+            data = Dict.get(values, AVOID, Dict.splitKeys(name) );
+            data = verify(values, cleans, wrongz, veriby, name, data, rulez);
 
             if (prompt && ! wrongz.isEmpty()) {
                 break;
             } else
-            if (BREAK == data) {
-                break;
-            } else
             if (BLANK == data) {
+                continue;
+            } else
+            if (AVOID == data) {
                 continue;
             }
 
@@ -153,35 +139,41 @@ public class Verify {
      * @return
      * @throws Wrongs
      */
-    private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data)
+    private Object verify(Map values, Map cleans, Map wrongz, Wheels veri, String name, Object data, List<Ruly> rulez)
     throws Wrongs {
-        Veriby      veri ;
-        if (data == BLANK) {
-            data  = null ;
-            veri  = new Veriby(this, values, cleans, false);
-        } else {
-            veri  = new Veriby(this, values, cleans, true );
-        }
-
         int i = 0;
         int j =  rulez. size();
         for(Ruly rule : rulez) {
             i ++ ;
 
-            data = verify( wrongz, veri, rule, name, data );
-            if (BREAK == data) {
-                break;
+            Object dist = verify(wrongz, veri, rule, name, data);
+
+            if (BLANK == dist) {
+                return  BLANK;
             }
-            if (BLANK == data) {
-                break;
+            if (AVOID != dist) {
+                data   = dist;
             }
 
             if (rule instanceof Rulx) {
-                data = verify(values, cleans, wrongz, rulez.subList(i, j), name, data, veri, (Rulx) rule);
+            if (AVOID != dist) {
+                data   = verify(values, cleans, wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
+            }
                 break;
             }
         }
-        return  data ;
+
+        /**
+         * 未给值且为更新
+         * 则跳过当前取值
+         */
+        if (AVOID == data) {
+        if (veri.isUpdate( ) ) {
+            return AVOID;
+        }
+            return null ;
+        }
+            return data ;
     }
 
     /**
@@ -197,7 +189,7 @@ public class Verify {
      * @return
      * @throws Wrongs
      */
-    private Object verify(Map values, Map cleans, Map wrongz, List<Ruly> rulez, String name, Object data, Veri veri, Rulx rule)
+    private Object verify(Map values, Map cleans, Map wrongz, Wheels veri, String name, Object data, List<Ruly> rulez, Rulx rule)
     throws Wrongs {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
@@ -215,17 +207,17 @@ public class Verify {
                     continue;
                 }
 
-                String name3 = name + "[" + i3 + "]" ;
-                data3 = verify(values, cleans, wrongz, rulez, name3, data3);
+                String name3 = name + "[" + i3 + "]";
+                Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
                 if (prompt && !wrongz.isEmpty()) {
-                    return BREAK;
+                    return BLANK;
                 }
-                if (BREAK == data3) {
-                    return BREAK;
-                }
-                if (BLANK == data3) {
+                if (BLANK == dist3) {
                     continue;
+                }
+                if (AVOID != dist3) {
+                    data3  = dist3;
                 }
 
                 data2.add(data3);
@@ -233,23 +225,24 @@ public class Verify {
         } else if (data instanceof Map) {
             for(Object i3 : ( ( Map ) data).entrySet()) {
                 Map.Entry e3 = (Map.Entry) i3;
+                Object    k3 = e3.getKey  ( );
                 Object data3 = e3.getValue( );
 
                 if (data3 == null || skips.contains(data3)) {
                     continue;
                 }
 
-                String name3 = name + "." + e3.getKey();
-                data3 = verify(values, cleans, wrongz, rulez, name3, data3);
+                String name3 = name + "." + k3 + "" ;
+                Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
                 if (prompt && !wrongz.isEmpty()) {
-                    return BREAK;
+                    return BLANK;
                 }
-                if (BREAK == data3) {
-                    return BREAK;
-                }
-                if (BLANK == data3) {
+                if (BLANK == dist3) {
                     continue;
+                }
+                if (AVOID != dist3) {
+                    data3  = dist3;
                 }
 
                 data2.add(data3);
@@ -269,7 +262,8 @@ public class Verify {
      * @param data
      * @return
      */
-    private Object verify(Map wrongz, Veri veri, Ruly rule, String name, Object data) {
+    private Object verify(Map wrongz, Wheels veri, Ruly rule, String name, Object data) {
+        veri.isValued(data != AVOID);
         try {
             return rule.verify(data,veri);
         } catch (Wrong  w) {
@@ -302,7 +296,8 @@ public class Verify {
      * @param data
      * @return
      */
-    private Object remedy(Map wrongz, Veri veri, Rulx rule, String name, Collection data) {
+    private Object remedy(Map wrongz, Wheels veri, Rulx rule, String name, Collection data) {
+        veri.isValued(data != AVOID);
         try {
             return rule.remedy(data,veri);
         } catch (Wrong  w) {

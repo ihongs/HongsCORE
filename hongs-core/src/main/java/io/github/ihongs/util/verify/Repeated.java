@@ -34,7 +34,7 @@ public class Repeated extends Rule implements Rulx {
      * @throws Wrong
      */
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         if (value == null) {
             return watch.isValued()
                  ? new LinkedList()
@@ -47,30 +47,11 @@ public class Repeated extends Rule implements Rulx {
 
             // 正则拆分
             s = Synt.asString( getParam("split") );
-            if (s != null) {
-                List<String> a = new LinkedList( );
-                Matcher m = Pattern.compile( s )
-                                   .matcher( v );
-                int e , b = 0;
-                while ( m.find ()) {
-                    e = m.start();
-                    a.add(v.substring(b, e));
-                    b = m.end  ();
-                }   a.add(v.substring(b   ));
-                return  a;
-            }
+            if (s != null) 
 
             // 普通拆分
             s = Synt.asString( getParam("slice") );
-            if (s != null) {
-                List<String> a = new LinkedList( );
-                int e , b = 0;
-                while ((e = v.indexOf(s, b))>-1) {
-                    a.add(v.substring(b, e));
-                    b = e + s.length (    ) ;
-                }   a.add(v.substring(b   ));
-                return  a;
-            }
+            if (s != null) 
 
             throw new Wrong ("fore.form.repeated");
         }
@@ -96,7 +77,7 @@ public class Repeated extends Rule implements Rulx {
      * @throws Wrong
      */
     @Override
-    public Object remedy(Collection value, Veri watch) throws Wrong {
+    public Object remedy(Collection value, Wheel watch) throws Wrong {
         // 多个值的数量限制
         int n, c = value.size();
         n = Synt.declare(getParam("minrepeat"), 0);

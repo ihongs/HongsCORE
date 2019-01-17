@@ -14,6 +14,6 @@ public interface Ruly {
      * @throws Wrong
      * @throws Wrongs
      */
-    public Object verify(Object value, Veri watch) throws Wrong, Wrongs;
+    public Object verify(Object value, Wheel watch) throws Wrong, Wrongs;
 
 }

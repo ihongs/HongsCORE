@@ -16,7 +16,7 @@ public interface Rulx extends Ruly {
      * @throws Wrong
      * @throws Wrongs 
      */
-    public Object remedy(Collection value, Veri watch) throws Wrong, Wrongs;
+    public Object remedy(Collection value, Wheel watch) throws Wrong, Wrongs;
     
     /**
      * 获取容器

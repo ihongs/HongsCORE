@@ -21,10 +21,10 @@ import java.util.regex.Pattern;
  */
 public class IsString extends Rule {
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值
-        if (null == value) {
-            return  value;
+        if (null== value) {
+            return AVOID;
         }
 
         String str = Synt.declare(value, "");

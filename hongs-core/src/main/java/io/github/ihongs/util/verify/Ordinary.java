@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class Ordinary extends Rule {
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         /**
          * 数组和集合要取第一个
          * 这样处理就可以适用于 Servlet 的 ParameterMap

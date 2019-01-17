@@ -32,7 +32,7 @@ import static io.github.ihongs.util.verify.Rule.AVOID;
  *      .addRule("f2", (v, w)->{
  *          return v != null ? v : Rule.AVOID;
  *      })
- *      .verify(values);
+ *      .verify(values, false, false);
  * </pre>
  *
  * <h3>异常代码</h3>

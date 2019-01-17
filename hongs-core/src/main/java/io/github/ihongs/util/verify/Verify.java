@@ -261,7 +261,14 @@ public class Verify {
      * @return
      */
     private Object verify(Map wrongz, Wheels veri, Ruly rule, String name, Object data) {
-        veri.isValued(AVOID != data);
+        // 写入是否有赋值
+        if (data == AVOID) {
+            data  =  null;
+            veri.isValued(false);
+        } else {
+            veri.isValued(true );
+        }
+
         try {
             return rule.verify(data,veri);
         } catch (Wrong  w) {
@@ -295,7 +302,14 @@ public class Verify {
      * @return
      */
     private Object remedy(Map wrongz, Wheels veri, Rulx rule, String name, Collection data) {
-        veri.isValued(AVOID != data);
+        // 不可能没有赋值
+//      if (data == AVOID) {
+//          data  =  null;
+//          veri.isValued(false);
+//      } else {
+            veri.isValued(true );
+//      }
+
         try {
             return rule.remedy(data,veri);
         } catch (Wrong  w) {

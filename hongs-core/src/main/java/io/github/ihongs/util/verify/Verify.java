@@ -131,9 +131,10 @@ public class Verify {
      * @param values
      * @param cleans
      * @param wrongz
-     * @param rulez
+     * @param veri
      * @param name
      * @param data
+     * @param rulez
      * @return
      * @throws Wrongs
      */
@@ -179,10 +180,10 @@ public class Verify {
      * @param values
      * @param cleans
      * @param wrongz
-     * @param rulez
+     * @param veri
      * @param name
      * @param data
-     * @param veri
+     * @param rulez
      * @param rule
      * @return
      * @throws Wrongs

@@ -263,18 +263,18 @@ public class Verify {
      * @return
      */
     private Object verify(Map wrongz, Wheels veri, Ruly rule, String name, Object data) {
-        veri.isValued(data != AVOID);
+        veri.isValued(AVOID != data);
         try {
             return rule.verify(data,veri);
         } catch (Wrong  w) {
             // 设置字段标签
-            if (w.getLocalizedCaption( ) == null) {
+            if ( w.getLocalizedCaption( ) == null) {
                 if (rule instanceof Rule) {
                     Rule r = (Rule) rule ;
                     w.setLocalizedCaption(Synt.defxult(
                             Synt.asString(r.getParam("__text__")),
                             Synt.asString(r.getParam("__name__")),
-                                          name) );
+                                          name)  );
                 } else {
                     w.setLocalizedCaption(name);
                 }
@@ -297,18 +297,18 @@ public class Verify {
      * @return
      */
     private Object remedy(Map wrongz, Wheels veri, Rulx rule, String name, Collection data) {
-        veri.isValued(data != AVOID);
+        veri.isValued(AVOID != data);
         try {
             return rule.remedy(data,veri);
         } catch (Wrong  w) {
             // 设置字段标签
-            if (w.getLocalizedCaption( ) == null) {
+            if ( w.getLocalizedCaption( ) == null) {
                 if (rule instanceof Rule) {
                     Rule r = (Rule) rule ;
                     w.setLocalizedCaption(Synt.defxult(
                             Synt.asString(r.getParam("__text__")),
                             Synt.asString(r.getParam("__name__")),
-                                          name) );
+                                          name)  );
                 } else {
                     w.setLocalizedCaption(name);
                 }

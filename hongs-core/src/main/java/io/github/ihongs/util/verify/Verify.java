@@ -248,7 +248,7 @@ public class Verify {
         }
 
         // 完成后还需再次校验一下结果
-        return  remedy(wrongz, veri, rule, name, data2);
+        return remedy(wrongz, veri, rule, name, data2);
     }
 
     /**

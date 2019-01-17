@@ -7,6 +7,6 @@ package io.github.ihongs.util.verify;
 public class Intact extends Rule {
     @Override
     public Object verify(Object value, Wheel watch) {
-        return watch.isValued() ? value : AVOID;
+        return AVOID;
     }
 }

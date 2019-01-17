@@ -50,6 +50,6 @@ public class Ordinary extends Rule {
             throw new Wrong ("fore.form.ordinary");
         }
 
-        return value;
+        return  AVOID;
     }
 }

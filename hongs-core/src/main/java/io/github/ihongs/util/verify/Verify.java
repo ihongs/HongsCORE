@@ -86,9 +86,9 @@ public class Verify {
 
     /**
      * 校验数据
-     * @param values
-     * @param update
-     * @param prompt
+     * @param values 待验数据
+     * @param update 更新模式
+     * @param prompt 速断模式
      * @return
      * @throws Wrongs
      */

@@ -94,7 +94,7 @@ html, body {
     margin : 1px 0;
 }
 .menubox li a {
-    padding: 9px 4px 9px 13px;
+    padding: 6px 4px 6px 13px;
 }
 .menubox li li a {
     padding: 6px 4px 6px 26px;
@@ -104,20 +104,16 @@ html, body {
     background: #373a3c;
     border-left: 2px solid #373a3c;
 }
-.menubox li a:hover {
-    background: #474949;
+.menubar li a:hover {
+    background: #313436;
 }
 .menubox li.acting a {
     background: #313436;
     border-left: 2px solid #202020;
 }
-.menubox li.acting>a {
+.menubox li.active a {
     background: #313436;
-    border-left: 2px solid #9b479f;
-}
-.menubox li.active>a {
-    background: #474949;
-    border-left: 2px solid #d9230f;
+    border-left: 2px solid #ea0000;
 }
 .menubox li .caret {
     float : right;

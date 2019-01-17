@@ -29,8 +29,11 @@ public class IsDate extends Rule {
     @Override
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
-        if (null== value || "".equals(value)) {
+        if (value  ==  null ) {
             return AVOID;
+        }
+        if (value.equals("")) {
+            return null ;
         }
 
         String typa = Synt.declare(getParam("__type__"), "");

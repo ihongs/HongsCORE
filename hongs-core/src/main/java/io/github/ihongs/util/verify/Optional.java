@@ -9,7 +9,7 @@ public class Optional extends Rule {
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 未给值则跳过此项目
         if (null != value || watch.isValued()) {
-            return  value;
+            return  AVOID;
         } else {
             return  BLANK;
         }

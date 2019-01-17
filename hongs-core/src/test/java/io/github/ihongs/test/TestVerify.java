@@ -1,0 +1,70 @@
+package io.github.ihongs.test;
+
+import io.github.ihongs.Core;
+import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.verify.IsNumber;
+import io.github.ihongs.util.verify.IsString;
+import io.github.ihongs.util.verify.Repeated;
+import io.github.ihongs.util.verify.Required;
+import io.github.ihongs.util.verify.Verify;
+import io.github.ihongs.util.verify.Wrongs;
+import java.util.Map;
+import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+/**
+ *
+ * @author Hongs
+ */
+public class TestVerify extends TestCase {
+    
+    
+    @BeforeClass
+    public static void setUpClass() {
+    }
+
+    @AfterClass
+    public static void tearDownClass() {
+    }
+
+    @Before
+    @Override
+    public void setUp() {
+    }
+
+    @After
+    @Override
+    public void tearDown() {
+    }
+
+    @Test
+    public void testVerify() {
+        try {
+            Verify verify = new Verify()
+                .addRule("name",
+                    new Required(),
+                    new IsString().config(Synt.mapOf("minlength", 3, "maxlength", 8))
+                )
+                .addRule("size",
+                    new Repeated().config(Synt.mapOf("slice", ",")),
+                    new IsNumber().config(Synt.mapOf("min", 10, "max", 99))
+                );
+            Map values = Synt.mapOf(
+                "name", "abcdef",
+                "size", "11,22"
+            );
+            Map cleans = verify.verify(values, false, false);
+            System.out.println(Data.toString(cleans));
+        }
+        catch (Wrongs wr) {
+            Core.ACTION_LANG.set("zh_CN");
+            fail(Data.toString(wr.getErrors()));
+        }
+    }
+    
+}

@@ -4,9 +4,12 @@ import io.github.ihongs.util.Synt;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * 多值约束
@@ -44,11 +47,30 @@ public class Repeated extends Rule implements Rulx {
 
             // 正则拆分
             s = Synt.asString( getParam("split") );
-            if (s != null) 
+            if (s != null) {
+                List<String> a = new LinkedList( );
+                Matcher m = Pattern.compile( s )
+                                   .matcher( v );
+                int e , b = 0;
+                while ( m.find ()) {
+                    e = m.start();
+                    a.add(v.substring(b, e));
+                    b = m.end  ();
+                }   a.add(v.substring(b   ));
+                return  a;
+            }
 
             // 普通拆分
             s = Synt.asString( getParam("slice") );
-            if (s != null) 
+            if (s != null) {
+                List<String> a = new LinkedList( );
+                int e , b = 0;
+                while ((e = v.indexOf(s, b))>-1) {
+                    a.add(v.substring(b, e));
+                    b = e + s.length (    ) ;
+                }   a.add(v.substring(b   ));
+                return  a;
+            }
 
             throw new Wrong ("fore.form.repeated");
         }

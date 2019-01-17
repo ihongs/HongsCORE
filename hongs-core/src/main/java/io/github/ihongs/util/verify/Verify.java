@@ -44,8 +44,6 @@ import static io.github.ihongs.util.verify.Rule.AVOID;
 public class Verify {
 
     private final Map<String, List<Ruly>> rules;
-    private boolean update;
-    private boolean prompt;
 
     public Verify() {
         rules = new LinkedHashMap();
@@ -111,10 +109,10 @@ public class Verify {
             if (prompt && ! wrongz.isEmpty()) {
                 break;
             } else
-            if (BLANK == data) {
+            if (data == BLANK) {
                 continue;
             } else
-            if (AVOID == data) {
+            if (data == AVOID) {
                 continue;
             }
 
@@ -148,16 +146,16 @@ public class Verify {
 
             Object dist = verify(wrongz, veri, rule, name, data);
 
-            if (BLANK == dist) {
+            if (dist == BLANK) {
                 return  BLANK;
             }
-            if (AVOID != dist) {
-                data   = dist;
+            if (dist != AVOID) {
+                data  = dist ;
             }
 
             if (rule instanceof Rulx) {
-            if (AVOID != dist) {
-                data   = verify(values, cleans, wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
+            if (dist != AVOID) {
+                data  = verify(values, cleans, wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
             }
                 break;
             }
@@ -167,13 +165,13 @@ public class Verify {
          * 未给值且为更新
          * 则跳过当前取值
          */
-        if (AVOID == data) {
+        if (data == AVOID) {
         if (veri.isUpdate( ) ) {
-            return AVOID;
+            return  AVOID;
         }
-            return null ;
+            return  null ;
         }
-            return data ;
+            return  data ;
     }
 
     /**
@@ -210,13 +208,13 @@ public class Verify {
                 String name3 = name + "[" + i3 + "]";
                 Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
-                if (prompt && !wrongz.isEmpty()) {
-                    return BLANK;
+                if (veri.isPrompt() && !wrongz.isEmpty()) {
+                    return   BLANK;
                 }
-                if (BLANK == dist3) {
+                if (dist3 == BLANK) {
                     continue;
                 }
-                if (AVOID != dist3) {
+                if (dist3 != AVOID) {
                     data3  = dist3;
                 }
 
@@ -235,13 +233,13 @@ public class Verify {
                 String name3 = name + "." + k3 + "" ;
                 Object dist3 = verify(values, cleans, wrongz, veri, name3, data3, rulez);
 
-                if (prompt && !wrongz.isEmpty()) {
-                    return BLANK;
+                if (veri.isPrompt() && !wrongz.isEmpty()) {
+                    return   BLANK;
                 }
-                if (BLANK == dist3) {
+                if (dist3 == BLANK) {
                     continue;
                 }
-                if (AVOID != dist3) {
+                if (dist3 != AVOID) {
                     data3  = dist3;
                 }
 

@@ -26,10 +26,10 @@ import java.util.Set;
 public class Diverse extends Rule {
 
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
-        if (null == value || "".equals(value)) {
-            return  null;
+        if (null== value || "".equals(value)) {
+            return AVOID;
         }
 
         String at = Synt.declare(getParam("data-ut" ), "");

@@ -16,10 +16,10 @@ import java.util.Set;
  */
 public class IsForm extends Rule {
     @Override
-    public Object verify(Object value, Veri helper) throws Wrong, Wrongs {
+    public Object verify(Object value, Wheel watch) throws Wrong, Wrongs {
         // 跳过空值和空串
-        if (null == value || "".equals(value)) {
-            return  null;
+        if (null== value || "".equals(value)) {
+            return AVOID;
         }
 
         String conf = Synt.asString(getParam("conf"));
@@ -32,8 +32,8 @@ public class IsForm extends Rule {
         }
 
         VerifyHelper hlpr = new VerifyHelper();
-        hlpr.isUpdate(helper.isUpdate());
-        hlpr.isPrompt(helper.isPrompt());
+        boolean update = watch.isUpdate();
+        boolean prompt = watch.isPrompt();
 
         /**
          * 字段外部可能会有特殊要求
@@ -42,13 +42,13 @@ public class IsForm extends Rule {
         Set <String> flag = Synt.toTerms(getParam("form-in"));
         if (flag != null) {
             if (flag.contains("create")) {
-                hlpr.isUpdate(false);
+                update = false;
             } else
             if (flag.contains("update")) {
-                hlpr.isUpdate(true );
+                update = true ;
             }
             if (flag.contains("prompt")) {
-                hlpr.isPrompt(true );
+                prompt = true ;
             }
         }
 
@@ -56,11 +56,11 @@ public class IsForm extends Rule {
          * 填充字段配置所指定的规则
          */
         try {
-            hlpr.addRulesByForm ( conf, name );
+            hlpr.addRulesByForm (conf , name);
         } catch ( HongsException ex) {
             throw ex.toExemption(  );
         }
 
-        return  hlpr.verify(Synt.asMap(value));
+        return  hlpr.verify(Synt.asMap(value), update, prompt);
     }
 }

@@ -6,7 +6,7 @@ import java.util.Map;
  * 校验状态
  * @author Hongs
  */
-public interface Veri {
+public interface Wheel {
 
     /**
      * @return 更新时为 true

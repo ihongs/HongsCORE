@@ -14,10 +14,10 @@ import io.github.ihongs.util.Synt;
  */
 public class IsNumber extends Rule {
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
-        if (null == value || "".equals(value)) {
-            return  null;
+        if (null== value || "".equals(value)) {
+            return AVOID;
         }
 
         // 类型转换

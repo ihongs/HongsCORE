@@ -196,13 +196,11 @@ public class AuthKit {
             // 校验及下载头像
             VerifyHelper vh = new VerifyHelper();
             vh.addRulesByForm("master" , "user");
-            vh.isPrompt(true);
-            vh.isUpdate(true);
 
             ud  =  new HashMap( );
             ud.put("name", uname);
             ud.put("head", uhead);
-            ud  =   vh.verify(ud);
+            ud  =   vh.verify(ud , true , true );
             usrid = db.getModel("user").add(ud );
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");

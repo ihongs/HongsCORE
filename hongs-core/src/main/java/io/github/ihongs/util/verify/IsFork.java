@@ -28,10 +28,10 @@ import java.util.Set;
  */
 public class IsFork extends Rule {
     @Override
-    public Object verify(Object value, Veri watch) throws Wrong {
+    public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
-        if (null == value || "".equals(value)) {
-            return  null;
+        if (null== value || "".equals(value)) {
+            return AVOID;
         }
 
         // 如果像 id 一样只是基本字符组成则跳过

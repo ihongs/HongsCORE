@@ -12,12 +12,12 @@ public abstract class Rule implements Ruly {
     /**
      * 跳过此值, 有错则可中止
      */
-    public static final Object BLANK = Synt.LOOP.NEXT;
+    public static final Object BLANK = Synt.LOOP.LAST;
 
     /**
      * 立即终止, 抛弃后续校验
      */
-    public static final Object BREAK = Synt.LOOP.LAST;
+    public static final Object AVOID = Synt.LOOP.NEXT;
 
     /**
      * 校验参数

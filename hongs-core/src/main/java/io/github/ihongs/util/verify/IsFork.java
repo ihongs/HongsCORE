@@ -31,10 +31,10 @@ public class IsFork extends Rule {
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
         if (value  ==  null ) {
-            return AVOID;
+            return STAND;
         }
         if (value.equals("")) {
-            return AVOID;
+            return STAND;
         }
 
         // 如果像 id 一样只是基本字符组成则跳过

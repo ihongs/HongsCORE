@@ -17,7 +17,7 @@ public class IsNumber extends Rule {
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
         if (value  ==  null ) {
-            return AVOID;
+            return STAND;
         }
         if (value.equals("")) {
             return null ;

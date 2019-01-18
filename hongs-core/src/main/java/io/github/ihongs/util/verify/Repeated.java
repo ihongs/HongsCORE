@@ -36,9 +36,13 @@ public class Repeated extends Rule implements Rulx {
     @Override
     public Object verify(Object value, Wheel watch) throws Wrong {
         if (value == null) {
-            return watch.isValued()
-                 ? new LinkedList()
-                 : BLANK;
+            // 更新而未给值则跳过
+            if (watch.isUpdate( )
+            && !watch.isValued()) {
+                return  BLANK;
+            } else {
+                return  STAND;
+            }
         }
 
         if (value instanceof String) {

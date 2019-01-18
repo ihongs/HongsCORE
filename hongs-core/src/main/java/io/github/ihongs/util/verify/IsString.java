@@ -24,7 +24,7 @@ public class IsString extends Rule {
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值
         if (null == value) {
-            return  AVOID;
+            return  STAND;
         }
 
         String str = Synt.declare(value, "");

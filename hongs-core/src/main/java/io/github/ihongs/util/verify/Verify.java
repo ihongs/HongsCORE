@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import static io.github.ihongs.util.verify.Rule.BLANK;
-import static io.github.ihongs.util.verify.Rule.AVOID;
+import static io.github.ihongs.util.verify.Rule.STAND;
 
 /**
  * 数据校验助手
@@ -30,7 +30,7 @@ import static io.github.ihongs.util.verify.Rule.AVOID;
  *          return v != null ? v : Rule.BLANK;
  *      })
  *      .addRule("f2", (v, w)->{
- *          return v != null ? v : Rule.AVOID;
+ *          return v != null ? v : Rule.STAND;
  *      })
  *      .verify(values, false, false);
  * </pre>
@@ -103,7 +103,7 @@ public class Verify {
             String     name  = et.getKey(  );
             Object     data  ;
 
-            data = Dict.get(values, AVOID, Dict.splitKeys(name) );
+            data = Dict.get(values, STAND, Dict.splitKeys(name) );
             data = verify(values, cleans, wrongz, veriby, name, data, rulez);
 
             if (prompt && ! wrongz.isEmpty()) {
@@ -112,7 +112,7 @@ public class Verify {
             if (data == BLANK) {
                 continue;
             } else
-            if (data == AVOID) {
+            if (data == STAND) {
                 continue;
             }
 
@@ -150,12 +150,12 @@ public class Verify {
             if (dist == BLANK) {
                 return  BLANK;
             }
-            if (dist != AVOID) {
+            if (dist != STAND) {
                 data  = dist ;
             }
 
             if (rule instanceof Rulx) {
-            if (dist != AVOID) {
+            if (data != STAND) {
                 data  = verify(values, cleans, wrongz, veri, name, data, rulez.subList(i, j), (Rulx) rule);
             }
                 break;
@@ -166,9 +166,9 @@ public class Verify {
          * 未给值且为更新
          * 则跳过当前取值
          */
-        if (data == AVOID) {
+        if (data == STAND) {
         if (veri.isUpdate( ) ) {
-            return  AVOID;
+            return  STAND;
         }
             return  null ;
         }
@@ -215,7 +215,7 @@ public class Verify {
                 if (dist3 == BLANK) {
                     continue;
                 }
-                if (dist3 != AVOID) {
+                if (dist3 != STAND) {
                     data3  = dist3;
                 }
 
@@ -240,7 +240,7 @@ public class Verify {
                 if (dist3 == BLANK) {
                     continue;
                 }
-                if (dist3 != AVOID) {
+                if (dist3 != STAND) {
                     data3  = dist3;
                 }
 
@@ -263,7 +263,7 @@ public class Verify {
      */
     private Object verify(Map wrongz, Wheels veri, Ruly rule, String name, Object data) {
         // 写入是否有赋值
-        if (data == AVOID) {
+        if (data == STAND) {
             data  =  null;
             veri.isValued(false);
         } else {
@@ -304,7 +304,7 @@ public class Verify {
      */
     private Object remedy(Map wrongz, Wheels veri, Rulx rule, String name, Collection data) {
         // 不可能没有赋值
-//      if (data == AVOID) {
+//      if (data == STAND) {
 //          data  =  null;
 //          veri.isValued(false);
 //      } else {

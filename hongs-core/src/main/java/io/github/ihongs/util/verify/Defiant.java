@@ -15,7 +15,8 @@ import java.util.Set;
  */
 public class Defiant extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) {
+    public Object verify(Value watch) {
+        Object value = watch.get( );
         if (null== value) {
             return STAND;
         }

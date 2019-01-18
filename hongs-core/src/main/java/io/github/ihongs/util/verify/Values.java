@@ -1,5 +1,7 @@
 package io.github.ihongs.util.verify;
 
+import static io.github.ihongs.util.verify.Rule.BLANK;
+import static io.github.ihongs.util.verify.Rule.STAND;
 import java.util.Map;
 
 /**
@@ -11,21 +13,45 @@ import java.util.Map;
  *
  * @author Hongs
  */
-public class Wheels implements Wheel {
+public class Values implements Value {
 
-    private final Map values;
-    private final Map cleans;
+    private final Map     values;
+    private final Map     cleans;
     private final boolean update;
     private final boolean prompt;
     private       boolean valued;
+    private       Object  value ;
 
-    public Wheels(Map values, Map cleans, boolean update, boolean prompt) {
+    public Values(Map values, Map cleans, boolean update, boolean prompt) {
         this.values = values;
         this.cleans = cleans;
         this.update = update;
         this.prompt = prompt;
     }
 
+    /**
+     * 设置数据
+     * @param value 
+     */
+    public void set(Object value) {
+        if (value == STAND || value == BLANK) {
+            this.value  = null ;
+            this.valued = false;
+        } else {
+            this.value  = value;
+            this.valued = true ;
+        }
+    }
+    
+    /**
+     * 当前取值
+     * @return 
+     */
+    @Override
+    public Object get() {
+        return value;
+    }
+    
     /**
      * 原始数据
      * @return

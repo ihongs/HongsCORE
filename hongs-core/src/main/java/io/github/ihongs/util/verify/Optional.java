@@ -6,7 +6,7 @@ package io.github.ihongs.util.verify;
  */
 public class Optional extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
         // 未给值则跳过此项目
         if (watch.isValued()) {
             return  STAND;

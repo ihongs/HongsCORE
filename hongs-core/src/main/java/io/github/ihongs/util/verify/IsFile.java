@@ -39,8 +39,9 @@ import javax.servlet.http.Part;
  */
 public class IsFile extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
         // 跳过空值和空串
+        Object value = watch.get();
         if (value  ==  null ) {
             return STAND;
         }

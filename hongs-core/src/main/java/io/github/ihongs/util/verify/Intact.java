@@ -6,7 +6,7 @@ package io.github.ihongs.util.verify;
  */
 public class Intact extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) {
+    public Object verify(Value watch) {
         return STAND;
     }
 }

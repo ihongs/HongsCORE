@@ -17,11 +17,11 @@ public class Defiant extends Rule {
     @Override
     public Object verify(Object value, Wheel watch) {
         if (null== value) {
-            return AVOID;
+            return STAND;
         }
         Object fiant = getParam("defiant");
         if (null== fiant) {
-            return AVOID;
+            return STAND;
         }
 
         Set def ;

@@ -17,7 +17,7 @@ public abstract class Rule implements Ruly {
     /**
      * 立即终止, 抛弃后续校验
      */
-    public static final Object AVOID = Synt.LOOP.NEXT;
+    public static final Object STAND = Synt.LOOP.NEXT;
 
     /**
      * 校验参数

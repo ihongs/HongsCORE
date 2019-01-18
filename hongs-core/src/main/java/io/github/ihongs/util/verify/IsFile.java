@@ -42,10 +42,10 @@ public class IsFile extends Rule {
     public Object verify(Object value, Wheel watch) throws Wrong {
         // 跳过空值和空串
         if (value  ==  null ) {
-            return AVOID;
+            return STAND;
         }
         if (value.equals("")) {
-            return AVOID;
+            return STAND;
         }
 
         if (value instanceof String) {

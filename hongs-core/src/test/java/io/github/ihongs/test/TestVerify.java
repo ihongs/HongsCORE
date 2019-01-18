@@ -46,7 +46,8 @@ public class TestVerify extends TestCase {
 
     @Test
     public void testVerify() throws IOException {
-        CmdletRunner.init(new String[] {}); // 避免路径缺失致写入项目主目录
+        // 避免路径缺失致写入项目主目录
+        CmdletRunner.init(new String[] {"--COREPATH", "target"});
         
         try {
             Verify verify = new Verify()

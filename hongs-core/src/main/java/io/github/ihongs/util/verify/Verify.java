@@ -25,12 +25,12 @@ import static io.github.ihongs.util.verify.Rule.STAND;
  *
  * <p>Java 8 中用函数式可简化代码:</p>
  * <pre>
- *  values = new Verify()
- *      .addRule("f1", (v, w)->{
- *          return v != null ? v : Rule.BLANK;
+ *  values = new Verify( )
+ *      .addRule("f1", (w)->{
+ *          return w.get() != null ? w.get() : Rule.BLANK;
  *      })
- *      .addRule("f2", (v, w)->{
- *          return v != null ? v : Rule.STAND;
+ *      .addRule("f2", (w)->{
+ *          return w.get() != null ? w.get() : Rule.STAND;
  *      })
  *      .verify(values, false, false);
  * </pre>
@@ -96,7 +96,7 @@ public class Verify {
         if (values == null) values = new HashMap();
         Map<String, Object> cleans = new LinkedHashMap();
         Map<String, Wrong > wrongz = new LinkedHashMap();
-        Wheels veriby = new Wheels(values, cleans, update,prompt);
+        Values veriby = new Values(values, cleans, update,prompt);
 
         for(Map.Entry<String , List<Ruly>> et : rules.entrySet()) {
             List<Ruly> rulez = et.getValue();
@@ -138,7 +138,7 @@ public class Verify {
      * @return
      * @throws Wrongs
      */
-    private Object verify(Map values, Map cleans, Map wrongz, Wheels veri, String name, Object data, List<Ruly> rulez)
+    private Object verify(Map values, Map cleans, Map wrongz, Values veri, String name, Object data, List<Ruly> rulez)
     throws Wrongs {
         int i = 0;
         int j =  rulez. size();
@@ -188,7 +188,7 @@ public class Verify {
      * @return
      * @throws Wrongs
      */
-    private Object verify(Map values, Map cleans, Map wrongz, Wheels veri, String name, Object data, List<Ruly> rulez, Rulx rule)
+    private Object verify(Map values, Map cleans, Map wrongz, Values veri, String name, Object data, List<Ruly> rulez, Rulx rule)
     throws Wrongs {
         Collection data2 = rule.getContext();
         Collection skips = rule.getDefiant();
@@ -261,17 +261,11 @@ public class Verify {
      * @param data
      * @return
      */
-    private Object verify(Map wrongz, Wheels veri, Ruly rule, String name, Object data) {
-        // 写入是否有赋值
-        if (data == STAND) {
-            data  =  null;
-            veri.isValued(false);
-        } else {
-            veri.isValued(true );
-        }
+    private Object verify(Map wrongz, Values veri, Ruly rule, String name, Object data) {
+        veri.set(data);
 
         try {
-            return rule.verify(data,veri);
+            return rule.verify(veri /**/);
         } catch (Wrong  w) {
             // 设置字段标签
             if ( w.getLocalizedCaption( ) == null) {
@@ -302,17 +296,11 @@ public class Verify {
      * @param data
      * @return
      */
-    private Object remedy(Map wrongz, Wheels veri, Rulx rule, String name, Collection data) {
-        // 不可能没有赋值
-//      if (data == STAND) {
-//          data  =  null;
-//          veri.isValued(false);
-//      } else {
-            veri.isValued(true );
-//      }
+    private Object remedy(Map wrongz, Values veri, Rulx rule, String name, Collection data) {
+        veri.set(data);
 
         try {
-            return rule.remedy(data,veri);
+            return rule.remedy(veri,data);
         } catch (Wrong  w) {
             // 设置字段标签
             if ( w.getLocalizedCaption( ) == null) {

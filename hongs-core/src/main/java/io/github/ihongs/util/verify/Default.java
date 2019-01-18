@@ -20,7 +20,8 @@ import java.util.regex.Pattern;
  */
 public class Default extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) {
+    public Object verify(Value watch) {
+        Object value = watch.get();
         Object force = getParam("deforce");
         if ("create".equals(force)) {
             if (watch.isUpdate() == true ) {

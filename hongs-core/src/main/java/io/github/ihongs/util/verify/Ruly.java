@@ -8,12 +8,11 @@ public interface Ruly {
 
     /**
      * 校验
-     * @param value
      * @param watch
      * @return
      * @throws Wrong
      * @throws Wrongs
      */
-    public Object verify(Object value, Wheel watch) throws Wrong, Wrongs;
+    public Object verify(Value watch) throws Wrong, Wrongs;
 
 }

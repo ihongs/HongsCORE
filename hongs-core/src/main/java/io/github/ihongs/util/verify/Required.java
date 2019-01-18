@@ -9,8 +9,9 @@ import java.util.Map;
  */
 public class Required extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
-        if (value == null) {
+    public Object verify(Value watch) throws Wrong {
+        Object value = watch.get();
+        if (value  ==  null ) {
             // 更新而未给值则跳过
             if (watch.isUpdate( )
             && !watch.isValued()) {

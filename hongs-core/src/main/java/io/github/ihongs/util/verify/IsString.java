@@ -21,8 +21,9 @@ import java.util.regex.Pattern;
  */
 public class IsString extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
         // 跳过空值
+        Object value = watch.get();
         if (null == value) {
             return  STAND;
         }

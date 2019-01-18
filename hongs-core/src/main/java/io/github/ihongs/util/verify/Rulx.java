@@ -10,13 +10,13 @@ public interface Rulx extends Ruly {
     
     /**
      * 校准集合
-     * @param value
      * @param watch
+     * @param value
      * @return
      * @throws Wrong
      * @throws Wrongs 
      */
-    public Object remedy(Collection value, Wheel watch) throws Wrong, Wrongs;
+    public Object remedy(Value watch, Collection value) throws Wrong, Wrongs;
     
     /**
      * 获取容器

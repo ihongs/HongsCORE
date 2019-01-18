@@ -6,8 +6,13 @@ import java.util.Map;
  * 校验状态
  * @author Hongs
  */
-public interface Wheel {
+public interface Value {
 
+    /**
+     * @return 当前取值
+     */
+    public Object get();
+    
     /**
      * @return 待验证的数据
      */

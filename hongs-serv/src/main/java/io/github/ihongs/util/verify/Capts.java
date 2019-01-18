@@ -15,7 +15,7 @@ import io.github.ihongs.util.Synt;
 public class Capts extends Rule {
 
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
         ActionHelper ah = Core.getInstance(ActionHelper.class);
         String ss = Synt.declare(getParam("capts-sess"),
             CoreConfig.getInstance()
@@ -25,7 +25,7 @@ public class Capts extends Rule {
                       .getProperty("core.capts.time",  600L ));
         String cc = Synt.declare(ah.getSessibute(ss + "_code"), "");
         long   ct = Synt.declare(ah.getSessibute(ss + "_time"), 0L);
-        String vs = Synt.declare(value, "");
+        String vs = Synt.declare(watch.get(), "");
 
         try {
             // 人机校验

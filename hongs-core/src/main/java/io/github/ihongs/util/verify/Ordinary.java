@@ -13,7 +13,9 @@ import java.util.Set;
  */
 public class Ordinary extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
+        Object value = watch.get();
+
         /**
          * 数组和集合要取第一个
          * 这样处理就可以适用于 Servlet 的 ParameterMap
@@ -27,7 +29,7 @@ public class Ordinary extends Rule {
             Object [ ] a  =  c.toArray();
             return a.length > 0 ? a [0] : null;
         }
-        
+
         /**
          * 对象类型的字段要放行
          * 至于实际仍是多组取值

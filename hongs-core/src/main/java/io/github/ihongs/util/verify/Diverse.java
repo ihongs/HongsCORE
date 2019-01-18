@@ -26,8 +26,9 @@ import java.util.Set;
 public class Diverse extends Rule {
 
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
         // 跳过空值和空串
+        Object value = watch.get();
         if (value  ==  null ) {
             return STAND;
         }

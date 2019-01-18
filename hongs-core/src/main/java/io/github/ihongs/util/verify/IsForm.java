@@ -16,8 +16,9 @@ import java.util.Set;
  */
 public class IsForm extends Rule {
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong, Wrongs {
+    public Object verify(Value watch) throws Wrong, Wrongs {
         // 跳过空值和空串
+        Object value = watch.get();
         if (value  ==  null ) {
             return STAND;
         }

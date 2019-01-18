@@ -34,7 +34,8 @@ public class Repeated extends Rule implements Rulx {
      * @throws Wrong
      */
     @Override
-    public Object verify(Object value, Wheel watch) throws Wrong {
+    public Object verify(Value watch) throws Wrong {
+        Object value = watch.get();
         if (value == null) {
             // 更新而未给值则跳过
             if (watch.isUpdate( )
@@ -100,7 +101,7 @@ public class Repeated extends Rule implements Rulx {
      * @throws Wrong
      */
     @Override
-    public Object remedy(Collection value, Wheel watch) throws Wrong {
+    public Object remedy(Value watch, Collection value) throws Wrong {
         // 多个值的数量限制
         int n, c = value.size();
         n = Synt.declare(getParam("minrepeat"), 0);

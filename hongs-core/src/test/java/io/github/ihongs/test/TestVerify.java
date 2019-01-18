@@ -1,6 +1,7 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.IsNumber;
@@ -9,6 +10,7 @@ import io.github.ihongs.util.verify.Repeated;
 import io.github.ihongs.util.verify.Required;
 import io.github.ihongs.util.verify.Verify;
 import io.github.ihongs.util.verify.Wrongs;
+import java.io.IOException;
 import java.util.Map;
 import junit.framework.TestCase;
 import org.junit.After;
@@ -43,7 +45,9 @@ public class TestVerify extends TestCase {
     }
 
     @Test
-    public void testVerify() {
+    public void testVerify() throws IOException {
+        CmdletRunner.init(new String[] {}); // 避免路径缺失致写入项目主目录
+        
         try {
             Verify verify = new Verify()
                 .addRule("name",

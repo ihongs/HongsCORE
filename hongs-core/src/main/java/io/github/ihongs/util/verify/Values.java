@@ -98,16 +98,17 @@ public class Values implements Value {
      * @return
      */
     @Override
-    public boolean isValued() {
+    public boolean isDefined() {
         return valued;
     }
 
     /**
-     * 设置是否有赋值
-     * @param valued
+     * 是否赋值且非空
+     * @return 
      */
-    public void isValued(boolean valued) {
-        this.valued = valued;
+    @Override
+    public boolean isPresent() {
+        return value != null;
     }
 
 }

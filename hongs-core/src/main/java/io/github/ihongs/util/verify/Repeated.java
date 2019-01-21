@@ -28,7 +28,6 @@ import java.util.regex.Pattern;
 public class Repeated extends Rule implements Rulx {
     /**
      * 前置校验
-     * @param value
      * @param watch
      * @return
      * @throws Wrong
@@ -38,8 +37,8 @@ public class Repeated extends Rule implements Rulx {
         Object value = watch.get();
         if (value == null) {
             // 更新而未给值则跳过
-            if (watch.isUpdate( )
-            && !watch.isValued()) {
+            if (watch.isUpdate ( )
+            && !watch.isDefined()) {
                 return  BLANK;
             } else {
                 return  STAND;

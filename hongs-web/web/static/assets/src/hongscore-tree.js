@@ -6,10 +6,8 @@
  * @param {Object} opts 选项
  * @param {Element} context 容器
  */
-function HsTree (context , opts) {
-    context = jQuery( context  );
-    context.data("HsTree", this);
-    context.addClass( "HsTree" );
+function HsTree(context, opts) {
+    context = jQuery (context);
 
     var loadBox  = context.closest(".loadbox");
     var treeBox  = context.find   (".treebox");

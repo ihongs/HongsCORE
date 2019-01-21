@@ -6,17 +6,14 @@
  * @param {Object} opts 选项
  * @param {Element} context 容器
  */
-function HsForm (context , opts) {
-    context = jQuery( context  );
-    context.data("HsForm", this);
-    context.addClass( "HsForm" );
+function HsForm(context, opts) {
+    context = jQuery (context);
 
     var loadBox  = context.closest(".loadbox");
     var formBox  = context.find   ( "form"   );
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var saveUrl  = hsGetValue(opts, "saveUrl");
     var loadDat  = hsGetValue(opts, "loadData");
-    var initDat  = hsGetValue(opts, "initData");
     var idKey    = hsGetValue(opts, "idKey", "id"); // id参数名, 用于判断编辑还是创建
     var abKey    = hsGetValue(opts, "abKey", "ab"); // ab参数名, 用于判断是否要枚举表
 
@@ -52,11 +49,9 @@ function HsForm (context , opts) {
     if (saveUrl) {
         saveUrl = hsFixPms(saveUrl, loadArr);
     }
-    initDat = initDat || loadDat || loadArr ;
 
     this.valiInit( /* */ );
     this.saveInit(saveUrl);
-    this.fillInit(initDat);
 
     /**
      * 如果存在 id 或 ab 则进行数据加载
@@ -260,34 +255,11 @@ HsForm.prototype = {
         }
         delete this._info;
     },
-    fillInit : function(data) {
-        /**
-         * 使用初始化数据填充表单
-         * 在打开表单窗口时, 可能指定一些参数(如父ID, 初始选中项等)
-         * 这时有必要将这些参数值填写入对应的表单项, 方便初始化过程
-         */
-        var box = this.formBox;
-        var arr =  hsSerialArr(data);
-        box.one("loadOver", function( ) {
-            for(var i = 0 ; i < arr.length ; i ++) {
-                var n = arr[i].name ;
-                var v = arr[i].value;
-                if (!v || (v == "0" && n == "id")) {
-                    continue;
-                }
-                box.find  ("[name='" + n + "']" )
-                   .filter("input,select,button")
-                   .not   (":file,.form-ignored")
-                   .val   (v)
-                   .change( );
-            }
-        });
-    },
 
     saveInit : function(act) {
         var url  = this.formBox.attr("action" ) || act;
         var type = this.formBox.attr("method" ) || "POST";
-        var enct = this.formBox.attr("enctype") || "application/x-www-form-urlencoded; charset=UTF-8";
+        var enct = this.formBox.attr("enctype") || "None";
         var mult = /^multipart\/.*/i.test(enct);
         var data = this.formBox;
         var that = this;

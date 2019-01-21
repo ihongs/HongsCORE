@@ -6,10 +6,8 @@
  * @param {Object} opts 选项
  * @param {Element} context 容器
  */
-function HsList (context , opts) {
-    context = jQuery( context  );
-    context.data("HsList", this);
-    context.addClass( "HsList" );
+function HsList(context, opts) {
+    context = jQuery (context);
 
     var loadBox  = context.closest(".loadbox");
     var listBox  = context.find   (".listbox");

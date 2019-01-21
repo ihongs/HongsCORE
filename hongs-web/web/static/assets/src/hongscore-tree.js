@@ -8,8 +8,8 @@
  */
 function HsTree (context , opts) {
     context = jQuery( context  );
-    context.data("HsTree", this);
-    context.addClass( "HsTree" );
+//  context.data("HsTree", this);
+//  context.addClass( "HsTree" );
 
     var loadBox  = context.closest(".loadbox");
     var treeBox  = context.find   (".treebox");

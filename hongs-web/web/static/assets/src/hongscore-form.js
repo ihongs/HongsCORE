@@ -8,8 +8,8 @@
  */
 function HsForm (context , opts) {
     context = jQuery( context  );
-    context.data("HsForm", this);
-    context.addClass( "HsForm" );
+//  context.data("HsForm", this);
+//  context.addClass( "HsForm" );
 
     var loadBox  = context.closest(".loadbox");
     var formBox  = context.find   ( "form"   );

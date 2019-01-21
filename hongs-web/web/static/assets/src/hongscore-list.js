@@ -8,8 +8,8 @@
  */
 function HsList (context , opts) {
     context = jQuery( context  );
-    context.data("HsList", this);
-    context.addClass( "HsList" );
+//  context.data("HsList", this);
+//  context.addClass( "HsList" );
 
     var loadBox  = context.closest(".loadbox");
     var listBox  = context.find   (".listbox");

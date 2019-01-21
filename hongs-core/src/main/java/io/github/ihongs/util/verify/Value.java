@@ -9,7 +9,7 @@ import java.util.Map;
 public interface Value {
 
     /**
-     * @return 当前取值
+     * @return 当前取值, 注意允许为 null
      */
     public Object get();
     

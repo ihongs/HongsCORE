@@ -68,7 +68,7 @@ public class SignAction {
             case "ip": id = Core.CLIENT_ADDR.get(); break;
             default  : id = ud.get("id") +"-"+ Core.CLIENT_ADDR.get();
         }
-        rt = Synt.declare(Record.get ( "sign.retry.times." + id ), 0);
+        rt = Synt.declare( Record.get( "sign.retry.times." + id ), 0);
         if (rt >= at) {
             ah.reply(AuthKit.getWrong("password", "core.password.timeout"));
             ah.getResponseData( ).put("allow_times" , at);

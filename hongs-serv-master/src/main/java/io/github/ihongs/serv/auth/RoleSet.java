@@ -117,7 +117,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         fc = new FetchCase( )
                 .from   (tb.tableName, tb.name)
                 .select (tb.name+".role")
-                .filter (tb.name+".user_id = ?",userId);
+                .filter (tb.name+".user_id = ?", userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get("role"));
@@ -135,7 +135,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
                 .filter (td.name+".user_id = ?", userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
-            roles.add((String) rm.get( "role" ));
+            roles.add((String) rm.get("role"));
         }
 
         //** 当前保存时间 **/

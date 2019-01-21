@@ -123,7 +123,7 @@ public class AuthKit {
             sarea  = new  HashSet();
         }
         if (place != null
-        &&  place.isEmpty( )
+        && !place.isEmpty( )
         &&  RoleSet.getInstance(usrid).contains(place)) {
             sarea.add(place);
         }

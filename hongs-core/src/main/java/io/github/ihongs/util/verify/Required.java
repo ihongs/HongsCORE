@@ -11,10 +11,10 @@ public class Required extends Rule {
     @Override
     public Object verify(Value watch) throws Wrong {
         Object value = watch.get();
-        if (value  ==  null ) {
+        if (value == null) {
             // 更新而未给值则跳过
-            if (watch.isUpdate( )
-            && !watch.isValued()) {
+            if (watch.isUpdate ( )
+            && !watch.isDefined()) {
                 return  BLANK;
             }
             throw new Wrong("fore.form.required");

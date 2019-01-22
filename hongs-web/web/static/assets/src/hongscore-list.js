@@ -23,18 +23,8 @@ function HsList(context, opts) {
     this.pageKey = hsGetValue(opts, "pageKey", hsGetConf("pn.key", "pn"));
     this.pagsKey = hsGetValue(opts, "pagsKey", hsGetConf("gn.key", "gn"));
     this.rowsKey = hsGetValue(opts, "rowsKey", hsGetConf("rn.key", "rn"));
-    this.pagsNum = hsGetValue(opts, "pagsKey", "");
-
-    // 逐层解析分页数量
-    var arr = hsMixSerias(loadUrl, loadBox);
-    this.rowsNum = hsGetSeria(arr, this.rowsKey);
-    this.pagsNum = hsGetSeria(arr, this.pagsKey) || this.pagsNum;
-    if (this.rowsNum == "") {
-        this.pagsNum = hsGetConf("pags.for.page", 20);
-    }
-    if (this.pagsNum == "") {
-        this.pagsNum = hsGetConf("pags.for.page", 5 );
-    }
+    this.pagsNum = hsGetValue(opts, "pagsNum", hsGetConf("pags.for.page", 5 ));
+    this.rowsNum = hsGetValue(opts, "pagsNum", hsGetConf("rows.per.page", 20));
 
     this.context = context;
     this.loadBox = loadBox;
@@ -165,7 +155,7 @@ function HsList(context, opts) {
 
     if (loadUrl) {
         loadUrl = hsFixPms   (loadUrl, loadBox);
-        loadDat = hsMixSerias(loadDat, findBox);
+        loadDat = hsSerialMix(loadDat, findBox);
         this.load(/*current*/ loadUrl, loadDat);
     }
 }
@@ -190,15 +180,18 @@ HsList.prototype = {
 
         this.listBox.trigger("loadBack", [rst, this]);
 
-        if (rst.list) this.fillList(rst.list);
-        if (rst.page) this.fillPage(rst.page);
-        else { // 无分页
-            if ( rst.list && rst.list.length) {
-                this.fillPage({uncertain: 1});
-            } else {
-                this.fillPage({ern: 1});
-            }
-        }
+        var list = rst["list"] || [];
+        var page = rst["page"] || {};
+
+        if (! rst.page) {
+        if (! rst.list || ! rst.list.length) {
+            page = {ern: 1}; // 空列表
+        } else {
+            page = {ern:-1}; // 估算量
+        }}
+
+        this.fillList(list);
+        this.fillPage(page);
 
         this.listBox.trigger("loadOver", [rst, this]);
     },
@@ -322,7 +315,7 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (page.uncertain && t == 1 + pmax) {
+        if (page.ern == -1 && pmax == t - 1) {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));
@@ -758,7 +751,7 @@ function hsListFillNext(page) {
     if (pag.size() === 0) {
         pag = this.pageBox.find(".page-curr"  );
     }
-    if (! page.uncertain) {
+    if (page.ern  !=  -1) {
         pag.text(p+"/"+t);
     } else {
         pag.text(p);

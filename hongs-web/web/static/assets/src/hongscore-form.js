@@ -14,6 +14,7 @@ function HsForm(context, opts) {
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var saveUrl  = hsGetValue(opts, "saveUrl");
     var loadDat  = hsGetValue(opts, "loadData");
+    var initDat  = hsGetValue(opts, "initData");
     var idKey    = hsGetValue(opts, "idKey", "id"); // id参数名, 用于判断编辑还是创建
     var abKey    = hsGetValue(opts, "abKey", "ab"); // ab参数名, 用于判断是否要枚举表
 
@@ -42,6 +43,21 @@ function HsForm(context, opts) {
         }
     }
 
+    function initData (a) {
+        var s = [];
+        for(var i = 0; i < a.length; i ++) {
+            var n = a [i];
+            if (n.value && n.name) {
+                s.push(n);
+            }
+        }
+        return  s;
+    }
+
+    function loadData (a) {
+        return  a;
+    }
+
     var loadArr = hsSerialArr(loadBox);
     if (loadUrl) {
         loadUrl = hsFixPms(loadUrl, loadArr);
@@ -49,9 +65,16 @@ function HsForm(context, opts) {
     if (saveUrl) {
         saveUrl = hsFixPms(saveUrl, loadArr);
     }
+    if (! loadDat) {
+        loadDat = loadData(loadArr);
+    }
+    if (! initDat) {
+        initDat = initData(loadArr);
+    }
 
     this.valiInit( /* */ );
     this.saveInit(saveUrl);
+    this._init  = initDat ;
 
     /**
      * 如果存在 id 或 ab 则进行数据加载
@@ -86,13 +109,24 @@ HsForm.prototype = {
 
         this.formBox.trigger("loadBack", [rst, this]);
 
-        if (rst["enum"]) this.fillEnum(rst["enum"]);
-        if (rst["info"]) this.fillInfo(rst["info"]);
-        else if (rst.list && rst.list[0]) {
-            this.fillInfo (  rst.list[0]);  // 可能仅提供 list
-        } else {
-            this.fillInfo ( {} );           // 空也要执行 fill
+        var envm = rst["enum"] || {};
+        var info = rst["info"] || {};
+
+        // 列表取第一个
+        if (rst.list && rst.list[0]) {
+            info = rst.list[0] || {};
         }
+
+        // 填充预置数据
+        if (this._init) {
+            var d = hsSerialDic(this._init);
+            for(var k in d) { var v = d [k];
+                hsSetValue(info,k,v);
+            }
+        }
+
+        this.fillEnum(envm);
+        this.fillInfo(info);
 
         this.formBox.trigger("loadOver", [rst, this]);
     },

@@ -500,11 +500,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         Map  resp = new HashMap();
         Map  page = new HashMap();
-        page.put("rowscount", rc);
-        page.put("pagecount", pc);
-        page.put("rows", rn);
-        page.put("pags", gn);
-        page.put("page", pn);
+        page.put("count", rc );
+        page.put("pages", pc );
+        page.put(Cnst.RN_KEY, rn);
+        page.put(Cnst.GN_KEY, gn);
+        page.put(Cnst.PN_KEY, pn);
         resp.put("page", page);
 
         if (rc == 0) {
@@ -543,11 +543,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         Map  resp = new HashMap();
         Map  page = new HashMap();
-        page.put("rowscount", rc);
-        page.put("pagecount", pc);
-        page.put("rows", rn);
-        page.put("pags", gn);
-        page.put("page", pn);
+        page.put("count", rc );
+        page.put("pages", pc );
+        page.put(Cnst.RN_KEY, rn);
+        page.put(Cnst.GN_KEY, gn);
+        page.put(Cnst.PN_KEY, pn);
         resp.put("page", page);
         resp.put("list", list);
 

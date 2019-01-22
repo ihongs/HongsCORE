@@ -513,7 +513,7 @@ public class Table
   /**
    * 插入子数据
    *
-   * 用于Model中, Table中不自动删除关联数据
+   * 用于Model中, Table中不自动写入关联数据
    *
    * @param values
    * @throws io.github.ihongs.HongsException

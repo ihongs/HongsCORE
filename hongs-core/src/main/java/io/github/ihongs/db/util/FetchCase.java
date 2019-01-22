@@ -43,22 +43,20 @@ import java.util.regex.Pattern;
  * ASSOC_MULTI  : boolean     对多关联(使用IN方式关联); 作用域: FetchMore
  * ASSOC_MERGE  : boolean     归并关联(仅限非对多关联); 作用域: FetchMore
  * ASSOC_FILLS  : boolean     给缺失的关联补全空白数据; 作用域: FetchMore
- * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: AssocMore.fetchMore
- * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: AssocMore.fetchMore
- * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore.fetchMore
- * CHECKS       ：Set         查询检查设置标识; 作用域: AssocMore.checkCase
- * page         : int|String  分页页码; 作用域: FetchPage
- * pags         : int|String  链接数量; 作用域: FetchPage
- * rows         : int|String  分页行数; 作用域: FetchPage
- * INCLUDE_REMOVED : boolean  包含伪删除的数据; 作用域: Table.fetchMore
- * INCLUDE_HASMANY : boolean  包含多对多的关联; 作用域: Table.fetchMore
+ * ASSOC_TYPES  : Set         仅对某些类型关联; 作用域: AssocMore
+ * ASSOC_JOINS  : Set         仅对某些类型连接; 作用域: AssocMore
+ * ASSOCS       : Set         仅对某些表做关联; 作用域: AssocMore
+ * CHECKS       ：Set         查询检查设置标识; 作用域: AssocMore
+ * pn           : int         分页页码; 作用域: FetchPage
+ * gn           : int         链接数量; 作用域: FetchPage
+ * rn           : int         分页行数; 作用域: FetchPage
  * </pre>
  *
  * <h3>异常代码:</h3>
  * <pre>
  * 区间: 0x10b0~0x10bf
  * 0x10b0 无法识别关联类型(JOIN)
- * 0x10b2 必须指定关联条件(FULL|LEFT|RIGHT)_JOIN
+ * 0x10b2 必须指定关联条件
  * 0x10b4 没有指定查询表名
  * 0x10b6 没有指定查询的库
  * </pre>

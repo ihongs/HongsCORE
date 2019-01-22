@@ -134,15 +134,15 @@ public class Diverse extends Rule {
         } else
         if (sd.containsKey("page")) {
             Map page = (Map ) sd.get("page");
-            if (page == null) {
+            if (page == null || page.isEmpty()) {
                 return value;
             } else
-            if (page.containsKey("pagecount")
-            &&  Synt.declare(page.get("pagecount"), 0) == 0) {
+            if (page.containsKey("count")
+            &&  Synt.declare(page.get("count"), 0) == 0) {
                 return value;
             } else
-            if (page.containsKey("rowscount")
-            &&  Synt.declare(page.get("rowscount"), 0) == 0) {
+            if (page.containsKey("pages")
+            &&  Synt.declare(page.get("pages"), 0) == 0) {
                 return value;
             }
         }

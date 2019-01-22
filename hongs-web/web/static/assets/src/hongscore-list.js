@@ -301,8 +301,8 @@ HsList.prototype = {
         }
 
         var i, p, t, pmin, pmax, that = this;
-        p = page.page      ? parseInt(page.page     ) : 1;
-        t = page.pagecount ? parseInt(page.pagecount) : 1;
+        p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
+        t = page[this._pc_key] ? parseInt(page[this._pc_key]) : 1;
         pmin = p - Math.floor( this.pagsNum / 2 );
         if (pmin < 1) pmin = 1;
         pmax = pmin + this.pagsNum - 1;
@@ -370,6 +370,8 @@ HsList.prototype = {
             ev.preventDefault();
         });
     },
+    _rc_key : "count",
+    _pc_key : "pages",
 
     send     : function(btn, msg, url, data) {
         var that = this;
@@ -720,11 +722,11 @@ function hsListFillNext(page) {
             return;
     }
 
-    var r = page.rows ? parseInt(page.rows) : 20;
-    var p = page.page ? parseInt(page.page) : 1 ;
-    var t = page.pagecount ? parseInt(page.pagecount)
-        : ( page.rowscount == 0 ? p - 1
-        : ( page.rowscount == r ? p + 1
+    var r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : 20;
+    var p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1 ;
+    var t = page[this._pc_key] ? parseInt(page[this._pc_key])
+        : ( page[this._rc_key] == 0 ? p - 1
+        : ( page[this._rc_key] == r ? p + 1
         : p ) );
 
     // 添加翻页按钮

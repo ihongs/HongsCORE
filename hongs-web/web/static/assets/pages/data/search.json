@@ -4,8 +4,8 @@
     "rel": "",
     "msg": "",
     "page": {
-        "pagecount": 2,
-        "rowscount": 18
+        "pages": 2,
+        "count": 18
     },
     "enum": {
         "type": [

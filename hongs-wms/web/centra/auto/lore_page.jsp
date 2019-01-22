@@ -101,6 +101,12 @@
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
 <b>列表:</b> {
+    "page": {
+        "<%=Cnst.PN_KEY%>": "页码参数",
+        "<%=Cnst.RN_KEY%>": "行数参数",
+        "pages": "总页数",
+        "count": "总行数",
+    },
     "list": [{
         "字段名": "字段值"
     }],
@@ -108,12 +114,6 @@
         "字段名": [
             ["值", "文本"],
         ]
-    },
-    "page": {
-        "page": "页码参数",
-        "rows": "行数参数",
-        "pagecount": "总页数",
-        "rowscount": "总行数",
     },
     // ...
 }

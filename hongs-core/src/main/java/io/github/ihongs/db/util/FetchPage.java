@@ -1,11 +1,12 @@
 package io.github.ihongs.db.util;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.HashMap;
 
 /**
  * 分页查询
@@ -34,19 +35,19 @@ public final class FetchPage
     this.tb    = null;
     this.caze  = caze;
 
-    Object page2 = caze.getOption("page");
+    Object page2 = caze.getOption(Cnst.PN_KEY);
     if (page2 != null && page2.equals(""))
     {
       this.setPage(Integer.parseInt(page2.toString()));
     }
 
-    Object lnks2 = caze.getOption("pags");
+    Object lnks2 = caze.getOption(Cnst.GN_KEY);
     if (lnks2 != null && lnks2.equals(""))
     {
       this.setPags(Integer.parseInt(lnks2.toString()));
     }
 
-    Object rows2 = caze.getOption("rows");
+    Object rows2 = caze.getOption(Cnst.RN_KEY);
     if (rows2 != null && rows2.equals(""))
     {
       this.setRows(Integer.parseInt(rows2.toString()));
@@ -59,19 +60,19 @@ public final class FetchPage
     this.tb    = table;
     this.caze  = caze;
 
-    Object page2 = caze.getOption("page");
+    Object page2 = caze.getOption(Cnst.PN_KEY);
     if (page2 != null && page2.equals(""))
     {
       this.setPage(Integer.parseInt(page2.toString()));
     }
 
-    Object lnks2 = caze.getOption("pags");
+    Object lnks2 = caze.getOption(Cnst.GN_KEY);
     if (lnks2 != null && lnks2.equals(""))
     {
       this.setPags(Integer.parseInt(lnks2.toString()));
     }
 
-    Object rows2 = caze.getOption("rows");
+    Object rows2 = caze.getOption(Cnst.RN_KEY);
     if (rows2 != null && rows2.equals(""))
     {
       this.setRows(Integer.parseInt(rows2.toString()));
@@ -89,9 +90,8 @@ public final class FetchPage
   {
     if (page <  0) {
         getPage( ); // 获取分页信息
-        Integer O = (  Integer  )
-            info.get("pagecount");
-        if (O == null || O == 0 ) {
+        Integer O = (Integer) this.info.get("pages");
+        if (O == null || O == 0) {
             O = 1;
         }
         page += O;
@@ -136,17 +136,17 @@ public final class FetchPage
     List list = this.gotList();
     if (!list.isEmpty())
     {
-      this.info.put("ern" , 0); // 没有异常
+      this.info.put( "ern" ,0); // 没有异常
     } else
     if ( this.page != 1)
     {
-      this.info.put("ern" , 2); // 页码超出
+      this.info.put( "ern" ,2); // 页码超出
     }
     else
     {
-      this.info.put("ern" , 1); // 列表为空
-      this.info.put("pagecount", 0);
-      this.info.put("rowscount", 0);
+      this.info.put( "ern" ,1); // 列表为空
+      this.info.put("count",0);
+      this.info.put("pages",0);
     }
 
     return list;
@@ -155,13 +155,13 @@ public final class FetchPage
   public Map getPage()
     throws HongsException
   {
-    this.info.put("page", this.page);
-    this.info.put("pags", this.pags);
-    this.info.put("rows", this.rows);
+    this.info.put(Cnst.PN_KEY, this.page);
+    this.info.put(Cnst.GN_KEY, this.pags);
+    this.info.put(Cnst.RN_KEY, this.rows);
 
     // 列表为空则不用再计算了
-    if (this.info.containsKey("pagecount")
-    ||  this.info.containsKey("rowscount"))
+    if (this.info.containsKey("count")
+    ||  this.info.containsKey("pages"))
     {
       return this.info;
     }
@@ -204,15 +204,16 @@ public final class FetchPage
     {
       int rc = Integer.parseInt(row.get("__count__").toString());
       int pc = (int)Math.ceil((float)rc / this.rows);
-      this.info.put("rowscount", rc);
-      this.info.put("pagecount", pc);
+      this.info.put("count", rc);
+      this.info.put("pages", pc);
+
       /**
        * 查得数量与限制数量一致
        * 总数就可能比此数量大些
        * 那么只能作估值
        * 反之为精确数量
        */
-      this.info.put("ern", limit > 0 && limit == rc ? -1 : 0);
+      this.info.put("ern", (limit == 0 || limit != rc) ? 0 : -1);
     }
 
     return this.info;

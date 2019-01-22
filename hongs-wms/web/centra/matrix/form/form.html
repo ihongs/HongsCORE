@@ -13,7 +13,9 @@
                         <label class="control-label clearfix" style="display: block;">
                             <span>名称</span>
                         </label>
-                        <input class="form-control" name="name" type="text" required="required" placeholder="输入名字用以识别这个表单"/>
+                        <input class="form-control" name="name" type="text" required="required"
+                               data-unique="centra/matrix/form/unique.act?rb=id&id=${id}&unit_id=${unit_id}"
+                               placeholder="输入名字用以识别这个表单"/>
                     </div>
                     <div class="form-group">
                         <label class="control-label clearfix" style="display: block">

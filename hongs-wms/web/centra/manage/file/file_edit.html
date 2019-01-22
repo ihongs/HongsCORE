@@ -2,11 +2,10 @@
 <div id="manage-file-file-modify"
      data-module="hsForm"
      data-save-url="centra/file/update.act"
-     data-load-url="centra/file/search.act?path=${path}&amp;type=file&amp;ab=_"
-     data-init-data="{'dist':H$('@path',this)}">
+     data-load-url="centra/file/search.act?path=${path}&amp;type=file&amp;ab=_">
     <form action="" method="POST">
         <input type="hidden" name="path"/>
-        <input type="hidden" name="dist"/>
+        <input type="hidden" name="dist" data-fl="H$('@path',this)"/>
         <input type="hidden" name="type" value="file"/>
         <div class="form-group row">
             <label class="col-xs-3 control-label form-control-static text-right">文件名</label>

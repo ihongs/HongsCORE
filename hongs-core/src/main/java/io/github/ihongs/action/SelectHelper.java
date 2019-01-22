@@ -345,7 +345,7 @@ public class SelectHelper {
                 Map.Entry et2 = (Map.Entry) ot2;
                 Object fn2 = et2.getKey(  );
                 Object fv2 = et2.getValue();
-                xnum.put(fn +"."+ fn2, fv2);
+                Dict.put( xnum, fv2, fn , fn2 );
             }
         }
     }
@@ -508,14 +508,14 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
-            List     lst = new ArrayList();
+            List     lst = new ArrayList(map.size());
 
             Iterator i = map.entrySet().iterator();
             while (i.hasNext()) {
                 Map.Entry e = (Map.Entry) i.next();
-                Object k = e.getKey (  );
-                Object v = e.getValue( );
-                List a = new ArrayList();
+                Object k = e.getKey  (  );
+                Object v = e.getValue(  );
+                List a = new ArrayList(2);
                 a.add( k );
                 a.add( v );
                 lst.add(a);

@@ -497,22 +497,30 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         Loop roll = search( rd, minRn , totRn - minRn );
         int  rc   = roll . size();
         int  pc   = ( int ) Math.ceil((double) rc / rn);
+        int  st   ;
+
+        if (rc == 0) {
+            st =  1;
+        } else
+//      if (rc <  minRn) {
+//          st =  2;
+//      } else
+        if (rc >= totRn) {
+            st = -1;
+        } else
+        {
+            st =  0;
+        }
 
         Map  resp = new HashMap();
         Map  page = new HashMap();
-        page.put("count", rc );
-        page.put("pages", pc );
         page.put(Cnst.RN_KEY, rn);
         page.put(Cnst.GN_KEY, gn);
         page.put(Cnst.PN_KEY, pn);
+        page.put("count", rc );
+        page.put("pages", pc );
+        page.put("state", st );
         resp.put("page", page);
-
-        if (rc == 0) {
-            page.put("ern", 1);
-        } else
-        if (rc ==  totRn  ) {
-            page.put("ern",-1);
-        }
 
         return resp;
     }
@@ -533,6 +541,20 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         Loop roll = search( rd, minRn , totRn - minRn );
         int  rc   = roll . size();
         int  pc   = ( int ) Math.ceil((double) rc / rn);
+        int  st   ;
+
+        if (rc == 0) {
+            st =  1;
+        } else
+        if (rc <  minRn) {
+            st =  2;
+        } else
+        if (rc >= totRn) {
+            st = -1;
+        } else
+        {
+            st =  0;
+        }
 
         // 提取分页片段
         List list = new LinkedList();
@@ -543,23 +565,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         Map  resp = new HashMap();
         Map  page = new HashMap();
-        page.put("count", rc );
-        page.put("pages", pc );
         page.put(Cnst.RN_KEY, rn);
         page.put(Cnst.GN_KEY, gn);
         page.put(Cnst.PN_KEY, pn);
+        page.put("count", rc );
+        page.put("pages", pc );
+        page.put("state", st );
         resp.put("page", page);
         resp.put("list", list);
-
-        if (rc == 0) {
-            page.put("ern", 1);
-        } else
-        if (rc ==  totRn  ) {
-            page.put("ern",-1);
-        } else
-        if (list.isEmpty()) {
-            page.put("ern", 2);
-        }
 
         return  resp;
     }

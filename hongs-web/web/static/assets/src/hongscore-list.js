@@ -185,9 +185,9 @@ HsList.prototype = {
 
         if (! rst.page) {
         if (! rst.list || ! rst.list.length) {
-            page = {ern: 1}; // 空列表
+            page = {state: 1}; // 空列表
         } else {
-            page = {ern:-1}; // 估算量
+            page = {state:-1}; // 估算量
         }}
 
         this.fillList(list);
@@ -277,7 +277,7 @@ HsList.prototype = {
         }
     },
     fillPage : function(page) {
-        switch (page.ern) {
+        switch (page.state) {
             case  2 :
             case "2":
                 this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
@@ -315,7 +315,7 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (page.ern == -1 && pmax == t - 1) {
+        if (page.state == -1 && pmax == t - 1) {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));
@@ -711,7 +711,7 @@ function hsListFillItem(list) {
  * @return {undefined}
  */
 function hsListFillNext(page) {
-    switch (page.ern) {
+    switch (page.state) {
         case  1 :
         case "1":
             this.note(this._empty_err || hsGetLang('list.empty'), "warning");
@@ -753,7 +753,7 @@ function hsListFillNext(page) {
     if (pag.size() === 0) {
         pag = this.pageBox.find(".page-curr"  );
     }
-    if (page.ern  !=  -1) {
+    if (page.state != -1) {
         pag.text(p+"/"+t);
     } else {
         pag.text(p);

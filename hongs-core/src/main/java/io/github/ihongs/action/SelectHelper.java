@@ -173,23 +173,24 @@ public class SelectHelper {
                 defts.put(name, mt.get("default"));
             }
 
-            if ("enum".equals(type)) {
+            switch (type) {
+            case "enum" : {
                 String xonf = (String) mt.get("conf");
                 String xame = (String) mt.get("enum");
                 if (null == xonf || "".equals( xonf )) xonf = conf;
                 if (null == xame || "".equals( xame )) xame = name;
                 Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
                 enums.put(name , xnum);
-            } else
-            if ("form".equals(type)) {
+            } break;
+            case "form" : {
                 String xonf = (String) mt.get("conf");
                 String xame = (String) mt.get("form");
                 if (null == xonf || "".equals( xonf )) xonf = conf;
                 if (null == xame || "".equals( xame )) xame = name;
                 Map xnum = FormSet.getInstance(xonf).getForm/*Normal*/(xame);
                 forms.put(name , xnum);
-            } else
-            if ("fork".equals(type)) {
+            } break;
+            case "fork" : {
                 Map xnum = new HashMap(mt);
                 if (! mt.containsKey("data-at" )
                 &&  ! mt.containsKey("data-al")) {
@@ -201,21 +202,22 @@ public class SelectHelper {
                 }
                 }
                 forks.put(name , xnum);
-            } else
-            if ("file".equals(type)) {
+            } break;
+            case "file" : {
                 String href = (String) mt.get("href");
                 if (href != null
                 && !HOSTP.matcher(href).find( )
                 && !SERVP.matcher(href).find()) {
                     files.add(name);
                 }
-            } else
-            if ("date".equals(type)) {
+            } break;
+            case "date" : {
                 String typa = (String) mt.get("type");
                 if (! "time"     .equals(typa )
                 &&  ! "timestamp".equals(typa)) {
                     dates.add(name);
                 }
+            } break;
             }
         }
 

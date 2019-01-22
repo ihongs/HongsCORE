@@ -482,7 +482,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     private Map getPage(Map rd, int rn, int gn, int pn) throws HongsException {
-        Loop roll = search( rd, 0 , rn * gn  * 10 + 1 );
+        // 获取页码, 计算查询区间
+        int minPn = pn - (gn / 2);
+        if (minPn < 1)   minPn=1 ;
+        int maxPn = gn + minPn-1 ;
+        int totRn = rn * maxPn+1 ;
+        int minRn = rn * (pn - 1);
+//      int maxRn = rn + minRn   ;
+        // 数量太少的话没必要估算
+        if (totRn < gn * rn * 10 + 1) {
+            totRn = gn * rn * 10 + 1;
+        }
+
+        Loop roll = search( rd, minRn , totRn - minRn );
         int  rc   = roll . size();
         int  pc   = ( int ) Math.ceil((double) rc / rn);
 
@@ -497,6 +509,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         if (rc == 0) {
             page.put("ern", 1);
+        } else
+        if (rc ==  totRn  ) {
+            page.put("ern",-1);
         }
 
         return resp;
@@ -538,6 +553,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         if (rc == 0) {
             page.put("ern", 1);
+        } else
+        if (rc ==  totRn  ) {
+            page.put("ern",-1);
         } else
         if (list.isEmpty()) {
             page.put("ern", 2);

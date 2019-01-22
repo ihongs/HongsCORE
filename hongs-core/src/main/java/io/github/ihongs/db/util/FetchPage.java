@@ -204,10 +204,15 @@ public final class FetchPage
     {
       int rc = Integer.parseInt(row.get("__count__").toString());
       int pc = (int)Math.ceil((float)rc / this.rows);
-      boolean uc = this.pags > 0 &&  rc >= limit; // 不确定的总数
       this.info.put("rowscount", rc);
       this.info.put("pagecount", pc);
-      this.info.put("ern", uc?-1: 0);
+      /**
+       * 查得数量与限制数量一致
+       * 总数就可能比此数量大些
+       * 那么只能作估值
+       * 反之为精确数量
+       */
+      this.info.put("ern", limit > 0 && limit == rc ? -1 : 0);
     }
 
     return this.info;

@@ -11,7 +11,9 @@
             <div class="col-xs-6 center-block">
                 <div class="form-group">
                     <label class="control-label">名称</label>
-                    <input class="form-control" name="name" type="text" required="required" placeholder="请输入名字用以作为菜单显示"/>
+                    <input class="form-control" name="name" type="text" required="required"
+                           data-unique="centra/matrix/unit/unique.act?rb=id&id=${id}&pid=${pid}"
+                           placeholder="请输入名字用以作为菜单显示"/>
                 </div>
                 <!--
                 <div class="form-group dont-close">

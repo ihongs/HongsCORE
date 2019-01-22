@@ -136,15 +136,15 @@ public final class FetchPage
     List list = this.gotList();
     if (!list.isEmpty())
     {
-      this.info.put( "ern" ,0); // 没有异常
+      this.info.put("state",0); // 没有异常
     } else
     if ( this.page != 1)
     {
-      this.info.put( "ern" ,2); // 页码超出
+      this.info.put("state",2); // 页码超出
     }
     else
     {
-      this.info.put( "ern" ,1); // 列表为空
+      this.info.put("state",1); // 列表为空
       this.info.put("count",0);
       this.info.put("pages",0);
     }
@@ -213,7 +213,7 @@ public final class FetchPage
        * 那么只能作估值
        * 反之为精确数量
        */
-      this.info.put("ern", (limit == 0 || limit != rc) ? 0 : -1);
+      this.info.put("state", limit == 0 || limit != rc ? 0 : -1);
     }
 
     return this.info;

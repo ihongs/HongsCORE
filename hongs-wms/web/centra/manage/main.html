@@ -1,2 +1,19 @@
-<h1>Hello World</h1>
-<p>如果您拥有文件管理权限，您可以到<a href="centra/manage/file/">通用/文件管理</a>打开"<b>网站/centra/manage</b>"下的"<b>main.html</b>"文件，此内容即在这个文件中，您可以编辑显示的内容。</p>
+<div class="jumbotron" id="centra-manage-main">
+    <h1>Hello, world!</h1>
+    <p>
+        如果您拥有文件管理权限，
+        可到 <b>通用/文件管理</b> 打开 <b>网站/centra/manage</b> 下的 <b>main.html</b> 文件，
+        此内容即在这个文件里面，
+        修改此内容可作其他用途。
+    </p>
+    <p>
+        <a class="btn btn-lg btn-primary" role="button" href="centra/manage/file/">管理文件</a>
+    </p>
+</div>
+<script type="text/javascript">
+    (function($) {
+        var context = $("#centra-manage-main").removeAttr("id");
+        
+        
+    })(jQuery);
+</script>

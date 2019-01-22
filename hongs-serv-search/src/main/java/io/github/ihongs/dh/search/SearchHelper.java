@@ -188,7 +188,7 @@ public class SearchHelper {
         }
 
         int z = counts(rd, counts2, countz2, countx2, reader, finder);
-        cnts.put("__total__", z);
+        cnts.put("__count__", z);
 
         //** 排序并截取统计数据 **/
 
@@ -433,7 +433,7 @@ public class SearchHelper {
         }
 
         int z = statis(rd, counts2, countx2, reader, finder);
-        cnts.put("__total__", z);
+        cnts.put("__count__", z);
 
         //** 排序统计数据 **/
 

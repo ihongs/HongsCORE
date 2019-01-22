@@ -282,7 +282,7 @@ HsStat.prototype = {
             cache  : true,
             success: function(rst) {
                 for (var k in rst.info) {
-                     if (k == "__total__") continue;
+                     if (k == "__count__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
                      that.setStatisCheck(n, d);
@@ -323,7 +323,7 @@ HsStat.prototype = {
             cache  : true,
             success: function(rst) {
                 for (var k in rst.info) {
-                     if (k == "__total__") continue;
+                     if (k == "__count__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
                      that.setCountsCheck(n, d);

@@ -5,7 +5,6 @@
      data-load-url="centra/file/search.act?path=${path}&amp;type=file&amp;ab=_">
     <form action="" method="POST">
         <input type="hidden" name="path"/>
-        <input type="hidden" name="dist" data-fl="H$('@path',this)"/>
         <input type="hidden" name="type" value="file"/>
         <div class="form-group row">
             <label class="col-xs-3 control-label form-control-static text-right">文件名</label>
@@ -61,12 +60,11 @@
             var form = $(this);
             var inst = context.data( "HsForm" );
             var path = form.find("[name=path]").val();
-            var dist = form.find("[name=dist]").val();
             var name = form.find("[name=name]").val();
             var text = form.find("[name=text]").data("CM").getValue();
-                dist = dist.replace(/\/[^\/]*$/, '' );
+            var dist = path.replace(/\/[^\/]*$/, '' );
             if (/\.properties$/.test(name)) {
-                text = encodeUnicode(text)
+                text = encodeUnicode(text);
             }
             var data = {
                 dist : dist + "/" + name,

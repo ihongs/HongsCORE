@@ -167,6 +167,8 @@ public class SelectHelper {
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 
+            if (type == null) {continue;}
+
             if (mt.containsKey("default")
             &&  mt.containsKey("deforce")
             &&  "blanks".equals(mt.get("deforce"))) {

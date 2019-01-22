@@ -14,6 +14,8 @@ if (!self.HsDEPS) self.HsDEPS = {};
  * : 获取语言
  * / 补全路径
  * ? 检查权限
+ * ! 快捷获取模块对象
+ * # 快捷获取容器对象
  * @ 获取参数, 第二个参数指定容器, 当键含有[]或..或以.结尾则返回数组
  * % 获取/设置本地存储, 第二个参数存在为设置, 第二个参数为null则删除
  * $ 获取/设置会话存储, 第二个参数存在为设置, 第二个参数为null则删除
@@ -28,10 +30,22 @@ function H$() {
     case ':': return hsGetLang.apply(this, arguments);
     case '/': return hsFixUri .apply(this, arguments);
     case '?': return hsChkUri .apply(this, arguments);
+    case '!':
+        if (arguments.length == 1) {
+          return jQuery("." + arguments[0]).data(arguments[0]);
+        } else {
+          return jQuery(arguments[1]).closest("."+ arguments[0]).data(arguments[0]);
+        }
+    case '#':
+        if (arguments.length == 1) {
+          return jQuery("#" + arguments[0]).removeAttr( "id" );
+        } else {
+          return jQuery(arguments[1]).closest("#"+ arguments[0]).removeAttr( "id" );
+        }
     case '@':
     case '&': // 因在 html 中为特殊符号, 为避麻烦弃用
-        if (arguments.length === 1) {
-            arguments.length  =  2;
+        if (arguments.length == 1) {
+            arguments.length =  2;
             arguments[1] = location.href;
         }
         if (typeof(arguments[1]) !== "string") {
@@ -60,7 +74,7 @@ function H$() {
             return c.getItem(arguments[0]);
         } else
         if (arguments[1] === null) {
-            c.removeItem(arguments[0]);
+            c.removeItem/**/(arguments[0]);
         } else
         {
             c.setItem(arguments[0], arguments[1]);
@@ -2271,8 +2285,6 @@ $.fn.hsFind = function(selr) {
     var salr = selr.substring(1);
     salr = $.trim(salr);
     switch (flag) {
-        case '!':
-            return $(this).closest("."+salr).data(salr); // 快捷提取模块对象
         case '@':
             do {
                 var x;

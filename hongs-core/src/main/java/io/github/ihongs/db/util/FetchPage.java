@@ -207,7 +207,7 @@ public final class FetchPage
       boolean uc = this.pags > 0 &&  rc >= limit; // 不确定的总数
       this.info.put("rowscount", rc);
       this.info.put("pagecount", pc);
-      this.info.put("uncertain", uc);
+      this.info.put("ern", uc?-1: 0);
     }
 
     return this.info;

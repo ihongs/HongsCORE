@@ -3,11 +3,10 @@
      data-module="hsForm"
      data-load-url="centra/master/user/info.act?ab=!enum&amp;navi-conf=default"
      data-save-url="centra/master/user/save.act"
-     data-data-0="_fill_head: (hsFormFillView) "
-     data-init-data="{'depts.0.dept_id': H$('@dept_id', this)}">
+     data-data-0="_fill_head: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id"/>
-        <input type="hidden" name="depts.0.dept_id"/>
+        <input type="hidden" name="depts.0.dept_id" data-fl="H$('@dept_id',this)"/>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">

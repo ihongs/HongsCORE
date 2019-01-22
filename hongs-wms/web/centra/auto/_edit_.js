@@ -6,10 +6,10 @@ function setFormItems(formbox, loadbox) {
         var inp;
 
         // 选择器
-        inp = formbox.find("[data-toggle=datetimepicker]");
-        if (inp.size()) forDateInput(inp);
+        inp = formbox.find("[data-toggle=dateinput],[data-toggle=datetimepicker]");
+        if (inp.size()) forDateInput(   );
         inp = formbox.find("[data-toggle=suggest]");
-        if (inp.size()) forSuggInput(inp);
+        if (inp.size()) forSuggInput(   );
         inp = formbox.find("[data-toggle=fileinput]");
         if (inp.size()) setFileInput(inp);
         inp = formbox.find("[data-toggle=tagsinput]");

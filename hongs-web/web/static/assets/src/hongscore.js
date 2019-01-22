@@ -326,7 +326,7 @@ function hsSerialArr(obj) {
         case "serdic":
             hsForEach(obj, function(vxl, key) {
                 if (key.length) {
-                    key  = key/***/[ 0 ];
+                    key  = key.join('.');
                     arr.push({name: key, value: vxl});
                 }
             });
@@ -357,19 +357,28 @@ function hsSerialArr(obj) {
         case "jquery":
             obj = jQuery( obj  );
             if (obj.data("href")) {
-                var pos ;
                 var url = obj.data("href");
                 var dat = obj.data("data");
-                pos = url.indexOf("?");
-                if (pos != -1) {
-                    arr = hsMixSerias(arr, url.substring(pos+1));
+                var p, a, i;
+                p = url.indexOf("?");
+                if (p != -1) {
+                    a  = hsSerialArr(url.substring(p + 1));
+                    for(i = 0; i < a.length; i ++) {
+                        arr.push(a[i]);
+                    }
                 }
-                pos = url.indexOf("#");
-                if (pos != -1) {
-                    arr = hsMixSerias(arr, url.substring(pos+1));
+                p = url.indexOf("#");
+                if (p != -1) {
+                    a  = hsSerialArr(url.substring(p + 1));
+                    for(i = 0; i < a.length; i ++) {
+                        arr.push(a[i]);
+                    }
                 }
                 if (dat) {
-                    arr = hsMixSerias(arr, dat);
+                    a  = hsSerialArr(dat);
+                    for(i = 0; i < a.length; i ++) {
+                        arr.push(a[i]);
+                    }
                 }
             } else {
                 arr = jQuery(obj).serializeArray();
@@ -385,11 +394,31 @@ function hsSerialArr(obj) {
 }
 
 /**
+ * 合并多组序列, 类似 jQuery.merge, 但归并层级, 返回为单层 HsSerialDic
+ * @param {Array|String|Object|Element|FormData} obj0, obj1, obj2...
+ * @returns {Object}
+ */
+function hsSerialMix() {
+    if (arguments.length < 2) {
+        throw "hsSerialMix: No less than two arguments";
+    }
+        var aro = hsSerialDic(arguments[0]);
+    for(var x = 1; x < arguments.length; x ++) {
+        var arx = hsSerialDic(arguments[x]);
+        jQuery.extend( aro, arx );
+    }
+    return  aro;
+}
+
+/**
  * 序列化为字典, 供快速地查找(直接使用Object-Key获取数据)
  * @param {Array|String|Object|Element|FormData} obj
  * @return {Object}
  */
 function hsSerialDic(obj) {
+    if (obj instanceof HsSerialDic) {
+        return obj;
+    }
     var arr = hsSerialArr(obj);
     obj = new HsSerialDic(   );
     for(var i = 0; i < arr.length; i ++) {
@@ -405,6 +434,9 @@ function hsSerialDic(obj) {
  * @return {Object}
  */
 function hsSerialDat(obj) {
+    if (obj instanceof HsSerialDat) {
+        return obj;
+    }
     var arr = hsSerialArr(obj);
     obj = new HsSerialDat(   );
     for(var i = 0; i < arr.length; i ++) {
@@ -536,26 +568,6 @@ function hsToFormData (data) {
         }
     }
     return  form;
-}
-
-/**
- * 合并多组序列
- * 类 jQuery.merge, 两点不同
- * 1. 后面同名的会覆盖前面的
- * 2. 返回新数组而非加到首个
- * @param {Array|String|Object|Element|FormData} arr1, arr2, arr3...
- * @returns {Array}
- */
-function hsMixSerias() {
-    if (arguments.length < 2) {
-        throw "hsMixSerias: No less than two arguments";
-    }
-        var aro = hsSerialDic(arguments[0]);
-    for(var x = 1; x < arguments.length; x ++) {
-        var arx = hsSerialDic(arguments[x]);
-        jQuery.extend (aro, arx);
-    }
-    return hsSerialArr(aro);
 }
 
 /**

@@ -209,7 +209,7 @@ function HsTree(context, opts) {
 
     if (loadUrl) {
         loadUrl = hsFixPms   (loadUrl, loadBox);
-        loadDat = hsMixSerias(loadDat, findBox);
+        loadDat = hsSerialMix(loadDat, findBox);
         this.load(rootInfo.id,loadUrl, findBox);
     }
 }
@@ -238,13 +238,22 @@ HsTree.prototype = {
 
         this.treeBox.trigger("loadBack", [rst, pid, this]);
 
-        if (rst.list) this.fillList( rst.list, pid );
-        if (this.treeBox.find(
-        "#tree-node-" + this.getSid()).size() === 0) {
-            this.select ( pid );
-        }
+        this.fillList(rst.list || [], pid);
 
         this.treeBox.trigger("loadOver", [rst, pid, this]);
+
+        /**
+         * 删除后重载会致丢失选中
+         * 此时需选中此节点的上级
+         */
+        var sid = this.getSid();
+        var rid = this.getRid();
+        if (this.treeBox.find("#tree-node-"+sid).size() === 0) {
+        if (this.treeBox.find("#tree-node-"+pid).size() === 0) {
+            this.select(rid);
+        } else {
+            this.select(pid);
+        }}
     },
     fillList : function(list, pid) {
         var lst, nod, i, id;

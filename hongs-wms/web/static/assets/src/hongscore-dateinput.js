@@ -116,7 +116,7 @@
         return  this;
     };
 
-    $(document).on("cursor", "[data-toggle=dateinput],[data-toggle=datetimepicker]",
+    $(document).on("focus", "[data-toggle=dateinput],[data-toggle=datetimepicker]",
     function( ) {
         $(this).hsDateInput();
     });

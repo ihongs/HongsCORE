@@ -694,7 +694,8 @@ function hsListFillItem(list) {
 
             td.text(v);
         });
-        tr.show( ).appendTo( this.listBox );
+        tr.css( "display", "" );
+        this.listBox.append(tr);
     }
 
         delete this._list;

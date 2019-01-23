@@ -1,26 +1,14 @@
-<div class="jumbotron" style="margin-top: 15px;">
+<div id="centre-manage-main" class="jumbotron" style="margin-bottom: 0;">
     <h1>Hello, world!</h1>
-    <p style="white-space: pre-wrap;">
-        &lt;Code 代码/&gt;
-
-        曲：赵雷《成都》
-        词：于涛
-
-        让我掉下眼泪的 不止内存泄漏 让我夜夜不眠的 不止你的需求
-        明天还要改多久 你攥着我的手 让我感到为难的 是善变的需求
-
-        发布总是在半夜 回滚是永远的愁 错误随时的暴漏 困扰着我心头
-        在那个机械的键盘里 我从未忘记你 代码 写不完的 只有你
-
-        和我在开源的社区搜一搜 喔哦… 直到所有框架都学会了也不停留
-        你会看着我的文档 我把参数写进注释 走到断点里的尽头 搞定内存里的泄漏
-
-        发布总是在半夜 回滚是永远的愁 线上抛出的异常 烦恼着我心头
-        在那些混乱的代码里 我从未忘记你 重构 做不完的 只有你
-
-        和我在重构的代码搜一搜 喔哦… 直到所有的坑都修复了也不停留
-        你会调着我的接口 我会把它日志保留 看到调试器的尽头 优化旧代码的架构
-
-        和我在代码的世界走一走 喔哦… 直到你的对象都找到了也不停留
-    </p>
 </div>
+<script type="text/javascript">
+    (function($) {
+        var context = H$("#centre-manage-main");
+        var height  =  $(window).height() - 235;
+        
+        context.find("h1").css({
+            "text-align" :"center",
+            "line-height": height + "px"
+        });
+    })(jQuery);
+</script>

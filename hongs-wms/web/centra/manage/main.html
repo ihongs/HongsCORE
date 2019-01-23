@@ -1,12 +1,38 @@
-<div class="jumbotron" style="margin-top: 15px;">
+<div id="centra-manage-main" class="jumbotron" style="margin-top: 15px;">
     <h1>Hello, world!</h1>
     <p>
         如果您拥有文件管理权限，
         可到 <b>通用/文件管理</b> 打开 <b>网站/centra/manage</b> 下的 <b>main.html</b> 文件，
         此内容即在这个文件里面，
-        修改此内容可作其他用途。
+        修改作为公告或其他用途。
+        更多功能请尝试左侧菜单。
     </p>
     <p>
-        <a class="btn btn-lg btn-primary" role="button" href="centra/manage/file/">管理文件</a>
+        <a class="btn btn-lg btn-primary" style="margin-right: 1em;"
+           role="button" href="centra/manage/info/"
+           data-eval="!H$('?centra/info/search.act') && $(this).hide()">
+            系统信息
+        </a>
+        <a class="btn btn-lg btn-success" style="margin-right: 1em;"
+           role="button" href="centra/manage/file/"
+           data-eval="!H$('?centra/file/search.act') && $(this).hide()">
+            管理文件
+        </a>
     </p>
 </div>
+<script type="text/javascript">
+    (function($) {
+        var context = H$("#centra-manage-main");
+        
+        $.hsAjax({
+            url : "centra/mine/info.act",
+            type: "GET",
+            dataKind: "form",
+            dataType: "json",
+            success :   function(rst) {
+                rst = hsResponse(rst);
+                context.find("h1").text("Hello, "+rst.info.name+"!");
+            }
+        });
+    })(jQuery);
+</script>

@@ -1740,6 +1740,106 @@ $.hsWarn = function(msg, typ, yes, not) {
     div.alert();
     return  div;
 };
+$.hsView = function(tit, txt, yes, not) {
+    var mod = $('<div class="modal fade in"><div class="modal-dialog">'
+              + '<div class="modal-content"><div class="modal-header">'
+              + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
+              + '<h4  class="modal-title" ></h4></div>'
+              + '<div class="modal-body"  ></div>'
+              + '<div class="modal-footer"></div>'
+              + '</div></div></div>'  );
+    var div = mod.find(".modal-dialog");
+    var btt = div.find(".modal-title" );
+    var btx = div.find(".modal-body"  );
+    var btn = div.find(".modal-footer");
+    var fns;
+    var end;
+
+    // 参数检查
+    if (typeof txt === "string") {
+        fns = Array.prototype.slice.call(arguments, 2);
+        btx.text(txt);
+    }
+    if (typeof tit === "string") {
+        fns = Array.prototype.slice.call(arguments, 1);
+        btt.text(tit);
+    } else
+    {
+        fns = Array.prototype.slice.call(arguments, 0);
+    }
+
+    // 操作按钮
+    for(var i = 0; i < fns.length; i ++ )  {
+        var v = fns[i];
+
+        // 确认和取消按钮可使用简化参数
+        if (v === null || $.isFunction(v)) {
+            if (i == 0) {
+                v = {
+                    "click": v,
+                    "class": "btn-primary",
+                    "label": hsGetLang("ensure")
+                };
+            } else
+            if (i == 1) {
+                v = {
+                    "click": v,
+                    "class": "btn-default",
+                    "label": hsGetLang("cancel")
+                };
+            } else {
+                throw new Error("hsView: The value of the "+i+"th argument is not supported");
+            }
+        }
+
+        if (v["label"] || v["click"]) {
+            var btm = $('<button type="button" class="btn btn-md"></button>');
+            btn.append(btm);
+            if (v["label"]) {
+                btm.text (v["label"]);
+            }
+            if (v["click"]) {
+                btm.click(v["click"]);
+            }
+            if (v["class"]) {
+                btm.addClass(v["class"]);
+            } else
+            {
+                btm.addClass("btn-default");
+            }
+        } else {
+            // 未指定标签则认为是在设置窗体
+            if (v["close"] !== undefined) {
+                end = v["close"];
+            }
+            if (v["title"] !== undefined) {
+                btt.text (v["title"]);
+            }
+            if (v["notes"] !== undefined) {
+                btx.text (v["notes"]);
+            }
+            if (v["class"] !== undefined) {
+                div.addClass (v["class"]);
+            }
+        }
+    }
+    
+    // 无则隐藏
+    if (btn.children().size() == 0) {
+        btn.hide(/**/);
+    }
+    $(":focus").blur();
+
+    mod.on( "hide.bs.modal", function(evt) {
+        div.remove();
+        mod.remove();
+        if (end) {
+            end(evt);
+        }
+    } );
+    mod.modal();
+    return  div;
+};
 
 /**
  * 带加载进度条的异步通讯方法

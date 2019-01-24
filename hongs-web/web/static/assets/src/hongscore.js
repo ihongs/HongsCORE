@@ -1660,11 +1660,11 @@ $.hsWarn = function(msg, typ, yes, not) {
             }
         } else {
             // 未指定标签则认为是在设置窗体
-            if (v["close"] !== undefined) {
-                end = v["close"];
-            }
             if (v["focus"] !== undefined) {
                 foc = v["focus"];
+            }
+            if (v["close"] !== undefined) {
+                end = v["close"];
             }
             if (v["title"] !== undefined) {
                 btt.text (v["title"]);
@@ -1821,6 +1821,9 @@ $.hsView = function(tit, txt, yes, not) {
             if (v["class"] !== undefined) {
                 div.addClass (v["class"]);
             }
+            if (v["space"] !== undefined) {
+                btx.css("white-space", v["white"]);
+            }
         }
     }
     
@@ -1830,7 +1833,10 @@ $.hsView = function(tit, txt, yes, not) {
     }
     $(":focus").blur();
 
-    mod.on( "hide.bs.modal", function(evt) {
+    btn.on("click", "button", function() {
+        mod.modal("hide");
+    } );
+    mod.on("hidden.bs.modal", function(evt) {
         div.remove();
         mod.remove();
         if (end) {

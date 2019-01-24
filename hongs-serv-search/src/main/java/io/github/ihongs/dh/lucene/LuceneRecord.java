@@ -1250,14 +1250,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         sq.analyzer   (getAnalyser (fc));
         sq.lightMatch (Synt.asBool (fc.get("lucene-light-match")));
         sq.smartParse (Synt.asBool (fc.get("lucene-smart-parse")));
-        sq.phraseSlop (Synt.asInt  (fc.get("lucene-parse-phraseSlop" )));
-        sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-parse-fuzzyPreLen")));
-        sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-parse-fuzzyMinSim")));
-        sq.analyzeRangeTerms(Synt.asBool(fc.get("lucene-parse-analyzeRangeTerms")));
-        sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parse-allowLeadingWildcard")));
-        sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parse-lowercaseExpandedTerms")));
-        sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parse-enablePositionIncrements")));
-        sq.autoGeneratePhraseQueries(Synt.asBool(fc.get("lucene-parse-autoGeneratePhraseQueries")));
+        sq.phraseSlop (Synt.asInt  (fc.get("lucene-phrase-slop")));
+        sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-fuzzy-pre-len")));
+        sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-fuzzy-min-sim")));
+        sq.analyzeRangeTerms(Synt.asBool(fc.get("lucene-parser-analyze-range-terms")));
+        sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parser-allow-leading-wildcard")));
+        sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parser-lowercase-expanded-terms")));
+        sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parser-enable-position-increments")));
+        sq.autoGeneratePhraseQueries(Synt.asBool(fc.get("lucene-parser-auto-generate-phrase-queries")));
     }
 
     /**

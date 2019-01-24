@@ -1622,22 +1622,19 @@ $.hsWarn = function(tit, txt) {
     var btt = div.find( "h4"   );
     var btx = div.find( "p" ).eq( 0 );
     var btn = div.find( "p" ).eq( 1 );
+    var fns = Array.prototype.slice.call(arguments, 0);
     var foc = 0;
-    var fns;
     var end;
 
     // 参数检查
-    if (typeof txt === "string") {
-        fns = Array.prototype.slice.call(arguments, 2);
-    } else
     if (typeof tit === "string") {
-        fns = Array.prototype.slice.call(arguments, 1);
-    } else
-    {
-        fns = Array.prototype.slice.call(arguments, 0);
+        fns =  fns.slice(1);
+        btt.text(tit);
     }
-    btt.text(tit || "");
-    btx.text(txt || "");
+    if (typeof txt === "string") {
+        fns =  fns.slice(1);
+        btx.text(txt);
+    }
 
     // 操作按钮
     for(var i = 0; i < fns.length; i ++ )  {
@@ -1758,22 +1755,19 @@ $.hsView = function(tit, txt) {
     var btt = div.find(".modal-title" );
     var btx = div.find(".modal-body"  );
     var btn = div.find(".modal-footer");
+    var fns = Array.prototype.slice.call(arguments, 0);
     var foc = 0;
-    var fns;
     var end;
 
     // 参数检查
-    if (typeof txt === "string") {
-        fns = Array.prototype.slice.call(arguments, 2);
-    } else
     if (typeof tit === "string") {
-        fns = Array.prototype.slice.call(arguments, 1);
-    } else
-    {
-        fns = Array.prototype.slice.call(arguments, 0);
+        fns =  fns.slice(1);
+        btt.text(tit);
     }
-    btt.text(tit || "");
-    btx.text(txt || "");
+    if (typeof txt === "string") {
+        fns =  fns.slice(1);
+        btx.text(txt);
+    }
 
     // 操作按钮
     for(var i = 0; i < fns.length; i ++ )  {

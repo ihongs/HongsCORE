@@ -15,10 +15,8 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
@@ -39,7 +37,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-import org.xml.sax.SAXException;
 
 /**
  * 表单模型
@@ -439,12 +436,10 @@ public class Form extends Model {
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
-        String   path;
         Document docm;
         Element  root, menu, role, actn, depn;
 
-        path = Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml";
-        docm = readDocument(path);
+        docm = makeDocument();
 
         root = docm.createElement("root");
         docm.appendChild ( root );
@@ -466,16 +461,19 @@ public class Form extends Model {
         role.setAttribute("text", "查看"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/search" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/search" + Cnst.ACT_EXT) );
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/counts/search" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/counts/search" + Cnst.ACT_EXT) );
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/statis/search" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/statis/search" + Cnst.ACT_EXT) );
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/stream/search" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/stream/search" + Cnst.ACT_EXT) );
+        depn = docm.createElement("depend");
+        role.appendChild ( depn );
+        depn.appendChild ( docm.createTextNode("centra") );
 
         // 修改
         role = docm.createElement("role");
@@ -484,10 +482,10 @@ public class Form extends Model {
         role.setAttribute("text", "修改"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/update" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/update" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
+        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
 
         // 添加
         role = docm.createElement("role");
@@ -496,10 +494,10 @@ public class Form extends Model {
         role.setAttribute("text", "添加"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/create" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/create" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
+        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
 
         // 删除
         role = docm.createElement("role");
@@ -508,10 +506,10 @@ public class Form extends Model {
         role.setAttribute("text", "删除"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/delete" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/delete" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
+        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
 
         // 回看
         role = docm.createElement("role");
@@ -520,10 +518,10 @@ public class Form extends Model {
         role.setAttribute("text", "回看"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/search") );
+        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
 
         // 恢复
         role = docm.createElement("role");
@@ -532,31 +530,29 @@ public class Form extends Model {
         role.setAttribute("text", "恢复"+name);
         actn = docm.createElement("action");
         role.appendChild ( actn );
-        actn.appendChild (docm.createTextNode(centra+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
+        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/update") );
+        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/update") );
         depn = docm.createElement("depend");
         role.appendChild ( depn );
-        depn.appendChild (docm.createTextNode(centra+"/"+id+"/review") );
+        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/review") );
 
-        saveDocument(path, docm);
+        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
 
         //** 对外开放 **/
 
-        path = Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml";
-        File fo = new File(path);
+        /**
+         * 内部情况确保文件不存在
+         */
+        File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml");
         if (!"2".equals(stat)) {
             if (fo.exists()) {
                 fo.delete();
             }   return;
-        } else {
-            if (fo.exists()) {
-                return;
-            }
         }
 
-        docm = readDocument(path);
+        docm = makeDocument();
 
         root = docm.createElement("root");
         docm.appendChild ( root );
@@ -576,7 +572,7 @@ public class Form extends Model {
         menu.appendChild ( role );
         role.setAttribute("name", "public");
 
-        // 增删改必须登录
+        // 增删改须登录
         role = docm.createElement("role");
         menu.appendChild ( role );
         role.setAttribute("name", "centre");
@@ -590,29 +586,28 @@ public class Form extends Model {
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
 
-        saveDocument(path, docm);
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
     }
 
     protected void updateFormConf(String id, String stat, List<Map> conf) throws HongsException {
-        String   path;
         Document docm;
         Element  root, form, item;
-        
-        Map types = FormSet.getInstance().getEnum("__types__");
 
-        path = Core.CONF_PATH+"/"+centra+"/"+id+Cnst.FORM_EXT+".xml";
-        docm = readDocument(path);
+        docm = makeDocument();
 
         root = docm.createElement("root");
         docm.appendChild ( root );
 
         form = docm.createElement("form");
         root.appendChild ( form );
-        form.setAttribute("name" , id);
+        form.setAttribute("name" ,  id  );
+
+        Map types = FormSet.getInstance().getEnum("__types__");
 
         for (Map fiel: conf) {
             item = docm.createElement("field");
             form.appendChild ( item );
+            
             String s, n, t;
             s = (String) fiel.get("__text__");
             if (s != null) item.setAttribute("text", s);
@@ -718,7 +713,7 @@ public class Form extends Model {
             //** 构建枚举列表 **/
 
             if (select != null) {
-                Element anum = docm.createElement( "enum" );
+                Element  anum = docm.createElement("enum" );
                 root.appendChild ( anum );
                 anum.setAttribute("name" , n);
 
@@ -756,12 +751,16 @@ public class Form extends Model {
             }
         }
 
-        saveDocument(path, docm);
+        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.FORM_EXT+".xml", docm);
 
         //** 对外开放 **/
 
-        path = Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml";
-        File fo = new File(path);
+        /**
+         * 内部情况确保文件不存在;
+         * 开放时文件存在则不处理,
+         * 内容是固定的没必要更新.
+         */
+        File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml");
         if (!"2".equals(stat)) {
             if (fo.exists()) {
                 fo.delete();
@@ -772,14 +771,14 @@ public class Form extends Model {
             }
         }
 
-        docm = readDocument(path);
+        docm = makeDocument();
 
         root = docm.createElement("root");
         docm.appendChild ( root );
 
         form = docm.createElement("form");
         root.appendChild ( form );
-        form.setAttribute("name" , id);
+        form.setAttribute("name" ,  id  );
 
         Element  defs, defi;
 
@@ -814,23 +813,14 @@ public class Form extends Model {
         defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
         defi.appendChild ( docm.createTextNode("($session.uid)"));
 
-        saveDocument(path, docm );
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
     }
 
-    private Document readDocument(String path) throws HongsException {
+    private Document makeDocument() throws HongsException {
         try {
-            DocumentBuilderFactory   factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder          builder = factory.newDocumentBuilder();
-            try {
-                FileInputStream      fstream = new FileInputStream ( path );
-                return builder.parse(fstream);
-            } catch (FileNotFoundException e) {
-                return builder.newDocument( );
-            }
-        } catch ( IOException ex) {
-            throw new HongsException(0x10e9, "Read '" +path+" error'", ex );
-        } catch (SAXException ex) {
-            throw new HongsException(0x10e9, "Parse '"+path+" error'", ex );
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder        builder = factory.newDocumentBuilder();
+            return  builder.newDocument();
         } catch (ParserConfigurationException e) {
             throw new HongsException.Common ( e);
         }

@@ -284,39 +284,6 @@ div.bootstrap-tagsinput.form-control {
     display: none;
 }
 
-#headbox .uhead {
-    width : 29px;
-    height: 29px;
-    border-radius: 50% ;
-    margin-bottom: -9px;
-    margin-top   : -6px;
-    display: inline-block;
-    background-position : center;
-    background-repeat: no-repeat;
-}
-
-#footbox.navbar {
-    background: #fcfcfc;
-    min-height: 32px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-#footbox blockquote {
-    font-size : 10px;
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-#bodybox {
-    margin-top: 58px;    /* 顶部菜单 */
-    margin-bottom: 50px; /* 底部通栏 */
-}
-
-.main-context ,
-.side-context {
-    padding: 0;
-}
-
 /** 列表 **/
 
 .listbox ,

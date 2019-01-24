@@ -245,8 +245,8 @@ public class Form extends Model {
                 flds.add(Synt.mapOf(
                     "__name__", "name",
                     "__type__", "hidden",
-                    "lucene-type", "stored",
-                    "readonly", "true"
+                    "readonly", "true",
+                    "lucene-type", "stored"
                 ));
             }
 
@@ -255,9 +255,10 @@ public class Form extends Model {
                 flds.add(Synt.mapOf(
                     "__name__", "word",
                     "__type__", "hidden",
-                    "lucene-type", "search",
                     "readonly", "true",
-                    "unstored", "true"
+                    "unstored", "true",
+                    "lucene-type", "search",
+                    "lucene-smart-parse", "true"
                 ));
             }
 

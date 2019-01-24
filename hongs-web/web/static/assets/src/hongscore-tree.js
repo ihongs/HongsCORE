@@ -449,13 +449,13 @@ HsTree.prototype = {
     },
 
     ajax : function() {
-        jQuery.hsAjax.apply(self, arguments);
+        return jQuery.hsAjax.apply(self, arguments);
     },
     note : function() {
-        jQuery.hsNote.apply(self, arguments);
+        return jQuery.hsNote.apply(self, arguments);
     },
     warn : function() {
-        jQuery.hsWarn.apply(self, arguments);
+        return jQuery.hsWarn.apply(self, arguments);
     },
 
     select   : function(id) {

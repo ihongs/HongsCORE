@@ -175,20 +175,20 @@
                                 Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
                                 if ( m.find( ) ) {
                                     // 限制最大宽度, 避免撑开容器
-                                    int w = Synt.declare(m.group(1), 300);
-                                    int h = Synt.declare(m.group(2), 300);
-                                    if (w > 300) {
-                                        h = 300  * h / w;
-                                        w = 300;
+                                    int w = Synt.declare(m.group(1), 150);
+                                    int h = Synt.declare(m.group(2), 150);
+                                    if (w > 150) {
+                                        h = 150  * h / w;
+                                        w = 150;
                                         size = w +"*"+ h;
                                     } else {
                                         size = m.group();
                                     }
                                 } else {
-                                    size = "100*100";
+                                    size = "150*150";
                                 }
                             } else {
-                                size = "100*100";
+                                size = "150*150";
                             }
                             kind += "\" data-size=\""+size+"\" data-keep=\""+keep;
                         }

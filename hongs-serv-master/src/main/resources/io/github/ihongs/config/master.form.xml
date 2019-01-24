@@ -16,7 +16,7 @@
             <param name="path">static/upload/master/head</param>
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
+            <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
             <param name="down-remote">yes</param>
         </field>
     </form>
@@ -34,7 +34,7 @@
             <param name="path">static/upload/master/head</param>
             <param name="thumb-extn">png</param>
             <param name="thumb-mode">pick</param>
-            <param name="thumb-size">_lg:256*256,_md:128*128,_sm:64*64</param>
+            <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
             <param name="down-remote">yes</param>
         </field>
     </form>

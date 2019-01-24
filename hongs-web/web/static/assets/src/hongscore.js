@@ -278,9 +278,10 @@ function hsResponse(rst, qut) {
                 }
             } else {
                 if (rst.msg) {
-                    jQuery.hsWarn(rst.msg, "warning");
+                    jQuery.hsNote(rst.msg, "warning");
                 } else {
-                    jQuery.hsWarn(hsGetLang('error.unkwn'), "danger");
+                    var ms = hsGetLang('error.unkwn');
+                    jQuery.hsNote(/**/ms , "danger" );
                 }
             }
         }
@@ -1518,18 +1519,32 @@ $.hsOpen = function(url, data, complete) {
     return  box;
 };
 $.hsNote = function(msg, typ, end, sec) {
-    var div = $('<div class="alert alert-dismissable fade in">'
+    var mod = $('<div class="modal fade in notebag">'
+              + '<div class="alert fade in notebox">'
               + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
-              + '<div class="alert-body notebox" ></div></div>');
-    div.find(".notebox").text(msg);
+              + '<div class="alert-body">'
+              + '</div></div></div>');
+    var div = mod.find(".alert");
+    var btx = mod.find(".alert-body");
+    mod.addClass("alert-dismissable");
+    btx.text(msg);
 
     // 参数检查
-    if (typeof typ !== "string") {
+    if (typeof typ === "function") {
         sec =  end ;
         end =  typ ;
-        typ ='info';
+        typ =  null;
+    } else
+    if (typeof typ === "number") {
+        sec =  typ ;
+        typ =  null;
+    } else
+    if (typeof end === "number") {
+        sec =  end ;
+        end =  null;
     }
 
+    // 样式类别
     switch (typ) {
         case 'info':
             div.addClass("alert-info"   );
@@ -1543,81 +1558,86 @@ $.hsNote = function(msg, typ, end, sec) {
         case 'warning':
             div.addClass("alert-warning");
             break;
+        default:
+        if (sec !== null  &&  sec >= 0  ) {
+            div.addClass("alert-success");
+        } else {
+            div.addClass("alert-warning");
+        }
     }
 
-    // 消息容器
-    var ctr = $("#notebox");
-    if (ctr.length < 1) {
-        ctr = $('<div id="notebox"></div>');
-        ctr.prependTo( document.body /**/ );
-    }
-    ctr.show().prepend(div);
+    $(":focus").blur(/**/);
 
-    // 延时关闭
-    if (sec === undefined ) {
+    if (sec === undefined) {
         sec = 5;
     }
-    if (sec > 0) {
-        setTimeout(function( ) {
-            div.alert("close");
-        } , sec * 1000);
-    }
+    if (sec !== null && sec >= 0 ) {
+        // 消息容器
+        var ctr = $("#notebox");
+        if (ctr.size()  ==  0 ) {
+            ctr = $('<div id="notebox"></div>');
+            $ ( document.body ).prepend ( ctr );
+        }
+        ctr.show().prepend(div);
 
-    div.on("close.bs.alert", function(evt) {
-        if (ctr.children( ).size( ) <= 1 ) {
-            ctr.hide( );
+        // 延时关闭
+        if (sec != 0) {
+            setTimeout(function( ) {
+                div.alert("close");
+            } , sec * 1000);
         }
-        if (end) {
-            end(evt);
-        }
-        div.remove();
-    });
-    div.alert();
+
+        div.on( "close.bs.alert", function(evt) {
+            if (ctr.children( ).size( ) <= 1  ) {
+                ctr.hide( );
+            }
+            if (end) {
+                end(evt);
+            }
+            div.remove();
+        } );
+        div.alert();
+    } else {
+        div.on( "close.bs.alert", function(evt) {
+            mod.modal("hide");
+        } );
+        mod.on("hidden.bs.modal", function(evt) {
+            if (end) {
+                end(evt);
+            }
+            mod.remove();
+        } );
+        mod.modal();
+        div.alert();
+    }
     return  div;
 };
-$.hsWarn = function(msg, typ, yes, not) {
-    var div = $('<div class="alert alert-dismissable fade in">'
-              + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
-              + '<div class="alert-body warnbox" ></div></div>');
-    var mod = $('<div class="modal fade in"></div>').append(div);
-    var box = div.find(".warnbox");
-    var btt = $('<h4></h4>');
-    var btx = $( '<p></p>' );
-    var btn = $( '<p></p>' );
+$.hsWarn = function(tit, txt) {
+    var mod = $('<div class="modal fade in warnbag">'
+              + '<div class="alert fade in warnbox">'
+              + '<div class="alert-body">'
+              + '<h4></h4><p class="warn-text"></p><p class="warn-btns"></p>'
+              + '</div></div></div>');
+    var div = mod.find(".alert");
+    var btt = div.find( "h4"   );
+    var btx = div.find( "p" ).eq( 0 );
+    var btn = div.find( "p" ).eq( 1 );
     var foc = 0;
     var fns;
     var end;
 
     // 参数检查
-    if (typeof typ === "string") {
+    if (typeof txt === "string") {
         fns = Array.prototype.slice.call(arguments, 2);
     } else
-    if (typeof msg === "string") {
+    if (typeof tit === "string") {
         fns = Array.prototype.slice.call(arguments, 1);
-        typ ='warning';
-    } else {
+    } else
+    {
         fns = Array.prototype.slice.call(arguments, 0);
-        typ = '' ;
-        msg = '' ;
     }
-
-    switch (typ) {
-        case 'info':
-            div.addClass("alert-info"   ); typ = "";
-            break;
-        case 'danger' :
-            div.addClass("alert-danger" ); typ = "";
-            break;
-        case 'warning':
-            div.addClass("alert-warning"); typ = "";
-            break;
-        case 'success':
-            div.addClass("alert-success"); typ = "";
-            break;
-    }
-    box.text(msg);
-    btt.text(msg);
-    btx.text(typ);
+    btt.text(tit || "");
+    btx.text(txt || "");
 
     // 操作按钮
     for(var i = 0; i < fns.length; i ++ )  {
@@ -1675,72 +1695,58 @@ $.hsWarn = function(msg, typ, yes, not) {
             if (v["class"] !== undefined) {
                 div.addClass (v["class"]);
             }
+            if (v["space"] !== undefined) {
+                btx.css("white-space", v["space"]);
+            }
         }
     }
 
-    // 确认对话
-    var ini = { show : true };
-    if (btn.children().size()) {
-        ini.keyboard = false ;
-        ini.backdrop = "static";
-
-        // 重新布局
-        div.addClass("warnbag");
-        btx.addClass("warn-text");
-        btn.addClass("warn-btns");
-        box.empty (   );
-        box.append(btt);
-        box.append(btx);
-        box.append(btn);
-
-        // 隐藏关闭
-        div.find(".close").hide();
-        div.removeClass("alert-dismissable");
-
-        // 垂直居中
-        mod.on("shown.bs.modal", function( ) {
-            var wh =$(window).height();
-            var mh = div.outerHeight();
-            if (wh > mh) {
-                mh = Math.floor((wh - mh) / 2);
-                div.css("margin-top", mh+"px");
-                mod.css("padding"   ,   "0px"); // 去掉模态框BS设的15像素右补丁
-            }
-        });
-
-        // 必须置空, 否则二次打开不会触发上方事件
-        $.support.transition = undefined;
-
-        // 按钮聚焦, 方便用户使用键盘快速默认操作
-        setTimeout( function( ) {
-            var fox = btn.find("button").eq(foc);
-            if (fox.size() > 0) {
-                fox[0].focus( );
-            } else {
-                box[0].focus( );
-            }
-        }, 500);
-    }
+    // 按钮聚焦
+    setTimeout( function( ) {
+        var fox = btn.find("button").eq(foc);
+        if (fox.size() > 0) {
+            fox[0].focus( );
+        } else {
+            div[0].focus( );
+        }
+    }, 500);
     $(":focus").blur();
 
-    btn.on( "click","button", function() {
-        mod.modal("hide");
+    var ini = { show : true };
+    if (btn.children().size() !== 0) {
+        ini.keyboard = false ;
+        ini.backdrop =  ( "static" );
+    }
+
+    /**
+     * 垂直居中,
+     * 去掉模态框BS设的15像素右补丁.
+     * 下方保障再打开能触发展现事件.
+     */
+    $.support.transition = undefined;
+    mod.on( "shown.bs.modal", function(evt) {
+        var wh =$(window).height();
+        var mh = div.outerHeight();
+        if (wh > mh) {
+            mh = Math.floor((wh - mh) / 2 );
+            div.css("margin-top", mh+"px" );
+            mod.css("padding"   ,   "0px" );
+        }
     } );
-    div.on( "close.bs.alert", function() {
+
+    btn.on("click", "button", function(evt) {
         mod.modal("hide");
     } );
     mod.on("hidden.bs.modal", function(evt) {
-        div.remove();
-        mod.remove();
         if (end) {
             end(evt);
         }
+        mod.remove();
     } );
     mod.modal( ini );
-    div.alert();
     return  div;
 };
-$.hsView = function(tit, txt, yes, not) {
+$.hsView = function(tit, txt) {
     var mod = $('<div class="modal fade in"><div class="modal-dialog">'
               + '<div class="modal-content"><div class="modal-header">'
               + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
@@ -1752,21 +1758,22 @@ $.hsView = function(tit, txt, yes, not) {
     var btt = div.find(".modal-title" );
     var btx = div.find(".modal-body"  );
     var btn = div.find(".modal-footer");
+    var foc = 0;
     var fns;
     var end;
 
     // 参数检查
     if (typeof txt === "string") {
         fns = Array.prototype.slice.call(arguments, 2);
-        btx.text(txt);
-    }
+    } else
     if (typeof tit === "string") {
         fns = Array.prototype.slice.call(arguments, 1);
-        btt.text(tit);
     } else
     {
         fns = Array.prototype.slice.call(arguments, 0);
     }
+    btt.text(tit || "");
+    btx.text(txt || "");
 
     // 操作按钮
     for(var i = 0; i < fns.length; i ++ )  {
@@ -1809,6 +1816,9 @@ $.hsView = function(tit, txt, yes, not) {
             }
         } else {
             // 未指定标签则认为是在设置窗体
+            if (v["focus"] !== undefined) {
+                foc = v["focus"];
+            }
             if (v["close"] !== undefined) {
                 end = v["close"];
             }
@@ -1822,28 +1832,37 @@ $.hsView = function(tit, txt, yes, not) {
                 div.addClass (v["class"]);
             }
             if (v["space"] !== undefined) {
-                btx.css("white-space", v["white"]);
+                btx.css("white-space", v["space"]);
             }
         }
     }
-    
-    // 无则隐藏
-    if (btn.children().size() == 0) {
-        btn.hide(/**/);
-    }
+
+    // 按钮聚焦
+    setTimeout( function( ) {
+        var fox = btn.find("button").eq(foc);
+        if (fox.size() > 0) {
+            fox[0].focus( );
+        } else {
+            div[0].focus( );
+        }
+    }, 500);
     $(":focus").blur();
 
-    btn.on("click", "button", function() {
+    var ini = { show : true };
+    if (btn.children().size() === 0) {
+        btn.hide (   );
+    }
+
+    btn.on("click", "button", function(evt) {
         mod.modal("hide");
     } );
     mod.on("hidden.bs.modal", function(evt) {
-        div.remove();
-        mod.remove();
         if (end) {
             end(evt);
         }
+        mod.remove();
     } );
-    mod.modal();
+    mod.modal( ini );
     return  div;
 };
 

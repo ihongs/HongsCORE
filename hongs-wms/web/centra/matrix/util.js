@@ -591,7 +591,7 @@ $.fn.hsCols = function() {
         if (group.is(".base-field")) {
             group = targetz.find("[data-type='"+group.attr("data-type")+"']");
         if (group.size( )  !==  0  ) {
-            $.hsWarn("此字段不可重复添加, 请检查已设字段");
+            $.hsNote("此字段不可重复添加, 请检查已设字段!", null,null );
             return;
         }}
 

@@ -11,8 +11,10 @@ import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.HashSet;
@@ -33,6 +35,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * 单元模型
@@ -158,7 +161,7 @@ public class Unit extends Grade {
 
         //** 后端 */
 
-        centraDocm = makeDocument();
+        centraDocm = readDocument(Core.CONF_PATH+"/"+centra+Cnst.NAVI_EXT+".xml");
 
         centraRoot = centraDocm.createElement("root");
         centraDocm.appendChild(centraRoot);
@@ -169,7 +172,7 @@ public class Unit extends Grade {
 
         //** 前端 **/
 
-        centreDocm = makeDocument();
+        centreDocm = readDocument(Core.CONF_PATH+"/"+centre+Cnst.NAVI_EXT+".xml");
 
         centreRoot = centreDocm.createElement("root");
         centreDocm.appendChild(centreRoot);
@@ -179,8 +182,6 @@ public class Unit extends Grade {
         centreRoot.appendChild(importNode);
 
         //** 填充 **/
-
-        List<Map> rows, subs;
 
         // 第一层表单
         insertForms(centraDocm, centraRoot, centreDocm, centreRoot, "0");
@@ -337,11 +338,20 @@ public class Unit extends Grade {
         }
     }
 
-    private Document makeDocument() throws HongsException {
+    private Document readDocument(String path) throws HongsException {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder        builder = factory.newDocumentBuilder();
-            return  builder.newDocument();
+            DocumentBuilderFactory   factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder          builder = factory.newDocumentBuilder();
+            try {
+                FileInputStream      fstream = new FileInputStream ( path );
+                return builder.parse(fstream);
+            } catch (FileNotFoundException e) {
+                return builder.newDocument( );
+            }
+        } catch ( IOException ex) {
+            throw new HongsException(0x10e9, "Read '" +path+" error'", ex );
+        } catch (SAXException ex) {
+            throw new HongsException(0x10e9, "Parse '"+path+" error'", ex );
         } catch (ParserConfigurationException e) {
             throw new HongsException.Common ( e);
         }

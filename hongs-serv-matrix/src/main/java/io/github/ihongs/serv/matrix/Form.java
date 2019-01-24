@@ -15,8 +15,10 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
@@ -37,6 +39,7 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.xml.sax.SAXException;
 
 /**
  * 表单模型
@@ -436,10 +439,12 @@ public class Form extends Model {
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
+        String   path;
         Document docm;
         Element  root, menu, role, actn, depn;
 
-        docm = makeDocument();
+        path = Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml";
+        docm = readDocument(path);
 
         root = docm.createElement("root");
         docm.appendChild ( root );
@@ -535,19 +540,23 @@ public class Form extends Model {
         role.appendChild ( depn );
         depn.appendChild (docm.createTextNode(centra+"/"+id+"/review") );
 
-        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(path, docm);
 
         //** 对外开放 **/
 
+        path = Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml";
+        File fo = new File(path);
         if (!"2".equals(stat)) {
-            File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml");
-            if ( fo.exists() ) {
-                 fo.delete() ;
+            if (fo.exists()) {
+                fo.delete();
+            }   return;
+        } else {
+            if (fo.exists()) {
+                return;
             }
-            return;
         }
 
-        docm = makeDocument();
+        docm = readDocument(path);
 
         root = docm.createElement("root");
         docm.appendChild ( root );
@@ -581,23 +590,28 @@ public class Form extends Model {
         role.appendChild ( actn );
         actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
 
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(path, docm);
     }
 
     protected void updateFormConf(String id, String stat, List<Map> conf) throws HongsException {
-        Document docm = makeDocument();
+        String   path;
+        Document docm;
+        Element  root, form, item;
+        
+        Map types = FormSet.getInstance().getEnum("__types__");
 
-        Element  root = docm.createElement("root");
+        path = Core.CONF_PATH+"/"+centra+"/"+id+Cnst.FORM_EXT+".xml";
+        docm = readDocument(path);
+
+        root = docm.createElement("root");
         docm.appendChild ( root );
 
-        Element  form = docm.createElement("form");
+        form = docm.createElement("form");
         root.appendChild ( form );
         form.setAttribute("name" , id);
 
-        Map types = FormSet.getInstance().getEnum("__types__");
-
         for (Map fiel: conf) {
-            Element item = docm.createElement("field" );
+            item = docm.createElement("field");
             form.appendChild ( item );
             String s, n, t;
             s = (String) fiel.get("__text__");
@@ -742,19 +756,23 @@ public class Form extends Model {
             }
         }
 
-        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        saveDocument(path, docm);
 
         //** 对外开放 **/
 
+        path = Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml";
+        File fo = new File(path);
         if (!"2".equals(stat)) {
-            File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml");
-            if ( fo.exists() ) {
-                 fo.delete() ;
+            if (fo.exists()) {
+                fo.delete();
+            }   return;
+        } else {
+            if (fo.exists()) {
+                return;
             }
-            return;
         }
 
-        docm = makeDocument();
+        docm = readDocument(path);
 
         root = docm.createElement("root");
         docm.appendChild ( root );
@@ -796,14 +814,23 @@ public class Form extends Model {
         defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
         defi.appendChild ( docm.createTextNode("($session.uid)"));
 
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        saveDocument(path, docm );
     }
 
-    private Document makeDocument() throws HongsException {
+    private Document readDocument(String path) throws HongsException {
         try {
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder        builder = factory.newDocumentBuilder();
-            return  builder.newDocument();
+            DocumentBuilderFactory   factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder          builder = factory.newDocumentBuilder();
+            try {
+                FileInputStream      fstream = new FileInputStream ( path );
+                return builder.parse(fstream);
+            } catch (FileNotFoundException e) {
+                return builder.newDocument( );
+            }
+        } catch ( IOException ex) {
+            throw new HongsException(0x10e9, "Read '" +path+" error'", ex );
+        } catch (SAXException ex) {
+            throw new HongsException(0x10e9, "Parse '"+path+" error'", ex );
         } catch (ParserConfigurationException e) {
             throw new HongsException.Common ( e);
         }

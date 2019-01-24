@@ -543,7 +543,8 @@ public class Form extends Model {
         //** 对外开放 **/
 
         /**
-         * 内部情况确保文件不存在
+         * 仅供内部管理用时,
+         * 应确保无开放配置.
          */
         File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml");
         if (!"2".equals(stat)) {
@@ -607,7 +608,7 @@ public class Form extends Model {
         for (Map fiel: conf) {
             item = docm.createElement("field");
             form.appendChild ( item );
-            
+
             String s, n, t;
             s = (String) fiel.get("__text__");
             if (s != null) item.setAttribute("text", s);
@@ -756,9 +757,10 @@ public class Form extends Model {
         //** 对外开放 **/
 
         /**
-         * 内部情况确保文件不存在;
-         * 开放时文件存在则不处理,
-         * 内容是固定的没必要更新.
+         * 仅供内部管理用时,
+         * 应确保无公开配置.
+         * 开放存在则不处理,
+         * 固定内容无需更新.
          */
         File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml");
         if (!"2".equals(stat)) {

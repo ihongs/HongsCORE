@@ -394,7 +394,7 @@ HsList.prototype = {
         if (!msg) {
             func( );
         } else {
-            this.warn(msg, "warning", func, null);
+            this.warn(msg , func, null).addClass("alert-warning");
         }
     },
     sendBack : function(btn, rst, data) {
@@ -405,9 +405,10 @@ HsList.prototype = {
             }
         } else {
             if (rst.msg) {
-                this.warn(rst.msg, "warning");
+                this.note(rst.msg, "warning", null, null);
             } else {
-                this.warn(hsGetLang('error.unkwn'), 'danger');
+                var  err_msg = hsGetLang( 'error.unkwn' );
+                this.note(err_msg, 'danger' , null, null);
             }
             return;
         }

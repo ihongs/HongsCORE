@@ -196,7 +196,9 @@
                     $.get(hsFixUri("centra/sign/delete.act"), function() {
                         location.assign(hsFixUri( "centra/login.html" ));
                     });
-                }, function() {});
+                }, function() {
+                    // Nothing todo.
+                }).addClass("alert-warning");
             });
         $("#user-set")
             .click(function() {

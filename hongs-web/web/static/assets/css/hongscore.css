@@ -642,12 +642,15 @@ input[type=file].form-control {
         width : 600px;
         left  :  50% ;
     }
-    .modal > .alert,
-    .alert > .warnbox {
+    .modal > .alert {
         margin: 0  auto ;
         width : 600px;
     }
-    .modal > .warnbag {
+    .warnbox .alert-body {
+        margin: 0  auto ;
+        width : 600px;
+    }
+    .modal > .alert.warnbox {
         border-radius: 0;
         width : 100% ;
     }

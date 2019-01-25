@@ -591,7 +591,7 @@ $.fn.hsCols = function() {
         if (group.is(".base-field")) {
             group = targetz.find("[data-type='"+group.attr("data-type")+"']");
         if (group.size( )  !==  0  ) {
-            $.hsNote("此字段不可重复添加, 请检查已设字段!", null,null );
+            $.hsWarn("此字段不可重复添加, 请检查已设字段!", "warning");
             return;
         }}
 
@@ -744,9 +744,12 @@ function hsFormMove(treebox, listbox) {
                 if (ui.helper.data("type") == "unit") {
                     var did = ui.draggable.attr("id").substring(10);
                     var req = { id : did, pid : pid };
-                    $.hsWarn(
-                        "您确定将此单元移到新单元下吗?",
-                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
+                    $.hsView({
+                            "alert": "static",
+                            "class": "alert-success",
+                            "title": "您确定将此单元移到新单元下吗?",
+                            "notes": "移动后导航结构发生改变, 可能还会影响到顶部菜单."
+                        },
                         {
                             "label": "移动",
                             "click": function() {
@@ -776,9 +779,12 @@ function hsFormMove(treebox, listbox) {
                 } else {
                     var fid = ui.helper.data("form_id");
                     var req = {id: fid, "unit_id": pid};
-                    $.hsWarn(
-                        "您确定将此表单移到新单元下吗?",
-                        "移动后导航结构发生改变, 可能还会影响到顶部菜单.",
+                    $.hsView({
+                            "alert": "static",
+                            "class": "alert-success",
+                            "title": "您确定将此表单移到新单元下吗?",
+                            "notes": "移动后导航结构发生改变, 可能还会影响到顶部菜单."
+                        },
                         {
                             "label": "移动",
                             "click": function() {

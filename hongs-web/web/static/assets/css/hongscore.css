@@ -236,19 +236,34 @@ div.bootstrap-tagsinput.form-control {
     left: 0;
     top: 0;
 }
+.modal.warnbag > .alert.warnbox {
+    box-shadow: 0 0 15px #333;
+    padding: 30px 15px;
+}
 #notebox .alert,
 .modal > .alert,
-.alert-body > p:nth-last-child(1) {
+.alert-body > h4,
+.alert-body > p {
     margin: 0;
+}
+.alert-body > p {
+    margin-top: 1em;
+}
+.alert-body > p:empty  {
+    margin-top: 0em;
 }
 .alert-body > p button {
     margin: 0 0.5em;
 }
-.alert-body > p.warn-btns {
-    text-align : right;
+.alert-body > p.button {
+    text-align: right;
 }
-.alert-body > p.warn-text {
-    white-space: pre-wrap;
+.alert-body > p.notice {
+    text-align: left ;
+}
+.alert-body > .close {
+    opacity: 0.8;
+    color: #eeeeee;
 }
 
 #notebox .alert {

@@ -380,10 +380,9 @@ HsTree.prototype = {
             }
         } else {
             if (rst.msg) {
-                this.note(rst.msg, "warning", null, null);
+                this.warn(rst.msg, "warning");
             } else {
-                var  err_msg = hsGetLang( 'error.unkwn' );
-                this.note(err_msg, 'danger' , null, null);
+                this.warn(hsGetLang('error.unkwn'));
             }
             return;
         }

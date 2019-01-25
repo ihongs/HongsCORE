@@ -40,8 +40,11 @@ function hsUserMove(treebox, listbox) {
                 if (ui.helper.data("type") == "dept") {
                     var did = ui.draggable.attr("id").substring(10);
                     var req = { id : did, pid : pid };
-                    $.hsWarn(
-                        "您确定将此部门移到新部门下吗?",
+                    $.hsView({
+                            "alert": "static",
+                            "class": "alert-success",
+                            "title": "您确定将此部门移到新部门下吗?"
+                        },
                         {
                             "label": "移动",
                             "click": function() {
@@ -72,9 +75,12 @@ function hsUserMove(treebox, listbox) {
                     var uid = ui.helper.data("user_id" );
                     var did = ui.helper.data("dept_id" );
                     var dis = ui.helper.data("dept_ids").slice(0);
-                    $.hsWarn(
-                        "您需要将用户移动到新部门, 还是移补或增挂到新部门?",
-                        "移动操作将取消此用户与前部门的关联, 移补操作退出当前部门但保留其他关联, 增挂就是他可以既在新部门又在旧部门.",
+                    $.hsView({
+                            "alert": "static",
+                            "class": "alert-success",
+                            "title": "您需要将用户移动到新部门, 还是移补或增挂到新部门?",
+                            "notes": "移动操作将取消此用户与前部门的关联, 移补操作退出当前部门但保留其他关联, 增挂就是他可以既在新部门又在旧部门."
+                        },
                         {
                             "label": "移动",
                             "click": function() {

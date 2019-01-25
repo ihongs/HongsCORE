@@ -416,11 +416,10 @@ HsForm.prototype = {
 
             // 错误提示
             if ( rst.msg ) {
-                this.note(rst.msg, "warning", null, null);
+                this.warn(rst.msg, "warning" );
             } else
             if (!rst.errs) {
-                var  err_msg = hsGetLang( 'error.unkwn' );
-                this.note(err_msg, 'danger' , null, null);
+                this.warn(hsGetLang('error.unkwn'));
             }
         }
     },
@@ -682,7 +681,7 @@ HsForm.prototype = {
             }
         }
         if ( !  vali ) {
-           this.note(hsGetLang('form.invalid'), "warning", null, null);
+           this.warn(hsGetLang('form.invalid'), "warning");
         }
         return  vali;
     },

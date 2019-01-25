@@ -1,0 +1,36 @@
+/**
+ * HongsCORE 前台布局
+ * 作者: 黄弘<kevin.hongs@gmail.com>
+ * 版本: 2018/07/27 23:00
+ */
+
+#headbox .uhead {
+    width : 29px;
+    height: 29px;
+    margin-top   : -6px;
+    margin-bottom: -9px;
+    border-radius: 50% ;
+    background-size  : 100% 100%;
+    background-repeat: no-repeat;
+    background-position:  center;
+    display: inline-block;
+}
+
+#footbox.navbar ,
+#footbox blockquote {
+    background: #fcfcfc;
+    font-size : 10px;
+    min-height: 32px;
+    margin-top   : 0;
+    margin-bottom: 0;
+}
+
+#bodybox {
+    margin-top   : 58px; /* 顶部菜单 */
+    margin-bottom: 50px; /* 底部通栏 */
+}
+
+.main-context ,
+.side-context {
+    padding: 0;
+}

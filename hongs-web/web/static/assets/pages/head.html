@@ -40,6 +40,8 @@
                 <li><a href="javascript:;" id="warn1">警告</a></li>
                 <li class="divider"></li>
                 <li><a href="javascript:;" id="warn2">确认</a></li>
+                <li><a href="javascript:;" id="view2">浮窗</a></li>
+                <li><a href="javascript:;" id="prog2">进度条</a></li>
             </ul>
         </li>
     </ul>
@@ -52,17 +54,42 @@
             $.hsNote("这是一般通知，可用于操作成功的告示，5 秒后自动消失", "success");
         });
         $("#warn1").click(function() {
-            $.hsNote("这是警告通知，可用于操作失败的警告，点其他地方消失", "warning", null, null);
+            $.hsWarn("这是警告通知，可用于操作失败的警告，点其他地方消失", "warning");
         });
         $("#warn2").click(function() {
             $.hsWarn("这是确认提示，可用于操作确认的选择，点按钮执行操作",
                      "这里可以放一些说明文字，比如点击确定会彻底删除，已删除的数据将无法恢复。您仍然确定操作吗？",
             function() {
-                $.hsNote("您点击了确定");
+                $.hsNote("您点击了确定", "info");
             },
             function() {
-                $.hsNote("您点击了取消");
-            }).addClass ("alert-danger");
+                $.hsNote("您点击了取消", "danger");
+            }).addClass("alert-danger");
+        });
+        $("#view2").click(function() {
+            $.hsView({
+                title: "这是确认提示，可用于操作确认的选择，点按钮执行操作",
+                notes: "这里可以放一些说明文字，比如点击确定会彻底删除，已删除的数据将无法恢复。您仍然确定操作吗？"
+            }, {
+                label: "确定",
+                glass: "btn-primary",
+                click: function() {
+                    $.hsNote("您点击了确定", "info");
+                }
+            }, {
+                label: "取消",
+                glass: "btn-default",
+                click: function() {
+                    $.hsNote("您点击了取消", "danger");
+                }
+            });
+        });
+        $("#prog2").click(function() {
+            var bar = $.hsXhwp("开始上传 C:\\Windows\\SYSTEM.DAT",
+                {"addEventListener": function() {}},
+                {"addEventListener": function() {}}
+            ).find("progress");
+            setTimeout
         });
 
         //** 菜单控制 **/

@@ -369,7 +369,7 @@ HsTree.prototype = {
         if (!msg) {
             func( );
         } else {
-            this.warn(msg , func, null).addClass("alert-warning");
+            this.warn(msg, "warning", func, null);
         }
     },
     sendBack : function(btn, rst, data) {

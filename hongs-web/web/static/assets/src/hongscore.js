@@ -1530,7 +1530,7 @@ $.hsNote = function(msg, typ, end, sec) {
         count: sec,
         close: end
     };
-    
+
     // 样式
     switch (typ) {
         case 'info':
@@ -1548,7 +1548,7 @@ $.hsNote = function(msg, typ, end, sec) {
         default:
             opt.glass = "alert-success";
     }
-    
+
     return $.hsView(opt);
 };
 $.hsWarn = function(msg, typ, yes, not) {
@@ -1620,7 +1620,7 @@ $.hsView = function(opt) {
         btt = div.find("h4"     );
         btx = div.find("p").eq(0);
         btn = div.find("p").eq(1);
-        
+
         if (opt.alert  ===  "static") {
             var cls =  div . find ( ".close");
             cls.attr("data-dismiss", "modal");
@@ -1731,7 +1731,7 @@ $.hsView = function(opt) {
             }
         } );
     }
-    
+
     if (opt["alert"] === "notice") {
         // 使通知框具备自关闭的特性
         div.addClass("alert-dismissable");
@@ -1806,7 +1806,6 @@ $.hsXhup = function(msg) {
  * @param {XMLHttpRequestUpload} xhu
  */
 $.hsXhwp = function(msg, xhr, xhu) {
-    var stt = new Date( ).getTime( ) / ( 1000 );
     var box = $.hsWarn(msg, "", function () {});
     var bax = $('<div class="progress"></div>');
     var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>').appendTo(bax);
@@ -1814,19 +1813,24 @@ $.hsXhwp = function(msg, xhr, xhu) {
     var etc = box.find(  ".button" );
     var alt = box.closest(".alert" );
     var mod = box.closest(".modal" );
+    var stt = new Date().getTime() / 1000;
     var pct = 0;
     var rtt = 0;
 
-    box.find(".close").remove();
+    box.find( ".close" ).remove( );
     etx.empty().append(bax);
     etc.empty().text("...");
     alt.addClass("progbox");
-    delete box; delete bax ;
-    delete etx; delete alt ;
 
+    delete bax;
+    delete etx;
+    delete alt;
+
+    if (xhr)
     xhr.addEventListener(  "load"  , function(   ) {
         mod.modal("hide");
     } , false);
+    if (xhu)
     xhu.addEventListener("progress", function(evt) {
         if (pct >= 100 || ! evt.lengthComputable ) {
             return;
@@ -1855,6 +1859,8 @@ $.hsXhwp = function(msg, xhr, xhu) {
         bar.css ( "width" , pct + "%");
         etc.text(  pct  + "% -" + snt);
     } , false);
+
+    return box;
 };
 
 $.fn.jqLoad = $.fn.load ;

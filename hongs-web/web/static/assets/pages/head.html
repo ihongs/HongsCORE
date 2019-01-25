@@ -85,11 +85,31 @@
             });
         });
         $("#prog2").click(function() {
-            var bar = $.hsXhwp("开始上传 C:\\Windows\\SYSTEM.DAT",
+            var box = $.hsXhwp("开始上传 C:\\Windows\\SYSTEM.DAT",
                 {"addEventListener": function() {}},
                 {"addEventListener": function() {}}
-            ).find("progress");
-            setTimeout
+            );
+            var bar = box.find(".progress-bar");
+            var etc = box.find(".button");
+            var cnt = 0;
+            var ord = 1;
+            setInterval(function() {
+                if (ord) {
+                    cnt += Math.floor(Math.random() * 100) % 5 ;
+                    if (cnt > 99) {
+                        cnt = 99;
+                        ord = 0 ;
+                    }
+                } else {
+                    cnt -= Math.floor(Math.random() * 100) % 20;
+                    if (cnt < 1 ) {
+                        cnt = 1 ;
+                        ord = 1 ;
+                    }
+                }
+                bar.css ("width", cnt + "%");
+                etc.text(/******/ cnt + "%");
+            } , 100);
         });
 
         //** 菜单控制 **/

@@ -29,6 +29,52 @@
         <script type="text/javascript">
             HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;
             HsDEPS["__DEFINED__"]=1;
+
+            // 虚拟路由
+            jQuery(function() {
+                var listBox = H$("#main-context");
+                var paneBox =  $(".labs").first();
+                var listUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/list.html";
+                var infoUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/info.html";
+                var inState ;
+
+                /**
+                 * 列表和查看对公共区很重要
+                 * 如果有给编号则打开详情页
+                 */
+                listBox.hsLoad(listUrl + hsSetParam(location.search, "id"));
+                $(window).on("popstate", function() {
+                    inState = true ;
+                    paneBox.children().eq(2).children().hsClose();
+                    if (H$("@id")) {
+                        paneBox.hsOpen(infoUrl + location.search);
+                    }
+                });
+                $(window).trigger("popstate");
+                inState = false;
+
+                /**
+                 * 还需要处理内部加载的页面
+                 */
+                paneBox.on("hsReady", ".loadbox", function() {
+                    if (inState) return;
+                    var url = hsFixUri($(this).data("href"));
+                    if (url.substr(0, infoUrl.length) == infoUrl) {
+                        var id = hsGetParam(url , "id");
+                        var ul = hsSetParam(location.search , "id", id);
+                        history.pushState({}, "", location.pathname+ul);
+                    }
+                });
+                paneBox.on("hsClose", ".loadbox", function() {
+                    if (inState) return;
+                    var url = hsFixUri($(this).data("href"));
+                    if (url.substr(0, listUrl.length) != listUrl) {
+                        var id = null  ;
+                        var ul = hsSetParam(location.search , "id", id);
+                        history.pushState({}, "", location.pathname+ul);
+                    }
+                });
+            });
         </script>
     </head>
     <body>
@@ -55,7 +101,7 @@
                 </ol>
                 <div class="labs laps">
                     <div></div>
-                    <div data-load="<%=_module%>/<%=_entity%>/list.html"></div>
+                    <div id="main-context"></div>
                 </div>
             </div>
         </div>

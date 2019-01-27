@@ -188,7 +188,7 @@
     </form>
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px 15px 7.5px;">
-        <input class="rowid" type="hidden" name="id" data-fn="id" data-fl="$(this).val(v)&&null"/>
+        <input type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && undefined" />
         <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
                 <%if (_fields.containsKey("logo")) {%>
@@ -302,26 +302,6 @@
         $(this).closest (".form-control-static")
                .siblings(":submit").click( );
     }).val(self.HsCUID);
-
-    /**
-     * 因详情页可能被分享
-     * 故为其分配特定 URL
-     * History 处理较麻烦
-     * 暂不支持返回和前进
-     */
-    context.on("openBack", ".review", function(ev, box, req) {
-            location.replace(location.pathname +"#"+ req.id);
-        box.on("hsClose" , function() {
-            location.replace(location.pathname +"#");
-        });
-    });
-    var mat= /^#(\w+)$/.exec(location.hash);
-    if (mat) {
-        var url = "<%=_module%>/<%=_entity%>/info.html";
-        var box = context.hsFind("@");
-        var btn = context.hsFind(".review").first( );
-        listobj.open(btn, box, url, { id: mat[1] } );
-    }
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制

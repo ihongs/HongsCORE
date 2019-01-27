@@ -176,9 +176,9 @@
                 <button type="submit" class="btn btn-sm btn-default">应用</button>
                 <span style="padding:0.1em;"></span>
                 <button type="reset"  class="btn btn-sm btn-default">重置</button>
-                <span class="form-control-static owner" style="vertical-align: middle;">
+                <span class="form-control-static" style="vertical-align: middle;">
                     <label>
-                        <input name="cuser" type="checkbox" style="margin-right: 5px;"/>
+                        <input type="checkbox" class="owned" style="margin-right: 5px;"/>
                         <span>我创建的</span>
                     </label>
                 </span>
@@ -227,6 +227,15 @@
     // 权限控制
     if (!hsChkUri("centre")) context.find(".owner").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
+
+    // 外部约束
+    var findreq = hsSerialDat(loadbox);
+    for(var key in findreq) {
+        if (findreq[ key ]) {
+            findbox.find("[name='"+key+"'][name^='"+key+".'],[data-fn='"+key+"'],[data-name='"+key+"']")
+                   .closest(".form-group").remove();
+        }
+    }
 
     //** 列表、搜索表单 **/
 
@@ -298,9 +307,15 @@
     });
 
     // 我创建的
-    filtbox.find(".owner").change(function() {
-        $(this).closest (".form-control-static")
-               .siblings(":submit").click( );
+    filtbox.find(".owned").change(function() {
+        var ab = /***/ hsGetParam(listobj._url, "<%=Cnst.AB_KEY%>"/**/);
+        if ( ! $(this).prop(  "checked"  ) ) {
+            ab = ab.replace(",.created", "");
+        } else {
+            ab = ab    +    ",.created";
+        }
+        listobj._url = hsSetParam(listobj._url, "<%=Cnst.AB_KEY%>", ab);
+        // 无需触发提交, 已对统计项绑定事件, 恰好有包含此表单项
     }).val(self.HsCUID);
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {

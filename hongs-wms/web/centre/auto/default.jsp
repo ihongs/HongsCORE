@@ -36,18 +36,30 @@
                 var paneBox =  $(".labs").first();
                 var listUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/list.html";
                 var infoUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/info.html";
+                var formUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form.html";
+                var addsUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form_adds.html";
                 var inState ;
+                var fi = "1"; // 处于表单中
+                var fn =null; // 非表单模式
 
                 /**
                  * 列表和查看对公共区很重要
                  * 如果有给编号则打开详情页
                  */
-                listBox.hsLoad(listUrl + hsSetParam(location.search, "id"));
+                listBox.hsLoad(listUrl + hsSetParam(location.search, "id", null));
                 $(window).on("popstate", function() {
                     inState = true ;
-                    paneBox.children().eq(2).children().hsClose();
+                    paneBox.children( ).eq(2).children( ).hsClose( );
                     if (H$("@id")) {
-                        paneBox.hsOpen(infoUrl + location.search);
+                        if (H$("@fx") ) {
+                            paneBox.hsOpen(formUrl+ location.search);
+                        } else {
+                            paneBox.hsOpen(infoUrl+ location.search);
+                        }
+                    } else {
+                        if (H$("@fx") ) {
+                            paneBox.hsOpen(addsUrl+ location.search);
+                        }
                     }
                 });
                 $(window).trigger("popstate");
@@ -57,21 +69,45 @@
                  * 还需要处理内部加载的页面
                  */
                 paneBox.on("hsReady", ".loadbox", function() {
-                    if (inState) return;
-                    var url = hsFixUri($(this).data("href"));
-                    if (url.substr(0, infoUrl.length) == infoUrl) {
-                        var id = hsGetParam(url , "id");
-                        var ul = hsSetParam(location.search , "id", id);
-                        history.pushState({}, "", location.pathname+ul);
+                    if (inState) {
+                        inState = false;
+                        return;
+                    }
+
+                    var id ;
+                    var ul = location.search;
+                    var rl = hsFixUri($(this).data("href"));
+
+                    if (rl.substr(0, infoUrl.length) == infoUrl) {
+                        id = hsGetParam(rl, "id");
+                        ul = hsSetParam(ul, "id", id);
+                        ul = hsSetParam(ul, "fo", fn);
+                        history.pushState({}, "", location.pathname + ul);
+                    } else
+                    if (rl.substr(0, formUrl.length) == formUrl) {
+                        id = hsGetParam(rl, "id");
+                        ul = hsSetParam(ul, "id", id);
+                        ul = hsSetParam(ul, "fx", fi);
+                        history.pushState({}, "", location.pathname + ul);
+                    } else
+                    if (rl.substr(0, addsUrl.length) == addsUrl) {
+                        ul = hsSetParam(ul, "id", fn);
+                        ul = hsSetParam(ul, "fx", fi);
+                        history.pushState({}, "", location.pathname + ul);
                     }
                 });
                 paneBox.on("hsClose", ".loadbox", function() {
-                    if (inState) return;
-                    var url = hsFixUri($(this).data("href"));
-                    if (url.substr(0, listUrl.length) != listUrl) {
-                        var id = null  ;
-                        var ul = hsSetParam(location.search , "id", id);
-                        history.pushState({}, "", location.pathname+ul);
+                    if (inState) {
+                        inState = false;
+                        return;
+                    }
+
+                    var ul = location.search;
+
+                    if (ul.substr(0, listUrl.length) != listUrl) {
+                        ul = hsSetParam(ul, "id", fn);
+                        ul = hsSetParam(ul, "fx", fn);
+                        history.pushState({}, "", location.pathname + ul);
                     }
                 });
             });

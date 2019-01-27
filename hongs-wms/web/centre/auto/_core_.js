@@ -223,7 +223,7 @@ function HsCate (context , opts) {
         } else {
             $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
         }
-        findbox.find(":submit:first").click();
+        findbox.find(":submit").click( );
     });
 }
 HsCate.prototype = {

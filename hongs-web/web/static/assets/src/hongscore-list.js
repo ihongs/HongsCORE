@@ -394,7 +394,7 @@ HsList.prototype = {
         if (!msg) {
             func( );
         } else {
-            this.warn(msg, "warning", func, null);
+            this.warn( msg , "warning", func, null);
         }
     },
     sendBack : function(btn, rst, data) {
@@ -490,7 +490,7 @@ HsList.prototype = {
         }
     },
     getRow   : function(o) {
-        return jQuery(o).closest("tr,.itembox").find(".checkone,.rowid");
+        return jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]");
     },
     getIds   : function(o) {
         if (jQuery.inArray (this.listBox[0], jQuery(o).parents()) != -1) {

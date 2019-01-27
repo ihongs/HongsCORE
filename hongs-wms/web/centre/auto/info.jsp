@@ -83,16 +83,21 @@
                             if (size.length( ) != 0  ) {
                                 Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
                                 if ( m.find( ) ) {
-                                    // 限制最大宽度, 避免撑开容器
-                                    int w = Synt.declare(m.group(1), 150);
-                                    int h = Synt.declare(m.group(2), 150);
-                                    if (w > 150) {
-                                        h = 150  * h / w;
-                                        w = 150;
-                                        size = w +"*"+ h;
+                                    // 限制最大尺寸, 避免撑开容器
+                                    int w  = 300 ;
+                                    int h  = 150 ;
+                                    int sw = Synt.declare(m.group(1), w);
+                                    int sh = Synt.declare(m.group(2), h);
+                                    int tw , th;
+                                    int dw = sh * w / h;
+                                    if (dw < sw) {
+                                        th = sw * h / w;
+                                        tw = sw; // 宽度优先
                                     } else {
-                                        size = m.group();
+                                        tw = dw;
+                                        th = sh; // 高度优先
                                     }
+                                    size = tw+"*"+th;
                                 } else {
                                     size = "150*150";
                                 }

@@ -39,8 +39,8 @@
                 var formUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form.html";
                 var addsUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form_adds.html";
                 var inState ;
-                var fi = "1"; // 处于表单中
-                var fn =null; // 非表单模式
+                var IF= "1" ; // 处于表单中
+                var NF= null; // 非表单模式
 
                 /**
                  * 列表和查看对公共区很重要
@@ -51,13 +51,13 @@
                     inState = true ;
                     paneBox.children( ).eq(2).children( ).hsClose( );
                     if (H$("@id")) {
-                        if (H$("@fx") ) {
+                        if (H$("@if") ) {
                             paneBox.hsOpen(formUrl+ location.search);
                         } else {
                             paneBox.hsOpen(infoUrl+ location.search);
                         }
                     } else {
-                        if (H$("@fx") ) {
+                        if (H$("@if") ) {
                             paneBox.hsOpen(addsUrl+ location.search);
                         }
                     }
@@ -78,21 +78,21 @@
                     var ul = location.search;
                     var rl = hsFixUri($(this).data("href"));
 
-                    if (rl.substr(0, infoUrl.length) == infoUrl) {
+                    if (rl.substr(0 , infoUrl.length) == infoUrl) {
                         id = hsGetParam(rl, "id");
                         ul = hsSetParam(ul, "id", id);
-                        ul = hsSetParam(ul, "fo", fn);
+                        ul = hsSetParam(ul, "if", NF);
                         history.pushState({}, "", location.pathname + ul);
                     } else
-                    if (rl.substr(0, formUrl.length) == formUrl) {
+                    if (rl.substr(0 , formUrl.length) == formUrl) {
                         id = hsGetParam(rl, "id");
                         ul = hsSetParam(ul, "id", id);
-                        ul = hsSetParam(ul, "fx", fi);
+                        ul = hsSetParam(ul, "if", IF);
                         history.pushState({}, "", location.pathname + ul);
                     } else
-                    if (rl.substr(0, addsUrl.length) == addsUrl) {
-                        ul = hsSetParam(ul, "id", fn);
-                        ul = hsSetParam(ul, "fx", fi);
+                    if (rl.substr(0 , addsUrl.length) == addsUrl) {
+                        ul = hsSetParam(ul, "id", NF);
+                        ul = hsSetParam(ul, "if", IF);
                         history.pushState({}, "", location.pathname + ul);
                     }
                 });
@@ -103,10 +103,13 @@
                     }
 
                     var ul = location.search;
+                    var rl = hsFixUri($(this).data("href"));
 
-                    if (ul.substr(0, listUrl.length) != listUrl) {
-                        ul = hsSetParam(ul, "id", fn);
-                        ul = hsSetParam(ul, "fx", fn);
+                    if (rl.substr(0 , infoUrl.length) == infoUrl
+                    ||  rl.substr(0 , formUrl.length) == formUrl
+                    ||  rl.substr(0 , addsUrl.length) == addsUrl) {
+                        ul = hsSetParam(ul, "id", NF);
+                        ul = hsSetParam(ul, "if", NF);
                         history.pushState({}, "", location.pathname + ul);
                     }
                 });

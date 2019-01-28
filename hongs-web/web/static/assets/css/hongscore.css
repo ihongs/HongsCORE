@@ -89,6 +89,16 @@ textarea.form-control {
     cursor: default;
 }
 
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+input[type="datetime-local"].form-control,
+input[type="date"].form-control ,
+input[type="time"].form-control {
+    line-height: 2.5;
+    padding-top: 0px;
+    padding-bottom: 0px;
+}
+}
+
 .navbar-default
 .navbar-toggle ,
 .navbar-toggle {
@@ -161,17 +171,6 @@ ol.label-list {
 .ui-droppable-handle {
     touch-action: none;
     -ms-touch-action: none;
-}
-
-/* bootstrap */
-@media screen and (-webkit-min-device-pixel-ratio: 0) {
-input[type="datetime-local"].form-control,
-input[type="date"].form-control ,
-input[type="time"].form-control {
-    line-height: 2.5;
-    padding-top: 0px;
-    padding-bottom: 0px;
-}
 }
 
 /* bootstrap-tagsinput */

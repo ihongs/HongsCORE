@@ -126,7 +126,11 @@ html, body {
     display: block;
 }
 
-.manage-file-list .pagination,
-.manage-file-list .page-count {
-    display: none ;
+/**
+ * 修正响应式表格不出横向滚动条的问题
+ */
+.table-responsive-revised {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
 }

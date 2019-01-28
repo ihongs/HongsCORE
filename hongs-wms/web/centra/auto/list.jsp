@@ -181,7 +181,8 @@
     </form>
     <%} /*End If */%>
     <!-- 列表 -->
-    <div class="listbox table-responsive">
+    <div class="table-responsive-revised">
+    <div class="table-responsive listbox">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
@@ -289,7 +290,7 @@
             <tbody>
             </tbody>
         </table>
-    </div>
+    </div></div>
     <div class="pagebox clearfix">
     </div>
 </div>

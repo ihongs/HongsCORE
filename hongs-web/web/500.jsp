@@ -80,7 +80,7 @@
             #footbox.navbar, body, .jumbotron, .container
                 { background-color: #8f0000; color: #fff; border: 0; }
             #footbox blockquote
-                { background-color: #6f0000; color: #fff; }
+                { background-color: #6f0000; color: #ddd; }
             h1, h3, pre
                 { font-weight: bold; }
             pre

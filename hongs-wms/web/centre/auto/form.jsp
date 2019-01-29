@@ -180,16 +180,15 @@
                                     int h  = 150 ;
                                     int sw = Synt.declare(m.group(1), w);
                                     int sh = Synt.declare(m.group(2), h);
-                                    int tw , th;
-                                    int dw = sh * w / h;
-                                    if (dw < sw) {
-                                        th = sw * h / w;
-                                        tw = sw; // 宽度优先
-                                    } else {
-                                        tw = dw;
-                                        th = sh; // 高度优先
+                                    if (sw > w) {
+                                        sh = w * sh / sw;
+                                        sw = w;
                                     }
-                                    size = tw+"*"+th;
+                                    if (sh > h) {
+                                        sw = h * sw / sh;
+                                        sh = h;
+                                    }
+                                    size = sw+"*"+sh;
                                 } else {
                                     size = "150*150";
                                 }

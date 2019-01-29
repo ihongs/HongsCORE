@@ -11,19 +11,24 @@
         return;
     }
 
+    Integer code;
     String  text;
+    code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
+    if (null != code) {
+        response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
+    }
     if (null == exception) {
         exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
     }
     if (null != exception) {
-        text  = exception.getLocalizedMessage( );
+        text  = exception.getLocalizedMessage();
     } else {
-        text  = (String) request.getAttribute( "javax.servlet.error.message" );
+        text  = (String) request.getAttribute("javax.servlet.error.message" );
         if (null != text ) {
-            text  = CoreLocale.getInstance( ).translate("core.error.no.thing");
+            text  = CoreLocale.getInstance().translate("core.error.no.thing");
         }
     }
-    String  link  = CoreLocale.getInstance( ).translate("core.error.to.index");
+    String  link  = CoreLocale.getInstance().translate("core.error.to.index");
 %>
 <!doctype html>
 <html>
@@ -40,9 +45,9 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
             #footbox.navbar, body, .jumbotron, .container
-                { background-color: #0071FF; color: #fff; border: 0; }
+                { background-color: #004f8f; color: #fff; border: 0; }
             #footbox blockquote
-                { background-color: #0071FF; color: #fff; }
+                { background-color: #003f6f; color: #fff; }
             h1, h3, pre
                 { font-weight: bold; }
             pre
@@ -55,14 +60,14 @@
             <div class="container">
                 <h1>: (</h1>
                 <p> <%=escapeXML(text)%> </p>
-                <p><a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-primary">
+                <p><a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-info">
                     <%=escapeXML(link)%>
                 </a></p>
             </div>
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
-                <blockquote><p>Copyleft &copy; 2018 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="<%=request.getContextPath()%>/power.html" target="_blank">others</a>.</small></p></blockquote>
+                <blockquote><p>Copyleft &copy; 2019 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="<%=request.getContextPath()%>/power.html" target="_blank">others</a>.</small></p></blockquote>
             </div>
         </nav>
     </body>

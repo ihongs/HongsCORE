@@ -71,23 +71,26 @@ public class DBConfig
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.DB_EXT + ".ser");
-    if ( xmlFile.exists( ) )
+    if ( xmlFile.exists() )
     {
       return xmlFile.lastModified() > serFile.lastModified();
     }
-    else
-    {
-      return false; // 为减少判断逻辑对 jar 文件不做变更对比.
-    }
+
+    // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
+    return null == getClass().getClassLoader().getResource(
+         name.contains(".")
+      || name.contains("/") ? name + Cnst.DB_EXT + ".xml"
+       : Cnst.CONF_PACK +"/"+ name + Cnst.DB_EXT + ".xml"
+    );
   }
 
   @Override
   protected void imports()
     throws HongsException
   {
-
     InputStream is;
     String      fn;
+    DBConfig    cp;
 
     try
     {
@@ -107,7 +110,15 @@ public class DBConfig
         }
     }
 
-    DBConfig cp = parseByStream(is);
+    try {
+        cp = parseByStream(is);
+    } finally {
+      try {
+        is.close();
+      } catch (IOException ex) {
+        throw new HongsException.Common(ex);
+      }
+    }
 
     this.link         = cp.link;
     this.source       = cp.source;

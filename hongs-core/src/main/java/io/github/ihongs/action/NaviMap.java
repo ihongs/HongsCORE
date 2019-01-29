@@ -178,14 +178,17 @@ public class NaviMap
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.NAVI_EXT + ".ser");
-    if ( xmlFile.exists() && serFile.exists() )
+    if ( xmlFile.exists() )
     {
       return xmlFile.lastModified() > serFile.lastModified();
     }
-    else
-    {
-      return xmlFile.exists(); // 为减少运算不去检查资源文件.
-    }
+
+    // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
+    return null == getClass().getClassLoader().getResource(
+         name.contains(".")
+      || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
+       : Cnst.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml"
+    );
   }
 
   @Override
@@ -212,6 +215,9 @@ public class NaviMap
                 "Can not find the config file '" + name + Cnst.NAVI_EXT + ".xml'.");
         }
     }
+
+    try
+    {
 
     Element root;
     try
@@ -248,6 +254,16 @@ public class NaviMap
     this.imports = new HashSet();
 
     this.parse(root, this.menus, this.manus, this.roles, this.imports, this.actions, new HashSet());
+
+    }
+    finally
+    {
+      try {
+        is.close();
+      } catch (IOException ex) {
+        throw new HongsException.Common(ex);
+      }
+    }
   }
 
   private void parse(Element element, Map menus, Map manus, Map roles, Set imports, Set actions, Set depends)

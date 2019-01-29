@@ -28,10 +28,14 @@
             String actc = href.equals(acti) ? "active" : "";
 
             List<Map> subs = (List) menu.get( "menus" );
-            if (subs != null && ! subs.isEmpty()) {
-                text += "<span class=\"caret\"></span>";
+            if (null != subs && ! subs.isEmpty()) {
+                StringBuilder subm= makeMenu(subs,acti);
+                if (0== subm.length()) {
+                    continue;
+                }
                 href  = Core.BASE_HREF +"/"+ href;
                 hrel  = Core.BASE_HREF +"/"+ hrel;
+                text += "<span class=\"caret\"></span>";
                 menus.append("<li class=\"")
                      .append(actc).append("\">" );
                 menus.append( "<a href=\"" )
@@ -39,7 +43,7 @@
                      .append(hrel).append("\">" )
                      .append(text).append("</a>");
                 menus.append("<ul class=\"\">")
-                     .append(makeMenu(subs, acti))
+                     .append(subm)
                      .append("</ul>");
                 menus.append("</li>");
             } else

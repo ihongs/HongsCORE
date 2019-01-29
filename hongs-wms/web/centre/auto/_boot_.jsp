@@ -7,11 +7,11 @@
 <%@page import="java.util.Map"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
-    String     _title = "";
+    CoreLocale _locale;
     String     _module;
     String     _entity;
-    CoreLocale _locale;
-    Map        _fields = null;
+    String     _title = null;
+    Map        _fields= null;
 
     {
         // 拆解路径
@@ -72,9 +72,7 @@
             }
             while (false);
 
-            /**
-             * 从字段配置里提取表单标题
-             */
+            // 从字段配置里提取表单标题
             if (_fields != null) {
                 _params  = (Map) _fields.get ( "@" );
                 if (_params != null) {
@@ -86,6 +84,7 @@
             }
         }
 
+        // 没菜单配置则抛出资源缺失异常
         if (_fields == null) {
             throw new HongsException(0x1104, _locale.translate("core.error.no.thing"));
         }

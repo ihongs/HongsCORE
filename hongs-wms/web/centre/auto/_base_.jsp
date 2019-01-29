@@ -5,10 +5,10 @@
 <%@page import="java.util.Map"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
-    String     _title = "";
+    CoreLocale _locale;
     String     _module;
     String     _entity;
-    CoreLocale _locale;
+    String     _title = null;
 
     {
         // 拆解路径
@@ -32,25 +32,40 @@
             Map menu;
             menu  = site.getMenu(_module +"/"+ _entity +"/");
             if (menu != null) {
+                if ("HIDE".equals(menu.get("hrel"))) {
+                    break; // 仅开放接口等同于没菜单
+                }
                     _title  = (String) menu.get("text");
                 if (_title != null) {
                     _title  = _locale.translate(_title);
-                    break;
+                } else {
+                    _title  = "";
                 }
+                break;
             }
             menu  = site.getMenu(_module +"/#"+_entity);
             if (menu != null) {
+                if ("HIDE".equals(menu.get("hrel"))) {
+                    break; // 仅开放接口等同于没菜单
+                }
                     _title  = (String) menu.get("text");
                 if (_title != null) {
                     _title  = _locale.translate(_title);
-                    break;
+                } else {
+                    _title  = "";
                 }
+                break;
             }
         } catch (HongsException ex) {
-            // 忽略配置文件缺失的异常情况
+            // 忽略配置文件缺失了的异常
             if (ex.getErrno() != 0x10e0) {
                 throw ex ;
             }
+        }
+
+        // 没菜单配置则抛出资源缺失异常
+        if (_title == null) {
+            throw new HongsException(0x1104, _locale.translate("core.error.no.thing"));
         }
     }
 %>

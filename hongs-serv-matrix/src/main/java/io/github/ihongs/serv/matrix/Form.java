@@ -573,12 +573,11 @@ public class Form extends Model {
         menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("text",  name );
+        menu.setAttribute("href", centre+"/"+id+"/");
 
         // 只开放了接口
         if ("4".equals(stat)) {
-            menu.setAttribute("href", "!"+centre+"/"+id+"/");
-        } else {
-            menu.setAttribute("href", /**/centre+"/"+id+"/");
+        menu.setAttribute("hrel", "HIDE");
         }
 
         // 会话

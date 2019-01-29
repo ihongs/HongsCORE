@@ -30,6 +30,7 @@
                         <select class="form-control" name="state">
                             <option value="1">内部</option>
                             <option value="2">开放</option>
+                            <option value="4">开放, 仅接口</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -695,10 +696,10 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="ul|data-required" value="required"/>必传
+                    <input type="checkbox" name="ul|data-required" value="yes"/>必传
                 </label>
                 <label>
-                    <input type="checkbox" name="ul|data-repeated" value="required"/>多个
+                    <input type="checkbox" name="ul|data-repeated" value="yes"/>多个
                 </label>
                 <label>
                     <input type="checkbox" name="ul|data-listable" value="yes"/>列举
@@ -721,10 +722,10 @@
             </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="ul|data-required" value="required"/>必选
+                    <input type="checkbox" name="ul|data-required" value="yes"/>必选
                 </label>
                 <label>
-                    <input type="checkbox" name="ul|data-repeated" value="repeated"/>多个
+                    <input type="checkbox" name="ul|data-repeated" value="yes"/>多个
                 </label>
                 <label>
                     <input type="checkbox" name="ul|data-listable" value="yes"/>列举
@@ -737,7 +738,7 @@
                 </label>
             </div>
         </div>
-        <div class="widget-pane widget-pane-cuser widget-pane-muser widget-pane-ctime widget-pane-mtime widget-pane-state">
+        <div class="widget-pane widget-pane-cuser widget-pane-muser widget-pane-ctime widget-pane-mtime widget-pane-state widget-pane-boost">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>

@@ -44,6 +44,8 @@ import org.w3c.dom.Element;
  */
 public class Form extends Model {
 
+    protected final String SERI_DATA_PATH = Core.DATA_PATH + "/serial";
+
     protected String centra = "centra/data";
     protected String centre = "centre/data";
     protected String upload = "static/upload/data";
@@ -68,7 +70,7 @@ public class Form extends Model {
         // 冻结意味着手动修改了配置
         // 再操作可能会冲掉自定配置
         if (stat == null) {
-            if ("3".equals(stax)) {
+            if ("8".equals(stax)) {
                 throw new HongsException(0x1100, "表单冻结, 禁止操作");
             }
             if ("0".equals(stax)) {
@@ -415,20 +417,32 @@ public class Form extends Model {
     protected void deleteFormMenu(String id) {
         File fo;
 
-        fo = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.FORM_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".xml");
         if (fo.exists()) fo.delete();
 
-        fo = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.FORM_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.NAVI_EXT +".xml");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(SERI_DATA_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".ser");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(SERI_DATA_PATH +"/"+ centre +"/"+ id + Cnst.NAVI_EXT +".ser");
         if (fo.exists()) fo.delete();
     }
 
     protected void deleteFormConf(String id) {
         File fo;
 
-        fo = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.FORM_EXT +".xml");
         if (fo.exists()) fo.delete();
 
-        fo = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.NAVI_EXT +".xml");
+        fo = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.FORM_EXT +".xml");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(SERI_DATA_PATH +"/"+ centra +"/"+ id + Cnst.FORM_EXT +".ser");
+        if (fo.exists()) fo.delete();
+
+        fo = new File(SERI_DATA_PATH +"/"+ centre +"/"+ id + Cnst.FORM_EXT +".ser");
         if (fo.exists()) fo.delete();
     }
 
@@ -541,18 +555,16 @@ public class Form extends Model {
 
         saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
 
-        //** 对外开放 **/
-
         /**
-         * 仅供内部管理用时,
-         * 应确保无开放配置.
+         * 内部资源置空
          */
-        File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml");
-        if (!"2".equals(stat)) {
-            if (fo.exists()) {
-                fo.delete();
-            }   return;
+        if ("1".equals(stat)) {
+        docm.appendChild ( docm.createElement("root") );
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        return;
         }
+
+        //** 对外开放 **/
 
         docm = makeDocument();
 
@@ -562,7 +574,13 @@ public class Form extends Model {
         menu = docm.createElement("menu");
         root.appendChild ( menu );
         menu.setAttribute("text",  name );
-        menu.setAttribute("href", centre+"/"+id+"/");
+
+        // 只开放了接口
+        if ("4".equals(stat)) {
+            menu.setAttribute("href", "!"+centre+"/"+id+"/");
+        } else {
+            menu.setAttribute("href", /**/centre+"/"+id+"/");
+        }
 
         // 会话
         role = docm.createElement("rsname");
@@ -758,20 +776,12 @@ public class Form extends Model {
         //** 对外开放 **/
 
         /**
-         * 仅供内部管理用时,
-         * 应确保无公开配置.
-         * 开放存在则不处理,
-         * 固定内容无需更新.
+         * 内部资源置空
          */
-        File fo = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml");
-        if (!"2".equals(stat)) {
-            if (fo.exists()) {
-                fo.delete();
-            }   return;
-        } else {
-            if (fo.exists()) {
-                return;
-            }
+        if ("1".equals(stat)) {
+        docm.appendChild ( docm.createElement("root") );
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        return;
         }
 
         docm = makeDocument();

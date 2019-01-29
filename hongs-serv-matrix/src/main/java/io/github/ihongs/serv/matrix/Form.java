@@ -555,21 +555,20 @@ public class Form extends Model {
 
         saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
 
-        /**
-         * 内部资源置空
-         */
-        if ("1".equals(stat)) {
-        docm.appendChild ( docm.createElement("root") );
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
-        return;
-        }
-
         //** 对外开放 **/
 
         docm = makeDocument();
 
         root = docm.createElement("root");
         docm.appendChild ( root );
+
+        /**
+         * 内部资源置空
+         */
+        if ("1".equals(stat)) {
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        return;
+        }
 
         menu = docm.createElement("menu");
         root.appendChild ( menu );
@@ -775,19 +774,18 @@ public class Form extends Model {
 
         //** 对外开放 **/
 
-        /**
-         * 内部资源置空
-         */
-        if ("1".equals(stat)) {
-        docm.appendChild ( docm.createElement("root") );
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
-        return;
-        }
-
         docm = makeDocument();
 
         root = docm.createElement("root");
         docm.appendChild ( root );
+
+        /**
+         * 内部资源置空
+         */
+        if ("1".equals(stat)) {
+        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        return;
+        }
 
         form = docm.createElement("form");
         root.appendChild ( form );

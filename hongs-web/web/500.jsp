@@ -30,8 +30,13 @@
         return;
     }
 
-    String  text  = null ;
-    String  trac  = null ;
+    Integer code;
+    String  text;
+    String  trac;
+    code = (Integer ) request.getAttribute("javax.servlet.error.status_code");
+    if (null != code) {
+        response.setStatus(code); // 不知何故 sendError 之后总是 500, 此为修正
+    }
     if (null == exception) {
         exception = (Throwable) request.getAttribute("javax.servlet.error.exception");
     }
@@ -48,12 +53,14 @@
             ByteArrayOutputStream o = new ByteArrayOutputStream();
             exception.printStackTrace(new PrintStream(o));
             trac  = new  String(o.toByteArray(), "utf-8");
+        } else {
+            trac  = null ;
         }
     } else {
         text  = (String) request.getAttribute("javax.servlet.error.message");
         if (text == null ) {
-            text  = CoreLocale.getInstance( ).translate("core.error.unknwn");
-        }
+            text  = CoreLocale.getInstance().translate("core.error.unknwn" );
+        }   trac  = null ;
     }
 %>
 <!doctype html>
@@ -71,9 +78,9 @@
         <script type="text/javascript" src="<%=request.getContextPath()%>/static/assets/jquery.min.js"></script>
         <style type="text/css">
             #footbox.navbar, body, .jumbotron, .container
-                { background-color: #8F0000; color: #fff; border: 0; }
+                { background-color: #8f0000; color: #fff; border: 0; }
             #footbox blockquote
-                { background-color: #8F0000; color: #fff; }
+                { background-color: #6f0000; color: #fff; }
             h1, h3, pre
                 { font-weight: bold; }
             pre
@@ -93,7 +100,7 @@
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
-                <blockquote><p>Copyleft &copy; 2018 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="<%=request.getContextPath()%>/power.html" target="_blank">others</a>.</small></p></blockquote>
+                <blockquote><p>Copyleft &copy; 2019 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="<%=request.getContextPath()%>/power.html" target="_blank">others</a>.</small></p></blockquote>
             </div>
         </nav>
     </body>

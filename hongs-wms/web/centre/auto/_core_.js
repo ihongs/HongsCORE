@@ -140,11 +140,7 @@ function hsListInitSort(x, v, n) {
     var inp = x;
     var sel = x.next().find("select").eq(0);
     var chk = x.next().find("select").eq(1);
-    // 没有可排序的字段就不显示此项
-    if (sel.children().size() < 2) {
-        sel.closest(".form-group").remove();
-        return;
-    }
+
     chk.addClass ("invisible");
     x.next().change(function() {
         if (sel.find("option").first().prop("selected") /**/) {
@@ -155,6 +151,7 @@ function hsListInitSort(x, v, n) {
         }
         inp.val(chk.val() + sel.val());
     });
+
     /*
     if (sel.find("[value=mtime]").size()) {
         chk.prop("checked", true);
@@ -167,6 +164,22 @@ function hsListInitSort(x, v, n) {
         inp.val ("-ctime");
     }
     */
+}
+
+/**
+ * 列表属主权限控制
+ */
+function hsListInitMine(x, v, n) {
+    x.next().on( "change", ":radio", function() {
+        switch ($(this).val()) {
+            case "1": x.attr("name", n + ":eq").val(HsCUID); break;
+            case "2": x.attr("name", n + ":ne").val(HsCUID); break;
+            default : x.attr("name", n).val(""); break;
+        }
+
+        // 为规避多余的查询项, 没有设选项字段名称, 需自行取消其他选项
+        $(this).closest("label").siblings().find("input").prop("checked", false);
+    });
 }
 
 /**
@@ -217,10 +230,11 @@ function HsCate (context , opts) {
         }
     });
 
-    statbox.on( "change" , ":checkbox", function() {
+    statbox.on( "change" , "input,select", function() {
         if ($(this).is(".checkall2")) {
             $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
-        } else {
+        } else
+        if ($(this).is(".checkone2")) {
             $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
         }
         findbox.find(":submit").click( );
@@ -266,8 +280,14 @@ HsCate.prototype = {
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='"+k+"']" ).val(data[k]);
+                    statbox.find("[name='"+k+"']" ).val(data [k]);
                 }
+
+                statbox.find(".checkbox").each(function() {
+                    if ($(this).find(":checked"  ).size() === 0 ) {
+                        statbox.find(".checkall2").prop("checked", true);
+                    }
+                });
             }
         });
     },
@@ -306,11 +326,14 @@ HsCate.prototype = {
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='" + k + "']").val(data[k]);
+                    statbox.find("[name='"+k+"']" ).val(data [k]);
                 }
-                if (statbox.find(":checked"  ).size( )   ==   0   ) {
-                    statbox.find(".checkall2").prop("checked",true);
-                }
+
+                statbox.find(".checkbox").each(function() {
+                    if ($(this).find(":checked"  ).size() === 0 ) {
+                        statbox.find(".checkall2").prop("checked", true);
+                    }
+                });
             }
         });
     },

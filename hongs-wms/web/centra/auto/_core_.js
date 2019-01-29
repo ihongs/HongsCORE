@@ -228,10 +228,11 @@ function HsStat (context , opts) {
         }
     });
 
-    statbox.on( "change" , ":checkbox", function() {
+    statbox.on( "change" , "input,select", function() {
         if ($(this).is(".checkall2")) {
             $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
-        } else {
+        } else
+        if ($(this).is(".checkone2")) {
             $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
         }
         findbox.find(":submit:first").click();
@@ -292,8 +293,14 @@ HsStat.prototype = {
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='"+k+"']" ).val(data[k]);
+                    statbox.find("[name='"+k+"']" ).val(data [k]);
                 }
+
+                statbox.find(".checkbox").each(function() {
+                    if ($(this).find(":checked"  ).size() === 0 ) {
+                        statbox.find(".checkall2").prop("checked", true);
+                    }
+                });
             }
         });
     },
@@ -333,11 +340,14 @@ HsStat.prototype = {
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='" + k + "']").val(data[k]);
+                    statbox.find("[name='"+k+"']" ).val(data [k]);
                 }
-                if (statbox.find(":checked"  ).size( )   ==   0   ) {
-                    statbox.find(".checkall2").prop("checked",true);
-                }
+
+                statbox.find(".checkbox").each(function() {
+                    if ($(this).find(":checked"  ).size() === 0 ) {
+                        statbox.find(".checkall2").prop("checked", true);
+                    }
+                });
             }
         });
     },

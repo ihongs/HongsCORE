@@ -47,7 +47,7 @@
             #footbox.navbar, body, .jumbotron, .container
                 { background-color: #004f8f; color: #fff; border: 0; }
             #footbox blockquote
-                { background-color: #003f6f; color: #fff; }
+                { background-color: #003f6f; color: #ddd; }
             h1, h3, pre
                 { font-weight: bold; }
             pre

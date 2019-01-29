@@ -212,10 +212,6 @@ public class Unit extends Grade {
             importNode.appendChild(centraDocm.createTextNode(centra+"/"+fid));
             centraRoot.appendChild(importNode);
 
-            if (! "2".equals(sta)) {
-                continue;
-            }
-
             importNode = centreDocm.createElement("import");
             importNode.appendChild(centreDocm.createTextNode(centre+"/"+fid));
             centreRoot.appendChild(importNode);
@@ -276,8 +272,8 @@ public class Unit extends Grade {
             Document centreDocm, Element centreRoot,
             String id)
     throws HongsException {
-        Element centraRoo2, centraHid2;
-        Element centreRoo2, centreHid2;
+        Element centraRoo2; //, centraHid2;
+        Element centreRoo2; //, centreHid2;
         List<Map> rows;
 
         rows = this.table
@@ -295,17 +291,17 @@ public class Unit extends Grade {
             centraRoo2.setAttribute("text", nam);
             centraRoo2.setAttribute("href", "common/menu.act?m="+centra+"&x="+pid);
 
-            centraHid2 = centraDocm.createElement("menu");
-            centraHid2.setAttribute("text", nam);
-            centraHid2.setAttribute("href", "!"+centra+"/"+pid);
+//          centraHid2 = centraDocm.createElement("menu");
+//          centraHid2.setAttribute("text", nam);
+//          centraHid2.setAttribute("href", "!"+centra+"/"+pid);
 
             centreRoo2 = centreDocm.createElement("menu");
             centreRoo2.setAttribute("text", nam);
             centreRoo2.setAttribute("href", "common/menu.act?m="+centre+"&x="+pid);
 
-            centreHid2 = centreDocm.createElement("menu");
-            centreHid2.setAttribute("text", nam);
-            centreHid2.setAttribute("href", "!"+centre+"/"+pid);
+//          centreHid2 = centreDocm.createElement("menu");
+//          centreHid2.setAttribute("text", nam);
+//          centreHid2.setAttribute("href", "!"+centre+"/"+pid);
 
             insertForms(
                 centraDocm, centraRoo2,
@@ -314,24 +310,24 @@ public class Unit extends Grade {
             );
 
             insertHides(
-                centraDocm, centraHid2,
-                centreDocm, centreHid2,
+                centraDocm, centraRoo2,
+                centreDocm, centreRoo2,
                 pid
             );
 
             if (centraRoo2.hasChildNodes()) {
                 centraRoot.appendChild(centraRoo2);
             }
-            if (centraHid2.hasChildNodes()) {
-                centraRoot.appendChild(centraHid2);
-            }
+//          if (centraHid2.hasChildNodes()) {
+//              centraRoot.appendChild(centraHid2);
+//          }
 
             if (centreRoo2.hasChildNodes()) {
                 centreRoot.appendChild(centreRoo2);
             }
-            if (centreHid2.hasChildNodes()) {
-                centreRoot.appendChild(centreHid2);
-            }
+//          if (centreHid2.hasChildNodes()) {
+//              centreRoot.appendChild(centreHid2);
+//          }
         }
     }
 

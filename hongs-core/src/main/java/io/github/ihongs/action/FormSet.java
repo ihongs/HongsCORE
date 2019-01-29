@@ -107,14 +107,17 @@ public class FormSet
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
-    if ( xmlFile.exists( ) )
+    if ( xmlFile.exists() )
     {
       return xmlFile.lastModified() > serFile.lastModified();
     }
-    else
-    {
-      return false; // 为减少判断逻辑对 jar 文件不做变更对比.
-    }
+
+    // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
+    return null == getClass().getClassLoader().getResource(
+         name.contains(".")
+      || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
+       : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml"
+    );
   }
 
   @Override
@@ -142,6 +145,9 @@ public class FormSet
         }
     }
 
+    try
+    {
+
     Element root;
     try
     {
@@ -166,6 +172,16 @@ public class FormSet
     this.forms = new HashMap();
     this.enums = new HashMap();
     this.parse(root, this.forms, this.enums);
+
+    }
+    finally
+    {
+      try {
+        is.close();
+      } catch (IOException ex) {
+        throw new HongsException.Common(ex);
+      }
+    }
   }
 
   private void parse(Element element, Map forms, Map enums)

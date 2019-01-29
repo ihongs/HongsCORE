@@ -65,7 +65,7 @@
                 continue;
             }
         %>
-        <div class="filt-group form-group form-group-sm clearfix">
+        <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
             <label class="col-xs-3 form-control-static control-label text-right"><%=text%></label>
             <div class="col-xs-6">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
@@ -170,7 +170,7 @@
                 type = "counts";
             }
         %>
-        <div data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-xs-6" style="padding: 5px;">
+        <div data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-xs-6" style="padding: 5px;">
             <div class="panel clearfix">
                 <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
                 <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
@@ -341,6 +341,14 @@
         surl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_text,_fork"
     });
+
+    var findreq = hsSerialDat( loadbox );
+    for(var fn in findreq) {
+        if (! findreq[fn]) {
+            continue;
+        }
+        findbox.children("[data-find='"+fn+"']").remove();
+    }
 
     if (filtbox.find(".filt-group").size() == 0) {
         findbox.find(".filter").remove();

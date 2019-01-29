@@ -53,9 +53,9 @@
         %>
         <%if ("@".equals(name) || "id".equals(name)) {%>
         <%} else if (Synt.declare(info.get("statable"), false)) {%>
-        <div class="stat-group form-group form-group-sm clearfix">
+        <div class="stat-group form-group form-group-sm clearfix" data-find="<%=name%>">
             <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
-            <div class="col-md-6 col-sm-8">
+            <div class="col-md-6 col-sm-8 form-control-static" style="height: auto;">
                 <%
                     String rb;
                     if ("number".equals(type)) {
@@ -85,11 +85,11 @@
                         type = "counts";
                     }
                 %>
-                <div class="checkbox" style="margin: 6px 0px; font-size: 13px; line-height: 1.5;" data-name="<%=name%>" data-type="<%=type%>" data-rb="<%=rb%>"></div>
+                <div class="checkbox" style="margin:0" data-name="<%=name%>" data-type="<%=type%>" data-rb="<%=rb%>"></div>
             </div>
         </div>
         <%} else if (Synt.declare(info.get("findable"), false)) {%>
-        <div class="filt-group form-group form-group-sm clearfix">
+        <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
             <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
@@ -141,7 +141,27 @@
         </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm clearfix">
+        <div class="filt-group form-group form-group-sm clearfix" data-find="cuser">
+            <label class="col-md-3 col-sm-2 form-control-static control-label text-right">属主</label>
+            <div class="col-md-6 col-sm-8 form-control-static">
+                <input type="hidden" name="cuser" value="" data-ft="_mine"/>
+                <div class="radio" style="margin:0">
+                    <label>
+                        <input type="radio" value="0" checked="checked"/>
+                        <span>全部</span>
+                    </label>
+                    <label>
+                        <input type="radio" value="1"/>
+                        <span>我创建的</span>
+                    </label>
+                    <label>
+                        <input type="radio" value="2"/>
+                        <span>其他人的</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="sort-group form-group form-group-sm clearfix" data-find="ob">
             <label class="col-md-3 col-sm-2 form-control-static control-label text-right">排序</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
@@ -171,20 +191,7 @@
                 </div>
             </div>
         </div>
-        <div class="form-group form-group-sm clearfix" style="margin-bottom: 0px">
-            <div class="col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2">
-                <button type="submit" class="btn btn-sm btn-default">应用</button>
-                <span style="padding:0.1em;"></span>
-                <button type="reset"  class="btn btn-sm btn-default">重置</button>
-                <span class="form-control-static" style="vertical-align: middle;">
-                    <label>
-                        <input type="checkbox" class="owned" style="margin-right: 5px;"/>
-                        <span>我创建的</span>
-                    </label>
-                </span>
-            </div>
-        </div>
-        <div class="form-group clearfix"></div>
+        <input type="submit" class="invisible"/>
     </form>
     <!-- 列表 -->
     <div class="itembox col-md-4 col-sm-6" style="display: none; padding: 0 7.5px 15px 7.5px;">
@@ -225,16 +232,17 @@
     var statbox = context.find(".statbox");
 
     // 权限控制
-    if (!hsChkUri("centre")) context.find(".owner").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
+    context.find("[data-ft=edit]:empty").remove(); // 没有修改或删除权限就干脆移除掉编辑按钮组
 
-    // 外部约束
-    var findreq = hsSerialDat(loadbox);
-    for(var key in findreq) {
-        if (findreq[ key ]) {
-            findbox.find("[name='"+key+"'][name^='"+key+".'],[data-fn='"+key+"'],[data-name='"+key+"']")
-                   .closest(".form-group").remove();
-        }
+    // 附加控制
+    if (!hsChkUri("centre")) {
+        findbox.find("[data-ft=_mine]").closest(".form-group").remove();
+    }
+    if (findbox.find("[data-ft=_sort]").closest(".form-group").find("option").size() <= 3 ) {
+        findbox.find("[data-ft=_sort]").closest(".form-group").remove();
     }
 
     //** 列表、搜索表单 **/
@@ -263,13 +271,27 @@
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum",
         _fill__enum : hsListFillFilt,
-        _fill__sort : hsListInitSort
+        _fill__sort : hsListInitSort,
+        _fill__mine : hsListInitMine
     });
 
     var statobj = context.hsCate({
         surl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_text,_fork"
     });
+
+    var findreq = hsSerialDat( loadbox );
+    for(var fn in findreq) {
+        if (! findreq[fn]) {
+            continue;
+        }
+        findbox.children("[data-find='"+fn+"']").remove();
+    }
+
+    if (filtbox.find(".filt-group").size() == 0
+    &&  statbox.find(".stat-group").size() == 0) {
+        context.find(".filter").remove();
+    }
 
     filtbox.on("opened", function() {
         if (filtbox.data("fetched") != true) {
@@ -305,18 +327,6 @@
             filtbox.find(":submit").click( );
         } , 500);
     });
-
-    // 我创建的
-    filtbox.find(".owned").change(function() {
-        var ab = /***/ hsGetParam(listobj._url, "<%=Cnst.AB_KEY%>"/**/);
-        if ( ! $(this).prop(  "checked"  ) ) {
-            ab = ab.replace(",.created", "");
-        } else {
-            ab = ab    +    ",.created";
-        }
-        listobj._url = hsSetParam(listobj._url, "<%=Cnst.AB_KEY%>", ab);
-        // 无需触发提交, 已对统计项绑定事件, 恰好有包含此表单项
-    }).val(self.HsCUID);
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制

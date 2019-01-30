@@ -34,7 +34,7 @@
         <div id="notebox"></div>
         <div id="context">
             <div id="headbox">
-                <div id="menu-context" data-load="centra/head.jsp"></div>
+                <div id="menu-context" data-load="centra/head.jsp?active=<%=encodeURL(_module+"/"+_entity+"/")%>"></div>
             </div>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">

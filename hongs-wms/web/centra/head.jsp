@@ -133,6 +133,10 @@
 //      var userbar = $("#user-menubar");
 
         $(function() {
+            if (menubar.find("li.active").size()) {
+                return;
+            }
+
             var a, b, h, l;
 
             h = location.href.replace(/^\w+:\/\/[^\/]+/, '');

@@ -12,67 +12,79 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     StringBuilder makeMenu(List<Map> list, String acti) {
-        StringBuilder topm = new StringBuilder();
-        StringBuilder subm ;
-        for(Map menu: list) {
-            String text = (String) menu.get("text");
-            String href = (String) menu.get("href");
-            String hrel = (String) menu.get("hrel");
-//          String icon = (String) menu.get("icon");
+        StringBuilder menu = new StringBuilder();
+        makeMenu(menu, list, acti);
+        return menu;
+    }
+    int makeMenu(StringBuilder menu, List<Map> list, String acti) {
+        int code = 0;
+
+        for(Map item: list) {
+            String text = (String) item.get("text");
+            String href = (String) item.get("href");
+            String hrel = (String) item.get("hrel");
+//          String icon = (String) item.get("icon");
 
             if (href.startsWith("!")) {
                 continue;
             }
-            if (hrel.equals ("HIDE")) {
+            if (hrel.equals("HIDE" )) {
                 continue;
             }
-            if (hrel.equals ("LINE")) {
-                topm.append("<li class=\"divider\"></li>" );
+            if (hrel.equals("LINE" )) {
+                menu.append("<li class=\"divider\"></li>");
                 continue;
             }
 
-            String actc = href.equals(acti) ? "active" : "";
-            List<Map> subs = (List) menu.get( "menus" );
+            String actc ;
+            if (href.equals(acti)) {
+                actc  = "active";
+                code  = 2 ;
+            } else
+            if (code == 0) {
+                actc  = "";
+                code  = 1 ;
+            } else
+            {
+                actc  = "";
+            }
 
-            if (subs != null && !subs.isEmpty()) {
-                subm  = makeMenu(subs,acti);
-                if (1 > subm.length()) {
-                    continue;
+            List<Map> subs = ( List ) item.get ("menus");
+            if (subs != null && ! subs.isEmpty ( /***/ )) {
+                StringBuilder subm = new StringBuilder();
+                switch ( makeMenu ( subm , subs , acti )) {
+                    case 0 : continue ;
+                    case 2 : code = 2 ; actc = "active" ;
                 }
 
                 href = Core.BASE_HREF +"/"+ href;
                 hrel = Core.BASE_HREF +"/"+ hrel;
-                text += "<span class=\"caret\"></span>";
-                hrel += "\" data-toggle=\"dropdown\""
-                     +   " class=\"dropdown-toggle\""  ;
-                actc += " dropdown";
-
-                topm.append("<li class=\"")
-                    .append(actc).append("\">" );
-                topm.append( "<a href=\"" )
-                    .append(href).append("\" data-href=\"")
-                    .append(hrel).append("\">" )
-                    .append(text).append("</a>");
-                topm.append("<ul class=\"dropdown-menu\">")
+                menu.append("<li class=\"").append(actc).append(" dropdown\">")
+                    .append(  "<a href=\"").append(href).append("\" ")
+                    .append("data-href=\"").append(hrel).append("\" ")
+                    .append("data-toggle=\"dropdown\" " )
+                    .append("class=\"dropdown-toggle\">")
+                    .append(text)
+                    .append("<span class=\"caret\"></span>")
+                    .append("</a>" )
+                    .append("<ul class=\"dropdown-menu\">" )
                     .append(subm)
-                    .append("</ul>");
-                topm.append("</li>");
+                    .append("</ul>")
+                    .append("</li>");
             } else
             if (!href.startsWith("common/menu.")) {
                 href = Core.BASE_HREF +"/"+ href;
                 hrel = Core.BASE_HREF +"/"+ hrel;
-
-                topm.append("<li class=\"")
-                    .append(actc).append("\">" );
-                topm.append( "<a href=\"" )
-                    .append(href).append("\" data-href=\"")
-                    .append(hrel).append("\">" )
-                    .append(text).append("</a>");
-                topm.append("</li>");
+                menu.append("<li class=\"").append(actc).append("\">")
+                    .append(  "<a href=\"").append(href).append("\" ")
+                    .append("data-href=\"").append(hrel).append("\">")
+                    .append(text)
+                    .append("</a>" )
+                    .append("</li>");
             }
         }
 
-        return  topm;
+        return  code;
     }
 %>
 <%

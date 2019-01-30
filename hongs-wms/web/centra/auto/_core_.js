@@ -156,14 +156,15 @@ function hsListFillOpen(x, v, n, t) {
                 url = v[i];
                 txt = v[i].replace(/[?#].*/, '')
                           .replace( /.*\// , '');
+                txt = decodeURIComponent ( txt );
             }
             var b = $('<a target="_blank"></a>');
             b.attr("href", url).text(txt);
             u.append(l.clone().append(b));
         }
         u.appendTo(m.find(".modal-body"));
-        u.css("font-family", "monospace");
-        m.css("text-align" , "left" /**/);
+        u.css("word-wrap", "break-word" );
+        m.css("text-align", /**/ "left" );
         m.find("h4").text("单击链接打开:");
         a.click(function( ) {
             m.modal("show");

@@ -388,49 +388,51 @@ public class UploadHelper {
             return  null;
         }
 
+        name = name.replace('\\', '/'); // 避免 Windows 异常
         String subn = name;
         String extn =  "" ;
-        name = name.replace( '\\', '/' ); // 避免 Windows 异常
-        int i  = subn.lastIndexOf( '/' );
+        int i  = subn.lastIndexOf('/');
         if (i != -1) {
-            subn = subn.substring(i + 1);
+            subn = subn.substring(i+1);
         }
-        int j  = subn.lastIndexOf( '.' );
+        int j  = subn.lastIndexOf('.');
         if (j != -1) {
-            extn = subn.substring(j + 1);
-            subn = subn.substring(0 , j);
-        }
-
-        /*
-         * 修改时文件未重新上传则回传原路径
-         * 此时传入名称和扩展应得到相同结果
-         * 这种情况无需额外的操作
-         */
-        setResultName(subn, extn);
-        String href = getResultHref();
-        String path = getResultPath();
-        if  (  name.equals (href)) {
-            return new File(path);
-        }
-
-        /*
-         * 不能直接当作文件路径来处理
-         * 这会导致严重的安全漏洞
-         * 如给的是某重要配置文件路径
-         * 则可能导致敏感数据泄露
-         */
-        if (i != -1) {
-            throw new Wrong( "core.file.upload.not.allows" );
-//          return upload(new File(subn),Core.getUniqueId());
+            extn = subn.substring(j+1);
         }
 
         /**
-         * 尝试移动临时目录的文件
+         * 值与目标网址的前导路径如果一致,
+         * 视为修改表单且没有重新上传文件;
+         * 但需规避用相对路径访问敏感文件,
+         * 目录不得以点结尾, 如 ./ 和 ../
+         *
+         * 反之将其视为传递来的临时文件名,
+         * 此时不得含斜杠从而规避同上问题.
          */
-        return upload(
-                new File(getUploadTemp(uploadTemp)
-                        + File.separator  +  name),
-                Core.newIdentity());
+
+        String href = getResultHref(uploadHref) + "/";
+        String path = getResultPath(uploadPath) + "/";
+        if (name.startsWith(href)) {
+            name = name.substring(href.length());
+            if (name.contains("./")) {
+                throw new Wrong("core.file.upload.not.allows");
+            }
+
+            File  file = new File( path + name );
+            if (! file.exists(/**/)) {
+                throw new Wrong("core.file.upload.not.exists");
+            }
+
+            setResultName(name,extn);
+            return file;
+        } else {
+            if (i != -1) { // 有斜杠:
+                throw new Wrong("core.file.upload.not.allows");
+            }
+
+            name = ( getUploadTemp(uploadTemp) + "/" + name  );
+            return upload(new File(name) , Core.newIdentity());
+        }
     }
 
     /**

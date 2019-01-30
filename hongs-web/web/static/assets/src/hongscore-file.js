@@ -26,9 +26,9 @@
         }
             box =$(box );
         $(this).before($(this).clone().val(''));
-        var txt = src.replace(/^.*[\/\\]/, '' );
+        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, '') );
         var cls = box.is(".pickrol") ? "btn-link" : "btn-info";
-        var div =$('<li class="btn ' + cls + ' form-control"></li>').attr( "title", txt )
+        var div =$('<li class="btn ' + cls +' form-control"></li>').attr( "title" , txt )
            .append(this)
            .append('<span class="glyphicon glyphicon-open-file"></span>')
            .append($('<span class="picktxt"></span>').text( txt ) )
@@ -48,9 +48,9 @@
             return;
         }
         var box =$(this);
-        var txt = src.replace(/^.*[\/\\]/, '' );
+        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, '') );
         var cls = box.is(".pickrol") ? "btn-link" : "btn-info";
-        var div =$('<li class="btn ' + cls + ' form-control"></li>').attr( "title", txt )
+        var div =$('<li class="btn ' + cls +' form-control"></li>').attr( "title" , txt )
            .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
            .append('<span class="glyphicon glyphicon-save-file"></span>')
            .append($('<span class="picktxt"></span>').text( txt ) )

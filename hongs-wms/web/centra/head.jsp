@@ -11,13 +11,18 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     StringBuilder makeMenu(List<Map> list, String acti) {
-        StringBuilder topm = new StringBuilder();
-        StringBuilder subm ;
-        for(Map menu: list) {
-            String text = (String) menu.get("text");
-            String href = (String) menu.get("href");
-            String hrel = (String) menu.get("hrel");
-//          String icon = (String) menu.get("icon");
+        StringBuilder menu = new StringBuilder();
+        makeMenu(menu, list, acti);
+        return menu;
+    }
+    int makeMenu(StringBuilder menu, List<Map> list, String acti) {
+        int code = 0;
+
+        for(Map item: list) {
+            String text = (String) item.get("text");
+            String href = (String) item.get("href");
+            String hrel = (String) item.get("hrel");
+//          String icon = (String) item.get("icon");
 
             if (href.startsWith("!")) {
                 continue;
@@ -26,49 +31,57 @@
                 continue;
             }
             if (hrel.equals("LINE" )) {
-                topm.append("<li class=\"divider\"></li>" );
+                menu.append("<li class=\"divider\"></li>");
                 continue;
             }
 
-            String actc = href.equals(acti) ? "active" : "";
-            List<Map> subs = (List) menu.get( "menus" );
+            String actc ;
+            if (href.equals(acti)) {
+                actc  = "active";
+                code  = 2 ;
+            } else
+            if (code == 0) {
+                actc  = "";
+                code  = 1 ;
+            } else
+            {
+                actc  = "";
+            }
 
-            if (subs != null && !subs.isEmpty()) {
-                subm  = makeMenu(subs,acti);
-                if (0 > subm.length()) {
-                    continue;
+            List<Map> subs = ( List ) item.get ("menus");
+            if (subs != null && ! subs.isEmpty ( /***/ )) {
+                StringBuilder subm = new StringBuilder();
+                switch ( makeMenu ( subm , subs , acti )) {
+                    case 0 : continue ;
+                    case 2 : code = 2 ; actc = "acting" ;
                 }
 
                 href = Core.BASE_HREF +"/"+ href;
                 hrel = Core.BASE_HREF +"/"+ hrel;
-                text += "<span class=\"caret\"></span>";
-
-                topm.append("<li class=\"")
-                    .append(actc).append("\">" );
-                topm.append( "<a href=\"" )
-                    .append(href).append("\" data-href=\"")
-                    .append(hrel).append("\">" )
-                    .append(text).append("</a>");
-                topm.append("<ul class=\"\">")
+                menu.append("<li class=\"").append(actc).append("\">")
+                    .append(  "<a href=\"").append(href).append("\" ")
+                    .append("data-href=\"").append(hrel).append("\">")
+                    .append(text)
+                    .append("<span class=\"caret\"></span>")
+                    .append("</a>" )
+                    .append("<ul>" )
                     .append(subm)
-                    .append("</ul>");
-                topm.append("</li>");
+                    .append("</ul>")
+                    .append("</li>");
             } else
             if (!href.startsWith("common/menu.")) {
                 href = Core.BASE_HREF +"/"+ href;
                 hrel = Core.BASE_HREF +"/"+ hrel;
-
-                topm.append("<li class=\"")
-                    .append(actc).append("\">" );
-                topm.append( "<a href=\"" )
-                    .append(href).append("\" data-href=\"")
-                    .append(hrel).append("\">" )
-                    .append(text).append("</a>");
-                topm.append("</li>");
+                menu.append("<li class=\"").append(actc).append("\">")
+                    .append(  "<a href=\"").append(href).append("\" ")
+                    .append("data-href=\"").append(hrel).append("\">")
+                    .append(text)
+                    .append("</a>" )
+                    .append("</li>");
             }
         }
 
-        return  topm;
+        return  code;
     }
 %>
 <%

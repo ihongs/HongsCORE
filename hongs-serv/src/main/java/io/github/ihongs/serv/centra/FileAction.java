@@ -75,16 +75,22 @@ public class FileAction implements IAction {
         // 根目录
         if ("".equals(path) || "/".equals(path)) {
             if ("file".equals(type)) {
-                helper.reply(Synt.mapOf("page" , Synt.mapOf(
-                        "ern" , 1
-                    ),
-                    "list" , new ArrayList()
+                helper.reply(Synt.mapOf(
+                    "list" , new  ArrayList(),
+                    "page" , Synt.mapOf(
+                        "count" , 0,
+                        "pages" , 0,
+                        "state" , 1
+                    )
                 ));
             } else {
-                helper.reply(Synt.mapOf("page" , Synt.mapOf(
-                        "ern" , 0
-                    ),
-                    "list" , ROOT_LIST
+                helper.reply(Synt.mapOf(
+                    "list" , ROOT_LIST ,
+                    "page" , Synt.mapOf(
+                        "count" , ROOT_LIST.size(),
+                        "pages" , 1,
+                        "state" , 0
+                    )
                 ));
             }
             return;
@@ -213,7 +219,9 @@ public class FileAction implements IAction {
             Map rsp = new HashMap();
             rsp.put("list", filez );
             rsp.put("page", Synt.mapOf(
-                "ern", filez.size() > 0 ? 0 : 1
+                "pages", 1,
+                "count", filez.size(),
+                "state", filez.size() > 0 ? 0 : 1
             ));
             helper.reply(rsp);
         } else

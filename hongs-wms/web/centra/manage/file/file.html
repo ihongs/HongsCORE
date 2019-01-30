@@ -1,5 +1,4 @@
 <div id="manage-file-list"
-     class="manage-file-list"
      data-module="hsList"
      data-load-url="centra/file/search.act?path=${path}&amp;type=file&amp;ob=name"
      data-send-urls-0="['centra/file/delete.act','.delete','您确定要删除此文件?']"
@@ -30,7 +29,7 @@
             <tbody></tbody>
         </table>
     </div>
-    <!--div class="pagebox"></div-->
+    <div class="pagebox"></div>
     <div class="alert" style="margin-top:-15.75px; display:none;">
         <h2>使用帮助</h2>
         <p><br/></p>
@@ -57,23 +56,29 @@
     (function($) {
         var context = $("#manage-file-list");
 
-        if (H$( "&path" , context) === '/' ) {
-            var toolBox = context.find(".toolbox");
-            var listBox = context.find(".listbox");
-            var pageBox = context.find(".pagebox");
-            context.removeAttr ( "data-load-url" );
-            toolBox.find(".btn").prop("disabled" , true);
-            listBox.hide( );
-            pageBox.hide( );
-            context.find(".alert").show();
+        if (H$("&path", context) === '/' ) {
+            context.removeAttr("data-load-url");
+            context.find(".alert"  ).show( );
+            context.find(".listbox").hide( );
+            context.find(".pagebox").hide( );
+            context.find(".toolbox").find("input,button").prop("disabled", true);
         }
-        
+
+        context.data("fillPage", function(page) {
+            if (page.state == 0) {
+                context.find(".pagebox").hide();
+                return ;
+            }
+            HsList.prototype.fillPage.call(this, page);
+        });
+
         context.on("click", ".create", function() {
             var inst  = context.data("HsList");
             var path  = H$( "&path", context );
             inst.open($(this), $(this).hsFind("@"),
             "centra/manage/file/file_form.html?path="+encodeURIComponent(path));
         });
+
         context.on("click", ".modify", function() {
             var inst  = context.data("HsList");
             var path  = inst.getOne ();

@@ -61,12 +61,13 @@
 <script type="text/javascript">
     (function($) {
         var context = $('#matrix-form-list');
-        var loadBox = context.closest(".loadbox");
-        var unitId = H$("@unit_id", loadBox);
+        var unitId = H$("@unit_id", context);
+
         if (unitId == "" || unitId == "0") {
-            context.find(".alert").show( );
-            context.find(".listbox").addClass("invisible");
-            context.find(".pagebox").addClass("invisible");
+            context.removeAttr("data-load-url");
+            context.find(".alert"  ).show( );
+            context.find(".listbox").hide( );
+            context.find(".pagebox").hide( );
             context.find(".toolbox").find("input,button").prop("disabled", true);
             context.find(".findbox").find("input,button").prop("disabled", true);
         } else {

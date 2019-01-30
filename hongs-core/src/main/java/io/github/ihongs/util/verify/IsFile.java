@@ -15,6 +15,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.URLConnection;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
@@ -118,18 +119,33 @@ public class IsFile extends Rule {
 
         if (value instanceof Part) {
             Part part =(Part) value;
-            hlpr.upload(part, toname(part.getSubmittedFileName( )));
+            hlpr.upload(part, naming(part.getSubmittedFileName()));
         } else
         if (value instanceof File) {
             File file =(File) value;
-            hlpr.upload(file, toname(file.getName( ) ));
+            hlpr.upload(file, naming(file.getName()));
         } else
         {
-            hlpr.upload(value.toString());
+            // 外部记录的是网址, 必须进行解码才行
+            href = value.toString();
+            if (getParam("keep-naming", false)
+            &&  href.contains("/")) {
+                href = decode(href);
+            }
+            hlpr.upload(href);
         }
 
-        href = hlpr.getResultHref();
         path = hlpr.getResultPath();
+        href = hlpr.getResultHref();
+
+        /**
+         * UploadHelper
+         * 不对路径进行转码
+         * 故需自行编码处理
+         */
+        if (getParam("keep-naming", false)) {
+            href = encode(href);
+        }
 
         /**
          * 检查新上传的文件
@@ -281,23 +297,73 @@ public class IsFile extends Rule {
         return href;
     }
 
-    private String toname(String name) {
+    private final Pattern NAME_PATT = Pattern.compile("[\\/<>:?*\"|]");
+
+    private String naming(String name) throws Wrong {
         if (Synt.declare ( getParam("keep-naming"), false)) {
-            String path;
-            path = Core.newIdentity(  );
-            return Tool.splitPn36(path)
-                   + "/" + encode(name);
+            if (255 < name.getBytes(  ).length) {
+                throw new Wrong("fore.file.name.toolong", name);
+            }
+            if (NAME_PATT.matcher(name).find()) {
+                throw new Wrong("fore.file.name.illegal", name);
+            }
+            return Tool.splitPn36(
+                   Core.newIdentity()
+                   ) + "/" + name;
         } else {
-            return Core.newIdentity(  );
+            return Core.newIdentity();
         }
     }
 
-    private String encode(String name) {
+    /**
+     * 仅对 URL 的文件名部分进行编码
+     * @param name
+     * @return
+     */
+    final public static String encode(String name) {
+        String   path;
+        int p  = name.lastIndexOf("/");
+        if (p != -1) {
+            p +=  1;
+            path = name.substring(0,p);
+            name = name.substring(  p);
+        } else {
+            path = "";
+        }
+
         try {
-            return URLEncoder.encode(name,"UTF-8");
-        } catch (UnsupportedEncodingException ex ) {
-            throw  new HongsExemption.Common( ex );
+            name = URLEncoder.encode(name , "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw  new HongsExemption.Common (e);
         }
+
+        name = name.replace("+","%20");
+        return path + name;
     }
 
+    /**
+     * 仅对 URL 的文件名部分进行解码
+     * @param name
+     * @return
+     */
+    final public static String decode(String name) {
+        String   path;
+        int p  = name.lastIndexOf("/");
+        if (p != -1) {
+            p +=  1;
+            path = name.substring(0,p);
+            name = name.substring(  p);
+        } else {
+            path = "";
+        }
+
+        try {
+            name = path+ URLDecoder.decode(name , "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw  new HongsExemption.Common (e);
+        }
+
+//      name = name.replace("%20","+");
+        return path + name;
+    }
 }

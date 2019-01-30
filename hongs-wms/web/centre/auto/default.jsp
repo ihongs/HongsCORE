@@ -120,7 +120,7 @@
         <div id="notebox"></div>
         <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
-                <div class="row" data-load="centre/head.jsp?active=<%=encodeURL(request.getContextPath()+"/"+_module+"/"+_entity+"/")%>"></div>
+                <div class="row" data-load="centre/head.jsp?active=<%=encodeURL(_module+"/"+_entity+"/")%>"></div>
             </div>
         </nav>
         <div id="bodybox">

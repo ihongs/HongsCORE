@@ -137,9 +137,9 @@ public class NaviMap
   private void initial(String name)
     throws HongsException
   {
-    File file = new File(Core.DATA_PATH
-              + File.separator + "serial"
-              + File.separator + name + Cnst.NAVI_EXT + ".ser");
+    File serFile = new File(Core.DATA_PATH
+                 + File.separator + "serial"
+                 + File.separator + name + Cnst.NAVI_EXT + ".ser");
 
     //* 加锁读写 */
 
@@ -147,8 +147,9 @@ public class NaviMap
 
     lock.lockr();
     try {
-      if (file.exists() && !expired(name)) {
-          load(file);
+      if (serFile.exists()
+      && !expired( name )) {
+          load( serFile );
           // 子菜单有过期则重新导入全部数据
           R : {
               for( String namz : imports ) {
@@ -164,20 +165,20 @@ public class NaviMap
 
     lock.lockw();
     try {
-      imports ();
-      save(file);
+      imports( );
+      save(serFile );
     } finally {
       lock.unlockw();
     }
   }
 
-  protected boolean expired(String name)
+  protected boolean expired(String namz)
   {
-    File xmlFile = new File(Core.CONF_PATH
-                 + File.separator + name + Cnst.NAVI_EXT + ".xml");
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.NAVI_EXT + ".ser");
+    File xmlFile = new File(Core.CONF_PATH
+                 + File.separator + namz + Cnst.NAVI_EXT + ".xml");
     if ( xmlFile.exists() )
     {
       return xmlFile.lastModified() > serFile.lastModified();
@@ -185,9 +186,9 @@ public class NaviMap
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
     return null == getClass().getClassLoader().getResource(
-         name.contains(".")
-      || name.contains("/") ? name + Cnst.NAVI_EXT + ".xml"
-       : Cnst.CONF_PACK +"/"+ name + Cnst.NAVI_EXT + ".xml"
+             namz.contains(".")
+          || namz.contains("/") ? namz + Cnst.NAVI_EXT + ".xml"
+           : Cnst.CONF_PACK +"/"+ namz + Cnst.NAVI_EXT + ".xml"
     );
   }
 

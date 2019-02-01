@@ -186,8 +186,8 @@ public class Unit extends Grade {
         // 第一层单元
         insertUnits(centraDocm, centraRoot, centreDocm, centreRoot, "0");
 
-        saveDocument(Core.CONF_PATH+"/"+centra+Cnst.NAVI_EXT+".xml", centraDocm);
-        saveDocument(Core.CONF_PATH+"/"+centre+Cnst.NAVI_EXT+".xml", centreDocm);
+        saveDocument(new File(Core.CONF_PATH+"/"+centra+Cnst.NAVI_EXT+".xml"), centraDocm);
+        saveDocument(new File(Core.CONF_PATH+"/"+centre+Cnst.NAVI_EXT+".xml"), centreDocm);
     }
 
     private void insertForms(
@@ -328,8 +328,7 @@ public class Unit extends Grade {
         }
     }
 
-    private void saveDocument(String path, Document docm) throws HongsException {
-        File file = new File(path);
+    private void saveDocument(File file, Document docm) throws HongsException {
         File fold = file.getParentFile();
         if (!fold.exists()) {
              fold.mkdirs();

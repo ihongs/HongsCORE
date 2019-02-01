@@ -535,14 +535,14 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Object   def =         et.getValue();
-            Object   val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+            Object   val = Dict.getValue(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
             }
 
             if (val == null || val.equals("")) {
-                Dict.setParam(info, def, key);
+                Dict.setValue(info, def, key);
             }
         }
     }
@@ -553,7 +553,7 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
-            Object   val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+            Object   val = Dict.getValue(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
@@ -561,14 +561,14 @@ public class SelectHelper {
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
-                Dict.setParam(info, new ArrayList(), key + "_text");
+                Dict.setValue(info, new ArrayList(), key + "_text");
                 for (Object vxl : (Collection) val) {
                     vxl = codeToText(vxl, map);
-                    Dict.setParam(info, vxl, key + "_text.");
+                    Dict.setValue(info, vxl, key + "_text" , null );
                 }
             } else {
                     val = codeToText(val, map);
-                    Dict.setParam(info, val, key + "_text" );
+                    Dict.setValue(info, val, key + "_text");
             }
         }
     }
@@ -577,7 +577,7 @@ public class SelectHelper {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
-            Object  val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+            Object  val = Dict.getValue(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
@@ -585,14 +585,14 @@ public class SelectHelper {
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
-                Dict.setParam(info, new ArrayList(), key + "_time");
+                Dict.setValue(info, new ArrayList(), key + "_time");
                 for (Object vxl : (Collection) val) {
                     vxl = dataToTime(vxl);
-                    Dict.setParam(info, vxl, key + "_time.");
+                    Dict.setValue(info, vxl, key + "_time" , null );
                 }
             } else {
                     val = dataToTime(val);
-                    Dict.setParam(info, val, key + "_time" );
+                    Dict.setValue(info, val, key + "_time");
             }
         }
     }
@@ -608,7 +608,7 @@ public class SelectHelper {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
-            Object  val = Dict.getParam(info, Synt.LOOP.NEXT, key);
+            Object  val = Dict.getValue(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
@@ -616,14 +616,14 @@ public class SelectHelper {
 
             if (val instanceof Collection) {
                 // 预置一个空列表, 规避无值导致客户端取文本节点出错
-                Dict.setParam(info, new ArrayList(), key + "_link");
+                Dict.setValue(info, new ArrayList(), key + "_link");
                 for (Object vxl : (Collection) val) {
                     vxl = hrefToLink(vxl);
-                    Dict.setParam(info, vxl, key + "_link.");
+                    Dict.setValue(info, vxl, key + "_link" , null );
                 }
             } else {
                     val = hrefToLink(val);
-                    Dict.setParam(info, val, key + "_link" );
+                    Dict.setValue(info, val, key + "_link");
             }
         }
     }

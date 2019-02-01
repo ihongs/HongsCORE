@@ -515,19 +515,23 @@ HsForm.prototype = {
             opt.val(k).text(t).data("data", v[i]);
             inp.append(opt);
         }
-        inp.click().change(); // multiple 必须触发 click 才初始化
+        if (inp.closest(".form-group").hasClass("has-error")) {
+            inp.change();
+        }
     },
     _prep__radio : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
-            var lab = jQuery('<label><input type="radio"/><span></span></label>');
+            var lab = jQuery('<label><input type="radio"   /><span></span></label>');
             lab.find("input").attr("name", n).data(v[i])
                              .val (hsGetValue(v[i], vk));
             lab.find("span" ).text(hsGetValue(v[i], tk));
             inp.append(lab);
         }
-        inp.find(":radio").first().change();
+        if (inp.closest(".form-group").hasClass("has-error")) {
+            inp.find("input").first( ).change();
+        }
     },
     _prep__check : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -539,7 +543,9 @@ HsForm.prototype = {
             lab.find("span" ).text(hsGetValue(v[i], tk));
             inp.append(lab);
         }
-        inp.find(":checkbox").first().change();
+        if (inp.closest(".form-group").hasClass("has-error")) {
+            inp.find("input").first( ).change();
+        }
     },
     _prep__checkset : function(inp, v, n) {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
@@ -576,7 +582,10 @@ HsForm.prototype = {
             }
         }}
 
-        inp.find(":checkbox").first().change();
+        if (inp.closest(".form-group").hasClass("has-error")) {
+            inp.find("input").first( ).change();
+        }
+
         inp.hsReady();
     },
 
@@ -654,8 +663,8 @@ HsForm.prototype = {
         });
     },
     verified : function() {
-        this.formBox.find(".form-group").removeClass( "has-error");
-        this.formBox.find(".form-error").   addClass( "invisible");
+        this.formBox.find(".form-group.has-error").removeClass("has-error")
+                    .find(".help-block" /* msg */).   addClass("invisible");
         return true;
     },
     verifies : function() {

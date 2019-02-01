@@ -2624,7 +2624,7 @@ function(evt) {
     cont.toggleClass( "dropup" );
     body.toggleClass("invisible", !cont.is(".dropup"));
 })
-.on("change","select[multiple]",
+.on("change", "select[multiple]",
 function(evt) {
     if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
         return;

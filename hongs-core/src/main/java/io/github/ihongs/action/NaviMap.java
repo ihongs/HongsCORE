@@ -152,7 +152,7 @@ public class NaviMap
           load( serFile );
           // 子菜单有过期则重新导入全部数据
           R : {
-              for( String namz : imports ) {
+              for( String namz : imports) {
               if (expired(namz)) {
                   break R;
               }}

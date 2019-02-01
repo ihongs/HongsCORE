@@ -15,9 +15,11 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
@@ -25,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Iterator;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -37,6 +41,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 /**
  * 表单模型
@@ -451,166 +458,207 @@ public class Form extends Model {
     }
 
     protected void updateFormMenu(String id, String stat, String name) throws HongsException {
+        File     file;
+        String   href;
         Document docm;
         Element  root, menu, role, actn, depn;
 
-        docm = makeDocument();
+        file = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.NAVI_EXT +".xml");
+        docm = readDocument(file);
 
-        root = docm.createElement("root");
-        docm.appendChild ( root );
+        root = docm.getDocumentElement();
+        if (root == null) {
+            root = docm.createElement("root");
+            docm.appendChild ( root );
+        }
 
-        menu = docm.createElement("menu");
-        root.appendChild ( menu );
-        menu.setAttribute("text",  name );
-        menu.setAttribute("href", centra+"/"+id+"/");
+        href = centra+"/"+id+"/";
+        menu = getChild6TagNameAndAttr(root, "menu", "href", href);
+        if (menu != null) {
+            menu.setAttribute("text" , name );
+        } else {
+            menu = docm.createElement("menu");
+            root.appendChild ( menu );
+            menu.setAttribute("text" , name );
+            menu.setAttribute("href" , href );
 
-        // 会话
-        role = docm.createElement("rsname");
-        root.appendChild ( role );
-        role.appendChild ( docm.createTextNode("@centra"));
+            // 会话
+            role = docm.createElement("rsname");
+            root.appendChild ( role );
+            role.appendChild ( docm.createTextNode("@centra"));
 
-        // 查看
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", centra+"/"+id+"/search");
-        role.setAttribute("text", "查看"+name);
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/search" + Cnst.ACT_EXT) );
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/counts/search" + Cnst.ACT_EXT) );
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/statis/search" + Cnst.ACT_EXT) );
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/stream/search" + Cnst.ACT_EXT) );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode("centra") );
+            // 查看
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href+"/search");
+            role.setAttribute("text", "查看");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/search" + Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/counts/search" + Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/statis/search" + Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/stream/search" + Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode("centra") );
 
-        // 修改
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", centra+"/"+id+"/update");
-        role.setAttribute("text", "修改"+name);
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/update" + Cnst.ACT_EXT) );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
+            // 修改
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href+"/update");
+            role.setAttribute("text", "修改");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/update" + Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href+"/search") );
 
-        // 添加
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", centra+"/"+id+"/create");
-        role.setAttribute("text", "添加"+name);
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/create" + Cnst.ACT_EXT) );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
+            // 添加
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href+"/create");
+            role.setAttribute("text", "添加");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/create" + Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href+"/search") );
 
-        // 删除
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", centra+"/"+id+"/delete");
-        role.setAttribute("text", "删除"+name);
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/delete" + Cnst.ACT_EXT) );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
+            // 删除
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href+"/delete");
+            role.setAttribute("text", "删除");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/delete" + Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href+"/search") );
 
-        // 回看
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", centra+"/"+id+"/review");
-        role.setAttribute("text", "回看"+name);
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/revert/search" + Cnst.ACT_EXT) );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/search") );
+            // 回看
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href+"/review");
+            role.setAttribute("text", "回看");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/revert/search" + Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href+"/search") );
 
-        // 恢复
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", centra+"/"+id+"/revert");
-        role.setAttribute("text", "恢复"+name);
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centra+"/"+id+"/revert/update" + Cnst.ACT_EXT) );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/update") );
-        depn = docm.createElement("depend");
-        role.appendChild ( depn );
-        depn.appendChild ( docm.createTextNode(centra+"/"+id+"/review") );
+            // 恢复
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", href+"/revert");
+            role.setAttribute("text", "恢复");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href+"/revert/update" + Cnst.ACT_EXT) );
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode(href+"/review") );
+        }
 
-        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(file , docm);
 
         //** 对外开放 **/
 
-        docm = makeDocument();
+        file = new File(Core.CONF_PATH +"/"+ centre +"/"+ id + Cnst.NAVI_EXT +".xml");
+        docm = readDocument(file);
 
-        root = docm.createElement("root");
-        docm.appendChild ( root );
-
-        /**
-         * 内部资源置空
-         */
-        if ("1".equals(stat)) {
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
-        return;
+        root = docm.getDocumentElement();
+        if (root == null) {
+            root = docm.createElement("root");
+            docm.appendChild ( root );
         }
 
-        menu = docm.createElement("menu");
-        root.appendChild ( menu );
-        menu.setAttribute("text",  name );
-        menu.setAttribute("href", centre+"/"+id+"/");
+        href = centre+"/"+id+"/";
+        menu = getChild6TagNameAndAttr(root, "menu", "href", href);
+        if (menu == null) {
+        menu = getChild6TagNameAndAttr(root, "xxxx", "href", href);
+        }
+        if (menu != null) {
+            menu.setAttribute("text" , name );
 
-        // 只开放了接口
-        if ("4".equals(stat)) {
-        menu.setAttribute("hrel", "HIDE");
+            /**
+             * 1 为内部资源, 改名使其失效
+             * 4 仅提供接口, 写入特殊属性
+             */
+            if ("1".equals(stat)) {
+                docm.renameNode(menu, null, "xxxx");
+            } else {
+                docm.renameNode(menu, null, "menu");
+            if ("4".equals(stat)) {
+                menu.setAttribute("hrel", "HIDE");
+            } else {
+                menu.setAttribute("hrel",   ""  );
+            }
+            }
+        } else {
+            menu = docm.createElement("menu");
+            root.appendChild ( menu );
+            menu.setAttribute("text" , name );
+            menu.setAttribute("href" , href );
+
+            /**
+             * 1 为内部资源, 改名使其失效
+             * 4 仅提供接口, 写入特殊属性
+             */
+            if ("1".equals(stat)) {
+                docm.renameNode(menu, null, "xxxx");
+            } else {
+            //  docm.renameNode(menu, null, "menu");
+            if ("4".equals(stat)) {
+                menu.setAttribute("hrel", "HIDE");
+            } else {
+                menu.setAttribute("hrel",   ""  );
+            }
+            }
+
+            // 会话
+            role = docm.createElement("rsname");
+            root.appendChild ( role );
+            role.appendChild ( docm.createTextNode("@centre"));
+
+            // 公共读取权限
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", "public");
+
+            // 增删改须登录
+            role = docm.createElement("role");
+            menu.appendChild ( role );
+            role.setAttribute("name", "centre");
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(centre+"/"+id+"/create" + Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(centre+"/"+id+"/update" + Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
         }
 
-        // 会话
-        role = docm.createElement("rsname");
-        root.appendChild ( role );
-        role.appendChild ( docm.createTextNode("@centre"));
-
-        // 公共读取权限
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", "public");
-
-        // 增删改须登录
-        role = docm.createElement("role");
-        menu.appendChild ( role );
-        role.setAttribute("name", "centre");
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centre+"/"+id+"/create" + Cnst.ACT_EXT) );
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centre+"/"+id+"/update" + Cnst.ACT_EXT) );
-        actn = docm.createElement("action");
-        role.appendChild ( actn );
-        actn.appendChild ( docm.createTextNode(centre+"/"+id+"/delete" + Cnst.ACT_EXT) );
-
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.NAVI_EXT+".xml", docm);
+        saveDocument(file , docm);
     }
 
     protected void updateFormConf(String id, String stat, List<Map> conf) throws HongsException {
+        File     file;
         Document docm;
-        Element  root, form, item;
+        Element  root, form, item, defs, defi;
 
+        file = new File(Core.CONF_PATH +"/"+ centra +"/"+ id + Cnst.FORM_EXT +".xml");
         docm = makeDocument();
 
         root = docm.createElement("root");
@@ -769,61 +817,79 @@ public class Form extends Model {
             }
         }
 
-        saveDocument(Core.CONF_PATH+"/"+centra+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        saveDocument(file , docm);
 
         //** 对外开放 **/
 
-        docm = makeDocument();
+        file = new File(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml");
+        docm = readDocument(file);
 
-        root = docm.createElement("root");
-        docm.appendChild ( root );
-
-        /**
-         * 内部资源置空
-         */
-        if ("1".equals(stat)) {
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
-        return;
+        root = docm.getDocumentElement();
+        if (root == null) {
+            root = docm.createElement("root");
+            docm.appendChild ( root );
         }
 
-        form = docm.createElement("form");
-        root.appendChild ( form );
-        form.setAttribute("name" ,  id  );
+        form = getChild6TagNameAndAttr(root, "form", "name", id);
+        if (form == null) {
+        form = getChild6TagNameAndAttr(root, "xxxx", "name", id);
+        }
+        if (form != null) {
+            /**
+             * 内部资源置空
+             */
+            if ("1".equals(stat)) {
+                docm.renameNode(form, null, "xxxx");
+            } else {
+                docm.renameNode(form, null, "form");
+            }
+        } else {
+            form = docm.createElement("form");
+            root.appendChild ( form );
+            form.setAttribute("name" ,  id  );
 
-        Element  defs, defi;
+            /**
+             * 内部资源置空
+             */
+            if ("1".equals(stat)) {
+                docm.renameNode(form, null, "xxxx");
+            } else {
+            //  docm.renameNode(form, null, "form");
+            }
 
-        // 全局性保护
-        defs = docm.createElement("enum");
-        root.appendChild ( defs );
-        defs.setAttribute("name", id+":defense");
-        defi = docm.createElement("value");
-        defs.appendChild ( defi );
-        defi.setAttribute("code", Cnst.AR_KEY);
-        defi.appendChild ( docm.createTextNode("(null)"));
-        defi = docm.createElement("value");
-        defs.appendChild ( defi );
-        defi.setAttribute("code", Cnst.OR_KEY);
-        defi.appendChild ( docm.createTextNode("(null)"));
+            // 全局性保护
+            defs = docm.createElement("enum");
+            root.appendChild ( defs );
+            defs.setAttribute("name", id+":defense");
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.AR_KEY);
+            defi.appendChild ( docm.createTextNode("(null)"));
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.OR_KEY);
+            defi.appendChild ( docm.createTextNode("(null)"));
 
-        // 保护写接口
-        defs = docm.createElement("enum");
-        root.appendChild ( defs );
-        defs.setAttribute("name", id+":defence");
-        defi = docm.createElement("value");
-        defs.appendChild ( defi );
-        defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
-        defi.appendChild ( docm.createTextNode("($session.uid)"));
+            // 保护写接口
+            defs = docm.createElement("enum");
+            root.appendChild ( defs );
+            defs.setAttribute("name", id+":defence");
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
+            defi.appendChild ( docm.createTextNode("($session.uid)"));
 
-        // 我所创建的
-        defs = docm.createElement("enum");
-        root.appendChild ( defs );
-        defs.setAttribute("name", id+".created");
-        defi = docm.createElement("value");
-        defs.appendChild ( defi );
-        defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
-        defi.appendChild ( docm.createTextNode("($session.uid)"));
+            // 我所创建的
+            defs = docm.createElement("enum");
+            root.appendChild ( defs );
+            defs.setAttribute("name", id+".created");
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.AR_KEY+".x.cuser");
+            defi.appendChild ( docm.createTextNode("($session.uid)"));
+        }
 
-        saveDocument(Core.CONF_PATH+"/"+centre+"/"+id+Cnst.FORM_EXT+".xml", docm);
+        saveDocument(file , docm);
     }
 
     private Document makeDocument() throws HongsException {
@@ -836,8 +902,25 @@ public class Form extends Model {
         }
     }
 
-    private void saveDocument(String path, Document docm) throws HongsException {
-        File file = new File(path);
+    private Document readDocument(File file) throws HongsException {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder        builder = factory.newDocumentBuilder();
+            try {
+                return  builder.parse(new FileInputStream(file));
+            } catch (FileNotFoundException e) {
+                return  builder.newDocument();
+            }
+        } catch (ParserConfigurationException e) {
+            throw new HongsException.Common ( e);
+        } catch (SAXException e) {
+            throw new HongsException.Common ( e);
+        } catch ( IOException e) {
+            throw new HongsException.Common ( e);
+        }
+    }
+
+    private void saveDocument(File file, Document docm) throws HongsException {
         File fold = file.getParentFile();
         if (!fold.exists()) {
              fold.mkdirs();
@@ -868,6 +951,25 @@ public class Form extends Model {
         } catch (UnsupportedEncodingException e) {
             throw new HongsException.Common(e);
         }
+    }
+
+    private Element getChild6TagNameAndAttr(Element elem, String tag, String att, String val) {
+        NodeList a = elem.getChildNodes();
+        for (int i = 0; i < a.getLength(); i ++ ) {
+            Node n = a.item(i);
+            if ( n.getNodeType() != Node.ELEMENT_NODE ) {
+                continue;
+            }
+            Element e = (Element) n;
+            if (!tag.equals(e.getTagName(/***/))) {
+                continue;
+            }
+            if (!val.equals(e.getAttribute(att))) {
+                continue;
+            }
+            return e;
+        }
+        return  null;
     }
 
 }

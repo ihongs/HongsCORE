@@ -111,8 +111,8 @@ public class Data extends SearchEntity {
                 break;
             }
 
-            if (cnf.startsWith("centre/")) {
-                cnf = "centra/"+ cnf.substring(7);
+            if (fields != null && cnf.startsWith("centre/")) {
+                cnf = "centra/" + cnf.substring (7);
             } else {
                 break;
             }

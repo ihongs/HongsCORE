@@ -198,13 +198,11 @@
         <input type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && undefined" />
         <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
-                <%if (_fields.containsKey("logo")) {%>
-                <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
+                <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top; <%=!_fields.containsKey("logo")?"display: none;":""%>">
                     <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
                         <div data-fn="logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
                     </div>
                 </div>
-                <%} /*End if */%>
                 <div style="display: table-cell; width: 100%; padding: 0px; vertical-align: top;">
                     <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
                         <div data-fn="name" style="color: #444;"></div>

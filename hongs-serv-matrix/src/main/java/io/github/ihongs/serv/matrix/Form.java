@@ -831,11 +831,11 @@ public class Form extends Model {
                 docm.renameNode(menu, null, "xxxx");
             } else {
                 docm.renameNode(menu, null, "menu");
+            }
             if ("4".equals(stat)) {
                 menu.setAttribute( "hrel" , "HIDE");
             } else {
                 menu.setAttribute( "hrel" ,   ""  );
-            }
             }
         } else {
             menu = docm.createElement("menu");
@@ -851,11 +851,11 @@ public class Form extends Model {
                 docm.renameNode(menu, null, "xxxx");
             } else {
             //  docm.renameNode(menu, null, "menu");
+            }
             if ("4".equals(stat)) {
                 menu.setAttribute( "hrel" , "HIDE");
             } else {
                 menu.setAttribute( "hrel" ,   ""  );
-            }
             }
 
             // 会话

@@ -102,11 +102,11 @@ public class FormSet
   @Override
   protected boolean expired(long time)
   {
-    File xmlFile = new File(Core.CONF_PATH
-                 + File.separator + name + Cnst.FORM_EXT + ".xml");
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
+    File xmlFile = new File(Core.CONF_PATH
+                 + File.separator + name + Cnst.FORM_EXT + ".xml");
     if ( xmlFile.exists() )
     {
       return xmlFile.lastModified() > serFile.lastModified();
@@ -114,9 +114,9 @@ public class FormSet
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
     return null == getClass().getClassLoader().getResource(
-         name.contains(".")
-      || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-       : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml"
+             name.contains(".")
+          || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
+           : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml"
     );
   }
 

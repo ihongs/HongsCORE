@@ -628,9 +628,9 @@ public class Form extends Model {
             docm.appendChild ( root );
         }
 
-        form = getChild6TagNameAndAttr(root, "form", "name", id);
+        form = getNodeByTagNameAndAttr(root, "form", "name", id);
         if (form == null) {
-        form = getChild6TagNameAndAttr(root, "xxxx", "name", id);
+        form = getNodeByTagNameAndAttr(root, "xxxx", "name", id);
         }
         if (form != null) {
             /**
@@ -706,7 +706,7 @@ public class Form extends Model {
             docm.appendChild ( root );
         }
 
-        menu = getChild6TagNameAndAttr(root, "menu", "href", href);
+        menu = getNodeByTagNameAndAttr(root, "menu", "href", href);
         if (menu != null) {
             menu.setAttribute("text" , name );
         } else {
@@ -816,9 +816,9 @@ public class Form extends Model {
             docm.appendChild ( root );
         }
 
-        menu = getChild6TagNameAndAttr(root, "menu", "href", href);
+        menu = getNodeByTagNameAndAttr(root, "menu", "href", href);
         if (menu == null) {
-        menu = getChild6TagNameAndAttr(root, "xxxx", "href", href);
+        menu = getNodeByTagNameAndAttr(root, "xxxx", "href", href);
         }
         if (menu != null) {
             menu.setAttribute("text" , name );
@@ -951,7 +951,7 @@ public class Form extends Model {
         }
     }
 
-    private Element getChild6TagNameAndAttr(Element elem, String tag, String att, String val) {
+    private Element getNodeByTagNameAndAttr(Element elem, String tag, String att, String val) {
         NodeList a = elem.getChildNodes();
         for (int i = 0; i < a.getLength(); i ++ ) {
             Node n = a.item(i);

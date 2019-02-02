@@ -1,4 +1,11 @@
 
+table.ui-droppable-hover ,
+table.ui-droppable-hover td ,
+.tree-curr>table.ui-droppable-hover ,
+.tree-curr>table.ui-droppable-hover td {
+    color: #dd4444;
+}
+
 .cols-form legend
     {margin-bottom: 15px; font-weight: bolder;}
 .cols-form .form-group legend

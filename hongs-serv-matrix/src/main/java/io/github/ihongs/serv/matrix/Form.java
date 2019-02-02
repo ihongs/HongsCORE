@@ -147,15 +147,6 @@ public class Form extends Model {
         return n;
     }
 
-    private String get(String id, String fn) throws HongsException {
-        Object fv = table.fetchCase()
-                .filter("id = ?", id)
-                .select(fn)
-                .getOne(  )
-                .get   (fn);
-        return Synt.declare( fv, "" );
-    }
-
     protected final int superAdd(String id, Map rd) throws HongsException {
         return super.add(id, rd);
     }

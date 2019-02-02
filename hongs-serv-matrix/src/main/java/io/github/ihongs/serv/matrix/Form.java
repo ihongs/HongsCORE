@@ -49,11 +49,10 @@ import org.xml.sax.SAXException;
  */
 public class Form extends Model {
 
-    protected final String SERI_DATA_PATH = Core.DATA_PATH + "/serial";
-
     protected String centra = "centra/data";
     protected String centre = "centre/data";
     protected String upload = "static/upload/data";
+    protected static final  String SERI_DATA_PATH = Core.DATA_PATH + "/serial";
 
     public Form() throws HongsException {
         this(DB.getInstance("matrix").getTable("form"));

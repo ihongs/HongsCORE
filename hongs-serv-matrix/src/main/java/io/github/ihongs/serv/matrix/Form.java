@@ -514,10 +514,10 @@ public class Form extends Model {
                 }
             }
 
+            //** 构建字段参数 **/
+
             Map<String,Map<String,String>> preset = null;
             List<List<String>>             select = null;
-
-            //** 构建字段参数 **/
 
             for(Object ot : fiel.entrySet( )) {
                 Map.Entry et = (Map.Entry) ot;

@@ -49,8 +49,7 @@ public class Unit extends Grade {
         this(DB.getInstance("matrix").getTable("unit"));
     }
 
-    public Unit(Table table)
-    throws HongsException {
+    public Unit(Table table) throws HongsException {
         super(table);
     }
 

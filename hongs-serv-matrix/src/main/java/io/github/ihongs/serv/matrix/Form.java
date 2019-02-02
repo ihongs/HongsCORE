@@ -58,8 +58,7 @@ public class Form extends Model {
         this(DB.getInstance("matrix").getTable("form"));
     }
 
-    public Form(Table table)
-    throws HongsException {
+    public Form(Table table) throws HongsException {
         super(table);
     }
 

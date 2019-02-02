@@ -475,10 +475,7 @@ public class Form extends Model {
             s = (String) fiel.get("__repeated__");
             if (s != null && s.length() != 0) item.setAttribute("repeated", s);
 
-            // 默认不要存放要空字符串
-            if (!fiel.containsKey("defiant")) {
-                fiel.put("defiant", "");
-            }
+            //** 复查字段属性 **/
 
             // 日期类型要指定存储格式
             if ("date".equals(types.get(t) )) {

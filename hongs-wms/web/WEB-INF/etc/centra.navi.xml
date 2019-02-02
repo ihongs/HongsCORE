@@ -8,8 +8,8 @@
         <menu text="通用" href="common/menu.act?m=centra&amp;x=base">
             <menu text="首页" href="centra/#manage" hrel="centra/manage/main.html"></menu>
             <import>manage</import>
-            <import>master</import>
             <import>matrix</import>
+            <import>master</import>
         </menu>
         <import>centra/data</import>
     </menu>

@@ -9,6 +9,7 @@
             <button type="button" class="create btn btn-default">创建表单</button>
             <button type="button" class="modify for-choose btn btn-default">修改</button>
             <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+            <button type="button" class="manual            btn btn-info   " title="帮助"><span class="glyphicon glyphicon-book "></span></button>
         </div>
         <form class="findbox col-xs-4 input-group" action="" method="POST">
             <input type="search" name="wd" class="form-control input-search"/>
@@ -35,49 +36,45 @@
         </table>
     </div>
     <div class="pagebox"></div>
-    <div class="alert" style="margin-top:-15.75px; display:none;">
-        <h2>使用帮助</h2>
-        <p><br/></p>
-        <p style="line-height: 2em; margin-bottom: 1em;">
-            请选择单元来管理表单，无单元请先添加单元；
-            顶层下单元为一级菜单，其下表单为二级菜单；
-            二层及以下的单元将用作隐藏数据不显示菜单。
-        </p>
-        <p style="line-height: 2em; margin-bottom: 1em;">
-            添加表单后需要刷新当前页面才能看到其菜单，
-            可在用户单元中将权限分配给其他用户或部门。
-        </p>
-        <p style="line-height: 2em; margin-bottom: 1em;">
-            状态为开放的表单默认为匿名可查且登录可写，
-            可将表单冻结然后自行修改配置文件进行定制。
-        </p>
-        <p style="line-height: 2em;">
-            <b>祝您使用顺利！</b>
-        </p>
-        <p><br/></p>
+
+    <div class="modal fade in" style="z-index: 99999; display: none;">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">帮助</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        请选择单元来管理表单，无单元请先添加单元；
+                        顶层下单元为一级菜单，其下表单为二级菜单；
+                        二层及以下的单元将用作隐藏数据不显示菜单。
+                    </p>
+                    <p>
+                        添加表单后需要刷新当前页面才能看到其菜单，
+                        可在用户单元中将权限分配给其他用户或部门。
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
-
 <script type="text/javascript">
     (function($) {
         var context = $('#matrix-form-list');
-        var unitId = H$("@unit_id", context);
+        var helpBox = context.find(".modal");
 
-        if (unitId == "" || unitId == "0") {
-            context.removeAttr("data-load-url");
-            context.find(".alert"  ).show( );
-            context.find(".listbox").hide( );
-            context.find(".pagebox").hide( );
-            context.find(".toolbox").find("input,button").prop("disabled", true);
-            context.find(".findbox").find("input,button").prop("disabled", true);
-        } else {
-            // 标红冻结的行
-            context.data("_fill_state_text", function(td, v) {
-                if (this._info.state == 3) {
-                    td.closest("tr").css("color", "#ff0000");
-                }
-                return v;
-            });
-        }
+        // 打开帮助信息
+        context.find( ".manual" ).click( function() {
+            helpBox.modal("show");
+        }); helpBox.modal("hide");
+
+        // 标红冻结的行
+        context.data("_fill_state_text", function(td, v) {
+            if (this._info.state == 8) {
+                td.closest("tr").css("color", "#ff0000");
+            }
+            return v;
+        });
     })(jQuery);
 </script>

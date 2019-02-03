@@ -1945,10 +1945,10 @@ $.fn.hsOpen = function(url, data, complete) {
         tab.show( ).find("a").click( );
         if (tab.find("a b,a span").size()) {
             tab.find("a b,a span").not(".close")
-               .text(hsGetLang("loading"));
+               .text("...");
         } else {
-            tab.find("a")
-               .text(hsGetLang("loading"));
+            tab.find( "a" )
+               .text("...");
         }
         // 关闭关联的 tab
         if (prt.children().size( ) ) {

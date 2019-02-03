@@ -433,7 +433,9 @@ public class Table
    */
   protected Object getDtval(String name, long time)
   {
-    int type = (Integer) ((Map) fields.get(name)).get("type");
+    Map item = (Map) fields.get(name);
+    int type = (Integer) item.get("type");
+    int size = (Integer) item.get("size");
     switch (type)
     {
       case Types.DATE:
@@ -444,9 +446,17 @@ public class Table
         return new Timestamp(time);
       case Types.INTEGER  :
         return time / 1000;
-      default:
-        return time ;
     }
+    /**
+     * 部分数据库空表时取不到类型
+     * 但如果给了宽度则可估算容量
+     * 0 为未知, 十位够到 2200 年
+     * 但很多人习惯设 INTEGER(11)
+     */
+    if (size >= 01 && size <= 11) {
+        return time / 1000;
+    }
+    return time ;
   }
 
   /**

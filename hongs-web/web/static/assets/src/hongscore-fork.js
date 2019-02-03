@@ -55,7 +55,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         var val = box.val( );
         var txt = btn.text();
         if (val) {
-            v[val] = txt;
+            v[val] = [txt, {}];
         }
     } else
     if (box.is("ul,ol")) {
@@ -63,7 +63,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             var opt = jQuery(this);
             var val = opt.find(".pickval").val ();
             var txt = opt.find(".picktxt").text();
-            v[val] = txt;
+            v[val] = [txt, {}];
         });
     }
 
@@ -354,25 +354,25 @@ function hsFormFillPick(box, v, n) {
  * @returns {undefined}
  */
 function hsListFillPick(cel, v, n) {
-    var box = cel.closest (".pickbox");
-    var mul = box.hasClass( "pickmul");
-    var val = box.data("pickData")||{};
+    var box = cel. closest (".pickbox,.openbox,.loadbox");
+    var mul = box.hasClass ( "pickmul" );
+    var val = box.data("pickData") || {};
 
     // 单选还是多选
     if (! mul) {
-        box.find( ".checkall" ).hide();
+        box.find(".checkall").hide(/**/);
     }
 
     // 填充选择控件
     if (! mul) {
-        HsList.prototype._fill__radio.call( this, cel, v, n );
+        HsList.prototype._fill__radio.call(this, cel, v, n );
     } else {
-        HsList.prototype._fill__check.call( this, cel, v, n );
+        HsList.prototype._fill__check.call(this, cel, v, n );
     }
 
     // 判断是否选中
     if (val[v] !== undefined) {
-        cel.find(".checkone").prop("checked", true).change( );
+        cel.find(".checkone").prop("checked", true).change();
     }
 }
 

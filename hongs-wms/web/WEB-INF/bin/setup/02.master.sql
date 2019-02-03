@@ -10,9 +10,9 @@ CREATE TABLE `a_master_dept` (
   `pid` CHAR(16) DEFAULT NULL,
   `name` VARCHAR(200) NOT NULL,
   `note` TEXT,
-  `ctime` INTEGER(10) UNSIGNED DEFAULT NULL,
-  `mtime` INTEGER(10) UNSIGNED DEFAULT NULL,
-  `rtime` INTEGER(10) UNSIGNED DEFAULT NULL,
+  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
+  `mtime` UNSIGNED INTEGER(10) DEFAULT NULL,
+  `rtime` UNSIGNED INTEGER(10) DEFAULT NULL,
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
   FOREIGN KEY (`pid`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
@@ -58,9 +58,9 @@ CREATE TABLE `a_master_user` (
   `name` VARCHAR(200) DEFAULT NULL,
   `head` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `ctime` INTEGER(10) UNSIGNED DEFAULT NULL,
-  `mtime` INTEGER(10) UNSIGNED DEFAULT NULL,
-  `rtime` INTEGER(10) UNSIGNED DEFAULT NULL, /* 权限最后更新时间 */
+  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
+  `mtime` UNSIGNED INTEGER(10) DEFAULT NULL,
+  `rtime` UNSIGNED INTEGER(10) DEFAULT NULL, /* 权限最后更新时间 */
   `state` TINYINT DEFAULT '1',
   /* 扩展字段 */
   `organ` VARCHAR(200) DEFAULT NULL,
@@ -146,7 +146,7 @@ CREATE TABLE `a_master_user_open` (
   `user_id` CHAR(16) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `opnid` VARCHAR(100) NOT NULL,
-  `ctime` INTEGER(10) UNSIGNED DEFAULT NULL,
+  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
 );
@@ -165,7 +165,7 @@ CREATE TABLE `a_master_user_sign` (
   `user_id` CHAR(16) NOT NULL,
   `appid` VARCHAR(100) NOT NULL,
   `sesid` VARCHAR(100) NOT NULL,
-  `ctime` INTEGER(10) UNSIGNED DEFAULT NULL,
+  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
   PRIMARY KEY (`user_id`,`appid`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
 );

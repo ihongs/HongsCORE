@@ -455,8 +455,9 @@ public class Table
      */
     if (size >= 01 && size <= 11) {
         return time / 1000;
+    } else {
+        return time ;
     }
-    return time ;
   }
 
   /**

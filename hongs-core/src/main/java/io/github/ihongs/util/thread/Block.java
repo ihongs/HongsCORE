@@ -377,7 +377,7 @@ public final class Block {
         @Override
         public void close() {}
         @Override
-        public boolean cleanable( ) {
+        public byte clean() {
             if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {
                 int n  =  cleans( );
                 if (0 != Core.DEBUG && 4 != (4 & Core.DEBUG)) {
@@ -388,7 +388,7 @@ public final class Block {
                     CoreLogger.trace( "No locks be cleared" );
                 }
             }
-            return false;
+            return (byte) 0;
         }
     }
 

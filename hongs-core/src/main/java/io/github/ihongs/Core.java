@@ -2,9 +2,8 @@ package io.github.ihongs;
 
 import java.util.Map;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.TimeZone;
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.function.Supplier;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.locks.ReadWriteLock;
@@ -433,24 +432,26 @@ abstract public class Core
       return;
     }
 
-    Iterator i = this.entrySet().iterator();
-    while  ( i.hasNext( ) )
+    /**
+     * 为规避 ConcurrentModificationException,
+     * 只能采用遍历数组而非迭代循环的方式进行.
+     */
+
+    Object[] a = this.keySet().toArray();
+    for (int i = 0; i < a.length; i ++ )
     {
-      Entry  e = (Entry)i.next();
-      Object o =  e . getValue();
+      Object k = a [i];
+      Object o = super.get( k );
       try
       {
-        if (o instanceof Cleanable)
+        if ((o instanceof /**/Cleanable)
+        && ((Cleanable) o ).clean() !=0)
         {
-          Cleanable c = (Cleanable) o;
-        if (c.cleanable ())
+        if ( o instanceof AutoCloseable)
         {
-        if (o instanceof AutoCloseable )
-        {
-           ((AutoCloseable) c ).close( );
+           ((AutoCloseable) o ).close( );
         }
-            i.remove();
-        }
+           this.remove( k );
         }
       }
       catch ( Throwable x )
@@ -482,7 +483,7 @@ abstract public class Core
       Object o = a [i];
       try
       {
-        if (o instanceof AutoCloseable )
+        if ( o instanceof AutoCloseable)
         {
            ((AutoCloseable) o ).close( );
         }
@@ -532,6 +533,10 @@ abstract public class Core
       if (ob instanceof Singleton)
       {
         sb.append('S');
+      }
+      if (ob instanceof Soliloquy)
+      {
+        sb.append('O');
       }
       if (ln < sb.length() )
       {
@@ -781,7 +786,11 @@ abstract public class Core
    */
   static public interface Cleanable
   {
-         public  boolean  cleanable ();
+    /**
+     * 清理方法
+     * @return 0 继续留用, 1 可以回收
+     */
+    public byte clean();
   }
 
   /**

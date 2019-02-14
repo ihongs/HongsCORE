@@ -1,9 +1,8 @@
 <root>
     <!-- 图片上传 -->
     <form name="image">
-        <field name="file" type="image" rule="Thumb" required="yes" repeated="yes">
-            <param name="thumb-extn">jpg</param>
-            <param name="extn">jpg,gif,png,bmp,jpeg</param>
+        <field name="file" type="file" required="yes" repeated="yes">
+            <param name="extn">jpeg,jpg,png,gif,bmp</param>
             <param name="path">${BASE_PATH}/static/upload/image</param>
             <param name="href">${BASE_HREF}/static/upload/image</param>
         </field>

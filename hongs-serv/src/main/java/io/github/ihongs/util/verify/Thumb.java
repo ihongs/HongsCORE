@@ -32,7 +32,7 @@ public class Thumb extends IsFile {
 
     @Override
     public String checks(String href, String path) throws Wrong {
-        String extn = Synt.declare(getParam("thumb-extn" ), "png");
+        String extn = Synt.declare(getParam("thumb-extn" ), "");
         String size = Synt.declare(getParam("thumb-size" ), "");
         String mode = Synt.declare(getParam("thumb-mode" ), "");
         String col  = Synt.declare(getParam("thumb-color"), "");
@@ -40,41 +40,38 @@ public class Thumb extends IsFile {
         int    idx  = Synt.declare(getParam("thumb-index"), 0 );
 
         try {
-            return exec(path, href, extn, size, mode, col, pos)[1][idx];
+            return exec(href, path, extn, size, mode, col, pos)[0][idx];
         } catch (IndexOutOfBoundsException ex) {
             throw new Wrong( ex, "Thumb index out of bounds." );
-        } catch (IOException | Wrong ex) {
+        } catch (IOException ex) {
             throw new Wrong( ex, "Can not create the thumbs." );
         }
     }
 
     /**
      * 生成缩略图
-     * @param pth 原始图片路径
      * @param url 原始图片链接
+     * @param nrl 原始图片路径
      * @param ext 输出格式: png,gif,jpg,bmp 之类
      * @param suf 截取比例: _bg:1/1,_sm:9*9 等等
      * @param mod 处理模式: pick 截取, keep 保留
      * @param col 背景颜色: R,G,B[,A] 取值 0~255
      * @param pos 停靠位置: 9宫格式
      * @return 缩略图路径,链接
+     * @throws Wrong
      * @throws IOException
      */
-    private String[][] exec(String pth, String url, String ext, String suf, String mod, String col, String pos)
+    public String[][] exec(String url, String nrl, String ext, String suf, String mod, String col, String pos)
     throws Wrong, IOException {
-//        if (pth == null || pth.equals("")) {
-//                throw new NullPointerException("Path can not be empty");
-//        }
-//        if (ext == null || ext.equals("")) {
-//            int idx = pth.lastIndexOf('.');
-//            if (idx > 0) {
-//                ext = pth.substring(idx+1);
-//            } else {
-//                throw new NullPointerException("Extn can not be empty");
-//            }
-//        }
-//        if (url == null) url = "";
-//        if (suf == null) suf = "";
+        // 没有指定扩展名则无需改变格式
+        if (ext.length() == 0 ) {
+            int idx = nrl.lastIndexOf('.');
+            if (idx > 0) {
+                ext = nrl.substring(1+idx);
+            } else {
+                throw new Wrong( "Missing extension." );
+            }
+        }
 
         /**
          * 仅校验尺寸或比例,
@@ -84,7 +81,7 @@ public class Thumb extends IsFile {
          */
         if ("test".equals(mod)) {
             Matcher       mat ;
-            BufferedImage img = ImageIO.read(new File(pth));
+            BufferedImage img = ImageIO.read(new File(nrl));
             int w = img.getWidth ();
             int h = img.getHeight();
 
@@ -109,24 +106,24 @@ public class Thumb extends IsFile {
                 throw new Wrong("Thumb size config can not be used for test mode");
             }
 
-            mod = ""; // 尺寸匹配则
+            mod = ""; // 尺寸匹配, 无需再缩放或裁剪
         }
 
-        List<String> pts = new ArrayList();
+        List<String> nrs = new ArrayList();
         List<String> urs = new ArrayList();
-        Builder      bld = null;
-        String       pre , prl ;
+        Builder      bui = null;
+        String       pre , pro ;
 
-        pth = new File( pth ).getAbsolutePath( );
-        pre = pth.replaceFirst("\\.[^\\.]+$","");
-        prl = url.replaceFirst("\\.[^\\.]+$","");
+        nrl = new File( nrl ).getAbsolutePath( );
+        pre = nrl.replaceFirst("\\.[^\\.]+$","");
+        pro = url.replaceFirst("\\.[^\\.]+$","");
 
         if (suf.contains("*")
         ||  suf.contains("/")
         ||  suf.contains(",")) {
 
             String[] sia = suf.split (",");
-            String   src = pth;
+            String   src = nrl;
             double   scl = 0;
             boolean  rat;
             int      w;
@@ -162,40 +159,40 @@ public class Thumb extends IsFile {
              * 第一个或比例有了变化,
              * 才需要特别去裁剪铺贴.
              */
-            if (bld == null || scl != w / h) {
-                bld = make(src, col, pos, mod, w, h, !rat);
+            if (bui == null || scl != w / h) {
+                bui = make(src, col, pos, mod, w, h, !rat);
                 scl = w / h;
             } else {
-                bld = Thumbnails.of(bld.asBufferedImage());
-                if (! rat) bld.size(w, h);
+                bui = Thumbnails.of(bui.asBufferedImage());
+                if (! rat) bui.size(w, h);
             }
 
             // 保存到文件
-            pth = pre + suf + "." + ext;
-            url = prl + suf + "." + ext;
-            bld.outputFormat(ext)
-               .toFile( file(pth) );
-            pts.add(pth);
+            nrl = pre + suf + "." + ext;
+            url = pro + suf + "." + ext;
+            bui.outputFormat(ext)
+               .toFile(file(nrl) );
+            nrs.add(nrl);
             urs.add(url);
         }} else {
             /**
              * 如果没有指定缩放尺寸,
              * 那就认为仅需转换格式.
              */
-            bld = make(pth , col);
+            bui = make(nrl , col);
 
             // 保存到文件
-            pth = pre + suf + "." + ext;
-            url = prl + suf + "." + ext;
-            bld.outputFormat(ext)
-               .toFile( file(pth) );
-            pts.add(pth);
+            nrl = pre + suf + "." + ext;
+            url = pro + suf + "." + ext;
+            bui.outputFormat(ext)
+               .toFile(file(nrl) );
+            nrs.add(nrl);
             urs.add(url);
         }
 
         return new String[][] {
-            pts.toArray(new String[] {}),
-            urs.toArray(new String[] {})
+            urs.toArray(new String[] {}),
+            nrs.toArray(new String[] {})
         };
     }
 

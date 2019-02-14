@@ -15,9 +15,9 @@
     ActionHelper  ah = Core.getInstance(ActionHelper.class);
     VerifyHelper  vh = new VerifyHelper();
     vh.addRule("file", new IsFile().config(Synt.mapOf(
-            "extn", "jpeg,jpg,png,gif,bmp" ,
+            "href", "${BASE_HREF}/static/upload/image",
             "path", "${BASE_PATH}/static/upload/image",
-            "href", "${BASE_HREF}/static/upload/image"
+            "extn", "jpeg,jpg,png,gif,bmp"
     )));
     ah.reply(vh.verify(ah.getRequestData() , true , true ));
 %>

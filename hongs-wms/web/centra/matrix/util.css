@@ -6,11 +6,10 @@ table.ui-droppable-hover td ,
     color: #dd4444;
 }
 
-.cols-form legend
-    {margin-bottom: 15px; font-weight: bolder;}
-.cols-form .form-group legend
-    {font-size: 15px;}
-.cols-form .form-group ul
+.cols-form .target-form legend,
+.cols-form .widget-form legend
+    {margin-bottom: 15px; font-size: 13px; font-weight: bold;}
+.cols-form .form-group   ul
     {padding-left: 0;}
 .cols-form .widget-form  ul,
 .cols-form .widget-form  input,

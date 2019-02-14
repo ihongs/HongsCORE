@@ -84,8 +84,18 @@ public class Thumb {
             return this;
         }
         try {
-            // RGBA 表示方法
-            if (!str.startsWith("#")) {
+            if (str.startsWith("#")) {
+                // 16 进制表示法
+                str = str.substring(1);
+                int c = Integer.parseInt (str, 16);
+                if (str.length() == 6) {
+                  return setColor(new Color(c, false));
+                } else
+                if (str.length() == 8) {
+                  return setColor(new Color(c, true ));
+                }
+            } else {
+                // RGBA 表示方法
                 String[] x = str.split(",");
                 int r = Integer.parseInt (x[0].trim());
                 int g = Integer.parseInt (x[1].trim());
@@ -93,14 +103,6 @@ public class Thumb {
                 int a = (x.length == 3 ) ? 255
                       : Integer.parseInt (x[3].trim());
                 return setColor(new Color(r, g, b, a));
-            }
-            // 16 进制表示法
-            int c = Integer.parseInt (str.substring(1), 16);
-            if (str.length() == 6) {
-                return setColor(new Color(c , false) );
-            } else
-            if (str.length() == 8) {
-                return setColor(new Color(c , true ) );
             }
             throw new HongsExemption.Common("Unable to parse color value: "+str);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {

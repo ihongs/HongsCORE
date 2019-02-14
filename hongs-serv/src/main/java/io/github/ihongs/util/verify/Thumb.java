@@ -28,11 +28,11 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  */
 public class Thumb extends IsFile {
 
-    Pattern TEST_PATT = Pattern.compile( "(\\d+)([\\*/])(\\d+)" );
+    Pattern TEST_PATT = Pattern.compile("(\\d+)([\\*/])(\\d+)");
 
     @Override
     public String checks(String href, String path) throws Wrong {
-        String extn = Synt.declare(getParam("thumb-extn" ), "jpg");
+        String extn = Synt.declare(getParam("thumb-extn" ), "png");
         String size = Synt.declare(getParam("thumb-size" ), "");
         String mode = Synt.declare(getParam("thumb-mode" ), "");
         String col  = Synt.declare(getParam("thumb-color"), "");

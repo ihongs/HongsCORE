@@ -19,5 +19,5 @@
             "path", "${BASE_PATH}/static/upload/image",
             "href", "${BASE_HREF}/static/upload/image"
     )));
-    ah.reply(vh.verify(ah.getRequestData() , true , true));
+    ah.reply(vh.verify(ah.getRequestData() , true , true ));
 %>

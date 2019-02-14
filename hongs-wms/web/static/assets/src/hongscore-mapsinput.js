@@ -5,7 +5,7 @@
 // 这在非文档写入流中并不能正常工作
 // 而且其下面的 apifiles 版本经常变
 // 为免维护麻烦只好用相同方式预加载
-document.write('<script type="text/javascript" src="//map.qq.com/api/js?v=2.exp"></script>');
+document.write('<script type="text/javascript" src="//map.qq.com/api/js?v=2.exp&key=OB4BZ-D4W3U-B7VVO-4PJWW-6TKDJ-WPB77"></script>');
 
 function forMapsInput(func) {
     hsRequires([

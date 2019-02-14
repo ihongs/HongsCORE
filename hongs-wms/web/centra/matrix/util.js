@@ -556,7 +556,10 @@ $.fn.hsCols = function() {
     });
 
     // 模拟提交
-    targets.find("[name=validate]").data("validate", function() {
+    targets.on("willSave", function(ev) {
+        $.hsWarn("模拟提交成功, 别忘了保存设置哦.", "success");
+        ev.stopPropagation();
+        ev.preventDefault ();
         return false;
     });
 

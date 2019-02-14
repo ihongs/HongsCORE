@@ -159,7 +159,7 @@ public class SearchTitler {
                 lv  = (String) es.get(lv ); // 得到标签
             }
             if (lv == null) {
-                lv  = (String) es.get("*"); // 其他类型
+                lv  = (String) es.get("-"); // 未知选项
             }
             if (lv == null) {
                 continue;

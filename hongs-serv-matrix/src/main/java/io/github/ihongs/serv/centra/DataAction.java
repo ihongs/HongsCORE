@@ -233,9 +233,9 @@ public class DataAction extends SearchAction {
             v = s.substring (1);
         } else
         if (e != null) {
-            Object x = e.get(v);
+            Object x = e.get(v); // 得到标签
             if (x == null) {
-                x =  e.get("*");
+                x =  e.get("-"); // 未知选项
             if (x == null) {
                 x =  v;
             }

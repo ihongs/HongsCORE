@@ -567,7 +567,8 @@ public class Data extends SearchEntity {
      * @return
      */
     protected boolean saveSkip(String fn, Object fr, Object fo) {
-        return "muser".equals(fn)
+        return "memo" .equals(fn)
+            || "muser".equals(fn)
             || "mtime".equals(fn)
             || fo.equals(fr);
     }

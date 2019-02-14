@@ -312,7 +312,7 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
 
 一个 xxx.form.xml 配置文件由 form,field,param,enum,value 这些节点组成, 结构类似于 Protobuf, form 类似 Protobuf 的 message. field 有 required/repeated 对应 Protobuf message 下条目的 required/optional/repeated; type 对应条目的类型, 只是更贴近HTML控件和数据库字段类型.
 
-其中 field 的 param 设置中, 可用于控制布局和查询的参数有:
+其中 field 内的 param 设置中, 可用于控制布局和查询的参数有:
 
     listable    字段可获取(可通过rb参数控制)
     sortable    字段可排序(可通过ob参数控制, 枚举等类型的字段实为分组类聚)
@@ -320,12 +320,12 @@ dete2mic 或 date2sec 搭配 all2str 则将转换后的时间戳数字再转为�
     findable    字段可过滤(可以用于查询, 用过滤标识时, 以层级数据结构给出)
     unstored    不保存原文(可查询或排序, 但不可以读取, 仅针对 Lucene 特有)
 
-每个表单(form)可以有一个 name="@" 的字段, 该字段的名称即为此表单的名称, 其配置即表单的配置, 同样也有一些控制视图的参数:
+每个表单(form)可以有一个 name="@" 的字段, 其名称即表单的名称, 其配置即表单的配置, 默认不设置 name 视为此字段, 同样也有一些控制视图的参数:
 
-    xxxxable           如同 field 中的同名参数, 但值为字段名称列表, * 表全部字段, ? 按类型判别
-    callable           告知 XxxAction 脚手架动作类, 限定可执行方法, 缺省全部允许, 为空全部禁止
+    xxxxable    如同 field 中的同名参数, 但值为字段名称列表, * 表全部字段, ? 按类型判别
+    callable    告知 XxxAction 脚手架动作类, 限定可执行方法, 缺省全部允许, 为空全部禁止
 
-另, 每个枚举(enum)可以有一个 code="\*" 的取值, 该取值用作"其他"选项, 当出现枚举中没有记录的值时, 将显示为"其他".
+另, 枚举(enum)可以有一个 code="-" 的条目, 该条目用作表示未知, 当出现未登记的值时, 可视作其他.
 
 ### 模型规范
 

@@ -509,7 +509,6 @@ HsForm.prototype = {
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
-            if (k == '*') continue ; // * 总为其他
             var t = hsGetValue(v[i], tk);
             var opt = jQuery('<option></option>');
             opt.val(k).text(t).data("data", v[i]);
@@ -523,10 +522,11 @@ HsForm.prototype = {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
+            var k = hsGetValue(v[i], vk);
+            var t = hsGetValue(v[i], tk);
             var lab = jQuery('<label><input type="radio"   /><span></span></label>');
-            lab.find("input").attr("name", n).data(v[i])
-                             .val (hsGetValue(v[i], vk));
-            lab.find("span" ).text(hsGetValue(v[i], tk));
+            lab.find("input"). val (k).attr("name", n).data("data", v[i]);
+            lab.find("span" ).text (t);
             inp.append(lab);
         }
         if (inp.closest(".form-group").hasClass("has-error")) {
@@ -537,10 +537,11 @@ HsForm.prototype = {
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
+            var k = hsGetValue(v[i], vk);
+            var t = hsGetValue(v[i], tk);
             var lab = jQuery('<label><input type="checkbox"/><span></span></label>');
-            lab.find("input").attr("name", n).data(v[i])
-                             .val (hsGetValue(v[i], vk));
-            lab.find("span" ).text(hsGetValue(v[i], tk));
+            lab.find("input"). val (k).attr("name", n).data("data", v[i]);
+            lab.find("span" ).text (t);
             inp.append(lab);
         }
         if (inp.closest(".form-group").hasClass("has-error")) {
@@ -640,7 +641,7 @@ HsForm.prototype = {
 
     valiInit : function() {
         var that = this;
-        this.formBox.attr("novalidate", "novalidate");
+        this.formBox.prop( "novalidate" , true);
         this.formBox.on("reset" , function(evt) {
             if (evt.isDefaultPrevented()) {
                 return;

@@ -631,7 +631,7 @@ public class SelectHelper {
     /**
      * 将枚举代号转换为对应文本
      * 空值和空串不处理
-     * 星号总是代表其他
+     * 横杠代表未知选项
      * @param map
      * @param val
      * @return
@@ -646,7 +646,7 @@ public class SelectHelper {
         if (null != vxl) {
             return  vxl;
         }
-        vxl = map.get("*");
+        vxl = map.get("-");
         if (null != vxl) {
             return  vxl;
         }

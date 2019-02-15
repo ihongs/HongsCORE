@@ -28,8 +28,6 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
  */
 public class Thumb extends IsFile {
 
-    Pattern TEST_PATT = Pattern.compile("(\\d+)([\\*/])(\\d+)");
-
     @Override
     public String checks(String href, String path) throws Wrong {
         String extn = Synt.declare(getParam("thumb-extn" ), "");
@@ -48,6 +46,8 @@ public class Thumb extends IsFile {
         }
     }
 
+    private static final Pattern TEST_PATT = Pattern.compile("(\\d+)([\\*/])(\\d+)");
+
     /**
      * 生成缩略图
      * @param url 原始图片链接
@@ -56,12 +56,12 @@ public class Thumb extends IsFile {
      * @param suf 截取比例: _bg:1/1,_sm:9*9 等等
      * @param mod 处理模式: pick 截取, keep 保留
      * @param col 背景颜色: R,G,B[,A] 取值 0~255
-     * @param pos 停靠位置: 9宫格式
-     * @return 缩略图路径,链接
+     * @param pos 停靠位置: 9 宫格式
+     * @return 缩略图 链接, 路径
      * @throws Wrong
      * @throws IOException
      */
-    public String[][] exec(String url, String nrl, String ext, String suf, String mod, String col, String pos)
+    private String[][] exec(String url, String nrl, String ext, String suf, String mod, String col, String pos)
     throws Wrong, IOException {
         // 没有指定扩展名则无需改变格式
         if (ext.length() == 0 ) {
@@ -75,17 +75,16 @@ public class Thumb extends IsFile {
 
         /**
          * 仅校验尺寸或比例,
-         * 不相符将直接退出.
+         * 不相符将抛出异常.
          * 会取出配置的第一个尺寸或比例,
          * 多个尺寸后面的会进行缩放处理.
          */
         if ("test".equals(mod)) {
-            Matcher       mat ;
             BufferedImage img = ImageIO.read(new File(nrl));
+            Matcher mat = TEST_PATT.matcher (suf);
             int w = img.getWidth ();
             int h = img.getHeight();
 
-            mat = TEST_PATT.matcher(suf);
             if (mat.matches()) {
                 String sc = mat.group(2);
                 int w2 = Integer.parseInt(mat.group(1));
@@ -106,7 +105,7 @@ public class Thumb extends IsFile {
                 throw new Wrong("Thumb size config can not be used for test mode");
             }
 
-            mod = ""; // 尺寸匹配, 无需再缩放或裁剪
+            mod = ""; // 尺寸匹配, 无需截取
         }
 
         List<String> nrs = new ArrayList();
@@ -164,14 +163,18 @@ public class Thumb extends IsFile {
                 scl = w / h;
             } else {
                 bui = Thumbnails.of(bui.asBufferedImage());
-                if (! rat) bui.size(w, h);
+                if (! rat ) bui.size (w , h);
             }
 
             // 保存到文件
             nrl = pre + suf + "." + ext;
             url = pro + suf + "." + ext;
-            bui.outputFormat(ext)
-               .toFile(file(nrl) );
+            try {
+                bui.outputFormat(ext);
+            } catch (IllegalArgumentException ex) {
+                throw new Wrong ("Unsupported format: " + ext);
+            }
+            bui.toFile(file(nrl));
             nrs.add(nrl);
             urs.add(url);
         }} else {
@@ -184,8 +187,12 @@ public class Thumb extends IsFile {
             // 保存到文件
             nrl = pre + suf + "." + ext;
             url = pro + suf + "." + ext;
-            bui.outputFormat(ext)
-               .toFile(file(nrl) );
+            try {
+                bui.outputFormat(ext);
+            } catch (IllegalArgumentException ex) {
+                throw new Wrong ("Unsupported format: " + ext);
+            }
+            bui.toFile(file(nrl));
             nrs.add(nrl);
             urs.add(url);
         }
@@ -196,8 +203,8 @@ public class Thumb extends IsFile {
         };
     }
 
-    private Builder make(String pth, String col, String pos, String mod, int w, int h, boolean f) throws IOException {
-        io.github.ihongs.util.sketch.Thumb thb = new io.github.ihongs.util.sketch.Thumb(pth);
+    private Builder make(String nrl, String col, String pos, String mod, int w, int h, boolean f) throws IOException {
+        io.github.ihongs.util.sketch.Thumb thb = new io.github.ihongs.util.sketch.Thumb(nrl);
 
         // 设置背景颜色
         thb.setColor(col);
@@ -217,8 +224,8 @@ public class Thumb extends IsFile {
         }
     }
 
-    private Builder make(String pth, String col) throws IOException {
-        io.github.ihongs.util.sketch.Thumb thb = new io.github.ihongs.util.sketch.Thumb(pth);
+    private Builder make(String nrl, String col) throws IOException {
+        io.github.ihongs.util.sketch.Thumb thb = new io.github.ihongs.util.sketch.Thumb(nrl);
 
         if (col != null) {
             thb.setColor(col);
@@ -229,8 +236,8 @@ public class Thumb extends IsFile {
         }
     }
 
-    private File file(String pth) {
-        File file = new File(pth);
+    private File file(String nrl) {
+        File file = new File(nrl);
         File dir  = file.getParentFile();
         if (!dir.exists()) {
              dir.mkdirs();

@@ -29,7 +29,7 @@ import javax.servlet.http.Part;
  *  down-remote yes|no 是否下载远程文件
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
- *  keep-naming yes|no 保持原文件名, 为规避非法文件名会对其做 UrlEncode
+ *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $BASE_HREF, $SERV_HREF 等, 后者包含域名
@@ -119,11 +119,11 @@ public class IsFile extends Rule {
 
         if (value instanceof Part) {
             Part part =(Part) value;
-            hlpr.upload(part, naming(part.getSubmittedFileName()));
+            hlpr.upload(part, bename(part.getSubmittedFileName()));
         } else
         if (value instanceof File) {
             File file =(File) value;
-            hlpr.upload(file, naming(file.getName()));
+            hlpr.upload(file, bename(file.getName()));
         } else
         {
             // 外部记录的是网址, 必须进行解码才行
@@ -297,10 +297,16 @@ public class IsFile extends Rule {
         return href;
     }
 
-    private final Pattern NAME_PATT = Pattern.compile("[\\/<>:?*\"|]");
+    private static final Pattern NAME_PATT = Pattern.compile("[\\/<>:?*\"|]");
 
-    private String naming(String name) throws Wrong {
-        if (Synt.declare ( getParam("keep-naming"), false)) {
+    /**
+     * 命名文件, 规避存储路径重合
+     * @param name
+     * @return
+     * @throws Wrong
+     */
+    private String bename(String name) throws Wrong {
+        if (getParam("keep-naming", false)) {
             if (255 < name.getBytes(  ).length) {
                 throw new Wrong("fore.file.name.toolong", name);
             }
@@ -316,37 +322,11 @@ public class IsFile extends Rule {
     }
 
     /**
-     * 仅对 URL 的文件名部分进行编码
-     * @param name
-     * @return
-     */
-    final public static String encode(String name) {
-        String   path;
-        int p  = name.lastIndexOf("/");
-        if (p != -1) {
-            p +=  1;
-            path = name.substring(0,p);
-            name = name.substring(  p);
-        } else {
-            path = "";
-        }
-
-        try {
-            name = URLEncoder.encode(name , "UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw  new HongsExemption.Common (e);
-        }
-
-        name = name.replace("+","%20");
-        return path + name;
-    }
-
-    /**
      * 仅对 URL 的文件名部分进行解码
      * @param name
      * @return
      */
-    final public static String decode(String name) {
+    private String decode(String name) {
         String   path;
         int p  = name.lastIndexOf("/");
         if (p != -1) {
@@ -364,6 +344,32 @@ public class IsFile extends Rule {
         }
 
 //      name = name.replace("%20","+");
+        return path + name;
+    }
+
+    /**
+     * 仅对 URL 的文件名部分进行编码
+     * @param name
+     * @return
+     */
+    private String encode(String name) {
+        String   path;
+        int p  = name.lastIndexOf("/");
+        if (p != -1) {
+            p +=  1;
+            path = name.substring(0,p);
+            name = name.substring(  p);
+        } else {
+            path = "";
+        }
+
+        try {
+            name = URLEncoder.encode(name , "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw  new HongsExemption.Common (e);
+        }
+
+        name = name.replace("+","%20");
         return path + name;
     }
 }

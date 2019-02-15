@@ -156,7 +156,9 @@ function setEditor(node, func) {
                             cache      : false,
                             contentType: false,
                             processData: false,
-                            success : function(data) {
+                            success    : function(data) {
+                                data = hsResponse(data);
+                                if ( ! data.ok ) return;
                                 for(var i = 0 ; i < data.file.length ; i ++) {
                                     $(that).summernote("insertImage" , data.file[i] );
                                 }

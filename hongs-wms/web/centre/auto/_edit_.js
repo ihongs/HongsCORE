@@ -156,7 +156,9 @@ function setEditor(node, func) {
                             cache      : false,
                             contentType: false,
                             processData: false,
-                            success : function(data) {
+                            success    : function(data) {
+                                data = hsResponse(data);
+                                if ( ! data.ok ) return;
                                 for(var i = 0 ; i < data.file.length ; i ++) {
                                     $(that).summernote("insertImage" , data.file[i] );
                                 }
@@ -261,24 +263,51 @@ function getModeByName(name) {
 }
 
 var EXTN_TO_MODE = {
-    jsx         : "jsx",
-    css         : "css",
-    xml         : "xml",
-    xsd         : "xml",
-    tld         : "xml",
-    sql         : "sql",
-    lua         : "lua",
-    sh          : "shell",
-    py          : "python",
-    groovy      : "groovy",
-    md          : "markdown",
-    protobuf    : "protobuf",
-    json        : "javascript",
-    js          : "javascript",
-    ls          : "livescript",
-    properties  : "properties",
-    html        : "htmlmixed",
-    htm         : "htmlmixed",
-    jsp         : "htmlembedded",
-    ejs         : "htmlembedded"
+    /* C   家族 */
+    h           : ["clike", "text/x-c"],
+    c           : ["clike", "text/x-c"],
+    cpp         : ["clike", "text/x-c++src"],
+    cs          : ["clike", "text/x-csharp"],
+    mm          : ["clike", "text/x-objectivec"],
+    m           : ["clike", "text/x-objectivec"],
+    /* JVM 家族 */
+    java        : ["clike", "text/x-java"],
+    scala       : ["clike", "text/x-scala"],
+    kotlin      : ["clike", "text/x-kotlin"],
+    groovy      : ["groovy", "groovy"],
+    gradle      : ["groovy", "groovy"],
+    /* JS  家族 */
+    json        : ["javascript", "application/json"],
+    js          : ["javascript", "text/javascript"],
+    ts          : ["javascript", "text/typescrpit"],
+    jsx         : ["jsx", "jsx"],
+    vue         : ["vue", "vue"],
+    /* XML 家族 */
+    xml         : ["xml", "xml"],
+    xsd         : ["xml", "xml"],
+    html        : ["htmlmixed", "text/html"],
+    htm         : ["htmlmixed", "text/html"],
+    asp         : ["htmlembedded", "text/aspx"],
+    jsp         : ["htmlembedded", "text/jsp" ],
+    /* 其他程序 */
+    sql         : ["sql", "sql"],
+    lua         : ["lua", "lua"],
+    php         : ["php", "php"],
+    py          : ["python", "python"],
+    rb          : ["ruby", "ruby"],
+    pl          : ["perl", "perl"],
+    pm          : ["perl", "perl"],
+    sh          : ["shell", "shell"],
+    bat         : ["shell", "shell"],
+    cmd         : ["shell", "shell"],
+    ps1         : ["powershell", "powershell"],
+    /* 其他代码 */
+    css         : ["css", "css"],
+    scss        : ["css", "text/x-scss"],
+    less        : ["css", "text/x-less"],
+    md          : ["markdown", "markdown"],
+    proto       : ["protobuf", "protobuf"],
+    ini         : ["properties", "properties"],
+    cnf         : ["properties", "properties"],
+    properties  : ["properties", "properties"]
 };

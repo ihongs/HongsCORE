@@ -24,7 +24,7 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            ||  Synt.declare(info.get("invisble"), false)) {
+            ||  Synt.declare(info.get("readless"), false)) {
                 continue ;
             }
 

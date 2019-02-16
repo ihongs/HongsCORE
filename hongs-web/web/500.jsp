@@ -100,7 +100,7 @@
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
-                <blockquote><p>Copyleft &copy; 2019 黄弘. <small class="pull-right">Powered by <a href="https://github.com/ihongs/HongsCORE/" target="_blank">HongsCORE</a>, and <a href="<%=request.getContextPath()%>/power.html" target="_blank">others</a>.</small></p></blockquote>
+                <blockquote><p>Copyleft &copy; 2019 黄弘. <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a>.</small></p></blockquote>
             </div>
         </nav>
     </body>

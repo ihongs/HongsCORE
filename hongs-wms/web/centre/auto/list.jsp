@@ -48,11 +48,15 @@
             Map.Entry et = (Map.Entry) it2.next();
             Map     info = (Map ) et.getValue();
             String  name = (String) et.getKey();
-            String  type = (String) info.get("__type__");
-            String  text = (String) info.get("__text__");
+            String  type = (String) info.get ("__type__");
+            String  text = (String) info.get ("__text__");
+
+            if ("@".equals(name) || "id".equals(name)
+            ||  Synt.declare(info.get("vendless"), false)) {
+                continue;
+            }
         %>
-        <%if ("@".equals(name) || "id".equals(name)) {%>
-        <%} else if (Synt.declare(info.get("statable"), false)) {%>
+        <% /***/ if (Synt.declare(info.get("statable"), false)) {%>
         <div class="stat-group form-group form-group-sm clearfix" data-find="<%=name%>">
             <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8 form-control-static" style="height: auto;">

@@ -183,6 +183,102 @@ function hsListInitMine(x, v, n) {
 }
 
 /**
+ * 简单页面路由处理
+ * @param {jQuery|Element} context
+ * @param {Object} urls
+ * @return {HsPops}
+ */
+function HsPops (context , urls) {
+    var paneBox, inState, IF, NF;
+    context = jQuery( context  );
+    paneBox = context.closest(".labs");
+    inState = false ;
+    IF = "1" ; // 处于表单中
+    NF = null; // 非表单模式
+    
+    /**
+     * 列表和查看对公共区很重要
+     * 如果有给编号则打开详情页
+     */
+    context.hsLoad(urls.listUrl + hsSetParam(location.search, "id", null));
+    $(window).on("popstate", function() {
+        inState = true;
+        paneBox.children().eq(2).children().hsClose();
+        if (H$("@id")) {
+            if (H$("@if")) {
+                if (urls.formUrl) {
+                    inState = true;
+                    paneBox.hsOpen(urls.formUrl + location.search);
+                }
+            } else {
+                if (urls.infoUrl) {
+                    inState = true;
+                    paneBox.hsOpen(urls.infoUrl + location.search);
+                }
+            }
+        } else {
+            if (H$("@if")) {
+                if (urls.addsUrl) {
+                    inState = true;
+                    paneBox.hsOpen(urls.addsUrl + location.search);
+                }
+            }
+        }
+    });
+    $(window).trigger("popstate");
+    
+    
+    /**
+     * 还需要处理内部加载的页面
+     */
+    paneBox.on("hsReady", ".loadbox", function() {
+        if (inState) {
+            inState = false;
+            return;
+        }
+
+        var id ;
+        var ul = location.search;
+        var rl = hsFixUri($(this).data("href"));
+
+        if (urls.infoUrl && rl.substr(0, urls.infoUrl.length) == urls.infoUrl ) {
+            id = hsGetParam(rl, "id");
+            ul = hsSetParam(ul, "id", id);
+            ul = hsSetParam(ul, "if", NF);
+            history.pushState({}, "", location.pathname + ul);
+        } else
+        if (urls.formUrl && rl.substr(0, urls.formUrl.length) == urls.formUrl ) {
+            id = hsGetParam(rl, "id");
+            ul = hsSetParam(ul, "id", id);
+            ul = hsSetParam(ul, "if", IF);
+            history.pushState({}, "", location.pathname + ul);
+        } else
+        if (urls.addsUrl && rl.substr(0, urls.addsUrl.length) == urls.addsUrl ) {
+            ul = hsSetParam(ul, "id", NF);
+            ul = hsSetParam(ul, "if", IF);
+            history.pushState({}, "", location.pathname + ul);
+        }
+    });
+    paneBox.on("hsClose", ".loadbox", function() {
+        if (inState) {
+            inState = false;
+            return;
+        }
+
+        var ul = location.search;
+        var rl = hsFixUri($(this).data("href"));
+
+        if((urls.infoUrl && rl.substr(0, urls.infoUrl.length) == urls.infoUrl )
+        || (urls.formUrl && rl.substr(0, urls.formUrl.length) == urls.formUrl )
+        || (urls.addsUrl && rl.substr(0, urls.addsUrl.length) == urls.addsUrl)) {
+            ul = hsSetParam(ul, "id", NF);
+            ul = hsSetParam(ul, "if", NF);
+            history.pushState({}, "", location.pathname + ul);
+        }
+    });
+}
+
+/**
  * 列表统计筛选组件
  * @param {jQuery|Element} context
  * @param {Object} opts

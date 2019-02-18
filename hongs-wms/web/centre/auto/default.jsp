@@ -29,90 +29,6 @@
         <script type="text/javascript">
             HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;
             HsDEPS["__DEFINED__"]=1;
-
-            // 虚拟路由
-            jQuery(function() {
-                var listBox = H$("#main-context");
-                var paneBox =  $(".labs").first();
-                var listUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/list.html";
-                var infoUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/info.html";
-                var formUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form.html";
-                var addsUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form_adds.html";
-                var inState = false;
-                var IF= "1" ; // 处于表单中
-                var NF= null; // 非表单模式
-
-                /**
-                 * 列表和查看对公共区很重要
-                 * 如果有给编号则打开详情页
-                 */
-                listBox.hsLoad(listUrl + hsSetParam(location.search, "id", null));
-                $(window).on("popstate", function() {
-                    paneBox.children().eq(2).children().hsClose();
-                    if (H$("@id")) {
-                        if (H$("@if")) {
-                            paneBox.hsOpen(formUrl+ location.search);
-                        } else {
-                            paneBox.hsOpen(infoUrl+ location.search);
-                        }   inState = true;
-                    } else {
-                        if (H$("@if")) {
-                            paneBox.hsOpen(addsUrl+ location.search);
-                            inState = true;
-                        }
-                    }
-                });
-                $(window).trigger("popstate");
-
-                /**
-                 * 还需要处理内部加载的页面
-                 */
-                paneBox.on("hsReady", ".loadbox", function() {
-                    if (inState) {
-                        inState = false;
-                        return;
-                    }
-
-                    var id ;
-                    var ul = location.search;
-                    var rl = hsFixUri($(this).data("href"));
-
-                    if (rl.substr(0 , infoUrl.length) == infoUrl) {
-                        id = hsGetParam(rl, "id");
-                        ul = hsSetParam(ul, "id", id);
-                        ul = hsSetParam(ul, "if", NF);
-                        history.pushState({}, "", location.pathname + ul);
-                    } else
-                    if (rl.substr(0 , formUrl.length) == formUrl) {
-                        id = hsGetParam(rl, "id");
-                        ul = hsSetParam(ul, "id", id);
-                        ul = hsSetParam(ul, "if", IF);
-                        history.pushState({}, "", location.pathname + ul);
-                    } else
-                    if (rl.substr(0 , addsUrl.length) == addsUrl) {
-                        ul = hsSetParam(ul, "id", NF);
-                        ul = hsSetParam(ul, "if", IF);
-                        history.pushState({}, "", location.pathname + ul);
-                    }
-                });
-                paneBox.on("hsClose", ".loadbox", function() {
-                    if (inState) {
-                        inState = false;
-                        return;
-                    }
-
-                    var ul = location.search;
-                    var rl = hsFixUri($(this).data("href"));
-
-                    if (rl.substr(0 , infoUrl.length) == infoUrl
-                    ||  rl.substr(0 , formUrl.length) == formUrl
-                    ||  rl.substr(0 , addsUrl.length) == addsUrl) {
-                        ul = hsSetParam(ul, "id", NF);
-                        ul = hsSetParam(ul, "if", NF);
-                        history.pushState({}, "", location.pathname + ul);
-                    }
-                });
-            });
         </script>
     </head>
     <body>
@@ -148,5 +64,15 @@
                 <div class="row" data-load="centre/foot.jsp"></div>
             </div>
         </nav>
+        <script type="text/javascript">
+            (function($) {
+                HsPops($("#main-context"), {
+                    listUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/list.html",
+                    infoUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/info.html",
+                    formUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form.html",
+                    addsUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form_adds.html"
+                });
+            })(jQuery);
+        </script>
     </body>
 </html>

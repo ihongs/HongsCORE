@@ -38,7 +38,7 @@
                 var infoUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/info.html";
                 var formUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form.html";
                 var addsUrl = "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form_adds.html";
-                var inState ;
+                var inState = false;
                 var IF= "1" ; // 处于表单中
                 var NF= null; // 非表单模式
 
@@ -48,22 +48,21 @@
                  */
                 listBox.hsLoad(listUrl + hsSetParam(location.search, "id", null));
                 $(window).on("popstate", function() {
-                    inState = true ;
-                    paneBox.children( ).eq(2).children( ).hsClose( );
+                    paneBox.children().eq(2).children().hsClose();
                     if (H$("@id")) {
-                        if (H$("@if") ) {
+                        if (H$("@if")) {
                             paneBox.hsOpen(formUrl+ location.search);
                         } else {
                             paneBox.hsOpen(infoUrl+ location.search);
-                        }
+                        }   inState = true;
                     } else {
-                        if (H$("@if") ) {
+                        if (H$("@if")) {
                             paneBox.hsOpen(addsUrl+ location.search);
+                            inState = true;
                         }
                     }
                 });
                 $(window).trigger("popstate");
-                inState = false;
 
                 /**
                  * 还需要处理内部加载的页面

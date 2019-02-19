@@ -131,7 +131,7 @@
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>
-                <%} else if ("textaera".equals(type) || "textview".equals(type)) {%>
+                <%} else if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String typa = (String) info.get("type");
                         String mode = (String) info.get("mode");

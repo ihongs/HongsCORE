@@ -189,13 +189,13 @@ public class Form extends Model {
             sql = "UPDATE `"+table.tableName+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
             db.updates(sql, now, "0", "0", id);
 
-            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "0", id, uid, conf, "1");
         } else {
             sql = "UPDATE `"+table.tableName+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
             db.updates(sql, now, "0", "0", id);
 
-            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "0", id, uid, "{}", "0");
         }
 

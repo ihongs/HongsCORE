@@ -30,6 +30,9 @@ public class Data extends SearchEntity {
 
     protected final String conf;
     protected final String form;
+    private   final Set<String> dcUrls = new LinkedHashSet();
+    private         Set<String> wdCols = null;
+    private         Set<String> nmCols = null;
 
     /**
      * 数据实例基础构造方法
@@ -67,7 +70,7 @@ public class Data extends SearchEntity {
      * 另一方法非常可能需要覆盖,
      * 故提供此方法以便从基类调,
      * 未设时抛出 NullPointerException
-     * @return 
+     * @return
      */
     protected final Map gotFields() {
         return  super . getFields();
@@ -573,68 +576,6 @@ public class Data extends SearchEntity {
             || fo.equals(fr);
     }
 
-    private final Set<String> dcUrls = new LinkedHashSet();
-    private Set<String> wdCols = null;
-    private Set<String> nmCols = null;
-
-    @Override
-    public Set<String> getSrchable() {
-        if (null != wdCols) {
-            return  wdCols;
-        }
-        Map fs = (Map) getFields().get("word");
-        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
-            wdCols =  Synt.setOf  (  "word"  );
-        } else {
-            wdCols =  getCaseNames("srchable");
-            wdCols.remove("word");
-        }
-        return wdCols;
-    }
-
-    public Set<String> getNameable() {
-        if (null != nmCols) {
-            return  nmCols;
-        }
-        Map fs = (Map) getFields().get("name");
-        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
-            nmCols =  Synt.setOf  (  "name"  );
-        } else {
-            nmCols =  getCaseNames("nameable");
-            nmCols.remove("name");
-        }
-        return nmCols;
-    }
-
-    /**
-     * 获取搜索串
-     * @param dd
-     * @return
-     * @throws HongsException
-     */
-    protected String getWord(Map dd) throws HongsException {
-        StringBuilder nn = new StringBuilder();
-        Set < String> ns = getSrchable( );
-        for ( String  fn : ns ) {
-              Object  fv = dd.get(fn);
-            if (fv == null) continue ;
-            if (fv instanceof Collection)
-            for (Object fw : (Collection) fv ) {
-                nn.append(fw).append(' ');
-            } else {
-                nn.append(fv).append(' ');
-            }
-        }
-        String nm = nn.toString().trim( );
-
-        if (! ns.contains("word")
-        &&  ! ns.contains("id") ) {
-            return dd.get("id") +" "+ nm ;
-        } else {
-            return nm;
-        }
-    }
-
     /**
      * 获取名称串
      * @param dd
@@ -662,6 +603,83 @@ public class Data extends SearchEntity {
         } else {
             return nm;
         }
+    }
+
+    /**
+     * 获取关键词
+     * @param dd
+     * @return
+     * @throws HongsException
+     */
+    protected String getWord(Map dd) throws HongsException {
+        StringBuilder nn = new StringBuilder();
+        Set < String> ns = getSrchable( );
+        for ( String  fn : ns ) {
+              Object  fv = dd.get(fn);
+            if (fv == null) continue ;
+            if (fv instanceof Collection)
+            for (Object fw : (Collection) fv ) {
+                nn.append(fw).append(' ');
+            } else {
+                nn.append(fv).append(' ');
+            }
+        }
+        String nm = nn.toString().trim( );
+
+        if (! ns.contains("word")
+        &&  ! ns.contains("id") ) {
+            return dd.get("id") +" "+ nm ;
+        } else {
+            return nm;
+        }
+    }
+
+    @Override
+    public Set<String> getCaseTypes(String t) {
+        if ("nameable".equals(t)) {
+            return Synt.setOf("string", "search", "text");
+        } else
+        if ("wordable".equals(t)) {
+            return super.getCaseTypes("srchable");
+        } else
+        {
+            return super.getCaseTypes(t);
+        }
+    }
+
+    private Set<String> getNameable() {
+        if (null != nmCols) {
+            return  nmCols;
+        }
+        Map fs = (Map) getFields().get("name");
+        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
+            nmCols =  Synt.setOf  (  "name"  );
+        } else {
+            nmCols =  getCaseNames("nameable");
+            nmCols.remove( "name" );
+        }
+        return nmCols;
+    }
+
+    public Set<String> getWordable() {
+        if (null != wdCols) {
+            return  wdCols;
+        }
+        Map fs = (Map) getFields().get("word");
+        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
+            wdCols =  Synt.setOf  (  "word"  );
+        } else {
+            wdCols =  getCaseNames("wordable");
+            wdCols.remove( "word" );
+            if (! wdCols.isEmpty()) return wdCols;
+
+            wdCols =  getSrchable();
+            if (! wdCols.isEmpty()) return wdCols;
+
+            wdCols =  getNameable();
+            if (! wdCols.isEmpty()) return wdCols;
+        }
+        return wdCols;
     }
 
 }

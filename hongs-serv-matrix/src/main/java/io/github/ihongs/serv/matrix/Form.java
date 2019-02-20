@@ -181,23 +181,23 @@ public class Form extends Model {
         if (conf != null) {
             // 配置未改变则不增加日志
             sql = "SELECT `data` FROM `" + tbl + "` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
-            Map row  = db.fetchOne(sql, "0", "0", id );
+            Map row  = db.fetchOne(sql, "0", "-", id );
             if (row != null && !row.isEmpty()
             &&  conf.equals(row.get("data"))) {
                 return 0;
             }
 
             sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
-            db.updates(sql, now, "0", "0", id);
+            db.updates(sql, now, "0", "-", id);
 
             sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            db.updates(sql, now, "0", "0", id, uid, conf, "1");
+            db.updates(sql, now, "0", "-", id, uid, conf, "1");
         } else {
             sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
-            db.updates(sql, now, "0", "0", id);
+            db.updates(sql, now, "0", "-", id);
 
             sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            db.updates(sql, now, "0", "0", id, uid, "{}", "0");
+            db.updates(sql, now, "0", "-", id, uid, "{}", "0");
         }
 
         return 1;

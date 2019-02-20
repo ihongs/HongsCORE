@@ -360,7 +360,7 @@ public class Data extends SearchEntity {
             nd.put("user_id", uid);
             nd.put("memo", rd.get("memo"));
             nd.put("name", dd.get("name"));
-            nd.put("data", io.github.ihongs.util.Data.toString(dd));
+            nd.put("data", io.github.ihongs.util.Data.toString(dd, true));
 
             table.update(ud, where, param);
             table.insert(nd);

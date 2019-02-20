@@ -248,7 +248,7 @@ public class Form extends Model {
                 idf.remove("__repeated__");
             }
 
-            conf = Data.toString(flds);
+            conf = Data.toString(flds, true);
             rd.put("conf", conf);
 
             // 补全表配置项

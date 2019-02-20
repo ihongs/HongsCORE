@@ -108,18 +108,6 @@ public final class Data
   }
 
   /**
-   * 将Java对象在标准控制台显示
-   * @see io.github.ihongs.cmdlet.CmdletHelper preview()
-   * @deprecated
-   * @param obj
-   */
-  public static void print (Object obj)
-  {
-    Data.append(System.out, obj, false);
-    System.out.println();
-  }
-
-  /**
    * 将Java对象输出到指定输出流
    * 非开发环境将会启用紧凑模式
    * @param obj

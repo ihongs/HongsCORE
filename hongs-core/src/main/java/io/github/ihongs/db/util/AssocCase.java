@@ -67,7 +67,7 @@ public class AssocCase {
      */
     public  static final String  LIKEABLE = "LIKEABLE";
     /**
-     * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 FINDABLE
+     * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 FINDABLE
      */
     public  static final String  RATEABLE = "RATEABLE";
     /**

@@ -180,7 +180,7 @@ public class Form extends Model {
 
         if (conf != null) {
             // 配置未改变则不增加日志
-            sql = "SELECT `data` FROM `"+tbl+"` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
+            sql = "SELECT `data` FROM `" + tbl + "` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
             Map row  = db.fetchOne(sql, "0", "0", id );
             if (row != null && !row.isEmpty()
             &&  conf.equals(row.get("data"))) {

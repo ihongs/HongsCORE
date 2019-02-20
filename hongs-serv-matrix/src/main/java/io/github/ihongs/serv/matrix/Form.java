@@ -214,6 +214,7 @@ public class Form extends Model {
                 "listable", "?",
                 "sortable", "?",
                 "findable", "?",
+                "wordable", "?",
                 "nameable", "?"
             );
             if (tdf != null) {

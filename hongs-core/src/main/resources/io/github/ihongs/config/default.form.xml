@@ -27,12 +27,8 @@
             fork,pick
         </value>
         <value code="srchable" type="set">
-            string,search,hidden,text,email,tel,sms,
+            string,search,hidden,text,
             textarea
-        </value>
-        <!-- 下为 Matrix 特有 -->
-        <value code="nameable" type="set">
-            string,search,text
         </value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->

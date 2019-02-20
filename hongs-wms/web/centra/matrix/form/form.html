@@ -245,7 +245,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-srchable="true" data-nameable="true" required="required"/>
+                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" data-nameable="true" required="required"/>
                     </div>
                     <div class="form-group base-field" data-type="note">
                         <label class="control-label clearfix" style="display: block;">
@@ -254,11 +254,11 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-srchable="true"/>
+                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-wordable="true"/>
                     </div>
                     <div class="form-group base-field" data-type="word">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>搜索</span>
+                            <span>搜查</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
@@ -430,6 +430,9 @@
                     <input type="checkbox" name="input|data-sortable" value="yes"/>排序
                 </label>
                 <label>
+                    <input type="checkbox" name="input|data-wordable" value="yes"/>搜查
+                </label>
+                <label>
                     <input type="checkbox" name="input|data-srchable" value="yes"/>搜索
                 </label>
                 <label>
@@ -458,6 +461,9 @@
                 </label>
                 <label>
                     <input type="checkbox" name="input|data-sortable" value="yes"/>排序
+                </label>
+                <label>
+                    <input type="checkbox" name="input|data-wordable" value="yes"/>搜查
                 </label>
                 <label>
                     <input type="checkbox" name="input|data-srchable" value="yes"/>搜索
@@ -631,6 +637,9 @@
                     <input type="checkbox" name="textarea|required" value="required"/>必填
                 </label>
                 <label>
+                    <input type="checkbox" name="textarea|data-wordable" value="yes"/>搜查
+                </label>
+                <label>
                     <input type="checkbox" name="textarea|data-srchable" value="yes"/>搜索
                 </label>
             </div>
@@ -705,6 +714,9 @@
             <div class="checkbox">
                 <label>
                     <input type="checkbox" name="textarea|required" value="required"/>必填
+                </label>
+                <label>
+                    <input type="checkbox" name="textarea|data-wordable" value="yes"/>搜查
                 </label>
                 <label>
                     <input type="checkbox" name="textarea|data-srchable" value="yes"/>搜索

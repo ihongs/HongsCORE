@@ -647,7 +647,7 @@ public class Data extends SearchEntity {
         }
     }
 
-    private Set<String> getNameable() {
+    public Set<String> getNameable() {
         if (null != nmCols) {
             return  nmCols;
         }

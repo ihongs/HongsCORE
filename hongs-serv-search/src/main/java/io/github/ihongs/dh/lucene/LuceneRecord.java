@@ -1027,14 +1027,17 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if ("double".equals(t)) {
                 st = SortField.Type.DOUBLE;
             } else
-            if ("string".equals(t)) {
-                st = SortField.Type.STRING;
-            } else
             if (  "date".equals(t)) {
                 st = SortField.Type.LONG;
             } else
             if ("sorted".equals(t)) {
                 st = SortField.Type.LONG;
+            } else
+            if ("string".equals(t)) {
+                st = SortField.Type.STRING;
+            } else
+            if ("search".equals(t)) {
+                st = SortField.Type.STRING;
             } else
             {
                 continue;

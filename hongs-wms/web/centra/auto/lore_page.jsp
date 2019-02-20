@@ -57,7 +57,7 @@
                         <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">多值</span><%}%>
                         <%if (Synt.declare(info.get(  "listable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">列举</span><%}%>
                         <%if (Synt.declare(info.get(  "sortable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">排序</span><%}%>
-                        <%if (Synt.declare(info.get(  "wordable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜查</span><%}%>
+                        <%if (Synt.declare(info.get(  "wordable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜寻</span><%}%>
                         <%if (Synt.declare(info.get(  "srchable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜索</span><%}%>
                         <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">筛选</span><%}%>
                         <%if (Synt.declare(info.get(  "statable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">统计</span><%}%>

@@ -172,30 +172,31 @@ public class Form extends Model {
         return super.del(id, fc);
     }
 
-    protected final int storeLog(String id, Object conf ) throws HongsException {
+    protected  int storeLog(String id, Object conf) throws HongsException {
         Object uid = ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
         long   now = System.currentTimeMillis() / 1000;
+        String tbl = db.getTable(  "data"  ).tableName;
         String sql ;
 
         if (conf != null) {
             // 配置未改变则不增加日志
-            sql = "SELECT `data` FROM `"+table.tableName+"` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
+            sql = "SELECT `data` FROM `"+tbl+"` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
             Map row  = db.fetchOne(sql, "0", "0", id );
             if (row != null && !row.isEmpty()
             &&  conf.equals(row.get("data"))) {
                 return 0;
             }
 
-            sql = "UPDATE `"+table.tableName+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
+            sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
             db.updates(sql, now, "0", "0", id);
 
-            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "0", id, uid, conf, "1");
         } else {
-            sql = "UPDATE `"+table.tableName+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
+            sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
             db.updates(sql, now, "0", "0", id);
 
-            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "0", id, uid, "{}", "0");
         }
 

@@ -23,7 +23,7 @@ public class ObjectFiald implements IField {
             v  = "{}" ;
         } else
         if (! ( v instanceof String )) {
-            v  = Data.toString(v);
+            v  = Data.toString(v, true );
         }
         return new StoredField(k, v.toString());
     }

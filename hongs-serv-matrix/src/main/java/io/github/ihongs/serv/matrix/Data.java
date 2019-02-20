@@ -656,7 +656,7 @@ public class Data extends SearchEntity {
             nmCols =  Synt.setOf  (  "name"  );
         } else {
             nmCols =  getCaseNames("nameable");
-            nmCols.remove( "name" );
+            nmCols.remove("name");
         }
         return nmCols;
     }
@@ -670,14 +670,7 @@ public class Data extends SearchEntity {
             wdCols =  Synt.setOf  (  "word"  );
         } else {
             wdCols =  getCaseNames("wordable");
-            wdCols.remove( "word" );
-            if (! wdCols.isEmpty()) return wdCols;
-
-            wdCols =  getSrchable();
-            if (! wdCols.isEmpty()) return wdCols;
-
-            wdCols =  getNameable();
-            if (! wdCols.isEmpty()) return wdCols;
+            wdCols.remove("word");
         }
         return wdCols;
     }

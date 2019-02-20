@@ -97,8 +97,8 @@ public final class Data
 
   /**
    * 将Java文本转义为JSON字符串
-   * @param str
-   * @return
+   * @param str 未JSON转义的Java字符串
+   * @return JS转义文本
    */
   public static String doEscape(String str)
   {

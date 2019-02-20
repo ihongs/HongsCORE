@@ -124,7 +124,7 @@ public class Form extends Model {
         int n  = superAdd(id, rd);
         if (n != 0) {
             // 记录配置变更
-            storeLog(id, rd.get( "conf" ));
+            storeLog(id , rd.get("conf") );
 
             // 更新配置文件
             updateFormConf(id, stat, conf);

@@ -1510,10 +1510,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 f = new StringFiald();
                 q = false; // 字符类型自带筛选
             } else
-            if ("search".equals (t)) { if ("".equals(v)) continue;
+            if ("search".equals (t)) {
                 f = new SearchFiald();
                 q = false; // 搜索类型自带筛选
-                s = false; // 搜索类型无法排序
             } else
             if ("object".equals (t)) { if ("".equals(v)) continue;
                 f = new ObjectFiald();

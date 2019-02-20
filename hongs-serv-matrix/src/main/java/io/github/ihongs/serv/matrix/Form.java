@@ -94,6 +94,11 @@ public class Form extends Model {
                 name  = namx;
             }
 
+            // 备份配置数据
+            if (conf != null) {
+                storeLog(id , rd.get("conf"));
+            }
+
             // 更新配置文件
             if (conf != null || stat != null) {
                 updateFormConf(id, stat,conf);
@@ -101,6 +106,8 @@ public class Form extends Model {
             if (name != null || stat != null) {
                 updateFormMenu(id, stat,name);
             }
+
+            // 更新单元菜单
             if (stat != null) {
                 updateUnitMenu(id);
             }
@@ -116,6 +123,9 @@ public class Form extends Model {
 
         int n  = superAdd(id, rd);
         if (n != 0) {
+            // 记录配置变更
+            storeLog(id, rd.get( "conf" ));
+
             // 更新配置文件
             updateFormConf(id, stat, conf);
             updateFormMenu(id, stat, name);
@@ -134,6 +144,9 @@ public class Form extends Model {
     public int del(String id, FetchCase fc) throws HongsException {
         int n  = superDel(id, fc);
         if (n != 0) {
+            // 记录配置变更
+            storeLog(id, null);
+
             // 删除配置文件
             deleteFormConf(id);
             deleteFormMenu(id);
@@ -157,6 +170,36 @@ public class Form extends Model {
 
     protected final int superDel(String id, FetchCase fc) throws HongsException {
         return super.del(id, fc);
+    }
+
+    protected final int storeLog(String id, Object conf ) throws HongsException {
+        Object uid = ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
+        long   now = System.currentTimeMillis() / 1000;
+        String sql ;
+
+        if (conf != null) {
+            // 配置未改变则不增加日志
+            sql = "SELECT `data` FROM `"+table.tableName+"` WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
+            Map row  = db.fetchOne(sql, "0", "0", id );
+            if (row != null && !row.isEmpty()
+            &&  conf.equals(row.get("data"))) {
+                return 0;
+            }
+
+            sql = "UPDATE `"+table.tableName+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
+            db.updates(sql, now, "0", "0", id);
+
+            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?)";
+            db.updates(sql, now, "0", "0", id, uid, conf, "1");
+        } else {
+            sql = "UPDATE `"+table.tableName+"` SET `etime` = ? WHERE `etime` = ? `form_id` = ? AND `id` = ?";
+            db.updates(sql, now, "0", "0", id);
+
+            sql = "INSERT INTO `"+table.tableName+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?)";
+            db.updates(sql, now, "0", "0", id, uid, "{}", "0");
+        }
+
+        return 1;
     }
 
     protected List<Map> parseConf(Map rd) {

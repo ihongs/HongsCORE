@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Arrays;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.regex.Matcher;
@@ -315,9 +316,8 @@ public final class Synt {
     }
 
     /**
-     * 尝试转为 List
-     * 非 Map 类型均会转换失败, 因 Map 转集合扔掉键即可,
-     * 但无法从其他集合类型中得到明确的可以作为键的东西.
+     * 尝试转为 Map
+     * 可将 数组,List,Set 转为 Map, 其他情况构建一个值为空的 Map
      * @param val
      * @return
      */
@@ -328,10 +328,25 @@ public final class Synt {
 
         if (val instanceof Map ) {
             return ( Map ) val ;
+        } else if (val instanceof Collection) {
+            int i = 0;
+            Map m = new LinkedHashMap( );
+            for (Object v : (Collection) val) {
+                m.put(i ++, v );
+            }
+            return m;
+        } else if (val instanceof Object[ ] ) {
+            int i = 0;
+            Map m = new LinkedHashMap( );
+            for (Object o : (Object[ ] ) val) {
+                m.put(i ++, o );
+            }
+            return m;
+        } else {
+            Map m = new LinkedHashMap( );
+            m.put ( null, val );
+            return m;
         }
-
-        // 其他类型均无法转换为 Map
-        throw new ClassCastException("'" + val + "' can not be cast to Map");
     }
 
     /**

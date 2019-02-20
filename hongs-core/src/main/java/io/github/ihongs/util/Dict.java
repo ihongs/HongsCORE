@@ -30,6 +30,20 @@ public final class Dict
     if (val != null) {
         if (val instanceof Map ) {
             return ( Map ) val ;
+        } else if (val instanceof Collection) {
+            int i = 0;
+            Map m = new LinkedHashMap( );
+            for (Object v : (Collection) val) {
+                m.put(i ++, v );
+            }
+            return m;
+        } else if (val instanceof Object[ ] ) {
+            int i = 0;
+            Map m = new LinkedHashMap( );
+            for (Object o : (Object[ ] ) val) {
+                m.put(i ++, o );
+            }
+            return m;
         }
     }
     return  new LinkedHashMap();

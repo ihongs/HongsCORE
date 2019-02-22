@@ -338,7 +338,7 @@ HsList.prototype = {
         }
 
         if (this.pagsNum < t) {
-            qbox.before(jQuery('<input class="page-input pull-right form-control" style="width:'+(3 + (t + '').length)+'em" type="number" value="'+p+'"/>'));
+            qbox.before(jQuery('<input class="page-input pull-right form-control" style="width:'+(2.5+(t+'').length)+'em" type="number" value="'+ p +'"/>'));
         }
 
         var tm = null;

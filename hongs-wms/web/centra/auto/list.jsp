@@ -309,6 +309,7 @@
     if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/stream/search.act")) context.find(".export").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".record").remove();
 
     //** 列表、搜索表单 **/
 
@@ -330,7 +331,7 @@
               '.revert', '@' ],
             [ '<%=_module%>/<%=_entity%>/logs.html',
               '.record', '@' ],
-            [ '<%=_module%>/<%=_entity%>/lore_page.html',
+            [ '<%=_module%>/<%=_entity%>/lore.html',
               '.manual', '@' ]
         ]
     });

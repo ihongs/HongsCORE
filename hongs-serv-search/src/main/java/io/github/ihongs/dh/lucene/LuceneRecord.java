@@ -505,11 +505,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 //      if (rc <  minRn) {
 //          st =  2;
 //      } else
-        if (rc >= totRn) {
-            st = -1;
+        if (rc <  totRn) {
+            st =  0;
         } else
         {
-            st =  0;
+            st = -1;
+            rc -= 1;
         }
 
         Map  resp = new HashMap();
@@ -549,11 +550,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (rc <  minRn) {
             st =  2;
         } else
-        if (rc >= totRn) {
-            st = -1;
+        if (rc < totRn) {
+            st =  0;
         } else
         {
-            st =  0;
+            st = -1;
+            rc -= 1;
         }
 
         // 提取分页片段

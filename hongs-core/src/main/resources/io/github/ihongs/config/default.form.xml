@@ -100,8 +100,8 @@
     <!-- 文本校验正则映射 -->
     <enum name="__patts__">
         <value code="id" ><![CDATA[^[0-9A-Za-z\-_]{1,18}$]]></value>
-        <value code="sms"><![CDATA[^(\+\d{1,3})?\d{3,15}$]]></value>
-        <value code="tel"><![CDATA[^(\+\d{1,3})?\d{3,15}$]]></value>
+        <value code="sms"><![CDATA[^\+?[0-9][\d\-]+[0-9]$]]></value>
+        <value code="tel"><![CDATA[^\+?[0-9][\d\-]+[0-9]$]]></value>
         <value code="url"><![CDATA[^([a-z]+:)?\/\/[^\s]+$]]></value>
         <value code="email"><![CDATA[^\w+([-.]\w+)*@\w+([-.]\w+)*$]]></value>
         <value code="color"><![CDATA[^#[0-9A-Fa-f]{6}$]]></value>

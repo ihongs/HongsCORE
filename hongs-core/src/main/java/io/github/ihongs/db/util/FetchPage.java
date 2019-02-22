@@ -204,8 +204,6 @@ public final class FetchPage
     {
       int rc = Integer.parseInt(row.get("__count__").toString());
       int pc = (int)Math.ceil((float)rc / this.rows);
-      this.info.put("count", rc);
-      this.info.put("pages", pc);
 
       /**
        * 查得数量与限制数量一致
@@ -213,7 +211,15 @@ public final class FetchPage
        * 那么只能作估值
        * 反之为精确数量
        */
-      this.info.put("state", limit == 0 || limit != rc ? 0 : -1);
+      if (limit == 0 || limit != rc) {
+          this.info.put("state",  0);
+      } else {
+          this.info.put("state", -1);
+          rc = rc -1;
+      }
+
+      this.info.put("count", rc);
+      this.info.put("pages", pc);
     }
 
     return this.info;

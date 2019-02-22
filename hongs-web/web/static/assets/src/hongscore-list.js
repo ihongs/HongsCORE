@@ -311,7 +311,7 @@ HsList.prototype = {
         if (pmin < 1) pmin = 1;
 
         var pbox = jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
-        var qbox = jQuery( '<p class="page-count pull-right"></p>' ).appendTo(this.pageBox);
+        var qbox = jQuery('<em class="page-count pull-right"></em>').appendTo(this.pageBox);
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
@@ -337,6 +337,10 @@ HsList.prototype = {
             btns.append(jQuery('<li class="page-next disabled"><a href="javascript:;" title="'+hsGetLang("list.next.page")+'">&raquo;</a></li>'));
         }
 
+        if (this.pagsNum < t) {
+            qbox.before(jQuery('<input class="page-input pull-right form-control" style="width:'+(3 + (t + '').length)+'em" type="number" value="'+p+'"/>'));
+        }
+
         var tm = null;
         var go = function(p) {
             if ( tm ) clearTimeout(tm);
@@ -349,6 +353,9 @@ HsList.prototype = {
                 go(p);
             } , 500 );
         };
+        this.pageBox.find(".page-input").on("change", function() {
+            go(jQuery(this).val());
+        });
         this.pageBox.find(".page-link a").on("click", function(ev) {
             go(jQuery(this).attr("data-pn"));
             ev.preventDefault();

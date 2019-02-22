@@ -69,16 +69,26 @@ public class IsString extends Rule {
         } catch (HongsException ex) {
             throw ex.toExemption( );
         }
-        String patt  = Synt.asString  (  getParam("pattern"));
-        String patl  = pats.get (patt);
-        if (patl != null && patl.length() != 0) {
-            if (!Pattern.compile(patl).matcher(str).matches()) {
-                throw new Wrong("fore.form.is.not."+patt);
+            String type = Synt.asString(getParam("__type__"));
+            String patt = Synt.asString(getParam( "pattern"));
+        if (patt != null && patt.length() != 0) {
+            String patl = pats.get(patt);
+            if (patl != null && patl.length() != 0) {
+                if (!Pattern.compile(patl).matcher(str).matches()) {
+                    throw new Wrong("fore.form.is.not."+patt);
+                }
+            } else {
+                if (!Pattern.compile(patt).matcher(str).matches()) {
+                    throw new Wrong("fore.form.is.not.match");
+                }
             }
         } else
-        if (patt != null && patt.length() != 0) {
-            if (!Pattern.compile(patt).matcher(str).matches()) {
-                throw new Wrong("fore.form.is.not.match");
+        if (type != null && type.length() != 0) {
+            String patl = pats.get(type);
+            if (patl != null && patl.length() != 0) {
+                if (!Pattern.compile(patl).matcher(str).matches()) {
+                    throw new Wrong("fore.form.is.not."+type);
+                }
             }
         }
 

@@ -353,9 +353,6 @@ HsList.prototype = {
                 go(p);
             } , 500 );
         };
-        this.pageBox.find(".page-input").on("change", function() {
-            go(jQuery(this).val());
-        });
         this.pageBox.find(".page-link a").on("click", function(ev) {
             go(jQuery(this).attr("data-pn"));
             ev.preventDefault();
@@ -375,6 +372,17 @@ HsList.prototype = {
         this.pageBox.find(".page-next a").on("dblclick", function(ev) {
             go(t);
             ev.preventDefault();
+        });
+        this.pageBox.find(".page-input" ).on("keydown" , function(ev) {
+            if (ev.which == 13) {
+                jQuery(this).prop("disabled", true);
+                go(jQuery(this).val());
+            }
+        });
+        this.pageBox.find(".page-input" ).on( "change" , function(  ) {
+            if ( ! jQuery(this).prop ("disabled") ) {
+                go(jQuery(this).val());
+            }
         });
     },
     _rc_key : "count",

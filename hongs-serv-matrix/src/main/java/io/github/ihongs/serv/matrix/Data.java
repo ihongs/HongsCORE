@@ -31,8 +31,9 @@ public class Data extends SearchEntity {
     protected final String conf;
     protected final String form;
     private   final Set<String> dcUrls = new LinkedHashSet();
-    private         Set<String> wdCols = null;
     private         Set<String> nmCols = null;
+    private         Set<String> wdCols = null;
+    private         Set<String> skCols = null;
 
     /**
      * 数据实例基础构造方法
@@ -321,26 +322,25 @@ public class Data extends SearchEntity {
         }
 
         // 合并新旧数据
-        int i = 0;
+        int i  = 0;
         Map<String,Map> fields = getFields();
-        for(String fn : fields.keySet( )) {
+        for(String fn : fields . keySet( ) ) {
             if (  "id". equals(fn)) {
                 dd.put(fn , id);
             } else
             if (rd.containsKey(fn)) {
-                Object fr = Synt.defoult(rd.get(fn), "");
-                Object fo = Synt.defoult(dd.get(fn), "");
+                Object fr = rd.get(fn);
+                Object fo = dd.get(fn);
                 dd.put(fn , fr);
-
-                if (! saveSkip(fn,fr,fo)) {
-                    i ++; // 需要排除修改环境数据
+                // 跳过环境字段, 比如修改时间
+                if (! canSkip (fn, fr, fo) ) {
+                    i ++;
                 }
             }
         }
-
         // 无更新不存储
-        if (i  ==  0) {
-            return 0;
+        if (i == 0) {
+          return 0;
         }
 
         dd.put("name", getName(dd));
@@ -565,15 +565,28 @@ public class Data extends SearchEntity {
      * 当返回 true 时跳过检查,
      * 如都是 true 则不做更新.
      * @param fn
-     * @param fr
-     * @param fo
+     * @param fr 新值
+     * @param fo 旧值
      * @return
      */
-    protected boolean saveSkip(String fn, Object fr, Object fo) {
-        return "memo" .equals(fn)
-            || "muser".equals(fn)
-            || "mtime".equals(fn)
-            || fo.equals(fr);
+    protected boolean canSkip(String fn, Object fr, Object fo) {
+        if (getSkipable().contains(fn)) {
+            return true ;
+        }
+        if (fr == null && fo == null) {
+            return true ;
+        }
+        if (fr == null || fo == null) {
+            return false;
+        }
+        // 复杂对象用 JSON 串进行对比
+        if (fr instanceof Map
+        ||  fr instanceof Collection
+        ||  fr instanceof Object [ ]) {
+            fr = io.github.ihongs.util.Data.toString(fr, true);
+            fo = io.github.ihongs.util.Data.toString(fo, true);
+        }
+        return fr.equals(fo);
     }
 
     /**
@@ -673,6 +686,17 @@ public class Data extends SearchEntity {
             wdCols.remove("word");
         }
         return wdCols;
+    }
+
+    public Set<String> getSkipable() {
+        if (null != skCols) {
+            return  skCols;
+        }
+        skCols = new HashSet(getCaseNames("skipable"));
+        skCols.add("mtime");
+        skCols.add("muser");
+        skCols.add("memo" );
+        return skCols;
     }
 
 }

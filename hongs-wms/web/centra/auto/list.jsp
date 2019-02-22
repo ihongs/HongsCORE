@@ -40,6 +40,7 @@
                 <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                 <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
                 <button type="button" class="export btn btn-default" title="<%=_locale.translate("fore.export", _title)%>"><span class="glyphicon glyphicon-export"></span></button>
+                <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
                 <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
             <%} // End If %>
             </span>
@@ -327,6 +328,8 @@
               '.review', '@' ],
             [ '<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
               '.revert', '@' ],
+            [ '<%=_module%>/<%=_entity%>/logs.html',
+              '.record', '@' ],
             [ '<%=_module%>/<%=_entity%>/lore_page.html',
               '.manual', '@' ]
         ]

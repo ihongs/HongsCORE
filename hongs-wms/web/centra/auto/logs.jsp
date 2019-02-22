@@ -74,14 +74,6 @@
             spn.remove();
         }
 
-        context.on("click", ".review", function() {
-            var lo = context.hsFind ("@" );
-            var tr = $(this).closest("tr");
-            var id =      tr.data(   "id");
-            var ct =      tr.data("ctime");
-            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_logs.html?<%=Cnst.AB_KEY%>=_text,_fork", {id: id, ctime: ct});
-        });
-
         sendbox.on("click", ".commit", function() {
             var mt = sendbox.find("input").val ();
             var tr = sendbox.data(   "tr");
@@ -90,13 +82,21 @@
             listobj.send (tr, "", "<%=_module%>/<%=_entity%>/revert/update.act", {id: id, rtime: ct, memo: mt});
         });
 
+        context.on("click", ".review", function() {
+            var lo = context.hsFind ("@" );
+            var tr = $(this).closest("tr");
+            var id =      tr.data(   "id");
+            var ct =      tr.data("ctime");
+            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_logs.html"   , {id: id, ctime: ct});
+        });
+
         context.on("click", ".revert", function() {
             var tr = $(this).closest("tr");
             sendbox.data (   "tr" ,   tr );
             sendbox.find ("input").val("");
             sendbox.modal( "show");
         });
-        
+
         sendbox.modal({show : false});
     })(jQuery);
 </script>

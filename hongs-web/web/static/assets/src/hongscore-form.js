@@ -962,7 +962,7 @@ HsForm.prototype = {
         },
         "[type=tel],.input-tel" : function(val, inp) {
             if (!val) return true; // 规避非 required 的情况
-            if (!/^(\+\d{1,3})?\d{3,15}$/.test(val)) {
+            if (!/^\+?[0-9][\d\-]+[0-9]$/.test(val)) {
                 return this.geterror(inp, "form.is.not.tel");
             }
             return true;

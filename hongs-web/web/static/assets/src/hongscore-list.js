@@ -315,7 +315,7 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (page.state == -1 && pmax == t - 1) {
+        if (page.state < 0) {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));

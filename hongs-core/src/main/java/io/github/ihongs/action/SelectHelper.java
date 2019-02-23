@@ -313,9 +313,9 @@ public class SelectHelper {
         }
         for( Map info : list ) {
         for(String fn : forms.keySet()) {
-            Object fv = info.get(fn);
-            if (fv  !=  null ) {
-            if (fv instanceof Object[ ] ) {
+            Object fv = info.get( fn );
+            if (fv != null && ! "".equals(fv)) { // 需规避误把空值存成了空串
+            if (fv instanceof Object [] ) {
                 maps.get(fn).addAll(Arrays.asList((Object[]) fv));
             } else
             if (fv instanceof Collection) {

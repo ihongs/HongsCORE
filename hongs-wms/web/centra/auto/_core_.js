@@ -299,7 +299,7 @@ HsStat.prototype = {
 
                 statbox.find(".checkbox").each(function() {
                     if ($(this).find(":checked"  ).size() === 0 ) {
-                        statbox.find(".checkall2").prop("checked", true);
+                        $(this).find(".checkall2").prop("checked", true);
                     }
                 });
             }
@@ -346,7 +346,7 @@ HsStat.prototype = {
 
                 statbox.find(".checkbox").each(function() {
                     if ($(this).find(":checked"  ).size() === 0 ) {
-                        statbox.find(".checkall2").prop("checked", true);
+                        $(this).find(".checkall2").prop("checked", true);
                     }
                 });
             }

@@ -16,11 +16,11 @@
                     <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
-                    <th data-fn="state" data-ft="stat" style="width:4em;">状态</th>
+                    <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
                     <th data-fn="" data-ft="_admin" style="width: 6.5em;">
                         操作
                         <div class="invisible">
-                            <a href="javascript:;" class="review">详情</a>
+                            <a href="javascript:;" class="review">快照</a>
                             <span style="margin-left:1em;"></span>
                             <a href="javascript:;" class="revert">恢复</a>
                         </div>
@@ -53,16 +53,17 @@
 
 <script type="text/javascript">
     (function($) {
+        var states  = {'0': "删除", '1': "更新", '2': "新增", '3': "恢复"};
         var context = $('#<%=_pageId%>').removeAttr("id");
         var sendbox = context.find(".sendbox");
         var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.AB_KEY%>=_text,_fork&<%=Cnst.RB_KEY%>=-data,user.*&<%=Cnst.OB_KEY%>=-ctime",
-            _fill_stat: function( td , stat) {
-                td.parent().data(this._info);
-                return ! stat || stat == '0' ? "删除" : "正常";
-            },
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
             _fill_time: function( td , time) {
                 return ! time || time == '0' ? '-' : this._fill__htime(td, time * 1000);
+            },
+            _fill_stat: function( td , stat) {
+                td.parent().data(this._info);
+                return  states  [stat + '' ];
             }
         });
 

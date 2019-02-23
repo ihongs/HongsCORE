@@ -293,6 +293,7 @@ public class Data extends SearchEntity {
         }
 
         // 获取旧的数据
+        int st = 1;
         Map dd = get( id );
         if (! dd.isEmpty()) {
             if (table != null) {
@@ -317,7 +318,11 @@ public class Data extends SearchEntity {
                         throw new HongsException(0x1100, "等会儿, 不要急");
                     }
                     dd = (Map) io.github.ihongs.util.Data.toObject(od.get("data").toString());
+                } else {
+                    st = 2; // 新增
                 }
+            } else {
+                    st = 2; // 新增
             }
         }
 
@@ -355,6 +360,7 @@ public class Data extends SearchEntity {
             Map nd = new HashMap();
             nd.put("ctime", ctime);
             nd.put("etime",   0  );
+            nd.put("state",   st );
             nd.put(/***/"id", id );
             nd.put("form_id", fid);
             nd.put("user_id", uid);
@@ -497,6 +503,7 @@ public class Data extends SearchEntity {
         dd.put("ctime", ctime);
         dd.put("rtime", rtime);
         dd.put("etime",   0  );
+        dd.put("state",   3  );
         dd.put("form_id", fid);
         dd.put("user_id", uid);
         dd.put("memo" , rd.get("memo"));

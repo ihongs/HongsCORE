@@ -123,15 +123,15 @@ fieldset>.dropdown-menu {
     margin-bottom: 0;
 }
 
- p.label-list ,
-ul.label-list ,
-ol.label-list {
+ p.list-label ,
+ul.list-label ,
+ol.list-label {
     padding: 0;
     margin: -0.3em 0;
     line-height: 2em;
     list-style: none;
 }
-.label-list .label {
+.list-label .label {
     font-size : 100%;
     font-weight: normal;
     margin-right: 0.5em;

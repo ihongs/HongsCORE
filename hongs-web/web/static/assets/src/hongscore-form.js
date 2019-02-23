@@ -453,11 +453,11 @@ HsForm.prototype = {
         }
 
         // 枚举,列表,选项,标签
-        if (inp.is("ul,ol,.label-list")) {
+        if (inp.is("ul,ol,.list-label")) {
             var k = inp.attr("data-vk") || 0;
             var t = inp.attr("data-tk") || 1;
             var a = inp.data("data")  ||  [];
-            var x = jQuery( inp.is("ul,ol") ? '<li></li>' : '<span></span>' );
+            var x = jQuery( inp.is("ul,ol") ? '<li></li>' : '<label></label>' );
             var m = { };
             var i, c, e;
 

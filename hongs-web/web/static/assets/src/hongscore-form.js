@@ -641,15 +641,16 @@ HsForm.prototype = {
 
     valiInit : function() {
         var that = this;
-        this.formBox.prop( "novalidate" , true);
-        this.formBox.on("reset" , function(evt) {
-            if (evt.isDefaultPrevented()) {
+        this.formBox.attr("novalidate", "novalidate");
+//      this.formBox.prop("novalidate", true); // 无效
+        this.formBox.on("reset" , function(e) {
+            if (e.isDefaultPrevented()) {
                 return;
             }
             return that.verified( );
         });
-        this.formBox.on("submit", function(evt) {
-            if (evt.isDefaultPrevented()) {
+        this.formBox.on("submit", function(e) {
+            if (e.isDefaultPrevented()) {
                 return;
             }
             return that.verifies( );

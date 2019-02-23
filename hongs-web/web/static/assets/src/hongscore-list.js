@@ -277,33 +277,38 @@ HsList.prototype = {
         }
     },
     fillPage : function(page) {
-        switch (page.state) {
-            case  2 :
-            case "2":
-                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                        + (this._above_err || hsGetLang('list.above')) + '</div>');
-                this.listBox.hide( );
-                var that = this;
-                hsSetSeria(this._data, this.pageKey);
-                setTimeout(function() {
-                    that.load();
-                }, 5000);
-                return;
-            case  1 :
-            case "1":
-                this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
-                        + (this._empty_err || hsGetLang('list.empty')) + '</div>');
-                this.listBox.hide( );
-                return;
-            default :
-                this.pageBox.empty();
-                this.listBox.show( );
+        /**
+         * 用字符串零是因为
+         * "0" != undefined
+         * "0" == 0
+         */
+        if (page[this._st_key] != "0") {
+            this.pageBox.empty();
+            this.listBox.show( );
+        } else
+        if (page[this._rc_key] == "0"
+        ||  page[this._pc_key] == "0") {
+            this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                    + (this._empty_err || hsGetLang('list.empty')) + '</div>');
+            this.listBox.hide( );
+            return;
+        } else
+        {
+            this.pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                    + (this._above_err || hsGetLang('list.above')) + '</div>');
+            this.listBox.hide( );
+            var that = this;
+            hsSetSeria(this._data, this.pageKey);
+            setTimeout(function( ) {
+                that.load();
+            }, 5000);
+            return;
         }
 
         var i, p, t, pmin, pmax, that = this;
         p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
         t = page[this._pc_key] ? parseInt(page[this._pc_key]) : 1;
-        pmin = p - Math.floor( this.pagsNum / 2 );
+        pmin = p - Math.floor(this.pagsNum / 2);
         if (pmin < 1) pmin = 1;
         pmax = pmin + this.pagsNum - 1;
         if (pmax > t) pmax = t;
@@ -315,7 +320,7 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (page.state < 0) {
+        if (page[this._st_key] == "2") {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));
@@ -338,7 +343,7 @@ HsList.prototype = {
         }
 
         if (this.pagsNum < t) {
-            qbox.before(jQuery('<input class="page-input pull-right form-control" style="width:'+(2.5+(t+'').length)+'em" type="number" value="'+ p +'"/>'));
+            qbox.before(jQuery('<input type="number" value="'+p+'" class="page-input pull-right form-control"/>'));
         }
 
         var tm = null;
@@ -385,6 +390,7 @@ HsList.prototype = {
             }
         });
     },
+    _st_key : "state",
     _rc_key : "count",
     _pc_key : "pages",
 
@@ -752,16 +758,15 @@ function hsListFillLess(page) {
  * @return {undefined}
  */
 function hsListFillNext(page) {
-    switch (page.state) {
-        case  1 :
-        case "1":
-            this.warn(this._empty_err || hsGetLang('list.empty'), "warning");
-            return;
-        case  2 :
-        case "2":
-            this.warn(this._above_err || hsGetLang('list.above'), "warning");
-            return;
-    }
+    if (page[this._st_key] == "0") {
+    if (page[this._rc_key] == "0"
+    ||  page[this._pc_key] == "0") {
+        this.warn(this._empty_err || hsGetLang('list.empty'), "warning");
+        return;
+    } else {
+        this.warn(this._above_err || hsGetLang('list.above'), "warning");
+        return;
+    }}
 
     var r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : 20;
     var p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1 ;
@@ -794,10 +799,10 @@ function hsListFillNext(page) {
     if (pag.size() === 0) {
         pag = this.pageBox.find(".page-curr"  );
     }
-    if (page.state != -1) {
-        pag.text(p+"/"+t);
+    if (page[this._st_key] == "2") {
+        pag.text(   p   );
     } else {
-        pag.text(p);
+        pag.text(p+"/"+t);
     }
     if (p > 1) {
         pag = btn.closest(".page-prev").removeClass("disabled");

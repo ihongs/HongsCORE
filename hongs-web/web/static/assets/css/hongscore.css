@@ -123,23 +123,28 @@ fieldset>.dropdown-menu {
     margin-top: -10px;
 }
 
- p.repeated ,
+.radio     label ,
+.checkbox  label {
+    margin-right: 1.0em;
+}
+.labelbox .label ,
+.repeated .label {
+    margin-right: 0.5em;
+}
+
+.labelbox .label ,
+.repeated .label {
+    font-size  : 100%;
+    font-weight: normal;
+    display: inline-block;
+}
 ul.repeated ,
-ol.repeated {
+ol.repeated ,
+ p.repeated {
     padding: 0;
     margin: -0.3em 0;
     line-height: 2em;
     list-style: none;
-}
-.repeated .label {
-    display: inline-block;
-    font-size : 100%;
-    font-weight: normal;
-    margin-right: 0.5em;
-}
-.checkbox  label ,
-.radio     label {
-    margin-right: 1.0em;
 }
 
 /** 可后退的导航条 **/
@@ -324,6 +329,10 @@ div.bootstrap-tagsinput.form-control {
 .pagebox .page-count {
     margin : 0;
     padding: 9px 13px;
+}
+.pagebox .page-input {
+    width: 5em;
+    padding-right: 0 ;
 }
 
 .listbox ._admin,

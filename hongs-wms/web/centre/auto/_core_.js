@@ -57,16 +57,6 @@ S$.delete = function(req) {
 };
 
 /**
- * 列表填充分页按钮
- */
-function hsListFillMore(page) {
-    HsList.prototype.fillPage.call(this, page);
-    this.pageBox.find(".page-input").remove( );
-    this.pageBox.find(".page-count").remove( );
-    this.pageBox.find(".pagination").removeClass("pull-left");
-}
-
-/**
  * 依据权限开放编辑
  */
 function hsListShowEdit(d, v) {

@@ -18,7 +18,8 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
             <param name="srchable">name,note</param>
             <assoc type="BLS_TO"
                    name="unit"
-                   foreignKey="unit_id">
+                   foreignKey="unit_id"
+                   tableName="matrix.unit">
             </assoc>
             <param name="user.table">master.user</param>
             <param name="role.table">master.user_role</param>
@@ -27,10 +28,12 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                tableName="a_matrix_data"
                primaryKey="id">
             <param name="srchable">name,memo</param>
-            <param name="check.value">false</param>
+            <param name="check.value">0</param><!-- 不检查字段值 -->
+            <param name="field.state">-</param><!-- 正常查阅删除 -->
             <assoc type="BLS_TO"
                    name="form"
-                   foreignKey="form_id">
+                   foreignKey="form_id"
+                   tableName="matrix.form">
                 <param name="fields">id,name</param>
             </assoc>
             <assoc type="BLS_TO"

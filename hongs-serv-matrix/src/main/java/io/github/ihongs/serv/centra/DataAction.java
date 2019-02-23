@@ -103,8 +103,7 @@ public class DataAction extends SearchAction {
         Map     rd = helper.getRequestData( );
         rd.remove("user_id");
         rd.put   ("form_id" , sr.getFormId());
-        Map     sd = mo.search(rd, mo.fetchCase()
-            .setOption ("INCLUDE_REMOVED", true));
+        Map     sd = mo.search(rd);
 
         // 详情数据转换
         if (sd.containsKey("info")) {

@@ -20,7 +20,7 @@
                     <th data-fn="" data-ft="_admin" style="width: 6.5em;">
                         操作
                         <div class="invisible">
-                            <a href="javascript:;" class="review">快照</a>
+                            <a href="javascript:;" class="review">查看</a>
                             <span style="margin-left:1em;"></span>
                             <a href="javascript:;" class="revert">恢复</a>
                         </div>

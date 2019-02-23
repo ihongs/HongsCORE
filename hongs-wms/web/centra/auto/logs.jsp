@@ -17,7 +17,7 @@
                 <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
             </div>
         </div>
-        <button type="submit" class="btn btn-default">查询</button>
+        <button type="submit" class="btn btn-sm btn-default">查询</button>
     </form>
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">

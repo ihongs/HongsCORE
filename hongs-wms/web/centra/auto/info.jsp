@@ -147,7 +147,7 @@
                 <%} else if ("url".equals(type)) {%>
                     <div class="form-control-static"><a data-fn="<%=name%>" data-ft="<%=kind%>" class="a-<%=type%>" target="_blank"></a></div>
                 <%} else if (name.endsWith(".")) {%>
-                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="label-list" data-item-class="label-info label"></p></div>
+                    <div class="form-control-static"><p data-fn="<%=name%>" data-ft="<%=kind%>" class="list-label" data-item-class="label label-default"></p></div>
                 <%} else {%>
                     <div class="form-control-static" data-fn="<%=name%>" data-ft="<%=kind%>"></div>
                 <%} /*End If */%>

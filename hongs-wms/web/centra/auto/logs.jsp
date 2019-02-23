@@ -6,18 +6,18 @@
 %>
 <h2><%=_locale.translate("fore.record.title", _title)%></h2>
 <div id="<%=_pageId%>" class="logs-list">
-    <form class="findbox form-inline">
-        <div class="form-group form-group-sm" style="margin-right:0.5em;">
+    <form class="findbox form-inline text-center">
+        <div class="form-group" style="margin-right:0.5em;">
             <input type="search" name="wd" class="form-control" placeholder="名称、备注">
         </div>
-        <div class="form-group form-group-sm" style="margin-right:0.5em;">
+        <div class="form-group" style="margin-right:0.5em;">
             <div class="input-group">
                 <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
-                <div class="input-group-addon">~</div>
+                <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
                 <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
             </div>
         </div>
-        <button type="submit" class="btn btn-sm btn-default">查询</button>
+        <button type="submit" class="btn btn-default">查询</button>
     </form>
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">

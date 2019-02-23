@@ -99,6 +99,17 @@ input[type="time"].form-control {
 }
 }
 
+.center-block {
+    float  : none;
+}
+.help-block:empty {
+    display: none;
+}
+.help-block.form-control-static {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
 .navbar-default
 .navbar-toggle ,
 .navbar-toggle {
@@ -112,32 +123,20 @@ fieldset>.dropdown-menu {
     margin-top: -10px;
 }
 
-.center-block {
-    float  : none;
-}
-.help-block:empty {
-    display: none;
-}
-.help-block.form-control-static {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
- p.list-label ,
-ul.list-label ,
-ol.list-label {
+ p.repeated ,
+ul.repeated ,
+ol.repeated {
     padding: 0;
     margin: -0.3em 0;
     line-height: 2em;
     list-style: none;
 }
-.list-label .label {
+.repeated .label {
+    display: inline-block;
     font-size : 100%;
     font-weight: normal;
     margin-right: 0.5em;
-    display: inline-block;
 }
-
 .checkbox  label ,
 .radio     label {
     margin-right: 1.0em;

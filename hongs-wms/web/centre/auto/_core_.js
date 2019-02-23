@@ -61,6 +61,7 @@ S$.delete = function(req) {
  */
 function hsListFillMore(page) {
     HsList.prototype.fillPage.call(this, page);
+    this.pageBox.find(".page-input").remove( );
     this.pageBox.find(".page-count").remove( );
     this.pageBox.find(".pagination").removeClass("pull-left");
 }

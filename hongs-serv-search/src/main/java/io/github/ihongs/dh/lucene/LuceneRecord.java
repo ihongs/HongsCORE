@@ -500,17 +500,18 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         int  st   ;
 
         if (rc == 0) {
-            st =  1;
-        } else
-//      if (rc <  minRn) {
-//          st =  2;
-//      } else
-        if (rc <  totRn) {
             st =  0;
         } else
+        if (rc <  minRn) {
+            st =  0;
+        } else
+        if (rc <  totRn) {
+            st =  1;
+        } else
         {
-            st = -1;
+            st =  2;
             rc -= 1;
+            pc -= 1;
         }
 
         Map  resp = new HashMap();
@@ -518,9 +519,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         page.put(Cnst.RN_KEY, rn);
         page.put(Cnst.GN_KEY, gn);
         page.put(Cnst.PN_KEY, pn);
+        page.put("state", st );
         page.put("count", rc );
         page.put("pages", pc );
-        page.put("state", st );
         resp.put("page", page);
 
         return resp;
@@ -545,17 +546,18 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         int  st   ;
 
         if (rc == 0) {
-            st =  1;
-        } else
-        if (rc <  minRn) {
-            st =  2;
-        } else
-        if (rc < totRn) {
             st =  0;
         } else
+        if (rc <  minRn) {
+            st =  0;
+        } else
+        if (rc < totRn) {
+            st =  1;
+        } else
         {
-            st = -1;
+            st =  2;
             rc -= 1;
+            pc -= 1;
         }
 
         // 提取分页片段
@@ -570,9 +572,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         page.put(Cnst.RN_KEY, rn);
         page.put(Cnst.GN_KEY, gn);
         page.put(Cnst.PN_KEY, pn);
+        page.put("state", st );
         page.put("count", rc );
         page.put("pages", pc );
-        page.put("state", st );
         resp.put("page", page);
         resp.put("list", list);
 

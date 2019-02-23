@@ -136,15 +136,15 @@ public final class FetchPage
     List list = this.gotList();
     if (!list.isEmpty())
     {
-      this.info.put("state",0); // 没有异常
+      this.info.put("state",1); // 没有异常
     } else
     if ( this.page != 1)
     {
-      this.info.put("state",2); // 页码超出
+      this.info.put("state",0); // 页码超出
     }
     else
     {
-      this.info.put("state",1); // 列表为空
+      this.info.put("state",0); // 列表为空
       this.info.put("count",0);
       this.info.put("pages",0);
     }
@@ -212,10 +212,11 @@ public final class FetchPage
        * 反之为精确数量
        */
       if (limit == 0 || limit != rc) {
-          this.info.put("state",  0);
+          this.info.put("state", 1 );
       } else {
-          this.info.put("state", -1);
-          rc = rc -1;
+          this.info.put("state", 2 );
+          rc -= 1;
+          pc -= 1;
       }
 
       this.info.put("count", rc);

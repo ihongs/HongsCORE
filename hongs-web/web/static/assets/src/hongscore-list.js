@@ -315,8 +315,8 @@ HsList.prototype = {
         pmin = pmax - this.pagsNum + 1;
         if (pmin < 1) pmin = 1;
 
-        var pbox = jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
-        var qbox = jQuery('<em class="page-count pull-right"></em>').appendTo(this.pageBox);
+        var pbox = jQuery('<ul class="pagination pull-left"></ul>').appendTo(this.pageBox);
+        var qbox = jQuery('<em class="page-text pull-right"></em>').appendTo(this.pageBox);
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
@@ -324,6 +324,9 @@ HsList.prototype = {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));
+        }
+        if (t >  this.pagsNum) {
+            qbox.append(jQuery('<a href="javascript:;" class="glyphicon glyphicon-bookmark"></a>'));
         }
 
         if (1 < p) {
@@ -340,10 +343,6 @@ HsList.prototype = {
             btns.append(jQuery('<li class="page-next"><a href="javascript:;" data-pn="'+(p+1)+'" title="'+hsGetLang("list.next.pagi")+'">&raquo;</a></li>'));
         } else {
             btns.append(jQuery('<li class="page-next disabled"><a href="javascript:;" title="'+hsGetLang("list.next.page")+'">&raquo;</a></li>'));
-        }
-
-        if (this.pagsNum < t) {
-            qbox.before(jQuery('<input type="number" value="'+p+'" class="page-input pull-right form-control"/>'));
         }
 
         var tm = null;
@@ -378,16 +377,19 @@ HsList.prototype = {
             go(t);
             ev.preventDefault();
         });
-        this.pageBox.find(".page-input" ).on("keydown" , function(ev) {
-            if (ev.which == 13) {
-                jQuery(this).prop("disabled", true);
-                go(jQuery(this).val());
+        this.pageBox.find(".page-text a").on("click", function(ev) {
+            var t ;
+            while (true) {
+                t = prompt(hsGetLang("list.page.goto"), p);
+                t = parseInt(n);
+                if (! isNaN (t)) {
+                    break ;
+                } else if (! t ) {
+                    return;
+                }
             }
-        });
-        this.pageBox.find(".page-input" ).on( "change" , function(  ) {
-            if ( ! jQuery(this).prop ("disabled") ) {
-                go(jQuery(this).val());
-            }
+            go(t);
+            ev.preventDefault();
         });
     },
     _st_key : "state",

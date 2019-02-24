@@ -55,6 +55,10 @@ S$.delete = function(req) {
     var url = S$.src() + "/delete.act";
     return S$.send(url, req);
 };
+S$.browse = function(req) {
+    var mod = S$();
+    mod.load(undefined, hsSerialMix(mod._data , req));
+};
 
 /**
  * 筛选列表填充数据
@@ -107,78 +111,34 @@ function hsListPrepFilt(x, v, n) {
 }
 
 /**
- * 列表填充打开链接
+ * 列表带备注的发送
  */
-function hsListFillOpen(x, v, n, t) {
-    if (!v || !v.length) {
-        return ;
-    }
-    if (!$.isArray( v )) {
-        v = [v];
-    }
-    x.addClass("dont-check"); // 点击链接不要选中行
-
-    switch  (t) {
-        case "email": n = "glyphicon glyphicon-envelope"; break;
-        case "image": n = "glyphicon glyphicon-picture" ; break;
-        case "video": n = "glyphicon glyphicon-play"    ; break;
-        case "audio": n = "glyphicon glyphicon-play"    ; break;
-        case "file" : n = "glyphicon glyphicon-file"    ; break;
-        default     : n = "glyphicon glyphicon-link"    ; break;
-    }
-
-    if (v.length == 1) {
-        var a = $('<a target="_blank" '+'><span class="'+n+'"></span></a>');
-        a.attr("href", t === "email" ? "mailto:" + v[0] : v[0]);
-        a.appendTo(x);
-    } else {
-        var a = $('<a href="javascript:;"><span class="'+n+'"></span></a>');
-        var m = $('<div class="modal fade" role="dialog" tabindex="-1">'
-                + '<div class="modal-dialog modal-sm " role="document">'
-                + '<div class="modal-content">'
-                + '<div class="modal-header ">'
-                + '<button type="button" class="close" data-dismiss="modal">'
-                + '<span >&times;</span></button>'
-                + '<h4  class="modal-title"></h4>'
-                + '</div>'
-                + '<div class="modal-body">'
-                + '</div></div></div></div>');
-        var u = $('<ul></ul>');
-        var l = $('<li></li>');
-        a.appendTo(x);
-        m.appendTo(x);
-        for(var i = 0; i < v.length; i ++) {
-            var txt, url;
-            if (t === "email") {
-                url = "mailto:"+ v[i];
-                txt = v[i];
-            } else {
-                url = v[i];
-                txt = v[i].replace(/[?#].*/, '')
-                          .replace( /.*\// , '');
-                txt = decodeURIComponent ( txt );
-            }
-            var b = $('<a target="_blank"></a>');
-            b.attr("href", url).text(txt);
-            u.append(l.clone().append(b));
+function hsSendWithMemo(btn, msg, url, data) {
+    var that = this;
+    var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="请输入操作备注(选填)"/>');
+    var func = function() {
+    var dat1 = jQuery.extend({}, hsSerialDat(data), {memo:memo.val()});
+    var dat2 = jQuery.extend({}, hsSerialDat(url ), hsSerialDat(data));
+    that.ajax({
+        "url"       : url ,
+        "data"      : dat1,
+        "type"      : "POST",
+        "dataType"  : "json",
+        "funcName"  : "send",
+        "cache"     : false,
+        "context"   : that,
+        "trigger"   : btn ,
+        "success"   : function(rst) {
+            this.sendBack(btn, rst, dat2);
         }
-        u.appendTo(m.find(".modal-body"));
-        u.css("word-wrap", "break-word" );
-        m.css("text-align", /**/ "left" );
-        m.find("h4").text("单击链接打开:");
-        a.click(function( ) {
-            m.modal("show");
-        });
+    });
+    } ;
+    if (!msg) {
+        func( );
+    } else {
+        this.warn(msg, "warning", func, null)
+            .find(  ".notice"  ).append(memo);
     }
-}
-
-/**
- * 列表填充链接包装
- */
-function hsListWrapOpen(t) {
-    return function (x, v, n) {
-         hsListFillOpen(x, v, n, t);
-    };
 }
 
 /**

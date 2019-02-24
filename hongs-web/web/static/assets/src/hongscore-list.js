@@ -392,14 +392,14 @@ HsList.prototype = {
             ev.preventDefault();
         });
     },
-    _st_key : "state",
-    _rc_key : "count",
-    _pc_key : "pages",
+    _st_key  : "state" ,
+    _rc_key  : "count" ,
+    _pc_key  : "pages" ,
 
     send     : function(btn, msg, url, data) {
         var that = this;
         var func = function() {
-        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
+        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data));
         that.ajax({
             "url"       : url ,
             "data"      : data,
@@ -455,7 +455,7 @@ HsList.prototype = {
         }
 
         var that = this;
-        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data||{}));
+        var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data));
         if (box) {
             box.hsOpen(url, data, function() {
                that.openBack(btn, jQuery( this ), dat2 );
@@ -655,6 +655,66 @@ HsList.prototype = {
         }
     }
 };
+
+/**
+ * 列表填充打开链接
+ * 当多个时显示列表
+ */
+function hsListFillOpen(x, v, t) {
+    if (!v || !v.length) {
+        return ;
+    }
+    if (!$.isArray( v )) {
+        v = [v];
+    }
+    x.addClass("dont-check"); // 点击链接不要选中行
+
+    var n ;
+    switch  (t) {
+        case "email": n = "glyphicon glyphicon-envelope"; break;
+        case "image": n = "glyphicon glyphicon-picture" ; break;
+        case "video": n = "glyphicon glyphicon-play"    ; break;
+        case "audio": n = "glyphicon glyphicon-play"    ; break;
+        case "file" : n = "glyphicon glyphicon-file"    ; break;
+        default     : n = "glyphicon glyphicon-link"    ; break;
+    }
+
+    if (v.length == 1) {
+        var a = $('<a target="_blank" '+'><span class="'+n+'"></span></a>');
+        a.attr("href", t === "email" ? "mailto:" + v[0] : v[0]);
+        a.appendTo(x);
+    } else {
+        var a = $('<a href="javascript:;"><span class="'+n+'"></span></a>');
+        var b = $('<b class="'+ n +'" style="margin-right:0.5em;"></span>');
+        var c = $('<a target="_blank" style="color:#eee"></a>');
+        var l = $('<li class="label label-info "></li>');
+        var u = $('<ul class="labelbox repeated"></ul>');
+        a.appendTo(x);
+        a.click(function() {
+            var m = $.hsView({"title": "点击可打开..."});
+            m.find(".modal-body"  ).append(u);
+            m.find(".modal-footer").remove( );
+        });
+        for(var i = 0; i < v.length; i ++) {
+            var txt, url;
+            if (t === "email") {
+                url = "mailto:"+ v[i];
+                txt = v[i];
+            } else {
+                url = v[i];
+                txt = v[i].replace(/[?#].*/, '')
+                          .replace( /.*\// , '');
+                txt = decodeURIComponent ( txt );
+            }
+            u.append(l.clone().append(b.clone()).append(c.clone().attr("href", url).text(txt)));
+        }
+    }
+}
+function hsListWrapOpen(t) {
+    return function (x, v) {
+         hsListFillOpen(x, v, t);
+    };
+}
 
 /**
  * 这是比 fillList 更简单的卡片式展现方式

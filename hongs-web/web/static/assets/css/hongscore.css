@@ -326,14 +326,11 @@ div.bootstrap-tagsinput.form-control {
 .pagebox .pagination {
     margin : 0;
 }
-.pagebox .page-count {
-    margin : 0;
-    padding: 9px 13px;
+.page-text a {
+    margin-left: 10px;
 }
-.pagebox .page-input {
-    width: 5em;
-    padding-right: 0 ;
-    text-align: right;
+.page-text {
+    line-height: 36px;
 }
 
 .listbox ._admin,

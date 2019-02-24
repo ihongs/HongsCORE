@@ -333,6 +333,7 @@ div.bootstrap-tagsinput.form-control {
 .pagebox .page-input {
     width: 5em;
     padding-right: 0 ;
+    text-align: right;
 }
 
 .listbox ._admin,

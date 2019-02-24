@@ -100,7 +100,7 @@ public class DataAction extends SearchAction {
         Data    sr = (Data) getEntity(helper);
         Map     rd = helper.getRequestData( );
         rd.put ( "form_id" , sr.getFormId() );
-        rd.put ( "user_id" , rd.get("user") ); // user_id 总是当前用户, 需另取个名字
+        rd.put ( "user_id" , rd.get("user") ); // user_id 总是当前用户, 筛选需绕过去
         Map     sd = sr.getModel().search(rd);
 
         // 详情数据转换

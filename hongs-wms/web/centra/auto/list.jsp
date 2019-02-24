@@ -292,8 +292,7 @@
             </tbody>
         </table>
     </div></div>
-    <div class="pagebox clearfix">
-    </div>
+    <div class="pagebox clearfix"></div>
 </div>
 <script type="text/javascript">
 (function($) {

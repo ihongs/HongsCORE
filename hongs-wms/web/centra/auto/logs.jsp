@@ -19,7 +19,8 @@
         </div>
         <button type="submit" class="btn btn-default">查询</button>
     </form>
-    <div class="listbox table-responsive">
+    <div class="table-responsive-revised">
+    <div class="table-responsive listbox">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
@@ -42,8 +43,8 @@
             </thead>
             <tbody></tbody>
         </table>
-    </div>
-    <div class="pagebox"></div>
+    </div></div>
+    <div class="pagebox clearfix"></div>
     <!-- 恢复确认及备注弹框 -->
     <div class="sendbox modal fade" role="dialog">
         <div class="modal-dialog" role="document">

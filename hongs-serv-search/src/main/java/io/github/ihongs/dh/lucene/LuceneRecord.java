@@ -489,10 +489,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         int totRn = rn * maxPn+1 ;
         int minRn = rn * (pn - 1);
 //      int maxRn = rn + minRn   ;
+
         // 数量太少的话没必要估算
-        if (totRn < gn * rn * 10 + 1) {
-            totRn = gn * rn * 10 + 1;
-        }
+        int talRn = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
+        if (totRn < talRn) totRn = 1 + talRn / rn * rn ;
 
         Loop roll = search( rd, minRn , totRn - minRn );
         int  rc   = roll . size();
@@ -535,10 +535,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         int totRn = rn * maxPn+1 ;
         int minRn = rn * (pn - 1);
         int maxRn = rn + minRn   ;
+
         // 数量太少的话没必要估算
-        if (totRn < gn * rn * 10 + 1) {
-            totRn = gn * rn * 10 + 1;
-        }
+        int talRn = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
+        if (totRn < talRn) totRn = 1 + talRn / rn * rn ;
 
         Loop roll = search( rd, minRn , totRn - minRn );
         int  rc   = roll . size();

@@ -6,10 +6,12 @@
 %>
 <h2><%=_locale.translate("fore.record.title", _title)%></h2>
 <div id="<%=_pageId%>" class="logs-list">
-    <form class="findbox form-inline text-center">
+    <form class="findbox form-inline">
+        <!--
         <div class="form-group" style="margin-right:0.5em;">
             <input type="search" name="wd" class="form-control" placeholder="名称、备注">
         </div>
+        //-->
         <div class="form-group" style="margin-right:0.5em;">
             <div class="input-group">
                 <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;width:11em;">
@@ -24,13 +26,13 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
+                    <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
+                    <th data-fn="user"  data-ft="user" style="width:8em;">用户</th>
+                    <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
                     <th data-fn="name">名称</th>
                     <th data-fn="memo">备注</th>
-                    <th data-fn="user.name" style="width:8em;">操作人员</th>
-                    <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
-                    <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
                     <th data-fn="_" data-ft="_admin" style="width:4.5em;">操作
                         <div class="invisible">
                             <a href="javascript:;" class="review"><span class="glyphicon glyphicon-eye-open" title="查看快照"></span></a>
@@ -66,16 +68,20 @@
 
 <script type="text/javascript">
     (function($) {
+        var statcol = {'0':"text-danger", '1':"text-default", '2':"text-success", '3':"text-warning"};
         var statmap = {'0':"删除", '1':"更新", '2':"新增", '3':"恢复"};
         var context = $('#<%=_pageId%>').removeAttr("id");
         var sendbox = context.find(".sendbox");
         var listobj = context.hsList({
             loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
             _fill_time: function( td , time) {
+                td.parent().data(this._info).addClass(statcol[ this._info.state + '' ]);
                 return ! time || time == '0' ? '-' : this._fill__htime(td, time * 1000);
             },
+            _fill_user: function( td , user) {
+                return   user  . name || '-';
+            },
             _fill_stat: function( td , stat) {
-                td.parent().data(this._info);
                 return  statmap [ '' + stat];
             }
         });

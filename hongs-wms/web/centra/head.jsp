@@ -31,7 +31,7 @@
                 continue;
             }
             if (hrel.equals("LINE" )) {
-                menu.append("<li class=\"divider\"></li>");
+                menu.append("<li class=\"divider\"></li>\r\n");
                 continue;
             }
 
@@ -61,13 +61,15 @@
                 menu.append("<li class=\"").append(actc).append("\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
-                    .append(text)
+                    .append( text )
                     .append("<span class=\"caret\"></span>")
-                    .append("</a>" )
-                    .append("<ul>" )
-                    .append(subm)
-                    .append("</ul>")
-                    .append("</li>");
+                    .append("</a>")
+                    .append("\r\n")
+                    .append("<ul>")
+                    .append("\r\n")
+                    .append( subm )
+                    .append("</ul>\r\n")
+                    .append("</li>\r\n");
             } else
             if (!href.startsWith("common/menu.")) {
                 href = Core.BASE_HREF +"/"+ href;
@@ -75,9 +77,9 @@
                 menu.append("<li class=\"").append(actc).append("\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
-                    .append(text)
-                    .append("</a>" )
-                    .append("</li>");
+                    .append( text )
+                    .append("</a>")
+                    .append("</li>\r\n");
             }
         }
 
@@ -122,7 +124,7 @@
 
 <div class="menubox clearfix">
     <ul id="main-menubar">
-        <%=makeMenu(menu, acti)%>
+<%=makeMenu(menu , acti)%>
     </ul>
 </div>
 

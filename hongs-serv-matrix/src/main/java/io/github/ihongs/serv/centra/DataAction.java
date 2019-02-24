@@ -99,11 +99,9 @@ public class DataAction extends SearchAction {
         String mod = runner.getModule();
 
         Data    sr = (Data) getEntity(helper);
-        Model   mo = sr.getModel();
         Map     rd = helper.getRequestData( );
-        rd.remove("user_id");
-        rd.put   ("form_id" , sr.getFormId());
-        Map     sd = mo.search(rd);
+        rd.put ( "form_id" , sr.getFormId() );
+        Map     sd = sr.getModel().search(rd);
 
         // 详情数据转换
         if (sd.containsKey("info")) {

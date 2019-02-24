@@ -147,6 +147,17 @@ ol.repeated ,
     list-style: none;
 }
 
+.table tbody tr.active td ,
+.table tbody tr.active th {
+    color: #444444;
+    background: #e8e8e8;
+}
+.table tbody tr.active:hover td ,
+.table tbody tr.active:hover th {
+    color: #000000;
+    background: #e0e0e0;
+}
+
 /** 可后退的导航条 **/
 
 .breadcrumb.laps {

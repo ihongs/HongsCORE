@@ -378,13 +378,13 @@ HsList.prototype = {
             ev.preventDefault();
         });
         this.pageBox.find(".page-text a").on("click", function(ev) {
-            var t ;
+            var t , n;
             while (true) {
-                t = prompt(hsGetLang("list.page.goto"), p);
+                n = prompt(hsGetLang("list.page.goto"), p);
                 t = parseInt(n);
                 if (! isNaN (t)) {
                     break ;
-                } else if (! t ) {
+                } else if (! n ) {
                     return;
                 }
             }
@@ -871,6 +871,7 @@ jQuery.fn.hsList = function(opts) {
         var siz = box.find(".checkone").length;
         var len = box.find(".checkone:checked").length;
         var ckd = siz && siz === len ? true : (len && len !== siz ? null : false);
+        $(this).closest( "tr" ).toggleClass( "active" , $(this).prop("checked") );
         box.find(".for-choose").prop("disabled", len !== 1);
         box.find(".for-checks").prop("disabled", len === 0);
         box.find(".checkall").prop("choosed", ckd);

@@ -12,9 +12,9 @@
         </div>
         <div class="form-group" style="margin-right:0.5em;">
             <div class="input-group">
-                <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;width:11em;">
                 <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
-                <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;width:11em;">
             </div>
         </div>
         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
@@ -26,17 +26,16 @@
                 <tr>
                     <th data-fn="name">名称</th>
                     <th data-fn="memo">备注</th>
-                    <th data-fn="user.name" style="width: 8.5em;">操作人员</th>
+                    <th data-fn="user.name" style="width:8em;">操作人员</th>
                     <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
                     <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
-                    <th data-fn="" data-ft="_admin" style="width: 6.5em;">
-                        操作
+                    <th data-fn="_" data-ft="_admin" style="width:4.5em;">操作
                         <div class="invisible">
-                            <a href="javascript:;" class="review">查看</a>
+                            <a href="javascript:;" class="review"><span class="glyphicon glyphicon-eye-open" title="查看快照"></span></a>
                             <span style="margin-left:1em;"></span>
-                            <a href="javascript:;" class="revert">恢复</a>
+                            <a href="javascript:;" class="revert"><span class="glyphicon glyphicon-refresh " title="恢复记录"></span></a>
                         </div>
                     </th>
                 </tr>
@@ -67,17 +66,22 @@
 
 <script type="text/javascript">
     (function($) {
-        var states  = {'0': "删除", '1': "更新", '2': "新增", '3': "恢复"};
+        var statmap = {'0':"删除", '1':"更新", '2':"新增", '3':"恢复"};
         var context = $('#<%=_pageId%>').removeAttr("id");
         var sendbox = context.find(".sendbox");
         var listobj = context.hsList({
             loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
             _fill_time: function( td , time) {
-                return ! time || time == '0' ? '-' : this._fill__htime(td, time * 1000);
+                if ( ! time || time == '0' ) {
+                    return '-' ;
+                }
+                time  *=  1000 ;
+                td.attr("title", this._fill__datetime(td, time));
+                return   /***/   this._fill__htime   (td, time) ;
             },
             _fill_stat: function( td , stat) {
                 td.parent().data(this._info);
-                return  states  [stat + '' ];
+                return  statmap [ '' + stat];
             }
         });
 

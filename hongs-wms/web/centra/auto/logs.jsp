@@ -72,12 +72,7 @@
         var listobj = context.hsList({
             loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
             _fill_time: function( td , time) {
-                if ( ! time || time == '0' ) {
-                    return '-' ;
-                }
-                time  *=  1000 ;
-                td.attr("title", this._fill__datetime(td, time));
-                return   /***/   this._fill__htime   (td, time) ;
+                return ! time || time == '0' ? '-' : this._fill__htime(td, time * 1000);
             },
             _fill_stat: function( td , stat) {
                 td.parent().data(this._info);

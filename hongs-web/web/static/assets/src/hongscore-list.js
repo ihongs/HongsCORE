@@ -579,8 +579,9 @@ HsList.prototype = {
 
     _fill__htime : function(td, v, n) {
         if (v === undefined) return v;
-        var d1  =  new Date ();
+        var d1  =  new  Date();
         var d2  =  hsPrsDate(v, hsGetLang("datetime.format"));
+        td.attr("title", this._fill__datetime (td, v, n));
         if (d1.getFullYear() == d2.getFullYear()
         &&  d1.getMonth() == d2.getMonth()
         &&  d1.getDate( ) == d2.getDate()) {
@@ -594,8 +595,9 @@ HsList.prototype = {
     },
     _fill__hdate : function(td, v, n) {
         if (v === undefined) return v;
-        var d1  =  new Date ();
+        var d1  =  new  Date();
         var d2  =  hsPrsDate(v, hsGetLang("date.format"));
+        td.attr("title", this._fill__datetime (td, v, n));
         if (d1.getFullYear() == d2.getFullYear()
         &&  d1.getMonth() == d2.getMonth()
         &&  d1.getDate( ) == d2.getDate()) {

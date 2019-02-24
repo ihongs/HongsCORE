@@ -332,7 +332,8 @@
               '.record', '@' ],
             [ '<%=_module%>/<%=_entity%>/lore.html',
               '.manual', '@' ]
-        ]
+        ],
+        send: hsSendWithMemo
     });
 
     <%if (!"select".equals(_action)) {%>

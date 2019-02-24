@@ -55,6 +55,10 @@ S$.delete = function(req) {
     var url = S$.src() + "/delete.act";
     return S$.send(url, req);
 };
+S$.browse = function(req) {
+    var mod = S$();
+    mod.load(undefined, hsSerialMix(mod._data , req));
+};
 
 /**
  * 依据权限开放编辑

@@ -267,7 +267,7 @@ div.bootstrap-tagsinput.form-control {
     margin-top: 0em;
 }
 .alert-body > p button {
-    margin: 0 0.5em;
+    margin-left: 1em ;
 }
 .alert-body > p.button {
     text-align: right;

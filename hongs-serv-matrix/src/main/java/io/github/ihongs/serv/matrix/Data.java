@@ -489,7 +489,7 @@ public class Data extends SearchEntity {
             throw new HongsException(0x1100, "找不到恢复起源");
         }
         if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
-            throw new HongsException(0x1100, "已经是最新记录");
+            throw new HongsException(0x1100, "这已是最终记录");
         }
         if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
             throw new HongsException(0x1100, "禁操作删除记录");

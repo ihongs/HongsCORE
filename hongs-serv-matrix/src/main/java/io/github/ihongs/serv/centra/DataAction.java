@@ -12,7 +12,6 @@ import io.github.ihongs.action.anno.CustomReplies;
 import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Select;
 import io.github.ihongs.action.anno.Verify;
-import io.github.ihongs.db.Model;
 import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.lucene.LuceneRecord.Loop;
 import io.github.ihongs.dh.search.SearchAction;

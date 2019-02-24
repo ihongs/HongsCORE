@@ -124,7 +124,7 @@
 
 <div class="menubox clearfix">
     <ul id="main-menubar">
-<%=makeMenu(menu , acti)%>
+        <%=makeMenu(menu , acti)%>
     </ul>
 </div>
 

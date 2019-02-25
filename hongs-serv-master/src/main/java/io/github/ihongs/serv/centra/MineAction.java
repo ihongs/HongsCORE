@@ -48,7 +48,7 @@ public class MineAction {
         // 验证原始密码
         String pw = (String) rd.get("password");
         String po = (String) rd.get("passolde");
-        if (pw != null && !"".equals(pw)) {
+        if (pw != null && ! "".equals(pw)) {
             Map xd = new HashMap();
             Map ed = new HashMap();
             xd.put("ok",false);
@@ -57,10 +57,13 @@ public class MineAction {
             if (po != null && !"".equals(po)) {
                 Map row = DB.getInstance("master").getTable ("user").fetchCase( )
                     .filter("id = ?", id)
-                    .select( "password" )
+                    .select("password , passcode")
                     .getOne( );
+                String ps = (String) row.get("password");
+                String pc = (String) row.get("passcode");
+                if (pc != null) po += pc ;
                 po = AuthKit.getCrypt(po);
-                if (! po.equals(row.get("password")) ) {
+                if (! po.equals(ps)) {
                     ed.put("passolde", "旧密码不正确");
                     ah.reply(xd);
                     return;

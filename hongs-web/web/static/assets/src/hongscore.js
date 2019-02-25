@@ -340,7 +340,7 @@ function hsSerialArr(obj) {
         case "serdic":
             hsForEach(obj, function(vxl, key) {
                 if (key.length) {
-                    key  = key.join('.');
+                    key  = key/***/[ 0 ]; // 一键多值但无层级
                     arr.push({name: key, value: vxl});
                 }
             });
@@ -348,7 +348,7 @@ function hsSerialArr(obj) {
         case "serdat":
             hsForEach(obj, function(vxl, key) {
                 if (key.length) {
-                    key  = key.join('.');
+                    key  = key.join('.'); // 需将多层键串起来
                     arr.push({name: key, value: vxl});
                 }
             });

@@ -137,7 +137,8 @@ function hsSendWithMemo(btn, msg, url, data) {
         func( );
     } else {
         this.warn(msg, "warning", func, null)
-            .find(  ".notice"  ).append(memo);
+            .find(/**/".notice").append(memo)
+            .trigger("shown.bs.modal");
     }
 }
 

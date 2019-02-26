@@ -6,6 +6,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.db.link.Loop;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
@@ -35,21 +36,20 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
+        if ( user == null ) user = Cnst.ADM_UID;
         long ct = Synt.declare(opts.get("time"), -1L);
         long dt = Core.ACTION_TIME .get(      );
         long di = (dt / 1000 );
         Data dr = Data.getInstance( conf,form );
-        if (user == null) {
-            user  = Cnst.ADM_UID;
-        }
+        Loop lp ;
 
         Map sd = new HashMap();
         sd.put("form_id",form);
         sd.put("user_id",user);
         sd.put("memo"   ,memo);
 
-        int  c = 0; // 操作总数
-        int  i = 0; // 变更计数
+        int  c  = 0; // 操作总数
+        int  i  = 0; // 变更计数
 
         /**
          * 对于时间参数
@@ -62,12 +62,11 @@ public class DataCmdlet {
         Set<String> ds = Synt.asSet (opts.get(""));
         FetchCase   fc = dr.getTable().fetchCase();
             fc.filter("form_id = ?", form);
-        if (ct >= 1) {
+        if (ct <= 0) {
+            fc.filter("etime  = ?" ,  0  );
+        } else {
             fc.filter("ctime <= ?" ,  ct );
             fc.assort("ctime DESC");
-            fc.gather("id");
-        } else {
-            fc.filter("etime = 0" );
         }
         if (! ds.isEmpty()) {
             fc.filter("id IN ( ? )",  ds );
@@ -80,12 +79,25 @@ public class DataCmdlet {
                   .get("c")
                 , 0);
         }
+        if (ct <= 0) {
+            lp  = fc.select(   );
+        } else {
+            lp  = dr.getTable ()
+                    .db.query (
+                  "SELECT _.* FROM ("
+                + fc.getSQL(   )
+                + ") _ GROUP BY _.id"
+                + " ORDER BY _.ctime"
+                , 0 , 0 ,
+                  fc.getParams()
+            );
+        }
 
         dr.begin(  );
-        CmdletHelper.progres(dt, c,i);
+        CmdletHelper.progres(dt, c, i);
 
         if (ct >= 0) {
-            for(Map od : fc.select( )) {
+            for(Map od : lp ) {
                 String id = ( String ) od.get( Cnst.ID_KEY );
                 if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                 if (Synt.declare(od.get("etime"), 0L) == 0L) {
@@ -105,7 +117,7 @@ public class DataCmdlet {
 //              }
             }
         } else {
-            for(Map od : fc.select( )) {
+            for(Map od : lp ) {
                 String id = ( String ) od.get( Cnst.ID_KEY );
                 if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
                     od = Synt.toMap( od.get( "data"));

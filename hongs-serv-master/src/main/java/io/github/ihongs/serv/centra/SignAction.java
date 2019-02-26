@@ -61,14 +61,18 @@ public class SignAction {
 
         // 重试限制
         CoreConfig cc = CoreConfig.getInstance ("master");
+        id = (String) ud.get("id");
         tt = Synt.declare(cc.getProperty("core.sign.retry.token"),"");
         at = Synt.declare(cc.getProperty("core.sign.retry.times"), 5);
-        switch (tt) {
-            case "id": id = (String) ud.get ("id"); break;
-            case "ip": id = Core.CLIENT_ADDR.get(); break;
-            default  : id = ud.get("id") +"-"+ Core.CLIENT_ADDR.get();
+        rt = Synt.declare(Record.get("sign.retry.times."+id), /**/ 0);
+        if ( Synt.declare(Record.get("sign.retry.allow."+id), false)) {
+            tt = "id";
         }
-        rt = Synt.declare( Record.get( "sign.retry.times." + id ), 0);
+        switch (tt) {
+            case "id": break;
+            case "ip": id = Core.CLIENT_ADDR.get(); break;
+            default  : id = id+"-"+Core.CLIENT_ADDR.get();
+        }
         if (rt >= at) {
             ah.reply(AuthKit.getWrong("password", "core.password.timeout"));
             ah.getResponseData( ).put("allow_times" , at);
@@ -91,14 +95,14 @@ public class SignAction {
             long     et;
             ca = Calendar.getInstance(Core.getTimezone());
             ca.setTimeInMillis( Core.ACTION_TIME.get( ) );
-            ca.set(Calendar.HOUR_OF_DAY, 23 );
+            ca.set(Calendar.HOUR_OF_DAY, 23);
             ca.set(Calendar.MINUTE, 59);
             ca.set(Calendar.SECOND, 59);
-            et = ca.getTimeInMillis() / 1000 ;
-            Record.put ("sign.retry.times."+id,rt+1,et+1);
+            et = ca.getTimeInMillis()/ 1000 + 1 ;
+            Record.put ("sign.retry.times." + id, rt, et);
             return;
         } else {
-            Record.del ("sign.retry.times."+id/*Remove*/);
+            Record.del ("sign.retry.times." + id/*Drop*/);
         }
 
         String usrid = (String) ud.get( "id" );

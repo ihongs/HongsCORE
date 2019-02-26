@@ -1,6 +1,7 @@
 package io.github.ihongs.serv.master;
 
 import io.github.ihongs.Cnst;
+import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
@@ -10,9 +11,11 @@ import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.util.FetchCase;
+import io.github.ihongs.normal.serv.Record;
 import io.github.ihongs.serv.auth.RoleMap;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -90,11 +93,15 @@ public class UserAction {
     public void doSave(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
+        boolean cp = false;
 
         // Ignore empty password in update
         if ("".equals(rd.get("password"))) {
             rd.remove("password");
             rd.remove("passcode");
+        } else {
+            cp = (null != rd.get("id"))
+            && !"".equals(rd.get("id"));
         }
 
         String id = model.set(rd);
@@ -108,6 +115,25 @@ public class UserAction {
                     ln.load("master" );
         String ms = ln.translate("core.save.user.success");
         helper.reply(ms, sd);
+
+        /**
+         * 2019/02/26
+         * 有修改密码则将重试次数归零,
+         * 若密码重试次数标记有用到IP,
+         * 需告知登录的校验标记改用ID.
+         */
+        if (cp) {
+            Calendar ca;
+            long     et;
+            ca = Calendar.getInstance(Core.getTimezone( ));
+            ca.setTimeInMillis ( Core.ACTION_TIME.get ( ));
+            ca.set(Calendar.HOUR_OF_DAY, 23);
+            ca.set(Calendar.MINUTE, 59);
+            ca.set(Calendar.SECOND, 59);
+            et = ca.getTimeInMillis()/ 1000 + 1 ;
+            Record.put( "sign.retry.times." + id, 0 , et );
+            Record.put( "sign.retry.allow." + id, 1 , et );
+        }
     }
 
     @Action("delete")

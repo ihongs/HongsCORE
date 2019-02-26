@@ -279,6 +279,7 @@ public class AuthKit {
     public static void cleanUserDepts(List<Map> list, String uid) throws HongsException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
+            cleanListItems(list,"dept_id");
             return; // 超级管理员可以更改任何人的部门, 即使自己没有
         }
 
@@ -289,14 +290,7 @@ public class AuthKit {
             uds = xds;
         }
 
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            Map    rm = (Map   ) it.next( );
-            String rn = (String) rm.get ("dept_id");
-            if (! uds.contains ( rn)) {
-                it.remove();
-            }
-        }
+        cleanListItems(list,"dept_id",uds);
     }
 
     /**
@@ -309,6 +303,7 @@ public class AuthKit {
     public static void cleanUserRoles(List<Map> list, String uid) throws HongsException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
+            cleanListItems(list,"role");
             return; // 超级管理员可以更改任何人的权限, 即使自己没有
         }
 
@@ -319,14 +314,7 @@ public class AuthKit {
             urs = xrs;
         }
 
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            Map    rm = (Map   ) it.next( );
-            String rn = (String) rm.get ("role");
-            if (! urs.contains ( rn)) {
-                it.remove();
-            }
-        }
+        cleanListItems(list,"role",urs);
     }
 
     public static Set getUserRoles(String uid) throws HongsException {
@@ -352,24 +340,18 @@ public class AuthKit {
     public static void cleanDeptRoles(List<Map> list, String gid) throws HongsException {
         String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
         if (Cnst.ADM_UID.equals(cid)) {
+            cleanListItems(list,"role");
             return; // 超级管理员可以更改任何组的权限, 即使自己没有
         }
 
-            Set urs = RoleSet.getInstance();  // 额外的权限也可给组
+            Set urs = getCurrRoles(cid);
         if (gid != null) {
             Set xrs = getDeptRoles(gid);
             xrs.addAll(urs);
             urs = xrs;
         }
 
-        Iterator it = list.iterator();
-        while (it.hasNext()) {
-            Map    rm = (Map   ) it.next( );
-            String rn = (String) rm.get ("role");
-            if (! urs.contains ( rn)) {
-                it.remove();
-            }
-        }
+        cleanListItems(list,"role",urs);
     }
 
     public static Set getDeptRoles(String gid) throws HongsException {
@@ -383,6 +365,35 @@ public class AuthKit {
             set.add(row.get("role"));
         }
         return set;
+    }
+
+    private static Set getCurrRoles(String uid) throws HongsException {
+        return RoleSet.getInstance (uid);
+    }
+
+    private static void cleanListItems(List<Map> list, String fn) {
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            Map    rm = (Map   ) it.next(  );
+            String rn = (String) rm.get (fn);
+            if (rn == null
+            ||  rn.length() ==0) {
+                it.remove();
+            }
+        }
+    }
+
+    private static void cleanListItems(List<Map> list, String fn, Set rs) {
+        Iterator it = list.iterator();
+        while (it.hasNext()) {
+            Map    rm = (Map   ) it.next(  );
+            String rn = (String) rm.get (fn);
+            if (rn == null
+            ||  rn.length() ==0
+            || !rs.contains(rn)) {
+                it.remove();
+            }
+        }
     }
 
 }

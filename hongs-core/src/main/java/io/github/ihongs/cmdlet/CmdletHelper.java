@@ -388,14 +388,7 @@ public class CmdletHelper
     }
     sb.append( "\r");
 
-    if (rate == 100)
-    {
-      System.err.println(sb.toString());
-    }
-    else
-    {
-      System.err.print  (sb.toString());
-    }
+    System.err.print(sb.toString( ));
   }
 
   /**
@@ -470,21 +463,6 @@ public class CmdletHelper
         notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Tool.humanTime(t));
     }
     CmdletHelper.progres(notes , scale);
-  }
-
-  /**
-   * 终止输出进度
-   *
-   * 请将执行块包裹在 try catch 中
-   * 接获到异常或中止执行时
-   * 使用本方法可安全的切行
-   * @param n 总条目数
-   * @param o 执行条数
-   */
-  public static void progred(int n, int o)
-  {
-    if ( n <= o ) return;
-    System.err.println();
   }
 
   /**

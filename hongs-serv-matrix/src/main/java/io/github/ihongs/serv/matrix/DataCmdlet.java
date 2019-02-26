@@ -132,7 +132,7 @@ public class DataCmdlet {
         }
 
         dr.commit( );
-        CmdletHelper.progred(c,i);
+        CmdletHelper.progred( );
 
         CmdletHelper.println("Revert "+i+" item(s) in "+dr.getDbName());
     }

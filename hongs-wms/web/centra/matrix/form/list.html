@@ -76,11 +76,16 @@
     (function($) {
         var context = $('#matrix-form-list');
         var helpBox = context.find(".modal");
+        var srchInp = context.find(".findbox [type=search]");
 
-        // 打开帮助信息
-        context.find( ".manual" ).click( function() {
-            helpBox.modal("show");
-        }); helpBox.modal("hide");
+        // 根节点搜全部
+        if (H$("@unit_id", context) === '0') {
+            srchInp.after('<input type="hidden" name="unit_id" value="0">');
+            srchInp.attr ("placeholder" , "可以搜全部表单哦");
+            srchInp.on   ("change" , function () {
+                $(this).next().val($(this).val() ? "" : "0");
+            } );
+        }
 
         // 标红冻结的行
         context.data("_fill_state_text", function(td, v) {
@@ -89,5 +94,10 @@
             }
             return v;
         });
+
+        // 打开帮助信息
+        context.find( ".manual" ).click( function() {
+            helpBox.modal("show");
+        }); helpBox.modal("hide");
     })(jQuery);
 </script>

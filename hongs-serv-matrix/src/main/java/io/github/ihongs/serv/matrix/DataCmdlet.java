@@ -20,7 +20,7 @@ import java.util.Set;
 public class DataCmdlet {
 
     @Cmdlet("revert")
-    public static void revert(String[] args) throws HongsException {
+    public static void revert(String[] args) throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -35,8 +35,9 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long ct = Synt.declare(opts.get("time"), 0L);
+        long ct = Synt.declare(opts.get("time"), -1L);
         long dt = Core.ACTION_TIME .get(      );
+        long di = (dt / 1000 );
         Data dr = Data.getInstance( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
@@ -50,10 +51,18 @@ public class DataCmdlet {
         int  c = 0; // 操作总数
         int  i = 0; // 变更计数
 
+        /**
+         * 对于时间参数
+         * 0 和 -1 都是写最新数据到索引库
+         * 0 会留历史记录 -1 不留历史记录
+         * 从数据库恢复到索引库用 -1 即可
+         * nameable,wordable 等改变需用 0
+         */
+
         Set<String> ds = Synt.asSet (opts.get(""));
         FetchCase   fc = dr.getTable().fetchCase();
             fc.filter("form_id = ?", form);
-        if (ct != 0) {
+        if (ct >= 1) {
             fc.filter("ctime <= ?" ,  ct );
             fc.assort("ctime DESC");
             fc.gather("id");
@@ -72,36 +81,64 @@ public class DataCmdlet {
                 , 0);
         }
 
+        dr.begin(  );
         CmdletHelper.progres(dt, c,i);
 
-        for(Map od : fc.select( )) {
-            String id = ( String ) od.get( Cnst.ID_KEY );
-            if (Synt.declare(od.get("state"), 1 ) <= 0 ) {
-                dr.del (/**/ id /**/);
-            } else
-            if (Synt.declare(od.get("etime"), 0L) == 0L) {
-                od = Synt.toMap (od.get( "data"));
-                dr.set (/**/ id, od );
-            } else {
-                sd.put ("rtime", od.get("ctime"));
-                dr.redo( dt, id, sd );
+        if (ct >= 0) {
+            for(Map od : fc.select( )) {
+                String id = ( String ) od.get( Cnst.ID_KEY );
+                if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
+                if (Synt.declare(od.get("etime"), 0L) == 0L) {
+                    od = Synt.toMap( od.get( "data"));
+                    od.putAll ( /**/ sd );
+                    dr.save( di, id, od );
+                }  else  {
+                    sd.put ("rtime", od.get("ctime"));
+                    dr.redo( di, id, sd );
+                }} else  {
+                    dr.drop( di, id, sd );
+                }
+                    ds.remove(id);
+                CmdletHelper.progres(dt, c, ++ i);
+//              if (i % 500 == 0) {
+//                  dr.commit(  );
+//              }
             }
-            ds.remove(id);
-            CmdletHelper.progres(dt, c, ++ i);
+        } else {
+            for(Map od : fc.select( )) {
+                String id = ( String ) od.get( Cnst.ID_KEY );
+                if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
+                    od = Synt.toMap( od.get( "data"));
+                    od.putAll(sd);
+                    dr.set(id,od);
+                }  else  {
+                    dr.delDoc(id);
+                }
+                    ds.remove(id);
+                CmdletHelper.progres(dt, c, ++ i);
+//              if (i % 500 == 0) {
+//                  dr.commit(  );
+//              }
+            }
         }
+
+        // 不存在的直接删掉
         for(String id:ds) {
-            dr.del   (id);
+            dr.delDoc(id);
             CmdletHelper.progres(dt, c, ++ i);
+ //         if (i % 500 == 0) {
+ //             dr.commit(  );
+ //         }
         }
-        if (c > i) {
-            CmdletHelper.progred();
-        }
+
+        dr.commit( );
+        CmdletHelper.progred(c,i);
 
         CmdletHelper.println("Revert "+i+" item(s) in "+dr.getDbName());
     }
 
     @Cmdlet("import")
-    public static void impart(String[] args) throws HongsException {
+    public static void impart(String[] args) throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -115,11 +152,13 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long dt = Core.ACTION_TIME .get(      );
+        long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }
+
+        dr.begin();
 
         int i  = 0;
         String[] dats = (String[]) opts.get("");
@@ -133,15 +172,20 @@ public class DataCmdlet {
             }
             data.put("form_id", form);
             data.put("user_id", user);
-            data.put("memo", memo);
+            data.put("memo"   , memo);
             i += dr.save(dt,id, data);
+//          if (i % 500 == 0) {
+//               dr.commit( );
+//          }
         }
+
+        dr.commit( );
 
         CmdletHelper.println("Import "+i+" item(s) to "+dr.getDbName());
     }
 
     @Cmdlet("update")
-    public static void update(String[] args) throws HongsException {
+    public static void update(String[] args) throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -155,7 +199,7 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long dt = Core.ACTION_TIME .get(      );
+        long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
@@ -174,17 +218,24 @@ public class DataCmdlet {
         sd.put("memo"   ,memo);
         rd.put(Cnst.RB_KEY , Synt.setOf(Cnst.ID_KEY));
 
+        dr.begin();
+
         int i  = 0;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY) ;
             i += dr.save(dt, id, sd);
+//          if (i % 500 == 0) {
+//               dr.commit( );
+//          }
         }
+
+        dr.commit( );
 
         CmdletHelper.println("Update "+i+" item(s) in "+dr.getDbName());
     }
 
     @Cmdlet("delete")
-    public static void delete(String[] args) throws HongsException {
+    public static void delete(String[] args) throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -198,7 +249,7 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long dt = Core.ACTION_TIME .get(      );
+        long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
         if (user == null) {
             user  = Cnst.ADM_UID;
@@ -217,11 +268,18 @@ public class DataCmdlet {
         sd.put("memo"   ,memo);
         rd.put(Cnst.RB_KEY , Synt.setOf(Cnst.ID_KEY));
 
+        dr.begin();
+
         int i  = 0;
         for(Map od : dr.search(rd, 0, 0)) {
             String id = (String) od.get(Cnst.ID_KEY) ;
             i += dr.drop(dt, id, sd);
+//          if (i % 500 == 0) {
+//               dr.commit( );
+//          }
         }
+
+        dr.commit( );
 
         CmdletHelper.println("Delete "+i+" item(s) in "+dr.getDbName());
     }

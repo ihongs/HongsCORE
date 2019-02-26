@@ -7,18 +7,22 @@
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
         <input type="hidden" name="id"/>
         <input type="hidden" name="depts..dept_id" class="form-ignored"/>
+        <div style="height: 0; overflow: hidden;">
+            <input type="text"     name="_u"/>
+            <input type="password" name="_s"/>
+        </div>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
                     <label class="control-label">账号</label>
-                    <input type="text" name="username" class="form-control" required="required" data-unique="centra/master/user/unique.act?id=${id}"/>
+                    <input type="text" name="username" class="form-control" required="required" data-unique="centra/master/user/unique.act?id=${id}" autocomplete="off"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">口令</label>
-                    <input type="text" name="password" class="form-control" required="required" data-relate="passcode" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off" onfocus="this.type='password'"/>
+                    <input type="password" name="password" class="form-control" required="required" data-relate="passcode" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off"/>
                 </div>
                 <div class="form-group">
-                    <input type="text" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off" onfocus="this.type='password'"/>
+                    <input type="password" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">昵称</label>

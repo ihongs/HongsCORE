@@ -57,9 +57,19 @@
     (function($) {
         var context = $("#master-user-list");
         var viewImg = context.find(".modal");
+        var srchInp = context.find(".findbox [type=search]");
 
+        // 根节点可搜索全部用户
+        if (H$("@dept_id", context) === '0') {
+            srchInp.after('<input type="hidden" name="dept_id" value="0">');
+            srchInp.attr ("placeholder" , "可以搜全部用户哦");
+            srchInp.on   ("change" , function () {
+                $(this).next().val($(this).val() ? "" : "0");
+            } );
+        }
+
+        // 点击用户头像打开预览
         viewImg.modal("hide");
-
         context.data("_fill_head" , function(c, v, n) {
             if (!v) {
                 var u = "static/assets/img/head_icon_sm.jpg";
@@ -90,6 +100,7 @@
             c.closest( "tr" ).data( "dept_ids" , deptIds);
         });
 
+        // 移除仅断开当前组关系
         context.on("click", ".remove", function( ) {
             var listobj = context.data( "HsList" );
             var ck  = listobj.getOne();

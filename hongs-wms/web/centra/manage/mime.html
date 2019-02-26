@@ -4,8 +4,12 @@
      data-save-url="centra/mine/save.act"
      data-load-url="centra/mine/info.act?ab=*&amp;rb=*"
      data-data-0="_fill_head:(hsFormFillView)">
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
         <input type="hidden" name="id"/>
+        <div style="height: 0; overflow: hidden;">
+            <input type="text"     name="_u"/>
+            <input type="password" name="_s"/>
+        </div>
         <fieldset>
             <legend>基础信息</legend>
             <div class="form-group">

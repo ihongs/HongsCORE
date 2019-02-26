@@ -4,9 +4,9 @@
      data-load-url="centra/master/user/info.act?ab=!enum&amp;navi-conf=default"
      data-save-url="centra/master/user/save.act"
      data-data-0="_fill_head: (hsFormFillView) ">
-    <form action="" method="POST" enctype="multipart/form-data">
+    <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
         <input type="hidden" name="id"/>
-        <input type="hidden" name="depts.0.dept_id" data-fl="H$('@dept_id',this)"/>
+        <input type="hidden" name="depts..dept_id" class="form-ignored"/>
         <div class="row">
             <div class="col-xs-6">
                 <div class="form-group">
@@ -15,10 +15,10 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">口令</label>
-                    <input type="password" name="password" class="form-control" required="required" data-relate="passcode" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off"/>
+                    <input type="text" name="password" class="form-control" required="required" data-relate="passcode" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off" onfocus="this.type='password'"/>
                 </div>
                 <div class="form-group">
-                    <input type="password" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off"/>
+                    <input type="text" name="passcode" class="form-control" required="required" data-repeat="password" data-error="请重复输入口令" placeholder="请重复输入口令" autocomplete="off" onfocus="this.type='password'"/>
                 </div>
                 <div class="form-group">
                     <label class="control-label">昵称</label>
@@ -46,16 +46,16 @@
                 </div>
             </div>
             <div class="col-xs-6">
-                <h4>权限设置</h4>
-                <div class="form-group" data-item-class="col-xs-6 col-lg-3"
+                <div class="form-group checkset" data-item-class="col-xs-6 col-lg-3"
                      data-fn="roles..role" data-ft="_checkset"
-                     data-vl="roles" data-tl="text"
-                     data-vk="name"  data-tk="text">
+                     data-vl="roles"   data-tl="text"
+                     data-vk="name"    data-tk="text">
+                    <h4>权限设置</h4>
                 </div>
-                <h4>所属分组</h4>
-                <div class="repeated" data-item-class="label label-default"
-                     data-fn="depts"
-                     data-tk="name">
+                <div class="form-group checkbox" data-item-class="col-xs-6 col-lg-3"
+                     data-fn="depts..dept_id" data-ft="_check"
+                     data-vk="dept_id" data-tk="name">
+                    <h4>分组设置</h4>
                 </div>
             </div>
         </div>
@@ -69,22 +69,15 @@
     (function($) {
         var context = $("#master-user-form");
 
-        context.on("loadOver", function(ev , rd) {
-            // 修改时口令选填
-            if ($(this).find("[name=id]").val()) {
-                $(this).find(":password").removeAttr("required");
-            }
-
-            // 写入所在的部门
-            if (rd.info.depts  &&  rd.info.depts.length) {
-                var p = context.find("[name='depts.0.dept_id']");
-                for(var i = 0; i < rd.info.depts.length; i ++) {
-                    $('<input type="hidden" />')
-                        .insertBefore(p)
-                        .attr("name", 'depts.'+i+'.dept_id')
-                        .val ( rd.info.depts [ i ].dept_id );
-                }
-                p.remove();
+        context.on("loadBack", function(ev, rd) {
+            var dp = H$("@dept_id", context);
+            if (rd["info"]) {
+                rd["enum"]["depts..dept_id"] = rd["info"]["depts"];
+                $(this).find("[name=password],[name=passcode]").removeAttr("required"); // 修改时密码为选填
+                $(this).find("[name='depts..dept_id']").val ( "" );
+            } else {
+                $(this).find("[name='depts..dept_id']").val ( dp );
+                $(this).find('[data-fn="depts..dept_id"]').hide( );
             }
         });
 

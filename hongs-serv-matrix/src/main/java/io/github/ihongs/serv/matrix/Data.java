@@ -633,7 +633,7 @@ public class Data extends SearchEntity {
      */
     protected String getWord(Map dd) throws HongsException {
         StringBuilder nn = new StringBuilder();
-        Set < String> ns = getSrchable( );
+        Set < String> ns = getWordable( );
         for ( String  fn : ns ) {
               Object  fv = dd.get(fn);
             if (fv == null) continue ;

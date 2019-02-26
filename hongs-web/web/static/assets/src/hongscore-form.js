@@ -844,12 +844,12 @@ HsForm.prototype = {
                 if (!inp. find (":checked").length) {
                     return this.geterror(inp, "form.requires");
                 }
-            } else if (inp.is( "ul, div" )) {
+            } else if (inp.is("ul,div")) {
                 if (!inp. find ( "input" ) .length) {
                     return this.geterror(inp, "form.requires");
                 }
-            } else if (inp.is(":file")) {
-                if (!val && !inp.data( "value" )  ) {
+            } else if (inp.is(":file" )) {
+                if (!val && !inp.data( "value" )) {
                     return this.geterror(inp, "form.requires");
                 }
                 // 选择区没有
@@ -858,7 +858,7 @@ HsForm.prototype = {
                 if (!val && !ipx.size() && box.size()) {
                     return this.geterror(inp, "form.requires");
                 }
-            } else if (inp.is(  "select" )) {
+            } else if (inp.is("select")) {
                 if (!val) {
                     return this.geterror(inp, "form.requires");
                 }

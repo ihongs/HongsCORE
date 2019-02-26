@@ -4,7 +4,7 @@ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
   <source link="default"/>
   <tables>
-      <table name="record" tableName="a_normal_record" primaryKey="id"/>
-      <table name="sesion" tableName="a_normal_sesion" primaryKey="id"/>
+      <table name="record" tableName="a_normal_data" primaryKey="id"/>
+      <table name="sesion" tableName="a_normal_sess" primaryKey="id"/>
   </tables>
 </db>

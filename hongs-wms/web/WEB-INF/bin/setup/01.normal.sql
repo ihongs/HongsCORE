@@ -4,8 +4,8 @@
 -- 简单键值存储
 --
 
-DROP TABLE IF EXISTS `a_normal_record`;
-CREATE TABLE `a_normal_record` (
+DROP TABLE IF EXISTS `a_normal_data`;
+CREATE TABLE `a_normal_data` (
     `id` VARCHAR(95) NOT NULL,
     `data`  BLOB NOT NULL,
     `xtime` UNSIGNED INTEGER(10) DEFAULT 0,
@@ -13,15 +13,15 @@ CREATE TABLE `a_normal_record` (
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `IK_a_normal_record_xtime` ON `a_normal_record` (`xtime`);
-CREATE INDEX `IK_a_normal_record_mtime` ON `a_normal_record` (`mtime`);
+CREATE INDEX `IK_a_normal_data_xtime` ON `a_normal_data` (`xtime`);
+CREATE INDEX `IK_a_normal_data_mtime` ON `a_normal_data` (`mtime`);
 
 --
 -- 会话数据存储
 --
 
-DROP TABLE IF EXISTS `a_normal_sesion`;
-CREATE TABLE `a_normal_sesion` (
+DROP TABLE IF EXISTS `a_normal_sess`;
+CREATE TABLE `a_normal_sess` (
     `id` VARCHAR(95) NOT NULL,
     `data`  BLOB NOT NULL,
     `xtime` UNSIGNED INTEGER(10) DEFAULT 0,
@@ -29,5 +29,5 @@ CREATE TABLE `a_normal_sesion` (
     PRIMARY KEY (`id`)
 );
 
-CREATE INDEX `IK_a_normal_sesion_xtime` ON `a_normal_sesion` (`xtime`);
-CREATE INDEX `IK_a_normal_sesion_mtime` ON `a_normal_sesion` (`mtime`);
+CREATE INDEX `IK_a_normal_sess_xtime` ON `a_normal_sess` (`xtime`);
+CREATE INDEX `IK_a_normal_sess_mtime` ON `a_normal_sess` (`mtime`);

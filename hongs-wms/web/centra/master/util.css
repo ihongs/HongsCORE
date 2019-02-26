@@ -6,8 +6,13 @@ table.ui-droppable-hover td ,
     color: #dd4444;
 }
 
+.role-info {
+    overflow-y: auto;
+    max-height: 50em;
+}
+
 .form-group fieldset legend {
-    font-size: 1em;
+    font-size: 1.0em;
 }
 .form-group fieldset .checkall {
     margin-right: 0.50em;

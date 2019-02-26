@@ -505,6 +505,7 @@ HsForm.prototype = {
         return  v ;
     },
     _prep__select : function(inp, v, n) {
+        if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
@@ -519,6 +520,7 @@ HsForm.prototype = {
         }
     },
     _prep__radio : function(inp, v, n) {
+        if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
@@ -534,6 +536,7 @@ HsForm.prototype = {
         }
     },
     _prep__check : function(inp, v, n) {
+        if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         for(var i = 0; i < v.length; i ++) {
@@ -549,6 +552,7 @@ HsForm.prototype = {
         }
     },
     _prep__checkset : function(inp, v, n) {
+        if (v === undefined) return ;
         var vk = inp.attr("data-vk"); if(!vk) vk = 0;
         var tk = inp.attr("data-tk"); if(!tk) tk = 1;
         var vl = inp.attr("data-vl"); if(!vl) vl = 0; // Value List
@@ -556,7 +560,6 @@ HsForm.prototype = {
         var bc = inp.attr("data-body-class") || "checkbox";
         var ic = inp.attr("data-item-class") || "col-xs-6";
 
-        if (v !== undefined) {
         for(var i = 0; i < v.length; i ++) {
             var u = v[ i ][vl];
             var s = v[ i ][tl];
@@ -581,7 +584,7 @@ HsForm.prototype = {
                 lab.find("span" ).text(hsGetValue(w, tk));
                 set.append(lab);
             }
-        }}
+        }
 
         if (inp.closest(".form-group").hasClass("has-error")) {
             inp.find("input").first( ).change();

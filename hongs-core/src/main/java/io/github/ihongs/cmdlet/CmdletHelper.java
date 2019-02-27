@@ -398,6 +398,7 @@ public class CmdletHelper
    */
   public static void progres(int n, int ok)
   {
+    if (0 == n) return;
     String notes = String.format("Ok(%d)", ok);
     float  scale = (float) ok / n * 100;
     CmdletHelper.progres(notes , scale);
@@ -411,6 +412,7 @@ public class CmdletHelper
    */
   public static void progres(int n, int ok, int er)
   {
+    if (0 == n) return;
     String notes = String.format("Ok(%d) Er(%d)", ok, er);
     float  scale = (float) (er + ok) / n * 100;
     CmdletHelper.progres(notes , scale);
@@ -424,6 +426,9 @@ public class CmdletHelper
    */
   public static void progres(long t, int n, int ok)
   {
+    if (0 == n ) {
+        return ;
+    }
     String notes ;
     float  scale = (float) ok / n * 100;
     if (0 == ok) {
@@ -449,6 +454,9 @@ public class CmdletHelper
    */
   public static void progres(long t, int n, int ok, int er)
   {
+    if (0 == n ) {
+        return ;
+    }
     String notes ;
     float  scale = (float) (er + ok) / n * 100;
     if (0 == ok + er) {

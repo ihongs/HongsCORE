@@ -287,6 +287,7 @@ public class Form extends Model {
                     "__name__", "name",
                     "__type__", "hidden",
                     "readonly", "true",
+                    "wordable", "true",
                     "lucene-type", "stored"
                 ));
             }
@@ -298,8 +299,7 @@ public class Form extends Model {
                     "__type__", "hidden",
                     "readonly", "true",
                     "unstored", "true",
-                    "lucene-type", "search",
-                    "lucene-smart-parse", "true"
+                    "lucene-type", "search"
                 ));
             }
 

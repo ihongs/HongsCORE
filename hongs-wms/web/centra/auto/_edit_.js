@@ -137,7 +137,7 @@ function setEditor(node, func) {
         node.each(function() {
             $(this).summernote({
                 toolbar: [
-                    ['base', ['bold' , 'italic' , 'underline' , 'strikethrough']],
+                    ['base', ['bold' , 'italic' , 'underline' , 'strikethrough' , 'clear']],
                     ['font', ['color', 'height' , 'fontsize']],
                     ['para', ['paragraph', 'ul' , 'ol'  ]],
                     ['list', ['table', 'picture', 'link']]

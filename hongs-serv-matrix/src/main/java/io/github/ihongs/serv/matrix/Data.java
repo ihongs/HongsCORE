@@ -348,9 +348,6 @@ public class Data extends SearchEntity {
           return 0;
         }
 
-        dd.put("name", getName(dd));
-        dd.put("word", getWord(dd));
-
         //** 保存到数据库 **/
 
         if (table != null) {
@@ -567,6 +564,15 @@ public class Data extends SearchEntity {
         }
     }
 
+    @Override
+    protected void docAdd(Document doc, Map map) {
+        // 需写入名称和关键词
+        map.put("name", getName(map));
+        map.put("word", getWord(map));
+
+        super.docAdd(doc, map);
+    }
+
     /**
      * 保存中跳过的字段或取值
      * 当返回 true 时跳过检查,
@@ -600,9 +606,8 @@ public class Data extends SearchEntity {
      * 获取名称串
      * @param dd
      * @return
-     * @throws HongsException
      */
-    protected String getName(Map dd) throws HongsException {
+    protected String getName(Map dd) {
         StringBuilder nn = new StringBuilder();
         Set < String> ns = getNameable( );
         for ( String  fn : ns  ) {
@@ -629,9 +634,8 @@ public class Data extends SearchEntity {
      * 获取关键词
      * @param dd
      * @return
-     * @throws HongsException
      */
-    protected String getWord(Map dd) throws HongsException {
+    protected String getWord(Map dd) {
         StringBuilder nn = new StringBuilder();
         Set < String> ns = getWordable( );
         for ( String  fn : ns ) {

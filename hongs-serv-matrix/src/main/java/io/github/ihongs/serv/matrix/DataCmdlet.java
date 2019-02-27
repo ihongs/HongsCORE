@@ -6,8 +6,8 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,108 +36,95 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        if ( user == null ) user = Cnst.ADM_UID;
-        long ct = Synt.declare(opts.get("time"), -1L);
-        long dt = Core.ACTION_TIME .get(      );
-        long di = (dt / 1000 );
+        Set< String >  ds = Synt.asSet ( opts.get(""));
+        long ct = Synt.declare(opts.get("time"),  0L );
+        long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
-        Loop lp ;
+        form = dr.getFormId( );
+        if (user == null) {
+            user  = Cnst.ADM_UID;
+        }
 
         Map sd = new HashMap();
         sd.put("form_id",form);
         sd.put("user_id",user);
         sd.put("memo"   ,memo);
 
-        int  c  = 0; // 操作总数
-        int  i  = 0; // 变更计数
-
-        /**
-         * 对于时间参数
-         * 0 和 -1 都是写最新数据到索引库
-         * 0 会留历史记录 -1 不留历史记录
-         * 从数据库恢复到索引库用 -1 即可
-         * nameable,wordable 等改变需用 0
-         */
-
-        Set<String> ds = Synt.asSet (opts.get(""));
-        FetchCase   fc = dr.getTable().fetchCase();
-            fc.filter("form_id = ?", form);
-        if (ct <= 0) {
-            fc.filter("etime  = ?" ,  0  );
+        Table  tb = dr.getTable();
+        String tn = tb.tableName ;
+        Loop   lp   ; // 查询迭代
+        int  c  = 0 ; // 操作总数
+        int  i  = 0 ; // 变更计数
+        if (ct == 0) {
+            String fa = "`a`.*"  ;
+            String fc = "COUNT(*) AS _cnt_" ;
+            String qa = "SELECT "+fa+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
+            String qc = "SELECT "+fc+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`etime`  = ?";
+            if (! ds.isEmpty() ) {
+                c  = ds.size();
+                qa = qa + " AND a.id IN (?)";
+                lp = tb.db.query(qa, 0, 0, form,  0, ds);
+            } else {
+                lp = tb.db.query(qa, 0, 0, form,  0    );
+                c  = Synt .declare (
+                     tb.db.fetchOne(   qc, form,  0    )
+                          .get("_cnt_"), 0 );
+            }
         } else {
-            fc.filter("ctime <= ?" ,  ct );
-            fc.assort("ctime DESC");
-        }
-        if (! ds.isEmpty()) {
-            fc.filter("id IN ( ? )",  ds );
-            c = ds.size ( );
-        } else {
-            c = Synt.declare(
-                fc.clone ()
-                  .select("COUNT(*) AS c")
-                  .getOne()
-                  .get("c")
-                , 0);
-        }
-        if (ct <= 0) {
-            lp  = fc.select(   );
-        } else {
-            lp  = dr.getTable ()
-                    .db.query (
-                  "SELECT _.* FROM ("
-                + fc.getSQL(   )
-                + ") _ GROUP BY _.id"
-                + " ORDER BY _.ctime"
-                , 0 , 0 ,
-                  fc.getParams()
-            );
+            String fx = "`x`.*"  ;
+            String fa = "`a`.id, MAX(a.ctime) AS ctime" ;
+            String fc = "COUNT(DISTINCT a.id) AS _cnt_" ;
+            String qa = "SELECT "+fa+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`ctime` <= ?";
+            String qc = "SELECT "+fc+" FROM `"+tn+"` AS `a` WHERE `a`.`form_id` = ? AND `a`.`ctime` <= ?";
+            String qx = " WHERE x.id = b.id AND x.ctime = b.ctime AND x.`form_id` = ? AND x.`ctime` <= ?";
+            if (! ds.isEmpty() ) {
+                c  = ds.size();
+                qa = qa + " AND a.id IN (?)";
+                qx = qx + " AND x.id IN (?)";
+                qa = qa + " GROUP BY `a`.id";
+                qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
+                lp = tb.db.query(qx, 0, 0, form, ct, ds, form, ct, ds);
+            } else {
+                qa = qa + " GROUP BY `a`.id";
+                qx = "SELECT "+fx+" FROM `"+tn+"` AS `x`, ("+qa+") AS `b` "+qx;
+                lp = tb.db.query(qx, 0, 0, form, ct    , form, ct    );
+                c  = Synt .declare (
+                     tb.db.fetchOne(   qc, form, ct    )
+                          .get("_cnt_"), 0 );
+            }
         }
 
+        long tm = System.currentTimeMillis();
+        CmdletHelper.progres(tm, c, i);
         dr.begin(  );
-        CmdletHelper.progres(dt, c, i);
 
-        if (ct >= 0) {
-            for(Map od : lp ) {
-                String id = ( String ) od.get( Cnst.ID_KEY );
-                if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                if (Synt.declare(od.get("etime"), 0L) == 0L) {
-                    od = Synt.toMap( od.get( "data"));
-                    od.putAll ( /**/ sd );
-                    dr.save( di, id, od );
-                }  else  {
-                    sd.put ("rtime", od.get("ctime"));
-                    dr.redo( di, id, sd );
-                }} else  {
-                    dr.drop( di, id, sd );
-                }
-                    ds.remove(id);
-                CmdletHelper.progres(dt, c, ++ i);
-//              if (i % 500 == 0) {
-//                  dr.commit(  );
-//              }
-            }
-        } else {
-            for(Map od : lp ) {
-                String id = ( String ) od.get( Cnst.ID_KEY );
-                if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
-                    od = Synt.toMap( od.get( "data"));
-                    od.putAll(sd);
-                    dr.set(id,od);
-                }  else  {
-                    dr.delDoc(id);
-                }
-                    ds.remove(id);
-                CmdletHelper.progres(dt, c, ++ i);
-//              if (i % 500 == 0) {
-//                  dr.commit(  );
-//              }
-            }
+        for(Map od : lp ) {
+            String id = ( String ) od.get( Cnst.ID_KEY );
+            if (Synt.declare(od.get("etime"), 0L) != 0L) {
+            if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
+                sd.put ("rtime", od.get("ctime"));
+                dr.redo( dt, id, sd );
+            }  else  {
+                dr.drop( dt, id, sd );
+            }} else  {
+            if (Synt.declare(od.get("state"), 1 ) >= 1 ) {
+                od = Synt.toMap( od.get( "data"));
+                od.putAll(sd);
+                dr.set(id,od);
+            }  else  {
+                dr.delDoc(id);
+            }}
+                ds.remove(id);
+            CmdletHelper.progres(tm, c, ++ i);
+//          if (i % 500 == 0) {
+//              dr.commit(  );
+//          }
         }
 
         // 不存在的直接删掉
         for(String id:ds) {
             dr.delDoc(id);
-            CmdletHelper.progres(dt, c, ++ i);
+            CmdletHelper.progres(tm, c, ++ i);
  //         if (i % 500 == 0) {
  //             dr.commit(  );
  //         }
@@ -166,6 +153,7 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
+        form = dr.getFormId( );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }
@@ -213,6 +201,7 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
+        form = dr.getFormId( );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }
@@ -263,6 +252,7 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
+        form = dr.getFormId( );
         if (user == null) {
             user  = Cnst.ADM_UID;
         }

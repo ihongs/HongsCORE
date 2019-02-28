@@ -43,7 +43,7 @@ public class UserAction {
         FetchCase fc = model.fetchCase();
         fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
         fc.setOption("INCLUDE_PARENTS", Synt.declare(rd.get("include-parents"), false));
-        fc.setOption("WITH_DEPTS", Synt.declare(rd.get("with-depts"), (byte)0));
+        fc.setOption("INCLUDE_DEPARTS", Synt.declare(rd.get("with-depts") , (byte) 0 ));
         rd = model.getList(rd, fc);
 
         // Remove the password field, don't show password in page
@@ -61,7 +61,7 @@ public class UserAction {
     throws HongsException {
         Map    rd = helper.getRequestData(  );
         String id = helper.getParameter("id");
-        String nc = helper.getParameter("navi-conf");
+        String nc = helper.getParameter("with-roles");
         String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
         if (id != null && id.length() != 0) {

@@ -47,7 +47,7 @@ public class DeptAction {
     throws HongsException {
         Map    rd = helper.getRequestData(  );
         String id = helper.getParameter("id");
-        String nc = helper.getParameter("navi-conf");
+        String nc = helper.getParameter("with-roles");
         String ud = (String) helper.getSessibute(Cnst.UID_SES);
 
         if (id != null && id.length() != 0) {

@@ -25,6 +25,20 @@ table.ui-droppable-hover td ,
     padding-left: 1.25em;
 }
 
+.userhead {
+    width: 50px;
+}
+.userhead span {
+    display: inline-block;
+    width : 32px;
+    height: 32px;
+    border-radius: 32px;
+    margin-top   : -5px;
+    margin-bottom:-10px;
+    background-repeat: no-repeat;
+    background-position:  center;
+}
+
 div[data-type=user],
 div[data-type=dept] {
     background: #eee;

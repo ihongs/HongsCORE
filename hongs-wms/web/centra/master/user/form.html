@@ -1,7 +1,7 @@
 <h2>{DO}用户</h2>
 <div id="master-user-form" class="hide-roles"
      data-module="hsForm"
-     data-load-url="centra/master/user/info.act?ab=!enum&amp;navi-conf=default"
+     data-load-url="centra/master/user/info.act?ab=!enum&amp;with-roles=default"
      data-save-url="centra/master/user/save.act"
      data-data-0="_fill_head: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -64,7 +64,7 @@
         </div>
         <div class="row">
             <div class="col-xs-6 form-btns">
-                <div class="form-group form-btns">
+                <div class="form-group">
                     <button type="submit" class="commit btn btn-primary">提交</button>
                     <button type="button" class="cancel btn btn-link"   >取消</button>
                 </div>

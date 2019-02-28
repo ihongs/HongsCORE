@@ -1,5 +1,5 @@
 <h2>{DO}部门</h2>
-<div id="master-dept-form"
+<div id="master-dept-form" class="hide-roles"
      data-module="hsForm"
      data-load-url="centra/master/dept/info.act?ab=!enum&amp;navi-conf=default"
      data-save-url="centra/master/dept/save.act">
@@ -44,15 +44,14 @@
     (function($) {
         var context = $("#master-dept-form");
 
-        if (H$("@id", context) === "CENTRE") {
-            context.find(".base-info, .form-btns").addClass("center-block");
-            context.find(".role-info").before(
-                '<input type="hidden"'
-                   +  ' name="roles..role"'
-                   + ' value="centre"'
-                   + ' class="form-ignored"/>');
-            context.find(".role-info").remove();
-        }
+        // 权限
+        context.on("loadBack", function(ev, rd) {
+            if (!rd["enum"]["roles..role"].length ) {
+                context.find(".role-info").remove();
+            } else {
+                context.removeClass( "hide-roles" );
+            }
+        });
 
         // 选择与之关联的权限
         context.on("change", "[name='roles..role']", function() {

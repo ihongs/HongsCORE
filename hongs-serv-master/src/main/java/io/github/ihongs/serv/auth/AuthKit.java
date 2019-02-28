@@ -15,8 +15,10 @@ import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.util.verify.Wrongs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.TreeSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -264,9 +266,25 @@ public class AuthKit {
         Set set = new HashSet();
         Dept dp = new Dept();
         for(Map row : lst) {
-            set.addAll(dp.getChildIds((String)row.get("dept_id"), true));
+            String id = (String) row.get("dept_id");
+            set.addAll(dp.getChildIds( id , true ));
         }
         return set;
+    }
+
+    public static Set getLessDepts(String uid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("user_dept");
+        List<Map> lst = rel.fetchCase()
+            .filter("user_id = ?", uid)
+            .select("dept_id" )
+            .getAll();
+        Set set = new TreeSet();
+        Dept dp = new Dept();
+        for(Map row : lst) {
+            String id = (String) row.get("dept_id");
+            set.add   (   getDeptPath( id , dp )  );
+        }
+        return getPeakPids(set);
     }
 
     /**
@@ -369,6 +387,33 @@ public class AuthKit {
 
     private static Set getCurrRoles(String uid) throws HongsException {
         return RoleSet.getInstance (uid);
+    }
+
+    private static String getDeptPath(String id, Dept dp) throws HongsException {
+        List <String> ds = dp.getParentIds(id);
+        StringBuilder sb = new StringBuilder();
+        Collections.reverse(ds);
+        for ( String  xd : ds ) {
+               sb.append(xd).append("/");
+        }
+        return sb.append(id).toString( );
+    }
+
+    private static Set  getPeakPids(Set<String> set) {
+        Set     ids = new HashSet();
+        String  pid =  "/" ;
+        for(String id : set) {
+            if (id.startsWith(pid)) {
+                continue;
+            }
+            pid = id + "/" ;
+            int  p = id.lastIndexOf("/");
+            if ( p > 0 ) {
+                id = id.substring  (p+1);
+            }
+            ids.add (id);
+        }
+        return  ids ;
     }
 
     private static void cleanListItems(List<Map> list, String fn) {

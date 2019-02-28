@@ -93,15 +93,21 @@ public class UserAction {
     public void doSave(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
-        boolean cp = false;
+        boolean cp;
 
         // Ignore empty password in update
-        if ("".equals(rd.get("password"))) {
+        if (null  ==  rd.get("password")
+        ||  "".equals(rd.get("password"))) {
             rd.remove("password");
             rd.remove("passcode");
-        } else {
-            cp = (null != rd.get("id"))
-            && !"".equals(rd.get("id"));
+            cp = false;
+        } else
+        if (null  ==  rd.get(   "id"   )
+        &&  "".equals(rd.get(   "id"   ))) {
+            cp = false;
+        } else
+        {
+            cp = true ;
         }
 
         String id = model.set(rd);
@@ -112,7 +118,7 @@ public class UserAction {
         sd.put("head", rd.get("head"));
 
         CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master" );
+                    ln.load("master");
         String ms = ln.translate("core.save.user.success");
         helper.reply(ms, sd);
 
@@ -131,8 +137,8 @@ public class UserAction {
             ca.set(Calendar.MINUTE, 59);
             ca.set(Calendar.SECOND, 59);
             et = ca.getTimeInMillis()/ 1000 + 1 ;
-            Record.put( "sign.retry.times." + id, 0 , et );
-            Record.put( "sign.retry.allow." + id, 1 , et );
+            Record.set( "sign.retry.allow." + id, 1 , et );
+            Record.del( "sign.retry.times." + id /*Drop*/);
         }
     }
 

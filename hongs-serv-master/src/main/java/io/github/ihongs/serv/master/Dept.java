@@ -89,7 +89,7 @@ extends Grade {
                 ActionHelper helper = Core.getInstance(ActionHelper.class);
                 String uid = (String) helper.getSessibute ( Cnst.UID_SES );
                 if (!Cnst.ADM_UID.equals( uid )) {
-                Set set = AuthKit.getUserDepts(uid);
+                Set set = AuthKit.getLessDepts(uid);
                 if (!set.contains(Cnst.ADM_GID)) {
                     req.put( "id", set);
                     req.remove( "pid" );
@@ -131,11 +131,11 @@ extends Grade {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanDeptRoles (list, id);
-                if ( list.isEmpty() ) {
-                    throw new HongsException
-                        .Notice("ex.master.user.dept.error")
-                        .setLocalizedContext("master");
-                }
+//              if ( list.isEmpty() ) {
+//                  throw new HongsException
+//                      .Notice("ex.master.user.dept.error")
+//                      .setLocalizedContext("master");
+//              }
                 data.put("roles", list);
             }
 

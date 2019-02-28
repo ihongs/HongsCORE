@@ -78,7 +78,7 @@ public class DeptAction {
         rd.put("name", rd.get("name"));
 
         CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master" );
+                    ln.load("master");
         String ms = ln.translate("core.save.dept.success");
         helper.reply(ms, rd);
     }
@@ -90,7 +90,7 @@ public class DeptAction {
         Map rd = helper.getRequestData();
         int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
-                    ln.load("master" );
+                    ln.load("master");
         String ms = ln.translate("core.delete.dept.success", Integer.toString(rn));
         helper.reply(ms, rn);
     }

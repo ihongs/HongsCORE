@@ -182,11 +182,11 @@ extends Model {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
-                if ( list.isEmpty() ) {
-                    throw new HongsException
-                        .Notice("ex.master.user.role.error")
-                        .setLocalizedContext("master");
-                }
+//              if ( list.isEmpty() ) {
+//                  throw new HongsException
+//                      .Notice("ex.master.user.role.error")
+//                      .setLocalizedContext("master");
+//              }
                 data.put("roles", list);
             }
 
@@ -229,16 +229,15 @@ extends Model {
             }
 
             // 超级管理组可操作任何用户
-            // 除了顶级部门和超级管理员
+            // 但不包含超级管理员
             Set cur = AuthKit.getUserDepts(uid);
-            Set tar = AuthKit.getUserDepts( id);
             if (cur.contains(Cnst.ADM_GID)
-            && !tar.contains(Cnst.ADM_GID)
             && !Cnst.ADM_UID.equals( id )) {
                 return;
             }
 
-            // 仅可以操作下级部门的用户
+            // 仅可以操作下级用户
+            Set tar = AuthKit.getLessDepts( id);
             Dept dept = new Dept();
             for (Object gid : cur) {
                 Set cld = new HashSet(dept.getChildIds((String) gid, true));

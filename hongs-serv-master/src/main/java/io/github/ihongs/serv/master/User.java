@@ -59,7 +59,7 @@ extends Model {
         rd = super.getList(rd, caze);
 
         // Add all depts for every user
-        byte incs = caze.getOption("WITH_DEPTS", (byte) 0 );
+        byte incs = caze.getOption("INCLUDE_DEPARTS", (byte) 0);
         if ( incs > 0 ) {
             List<Map> list = ( List ) rd.get( "list" );
             if (list != null) {
@@ -74,7 +74,7 @@ extends Model {
                 if (incs == 2) {
                     caze.join(db.getTable("dept").tableName,
                         "dept", "user_dept.dept_id = dept.id" )
-                        .select("user_id,dept.*");
+                        .select("user_id , dept_id , dept.* " );
                 }
                 List<Map> rows = caze.getAll( );
                 for ( Map dept : rows ) {

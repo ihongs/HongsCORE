@@ -27,8 +27,6 @@ CREATE UNIQUE INDEX `UK_a_master_dept_name` ON `a_master_dept` (`name`,`pid`);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0',NULL,'ROOT','ROOT','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRA','0','管理区','默认内部管理区域','1424075622','1424075622','0',1);
 INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('CENTRE','0','公共区','默认注册到此区域','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HONGZHSHJISHZU00','CENTRA','技术组','技术组负责系统维护','1424075622','1424075622','0',1);
-INSERT INTO `a_master_dept` (`id`,`pid`,`name`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('HONGZHSHYUYNZU00','CENTRA','运营组','运营组负责平台操作','1424075622','1424075622','0',1);
 
 --
 -- 部门拥有角色
@@ -44,6 +42,9 @@ CREATE TABLE `a_master_dept_role` (
 
 CREATE INDEX `IK_a_master_dept_role_dept` ON `a_master_dept_role` (`dept_id`);
 CREATE INDEX `IK_a_master_dept_role_role` ON `a_master_dept_role` (`role`);
+
+INSERT INTO `a_master_user_role` VALUES ('CENTRA','centra');
+INSERT INTO `a_master_user_role` VALUES ('CENTRE','centre');
 
 --
 -- 用户

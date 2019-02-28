@@ -10,14 +10,14 @@ import java.util.Map;
 public abstract class Rule implements Ruly {
 
     /**
-     * 跳过此值, 有错则可中止
-     */
-    public static final Object BLANK = Synt.LOOP.LAST;
-
-    /**
-     * 立即终止, 抛弃后续校验
+     * 未处理值
      */
     public static final Object STAND = Synt.LOOP.NEXT;
+
+    /**
+     * 丢弃取值
+     */
+    public static final Object BLANK = Synt.LOOP.LAST;
 
     /**
      * 校验参数

@@ -25,12 +25,10 @@
                     <th data-fn="id[]" data-ft="_check" class="_check">
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
-                    <th data-fn="head"  style="width:50px;">头像</th>
+                    <th data-fn="head"     class="userhead">头像</th>
+                    <th data-fn="name"     class="sortable">名称</th>
                     <th data-fn="username" class="sortable">账号</th>
-                    <th data-fn="name"  class="sortable">名称</th>
-                    <th data-fn="depts..name">分组</th>
-                    <th data-fn="phone" class="sortable">电话</th>
-                    <th data-fn="email" class="sortable">邮箱</th>
+                    <th data-fn="depts..name"              >分组</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
                 </tr>
@@ -63,7 +61,7 @@
         // 根节点可搜索全部用户
         if (H$("@dept_id", context) === '0') {
             srchInp.after('<input type="hidden" name="dept_id" value="0">');
-            srchInp.attr ("placeholder" , "可以搜全部用户哦");
+            srchInp.attr ("placeholder", "可以搜全部用户哦");
             srchInp.on   ("change" , function () {
                 $(this).next().val($(this).val() ? "" : "0");
             } );
@@ -74,15 +72,13 @@
         context.data("_fill_head" , function(c, v, n) {
             if (!v) {
                 var u = "static/assets/img/head_icon_sm.jpg";
-                $('<a href="javascript:;">'
-                 +'<span style="background-image:url('+u+');'
-                 +'display:inline-block;width:32px;height:32px;border-radius:32px;margin-top:-5px;margin-bottom:-10px;background-position:center;background-repeat:no-repeat;"/></a>')
+                $('<a href="javascript:;" data-href="'+u+'">'
+                 +'<span style="background-image:url('+u+');"/></a>')
                 .appendTo(c);
             } else {
-                var u = v.replace(/(_[^_]+)?\.[^\.]+$/, "_sm.png");
+                var u = v.replace( /(_[^_]+)?\.[^\.]+$/ , "_sm.png" );
                 $('<a href="javascript:;" data-href="'+v+'">'
-                 +'<span style="background-image:url('+u+');'
-                 +'display:inline-block;width:32px;height:32px;border-radius:32px;margin-top:-5px;margin-bottom:-10px;background-position:center;background-repeat:no-repeat;"/></a>')
+                 +'<span style="background-image:url('+u+');"/></a>')
                 .appendTo(c)
                 .click( function( ) {
                     var v = $(this).attr("data-href");

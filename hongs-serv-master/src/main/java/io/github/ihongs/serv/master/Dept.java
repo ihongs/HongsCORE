@@ -53,6 +53,9 @@ extends Grade {
         return super.del(id, caze);
     }
 
+    /**
+     * @deprecated
+     */
     public Set<String> getRoles(String deptId)
     throws HongsException {
         if (deptId == null) throw new HongsException(0x10000, "Dept Id required!");

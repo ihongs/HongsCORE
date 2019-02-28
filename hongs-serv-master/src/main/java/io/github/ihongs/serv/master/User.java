@@ -87,6 +87,9 @@ extends Model {
         return rd;
     }
 
+    /**
+     * @deprecated
+     */
     public Set<String> getRoles(String userId)
     throws HongsException {
         if (userId == null) throw new HongsException(0x10000, "User Id required!");

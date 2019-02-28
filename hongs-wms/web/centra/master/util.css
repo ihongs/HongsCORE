@@ -6,6 +6,15 @@ table.ui-droppable-hover td ,
     color: #dd4444;
 }
 
+.hide-roles .base-info ,
+.hide-roles .form-btns {
+    float :   none;
+    margin: 0 auto;
+}
+.hide-roles .role-info {
+    display : none;
+}
+
 .form-group fieldset legend {
     font-size: 1.0em;
 }

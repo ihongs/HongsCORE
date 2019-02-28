@@ -1,12 +1,13 @@
 <h2>{DO}用户</h2>
-<div id="master-user-form"
+<div id="master-user-form" class="hide-roles"
      data-module="hsForm"
      data-load-url="centra/master/user/info.act?ab=!enum&amp;navi-conf=default"
      data-save-url="centra/master/user/save.act"
      data-data-0="_fill_head: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
         <input type="hidden" name="id"/>
-        <div style="height: 0; overflow: hidden;">
+        <input type="hidden" name="depts..dept_id"/>
+        <div style="height: 0; overflow: hidden; " >
             <input type="text"     name="_u"/>
             <input type="password" name="_s"/>
         </div>
@@ -51,21 +52,11 @@
             <div class="col-xs-6 role-info">
                 <div class="form-group">
                     <h4>权限设置</h4>
-                    <input type="hidden" name="roles..role"    class="form-ignored"/>
+                    <input type="hidden" name="roles..role" class="form-ignored"/>
                     <div class="checkset" data-item-class="col-xs-6 col-lg-3"
                          data-fn="roles..role" data-ft="_checkset"
                          data-vl="roles" data-tl="text"
                          data-vk="name"  data-tk="text">
-                    </div>
-                    <div class="help-block"></div>
-                </div>
-                <div class="form-group">
-                    <h4>分组设置</h4>
-                    <input type="hidden" name="depts..dept_id" class="form-ignored"/>
-                    <div class="checkbox" data-item-class="col-xs-6 col-lg-3"
-                         data-fn="depts..dept_id" data-ft="_check"
-                         data-vk="dept_id" data-tk="name"
-                         data-required="required">
                     </div>
                     <div class="help-block"></div>
                 </div>
@@ -85,17 +76,19 @@
     (function($) {
         var context = $("#master-user-form");
 
-        // 分组及密码必填约束
+        // 密码、分组及权限表
         context.on("loadBack", function(ev, rd) {
-            var dp = H$("@dept_id", context);
-            if (rd["info"]) {
-                rd["enum"]["depts..dept_id"] = rd["info"]["depts"];
-                $(this).find(":password").removeAttr( "required" );
-                $(this).find("[name='depts..dept_id']" ).val( "" );
+            if (!rd["enum"]["roles..role"].length ) {
+                context.find(".role-info").remove();
             } else {
-                $(this).find("[name='depts..dept_id']" ).val( dp );
-                $(this).find('[data-fn="depts..dept_id"]')
-                       .closest( ".form-group" ).remove( );
+                context.removeClass( "hide-roles" );
+            }
+            if (!rd["info"] ) {
+                var dp = H$ ( "@dept_id", context );
+                $(this).find("[name='depts..dept_id']").val( dp );
+            } else {
+                $(this).find("[name='depts..dept_id']").remove( );
+                $(this).find(":password" ).removeAttr("required");
             }
         });
 

@@ -62,10 +62,9 @@ public class SignAction {
         // 重试限制
         CoreConfig cc = CoreConfig.getInstance ("master");
         id = (String) ud.get("id");
-        tt = Synt.declare(cc.getProperty("core.sign.retry.token"),"");
-        at = Synt.declare(cc.getProperty("core.sign.retry.times"), 5);
-        rt = Synt.declare(Record.get("sign.retry.times."+id), /**/ 0);
-        if ( Synt.declare(Record.get("sign.retry.allow."+id), false)) {
+        tt = Synt.declare(cc.getProperty("core.sign.retry.token"), "");
+        at = Synt.declare(cc.getProperty("core.sign.retry.times"), 5 );
+        if ( Synt.declare(Record.get("sign.retry.allow."+id), false) ) {
             tt = "id";
         }
         switch (tt) {
@@ -73,6 +72,7 @@ public class SignAction {
             case "ip": id = Core.CLIENT_ADDR.get(); break;
             default  : id = id+"-"+Core.CLIENT_ADDR.get();
         }
+        rt = Synt.declare(Record.get("sign.retry.times."+id), 0 );
         if (rt >= at) {
             ah.reply(AuthKit.getWrong("password", "core.password.timeout"));
             ah.getResponseData( ).put("allow_times" , at);
@@ -99,7 +99,7 @@ public class SignAction {
             ca.set(Calendar.MINUTE, 59);
             ca.set(Calendar.SECOND, 59);
             et = ca.getTimeInMillis()/ 1000 + 1 ;
-            Record.put ("sign.retry.times." + id, rt, et);
+            Record.set ("sign.retry.times." + id, rt, et);
             return;
         } else {
             Record.del ("sign.retry.times." + id/*Drop*/);

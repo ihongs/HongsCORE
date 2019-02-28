@@ -6,7 +6,6 @@
      data-data-0="_fill_head: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
         <input type="hidden" name="id"/>
-        <input type="hidden" name="depts..dept_id" class="form-ignored"/>
         <div style="height: 0; overflow: hidden;">
             <input type="text"     name="_u"/>
             <input type="password" name="_s"/>
@@ -52,6 +51,7 @@
             <div class="col-xs-6 role-info">
                 <div class="form-group">
                     <h4>权限设置</h4>
+                    <input type="hidden" name="roles..role"    class="form-ignored"/>
                     <div class="checkset" data-item-class="col-xs-6 col-lg-3"
                          data-fn="roles..role" data-ft="_checkset"
                          data-vl="roles" data-tl="text"
@@ -61,6 +61,7 @@
                 </div>
                 <div class="form-group">
                     <h4>分组设置</h4>
+                    <input type="hidden" name="depts..dept_id" class="form-ignored"/>
                     <div class="checkbox" data-item-class="col-xs-6 col-lg-3"
                          data-fn="depts..dept_id" data-ft="_check"
                          data-vk="dept_id" data-tk="name"

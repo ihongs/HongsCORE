@@ -1462,6 +1462,12 @@ $.hsAjax = function(url, settings) {
         }
     }
 
+    // 统一自定义数据结构, 避免转换后出现偏差
+    if (settings.data instanceof HsSerialDic
+    ||  settings.data instanceof HsSerialDat  ) {
+        settings.data = hsSerialArr(settings.data);
+    }
+
     // 为明确所送数据类型, 便于服务端正确解析
     // 增加 dataKind, 取值 form,json,xml
     if (settings.dataKind) {

@@ -25,16 +25,7 @@ public class RoleMap {
     }
 
     /**
-     * 获取全部权限数据
-     * @return
-     * @throws HongsException
-     */
-    public  List<Map> getRoleTranslates() throws HongsException {
-        return getRoleTranslated(null);
-    }
-
-    /**
-     * 仅取当前有的权限
+     * 按当前权限获取权限列表
      * @return
      * @throws HongsException
      */
@@ -42,6 +33,11 @@ public class RoleMap {
         return getRoleTranslated(navi.getRoleSet());
     }
 
+    /**
+     * 按特定权限获取权限列表
+     * @param rolez
+     * @return 
+     */
     public  List<Map> getRoleTranslated(Set<String> rolez) {
         Set  <String> namez  =  new HashSet(      );
         StringBuilder path   =  new StringBuilder();

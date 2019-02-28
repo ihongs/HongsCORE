@@ -9,6 +9,7 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.util.FetchCase;
+import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.auth.RoleMap;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
@@ -57,9 +58,12 @@ public class DeptAction {
 
         // With all roles
         if (nc != null && nc.length() != 0) {
-            List rs = !Cnst.ADM_UID.equals(ud) ?
-                new RoleMap(NaviMap.getInstance(nc)).getRoleTranslated():
-                new RoleMap(NaviMap.getInstance(nc)).getRoleTranslates();
+            List rs = new RoleMap (NaviMap.getInstance(nc))
+                .getRoleTranslated(
+                    ! Cnst.ADM_UID.equals (ud)
+                    ? AuthKit.getUserRoles(ud)
+                    : null
+                );
             Dict.put(rd, rs, "enum", "roles..role");
         }
 

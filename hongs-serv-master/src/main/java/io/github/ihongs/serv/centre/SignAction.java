@@ -64,17 +64,17 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         String appid = Synt.declare(ah.getParameter("appid"), "_WEB_");
         String place = Synt.declare(ah.getParameter("place"),"centre");
 
-        // 赋予公共权限
-        sd = new HashMap();
-        sd.put("user_id", usrid);
-        sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));
-        uo.db.getTable("user_role").insert(sd);
-
         // 加入公共部门
         sd = new HashMap();
         sd.put("user_id", usrid);
         sd.put("dept_id", cc.getProperty("core.public.regs.dept", "CENTRE"));
         uo.db.getTable("user_dept").insert(sd);
+
+        // 赋予公共权限. 仅用部门限权(2019/02/28)
+//      sd = new HashMap();
+//      sd.put("user_id", usrid);
+//      sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));
+//      uo.db.getTable("user_role").insert(sd);
 
         ah.reply(AuthKit.userSign(ah, place, appid, usrid, uname, uhead, utime));
     }

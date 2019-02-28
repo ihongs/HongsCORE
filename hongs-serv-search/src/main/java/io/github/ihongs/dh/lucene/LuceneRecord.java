@@ -82,7 +82,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     private IndexWriter   writer  = null ;
     private String        dbpath  = null ;
     private String        dbname  = null ;
-    private Set<String>  replies  = null ;
+    private Set<String>  replies  = null ; // 这个会使对象不是线程安全的, 好在当前对象无需线程内共享
 
     /**
      * 构造方法
@@ -1362,17 +1362,29 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return Synt.declare(fc.get(  "unstored"  ), false);
     }
 
+    /**
+     * 存储时忽略
+     * @param fc
+     * @return
+     */
     protected boolean ignored (Map fc) {
-        return "@".equals(fc.get("__name__"))
+        return "" .equals(fc.get("__type__"))
             || "" .equals(fc.get("__name__"))
-            || "" .equals(fc.get("__type__"))
-            || "Ignore".equals (fc.get(  "rule"  ));
+            || "@".equals(fc.get("__name__"))
+            || "Ignore".equals( fc.get("__rule__") );
     }
 
-    protected boolean replied (Map fc) {
-        return replies == null
-            || replies.isEmpty (/* ignore empty */)
-            || replies.contains(fc.get("__name__"));
+    /**
+     * 读取时忽略
+     * @param fc
+     * @return
+     */
+    protected boolean escaped (Map fc) {
+        return unstored(fc)
+          ||   ignored (fc)
+          || ( replies != null
+          && ! replies.isEmpty ()
+          && ! replies.contains(fc.get("__name__")));
     }
 
     protected boolean queried (Map rd, String fn, Object fv, BooleanQuery.Builder qb) {
@@ -1390,9 +1402,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             Map    m = (Map) e.getValue();
             String k = (String)e.getKey();
 
-            if (unstored(m)
-            ||  ignored (m)
-            || !replied (m)) {
+            if (escaped(m)) {
                 continue;
             }
 

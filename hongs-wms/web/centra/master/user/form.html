@@ -76,7 +76,7 @@
     (function($) {
         var context = $("#master-user-form");
 
-        // 密码、分组及权限表
+        // 权限、分组以及密码
         context.on("loadBack", function(ev, rd) {
             if (!rd["enum"]["roles..role"].length ) {
                 context.find(".role-info").remove();

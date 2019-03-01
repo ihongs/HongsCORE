@@ -1,9 +1,12 @@
 <div id="master-user-list"
      data-module="hsList"
-     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&amp;ob=-mtime&amp;with-depts=2"
-     data-open-urls-0="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']"
-     data-open-urls-1="['centra/master/user/form.html?id={ID}','.modify','@']"
-     data-send-urls-0="['centra/master/user/delete.act','.delete','您确定要删除此用户?']">
+     data-data-0="load:(hsUserLoad)"
+     data-data-1="send:(hsUserSend)"
+     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&amp;ob=-mtime,-ctime&amp;with-depts=2&amp;bind-scope=1"
+     data-send-urls-0="['centra/master/user/save.act'  ,'.remove', '您确定要移出此用户?']"
+     data-send-urls-1="['centra/master/user/delete.act','.delete', '您确定要删除此用户?']"
+     data-open-urls-0="['centra/master/user/form.html?id={ID}','.modify','@']"
+     data-open-urls-1="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']">
     <div class="clearfix">
         <div class="toolbox col-xs-8 btn-group">
             <button type="button" class="create btn btn-default">创建用户</button>
@@ -23,7 +26,7 @@
             <thead>
                 <tr>
                     <th data-fn="id[]" data-ft="_check" class="_check">
-                        <input type="checkbox" class="checkall" name="id[]"/>
+                        <input type="checkbox" class="checkall" name="id[]" />
                     </th>
                     <th data-fn="head"     class="userhead">头像</th>
                     <th data-fn="name"     class="sortable">名称</th>
@@ -54,24 +57,14 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#master-user-list");
+        var context = $("#master-user-list").removeAttr("id");
         var viewImg = context.find(".modal");
-        var srchInp = context.find(".findbox [type=search]");
-
-        // 根节点可搜索全部用户
-        if (H$("@dept_id", context) === '0') {
-            srchInp.after('<input type="hidden" name="dept_id" value="0">');
-            srchInp.attr ("placeholder", "可以搜全部用户哦");
-            srchInp.on   ("change" , function () {
-                $(this).next().val($(this).val() ? "" : "0");
-            } );
-        }
 
         // 点击用户头像打开预览
         viewImg.modal("hide");
         context.data("_fill_head" , function(c, v, n) {
             if (!v) {
-                var u = "static/assets/img/head_icon_sm.jpg";
+                var u = "static/assets/img/head_icon_sm.jpg" ;
                 $('<a href="javascript:;" data-href="'+u+'">'
                  +'<span style="background-image:url('+u+');"/></a>')
                 .appendTo(c);
@@ -96,36 +89,5 @@
             }
             c.closest( "tr" ).data( "dept_ids" , deptIds);
         });
-
-        // 移除仅断开当前组关系
-        context.on("click", ".remove", function( ) {
-            var listobj = context.data( "HsList" );
-            var ck  = listobj.getOne();
-            if (ck === null)  return  ;
-            var tr  = ck.closest("tr");
-            var uid = ck.val (  );
-            var dis = tr.data("dept_ids").slice(0);
-            var did = H$("&dept_id", listobj._url);
-
-            del(dis , did);
-            if (dis.length === 0) {
-                listobj.warn("这是此用户唯一的部门, 不能再移除了.");
-                return;
-            }
-
-            listobj.send( $(this),
-                "您确定移出此用户?", "centra/master/user/save.act",
-                new HsSerialDic({id: uid, "depts..dept_id": dis})
-            );
-        });
-
-        function del(arr, val) {
-            for(var i = 0; i < arr.length; i ++) {
-                if (arr[i] === val) {
-                    arr.splice(i,1);
-                    break;
-                }
-            }
-        }
     })(jQuery);
 </script>

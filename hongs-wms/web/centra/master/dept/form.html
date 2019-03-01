@@ -44,7 +44,7 @@
     (function($) {
         var context = $("#master-dept-form");
 
-        // 权限
+        // 无可分配权限则隐藏
         context.on("loadBack", function(ev, rd) {
             if (!rd["enum"]["roles..role"].length ) {
                 context.find(".role-info").remove();

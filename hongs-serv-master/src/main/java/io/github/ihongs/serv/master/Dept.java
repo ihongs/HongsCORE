@@ -72,28 +72,6 @@ extends Grade {
     protected void filter(FetchCase caze, Map req)
     throws HongsException {
         /**
-         * 如果有指定 user_id
-         * 则关联 a_master_user_dept 来约束范围
-         * 当其为横杠时表示取那些没有关联的部门
-         */
-        Object uid = req.get("user_id");
-        if (null != uid && ! "".equals(uid)) {
-            if ( "-".equals (uid)) {
-                caze.gotJoin("users")
-                    .from   ("a_master_user_dept")
-                    .by     (FetchCase.INNER)
-                    .on     ("`users`.`dept_id` = `dept`.`id`")
-                    .filter ("`users`.`user_id` IS NULL" /**/ );
-            } else {
-                caze.gotJoin("users")
-                    .from   ("a_master_user_dept")
-                    .by     (FetchCase.INNER)
-                    .on     ("`users`.`dept_id` = `dept`.`id`")
-                    .filter ("`users`.`user_id` IN (?)" , uid );
-            }
-        }
-
-        /**
          * 非超级管理员或在超级管理组
          * 限制查询为当前管辖范围以内
          */
@@ -115,6 +93,28 @@ extends Grade {
                 }
             } else caze.setOption("SCOPE" , 2 );
             } else caze.setOption("SCOPE" , 1 );
+        }
+
+        /**
+         * 如果有指定 user_id
+         * 则关联 a_master_user_dept 来约束范围
+         * 当其为横杠时表示取那些没有关联的部门
+         */
+        Object uid = req.get("user_id");
+        if (null != uid && ! "".equals(uid)) {
+            if ( "-".equals (uid)) {
+                caze.gotJoin("users")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`users`.`dept_id` = `dept`.`id`")
+                    .filter ("`users`.`user_id` IS NULL" /**/ );
+            } else {
+                caze.gotJoin("users")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`users`.`dept_id` = `dept`.`id`")
+                    .filter ("`users`.`user_id` IN (?)" , uid );
+            }
         }
 
         super.filter(caze, req);

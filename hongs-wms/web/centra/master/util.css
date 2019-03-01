@@ -39,8 +39,8 @@ table.ui-droppable-hover td ,
     background-position:  center;
 }
 
-div[data-type=user],
-div[data-type=dept] {
+table[data-type=user],
+table[data-type=dept] {
     background: #eee;
     border : 1px dotted #000;
     padding: 0px 5px;

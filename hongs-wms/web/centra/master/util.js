@@ -1,39 +1,84 @@
 
 function hsUserMove(treebox, listbox) {
+    var top_ids = {};
+
+    // 顶层需禁止操作
+    treebox.on("treeSelect", ".tree-node>table", function(ev, id, md) {
+        md.context.find(".for-select").prop("disabled", top_ids[id] );
+    });
+
     listbox.on("loadOver", function(evt, rst, mod) {
         var did = hsGetParam(mod._url , "dept_id");
+
+        // 非管辖范围提示
+        if (top_ids[did]) {
+            listbox.find(".create" )
+                   .prop("disabled", true );
+            listbox.find(".pagebox .alert")
+                   .text("您可以管理左侧的下级分组中的用户, 或向其下添加新的分组.");
+            listbox.find(".findbox .input-search")
+                   .attr("placeholder", "可以搜全部的哦");
+            listbox.find(".listbox").addClass("on-top" );
+        } else
+        if (did === "0" ) {
+            listbox.find(".findbox .input-search")
+                   .attr("placeholder", "可以搜全部的哦");
+            listbox.find(".listbox").addClass("on-top" );
+        }
+
+        // 拖拽用户
         listbox.find(".listbox tbody tr")
         .draggable({
             opactiy: 0.5,
             revert: "invalid",
             helper: function() {
-                var uid = $(this).find("td:eq(0) input").val  ();
-                var img = $(this).find("td:eq(1) span" ).clone();
-                var txt = $(this).find("td:eq(2)"      ).text ();
-                var dis = $(this).data("dept_ids"      );
-                return $('<div data-type="user"></div>')
+                var uid = $(this).find("td:eq(0) input").val();
+                var img = $(this).find("td:eq(1)").clone();
+                var txt = $(this).find("td:eq(2)").clone();
+                var dis = $(this).data("dept_ids");
+                return $( '<table data-type="user"></table>' )
                         .data("user_id" , uid)
                         .data("dept_id" , did)
                         .data("dept_ids", dis)
-                        .append(img)
-                        .append(txt);
+                        .append($('<tr></tr>')
+                            .append(img)
+                            .append(txt)
+                        );
             }
         });
     });
 
     treebox.on("loadOver", function(evt, rst, mod) {
-        treebox.find(".tree-node" /***/ )
+        // 非管辖范围处理
+        if (rst.scope == 0
+        &&  rst._pid  == 0 ) {
+            var  pid  ;
+            for(var i = 0; i < rst.list.length; i ++) {
+                var d = rst.list[i]["id"];
+                if (i < 1) pid = d;
+                top_ids[d] = true ;
+            }
+            mod.select (pid);
+            mod.toggle (pid);
+            mod.getNode("0").children("table").hide();
+        }
+
+        // 拖拽分组
+        treebox.find(".tree-node" /**/ )
         .draggable({
             opacity: 0.5,
             revert: "invalid",
             helper: function() {
-                return $('<div data-type="dept"></div>')
-                        .text( $(this).children("table")
-                        .find( ".tree-name" ).text( )  );
+                var txt = $(this).children( "table" )
+                                 .find (".tree-name")
+                                 .first(  ).clone(  );
+                return $( '<table data-type="user"></table>' )
+                        .append($('<tr></tr>').append( txt ) );
             }
         });
 
-        treebox.find(".tree-node table" )
+        // 分组接收
+        treebox.find(".tree-node table")
         .droppable({
             drop: function(ev, ui) {
                 var pid = $(this).parent().attr("id").substring(10);
@@ -75,6 +120,7 @@ function hsUserMove(treebox, listbox) {
                     var uid = ui.helper.data("user_id" );
                     var did = ui.helper.data("dept_id" );
                     var dis = ui.helper.data("dept_ids").slice(0);
+                    var del = hsUserDel_;
                     $.hsView({
                             "alert": "static",
                             "class": "alert-success",
@@ -159,12 +205,49 @@ function hsUserMove(treebox, listbox) {
         });
     });
 
-    function del(arr, val) {
-        for(var i = 0; i < arr.length; i ++) {
-            if (arr[i] === val) {
-                arr.splice(i,1);
-                break;
-            }
+}
+
+function hsUserLoad(url, data) {
+    if (!url ) url  = this._url ;
+    if (!data) data = this._data;
+    // 搜索
+    if (this.listBox.is(".on-top") ) {
+        var rd = hsSerialArr( data );
+        var wd = hsGetSeria(rd,"wd");
+        if (wd) {
+           url = hsSetParam(url, "dept_id", "");
+        } else {
+           url = hsSetParam(url, "dept_id","0");
+        }
+    }
+    HsList.prototype.load.call(this, url, data);
+}
+
+function hsUserSend(btn, msg, url, data) {
+    // 移出
+    if (btn.is(".remove")) {
+        var uid = data.val();
+        var dis = data.closest("tr")
+                 .data ( "dept_ids")
+                 .slice( 0 );
+        var did =  H$  ("&dept_id" , this._url);
+
+        hsUserDel_(dis, did);
+        if (dis.length == 0) {
+            this.warn("这是此用户唯一的部门, 不能再移除了.");
+            return;
+        }
+
+        data = new HsSerialDic({id: uid, "depts..dept_id": dis});
+    }
+    HsList.prototype.send.call(this, btn, msg, url, data);
+}
+
+function hsUserDel_(arr, val) {
+    for(var i = 0; i < arr.length; i ++) {
+        if (arr[i] === val) {
+            arr.splice(i,1);
+            break;
         }
     }
 }

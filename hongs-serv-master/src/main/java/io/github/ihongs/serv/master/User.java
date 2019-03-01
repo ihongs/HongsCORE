@@ -76,8 +76,8 @@ extends Model {
                         .filter("user_id IN (?)", maps.keySet());
                 if (incs == 2) {
                     caze.join(db.getTable("dept").tableName,
-                        "dept", "user_dept.dept_id = dept.id" )
-                        .select("user_id , dept_id , dept.* " );
+                        "dept", "user_dept.dept_id = dept.id")
+                        .select("user_id , dept_id , dept.* ");
                 }
                 List<Map> rows = caze.getAll( );
                 for ( Map dept : rows ) {

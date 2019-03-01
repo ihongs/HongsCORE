@@ -3,8 +3,15 @@ function hsUserMove(treebox, listbox) {
     var top_ids = {};
 
     // 顶层需禁止操作
-    treebox.on("treeSelect", ".tree-node>table", function(ev, id, md) {
-        md.context.find(".for-select").prop("disabled", top_ids[id] );
+    treebox.on("treeSelect", ".tree-node>table", function(ev, id) {
+        if (top_ids[id]) {
+            if (id == 0)ev.preventDefault(); // 受限时原始顶层不要打开用户列表
+            treebox.find(".for-select")
+                   .prop("disabled", true );
+        } else {
+            treebox.find(".for-select")
+                   .prop("disabled", false);
+        }
     });
 
     listbox.on("loadOver", function(evt, rst, mod) {
@@ -18,12 +25,12 @@ function hsUserMove(treebox, listbox) {
                    .text("您可以管理左侧的下级分组中的用户, 或向其下添加新的分组.");
             listbox.find(".findbox .input-search")
                    .attr("placeholder", "可以搜全部的哦");
-            listbox.find(".listbox").addClass("on-top" );
+            listbox.find(".listbox").addClass( "on-top" );
         } else
         if (did === "0" ) {
             listbox.find(".findbox .input-search")
                    .attr("placeholder", "可以搜全部的哦");
-            listbox.find(".listbox").addClass("on-top" );
+            listbox.find(".listbox").addClass( "on-top" );
         }
 
         // 拖拽用户
@@ -58,6 +65,7 @@ function hsUserMove(treebox, listbox) {
                 if (i < 1) pid = d;
                 top_ids[d] = true ;
             }
+            top_ids[ "0" ] = true ;
             mod.select (pid);
             mod.toggle (pid);
             mod.getNode("0").children("table").hide();

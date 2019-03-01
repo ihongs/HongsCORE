@@ -9,6 +9,7 @@ import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.auth.AuthKit;
+import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -56,6 +57,9 @@ extends Model {
 
     @Override
     public Map getList(Map rd, FetchCase caze) throws HongsException {
+        if (caze == null) {
+            caze = new FetchCase();
+        }
         Map sd = super.getList(rd, caze);
 
         // Add all depts for every user

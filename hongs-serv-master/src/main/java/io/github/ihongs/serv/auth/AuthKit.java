@@ -214,17 +214,17 @@ public class AuthKit {
             ud.put("opnid"  ,  opnid  );
             db.getTable("user_open").insert(ud );
 
-            // 赋予公共权限
-            ud  =  new HashMap( );
-            ud.put("user_id",  usrid  );
-            ud.put("role"   , "centre");
-            db.getTable("user_role").insert(ud );
-
             // 加入公共部门
             ud  =  new HashMap( );
             ud.put("user_id",  usrid  );
             ud.put("dept_id", "CENTRE");
             db.getTable("user_dept").insert(ud );
+
+            // 赋予公共权限. 仅用部门即可(2019/02/28)
+//          ud  =  new HashMap( );
+//          ud.put("user_id",  usrid  );
+//          ud.put("role"   , "centre");
+//          db.getTable("user_role").insert(ud );
         }
 
         return userSign(ah, place, appid, usrid, uname, uhead, utime);
@@ -244,6 +244,50 @@ public class AuthKit {
         // Nothing todo.
     }
 
+    /**
+     * 获取分组拥有的权限
+     * @param gid
+     * @return
+     * @throws HongsException
+     */
+    public static Set getDeptRoles(String gid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("dept_role");
+        List<Map> lst = rel.fetchCase()
+            .filter("dept_id = ?", gid)
+            .select("role"    )
+            .getAll();
+        Set set = new HashSet();
+        for(Map row : lst) {
+            set.add(row.get("role"));
+        }
+        return set;
+    }
+
+    /**
+     * 获取用户拥有的权限
+     * @param uid
+     * @return
+     * @throws HongsException
+     */
+    public static Set getUserRoles(String uid) throws HongsException {
+        Table rel = DB.getInstance("master").getTable("user_role");
+        List<Map> lst = rel.fetchCase()
+            .filter("user_id = ?",uid)
+            .select("role"    )
+            .getAll();
+        Set set = new HashSet();
+        for(Map row : lst) {
+            set.add(row.get("role"));
+        }
+        return set;
+    }
+
+    /**
+     * 获取用户所在的分组
+     * @param uid
+     * @return
+     * @throws HongsException
+     */
     public static Set getUserDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
@@ -257,6 +301,12 @@ public class AuthKit {
         return set;
     }
 
+    /**
+     * 获取所在的下级分组
+     * @param uid
+     * @return
+     * @throws HongsException
+     */
     public static Set getMoreDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
@@ -267,11 +317,32 @@ public class AuthKit {
         Dept dp = new Dept();
         for(Map row : lst) {
             String id = (String) row.get("dept_id");
-            set.addAll(dp.getChildIds( id , true ));
+            set.addAll( dp.getChildIds(id , true) );
         }
         return set;
     }
 
+    /**
+     * 获取所在的下级分组
+     * @param deptIds
+     * @return
+     * @throws HongsException
+     */
+    public static Set getMoreDepts(Set<String> deptIds) throws HongsException {
+        Set set = new HashSet();
+        Dept dp = new Dept();
+        for(String id:deptIds ) {
+            set.addAll( dp.getChildIds(id , true) );
+        }
+        return set;
+    }
+
+    /**
+     * 获取所在的顶层分组
+     * @param uid
+     * @return
+     * @throws HongsException
+     */
     public static Set getLessDepts(String uid) throws HongsException {
         Table rel = DB.getInstance("master").getTable("user_dept");
         List<Map> lst = rel.fetchCase()
@@ -282,70 +353,24 @@ public class AuthKit {
         Dept dp = new Dept();
         for(Map row : lst) {
             String id = (String) row.get("dept_id");
-            set.add   (   getDeptPath( id , dp )  );
+            set.add(getDeptPath(id, dp));
         }
         return getPeakPids(set);
     }
 
     /**
-     * 检查并清理不合规的部门设置数据
-     * 操作人员无法增减自己不在的部门
-     * @param list 权限设置数据
-     * @param uid  用户ID
+     * 获取所在的顶层分组
+     * @param deptIds
+     * @return
      * @throws HongsException
      */
-    public static void cleanUserDepts(List<Map> list, String uid) throws HongsException {
-        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
-        if (Cnst.ADM_UID.equals(cid)) {
-            cleanListItems(list,"dept_id");
-            return; // 超级管理员可以更改任何人的部门, 即使自己没有
+    public static Set getLessDepts(Set<String> deptIds) throws HongsException {
+        Set set = new TreeSet();
+        Dept dp = new Dept();
+        for(String id:deptIds ) {
+            set.add(getDeptPath(id, dp));
         }
-
-            Set uds = getMoreDepts(cid);
-        if (uid != null) {
-            Set xds = getUserDepts(uid);
-            xds.addAll(uds);
-            uds = xds;
-        }
-
-        cleanListItems(list,"dept_id",uds);
-    }
-
-    /**
-     * 检查并清理不合规的权限设置数据
-     * 操作人员无法增减自己没有的权限
-     * @param list 权限设置数据
-     * @param uid  用户ID
-     * @throws HongsException
-     */
-    public static void cleanUserRoles(List<Map> list, String uid) throws HongsException {
-        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
-        if (Cnst.ADM_UID.equals(cid)) {
-            cleanListItems(list,"role");
-            return; // 超级管理员可以更改任何人的权限, 即使自己没有
-        }
-
-            Set urs = getUserRoles(cid);
-        if (uid != null) {
-            Set xrs = getUserRoles(uid);
-            xrs.addAll(urs);
-            urs = xrs;
-        }
-
-        cleanListItems(list,"role",urs);
-    }
-
-    public static Set getUserRoles(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("user_role");
-        List<Map> lst = rel.fetchCase()
-            .filter("user_id = ?",uid)
-            .select("role"    )
-            .getAll();
-        Set set = new HashSet();
-        for(Map row : lst) {
-            set.add(row.get("role"));
-        }
-        return set;
+        return getPeakPids(set);
     }
 
     /**
@@ -372,17 +397,52 @@ public class AuthKit {
         cleanListItems(list,"role",urs);
     }
 
-    public static Set getDeptRoles(String gid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("dept_role");
-        List<Map> lst = rel.fetchCase()
-            .filter("dept_id = ?", gid)
-            .select("role"    )
-            .getAll();
-        Set set = new HashSet();
-        for(Map row : lst) {
-            set.add(row.get("role"));
+    /**
+     * 检查并清理不合规的权限设置数据
+     * 操作人员无法增减自己没有的权限
+     * @param list 权限设置数据
+     * @param uid  用户ID
+     * @throws HongsException
+     */
+    public static void cleanUserRoles(List<Map> list, String uid) throws HongsException {
+        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
+        if (Cnst.ADM_UID.equals(cid)) {
+            cleanListItems(list,"role");
+            return; // 超级管理员可以更改任何人的权限, 即使自己没有
         }
-        return set;
+
+            Set urs = getUserRoles(cid);
+        if (uid != null) {
+            Set xrs = getUserRoles(uid);
+            xrs.addAll(urs);
+            urs = xrs;
+        }
+
+        cleanListItems(list,"role",urs);
+    }
+
+    /**
+     * 检查并清理不合规的部门设置数据
+     * 操作人员无法增减自己不在的部门
+     * @param list 权限设置数据
+     * @param uid  用户ID
+     * @throws HongsException
+     */
+    public static void cleanUserDepts(List<Map> list, String uid) throws HongsException {
+        String cid = (String) Core.getInstance(ActionHelper.class).getSessibute("uid");
+        if (Cnst.ADM_UID.equals(cid)) {
+            cleanListItems(list,"dept_id");
+            return; // 超级管理员可以更改任何人的部门, 即使自己没有
+        }
+
+            Set uds = getMoreDepts(cid);
+        if (uid != null) {
+            Set xds = getUserDepts(uid);
+            xds.addAll(uds);
+            uds = xds;
+        }
+
+        cleanListItems(list,"dept_id",uds);
     }
 
     private static Set getCurrRoles(String uid) throws HongsException {
@@ -399,7 +459,7 @@ public class AuthKit {
         return sb.append(id).toString( );
     }
 
-    private static Set  getPeakPids(Set<String> set) {
+    private static Set getPeakPids(Set<String> set) {
         Set     ids = new HashSet();
         String  pid =  "/" ;
         for(String id : set) {

@@ -59,7 +59,7 @@ extends Model {
         rd = super.getList(rd, caze);
 
         // Add all depts for every user
-        byte incs = caze.getOption("INCLUDE_DEPARTS", (byte) 0);
+        byte incs = Synt.declare( rd.get("with-depts"), (byte) 0 );
         if ( incs > 0 ) {
             List<Map> list = ( List ) rd.get( "list" );
             if (list != null) {
@@ -134,33 +134,13 @@ extends Model {
     protected void filter(FetchCase caze, Map req)
     throws HongsException {
         /**
-         * 默认情况下不包含上级部门
-         * 此时顶级仅需列出当前用户
-         */
-        if (!caze.getOption(  "INCLUDE_PARENTS" , false   )
-        && "getList".equals(caze.getOption("MODEL_START"))) {
-            Object  id = req.get(/***/"id");
-            Object pid = req.get("dept_id");
-            if (id == null && "0".equals( pid )) {
-                ActionHelper helper = Core.getInstance(ActionHelper.class);
-                String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-                if (!Cnst.ADM_UID.equals( uid )) {
-                Set set = AuthKit.getUserDepts(uid);
-                if (!set.contains(Cnst.ADM_GID)) {
-                    req.put   ("id", uid);
-                    req.remove("dept_id");
-                }}
-            }
-        }
-
-        /**
          * 如果有指定 dept_id
          * 则关联 a_master_user_dept 来约束范围
          * 当其为横杠时表示取那些没有关联的用户
          */
-        Object deptId = req.get("dept_id");
-        if (null != deptId && ! "".equals(deptId)) {
-            if ( "-".equals ( deptId)) {
+        Object pid = req.get("dept_id");
+        if (null != pid && ! "".equals(pid)) {
+            if ( "-".equals (pid ) ) {
                 caze.gotJoin("depts")
                     .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
@@ -171,17 +151,45 @@ extends Model {
                     .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
-                    .filter ("`depts`.`dept_id` IN (?)",deptId);
+                    .filter ("`depts`.`dept_id` IN (?)" , pid );
             }
         }
+
+        /**
+         * 非超级管理员或在超级管理组
+         * 限制查询为当前管辖范围以内
+         */
+        ActionHelper helper = Core.getInstance(ActionHelper.class);
+        String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+        if (!Cnst.ADM_UID.equals( mid )) {
+        Set set = AuthKit.getUserDepts(mid);
+        if (!set.contains(Cnst.ADM_GID)) {
+            set = AuthKit.getMoreDepts(set);
+            caze.gotJoin("depts")
+                .from   ("a_master_user_dept")
+                .by     (FetchCase.INNER)
+                .on     ("`depts`.`user_id` = `user`.`id`")
+                .filter ("`depts`.`dept_id` IN (?)" , set );
+        }}
 
         super.filter(caze, req);
     }
 
     protected void permit(String id, Map data) throws HongsException {
         if (data != null) {
+            // 加密密码
+            data.remove ("passcode");
+            if (data.containsKey ("password")) {
+                String pw = Synt.declare( data.get("password"), "" );
+                String pc = Core.newIdentity();
+                pc = AuthKit.getCrypt(pw + pc);
+                pw = AuthKit.getCrypt(pw + pc);
+                data.put("password" , pw);
+                data.put("passcode" , pc);
+            }
+
             // 权限限制, 仅能赋予当前登录用户所有的权限
-            if (data.containsKey( "roles"  )) {
+            if (data.containsKey("roles")) {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
@@ -194,7 +202,7 @@ extends Model {
             }
 
             // 部门限制, 仅能指定当前登录用户下属的部门
-            if (data.containsKey( "depts"  )) {
+            if (data.containsKey("depts")) {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "depts" ));
                 AuthKit.cleanUserDepts (list, id);
@@ -205,29 +213,14 @@ extends Model {
                 }
                 data.put("depts", list);
             }
-
-            // 加密密码
-            data.remove ("passcode");
-            if (data.containsKey("password")) {
-                String password = Synt.declare(data.get("password"), "");
-                String passcode = Core.newIdentity();
-                passcode = AuthKit.getCrypt(password + passcode);
-                password = AuthKit.getCrypt(password + passcode);
-                data.put("password", password);
-                data.put("passcode", passcode);
-            }
         }
 
         if (id != null) {
             // 超级管理员可操作任何用户
+            // 但允许操作自身账号
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-            if (Cnst.ADM_UID.equals(uid )) {
-                return;
-            }
-
-            // 可以操作自己
-            if (uid.equals(id)) {
+            if (Cnst.ADM_UID.equals(uid) || id.equals ( uid )) {
                 return;
             }
 

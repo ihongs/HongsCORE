@@ -41,10 +41,7 @@ public class UserAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
-        fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
-        fc.setOption("INCLUDE_PARENTS", Synt.declare(rd.get("include-parents"), false));
-        fc.setOption("INCLUDE_DEPARTS", Synt.declare(rd.get("with-depts") , (byte) 0 ));
-        rd = model.getList(rd, fc);
+        rd = model.getList(rd , fc);
 
         // Remove the password field, don't show password in page
         List<Map> list = (List) rd.get("list");
@@ -96,8 +93,9 @@ public class UserAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        boolean cp;
+        Map    rd = helper.getRequestData();
+        String id;
+       boolean cp;
 
         // Ignore empty password in update
         if (null  ==  rd.get("password")
@@ -114,17 +112,16 @@ public class UserAction {
             cp = true ;
         }
 
-        String id = model.set(rd);
-
-        Map sd = new HashMap();
-        sd.put( "id" , id);
-        sd.put("name", rd.get("name"));
-        sd.put("head", rd.get("head"));
+        id = model.set(rd);
+        rd = new HashMap();
+        rd.put( "id" , id);
+        rd.put("name", rd.get("name"));
+        rd.put("head", rd.get("head"));
 
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
         String ms = ln.translate("core.save.user.success");
-        helper.reply(ms, sd);
+        helper.reply(ms, rd);
 
         /**
          * 2019/02/26
@@ -150,12 +147,8 @@ public class UserAction {
     @CommitSuccess
     public void doDelete(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        FetchCase fc = model.fetchCase();
-        fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
-
         // 不能删除自己和超级管理员
-        Set rs = Synt.asSet( rd.get( model.table.primaryKey ) );
+        Set rs = Synt.asSet(helper.getParameter(Cnst. ID_KEY ));
         if (rs != null) {
             if (rs.contains(helper.getSessibute(Cnst.UID_SES))) {
                 helper.fault("不能删除当前登录用户");
@@ -167,7 +160,8 @@ public class UserAction {
             }
         }
 
-        int rn = model.delete(rd, fc);
+        Map rd = helper.getRequestData();
+        int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
         String ms = ln.translate("core.delete.user.success", Integer.toString(rn));

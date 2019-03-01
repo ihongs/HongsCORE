@@ -70,7 +70,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         sd.put("dept_id", cc.getProperty("core.public.regs.dept", "CENTRE"));
         uo.db.getTable("user_dept").insert(sd);
 
-        // 赋予公共权限. 仅用部门限权(2019/02/28)
+        // 赋予公共权限. 仅用部门即可(2019/02/28)
 //      sd = new HashMap();
 //      sd.put("user_id", usrid);
 //      sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));

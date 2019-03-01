@@ -534,7 +534,7 @@ public class FetchCase
    * 查询字段前缀
    * 比如 select("fn1,fn2").in("foo") 得到 `foo.fn1`,`foo.fn2`
    * 查询结果会按 . 自动拆解为层级结构, 如 foo={fn1=v1,fn2=v2}
-   * 但当选项 CLEVER_MODE 为 true 时才有效
+   * 仅当选项 CLEVER_MODE 为 true 时才有效
    * @param name
    * @return
    */

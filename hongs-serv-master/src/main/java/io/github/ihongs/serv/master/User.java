@@ -72,8 +72,8 @@ extends Model {
                     info.put( "depts" , new HashSet());
                     maps.put(uid, info);
                 }
-                caze = db.getTable("user_dept").fetchCase()
-                        .filter("user_id IN (?)",maps.keySet());
+                    caze = db.getTable("user_dept").fetchCase( )
+                        .filter("user_id IN (?)", maps.keySet());
                 if (incs == 2) {
                     caze.join(db.getTable("dept").tableName,
                         "dept", "user_dept.dept_id = dept.id" )

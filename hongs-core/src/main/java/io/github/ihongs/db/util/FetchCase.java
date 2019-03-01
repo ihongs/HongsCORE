@@ -496,7 +496,7 @@ public class FetchCase
   {
     this.joinSet.add(caze);
     caze.options = options;
-    if (caze.joinType == NONE)
+    if (caze.joinType <= NONE)
     {
         caze.joinType = INNER;
     }
@@ -1085,7 +1085,7 @@ public class FetchCase
 
     for(FetchCase caze : this.joinSet)
     {
-      if (NONE != caze.joinType)
+      if ( NONE < caze.joinType)
       {
         caze.getParamsDeep(wparamz, hparamz);
       }

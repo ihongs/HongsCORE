@@ -236,7 +236,7 @@ HsTree.prototype = {
         rst = hsResponse(rst);
         if (rst.ok === false) return;
 
-        rst._pid = pid; // 先登记待用.
+        rst._pid = pid; // 先登记待用
 
         this.treeBox.trigger("loadBack", [rst, this]);
 

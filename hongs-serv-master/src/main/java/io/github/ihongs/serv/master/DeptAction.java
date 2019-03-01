@@ -36,9 +36,7 @@ public class DeptAction {
     throws HongsException {
         Map rd = helper.getRequestData();
         FetchCase fc = model.fetchCase();
-        fc.setOption("INCLUDE_REMOVED", Synt.declare(rd.get("include-removed"), false));
-        fc.setOption("INCLUDE_PARENTS", Synt.declare(rd.get("include-parents"), false));
-        rd = model.getList(rd, fc);
+        rd = model.getList(rd , fc);
         helper.reply(rd);
     }
 
@@ -74,9 +72,10 @@ public class DeptAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        String id = model.set(rd);
-        
+        Map    rd = helper.getRequestData();
+        String id;
+
+        id = model.set(rd);
         rd = new HashMap();
         rd.put( "id" , id);
         rd.put("name", rd.get("name"));

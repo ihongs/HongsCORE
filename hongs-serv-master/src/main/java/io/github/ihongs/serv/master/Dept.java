@@ -53,6 +53,21 @@ extends Grade {
         return super.del(id, caze);
     }
 
+    @Override
+    public Map getList(Map rd, FetchCase caze) throws HongsException {
+        if (caze == null) {
+            caze  = new FetchCase( );
+        }
+        rd = super.getList(rd, caze);
+
+        // 当前用户身份标识: 0 一般用户, 1 管理员, 2 管理层
+        if ("0".equals(rd.get("pid"))) {
+            rd.put("rank", caze.getOption("DEPT_RANK", 0));
+        }
+
+        return rd;
+    }
+
     /**
      * @deprecated
      */
@@ -81,33 +96,13 @@ extends Grade {
     protected void filter(FetchCase caze, Map req)
     throws HongsException {
         /**
-         * 默认情况下不包含上级部门
-         * 此时顶级需取用户所在部门
-         */
-        if (!caze.getOption(  "INCLUDE_PARENTS" , false   )
-        && "getList".equals(caze.getOption("MODEL_START"))) {
-            Object  id = req.get( "id");
-            Object pid = req.get("pid");
-            if (id == null && "0".equals( pid )) {
-                ActionHelper helper = Core.getInstance(ActionHelper.class);
-                String uid = (String) helper.getSessibute ( Cnst.UID_SES );
-                if (!Cnst.ADM_UID.equals( uid )) {
-                Set set = AuthKit.getLessDepts(uid);
-                if (!set.contains(Cnst.ADM_GID)) {
-                    req.put( "id", set);
-                    req.remove( "pid" );
-                }}
-            }
-        }
-
-        /**
          * 如果有指定 user_id
          * 则关联 a_master_user_dept 来约束范围
          * 当其为横杠时表示取那些没有关联的部门
          */
-        Object userId = req.get("user_id");
-        if (null != userId && ! "".equals(userId)) {
-            if ( "-".equals ( userId)) {
+        Object uid = req.get("user_id");
+        if (null != uid && ! "".equals(uid)) {
+            if ( "-".equals (uid)) {
                 caze.gotJoin("users")
                     .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
@@ -118,9 +113,32 @@ extends Grade {
                     .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
                     .on     ("`users`.`dept_id` = `dept`.`id`")
-                    .filter ("`users`.`user_id` IN (?)",userId);
+                    .filter ("`users`.`user_id` IN (?)",uid);
             }
         }
+
+        /**
+         * 非超级管理员或在超级管理组
+         * 限制查询为当前管辖范围以内
+         */
+        ActionHelper helper = Core.getInstance(ActionHelper.class);
+        String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+        if (!Cnst.ADM_UID.equals( mid )) {
+        Set set = AuthKit.getUserDepts(mid);
+        if (!set.contains(Cnst.ADM_GID)) {
+            Object  id = req.get( "id");
+            Object pid = req.get("pid");
+            if (id == null || "".equals(id)) // 详情随便查吧, 反正不能设置
+            if ("0".equals(  pid  )) {
+                set = AuthKit.getLessDepts(set);
+                req.put( "id", set);
+                req.remove( "pid" );
+            } else {
+                set = AuthKit.getMoreDepts(set);
+                req.put( "id", set);
+            }
+        } else caze.setOption( "DEPT_RANK", 2 );
+        } else caze.setOption( "DEPT_RANK", 1 );
 
         super.filter(caze, req);
     }
@@ -129,8 +147,15 @@ extends Grade {
       String pid  = null;
 
         if (data != null) {
+            // 上级部门
+             pid  =  (String) data.get ("pid");
+            if (pid == null || pid.equals("")) {
+                data.remove("pid");
+                pid  = null;
+            }
+
             // 权限限制, 仅能赋予当前登录用户所有的权限
-            if (data.containsKey( "roles" )) {
+            if (data.containsKey("roles")) {
                 data.put("rtime", System.currentTimeMillis() / 1000);
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanDeptRoles (list, id);
@@ -141,17 +166,24 @@ extends Grade {
 //              }
                 data.put("roles", list);
             }
-
-            // 部门限制, 默认顶级, 是否可操作在下方判断
-            pid = Synt.declare(data.get("pid"), "");
-            if ("".equals(pid)) pid = Cnst.ADM_GID ;
         } else {
+            List  list  ;
+            Table tablx = db.getTable("user_dept");
+
+            // 删除限制, 如果部门下有部门则中止当前操作
+            list = table.fetchCase()
+                .filter("pid = ? AND state > ?", id, 0 )
+                .limit (1)
+                .getAll( );
+            if (!list.isEmpty() ) {
+                throw new HongsException
+                    .Notice("ex.master.dept.have.depts")
+                    .setLocalizedContext("master");
+            }
+
             // 删除限制, 如果部门下有用户则中止当前操作
-            User user = new User();
-            List list = user.table.fetchCase()
-                .join  (user.db.getTable("user_dept").tableName , "depts" ,
-                        "`depts`.`user_id` = `user`.`id`", FetchCase.INNER)
-                .filter("`depts`.`dept_id` = ?", id )
+            list = tablx.fetchCase()
+                .filter("dept_id = ?", id)
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {

@@ -56,16 +56,16 @@ extends Grade {
     @Override
     public Map getList(Map rd, FetchCase caze) throws HongsException {
         if (caze == null) {
-            caze  = new FetchCase( );
+            caze = new FetchCase();
         }
-        rd = super.getList(rd, caze);
+        Map sd = super.getList(rd, caze);
 
         // 当前用户身份标识: 0 一般用户, 1 管理员, 2 管理层
-        if ("0".equals(rd.get("pid"))) {
-            rd.put("rank", caze.getOption("DEPT_RANK", 0));
+        if ( "0".equals(rd.get("pid")) ) {
+            sd.put("rank", caze.getOption("DEPT_RANK", 0));
         }
 
-        return rd;
+        return sd;
     }
 
     /**

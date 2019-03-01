@@ -56,12 +56,12 @@ extends Model {
 
     @Override
     public Map getList(Map rd, FetchCase caze) throws HongsException {
-        rd = super.getList(rd, caze);
+        Map sd = super.getList(rd, caze);
 
         // Add all depts for every user
         byte incs = Synt.declare( rd.get("with-depts"), (byte) 0 );
         if ( incs > 0 ) {
-            List<Map> list = ( List ) rd.get( "list" );
+            List<Map> list = ( List ) sd.get( "list" );
             if (list != null) {
                 Map<String, Map> maps = new HashMap( );
                 for ( Map info : list ) {
@@ -84,7 +84,7 @@ extends Model {
             }
         }
 
-        return rd;
+        return sd;
     }
 
     /**

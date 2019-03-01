@@ -78,17 +78,17 @@ extends Grade {
         if (Synt.declare (req.get("bind-scope"), false)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+            String pid = Synt.declare(req.get("pid"),"");
             if (!Cnst.ADM_UID.equals( mid )) {
             Set set = AuthKit.getUserDepts(mid);
             if (!set.contains(Cnst.ADM_GID)) {
-                Object  id = req.get( "id");
-                Object pid = req.get("pid");
                 if ("0".equals(  pid  )) {
                     set = AuthKit.getLessDepts(set);
-                    req.put( "id", set);
                     req.remove( "pid" );
+                    req.put( "id", set);
                 } else {
                     set = AuthKit.getMoreDepts(set);
+                    if (! set.contains( pid ) ) // 有则不必限制
                     req.put( "id", set);
                 }
             } else caze.setOption("SCOPE" , 2 );

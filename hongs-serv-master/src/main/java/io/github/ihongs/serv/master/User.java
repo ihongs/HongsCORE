@@ -100,17 +100,19 @@ extends Model {
         if (Synt.declare (req.get("bind-scope"), false)) {
             ActionHelper helper = Core.getInstance(ActionHelper.class);
             String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+            String pid = Synt.declare(req.get("dept_id"),"");
             if (!Cnst.ADM_UID.equals( mid )) {
             Set set = AuthKit.getUserDepts(mid);
             if (!set.contains(Cnst.ADM_GID)) {
                 set = AuthKit.getMoreDepts(set);
-                caze.by     (FetchCase.DISTINCT  );
+            if (!set.contains(pid)) {
+                caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("depts")
                     .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` IN (?)" , set );
-            }}
+            }}}
         }
 
         /**

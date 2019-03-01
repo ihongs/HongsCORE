@@ -80,7 +80,7 @@ function hsUserMove(treebox, listbox) {
                 var txt = $(this).children( "table" )
                                  .find (".tree-name")
                                  .first(  ).clone(  );
-                return $( '<table data-type="user"></table>' )
+                return $( '<table data-type="dept"></table>' )
                         .append($('<tr></tr>').append( txt ) );
             }
         });

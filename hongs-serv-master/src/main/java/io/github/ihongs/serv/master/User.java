@@ -94,6 +94,26 @@ extends Model {
     protected void filter(FetchCase caze, Map req)
     throws HongsException {
         /**
+         * 非超级管理员或在超级管理组
+         * 限制查询为当前管辖范围以内
+         */
+        if (Synt.declare (req.get("bind-scope"), false)) {
+            ActionHelper helper = Core.getInstance(ActionHelper.class);
+            String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+            if (!Cnst.ADM_UID.equals( mid )) {
+            Set set = AuthKit.getUserDepts(mid);
+            if (!set.contains(Cnst.ADM_GID)) {
+                set = AuthKit.getMoreDepts(set);
+                caze.by     (FetchCase.DISTINCT  );
+                caze.gotJoin("depts")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`depts`.`user_id` = `user`.`id`")
+                    .filter ("`depts`.`dept_id` IN (?)" , set );
+            }}
+        }
+
+        /**
          * 如果有指定 dept_id
          * 则关联 a_master_user_dept 来约束范围
          * 当其为横杠时表示取那些没有关联的用户
@@ -113,25 +133,6 @@ extends Model {
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` IN (?)" , pid );
             }
-        }
-
-        /**
-         * 非超级管理员或在超级管理组
-         * 限制查询为当前管辖范围以内
-         */
-        if (Synt.declare (req.get("bind-scope"), false)) {
-            ActionHelper helper = Core.getInstance(ActionHelper.class);
-            String mid = (String) helper.getSessibute ( Cnst.UID_SES );
-            if (!Cnst.ADM_UID.equals( mid )) {
-            Set set = AuthKit.getUserDepts(mid);
-            if (!set.contains(Cnst.ADM_GID)) {
-                set = AuthKit.getMoreDepts(set);
-                caze.gotJoin("depts")
-                    .from   ("a_master_user_dept")
-                    .by     (FetchCase.INNER)
-                    .on     ("`depts`.`user_id` = `user`.`id`")
-                    .filter ("`depts`.`dept_id` IN (?)" , set );
-            }}
         }
 
         super.filter(caze, req);

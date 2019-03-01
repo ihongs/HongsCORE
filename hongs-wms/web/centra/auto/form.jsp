@@ -49,8 +49,8 @@
             </fieldset>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-xs-3 control-label form-control-static text-right"><%=text%></label>
-                <div class="col-xs-6">
+                <label class="col-xs-3 col-md-2 control-label form-control-static text-right"><%=text%></label>
+                <div class="col-xs-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%
                         String extr = "";
@@ -205,12 +205,12 @@
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%> <%=rptd%>/>
                 <%} /*End If */%>
                 </div>
-                <div class="col-xs-3 col-xs-offset-0 help-block form-control-static"></div>
+                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block form-control-static"></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>
         <div class="form-group row" style="background-color: white;">
-            <div class="col-xs-6 col-xs-offset-3">
+            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="submit" class="commit btn btn-primary"><%=_locale.translate("fore.commit")%></button>
                 <button type="button" class="cancel btn btn-link"   ><%=_locale.translate("fore.cancel")%></button>
             </div>

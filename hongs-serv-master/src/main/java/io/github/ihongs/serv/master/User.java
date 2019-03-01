@@ -9,7 +9,6 @@ import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.auth.AuthKit;
-import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -91,49 +90,6 @@ extends Model {
         return sd;
     }
 
-    /**
-     * @deprecated
-     */
-    public Set<String> getRoles(String userId)
-    throws HongsException {
-        if (userId == null) throw new HongsException(0x10000, "User Id required!");
-
-        Table       asoc;
-        FetchCase   caze;
-        List<Map>   rows;
-        Set<String> roles = new HashSet();
-        Set<String> depts = new HashSet();
-
-        asoc = this.db.getTable("a_master_user_dept");
-        caze = this.fetchCase();
-        caze.select(asoc.name+".dept_id")
-            .filter(asoc.name+".user_id = ?", userId);
-        rows = asoc.fetchMore(caze);
-        for (Map row : rows) {
-            depts.add((String) row.get("dept_id"));
-        }
-
-        asoc = this.db.getTable("a_master_dept_role");
-        caze = this.fetchCase();
-        caze.select(asoc.name+".role")
-            .filter(asoc.name+".dept_id = ?", depts );
-        rows = asoc.fetchMore(caze);
-        for (Map row : rows) {
-            roles.add((String) row.get("role"));
-        }
-
-        asoc = this.db.getTable("a_master_user_role");
-        caze = this.fetchCase();
-        caze.select(asoc.name+".role")
-            .filter(asoc.name+".user_id = ?", userId);
-        rows = asoc.fetchMore(caze);
-        for (Map row : rows) {
-            roles.add((String) row.get("role"));
-        }
-
-        return roles;
-    }
-
     @Override
     protected void filter(FetchCase caze, Map req)
     throws HongsException {
@@ -163,18 +119,20 @@ extends Model {
          * 非超级管理员或在超级管理组
          * 限制查询为当前管辖范围以内
          */
-        ActionHelper helper = Core.getInstance(ActionHelper.class);
-        String mid = (String) helper.getSessibute ( Cnst.UID_SES );
-        if (!Cnst.ADM_UID.equals( mid )) {
-        Set set = AuthKit.getUserDepts(mid);
-        if (!set.contains(Cnst.ADM_GID)) {
-            set = AuthKit.getMoreDepts(set);
-            caze.gotJoin("depts")
-                .from   ("a_master_user_dept")
-                .by     (FetchCase.INNER)
-                .on     ("`depts`.`user_id` = `user`.`id`")
-                .filter ("`depts`.`dept_id` IN (?)" , set );
-        }}
+        if (Synt.declare (req.get("bind-scope"), false)) {
+            ActionHelper helper = Core.getInstance(ActionHelper.class);
+            String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+            if (!Cnst.ADM_UID.equals( mid )) {
+            Set set = AuthKit.getUserDepts(mid);
+            if (!set.contains(Cnst.ADM_GID)) {
+                set = AuthKit.getMoreDepts(set);
+                caze.gotJoin("depts")
+                    .from   ("a_master_user_dept")
+                    .by     (FetchCase.INNER)
+                    .on     ("`depts`.`user_id` = `user`.`id`")
+                    .filter ("`depts`.`dept_id` IN (?)" , set );
+            }}
+        }
 
         super.filter(caze, req);
     }

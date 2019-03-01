@@ -60,36 +60,12 @@ extends Grade {
         }
         Map sd = super.getList(rd, caze);
 
-        // 当前用户身份标识: 0 一般用户, 1 管理员, 2 管理层
-        if ( "0".equals(rd.get("pid")) ) {
-            sd.put("rank", caze.getOption("DEPT_RANK", 0));
+        // 管辖范围限制标识: 0 一般用户, 1 管理员, 2 管理层
+        if (Synt.declare(rd.get("bind-scope"), false )) {
+            sd.put("scope", caze.getOption("SCOPE", 0));
         }
 
         return sd;
-    }
-
-    /**
-     * @deprecated
-     */
-    public Set<String> getRoles(String deptId)
-    throws HongsException {
-        if (deptId == null) throw new HongsException(0x10000, "Dept Id required!");
-
-        Table       asoc;
-        FetchCase   caze;
-        List<Map>   rows;
-        Set<String> roles = new HashSet();
-
-        asoc = this.db.getTable("a_master_dept_role");
-        caze = this.fetchCase();
-        caze.select(asoc.name+".role")
-            .filter(asoc.name+".dept_id = ?", deptId);
-        rows = asoc.fetchMore(caze);
-        for (Map row : rows) {
-            roles.add((String) row.get("role"));
-        }
-
-        return roles;
     }
 
     @Override
@@ -113,7 +89,7 @@ extends Grade {
                     .from   ("a_master_user_dept")
                     .by     (FetchCase.INNER)
                     .on     ("`users`.`dept_id` = `dept`.`id`")
-                    .filter ("`users`.`user_id` IN (?)",uid);
+                    .filter ("`users`.`user_id` IN (?)" , uid );
             }
         }
 
@@ -121,24 +97,25 @@ extends Grade {
          * 非超级管理员或在超级管理组
          * 限制查询为当前管辖范围以内
          */
-        ActionHelper helper = Core.getInstance(ActionHelper.class);
-        String mid = (String) helper.getSessibute ( Cnst.UID_SES );
-        if (!Cnst.ADM_UID.equals( mid )) {
-        Set set = AuthKit.getUserDepts(mid);
-        if (!set.contains(Cnst.ADM_GID)) {
-            Object  id = req.get( "id");
-            Object pid = req.get("pid");
-            if (id == null || "".equals(id)) // 详情随便查吧, 反正不能设置
-            if ("0".equals(  pid  )) {
-                set = AuthKit.getLessDepts(set);
-                req.put( "id", set);
-                req.remove( "pid" );
-            } else {
-                set = AuthKit.getMoreDepts(set);
-                req.put( "id", set);
-            }
-        } else caze.setOption( "DEPT_RANK", 2 );
-        } else caze.setOption( "DEPT_RANK", 1 );
+        if (Synt.declare (req.get("bind-scope"), false)) {
+            ActionHelper helper = Core.getInstance(ActionHelper.class);
+            String mid = (String) helper.getSessibute ( Cnst.UID_SES );
+            if (!Cnst.ADM_UID.equals( mid )) {
+            Set set = AuthKit.getUserDepts(mid);
+            if (!set.contains(Cnst.ADM_GID)) {
+                Object  id = req.get( "id");
+                Object pid = req.get("pid");
+                if ("0".equals(  pid  )) {
+                    set = AuthKit.getLessDepts(set);
+                    req.put( "id", set);
+                    req.remove( "pid" );
+                } else {
+                    set = AuthKit.getMoreDepts(set);
+                    req.put( "id", set);
+                }
+            } else caze.setOption("SCOPE" , 2 );
+            } else caze.setOption("SCOPE" , 1 );
+        }
 
         super.filter(caze, req);
     }

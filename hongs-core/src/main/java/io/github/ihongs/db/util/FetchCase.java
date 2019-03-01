@@ -86,6 +86,8 @@ public class FetchCase
   protected String              joinExpr;
   protected byte                joinType;
 
+  public static final byte DISTINCT = -1;
+
   public static final byte NONE   = 0;
   public static final byte INNER  = 1;
   public static final byte LEFT   = 2;
@@ -571,6 +573,12 @@ public class FetchCase
     getSQLDeep(t, f, w, g, h, o, null, null);
 
     StringBuilder sql = new StringBuilder("SELECT");
+
+    // 去重
+    if (joinType == DISTINCT )
+    {
+      sql.append( " DISTINCT");
+    }
 
     // 字段
     if (f.length() != 0)

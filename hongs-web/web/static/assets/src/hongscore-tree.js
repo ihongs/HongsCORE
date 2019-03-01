@@ -236,11 +236,13 @@ HsTree.prototype = {
         rst = hsResponse(rst);
         if (rst.ok === false) return;
 
-        this.treeBox.trigger("loadBack", [rst, pid, this]);
+        rst._pid = pid; // 先登记待用.
+
+        this.treeBox.trigger("loadBack", [rst, this]);
 
         this.fillList(rst.list || [], pid);
 
-        this.treeBox.trigger("loadOver", [rst, pid, this]);
+        this.treeBox.trigger("loadOver", [rst, this]);
 
         /**
          * 删除后重载会致丢失选中

@@ -190,20 +190,12 @@ function HsTree(context, opts) {
 
     //** 顶级节点 **/
 
-    var  rootBox = jQuery('<div class="tree-node tree-root" id="tree-node-'
-                 +rootInfo.id+'"></div>')
-                 .appendTo(treeBox);
-    this.fillInfo(rootInfo,rootBox);
-    this.select  (rootInfo.id);
-
-    //** 搜索服务 **/
-
-    if (findBox.length) {
-        findBox.on("submit", function() {
-            that.find( loadUrl , this );
-            return true;
-        });
-    }
+    this.fillInfo(
+         rootInfo,
+         jQuery('<div/>').appendTo(treeBox)
+          .attr("id", "tree-node-"+rootInfo.id)
+          .attr("class", "tree-node tree-root")
+    );
 
     //** 立即加载 **/
 
@@ -343,11 +335,6 @@ HsTree.prototype = {
             nod.removeClass( "tree-fold")
                .removeClass( "tree-open");
         }
-    },
-
-    find     : function(url, data) {
-    },
-    findBack : function(rst) {
     },
 
     send     : function(btn, msg, url, data) {

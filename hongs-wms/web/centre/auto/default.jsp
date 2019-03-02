@@ -29,6 +29,14 @@
         <script type="text/javascript">
             HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;
             HsDEPS["__DEFINED__"]=1;
+            $(function(){
+                HsPops($("#main-context"), {
+                    listUrl: "<%=_module%>/<%=_entity%>/list.html",
+                    infoUrl: "<%=_module%>/<%=_entity%>/info.html",
+                    formUrl: "<%=_module%>/<%=_entity%>/form.html",
+                    addsUrl: "<%=_module%>/<%=_entity%>/form_adds.html"
+                });
+            });
         </script>
     </head>
     <body>
@@ -64,15 +72,5 @@
                 <div class="row" data-load="centre/foot.jsp"></div>
             </div>
         </nav>
-        <script type="text/javascript">
-            (function($) {
-                HsPops($("#main-context"), {
-                    listUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/list.html",
-                    infoUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/info.html",
-                    formUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form.html",
-                    addsUrl: "<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/form_adds.html"
-                });
-            })(jQuery);
-        </script>
     </body>
 </html>

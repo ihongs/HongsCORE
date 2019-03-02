@@ -747,11 +747,11 @@ function hsFormMove(treebox, listbox) {
                 if (ui.helper.data("type") == "unit") {
                     var did = ui.draggable.attr("id").substring(10);
                     var req = { id : did, pid : pid };
-                    $.hsView({
-                            "alert": "static",
+                    $.hsMask({
+                            "mode" : "warn",
                             "class": "alert-success",
                             "title": "您确定将此单元移到新单元下吗?",
-                            "notes": "移动后导航结构发生改变, 可能还会影响到顶部菜单."
+                            "text" : "移动后导航结构发生改变, 可能还会影响到顶部菜单."
                         },
                         {
                             "label": "移动",
@@ -782,11 +782,11 @@ function hsFormMove(treebox, listbox) {
                 } else {
                     var fid = ui.helper.data("form_id");
                     var req = {id: fid, "unit_id": pid};
-                    $.hsView({
-                            "alert": "static",
+                    $.hsMask({
+                            "mode" : "warn",
                             "class": "alert-success",
                             "title": "您确定将此表单移到新单元下吗?",
-                            "notes": "移动后导航结构发生改变, 可能还会影响到顶部菜单."
+                            "text" : "移动后导航结构发生改变, 可能还会影响到顶部菜单."
                         },
                         {
                             "label": "移动",

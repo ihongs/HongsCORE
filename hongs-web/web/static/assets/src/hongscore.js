@@ -1531,8 +1531,8 @@ $.hsNote = function(msg, typ, end, sec) {
         typ  = "" ;
     }
     var opt  = {
-        alert: "notice",
-        notes: msg,
+        mode : "note",
+        title: msg,
         count: sec,
         close: end
     };
@@ -1555,7 +1555,7 @@ $.hsNote = function(msg, typ, end, sec) {
             opt.glass = "alert-success";
     }
 
-    return $.hsView(opt);
+    return $.hsMask(opt);
 };
 $.hsWarn = function(msg, typ, yes, not) {
     // 参数
@@ -1565,7 +1565,7 @@ $.hsWarn = function(msg, typ, yes, not) {
         typ  = "" ;
     }
     var opt  = {
-        alert: "static",
+        mode : "warn",
         title: msg
     };
 
@@ -1584,7 +1584,7 @@ $.hsWarn = function(msg, typ, yes, not) {
             opt.glass = "alert-success";
             break;
         default:
-            opt.notes =  typ ;
+            opt.text  =  typ ;
     }
 
     // 按钮
@@ -1605,20 +1605,20 @@ $.hsWarn = function(msg, typ, yes, not) {
         };
     }
 
-    return $.hsView(opt, yes, not);
+    return $.hsMask(opt, yes, not);
 };
-$.hsView = function(opt) {
+$.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
-    var ini = {show: true};
+    var ini = { show: true };
     var foc = 0;
     var sec = 5;
     var end ;
 
     // 窗体设置
-    if (opt["alert"]) {
+    if (opt["mode"]) {
         mod = $('<div class="modal fade in warnbag">'
               + '<div class="alert fade in warnbox">'
-              + '<button type="button" class="close" data-dismiss="alert">&times;</button>'
+              + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
               + '<div class="alert-body">'
               + '<h4></h4><p class="notice"></p><p class="button"></p>'
               + '</div></div></div>');
@@ -1627,14 +1627,14 @@ $.hsView = function(opt) {
         btx = div.find("p").eq(0);
         btn = div.find("p").eq(1);
 
-        if (opt.alert  ===  "static") {
-            var cls =  div . find ( ".close");
-            cls.attr("data-dismiss", "modal");
-            btt.before(cls);
-        } else
-        if (opt.alert  ===  "notice") {
+        var clo = div.find(".close" );
+        if (opt.mode === "note" ) {
+            btt = btx = btx.parent( ).empty();
             div.addClass("alert-dismissable");
-            btx = btx.parent().empty( );
+            clo.attr("data-dismiss", "modal");
+        } else
+        if (opt.mode === "warn" ) {
+            btt.before(clo);
         }
     } else {
         mod = $('<div class="modal fade in"><div class="modal-dialog">'
@@ -1649,10 +1649,6 @@ $.hsView = function(opt) {
         btx = div.find(".modal-body"  );
         btn = div.find(".modal-footer");
     }
-    if (opt["still"]) {
-        ini.keyboard =  false  ;
-        ini.backdrop = "static";
-    }
     if (opt["focus"] !== undefined) {
         foc = opt["focus"];
     }
@@ -1665,8 +1661,11 @@ $.hsView = function(opt) {
     if (opt["title"] !== undefined) {
         btt.text (opt["title"]);
     }
-    if (opt["notes"] !== undefined) {
-        btx.text (opt["notes"]);
+    if (opt["text" ] !== undefined) {
+        btx.text (opt["text" ]);
+    } else
+    if (opt["html" ] !== undefined) {
+        btx.html (opt["html" ]);
     }
     if (opt["class"] !== undefined) {
         div.addClass (opt["class"]);
@@ -1705,9 +1704,8 @@ $.hsView = function(opt) {
     if (btn.children().size()) {
         btn.siblings(".close").remove();
         div.children(".close").remove();
-        if (opt["still"] === undefined) {
-            ini.keyboard =  false  ;
-            ini.backdrop = "static";
+        if (opt["lock"] === undefined ) {
+            opt["lock"] = true;
         }
     }
 
@@ -1722,7 +1720,12 @@ $.hsView = function(opt) {
         }
     }, 500);
 
-    if (opt["alert"] === "static") {
+    if (opt["lock"]) {
+        ini.keyboard =  false  ;
+        ini.backdrop = "static";
+    }
+
+    if (opt["mode"] === "warn") {
         // 规避再打开不触发显示事件
         $.support.transition = undefined ;
 
@@ -1738,7 +1741,7 @@ $.hsView = function(opt) {
         } );
     }
 
-    if (opt["alert"] === "notice") {
+    if (opt["mode"] === "note") {
         // 使通知框具备自关闭的特性
         div.addClass("alert-dismissable");
 
@@ -1812,7 +1815,7 @@ $.hsXhup = function(msg) {
  * @param {XMLHttpRequestUpload} xhu
  */
 $.hsXhwp = function(msg, xhr, xhu) {
-    var box = $.hsWarn(msg, "", function () {});
+    var box = $.hsMask({title:msg, lock:true, mode:"warn"});
     var bax = $('<div class="progress"></div>');
     var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>').appendTo(bax);
     var etx = box.find(  ".notice" );
@@ -1823,10 +1826,11 @@ $.hsXhwp = function(msg, xhr, xhu) {
     var pct = 0;
     var rtt = 0;
 
-    box.find( ".close" ).remove( );
     etx.empty().append(bax);
     etc.empty().text("...");
     alt.addClass("progbox");
+    box.find ( ".close").remove();
+    box.trigger("shown.bs.modal");
 
     delete bax;
     delete etx;

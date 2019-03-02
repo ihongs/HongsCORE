@@ -691,7 +691,7 @@ function hsListFillOpen(x, v, t) {
         var u = $('<ul class="labelbox repeated"></ul>');
         a.appendTo(x);
         a.click(function() {
-            var m = $.hsView({"title": "点击可打开..."});
+            var m = $.hsMask({"title": "点击可打开..."});
             m.find(".modal-body"  ).append(u);
             m.find(".modal-footer").remove( );
         });

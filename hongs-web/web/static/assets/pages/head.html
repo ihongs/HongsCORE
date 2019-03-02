@@ -67,9 +67,9 @@
             }).addClass("alert-danger");
         });
         $("#view2").click(function() {
-            $.hsView({
+            $.hsMask({
                 title: "这是确认提示，可用于操作确认的选择，点按钮执行操作",
-                notes: "这里可以放一些说明文字，比如点击确定会彻底删除，已删除的数据将无法恢复。您仍然确定操作吗？"
+                text : "这里可以放一些说明文字，比如点击确定会彻底删除，已删除的数据将无法恢复。您仍然确定操作吗？"
             }, {
                 label: "确定",
                 glass: "btn-primary",

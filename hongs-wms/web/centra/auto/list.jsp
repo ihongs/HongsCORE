@@ -234,7 +234,7 @@
                 <%} else if ("time".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_time"  <%=ob%> class="<%=oc%> numerial time"><%=text%></th>
                 <%} else if ("datetime".equals(type)) {%>
-                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> numerial datetime"><%=text%></th>
+                    <th data-fn="<%=name%>" data-ft="_htime" <%=ob%> class="<%=oc%> numerial _htime"><%=text%></th>
                 <%} else if (  "url".equals(type)) {%>
                     <th data-fn="<%=name%>" data-ft="_ulink" <%=ob%> class="<%=oc%> text-center"><%=text%></th>
                 <%} else if ("email".equals(type)) {%>
@@ -342,8 +342,8 @@
     });
 
     var statobj = context.hsStat({
-        surl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/counts/search.act?<%=Cnst.AB_KEY%>=_text,_fork"
+        surl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/counts/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     var findreq = hsSerialDat( loadbox );

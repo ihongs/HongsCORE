@@ -74,12 +74,12 @@
     </servlet-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>43200</session-timeout>
+        <session-timeout>10080</session-timeout><!--for minute, 7 days-->
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>
             <name>SSID</name>
-            <max-age>604800</max-age>
+            <max-age>604800</max-age><!--for second, 7 days-->
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

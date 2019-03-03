@@ -23,7 +23,7 @@
         <servlet-name>Acts</servlet-name>
         <servlet-class>io.github.ihongs.action.serv.ActsAction</servlet-class>
         <multipart-config>
-            <max-file-size>10485760</max-file-size>
+            <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>
             <file-size-threshold>5242880</file-size-threshold>
         </multipart-config>
@@ -37,7 +37,7 @@
         <servlet-name>Apis</servlet-name>
         <servlet-class>io.github.ihongs.action.serv.ApisAction</servlet-class>
         <multipart-config>
-            <max-file-size>10485760</max-file-size>
+            <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>
             <file-size-threshold>5242880</file-size-threshold>
         </multipart-config>
@@ -51,7 +51,7 @@
         <servlet-name>Rest</servlet-name>
         <servlet-class>io.github.ihongs.normal.serv.RestAction</servlet-class>
         <multipart-config>
-            <max-file-size>10485760</max-file-size>
+            <max-file-size>20971520</max-file-size>
             <max-request-size>20971520</max-request-size>
             <file-size-threshold>5242880</file-size-threshold>
         </multipart-config>
@@ -100,7 +100,7 @@
         </init-param>
         <init-param>
             <param-name>cookie-max-age</param-name>
-            <param-value>28800</param-value><!--8 hours-->
+            <param-value>604800</param-value><!--7 days-->
         </init-param>
         <init-param>
             <param-name>attend-urls</param-name>
@@ -132,7 +132,7 @@
         </init-param>
         <init-param>
             <param-name>expire-time</param-name>
-            <param-value>28800</param-value>
+            <param-value>57600</param-value><!--16 hours-->
         </init-param>
         <init-param>
             <param-name>index-page</param-name>
@@ -228,12 +228,12 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>43200</session-timeout>
+        <session-timeout>10080</session-timeout><!--for minute, 7 days-->
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>
             <name>XXID</name>
-            <max-age>604800</max-age>
+            <max-age>604800</max-age><!--for second, 7 days-->
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

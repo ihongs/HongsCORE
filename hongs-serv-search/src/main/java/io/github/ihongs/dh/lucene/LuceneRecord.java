@@ -1368,10 +1368,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @return
      */
     protected boolean ignored (Map fc) {
-        return "" .equals(fc.get("__type__"))
-            || "" .equals(fc.get("__name__"))
-            || "@".equals(fc.get("__name__"))
-            || "Ignore".equals( fc.get("__rule__") );
+        return (""+ fc.get("__name__")).startsWith ( "@" )
+          ||   (""+ fc.get("__rule__")).contains("Ignore");
     }
 
     /**

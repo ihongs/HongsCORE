@@ -67,7 +67,11 @@ public class VerifyHelper extends Verify {
             if ( "@".equals(name) ) {continue;}
             Map     optz = (Map)  et.getValue();
             Map     opts =  new HashMap( optz );
-            Object  o;
+            String  ruls = (String) opts.remove("__rule__");
+
+            opts.put("__conf__", conf);
+            opts.put("__form__", form);
+            opts.put("__name__", name);
 
             /**
              * 一般情况下的字段属性,
@@ -75,18 +79,13 @@ public class VerifyHelper extends Verify {
              * 要么是单值要么是多值;
              * 但有时候可能要自定义,
              * 比如希望是有序的列表,
-             * 需要一个方式可以跳脱 required 和 repeated 限制.
+             * 需要一个方式可以跳脱 required 和 repeated 限制;
+             * 故这里规定当需要自定义规则时可将 rule 以 $ 开头.
              */
-            String  ruls = (String) opts.remove("__rule__");
-            boolean skip = ruls != null && ruls.startsWith("$");
 
-            opts.put("__conf__", conf);
-            opts.put("__form__", form);
-            opts.put("__name__", name);
+            if (ruls == null || !ruls.startsWith("$")) {
+                Object  o;
 
-            if (skip) {
-                ruls = ruls.substring( 1 );
-            } else {
                 o = opts.get   ("defiant");
                 if (o != null) {
                     Rule rule = new Defiant();
@@ -124,12 +123,9 @@ public class VerifyHelper extends Verify {
                 }
             }
 
-            // 可设多个规则, 缺省情况按字符串处理
             String[] list;
-            if (ruls == null || ruls.length() == 0) {
-            if (skip) {
-                continue ; // 完全跳过其他的校验
-            } else {
+
+            if (ruls == null || (ruls.length() == 0 )) {
                 String type = (String) opts.get("__type__");
                 String item ;
                 if (ts.containsKey(type)) {
@@ -148,8 +144,10 @@ public class VerifyHelper extends Verify {
                 }
 
                 list = new String[]{item};
-            }
             } else {
+            if (ruls . startsWith( "$" )) {
+                ruls = ruls.substring (1);
+            }
                 list = ruls.split("[,;]");
             }
 

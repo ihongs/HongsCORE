@@ -27,11 +27,9 @@ function setMapsInput(opts, func) {
     var poisInp = opts.lat_lng || context.find("[name=lat_lng]");
     var areaBox = $(
           '<div class="row form-group">'
-        + '<label class="col-sm-3 control-label form-control-static text-right">地图</label>'
-        + '<div class="col-sm-6">'
-        + '<div class="map" style="width: 100%; height: 300px;"></div>'
-        + '</div>'
-        + '<div class="col-sm-3 help-block form-control-static"></div>'
+        + '<label class="col-xs-3 col-md-2 control-label form-control-static text-right">地图</label>'
+        + '<div class="col-xs-9 col-md-8"><div class=" map " style=" width: 100%; height: 300px; "></div></div>'
+        + '<div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block form-control-static"></div>'
         + '</div>'
     );
     var mapsBox = areaBox.find(".map");

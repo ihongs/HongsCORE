@@ -41,7 +41,7 @@
         %>
         <%if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>" value="<%="form_id".equals(name)?_entity:""%>"/>
-        <%} else if ("splitbar".equals(type)) {%>
+        <%} else if ( "legend" .equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
         <%} else if ("checkset".equals(type)) {%>
             <fieldset>

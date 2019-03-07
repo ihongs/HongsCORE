@@ -82,7 +82,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     private IndexWriter   writer  = null ;
     private String        dbpath  = null ;
     private String        dbname  = null ;
-    private Set<String>  replies  = null ; // 这个会使对象不是线程安全的, 好在当前对象无需线程内共享
+    private Set<String>     reps  = null ; // 这个会使对象不是线程安全的, 好在当前对象无需线程内共享
 
     /**
      * 构造方法
@@ -1067,10 +1067,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @param rd
      */
     public void setReps(Map rd) {
-        if ( rd  == null) {
-          replies = null; // 默认情况返回全部设定的字段.
+        if ( rd == null) {
+            reps = null;
         } else {
-          replies = Synt.toTerms(rd.get(Cnst.RB_KEY));
+            reps = Synt.toTerms (rd.get(Cnst.RB_KEY));
         }
     }
 
@@ -1362,29 +1362,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return Synt.declare(fc.get(  "unstored"  ), false);
     }
 
-    /**
-     * 存储时忽略
-     * @param fc
-     * @return
-     */
-    protected boolean ignored (Map fc) {
-        return "" .equals(fc.get("__type__"))
-            || "" .equals(fc.get("__name__"))
-            || "@".equals(fc.get("__name__"))
-            || "Ignore".equals( fc.get("__rule__") );
+    protected boolean unstated(Map fc) {
+        return Synt.declare(fc.get(  "unstated"  ), false);
     }
 
-    /**
-     * 读取时忽略
-     * @param fc
-     * @return
-     */
-    protected boolean escaped (Map fc) {
-        return unstored(fc)
-          ||   ignored (fc)
-          || ( replies != null
-          && ! replies.isEmpty ()
-          && ! replies.contains(fc.get("__name__")));
+    protected boolean ignored (Map fc) {
+        String name = (String) fc.get ("__name__");
+        return name == null || name.isEmpty() || name.startsWith("@")
+        || ! ( reps == null || reps.isEmpty() || reps.contains(name));
     }
 
     protected boolean queried (Map rd, String fn, Object fv, BooleanQuery.Builder qb) {
@@ -1402,7 +1387,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             Map    m = (Map) e.getValue();
             String k = (String)e.getKey();
 
-            if (escaped(m)) {
+            if (unstored(m)
+            ||  unstated(m)
+            ||  ignored (m)) {
                 continue;
             }
 
@@ -1477,8 +1464,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             doc.removeFields(k);
 
-            if (null == v
-            ||  ignored(m)) {
+            if (null == v) {
                 continue;
             }
 

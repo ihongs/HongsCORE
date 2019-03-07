@@ -112,7 +112,7 @@
     <!--
         form 的 field 节点上的属性,
         name 为 @ 表示当前表单扩展, 如果不设置即为 @ ;
-        rule 以 $ 开头则会跳过校验 required,repeated, 也不自动绑定 default,defiant.
+        rule 以 @ 开头则会跳过校验 required,repeated, 也不自动绑定 default,defiant.
     //-->
     <!--
     <form name="demo-form">

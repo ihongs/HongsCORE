@@ -11,8 +11,8 @@ CREATE TABLE `a_matrix_unit` (
   `name` VARCHAR(200) NOT NULL,
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
-  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
-  `mtime` UNSIGNED INTEGER(10) DEFAULT NULL,
+  `ctime` INTEGER(10) DEFAULT NULL,
+  `mtime` INTEGER(10) DEFAULT NULL,
   `boost` INTEGER DEFAULT '0',
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -37,8 +37,8 @@ CREATE TABLE `a_matrix_form` (
   `icon` VARCHAR(100) DEFAULT NULL,
   `note` TEXT,
   `conf` TEXT NOT NULL,
-  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
-  `mtime` UNSIGNED INTEGER(10) DEFAULT NULL,
+  `ctime` INTEGER(10) DEFAULT NULL,
+  `mtime` INTEGER(10) DEFAULT NULL,
   `boost` INTEGER DEFAULT '0',
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`),
@@ -63,9 +63,9 @@ CREATE TABLE `a_matrix_data` (
   `name` VARCHAR(255) DEFAULT NULL,
   `memo` VARCHAR(255) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,
-  `ctime` UNSIGNED INTEGER(10) DEFAULT NULL,
-  `etime` UNSIGNED INTEGER(10) DEFAULT NULL,
-  `rtime` UNSIGNED INTEGER(10) DEFAULT NULL, /* 从哪个时间点恢复 */
+  `ctime` INTEGER(10) NOT NULL,
+  `etime` INTEGER(10) NOT NULL,
+  `rtime` INTEGER(10) DEFAULT NULL, /* 从哪个时间点恢复 */
   `state` TINYINT DEFAULT '1',
   PRIMARY KEY (`id`,`form_id`,`etime`)
 );

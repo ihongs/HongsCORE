@@ -30,7 +30,7 @@ import java.util.Map;
  * 无 type 也无 rule 则同 type="string",
  * 无 required 时默认启用 Optional 规则,
  * 无 repeated 时默认启用 Ordinary 规则;
- * 但 rule 以 $ 开头则完全使用自定义规则,
+ * 但 rule 以 @ 开头则完全使用自定义规则,
  * 也不自动绑定 default 和 defiant 规则.
  * </p>
  *
@@ -80,10 +80,10 @@ public class VerifyHelper extends Verify {
              * 但有时候可能要自定义,
              * 比如希望是有序的列表,
              * 需要一个方式可以跳脱 required 和 repeated 限制;
-             * 故这里规定当需要自定义规则时可将 rule 以 $ 开头.
+             * 故这里规定当需要自定义规则时可将 rule 以 @ 开头.
              */
 
-            if (ruls == null || !ruls.startsWith("$")) {
+            if (ruls == null || !ruls.startsWith("@")) {
                 Object  o;
 
                 o = opts.get   ("defiant");
@@ -145,7 +145,7 @@ public class VerifyHelper extends Verify {
 
                 list = new String[]{item};
             } else {
-            if (ruls . startsWith( "$" )) {
+            if (ruls . startsWith( "@" )) {
                 ruls = ruls.substring (1);
             }
                 list = ruls.split("[,;]");

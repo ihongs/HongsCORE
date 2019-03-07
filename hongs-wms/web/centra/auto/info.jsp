@@ -64,7 +64,7 @@
         %>
         <%if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>"/>
-        <%} else if ("splitbar".equals(type)) {%>
+        <%} else if ( "legend" .equals(type)) {%>
             <legend class="form-group"><%=text%></legend>
         <%} else {%>
             <div class="form-group row">

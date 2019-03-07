@@ -635,7 +635,7 @@ $.fn.hsCols = function() {
             tabs.find("li:eq(1) a").click();
             tabs.find("li:eq(0)"  ).hide( );
         } else
-        if (type == 'splitbar') {
+        if (type == 'legend') {
             tabs.find("li:eq(0) a").click();
             tabs.find("li:eq(1)"  ).hide( );
         } else

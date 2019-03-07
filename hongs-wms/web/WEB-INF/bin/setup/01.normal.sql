@@ -8,8 +8,8 @@ DROP TABLE IF EXISTS `a_normal_data`;
 CREATE TABLE `a_normal_data` (
     `id` VARCHAR(95) NOT NULL,
     `data`  BLOB NOT NULL,
-    `xtime` UNSIGNED INTEGER(10) DEFAULT 0,
-    `mtime` UNSIGNED INTEGER(10) DEFAULT 0,
+    `xtime` INTEGER(10) DEFAULT 0,
+    `mtime` INTEGER(10) DEFAULT 0,
     PRIMARY KEY (`id`)
 );
 
@@ -24,8 +24,8 @@ DROP TABLE IF EXISTS `a_normal_sess`;
 CREATE TABLE `a_normal_sess` (
     `id` VARCHAR(95) NOT NULL,
     `data`  BLOB NOT NULL,
-    `xtime` UNSIGNED INTEGER(10) DEFAULT 0,
-    `mtime` UNSIGNED INTEGER(10) DEFAULT 0,
+    `xtime` INTEGER(10) DEFAULT 0,
+    `mtime` INTEGER(10) DEFAULT 0,
     PRIMARY KEY (`id`)
 );
 

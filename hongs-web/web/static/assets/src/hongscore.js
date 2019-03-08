@@ -1609,7 +1609,7 @@ $.hsWarn = function(msg, typ, yes, not) {
 };
 $.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
-    var ini = { show: true };
+    var ini = { show: true, backdrop: opt.backdrop, keyboard: opt.keyboard };
     var foc = 0;
     var dow = 0;
     var end ;
@@ -1750,7 +1750,7 @@ $.hsMask = function(opt) {
     // 居中显示
     if (opt.position === "middle") {
         // 规避再打开不触发显示事件
-        $.support.transition = undefined;
+        delete( $.support.transition );
 
         mod.on("shown.bs.modal", function(evt) {
             var wh =$(window).height();

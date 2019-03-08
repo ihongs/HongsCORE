@@ -1609,7 +1609,7 @@ $.hsWarn = function(msg, typ, yes, not) {
 };
 $.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
-    var ini = { show: true, backdrop: opt.backdrop, keyboard: opt.keyboard };
+    var ini = { show: true };
     var foc = 0;
     var dow = 0;
     var end ;

@@ -1610,9 +1610,9 @@ $.hsWarn = function(msg, typ, yes, not) {
 $.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
     var ini = { show: true };
+    var end = function() { };
     var foc = 0;
     var dow = 0;
-    var end ;
 
     // 构建窗体
     if (opt["mode"]) {
@@ -1785,7 +1785,7 @@ $.hsMask = function(opt) {
         mod.modal ( "hide" );
     } );
     mod.on("hidden.bs.modal", function(evt) {
-        if ( end ) end (evt);
+        end. call (div, evt);
         mod.remove();
     } );
     mod.modal( ini );
@@ -1830,9 +1830,9 @@ $.hsXhwp = function(msg, xhr, xhu) {
         mode : "prog",
         glass: "progbox",
         html : '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>',
-        keyboard:  false  ,
+        position: "middle",
         backdrop: "static",
-        position: "middle"
+        keyboard:  false
     });
     var mod = box.closest(".modal");
     var foo = box.find(".alert-footer");

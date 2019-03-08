@@ -1616,16 +1616,17 @@ $.hsMask = function(opt) {
 
     // 构建窗体
     if (opt["mode"]) {
-        mod = $('<div class="modal fade in">'
-              + '<div class="alert fade in">'
-              + '<div class="alert-body">'
+        mod = $('<div class="modal fade in"><div class="alert dialog">'
+              + '<div class="alert-content"><div class="alert-header">'
               + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
-              + '<h4></h4><p class="m-body"></p><p class="m-foot"></p>'
-              + '</div></div></div>');
-        div = mod.find(".alert" );
-        btt = div.find("h4"     );
-        btx = div.find("p").eq(0);
-        btn = div.find("p").eq(1);
+              + '<h4  class="alert-title" ></h4></div>'
+              + '<div class="alert-body"  ></div>'
+              + '<div class="alert-footer"></div>'
+              + '</div></div></div>'  );
+        div = mod.find(".alert.dialog");
+        btt = div.find(".alert-title" );
+        btx = div.find(".alert-body"  );
+        btn = div.find(".alert-footer");
     } else {
         mod = $('<div class="modal fade in"><div class="modal-dialog">'
               + '<div class="modal-content"><div class="modal-header">'
@@ -1633,7 +1634,7 @@ $.hsMask = function(opt) {
               + '<h4  class="modal-title" ></h4></div>'
               + '<div class="modal-body"  ></div>'
               + '<div class="modal-footer"></div>'
-              + '</div></div></div>');
+              + '</div></div></div>'  );
         div = mod.find(".modal-dialog");
         btt = div.find(".modal-title" );
         btx = div.find(".modal-body"  );
@@ -1697,24 +1698,27 @@ $.hsMask = function(opt) {
     }
 
     if (btn.children().size( )) {
-        btn.siblings(".close").remove();
+        btt.siblings(".close").remove();
+        if (opt.keyboard === undefined) {
+            ini.keyboard  =  false  ;
+        }
         if (opt.backdrop === undefined) {
-            opt.backdrop  =  "locked"  ;
+            ini.backdrop  = "static";
         }
     }
-    if (opt["mode"] === "warn") {
-        div.addClass(opt.mode + "box" );
-        if (opt.position === undefined) {
-            opt.position  =  "middle"  ;
-        }
-    } else
     if (opt["mode"] === "note") {
-        div.addClass(opt.mode + "box" );
-        if (opt.backdrop === undefined) {
-            opt.backdrop  =  "hidden"  ;
+        if (opt.keyboard === undefined) {
+            ini.keyboard  =  true   ;
         }
+        if (opt.backdrop === undefined) {
+            ini.backdrop  = "hidden";
+        }
+    }
+    if (opt["mode"] === "note"
+    ||  opt["mode"] === "warn") {
+        div.addClass(opt.mode + "box" );
         if (opt.position === undefined) {
-            opt.position  =  "middle"  ;
+            opt.position  = "middle";
         }
     }
 
@@ -1735,12 +1739,8 @@ $.hsMask = function(opt) {
         mod.modal( "hide" );
     } , dow);
 
-    // 锁定背板
-    if (opt.backdrop === "locked") {
-        ini.backdrop  =  "static";
-        ini.keyboard  =   false  ;
-    } else
-    if (opt.backdrop === "hidden") {
+    // 附加类型
+    if (ini.backdrop === "hidden") {
         ini.backdrop  =   false  ;
 
         // 无遮罩时点对话框外也关闭
@@ -1751,7 +1751,7 @@ $.hsMask = function(opt) {
         } );
     }
 
-    // 居中显示
+    // 显示位置
     if (opt.position === "middle") {
         // 规避再打开不触发显示事件
         delete( $.support.transition );
@@ -1761,6 +1761,20 @@ $.hsMask = function(opt) {
             var mh = div.outerHeight();
             if (wh > mh) {
                 mh = Math.floor((wh - mh) / 2);
+                div.css("margin-top", mh+"px");
+                mod.css("padding"   ,   "0px");
+            }
+        } );
+    } else
+    if (opt.position === "bottom") {
+        // 规避再打开不触发显示事件
+        delete( $.support.transition );
+
+        mod.on("shown.bs.modal", function(evt) {
+            var wh =$(window).height();
+            var mh = div.outerHeight();
+            if (wh > mh) {
+                mh = wh - mh;
                 div.css("margin-top", mh+"px");
                 mod.css("padding"   ,   "0px");
             }
@@ -1811,30 +1825,29 @@ $.hsXhup = function(msg) {
  * @param {XMLHttpRequestUpload} xhu
  */
 $.hsXhwp = function(msg, xhr, xhu) {
-    var box = $.hsMask({title:msg, mode:"warn", backdrop:"locked", position:"middle"});
-    var bax = $('<div class="progress"></div>');
-    var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>').appendTo(bax);
-    var etx = box.find("p").eq( 0 );
-    var etc = box.find("p").eq( 1 );
-    var alt = box.closest(".alert");
+    var box = $.hsMask({
+        title: msg,
+        mode : "prog",
+        glass: "progbox",
+        html : '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>',
+        keyboard:  false  ,
+        backdrop: "static",
+        position: "middle"
+    });
     var mod = box.closest(".modal");
-    var stt = new Date().getTime( ) / 1000;
+    var foo = box.find(".alert-footer");
+    var bar = box.find(".progress-bar");
+    var stt = new Date().getTime()/1000;
     var pct = 0;
     var rtt = 0;
 
-    etx.empty().append(bax);
-    etc.empty().text("...");
-    alt.addClass("progbox");
+    foo.empty().text("...");
     box.find ( ".close").remove();
     box.trigger("shown.bs.modal");
 
-    delete bax;
-    delete etx;
-    delete alt;
-
     if (xhr)
     xhr.addEventListener(  "load"  , function(   ) {
-        mod.modal("hide");
+        mod.modal( "hide" );
     } , false);
     if (xhu)
     xhu.addEventListener("progress", function(evt) {
@@ -1863,7 +1876,7 @@ $.hsXhwp = function(msg, xhr, xhu) {
 
         bar.attr("aria-valuenow", pct);
         bar.css ( "width" , pct + "%");
-        etc.text(  pct  + "% -" + snt);
+        foo.text(  pct  + "% -" + snt);
     } , false);
 
     return box;

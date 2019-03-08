@@ -241,44 +241,47 @@ div.bootstrap-tagsinput.form-control {
 
 /** 布局 **/
 
-.notebox.alert {
-    box-shadow: 0 0 90px #333;
-    padding: 15px 15px;
+.progbox.alert ,
+.notebox.alert ,
+.warnbox.alert {
+    border-color: transparent;
+    color : #eee;
+    margin: 0;
 }
+.progbox.alert ,
 .warnbox.alert {
     box-shadow: 0 0 15px #333;
     padding: 30px 15px;
 }
-.notebox.alert,
-.warnbox.alert,
-.alert-body > h4,
-.alert-body > p {
-    margin: 0;
+.notebox.alert {
+    box-shadow: 0 0 90px #333;
+    padding: 15px 15px;
 }
-.alert-body > p {
-    margin-top: 1em;
+.alert-footer {
+    text-align : right;
 }
-.alert-body > p:empty  {
-    margin-top: 0em;
+.alert-header h4 ,
+.alert-header .close {
+    margin-bottom: 0;
 }
-.alert-body > p button {
-    margin-left: 1em ;
+.modal-header .close {
+    margin-top : 2px;
 }
-.alert-body > p.m-body {
-    text-align: left ;
+.alert-content>.alert-body ,
+.alert-content>.alert-footer {
+    margin-top : 1em;
 }
-.alert-body > p.m-foot {
-    text-align: right;
+.alert-content>.alert-body:empty ,
+.alert-content>.alert-footer:empty {
+    margin-top : 0em;
 }
-.alert-body > .close {
-    opacity: 0.8;
-    color: #eeeeee;
+.alert-footer button {
+    margin-left: 5px;
 }
 
 .notebox.alert ,
-.warnbox.alert {
-    color: #eeeeee;
-    border-color: transparent;
+.warnbox.alert ,
+.progbox.alert {
     background: #2e2f2faa;
 }
 .notebox.alert.alert-info ,
@@ -296,9 +299,6 @@ div.bootstrap-tagsinput.form-control {
 .notebox.alert.alert-success ,
 .warnbox.alert.alert-success {
     background: #469408cc;
-}
-.modal-header .close {
-    margin-top: 2px;
 }
 
 .labs>*>h1,
@@ -574,16 +574,6 @@ ul.pickrol .close {
     box-shadow: 0 0 0.5em #000;
 }
 
-.progbox.alert {
-    background: rgba(0, 0, 0, 0.5);
-}
-.progbox .progress {
-    margin: 0 0;
-}
-.progbox .progress-bar {
-    width: 100%;
-}
-
 .datebox.input-group {
     background-color: #f8f8f8;
     border: 1px solid #dddddd;
@@ -665,11 +655,13 @@ input[type=file].form-control {
 /** 适配 **/
 
 @media (min-width: 630px) {
-    .warnbox.alert {
+    .warnbox.alert ,
+    .progbox.alert {
         border-radius: 0;
     }
     .notebox.alert ,
-    .warnbox.alert .alert-body {
+    .warnbox.alert .alert-content ,
+    .progbox.alert .alert-content {
         margin: 0 auto;
         width : 600px ;
     }

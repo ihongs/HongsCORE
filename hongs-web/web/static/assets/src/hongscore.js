@@ -2567,23 +2567,21 @@ function() {
             box = box.closest(".modal");
             break ;
         }
-        // 警示框
-        box = ths.closest( ".notebox, .warnbox" );
-        if (box.is( ".alert-body")) {
-            box = box.closest(".alert");
-            break ;
-        }
-        // 模态框
+        // 模态框和警示框
         box = ths.closest( ".openbox" );
         if (box.is( ".modal-body")) {
             box = box.closest(".modal");
             break ;
         }
-        if (box.size()
-        &&  box.closest(".alert,.modal").size()) {
+        if (box.is( ".alert-body")) {
+            box = box.closest(".alert");
             break ;
         }
-        if (ths.closest(".alert,.modal").size()) {
+        if (box.size()
+        &&  box.closest(".modal,.alert").size()) {
+            break ;
+        }
+        if (ths.closest(".modal,.alert").size()) {
             return;
         }
     } while(false);

@@ -1641,8 +1641,10 @@ $.hsMask = function(opt) {
     }
 
     // 设置参数
+    ini.backdrop = opt.backdrop;
+    ini.keyboard = opt.keyboard;
     if (opt["count"] !== undefined) {
-        dow = opt["count"] * 1000 ;
+        dow = opt["count"]*1000;
     }
     if (opt["focus"] !== undefined) {
         foc = opt["focus"];

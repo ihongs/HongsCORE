@@ -1700,14 +1700,17 @@ $.hsMask = function(opt) {
             opt.backdrop  =  "locked"  ;
         }
     }
+    if (opt["mode"] === "warn") {
+        div.addClass(opt.mode + "box" );
+        if (opt.position === undefined) {
+            opt.position  =  "middle"  ;
+        }
+    } else
     if (opt["mode"] === "note") {
+        div.addClass(opt.mode + "box" );
         if (opt.backdrop === undefined) {
             opt.backdrop  =  "hidden"  ;
         }
-    }
-    if (opt["mode"] === "note"
-    ||  opt["mode"] === "warn") {
-        div.addClass(opt.mode + "box" );
         if (opt.position === undefined) {
             opt.position  =  "middle"  ;
         }

@@ -31,7 +31,6 @@
         </script>
     </head>
     <body>
-        <div id="notebox"></div>
         <div id="context">
             <div id="headbox">
                 <div id="menu-context" data-load="centra/head.jsp?active=<%=encodeURL(_module+"/"+_entity+"/")%>"></div>

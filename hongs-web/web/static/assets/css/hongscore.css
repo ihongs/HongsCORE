@@ -242,7 +242,7 @@ div.bootstrap-tagsinput.form-control {
 /** 布局 **/
 
 .notebox.alert {
-    box-shadow: 0 0 90px #000;
+    box-shadow: 0 0 90px #333;
     padding: 15px 15px;
 }
 .warnbox.alert {

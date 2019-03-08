@@ -1533,8 +1533,8 @@ $.hsNote = function(msg, typ, end, sec) {
     var opt  = {
         mode : "note",
         title: msg,
-        count: sec,
-        close: end
+        close: end,
+        count: sec || 1.5
     };
 
     // 样式
@@ -1611,31 +1611,21 @@ $.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
     var ini = { show: true };
     var foc = 0;
-    var sec = 5;
+    var dow = 0;
     var end ;
 
-    // 窗体设置
+    // 构建窗体
     if (opt["mode"]) {
-        mod = $('<div class="modal fade in warnbag">'
-              + '<div class="alert fade in warnbox">'
-              + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
+        mod = $('<div class="modal fade in">'
+              + '<div class="alert fade in">'
               + '<div class="alert-body">'
-              + '<h4></h4><p class="notice"></p><p class="button"></p>'
+              + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
+              + '<h4></h4><p class="m-body"></p><p class="m-foot"></p>'
               + '</div></div></div>');
         div = mod.find(".alert" );
         btt = div.find("h4"     );
         btx = div.find("p").eq(0);
         btn = div.find("p").eq(1);
-
-        var clo = div.find(".close" );
-        if (opt.mode === "note" ) {
-            btt = btx = btx.parent( ).empty();
-            div.addClass("alert-dismissable");
-            clo.attr("data-dismiss", "modal");
-        } else
-        if (opt.mode === "warn" ) {
-            btt.before(clo);
-        }
     } else {
         mod = $('<div class="modal fade in"><div class="modal-dialog">'
               + '<div class="modal-content"><div class="modal-header">'
@@ -1649,11 +1639,13 @@ $.hsMask = function(opt) {
         btx = div.find(".modal-body"  );
         btn = div.find(".modal-footer");
     }
+
+    // 设置参数
+    if (opt["count"] !== undefined) {
+        dow = opt["count"] * 1000 ;
+    }
     if (opt["focus"] !== undefined) {
         foc = opt["focus"];
-    }
-    if (opt["count"] !== undefined) {
-        sec = opt["count"];
     }
     if (opt["close"] !== undefined) {
         end = opt["close"];
@@ -1677,7 +1669,7 @@ $.hsMask = function(opt) {
         btx.css( "white-space", opt["space"] );
     }
 
-    // 按钮设置
+    // 设置按钮
     for(var i = 1; i < arguments.length; i ++) {
         var cnf = arguments[ i ]; if ( ! cnf ) continue;
         var btm = $('<button type="button" class="btn btn-md"></button>');
@@ -1701,11 +1693,23 @@ $.hsMask = function(opt) {
             btm.addClass("btn-default");
         }
     }
-    if (btn.children().size()) {
+
+    if (btn.children().size( )) {
         btn.siblings(".close").remove();
-        div.children(".close").remove();
-        if (opt["lock"] === undefined ) {
-            opt["lock"] = true;
+        if (opt.backdrop === undefined) {
+            opt.backdrop  =  "locked"  ;
+        }
+    }
+    if (opt["mode"] === "note") {
+        if (opt.backdrop === undefined) {
+            opt.backdrop  =  "hidden"  ;
+        }
+    }
+    if (opt["mode"] === "note"
+    ||  opt["mode"] === "warn") {
+        div.addClass(opt.mode + "box" );
+        if (opt.position === undefined) {
+            opt.position  =  "middle"  ;
         }
     }
 
@@ -1718,67 +1722,55 @@ $.hsMask = function(opt) {
         } else {
             div[0].focus( );
         }
-    }, 500);
+    } , 500);
 
-    if (opt["lock"]) {
-        ini.keyboard =  false  ;
-        ini.backdrop = "static";
+    // 延时关闭
+    if (dow !== 0)
+    setTimeout( function( ) {
+        mod.modal( "hide" );
+    } , dow);
+
+    // 锁定背板
+    if (opt.backdrop === "locked") {
+        ini.backdrop  =  "static";
+        ini.keyboard  =   false  ;
+    } else
+    if (opt.backdrop === "hidden") {
+        ini.backdrop  =   false  ;
+        ini.keyboard  =   false  ;
+
+        // 无遮罩时点对话框外也关闭
+        mod.on("click", function( evt ) {
+            if ($(this).is(evt.target)) {
+                mod.modal (  "hide"  );
+            }
+        } );
     }
 
-    if (opt["mode"] === "warn") {
+    // 居中显示
+    if (opt.position === "middle") {
         // 规避再打开不触发显示事件
-        $.support.transition = undefined ;
+        $.support.transition = undefined;
 
-        // 垂直居中
-        mod.on( "shown.bs.modal", function(evt) {
+        mod.on("shown.bs.modal", function(evt) {
             var wh =$(window).height();
             var mh = div.outerHeight();
             if (wh > mh) {
-                mh = Math.floor((wh - mh) / 2 );
-                div.css("margin-top", mh+"px" );
-                mod.css("padding"   ,   "0px" );
+                mh = Math.floor((wh - mh) / 2);
+                div.css("margin-top", mh+"px");
+                mod.css("padding"   ,   "0px");
             }
         } );
     }
 
-    if (opt["mode"] === "note") {
-        // 使通知框具备自关闭的特性
-        div.addClass("alert-dismissable");
-
-        // 消息容器
-        var ctr = $("#notebox");
-        if (ctr.size( ) === 0 ) {
-            ctr = $('<div id="notebox"></div>');
-            $ ( document.body ).prepend ( ctr );
-        }
-        ctr.show().prepend(div);
-
-        // 延时关闭
-        if (sec !== 0) {
-            setTimeout(function( ) {
-                div.alert("close");
-            } , sec * 1000);
-        }
-
-        div.on( "close.bs.alert", function(evt) {
-            if (end) {
-                end(evt);
-            }
-            div.remove();
-        } );
-        div.alert(     );
-    } else {
-        btn.on("click", "button", function(evt) {
-            mod.modal("hide");
-        } );
-        mod.on("hidden.bs.modal", function(evt) {
-            if (end) {
-                end(evt);
-            }
-            mod.remove();
-        } );
-        mod.modal( ini );
-    }
+    btn.on("click", "button", function(evt) {
+        mod.modal ( "hide" );
+    } );
+    mod.on("hidden.bs.modal", function(evt) {
+        if ( end ) end (evt);
+        mod.remove();
+    } );
+    mod.modal( ini );
 
     return  div;
 };
@@ -1815,14 +1807,14 @@ $.hsXhup = function(msg) {
  * @param {XMLHttpRequestUpload} xhu
  */
 $.hsXhwp = function(msg, xhr, xhu) {
-    var box = $.hsMask({title:msg, lock:true, mode:"warn"});
+    var box = $.hsMask({title:msg, mode:"warn", backdrop:"locked", position:"middle"});
     var bax = $('<div class="progress"></div>');
     var bar = $('<div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>').appendTo(bax);
-    var etx = box.find(  ".notice" );
-    var etc = box.find(  ".button" );
-    var alt = box.closest(".alert" );
-    var mod = box.closest(".modal" );
-    var stt = new Date().getTime() / 1000;
+    var etx = box.find("p").eq( 0 );
+    var etc = box.find("p").eq( 1 );
+    var alt = box.closest(".alert");
+    var mod = box.closest(".modal");
+    var stt = new Date().getTime( ) / 1000;
     var pct = 0;
     var rtt = 0;
 

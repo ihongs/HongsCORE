@@ -1737,7 +1737,6 @@ $.hsMask = function(opt) {
     } else
     if (opt.backdrop === "hidden") {
         ini.backdrop  =   false  ;
-        ini.keyboard  =   false  ;
 
         // 无遮罩时点对话框外也关闭
         mod.on("click", function( evt ) {

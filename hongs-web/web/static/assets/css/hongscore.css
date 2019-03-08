@@ -241,21 +241,16 @@ div.bootstrap-tagsinput.form-control {
 
 /** 布局 **/
 
-#notebox {
-    background: transparent;
-    position: fixed;
-    display: none;
-    z-index: 1040;
-    width: 100%;
-    left: 0;
-    top: 0;
+.notebox.alert {
+    box-shadow: 0 0 90px #333;
+    padding: 15px 15px;
 }
-.modal.warnbag > .alert.warnbox {
+.warnbox.alert {
     box-shadow: 0 0 15px #333;
     padding: 30px 15px;
 }
-#notebox .alert,
-.modal > .alert,
+.notebox.alert,
+.warnbox.alert,
 .alert-body > h4,
 .alert-body > p {
     margin: 0;
@@ -269,35 +264,37 @@ div.bootstrap-tagsinput.form-control {
 .alert-body > p button {
     margin-left: 1em ;
 }
-.alert-body > p.button {
-    text-align: right;
-}
-.alert-body > p.notice {
+.alert-body > p.m-body {
     text-align: left ;
+}
+.alert-body > p.m-foot {
+    text-align: right;
 }
 .alert-body > .close {
     opacity: 0.8;
     color: #eeeeee;
 }
 
-#notebox .alert {
-    opacity: 0.8;
-}
-.modal > .alert {
+.notebox.alert ,
+.warnbox.alert {
     color: #eeeeee;
-    border-color: #606262;
+    border-color: transparent;
     background: #2e2f2faa;
 }
-.modal > .alert.alert-info {
+.notebox.alert.alert-info ,
+.warnbox.alert.alert-info {
     background: #029acfcc;
 }
-.modal > .alert.alert-danger  {
+.notebox.alert.alert-danger ,
+.warnbox.alert.alert-danger  {
     background: #d9230fcc;
 }
-.modal > .alert.alert-warning {
+.notebox.alert.alert-warning ,
+.warnbox.alert.alert-warning {
     background: #79377ccc;
 }
-.modal > .alert.alert-success {
+.notebox.alert.alert-success ,
+.warnbox.alert.alert-success {
     background: #469408cc;
 }
 .modal-header .close {
@@ -668,21 +665,12 @@ input[type=file].form-control {
 /** 适配 **/
 
 @media (min-width: 630px) {
-    #notebox {
-        margin: 0 -300px;
-        width : 600px;
-        left  :  50% ;
-    }
-    .modal > .alert {
-        margin: 0  auto ;
-        width : 600px;
-    }
-    .warnbox .alert-body {
-        margin: 0  auto ;
-        width : 600px;
-    }
-    .modal > .alert.warnbox {
+    .warnbox.alert {
         border-radius: 0;
-        width : 100% ;
+    }
+    .notebox.alert ,
+    .warnbox.alert .alert-body {
+        margin: 0 auto;
+        width : 600px ;
     }
 }

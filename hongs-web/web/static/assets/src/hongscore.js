@@ -1697,28 +1697,28 @@ $.hsMask = function(opt) {
         }
     }
 
-    if (btn.children().size( )) {
-        btt.siblings(".close").remove();
-        if (opt.keyboard === undefined) {
-            ini.keyboard  =  false  ;
-        }
-        if (opt.backdrop === undefined) {
-            ini.backdrop  = "static";
-        }
-    }
-    if (opt["mode"] === "note") {
-        if (opt.keyboard === undefined) {
-            ini.keyboard  =  true   ;
-        }
-        if (opt.backdrop === undefined) {
-            ini.backdrop  = "hidden";
-        }
-    }
     if (opt["mode"] === "note"
     ||  opt["mode"] === "warn") {
         div.addClass(opt.mode + "box" );
         if (opt.position === undefined) {
             opt.position  = "middle";
+        }
+    }
+    if (opt["mode"] === "note") {
+        if (opt.backdrop === undefined) {
+        if (btn.children().size() == 0) {
+            ini.backdrop  = "hidden";
+        } else {
+            ini.backdrop  =  false  ;
+        }}
+    }
+    if (btn.children().size( )) {
+        btt.siblings(".close").remove();
+        if (opt.backdrop === undefined) {
+            ini.backdrop  = "static";
+        }
+        if (opt.keyboard === undefined) {
+            ini.keyboard  =  false  ;
         }
     }
 

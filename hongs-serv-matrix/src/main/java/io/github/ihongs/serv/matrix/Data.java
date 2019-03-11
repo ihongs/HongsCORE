@@ -403,7 +403,7 @@ public class Data extends SearchEntity {
         if (table != null) {
             Map dd = table.fetchCase()
                 .filter( where, param)
-                .select("ctime, state, name")
+                .select("ctime, state, name, data")
                 .getOne( );
             if (dd.isEmpty()) {
                  delDoc( id ); return 0; // 规避关系库无而搜索库有
@@ -429,7 +429,7 @@ public class Data extends SearchEntity {
             nd.put("user_id", uid);
             nd.put("memo", rd.get("memo"));
             nd.put("name", dd.get("name"));
-            nd.put("data",  "{}" );
+            nd.put("data", dd.get("data"));
 
             table.update(ud, where, param);
             table.insert(nd);
@@ -485,12 +485,11 @@ public class Data extends SearchEntity {
         if (dd.isEmpty()) {
             throw new HongsException(0x1100, "找不到恢复起源");
         }
+        // 删除时保留的是删除前的快照, 即使为最终记录仍然可以恢复
+        if ( Synt.declare ( dd.get("state"), 0  )  !=   0    ) {
         if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
             throw new HongsException(0x1100, "这已是最终记录");
-        }
-        if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
-            throw new HongsException(0x1100, "禁操作删除记录");
-        }
+        }}
 
         //** 保存到数据库 **/
 

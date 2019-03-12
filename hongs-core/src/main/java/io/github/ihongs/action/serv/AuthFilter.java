@@ -224,6 +224,17 @@ public class AuthFilter
             return;
         }
     } else {
+        /**
+         * 2019/8/12
+         * 有指定登录页才需要验证是否对整个区域都有准入限制
+         */
+        if (null != loginPage
+        &&  siteMap.actions.contains(aut)) {
+            if (  ! authset.contains(aut)) {
+                doFailed(core, hlpr, (byte) 2); // 禁入区域
+                return;
+            }
+        }
         if (siteMap.actions.contains(act)) {
             if (  ! authset.contains(act)) {
                 doFailed(core, hlpr, (byte) 3); // 缺少权限
@@ -235,24 +246,6 @@ public class AuthFilter
                 doFailed(core, hlpr, (byte) 3); // 缺少权限(带方法)
                 return;
             }
-        }
-        if (siteMap.actions.contains(aut)) {
-            if (  ! authset.contains(aut)) {
-                doFailed(core, hlpr, (byte) 2); // 禁入区域
-                return;
-            }
-
-            /**
-             * 权限配置中有指定区域的
-             * 必须在指定区域再次登录
-             * 登录时会将区域写入会话
-             */
-            if (loginPage != null) {
-            Set sae = (Set) hlpr.getSessibute(Cnst.SAE_SES);
-            if (sae == null || ! sae.contains(aut)) {
-                doFailed(core, hlpr, (byte) 1); // 登录区域
-                return;
-            }}
         }
     }
 

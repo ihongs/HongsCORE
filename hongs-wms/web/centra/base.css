@@ -6,6 +6,7 @@
 
 html, body {
     height: 100%;
+    width : 100%;
     min-width: 970px;
 }
 
@@ -13,20 +14,20 @@ html, body {
     display: table;
     height: 100%;
     width : 100%;
-    margin-top: 0;
-    margin-bottom: 0;
+    margin: 0;
+}
+#bodybox {
+    display: table-cell;
+    vertical-align: top;
 }
 #headbox {
     display: table-cell;
     vertical-align: top;
     background: #373a3c;
+    text-shadow: 0 0 6px #000;
     min-width: 150px;
     max-width: 300px;
     width: 12.5%;
-}
-#bodybox {
-    display: table-cell;
-    vertical-align: top;
 }
 #main-context {
     overflow: auto;
@@ -44,11 +45,16 @@ html, body {
     margin-top: 15px;
 }
 
-#menu-context a {
-    color: #eee;
-}
 #user-menubar a {
     color: #aaa;
+    font-size: 13px;
+}
+#main-menubar a {
+    color: #eee;
+    font-size: 15px;
+}
+#main-menubar li li a {
+    font-size: 13px;
 }
 
 #menu-laq {
@@ -94,25 +100,22 @@ html, body {
     margin : 1px 0;
 }
 .menubox li a {
-    padding: 6px 4px 6px 13px;
+    padding: 6px 4px 6px 15px;
 }
 .menubox li li a {
-    padding: 6px 4px 6px 26px;
+    padding: 6px 4px 6px 30px;
 }
-.menubox li a {
+.menubox li a ,
+.menubox li.acting > a.dropup {
     display: block;
     background: #373a3c;
     border-left: 2px solid #373a3c;
 }
-.menubar li a:hover {
-    background: #313436;
-}
-.menubox li.acting a {
-    background: #313436;
-    border-left: 2px solid #202020;
-}
-.menubox li.active a {
-    background: #313436;
+.menubar li:hover  > a ,
+.menubox li.acting > a ,
+.menubox li.active > a ,
+.menubox li.active > a.dropup {
+    background: #212426;
     border-left: 2px solid #ea0000;
 }
 .menubox li .caret {

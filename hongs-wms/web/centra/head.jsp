@@ -128,7 +128,7 @@
     </ul>
 </div>
 
-<hr style="margin-top: 18px; border-top: 1px dashed #666;"/>
+<hr style="margin-top: 18px; border-top: 2px groove #555;"/>
 
 <div class="menubox clearfix">
     <ul id="user-menubar">

@@ -101,19 +101,20 @@ html, body {
     margin : 1px 0;
 }
 .menubox li a {
+    display: block;
     padding: 6px 4px 6px 15px;
 }
 .menubox li li a {
+    display: block;
     padding: 6px 4px 6px 30px;
 }
 .menubox li a ,
 .menubox li.acting > a.dropup {
-    display: block;
     background: #373a3c;
     border-left: 2px solid #373a3c;
 }
-.menubox li a:hover  ,
-.menubox li.acting > a:hover  {
+.menubox li a:hover ,
+.menubox li.acting > a:hover.dropup {
     background: #212426;
     border-left: 2px solid #777777;
 }

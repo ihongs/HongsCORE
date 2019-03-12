@@ -20,6 +20,17 @@ import java.util.Map;
 @Action("centra/mine")
 public class MineAction {
 
+    @Action("same")
+    public void sameName(ActionHelper ah)
+    throws HongsException {
+        Map rd = ah.getRequestData();
+        String id = (String) ah.getSessibute(Cnst.UID_SES);
+        rd.put( "id", id );
+
+        UserAction ua = new UserAction();
+        ua.isUnique ( ah );
+    }
+
     @Action("info")
     @Preset(conf="master", form="mine")
     public void mineInfo(ActionHelper ah)
@@ -38,9 +49,9 @@ public class MineAction {
     throws HongsException {
         Map rd = ah.getRequestData();
         String id = (String) ah.getSessibute(Cnst.UID_SES);
+        rd.put( "id", id );
 
         // 禁止危险修改. 这是以防万一, 其实校验已经做过限制了
-        rd.put( "id", id );
         rd.remove("depts");
         rd.remove("roles");
         rd.remove("state");

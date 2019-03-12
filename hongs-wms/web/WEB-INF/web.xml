@@ -146,9 +146,7 @@
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
-                /centra/sign/create.act;
-                /centra/sign/delete.act;
-                /centra/login.html;
+                /centra/sign/*;/centra/login.html;
             </param-value>
         </init-param>
     </filter>
@@ -168,15 +166,13 @@
         </init-param>
         <init-param>
             <param-name>expire-time</param-name>
-            <param-value>28800</param-value>
+            <param-value>57600</param-value><!--16 hours-->
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
-                /centre/capt/create.act;
-                /centre/sign/create.act;
-                /centre/sign/delete.act;
+                /centre/sign/*;/centre/capt/*;
             </param-value>
         </init-param>
     </filter>

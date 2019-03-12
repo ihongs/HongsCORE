@@ -3,7 +3,7 @@
 /**
  * 设置当前用户ID
  */
-if (hsChkUri('centre')) {
+if (hsChkUri('centra')) {
     window.HsCUID = H$('%HsCUID');
 } else {
     window.HsCUID = null ;

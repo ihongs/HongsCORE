@@ -1,20 +1,13 @@
 package io.github.ihongs.action.anno;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.NaviMap;
 import java.lang.annotation.Annotation;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * 权限过滤处理器
- * conf 为 $ 时仅查会话状态
- * 此时 role 解释为登录区域
- * 空串 role 表示可在匿名区
  * @author Hongs
  */
 public class PermitInvoker implements FilterInvoker {
@@ -24,42 +17,6 @@ public class PermitInvoker implements FilterInvoker {
         Permit   ann  = (Permit) anno;
         String   conf = ann.conf();
         String[] role = ann.role();
-
-        /**
-         * 很多对外动作并不需要做复杂的权限校验
-         * 仅需判断用户是否登录即可
-         * conf 为 $ 时仅查会话状态
-         * 此时 role 解释为登录区域
-         * 空串 role 表示可在匿名区
-         */
-        if (conf.startsWith("$")) {
-            conf = conf.substring(1);
-            if (conf.length( ) == 0) {
-                conf = Cnst.SAE_SES ;
-            }
-
-            Object uid = helper.getSessibute(Cnst.UID_SES);
-            if (uid == null || "".equals( uid )) {
-                throw new HongsException(0x1101);
-            }
-
-            if (role.length != 0) {
-                Set usl = (Set) helper.getSessibute(conf );
-                Set rol = new HashSet(Arrays.asList(role));
-                if (usl == null || ! usl.isEmpty()) {
-                    if (!rol.contains ("" )) {
-                        throw new HongsException(0x1102);
-                    }
-                } else {
-                    if (!rol.retainAll(usl)) {
-                        throw new HongsException(0x1102);
-                    }
-                }
-            }
-
-            chains.doAction();
-            return;
-        }
 
         // 识别路径
         if (conf.length() == 0) {
@@ -81,9 +38,15 @@ public class PermitInvoker implements FilterInvoker {
         }
 
         if (role == null || role.length == 0) {
-            has = map.chkAuth(chains.getAction());
+            has = map.chkAuth(chains.getAction( ) );
         } else {
             for ( String rale : role ) {
+                if ( rale.startsWith( "@" ) ) {
+                if (map.chkAuth(rale.substring(1))) {
+                    has = true;
+                    break;
+                }
+                } else
                 if (map.chkRole(rale)) {
                     has = true;
                     break;

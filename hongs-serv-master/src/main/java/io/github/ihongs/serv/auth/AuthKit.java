@@ -104,7 +104,6 @@ public class AuthKit {
                        CoreConfig.getInstance ( "master" )
                                  .getProperty ("core.keep.sess",""));
             Map<String,Object> xs = new HashMap();
-            ks.add(Cnst.SAE_SES);
             for(String  kn : ks) {
                 Object  kv = sd.getAttribute(kn );
                 if ( null != kv) xs.put( kn, kv );
@@ -119,21 +118,9 @@ public class AuthKit {
         }
         String   sesid = sd.getId();
 
-        // 登录区域
-        Set sarea  = Synt.asSet(sd.getAttribute(Cnst.SAE_SES));
-        if (sarea == null) {
-            sarea  = new  HashSet();
-        }
-        if (place != null
-        && !place.isEmpty( )
-        &&  RoleSet.getInstance(usrid).contains(place)) {
-            sarea.add(place);
-        }
-
         // 设置会话
         sd.setAttribute(Cnst.UID_SES, usrid);
-        sd.setAttribute(Cnst.SAE_SES, sarea);
-        sd.setAttribute(Cnst.STM_SES, stime);
+        sd.setAttribute(Cnst.UST_SES, stime);
         sd.setAttribute("uname", uname);
         sd.setAttribute("uhead", uhead);
         sd.setAttribute("utime", utime);

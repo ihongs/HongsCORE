@@ -105,15 +105,13 @@ public final class Cnst {
 
     //** 会话参数 **/
 
-    public static final String  UID_SES =  "uid";
+    public static final String  UID_SES =  "uid"; // 用户代号
 
-    public static final String  STM_SES =  "SIGN_TIME"; // 最后访问时间
+    public static final String  UST_SES =  "ust"; // 登录时间
 
-    public static final String  SAE_SES =  "SIGN_AREA"; // 已登录的区域
+    public static final String  ADM_UID =  "1";   // 超级管理员
 
-    public static final String  ADM_UID =  "1";
-
-    public static final String  ADM_GID =  "0";
+    public static final String  ADM_GID =  "0";   // 顶级管理组
 
     //** 请求属性 **/
 

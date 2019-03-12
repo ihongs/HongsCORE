@@ -50,10 +50,11 @@ html, body {
     font-size: 13px;
 }
 #main-menubar a {
-    color: #eee;
+    color: #aaa;
     font-size: 15px;
 }
 #main-menubar li li a {
+    color: #eee;
     font-size: 13px;
 }
 

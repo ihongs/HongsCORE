@@ -116,7 +116,7 @@ html, body {
 .menubox li a:hover ,
 .menubox li.acting > a:hover.dropup {
     background: #313436;
-    border-left: 2px solid #777777;
+    border-left: 2px solid #000000;
 }
 .menubox li.acting > a ,
 .menubox li.active > a ,

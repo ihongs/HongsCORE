@@ -50,7 +50,7 @@ html, body {
     font-size: 13px;
 }
 #main-menubar a {
-    color: #aaa;
+    color: #ccc;
     font-size: 15px;
 }
 #main-menubar li li a {
@@ -112,7 +112,7 @@ html, body {
     background: #373a3c;
     border-left: 2px solid #373a3c;
 }
-.menubar li:hover  > a ,
+.menubox li:hover  > a ,
 .menubox li.acting > a ,
 .menubox li.active > a ,
 .menubox li.active > a.dropup {
@@ -120,6 +120,7 @@ html, body {
     border-left: 2px solid #ea0000;
 }
 .menubox li .caret {
+    color : #aaa ;
     float : right;
     margin: 7px 0;
 }

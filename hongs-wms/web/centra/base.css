@@ -38,10 +38,10 @@ html, body {
     height: 100%;
 }
 
-#main-context>.tabs {
+#main-context > .tabs {
     margin-bottom: 0;
 }
-#main-context>.labs {
+#main-context > .labs {
     margin-top: 15px;
 }
 
@@ -54,39 +54,7 @@ html, body {
     font-size: 15px;
 }
 #main-menubar li li a {
-    color: #eee;
     font-size: 13px;
-}
-
-#menu-laq {
-    background: #333;
-    color     : #eee;
-    position: absolute;
-    display : block;
-    right: 0;
-    top  : 0;
-}
-#menu-raq {
-    background: #eee;
-    color     : #333;
-    position: fixed;
-    display : none ;
-    left : 0;
-    top  : 0;
-}
-#menu-laq,
-#menu-raq {
-    width: 15px;
-    padding-left : 0;
-    padding-right: 0;
-    border-width : 0;
-    border-radius: 0;
-    text-align: center;
-}
-#menu-laq:hover,
-#menu-raq:hover {
-    background: #444;
-    color     : #ddd;
 }
 
 .menubox ul {
@@ -113,34 +81,42 @@ html, body {
     background: #373a3c;
     border-left: 2px solid #373a3c;
 }
-.menubox li a:hover ,
-.menubox li.acting > a:hover.dropup {
-    background: #313436;
-    border-left: 2px solid #000000;
-}
 .menubox li.acting > a ,
 .menubox li.active > a ,
 .menubox li.active > a.dropup {
-    background: #212426;
+    background: #610000;
     border-left: 2px solid #ea0000;
 }
+
 .menubox li .caret {
-    color : #aaa ;
+    margin: 9px 0;
     float : right;
-    margin: 7px 0;
+    color : #373a3c;
+}
+.menubox li:hover .caret {
+    color : #aaaaaa;
 }
 
+/**
+ * 统计图表附带选项
+ */
 .statbox .checkbox label {
-    line-height: 21px;
-    font-size: 12px;
     display: block;
+    font-size: 12px;
+    line-height: 21px;
 }
 
 /**
  * 修正响应式表格不出横向滚动条的问题
  */
-.table-responsive-revised {
+.table-responsive-revised  {
     width: 100%;
     display: table;
     table-layout: fixed;
+}
+.table-responsive thead th {
+    white-space: nowrap;
+}
+.table-responsive tbody td {
+    white-space: normal;
 }

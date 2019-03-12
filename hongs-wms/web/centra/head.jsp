@@ -118,8 +118,6 @@
         <span style="color:#fcc">R</span>
         <span style="color:#fdd">E</span>
     </a>
-    <a href="javascript:;" class="btn" id="menu-laq">&laquo;</a>
-    <a href="javascript:;" class="btn" id="menu-raq">&raquo;</a>
 </div>
 
 <div class="menubox clearfix">
@@ -203,24 +201,6 @@
             }
         });
 
-        /*
-        var badge = userbar.find(".badge" );
-        var timer = setInterval (function() {
-            if (! badge.is(":visible")) {
-                clearInterval( timer );
-                return;
-            }
-            $.ajax({
-                url     : hsFixUri("centre/medium/suggest/search.act?unit=message"),
-                type    : "GET" ,
-                dataType: 'JSON',
-                complete: function(rst) {
-                    badge.text(rst.size ? rst.size : "");
-                }
-            });
-        }, 10000);
-        */
-
         $("#sign-out")
             .click(function() {
                 $.hsWarn(
@@ -241,18 +221,6 @@
         $("#note-msg")
             .click(function() {
                 $.hsOpen("centra/manage/note.html");
-            });
-
-        // 菜单隐藏和显示
-        $("#menu-raq").appendTo(document.body)
-            .click(function() {
-                $('#headbox' ).show();
-                $("#menu-raq").hide();
-            });
-        $("#menu-laq")
-            .click(function() {
-                $('#headbox' ).hide();
-                $("#menu-raq").show();
             });
 
         // 菜单折叠和展开

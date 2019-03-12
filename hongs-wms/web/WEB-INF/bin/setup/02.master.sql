@@ -43,8 +43,8 @@ CREATE TABLE `a_master_dept_role` (
 CREATE INDEX `IK_a_master_dept_role_dept` ON `a_master_dept_role` (`dept_id`);
 CREATE INDEX `IK_a_master_dept_role_role` ON `a_master_dept_role` (`role`);
 
-INSERT INTO `a_master_user_role` VALUES ('CENTRA','centra');
-INSERT INTO `a_master_user_role` VALUES ('CENTRE','centre');
+INSERT INTO `a_master_dept_role` VALUES ('CENTRA','centra');
+INSERT INTO `a_master_dept_role` VALUES ('CENTRE','centre');
 
 --
 -- 用户

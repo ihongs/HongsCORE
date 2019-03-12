@@ -765,9 +765,9 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"statis/search"+ Cnst.ACT_EXT) );
-            actn = docm.createElement("action");
-            role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"stream/search"+ Cnst.ACT_EXT) );
+//          actn = docm.createElement("action");
+//          role.appendChild ( actn );
+//          actn.appendChild ( docm.createTextNode(href +"stream/search"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );

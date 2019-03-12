@@ -182,10 +182,10 @@ public class AuthFilter
      * 对超级管理员无限制
      */
     Set <String> authset = null;
-    long stm = Synt.declare ( hlpr.getSessibute ( Cnst.STM_SES ) , 0L );
+    long stm = Synt.declare ( hlpr.getSessibute (Cnst.UST_SES ) , 0L );
     long now = System.currentTimeMillis() / 1000;
     if ( exp == 0 || exp > now - stm ) {
-        hlpr.setSessibute ( Cnst.STM_SES , now );
+        hlpr.setSessibute (Cnst.UST_SES , now );
 
         if ( 0 < Core.DEBUG ) {
             String uid = Synt.asString(hlpr.getSessibute(Cnst.UID_SES));

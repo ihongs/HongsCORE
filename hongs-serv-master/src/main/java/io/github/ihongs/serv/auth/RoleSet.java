@@ -153,21 +153,21 @@ public class RoleSet extends CoreSerial implements Set<String> {
             return (RoleSet) c.get( k );
         }
         RoleSet s = new RoleSet(userId);
-        if (s.rtime ==   0  ) {
-            s = null;   // 状态不对
+        if (s . rtime ==  0 ) {
+            s = null; // 状态不对
         }
-        c.put(k,s);     // 缓存对象
-        return  s ;
+        c.put(k , s); // 缓存对象
+        return s;
     }
 
     public static RoleSet getInstance()
     throws HongsException {
-        ActionHelper ah = Core.getInstance (ActionHelper.class);
-        String id = (String)ah.getSessibute(Cnst.UID_SES);
-        if  (  id == null  ) {
-            return   null; // 未登录
+        Object id = Core.getInstance (ActionHelper.class)
+                        .getSessibute(   Cnst.UID_SES   );
+        if (id ==  null) {
+            return null; // 未登录
         }
-        return getInstance(id);
+        return getInstance((String) id);
     }
 
     //** Set 相关操作 **/

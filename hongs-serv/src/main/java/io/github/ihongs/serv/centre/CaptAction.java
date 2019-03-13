@@ -12,7 +12,7 @@ import java.io.IOException;
  * 简单验证图片
  * @author Hongs
  */
-@Action("centre/capt")
+@Action("common/capt")
 public class CaptAction {
 
     @Action("create")

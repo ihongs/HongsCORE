@@ -29,7 +29,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * <h3>初始化参数(init-param):</h3>
  * <pre>
- * config-name  菜单配置
+ * config-name  菜单配置, 注: 如存在同名动作, 则全区均需登录
  * expire-time  登录超时(默认为永久)
  * index-page   起始页(为空则不跳转)
  * login-page   登录页(为空则不跳转)
@@ -169,6 +169,11 @@ public class AuthFilter
     String act = ActionDriver.getRecentPath(req);
 
     /**
+     * 标记当前登录区域, 以便区分不同权限
+     */
+    req.setAttribute(AuthFilter.class.getName( ) + ":config", aut);
+
+    /**
      * 检查当前动作是否可以忽略
      */
     if (ignore != null && ignore.ignore( act ) ) {
@@ -177,16 +182,21 @@ public class AuthFilter
     }
 
     /**
+     * 登记的动作权限串无前斜杠
+     */
+    if (act . startsWith ("/") ) {
+        act = act.substring( 1 );
+    }
+
+    /**
      * 判断当前用户是否登录超时
      * 未超时且是调试模式
      * 对超级管理员无限制
      */
     Set <String> authset = null;
-    long stm = Synt.declare ( hlpr.getSessibute (Cnst.UST_SES ) , 0L );
+    long ust = Synt.declare ( hlpr.getSessibute ( Cnst.UST_SES ) , 0L );
     long now = System.currentTimeMillis() / 1000;
-    if ( exp == 0 || exp > now - stm ) {
-        hlpr.setSessibute (Cnst.UST_SES , now );
-
+    if ( exp == 0 || exp > now - ust ) {
         if ( 0 < Core.DEBUG ) {
             String uid = Synt.asString(hlpr.getSessibute(Cnst.UID_SES));
             if ( Cnst.ADM_UID.equals(uid)) {
@@ -200,52 +210,28 @@ public class AuthFilter
         } catch (HongsException ex) {
             throw new ServletException(ex);
         }
-        stm = 0;
+        ust = 0;
     }
 
-    // 权限动作无前导杠
-    // 附带上协议方法名
-    if (act.startsWith( "/" )) {
-        act = act.substring(1);
-    }
-    String amt = act + "|" + hlpr.getRequest().getMethod();
-
-    if (null == authset) {
-        if (null != loginPage) {
-            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 1)); // 没有登录
+    if (authset != null) {
+        if (siteMap.actions.contains(aut)
+        &&         !authset.contains(aut)) {
+            doFailed(core, hlpr, (byte) 2);
             return;
         }
-        if (siteMap.actions.contains(act)) {
-            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 1)); // 需要权限
-            return;
-        }
-        if (siteMap.actions.contains(amt)) {
-            doFailed(core, hlpr, (byte) (stm > 0 ? 0 : 1)); // 需要权限(带方法)
+        if (siteMap.actions.contains(act)
+        &&         !authset.contains(act)) {
+            doFailed(core, hlpr, (byte) 3);
             return;
         }
     } else {
-        /**
-         * 2019/8/12
-         * 有指定登录页才需要验证是否对整个区域都有准入限制
-         */
-        if (null != loginPage
-        &&  siteMap.actions.contains(aut)) {
-            if (  ! authset.contains(aut)) {
-                doFailed(core, hlpr, (byte) 2); // 禁入区域
-                return;
-            }
+        if (siteMap.actions.contains(aut)) {
+            doFailed(core, hlpr, (byte) (ust > 0 ? 0 : 1));
+            return;
         }
         if (siteMap.actions.contains(act)) {
-            if (  ! authset.contains(act)) {
-                doFailed(core, hlpr, (byte) 3); // 缺少权限
-                return;
-            }
-        }
-        if (siteMap.actions.contains(amt)) {
-            if (  ! authset.contains(amt)) {
-                doFailed(core, hlpr, (byte) 3); // 缺少权限(带方法)
-                return;
-            }
+            doFailed(core, hlpr, (byte) (ust > 0 ? 0 : 1));
+            return;
         }
     }
 

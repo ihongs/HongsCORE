@@ -127,12 +127,12 @@
         <filter-name>AuthFilter_Centra</filter-name>
         <filter-class>io.github.ihongs.action.serv.AuthFilter</filter-class>
         <init-param>
-            <param-name>config-name</param-name>
-            <param-value>centra</param-value>
-        </init-param>
-        <init-param>
             <param-name>expire-time</param-name>
             <param-value>57600</param-value><!--16 hours-->
+        </init-param>
+        <init-param>
+            <param-name>config-name</param-name>
+            <param-value>centra</param-value>
         </init-param>
         <init-param>
             <param-name>index-page</param-name>
@@ -161,18 +161,26 @@
         <filter-name>AuthFilter_Centre</filter-name>
         <filter-class>io.github.ihongs.action.serv.AuthFilter</filter-class>
         <init-param>
+            <param-name>expire-time</param-name>
+            <param-value>57600</param-value><!--16 hours-->
+        </init-param>
+        <init-param>
             <param-name>config-name</param-name>
             <param-value>centre</param-value>
         </init-param>
         <init-param>
-            <param-name>expire-time</param-name>
-            <param-value>57600</param-value><!--16 hours-->
+            <param-name>index-page</param-name>
+            <param-value>/centra/index.html</param-value>
+        </init-param>
+        <init-param>
+            <param-name>login-page</param-name>
+            <param-value>/centre/login.html</param-value>
         </init-param>
         <init-param>
             <param-name>ignore-urls</param-name>
             <param-value>
                 *.js;*.css;*.png;*.gif;*.jpg;*.bmp;*.api;/api/*;
-                /centre/sign/*;/centre/capt/*;
+                /centre/sign/*;/centre/login.html;
             </param-value>
         </init-param>
     </filter>

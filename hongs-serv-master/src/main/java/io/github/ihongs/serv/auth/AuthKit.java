@@ -2,7 +2,6 @@ package io.github.ihongs.serv.auth;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
@@ -16,6 +15,7 @@ import io.github.ihongs.util.verify.Wrongs;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.TreeSet;
@@ -95,28 +95,26 @@ public class AuthKit {
             String place, String appid, String usrid,
             String uname, String uhead,  long  utime)
     throws HongsException {
-        long     stime = System.currentTimeMillis() / 1000;
-        HttpSession sd = ah.getRequest().getSession(false);
+        long     stime = System.currentTimeMillis() / 1000 ;
+        HttpSession sd = ah.getRequest( ).getSession(false);
 
-        // 重建会话, 检查登录时哪些会话数据需要保留
+        // 重建会话
         if (sd != null) {
-            Set<String> ks = Synt. toTerms    (
-                       CoreConfig.getInstance ( "master" )
-                                 .getProperty ("core.keep.sess",""));
-            Map<String,Object> xs = new HashMap();
-            for(String  kn : ks) {
-                Object  kv = sd.getAttribute(kn );
-                if ( null != kv) xs.put( kn, kv );
+            Enumeration<String> ns = sd.getAttributeNames();
+            Map<String, Object> ss = new HashMap (/*Copy*/);
+            while ( ns.hasMoreElements() ) {
+                String nn = ns.nextElement (    );
+                ss.put(nn , sd.getAttribute(nn) );
             }
             sd.invalidate();
             sd = ah.getRequest().getSession(true);
-            for(Map.Entry<String,Object> et: xs.entrySet()) {
+            for(Map.Entry<String,Object> et: ss.entrySet()) {
                 sd.setAttribute(et.getKey(), et.getValue());
             }
         } else {
             sd = ah.getRequest().getSession(true);
         }
-        String   sesid = sd.getId();
+        String sesid = sd.getId();
 
         // 设置会话
         sd.setAttribute(Cnst.UID_SES, usrid);
@@ -137,7 +135,7 @@ public class AuthKit {
 
         // 记录登录
         Map ud = new HashMap();
-        ud.put("user_id"   , usrid);
+        ud.put( "user_id"  , usrid);
         ud.put("sesid", sesid);
         ud.put("appid", appid);
         ud.put("ctime", stime);
@@ -217,18 +215,19 @@ public class AuthKit {
         return userSign(ah, place, appid, usrid, uname, uhead, utime);
     }
 
+    public static void signUpd(HttpSession ss) throws HongsException {
+        // 刷新时间
+        ss.setAttribute(Cnst.UST_SES,System.currentTimeMillis()/1000);
+    }
+
     public static void signOut(HttpSession ss) throws HongsException {
+        // 清除会话
+        ss.invalidate();
+
         // 清除登录
         DB.getInstance("master")
           .getTable("user_sign")
           .remove("`sesid` = ?", ss.getId());
-
-        // 清除会话
-        ss.invalidate();
-    }
-
-    public static void signUpd(HttpSession ss) throws HongsException {
-        // Nothing todo.
     }
 
     /**

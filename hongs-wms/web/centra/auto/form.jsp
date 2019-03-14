@@ -35,13 +35,13 @@
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
             if (rptd.length() != 0) {
-                name = name + "." ;
+                name += ".";
             }
             if (text == null) {
-                text = "";
+                text  = "" ;
             }
             if (hint == null) {
-                hint = "";
+                hint  = "" ;
             }
         %>
         <%if ("hidden".equals(type)) {%>

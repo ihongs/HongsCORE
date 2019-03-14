@@ -249,8 +249,8 @@ div.bootstrap-tagsinput.form-control {
 /** 布局 **/
 
 .progbox.alert ,
-.notebox.alert ,
-.warnbox.alert {
+.warnbox.alert ,
+.notebox.alert {
     border-color: transparent;
     color : #eee;
     margin: 0;
@@ -259,10 +259,12 @@ div.bootstrap-tagsinput.form-control {
 .warnbox.alert {
     box-shadow: 0 0 15px #333;
     padding: 30px 15px;
+    opacity: 1.0;
 }
 .notebox.alert {
-    box-shadow: 0 0 90px #333;
+    box-shadow: 0 0 90px #666;
     padding: 15px 15px;
+    opacity: 0.5;
 }
 .alert-footer {
     text-align : right;

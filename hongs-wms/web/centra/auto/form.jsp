@@ -34,8 +34,11 @@
             String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
-            if (!"".equals(rptd)) {
+            if (rptd.length() != 0) {
                 name = name + "." ;
+            }
+            if (hint == null) {
+                hint = "";
             }
         %>
         <%if ("hidden".equals(type)) {%>
@@ -205,7 +208,9 @@
                 <%} /*End If */%>
                 </div>
                 <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block form-control-static"></div>
+                <%if (hint.length() != 0) {%>
                 <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-2 text-muted form-control-static"><%=hint%></div>
+                <%} /*End If */%>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

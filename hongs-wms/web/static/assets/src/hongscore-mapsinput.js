@@ -28,8 +28,8 @@ function setMapsInput(opts, func) {
     var areaBox = $(
           '<div class="row form-group">'
         + '<label class="col-xs-3 col-md-2 control-label form-control-static text-right">地图</label>'
-        + '<div class="col-xs-9 col-md-8"><div class=" map " style=" width: 100%; height: 300px; "></div></div>'
-        + '<div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block form-control-static"></div>'
+        + '<div class="col-xs-9 col-md-8"><div class=" map " style="width:100%; height:300px; display:block;"></div></div>'
+        + '<div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 form-control-static help-block text-error"></div>'
         + '</div>'
     );
     var mapsBox = areaBox.find(".map");

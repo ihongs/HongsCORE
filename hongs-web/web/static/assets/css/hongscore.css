@@ -102,8 +102,15 @@ input[type="time"].form-control {
 .center-block {
     float  : none;
 }
+.form-group:empty ,
 .help-block:empty {
     display: none;
+}
+.help-block.text-muted,
+.has-error .help-block.text-muted ,
+.has-success .help-block.text-muted ,
+.has-warning .help-block.text-muted {
+    color  : #b7b7b7;
 }
 .help-block.form-control-static {
     margin-top: 0;

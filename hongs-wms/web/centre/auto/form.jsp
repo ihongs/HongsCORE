@@ -38,6 +38,9 @@
             if (rptd.length() != 0) {
                 name = name + "." ;
             }
+            if (text == null) {
+                text = "";
+            }
             if (hint == null) {
                 hint = "";
             }

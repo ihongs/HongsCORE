@@ -210,10 +210,8 @@
                     <%hint ="";%>
                 <%} /*End If */%>
                 </div>
-                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block form-control-static"></div>
-                <%if (hint.length() != 0) {%>
-                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-2 text-muted form-control-static"><%=hint%></div>
-                <%} /*End If */%>
+                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"><%=hint%></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

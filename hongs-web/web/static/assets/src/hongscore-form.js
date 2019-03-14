@@ -668,8 +668,10 @@ HsForm.prototype = {
         });
     },
     verified : function() {
-        this.formBox.find(".form-group.has-error").removeClass("has-error")
-                    .find(".help-block" /* msg */).   addClass("invisible");
+        this.formBox.find(".form-group")
+              .removeClass( "has-error")
+                    .find(".text-error")
+                    .empty();
         return true;
     },
     verifies : function() {
@@ -735,11 +737,11 @@ HsForm.prototype = {
         inp = this.getinput(inp);
 
         var grp = inp.closest(".form-group");
-        var blk = grp.find(   ".help-block");
+        var blk = grp.find(   ".text-error");
         var leb = grp.find(".control-label");
         if (blk.size() == 0) {
-            blk = jQuery('<p class="help-block"></p>').appendTo(grp);
-            if (leb.hasClass(".form-control-static" )) {
+            blk = jQuery('<p class="text-error help-block"></p>').appendTo(grp);
+            if (leb.hasClass(".form-control-static")) {
                 blk.addClass( "form-control-static" );
             }
         }
@@ -753,8 +755,9 @@ HsForm.prototype = {
         }
     },
     geterror : function(inp, err, rep) {
-        var msg = err.replace(/^form\./, "").replace(/\./g, "-");
-            msg = inp.attr("data-" + msg + "-error" )
+        var msg = err.replace(/^form\./, "")
+                     .replace( /\./g , "-" );
+            msg = inp.attr("data-" + msg + "-error")
                || inp.attr("data-error");
         if (msg) {
             err = msg;

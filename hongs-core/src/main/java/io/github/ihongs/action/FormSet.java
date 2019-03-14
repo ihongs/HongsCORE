@@ -390,23 +390,39 @@ public class FormSet
   }
 
   public Map getEnum(String name) throws HongsException {
-    if (name != null && name.startsWith("@")) {
-        return (Map) Core.getInstance(name.substring(1));
+    if (null == name) {
+        throw new NullPointerException ("Enum name can not be null");
     }
-    if (!enums.containsKey(name)) {
-        throw new HongsException(0x10eb, "Enum "+name+" in "+this.name+" is not exists");
+    Map names = enums.get("_enum_");
+    if (null != names
+    &&  names.containsKey(name)) {
+        name  = (String)  names.get(name);
     }
-    return enums.get(name);
+    if (enums.containsKey(name)) {
+        return  ( Map  )  enums.get(name);
+    }
+    if (name . startsWith ("@")) {
+        return  ( Map  )  Core.getInstance(name.substring(1));
+    }
+    throw new HongsException(0x10eb, "Enum "+name+" in "+this.name+" is not exists");
   }
 
   public Map getForm(String name) throws HongsException {
-    if (name != null && name.startsWith("@")) {
-        return (Map) Core.getInstance(name.substring(1));
+    if (null == name) {
+        throw new NullPointerException ("Form name can not be null");
     }
-    if (!forms.containsKey(name)) {
-        throw new HongsException(0x10ea, "Form "+name+" in "+this.name+" is not exists");
+    Map names = enums.get("_form_");
+    if (null != names
+    &&  names.containsKey(name)) {
+        name  = (String)  names.get(name);
     }
-    return forms.get(name);
+    if (forms.containsKey(name)) {
+        return  ( Map  )  forms.get(name);
+    }
+    if (name . startsWith ("@")) {
+        return  ( Map  )  Core.getInstance(name.substring(1));
+    }
+    throw new HongsException(0x10ea, "Form "+name+" in "+this.name+" is not exists");
   }
 
   public CoreLocale getCurrTranslator() {

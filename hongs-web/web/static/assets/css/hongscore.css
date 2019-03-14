@@ -257,14 +257,12 @@ div.bootstrap-tagsinput.form-control {
 }
 .progbox.alert ,
 .warnbox.alert {
-    box-shadow: 0 0 15px #333;
+    box-shadow: 0 0 15px #000;
     padding: 30px 15px;
-    opacity: 1.0;
 }
 .notebox.alert {
-    box-shadow: 0 0 90px #666;
+    box-shadow: 0 0 90px #000;
     padding: 15px 15px;
-    opacity: 0.5;
 }
 .alert-footer {
     text-align : right;

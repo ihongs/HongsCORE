@@ -34,8 +34,14 @@
             String  rqrd = Synt.declare(info.get("__required__"), false) ? "required=\"required\"" : "";
             String  rptd = Synt.declare(info.get("__repeated__"), false) ? "multiple=\"multiple\"" : "";
 
-            if (!"".equals(rptd)) {
-                name = name + "." ;
+            if (rptd.length() != 0) {
+                name += ".";
+            }
+            if (text == null) {
+                text  = "" ;
+            }
+            if (hint == null) {
+                hint  = "" ;
             }
         %>
         <%if ("hidden".equals(type)) {%>
@@ -67,6 +73,7 @@
                         }
                     %>
                     <textarea id="<%=_pageId%>-<%=name%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%><%=extr%>></textarea>
+                    <%hint ="";%>
                 <%} else if ("string".equals(type) || "text".equals(type) || "email".equals(type) || "url".equals(type) || "tel".equals(type) || "sms".equals(type)) {%>
                     <%
                         String extr = "";
@@ -84,6 +91,7 @@
                         if (info.containsKey( "pattern" )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
+                    <%hint ="";%>
                 <%} else if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                     <%
                         String extr = "";
@@ -93,6 +101,7 @@
                         if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%>/>
+                    <%hint ="";%>
                 <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
                     <%
                         String fomt = Synt.declare(info.get("format"),  type      );
@@ -107,25 +116,22 @@
                             extr += " data-fl=\"v ? v : new Date().getTime()/1000\"";
                         }}
                     %>
-                    <input class="form-control input-date" type="text" name="<%=name%>" value="" placeholder="<%=hint%>" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
+                    <input class="form-control" type="text" name="<%=name%>" value="" <%=rqrd%><%=extr%> data-toggle="hsDate"/>
                 <%} else if ("check".equals(type)) {%>
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
-                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("radio".equals(type)) {%>
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */%>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
-                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
                     <%if ("".equals(rqrd) && !"".equals(rptd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} /* End if */%>
                     <select class="form-control" name="<%=name%>" <%=rqrd%> <%=rptd%>></select>
-                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                     <%
                         String mode = "hsFork";
@@ -154,7 +160,6 @@
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.fork.select", text)%></button>
-                    <div class="text-muted"><%=hint%></div>
                 <%} else if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%
                         String mode = "hsFile";
@@ -200,12 +205,15 @@
                     <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
-                    <div class="text-muted"><%=hint%></div>
                 <%} else {%>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%> <%=rptd%>/>
+                    <%hint ="";%>
                 <%} /*End If */%>
                 </div>
                 <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block form-control-static"></div>
+                <%if (hint.length() != 0) {%>
+                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-2 text-muted form-control-static"><%=hint%></div>
+                <%} /*End If */%>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

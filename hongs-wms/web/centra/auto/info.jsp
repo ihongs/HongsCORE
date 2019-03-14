@@ -59,7 +59,10 @@
             }
             if (Synt.declare(info.get("__repeated__"), false)) {
                 // 为与表单一致而对多值字段的名称后加点
-                name += "."/**/;
+                name += ".";
+            }
+            if (text == null) {
+                text  = "" ;
             }
         %>
         <%if ("hidden".equals(type)) {%>

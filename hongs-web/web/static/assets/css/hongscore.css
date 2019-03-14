@@ -252,16 +252,15 @@ div.bootstrap-tagsinput.form-control {
 .warnbox.alert ,
 .notebox.alert {
     border-color: transparent;
+    box-shadow: 0 0 15px #000;
     color : #eee;
     margin: 0;
 }
 .progbox.alert ,
 .warnbox.alert {
-    box-shadow: 0 0 15px #000;
     padding: 30px 15px;
 }
 .notebox.alert {
-    box-shadow: 0 0 90px #000;
     padding: 15px 15px;
 }
 .alert-footer {

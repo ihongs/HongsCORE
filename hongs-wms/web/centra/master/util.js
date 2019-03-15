@@ -24,13 +24,13 @@ function hsUserMove(treebox, listbox) {
             listbox.find(".pagebox .alert")
                    .text("您可以管理左侧的下级分组中的用户, 或向其下添加新的分组.");
             listbox.find(".findbox .input-search")
-                   .attr("placeholder", "可以搜全部的哦");
-            listbox.find(".listbox").addClass( "on-top" );
+                   .attr("placeholder", "可以搜全部用户哦");
+            listbox.find(".listbox").addClass("on-top");
         } else
         if (did === "0" ) {
             listbox.find(".findbox .input-search")
-                   .attr("placeholder", "可以搜全部的哦");
-            listbox.find(".listbox").addClass( "on-top" );
+                   .attr("placeholder", "可以搜全部用户哦");
+            listbox.find(".listbox").addClass("on-top");
         }
 
         // 拖拽用户

@@ -1531,9 +1531,9 @@ $.hsNote = function(msg, typ, end, sec) {
         typ  = "" ;
     }
     var opt  = {
-        mode : "note",
-        title: msg,
-        close: end,
+        mode : "note" ,
+        title: msg ,
+        close: end ,
         count: sec || 1.5
     };
 
@@ -1555,7 +1555,7 @@ $.hsNote = function(msg, typ, end, sec) {
             opt.glass = "alert-success";
     }
 
-    return $.hsMask(opt);
+    return $.hsMask.call ( this , opt );
 };
 $.hsWarn = function(msg, typ, yes, not) {
     // 参数
@@ -1565,9 +1565,10 @@ $.hsWarn = function(msg, typ, yes, not) {
         typ  = "" ;
     }
     var opt  = {
-        mode : "warn",
+        mode : "warn" ,
         title: msg
     };
+    var arr  = [ opt ];
 
     // 样式
     switch (typ) {
@@ -1593,7 +1594,7 @@ $.hsWarn = function(msg, typ, yes, not) {
         yes = {
             click: yes,
             glass: "btn-primary",
-            label: hsGetLang("ensure")
+            label: hsGetLang ("ensure")
         };
     }
     if (null===not) not = function() {};
@@ -1601,11 +1602,13 @@ $.hsWarn = function(msg, typ, yes, not) {
         not = {
             click: not,
             glass: "btn-default",
-            label: hsGetLang("cancel")
+            label: hsGetLang ("cancel")
         };
     }
+    if (yes) arr.push( yes );
+    if (not) arr.push( not );
 
-    return $.hsMask(opt, yes, not);
+    return $.hsMask.apply( this , arr );
 };
 $.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
@@ -1641,6 +1644,45 @@ $.hsMask = function(opt) {
         btn = div.find(".modal-footer");
     }
 
+    // 预置组合
+    switch (opt["mode"]) {
+    case "warn":
+        div.addClass(opt.mode + "box" );
+        if (opt.position === undefined) {
+            opt.position  = "middle";
+        }
+        if (arguments.length > 1) {
+        if (opt.backdrop === undefined) {
+            opt.backdrop  = "static";
+        }
+        if (opt.keyboard === undefined) {
+            opt.keyboard  =  false;
+        }
+        if (opt.closable === undefined) {
+            opt.closable  =  false;
+        }}
+        break;
+    case "note":
+        div.addClass(opt.mode + "box" );
+        if (opt.position === undefined) {
+            opt.position  = "middle";
+        }
+        if (arguments.length < 2) {
+        if (opt.backdrop === undefined) {
+            opt.backdrop  = "hidden";
+        }} else {
+        if (opt.backdrop === undefined) {
+            opt.backdrop  =  false;
+        }
+        if (opt.keyboard === undefined) {
+            opt.keyboard  =  false;
+        }
+        if (opt.closable === undefined) {
+            opt.closable  =  false;
+        }}
+        break;
+    }
+
     // 设置参数
     ini.backdrop = opt.backdrop;
     ini.keyboard = opt.keyboard;
@@ -1674,7 +1716,7 @@ $.hsMask = function(opt) {
 
     // 设置按钮
     for(var i = 1; i < arguments.length; i ++) {
-        var cnf = arguments[ i ]; if ( ! cnf ) continue;
+        var cnf = arguments[i];
         var btm = $('<button type="button" class="btn btn-md"></button>');
         btn.append( btm );
         if (opt["focus"]) {
@@ -1697,31 +1739,6 @@ $.hsMask = function(opt) {
         }
     }
 
-    if (opt["mode"] === "note"
-    ||  opt["mode"] === "warn") {
-        div.addClass(opt.mode + "box" );
-        if (opt.position === undefined) {
-            opt.position  = "middle";
-        }
-    }
-    if (opt["mode"] === "note") {
-        if (opt.backdrop === undefined) {
-        if (btn.children().size() == 0) {
-            ini.backdrop  = "hidden";
-        } else {
-            ini.backdrop  =  false  ;
-        }}
-    }
-    if (btn.children().size( )) {
-        btt.siblings(".close").remove();
-        if (opt.backdrop === undefined) {
-            ini.backdrop  = "static";
-        }
-        if (opt.keyboard === undefined) {
-            ini.keyboard  =  false  ;
-        }
-    }
-
     // 按钮聚焦
     $(":focus").blur();
     setTimeout( function( ) {
@@ -1738,6 +1755,11 @@ $.hsMask = function(opt) {
     setTimeout( function( ) {
         mod.modal( "hide" );
     } , dow);
+
+    // 附加开关
+    if (opt.closable ===  false  ) {
+        btt.siblings(".close").remove();
+    }
 
     // 附加类型
     if (ini.backdrop === "hidden") {
@@ -1832,7 +1854,8 @@ $.hsXhwp = function(msg, xhr, xhu) {
         html : '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>',
         position: "middle",
         backdrop: "static",
-        keyboard:  false
+        keyboard:  false,
+        closable:  false
     });
     var mod = box.closest(".modal");
     var foo = box.find(".alert-footer");
@@ -2067,7 +2090,7 @@ $.fn.hsClose = function() {
     box.trigger("hsClose");
 
     // 联动关闭
-    box.hsCloze(/*recur*/);
+    box.hsCloze(/* rel */);
 
     // 恢复标签
     if (tab) {
@@ -2541,7 +2564,7 @@ function() {
         });
     }
 })
-.on("cilck", "[data-toggle=exit]",
+.on("cilck", "[data-toggle=hsExit]",
 function() {
     var sel = $(this).attr("data-target");
     var box = $(this).hsFind (sel || "@");

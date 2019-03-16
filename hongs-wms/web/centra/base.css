@@ -126,7 +126,7 @@ html, body {
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
-    text-shadow: 2px 2px 6px #000;
+    text-shadow  : 1px 1px 4px #000;
 }
 #user-menubar .caret {
     margin: 14px 6px;

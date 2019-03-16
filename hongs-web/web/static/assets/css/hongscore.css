@@ -288,23 +288,28 @@ div.bootstrap-tagsinput.form-control {
 .notebox.alert ,
 .warnbox.alert ,
 .progbox.alert {
-    background: #2e2f2faa;
+    background: rgb ( 46, 47, 47);
+    background: rgba( 46, 47, 47,0.6);
 }
 .notebox.alert.alert-info ,
 .warnbox.alert.alert-info {
-    background: #029acfcc;
+    background: rgb (  2,154,207);
+    background: rgba(  2,154,207,0.8);
 }
 .notebox.alert.alert-danger ,
 .warnbox.alert.alert-danger  {
-    background: #d9230fcc;
-}
-.notebox.alert.alert-warning ,
-.warnbox.alert.alert-warning {
-    background: #79377ccc;
+    background: rgb (217, 35, 15);
+    background: rgba(217, 35, 15,0.8);
 }
 .notebox.alert.alert-success ,
 .warnbox.alert.alert-success {
-    background: #469408cc;
+    background: rgb ( 70,148,  8);
+    background: rgba( 70,148,  8,0.8);
+}
+.notebox.alert.alert-warning ,
+.warnbox.alert.alert-warning {
+    background: rgb (121, 55,124);
+    background: rgba(121, 55,124,0.8);
 }
 
 .labs>*>h1,

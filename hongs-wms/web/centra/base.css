@@ -11,28 +11,21 @@ html, body {
 }
 
 #context {
-    display: table;
     height: 100%;
     width : 100%;
-    margin: 0;
 }
 #bodybox {
-    display: table-cell;
-    vertical-align: top;
+    height: 100%;
+    width : 100%;
+    overflow: auto;
+    padding-left: 175px;
 }
 #headbox {
-    display: table-cell;
-    vertical-align: top;
+    height: 100%;
+    width : 175px;
+    overflow: auto;
+    position: fixed;
     background: #373a3c;
-    width: 150px;
-}
-#main-context {
-    overflow: auto;
-    height: 100%;
-}
-#menu-context {
-    overflow: auto;
-    height: 100%;
 }
 
 #main-context > .tabs {
@@ -42,90 +35,107 @@ html, body {
     margin-top: 15px;
 }
 
-#user-menubar a {
-    color: #aaa;
-    font-size: 12px;
-}
-#main-menubar a {
-    color: #ccc;
-    font-size: 14px;
-}
-#main-menubar li li a {
-    font-size: 12px;
-}
+/** 菜单 **/
 
-.menubox ul {
+#main-menubar ,
+#user-menubar {
+    padding: 18px 0 18px 0;
+}
+#main-menubar ul ,
+#user-menubar ul {
     list-style: none;
     margin : 0;
     padding: 0;
 }
-.menubox li a {
+#main-menubar li a ,
+#user-menubar li a {
+    color: #ccc;
+    font-size: 14px;
     display: block;
     padding: 9px 6px 9px 14px;
 }
-.menubox li li a {
+#main-menubar li li a ,
+#user-menubar li li a {
+    color: #eee;
+    font-size: 12px;
     display: block;
     padding: 6px 6px 6px 28px;
 }
-.menubox li a ,
-.menubox li.acting > a.dropup {
-    background: #373a3c;
-    border-left: 2px solid #373a3c;
+#main-menubar li a ,
+#main-menubar li.acting > a.dropup ,
+#user-menubar li a ,
+#user-menubar li.acting > a.dropup {
+    background: transparent;
+    border-left: 2px solid transparent;
 }
-.menubox li.acting > a ,
-.menubox li.active > a ,
-.menubox li.active > a.dropup {
-    background: #610000;
-    border-left: 2px solid #b20000;
+#main-menubar li a:hover,
+#main-menubar li.acting > a.dropup:hover {
+    background: #330000;
+    border-left: 2px solid #660000;
+}
+#user-menubar li a:hover,
+#user-menubar li.acting > a.dropup:hover {
+    background: #003300;
+    border-left: 2px solid #006600;
+}
+#main-menubar li.acting > a ,
+#main-menubar li.active > a ,
+#main-menubar li.active > a.dropup ,
+#user-menubar li.acting > a ,
+#user-menubar li.active > a ,
+#user-menubar li.active > a.dropup {
+    background: #660000;
+    border-left: 2px solid #bb0000;
 }
 
-.menubox li .caret {
+#main-menubar .caret ,
+#user-menubar .caret {
     margin: 9px 0;
     float : right;
-    color : #373a3c;
+    color : #3c3a37;
 }
-.menubox li:hover .caret {
-    color : #aaaaaa;
+#main-menubar:hover .caret ,
+#user-menubar:hover .caret {
+    color : #ccaaaa;
 }
 
-.userbox {
-    margin: 18px 6px 0px 14px;
+/* 头像 */
+
+#user-menubar {
+    background: #006600;
 }
-.userbox .caret {
-    float: right;
-    margin-top: 13px;
-}
-.userbox .uhead {
+#user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
-    width : 29px;
-    height: 29px;
+    width : 30px;
+    height: 30px;
+    margin-left: 14px;
     border-radius: 50% ;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
 }
-.userbox .uname {
+#user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #ccc;
-    width : 69px;
-    height: 29px;
-    line-height: 29px;
+    color : #eee;
+    width : 80px;
+    height: 30px;
+    line-height: 30px;
     margin-left: 10px;
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
+    text-shadow: 2px 2px 6px #000;
 }
-.copybox {
-    position: fixed;
-    bottom: 65px;
-    left  :-15px;
-    width :180px;
-    color : #666;
-    text-align : center;
-    text-shadow: 0 0 3px #000 ;
-    transform  : rotate(45deg);
+#user-menubar .caret {
+    margin: 14px 6px;
+}
+#user-menubar ul {
+    padding-top:18px;
+}
+#user-menubar ul.invisible {
+    padding-top: 0px;
 }
 
 /**

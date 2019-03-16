@@ -299,13 +299,13 @@ ol.repeated ,
 }
 .notebox.alert.alert-info ,
 .warnbox.alert.alert-info {
-    background: rgb (0,153,204);
-    background: rgba(0,153,204,0.8);
+    background: rgb (0,102,153);
+    background: rgba(0,102,153,0.8);
 }
 .notebox.alert.alert-warning ,
 .warnbox.alert.alert-warning {
-    background: rgb (204,0,153);
-    background: rgba(204,0,153,0.8);
+    background: rgb (153,0,102);
+    background: rgba(153,0,102,0.8);
 }
 .notebox.alert.alert-success ,
 .warnbox.alert.alert-success {

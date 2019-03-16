@@ -24,10 +24,7 @@ html, body {
     display: table-cell;
     vertical-align: top;
     background: #373a3c;
-    text-shadow: 0 0 6px #000;
-    min-width: 150px;
-    max-width: 300px;
-    width: 12.5%;
+    width: 150px;
 }
 #main-context {
     overflow: auto;
@@ -47,14 +44,14 @@ html, body {
 
 #user-menubar a {
     color: #aaa;
-    font-size: 13px;
+    font-size: 12px;
 }
 #main-menubar a {
     color: #ccc;
-    font-size: 15px;
+    font-size: 14px;
 }
 #main-menubar li li a {
-    font-size: 13px;
+    font-size: 12px;
 }
 
 .menubox ul {
@@ -62,19 +59,13 @@ html, body {
     margin : 0;
     padding: 0;
 }
-.menubox li {
-    margin : 6px 0;
-}
-.menubox li li {
-    margin : 1px 0;
-}
 .menubox li a {
     display: block;
-    padding: 6px 4px 6px 15px;
+    padding: 9px 6px 9px 14px;
 }
 .menubox li li a {
     display: block;
-    padding: 6px 4px 6px 30px;
+    padding: 6px 6px 6px 28px;
 }
 .menubox li a ,
 .menubox li.acting > a.dropup {
@@ -85,7 +76,7 @@ html, body {
 .menubox li.active > a ,
 .menubox li.active > a.dropup {
     background: #610000;
-    border-left: 2px solid #ea0000;
+    border-left: 2px solid #b20000;
 }
 
 .menubox li .caret {
@@ -95,6 +86,46 @@ html, body {
 }
 .menubox li:hover .caret {
     color : #aaaaaa;
+}
+
+.userbox {
+    margin: 18px 6px 0px 14px;
+}
+.userbox .caret {
+    float: right;
+    margin-top: 13px;
+}
+.userbox .uhead {
+    display: inline-block ;
+    vertical-align: middle;
+    width : 29px;
+    height: 29px;
+    border-radius: 50% ;
+    background-size  : 100% 100%;
+    background-repeat: no-repeat;
+    background-position:  center;
+}
+.userbox .uname {
+    display: inline-block ;
+    vertical-align: middle;
+    color : #ccc;
+    width : 69px;
+    height: 29px;
+    line-height: 29px;
+    margin-left: 10px;
+    white-space: nowrap;
+    overflow   : hidden;
+    text-overflow: ellipsis;
+}
+.copybox {
+    position: fixed;
+    bottom: 65px;
+    left : -15px;
+    width: 180px;
+    color: #666;
+    text-align : center;
+    text-shadow: 0 0 3px #000 ;
+    transform  : rotate(45deg);
 }
 
 /**

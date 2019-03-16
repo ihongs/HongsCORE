@@ -105,20 +105,19 @@
     }
 %>
 
-<div style="margin-bottom: 26px; position: relative;">
-    <a href="<%=Core.BASE_HREF%>/centra/" class="btn">
-        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 4px; margin-top: -2px;"/></span>
-        <span style="color:#833">H</span>
-        <span style="color:#722">o</span>
-        <span style="color:#611">n</span>
-        <span style="color:#722">g</span>
-        <span style="color:#833">s</span>
-        <span style="color:#eaa">C</span>
-        <span style="color:#ebb">O</span>
-        <span style="color:#fcc">R</span>
-        <span style="color:#fdd">E</span>
-    </a>
+<div class="userbox clearfix dropdown-toggle">
+    <div class="uhead" style="background-image: url(<%=head%>)"></div>
+    <div class="uname" style="" title="<%=name%>">  <%=name%>   </div>
+    <div class="caret"></div>
 </div>
+<div class="menubox clearfix dropdown-body" style="padding-top: 9px;">
+    <ul id="user-menubar">
+        <li><a href="javascript:;" id="user-set"><span class="glyphicon glyphicon-cog"></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.modify") %></a></li>
+        <li><a href="javascript:;" id="sign-out"><span class="glyphicon glyphicon-off"></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.logout") %></a></li>
+    </ul>
+</div>
+
+<div style="border-top: 1px solid #111; border-bottom: 1px solid #555; margin-top: 9px; margin-bottom: 18px;"></div>
 
 <div class="menubox clearfix">
     <ul id="main-menubar">
@@ -126,18 +125,11 @@
     </ul>
 </div>
 
-<hr style="margin-top: 18px; border-top: 2px groove #555;"/>
+<div style="height: 150px;"></div>
 
-<div class="menubox clearfix">
-    <ul id="user-menubar">
-        <li><a href="javascript:;" id="user-set"><span class="glyphicon glyphicon-user"   ></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.modify") %></a></li>
-        <li><a href="javascript:;" id="sign-out"><span class="glyphicon glyphicon-log-out"></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.logout") %></a></li>
-    </ul>
-</div>
-
-<p style="color: #666; font-size: 11px; margin: 13px 15px;">
+<div class="copybox clearfix">
     Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #844;">HongsCORE</a>
-</p>
+</div>
 
 <script type="text/javascript">
     (function($) {

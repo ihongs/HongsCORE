@@ -290,32 +290,32 @@ ol.repeated ,
     margin-left: 5px;
 }
 
-/* 对话框背景色, 同按钮主题色 */
+/* 对话框背景色, 类按钮情景色 */
 .notebox.alert ,
 .warnbox.alert ,
 .progbox.alert {
-    background: rgb ( 46, 47, 47);
-    background: rgba( 46, 47, 47,0.6);
+    background: rgb (51,51,51);
+    background: rgba(51,51,51,0.8);
 }
 .notebox.alert.alert-info ,
 .warnbox.alert.alert-info {
-    background: rgb (  2,154,207);
-    background: rgba(  2,154,207,0.8);
-}
-.notebox.alert.alert-danger ,
-.warnbox.alert.alert-danger  {
-    background: rgb (217, 35, 15);
-    background: rgba(217, 35, 15,0.8);
-}
-.notebox.alert.alert-success ,
-.warnbox.alert.alert-success {
-    background: rgb ( 70,148,  8);
-    background: rgba( 70,148,  8,0.8);
+    background: rgb (0,153,204);
+    background: rgba(0,153,204,0.8);
 }
 .notebox.alert.alert-warning ,
 .warnbox.alert.alert-warning {
-    background: rgb (121, 55,124);
-    background: rgba(121, 55,124,0.8);
+    background: rgb (204,0,153);
+    background: rgba(204,0,153,0.8);
+}
+.notebox.alert.alert-success ,
+.warnbox.alert.alert-success {
+    background: rgb (0,153,0);
+    background: rgba(0,153,0,0.8);
+}
+.notebox.alert.alert-danger ,
+.warnbox.alert.alert-danger  {
+    background: rgb (153,0,0);
+    background: rgba(153,0,0,0.8);
 }
 
 /** 列表 **/

@@ -134,7 +134,7 @@
 </div>
 
 <div style="position: fixed; bottom: 0; width: 175px; font-size: 12px; text-align: center; text-shadow: 0 0 2px #000;">
-    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #900;">HongsCORE</a>
+    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #b00;">HongsCORE</a>
 </div>
 
 <script type="text/javascript">

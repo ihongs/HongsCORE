@@ -1,7 +1,7 @@
 <root>
     <rsname>@default</rsname>
     <menu text="前台" href="common/menu.act?m=centre">
-        <role text="登录前台" name="centre">
+        <role text="访问前台" name="centre">
             <action>centre/data/upload/image/create.act</action>
         </role>
         <menu text="首页" href="centre/#manage" hrel="centre/manage/main.html"></menu>

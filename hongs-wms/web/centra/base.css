@@ -39,26 +39,28 @@ html, body {
 
 #main-menubar ,
 #user-menubar {
-    padding: 18px 0 18px 0;
+    padding: 15px 0 15px 0;
 }
 #main-menubar ul ,
 #user-menubar ul {
-    list-style: none;
     margin : 0;
     padding: 0;
+    list-style: none;
 }
 #main-menubar li a ,
 #user-menubar li a {
-    color: #ccc;
-    font-size: 14px;
+    color: #eeeeee;
     display: block;
+    text-decoration: none;
+}
+#main-menubar li a ,
+#user-menubar li a {
+    font-size: 14px;
     padding: 9px 6px 9px 14px;
 }
 #main-menubar li li a ,
 #user-menubar li li a {
-    color: #eee;
     font-size: 12px;
-    display: block;
     padding: 6px 6px 6px 28px;
 }
 #main-menubar li a ,
@@ -90,13 +92,17 @@ html, body {
 
 #main-menubar .caret ,
 #user-menubar .caret {
-    margin: 9px 0;
+    margin: 8px 0;
     float : right;
     color : #3c3a37;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
-    color : #ccaaaa;
+    color : #eeeeee;
+}
+#main-menubar .glyphicon ,
+#user-menubar .glyphicon  {
+    top: 2px;
 }
 
 /* 头像 */
@@ -107,32 +113,35 @@ html, body {
 #user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
-    width : 30px;
-    height: 30px;
+    width : 36px;
+    height: 36px;
     margin-left: 14px;
     border-radius: 50% ;
+    background-color : #eee;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
+    box-shadow: 2px 2px 8px #000;
 }
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
     color : #eee;
     width : 80px;
-    height: 30px;
-    line-height: 30px;
+    height: 36px;
+    line-height: 36px;
     margin-left: 10px;
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
-    text-shadow  : 1px 1px 4px #000;
+    text-shadow: 2px 2px 4px #000;
+    font-weight: 400;
 }
 #user-menubar .caret {
-    margin: 14px 6px;
+    margin: 16px 6px;
 }
 #user-menubar ul {
-    padding-top:18px;
+    padding-top:15px;
 }
 #user-menubar ul.invisible {
     padding-top: 0px;

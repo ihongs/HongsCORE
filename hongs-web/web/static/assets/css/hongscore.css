@@ -130,30 +130,6 @@ fieldset>.dropdown-menu {
     margin-top: -10px;
 }
 
-.radio     label ,
-.checkbox  label {
-    margin-right: 1.0em;
-}
-.labelbox .label ,
-.repeated .label {
-    margin-right: 0.5em;
-}
-
-.labelbox .label ,
-.repeated .label {
-    font-size  : 100%;
-    font-weight: normal;
-    display: inline-block;
-}
-ul.repeated ,
-ol.repeated ,
- p.repeated {
-    padding: 0;
-    margin: -0.3em 0;
-    line-height: 2em;
-    list-style: none;
-}
-
 .table tbody tr.active td ,
 .table tbody tr.active th {
     color: #444444;
@@ -248,6 +224,35 @@ div.bootstrap-tagsinput.form-control {
 
 /** 布局 **/
 
+.radio     label ,
+.checkbox  label {
+    margin-right: 1.0em;
+}
+.labelbox .label ,
+.repeated .label {
+    margin-right: 0.5em;
+    font-weight: normal;
+    font-size: 100%;
+    display: inline-block;
+}
+ul.repeated ,
+ol.repeated ,
+ p.repeated {
+    padding: 0;
+    margin: -0.3em 0;
+    line-height: 2em;
+    list-style: none;
+}
+
+.labs>*>h1,
+.labs>*>h2,
+.labs>*>.openbox>h1,
+.labs>*>.openbox>h2,
+.modal-body.openbox>h1 ,
+.modal-body.openbox>h2 {
+    display: none;
+}
+
 .progbox.alert ,
 .warnbox.alert ,
 .notebox.alert {
@@ -285,6 +290,7 @@ div.bootstrap-tagsinput.form-control {
     margin-left: 5px;
 }
 
+/* 对话框背景色, 同按钮主题色 */
 .notebox.alert ,
 .warnbox.alert ,
 .progbox.alert {
@@ -310,15 +316,6 @@ div.bootstrap-tagsinput.form-control {
 .warnbox.alert.alert-warning {
     background: rgb (121, 55,124);
     background: rgba(121, 55,124,0.8);
-}
-
-.labs>*>h1,
-.labs>*>h2,
-.labs>*>.openbox>h1,
-.labs>*>.openbox>h2,
-.modal-body.openbox>h1 ,
-.modal-body.openbox>h2 {
-    display: none;
 }
 
 /** 列表 **/

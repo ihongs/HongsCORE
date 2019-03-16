@@ -120,9 +120,9 @@ html, body {
 .copybox {
     position: fixed;
     bottom: 65px;
-    left : -15px;
-    width: 180px;
-    color: #666;
+    left  :-15px;
+    width :180px;
+    color : #666;
     text-align : center;
     text-shadow: 0 0 3px #000 ;
     transform  : rotate(45deg);

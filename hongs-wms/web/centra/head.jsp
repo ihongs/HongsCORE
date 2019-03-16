@@ -105,30 +105,36 @@
     }
 %>
 
-<div class="userbox clearfix dropdown-toggle">
-    <div class="uhead" style="background-image: url(<%=head%>)"></div>
-    <div class="uname" style="" title="<%=name%>">  <%=name%>   </div>
-    <div class="caret"></div>
-</div>
-<div class="menubox clearfix dropdown-body" style="padding-top: 9px;">
-    <ul id="user-menubar">
-        <li><a href="javascript:;" id="user-set"><span class="glyphicon glyphicon-cog"></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.modify") %></a></li>
-        <li><a href="javascript:;" id="sign-out"><span class="glyphicon glyphicon-off"></span>&nbsp;<%=CoreLocale.getInstance().translate("fore.logout") %></a></li>
+<div id="user-menubar">
+    <div class="dropdown-toggle">
+        <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
+        <div class="uname" title="<%=name%>"><%=name%></div>
+        <div class="caret"></div>
+    </div>
+    <ul  class="dropdown-body"  >
+        <li>
+            <a href="javascript:;" id="user-set">
+                <span class="glyphicon glyphicon-cog"></span>
+                <%=CoreLocale.getInstance().translate("fore.modify")%>
+            </a>
+        </li>
+        <li>
+            <a href="javascript:;" id="sign-out">
+                <span class="glyphicon glyphicon-off"></span>
+                <%=CoreLocale.getInstance().translate("fore.logout")%>
+            </a>
+        </li>
     </ul>
 </div>
 
-<div style="border-top: 1px solid #111; border-bottom: 1px solid #555; margin-top: 9px; margin-bottom: 18px;"></div>
-
-<div class="menubox clearfix">
-    <ul id="main-menubar">
-        <%=makeMenu(menu , acti)%>
+<div id="main-menubar">
+    <ul>
+<%=makeMenu(menu, acti)%>
     </ul>
 </div>
 
-<div style="height: 150px;"></div>
-
-<div class="copybox clearfix">
-    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #844;">HongsCORE</a>
+<div style="position: fixed; bottom: 0; width: 175px; font-size: 12px; text-align: center; text-shadow: 0 0 2px #000;">
+    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #900;">HongsCORE</a>
 </div>
 
 <script type="text/javascript">
@@ -149,10 +155,10 @@
             h = menubar .find("a").attr("href" );
             b = menubar ;
 
-            b.find("li").removeClass( "acting" );
-            b.find("li").removeClass( "active" );
-            a.parents("li").addClass( "acting" );
-            a.closest("li").addClass( "active" );
+            b.find("li").removeClass( "active" )
+                        .removeClass( "acting" );
+            a.closest("li").addClass( "active" )
+             .parents("li").addClass( "acting" );
 
             /**
              * 容器不存在或容器已预载,

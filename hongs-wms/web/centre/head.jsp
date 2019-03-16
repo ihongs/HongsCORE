@@ -131,7 +131,7 @@
 
 <div class="collapse navbar-collapse" id="main-collapse">
     <ul class="nav navbar-nav navbar-left " id="main-menubar">
-        <%=makeMenu(menu, acti)%>
+<%=makeMenu(menu, acti)%>
     </ul>
     <ul class="nav navbar-nav navbar-right" id="user-menubar">
         <li class="dropdown">

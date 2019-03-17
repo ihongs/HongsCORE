@@ -2519,6 +2519,33 @@ $(document).ajaxError(function(evt, xhr, cnf) {
 });
 
 $(document)
+.on("change", "select[multiple]",
+function(evt) {
+    if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
+        return;
+    }
+    var vals = $(this).data("vals") || [];
+    var valz = $(this).val ( /**/ ) || [];
+    $.each(valz, function(x, v    ) {
+        var i = $.inArray(v, vals );
+        if (i < 0) {
+            vals.push  ( v );
+        } else {
+            vals.splice(i,1);
+        }
+    });
+    $(this).data("vals", vals);
+    $(this).val ( vals );
+})
+.on("click", ".dropdown-toggle",
+function(evt) {
+    if ($(evt.target).is(".dropdown-deny")) return;
+    var body = $(this).siblings(".dropdown-body" );
+    if (body.size() == 0) return;
+    var cont = $(this).parent( );
+    cont.toggleClass( "dropup" );
+    body.toggleClass("invisible", !cont.is(".dropup"));
+})
 .on("click", "[data-toggle=hsOpen]",
 function() {
     var btn = $(this);
@@ -2645,42 +2672,15 @@ function() {
     tab.show().addClass("active");
     pne.show().trigger("hsRecur");
 })
+.on("click", ".home-crumb a",
+function() {
+    // Nothing to do...
+})
 .on("click", ".back-crumb a",
 function() {
     var nav = $(this).closest('.breadcrumb');
     nav.find('li:last a').hsClose();
     nav.find('li:last a').  click();
-})
-.on("click", ".home-crumb a",
-function() {
-    // Nothing to do...
-})
-.on("click", ".dropdown-toggle",
-function(evt) {
-    if ($(evt.target).is(".dropdown-deny")) return;
-    var body = $(this).siblings(".dropdown-body" );
-    if (body.size() == 0) return;
-    var cont = $(this).parent( );
-    cont.toggleClass( "dropup" );
-    body.toggleClass("invisible", !cont.is(".dropup"));
-})
-.on("change", "select[multiple]",
-function(evt) {
-    if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
-        return;
-    }
-    var vals = $(this).data("vals") || [];
-    var valz = $(this).val ( /**/ ) || [];
-    $.each(valz, function(x, v    ) {
-        var i = $.inArray(v, vals );
-        if (i < 0) {
-            vals.push  ( v );
-        } else {
-            vals.splice(i,1);
-        }
-    });
-    $(this).data("vals", vals);
-    $(this).val ( vals );
 })
 .on("hsReady hsRecur", ".labs.laps",
 function() {

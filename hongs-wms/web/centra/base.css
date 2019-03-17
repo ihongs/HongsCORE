@@ -108,6 +108,7 @@ html, body {
 /* 头像 */
 
 #user-menubar {
+    position : relative;
     background: #006600;
 }
 #user-menubar .uhead {
@@ -121,7 +122,7 @@ html, body {
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
-    box-shadow: 2px 2px 8px #000;
+    box-shadow: 0px 2px 8px #000;
 }
 #user-menubar .uname {
     display: inline-block ;
@@ -134,8 +135,16 @@ html, body {
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
-    text-shadow: 2px 2px 4px #000;
+    text-shadow: 0px 2px 4px #000;
     font-weight: 400;
+}
+#user-menubar .umask {
+    background: url(../static/assets/img/head_mask.png) no-repeat;
+    background-size: 36px 36px;
+    position: absolute;
+    left  : 14px;
+    width : 36px;
+    height: 36px;
 }
 #user-menubar .caret {
     margin: 16px 6px;

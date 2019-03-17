@@ -107,11 +107,12 @@
 
 <div id="user-menubar">
     <div class="dropdown-toggle">
+        <div class="umask"></div>
+        <div class="caret"></div>
         <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
         <div class="uname" title="<%=name%>"><%=name%></div>
-        <div class="caret"></div>
     </div>
-    <ul  class="dropdown-body"  >
+    <ul  class="dropdown-body">
         <li>
             <a href="javascript:;" id="user-set">
                 <span class="glyphicon glyphicon-cog"></span>

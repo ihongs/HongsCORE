@@ -139,7 +139,8 @@ html, body {
     font-weight: 400;
 }
 #user-menubar .umask {
-    background: transparent url(../static/assets/img/head_glob.png) no-repeat 100% 100%;
+    background: url(../static/assets/img/head_glob.png) no-repeat center;
+    background-size: 100% 100%;
     position: absolute;
     left  : 14px;
     width : 36px;

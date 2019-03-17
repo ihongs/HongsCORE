@@ -282,7 +282,7 @@ HsList.prototype = {
          * "0" != undefined
          * "0" == 0
          */
-        if (page[this._st_key] != "0") {
+        if (page[this._ps_key] != "0") {
             this.pageBox.empty();
             this.listBox.show( );
         } else
@@ -305,7 +305,8 @@ HsList.prototype = {
             return;
         }
 
-        var i, p, t, pmin, pmax, that = this;
+        var i, r, p, t, pmin, pmax, that = this;
+        r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
         p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1;
         t = page[this._pc_key] ? parseInt(page[this._pc_key]) : 1;
         pmin = p - Math.floor(this.pagsNum / 2);
@@ -320,14 +321,14 @@ HsList.prototype = {
         var nums = pbox; //jQuery('<ul class="pagination pull-left "></ul>').appendTo(this.pageBox);
         var btns = pbox; //jQuery('<ul class="pagination pull-right"></ul>').appendTo(this.pageBox);
 
-        if (page[this._st_key] == "2") {
+        if (page[this._ps_key] == "2") {
             qbox.text(hsGetLang("list.page.unfo", page));
         } else {
             qbox.text(hsGetLang("list.page.info", page));
         }
-        if (t >  this.pagsNum) {
+///     if (t >  this.pagsNum) {
             qbox.append(jQuery('<a href="javascript:;" class="glyphicon glyphicon-bookmark"></a>'));
-        }
+///     }
 
         if (1 < p) {
             btns.append(jQuery('<li class="page-prev"><a href="javascript:;" data-pn="'+(p-1)+'" title="'+hsGetLang("list.prev.pagi")+'">&laquo;</a></li>'));
@@ -378,23 +379,48 @@ HsList.prototype = {
             ev.preventDefault();
         });
         this.pageBox.find(".page-text a").on("click", function(ev) {
-            var t , n;
-            while (true) {
-                n = prompt(hsGetLang("list.page.goto"), p);
-                t = parseInt(n);
-                if (! isNaN (t)) {
-                    break ;
-                } else if (! n ) {
-                    return;
-                }
-            }
-            go(t);
+            that.gotoPage(p, r);
             ev.preventDefault();
         });
     },
-    _st_key  : "state" ,
-    _rc_key  : "count" ,
+    gotoPage : function(pn, rn) {
+        var that = this;
+        jQuery.hsMask({
+            title: '快速跳转:',
+            mode : "warn",
+            html : '<form class="form-inline">'
+                 + '<div  class="form-group from-group-sm" style="margin-right: 0.5em;">'
+                 + '<span>到第</span> <input class="form-control" type="number" name="pn" value="'+pn+'"/> <span>页, </span>'
+                 + '</div>'
+                 + '<div  class="form-group from-group-sm" style="margin-right: 0.5em;">'
+                 + '<span>每页</span> <input class="form-control" type="number" name="rn" value="'+rn+'"/> <span>条. </span>'
+                 + '</div>'
+                 + '<input class="invisible" type="submit"/>'
+                 + '</form>'
+        }, {
+            glass: 'btn-primary',
+            label: hsGetLang("ensure"),
+            click: function() {
+                jQuery(this).closest(".modal").find(":submit").click();
+            }
+        }, {
+            glass: 'btn-default',
+            label: hsGetLang("cancel")
+        }).submit(function(evt) {
+            evt.preventDefault( );
+            evt.stopPropagation();
+            jQuery(this).closest(".modal").modal("hide");
+            var req = hsSerialArr(that._data);
+            var url = (  that._url  ||  ""  );
+            that.load (
+                hsSetParam(url, that.rowsKey, $(this).find("[name=rn]").val()),
+                hsSetSeria(req, that.pageKey, $(this).find("[name=pn]").val())
+            );
+        });
+    },
+    _ps_key  : "state" ,
     _pc_key  : "pages" ,
+    _rc_key  : "count" ,
 
     send     : function(btn, msg, url, data) {
         var that = this;
@@ -819,9 +845,9 @@ function hsListFillLess(page) {
  * @return {undefined}
  */
 function hsListFillNext(page) {
-    if (page[this._st_key] == "0") {
-    if (page[this._rc_key] == "0"
-    ||  page[this._pc_key] == "0") {
+    if (page[this._ps_key] == "0") {
+    if (page[this._pc_key] == "0"
+    ||  page[this._rc_key] == "0") {
         this.warn(this._empty_err || hsGetLang('list.empty'), "warning");
         return;
     } else {
@@ -829,8 +855,8 @@ function hsListFillNext(page) {
         return;
     }}
 
-    var r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : 20;
-    var p = page[this.pageKey] ? parseInt(page[this.pageKey]) : 1 ;
+    var r = page[this.rowsKey] ? parseInt(page[this.rowsKey]) : this.rowsNum;
+    var p = page[this.pageKey] ? parseInt(page[this.pageKey]) :  1  ;
     var t = page[this._pc_key] ? parseInt(page[this._pc_key])
         : ( page[this._rc_key] == 0 ? p - 1
         : ( page[this._rc_key] == r ? p + 1
@@ -860,7 +886,7 @@ function hsListFillNext(page) {
     if (pag.size() === 0) {
         pag = this.pageBox.find(".page-curr"  );
     }
-    if (page[this._st_key] == "2") {
+    if (page[this._ps_key] == "2") {
         pag.text(   p   );
     } else {
         pag.text(p+"/"+t);

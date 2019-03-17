@@ -139,7 +139,7 @@ html, body {
     font-weight: 400;
 }
 #user-menubar .umask {
-    background: url(../static/assets/img/head_mask.png) no-repeat;
+    background: url(../static/assets/img/head_glob.png) no-repeat;
     background-size: 36px 36px;
     position: absolute;
     left  : 14px;

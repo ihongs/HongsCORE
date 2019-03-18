@@ -25,7 +25,20 @@ html, body {
     width : 175px;
     overflow: auto;
     position: fixed;
-    background: #373a3c;
+    z-index : 10;
+    background: #404242;
+}
+#context.fullest>#bodybox {
+    padding: 0;
+}
+#context.fullest>#headbox {
+    width: 0;
+}
+#context.fullest #side-hidebtn {
+    left : 0;
+}
+#context.fullest #side-copybar {
+    display: none;
 }
 
 #main-context > .tabs {
@@ -98,10 +111,10 @@ html, body {
 
 #main-menubar ul ul ,
 #user-menubar ul {
-    background: rgba( 0 , 0 , 0 ,0.2);
+    background: rgba( 0 , 0 , 0 ,0.1);
 }
 #user-menubar {
-    background: rgba(255,255,255,0.2);
+    background: rgba(153,153,153,0.6);
 }
 
 #main-menubar .caret {
@@ -113,7 +126,7 @@ html, body {
 #main-menubar .caret ,
 #user-menubar .caret {
     float:  right ;
-    color: #3c3a37;
+    color: #404242;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
@@ -165,10 +178,61 @@ html, body {
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
-    text-shadow: 0px 2px #000, 0px -2px #333;
+    text-shadow: 0px 2px 0px #000, 0px -2px 0px #333;
+}
+#user-menubar:hover {
+     box-shadow: 0px 2px 2px #333, 0px 0px 15px #990;
+}
+#user-menubar:hover .uhead  {
+     box-shadow: 0px 2px 8px #000, 0px 0px 15px #ff0;
 }
 #user-menubar.dropup ul {
     margin-top: 15px;
+}
+
+/* 其他 */
+
+#side-copybar {
+    position: fixed;
+    bottom: 0;
+    width: 175px;
+    font-size: 10px;
+    text-align: center;
+    text-shadow: 0 0 2px #000;
+}
+#side-copybar:hover {
+    text-shadow: 0 0 2px #660;
+}
+#side-copybar a {
+    color: #a00;
+}
+#side-hidebtn {
+    position: fixed;
+    top  : 50%;
+    left : 175px;
+    width : 15px;
+    height: 30px;
+    margin-top: -15px;
+    border-radius: 0 5px 5px 0;
+    background: rgba(64,66,66,0.5);
+}
+#side-hidebtn:hover {
+    background: rgba(64,66,66,1.0);
+}
+#side-hidebtn a {
+    width : 0; 
+    height: 0;
+    display: block;
+    border-width: 4px;
+    border-style: solid;
+}
+#context #side-hidebtn a {
+    border-color: transparent #ddd transparent transparent;
+    margin-top: 11px;
+}
+#context.fullest #side-hidebtn a {
+    border-color: transparent transparent transparent #ddd;
+    margin-left: 5px;
 }
 
 /**

@@ -19,7 +19,9 @@ code, pre, var, dfn, kbd {
 
 /** Bootstrap 调整 **/
 
-.invisible {
+.invisible ,
+:not(.dropup) > .dropdown-body ,
+:not(.dropup) > .dropdown-list {
     visibility: hidden;
     overflow: hidden;
     display: block;
@@ -126,7 +128,7 @@ input[type="time"].form-control {
     cursor: pointer;
 }
 fieldset>.dropdown-body ,
-fieldset>.dropdown-menu {
+fieldset>.dropdown-list {
     margin-top: -10px;
 }
 
@@ -304,18 +306,18 @@ ol.repeated ,
 }
 .notebox.alert.alert-warning ,
 .warnbox.alert.alert-warning {
-    background: rgb (153,0,102);
-    background: rgba(153,0,102,0.8);
+    background: rgb (102,0,102);
+    background: rgba(102,0,102,0.8);
 }
 .notebox.alert.alert-success ,
 .warnbox.alert.alert-success {
-    background: rgb (0,153,0);
-    background: rgba(0,153,0,0.8);
+    background: rgb (0,102,0);
+    background: rgba(0,102,0,0.8);
 }
 .notebox.alert.alert-danger ,
 .warnbox.alert.alert-danger  {
-    background: rgb (153,0,0);
-    background: rgba(153,0,0,0.8);
+    background: rgb (102,0,0);
+    background: rgba(102,0,0,0.8);
 }
 
 /** 列表 **/

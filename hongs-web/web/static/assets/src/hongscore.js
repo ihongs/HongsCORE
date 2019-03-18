@@ -2016,14 +2016,8 @@ $.fn.hsReady = function() {
     }).remove();
 
     // 输入类
-    box.find("input"/*class*/).each(function() {
+    box.find("input").each(function() {
         $(this).addClass("input-"+$(this).attr("type"));
-    });
-
-    // 折叠栏
-    box.find(".dropdown-body").each(function() {
-        var u = $(this).parent().is(".dropup");
-        $(this).toggleClass("invisible", ! u );
     });
 
     // 国际化
@@ -2539,12 +2533,12 @@ function(evt) {
 })
 .on("click", ".dropdown-toggle",
 function(evt) {
-    if ($(evt.target).is(".dropdown-deny")) return;
-    var body = $(this).siblings(".dropdown-body" );
-    if (body.size() == 0) return;
-    var cont = $(this).parent( );
-    cont.toggleClass( "dropup" );
-    body.toggleClass("invisible", !cont.is(".dropup"));
+    var body = $(this).siblings(".dropdown-body,.dropdown-list");
+    if (! body.size() || $(evt.trget).is("input,.dropdown-deny")) {
+        return; // 需跳过全选等
+    }
+    var cont = $(this).parent();
+    cont.toggleClass ("dropup");
 })
 .on("click", "[data-toggle=hsOpen]",
 function() {

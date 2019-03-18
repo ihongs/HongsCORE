@@ -227,11 +227,11 @@ html, body {
     border-style: solid;
 }
 #context #side-hidebtn a {
-    border-color: transparent #ddd transparent transparent;
+    border-color: transparent #fcfcfc transparent transparent;
     margin-top: 11px;
 }
 #context.fullest #side-hidebtn a {
-    border-color: transparent transparent transparent #ddd;
+    border-color: transparent transparent transparent #fcfcfc;
     margin-left: 5px;
 }
 

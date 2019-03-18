@@ -106,22 +106,22 @@
 %>
 
 <div id="user-menubar">
-    <div class="dropdown-toggle">
+    <a href="javascript:;" style="display: block;">
         <div class="umask"></div>
         <div class="caret"></div>
         <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
         <div class="uname" title="<%=name%>"><%=name%></div>
-    </div>
-    <ul  class="dropdown-body">
+    </a>
+    <ul>
         <li>
             <a href="javascript:;" id="user-set">
-                <span class="glyphicon glyphicon-cog"></span>
+                <span class="glyphicon glyphicon-user"></span>
                 <%=CoreLocale.getInstance().translate("fore.modify")%>
             </a>
         </li>
         <li>
             <a href="javascript:;" id="sign-out">
-                <span class="glyphicon glyphicon-off"></span>
+                <span class="glyphicon glyphicon-off "></span>
                 <%=CoreLocale.getInstance().translate("fore.logout")%>
             </a>
         </li>
@@ -134,15 +134,19 @@
     </ul>
 </div>
 
-<div style="position: fixed; bottom: 0; width: 175px; font-size: 12px; text-align: center; text-shadow: 0 0 2px #000;">
-    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank" style="color: #b00;">HongsCORE</a>
+<div id="side-hidebtn">
+    <a href="javascript:;"></a>
+</div>
+
+<div id="side-copybar">
+    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
 </div>
 
 <script type="text/javascript">
     (function($) {
         var context = $("#main-context");
         var menubar = $("#main-menubar");
-//      var userbar = $("#user-menubar");
+        var userbar = $("#user-menubar");
 
         $(function() {
             if (menubar.find("li.active").size()) {
@@ -223,16 +227,24 @@
             });
 
         // 菜单折叠和展开
-        menubar.find("li>ul" ).hide();
-        menubar.find("li.acting>ul").show();
-        menubar.find("li.acting>a" ).addClass("dropup");
-        menubar.on("click", "a", function() {
-            $(this).toggleClass( "dropup" );
-            var ul = $(this).next(  );
-            if (ul.size( ) ) {
-                ul.toggle( );
+        userbar.children("ul").hide();
+        menubar.find("li> ul").hide();
+        menubar.find("li.acting> ul").show();
+        menubar.find("li.acting> a ").addClass("dropup");
+        $().add(menubar).add(userbar)
+           .on ("click", "a", function() {
+            var la = $( this );
+            var ul = la.next();
+            if (ul.size(  )  ) {
+                ul.slideToggle( "fast" );
+                la.toggleClass("dropup");
                 return false;
             }
+        });
+        
+        // 边栏隐藏与显示
+        $("#side-hidebtn").click(function() {
+            $( "#context").toggleClass("fullest");
         });
     })(jQuery);
 </script>

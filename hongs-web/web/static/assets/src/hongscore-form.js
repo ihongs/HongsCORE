@@ -565,11 +565,11 @@ HsForm.prototype = {
             var s = v[ i ][tl];
             var set = jQuery('<fieldset>'
                             +'<legend class=" dropdown-toggle ">'
-                            +'<input type="checkbox" class="dropdown-deny checkall"/>'
+                            +'<input type="checkbox" class="checkall dropdown-deny"/>'
                             +'<span></span><b class="caret"></b>'
                             +'</legend>'
                             +'<div class=" dropdown-body clearfix ' + bc + ' "></div>'
-                            +'</fieldset>');
+                            +'</fieldset>' );
             set.find("span").first().text(s);
             inp.append(set );
             set = set.find ( "div" );

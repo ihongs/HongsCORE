@@ -56,9 +56,13 @@ html, body {
 }
 #main-menubar ul ,
 #user-menubar ul {
-    margin : 0;
-    padding: 0;
     list-style: none;
+    margin : 0 0 0px 0;
+    padding: 0 0 4px 0;
+}
+#main-menubar li ,
+#user-menubar li {
+    padding: 4px 0 0 0;
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -69,18 +73,18 @@ html, body {
 #main-menubar li a {
     font-size: 15px;
     font-weight: 600;
-    padding: 9px 6px 9px 14px;
+    padding: 7px 6px 7px 14px;
 }
 #user-menubar li a {
     font-size: 13px;
     font-weight: 400;
-    padding: 6px 6px 6px 10px;
+    padding: 9px 6px 9px 10px;
 }
 #main-menubar li li a ,
 #user-menubar li li a {
     font-size: 13px;
     font-weight: 400;
-    padding: 6px 6px 6px 28px;
+    padding: 9px 6px 9px 28px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
@@ -89,27 +93,27 @@ html, body {
     background: transparent;
     border-left: 2px solid transparent;
 }
-#main-menubar li.acting > a ,
-#main-menubar li.active > a ,
-#main-menubar li.active > a.dropup {
-    background: #660000;
-    border-left: 2px solid #bb0000;
-}
 #main-menubar li a:hover,
 #main-menubar li.acting > a.dropup:hover {
     background: #330000;
-    border-left: 2px solid #990000;
+    border-left: 2px solid #660033;
 }
-#user-menubar li.acting > a ,
-#user-menubar li.active > a ,
-#user-menubar li.active > a.dropup {
-    background: #660000;
-    border-left: 2px solid #bb0000;
+#main-menubar li.acting > a ,
+#main-menubar li.active > a ,
+#main-menubar li.active > a.dropup {
+    background: #aa0000;
+    border-left: 2px solid #ff0088;
 }
 #user-menubar li a:hover,
 #user-menubar li.acting > a.dropup:hover {
     background: #330000;
-    border-left: 2px solid #990000;
+    border-left: 2px solid #660033;
+}
+#user-menubar li.acting > a ,
+#user-menubar li.active > a ,
+#user-menubar li.active > a.dropup {
+    background: #aa0000;
+    border-left: 2px solid #ff0088;
 }
 
 #main-menubar ul ul {
@@ -120,10 +124,10 @@ html, body {
 }
 
 #main-menubar .caret {
-    margin: 10px  0px;
+    margin:  8px 0px;
 }
 #user-menubar .caret {
-    margin: 16px  6px;
+    margin: 16px 6px;
 }
 #main-menubar .caret ,
 #user-menubar .caret {
@@ -135,41 +139,34 @@ html, body {
     color: #cccccc;
 }
 
-#main-menubar .glyphicon ,
-#user-menubar .glyphicon {
-    color: #aaaaaa;
-    top: 2px; /* 修正字体符号偏上的问题 */
-    margin-left : 10px;
-    margin-right: 21px;
-}
-
 /* 头像 */
 
 #user-menubar {
-    background: #777;
+    background: #069;
     position: relative;
 }
-/*
-#user-menubar .umask {
+#user-menubar .badge {
+    background: #f00;
     position: absolute;
-    left  : 10px;
-    width : 36px;
-    height: 36px;
-    background-image : url(../static/assets/img/head_glob.png);
-    background-size  : 100% 100%;
-    background-repeat: no-repeat;
-    background-position:  center;
+    display: none;
+    top    : 13px;
+    left   : 13px;
+    width  : 6px;
+    height : 6px;
+    padding: 0;
+    border : 0;
+    margin : 0;
+    min-width : 0;
+    min-height: 0;
 }
-*/
 #user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
-    width : 36px;
-    height: 36px;
-    margin-left  : 10px;
-    margin-right : 10px;
-    border-radius: 50% ;
+    width : 44px;
+    height: 44px;
+    margin: -4px 4px -4px 10px;
     box-shadow: 0 1px 2px #000;
+    border-radius    : 50% ;
     background-color : #eee;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
@@ -178,15 +175,21 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : rgba(255,255,255,0.8);
+    color : #ddd;
     width : 80px;
     height: 36px;
     line-height: 36px;
-    font-weight: 600 ;
-    text-shadow: 0 1px #000;
+    font-weight: 400 ;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow   : hidden;
+}
+#user-menubar .glyphicon {
+    color: #09c;
+    width: 40px;
+    top  :  2px; /* 修正字体符号偏上的问题 */
+    margin-right: 6px ;
+    text-align: center;
 }
 
 /* 其他 */

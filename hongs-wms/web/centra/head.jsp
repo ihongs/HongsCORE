@@ -61,8 +61,8 @@
                 menu.append("<li class=\"").append(actc).append("\">")
                     .append(  "<a href=\"").append(href).append("\" ")
                     .append("data-href=\"").append(hrel).append("\">")
-                    .append( text )
                     .append("<span class=\"caret\"></span>")
+                    .append( text )
                     .append("</a>")
                     .append("\r\n")
                     .append("<ul>")
@@ -107,8 +107,8 @@
 
 <div id="user-menubar">
     <a href="javascript:;" style="display: block;">
-        <div class="umask"></div>
         <div class="caret"></div>
+        <div class="badge"></div>
         <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
         <div class="uname" title="<%=name%>"><%=name%></div>
     </a>

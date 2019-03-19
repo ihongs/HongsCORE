@@ -86,7 +86,7 @@
     form.html        编辑表单
     form_adds.html   创建表单
     list.html        列表区块
-    list_fork.html   选择区块
+    pick.html        选择区块
 
 一个简单的方法是通过浏览器控制台的网络获取相应页面，复制并存到 URL 对应位置后，在这个基础上继续修改.  如不想使用原页面体系可在构建的 default.html 中按自定规则组织子功能页面体系。您可以使用内置的 JS 框架和组件继续开发，这很简单(见 [**HongsCORE4JS**](hongs-web/web/static/assets/src/) 和 [**HongsCORE4JS Demo**](hongs-web/web/static/assets/pages/))，通过 defines.js 可微调大部分的细节。但也可以覆盖 default.html 完全定制整个页面，这样您可以随意选择自己习惯的 JS 和 CSS 库。
 

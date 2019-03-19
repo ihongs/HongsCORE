@@ -155,9 +155,9 @@
                                   ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
                             +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                             +"/pick.html";
-                        al = al.replace("centra", "centre").replace("list_fork", "pick");
+                        al = al.replace("centra", "centre");
+                        mode += "\" data-href=\""+al+"\" data-target=\"" ;
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
-                        mode += "\" data-href=\""+al;
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>

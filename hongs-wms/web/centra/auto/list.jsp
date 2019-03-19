@@ -36,18 +36,15 @@
             <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search"/>
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
-            <%if (!"select".equals(_action)) {%>
                 <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                 <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
+            <%if (!"select".equals(_action)) {%>
                 <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
-                <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
+                <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-cloud" ></span></button>
             <%} // End If %>
             </span>
         </form>
     </div>
-    <%
-    if (!"select".equals(_action)) {
-    %>
     <!-- 筛选 -->
     <form class="findbox filtbox panel invisible">
         <div class="form-group clearfix"></div>
@@ -179,7 +176,6 @@
         <%} /*End For*/%>
         </div>
     </form>
-    <%} /*End If */%>
     <!-- 列表 -->
     <div class="table-responsive-revised">
     <div class="table-responsive listbox">
@@ -334,7 +330,6 @@
         send: hsSendWithMemo
     });
 
-    <%if (!"select".equals(_action)) {%>
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum"
     });
@@ -374,7 +369,7 @@
 
     filtobj._prep__enum = hsListPrepFilt;
     filtobj._fill__enum = hsListFillFilt;
-    <%} else {%>
+    <%if ("select".equals(_action)) {%>
     listobj._fill__fork = hsListFillSele;
     <%} /*End If */%>
 

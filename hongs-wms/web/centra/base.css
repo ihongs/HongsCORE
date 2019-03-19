@@ -62,21 +62,24 @@ html, body {
 }
 #main-menubar li a ,
 #user-menubar li a {
-    color: #eeeeee;
+    color: #dddddd;
     display: block;
     text-decoration: none;
 }
 #main-menubar li a {
-    font-size: 14px;
+    font-size: 15px;
+    font-weight: 600;
     padding: 9px 6px 9px 14px;
 }
 #user-menubar li a {
-    font-size: 12px;
-    padding: 6px 6px 6px 14px;
+    font-size: 13px;
+    font-weight: 400;
+    padding: 6px 6px 6px 10px;
 }
 #main-menubar li li a ,
 #user-menubar li li a {
-    font-size: 12px;
+    font-size: 13px;
+    font-weight: 400;
     padding: 6px 6px 6px 28px;
 }
 #main-menubar li a ,
@@ -109,16 +112,15 @@ html, body {
     border-left: 2px solid #990000;
 }
 
-#main-menubar ul ul ,
-#user-menubar ul {
-    background: rgba( 0 , 0 , 0 ,0.1);
+#main-menubar ul ul {
+    background: #303131;
 }
-#user-menubar {
-    background: rgba(153,153,153,0.6);
+#user-menubar ul {
+    background: #404242;
 }
 
 #main-menubar .caret {
-    margin:  8px  0px;
+    margin: 10px  0px;
 }
 #user-menubar .caret {
     margin: 16px  6px;
@@ -130,22 +132,27 @@ html, body {
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
-    color: #eeeeee;
+    color: #cccccc;
 }
 
 #main-menubar .glyphicon ,
 #user-menubar .glyphicon {
+    color: #aaaaaa;
     top: 2px; /* 修正字体符号偏上的问题 */
+    margin-left : 10px;
+    margin-right: 21px;
 }
 
 /* 头像 */
 
 #user-menubar {
+    background: #777;
     position: relative;
 }
+/*
 #user-menubar .umask {
     position: absolute;
-    left  : 14px;
+    left  : 10px;
     width : 36px;
     height: 36px;
     background-image : url(../static/assets/img/head_glob.png);
@@ -153,41 +160,33 @@ html, body {
     background-repeat: no-repeat;
     background-position:  center;
 }
+*/
 #user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
     width : 36px;
     height: 36px;
-    margin-left  : 14px;
+    margin-left  : 10px;
     margin-right : 10px;
     border-radius: 50% ;
+    box-shadow: 0 1px 2px #000;
     background-color : #eee;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
-    box-shadow: 0px 2px 8px #000;
 }
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #eee;
+    color : rgba(255,255,255,0.8);
     width : 80px;
     height: 36px;
     line-height: 36px;
-    font-weight: 400 ;
+    font-weight: 600 ;
+    text-shadow: 0 1px #000;
+    text-overflow: ellipsis;
     white-space: nowrap;
     overflow   : hidden;
-    text-overflow: ellipsis;
-    text-shadow: 0px 2px 0px #000, 0px -2px 0px #333;
-}
-#user-menubar:hover {
-     box-shadow: 0px 2px 2px #333, 0px 0px 15px #990;
-}
-#user-menubar:hover .uhead  {
-     box-shadow: 0px 2px 8px #000, 0px 0px 15px #ff0;
-}
-#user-menubar.dropup ul {
-    margin-top: 15px;
 }
 
 /* 其他 */

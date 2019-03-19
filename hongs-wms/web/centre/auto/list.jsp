@@ -131,8 +131,8 @@
                     String al = info.containsKey("data-al") ? (String) info.get("data-al") :
                               ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
                         +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
-                        +"/list_fork.html";
-                    al = al.replace("centra", "centre").replace("list_fork", "pick");
+                        +"/pick.html";
+                    al = al.replace("centra", "centre");
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>

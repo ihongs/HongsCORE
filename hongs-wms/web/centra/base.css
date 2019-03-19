@@ -57,12 +57,8 @@ html, body {
 #main-menubar ul ,
 #user-menubar ul {
     list-style: none;
-    margin : 0 0 0px 0;
-    padding: 0 0 4px 0;
-}
-#main-menubar li ,
-#user-menubar li {
-    padding: 4px 0 0 0;
+    margin : 0;
+    padding: 0;
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -72,7 +68,7 @@ html, body {
 }
 #main-menubar li a {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 7px 6px 7px 14px;
 }
 #user-menubar li a {
@@ -116,11 +112,16 @@ html, body {
     border-left: 2px solid #ff0088;
 }
 
+#main-menubar>ul>li {
+    padding: 4px 0px;
+}
 #main-menubar ul ul {
-    background: #303131;
+    padding: 2px 0px;
+    background: #333;
 }
 #user-menubar ul {
-    background: #404242;
+    padding: 2px 0px;
+    background: #444;
 }
 
 #main-menubar .caret {

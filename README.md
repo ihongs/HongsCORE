@@ -83,8 +83,9 @@
 
     default.html     引导页面
     defines.js       过程干预定制脚本（默认是空的）
+    form_init.html   创建表单
     form.html        编辑表单
-    form_adds.html   创建表单
+    info.html        查看详情
     list.html        列表区块
     pick.html        选择区块
 

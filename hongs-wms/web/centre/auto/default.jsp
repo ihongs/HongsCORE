@@ -34,7 +34,7 @@
                     listUrl: "<%=_module%>/<%=_entity%>/list.html",
                     infoUrl: "<%=_module%>/<%=_entity%>/info.html",
                     formUrl: "<%=_module%>/<%=_entity%>/form.html",
-                    addsUrl: "<%=_module%>/<%=_entity%>/form_adds.html"
+                    addsUrl: "<%=_module%>/<%=_entity%>/form_init.html"
                 });
             });
         </script>

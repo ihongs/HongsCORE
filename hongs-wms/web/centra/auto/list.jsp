@@ -314,17 +314,17 @@
               '<%=_locale.translate("fore.delete.confirm", _title)%>' ]
         ],
         openUrls: [
-            [ '<%=_module%>/<%=_entity%>/form_adds.html?'+$.param(hsSerialArr(loadbox)),
+            [ '<%=_module%>/<%=_entity%>/form_init.html?'+$.param(hsSerialArr(loadbox)),
               '.create', '@' ],
             [ '<%=_module%>/<%=_entity%>/form.html?<%=Cnst.ID_KEY%>={ID}',
               '.update', '@' ],
             [ '<%=_module%>/<%=_entity%>/info.html?<%=Cnst.ID_KEY%>={ID}',
               '.review', '@' ],
-            [ '<%=_module%>/<%=_entity%>/logs.html?<%=Cnst.ID_KEY%>={ID}',
+            [ '<%=_module%>/<%=_entity%>/snap.html?<%=Cnst.ID_KEY%>={ID}',
               '.revert', '@' ],
-            [ '<%=_module%>/<%=_entity%>/logs.html',
+            [ '<%=_module%>/<%=_entity%>/snap.html',
               '.record', '@' ],
-            [ '<%=_module%>/<%=_entity%>/lore.html',
+            [ '<%=_module%>/<%=_entity%>/swap.html',
               '.manual', '@' ]
         ],
         send: hsSendWithMemo

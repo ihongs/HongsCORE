@@ -90,7 +90,7 @@
             var tr = $(this).closest("tr");
             var id =      tr.data(   "id");
             var ct =      tr.data("ctime");
-            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_logs.html"   , {id: id, ctime: ct});
+            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html"   , {id: id, ctime: ct});
         });
 
         sendbox.modal({show : false});

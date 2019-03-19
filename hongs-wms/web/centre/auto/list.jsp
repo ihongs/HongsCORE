@@ -257,7 +257,7 @@
               '<%=_locale.translate("fore.delete.confirm", _title)%>' ]
         ],
         openUrls: [
-            [ '<%=_module%>/<%=_entity%>/form_adds.html?'+$.param(hsSerialArr(loadbox)),
+            [ '<%=_module%>/<%=_entity%>/form_init.html?'+$.param(hsSerialArr(loadbox)),
               '.create', '@' ],
             [ '<%=_module%>/<%=_entity%>/form.html?<%=Cnst.ID_KEY%>={ID}',
               '.update', '@' ],

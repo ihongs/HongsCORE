@@ -54,6 +54,8 @@
         var context = $("#master-user-pick").removeAttr("id");
         var viewImg = context.find(".modal");
 
+        hsRequires("centra/master/util.css");
+
         // 点击用户头像打开预览
         viewImg.modal("hide");
         context.data("_fill_head" , function(c, v, n) {

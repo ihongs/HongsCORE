@@ -115,14 +115,12 @@
     <ul>
         <li>
             <a href="javascript:;" id="user-set">
-                <span class="glyphicon glyphicon-user"></span>
-                <%=CoreLocale.getInstance().translate("fore.modify")%>
+                <span class="glyphicon glyphicon-user"></span><%=CoreLocale.getInstance().translate("fore.modify")%>
             </a>
         </li>
         <li>
             <a href="javascript:;" id="sign-out">
-                <span class="glyphicon glyphicon-off "></span>
-                <%=CoreLocale.getInstance().translate("fore.logout")%>
+                <span class="glyphicon glyphicon-off "></span><%=CoreLocale.getInstance().translate("fore.logout")%>
             </a>
         </li>
     </ul>

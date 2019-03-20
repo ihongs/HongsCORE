@@ -35,10 +35,11 @@ public class SelectHelper {
     public  final static  byte FORK =  8;
     public  final static  byte LINK = 16;
     public  final static  byte TIME = 32;
-    public  final static  byte DEFS = 64;
+    public  final static  byte INFO = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
     private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");
+    private final static  Pattern  DEFTP = Pattern.compile( "^=[~@#$%]" );
 
     private final Map<String, Object> defts;
     private final Map<String, Map> enums;
@@ -65,7 +66,7 @@ public class SelectHelper {
      * @param val
      * @return
      */
-    public SelectHelper addDefs(String name, Object val) {
+    public SelectHelper addInfo(String name, Object val) {
         defts.put(name, val );
         return this;
     }
@@ -169,10 +170,15 @@ public class SelectHelper {
 
             if (type == null) {continue;}
 
-            if (mt.containsKey("default")
-            &&  mt.containsKey("deforce")
-            &&  "blanks".equals(mt.get("deforce"))) {
-                defts.put(name, mt.get("default"));
+            // 默认值
+            String  defv = (String) mt.get("default" );
+            if (defv != null && ! DEFTP.matcher(defv).find()) {
+                String typa = (String) mt.get("type");
+                if (typa == null || typa.isEmpty( ) ) {
+                    typa =  type;
+                }
+                Object defo = defvInType(defv, typa );
+                defts.put(name , defo);
             }
 
             switch (type) {
@@ -238,7 +244,7 @@ public class SelectHelper {
         boolean withFork = FORK == (FORK & action);
         boolean withLink = LINK == (LINK & action);
         boolean withTime = TIME == (TIME & action);
-        boolean withDeft = DEFS == (DEFS & action);
+        boolean withInfo = INFO == (INFO & action);
 
         // 附带枚举数据
         if (withEnum) {
@@ -249,18 +255,27 @@ public class SelectHelper {
             }   injectData(  data  , enums);
         }
 
+        // 附带默认数据
+        if (withInfo) {
+            /**/ Map  data = (Map ) values.get("info");
+            if (data == null) {
+                data  = new LinkedHashMap();
+                values.put( "info" , data );
+            }   injectInfo(  data  , defts);
+        }
+
         // 补全额外数据
-        if (withText || withTime || withLink || withDeft) {
+        if (withText || withTime || withLink) {
             /**/ Map  info = (Map ) values.get("info");
             List<Map> list = (List) values.get("list");
             if (info != null) {
-                if (withDeft) injectDefs(info , defts);
+//              if (withDeft) injectDefs(info , defts);
                 if (withText) injectText(info , enums);
                 if (withTime) injectTime(info , dates);
                 if (withLink) injectLink(info , files);
             }
             if (list != null) for ( Map  item : list ) {
-                if (withDeft) injectDefs(item , defts);
+//              if (withDeft) injectDefs(item , defts);
                 if (withText) injectText(item , enums);
                 if (withTime) injectTime(item , dates);
                 if (withLink) injectLink(item , files);
@@ -354,16 +369,20 @@ public class SelectHelper {
         }
     }
 
-    public void injectDefs(Map info) {
-        injectDefs(info, defts);
-    }
-
     public void injectData(Map data) {
         injectData(data, enums);
     }
 
     public void injectText(Map info) {
         injectText(info, enums);
+    }
+
+    public void injectInfo(Map info) {
+        injectInfo(info, defts);
+    }
+
+    public void injectDefs(Map info) {
+        injectDefs(info, defts);
     }
 
     public void injectTime(Map info) {
@@ -526,6 +545,17 @@ public class SelectHelper {
             }
 
             data.put(key, lst);
+        }
+    }
+
+    private void injectInfo(Map info, Map defs) {
+        Iterator it = defs.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry et = (Map.Entry) it.next();
+            String   key = (String)  et.getKey();
+            Object   def =         et.getValue();
+
+            Dict.setValue(info, def, key);
         }
     }
 
@@ -694,6 +724,31 @@ public class SelectHelper {
         } else
         {
             return _host +_path +"/"+ url;
+        }
+    }
+
+    private Object defvInType(String val, String type) {
+        if (   "int".equals(type)) {
+            return Synt.declare(val, 0 );
+        } else
+        if (  "long".equals(type)) {
+            return Synt.declare(val, 0L);
+        } else
+        if ( "float".equals(type)) {
+            return Synt.declare(val, 0F);
+        } else
+        if ("double".equals(type)
+        ||  "number".equals(type)) {
+            return Synt.declare(val, 0D);
+        } else
+        if ( "short".equals(type)) {
+            return Synt.declare(val, (short) 0);
+        } else
+        if (  "byte".equals(type)) {
+            return Synt.declare(val, (byte ) 0);
+        } else
+        {
+            return val ;
         }
     }
 

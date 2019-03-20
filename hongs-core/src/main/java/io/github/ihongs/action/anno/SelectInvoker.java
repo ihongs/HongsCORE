@@ -38,11 +38,17 @@ public class SelectInvoker implements FilterInvoker {
         if (adds == 0) {
             Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
             if (ab != null) {
-                if (ab.contains("!enum")) {
+                if (ab.contains("!enum" )
+                ||  ab.contains("!info")) {
+                    adds = 0;
+                    if (ab.contains("!enum")) {
+                        adds -= SelectHelper.ENUM;
+                    }
+                    if (ab.contains("!info")) {
+                        adds -= SelectHelper.INFO;
+                    }
                     if (ab.contains(".form")) {
-                        adds  = -5;
-                    } else {
-                        adds  = -1;
+                        adds -= SelectHelper.FORM;
                     }
                 } else {
                     if (ab.contains(".enum")) {
@@ -70,19 +76,19 @@ public class SelectInvoker implements FilterInvoker {
 
         // 为负则不执行, 仅取选项数据
         Map rsp;
-        if (adds <  0 ) {
-            adds=(byte)(0-adds);
-            rsp = new HashMap();
-        } else
         if (adds == 0 ) {
             chains.doAction(  );
             return;
-        } else {
+        } else
+        if (adds >  0 ) {
             chains.doAction(  );
             rsp = helper.getResponseData(  );
             if (! Synt.declare(rsp.get("ok"), false)) {
                 return;
             }
+        } else {
+            adds=(byte)(0-adds);
+            rsp = new HashMap();
         }
 
         // 识别路径

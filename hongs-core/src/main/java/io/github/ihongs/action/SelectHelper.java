@@ -568,7 +568,7 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Object   def =         et.getValue();
-            Object   val = Dict.getValue(info, Synt.LOOP.NEXT, key);
+            Object   val = Dict.get(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
@@ -586,7 +586,7 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry) it.next();
             String   key = (String)  et.getKey();
             Map      map = (Map)   et.getValue();
-            Object   val = Dict.getValue(info, Synt.LOOP.NEXT, key);
+            Object   val = Dict.get(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
@@ -610,7 +610,7 @@ public class SelectHelper {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
-            Object  val = Dict.getValue(info, Synt.LOOP.NEXT, key);
+            Object  val = Dict.get(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;
@@ -641,7 +641,7 @@ public class SelectHelper {
         Iterator it = keys.iterator();
         while (it.hasNext()) {
             String  key = (String) it.next();
-            Object  val = Dict.getValue(info, Synt.LOOP.NEXT, key);
+            Object  val = Dict.get(info, Synt.LOOP.NEXT, key);
 
             if (val == Synt.LOOP.NEXT) {
                 continue;

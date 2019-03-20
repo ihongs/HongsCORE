@@ -132,11 +132,11 @@
     </ul>
 </div>
 
-<div id="side-hidebtn">
+<div id="head-handled">
     <a href="javascript:;"></a>
 </div>
 
-<div id="side-copybar">
+<div id="head-powered">
     Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
 </div>
 
@@ -241,7 +241,7 @@
         });
         
         // 边栏隐藏与显示
-        $("#side-hidebtn").click(function() {
+        $("#head-handled").click(function() {
             $( "#context").toggleClass("fullest");
         });
     })(jQuery);

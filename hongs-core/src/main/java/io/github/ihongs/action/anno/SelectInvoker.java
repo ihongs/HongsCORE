@@ -16,14 +16,15 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * !enum 表示不需要执行, ab将被重置为.enum
- * !info 表示不需要执行, ab将被重置为.defs
+ * !enum 表示不需要执行, 重置为 .enum
+ * !info 表示不需要执行, 类似于 .defs
  * .enum 表示要选项数据
  * _text 表示加选项文本
  * _time 表示加数字时间
  * _link 表示加完整链接
  * _fork 表示加关联数据
  * .form 表示处理子表单
+ * .defs 表示补充默认值
  * </pre>
  * @author Hong
  */

@@ -41,7 +41,7 @@ public class SelectHelper {
     private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");
     private final static  Pattern  DEFTP = Pattern.compile( "^=[~@#$%]" );
 
-    private final Map<String, Object> defts;
+    private final Map<String, Object> infos;
     private final Map<String, Map> enums;
     private final Map<String, Map> forms;
     private final Map<String, Map> forks;
@@ -52,7 +52,7 @@ public class SelectHelper {
     private String _path = null;
 
     public SelectHelper() {
-        defts = new LinkedHashMap();
+        infos = new LinkedHashMap();
         enums = new LinkedHashMap();
         forms = new LinkedHashMap();
         forks = new LinkedHashMap();
@@ -67,7 +67,7 @@ public class SelectHelper {
      * @return
      */
     public SelectHelper addInfo(String name, Object val) {
-        defts.put(name, val );
+        infos.put(name, val );
         return this;
     }
 
@@ -168,17 +168,17 @@ public class SelectHelper {
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 
-            if (type == null) {continue;}
+            if (type == null) { continue; }
 
             // 默认值
             String  defv = (String) mt.get("default" );
-            if (defv != null && ! DEFTP.matcher(defv).find()) {
+            if (defv != null && !DEFTP.matcher(defv).find()) {
                 String typa = (String) mt.get("type");
                 if (typa == null || typa.isEmpty( ) ) {
-                    typa =  type;
+                    typa =  type  ;
                 }
-                Object defo = defvInType(defv, typa );
-                defts.put(name , defo);
+                Object defo = infoAsType(defv, typa );
+                infos.put(name , defo);
             }
 
             switch (type) {
@@ -252,7 +252,8 @@ public class SelectHelper {
             if (data == null) {
                 data  = new LinkedHashMap();
                 values.put( "enum" , data );
-            }   injectData(  data  , enums);
+            }
+                injectData(  data  , enums);
         }
 
         // 附带默认数据
@@ -261,21 +262,23 @@ public class SelectHelper {
             if (data == null) {
                 data  = new LinkedHashMap();
                 values.put( "info" , data );
-            }   injectInfo(  data  , defts);
+                injectInfo(  data  , infos);
+                withInfo  =  false ;
+            }
         }
 
         // 补全额外数据
-        if (withText || withTime || withLink) {
+        if (withText || withTime || withLink || withInfo) {
             /**/ Map  info = (Map ) values.get("info");
             List<Map> list = (List) values.get("list");
             if (info != null) {
-//              if (withDeft) injectDefs(info , defts);
+                if (withInfo) injectDefs(info , infos);
                 if (withText) injectText(info , enums);
                 if (withTime) injectTime(info , dates);
                 if (withLink) injectLink(info , files);
             }
             if (list != null) for ( Map  item : list ) {
-//              if (withDeft) injectDefs(item , defts);
+                if (withInfo) injectDefs(item , infos);
                 if (withText) injectText(item , enums);
                 if (withTime) injectTime(item , dates);
                 if (withLink) injectLink(item , files);
@@ -378,11 +381,11 @@ public class SelectHelper {
     }
 
     public void injectInfo(Map info) {
-        injectInfo(info, defts);
+        injectInfo(info, infos);
     }
 
     public void injectDefs(Map info) {
-        injectDefs(info, defts);
+        injectDefs(info, infos);
     }
 
     public void injectTime(Map info) {
@@ -727,7 +730,7 @@ public class SelectHelper {
         }
     }
 
-    private Object defvInType(String val, String type) {
+    private Object infoAsType(String val, String type) {
         if (   "int".equals(type)) {
             return Synt.declare(val, 0 );
         } else

@@ -27,6 +27,7 @@ html, body {
     position: fixed;
     z-index : 10;
     background: #404242;
+    background-image: linear-gradient(-135deg, #4f4d4d 135px, #4c4a4a 135px, #424444 175px, #404242 175px);
 }
 #context.fullest>#bodybox {
     padding: 0;
@@ -34,10 +35,10 @@ html, body {
 #context.fullest>#headbox {
     width: 0;
 }
-#context.fullest #side-hidebtn {
+#context.fullest #head-handled {
     left : 0;
 }
-#context.fullest #side-copybar {
+#context.fullest #head-powered {
     display: none;
 }
 
@@ -62,25 +63,25 @@ html, body {
 }
 #main-menubar li a ,
 #user-menubar li a {
-    color: #dddddd;
+    color: #cccccc;
     display: block;
     text-decoration: none;
 }
 #main-menubar li a {
     font-size: 15px;
-    font-weight: 500;
-    padding: 7px 6px 7px 14px;
+    font-weight: 600;
+    padding: 7px 6px 7px 15px;
 }
 #user-menubar li a {
     font-size: 13px;
-    font-weight: 400;
+    font-weight: 500;
     padding: 9px 6px 9px 10px;
 }
 #main-menubar li li a ,
 #user-menubar li li a {
     font-size: 13px;
-    font-weight: 300;
-    padding: 9px 6px 9px 28px;
+    font-weight: 400;
+    padding: 9px 6px 9px 23px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
@@ -92,36 +93,33 @@ html, body {
 #main-menubar li a:hover,
 #main-menubar li.acting > a.dropup:hover {
     background: #330000;
-    border-left: 2px solid #660033;
+    border-left: 2px solid #990033;
 }
 #main-menubar li.acting > a ,
 #main-menubar li.active > a ,
 #main-menubar li.active > a.dropup {
-    background: #aa0000;
+    background: #990000;
     border-left: 2px solid #ff0088;
 }
 #user-menubar li a:hover,
 #user-menubar li.acting > a.dropup:hover {
     background: #330000;
-    border-left: 2px solid #660033;
+    border-left: 2px solid #990033;
 }
 #user-menubar li.acting > a ,
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
-    background: #aa0000;
+    background: #990000;
     border-left: 2px solid #ff0088;
 }
 
-#main-menubar>ul>li {
-    padding: 4px 0px;
-}
 #main-menubar ul ul {
+    background: #222;
     padding: 2px 0px;
-    background: #333;
 }
 #user-menubar ul {
-    padding: 2px 0px;
     background: #444;
+    padding: 2px 0px;
 }
 
 #main-menubar .caret {
@@ -143,31 +141,17 @@ html, body {
 /* 头像 */
 
 #user-menubar {
-    background: #069;
+    background: #777;
     position: relative;
-}
-#user-menubar .badge {
-    background: #f00;
-    position: absolute;
-    display: none;
-    top    : 13px;
-    left   : 13px;
-    width  : 6px;
-    height : 6px;
-    padding: 0;
-    border : 0;
-    margin : 0;
-    min-width : 0;
-    min-height: 0;
 }
 #user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
     width : 44px;
     height: 44px;
-    margin: -4px 4px -4px 10px;
-    box-shadow: 0 1px 2px #000;
-    border-radius    : 50% ;
+    margin: -4px 8px -4px 10px;
+    box-shadow:  0 0  2px #000;
+    border-radius    : 3px;
     background-color : #eee;
     background-size  : 100% 100%;
     background-repeat: no-repeat;
@@ -176,66 +160,78 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #ddd;
-    width : 80px;
+    color : #eee;
+    width : 75px;
     height: 36px;
     line-height: 36px;
-    font-weight: 400 ;
+    font-weight: 600 ;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow   : hidden;
 }
+#user-menubar .badge {
+    position: absolute;
+    background: #f00;
+    display: none;
+    min-width : 0;
+    min-height: 0;
+    width  : 8px;
+    height : 8px;
+    padding: 0;
+    border : 0;
+    margin : -8px  6px;
+}
 #user-menubar .glyphicon {
-    color: #09c;
+    color: #d00;
     width: 40px;
     top  :  2px; /* 修正字体符号偏上的问题 */
-    margin-right: 6px ;
+    margin-right: 10px;
     text-align: center;
 }
 
 /* 其他 */
 
-#side-copybar {
-    position: fixed;
-    bottom: 0;
-    width: 175px;
-    font-size: 10px;
-    text-align: center;
-    text-shadow: 0 0 2px #000;
-}
-#side-copybar:hover {
-    text-shadow: 0 0 2px #660;
-}
-#side-copybar a {
-    color: #a00;
-}
-#side-hidebtn {
+#head-handled {
     position: fixed;
     top  : 50%;
     left : 175px;
-    width : 15px;
+    width : 14px;
     height: 30px;
     margin-top: -15px;
     border-radius: 0 5px 5px 0;
     background: rgba(64,66,66,0.5);
 }
-#side-hidebtn:hover {
+#head-handled:hover {
     background: rgba(64,66,66,1.0);
 }
-#side-hidebtn a {
+#head-handled a {
     width : 0; 
     height: 0;
     display: block;
     border-width: 4px;
     border-style: solid;
 }
-#context #side-hidebtn a {
+#context #head-handled a {
     border-color: transparent #fcfcfc transparent transparent;
     margin-top: 11px;
 }
-#context.fullest #side-hidebtn a {
+#context.fullest #head-handled a {
     border-color: transparent transparent transparent #fcfcfc;
     margin-left: 5px;
+}
+
+#head-powered {
+    text-align: center;
+    font-size: 10px;
+    position: fixed;
+    bottom:  5px;
+    width: 175px;
+}
+#head-powered a {
+    color: #b00;
+}
+#head-powered a:hover {
+    color: #f00;
 }
 
 /**

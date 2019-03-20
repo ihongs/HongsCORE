@@ -50,6 +50,7 @@ public class SelectHelper {
 
     private String _host = null;
     private String _path = null;
+    private Set    _cols = null;
 
     public SelectHelper() {
         infos = new LinkedHashMap();
@@ -144,6 +145,19 @@ public class SelectHelper {
         return  this;
     }
 
+    /**
+     * 设置表单可选字段, 需先于 addItemsByForm
+     * @param rb
+     * @return
+     */
+    public SelectHelper setItemsInForm(Set rb ) {
+      if (rb != null && rb.isEmpty()) {
+          rb  = null;
+      }
+        _cols =  rb ;
+        return  this;
+    }
+
     public SelectHelper addItemsByForm(Map fs ) throws HongsException {
         String conf = Dict.getValue( fs, "default", "@", "conf");
         String form = Dict.getValue( fs, "unknown", "@", "form");
@@ -165,20 +179,26 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry)it.next();
             Map       mt = (Map ) et.getValue();
             String  name = (String) et.getKey();
+            String  defv = (String) mt.get("default" );
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 
-            if (type == null) { continue; }
+            if (null != _cols && !_cols.contains(name) /***/ ) {
+                continue;
+            }
 
             // 默认值
-            String  defv = (String) mt.get("default" );
-            if (defv != null && !DEFTP.matcher(defv).find()) {
+            if (null !=  defv && !DEFTP.matcher (defv).find()) {
                 String typa = (String) mt.get("type");
                 if (typa == null || typa.isEmpty( ) ) {
                     typa =  type  ;
                 }
                 Object defo = infoAsType(defv, typa );
                 infos.put(name , defo);
+            }
+
+            if (null ==  type) {
+                continue;
             }
 
             switch (type) {

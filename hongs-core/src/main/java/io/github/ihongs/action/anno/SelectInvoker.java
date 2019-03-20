@@ -17,6 +17,7 @@ import java.util.Set;
  * <pre>
  * ab 参数含义:
  * !enum 表示不需要执行, ab将被重置为.enum
+ * !info 表示不需要执行, ab将被重置为.defs
  * .enum 表示要选项数据
  * _text 表示加选项文本
  * _time 表示加数字时间
@@ -47,6 +48,15 @@ public class SelectInvoker implements FilterInvoker {
                     if (ab.contains("!info")) {
                         adds -= SelectHelper.INFO;
                     }
+                    if (ab.contains("_time")) {
+                        adds += SelectHelper.TIME;
+                    }
+                    if (ab.contains("_link")) {
+                        adds += SelectHelper.LINK;
+                    }
+                    if (ab.contains("_fork")) {
+                        adds += SelectHelper.FORK;
+                    }
                     if (ab.contains(".form")) {
                         adds -= SelectHelper.FORM;
                     }
@@ -69,6 +79,9 @@ public class SelectInvoker implements FilterInvoker {
                     }
                     if (ab.contains(".form")) {
                         adds += SelectHelper.FORM;
+                    }
+                    if (ab.contains(".defs")) {
+                        adds += SelectHelper.INFO;
                     }
                 }
             }

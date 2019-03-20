@@ -52,9 +52,7 @@ public class SearchHelper {
         IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
 
-        Map  resp = new HashMap();
         Map  cnts = new HashMap();
-        resp.put( "info" , cnts );
 
         int         topz = Synt.declare(rd.get(Cnst.RN_KEY), 0);
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)   );
@@ -235,7 +233,7 @@ public class SearchHelper {
             cnts.put(et.getKey(), a);
         }
 
-        return resp;
+        return cnts;
     }
 
     private int counts(Map rd,
@@ -315,9 +313,7 @@ public class SearchHelper {
         IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
 
-        Map  resp = new HashMap();
         Map  cnts = new HashMap();
-        resp.put( "info" , cnts );
 
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Map<String, Map<Minmax, Cntsum>> counts = new HashMap();
@@ -466,7 +462,7 @@ public class SearchHelper {
             cnts.put(et.getKey(), a );
         }
 
-        return resp;
+        return cnts;
     }
 
     private int statis(Map rd,

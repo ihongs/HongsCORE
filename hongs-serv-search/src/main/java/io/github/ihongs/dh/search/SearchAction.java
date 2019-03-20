@@ -90,7 +90,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
             rd = getReqMap(helper, sr, "counts", rd);
-        Map sd = sh.counts(rd);
+        Map sd = Synt.mapOf( "info", sh.counts(rd) );
             sd = getRspMap(helper, sr, "counts", sd);
 //               sr.close (  ); // 应用容器可自行关闭
 
@@ -112,7 +112,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
             rd = getReqMap(helper, sr, "statis", rd);
-        Map sd = sh.statis(rd);
+        Map sd = Synt.mapOf( "info", sh.statis(rd) );
             sd = getRspMap(helper, sr, "statis", sd);
 //               sr.close (  ); // 应用容器可自行关闭
 

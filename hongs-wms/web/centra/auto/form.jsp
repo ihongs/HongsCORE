@@ -230,7 +230,7 @@
     var formbox = context.find("form");
 
     var formobj = context.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=<%="create".equals(_action)?"!enum,.form":".enum,.form,_fork"%>",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=<%="create".equals(_action)?"!enum,!info,.form":".enum,.form,_fork"%>",
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

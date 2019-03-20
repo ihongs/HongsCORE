@@ -38,7 +38,10 @@ public class SelectInvoker implements FilterInvoker {
         byte     adds = ann.adds();
 
         if (adds == 0) {
-            Set ab = Synt.toTerms(helper.getRequestData().get(Cnst.AB_KEY));
+            Set ab  = Synt.toTerms(
+                helper.getRequestData ( )
+                      .get( Cnst.AB_KEY )
+            );
             if (ab != null) {
                 if (ab.contains("!enum" )
                 ||  ab.contains("!info")) {
@@ -119,14 +122,20 @@ public class SelectInvoker implements FilterInvoker {
 
         // 填充数据
         try {
+            Set rb = Synt.toTerms(
+                helper.getRequestData()
+                      .get(Cnst.RB_KEY)
+            );
+
             Map data  = (Map) helper.getAttribute("form:"+conf+"."+form);
             if (data == null) {
                 data  = FormSet.getInstance(conf).getForm(form);
             }
 
             SelectHelper sel = new SelectHelper();
-            sel.addItemsByForm (conf, form, data);
-            sel.select (rsp, adds );
+            sel.setItemsInForm( rb );
+            sel.addItemsByForm( conf, form, data);
+            sel.select ( rsp, adds );
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {

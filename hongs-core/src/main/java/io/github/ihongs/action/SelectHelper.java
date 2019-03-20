@@ -183,12 +183,12 @@ public class SelectHelper {
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 
-            if (null != _cols && !_cols.contains(name) /***/ ) {
+            if (null !=_cols && ! _cols.contains(name) /***/ ) {
                 continue;
             }
 
             // 默认值
-            if (null !=  defv && !DEFTP.matcher (defv).find()) {
+            if (null != defv && ! DEFTP.matcher (defv).find()) {
                 String typa = (String) mt.get("type");
                 if (typa == null || typa.isEmpty( ) ) {
                     typa =  type  ;
@@ -197,7 +197,7 @@ public class SelectHelper {
                 infos.put(name , defo);
             }
 
-            if (null ==  type) {
+            if (null == type) {
                 continue;
             }
 

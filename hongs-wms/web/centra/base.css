@@ -258,14 +258,14 @@ html, body {
 /**
  * 修正响应式表格不出横向滚动条的问题
  */
-.table-responsive-revised  {
+.table-responsive-revised {
     width: 100%;
     display: table;
     table-layout: fixed;
 }
-.table-responsive thead th {
+.table-responsive-revised th ,
+.table-responsive-revised td {
+    overflow: hidden;
     white-space: nowrap;
-}
-.table-responsive tbody td {
-    white-space: normal;
+    text-overflow: ellipsis;
 }

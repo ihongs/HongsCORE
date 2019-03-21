@@ -179,73 +179,75 @@ public class SelectHelper {
             Map.Entry et = (Map.Entry)it.next();
             Map       mt = (Map ) et.getValue();
             String  name = (String) et.getKey();
-            String  defv = (String) mt.get("default" );
+
+            if (null != _cols && !_cols.contains(name)) {
+                continue ;
+            }
+
+            Object  defo = (String) mt.get("default" );
             String  type = (String) mt.get("__type__");
                     type = (String) ts.get(   type   ); // 类型别名转换
 
-            if (null !=_cols && ! _cols.contains(name) /***/ ) {
-                continue;
+            if (null != defo) {
+                if (defo instanceof String) {
+                    String defs = (String)  defo ;
+                if ( ! DEFTP.matcher (defs).find() ) {
+                    String typa = (String) mt.get("type");
+                    if (typa == null || "".equals( typa )) typa = type;
+                    defo = infoAsType(defs, typa);
+                    infos.put(name , defo);
+                }} else {
+                    infos.put(name , defo);
+                }
             }
 
-            // 默认值
-            if (null != defv && ! DEFTP.matcher (defv).find()) {
-                String typa = (String) mt.get("type");
-                if (typa == null || typa.isEmpty( ) ) {
-                    typa =  type  ;
+            if (null != type) {
+                switch (type) {
+                case "enum" : {
+                    String xonf = (String) mt.get("conf");
+                    String xame = (String) mt.get("enum");
+                    if (null == xonf || "".equals( xonf )) xonf = conf;
+                    if (null == xame || "".equals( xame )) xame = name;
+                    Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
+                    enums.put(name , xnum);
+                } break;
+                case "form" : {
+                    String xonf = (String) mt.get("conf");
+                    String xame = (String) mt.get("form");
+                    if (null == xonf || "".equals( xonf )) xonf = conf;
+                    if (null == xame || "".equals( xame )) xame = name;
+                    Map xnum = FormSet.getInstance(xonf).getForm/*Normal*/(xame);
+                    forms.put(name , xnum);
+                } break;
+                case "fork" : {
+                    Map xnum = new HashMap(mt);
+                    if (! mt.containsKey("data-at" )
+                    &&  ! mt.containsKey("data-al")) {
+                    if (! mt.containsKey("form")) {
+                        xnum.put("form" , name.replace("_id", "")); // 去除其后缀
+                    }
+                    if (! mt.containsKey("conf")) {
+                        xnum.put("conf" , conf);
+                    }
+                    }
+                    forks.put(name , xnum);
+                } break;
+                case "file" : {
+                    String href = (String) mt.get("href");
+                    if (href != null
+                    && !HOSTP.matcher(href).find( )
+                    && !SERVP.matcher(href).find()) {
+                        files.add(name);
+                    }
+                } break;
+                case "date" : {
+                    String typa = (String) mt.get("type");
+                    if (! "time"     .equals(typa )
+                    &&  ! "timestamp".equals(typa)) {
+                        dates.add(name);
+                    }
+                } break;
                 }
-                Object defo = infoAsType(defv, typa );
-                infos.put(name , defo);
-            }
-
-            if (null == type) {
-                continue;
-            }
-
-            switch (type) {
-            case "enum" : {
-                String xonf = (String) mt.get("conf");
-                String xame = (String) mt.get("enum");
-                if (null == xonf || "".equals( xonf )) xonf = conf;
-                if (null == xame || "".equals( xame )) xame = name;
-                Map xnum = FormSet.getInstance(xonf).getEnumTranslated(xame);
-                enums.put(name , xnum);
-            } break;
-            case "form" : {
-                String xonf = (String) mt.get("conf");
-                String xame = (String) mt.get("form");
-                if (null == xonf || "".equals( xonf )) xonf = conf;
-                if (null == xame || "".equals( xame )) xame = name;
-                Map xnum = FormSet.getInstance(xonf).getForm/*Normal*/(xame);
-                forms.put(name , xnum);
-            } break;
-            case "fork" : {
-                Map xnum = new HashMap(mt);
-                if (! mt.containsKey("data-at" )
-                &&  ! mt.containsKey("data-al")) {
-                if (! mt.containsKey("form")) {
-                    xnum.put("form" , name.replace("_id", "")); // 去除其后缀
-                }
-                if (! mt.containsKey("conf")) {
-                    xnum.put("conf" , conf);
-                }
-                }
-                forks.put(name , xnum);
-            } break;
-            case "file" : {
-                String href = (String) mt.get("href");
-                if (href != null
-                && !HOSTP.matcher(href).find( )
-                && !SERVP.matcher(href).find()) {
-                    files.add(name);
-                }
-            } break;
-            case "date" : {
-                String typa = (String) mt.get("type");
-                if (! "time"     .equals(typa )
-                &&  ! "timestamp".equals(typa)) {
-                    dates.add(name);
-                }
-            } break;
             }
         }
 
@@ -343,6 +345,8 @@ public class SelectHelper {
                 values.put( "enum" , xnum );
             }
         }
+
+        // TODO: 有 setItemsInForm 还需处理下级字段列表
 
         // 数据映射整理
         Map<String, List> maps = new HashMap();

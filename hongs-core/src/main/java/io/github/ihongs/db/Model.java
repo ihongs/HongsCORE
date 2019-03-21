@@ -292,7 +292,7 @@ implements IEntity
   public boolean unique(Map rd)
     throws HongsException
   {
-    return !exists(rd);
+    return  unique(rd, null);
   }
 
   public boolean unique(Map rd, FetchCase caze)

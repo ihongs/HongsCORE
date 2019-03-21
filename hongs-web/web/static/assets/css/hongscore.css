@@ -42,6 +42,11 @@ code, pre, var, dfn, kbd {
     margin-bottom: 15px;
 }
 
+.breadcrumb>.active>a {
+    color: #808080;
+    color: inherit;
+}
+
 .nav .close {
     margin-right: -15px;
     margin-top: -6.5px;

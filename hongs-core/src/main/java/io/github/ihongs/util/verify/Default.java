@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
  * 默认取值
  * <pre>
  * 规则参数:
- *  default 默认值, 可使用 =@别名字段 =$会话属性, =%应用属性, =%now+-偏移毫秒
+ *  default 默认值, 可使用 =@别名字段 =$会话属性, =#应用属性, =%now+-偏移毫秒
  *  deforce 强制写, 控制不同阶段, create 创建时, update 更新时, always 任何时
  *  deforce 还可设为 blanks, 此时为空则返回空值, 可用 SelectHelper 在读时补全
  * </pre>
@@ -62,12 +62,23 @@ public class Default extends Rule {
             }
         }}
 
-        Object val = getParam("default");
-        String def = val != null ? val.toString(  ).trim(  ) : "";
-        String bef = def.length() >= 2 ? def.substring(0, 2) : "";
+        Object val = getParam( "default" );
+        if (null == val || ! ( val instanceof String )) {
+            return  val ;
+        }
+
+        String def = ((String) val).trim();
+        String bef = def.length ( ) >= 2
+                   ? def.substring( 0, 2 )
+                   : "" ;
+
+        // 起始转义
+        if (bef.equals("\\=") ) {
+            return def.substring(1);
+        }
 
         // 拼接字段
-        if (bef.equals("=~")) {
+        if (bef.equals("=+")) {
             return Tool.inject(def.substring(2), watch.getCleans());
         }
 

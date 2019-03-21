@@ -352,6 +352,7 @@ function hsSerialArr(obj) {
                     arr.push({name: key, value: vxl});
                 }
             });
+            break;
         case "string":
             var ar1, ar2, key, vxl, i = 0;
             ar1 = obj.split('#' , 2);
@@ -1442,18 +1443,21 @@ function hsGmtZone(off) {
 
 (function($) {
 
-// 为了特别区分才搞出来的 HsSerialDic 和 HsSerialDat
-// 仍需要被认为是基础对象
-$.jqPlainObject = $.isPlainObject;
-$.isPlainObject = function(obj) {
-    if (obj instanceof HsSerialDic
-    ||  obj instanceof HsSerialDat) {
-        return true;
-    }
-    return $.jqPlainObject(obj);
-};
+/**
+ * 为了特别区分才搞出来的 HsSerialDic 和 HsSerialDat
+ * 仍需要被认为是基础对象
+ */
+if ($.jqPlainObject === undefined ) {
+    $.jqPlainObject = $.isPlainObject;
+    $.isPlainObject = function(obj) {
+        if (obj instanceof HsSerialDic
+        ||  obj instanceof HsSerialDat) {
+            return true;
+        }
+        return $.jqPlainObject(obj);
+    };
+}
 
-$.jqAjax = $.ajax;
 $.hsAjax = function(url, settings) {
     if (typeof(url) ===  "object") {
         settings = url;
@@ -1461,10 +1465,11 @@ $.hsAjax = function(url, settings) {
             url  = url["url"];
         }
     }
+    url = hsFixUri(url);
 
     // 统一自定义数据结构, 避免转换后出现偏差
-    if (settings.data instanceof HsSerialDic
-    ||  settings.data instanceof HsSerialDat  ) {
+    if (settings.data  instanceof  HsSerialDic
+    ||  settings.data  instanceof  HsSerialDat) {
         settings.data = hsSerialArr(settings.data);
     }
 
@@ -1500,15 +1505,16 @@ $.hsAjax = function(url, settings) {
                     settings.data = '<?xml version="1.0" encoding="UTF-8"?>'
                                   + $( settings.data).prop( 'outerHTML');
                 }
-                settings.contentType =  "application/xml; charset=UTF-8";
+                settings.contentType = "application/xml; charset=UTF-8" ;
                 break;
             default:
                 throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);
         }
     }
 
-    return $.jqAjax( hsFixUri(url) , settings );
+    return  $.ajax (url, settings);
 };
+
 $.hsOpen = function(url, data, complete) {
     var div = $('<div class="modal fade in"><div class="modal-dialog">'
               + '<div class="modal-content"><div class="modal-header">'
@@ -1523,93 +1529,7 @@ $.hsOpen = function(url, data, complete) {
     div.modal();
     return  box;
 };
-$.hsNote = function(msg, typ, end, sec) {
-    // 参数
-    if (typeof typ !== "string") {
-        sec  = end;
-        end  = typ;
-        typ  = "" ;
-    }
-    var opt  = {
-        mode : "note" ,
-        title: msg ,
-        close: end ,
-        count: sec || 1.5
-    };
 
-    // 样式
-    switch (typ) {
-        case 'info':
-            opt.glass = "alert-info" ;
-            break;
-        case 'danger' :
-            opt.glass = "alert-danger" ;
-            break;
-        case 'warning':
-            opt.glass = "alert-warning";
-            break;
-        case 'success':
-            opt.glass = "alert-success";
-            break;
-        default:
-            opt.glass = "alert-success";
-    }
-
-    return $.hsMask.call ( this , opt );
-};
-$.hsWarn = function(msg, typ, yes, not) {
-    // 参数
-    if (typeof typ !== "string") {
-        not  = yes;
-        yes  = typ;
-        typ  = "" ;
-    }
-    var opt  = {
-        mode : "warn" ,
-        title: msg
-    };
-    var arr  = [ opt ];
-
-    // 样式
-    switch (typ) {
-        case 'info':
-            opt.glass = "alert-info" ;
-            break;
-        case 'danger' :
-            opt.glass = "alert-danger" ;
-            break;
-        case 'warning':
-            opt.glass = "alert-warning";
-            break;
-        case 'success':
-            opt.glass = "alert-success";
-            break;
-        default:
-            opt.text  =  typ ;
-    }
-
-    // 按钮
-    if (null===yes) yes = function() {};
-    if (typeof yes  ===  "function") {
-        yes = {
-            click: yes,
-            glass: "btn-primary",
-            label: hsGetLang ("ensure")
-        };
-    }
-    if (null===not) not = function() {};
-    if (typeof not  ===  "function") {
-        not = {
-            click: not,
-            glass: "btn-default",
-            label: hsGetLang ("cancel")
-        };
-    }
-    if (yes) arr.push( yes );
-    if (not) arr.push( not );
-
-    return $.hsMask.apply( this , arr );
-};
 $.hsMask = function(opt) {
     var mod , div , btt, btx, btn ;
     var ini = { show: true };
@@ -1814,32 +1734,94 @@ $.hsMask = function(opt) {
 
     return  div;
 };
+$.hsNote = function(msg, typ, end, sec) {
+    // 参数
+    if (typeof typ !== "string") {
+        sec  = end;
+        end  = typ;
+        typ  = "" ;
+    }
+    var opt  = {
+        mode : "note" ,
+        title: msg ,
+        close: end ,
+        count: sec || 1.5
+    };
 
-/**
- * 带加载进度条的异步通讯方法
- * @param {String} msg 提示语
- * @return {Function} xhr回调
- */
-$.hsXhrp = function(msg) {
-    return function(   ) {
-        var xhr = $.ajaxSettings.xhr();
-        $.hsXhwp( /**/ msg, xhr, xhr );
-        return xhr;
-    };
+    // 样式
+    switch (typ) {
+        case 'info':
+            opt.glass = "alert-info" ;
+            break;
+        case 'danger' :
+            opt.glass = "alert-danger" ;
+            break;
+        case 'warning':
+            opt.glass = "alert-warning";
+            break;
+        case 'success':
+            opt.glass = "alert-success";
+            break;
+        default:
+            opt.glass = "alert-success";
+    }
+
+    return $.hsMask.call ( this , opt );
 };
-/**
- * 带上传进度条的异步通讯方法
- * @param {String} msg 提示语
- * @return {Function} xhr回调
- */
-$.hsXhup = function(msg) {
-    return function(   ) {
-        var xhr = $.ajaxSettings.xhr();
-        var xhu = xhr.upload ||  xhr  ;
-        $.hsXhwp( /**/ msg, xhr, xhu );
-        return xhr;
+$.hsWarn = function(msg, typ, yes, not) {
+    // 参数
+    if (typeof typ !== "string") {
+        not  = yes;
+        yes  = typ;
+        typ  = "" ;
+    }
+    var opt  = {
+        mode : "warn" ,
+        title: msg
     };
+    var arr  = [ opt ];
+
+    // 样式
+    switch (typ) {
+        case 'info':
+            opt.glass = "alert-info" ;
+            break;
+        case 'danger' :
+            opt.glass = "alert-danger" ;
+            break;
+        case 'warning':
+            opt.glass = "alert-warning";
+            break;
+        case 'success':
+            opt.glass = "alert-success";
+            break;
+        default:
+            opt.text  =  typ ;
+    }
+
+    // 按钮
+    if (null===yes) yes = function() {};
+    if (typeof yes  ===  "function") {
+        yes = {
+            click: yes,
+            glass: "btn-primary",
+            label: hsGetLang ("ensure")
+        };
+    }
+    if (null===not) not = function() {};
+    if (typeof not  ===  "function") {
+        not = {
+            click: not,
+            glass: "btn-default",
+            label: hsGetLang ("cancel")
+        };
+    }
+    if (yes) arr.push( yes );
+    if (not) arr.push( not );
+
+    return $.hsMask.apply( this , arr );
 };
+
 /**
  * 为异步通讯对象包装上进度条
  * @param {String} msg 提示语
@@ -1904,8 +1886,32 @@ $.hsXhwp = function(msg, xhr, xhu) {
 
     return box;
 };
+/**
+ * 带加载进度条的异步通讯方法
+ * @param {String} msg 提示语
+ * @return {Function} xhr回调
+ */
+$.hsXhrp = function(msg) {
+    return function(   ) {
+        var xhr = $.ajaxSettings.xhr();
+        $.hsXhwp( /**/ msg, xhr, xhr );
+        return xhr;
+    };
+};
+/**
+ * 带上传进度条的异步通讯方法
+ * @param {String} msg 提示语
+ * @return {Function} xhr回调
+ */
+$.hsXhup = function(msg) {
+    return function(   ) {
+        var xhr = $.ajaxSettings.xhr();
+        var xhu = xhr.upload ||  xhr  ;
+        $.hsXhwp( /**/ msg, xhr, xhu );
+        return xhr;
+    };
+};
 
-$.fn.jqLoad = $.fn.load ;
 $.fn.hsLoad = function(url, data, complete) {
     if ( $.isFunction(  data  )) {
         complete = data ;
@@ -1947,7 +1953,7 @@ $.fn.hsLoad = function(url, data, complete) {
     }
     url = hsFixUri(url);
 
-    return $.fn.jqLoad.call(this, url, dat, function() {
+    return  $.fn.load.call (this, url, dat, function() {
         $(this).removeClass("loading").hsReady();
         complete.apply(this,arguments);
     });

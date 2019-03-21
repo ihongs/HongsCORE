@@ -64,6 +64,7 @@ function HsForm(context, opts) {
     }
     if (saveUrl) {
         saveUrl = hsFixPms(saveUrl, loadArr);
+        this.formBox.attr("action", saveUrl);
     }
     if (! loadDat) {
         loadDat = loadData(loadArr);
@@ -71,10 +72,10 @@ function HsForm(context, opts) {
     if (! initDat) {
         initDat = initData(loadArr);
     }
-
-    this.valiInit( /* */ );
-    this.saveInit(saveUrl);
     this._init  = initDat ;
+
+    this.valiInit();
+    this.saveInit();
 
     /**
      * 如果存在 id 或 ab 则进行数据加载
@@ -290,21 +291,19 @@ HsForm.prototype = {
         delete this._info;
     },
 
-    saveInit : function(act) {
-        var url  = this.formBox.attr("action" ) || act;
-        var type = this.formBox.attr("method" ) || "POST";
-        var enct = this.formBox.attr("enctype") || "None";
-        var mult = /^multipart\/.*/i.test(enct);
-        var data = this.formBox;
+    saveInit : function() {
         var that = this;
+        this.formBox.submit(function(evt) {
+            if (evt.isDefaultPrevented()) {
+                return ;
+            }
 
-        data.attr("action", hsFixUri(url));
+            var data = that.formBox ;
+            var url  = data.attr("action" ) ;
+            var type = data.attr("method" ) || "POST";
+            var enct = data.attr("enctype") || "None";
 
-        if (!mult) {
-            data.on("submit", function( evt ) {
-                if (evt.isDefaultPrevented()) {
-                    return;
-                }
+            if (! /^multipart\/.*/i.test( enct ) ) {
                 evt.preventDefault();
 
                 var dat = hsAsFormData( data [0] );
@@ -329,13 +328,8 @@ HsForm.prototype = {
                     "complete"    : that.saveBack,
                     "error"       : function() { return false; }
                 });
-            });
-        } else
-        if (self.FormData) {
-            data.on("submit", function( evt ) {
-                if (evt.isDefaultPrevented()) {
-                    return;
-                }
+            } else
+            if (window.FormData ) {
                 evt.preventDefault();
 
                 var dat = hsToFormData( data [0] );
@@ -360,37 +354,32 @@ HsForm.prototype = {
                     "complete"    : that.saveBack,
                     "error"       : function() { return false; }
                 });
-            });
-        } else
-        {
-            data.on("submit", function( evt ) {
-                if (evt.isDefaultPrevented()) {
-                    return;
-                }
-
+            } else
+            {
                 var ext = jQuery.Event("willSave");
                 data.trigger(ext, [ null, that ] );
                 if (ext.isDefaultPrevented()) {
                     evt.preventDefault();
                     return;
                 }
-            });
 
-            if (  ! data.attr("target")  ) {
-                var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
-                var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
-                var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
-                data.attr("action", hsSetParam(url, ".ajax", "1")); // 显式申明 AJAX 方式;
-                data.attr("target", name );
-                frame.insertBefore( data );
-                frame.on ("load", function( ) {
-                    var doc = frame[0].contentDocument || frame[0].contentWindow.document;
-                    if (doc.location.href == "about:blank") return;
-                    var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
-                    that.saveBack(rst);
-                });
+                // 显式申明 AJAX 方式
+                data.attr( "action" , hsSetParam (url, ".ajax", "1") );
+
+                if (! data.attr("target")) {
+                    var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
+                    var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
+                    var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
+                    data.attr("target", name).before ( frame );
+                    frame.on ( "load" , function ( ) {
+                        var doc = frame[0].contentDocument || frame[0].contentWindow.document;
+                        if (doc.location.href==="about:blank") return ;
+                        var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
+                        that.saveBack(rst);
+                    } );
+                }
             }
-        }
+        });
     },
     saveBack : function(rst) {
         rst = hsResponse(rst, 1);
@@ -706,13 +695,14 @@ HsForm.prototype = {
             return this.verifies();
         }
 
+        var val;
         inp = this.getinput( inp );
+        val = this.getvalue( inp );
 
         for(var key in this.rules) {
             if (!inp.is(key)) {
                 continue;
             }
-            var val  =  inp.val( );
             var err  =  this.rules[key].call(this, val, inp);
             if (err !== true) {
                 err  =  err || hsGetLang ( "form.haserror" );
@@ -831,9 +821,41 @@ HsForm.prototype = {
             if (inp.size()) {
                 break;
             }
-        } while (false);
+        }
+        while ( false );
 
         return inp.not(".form-ignored");
+    },
+    getvalue : function(inp) {
+        if (inp.is("input,select,textarea") === false) {
+            inp = inp.find("input");
+        }
+
+        if (inp.is(":checkbox")) {
+            var val = [];
+            inp.filter(":checked")
+               .each(function( ) {
+                val.push($(this).val( ) );
+            });
+            return val;
+        }
+        if (inp.is(":radio"   )) {
+            return inp.filter(":checked")
+                      .last()
+                      .val ();
+        }
+
+        // 以 . 结尾, 含有 .. 或 [] 均表示为多个值
+        if (/(\[\]|\.\.|\.$)/.test(inp.attr("name"))) {
+            var val = [];
+            inp.each(function( ) {
+                val.push($(this).val( ) );
+            });
+            return val;
+        } else {
+            return inp.last()
+                      .val ();
+        }
     },
     rmsgs : {
     },
@@ -1003,25 +1025,30 @@ HsForm.prototype = {
             }
         },
         "[data-verify]" : function(val, inp, url) {
-            if (! val) return true;
-            var ret = true;
-            var obj = this.formBox;
-            var data = {
-                "n" : inp.attr("name"),
-                "v" : val
-            };
+            if (! val) return true ;
+            var ret  = true;
+            var obj  = this.formBox;
+            var key  = inp.attr("name") || inp.attr("data-fn");
+
+            // 清理多值名称
+            key = key.replace(".." , ".")
+                     .replace("[]" , "" )
+                     .replace(/\.$/, "" );
+
+            // 补齐请求参数
             if (! url) url = inp.attr("data-verify");
-            url = url.replace(/\$\{(.*?)\}/g,function(x, n) {
+            url = url.replace(/\$\{(.*?)\}/g, function( x, n ) {
                 return obj.find("[name='"+n+"']")
-                          .not ( ".form-ignored" )
-                          .val ( ) || "";
+                          .not (".form-ignored" )
+                          .val ( ) || "" ;
             });
+
             this.ajax({
                 "url"     : url ,
-                "data"    : data,
+                "data"    : { n : key , v : val },
                 "type"    : "POST",
                 "dataType": "json",
-                "funcName": "vali",
+                "funcName": "veri",
                 "async"   : false,
                 "cache"   : false,
                 "global"  : false,
@@ -1029,22 +1056,28 @@ HsForm.prototype = {
                 "complete": function(rst) {
                     rst = hsResponse(rst);
                     if (rst["list"] !== undefined) {
-                        ret = rst["list"].length > 0;
+                        ret = inp.attr("data-unique")
+                            ? rst["list"].length == 0
+                            : rst["list"].length != 0;
                     } else
-                    if (rst["info"] !== undefined) {
-                        ret = !jQuery.isEmptyObject(rst["info"]);
+                    if (rst["page"] !== undefined) {
+                        ret = inp.attr("data-unique")
+                            ? rst["page"].count  == 0
+                            : rst["list"].count  != 0;
                     } else
                     if (rst["size"] !== undefined) {
-                        ret = parseInt ( rst["size"] ) ? true   :
-                            ( rst["msg" ] ? rst["msg"] : false );
+                        ret = parseInt( rst["size"] ) ? true
+                          : ( rst["msg"] ? rst["msg"] : false );
                     } else {
-                        ret = rst[ "ok" ] ? true :
-                            ( rst["msg" ] ? rst["msg"] : false );
+                        ret = rst["ok" ] ? true
+                          : ( rst["msg"] ? rst["msg"] : false );
                     }
                 },
-                "error" : function( ) { ret = false; }
+                "error" : function() {
+                    ret = false;
+                }
             });
-            return ret;
+            return  ret;
         },
         "[data-unique]" : function(val, inp) {
             var ret = this.rules["[data-verify]"].call(this, val, inp, inp.attr("data-unique"));
@@ -1066,32 +1099,15 @@ HsForm.prototype = {
         },
         "[data-repeat]" : function(val, inp) {
             var fn = inp.attr("data-repeat");
-            var fd = this.formBox.find("[name="+fn+"],[data-fn="+fn+"]").not(".form-ignored");
-            if (fd.val( ) != val) {
+            if (val != this.getvalue(this.getinput(fn))) {
                 return this.geterror(inp, "form.is.not.repeat");
             }
             return true;
         },
         "[data-relate]" : function(val, inp) {
             var fn = inp.attr("data-relate");
-            var fd = this.formBox.find("[name="+fn+"],[data-fn="+fn+"]").not(".form-ignored");
-            if (fd.val( ) != "" ) {
+            if (this.getvalue(this.getinput(fn))) {
                 this.validate(fn);
-            }
-            return true;
-        },
-        "[data-depend]" : function(val, inp) {
-            if (inp.data("DEPENDING")) {
-                return true;
-            }
-            try {
-                inp.data("DEPENDING", true);
-                var fa = inp.data("data-depend").split(",");
-                for (var j = fa.length, i = 0; i < j; i ++) {
-                    this.validate( fa [i] );
-                }
-            } finally {
-                inp.removeData("DEPENDING");
             }
             return true;
         }

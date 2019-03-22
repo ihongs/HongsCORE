@@ -26,7 +26,6 @@ public class DataAction extends SearchAction {
 
     public DataAction() {
         sub.add("revert");
-        sub.add("stream");
     }
 
     /**

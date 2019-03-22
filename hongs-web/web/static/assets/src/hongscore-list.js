@@ -386,15 +386,11 @@ HsList.prototype = {
     gotoPage : function(pn, rn) {
         var that = this;
         jQuery.hsMask({
-            title: '快速跳转:',
+            title: '请输入页码和条数',
             mode : "warn",
-            html : '<form class="form-inline">'
-                 + '<div  class="form-group from-group-sm" style="margin-right: 0.5em;">'
-                 + '<span>到第</span> <input class="form-control" type="number" name="pn" value="'+pn+'"/> <span>页, </span>'
-                 + '</div>'
-                 + '<div  class="form-group from-group-sm" style="margin-right: 0.5em;">'
-                 + '<span>每页</span> <input class="form-control" type="number" name="rn" value="'+rn+'"/> <span>条. </span>'
-                 + '</div>'
+            html : '<form>'
+                 + '<span> 跳转到第 </span><input type="number" name="pn" value="'+pn+'" class="form-control" style="display:inline-block;width:6em;" min="1" step="1" /><span> 页, </span>'
+                 + '<span> 平均每页 </span><input type="number" name="rn" value="'+rn+'" class="form-control" style="display:inline-block;width:6em;" min="1" step="10"/><span> 条. </span>'
                  + '<input class="invisible" type="submit"/>'
                  + '</form>'
         }, {

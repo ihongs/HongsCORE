@@ -278,8 +278,8 @@
     });
 
     var statobj = context.hsCate({
-        surl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/counts/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
+        surl: "<%=_module%>/<%=_entity%>/statis/amount.act?rn=20&<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     var findreq = hsSerialDat( loadbox );

@@ -48,7 +48,7 @@ public class SearchHelper {
      * @return
      * @throws HongsException
      */
-    public Map counts(Map rd) throws HongsException {
+    public Map acount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
 
@@ -181,11 +181,11 @@ public class SearchHelper {
                 Map xd = new HashMap();
                 xd.putAll(rd);
                 xd.remove( k);
-                counts(xd, counts3, countz3, countx3, reader, finder);
+                acount(xd, counts3, countz3, countx3, reader, finder);
             }
         }
 
-        int z = counts(rd, counts2, countz2, countx2, reader, finder);
+        int z = acount(rd, counts2, countz2, countx2, reader, finder);
         cnts.put("__count__", z);
 
         //** 排序并截取统计数据 **/
@@ -236,7 +236,7 @@ public class SearchHelper {
         return cnts;
     }
 
-    private int counts(Map rd,
+    private int acount(Map rd,
             Map<String, Map<String, Integer>> counts,
             Map<String, Map<String, Integer>> countz,
             Map<String, Set<String         >> countx,
@@ -309,7 +309,7 @@ public class SearchHelper {
         return total;
     }
 
-    public Map statis(Map rd) throws HongsException {
+    public Map amount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
 
@@ -424,11 +424,11 @@ public class SearchHelper {
                 Map xd = new HashMap();
                 xd.putAll(rd);
                 xd.remove( k);
-                statis(xd, counts3, countx3, reader, finder);
+                amount(xd, counts3, countx3, reader, finder);
             }
         }
 
-        int z = statis(rd, counts2, countx2, reader, finder);
+        int z = amount(rd, counts2, countx2, reader, finder);
         cnts.put("__count__", z);
 
         //** 排序统计数据 **/
@@ -465,7 +465,7 @@ public class SearchHelper {
         return cnts;
     }
 
-    private int statis(Map rd,
+    private int amount(Map rd,
             Map<String, Map<Minmax , Cntsum>> counts,
             Map<String, Set<Minmax         >> countx,
             IndexReader reader, IndexSearcher finder) throws HongsException {

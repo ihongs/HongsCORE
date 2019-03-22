@@ -25,7 +25,7 @@ import java.util.Set;
 @Action()
 public class SearchAction extends ModelGate implements IAction, IActing {
 
-    protected Set<String> sub = Synt.setOf("counts", "statis");
+    protected Set<String> sub = Synt.setOf("statis");
 
     @Override
     public IEntity getEntity(ActionHelper helper)
@@ -78,21 +78,20 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         super.search(helper);
     }
 
-    @Action("counts/search")
+    @Action("statis/search")
     @Preset(conf="", form="")
     public void counts(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
-        String ent = runner.getEntity();
+//      String ent = runner.getEntity();
         String mod = runner.getModule();
 
         SearchEntity sr = (SearchEntity) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
-            rd = getReqMap(helper, sr, "counts", rd);
-        Map sd = Synt.mapOf( "info", sh.counts(rd) );
-            sd = getRspMap(helper, sr, "counts", sd);
-//               sr.close (  ); // 应用容器可自行关闭
+            rd = getReqMap(helper, sr, "acount", rd);
+        Map sd = Synt.mapOf( "info", sh.acount(rd) );
+            sd = getRspMap(helper, sr, "acount", sd);
 
         // 增加标题
         titled(mod, sr.getFields(), rd, sd);
@@ -100,21 +99,20 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         helper.reply(sd);
     }
 
-    @Action("statis/search")
+    @Action("statis/amount")
     @Preset(conf="", form="")
     public void statis(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
-        String ent = runner.getEntity();
+//      String ent = runner.getEntity();
         String mod = runner.getModule();
 
         SearchEntity sr = (SearchEntity) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
         Map rd = helper.getRequestData();
-            rd = getReqMap(helper, sr, "statis", rd);
-        Map sd = Synt.mapOf( "info", sh.statis(rd) );
-            sd = getRspMap(helper, sr, "statis", sd);
-//               sr.close (  ); // 应用容器可自行关闭
+            rd = getReqMap(helper, sr, "amount", rd);
+        Map sd = Synt.mapOf( "info", sh.amount(rd) );
+            sd = getRspMap(helper, sr, "amount", sd);
 
         // 增加标题
         titled(mod, sr.getFields(), rd, sd);

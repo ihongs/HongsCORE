@@ -298,7 +298,6 @@
             return; // 跳过已初始化
         }
 
-        var hide = $('<input type="hidden" class="form-ignored"/>');
         var type = this.attr("type"   );
         var kind = this.data("type"   );
         var frmt = this.data("format" );
@@ -323,28 +322,26 @@
             this.attr("pattern", patt);
         }
 
-        hide.attr("name", this.attr("name"));
-        this.attr("name", "" );
+        // 取表单项, 没有则添加一个
+        var hide = this.next("input:hidden")
+                || this.prev("input:hidden");
+        if (! hide.size() ) {
+            hide = $('<input type="hidden" class="form-ignored"/>');
+            // 避免在 input-group 中影响圆边角
+            if (! this.index( ) ) {
+                this.after (hide);
+            } else {
+                this.before(hide);
+            }
+        }
+        if (! hide.attr("name") ) {
+            hide.attr("name", this.attr("name"));
+        }
+        this.attr( "name" ,  "" );
         this.data("linked", hide);
         hide.data("linked", this);
-        // 避免在 input-group 中影响圆边角
-        if (this.index () < 1) {
-            this.after (hide );
-        } else {
-            this.before(hide );
-        }
 
-        // 互相联动
-        hide.on("change", function() {
-            var v = $(this).val();
-            if (v == "") {
-                that.val("");
-                return ;
-            }
-
-            var d = hsFmtDate(v, frmt);
-            that.val(d);
-        });
+        // 互联互动
         this.on("change", function() {
             var v = $(this).val();
             if (v == "") {
@@ -354,7 +351,7 @@
 
             // 解析失败设为空
             var d = hsPrsDate(v, frmt);
-            d = d.getTime( );
+                d = d.getTime();
             if (isNaN(d)
             ||  0 === d) {
                 hide.val("");
@@ -369,6 +366,30 @@
 
             hide.val(d);
         });
+        hide.on("change", function() {
+            var v = $(this).val();
+            if (v == "") {
+                that.val("");
+                return ;
+            }
+
+            // 需要转换为毫秒
+            if (kind == "timestamp"
+            ||  kind == "datestamp") {
+                v = v * 1000;
+            }
+            var d = hsFmtDate(v, frmt);
+
+            that.val(d);
+        });
+
+        // 初始同步
+        if (this.val()) {
+            this.change();
+        } else
+        if (hide.val()) {
+            hide.change();
+        }
     };
 
     // 处理大小月及闰年时日期的变化

@@ -59,9 +59,9 @@ public final class Cnst {
 
     public static final String NE_REL = ":ne"; // 不等于
 
-    public static final String CQ_REL = ":cq"; // 包含
+    public static final String CQ_REL = ":cq"; // 匹配
 
-    public static final String NC_REL = ":nc"; // 不包含
+    public static final String NC_REL = ":nc"; // 不匹配
 
     public static final String LT_REL = ":lt"; // 小于
 
@@ -84,6 +84,8 @@ public final class Cnst {
     public static final String SI_REL = ":si"; // 可包含    (Lucene 特有, may in)
 
     public static final String SE_REL = ":se"; // 可等于    (Lucene 特有, may be)
+
+    public static final String SC_REL = ":sc"; // 可匹配    (Lucene 特有, may be)
 
     public static final String WT_REL = ":wt"; // 权重      (Lucene 特有, weight)
 

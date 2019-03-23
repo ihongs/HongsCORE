@@ -880,7 +880,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             String fn = (String) fu;
 
             // 自定义查询
-            if (! qryAdd(qr, fn, fv) ) {
+            if (! padQry(qr, fn, fv) ) {
                 continue;
             }
 
@@ -922,7 +922,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 continue;
             }
 
-            qryAdd(qr, fn, fv, aq);
+            padQry(qr, fn, fv, aq);
         }
 
         // 关键词
@@ -941,13 +941,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
                     for(String fk : fs) {
-                        qryAdd(qx , fk , fw , new SearchQuery());
+                        padQry(qx , fk , fw , new SearchQuery());
                     }
 
                     qr.add(qx.build(), BooleanClause.Occur.MUST);
                 } else {
                     for(String fk : fs) {
-                        qryAdd(qr , fk , fv , new SearchQuery());
+                        padQry(qr , fk , fv , new SearchQuery());
                     }
                 }
             }
@@ -1024,7 +1024,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (rv) fn = fn.substring ( 1 );
 
             // 自定义排序
-            if (! srtAdd(of, fn, rv) ) {
+            if (! padSrt(of, fn, rv) ) {
                 continue;
             }
 
@@ -1636,7 +1636,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @param q
      * @throws HongsException
      */
-    protected void qryAdd(BooleanQuery.Builder qry, String k, Object v, IQuery q)
+    protected void padQry(BooleanQuery.Builder qry, String k, Object v, IQuery q)
     throws HongsException {
         Map m;
         if (v instanceof Map) {
@@ -1829,7 +1829,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (!m.isEmpty()) {
             s =  new  HashSet( );
             s.addAll(m.values());
-            qryAdd(qry, k, s, q);
+            padQry(qry, k, s, q);
         }
 
         //** 权重设置 **/
@@ -1849,7 +1849,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @param v
      * @return 返回 false 阻断
      */
-    protected boolean qryAdd(BooleanQuery.Builder qry, String k, Object v) {
+    protected boolean padQry(BooleanQuery.Builder qry, String k, Object v) {
         return true;
     }
 
@@ -1860,7 +1860,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @param r
      * @return 返回 false 阻断
      */
-    protected boolean srtAdd(List<SortField> srt, String k, boolean r) {
+    protected boolean padSrt(List<SortField> srt, String k, boolean r) {
         return true;
     }
 

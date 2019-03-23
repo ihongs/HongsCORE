@@ -1,11 +1,7 @@
 package io.github.ihongs.dh.lucene.query;
 
-import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Synt;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;

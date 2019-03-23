@@ -608,8 +608,7 @@ public class Data extends SearchEntity {
              * 索引前需将标签代码清理干净
              */
             Object x = v;
-            if (x != null
-            && "textview".equals(m.get("__type__"))) {
+            if ("textview".equals(m.get("__type__"))) {
                 x = Tool.stripCros(Synt.asString(v));
             }
 

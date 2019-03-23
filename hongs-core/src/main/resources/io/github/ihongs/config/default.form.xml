@@ -12,13 +12,6 @@
             form,part,object,
             json
         </value>
-        <value code="sortable" type="set">
-            string,sorted,hidden,text,email,url,tel,sms,
-            number,range,color,
-            date,time,datetime,
-            enum,check,radio,select,type,
-            fork,pick
-        </value>
         <value code="findable" type="set">
             string,search,hidden,text,email,url,tel,sms,
             number,range,color,
@@ -26,9 +19,15 @@
             enum,check,radio,select,type,
             fork,pick
         </value>
+        <value code="sortable" type="set">
+            string,sorted,hidden,text,email,url,tel,sms,
+            number,range,color,
+            date,time,datetime,
+            enum,check,radio,select,type
+        </value>
         <value code="srchable" type="set">
             string,search,hidden,text,
-            textarea
+            textarea,textview
         </value>
     </enum>
     <!-- 存储类型与字段类型的映射 -->
@@ -81,10 +80,10 @@
         <value code="datetime">date</value>
         <!-- Enum -->
         <value code="enum">enum</value>
+        <value code="type">enum</value><!-- enum 的别名 -->
         <value code="select">enum</value>
         <value code="check">enum</value>
         <value code="radio">enum</value>
-        <value code="type">enum</value><!-- enum 的别名 -->
         <!-- File -->
         <value code="file">file</value>
         <value code="image">file</value>

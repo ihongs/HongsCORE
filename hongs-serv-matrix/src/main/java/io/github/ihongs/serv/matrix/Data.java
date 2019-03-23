@@ -373,7 +373,7 @@ public class Data extends SearchEntity {
 
         Document doc = new Document();
         dd.put(Cnst.ID_KEY, id);
-        docAdd(doc, dd);
+        padDoc(doc, dd , null );
         setDoc(id, doc);
 
         return 1;
@@ -513,7 +513,7 @@ public class Data extends SearchEntity {
 
         Document doc = new Document(  );
         dd.put(Cnst.ID_KEY, id);
-        docAdd(doc, dd);
+        padDoc(doc, dd , null );
         setDoc(id, doc);
 
         return 1;
@@ -564,7 +564,7 @@ public class Data extends SearchEntity {
     }
 
     @Override
-    protected void docAdd(Document doc, Map map) {
+    protected void padDoc(Document doc, Map map, Set rep) {
         /**
          * 需写入名称和关键词
          * 2019/03/23
@@ -581,7 +581,7 @@ public class Data extends SearchEntity {
             map.put("word", getWord(map));
         }
 
-        super.docAdd(doc, map);
+        super.padDoc(doc, map, rep);
     }
 
     /**

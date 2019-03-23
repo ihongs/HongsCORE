@@ -355,9 +355,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (id != null && id.length() != 0) {
             throw new HongsException.Common("Id can not set in add");
         }
-        id = Core.newIdentity();
-        rd.put(Cnst.ID_KEY, id);
-        addDoc(toDoc(rd));
+        Document doc = new Document();
+        id  =  Core.newIdentity();
+        rd.put(Cnst.ID_KEY , id );
+        padDoc(doc, rd, null);
+        addDoc(doc);
         return id;
     }
 
@@ -373,7 +375,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
         Document doc = getDoc(id);
         if (doc == null) {
-            doc =  new Document();
+//          throw new NullPointerException("Doc#"+id+" not exists");
         } else {
             /**
              * 实际运行中发现
@@ -381,13 +383,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            Map md =  toDat(doc );
+            Map md = padDat(doc );
                 md . putAll( rd );
                 rd = md;
-            doc = new Document( );
         }
+        doc =  new Document(); // 总是新建
         rd.put(Cnst.ID_KEY , id );
-        docAdd(doc, rd);
+        padDoc(doc, rd, null);
         setDoc(id, doc);
     }
 
@@ -411,12 +413,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            Map md =  toDat(doc );
+            Map md = padDat(doc );
                 md . putAll( rd );
                 rd = md;
         }
+        doc =  new Document(); // 总是新建
         rd.put(Cnst.ID_KEY , id );
-        docAdd(doc, rd);
+        padDoc(doc, rd, null);
         setDoc(id, doc);
     }
 
@@ -445,7 +448,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Map get(String id) throws HongsException {
         Document doc = getDoc(id);
         if (doc != null) {
-            return toDat ( doc  );
+            return padDat ( doc );
         } else {
             return new HashMap( );
         }
@@ -656,21 +659,27 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
     }
 
-    public Document toDoc(Map map) {
+    public Document padDoc(Map map) {
         Document doc = new Document();
-        docAdd(doc, map);
+        padDoc(doc, map, null);
         return doc;
     }
 
-    public Map toDat(Document doc) {
+    public Document padDoc(Map map, Set rep) {
+        Document doc = new Document();
+        padDoc(doc, map, rep);
+        return doc;
+    }
+
+    public Map padDat(Document doc) {
         Map map = new LinkedHashMap();
-        datAdd(doc, map);
+        padDat(doc, map, null);
         return map;
     }
 
-    public Map toDat(Document doc, Set rep) {
+    public Map padDat(Document doc, Set rep) {
         Map map = new LinkedHashMap();
-        datAdd(doc, map, rep);
+        padDat(doc, map, rep );
         return map;
     }
 
@@ -1370,17 +1379,28 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return Synt.declare(fc.get(  "unstated"  ), false);
     }
 
-    protected void docAdd(Document doc, Map map) {
+    protected void padDoc(Document doc, Map map, Set rep) {
+        if (rep != null && rep.isEmpty( )) {
+            rep  = null;
+        }
+
         Map<String, Map> fields = getFields();
-        for(Object o : fields.entrySet()) {
-            Map.Entry e = (Map.Entry) o;
-            Map    m = (Map) e.getValue();
-            String k = (String)e.getKey();
+        for(Map.Entry<String, Map> e : fields.entrySet()) {
+            Map    m = e.getValue();
+            String k = e.getKey  ();
             Object v = Dict.getParam(map , k);
 
             doc.removeFields(k);
 
-            if (null == v) {
+            if (rep != null
+            && !rep.contains(k)) {
+                continue;
+            }
+
+            if (v == null
+            ||  k == null
+            ||  k.equals("@")
+            ||  unstated( m )) {
                 continue;
             }
 
@@ -1505,11 +1525,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
     }
 
-    protected void datAdd(Document doc, Map map) {
-        datAdd(doc, map, null);
-    }
-
-    protected void datAdd(Document doc, Map map, Set rep) {
+    protected void padDat(Document doc, Map map, Set rep) {
         if (rep != null && rep.isEmpty( )) {
             rep  = null;
         }
@@ -1523,12 +1539,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             && !rep.contains(k)) {
                 continue;
             }
-            if ("@" . equals(k)) {
-                continue;
-            }
 
-            if (unstored(m)
-            ||  unstated(m)) {
+            if (k == null
+            ||  k.equals("@")
+            ||  unstated( m )
+            ||  unstored( m )) {
                 continue;
             }
 
@@ -1959,7 +1974,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             try {
                 /*Read*/ doc = docs[i ++ ];
                 Document dox = reader.document( doc.doc );
-                return  that.toDat (dox,r);
+                return  that.padDat(dox,r);
             } catch (IOException ex) {
                 throw new HongsExemption.Common(ex);
             }

@@ -590,12 +590,10 @@ public class Data extends SearchEntity {
              * 存在外部只读才拼接
              */
             if ("name".equals(k) && Synt.declare(m.get("readonly"), false)) {
-                map.put("name", getName(map));
-                continue;
+                v = getName(map);
             }
             if ("word".equals(k) && Synt.declare(m.get("readonly"), false)) {
-                map.put("word", getWord(map));
-                continue;
+                v = getWord(map);
             }
 
             if (v == null
@@ -610,7 +608,8 @@ public class Data extends SearchEntity {
              * 索引前需将标签代码清理干净
              */
             Object x = v;
-            if ("textview".equals(m.get("__type__"))) {
+            if (x != null
+            && "textview".equals(m.get("__type__"))) {
                 x = Tool.stripCros(Synt.asString(v));
             }
 

@@ -11,7 +11,7 @@ import org.apache.lucene.search.Query;
  *
  * @author Hongs
  */
-public class SearchQuery implements IQuery {
+public class SearchQuery extends StringQuery {
     private Analyzer ana = null;
     private Boolean  des = null;
     private Boolean  dor = null;
@@ -58,21 +58,14 @@ public class SearchQuery implements IQuery {
     }
 
     @Override
-    public Query get(String k, Object v) {
-        QueryParser qp = new QueryParser(k, ana != null ? ana : new StandardAnalyzer());
-
-        /**
-         * 无法给字段存 null,
-         * 故字段无值即 null,
-         * 那么可以利用 Lucene 语法查空区间.
-         */
-        String s;
-        if (v == null) {
-            des= true;
-            s =  "[* TO *]" ;
-        } else {
-            s = v.toString();
+    public Query gen(String k, Object v) {
+        if (null == v) {
+            throw new NullPointerException("Query for "+k+" must be string, but null");
         }
+        
+        QueryParser qp = new QueryParser("!" + k, ana != null ? ana : new StandardAnalyzer());
+
+        String s = v.toString( );
 
         // 是否转义
         if (des == null || !des) {
@@ -103,9 +96,5 @@ public class SearchQuery implements IQuery {
             throw new HongsExemption.Common(ex);
         }
     }
-    @Override
-    public Query get(String k, Object n, Object x, boolean l, boolean g) {
-        throw new HongsExemption(0x1100, "Field "+k+" does not suported interval queries.");
-    }
-
+    
 }

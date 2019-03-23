@@ -12,7 +12,7 @@ import org.apache.lucene.document.StoredField;
  */
 public class DoubleField implements IField {
     @Override
-    public Field get(String k, Object v, boolean u) {
+    public Field get(String k, Object v) {
         return new StoredField(    k, Synt.declare(v, 0D));
     }
     @Override
@@ -22,5 +22,9 @@ public class DoubleField implements IField {
     @Override
     public Field odr(String k, Object v) {
         return new DoubleDocValuesField("."+k, Synt.declare(v, 0.0D));
+    }
+    @Override
+    public Field wdr(String k, Object v) {
+        return null; // 数字类型无法模糊搜索, 无法增加搜索字段
     }
 }

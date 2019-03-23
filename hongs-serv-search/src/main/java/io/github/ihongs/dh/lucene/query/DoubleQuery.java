@@ -10,9 +10,13 @@ import org.apache.lucene.search.Query;
  */
 public class DoubleQuery implements IQuery {
     @Override
+    public Query gen(String k, Object v) {
+        throw new UnsupportedOperationException("Number field "+k+" does not support search");
+    }
+    @Override
     public Query get(String k, Object v) {
         if (v == null) {
-            throw new ClassCastException("Query for "+k+" must be double, but null");
+            throw new NullPointerException("Query for "+k+" must be double, but null");
         }
         double  n2 = Synt.asDouble(v);
         Query   q2 = DoublePoint.newExactQuery(":"+k, n2);
@@ -21,7 +25,7 @@ public class DoubleQuery implements IQuery {
     @Override
     public Query get(String k, Object n, Object x, boolean l, boolean g) {
         if (n == null && x == null) {
-            throw new ClassCastException("Range for "+k+" must be double, but null");
+            throw new NullPointerException("Range for "+k+" must be double, but null");
         }
         double n2, x2;
         if (n == null || "".equals(n)) {

@@ -510,10 +510,19 @@ public class Form extends Model {
 
             //** 复查字段属性 **/
 
+            if (! "@" .equals(n)) {
+            
             // 日期类型要指定存储格式
             if ("date".equals(types.get(t) )) {
                 if(!fiel.containsKey("type")) {
                     fiel.put("type", "timestamp");
+                }
+            } else
+            // 选项表单要指定配置路径
+            if ("enum".equals(types.get(t) )
+            ||  "form".equals(types.get(t) )) {
+                if(!fiel.containsKey("conf")) {
+                    fiel.put("conf", centra +"/"+ id);
                 }
             } else
             // 文件类型要指定上传路径
@@ -524,27 +533,8 @@ public class Form extends Model {
                 if(!fiel.containsKey("path")) {
                     fiel.put("path", upload +"/"+ id);
                 }
-            } else
-            // 选项表单要指定配置路径
-            if ("enum".equals(types.get(t) )
-            ||  "form".equals(types.get(t) )) {
-                if(!fiel.containsKey("conf")) {
-                    fiel.put("conf", centra +"/"+ id);
-                }
-            } else
-            // 可搜索指定存为搜索类型
-            if ("search".equals(t)
-            ||  Synt.declare(fiel.get("srchable"), false)) {
-                if(!fiel.containsKey("lucnene-type")) {
-                    fiel.put("lucene-type", "search");
-                }
-            } else
-            // 文本禁搜索则为存储类型
-            if ("stored".equals(t)
-            ||"textarea".equals(t) ||"textview".equals(t)) {
-                if(!fiel.containsKey("lucnene-type")) {
-                    fiel.put("lucene-type", "stored");
-                }
+            }
+            
             }
 
             //** 构建字段参数 **/

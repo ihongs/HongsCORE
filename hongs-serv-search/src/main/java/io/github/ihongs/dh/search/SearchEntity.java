@@ -214,7 +214,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void setDoc(String id, Document doc) throws HongsException {
-        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.SET, new Term(Cnst.ID_KEY, id), doc ));
+        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.SET, new Term(":"+Cnst.ID_KEY, id), doc ));
         if (!TRNSCT_MODE) {
             commit();
         }
@@ -222,7 +222,7 @@ public class SearchEntity extends LuceneRecord {
 
     @Override
     public void delDoc(String id) throws HongsException {
-        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.DEL, new Term(Cnst.ID_KEY, id), null));
+        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.DEL, new Term(":"+Cnst.ID_KEY, id), null));
         if (!TRNSCT_MODE) {
             commit();
         }

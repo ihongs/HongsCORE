@@ -622,7 +622,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public void setDoc(String id, Document doc) throws HongsException {
         IndexWriter iw = getWriter();
         try {
-            iw.updateDocument (new Term(Cnst.ID_KEY, id), doc);
+            iw.updateDocument (new Term(":"+Cnst.ID_KEY, id), doc);
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
@@ -634,7 +634,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public void delDoc(String id) throws HongsException {
         IndexWriter iw = getWriter();
         try {
-            iw.deleteDocuments(new Term(Cnst.ID_KEY, id) /**/);
+            iw.deleteDocuments(new Term(":"+Cnst.ID_KEY, id) /**/);
         } catch (IOException ex) {
             throw new HongsException.Common(ex);
         }
@@ -646,7 +646,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Document getDoc(String id) throws HongsException {
         IndexSearcher  ff = getFinder( );
         try {
-                Query  qq = new TermQuery(new Term(Cnst.ID_KEY, id));
+                Query  qq = new TermQuery(new Term(":"+Cnst.ID_KEY, id));
               TopDocs  tt = ff.search(qq,  1  );
             ScoreDoc[] hh = tt.scoreDocs;
             if  ( 0 != hh.length ) {

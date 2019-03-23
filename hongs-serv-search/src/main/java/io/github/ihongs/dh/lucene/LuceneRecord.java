@@ -1504,7 +1504,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             } else
             {
                 if (g) {
-                    doc.add(f.get(k , v));
+                    doc.add(f.get(k, v));
                 }
                 if (q) {
                     doc.add(f.whr(k, v));

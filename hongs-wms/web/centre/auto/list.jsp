@@ -83,16 +83,16 @@
                         } else {
                             rb = "&rb.="+ name ;
                         }
-                        type = "statis";
+                        type = "amount";
                     } else {
                         rb   = "&rb.=" +  name ;
-                        type = "counts";
+                        type = "acount";
                     }
                 %>
                 <div class="checkbox" style="margin:0" data-name="<%=name%>" data-type="<%=type%>" data-rb="<%=rb%>"></div>
             </div>
         </div>
-        <%} else if (Synt.declare(info.get("findable"), false)) {%>
+        <%} else if (Synt.declare(info.get("filtable"), false)) {%>
         <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
             <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
@@ -139,6 +139,12 @@
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="<%=name%>" data-ft="_enum"></select>
             <%} else {%>
+                <%
+                    // 搜索类型优先模糊匹配
+                    if (Synt.declare(info.get("srchable"), false)) {
+                        name += ":"+ Cnst.CQ_REL;
+                    }
+                %>
                 <input type="text" class="form-control" name="<%=name%>" />
             <%} /*End If */%>
             </div>
@@ -278,7 +284,7 @@
     });
 
     var statobj = context.hsCate({
-        surl: "<%=_module%>/<%=_entity%>/statis/amount.act?rn=20&<%=Cnst.AB_KEY%>=_text",
+        aurl: "<%=_module%>/<%=_entity%>/statis/amount.act?rn=20&<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 

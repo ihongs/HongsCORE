@@ -109,7 +109,10 @@
             <%} else {%>
                 <%
                     // 搜索类型优先模糊匹配
-                    if (Synt.declare(info.get("srchable"), false)) {
+                    if (Synt.declare(info.get("srchable"), false)
+                    ||  Synt.declare(info.get("wordable"), false)
+                    ||  "textarea".equals(type)
+                    ||  "textview".equals(type)) {
                         name += ":"+ Cnst.CQ_REL;
                     }
                 %>

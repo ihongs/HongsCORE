@@ -53,13 +53,13 @@ public class SelectInvoker implements FilterInvoker {
                         adds -= SelectHelper.INFO;
                     }
                     if (ab.contains("_time")) {
-                        adds += SelectHelper.TIME;
+                        adds -= SelectHelper.TIME;
                     }
                     if (ab.contains("_link")) {
-                        adds += SelectHelper.LINK;
+                        adds -= SelectHelper.LINK;
                     }
                     if (ab.contains("_fork")) {
-                        adds += SelectHelper.FORK;
+                        adds -= SelectHelper.FORK;
                     }
                     if (ab.contains(".form")) {
                         adds -= SelectHelper.FORM;

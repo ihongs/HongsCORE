@@ -584,15 +584,6 @@ public class Data extends SearchEntity {
                 continue;
             }
 
-            if (v == null
-            ||  k == null
-            ||  k.equals("@")
-            ||  unstated( m )) {
-                continue;
-            }
-
-            //** 自定义补充部分 **/
-
             /**
              * 需写入名称和关键词
              * 2019/03/23
@@ -607,6 +598,13 @@ public class Data extends SearchEntity {
                 continue;
             }
 
+            if (v == null
+            ||  k == null
+            ||  k.equals("@")
+            ||  unstated( m )) {
+                continue;
+            }
+
             /**
              * 找出那些 textview 类的字段
              * 索引前需将标签代码清理干净
@@ -615,8 +613,6 @@ public class Data extends SearchEntity {
             if ("textview".equals(m.get("__type__"))) {
                 x = Tool.stripCros(Synt.asString(v));
             }
-
-            //** 自定义补充结束 **/
 
             IField  f ;
             String  t = datatype(m);

@@ -255,10 +255,10 @@ public class Form extends Model {
             // 补全表配置项
             fld = Synt.mapOf(
                 "__text__", name,
-                "listable", "?",
-                "sortable", "?",
-                "findable", "?",
-                "wordable", "?",
+                "listable", "?" ,
+                "sortable", "?" ,
+                "srchable", "?" ,
+                "findable", "?" ,
                 "nameable", "?"
             );
             if (tdf != null) {
@@ -287,19 +287,7 @@ public class Form extends Model {
                     "__name__", "name",
                     "__type__", "hidden",
                     "readonly", "true",
-                    "wordable", "true",
-                    "lucene-type", "stored"
-                ));
-            }
-
-            // 增加搜索字段
-            if (set.contains("word")) {
-                flds.add(Synt.mapOf(
-                    "__name__", "word",
-                    "__type__", "hidden",
-                    "readonly", "true",
-                    "unstored", "true",
-                    "lucene-type", "search"
+                    "wordable", "true"
                 ));
             }
 

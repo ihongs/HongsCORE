@@ -145,7 +145,7 @@
                     ||  Synt.declare(info.get("wordable"), false)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type)) {
-                        name += ":"+ Cnst.CQ_REL;
+                        name += Cnst.CQ_REL;
                     }
                 %>
                 <input type="text" class="form-control" name="<%=name%>" />

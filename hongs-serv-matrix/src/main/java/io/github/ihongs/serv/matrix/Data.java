@@ -565,9 +565,21 @@ public class Data extends SearchEntity {
 
     @Override
     protected void docAdd(Document doc, Map map) {
-        // 需写入名称和关键词
-        map.put("name", getName(map));
-        map.put("word", getWord(map));
+        /**
+         * 需写入名称和关键词
+         * 2019/03/23
+         * 存在外部只读才拼接
+         */
+        Map fs = getFields();
+        Map fc ;
+        fc = (Map) fs.get("name");
+        if (fc != null && Synt.declare(fc.get("readonly"), false)) {
+            map.put("name", getName(map));
+        }
+        fc = (Map) fs.get("word");
+        if (fc != null && Synt.declare(fc.get("readonly"), false)) {
+            map.put("word", getWord(map));
+        }
 
         super.docAdd(doc, map);
     }
@@ -670,20 +682,7 @@ public class Data extends SearchEntity {
         }
     }
 
-    public Set<String> getNameable() {
-        if (null != nmCols) {
-            return  nmCols;
-        }
-        Map fs = (Map) getFields().get("name");
-        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
-            nmCols =  Synt.setOf  (  "name"  );
-        } else {
-            nmCols =  getCaseNames("nameable");
-            nmCols.remove("name");
-        }
-        return nmCols;
-    }
-
+    @Override
     public Set<String> getWordable() {
         if (null != wdCols) {
             return  wdCols;
@@ -696,6 +695,20 @@ public class Data extends SearchEntity {
             wdCols.remove("word");
         }
         return wdCols;
+    }
+
+    public Set<String> getNameable() {
+        if (null != nmCols) {
+            return  nmCols;
+        }
+        Map fs = (Map) getFields().get("name");
+        if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
+            nmCols =  Synt.setOf  (  "name"  );
+        } else {
+            nmCols =  getCaseNames("nameable");
+            nmCols.remove("name");
+        }
+        return nmCols;
     }
 
     public Set<String> getSkipable() {

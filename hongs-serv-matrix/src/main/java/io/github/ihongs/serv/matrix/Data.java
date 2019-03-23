@@ -585,6 +585,7 @@ public class Data extends SearchEntity {
             }
 
             /**
+             * 补充:
              * 需写入名称和关键词
              * 2019/03/23
              * 存在外部只读才拼接
@@ -667,6 +668,7 @@ public class Data extends SearchEntity {
             }
 
             /**
+             * 补充:
              * 找出那些 textview 类的字段
              * 索引前需将标签代码清理干净
              */

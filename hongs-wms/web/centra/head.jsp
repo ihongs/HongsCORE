@@ -203,26 +203,29 @@
         });
 
         $("#sign-out")
-            .click(function() {
+            .click( function() {
                 $.hsWarn(
-                   "您确定要退出登录吗?",
-                   "点击“确定”将离开系统, 点击“取消”可继续使用. 感谢您的使用, 祝您工作顺利!",
-                   function() {
-                    $.get(hsFixUri("centra/sign/delete.act"), function() {
-                        location.assign(hsFixUri( "centra/login.html" ));
-                    });
-                }, function() {
-                    // Nothing todo.
-                }).addClass("alert-warning");
-            });
+                    "您确定要退出登录吗?\r\n" +
+                    "点击“确定”将离开系统, 点击“取消”可继续使用. 感谢您的使用, 祝您工作顺利!",
+                    "warning",
+                    function() {
+                        $.get(hsFixUri("centra/sign/delete.act"), function() {
+                            location.assign(hsFixUri( "centra/login.html" ));
+                        });
+                    },
+                    function() {
+                        // Nothing todo.
+                    }
+                );
+            } );
         $("#user-set")
-            .click(function() {
+            .click( function() {
                 $.hsOpen("centra/manage/mime.html");
-            });
+            } );
         $("#note-msg")
-            .click(function() {
+            .click( function() {
                 $.hsOpen("centra/manage/note.html");
-            });
+            } );
 
         // 菜单折叠和展开
         userbar.children("ul").hide();

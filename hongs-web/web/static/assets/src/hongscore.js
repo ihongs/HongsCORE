@@ -1741,8 +1741,15 @@ $.hsNote = function(msg, typ, end, sec) {
         end  = typ;
         typ  = "" ;
     }
+    var txt  ;
+    var pos  = msg.indexOf( "\r\n" );
+    if (pos !== -1) {
+        txt  = msg.substring(1+ pos);
+        msg  = msg.substring(0, pos);
+    }
     var opt  = {
         mode : "note" ,
+        text : txt ,
         title: msg ,
         close: end ,
         count: sec || 1.5
@@ -1763,7 +1770,7 @@ $.hsNote = function(msg, typ, end, sec) {
             opt.glass = "alert-success";
             break;
         default:
-            opt.glass = "alert-success";
+            console.warn("hsWarn: Wrong type " + typ);
     }
 
     return $.hsMask.call ( this , opt );
@@ -1775,8 +1782,15 @@ $.hsWarn = function(msg, typ, yes, not) {
         yes  = typ;
         typ  = "" ;
     }
+    var txt  ;
+    var pos  = msg.indexOf( "\r\n" );
+    if (pos !== -1) {
+        txt  = msg.substring(1+ pos);
+        msg  = msg.substring(0, pos);
+    }
     var opt  = {
         mode : "warn" ,
+        text : txt ,
         title: msg
     };
     var arr  = [ opt ];
@@ -1796,7 +1810,7 @@ $.hsWarn = function(msg, typ, yes, not) {
             opt.glass = "alert-success";
             break;
         default:
-            opt.text  =  typ ;
+            console.warn("hsWarn: Wrong type " + typ);
     }
 
     // 按钮

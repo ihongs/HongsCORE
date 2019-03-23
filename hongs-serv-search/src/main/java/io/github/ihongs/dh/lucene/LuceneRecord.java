@@ -355,11 +355,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (id != null && id.length() != 0) {
             throw new HongsException.Common("Id can not set in add");
         }
-        Document doc = new Document();
         id  =  Core.newIdentity();
         rd.put(Cnst.ID_KEY , id );
-        padDoc(doc, rd, null);
-        addDoc(doc);
+        addDoc(padDoc (rd));
         return id;
     }
 
@@ -387,10 +385,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 md . putAll( rd );
                 rd = md;
         }
-        doc =  new Document(); // 总是新建
         rd.put(Cnst.ID_KEY , id );
-        padDoc(doc, rd, null);
-        setDoc(id, doc);
+        setDoc( id , padDoc (rd)); // 总是新建 Document
     }
 
     /**
@@ -417,10 +413,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 md . putAll( rd );
                 rd = md;
         }
-        doc =  new Document(); // 总是新建
         rd.put(Cnst.ID_KEY , id );
-        padDoc(doc, rd, null);
-        setDoc(id, doc);
+        setDoc( id , padDoc (rd)); // 总是新建 Document
     }
 
     /**

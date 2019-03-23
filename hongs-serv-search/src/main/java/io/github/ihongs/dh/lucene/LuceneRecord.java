@@ -57,6 +57,8 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 
 /**
  * Lucene 记录模型
@@ -82,6 +84,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     private IndexWriter   writer  = null ;
     private String        dbpath  = null ;
     private String        dbname  = null ;
+    private Set           wdcolz  = null ;
     private Set<String>     reps  = null ; // 这个会使对象不是线程安全的, 好在当前对象无需线程内共享
 
     /**
@@ -910,7 +913,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (rd.containsKey(Cnst.WD_KEY)) {
             Object fv = rd.get (Cnst.WD_KEY);
                    fv = Synt.declare(fv, "");
-            Set<String> fs = getSrchable(  );
+            Set<String> fs = getWordable(  );
 
             if (fv != null && !"".equals(fv)) {
                 if (fs.size() > 1) {
@@ -1075,6 +1078,16 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     //** 底层工具 **/
+
+    /**
+     * 获取搜索列
+     * 特别针对 wd 查询参数
+     * 默认等同 getSrchable
+     * @return
+     */
+    protected Set<String> getWordable() {
+        return getSrchable();
+    }
 
     /**
      * 存储分析器
@@ -1295,10 +1308,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         //** 先查特有的 **/
 
-        if (srchable(fc)) {
-            return "search";
-        }
-
         ks = getSaveTypes("search");
         if (ks != null && ks.contains(t) ) {
             return "search";
@@ -1470,80 +1479,83 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             IField  f ;
             String  t = datatype(m);
-            boolean s = sortable(m);
-            boolean q = findable(m);
-            boolean u = unstored(m);
             boolean r = repeated(m);
-            boolean g = true; // 是否要存储, 数值类型过滤与存储是分离的, 故其等同于 !unstored
+            boolean s = sortable(m);
+            boolean p = srchable(m);
+            boolean q = findable(m);
+            boolean g =!unstored(m);
 
-            /**
-             * 日期和排序均是长整型
-             * 排序字段仅排序不存储
-             */
-            if (  "date".equals (t)) {
-                t = "long";
-            }
-            if ("sorted".equals (t)) {
-                t = "long";
-                s =  true ;
-                u =  true ;
-            }
-
-            /**
-             * 数值和搜索及对象类型
-             * 空串没有意义不作储存
-             */
-            if (   "int".equals (t)) { if ("".equals(v)) continue;
-                f = new IntField( );
-                g = !u;
-            } else
-            if (  "long".equals (t)) { if ("".equals(v)) continue;
+            if (t != null) switch (t) {
+            case "int":
+                if ("".equals(v)) continue;
+                f = new IntField();
+                p = false;
+                break;
+            case "long":
+                if ("".equals(v)) continue;
                 f = new LongField();
-                g = !u;
-            } else
-            if ( "float".equals (t)) { if ("".equals(v)) continue;
+                p = false;
+                break;
+            case "float":
+                if ("".equals(v)) continue;
                 f = new FloatField();
-                g = !u;
-            } else
-            if ("double".equals (t)) { if ("".equals(v)) continue;
+                p = false;
+                break;
+            case "double":
+                if ("".equals(v)) continue;
                 f = new DoubleField();
-                g = !u;
-            } else
-            if ("string".equals (t)) {
-                f = new StringFiald();
-                q = false; // 字符类型自带筛选
-            } else
-            if ("search".equals (t)) {
-                f = new SearchFiald();
-                q = false; // 搜索类型自带筛选
-            } else
-            if ("object".equals (t)) { if ("".equals(v)) continue;
+                p = false;
+                break;
+            case "date":
+                if ("".equals(v)) continue;
+                f = new LongField();
+                p = false;
+                break;
+            case "sorted":
+                if ("".equals(v)) continue;
+                f = new LongField();
+                s = true ;
+                g = false; // 排序类型无需存储
+                p = false; // 排序类型无法搜索
+                q = false; // 排序类型无法筛选
+                break;
+            case "object":
+                if ("".equals(v)) continue;
                 f = new ObjectFiald();
+                g = true ;
+                p = false; // 对象类型无法搜索
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
-            } else
-            {
-                f = new StoredFiald();
+                break;
+            case "stored":
+                f = new StringFiald();
+                g = true ;
+                p = false; // 存储类型无法搜索
                 q = false; // 存储类型无法筛选
                 s = false; // 存储类型无法排序
+                break;
+            default:
+                f = new StringFiald();
+            } else {
+                f = new StringFiald();
             }
 
             if (r) {
                 if (g) {
-                    if (v instanceof Object[ ] ) {
-                        for (Object w: (Object[ ] ) v) {
-                            doc.add(f.get(k, w, u));
+                    if (v instanceof Object [ ]) {
+                        for (Object w: (Object [ ]) v) {
+                            doc.add(f.get(k, w));
                         }
                     } else
                     if (v instanceof Collection) {
                         for (Object w: (Collection) v) {
-                            doc.add(f.get(k, w, u));
+                            doc.add(f.get(k, w));
                         }
                     } else
                     {
-                        Set a = Synt.asSet(v);
-                        for (Object w: a) {
-                            doc.add(f.get(k, w, u));
+                        Set a = Synt.asSet ( v );
+                        for (Object w: a ) {
+                            doc.add(f.get(k, w));
                         }
                         v = a;
                     }
@@ -1556,6 +1568,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                         doc.add(f.whr(k, w));
                     }
                 }
+                if (p && a != null && !a.isEmpty()) {
+                    for (Object w: a) {
+                        doc.add(f.wdr(k, w));
+                    }
+                }
                 // 排序值不能存多个
                 if (s && a != null && !a.isEmpty()) {
 //                  for (Object w: a) {
@@ -1565,10 +1582,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 }
             } else
             {
-                doc.add(f.get( k, v, u));
-
+                if (g) {
+                    doc.add(f.get(k , v));
+                }
                 if (q) {
                     doc.add(f.whr(k, v));
+                }
+                if (p) {
+                    doc.add(f.wdr(k, v));
                 }
                 if (s) {
                     doc.add(f.odr(k, v));
@@ -1583,6 +1604,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * 操作符:
      *  eq 等于
      *  ne 不等于
+     *  cq 匹配
+     *  nc 不匹配
      *  lt 小于
      *  le 小于或等于
      *  gt 大于
@@ -1610,27 +1633,24 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             m = new HashMap();
             m.putAll((Map) v);
         } else {
-            if (null== v || "".equals(v)) {
-                return ;
+            if (null==v || "".equals(v)) {
+                return;
             }
             m = new HashMap();
-            if (v instanceof Collection ) {
-                Collection c = (Collection) v;
+            if (v instanceof Collection) {
+            Collection c  = (Collection) v;
                     c.remove("");
                 if (c.isEmpty()) {
                     return;
                 }
                 m.put(Cnst.IN_REL, c);
             } else
-            if (q instanceof SearchQuery) {
-                m.put(Cnst.CQ_REL, v);
-            } else
             {
                 m.put(Cnst.EQ_REL, v);
             }
         }
 
-        // 对 text 类型指定分词器
+        // 搜索类型指定分词器
         if (q instanceof SearchQuery) {
             Map<String, Map> fields = getFields( );
             Map         fc = ( Map ) fields.get(k);
@@ -1642,73 +1662,96 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (m.containsKey(Cnst.WT_REL)) {
             src = qry;
             qry = new BooleanQuery.Builder();
-            bst = Synt.declare(m.remove(Cnst.WT_REL), bst);
+            bst = Synt.declare(m.remove(Cnst.WT_REL), bst );
         }
+
+        //** 空值查询 **/
+
+        if (m.containsKey(Cnst.IS_REL)) { // Is
+            String a = Synt.asString(m.remove(Cnst.IS_REL));
+            String l = q instanceof SearchQuery ? "!" : ":";
+            Query  p ;
+            try {
+                p = new QueryParser(l+k, new StandardAnalyzer()).parse("[* TO *]");
+            } catch (ParseException ex) {
+                throw new HongsExemption.Common (ex);
+            }
+            if ("FILL".equalsIgnoreCase(a)) {
+                qry.add(p, BooleanClause.Occur.MUST);
+            } else
+            if ("NULL".equalsIgnoreCase(a)) {
+                qry.add(p, BooleanClause.Occur.MUST_NOT);
+            } else
+            if ("FINE".equalsIgnoreCase(a)) {
+                qry.add(p, BooleanClause.Occur.SHOULD  );
+            }
+        }
+
+        //** 模糊匹配 */
+
+        if (m.containsKey(Cnst.CQ_REL)) {
+            Object n = m.remove(Cnst.CQ_REL);
+            if ( ! "".equals(n)) // 空即查全部, 没必要解析
+            qry.add(q.gen(k, n), BooleanClause.Occur.MUST);
+        }
+
+        if (m.containsKey(Cnst.NC_REL)) {
+            Object n = m.remove(Cnst.NC_REL);
+            qry.add(q.gen(k, n), BooleanClause.Occur.MUST_NOT);
+        }
+
+        if (m.containsKey(Cnst.SC_REL)) {
+            Object n = m.remove(Cnst.SC_REL);
+            qry.add(q.gen(k, n), BooleanClause.Occur.SHOULD  );
+        }
+
+        //** 精确匹配 **/
 
         if (m.containsKey(Cnst.EQ_REL)) {
             Object n = m.remove(Cnst.EQ_REL);
-            qry.add(q.get(k, n), BooleanClause.Occur.MUST);
-        } else
-        if (m.containsKey(Cnst.CQ_REL)) {
-            Object n = m.remove(Cnst.CQ_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.MUST);
         }
 
         if (m.containsKey(Cnst.NE_REL)) {
             Object n = m.remove(Cnst.NE_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
-        } else
-        if (m.containsKey(Cnst.NC_REL)) {
-            Object n = m.remove(Cnst.NC_REL);
-            qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
         }
 
         if (m.containsKey(Cnst.SE_REL)) {
             Object n = m.remove(Cnst.SE_REL);
-            qry.add(q.get(k, n), BooleanClause.Occur.SHOULD);
+            qry.add(q.get(k, n), BooleanClause.Occur.SHOULD  );
         }
 
+        //** 包含多个 **/
+
         if (m.containsKey(Cnst.AI_REL)) { // All In
-            Set a = Synt.declare(m.remove(Cnst.AI_REL), new HashSet());
-            for(Object x : a) {
+            Set a = Synt.declare(m.remove(Cnst.AI_REL), Set.class);
+            if (a!= null) for(Object x : a) {
                 qry.add(q.get(k, x), BooleanClause.Occur.MUST);
             }
         }
 
         if (m.containsKey(Cnst.NI_REL)) { // Not In
-            Set a = Synt.declare(m.remove(Cnst.NI_REL), new HashSet());
-            for(Object x : a) {
+            Set a = Synt.declare(m.remove(Cnst.NI_REL), Set.class);
+            if (a!= null) for(Object x : a) {
                 qry.add(q.get(k, x), BooleanClause.Occur.MUST_NOT);
             }
         }
 
         if (m.containsKey(Cnst.SI_REL)) { // May In
-            Set a = Synt.declare(m.remove(Cnst.SI_REL), new HashSet());
-            for(Object x : a) {
-                qry.add(q.get(k, x), BooleanClause.Occur.SHOULD);
+            Set a = Synt.declare(m.remove(Cnst.SI_REL), Set.class);
+            if (a!= null) for(Object x : a) {
+                qry.add(q.get(k, x), BooleanClause.Occur.SHOULD  );
             }
         }
 
         if (m.containsKey(Cnst.IN_REL)) { // In
-            BooleanQuery.Builder qay = new BooleanQuery.Builder();
-            Set a = Synt.declare(m.remove(Cnst.IN_REL), new HashSet());
-            for(Object x : a) {
-                qay.add(q.get(k, x), BooleanClause.Occur.SHOULD);
+            BooleanQuery.Builder qay = new BooleanQuery.Builder( );
+            Set a = Synt.declare(m.remove(Cnst.IN_REL), Set.class);
+            if (a!= null) for(Object x : a) {
+                qay.add(q.get(k, x), BooleanClause.Occur.SHOULD  );
             }
-            qry.add(qay.build(), BooleanClause.Occur.MUST );
-        }
-
-        if (m.containsKey(Cnst.IS_REL)) { // Is
-            String a = Synt.asString(m.remove(Cnst.IS_REL));
-            if ("FILL".equalsIgnoreCase(a)) {
-                qry.add(new SearchQuery().get(k, null), BooleanClause.Occur.MUST);
-            } else
-            if ("NULL".equalsIgnoreCase(a)) {
-                qry.add(new SearchQuery().get(k, null), BooleanClause.Occur.MUST_NOT);
-            } else
-            if ("FINE".equalsIgnoreCase(a)) {
-                qry.add(new SearchQuery().get(k, null), BooleanClause.Occur.SHOULD);
-            }
+            qry.add(qay.build(), BooleanClause.Occur.MUST);
         }
 
         //** 区间查询 **/

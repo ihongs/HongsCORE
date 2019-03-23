@@ -10,15 +10,7 @@ import org.apache.lucene.document.StoredField;
  */
 public class ObjectFiald implements IField {
     @Override
-    public Field whr(String k, Object v) {
-        return null; // 对象类型无法用于排序, 无法增加排序字段
-    }
-    @Override
-    public Field odr(String k, Object v) {
-        return null; // 对象类型无法用于排序, 无法增加排序字段
-    }
-    @Override
-    public Field get(String k, Object v, boolean u) {
+    public Field get(String k, Object v) {
         if (v == null || "".equals(v)) {
             v  = "{}" ;
         } else
@@ -26,5 +18,17 @@ public class ObjectFiald implements IField {
             v  = Data.toString(v, true );
         }
         return new StoredField(k, v.toString());
+    }
+    @Override
+    public Field whr(String k, Object v) {
+        return null; // 对象类型无法用于排序, 无法增加排序字段
+    }
+    @Override
+    public Field wdr(String k, Object v) {
+        return null; // 对象类型无法模糊搜索, 无法增加搜索字段
+    }
+    @Override
+    public Field odr(String k, Object v) {
+        return null; // 对象类型无法用于排序, 无法增加排序字段
     }
 }

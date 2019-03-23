@@ -2,7 +2,9 @@ package io.github.ihongs.dh.lucene.field;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.SortedDocValuesField;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.util.BytesRef;
 
 /**
@@ -11,15 +13,19 @@ import org.apache.lucene.util.BytesRef;
  */
 public class StringFiald implements IField {
     @Override
+    public Field get(String k, Object v) {
+        return new StoredField(k, v != null ? v.toString() : "");
+    }
+    @Override
     public Field whr(String k, Object v) {
-        return null; // 字符类型本身即可用于过滤, 无需额外增加过滤字段
+        return new StringField(":"+k, v != null ? v.toString() : "", Field.Store.NO);
+    }
+    @Override
+    public Field wdr(String k, Object v) {
+        return new   TextField("!"+k, v != null ? v.toString() : "", Field.Store.NO);
     }
     @Override
     public Field odr(String k, Object v) {
         return new SortedDocValuesField("."+k, new BytesRef(v != null ? v.toString() : ""));
-    }
-    @Override
-    public Field get(String k, Object v, boolean u) {
-        return new StringField(k, v != null ? v.toString() : "", u ? Field.Store.NO : Field.Store.YES);
     }
 }

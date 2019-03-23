@@ -603,15 +603,6 @@ public class Data extends SearchEntity {
                 continue;
             }
 
-            /**
-             * 找出那些 textview 类的字段
-             * 索引前需将标签代码清理干净
-             */
-            Object x = v;
-            if ("textview".equals(m.get("__type__"))) {
-                x = Tool.stripCros(Synt.asString(v));
-            }
-
             IField  f ;
             String  t = datatype(m);
             boolean r = repeated(m);
@@ -673,6 +664,15 @@ public class Data extends SearchEntity {
                 f = new StringFiald();
             } else {
                 f = new StringFiald();
+            }
+
+            /**
+             * 找出那些 textview 类的字段
+             * 索引前需将标签代码清理干净
+             */
+            Object x = v;
+            if (p && "textview".equals(m.get("__type__"))) {
+                x = Tool.stripCros(Synt.asString(x));
             }
 
             if (r) {

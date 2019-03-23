@@ -153,7 +153,7 @@ function HsStat (context , opts) {
     context.data("HsStat", this);
     context.addClass( "HsStat" );
 
-    this.surl = opts.surl;
+    this.aurl = opts.aurl;
     this.curl = opts.curl;
     this.context = context;
     this.statbox = context.find(".statbox");
@@ -205,7 +205,7 @@ HsStat.prototype = {
         var that    = this;
         var statbox = this.statbox;
         hsRequires("static/addons/echarts/echarts.js", function() {
-            statbox.find("[data-type=counts],[data-type=statis]")
+            statbox.find("[data-type=acount],[data-type=amount]")
                    .each(function() {
                 var sta =  $(  this  );
                 if(!sta.data("echart")) {
@@ -215,21 +215,21 @@ HsStat.prototype = {
                 }
             });
 
-            that.statis();
-            that.counts();
+            that.amount();
+            that.acount();
         });
     },
 
-    statis: function(rb) {
+    amount: function(rb) {
         var that = this;
-        var url  = this.surl;
+        var url  = this.aurl;
         var context = this.context;
         var statbox = this.statbox;
         var findbox = this.findbox;
 
         if ( ! rb ) {
             rb = [];
-            statbox.find( "[data-type=statis]" )
+            statbox.find( "[data-type=amount]" )
                    .each(function() {
                 rb.push($(this).attr("data-rb"));
             });
@@ -248,8 +248,8 @@ HsStat.prototype = {
                      if (k == "__count__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
-                     that.setStatisCheck(n, d);
-                     that.setStatisChart(n, d);
+                     that.setAmountCheck(n, d);
+                     that.setAmountChart(n, d);
                 }
 
                 var list = context.data( "HsList" );
@@ -267,7 +267,7 @@ HsStat.prototype = {
         });
     },
 
-    counts: function(rb) {
+    acount: function(rb) {
         var that = this;
         var url  = this.curl;
         var context = this.context;
@@ -276,7 +276,7 @@ HsStat.prototype = {
 
         if ( ! rb ) {
             rb = [];
-            statbox.find( "[data-type=counts]" )
+            statbox.find( "[data-type=acount]" )
                    .each(function() {
                 rb.push($(this).attr("data-rb"));
             });
@@ -295,8 +295,8 @@ HsStat.prototype = {
                      if (k == "__count__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
-                     that.setCountsCheck(n, d);
-                     that.setCountsChart(n, d);
+                     that.setAcountCheck(n, d);
+                     that.setAcountChart(n, d);
                 }
 
                 var list = context.data( "HsList" );
@@ -314,7 +314,7 @@ HsStat.prototype = {
         });
     },
 
-    setStatisCheck: function(box, data) {
+    setAmountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.find( ".checkbox").empty();
@@ -339,7 +339,7 @@ HsStat.prototype = {
         }
     },
 
-    setCountsCheck: function(box, data) {
+    setAcountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.find( ".checkbox").empty();
@@ -364,7 +364,7 @@ HsStat.prototype = {
         }
     },
 
-    setCountsChart: function(box, data) {
+    setAcountChart: function(box, data) {
         var chart = box.data("echart");
         var xData = [];
         var bData = [];
@@ -447,7 +447,7 @@ HsStat.prototype = {
         chart.setOption(opts);
     },
 
-    setStatisChart: function(box, data) {
+    setAmountChart: function(box, data) {
         var chart = box.data("echart");
         var xData = [];
         var bData1 = [];

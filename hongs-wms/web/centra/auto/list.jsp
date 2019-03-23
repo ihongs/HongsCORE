@@ -58,7 +58,7 @@
             String  text = (String) info.get("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            || !Synt.declare(info.get("findable"), false)) {
+            || !Synt.declare(info.get("filtable"), false)) {
                 continue;
             }
         %>
@@ -107,7 +107,13 @@
             <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type) || "check".equals(type) || "radio".equals(type)) {%>
                 <select class="form-control" name="ar.0.<%=name%>" data-ft="_enum"></select>
             <%} else {%>
-                <input type="text" class="form-control" name="ar.0.<%=name%>" />
+                <%
+                    // 搜索类型优先模糊匹配
+                    if (Synt.declare(info.get("srchable"), false)) {
+                        name += ":"+ Cnst.CQ_REL;
+                    }
+                %>
+                <input class="form-control" type="text" name="ar.0.<%=name%>" />
             <%} /*End If */%>
             </div>
         </div>
@@ -161,10 +167,10 @@
                 } else {
                     rb = "&rb.="+ name ;
                 }
-                type = "statis";
+                type = "amount";
             } else {
                 rb   = "&rb.=" +  name ;
-                type = "counts";
+                type = "acount";
             }
         %>
         <div data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-xs-6" style="padding: 5px;">
@@ -335,7 +341,7 @@
     });
 
     var statobj = context.hsStat({
-        surl: "<%=_module%>/<%=_entity%>/statis/amount.act?rn=20&<%=Cnst.AB_KEY%>=_text",
+        aurl: "<%=_module%>/<%=_entity%>/statis/amount.act?rn=20&<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 

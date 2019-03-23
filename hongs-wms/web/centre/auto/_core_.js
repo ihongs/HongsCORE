@@ -284,7 +284,7 @@ function HsCate (context , opts) {
     context.data("HsCate", this);
     context.addClass( "HsCate" );
 
-    this.surl = opts.surl;
+    this.aurl = opts.aurl;
     this.curl = opts.curl;
     this.context = context;
     this.statbox = context.find(".statbox");
@@ -333,11 +333,11 @@ function HsCate (context , opts) {
 }
 HsCate.prototype = {
     load: function() {
-        this.statis();
-        this.counts();
+        this.amount();
+        this.acount();
     },
 
-    statis: function(rb) {
+    amount: function(rb) {
         var that = this;
         var url  = this.surl;
         var context = this.context;
@@ -346,7 +346,7 @@ HsCate.prototype = {
 
         if ( ! rb ) {
             rb = [];
-            statbox.find( "[data-type=statis]" )
+            statbox.find( "[data-type=amount]" )
                    .each(function() {
                 rb.push($(this).attr("data-rb"));
             });
@@ -365,7 +365,7 @@ HsCate.prototype = {
                      if (k == "__count__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
-                     that.setStatisCheck(n, d);
+                     that.setAmountCheck(n, d);
                 }
 
                 var list = context.data( "HsList" );
@@ -383,7 +383,7 @@ HsCate.prototype = {
         });
     },
 
-    counts: function(rb) {
+    acount: function(rb) {
         var that = this;
         var url  = this.curl;
         var context = this.context;
@@ -392,7 +392,7 @@ HsCate.prototype = {
 
         if ( ! rb ) {
             rb = [];
-            statbox.find( "[data-type=counts]" )
+            statbox.find( "[data-type=acount]" )
                    .each(function() {
                 rb.push($(this).attr("data-rb"));
             });
@@ -411,7 +411,7 @@ HsCate.prototype = {
                      if (k == "__count__") continue;
                      var d  = rst.info[k];
                      var n  = statbox.find("[data-name='"+k+"']");
-                     that.setCountsCheck(n, d);
+                     that.setAcountCheck(n, d);
                 }
 
                 var list = context.data( "HsList" );
@@ -429,7 +429,7 @@ HsCate.prototype = {
         });
     },
 
-    setStatisCheck: function(box, data) {
+    setAmountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.empty();
@@ -461,7 +461,7 @@ HsCate.prototype = {
         }
     },
 
-    setCountsCheck: function(box, data) {
+    setAcountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.empty();

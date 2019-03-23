@@ -84,8 +84,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     private IndexWriter   writer  = null ;
     private String        dbpath  = null ;
     private String        dbname  = null ;
-    private Set           wdcolz  = null ;
-    private Set<String>     reps  = null ; // 这个会使对象不是线程安全的, 好在当前对象无需线程内共享
 
     /**
      * 构造方法
@@ -359,7 +357,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
         id = Core.newIdentity();
         rd.put(Cnst.ID_KEY, id);
-        addDoc(map2Doc(rd));
+        addDoc(toDoc(rd));
         return id;
     }
 
@@ -383,12 +381,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setReps(null);
-            Map md = doc2Map(doc);
-            md.putAll(rd);rd = md;
-            doc =  new Document();
+            Map md =  toDat(doc );
+                md . putAll( rd );
+                rd = md;
+            doc = new Document( );
         }
-        rd.put(Cnst.ID_KEY, id);
+        rd.put(Cnst.ID_KEY , id );
         docAdd(doc, rd);
         setDoc(id, doc);
     }
@@ -413,11 +411,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
              * 故只好转换成 map 再重新设置, 这样才能确保索引完整
              * 但那些 Store=NO 的数据将无法设置
              */
-            setReps(null);
-            Map md = doc2Map(doc);
-            md.putAll(rd);rd = md;
+            Map md =  toDat(doc );
+                md . putAll( rd );
+                rd = md;
         }
-        rd.put(Cnst.ID_KEY, id);
+        rd.put(Cnst.ID_KEY , id );
         docAdd(doc, rd);
         setDoc(id, doc);
     }
@@ -446,9 +444,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     public Map get(String id) throws HongsException {
         Document doc = getDoc(id);
-        if ( doc != null) {
-            setReps(null);
-            return doc2Map( doc );
+        if (doc != null) {
+            return toDat ( doc  );
         } else {
             return new HashMap( );
         }
@@ -595,14 +592,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Loop search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
-                  setReps (rd);
-        Loop  r = new Loop(this, q, s, begin, limit);
+        Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        Loop  l = new Loop(this, q,s,r, begin,limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
             CoreLogger.debug("LuceneRecord.search: " + r.toString());
         }
 
-        return r ;
+        return l;
     }
 
     //** 组件方法 **/
@@ -659,15 +656,21 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
     }
 
-    public Document map2Doc(Map map) {
+    public Document toDoc(Map map) {
         Document doc = new Document();
         docAdd(doc, map);
         return doc;
     }
 
-    public Map doc2Map(Document doc) {
+    public Map toDat(Document doc) {
         Map map = new LinkedHashMap();
-        mapAdd(map, doc);
+        datAdd(doc, map);
+        return map;
+    }
+
+    public Map toDat(Document doc, Set rep) {
+        Map map = new LinkedHashMap();
+        datAdd(doc, map, rep);
         return map;
     }
 
@@ -862,12 +865,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         BooleanQuery.Builder qr = new BooleanQuery.Builder();
 
         for (Object o : rd.entrySet()) {
-            Map.Entry e = (Map.Entry) o;
-            Object fv = e.getValue( );
-            String fn = (String) e.getKey();
+            Map.Entry e = (Map.Entry)o;
+            Object fv =  e.getValue( );
+            Object fu =  e.getKey  ( );
+            String fn = (String) fu;
 
             // 自定义查询
-            if (queried ( rd, fn, fv, qr )) {
+            if (! qryAdd(qr, fn, fv) ) {
                 continue;
             }
 
@@ -875,7 +879,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (m == null) {
                 continue;
             }
-            if (findable(m) == false ) {
+            if (! findable(m)) {
+                continue;
+            }
+            if (! srchable(m)) {
                 continue;
             }
 
@@ -1008,15 +1015,15 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (rv) fn = fn.substring ( 1 );
 
             // 自定义排序
-            if (sorted ( rd, fn, rv, of ) ) {
+            if (! srtAdd(of, fn, rv) ) {
                 continue;
             }
 
-            Map m = (Map ) fields.get ( fn);
+            Map m = (Map ) fields.get( fn );
             if (m == null) {
                 continue;
             }
-            if (sortable(m)==false) {
+            if (! sortable(m)) {
                 continue;
             }
 
@@ -1063,18 +1070,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
 
         return new Sort(of.toArray(new SortField[0]));
-    }
-
-    /**
-     * 返回字段
-     * @param rd
-     */
-    public void setReps(Map rd) {
-        if ( rd == null) {
-            reps = null;
-        } else {
-            reps = Synt.toTerms (rd.get(Cnst.RB_KEY));
-        }
     }
 
     //** 底层工具 **/
@@ -1375,94 +1370,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return Synt.declare(fc.get(  "unstated"  ), false);
     }
 
-    protected boolean ignored (Map fc) {
-        String name = (String) fc.get ("__name__");
-        return name == null || name.isEmpty() || name.startsWith("@")
-        || ! ( reps == null || reps.isEmpty() || reps.contains(name));
-    }
-
-    protected boolean queried (Map rd, String fn, Object fv, BooleanQuery.Builder qb) {
-        return false;
-    }
-
-    protected boolean sorted  (Map rd, String fn, boolean r, List <  SortField  > sf) {
-        return false;
-    }
-
-    protected void mapAdd(Map map, Document doc) {
-        Map<String, Map> fields = getFields( );
-        for(Object o : fields.entrySet()) {
-            Map.Entry e = (Map.Entry) o;
-            Map    m = (Map) e.getValue();
-            String k = (String)e.getKey();
-
-            if (unstored(m)
-            ||  unstated(m)
-            ||  ignored (m)) {
-                continue;
-            }
-
-            IValue  v ;
-            String  t = datatype(m);
-            boolean r = repeated(m);
-            IndexableField[] fs = doc.getFields(k);
-
-            if ("sorted".equals(t)) {
-                continue; // 排序字段没有可见值
-            } else
-            if (  "date".equals(t)) {
-                // 时间戳转 Date 对象时需要乘以 1000
-                String  y = Synt.declare(m.get("type"), "");
-                if (OBJECT_MODE) {
-                    if ("time".equals(y) || "timestamp".equals(y)) {
-                        v = new NumberValue( );
-                    } else {
-                        v = new DatimeValue(m);
-                    }
-                } else {
-                    if ("time".equals(y) || "timestamp".equals(y)) {
-                        v = new NumeraValue( );
-                    } else {
-                        v = new DatextValue(m);
-                    }
-                }
-            } else
-            if (   "int".equals(t)
-            ||    "long".equals(t)
-            ||   "float".equals(t)
-            ||  "double".equals(t)
-            ||  "number".equals(t)) {
-                if (OBJECT_MODE) {
-                    v = new NumberValue();
-                } else {
-                    v = new NumeraValue();
-                }
-            } else
-            if ("object".equals(t)) {
-                v = new ObjectValue();
-            } else
-            {
-                v = new StringValue();
-            }
-
-            if (r) {
-                if (fs.length > 0) {
-                    for(IndexableField f : fs ) {
-                        Dict.put(map , v.get(f), k, null);
-                    }
-                } else {
-                    map.put(k , new ArrayList());
-                }
-            } else {
-                if (fs.length > 0) {
-                    map.put(k , v.get( fs[0] ) );
-                } else {
-                    map.put(k , null);
-                }
-            }
-        }
-    }
-
     protected void docAdd(Document doc, Map map) {
         Map<String, Map> fields = getFields();
         for(Object o : fields.entrySet()) {
@@ -1519,6 +1426,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false; // 排序类型无法搜索
                 q = false; // 排序类型无法筛选
                 break;
+            case "stored":
+                f = new StringFiald();
+                g = true ;
+                p = false; // 存储类型无法搜索
+                q = false; // 存储类型无法筛选
+                s = false; // 存储类型无法排序
+                break;
             case "object":
                 if ("".equals(v)) continue;
                 f = new ObjectFiald();
@@ -1526,13 +1440,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false; // 对象类型无法搜索
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
-                break;
-            case "stored":
-                f = new StringFiald();
-                g = true ;
-                p = false; // 存储类型无法搜索
-                q = false; // 存储类型无法筛选
-                s = false; // 存储类型无法排序
                 break;
             default:
                 f = new StringFiald();
@@ -1593,6 +1500,94 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 }
                 if (s) {
                     doc.add(f.odr(k, v));
+                }
+            }
+        }
+    }
+
+    protected void datAdd(Document doc, Map map) {
+        datAdd(doc, map, null);
+    }
+
+    protected void datAdd(Document doc, Map map, Set rep) {
+        if (rep != null && rep.isEmpty( )) {
+            rep  = null;
+        }
+
+        Map<String, Map> fields = getFields();
+        for(Map.Entry<String, Map> e : fields.entrySet()) {
+            Map    m = e.getValue();
+            String k = e.getKey  ();
+
+            if (rep != null
+            && !rep.contains(k)) {
+                continue;
+            }
+            if ("@" . equals(k)) {
+                continue;
+            }
+
+            if (unstored(m)
+            ||  unstated(m)) {
+                continue;
+            }
+
+            IValue  v ;
+            String  t = datatype(m);
+            boolean r = repeated(m);
+            IndexableField[] fs = doc.getFields(k);
+
+            if (  "date".equals(t)) {
+                // 时间戳转 Date 对象时需要乘以 1000
+                String  y = Synt.declare(m.get("type"), "");
+                if (OBJECT_MODE) {
+                    if ("time".equals(y) || "timestamp".equals(y)) {
+                        v = new NumberValue( );
+                    } else {
+                        v = new DatimeValue(m);
+                    }
+                } else {
+                    if ("time".equals(y) || "timestamp".equals(y)) {
+                        v = new NumeraValue( );
+                    } else {
+                        v = new DatextValue(m);
+                    }
+                }
+            } else
+            if (   "int".equals(t)
+            ||    "long".equals(t)
+            ||   "float".equals(t)
+            ||  "double".equals(t)
+            ||  "number".equals(t)) {
+                if (OBJECT_MODE) {
+                    v = new NumberValue();
+                } else {
+                    v = new NumeraValue();
+                }
+            } else
+            if ("sorted".equals(t)) {
+                continue; // 纯排序字段没有可见值
+            } else
+            if ("object".equals(t)) {
+                v = new ObjectValue();
+            } else
+            {
+                v = new StringValue();
+            }
+
+            if (r) {
+                if (fs.length > 0) {
+                    for(IndexableField f : fs ) {
+                        Dict.put(map , v.get(f), k, null);
+                    }
+                } else {
+                    map.put(k , new ArrayList());
+                }
+            } else {
+                if (fs.length > 0) {
+                    map.put(k , v.get ( fs[0] ));
+                } else {
+                    map.put(k , null);
                 }
             }
         }
@@ -1832,6 +1827,28 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
     }
 
+    /**
+     * 自定义查询
+     * @param qry
+     * @param k
+     * @param v
+     * @return 返回 false 阻断
+     */
+    protected boolean qryAdd(BooleanQuery.Builder qry, String k, Object v) {
+        return true;
+    }
+
+    /**
+     * 自定义排序
+     * @param srt
+     * @param k
+     * @param r
+     * @return 返回 false 阻断
+     */
+    protected boolean srtAdd(List<SortField> srt, String k, boolean r) {
+        return true;
+    }
+
     //** 辅助对象 **/
 
     /**
@@ -1845,6 +1862,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         private       ScoreDoc      doc ;
         private final Query   q;
         private final Sort    s;
+        private final Set     r;
         private final int     b; // 起始位置
         private final int     l; // 单次限制
         private       int     L; // 起始限制
@@ -1858,15 +1876,17 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
          * @param that 记录实例
          * @param q 查询对象
          * @param s 排序对象
+         * @param r 返回字段
          * @param b 起始偏移
          * @param l 查询限额
          */
-        public Loop(LuceneRecord that, Query q, Sort s, int b, int l) {
+        public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
             this.that = that;
             this.docs = null;
             this.doc  = null;
             this.q    = q;
             this.s    = s;
+            this.r    = r;
             this.b    = b;
 
             // 是否获取全部
@@ -1937,9 +1957,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 throw new NullPointerException("hasNext not run?");
             }
             try {
-                /*Read*/ doc = docs[i++];
+                /*Read*/ doc = docs[i ++ ];
                 Document dox = reader.document( doc.doc );
-                return that.doc2Map(dox);
+                return  that.toDat (dox,r);
             } catch (IOException ex) {
                 throw new HongsExemption.Common(ex);
             }

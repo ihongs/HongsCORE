@@ -110,8 +110,9 @@ input[type="time"].form-control {
 .center-block {
     float  : none;
 }
-.form-group:empty ,
-.help-block:empty {
+.form-group .help-block:empty ,
+.form-group .text-error:empty ,
+.form-group .text-muted:empty {
     display: none;
 }
 .help-block.text-muted,

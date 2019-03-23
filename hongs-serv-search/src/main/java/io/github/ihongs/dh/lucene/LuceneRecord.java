@@ -1482,8 +1482,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     }
                 }
 
-                // 筛选和排序前去重
+                // 条件类可去重
                 Set a = Synt.asSet(v);
+
+                if (s && a != null && !a.isEmpty()) {
+                    Object  w = a.toArray( )[0]; // 排序值不能存多个
+                        doc.add(f.odr(k, w));
+                }
                 if (q && a != null && !a.isEmpty()) {
                     for (Object w: a) {
                         doc.add(f.whr(k, w));
@@ -1494,26 +1499,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                         doc.add(f.wdr(k, w));
                     }
                 }
-                // 排序值不能存多个
-                if (s && a != null && !a.isEmpty()) {
-//                  for (Object w: a) {
-                        v = a.toArray()[ 0 ];
-                        doc.add(f.odr(k, v));
-//                  }
-                }
             } else
             {
                 if (g) {
                     doc.add(f.get(k, v));
+                }
+                if (s) {
+                    doc.add(f.odr(k, v));
                 }
                 if (q) {
                     doc.add(f.whr(k, v));
                 }
                 if (p) {
                     doc.add(f.wdr(k, v));
-                }
-                if (s) {
-                    doc.add(f.odr(k, v));
                 }
             }
         }

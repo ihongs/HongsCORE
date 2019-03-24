@@ -1544,7 +1544,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             boolean r = repeated(m);
             IndexableField[] fs = doc.getFields(k);
 
-            if (  "date".equals(t)) {
+            if (t != null) switch (t) {
+            case "sorted":
+                continue; // 纯排序字段无可见值
+            case "date":
                 // 时间戳转 Date 对象时需要乘以 1000
                 String  y = Synt.declare(m.get("type"), "");
                 if (OBJECT_MODE) {
@@ -1560,25 +1563,24 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                         v = new DatextValue(m);
                     }
                 }
-            } else
-            if (   "int".equals(t)
-            ||    "long".equals(t)
-            ||   "float".equals(t)
-            ||  "double".equals(t)
-            ||  "number".equals(t)) {
+                break;
+            case "int":
+            case "long":
+            case "float":
+            case "double":
+            case "number":
                 if (OBJECT_MODE) {
                     v = new NumberValue();
                 } else {
                     v = new NumeraValue();
                 }
-            } else
-            if ("sorted".equals(t)) {
-                continue; // 纯排序字段没有可见值
-            } else
-            if ("object".equals(t)) {
+                break;
+            case "object":
                 v = new ObjectValue();
-            } else
-            {
+                break;
+            default:
+                v = new StringValue();
+            } else {
                 v = new StringValue();
             }
 

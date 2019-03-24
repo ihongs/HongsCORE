@@ -590,11 +590,17 @@ public class Data extends SearchEntity {
              * 2019/03/23
              * 存在外部只读才拼接
              */
-            if ("name".equals(k) && Synt.declare(m.get("readonly"), false)) {
-                v = getName(map);
-            }
-            if ("word".equals(k) && Synt.declare(m.get("readonly"), false)) {
-                v = getWord(map);
+            if (k != null) switch (k) {
+            case "name":
+                if (Synt.declare(m.get("readonly"), false)) {
+                    v = getName(map);
+                }
+                break;
+            case "word":
+                if (Synt.declare(m.get("readonly"), false)) {
+                    v = getWord(map);
+                }
+                break;
             }
 
             if (v == null

@@ -674,7 +674,11 @@ public class Data extends SearchEntity {
              */
             Object x = v;
             if (p && "textview".equals(m.get("__type__"))) {
-                x = Tool.stripCros(Synt.asString(x));
+                x = Tool.stripEnds(
+                    Tool.stripTags(
+                    Tool.stripCros(
+                    Synt.asString ( x )
+                    )) );
             }
 
             if (r) {

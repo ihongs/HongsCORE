@@ -28,7 +28,7 @@
             fs  = mc.getCaseNames("srchable" );
         }
 
-        for(Object fn : fs) {
+        for( Object fn : fs ) {
             fc  = (Map) fields.get(fn);
             fn  = fc.get( "__text__" );
         if (fn != null && ! "".equals(fn)) {

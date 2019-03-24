@@ -1293,7 +1293,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @return
      */
     protected String datatype(Map fc) {
-        String t = Synt.asString(fc.get("lucene-type"));
+        String  t = Synt.asString(fc.get("lucene-type"));
         if (null != t) {
             if (t.equals("text")) {
                 return "search"; // Lucene 的 text 在这里叫 search
@@ -1301,46 +1301,46 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             return  t;
         }
 
-        t = (String) fc.get("__type__");
+        t = (String) fc.get( "__type__" );
         Set <String> ks;
 
         //** 先查特有的 **/
 
         ks = getSaveTypes("search");
-        if (ks != null && ks.contains(t) ) {
+        if (ks != null && ks.contains(t)) {
             return "search";
         }
 
         ks = getSaveTypes("sorted");
-        if (ks != null && ks.contains(t) ) {
+        if (ks != null && ks.contains(t)) {
             return "sorted";
         }
 
         ks = getSaveTypes("stored");
-        if (ks != null && ks.contains(t) ) {
+        if (ks != null && ks.contains(t)) {
             return "stored";
         }
 
         ks = getSaveTypes("object");
-        if (ks != null && ks.contains(t) ) {
+        if (ks != null && ks.contains(t)) {
             return "object";
         }
 
         //** 再查一般的 **/
 
-        ks = getSaveTypes("number");
-        if (ks != null && ks.contains(t) ) {
-            return Synt.declare(fc.get("type"), "double");
+        ks = getSaveTypes( "date" );
+        if (ks != null && ks.contains(t)) {
+            return  "date" ;
         }
 
         ks = getSaveTypes("string");
-        if (ks != null && ks.contains(t) ) {
+        if (ks != null && ks.contains(t)) {
             return "string";
         }
 
-        ks = getSaveTypes( "date" );
-        if (ks != null && ks.contains(t) ) {
-            return  "date" ;
+        ks = getSaveTypes("number");
+        if (ks != null && ks.contains(t)) {
+            return Synt.declare(fc.get("type"), "double");
         }
 
         return t;
@@ -1454,6 +1454,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false; // 对象类型无法搜索
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
+                break;
+            case "search":
+                f = new StringFiald();
+                p = true ;
+                g = false; // 搜索类型无需存储
+                q = false; // 搜索类型无法筛选
+                s = false; // 搜索类型无法排序
                 break;
             default:
                 f = new StringFiald();

@@ -33,7 +33,8 @@
             <%} // End If %>
         </div>
         <form class="findbox input-group col-xs-6">
-            <input  type="search" class="form-control" name="<%=_fields.containsKey("word") ? "word:cq" : "wd"%>" placeholder="<%=getSearchHolder(_fields, 0)%>" />
+            <%String _ph = getSearchHolder(_fields);%>
+            <input  type="search" class="form-control" name="<%=_fields.containsKey("word") ? "word:cq" : "wd"%>" <%=_ph.isEmpty() ? "disabled=\"disabled\"" : ""%> placeholder="<%=_ph%>" />
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                 <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>

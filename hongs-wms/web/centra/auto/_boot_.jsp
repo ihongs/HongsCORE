@@ -17,10 +17,8 @@
 
     /**
      * 获取搜索提示语
-     * @param fields 表单字段
-     * @param limit  数量限制
      */
-    String getSearchHolder(Map fields, int limit) throws HongsException {
+    String getSearchHolder(Map fields) throws HongsException {
         StringBuilder sb = new StringBuilder();
         ModelCase mc = new MyCase(fields);
         Set fs  = mc.getCaseNames("wordable" );
@@ -28,15 +26,7 @@
             fs  = mc.getCaseNames("srchable" );
         }
 
-        int total = fs.size();
-        if (limit == 0) {
-            limit = ( total );
-        }
-
-        int i = 0;
         for (Object fn : fs ) {
-            i ++ ;
-
             Map  fc;
             fc = (Map) fields.get(fn);
             fn = fc.get( "__text__" );
@@ -44,18 +34,20 @@
             || "".equals(fn)) {
                 continue ;
             }
-            sb.append(fn);
-
-            if (i < total) {
-            if (i < limit) {
-                sb.append( ", ");
-            } else {
-                sb.append("...");
-                break;
-            }}
+            sb.append( fn )
+              .append(", ");
         }
 
-        return  sb.toString();
+        if (sb.length() != 0) {
+            sb.setLength(sb.length() - 2);
+            return sb.toString();
+        } else
+        if (fs.size(  ) != 0) {
+            return " ";
+        } else
+        {
+            return "" ;
+        }
     }
 %>
 <%

@@ -29,7 +29,7 @@
         </div>
         <div style="display: table-cell; width: 100%; vertical-align: middle;">
             <form class="findbox input-group">
-                <input type="search" name="<%=_fields.containsKey("word") ? "word" : "wd"%>" class="form-control input-search">
+                <input type="search" name="<%=_fields.containsKey("word") ? "word:cq" : "wd"%>" class="form-control input-search">
                 <span class="input-group-btn">
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>

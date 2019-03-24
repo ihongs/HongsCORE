@@ -238,33 +238,6 @@
                             <span>常用字段</span>
                         </legend>
                     </div>
-                    <div class="form-group base-field" data-type="name">
-                        <label class="control-label clearfix" style="display: block;">
-                            <span>名称</span>
-                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                        </label>
-                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" data-nameable="true" required="required"/>
-                    </div>
-                    <div class="form-group base-field" data-type="note">
-                        <label class="control-label clearfix" style="display: block;">
-                            <span>简介</span>
-                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                        </label>
-                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-wordable="true"/>
-                    </div>
-                    <div class="form-group base-field" data-type="tags">
-                        <label class="control-label clearfix" style="display: block;">
-                            <span>标签</span>
-                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                        </label>
-                        <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-findable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
-                    </div>
                     <div class="form-group base-field" data-type="logo">
                         <label class="control-label clearfix" style="display: block;">
                             <span>图标</span>
@@ -276,14 +249,41 @@
                         <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                     </div>
-                    <div class="form-group base-field" data-type="word">
+                    <div class="form-group base-field" data-type="tags">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>词汇</span>
+                            <span>标签</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="form-control" name="word" type="text" placeholder="请输入..." data-srchable="true"/>
+                        <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-findable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
+                    </div>
+                    <div class="form-group base-field" data-type="name">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>名称</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" data-nameable="true" required="required"/>
+                    </div>
+                    <div class="form-group base-field" data-type="note">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>简介语</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" />
+                    </div>
+                    <div class="form-group base-field" data-type="word">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>关键词</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="word" type="text" placeholder="请输入..." data-srchable="true" data-findable="false"/>
                     </div>
                     <div class="form-group base-field" data-type="memo">
                         <label class="control-label clearfix" style="display: block;">

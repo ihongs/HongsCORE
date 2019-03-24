@@ -80,7 +80,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
 
     @Action("statis/search")
     @Preset(conf="", form="")
-    public void counts(ActionHelper helper) throws HongsException {
+    public void acount(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
 //      String ent = runner.getEntity();
@@ -101,7 +101,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
 
     @Action("statis/amount")
     @Preset(conf="", form="")
-    public void statis(ActionHelper helper) throws HongsException {
+    public void amount(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
 //      String ent = runner.getEntity();

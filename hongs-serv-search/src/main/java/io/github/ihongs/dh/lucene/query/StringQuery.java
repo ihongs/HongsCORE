@@ -21,14 +21,14 @@ public class StringQuery implements IQuery {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
 
-        Query  q2 = new  TermQuery (new Term(":"+k, v.toString()));
+        Query  q2 = new  TermQuery (new Term("@"+k, v.toString()));
         return q2 ;
     }
     @Override
     public Query get(String k, Object n, Object x, boolean l, boolean g) {
         String n2 = Synt.declare(n, "");
         String x2 = Synt.declare(n, "");
-        Query  q2 = TermRangeQuery.newStringRange(":" + k, n2, x2, l, g);
+        Query  q2 = TermRangeQuery.newStringRange("@" + k, n2, x2, l, g);
         return q2 ;
     }
 }

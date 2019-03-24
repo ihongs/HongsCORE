@@ -13,15 +13,15 @@ import org.apache.lucene.document.StoredField;
 public class IntField implements IField {
     @Override
     public Field get(String k, Object v) {
-        return new StoredField( k, Synt.declare(v, 0));
+        return new StoredField(/**/k, Synt.declare(v, 0));
     }
     @Override
     public Field whr(String k, Object v) {
-        return new IntPoint(":"+k, Synt.declare(v, 0));
+        return new    IntPoint("@"+k, Synt.declare(v, 0));
     }
     @Override
     public Field odr(String k, Object v) {
-        return new NumericDocValuesField("."+k, Synt.declare(v, 0));
+        return new NumericDocValuesField("#"+k, Synt.declare(v, 0));
     }
     @Override
     public Field wdr(String k, Object v) {

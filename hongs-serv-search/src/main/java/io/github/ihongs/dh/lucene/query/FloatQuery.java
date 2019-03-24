@@ -19,7 +19,7 @@ public class FloatQuery implements IQuery {
             throw new NullPointerException("Query for "+k+" must be float, but null");
         }
         float   n2 = Synt.asFloat(v);
-        Query   q2 = FloatPoint.newExactQuery(":"+k, n2);
+        Query   q2 = FloatPoint.newExactQuery("@"+k, n2);
         return  q2;
     }
     @Override
@@ -44,7 +44,7 @@ public class FloatQuery implements IQuery {
                 x2 = FloatPoint.nextDown(x2);
             }
         }
-        Query   q2 = FloatPoint.newRangeQuery(":"+k, n2, x2);
+        Query   q2 = FloatPoint.newRangeQuery("@"+k, n2, x2);
         return  q2;
     }
 }

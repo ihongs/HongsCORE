@@ -63,7 +63,7 @@ public class SearchQuery extends StringQuery {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
         
-        QueryParser qp = new QueryParser("!" + k, ana != null ? ana : new StandardAnalyzer());
+        QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());
 
         String s = v.toString( );
 

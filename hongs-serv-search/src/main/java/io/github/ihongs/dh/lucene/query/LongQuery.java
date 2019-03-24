@@ -19,7 +19,7 @@ public class LongQuery implements IQuery {
             throw new NullPointerException("Query for "+k+" must be long, but null");
         }
         long    n2 = Synt.asLong(v);
-        Query   q2 = LongPoint.newExactQuery(":"+k, n2);
+        Query   q2 = LongPoint.newExactQuery("@"+k, n2);
         return  q2;
     }
     @Override
@@ -44,7 +44,7 @@ public class LongQuery implements IQuery {
                 x2 = x2 - 1;
             }
         }
-        Query   q2 = LongPoint.newRangeQuery(":"+k, n2, x2);
+        Query   q2 = LongPoint.newRangeQuery("@"+k, n2, x2);
         return  q2;
     }
 }

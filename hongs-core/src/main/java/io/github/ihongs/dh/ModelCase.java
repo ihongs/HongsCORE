@@ -22,7 +22,6 @@ import java.util.Set;
 public class ModelCase implements IVolume {
 
     private Map fieldz = null;
-    private Map paramz = null;
     private Map fsavez = null;
     private Map fcasez = null;
     private Set rbColz = null;
@@ -84,15 +83,11 @@ public class ModelCase implements IVolume {
      */
     @Override
     public Map getParams() {
-        if (null != paramz) {
-            return  paramz;
+        Map ps =  Synt.asMap(getFields().get("@"));
+        if (ps == null) {
+            ps =  Synt.mapOf();
         }
-        paramz = Synt.asMap(getFields().get("@"));
-        if (null != paramz) {
-            return  paramz;
-        }
-        paramz = Synt.mapOf();
-        return paramz;
+        return ps;
     }
 
     /**

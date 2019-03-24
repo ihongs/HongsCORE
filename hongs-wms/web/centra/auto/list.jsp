@@ -33,8 +33,14 @@
             <%} // End If %>
         </div>
         <form class="findbox input-group col-xs-6">
-            <%String _ph = getSearchHolder(_fields);%>
-            <input  type="search" class="form-control" name="<%=_fields.containsKey("word") ? "word:cq" : "wd"%>" <%=_ph.isEmpty() ? "disabled=\"disabled\"" : ""%> placeholder="<%=_ph%>" />
+            <%
+                String sn = _fields.containsKey("word") ? "word:cq" : "wd";
+                String sp =  getSearchHolder( _fields );
+                if (sp.length() == 0) {
+                    sp = sp + "\" disabled=\"disabled" ;
+                }
+            %>
+            <input  type="search" class="form-control" name="<%=sn%>" placeholder="<%=sp%>" />
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                 <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
@@ -349,7 +355,7 @@
         curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    var findreq = hsSerialDat( loadbox );
+    var findreq = hsSerialDat(loadbox);
     for(var fn in findreq) {
         if (! findreq[fn]) {
             continue;

@@ -1406,6 +1406,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             boolean q = findable(m);
             boolean g =!unstored(m);
 
+            if (Cnst.ID_KEY.equals(k)) {
+                p  = false; // ID 无需搜索
+                q  = true ;
+                g  = true ;
+            }
+
             if (t != null) switch (t) {
             case "int":
                 if ("".equals(v)) continue;

@@ -210,7 +210,7 @@ public class Form extends Model {
 
         if (conf != null && !"".equals(conf)) {
             flds = Synt.asList(Data.toObject(conf));
-            Set set = Synt.setOf("name", "word", "cuser", "muser", "ctime", "mtime");
+            Set set = Synt.setOf("name", "cuser", "muser", "ctime", "mtime");
             Map tdf = null;
             Map idf = null;
             Map fld ;
@@ -510,31 +510,28 @@ public class Form extends Model {
 
             //** 复查字段属性 **/
 
-            if (! "@" .equals(n)) {
-
+            s = (String) types.get(t);
             // 日期类型要指定存储格式
-            if ("date".equals(types.get(t) )) {
+            if ("date".equals(s)) {
                 if(!fiel.containsKey("type")) {
                     fiel.put("type", "timestamp");
                 }
             } else
             // 选项表单要指定配置路径
-            if ("enum".equals(types.get(t) )
-            ||  "form".equals(types.get(t) )) {
+            if ("enum".equals(s)
+            ||  "form".equals(s)) {
                 if(!fiel.containsKey("conf")) {
-                    fiel.put("conf", centra +"/"+ id);
+                    fiel.put("conf", centra + "/" + id);
                 }
             } else
             // 文件类型要指定上传路径
-            if ("file".equals(types.get(t) )) {
+            if ("file".equals(s)) {
                 if(!fiel.containsKey("href")) {
-                    fiel.put("href", upload +"/"+ id);
+                    fiel.put("href", upload + "/" + id);
                 }
                 if(!fiel.containsKey("path")) {
-                    fiel.put("path", upload +"/"+ id);
+                    fiel.put("path", upload + "/" + id);
                 }
-            }
-
             }
 
             //** 构建字段参数 **/

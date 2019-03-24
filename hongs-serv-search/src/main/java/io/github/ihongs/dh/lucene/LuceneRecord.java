@@ -882,7 +882,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (m == null) {
                 continue;
             }
-            if (! findable(m)
+            if (! findable(m )
             &&  ! srchable(m)) {
                 continue;
             }

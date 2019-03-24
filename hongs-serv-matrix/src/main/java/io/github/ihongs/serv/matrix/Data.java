@@ -855,6 +855,20 @@ public class Data extends SearchEntity {
     }
 
     @Override
+    public Set<String> getCaseNames(String t) {
+        if ("wordable".equals(t)) {
+            Set w= super.getCaseNames("wordable");
+            if (w== null || w.isEmpty()) {
+                w= super.getCaseNames("srchable");
+            }
+            return w;
+        } else
+        {
+            return super.getCaseNames(t);
+        }
+    }
+
+    @Override
     public Set<String> getWordable() {
         if (null != wdCols) {
             return  wdCols;

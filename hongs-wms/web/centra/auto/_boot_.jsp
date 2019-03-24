@@ -4,39 +4,36 @@
 <%@page import="io.github.ihongs.action.FormSet"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="io.github.ihongs.dh.ModelCase"%>
+<%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
-    private static class MyCase extends ModelCase {
-        public MyCase(Map fields) {
-            setFields(fields);
-        }
-    }
-
     /**
      * 获取搜索提示语
      */
     String getSearchHolder(Map fields) throws HongsException {
+        Map fc  = (Map) fields.get("word");
+        if (fc != null && ! Synt.declare(fc.get("readonly"), false)) {
+            Object fn = fc.get("__text__");
+        if (fn != null && ! "".equals(fn)) {
+            return (String) fn;
+        }}
+
         StringBuilder sb = new StringBuilder();
         ModelCase mc = new MyCase(fields);
         Set fs  = mc.getCaseNames("wordable" );
-        if (fs == null || fs.isEmpty( ) ) {
+        if (fs == null || fs.isEmpty()) {
             fs  = mc.getCaseNames("srchable" );
         }
 
-        for (Object fn : fs ) {
-            Map  fc;
-            fc = (Map) fields.get(fn);
-            fn = fc.get( "__text__" );
-            if (null  == fn
-            || "".equals(fn)) {
-                continue ;
-            }
-            sb.append( fn )
-              .append(", ");
-        }
+        for( Object fn : fs ) {
+            fc  = (Map) fields.get(fn);
+            fn  = fc.get( "__text__" );
+        if (null != fn && ! "".equals(fn)) {
+            sb.append(fn).append(", ");
+        }}
 
         if (sb.length() != 0) {
             sb.setLength(sb.length() - 2);
@@ -47,6 +44,11 @@
         } else
         {
             return "" ;
+        }
+    }
+    private static class MyCase extends ModelCase {
+        public MyCase(Map fields) {
+            setFields(fields);
         }
     }
 %>

@@ -928,7 +928,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (fv != null && !"".equals(fv)) {
                 if (fs.size() > 1) {
                     // 当设置了多个搜索字段时
-                    // 将条件整理为: +(!fn1:xxx !fn2:xxx)
+                    // 将条件整理为: +($fn1:xxx $fn2:xxx)
 
                     Map fw = new HashMap(  );
                     fw.put(Cnst.SC_REL , fv);

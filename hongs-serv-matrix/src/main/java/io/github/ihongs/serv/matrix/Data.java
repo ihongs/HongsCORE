@@ -667,6 +667,13 @@ public class Data extends SearchEntity {
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
                 break;
+            case "search":
+                f = new StringFiald();
+                p = true ;
+                g = false; // 搜索类型无需存储
+                q = false; // 搜索类型无法筛选
+                s = false; // 搜索类型无法排序
+                break;
             default:
                 f = new StringFiald();
             } else {

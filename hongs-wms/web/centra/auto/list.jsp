@@ -14,13 +14,13 @@
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
 
-    StringBuilder _ob = new StringBuilder("-,-boost,-mtime,-ctime");
+    StringBuilder _ob = new StringBuilder( "-,-boost,-mtime,-ctime");
     StringBuilder _rb = new StringBuilder("id,name");
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
     <div class="clearfix">
-        <div class="toolbox col-xs-6 btn-group">
+        <div class="toolbox btn-group col-xs-6">
             <%if ( "select".equals(_action)) {%>
             <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
@@ -32,8 +32,8 @@
             <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
             <%} // End If %>
         </div>
-        <form class="findbox col-xs-6 input-group">
-            <input type="search" name="<%=_fields.containsKey("word") ? "word:cq" : "wd"%>" class="form-control input-search"/>
+        <form class="findbox input-group col-xs-6">
+            <input  type="search" class="form-control" name="<%=_fields.containsKey("word") ? "word:cq" : "wd"%>" placeholder="<%=getSearchHolder(_fields, 0)%>" />
             <span class="input-group-btn">
                 <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                 <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>

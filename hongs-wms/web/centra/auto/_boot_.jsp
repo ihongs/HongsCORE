@@ -3,9 +3,61 @@
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
+<%@page import="io.github.ihongs.dh.ModelCase"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
+<%@page import="java.util.Set"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%!
+    private static class MyCase extends ModelCase {
+        public MyCase(Map fields) {
+            setFields(fields);
+        }
+    }
+
+    /**
+     * 获取搜索提示语
+     * @param fields 表单字段
+     * @param limit  数量限制
+     */
+    String getSearchHolder(Map fields, int limit) throws HongsException {
+        StringBuilder sb = new StringBuilder();
+        ModelCase mc = new MyCase(fields);
+        Set fs  = mc.getCaseNames("wordable" );
+        if (fs == null || fs.isEmpty( ) ) {
+            fs  = mc.getCaseNames("srchable" );
+        }
+
+        int total = fs.size();
+        if (limit == 0) {
+            limit = ( total );
+        }
+
+        int i = 0;
+        for (Object fn : fs ) {
+            i ++ ;
+
+            Map  fc;
+            fc = (Map) fields.get(fn);
+            fn = fc.get( "__text__" );
+            if (null  == fn
+            || "".equals(fn)) {
+                continue ;
+            }
+            sb.append(fn);
+
+            if (i < total) {
+            if (i < limit) {
+                sb.append( ", ");
+            } else {
+                sb.append("...");
+                break;
+            }}
+        }
+
+        return  sb.toString();
+    }
+%>
 <%
     String     _title = "";
     String     _module;

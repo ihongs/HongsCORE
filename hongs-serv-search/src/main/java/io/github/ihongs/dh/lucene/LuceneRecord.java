@@ -575,7 +575,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         resp.put("page", page);
         resp.put("list", list);
 
-        return  resp;
+        return resp;
     }
 
     /**
@@ -593,7 +593,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         Loop  l = new Loop(this, q,s,r, begin,limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-            CoreLogger.debug("LuceneRecord.search: " + r.toString());
+            CoreLogger.debug("LuceneRecord.search: " + l.toString());
         }
 
         return l;

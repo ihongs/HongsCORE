@@ -1062,9 +1062,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             /**
              * 因为 Lucene 5 必须使用 DocValues 才能排序
-             * 在更新数据时, 默认有加 '.' 打头的排序字段
+             * 在更新数据时, 默认有加 '#' 打头的排序字段
              */
-            of.add(new SortField("." + fn , st , rv));
+            of.add(new SortField("#" + fn , st , rv));
         }
 
         // 未指定则按文档顺序
@@ -1671,7 +1671,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         if (m.containsKey(Cnst.IS_REL)) { // Is
             String a = Synt.asString(m.remove(Cnst.IS_REL));
-            String l = q instanceof SearchQuery ? "!" : ":";
+            String l = q instanceof SearchQuery ? "$" : "@";
             Query  p ;
             try {
                 p = new QueryParser(l+k, new StandardAnalyzer()).parse("[* TO *]");

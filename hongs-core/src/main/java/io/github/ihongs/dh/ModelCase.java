@@ -22,6 +22,7 @@ import java.util.Set;
 public class ModelCase implements IVolume {
 
     private Map fieldz = null;
+    private Map paramz = null;
     private Map fsavez = null;
     private Map fcasez = null;
     private Set rbColz = null;
@@ -60,10 +61,11 @@ public class ModelCase implements IVolume {
     try {
         return super.getFields();
     }
-    catch (NullPointerException) {}
-    // TODO: 自行获取 fields
-    setFields(fields);
-    return fields;
+    catch (NullPointerException ex) {
+        // 自定义 fields
+        setFields(fields);
+        return fields;
+    }
      * </code>
      * @return
      */
@@ -82,7 +84,15 @@ public class ModelCase implements IVolume {
      */
     @Override
     public Map getParams() {
-        return Synt.declare(getFields().get("@"), new HashMap());
+        if (null != paramz) {
+            return  paramz;
+        }
+        paramz = Synt.asMap(getFields().get("@"));
+        if (null != paramz) {
+            return  paramz;
+        }
+        paramz = Synt.mapOf();
+        return paramz;
     }
 
     /**

@@ -19,7 +19,7 @@ public class IntQuery implements IQuery {
             throw new NullPointerException("Query for "+k+" must be int, but null");
         }
         int     n2 = Synt.asInt(v);
-        Query   q2 = IntPoint.newExactQuery(":"+k, n2);
+        Query   q2 = IntPoint.newExactQuery("@"+k, n2);
         return  q2;
     }
     @Override
@@ -44,7 +44,7 @@ public class IntQuery implements IQuery {
                 x2 = x2 - 1;
             }
         }
-        Query   q2 = IntPoint.newRangeQuery(":"+k, n2, x2);
+        Query   q2 = IntPoint.newRangeQuery("@"+k, n2, x2);
         return  q2;
     }
 }

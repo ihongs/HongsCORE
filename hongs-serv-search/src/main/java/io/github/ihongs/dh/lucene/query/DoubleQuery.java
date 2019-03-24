@@ -19,7 +19,7 @@ public class DoubleQuery implements IQuery {
             throw new NullPointerException("Query for "+k+" must be double, but null");
         }
         double  n2 = Synt.asDouble(v);
-        Query   q2 = DoublePoint.newExactQuery(":"+k, n2);
+        Query   q2 = DoublePoint.newExactQuery("@"+k, n2);
         return  q2;
     }
     @Override
@@ -44,7 +44,7 @@ public class DoubleQuery implements IQuery {
                 x2 = DoublePoint.nextDown(x2);
             }
         }
-        Query   q2 = DoublePoint.newRangeQuery(":"+k, n2, x2);
+        Query   q2 = DoublePoint.newRangeQuery("@"+k, n2, x2);
         return  q2;
     }
 }

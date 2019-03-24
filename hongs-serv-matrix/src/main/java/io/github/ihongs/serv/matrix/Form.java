@@ -511,7 +511,7 @@ public class Form extends Model {
             //** 复查字段属性 **/
 
             if (! "@" .equals(n)) {
-            
+
             // 日期类型要指定存储格式
             if ("date".equals(types.get(t) )) {
                 if(!fiel.containsKey("type")) {
@@ -534,7 +534,7 @@ public class Form extends Model {
                     fiel.put("path", upload +"/"+ id);
                 }
             }
-            
+
             }
 
             //** 构建字段参数 **/

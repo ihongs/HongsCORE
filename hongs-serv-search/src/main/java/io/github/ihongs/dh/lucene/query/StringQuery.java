@@ -13,7 +13,7 @@ import org.apache.lucene.search.TermRangeQuery;
 public class StringQuery implements IQuery {
     @Override
     public Query gen(String k, Object v) {
-        throw new UnsupportedOperationException("String field "+k+" does not support search");
+        throw new UnsupportedOperationException("Field "+k+" does not support search");
     }
     @Override
     public Query get(String k, Object v) {

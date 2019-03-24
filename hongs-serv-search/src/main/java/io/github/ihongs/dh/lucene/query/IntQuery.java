@@ -11,12 +11,12 @@ import org.apache.lucene.search.Query;
 public class IntQuery implements IQuery {
     @Override
     public Query gen(String k, Object v) {
-        throw new UnsupportedOperationException("Number field "+k+" does not support search");
+        throw new UnsupportedOperationException("Field "+k+" does not support search");
     }
     @Override
     public Query get(String k, Object v) {
         if (v == null) {
-            throw new NullPointerException("Query for "+k+" must be int, but null");
+            throw new NullPointerException("Query for "+k+" must be number, but null");
         }
         int     n2 = Synt.asInt(v);
         Query   q2 = IntPoint.newExactQuery("@"+k, n2);
@@ -25,7 +25,7 @@ public class IntQuery implements IQuery {
     @Override
     public Query get(String k, Object n, Object x, boolean l, boolean g) {
         if (n == null && x == null) {
-            throw new NullPointerException("Range for "+k+" must be int, but null");
+            throw new NullPointerException("Range for "+k+" must be number, but null");
         }
         int n2, x2;
         if (n == null || "".equals(n)) {

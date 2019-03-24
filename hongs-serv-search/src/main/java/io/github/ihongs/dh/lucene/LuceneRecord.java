@@ -904,11 +904,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (  "date".equals(t)) {
                 aq = new LongQuery();
             } else
-            if ("string".equals(t)) {
-                aq = new StringQuery();
-            } else
             if ("search".equals(t)) {
                 aq = new SearchQuery();
+            } else
+            if ("string".equals(t)) {
+                aq = srchable(m)
+                   ? new SearchQuery()
+                   : new StringQuery();
             } else
             {
                 continue;
@@ -1048,10 +1050,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if ("sorted".equals(t)) {
                 st = SortField.Type.LONG;
             } else
-            if ("string".equals(t)) {
+            if ("search".equals(t)) {
                 st = SortField.Type.STRING;
             } else
-            if ("search".equals(t)) {
+            if ("string".equals(t)) {
                 st = SortField.Type.STRING;
             } else
             {

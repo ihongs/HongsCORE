@@ -121,12 +121,12 @@
                 <%} else if ("check".equals(type)) {%>
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
-                    <%} /* End if */%>
+                    <%} else { rqrd = "data-"+rqrd; }%>
                     <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
                 <%} else if ("radio".equals(type)) {%>
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
-                    <%} /* End if */%>
+                    <%} else { rqrd = "data-"+rqrd; }%>
                     <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
                     <%if ("".equals(rqrd) && !"".equals(rptd)) {%>

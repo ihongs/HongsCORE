@@ -27,7 +27,7 @@ html, body {
     position: fixed;
     z-index : 10;
     background: #404242 linear-gradient(
-        120deg, #404242 10%, #494242 50%, #404242 50%
+        120deg, #404242 25%, #504242 50%, #404242 50%
     );
 }
 #context.fullest>#bodybox {

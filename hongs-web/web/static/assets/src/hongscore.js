@@ -2041,7 +2041,7 @@ $.fn.hsReady = function() {
     });
 
     // 国际化
-    box.find(".i18n,[data-i18n]").each(function() {
+    box.find("[data-i18n] , .i18n ").each(function() {
         $(this).hsI18n();
     });
 
@@ -2050,25 +2050,18 @@ $.fn.hsReady = function() {
         $(this).hsTabs();
     });
 
-    // 初始化
-    box.find("[data-toggle=hsInit]").each(function() {
-        $(this).hsInit();
-    });
-
-    // 初始化
-    if (! box.children("[data-toggle=hsInit],[data-module=hsInit]").size()) {
-        $(this).hsInit();
-    }
-
     // 组件化
     box.find("[data-module]").each( function() {
         var prnt = $(this);
         var opts = $(this).hsData();
         var func = $(this).attr("data-module");
         if (typeof(prnt[func]) === "function") {
-            prnt[func]( opts );
+            prnt[func] (opts);
         }
     });
+
+    // 写标题
+    box.hsTitl ();
 
     // 在加载前触发事件
     box.trigger("hsReady");
@@ -2199,67 +2192,40 @@ $.fn.hsTdel = function(ref) {
     return [tab, pne];
 };
 
-// 初始化
-$.fn.hsInit = function(cnf) {
-    if (cnf ===  undefined) {
-        cnf = $(this).hsData();
-    }
+// 设标题
+$.fn.hsTitl = function(tit) {
     var box = $(this);
+    var prt = box.parent( );
+    var hea = box.children("h1,h2,h3,h4,h5,h6");
 
-    // 标题上的设置作用在其容器上
-    if (box.is("h1,h2,h3")) {
-        box = box.parent();
+    // 从其下标题提取
+    if (! tit) {
+    if (! hea.size()) {
+        return;
+    }
+    tit = hea.text();
     }
 
-    // 自动提取标题, 替换编辑文字
-    // 如主键不叫id, 打开编辑页面, 则需加上id=0
-    var h = box.children("h1,h2,h3").first();
-    if (h.length
-    && !cnf.title) {
-        cnf.title = h.text();
-    }
-    if (cnf.title) {
-        cnf.title = hsGetSeria(hsSerialArr(box.closest( ".loadbox" )), "id") ?
-            cnf.title.replace('{DO}', cnf.update || hsGetLang("form.update")):
-            cnf.title.replace('{DO}', cnf.create || hsGetLang("form.create"));
-    }
-    if (h.length ) {
-        h.text ( cnf.title );
-    }
+    // 针对共用的表单, 有 ID 即为更新
+    tit = hsGetSeria(hsSerialArr(box.closest(".loadbox")), "id")
+        ? tit.replace('{DO}', hsGetLang("form.update"))
+        : tit.replace('{DO}', hsGetLang("form.create"));
 
     if (box.is(".modal-body")) {
-        var a = box.closest(".modal");
-        for(var k in cnf) {
-            var v =  cnf[k];
-            switch (k) {
-                case "title":
-                    a.find(".modal-title" ).text( v );
-                    break;
-                case "modal":
-                    a.find(".modal-dialog").addClass("modal-" + v);
-                    break;
-            }
-        }
-        a.modal();
+        box.closest(".modal").children(".modal-title").text(tit);
     } else
     if (box.parent(".labs").size()
-    ||  box.parent().parent(".labs").size()) {
-        var a = box.closest(".labs>*" );
-            a = box.closest(".labs")
-                   .data("tabs").children( ).eq(a.index());
-        for(var k in cnf) {
-            var v =  cnf[k];
-            switch (k) {
-                case "title":
-                    var x = a.find("a");
-                    var y = x.find("b,span").not(".close");
-                    if (y.size()) {
-                        y.text(v);
-                    } else {
-                        x.text(v);
-                    }
-                    break;
-            }
+    ||  prt.parent(".labs").size()) {
+        var tbs = box.closest(".labs").data("tabs");
+        var idx = box.closest(".labs>*").index(   );
+        var tab = tbs.children().eq(idx);
+        var a = tab.find("a"     );
+        var b = tab.find("b,span")
+                   .not (".close");
+        if (b.size()) {
+            b.text(tit);
+        } else {
+            a.text(tit);
         }
     }
 
@@ -2271,13 +2237,17 @@ $.fn.hsI18n = function(rep) {
     var box = $(this);
     var lng;
 
+    if (rep === undefined ) {
+        rep = box.hsData( );
+    }
+
     if (box.attr("data-i18n")) {
         lng = box.attr("data-i18n");
         lng = hsGetLang(lng, rep);
         box.text( lng );
     } else
     if ($(this).text()) {
-        lng = box.text( );
+        lng = box.text(/*content*/);
         lng = hsGetLang(lng, rep);
         box.text( lng );
     }

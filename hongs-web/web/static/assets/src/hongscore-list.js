@@ -558,7 +558,7 @@ HsList.prototype = {
         this.listBox.find( 'thead th,thead td' ).eq(td.index( ))
             .find(".invisible").clone().removeClass("invisible")
             .appendTo(td);
-        jQuery(td).hsInit().find("input:hidden").val(v);
+        jQuery(td).find("input:hidden").val( v );
         return false;
     },
     _fill__check : function(td, v, n) {

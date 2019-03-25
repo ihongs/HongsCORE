@@ -26,19 +26,8 @@ html, body {
     overflow: auto;
     position: fixed;
     z-index : 10;
-    background: #404242;
-    background-image: linear-gradient(
-        -135deg,
-        #4a4c4c  95px, #424444  95px,
-        #3a3c3c 155px, #404242 155px,
-        #4a4242  50% , #404242  50%
-    );
-}
-#headbox #user-menubar>ul {
-    background-image: linear-gradient(
-        -135deg,
-        #4a4c4c  60px, #424444  60px,
-        #3a3c3c 120px, #404242 120px
+    background: #404242 linear-gradient(
+        120deg, #404242 10%, #494242 50%, #404242 50%
     );
 }
 #context.fullest>#bodybox {
@@ -233,6 +222,7 @@ html, body {
 }
 
 #head-powered {
+    text-shadow: 0 2px 2px #000;
     text-align: center;
     font-size: 10px;
     position: fixed;
@@ -240,7 +230,7 @@ html, body {
     width: 175px;
 }
 #head-powered a {
-    color: #b00;
+    color: #900;
 }
 #head-powered a:hover {
     color: #f00;

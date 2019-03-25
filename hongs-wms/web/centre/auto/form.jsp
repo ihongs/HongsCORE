@@ -105,8 +105,8 @@
                     <%hint ="";%>
                 <%} else if ("date".equals(type) || "time".equals(type) || "datetime".equals(type)) {%>
                     <%
-                        String fomt = Synt.declare(info.get("format"),  type      );
-                        String typa = Synt.declare(info.get( "type" ), "timestamp");
+                        String fomt = Synt.declare(info.get("format"),  type );
+                        String typa = Synt.declare(info.get( "type" ), "date");
                         String extr = " data-type=\""+typa +"\" data-format=\""+fomt+"\"";
                         if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
                         if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";

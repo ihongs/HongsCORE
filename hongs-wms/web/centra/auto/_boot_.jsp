@@ -30,6 +30,7 @@
 
         for( Object fn : fs ) {
             fc  = (Map) fields.get(fn);
+        if (fc == null) continue;
             fn  = fc.get( "__text__" );
         if (fn != null && ! "".equals(fn)) {
             sb.append(fn).append(", ");

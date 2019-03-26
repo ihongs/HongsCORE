@@ -47,14 +47,14 @@ html, body {
     margin-bottom: 0;
 }
 #main-context > .labs {
-    margin-top: 15px;
+    margin-top: 18px;
 }
 
 /** 菜单 **/
 
 #main-menubar ,
 #user-menubar {
-    padding: 15px 0 15px 0;
+    padding: 18px 0 18px 0;
 }
 #main-menubar ul ,
 #user-menubar ul {

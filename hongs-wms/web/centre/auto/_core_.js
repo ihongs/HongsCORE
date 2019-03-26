@@ -3,7 +3,7 @@
 /**
  * 设置当前用户ID
  */
-if (hsChkUri('centre')) {
+if (hsChkUri('public')) {
     window.HsCUID = H$('%HsCUID');
 } else {
     window.HsCUID = null ;
@@ -279,56 +279,55 @@ function HsPops (context , urls) {
  * @param {Object} opts
  * @return {HsStat}
  */
-function HsCate (context , opts) {
-    context = jQuery( context  );
-    context.data("HsCate", this);
-    context.addClass( "HsCate" );
+function HsCate(context, opts) {
+    context = $(context);
 
-    this.aurl = opts.aurl;
-    this.curl = opts.curl;
+    var  statBox = context.find(".statbox");
+    var  findBox = context.find(".findbox");
+    var  toolBox = context.find(".toolbox");
+
     this.context = context;
-    this.statbox = context.find(".statbox");
-    this.findbox = context.find(".findbox");
+    this.statBox = statBox;
+    this.findBox = findBox;
+    this.aurl  = opts.aurl;
+    this.curl  = opts.curl;
 
-    var  statobj = this;
-    var  statbox = this.statbox;
-    var  findbox = this.findbox;
-    var  toolbox = context.find(".toolbox");
+    var  that  = this;
 
     //** 条件改变时重载图表 **/
 
-    statbox.data("changed", statbox.is(".invisible"));
+    statBox.data("changed", statBox.is(".invisible"));
 
-    toolbox.on("saveBack", function() {
-        if (statbox.is(".invisible")) {
-            statbox.data("changed", true );
+    toolBox.on("saveBack", function() {
+        if (statBox.is(".invisible")) {
+            statBox.data("changed", true );
         } else {
-            statbox.data("changed", false);
+            statBox.data("changed", false);
             setTimeout(function() {
-                statobj.load();
+                that.load();
             }, 1000);
         }
     });
 
-    findbox.on( "submit" , function() {
-        if (statbox.is(".invisible")) {
-            statbox.data("changed", true );
+    findBox.on( "submit" , function() {
+        if (statBox.is(".invisible")) {
+            statBox.data("changed", true );
         } else {
-            statbox.data("changed", false);
+            statBox.data("changed", false);
             setTimeout(function() {
-                statobj.load();
+                that.load();
             }, 1000);
         }
     });
 
-    statbox.on( "change" , "input,select", function() {
+    statBox.on( "change" , "input,select", function() {
         if ($(this).is(".checkall2")) {
             $(this).closest(".checkbox").find(".checkone2").prop("checked", false);
         } else
         if ($(this).is(".checkone2")) {
             $(this).closest(".checkbox").find(".checkall2").prop("checked", false);
         }
-        findbox.find(":submit").click( );
+        findBox.find(":submit").first().click();
     });
 }
 HsCate.prototype = {
@@ -341,12 +340,12 @@ HsCate.prototype = {
         var that = this;
         var url  = this.surl;
         var context = this.context;
-        var statbox = this.statbox;
-        var findbox = this.findbox;
+        var statBox = this.statBox;
+        var findBox = this.findBox;
 
         if ( ! rb ) {
             rb = [];
-            statbox.find( "[data-type=amount]" )
+            statBox.find( "[data-type=amount]" )
                    .each(function() {
                 rb.push($(this).attr("data-rb"));
             });
@@ -357,26 +356,26 @@ HsCate.prototype = {
 
         $.ajax({
             url : url + rb.join( "" ),
-            data: findbox.serialize(),
+            data: findBox.serialize(),
             dataType: "json",
             cache  : true,
             success: function(rst) {
                 for (var k in rst.info) {
                      if (k == "__count__") continue;
                      var d  = rst.info[k];
-                     var n  = statbox.find("[data-name='"+k+"']");
+                     var n  = statBox.find("[data-name='"+k+"']");
                      that.setAmountCheck(n, d);
                 }
 
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='"+k+"']" ).val(data [k]);
+                    statBox.find("[name='"+k+"']" ).val(data [k]);
                 }
 
-                statbox.find(".checkbox").each(function() {
+                statBox.find(".checkbox").each(function() {
                     if ($(this).find(":checked"  ).size() === 0 ) {
-                        statbox.find(".checkall2").prop("checked", true);
+                        statBox.find(".checkall2").prop("checked", true);
                     }
                 });
             }
@@ -387,12 +386,12 @@ HsCate.prototype = {
         var that = this;
         var url  = this.curl;
         var context = this.context;
-        var statbox = this.statbox;
-        var findbox = this.findbox;
+        var statBox = this.statBox;
+        var findBox = this.findBox;
 
         if ( ! rb ) {
             rb = [];
-            statbox.find( "[data-type=acount]" )
+            statBox.find( "[data-type=acount]" )
                    .each(function() {
                 rb.push($(this).attr("data-rb"));
             });
@@ -403,26 +402,26 @@ HsCate.prototype = {
 
         $.ajax({
             url : url + rb.join( "" ),
-            data: findbox.serialize(),
+            data: findBox.serialize(),
             dataType: "json",
             cache  : true,
             success: function(rst) {
                 for (var k in rst.info) {
                      if (k == "__count__") continue;
                      var d  = rst.info[k];
-                     var n  = statbox.find("[data-name='"+k+"']");
+                     var n  = statBox.find("[data-name='"+k+"']");
                      that.setAcountCheck(n, d);
                 }
 
                 var list = context.data( "HsList" );
                 var data = hsSerialDic (list._data);
                 for (var k in data) {
-                    statbox.find("[name='"+k+"']" ).val(data [k]);
+                    statBox.find("[name='"+k+"']" ).val(data [k]);
                 }
 
-                statbox.find(".checkbox").each(function() {
+                statBox.find(".checkbox").each(function() {
                     if ($(this).find(":checked"  ).size() === 0 ) {
-                        statbox.find(".checkall2").prop("checked", true);
+                        statBox.find(".checkall2").prop("checked", true);
                     }
                 });
             }

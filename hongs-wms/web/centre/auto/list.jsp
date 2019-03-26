@@ -47,8 +47,7 @@
     </div>
     </div>
     <!-- 筛选 -->
-    <form class="findbox filtbox statbox panel invisible">
-        <div class="form-group clearfix"></div>
+    <form class="findbox filtbox statbox invisible panel panel-body">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -256,7 +255,7 @@
     context.find("[data-ft=edit]:empty").remove(); // 没有修改或删除权限就干脆移除掉编辑按钮组
 
     // 附加控制
-    if (!hsChkUri("centre")) {
+    if (!window.HsCUID) {
         findbox.find("[data-ft=_mine]").closest(".form-group").remove();
     }
     if (findbox.find("[data-ft=_sort]").closest(".form-group").find("option").size() <= 3 ) {
@@ -288,6 +287,7 @@
 
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum",
+        _prep__enum : hsListPrepFilt,
         _fill__enum : hsListFillFilt,
         _fill__sort : hsListInitSort,
         _fill__mine : hsListInitMine
@@ -298,19 +298,29 @@
         curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    var findreq = hsSerialDat(loadbox);
-    for(var fn in findreq) {
-        if (! findreq[fn]) {
+    var loadarr = hsSerialArr(loadbox);
+    var loadres = hsSerialDat(loadarr);
+
+    // 绑定参数
+    listobj._url = hsSetPms(listobj._url, loadarr);
+    statobj.aurl = hsSetPms(statobj.aurl, loadarr);
+    statobj.curl = hsSetPms(statobj.curl, loadarr);
+
+    // 移除参数限定的过滤项
+    for(var fn in loadres) {
+        if (! loadres[fn]) {
             continue;
         }
         findbox.children("[data-find='"+fn+"']").remove();
     }
 
+    // 无过滤或统计则隐藏之
     if (filtbox.find(".filt-group").size() == 0
     &&  statbox.find(".stat-group").size() == 0) {
         context.find(".filter").remove();
     }
 
+    // 延迟加载
     filtbox.on("opened", function() {
         if (filtbox.data("fetched") != true) {
             filtbox.data("fetched"  ,  true);
@@ -353,7 +363,7 @@
         }
 
         // 加载数据
-        listobj.load(hsSetPms(listobj._url, loadbox), findbox);
+        listobj.load(listobj._url, findbox);
     });
 })(jQuery);
 </script>

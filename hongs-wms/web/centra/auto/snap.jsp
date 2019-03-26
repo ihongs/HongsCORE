@@ -6,7 +6,7 @@
 %>
 <h2><%=_locale.translate("fore.record.title", _title)%></h2>
 <div id="<%=_pageId%>" class="logs-list">
-    <form class="findbox form-inline">
+    <form class="findbox form-inline board">
         <!--
         <div class="form-group" style="margin-right:0.5em;">
             <input type="search" name="wd" class="form-control" placeholder="名称、备注">

@@ -69,7 +69,7 @@ public class AssocCase {
     /**
      * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 FINDABLE
      */
-    public  static final String  RATEABLE = "RATEABLE";
+    public  static final String  RANGABLE = "RANGABLE";
     /**
      * 可存储字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
@@ -460,7 +460,7 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FINDABLE);
-        Map<String, String> rf = allow(RATEABLE);
+        Map<String, String> rf = allow(RANGABLE);
         Map<String, String> sf = allow(SRCHABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
@@ -705,7 +705,7 @@ public class AssocCase {
                     af =  new HashMap();
                 }
                 break;
-            case RATEABLE:
+            case RANGABLE:
                 af = allow(FINDABLE);
                 if (af == null) {
                     af =  new HashMap();
@@ -830,7 +830,7 @@ public class AssocCase {
         cs = (String) ps.get("wordable");
         if (cs != null) allow(WORDABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("rateable");
-        if (cs != null) allow(RATEABLE, cs.trim().split("\\s*,\\s*"));
+        if (cs != null) allow(RANGABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("saveable");
         if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));
         else {

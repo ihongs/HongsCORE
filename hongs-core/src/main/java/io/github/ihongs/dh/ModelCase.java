@@ -138,7 +138,7 @@ public class ModelCase implements IVolume {
         for(Map.Entry<String, Map> et:fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
-            if ("@".equals(fn)) {
+            if ("@".equals (fn)) {
                 continue; // 排除掉 @
             }
             if (field.containsKey(x)) {
@@ -189,7 +189,7 @@ public class ModelCase implements IVolume {
         for(Map.Entry<String, Map> et:fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
-            if ("@".equals(fn)) {
+            if ("@".equals (fn)) {
                 continue; // 排除掉 @
             }
             if (field.containsKey(x)) {

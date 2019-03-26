@@ -254,12 +254,16 @@ public class Form extends Model {
 
             // 补全表配置项
             fld = Synt.mapOf(
-                "__text__", name,
+                "__text__", name
+                /*
+                // 已改完默认按类型判断
+                // 故没有必要再作设置了
                 "listable", "?" ,
                 "sortable", "?" ,
                 "srchable", "?" ,
                 "findable", "?" ,
                 "nameable", "?"
+                */
             );
             if (tdf != null) {
                 fld .putAll(tdf);

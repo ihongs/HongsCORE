@@ -19,8 +19,8 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div class="clearfix">
-        <div class="toolbox btn-group col-xs-6">
+    <div class="row board">
+        <div class="toolbox col-xs-6 btn-group">
             <%if ( "select".equals(_action)) {%>
             <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
             <%} // End If %>
@@ -53,8 +53,7 @@
         </form>
     </div>
     <!-- 筛选 -->
-    <form class="findbox filtbox panel invisible">
-        <div class="form-group clearfix"></div>
+    <form class="findbox filtbox invisible panel panel-body">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -132,14 +131,12 @@
             <div class="col-xs-6 col-xs-offset-3">
                 <button type="submit" class="btn btn-default">过滤</button>
                 <span style="padding: 0.1em;"></span>
-                <button type="reset"  class="btn btn-default">重置</button>
+                <button type="reset"  class="btn btn-link"   >重置</button>
             </div>
         </div>
-        <div class="form-group clearfix"></div>
     </form>
     <!-- 统计 -->
-    <form class="findbox statbox invisible">
-        <div class="clearfix" style="padding: 5px;">
+    <form class="findbox statbox invisible row">
         <%
         Iterator it3 = _fields.entrySet().iterator();
         while (it3.hasNext()) {
@@ -183,14 +180,13 @@
                 type = "acount";
             }
         %>
-        <div data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>" class="stat-group col-xs-6" style="padding: 5px;">
+        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>">
             <div class="panel clearfix">
                 <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
                 <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
             </div>
         </div>
         <%} /*End For*/%>
-        </div>
     </form>
     <!-- 列表 -->
     <div class="table-responsive-revised">
@@ -198,7 +194,7 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <th data-fn="id[]" data-ft="<%if ("select".equals(_action)) {%>_fork<%} else {%>_check<%}%>" class="_check">
+                    <th data-fn="id[]" data-ft="_check" class="_check">
                         <input type="checkbox" class="checkall" name="id[]"/>
                     </th>
                 <%
@@ -343,11 +339,23 @@
             [ '<%=_module%>/<%=_entity%>/swap.html',
               '.manual', '@' ]
         ],
-        send: hsSendWithMemo
+        send        : hsSendWithMemo,
+        <%if ("select".equals(_action)) {%>
+        _fill__check: hsListFillSele,
+        <%} /*End If */%>
+        // 链接填充, 支持多值, 占格子窄
+        _fill__ulink: hsListWrapOpen("link" ),
+        _fill__files: hsListWrapOpen("file" ),
+        _fill__email: hsListWrapOpen("email"),
+        _fill__image: hsListWrapOpen("image"),
+        _fill__video: hsListWrapOpen("video"),
+        _fill__audio: hsListWrapOpen("audio")
     });
 
     var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum"
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum",
+        _prep__enum : hsListPrepFilt,
+        _fill__enum : hsListFillFilt
     });
 
     var statobj = context.hsStat({
@@ -355,14 +363,23 @@
         curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    var findreq = hsSerialDat(loadbox);
-    for(var fn in findreq) {
-        if (! findreq[fn]) {
+    var loadarr = hsSerialArr(loadbox);
+    var loadres = hsSerialDat(loadarr);
+
+    // 绑定参数
+    listobj._url = hsSetPms(listobj._url, loadarr);
+    statobj.aurl = hsSetPms(statobj.aurl, loadarr);
+    statobj.curl = hsSetPms(statobj.curl, loadarr);
+
+    // 移除参数限定的过滤项
+    for(var fn in loadres) {
+        if (! loadres[fn]) {
             continue;
         }
         findbox.children("[data-find='"+fn+"']").remove();
     }
 
+    // 无过滤或统计则隐藏之
     if (filtbox.find(".filt-group").size() == 0) {
         findbox.find(".filter").remove();
     }
@@ -370,6 +387,7 @@
         findbox.find(".statis").remove();
     }
 
+    // 延迟加载
     filtbox.on("opened", function() {
         if (filtbox.data("fetched") != true) {
             filtbox.data("fetched"  ,  true);
@@ -382,20 +400,6 @@
             statobj.load();
         }
     });
-
-    filtobj._prep__enum = hsListPrepFilt;
-    filtobj._fill__enum = hsListFillFilt;
-    <%if ("select".equals(_action)) {%>
-    listobj._fill__fork = hsListFillSele;
-    <%} /*End If */%>
-
-    // 链接填充, 支持多值, 占格子窄
-    listobj._fill__ulink = hsListWrapOpen("link");
-    listobj._fill__files = hsListWrapOpen("file");
-    listobj._fill__email = hsListWrapOpen("email");
-    listobj._fill__image = hsListWrapOpen("image");
-    listobj._fill__video = hsListWrapOpen("video");
-    listobj._fill__audio = hsListWrapOpen("audio");
 
     // 管理动作
     findbox.find(".filter").click(function() {
@@ -432,7 +436,7 @@
         }
 
         // 加载数据
-        listobj.load(hsSetPms(listobj._url, loadbox), findbox);
+        listobj.load(listobj._url, findbox);
     });
 })(jQuery);
 </script>

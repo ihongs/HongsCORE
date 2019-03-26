@@ -158,7 +158,8 @@
             </div>
         <%} /*End if */%>
         <%} /*End For*/%>
-        <div class="form-group row" style="background-color: white;">
+        <hr/>
+        <div class="form-group row">
             <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
             </div>

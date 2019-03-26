@@ -51,21 +51,21 @@ public class AssocCase {
      */
     public  static final String  LISTABLE = "LISTABLE";
     /**
+     * 可搜索字段, 用于 FetchCase 的 Option
+     */
+    public  static final String  SRCHABLE = "SRCHABLE";
+    /**
      * 可排序字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  SORTABLE = "SORTABLE";
-    /**
-     * 可模糊搜索, 用于 FetchCase 的 Option
-     */
-    public  static final String  SRCHABLE = "SRCHABLE";
     /**
      * 可过滤字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  FINDABLE = "FINDABLE";
     /**
-     * 可模糊搜索, 用于 FetchCase 的 Option, 未设置则取 SRCHABLE
+     * 搜索的字段, 用于 FetchCase 的 Option, 未设置则取 SRCHABLE
      */
-    public  static final String  LIKEABLE = "LIKEABLE";
+    public  static final String  WORDABLE = "WORDABLE";
     /**
      * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 FINDABLE
      */
@@ -136,11 +136,11 @@ public class AssocCase {
     /**
      * 自定义许可字段
      * <pre>
- fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
- fs 仅给一个常量 DENY 表示禁用 an 的 allow 设置,
- fs 不给值或给空串同样表示禁用 an 的 allow 设置,
- 清除后非 LISTABLE,SRCHABLE 即可继承 LISTABLE;
- </pre>
+     * fs 仅给一个常量 WIPE 表示清除 an 的 allow 设置,
+     * fs 仅给一个常量 DENY 表示禁用 an 的 allow 设置,
+     * fs 不给值或给空串同样表示禁用 an 的 allow 设置,
+     * 清除后非 LISTABLE,SRCHABLE 即可继承 LISTABLE;
+     * </pre>
      * <pre>
      * <b>字段的首字符:</b>
      *   - 相对 LISTABLE 删减字段,
@@ -401,7 +401,7 @@ public class AssocCase {
 
         Map<String, String> af = allow(SORTABLE);
 
-        for(String fn : ob) {
+        for(String  fn : ob) {
             boolean desc = fn.startsWith("-");
             if (desc) {
                 fn = fn.substring(1);
@@ -420,32 +420,39 @@ public class AssocCase {
     private void query(FetchCase caze, Set<String> wd) {
         if (wd == null || wd.isEmpty()) return;
 
-        Map<String, String> af = allow(SRCHABLE);
+        Map<String, String> af = allow(WORDABLE);
+
+        query ( caze, wd, af.values ());
+    }
+
+    private void query(FetchCase caze, Collection<String> wd, Collection<String> wf) {
+        if (wf == null || wf.isEmpty()) return;
+
         int  i = 0;
-        int  l = wd.size( ) * af.size( );
+        int  l = wd.size( ) * wf.size( );
         Object[]      ab = new Object[l];
         Set<String>   xd = new HashSet();
         StringBuilder sb = new StringBuilder();
 
         // 转义待查词, 避开通配符, 以防止歧义
-        for(String  wb : wd) {
-            xd.add("%" + Tool.escape( wb , "/%_[]" , "/") + "%" );
+        for(String  fw : wd) {
+            xd.add("%" + Tool.escape(fw , "/%_[]" , "/") + "%");
         }
 
-        for(Map.Entry<String, String> et : af.entrySet()) {
-            String fn = et.getValue();
+        for(String  fn : wf) {
             sb.append("(");
             for(String wb : xd) {
                 ab[ i++ ] = wb;
-                sb.append(fn).append( " LIKE ? ESCAPE '/' AND " );
+                sb.append(fn).append(" LIKE ? ESCAPE '/' AND ");
             }
             sb.setLength(sb.length() - 5);
             sb.append(") OR " );
-        }
+        }   sb.setLength(sb.length() - 4);
 
-        if (l > 0) {
-            sb.setLength(sb.length() - 4);
-            caze.filter ("(" + sb.toString() + ")" , ab );
+        if (wf.size() == 1) {
+            caze.filter(    sb.toString()    , ab);
+        } else {
+            caze.filter("("+sb.toString()+")", ab);
         }
     }
 
@@ -454,7 +461,7 @@ public class AssocCase {
 
         Map<String, String> af = allow(FINDABLE);
         Map<String, String> rf = allow(RATEABLE);
-        Map<String, String> sf = allow(LIKEABLE);
+        Map<String, String> sf = allow(SRCHABLE);
 
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
@@ -505,19 +512,11 @@ public class AssocCase {
                             continue;
                         }
 
-                        // 转义待查词, 避开通配符, 以防止歧义
-                        Set  <String> ws = Synt.toWords ( rv );
-                        List <String> wb = new ArrayList(    );
-                        StringBuilder sb = new StringBuilder();
-                        sb.append("(");
-                        for(String wd : ws) {
-                            sb.append(fn).append(" ").append(rn)
-                              .append(  " ? ESCAPE '/' AND "   );
-                            wb.add("%" + Tool.escape(wd, "/%_[]", "/") + "%");
-                        }
-                        sb.setLength(sb.length() - 5);
-                        sb.append(")");
-                        caze.filter(sb.toString(), wb.toArray());
+                        // 组织成 LIKE 查询串
+                        Set<String> ws = Synt.toWords(rv);
+                        Set<String> ns = new  HashSet(01);
+                        ns.add(fn);
+                        query(caze, ws , ns);
                         continue;
                     }
 
@@ -687,29 +686,33 @@ public class AssocCase {
 
         // 相对查询字段增加, 删减
         if (af != null && !LISTABLE.equals(on)) {
-            Map xf = allowDiffs(af);
+            Map xf  = allowDiffs (af);
             if (xf != null) {
                 return xf ;
             }
         }
 
-        // 搜索字段不能从列举继承
-        // 包含字段可以从搜索继承
+        // 继承树, 列举和搜索为根
         if (af == null) {
-            if (LISTABLE.equals(on)
-            ||  SRCHABLE.equals(on)) {
-                af = new HashMap(  );
-            } else
-            if (LIKEABLE.equals(on)) {
+        if (on != null) switch (on) {
+            case LISTABLE:
+            case SRCHABLE:
+                af =  new HashMap();
+                break;
+            case WORDABLE:
                 af = allow(SRCHABLE);
                 if (af == null) {
+                    af =  new HashMap();
+                }
+                break;
+            case RATEABLE:
                 af = allow(FINDABLE);
                 if (af == null) {
                     af =  new HashMap();
-                }}
-            } else
-            if (RATEABLE.equals(on)) {
-                af = allow(FINDABLE);
+                }
+                break;
+            default:
+                af = allow(LISTABLE);
                 if (af == null) {
                     af =  new HashMap();
                 }
@@ -816,20 +819,20 @@ public class AssocCase {
     public AssocCase allow(Table table) {
         String cs;
         Map ps = table.getParams();
-        cs = (String) ps.get("sortable");
-        if (cs != null) allow(SORTABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("listable");
+        if (cs != null) allow(LISTABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("srchable");
         if (cs != null) allow(SRCHABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("sortable");
+        if (cs != null) allow(SORTABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("findable");
         if (cs != null) allow(FINDABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("likeable");
-        if (cs != null) allow(LIKEABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("wordable");
+        if (cs != null) allow(WORDABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("rateable");
         if (cs != null) allow(RATEABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("saveable");
         if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("listable");
-        if (cs != null) allow(LISTABLE, cs.trim().split("\\s*,\\s*"));
         else {
             /**
              * 此处未将 SRCHTABLE 设为当前所有字段

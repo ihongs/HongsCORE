@@ -2,15 +2,12 @@
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
         <value code="listable" type="set">
-            string,stored,search,hidden,text,email,url,tel,sms,
-            textarea,textview,
+            string,stored,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
             enum,check,radio,select,type,
             file,image,audio,video,
-            fork,pick,stored,
-            form,part,object,
-            json
+            fork,pick
         </value>
         <value code="findable" type="set">
             string,search,hidden,text,email,url,tel,sms,

@@ -1346,6 +1346,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             return  "date" ;
         }
 
+        ks = getSaveTypes( "enum" );
+        if (ks != null && ks.contains(t)) {
+            return Synt.declare(fc.get("type"), "string");
+        }
+
         ks = getSaveTypes("string");
         if (ks != null && ks.contains(t)) {
             return "string";
@@ -1442,6 +1447,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false;
                 break;
             case "double":
+            case "number":
                 if ("".equals(v)) continue;
                 f = new DoubleField();
                 p = false;
@@ -1459,13 +1465,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false; // 排序类型无法搜索
                 q = false; // 排序类型无法筛选
                 break;
-            case "stored":
-                f = new StringFiald();
-                g = true ;
-                p = false; // 存储类型无法搜索
-                q = false; // 存储类型无法筛选
-                s = false; // 存储类型无法排序
-                break;
             case "object":
                 if ("".equals(v)) continue;
                 f = new ObjectFiald();
@@ -1473,6 +1472,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false; // 对象类型无法搜索
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
+                break;
+            case "stored":
+                f = new StringFiald();
+                g = true ;
+                p = false; // 存储类型无法搜索
+                q = false; // 存储类型无法筛选
+                s = false; // 存储类型无法排序
                 break;
             case "search":
                 f = new StringFiald();
@@ -1571,8 +1577,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             IndexableField[] fs = doc.getFields(k);
 
             if (t != null) switch (t) {
+            case "search":
             case "sorted":
-                continue; // 纯排序字段无可见值
+                continue; // 纯功能字段无可见值
             case "date":
                 // 时间戳转 Date 对象时需要乘以 1000
                 String  y = Synt.declare(m.get("type"), "");

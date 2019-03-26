@@ -3,54 +3,36 @@ package io.github.ihongs.dh;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
 /**
  * 表单模型通用配置
  *
- * 对表单中 @ 区域的 xxxxable 配置项,
+ * 对表单中 @ 区域的 xxxxable 配置项:
  * 其取值为 ? 将根据字段的类型来判别,
- * 如取值为 * 表示当前全部字段都可用.
- * 默认情况需检查字段自身的 xxxxable.
+ * 其取值为 ! 将检查字段内的对应设置,
+ * 其取值为 * 表示当前全部字段都可用,
+ * 亦可直接指定一个字段列表,
+ * 默认不作设置按类型来判别.
  *
  * @author Hongs
  */
 public class ModelCase implements IVolume {
 
-    private Map fieldz = null;
-    private Map fsavez = null;
-    private Map fcasez = null;
-    private Set rbColz = null;
-    private Set obColz = null;
-    private Set wdColz = null;
-    private Set whColz = null;
+    private Map _fields = null;
+    private Set _rb_fns = null;
+    private Set _ob_fns = null;
+    private Set _wd_fns = null;
+    private Set _wh_fns = null;
 
     /**
      * 设置字段配置
      * @param map
      */
     protected void setFields(Map map) {
-        fieldz = map;
-    }
-
-    /**
-     * 设置存储类型映射
-     * @param map
-     */
-    protected void setSaveTypes(Map<String, Set<String>> map) {
-        fsavez = map;
-    }
-
-    /**
-     * 设置使用类型映射
-     * @param map
-     */
-    protected void setCaseTypes(Map<String, Set<String>> map) {
-        fcasez = map;
+        _fields = map;
     }
 
     /**
@@ -70,8 +52,8 @@ public class ModelCase implements IVolume {
      */
     @Override
     public Map getFields() {
-        if (null != fieldz) {
-            return  fieldz;
+        if (null != _fields) {
+            return  _fields;
         }
         throw new NullPointerException("Fields can not be null");
     }
@@ -91,52 +73,35 @@ public class ModelCase implements IVolume {
     }
 
     /**
-     * 获取字段类型映射
-     * @return
-     */
-    public Map<String, Set<String>> getSaveTypes() {
-        if (null != fsavez) {
-            return  fsavez;
-        }
-        try {
-            Map<String, Object> m = FormSet.getInstance().getEnum("__saves__");
-            fsavez = new HashMap();
-            for(Map.Entry<String, Object> et : m.entrySet()) {
-                fsavez.put(et.getKey(), Synt.toSet(et.getValue()));
-            }
-            return  fsavez;
-        } catch (HongsException e) {
-            throw e.toExemption( );
-        }
-    }
-
-    /**
-     * 获取查询类型映射
-     * @return
-     */
-    public Map<String, Set<String>> getCaseTypes() {
-        if (null != fcasez) {
-            return  fcasez;
-        }
-        try {
-            Map<String, Object> m = FormSet.getInstance().getEnum("__cases__");
-            fcasez = new HashMap();
-            for(Map.Entry<String, Object> et : m.entrySet()) {
-                fcasez.put(et.getKey(), Synt.toSet(et.getValue()));
-            }
-            return  fcasez;
-        } catch (HongsException e) {
-            throw e.toExemption( );
-        }
-    }
-
-    /**
      * 获取特定类别的字段类型
      * @param x 类别, 如 string,number
      * @return
      */
-    public Set<String> getSaveTypes(String x) {
-        return getSaveTypes().get(x);
+    protected Set<String> getSaveTypes(String x) {
+        try {
+            return ((Map<String, Set>) FormSet
+                    .getInstance()
+                    .getEnum("__saves__"))
+                    .get( x );
+        } catch (HongsException e) {
+            throw e.toExemption( );
+        }
+    }
+
+    /**
+     * 获取特定用途的字段类型
+     * @param x 标识, 如 listable,sortable
+     * @return
+     */
+    protected Set<String> getCaseTypes(String x) {
+        try {
+            return ((Map<String, Set>) FormSet
+                    .getInstance()
+                    .getEnum("__cases__"))
+                    .get( x );
+        } catch (HongsException e) {
+            throw e.toExemption( );
+        }
     }
 
     /**
@@ -145,31 +110,49 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getSaveNames(String x) {
-        Map<String, Map> fields = getFields();
-        Set<String> fns = new LinkedHashSet();
-        Set         fts = getSaveTypes(x);
+        Set fts;
 
-        for(Map.Entry<String, Map> et: fields.entrySet()) {
+        Map<String, Object> pvs = getParams();
+        if (pvs.containsKey(x)) {
+            Object  o  =  pvs.get (x);
+            if ("*".equals (o)) {
+                fts = new HashSet(getFields().keySet());
+                fts.remove("@");
+                return fts;
+            } else
+            if ("!".equals (o)) {
+                fts = null;
+            } else
+            if ("?".equals (o)) {
+                fts = getSaveTypes(x);
+            } else
+            {
+                return Synt.toSet (o);
+            }
+        } else {
+                fts = getSaveTypes(x);
+        }
+
+        Map<String, Map> fields = getFields();
+        Set<String>      fns  = new HashSet();
+        for(Map.Entry<String, Map> et:fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
             if ("@".equals(fn)) {
                 continue; // 排除掉 @
             }
-            if (fts.contains( field.get( "__type__" ) ) ) {
-                fns.add(fn);
+            if (field.containsKey(x)) {
+                if (Synt.declare(field.get(x), false ) ) {
+                    fns.add(fn);
+                }
+            } else if ( fts != null ) {
+                if (fts.contains(field.get("__type__"))) {
+                    fns.add(fn);
+                }
             }
         }
 
         return  fns;
-    }
-
-    /**
-     * 获取特定用途的字段类型
-     * @param x 标识, 如 listable,sortable
-     * @return
-     */
-    public Set<String> getCaseTypes(String x) {
-        return getCaseTypes().get(x);
     }
 
     /**
@@ -178,40 +161,32 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getCaseNames(String x) {
-        Set fts = null;
+        Set fts;
 
         Map<String, Object> pvs = getParams();
         if (pvs.containsKey(x)) {
-            // 检查是否根据类型识别
-            // 亦或提取全部字段名称
-            Object  o  =  pvs.get(x);
-            if (!"?".equals(o)) {
-            if (!"*".equals(o)) {
-                return Synt.toSet(o);
-            } else {
-                Set fs = getFields().keySet();
-                fs = new LinkedHashSet ( fs );
-                fs.remove("@");
-                return fs;
-            }}
-
-            fts = getCaseTypes(x);
-        } else {
-            // 可在表参数区直接给出
-            // 专用类型无需特别设置
-            if ("srchable".equals(x)) {
-                fts = new HashSet( );
-                fts.add("search");
+            Object  o  =  pvs.get (x);
+            if ("*".equals (o)) {
+                fts = new HashSet(getFields().keySet());
+                fts.remove("@");
+                return fts;
             } else
-            if ("sortable".equals(x)) {
-                fts = new HashSet( );
-                fts.add("sorted");
+            if ("!".equals (o)) {
+                fts = null;
+            } else
+            if ("?".equals (o)) {
+                fts = getCaseTypes(x);
+            } else
+            {
+                return Synt.toSet (o);
             }
+        } else {
+                fts = getCaseTypes(x);
         }
 
-        Map<String, Map   > fcs = getFields();
-        Set<String> fns = new LinkedHashSet();
-        for(Map.Entry<String, Map> et: fcs.entrySet( ) ) {
+        Map<String, Map> fields = getFields();
+        Set<String>      fns  = new HashSet();
+        for(Map.Entry<String, Map> et:fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
             if ("@".equals(fn)) {
@@ -236,11 +211,11 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getListable() {
-        if (null != rbColz) {
-            return  rbColz;
+        if (null != _rb_fns) {
+            return  _rb_fns;
         }
-        rbColz = getCaseNames("listable");
-        return rbColz;
+        _rb_fns = getCaseNames("listable");
+        return _rb_fns;
     }
 
     /**
@@ -248,11 +223,11 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getSortable() {
-        if (null != obColz) {
-            return  obColz;
+        if (null != _ob_fns) {
+            return  _ob_fns;
         }
-        obColz = getCaseNames("sortable");
-        return obColz;
+        _ob_fns = getCaseNames("sortable");
+        return _ob_fns;
     }
 
     /**
@@ -260,11 +235,11 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getSrchable() {
-        if (null != wdColz) {
-            return  wdColz;
+        if (null != _wd_fns) {
+            return  _wd_fns;
         }
-        wdColz = getCaseNames("srchable");
-        return wdColz;
+        _wd_fns = getCaseNames("srchable");
+        return _wd_fns;
     }
 
     /**
@@ -272,11 +247,11 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getFindable() {
-        if (null != whColz) {
-            return  whColz;
+        if (null != _wh_fns) {
+            return  _wh_fns;
         }
-        whColz = getCaseNames("findable");
-        return whColz;
+        _wh_fns = getCaseNames("findable");
+        return _wh_fns;
     }
 
 }

@@ -5,7 +5,7 @@
             string,stored,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,check,radio,select,type,
+            enum,type,select,check,radio,
             file,image,audio,video,
             fork,pick
         </value>
@@ -13,14 +13,14 @@
             string,search,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,check,radio,select,type,
+            enum,type,select,check,radio,
             fork,pick
         </value>
         <value code="sortable" type="set">
             string,sorted,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,check,radio,select,type
+            enum,type,select,check,radio
         </value>
         <value code="srchable" type="set">
             string,search,hidden,text,
@@ -30,19 +30,21 @@
     <!-- 存储类型与字段类型的映射 -->
     <enum name="__saves__">
         <value code="string" type="set">
-            string,search,hidden,text,email,url,tel,sms,
+            string,hidden,text,email,url,tel,sms,
             textarea,textview,
-            enum,radio,check,select,type,
             file,image,audio,video,
             fork,pick,
             form,part,
-            json
+            json,object
         </value>
         <value code="number" type="set">
             number,range,color
         </value>
         <value code="date"   type="set">
             date,time,datetime
+        </value>
+        <value code="enum"   type="set">
+            enum,type,select,check,radio
         </value>
         <!-- 下为 Lucene 特有 -->
         <value code="object" type="set">

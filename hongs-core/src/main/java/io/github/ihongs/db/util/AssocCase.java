@@ -829,7 +829,7 @@ public class AssocCase {
         if (cs != null) allow(FINDABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("wordable");
         if (cs != null) allow(WORDABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("rateable");
+        cs = (String) ps.get("rangable");
         if (cs != null) allow(RANGABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("saveable");
         if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));

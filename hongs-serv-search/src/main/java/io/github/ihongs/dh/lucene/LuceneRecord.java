@@ -589,7 +589,20 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Loop search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
-        Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        Set   r ;
+
+        /**
+         * 无 rb 和 id 字段参数,
+         * 表明这是在查默认列表,
+         * 按 LISTABLE 进行限制.
+         */
+        if (! rd.containsKey(Cnst.RB_KEY )
+        &&  ! rd.containsKey(Cnst.ID_KEY)) {
+              r =  getListable ( /*****/ );
+        } else {
+              r = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        }
+
         Loop  l = new Loop(this, q,s,r, begin,limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {

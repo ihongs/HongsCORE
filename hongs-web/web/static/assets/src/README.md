@@ -59,7 +59,7 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
          data-send-urls-0="['centra/master/user/delete.act','.delete','您确定要删除此用户?']"
          data-open-urls-0="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']"
          data-open-urls-1="['centra/master/user/form.html?id={ID}'           ,'.modify','@']">
-        <div>
+        <div class="row board">
             <div class="toolbox col-md-8 btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
                 <button type="button" class="modify for-choose btn btn-default">修改</button>
@@ -103,7 +103,7 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
          data-open-urls-0="['centra/master/dept/form.html?pid={ID}','.create','@']"
          data-open-urls-1="['centra/master/dept/form.html?id={ID}' ,'.modify','@']"
          data-root-name="组织架构">
-        <div class="toolbox btn-group">
+        <div class="toolbox btn-group board">
             <button type="button" class="create btn btn-default">添加</button>
             <button type="button" class="modify for-select btn btn-default">修改</button>
             <button type="button" class="delete for-select btn btn-warning">删除</button>

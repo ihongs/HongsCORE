@@ -36,12 +36,6 @@ code, pre, var, dfn, kbd {
     max-height: 0;
 }
 
-.nav-tabs ,
-.nav-pills,
-.breadcrumb {
-    margin-bottom: 15px;
-}
-
 .breadcrumb>.active>a {
     font-weight: bold;
     color: #808080;
@@ -139,6 +133,12 @@ fieldset>.dropdown-list {
     margin-top: -10px;
 }
 
+.table-responsive {
+    margin-bottom: 18px;
+}
+.table-responsive>.table {
+    margin-bottom:  0px;
+}
 .table tbody tr.active td ,
 .table tbody tr.active th {
     color: #444444;
@@ -329,32 +329,34 @@ ol.repeated ,
 
 /** 列表 **/
 
-.listbox ,
-.pagebox ,
-.toolbox ,
-.findbox {
-    margin-bottom: 15px;
+.board {
+    margin-bottom: 18px;
 }
-.toolbox.invisible ,
-.findbox.invisible {
-    margin-bottom: 0
-}
-.toolbox.btn-group {
-    padding-right: 0;
-    padding-left : 0;
+.board-body {
+    padding : 15px 15px;
 }
 
-.listbox .table,
-.toolbox .alert,
-.pagebox .alert,
-.pagebox .pager,
-.pagebox .pagination {
-    margin : 0;
+.findbox.input-group[class*="col-"] {
+    padding-left : 15px;
+    padding-right: 15px;
 }
-.page-text a {
+
+.listbox.invisible ,
+.pagebox.invisible ,
+.findbox.invisible ,
+.toolbox.invisible {
+    margin-bottom: 0;
+}
+
+.pagebox .alert ,
+.pagebox .pager ,
+.pagebox .pagination {
+    margin-top : 0;
+}
+.pagebox .page-text a {
     margin-left: 10px;
 }
-.page-text {
+.pagebox .page-text   {
     line-height: 36px;
 }
 

@@ -22,8 +22,12 @@
             date,time,datetime,
             enum,type,select,check,radio
         </value>
+        <value code="compable" type="set">
+            number,range,color,
+            date,time,datetime
+        </value>
         <value code="srchable" type="set">
-            string,search,hidden,text,
+            string,search,text,
             textarea,textview
         </value>
     </enum>

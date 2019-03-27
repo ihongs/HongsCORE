@@ -67,9 +67,9 @@ public class AssocCase {
      */
     public  static final String  WORDABLE = "WORDABLE";
     /**
-     * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 FINDABLE
+     * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 SORTABLE
      */
-    public  static final String  RANGABLE = "RANGABLE";
+    public  static final String  COMPABLE = "COMPABLE";
     /**
      * 可存储字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
@@ -104,6 +104,7 @@ public class AssocCase {
         NOLS.add(Cnst.AI_REL);
         NOLS.add(Cnst.SI_REL);
         NOLS.add(Cnst.SE_REL);
+        NOLS.add(Cnst.SC_REL);
         NOLS.add(Cnst.WT_REL);
 
         FUNC.add(Cnst.PN_KEY);
@@ -126,7 +127,7 @@ public class AssocCase {
      */
     public AssocCase(FetchCase caze) {
         if (caze == null) {
-            throw new NullPointerException(AssocCase.class.getName()+": temp can not be null");
+            throw new NullPointerException(AssocCase.class.getName()+": case can not be null");
         }
         this.that = caze;
         this.opts = new HashMap();
@@ -249,7 +250,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "sortable", "srchable", "findable"};
+        String[] ks = new String[] {"listable", "findable", "sortable", "srchable", "wordable", "compable"};
         for(String k : ks) {
             Object s = fc.get( k );
             if (null == s) {
@@ -460,9 +461,9 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FINDABLE);
-        Map<String, String> rf = allow(RANGABLE);
+        Map<String, String> rf = allow(COMPABLE);
         Map<String, String> sf = allow(SRCHABLE);
-
+        
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
             String fn = et.getValue();
@@ -705,8 +706,8 @@ public class AssocCase {
                     af =  new HashMap();
                 }
                 break;
-            case RANGABLE:
-                af = allow(FINDABLE);
+            case COMPABLE:
+                af = allow(SORTABLE);
                 if (af == null) {
                     af =  new HashMap();
                 }
@@ -830,7 +831,7 @@ public class AssocCase {
         cs = (String) ps.get("wordable");
         if (cs != null) allow(WORDABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("rangable");
-        if (cs != null) allow(RANGABLE, cs.trim().split("\\s*,\\s*"));
+        if (cs != null) allow(COMPABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("saveable");
         if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));
         else {

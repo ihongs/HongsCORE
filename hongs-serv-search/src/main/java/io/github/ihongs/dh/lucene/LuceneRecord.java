@@ -1425,12 +1425,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             boolean g =!unstored(m);
 
             if (Cnst.ID_KEY.equals(k)) {
-                p  = false; // ID 无需搜索
-                q  = true ;
-                g  = true ;
+                q  = true;
+                g  = true;
             }
 
-            if (t != null) switch (t) {
+            if (t != null) switch (t)  {
             case "int":
                 if ("".equals(v)) continue;
                 f = new IntField();
@@ -1724,24 +1723,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             }
         }
 
-        //** 模糊匹配 */
-
-        if (m.containsKey(Cnst.CQ_REL)) {
-            Object n = m.remove(Cnst.CQ_REL);
-            if ( ! "".equals(n)) // 空即查全部, 没必要解析
-            qry.add(q.gen(k, n), BooleanClause.Occur.MUST);
-        }
-
-        if (m.containsKey(Cnst.NC_REL)) {
-            Object n = m.remove(Cnst.NC_REL);
-            qry.add(q.gen(k, n), BooleanClause.Occur.MUST_NOT);
-        }
-
-        if (m.containsKey(Cnst.SC_REL)) {
-            Object n = m.remove(Cnst.SC_REL);
-            qry.add(q.gen(k, n), BooleanClause.Occur.SHOULD  );
-        }
-
         //** 精确匹配 **/
 
         if (m.containsKey(Cnst.EQ_REL)) {
@@ -1757,6 +1738,26 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (m.containsKey(Cnst.SE_REL)) {
             Object n = m.remove(Cnst.SE_REL);
             qry.add(q.get(k, n), BooleanClause.Occur.SHOULD  );
+        }
+
+        //** 模糊匹配 */
+
+        if (m.containsKey(Cnst.CQ_REL)) {
+            Object n = m.remove(Cnst.CQ_REL);
+            if ( ! "".equals(n)) // 空即查全部, 没必要解析
+            qry.add(q.gen(k, n), BooleanClause.Occur.MUST);
+        }
+
+        if (m.containsKey(Cnst.NC_REL)) {
+            Object n = m.remove(Cnst.NC_REL);
+            if ( ! "".equals(n)) // 空即查全部, 没必要解析
+            qry.add(q.gen(k, n), BooleanClause.Occur.MUST_NOT);
+        }
+
+        if (m.containsKey(Cnst.SC_REL)) {
+            Object n = m.remove(Cnst.SC_REL);
+            if ( ! "".equals(n)) // 空即查全部, 没必要解析
+            qry.add(q.gen(k, n), BooleanClause.Occur.SHOULD  );
         }
 
         //** 包含多个 **/

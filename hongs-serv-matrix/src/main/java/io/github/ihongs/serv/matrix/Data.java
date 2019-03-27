@@ -80,6 +80,33 @@ public class Data extends SearchEntity {
     }
 
     /**
+     * 获取参数
+     * 另一方法非常可能需要覆盖,
+     * 故提供此方法以便从基类调,
+     * 未设时抛出 NullPointerException
+     * @return
+     */
+    protected final Map gotParams() {
+        return  super . getParams();
+    }
+
+    /**
+     * 获取参数
+     * 取不到则会尝试先获取字段.
+     * @return
+     */
+    @Override
+    public Map getParams() {
+        try {
+            return gotParams();
+        }
+        catch (NullPointerException ex) {
+                   getFields();
+            return gotParams();
+        }
+    }
+
+    /**
      * 获取字段
      * 当前表单不在管理区之内时,
      * 会用当前表单覆盖管理表单,
@@ -92,8 +119,8 @@ public class Data extends SearchEntity {
             return gotFields();
         }
         catch (NullPointerException ex) {
-            // 使用超类来管理字段集合
-            // 拿不到就走下面流程填充
+            // 使用超类管理字段
+            // 拿不到就进行填充
         }
 
         /**
@@ -619,12 +646,11 @@ public class Data extends SearchEntity {
             boolean g =!unstored(m);
 
             if (Cnst.ID_KEY.equals(k)) {
-                p  = false; // ID 无需搜索
-                q  = true ;
-                g  = true ;
+                q  = true;
+                g  = true;
             }
 
-            if (t != null) switch (t) {
+            if (t != null) switch (t)  {
             case "int":
                 if ("".equals(v)) continue;
                 f = new IntField();

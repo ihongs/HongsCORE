@@ -3,6 +3,7 @@ package io.github.ihongs.dh;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -22,32 +23,50 @@ import java.util.Set;
 public class ModelCase implements IVolume {
 
     private Map _fields = null;
+    private Map _params = null;
     private Set _rb_fns = null;
     private Set _ob_fns = null;
     private Set _wd_fns = null;
     private Set _wh_fns = null;
+    private Set _rg_fns = null;
 
     /**
-     * 设置字段配置
+     * 设置表单字段
+     *
+     * 会同时设置参数, 但需注意:
+     * 重复调用时第一次不带参数,
+     * 后面再带上参数并不会覆盖,
+     * 重设字段务必自行处理参数.
+     *
      * @param map
      */
-    protected void setFields(Map map) {
+    protected final void setFields(Map map) {
         _fields = map;
+
+        if (_fields != null
+        &&  _params == null) {
+            _params  = (Map) map.get("@");
+        if (_params == null) {
+            _params  =  new  HashMap(   );
+        }}
     }
 
     /**
-     * 获取字段配置
-     * 如需覆盖, 可参考以下代码:
-     * <code>
-    try {
-        return super.getFields();
+     * 设置表单参数
+     *
+     * 如果自定义字段, 需要注意:
+     * 初始化未设字段千万要小心,
+     * 此时您可能需要重写此方法,
+     * 在获取不到时尝试先取字段.
+     *
+     * @param map
+     */
+    protected final void setParams(Map map) {
+        _params = map;
     }
-    catch (NullPointerException ex) {
-        // 自定义 fields
-        setFields(fields);
-        return fields;
-    }
-     * </code>
+
+    /**
+     * 获取表单字段
      * @return
      */
     @Override
@@ -60,16 +79,14 @@ public class ModelCase implements IVolume {
 
     /**
      * 获取表单参数
-     * 默认来自字段配置的 @ 项
      * @return
      */
     @Override
     public Map getParams() {
-        Map ps =  Synt.asMap(getFields().get("@"));
-        if (ps == null) {
-            ps =  Synt.mapOf();
+        if (null != _params) {
+            return  _params;
         }
-        return ps;
+        throw new NullPointerException("Params can not be null");
     }
 
     /**
@@ -77,7 +94,7 @@ public class ModelCase implements IVolume {
      * @param x 类别, 如 string,number
      * @return
      */
-    protected Set<String> getSaveTypes(String x) {
+    public Set<String> getSaveTypes(String x) {
         try {
             return ((Map<String, Set>) FormSet
                     .getInstance()
@@ -93,7 +110,7 @@ public class ModelCase implements IVolume {
      * @param x 标识, 如 listable,sortable
      * @return
      */
-    protected Set<String> getCaseTypes(String x) {
+    public Set<String> getCaseTypes(String x) {
         try {
             return ((Map<String, Set>) FormSet
                     .getInstance()
@@ -110,45 +127,18 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getSaveNames(String x) {
-        Set fts;
-
-        Map<String, Object> pvs = getParams();
-        if (pvs.containsKey(x)) {
-            Object  o  =  pvs.get (x);
-            if ("*".equals (o)) {
-                fts = new HashSet(getFields().keySet());
-                fts.remove("@");
-                return fts;
-            } else
-            if ("!".equals (o)) {
-                fts = null;
-            } else
-            if ("?".equals (o)) {
-                fts = getSaveTypes(x);
-            } else
-            {
-                return Synt.toSet (o);
-            }
-        } else {
-                fts = getSaveTypes(x);
-        }
-
         Map<String, Map> fields = getFields();
-        Set<String>      fns  = new HashSet();
-        for(Map.Entry<String, Map> et:fields.entrySet()) {
+        Set fts = getSaveTypes(x);
+        Set fns = new HashSet ( );
+
+        for(Map.Entry<String, Map> et: fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
-            if ("@".equals (fn)) {
+            if ("@".equals(fn)) {
                 continue; // 排除掉 @
             }
-            if (field.containsKey(x)) {
-                if (Synt.declare(field.get(x), false ) ) {
-                    fns.add(fn);
-                }
-            } else if ( fts != null ) {
-                if (fts.contains(field.get("__type__"))) {
-                    fns.add(fn);
-                }
+            if (fts.contains( field.get( "__type__" ) ) ) {
+                fns.add(fn);
             }
         }
 
@@ -161,15 +151,17 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getCaseNames(String x) {
-        Set fts;
+        Map<String, Map> fields = getFields();
+        Map<String, Object> pms = getParams();
+        Set fts ;
+        Set fns ;
 
-        Map<String, Object> pvs = getParams();
-        if (pvs.containsKey(x)) {
-            Object  o  =  pvs.get (x);
+        if (pms.containsKey(x)) {
+            Object  o = pms . get (x);
             if ("*".equals (o)) {
-                fts = new HashSet(getFields().keySet());
-                fts.remove("@");
-                return fts;
+                fns = new HashSet (fields.keySet());
+                fns.remove("@");
+                return fns;
             } else
             if ("!".equals (o)) {
                 fts = null;
@@ -184,8 +176,7 @@ public class ModelCase implements IVolume {
                 fts = getCaseTypes(x);
         }
 
-        Map<String, Map> fields = getFields();
-        Set<String>      fns  = new HashSet();
+        fns = new HashSet( );
         for(Map.Entry<String, Map> et:fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
@@ -252,6 +243,18 @@ public class ModelCase implements IVolume {
         }
         _wh_fns = getCaseNames("findable");
         return _wh_fns;
+    }
+
+    /**
+     * 获取可比对的字段 (用于区间查询)
+     * @return
+     */
+    public Set<String> getCompable() {
+        if (null != _rg_fns) {
+            return  _rg_fns;
+        }
+        _rg_fns = getCaseNames("compable");
+        return _rg_fns;
     }
 
 }

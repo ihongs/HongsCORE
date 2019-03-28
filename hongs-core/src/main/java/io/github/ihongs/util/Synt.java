@@ -283,7 +283,7 @@ public final class Synt {
         } else if (val instanceof Object[]) {
             return new ArrayList(Arrays.asList((Object[]) val));
         } else {
-            List lst = new ArrayList ();
+            List lst = new ArrayList(1);
             lst.add(val);
             return  lst ;
         }
@@ -309,7 +309,7 @@ public final class Synt {
         } else if (val instanceof Object[]) {
             return new LinkedHashSet(Arrays.asList((Object[]) val));
         } else {
-            Set set = new LinkedHashSet();
+            Set set = new LinkedHashSet(1);
             set.add(val);
             return  set ;
         }
@@ -343,7 +343,7 @@ public final class Synt {
             }
             return m;
         } else {
-            Map m = new LinkedHashMap( );
+            Map m = new LinkedHashMap(1);
             m.put ( null, val );
             return m;
         }

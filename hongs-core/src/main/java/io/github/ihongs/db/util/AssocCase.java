@@ -1,7 +1,6 @@
 package io.github.ihongs.db.util;
 
 import io.github.ihongs.Cnst;
-import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.Model;
@@ -85,37 +84,6 @@ public class AssocCase {
 
     private static final Pattern ANPT = Pattern.compile("^[\\w\\.]+\\s*(:|$)");
     private static final Pattern CNPT = Pattern.compile("^[\\w]+$");
-
-    private static final Map<String, String> RELS = new HashMap();
-    private static final Set<String  /**/  > NOLS = new HashSet();
-    private static final Set<String  /**/  > FUNC = new HashSet();
-    static {
-        RELS.put(Cnst.EQ_REL, "=" );
-        RELS.put(Cnst.NE_REL, "!=");
-        RELS.put(Cnst.GT_REL, ">" );
-        RELS.put(Cnst.GE_REL, ">=");
-        RELS.put(Cnst.LT_REL, "<" );
-        RELS.put(Cnst.LE_REL, "<=");
-        RELS.put(Cnst.IN_REL, "IN");
-        RELS.put(Cnst.NI_REL, "NOT IN");
-        RELS.put(Cnst.CQ_REL, "LIKE");
-        RELS.put(Cnst.NC_REL, "NOT LIKE");
-
-        NOLS.add(Cnst.AI_REL);
-        NOLS.add(Cnst.SI_REL);
-        NOLS.add(Cnst.SE_REL);
-        NOLS.add(Cnst.SC_REL);
-        NOLS.add(Cnst.WT_REL);
-
-        FUNC.add(Cnst.PN_KEY);
-        FUNC.add(Cnst.GN_KEY);
-        FUNC.add(Cnst.RN_KEY);
-        FUNC.add(Cnst.OB_KEY);
-        FUNC.add(Cnst.RB_KEY);
-        FUNC.add(Cnst.WD_KEY);
-        FUNC.add(Cnst.OR_KEY);
-        FUNC.add(Cnst.AR_KEY);
-    }
 
     private final FetchCase        that;
     private final Map<String, Map> opts;
@@ -323,16 +291,17 @@ public class AssocCase {
 
         query(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
 
-        where(caze, rd);
+        AssocCase.this.where(caze, rd);
     }
 
     private void field(FetchCase caze, Set<String> rb) {
         if (rb == null || rb.isEmpty()) return;
+        Map<String, String > af = allow(LISTABLE);
+        if (af == null || af.isEmpty()) return;
 
-        Map<String,     String > af = allow(LISTABLE);
-        Map<String, Set<String>> cf = new HashMap(  );
-        Set<String> ic = new LinkedHashSet();
-        Set<String> ec = new LinkedHashSet();
+        Map<String, Set>  cf = new HashMap();
+        Set<String> ic = new LinkedHashSet(); // 包含的字段
+        Set<String> ec = new LinkedHashSet(); // 排除的字段
         Set<String> xc ;
 
         // 整理出层级结构, 方便处理通配符
@@ -386,7 +355,7 @@ public class AssocCase {
             ic.addAll(af.keySet());
         }
 
-        // 取差集排排除字段
+        // 取差集排除掉字段
         if (ec.isEmpty() == false) {
             ic.removeAll(ec);
         }
@@ -399,8 +368,8 @@ public class AssocCase {
 
     private void order(FetchCase caze, Set<String> ob) {
         if (ob == null || ob.isEmpty()) return;
-
         Map<String, String> af = allow(SORTABLE);
+        if (af == null || af.isEmpty()) return;
 
         for(String  fn : ob) {
             boolean desc = fn.startsWith("-");
@@ -420,27 +389,21 @@ public class AssocCase {
 
     private void query(FetchCase caze, Set<String> wd) {
         if (wd == null || wd.isEmpty()) return;
-
         Map<String, String> af = allow(WORDABLE);
-
-        query ( caze, wd, af.values ());
-    }
-
-    private void query(FetchCase caze, Collection<String> wd, Collection<String> wf) {
-        if (wf == null || wf.isEmpty()) return;
+        if (af == null || af.isEmpty()) return;
 
         int  i = 0;
-        int  l = wd.size( ) * wf.size( );
+        int  l = wd.size( ) * af.size( );
         Object[]      ab = new Object[l];
         Set<String>   xd = new HashSet();
         StringBuilder sb = new StringBuilder();
 
         // 转义待查词, 避开通配符, 以防止歧义
-        for(String  fw : wd) {
-            xd.add("%" + Tool.escape(fw , "/%_[]" , "/") + "%");
+        for(String  wb : wd) {
+            xd.add("%" + Tool.escape(wb , "/%_[]" , "/") + "%");
         }
 
-        for(String  fn : wf) {
+        for(String  fn : af.values()) {
             sb.append("(");
             for(String wb : xd) {
                 ab[ i++ ] = wb;
@@ -450,10 +413,10 @@ public class AssocCase {
             sb.append(") OR " );
         }   sb.setLength(sb.length() - 4);
 
-        if (wf.size() == 1) {
-            caze.filter(    sb.toString()    , ab);
+        if (af.size( ) > 1 ) {
+            caze.filter ("("+sb.toString()+")", ab);
         } else {
-            caze.filter("("+sb.toString()+")", ab);
+            caze.filter (    sb.toString()    , ab);
         }
     }
 
@@ -461,189 +424,204 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FINDABLE);
-        Map<String, String> rf = allow(COMPABLE);
-        Map<String, String> sf = allow(SRCHABLE);
-        
+        Map<String, String> cf = new LinkedHashMap(allow(COMPABLE));
+        Map<String, String> sf = new LinkedHashMap(allow(SRCHABLE));
+
         for(Map.Entry<String, String> et : af.entrySet()) {
             String kn = et.getKey(  );
             String fn = et.getValue();
-            Object fv = Dict.getParam(rd , kn);
+            Object vv = Dict.getParam(rd , kn);
 
-            if (null == fv || "".equals( fv )) {
-                continue; // 忽略空串, 但可以用 xx.eq= 查询空串
+            if (vv == null) {
+                continue;
+            } else
+            if (vv instanceof Set
+            ||  vv instanceof Collection
+            ||  vv instanceof Object [] ) {
+                Set vs = Synt.asSet(vv);
+                    vs.remove("");
+                if(!vs.isEmpty( )) {
+                    caze.filter(fn+" IN (?)", vv);
+                }
+                continue;
+            } else
+            if (! ( vv instanceof Map ) ) {
+                if(!vv.equals("")) {
+                    caze.filter(fn+  " = ?" , vv);
+                }
+                continue;
             }
 
-            if (fv instanceof Map) {
-                Map fm = new HashMap();
-                fm.putAll(( Map ) fv );
+            String f0 = cf.remove( kn ); // 区间字段
+            String f1 = sf.remove( kn ); // 搜索字段
+            Map    vm = new HashMap(( Map ) vv);
+            Object vo ;
 
-                // 处理关系符号
-                for(Map.Entry<String, String> el : RELS.entrySet()) {
-                    String rl = el.getKey(  );
-                    String rn = el.getValue();
-                    Object rv = fm.remove(rl);
-                    if (rv == null) continue ;
-
-                    if (Cnst.IN_REL.equals(rl)
-                    ||  Cnst.NI_REL.equals(rl)) {
-                        caze.filter(fn+" "+rn+" (?)", rv);
-                        continue;
-                    } else
-                    if (Cnst.GT_REL.equals(rl)
-                    ||  Cnst.GE_REL.equals(rl)) {
-                        // 区间为空串表示无限
-                        if ("".equals(rv)
-                        && !rf.containsKey(fn)) {
-                            continue;
-                        }
-                    } else
-                    if (Cnst.LT_REL.equals(rl)
-                    ||  Cnst.LE_REL.equals(rl)) {
-                        // 区间为空串表示无限
-                        if ("".equals(rv)
-                        && !rf.containsKey(fn)) {
-                            continue;
-                        }
-                    } else
-                    if (Cnst.CQ_REL.equals(rl)
-                    ||  Cnst.NC_REL.equals(rl)) {
-                        // 包含为空串表示不限
-                        if ("".equals(rv)
-                        && !sf.containsKey(fn)) {
-                            continue;
-                        }
-
-                        // 组织成 LIKE 查询串
-                        Set<String> ws = Synt.toWords(rv);
-                        Set<String> ns = new  HashSet(01);
-                        ns.add(fn);
-                        query(caze, ws , ns);
-                        continue;
-                    }
-
-                    if (!(rv instanceof Map)
-                    &&  !(rv instanceof Set)
-                    &&  !(rv instanceof Collection)) {
-                        caze.filter(fn+" "+rn+ " ?" , rv);
-                    } else {
-                        CoreLogger.trace(AssocCase.class.getName()+": Can not set "+fn+" "+rn+" Collection");
-                    }
-                }
-
-                // 空值判断语句
-                if (fm.containsKey(Cnst.IS_REL)) {
-                    String rv = Synt.asString(fm.remove(Cnst.IS_REL));
-                    if ("NULL".equalsIgnoreCase(rv)) {
-                        caze.filter(fn + " IS NULL");
-                    } else
-                    if ("FILL".equalsIgnoreCase(rv)) {
-                        caze.filter(fn + " IS NOT NULL");
-                    }
-                }
-
-                // 数值区间查询
-                Set ir = null;
-                if (fm.containsKey(Cnst.RN_REL)) {
-                    ir = Synt.setOf(fm.remove(Cnst.RN_REL));
+            vo = vm.remove(Cnst.IS_REL);
+            if ( vo != null ) {
+                String rv  =  Synt.asString(vo);
+                if ("NULL".equalsIgnoreCase(rv)) {
+                    caze.filter(fn+/**/" IS NULL");
                 } else
-                if (fm.containsKey(Cnst.ON_REL)) {
-                    ir = Synt.asSet(fm.remove(Cnst.ON_REL));
+                if ("FILL".equalsIgnoreCase(rv)) {
+                    caze.filter(fn+" IS NOT NULL");
                 }
+            }
+
+            vo = vm.remove(Cnst.IN_REL);
+            if ( vo != null ) {
+                caze.filter(fn+/**/" IN (?)", vo );
+            }
+            vo = vm.remove(Cnst.NI_REL);
+            if ( vo != null ) {
+                caze.filter(fn+" NOT IN (?)", vo );
+            }
+
+            vo = vm.remove(Cnst.EQ_REL);
+            if ( vo != null ) {
+                caze.filter(fn+ " = ?", alone(vo, kn, Cnst.EQ_REL));
+            }
+            vo = vm.remove(Cnst.NE_REL);
+            if ( vo != null ) {
+                caze.filter(fn+" != ?", alone(vo, kn, Cnst.NE_REL));
+            }
+
+            vo = vm.remove(Cnst.GT_REL);
+            if ( f0 != null && vo != null && !"".equals(vo) ) {
+                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.GT_REL));
+            }
+            vo = vm.remove(Cnst.GE_REL);
+            if ( f0 != null && vo != null && !"".equals(vo) ) {
+                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.GE_REL));
+            }
+
+            vo = vm.remove(Cnst.LT_REL);
+            if ( f0 != null && vo != null && !"".equals(vo) ) {
+                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.LT_REL));
+            }
+            vo = vm.remove(Cnst.LE_REL);
+            if ( f0 != null && vo != null && !"".equals(vo) ) {
+                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.LE_REL));
+            }
+
+            vo = vm.remove(Cnst.RN_REL);
+            if ( f0 != null && vo != null ) {
+                Set ir = Synt.setOf(vo);
                 if (ir != null && !ir.isEmpty()) {
-                    StringBuilder sb = new StringBuilder( );
-                    List sp = new ArrayList();
-                    int i = 0;
-                    for(Object v : ir) {
-                        Object[] a = Synt.toRange(v);
-                        if (a != null) {
-                            StringBuilder sd = new StringBuilder();
-                            if (a[0] != null) {
-//                              if (sd.length() > 0) {
-//                                  sd.append(" AND ");
-//                              }
-                                if ((boolean) a[2] ) {
-                                    sd.append(fn).append(" >= ?");
-                                    sp.add  ( a[0] );
-                                } else {
-                                    sd.append(fn).append( " > ?");
-                                    sp.add  ( a[0] );
-                                }
-                            }
-                            if (a[1] != null) {
-                                if (sd.length() > 0) {
-                                    sd.append(" AND ");
-                                }
-                                if ((boolean) a[3] ) {
-                                    sd.append(fn).append(" <= ?");
-                                    sp.add  ( a[1] );
-                                } else {
-                                    sd.append(fn).append( " < ?");
-                                    sp.add  ( a[1] );
-                                }
-                            }
-                            if (sd.length() > 0) {
-                                sb.append("(").append(sd).append(") OR ");
-                                i ++;
-                            }
-                        }
-                    }
-                    if (sb.length() > 0) {
-                        sb.setLength(sb.length() - 4);
-                        if (i == 1) {
-                            caze.filter(    sb.toString()    , sp.toArray());
-                        } else {
-                            caze.filter("("+sb.toString()+")", sp.toArray());
-                        }
-                    }
+                    range(caze, ir, f0);
                 }
+            }
+            vo = vm.remove(Cnst.ON_REL);
+            if ( f0 != null && vo != null ) {
+                Set ir = Synt.asSet(vo);
+                if (ir != null && !ir.isEmpty()) {
+                    range(caze, ir, f0);
+                }
+            }
 
-                // 清除不支持的
-                for(String rl : NOLS) {
-                    if (fm.remove(rl) != null) {
-                        CoreLogger.trace(AssocCase.class.getName()+": Can not support "+fn+"."+rl);
-                    }
-                }
+            vo = vm.remove(Cnst.CQ_REL);
+            if ( f1 != null && vo != null && !"".equals(vo) ) {
+                Set<String> ws = Synt.toWords(vo);
+                likes(caze, ws , f1 , /**/"LIKE");
+            }
+            vo = vm.remove(Cnst.NC_REL);
+            if ( f1 != null && vo != null && !"".equals(vo) ) {
+                Set<String> ws = Synt.toWords(vo);
+                likes(caze, ws , f1 , "NOT LIKE");
+            }
 
-                // 清除功能参数
-                for(String rl : FUNC) {
-                    if (fm.remove(rl) != null) {
-                        CoreLogger.trace(AssocCase.class.getName()+": Can not dispose "+fn+"."+rl);
-                    }
-                }
-
-                // 清除空字符串, 如想要 IN ('') 可使用 xx.in=
-                fm.remove("");
-
-                // 如果还有剩余, 就当做 IN 来处理
-                if (!fm.isEmpty()) {
-                    fv = new LinkedHashSet( fm.values(  ) );
-                    caze.filter(fn+" IN (?)", fv);
-                }
-            } else
-            if (fv instanceof Set) {
-                Set vs = (Set) fv;
-                    vs.remove("");
-                if(!vs.isEmpty( )) {
-                    caze.filter(fn+" IN (?)", fv);
-                }
-            } else
-            if (fv instanceof Collection) {
-                Set vs = new LinkedHashSet((Collection) fv);
-                    vs.remove("");
-                if(!vs.isEmpty( )) {
-                    caze.filter(fn+" IN (?)", fv);
-                }
-            } else {
-                    caze.filter(fn+  " = ?" , fv);
+            // 如果还有剩余, 就当做 IN 来处理
+            /**/ vm.remove("");
+            if (!vm.isEmpty()) {
+                caze.filter(fn + " IN (?)" , Synt.asSet(vm) );
             }
         }
 
-        // 分组查询, 满足复杂的组合查询条件
-        group(caze, Synt.asSet(rd.get(Cnst.OR_KEY)), "OR" );
-        group(caze, Synt.asSet(rd.get(Cnst.AR_KEY)), "AND");
+        /**
+         * 可能存在不过滤的区间和搜索字段
+         * 例如长文本类型并不便于一般比对
+         * 下面即为处理与过滤表的差集部分
+         */
+
+        for(Map.Entry<String, String> et : cf.entrySet()) {
+            String kn = et.getKey(  );
+            String f0 = et.getValue();
+            Object vv = Dict.getParam(rd , kn);
+
+            if (! (vv instanceof Map)) {
+                continue;
+            }
+
+            Map    vm = (Map) vv;
+            Object vo ;
+
+            vo = vm.get(Cnst.GT_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.GT_REL));
+            }
+            vo = vm.get(Cnst.GE_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.GE_REL));
+            }
+
+            vo = vm.get(Cnst.LT_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.LT_REL));
+            }
+            vo = vm.get(Cnst.LE_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.LE_REL));
+            }
+
+            vo = vm.get(Cnst.RN_REL);
+            if ( vo != null ) {
+                Set ir = Synt.setOf(vo);
+                if (ir != null && !ir.isEmpty()) {
+                    range(caze, ir, f0);
+                }
+            }
+            vo = vm.get(Cnst.ON_REL);
+            if ( vo != null ) {
+                Set ir = Synt.asSet(vo);
+                if (ir != null && !ir.isEmpty()) {
+                    range(caze, ir, f0);
+                }
+            }
+        }
+
+        for(Map.Entry<String, String> et : sf.entrySet()) {
+            String kn = et.getKey(  );
+            String f1 = et.getValue();
+            Object vv = Dict.getParam(rd , kn);
+
+            if (! (vv instanceof Map)) {
+                continue;
+            }
+
+            Map    vm = (Map) vv;
+            Object vo ;
+
+            vo = vm.remove(Cnst.CQ_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                Set<String> ws = Synt.toWords(vo);
+                likes(caze, ws , f1 , /**/"LIKE");
+            }
+            vo = vm.remove(Cnst.NC_REL);
+            if ( vo != null && !"".equals(vo) ) {
+                Set<String> ws = Synt.toWords(vo);
+                likes(caze, ws , f1 , "NOT LIKE");
+            }
+        }
+
+        /**
+         * 分组查询, 满足复杂的组合查询条件
+         */
+
+        where(caze, Synt.asSet(rd.get(Cnst.OR_KEY)), "OR" );
+        where(caze, Synt.asSet(rd.get(Cnst.AR_KEY)), "AND");
     }
 
-    private void group(FetchCase caze, Set<Map> ar, String rn) {
+    private void where(FetchCase caze, Set ar, String rn) {
         if (ar == null || ar.isEmpty()) return;
 
         StringBuilder sb = new StringBuilder();
@@ -669,6 +647,88 @@ public class AssocCase {
                   .append('(').append(sb).append(')');
             caze.wparams.addAll(caxe.wparams );
         }
+    }
+
+    private void range(FetchCase caze, Set ir, String fn) {
+        StringBuilder sb = new StringBuilder( );
+        List sp = new ArrayList();
+        int i = 0;
+        for(Object v : ir) {
+            Object[] a = Synt.toRange(v);
+            if (a != null) {
+                StringBuilder sd = new StringBuilder();
+                if (a[0] != null) {
+//                  if (sd.length() > 0) {
+//                      sd.append(" AND ");
+//                  }
+                    if ((boolean) a[2] ) {
+                        sd.append(fn).append(" >= ?");
+                        sp.add  ( a[0] );
+                    } else {
+                        sd.append(fn).append( " > ?");
+                        sp.add  ( a[0] );
+                    }
+                }
+                if (a[1] != null) {
+                    if (sd.length() > 0) {
+                        sd.append(" AND ");
+                    }
+                    if ((boolean) a[3] ) {
+                        sd.append(fn).append(" <= ?");
+                        sp.add  ( a[1] );
+                    } else {
+                        sd.append(fn).append( " < ?");
+                        sp.add  ( a[1] );
+                    }
+                }
+                if (sd.length() > 0) {
+                    sb.append("(").append(sd).append(") OR ");
+                    i ++;
+                }
+            }
+        }
+        if (sb.length() > 0) {
+            sb.setLength(sb.length() - 4);
+            if (i > 1 ) {
+                caze.filter("("+sb.toString()+")", sp.toArray());
+            } else {
+                caze.filter(    sb.toString()    , sp.toArray());
+            }
+        }
+    }
+
+    private void likes(FetchCase caze, Set wd, String fn, String rn) {
+        int  i = 0;
+        int  l = wd.size( );
+        Object[]      ab = new Object[l];
+        Set<String>   xd = new HashSet();
+        StringBuilder sb = new StringBuilder(  );
+
+        // 转义待查词, 避开通配符, 以防止歧义
+        for(Object  fo : wd) {
+            String  fw = fo.toString(  );
+            xd.add("%" + Tool.escape(fw , "/%_[]" , "/") + "%");
+        }
+
+        sb.append("(");
+        for(String wb : xd) {
+            ab[ i++ ] = wb;
+            sb.append(fn).append(" ").append(rn)
+              .append(  " ? ESCAPE '/' AND "   );
+        }
+        sb.setLength(sb.length(  ) - 5);
+        sb.append(")");
+
+        caze.filter (sb.toString(), ab);
+    }
+
+    private Object alone(Object fv, String fn, String rn) {
+        if (fv instanceof Map
+        ||  fv instanceof Collection
+        ||  fv instanceof Object [] ) {
+            throw new HongsExemption(0x1100, "Wrong value type for "+fn+rn);
+        }
+        return fv;
     }
 
     private Map allow(String on) {

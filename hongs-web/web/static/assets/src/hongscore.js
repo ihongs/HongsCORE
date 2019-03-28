@@ -2521,14 +2521,17 @@ function(evt) {
     $(this).data("vals", vals);
     $(this).val ( vals );
 })
-.on("click", ".dropdown-toggle",
+.on("click", "[data-toggle=hsDrop]",
 function(evt) {
-    var body = $(this).siblings(".dropdown-body,.dropdown-list");
-    if (! body.size() || $(evt.trget).is("input,.dropdown-deny")) {
-        return; // 需跳过全选等
+    if ($(this).siblings(".dropdown-body,.dropdown-list").size()
+    && !$(evt.target).is(".dropdown-deny,input")) {
+        $(this).parent( ).toggleClass( "dropup" );
     }
-    var cont = $(this).parent();
-    cont.toggleClass ("dropup");
+})
+.on("cilck", "[data-toggle=hsExit]",
+function() {
+    var box = $(this).attr("data-target");
+    $(this).hsFind(box || "@").hsClose( );
 })
 .on("click", "[data-toggle=hsOpen]",
 function() {
@@ -2574,12 +2577,6 @@ function() {
             f.apply(btn, arguments);
         });
     }
-})
-.on("cilck", "[data-toggle=hsExit]",
-function() {
-    var sel = $(this).attr("data-target");
-    var box = $(this).hsFind (sel || "@");
-    box.hsClose( );
 })
 .on("click", ".close,.cancel",
 function() {

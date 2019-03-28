@@ -32,8 +32,7 @@
             </div>
         </ul>
     </form>
-    <div class="table-responsive-revised">
-    <div class="table-responsive listbox">
+    <div class="listbox table-responsive-revised">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
@@ -57,7 +56,7 @@
             </thead>
             <tbody></tbody>
         </table>
-    </div></div>
+    </div>
     <div class="pagebox clearfix"></div>
 </div>
 

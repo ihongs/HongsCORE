@@ -553,15 +553,16 @@ HsForm.prototype = {
             var u = v[ i ][vl];
             var s = v[ i ][tl];
             var set = jQuery('<fieldset>'
-                            +'<legend class=" dropdown-toggle ">'
-                            +'<input type="checkbox" class="checkall dropdown-deny"/>'
-                            +'<span></span><b class="caret"></b>'
+                            +'<legend data-toggle="hsDrop">'
+                            +'<input  type="checkbox" class="checkall"/>'
+                            +'<b></b> <i class="caret"></i>'
                             +'</legend>'
-                            +'<div class=" dropdown-body clearfix ' + bc + ' "></div>'
-                            +'</fieldset>' );
-            set.find("span").first().text(s);
-            inp.append(set );
-            set = set.find ( "div" );
+                            +'<div class="dropdown-body clearfix"></div>'
+                            +'</fieldset>');
+            inp.append(set);
+            set.find("b").text(s);
+            set = set.find("div")
+                . addClass( bc  );
 
             for(var j = 0; j < u.length; j ++) {
                 var w = u[ j ];

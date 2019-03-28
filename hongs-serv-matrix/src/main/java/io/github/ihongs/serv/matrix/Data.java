@@ -322,36 +322,41 @@ public class Data extends SearchEntity {
         }
 
         // 获取旧的数据
-        int st = 1;
+        int st ;
         Map dd = get( id );
-        if (! dd.isEmpty()) {
+        if (! dd.isEmpty() ) {
+            st = 2; // 更新
             if (table != null) {
-                Map od = table.fetchCase()
-                    .filter( where, param)
-                    .select("ctime")
+                Map od = table.fetchCase( )
+                    .filter( where, param )
+                    .select("ctime, state")
                     .getOne( );
-                if (! od.isEmpty( )) {
+                if (! od.isEmpty()) {
+                    if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+                        throw new HongsException(0x1104, "记录已经删除了");
+                    }
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
                         throw new HongsException(0x1100, "等会儿, 不要急");
                     }
                 }
             }
         } else {
+            st = 1; // 创建
             if (table != null) {
-                Map od = table.fetchCase()
-                    .filter( where, param)
-                    .select("ctime, data")
-                    .getOne();
-                if (! od.isEmpty( )) {
+                Map od = table.fetchCase( )
+                    .filter( where, param )
+                    .select("ctime, state, data")
+                    .getOne( );
+                if (! od.isEmpty()) {
+                    if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+                        throw new HongsException(0x1104, "记录已经删除了");
+                    }
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
                         throw new HongsException(0x1100, "等会儿, 不要急");
                     }
                     dd = (Map) io.github.ihongs.util.Data.toObject(od.get("data").toString());
-                } else {
-                    st = 2; // 新增
+                    st = 2; // 有快照也算更新
                 }
-            } else {
-                    st = 2; // 新增
             }
         }
 

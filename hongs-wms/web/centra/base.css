@@ -70,12 +70,12 @@ html, body {
 }
 #main-menubar li a {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 500;
     padding: 7px 6px 7px 15px;
 }
 #user-menubar li a {
     font-size: 13px;
-    font-weight: 500;
+    font-weight: 400;
     padding: 9px 6px 9px 10px;
 }
 #main-menubar li li a ,
@@ -115,11 +115,11 @@ html, body {
 }
 
 #main-menubar ul ul {
-    background: #222;
+    background: rgba(34,34,34,0.5);
     padding: 2px 0px;
 }
 #user-menubar ul {
-    background: #444;
+    background: rgba(68,68,68,0.5);
     padding: 2px 0px;
 }
 
@@ -165,7 +165,7 @@ html, body {
     width : 75px;
     height: 36px;
     line-height: 36px;
-    font-weight: 600 ;
+    font-weight: 500 ;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow   : hidden;
@@ -222,7 +222,7 @@ html, body {
 }
 
 #head-powered {
-    text-shadow: 0 2px 2px #000;
+    text-shadow: 0 1px 1px #000;
     text-align: center;
     font-size: 10px;
     position: fixed;
@@ -230,32 +230,15 @@ html, body {
     width: 175px;
 }
 #head-powered a {
-    color: #900;
+    color: #a00;
 }
 #head-powered a:hover {
     color: #f00;
 }
 
-/**
- * 统计图表附带选项
- */
+/* 统计图表附带选项 */
 .statbox .checkbox label {
     display: block;
     font-size: 12px;
     line-height: 21px;
-}
-
-/**
- * 修正响应式表格不出横向滚动条的问题
- */
-.table-responsive-revised {
-    width: 100%;
-    display: table;
-    table-layout: fixed;
-}
-.table-responsive-revised th ,
-.table-responsive-revised td {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
 }

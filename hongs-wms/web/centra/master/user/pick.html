@@ -4,17 +4,21 @@
      data-load-url="centra/master/user/list.act?with-depts=2"
      data-load-data="(this.closest('.loadbox'))"
      data-data-0="_fill__fork:(hsListFillFork)">
-    <div class="row board">
-        <div class="toolbox col-xs-8 btn-group">
-            <button type="button" class="commit btn btn-primary">确认选择</button>
+    <form class="findbox toolbox board row" action="" method="POST">
+        <div class="col-xs-8">
+            <div class="btn-group">
+                <button type="button" class="commit btn btn-primary">确认选择</button>
+            </div>
         </div>
-        <form class="findbox col-xs-4 input-group" action="" method="POST">
-            <input type="search" name="wd" class="form-control input-search"/>
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-default">查找</button>
-            </span>
-        </form>
-    </div>
+        <div class="col-xs-4">
+            <div class="input-group">
+                <input type="search" name="wd" class="form-control input-search"/>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default">查找</button>
+                </span>
+            </div>
+        </div>
+    </form>
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
             <thead>

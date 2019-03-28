@@ -16,6 +16,15 @@
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
+        <style type="text/css">
+            @media (min-width: 768px) {
+                .jumbotron {
+                    background: #202222 linear-gradient(
+                        -45deg, #202222 15%, #20282f 40%, #202222 40%
+                    );
+                }
+            }
+        </style>
     </head>
     <body>
         <div class="jumbotron" style="background-color: #222; color: #ccc;">
@@ -34,7 +43,7 @@
                     <span style="color:#fdd">E&nbsp;</span>
                     <span data-i18n="welcome2">management information systems. Please login...</span></p>
                 <div class="row">
-                    <form action="centra/sign/create.act?ab=.errs" data-module="hsForm" id="sign-in-form" class="col-md-6 col-sm-8">
+                    <form action="centra/sign/create.act?ab=.errs" data-module="hsForm" id="sign-in-form" class="col-md-6">
                         <input type="hidden" name="place" value="centra"/>
                         <div class="form-group">
                             <input type="text"     name="username" placeholder="username" value="" class="form-control i18n" required="required"/>

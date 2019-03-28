@@ -5,7 +5,7 @@
     String _pageId = (_module + "_" + _entity + "_logs").replace('/', '_');
 %>
 <h2><%=_locale.translate("fore.record.title", _title)%></h2>
-<div id="<%=_pageId%>" class="logs-list">
+<div id="<%=_pageId%>" class="snap-list">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">
             <li class="active"><a href="javascript:;"><b>全部记录</b></a></li>
@@ -37,6 +37,15 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
+                    <th data-fn="_" data-ft="_admin" class="_amenu">
+                        <div class="dropdown invisible">
+                            <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-th-list"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:;" class="review">查看快照</a></li>
+                                <li><a href="javascript:;" class="revert">恢复记录</a></li>
+                            </ul>
+                        </div>
+                    </th>
                     <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
                     <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
                     <th data-fn="user">用户</th>
@@ -44,13 +53,6 @@
                     <th data-fn="memo">操作备注</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
-                    <th data-fn="_" data-ft="_admin" style="width:4.5em;">操作
-                        <div class="invisible">
-                            <a href="javascript:;" class="review"><span class="glyphicon glyphicon-eye-open" title="查看快照"></span></a>
-                            <span style="margin-left:1em;"></span>
-                            <a href="javascript:;" class="revert"><span class="glyphicon glyphicon-refresh " title="恢复记录"></span></a>
-                        </div>
-                    </th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -61,24 +63,42 @@
 
 <script type="text/javascript">
     (function($) {
-        var statcol = {'0':"text-danger", '1':"text-default", '2':"text-success", '3':"text-warning"};
-        var statmap = {'0':"删除", '1':"更新", '2':"新增", '3':"恢复"};
+        var statmap = {
+            '0': [ "text-warning", "删除" ],
+            '1': [ "text-default", "新增" ],
+            '2': [ "text-default", "更新" ],
+            '3': [ "text-success", "恢复" ]
+        };
+
         var context = $('#<%=_pageId%>').removeAttr("id");
-        var sendbox = context.find(".sendbox");
+
         var listobj = context.hsList({
             loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
-            send    : hsSendWithMemo ,
-            _fill_time: function( td , time) {
-                td.parent().data(this._info).addClass(statcol[ this._info.state + '' ]);
-                return ! time || time == '0' ? '-' : this._fill__htime(td, time * 1000);
+            send    : hsSendWithMemo,
+            _fill_stat: function(td , stat) {
+                var st = statmap['' + stat];
+                td.parent( ).data(this._info).addClass(st[0]);
+                return st[1];
             },
-            _fill_user: function( td , user) {
-                return   user  . name || '-';
+            _fill_time: function(td , time) {
+                if (time && time != 0) {
+                    return this._fill__htime(td, time * 1000);
+                }
+                return '-';
             },
-            _fill_stat: function( td , stat) {
-                return  statmap [ '' + stat];
+            _fill_user: function(td , user) {
+                if (user && user.name) {
+                    return  user.name;
+                }
+                return '-';
             }
         });
+
+        // 独立记录
+        if (H$("@id", context)) {
+            context.find("ul.nav li[data-state]")
+                   .hide();
+        }
 
         // 权限检查
         if (! hsChkUri("<%=_module%>/<%=_entity%>/revert/update.act")) {
@@ -105,21 +125,19 @@
         });
 
         context.on("click", ".nav li", function() {
-            if ($(this).is(".active")) return;
-            $(this).   addClass("active")
-                   .siblings(  )
-                   .removeClass("active");
-            var fd = $(this).siblings("div");
-            var fv = $(this).data  ("state");
-            if (fv) {
-                fd.find("[name=state]").val(fv );
-                fd.find("[name=etime]").val("0");
+            if ( $(this).is(".active") ) return;
+            $(this).addClass("active").siblings()
+                .removeClass("active");
+            var fd = $(this).siblings ( "div" );
+            var fv = $(this).attr("data-state");
+            if (fv) {  var  fe  = "0" ;
+                fd.find("[name=state]").val(fv);
+                fd.find("[name=etime]").val(fe);
             } else {
-                fd.find("[name=state]").val("" );
-                fd.find("[name=etime]").val("" );
+                fd.find("[name=state]").val("");
+                fd.find("[name=etime]").val("");
             }
+            fd.find(":submit").click();
         });
-
-        sendbox.modal({show : false});
     })(jQuery);
 </script>

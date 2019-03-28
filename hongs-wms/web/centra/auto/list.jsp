@@ -19,39 +19,43 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div class="row board">
-        <div class="toolbox col-xs-6 btn-group">
-            <%if ( "select".equals(_action)) {%>
-            <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
-            <%} // End If %>
-            <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
-            <%if (!"select".equals(_action)) {%>
-            <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
-            <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
-            <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time" ></span></button>
-            <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
-            <%} // End If %>
+    <form class="findbox toolbox board row">
+        <div class="col-xs-6">
+            <div class="btn-group">
+                <%if ( "select".equals(_action)) {%>
+                <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
+                <%} // End If %>
+                <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
+                <%if (!"select".equals(_action)) {%>
+                <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
+                <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
+                <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-inbox"></span></button>
+                <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+                <%} // End If %>
+            </div>
         </div>
-        <form class="findbox input-group col-xs-6">
-            <%
-                String sn = _fields.containsKey("word") ? "word:cq" : "wd";
-                String sp =  getSearchHolder( _fields );
-                if (sp.length() == 0) {
-                    sp = sp + "\" disabled=\"disabled" ;
-                }
-            %>
-            <input  type="search" class="form-control" name="<%=sn%>" placeholder="<%=sp%>" />
-            <span class="input-group-btn">
-                <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
-                <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
-            <%if (!"select".equals(_action)) {%>
-                <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
-                <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
-            <%} // End If %>
-            </span>
-        </form>
-    </div>
+        <div class="col-xs-6">
+            <div class="input-group">
+                <%
+                    String sn = _fields.containsKey("word") ? "word:cq" : "wd";
+                    String sp =  getSearchHolder( _fields );
+                    if (sp.length() == 0) {
+                        sp = sp + "\" disabled=\"disabled" ;
+                    }
+                %>
+                <input  type="search" class="form-control" name="<%=sn%>" placeholder="<%=sp%>" />
+                <span class="input-group-btn">
+                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
+                    <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
+                <%if (!"select".equals(_action)) {%>
+                    <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-time"  ></span></button>
+                    <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
+                <%} // End If %>
+                </span>
+            </div>
+        </div>
+    </form>
     <!-- 筛选 -->
     <form class="findbox filtbox invisible panel panel-body">
         <%

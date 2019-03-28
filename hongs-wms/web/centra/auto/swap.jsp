@@ -70,7 +70,7 @@
     </div>
     <div class="col-xs-6">
         <fieldset>
-            <legend class="dropdown dropdown-toggle">获取列表或详情 <span class="caret"></span></legend>
+            <legend data-toggle="hsDrop">获取列表或详情 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
                     <label class="control-label">接口</label>
@@ -130,7 +130,7 @@
             </div>
         </fieldset>
         <fieldset>
-            <legend class="dropdown dropdown-toggle">新增信息 <span class="caret"></span></legend>
+            <legend data-toggle="hsDrop">新增信息 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
                     <label class="control-label">接口</label>
@@ -160,7 +160,7 @@
             </div>
         </fieldset>
         <fieldset>
-            <legend class="dropdown dropdown-toggle">批量更新 <span class="caret"></span></legend>
+            <legend data-toggle="hsDrop">批量更新 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
                     <label class="control-label">接口</label>
@@ -189,7 +189,7 @@ id=ID 或 id.=ID1&id.=ID2...
             </div>
         </fieldset>
         <fieldset>
-            <legend class="dropdown dropdown-toggle">批量删除 <span class="caret"></span></legend>
+            <legend data-toggle="hsDrop">批量删除 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
                     <label class="control-label">接口</label>
@@ -217,7 +217,7 @@ id=ID 或 id.=ID1&id.=ID2...
             </div>
         </fieldset>
         <fieldset>
-            <legend class="dropdown dropdown-toggle">其他 <span class="caret"></span></legend>
+            <legend data-toggle="hsDrop">其他 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
                     <p>

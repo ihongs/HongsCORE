@@ -16,6 +16,9 @@ label, input, button, select, textarea {
 code, pre, var, dfn, kbd {
     font-family: "Courier New",Monaco,Menlo,monospace;
 }
+.text-mono {
+    font-family: "Courier New",Monaco,Menlo,monospace;
+}
 
 /** Bootstrap 调整 **/
 
@@ -329,16 +332,17 @@ ol.repeated ,
 
 /** 列表 **/
 
-.board {
-    margin-bottom: 18px;
+/* 修正响应式表格在移动端不出滚动条的问题 */
+.table-responsive-revised {
+    width: 100%;
+    display: table;
+    table-layout: fixed;
 }
-.board-body {
-    padding : 15px 15px;
-}
-
-.findbox.input-group[class*="col-"] {
-    padding-left : 15px;
-    padding-right: 15px;
+.table-responsive-revised th ,
+.table-responsive-revised td {
+    white-space: nowrap;
+    overflow-x : hidden;
+    text-overflow: ellipsis;
 }
 
 .listbox.invisible ,
@@ -360,7 +364,7 @@ ol.repeated ,
     line-height: 36px;
 }
 
-.listbox ._admin,
+.listbox ._amenu,
 .listbox ._check,
 .listbox ._radio {
     width: 1.5em;
@@ -372,11 +376,11 @@ ol.repeated ,
     width: 7.0em;
 }
 .listbox .datetime {
-    width: 10em;
+    width: 10.5em;
 }
-.listbox td.id {
-    width: 10em;
-    font-family: "Courier New",Monaco,Menlo,monospace;
+.listbox th._amenu ,
+.listbox td._amenu {
+    overflow: visible;
 }
 
 .listbox thead .sortable {
@@ -520,6 +524,13 @@ ol.repeated ,
 }
 
 /** 其他 **/
+
+.board {
+    margin-bottom: 18px;
+}
+.board-body {
+    padding : 15px 15px;
+}
 
 ul.pickbox {
     padding: 0;

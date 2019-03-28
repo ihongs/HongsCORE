@@ -332,7 +332,7 @@ public class Data extends SearchEntity {
                     .select("ctime, state")
                     .getOne( );
                 if (! od.isEmpty()) {
-                    if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+                    if ( Synt.declare ( od.get("state"), 0  )  ==   0    ) {
                         throw new HongsException(0x1104, "记录已经删除了");
                     }
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
@@ -348,7 +348,7 @@ public class Data extends SearchEntity {
                     .select("ctime, state, data")
                     .getOne( );
                 if (! od.isEmpty()) {
-                    if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
+                    if ( Synt.declare ( od.get("state"), 0  )  ==   0    ) {
                         throw new HongsException(0x1104, "记录已经删除了");
                     }
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {

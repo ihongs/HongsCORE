@@ -150,12 +150,13 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
+                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :
                                   ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
                             +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
                             +"/pick.html";
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-href=\""+rl+"\" data-target=\"@";
                         mode += "\" data-href=\""+al+"\" data-target=\"@";
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
                     %>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>

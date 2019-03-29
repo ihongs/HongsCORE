@@ -126,7 +126,8 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
+                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-href=\""+rl+"\" data-target=\"@";
                         if (Synt.declare(info.get("__repeated__"), false)) {
                             kind  += "\" data-repeated=\"true";
                         }

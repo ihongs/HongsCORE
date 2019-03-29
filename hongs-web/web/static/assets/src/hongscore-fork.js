@@ -288,71 +288,95 @@ function hsFormFillPick(box, v, n) {
         );
     }
     function puton(btn, box, val, txt) {
-        box.append(jQuery('<li class="btn btn-info form-control"></li>').attr("title" , txt )
+        box.append(jQuery('<li class="btn btn-link form-control"></li>').attr("title" , txt )
            .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
            .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
+//         .append(jQuery( '<span class="close pull-right">&times;</span>'))
         );
     }
 
     if (box.is("input") ) {
         if (! btn.data("pickInited")) {
             btn.data("pickInited", 1);
-            btn.data("txt", btn.text( ) );
+            btn.data("txt", btn.text( /***/ ));
             btn.data("cls", btn.attr("class"));
-            btn.on("click", ".close", box, function(evt) {
-                var btn = jQuery(evt.delegateTarget);
-                var box = evt.data;
-                reset( box , btn );
+            btn.on("click", ".close", [btn, box], function(evt) {
+                var btn = evt.data[0];
+                var box = evt.data[1];
+                var val = box.val ( );
+                delete  v [val];
+                reset(box, btn);
                 box.trigger("change");
-                return false ;
+                return false;
             });
         }
 
-        if ( jQuery.isEmptyObject(v)) {
-            reset(btn, box  );
-        } else
-        for(var val in v) {
-            var arr  = v[val];
-            var txt  = arr[0];
-            inset(btn, box, val, txt);
-        }
-    } else if ( ! rol ) {
-        if (! box.data("pickInited")) {
-            box.data("pickInited", 1);
-            box.on("click", ".close", btn, function(evt) {
-                var opt = jQuery(this).closest("li");
-                var val = opt.find(":hidden").val( );
-                var btn = evt.data;
-                delete v[val];
-                btn.show (  );
-                opt.remove( );
-                box.trigger("change");
-                return false ;
-            });
-            if (! mul ) {
-                box.on("click", null, btn, function(evt) {
-                    evt.data.click();
-                });
+        if (!jQuery.isEmptyObject(v)) {
+            for(var val in v) {
+                var arr  = v[val];
+                var txt  = arr[0];
+                inset(btn, box, val, txt);
             }
-        }
-
-        box.empty().toggleClass("pickmul", mul);
-
-        if ( jQuery.isEmptyObject(v)) {
-            btn.show();
-        } else if (! mul) {
-            btn.hide();
-        }
-        for(var val in v) {
-            var arr  = v[val];
-            var txt  = arr[0];
-            putin(btn, box, val, txt);
+        } else {
+                reset(btn, box /*reset*/);
         }
     } else {
-        for(var val in v) {
-            var arr  = v[val];
-            var txt  = arr[0];
-            puton(btn, box, val, txt);
+        if (! box.data("pickInited")) {
+            box.data("pickInited", 1);
+            box.on("click", ".close", [btn, box], function(evt) {
+                var btn = evt.data[0];
+                var box = evt.data[1];
+                var opt = jQuery(this).closest("li");
+                var val = opt.find("input:hidden").val();
+                delete  v [val];
+                opt.remove();
+                btn. show ();
+                box.trigger("change");
+                return false;
+            });
+            box.on("click", "li.btn", [btn, box], function(evt) {
+                var btn = evt.data[0];
+                var box = evt.data[1];
+                var opt = jQuery(this).closest("li");
+                var val = opt.find("input:hidden").val();
+                var rel = box.data("target");
+                var url = box.data( "href" );
+                if (url) {
+                    url = url.replace("{ID}", val);
+                    if (! rel) {
+                       jQuery.hsOpen(url);
+                    } else {
+                        box . hsFind(rel)
+                            . hsOpen(url);
+                    }
+                } else {
+                    if (! mul) {
+                        btn . click ();
+                    }
+                }
+            });
+        }
+
+        if (!jQuery.isEmptyObject(v)) {
+            if (! mul) btn.hide();
+        } else {
+            if (! rol) btn.show();
+        }
+
+        box.empty( );
+
+        if (! rol) {
+            for(var val in v) {
+                var arr  = v[val];
+                var txt  = arr[0];
+                putin(btn, box, val, txt);
+            }
+        } else {
+            for(var val in v) {
+                var arr  = v[val];
+                var txt  = arr[0];
+                puton(btn, box, val, txt);
+            }
         }
     }
 }

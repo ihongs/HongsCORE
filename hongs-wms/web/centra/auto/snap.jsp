@@ -28,7 +28,7 @@
                         <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;width:11em;">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
             </div>
         </ul>
     </form>

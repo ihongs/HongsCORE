@@ -38,7 +38,7 @@
                 <tr>
                     <th data-fn="_" data-ft="_admin" class="_amenu">
                         <div class="dropdown invisible">
-                            <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-th-list"></span></a>
+                            <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                             <ul class="dropdown-menu">
                                 <li><a href="javascript:;" class="review">查看快照</a></li>
                                 <li><a href="javascript:;" class="revert">恢复记录</a></li>

@@ -1409,21 +1409,34 @@ function hsPrsDate(text, format) {
     }
   }
 
-  if (a == 1) {
+  if (a) {
     H += 12;
   }
+  if (M) {
+    M -= 1 ;
+  }
 
-  var text2;
+  var date ;
   if (typeof(M) !== "undefined"
   &&  typeof(d) !== "undefined"
   &&  typeof(y) !== "undefined") {
-    text2 = M+"/"+d+"/"+y+" "+H+":"+m+":"+s+"."+S;
+    date =  new Date( );
+    date.setFullYear(y);
+    date.setMonth   (M);
+    date.setDate    (d);
+    date.setHours   (H);
+    date.setMinutes (m);
+    date.setSeconds (s);
+    date.setMilliseconds(S);
   }
   else {
-    text2 = H+":"+m+":"+s+"."+S;
+    date =  new Date(0);
+    date.setHours   (H);
+    date.setMinutes (m);
+    date.setSeconds (s);
+    date.setMilliseconds(S);
   }
-
-  return new Date(Date.parse(text2));
+  return date;
 }
 
 /**

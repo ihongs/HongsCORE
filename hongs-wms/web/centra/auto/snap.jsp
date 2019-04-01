@@ -8,27 +8,34 @@
 <div id="<%=_pageId%>" class="snap-list">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">
-            <li class="active"><a href="javascript:;"><b>全部记录</b></a></li>
-            <li data-state="0"><a href="javascript:;"><b>回收站</b></a></li>
-            <li data-state="1"><a href="javascript:;"><b>新增</b></a></li>
-            <li data-state="2"><a href="javascript:;"><b>更新</b></a></li>
-            <li data-state="3"><a href="javascript:;"><b>恢复</b></a></li>
-            <div class="form-inline pull-right">
+            <li class="active">
+                <a href="javascript:;"><b>全部记录</b></a>
+            </li>
+            <li data-state="0" data-etime="0">
+                <a href="javascript:;"><b> 回收站 </b></a>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:;" data-toggle="dropdown"><b>行为</b><i class="caret"></i></a>
+                <ul class="dropdown-menu">
+                    <li data-state="1"><a href="javascript:;"><b>新增</b></a></li>
+                    <li data-state="2"><a href="javascript:;"><b>更新</b></a></li>
+                    <li data-state="0"><a href="javascript:;"><b>删除</b></a></li>
+                    <li data-state="3"><a href="javascript:;"><b>恢复</b></a></li>
+                </ul>
+            </li>
+            <div class="form-inline pull-right" style="line-height: 0px;">
                 <input type="hidden" name="state"/>
                 <input type="hidden" name="etime"/>
-                <!--
-                <div class="form-group" style="margin-right:0.5em;">
-                    <input type="search" name="wd" class="form-control" placeholder="名称、备注">
+                <div class=" form-group" style="display:inline-block;margin: 0px;">
+                <div class="input-group" style="display:inline-table;width:380px;">
+                    <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                    <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
+                    <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                    <span class="input-group-btn">
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
+                    </span>
                 </div>
-                //-->
-                <div class="form-group" style="margin-right:0.5em;">
-                    <div class="input-group">
-                        <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;width:11em;">
-                        <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
-                        <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;width:11em;">
-                    </div>
                 </div>
-                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
             </div>
         </ul>
     </form>
@@ -95,7 +102,7 @@
 
         // 独立记录
         if (H$("@id", context)) {
-            context.find("ul.nav li[data-state]")
+            context.find("ul.nav>li:eq(1)")
                    .hide();
         }
 
@@ -124,19 +131,22 @@
         });
 
         context.on("click", ".nav li", function() {
-            if ( $(this).is(".active") ) return;
-            $(this).addClass("active").siblings()
-                .removeClass("active");
-            var fd = $(this).siblings ( "div" );
-            var fv = $(this).attr("data-state");
-            if (fv) {  var  fe  = "0" ;
-                fd.find("[name=state]").val(fv);
-                fd.find("[name=etime]").val(fe);
-            } else {
-                fd.find("[name=state]").val("");
-                fd.find("[name=etime]").val("");
+            if ( $(this).is(".active,.dropdown")) {
+                return;
             }
+
+            var fv = $(this).attr("data-state") || "";
+            var fe = $(this).attr("data-etime") || "";
+            var fd = $(this).closest("form");
+            fd.find("[name=state]").val(fv );
+            fd.find("[name=etime]").val(fe );
             fd.find(":submit").click();
+
+            $(this).closest(".nav").find(".active")
+                .removeClass("active");
+            $(this).closest(".dropdown")
+                   .addClass("active");
+            $(this).addClass("active");
         });
     })(jQuery);
 </script>

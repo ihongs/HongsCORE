@@ -72,9 +72,6 @@ code, pre, var, dfn, kbd {
     color: #666;
 }
 
-.form-control {
-    height: auto;
-}
 select.form-control {
     height: 2.76923077em;
 }

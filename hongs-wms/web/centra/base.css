@@ -26,9 +26,7 @@ html, body {
     overflow: auto;
     position: fixed;
     z-index : 10;
-    background: #404242 linear-gradient(
-        -60deg, #404242 25%, #504242 50%, #404242 50%
-    );
+    background: #2e2f2f;
 }
 #context.fullest>#bodybox {
     padding: 0;
@@ -67,7 +65,6 @@ html, body {
     color: #cccccc;
     display: block;
     text-decoration: none;
-    text-shadow: 0px 1px 2px #000;
 }
 #main-menubar li a {
     font-size: 15px;
@@ -115,12 +112,15 @@ html, body {
     border-left: 2px solid #ff0088;
 }
 
+#main-menubar>ul>li {
+    margin-bottom: 13px;
+}
 #main-menubar ul ul {
-    background: rgba(34,34,34,0.5);
+    background: #000000;
     padding: 2px 0px;
 }
 #user-menubar ul {
-    background: rgba(68,68,68,0.5);
+    background: #2e2f2f;
     padding: 2px 0px;
 }
 
@@ -133,7 +133,7 @@ html, body {
 #main-menubar .caret ,
 #user-menubar .caret {
     float:  right ;
-    color: #404242;
+    color: #505252;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
@@ -152,10 +152,7 @@ html, body {
     width : 44px;
     height: 44px;
     margin: -4px 8px -4px 10px;
-    box-shadow:  0 0  2px #000;
-    border-radius    : 3px;
-    background-color : #eee;
-    background-size  : 100% 100%;
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
 }
@@ -201,10 +198,10 @@ html, body {
     height: 30px;
     margin-top: -15px;
     border-radius: 0 5px 5px 0;
-    background: rgba(64,66,66,0.5);
+    background: rgba(66,66,66,0.5);
 }
 #head-handled:hover {
-    background: rgba(64,66,66,1.0);
+    background: rgba(66,66,66,1.0);
 }
 #head-handled a {
     width : 0; 

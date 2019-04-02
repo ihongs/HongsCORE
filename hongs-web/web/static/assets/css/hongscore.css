@@ -45,11 +45,7 @@ code, pre, var, dfn, kbd {
     color: inherit;
 }
 
-.nav .close {
-    margin-right: -15px;
-    margin-top: -6.5px;
-    padding: 0 6px;
-}
+.nav .close ,
 .btn .close {
     margin-right: -11px;
     margin-top: -2.5px;

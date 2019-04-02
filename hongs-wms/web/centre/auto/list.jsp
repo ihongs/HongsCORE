@@ -19,7 +19,7 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div class="row">
+    <div class="row board">
     <div class="col-md-6 col-sm-8 center-block">
         <div style="display: table; width: 100%;">
         <div style="display: table-cell; width: 15px; vertical-align: middle;">

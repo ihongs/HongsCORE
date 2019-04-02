@@ -414,6 +414,7 @@ HsStat.prototype = {
                 bottom: 0,
                 containLabel: true
             },
+            tooltip: {},
             toolbox: {
                 show: true,
                 feature: {
@@ -518,6 +519,7 @@ HsStat.prototype = {
                 bottom: 0,
                 containLabel: true
             },
+            tooltip: {},
             toolbox: {
                 show: true,
                 feature: {

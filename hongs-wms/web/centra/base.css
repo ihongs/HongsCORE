@@ -41,35 +41,32 @@ html, body {
     display: none;
 }
 
-#main-context > .tabs {
-    margin-bottom: 0;
-}
-#main-context > .labs {
-    margin-top: 18px;
-}
-
 /** 菜单 **/
 
 #main-menubar ,
 #user-menubar {
-    padding: 18px 0 18px 0;
+    padding: 18px 0;
 }
 #main-menubar ul ,
 #user-menubar ul {
-    list-style: none;
-    margin : 0;
     padding: 0;
+    margin : 0;
+    list-style: none;
+    background: #2e2f2f;
+}
+#main-menubar ul ul ,
+#user-menubar ul ul {
+    background: #202222;
 }
 #main-menubar li a ,
 #user-menubar li a {
-    color: #cccccc;
     display: block;
     text-decoration: none;
 }
 #main-menubar li a {
-    font-size: 15px;
-    font-weight: 500;
-    padding: 7px 6px 7px 15px;
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 6px 8px 16px;
 }
 #user-menubar li a {
     font-size: 13px;
@@ -80,48 +77,33 @@ html, body {
 #user-menubar li li a {
     font-size: 13px;
     font-weight: 400;
-    padding: 9px 6px 9px 23px;
+    padding: 9px 6px 9px 17px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
+    color: #aaaaaa;
     background: transparent;
     border-left: 2px solid transparent;
 }
 #main-menubar li a:hover,
-#main-menubar li.acting > a.dropup:hover {
-    background: #330000;
-    border-left: 2px solid #990033;
+#main-menubar li.acting > a.dropup:hover ,
+#user-menubar li a:hover,
+#user-menubar li.acting > a.dropup:hover {
+    color: #aaaaaa;
+    background: #770000;
+    border-left: 2px solid #990000;
 }
 #main-menubar li.acting > a ,
 #main-menubar li.active > a ,
-#main-menubar li.active > a.dropup {
-    background: #990000;
-    border-left: 2px solid #ff0088;
-}
-#user-menubar li a:hover,
-#user-menubar li.acting > a.dropup:hover {
-    background: #330000;
-    border-left: 2px solid #990033;
-}
+#main-menubar li.active > a.dropup ,
 #user-menubar li.acting > a ,
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
+    color: #eeeeee;
     background: #990000;
-    border-left: 2px solid #ff0088;
-}
-
-#main-menubar>ul>li {
-    margin-bottom: 13px;
-}
-#main-menubar ul ul {
-    background: #000000;
-    padding: 2px 0px;
-}
-#user-menubar ul {
-    background: #2e2f2f;
-    padding: 2px 0px;
+    border-left: 2px solid #ff0000;
 }
 
 #main-menubar .caret {
@@ -137,6 +119,7 @@ html, body {
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
+    float:  right ;
     color: #cccccc;
 }
 
@@ -181,7 +164,7 @@ html, body {
     margin : -8px  6px;
 }
 #user-menubar .glyphicon {
-    color: #d00;
+    color: #a00;
     width: 40px;
     top  :  2px; /* 修正字体符号偏上的问题 */
     margin-right: 10px;
@@ -232,6 +215,14 @@ html, body {
 }
 #head-powered a:hover {
     color: #f00;
+}
+
+/* 容器主要内容边界 */
+#main-context > .tabs {
+    margin-bottom: 0;
+}
+#main-context > .labs {
+    margin-top: 18px;
 }
 
 /* 统计图表附带选项 */

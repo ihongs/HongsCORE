@@ -379,14 +379,35 @@ HsStat.prototype = {
             });
         }
 
-        var opts = {
+        var pieOpts = {
             series: [{
                 data: pData,
                 type: 'pie'
             }],
-            xAxis : [],
-            yAxis : [],
-            grid: {
+            xAxis : [{
+                show: false
+            }],
+            yAxis : [{
+                show: false
+            }]
+        };
+        var barOpts = {
+            series: [{
+                data: bData,
+                type: 'bar'
+            }],
+            xAxis : [{
+                data: xData,
+                show: true,
+                type: 'category'
+            }],
+            yAxis : [{
+                show: true,
+                type: "value"
+            }]
+        };
+        var opts = {
+            grid : {
                 top: 30,
                 left: 15,
                 right: 15,
@@ -402,18 +423,7 @@ HsStat.prototype = {
                         icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
                         title: '饼视图',
                         onclick: function () {
-                            chart.setOption({
-                                series: [{
-                                    data: pData,
-                                    type: 'pie'
-                                }],
-                                xAxis : [{
-                                    show: false
-                                }],
-                                yAxis : [{
-                                    show: false
-                                }]
-                            });
+                            chart.setOption(pieOpts);
                         }
                     },
                     myBar: {
@@ -421,26 +431,18 @@ HsStat.prototype = {
                         icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
                         title: '柱状图',
                         onclick: function () {
-                            chart.setOption({
-                                series: [{
-                                    data: bData,
-                                    type: 'bar'
-                                }],
-                                xAxis : [{
-                                    data: xData,
-                                    show: true,
-                                    type: 'category'
-                                }],
-                                yAxis : [{
-                                    show: true,
-                                    type: "value"
-                                }]
-                            });
+                            chart.setOption(barOpts);
                         }
                     }
                 }
             }
         };
+
+        if (box.data("plot") == "bar") {
+            $.extend( opts , barOpts );
+        } else {
+            $.extend( opts , pieOpts );
+        }
 
         chart.resize();
         chart.setOption(opts);
@@ -469,7 +471,7 @@ HsStat.prototype = {
             });
         }
 
-        var opts = {
+        var pieOpts = {
             series: [{
                 radius : [ 0, 50],
                 data: pData1,
@@ -479,9 +481,37 @@ HsStat.prototype = {
                 data: pData2,
                 type: 'pie'
             }],
-            xAxis : [],
-            yAxis : [],
-            grid: {
+            xAxis : [{
+                show: false
+            }],
+            yAxis : [{
+                show: false
+            }]
+        };
+        var barOpts = {
+            series: [{
+                data: bData1,
+                type: 'bar'
+            }, {
+                data: bData2,
+                type: 'bar'
+            }],
+            yAxis : [{
+                show: true,
+                type: "value"
+            }, {
+                show: true,
+                type: "value",
+                position: "right"
+            }],
+            xAxis : [{
+                data: xData,
+                show: true,
+                type: 'category'
+            }]
+        };
+        var opts = {
+            grid : {
                 top: 30,
                 left: 15,
                 right: 15,
@@ -497,23 +527,7 @@ HsStat.prototype = {
                         icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
                         title: '饼视图',
                         onclick: function () {
-                            chart.setOption({
-                                series: [{
-                                    radius : [ 0, 50],
-                                    data: pData1,
-                                    type: 'pie'
-                                }, {
-                                    radius : [60, 80],
-                                    data: pData2,
-                                    type: 'pie'
-                                }],
-                                xAxis : [{
-                                    show: false
-                                }],
-                                yAxis : [{
-                                    show: false
-                                }]
-                            });
+                            chart.setOption(pieOpts);
                         }
                     },
                     myBar: {
@@ -521,33 +535,18 @@ HsStat.prototype = {
                         icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
                         title: '柱状图',
                         onclick: function () {
-                            chart.setOption({
-                                series: [{
-                                    data: bData1,
-                                    type: 'bar'
-                                }, {
-                                    data: bData2,
-                                    type: 'bar'
-                                }],
-                                yAxis : [{
-                                    show: true,
-                                    type: "value"
-                                }, {
-                                    show: true,
-                                    type: "value",
-                                    position: "right"
-                                }],
-                                xAxis : [{
-                                    data: xData,
-                                    show: true,
-                                    type: 'category'
-                                }]
-                            });
+                            chart.setOption(barOpts);
                         }
                     }
                 }
             }
         };
+
+        if (box.data("plot") == "bar") {
+            $.extend( opts , barOpts );
+        } else {
+            $.extend( opts , pieOpts );
+        }
 
         chart.resize();
         chart.setOption(opts);

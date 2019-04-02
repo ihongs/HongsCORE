@@ -2224,13 +2224,10 @@ $.fn.hsTitl = function(tit) {
         ? tit.replace('{DO}', hsGetLang("form.update"))
         : tit.replace('{DO}', hsGetLang("form.create"));
 
-    if (box.is(".modal-body")) {
-        box.closest(".modal").children(".modal-title").text(tit);
-    } else
     if (box.parent(".labs").size()
     ||  prt.parent(".labs").size()) {
         var tbs = box.closest(".labs").data("tabs");
-        var idx = box.closest(".labs>*").index(   );
+        var idx = box.closest(".labs>*").index();
         var tab = tbs.children().eq(idx);
         var a = tab.find("a"     );
         var b = tab.find("b,span")
@@ -2240,6 +2237,16 @@ $.fn.hsTitl = function(tit) {
         } else {
             a.text(tit);
         }
+    } else
+    if (box.is(".modal-body")) {
+        box.closest(".modal")
+           .find(".modal-title:first")
+           .text( tit );
+    } else
+    if (box.is(".alert-body")) {
+        box.closest(".alert")
+           .find(".alert-title:first")
+           .text( tit );
     }
 
     return box;

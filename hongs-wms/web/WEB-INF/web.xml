@@ -91,16 +91,17 @@
         <url-pattern>/public/*</url-pattern>
     </filter-mapping>
     <!-- Sess Filter -->
+    <!--
     <filter>
         <filter-name>SessFilter</filter-name>
         <filter-class>io.github.ihongs.normal.serv.SessFilter</filter-class>
         <init-param>
             <param-name>record-max-age</param-name>
-            <param-value>604800</param-value><!--7 days-->
+            <param-value>604800</param-value>
         </init-param>
         <init-param>
             <param-name>cookie-max-age</param-name>
-            <param-value>604800</param-value><!--7 days-->
+            <param-value>604800</param-value>
         </init-param>
         <init-param>
             <param-name>attend-urls</param-name>
@@ -122,6 +123,7 @@
         <url-pattern>/common/*</url-pattern>
         <url-pattern>/api/*</url-pattern>
     </filter-mapping>
+    //-->
     <!-- Auth Filter -->
     <filter>
         <filter-name>AuthFilter_Centra</filter-name>

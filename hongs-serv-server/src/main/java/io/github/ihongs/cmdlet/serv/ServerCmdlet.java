@@ -149,6 +149,7 @@ public class ServerCmdlet {
         try {
             server.setHandler(webapp);
             server.start();
+        //  server.dumpStdErr();
             server.join( );
         } catch (Exception e) {
             throw new HongsException.Common(e);
@@ -242,6 +243,11 @@ public class ServerCmdlet {
                    dh.mkdirs();
             }
 
+            Server                  sv = sc . getServer             (  );
+            DefaultSessionIdManager im = new DefaultSessionIdManager(sv);
+            im.setWorkerName       (Core.SERVER_ID);
+            sv.setSessionIdManager (im);
+
             SessionHandler          sh = sc . getSessionHandler  (  );
             DefaultSessionCache     ch = new DefaultSessionCache (sh);
             FileSessionDataStore    sd = new FileSessionDataStore(  );
@@ -262,17 +268,17 @@ public class ServerCmdlet {
             CoreConfig  cc = CoreConfig.getInstance("defines");
             String dh = cc.getProperty("jetty.session.manager.db", "default");
 
+            Server                  sv = sc . getServer             (  );
+            DefaultSessionIdManager im = new DefaultSessionIdManager(sv);
+            im.setWorkerName       (Core.SERVER_ID);
+            sv.setSessionIdManager (im);
+
             SessionHandler          sh = sc . getSessionHandler  (  );
             DefaultSessionCache     ds = new DefaultSessionCache (sh);
             JDBCSessionDataStore    sd = new JDBCSessionDataStore(  );
             sd.setDatabaseAdaptor  (getAdaptor(dh));
             ds.setSessionDataStore (sd);
             sh.setSessionCache     (ds);
-
-            Server                  sv = sc . getServer             (  );
-            DefaultSessionIdManager im = new DefaultSessionIdManager(sv);
-            im.setWorkerName       (Core.SERVER_ID);
-            sh.setSessionIdManager (im);
         }
 
         private DatabaseAdaptor getAdaptor(String dh) {

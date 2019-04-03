@@ -30,18 +30,21 @@ import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.webapp.WebAppContext;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 
-// JSP,Session 初始器依赖的类
-import org.apache.tomcat.InstanceManager;
-import org.apache.tomcat.SimpleInstanceManager;
+// Session 初始化依赖的类
+import org.eclipse.jetty.server.session.SessionHandler;
+import org.eclipse.jetty.server.session.DatabaseAdaptor;
+import org.eclipse.jetty.server.session.DefaultSessionCache;
+import org.eclipse.jetty.server.session.DefaultSessionIdManager;
+import org.eclipse.jetty.server.session.FileSessionDataStore;
+import org.eclipse.jetty.server.session.JDBCSessionDataStore;
+
+// JSP 初始化依赖的类
+import org.eclipse.jetty.servlet.ServletHolder;
+import org.eclipse.jetty.servlet. FilterHolder;
 import org.eclipse.jetty.plus.annotation.ContainerInitializer;
 import org.eclipse.jetty.apache.jsp.JettyJasperInitializer;
-import org.eclipse.jetty.server.session.SessionHandler;
-import org.eclipse.jetty.server.session.HashSessionManager;
-import org.eclipse.jetty.server.session.HashSessionIdManager;
-import org.eclipse.jetty.server.session.JDBCSessionManager;
-import org.eclipse.jetty.server.session.JDBCSessionIdManager;
-import org.eclipse.jetty.servlet.FilterHolder;
-import org.eclipse.jetty.servlet.ServletHolder;
+import org.apache.tomcat.InstanceManager;
+import org.apache.tomcat.SimpleInstanceManager;
 
 /**
  * 服务启动命令
@@ -144,6 +147,7 @@ public class ServerCmdlet {
 
         // 启动服务
         try {
+            server.setHandler(webapp);
             server.start();
             server.join( );
         } catch (Exception e) {
@@ -227,29 +231,25 @@ public class ServerCmdlet {
 
         @Override
         public void init(ServletContextHandler sc) {
-            CoreConfig cc = CoreConfig.getInstance("defines");
+            CoreConfig  cc = CoreConfig.getInstance("defines");
             String dn = cc.getProperty("jetty.session.manager.path", "server" + File.separator + "sess");
             File   dh = new File(dn);
             if ( ! dh.isAbsolute() ) {
-                   dn = Core.DATA_PATH + File.separator + dn ;
+                   dn = Core.DATA_PATH + File.separator + dn;
                    dh = new File(dn);
             }
             if ( ! dh.exists() /**/) {
                    dh.mkdirs();
             }
 
-            try {
-                HashSessionManager sm = new HashSessionManager();
-    //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
-    //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
-    //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
-                sm.setStoreDirectory( dh );
-                /**/SessionHandler sh = new SessionHandler( sm );
-                sc.setSessionHandler( sh );
-            } catch (IOException e) {
-                throw new HongsError.Common(e);
-            }
+            SessionHandler          sh = sc . getSessionHandler  (  );
+            DefaultSessionCache     ch = new DefaultSessionCache (sh);
+            FileSessionDataStore    sd = new FileSessionDataStore(  );
+            sd.setStoreDir         (dh);
+            ch.setSessionDataStore (sd);
+            sh.setSessionCache     (ch);
         }
+
     }
 
     /**
@@ -259,29 +259,23 @@ public class ServerCmdlet {
 
         @Override
         public void init(ServletContextHandler sc) {
-            CoreConfig cc = CoreConfig.getInstance("defines");
-            String dh = cc.getProperty( "jetty.session.manager.db", "default" );
-            Server sv = sc.getServer();
-            JDBCSessionIdManager im = new JDBCSessionIdManager(sv);
-            sv.setAttribute ("jdbcIdMgr",im);
-            im.setWorkerName(Core.SERVER_ID);
-            im.setScavengeInterval(60);
-            setSidMgr(im, dh);
+            CoreConfig  cc = CoreConfig.getInstance("defines");
+            String dh = cc.getProperty("jetty.session.manager.db", "default");
 
-            try {
-                JDBCSessionManager sm = new JDBCSessionManager();
-    //          sm.setHttpOnly( true  ); sm.setLazyLoad( true  );
-    //          sm.setSessionCookie/*rameterNa*/(Cnst.CSID_KEY );
-    //          sm.setSessionIdPathParameterName(Cnst.PSID_KEY );
-                sm.setSessionIdManager(im);
-                /**/SessionHandler sh = new SessionHandler( sm );
-                sc.setSessionHandler( sh );
-            } catch (  Exception e) {
-                throw new HongsError.Common(e);
-            }
+            SessionHandler          sh = sc . getSessionHandler  (  );
+            DefaultSessionCache     ds = new DefaultSessionCache (sh);
+            JDBCSessionDataStore    sd = new JDBCSessionDataStore(  );
+            sd.setDatabaseAdaptor  (getAdaptor(dh));
+            ds.setSessionDataStore (sd);
+            sh.setSessionCache     (ds);
+
+            Server                  sv = sc . getServer             (  );
+            DefaultSessionIdManager im = new DefaultSessionIdManager(sv);
+            im.setWorkerName       (Core.SERVER_ID);
+            sh.setSessionIdManager (im);
         }
 
-        private void setSidMgr(JDBCSessionIdManager im, String dh) {
+        private DatabaseAdaptor getAdaptor(String dh) {
             DBConfig conf;
             try {
                 conf= new DBConfig(dh);
@@ -290,26 +284,30 @@ public class ServerCmdlet {
             }
 
             if (conf.link != null && conf.link.length() != 0 ) {
-                setSidMgr(im, conf.link);
+                return getAdaptor(conf.link);
             } else
             if (conf.origin != null && !conf.origin.isEmpty()) {
                 dh = (String) conf.origin.get("name");
-                dh = ( dh + getUrlPms ( conf.origin));
-                im.setDatasourceName(dh);
+                dh = ( dh + getOptions (conf.origin));
+                DatabaseAdaptor da = new DatabaseAdaptor();
+                da.setDatasourceName(dh);
+                return da;
             } else
             if (conf.source != null && !conf.source.isEmpty()) {
                 String dt ;
                 dt = (String) conf.source.get("jdbc");
                 dh = (String) conf.source.get("name");
                 dh = ( DBConfig.fixSourceName( dh  ));
-                dh = ( dh + getUrlPms ( conf.source));
-                im.setDriverInfo(dt, dh);
+                dh = ( dh + getOptions (conf.source));
+                DatabaseAdaptor da = new DatabaseAdaptor();
+                da.setDriverInfo(dt, dh);
+                return da;
             } else {
                 throw new HongsError.Common("Wrong session manager jdbc!");
             }
         }
 
-        private String getUrlPms(Map dc) {
+        private String getOptions( Map dc ) {
             Map dp = (Map) dc.get( "info" );
             if (dp == null || dp.isEmpty()) {
                 return "";

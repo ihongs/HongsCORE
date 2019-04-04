@@ -315,7 +315,6 @@ public class SearchHelper {
         //** 整理待统计的数据 **/
 
         if (cntz != null && !cntz.isEmpty()) {
-            Map<String, Map> fields = that.getFields();
             for(String   x : cntz) {
                 String[] a = x.split(":", 2);
                 if (a[0].startsWith ("-")) {

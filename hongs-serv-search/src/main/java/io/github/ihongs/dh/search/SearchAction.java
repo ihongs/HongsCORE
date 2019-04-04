@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
+import io.github.ihongs.action.FormSet;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Select;
@@ -81,20 +82,18 @@ public class SearchAction extends ModelGate implements IAction, IActing {
     @Action("statis/search")
     @Preset(conf="", form="")
     public void acount(ActionHelper helper) throws HongsException {
-        ActionRunner runner = (ActionRunner)
-           helper.getAttribute(ActionRunner.class.getName());
-//      String ent = runner.getEntity();
-        String mod = runner.getModule();
-
         SearchEntity sr = (SearchEntity) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
-        Map rd = helper.getRequestData();
-            rd = getReqMap(helper, sr, "acount", rd);
-        Map sd = Synt.mapOf( "info", sh.acount(rd) );
-            sd = getRspMap(helper, sr, "acount", sd);
 
-        // 增加标题
-        titled(mod, sr.getFields(), rd, sd);
+        Map rd = helper.getRequestData();
+        rd = getReqMap(helper, sr, "acount", rd);
+
+        acheck(sr, rd, false ); // 检查参数
+        Map xd = sh.acount(rd);
+        atitle(sr, rd, xd/**/); // 增加标题
+
+        Map sd = Synt.mapOf("info" , xd);
+        sd = getRspMap(helper, sr, "acount", sd);
 
         helper.reply(sd);
     }
@@ -102,35 +101,60 @@ public class SearchAction extends ModelGate implements IAction, IActing {
     @Action("statis/amount")
     @Preset(conf="", form="")
     public void amount(ActionHelper helper) throws HongsException {
-        ActionRunner runner = (ActionRunner)
-           helper.getAttribute(ActionRunner.class.getName());
-//      String ent = runner.getEntity();
-        String mod = runner.getModule();
-
         SearchEntity sr = (SearchEntity) getEntity(helper);
         SearchHelper sh = new SearchHelper(sr);
-        Map rd = helper.getRequestData();
-            rd = getReqMap(helper, sr, "amount", rd);
-        Map sd = Synt.mapOf( "info", sh.amount(rd) );
-            sd = getRspMap(helper, sr, "amount", sd);
 
-        // 增加标题
-        titled(mod, sr.getFields(), rd, sd);
+        Map rd = helper.getRequestData();
+        rd = getReqMap(helper, sr, "amount", rd);
+
+        acheck(sr, rd, true  ); // 检查参数
+        Map xd = sh.amount(rd);
+        atitle(sr, rd, xd/**/); // 增加标题
+
+        Map sd = Synt.mapOf("info" , xd);
+        sd = getRspMap(helper, sr, "amount", sd);
 
         helper.reply(sd);
     }
 
     /**
-     * 追加枚举和关联名称
-     * @param mod
-     * @param fs 字段配置
+     * 检查参数是否可统计
+     * @param sr 字段配置
      * @param rd 请求数据
-     * @param sd 响应数据
+     * @param nb 是否数值
      * @throws HongsException
      */
-    protected void titled(String mod, Map fs, Map rd, Map sd) throws HongsException {
+    protected void acheck(SearchEntity sr, Map rd, boolean nb) throws HongsException {
+        Set rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        Set sf = sr.getFields(  ).keySet(  );
+        Set st = sr.getCaseNames("statable");
+        Set ss = ! nb ? null
+               : (Set) FormSet.getInstance()
+                   .getEnum("__saves__")
+                   .get    (  "number" );
+
+        if (rb!= null) for (Object fn : rb ) {
+            if (! sf.contains(fn)) {
+                throw new HongsException(0x1100, "");
+            }
+            if (! st.contains(fn)) {
+                throw new HongsException(0x1100, "");
+            }
+            if (ss != null && ! ss.contains ( fn ) ) {
+                throw new HongsException(0x1100, "");
+            }
+        }
+    }
+
+    /**
+     * 追加枚举和关联名称
+     * @param sr 字段配置
+     * @param rd 请求数据
+     * @param xd 统计数据
+     * @throws HongsException
+     */
+    protected void atitle(SearchEntity sr, Map rd, Map xd) throws HongsException {
         Set ab = Synt.toTerms(rd.get(Cnst.AB_KEY));
-        Map xd = (Map) sd.get("info");
         if (ab == null || xd == null) {
             return ;
         }
@@ -144,6 +168,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         }
 
         if (md != 0) {
+            Map fs = sr.getFields();
             new SearchTitler(  )
              .addItemsByForm(fs)
              .addTitle( xd , md);

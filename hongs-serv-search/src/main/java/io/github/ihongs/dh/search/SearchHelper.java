@@ -63,14 +63,10 @@ public class SearchHelper {
         //** 整理待统计的数据 **/
 
         if (cntz != null && !cntz.isEmpty()) {
-            Map<String, Map> fields = that.getFields();
             for(String   x : cntz) {
                 String[] a = x.split(":", 2);
                 if (a[0].startsWith ("-")) {
                     a[0] = a[0].substring(1);
-                    if (!fields.containsKey(a[0])) {
-                        throw new HongsException.Common("Field "+a[0]+" not exists");
-                    }
                     if (a.length > 1) {
                         if (!countx.containsKey(a[0])) {
                             countx.put(a[0], new HashSet());
@@ -78,9 +74,6 @@ public class SearchHelper {
                         countx.get(a[0]).add(a[1]/**/);
                     }
                 } else {
-                    if (!fields.containsKey(a[0])) {
-                        throw new HongsException.Common("Field "+a[0]+" not exists");
-                    }
                     if (a.length > 1) {
                         if (!countz.containsKey(a[0])) {
                             countz.put(a[0], new HashMap());
@@ -327,9 +320,6 @@ public class SearchHelper {
                 String[] a = x.split(":", 2);
                 if (a[0].startsWith ("-")) {
                     a[0] = a[0].substring(1);
-                    if (!fields.containsKey(a[0])) {
-                        throw new HongsException.Common("Field "+a[0]+" not exists");
-                    }
                     if (a.length > 1) {
                         if (!countx.containsKey(a[0])) {
                             countx.put(a[0], new HashSet());
@@ -339,9 +329,6 @@ public class SearchHelper {
                         countx.get( a[0] ).add( mm );
                     }
                 } else {
-                    if (!fields.containsKey(a[0])) {
-                        throw new HongsException.Common("Field "+a[0]+" not exists");
-                    }
                     if (a.length > 1) {
                         if (!counts.containsKey(a[0])) {
                             counts.put(a[0], new HashMap());

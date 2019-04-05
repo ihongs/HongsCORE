@@ -419,14 +419,6 @@ HsStat.prototype = {
                 show: true,
                 feature: {
                     show: true,
-                    myPie: {
-                        show: true,
-                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
-                        title: '饼视图',
-                        onclick: function () {
-                            chart.setOption(pieOpts);
-                        }
-                    },
                     myBar: {
                         show: true,
                         icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
@@ -434,15 +426,23 @@ HsStat.prototype = {
                         onclick: function () {
                             chart.setOption(barOpts);
                         }
+                    },
+                    myPie: {
+                        show: true,
+                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
+                        title: '饼视图',
+                        onclick: function () {
+                            chart.setOption(pieOpts);
+                        }
                     }
                 }
             }
         };
 
-        if (box.data("plot") == "bar") {
-            $.extend( opts , barOpts );
-        } else {
+        if (box.data("plot") == "pie") {
             $.extend( opts , pieOpts );
+        } else {
+            $.extend( opts , barOpts );
         }
 
         chart.resize();
@@ -524,14 +524,6 @@ HsStat.prototype = {
                 show: true,
                 feature: {
                     show: true,
-                    myPie: {
-                        show: true,
-                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
-                        title: '饼视图',
-                        onclick: function () {
-                            chart.setOption(pieOpts);
-                        }
-                    },
                     myBar: {
                         show: true,
                         icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
@@ -539,15 +531,23 @@ HsStat.prototype = {
                         onclick: function () {
                             chart.setOption(barOpts);
                         }
+                    },
+                    myPie: {
+                        show: true,
+                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
+                        title: '饼视图',
+                        onclick: function () {
+                            chart.setOption(pieOpts);
+                        }
                     }
                 }
             }
         };
 
-        if (box.data("plot") == "bar") {
-            $.extend( opts , barOpts );
-        } else {
+        if (box.data("plot") == "pie") {
             $.extend( opts , pieOpts );
+        } else {
+            $.extend( opts , barOpts );
         }
 
         chart.resize();

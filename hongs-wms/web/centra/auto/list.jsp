@@ -149,7 +149,6 @@
             String  name = (String) et.getKey();
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
-            String  plot = Synt.declare(info.get("__repeated__"), false) ? "bar" : "pie";
 
             if ("@".equals(name) || "id".equals(name)
             || !Synt.declare(info.get("statable"), false)) {
@@ -185,7 +184,7 @@
                 type = "acount";
             }
         %>
-        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-plot="<%=plot%>" data-rb="<%=rb%>">
+        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>">
             <div class="panel clearfix">
                 <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
                 <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>

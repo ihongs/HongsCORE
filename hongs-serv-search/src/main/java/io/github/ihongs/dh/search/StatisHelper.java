@@ -30,11 +30,11 @@ import org.apache.lucene.search.ScoreDoc;
  * 搜索助手
  * @author Hongs
  */
-public class SearchHelper {
+public class StatisHelper {
 
     private final LuceneRecord that;
 
-    public SearchHelper(LuceneRecord that) {
+    public StatisHelper(LuceneRecord that) {
         this.that = that;
     }
 
@@ -52,12 +52,9 @@ public class SearchHelper {
         IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
 
-        Map  cnts = new HashMap();
-
-        int         topz = Synt.declare(rd.get(Cnst.RN_KEY), 0);
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)   );
-        Map<String, Map<String, Integer>> counts = new HashMap( );
-        Map<String, Map<String, Integer>> countz = new HashMap( );
+        int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
+        Map<String, Map<String, Integer>> counts = new HashMap();
         Map<String, Set<String         >> countx = new HashMap();
 
         //** 整理待统计的数据 **/
@@ -75,10 +72,10 @@ public class SearchHelper {
                     }
                 } else {
                     if (a.length > 1) {
-                        if (!countz.containsKey(a[0])) {
-                            countz.put(a[0], new HashMap());
+                        if (!counts.containsKey(a[0])) {
+                            counts.put(a[0], new HashMap());
                         }
-                        countz.get(a[0]).put(a[1] , 0);
+                        counts.get(a[0]).put(a[1] , 0);
                     } else {
                         if (!counts.containsKey(a[0])) {
                             counts.put(a[0], new HashMap());
@@ -91,16 +88,10 @@ public class SearchHelper {
         //** 分块统计数据 **/
 
         Map<String, Map<String, Integer>> counts2 = new HashMap();
-        Map<String, Map<String, Integer>> countz2 = new HashMap();
-        Map<String, Set<String>> countx2 = new HashMap();
+        Map<String, Set<String         >> countx2 = new HashMap();
 
         Map<String, Map<String, Integer>> counts3 = new HashMap();
-        Map<String, Map<String, Integer>> countz3 = new HashMap();
-        Map<String, Set<String>> countx3 = new HashMap();
-
-        Set<String> cxts = new HashSet();
-        cxts.addAll(counts.keySet());
-        cxts.addAll(countz.keySet());
+        Map<String, Set<String         >> countx3 = new HashMap();
 
         /**
          * 根据请求数据进行综合判断,
@@ -114,7 +105,7 @@ public class SearchHelper {
          * 与 LinkedIn 左侧筛选类似.
          */
 
-        for(String  k  : cxts) {
+        for(String  k  : counts.keySet()) {
             Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
@@ -135,33 +126,24 @@ public class SearchHelper {
                 if (counts.containsKey(k)) {
                     counts2.put(k, counts.get(k));
                 }
-                if (countz.containsKey(k)) {
-                    countz2.put(k, countz.get(k));
-                }
                 if (countx.containsKey(k)) {
                     countx2.put(k, countx.get(k));
                 }
             } else {
-                Map<String, Integer> va = counts.get(k);
-                Map<String, Integer> vz = countz.get(k);
+                Map<String, Integer> vz = counts.get(k);
                 Set<String         > vx = countx.get(k);
 
                 counts3.clear();
-                countz3.clear();
                 countx3.clear();
 
-                if (va != null) {
-                    counts3.put(k, va);
-                }
                 if (vx != null) {
                     countx3.put(k, vx);
                 }
                 if (vz != null) {
-                    countz3.put(k, vz);
+                    counts3.put(k, vz);
                 } else {
                     vz = new HashMap();
-                    countz3.put(k, vz);
-                    countz .put(k, vz);
+                    counts3.put(k, vz);
                 }
 
                 for(Object v : vs) {
@@ -174,56 +156,31 @@ public class SearchHelper {
                 Map xd = new HashMap();
                 xd.putAll(rd);
                 xd.remove( k);
-                acount(xd, counts3, countz3, countx3, reader, finder);
+                acount(xd, counts3, countx3, reader, finder);
             }
         }
 
-        int z = acount(rd, counts2, countz2, countx2, reader, finder);
+        int z = acount(rd, counts2, countx2, reader, finder);
+
+        Map cnts = new HashMap();
         cnts.put("__count__", z);
 
         //** 排序并截取统计数据 **/
 
-        Map<String, List<Map.Entry<String, Integer>>> cntlst = new HashMap();
-
-        for (Map.Entry<String, Map<String, Integer>>  et : counts.entrySet()) {
-            String k = et.getKey();
-            int t  = topz;
-            if (t != 0) {
-                Map c  = countz.get(k);
-                if (c != null) {
-                    t  = t - c.size( );
-                }
-                if (t <=  0  ) {
-                    continue;
-                }
-            }
-            List<Map.Entry<String, Integer>> l = new ArrayList(et.getValue().entrySet());
-            Collections.sort( l, new Sorted());
-            if (t != 0 && t < l.size()) {
-                l  = l.subList( 0, t );
-            }
-            cntlst.put(k, l);
-        }
-
-        for (Map.Entry<String, Map<String, Integer>>  et : countz.entrySet()) {
-            String k = et.getKey();
-            List<Map.Entry<String, Integer>> l = new ArrayList(et.getValue().entrySet());
-            List<Map.Entry<String, Integer>> a = cntlst.get(k);
-            if ( null != a ) {
-                l.addAll(a );
-            }
-            Collections.sort( l, new Sorted());
-            cntlst.put(k, l);
-        }
-
-        for (Map.Entry<String, List<Map.Entry<String, Integer>>> et : cntlst.entrySet()) {
-            List<Object[]> a = new ArrayList();
-            for (Map.Entry<String, Integer> e : et.getValue()) {
+        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+            List<Object[]>  a = new ArrayList( );
+            for (Map.Entry< String, Integer > e : et.getValue().entrySet()) {
+                String  m = e.getKey  ();
+                Integer c = e.getValue();
                 a.add(new Object[] {
-                    e.getKey(), null, e.getValue()
+                    m, null, c
                 });
             }
-            cnts.put(et.getKey(), a);
+            Collections.sort (a, new Counts());
+            if (0 < topn && topn < a . size()) {
+                a = a.subList(0, topn);
+            }
+            cnts.put( et.getKey(), a );
         }
 
         return cnts;
@@ -231,9 +188,16 @@ public class SearchHelper {
 
     private int acount(Map rd,
             Map<String, Map<String, Integer>> counts,
-            Map<String, Map<String, Integer>> countz,
             Map<String, Set<String         >> countx,
             IndexReader reader, IndexSearcher finder) throws HongsException {
+        // 判断是否需要额外的值
+        Set<String> more = new HashSet();
+        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+            if (et.getValue().isEmpty()) {
+                more.add( et . getKey());
+            }
+        }
+
         int total = 0;
 
         try {
@@ -243,45 +207,39 @@ public class SearchHelper {
                 CoreLogger.debug("SearchRecord.counts: "+q.toString());
             }
 
-            TopDocs docz = finder.search(q, 500);
+            TopDocs docz = finder.search(q,65535);
             while ( docz.totalHits > 0) {
-                ScoreDoc[] docs = docz.scoreDocs;
+                ScoreDoc[] docs = docz.scoreDocs ;
 
-                if (!countz.isEmpty() || !counts.isEmpty()) {
+                if (!counts.isEmpty()) {
                     for(ScoreDoc dox : docs) {
                         Document doc = reader.document(dox.doc);
 
-                        for (Map.Entry<String, Map<String, Integer>> et : countz.entrySet()) {
+                        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
                             String               k    = et .getKey   ( );
                             Map<String, Integer> cntc = et .getValue ( );
                             IndexableField[]     vals = doc.getFields(k);
-
-                            for(IndexableField vol : vals) {
-                                String   val = vol.stringValue();
-                                         val = getValue( val,k );
-                                if (cntc.containsKey(val)) {
-                                    cntc.put(val , cntc.get(val) + 1);
-                                }
-                            }
-                        }
-
-                        for (Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-                            String               k    = et .getKey   ( );
-                            Map<String, Integer> cntc = et .getValue ( );
-                            IndexableField[]     vals = doc.getFields(k);
-                            Map<String, Integer> cntu = countz.get   (k);
                             Set<String>          cntx = countx.get   (k);
-                            Set<String>          cntv = cntu != null ? cntu.keySet() : null;
 
-                            for(IndexableField vol : vals) {
-                                String   val = vol.stringValue();
-                                         val = getValue( val,k );
-                                if (cntc.containsKey(val)) {
-                                    cntc.put(val , cntc.get(val) + 1);
-                                } else
-                                if ((cntv == null || !cntv.contains(val) )
-                                && ( cntx == null || !cntx.contains(val))) {
-                                    cntc.put(val , 1);
+                            if (! more.contains( k )) {
+                                for(IndexableField x : vals) {
+                                    String   v = x.stringValue();
+                                             v = getValue( v,k );
+                                    if (cntc.containsKey(v)) {
+                                        cntc.put(v, 1 + cntc.get(v));
+                                    }
+                                }
+                            } else {
+                                for(IndexableField x : vals) {
+                                    String   v = x.stringValue();
+                                             v = getValue( v,k );
+                                    if (cntc.containsKey(v)) {
+                                        cntc.put(v, 1 + cntc.get(v));
+                                    } else
+                                    if (cntx == null
+                                    || !cntx.contains   (v)) {
+                                        cntc.put(v, 1);
+                                    }
                                 }
                             }
                         }
@@ -289,7 +247,7 @@ public class SearchHelper {
                 }
 
                 if (docs.length > 0) {
-                    docz = finder.searchAfter(docs[docs.length - 1], q, 500);
+                    docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
                     total += docs.length;
                 } else {
                     break;
@@ -306,9 +264,8 @@ public class SearchHelper {
         IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
 
-        Map  cnts = new HashMap();
-
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        int         topn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)   );
         Map<String, Map<Minmax, Cntsum>> counts = new HashMap();
         Map<String, Set<Minmax        >> countx = new HashMap();
 
@@ -357,13 +314,19 @@ public class SearchHelper {
         Map<String, Map<Minmax , Cntsum>> counts3 = new HashMap();
         Map<String, Set<Minmax         >> countx3 = new HashMap();
 
-        Set<String> cxts = counts.keySet();
-
         /**
-         * 类似 counts 对应部分的逻辑
+         * 根据请求数据进行综合判断,
+         * 如果字段已经作为过滤条件,
+         * 则此字段的统计需单独进行,
+         * 且需抛开此字段的过滤数据.
+         *
+         * 例如某数据有一个时间字段且每条记录只能有一个时间,
+         * 如果没有以下处理则选某段后其他未选区间数量将为零.
+         *
+         * 与 acount 的对应逻辑类似
          */
 
-        for(String  k  : cxts) {
+        for(String  k  : counts.keySet()) {
             Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
@@ -415,37 +378,29 @@ public class SearchHelper {
         }
 
         int z = amount(rd, counts2, countx2, reader, finder);
+
+        Map cnts = new HashMap();
         cnts.put("__count__", z);
 
         //** 排序统计数据 **/
 
-        Map<String, List<Map.Entry<Minmax, Cntsum>>> cntlst = new HashMap();
-
-        for (Map.Entry<String, Map<Minmax, Cntsum>>  et : counts.entrySet()) {
-            String k = et.getKey();
-            List<Map.Entry<Minmax, Cntsum>> l = new ArrayList(et.getValue().entrySet());
-            List<Map.Entry<Minmax, Cntsum>> a = cntlst.get(k);
-            if ( null != a ) {
-                l.addAll(a );
-            }
-            Collections.sort( l, new Sortes());
-            cntlst.put(k, l);
-        }
-
-        for (Map.Entry<String, List<Map.Entry<Minmax, Cntsum>>> et : cntlst.entrySet()) {
-            List<Object[]> a = new ArrayList();
-            for (Map.Entry<Minmax, Cntsum> e : et.getValue()) {
-                Cntsum c = e.getValue( );
-                Minmax m = e.getKey(   );
-//              if (c.cnt == 0) continue; // 数值统计都是外部指定的区间, 故不能去掉空值
-                String k = m != null ? m.toString() : null;
+        for(Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
+            List<Object[]> a = new ArrayList( );
+            for(Map.Entry < Minmax, Cntsum > e : et.getValue().entrySet()) {
+                Minmax m = e.getKey  ();
+                Cntsum c = e.getValue();
+                String v = m.toString();
                 a.add(new Object[] {
-                    k, null, c.cnt, c.sum ,
-                    c.cnt != 0 ? c.min : 0,
-                    c.cnt != 0 ? c.max : 0
+                    v, null, c.cnt, c.sum ,
+                    c.cnt != 0 ? c.min : 0, // 最小值
+                    c.cnt != 0 ? c.max : 0  // 最大值
                 });
             }
-            cnts.put(et.getKey(), a );
+            Collections.sort (a, new Mounts());
+            if (0 < topn && topn < a . size()) {
+                a = a.subList(0, topn);
+            }
+            cnts.put( et.getKey(), a );
         }
 
         return cnts;
@@ -464,9 +419,9 @@ public class SearchHelper {
                 CoreLogger.debug("SearchRecord.statis: " +q.toString());
             }
 
-            TopDocs docz = finder.search(q, 500);
+            TopDocs docz = finder.search(q,65535);
             while ( docz.totalHits > 0) {
-                ScoreDoc[] docs = docz.scoreDocs;
+                ScoreDoc[] docs = docz.scoreDocs ;
 
                 if (!counts.isEmpty()) {
                     for(ScoreDoc dox : docs) {
@@ -478,34 +433,24 @@ public class SearchHelper {
                             Set<Minmax        > cntx = countx.get   (k);
                             IndexableField[   ] vals = doc.getFields(k);
 
-                            F : for (IndexableField x: vals) {
-                                double v = x.numericValue( )
-                                            . doubleValue( );
-                                       v =    getValue(v, k);
-                                for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
-                                    Minmax m = mc.getKey ( );
+                        F : for (IndexableField x : vals) {
+                                double v = x.numericValue()
+                                            . doubleValue();
+                                       v = getValue( v, k );
 
-                                    /*
-                                     * 注意:
-                                     * 总计并没有跳过需忽略的值,
-                                     * 忽略的值仅表示不进行统计;
-                                     * 如果需要从结果中排除记录,
-                                     * 应在wr或ar参数中进行指定.
-                                     */
-                                    if (! m.covers( )) {
-                                        if (! m.covers(v)) {
-                                            continue;
-                                        }
-
-                                        if (  cntx  != null)
-                                        for(Minmax w : cntx) {
-                                            if (w.covers(v)) {
-                                                continue F ;
-                                            }
-                                        }
+                                if (cntx != null) for (Minmax w : cntx) {
+                                    if (w.covers(v)) {
+                                        continue F ;
                                     }
+                                }
 
-                                    mc.getValue().add(v);
+                                for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
+                                    Minmax m = mc.getKey  ( );
+                                    Cntsum c = mc.getValue( );
+
+                                    if (m.covers(v)) {
+                                        c.add   (v);
+                                    }
                                 }
                             }
                         }
@@ -513,7 +458,7 @@ public class SearchHelper {
                 }
 
                 if (docs.length > 0) {
-                    docz = finder.searchAfter(docs[docs.length - 1], q, 500);
+                    docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
                     total += docs.length;
                 } else {
                     break;
@@ -551,28 +496,35 @@ public class SearchHelper {
         System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
     }
 
-    private static class Sorted implements Comparator<Map.Entry<String, Integer>> {
+    private static class Counts implements Comparator<Object[]> {
         @Override
-        public int compare(Map.Entry<String, Integer> o1, Map.Entry<String, Integer> o2) {
-            int i1 = o1.getValue(), i2 = o2.getValue();
-            if (i1 > i2) return -1;
-            if (i1 < i2) return  1;
-            // 数量一致时按取值排, 避免限定后顺序变化
-            return o1.getKey().compareTo(o2.getKey() );
+        public int compare(Object[] o1, Object[] o2) {
+            int    cnt1 = (int)    o1[2];
+            int    cnt2 = (int)    o2[2];
+            if (cnt1 != cnt2) {
+                return  cnt1>cnt2 ? -1:1;
+            }
+
+            return 0;
         }
     }
 
-    private static class Sortes implements Comparator<Map.Entry<Minmax, Cntsum >> {
+    private static class Mounts implements Comparator<Object[]> {
         @Override
-        public int compare(Map.Entry<Minmax, Cntsum > o1, Map.Entry<Minmax, Cntsum > o2) {
-            // 区间为空的表示总计, 确保它总是在第一个
-            Minmax k1 = o1.getKey(  ), k2 = o2.getKey(  );
-            if  (  k1.covers()  ) return -1;
-            if  (  k2.covers()  ) return  1;
+        public int compare(Object[] o1, Object[] o2) {
+            int    cnt1 = (int)    o1[2];
+            int    cnt2 = (int)    o2[2];
+            if (cnt1 != cnt2) {
+                return  cnt1>cnt2 ? -1:1;
+            }
 
-            Cntsum x1 = o1.getValue(), x2 = o2.getValue();
-            return x1.cnt != x2.cnt ? (x2.cnt > x1.cnt ? 1 : -1)
-                : (x1.sum != x2.sum ? (x2.sum > x1.sum ? 1 : -1) : 0 );
+            double sum1 = (double) o1[3];
+            double sum2 = (double) o2[3];
+            if (sum1 != sum2) {
+                return  sum1>sum2 ? -1:1;
+            }
+
+            return 0;
         }
     }
 

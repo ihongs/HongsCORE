@@ -22,40 +22,40 @@ import java.util.Set;
  * 命名助手
  * @author Hongs
  */
-public class SearchTitler {
+public class TitlesHelper {
 
     protected Map<String, Map<String, String>> enums = null;
     protected Map<String, Map<String, String>> forks = null;
 
-    public SearchTitler() {
+    public TitlesHelper() {
         enums = new HashMap();
         forks = new HashMap();
     }
 
-    public SearchTitler addEnum(String code, Map<String, String> opts) {
+    public TitlesHelper addEnum(String code, Map<String, String> opts) {
         enums.put(code, opts);
         return this;
     }
 
-    public SearchTitler addFork(String code, Map<String, String> opts) {
+    public TitlesHelper addFork(String code, Map<String, String> opts) {
         forks.put(code, opts);
         return this;
     }
 
-    public SearchTitler addItemsByForm(Map fs ) throws HongsException  {
+    public TitlesHelper addItemsByForm(Map fs ) throws HongsException  {
         String conf = Dict.getValue( fs, "default", "@", "conf");
         String form = Dict.getValue( fs, "unknown", "@", "form");
         return addItemsByForm( conf, form, fs );
     }
 
-    public SearchTitler addItemsByForm(String conf, String form)
+    public TitlesHelper addItemsByForm(String conf, String form)
     throws HongsException {
         Map fs = FormSet.getInstance(conf /**/)
                         .getForm    (form /**/);
         return addItemsByForm( conf, form, fs );
     }
 
-    public SearchTitler addItemsByForm(String conf, String form, Map<String, Map> fs)
+    public TitlesHelper addItemsByForm(String conf, String form, Map<String, Map> fs)
     throws HongsException {
         Map ts = FormSet.getInstance("default")
                         .getEnum ( "__types__");

@@ -83,7 +83,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
     @Preset(conf="", form="")
     public void acount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
-        SearchHelper sh = new SearchHelper(sr);
+        StatisHelper sh = new StatisHelper(sr);
 
         Map rd = helper.getRequestData();
         rd = getReqMap(helper, sr, "acount", rd);
@@ -102,7 +102,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
     @Preset(conf="", form="")
     public void amount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
-        SearchHelper sh = new SearchHelper(sr);
+        StatisHelper sh = new StatisHelper(sr);
 
         Map rd = helper.getRequestData();
         rd = getReqMap(helper, sr, "amount", rd);
@@ -126,7 +126,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
      */
     protected void acheck(SearchEntity sr, Map rd, boolean nb) throws HongsException {
         Set rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        Set sf = sr.getFields(  ).keySet(  );
+        Map fs = sr.getFields( );
         Set st = sr.getCaseNames("statable");
         Set ss = ! nb ? null
                : (Set) FormSet.getInstance()
@@ -134,14 +134,17 @@ public class SearchAction extends ModelGate implements IAction, IActing {
                    .get    (  "number" );
 
         if (rb!= null) for (Object fn : rb ) {
-            if (! sf.contains(fn)) {
-                throw new HongsException(0x1100, "");
+            if (! fs.containsKey(fn)) {
+                throw new HongsException(0x1100, "Field '"+fn+"' is not exists"  );
             }
-            if (! st.contains(fn)) {
-                throw new HongsException(0x1100, "");
+            if (! st.contains   (fn)) {
+                throw new HongsException(0x1100, "Field '"+fn+"' is not statable");
             }
-            if (ss != null && ! ss.contains ( fn ) ) {
-                throw new HongsException(0x1100, "");
+            Map fc = (Map)fs.get(fn);
+            if (  ss  != null
+            &&  ! ss.contains   (fc.get("__type__"))
+            &&  ! ss.contains   (fc.get(  "type"  ))  ) {
+                throw new HongsException(0x1100, "Field '"+fn+"' is not numeric" );
             }
         }
     }
@@ -169,7 +172,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
 
         if (md != 0) {
             Map fs = sr.getFields();
-            new SearchTitler(  )
+            new TitlesHelper(  )
              .addItemsByForm(fs)
              .addTitle( xd , md);
         }

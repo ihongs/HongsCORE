@@ -382,7 +382,7 @@ HsStat.prototype = {
         var pieOpts = {
             series: [{
                 data: pData,
-                type: 'pie'
+                type: "pie"
             }],
             xAxis : [{
                 show: false
@@ -394,12 +394,13 @@ HsStat.prototype = {
         var barOpts = {
             series: [{
                 data: bData,
-                type: 'bar'
+                type: "bar",
+                barMaxWidth: 10
             }],
             xAxis : [{
                 data: xData,
                 show: true,
-                type: 'category'
+                type: "category"
             }],
             yAxis : [{
                 show: true,
@@ -476,11 +477,11 @@ HsStat.prototype = {
             series: [{
                 radius : [ 0, 50],
                 data: pData1,
-                type: 'pie'
+                type: "pie"
             }, {
                 radius : [60, 80],
                 data: pData2,
-                type: 'pie'
+                type: "pie"
             }],
             xAxis : [{
                 show: false
@@ -492,10 +493,17 @@ HsStat.prototype = {
         var barOpts = {
             series: [{
                 data: bData1,
-                type: 'bar'
+                type: "bar",
+                barMaxWidth: 10
             }, {
                 data: bData2,
-                type: 'bar'
+                type: "bar",
+                barMaxWidth: 10
+            }],
+            xAxis : [{
+                data: xData,
+                show: true,
+                type: "category"
             }],
             yAxis : [{
                 show: true,
@@ -504,11 +512,6 @@ HsStat.prototype = {
                 show: true,
                 type: "value",
                 position: "right"
-            }],
-            xAxis : [{
-                data: xData,
-                show: true,
-                type: 'category'
             }]
         };
         var opts = {

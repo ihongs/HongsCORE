@@ -395,7 +395,10 @@ HsStat.prototype = {
             series: [{
                 data: bData,
                 type: "bar",
-                barMaxWidth: 10
+                barMaxWidth: 10,
+                itemStyle: { normal: {
+                    barBorderRadius: [5, 5, 0, 0]
+                } }
             }],
             xAxis : [{
                 data: xData,
@@ -494,11 +497,17 @@ HsStat.prototype = {
             series: [{
                 data: bData1,
                 type: "bar",
-                barMaxWidth: 10
+                barMaxWidth: 10,
+                itemStyle: { normal: {
+                    barBorderRadius: [5, 5, 0, 0]
+                } }
             }, {
                 data: bData2,
                 type: "bar",
-                barMaxWidth: 10
+                barMaxWidth: 10,
+                itemStyle: { normal: {
+                    barBorderRadius: [5, 5, 0, 0]
+                } }
             }],
             xAxis : [{
                 data: xData,

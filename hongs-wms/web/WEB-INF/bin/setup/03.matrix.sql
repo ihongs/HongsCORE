@@ -91,6 +91,7 @@ VALUES ('user', '-', '用户', '', '', '{
     "data-vk":"id",
     "data-tk":"name",
     "data-at":"centra/master/user/list",
-    "data-al":"centra/master/user/pick.html"
+    "data-al":"centra/master/user/pick.html",
+    "data-rl":""
 }', 0, 0, 0, 3);
 

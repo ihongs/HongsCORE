@@ -24,6 +24,8 @@
         data-ak     Assoc key   关联数据键
         data-vk     Value key   关联数据取值键
         data-tk     Title key   关联数据标题键
+        data-al     Assoc lnk   关联选取页
+        data-rl     Refer lnk   关联查阅页
     Form checkbox:
         data-vk     Value key   选项数据取值键
         data-tk     Title key   选项数据标签键

@@ -116,6 +116,7 @@
                     <%
                         kind =  "_fork" ;
                         String fn = name;
+                        String fm = _module;
                         if (fn.endsWith( "." )) {
                             fn = fn.substring(0, fn.length() - 1);
                         }
@@ -127,10 +128,13 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk;
-                        if (Synt.declare(info.get("__repeated__"), false)) {
-                            kind  += "\" data-repeated=\"true";
-                        }
+                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :
+                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
+                          + "/" + ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
+                          + "/info.html?id={ID}";
+                        rl = rl.replace("centra", "centre");
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
+                             +  "\" data-href=\""+rl+"\" data-target=\"@";
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>
                     <button type="button" data-toggle="hsFork" class="hide"></button>

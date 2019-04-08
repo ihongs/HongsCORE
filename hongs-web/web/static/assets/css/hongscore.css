@@ -45,27 +45,16 @@ code, pre, var, dfn, kbd {
     color: inherit;
 }
 
-.nav .close ,
 .btn .close {
-    margin-right: -11px;
-    margin-top: -2.5px;
-    padding: 0 2px;
-}
-.breadcrumb .close {
-    display: none;
-}
-.btn.btn-default .close,
-.btn.btn-primary .close,
-.btn.btn-success .close,
-.btn.btn-warning .close,
-.btn.btn-danger .close,
-.btn.btn-info .close {
+    margin-right: -0.5em;
+    margin-top: -0.1em;
+    opacity: 0.8;
     color: #eee;
 }
-.form-group .close,
-.form-group .close:hover ,
-.form-group .close:focus {
-    color: #666;
+.btn .close:hover ,
+.btn .close:focus {
+    opacity: 1.0;
+    color: #eee;
 }
 
 select.form-control {
@@ -148,6 +137,9 @@ fieldset>.dropdown-list {
 
 /** 可后退的导航条 **/
 
+.breadcrumb .close {
+    display: none;
+}
 .breadcrumb.laps {
     background: #ffffff;
 }

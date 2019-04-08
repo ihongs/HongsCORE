@@ -2,7 +2,7 @@
 <div id="matrix-form-pick"
      data-module="hsList"
      data-load-url="centra/matrix/form/list.act"
-     data-data-0="_fill__fork:(hsListFillFork)">
+     data-load-data="(this.closest('.loadbox'))">
     <form class="findbox toolbox board row" action="" method="POST">
         <div class="col-xs-6">
             <div class="btn-group">
@@ -54,7 +54,7 @@
                 "data-at": "centra/auto/search!" // 虚拟路径需要代理
                          + "centra/data/"+ this._info.id +"/search",
                 "data-al": "centra/data/"+ this._info.id +"/pick.html",
-                "data-rl": "centra/data/"+ this._info.id +"/info.html?id={ID}",
+                "data-rl": "centra/data/"+ this._info.id +"/info.html",
                 "data-vk": "id" ,
                 "data-tk": "name"
             };

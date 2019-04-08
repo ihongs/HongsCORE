@@ -339,19 +339,20 @@ function hsFormFillPick(box, v, n) {
                 var box = evt.data[1];
                 var opt = jQuery(this).closest("li");
                 var val = opt.find("input:hidden").val();
+                var key = box.attr( "data-vk" ) || "id" ;
                 var rel = box.data("target");
                 var url = box.data( "href" );
                 if (url) {
-                    url = url.replace("{ID}", val);
+                    url = hsSetParam (url, key, val);
                     if (! rel) {
-                       jQuery.hsOpen(url);
+                        jQuery.hsOpen(url);
                     } else {
-                        box . hsFind(rel)
-                            . hsOpen(url);
+                        box.hsFind(rel)
+                           .hsOpen(url);
                     }
                 } else {
                     if (! mul) {
-                        btn . click ();
+                        btn.click (   );
                     }
                 }
             });

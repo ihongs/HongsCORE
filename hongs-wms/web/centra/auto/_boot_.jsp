@@ -22,10 +22,10 @@
         }}
 
         StringBuilder sb = new StringBuilder();
-        ModelCase mc = new MyCase(fields);
-        Set fs  = mc.getCaseNames("wordable" );
+        ModelCase mc = new MyCase (fields);
+        Set fs  = mc.getCaseNames ("wordable");
         if (fs == null || fs.isEmpty()) {
-            fs  = mc.getCaseNames("srchable" );
+            fs  = mc.getCaseNames ("srchable");
         }
 
         for( Object fn : fs ) {

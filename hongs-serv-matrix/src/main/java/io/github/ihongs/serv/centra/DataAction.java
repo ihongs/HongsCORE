@@ -40,9 +40,10 @@ public class DataAction extends SearchAction {
     @Override
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        ActionRunner  runner  =  (ActionRunner)
-              helper.getAttribute(ActionRunner.class.getName());
-        return  Data.getInstance (runner.getModule(), runner.getEntity());
+        ActionRunner runner = (ActionRunner)helper.getAttribute(ActionRunner.class.getName());
+        Data data = Data.getInstance(runner.getModule(), runner.getEntity());
+        data.setUserId((String)helper.getSessibute(Cnst.UID_SES));
+        return data;
     }
 
     @Override
@@ -61,11 +62,6 @@ public class DataAction extends SearchAction {
             Map  fcs =  dat.getFields();
             helper.setAttribute("form:"+ mod +"."+ ent, fcs);
         }
-
-        // 放入当前用户ID
-        Object uid = helper.getSessibute(Cnst.UID_SES);
-        helper.getRequestData().put("user_id", uid);
-        helper.getRequestData().put("form_id", ent);
     }
 
     //** 恢复 **/

@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
@@ -14,7 +15,6 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
 
-import org.apache.lucene.document.Document;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
@@ -24,18 +24,33 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.BooleanClause;
+
 /**
  * 数据存储模型
  * @author Hongs
  */
 public class Data extends SearchEntity {
 
-    protected final String conf;
-    protected final String form;
+    /**
+     * 分区字段名
+     */
+    public static final String  PART_ID_KEY  =  "pt";
+
+    protected final     String  conf   ;
+    protected final     String  form   ;
     private   final Set<String> dcUrls = new LinkedHashSet();
     private         Set<String> nmCols = null;
     private         Set<String> wdCols = null;
     private         Set<String> skCols = null;
+    private             String  userId = null;
 
     /**
      * 数据实例基础构造方法
@@ -177,6 +192,22 @@ public class Data extends SearchEntity {
         return    fields ;
     }
 
+    public Model getModel() throws HongsException {
+        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getModel(tn);
+    }
+
+    public Table getTable() throws HongsException {
+        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getTable(tn);
+    }
+
     @Override
     public String getDbPath() {
         String path = conf.replaceFirst("^(centre|centra)/" , "") +"/"+ form;
@@ -204,20 +235,27 @@ public class Data extends SearchEntity {
         return Synt.declare(getParams().get("form_id"),form);
     }
 
-    public Model getModel() throws HongsException {
-        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
-        if ("".equals(tn) || "none".equals(tn)) {
-            return null;
-        }
-        return DB.getInstance("matrix").getModel(tn);
+    public String getPartId() {
+        return Synt.declare(getParams().get("part_id"), String.class );
     }
 
-    public Table getTable() throws HongsException {
-        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
-        if ("".equals(tn) || "none".equals(tn)) {
-            return null;
+    public String getUserId() {
+        if ( null == userId ) {
+            try {
+                userId = (String) ActionHelper.getInstance()
+                                . getSessibute(Cnst.UID_SES);
+            } catch (UnsupportedOperationException e ) {
+                throw new NullPointerException("Call setUserId first");
+            }
+            if ( null == userId ) {
+                throw new NullPointerException("Call setUserId first");
+            }
         }
-        return DB.getInstance("matrix").getTable(tn);
+        return userId;
+    }
+
+    public void setUserId(String cuId) {
+        userId = cuId;
     }
 
     /**
@@ -313,13 +351,9 @@ public class Data extends SearchEntity {
     public int save(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
-        String   uid   = (String) rd.get( "user_id" );
-        Object[] param = new String[] { id, fid, "0"};
+        String   uid   = getUserId();
+        Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-
-        if (uid == null) {
-            throw new NullPointerException("user_id required!");
-        }
 
         // 获取旧的数据
         int st ;
@@ -424,13 +458,9 @@ public class Data extends SearchEntity {
     public int drop(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
-        String   uid   = (String) rd.get( "user_id" );
-        Object[] param = new String[] { id, fid, "0"};
+        String   uid   = getUserId();
+        Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-
-        if (uid == null) {
-            throw new NullPointerException("user_id required!");
-        }
 
         /** 记录到数据库 **/
 
@@ -487,19 +517,12 @@ public class Data extends SearchEntity {
     public int redo(long ctime, String id, Map rd) throws HongsException {
         Table    table = getTable( );
         String   fid   = getFormId();
-        String   uid   = (String) rd.get( "user_id" );
-        Object[] param = new String[] { id, fid, "0"};
+        String   uid   = getUserId();
+        long     rtime = Synt.declare (rd.get("rtime"), 0L);
+        Object[] param = new String[] {id, fid, "0" };
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-        long     rtime = Synt.declare(rd.get("rtime"), 0L);
-        Object[] para2 = new String[] { id, fid, ""+rtime};
+        Object[] para2 = new Object[] {id, fid,rtime};
         String   wher2 = "`id`=? AND `form_id`=? AND `ctime`=?";
-
-        if (uid == null) {
-            throw new NullPointerException("user_id required!");
-        }
-        if (rtime == 0L) {
-            throw new NullPointerException( "rtime required!" );
-        }
 
         //** 获取旧的数据 **/
 
@@ -598,9 +621,32 @@ public class Data extends SearchEntity {
     }
 
     @Override
+    public Query getQuery(Map rd) throws HongsException {
+        Query q = super.getQuery(rd);
+
+        // 限定分区范围
+        String pd = getPartId();
+        if (null != pd) {
+            Query p = new TermQuery( new Term("@" + PART_ID_KEY, pd) );
+            BooleanQuery.Builder b = new BooleanQuery.Builder();
+            b.add(p, BooleanClause.Occur.MUST);
+            b.add(q, BooleanClause.Occur.MUST);
+            q = b.build();
+        }
+
+        return  q;
+    }
+
+    @Override
     protected void padDoc(Document doc, Map map, Set rep) {
         if (rep != null && rep.isEmpty( )) {
             rep  = null;
+        }
+
+        // 写入分区标识
+        String pd = getPartId();
+        if (null != pd) {
+            doc.add(new StringField("@" + PART_ID_KEY, pd, Field.Store.NO));
         }
 
         Map<String, Map> fields = getFields();

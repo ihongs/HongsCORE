@@ -3,8 +3,8 @@ package io.github.ihongs.dh;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.util.Synt;
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -45,9 +45,9 @@ public class ModelCase implements IVolume {
 
         if (_fields != null
         &&  _params == null) {
-            _params  = (Map) map.get("@");
+            _params  = (Map) map.get ("@");
         if (_params == null) {
-            _params  =  new  HashMap(   );
+            _params  = new LinkedHashMap();
         }}
     }
 
@@ -128,13 +128,13 @@ public class ModelCase implements IVolume {
      */
     public Set<String> getSaveNames(String x) {
         Map<String, Map> fields = getFields();
-        Set fts = getSaveTypes(x);
-        Set fns = new HashSet ( );
+        Set fts = getSaveTypes(  x  );
+        Set fns = new LinkedHashSet();
 
         for(Map.Entry<String, Map> et: fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
-            if ("@".equals(fn)) {
+            if ("@".equals (fn)) {
                 continue; // 排除掉 @
             }
             if (fts.contains( field.get( "__type__" ) ) ) {
@@ -159,7 +159,7 @@ public class ModelCase implements IVolume {
         if (pms.containsKey(x)) {
             Object  o = pms . get (x);
             if ("*".equals (o)) {
-                fns = new HashSet (fields.keySet());
+                fns = new LinkedHashSet(fields.keySet());
                 fns.remove("@");
                 return fns;
             } else
@@ -176,7 +176,7 @@ public class ModelCase implements IVolume {
                 fts = getCaseTypes(x);
         }
 
-        fns = new HashSet( );
+        fns = new LinkedHashSet();
         for(Map.Entry<String, Map> et:fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
@@ -184,7 +184,7 @@ public class ModelCase implements IVolume {
                 continue; // 排除掉 @
             }
             if (field.containsKey(x)) {
-                if (Synt.declare(field.get(x), false ) ) {
+                if (Synt.declare(field.get( x ), false)) {
                     fns.add(fn);
                 }
             } else if ( fts != null ) {

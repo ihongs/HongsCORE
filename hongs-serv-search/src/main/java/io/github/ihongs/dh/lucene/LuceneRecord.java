@@ -1106,16 +1106,15 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @throws HongsException
      */
     protected Analyzer getAnalyzer() throws HongsException {
+        /*Default*/ Analyzer  ad = new StandardAnalyzer();
         Map<String, Analyzer> az = new HashMap();
-        Map<String, Map>  fields = getFields(  );
-        Analyzer ad = new StandardAnalyzer();
-        for(Object ot : fields.entrySet( ) ) {
-            Map.Entry et = (Map.Entry) ot;
-            Map    m = (Map ) et.getValue( );
-            String n = (String) et.getKey( );
-            String t = datatype(m);
-            if ("search".equals(t)) {
-                az.put(n, getAnalyzer(m));
+        Map<String, Map     > fs = getFields(  );
+        for(Map.Entry<String, Map> et : fs.entrySet()) {
+            String fn = et.getKey(  );
+            Map    fc = et.getValue();
+            if (srchable(fc)) {
+                // 注意: 搜索对应的字段名开头为 $
+                az.put("$" + fn, getAnalyzer(fc) );
             }
         }
         return new PerFieldAnalyzerWrapper(ad, az);

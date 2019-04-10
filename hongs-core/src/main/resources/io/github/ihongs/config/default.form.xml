@@ -118,12 +118,7 @@
     //-->
     <!--
     <form name="demo-form">
-        <field text="示例">
-            <param name="listable">?</param>
-            <param name="sortable">?</param>
-            <param name="findable">?</param>
-            <param name="nameable">?</param>
-        </field>
+        <field text="示例"></field>
         <field name="str" text="文本" type="text,textarea,hidden,search,tel,url,email">
             <param name="minlength">100</param>
             <param name="maxlength">500</param>
@@ -141,24 +136,27 @@
             <param name="max">9:30</param>
             <param name="format">H/mm</param>
         </field>
-        <field name="file" text="文件" type="file">
+        <field name="file" text="文件" type="file,image,video,audio">
             <param name="path"></param>
             <param name="href"></param>
             <param name="name"></param>
             <param name="type"></param>
             <param name="extn"></param>
         </field>
-        <field name="enum" text="枚举" type="enum,select,check,radio">
-            <param name="conf"></param>
-            <param name="enum">demo-enum</param>
-        </field>
-        <field name="form" text="关联" type="fork,pick">
-            <param name="conf"></param>
-            <param name="form">demo-form</param>
+        <field name="fork" text="关联" type="fork,pick">
+            <param name="data-at">assoc/action</param>
+            <param name="data-al">assoc/page.html</param>
+            <param name="data-rl">refer/page.html</param>
+            <param name="data-tk"></param>
+            <param name="data-vk"></param>
         </field>
         <field name="form" text="表单" type="form,part">
             <param name="conf"></param>
             <param name="form">demo-form</param>
+        </field>
+        <field name="enum" text="枚举" type="enum,type,select,check,radio">
+            <param name="conf"></param>
+            <param name="enum">demo-enum</param>
         </field>
         <field name="more" text="必填" type="text" required="yes">
         </field>

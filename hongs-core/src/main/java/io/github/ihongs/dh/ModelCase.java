@@ -12,9 +12,8 @@ import java.util.Set;
  * 表单模型通用配置
  *
  * 对表单中 @ 区域的 xxxxable 配置项:
- * 其取值为 ? 将根据字段的类型来判别,
- * 其取值为 ! 将检查字段内的对应设置,
- * 其取值为 * 表示当前全部字段都可用,
+ * 其取值为 @ 表示当前全部字段都可用,
+ * 其取值为 $ 将检查字段内的对应设置,
  * 亦可直接指定一个字段列表,
  * 默认不作设置按类型来判别.
  *
@@ -134,7 +133,7 @@ public class ModelCase implements IVolume {
         for(Map.Entry<String, Map> et: fields.entrySet()) {
             Map field = et.getValue();
             String fn = et.getKey(  );
-            if ("@".equals (fn)) {
+            if ("@".equals(fn)) {
                 continue; // 排除掉 @
             }
             if (fts.contains( field.get( "__type__" ) ) ) {
@@ -151,50 +150,79 @@ public class ModelCase implements IVolume {
      * @return
      */
     public Set<String> getCaseNames(String x) {
-        Map<String, Map> fields = getFields();
-        Map<String, Object> pms = getParams();
+        Map<String, Map   > fields = getFields();
+        Map<String, Object> params = getParams();
+        Object ab = params.get(x);
         Set fts ;
         Set fns ;
 
-        if (pms.containsKey(x)) {
-            Object  o = pms . get (x);
-            if ("*".equals (o)) {
-                fns = new LinkedHashSet(fields.keySet());
-                fns.remove("@");
-                return fns;
-            } else
-            if ("!".equals (o)) {
-                fts = null;
-            } else
-            if ("?".equals (o)) {
-                fts = getCaseTypes(x);
-            } else
-            {
-                return Synt.toSet (o);
-            }
-        } else {
-                fts = getCaseTypes(x);
-        }
-
-        fns = new LinkedHashSet();
-        for(Map.Entry<String, Map> et:fields.entrySet()) {
-            Map field = et.getValue();
-            String fn = et.getKey(  );
-            if ("@".equals (fn)) {
-                continue; // 排除掉 @
-            }
-            if (field.containsKey(x)) {
+        // 按类型判断, 类型符合或有设置, 兼容旧的问号标识
+        if ( null  ==  ab
+        ||  "?".equals(ab)) {
+            fts = getCaseTypes(x);
+            fns = new LinkedHashSet();
+            if (fts!= null) {
+            for(Map.Entry<String, Map> et:fields.entrySet()) {
+                Map field = et.getValue();
+                String fn = et.getKey(  );
+                if ("@".equals(fn)) {
+                    continue; // 排除掉 @
+                }
+                if (field.containsKey(x)) {
+                if (Synt.declare(field.get( x ), false)) {
+                    fns.add(fn);
+                }} else {
+                if (fts.contains(field.get("__type__"))) {
+                    fns.add(fn);
+                }}
+            }} else {
+            for(Map.Entry<String, Map> et:fields.entrySet()) {
+                Map field = et.getValue();
+                String fn = et.getKey(  );
+                if ("@".equals(fn)) {
+                    continue; // 排除掉 @
+                }
                 if (Synt.declare(field.get( x ), false)) {
                     fns.add(fn);
                 }
-            } else if ( fts != null ) {
-                if (fts.contains(field.get("__type__"))) {
+            }}
+            return  fns;
+        }
+
+        // 有设的字段, 仅接受有设置 xable 且不为 false
+        if ("$".equals(ab)) {
+            fns = new LinkedHashSet();
+            for(Map.Entry<String, Map> et:fields.entrySet()) {
+                Map field = et.getValue();
+                String fn = et.getKey(  );
+                if ("@".equals(fn)) {
+                    continue; // 排除掉 @
+                }
+                if (Synt.declare(field.get( x ), false)) {
                     fns.add(fn);
                 }
             }
+            return  fns;
         }
 
-        return  fns;
+        // 所有的字段, 除非明确声明 xable 且值为 false
+        if ("@".equals(ab)) {
+            fns = new LinkedHashSet();
+            for(Map.Entry<String, Map> et:fields.entrySet()) {
+                Map field = et.getValue();
+                String fn = et.getKey(  );
+                if ("@".equals(fn)) {
+                    continue; // 排除掉 @
+                }
+                if (Synt.declare(field.get( x ), true )) {
+                    fns.add(fn);
+                }
+            }
+            return  fns;
+        }
+
+        // 指定的字段
+        return Synt . toSet(ab);
     }
 
     /**

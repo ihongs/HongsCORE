@@ -70,7 +70,7 @@
 <script type="text/javascript">
     (function($) {
         var statmap = {
-            '0': [ "text-warning", "删除" ],
+            '0': [ "text-danger" , "删除" ],
             '1': [ "text-default", "新增" ],
             '2': [ "text-default", "更新" ],
             '3': [ "text-success", "恢复" ]

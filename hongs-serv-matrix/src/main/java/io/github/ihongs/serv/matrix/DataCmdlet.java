@@ -40,15 +40,13 @@ public class DataCmdlet {
         long ct = Synt.declare(opts.get("time"),  0L );
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
+
+        dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
+//      user = dr.getUserId( );
         form = dr.getFormId( );
-        if (user == null) {
-            user  = Cnst.ADM_UID;
-        }
 
         Map sd = new HashMap();
-        sd.put("form_id",form);
-        sd.put("user_id",user);
-        sd.put("memo"   ,memo);
+        sd.put( "memo", memo );
 
         Table  tb = dr.getTable();
         String tn = tb.tableName ;

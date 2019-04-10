@@ -918,30 +918,20 @@ public class Data extends SearchEntity {
         }
     }
 
+    /**
+     * 增加搜索和命名未明确指定时的后备类型
+     * @param t
+     * @return 
+     */
     @Override
     public Set<String> getCaseTypes(String t) {
-        if ("nameable".equals(t)) {
+        if ("_wordable".equals(t)) {
+            return Synt.setOf("string", "search", "text", "textarea", "textview");
+        } else
+        if ("_nameable".equals(t)) {
             return Synt.setOf("string", "search", "text");
-        } else
-        if ("wordable".equals(t)) {
-            return super.getCaseTypes("srchable");
-        } else
-        {
+        } else {
             return super.getCaseTypes(t);
-        }
-    }
-
-    @Override
-    public Set<String> getCaseNames(String t) {
-        if ("wordable".equals(t)) {
-            Set w= super.getCaseNames("wordable");
-            if (w== null || w.isEmpty()) {
-                w= super.getCaseNames("srchable");
-            }
-            return w;
-        } else
-        {
-            return super.getCaseNames(t);
         }
     }
 
@@ -952,28 +942,36 @@ public class Data extends SearchEntity {
         }
         Map fs = (Map) getFields().get("word");
         if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
-            wdCols =  Synt.setOf  (  "word"  );
+            wdCols = Synt.setOf("word");
         } else {
-            wdCols =  getCaseNames("wordable");
+            wdCols = getCaseNames( "wordable");
+        if (wdCols.isEmpty()) {
+            wdCols = getCaseNames("_wordable");
+        }
             wdCols.remove("word");
         }
         return wdCols;
     }
 
+//  @Override
     public Set<String> getNameable() {
         if (null != nmCols) {
             return  nmCols;
         }
         Map fs = (Map) getFields().get("name");
         if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
-            nmCols =  Synt.setOf  (  "name"  );
+            nmCols = Synt.setOf("name");
         } else {
-            nmCols =  getCaseNames("nameable");
+            nmCols = getCaseNames( "nameable");
+        if (nmCols.isEmpty()) {
+            nmCols = getCaseNames("_nameable");
+        }
             nmCols.remove("name");
         }
         return nmCols;
     }
 
+//  @Override
     public Set<String> getSkipable() {
         if (null != skCols) {
             return  skCols;

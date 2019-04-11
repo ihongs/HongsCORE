@@ -244,10 +244,10 @@ function hsCopyListData(box) {
     var sel = window.getSelection( );
     sel.removeAllRanges();
     try {
-        rng.selectNodeContents(box[0]);
+        rng.selectNodeContents(tab[0]);
         sel.addRange(rng);
     } catch (e) {
-        rng.selectNode /****/ (box[0]);
+        rng.selectNode /****/ (tab[0]);
         sel.addRange(rng);
     }
     document.execCommand("Copy");

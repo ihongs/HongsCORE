@@ -1737,9 +1737,15 @@ $.hsMask = function(opt) {
     }
 
     btn.on("click", "button", function(evt) {
+        if (evt.isDefaultPrevented()) {
+            return;
+        }
         mod.modal ( "hide" );
     } );
     mod.on("hidden.bs.modal", function(evt) {
+        if (evt.isDefaultPrevented()) {
+            return;
+        }
         end. call (div, evt);
         mod.remove();
     } );

@@ -389,8 +389,8 @@ HsList.prototype = {
             title: '请输入页码和条数',
             mode : "warn",
             html : '<form autocomplete="off" novalidate="novalidate">'
-                 + '<span> 跳转到第 </span><input type="number" name="pn" value="'+pn+'" class="form-control" style="display:inline-block;width:6em;" min="1"  step="1" /><span> 页, </span>'
-                 + '<span> 平均每页 </span><input type="number" name="rn" value="'+rn+'" class="form-control" style="display:inline-block;width:6em;" min="10" step="10"/><span> 条. </span>'
+                 + '<span> 跳转到第 </span><input type="number" name="pn" value="'+pn+'" class="form-control" style="display:inline-block;width:6em;" step="1"  min="1"  '   +   '/><span> 页, </span>'
+                 + '<span> 平均每页 </span><input type="number" name="rn" value="'+rn+'" class="form-control" style="display:inline-block;width:6em;" step="10" min="10" max="100"/><span> 条. </span>'
                  + '<button type="submit" class="invisible"></button>'
                  + '</form>'
         }, {

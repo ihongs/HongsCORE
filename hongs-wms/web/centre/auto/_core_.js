@@ -57,7 +57,7 @@ S$.delete = function(req) {
 };
 S$.browse = function(req) {
     var mod = S$();
-    mod.load(undefined, hsSerialMix(mod._data , req));
+    mod.load(undefined, hsSerialMix(mod._data, req));
 };
 
 /**

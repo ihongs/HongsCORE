@@ -201,8 +201,13 @@ public final class Remote {
             // 设置报头
             if (head != null) {
                 for(Map.Entry<String, String> et : head.entrySet()) {
-                    http.setHeader( et.getKey( ) , et.getValue( ) );
+                    http.setHeader  ( et.getKey(), et.getValue() );
                 }
+                if (head.containsKey("Accept") == false) {
+                    http.setHeader  ("Accept", "application/json, */*;q=0.8");
+                }
+            } else {
+                    http.setHeader  ("Accept", "application/json, */*;q=0.8");
             }
 
             // 执行请求

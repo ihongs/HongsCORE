@@ -57,7 +57,7 @@ S$.delete = function(req) {
 };
 S$.browse = function(req) {
     var mod = S$();
-    mod.load(undefined, hsSerialMix(mod._data , req));
+    mod.load(undefined, hsSerialMix(mod._data, req));
 };
 
 /**
@@ -108,6 +108,152 @@ function hsListPrepFilt(x, v, n) {
     }
 
     return HsForm.prototype._prep__select.call(this, x, v, n);
+}
+
+/**
+ * 列表填充打开链接
+ * 当多个时显示列表
+ */
+function hsListFillOpen(x, v, t) {
+    if (!v || !v.length) {
+        return ;
+    }
+    if (!$.isArray( v )) {
+        v = [v];
+    }
+
+    var n ;
+    switch  (t) {
+        case "email": n = "glyphicon glyphicon-envelope"; break;
+        case "image": n = "glyphicon glyphicon-picture" ; break;
+        case "video": n = "glyphicon glyphicon-play"    ; break;
+        case "audio": n = "glyphicon glyphicon-play"    ; break;
+        case "file" : n = "glyphicon glyphicon-file"    ; break;
+        default     : n = "glyphicon glyphicon-link"    ; break;
+    }
+
+    var a = $('<a><span class="'+n+'" ></span></a>');
+    var k = $('<a target="_blank" ></a>');
+    var b = $('<b class="'+n+'"></span>');
+    var l = $('<li class="label label-info "></li>');
+    var u = $('<ul class="labelbox repeated"></ul>');
+    for(var i = 0; i < v.length; i ++) {
+        var txt, url;
+        if (t === "email") {
+            url = "mailto:"+v[i] ;
+            txt = v[i];
+        } else {
+            url = hsFixUri (v[i]);
+            txt = v[i].replace(/[?#].*/, '')
+                      .replace( /.*\// , '');
+            txt = decodeURIComponent ( txt );
+        }
+        u.append(l.clone().append(b.clone())
+         .append(k.clone().attr("href", url)
+                          .text(  txt  ) ) );
+    }
+    x.addClass("dont-check"); // 点链接不选中
+    x.data("node", u);        // 可被复制使用
+
+    if (v.length > 1) {
+        a.appendTo(x);
+        a.attr("href","javascript:;");
+        a.click(function() {
+            var m = $.hsMask({"title": "点击可打开..."});
+            m.find(".modal-body"  ).append(u);
+            m.find(".modal-footer").remove( );
+        });
+    } else {
+        a.appendTo(x);
+        a.attr( "target" , "_blank" );
+        if (t === "email") {
+            a.attr("href", "mailto:"+v[0] );
+        } else {
+            a.attr("href", hsFixUri (v[0]));
+        }
+    }
+}
+function hsListWrapOpen(t) {
+    return function (x, v) {
+         hsListFillOpen(x, v, t);
+    };
+}
+
+/**
+ * 复制列表中的内容
+ */
+function hsCopyListData(box) {
+    // 检查接口
+    if (! window.getSelection
+    ||  ! document.createRange
+    ||  ! document.execCommand ) {
+        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome,Firefox 或以它们为核心的浏览器.", "warning");
+        return;
+    }
+
+    // 复制表格
+    var div = $('<div style="height:1px;overflow:auto;"></div>').insertBefore(box);
+    var tab = $('<table></table>').appendTo(div);
+    var tbd = $('<tbody></tbody>').appendTo(tab);
+    var tr  = $('<tr></tr>');
+    var th  = $('<td></th>');
+    var td  = $('<td></td>');
+    tab.attr("class", "table");
+    box.find("thead:first tr").each(function() {
+        var tr2 = tr.clone().appendTo(tbd);
+        $(this).find("th").each(function() {
+            var th2 = th.clone().appendTo(tr2);
+            var th0 = $(this);
+            if (th0.is(".dont-copy,._check,._amenu")) {
+                return;
+            }
+            th2.text(th0.text());
+        });
+    });
+    box.find("tbody:first tr").each(function() {
+        var tr2 = tr.clone().appendTo(tbd);
+        $(this).find("td").each(function() {
+            var td2 = td.clone().appendTo(tr2);
+            var td0 = $ (this);
+            if (td0.is(".dont-copy,._check,._amenu")) {
+                return;
+            }
+            if (td0.data("copy")) {
+                td0.data("copy").call(this, td2[0]);
+            } else
+            if (td0.data("node")) {
+                td2.append(td0.data("node"));
+            } else
+            if (td0.data("html")) {
+                td2.html(td0.data("html"));
+            } else
+            if (td0.data("text")) {
+                td2.text(td0.data("text"));
+            } else
+            if (td0.attr("title")) {
+                td2.text(td0.attr("title"));
+            } else
+            {
+                td2.text(td0.text());
+            }
+        });
+    });
+
+    // 复制内容
+    var rng = document.createRange();
+    var sel = window.getSelection( );
+    sel.removeAllRanges();
+    try {
+        rng.selectNodeContents(box[0]);
+        sel.addRange(rng);
+    } catch (e) {
+        rng.selectNode /****/ (box[0]);
+        sel.addRange(rng);
+    }
+    document.execCommand("Copy");
+    div.remove();
+
+    $.hsNote("复制成功, 去粘贴吧!", "success");
 }
 
 /**

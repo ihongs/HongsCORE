@@ -49,6 +49,7 @@
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                     <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
                 <%if (!"select".equals(_action)) {%>
+                    <button type="button" class="recopy btn btn-default" title="<%=_locale.translate("fore.recopy", _title)%>"><span class="glyphicon glyphicon-copy"  ></span></button>
                     <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-time"  ></span></button>
                     <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
                 <%} // End If %>
@@ -417,6 +418,9 @@
         if (! statbox.is("invisible")) {
             statbox.trigger("opened");
         }
+    });
+    findbox.find(".recopy").click(function() {
+        hsCopyListData(listobj.listBox);
     });
     findbox.find(".search").click(function() {
         filtbox.addClass("invisible");

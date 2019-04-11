@@ -187,7 +187,7 @@ function hsCopyListData(box) {
     if (! window.getSelection
     ||  ! document.createRange
     ||  ! document.execCommand ) {
-        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome,Firefox 或以它们为核心的浏览器.", "warning");
+        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome,Firefox 或以它们为核心的其他浏览器.", "warning");
         return;
     }
 

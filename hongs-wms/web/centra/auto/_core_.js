@@ -202,24 +202,24 @@ function hsCopyListData(box) {
     box.find("thead:first tr").each(function() {
         var tr2 = tr.clone().appendTo(tbd);
         $(this).find("th").each(function() {
-            var th2 = th.clone().appendTo(tr2);
             var th0 = $(this);
             if (th0.is(".dont-copy,._check,._amenu")) {
                 return;
             }
+            var th2 = th.clone().appendTo(tr2);
             th2.text(th0.text());
         });
     });
     box.find("tbody:first tr").each(function() {
         var tr2 = tr.clone().appendTo(tbd);
         $(this).find("td").each(function() {
-            var td2 = td.clone().appendTo(tr2);
             var td0 = $ (this);
             if (td0.is(".dont-copy,._check,._amenu")) {
                 return;
             }
+            var td2 = td.clone().appendTo(tr2);
             if (td0.data("copy")) {
-                td0.data("copy").call(this, td2[0]);
+                td0.data("copy").call(this , td2[0]);
             } else
             if (td0.data("node")) {
                 td2.append(td0.data("node"));

@@ -119,14 +119,16 @@ public class StatisHelper {
             } else {
                 if (vo!= null && !"".equals(vo)) {
                     vs = Synt.asSet(rd.get( k ));
+                    vs.remove( "" );
+                    vs.remove(null);
                 }
             }
 
-            if (vs == null) {
-                if (counts.containsKey(k)) {
+            if (vs == null || vs.isEmpty()) {
+                if (counts .containsKey(k)) {
                     counts2.put(k, counts.get(k));
                 }
-                if (countx.containsKey(k)) {
+                if (countx .containsKey(k)) {
                     countx2.put(k, countx.get(k));
                 }
             } else {
@@ -146,12 +148,14 @@ public class StatisHelper {
                     counts3.put(k, vz);
                 }
 
+                /* 如果将参数值加入, 下面会跳过其他值
                 for(Object v : vs) {
                     String s = v.toString();
                     if (vx  == null || ! vx.contains(s)) {
                         vz.put( s, 0 );
                     }
                 }
+                */
 
                 Map xd = new HashMap();
                 xd.putAll(rd);
@@ -363,12 +367,14 @@ public class StatisHelper {
                     counts3.put(k, vz);
                 }
 
+                /* 如果将参数值加入, 下面会跳过其他值
                 for(Object v : vs) {
                     Minmax m = new Minmax(v.toString( ));
                     if (vx  == null || ! vx.contains(m)) {
                         vz.put( m, new Cntsum() );
                     }
                 }
+                */
 
                 Map xd = new HashMap();
                 xd.putAll(rd);

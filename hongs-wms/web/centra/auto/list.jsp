@@ -29,8 +29,9 @@
                 <%if (!"select".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
                 <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
-                <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-repeat"></span></button>
-                <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-remove"></span></button>
+                <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
+                <button type="button" class="recopy for-checks btn btn-default" title="<%=_locale.translate("fore.recopy", _title)%>"><span class="glyphicon glyphicon-copy "></span></button>
+                <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
                 <%} // End If %>
             </div>
         </div>
@@ -47,11 +48,10 @@
                 <span class="input-group-btn">
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats" ></span></button>
+                    <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats "></span></button>
                 <%if (!"select".equals(_action)) {%>
-                    <button type="button" class="recopy btn btn-default" title="<%=_locale.translate("fore.recopy", _title)%>"><span class="glyphicon glyphicon-copy"  ></span></button>
-                    <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-time"  ></span></button>
-                    <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book"  ></span></button>
+                    <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
+                    <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book  "></span></button>
                 <%} // End If %>
                 </span>
             </div>

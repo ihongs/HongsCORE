@@ -132,11 +132,10 @@ function hsListFillOpen(x, v, t) {
         default     : n = "glyphicon glyphicon-link"    ; break;
     }
 
-    var a = $('<a><span class="'+n+'" ></span></a>');
-    var k = $('<a target="_blank" ></a>');
-    var b = $('<b class="'+n+'"></span>');
-    var l = $('<li class="label label-info "></li>');
-    var u = $('<ul class="labelbox repeated"></ul>');
+    var a = $('<a><span class="'+n+'"></span></a>');
+    var e = $('<a target="_blank"></a>');
+    var l = $('<li></li>');
+    var u = $('<ul></ul>');
     for(var i = 0; i < v.length; i ++) {
         var txt, url;
         if (t === "email") {
@@ -144,13 +143,12 @@ function hsListFillOpen(x, v, t) {
             txt = v[i];
         } else {
             url = hsFixUri (v[i]);
-            txt = v[i].replace(/[?#].*/, '')
-                      .replace( /.*\// , '');
-            txt = decodeURIComponent ( txt );
+            txt = v[i].replace(/[?#].*/,'')
+                      .replace( /.*\// ,'');
+            txt = decodeURIComponent( txt );
         }
-        u.append(l.clone().append(b.clone())
-         .append(k.clone().attr("href", url)
-                          .text(  txt  ) ) );
+        u.append(l.clone().append(e.clone()
+         .attr("href", url ).text( txt ) ));
     }
     x.addClass("dont-check"); // 点链接不选中
     x.data("node", u);        // 可被复制使用
@@ -192,15 +190,17 @@ function hsCopyListData(box) {
     }
 
     // 复制表格
-    var div = $('<div style="height:1px;overflow:auto;"></div>').insertBefore(box);
+    var div = $('<div></div>').insertBefore(box);
     var tab = $('<table></table>').appendTo(div);
+    var thd = $('<thead></thead>').appendTo(tab);
     var tbd = $('<tbody></tbody>').appendTo(tab);
     var tr  = $('<tr></tr>');
     var th  = $('<td></th>');
     var td  = $('<td></td>');
-    tab.attr("class", "table");
+    div.attr("style" , "height:1px; overflow:auto;");
+    tab.attr("class" , "table table-bordered");
     box.find("thead:first tr").each(function() {
-        var tr2 = tr.clone().appendTo(tbd);
+        var tr2 = tr.clone().appendTo(thd);
         $(this).find("th").each(function() {
             var th0 = $(this);
             if (th0.is(".dont-copy,._check,._amenu")) {
@@ -210,7 +210,7 @@ function hsCopyListData(box) {
             th2.text(th0.text());
         });
     });
-    box.find("tbody:first tr").each(function() {
+    box.find("tbody:first tr.active").each(function() {
         var tr2 = tr.clone().appendTo(tbd);
         $(this).find("td").each(function() {
             var td0 = $ (this);
@@ -218,23 +218,21 @@ function hsCopyListData(box) {
                 return;
             }
             var td2 = td.clone().appendTo(tr2);
-            if (td0.data("copy")) {
-                td0.data("copy").call(this , td2[0]);
+            td2.attr( "style" , "white-space: pre-line;" );
+            if (td0.data("node" )) {
+                td2.html(hsTidyHtmlTags(td0.data("node")));
             } else
-            if (td0.data("node")) {
-                td2.append(td0.data("node"));
+            if (td0.data("html" )) {
+                td2.html(hsTidyHtmlTags(td0.data("html")));
             } else
-            if (td0.data("html")) {
-                td2.html(td0.data("html"));
-            } else
-            if (td0.data("text")) {
-                td2.text(td0.data("text"));
+            if (td0.data("text" )) {
+                td2.text(td0.data("text" ));
             } else
             if (td0.attr("title")) {
                 td2.text(td0.attr("title"));
             } else
             {
-                td2.text(td0.text());
+                td2.html(hsTidyHtmlTags(td0.html()));
             }
         });
     });
@@ -254,6 +252,25 @@ function hsCopyListData(box) {
     div.remove();
 
     $.hsNote("复制成功, 去粘贴吧!", "success");
+}
+
+/**
+ * 清理网页标签以供表格复制中用
+ * @param {String|Number|Element} html
+ * @return {String}
+ */
+function hsTidyHtmlTags(html) {
+    if (!html) return "";
+    if (typeof html === "number") {
+        return html + "";
+    }
+    if (typeof html === "object") {
+        html = $(html).html();
+    }
+    html = html.replace(/\s+/gm, " "); // 合并空字符
+    html = html.replace(/<(p|ul|ol|li|div|pre)(\s.*?)?>/gmi, "" ); // 清除块标签
+    html = html.replace(/<\/(p|ul|ol|li|div|pre)>|<(br|hr)\/?>/gi, "\r\n"); // 转为换行符
+    return  $.trim(html);
 }
 
 /**

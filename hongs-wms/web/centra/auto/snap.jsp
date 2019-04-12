@@ -32,7 +32,7 @@
                     <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
                     <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
                     <span class="input-group-btn">
-                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-refresh"></span></button>
+                        <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-repeat"></span></button>
                     </span>
                 </div>
                 </div>

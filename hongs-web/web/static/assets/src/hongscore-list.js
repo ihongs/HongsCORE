@@ -397,9 +397,9 @@ HsList.prototype = {
             glass: 'btn-primary',
             label: hsGetLang("ensure"),
             click: function() {
-                var fo = jQuery(this).closest(".modal-body" ).find( ".form" );
-                var pn = parseInt(fo.find("[name='"+this.pageKey+"']").val());
-                var rn = parseInt(fo.find("[name='"+this.rowsKey+"']").val());
+                var fo = jQuery(this).closest(".alert-content" ).find("form");
+                var pn = parseInt(fo.find("[name='"+that.pageKey+"']").val());
+                var rn = parseInt(fo.find("[name='"+that.rowsKey+"']").val());
                 if (isNaN(pn) || isNaN(rn) || pn < 01 || rn < 10 || rn > 100) {
                     alert( "输入错误, 页码需大于或等于1, 行数需10到100之间" );
                     return false;

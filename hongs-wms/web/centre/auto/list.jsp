@@ -121,8 +121,7 @@
                 </div>
             <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
-                    String fm = _module;
-                    String fn =  name  ;
+                    String fn = name;
                     if (fn.endsWith( "." )) {
                         fn = fn.substring(0, fn.length() - 1);
                     }
@@ -134,10 +133,7 @@
                     String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                     String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                     String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :
-                              ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
-                        +"/"+ ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
-                        +"/pick.html";
+                    String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
                     al = al.replace("centra", "centre");
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>

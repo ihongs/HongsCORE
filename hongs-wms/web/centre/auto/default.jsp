@@ -13,18 +13,18 @@
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
-        <link rel="stylesheet" type="text/css" href="centre/base.css"/>
+        <link rel="stylesheet" type="text/css" href="centre/base.min.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
         <script type="text/javascript" src="static/assets/jquery.min.js"></script>
         <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
+        <script type="text/javascript" src="centre/assets/hongsedit.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centre.js" ></script>
-        <script type="text/javascript" src="centre/auto/_core_.js" ></script>
-        <script type="text/javascript" src="centre/auto/_edit_.js" ></script>
+        <script type="text/javascript" src="centre/base.min.js"></script>
         <script type="text/javascript" src="<%=_module%>/<%=_entity%>/defines.js"></script>
         <script type="text/javascript">
             HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;

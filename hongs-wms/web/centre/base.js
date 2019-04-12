@@ -51,7 +51,7 @@ S$.update = function(req) {
     var url = S$.src() + "/update.act";
     return S$.send(url, req);
 };
-S$.delete = function(req) {
+S$.remove = function(req) {
     var url = S$.src() + "/delete.act";
     return S$.send(url, req);
 };

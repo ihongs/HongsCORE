@@ -116,7 +116,6 @@
                     <%
                         kind =  "_fork" ;
                         String fn = name;
-                        String fm = _module;
                         if (fn.endsWith( "." )) {
                             fn = fn.substring(0, fn.length() - 1);
                         }
@@ -128,10 +127,7 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :
-                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
-                          + "/" + ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
-                          + "/info.html?id={ID}";
+                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         rl = rl.replace("centra", "centre");
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";

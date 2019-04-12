@@ -1,5 +1,6 @@
-
 /* global HsLANG, CodeMirror */
+
+//** 初始化表单项 **/
 
 function setFormItems(formbox, loadbox) {
     formbox.on("loadOver", function(evt, rst) {
@@ -149,7 +150,7 @@ function setEditor(node, func) {
                             data.append("file.",files[i]);
                         }
                         $.ajax({
-                            url     : hsFixUri("centra/data/upload/image/create.act"),
+                            url     : hsFixUri(ADD_IMG_HREF),
                             data    :  data ,
                             type    : "POST",
                             dataType: "json",
@@ -263,6 +264,10 @@ function getModeByName(name) {
         return [name , name];
     }
 }
+
+var ADD_IMG_HREF = hsChkUri('centra') ?
+    "centra/data/upload/image/create.act" :
+    "centre/data/upload/image/create.act" ;
 
 var EXTN_TO_MODE = {
     /* C   家族 */

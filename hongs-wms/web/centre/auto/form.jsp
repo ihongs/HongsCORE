@@ -137,8 +137,7 @@
                     <%
                         String mode = "hsFork";
                         String kind =  "_fork";
-                        String fm = _module;
-                        String fn =  name  ;
+                        String fn = name;
                         if (! "".equals(rptd) ) {
                             rptd  = "data-repeated=\"repeated\"" ;
                             fn = fn.substring(0, fn.length() - 1);
@@ -151,14 +150,8 @@
                         String tk = info.containsKey("data-tk") ? (String) info.get("data-tk") : "name";
                         String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
-                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :
-                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
-                          + "/" + ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
-                          + "/info.html?id={ID}";
-                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :
-                                  ( info.containsKey("conf"   ) ? (String) info.get("conf"   ) :  fm )
-                          + "/" + ( info.containsKey("form"   ) ? (String) info.get("form"   ) :  fn )
-                          + "/pick.html";
+                        String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
+                        String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
                         rl = rl.replace("centra", "centre");
                         al = al.replace("centra", "centre");
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk

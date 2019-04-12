@@ -274,28 +274,27 @@ function saveConf(modal, field) {
          .each(function() {
         var n = $(this).find("[name=param_name]" ).val();
         var v = $(this).find("[name=param_value]").val();
-        if (! n || !v ) {
+        if (! n ) {
             return;
         }
-        if (!COLS_PATT_BASE.test(n)) {
+        if (! COLS_PATT_BASE.test( n )) {
             v = (n + "|" + v);
             n = "data-"+(I++);
         } else
-        if (!COLS_PATT_DATA.test(n)) {
-            n = "data-"+ n ;
+        if (! COLS_PATT_DATA.test( n )) {
+            n = "data-"  + n ;
         }
         fd.removeAttr(n);
-        fd.attr(n, v);
-        uz[n] = true ;
+        fd.attr ( n , v);
+        uz[n] = true;
     });
 
     // 清理遗留
     for(var i = 0; i < az.length; i ++) {
-        var n = az[i].name ;
-        var v = az[i].value;
-        if (!COLS_PATT_DATA.test(n)
-        || (v &&uz[n]) ) {
-            continue ;
+        var n = az[i]["name"];
+        if (/**/uz[n]
+        ||  ! COLS_PATT_DATA.test( n )) {
+            continue;
         }
         fd.removeAttr(n);
     }
@@ -348,8 +347,7 @@ function gainFlds(fields, area) {
         for(var i = 0; i < a.length; i ++) {
             var k = a[i].nodeName ;
             var v = a[i].nodeValue;
-            if (v !== ""
-            &&  k.substr(0,5) === "data-") {
+            if (k.substr(0,5) === "data-") {
                 if (k === "data-fn"
                 ||  k === "data-ft"
                 ||  k === "data-required"
@@ -430,7 +428,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         }
         // 内部缺省字段, 禁止自行设置
         if ((type == "number" && (name == "ctime" || name == "mtime"))
-        || ( type == "hidden" && (name == "cuid"  || name == "muid" || name == "id"))) {
+        || ( type == "hidden" && (name == "cuser" || name == "muser" || name == "id"))) {
             continue;
         }
 

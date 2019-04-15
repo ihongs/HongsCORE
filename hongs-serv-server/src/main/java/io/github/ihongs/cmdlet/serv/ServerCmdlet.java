@@ -254,6 +254,7 @@ public class ServerCmdlet {
             sd.setStoreDir         (dh);
             ch.setSessionDataStore (sd);
             sh.setSessionCache     (ch);
+            sc.setSessionHandler   (sh);
         }
 
     }
@@ -274,11 +275,12 @@ public class ServerCmdlet {
             sv.setSessionIdManager (im);
 
             SessionHandler          sh = sc . getSessionHandler  (  );
-            DefaultSessionCache     ds = new DefaultSessionCache (sh);
+            DefaultSessionCache     ch = new DefaultSessionCache (sh);
             JDBCSessionDataStore    sd = new JDBCSessionDataStore(  );
             sd.setDatabaseAdaptor  (getAdaptor(dh));
-            ds.setSessionDataStore (sd);
-            sh.setSessionCache     (ds);
+            ch.setSessionDataStore (sd);
+            sh.setSessionCache     (ch);
+            sc.setSessionHandler   (sh);
         }
 
         private DatabaseAdaptor getAdaptor(String dh) {

@@ -268,8 +268,7 @@ function hsTidyHtmlTags(html) {
         html = $(html).html();
     }
     html = html.replace(/\s+/gm, " "); // 合并空字符
-    html = html.replace(/<(p|ul|ol|li|div|pre)(\s.*?)?>/gmi, "" ); // 清除块标签
-    html = html.replace(/<\/(p|ul|ol|li|div|pre)>|<(br|hr)\/?>/gi, "\r\n"); // 转为换行符
+    html = html.replace(/<\/?(p|br|hr|ul|ol|li|div|pre)(\/|\s.*?)?>/igm, "\r\n" ); // 块转为换行
     return  $.trim(html);
 }
 

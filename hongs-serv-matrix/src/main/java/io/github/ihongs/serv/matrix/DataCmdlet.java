@@ -151,27 +151,24 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
-        form = dr.getFormId( );
-        if (user == null) {
-            user  = Cnst.ADM_UID;
-        }
+
+        String[] dats = (String[]) opts.get("");
+
+        dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
+//      user = dr.getUserId( );
+//      form = dr.getFormId( );
 
         dr.begin();
 
         int i  = 0;
-        String[] dats = (String[]) opts.get("");
         for(String text : dats) {
-            String id ;
-            Map  data = data(text);
-            id = (String) data.get(Cnst.ID_KEY);
+            Map sd = data(text);
+            String id = (String) sd.get(Cnst.ID_KEY);
             if (id == null) { //
-                id  = Core.newIdentity( );
-                data.put(Cnst.ID_KEY, id);
-            }
-            data.put("form_id", form);
-            data.put("user_id", user);
-            data.put("memo"   , memo);
-            i += dr.save(dt,id, data);
+                id = Core.newIdentity();
+                sd.put(Cnst.ID_KEY, id);
+            }   sd.put( "memo" , memo );
+            i += dr.save ( dt, id, sd );
 //          if (i % 500 == 0) {
 //               dr.commit( );
 //          }
@@ -199,29 +196,27 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
-        form = dr.getFormId( );
-        if (user == null) {
-            user  = Cnst.ADM_UID;
-        }
 
         String[] dats = (String[]) opts.get("");
         if (dats.length < 2) {
-            CmdletHelper.println("Need FIND DATA.");
+            CmdletHelper.println ( "Need FIND DATA." );
             return;
         }
 
+        dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
+//      user = dr.getUserId( );
+//      form = dr.getFormId( );
+
         Map rd = data(dats[0]);
         Map sd = data(dats[1]);
-        sd.put("form_id",form);
-        sd.put("user_id",user);
-        sd.put("memo"   ,memo);
+        sd.put( "memo", memo );
         rd.put(Cnst.RB_KEY , Synt.setOf(Cnst.ID_KEY));
 
         dr.begin();
 
         int i  = 0;
         for(Map od : dr.search(rd, 0, 0)) {
-            String id = (String) od.get(Cnst.ID_KEY) ;
+            String id = (String) od.get(Cnst.ID_KEY);
             i += dr.save(dt, id, sd);
 //          if (i % 500 == 0) {
 //               dr.commit( );
@@ -250,29 +245,27 @@ public class DataCmdlet {
         String memo = (String) opts.get("memo");
         long dt = Core.ACTION_TIME .get() /1000;
         Data dr = Data.getInstance( conf,form );
-        form = dr.getFormId( );
-        if (user == null) {
-            user  = Cnst.ADM_UID;
-        }
 
         String[] dats = (String[]) opts.get("");
         if (dats.length < 1) {
-            CmdletHelper.println("Need FIND_TERM.");
+            CmdletHelper.println ( "Need FIND_TERM." );
             return;
         }
 
+        dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
+//      user = dr.getUserId( );
+//      form = dr.getFormId( );
+
         Map rd = data(dats[0]);
         Map sd = new HashMap();
-        sd.put("form_id",form);
-        sd.put("user_id",user);
-        sd.put("memo"   ,memo);
+        sd.put( "memo", memo );
         rd.put(Cnst.RB_KEY , Synt.setOf(Cnst.ID_KEY));
 
         dr.begin();
 
         int i  = 0;
         for(Map od : dr.search(rd, 0, 0)) {
-            String id = (String) od.get(Cnst.ID_KEY) ;
+            String id = (String) od.get(Cnst.ID_KEY);
             i += dr.drop(dt, id, sd);
 //          if (i % 500 == 0) {
 //               dr.commit( );

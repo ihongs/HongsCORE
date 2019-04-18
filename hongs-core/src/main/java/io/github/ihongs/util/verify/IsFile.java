@@ -102,20 +102,20 @@ public class IsFile extends Rule {
         } // End If
 
         UploadHelper hlpr = new UploadHelper();
-        String href, path;
-        String   x ;
-        String[] y ;
+        String href;
+        String path;
+        Object para;
 
-        x = (String) getParam("temp");
-        if (x != null) hlpr.setUploadTemp(x);
-        x = (String) getParam("path");
-        if (x != null) hlpr.setUploadPath(x);
-        x = (String) getParam("href");
-        if (x != null) hlpr.setUploadHref(x);
-        y = (String[]) Synt.toArray(getParam("type"));
-        if (y != null) hlpr.setAllowTypes(y);
-        y = (String[]) Synt.toArray(getParam("extn"));
-        if (y != null) hlpr.setAllowExtns(y);
+        para = getParam("temp");
+        if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
+        para = getParam("path");
+        if (para != null && !"".equals(para)) hlpr.setUploadPath(Synt.declare(para, String.class));
+        para = getParam("href");
+        if (para != null && !"".equals(para)) hlpr.setUploadHref(Synt.declare(para, String.class));
+        para = getParam("type");
+        if (para != null && !"".equals(para)) hlpr.setAllowTypes(Synt.asArray(para, String.class));
+        para = getParam("extn");
+        if (para != null && !"".equals(para)) hlpr.setAllowExtns(Synt.asArray(para, String.class));
 
         if (value instanceof Part) {
             Part part =(Part) value;
@@ -153,7 +153,7 @@ public class IsFile extends Rule {
          * 或者抛弃原始文件
          */
         if ( ! href.equals(value) ) {
-            x = checks(href , path);
+            String  x = checks(href , path);
             if ( ! href.equals(x) ) {
                 if (Synt.declare(getParam("keep-origin"), false)) {
                     // Keep to return origin href

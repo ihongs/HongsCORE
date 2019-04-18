@@ -17,7 +17,7 @@ public class DoubleField implements IField {
     }
     @Override
     public Field whr(String k, Object v) {
-        return new DoublePoint("@"+k, Synt.declare(v, 0L));
+        return new DoublePoint("@"+k, Synt.declare(v, 0D));
     }
     @Override
     public Field odr(String k, Object v) {

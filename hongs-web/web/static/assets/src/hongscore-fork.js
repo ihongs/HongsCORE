@@ -233,12 +233,12 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  * @returns {undefined}
  */
 function hsFormFillPick(box, v, n) {
-    if (n == undefined) n = box.data("fn");
+    if (! n ) n = box.data( "fn" );
     var rol = box.data("readonly")
            || box.is  (".pickrol");
     var mul = box.data("repeated")
            || box.is  (".pickmul")
-           || /(\[\]|\.\.|\.$)/.test(  n );
+           || /(\[\]|\.\.|\.$)/.test(n);
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 
     // 表单初始化载入时需从关联数据提取选项对象
@@ -249,6 +249,7 @@ function hsFormFillPick(box, v, n) {
         if (!mul) v = [v];
     }
 
+    // 对表单初始化数据转换为关联组件的字典格式
     if (jQuery.isArray(v)) {
         var tk = box.attr("data-tk") || "name";
         var vk = box.attr("data-vk") ||  "id" ;

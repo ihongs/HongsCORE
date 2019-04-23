@@ -1039,9 +1039,10 @@ HsForm.prototype = {
             // 补齐请求参数
             if (! url) url = inp.attr("data-verify");
             url = url.replace(/\$\{(.*?)\}/g, function( x, n ) {
-                return obj.find("[name='"+n+"']")
+                return encodeURIComponent(
+                       obj.find("[name='"+n+"']")
                           .not (".form-ignored" )
-                          .val ( ) || "" ;
+                          .val () || "" );
             });
 
             this.ajax({

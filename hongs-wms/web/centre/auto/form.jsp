@@ -212,7 +212,7 @@
                 <%} /*End If */%>
                 </div>
                 <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-                <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"><%=hint%></div>
+                <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"><%=hint%></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

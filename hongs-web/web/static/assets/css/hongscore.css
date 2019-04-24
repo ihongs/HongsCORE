@@ -518,45 +518,39 @@ ol.repeated ,
 }
 
 ul.pickbox {
-    padding: 0;
-    margin : 0;
-}
-ul.pickbox:after {
-    clear: both;
-    content: "";
-    display: table;
-}
-ul.pickbox > li {
-    float: left;
+    padding : 0;
+    margin  : 0;
 }
 ul.pickbox > li.btn {
-    width: 100%;
-    text-align: left;
-}
-ul.pickbox > li.btn span {
-    float: left;
-    overflow: hidden;
-}
-ul.pickbox > li.btn span.picktxt {
+    width        : 100%;
+    text-align   : left;
+    white-space  : nowrap;
+    overflow     : hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    max-width: 90%;
+}
+ul.pickrol > li.btn {
+    box-shadow   : none;
+    font-weight  : normal;
+    border-color : transparent;
+    background   : transparent;
+    padding-left : 0px;
+    padding-right: 0px;
+    margin-bottom: 0px;
 }
 ul.pickmul > li.btn {
     margin-bottom: 1px;
 }
-ul.pickrol > li.btn {
-    margin-bottom: 0px;
-    padding-right: 0px;
-    padding-left : 0px;
-    box-shadow   : none;
-    font-weight  : inherit;
-    border-color : transparent;
-    background   : transparent;
-    color: inherit;
+ul.pickbox > li.btn .glyphicon {
+    margin-right : 6px;
 }
-ul.pickrol .close {
-    display: none ;
+ul.pickrol > li.btn .glyphicon ,
+ul.pickrol > li.btn .close {
+    display : none;
+}
+ul.pickrol > li.btn-text:hover {
+    cursor  : text;
+    color   : inherit;
+    user-select: text;
 }
 
 .preview {

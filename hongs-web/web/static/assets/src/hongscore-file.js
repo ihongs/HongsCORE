@@ -30,9 +30,9 @@
         var cls = box.is(".pickrol") ? "btn-link" : "btn-info";
         var div =$('<li class="btn ' + cls +' form-control"></li>').attr( "title" , txt )
            .append(this)
+           .append('<span class="close pull-right">&times;</span>')
            .append('<span class="glyphicon glyphicon-open-file"></span>')
-           .append($('<span class="picktxt"></span>').text( txt ) )
-           .append('<span class="close pull-right">&times;</span>');
+           .append($('<span class="picktxt"></span>').text( txt ) );
         box.append(div );
         return div ;
     };
@@ -52,9 +52,9 @@
         var cls = box.is(".pickrol") ? "btn-link" : "btn-info";
         var div =$('<li class="btn ' + cls +' form-control"></li>').attr( "title" , txt )
            .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
+           .append('<span class="close pull-right">&times;</span>')
            .append('<span class="glyphicon glyphicon-save-file"></span>')
-           .append($('<span class="picktxt"></span>').text( txt ) )
-           .append('<span class="close pull-right">&times;</span>');
+           .append($('<span class="picktxt"></span>').text( txt ) );
         box.append(div );
         return div;
     };
@@ -80,8 +80,8 @@
         var div =$('<li class="preview"></li>').css({
             width: w + 'px', height: h + 'px', overflow: 'hidden'
         } ).append(this)
-           .append(img )
-           .append('<a href="javascript:;" class="close">&times</a>');
+           .append('<a href="javascript:;" class="close">&times</a>')
+           .append(img );
         box.append(div );
         return div;
     };
@@ -104,8 +104,8 @@
         var div =$('<li class="preview"></li>').css({
             width: w + 'px', height: h + 'px', overflow: 'hidden'
         } ).append($('<input type="hidden"/>' ).attr("name", nam).val(src))
-           .append(img )
-           .append('<a href="javascript:;" class="close">&times</a>');
+           .append('<a href="javascript:;" class="close">&times</a>')
+           .append(img );
         box.append(div );
         return div ;
     };

@@ -239,6 +239,7 @@ function hsFormFillPick(box, v, n) {
     var mul = box.data("repeated")
            || box.is  (".pickmul")
            || /(\[\]|\.\.|\.$)/.test(n);
+        box.toggleClass("pickmul", mul);
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 
     // 表单初始化载入时需从关联数据提取选项对象
@@ -281,18 +282,12 @@ function hsFormFillPick(box, v, n) {
         btn.addClass("btn-info" );
         btn.append(jQuery( '<span class="close pull-right">&times;</span>'));
     }
-    function putin(btn, box, val, txt) {
-        box.append(jQuery('<li class="btn btn-info form-control"></li>').attr("title" , txt )
-           .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
-           .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
+    function doset(box, val, txt, cls, clz) {
+        box.append(jQuery('<li class="btn '+cls+' form-control"></li>').attr("title" , txt )
+           .append(jQuery('<input class="pickval" type="hidden"/>').attr("name",n).val(val))
            .append(jQuery( '<span class="close pull-right">&times;</span>'))
-        );
-    }
-    function puton(btn, box, val, txt) {
-        box.append(jQuery('<li class="btn btn-link form-control"></li>').attr("title" , txt )
-           .append(jQuery('<input class="pickval" type="hidden"/>').attr("name", n).val(val))
-           .append(jQuery( '<span class="picktxt"></span>' ).text (  txt  ))
-//         .append(jQuery( '<span class="close pull-right">&times;</span>'))
+           .append(jQuery( '<span class="glyphicon '+clz+'"></span>' ))
+           .append(jQuery( '<span class="picktxt"></span>' ).text(txt))
         );
     }
 
@@ -327,7 +322,7 @@ function hsFormFillPick(box, v, n) {
             box.on("click", ".close", [btn, box], function(evt) {
                 var btn = evt.data[0];
                 var box = evt.data[1];
-                var opt = jQuery(this).closest("li");
+                var opt = jQuery( this ).closest( "li" );
                 var val = opt.find("input:hidden").val();
                 delete  v [val];
                 opt.remove();
@@ -338,21 +333,21 @@ function hsFormFillPick(box, v, n) {
             box.on("click", "li.btn", [btn, box], function(evt) {
                 var btn = evt.data[0];
                 var box = evt.data[1];
-                var opt = jQuery(this).closest("li");
+                var opt = jQuery( this ).closest( "li" );
                 var val = opt.find("input:hidden").val();
-                var key = box.attr( "data-vk" ) || "id" ;
-                var rel = box.data("target");
-                var url = box.data( "href" );
+                var key = box.attr("data-vk" ) || "id"  ;
+                var url = box.attr("data-href"  );
+                var rel = box.attr("data-target");
                 if (url) {
-                    url = hsSetParam (url, key, val);
+                    url = hsSetParam ( url , key , val );
                     if (! rel) {
-                        jQuery.hsOpen(url);
+                     jQuery.hsOpen(url);
                     } else {
                         box.hsFind(rel)
                            .hsOpen(url);
                     }
                 } else {
-                    if (! mul) {
+                    if (! rol) {
                         btn.click (   );
                     }
                 }
@@ -365,20 +360,29 @@ function hsFormFillPick(box, v, n) {
             if (! rol) btn.show();
         }
 
-        box.empty( );
-
+        // 按钮及图标样式
+        var cls , clz;
         if (! rol) {
-            for(var val in v) {
-                var arr  = v[val];
-                var txt  = arr[0];
-                putin(btn, box, val, txt);
+                cls = "btn-info";
+            if (box.attr("data-href")) {
+                clz = "glyphicon-share";
+            } else {
+                clz = "glyphicon-check";
             }
         } else {
-            for(var val in v) {
-                var arr  = v[val];
-                var txt  = arr[0];
-                puton(btn, box, val, txt);
+                clz = "glyphicon-link" ;
+            if (box.attr("data-href")) {
+                cls = "btn-link";
+            } else {
+                cls = "btn-text";
             }
+        }
+
+        box.empty();
+        for(var val in v) {
+            var arr  = v[val];
+            var txt  = arr[0];
+            doset(box, val, txt, cls, clz);
         }
     }
 }

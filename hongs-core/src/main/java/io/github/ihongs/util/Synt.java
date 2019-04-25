@@ -123,6 +123,18 @@ public final class Synt {
     /**
      * 尝试转为数组
      * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
+     * @param <T> 返回数组的值的类型
+     * @param val
+     * @param cls
+     * @return
+     */
+    public static <T> T [] toArray(Object val, Class<T> cls) {
+        return asArray(toArray(val), cls);
+    }
+
+    /**
+     * 尝试转为数组
+     * 与 asArray 的不同在于当 val 是字符串时, 尝试通过 JSON 解析或逗号分隔
      * @param val
      * @return
      */

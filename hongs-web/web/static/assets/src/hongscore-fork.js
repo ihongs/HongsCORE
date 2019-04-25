@@ -59,10 +59,12 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
     } else
     if (box.is("ul,ol")) {
-        box.find("li").each(function() {
-            var opt = jQuery  ( this );
-            var val = opt.find(".pickval").val ();
-            var txt = opt.find(".picktxt").text();
+        box.find("li").each(function( ) {
+            var opt = jQuery(this);
+            var val = opt.find("input")
+                         .val ( /***/ );
+            var txt = opt.attr("title")
+                   || opt.data("title");
             v[val] = [txt, {}];
         });
     }
@@ -150,7 +152,6 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
 
             // 获取选项名称和附加信息
             txt = chk.attr( "title" );
-            inf = chk.hsData( );
             if (txt) break;
 
             // 选项中没有指定则尝试从当前行的其他位置获取
@@ -170,6 +171,8 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             if (idx != -1) txt = tds.eq(idx).text();
         }
         while (false);
+
+        if (txt) inf = chk.hsData( ); // 其他字段信息
 
         if (pickItem(val, txt, inf, chk) === false) {
             chk.prop( "checked", false );
@@ -280,15 +283,18 @@ function hsFormFillPick(box, v, n) {
         box.val (val);
         btn.text(txt);
         btn.addClass("btn-info" );
-        btn.append(jQuery( '<span class="close pull-right">&times;</span>'));
+        btn.append('<span class="close pull-right">&times;</span>');
     }
-    function doset(box, val, txt, cls, clz) {
-        box.append(jQuery('<li class="btn '+cls+' form-control"></li>').attr("title" , txt )
-           .append(jQuery('<input class="pickval" type="hidden"/>').attr("name",n).val(val))
-           .append(jQuery( '<span class="close pull-right">&times;</span>'))
-           .append(jQuery( '<span class="glyphicon '+clz+'"></span>' ))
-           .append(jQuery( '<span class="picktxt"></span>' ).text(txt))
-        );
+    function doset(box, val, txt, cls) {
+        var lab = jQuery('<span></span>').text(txt);
+        var inp = jQuery('<input type="hidden" />').attr("name", n).val(val);
+        var div = jQuery('<li class="btn '+ cls[0] +' form-control"></li>' )
+           .attr  ("title" , txt)
+           .append('<span class="close pull-right">&times;</span>')
+           .append('<span class="glyphicon '+ cls[1] +'" ></span>')
+           .append(lab)
+           .append(inp);
+        box.append(div);
     }
 
     if (box.is("input") ) {
@@ -361,28 +367,24 @@ function hsFormFillPick(box, v, n) {
         }
 
         // 按钮及图标样式
-        var cls , clz;
+        var cls = [];
         if (! rol) {
-                cls = "btn-info";
-            if (box.attr("data-href")) {
-                clz = "glyphicon-share";
-            } else {
-                clz = "glyphicon-check";
-            }
+            cls[0] = "btn-info";
+            cls[1] = box.attr("data-href")
+                   ? "glyphicon-share"
+                   : "glyphicon-check";
         } else {
-                clz = "glyphicon-link" ;
-            if (box.attr("data-href")) {
-                cls = "btn-link";
-            } else {
-                cls = "btn-text";
-            }
+            cls[0] = box.attr("data-href")
+                   ? "btn-link"
+                   : "btn-text";
+            cls[1] = "glyphicon-link" ;
         }
 
         box.empty();
         for(var val in v) {
             var arr  = v[val];
             var txt  = arr[0];
-            doset(box, val, txt, cls, clz);
+            doset(box, val, txt, cls);
         }
     }
 }
@@ -415,6 +417,9 @@ function hsListFillPick(cel, v, n) {
     if (val[v] !== undefined) {
         cel.find(".checkone").prop("checked", true).change();
     }
+
+    // 其他字段信息
+    cel.find(".checkone").data(this._info);
 }
 
 (function($) {

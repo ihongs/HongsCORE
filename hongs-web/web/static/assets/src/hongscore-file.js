@@ -24,17 +24,20 @@
         if (! src ) {
             return;
         }
-            box =$(box );
         $(this).before($(this).clone().val(''));
-        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, '') );
-        var cls = box.is(".pickrol") ? "btn-link" : "btn-info";
-        var div =$('<li class="btn ' + cls +' form-control"></li>').attr( "title" , txt )
-           .append(this)
-           .append('<span class="close pull-right">&times;</span>')
+            box = $(box );
+        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
+        var lab = $('<span></span>' ).text(txt);
+        var inp = $(this);
+        var div = $('<li class="btn '+cls+' form-control" ></li>')
+           .attr  ("title", txt)
+           .append('<span class="close pull-right"      >&times;</span>')
            .append('<span class="glyphicon glyphicon-open-file"></span>')
-           .append($('<span class="picktxt"></span>').text( txt ) );
-        box.append(div );
-        return div ;
+           .append(lab)
+           .append(inp);
+        box.append(div);
+        return div;
     };
 
     /**
@@ -47,15 +50,19 @@
         if (! src ) {
             return;
         }
-        var box =$(this);
-        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, '') );
-        var cls = box.is(".pickrol") ? "btn-link" : "btn-info";
-        var div =$('<li class="btn ' + cls +' form-control"></li>').attr( "title" , txt )
-           .append($('<input class="pickval" type="hidden"/>').attr('name',nam).val(src))
-           .append('<span class="close pull-right">&times;</span>')
+        var box = $(this);
+        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
+        var lab = $('<span></span>' ).text(txt);
+        var inp = $('<input  type="hidden" />')
+                   .attr('name', nam).val (src);
+        var div = $('<li class="btn '+cls+' form-control" ></li>')
+           .attr  ("title", txt)
+           .append('<span class="close pull-right"      >&times;</span>')
            .append('<span class="glyphicon glyphicon-save-file"></span>')
-           .append($('<span class="picktxt"></span>').text( txt ) );
-        box.append(div );
+           .append(lab)
+           .append(inp);
+        box.append(div);
         return div;
     };
 
@@ -74,15 +81,18 @@
         if (! src ) {
             return;
         }
-            box =$(box );
         $(this).before($(this).clone().val(''));
-        var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
-        var div =$('<li class="preview"></li>').css({
-            width: w + 'px', height: h + 'px', overflow: 'hidden'
-        } ).append(this)
-           .append('<a href="javascript:;" class="close">&times</a>')
-           .append(img );
-        box.append(div );
+            box = $(box );
+        var inp = $(this);
+        var img = k ? $.hsKeepSnap( src, w, h )
+                    : $.hsPickSnap( src, w, h );
+        var txt = decodeURIComponent( src.replace(/^.*[\/\\]/ , '') );
+        var div = $('<li class="preview"></li>').attr( "title", txt )
+           .css({width : w+'px', height: h+'px', overflow: 'hidden'})
+           .append(inp)
+           .append(img)
+           .append('<a href="javascript:;" class="close">&times</a>');
+        box.append(div);
         return div;
     };
 
@@ -99,15 +109,19 @@
         if (! src ) {
             return;
         }
-        var box =$(this);
-        var img = k ? $.hsKeepSnap( src, w, h ) : $.hsPickSnap( src, w, h );
-        var div =$('<li class="preview"></li>').css({
-            width: w + 'px', height: h + 'px', overflow: 'hidden'
-        } ).append($('<input type="hidden"/>' ).attr("name", nam).val(src))
-           .append('<a href="javascript:;" class="close">&times</a>')
-           .append(img );
-        box.append(div );
-        return div ;
+        var box = $(this);
+        var inp = $( '<input type="hidden"/>' )
+                   .attr("name", nam).val (src);
+        var img = k ? $.hsKeepSnap( src, w, h )
+                    : $.hsPickSnap( src, w, h );
+        var txt = decodeURIComponent( src.replace(/^.*[\/\\]/ , '') );
+        var div = $('<li class="preview"></li>').attr( "title", txt )
+           .css({width : w+'px', height: h+'px', overflow: 'hidden'})
+           .append(inp)
+           .append(img)
+           .append('<a href="javascript:;" class="close">&times</a>');
+        box.append(div);
+        return div;
     };
 
     //** 预览辅助 **/

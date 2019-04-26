@@ -563,8 +563,8 @@ ul.pickrol > li.btn-text:hover {
 .preview {
     position: relative;
 }
-.preview a ,
-.preview img {
+.preview img,
+.preview .close {
     position: absolute;
 }
 .preview {
@@ -587,6 +587,9 @@ ul.pickrol > li.btn-text:hover {
 }
 .preview .close:hover {
     box-shadow: 0 0 0.5em #000;
+}
+.pickrol .preview img {
+    cursor: pointer;
 }
 
 .datebox.input-group {

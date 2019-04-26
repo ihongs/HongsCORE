@@ -216,52 +216,11 @@
     };
 
     /**
-     * 移除文件事件处理
-     */
-    $(document).on("click", "ul.pickbox .close,li.preview .close",
-    function( ) {
-        var box = $(this).closest(".pickbox");
-        _hsSoloFile( box , true );
-        $(this).parent().remove();
-        box.trigger(  "change"  );
-    });
-
-    /**
-     * 打开文件事件处理
-     */
-    $(document).on("click", "ul.pickbox li",
-    function(x) {
-        if ($(x.target).is(".close")
-        ||  $(this).parent( )
-                   .siblings("[data-toggle=hsFile],[data-toggle=hsView]")
-                   .size  ( ) == 0 ) {
-            return;
-        }
-
-        /**
-         * 暂时没有较好的办法像打开远程文件一样打开刚选择待上传的文件
-         * 倒是可以通过 hsReadFile 来获取 base64 编码进而在新窗口打开
-         * 但如果是较大的文件可能不太合适
-         * 故干脆放弃待上传新窗口打开预览
-         * 预览待上传图片用 hsView 等方法
-         */
-
-        var inp = $(this).find( ":file" );
-        if (inp.size() === 0) {
-            inp = $(this).find(":hidden");
-            var url = hsFixUri(inp.val());
-            if (url) {
-                window.open(url,"_blank");
-            }
-        }
-    });
-
-    /**
      * 选择文件事件处理
      */
     $(document).on("click", "[data-toggle=hsFile]",
     function( ) {
-        var inp = $(this).siblings(":file");
+        var inp = $(this).siblings(":file"   );
         if (! inp.data("picked")) {
             inp.data("picked", 1);
             var box = inp.siblings(".pickbox");
@@ -278,11 +237,11 @@
      */
     $(document).on("click", "[data-toggle=hsView]",
     function( ) {
-        var inp = $(this).siblings(":file");
+        var inp = $(this).siblings(":file"   );
         if (! inp.data("picked")) {
             inp.data("picked", 1);
             var box = inp.siblings(".pickbox");
-            var mul = inp.prop("multiple" );
+            var mul = inp.prop("multiple");
             var  k  = box.data("keep");
             var  w  = box.data("size");
             var  h  = w.split ("*", 2);
@@ -322,6 +281,41 @@
         inp.click();
     });
 
+    /**
+     * 文件的打开和移除
+     */
+    $(document).on("click", "ul.pickbox li",
+    function(x) {
+        var box = $(this).closest(".pickbox");
+        if (box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").size() == 0) {
+            return;
+        }
+
+        /**
+         * 点击关闭按钮则删除当前文件节点
+         */
+        if ($(x.target).is( ".close" )) {
+            $(this).remove();
+            box.trigger( "change" );
+            _hsSoloFile(box , true);
+            return;
+        }
+
+        /**
+         * 暂时没有较好的办法像打开远程文件一样打开刚选择待上传的文件
+         * 倒是可以通过 hsReadFile 来获取 base64 编码进而在新窗口打开
+         * 但如果是较大的文件可能不太合适
+         * 故干脆放弃待上传新窗口打开预览
+         * 预览待上传图片用 hsView 等方法
+         */
+        var inp = $(this).find("input");
+        if (inp.attr("type") != "file") {
+        var url = hsFixUri( inp.val() );
+        if (url) {
+            window.open(url , "_blank");
+        }}
+    });
+
 })(jQuery);
 
 function _hsSoloFile(box, show) {
@@ -330,7 +324,8 @@ function _hsSoloFile(box, show) {
         return;
     }
     if (! box.data("repeated") && ! /(\[\]|\.\.|\.$)/.test( fn )) {
-        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]").toggle(show);
+        box.siblings("[data-toggle=hsFile],[data-toggle=hsView]")
+           .toggle( show  );
         box.removeClass("pickmul");
     } else {
         box.   addClass("pickmul");

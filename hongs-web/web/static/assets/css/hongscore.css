@@ -542,15 +542,22 @@ ul.pickmul > li.btn {
 }
 ul.pickbox > li.btn .glyphicon {
     margin-right : 6px;
+    color   : #ddd;
 }
-ul.pickrol > li.btn .glyphicon ,
-ul.pickrol > li.btn .close {
+ul.pickrol > li.btn .glyphicon {
+    margin-right : 0px;
     display : none;
 }
+ul.pickrol > li.btn-text,
 ul.pickrol > li.btn-text:hover {
     cursor  : text;
     color   : inherit;
     user-select: text;
+    font-weight: inherit;
+}
+
+.pickrol .close {
+    display : none;
 }
 
 .preview {
@@ -564,7 +571,7 @@ ul.pickrol > li.btn-text:hover {
     padding: 0px;
     border : 0px;
     margin : 1px;
-	border-radius: 4px;
+    border-radius: 4px;
     box-shadow: 0 0 0.2em #000;
 }
 .preview .close {
@@ -578,7 +585,6 @@ ul.pickrol > li.btn-text:hover {
     border-radius: 50%;
     box-shadow: 0 0 0.2em #000;
 }
-.preview:hover
 .preview .close:hover {
     box-shadow: 0 0 0.5em #000;
 }

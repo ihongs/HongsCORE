@@ -2032,13 +2032,25 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         @Override
         public String toString() {
             hasNext();
-            StringBuilder sb = new StringBuilder(q.toString());
+            StringBuilder sb = new StringBuilder();
+                sb.append(  "FROM: ");
+                sb.append(that.getDbName());
+            if ( q != null ) {
+                sb.append(" QUERY: ");
+                sb.append( q );
+            }
             if ( s != null ) {
-                sb.append( " Sort: ");
+                sb.append( " SORT: ");
                 sb.append( s );
             }
+            if ( r != null && !r.isEmpty()) {
+                String x = r.toString();
+                int    i = x.length()-1;
+                sb.append( " KEYS: ");
+                sb.append( x , 1, i );
+            }
             if ( l != 0 || b != 0 ) {
-                sb.append(" Limit: ");
+                sb.append(" LIMIT: ");
                 sb.append( b );
                 sb.append(",");
                 sb.append( l );

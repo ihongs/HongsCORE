@@ -59,6 +59,9 @@
   height: auto;
   padding: 5px 9px 6px 9px;
 }
+.form-group-sm .bootstrap-tagsinput.form-control {
+  padding: 2px 7px 2px 7px;
+}
 .bootstrap-tagsinput.form-control .label {
   font-size: 100%;
   line-height: 2em;

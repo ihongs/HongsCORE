@@ -44,13 +44,13 @@ public class Data extends SearchEntity {
      */
     public static final String  PART_ID_KEY  =  "pt";
 
-    protected final     String  conf   ;
-    protected final     String  form   ;
-    private   final Set<String> dcUrls = new LinkedHashSet();
+    protected     final String  conf   ;
+    protected     final String  form   ;
+    private             String  userId = null;
     private         Set<String> nmCols = null;
     private         Set<String> wdCols = null;
     private         Set<String> skCols = null;
-    private             String  userId = null;
+    protected       Set<String> dcUrls = new LinkedHashSet();
 
     /**
      * 数据实例基础构造方法
@@ -591,16 +591,14 @@ public class Data extends SearchEntity {
         }
 
         String fid = getFormId();
-        url = Tool.inject(url,Synt.mapOf(
+        dcUrls.add(Tool.inject(url, Synt.mapOf(
             "form_id", fid,
             "id"     , id ,
             "type"   , on ,
             "time"   , xtime
-        ));
+        )));
 
-        dcUrls.add(url);
-
-        return 1;
+        return 1 ;
     }
 
     @Override
@@ -614,7 +612,7 @@ public class Data extends SearchEntity {
                 dc.add(du);
             }
         } catch (HongsException e ) {
-            throw e.toExemption(  );
+            throw e.toExemption ( );
         } finally {
             dcUrls.clear();
         }
@@ -921,7 +919,7 @@ public class Data extends SearchEntity {
     /**
      * 增加搜索和命名未明确指定时的后备类型
      * @param t
-     * @return 
+     * @return
      */
     @Override
     public Set<String> getCaseTypes(String t) {

@@ -77,8 +77,8 @@ public class Data extends SearchEntity {
         if (core.containsKey(name)) {
             inst = (Data) core.got(name);
         } else {
-            inst = new Data( conf, form);
-            core.put ( name, inst);
+            inst = new Data (conf, form);
+            core.put ( name, inst );
         }
         return inst;
     }

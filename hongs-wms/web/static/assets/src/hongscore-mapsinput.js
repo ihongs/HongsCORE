@@ -16,37 +16,57 @@ function forMapsInput(func) {
 }
 
 function setMapsInput(opts, func) {
-    var readonly = !! opts.readonly;
     var context = opts.context || $( );
     var formobj = opts.formobj || null;
 
-    var addrInp = opts.addrinp || context.find("[name=addr],[data-fn=addr]");
     var provInp = opts.provinp || context.find("[name=prov],[data-fn=prov]");
     var cityInp = opts.cityinp || context.find("[name=city],[data-fn=city]");
     var distInp = opts.distinp || context.find("[name=dist],[data-fn=dist]");
+    var addrInp = opts.addrinp || context.find("[name=addr],[data-fn=addr]");
     var poisInp = opts.lat_lng || context.find("[name=lat_lng]");
-    var areaBox = $(
-          '<div class="row form-group">'
-        + '<label class="col-xs-3 col-md-2 control-label form-control-static text-right">地图</label>'
-        + '<div class="col-xs-9 col-md-8"><div class=" map " style="width:100%; height:300px; display:block;"></div></div>'
-        + '<div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 form-control-static help-block text-error"></div>'
-        + '</div>'
-    );
-    var mapsBox = areaBox.find(".map");
-    var changed = false;
+    var mapsInp = opts.map_inp || context.find(".map-find");
+    var mapsBox = opts.map_box || context.find(".map-area");
 
-    // 规避异异步情况下方注册时值已设置
-    context.on("loadOver", function( ) {
-        changed = true ;
-    });
-
-    areaBox.insertAfter( addrInp.closest ( ".form-group" ) );
-    if (!readonly) {
+    // 附加的隐藏地址以外字段的快捷操作
+    var readonly  = opts.readonly;
+    if (readonly == 1 || readonly == -1) {
+        readonly  = 0 <  readonly;
+        poisInp.attr("readonly", true);
+        provInp.attr("readonly", true);
+        cityInp.attr("readonly", true);
+        distInp.attr("readonly", true);
+        addrInp.attr("readonly", true);
+    } else
+    if (readonly == 2 || readonly == -2) {
+        readonly  = 0 <  readonly;
+        poisInp.closest(".form-group").addClass("invisible");
         provInp.closest(".form-group").addClass("invisible");
         cityInp.closest(".form-group").addClass("invisible");
         distInp.closest(".form-group").addClass("invisible");
-        poisInp.closest(".form-group").addClass("invisible");
+        addrInp.closest(".form-group").addClass("invisible");
     }
+
+    // 地图组件区域如缺失则自动添加一个
+    if (mapsBox.size() == 0) {
+        mapsBox = $ (
+            '<div class="row form-group">'
+          + '<label class="col-xs-3 col-md-2 control-label form-control-static text-right">地图</label>'
+          + '<div class="col-xs-9 col-md-8"><div class="map-area" style=" height: 250px; "></div></div>'
+          + '</div>'
+        ).insertBefore(poisInp.closest(".form-group"));
+        mapsBox = mapsBox.find(".map-area");
+    }
+    if (mapsInp.size() == 0 && ! readonly ) {
+        mapsInp = $ (
+            '<input type="search" class="map-find form-control" placeholder="请输入城市或地点进行搜索"/>'
+        ).insertBefore(mapsBox);
+    }
+
+    // 规避异异步情况下方注册时值已设置
+    var changed = false;
+    context.on("loadOver", function( ) {
+        changed = true ;
+    });
 
     forMapsInput(function( ) {
         var map = new qq.maps.Map(
@@ -72,7 +92,8 @@ function setMapsInput(opts, func) {
             } else {
                 // 没有地址则清空
                 provInp.val(""); cityInp.val("");
-                distInp.val(""); poisInp.val("");
+                distInp.val(""); addrInp.val("");
+                poisInp.val("");
             }
         }
 
@@ -105,65 +126,65 @@ function setMapsInput(opts, func) {
             var suggData;
 
             // 搜索地址
-            addrInp.wrap('<div class="input-group"></div>').parent().append(
+            mapsInp.wrap('<div class="input-group"></div>').parent().append(
                        $('<div>'
                        + '<a  data-toggle="dropdown"></a>'
                        + '<ul class="dropdown-menu"></ul>'
                        + '</div>')
             );
-            addrInp.bsSuggest({
+            mapsInp.bsSuggest({
                 showBtn         : false,
                 idField         :  "id",
                 keyField        :  "name" ,
                 searchFields    : ["name"],
                 effectiveFields : ["name"],
-                fnGetData       : function(keyword, $input$, display, options) {
+                fnGetData       : function(keyword, inp, display, options) {
                     if (keyword) {
                         suggFunc = display;
                         suggOpts = options;
                         sea.search(keyword);
-                        addrInp.data("changed", true);
                     } else {
-                        addrInp.removeData("changed");
                         setPos(null);
                     }
                 }
+            }).on("keydown", function(evt) {
+                if (evt.which == 13) {
+                    mapsInp.parent()
+                           .find( "tr" ).eq( 0 )
+                           .trigger("mousedown");
+                }
             }).on("onSetSelectValue", function ( evt , add , dat) {
-                addrInp.removeData("changed");
-                setPos( dat.latLng );
+                setPos(dat ? dat.latLng : null );
             });
 
             // 点选地址
             qq.maps.event.addListener(map, 'click', function(evt) {
-                if (! addrInp.data("changed")) {
-                    addrInp.val ("");
-                }
-                setPos( evt.latLng );
+                setPos(evt ? evt.latLng : null );
             });
 
-            // 推荐地址
+            // 推荐回调
             sea.setComplete(function(rst) {
                 rst = rst.detail;
                 if (rst.pois && rst.pois.length) {
                     // 将结果转交给建议插件
                     suggData = {value: rst.pois};
                     suggOpts["data"] = suggData ;
-                    suggFunc(addrInp , suggData , suggOpts);
+                    suggFunc(mapsInp , suggData , suggOpts);
                 }
             });
 
             // 地图回调
             geo.setComplete(function(rst) {
                 rst = rst.detail;
+                poisInp.val(rst.location.lat+","+rst.location.lng);
                 provInp.val(rst.addressComponents.province);
                 cityInp.val(rst.addressComponents.city    );
                 distInp.val(rst.addressComponents.district);
-                poisInp.val(rst.location.lat+","+rst.location.lng);
-                if (addrInp.val( ) == '') {
-                    addrInp.val( rst.address);
-                }
+                addrInp.val(rst.address ) ;
+                sea.setLocation(rst.addressComponents.city);
+                mapsBox.trigger("mapsBack", [rst]);
                 if (formobj && !readonly) {
-                    formobj.seterror(mapsBox);
+                    formobj . seterror ( mapsBox );
                 }
             });
         }

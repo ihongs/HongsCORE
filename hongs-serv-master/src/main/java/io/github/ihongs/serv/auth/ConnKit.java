@@ -1,9 +1,11 @@
 package io.github.ihongs.serv.auth;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.serv.master.UserAction;
 import io.github.ihongs.util.Remote;
 import java.util.Map;
 
@@ -32,6 +34,9 @@ public class ConnKit {
      * 依此检查 Parameters,Cookies,Session 中是否有指定返回路径
      * 都没有指定时则跳转到默认地址
      * 默认地址缺失则跳转到网站首页
+     * 也可用特殊值要求返回特定数据
+     *  * 用户信息
+     *  - 无返回信息
      * @param helper
      * @throws HongsException
      */
@@ -69,8 +74,17 @@ public class ConnKit {
             v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
         } while (false);
 
-        // 跳转
-        helper.redirect(v);
+        if ("*".equals(v)) {
+            Object id = helper.getSessibute(Cnst.UID_SES);
+            Map    rd = helper.getRequestData();
+                   rd.put (Cnst.ID_KEY , id);
+            new UserAction().getInfo(helper);
+        } else
+        if ("-".equals(v)) {
+            helper.reply( "" );
+        } else {
+            helper.redirect(v);
+        }
     }
 
 }

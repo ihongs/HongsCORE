@@ -15,7 +15,7 @@ import java.util.Map;
  * 微博关联登录
  * @author Hongs
  */
-@Action("centre/oauth2/wx")
+@Action("centre/oauth2/wb")
 public class WBAction {
 
     @Action("web/create")

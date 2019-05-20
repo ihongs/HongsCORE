@@ -7,6 +7,7 @@ import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.serv.auth.ConnKit;
 import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,24 +74,24 @@ public class WBAction {
 
         url = "https://api.weibo.com/oauth2/access_token";
         req = new HashMap();
-        req.put("code"          , code );
-        req.put("client_id"     , appId);
-        req.put("client_secret" , appSk);
-        req.put("grant_type"    , "authorization_code");
-        rsp = ConnKit.retrieve(url, req);
+        req.put("code"         , code );
+        req.put("client_id"    , appId);
+        req.put("client_secret", appSk);
+        req.put("grant_type"   , "authorization_code");
+        rsp = Remote.parseData(Remote.get(url, req));
 
         err = Synt.declare(rsp.get("errcode"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get token and opnId error\r\n"+Data.toString(rsp));
+            throw new HongsException.Common("Get token error\r\n"+Data.toString(rsp));
         }
         token = (String) rsp.get("access_token");
         opnId = (String) rsp.get("uid");
 
         url = "https://api.weibo.com/2/eps/user/info.json";
         req = new HashMap();
-        req.put("uid", opnId);
+        req.put("uid"         , opnId);
         req.put("access_token", token);
-        rsp = ConnKit.retrieve(url, req);
+        rsp = Remote.parseData(Remote.get(url, req));
 
         err = Synt.declare(rsp.get("errcode"), 0);
         if (err != 0) {

@@ -2,6 +2,7 @@ package io.github.ihongs.serv.auth;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
@@ -9,6 +10,7 @@ import io.github.ihongs.action.VerifyHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.master.Dept;
+import io.github.ihongs.serv.master.UserAction;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.util.verify.Wrongs;
@@ -34,49 +36,65 @@ public class AuthKit {
     private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
 
     /**
-     * 获取特征加密字符串
-     * @param pswd
-     * @return
+     * 登录成功后跳转
+     * 依此检查 Parameters,Cookies,Session 中是否有指定返回路径
+     * 都没有指定时则跳转到默认地址
+     * 默认地址缺失则跳转到网站首页
+     * 也可用特殊值要求返回特定数据
+     *  * 用户信息
+     *  - 无返回信息
+     * @param helper
+     * @param rst
      * @throws HongsException
      */
-    public static String getCrypt(String pswd) throws HongsException {
-        try {
-            MessageDigest m = MessageDigest.getInstance("MD5");
-            byte[] pzwd = m.digest(pswd.getBytes());
-            byte[] pxwd = new byte[pzwd.length * 2];
-            for (int i = 0, j = 0; i < pzwd.length; i ++) {
-                byte pzbt = pzwd[i];
-                pxwd[j++] = PAZZ[pzbt >>> 4 & 15];
-                pxwd[j++] = PAZZ[pzbt       & 15];
-            }
-            return new String(pxwd);
-        } catch (NoSuchAlgorithmException ex) {
-            throw new HongsException.Common(ex);
-        }
-    }
+    public static void redirect(ActionHelper helper, Map rst)
+    throws HongsException {
+        String k;
+        String v;
+        CoreConfig cc = CoreConfig.getInstance("oauth2");
 
-    /**
-     * 快速输出登录的错误
-     * @param k 字段
-     * @param w 错误
-     * @return
-     * @throws HongsException
-     */
-    public static Map getWrong(String k, String w) throws HongsException {
-        CoreLocale l = CoreLocale.getInstance("master");
-        Map e  = new HashMap();
-        if (k != null && ! "".equals( k )) {
-        Map m  = new HashMap();
-            m.put( k ,    new Wrong ( w ));
-            e.put("errs", new Wrongs( m )
-                .setLocalizedContext( l )
-                .getErrors( ));
-            e.put("msg", l.translate( w ));
+        do {
+            k = cc.getProperty("oauth2.bak.prm", "back");
+            v = helper.getParameter(k);
+            if (v != null && !v.isEmpty()) {
+                break;
+            }
+
+            k = cc.getProperty("oauth2.bak.cok");
+            if (k != null && !k.isEmpty()) {
+                v = (String) helper.getCookibute(k);
+                if (v != null && !v.isEmpty()) {
+                    helper.setCookibute(k, null); // 清除 Cookies
+                    break;
+                }
+            }
+
+            k = cc.getProperty("oauth2.bak.ses");
+            if (k != null && !k.isEmpty()) {
+                v = (String) helper.getSessibute(k);
+                if (v != null && !v.isEmpty()) {
+                    helper.setSessibute(k, null); // 清除 Session
+                    break;
+                }
+            }
+
+            v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
+        } while (false);
+
+        if ("_mine_info_".equals(v)) {
+            Object id = helper.getSessibute(Cnst.UID_SES);
+            Map    rd = helper.getRequestData();
+                   rd.put (Cnst.ID_KEY , id);
+            new UserAction().getInfo(helper);
+        } else
+        if ("_sign_info_".equals(v)) {
+            helper.reply( "" , rst );
+        } else
+        if ("-".equals(v)) {
+            helper.reply( "" );
         } else {
-            e.put("msg", l.translate( w ));
+            helper.redirect(v);
         }
-        e.put("ok", false);
-        return e;
     }
 
     /**
@@ -215,11 +233,11 @@ public class AuthKit {
         return userSign(ah, place, appid, usrid, uname, uhead, utime);
     }
 
-    public static void signUpd(HttpSession ss) throws HongsException {
-        // 刷新时间
-        ss.setAttribute(Cnst.UST_SES,System.currentTimeMillis()/1000);
-    }
-
+    /**
+     * 退出登录
+     * @param ss
+     * @throws HongsException
+     */
     public static void signOut(HttpSession ss) throws HongsException {
         // 清除会话
         ss.invalidate();
@@ -228,6 +246,62 @@ public class AuthKit {
         DB.getInstance("master")
           .getTable("user_sign")
           .remove("`sesid` = ?", ss.getId());
+    }
+
+    /**
+     * 更新状态
+     * @param ss
+     * @throws HongsException
+     */
+    public static void signUpd(HttpSession ss) throws HongsException {
+        // 刷新时间
+        ss.setAttribute(Cnst.UST_SES, System.currentTimeMillis() / 1000);
+    }
+
+    /**
+     * 快速输出登录的错误
+     * @param k 字段
+     * @param w 错误
+     * @return
+     * @throws HongsException
+     */
+    public static Map getWrong(String k, String w) throws HongsException {
+        CoreLocale l = CoreLocale.getInstance("master");
+        Map e  = new HashMap();
+        if (k != null && ! "".equals( k )) {
+        Map m  = new HashMap();
+            m.put( k ,    new Wrong ( w ));
+            e.put("errs", new Wrongs( m )
+                .setLocalizedContext( l )
+                .getErrors( ));
+            e.put("msg", l.translate( w ));
+        } else {
+            e.put("msg", l.translate( w ));
+        }
+        e.put("ok", false);
+        return e;
+    }
+
+    /**
+     * 获取特征加密字符串
+     * @param p
+     * @return
+     * @throws HongsException
+     */
+    public static String getCrypt(String p) throws HongsException {
+        try {
+            MessageDigest m = MessageDigest.getInstance("MD5");
+            byte[] a = m.digest(p.getBytes());
+            byte[] b = new byte[a.length * 2];
+            for (int i = 0, j = 0; i < a.length; i ++) {
+                byte c = a[i];
+                b[j++] = PAZZ[c >>> 4 & 15];
+                b[j++] = PAZZ[c       & 15];
+            }
+            return new String(b);
+        }   catch (NoSuchAlgorithmException ex) {
+            throw new HongsException.Common(ex);
+        }
     }
 
     /**

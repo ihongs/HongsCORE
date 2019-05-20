@@ -41,9 +41,9 @@ public class QQAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper);
+        ConnKit.redirect(helper, back);
     }
 
     /**
@@ -69,9 +69,9 @@ public class QQAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper);
+        ConnKit.redirect(helper, back);
     }
 
     public static Map getUserInfo(String code, String appId, String appSk, String rurl, boolean inQQ)

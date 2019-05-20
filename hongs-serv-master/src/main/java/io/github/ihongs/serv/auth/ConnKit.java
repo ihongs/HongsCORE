@@ -38,9 +38,10 @@ public class ConnKit {
      *  * 用户信息
      *  - 无返回信息
      * @param helper
+     * @param rst
      * @throws HongsException
      */
-    public static void redirect(ActionHelper helper)
+    public static void redirect(ActionHelper helper, Map rst)
     throws HongsException {
         String k;
         String v;
@@ -74,11 +75,14 @@ public class ConnKit {
             v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
         } while (false);
 
-        if ("*".equals(v)) {
+        if ("_mine_info_".equals(v)) {
             Object id = helper.getSessibute(Cnst.UID_SES);
             Map    rd = helper.getRequestData();
                    rd.put (Cnst.ID_KEY , id);
             new UserAction().getInfo(helper);
+        } else
+        if ("_sign_info_".equals(v)) {
+            helper.reply( "" , rst );
         } else
         if ("-".equals(v)) {
             helper.reply( "" );

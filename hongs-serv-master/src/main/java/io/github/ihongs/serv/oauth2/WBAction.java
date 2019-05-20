@@ -35,9 +35,9 @@ public class WBAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper);
+        ConnKit.redirect(helper, back);
     }
 
     @Action("wap/create")
@@ -57,9 +57,9 @@ public class WBAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper);
+        ConnKit.redirect(helper, back);
     }
 
     public static Map getUserInfo(String code, String appId, String appSk, String rurl)

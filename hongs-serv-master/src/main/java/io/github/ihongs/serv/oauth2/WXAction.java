@@ -40,9 +40,9 @@ public class WXAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "wx", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "centre", "wx", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper);
+        ConnKit.redirect(helper, back);
     }
 
     /**
@@ -67,9 +67,9 @@ public class WXAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        AuthKit.openSign(helper, "centre", "wx", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "centre", "wx", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper);
+        ConnKit.redirect(helper, back);
     }
 
     public static Map getUserInfo(String code, String appId, String appSk)

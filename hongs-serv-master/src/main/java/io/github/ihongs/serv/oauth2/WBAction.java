@@ -5,7 +5,6 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.serv.auth.AuthKit;
-import io.github.ihongs.serv.auth.ConnKit;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Synt;
@@ -38,7 +37,7 @@ public class WBAction {
 
         Map back = AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper, back);
+        AuthKit.redirect(helper, back);
     }
 
     @Action("wap/create")
@@ -60,7 +59,7 @@ public class WBAction {
 
         Map back = AuthKit.openSign(helper, "centre", "wb", opnId, name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper, back);
+        AuthKit.redirect(helper, back);
     }
 
     public static Map getUserInfo(String code, String appId, String appSk, String rurl)

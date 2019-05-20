@@ -1,6 +1,5 @@
 package io.github.ihongs.serv.oauth2;
 
-import io.github.ihongs.serv.auth.ConnKit;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
@@ -44,7 +43,7 @@ public class QQAction {
 
         Map back = AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper, back);
+        AuthKit.redirect(helper, back);
     }
 
     /**
@@ -72,7 +71,7 @@ public class QQAction {
 
         Map back = AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
 
-        ConnKit.redirect(helper, back);
+        AuthKit.redirect(helper, back);
     }
 
     public static Map getUserInfo(String code, String appId, String appSk, String rurl, boolean inQQ)

@@ -7,6 +7,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
@@ -21,7 +22,7 @@ public class QQAction {
     /**
      * QQ Web 登录回调
      * @param helper
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("web/create")
     public void inWeb(ActionHelper helper) throws HongsException {
@@ -49,7 +50,7 @@ public class QQAction {
     /**
      * QQ WAP 登录回调
      * @param helper
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("wap/create")
     public void inWap(ActionHelper helper) throws HongsException {
@@ -88,12 +89,12 @@ public class QQAction {
             ? "https://graph.z.qq.com/moc2/token"
             : "https://graph.qq.com/oauth2.0/token";
         req = new HashMap();
-        req.put("code"          , code );
-        req.put("client_id"     , appId);
-        req.put("client_secret" , appSk);
-        req.put("redirect_uri"  , rurl );
-        req.put("grant_type"    , "authorization_code");
-        rsp = ConnKit.retrieve(url, req);
+        req.put("code"         , code );
+        req.put("client_id"    , appId);
+        req.put("client_secret", appSk);
+        req.put("redirect_uri" , rurl );
+        req.put("grant_type"   , "authorization_code");
+        rsp = Remote.parseData(Remote.get(url, req));
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
@@ -105,21 +106,21 @@ public class QQAction {
             ? "https://graph.z.qq.com/moc2/me"
             : "https://graph.qq.com/oauth2.0/me";
         req = new HashMap();
-        req.put("access_token"  , token);
-        rsp = ConnKit.retrieve(url, req);
+        req.put("access_token" , token);
+        rsp = Remote.parseData(Remote.get(url, req));
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get opnId error\r\n"+Data.toString(rsp));
+            throw new HongsException.Common("Get open id error\r\n"+Data.toString(rsp));
         }
         opnId = (String) rsp.get("openid");
 
         url = "https://graph.qq.com/user/get_user_info";
         req = new HashMap();
+        req.put("openid"       , opnId);
+        req.put("access_token" , token);
         req.put("oauth_consumer_key", appId);
-        req.put("access_token"  , token);
-        req.put("openid"        , opnId);
-        rsp = ConnKit.retrieve(url, req);
+        rsp = Remote.parseData(Remote.get(url, req));
 
         err = Synt.declare(rsp.get("ret"), 0);
         if (err != 0) {

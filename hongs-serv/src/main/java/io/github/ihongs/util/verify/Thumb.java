@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.imageio.ImageIO;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 
@@ -80,7 +79,7 @@ public class Thumb extends IsFile {
          * 多个尺寸后面的会进行缩放处理.
          */
         if ("test".equals(mod)) {
-            BufferedImage img = ImageIO.read(new File(nrl));
+            BufferedImage img = make(nrl, null).asBufferedImage();
             Matcher mat = TEST_PATT.matcher (suf);
             int w = img.getWidth ();
             int h = img.getHeight();
@@ -104,6 +103,8 @@ public class Thumb extends IsFile {
             } else {
                 throw new Wrong("Thumb size config can not be used for test mode");
             }
+
+            Thumbnails.of(nrl).scale(1).toFile(nrl); // 重新存储, 规避 iOS 旋转
 
             mod = ""; // 尺寸匹配, 无需截取
         }

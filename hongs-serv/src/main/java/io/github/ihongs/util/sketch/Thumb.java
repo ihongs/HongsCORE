@@ -5,8 +5,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.InputStream;
 import java.io.IOException;
-import javax.imageio.ImageIO;
 import net.coobird.thumbnailator.Thumbnails;
 import net.coobird.thumbnailator.Thumbnails.Builder;
 import net.coobird.thumbnailator.geometry.Position;
@@ -27,30 +27,30 @@ import net.coobird.thumbnailator.geometry.Positions;
  */
 public class Thumb {
 
-    private BufferedImage src;
-    private Position      pos = null;
-    private Color         col = null;
+    private final BufferedImage src;
+    private Position pos = null;
+    private Color    col = null;
 
-    public Thumb(File src) throws IOException {
-        this(ImageIO.read(src));
-    }
-
-    public Thumb(String src) throws IOException {
-        this(  new File(src)  );
-    }
-
-    public Thumb(Builder tmp) throws IOException {
-        this(tmp.asBufferedImage());
-    }
-
-    public Thumb(BufferedImage img) {
+    public Thumb (BufferedImage img) {
         this.src = img;
+    }
+
+    public Thumb (File   src) throws IOException {
+        this.src = Thumbnails.of(src).useExifOrientation(true).scale(1).asBufferedImage(); // 纠正方向, 规避 iOS 旋转
+    }
+
+    public Thumb (String src) throws IOException {
+        this.src = Thumbnails.of(src).useExifOrientation(true).scale(1).asBufferedImage(); // 纠正方向, 规避 iOS 旋转
+    }
+
+    public Thumb (InputStream src) throws IOException {
+        this.src = Thumbnails.of(src).useExifOrientation(true).scale(1).asBufferedImage(); // 纠正方向, 规避 iOS 旋转
     }
 
     /**
      * 设置背景颜色
      * @param col
-     * @return 
+     * @return
      */
     public Thumb setColor(Color col) {
         this.col = col;
@@ -60,7 +60,7 @@ public class Thumb {
     /**
      * 设置停靠位置
      * @param pos
-     * @return 
+     * @return
      */
     public Thumb setAlign(Position pos) {
         this.pos = pos;
@@ -71,7 +71,7 @@ public class Thumb {
      * 设置背景颜色
      * 可以用 #RRGGBB 或 #AARRGGBB 或 R,G,B 或 R,G,B,A 的形式
      * @param str
-     * @return 
+     * @return
      */
     public Thumb setColor(String str) {
         if (str == null) {
@@ -114,7 +114,7 @@ public class Thumb {
      * 设置停靠位置
      * 类似于 HTML align 的形式, 如 center 或 center right 等
      * @param str
-     * @return 
+     * @return
      */
     public Thumb setAlign(String str) {
         if (str == null) {

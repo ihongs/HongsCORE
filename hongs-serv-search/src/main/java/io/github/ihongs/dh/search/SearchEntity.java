@@ -254,7 +254,6 @@ public class SearchEntity extends LuceneRecord {
 
         private final IndexWriter writer;
         private final      String dbname;
-        private  long             t = 0 ;
         private   int             c = 1 ;
 
         public SearchWriter(IndexWriter writer, String dbname) {
@@ -266,55 +265,64 @@ public class SearchEntity extends LuceneRecord {
             }
         }
 
-//      synchronized
         public IndexWriter conn() {
-//          c += 0;
-            return  writer;
+//          synchronized (writer) {
+//              c += 0;
+                return writer;
+//          }
         }
 
-        synchronized
         public IndexWriter open() {
-            c += 1;
-            return  writer;
+            synchronized (writer) {
+                c += 1;
+                return writer;
+            }
         }
 
-        synchronized
-        public void exit() {
-            if (c >= 1) {
-                c -= 1;
+        public void exit () {
+            synchronized (writer) {
+                if (c >= 1) {
+                    c -= 1;
+                }
             }
-            t = System.currentTimeMillis();
         }
 
         @Override
         public byte clean() {
-            // 全部退出超过 1 分钟或已断开, 则可以清理了
-            if (c <= 0 && t <= System.currentTimeMillis() - 60000
-            ||  ! writer.isOpen( )) {
-                return (byte) 1;
-            } else {
-                return (byte) 0;
+            synchronized (writer) {
+                if (! writer.isOpen() ) {
+                    return (byte) 1;
+                }
+
+                if (c <= 0) {
+                    this . close( );
+                    return (byte) 1;
+                } else {
+                    return (byte) 0;
+                }
             }
         }
 
         @Override
         public void close() {
-            if (! writer.isOpen( )) {
-                return;
-            }
+            synchronized (writer) {
+                if (! writer.isOpen() ) {
+                    return;
+                }
 
-            // 退出时合并索引
-            try {
-                writer.maybeMerge();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            }
+                // 退出时合并索引
+                try {
+                    writer.maybeMerge();
+                } catch (IOException x) {
+                    CoreLogger.error(x);
+                }
 
-            // 关闭后外部移除
-            try {
-                writer.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
+                // 关闭后外部移除
+                try {
+                    writer.close( );
+                } catch (IOException x) {
+                    CoreLogger.error(x);
+                }
             }
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {

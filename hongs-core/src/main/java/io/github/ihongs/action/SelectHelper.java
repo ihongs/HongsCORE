@@ -487,31 +487,22 @@ public class SelectHelper {
                 ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
             }
             if (null != aq && !"".equals(aq)) {
-                if (aq.startsWith("{") && aq.endsWith("}")) {
+                if (aq.startsWith("{" )
+                &&  aq.  endsWith("}")) {
                     rd = (  Map  ) Data.toObject( aq );
                 } else {
                     rd = ActionHelper.parseQuery( aq );
                 }
-                if (!rd.containsKey(Cnst.RB_KEY)) {
-                    rd.put(Cnst.RB_KEY, "-" );
-                }
-                if (!rd.containsKey(Cnst.RN_KEY)) {
-                    rd.put(Cnst.RN_KEY,  0  );
-                }
-            } else
-            if (null != vk && !"".equals(vk )
-            &&  null != tk && !"".equals(tk)) {
-                rd = new HashMap();
-                rb = new HashSet();
-                rb.add( vk);
-                rb.add( tk);
-                rd.put(Cnst.RB_KEY, rb);
-                rd.put(Cnst.RN_KEY, 0 );
             } else {
                 rd = new HashMap();
-                rb = new HashSet();
-                rb.add("-");
+            }
+            if (null != vk && !"".equals(vk )
+            &&  null != tk && !"".equals(tk )
+            &&  !rd.containsKey(Cnst.RB_KEY)) {
+                rb = Synt.setOf(vk, tk);
                 rd.put(Cnst.RB_KEY, rb);
+            }
+            if (!rd.containsKey(Cnst.RN_KEY)) {
                 rd.put(Cnst.RN_KEY, 0 );
             }
 

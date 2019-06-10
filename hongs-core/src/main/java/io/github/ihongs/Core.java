@@ -444,13 +444,9 @@ abstract public class Core
       Object o = super.get( k );
       try
       {
-        if ((o instanceof /**/Cleanable)
-        && ((Cleanable) o ).clean() !=0)
+        if ((o instanceof Cleanable/**/)
+        && ((Cleanable) o ).clean() > 0)
         {
-        if ( o instanceof AutoCloseable)
-        {
-           ((AutoCloseable) o ).close( );
-        }
            this.remove( k );
         }
       }

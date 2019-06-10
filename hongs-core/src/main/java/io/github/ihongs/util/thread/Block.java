@@ -373,9 +373,7 @@ public final class Block {
         }
     }
 
-    private static class Cleans implements AutoCloseable, Core.Cleanable, Core.Singleton {
-        @Override
-        public void close() {}
+    private static class Cleans implements Core.Cleanable, Core.Singleton {
         @Override
         public byte clean() {
             if (!ST_LOCKS.isEmpty() || !RW_LOCKS.isEmpty()) {

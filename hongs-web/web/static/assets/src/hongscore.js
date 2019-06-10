@@ -1210,23 +1210,23 @@ function hsFmtDate(date, format) {
       return   '';
   }
 
-  if (typeof(date) === "string") {
-    if (  isNaN(Number (date) )) {
-      // 整理成 yyyy/MM/dd HH:mm:ss 的格式, 并尝试解析它
-      var text = date ;
-      date = date.replace(/-/g, "/").replace(/t/i, " ");
-      date = date.replace(/(\.\d+\s*$|\s+$|^\s+)/g, "");
-      date = Date.parse(date);
-      if (isNaN( date )) {
-          return text ;
-      }
-    } else {
-      date = parseInt(date);
-    }
-  }
-
   if (typeof(date) === "number") {
       date = new Date(date);
+  } else
+  if (typeof(date) === "string") {
+  do {
+    var time = Number(date);
+    if ( ! isNaN(time) ) {
+      date = new Date(time);
+      break;
+    }
+    time = Date.parse(date);
+    if ( ! isNaN(time) ) {
+      date = new Date(time);
+      break;
+    }
+    throw new Error("hsFmtDate: invalid date: " + date);
+  } while (false);
   }
 
   var y = date.getFullYear( );
@@ -1327,17 +1327,23 @@ function hsFmtDate(date, format) {
  * @return {Date}
  */
 function hsPrsDate(text, format) {
-  if (!text) {
-    return  new Date(  0 );
+  if (! text) {
+      return new Date( 0  );
   }
   if (typeof(text) === "number") {
-    return  new Date(text);
+      return new Date(text);
   }
   if (typeof(text) === "string") {
-    var  x  = Number(text);
-    if (!isNaN(x)) {
-        return new Date(x);
+    var time = Number(text);
+    if ( ! isNaN(time) ) {
+      return new Date(time);
     }
+    /* // 强制 format 格式
+    time = Date.parse(text);
+    if ( ! isNaN(time) ) {
+      return new Date(time);
+    }
+    */
   }
 
   function _getcode(arr, wrd) {

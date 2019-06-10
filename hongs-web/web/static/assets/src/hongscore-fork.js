@@ -180,9 +180,29 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         }
     }
 
+    function commit () {
+        var btn = jQuery(this);
+        if (btn.closest(".HsList" ).data("HsList")._info) {
+            return;
+        }
+        if (btn.closest(".openbox"). is ( bin ) !== true) {
+            return;
+        }
+
+        if (pickBack( ) === false ) {
+            return false;
+        }
+
+        bin.hsClose();
+        return false ;
+    }
+
     function create () {
         var btn = jQuery(this);
-        if (btn.closest(".openbox").is(bin)!==true) {
+        if (btn.closest(".HsList" ).data("HsList")._info) {
+            return;
+        }
+        if (btn.closest(".openbox"). is ( bin ) !== true) {
             return;
         }
 
@@ -192,25 +212,11 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         var val = rst[vk] || hsGetValue(rst, vk);
         var txt = rst[tk] || hsGetValue(rst, tk);
 
-        if (pickItem(val, txt) === false) {
+        if (pickItem(val, txt, rst) === false) {
             return false;
         }
 
-        if (pickBack(/* OK */) === false) {
-            return false;
-        }
-
-        bin.hsClose();
-        return false ;
-    }
-
-    function commit () {
-        var btn = jQuery(this);
-        if (btn.closest(".openbox").is(bin)!==true) {
-            return;
-        }
-
-        if (pickBack(/* OK */) === false) {
+        if (pickBack( ) === false ) {
             return false;
         }
 

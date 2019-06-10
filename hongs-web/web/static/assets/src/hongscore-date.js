@@ -147,7 +147,7 @@
                 }
             case 'y':
                 if (len >= 4) {
-                    return _makeSelect( "y", 2000, 2099, len);
+                    return _makeSelect( "y", 1949, 2099, len);
                 }
                 else {
                     return _makeSelect("Sy", 0, 99, len);

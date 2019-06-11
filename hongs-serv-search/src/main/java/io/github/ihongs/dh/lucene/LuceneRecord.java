@@ -818,14 +818,28 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     public IndexSearcher getFinder() throws HongsException {
+        IndexReader ir = getReader(); // 见下方注释
         if (finder == null) {
-            finder  = new IndexSearcher(getReader());
+            finder  = new IndexSearcher(ir);
         }
         return finder;
     }
 
     public IndexReader getReader() throws HongsException {
-        if (reader == null) {
+        if (reader != null) {
+            try {
+                // 如果有更新数据则会重新打开查询接口
+                // 这可以规避提交更新后却查不到的问题
+                IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
+                if ( null != nred) {
+                    reader.close();
+                    reader = nred ;
+                    finder = null ;
+                }
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+        } else {
             String path = getDbPath();
 
             try {

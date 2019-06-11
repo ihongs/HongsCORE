@@ -35,6 +35,11 @@ import org.apache.lucene.search.BooleanClause;
 
 /**
  * 数据存储模型
+ *
+ * 注意:
+ * add,set,put,del  直接作用于数据索引, 不会产生数据变更日志;
+ * save(String,Map) 仅供动作内后续修改, 不得用于对外模型方法.
+ *
  * @author Hongs
  */
 public class Data extends SearchEntity {
@@ -338,6 +343,76 @@ public class Data extends SearchEntity {
         int  cn = redo(ct, id, rd);
         call(ct, id, "revert");
         return cn;
+    }
+
+    /**
+     * 保存记录
+     *
+     * 注意:
+     * 仅供内部补充修改,
+     * 不会记录操作日志.
+     *
+     * @param id
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public int save(String id, Map rd) throws HongsException {
+        /**
+         * 为避免重复获取浪费时间
+         * 此块代码照搬自方法 set
+         * 目的在于可复用变量 md
+         */
+        if (id == null || id.length() == 0) {
+            throw new NullPointerException("Id must be set in set");
+        }
+        Document doc = getDoc(id);
+        if (doc != null) {
+            Map md = padDat(doc );
+                md . putAll( rd );
+                rd = md;
+        }
+        rd.put(Cnst.ID_KEY , id );
+        setDoc( id , padDoc (rd));
+
+        Table    table = getTable( );
+        if (table == null) return 1 ;
+        String   fid   = getFormId();
+        String   uid   = getUserId();
+        Object[] param = new String[] {id, fid, "0"};
+        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+
+        /**
+         * 此类里的提交方法并不会将对应的操作记录数据进行提交,
+         * 好在关系数据库事务内可查到前面插入但还未提交的记录.
+         */
+        Map ud = table.fetchCase()
+            .filter( where,param )
+            .select( Cnst.ID_KEY )
+            .getOne( );
+        if (ud == null || ud.isEmpty()) {
+            ud  = new HashMap (  );
+            ud.put(     "id", id );
+            ud.put("form_id", fid);
+            ud.put("user_id", uid);
+            ud.put("state",   1  );
+            ud.put("etime",   0  );
+            ud.put("ctime", System.currentTimeMillis() / 1000 );
+        }
+
+        if (rd.containsKey("name") ) {
+            ud.put("name", rd.get("name"));
+        }
+        if (rd.containsKey("memo") ) {
+            ud.put("memo", rd.get("memo"));
+        }
+        ud.put("data", io.github.ihongs.util.Data.toString(rd));
+
+        if (ud.containsKey("etime")) {
+            return table.insert(ud);
+        } else {
+            return table.update(ud, where, param);
+        }
     }
 
     /**

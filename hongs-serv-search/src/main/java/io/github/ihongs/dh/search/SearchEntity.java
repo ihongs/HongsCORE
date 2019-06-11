@@ -10,9 +10,8 @@ import io.github.ihongs.dh.lucene.LuceneRecord;
 
 import java.io.IOException;
 import java.nio.file.Paths;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
+import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
 import org.apache.lucene.document.Document;
@@ -32,10 +31,10 @@ import org.apache.lucene.store.FSDirectory;
  */
 public class SearchEntity extends LuceneRecord {
 
-    private SearchWriter WRITER = null;
-    private final List<SearchTrnsct> WRITES = new LinkedList();
+    private final Map<String, Document> WRITES = new LinkedHashMap();
+    private Writer WRITER = null ;
 
-    public SearchEntity(Map form, String path, String name) {
+    public SearchEntity(Map form , String path , String name) {
         super(form , path , name);
     }
 
@@ -100,10 +99,10 @@ public class SearchEntity extends LuceneRecord {
         final boolean[] b = new boolean[] {false};
 
         try {
-            WRITER = Core.GLOBAL_CORE.get (SearchWriter.class.getName() + ":" + name,
-            new Supplier<SearchWriter> () {
+            WRITER = Core.GLOBAL_CORE.get (Writer.class.getName() + ":" + name,
+            new Supplier<Writer> () {
                 @Override
-                public SearchWriter get() {
+                public Writer get() {
                     IndexWriter writer;
                     b[0] = true;
 
@@ -120,7 +119,7 @@ public class SearchEntity extends LuceneRecord {
                         throw x.toExemption( );
                     }
 
-                    return new SearchWriter(writer , name);
+                    return new Writer(writer , name);
                 }
             });
         } catch (HongsExemption x) {
@@ -169,8 +168,14 @@ public class SearchEntity extends LuceneRecord {
             IndexWriter iw = getWriter();
             synchronized (iw) {
                 // 此处才会是真的更新文档
-                for (SearchTrnsct st : WRITES) {
-                st.update(iw);
+                for (Map.Entry<String, Document> et : WRITES.entrySet()) {
+                    String   id = et.getKey  ();
+                    Document dc = et.getValue();
+                    if (dc != null) {
+                        iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), dc);
+                    } else {
+                        iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id)    );
+                    }
                 }
                 iw.commit(  );
             }
@@ -205,58 +210,50 @@ public class SearchEntity extends LuceneRecord {
     }
 
     @Override
-    public void addDoc(Document doc) throws HongsException {
-        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.ADD, null, doc));
+    public void addDoc(Document doc)
+    throws HongsException {
+        String id = doc.getField(Cnst.ID_KEY).stringValue();
+        WRITES.put(id, doc );
         if (!TRNSCT_MODE) {
             commit();
         }
     }
 
     @Override
-    public void setDoc(String id, Document doc) throws HongsException {
-        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.SET, new Term("@"+Cnst.ID_KEY, id), doc ));
+    public void setDoc(String id, Document doc)
+    throws HongsException {
+        WRITES.put(id, doc );
         if (!TRNSCT_MODE) {
             commit();
         }
     }
 
     @Override
-    public void delDoc(String id) throws HongsException {
-        WRITES.add(new SearchTrnsct(SearchTrnsct.TYPE.DEL, new Term("@"+Cnst.ID_KEY, id), null));
+    public void delDoc(String id)
+    throws HongsException {
+        WRITES.put(id, null);
         if (!TRNSCT_MODE) {
             commit();
         }
     }
 
-    private static class SearchTrnsct {
-
-        public  enum  TYPE     {ADD, SET, DEL};
-        private final TYPE     type;
-        private final Term     term;
-        private final Document docu;
-
-        public SearchTrnsct(TYPE type, Term term, Document dm) {
-            this.type = type;
-            this.term = term;
-            this.docu = dm  ;
+    @Override
+    public Document getDoc(String id)
+    throws HongsException {
+        Document doc = WRITES.get(id);
+        if (doc == null ) {
+            doc  = super . getDoc(id);
         }
-
-        public void update (IndexWriter iw) throws IOException {
-            switch( type ) {
-                case ADD: iw.   addDocument (      docu); break;
-                case SET: iw.updateDocument (term, docu); break;
-                case DEL: iw.deleteDocuments(term      ); break;
-            }
-        }
+        return   doc;
     }
 
-    private static class SearchWriter implements AutoCloseable, Core.Cleanable, Core.Singleton {
+    private static class Writer implements AutoCloseable, Core.Cleanable, Core.Singleton {
 
         private final IndexWriter writer;
         private final      String dbname;
         private   int             c = 1 ;
 
-        public SearchWriter(IndexWriter writer, String dbname) {
+        public Writer(IndexWriter writer, String dbname) {
             this.writer = writer;
             this.dbname = dbname;
 

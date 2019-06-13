@@ -7,7 +7,7 @@
 DROP TABLE IF EXISTS `a_normal_data`;
 CREATE TABLE `a_normal_data` (
     `id` VARCHAR(95) NOT NULL,
-    `data`  BLOB NOT NULL,
+    `data`  TEXT NOT NULL, /* 存 JSON, 换 BLOB 则改用 Java 序列化 */
     `xtime` INTEGER(10) DEFAULT 0,
     `mtime` INTEGER(10) DEFAULT 0,
     PRIMARY KEY (`id`)
@@ -23,7 +23,7 @@ CREATE INDEX `IK_a_normal_data_mtime` ON `a_normal_data` (`mtime`);
 DROP TABLE IF EXISTS `a_normal_sess`;
 CREATE TABLE `a_normal_sess` (
     `id` VARCHAR(95) NOT NULL,
-    `data`  BLOB NOT NULL,
+    `data`  TEXT NOT NULL, /* 存 JSON, 换 BLOB 则改用 Java 序列化 */
     `xtime` INTEGER(10) DEFAULT 0,
     `mtime` INTEGER(10) DEFAULT 0,
     PRIMARY KEY (`id`)

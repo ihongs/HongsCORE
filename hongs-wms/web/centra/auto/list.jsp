@@ -374,11 +374,10 @@
 
     // 移除参数限定的过滤项
     for(var fn in loadres) {
-        if (! loadres[fn]) {
-            continue;
-        }
+    if (loadres   [ fn ] ) {
         findbox.children("[data-find='"+fn+"']").remove();
-    }
+        findbox.find(".record").remove();
+    }}
 
     // 无过滤或统计则隐藏之
     if (filtbox.find(".filt-group").size() == 0) {

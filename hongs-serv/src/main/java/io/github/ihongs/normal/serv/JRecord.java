@@ -4,13 +4,16 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.util.Data;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.ByteArrayOutputStream;
-import java.sql.PreparedStatement;
+import java.util.Map;
+import java.sql.Types;
 import java.sql.ResultSet;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 /**
@@ -20,10 +23,17 @@ import java.sql.SQLException;
  */
 public class JRecord<T> implements IRecord<T>, AutoCloseable {
 
-    protected  final  Table table;
+    protected final boolean bytes;
+    protected final   Table table;
 
     protected JRecord(Table table) throws HongsException {
-        this.table =  table;
+        this. table = table;
+
+        // 判断是采用序列化还是 JSON
+        Map fs =  table.getFields();
+        Map df = (Map    ) fs.get("data");
+        int dt = (Integer) df.get("type");
+        bytes  =  dt == Types.BLOB || dt == Types.BINARY ;
     }
 
     public JRecord() throws HongsException {
@@ -52,7 +62,10 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             }
 
             // 反序列化
-            try (
+            if (! bytes) {
+                return ( T ) Data.toObject(rs.getString( 1 ));
+            }
+            else try (
                       InputStream ins =    rs.getBinaryStream( 1 );
                 ObjectInputStream ois = new ObjectInputStream(ins);
             ) {
@@ -79,8 +92,12 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
     @Override
     public void set(String key, T val, long exp) throws HongsException {
         // 序列化值
-        byte[] arr;
-        try (
+        byte[] arr = null;
+        String str = null;
+        if (! bytes) {
+            str = Data.toString ( val );
+        }
+        else try (
             ByteArrayOutputStream bos = new ByteArrayOutputStream(   );
                ObjectOutputStream out = new    ObjectOutputStream(bos);
         ) {
@@ -102,11 +119,15 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
                       "UPDATE `" + table.tableName + "` SET data= ?, xtime= ?, mtime= ? WHERE id = ?"
             );
         ) {
-            ps.setString(4, key);
-            ps.setBytes (1, arr);
+            if (arr != null) {
+                ps.setBytes (1, arr);
+            } else {
+                ps.setString(1, str);
+            }
             ps.setLong  (2, exp);
             ps.setLong  (3, now);
-            if(ps.executeUpdate( ) > 0) {
+            ps.setString(4, key);
+            if (ps.executeUpdate() > 0) {
                return;
             }
         }
@@ -116,14 +137,18 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
 
         try (
             PreparedStatement ps = table.db.prepareStatement(
-                 "INSERT INTO `" + table.tableName + "` (id, data, xtime, mtime) VALUES (?, ?, ?, ?)"
+                 "INSERT INTO `" + table.tableName + "` (data, xtime, mtime, id) VALUES (?, ?, ?, ?)"
             );
         ) {
-            ps.setString(1, key);
-            ps.setBytes (2, arr);
-            ps.setLong  (3, exp);
-            ps.setLong  (4, now);
-            if(ps.executeUpdate( ) > 0) {
+            if (arr != null) {
+                ps.setBytes (1, arr);
+            } else {
+                ps.setString(1, str);
+            }
+            ps.setLong  (2, exp);
+            ps.setLong  (3, now);
+            ps.setString(4, key);
+            if (ps.executeUpdate() > 0) {
                return;
             }
         }
@@ -150,9 +175,9 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
                       "UPDATE `" + table.tableName + "` SET xtime = ?, mtime = ? WHERE id = ?"
             );
         ) {
-            ps.setString(3, key);
             ps.setLong  (1, exp);
             ps.setLong  (2, now);
+            ps.setString(3, key);
             ps.executeUpdate(  );
         }
         catch (SQLException ex ) {

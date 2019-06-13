@@ -191,6 +191,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             return data;
         }
 
+        // 默认仅返回可以列举的字段
+        Set rb = Synt.declare(rd.get(Cnst.RB_KEY), Set.class);
+        if (rb == null || rb.isEmpty( )) {
+            rd =  new LinkedHashMap (rd);
+            rd.put( Cnst.RB_KEY , getListable() );
+        }
+
         // 获取页码
         int pn = 1;
         if (rd.containsKey(Cnst.PN_KEY)) {
@@ -589,20 +596,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public Loop search(Map rd, int begin, int limit) throws HongsException {
         Query q = getQuery(rd);
         Sort  s = getSort (rd);
-        Set   r ;
-
-        /**
-         * 无 rb 和 id 字段参数,
-         * 表明这是在查默认列表,
-         * 按 LISTABLE 进行限制.
-         */
-        if (! rd.containsKey(Cnst.RB_KEY )
-        &&  ! rd.containsKey(Cnst.ID_KEY)) {
-              r =  getListable ( /*****/ );
-        } else {
-              r = Synt.toTerms (rd.get(Cnst.RB_KEY));
-        }
-
+        Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
         Loop  l = new Loop(this, q,s,r, begin,limit);
 
         if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {

@@ -23,11 +23,11 @@ public final class FetchPage
 
   private final Map info = new HashMap();
 
-  private int page =  1;
+  private int page = 1;
 
-  private int pags =  0;
+  private int pags = 0;
 
-  private int rows = 20;
+  private int rows = Cnst.RN_DEF;
 
   public FetchPage(FetchCase caze, DB db) throws HongsException
   {

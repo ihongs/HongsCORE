@@ -60,6 +60,16 @@
         <servlet-name>Rest</servlet-name>
         <url-pattern>/api/*</url-pattern>
     </servlet-mapping>
+    <!-- XSRF Filter -->
+    <filter>
+        <filter-name>XsrfFilter</filter-name>
+        <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>XsrfFilter</filter-name>
+        <url-pattern>*.act</url-pattern>
+        <url-pattern>*.api</url-pattern>
+    </filter-mapping>
     <!-- SACL Servlet -->
     <servlet>
         <servlet-name>Sacl</servlet-name>
@@ -71,16 +81,6 @@
         <url-pattern>/common/conf/*</url-pattern>
         <url-pattern>/common/lang/*</url-pattern>
     </servlet-mapping>
-    <!-- XSRF Filter -->
-    <filter>
-        <filter-name>XsrfFilter</filter-name>
-        <filter-class>io.github.ihongs.normal.serv.XsrfFilter</filter-class>
-    </filter>
-    <filter-mapping>
-        <filter-name>XsrfFilter</filter-name>
-        <url-pattern>*.act</url-pattern>
-        <url-pattern>*.api</url-pattern>
-    </filter-mapping>
     <!-- SPAR Filter -->
     <filter>
         <filter-name>SparFilter</filter-name>

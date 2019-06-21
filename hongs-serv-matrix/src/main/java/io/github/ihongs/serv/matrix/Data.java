@@ -402,10 +402,10 @@ public class Data extends SearchEntity {
 
         ud.put("data", io.github.ihongs.util.Data.toString(rd, true));
         if (rd.containsKey("name") ) {
-            ud.put("name" , substr((String) rd.get("name") , "name"));
+            ud.put( "name", substr((String) rd.get("name"), "name" ));
         }
         if (rd.containsKey("memo") ) {
-            ud.put("memo" , substr((String) rd.get("memo") , "memo"));
+            ud.put( "memo", substr((String) rd.get("memo"), "memo" ));
         }
 
         if (ud.containsKey("etime")) {

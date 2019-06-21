@@ -11,6 +11,16 @@ if (hsChkUri('centra')) {
 }
 
 /**
+ * 返回键联动导航条
+ */
+$(window).on("popstate", function(ev) {
+    ev = ev.originalEvent;
+    if (!ev || !ev.state || !ev.state.crumb) { return; }
+    $("#main-context>.breadcrumb>.back-crumb:visible>a").click();
+    history.pushState({crumb: true}, null, null);
+}); history.pushState({crumb: true}, null, null);
+
+/**
  * 获取当前模块对象
  */
 function S$() {

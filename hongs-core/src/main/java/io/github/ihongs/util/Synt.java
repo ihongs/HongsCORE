@@ -50,8 +50,7 @@ public final class Synt {
     };
 
     private static final Number  ZERO = 0 ;
-    private static final String  EMPT = "";
-    private static final Boolean FALS = false;
+    private static final String  VOID = "";
 
     private static final Pattern SEXP = Pattern.compile("\\s*,\\s*");
     private static final Pattern MEXP = Pattern.compile("\\s*:\\s*");
@@ -631,7 +630,7 @@ public final class Synt {
         }
 
         // 空串视为未取值
-        if (EMPT.equals(val)) {
+        if (VOID.equals(val)) {
             return null;
         }
 
@@ -880,6 +879,24 @@ public final class Synt {
 
     /**
      * 取默认值(null 视为无值)
+     * Java8 环境的函数式支持
+     * 可以更好的做到惰性计算
+     * @param <T>
+     * @param vals 由于在 java7 下编译, 无法使用 Supplier
+     * @return
+     */
+    public static <T> T defoult(Defn<T>... vals) {
+        for (Defn <T> def : vals) {
+            T   val = def.get();
+            if (val != null) {
+                return val ;
+            }
+        }
+        return  null;
+    }
+
+    /**
+     * 取默认值(null 视为无值)
      * @param <T>
      * @param vals
      * @return
@@ -894,39 +911,14 @@ public final class Synt {
     }
 
     /**
-     * 取默认值(null 视为无值)
-     * Java8 环境的函数式支持
-     * 可以更好的做到惰性计算
-     * @param <T>
-     * @param val
-     * @param vals 由于在 java7 下编译, 无法使用 Supplier
-     * @return
-     */
-    public static <T> T defoult(T val, Defn<T>... vals) {
-        if (val != null) {
-            return val ;
-        }
-        for (Defn<T> def : vals) {
-            val = def.get();
-            if (val != null) {
-                return val ;
-            }
-        }
-        return  null;
-    }
-
-    /**
-     * 取默认值(null,false,0,"" 均视为无值, 同 javascript)
+     * 取默认值(null,"" 均视为无值)
      * @param <T>
      * @param vals
      * @return
      */
-    public static <T> T defxult(T... vals) {
+    public static <T extends String> T defxult(T... vals) {
         for (T  val :  vals) {
-            if (val != null
-            && !FALS.equals(val)
-            && !EMPT.equals(val)
-            && !ZERO.equals(val)) {
+            if (val != null && ! VOID.equals(val)) {
                 return val ;
             }
         }
@@ -934,27 +926,14 @@ public final class Synt {
     }
 
     /**
-     * 取默认值(null,false,0,"" 均视为无值, 同 javascript)
-     * Java8 环境的函数式支持
-     * 可以更好的做到惰性计算
+     * 取默认值(null, 0 均视为无值)
      * @param <T>
-     * @param val
-     * @param vals 由于在 java7 下编译, 无法使用 Supplier
+     * @param vals
      * @return
      */
-    public static <T> T defxult(T val, Defn<T>... vals) {
-        if (val != null
-        && !FALS.equals(val)
-        && !EMPT.equals(val)
-        && !ZERO.equals(val)) {
-            return val ;
-        }
-        for (Defn<T> def : vals) {
-            val = def.get();
-            if (val != null
-            && !FALS.equals(val)
-            && !EMPT.equals(val)
-            && !ZERO.equals(val)) {
+    public static <T extends Number> T defxult(T... vals) {
+        for (T  val :  vals) {
+            if (val != null && ! ZERO.equals(val)) {
                 return val ;
             }
         }

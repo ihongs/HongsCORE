@@ -400,18 +400,12 @@ public class Data extends SearchEntity {
             ud.put("ctime", System.currentTimeMillis() / 1000 );
         }
 
-        String nm;
-        nm = io.github.ihongs.util.Data.toString(rd, true);
-        ud.put("data", nm);
-        nm = Synt.asString(rd.get("name"));
-        if (nm != null && !nm.isEmpty()) {
-            nm  = substr(nm, Synt.defxult((Integer) ((Map) table.getFields().get("name")).get("size"), 255));
-            ud.put("name", nm);
+        ud.put("data", io.github.ihongs.util.Data.toString(rd, true));
+        if (rd.containsKey("name") ) {
+            ud.put("name" , substr((String) rd.get("name") , "name"));
         }
-        nm = Synt.asString(rd.get("memo"));
-        if (nm != null && !nm.isEmpty()) {
-            nm  = substr(nm, Synt.defxult((Integer) ((Map) table.getFields().get("memo")).get("size"), 255));
-            ud.put("memo", nm);
+        if (rd.containsKey("memo") ) {
+            ud.put("memo" , substr((String) rd.get("memo") , "memo"));
         }
 
         if (ud.containsKey("etime")) {
@@ -510,20 +504,9 @@ public class Data extends SearchEntity {
             nd.put(/***/"id", id );
             nd.put("form_id", fid);
             nd.put("user_id", uid);
-
-            String nm;
-            nm = io.github.ihongs.util.Data.toString(rd, true);
-            ud.put("data", nm);
-            nm = Synt.asString(dd.get("name"));
-            if (nm != null && !nm.isEmpty()) {
-                nm  = substr(nm, Synt.defxult((Integer) ((Map) table.getFields().get("name")).get("size"), 255));
-                ud.put("name", nm);
-            }
-            nm = Synt.asString(rd.get("memo"));
-            if (nm != null && !nm.isEmpty()) {
-                nm  = substr(nm, Synt.defxult((Integer) ((Map) table.getFields().get("memo")).get("size"), 255));
-                ud.put("memo", nm);
-            }
+            ud.put("data", io.github.ihongs.util.Data.toString(rd, true));
+            ud.put("name", substr((String) dd.get("name"), "name"));
+            ud.put("memo", substr((String) rd.get("memo"), "memo"));
 
             table.update(ud, where, param);
             table.insert(nd);
@@ -583,9 +566,9 @@ public class Data extends SearchEntity {
             nd.put(/***/"id", id );
             nd.put("form_id", fid);
             nd.put("user_id", uid);
-            nd.put("memo", rd.get("memo"));
-            nd.put("name", dd.get("name"));
             nd.put("data", dd.get("data"));
+            nd.put("name", dd.get("name"));
+            nd.put("memo", substr((String) rd.get("memo"), "memo"));
 
             table.update(ud, where, param);
             table.insert(nd);
@@ -1073,12 +1056,16 @@ public class Data extends SearchEntity {
         return skCols;
     }
 
-    /**
-     * 按数据库显示长度切割字符串
-     * @see io.github.ihongs.db.Table.checkMainValues
-     * @return
-     */
-    private static String substr(String str, int len) {
+    private String substr(String str, String col) {
+        Map cnf = (Map) getFields( ).get(col);
+        int len = Synt.defxult((Integer) cnf.get("size"), 255);
+        return substr(str, len);
+    }
+    
+    private String substr(String str, int len) {
+        if (null == str) {
+            return  str;
+        }
         int l  = 0, i , c;
         for(i  = 0; i < str.length(); i ++)
         {

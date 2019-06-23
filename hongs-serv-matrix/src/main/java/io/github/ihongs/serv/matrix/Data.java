@@ -358,61 +358,77 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public int save(String id, Map rd) throws HongsException {
-        /**
-         * 为避免重复获取浪费时间
-         * 此块代码照搬自方法 set
-         * 目的在于可复用变量 md
-         */
-        if (id == null || id.length() == 0) {
-            throw new NullPointerException("Id must be set in set");
+        // 合并新旧数据
+        int i  = 0;
+//      int t  = 2;
+        Map dd = get(id);
+//      if (dd.isEmpty()) t = 1;
+        Map<String,Map> fs = getFields();
+        for(String fn : fs . keySet( ) ) {
+            if (  "id". equals(fn)) {
+                dd.put(fn , id);
+            } else
+            if (rd.containsKey(fn)) {
+                Object fr = rd.get(fn);
+                Object fo = dd.get(fn);
+                dd.put(fn , fr);
+                // 跳过环境字段, 比如修改时间
+                if (! canSkip(fn,fr,fo)) {
+                    i ++;
+                }
+            }
         }
-        Document doc = getDoc(id);
-        if (doc != null) {
-            Map md = padDat(doc );
-                md . putAll( rd );
-                rd = md;
-        }
-        rd.put(Cnst.ID_KEY , id );
-        setDoc( id , padDoc (rd));
-
-        Table    table = getTable( );
-        if (table == null) return 1 ;
-        String   fid   = getFormId();
-        String   uid   = getUserId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
-
-        /**
-         * 此类里的提交方法并不会将对应的操作记录数据进行提交,
-         * 好在关系数据库事务内可查到前面插入但还未提交的记录.
-         */
-        Map ud = table.fetchCase()
-            .filter( where,param )
-            .select( Cnst.ID_KEY )
-            .getOne( );
-        if (ud == null || ud.isEmpty()) {
-            ud  = new HashMap (  );
-            ud.put(     "id", id );
-            ud.put("form_id", fid);
-            ud.put("user_id", uid);
-            ud.put("state",   1  );
-            ud.put("etime",   0  );
-            ud.put("ctime", System.currentTimeMillis() / 1000 );
+        // 无更新不存储
+        if (i == 0) {
+          return 0;
         }
 
-        ud.put("data", io.github.ihongs.util.Data.toString(rd, true));
-        if (rd.containsKey("name") ) {
-            ud.put( "name", substr((String) rd.get("name"), "name" ));
-        }
-        if (rd.containsKey("memo") ) {
-            ud.put( "memo", substr((String) rd.get("memo"), "memo" ));
+        // 构建文档对象, 会重组 name,word 的取值, 用于下方记录
+        dd.put(Cnst.ID_KEY , id);
+        Document dc = padDoc(dd);
+
+        // 保存到数据库
+        Table table = getTable();
+        if (table != null) {
+            String   fid   = getFormId();
+            String   uid   = getUserId();
+            Object[] param = new String[] {id, fid, "0"};
+            String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+
+            /**
+             * 此类里的提交方法并不会将对应的操作记录数据进行提交,
+             * 好在关系数据库事务内可查到前面插入但还未提交的记录.
+             */
+            Map ud = table.fetchCase()
+                .filter( where,param )
+                .select( Cnst.ID_KEY )
+                .getOne( );
+            if (ud == null || ud.isEmpty()) {
+                ud  = new HashMap (  );
+                ud.put(     "id", id );
+                ud.put("form_id", fid);
+                ud.put("user_id", uid);
+                ud.put("state",   1  );
+                ud.put("etime",   0  );
+                ud.put("ctime", System.currentTimeMillis() / 1000 );
+            }
+
+            ud.put("data", io.github.ihongs.util.Data.toString(dd, true));
+            ud.put("name", cutName(dd, "name"));
+            if (rd.containsKey("memo" ) == true ) {
+            ud.put("memo", cutName(dd, "memo"));
+            }
+
+            if (ud.containsKey("state") == false) {
+                table.update(ud, where, param);
+            } else {
+                table.insert(ud);
+            }
         }
 
-        if (ud.containsKey("etime")) {
-            return table.insert(ud);
-        } else {
-            return table.update(ud, where, param);
-        }
+        // 保存到索引库
+        setDoc(id, dc);
+        return 1;
     }
 
     /**
@@ -424,18 +440,44 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public int save(long ctime, String id, Map rd) throws HongsException {
-        Table    table = getTable( );
-        String   fid   = getFormId();
-        String   uid   = getUserId();
-        Object[] param = new String[] {id, fid, "0"};
-        String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+        // 合并新旧数据
+        int i  = 0;
+        int t  = 2;
+        Map dd = get(id);
+        if (dd.isEmpty()) t = 1;
+        Map<String,Map> fs = getFields();
+        for(String fn : fs . keySet( ) ) {
+            if (  "id". equals(fn)) {
+                dd.put(fn , id);
+            } else
+            if (rd.containsKey(fn)) {
+                Object fr = rd.get(fn);
+                Object fo = dd.get(fn);
+                dd.put(fn , fr);
+                // 跳过环境字段, 比如修改时间
+                if (! canSkip(fn,fr,fo)) {
+                    i ++;
+                }
+            }
+        }
+        // 无更新不存储
+        if (i == 0) {
+          return 0;
+        }
 
-        // 获取旧的数据
-        int st ;
-        Map dd = get( id );
-        if (! dd.isEmpty() ) {
-            st = 2; // 更新
-            if (table != null) {
+        // 构建文档对象, 会重组 name,word 的取值, 用于下方记录
+        dd.put(Cnst.ID_KEY , id);
+        Document dc = padDoc(dd);
+
+        // 保存到数据库
+        Table table = getTable();
+        if (table != null) {
+            String   fid   = getFormId();
+            String   uid   = getUserId();
+            Object[] param = new String[] {id, fid, "0"};
+            String   where = "`id`=? AND `form_id`=? AND `etime`=?";
+
+            if (t == 2) {
                 Map od = table.fetchCase( )
                     .filter( where, param )
                     .select("ctime, state")
@@ -448,10 +490,7 @@ public class Data extends SearchEntity {
                         throw new HongsException(0x1100, "等会儿, 不要急");
                     }
                 }
-            }
-        } else {
-            st = 1; // 创建
-            if (table != null) {
+            } else {
                 Map od = table.fetchCase( )
                     .filter( where, param )
                     .select("ctime, state, data")
@@ -463,62 +502,40 @@ public class Data extends SearchEntity {
                     if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
                         throw new HongsException(0x1100, "等会儿, 不要急");
                     }
-                    dd = (Map) io.github.ihongs.util.Data.toObject(od.get("data").toString());
-                    st = 2; // 有快照也算更新
+                    // 有快照也算更新
+                    t = 2;
+                    Map<Object, Object> bd = (Map) io.github.ihongs.util.Data.toObject(od.get("data").toString());
+                    for (Map.Entry et : bd.entrySet()) {
+                        Object k = et.getKey( );
+                        if (dd.containsKey(k)
+                        || !fs.containsKey(k) ) {
+                            continue;
+                        }
+                        dd.put(k,et.getValue());
+                    }
                 }
             }
-        }
 
-        // 合并新旧数据
-        int i  = 0;
-        Map<String,Map> fields = getFields();
-        for(String fn : fields . keySet( ) ) {
-            if (  "id". equals(fn)) {
-                dd.put(fn , id);
-            } else
-            if (rd.containsKey(fn)) {
-                Object fr = rd.get(fn);
-                Object fo = dd.get(fn);
-                dd.put(fn , fr);
-                // 跳过环境字段, 比如修改时间
-                if (! canSkip (fn, fr, fo) ) {
-                    i ++;
-                }
-            }
-        }
-        // 无更新不存储
-        if (i == 0) {
-          return 0;
-        }
-
-        //** 保存到数据库 **/
-
-        if (table != null) {
             Map ud = new HashMap();
             ud.put("etime", ctime);
 
             Map nd = new HashMap();
             nd.put("ctime", ctime);
             nd.put("etime",   0  );
-            nd.put("state",   st );
+            nd.put("state",   t  );
             nd.put(/***/"id", id );
             nd.put("form_id", fid);
             nd.put("user_id", uid);
-            ud.put("data", io.github.ihongs.util.Data.toString(rd, true));
-            ud.put("name", substr((String) dd.get("name"), "name"));
-            ud.put("memo", substr((String) rd.get("memo"), "memo"));
+            nd.put("data", io.github.ihongs.util.Data.toString(dd, true));
+            nd.put("name", cutName(dd, "name"));
+            nd.put("memo", cutName(rd, "memo"));
 
             table.update(ud, where, param);
             table.insert(nd);
         }
 
-        //** 保存到索引库 **/
-
-        Document doc = new Document();
-        dd.put(Cnst.ID_KEY, id);
-        padDoc(doc, dd , null );
-        setDoc(id, doc);
-
+        // 保存到索引库
+        setDoc(id, dc);
         return 1;
     }
 
@@ -531,53 +548,56 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public int drop(long ctime, String id, Map rd) throws HongsException {
-        Table    table = getTable( );
+        Table table = getTable();
+        if (table == null) {
+            delDoc(id); return 1;
+        }
+
         String   fid   = getFormId();
         String   uid   = getUserId();
         Object[] param = new String[] {id, fid, "0"};
         String   where = "`id`=? AND `form_id`=? AND `etime`=?";
 
-        /** 记录到数据库 **/
+        //** 检查旧的状态 **/
 
-        if (table != null) {
-            Map dd = table.fetchCase()
-                .filter( where, param)
-                .select("ctime, state, name, data")
-                .getOne( );
-            if (dd.isEmpty()) {
-                 delDoc( id ); return 0; // 规避关系库无而搜索库有
-//              throw new HongsException(0x1104, "找不到原始记录");
-            }
-            if ( Synt.declare ( dd.get("state"), 0  )  ==   0    ) {
-                 delDoc( id ); return 0; // 删除是幂等的可重复调用
-//              throw new HongsException(0x1100, "禁操作删除记录");
-            }
-            if ( Synt.declare ( dd.get("ctime"), 0L )  >=  ctime ) {
-                throw new HongsException(0x1100, "等会儿, 不要急");
-            }
-
-            Map ud = new HashMap();
-            ud.put("etime", ctime);
-
-            Map nd = new HashMap();
-            nd.put("ctime", ctime);
-            nd.put("etime",   0  );
-            nd.put("state",   0  );
-            nd.put(/***/"id", id );
-            nd.put("form_id", fid);
-            nd.put("user_id", uid);
-            nd.put("data", dd.get("data"));
-            nd.put("name", dd.get("name"));
-            nd.put("memo", substr((String) rd.get("memo"), "memo"));
-
-            table.update(ud, where, param);
-            table.insert(nd);
+        Map od = table.fetchCase()
+            .filter( where, param)
+            .select("ctime, state, name, data")
+            .getOne( );
+        if (od.isEmpty()) {
+             delDoc( id ); return 0; // 规避关系库无而搜索库有
+//          throw new HongsException(0x1104, "找不到原始记录");
+        }
+        if ( Synt.declare ( od.get("state"), 0  )  ==   0    ) {
+             delDoc( id ); return 0; // 删除是幂等的可重复调用
+//          throw new HongsException(0x1100, "禁操作删除记录");
+        }
+        if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
+            throw new HongsException(0x1100, "等会儿, 不要急");
         }
 
-        //** 从索引库删除 **/
+        //** 保存到数据库 **/
+
+        Map ud = new HashMap();
+        ud.put("etime", ctime);
+
+        Map nd = new HashMap();
+        nd.put("ctime", ctime);
+        nd.put("etime",   0  );
+        nd.put("state",   0  );
+        nd.put(/***/"id", id );
+        nd.put("form_id", fid);
+        nd.put("user_id", uid);
+        nd.put("data", od.get("data"));
+        nd.put("name", od.get("name"));
+        nd.put("memo", cutName(rd, "memo"));
+
+        table.update(ud, where, param);
+        table.insert(nd);
+
+        //** 保存到索引库 **/
 
         delDoc(id);
-
         return 1;
     }
 
@@ -590,7 +610,11 @@ public class Data extends SearchEntity {
      * @throws HongsException
      */
     public int redo(long ctime, String id, Map rd) throws HongsException {
-        Table    table = getTable( );
+        Table table = getTable();
+        if (table == null) {
+            throw new HongsException(0x1100, "资源不支持恢复");
+        }
+
         String   fid   = getFormId();
         String   uid   = getUserId();
         long     rtime = Synt.declare (rd.get("rtime"), 0L);
@@ -601,25 +625,22 @@ public class Data extends SearchEntity {
 
         //** 获取旧的数据 **/
 
-        if (table == null) {
-            throw new HongsException(0x1100, "资源不支持恢复");
-        }
-        Map ld = table.fetchCase()
+        Map od = table.fetchCase()
             .filter( where, param)
             .select("ctime")
             .getOne( );
-        if ( Synt.declare ( ld.get("ctime"), 0L )  >=  ctime ) {
+        if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
             throw new HongsException(0x1100, "等会儿, 不要急");
         }
-        Map dd = table.fetchCase()
+        Map nd = table.fetchCase()
             .filter( wher2, para2)
             .getOne( );
-        if (dd.isEmpty()) {
+        if (nd.isEmpty()) {
             throw new HongsException(0x1100, "找不到恢复起源");
         }
         // 删除时保留的是删除前的快照, 即使为最终记录仍然可以恢复
-        if ( Synt.declare ( dd.get("state"), 0  )  !=   0    ) {
-        if ( Synt.declare ( dd.get("etime"), 0L )  ==   0L   ) {
+        if ( Synt.declare ( nd.get("state"), 0  )  !=   0    ) {
+        if ( Synt.declare ( nd.get("etime"), 0L )  ==   0L   ) {
             throw new HongsException(0x1100, "这已是最终记录");
         }}
 
@@ -628,26 +649,22 @@ public class Data extends SearchEntity {
         Map ud = new HashMap();
         ud.put("etime", ctime);
 
-        dd.put("ctime", ctime);
-        dd.put("rtime", rtime);
-        dd.put("etime",   0  );
-        dd.put("state",   3  );
-        dd.put("form_id", fid);
-        dd.put("user_id", uid);
-        dd.put("memo" , rd.get("memo"));
+        nd.put("ctime", ctime);
+        nd.put("rtime", rtime);
+        nd.put("etime",   0  );
+        nd.put("state",   3  );
+        nd.put("form_id", fid);
+        nd.put("user_id", uid);
+        nd.put("memo", cutName(rd, "memo"));
 
-        table.update(ud , where, param);
-        table.insert(dd);
+        table.update(ud, where, param);
+        table.insert(nd);
 
         //** 保存到索引库 **/
 
-        dd = (Map) io.github.ihongs.util.Data.toObject(dd.get("data").toString());
-
-        Document doc = new Document(  );
+        Map dd = (Map) io.github.ihongs.util.Data.toObject((String) nd.get("data"));
         dd.put(Cnst.ID_KEY, id);
-        padDoc(doc, dd , null );
-        setDoc(id, doc);
-
+        setDoc(id, padDoc(dd) );
         return 1;
     }
 
@@ -744,12 +761,14 @@ public class Data extends SearchEntity {
             if (k != null) switch (k) {
             case "name":
                 if (Synt.declare(m.get("readonly"), false)) {
-                    v = getName(map);
+                    v  = getName(map);
+                    map.put(k, v);
                 }
                 break;
             case "word":
                 if (Synt.declare(m.get("readonly"), false)) {
-                    v = getWord(map);
+                    v  = getWord(map);
+                    map.put(k, v);
                 }
                 break;
             }
@@ -936,6 +955,41 @@ public class Data extends SearchEntity {
     }
 
     /**
+     * 切割名称串, 防止数据库报错
+     * @param dd
+     * @param fn
+     * @return
+     * @throws HongsException
+     */
+    protected String cutName(Map dd, String fn)
+    throws HongsException {
+        String s = Synt.asString(dd.get( fn ) );
+        if (s == null) return null;
+        Map m  = (Map) getTable(  ).getFields(  ).get( fn );
+        if (m == null) return null;
+        int k  = Synt.defxult((Integer) m.get("size"), 255);
+        if (k >= s.length()) return s;
+
+        // 宽字符按长度为 2 进行切割
+        int l  = 0, i , c;
+        for(i  = 0; i < s.length( ); i ++ )
+        {
+            c  = Character.codePointAt(s,i);
+            if (c >= 0 && c <= 255) {
+                l += 1;
+            } else {
+                l += 2;
+            }
+            if (l >  k) {
+                s = s.substring( 0, i - 1 );
+                break;
+            }
+        }
+
+        return  s ;
+    }
+
+    /**
      * 获取名称串
      * @param dd
      * @return
@@ -1054,33 +1108,6 @@ public class Data extends SearchEntity {
         skCols.add("muser");
         skCols.add("memo" );
         return skCols;
-    }
-
-    private String substr(String str, String col) {
-        Map cnf = (Map) getFields( ).get(col);
-        int len = Synt.defxult((Integer) cnf.get("size"), 255);
-        return substr(str, len);
-    }
-    
-    private String substr(String str, int len) {
-        if (null == str) {
-            return  str;
-        }
-        int l  = 0, i , c;
-        for(i  = 0; i < str.length(); i ++)
-        {
-          c = Character.codePointAt(str, i);
-          if (c >= 0 && c <= 255) {
-            l += 1;
-          } else {
-            l += 2;
-          }
-          if (l > len) {
-            str = str.substring( 0, i - 1 );
-            break ;
-          }
-        }
-        return str;
     }
 
 }

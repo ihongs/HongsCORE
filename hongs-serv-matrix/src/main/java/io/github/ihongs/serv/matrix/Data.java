@@ -682,9 +682,9 @@ public class Data extends SearchEntity {
             return 0;
         }
 
-        String fid = getFormId();
         dcUrls.add(Tool.inject(url, Synt.mapOf(
-            "form_id", fid,
+            "user_id", getUserId(),
+            "form_id", getFormId(),
             "id"     , id ,
             "type"   , on ,
             "time"   , xtime
@@ -944,6 +944,12 @@ public class Data extends SearchEntity {
         if (fr == null || fo == null) {
             return false;
         }
+        // 数字类则转为字符串进行对比
+        if (fr instanceof Number
+        ||  fo instanceof Number ) {
+            fr = Synt.asString(fr);
+            fo = Synt.asString(fo);
+        } else
         // 复杂对象用 JSON 串进行对比
         if (fr instanceof Map
         ||  fr instanceof Collection
@@ -963,11 +969,11 @@ public class Data extends SearchEntity {
      */
     protected String cutName(Map dd, String fn)
     throws HongsException {
-        String s = Synt.asString(dd.get( fn ) );
+        String s = Synt.asString(dd.get(fn));
         if (s == null) return null;
-        Map m  = (Map) getTable(  ).getFields(  ).get( fn );
+        Map m  = (Map) getTable().getFields().get(fn);
         if (m == null) return null;
-        int k  = Synt.defxult((Integer) m.get("size"), 255);
+        int k  = Synt.defxult((Integer) m.get("size"), 255); // 默认字段宽 255
         if (k >= s.length()) return s;
 
         // 宽字符按长度为 2 进行切割
@@ -981,8 +987,8 @@ public class Data extends SearchEntity {
                 l += 2;
             }
             if (l >  k) {
-                s = s.substring( 0, i - 1 );
-                break;
+                s  = s.substring(0 , i - 1) + "…";
+                break ;
             }
         }
 
@@ -1010,8 +1016,8 @@ public class Data extends SearchEntity {
         String nm = nn.toString().trim( );
 
         if (! ns.contains("name")
-        &&    99 < nm.length( ) ) {
-            return nm.substring(0, 99) + "...";
+        &&  255 <  nm.length( ) ) {
+            return nm.substring( 0, 254 ) + "…";
         } else {
             return nm;
         }

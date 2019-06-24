@@ -265,21 +265,47 @@ function hsCopyListData(box) {
 }
 
 /**
- * 清理网页标签以供表格复制中用
- * @param {String|Number|Element} html
- * @return {String}
+ * 清理内容中的标签
+ * 以供表格复制中用
  */
-function hsTidyHtmlTags(html) {
-    if (!html) return "";
-    if (typeof html === "number") {
-        return html + "";
+function hsTidyHtmlTags(htm) {
+    if (!htm) return "";
+    if (typeof htm === "number") {
+        return htm + "";
     }
-    if (typeof html === "object") {
-        html = $(html).html();
+    if (typeof htm === "object") {
+        htm = $(htm).html();
     }
-    html = html.replace(/\s+/gm, " "); // 合并空字符
-    html = html.replace(/<\/?(p|br|hr|ul|ol|li|div|pre)(\/|\s.*?)?>/igm, "\r\n" ); // 块转为换行
-    return  $.trim(html);
+    htm = htm.replace(/\s+/gm, " "); // 合并空字符
+    htm = htm.replace(/<\/?(p|br|hr|ul|ol|li|div|pre)(\/|\s.*?)?>/igm, "\r\n" ); // 块转为换行
+    return    $.trim( htm );
+}
+
+/**
+ * 表单带备注的保存
+ */
+function hsSaveWithMemo(msg) {
+    return function( ) {
+    var args = arguments;
+    var reqs = args[ 0 ];
+    if (reqs.funcName != "save") {
+        HsForm.prototype.ajax.apply(this, args);
+        return;
+    }
+    var that = this;
+    var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="请输入操作备注(选填)"/>');
+    var func = function() {
+        reqs.data.append( "memo", memo.val( ) );
+        HsForm.prototype.ajax.apply(that, args);
+    } ;
+    if (msg) {
+        this.warn(msg, "warning", func, null)
+            .find(".alert-body").append(memo)
+            .trigger("shown.bs.modal");
+    } else {
+        func();
+    }
+    } ;
 }
 
 /**
@@ -305,12 +331,12 @@ function hsSendWithMemo(btn, msg, url, data) {
         }
     });
     } ;
-    if (!msg) {
-        func( );
-    } else {
+    if (msg) {
         this.warn(msg, "warning", func, null)
             .find(".alert-body").append(memo)
             .trigger("shown.bs.modal");
+    } else {
+        func();
     }
 }
 

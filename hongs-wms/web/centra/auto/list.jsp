@@ -340,7 +340,7 @@
             [ '<%=_module%>/<%=_entity%>/swap.html',
               '.manual', '@' ]
         ],
-        send        : hsSendWithMemo,
+        send: hsSendWithMemo,
         <%if ("select".equals(_action)) {%>
         _fill__check: hsListFillSele,
         <%} /*End If */%>

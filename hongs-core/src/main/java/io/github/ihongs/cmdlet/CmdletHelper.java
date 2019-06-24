@@ -364,7 +364,7 @@ public class CmdletHelper
     if (rate >  100 ) rate = 100;
 
     sb.append("[");
-    for (int i = 0; i < 100; i += 5)
+    for(int i = 0 ; i < 100; i += 5)
     {
       if (rate < i + 5)
       {
@@ -380,15 +380,19 @@ public class CmdletHelper
     ft.format(" %6.2f%% ", rate);
     sb.append(/* extra */  text);
 
-    // 清除末尾多余的字符, 并将光标移回行首
-    // 每行按最少80个字符来计算
-    for (int i = sb.length(); i < 79; i += 1)
+    // 清除末尾多余字符
+    // 并将光标移回行首
+    // 无法获取宽度则为 80 (Windows 默认命令行窗口)
+    int k = Synt.defxult(Synt.asInt(System.getenv("COLUMNS")), 80) - 1;
+    int l =     sb.   length ( );
+    if (l > k ) sb.setLength (k);
+    for(int i = l ; i < k; i ++)
     {
       sb.append(" ");
     }
     sb.append( "\r");
 
-    System.err.print(sb.toString( ));
+    System.err.print(sb);
   }
 
   /**

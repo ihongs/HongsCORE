@@ -5,6 +5,8 @@ CORE_PATH=` dirname $CURR_PATH`
 JAVA_PATH="$JAVA_HOME/bin/java"
 KLASSPATH="$CLASSPATH:$CORE_PATH/lib/*:$CORE_PATH/classes:$CORE_PATH/lib/classes"
 
+export COLUMNS=$COLUMNS
+
 # find java
 if [ '' = "$JAVA_HOME" ]
 then
@@ -12,7 +14,7 @@ then
 fi
 if [ '' = "$JAVA_PATH" ]
 then
-    echo  "Java can't be found"
+    echo  "Could not find java"
     exit  1
 fi
 

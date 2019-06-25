@@ -140,39 +140,19 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/update');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/delete');
 
 --
--- 用户登录关联
---
-
-DROP TABLE IF EXISTS `a_master_user_open`;
-CREATE TABLE `a_master_user_open` (
-  `user_id` CHAR(16) NOT NULL,
-  `appid` VARCHAR(100) NOT NULL,
-  `opnid` VARCHAR(100) NOT NULL,
-  `ctime` INTEGER(10) DEFAULT NULL,
-  PRIMARY KEY (`user_id`,`appid`),
-  FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
-);
-
-CREATE INDEX `IK_a_master_user_open_user` ON `a_master_user_open` (`user_id`);
-CREATE INDEX `IK_a_master_user_open_appid` ON `a_master_user_open` (`appid`);
-CREATE INDEX `IK_a_master_user_open_opnid` ON `a_master_user_open` (`opnid`);
-CREATE UNIQUE INDEX `UK_a_master_user_open_id` ON `a_master_user_open` (`appid`, `opnid`);
-
---
--- 用户登录凭证
+-- 用户关联登录
 --
 
 DROP TABLE IF EXISTS `a_master_user_sign`;
 CREATE TABLE `a_master_user_sign` (
   `user_id` CHAR(16) NOT NULL,
-  `appid` VARCHAR(100) NOT NULL,
-  `sesid` VARCHAR(100) NOT NULL,
-  `ctime` INTEGER(10) DEFAULT NULL,
-  PRIMARY KEY (`user_id`,`appid`),
+  `unit` VARCHAR(32) NOT NULL,
+  `code` VARCHAR(64) NOT NULL,
+  PRIMARY KEY (`user_id`,`unit`),
   FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE
 );
 
 CREATE INDEX `IK_a_master_user_sign_user` ON `a_master_user_sign` (`user_id`);
-CREATE INDEX `IK_a_master_user_sign_appid` ON `a_master_user_sign` (`appid`);
-CREATE INDEX `IK_a_master_user_sign_sesid` ON `a_master_user_sign` (`sesid`);
-CREATE UNIQUE INDEX `UK_a_master_user_sign_id` ON `a_master_user_sign` (`appid`, `sesid`);
+CREATE INDEX `IK_a_master_user_sign_unit` ON `a_master_user_sign` (`unit`);
+CREATE INDEX `IK_a_master_user_sign_code` ON `a_master_user_sign` (`code`);
+CREATE UNIQUE INDEX `UK_a_master_user_sign_id` ON `a_master_user_sign` (`unit`, `code`);

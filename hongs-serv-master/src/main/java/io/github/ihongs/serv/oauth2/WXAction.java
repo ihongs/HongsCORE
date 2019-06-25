@@ -90,7 +90,7 @@ public class WXAction {
             helper.error500("Not support this mode");
         }
 
-        Map info = getUserInfo(code, appId, appSk);
+        Map info = getWxauInfo(code, appId, appSk, helper.getRequestData());
         String  opnId = (String) info.get("opnid");
         String  opuId = (String) info.get("opuid");
         String   name = (String) info.get( "name");

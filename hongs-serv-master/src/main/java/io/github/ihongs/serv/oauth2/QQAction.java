@@ -128,7 +128,6 @@ public class QQAction {
         opuId = (String) rsp.get("unionid");
 
         req = new HashMap();
-        req.put("appid", "qq" );
         req.put("opnid", opnId);
         req.put("opuid", opuId);
         req.put("name" , rsp.get("nickname"));

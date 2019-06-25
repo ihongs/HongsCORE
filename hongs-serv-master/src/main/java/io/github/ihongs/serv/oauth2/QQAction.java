@@ -41,7 +41,7 @@ public class QQAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        Map back = AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "qq", Synt.defoult(opuId, opnId), name, head);
 
         AuthKit.redirect(helper, back);
     }
@@ -69,7 +69,7 @@ public class QQAction {
         String   name = (String) info.get( "name");
         String   head = (String) info.get( "head");
 
-        Map back = AuthKit.openSign(helper, "centre", "qq", Synt.defoult(opuId, opnId), name, head, System.currentTimeMillis());
+        Map back = AuthKit.openSign(helper, "qq", Synt.defoult(opuId, opnId), name, head);
 
         AuthKit.redirect(helper, back);
     }

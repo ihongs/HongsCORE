@@ -11,7 +11,6 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.master.Dept;
 import io.github.ihongs.serv.master.UserAction;
-import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.util.verify.Wrongs;
 import java.security.MessageDigest;
@@ -34,6 +33,10 @@ import javax.servlet.http.HttpSession;
 public class AuthKit {
 
     private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
+
+    private static final String AUTH_SID_KEY = "ssid";
+    private static final String AUTH_UNI_KEY = "unit";
+    private static final String AUTH_UUT_KEY = "uut" ; // 用户更新时间
 
     /**
      * 登录成功后跳转
@@ -100,18 +103,14 @@ public class AuthKit {
     /**
      * 自运营登录
      * @param ah
-     * @param place
-     * @param appid
-     * @param usrid
+     * @param unit
+     * @param uuid
      * @param uname 名称
      * @param uhead 头像
-     * @param utime 用户信息更新时间
      * @return
      * @throws HongsException
      */
-    public static Map userSign(ActionHelper ah,
-            String place, String appid, String usrid,
-            String uname, String uhead,  long  utime)
+    public static Map userSign(ActionHelper ah, String unit, String uuid, String uname, String uhead)
     throws HongsException {
         long     stime = System.currentTimeMillis() / 1000 ;
         HttpSession sd = ah.getRequest( ).getSession(false);
@@ -132,34 +131,24 @@ public class AuthKit {
         } else {
             sd = ah.getRequest().getSession(true);
         }
-        String sesid = sd.getId();
+        String ssid = sd.getId();
 
         // 设置会话
-        sd.setAttribute(Cnst.UID_SES, usrid);
+        sd.setAttribute(Cnst.UID_SES, uuid );
         sd.setAttribute(Cnst.UST_SES, stime);
+        sd.setAttribute(AUTH_UUT_KEY, stime);
         sd.setAttribute("uname", uname);
         sd.setAttribute("uhead", uhead);
-        sd.setAttribute("utime", utime);
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(Cnst.UID_SES, usrid);
-        rd.put("sesid", sesid);
-        rd.put("appid", appid);
+        rd.put(AUTH_UNI_KEY, unit );
+        rd.put(Cnst.UID_SES, uuid );
+        rd.put(AUTH_SID_KEY, ssid );
+        rd.put(Cnst.UST_SES, stime);
+        rd.put(AUTH_UUT_KEY, stime);
         rd.put("uname", uname);
         rd.put("uhead", uhead);
-        rd.put("utime", utime);
-        rd.put("stime", stime);
-
-        // 记录登录
-        Map ud = new HashMap();
-        ud.put( "user_id"  , usrid);
-        ud.put("sesid", sesid);
-        ud.put("appid", appid);
-        ud.put("ctime", stime);
-        Table  tb = DB.getInstance("master").getTable("user_sign");
-        tb.remove("(`user_id` = ? AND `appid` = ?) OR `sesid` = ?", usrid, appid, sesid);
-        tb.insert(ud);
 
         return rd;
     }
@@ -167,36 +156,31 @@ public class AuthKit {
     /**
      * 第三方登录
      * @param ah
-     * @param place
-     * @param appid
-     * @param opnid
+     * @param unit
+     * @param code
      * @param uname 名称
      * @param uhead 头像
-     * @param utime 用户信息更新时间
      * @return
      * @throws HongsException
      */
-    public static Map openSign(ActionHelper ah,
-            String place, String appid, String opnid,
-            String uname, String uhead,  long  utime)
+    public static Map openSign(ActionHelper ah, String unit, String code, String uname, String uhead)
     throws HongsException {
         DB    db = DB.getInstance("master");
-        Table tb = db.getTable("user_open");
+        Table tb = db.getTable("user_sign");
         Table ub = db.getTable("user");
         Map   ud = tb.fetchCase()
-                     .from(tb.tableName, "o")
-                     .join(ub.tableName, "u", "`u`.`id` = `o`.`user_id`")
-                     .filter("`opnid` = ? AND `appid` = ?", opnid, appid)
-                     .select("`o`.`user_id`, `u`.`name`, `u`.`head`, `u`.`mtime`")
+                     .from(tb.tableName, "s")
+                     .join(ub.tableName, "u", "`u`.`id` = `s`.`user_id`")
+                     .filter("`s`.`unit`=? AND `s`.`code`=?", unit, code)
+                     .select("`u`.`id`, `u`.`name`, `u`.`head`")
                      .getOne(   );
 
         // 记录关联
-        String usrid;
+        String uuid;
         if (ud != null && !ud.isEmpty()) {
-            usrid = ud.get("user_id").toString();
+            uuid  = (String) ud.get( "id" );
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
-            utime = Synt.declare(ud.get("mtime"), utime); // 信息更新时间
         } else {
             // 校验及下载头像
             VerifyHelper vh = new VerifyHelper();
@@ -205,32 +189,32 @@ public class AuthKit {
             ud  =  new HashMap( );
             ud.put("name", uname);
             ud.put("head", uhead);
-            ud  =   vh.verify(ud , true , true );
-            usrid = db.getModel("user").add(ud );
+            ud  =   vh.verify(ud , true , true);
+            uuid  = db.getModel("user").add(ud);
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
 
             // 第三方登录项
             ud  =  new HashMap( );
-            ud.put("user_id",  usrid  );
-            ud.put("appid"  ,  appid  );
-            ud.put("opnid"  ,  opnid  );
-            db.getTable("user_open").insert(ud );
+            ud.put("user_id",  uuid   );
+            ud.put("unit"   ,  unit   );
+            ud.put("code"   ,  code   );
+            tb.insert( ud  );
 
             // 加入公共部门
             ud  =  new HashMap( );
-            ud.put("user_id",  usrid  );
+            ud.put("user_id",  uuid   );
             ud.put("dept_id", "CENTRE");
-            db.getTable("user_dept").insert(ud );
+            db.getTable("user_dept").insert(ud);
 
             // 赋予公共权限. 仅用部门即可(2019/02/28)
 //          ud  =  new HashMap( );
-//          ud.put("user_id",  usrid  );
+//          ud.put("user_id",  uuid   );
 //          ud.put("role"   , "centre");
-//          db.getTable("user_role").insert(ud );
+//          db.getTable("user_role").insert(ud);
         }
 
-        return userSign(ah, place, appid, usrid, uname, uhead, utime);
+        return userSign(ah, unit, uuid, uname, uhead);
     }
 
     /**

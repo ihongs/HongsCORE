@@ -82,8 +82,8 @@ public class WXAction {
     @Action("wxa/create")
     public void inWxa(ActionHelper helper) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("oauth2");
-        String  appId = cc.getProperty("oauth2.wx.wap.app.id" );
-        String  appSk = cc.getProperty("oauth2.wx.wap.app.key");
+        String  appId = cc.getProperty("oauth2.wx.wxa.app.id" );
+        String  appSk = cc.getProperty("oauth2.wx.wxa.app.key");
         String   code = helper.getParameter ("code");
 
         if (appId == null || appSk == null) {

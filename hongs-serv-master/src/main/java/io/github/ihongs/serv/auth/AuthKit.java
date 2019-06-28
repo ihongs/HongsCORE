@@ -218,31 +218,6 @@ public class AuthKit {
     }
 
     /**
-     * 退出登录
-     * @param ss
-     * @throws HongsException
-     */
-    public static void signOut(HttpSession ss) throws HongsException {
-        // 清除会话
-        ss.invalidate();
-
-        // 清除登录
-        DB.getInstance("master")
-          .getTable("user_sign")
-          .remove("`sesid` = ?", ss.getId());
-    }
-
-    /**
-     * 更新状态
-     * @param ss
-     * @throws HongsException
-     */
-    public static void signUpd(HttpSession ss) throws HongsException {
-        // 刷新时间
-        ss.setAttribute(Cnst.UST_SES, System.currentTimeMillis() / 1000);
-    }
-
-    /**
      * 快速输出登录的错误
      * @param k 字段
      * @param w 错误

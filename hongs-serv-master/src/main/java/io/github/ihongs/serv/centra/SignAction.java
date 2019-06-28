@@ -1,5 +1,6 @@
 package io.github.ihongs.serv.centra;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
@@ -128,25 +129,6 @@ public class SignAction {
     }
 
     /**
-     * 登出
-     * 此动作可以清除会话数据
-     * @param ah
-     * @throws HongsException
-     */
-    @Action("delete")
-    public void signDelete(ActionHelper ah) throws HongsException {
-        HttpSession ss = ah.getRequest().getSession(false);
-        if (null == ss) {
-            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
-            return;
-        }
-
-        AuthKit.signOut(ss);
-
-        ah.reply ( "" );
-    }
-
-    /**
      * 更新
      * 此动作可维持会话不过期
      * @param ah
@@ -160,7 +142,26 @@ public class SignAction {
             return;
         }
 
-        AuthKit.signUpd(ss);
+        ss.setAttribute(Cnst.UST_SES, System.currentTimeMillis()/1000 );
+
+        ah.reply ( "" );
+    }
+
+    /**
+     * 登出
+     * 此动作可以清除会话数据
+     * @param ah
+     * @throws HongsException
+     */
+    @Action("delete")
+    public void signDelete(ActionHelper ah) throws HongsException {
+        HttpSession ss = ah.getRequest().getSession(false);
+        if (null == ss) {
+            ah.reply(AuthKit.getWrong(null, "core.sign.phase.invalid"));
+            return;
+        }
+
+        ss.invalidate();
 
         ah.reply ( "" );
     }

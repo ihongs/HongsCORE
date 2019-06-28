@@ -4,8 +4,6 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.db.DB;
-import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Data;
 import io.github.ihongs.util.Remote;
@@ -74,33 +72,6 @@ public class WXAction {
         AuthKit.redirect(helper, back);
     }
 
-    /**
-     * 微信小程序登录回调
-     * @param helper
-     * @throws HongsException 
-     */
-    @Action("wxa/create")
-    public void inWxa(ActionHelper helper) throws HongsException {
-        CoreConfig cc = CoreConfig.getInstance("oauth2");
-        String  appId = cc.getProperty("oauth2.wx.wxa.app.id" );
-        String  appSk = cc.getProperty("oauth2.wx.wxa.app.key");
-        String   code = helper.getParameter ("code");
-
-        if (appId == null || appSk == null) {
-            helper.error500("Not support this mode");
-        }
-
-        Map info = getWxauInfo(code, appId, appSk, helper.getRequestData());
-        String  opnId = (String) info.get("opnid");
-        String  opuId = (String) info.get("opuid");
-        String   name = (String) info.get( "name");
-        String   head = (String) info.get( "head");
-
-        Map back = AuthKit.openSign(helper, "wx", Synt.defoult(opuId, opnId), name, head);
-
-        AuthKit.redirect(helper, back);
-    }
-
     public static Map getUserInfo(String code, String appId, String appSk)
     throws HongsException {
         Map    req;
@@ -148,57 +119,4 @@ public class WXAction {
         return req;
     }
 
-    public static Map getWxauInfo(String code, String appId, String appSk, Map data)
-    throws HongsException {
-        Map    rsp;
-        int    err;
-        String url;
-
-        url = "https://api.weixin.qq.com/sns/jscode2session?appid="+appId+"&secret="+appSk+"&js_code="+code+"&grant_type=authorization_code";
-        rsp = Remote.parseData(Remote.get(url));
-
-        err = Synt.declare(rsp.get("errcode"), 0);
-        if (err != 0) {
-            throw new HongsException.Common("Get session error\r\n"+Data.toString(rsp));
-        }
-
-        String opnId = (String)rsp.get( "openid");
-        String opuId = (String)rsp.get("unionid");
-
-        Map   ud;
-        DB    db;
-        Table tb;
-
-        ud  = (Map) data.get("user_info");
-        if (ud != null && ! ud.isEmpty()) {
-            return  Synt.mapOf(
-                "opnid", opnId,
-                "opuid", opuId,
-                "name" , ud.get("name"),
-                "head" , ud.get("head")
-            );
-        }
-
-        db  = DB.getInstance( "master");
-        tb  = db.getTable ("user_sign");
-        ud  = tb.fetchCase()
-                .filter("`unit` = ? AND `code` = ?", "wx", Synt.defoult(opuId, opnId))
-                .select("`user_id`")
-                .getOne(   );
-        if (ud != null && !ud.isEmpty()) {
-            tb  = db.getTable ( "user");
-            ud  = tb.fetchCase()
-                    .filter("`id` = ?" , ud.get("user_id"))
-                    .select("`name`,`head`")
-                    .getOne(   );
-            return  Synt.mapOf(
-                "opnid", opnId,
-                "opuid", opuId,
-                "name" , ud.get("name"),
-                "head" , ud.get("head")
-            );
-        }
-
-        return null;
-    }
 }

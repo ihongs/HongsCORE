@@ -5,7 +5,6 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.serv.auth.AuthKit;
@@ -44,8 +43,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      * @throws HongsException
      */
     @Action("user/create")
-    @Preset(conf="master", form="mine")
-    @Verify(conf="master", form="mine")
+    @Verify(conf="master", form="regs")
     public void userCreate(ActionHelper ah) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("master");
         if(!cc.getProperty("core.public.regs.open",true)) {

@@ -161,6 +161,12 @@
         <div class="form-group row">
             <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
+                <%if ("revert".equals(_action)) {%>
+                <div class="btn-group" style="margin-left: 1em;">
+                <button type="button" class="re-new btn btn-default" title="后一条记录(新)"><span class="glyphicon glyphicon-backward"></span></button>
+                <button type="button" class="re-old btn btn-default" title="前一条记录(旧)"><span class="glyphicon glyphicon-forward" ></span></button>
+                </div>
+                <%} /*End If */%>
             </div>
         </div>
     </form>
@@ -177,6 +183,45 @@
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView
     });
+
+    <%if ("revert".equals(_action)) {%>
+    // 前后历史记录快速切换
+    var id = H$("@id"   , loadbox);
+    var ct = H$("@ctime", loadbox);
+    context.on("click", ".re-new,.re-old", function() {
+        var data = {
+            "<%=Cnst.OB_KEY%>" : "ctime",
+            "<%=Cnst.RB_KEY%>" : "ctime",
+            "<%=Cnst.RN_KEY%>" : "1",
+            "<%=Cnst.PN_KEY%>" : "1",
+            "<%=Cnst.ID_KEY%>.": id
+        };
+        if ($(this).is( ".re-old" )) {
+            data["<%=Cnst.OB_KEY%>"] = "-"+data["<%=Cnst.OB_KEY%>"];
+            data["ctime:lt"] = ct;
+        } else {
+            data["ctime:gt"] = ct;
+        }
+        $.hsAjax({
+            url : "<%=_module%>/<%=_entity%>/revert/search.act",
+            data: data ,
+            type: "GET",
+            success: function(rst) {
+                rst = hsResponse(rst, 1);
+                if (! rst.ok) {
+                    $.hsWarn(rst.msg || "未知的错误", "danger");
+                    return;
+                }
+                if (! rst.list || ! rst.list.length) {
+                    $.hsNote(rst.msg || "没有记录了", "danger");
+                    return;
+                }
+                ct = rst.list[0].ctime;
+                loadbox.hsLoad("<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
+            }
+        });
+    });
+    <%} /*End If */%>
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制

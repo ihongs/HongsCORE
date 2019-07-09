@@ -497,11 +497,11 @@ public class AssocCase {
 
             vo = vm.remove(Cnst.LT_REL);
             if ( f0 != null && vo != null && !"".equals(vo) ) {
-                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.LT_REL));
+                caze.filter(f0+ " < ?", alone(vo, kn, Cnst.LT_REL));
             }
             vo = vm.remove(Cnst.LE_REL);
             if ( f0 != null && vo != null && !"".equals(vo) ) {
-                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.LE_REL));
+                caze.filter(f0+" <= ?", alone(vo, kn, Cnst.LE_REL));
             }
 
             vo = vm.remove(Cnst.RN_REL);

@@ -1486,24 +1486,27 @@ $.hsAjax = function(url, settings) {
     }
     url = hsFixUri(url);
 
-    // 统一自定义数据结构, 避免转换后出现偏差
-    if (settings.data  instanceof  HsSerialDic
-    ||  settings.data  instanceof  HsSerialDat) {
-        settings.data = hsSerialArr(settings.data);
-    }
-
-    // 为明确所送数据类型, 便于服务端正确解析
-    // 增加 dataKind, 取值 form,json,xml
+    // 明确发送数据的类型, 便于服务端正确解析
     if (settings.dataKind) {
+        var FormData = self.FormData || Array ;
         switch(settings.dataKind.toLowerCase()) {
+            case "part":
+                if ($.isArray( /**/ settings.data)
+                ||  $.isPlainObject(settings.data)
+                ||  settings.data instanceof jQuery
+                ||  settings.data instanceof Element ) {
+                    settings.data = hsToFormData(settings.data);
+                }
+                settings.contentType = "multipart/form-data; charset=UTF-8";
             case "form":
                 if ($.isArray( /**/ settings.data)
                 ||  $.isPlainObject(settings.data)
                 ||  settings.data instanceof jQuery
-                ||  settings.data instanceof Element) {
-                    var hsStringprm = jQuery.param  ;
-                    settings.data = hsSerialArr(settings.data);
-                    settings.data = hsStringprm(settings.data);
+                ||  settings.data instanceof Element
+                ||  settings.data instanceof FormData) {
+                    var hsSerialStr = jQuery . param ;
+                    settings.data = hsSerialArr (settings.data);
+                    settings.data = hsSerialStr (settings.data);
                 }
                 settings.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
                 break;
@@ -1511,24 +1514,34 @@ $.hsAjax = function(url, settings) {
                 if ($.isArray( /**/ settings.data)
                 ||  $.isPlainObject(settings.data)
                 ||  settings.data instanceof jQuery
-                ||  settings.data instanceof Element) {
-                    var hsStringify = JSON.stringify;
-                    settings.data = hsSerialDat(settings.data);
-                    settings.data = hsStringify(settings.data);
+                ||  settings.data instanceof Element
+                ||  settings.data instanceof FormData) {
+                    var hsSerialStr = JSON.stringify ;
+                    settings.data = hsSerialDat (settings.data);
+                    settings.data = hsSerialStr (settings.data);
                 }
                 settings.contentType = "application/json; charset=UTF-8";
                 break;
             case "xml" :
                 if (settings.data instanceof jQuery
-                ||  settings.data instanceof Element) {
+                ||  settings.data instanceof Element ) {
                     settings.data = '<?xml version="1.0" encoding="UTF-8"?>'
-                                  + $( settings.data).prop( 'outerHTML');
+                                  + $( settings.data ).prop('outerHTML');
                 }
                 settings.contentType = "application/xml; charset=UTF-8" ;
+                break;
+            case "text":
+                settings.contentType = "text/plain; charset=UTF-8" ;
                 break;
             default:
                 throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);
         }
+    } else
+    // 统一自定义数据结构, 避免转换后出现偏差
+    if (settings.data
+    && (settings.data instanceof HsSerialDic
+    ||  settings.data instanceof HsSerialDat) ) {
+        settings.data = hsSerialArr(settings.data);
     }
 
     return  $.ajax (url, settings);

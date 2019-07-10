@@ -287,16 +287,12 @@ function hsTidyHtmlTags(htm) {
 function hsSaveWithMemo(msg) {
     return function( ) {
     var args = arguments;
-    var reqs = args[ 0 ];
-    if (reqs.funcName != "save") {
-        HsForm.prototype.ajax.apply(this, args);
-        return;
-    }
+    var data = args[ 1 ];
     var that = this;
     var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="请输入操作备注(选填)"/>');
     var func = function() {
-        reqs.data.append( "memo", memo.val( ) );
-        HsForm.prototype.ajax.apply(that, args);
+        data.append("memo",memo.val());
+      HsForm.prototype.save.apply(that, args);
     } ;
     if (msg) {
         this.warn(msg, "warning", func, null)

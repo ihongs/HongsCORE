@@ -303,6 +303,18 @@ HsForm.prototype = {
             var type = data.attr("method" ) || "POST";
             var enct = data.attr("enctype") || "None";
 
+            if (/^.*\/json($|;| )/i.test( enct ) ) {
+                evt.preventDefault();
+
+                var dat = hsAsFormData( data [0] );
+                var ext = jQuery.Event("willSave");
+                data.trigger(ext, [ dat , that ] );
+                if (ext.isDefaultPrevented()) {
+                    return;
+                }
+
+                that.save(url, dat, type, "json" );
+            } else
             if (! /^multipart\/.*/i.test( enct ) ) {
                 evt.preventDefault();
 
@@ -313,21 +325,7 @@ HsForm.prototype = {
                     return;
                 }
 
-                that.ajax({
-                    "url"         : url ,
-                    "data"        : dat ,
-                    "type"        : type,
-                    "dataType"    : "json",
-                    "funcName"    : "save",
-//                  "contentType" : false,
-//                  "processData" : false,
-                    "global"      : false,
-                    "async"       : false,
-                    "cache"       : false,
-                    "context"     : that,
-                    "complete"    : that.saveBack,
-                    "error"       : function() { return false; }
-                });
+                that.save(url, dat, type, "form" );
             } else
             if (window.FormData ) {
                 evt.preventDefault();
@@ -339,21 +337,7 @@ HsForm.prototype = {
                     return;
                 }
 
-                that.ajax({
-                    "url"         : url ,
-                    "data"        : dat ,
-                    "type"        : type,
-                    "dataType"    : "json",
-                    "funcName"    : "save",
-                    "contentType" : false,
-                    "processData" : false,
-                    "global"      : false,
-                    "async"       : false,
-                    "cache"       : false,
-                    "context"     : that,
-                    "complete"    : that.saveBack,
-                    "error"       : function() { return false; }
-                });
+                that.save(url, dat, type, "part" );
             } else
             {
                 var ext = jQuery.Event("willSave");
@@ -411,6 +395,30 @@ HsForm.prototype = {
                 this.warn(hsGetLang('error.unkwn'));
             }
         }
+    },
+    save : function(url, data, type, kind) {
+        if (!type) type = "POST";
+//      if (!data) data =  {  } ;
+        data = {
+            "url"       : url ,
+            "data"      : data,
+            "type"      : type,
+            "dataKind"  : kind,
+            "dataType"  : "json",
+            "funcName"  : "save",
+            "global"    : false,
+            "async"     : false,
+            "cache"     : false,
+            "context"   : this,
+            "complete"  : this.saveBack,
+            "error"     : function() { return false; }
+        };
+        // multipart/form-data 采用 FormData 无需 ajax 特别处理
+        if (kind === "part") {
+            data.contentType = false;
+            data.processData = false;
+        }
+        this.ajax(data);
     },
 
     ajax : function() {

@@ -105,6 +105,7 @@ public class DataAction extends SearchAction {
                 if (ab.contains("_link")) md += SelectHelper.LINK;
                 if (ab.contains("_fork")) md += SelectHelper.FORK;
                 if (ab.contains(".form")) md += SelectHelper.FORM;
+                if (ab.contains(".enum")) md += SelectHelper.ENUM;
                 if (md != 0) {
                     new SelectHelper().addItemsByForm(mod, ent).select(sd, md);
                 }

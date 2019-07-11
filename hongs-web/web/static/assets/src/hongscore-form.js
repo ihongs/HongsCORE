@@ -397,9 +397,7 @@ HsForm.prototype = {
         }
     },
     save : function(url, data, type, kind) {
-        if (!type) type = "POST";
-//      if (!data) data =  {  } ;
-        data = {
+        this.ajax( {
             "url"       : url ,
             "data"      : data,
             "type"      : type,
@@ -412,13 +410,7 @@ HsForm.prototype = {
             "context"   : this,
             "complete"  : this.saveBack,
             "error"     : function() { return false; }
-        };
-        // multipart/form-data 采用 FormData 无需 ajax 特别处理
-        if (kind === "part") {
-            data.contentType = false;
-            data.processData = false;
-        }
-        this.ajax(data);
+        } );
     },
 
     ajax : function() {

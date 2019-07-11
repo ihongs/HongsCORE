@@ -50,6 +50,9 @@
                             <ul class="dropdown-menu">
                                 <li><a href="javascript:;" class="review">查看快照</a></li>
                                 <li><a href="javascript:;" class="revert">恢复记录</a></li>
+                                <li class="divider same-l"></li>
+                                <li><a href="javascript:;" class="same-r">同资源的</a></li>
+                                <li><a href="javascript:;" class="same-u">同用户的</a></li>
                             </ul>
                         </div>
                     </th>
@@ -81,7 +84,7 @@
         var context = $('#<%=_pageId%>').removeAttr("id");
 
         var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*,user_id=$user_id",
             send    : hsSendWithMemo,
             _fill_stat: function(td , stat) {
                 var st = statmap['' + stat];
@@ -103,8 +106,10 @@
         });
 
         // 独立记录
-        if (H$("@id", context)) {
-            context.find("ul.nav>li:eq(1)")
+        if ( H$(     "@id", context  )
+        ||   H$("@user_id", context) ) {
+            context.find("ul.nav>li:eq(1),"
+                + ".same-l,.same-r,.same-u" )
                    .hide();
         }
 
@@ -130,6 +135,22 @@
             var id =      tr.data(   "id");
             var ct =      tr.data("ctime");
             listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html"   , {id: id, ctime: ct});
+        });
+
+        context.on("click", ".same-r", function() {
+            var lo = context.hsFind ("@" );
+            var tr = $(this).closest("tr");
+            var tt = $(this).text   (    );
+            var id =    tr.data(     "id");
+            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {     id: id}, function() { $(this).hsTitl(tt); });
+        });
+
+        context.on("click", ".same-u", function() {
+            var lo = context.hsFind ("@" );
+            var tr = $(this).closest("tr");
+            var tt = $(this).text   (    );
+            var id =    tr.data("user_id");
+            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user_id: id}, function() { $(this).hsTitl(tt); });
         });
 
         context.on("click", ".nav li", function() {

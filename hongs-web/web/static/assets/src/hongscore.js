@@ -484,6 +484,9 @@ function HsSerialDat(obj) {
  */
 function hsAsFormData (data) {
     data = hsSerialArr(data);
+    if (typeof data.getAll === "function") {
+        return data; // append,delete 可能被别人扩展, getAll 的可能性则很小
+    }
     data["append"] = function(name, value) {
         data.push( { name: name, value: value } );
     };
@@ -534,11 +537,9 @@ function hsAsFormData (data) {
  * @return {FormData}
  */
 function hsToFormData (data) {
-    var form = new FormData( );
-
     // 自适应输入数据类型, 支持不同来源的数据
     if (! data ) {
-        return form;
+        return new FormData(    );
     } else
     if (data instanceof FormData) {
         return data;
@@ -552,6 +553,8 @@ function hsToFormData (data) {
     {
         data = hsSerialArr (data);
     }
+
+    var form = new FormData(    );
 
     for(var i = 0; i < data.length; i ++) {
         var item = data[i];
@@ -1491,24 +1494,9 @@ $.hsAjax = function(url, settings) {
         var FormData = self.FormData || Array ;
         switch(settings.dataKind.toLowerCase()) {
             case "part":
-                if ($.isArray( /**/ settings.data)
-                ||  $.isPlainObject(settings.data)
-                ||  settings.data instanceof jQuery
-                ||  settings.data instanceof Element ) {
-                    settings.data = hsToFormData(settings.data);
-                }
-                settings.contentType = "multipart/form-data; charset=UTF-8";
-            case "form":
-                if ($.isArray( /**/ settings.data)
-                ||  $.isPlainObject(settings.data)
-                ||  settings.data instanceof jQuery
-                ||  settings.data instanceof Element
-                ||  settings.data instanceof FormData) {
-                    var hsSerialStr = jQuery . param ;
-                    settings.data = hsSerialArr (settings.data);
-                    settings.data = hsSerialStr (settings.data);
-                }
-                settings.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
+                settings.contentType  = false ;
+                settings.processData  = false ;
+                settings.data = hsToFormData(settings.data);
                 break;
             case "json":
                 if ($.isArray( /**/ settings.data)
@@ -1517,24 +1505,25 @@ $.hsAjax = function(url, settings) {
                 ||  settings.data instanceof Element
                 ||  settings.data instanceof FormData) {
                     var hsSerialStr = JSON.stringify ;
-                    settings.data = hsSerialDat (settings.data);
-                    settings.data = hsSerialStr (settings.data);
+                    settings.data = hsSerialDat(settings.data);
+                    settings.data = hsSerialStr(settings.data);
                 }
                 settings.contentType = "application/json; charset=UTF-8";
                 break;
-            case "xml" :
-                if (settings.data instanceof jQuery
-                ||  settings.data instanceof Element ) {
-                    settings.data = '<?xml version="1.0" encoding="UTF-8"?>'
-                                  + $( settings.data ).prop('outerHTML');
+            case "form":
+                if ($.isArray( /**/ settings.data)
+                ||  $.isPlainObject(settings.data)
+                ||  settings.data instanceof jQuery
+                ||  settings.data instanceof Element
+                ||  settings.data instanceof FormData) {
+                    var hsSerialStr = jQuery . param ;
+                    settings.data = hsSerialArr(settings.data);
+                    settings.data = hsSerialStr(settings.data);
                 }
-                settings.contentType = "application/xml; charset=UTF-8" ;
-                break;
-            case "text":
-                settings.contentType = "text/plain; charset=UTF-8" ;
+                settings.contentType = "application/x-www-form-urlencoded; charset=UTF-8";
                 break;
             default:
-                throw new Error("hsAjax: Unrecognized dataKind " + settings.dataKind);
+                throw new Error ( "hsAjax: Unrecognized dataKind " + settings.dataKind ) ;
         }
     } else
     // 统一自定义数据结构, 避免转换后出现偏差
@@ -2093,7 +2082,7 @@ $.fn.hsReady = function() {
     });
 
     // 写标题
-    box.hsTitl ();
+    box.hsTitl (/* tit */);
 
     // 在加载前触发事件
     box.trigger("hsReady");
@@ -2232,9 +2221,8 @@ $.fn.hsTitl = function(tit) {
 
     // 从其下标题提取
     if (! tit) {
-    if (! hea.size()) {
-        return;
-    }
+    if (! hea.size())
+        return ;
     tit = hea.text();
     }
 

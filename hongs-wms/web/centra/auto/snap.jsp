@@ -26,11 +26,13 @@
             <div class="form-inline pull-right" style="line-height: 0px;">
                 <input type="hidden" name="state"/>
                 <input type="hidden" name="etime"/>
-                <div class=" form-group" style="display:inline-block;margin: 0px;">
-                <div class="input-group" style="display:inline-table;width:380px;">
-                    <input type="date" name="ctime:ge" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                <div class=" form-group" style="display:inline-block;margin:0px;">
+                <div class="input-group" style="display:inline-table;width:30em;">
+                    <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                    <input type="hidden" class="form-ignored" name="ctime:ge">
                     <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
-                    <input type="date" name="ctime:le" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                    <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
+                    <input type="hidden" class="form-ignored" name="ctime:le">
                     <span class="input-group-btn">
                         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-repeat"></span></button>
                     </span>
@@ -82,9 +84,11 @@
         };
 
         var context = $('#<%=_pageId%>').removeAttr("id");
+        context.find("[name='ctime:ge']").val(H$("@ctime_ge", context));
+        context.find("[name='ctime:le']").val(H$("@ctime_le", context));
 
         var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user_id",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user",
             send    : hsSendWithMemo,
             _fill_stat: function(td , stat) {
                 var st = statmap['' + stat];
@@ -106,8 +110,8 @@
         });
 
         // 独立记录
-        if ( H$(     "@id", context  )
-        ||   H$("@user_id", context) ) {
+        if (H$( "@id" , context )
+        ||  H$("@user", context)) {
             context.find("ul.nav>li:eq(1),"
                 + ".same-l,.same-r,.same-u" )
                    .hide();
@@ -142,7 +146,9 @@
             var tr = $(this).closest("tr");
             var tt = $(this).text   (    );
             var id =    tr.data(     "id");
-            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {     id: id}, function() { $(this).hsTitl(tt); });
+            var ge = context.find("[name='ctime:ge']").val();
+            var le = context.find("[name='ctime:le']").val();
+            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
         });
 
         context.on("click", ".same-u", function() {
@@ -150,7 +156,9 @@
             var tr = $(this).closest("tr");
             var tt = $(this).text   (    );
             var id =    tr.data("user_id");
-            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user_id: id}, function() { $(this).hsTitl(tt); });
+            var ge = context.find("[name='ctime:ge']").val();
+            var le = context.find("[name='ctime:le']").val();
+            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
         });
 
         context.on("click", ".nav li", function() {

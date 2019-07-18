@@ -1489,6 +1489,7 @@ $.hsAjax = function(url, settings) {
     }
     url = hsFixUri(url);
 
+    if (settings) {
     // 明确发送数据的类型, 便于服务端正确解析
     if (settings.dataKind) {
         var FormData = self.FormData || Array ;
@@ -1531,7 +1532,7 @@ $.hsAjax = function(url, settings) {
     && (settings.data instanceof HsSerialDic
     ||  settings.data instanceof HsSerialDat) ) {
         settings.data = hsSerialArr(settings.data);
-    }
+    }}
 
     return  $.ajax (url, settings);
 };

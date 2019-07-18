@@ -289,7 +289,7 @@ function hsSaveWithMemo(msg) {
     var args = arguments;
     var data = args[ 1 ];
     var that = this;
-    var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="请输入操作备注(选填)"/>');
+    var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="选填, 请输入操作备注, 如: 补充简介信息"/>');
     var func = function() {
         data.append("memo",memo.val());
       HsForm.prototype.save.apply(that, args);
@@ -309,7 +309,7 @@ function hsSaveWithMemo(msg) {
  */
 function hsSendWithMemo(btn, msg, url, data) {
     var that = this;
-    var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="请输入操作备注(选填)"/>');
+    var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="选填, 请输入操作备注, 如: 清理重复数据"/>');
     var func = function() {
     var dat1 = jQuery.extend({}, hsSerialDat(data), {memo:memo.val()});
     var dat2 = jQuery.extend({}, hsSerialDat(url ), hsSerialDat(data));

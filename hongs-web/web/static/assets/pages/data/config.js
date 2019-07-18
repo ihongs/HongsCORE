@@ -137,4 +137,19 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
             rst.info = {};
         }
     });
+
+    // 规避 POST 一个 json 演示数据文件而失败
+    var _hsAjax = $.hsAjax;
+    $.hsAjax = function(url, settings) {
+        if (typeof(url) ===  "object") {
+            settings = url;
+            if (typeof(url["url"]) !== "undefined") {
+                url  = url["url"];
+            }
+        }
+        if (settings && url.indexOf(".json") != -1) {
+            settings.type = "GET";
+        }
+        return _hsAjax (url, settings);
+    };
 })(jQuery);

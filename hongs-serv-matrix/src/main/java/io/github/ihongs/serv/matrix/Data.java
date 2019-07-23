@@ -719,8 +719,11 @@ public class Data extends SearchEntity {
         if (null != pd) {
             Query p = new TermQuery( new Term("@" + PART_ID_KEY, pd) );
             BooleanQuery.Builder b = new BooleanQuery.Builder();
-            b.add(p, BooleanClause.Occur.MUST);
-            b.add(q, BooleanClause.Occur.MUST);
+            b.add(p , BooleanClause.Occur.MUST );
+            if (  q  instanceof  BooleanQuery  ) {
+            for(BooleanClause c:(BooleanQuery)q) {
+                b.add (c);
+            }}
             q = b.build();
         }
 

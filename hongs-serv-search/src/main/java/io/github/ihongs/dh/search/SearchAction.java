@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * 搜索动作
@@ -27,6 +28,7 @@ import java.util.Set;
 public class SearchAction extends ModelGate implements IAction, IActing {
 
     protected Set<String> sub = Synt.setOf("statis");
+    protected Pattern     rep = Pattern.compile("(^-|:.*$)");
 
     @Override
     public IEntity getEntity(ActionHelper helper)
@@ -98,7 +100,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         helper.reply(sd);
     }
 
-    @Action("statis/amount")
+    @Action("statis/survey")
     @Preset(conf="", form="")
     public void amount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
@@ -134,6 +136,9 @@ public class SearchAction extends ModelGate implements IAction, IActing {
                    .get    (  "number" );
 
         if (rb!= null) for (Object fn : rb ) {
+            if (fn!= null) {
+                fn = rep.matcher(fn.toString()).replaceAll(""); // 清理重点和排除值, 如: -fn:0,-fn:1
+            }
             if (! fs.containsKey(fn)) {
                 throw new HongsException(0x1100, "Field '"+fn+"' is not exists"  );
             }

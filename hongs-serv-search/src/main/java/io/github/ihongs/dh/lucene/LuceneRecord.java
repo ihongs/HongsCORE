@@ -968,21 +968,21 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             }
         }
 
+        // 并条件
+        if (rd.containsKey(Cnst.AR_KEY)) {
+            Set<Map> set = Synt.asSet(rd.get(Cnst.AR_KEY));
+            if (set != null && ! set.isEmpty())
+            for(Map  map : set) {
+                qr.add(getQuery(map), BooleanClause.Occur.FILTER);
+            }
+        }
+
         // 附条件
         if (rd.containsKey(Cnst.SR_KEY)) {
             Set<Map> set = Synt.asSet(rd.get(Cnst.SR_KEY));
             if (set != null && ! set.isEmpty())
             for(Map  map : set) {
                 qr.add(getQuery(map), BooleanClause.Occur.SHOULD);
-            }
-        }
-
-        // 并条件
-        if (rd.containsKey(Cnst.AR_KEY)) {
-            Set<Map> set = Synt.asSet(rd.get(Cnst.AR_KEY));
-            if (set != null && ! set.isEmpty())
-            for(Map  map : set) {
-                qr.add(getQuery(map), BooleanClause.Occur.MUST  );
             }
         }
 

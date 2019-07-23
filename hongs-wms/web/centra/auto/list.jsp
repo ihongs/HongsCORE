@@ -360,7 +360,7 @@
     });
 
     var statobj = context.hsStat({
-        aurl: "<%=_module%>/<%=_entity%>/statis/amount.act?rn=20&<%=Cnst.AB_KEY%>=_text",
+        aurl: "<%=_module%>/<%=_entity%>/statis/survey.act?rn=20&<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 

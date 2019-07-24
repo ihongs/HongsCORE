@@ -1072,6 +1072,16 @@ public class Data extends SearchEntity {
     }
 
     @Override
+    protected Set<String> getWdCols( ) {
+        Map fs = (Map) getFields().get("word");
+        if (fs != null) {
+            return Synt.setOf ("word");
+        } else {
+            return getWordable( /**/ );
+        }
+    }
+
+//  @Override
     public Set<String> getWordable() {
         if (null != wdCols) {
             return  wdCols;

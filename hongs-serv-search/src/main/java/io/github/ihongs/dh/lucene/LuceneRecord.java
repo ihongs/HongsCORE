@@ -811,6 +811,16 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return dbname;
     }
 
+    /**
+     * 获取搜索列
+     * 特别针对 wd 查询参数
+     * 默认等同 getSrchable
+     * @return
+     */
+    protected Set<String> getWdCols() {
+        return getSrchable();
+    }
+
     public IndexSearcher getFinder() throws HongsException {
         IndexReader ir = getReader(); // 见下方注释
         if (finder == null) {
@@ -944,10 +954,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (rd.containsKey(Cnst.WD_KEY)) {
             Object fv = rd.get (Cnst.WD_KEY);
                    fv = Synt.declare(fv, "");
-            Set<String> fs = getWordable(  );
 
             if (fv != null && !"".equals(fv)) {
-                if (fs.size() > 1) {
+                Set<String> fs = getWdCols();
+                if (1 < fs.size()) {
                     // 当设置了多个搜索字段时
                     // 将条件整理为: +($fn1:xxx $fn2:xxx)
 
@@ -1097,16 +1107,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     //** 底层工具 **/
-
-    /**
-     * 获取搜索列
-     * 特别针对 wd 查询参数
-     * 默认等同 getSrchable
-     * @return
-     */
-    protected Set<String> getWordable() {
-        return getSrchable();
-    }
 
     /**
      * 存储分析器

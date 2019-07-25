@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <root>
     <!-- 查询用途与字段类型的映射 -->
     <enum name="__cases__">
@@ -22,7 +23,7 @@
             date,time,datetime,
             enum,type,select,check,radio
         </value>
-        <value code="compable" type="set">
+        <value code="rankable" type="set">
             number,range,color,
             date,time,datetime
         </value>

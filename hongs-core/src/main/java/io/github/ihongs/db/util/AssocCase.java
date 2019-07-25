@@ -68,7 +68,7 @@ public class AssocCase {
     /**
      * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 SORTABLE
      */
-    public  static final String  COMPABLE = "COMPABLE";
+    public  static final String  RANKABLE = "RANKABLE";
     /**
      * 可存储字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
@@ -218,7 +218,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "findable", "sortable", "srchable", "wordable", "compable"};
+        String[] ks = new String[] {"listable", "findable", "sortable", "srchable", "wordable", "rankable"};
         for(String k : ks) {
             Object s = fc.get( k );
             if (null == s) {
@@ -424,7 +424,7 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FINDABLE);
-        Map<String, String> cf = new LinkedHashMap(allow(COMPABLE));
+        Map<String, String> cf = new LinkedHashMap(allow(RANKABLE));
         Map<String, String> sf = new LinkedHashMap(allow(SRCHABLE));
 
         for(Map.Entry<String, String> et : af.entrySet()) {
@@ -766,7 +766,7 @@ public class AssocCase {
                     af =  new HashMap();
                 }
                 break;
-            case COMPABLE:
+            case RANKABLE:
                 af = allow(SORTABLE);
                 if (af == null) {
                     af =  new HashMap();
@@ -890,8 +890,8 @@ public class AssocCase {
         if (cs != null) allow(FINDABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("wordable");
         if (cs != null) allow(WORDABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("rangable");
-        if (cs != null) allow(COMPABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("rankable");
+        if (cs != null) allow(RANKABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("saveable");
         if (cs != null) allow(SAVEABLE, cs.trim().split("\\s*,\\s*"));
         else {

@@ -27,7 +27,7 @@ public class ModelCase implements IVolume {
     private Set _ob_fns = null;
     private Set _wd_fns = null;
     private Set _wh_fns = null;
-    private Set _rg_fns = null;
+    private Set _rk_fns = null;
 
     /**
      * 设置表单字段
@@ -277,12 +277,12 @@ public class ModelCase implements IVolume {
      * 获取可比对的字段 (用于区间查询)
      * @return
      */
-    public Set<String> getCompable() {
-        if (null != _rg_fns) {
-            return  _rg_fns;
+    public Set<String> getRankable() {
+        if (null != _rk_fns) {
+            return  _rk_fns;
         }
-        _rg_fns = getCaseNames("compable");
-        return _rg_fns;
+        _rk_fns = getCaseNames("rankable");
+        return _rk_fns;
     }
 
 }

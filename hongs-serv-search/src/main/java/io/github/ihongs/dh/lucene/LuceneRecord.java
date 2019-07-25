@@ -956,24 +956,24 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             Object fv = rd.get (Cnst.WD_KEY);
                    fv = Synt.declare(fv, "");
 
-            if (fv != null && !"".equals(fv)) {
+            if (fv != null && !fv.equals("")) {
                 Set<String> fs = getWdCols();
                 if (1 < fs.size()) {
-                    // 当设置了多个搜索字段时
-                    // 将条件整理为: +($fn1:xxx $fn2:xxx)
-
                     Map fw = new HashMap(  );
                     fw.put(Cnst.SC_REL , fv);
-                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
+                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
                     for(String fk : fs) {
                         padQry(qx , fk , fw , new SearchQuery());
                     }
-
                     qr.add(qx.build(), BooleanClause.Occur.MUST);
-                } else {
+                } else
+                if (0 < fs.size()) {
+                    Map fw = new HashMap(  );
+                    fw.put(Cnst.CQ_REL , fv);
+
                     for(String fk : fs) {
-                        padQry(qr , fk , fv , new SearchQuery());
+                        padQry(qr , fk , fw , new SearchQuery());
                     }
                 }
             }

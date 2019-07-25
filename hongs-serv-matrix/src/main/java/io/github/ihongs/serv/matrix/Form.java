@@ -295,6 +295,16 @@ public class Form extends Model {
                 ));
             }
 
+            // 增加搜索字段
+            if (set.contains("word")) {
+                flds.add(Synt.mapOf(
+                    "__name__", "word",
+                    "__type__", "hidden",
+                    "readonly", "true",
+                    "readinly", "true"
+                ));
+            }
+
             // 增加用户字段
             if (set.contains("muser")) {
                 flds.add(Synt.mapOf(

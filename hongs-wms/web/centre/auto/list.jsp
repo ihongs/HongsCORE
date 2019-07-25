@@ -58,7 +58,7 @@
             String  text = (String) info.get ("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            ||  Synt.declare(info.get("vendless"), false)) {
+            ||  Synt.declare(info.get("wardonly"), false)) {
                 continue;
             }
         %>

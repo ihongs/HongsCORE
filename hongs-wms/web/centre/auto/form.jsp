@@ -25,7 +25,7 @@
 
             if ("@".equals(name)
             ||  Synt.declare(info.get("readonly"), false)
-            ||  Synt.declare(info.get("vendless"), false)) {
+            ||  Synt.declare(info.get("wardonly"), false)) {
                 continue ;
             }
 

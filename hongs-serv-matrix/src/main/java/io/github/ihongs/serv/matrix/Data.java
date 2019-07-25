@@ -1054,23 +1054,6 @@ public class Data extends SearchEntity {
         }
     }
 
-    /**
-     * 增加搜索和命名未明确指定时的后备类型
-     * @param t
-     * @return
-     */
-    @Override
-    public Set<String> getCaseTypes(String t) {
-        if ("_wordable".equals(t)) {
-            return Synt.setOf("string", "search", "text", "textarea", "textview");
-        } else
-        if ("_nameable".equals(t)) {
-            return Synt.setOf("string", "search", "text");
-        } else {
-            return super.getCaseTypes(t);
-        }
-    }
-
     @Override
     protected Set<String> getWdCols( ) {
         Map fs = (Map) getFields().get("word");
@@ -1081,19 +1064,36 @@ public class Data extends SearchEntity {
         }
     }
 
+    /**
+     * 增加搜索和命名未明确指定时的后备类型
+     * @param t
+     * @return
+     */
+    @Override
+    public Set<String> getCaseTypes(String t) {
+        if ("wordable".equals(t)) {
+            return Synt.setOf("string", "search", "text", "textarea", "textview");
+        } else
+        if ("nameable".equals(t)) {
+            return Synt.setOf("string", "search", "text");
+        } else {
+            return super.getCaseTypes(t);
+        }
+    }
+
 //  @Override
     public Set<String> getWordable() {
         if (null != wdCols) {
             return  wdCols;
         }
-        Map fs = (Map) getFields().get("word");
+        Map fs  = (Map) getFields().get("word");
         if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
             wdCols = Synt.setOf("word");
         } else {
-            wdCols = getCaseNames( "wordable");
-        if (wdCols.isEmpty()) {
-            wdCols = getCaseNames("_wordable");
-        }
+            wdCols = getCaseNames("wordable");
+            if (wdCols.isEmpty()) {
+                wdCols = getSrchable( );
+            }
             wdCols.remove("word");
         }
         return wdCols;
@@ -1104,14 +1104,14 @@ public class Data extends SearchEntity {
         if (null != nmCols) {
             return  nmCols;
         }
-        Map fs = (Map) getFields().get("name");
+        Map fs  = (Map) getFields().get("name");
         if (fs != null && !Synt.declare(fs.get("readonly"), false)) {
             nmCols = Synt.setOf("name");
         } else {
-            nmCols = getCaseNames( "nameable");
-        if (nmCols.isEmpty()) {
-            nmCols = getCaseNames("_nameable");
-        }
+            nmCols = getCaseNames("nameable");
+//          if (nmCols.isEmpty()) {
+//              nmCols = getListable( );
+//          }
             nmCols.remove("name");
         }
         return nmCols;

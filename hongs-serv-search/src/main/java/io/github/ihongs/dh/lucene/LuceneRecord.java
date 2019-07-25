@@ -220,7 +220,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             gn = CoreConfig.getInstance().getProperty("fore.pugs.for.page", Cnst.GN_DEF);
         }
 
-        // 指定行数 0, 则走 getAll
+        if (gn == 0) {
+            gn =  1;
+        }
+
+        // 指定行数 0, 则获取全部
         if (rn == 0) {
             Map  data = new HashMap();
             List list = getAll(rd);
@@ -229,9 +233,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
 
         // 指定页码 0, 仅获取分页
-        if (gn == 0) {
-            gn =  1;
-        }
         if (pn == 0) {
             return getPage(rd, rn, gn, 1 );
         } else {

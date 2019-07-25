@@ -25,8 +25,8 @@ public class ModelCase implements IVolume {
     private Map _params = null;
     private Set _rb_fns = null;
     private Set _ob_fns = null;
-    private Set _wd_fns = null;
     private Set _wh_fns = null;
+    private Set _wd_fns = null;
     private Set _rk_fns = null;
 
     /**
@@ -250,18 +250,6 @@ public class ModelCase implements IVolume {
     }
 
     /**
-     * 获取可搜索的字段
-     * @return
-     */
-    public Set<String> getSrchable() {
-        if (null != _wd_fns) {
-            return  _wd_fns;
-        }
-        _wd_fns = getCaseNames("srchable");
-        return _wd_fns;
-    }
-
-    /**
      * 获取可过滤的字段
      * @return
      */
@@ -271,6 +259,18 @@ public class ModelCase implements IVolume {
         }
         _wh_fns = getCaseNames("findable");
         return _wh_fns;
+    }
+
+    /**
+     * 获取可搜索的字段
+     * @return
+     */
+    public Set<String> getSrchable() {
+        if (null != _wd_fns) {
+            return  _wd_fns;
+        }
+        _wd_fns = getCaseNames("srchable");
+        return _wd_fns;
     }
 
     /**

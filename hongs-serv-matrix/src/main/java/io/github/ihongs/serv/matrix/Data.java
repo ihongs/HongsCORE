@@ -1056,7 +1056,7 @@ public class Data extends SearchEntity {
 
     @Override
     protected Set<String> getWdCols( ) {
-        Map fs = (Map) getFields().get("word");
+        Map fs  = (Map) getFields().get("word");
         if (fs != null) {
             return Synt.setOf ("word");
         } else {

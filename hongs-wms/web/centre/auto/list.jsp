@@ -104,9 +104,9 @@
             <div class="col-md-6 col-sm-8">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%><%=Cnst.GE_REL%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%><%=Cnst.LE_REL%>" />
                 </div>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <%
@@ -115,9 +115,9 @@
                     }
                 %>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%><%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <input type="<%=type%>" class="form-control" name="<%=name%><%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                 </div>
             <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%

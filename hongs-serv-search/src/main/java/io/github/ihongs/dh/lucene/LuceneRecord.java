@@ -1196,6 +1196,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return Synt.declare(fc.get(  "unstated"  ), false);
     }
 
+    //** 组件封装 **/
+
     /**
      * 填充存储数据(将 map 填充到 doc)
      * 可覆盖此方法补充额外数据

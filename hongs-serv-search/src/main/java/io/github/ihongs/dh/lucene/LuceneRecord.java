@@ -609,12 +609,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     //** 组件方法 **/
 
-    /**
-     * 查询分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
     public Query getQuery(Map rd) throws HongsException {
         BooleanQuery.Builder qr = new BooleanQuery.Builder();
 
@@ -628,12 +622,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return new MatchAllDocsQuery( );
     }
 
-    /**
-     * 排序分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
     public Sort  getSort (Map rd) throws HongsException {
         List<SortField> of = new LinkedList();
 

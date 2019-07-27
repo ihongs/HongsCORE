@@ -710,492 +710,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return new Sort(of.toArray(new SortField[0]));
     }
 
-    //** 事务方法 **/
-
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-           this.close(   );
-        } finally {
-          super.finalize();
-        }
-    }
-
-    /**
-     * 销毁读写连接
-     */
-    @Override
-    public void close() {
-        if (reader != null ) {
-            try {
-                reader.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                reader = null ;
-                finder = null ;
-            }
-
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                CoreLogger.trace("Close the lucene reader for " + getDbName());
-            }
-        }
-
-        if (writer != null ) {
-        if (writer.isOpen()) {
-            // 默认退出时提交
-            if (TRNSCT_MODE) {
-                try {
-                try {
-                    commit();
-                } catch (Throwable e) {
-                    revert();
-                    throw e ;
-                }
-                } catch (Throwable e) {
-                    CoreLogger.error(e);
-                }
-            }
-
-            // 退出时合并索引
-            try {
-                writer.maybeMerge();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            }
-
-            try {
-                writer.close();
-            } catch (IOException x) {
-                CoreLogger.error(x);
-            } finally {
-                writer = null ;
-            }
-
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                CoreLogger.trace("Close the lucene writer for " + getDbName());
-            }
-        } else {
-            /**/writer = null ;
-        }
-        }
-    }
-
-    /**
-     * 事务开始
-     */
-    @Override
-    public void begin() {
-        TRNSCT_MODE = true;
-    }
-
-    /**
-     * 提交更改
-     */
-    @Override
-    public void commit() {
-        TRNSCT_MODE = TRNSCT_BASE;
-        if (writer == null) {
-            return;
-        }
-        try {
-            writer.commit ( );
-        } catch (IOException ex) {
-            throw new HongsExemption(0x102c, ex);
-        }
-    }
-
-    /**
-     * 回滚操作
-     */
-    @Override
-    public void revert() {
-        TRNSCT_MODE = TRNSCT_BASE;
-        if (writer == null) {
-            return;
-        }
-        try {
-            writer.rollback();
-        } catch (IOException ex) {
-            throw new HongsExemption(0x102d, ex);
-        }
-    }
-
-    //** 底层方法 **/
-
-    public String getDbPath() {
-        if (dbpath == null) {
-            throw new NullPointerException("DB path is not set");
-        }
-        return dbpath;
-    }
-
-    public String getDbName() {
-        if (dbname == null) {
-            throw new NullPointerException("DB name is not set");
-        }
-        return dbname;
-    }
-
-    /**
-     * 获取搜索列
-     * 特别针对 wd 查询参数
-     * 默认等同 getSrchable
-     * @return
-     */
-    protected Set<String> getWdCols() {
-        return getSrchable();
-    }
-
-    public IndexSearcher getFinder() throws HongsException {
-        IndexReader ir = getReader(); // 见下方注释
-        if (finder == null) {
-            finder  = new IndexSearcher(ir);
-        }
-        return finder;
-    }
-
-    public IndexReader getReader() throws HongsException {
-        if (reader != null) {
-            try {
-                // 如果有更新数据则会重新打开查询接口
-                // 这可以规避提交更新后却查不到的问题
-                IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
-                if ( null != nred) {
-                    reader.close();
-                    reader = nred ;
-                    finder = null ;
-                }
-            } catch (IOException x) {
-                throw new HongsException.Common(x);
-            }
-        } else {
-            String path = getDbPath();
-
-            try {
-                // 目录不存在需开写并提交从而建立索引
-                // 否则会抛出: IndexNotFoundException
-                if (! new File(path).exists())
-                    getWriter (    ).commit();
-
-                Directory dir = FSDirectory.open(Paths.get(path));
-
-                reader = DirectoryReader.open(dir);
-            } catch (IOException x) {
-                throw new HongsException.Common(x);
-            }
-
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                CoreLogger.trace("Start the lucene reader for "+getDbName());
-            }
-        }
-        return reader;
-    }
-
-    public IndexWriter getWriter() throws HongsException {
-        if (writer == null || writer.isOpen() == false ) {
-            String path = getDbPath();
-
-            try {
-                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
-                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
-
-                Directory dir = FSDirectory.open(Paths.get(path));
-
-                writer = new IndexWriter(dir, iwc);
-            } catch (IOException x) {
-                throw new HongsException.Common(x);
-            }
-
-            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
-                CoreLogger.trace("Start the lucene writer for "+getDbName());
-            }
-        }
-        return writer;
-    }
-
-    //** 底层工具 **/
-
-    /**
-     * 存储分析器
-     * @return
-     * @throws HongsException
-     */
-    protected Analyzer getAnalyzer() throws HongsException {
-        /*Default*/ Analyzer  ad = new StandardAnalyzer();
-        Map<String, Analyzer> az = new HashMap();
-        Map<String, Map     > fs = getFields(  );
-        for(Map.Entry<String, Map> et : fs.entrySet()) {
-            String fn = et.getKey(  );
-            Map    fc = et.getValue();
-            if (srchable(fc)) {
-                // 注意: 搜索对应的字段名开头为 $
-                az.put("$" + fn, getAnalyzer(fc) );
-            }
-        }
-        return new PerFieldAnalyzerWrapper(ad, az);
-    }
-
-    /**
-     * 存储分析器
-     * @param fc 字段配置
-     * @return
-     * @throws HongsException
-     */
-    protected Analyzer getAnalyzer(Map fc) throws HongsException {
-        try {
-            CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
-            String kn, an, ac; Map oc;
-
-            // 分词器
-            an = Synt.declare(fc.get("lucene-tokenizer"), "");
-            if (!"".equals(an)) {
-                int p  = an.indexOf('{');
-                if (p != -1) {
-                    ac = an.substring(p);
-                    an = an.substring(0, p - 1).trim();
-                    oc = Synt.asMap(Data.toObject(ac));
-                    cb.withTokenizer(an, oc);
-                } else {
-                    cb.withTokenizer(an/**/);
-                }
-            } else {
-                cb.withTokenizer("Standard");
-            }
-
-            // 过滤器
-            for(Object ot2 : fc.entrySet()) {
-                Map.Entry et2 = (Map.Entry) ot2;
-                kn = (String) et2.getKey();
-
-                // 存储参数为 char,token
-                if (kn.startsWith("lucene-char-filter")) {
-                    an = (String) et2.getValue();
-                    an = an.trim();
-                    if ("".equals(an)) {
-                        continue;
-                    }
-                    int p  = an.indexOf('{');
-                    if (p != -1) {
-                        ac = an.substring(p);
-                        an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Data.toObject(ac));
-                        cb.addCharFilter(an, oc);
-                    } else {
-                        cb.addCharFilter(an/**/);
-                    }
-                } else
-                if (kn.startsWith("lucene-token-filter")) {
-                    an = (String) et2.getValue();
-                    an = an.trim();
-                    if ("".equals(an)) {
-                        continue;
-                    }
-                    int p  = an.indexOf('{');
-                    if (p != -1) {
-                        ac = an.substring(p);
-                        an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Data.toObject(ac));
-                        cb.addTokenFilter(an, oc);
-                    } else {
-                        cb.addTokenFilter(an/**/);
-                    }
-                }
-            }
-
-            return cb.build();
-        } catch ( IOException ex) {
-            throw new HongsException.Common(ex);
-        } catch ( IllegalArgumentException  ex) {
-            throw new HongsException.Common(ex);
-        }
-    }
-
-    /**
-     * 查询分析器
-     * @param fc 字段配置
-     * @return
-     * @throws HongsException
-     */
-    protected Analyzer getAnalyser(Map fc) throws HongsException {
-        try {
-            CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
-            String kn, an, ac; Map oc;
-
-            // 分词器
-            an = Synt.declare(fc.get("lucene-tokenizer"), "");
-            if (!"".equals(an)) {
-                int p  = an.indexOf('{');
-                if (p != -1) {
-                    ac = an.substring(p);
-                    an = an.substring(0, p - 1).trim();
-                    oc = Synt.asMap(Data.toObject(ac));
-                    cb.withTokenizer(an, oc);
-                } else {
-                    cb.withTokenizer(an/**/);
-                }
-            } else {
-                cb.withTokenizer("Standard");
-            }
-
-            // 过滤器
-            for(Object ot2 : fc.entrySet()) {
-                Map.Entry et2 = (Map.Entry) ot2;
-                kn = (String) et2.getKey();
-
-                // 查询参数为 find,query
-                if (kn.startsWith("lucene-find-filter")) {
-                    an = (String) et2.getValue();
-                    an = an.trim();
-                    if ("".equals(an)) {
-                        continue;
-                    }
-                    int p  = an.indexOf('{');
-                    if (p != -1) {
-                        ac = an.substring(p);
-                        an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Data.toObject(ac));
-                        cb.addCharFilter(an, oc);
-                    } else {
-                        cb.addCharFilter(an/**/);
-                    }
-                } else
-                if (kn.startsWith("lucene-query-filter")) {
-                    an = (String) et2.getValue();
-                    an = an.trim();
-                    if ("".equals(an)) {
-                        continue;
-                    }
-                    int p  = an.indexOf('{');
-                    if (p != -1) {
-                        ac = an.substring(p);
-                        an = an.substring(0, p - 1).trim();
-                        oc = Synt.asMap(Data.toObject(ac));
-                        cb.addTokenFilter(an, oc);
-                    } else {
-                        cb.addTokenFilter(an/**/);
-                    }
-                }
-            }
-
-            return cb.build();
-        } catch ( IOException ex) {
-            throw new HongsException.Common(ex);
-        } catch ( IllegalArgumentException  ex) {
-            throw new HongsException.Common(ex);
-        }
-    }
-
-    /**
-     * 获取类型变体
-     * 返回的类型有
-     * int
-     * long
-     * float
-     * double
-     * search
-     * string
-     * object
-     * date
-     * @param fc 字段配置
-     * @return
-     */
-    protected String datatype(Map fc) {
-        String t;
-
-        t = (String) fc.get("lucene-type");
-        if (t != null) {
-            return t.equals(  "text"  )
-                 ?  "search"
-                 : t;
-        }
-
-        t = (String) fc.get("__type__");
-        if (t == null) {
-            return t;
-        }
-
-        Set<String> ks;
-
-        //** 先查特有的 **/
-
-        ks = getSaveTypes("search");
-        if (ks != null && ks.contains(t)) {
-            return "search";
-        }
-
-        ks = getSaveTypes("sorted");
-        if (ks != null && ks.contains(t)) {
-            return "sorted";
-        }
-
-        ks = getSaveTypes("stored");
-        if (ks != null && ks.contains(t)) {
-            return "stored";
-        }
-
-        ks = getSaveTypes("object");
-        if (ks != null && ks.contains(t)) {
-            return "object";
-        }
-
-        //** 再查一般的 **/
-
-        ks = getSaveTypes( "date" );
-        if (ks != null && ks.contains(t)) {
-            return  "date" ;
-        }
-
-        ks = getSaveTypes( "enum" );
-        if (ks != null && ks.contains(t)) {
-            return Synt.declare(fc.get("type"), "string");
-        }
-
-        ks = getSaveTypes("string");
-        if (ks != null && ks.contains(t)) {
-            return "string";
-        }
-
-        ks = getSaveTypes("number");
-        if (ks != null && ks.contains(t)) {
-            return Synt.declare(fc.get("type"), "double");
-        }
-
-        return t;
-    }
-
-    protected boolean findable(Map fc) {
-        String name = Synt.declare(fc.get("__name__"), "");
-        return getFindable().contains(name) || Cnst.ID_KEY.equals(name);
-    }
-
-    protected boolean sortable(Map fc) {
-        String name = Synt.declare(fc.get("__name__"), "");
-        return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
-    }
-
-    protected boolean srchable(Map fc) {
-        String name = Synt.declare(fc.get("__name__"), "");
-        return getSrchable().contains(name);
-    }
-
-    protected boolean rankable(Map fc) {
-        String name = Synt.declare(fc.get("__name__"), "");
-        return getRankable().contains(name);
-    }
-
-    protected boolean repeated(Map fc) {
-        return Synt.declare(fc.get("__repeated__"), false);
-    }
-
-    protected boolean unstored(Map fc) {
-        return Synt.declare(fc.get(  "unstored"  ), false);
-    }
-
-    protected boolean unstated(Map fc) {
-        return Synt.declare(fc.get(  "unstated"  ), false);
-    }
-
     //** 组件封装 **/
 
     /**
@@ -1918,6 +1432,492 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     protected boolean padSrt(List<SortField> of, Map rd, String k, boolean r) {
         return true;
+    }
+
+    //** 事务方法 **/
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+           this.close(   );
+        } finally {
+          super.finalize();
+        }
+    }
+
+    /**
+     * 销毁读写连接
+     */
+    @Override
+    public void close() {
+        if (reader != null ) {
+            try {
+                reader.close();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            } finally {
+                reader = null ;
+                finder = null ;
+            }
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Close the lucene reader for " + getDbName());
+            }
+        }
+
+        if (writer != null ) {
+        if (writer.isOpen()) {
+            // 默认退出时提交
+            if (TRNSCT_MODE) {
+                try {
+                try {
+                    commit();
+                } catch (Throwable e) {
+                    revert();
+                    throw e ;
+                }
+                } catch (Throwable e) {
+                    CoreLogger.error(e);
+                }
+            }
+
+            // 退出时合并索引
+            try {
+                writer.maybeMerge();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            }
+
+            try {
+                writer.close();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            } finally {
+                writer = null ;
+            }
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Close the lucene writer for " + getDbName());
+            }
+        } else {
+            /**/writer = null ;
+        }
+        }
+    }
+
+    /**
+     * 事务开始
+     */
+    @Override
+    public void begin() {
+        TRNSCT_MODE = true;
+    }
+
+    /**
+     * 提交更改
+     */
+    @Override
+    public void commit() {
+        TRNSCT_MODE = TRNSCT_BASE;
+        if (writer == null) {
+            return;
+        }
+        try {
+            writer.commit ( );
+        } catch (IOException ex) {
+            throw new HongsExemption(0x102c, ex);
+        }
+    }
+
+    /**
+     * 回滚操作
+     */
+    @Override
+    public void revert() {
+        TRNSCT_MODE = TRNSCT_BASE;
+        if (writer == null) {
+            return;
+        }
+        try {
+            writer.rollback();
+        } catch (IOException ex) {
+            throw new HongsExemption(0x102d, ex);
+        }
+    }
+
+    //** 底层方法 **/
+
+    public String getDbPath() {
+        if (dbpath == null) {
+            throw new NullPointerException("DB path is not set");
+        }
+        return dbpath;
+    }
+
+    public String getDbName() {
+        if (dbname == null) {
+            throw new NullPointerException("DB name is not set");
+        }
+        return dbname;
+    }
+
+    /**
+     * 获取搜索列
+     * 特别针对 wd 查询参数
+     * 默认等同 getSrchable
+     * @return
+     */
+    protected Set<String> getWdCols() {
+        return getSrchable();
+    }
+
+    public IndexSearcher getFinder() throws HongsException {
+        IndexReader ir = getReader(); // 见下方注释
+        if (finder == null) {
+            finder  = new IndexSearcher(ir);
+        }
+        return finder;
+    }
+
+    public IndexReader getReader() throws HongsException {
+        if (reader != null) {
+            try {
+                // 如果有更新数据则会重新打开查询接口
+                // 这可以规避提交更新后却查不到的问题
+                IndexReader  nred = DirectoryReader.openIfChanged((DirectoryReader) reader);
+                if ( null != nred) {
+                    reader.close();
+                    reader = nred ;
+                    finder = null ;
+                }
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+        } else {
+            String path = getDbPath();
+
+            try {
+                // 目录不存在需开写并提交从而建立索引
+                // 否则会抛出: IndexNotFoundException
+                if (! new File(path).exists())
+                    getWriter (    ).commit();
+
+                Directory dir = FSDirectory.open(Paths.get(path));
+
+                reader = DirectoryReader.open(dir);
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Start the lucene reader for "+getDbName());
+            }
+        }
+        return reader;
+    }
+
+    public IndexWriter getWriter() throws HongsException {
+        if (writer == null || writer.isOpen() == false ) {
+            String path = getDbPath();
+
+            try {
+                IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
+                iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+
+                Directory dir = FSDirectory.open(Paths.get(path));
+
+                writer = new IndexWriter(dir, iwc);
+            } catch (IOException x) {
+                throw new HongsException.Common(x);
+            }
+
+            if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
+                CoreLogger.trace("Start the lucene writer for "+getDbName());
+            }
+        }
+        return writer;
+    }
+
+    //** 底层工具 **/
+
+    /**
+     * 存储分析器
+     * @return
+     * @throws HongsException
+     */
+    protected Analyzer getAnalyzer() throws HongsException {
+        /*Default*/ Analyzer  ad = new StandardAnalyzer();
+        Map<String, Analyzer> az = new HashMap();
+        Map<String, Map     > fs = getFields(  );
+        for(Map.Entry<String, Map> et : fs.entrySet()) {
+            String fn = et.getKey(  );
+            Map    fc = et.getValue();
+            if (srchable(fc)) {
+                // 注意: 搜索对应的字段名开头为 $
+                az.put("$" + fn, getAnalyzer(fc) );
+            }
+        }
+        return new PerFieldAnalyzerWrapper(ad, az);
+    }
+
+    /**
+     * 存储分析器
+     * @param fc 字段配置
+     * @return
+     * @throws HongsException
+     */
+    protected Analyzer getAnalyzer(Map fc) throws HongsException {
+        try {
+            CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
+            String kn, an, ac; Map oc;
+
+            // 分词器
+            an = Synt.declare(fc.get("lucene-tokenizer"), "");
+            if (!"".equals(an)) {
+                int p  = an.indexOf('{');
+                if (p != -1) {
+                    ac = an.substring(p);
+                    an = an.substring(0, p - 1).trim();
+                    oc = Synt.asMap(Data.toObject(ac));
+                    cb.withTokenizer(an, oc);
+                } else {
+                    cb.withTokenizer(an/**/);
+                }
+            } else {
+                cb.withTokenizer("Standard");
+            }
+
+            // 过滤器
+            for(Object ot2 : fc.entrySet()) {
+                Map.Entry et2 = (Map.Entry) ot2;
+                kn = (String) et2.getKey();
+
+                // 存储参数为 char,token
+                if (kn.startsWith("lucene-char-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addCharFilter(an, oc);
+                    } else {
+                        cb.addCharFilter(an/**/);
+                    }
+                } else
+                if (kn.startsWith("lucene-token-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addTokenFilter(an, oc);
+                    } else {
+                        cb.addTokenFilter(an/**/);
+                    }
+                }
+            }
+
+            return cb.build();
+        } catch ( IOException ex) {
+            throw new HongsException.Common(ex);
+        } catch ( IllegalArgumentException  ex) {
+            throw new HongsException.Common(ex);
+        }
+    }
+
+    /**
+     * 查询分析器
+     * @param fc 字段配置
+     * @return
+     * @throws HongsException
+     */
+    protected Analyzer getAnalyser(Map fc) throws HongsException {
+        try {
+            CustomAnalyzer.Builder cb = CustomAnalyzer.builder();
+            String kn, an, ac; Map oc;
+
+            // 分词器
+            an = Synt.declare(fc.get("lucene-tokenizer"), "");
+            if (!"".equals(an)) {
+                int p  = an.indexOf('{');
+                if (p != -1) {
+                    ac = an.substring(p);
+                    an = an.substring(0, p - 1).trim();
+                    oc = Synt.asMap(Data.toObject(ac));
+                    cb.withTokenizer(an, oc);
+                } else {
+                    cb.withTokenizer(an/**/);
+                }
+            } else {
+                cb.withTokenizer("Standard");
+            }
+
+            // 过滤器
+            for(Object ot2 : fc.entrySet()) {
+                Map.Entry et2 = (Map.Entry) ot2;
+                kn = (String) et2.getKey();
+
+                // 查询参数为 find,query
+                if (kn.startsWith("lucene-find-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addCharFilter(an, oc);
+                    } else {
+                        cb.addCharFilter(an/**/);
+                    }
+                } else
+                if (kn.startsWith("lucene-query-filter")) {
+                    an = (String) et2.getValue();
+                    an = an.trim();
+                    if ("".equals(an)) {
+                        continue;
+                    }
+                    int p  = an.indexOf('{');
+                    if (p != -1) {
+                        ac = an.substring(p);
+                        an = an.substring(0, p - 1).trim();
+                        oc = Synt.asMap(Data.toObject(ac));
+                        cb.addTokenFilter(an, oc);
+                    } else {
+                        cb.addTokenFilter(an/**/);
+                    }
+                }
+            }
+
+            return cb.build();
+        } catch ( IOException ex) {
+            throw new HongsException.Common(ex);
+        } catch ( IllegalArgumentException  ex) {
+            throw new HongsException.Common(ex);
+        }
+    }
+
+    /**
+     * 获取类型变体
+     * 返回的类型有
+     * int
+     * long
+     * float
+     * double
+     * search
+     * string
+     * object
+     * date
+     * @param fc 字段配置
+     * @return
+     */
+    protected String datatype(Map fc) {
+        String t;
+
+        t = (String) fc.get("lucene-type");
+        if (t != null) {
+            return t.equals(  "text"  )
+                 ?  "search"
+                 : t;
+        }
+
+        t = (String) fc.get("__type__");
+        if (t == null) {
+            return t;
+        }
+
+        Set<String> ks;
+
+        //** 先查特有的 **/
+
+        ks = getSaveTypes("search");
+        if (ks != null && ks.contains(t)) {
+            return "search";
+        }
+
+        ks = getSaveTypes("sorted");
+        if (ks != null && ks.contains(t)) {
+            return "sorted";
+        }
+
+        ks = getSaveTypes("stored");
+        if (ks != null && ks.contains(t)) {
+            return "stored";
+        }
+
+        ks = getSaveTypes("object");
+        if (ks != null && ks.contains(t)) {
+            return "object";
+        }
+
+        //** 再查一般的 **/
+
+        ks = getSaveTypes( "date" );
+        if (ks != null && ks.contains(t)) {
+            return  "date" ;
+        }
+
+        ks = getSaveTypes( "enum" );
+        if (ks != null && ks.contains(t)) {
+            return Synt.declare(fc.get("type"), "string");
+        }
+
+        ks = getSaveTypes("string");
+        if (ks != null && ks.contains(t)) {
+            return "string";
+        }
+
+        ks = getSaveTypes("number");
+        if (ks != null && ks.contains(t)) {
+            return Synt.declare(fc.get("type"), "double");
+        }
+
+        return t;
+    }
+
+    protected boolean findable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getFindable().contains(name) || Cnst.ID_KEY.equals(name);
+    }
+
+    protected boolean sortable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
+    }
+
+    protected boolean srchable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getSrchable().contains(name);
+    }
+
+    protected boolean rankable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getRankable().contains(name);
+    }
+
+    protected boolean repeated(Map fc) {
+        return Synt.declare(fc.get("__repeated__"), false);
+    }
+
+    protected boolean unstored(Map fc) {
+        return Synt.declare(fc.get(  "unstored"  ), false);
+    }
+
+    protected boolean unstated(Map fc) {
+        return Synt.declare(fc.get(  "unstated"  ), false);
     }
 
     //** 辅助对象 **/

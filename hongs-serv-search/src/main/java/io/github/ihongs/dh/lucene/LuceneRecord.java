@@ -587,43 +587,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     /**
-     * 排序分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    public Sort getSort(Map rd) throws HongsException {
-        List<SortField> of = new LinkedList();
-
-        padSrt(of, rd);
-
-        if (of.isEmpty()) {
-            of.add(SortField.FIELD_DOC);
-        }
-
-        return new Sort(of.toArray(new SortField[0]));
-    }
-
-    /**
-     * 查询分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    public Query getQuery(Map rd) throws HongsException {
-        BooleanQuery.Builder qr = new BooleanQuery.Builder();
-
-        padQry(qr, rd);
-
-        BooleanQuery qu = qr.build();
-        if (! qu.clauses().isEmpty()) {
-            return qu ;
-        }
-
-        return new MatchAllDocsQuery( );
-    }
-
-    /**
      * 搜索查询文档
      * @param rd
      * @param begin 起始位置
@@ -645,6 +608,43 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     //** 组件方法 **/
+
+    /**
+     * 查询分析
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Query getQuery(Map rd) throws HongsException {
+        BooleanQuery.Builder qr = new BooleanQuery.Builder();
+
+        padQry(qr, rd);
+
+        BooleanQuery qu = qr.build();
+        if (! qu.clauses().isEmpty()) {
+            return qu ;
+        }
+
+        return new MatchAllDocsQuery( );
+    }
+
+    /**
+     * 排序分析
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Sort getSort(Map rd) throws HongsException {
+        List<SortField> of = new LinkedList();
+
+        padSrt(of, rd);
+
+        if (of.isEmpty()) {
+            of.add(SortField.FIELD_DOC);
+        }
+
+        return new Sort(of.toArray(new SortField[0]));
+    }
 
     public void addDoc(Document doc) throws HongsException {
         IndexWriter iw = getWriter();

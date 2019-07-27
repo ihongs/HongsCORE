@@ -530,11 +530,11 @@ public class AssocCase {
                 likes(caze, ws , f1 , "NOT LIKE");
             }
 
-            // 如果还有剩余, 就当做 IN 来处理
-            /**/ vm.remove("");
+            // 如果还有剩余, 就当做 IN 来处理. 2019/07/27 为避免歧义, 取消此逻辑
+            /*   vm.remove("");
             if (!vm.isEmpty()) {
                 caze.filter(fn + " IN (?)" , Synt.asSet(vm) );
-            }
+            }*/
         }
 
         /**

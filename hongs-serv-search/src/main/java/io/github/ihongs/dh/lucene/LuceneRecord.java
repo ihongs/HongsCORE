@@ -587,6 +587,43 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     /**
+     * 排序分析
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Sort getSort(Map rd) throws HongsException {
+        List<SortField> of = new LinkedList();
+
+        padSrt(of, rd);
+
+        if (of.isEmpty()) {
+            of.add(SortField.FIELD_DOC);
+        }
+
+        return new Sort(of.toArray(new SortField[0]));
+    }
+
+    /**
+     * 查询分析
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Query getQuery(Map rd) throws HongsException {
+        BooleanQuery.Builder qr = new BooleanQuery.Builder();
+
+        padQry(qr, rd);
+
+        BooleanQuery qu = qr.build();
+        if (! qu.clauses().isEmpty()) {
+            return qu ;
+        }
+
+        return new MatchAllDocsQuery( );
+    }
+
+    /**
      * 搜索查询文档
      * @param rd
      * @param begin 起始位置
@@ -889,224 +926,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return writer;
     }
 
-    /**
-     * 查询分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    public Query getQuery(Map rd) throws HongsException {
-        Map<String, Map> fields = getFields();
-        BooleanQuery.Builder qr = new BooleanQuery.Builder();
-
-        for (Object o : rd.entrySet()) {
-            Map.Entry e = (Map.Entry)o;
-            Object fv =  e.getValue( );
-            Object fu =  e.getKey  ( );
-            String fn = (String) fu;
-
-            // 自定义查询
-            if (! padQry(qr, fn, fv) ) {
-                continue;
-            }
-
-            Map m = (Map ) fields.get( fn );
-            if (m == null) {
-                continue;
-            }
-            if (! findable(m )
-            &&  ! srchable(m)) {
-                continue;
-            }
-
-            IQuery aq;
-            String t = datatype(m);
-            if (   "int".equals(t)) {
-                aq = new IntQuery();
-            } else
-            if (  "long".equals(t)) {
-                aq = new LongQuery();
-            } else
-            if ( "float".equals(t)) {
-                aq = new FloatQuery();
-            } else
-            if ("double".equals(t)) {
-                aq = new DoubleQuery();
-            } else
-            if (  "date".equals(t)) {
-                aq = new LongQuery();
-            } else
-            if ("search".equals(t)) {
-                aq = new SearchQuery();
-            } else
-            if ("string".equals(t)) {
-                aq = srchable(m)
-                   ? new SearchQuery()
-                   : new StringQuery();
-            } else
-            {
-                continue;
-            }
-
-            padQry(qr, fn, fv, aq);
-        }
-
-        // 关键词
-        if (rd.containsKey(Cnst.WD_KEY)) {
-            Object fv = rd.get (Cnst.WD_KEY);
-                   fv = Synt.declare(fv, "");
-
-            if (fv != null && !fv.equals("")) {
-                Set<String> fs = getWdCols();
-                if (1 < fs.size()) {
-                    Map fw = new HashMap(  );
-                    fw.put(Cnst.SC_REL , fv);
-
-                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                    for(String fk : fs) {
-                        padQry(qx , fk , fw , new SearchQuery());
-                    }
-                    qr.add(qx.build(), BooleanClause.Occur.MUST);
-                } else
-                if (0 < fs.size()) {
-                    Map fw = new HashMap(  );
-                    fw.put(Cnst.CQ_REL , fv);
-
-                    for(String fk : fs) {
-                        padQry(qr , fk , fw , new SearchQuery());
-                    }
-                }
-            }
-        }
-
-        // 并条件
-        if (rd.containsKey(Cnst.AR_KEY)) {
-            Set<Map> set = Synt.asSet(rd.get(Cnst.AR_KEY));
-            if (set != null && ! set.isEmpty())
-            for(Map  map : set) {
-                qr.add(getQuery(map), BooleanClause.Occur.FILTER);
-            }
-        }
-
-        // 附条件
-        if (rd.containsKey(Cnst.SR_KEY)) {
-            Set<Map> set = Synt.asSet(rd.get(Cnst.SR_KEY));
-            if (set != null && ! set.isEmpty())
-            for(Map  map : set) {
-                qr.add(getQuery(map), BooleanClause.Occur.SHOULD);
-            }
-        }
-
-        // 或条件
-        if (rd.containsKey(Cnst.OR_KEY)) {
-            Set<Map> set = Synt.asSet(rd.get(Cnst.OR_KEY));
-            if (set != null && ! set.isEmpty()) {
-            BooleanQuery.Builder qx = new BooleanQuery.Builder( );
-            for(Map  map : set) {
-                qx.add(getQuery(map), BooleanClause.Occur.SHOULD);
-            }
-                qr.add(qx.build(   ), BooleanClause.Occur.MUST  );
-            }
-        }
-
-        // 没有条件则查询全部
-        BooleanQuery query = qr.build(   );
-        if ( query.clauses( ).isEmpty( ) ) {
-            return new MatchAllDocsQuery();
-        }
-
-        return query;
-    }
-
-    /**
-     * 排序分析
-     * @param rd
-     * @return
-     * @throws HongsException
-     */
-    public Sort getSort(Map rd) throws HongsException {
-        Map<String, Map> fields = getFields();
-        List<SortField> of = new LinkedList();
-        Object xb = rd.get(Cnst.OB_KEY);
-        Set<String> ob  =  xb  !=  null
-                  ? Synt.toTerms ( xb )
-                  : new LinkedHashSet();
-
-        for (String fn: ob) {
-            // 相关
-            if (fn.equals("-")) {
-                of.add(SortField.FIELD_SCORE);
-                continue;
-            }
-
-            // 文档
-            if (fn.equals("_")) {
-                of.add(SortField.FIELD_DOC);
-                continue;
-            }
-
-            // 逆序
-            boolean rv = fn.startsWith("-");
-            if (rv) fn = fn.substring ( 1 );
-
-            // 自定义排序
-            if (! padSrt(of, fn, rv) ) {
-                continue;
-            }
-
-            Map m = (Map ) fields.get( fn );
-            if (m == null) {
-                continue;
-            }
-            if (! sortable(m)) {
-                continue;
-            }
-
-            SortField.Type st;
-            String t = datatype(m);
-            if (   "int".equals(t)) {
-                st = SortField.Type.INT;
-            } else
-            if (  "long".equals(t)) {
-                st = SortField.Type.LONG;
-            } else
-            if ( "float".equals(t)) {
-                st = SortField.Type.FLOAT;
-            } else
-            if ("double".equals(t)) {
-                st = SortField.Type.DOUBLE;
-            } else
-            if (  "date".equals(t)) {
-                st = SortField.Type.LONG;
-            } else
-            if ("sorted".equals(t)) {
-                st = SortField.Type.LONG;
-            } else
-            if ("search".equals(t)) {
-                st = SortField.Type.STRING;
-            } else
-            if ("string".equals(t)) {
-                st = SortField.Type.STRING;
-            } else
-            {
-                continue;
-            }
-
-            /**
-             * 因为 Lucene 5 必须使用 DocValues 才能排序
-             * 在更新数据时, 默认有加 '#' 打头的排序字段
-             */
-            of.add(new SortField("#" + fn , st , rv));
-        }
-
-        // 未指定则按文档顺序
-        if (of.isEmpty()) {
-            of.add(SortField.FIELD_DOC);
-        }
-
-        return new Sort(of.toArray(new SortField[0]));
-    }
-
     //** 底层工具 **/
 
     /**
@@ -1280,26 +1099,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     /**
-     * 设置搜索项
-     * @param fc 字段配置
-     * @param sq 搜索对象
-     * @throws HongsException
-     */
-    protected void setParser(Map fc, SearchQuery sq) throws HongsException {
-        sq.analyzer   (getAnalyser (fc));
-        sq.lightMatch (Synt.asBool (fc.get("lucene-light-match")));
-        sq.smartParse (Synt.asBool (fc.get("lucene-smart-parse")));
-        sq.phraseSlop (Synt.asInt  (fc.get("lucene-phrase-slop")));
-        sq.fuzzyPreLen(Synt.asInt  (fc.get("lucene-fuzzy-pre-len")));
-        sq.fuzzyMinSim(Synt.asFloat(fc.get("lucene-fuzzy-min-sim")));
-        sq.analyzeRangeTerms(Synt.asBool(fc.get("lucene-parser-analyze-range-terms")));
-        sq.allowLeadingWildcard(Synt.asBool(fc.get("lucene-parser-allow-leading-wildcard")));
-        sq.lowercaseExpandedTerms(Synt.asBool(fc.get("lucene-parser-lowercase-expanded-terms")));
-        sq.enablePositionIncrements(Synt.asBool(fc.get("lucene-parser-enable-position-increments")));
-        sq.autoGeneratePhraseQueries(Synt.asBool(fc.get("lucene-parser-auto-generate-phrase-queries")));
-    }
-
-    /**
      * 获取类型变体
      * 返回的类型有
      * int
@@ -1314,16 +1113,21 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @return
      */
     protected String datatype(Map fc) {
-        String  t = Synt.asString(fc.get("lucene-type"));
-        if (null != t) {
-            if (t.equals("text")) {
-                return "search"; // Lucene 的 text 在这里叫 search
-            }
-            return  t;
+        String t;
+
+        t = (String) fc.get("lucene-type");
+        if (t != null) {
+            return t.equals(  "text"  )
+                 ?  "search"
+                 : t;
         }
 
-        t = (String) fc.get( "__type__" );
-        Set <String> ks;
+        t = (String) fc.get("__type__");
+        if (t == null) {
+            return t;
+        }
+
+        Set<String> ks;
 
         //** 先查特有的 **/
 
@@ -1372,19 +1176,24 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return t;
     }
 
-    protected boolean sortable(Map fc) {
-        String name = Synt.declare(fc.get("__name__"), "");
-        return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
-    }
-
     protected boolean findable(Map fc) {
         String name = Synt.declare(fc.get("__name__"), "");
         return getFindable().contains(name) || Cnst.ID_KEY.equals(name);
     }
 
+    protected boolean sortable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getSortable().contains(name) || Cnst.ID_KEY.equals(name);
+    }
+
     protected boolean srchable(Map fc) {
         String name = Synt.declare(fc.get("__name__"), "");
         return getSrchable().contains(name);
+    }
+
+    protected boolean rankable(Map fc) {
+        String name = Synt.declare(fc.get("__name__"), "");
+        return getRankable().contains(name);
     }
 
     protected boolean repeated(Map fc) {
@@ -1399,6 +1208,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return Synt.declare(fc.get(  "unstated"  ), false);
     }
 
+    /**
+     * 填充存储数据(将 map 填充到 doc)
+     * 可覆盖此方法补充额外数据
+     *
+     * @param doc
+     * @param map
+     * @param rep
+     */
     protected void padDoc(Document doc, Map map, Set rep) {
         if (rep != null && rep.isEmpty( )) {
             rep  = null;
@@ -1444,6 +1261,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 p = false;
                 break;
             case "long":
+            case "date":
                 if ("".equals(v)) continue;
                 f = new LongField();
                 p = false;
@@ -1457,11 +1275,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             case "number":
                 if ("".equals(v)) continue;
                 f = new DoubleField();
-                p = false;
-                break;
-            case "date":
-                if ("".equals(v)) continue;
-                f = new LongField();
                 p = false;
                 break;
             case "sorted":
@@ -1556,6 +1369,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
     }
 
+    /**
+     * 填充返回数据(将 doc 填充到 map)
+     * 可覆盖此方法补充额外数据
+     *
+     * @param doc
+     * @param map
+     * @param rep
+     */
     protected void padDat(Document doc, Map map, Set rep) {
         if (rep != null && rep.isEmpty( )) {
             rep  = null;
@@ -1644,259 +1465,431 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     /**
      * 组织查询条件
+     * 可覆盖此方法扩展顶层条件
      *
-     * 操作符:
-     *  eq 等于
-     *  ne 不等于
-     *  cq 匹配
-     *  nc 不匹配
-     *  lt 小于
-     *  le 小于或等于
-     *  gt 大于
-     *  ge 大于或等于
-     *  on 区间
-     *  in 包含
-     *  ni 不包含
-     * 以下为 Lucene 特有的操作符:
-     *  wt 优先度, 设定查询的权重
-     *  ai 全包含, 此为目标真子集
-     *  si 可包含, 有则优先
-     *  se 可等于, 有则优先
-     * 注意: 默认情况下查询参数不给值则忽略, 如果指定了操作符则匹配空串
-     *
-     * @param qry
-     * @param k
-     * @param v
-     * @param q
+     * @param qr
+     * @param rd
      * @throws HongsException
      */
-    protected void padQry(BooleanQuery.Builder qry, String k, Object v, IQuery q)
-    throws HongsException {
-        Map m;
-        if (v instanceof Map) {
-            m = new HashMap();
-            m.putAll((Map) v);
-        } else {
-            if (null==v || "".equals(v)) {
-                return;
+    protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
+        padQry(qr, rd, 0);
+    }
+
+    /**
+     * 组织查询条件
+     * 可覆盖此方法扩展查询条件
+     *
+     * @param qr
+     * @param rd
+     * @param r
+     * @throws HongsException
+     */
+    protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws HongsException {
+        Map<String, Map> fields = getFields();
+        for(Map.Entry<String, Map> e : fields.entrySet()) {
+            Map    m =  e.getValue();
+            String k =  e.getKey(  );
+            Object v = rd.get(  k  );
+
+            if (m == null
+            ||  v == null) {
+                continue;
             }
-            m = new HashMap();
-            if (v instanceof Collection) {
-            Collection c  = (Collection) v;
-                    c.remove("");
-                if (c.isEmpty()) {
-                    return;
+
+            IQuery qa ;
+            String t  =  datatype (m);
+            if (t != null) switch (t) {
+            case "int":
+                qa = new IntQuery();
+                break;
+            case "long":
+            case "date":
+                qa = new LongQuery();
+                break;
+            case "float":
+                qa = new FloatQuery();
+                break;
+            case "double":
+            case "number":
+                qa = new DoubleQuery();
+                break;
+            case "string":
+            case "search":
+            if (!srchable(m)) {
+                qa = new StringQuery();
+            } else {
+                SearchQuery qs;
+                qa = qs = new SearchQuery();
+                qs.analyser(getAnalyser(m));
+                qs.settings(m);
+            }
+                break;
+            default:
+                continue;
+            } else {
+                continue;
+            }
+
+            //** 常规查询 **/
+
+            Map vd;
+            if (v instanceof Map) {
+                vd = (Map) v;
+            } else
+            if (v instanceof Set
+            ||  v instanceof Collection
+            ||  v instanceof Object[ ]) {
+                Set  a = Synt.asSet(v);
+                     a.remove("");
+                if (!a.isEmpty( )) {
+                    BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                    for(Object b : a) {
+                        qx.add(qa.get(k, b), BooleanClause.Occur.SHOULD);
+                    }
+                    qr.add(qx.build(  ), BooleanClause.Occur.MUST);
                 }
-                m.put(Cnst.IN_REL, c);
-            } else
-            {
-                m.put(Cnst.EQ_REL, v);
+                continue;
+            } else {
+                if (!v.equals("")) {
+                    qr.add(qa.get(k, v), BooleanClause.Occur.MUST);
+                }
+                continue;
             }
-        }
 
-        // 搜索类型指定分词器
-        if (q instanceof SearchQuery) {
-            Map<String, Map> fields = getFields( );
-            Map         fc = ( Map ) fields.get(k);
-            setParser(  fc , ( SearchQuery )  q  );
-        }
+            //** 空值查询 **/
 
-        float                bst = 1.0F;
-        BooleanQuery.Builder src = null;
-        if (m.containsKey(Cnst.WT_REL)) {
-            src = qry;
-            qry = new BooleanQuery.Builder();
-            bst = Synt.declare(m.remove(Cnst.WT_REL), bst );
-        }
-
-        //** 空值查询 **/
-
-        if (m.containsKey(Cnst.IS_REL)) { // Is
-            String a = Synt.asString(m.remove(Cnst.IS_REL));
-            String l = q instanceof SearchQuery ? "$" : "@";
-            Query  p ;
-            try {
-                p = new QueryParser(l+k, new StandardAnalyzer()).parse("[* TO *]");
-            } catch (ParseException ex) {
-                throw new HongsExemption.Common (ex);
+            v = vd.get(Cnst.IS_REL);
+            if ( v != null ) {
+                String b = qa instanceof SearchQuery ? "$" : "@";
+                String a = Synt.asString(v);
+                Query  p ;
+                try {
+                    p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
+                } catch (ParseException ex) {
+                    throw new HongsExemption.Common(ex);
+                }
+                if ("WELL".equalsIgnoreCase(a)) {
+                    qr.add(p, BooleanClause.Occur.MUST);
+                } else
+                if ("NULL".equalsIgnoreCase(a)) {
+                    qr.add(p, BooleanClause.Occur.MUST_NOT);
+                } else
+                if ("FINE".equalsIgnoreCase(a)) {
+                    qr.add(p, BooleanClause.Occur.SHOULD  );
+                }
             }
-            if ("FILL".equalsIgnoreCase(a)) {
-                qry.add(p, BooleanClause.Occur.MUST);
-            } else
-            if ("NULL".equalsIgnoreCase(a)) {
-                qry.add(p, BooleanClause.Occur.MUST_NOT);
-            } else
-            if ("FINE".equalsIgnoreCase(a)) {
-                qry.add(p, BooleanClause.Occur.SHOULD  );
+
+            //** 精确匹配 **/
+
+            v = vd.get(Cnst.EQ_REL);
+            if ( v != null ) {
+                qr.add(qa.get(k, v), BooleanClause.Occur.MUST);
             }
-        }
-
-        //** 精确匹配 **/
-
-        if (m.containsKey(Cnst.EQ_REL)) {
-            Object n = m.remove(Cnst.EQ_REL);
-            qry.add(q.get(k, n), BooleanClause.Occur.MUST);
-        }
-
-        if (m.containsKey(Cnst.NE_REL)) {
-            Object n = m.remove(Cnst.NE_REL);
-            qry.add(q.get(k, n), BooleanClause.Occur.MUST_NOT);
-        }
-
-        if (m.containsKey(Cnst.SE_REL)) {
-            Object n = m.remove(Cnst.SE_REL);
-            qry.add(q.get(k, n), BooleanClause.Occur.SHOULD  );
-        }
-
-        //** 模糊匹配 */
-
-        if (m.containsKey(Cnst.CQ_REL)) {
-            Object n = m.remove(Cnst.CQ_REL);
-            if ( ! "".equals(n)) // 空即查全部, 没必要解析
-            qry.add(q.gen(k, n), BooleanClause.Occur.MUST);
-        }
-
-        if (m.containsKey(Cnst.NC_REL)) {
-            Object n = m.remove(Cnst.NC_REL);
-            if ( ! "".equals(n)) // 空即查全部, 没必要解析
-            qry.add(q.gen(k, n), BooleanClause.Occur.MUST_NOT);
-        }
-
-        if (m.containsKey(Cnst.SC_REL)) {
-            Object n = m.remove(Cnst.SC_REL);
-            if ( ! "".equals(n)) // 空即查全部, 没必要解析
-            qry.add(q.gen(k, n), BooleanClause.Occur.SHOULD  );
-        }
-
-        //** 包含多个 **/
-
-        if (m.containsKey(Cnst.AI_REL)) { // All In
-            Set a = Synt.declare(m.remove(Cnst.AI_REL), Set.class);
-            if (a!= null) for(Object x : a) {
-                qry.add(q.get(k, x), BooleanClause.Occur.MUST);
+            v = vd.get(Cnst.NE_REL);
+            if ( v != null ) {
+                qr.add(qa.get(k, v), BooleanClause.Occur.MUST_NOT);
             }
-        }
-
-        if (m.containsKey(Cnst.NI_REL)) { // Not In
-            Set a = Synt.declare(m.remove(Cnst.NI_REL), Set.class);
-            if (a!= null) for(Object x : a) {
-                qry.add(q.get(k, x), BooleanClause.Occur.MUST_NOT);
+            v = vd.get(Cnst.SE_REL);
+            if ( v != null ) {
+                qr.add(qa.get(k, v), BooleanClause.Occur.SHOULD  );
             }
-        }
 
-        if (m.containsKey(Cnst.SI_REL)) { // May In
-            Set a = Synt.declare(m.remove(Cnst.SI_REL), Set.class);
-            if (a!= null) for(Object x : a) {
-                qry.add(q.get(k, x), BooleanClause.Occur.SHOULD  );
+            //** 模糊匹配 **/
+
+            v = vd.get(Cnst.CQ_REL);
+            if ( v != null ) {
+                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST);
             }
-        }
-
-        if (m.containsKey(Cnst.IN_REL)) { // In
-            BooleanQuery.Builder qay = new BooleanQuery.Builder( );
-            Set a = Synt.declare(m.remove(Cnst.IN_REL), Set.class);
-            if (a!= null) for(Object x : a) {
-                qay.add(q.get(k, x), BooleanClause.Occur.SHOULD  );
+            v = vd.get(Cnst.NC_REL);
+            if ( v != null ) {
+                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST_NOT);
             }
-            qry.add(qay.build(), BooleanClause.Occur.MUST);
-        }
+            v = vd.get(Cnst.SC_REL);
+            if ( v != null ) {
+                qr.add(qa.gen(k, v), BooleanClause.Occur.SHOULD  );
+            }
 
-        //** 区间查询 **/
+            //** 集合查询 **/
 
-        Object  n, x;
-        boolean l, g;
-        Set s = null;
-
-        if (m.containsKey(Cnst.RN_REL)) {
-            s = Synt.setOf(m.remove(Cnst.RN_REL));
-        } else
-        if (m.containsKey(Cnst.ON_REL)) {
-            s = Synt.asSet(m.remove(Cnst.ON_REL));
-        }
-
-        if (s != null && !s.isEmpty( )) {
-            BooleanQuery.Builder qay = new BooleanQuery.Builder();
-
-            for(Object   o :  s) {
-                Object[] a = Synt.toRange(  o  );
-                if (null  !=  a) {
-                    n = a[0]; l = (boolean) a[2];
-                    x = a[1]; g = (boolean) a[3];
-
-                    if (n != null || x != null ) {
-                        qay.add(q.get(k, n, x, l, g), BooleanClause.Occur.SHOULD);
+            v = vd.get(Cnst.IN_REL);
+            if ( v != null ) {
+                Set vs = Synt.asSet(v);
+                if(!vs.isEmpty( )) {
+                    BooleanQuery.Builder  qx = new BooleanQuery.Builder();
+                    for(Object vv : vs) {
+                        qx.add(qa.get(k, vv), BooleanClause.Occur.SHOULD);
+                    }   qr.add(qx.build (  ), BooleanClause.Occur.MUST);
+                }
+            }
+            v = vd.get(Cnst.AI_REL);
+            if ( v != null ) {
+                Set vs = Synt.asSet(v);
+                if(!vs.isEmpty( )) {
+                    for(Object vv : vs) {
+                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST);
+                    }
+                }
+            }
+            v = vd.get(Cnst.NI_REL);
+            if ( v != null ) {
+                Set vs = Synt.asSet(v);
+                if(!vs.isEmpty( )) {
+                    for(Object vv : vs) {
+                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST_NOT);
+                    }
+                }
+            }
+            v = vd.get(Cnst.SI_REL);
+            if ( v != null ) {
+                Set vs = Synt.asSet(v);
+                if(!vs.isEmpty( )) {
+                    for(Object vv : vs) {
+                        qr.add(qa.get(k, vv), BooleanClause.Occur.SHOULD  );
                     }
                 }
             }
 
-            BooleanQuery qxy = qay.build();
-            if (qxy.clauses().size() > 0 ) {
-                qry.add(qxy, BooleanClause.Occur.MUST);
-            }
-        } else {
-            if (m.containsKey(Cnst.GE_REL)) {
-                n = m.remove (Cnst.GE_REL); l = true ;
-            } else
-            if (m.containsKey(Cnst.GT_REL)) {
-                n = m.remove (Cnst.GT_REL); l = false;
-            } else
-            {
-                n = null; l = false;
-            }
+            //** 区间查询 **/
 
-            if (m.containsKey(Cnst.LE_REL)) {
-                x = m.remove (Cnst.LE_REL); g = true ;
-            } else
-            if (m.containsKey(Cnst.LT_REL)) {
-                x = m.remove (Cnst.LT_REL); g = false;
-            } else
-            {
-                x = null; g = false;
-            }
+            Set s = null;
+            Object  n, x;
+            boolean l, g;
+
+            n = vd.get(Cnst.GE_REL);
+            if (n != null) {
+                l  = true ;
+            } else {
+            n = vd.get(Cnst.GT_REL);
+            if (n != null) {
+                l  = false;
+            } else {
+                n  = null ;
+                l  = false;
+            }}
+
+            x = vd.get(Cnst.LE_REL);
+            if (x != null) {
+                g  = true ;
+            } else {
+            x = vd.get(Cnst.LT_REL);
+            if (x != null) {
+                g  = false;
+            } else {
+                x  = null ;
+                g  = false;
+            }}
 
             if ((n != null && ! "".equals(n))
             ||  (x != null && ! "".equals(x)) ) {
-                qry.add(q.get(k, n, x, l, g), BooleanClause.Occur.MUST);
+                qr.add(qa.get(k, n, x, l, g), BooleanClause.Occur.MUST);
+            }
+
+            v = vd.get(Cnst.RN_REL);
+            if (v != null) {
+                s  = Synt.setOf (v);
+            } else {
+            v = vd.get(Cnst.ON_REL);
+            if (v != null) {
+                s  = Synt.asSet (v);
+            }}
+
+            if (s != null && !s.isEmpty( )) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+
+                for(Object o : s ) {
+                    Object[] a = Synt.toRange(o);
+                    if (a == null) {
+                        continue ;
+                    }
+
+                    n = a[0]; l = (boolean) a[2];
+                    x = a[1]; g = (boolean) a[3];
+                    if (n == null
+                    &&  x == null) {
+                        continue ;
+                    }
+
+                       Query qu = qa.get (k , n , x , l , g);
+                    qx.add ( qu, BooleanClause.Occur.SHOULD);
+                }
+
+                BooleanQuery qz = qx.build();
+                if (qz.clauses().size() > 0) {
+                    qr.add ( qz, BooleanClause.Occur.MUST  );
+                }
             }
         }
 
-        //** 其他包含 **/
+        Object v;
 
-        m.remove(""); // 想 IN ('') 必须明确指定 xxx.in=''
-        if (!m.isEmpty()) {
-            s =  new  HashSet( );
-            s.addAll(m.values());
-            padQry(qry, k, s, q);
+        //** 全局搜索 **/
+
+        v = rd.get(Cnst.WD_KEY);
+        if ( v != null ) {
+             v  = Synt.declare(v, "");
+            if (v != null && ! v.equals("")) {
+                Set<String> fs = getWdCols();
+                if (fs.size() > 0) {
+                    BooleanQuery.Builder qx = new BooleanQuery.Builder( );
+                     SearchQuery         qs = new  SearchQuery        ( );
+                           Map           fc ;
+
+                    for(String fn : fs) {
+                        fc = fields.get (fn);
+                        if (fc == null) {
+                            continue;
+                        }
+
+                        qs.settings(            fc );
+                        qs.analyser(getAnalyser(fc));
+
+                        qx.add(qs.gen(fn, v), BooleanClause.Occur.SHOULD);
+                    }   qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+                }
+            }
         }
 
-        //** 权重设置 **/
+        //** 附加条件 **/
 
-        if (src != null ) {
-            BooleanQuery qay = qry.build();
-            if (qay.clauses().size() > 0 ) {
-                src.add(new BoostQuery(qay, bst), BooleanClause.Occur.MUST);
+        v = rd.get(Cnst.AR_KEY);
+        if ( v != null ) {
+            if ( r > 2 ) {
+                throw new HongsException.Common("Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
+            }
+            Set<Map> set = Synt.asSet(v);
+            if (set != null && ! set.isEmpty())
+            for(Map  map : set) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                padQry(qx, map, r + 1);
+                qr.add(qx.build(), BooleanClause.Occur.FILTER);
+            }
+        }
+
+        v = rd.get(Cnst.SR_KEY);
+        if ( v != null ) {
+            if ( r > 2 ) {
+                throw new HongsException.Common("Key '" + Cnst.SR_KEY + "' can not exceed 2 layers");
+            }
+            Set<Map> set = Synt.asSet(v);
+            if (set != null && ! set.isEmpty())
+            for(Map  map : set) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                padQry(qx, map, r + 1);
+                qr.add(qx.build(), BooleanClause.Occur.SHOULD);
+            }
+        }
+
+        v = rd.get(Cnst.OR_KEY);
+        if ( v != null ) {
+            if ( r > 2 ) {
+                throw new HongsException.Common("Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
+            }
+            Set<Map> set = Synt.asSet(v);
+            if (set != null && ! set.isEmpty()) {
+                BooleanQuery.Builder qz = new BooleanQuery.Builder();
+            for(Map  map : set) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                padQry(qx, map, r + 1);
+                qz.add(qx.build(), BooleanClause.Occur.SHOULD);
+            }   qr.add(qz.build(), BooleanClause.Occur.MUST  );
             }
         }
     }
 
     /**
-     * 自定义查询
-     * @param qry
-     * @param k
-     * @param v
-     * @return 返回 false 阻断
+     * 组织排序规则
+     * 可覆盖此方法进行补充排序
+     *
+     * @param of
+     * @param rd
+     * @throws HongsException
      */
-    protected boolean padQry(BooleanQuery.Builder qry, String k, Object v) {
-        return true;
+    protected void padSrt(List<SortField> of, Map rd) throws HongsException {
+        Set<String> ob = Synt.toTerms(rd.get(Cnst.OB_KEY));
+        if (ob == null) {
+            return;
+        }
+
+        Map<String, Map> fields = getFields();
+        for (String fn: ob) {
+            // 相关
+            if (fn.equals("-")) {
+                of.add(SortField.FIELD_SCORE);
+                continue;
+            }
+
+            // 文档
+            if (fn.equals("_")) {
+                of.add(SortField.FIELD_DOC);
+                continue;
+            }
+
+            // 逆序
+            boolean rv = fn.startsWith("-");
+            if (rv) fn = fn.substring ( 1 );
+
+            // 自定义排序
+            if (! padSrt (of, rd, fn, rv) ) {
+                continue;
+            }
+
+            Map m  = (Map) fields.get(fn);
+            if (m == null) {
+                continue ;
+            }
+            if (! sortable(m)) {
+                continue ;
+            }
+
+            SortField.Type st;
+            String t = datatype(m);
+            if (   "int".equals(t)) {
+                st = SortField.Type.INT;
+            } else
+            if (  "long".equals(t)) {
+                st = SortField.Type.LONG;
+            } else
+            if ( "float".equals(t)) {
+                st = SortField.Type.FLOAT;
+            } else
+            if ("double".equals(t)) {
+                st = SortField.Type.DOUBLE;
+            } else
+            if (  "date".equals(t)) {
+                st = SortField.Type.LONG;
+            } else
+            if ("sorted".equals(t)) {
+                st = SortField.Type.LONG;
+            } else
+            if ("search".equals(t)) {
+                st = SortField.Type.STRING;
+            } else
+            if ("string".equals(t)) {
+                st = SortField.Type.STRING;
+            } else
+            {
+                continue;
+            }
+
+            /**
+             * 因为 Lucene 5 必须使用 DocValues 才能排序
+             * 在更新数据时, 默认有加 '#' 打头的排序字段
+             */
+            of.add(new SortField("#" + fn , st , rv));
+        }
     }
 
     /**
-     * 自定义排序
-     * @param srt
-     * @param k
-     * @param r
+     * 自定排序规则
+     * 可覆盖此方法进行特殊排序
+     *
+     * @param of
+     * @param rd
+     * @param k 排序字段
+     * @param r 是否逆序
      * @return 返回 false 阻断
      */
-    protected boolean padSrt(List<SortField> srt, String k, boolean r) {
+    protected boolean padSrt(List<SortField> of, Map rd, String k, boolean r) {
         return true;
     }
 

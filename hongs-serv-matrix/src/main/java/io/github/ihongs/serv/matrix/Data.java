@@ -711,23 +711,16 @@ public class Data extends SearchEntity {
     }
 
     @Override
-    public Query getQuery(Map rd) throws HongsException {
-        Query q = super.getQuery(rd);
-
+    protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
         // 限定分区范围
-        String pd = getPartId();
-        if (null != pd) {
-            Query p = new TermQuery( new Term("@" + PART_ID_KEY, pd) );
-            BooleanQuery.Builder b = new BooleanQuery.Builder();
-            b.add(p , BooleanClause.Occur.MUST );
-            if (  q  instanceof  BooleanQuery  ) {
-            for(BooleanClause c:(BooleanQuery)q) {
-                b.add (c);
-            }}
-            q = b.build();
+        String p  = getPartId();
+        if (   p != null) {
+            Term   t = new Term("@"+PART_ID_KEY, p);
+            Query  q = new TermQuery(t);
+            qr.add(q , BooleanClause.Occur.MUST);
         }
 
-        return  q;
+        super.padQry(qr, rd);
     }
 
     @Override

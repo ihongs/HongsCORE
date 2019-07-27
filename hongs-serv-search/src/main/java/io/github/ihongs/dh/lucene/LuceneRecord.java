@@ -985,7 +985,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      *
      * @param qr
      * @param rd
-     * @param r
+     * @param r 递归层级
      * @throws HongsException
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws HongsException {

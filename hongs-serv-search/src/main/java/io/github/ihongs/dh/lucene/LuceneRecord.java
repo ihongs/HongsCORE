@@ -1436,15 +1436,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     //** 事务方法 **/
 
-    @Override
-    protected void finalize() throws Throwable {
-        try {
-           this.close(   );
-        } finally {
-          super.finalize();
-        }
-    }
-
     /**
      * 销毁读写连接
      */
@@ -1542,6 +1533,15 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             writer.rollback();
         } catch (IOException ex) {
             throw new HongsExemption(0x102d, ex);
+        }
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        try {
+           this.close(   );
+        } finally {
+          super.finalize();
         }
     }
 

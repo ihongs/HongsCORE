@@ -634,7 +634,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @return
      * @throws HongsException
      */
-    public Sort getSort(Map rd) throws HongsException {
+    public Sort  getSort (Map rd) throws HongsException {
         List<SortField> of = new LinkedList();
 
         padSrt(of, rd);

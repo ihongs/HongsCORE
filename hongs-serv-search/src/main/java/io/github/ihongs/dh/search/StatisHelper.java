@@ -205,7 +205,7 @@ public class StatisHelper {
         int total = 0;
 
         try {
-            Query q = that.getQuery(rd);
+            Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
                 CoreLogger.debug("SearchRecord.counts: "+q.toString());
@@ -419,7 +419,7 @@ public class StatisHelper {
         int total = 0;
 
         try {
-            Query q = that.getQuery(rd);
+            Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
                 CoreLogger.debug("SearchRecord.statis: " +q.toString());

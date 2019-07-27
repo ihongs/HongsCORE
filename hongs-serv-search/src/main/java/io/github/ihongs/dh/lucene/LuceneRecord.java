@@ -595,8 +595,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @throws HongsException
      */
     public Loop search(Map rd, int begin, int limit) throws HongsException {
-        Query q = getQuery(rd);
-        Sort  s = getSort (rd);
+        Query q = padQry(rd);
+        Sort  s = padSrt(rd);
         Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
         Loop  l = new Loop(this, q,s,r, begin,limit);
 
@@ -608,31 +608,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     //** 组件方法 **/
-
-    public Query getQuery(Map rd) throws HongsException {
-        BooleanQuery.Builder qr = new BooleanQuery.Builder();
-
-        padQry(qr, rd);
-
-        BooleanQuery qu = qr.build();
-        if (! qu.clauses().isEmpty()) {
-            return qu ;
-        }
-
-        return new MatchAllDocsQuery( );
-    }
-
-    public Sort  getSort (Map rd) throws HongsException {
-        List<SortField> of = new LinkedList();
-
-        padSrt(of, rd);
-
-        if (of.isEmpty()) {
-            of.add(SortField.FIELD_DOC);
-        }
-
-        return new Sort(of.toArray(new SortField[0]));
-    }
 
     public void addDoc(Document doc) throws HongsException {
         IndexWriter iw = getWriter();
@@ -708,6 +683,31 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         Map map = new LinkedHashMap();
         padDat(doc, map, rep );
         return map;
+    }
+
+    public Query padQry(Map rd) throws HongsException {
+        BooleanQuery.Builder qr = new BooleanQuery.Builder();
+
+        padQry(qr, rd);
+
+        BooleanQuery qu = qr.build();
+        if (! qu.clauses().isEmpty()) {
+            return qu ;
+        }
+
+        return new MatchAllDocsQuery( );
+    }
+
+    public Sort  padSrt(Map rd) throws HongsException {
+        List<SortField> of = new LinkedList();
+
+        padSrt(of, rd);
+
+        if (of.isEmpty()) {
+            of.add(SortField.FIELD_DOC);
+        }
+
+        return new Sort(of.toArray(new SortField[0]));
     }
 
     //** 事务方法 **/
@@ -1460,7 +1460,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @throws HongsException
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
-        padQry(qr, rd, 0);
+        LuceneRecord.this.padQry(qr, rd, 0);
     }
 
     /**
@@ -1749,7 +1749,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 BooleanQuery.Builder qz = new BooleanQuery.Builder();
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry( qx, map, r + 1 );
+                    LuceneRecord.this.padQry( qx, map, r + 1 );
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
                     Query qb = qa ;
@@ -1779,7 +1779,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (set != null && ! set.isEmpty())
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry( qx, map, r + 1 );
+                LuceneRecord.this.padQry( qx, map, r + 1 );
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
                     Query qb = qa ;
@@ -1804,7 +1804,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (set != null && ! set.isEmpty())
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry( qx, map, r + 1 );
+                LuceneRecord.this.padQry( qx, map, r + 1 );
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
                     Query qb = qa ;
@@ -1854,7 +1854,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (rv) fn = fn.substring ( 1 );
 
             // 自定义排序
-            if (! padSrt (of, rd, fn, rv) ) {
+            if (! LuceneRecord.this.padSrt (of, rd, fn, rv) ) {
                 continue;
             }
 

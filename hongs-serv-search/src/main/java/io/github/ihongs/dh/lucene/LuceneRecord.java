@@ -1751,6 +1751,37 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
         //** 附加条件 **/
 
+        v = rd.get(Cnst.OR_KEY);
+        if ( v != null ) {
+            if ( r > 2 ) {
+                throw new HongsException.Common("Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
+            }
+            Set<Map> set = Synt.asSet(v);
+            if (set != null && ! set.isEmpty()) {
+                BooleanQuery.Builder qz = new BooleanQuery.Builder();
+            for(Map  map : set) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                padQry( qx, map, r + 1 );
+                BooleanQuery qa = qx.build();
+                if (! qa.clauses().isEmpty()) {
+                    Query qb = qa ;
+
+                    // 权重
+                    v = map.get(Cnst.WT_REL);
+                    if (v != null) {
+                        qb = new BoostQuery(qa, Synt.declare(v, 1f));
+                    }
+
+                    qz.add(qb, BooleanClause.Occur.SHOULD);
+                }
+            }
+                BooleanQuery qa = qz.build();
+                if (! qa.clauses().isEmpty()) {
+                    qr.add(qa, BooleanClause.Occur.MUST  );
+                }
+            }
+        }
+
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
@@ -1760,8 +1791,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (set != null && ! set.isEmpty())
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry(qx, map, r + 1);
-                qr.add(qx.build(), BooleanClause.Occur.FILTER);
+                padQry( qx, map, r + 1 );
+                BooleanQuery qa = qx.build();
+                if (! qa.clauses().isEmpty()) {
+                    Query qb = qa ;
+
+                    // 权重
+                    v = map.get(Cnst.WT_REL);
+                    if (v != null) {
+                        qb = new BoostQuery(qa, Synt.declare(v, 1f));
+                    }
+
+                    qr.add(qb, BooleanClause.Occur.FILTER);
+                }
             }
         }
 
@@ -1774,24 +1816,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (set != null && ! set.isEmpty())
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry(qx, map, r + 1);
-                qr.add(qx.build(), BooleanClause.Occur.SHOULD);
-            }
-        }
+                padQry( qx, map, r + 1 );
+                BooleanQuery qa = qx.build();
+                if (! qa.clauses().isEmpty()) {
+                    Query qb = qa ;
 
-        v = rd.get(Cnst.OR_KEY);
-        if ( v != null ) {
-            if ( r > 2 ) {
-                throw new HongsException.Common("Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
-            }
-            Set<Map> set = Synt.asSet(v);
-            if (set != null && ! set.isEmpty()) {
-                BooleanQuery.Builder qz = new BooleanQuery.Builder();
-            for(Map  map : set) {
-                BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                padQry(qx, map, r + 1);
-                qz.add(qx.build(), BooleanClause.Occur.SHOULD);
-            }   qr.add(qz.build(), BooleanClause.Occur.MUST  );
+                    // 权重
+                    v = map.get(Cnst.WT_REL);
+                    if (v != null) {
+                        qb = new BoostQuery(qa, Synt.declare(v, 1f));
+                    }
+
+                    qr.add(qb, BooleanClause.Occur.SHOULD);
+                }
             }
         }
     }

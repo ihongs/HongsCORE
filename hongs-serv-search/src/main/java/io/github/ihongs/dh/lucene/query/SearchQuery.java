@@ -1,6 +1,8 @@
 package io.github.ihongs.dh.lucene.query;
 
 import io.github.ihongs.HongsExemption;
+import io.github.ihongs.util.Synt;
+import java.util.Map;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -23,7 +25,25 @@ public class SearchQuery extends StringQuery {
     private Boolean  let = null;
     private Boolean  epi = null;
     private Boolean  agp = null;
-    public void  analyzer(Analyzer a) {
+
+    /**
+     * 快捷设置 lightMatch,smartParse 等, 但不包含 analyser
+     * @param m
+     */
+    public void  settings(Map m) {
+        lightMatch (Synt.asBool (m.get("lucene-light-match")));
+        smartParse (Synt.asBool (m.get("lucene-smart-parse")));
+        phraseSlop (Synt.asInt  (m.get("lucene-phrase-slop")));
+        fuzzyPreLen(Synt.asInt  (m.get("lucene-fuzzy-pre-len")));
+        fuzzyMinSim(Synt.asFloat(m.get("lucene-fuzzy-min-sim")));
+        analyzeRangeTerms(Synt.asBool(m.get("lucene-parser-analyze-range-terms")));
+        allowLeadingWildcard(Synt.asBool(m.get("lucene-parser-allow-leading-wildcard")));
+        lowercaseExpandedTerms(Synt.asBool(m.get("lucene-parser-lowercase-expanded-terms")));
+        enablePositionIncrements(Synt.asBool(m.get("lucene-parser-enable-position-increments")));
+        autoGeneratePhraseQueries(Synt.asBool(m.get("lucene-parser-auto-generate-phrase-queries")));
+    }
+
+    public void  analyser(Analyzer a) {
         this.ana = a;
     }
     public void  smartParse (Boolean x) {
@@ -62,7 +82,7 @@ public class SearchQuery extends StringQuery {
         if (null == v) {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
-        
+
         QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());
 
         String s = v.toString( );
@@ -96,5 +116,5 @@ public class SearchQuery extends StringQuery {
             throw new HongsExemption.Common(ex);
         }
     }
-    
+
 }

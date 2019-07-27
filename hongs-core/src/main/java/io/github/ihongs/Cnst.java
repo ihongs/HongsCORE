@@ -53,7 +53,7 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String IS_REL = ":is"; // 是否为空  (NULL , FILL)
+    public static final String IS_REL = ":is"; // 是否为空  (NULL , WELL)
 
     public static final String EQ_REL = ":eq"; // 等于
 

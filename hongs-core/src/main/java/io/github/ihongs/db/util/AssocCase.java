@@ -463,7 +463,7 @@ public class AssocCase {
                 if ("NULL".equalsIgnoreCase(rv)) {
                     caze.filter(fn+/**/" IS NULL");
                 } else
-                if ("FILL".equalsIgnoreCase(rv)) {
+                if ("WELL".equalsIgnoreCase(rv)) {
                     caze.filter(fn+" IS NOT NULL");
                 }
             }

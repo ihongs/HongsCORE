@@ -990,7 +990,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws HongsException {
         int i = 0, j = 0;
-        
+
         Map<String, Map> fields = getFields();
         for(Map.Entry<String, Map> e : fields.entrySet()) {
             Map    m =  e.getValue();
@@ -1203,19 +1203,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             }
         }
 
-        /**
-         * AR 下全部 MUST_NOT 会造成取不到数据
-         * 需要增加一个肯定的条件
-         */
-        if (r > 0 && i > 0 && i == j) {
-            try {
-                Query  p = new QueryParser("@" + Cnst.ID_KEY, new StandardAnalyzer()).parse("[* TO *]");
-                qr.add(p, BooleanClause.Occur.MUST);
-            } catch (ParseException ex) {
-                throw new HongsExemption.Common(ex);
-            }
-        }
-        
         Object v;
 
         //** 全局搜索 **/
@@ -1256,6 +1243,21 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 LuceneRecord.this.padQry( qx, map, r + 1 );
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
+                    /**
+                     * AR 下全部 MUST_NOT 会造成取不到数据
+                     * 需要增加一个肯定的条件
+                     */
+                    int x = 0;
+                    for (BooleanClause bc : qa.clauses()) {
+                        if (bc.getOccur() == BooleanClause.Occur.MUST_NOT) {
+                            x ++;
+                        }
+                    }
+                    if (x == qa.clauses().size()) {
+                        qx.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
+                        qa = qx.build();
+                    }
+
                     Query qb = qa ;
 
                     // 权重
@@ -1282,6 +1284,21 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     LuceneRecord.this.padQry( qx, map, r + 1 );
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
+                    /**
+                     * AR 下全部 MUST_NOT 会造成取不到数据
+                     * 需要增加一个肯定的条件
+                     */
+                    int x = 0;
+                    for (BooleanClause bc : qa.clauses()) {
+                        if (bc.getOccur() == BooleanClause.Occur.MUST_NOT) {
+                            x ++;
+                        }
+                    }
+                    if (x == qa.clauses().size()) {
+                        qz.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
+                        qa = qx.build();
+                    }
+
                     Query qb = qa ;
 
                     // 权重

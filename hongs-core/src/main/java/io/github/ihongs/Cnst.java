@@ -73,8 +73,6 @@ public final class Cnst {
 
     public static final String RN_REL = ":rn"; // 区间
 
-    public static final String ON_REL = ":on"; // 多区间
-
     public static final String IN_REL = ":in"; // 包含
 
     public static final String NI_REL = ":ni"; // 不包含

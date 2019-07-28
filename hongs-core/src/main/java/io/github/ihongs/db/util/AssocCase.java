@@ -454,7 +454,7 @@ public class AssocCase {
 
             String f0 = cf.remove( kn ); // 区间字段
             String f1 = sf.remove( kn ); // 搜索字段
-            Map    vm = new HashMap(( Map ) vv);
+            Map    vm = new HashMap ( ( Map ) vv);
             Object vo ;
 
             vo = vm.remove(Cnst.IS_REL);
@@ -489,29 +489,22 @@ public class AssocCase {
             vo = vm.remove(Cnst.GT_REL);
             if ( f0 != null && vo != null && !"".equals(vo) ) {
                 caze.filter(f0+ " > ?", alone(vo, kn, Cnst.GT_REL));
-            }
+            } else {
             vo = vm.remove(Cnst.GE_REL);
             if ( f0 != null && vo != null && !"".equals(vo) ) {
                 caze.filter(f0+" >= ?", alone(vo, kn, Cnst.GE_REL));
-            }
+            }}
 
             vo = vm.remove(Cnst.LT_REL);
             if ( f0 != null && vo != null && !"".equals(vo) ) {
                 caze.filter(f0+ " < ?", alone(vo, kn, Cnst.LT_REL));
-            }
+            } else {
             vo = vm.remove(Cnst.LE_REL);
             if ( f0 != null && vo != null && !"".equals(vo) ) {
                 caze.filter(f0+" <= ?", alone(vo, kn, Cnst.LE_REL));
-            }
+            }}
 
             vo = vm.remove(Cnst.RN_REL);
-            if ( f0 != null && vo != null ) {
-                Set ir = Synt.setOf(vo);
-                if (ir != null && !ir.isEmpty()) {
-                    range(caze, ir, f0);
-                }
-            }
-            vo = vm.remove(Cnst.ON_REL);
             if ( f0 != null && vo != null ) {
                 Set ir = Synt.asSet(vo);
                 if (ir != null && !ir.isEmpty()) {
@@ -576,13 +569,6 @@ public class AssocCase {
             vo = vm.get(Cnst.RN_REL);
             if ( vo != null ) {
                 Set ir = Synt.setOf(vo);
-                if (ir != null && !ir.isEmpty()) {
-                    range(caze, ir, f0);
-                }
-            }
-            vo = vm.get(Cnst.ON_REL);
-            if ( vo != null ) {
-                Set ir = Synt.asSet(vo);
                 if (ir != null && !ir.isEmpty()) {
                     range(caze, ir, f0);
                 }

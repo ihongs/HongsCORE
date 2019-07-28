@@ -739,7 +739,7 @@ public final class Synt {
         /**
          * 按区间格式进行解析
          */
-        if (val instanceof String ) {
+        if (val instanceof String  ) {
             String vs = declare(val, "");
             Matcher m = RNGP.matcher(vs);
             if (m.matches()) {
@@ -766,6 +766,19 @@ public final class Synt {
             arr = ((List)val).toArray();
         } else {
             throw new ClassCastException("'"+val+"' can not be cast to range");
+        }
+
+        /**
+         * 空串表示无穷大或小
+         * 为便判断统一为空值
+         */
+        if (1 < arr.length) {
+            if ( "".equals(arr[0]) ) {
+                arr[0] = null;
+            }
+            if ( "".equals(arr[1]) ) {
+                arr[1] = null;
+            }
         }
 
         switch (arr.length) {

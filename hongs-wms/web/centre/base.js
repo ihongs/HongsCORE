@@ -452,7 +452,7 @@ HsCate.prototype = {
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name+":on.")
+                .attr("name" , name + ":rn.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);

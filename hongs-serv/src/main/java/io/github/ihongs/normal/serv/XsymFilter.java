@@ -59,28 +59,31 @@ public class XsymFilter extends ActionDriver {
         String act = ActionDriver.getRecentPath(req);
         String ctt = req.getContentType();
 
-        /**
-         * 非 JSON 类型已在 Dict 中作兼容
-         */
-        if (ctt == null) {
-            chain.doFilter(req, rsp);
-            return;
-        }
-        ctt = ctt.split( ";", 2 )[0];
-        if (! ctt.endsWith("/json")) {
-            chain.doFilter(req, rsp);
-            return;
-        }
+        do {
+            if (ctt == null) {
+                break;
+            }
 
-        /**
-         * 检查当前动作是否可以忽略
-         */
-        if (ignore != null && ignore.ignore( act ) ) {
-            chain.doFilter(req, rsp);
-            return;
-        }
+            /**
+             * 非 JSON 已在 Dict 中兼容
+             */
+            ctt = ctt.split( ";", 2 )[0];
+            if (! ctt.endsWith("/json")) {
+                break;
+            }
 
-        doChange(hlpr.getRequestData());
+            /**
+             * 检查当前动作是否可以忽略
+             */
+            if (ignore != null && ignore.ignore(act)) {
+                break;
+            }
+
+            doChange(hlpr.getRequestData());
+        }
+        while (false);
+
+        chain.doFilter(req , rsp);
     }
 
     private void doChange(Map rd) {

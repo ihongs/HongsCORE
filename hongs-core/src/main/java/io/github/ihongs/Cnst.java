@@ -49,8 +49,6 @@ public final class Cnst {
 
     public static final String AR_KEY =  "ar"; // 与条件    (And)
 
-    public static final String SR_KEY =  "sr"; // 可条件    (Lucene 特有)
-
     //** 关系符号 **/
 
     public static final String IS_REL =  "is"; // 是否为空  (NULL , WELL)
@@ -78,12 +76,6 @@ public final class Cnst {
     public static final String NI_REL =  "ni"; // 不包含
 
     public static final String AI_REL =  "ai"; // 全包含    (Lucene 特有, all in)
-
-    public static final String SI_REL =  "si"; // 可包含    (Lucene 特有, should in)
-
-    public static final String SE_REL =  "se"; // 可等于    (Lucene 特有, should equals)
-
-    public static final String SC_REL =  "sc"; // 可匹配    (Lucene 特有, should matchs)
 
     public static final String WT_REL =  "wt"; // 权重      (Lucene 特有, weight)
 

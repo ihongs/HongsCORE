@@ -100,11 +100,6 @@ public class BynameHelper {
             newData.put(Cnst.AR_KEY, in(subData));
         }
 
-        subData = Synt.asMap(newData.get(Cnst.SR_KEY));
-        if (subData != null) {
-            newData.put(Cnst.SR_KEY, in(subData));
-        }
-
         setData = Synt.toTerms(newData.get(Cnst.RB_KEY));
         if (setData != null) {
             newData.put(Cnst.RB_KEY, in(setData));

@@ -140,7 +140,8 @@ public class TestDict extends TestCase {
 
     @Test
     public void testSplitKeys() {
-        Object[] a = new Object[ ] {"", "a", "b", "c", "d", ":e", ":f", "g", ":h", null, "x.y:z", "def", null};
+//      Object[] a = new Object [] {"", "a", "b", "c", "d", ":e", ":f", "g", ":h", null, "x.y:z", "def", null};
+        Object[] a = new Object [] {"", "a", "b", "c", "d", null, "e", "f", "g", "h", null, "x.y:z", "def", null};
         Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");
         Object[] c = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def." );
         System.out.println(Data.toString(a));

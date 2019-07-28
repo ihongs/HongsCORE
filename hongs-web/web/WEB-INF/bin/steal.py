@@ -9,13 +9,14 @@
 
 import re
 import sys
+from getopt import getopt
 
 if  __name__ == "__main__":
     def cmd_help():
         print "Usage: | steal.py REGEXP"
         print "Another options:"
         print "  -n --name             Action or Cmdlet name"
-        print "  -d --addr             Client IP address"
+        print "  -a --addr             Client IP address"
         print "  -l --type             Logs type level"
         print "  -t --time             Logs time range"
         print "  -h --help             Show this msg"
@@ -33,14 +34,14 @@ if  __name__ == "__main__":
     opts, args = getopt(sys.argv[1:], "n:a:l:t:h", ["name", "addr", "type", "time", "help"])
     for n,v in opts:
         if  n in ("-n", "--name"):
-            if  v.startswith('*')
+            if  v.startswith('*'):
                 tn = re.compile(re.escape(v[:-1]+".*"))
             elif  v.endswith('*'):
                 tn = re.compile(re.escape(".*"+v[ 1:]))
             else:
                 tn = re.compile(re.escape(v))
         if  n in ("-d", "--addr"):
-            if  v.startswith('*')
+            if  v.startswith('*'):
                 ip = re.compile(re.escape(v[:-1]+".*"))
             elif  v.endswith('*'):
                 ip = re.compile(re.escape(".*"+v[ 1:]))
@@ -93,7 +94,7 @@ if  __name__ == "__main__":
             rf = True
             continue
 
-        if  tm:
+        if  tr:
             pass
 
     # 退出时检查缓冲区是否有内容

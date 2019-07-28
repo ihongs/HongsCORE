@@ -173,28 +173,28 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
 支持 Content-Type 为 application/x-www-form-urlencoded, multipart/form-data 和 application/json 的请求, 组成结构为:
 
-    f1=1&f2:eq=2&f3:in.=30&f3:in.=31&t1.f4:rg=18,55&ob=-f5+f6&wd=Hello+world
+    f1=1&f2.eq=2&f3.in.=30&f3.in.=31&t1.f4.rg=18,55&ob=-f5+f6&wd=Hello+world
 
 在 URL 中 + 表示空格. 可兼容 PHP 的格式:
 
-    f1=1&f2[:eq]=2&f3[:in][]=30&f3[:in][]=31&t1[f4][:rg]=18,55&ob=-f5+f6&wd=Hello+world
+    f1=1&f2[eq]=2&f3[in][]=30&f3[in][]=31&t1[f4][rg]=18,55&ob=-f5+f6&wd=Hello+world
 
 此 URL 查询串将转为类似下面 JSON 的结构:
 
     {
         "f1": 1,
         "f2": {
-            ":eq": 2
+            "eq": 2
         },
         "f3": {
-            ":in": [
+            "in": [
                 30,
                 31
             ]
         },
         "t1": {
             "f4": {
-                ":rg": "18,55"
+                "rg": "18,55"
             }
         },
         "ob": "-f5 f6",
@@ -209,8 +209,7 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
      ge     大于或等于
      lt     小于
      le     小于或等于
-     rn     区间
-     on     区间集
+     rg     区间
      in     包含
      ni     不包含
 

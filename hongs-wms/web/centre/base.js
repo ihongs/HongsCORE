@@ -167,8 +167,8 @@ function hsListInitSort(x, v, n) {
 function hsListInitMine(x, v, n) {
     x.next().on( "change", ":radio", function() {
         switch ($(this).val()) {
-            case "1": x.attr("name", n + ":eq").val(HsCUID); break;
-            case "2": x.attr("name", n + ":ne").val(HsCUID); break;
+            case "1": x.attr("name", n + ".eq").val(HsCUID); break;
+            case "2": x.attr("name", n + ".ne").val(HsCUID); break;
             default : x.attr("name", n).val(""); break;
         }
 
@@ -452,7 +452,7 @@ HsCate.prototype = {
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name + ":rn.")
+                .attr("name" , name + ".rg.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);
@@ -484,7 +484,7 @@ HsCate.prototype = {
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
-                .attr("name" , name+":in.")
+                .attr("name" , name + ".in.")
                 .attr("value", v[0]);
             title = $('<span></span>')
                 .text(v[1]);

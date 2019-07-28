@@ -431,7 +431,7 @@ public final class Dict
     while (end < len ) {
         pnt = path.charAt(end);
         switch ( pnt ) {
-            case ':' :
+            case ':' :/* // 2019/07/28 取消特殊对待, 使其向下兼容
                 if (fkh) {
                     break; // [] 内可以用 :
                 }
@@ -439,7 +439,7 @@ public final class Dict
                     lst.add(path.substring(beg, end));
                     beg  = end;
                 }
-                break;
+                break;*/
             case '.' :
                 if (fkh) {
                     break; // [] 内可以用 .

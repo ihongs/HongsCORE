@@ -335,8 +335,8 @@ public class StatisHelper {
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
-                if (vm.containsKey ( /***/ Cnst.RN_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.RN_REL));
+                if (vm.containsKey ( /***/ Cnst.RG_REL)) {
+                    vs = Synt.asSet(vm.get(Cnst.RG_REL));
                 }
             }
 

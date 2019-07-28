@@ -1189,7 +1189,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             }
 
             Set s  = null;
-            v = vd.get(Cnst.RN_REL);
+            v = vd.get(Cnst.RG_REL);
             if (v != null) {
                 s  = Synt.asSet (v);
             }

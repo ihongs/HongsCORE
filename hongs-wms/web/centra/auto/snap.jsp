@@ -29,10 +29,10 @@
                 <div class=" form-group" style="display:inline-block;margin:0px;">
                 <div class="input-group" style="display:inline-table;width:30em;">
                     <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
-                    <input type="hidden" class="form-ignored" name="ctime:ge">
+                    <input type="hidden" class="form-ignored" name="ctime.ge">
                     <span class="input-group-addon" style="padding-left:0.2em;padding-right:0.2em;">~</span>
                     <input type="datetime-local" data-type="timestamp" data-toggle="hsTime" class="form-control" style="padding-right:0;">
-                    <input type="hidden" class="form-ignored" name="ctime:le">
+                    <input type="hidden" class="form-ignored" name="ctime.le">
                     <span class="input-group-btn">
                         <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-repeat"></span></button>
                     </span>
@@ -84,8 +84,8 @@
         };
 
         var context = $('#<%=_pageId%>').removeAttr("id");
-        context.find("[name='ctime:ge']").val(H$("@ctime_ge", context));
-        context.find("[name='ctime:le']").val(H$("@ctime_le", context));
+        context.find("[name='ctime.ge']").val(H$("@ctime_ge", context));
+        context.find("[name='ctime.le']").val(H$("@ctime_le", context));
 
         var listobj = context.hsList({
             loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user",
@@ -146,8 +146,8 @@
             var tr = $(this).closest("tr");
             var tt = $(this).text   (    );
             var id =    tr.data(     "id");
-            var ge = context.find("[name='ctime:ge']").val();
-            var le = context.find("[name='ctime:le']").val();
+            var ge = context.find("[name='ctime.ge']").val();
+            var le = context.find("[name='ctime.le']").val();
             lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
         });
 
@@ -156,8 +156,8 @@
             var tr = $(this).closest("tr");
             var tt = $(this).text   (    );
             var id =    tr.data("user_id");
-            var ge = context.find("[name='ctime:ge']").val();
-            var le = context.find("[name='ctime:le']").val();
+            var ge = context.find("[name='ctime.ge']").val();
+            var le = context.find("[name='ctime.le']").val();
             lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
         });
 

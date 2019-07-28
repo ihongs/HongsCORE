@@ -198,9 +198,9 @@
         };
         if ($(this).is( ".re-old" )) {
             data["<%=Cnst.OB_KEY%>"] = "-"+data["<%=Cnst.OB_KEY%>"];
-            data["ctime:lt"] = ct;
+            data["ctime.lt"] = ct;
         } else {
-            data["ctime:gt"] = ct;
+            data["ctime.gt"] = ct;
         }
         $.hsAjax({
             url : "<%=_module%>/<%=_entity%>/revert/search.act",

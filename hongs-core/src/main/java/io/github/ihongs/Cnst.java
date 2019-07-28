@@ -53,39 +53,39 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String IS_REL = ":is"; // 是否为空  (NULL , WELL)
+    public static final String IS_REL =  "is"; // 是否为空  (NULL , WELL)
 
-    public static final String EQ_REL = ":eq"; // 等于
+    public static final String EQ_REL =  "eq"; // 等于
 
-    public static final String NE_REL = ":ne"; // 不等于
+    public static final String NE_REL =  "ne"; // 不等于
 
-    public static final String CQ_REL = ":cq"; // 匹配
+    public static final String CQ_REL =  "cq"; // 匹配
 
-    public static final String NC_REL = ":nc"; // 不匹配
+    public static final String NC_REL =  "nc"; // 不匹配
 
-    public static final String LT_REL = ":lt"; // 小于
+    public static final String GT_REL =  "gt"; // 大于
 
-    public static final String LE_REL = ":le"; // 小于或等于
+    public static final String GE_REL =  "ge"; // 大于或等于
 
-    public static final String GT_REL = ":gt"; // 大于
+    public static final String LT_REL =  "lt"; // 小于
 
-    public static final String GE_REL = ":ge"; // 大于或等于
+    public static final String LE_REL =  "le"; // 小于或等于
 
-    public static final String RN_REL = ":rn"; // 区间
+    public static final String RG_REL =  "rg"; // 区间
 
-    public static final String IN_REL = ":in"; // 包含
+    public static final String IN_REL =  "in"; // 包含
 
-    public static final String NI_REL = ":ni"; // 不包含
+    public static final String NI_REL =  "ni"; // 不包含
 
-    public static final String AI_REL = ":ai"; // 全包含    (Lucene 特有, all in)
+    public static final String AI_REL =  "ai"; // 全包含    (Lucene 特有, all in)
 
-    public static final String SI_REL = ":si"; // 可包含    (Lucene 特有, may in)
+    public static final String SI_REL =  "si"; // 可包含    (Lucene 特有, should in)
 
-    public static final String SE_REL = ":se"; // 可等于    (Lucene 特有, may be)
+    public static final String SE_REL =  "se"; // 可等于    (Lucene 特有, should equals)
 
-    public static final String SC_REL = ":sc"; // 可匹配    (Lucene 特有, may be)
+    public static final String SC_REL =  "sc"; // 可匹配    (Lucene 特有, should matchs)
 
-    public static final String WT_REL = ":wt"; // 权重      (Lucene 特有, weight)
+    public static final String WT_REL =  "wt"; // 权重      (Lucene 特有, weight)
 
     //** 配置扩展 **/
 

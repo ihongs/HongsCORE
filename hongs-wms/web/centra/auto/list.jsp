@@ -38,13 +38,12 @@
         <div class="col-xs-6">
             <div class="input-group">
                 <%
-                    String sn = _fields.containsKey("word") ? "word:cq" : "wd";
-                    String sp =  getSearchHolder( _fields );
+                    String sp = getSearchHolder(_fields);
                     if (sp.length() == 0) {
-                        sp = sp + "\" disabled=\"disabled" ;
+                        sp = sp+"\" disabled=\"disabled";
                     }
                 %>
-                <input  type="search" class="form-control" name="<%=sn%>" placeholder="<%=sp%>" />
+                <input  type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" />
                 <span class="input-group-btn">
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
@@ -78,9 +77,9 @@
             <div class="col-xs-6">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%><%=Cnst.GE_REL%>" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%><%=Cnst.LE_REL%>" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.LE_REL%>" />
                 </div>
             <%} else if ("date".equals(type) || "time" .equals(type) || "datetime" .equals(type)) {%>
                 <%
@@ -89,9 +88,9 @@
                     }
                 %>
                 <div class="input-group">
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%><%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.GE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                     <span class="input-group-addon input-sm">~</span>
-                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%><%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
+                    <input type="<%=type%>" class="form-control" name="ar.0.<%=name%>.<%=Cnst.LE_REL%>" data-toggle="hsTime" data-type="<%=info.get("type")%>" />
                 </div>
             <%} else if ("fork".equals(type) || "pick".equals(type)) {%>
                 <%
@@ -360,8 +359,8 @@
     });
 
     var statobj = context.hsStat({
-        aurl: "<%=_module%>/<%=_entity%>/statis/survey.act?rn=20&<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/statis/search.act?rn=20&<%=Cnst.AB_KEY%>=_text,_fork"
+        aurl: "<%=_module%>/<%=_entity%>/statis/survey.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     var loadarr = hsSerialArr(loadbox);

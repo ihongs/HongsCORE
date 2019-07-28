@@ -1101,15 +1101,15 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             //** 模糊匹配 **/
 
             v = vd.get(Cnst.CQ_REL);
-            if ( v != null ) {
+            if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.gen(k, v), BooleanClause.Occur.MUST);
             }
             v = vd.get(Cnst.NC_REL);
-            if ( v != null ) {
+            if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.gen(k, v), BooleanClause.Occur.MUST_NOT);
             }
             v = vd.get(Cnst.SC_REL);
-            if ( v != null ) {
+            if ( v != null && ! "".equals(v) ) {
                 qr.add(qa.gen(k, v), BooleanClause.Occur.SHOULD  );
             }
 
@@ -1155,49 +1155,46 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             //** 区间查询 **/
 
-            Set s = null;
             Object  n, x;
             boolean l, g;
 
-            n = vd.get(Cnst.GE_REL);
-            if (n != null) {
-                l  = true ;
-            } else {
             n = vd.get(Cnst.GT_REL);
             if (n != null) {
                 l  = false;
             } else {
+            n = vd.get(Cnst.GE_REL);
+            if (n != null) {
+                l  = true ;
+            } else {
                 n  = null ;
-                l  = false;
+                l  = true ;
             }}
 
-            x = vd.get(Cnst.LE_REL);
-            if (x != null) {
-                g  = true ;
-            } else {
             x = vd.get(Cnst.LT_REL);
             if (x != null) {
                 g  = false;
             } else {
+            x = vd.get(Cnst.LE_REL);
+            if (x != null) {
+                g  = true ;
+            } else {
                 x  = null ;
-                g  = false;
+                g  = true ;
             }}
 
             if ((n != null && ! "".equals(n))
-            ||  (x != null && ! "".equals(x)) ) {
-                qr.add(qa.get(k, n, x, l, g), BooleanClause.Occur.MUST);
+            ||  (x != null && ! "".equals(x))) {
+                Query  qu = qa.get( k, n, x, l, g );
+                qr.add(qu,BooleanClause.Occur.MUST);
             }
 
+            Set s  = null;
             v = vd.get(Cnst.RN_REL);
             if (v != null) {
-                s  = Synt.setOf (v);
-            } else {
-            v = vd.get(Cnst.ON_REL);
-            if (v != null) {
                 s  = Synt.asSet (v);
-            }}
+            }
 
-            if (s != null && !s.isEmpty( )) {
+            if (s != null && ! s.isEmpty()) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
 
                 for(Object o : s ) {
@@ -1229,27 +1226,24 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         //** 全局搜索 **/
 
         v = rd.get(Cnst.WD_KEY);
-        if ( v != null ) {
-             v  = Synt.declare(v, "");
-            if (v != null && ! v.equals("")) {
-                Set<String> fs = getWdCols();
-                if (fs.size() > 0) {
-                    BooleanQuery.Builder qx = new BooleanQuery.Builder( );
-                     SearchQuery         qs = new  SearchQuery        ( );
-                           Map           fc ;
+        if ( v != null && ! "".equals(v) ) {
+            Set<String> fs = getWdCols();
+            if (fs.size() > 0) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder( );
+                 SearchQuery         qs = new  SearchQuery        ( );
+                       Map           fc ;
 
-                    for(String fn : fs) {
-                        fc = fields.get (fn);
-                        if (fc == null) {
-                            continue;
-                        }
+                for(String fn : fs) {
+                    fc = fields.get (fn);
+                    if (fc == null) {
+                        continue;
+                    }
 
-                        qs.settings(            fc );
-                        qs.analyser(getAnalyser(fc));
+                    qs.settings(            fc );
+                    qs.analyser(getAnalyser(fc));
 
-                        qx.add(qs.gen(fn, v), BooleanClause.Occur.SHOULD);
-                    }   qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
-                }
+                    qx.add(qs.gen(fn, v), BooleanClause.Occur.SHOULD);
+                }   qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
             }
         }
 

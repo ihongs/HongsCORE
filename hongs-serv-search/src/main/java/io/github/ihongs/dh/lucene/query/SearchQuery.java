@@ -26,26 +26,6 @@ public class SearchQuery extends StringQuery {
     private Boolean  epi = null;
     private Boolean  agp = null;
 
-    /**
-     * 快捷设置 lightMatch,smartParse 等, 但不包含 analyser
-     * @param m
-     */
-    public void  settings(Map m) {
-        lightMatch (Synt.asBool (m.get("lucene-light-match")));
-        smartParse (Synt.asBool (m.get("lucene-smart-parse")));
-        phraseSlop (Synt.asInt  (m.get("lucene-phrase-slop")));
-        fuzzyPreLen(Synt.asInt  (m.get("lucene-fuzzy-pre-len")));
-        fuzzyMinSim(Synt.asFloat(m.get("lucene-fuzzy-min-sim")));
-        analyzeRangeTerms(Synt.asBool(m.get("lucene-parser-analyze-range-terms")));
-        allowLeadingWildcard(Synt.asBool(m.get("lucene-parser-allow-leading-wildcard")));
-        lowercaseExpandedTerms(Synt.asBool(m.get("lucene-parser-lowercase-expanded-terms")));
-        enablePositionIncrements(Synt.asBool(m.get("lucene-parser-enable-position-increments")));
-        autoGeneratePhraseQueries(Synt.asBool(m.get("lucene-parser-auto-generate-phrase-queries")));
-    }
-
-    public void  analyser(Analyzer a) {
-        this.ana = a;
-    }
     public void  smartParse (Boolean x) {
         this.des = x;
     }
@@ -77,10 +57,34 @@ public class SearchQuery extends StringQuery {
         this.agp = x;
     }
 
+    public void  analyser(Analyzer a) {
+        this.ana = a;
+    }
+
+    /**
+     * 快捷设置 lightMatch,smartParse 等, 但不包含 analyser
+     * @param m
+     */
+    public void  settings(Map m) {
+        lightMatch (Synt.asBool (m.get("lucene-light-match")));
+        smartParse (Synt.asBool (m.get("lucene-smart-parse")));
+        phraseSlop (Synt.asInt  (m.get("lucene-phrase-slop")));
+        fuzzyPreLen(Synt.asInt  (m.get("lucene-fuzzy-pre-len")));
+        fuzzyMinSim(Synt.asFloat(m.get("lucene-fuzzy-min-sim")));
+        analyzeRangeTerms(Synt.asBool(m.get("lucene-parser-analyze-range-terms")));
+        allowLeadingWildcard(Synt.asBool(m.get("lucene-parser-allow-leading-wildcard")));
+        lowercaseExpandedTerms(Synt.asBool(m.get("lucene-parser-lowercase-expanded-terms")));
+        enablePositionIncrements(Synt.asBool(m.get("lucene-parser-enable-position-increments")));
+        autoGeneratePhraseQueries(Synt.asBool(m.get("lucene-parser-auto-generate-phrase-queries")));
+    }
+
     @Override
     public Query gen(String k, Object v) {
-        if (null == v) {
+        if (null  ==  v ) {
             throw new NullPointerException("Query for "+k+" must be string, but null");
+        }
+        if ("".equals(v)) {
+            throw new NullPointerException("Query for "+k+" can not be empty string" );
         }
 
         QueryParser qp = new QueryParser("$" + k, ana != null ? ana : new StandardAnalyzer());

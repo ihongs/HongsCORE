@@ -239,14 +239,14 @@ public class ConfAction
       /**
        * 后缀 意义
        * [无] 字符串
-       * .B   布尔
        * .N   数字
+       * .B   布尔
        * .C   代码
-       * .L   链接
+       * .D   指向
        */
-      String name = nam.replaceFirst( "\\.[B|N|C|L]$" , "")
+      String name = nam.replaceFirst( "\\.[N|B|C|D]$" , "")
                        .replaceFirst("^(fore|core)\\.", "");
-      if (nam.endsWith(".L"))
+      if (nam.endsWith(".D"))
       {
         return this.makeLink(name, key);
       }

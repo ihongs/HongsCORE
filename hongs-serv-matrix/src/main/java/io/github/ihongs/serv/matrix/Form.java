@@ -299,7 +299,7 @@ public class Form extends Model {
             if (set.contains("word")) {
                 flds.add(Synt.mapOf(
                     "__name__", "word",
-                    "__type__", "hidden",
+                    "__type__", "search",
                     "readonly", "true",
                     "readinly", "true"
                 ));

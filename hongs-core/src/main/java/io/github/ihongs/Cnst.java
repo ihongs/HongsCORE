@@ -9,8 +9,7 @@ package io.github.ihongs;
  * 特殊查询参数都是使用两个字符;
  * 因模型中会将参数作为字段过滤,
  * 故请避免将字段取名为两个字符.
- * 但 id 可以并推荐作为主键字段,
- * 而 wd 亦可按需作专用搜索字段.
+ * 但 id 可以并推荐作为主键字段.
  * </p>
  *
  * @author Hongs
@@ -31,6 +30,8 @@ public final class Cnst {
 
     public static final String WD_KEY =  "wd"; // 查询      (Word)
 
+    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
+
     public static final String PN_KEY =  "pn"; // 页码编号  (Page num)
 
     public static final String GN_KEY =  "gn"; // 最多页数  (Pugs num)
@@ -43,15 +44,15 @@ public final class Cnst {
 
     public static final String AB_KEY =  "ab"; // 应用约束  (Apply with)
 
-    public static final String CB_KEY =  "cb"; // 回调名称  (Callback)
-
     public static final String OR_KEY =  "or"; // 或条件    (Or )
+
+    public static final String NR_KEY =  "nr"; // 否条件    (Not)
 
     public static final String AR_KEY =  "ar"; // 与条件    (And)
 
     //** 关系符号 **/
 
-    public static final String IS_REL =  "is"; // 是否为空  (NULL , WELL)
+    public static final String IS_REL =  "is"; // 是否为空  (NULL, WELL)
 
     public static final String EQ_REL =  "eq"; // 等于
 

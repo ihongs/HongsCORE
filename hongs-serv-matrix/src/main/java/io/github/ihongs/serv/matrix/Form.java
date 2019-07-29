@@ -685,6 +685,10 @@ public class Form extends Model {
             defi.appendChild ( docm.createTextNode("(null)"));
             defi = docm.createElement("value");
             defs.appendChild ( defi );
+            defi.setAttribute("code", Cnst.NR_KEY);
+            defi.appendChild ( docm.createTextNode("(null)"));
+            defi = docm.createElement("value");
+            defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.OR_KEY);
             defi.appendChild ( docm.createTextNode("(null)"));
 

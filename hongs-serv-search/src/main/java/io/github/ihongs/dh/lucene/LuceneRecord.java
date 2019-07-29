@@ -989,7 +989,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * @throws HongsException
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd, int r) throws HongsException {
-        int i = 0, j = 0;
+        int i = 0, j = 0; // 条件数量, 否定数量, 计数规避全否定时查不到数据
 
         Map<String, Map> fields = getFields();
         for(Map.Entry<String, Map> e : fields.entrySet()) {
@@ -1052,12 +1052,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     for(Object b : a) {
                         qx.add(qa.get(k, b), BooleanClause.Occur.SHOULD);
                     }
-                    qr.add(qx.build(  ), BooleanClause.Occur.MUST); i ++;
+                    qr.add(qx.build(  ), BooleanClause.Occur.MUST);
+                    i ++;
                 }
                 continue;
             } else {
                 if (!v.equals("")) {
-                    qr.add(qa.get(k, v), BooleanClause.Occur.MUST); i ++;
+                    qr.add(qa.get(k, v), BooleanClause.Occur.MUST);
+                    i ++;
                 }
                 continue;
             }
@@ -1075,10 +1077,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     throw new HongsExemption.Common(ex);
                 }
                 if ("WELL".equalsIgnoreCase(a)) {
-                    qr.add(p, BooleanClause.Occur.MUST); i ++;
+                    qr.add(p, BooleanClause.Occur.MUST);
+                    i ++;
                 } else
                 if ("NULL".equalsIgnoreCase(a)) {
-                    qr.add(p, BooleanClause.Occur.MUST_NOT); i ++; j ++;
+                    qr.add(p, BooleanClause.Occur.MUST_NOT);
+                    i ++;  j ++;
                 }
             }
 
@@ -1086,22 +1090,26 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             v = vd.get(Cnst.EQ_REL);
             if ( v != null ) {
-                qr.add(qa.get(k, v), BooleanClause.Occur.MUST); i ++;
+                qr.add(qa.get(k, v), BooleanClause.Occur.MUST);
+                i ++;
             }
             v = vd.get(Cnst.NE_REL);
             if ( v != null ) {
-                qr.add(qa.get(k, v), BooleanClause.Occur.MUST_NOT); i ++; j ++;
+                qr.add(qa.get(k, v), BooleanClause.Occur.MUST_NOT);
+                i ++;  j ++;
             }
 
             //** 模糊匹配 **/
 
             v = vd.get(Cnst.CQ_REL);
             if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST); i ++;
+                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST);
+                i ++;
             }
             v = vd.get(Cnst.NC_REL);
             if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST_NOT); i ++; j ++;
+                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST_NOT);
+                i ++;  j ++;
             }
 
             //** 集合查询 **/
@@ -1111,7 +1119,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 Set vs = Synt.asSet(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
-                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST); i ++;
+                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST);
+                        i ++;
                     }
                 }
             }
@@ -1120,7 +1129,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 Set vs = Synt.asSet(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
-                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST_NOT); i ++; j ++;
+                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST_NOT);
+                        i ++;  j ++;
                     }
                 }
             }
@@ -1131,7 +1141,9 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     BooleanQuery.Builder  qx = new BooleanQuery.Builder();
                     for(Object vv : vs) {
                         qx.add(qa.get(k, vv), BooleanClause.Occur.SHOULD);
-                    }   qr.add(qx.build (  ), BooleanClause.Occur.MUST  ); i ++;
+                    }
+                        qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+                        i ++;
                 }
             }
 
@@ -1167,7 +1179,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if ((n != null && ! "".equals(n))
             ||  (x != null && ! "".equals(x))) {
                 Query  qu = qa.get( k, n, x, l, g );
-                qr.add(qu,BooleanClause.Occur.MUST); i ++;
+                qr.add(qu,BooleanClause.Occur.MUST);
+                i ++;
             }
 
             Set s  = null;
@@ -1198,7 +1211,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
                 BooleanQuery qz = qx.build();
                 if (qz.clauses().size() > 0) {
-                    qr.add ( qz, BooleanClause.Occur.MUST  ); i ++;
+                    qr.add ( qz, BooleanClause.Occur.MUST  );
+                    i ++;
                 }
             }
         }
@@ -1211,25 +1225,26 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if ( v != null && ! "".equals(v) ) {
             Set<String> fs = getWdCols();
             if (fs.size() > 0) {
-                BooleanQuery.Builder qx = new BooleanQuery.Builder( );
-                 SearchQuery         qs = new  SearchQuery        ( );
-                       Map           fc ;
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                 SearchQuery         qs = new  SearchQuery        ();
 
                 for(String fn : fs) {
-                    fc = fields.get (fn);
-                    if (fc == null) {
-                        continue;
-                    }
-
-                    qs.settings(            fc );
+                    Map fc  = fields.get(fn);
+                    if (fc == null) continue;
+                    qs.settings( /*parser*/ fc );
                     qs.analyser(getAnalyser(fc));
+                    qx.add(qs.gen(fn, v),BooleanClause.Occur.SHOULD);
+                }
 
-                    qx.add(qs.gen(fn, v), BooleanClause.Occur.SHOULD);
-                }   qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
+                BooleanQuery qa = qx.build();
+                if (! qa.clauses().isEmpty()) {
+                    qr.add(qa, BooleanClause.Occur.MUST  );
+                    i ++;
+                }
             }
         }
 
-        //** 附加条件 **/
+        //** 递归条件 **/
 
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
@@ -1237,37 +1252,51 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 throw new HongsException.Common("Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
-            if (set != null && ! set.isEmpty())
+            if (set != null && ! set.isEmpty()) {
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                LuceneRecord.this.padQry( qx, map, r + 1 );
+                padQry( qx, map, r + 1 );
+
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
-                    /**
-                     * AR 下全部 MUST_NOT 会造成取不到数据
-                     * 需要增加一个肯定的条件
-                     */
-                    int x = 0;
-                    for (BooleanClause bc : qa.clauses()) {
-                        if (bc.getOccur() == BooleanClause.Occur.MUST_NOT) {
-                            x ++;
-                        }
-                    }
-                    if (x == qa.clauses().size()) {
-                        qx.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
-                        qa = qx.build();
-                    }
-
-                    Query qb = qa ;
-
                     // 权重
+                    Query qb = qa;
                     v = map.get(Cnst.WT_REL);
                     if (v != null) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }
 
-                    qr.add(qb, BooleanClause.Occur.MUST  );
+                    qr.add(qb, BooleanClause.Occur.MUST);
+                    i ++;
                 }
+            }
+            }
+        }
+
+        v = rd.get(Cnst.NR_KEY);
+        if ( v != null ) {
+            if ( r > 2 ) {
+                throw new HongsException.Common("Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
+            }
+            Set<Map> set = Synt.asSet(v);
+            if (set != null && ! set.isEmpty()) {
+            for(Map  map : set) {
+                BooleanQuery.Builder qx = new BooleanQuery.Builder();
+                padQry( qx, map, r + 1 );
+
+                BooleanQuery qa = qx.build();
+                if (! qa.clauses().isEmpty()) {
+                    // 权重
+                    Query qb = qa;
+                    v = map.get(Cnst.WT_REL);
+                    if (v != null) {
+                        qb = new BoostQuery(qa, Synt.declare(v, 1f));
+                    }
+
+                    qr.add(qb, BooleanClause.Occur.MUST_NOT);
+                    i ++;  j ++;
+                }
+            }
             }
         }
 
@@ -1281,27 +1310,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 BooleanQuery.Builder qz = new BooleanQuery.Builder();
             for(Map  map : set) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                    LuceneRecord.this.padQry( qx, map, r + 1 );
+                padQry( qx, map, r + 1 );
+
                 BooleanQuery qa = qx.build();
                 if (! qa.clauses().isEmpty()) {
-                    /**
-                     * AR 下全部 MUST_NOT 会造成取不到数据
-                     * 需要增加一个肯定的条件
-                     */
-                    int x = 0;
-                    for (BooleanClause bc : qa.clauses()) {
-                        if (bc.getOccur() == BooleanClause.Occur.MUST_NOT) {
-                            x ++;
-                        }
-                    }
-                    if (x == qa.clauses().size()) {
-                        qz.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
-                        qa = qx.build();
-                    }
-
-                    Query qb = qa ;
-
                     // 权重
+                    Query qb = qa;
                     v = map.get(Cnst.WT_REL);
                     if (v != null) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
@@ -1313,8 +1327,17 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 BooleanQuery qa = qz.build();
                 if (! qa.clauses().isEmpty()) {
                     qr.add(qa, BooleanClause.Occur.MUST  );
+                    i ++;
                 }
             }
+        }
+
+        /**
+         * 如果全部条件都是 MUST_NOT 会导致取不到数据
+         * 故有必要增加一个 MUST all 从而规避这个问题
+         */
+        if (i > 0 & i == j) {
+            qr.add(new MatchAllDocsQuery(), BooleanClause.Occur.MUST);
         }
     }
 

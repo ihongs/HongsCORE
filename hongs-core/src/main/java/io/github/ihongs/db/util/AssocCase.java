@@ -605,10 +605,19 @@ public class AssocCase {
 
         where(caze, Synt.asSet(rd.get(Cnst.OR_KEY)), "OR" );
         where(caze, Synt.asSet(rd.get(Cnst.AR_KEY)), "AND");
+        where(caze, Synt.asSet(rd.get(Cnst.NR_KEY)), "NOT");
     }
 
     private void where(FetchCase caze, Set ar, String rn) {
         if (ar == null || ar.isEmpty()) return;
+
+        String nr;
+        if ("NOT".equals(rn)) {
+            nr = " NOT ";
+            rn =  "AND" ;
+        } else {
+            nr =   ""   ;
+        }
 
         StringBuilder sb = new StringBuilder();
         FetchCase   caxe = new FetchCase(    );
@@ -629,7 +638,7 @@ public class AssocCase {
 
         if (sb.length() > 0) {
             sb.setLength( sb.length()-rn.length()-2 );
-            caze.wheres .append(   " AND "   )
+            caze.wheres .append(" AND " ).append(nr )
                   .append('(').append(sb).append(')');
             caze.wparams.addAll(caxe.wparams );
         }

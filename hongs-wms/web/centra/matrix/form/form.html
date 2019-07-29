@@ -238,16 +238,32 @@
                             <span>常用字段</span>
                         </legend>
                     </div>
-                    <div class="form-group base-field" data-type="logo">
+                    <div class="form-group base-field" data-type="name">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>图标</span>
+                            <span>标题</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <ul class="pickbox" data-fn="logo" data-ft="_view" data-listable="true" data-__type__="image" data-__rule__="Thumb" data-thumb-mode="pick" data-thumb-size="300*300"></ul>
-                        <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
-                        <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
+                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-wordable="true"   required="required" />
+                    </div>
+                    <div class="form-group base-field" data-type="note">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>简介</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-wordable="true"  data-sortable="false"/>
+                    </div>
+                    <div class="form-group base-field" data-type="word">
+                        <label class="control-label clearfix" style="display: block;">
+                            <span>词汇</span>
+                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
+                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
+                        </label>
+                        <input class="form-control" name="word" type="text" placeholder="请输入..." data-srchable="true" data-findable="false" data-sortable="false"/>
                     </div>
                     <div class="form-group base-field" data-type="tags">
                         <label class="control-label clearfix" style="display: block;">
@@ -258,41 +274,16 @@
                         </label>
                         <input class="form-control" name="tags" type="text" placeholder="请输入..." data-listable="true" data-findable="true" data-statable="true" data-__repeated__="true" data-deverse="true" data-split="," data-slice=","/>
                     </div>
-                    <div class="form-group base-field" data-type="name">
+                    <div class="form-group base-field" data-type="logo">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>名称</span>
+                            <span>图标</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="form-control" name="name" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" data-nameable="true" required="required"/>
-                    </div>
-                    <div class="form-group base-field" data-type="note">
-                        <label class="control-label clearfix" style="display: block;">
-                            <span>简介语</span>
-                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                        </label>
-                        <input class="form-control" name="note" type="text" placeholder="请输入..." data-listable="true" data-wordable="true" />
-                    </div>
-                    <div class="form-group base-field" data-type="word">
-                        <label class="control-label clearfix" style="display: block;">
-                            <span>关键词</span>
-                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                        </label>
-                        <input class="form-control" name="word" type="text" placeholder="请输入..." data-srchable="true" data-findable="false"/>
-                    </div>
-                    <div class="form-group base-field" data-type="memo">
-                        <label class="control-label clearfix" style="display: block;">
-                            <span>备注</span>
-                            <span class="glyphicon glyphicon-remove-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-info-sign pull-right"></span>
-                            <span class="glyphicon glyphicon-plus-sign pull-right"></span>
-                        </label>
-                        <input class="form-control" name="memo" type="text" placeholder="请输入..." data-unstored="true"/>
+                        <ul class="pickbox" data-fn="logo" data-ft="_view" data-listable="true" data-__type__="image" data-__rule__="Thumb" data-thumb-mode="pick" data-thumb-size="300*300"></ul>
+                        <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
+                        <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                     </div>
                     <div class="form-group">
                         <legend class="clearfix" data-valtype="text">
@@ -315,7 +306,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="enum"   name="state" data-default="1" data-:1="正常"/>
+                        <input class="invisible" type="enum" name="state" data-default="1" data-type="byte" data-:1="正常"/>
                     </div>
                     <div class="form-group base-field" data-type="ctime">
                         <label class="control-label clearfix" style="display: block;">

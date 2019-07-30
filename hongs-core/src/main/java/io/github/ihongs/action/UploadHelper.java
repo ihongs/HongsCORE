@@ -378,6 +378,7 @@ public class UploadHelper {
     /**
      * 检查临时文件或目标链接情况
      * 参数为临时文件名或结果链接
+     * 注意: 如果有 URL encode 务必先 decode
      * @param name
      * @return
      * @throws Wrong
@@ -389,16 +390,6 @@ public class UploadHelper {
         }
 
         name = name.replace('\\', '/'); // 避免 Windows 异常
-        String subn = name;
-        String extn =  "" ;
-        int i  = subn.lastIndexOf('/');
-        if (i != -1) {
-            subn = subn.substring(i+1);
-        }
-        int j  = subn.lastIndexOf('.');
-        if (j != -1) {
-            extn = subn.substring(j+1);
-        }
 
         /**
          * 值与目标网址的前导路径如果一致,
@@ -410,29 +401,44 @@ public class UploadHelper {
          * 此时不得含斜杠从而规避同上问题.
          */
 
-        String href = getResultHref(uploadHref) + "/";
-        String path = getResultPath(uploadPath) + "/";
-        if (name.startsWith(href)) {
-            name = name.substring(href.length());
-            if (name.contains("./")) {
-                throw new Wrong("core.file.upload.not.allows");
+        String  subn;
+
+        do {
+            String href = getResultHref(uploadHref) + "/";
+            String path = getResultPath(uploadPath) + "/";
+
+            if (name.startsWith(href)) {
+                subn = name.substring(href.length());
+                if (subn.contains("./" )) {
+                    throw new Wrong("core.file.upload.not.allows");
+                }
+                name = path + subn;
+                break;
             }
 
-            File  file = new File( path + name );
-            if (! file.exists(/**/)) {
-                throw new Wrong("core.file.upload.not.exists");
+            if (name.startsWith(path)) {
+                subn = name.substring(path.length());
+                if (subn.contains("./" )) {
+                    throw new Wrong("core.file.upload.not.allows");
+                }
+//              name = path + subn;
+                break;
             }
 
-            setResultName(name,extn);
-            return file;
-        } else {
-            if (i != -1) { // 有斜杠:
-                throw new Wrong("core.file.upload.not.allows");
-            }
+            String temp = getUploadTemp(uploadTemp) + "/";
 
-            name = ( getUploadTemp(uploadTemp) + "/" + name  );
-            return upload(new File(name) , Core.newIdentity());
+            {
+                if (name.contains("./" )) {
+                    throw new Wrong("core.file.upload.not.allows");
+                }
+                subn = Core.newIdentity();
+                name = temp + name;
+                break;
+            }
         }
+        while (false);
+
+        return upload(new File(name), subn);
     }
 
     /**

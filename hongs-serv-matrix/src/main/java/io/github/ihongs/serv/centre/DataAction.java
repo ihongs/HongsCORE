@@ -46,6 +46,12 @@ public class DataAction extends SearchAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
         Method met = runner.getMethod();
+        Map    req = helper.getRequestData();
+
+        // 默认的终端标识
+        if ( ! req.containsKey("meno")) {
+            req.put( "meno", "centre" );
+        }
 
         // 绑定特制的表单
         if (met.isAnnotationPresent(Select.class)

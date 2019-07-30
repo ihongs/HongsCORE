@@ -414,9 +414,14 @@ public class Data extends SearchEntity {
             }
 
             ud.put("data", io.github.ihongs.util.Data.toString(dd, true));
-            ud.put("name", cutName(dd, "name"));
-            if (rd.containsKey("memo" ) == true ) {
-            ud.put("memo", cutName(dd, "memo"));
+            ud.put("name", cutText(dd, "name"));
+
+            // 操作备注和终端代码
+            if (rd.containsKey("memo")) {
+                ud.put("memo", cutText(rd, "memo"));
+            }
+            if (rd.containsKey("meno")) {
+                ud.put("meno", cutText(rd, "meno"));
             }
 
             if (ud.containsKey("state") == false) {
@@ -527,8 +532,15 @@ public class Data extends SearchEntity {
             nd.put("form_id", fid);
             nd.put("user_id", uid);
             nd.put("data", io.github.ihongs.util.Data.toString(dd, true));
-            nd.put("name", cutName(dd, "name"));
-            nd.put("memo", cutName(rd, "memo"));
+            nd.put("name", cutText(dd, "name"));
+
+            // 操作备注和终端代码
+            if (rd.containsKey("memo")) {
+                nd.put("memo", cutText(rd, "memo"));
+            }
+            if (rd.containsKey("meno")) {
+                nd.put("meno", cutText(rd, "meno"));
+            }
 
             table.update(ud, where, param);
             table.insert(nd);
@@ -590,7 +602,14 @@ public class Data extends SearchEntity {
         nd.put("user_id", uid);
         nd.put("data", od.get("data"));
         nd.put("name", od.get("name"));
-        nd.put("memo", cutName(rd, "memo"));
+
+        // 操作备注和终端代码
+        if (rd.containsKey("memo")) {
+            nd.put("memo", cutText(rd, "memo"));
+        }
+        if (rd.containsKey("meno")) {
+            nd.put("meno", cutText(rd, "meno"));
+        }
 
         table.update(ud, where, param);
         table.insert(nd);
@@ -655,7 +674,14 @@ public class Data extends SearchEntity {
         nd.put("state",   3  );
         nd.put("form_id", fid);
         nd.put("user_id", uid);
-        nd.put("memo", cutName(rd, "memo"));
+
+        // 操作备注和终端代码
+        if (rd.containsKey("memo")) {
+            nd.put("memo", cutText(rd, "memo"));
+        }
+        if (rd.containsKey("meno")) {
+            nd.put("meno", cutText(rd, "meno"));
+        }
 
         table.update(ud, where, param);
         table.insert(nd);
@@ -957,13 +983,13 @@ public class Data extends SearchEntity {
     }
 
     /**
-     * 切割名称串, 防止数据库报错
+     * 切割字段值, 防止数据库报错
      * @param dd
      * @param fn
      * @return
      * @throws HongsException
      */
-    protected String cutName(Map dd, String fn)
+    protected String cutText(Map dd, String fn)
     throws HongsException {
         String s = Synt.asString(dd.get(fn));
         if (s == null) return null;
@@ -1074,7 +1100,6 @@ public class Data extends SearchEntity {
         }
     }
 
-//  @Override
     public Set<String> getWordable() {
         if (null != wdCols) {
             return  wdCols;
@@ -1092,7 +1117,6 @@ public class Data extends SearchEntity {
         return wdCols;
     }
 
-//  @Override
     public Set<String> getNameable() {
         if (null != nmCols) {
             return  nmCols;
@@ -1110,7 +1134,6 @@ public class Data extends SearchEntity {
         return nmCols;
     }
 
-//  @Override
     public Set<String> getSkipable() {
         if (null != skCols) {
             return  skCols;
@@ -1119,6 +1142,7 @@ public class Data extends SearchEntity {
         skCols.add("mtime");
         skCols.add("muser");
         skCols.add("memo" );
+        skCols.add("meno" );
         return skCols;
     }
 

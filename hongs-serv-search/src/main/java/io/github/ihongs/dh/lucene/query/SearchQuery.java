@@ -20,41 +20,18 @@ public class SearchQuery extends StringQuery {
     private Integer  phr = null;
     private Integer  fpl = null;
     private Float    fms = null;
-    private Boolean  art = null;
+//  private Boolean  art = null;
+    private Boolean  sow = null;
     private Boolean  alw = null;
-    private Boolean  let = null;
+//  private Boolean  let = null;
     private Boolean  epi = null;
     private Boolean  agp = null;
 
-    public void  smartParse (Boolean x) {
+    public void  smartParse(Boolean x) {
         this.des = x;
     }
-    public void  lightMatch (Boolean x) {
+    public void  lightMatch(Boolean x) {
         this.dor = x;
-    }
-    public void  phraseSlop (Integer x) {
-        this.phr = x;
-    }
-    public void  fuzzyPreLen(Integer x) {
-        this.fpl = x;
-    }
-    public void  fuzzyMinSim(Float   x) {
-        this.fms = x;
-    }
-    public void  analyzeRangeTerms(Boolean x) {
-        this.art = x;
-    }
-    public void  allowLeadingWildcard(Boolean x) {
-        this.alw = x;
-    }
-    public void  lowercaseExpandedTerms(Boolean x) {
-        this.let = x;
-    }
-    public void  enablePositionIncrements(Boolean x) {
-        this.epi = x;
-    }
-    public void  autoGeneratePhraseQueries(Boolean x) {
-        this.agp = x;
     }
 
     public void  analyser(Analyzer a) {
@@ -66,20 +43,33 @@ public class SearchQuery extends StringQuery {
      * @param m
      */
     public void  settings(Map m) {
-        lightMatch (Synt.asBool (m.get("lucene-light-match")));
-        smartParse (Synt.asBool (m.get("lucene-smart-parse")));
-        phraseSlop (Synt.asInt  (m.get("lucene-phrase-slop")));
-        fuzzyPreLen(Synt.asInt  (m.get("lucene-fuzzy-pre-len")));
-        fuzzyMinSim(Synt.asFloat(m.get("lucene-fuzzy-min-sim")));
-        analyzeRangeTerms(Synt.asBool(m.get("lucene-parser-analyze-range-terms")));
-        allowLeadingWildcard(Synt.asBool(m.get("lucene-parser-allow-leading-wildcard")));
-        lowercaseExpandedTerms(Synt.asBool(m.get("lucene-parser-lowercase-expanded-terms")));
-        enablePositionIncrements(Synt.asBool(m.get("lucene-parser-enable-position-increments")));
-        autoGeneratePhraseQueries(Synt.asBool(m.get("lucene-parser-auto-generate-phrase-queries")));
+        Object obj;
+        obj = m.get("lucene-smart-parse");
+        if (obj != null) des = Synt.asBool (obj);
+        obj = m.get("lucene-light-match");
+        if (obj != null) dor = Synt.asBool (obj);
+        obj = m.get("lucene-phrase-slop");
+        if (obj != null) phr = Synt.asInt  (obj);
+        obj = m.get("lucene-fuzzy-pre-len");
+        if (obj != null) fpl = Synt.asInt  (obj);
+        obj = m.get("lucene-fuzzy-min-sim");
+        if (obj != null) fms = Synt.asFloat(obj);
+//      obj = m.whr("lucene-parser-analyze-range-terms");
+//      if (obj != null) art = Synt.asBool (obj);
+        obj = m.get("lucene-parser-split-on-whitespace");
+        if (obj != null) sow = Synt.asBool (obj);
+        obj = m.get("lucene-parser-allow-leading-wildcard");
+        if (obj != null) alw = Synt.asBool (obj);
+//      obj = m.whr("lucene-parser-lowercase-expanded-terms");
+//      if (obj != null) let = Synt.asBool (obj);
+        obj = m.get("lucene-parser-enable-position-increments");
+        if (obj != null) epi = Synt.asBool (obj);
+        obj = m.get("lucene-parser-auto-generate-phrase-queries");
+        if (obj != null) agp = Synt.asBool (obj);
     }
 
     @Override
-    public Query gen(String k, Object v) {
+    public Query wdr(String k, Object v) {
         if (null  ==  v ) {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
@@ -107,9 +97,10 @@ public class SearchQuery extends StringQuery {
         if (phr != null) qp.setPhraseSlop       (phr);
         if (fms != null) qp.setFuzzyMinSim      (fms);
         if (fpl != null) qp.setFuzzyPrefixLength(fpl);
-        if (art != null) qp.setAnalyzeRangeTerms(art);
+//      if (art != null) qp.setAnalyzeRangeTerms(art);
+        if (sow != null) qp.setSplitOnWhitespace(sow);
         if (alw != null) qp.setAllowLeadingWildcard     (alw);
-        if (let != null) qp.setLowercaseExpandedTerms   (let);
+//      if (let != null) qp.setLowercaseExpandedTerms   (let);
         if (epi != null) qp.setEnablePositionIncrements (epi);
         if (agp != null) qp.setAutoGeneratePhraseQueries(agp);
 

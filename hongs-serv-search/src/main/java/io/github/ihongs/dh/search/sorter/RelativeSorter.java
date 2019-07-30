@@ -50,7 +50,7 @@ public class RelativeSorter extends FieldComparatorSource {
         protected long toGetCurrDvalue ( int d )
         throws IOException {
             try {
-                long fx = docs.get(d);
+                long fx = docs.advanceExact(d) ? docs.longValue() : 0;
                 if ( fx > dist) {
                     return fx - dist ;
                 } else

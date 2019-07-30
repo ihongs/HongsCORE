@@ -55,8 +55,8 @@ public class DurationSorter extends FieldComparatorSource {
         protected long toGetCurrDvalue (int  d)
         throws IOException {
             try {
-                long fx = doc0.get(d);
-                long fy = doc1.get(d);
+                long fx = doc0.advanceExact(d) ? doc0.longValue() : 0;
+                long fy = doc1.advanceExact(d) ? doc1.longValue() : 0;
 
                 // 三角函数求弦
                 fx = Math.abs(fx - x);

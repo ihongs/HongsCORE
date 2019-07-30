@@ -53,8 +53,8 @@ public class IntervalSorter extends FieldComparatorSource {
         protected long toGetCurrDvalue (int  d)
         throws IOException {
             try {
-                long fx = doc0.get(d);
-                long fy = doc1.get(d);
+                long fx = doc0.advanceExact(d) ? doc0.longValue() : 0;
+                long fy = doc1.advanceExact(d) ? doc1.longValue() : 0;
 
                 // 区间外为正值, 仅计算绝对值
                 if ( fx > dist) {

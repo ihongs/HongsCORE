@@ -21,7 +21,7 @@ public class DistanceSorter extends FieldComparatorSource {
     public DistanceSorter(float o, float a) {
         this(o , a, 12756000L); // 地球直径(米)
     }
-    
+
     public DistanceSorter(float o, float a, long w) {
         this.o = o;
         this.a = a;
@@ -65,8 +65,8 @@ public class DistanceSorter extends FieldComparatorSource {
         protected long toGetCurrDvalue (int  d)
         throws IOException {
             try {
-                float fo = Float.intBitsToFloat((int) doc0.get(d)); // 经度
-                float fa = Float.intBitsToFloat((int) doc1.get(d)); // 维度
+                float fo = doc0.advanceExact(d) ? Float.intBitsToFloat((int) doc0.longValue()) : 0;
+                float fa = doc1.advanceExact(d) ? Float.intBitsToFloat((int) doc1.longValue()) : 0;
 
                 fo = Math.abs(fo - o);
                 fa = Math.abs(fa - a);

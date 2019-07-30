@@ -50,14 +50,16 @@ public class SortInSet extends FieldComparatorSource {
         }
 
         @Override
-        protected void doSetNextReader(LeafReader r ) throws IOException {
+        protected void doSetNextReader(LeafReader r )
+        throws IOException {
             docs = DocValues.getBinary(r, name);
         }
 
         @Override
-        protected long toGetCurrDvalue( int d ) {
+        protected long toGetCurrDvalue( int d )
+        throws IOException {
             try {
-                BytesRef br = docs.get( d );
+                BytesRef br = docs.advanceExact(d) ? docs.binaryValue() : null;
                 String   v  = br.utf8ToString();
                 Long     bs = dist.get( v );
                 if (null != bs) {

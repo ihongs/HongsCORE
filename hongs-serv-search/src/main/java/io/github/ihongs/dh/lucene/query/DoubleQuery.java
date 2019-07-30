@@ -10,11 +10,11 @@ import org.apache.lucene.search.Query;
  */
 public class DoubleQuery implements IQuery {
     @Override
-    public Query gen(String k, Object v) {
+    public Query wdr(String k, Object v) {
         throw new UnsupportedOperationException("Field "+k+" does not support search");
     }
     @Override
-    public Query get(String k, Object v) {
+    public Query whr(String k, Object v) {
         if (v == null) {
             throw new NullPointerException("Query for "+k+" must be number, but null");
         }
@@ -23,7 +23,7 @@ public class DoubleQuery implements IQuery {
         return  q2;
     }
     @Override
-    public Query get(String k, Object n, Object x, boolean l, boolean g) {
+    public Query whr(String k, Object n, Object x, boolean l, boolean g) {
         if (n == null && x == null) {
             throw new NullPointerException("Range for "+k+" must be number, but null");
         }

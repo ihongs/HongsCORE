@@ -110,17 +110,8 @@ public class StatisHelper {
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
-                if (vm.containsKey(Cnst.EQ_REL)) {
-                    vs = Synt.asSet(vm.get(Cnst.EQ_REL));
-                } else
-                if (vm.containsKey(Cnst.IN_REL)) {
+                if (vm.containsKey ( /***/ Cnst.IN_REL)) {
                     vs = Synt.asSet(vm.get(Cnst.IN_REL));
-                }
-            } else {
-                if (vo!= null && !"".equals(vo)) {
-                    vs = Synt.asSet(rd.get( k ));
-                    vs.remove( "" );
-                    vs.remove(null);
                 }
             }
 

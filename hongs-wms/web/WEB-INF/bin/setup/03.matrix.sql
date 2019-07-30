@@ -62,6 +62,7 @@ CREATE TABLE `a_matrix_data` (
   `user_id` CHAR(16) NOT NULL,
   `name` VARCHAR(255) DEFAULT NULL,
   `memo` VARCHAR(255) DEFAULT NULL,
+  `meno` VARCHAR(100) DEFAULT NULL,
   `data` LONGTEXT NOT NULL,
   `ctime` INTEGER(10) NOT NULL,
   `etime` INTEGER(10) NOT NULL,

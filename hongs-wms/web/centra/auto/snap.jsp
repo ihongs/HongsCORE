@@ -55,6 +55,7 @@
                                 <li class="divider same-l"></li>
                                 <li><a href="javascript:;" class="same-r">同资源的</a></li>
                                 <li><a href="javascript:;" class="same-u">同用户的</a></li>
+                                <li><a href="javascript:;" class="same-m">同终端的</a></li>
                             </ul>
                         </div>
                     </th>
@@ -63,6 +64,7 @@
                     <th data-fn="user">用户</th>
                     <th data-fn="name">资源标题</th>
                     <th data-fn="memo">操作备注</th>
+                    <th data-fn="meno">终端标识</th>
                     <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
                     <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
                 </tr>
@@ -88,7 +90,7 @@
         context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(H$("@ctime_le", context));
 
         var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user",
+            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
             send    : hsSendWithMemo,
             _fill_stat: function(td , stat) {
                 var st = statmap['' + stat];
@@ -159,6 +161,16 @@
             var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
             var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
             lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+        });
+
+        context.on("click", ".same-m", function() {
+            var lo = context.hsFind ("@" );
+            var tr = $(this).closest("tr");
+            var tt = $(this).text   (    );
+            var id =    tr.data(   "meno");
+            var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
+            var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
+            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
         });
 
         context.on("click", ".nav li", function() {

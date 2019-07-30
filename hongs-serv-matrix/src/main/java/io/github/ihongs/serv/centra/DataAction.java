@@ -40,10 +40,23 @@ public class DataAction extends SearchAction {
     @Override
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
-        ActionRunner runner = (ActionRunner)helper.getAttribute(ActionRunner.class.getName());
+        ActionRunner runner = (ActionRunner) helper.getAttribute(ActionRunner.class.getName());
         Data data = Data.getInstance(runner.getModule(), runner.getEntity());
-        data.setUserId((String)helper.getSessibute(Cnst.UID_SES));
+        data.setUserId((String) helper.getSessibute(Cnst.UID_SES));
         return data;
+    }
+
+    @Override
+    protected Map getReqMap (ActionHelper helper, IEntity ett, String opr, Map req)
+    throws HongsException {
+        req = super.getReqMap(helper, ett, opr, req);
+
+        // 默认的终端标识
+        if (! req.containsKey("meno")) {
+            req.put("meno", "centra");
+        }
+
+        return req;
     }
 
     @Override
@@ -54,12 +67,6 @@ public class DataAction extends SearchAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
         Method met = runner.getMethod();
-        Map    req = helper.getRequestData();
-
-        // 默认的终端标识
-        if ( ! req.containsKey("meno")) {
-            req.put( "meno", "centra" );
-        }
 
         // 绑定特制的表单
         if (met.isAnnotationPresent(Select.class)

@@ -8,20 +8,21 @@
     <parent>
         <artifactId>hongs-base</artifactId>
         <groupId>io.github.ihongs</groupId>
-        <version>0.4-SNAPSHOT</version>
+        <version>0.9-SNAPSHOT</version>
     </parent>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.source>1.7</maven.compiler.source>
-        <maven.compiler.target>1.7</maven.compiler.target>
-        <slf4j.version>1.7.25</slf4j.version>
-        <log4j.version>2.11.1</log4j.version>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <log4j.version>2.12.0</log4j.version>
+        <slf4j.version>1.7.26</slf4j.version>
+        <junit.version>4.12</junit.version>
     </properties>
     <dependencies>
         <dependency>
             <artifactId>junit</artifactId>
             <groupId>junit</groupId>
-            <version>4.10</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -52,12 +53,12 @@
         <dependency>
             <artifactId>commons-pool2</artifactId>
             <groupId>org.apache.commons</groupId>
-            <version>2.4.2</version>
+            <version>2.6.2</version>
         </dependency>
         <dependency>
             <artifactId>commons-dbcp2</artifactId>
             <groupId>org.apache.commons</groupId>
-            <version>2.1.1</version>
+            <version>2.6.0</version>
         </dependency>
         <dependency>
             <artifactId>json-simple</artifactId>
@@ -72,14 +73,14 @@
         <dependency>
             <artifactId>javax.servlet.jsp-api</artifactId>
             <groupId>javax.servlet.jsp</groupId>
-            <version>2.3.1</version>
+            <version>2.3.3</version>
         </dependency>
     </dependencies>
     <reporting>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+                <groupId>org.apache.maven.plugins</groupId>
                 <version>2.10.1</version>
                 <configuration>
                 </configuration>
@@ -93,7 +94,7 @@
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>2.5.1</version>
+                <version>3.1.0</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -101,7 +102,7 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>2.5.1</version>
+                <version>3.7.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -109,7 +110,7 @@
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>2.5.1</version>
+                <version>2.22.2</version>
                 <configuration>
                     <skip>true</skip>
                 </configuration>

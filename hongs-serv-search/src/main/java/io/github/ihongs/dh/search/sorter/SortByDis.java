@@ -64,7 +64,7 @@ public class SortByDis extends FieldComparatorSource {
         protected long toGetCurrDvalue( int d )
         throws IOException {
             try {
-                BytesRef br = docs.get( d );
+                BytesRef br = docs.advanceExact(d) ? docs.binaryValue() : null;
                 String   fv = br.utf8ToString();
                 String[] xy = fv.split("," , 2);
                 float    fo = Float.parseFloat(xy[0]);

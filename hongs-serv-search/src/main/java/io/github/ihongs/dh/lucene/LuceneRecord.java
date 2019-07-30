@@ -1050,7 +1050,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 if (!a.isEmpty( )) {
                     BooleanQuery.Builder qx = new BooleanQuery.Builder();
                     for(Object b : a) {
-                        qx.add(qa.get(k, b), BooleanClause.Occur.SHOULD);
+                        qx.add(qa.whr(k, b), BooleanClause.Occur.SHOULD);
                     }
                     qr.add(qx.build(  ), BooleanClause.Occur.MUST);
                     i ++;
@@ -1058,7 +1058,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 continue;
             } else {
                 if (!v.equals("")) {
-                    qr.add(qa.get(k, v), BooleanClause.Occur.MUST);
+                    qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
                     i ++;
                 }
                 continue;
@@ -1090,12 +1090,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             v = vd.get(Cnst.EQ_REL);
             if ( v != null ) {
-                qr.add(qa.get(k, v), BooleanClause.Occur.MUST);
+                qr.add(qa.whr(k, v), BooleanClause.Occur.MUST);
                 i ++;
             }
             v = vd.get(Cnst.NE_REL);
             if ( v != null ) {
-                qr.add(qa.get(k, v), BooleanClause.Occur.MUST_NOT);
+                qr.add(qa.whr(k, v), BooleanClause.Occur.MUST_NOT);
                 i ++;  j ++;
             }
 
@@ -1103,12 +1103,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             v = vd.get(Cnst.CQ_REL);
             if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST);
+                qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST);
                 i ++;
             }
             v = vd.get(Cnst.NC_REL);
             if ( v != null && ! "".equals(v) ) {
-                qr.add(qa.gen(k, v), BooleanClause.Occur.MUST_NOT);
+                qr.add(qa.wdr(k, v), BooleanClause.Occur.MUST_NOT);
                 i ++;  j ++;
             }
 
@@ -1119,7 +1119,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 Set vs = Synt.asSet(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
-                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST);
+                        qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST);
                         i ++;
                     }
                 }
@@ -1129,7 +1129,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 Set vs = Synt.asSet(v);
                 if(!vs.isEmpty( )) {
                     for(Object vv : vs) {
-                        qr.add(qa.get(k, vv), BooleanClause.Occur.MUST_NOT);
+                        qr.add(qa.whr(k, vv), BooleanClause.Occur.MUST_NOT);
                         i ++;  j ++;
                     }
                 }
@@ -1140,7 +1140,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 if(!vs.isEmpty( )) {
                     BooleanQuery.Builder  qx = new BooleanQuery.Builder();
                     for(Object vv : vs) {
-                        qx.add(qa.get(k, vv), BooleanClause.Occur.SHOULD);
+                        qx.add(qa.whr(k, vv), BooleanClause.Occur.SHOULD);
                     }
                         qr.add(qx.build (  ), BooleanClause.Occur.MUST  );
                         i ++;
@@ -1178,7 +1178,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             if ((n != null && ! "".equals(n))
             ||  (x != null && ! "".equals(x))) {
-                Query  qu = qa.get( k, n, x, l, g );
+                Query  qu = qa.whr( k, n, x, l, g );
                 qr.add(qu,BooleanClause.Occur.MUST);
                 i ++;
             }
@@ -1205,7 +1205,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                         continue ;
                     }
 
-                       Query qu = qa.get (k , n , x , l , g);
+                       Query qu = qa.whr (k , n , x , l , g);
                     qx.add ( qu, BooleanClause.Occur.SHOULD);
                 }
 
@@ -1233,7 +1233,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     if (fc == null) continue;
                     qs.settings( /*parser*/ fc );
                     qs.analyser(getAnalyser(fc));
-                    qx.add(qs.gen(fn, v),BooleanClause.Occur.SHOULD);
+                    qx.add(qs.wdr(fn, v),BooleanClause.Occur.SHOULD);
                 }
 
                 BooleanQuery qa = qx.build();

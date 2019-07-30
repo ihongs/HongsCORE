@@ -12,11 +12,11 @@ import org.apache.lucene.search.TermRangeQuery;
  */
 public class StringQuery implements IQuery {
     @Override
-    public Query gen(String k, Object v) {
+    public Query wdr(String k, Object v) {
         throw new UnsupportedOperationException("Field "+k+" does not support search");
     }
     @Override
-    public Query get(String k, Object v) {
+    public Query whr(String k, Object v) {
         if (null == v) {
             throw new NullPointerException("Query for "+k+" must be string, but null");
         }
@@ -25,7 +25,7 @@ public class StringQuery implements IQuery {
         return q2 ;
     }
     @Override
-    public Query get(String k, Object n, Object x, boolean l, boolean g) {
+    public Query whr(String k, Object n, Object x, boolean l, boolean g) {
         String n2 = Synt.declare(n, "");
         String x2 = Synt.declare(x, "");
         Query  q2 = TermRangeQuery.newStringRange("@" + k, n2, x2, l, g);

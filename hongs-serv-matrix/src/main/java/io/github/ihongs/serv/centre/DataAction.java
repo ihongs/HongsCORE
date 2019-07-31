@@ -10,6 +10,7 @@ import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.search.SearchAction;
 import io.github.ihongs.serv.matrix.Data;
+import io.github.ihongs.util.Synt;
 import java.lang.reflect.Method;
 import java.util.Map;
 
@@ -44,7 +45,10 @@ public class DataAction extends SearchAction {
         req = super.getReqMap(helper, ett, opr, req);
 
         // 默认的终端标识
-        if (! req.containsKey("meno")) {
+        String meno = Synt.asString(req.get("meno"));
+        if ( meno != null && ! meno.isEmpty()) {
+            req.put("meno", "centre."+ meno );
+        } else {
             req.put("meno", "centre");
         }
 

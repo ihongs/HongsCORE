@@ -106,12 +106,17 @@ public class StatisHelper {
          */
 
         for(String  k  : counts.keySet()) {
+            Map     vd = null;
             Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
                 if (vm.containsKey ( /***/ Cnst.IN_REL)) {
                     vs = Synt.asSet(vm.get(Cnst.IN_REL));
+                    vd = new HashMap( rd );
+                    vm = new HashMap( vm );
+                    vm.remove(Cnst.IN_REL);
+                    vd.put(k , vm);
                 }
             }
 
@@ -148,10 +153,7 @@ public class StatisHelper {
                 }
                 */
 
-                Map xd = new HashMap();
-                xd.putAll(rd);
-                xd.remove( k);
-                acount(xd, counts3, countx3, reader, finder);
+                acount(vd, counts3, countx3, reader, finder);
             }
         }
 
@@ -322,12 +324,17 @@ public class StatisHelper {
          */
 
         for(String  k  : counts.keySet()) {
+            Map     vd = null;
             Set     vs = null;
             Object  vo = rd.get(k);
             if (vo instanceof Map) {
                 Map vm = (Map) vo ;
                 if (vm.containsKey ( /***/ Cnst.RG_REL)) {
                     vs = Synt.asSet(vm.get(Cnst.RG_REL));
+                    vd = new HashMap( rd );
+                    vm = new HashMap( vm );
+                    vm.remove(Cnst.RG_REL);
+                    vd.put(k , vm);
                 }
             }
 
@@ -364,10 +371,7 @@ public class StatisHelper {
                 }
                 */
 
-                Map xd = new HashMap();
-                xd.putAll(rd);
-                xd.remove( k);
-                amount(xd, counts3, countx3, reader, finder);
+                amount(vd, counts3, countx3, reader, finder);
             }
         }
 

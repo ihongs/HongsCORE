@@ -61,11 +61,6 @@
             <version>2.6.0</version>
         </dependency>
         <dependency>
-            <artifactId>json-simple</artifactId>
-            <groupId>com.googlecode.json-simple</groupId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
             <artifactId>javax.servlet-api</artifactId>
             <groupId>javax.servlet</groupId>
             <version>3.1.0</version>
@@ -74,6 +69,11 @@
             <artifactId>javax.servlet.jsp-api</artifactId>
             <groupId>javax.servlet.jsp</groupId>
             <version>2.3.3</version>
+        </dependency>
+        <dependency>
+            <artifactId>json-simple</artifactId>
+            <groupId>com.googlecode.json-simple</groupId>
+            <version>1.1.1</version>
         </dependency>
     </dependencies>
     <reporting>
@@ -94,7 +94,7 @@
             <plugin>
                 <artifactId>maven-jar-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>3.1.0</version>
+                <version>3.1.2</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>
@@ -102,7 +102,7 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <groupId>org.apache.maven.plugins</groupId>
-                <version>3.7.1</version>
+                <version>3.8.1</version>
                 <configuration>
                     <encoding>UTF-8</encoding>
                 </configuration>

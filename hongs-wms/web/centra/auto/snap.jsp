@@ -16,7 +16,7 @@
             </li>
             <li class="dropdown">
                 <a href="javascript:;" data-toggle="dropdown"><b>行为</b><i class="caret"></i></a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu sta-menu">
                     <li data-state="1"><a href="javascript:;"><b>新增</b></a></li>
                     <li data-state="2"><a href="javascript:;"><b>更新</b></a></li>
                     <li data-state="0"><a href="javascript:;"><b>删除</b></a></li>
@@ -49,24 +49,24 @@
                     <th data-fn="_" data-ft="_admin" class="_amenu">
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
-                            <ul class="dropdown-menu">
+                            <ul class="dropdown-menu adm-menu">
                                 <li><a href="javascript:;" class="review">查看快照</a></li>
                                 <li><a href="javascript:;" class="revert">恢复记录</a></li>
-                                <li class="divider same-l"></li>
+                                <li class="divider"></li>
                                 <li><a href="javascript:;" class="same-r">同资源的</a></li>
                                 <li><a href="javascript:;" class="same-u">同用户的</a></li>
                                 <li><a href="javascript:;" class="same-m">同终端的</a></li>
                             </ul>
                         </div>
                     </th>
-                    <th data-fn="ctime" data-ft="time" class="_htime">记录时间</th>
+                    <th data-fn="ctime" data-ft="time" class="_htime sortable">记录时间</th>
                     <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
                     <th data-fn="user">用户</th>
                     <th data-fn="name">资源标题</th>
                     <th data-fn="memo">操作备注</th>
                     <th data-fn="meno">终端标识</th>
-                    <th data-fn="etime" data-ft="time" class="_htime">截止时间</th>
-                    <th data-fn="rtime" data-ft="time" class="_htime">恢复起源</th>
+                    <th data-fn="etime" data-ft="time" class="_htime sortable">截止时间</th>
+                    <th data-fn="rtime" data-ft="time" class="_htime sortable">恢复起源</th>
                 </tr>
             </thead>
             <tbody></tbody>
@@ -114,8 +114,7 @@
         // 独立记录
         if (H$( "@id" , context )
         ||  H$("@user", context)) {
-            context.find("ul.nav>li:eq(1),"
-                + ".same-l,.same-r,.same-u" )
+            context.find("ul.nav-tabs>li:eq(1),ul.adm-menu>li:gt(1)")
                    .hide();
         }
 

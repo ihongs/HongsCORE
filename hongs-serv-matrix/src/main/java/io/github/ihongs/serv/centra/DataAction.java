@@ -52,7 +52,10 @@ public class DataAction extends SearchAction {
         req = super.getReqMap(helper, ett, opr, req);
 
         // 默认的终端标识
-        if (! req.containsKey("meno")) {
+        String meno = Synt.asString(req.get("meno"));
+        if ( meno != null && ! meno.isEmpty()) {
+            req.put("meno", "centra."+ meno );
+        } else {
             req.put("meno", "centra");
         }
 

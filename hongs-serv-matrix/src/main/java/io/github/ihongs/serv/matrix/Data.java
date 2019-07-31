@@ -47,7 +47,7 @@ public class Data extends SearchEntity {
     /**
      * 分区字段名
      */
-    public static final String  PART_ID_KEY  =  "pt";
+    public static final String  PART_ID_KEY  =  "pd";
 
     protected     final String  conf   ;
     protected     final String  form   ;

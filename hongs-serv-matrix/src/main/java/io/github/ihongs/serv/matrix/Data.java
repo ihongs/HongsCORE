@@ -26,6 +26,7 @@ import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.Query;
@@ -758,7 +759,8 @@ public class Data extends SearchEntity {
         // 写入分区标识
         String pd = getPartId();
         if (null != pd) {
-            doc.add(new StringField("@" + PART_ID_KEY, pd, Field.Store.NO));
+            doc.add(new StringField("@"+PART_ID_KEY, pd, Field.Store.NO));
+            doc.add(new StoredField(/**/PART_ID_KEY, pd));
         }
 
         Map<String, Map> fields = getFields();

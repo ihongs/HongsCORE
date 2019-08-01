@@ -308,18 +308,19 @@
         if (!frmt || !patt) {
             if (type == "time") {
                 frmt = "HH:mm" ;
-                patt = "\d{1,2}:\d{1,2}" ;
+                patt = "\\d{1,2}:\\d{1,2}" ;
             } else
             if (type == "date") {
                 frmt = "yyyy-MM-dd";
-                patt = "\d{2,4}-\d{1,2}-\d{1,2}";
+                patt = "\\d{2,4}-\\d{1,2}-\\d{1,2}";
             } else
             {
                 frmt = "yyyy-MM-ddTHH:mm";
-                patt = "\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}";
+                patt = "\\d{2,4}-\\d{1,2}-\\d{1,2}T\\d{1,2}:\\d{1,2}";
             }
             this.data("format" , frmt);
             this.attr("pattern", patt);
+            this.attr("placeholder" , frmt );
         }
 
         // 取表单项, 没有则添加一个

@@ -5,10 +5,10 @@
 <%@page import="java.util.Map"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
-    CoreLocale _locale;
+    String     _title = null;
     String     _module;
     String     _entity;
-    String     _title = null;
+    CoreLocale _locale;
 
     {
         // 拆解路径
@@ -57,7 +57,7 @@
                 break;
             }
         } catch (HongsException ex) {
-            // 忽略配置文件缺失了的异常
+            // 忽略配置文件缺失的异常情况
             if (ex.getErrno() != 0x10e0) {
                 throw ex ;
             }

@@ -16,6 +16,8 @@
 
     StringBuilder _ob = new StringBuilder( "-,-boost,-mtime,-ctime");
     StringBuilder _rb = new StringBuilder("id,name");
+    Set<String>   _wd = getWordable();
+    Set<String>   _sd = getSrchable();
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
@@ -37,10 +39,16 @@
         </div>
         <div class="col-xs-6">
             <div class="input-group">
+                <!-- <%=_wd%> -->
                 <%
-                    String sp = getSearchHolder(_fields);
-                    if (sp.length() == 0) {
-                        sp = sp+"\" disabled=\"disabled";
+                    StringBuilder sp = new StringBuilder( );
+                    if (! _wd.isEmpty()) {
+                    for(String ss : _wd) {
+                        ss = Dict.getValue(_fields, "" , ss , "__text__");
+                        if (ss.length() != 0) sp.append( ss ).append(",");
+                    }   if (sp.length() != 0) sp.setLength(sp.length()-1);
+                    } else {
+                        sp.append("\" disabled=\"disabled");
                     }
                 %>
                 <input  type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" />
@@ -115,11 +123,11 @@
             <%} else {%>
                 <%
                     // 搜索类型优先模糊匹配
-                    if (Synt.declare(info.get("srchable"), false)
-                    ||  Synt.declare(info.get("wordable"), false)
+                    if (_sd.contains(name)
+                    && (_wd.contains(name)
                     ||  "textarea".equals(type)
-                    ||  "textview".equals(type)) {
-                        name += Cnst.CQ_REL;
+                    ||  "textview".equals(type))) {
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配\"";
                     }
                 %>
                 <input class="form-control" type="text" name="ar.0.<%=name%>" />

@@ -11,54 +11,45 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     /**
-     * 获取搜索提示语
+     * 获取全局搜索字段
      */
-    String getSearchHolder(Map fields) throws HongsException {
-        Map fc  = (Map) fields.get("word");
+    Set<String> getWordable() throws HongsException {
+        Map fc = (Map) _fields.get("word");
         if (fc != null && ! Synt.declare(fc.get("readonly"), false)) {
-            Object fn = fc.get("__text__");
-        if (fn != null && ! "".equals(fn)) {
-            return (String) fn;
-        }}
+            return /**/ Synt.setOf("word");
+        }
 
-        StringBuilder sb = new StringBuilder();
-        ModelCase  mc = new MyCase(fields);
-        Set fs  =  mc.getCaseNames("wordable");
+        if (_sample == null ) _sample = new Sample(_fields);
+        Set fs = _sample.getCaseNames("wordable");
         if (fs == null || fs.isEmpty()) {
-            fs  =  mc.getCaseNames("srchable");
+            fs = _sample.getCaseNames("srchable");
         }
+        return fs;
+    }
 
-        for( Object fn : fs ) {
-            fc  = (Map) fields.get(fn);
-        if (fc == null) continue;
-            fn  = fc.get( "__text__" );
-        if (fn != null && ! "".equals(fn)) {
-            sb.append(fn).append(", ");
-        }}
+    /**
+     * 获取可搜索的字段
+     */
+    Set<String> getSrchable() throws HongsException {
+        if (_sample == null ) _sample = new Sample(_fields);
+        Set fs = _sample.getCaseNames("srchable");
+        return fs;
+    }
 
-        if (sb.length() != 0) {
-            sb.setLength(sb.length() - 2);
-            return sb.toString();
-        } else
-        if (fs.size(  ) != 0) {
-            return " ";
-        } else
-        {
-            return "" ;
+    private static class Sample extends ModelCase {
+        public Sample(Map fields) {
+            setFields(/**/fields);
         }
     }
-    private static class MyCase extends ModelCase {
-        public MyCase(Map fields) {
-            setFields(fields);
-        }
-    }
+
+    Map        _fields = null;
+    ModelCase  _sample = null;
 %>
 <%
     String     _title = "";
     String     _module;
     String     _entity;
     CoreLocale _locale;
-    Map        _fields = null;
 
     {
         // 拆解路径
@@ -97,8 +88,8 @@
                     break;
                 }
 
-                if (name.startsWith("centre/") ) {
-                    name = "centra/"+ name.substring(7);
+                if (_fields != null && name.startsWith("centre/") ) {
+                    name = "centra/" + name.substring(7);
                 } else {
                     break;
                 }

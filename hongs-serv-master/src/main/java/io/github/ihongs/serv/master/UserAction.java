@@ -44,11 +44,12 @@ public class UserAction {
         rd = model.getList(rd , fc);
 
         // Remove the password field, don't show password in page
-        List<Map> list = (List) rd.get("list");
-        for (Map  info :  list) {
+        List<Map> list  = (List) rd.get("list");
+        if  (/**/ null !=  list) {
+        for (Map  info  :  list) {
             info.remove("password");
             info.remove("passcode");
-        }
+        }}
 
         helper.reply(rd);
     }

@@ -63,7 +63,7 @@ CREATE TABLE `a_master_user` (
   `ctime` INTEGER(10) DEFAULT NULL,
   `mtime` INTEGER(10) DEFAULT NULL,
   `rtime` INTEGER(10) DEFAULT NULL, /* 权限最后更新时间 */
-  `state` TINYINT DEFAULT '1',
+  `state` TINYINT DEFAULT '1', /* 1 正常, 2 系统, 0 删除, -1 锁定
   /* 扩展字段 */
   `organ` VARCHAR(200) DEFAULT NULL,
   `title` VARCHAR(200) DEFAULT NULL,
@@ -83,6 +83,7 @@ CREATE UNIQUE INDEX `UK_a_master_user_username` ON `a_master_user` (`username`);
 -- CREATE UNIQUE INDEX `UK_a_master_user_phone` ON `a_master_user` (`phone`);
 
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('1','9BA587D4E465F45669F19AF20CA033D9','abc@def.cn','超级管理员',NULL,NULL,'1424075622','1424075622','0',1);
+INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0','9BA587D4E465F45669F19AF20CA033D9','xyz@def.cn','匿名使用者',NULL,NULL,'1424075622','1424075622','0',2);
 
 --
 -- 用户所属部门

@@ -117,36 +117,56 @@ public class Unit extends Grade {
         caze.filter("`"+table.name+"`.`id` IN (?)", us);
     }
 
-    private boolean getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
-        boolean hasRol = false;
-        boolean hasSub ;
-        boolean hasOne ;
-        Matcher keyMat ;
-        for(Map.Entry<String, Map> subEnt : menus.entrySet()) {
-            Map<String, Object> menu = subEnt.getValue();
-            Map<String, Map> menus2 = (Map) menu.get("menus");
-            Set<String/***/> roles2 = (Set) menu.get("roles");
-            hasSub = hasOne = false;
-            if (menus2 != null && !menus2.isEmpty() /* Check sub menus */ ) {
-                hasSub  = getSubUnits (menus2, roles, units );
-            } else {
-                hasOne  = true ;
+    private int getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
+        int count = 0; // 0 空菜单, 1 无权限, 2 有权限
+        Matcher match;
+
+        TOP:for(Map.Entry<String, Map> entry : menus.entrySet()) {
+            Map<String, Object> menu = entry.getValue( );
+            Map<String, Map>  menus2 = (Map) menu.get( "menus" );
+            Set<String/***/>  roles2 = (Set) menu.get( "roles" );
+
+            boolean noRol  = roles2 == null || roles2.isEmpty( );
+            if ( !  noRol  ) {
+                if (count != 1) {
+                    count  = 1;
+                }
+                for(String rn : roles2) {
+                if (roles.contains(rn)) {
+                    match  = UNIT_ID_RG.matcher(entry.getKey( ));
+                    if (match.find()) units.add(match.group (1));
+                    count  = 2;
+                    break  TOP;
+                }}
             }
-            if (roles2 != null && !roles2.isEmpty() && (!hasSub || hasOne)) {
-                hasOne  = false;
-            for(String rn : roles2) {
-            if (roles.contains(rn)) {
-                hasOne  = true ;
-                break;
-            }}
+
+            boolean noMen  = menus2 == null || menus2.isEmpty( );
+            if ( !  noMen  ) {
+                int mount  = getSubUnits( menus2, roles, units );
+                if (mount == 0) {
+                    noMen  = true;
+                } else
+                if (mount == 1) {
+                    count  = 1;
+                } else
+                if (mount == 2) {
+                    match  = UNIT_ID_RG.matcher(entry.getKey( ));
+                    if (match.find()) units.add(match.group (1));
+                    count  = 2;
+                    break  TOP;
+                }
             }
-            if (hasSub || hasOne  ) {
-                hasRol  = true ;
-                keyMat  = UNIT_ID_RG.matcher(subEnt.getKey());
-                if (keyMat.find()) units.add(keyMat.group(1));
-            }
+
+                /**
+                 * 没权限没菜单, 公开可见
+                 */
+                if (noRol && noMen) {
+                    match  = UNIT_ID_RG.matcher(entry.getKey( ));
+                    if (match.find()) units.add(match.group (1));
+                }
         }
-        return  hasRol ;
+
+        return count;
     }
 
     public  void updateMenus()

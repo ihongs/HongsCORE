@@ -72,7 +72,9 @@ function hsListShowEdit(d, v) {
             v = v. id;
         }
     }
-    d.toggle( v && v == HsCUID );
+    if (v && v == window.HsCUID) {
+        d.show ();
+    }
 }
 
 /**

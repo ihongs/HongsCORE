@@ -92,7 +92,7 @@ function hsListFillFilt(x, v, n) {
 /**
  * 列表预置过滤选项
  */
-function hsListPrepFilt(x, v, n) {
+function hsListDollFilt(x, v, n) {
     n = n.replace(/^ar\.\d\./, "");
     v = this._enum[n];
 
@@ -117,8 +117,9 @@ function hsListPrepFilt(x, v, n) {
         v.unshift(a);
     }
 
-    return HsForm.prototype._prep__select.call(this, x, v, n);
+    return HsForm.prototype._doll__select.call(this, x, v, n);
 }
+var hsListPrepFilt = hsListDollFilt; // 兼容
 
 /**
  * 列表填充打开链接

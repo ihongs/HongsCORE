@@ -480,19 +480,18 @@ function hsListFillPick(cel, v, n) {
     .on("click", "[data-toggle=hsPick],[data-toggle=hsFork]",
     function() {
         var url = $(this).attr("data-href") || $(this).attr("href");
-        var bin = $(this).attr("data-target");
-        var box = $(this).attr("data-result");
+        var bin = $(this).attr("data-target"); // 选择区域
+        var box = $(this).attr("data-result"); // 填充区域
 
-        // 选择区域
         if (bin) {
             bin = $(this).hsFind(bin);
         }
-
-        // 填充区域
         if (box) {
             box = $(this).hsFind(box);
-        } else {
-            box = $(this).siblings("[name],[data-fn],[data-ft]").not(".form-ignored");
+        } else
+        {
+            box = $(this).siblings ( "[name],[data-fn],[data-ft]" )
+               .not(".form-ignored" );
         }
 
         $(this).hsPick(url, bin, box);

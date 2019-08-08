@@ -2390,7 +2390,7 @@ $.fn.hsFind = function(selr) {
                 if (x.size()) { elem = x; break; }
                 elem = $(document);
             } while (false);
-            return salr ? $(salr, elem) : elem;
+            return salr ? $(salr, elem) : elem ;
         case '$':
             do {
                 var x;

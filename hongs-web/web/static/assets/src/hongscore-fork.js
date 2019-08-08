@@ -22,7 +22,7 @@
  * @param {jQuery} bin 在哪打开
  * @param {jQuery} box 在哪填充
  * @param {Function} fil 填充函数
- * @param {Function} fet 加载函数
+ * @param {Function} fet 读取函数
  * @returns {jQuery}
  */
 jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
@@ -48,25 +48,16 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         } while (false);
     }
 
-    if (fet) {
-        fet(box, v, n );
-    } else
-    if (box.is("input")) {
-        var val = box.val( );
-        var txt = btn.text();
-        if (val) {
-            v[val] = [txt, {}];
-        }
-    } else
-    if (box.is("ul,ol")) {
-        box.find("li").each(function( ) {
-            var opt = jQuery(this);
-            var val = opt.find("input")
-                         .val ( /***/ );
-            var txt = opt.attr("title")
-                   || opt.data("title");
-            v[val] = [txt, {}];
-        });
+    if (! fet) {
+        do {
+            fet = foo["_fork_"+ n];
+            if (fet) break;
+
+            fet = foo["_fork_"+ t];
+            if (fet) break;
+
+            fet = hsFormForkData;
+        } while (false);
     }
 
     function pickItem(val, txt, inf, chk ) {
@@ -224,6 +215,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         return false ;
     }
 
+    fet.call(  foo, box, v, n  ); // 读取已选
     if (bin) {
         bin =  bin  .hsOpen(url);
     } else {
@@ -235,11 +227,65 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
 };
 
 /**
+ * 表单获取选项
+ * @param {jQuery} box
+ * @param {Object} v
+ * @param {String} n
+ */
+function hsFormForkData(box, v, n) {
+    if (box.is("input")) {
+        var val = box.val ();
+        var dat = box.data();
+        var txt = box.attr("title")
+               || box.data("name" );
+        if (val) {
+            v[val] = [txt, dat||{}];
+        }
+    } else
+    if (box.is("ul,ol")) {
+    box.find("li").each (function() {
+        var row = jQuery(this);
+        var inp = row.find("input");
+        var val = inp.val ();
+        var dat = inp.data();
+        var txt = row.attr("title")
+               || inp.data("name" );
+        if (val) {
+            v[val] = [txt, dat||{}];
+        }
+    });
+    } else
+    if (box.is("table,tbody")) {
+    box.find("tr").each (function() {
+        var row = jQuery(this);
+        var inp = row.find("input");
+        var val = inp.val ();
+        var dat = inp.data();
+        var txt = row.attr("title")
+               || inp.data("name" );
+        if (val) {
+            v[val] = [txt, dat||{}];
+        }
+    });
+    } else {
+    box.find("input:hidden").each(function() {
+        var inp = jQuery(this);
+        var val = inp.val ();
+        var dat = inp.data();
+        var txt = inp.attr("title")
+               || inp.data("name" );
+        if (val) {
+            v[val] = [txt, dat||{}];
+        }
+    });
+    }
+}
+
+/**
  * 表单填充选项
  * @param {jQuery} box
  * @param {Object} v
  * @param {String} n
- * @returns {undefined}
  */
 function hsFormFillPick(box, v, n) {
     if (! n ) n = box.data( "fn" );
@@ -281,13 +327,15 @@ function hsFormFillPick(box, v, n) {
     function reset(btn, box) {
         var txt = btn.data("txt");
         var cls = btn.data("cls");
-        box.val ( "");
         btn.text(txt);
+        box.val ( "");
+        box.attr( "title" , ""  );
         btn.attr( "class" , cls );
     }
     function inset(btn, box, val, txt) {
-        box.val (val);
         btn.text(txt);
+        box.val (val);
+        box.attr( "title" , txt );
         btn.addClass("btn-info" );
         btn.append('<span class="close pull-right">&times;</span>');
     }
@@ -400,7 +448,6 @@ function hsFormFillPick(box, v, n) {
  * @param {jQuery} cel
  * @param {String} v
  * @param {String} n
- * @returns {undefined}
  */
 function hsListFillPick(cel, v, n) {
     var box = cel. closest (".pickbox,.openbox,.loadbox");

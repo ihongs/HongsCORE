@@ -362,7 +362,7 @@
 
     var filtobj = filtbox.hsForm({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=!enum",
-        _prep__enum : hsListPrepFilt,
+        _doll__enum : hsListDollFilt,
         _fill__enum : hsListFillFilt
     });
 

@@ -492,7 +492,7 @@ function hsListFillPick(cel, v, n) {
         if (box) {
             box = $(this).hsFind(box);
         } else {
-            box = $(this).siblings("[name],[data-fn]").not(".form-ignored");
+            box = $(this).siblings("[name],[data-fn],[data-ft]").not(".form-ignored");
         }
 
         $(this).hsPick(url, bin, box);

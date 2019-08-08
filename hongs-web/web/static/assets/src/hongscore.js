@@ -2391,7 +2391,7 @@ $.fn.hsFind = function(selr) {
                 elem = $(document);
             } while (false);
             return salr ? $(salr, elem) : elem;
-        case '&':
+        case '$':
             do {
                 var x;
                 x = elem.closest(".loadbox");
@@ -2401,9 +2401,9 @@ $.fn.hsFind = function(selr) {
                 elem = $(document);
             } while (false);
             return salr ? $(salr, elem) : elem ;
-        case '^':
+        case '/':
             elem = elem.parent();
-            var a = salr.split(';' , 2);
+            var a = salr.split('/' , 2);
             if (a[0]) elem = elem.closest(a[0]);
             if (a[1]) elem = elem.hsFind (a[1]);
             return elem;
@@ -2413,8 +2413,8 @@ $.fn.hsFind = function(selr) {
             return elem.siblings(salr);
         case '+':
             return elem.next(salr);
-        case '-':
-            return elem.prev(salr);
+//      case '-':
+//          return elem.prev(salr);
         case '?':
             return elem.find(salr);
         case '*':

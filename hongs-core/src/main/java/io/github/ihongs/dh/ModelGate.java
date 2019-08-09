@@ -76,6 +76,14 @@ abstract public class ModelGate implements IActing, IAction {
         }
     }
 
+    @Action("select")
+    @Preset(conf="", form="")
+    @Select(conf="", form="")
+    public void select(ActionHelper helper) {
+        // Used only to return default info and enum.
+        helper.reply("");
+    }
+
     @Override
     @Action("search")
     @Preset(conf="", form="")

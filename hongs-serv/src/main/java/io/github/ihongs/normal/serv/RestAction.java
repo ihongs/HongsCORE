@@ -150,15 +150,20 @@ public class RestAction extends ApisAction {
 
         /**
          * 当已知的动作中无法匹配时
-         * 可能是使用了 AutoFilter 的原因
          * 可尝试检查当前动作或方法
+         * 这可能是用了 AutoFilter
          */
         for(String x : mts) {
-            if (w.endsWith("/" + x)) {
+            if (w.endsWith("/" +x)) {
                 x = "/" + w + Cnst.ACT_EXT;
                 return    x ;
             }
         }
+
+        /**
+         * 找不到后缀就按方法来扩展
+         * 后续转发仍然没有会报 404
+         */
         if (m.equals(ACTION_GET   [0])) {
             return "/" + w + "/search" + Cnst.ACT_EXT;
         }

@@ -8,6 +8,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
+import io.github.ihongs.action.anno.Select;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.util.FetchCase;
@@ -37,6 +38,7 @@ public class UserAction {
     }
 
     @Action("list")
+    @Select(conf="master", form="user")
     public void getList(ActionHelper helper)
     throws HongsException {
         Map rd = helper.getRequestData();
@@ -55,6 +57,7 @@ public class UserAction {
     }
 
     @Action("info")
+    @Select(conf="master", form="user")
     public void getInfo(ActionHelper helper)
     throws HongsException {
         Map    rd = helper.getRequestData(  );

@@ -1,7 +1,7 @@
 <h2>选择用户</h2>
 <div id="master-user-pick"
      data-module="hsList"
-     data-load-url="centra/master/user/list.act?with-depts=2"
+     data-load-url="centra/master/user/list.act?ab=_text&amp;with-depts=2&amp;bind-scope=0"
      data-load-data="(this.closest('.loadbox'))"
      data-data-0="_fill__fork: (hsListFillFork)">
     <form class="findbox toolbox board row" action="" method="POST">
@@ -29,7 +29,8 @@
                     <th data-fn="head"     class="userhead">头像</th>
                     <th data-fn="name"     class="sortable">名称</th>
                     <th data-fn="username" class="sortable">账号</th>
-                    <th data-fn="depts..name"              >分组</th>
+                    <th data-fn="depts.name">分组</th>
+                    <th data-fn="depts_stat">状态</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
                 </tr>

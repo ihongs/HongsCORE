@@ -216,8 +216,10 @@ public class Data extends SearchEntity {
 
     @Override
     public String getDbPath() {
-        String path = conf.replaceFirst("^(centre|centra)/" , "") +"/"+ form;
-        path = Synt.declare(getParams().get("db-path"),path);
+        String path = Synt.asString(getParams().get("db-path"));
+        if (path == null || path.isEmpty()) {
+            path  = conf.replaceFirst("^(centre|centra)/", "") + "/" + form ;
+        }
 
         // 进一步处理路径
         Map m = new HashMap();
@@ -233,16 +235,24 @@ public class Data extends SearchEntity {
 
     @Override
     public String getDbName() {
-        String name = conf.replaceFirst("^(centre|centra)/" , "") +"/"+ form;
-        return Synt.declare(getParams().get("db-name"),name);
+        String name = Synt.asString(getParams().get("db-path"));
+        if (name == null || name.isEmpty()) {
+            name  = conf.replaceFirst("^(centre|centra)/", "") + "." + form ;
+        }
+        return name;
     }
 
     public String getFormId() {
-        return Synt.declare(getParams().get("form_id"),form);
+        String code = Synt.asString(getParams().get("form_id"));
+        if (code == null || code.isEmpty()) {
+            code  = form;
+        }
+        return code;
     }
 
     public String getPartId() {
-        return Synt.declare(getParams().get("part_id"), "" );
+        String code = Synt.asString(getParams().get("part_id"));
+        return code;
     }
 
     public String getUserId() {

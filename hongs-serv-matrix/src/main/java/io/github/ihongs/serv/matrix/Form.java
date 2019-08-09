@@ -73,7 +73,7 @@ public class Form extends Model {
         String namx = Synt.asString(xd.get("name" ));
         String stat = Synt.asString(rd.get("state"));
         String name = Synt.asString(rd.get("name" ));
-        List   conf = parseConf(rd);
+        List   conf = parseConf(id, rd);
 
         // 冻结意味着手动修改了配置
         // 再操作可能会冲掉自定配置
@@ -84,7 +84,7 @@ public class Form extends Model {
             throw new HongsException(0x1104, "表单缺失, 无法操作");
         }
 
-        int n  = superPut(id, rd);
+        int n  = superPut (id , rd);
         if (n != 0) {
             // 用旧数据补全
             if (stat == null && name != null) {
@@ -119,12 +119,12 @@ public class Form extends Model {
     public int add(String id, Map rd) throws HongsException {
         String stat = Synt.asString(rd.get("state"));
         String name = Synt.asString(rd.get("name" ));
-        List   conf = parseConf(rd);
+        List   conf = parseConf(id, rd);
 
-        int n  = superAdd(id, rd);
+        int n  = superAdd (id , rd);
         if (n != 0) {
             // 记录配置变更
-            storeConf(id, rd.get("conf") );
+            storeConf(id , rd.get("conf"));
 
             // 更新配置文件
             updateFormConf(id, stat, conf);
@@ -160,12 +160,12 @@ public class Form extends Model {
         return n;
     }
 
-    protected final int superAdd(String id, Map rd) throws HongsException {
-        return super.add(id, rd);
-    }
-
     protected final int superPut(String id, Map rd) throws HongsException {
         return super.put(id, rd);
+    }
+
+    protected final int superAdd(String id, Map rd) throws HongsException {
+        return super.add(id, rd);
     }
 
     protected final int superDel(String id, FetchCase fc) throws HongsException {
@@ -203,7 +203,7 @@ public class Form extends Model {
         return 1;
     }
 
-    protected List<Map> parseConf(Map rd) {
+    protected List<Map> parseConf(String id, Map rd) {
         List<Map> flds = null;
         String conf = (String) rd.get("conf");
         String name = (String) rd.get("name");
@@ -254,7 +254,11 @@ public class Form extends Model {
 
             // 补全表配置项
             fld = Synt.mapOf(
-                "__text__", name
+                "__text__", name,
+                "form_id" , id  ,
+                "part_id" , id  ,
+                "db-name" , "data/__main__" ,
+                "db-path" , "data/__main__"
                 /*
                 // 已改完默认按类型判断
                 // 故没有必要再作设置了
@@ -285,7 +289,7 @@ public class Form extends Model {
                 flds.add(1, fld);
             }
 
-            // 增加名称字段
+            // 增加描述字段
             if (set.contains("name")) {
                 flds.add(Synt.mapOf(
                     "__name__", "name",
@@ -294,8 +298,6 @@ public class Form extends Model {
                     "wordable", "true"
                 ));
             }
-
-            // 增加搜索字段
             if (set.contains("word")) {
                 flds.add(Synt.mapOf(
                     "__name__", "word",

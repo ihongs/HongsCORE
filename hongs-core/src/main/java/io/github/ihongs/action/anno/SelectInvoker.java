@@ -17,14 +17,14 @@ import java.util.Set;
  * <pre>
  * ab 参数含义:
  * !enum 表示不需要执行, 重置为 .enum
- * !info 表示不需要执行, 类似于 .defs
+ * !info 表示不需要执行, 类似于 .info
  * .enum 表示要选项数据
+ * .info 表示补充默认值
+ * .form 表示处理子表单
  * _text 表示加选项文本
  * _time 表示加数字时间
  * _link 表示加完整链接
  * _fork 表示加关联数据
- * .form 表示处理子表单
- * .defs 表示补充默认值
  * </pre>
  * @author Hong
  */
@@ -45,47 +45,46 @@ public class SelectInvoker implements FilterInvoker {
             if (ab != null) {
                 if (ab.contains("!enum" )
                 ||  ab.contains("!info")) {
-                    adds = 0;
                     if (ab.contains("!enum")) {
                         adds -= SelectHelper.ENUM;
                     }
                     if (ab.contains("!info")) {
                         adds -= SelectHelper.INFO;
                     }
-                    if (ab.contains("_time")) {
-                        adds -= SelectHelper.TIME;
-                    }
-                    if (ab.contains("_link")) {
-                        adds -= SelectHelper.LINK;
+                    if (ab.contains(".form")) {
+                        adds -= SelectHelper.FORM;
                     }
                     if (ab.contains("_fork")) {
                         adds -= SelectHelper.FORK;
                     }
-                    if (ab.contains(".form")) {
-                        adds -= SelectHelper.FORM;
+                    if (ab.contains("_link")) {
+                        adds -= SelectHelper.LINK;
+                    }
+                    if (ab.contains("_time")) {
+                        adds -= SelectHelper.TIME;
                     }
                 } else {
                     if (ab.contains(".enum")) {
                         adds += SelectHelper.ENUM;
                     }
-                    if (ab.contains("_enum" ) // 兼容旧名称
-                    ||  ab.contains("_text")) {
-                        adds += SelectHelper.TEXT;
-                    }
-                    if (ab.contains("_time")) {
-                        adds += SelectHelper.TIME;
-                    }
-                    if (ab.contains("_link")) {
-                        adds += SelectHelper.LINK;
-                    }
-                    if (ab.contains("_fork")) {
-                        adds += SelectHelper.FORK;
+                    if (ab.contains(".info")) {
+                        adds += SelectHelper.INFO;
                     }
                     if (ab.contains(".form")) {
                         adds += SelectHelper.FORM;
                     }
-                    if (ab.contains(".defs")) {
-                        adds += SelectHelper.INFO;
+                    if (ab.contains("_fork")) {
+                        adds += SelectHelper.FORK;
+                    }
+                    if (ab.contains("_link")) {
+                        adds += SelectHelper.LINK;
+                    }
+                    if (ab.contains("_time")) {
+                        adds += SelectHelper.TIME;
+                    }
+                    if (ab.contains("_enum" ) // 兼容旧名称
+                    ||  ab.contains("_text")) {
+                        adds += SelectHelper.TEXT;
                     }
                 }
             }
@@ -99,8 +98,9 @@ public class SelectInvoker implements FilterInvoker {
         } else
         if (adds >  0 ) {
             chains.doAction(  );
-            rsp = helper.getResponseData(  );
-            if (! Synt.declare(rsp.get("ok"), false)) {
+            rsp = helper.getResponseData();
+            if (null != rsp
+            && !Synt.declare(rsp.get("ok"), false)) {
                 return;
             }
         } else {

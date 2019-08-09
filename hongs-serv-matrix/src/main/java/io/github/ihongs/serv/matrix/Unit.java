@@ -9,12 +9,14 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Grade;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.util.FetchCase;
+import io.github.ihongs.util.Synt;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -42,8 +44,6 @@ public class Unit extends Grade {
 
     protected String centra = "centra/data";
     protected String centre = "centre/data";
-
-    private final Pattern UNIT_ID_RG = Pattern.compile("x=(\\w+)");
 
     public Unit() throws HongsException {
         this(DB.getInstance("matrix").getTable("unit"));
@@ -107,66 +107,63 @@ public class Unit extends Grade {
         }
 
         // 从导航表中取单元ID
-        NaviMap navi = NaviMap.getInstance(centra);
-        Map<String, Map> ms = navi.menus;
-        Set<String> rs = navi.getRoleSet();
-        Set<String> us = /**/new HashSet();
-        getSubUnits(ms , rs , us );
+        Set<String> us = new HashSet();
+        NaviMap     nv = NaviMap.getInstance(centra);
+        getSubUnits(nv.menus, nv.getRoleSet ( ), us);
 
         // 限制为有权限的单元
         caze.filter("`"+table.name+"`.`id` IN (?)", us);
     }
 
-    private int getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
-        int count = 0; // 0 空菜单, 1 无权限, 2 有权限
+    private static final Pattern UNIT_CODE = Pattern.compile("\\Wx=(\\w+)");
 
-        TOP:for(Map.Entry<String, Map> entry : menus.entrySet()) {
+    private int getSubUnits(Map<String, Map> menus, Set<String> roles, Set<String> units) {
+        /**
+         * 返回值及 hasRol 和 hasSub 取值含义为:
+         * 0 无角色设置
+         * 1 有访问权限
+         * 2 无访问权限
+         */
+
+        int cntNul = 0; // 空角色设置计数
+        int cntRol = 0; // 有访问权限计数
+        int l = menus.size(); // 菜单数量
+
+        for(Map.Entry<String, Map> entry : menus.entrySet()) {
                 String          href = entry.getKey  ();
             Map<String, Object> menu = entry.getValue();
-            Map<String, Map>  menus2 = (Map) menu.get( "menus");
-            Set<String     >  roles2 = (Set) menu.get( "roles");
+            Map<String, Map>  menus2 = (Map) menu.get("menus");
+            Set<String     >  roles2 = (Set) menu.get("roles");
 
-            boolean noRol  = roles2 == null || roles2.isEmpty();
-            if ( !  noRol  ) {
-                if (count != 1) {
-                    count  = 1;
-                }
-                for(String rn : roles2) {
-                if (roles.contains(rn)) {
-                    Matcher match  = UNIT_ID_RG.matcher( href );
-                    if (match.find()) units.add(match.group(1));
-                    count  = 2;
-                    break  TOP;
-                }}
+            int hasRol = roles2 == null || roles2.isEmpty( ) ? 0 : 1;
+            if (hasRol == 1) {
+                hasRol = Collections.disjoint(roles2, roles) ? 2 : 1;
             }
 
-            boolean noMen  = menus2 == null || menus2.isEmpty();
-            if ( !  noMen  ) {
-                int mount  = getSubUnits (menus2, roles, units);
-                if (mount == 0) {
-                    noMen  = true;
-                } else
-                if (mount == 1) {
-                    count  = 1;
-                } else
-                if (mount == 2) {
-                    Matcher match  = UNIT_ID_RG.matcher( href );
-                    if (match.find()) units.add(match.group(1));
-                    count  = 2;
-                    break  TOP;
-                }
+            int hasSub = menus2 == null || menus2.isEmpty( ) ? 0 : 1;
+            if (hasSub == 1) {
+                hasSub = getSubUnits(menus2 , roles , units);
             }
 
-                /**
-                 * 没权限没菜单, 公开可见
-                 */
-                if (noRol && noMen) {
-                    Matcher match  = UNIT_ID_RG.matcher( href );
-                    if (match.find()) units.add(match.group(1));
-                }
+            if (hasRol == 0 && hasSub == 0) {
+                cntNul += 1;
+                Matcher m = UNIT_CODE.matcher(href);
+                if (m.find()) units.add(m.group(1));
+            } else
+            if (hasRol == 1 || hasSub == 1) {
+                cntRol += 1;
+                Matcher m = UNIT_CODE.matcher(href);
+                if (m.find()) units.add(m.group(1));
+            }
         }
 
-        return count;
+        if (cntNul == l) { // 没任何角色设置
+            return 0;
+        }
+        if (cntRol >= 1) { // 有至少一个权限
+            return 1;
+        }
+        return 2;
     }
 
     public  void updateMenus()
@@ -216,6 +213,7 @@ public class Unit extends Grade {
     throws HongsException {
         Element importNode;
         List<Map> rows;
+        int  cnt  = 0 ;
 
         rows = this.db.getTable("form")
             .fetchCase()
@@ -224,8 +222,11 @@ public class Unit extends Grade {
             .assort("boost DESC")
             .getAll( );
         for ( Map  row : rows ) {
-            String fid = row.get( "id"  ).toString();
-            String sta = row.get("state").toString();
+            String fid = row.get( "id" ).toString();
+            int    sta = Synt.declare(row.get("state"), 0 );
+            if (sta == 1 || sta == 4 ) { // 内部表单或仅开接口
+                cnt ++ ;
+            }
 
             importNode = centraDocm.createElement("import");
             importNode.appendChild(centraDocm.createTextNode(centra+"/"+fid));
@@ -235,55 +236,17 @@ public class Unit extends Grade {
             importNode.appendChild(centreDocm.createTextNode(centre+"/"+fid));
             centreRoot.appendChild(importNode);
         }
-    }
 
-    private void insertHides(
-            Document centraDocm, Element centraRoot,
-            Document centreDocm, Element centreRoot,
-            String id)
-    throws HongsException {
-        Element centraHid2, centreHid2;
-        List<Map> rows;
-
-        rows = this.table
-            .fetchCase()
-            .filter("pid = ? AND state > 0", id)
-            .select("id, name"  )
-            .assort("boost DESC")
-            .getAll( );
-
-        for ( Map  row : rows ) {
-            String pid = row.get( "id" ).toString();
-            String nam = row.get("name").toString();
-
-            centraHid2 = centraDocm.createElement("menu");
-            centraHid2.setAttribute("text", nam);
-            centraHid2.setAttribute("href", "!"+centra+"/"+pid);
-            centraHid2.setAttribute("hrel", "HIDE");
-
-            centreHid2 = centreDocm.createElement("menu");
-            centreHid2.setAttribute("text", nam);
-            centreHid2.setAttribute("href", "!"+centre+"/"+pid);
-            centraHid2.setAttribute("hrel", "HIDE");
-
-            insertForms(
-                centraDocm, centraHid2,
-                centreDocm, centreHid2,
-                pid
-            );
-
-            insertHides(
-                centraDocm, centraHid2,
-                centreDocm, centreHid2,
-                pid
-            );
-
-            if (centraHid2.hasChildNodes()) {
-                centraRoot.appendChild(centraHid2);
+        /**
+         * 非顶层而下级无可见表单
+         * 则将上级菜单设置为隐藏
+         */
+        if (! "0".equals(id)) {
+            if (rows.size() ==  0 ) {
+                centraRoot.setAttribute("hrel", "HIDE");
             }
-
-            if (centreHid2.hasChildNodes()) {
-                centreRoot.appendChild(centreHid2);
+            if (rows.size() == cnt) {
+                centreRoot.setAttribute("hrel", "HIDE");
             }
         }
     }
@@ -308,12 +271,14 @@ public class Unit extends Grade {
             String nam = row.get("name").toString();
 
             centraRoo2 = centraDocm.createElement("menu");
-            centraRoo2.setAttribute("text", nam);
             centraRoo2.setAttribute("href", "common/menu.act?m="+centra+"&x="+pid);
+            centraRoo2.setAttribute("text",  nam  );
+            centraRoot.appendChild (  centraRoo2  );
 
             centreRoo2 = centreDocm.createElement("menu");
-            centreRoo2.setAttribute("text", nam);
             centreRoo2.setAttribute("href", "common/menu.act?m="+centre+"&x="+pid);
+            centreRoo2.setAttribute("text",  nam  );
+            centreRoot.appendChild (  centreRoo2  );
 
             insertForms(
                 centraDocm, centraRoo2,
@@ -326,14 +291,51 @@ public class Unit extends Grade {
                 centreDocm, centreRoo2,
                 pid
             );
+        }
+    }
 
-            if (centraRoo2.hasChildNodes()) {
-                centraRoot.appendChild(centraRoo2);
-            }
+    private void insertHides(
+            Document centraDocm, Element centraRoot,
+            Document centreDocm, Element centreRoot,
+            String id)
+    throws HongsException {
+        Element centraHid2, centreHid2;
+        List<Map> rows;
 
-            if (centreRoo2.hasChildNodes()) {
-                centreRoot.appendChild(centreRoo2);
-            }
+        rows = this.table
+            .fetchCase()
+            .filter("pid = ? AND state > 0", id)
+            .select("id, name"  )
+            .assort("boost DESC")
+            .getAll( );
+
+        for ( Map  row : rows ) {
+            String pid = row.get( "id" ).toString();
+            String nam = row.get("name").toString();
+
+            centraHid2 = centraDocm.createElement("menu");
+            centraHid2.setAttribute("href", "common/menu.act?m="+centra+"&x="+pid);
+            centraHid2.setAttribute("hrel", "HIDE"); // 默认隐藏
+            centraHid2.setAttribute("text",  nam  );
+            centraRoot.appendChild (  centraHid2  );
+
+            centreHid2 = centreDocm.createElement("menu");
+            centreHid2.setAttribute("href", "common/menu.act?m="+centre+"&x="+pid);
+            centraHid2.setAttribute("hrel", "HIDE"); // 默认隐藏
+            centreHid2.setAttribute("text",  nam  );
+            centreRoot.appendChild (  centreHid2  );
+
+            insertForms(
+                centraDocm, centraHid2,
+                centreDocm, centreHid2,
+                pid
+            );
+
+            insertHides(
+                centraDocm, centraHid2,
+                centreDocm, centreHid2,
+                pid
+            );
         }
     }
 

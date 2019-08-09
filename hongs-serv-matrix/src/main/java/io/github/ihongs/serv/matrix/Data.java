@@ -9,8 +9,8 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
-import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.dh.lucene.field.*;
+import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
@@ -29,7 +29,6 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
@@ -199,7 +198,7 @@ public class Data extends SearchEntity {
     }
 
     public Model getModel() throws HongsException {
-        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
+        String tn = Synt.declare(getParams().get("db-model"), "matrix.data");
         if ("".equals(tn) || "none".equals(tn)) {
             return null;
         }
@@ -740,14 +739,12 @@ public class Data extends SearchEntity {
     @Override
     protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
         // 限定分区范围
-        String p  = getPartId();
-        if (   p != null) {
-            Term   t = new Term("@"+PART_ID_KEY, p);
-            Query  q = new TermQuery(t);
-            qr.add(q , BooleanClause.Occur.MUST);
+        String pd = getPartId();
+        if (null != pd && ! pd.isEmpty( )) {
+            qr.add(new TermQuery(new Term("@"+PART_ID_KEY, pd)), BooleanClause.Occur.MUST);
         }
 
-        super.padQry(qr, rd);
+        super.padQry ( qr, rd );
     }
 
     @Override
@@ -758,7 +755,7 @@ public class Data extends SearchEntity {
 
         // 写入分区标识
         String pd = getPartId();
-        if (null != pd) {
+        if (null != pd && ! pd.isEmpty( )) {
             doc.add(new StringField("@"+PART_ID_KEY, pd, Field.Store.NO));
             doc.add(new StoredField(/**/PART_ID_KEY, pd));
         }
@@ -824,6 +821,7 @@ public class Data extends SearchEntity {
                 p = false;
                 break;
             case "long":
+            case "date":
                 if ("".equals(v)) continue;
                 f = new LongField();
                 p = false;
@@ -834,13 +832,9 @@ public class Data extends SearchEntity {
                 p = false;
                 break;
             case "double":
+            case "number":
                 if ("".equals(v)) continue;
                 f = new DoubleField();
-                p = false;
-                break;
-            case "date":
-                if ("".equals(v)) continue;
-                f = new LongField();
                 p = false;
                 break;
             case "sorted":
@@ -851,13 +845,6 @@ public class Data extends SearchEntity {
                 p = false; // 排序类型无法搜索
                 q = false; // 排序类型无法筛选
                 break;
-            case "stored":
-                f = new StringFiald();
-                g = true ;
-                p = false; // 存储类型无法搜索
-                q = false; // 存储类型无法筛选
-                s = false; // 存储类型无法排序
-                break;
             case "object":
                 if ("".equals(v)) continue;
                 f = new ObjectFiald();
@@ -865,6 +852,13 @@ public class Data extends SearchEntity {
                 p = false; // 对象类型无法搜索
                 q = false; // 对象类型无法筛选
                 s = false; // 对象类型无法排序
+                break;
+            case "stored":
+                f = new StringFiald();
+                g = true ;
+                p = false; // 存储类型无法搜索
+                q = false; // 存储类型无法筛选
+                s = false; // 存储类型无法排序
                 break;
             case "search":
                 f = new StringFiald();
@@ -890,7 +884,7 @@ public class Data extends SearchEntity {
                     Tool.stripTags(
                     Tool.stripCros(
                     Synt.asString ( x )
-                    )) );
+                 )  )  );
             }
 
             if (r) {

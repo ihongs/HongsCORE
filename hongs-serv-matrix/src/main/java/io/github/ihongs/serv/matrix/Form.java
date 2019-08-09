@@ -756,6 +756,9 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"search"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"statis/search"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
@@ -775,9 +778,12 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"create"+ Cnst.ACT_EXT) );
-            depn = docm.createElement("depend");
-            role.appendChild ( depn );
-            depn.appendChild ( docm.createTextNode(href +"search") );
+            actn = docm.createElement("action");
+            role.appendChild ( actn );
+            actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
+//          depn = docm.createElement("depend");
+//          role.appendChild ( depn );
+//          depn.appendChild ( docm.createTextNode(href +"search") );
 
             // 修改
             role = docm.createElement("role");

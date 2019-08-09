@@ -5,7 +5,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.serv.auth.AuthKit;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
@@ -97,7 +97,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get token error\r\n"+Data.toString(rsp));
+            throw new HongsException.Common("Get token error\r\n"+Dawn.toString(rsp));
         }
         token = (String) rsp.get("access_token");
 
@@ -110,7 +110,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get open id error\r\n"+Data.toString(rsp));
+            throw new HongsException.Common("Get open id error\r\n"+Dawn.toString(rsp));
         }
         opnId = (String) rsp.get("openid");
 
@@ -123,7 +123,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("ret"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get user info error\r\n"+Data.toString(rsp));
+            throw new HongsException.Common("Get user info error\r\n"+Dawn.toString(rsp));
         }
         opuId = (String) rsp.get("unionid");
 

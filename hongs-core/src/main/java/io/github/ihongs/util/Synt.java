@@ -148,7 +148,7 @@ public final class Synt {
             }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
-                return ((List) Data.toObject(text))
+                return ((List) Dawn.toObject(text))
                                    .toArray (    );
             } else {
                 return SEXP.split(text);
@@ -175,7 +175,7 @@ public final class Synt {
             }
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
-                return (List) Data.toObject (text);
+                return (List) Dawn.toObject (text);
             } else {
                 return  new ArrayList(
                     Arrays.asList(SEXP.split(text))
@@ -204,7 +204,7 @@ public final class Synt {
             String text = ( (String) val).trim(  );
             if (text.startsWith("[") && text.endsWith("]")) {
                 return  new LinkedHashSet(
-                       (List) Data.toObject (text)
+                       (List) Dawn.toObject (text)
                 );
             } else {
                 return  new LinkedHashSet(
@@ -233,7 +233,7 @@ public final class Synt {
             }
             String text = ( (String) val).trim(  );
             if (text.startsWith("{") && text.endsWith("}")) {
-                return (Map ) Data.toObject (text);
+                return (Map ) Dawn.toObject (text);
             } else {
                 Map m = new LinkedHashMap();
                 for(String   s : SEXP.split (text)) {
@@ -1159,11 +1159,11 @@ public final class Synt {
         System.err.println("");
 
         System.err.print("a = ");
-        Data.dumps(a);
+        Dawn.dumps(a);
         System.err.print("b = ");
-        Data.dumps(b);
+        Dawn.dumps(b);
         System.err.print("c = ");
-        Data.dumps(c);
+        Dawn.dumps(c);
 
         // defoult, defxult 的函数式特性测试
         String v;

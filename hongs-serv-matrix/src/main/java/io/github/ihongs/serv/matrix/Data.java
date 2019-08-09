@@ -11,6 +11,7 @@ import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.dh.lucene.field.*;
 import io.github.ihongs.dh.search.SearchEntity;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
@@ -413,8 +414,8 @@ public class Data extends SearchEntity {
                 ud.put("ctime", System.currentTimeMillis() / 1000 );
             }
 
-            ud.put("data", io.github.ihongs.util.Data.toString(dd, true));
-            ud.put("name", cutText(dd, "name"));
+            ud.put("data", Dawn.toString(dd, true));
+            ud.put("name", /**/cutText(dd, "name"));
 
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
@@ -509,7 +510,7 @@ public class Data extends SearchEntity {
                     }
                     // 有快照也算更新
                     t = 2;
-                    Map<Object, Object> bd = (Map) io.github.ihongs.util.Data.toObject(od.get("data").toString());
+                    Map<Object, Object> bd = (Map) Dawn.toObject( (String) od.get("data"));
                     for (Map.Entry et : bd.entrySet()) {
                         Object k = et.getKey( );
                         if (dd.containsKey(k)
@@ -531,8 +532,8 @@ public class Data extends SearchEntity {
             nd.put(/***/"id", id );
             nd.put("form_id", fid);
             nd.put("user_id", uid);
-            nd.put("data", io.github.ihongs.util.Data.toString(dd, true));
-            nd.put("name", cutText(dd, "name"));
+            nd.put("data", Dawn.toString(dd, true));
+            nd.put("name", /**/cutText(dd, "name"));
 
             // 操作备注和终端代码
             if (rd.containsKey("memo")) {
@@ -688,7 +689,7 @@ public class Data extends SearchEntity {
 
         //** 保存到索引库 **/
 
-        Map dd = (Map) io.github.ihongs.util.Data.toObject((String) nd.get("data"));
+        Map dd = (Map) Dawn.toObject((String) nd.get("data"));
         dd.put(Cnst.ID_KEY, id);
         setDoc(id, padDoc(dd) );
         return 1;
@@ -972,8 +973,8 @@ public class Data extends SearchEntity {
         if (fr instanceof Map
         ||  fr instanceof Collection
         ||  fr instanceof Object [ ]) {
-            fr = io.github.ihongs.util.Data.toString(fr, true);
-            fo = io.github.ihongs.util.Data.toString(fo, true);
+            fr = Dawn.toString(fr, true);
+            fo = Dawn.toString(fo, true);
         }
         return fr.equals(fo);
     }

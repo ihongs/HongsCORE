@@ -7,7 +7,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.ArrayList;
@@ -214,7 +214,7 @@ public class TitlesHelper {
             at = at.substring(0 , ps).trim();
             if (!"".equals(aq)) {
                 if (aq.startsWith("{") && aq.endsWith("}")) {
-                    rd = (  Map  ) Data.toObject(aq);
+                    rd = (  Map  ) Dawn.toObject(aq);
                 } else {
                     rd = ActionHelper.parseQuery(aq);
                 }

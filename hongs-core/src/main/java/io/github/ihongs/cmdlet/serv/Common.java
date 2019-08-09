@@ -10,7 +10,7 @@ import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.CoreRoster.Mathod;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -363,7 +363,7 @@ public class Common {
 
         Map data;
         if (text.startsWith("{") && text.endsWith("}")) {
-            data = (  Map  ) Data.toObject(text);
+            data = (  Map  ) Dawn.toObject(text);
         } else
         if (text.startsWith("[") && text.endsWith("]")) {
             throw  new UnsupportedOperationException("Unsupported list: "+ text);

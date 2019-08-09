@@ -4,7 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.dh.MergeMore;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.Arrays;
@@ -489,7 +489,7 @@ public class SelectHelper {
             if (null != aq && !"".equals(aq)) {
                 if (aq.startsWith("{" )
                 &&  aq.  endsWith("}")) {
-                    rd = (  Map  ) Data.toObject( aq );
+                    rd = (  Map  ) Dawn.toObject( aq );
                 } else {
                     rd = ActionHelper.parseQuery( aq );
                 }

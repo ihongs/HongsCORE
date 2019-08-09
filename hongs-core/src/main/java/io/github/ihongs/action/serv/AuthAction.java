@@ -7,7 +7,7 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.NaviMap;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -92,7 +92,7 @@ public class AuthAction
         datamap.put( act , authset.contains(act) );
       }
 
-      s = Data.toString(datamap);
+      s = Dawn.toString(datamap);
     }
     catch (HongsException | HongsExemption | HongsError ex) {
       if (ex.getErrno() == 0x10e0) {

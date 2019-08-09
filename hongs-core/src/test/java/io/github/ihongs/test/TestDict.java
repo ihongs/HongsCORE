@@ -1,6 +1,6 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -144,9 +144,9 @@ public class TestDict extends TestCase {
         Object[] a = new Object [] {"", "a", "b", "c", "d", null, "e", "f", "g", "h", null, "x.y:z", "def", null};
         Object[] b = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def[]");
         Object[] c = Dict.splitKeys(".a.b[c][d].:e:f[g]:h[][x.y:z].def." );
-        System.out.println(Data.toString(a));
-        System.out.println(Data.toString(b));
-        System.out.println(Data.toString(c));
+        System.out.println(Dawn.toString(a));
+        System.out.println(Dawn.toString(b));
+        System.out.println(Dawn.toString(c));
         assertTrue(Arrays.equals(a, b));
         assertTrue(Arrays.equals(a, c));
     }

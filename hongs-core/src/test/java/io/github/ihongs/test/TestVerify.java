@@ -2,7 +2,7 @@ package io.github.ihongs.test;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.cmdlet.CmdletRunner;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.IsNumber;
 import io.github.ihongs.util.verify.IsString;
@@ -64,11 +64,11 @@ public class TestVerify extends TestCase {
                 "size", "11,22"
             );
             Map cleans = verify.verify(values, false, false);
-            System.out.println(Data.toString(cleans));
+            System.out.println(Dawn.toString(cleans));
         }
         catch (Wrongs wr) {
             Core.ACTION_LANG.set("zh_CN");
-            fail(Data.toString(wr.getErrors()));
+            fail(Dawn.toString(wr.getErrors()));
         }
     }
     

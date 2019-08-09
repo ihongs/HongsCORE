@@ -1,6 +1,6 @@
 package io.github.ihongs.dh.lucene.field;
 
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
 
@@ -15,7 +15,7 @@ public class ObjectFiald implements IField {
             v  = "{}" ;
         } else
         if (! ( v instanceof String )) {
-            v  = Data.toString(v, true );
+            v  = Dawn.toString(v, true );
         }
         return new StoredField(k, v.toString());
     }

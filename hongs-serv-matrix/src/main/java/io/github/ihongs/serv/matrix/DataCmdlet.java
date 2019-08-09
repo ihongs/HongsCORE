@@ -8,6 +8,7 @@ import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.Map;
@@ -312,7 +313,7 @@ public class DataCmdlet {
             throw  new UnsupportedOperationException("Unsupported list: "+ text);
         } else
         if (text.startsWith("{") && text.endsWith("}")) {
-            return (Map) io.github.ihongs.util.Data.toObject(text);
+            return ( Map ) Dawn.toObject  (text);
         } else {
             return ActionHelper.parseQuery(text);
         }

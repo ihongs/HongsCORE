@@ -5,7 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 
 import java.io.OutputStream;
@@ -303,7 +303,7 @@ public class ActionHelper implements Cloneable
         return null;
     }
     try {
-        return (Map) Data.toObject ( request.getReader( ) );
+        return (Map) Dawn.toObject ( request.getReader( ) );
     } catch (IOException ex) {
         throw new HongsExemption(0x1114, ex);
     } catch ( /**/HongsExemption ex) {
@@ -954,7 +954,7 @@ public class ActionHelper implements Cloneable
    */
   public void print(Object dat)
   {
-    String  str = Data.toString( dat );
+    String  str = Dawn.toString( dat );
     this.print(str,"application/json");
   }
 
@@ -1011,7 +1011,7 @@ public class ActionHelper implements Cloneable
                 out.append("<script type=\"text/javascript\">");
                 out.append( fun);
                 out.append("(" );
-                Data.append(out, this.responseData);
+                Dawn.append(out, this.responseData);
                 out.append(");");
                 out.append("</script>");
             } else {
@@ -1023,7 +1023,7 @@ public class ActionHelper implements Cloneable
 
                 out.append( fun);
                 out.append("(" );
-                Data.append(out, this.responseData);
+                Dawn.append(out, this.responseData);
                 out.append(");");
             }
         } else {
@@ -1033,7 +1033,7 @@ public class ActionHelper implements Cloneable
                     this.response.setContentType("application/json");
                 }
 
-                Data.append(out, this.responseData);
+                Dawn.append(out, this.responseData);
         }
     } catch (IOException e ) {
       throw new HongsExemption(0x1110, "Can not send to client.", e);

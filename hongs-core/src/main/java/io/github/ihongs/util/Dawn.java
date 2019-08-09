@@ -31,12 +31,12 @@ import java.util.LinkedHashMap;
  * </p>
  *
  * <p>
- * 顺便说说为什么不采用第3方的 JSON 库:
- * 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
- * 后来采用 org.json.simple , 也很好, 但是不支持 Set , 需要修改其源码将 List 改成 Collection;
- * 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
- * 故将其修改成该 Data 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
- * </p>
+ 顺便说说为什么不采用第3方的 JSON 库:
+ 最开始用 org.json, 还不错, 可惜在解析 JSON 时会解析成他自身的对象而不是 Java 集合框架对象;
+ 后来采用 org.json.simple , 也很好, 但是不支持 Set , 需要修改其源码将 List 改成 Collection;
+ 考虑到我有一个 Dump 类, 用于调试输出基础类型和集合对象, 其实现与 JSON 大同小异,
+ 故将其修改成该 Dawn 类; 但是 JSON 的解析太麻烦, 就还是调 org.json.simple 好了 ;
+ </p>
  *
  * <h3>异常代码</h3>
  * <pre>
@@ -46,7 +46,7 @@ import java.util.LinkedHashMap;
  *
  * @author Hongs
  */
-public final class Data
+public final class Dawn
 {
 
   /**
@@ -92,7 +92,7 @@ public final class Data
   public static String toString(Object obj, boolean compact)
   {
     StringBuilder out = new StringBuilder();
-    Data.append(out, obj, compact);
+    Dawn.append(out, obj, compact);
     return out.toString();
   }
 
@@ -104,7 +104,7 @@ public final class Data
   public static String toString(Object obj)
   {
     StringBuilder out = new StringBuilder();
-    Data.append(out, obj);
+    Dawn.append(out, obj);
     return out.toString();
   }
 
@@ -116,7 +116,7 @@ public final class Data
   public static String doEscape(String str)
   {
     StringBuilder out = new StringBuilder();
-    Data.excape(out, str);
+    Dawn.excape(out, str);
     return out.toString();
   }
 
@@ -128,7 +128,7 @@ public final class Data
    */
   public static void append(Appendable out, Object obj)
   {
-    Data.append(out, obj, 0 == Core.DEBUG);
+    Dawn.append(out, obj, 0 == Core.DEBUG);
   }
 
   /**
@@ -141,7 +141,7 @@ public final class Data
   {
     try
     {
-      Data.append(out, compact ? null : "" , null, obj, false);
+      Dawn.append(out, compact ? null : "" , null, obj, false);
     }
     catch (IOException ex)
     {
@@ -163,7 +163,7 @@ public final class Data
     if (key != null)
     {
       sb.append('"');
-            Data.escape(sb, String.valueOf(key));
+            Dawn.escape(sb, String.valueOf(key));
       sb.append('"');
       sb.append(':');
     }
@@ -220,7 +220,7 @@ public final class Data
     else
     {
       sb.append('"');
-            Data.escape(sb, val.toString());
+            Dawn.escape(sb, val.toString());
       sb.append('"');
     }
 

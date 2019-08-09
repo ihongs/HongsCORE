@@ -109,7 +109,7 @@ public class DataAction extends SearchAction {
         // 详情数据转换
         if (sd.containsKey("info")) {
             Map df = (Map) sd.remove("info" );
-            Map dt = (Map) io.github.ihongs.util.Data.toObject(
+            Map dt = (Map) io.github.ihongs.util.Dawn.toObject(
                   (String) df.remove("data"));
             sd.put("logs", df);
             sd.put("info", dt);

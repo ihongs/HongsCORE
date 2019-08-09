@@ -1,7 +1,7 @@
 package io.github.ihongs.test;
 
 import io.github.ihongs.cmdlet.CmdletHelper;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.util.Map;
 import junit.framework.TestCase;
@@ -52,7 +52,7 @@ public class TestCmdletHelper extends TestCase {
             "!U",
             "!A"
         );
-        System.out.println(Data.toString(opts));
+        System.out.println(Dawn.toString(opts));
     }
 
 }

@@ -373,7 +373,7 @@ public final class Remote {
             return new HashMap();
         }
         if (resp.startsWith("{") && resp.endsWith("}")) {
-            return (  Map  ) Data.toObject(resp);
+            return (  Map  ) Dawn.toObject(resp);
         } else
         if (resp.startsWith("[") && resp.endsWith("]")) {
             throw  new UnsupportedOperationException("Unsupported list: "+ resp);
@@ -397,7 +397,7 @@ public final class Remote {
      */
     public static HttpEntity buildJson(Map<String, Object> data)
             throws HongsException {
-        StringEntity enti = new StringEntity(Data.toString(data), "UTF-8");
+        StringEntity enti = new StringEntity(Dawn.toString(data), "UTF-8");
                      enti.setContentType/**/("application/json");
                      enti.setContentEncoding("UTF-8");
         return enti;

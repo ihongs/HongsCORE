@@ -6,7 +6,7 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.FileInputStream;
@@ -335,15 +335,15 @@ public class FormSet
       if ("json".equals(type)) {
         if (text.startsWith("(") && text.endsWith(")")) {
           text = text.substring( 1, text.length() - 1 );
-          return Data.toObject(text);
+          return Dawn.toObject(text);
         } else {
-          return Data.toObject(text);
+          return Dawn.toObject(text);
         }
       }
 
       if ("list".equals(type)) {
         if (text.startsWith("[") && text.endsWith("]")) {
-          return ( List) Data.toObject(text);
+          return ( List) Dawn.toObject(text);
         } else {
           return  new  ArrayList   (
               Arrays.asList(SEXP.split(text))
@@ -354,7 +354,7 @@ public class FormSet
       if ( "set".equals(type)) {
         if (text.startsWith("[") && text.endsWith("]")) {
           return  new LinkedHashSet(
-                 ( List) Data.toObject(text)
+                 ( List) Dawn.toObject(text)
           );
         } else {
           return  new LinkedHashSet(
@@ -365,7 +365,7 @@ public class FormSet
 
       if ( "map".equals(type)) {
         if (text.startsWith("{") && text.endsWith("}")) {
-          return ( Map ) Data.toObject(text);
+          return ( Map ) Dawn.toObject(text);
         } else {
           Map m = new LinkedHashMap();
           for(String   s : SEXP.split (text)) {

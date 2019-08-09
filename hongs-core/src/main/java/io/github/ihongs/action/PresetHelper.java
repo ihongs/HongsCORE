@@ -2,7 +2,7 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.LinkedHashMap;
@@ -179,7 +179,7 @@ public class PresetHelper {
                 // 默认值, 没取到则跳过
                 if (x != null) {
                     if (data == null) {
-                        data  = Data.toObject(x);
+                        data  = Dawn.toObject(x);
                     }
                 } else {
                     if (data == null) {
@@ -195,13 +195,13 @@ public class PresetHelper {
             } else
             if (text.startsWith("(") && text.endsWith(")")) {
                 text = text.substring(1,text.length( ) - 1);
-                data = Data.toObject (text);
+                data = Dawn.toObject (text);
             } else
             if (text.startsWith("{") && text.endsWith("}")) {
-                data = Data.toObject (text);
+                data = Dawn.toObject (text);
             } else
             if (text.startsWith("[") && text.endsWith("]")) {
-                data = Data.toObject (text);
+                data = Dawn.toObject (text);
             }
         }
 

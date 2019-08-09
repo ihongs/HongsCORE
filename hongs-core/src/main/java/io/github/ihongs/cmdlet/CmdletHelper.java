@@ -2,7 +2,7 @@ package io.github.ihongs.cmdlet;
 
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsError;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.Tool;
 import java.util.ArrayList;
@@ -331,7 +331,7 @@ public class CmdletHelper
    */
   public static void preview(Object data)
   {
-    Data.append(System.out , data, false);
+    Dawn.append(System.out , data, false);
     System.out.println();
   }
 

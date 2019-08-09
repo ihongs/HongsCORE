@@ -5,7 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.util.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -103,7 +103,7 @@ public class IsFork extends Rule {
         // 附加参数
         if (aq != null && !"".equals(aq)) {
             if (aq.startsWith("{") && aq.endsWith("}")) {
-                rd.putAll( ( Map )  Data.toObject(aq));
+                rd.putAll(( Map )  Dawn.toObject(aq));
             } else {
                 rd.putAll(ActionHelper.parseQuery(aq));
             }

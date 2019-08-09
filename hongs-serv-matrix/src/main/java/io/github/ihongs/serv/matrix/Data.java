@@ -242,7 +242,7 @@ public class Data extends SearchEntity {
     }
 
     public String getPartId() {
-        return Synt.declare(getParams().get("part_id"), String.class );
+        return Synt.declare(getParams().get("part_id"), "" );
     }
 
     public String getUserId() {

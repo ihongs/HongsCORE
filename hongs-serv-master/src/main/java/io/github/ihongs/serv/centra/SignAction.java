@@ -112,14 +112,14 @@ public class SignAction {
         int    state = Synt.declare( ud.get("state"), 0 );
 
         // 验证状态
-        if (1 != state) {
+        if (0 >= state) {
             ah.reply(AuthKit.getWrong("state" , "core.sign.state.invalid"));
             return;
         }
 
         // 验证区域
-        Set rs = RoleSet.getInstance (uuid );
-        if (0 != place.length() && !rs.contains(place)) {
+        Set rs = RoleSet.getInstance (uuid);
+        if (0 != place.length() && ! rs.contains(place) ) {
             ah.reply(AuthKit.getWrong("place" , "core.sign.place.invalid"));
             return;
         }

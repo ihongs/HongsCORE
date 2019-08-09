@@ -2,7 +2,7 @@
      data-module="hsList"
      data-data-0="load:(hsUserLoad)"
      data-data-1="send:(hsUserSend)"
-     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&amp;ob=-mtime,-ctime&amp;with-depts=2&amp;bind-scope=1"
+     data-load-url="centra/master/user/list.act?dept_id=${dept_id}&amp;ob=-mtime,-ctime&amp;ab=_text&amp;with-depts=2&amp;bind-scope=1"
      data-send-urls-0="['centra/master/user/save.act'  ,'.remove', '您确定要移出此用户?']"
      data-send-urls-1="['centra/master/user/delete.act','.delete', '您确定要删除此用户?']"
      data-open-urls-0="['centra/master/user/form.html?id={ID}','.modify','@']"
@@ -35,7 +35,8 @@
                     <th data-fn="head"     class="userhead">头像</th>
                     <th data-fn="name"     class="sortable">名称</th>
                     <th data-fn="username" class="sortable">账号</th>
-                    <th data-fn="depts..name"              >分组</th>
+                    <th data-fn="depts.name">分组</th>
+                    <th data-fn="state_text">状态</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
                 </tr>

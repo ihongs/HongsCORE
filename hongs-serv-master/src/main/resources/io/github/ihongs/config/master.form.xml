@@ -55,7 +55,16 @@
             <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
             <param name="down-remote">yes</param>
         </field>
+        <field name="state" type="enum">
+            <param name="enum">stat</param>
+            <param name="conf">master</param>
+        </field>
     </form>
+    <enum name="stat">
+        <value code="1" >正常</value>
+        <value code="-1">锁定</value>
+        <value code="-2">系统</value>
+    </enum>
     <enum name="mine:defense">
         <value code="id">($session.uid)</value>
     </enum>

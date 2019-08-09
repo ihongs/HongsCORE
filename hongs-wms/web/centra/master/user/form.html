@@ -1,7 +1,7 @@
 <h2>{DO}用户</h2>
 <div id="master-user-form" class="hide-roles"
      data-module="hsForm"
-     data-load-url="centra/master/user/info.act?ab=!enum&amp;with-roles=default"
+     data-load-url="centra/master/user/info.act?ab=.enum&amp;with-roles=default"
      data-save-url="centra/master/user/save.act"
      data-data-0="_fill_head: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -35,6 +35,10 @@
                 <div class="form-group">
                     <label class="control-label">邮箱</label>
                     <input type="email" name="email" class="form-control"/>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">状态</label>
+                    <select name="state" class="form-control"></select>
                 </div>
                 <div class="form-group dont-close">
                     <label class="control-label">头像</label>

@@ -87,24 +87,28 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     /**
      * 构造方法
+     *
+     * 注意 : path 务必使用绝对地址
+     *
      * @param form 字段配置, 可覆盖 getFields
      * @param path 存储路径, 可覆盖 getDbPath
      * @param name 存储名称, 可覆盖 getDbName
      */
     public LuceneRecord(Map form, String path, String name) {
-        super.setFields(form);
-        this.dbpath  =  path ;
-        this.dbname  =  name ;
+        // 必要参数
+        setFields (form);
+        setDbPath (path);
+        setDbName (name);
 
         // 环境模式
-        CoreConfig  conf = CoreConfig.getInstance( );
-        this.OBJECT_MODE = Synt.declare(
+        CoreConfig conf = CoreConfig.getInstance();
+        OBJECT_MODE = Synt.declare(
             Core.getInstance().got(Cnst.OBJECT_MODE),
             conf.getProperty("core.in.object.mode", false));
-        this.TRNSCT_MODE = Synt.declare(
+        TRNSCT_MODE = Synt.declare(
             Core.getInstance().got(Cnst.TRNSCT_MODE),
             conf.getProperty("core.in.trnsct.mode", false));
-        this.TRNSCT_BASE = this.TRNSCT_MODE;
+        TRNSCT_BASE = TRNSCT_MODE;
     }
 
     /**
@@ -148,7 +152,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if ( ! new File(path).isAbsolute())
             path = Core.DATA_PATH + "/lucene/" + path;
 
-            LuceneRecord inst = new LuceneRecord(fxrm, path, name);
+            LuceneRecord inst = new LuceneRecord(fxrm, path,name);
             core.put( code, inst ) ; return inst ;
         } else {
             return  (LuceneRecord) core.got(code);

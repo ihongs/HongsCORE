@@ -216,9 +216,23 @@ public class Data extends SearchEntity {
 
     @Override
     public String getDbPath() {
+        try {
+            return super.getDbPath();
+        }
+        catch (NullPointerException ex) {
+            // Will build the path.
+        }
+
         String path = Synt.asString(getParams().get("db-path"));
+
+        // 按配置构建路径
         if (path == null || path.isEmpty()) {
-            path  = conf.replaceFirst("^(centre|centra)/", "") + "/" + form ;
+            if (conf.startsWith("centra/")
+            ||  conf.startsWith("centre/")) {
+                path = "matrix/"+ conf.substring(7) +"/"+ form ;
+            } else {
+                path = conf +"/"+ form;
+            }
         }
 
         // 进一步处理路径
@@ -228,30 +242,53 @@ public class Data extends SearchEntity {
         m.put("DATA_PATH", Core.DATA_PATH);
         path = Tool.inject(path, m);
         if ( ! new File(path).isAbsolute())
-        path = Core.DATA_PATH + "/lucene/" + path;
+        path = Core.DATA_PATH +"/lucene/"+ path;
+
+        setDbPath(path);
 
         return path;
     }
 
     @Override
     public String getDbName() {
-        String name = Synt.asString(getParams().get("db-path"));
-        if (name == null || name.isEmpty()) {
-            name  = conf.replaceFirst("^(centre|centra)/", "") + "." + form ;
+        try {
+            return super.getDbPath();
         }
+        catch (NullPointerException ex) {
+            // Will build the name.
+        }
+
+        String name = Synt.asString(getParams().get("db-path"));
+
+        // 按配置构建路径
+        if (name == null || name.isEmpty()) {
+            if (conf.startsWith("centra/")
+            ||  conf.startsWith("centre/")) {
+                name = "matrix/"+ conf.substring(7) +"."+ form ;
+            } else {
+                name = conf +"."+ form;
+            }
+        }
+
+        setDbName(name);
+
         return name;
     }
 
     public String getFormId() {
         String code = Synt.asString(getParams().get("form_id"));
+
+        // 默认用表单编号
         if (code == null || code.isEmpty()) {
             code  = form;
         }
+
         return code;
     }
 
     public String getPartId() {
         String code = Synt.asString(getParams().get("part_id"));
+
         return code;
     }
 

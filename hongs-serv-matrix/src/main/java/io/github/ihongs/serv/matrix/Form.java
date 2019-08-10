@@ -257,8 +257,8 @@ public class Form extends Model {
                 "__text__", name,
                 "form_id" , id  ,
                 "part_id" , id  ,
-                "db-name" , "data/__main__" ,
-                "db-path" , "data/__main__"
+                "db-name" , "matrix/base" ,
+                "db-path" , "matrix/base"
                 /*
                 // 已改完默认按类型判断
                 // 故没有必要再作设置了

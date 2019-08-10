@@ -278,7 +278,7 @@ public class Data extends SearchEntity {
     public String getFormId() {
         String code = Synt.asString(getParams().get("form_id"));
 
-        // 默认用表单编号
+        // 默认同表单名称
         if (code == null || code.isEmpty()) {
             code  = form;
         }

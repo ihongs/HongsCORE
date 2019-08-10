@@ -99,7 +99,7 @@ public class AutoFilter extends ActionDriver {
 
         // 禁止访问动作脚本, 避免绕过权限过滤
         if (DENY_JSPS.matcher(ref).find()) {
-            rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "What the fuck do you want?");
+            rsp.sendError(HttpServletResponse.SC_NOT_FOUND, "What's your problem?");
             return;
         }
 

@@ -203,17 +203,21 @@ public class FileAction implements IAction {
                 }
 
                 String name = item.getName();
-                String extn = name.replaceFirst("^.*/","");
-                String mime = nmap.getContentType ( extn );
+
+                // 跳过隐藏和备份的文件
+                if (name.startsWith(".")
+                ||  name.  endsWith("~")) {
+                    continue;
+                }
 
                 Map xxxx = new HashMap();
-                xxxx.put("path" , pxth + "/" + name);
                 xxxx.put("name" , name );
-                xxxx.put("mime" , mime );
+                xxxx.put("path" , pxth + "/" + name);
+                xxxx.put("mime" , nmap.getContentType (name));
                 xxxx.put("type" , item.isDirectory() ? "dir" : (isTextFile(item) ? "txt" : "bin"));
                 xxxx.put("size" , item.isDirectory() ? item.list(  ).length  :  item.length(  )  );
-                xxxx.put("mtime", item.lastModified());
-                filez.add(xxxx );
+                xxxx.put("mtime", item.lastModified( ));
+                filez.add (xxxx);
             }
 
             Map rsp = new HashMap();
@@ -227,17 +231,16 @@ public class FileAction implements IAction {
         } else
         if (isTextFile(file)) {
             String name = file.getName();
-            String extn = name.replaceFirst("^.*/","");
-            String mime = nmap.getContentType ( extn );
+            String mime = nmap.getContentType(name);
 
             Map xxxx = new HashMap();
             xxxx.put("path" , pxth );
             xxxx.put("name" , name );
             xxxx.put("mime" , mime );
             xxxx.put("type" , "txt");
-            xxxx.put("size" , file.length( ));
             xxxx.put("text" , readFile(file));
-            xxxx.put("mtime", file.lastModified());
+            xxxx.put("size" , file.length( ));
+            xxxx.put("mtime", file.lastModified( ));
             helper.reply( "", xxxx );
         } else {
             helper.fault(lang.translate("core.manage.file.unsupported"));

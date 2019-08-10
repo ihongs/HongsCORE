@@ -1551,6 +1551,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     //** 底层方法 **/
 
+    protected final void setDbPath(String path) {
+        dbpath = path;
+    }
+
+    protected final void setDbName(String name) {
+        dbname = name;
+    }
+
     public String getDbPath() {
         if (dbpath == null) {
             throw new NullPointerException("DB path is not set");

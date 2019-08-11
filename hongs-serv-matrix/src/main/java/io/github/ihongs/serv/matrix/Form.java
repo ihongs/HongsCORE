@@ -781,6 +781,9 @@ public class Form extends Model {
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
             // 2019/08/10, 添加不再依赖查看权限
+            depn = docm.createElement("depend");
+            role.appendChild ( depn );
+            depn.appendChild ( docm.createTextNode("centra") );
 //          depn = docm.createElement("depend");
 //          role.appendChild ( depn );
 //          depn.appendChild ( docm.createTextNode(href +"search") );

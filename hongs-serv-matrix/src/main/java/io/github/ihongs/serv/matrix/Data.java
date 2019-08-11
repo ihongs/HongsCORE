@@ -166,7 +166,7 @@ public class Data extends SearchEntity {
             }
 
             if (fields != null && cnf.startsWith("centre/")) {
-                cnf = "centra/" + cnf.substring (7);
+                cnf = "centra/" + cnf.substring(7);
             } else {
                 break;
             }
@@ -181,12 +181,23 @@ public class Data extends SearchEntity {
                 break;
             }
 
-            // 注意:
-            // 1. 不可破坏原始配置
-            // 2. 当前的覆盖后台的
-            fieldx = new LinkedHashMap(fieldx);
-            fieldx.putAll(fields);
-            fields = fieldx ;
+            /**
+             * 注意:
+             * 1. 不可破坏原始配置
+             * 2. 当前的覆盖后台的
+             */
+            Map fieldz = new LinkedHashMap(fieldx);
+                fieldz.putAll (fields);
+                fields = /**/  fieldz ;
+
+            // 3. 表单参数可被重写, 2019/08/10
+            Map params = (Map) fields .get( "@"  );
+            Map paramx = (Map) fieldx .get( "@"  );
+            if ( null != params && null != paramx) {
+                paramx = new LinkedHashMap(paramx);
+                paramx.putAll (params);
+                fields.put("@",paramx);
+            }
         }   while  ( false );
 
         if ( null == fields) {

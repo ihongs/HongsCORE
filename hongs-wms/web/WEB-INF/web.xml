@@ -203,12 +203,12 @@
         <filter-name>AutoFilter_Centra</filter-name>
         <filter-class>io.github.ihongs.action.serv.AutoFilter</filter-class>
         <init-param>
-            <param-name>action-path</param-name>
-            <param-value>/centra/auto</param-value>
+            <param-name>layout-path</param-name>
+            <param-value>/centra/base</param-value>
         </init-param>
         <init-param>
-            <param-name>layout-path</param-name>
-            <param-value>/centra/auto</param-value>
+            <param-name>action-path</param-name>
+            <param-value>/centra/data</param-value>
         </init-param>
     </filter>
     <filter-mapping>
@@ -222,12 +222,12 @@
         <filter-name>AutoFilter_Centre</filter-name>
         <filter-class>io.github.ihongs.action.serv.AutoFilter</filter-class>
         <init-param>
-            <param-name>action-path</param-name>
-            <param-value>/centre/auto</param-value>
+            <param-name>layout-path</param-name>
+            <param-value>/centre/base</param-value>
         </init-param>
         <init-param>
-            <param-name>layout-path</param-name>
-            <param-value>/centre/auto</param-value>
+            <param-name>action-path</param-name>
+            <param-value>/centre/data</param-value>
         </init-param>
     </filter>
     <filter-mapping>

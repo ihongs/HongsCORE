@@ -103,7 +103,7 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
 	"time.today":"${0}",
 	"week.start":0,
 
-	"file.select":"选择...",
+	"file.browse":"选择...",
 	"file.upload":"上传",
 	"file.cancel":"取消",
 	"file.remove":"删除",

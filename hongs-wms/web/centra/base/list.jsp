@@ -30,8 +30,8 @@
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
                 <%if (!"select".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
-                <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
-                <button type="button" class="revert for-choose btn btn-default" title="<%=_locale.translate("fore.revert", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
+                <button type="button" class="recite for-choose btn btn-default"><%=_locale.translate("fore.recite", _title)%></button>
+                <button type="button" class="review for-choose btn btn-default" title="<%=_locale.translate("fore.review", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
                 <button type="button" class="recopy for-checks btn btn-default" title="<%=_locale.translate("fore.recopy", _title)%>"><span class="glyphicon glyphicon-copy "></span></button>
                 <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
                 <%} // End If %>
@@ -321,7 +321,7 @@
     if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".revert").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/review.act")) context.find(".review").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/revert/search.act")) context.find(".record").remove();
 
     //** 列表、搜索表单 **/
@@ -367,8 +367,8 @@
     });
 
     var statobj = context.hsStat({
-        aurl: "<%=_module%>/<%=_entity%>/statis/survey.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
+        aurl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     var loadarr = hsSerialArr(loadbox);

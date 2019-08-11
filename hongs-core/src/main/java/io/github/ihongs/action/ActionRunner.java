@@ -11,11 +11,12 @@ import io.github.ihongs.action.anno.Assign;
 import io.github.ihongs.action.anno.Filter;
 import io.github.ihongs.action.anno.FilterInvoker;
 import io.github.ihongs.dh.IActing;
+import io.github.ihongs.util.Dawn;
 
-import java.util.Map;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
 
 /**
  * 动作执行器
@@ -87,6 +88,95 @@ public class ActionRunner {
         this.method = mt.getMethod();
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
+    }
+
+    /**
+     * 构建 AcitonRunner 对象
+     *
+     * 尝试寻找正确的动作路径
+     * 并从其末尾提取请求参数
+     *
+     * @param ah
+     * @param at
+     * @return
+     * @throws HongsException
+     */
+    public static ActionRunner newInstance(ActionHelper ah, String at)
+    throws HongsException {
+        // 查询结构
+        String ap = null; // 虚拟动作路径, 作为目标路径
+        String aq = null; // 关联请求参数, 转为请求数据
+        Map rd;           // 关联请求数据
+        Map ad;           // 全部动作集合
+        int ps;
+
+        ps = at.indexOf('?');
+        if (ps > -1) {
+            aq = at.substring(1 + ps).trim();
+            at = at.substring(0 , ps).trim();
+        }
+        ps = at.indexOf('!');
+        if (ps > -1) {
+            ap = at.substring(1 + ps).trim();
+            at = at.substring(0 , ps).trim();
+        }
+
+        // 请求参数
+        if (null != aq && !"".equals(aq)) {
+            if (aq.startsWith("{" )
+            &&  aq.  endsWith("}")) {
+                rd = ( Map ) Dawn. toObject ( aq );
+            } else {
+                rd = ActionHelper.parseQuery( aq );
+            }
+            ah.getRequestData( /**/ ).putAll( rd );
+        }
+
+        // 虚拟路径
+        ad = ActionRunner.getActions(  );
+        if (null != ap && !"".equals(ap)) {
+            ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
+
+            /**
+             * 目标动作已经存在
+             * 直接使用不走代理
+             */
+            if ( ad.containsKey (ap)) {
+                 at = ap;
+            }
+        } else {
+            ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
+
+            /**
+             * 当前动作并不存在
+             * 尝试逐级向上查找
+             */
+            if (!ad.containsKey (at)) {
+                String   mt; // 方法
+                String   ot; // 资源
+                    ot = at;
+                if  (  0 < (ps = ot.lastIndexOf("/"))) {
+                    mt = ot.substring(0+ ps);
+                    ot = ot.substring(0, ps);
+                while (0 < (ps = ot.lastIndexOf("/"))) {
+                    ot = ot.substring(0, ps);
+                         ap = ot  +  mt;
+                    if ( ad.containsKey (ap)) {
+                         at = ap; break;
+                    }
+                }}
+            }
+        }
+
+        return new ActionRunner(ah, at);
+    }
+
+    /**
+     * 获取当前 ActionHelper
+     * @return
+     */
+    public ActionHelper getHelper() {
+        return helper;
     }
 
     /**

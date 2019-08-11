@@ -5,7 +5,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -47,91 +46,55 @@ public class IsFork extends Rule {
             }
         }
 
-        String at = Synt.declare(getParam("data-at" ), "");
-        String vk = Synt.declare(getParam("data-vk" ), "");
-        String cl = Synt.declare(getParam(  "conf"  ), "");
-        String fl = Synt.declare(getParam(  "form"  ), "");
-        String ck = Synt.declare(getParam("__conf__"), "");
-        String fk = Synt.declare(getParam("__name__"), "");
-        String ap = null;
-        String aq = null;
+        String at = (String) getParam("data-at" );
+        String vk = (String) getParam("data-vk" );
+        String fk = (String) getParam("__name__");
+        String ck = (String) getParam("__conf__");
+        String fl = (String) getParam(  "form"  );
+        String cl = (String) getParam(  "conf"  );
 
-        if ("".equals(vk)) {
-            vk = Cnst.ID_KEY;
-        }
-        if ("".equals(cl)) {
+        if (cl == null || cl.isEmpty()) {
             cl = ck;
         }
-        if ("".equals(fl)) {
+        if (fl == null || fl.isEmpty()) {
             fl = fk.replaceFirst("_id$","");
         }
-        if ("".equals(at)) {
+        if (at == null || at.isEmpty()) {
             at = cl + "/" + fl + "/search" ;
-        } else {
-            // 尝试解析附加参数
-            int ps;
-            ps = at.indexOf('?');
-            if (ps > 0) {
-                aq = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
-            ps = at.indexOf('!');
-            if (ps > 0) {
-                ap = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
         }
 
+        // 请求数据
+        Map rd = new HashMap( );
+        Set rb = new HashSet( );
+        Set id = new HashSet( );
+        id.add(value);
+        rb.add(vk   );
+        rb.add(Cnst.ID_KEY);
+        rd.put(Cnst.ID_KEY, id);
+        rd.put(Cnst.RB_KEY, rb);
+        rd.put(Cnst.RN_KEY, 0 );
+        rd.put(Cnst.PN_KEY, 1 );
+
+        // 执行动作
         ActionHelper ah = ActionHelper.newInstance();
         ah.setContextData(Synt.mapOf(
             Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
         ));
-
-        // 请求数据
-        Map rd = new HashMap();
-        Set rb = new HashSet();
-        Set id = new HashSet();
-        id.add(value);
-        rb.add(vk   );
-        rb.add(Cnst.ID_KEY);
-        rd.put(Cnst.ID_KEY,id);
-        rd.put(Cnst.RB_KEY,rb);
-        rd.put(Cnst.RN_KEY, 0);
-        rd.put(Cnst.PN_KEY, 1);
-        ah.setRequestData (rd);
-
-        // 附加参数
-        if (aq != null && !"".equals(aq)) {
-            if (aq.startsWith("{") && aq.endsWith("}")) {
-                rd.putAll(( Map )  Dawn.toObject(aq));
-            } else {
-                rd.putAll(ActionHelper.parseQuery(aq));
-            }
-        }
-
-        // 虚拟路径
-        if (ap != null && !"".equals(ap)) {
-            if (ActionRunner.getActions()
-                        .containsKey(ap)) {
-                at = ap ; // 自动行为方法可能被定制开发
-            }
-            ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
-        } else {
-            ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
-        }
-
-        // 执行动作
+        ah.setRequestData( rd );
         try {
-            new ActionRunner(ah,at).doInvoke();
+            ActionRunner.newInstance(ah, at).doInvoke();
         } catch (HongsException ex) {
             throw ex.toExemption( );
         }
 
         // 对比结果
-        Map  sd = ah.getResponseData( );
+        Map  sd =  ah.getResponseData();
+        if ( sd == null || sd.isEmpty()) {
+            throw  new Wrong("fore.form.is.not.exists");
+        }
         List ls = (List) sd.get("list");
         if ( ls == null || ls.isEmpty()) {
-            throw new Wrong("fore.form.is.not.exists", fl);
+            throw  new Wrong("fore.form.is.not.exists");
         }
 
         return value;

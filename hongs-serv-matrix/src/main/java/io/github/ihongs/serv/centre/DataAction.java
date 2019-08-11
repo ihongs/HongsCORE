@@ -18,7 +18,7 @@ import java.util.Map;
  * 数据存储动作
  * @author Hongs
  */
-@Action("centre/auto")
+@Action("centre/data")
 public class DataAction extends SearchAction {
 
     /**

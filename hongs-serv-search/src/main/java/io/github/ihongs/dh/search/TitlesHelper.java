@@ -2,12 +2,10 @@ package io.github.ihongs.dh.search;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.ArrayList;
@@ -171,19 +169,25 @@ public class TitlesHelper {
     /**
      * 通过调用关联动作来补全名称
      * @param ls
-     * @param fs
+     * @param fc
      * @param fn
      * @throws HongsException
      */
-    protected void addForks(List<Object[]> ls, Map fs, String fn) throws HongsException {
-        String at = (String) fs.get("data-at");
-        String vk = (String) fs.get("data-vk");
-        String tk = (String) fs.get("data-tk");
-        if (at == null || at.length() == 0
-        ||  vk == null || vk.length() == 0
-        ||  tk == null || tk.length() == 0 ) {
-            CoreLogger.error("data-at, data-vk or data-tk can not be empty in field "+fn);
-            return;
+    protected void addForks(List<Object[]> ls, Map fc, String fn) throws HongsException {
+        String at = (String) fc.get("data-at");
+        String vk = (String) fc.get("data-vk");
+        String tk = (String) fc.get("data-tk");
+
+        if (at == null || at.isEmpty()) {
+            String c = (String) fc.get("conf");
+            String f = (String) fc.get("form");
+            at  =  c +"/"+ f +"/search";
+        }
+        if (vk == null || vk.isEmpty()) {
+            vk  =  Cnst.ID_KEY;
+        }
+        if (tk == null || tk.isEmpty()) {
+            tk  =  "name";
         }
 
         // 映射关系
@@ -197,60 +201,40 @@ public class TitlesHelper {
             }
             lw.add(lx);
         }
-
-        ActionHelper ah = ActionHelper.newInstance();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
+        Set li  =  lm.keySet();
 
         // 查询结构
         Map rd = new HashMap();
         Set rb = new HashSet();
-        int ps ;
-        ps = at.indexOf("?");
-        if (ps > -1) {
-            String aq;
-            aq = at.substring(1 + ps).trim();
-            at = at.substring(0 , ps).trim();
-            if (!"".equals(aq)) {
-                if (aq.startsWith("{") && aq.endsWith("}")) {
-                    rd = (  Map  ) Dawn.toObject(aq);
-                } else {
-                    rd = ActionHelper.parseQuery(aq);
-                }
-            }
-        }
-        ps = at.indexOf("!");
-        if (ps > -1) {
-            String ap;
-            ap = at.substring(1 + ps).trim();
-            at = at.substring(0 , ps).trim();
-            if (!"".equals(ap)) {
-                ap = ap + Cnst.ACT_EXT;
-                ah.setAttribute(Cnst.ACTION_ATTR,ap);
-            }
-        }
+        rd.put(Cnst.RN_KEY, 0);
+        rd.put(Cnst.RB_KEY,rb);
+        rd.put(Cnst.ID_KEY,li);
         rb.add(vk);
         rb.add(tk);
-        rd.put(Cnst.RN_KEY, 0 );
-        rd.put(Cnst.RB_KEY, rb);
-        rd.put(Cnst.ID_KEY, lm.keySet());
 
         // 获取结果
-        ah.setRequestData(rd);
-        new ActionRunner (ah, at).doInvoke();
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
+        ah.setRequestData( rd );
+        try {
+            ActionRunner.newInstance(ah, at).doInvoke();
+        } catch (HongsException ex) {
+            throw ex.toExemption( );
+        }
+
+        // 整合数据
         Map sd  = ah.getResponseData( /**/ );
         List<Map> lz = (List) sd.get("list");
         if (lz == null) {
             return;
         }
-
-        // 整合数据
         for ( Map  ro : lz) {
             String lv = Dict.getParam(ro, "", vk);
             String lt = Dict.getParam(ro, "", tk);
 
-            List<Object[]> lw = lm.get(lv);
+            List<Object[]> lw = lm.get( lv );
             if  (  null != lw )
             for (Object[]  lx : lw) {
                    lx[1] = lt ;

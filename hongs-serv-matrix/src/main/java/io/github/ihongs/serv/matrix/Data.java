@@ -279,13 +279,13 @@ public class Data extends SearchEntity {
     @Override
     public String getDbName() {
         try {
-            return super.getDbPath();
+            return super.getDbName();
         }
         catch (NullPointerException ex) {
             // Will build the name.
         }
 
-        String name = Synt.asString(getParams().get("db-path"));
+        String name = Synt.asString(getParams().get("db-name"));
 
         // 按配置构建路径
         if (name == null || name.isEmpty()) {

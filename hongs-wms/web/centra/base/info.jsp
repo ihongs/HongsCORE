@@ -203,7 +203,7 @@
             data["ctime.gt"] = ct;
         }
         $.hsAjax({
-            url : "<%=_module%>/<%=_entity%>/revert/search.act",
+            url : "<%=_module%>/<%=_entity%>/reveal.act",
             data: data ,
             type: "GET",
             success: function(rst) {

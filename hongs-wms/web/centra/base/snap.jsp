@@ -90,7 +90,7 @@
         context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(H$("@ctime_le", context));
 
         var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/revert/search.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
+            loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
             send    : hsSendWithMemo,
             _fill_stat: function(td , stat) {
                 var st = statmap['' + stat];
@@ -119,7 +119,7 @@
         }
 
         // 权限检查
-        if (! hsChkUri("<%=_module%>/<%=_entity%>/revert/update.act")) {
+        if (! hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) {
             var btn = context.find(".revert");
             var spn = btn.siblings(  "span" );
             btn.remove();
@@ -131,7 +131,7 @@
             var tr = $(this).closest("tr");
             var id =      tr.data(   "id");
             var ct =      tr.data("ctime");
-            listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert/update.act", {id: id, rtime: ct});
+            listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
         });
 
         context.on("click", ".review", function() {
@@ -139,7 +139,7 @@
             var tr = $(this).closest("tr");
             var id =      tr.data(   "id");
             var ct =      tr.data("ctime");
-            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html"   , {id: id, ctime: ct});
+            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
         });
 
         context.on("click", ".same-r", function() {

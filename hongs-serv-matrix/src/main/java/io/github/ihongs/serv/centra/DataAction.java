@@ -21,12 +21,8 @@ import java.util.Set;
  * 数据存储动作
  * @author Hongs
  */
-@Action("centra/auto")
+@Action("centra/data")
 public class DataAction extends SearchAction {
-
-    public DataAction() {
-        sub.add("revert");
-    }
 
     /**
      * 获取模型对象
@@ -84,7 +80,7 @@ public class DataAction extends SearchAction {
 
     //** 恢复 **/
 
-    @Action("revert/update")
+    @Action("revert")
     @CommitSuccess
     public void revert(ActionHelper helper) throws HongsException {
         Data  sr = (Data) getEntity(helper);
@@ -93,7 +89,7 @@ public class DataAction extends SearchAction {
         helper.reply ("");
     }
 
-    @Action("revert/search")
+    @Action("review")
     public void review(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());

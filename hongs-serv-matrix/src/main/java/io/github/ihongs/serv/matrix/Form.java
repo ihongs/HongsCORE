@@ -761,13 +761,10 @@ public class Form extends Model {
             actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"statis/search"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"acount"+ Cnst.ACT_EXT) );
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"statis/survey"+ Cnst.ACT_EXT) );
-//          actn = docm.createElement("action");
-//          role.appendChild ( actn );
-//          actn.appendChild ( docm.createTextNode(href +"stream/search"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"amount"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode("centra") );
@@ -783,6 +780,7 @@ public class Form extends Model {
             actn = docm.createElement("action");
             role.appendChild ( actn );
             actn.appendChild ( docm.createTextNode(href +"select"+ Cnst.ACT_EXT) );
+            // 2019/08/10, 添加不再依赖查看权限
 //          depn = docm.createElement("depend");
 //          role.appendChild ( depn );
 //          depn.appendChild ( docm.createTextNode(href +"search") );
@@ -814,11 +812,11 @@ public class Form extends Model {
             // 回看
             role = docm.createElement("role");
             menu.appendChild ( role );
-            role.setAttribute("name", href +"review");
+            role.setAttribute("name", href +"reveal");
             role.setAttribute("text", "回看");
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"revert/search"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"reveal"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
             depn.appendChild ( docm.createTextNode(href +"search") );
@@ -830,10 +828,10 @@ public class Form extends Model {
             role.setAttribute("text", "恢复");
             actn = docm.createElement("action");
             role.appendChild ( actn );
-            actn.appendChild ( docm.createTextNode(href +"revert/update"+ Cnst.ACT_EXT) );
+            actn.appendChild ( docm.createTextNode(href +"revert"+ Cnst.ACT_EXT) );
             depn = docm.createElement("depend");
             role.appendChild ( depn );
-            depn.appendChild ( docm.createTextNode(href +"review") );
+            depn.appendChild ( docm.createTextNode(href +"reveal") );
         }
 
         saveDocument(file , docm);

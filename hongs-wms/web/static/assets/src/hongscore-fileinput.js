@@ -11,7 +11,7 @@
     $.fn.fileinputLocales.en = {
         fileSingle      : hsGetLang('file.single'),
         filePlural      : hsGetLang('file.plural'),
-        browseLabel     : hsGetLang('file.select'),
+        browseLabel     : hsGetLang('file.browse'),
         removeLabel     : hsGetLang('file.remove'),
         removeTitle     : hsGetLang('file.remove.title'),
         uploadLabel     : hsGetLang('file.upload'),

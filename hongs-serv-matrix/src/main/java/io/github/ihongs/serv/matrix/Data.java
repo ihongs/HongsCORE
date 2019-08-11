@@ -89,15 +89,20 @@ public class Data extends SearchEntity {
         return inst;
     }
 
-    /**
-     * 获取字段
-     * 另一方法非常可能需要覆盖,
-     * 故提供此方法以便从基类调,
-     * 未设时抛出 NullPointerException
-     * @return
-     */
-    protected final Map gotFields() {
-        return  super . getFields();
+    public Model getModel() throws HongsException {
+        String tn = Synt.declare(getParams().get("db-model"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getModel(tn);
+    }
+
+    public Table getTable() throws HongsException {
+        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
+        if ("".equals(tn) || "none".equals(tn)) {
+            return null;
+        }
+        return DB.getInstance("matrix").getTable(tn);
     }
 
     /**
@@ -109,6 +114,17 @@ public class Data extends SearchEntity {
      */
     protected final Map gotParams() {
         return  super . getParams();
+    }
+
+    /**
+     * 获取字段
+     * 另一方法非常可能需要覆盖,
+     * 故提供此方法以便从基类调,
+     * 未设时抛出 NullPointerException
+     * @return
+     */
+    protected final Map gotFields() {
+        return  super . getFields();
     }
 
     /**
@@ -165,9 +181,11 @@ public class Data extends SearchEntity {
                 break;
             }
 
-            if (fields != null && cnf.startsWith("centre/")) {
-                cnf = "centra/" + cnf.substring(7);
-            } else {
+            if (fields == null) {
+                break;
+            }
+            cnf = getBgConf(  );
+            if (  cnf  == null) {
                 break;
             }
 
@@ -209,20 +227,18 @@ public class Data extends SearchEntity {
         return    fields ;
     }
 
-    public Model getModel() throws HongsException {
-        String tn = Synt.declare(getParams().get("db-model"), "matrix.data");
-        if ("".equals(tn) || "none".equals(tn)) {
+    /**
+     * 获取背景
+     * 当前表单不在管理区之内时,
+     * 会用当前表单覆盖管理表单,
+     * 此可获取对内配置, 用于 getFields
+     * @return
+     */
+    protected String getBgConf() {
+        if ( ! conf.startsWith("centre/") ) {
             return null;
         }
-        return DB.getInstance("matrix").getModel(tn);
-    }
-
-    public Table getTable() throws HongsException {
-        String tn = Synt.declare(getParams().get("db-table"), "matrix.data");
-        if ("".equals(tn) || "none".equals(tn)) {
-            return null;
-        }
-        return DB.getInstance("matrix").getTable(tn);
+        return "centra/"+ conf.substring(7);
     }
 
     @Override

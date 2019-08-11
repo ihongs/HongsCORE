@@ -89,8 +89,8 @@ public class DataAction extends SearchAction {
         helper.reply ("");
     }
 
-    @Action("review")
-    public void review(ActionHelper helper) throws HongsException {
+    @Action("reveal")
+    public void reveal(ActionHelper helper) throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
         String ent = runner.getEntity();

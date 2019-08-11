@@ -296,8 +296,8 @@
     });
 
     var statobj = context.hsCate({
-        aurl: "<%=_module%>/<%=_entity%>/statis/survey.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/statis/search.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
+        aurl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     var loadarr = hsSerialArr(loadbox);

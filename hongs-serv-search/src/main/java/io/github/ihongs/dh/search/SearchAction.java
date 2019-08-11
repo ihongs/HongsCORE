@@ -27,33 +27,12 @@ import java.util.regex.Pattern;
 @Action()
 public class SearchAction extends ModelGate implements IAction, IActing {
 
-    protected Set<String> sub = Synt.setOf("statis");
-    protected Pattern     rep = Pattern.compile("(^-|:.*$)");
-
     @Override
     public IEntity getEntity(ActionHelper helper)
     throws HongsException {
         ActionRunner runner = (ActionRunner)
            helper.getAttribute(ActionRunner.class.getName());
         return SearchEntity.getInstance (runner.getModule(), runner.getEntity());
-    }
-
-    @Override
-    public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
-        String ent = runner.getEntity();
-        String mod = runner.getModule();
-
-        // 特别扩展的资源
-        if (sub.contains(ent)) {
-            int   pos;
-            pos = mod.lastIndexOf( "/");
-            ent = mod.substring(1+ pos);
-            mod = mod.substring(0, pos);
-            runner.setEntity(ent);
-            runner.setModule(mod);
-        }
-
-        super.acting(helper, runner);
     }
 
     @Action("search")
@@ -81,7 +60,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         super.search(helper);
     }
 
-    @Action("statis/search")
+    @Action("acount")
     @Preset(conf="", form="")
     public void acount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
@@ -100,7 +79,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         helper.reply(sd);
     }
 
-    @Action("statis/survey")
+    @Action("amount")
     @Preset(conf="", form="")
     public void amount(ActionHelper helper) throws HongsException {
         SearchEntity sr = (SearchEntity) getEntity(helper);
@@ -127,6 +106,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
      * @throws HongsException
      */
     protected void acheck(SearchEntity sr, Map rd, boolean nb) throws HongsException {
+        Pattern pt = Pattern.compile("(^-|:.*$)" );
         Set rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
         Map fs = sr.getFields( );
         Set st = sr.getCaseNames("statable");
@@ -137,7 +117,8 @@ public class SearchAction extends ModelGate implements IAction, IActing {
 
         if (rb!= null) for (Object fn : rb ) {
             if (fn!= null) {
-                fn = rep.matcher(fn.toString()).replaceAll(""); // 清理重点和排除值, 如: -fn:0,-fn:1
+                // 清理重点和排除值, 如: -fn:0,-fn:1
+                fn = pt.matcher (fn.toString()).replaceAll("");
             }
             if (! fs.containsKey(fn)) {
                 throw new HongsException(0x1100, "Field '"+fn+"' is not exists"  );

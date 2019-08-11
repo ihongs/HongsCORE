@@ -427,6 +427,7 @@ public class SelectHelper {
     public void injectFork(List<Map> list) {
         MergeMore    mm = new  MergeMore  (  list  );
         ActionHelper ah = ActionHelper.newInstance();
+        Map          rd = ah.getRequestData();
         ah.setContextData(Synt.mapOf(
             Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
         ));
@@ -443,11 +444,17 @@ public class SelectHelper {
                 continue;
             }
 
+            String at = (String) mt.get("data-at"); // 关联动作路径
+            String ak = (String) mt.get("data-ak"); // 数据放入此下
             String vk = (String) mt.get("data-vk"); // 关联字段
             String tk = (String) mt.get("data-tk"); // 名称字段
-            String ak = (String) mt.get("data-ak"); // 数据放入此下
-            String at = (String) mt.get("data-at"); // 关联动作路径
-            if (null == ak || "".equals(ak)) {
+
+            if (at == null || at.isEmpty()) {
+                String c = (String) mt.get("conf");
+                String f = (String) mt.get("form");
+                at  =  c +"/"+ f +"/search";
+            }
+            if (ak == null || ak.isEmpty()) {
                 if (fn.endsWith("_id")) {
                     int  ln = fn.length()-3;
                     ak = fn.substring(0,ln);
@@ -455,85 +462,45 @@ public class SelectHelper {
                     ak = fn + "_fork";
                 }
             }
-            if (null == at || "".equals(at)) {
-                String c = (String) mt.get("conf");
-                String f = (String) mt.get("form");
-                at  =  c + "/" + f + "/search";
-            }
 
             // 查询结构
-            String ap = null; // 虚拟动作路径, 作为目标路径
-            String aq = null; // 关联请求参数, 转为请求数据
-            Map rd;           // 关联请求数据
-            Set rb;           // 关联结果字段
-            int ps;
-            ps = at.indexOf('?');
-            if (ps > -1) {
-                aq = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
-            ps = at.indexOf('!');
-            if (ps > -1) {
-                ap = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
-            if (null != ap && !"".equals(ap)) {
-                if (ActionRunner.getActions()
-                            .containsKey(ap)) {
-                    at = ap ; // 自动行为方法可能被定制开发
-                }
-                ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
-            } else {
-                ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
-            }
-            if (null != aq && !"".equals(aq)) {
-                if (aq.startsWith("{" )
-                &&  aq.  endsWith("}")) {
-                    rd = (  Map  ) Dawn.toObject( aq );
-                } else {
-                    rd = ActionHelper.parseQuery( aq );
-                }
-            } else {
-                rd = new HashMap();
-            }
-            if (null != vk && !"".equals(vk )
-            &&  null != tk && !"".equals(tk )
-            &&  !rd.containsKey(Cnst.RB_KEY)) {
+            if (vk != null && !vk.isEmpty()
+            &&  tk != null && !tk.isEmpty()
+            &&  ! rd.containsKey(Cnst.RB_KEY)) {
+                Set rb;
                 rb = Synt.setOf(vk, tk);
                 rd.put(Cnst.RB_KEY, rb);
             }
-            if (!rd.containsKey(Cnst.RN_KEY)) {
+            if (! rd.containsKey(Cnst.RN_KEY)) {
                 rd.put(Cnst.RN_KEY, 0 );
             }
 
             // 关联约束
             // 没有指定 vk 时与 id 进行关联
-            if (null == vk || "".equals(vk)) {
+            if (vk == null || vk.isEmpty()) {
                 vk = Cnst . ID_KEY ;
             }
             rd.put(vk, ms.keySet());
 
             // 获取结果
             // 关联出错应在测试期发现并解决
-            ah.setRequestData( rd );
             try {
+                ActionRunner ar = ActionRunner.newInstance(ah, at);
                 if (rd.containsKey(Cnst.AB_KEY)) {
-                    new ActionRunner(ah, at).doAction();
+                    ar.doAction();
                 } else {
-                    new ActionRunner(ah, at).doInvoke();
+                    ar.doInvoke();
                 }
             } catch (HongsException e) {
                 throw e.toExemption( );
             }
-            Map  sd;
-            List <Map > ls;
-            sd = ah.getResponseData( );
-            ls = (List) sd.get("list");
-            if (null == ls) {
-                continue;
-            }
 
             // 整合数据
+            Map sd  = ah.getResponseData( /**/ );
+            List<Map> ls = (List) sd.get("list");
+            if (ls == null) {
+                continue;
+            }
             boolean rp = Synt.declare(mt.get("__repeated__"), false);
             if (rp) {
                 mm.append(ls, ms, vk, ak);

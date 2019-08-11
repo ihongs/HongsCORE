@@ -36,16 +36,15 @@ public class Diverse extends Rule {
             return STAND;
         }
 
-        String at = Synt.declare(getParam("data-ut" ), "");
-        String ck = Synt.declare(getParam("__conf__"), "");
-        String fk = Synt.declare(getParam("__form__"), "");
-        String nk = Synt.declare(getParam("__name__"), "");
-        String ap = null;
-        String aq = null;
+        String at = (String) getParam("data-ut" );
+        String nk = (String) getParam("__name__");
+        String ck = (String) getParam("__conf__");
+        String fk = (String) getParam("__form__");
         String ad = null;
+        String aq = null;
 
-        if ("".equals(at)) {
-            at = ck + "/" + fk + "/search";
+        if (at == null || at.isEmpty()) {
+            at = ck + "/" + fk + "/search" ;
         } else {
             // 尝试解析附加参数
             int ps;
@@ -59,24 +58,13 @@ public class Diverse extends Rule {
                 aq = at.substring(1 + ps).trim();
                 at = at.substring(0 , ps).trim();
             }
-            ps = at.indexOf('!');
-            if (ps > 0) {
-                ap = at.substring(1 + ps).trim();
-                at = at.substring(0 , ps).trim();
-            }
         }
-
-        ActionHelper ah = ActionHelper.newInstance();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
 
         // 请求数据
         Map rd = new HashMap();
-        ah.setRequestData (rd);
         rd.put(Cnst.PN_KEY, 0);
         rd.put(Cnst.RN_KEY, 1);
-        rd.put(Cnst.RB_KEY, Synt.setOf(Cnst.ID_KEY));
+        rd.put(Cnst.RB_KEY, Synt.setOf (  Cnst.ID_KEY  ) );
         rd.put(nk , value);
         if (watch.isUpdate( )) { // 更新需排除当前记录
             Object vo = watch.getValues().get(Cnst.ID_KEY);
@@ -89,37 +77,34 @@ public class Diverse extends Rule {
         if (ad != null && !"".equals(ad)) {
             Set<String> ks = Synt.toTerms ( ad );
             if (null != ks) for (String kn: ks ) {
-                rd.put( kn, watch.getValues().get(kn));
+                rd.put( kn, watch.getValues().get(kn) );
             }
         }
         if (aq != null && !"".equals(aq)) {
             if (aq.startsWith("{") && aq.endsWith("}")) {
-                rd.putAll(( Map )  Dawn.toObject(aq));
+                rd.putAll( ( Map )  Dawn.toObject(aq) );
             } else {
-                rd.putAll(ActionHelper.parseQuery(aq));
+                rd.putAll(ActionHelper.parseQuery(aq) );
             }
-        }
-
-        // 虚拟路径
-        if (ap != null && !"".equals(ap)) {
-            if (ActionRunner.getActions()
-                        .containsKey(ap)) {
-                at = ap ; // 自动行为方法可能被定制开发
-            }
-            ah.setAttribute(Cnst.ACTION_ATTR, ap + Cnst.ACT_EXT);
-        } else {
-            ah.setAttribute(Cnst.ACTION_ATTR, at + Cnst.ACT_EXT);
         }
 
         // 执行动作
+        ActionHelper ah = ActionHelper.newInstance();
+        ah.setContextData(Synt.mapOf(
+            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
+        ));
+        ah.setRequestData( rd );
         try {
-            new ActionRunner(ah,at).doInvoke();
+            ActionRunner.newInstance(ah, at).doInvoke();
         } catch (HongsException ex) {
             throw ex.toExemption( );
         }
 
-        // 判断记录是否存在
+        // 对比结果
         Map sd  = ah.getResponseData();
+        if (sd == null) {
+                return value;
+        }
         if (sd.containsKey("list")) {
            List list = (List) sd.get("list");
             if (list == null || list.isEmpty()) {

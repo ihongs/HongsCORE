@@ -58,17 +58,17 @@ public class RoleSet extends CoreSerial implements Set<String> {
         db = DB.getInstance("master");
 
         tb = db.getTable("user");
-        fc = new FetchCase( )
-                .from   (tb.tableName, tb.name)
-                .select (tb.name+".rtime, "+tb.name+".state")
-                .filter (tb.name+".id = ?" , userId);
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .select(tb.name+".rtime, "+tb.name+".state")
+                .filter(tb.name+".id = ?", userId);
         rs = db.fetchLess(fc);
-        rt = Synt.declare(rs.get( "rtime" ), 0);
-        st = Synt.declare(rs.get( "state" ), 0);
+        st = Synt.declare(rs.get("state"), 0);
         if (st <=   0 ) { // 删除或锁定
             rtime = 0 ;
             return;
         }
+        rt = Synt.declare(rs.get("rtime"), 0);
         if (rt > rtime) { // 从库表加载
             init(n, f, 1);
             return;
@@ -76,23 +76,22 @@ public class RoleSet extends CoreSerial implements Set<String> {
 
         tb = db.getTable("dept");
         td = db.getTable("user_dept");
-        fc = new FetchCase( )
-                .from   (tb.tableName, tb.name)
-                .select (tb.name+".rtime, "+tb.name+".state")
-                .assort (tb.name+".rtime DESC");
-              fc.join   (td.tableName, td.name)
-                .on     (td.name+".dept_id = "+tb.name+".id")
-                .filter (td.name+".user_id = ?", userId);
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
+                .select("MAX("+tb.name+".rtime) AS rtime, MAX("+tb.name+".state) AS state")
+                .filter(td.name+".user_id = ?", userId)
+                .gather(td.name+".user_id");
         rs = db.fetchLess(fc);
-        rt = Synt.declare(rs.get( "rtime" ), 0);
-        st = Synt.declare(rs.get( "state" ), 0);
-        if (rs.isEmpty()) { // 没有部门
+        if (rs.isEmpty()) { // 部门可选
             return;
         }
+        st = Synt.declare(rs.get("state"), 0);
         if (st <=   0 ) { // 删除或锁定
             rtime = 0 ;
             return;
         }
+        rt = Synt.declare(rs.get("rtime"), 0);
         if (rt > rtime) { // 从库表加载
             init(n, f, 1);
 //          return;
@@ -106,6 +105,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         DB        db;
         Table     tb;
         Table     td;
+        Table     tt;
         FetchCase fc;
         List<Map> rz;
 
@@ -114,10 +114,10 @@ public class RoleSet extends CoreSerial implements Set<String> {
         //** 查询用户权限 **/
 
         tb = db.getTable("user_role");
-        fc = new FetchCase( )
-                .from   (tb.tableName, tb.name)
-                .select (tb.name+".role")
-                .filter (tb.name+".user_id = ?", userId);
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .select(tb.name+".role")
+                .filter(tb.name+".user_id = ?", userId);
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get("role"));
@@ -127,12 +127,14 @@ public class RoleSet extends CoreSerial implements Set<String> {
 
         tb = db.getTable("dept_role");
         td = db.getTable("user_dept");
-        fc = new FetchCase( )
-                .from   (tb.tableName, tb.name)
-                .select (tb.name+".role");
-              fc.join   (td.tableName, td.name)
-                .on     (td.name+".dept_id = "+tb.name+".dept_id")
-                .filter (td.name+".user_id = ?", userId);
+        tt = db.getTable("dept");
+        fc = new FetchCase( FetchCase.STRICT )
+                .from  (tb.tableName, tb.name)
+                .join  (td.tableName, td.name , tb.name+".dept_id = "+td.name+".dept_id")
+                .join  (tt.tableName, tt.name , td.name+".dept_id = "+tt.name+".id" /**/)
+                .select(tb.name+".role")
+                .filter(td.name+".user_id = ?", userId)
+                .filter(tt.name+".state > 0" );
         rz = db.fetchMore(fc);
         for (Map rm : rz) {
             roles.add((String) rm.get("role"));

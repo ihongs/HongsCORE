@@ -440,8 +440,9 @@ HsStat.prototype = {
             success: function(rst) {
                 for (var k in rst.info) {
                      if (k == "__count__") continue;
-                     var d  = rst.info[k];
                      var n  = statBox.find("[data-name='"+k+"']");
+                     if (0 == n.size( )  ) continue;
+                     var d  = rst.info[k];
                      that.setAmountCheck(n, d);
                      that.setAmountChart(n, d);
                 }
@@ -487,8 +488,9 @@ HsStat.prototype = {
             success: function(rst) {
                 for (var k in rst.info) {
                      if (k == "__count__") continue;
-                     var d  = rst.info[k];
                      var n  = statBox.find("[data-name='"+k+"']");
+                     if (0 == n.size( )  ) continue;
+                     var d  = rst.info[k];
                      that.setAcountCheck(n, d);
                      that.setAcountChart(n, d);
                 }

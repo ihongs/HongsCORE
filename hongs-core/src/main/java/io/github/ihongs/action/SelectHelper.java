@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.dh.MergeMore;
-import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.Arrays;
@@ -425,12 +424,14 @@ public class SelectHelper {
     }
 
     public void injectFork(List<Map> list) {
-        MergeMore    mm = new  MergeMore  (  list  );
         ActionHelper ah = ActionHelper.newInstance();
-        Map          rd = ah.getRequestData();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
+        MergeMore    mm = new MergeMore(list);
+        Map          rd = new HashMap();
+        Map          cd = new HashMap();
+
+        ah.setRequestData(rd);
+        ah.setContextData(cd);
+        cd.put(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
 
         for(Map.Entry et : forks.entrySet()) {
             Map    mt = (Map) et.getValue( );
@@ -464,23 +465,15 @@ public class SelectHelper {
             }
 
             // 查询结构
-            if (vk != null && !vk.isEmpty()
-            &&  tk != null && !tk.isEmpty()
-            &&  ! rd.containsKey(Cnst.RB_KEY)) {
-                Set rb;
-                rb = Synt.setOf(vk, tk);
-                rd.put(Cnst.RB_KEY, rb);
+            rd.clear( );
+            rd.put(Cnst.RN_KEY, 0);             // 不分页
+            rd.put(Cnst.ID_KEY, ms.keySet ());  // 关联ID
+            if (vk != null && ! vk.isEmpty()
+            &&  tk != null && ! tk.isEmpty()) {
+                Set rb = new HashSet();
+                rb.add(tk); rb.add(vk);
+                rd.put(Cnst.RB_KEY,rb);         // 返回列
             }
-            if (! rd.containsKey(Cnst.RN_KEY)) {
-                rd.put(Cnst.RN_KEY, 0 );
-            }
-
-            // 关联约束
-            // 没有指定 vk 时与 id 进行关联
-            if (vk == null || vk.isEmpty()) {
-                vk = Cnst . ID_KEY ;
-            }
-            rd.put(vk, ms.keySet());
 
             // 获取结果
             // 关联出错应在测试期发现并解决

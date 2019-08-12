@@ -153,6 +153,11 @@ extends Model {
                 data.put("passcode" , pc);
             }
 
+            // 状态变更, 联动权限更新时间
+            if (data.containsKey("state")) {
+                data.put("rtime", System.currentTimeMillis() / 1000);
+            }
+
             // 权限限制, 仅能赋予当前登录用户所有的权限
             if (data.containsKey("roles")) {
                 data.put("rtime", System.currentTimeMillis() / 1000);

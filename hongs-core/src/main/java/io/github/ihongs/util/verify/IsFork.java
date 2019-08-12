@@ -38,7 +38,7 @@ public class IsFork extends Rule {
         }
 
         // 如果像 id 一样只是基本字符组成则跳过
-        // 也可通过直接通过 rule 参数不做此检查
+        // 也可用 rule 设置其他的校验规则来跳过
         if (Synt.declare(getParam("pass-id"), false)) {
             String sv = value.toString( );
             if (sv.matches("^[\\w\\-]+$")) {

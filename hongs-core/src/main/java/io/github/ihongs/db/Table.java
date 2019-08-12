@@ -6,8 +6,8 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.util.AssocMore;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.sql.Types;
 import java.sql.Date;
 import java.sql.Time;
@@ -635,7 +635,7 @@ public class Table
        */
       String valueStr;
       if (value instanceof Number ) {
-        valueStr = Tool .toNumStr((Number) value);
+        valueStr = Syno .toNumStr((Number) value);
       } else {
         valueStr = value.toString().trim();
       }

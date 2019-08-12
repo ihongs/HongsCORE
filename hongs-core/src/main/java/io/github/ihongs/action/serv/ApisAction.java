@@ -7,8 +7,8 @@ import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -310,7 +310,7 @@ public class ApisAction
         @Override
         public Object conv(Object o) {
             if (o instanceof Number) {
-                return Tool.toNumStr((Number) o);
+                return Syno.toNumStr((Number) o);
             }
             return o.toString();
         }

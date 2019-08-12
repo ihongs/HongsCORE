@@ -6,8 +6,8 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -400,7 +400,7 @@ public class AssocCase {
 
         // 转义待查词, 避开通配符, 以防止歧义
         for(String  wb : wd) {
-            xd.add("%" + Tool.escape(wb , "/%_[]" , "/") + "%");
+            xd.add("%" + Syno.escape(wb , "/%_[]" , "/") + "%");
         }
 
         for(String  fn : af.values()) {
@@ -702,7 +702,7 @@ public class AssocCase {
         // 转义待查词, 避开通配符, 以防止歧义
         for(Object  fo : wd) {
             String  fw = fo.toString(  );
-            xd.add("%" + Tool.escape(fw , "/%_[]" , "/") + "%");
+            xd.add("%" + Syno.escape(fw , "/%_[]" , "/") + "%");
         }
 
         sb.append("(");

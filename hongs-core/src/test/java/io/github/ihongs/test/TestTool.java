@@ -1,6 +1,6 @@
 package io.github.ihongs.test;
 
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +13,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
- * 测试 io.github.ihongs.util.Tool
+ * 测试 io.github.ihongs.util.Syno
  * @author Hongs
  */
 public class TestTool extends TestCase {
@@ -47,10 +47,10 @@ public class TestTool extends TestCase {
         a = 1234567890;
         x = "KF12OI";
 
-        y = Tool.to36Hex(a);
+        y = Syno.to36Hex(a);
         assertEquals(y, x);
 
-        b = Tool.as36Hex(y);
+        b = Syno.as36Hex(y);
         assertEquals(b, a);
     }
 
@@ -60,10 +60,10 @@ public class TestTool extends TestCase {
         a = "I'm Hongs: \"How are you!\"";
         b = "I\\'m Hongs: \\\"How are you!\\\"";
 
-        s = Tool.escape(a);
+        s = Syno.escape(a);
         assertEquals(s, b);
 
-        s = Tool.resume(s);
+        s = Syno.resume(s);
         assertEquals(s, a);
     }
 
@@ -73,10 +73,10 @@ public class TestTool extends TestCase {
         a = "I'm Hongs:\r\n\t\"How are you!\"";
         b = "\tI'm Hongs:\r\n\t\t\"How are you!\"";
 
-        s = Tool.indent(a);
+        s = Syno.indent(a);
         assertEquals(s, b);
 
-        s = Tool.undent(s);
+        s = Syno.undent(s);
         assertEquals(s, a);
     }
 
@@ -86,19 +86,19 @@ public class TestTool extends TestCase {
         a = "I'm $0, are you ${1}in?";
         b = "I'm Hongs, are you Kevin?";
 
-        s = Tool.inject(a, "Hongs", "Kev");
+        s = Syno.inject(a, "Hongs", "Kev");
         assertEquals(s, b);
 
         List l = new ArrayList();
         l.add("Hongs");
         l.add("Kev");
-        s = Tool.inject(a, l);
+        s = Syno.inject(a, l);
         assertEquals(s, b);
 
         Map m = new HashMap();
         m.put("0", "Hongs");
         m.put("1", "Kev");
-        s = Tool.inject(a, m);
+        s = Syno.inject(a, m);
         assertEquals(s, b);
     }
 

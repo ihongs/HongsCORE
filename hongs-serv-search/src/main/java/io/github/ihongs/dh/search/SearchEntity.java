@@ -7,7 +7,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 import java.io.File;
 
 import java.io.IOException;
@@ -78,7 +78,7 @@ public class SearchEntity extends LuceneRecord {
             m.put("SERVER_ID", Core.SERVER_ID);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
-            path = Tool.inject(path, m);
+            path = Syno.inject(path, m);
             if ( ! new File(path).isAbsolute())
             path = Core.DATA_PATH + "/lucene/" + path;
 

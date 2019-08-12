@@ -5,7 +5,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -271,7 +271,7 @@ public class ConfAction
     private String makeConf(String name, String key, String def)
     {
       String value = this.conf.getProperty(key, def);
-      value = Tool.escape(value);
+      value = Syno.escape(value);
       return "\t\"" + name + "\":\"" + value + "\",\r\n";
     }
 

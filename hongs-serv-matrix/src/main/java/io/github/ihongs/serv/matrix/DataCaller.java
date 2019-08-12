@@ -4,8 +4,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Tool;
 import io.github.ihongs.util.Remote;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.thread.Async;
 import java.util.function.Supplier;
 
@@ -44,7 +44,7 @@ public class DataCaller extends Async<String> implements Core.Singleton {
     public void run(String url) {
         try {
             String rsp = Remote.get(url);
-            String log = "GET: "+ url +" RSP: "+ Tool.indent(rsp.trim( ));
+            String log = "GET: "+ url +" RSP: "+ Syno.indent(rsp.trim( ));
             CoreLogger.getLogger (SPACE).info(ENVIR + log);
         } catch ( Exception | Error ex ) {
             String log = ex.getMessage();

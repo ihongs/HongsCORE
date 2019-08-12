@@ -4,8 +4,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
@@ -49,7 +49,7 @@ public class InfoAction {
             app.put("base_href",Core.BASE_HREF);
             app.put("base_path",Core.BASE_PATH);
             app.put("open_time",tim);
-            app.put("live_time",Tool.humanTime(now - tim));
+            app.put("live_time",Syno.humanTime(now - tim));
         }
 
         // 系统信息
@@ -92,11 +92,11 @@ public class InfoAction {
             rsp.put("run_info", inf);
 
             inf.put("load" , new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("size" , new Object[] {siz, Tool.humanSize(siz), "全部"});
-            inf.put("free" , new Object[] {fre, Tool.humanSize(fre), "空闲"});
-            inf.put("dist" , new Object[] {max, Tool.humanSize(max), "可用"});
-            inf.put("used" , new Object[] {use, Tool.humanSize(use), "已用"});
-            inf.put("uses" , new Object[] {stk, Tool.humanSize(stk), "非堆"});
+            inf.put("size" , new Object[] {siz, Syno.humanSize(siz), "全部"});
+            inf.put("free" , new Object[] {fre, Syno.humanSize(fre), "空闲"});
+            inf.put("dist" , new Object[] {max, Syno.humanSize(max), "可用"});
+            inf.put("used" , new Object[] {use, Syno.humanSize(use), "已用"});
+            inf.put("uses" , new Object[] {stk, Syno.humanSize(stk), "非堆"});
         }
 
         // 磁盘情况
@@ -141,7 +141,7 @@ public class InfoAction {
                 if (one == 0) {
                     continue;
                 }
-                hum = Tool.humanSize(one);
+                hum = Syno.humanSize(one);
                 map.put(f.getName(), new Object[] {one, hum, "目录 "+f.getName()});
             } else {
                 one = f.length();
@@ -150,24 +150,24 @@ public class InfoAction {
             all += one;
         }
 
-        hum = Tool.humanSize(all);
+        hum = Syno.humanSize(all);
         map.put(".", new Object[] {all, hum, "当前目录"});
 
-        hum = Tool.humanSize(oth);
+        hum = Syno.humanSize(oth);
         map.put("!", new Object[] {oth, hum, "其他文件"});
 
         long tot;
 
         tot = d.getTotalSpace();
-        hum = Tool.humanSize(tot);
+        hum = Syno.humanSize(tot);
         map.put("@", new Object[] {tot, hum, "磁盘大小"});
 
         one = d.getFreeSpace();
-        hum = Tool.humanSize(one);
+        hum = Syno.humanSize(one);
         map.put("#", new Object[] {one, hum, "磁盘剩余"});
 
         one = tot - one;
-        hum = Tool.humanSize(one);
+        hum = Syno.humanSize(one);
         map.put("$", new Object[] {one, hum, "磁盘已用"});
 
         // 排序

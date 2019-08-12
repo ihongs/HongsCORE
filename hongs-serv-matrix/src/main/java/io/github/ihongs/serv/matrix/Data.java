@@ -13,8 +13,8 @@ import io.github.ihongs.dh.lucene.field.*;
 import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 
 import java.io.File;
 import java.util.Collection;
@@ -267,7 +267,7 @@ public class Data extends SearchEntity {
         m.put("SERVER_ID", Core.SERVER_ID);
         m.put("CORE_PATH", Core.CORE_PATH);
         m.put("DATA_PATH", Core.DATA_PATH);
-        path = Tool.inject(path, m);
+        path = Syno.inject(path, m);
         if ( ! new File(path).isAbsolute())
         path = Core.DATA_PATH +"/lucene/"+ path;
 
@@ -783,7 +783,7 @@ public class Data extends SearchEntity {
             return 0;
         }
 
-        dcUrls.add(Tool.inject(url, Synt.mapOf(
+        dcUrls.add(Syno.inject(url, Synt.mapOf(
             "user_id", getUserId(),
             "form_id", getFormId(),
             "id"     , id ,
@@ -955,9 +955,7 @@ public class Data extends SearchEntity {
              */
             Object x = v;
             if (p && "textview".equals(m.get("__type__"))) {
-                x = Tool.stripEnds(
-                    Tool.stripTags(
-                    Tool.stripCros(
+                x = Syno.stripEnds(Syno.stripTags(Syno.stripCros(
                     Synt.asString ( x )
                  )  )  );
             }

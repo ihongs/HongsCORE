@@ -2,8 +2,8 @@ package io.github.ihongs.action;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import io.github.ihongs.util.verify.Wrong;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -138,7 +138,7 @@ public class UploadHelper {
             extn  = null;
         } else
         {
-            name  = Tool.splitPath(name);
+            name  = Syno.splitPath(name);
         }
 
         if (extn != null
@@ -155,7 +155,7 @@ public class UploadHelper {
         m.put("CORE_PATH", Core.CORE_PATH);
         m.put("CONF_PATH", Core.CONF_PATH);
         m.put("DATA_PATH", Core.DATA_PATH);
-        path = Tool.inject(path, m );
+        path = Syno.inject(path, m );
 
         if (! new File(path).isAbsolute()) {
             path = Core.BASE_PATH  + "/" + path;
@@ -170,7 +170,7 @@ public class UploadHelper {
         m.put("CORE_PATH", Core.CORE_PATH);
         m.put("CONF_PATH", Core.CONF_PATH);
         m.put("DATA_PATH", Core.DATA_PATH);
-        path = Tool.inject(path, m );
+        path = Syno.inject(path, m );
 
         if (! new File(path).isAbsolute()) {
             path = Core.BASE_PATH  + "/" + path;
@@ -185,7 +185,7 @@ public class UploadHelper {
         m.put("SITE_HREF", Core.SITE_HREF);
         m.put("SERV_HREF", Core.SITE_HREF
                          + Core.BASE_HREF);
-        href = Tool.inject(href, m );
+        href = Syno.inject(href, m );
         return href;
     }
 

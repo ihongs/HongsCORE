@@ -8,8 +8,8 @@ import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -255,7 +255,7 @@ public class CmdletRunner implements Runnable
         String v = (String) et.getValue();
         if (k.startsWith("envir.")) {
             k = k.substring(6  );
-            v = Tool.inject(v,m);
+            v = Syno.inject(v,m);
             System.setProperty(k,v);
         }
     }
@@ -267,7 +267,7 @@ public class CmdletRunner implements Runnable
         String v = (String) et.getValue();
         if (k.startsWith("debug.")) {
             k = k.substring(6  );
-            v = Tool.inject(v,m);
+            v = Syno.inject(v,m);
             System.setProperty(k,v);
         }
     }

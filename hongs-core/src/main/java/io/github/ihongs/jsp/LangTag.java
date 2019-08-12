@@ -1,7 +1,7 @@
 package io.github.ihongs.jsp;
 
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +64,7 @@ public class LangTag extends TagSupport implements DynamicAttributes {
       && ! "".equals(this.esc)
       && ! "no".equals(this.esc)) {
         if ("yes".equals(this.esc)) {
-          str = Tool.escape(str);
+          str = Syno.escape(str);
         }
         else if ("xml".equals(this.esc)) {
           str = Pagelet.escapeXML (str);
@@ -76,7 +76,7 @@ public class LangTag extends TagSupport implements DynamicAttributes {
           str = Pagelet.escapeJSS (str);
         }
         else {
-          str = Tool.escape(str, this.esc);
+          str = Syno.escape(str, this.esc);
         }
       }
 

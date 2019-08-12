@@ -15,8 +15,8 @@ import io.github.ihongs.dh.lucene.value.*;
 import io.github.ihongs.dh.lucene.query.*;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 
 import java.io.File;
 import java.io.IOException;
@@ -148,7 +148,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             m.put("SERVER_ID", Core.SERVER_ID);
             m.put("CORE_PATH", Core.CORE_PATH);
             m.put("DATA_PATH", Core.DATA_PATH);
-            path = Tool.inject(path, m);
+            path = Syno.inject(path, m);
             if ( ! new File(path).isAbsolute())
             path = Core.DATA_PATH + "/lucene/" + path;
 

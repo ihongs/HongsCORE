@@ -7,8 +7,8 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.dh.ITrnsct;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -690,7 +690,7 @@ abstract public class Link
    */
   public static String quoteField(String field)
   {
-    return "`" + Tool.escape(field, "`") + "`";
+    return "`" + Syno.escape(field, "`") + "`";
   }
 
   /**
@@ -700,7 +700,7 @@ abstract public class Link
    */
   public static String quoteValue(String value)
   {
-    return "'" + Tool.escape(value, "'") + "'";
+    return "'" + Syno.escape(value, "'") + "'";
   }
 
   /**
@@ -837,7 +837,7 @@ abstract public class Link
       else
       if (obj instanceof Number)
       {
-        str = Tool.toNumStr((Number) obj);
+        str = Syno.toNumStr((Number) obj);
       }
       else
       {

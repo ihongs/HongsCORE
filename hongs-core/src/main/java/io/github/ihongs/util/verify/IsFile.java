@@ -4,8 +4,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.UploadHelper;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
@@ -313,7 +313,7 @@ public class IsFile extends Rule {
             if (NAME_PATT.matcher(name).find()) {
                 throw new Wrong("fore.file.name.illegal", name);
             }
-            return Tool.splitPn36(
+            return Syno.splitPn36(
                    Core.newIdentity()
                    ) + "/" + name;
         } else {

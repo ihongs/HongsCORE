@@ -2,8 +2,8 @@ package io.github.ihongs.util.verify;
 
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -34,13 +34,13 @@ public class IsString extends Rule {
         Set<String> sa = Synt.toSet(getParam("strip"));
         if (null != sa) {
             if (sa.contains("cros")) {
-                str = Tool.stripTags(str); // 清除脚本
+                str = Syno.stripTags(str); // 清除脚本
             }
             if (sa.contains("tags")) {
-                str = Tool.stripTags(str); // 清除标签
+                str = Syno.stripTags(str); // 清除标签
             }
             if (sa.contains("ends")) {
-                str = Tool.stripEnds(str); // 首尾清理(含全角)
+                str = Syno.stripEnds(str); // 首尾清理(含全角)
             }
             if (sa.contains("trim") || sa.contains("true")) {
                 str = str.trim();

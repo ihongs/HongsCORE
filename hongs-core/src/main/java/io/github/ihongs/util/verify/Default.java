@@ -3,7 +3,7 @@ package io.github.ihongs.util.verify;
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dict;
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -79,7 +79,7 @@ public class Default extends Rule {
 
         // 拼接字段
         if (bef.equals("=+")) {
-            return Tool.inject(def.substring(2), watch.getCleans());
+            return Syno.inject(def.substring(2), watch.getCleans());
         }
 
         // 别名字段

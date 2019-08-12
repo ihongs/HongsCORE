@@ -1,7 +1,7 @@
 package io.github.ihongs.jsp;
 
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 import javax.servlet.jsp.JspWriter;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.tagext.TagSupport;
@@ -44,7 +44,7 @@ public class ConfTag extends TagSupport {
       &&  !    "".equals(this.esc)
       &&  !  "no".equals(this.esc)) {
         if ("yes".equals(this.esc)) {
-          str = Tool.escape(str);
+          str = Syno.escape(str);
         }
         else if ("xml".equals(this.esc)) {
           str = Pagelet.escapeXML (str);
@@ -56,7 +56,7 @@ public class ConfTag extends TagSupport {
           str = Pagelet.escapeJSS (str);
         }
         else {
-          str = Tool.escape(str, this.esc);
+          str = Syno.escape(str, this.esc);
         }
       }
 

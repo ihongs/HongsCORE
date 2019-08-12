@@ -6,8 +6,8 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.io.IOException;
 import java.util.Enumeration;
@@ -145,7 +145,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 String v = (String) et.getValue();
                 if (k.startsWith("envir.")) {
                     k = k.substring(6  );
-                    v = Tool.inject(v,m);
+                    v = Syno.inject(v,m);
                     System.setProperty(k,v);
                 }
             }
@@ -157,7 +157,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 String v = (String) et.getValue();
                 if (k.startsWith("debug.")) {
                     k = k.substring(6  );
-                    v = Tool.inject(v,m);
+                    v = Syno.inject(v,m);
                     System.setProperty(k,v);
                 }
             }
@@ -238,7 +238,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   .info(new StringBuilder("Http server has stopped.")
             .append("\r\n\tSERVER_ID   : ").append(Core.SERVER_ID)
             .append("\r\n\tObjects     : ").append(core.toString (    ))
-            .append("\r\n\tRuntime     : ").append(Tool.humanTime(time))
+            .append("\r\n\tRuntime     : ").append(Syno.humanTime(time))
             .toString());
 
         if (!SETUP) {
@@ -427,7 +427,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                 } else {
                     mem  =  "-";
                 }
-                tim = Tool.humanTime ( System.currentTimeMillis() - Core.ACTION_TIME.get() );
+                tim = Syno.humanTime ( System.currentTimeMillis() - Core.ACTION_TIME.get() );
 
                 StringBuilder sb = new StringBuilder("...");
                   sb.append("\r\n\tACTION_NAME : ").append(Core.ACTION_NAME.get())
@@ -454,7 +454,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     }
                     if (rd != null && !rd.isEmpty()) {
                         sb.append("\r\n\tRequest     : ")
-                          .append(Tool.indent(Dawn.toString(rd)).substring(1));
+                          .append(Syno.indent(Dawn.toString(rd)).substring(1));
                     }
                 }
 
@@ -465,7 +465,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                     }
                     if (xd != null && !xd.isEmpty()) {
                         sb.append("\r\n\tResults     : ")
-                          .append(Tool.indent(Dawn.toString(xd)).substring(1));
+                          .append(Syno.indent(Dawn.toString(xd)).substring(1));
                     }
                 }
 
@@ -478,7 +478,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tSession     : ")
-                        .append(Tool.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
                 }
 
@@ -491,7 +491,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tContext     : ")
-                        .append(Tool.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
                 }
 
@@ -504,7 +504,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tHeaders     : ")
-                        .append(Tool.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
                 }
 
@@ -516,7 +516,7 @@ public class ActionDriver extends HttpServlet implements Servlet, Filter {
                   }
                   if (!map.isEmpty()) {
                       sb.append("\r\n\tCookies     : ")
-                        .append(Tool.indent(Dawn.toString(map)).substring(1));
+                        .append(Syno.indent(Dawn.toString(map)).substring(1));
                   }
                 }
 

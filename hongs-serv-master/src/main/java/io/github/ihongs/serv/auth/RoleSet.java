@@ -8,8 +8,8 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.io.File;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,7 +34,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         String  n;
         File    f;
 
-        n = "master/role/" + Tool.splitPath(userId);
+        n = "master/role/" + Syno.splitPath(userId);
         f = new File(Core.DATA_PATH
               + File.separator + "serial"
               + File.separator + n+".ser"

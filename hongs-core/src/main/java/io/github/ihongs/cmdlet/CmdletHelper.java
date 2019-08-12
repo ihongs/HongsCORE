@@ -3,8 +3,8 @@ package io.github.ihongs.cmdlet;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.util.Dawn;
+import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import io.github.ihongs.util.Tool;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -440,11 +440,11 @@ public class CmdletHelper
     } else
     if (n == ok) {
         t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) TT: %s", ok, Tool.humanTime(t));
+        notes = String.format("Ok(%d) TT: %s", ok, Syno.humanTime(t));
     } else {
         t = System.currentTimeMillis() - t;
         t = (long) ( t / scale * 100 - t );
-        notes = String.format("Ok(%d) ET: %s", ok, Tool.humanTime(t));
+        notes = String.format("Ok(%d) ET: %s", ok, Syno.humanTime(t));
     }
     CmdletHelper.progres(notes , scale);
   }
@@ -468,11 +468,11 @@ public class CmdletHelper
     } else
     if (n == ok + er) {
         t = System.currentTimeMillis() - t;
-        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Tool.humanTime(t));
+        notes = String.format("Ok(%d) Er(%d) TT: %s", ok, er, Syno.humanTime(t));
     } else {
         t = System.currentTimeMillis() - t;
         t = (long) ( t / scale * 100 - t );
-        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Tool.humanTime(t));
+        notes = String.format("Ok(%d) Er(%d) ET: %s", ok, er, Syno.humanTime(t));
     }
     CmdletHelper.progres(notes , scale);
   }

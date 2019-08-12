@@ -18,7 +18,7 @@ import java.text.NumberFormat;
  *
  * @author Hongs
  */
-public final class Tool
+public final class Syno
 {
 
   private static final NumberFormat NS_FMT = NumberFormat.getInstance();
@@ -116,7 +116,7 @@ public final class Tool
    */
   public static String to36Hex(long num)
   {
-    return Tool.toXHex(num, HEX_36);
+    return Syno.toXHex(num, HEX_36);
   }
 
   /**
@@ -126,7 +126,7 @@ public final class Tool
    */
   public static String to26Hex(long num)
   {
-    return Tool.toYHex(num, HEX_26);
+    return Syno.toYHex(num, HEX_26);
   }
 
   public static long asXHex(String str, char[] arr) {
@@ -228,18 +228,18 @@ public final class Tool
      * 偶数个转义符后加转义符.
      */
 
-    String esc2 = Tool.escapeRegular(esc);
-    String sym2 = Tool.escapeReplace(sym);
+    String esc2 = Syno.escapeRegular(esc);
+    String sym2 = Syno.escapeReplace(sym);
 
     return str.replaceAll("(["+esc2+"])", sym2+"$1");
   }
   public static String escape(String str, String esc)
   {
-    return Tool.escape(str, esc, "\\");
+    return Syno.escape(str, esc, "\\");
   }
   public static String escape(String str)
   {
-    return Tool.escape(str, "'\"", "\\");
+    return Syno.escape(str, "'\"", "\\");
   }
 
   /**
@@ -261,18 +261,18 @@ public final class Tool
      * 把单个转义符全删除掉.
      */
 
-    String esc2 = Tool.escapeRegular(esc);
-    String sym2 = Tool.escapeRegular(sym);
+    String esc2 = Syno.escapeRegular(esc);
+    String sym2 = Syno.escapeRegular(sym);
 
     return str.replaceAll(sym2+"(["+esc2+"])", "$1");
   }
   public static String resume(String str, String esc)
   {
-    return Tool.resume(str, esc, "\\");
+    return Syno.resume(str, esc, "\\");
   }
   public static String resume(String str)
   {
-    return Tool.resume(str, "'\"", "\\");
+    return Syno.resume(str, "'\"", "\\");
   }
 
   //** 缩进 **/
@@ -568,10 +568,10 @@ public final class Tool
    * @return
    */
   public static String splitPn36(String name) {
-      int i  = 0;
+      int i  = 0 ;
       int j  = name.length();
-      if (j >= 8) {
-          j  = 8;
+      if (j >= 8 ) {
+          j  = 8 ;
       } else {
           j  = j - ( j % 2 );
       }
@@ -590,7 +590,7 @@ public final class Tool
    * @return
    */
   public static String splitPn16(String name) {
-      int i  = 0;
+      int i  = 0 ;
       int j  = name.length();
       if (j >= 32) {
           j  = 32;

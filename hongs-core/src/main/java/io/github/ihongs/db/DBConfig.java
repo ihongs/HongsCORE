@@ -5,7 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.util.Tool;
+import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -590,7 +590,7 @@ public class DBConfig
         opts.put("CORE_PATH", Core.CORE_PATH);
         opts.put("CONF_PATH", Core.CONF_PATH);
         opts.put("DATA_PATH", Core.DATA_PATH);
-        name = Tool.inject( name, opts );
+        name = Syno.inject( name, opts );
 
         if(!new File(name).isAbsolute()) {
             name = Core.DATA_PATH +"/sqlite/"+ name;

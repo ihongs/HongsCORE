@@ -114,7 +114,7 @@ public class InfoAction {
             rsp.put("core_set", Core.GLOBAL_CORE.keySet());
         }
         if ( rb != null && rb.contains("lock_info")) {
-            rsp.put("lock_map", io.github.ihongs.util.thread.Block.counts());
+            rsp.put("lock_map", io.github.ihongs.util.reflex.Block.counts());
         }
 
         helper.reply("", rsp);

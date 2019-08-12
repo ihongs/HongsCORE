@@ -6,7 +6,7 @@ import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DBConfig;
-import io.github.ihongs.util.Classes;
+import io.github.ihongs.util.reflex.Classes;
 
 import java.io.File;
 import java.io.FileWriter;

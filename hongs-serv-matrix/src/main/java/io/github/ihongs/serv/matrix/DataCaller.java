@@ -6,7 +6,7 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.util.Remote;
 import io.github.ihongs.util.Syno;
-import io.github.ihongs.util.thread.Async;
+import io.github.ihongs.util.reflex.Async;
 import java.util.function.Supplier;
 
 /**

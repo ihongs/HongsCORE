@@ -56,11 +56,11 @@ public class DBAction implements IAction, IActing {
                 throw ex;
             }}
 
-            String mad = ( mod+"/"+ent );
+            mod = mod + "/" + ent;
 
             try {
-                fs = FormSet.getInstance(mad).getForm(ent);
-                runner.setModule ( mad );
+                fs = FormSet.getInstance(mod).getForm(ent);
+                runner.setModule ( mod );
             } catch ( HongsException ex) {
             if (ex.getErrno() != 0x10e8
             &&  ex.getErrno() != 0x10ea) {

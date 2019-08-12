@@ -322,7 +322,7 @@
     if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/reveal.act")) context.find(".reveal").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) context.find(".record").remove();
+    if (!hsChkUri("<%=_module%>/<%=_entity%>/reveal.act")) context.find(".record").remove();
 
     //** 列表、搜索表单 **/
 

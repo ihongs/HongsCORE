@@ -1,4 +1,4 @@
-package io.github.ihongs.util.thread;
+package io.github.ihongs.util.reflex;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;

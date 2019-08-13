@@ -39,14 +39,13 @@
         </div>
         <div class="col-xs-6">
             <div class="input-group">
-                <!-- <%=_wd%> -->
                 <%
                     StringBuilder sp = new StringBuilder( );
                     if (! _wd.isEmpty()) {
                     for(String ss : _wd) {
-                        ss = Dict.getValue(_fields, "" , ss , "__text__");
-                        if (ss.length() != 0) sp.append( ss ).append(",");
-                    }   if (sp.length() != 0) sp.setLength(sp.length()-1);
+                        ss = Dict.getValue(_fields, "", ss , "__text__" );
+                        if (ss.length() != 0) sp.append(ss).append(", " );
+                    }   if (sp.length() != 0) sp.setLength(sp.length()-2);
                     } else {
                         sp.append("\" disabled=\"disabled");
                     }
@@ -56,10 +55,10 @@
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                     <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats "></span></button>
-                <%if (!"select".equals(_action)) {%>
+                    <%if (!"select".equals(_action)) {%>
                     <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
                     <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book  "></span></button>
-                <%} // End If %>
+                    <%} // End If %>
                 </span>
             </div>
         </div>
@@ -127,7 +126,7 @@
                     && (_wd.contains(name)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配\"";
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配";
                     }
                 %>
                 <input class="form-control" type="text" name="ar.0.<%=name%>" />

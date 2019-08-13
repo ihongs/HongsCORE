@@ -12,6 +12,7 @@ import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.dh.IEntity;
 import io.github.ihongs.dh.search.SearchAction;
 import io.github.ihongs.serv.matrix.Data;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.lang.reflect.Method;
 import java.util.Map;
@@ -45,16 +46,22 @@ public class DataAction extends SearchAction {
     }
 
     @Override
-    protected Map getReqMap (ActionHelper helper, IEntity ett, String opr, Map req)
+    protected Map getReqMap(ActionHelper helper, IEntity ett, String opr, Map req)
     throws HongsException {
         req = super.getReqMap(helper, ett, opr, req);
 
         // 默认的终端标识
+        if ("create".equals(opr)
+        ||  "update".equals(opr)
+        ||  "create".equals(opr) ) {
         String meno = Synt.asString(req.get("meno"));
-        if ( meno != null && ! meno.isEmpty()) {
-            req.put("meno", "centra."+ meno );
-        } else {
-            req.put("meno", "centra");
+        if (meno == null || meno.isEmpty()) {
+            req.put ( "meno" , "centra" );
+        } else
+        if ( ! meno.equals    ("centra" )
+        &&   ! meno.startsWith("centra.") ) {
+            req.put ( "meno" , "centra."  +  meno  );
+        }
         }
 
         return req;
@@ -83,10 +90,20 @@ public class DataAction extends SearchAction {
     @Action("revert")
     @CommitSuccess
     public void revert(ActionHelper helper) throws HongsException {
-        Data  sr = (Data) getEntity(helper);
-        Map   rd = helper.getRequestData( );
-            sr.revert(rd);
-        helper.reply ("");
+        Data   ett = (Data) getEntity(helper);
+        Map    req = helper.getRequestData( );
+
+        // 默认的终端标识
+        String meno = Synt.asString(req.get("meno"));
+        if (meno == null || meno.isEmpty()) {
+            req.put ( "meno" , "centra" );
+        } else
+        if ( ! meno.equals    ("centra" )
+        &&   ! meno.startsWith("centra.") ) {
+            req.put ( "meno" , "centra."  +  meno  );
+        }
+
+        helper.reply("", ett.revert(req));
     }
 
     @Action("reveal")
@@ -96,23 +113,24 @@ public class DataAction extends SearchAction {
         String ent = runner.getEntity();
         String mod = runner.getModule();
 
-        Data    sr = (Data) getEntity(helper);
-        Map     rd = helper.getRequestData( );
-        rd.put ( "form_id" , sr.getFormId() );
-        rd.put ( "user_id" , rd.get("user") ); // user_id 总是当前用户, 筛选需绕过去
-        Map     sd = sr.getModel().search(rd);
+        Data   ett = (Data) getEntity(helper);
+        Map    req = helper.getRequestData( );
+               req.put("form_id", ett.getFormId());
+               req.put("user_id", req.get("user"));
+        Map    rsp = ett.getModel( ).search( req );
 
         // 详情数据转换
-        if (sd.containsKey("info")) {
-            Map df = (Map) sd.remove("info" );
-            Map dt = (Map) io.github.ihongs.util.Dawn.toObject(
-                  (String) df.remove("data"));
-            sd.put("logs", df);
-            sd.put("info", dt);
+        if (rsp.containsKey("info")) {
+            Map df = (Map) rsp.remove("info");
+            Map dt = (Map) Dawn.toObject(
+                  (String)  df.remove("data")
+            );
+            rsp.put("logs", df);
+            rsp.put("info", dt);
 
             // 补充枚举和关联
-            Set ab = Synt.toTerms(rd.get( Cnst.AB_KEY ));
-            if (ab != null) {
+            Set ab = Synt.toTerms(req.get(Cnst.AB_KEY));
+            if (null != ab) {
                 byte md = 0;
                 if (ab.contains("_text")) md += SelectHelper.TEXT;
                 if (ab.contains("_time")) md += SelectHelper.TIME;
@@ -121,12 +139,12 @@ public class DataAction extends SearchAction {
                 if (ab.contains(".form")) md += SelectHelper.FORM;
                 if (ab.contains(".enum")) md += SelectHelper.ENUM;
                 if (md != 0) {
-                    new SelectHelper().addItemsByForm(mod, ent).select(sd, md);
+                    new SelectHelper().addItemsByForm(mod, ent).select(rsp, md);
                 }
             }
         }
 
-        helper.reply(sd);
+        helper.reply(rsp);
     }
 
 }

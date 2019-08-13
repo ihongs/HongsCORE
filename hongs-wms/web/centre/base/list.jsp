@@ -35,9 +35,9 @@
                     StringBuilder sp = new StringBuilder( );
                     if (! _wd.isEmpty()) {
                     for(String ss : _wd) {
-                        ss = Dict.getValue(_fields, "" , ss , "__text__");
-                        if (ss.length() != 0) sp.append( ss ).append(",");
-                    }   if (sp.length() != 0) sp.setLength(sp.length()-1);
+                        ss = Dict.getValue(_fields, "", ss , "__text__" );
+                        if (ss.length() != 0) sp.append(ss).append(", " );
+                    }   if (sp.length() != 0) sp.setLength(sp.length()-2);
                     } else {
                         sp.append("\" disabled=\"disabled");
                     }
@@ -153,7 +153,7 @@
                     && (_wd.contains(name)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配\"";
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配";
                     }
                 %>
                 <input type="text" class="form-control" name="<%=name%>" />

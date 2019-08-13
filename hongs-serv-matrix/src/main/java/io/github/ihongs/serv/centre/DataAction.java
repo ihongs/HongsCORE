@@ -42,16 +42,22 @@ public class DataAction extends SearchAction {
     }
 
     @Override
-    protected Map getReqMap (ActionHelper helper, IEntity ett, String opr, Map req)
+    protected Map getReqMap(ActionHelper helper, IEntity ett, String opr, Map req)
     throws HongsException {
         req = super.getReqMap(helper, ett, opr, req);
 
         // 默认的终端标识
+        if ("create".equals(opr)
+        ||  "update".equals(opr)
+        ||  "create".equals(opr) ) {
         String meno = Synt.asString(req.get("meno"));
-        if ( meno != null && ! meno.isEmpty()) {
-            req.put("meno", "centre."+ meno );
-        } else {
-            req.put("meno", "centre");
+        if (meno == null || meno.isEmpty()) {
+            req.put ( "meno" , "centre" );
+        } else
+        if ( ! meno.equals    ("centre" )
+        &&   ! meno.startsWith("centre.") ) {
+            req.put ( "meno" , "centre."  +  meno  );
+        }
         }
 
         return req;

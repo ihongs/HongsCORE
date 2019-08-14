@@ -292,7 +292,7 @@ function HsCate(context, opts) {
     this.context = context;
     this.statBox = statBox;
     this.findBox = findBox;
-    this.aurl  = opts.aurl;
+    this.murl  = opts.murl;
     this.curl  = opts.curl;
 
     var  that  = this;
@@ -341,7 +341,7 @@ HsCate.prototype = {
 
     amount: function(rb) {
         var that = this;
-        var url  = this.surl;
+        var url  = this.murl;
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;

@@ -251,16 +251,16 @@ id=ID 或 id.=ID1&id.=ID2...
     }
 </style>
 <script type="text/javascript">
-    (function($) {
-        var context = $("#<%=_pageId%>").removeAttr("id");
+(function($) {
+    var context = H$("#<%=_pageId%>");
 
-        context.find("pre").each(function() {
-            var html = $(this).html();
-            // 去除中间空行, 统一换行符号
-            html = html.replace(/(\r\n(\r\n)*|\r\r*|\n\n*)/g, "\r\n");
-            // 去除末尾空行
-            html = html.replace(/[\r\n ]+$/g, "");
-            $(this).html(html);
-        });
-    })(jQuery);
+    context.find("pre").each(function() {
+        var html = $(this).html();
+        // 去除中间空行, 统一换行符号
+        html = html.replace(/(\r\n(\r\n)*|\r\r*|\n\n*)/g, "\r\n");
+        // 去除末尾空行
+        html = html.replace(/[\r\n ]+$/g, "");
+        $(this).html(html);
+    });
+})(jQuery);
 </script>

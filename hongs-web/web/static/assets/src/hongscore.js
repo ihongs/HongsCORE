@@ -1014,14 +1014,15 @@ function hsGetConf(key, def) {
 /**
  * 检查权限
  * @param {String} act
+ * @param {String} def 缺省值
  * @return {Boolean} 是(true)否(false)有权访问某动作
  */
-function hsGetAuth(act) {
+function hsGetAuth(act, def) {
     if (typeof(HsAUTH[act]) !== "undefined") {
         return HsAUTH[act];
     }
     else {
-        return true;
+        return def;
     }
 }
 
@@ -1056,8 +1057,8 @@ function hsFixUri(uri) {
 
 /**
  * 补充URI为其设置参数
- * @param {type} uri
- * @param {type} pms 可以是 hsSerialArr 或 .loadbox 节点
+ * @param {String} uri
+ * @param {Object} pms 可为 hsSerialArr,HsSerialDic,HsSerialDat 或 .loadbox 对象
  * @return {String} 完整的URI
  */
 function hsSetPms(uri, pms) {
@@ -1065,39 +1066,37 @@ function hsSetPms(uri, pms) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
     }   pms = hsSerialDic(pms);
-    for(var n in pms) {
-        var v  = pms[n];
-        if (jQuery.isArray(v)) {
-            uri= hsSetParams(uri, n, v);
-        }
-        else {
-            uri= hsSetParam (uri, n, v);
-        }
+    var ums = hsSerialDic(uri);
+        ums = hsSerialMix(ums ,   pms );
+        ums = hsSerialArr(ums);
+        ums =jQuery.param(ums);
+        uri = uri.replace(/[?#].*/, '');
+    if (ums) {
+        uri = uri + "?" + ums ;
     }
-    return  uri;
+    return uri;
 }
 
 /**
  * 补全URI为其设置参数
- * 注意: 参数必须是单个的, 对多个参数如 &a[]=$a&a[]=$a 只会设置两个一样的值
+ * 注意 : 参数须为单个, 多个参数如 ?a.=$a&a.=$a 会设相同值. 亦可作字符串参数注入
  * @param {String} uri
- * @param {Object} pms 可以是 hsSerialArr 或 .loadbox 节点
+ * @param {Object} pms 可为 hsSerialArr,HsSerialDic,HsSerialDat 或 .loadbox 对象 
  * @returns {String} 完整的URI
  */
 function hsFixPms(uri, pms) {
     if (pms instanceof Element || pms instanceof jQuery) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
-    }   pms = hsSerialDat(pms);
-    return uri.replace(/\$(\w+|\{.+?\})/gm , function(w) {
+    }   pms = hsSerialDic(pms);
+    return  uri.replace(/\$(\w+|\{.+?\})/gm, function(w) {
         if (w.substring(0 , 2) === "${") {
-            w = w.substring(2, w.length -1);
+            w = w.substring(2 , w.length - 1);
         }
         else {
             w = w.substring(1);
         }
-        w = hsGetValue(pms, w);
-        return  w || "";
+        return  pms [w] || "" ;
     });
 };
 

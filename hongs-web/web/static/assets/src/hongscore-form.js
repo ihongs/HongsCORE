@@ -43,21 +43,6 @@ function HsForm(context, opts) {
         }
     }
 
-    function initData (a) {
-        var s = [];
-        for(var i = 0; i < a.length; i ++) {
-            var n = a [i];
-            if (n.value && n.name) {
-                s.push(n);
-            }
-        }
-        return  s;
-    }
-
-    function loadData (a) {
-        return  a;
-    }
-
     var loadArr = hsSerialArr(loadBox);
     if (loadUrl) {
         loadUrl = hsFixPms(loadUrl, loadArr);
@@ -66,13 +51,34 @@ function HsForm(context, opts) {
         saveUrl = hsFixPms(saveUrl, loadArr);
         this.formBox.attr("action", saveUrl);
     }
+
+    /**
+     * 没有指定 id 尝试从加载参数中提取
+     */
     if (! loadDat) {
-        loadDat = loadData(loadArr);
+        var id = hsGetParam(loadUrl , idKey);
+        if (! id ) {
+            id = hsGetSeria(loadArr , idKey);
+            loadDat        = {};
+            loadDat[idKey] = id;
+        }
     }
+
+    /**
+     * 表单初始数据可以从加载参数中提取
+     */
     if (! initDat) {
-        initDat = initData(loadArr);
+        var initArr = [];
+        for(var i = 0; i < loadArr.length; i ++ ) {
+            var n = loadArr [i];
+            if (n.name && (n.value||n.value===0)) {
+                initArr.push(n);
+            }
+        }
+        this._init = initArr;
+    } else {
+        this._init = initDat;
     }
-    this._init  = initDat ;
 
     this.valiInit();
     this.saveInit();
@@ -84,24 +90,24 @@ function HsForm(context, opts) {
     if (loadUrl
     && (hsGetParam(loadUrl, idKey)
     ||  hsGetParam(loadUrl, abKey))) {
-        this.load (loadUrl, loadDat || loadArr );
+        this.load (loadUrl, loadDat);
     } else if (! this._url) {
         this.loadBack( {} );
     }
 }
 HsForm.prototype = {
     load     : function(url, data) {
-        if (url ) this._url  = url;
-        if (data) this._data = hsSerialArr(data);
+        if (url ) this._url  = url ;
+        if (data) this._data = data;
         this.ajax({
-            "url"       : this._url ,
-            "data"      : this._data,
-            "type"      : "POST",
-            "dataType"  : "json",
-            "funcName"  : "load",
-            "cache"     : false,
-            "context"   : this,
-            "success"   : this.loadBack
+            "url"      : this._url ,
+            "data"     : this._data,
+            "type"     : "POST",
+            "dataType" : "json",
+            "funcName" : "load",
+            "cache"    : false,
+            "context"  : this,
+            "success"  : this.loadBack
         });
     },
     loadBack : function(rst) {

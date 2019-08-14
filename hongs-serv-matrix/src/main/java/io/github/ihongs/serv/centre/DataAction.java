@@ -49,7 +49,7 @@ public class DataAction extends SearchAction {
         // 默认的终端标识
         if ("create".equals(opr)
         ||  "update".equals(opr)
-        ||  "create".equals(opr) ) {
+        ||  "delete".equals(opr) ) {
         String meno = Synt.asString(req.get("meno"));
         if (meno == null || meno.isEmpty()) {
             req.put ( "meno" , "centre" );

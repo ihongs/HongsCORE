@@ -232,10 +232,10 @@
     var formbox = context.find("form");
 
     var formobj = context.hsForm({
-        <%if ("update".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork&<%=Cnst.ID_KEY%>=$id",
-        <%} else {%>
+        <%if ("create".equals(_action)) {%>
         _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        <%} else {%>
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
         <%} /* End if */ %>
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,

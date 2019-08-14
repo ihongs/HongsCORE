@@ -28,7 +28,7 @@
                 <button type="button" class="commit btn btn-primary"><%=_locale.translate("fore.select", _title)%></button>
                 <%} // End If %>
                 <button type="button" class="create btn btn-default"><%=_locale.translate("fore.create", _title)%></button>
-                <%if ("update".equals(_action)) {%>
+                <%if ("browse".equals(_action)) {%>
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
                 <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
@@ -55,7 +55,7 @@
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                     <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats "></span></button>
-                    <%if ("update".equals(_action)) {%>
+                    <%if ("browse".equals(_action)) {%>
                     <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
                     <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book  "></span></button>
                     <%} // End If %>

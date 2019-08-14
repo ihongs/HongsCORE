@@ -174,7 +174,7 @@
     var formbox = context.find("form");
 
     var formobj = context.hsForm({
-        _url: "<%=_module%>/<%=_entity%><%="revert".equals(_action)?"/revert":""%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=_text,_fork,.form",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=_text,_fork,.form",
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
         _fill__view: hsFormFillView

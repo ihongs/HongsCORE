@@ -7,7 +7,7 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "browse");
-    String _pageId = (_module + "_" + _entity + "_" + _action).replace('/', '_');
+    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_list").replace('/', '_');
 
     String _conf   = FormSet.hasConfFile(_module + "/" + _entity)

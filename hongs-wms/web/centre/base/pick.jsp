@@ -6,7 +6,7 @@
 <%@include file="_boot_.jsp"%>
 <%
     String _action = Synt.declare(request.getAttribute("list.action"), "select");
-    String _pageId = (_module + "_" + _entity + "_" + _action).replace('/', '_');
+    String _pageId = (_module + "-" + _entity + "-" + _action).replace('/', '-');
     String _funcId = "in_"+(_module + "_" + _entity + "_pick").replace('/', '_');
 
     StringBuilder _ob = new StringBuilder( "-,-boost,-mtime,-ctime");
@@ -35,8 +35,8 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <th data-fn="id[]" data-ft="<%if ("select".equals(_action)) {%>_fork<%} else {%>_check<%}%>" class="_check">
-                        <input type="checkbox" class="checkall" name="id[]"/>
+                    <th data-fn="id." data-ft="_check" class="_check">
+                        <input name="id." type="checkbox" class="checkall"/>
                     </th>
                     <th data-fn="name" data-ob="name" class="sortable name"><%=Dict.getDepth(_fields, "name" , "__text__")%></th>
                     <th data-fn="note" data-ob="note" class="noteable note"><%=Dict.getDepth(_fields, "note" , "__text__")%></th>
@@ -71,8 +71,8 @@
 
     var listobj = context.hsList({
         _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,created&<%=Cnst.OB_KEY%>=<%=_ob%>&<%=Cnst.RB_KEY%>=<%=_rb%>",
-        _fill__fork: hsListFillFork,
-         fillPage  : hsListFillNext
+         fillPage   : hsListFillNext,
+        _fill__check: hsListFillFork
     });
 
     // 简单分页, 选择条目

@@ -163,6 +163,7 @@ function HsList(context, opts) {
 }
 HsList.prototype = {
     load     : function(url, data) {
+        data =  hsSerialObj (data) ;
         if (url ) this._url  = url ;
         if (data) this._data = data;
         this.ajax({

@@ -97,6 +97,7 @@ function HsForm(context, opts) {
 }
 HsForm.prototype = {
     load     : function(url, data) {
+        data =  hsSerialObj (data) ;
         if (url ) this._url  = url ;
         if (data) this._data = data;
         this.ajax({

@@ -209,6 +209,7 @@ function HsTree(context, opts) {
 }
 HsTree.prototype = {
     load     : function(pid, url, data) {
+        data =  hsSerialObj (data) ;
         if (pid ) this._pid  = pid ;
         if (url ) this._url  = url ;
         if (data) this._data = data;

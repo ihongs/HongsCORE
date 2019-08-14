@@ -6,7 +6,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%
-    String _pageId = (_module + "_" + _entity + "_lore").replace('/', '_');
+    String _pageId = (_module + "-" + _entity + "-swap").replace('/', '-');
 
     StringBuilder listable = new StringBuilder();
     StringBuilder sortable = new StringBuilder();

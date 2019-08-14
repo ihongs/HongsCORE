@@ -2,7 +2,7 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <%
-    String _pageId = (_module + "_" + _entity + "_logs").replace('/', '_');
+    String _pageId = (_module + "-" + _entity + "-snap").replace('/', '-');
 %>
 <h2><%=_locale.translate("fore.record.title", _title)%></h2>
 <div id="<%=_pageId%>" class="snap-list">

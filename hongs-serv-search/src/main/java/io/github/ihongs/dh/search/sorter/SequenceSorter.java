@@ -13,15 +13,15 @@ import org.apache.lucene.util.BytesRef;
 
 /**
  * 集合顺序排序
- * 用法 new SortField(FIELD_NAME, new SortInSet(DIST), DESC)
- * 类似 MySQL 的 ORDER BY FIND_IN_SET(col, set)
+ 用法 new SortField(FIELD_NAME, new SequenceSorter(DIST), DESC)
+ 类似 MySQL 的 ORDER BY FIND_IN_SET(col, set)
  * @author Hongs
  */
-public class SortInSet extends FieldComparatorSource {
+public class SequenceSorter extends FieldComparatorSource {
 
     final Map <String, Long> dist ;
 
-    public SortInSet(Collection<String> vals) {
+    public SequenceSorter(Collection<String> vals) {
         long  i  = 0 - vals.size();
             dist = new HashMap ( );
         for ( String  val : vals ) {

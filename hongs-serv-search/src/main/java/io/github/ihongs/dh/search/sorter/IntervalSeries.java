@@ -8,15 +8,15 @@ import org.apache.lucene.search.FieldComparator;
 import org.apache.lucene.search.FieldComparatorSource;
 
 /**
- * 相对值排序器
- 用法 new SortField(FIELD_NAME, new RelativeSorter(DIST), DESC)
+ * 区间近邻排序
+ 用法 new SortField("开始字段,结束字段", new IntervalSeries(DIST), DESC)
  * @author Hongs
  */
-public class RelativeSorter extends FieldComparatorSource {
+public class IntervalSeries extends FieldComparatorSource {
 
     final long dist;
 
-    public RelativeSorter(long dist) {
+    public IntervalSeries(long dist) {
         this.dist = dist;
     }
 
@@ -27,13 +27,14 @@ public class RelativeSorter extends FieldComparatorSource {
 
     @Override
     public String toString() {
-        return "Relative("+ dist + ")";
+        return "Interval("+ dist + ")";
     }
 
     static public class Comparator extends BaseComparator {
 
         final long dist;
-        NumericDocValues docs;
+        NumericDocValues doc0;
+        NumericDocValues doc1;
 
         public Comparator(String name, int hits, long dist) {
             super(name, hits);
@@ -43,19 +44,32 @@ public class RelativeSorter extends FieldComparatorSource {
         @Override
         protected void doSetNextReader (LeafReader r)
         throws IOException {
-            docs = DocValues.getNumeric(r, name);
+            String[] names = name.split(",", 2);
+            doc0 = DocValues.getNumeric(r, names [0]);
+            doc1 = DocValues.getNumeric(r, names [1]);
         }
 
         @Override
-        protected long toGetCurrDvalue ( int d )
+        protected long toGetCurrDvalue (int  d)
         throws IOException {
             try {
-                long fx = docs.advanceExact(d) ? docs.longValue() : 0;
+                long fx = doc0.advanceExact(d) ? doc0.longValue() : 0;
+                long fy = doc1.advanceExact(d) ? doc1.longValue() : 0;
+
+                // 区间外为正值, 仅计算绝对值
                 if ( fx > dist) {
-                    return fx - dist ;
+                    return  fx - dist;
+                } else
+                if ( fy < dist) {
+                    return  dist - fy;
+                }
+
+                // 区间内为负值, 比外面都优先
+                if ( fy - dist > dist - fx) {
+                    return  fx - dist;
                 } else
                 {
-                    return dist - fx ;
+                    return  dist - fy;
                 }
             }
             catch (NullPointerException ex) {

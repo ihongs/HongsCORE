@@ -125,7 +125,7 @@ public class DataAction extends SearchAction {
             Map dt = (Map) Dawn.toObject(
                   (String)  df.remove("data")
             );
-            rsp.put("logs", df);
+            rsp.put("snap", df);
             rsp.put("info", dt);
 
             // 补充枚举和关联

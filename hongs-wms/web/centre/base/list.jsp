@@ -296,7 +296,7 @@
     });
 
     var statobj = context.hsCate({
-        aurl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
+        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
         curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
@@ -304,7 +304,7 @@
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
-    statobj.aurl = hsSetPms(statobj.aurl, loadres);
+    statobj.murl = hsSetPms(statobj.murl, loadres);
     statobj.curl = hsSetPms(statobj.curl, loadres);
 
     // 移除参数限定的过滤项

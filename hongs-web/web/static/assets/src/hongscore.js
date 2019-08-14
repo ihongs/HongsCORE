@@ -295,6 +295,52 @@ function hsResponse(rst, qut) {
 }
 
 /**
+ * 尝试序列化对象, 保留 HsSerialDic,HsSerialDat 类型
+ * @param {Array|String|Object|Element|FormData} obj
+ * @param {boolean} kep 为 true 时不处理 PlainObject 和 FormData
+ * @return {Array|HsSerialDic|HsSerialDat}
+ */
+function hsSerialObj(obj, kep) {
+    var typ = jQuery.type(obj);
+    if (typ == "array" || typ == "object") {
+        if (obj instanceof jQuery
+        ||  obj instanceof Element ) {
+            typ = "jquery";
+        } else
+        if (       window .FormData
+        &&  obj instanceof FormData) {
+            typ = "fordat";
+        } else
+        if (obj instanceof HsSerialDic) {
+            typ = "serdic";
+        } else
+        if (obj instanceof HsSerialDat) {
+            typ = "serdat";
+        }
+    }
+    switch (typ) {
+        case "undefined":
+        case "null"  :
+        case "array" :
+        case "serdic":
+        case "serdat":
+            return obj;
+        case "string":
+        case "jquery":
+            return hsSerialArr(obj);
+        case "object":
+        case "fordat":
+        if (kep) {
+            return obj;
+        } else {
+            return hsSerialArr(obj);
+        }
+        default:
+            throw new Error("hsSerialObj: Unsupported type "+typ);
+    }
+}
+
+/**
  * 序列化为数组, 供发往服务器(类似 jQuery.fn.serializeArray)
  * @param {Array|String|Object|Element|FormData} obj
  * @return {Array}
@@ -319,6 +365,9 @@ function hsSerialArr(obj) {
         }
     }
     switch (typ) {
+        case "undefined":
+        case "null"  :
+            break;
         case "array" :
             arr = obj;
             break;
@@ -398,9 +447,6 @@ function hsSerialArr(obj) {
             } else {
                 arr = jQuery(obj).serializeArray();
             }
-            break;
-        case "undefined":
-        case "null":
             break;
         default:
             throw new Error("hsSerialArr: Unsupported type "+typ);
@@ -1083,7 +1129,7 @@ function hsSetPms(uri, pms) {
  * 补全URI为其设置参数
  * 注意 : 参数须为单个, 多个参数如 ?a.=$a&a.=$a 会设相同值. 亦可作字符串参数注入
  * @param {String} uri
- * @param {Object} pms 可为 hsSerialArr,HsSerialDic,HsSerialDat 或 .loadbox 对象 
+ * @param {Object} pms 可为 hsSerialArr,HsSerialDic,HsSerialDat 或 .loadbox 对象
  * @returns {String} 完整的URI
  */
 function hsFixPms(uri, pms) {

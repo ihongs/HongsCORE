@@ -1032,8 +1032,9 @@ function hsGetAuth(act, def) {
  * @return {Boolean} 是否有权
  */
 function hsChkUri(uri) {
+    if ( ! uri )  uri = "";
     uri  = uri.replace(/[?#].*/, '');
-    return hsGetAuth(uri) !== false ;
+    return false  !== hsGetAuth(uri);
 }
 
 /**
@@ -1062,6 +1063,7 @@ function hsFixUri(uri) {
  * @return {String} 完整的URI
  */
 function hsSetPms(uri, pms) {
+    if ( ! uri )  uri = "";
     if (pms instanceof Element || pms instanceof jQuery) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
@@ -1085,6 +1087,7 @@ function hsSetPms(uri, pms) {
  * @returns {String} 完整的URI
  */
 function hsFixPms(uri, pms) {
+    if ( ! uri ) return "";
     if (pms instanceof Element || pms instanceof jQuery) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);

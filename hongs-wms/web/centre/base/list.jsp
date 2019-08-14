@@ -244,7 +244,7 @@
 </div>
 <script type="text/javascript">
 (function($) {
-    var context = $("#<%=_pageId%>").removeAttr("id");
+    var context = H$("#<%=_pageId%>");
     var loadbox = context.closest(".loadbox");
     var findbox = context.find(".findbox");
     var filtbox = context.find(".filtbox");
@@ -300,13 +300,12 @@
         curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
-    var loadarr = hsSerialArr(loadbox);
-    var loadres = hsSerialDat(loadarr);
+    var loadres = hsSerialDat(loadres);
 
     // 绑定参数
-    listobj._url = hsSetPms(listobj._url, loadarr);
-    statobj.aurl = hsSetPms(statobj.aurl, loadarr);
-    statobj.curl = hsSetPms(statobj.curl, loadarr);
+    listobj._url = hsSetPms(listobj._url, loadres);
+    statobj.aurl = hsSetPms(statobj.aurl, loadres);
+    statobj.curl = hsSetPms(statobj.curl, loadres);
 
     // 移除参数限定的过滤项
     for(var fn in loadres) {
@@ -359,7 +358,7 @@
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {
         // 外部定制
         if (window["<%=_funcId%>"]) {
-            window["<%=_funcId%>"](context, listobj);
+            window["<%=_funcId%>"](context, listobj, filtobj, statobj);
         }
 
         // 加载数据

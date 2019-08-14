@@ -146,32 +146,34 @@ function HsList(context, opts) {
 
     if (findBox.length) {
         findBox.on("submit", function() {
-            that.load(null , findBox  );
-            return   false ;
+            that.load(null ,
+            hsSerialMix(loadDat, findBox)
+            ); return false;
         });
     }
 
     //** 立即加载 **/
 
     if (loadUrl) {
-        loadUrl = hsFixPms   (loadUrl, loadBox);
-        loadDat = hsSerialMix(loadDat, findBox);
-        this.load(/*current*/ loadUrl, loadDat);
+        this.load(
+            hsFixPms   (loadUrl, loadBox),
+            hsSerialMix(loadDat, findBox)
+        );
     }
 }
 HsList.prototype = {
     load     : function(url, data) {
-        if (url ) this._url  = url;
-        if (data) this._data = hsSerialArr(data);
+        if (url ) this._url  = url ;
+        if (data) this._data = data;
         this.ajax({
-            "url"       : this._url ,
-            "data"      : this._data,
-            "type"      : "POST",
-            "dataType"  : "json",
-            "funcName"  : "load",
-            "cache"     : false,
-            "context"   : this,
-            "success"   : this.loadBack
+            "url"      : this._url ,
+            "data"     : this._data,
+            "type"     : "POST",
+            "dataType" : "json",
+            "funcName" : "load",
+            "cache"    : false,
+            "context"  : this,
+            "success"  : this.loadBack
         });
     },
     loadBack : function(rst) {

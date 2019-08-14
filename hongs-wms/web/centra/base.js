@@ -353,7 +353,7 @@ function HsStat(context, opts) {
     this.context = context;
     this.statBox = statBox;
     this.findBox = findBox;
-    this.aurl  = opts.aurl;
+    this.murl  = opts.murl;
     this.curl  = opts.curl;
 
     var  that  = this;
@@ -416,7 +416,7 @@ HsStat.prototype = {
 
     amount: function(rb) {
         var that = this;
-        var url  = this.aurl;
+        var url  = this.murl;
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;

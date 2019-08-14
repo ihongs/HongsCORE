@@ -63,7 +63,7 @@
 </div>
 <script type="text/javascript">
 (function($) {
-    var context = $("#<%=_pageId%>").removeAttr("id");
+    var context = H$("#<%=_pageId%>");
     var loadbox = context.closest(".loadbox");
     var findbox = context.find   (".findbox");
 

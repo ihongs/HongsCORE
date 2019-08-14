@@ -77,118 +77,118 @@
 </div>
 
 <script type="text/javascript">
-    (function($) {
-        var statmap = {
-            '0': [ "text-danger" , "删除" ],
-            '1': [ "text-default", "新增" ],
-            '2': [ "text-default", "更新" ],
-            '3': [ "text-success", "恢复" ]
-        };
+(function($) {
+    var statmap = {
+        '0': [ "text-danger" , "删除" ],
+        '1': [ "text-default", "新增" ],
+        '2': [ "text-default", "更新" ],
+        '3': [ "text-success", "恢复" ]
+    };
 
-        var context = $('#<%=_pageId%>').removeAttr("id");
-        context.find("[name='ctime.<%=Cnst.GE_REL%>']").val(H$("@ctime_ge", context));
-        context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(H$("@ctime_le", context));
+    var context = H$("#<%=_pageId%>");
+    context.find("[name='ctime.<%=Cnst.GE_REL%>']").val(H$("@ctime_ge", context));
+    context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(H$("@ctime_le", context));
 
-        var listobj = context.hsList({
-            loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*",
-            send    : hsSendWithMemo,
-            _fill_stat: function(td , stat) {
-                var st = statmap['' + stat];
-                td.parent( ).data(this._info).addClass(st[0]);
-                return st[1];
-            },
-            _fill_time: function(td , time) {
-                if (time && time != 0) {
-                    return this._fill__htime(td, time * 1000);
-                }
-                return '-';
-            },
-            _fill_user: function(td , user) {
-                if (user && user.name) {
-                    return  user.name;
-                }
-                return '-';
+    var listobj = context.hsList({
+        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
+        send    : hsSendWithMemo,
+        _fill_stat: function(td , stat) {
+            var st = statmap['' + stat];
+            td.parent( ).data(this._info).addClass(st[0]);
+            return st[1];
+        },
+        _fill_time: function(td , time) {
+            if (time && time != 0) {
+                return this._fill__htime(td, time * 1000);
             }
-        });
+            return '-';
+        },
+        _fill_user: function(td , user) {
+            if (user && user.name) {
+                return  user.name;
+            }
+            return '-';
+        }
+    });
 
-        // 独立记录
-        if (H$( "@id" , context )
-        ||  H$("@user", context)) {
-            context.find("ul.nav-tabs>li:eq(1),ul.adm-menu>li:gt(1)")
-                   .hide();
+    // 独立记录
+    if (H$( "@id" , context )
+    ||  H$("@user", context)) {
+        context.find("ul.nav-tabs>li:eq(1),ul.adm-menu>li:gt(1)")
+               .hide();
+    }
+
+    // 权限检查
+    if (! hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) {
+        var btn = context.find(".revert");
+        var spn = btn.siblings(  "span" );
+        btn.remove();
+        spn.remove();
+    }
+
+    context.on("click", ".revert", function() {
+        var ms = "确定恢复到此版本吗?";
+        var tr = $(this).closest("tr");
+        var id =      tr.data(   "id");
+        var ct =      tr.data("ctime");
+        listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
+    });
+
+    context.on("click", ".review", function() {
+        var lo = context.hsFind ("@" );
+        var tr = $(this).closest("tr");
+        var id =      tr.data(   "id");
+        var ct =      tr.data("ctime");
+        listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
+    });
+
+    context.on("click", ".same-r", function() {
+        var lo = context.hsFind ("@" );
+        var tr = $(this).closest("tr");
+        var tt = $(this).text   (    );
+        var id =    tr.data(     "id");
+        var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
+        var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+    });
+
+    context.on("click", ".same-u", function() {
+        var lo = context.hsFind ("@" );
+        var tr = $(this).closest("tr");
+        var tt = $(this).text   (    );
+        var id =    tr.data("user_id");
+        var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
+        var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+    });
+
+    context.on("click", ".same-m", function() {
+        var lo = context.hsFind ("@" );
+        var tr = $(this).closest("tr");
+        var tt = $(this).text   (    );
+        var id =    tr.data(   "meno");
+        var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
+        var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+    });
+
+    context.on("click", ".nav li", function() {
+        if ( $(this).is(".active,.dropdown")) {
+            return;
         }
 
-        // 权限检查
-        if (! hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) {
-            var btn = context.find(".revert");
-            var spn = btn.siblings(  "span" );
-            btn.remove();
-            spn.remove();
-        }
+        var fv = $(this).attr("data-state") || "";
+        var fe = $(this).attr("data-etime") || "";
+        var fd = $(this).closest("form");
+        fd.find("[name=state]").val(fv );
+        fd.find("[name=etime]").val(fe );
+        fd.find(":submit").click();
 
-        context.on("click", ".revert", function() {
-            var ms = "确定恢复到此版本吗?";
-            var tr = $(this).closest("tr");
-            var id =      tr.data(   "id");
-            var ct =      tr.data("ctime");
-            listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
-        });
-
-        context.on("click", ".review", function() {
-            var lo = context.hsFind ("@" );
-            var tr = $(this).closest("tr");
-            var id =      tr.data(   "id");
-            var ct =      tr.data("ctime");
-            listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
-        });
-
-        context.on("click", ".same-r", function() {
-            var lo = context.hsFind ("@" );
-            var tr = $(this).closest("tr");
-            var tt = $(this).text   (    );
-            var id =    tr.data(     "id");
-            var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
-            var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
-        });
-
-        context.on("click", ".same-u", function() {
-            var lo = context.hsFind ("@" );
-            var tr = $(this).closest("tr");
-            var tt = $(this).text   (    );
-            var id =    tr.data("user_id");
-            var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
-            var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
-        });
-
-        context.on("click", ".same-m", function() {
-            var lo = context.hsFind ("@" );
-            var tr = $(this).closest("tr");
-            var tt = $(this).text   (    );
-            var id =    tr.data(   "meno");
-            var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
-            var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-            lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
-        });
-
-        context.on("click", ".nav li", function() {
-            if ( $(this).is(".active,.dropdown")) {
-                return;
-            }
-
-            var fv = $(this).attr("data-state") || "";
-            var fe = $(this).attr("data-etime") || "";
-            var fd = $(this).closest("form");
-            fd.find("[name=state]").val(fv );
-            fd.find("[name=etime]").val(fe );
-            fd.find(":submit").click();
-
-            $(this).closest(".nav").find(".active")
-                .removeClass("active");
-            $(this).closest(".dropdown")
-                   .addClass("active");
-            $(this).addClass("active");
-        });
-    })(jQuery);
+        $(this).closest(".nav").find(".active")
+            .removeClass("active");
+        $(this).closest(".dropdown")
+               .addClass("active");
+        $(this).addClass("active");
+    });
+})(jQuery);
 </script>

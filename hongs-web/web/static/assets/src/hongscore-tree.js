@@ -200,27 +200,29 @@ function HsTree(context, opts) {
     //** 立即加载 **/
 
     if (loadUrl) {
-        loadUrl = hsFixPms   (loadUrl, loadBox);
-        loadDat = hsSerialMix(loadDat, findBox);
-        this.load(rootInfo.id,loadUrl, findBox);
+        this.load(
+            rootInfo.id,
+            hsFixPms   (loadUrl, loadBox),
+            hsSerialMix(loadDat, findBox)
+        );
     }
 }
 HsTree.prototype = {
     load     : function(pid, url, data) {
-        if (pid ) this._pid  = pid;
-        if (url ) this._url  = url;
-        if (data) this._data = hsSerialArr(data);
-      hsSetSeria( this._data, this.pidKey, this._pid );
+        if (pid ) this._pid  = pid ;
+        if (url ) this._url  = url ;
+        if (data) this._data = data;
+      hsSetSeria (this._data, this.pidKey, this._pid);
         this.ajax({
-            "url"       : this._url ,
-            "data"      : this._data,
-            "type"      : "POST",
-            "dataType"  : "json",
-            "funcName"  : "load",
-            "cache"     : false,
-            "context"   : this,
-            "success"   : function(rst) {
-                this.loadBack(rst, pid);
+            "url"      : this._url ,
+            "data"     : this._data,
+            "type"     : "POST",
+            "dataType" : "json",
+            "funcName" : "load",
+            "cache"    : false,
+            "context"  : this,
+            "success"  : function(rst) {
+               this.loadBack(rst, pid);
             }
         });
     },

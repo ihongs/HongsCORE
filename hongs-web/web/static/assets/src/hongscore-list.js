@@ -204,11 +204,12 @@ HsList.prototype = {
         tb  = this.listBox.find("tbody"); tb.empty( );
 
         // 排序
-        var sn = hsGetSerias(this._data,this.sortKey);
-        if (sn.length == 0) {
+        var sn = hsGetSeria (this._data,this.sortKey);
+        if (! sn) {
             sn = hsGetParam (this._url ,this.sortKey);
-        } else {
-            sn = sn[0];
+        }
+        if (jQuery.isArray(sn)) {
+            sn = sn . join(",");
         }
 
         for (i = 0; i < ths .length; i ++) {

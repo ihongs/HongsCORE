@@ -161,7 +161,7 @@
         <div class="form-group row">
             <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="button" class="cancel btn btn-default"><%=_locale.translate("fore.goback")%></button>
-                <%if ("revert".equals(_action)) {%>
+                <%if ("reveal".equals(_action)) {%>
                 <div class="btn-group" style="margin-left: 1em;">
                 <button type="button" class="re-new btn btn-default" title="后一条记录(新)"><span class="glyphicon glyphicon-backward"></span></button>
                 <button type="button" class="re-old btn btn-default" title="前一条记录(旧)"><span class="glyphicon glyphicon-forward" ></span></button>

@@ -36,6 +36,7 @@ public class SelectInvoker implements FilterInvoker {
         String   conf = ann.conf();
         String   form = ann.form();
         byte     adds = ann.adds();
+        boolean  edds = false;
 
         if (adds == 0) {
             Set ab  = Synt.toTerms(
@@ -44,9 +45,14 @@ public class SelectInvoker implements FilterInvoker {
             );
             if (ab != null) {
                 if (ab.contains("!enum" )
+                ||  ab.contains("!data" )
                 ||  ab.contains("!info")) {
                     if (ab.contains("!enum")) {
                         adds -= SelectHelper.ENUM;
+                    } else
+                    if (ab.contains("!data")) {
+                        adds -= SelectHelper.ENUM;
+                        edds  = true ;
                     }
                     if (ab.contains("!info")) {
                         adds -= SelectHelper.INFO;
@@ -63,9 +69,16 @@ public class SelectInvoker implements FilterInvoker {
                     if (ab.contains("_time")) {
                         adds -= SelectHelper.TIME;
                     }
+                    if (ab.contains("_text")) {
+                        adds -= SelectHelper.TEXT;
+                    }
                 } else {
                     if (ab.contains(".enum")) {
                         adds += SelectHelper.ENUM;
+                    } else
+                    if (ab.contains(".data")) {
+                        adds += SelectHelper.ENUM;
+                        edds  = true ;
                     }
                     if (ab.contains(".info")) {
                         adds += SelectHelper.INFO;
@@ -82,8 +95,7 @@ public class SelectInvoker implements FilterInvoker {
                     if (ab.contains("_time")) {
                         adds += SelectHelper.TIME;
                     }
-                    if (ab.contains("_enum" ) // 兼容旧名称
-                    ||  ab.contains("_text")) {
+                    if (ab.contains("_text")) {
                         adds += SelectHelper.TEXT;
                     }
                 }
@@ -92,21 +104,19 @@ public class SelectInvoker implements FilterInvoker {
 
         // 为负则不执行, 仅取选项数据
         Map rsp;
-        if (adds == 0 ) {
+        if (adds <  0) {
+            adds = (byte)(0-adds);
+            rsp  =  new HashMap();
+        } else
+        if (adds == 0) {
             chains.doAction(  );
             return;
-        } else
-        if (adds >  0 ) {
-            chains.doAction(  );
-            rsp = helper.getResponseData();
-            if (null != rsp
-            && !Synt.declare(rsp.get("ok"), false)) {
-                return;
-            }
         } else {
-            adds=(byte)(0-adds);
-            rsp = new HashMap();
-        }
+            chains.doAction(  );
+            rsp  = helper.getResponseData(  );
+        if (rsp != null && ! Synt.declare(rsp.get("ok"), false)) {
+            return;
+        }}
 
         // 识别路径
         if (form.length() == 0) {
@@ -136,6 +146,11 @@ public class SelectInvoker implements FilterInvoker {
             sel.setItemsInForm( rb );
             sel.addItemsByForm( conf, form, data);
             sel.select ( rsp, adds );
+
+            // 部分框架可将数据映射到对象, 需规避关键词 enum
+            if (edds && rsp != null && rsp.containsKey("enum")) {
+                rsp.put("data", rsp.remove("enum"));
+            }
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {

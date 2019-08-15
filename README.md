@@ -259,7 +259,7 @@ ern 为 Er301,Er302,Er401,Er402,Er403,Er404 时, err 如有值为"Goto URL"则�
         ...
     ],
 
-    // 枚举信息, 在 search,list,info 动作返回
+    // 枚举信息, 在 search,select 动作返回
     "enum": {
         "字段": [
             ["取值", "名称"],

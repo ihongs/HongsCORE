@@ -28,12 +28,12 @@ import java.util.regex.Pattern;
  */
 public class SelectHelper {
 
-    public  final static  byte ENUM =  1;
+    public  final static  byte DATA =  1;
     public  final static  byte TEXT =  2;
-    public  final static  byte FORM =  4;
-    public  final static  byte FORK =  8;
-    public  final static  byte LINK = 16;
-    public  final static  byte TIME = 32;
+    public  final static  byte TIME =  4;
+    public  final static  byte LINK =  8;
+    public  final static  byte FORK = 16;
+    public  final static  byte FORM = 32;
     public  final static  byte INFO = 64;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
@@ -256,23 +256,23 @@ public class SelectHelper {
     /**
      * 数据填充
      * @param values 返回数据
-     * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
+     * @param action 填充规则, 使用常量 DATA,TEXT 等, 可用或运算传多个值
      */
     public void select(Map values, byte action) {
-        boolean withEnum = ENUM == (ENUM & action);
+        boolean withData = DATA == (DATA & action);
         boolean withText = TEXT == (TEXT & action);
-        boolean withForm = FORM == (FORM & action);
-        boolean withFork = FORK == (FORK & action);
-        boolean withLink = LINK == (LINK & action);
         boolean withTime = TIME == (TIME & action);
+        boolean withLink = LINK == (LINK & action);
+        boolean withFork = FORK == (FORK & action);
+        boolean withForm = FORM == (FORM & action);
         boolean withInfo = INFO == (INFO & action);
 
         // 附带枚举数据
-        if (withEnum) {
-            /**/ Map  data = (Map ) values.get("enum");
+        if (withData) {
+            /**/ Map  data = (Map ) values.get("data");
             if (data == null) {
                 data  = new LinkedHashMap();
-                values.put( "enum" , data );
+                values.put( "data" , data );
             }
                 injectData(  data  , enums);
         }
@@ -325,7 +325,7 @@ public class SelectHelper {
     /**
      * 深度补充
      * @param values 返回数据
-     * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
+     * @param action 填充规则, 使用常量 DATA,TEXT 等, 可用或运算传多个值
      */
     public void inject(Map values, byte action) {
         List<Map> list = new LinkedList();
@@ -338,10 +338,10 @@ public class SelectHelper {
 
         Map xnum = null;
         if (1 == (1 & action)) {
-            xnum = (Map) values.get("enum");
+            xnum = (Map) values.get("data");
             if (xnum == null ) {
                 xnum  = new LinkedHashMap();
-                values.put( "enum" , xnum );
+                values.put( "data" , xnum );
             }
         }
 
@@ -373,7 +373,7 @@ public class SelectHelper {
             Map fields = et.getValue();
             Map valuez = new HashMap();
             Map anum   = new HashMap();
-            valuez.put( "enum", anum );
+            valuez.put( "data", anum );
             valuez.put( "list", maps.get(fn) );
 
             try {

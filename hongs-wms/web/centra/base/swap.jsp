@@ -90,7 +90,7 @@
 <b><%=Cnst.WD_KEY%></b>=搜索
 <b><%=Cnst.PN_KEY%></b>=分页, 从 1 开始
 <b><%=Cnst.RN_KEY%></b>=条数, 默认 20 条
-<b><%=Cnst.AB_KEY%></b>=模式, !enum 仅要选项数据, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
+<b><%=Cnst.AB_KEY%></b>=模式, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
 <%if (sortable.length() > 0) {%>
 <b><%=Cnst.OB_KEY%></b>=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序
 <%}%>
@@ -122,6 +122,11 @@
 <b>详情:</b> {
     "info": {
         "字段名": "字段值"
+    },
+    "enum": {
+        "字段名": [
+            ["值", "文本"],
+        ]
     },
     // ...
 }
@@ -217,9 +222,78 @@ id=ID 或 id.=ID1&id.=ID2...
             </div>
         </fieldset>
         <fieldset>
+            <legend data-toggle="hsDrop">选项数据 <span class="caret"></span></legend>
+            <div class="dropdown-body">
+                <div class="form-group">
+                    <label class="control-label">接口</label>
+                    <pre class="form-control-static">
+<%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/select<%=Cnst.ACT_EXT%>
+                    </pre>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">参数</label>
+                    <pre class="form-control-static">
+<b><%=Cnst.AB_KEY%></b>=模式, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
+                    </pre>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">返回</label>
+                    <pre class="form-control-static">
+{
+    "info": {
+        "字段名": "字段值"
+    },
+    "enum": {
+        "字段名": [
+            ["值", "文本"],
+        ]
+    },
+    // ...
+}
+                    </pre>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend data-toggle="hsDrop">统计数据 <span class="caret"></span></legend>
+            <div class="dropdown-body">
+                <div class="form-group">
+                    <label class="control-label">接口</label>
+                    <pre class="form-control-static">
+<%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
+<%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
+                    </pre>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">参数</label>
+                    <pre class="form-control-static">
+<b><%=Cnst.RB_KEY%></b>=字段, 可用于统计的; acount 用于一般选项计数; amount 用于数值区间统计; amount 可返回求和等数据.
+                    </pre>
+                </div>
+                <div class="form-group">
+                    <label class="control-label">返回</label>
+                    <pre class="form-control-static">
+{
+    "info": {
+        "字段名": [
+            ["值", "文本", "数量", "求和"],
+        ]
+    },
+    // ...
+}
+                    </pre>
+                </div>
+            </div>
+        </fieldset>
+        <fieldset>
             <legend data-toggle="hsDrop">其他 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
+                    <p>
+                        <%=Cnst. AB_KEY%> 的 .enum 可换为 .data,
+                        返回数据的键会跟着从 .enum 替换为 .data,
+                        从而规避部分框架里面  enum 关键词的问题.
+                    </p>
                     <p>
                         <%=Cnst.ACT_EXT%> 是基础接口;
                         <%=Cnst.API_EXT%> 及 /api 接口可用 .data 和 .mode 参数,

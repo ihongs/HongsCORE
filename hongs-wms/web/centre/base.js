@@ -363,11 +363,12 @@ HsCate.prototype = {
             dataType: "json",
             cache  : true,
             success: function(rst) {
-                for (var k in rst.info) {
+                rst = rst.info || rst.data || {};
+                for (var k in rst) {
                      if (k == "__count__") continue;
                      var n  = statBox.find("[data-name='"+k+"']");
                      if (0 == n.size( )  ) continue;
-                     var d  = rst.info[k];
+                     var d  = rst[k];
                      that.setAmountCheck(n, d);
                 }
 
@@ -410,11 +411,12 @@ HsCate.prototype = {
             dataType: "json",
             cache  : true,
             success: function(rst) {
-                for (var k in rst.info) {
+                rst = rst.info || rst.data || {};
+                for (var k in rst) {
                      if (k == "__count__") continue;
                      var n  = statBox.find("[data-name='"+k+"']");
                      if (0 == n.size( )  ) continue;
-                     var d  = rst.info[k];
+                     var d  = rst[k];
                      that.setAcountCheck(n, d);
                 }
 

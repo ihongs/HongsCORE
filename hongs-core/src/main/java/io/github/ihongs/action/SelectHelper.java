@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public class SelectHelper {
 
-    public  final static  byte DATA =  1;
+    public  final static  byte ENUM =  1;
     public  final static  byte TEXT =  2;
     public  final static  byte TIME =  4;
     public  final static  byte LINK =  8;
@@ -256,10 +256,10 @@ public class SelectHelper {
     /**
      * 数据填充
      * @param values 返回数据
-     * @param action 填充规则, 使用常量 DATA,TEXT 等, 可用或运算传多个值
+     * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
     public void select(Map values, byte action) {
-        boolean withData = DATA == (DATA & action);
+        boolean withEnum = ENUM == (ENUM & action);
         boolean withText = TEXT == (TEXT & action);
         boolean withTime = TIME == (TIME & action);
         boolean withLink = LINK == (LINK & action);
@@ -268,13 +268,12 @@ public class SelectHelper {
         boolean withInfo = INFO == (INFO & action);
 
         // 附带枚举数据
-        if (withData) {
-            /**/ Map  data = (Map ) values.get("data");
+        if (withEnum) {
+            /**/ Map  data = (Map ) values.get("enum");
             if (data == null) {
                 data  = new LinkedHashMap();
-                values.put( "data" , data );
-            }
-                injectData(  data  , enums);
+                values.put( "enum" , data );
+            }   injectData(  data  , enums);
         }
 
         // 附带默认数据
@@ -325,7 +324,7 @@ public class SelectHelper {
     /**
      * 深度补充
      * @param values 返回数据
-     * @param action 填充规则, 使用常量 DATA,TEXT 等, 可用或运算传多个值
+     * @param action 填充规则, 使用常量 ENUM,TEXT 等, 可用或运算传多个值
      */
     public void inject(Map values, byte action) {
         List<Map> list = new LinkedList();
@@ -338,10 +337,10 @@ public class SelectHelper {
 
         Map xnum = null;
         if (1 == (1 & action)) {
-            xnum = (Map) values.get("data");
+            xnum = (Map) values.get("enum");
             if (xnum == null ) {
                 xnum  = new LinkedHashMap();
-                values.put( "data" , xnum );
+                values.put( "enum" , xnum );
             }
         }
 
@@ -373,7 +372,7 @@ public class SelectHelper {
             Map fields = et.getValue();
             Map valuez = new HashMap();
             Map anum   = new HashMap();
-            valuez.put( "data", anum );
+            valuez.put( "enum", anum );
             valuez.put( "list", maps.get(fn) );
 
             try {

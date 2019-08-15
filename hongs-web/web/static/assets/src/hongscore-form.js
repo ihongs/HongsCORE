@@ -118,7 +118,7 @@ HsForm.prototype = {
         this.formBox.trigger("loadBack", [rst, this]);
 
         var envm = rst["enum"]
-                || rst["data"] || {};
+                || rst["menu"] || {};
         var info = rst["info"] || {};
         if (rst.list) {
             info = rst.list[0] || {};

@@ -16,9 +16,9 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * !data 表示不需要执行, 同 .data
+ * !enum 表示不需要执行, 同 .enum
  * !info 表示不需要执行, 同 .info
- * .data 表示要选项数据
+ * .enum 表示要选项数据
  * .info 表示补充默认值
  * .form 表示处理子表单
  * _text 表示加选项文本
@@ -36,7 +36,7 @@ public class SelectInvoker implements FilterInvoker {
         String   conf = ann.conf();
         String   form = ann.form();
         byte     adds = ann.adds();
-        boolean  edds = false;
+        boolean  menu = false;
 
         if (adds == 0) {
             Set ab  = Synt.toTerms(
@@ -44,15 +44,15 @@ public class SelectInvoker implements FilterInvoker {
                       .get( Cnst.AB_KEY )
             );
             if (ab != null) {
-                if (ab.contains("!enum" )
-                ||  ab.contains("!data" )
+                if (ab.contains("!menu" )
+                ||  ab.contains("!enum" )
                 ||  ab.contains("!info")) {
-                    if (ab.contains("!enum")) {
-                        edds  = true ;
-                        adds -= SelectHelper.DATA;
+                    if (ab.contains("!menu")) {
+                        menu  = true ;
+                        adds -= SelectHelper.ENUM;
                     } else
-                    if (ab.contains("!data")) {
-                        adds -= SelectHelper.DATA;
+                    if (ab.contains("!enum")) {
+                        adds -= SelectHelper.ENUM;
                     }
                     if (ab.contains("!info")) {
                         adds -= SelectHelper.INFO;
@@ -73,12 +73,12 @@ public class SelectInvoker implements FilterInvoker {
                         adds -= SelectHelper.TEXT;
                     }
                 } else {
-                    if (ab.contains(".enum")) {
-                        edds  = true ;
-                        adds += SelectHelper.DATA;
+                    if (ab.contains(".menu")) {
+                        menu  = true ;
+                        adds += SelectHelper.ENUM;
                     } else
-                    if (ab.contains(".data")) {
-                        adds += SelectHelper.DATA;
+                    if (ab.contains(".enum")) {
+                        adds += SelectHelper.ENUM;
                     }
                     if (ab.contains(".info")) {
                         adds += SelectHelper.INFO;
@@ -147,9 +147,9 @@ public class SelectInvoker implements FilterInvoker {
             sel.addItemsByForm( conf, form, data);
             sel.select ( rsp, adds );
 
-            // 兼容
-            if (edds && rsp != null && rsp.containsKey("data")) {
-                rsp.put("enum", rsp.remove("data"));
+            // 某些框架可把数据映射到对象, 需规避关键词 enum
+            if (menu && rsp != null && rsp.containsKey("enum")) {
+                rsp.put("menu", rsp.remove("enum"));
             }
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();

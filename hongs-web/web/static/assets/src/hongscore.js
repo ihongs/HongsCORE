@@ -34,13 +34,13 @@ function H$() {
         if (arguments.length == 1) {
           return jQuery("." + arguments[0]).data(arguments[0]);
         } else {
-          return jQuery(arguments[1]).closest("."+ arguments[0]).data(arguments[0]);
+          return jQuery(arguments[1]).closest("." + arguments[0]).data(arguments[0]);
         }
     case '#':
         if (arguments.length == 1) {
           return jQuery("#" + arguments[0]).removeAttr( "id" );
         } else {
-          return jQuery(arguments[1]).closest("#"+ arguments[0]).removeAttr( "id" );
+          return jQuery(arguments[1]).closest("#" + arguments[0]).removeAttr( "id" );
         }
     case '@':
     case '&': // 因在 html 中为特殊符号, 为避麻烦弃用
@@ -50,17 +50,11 @@ function H$() {
         }
         if (typeof(arguments[1]) !== "string") {
             if (!jQuery.isArray(arguments[1])) {
-                arguments[1]= hsSerialArr(jQuery(arguments[1]).closest(".loadbox"));
+                arguments[1] = hsSerialArr(jQuery(arguments[1]).closest(".loadbox"));
             }
-            if (/(\[\]|\.\.|\.$)/.test(arguments[0]))
-                return hsGetSerias(arguments[1], arguments[0]);
-            else
-                return hsGetSeria (arguments[1], arguments[0]);
+            return hsGetSeria(arguments[1], arguments[0]);
         } else {
-            if (/(\[\]|\.\.|\.$)/.test(arguments[0]))
-                return hsGetParams(arguments[1], arguments[0]);
-            else
-                return hsGetParam (arguments[1], arguments[0]);
+            return hsGetParam(arguments[1], arguments[0]);
         }
     case '%':
     case '$':
@@ -635,28 +629,58 @@ function hsToFormData (data) {
 }
 
 /**
- * 获取多个序列值
- * @param {Array} arr 使用 hsSerialArr 获得
+ * 获取序列值
+ * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
- * @return {Array}
+ * @return {String|Array}
  */
-function hsGetSerias(arr, name) {
-    var val = [];
-    for(var i = 0; i < arr.length; i ++) {
+function hsGetSeria (arr, name) {
+    if (arr instanceof HsSerialDic) {
+        return _hsGetPoint (arr, _hsGetDkeys(name));
+    }
+    if (arr instanceof HsSerialDat) {
+        return _hsGetPoint (arr, _hsGetPkeys(name));
+    }
+    if ( jQuery.isPlainObject(arr)) {
+        return arr[ name ];
+    }
+    var val = [  ];
+    for(var i = 0 ; i < arr.length; i ++) {
         if (arr[i]["name"] === name ) {
             val.push(arr[i]["value"]);
         }
     }
-    return val;
+    if (val.length === 0) {
+        return undefined;
+    }
+    if (/(\[\]|\.\.|\.$)/.test(name)) {
+        return val;
+    }
+    return val [0];
 }
 
 /**
- * 设置多个序列值
- * @param {Array} arr 使用 hsSerialArr 获得
+ * 设置序列值
+ * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
- * @param {Array} value
+ * @param {String|Array} value
  */
-function hsSetSerias(arr, name, value) {
+function hsSetSeria (arr, name, value) {
+    if (arr instanceof HsSerialDic) {
+        _hsSetPoint (arr, _hsGetDkeyz(name), value);
+        return;
+    }
+    if (arr instanceof HsSerialDat) {
+        _hsSetPoint (arr, _hsGetPkeyz(name), value);
+        return;
+    }
+    if ( jQuery.isPlainObject(arr)) {
+        arr[name] = value;
+        return;
+    }
+    if (!jQuery.isArray(value)) {
+        value = [ value ];
+    }
     for(var j = arr.length-1; j > -1; j --) {
         if (arr[j]["name"] === name) {
             arr.splice(j, 1);
@@ -668,25 +692,79 @@ function hsSetSerias(arr, name, value) {
 }
 
 /**
- * 获取单个序列值
- * @param {Array} arr 使用 hsSerialArr 获得
+ * 获取多个序列值
+ * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
- * @return {String}
+ * @return {Array}
+ * @deprecated 只用 hsGetSeria 即可
  */
-function hsGetSeria (arr, name) {
-    var val = hsGetSerias(arr, name);
-    if (val.length) return val.pop();
-    else            return "";
+function hsGetSerias(arr, name) {
+    var value = hsGetSeria(arr, name);
+    if (value ===  undefined  ) {
+        value = [/***/];
+    } else
+    if (!jQuery.isArray(value)) {
+        value = [value];
+    }
+    return value;
 }
 
 /**
- * 设置单个序列值
- * @param {Array} arr 使用 hsSerialArr 获得
+ * 设置多个序列值
+ * @param {Array} arr hsSerialArr 或 HsSerialDic,HsSerialDat
  * @param {String} name
  * @param {Array} value
+ * @deprecated 只用 hsSetSeria 即可
  */
-function hsSetSeria (arr, name, value) {
-    hsSetSerias(arr, name, value != undefined && value != null ? [value] : []);
+function hsSetSerias(arr, name, value) {
+  return hsSetSeria (arr, name, value);
+}
+
+/**
+ * 获取多个参数值
+ * @param {String} url
+ * @param {String} name
+ * @return {String|Array}
+ */
+function hsGetParam (url, name) {
+    name = encodeURIComponent( name );
+    var nam = name.replace('.','\\.');
+    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
+    var arr = null;
+    var val = [  ];
+    while ( ( arr = reg.exec(url) ) ) {
+        val.push(decodeURIComponent(arr[1]));
+    }
+    if (val.length === 0) {
+        return undefined;
+    }
+    if (/(\[\]|\.\.|\.$)/.test(name)) {
+        return val;
+    }
+    return val [0];
+}
+
+/**
+ * 设置多个参数值
+ * @param {String} url
+ * @param {String} name
+ * @param {String|Array} value
+ */
+function hsSetParam(url, name, value) {
+    name = encodeURIComponent( name );
+    var nam = name.replace('.','\\.');
+    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
+    url = url.replace(reg, "");
+    if (!jQuery.isArray(value)) {
+        value = [value];
+    }
+    for(var i = 0; i < value.length; i ++) {
+        url+= "&"+ name +"="+ encodeURIComponent(value[i]);
+    }
+    if (url.indexOf( "?" ) < 0) {
+        url = url.replace("&", "?");
+    }
+    return url;
 }
 
 /**
@@ -694,16 +772,17 @@ function hsSetSeria (arr, name, value) {
  * @param {String} url
  * @param {String} name
  * @return {Array}
+ * @deprecated 只用 hsGetParam 即可
  */
 function hsGetParams(url, name) {
-    name = encodeURIComponent ( name );
-    var nam = name.replace('.', '\\.');
-    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
-    var arr = null, val = [  ];
-    while ((arr = reg.exec(url))) {
-        val.push(decodeURIComponent(arr[1]));
+    var value = hsGetParam(url, name);
+    if (value ===  undefined  ) {
+        value = [/***/];
+    } else
+    if (!jQuery.isArray(value)) {
+        value = [value];
     }
-    return val;
+    return value;
 }
 
 /**
@@ -711,41 +790,110 @@ function hsGetParams(url, name) {
  * @param {String} url
  * @param {String} name
  * @param {Array} value
+ * @deprecated 只用 hsSetParam 即可
  */
 function hsSetParams(url, name, value) {
-    name = encodeURIComponent ( name );
-    var nam = name.replace('.', '\\.');
-    var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
-    url = url.replace(reg, "");
-    for(var i = 0; i < value.length; i ++) {
-        url+= "&"+ name +"="+ encodeURIComponent(value[i]);
-    }
-    if (url.indexOf("?") < 0 ) {
-        url = url.replace("&", "?");
-    }
-    return url;
+  return hsSetParam (url, name, value);
 }
 
 /**
- * 获取单个参数值
- * @param {String} url
- * @param {String} name
- * @return {String}
+ * 向树对象设置值
+ * @param {Object|Array} obj
+ * @param {Array|String} path ['a','b'] 或 a.b
+ * @param val 将设置的值
  */
-function hsGetParam (url, name) {
-    var val = hsGetParams(url, name);
-    if (val.length) return val.pop();
-    else            return "";
+function hsSetValue (obj, path, val) {
+    /**
+     需要注意的键:
+     a[1]   数字将作为字符串对待
+     a[][k] 空键将作为字符串对待, 但放在末尾可表示push
+     */
+    if (jQuery.isArray(path)) {
+        _hsSetPoint( obj, path, val);
+    } else
+    if (typeof(path) === "number") {
+        var keys = [path];
+        _hsSetPoint( obj, keys, val);
+    } else
+    if (typeof(path) === "string") {
+        var keys = _hsGetPkeys(path);
+        _hsSetPoint( obj, keys, val);
+    } else {
+        throw "hsSetValue: 'path' must be an array or string";
+    }
 }
 
 /**
- * 设置单个参数值
- * @param {String} url
- * @param {String} name
- * @param {String} value
+ * 向树对象设置值(hsSetValue的底层方法)
+ * @param {Object|Array} obj
+ * @param {Array} keys ['a','b']
+ * @param val
  */
-function hsSetParam (url, name, value) {
-    return hsSetParams(url, name, value != undefined && value != null ? [value] : []);
+function _hsSetPoint(obj, keys, val) {
+    if (!obj) {
+        return;
+    }
+    if (!jQuery.isPlainObject(obj)) {
+        throw "_hsSetPoint: 'obj' must be an object";
+    }
+    if (!jQuery.isArray(keys)) {
+        throw "_hsSetPoint: 'keys' must be an array";
+    }
+    if (!keys.length) {
+        throw "_hsSetPoint: 'keys' can not be empty";
+    }
+    _hsSetDepth(obj, keys, val, 0);
+}
+
+function _hsSetDepth(obj, keys, val, pos) {
+    var key = keys[pos];
+
+    // 按键类型来决定容器类型
+    if (key == null) {
+        if (obj == null) {
+            obj =  [];
+        }
+
+        if (keys.length == pos + 1) {
+            obj.push(val);
+        } else {
+            obj.push(_hsSetDepth(null, keys, val, pos + 1));
+        }
+
+        return obj;
+    } else
+    if (typeof(key) == "number") {
+        if (obj == null) {
+            obj =  [];
+        }
+
+        // 如果列表长度不够, 填充到索引的长度
+        if (obj.length <= key) {
+            for(var i = 0; i <= key; i++) {
+                obj.push(null);
+            }
+        }
+
+        if (keys.length == pos + 1) {
+            obj[key] = val;
+        } else {
+            obj[key] = _hsSetDepth(obj[key], keys, val, pos + 1);
+        }
+
+        return obj;
+    } else {
+        if (obj == null) {
+            obj =  {};
+        }
+
+        if (keys.length == pos + 1) {
+            obj[key] = val;
+        } else {
+            obj[key] = _hsSetDepth(obj[key], keys, val, pos + 1);
+        }
+
+        return obj;
+    }
 }
 
 /**
@@ -848,14 +996,6 @@ function _hsGetDapth(lst, keys, def, pos) {
     }
 }
 
-function _hsGetDkeys(path) {
-    if (/(\[\]|\.\.|\.$)/.test(path)) {
-        return [path , null];
-    } else {
-        return [path];
-    }
-}
-
 function _hsGetPkeys(path) {
     path = path.replace(/\]\[/g, ".")
                .replace(/\[/   , ".")
@@ -864,11 +1004,6 @@ function _hsGetPkeys(path) {
     var i , keys = [];
     for(i = 0; i < path.length; i ++) {
         var keyn = path[i];
-        /*
-        if (keyn.substr(0, 1) == '#') {
-            keys.push(parseInt(keyn.substr(1)));
-        } else
-        */
         if (keyn.length == 0 && i!=0) {
             keys.push(null);
         } else
@@ -879,104 +1014,21 @@ function _hsGetPkeys(path) {
     return  keys;
 }
 
-/**
- * 向树对象设置值
- * @param {Object|Array} obj
- * @param {Array|String} path ['a','b'] 或 a.b
- * @param val 将设置的值
- */
-function hsSetValue (obj, path, val) {
-    /**
-     需要注意的键:
-     a[1]   数字将作为字符串对待
-     a[][k] 空键将作为字符串对待, 但放在末尾可表示push
-     */
-    if (jQuery.isArray(path)) {
-        _hsSetPoint( obj, path, val);
-    } else
-    if (typeof(path) === "number") {
-        var keys = [path];
-        _hsSetPoint( obj, keys, val);
-    } else
-    if (typeof(path) === "string") {
-        var keys = _hsGetPkeys(path);
-        _hsSetPoint( obj, keys, val);
+function _hsGetDkeys(path) {
+    if (/(\[\]|\.\.|\.$)/.test(path)) {
+        return [path , null];
     } else {
-        throw "hsSetValue: 'path' must be an array or string";
+        return [path];
     }
 }
 
-/**
- * 向树对象设置值(hsSetValue的底层方法)
- * @param {Object|Array} obj
- * @param {Array} keys ['a','b']
- * @param val
- */
-function _hsSetPoint(obj, keys, val) {
-    if (!obj) {
-        return;
-    }
-    if (!jQuery.isPlainObject(obj)) {
-        throw "_hsSetPoint: 'obj' must be an object";
-    }
-    if (!jQuery.isArray(keys)) {
-        throw "_hsSetPoint: 'keys' must be an array";
-    }
-    if (!keys.length) {
-        throw "_hsSetPoint: 'keys' can not be empty";
-    }
-    _hsSetDepth(obj, keys, val, 0);
+function _hsGetPkeyz(path) {
+    path = path.replace(/(\[\]|\.)$/, '');
+    return _hsGetPkeys (path);
 }
 
-function _hsSetDepth(obj, keys, val, pos) {
-    var key = keys[pos];
-
-    // 按键类型来决定容器类型
-    if (key == null) {
-        if (obj == null) {
-            obj =  [];
-        }
-
-        if (keys.length == pos + 1) {
-            obj.push(val);
-        } else {
-            obj.push(_hsSetDepth(null, keys, val, pos + 1));
-        }
-
-        return obj;
-    } else
-    if (typeof(key) == "number") {
-        if (obj == null) {
-            obj =  [];
-        }
-
-        // 如果列表长度不够, 填充到索引的长度
-        if (obj.length <= key) {
-            for(var i = 0; i <= key; i++) {
-                obj.push(null);
-            }
-        }
-
-        if (keys.length == pos + 1) {
-            obj[key] = val;
-        } else {
-            obj[key] = _hsSetDepth(obj[key], keys, val, pos + 1);
-        }
-
-        return obj;
-    } else {
-        if (obj == null) {
-            obj =  {};
-        }
-
-        if (keys.length == pos + 1) {
-            obj[key] = val;
-        } else {
-            obj[key] = _hsSetDepth(obj[key], keys, val, pos + 1);
-        }
-
-        return obj;
-    }
+function _hsGetDkeyz(path) {
+    return [path];
 }
 
 /**

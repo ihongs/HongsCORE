@@ -301,6 +301,12 @@ public class FormSet
                     items.put("conf", name);
                 }
                 }
+            } else
+            if (items.containsKey("enum")
+            ||  items.containsKey("form") ) {
+                if (! items.containsKey("conf")) {
+                    items.put("conf", name);
+                }
             }
         }
       } else

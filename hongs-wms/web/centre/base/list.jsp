@@ -16,8 +16,8 @@
 
     StringBuilder _ob = new StringBuilder( "-,-boost,-mtime,-ctime");
     StringBuilder _rb = new StringBuilder("id,name,note,logo,cuser");
-    Set<String>   _wd = getWordable();
-    Set<String>   _sd = getSrchable();
+    Set<String>   _wd = getWordable (_fields);
+    Set<String>   _sd = getSrchable (_fields);
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">

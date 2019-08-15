@@ -13,13 +13,13 @@
     /**
      * 获取全局搜索字段
      */
-    Set<String> getWordable() throws HongsException {
+    Set<String> getWordable(Map _fields) throws HongsException {
         Map fc = (Map) _fields.get("word");
         if (fc != null && ! Synt.declare(fc.get("readonly"), false)) {
             return /**/ Synt.setOf("word");
         }
 
-        if (_sample == null ) _sample = new Sample(_fields);
+        Sample   _sample = new Sample( _fields  );
         Set fs = _sample.getCaseNames("wordable");
         if (fs == null || fs.isEmpty()) {
             fs = _sample.getCaseNames("srchable");
@@ -30,8 +30,8 @@
     /**
      * 获取可搜索的字段
      */
-    Set<String> getSrchable() throws HongsException {
-        if (_sample == null ) _sample = new Sample(_fields);
+    Set<String> getSrchable(Map _fields) throws HongsException {
+        Sample   _sample = new Sample( _fields  );
         Set fs = _sample.getCaseNames("srchable");
         return fs;
     }
@@ -41,15 +41,13 @@
             setFields(/**/fields);
         }
     }
-
-    Map        _fields = null;
-    ModelCase  _sample = null;
 %>
 <%
     String     _title = "";
     String     _module;
     String     _entity;
     CoreLocale _locale;
+    Map        _fields = null;
 
     {
         // 拆解路径

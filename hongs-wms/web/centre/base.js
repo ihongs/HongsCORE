@@ -363,7 +363,7 @@ HsCate.prototype = {
             dataType: "json",
             cache  : true,
             success: function(rst) {
-                rst = rst.data || rst.info || {};
+                rst  = rst.info || {};
                 for (var k in rst) {
                      if (k == "__count__") continue;
                      var n  = statBox.find("[data-name='"+k+"']");
@@ -411,7 +411,7 @@ HsCate.prototype = {
             dataType: "json",
             cache  : true,
             success: function(rst) {
-                rst = rst.data || rst.info || {};
+                rst  = rst.info || {};
                 for (var k in rst) {
                      if (k == "__count__") continue;
                      var n  = statBox.find("[data-name='"+k+"']");

@@ -16,9 +16,9 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * !enum 表示不需要执行, 重置为 .enum
- * !info 表示不需要执行, 类似于 .info
- * .enum 表示要选项数据
+ * !data 表示不需要执行, 同 .data
+ * !info 表示不需要执行, 同 .info
+ * .data 表示要选项数据
  * .info 表示补充默认值
  * .form 表示处理子表单
  * _text 表示加选项文本
@@ -48,11 +48,11 @@ public class SelectInvoker implements FilterInvoker {
                 ||  ab.contains("!data" )
                 ||  ab.contains("!info")) {
                     if (ab.contains("!enum")) {
-                        adds -= SelectHelper.ENUM;
+                        edds  = true ;
+                        adds -= SelectHelper.DATA;
                     } else
                     if (ab.contains("!data")) {
-                        adds -= SelectHelper.ENUM;
-                        edds  = true ;
+                        adds -= SelectHelper.DATA;
                     }
                     if (ab.contains("!info")) {
                         adds -= SelectHelper.INFO;
@@ -74,11 +74,11 @@ public class SelectInvoker implements FilterInvoker {
                     }
                 } else {
                     if (ab.contains(".enum")) {
-                        adds += SelectHelper.ENUM;
+                        edds  = true ;
+                        adds += SelectHelper.DATA;
                     } else
                     if (ab.contains(".data")) {
-                        adds += SelectHelper.ENUM;
-                        edds  = true ;
+                        adds += SelectHelper.DATA;
                     }
                     if (ab.contains(".info")) {
                         adds += SelectHelper.INFO;
@@ -147,9 +147,9 @@ public class SelectInvoker implements FilterInvoker {
             sel.addItemsByForm( conf, form, data);
             sel.select ( rsp, adds );
 
-            // 部分框架可将数据映射到对象, 需规避关键词 enum
-            if (edds && rsp != null && rsp.containsKey("enum")) {
-                rsp.put("data", rsp.remove("enum"));
+            // 兼容
+            if (edds && rsp != null && rsp.containsKey("data")) {
+                rsp.put("enum", rsp.remove("data"));
             }
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();

@@ -90,7 +90,7 @@
 <b><%=Cnst.WD_KEY%></b>=搜索
 <b><%=Cnst.PN_KEY%></b>=分页, 从 1 开始
 <b><%=Cnst.RN_KEY%></b>=条数, 默认 20 条
-<b><%=Cnst.AB_KEY%></b>=模式, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
+<b><%=Cnst.AB_KEY%></b>=模式, .data 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
 <%if (sortable.length() > 0) {%>
 <b><%=Cnst.OB_KEY%></b>=排序, 取值 <%=sortable.substring(1)%>, 逗号分隔, 字段前加 - 表示逆序
 <%}%>
@@ -103,19 +103,14 @@
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
 <b>列表:</b> {
+    "list": [{
+        "字段名": "字段值"
+    }],
     "page": {
         "<%=Cnst.PN_KEY%>": "页码参数",
         "<%=Cnst.RN_KEY%>": "行数参数",
         "pages": "总页数",
         "count": "总行数",
-    },
-    "list": [{
-        "字段名": "字段值"
-    }],
-    "enum": {
-        "字段名": [
-            ["值", "文本"],
-        ]
     },
     // ...
 }
@@ -123,7 +118,7 @@
     "info": {
         "字段名": "字段值"
     },
-    "enum": {
+    "data": {
         "字段名": [
             ["值", "文本"],
         ]
@@ -233,7 +228,7 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">参数</label>
                     <pre class="form-control-static">
-<b><%=Cnst.AB_KEY%></b>=模式, .enum 增加选项数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
+<b><%=Cnst.AB_KEY%></b>=模式, .data 提供选项数据, .info 提供缺省数据, _text 补全选项文本, _time 附加数字时间, _link 附加完整链接, _fork 增加关联数据, .form 深入子级表单(适用 form/part 类型)
                     </pre>
                 </div>
                 <div class="form-group">
@@ -243,7 +238,7 @@ id=ID 或 id.=ID1&id.=ID2...
     "info": {
         "字段名": "字段值"
     },
-    "enum": {
+    "data": {
         "字段名": [
             ["值", "文本"],
         ]
@@ -274,7 +269,7 @@ id=ID 或 id.=ID1&id.=ID2...
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
 {
-    "info": {
+    "data": {
         "字段名": [
             ["值", "文本", "数量", "求和"],
         ]
@@ -289,11 +284,6 @@ id=ID 或 id.=ID1&id.=ID2...
             <legend data-toggle="hsDrop">其他 <span class="caret"></span></legend>
             <div class="dropdown-body">
                 <div class="form-group">
-                    <p>
-                        <%=Cnst. AB_KEY%> 的 .enum 可换为 .data,
-                        返回数据的键会跟着从 .enum 替换为 .data,
-                        从而规避部分框架里面  enum 关键词的问题.
-                    </p>
                     <p>
                         <%=Cnst.ACT_EXT%> 是基础接口;
                         <%=Cnst.API_EXT%> 及 /api 接口可用 .data 和 .mode 参数,

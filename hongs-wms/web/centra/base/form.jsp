@@ -230,9 +230,9 @@
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.data,.info,.form,_fork",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.data,.info,.form,_fork",
         <%if (! _fields.containsKey("memo")) {%>
         save: hsSaveWithMemo('<%=_locale.translate("fore.update.confirm", _title)%>'),
         <%}} /* End if */%>

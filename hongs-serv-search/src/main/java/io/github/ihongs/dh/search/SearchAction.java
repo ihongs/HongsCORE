@@ -73,7 +73,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         Map xd = sh.acount(rd);
         atitle(sr, rd, xd/**/); // 增加标题
 
-        Map sd = Synt.mapOf("data" , xd);
+        Map sd = Synt.mapOf("info" , xd);
         sd = getRspMap(helper, sr, "acount", sd);
 
         helper.reply(sd);
@@ -92,7 +92,7 @@ public class SearchAction extends ModelGate implements IAction, IActing {
         Map xd = sh.amount(rd);
         atitle(sr, rd, xd/**/); // 增加标题
 
-        Map sd = Synt.mapOf("data" , xd);
+        Map sd = Synt.mapOf("info" , xd);
         sd = getRspMap(helper, sr, "amount", sd);
 
         helper.reply(sd);

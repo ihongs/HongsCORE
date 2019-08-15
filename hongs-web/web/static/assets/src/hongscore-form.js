@@ -117,19 +117,19 @@ HsForm.prototype = {
 
         this.formBox.trigger("loadBack", [rst, this]);
 
-        var envm = rst["enum"] || {};
+        var envm = rst["enum"]
+                || rst["data"] || {};
         var info = rst["info"] || {};
-
-        // 列表取第一个
-        if (rst.list && rst.list[0]) {
+        if (rst.list) {
             info = rst.list[0] || {};
         }
 
         // 填充预置数据
         if (this._init) {
             var d = hsSerialDic(this._init);
-            for(var k in d) { var v = d [k];
-                hsSetValue(info,k,v);
+            for(var k in d ) {
+                var v  = d [k];
+                hsSetValue ( info , k , v );
             }
         }
 

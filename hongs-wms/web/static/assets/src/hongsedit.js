@@ -143,6 +143,10 @@ function setEditor(node, func) {
                     ['para', ['paragraph', 'ul' , 'ol'  ]],
                     ['list', ['table', 'picture', 'link']]
                 ],
+                colorButton: {
+                    foreColor: '#FFFFFF',
+                    backColor: '#474949'
+                },
                 callbacks: {
                     onImageUpload: function(files) {
                         var data  = new FormData();
@@ -287,21 +291,24 @@ var EXTN_TO_MODE = {
     json        : ["javascript", "application/json"],
     js          : ["javascript", "text/javascript"],
     ts          : ["javascript", "text/typescrpit"],
+    coffee      : ["coffee", "text/coffeescript"],
     jsx         : ["jsx", "jsx"],
     vue         : ["vue", "vue"],
     /* XML 家族 */
     xml         : ["xml", "xml"],
     xsd         : ["xml", "xml"],
+    dtd         : ["dtd", "dtd"],
     html        : ["htmlmixed", "text/html"],
     htm         : ["htmlmixed", "text/html"],
     asp         : ["htmlembedded", "text/aspx"],
     jsp         : ["htmlembedded", "text/jsp" ],
     /* 其他程序 */
+    go          : ["go", "go"],
     sql         : ["sql", "sql"],
     lua         : ["lua", "lua"],
     php         : ["php", "php"],
-    py          : ["python", "python"],
     rb          : ["ruby", "ruby"],
+    py          : ["python", "python"],
     pl          : ["perl", "perl"],
     pm          : ["perl", "perl"],
     sh          : ["shell", "shell"],
@@ -312,9 +319,11 @@ var EXTN_TO_MODE = {
     css         : ["css", "css"],
     scss        : ["css", "text/x-scss"],
     less        : ["css", "text/x-less"],
+    sass        : ["sass", "text/x-sass"],
     md          : ["markdown", "markdown"],
     proto       : ["protobuf", "protobuf"],
     ini         : ["properties", "properties"],
     cnf         : ["properties", "properties"],
+    conf        : ["properties", "properties"],
     properties  : ["properties", "properties"]
 };

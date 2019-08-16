@@ -120,12 +120,14 @@ function hsRequires(url, fun ) {
 
     while ( l >= ++ i ) {
         var u = url[i - 1 ];
-        if (HsREQS [u]) {
+        if ( HsREQS[u]) {
             u = HsREQS  [u];
         }   u = hsFixUri(u);
-        if (HsDEPS [u]) {
-            HsDEPS [u] += 1;
-            if (fun && l == ++ j) {
+        if (!HsDEPS[u]) {
+             HsDEPS[u]  = 1;
+        } else {
+             HsDEPS[u] += 1;
+            if (fun && ++ j == l) {
                 fun( );
             }
             continue  ;
@@ -140,7 +142,6 @@ function hsRequires(url, fun ) {
                 ||  n.readyState == "loaded"
                 ||  n.readyState == "complete") {
                     n.onload = n.onreadystatechange = null;
-                    HsDEPS [u] = 1;
                     if (fun && l == ++ j) {
                         fun( );
                     }

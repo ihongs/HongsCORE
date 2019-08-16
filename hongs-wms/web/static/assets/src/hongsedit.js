@@ -171,8 +171,8 @@ function setEditor(node, func) {
                         });
                     }
                 },
-                minHeight: $( this ).height ( ) * 1,
-                maxHeight: $( this ).height ( ) * 5,
+                minHeight: $( this ).height () * 1,
+                maxHeight: $( this ).height () * 2,
                 lang: HsLANG['lang'].replace('_', '-')
             });
 

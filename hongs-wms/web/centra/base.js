@@ -398,7 +398,7 @@ HsStat.prototype = {
     load: function() {
         var that    = this;
         var statBox = this.statBox;
-        hsRequires("static/addons/echarts/echarts.js", function() {
+        hsRequires("static/addons/echarts/echarts.min.js", function() {
             statBox.find("[data-type=acount],[data-type=amount]")
                    .each(  function  () {
                 var sta =  $(  this  );

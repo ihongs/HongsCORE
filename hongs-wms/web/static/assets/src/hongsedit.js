@@ -136,8 +136,9 @@ function forEditor(func) {
 function setEditor(node, func) {
     forEditor(function() {
         node.each(function() {
-            $(this).summernote({
-                toolbar: [
+            var data = $(this).hsData() || {};
+            var conf = {
+                toolbar : [
                     ['base', ['bold' , 'italic' , 'underline' , 'strikethrough' , 'clear']],
                     ['font', ['color', 'height' , 'fontsize']],
                     ['para', ['paragraph', 'ul' , 'ol'  ]],
@@ -171,10 +172,12 @@ function setEditor(node, func) {
                         });
                     }
                 },
-                minHeight: $( this ).height () * 1,
-                maxHeight: $( this ).height () * 2,
+                placeholder: $(this).attr("placeholder") || "",
+                minHeight  : $(this).height (   ) * 1 ,
+                maxHeight  : $(this).height (   ) * 2 ,
                 lang: HsLANG['lang'].replace('_', '-')
-            });
+            };
+            $(this).summernote( $.extend(conf, data) );
 
             // 默认无背景色
             $(this).siblings(".note-editor")
@@ -198,10 +201,18 @@ function forMirror(func, mode) {
         "static/addons/codemirror/codemirror.min.css",
         "static/addons/codemirror/codemirror.min.js"
     ] , function() {
-        if (mode ) {
-            hsRequires([
-                "static/addons/codemirror/mode/"+mode+"/"+mode+".js"
-            ] , func );
+        if (! $.isArray(mode)) {
+            mode  = [mode];
+        }
+        var deps  = [/**/];
+        for(var i = 0; i < mode.length; i ++) {
+            deps.push("static/addons/codemirror/mode/"+mode[i]+"/"+mode[i]+".js");
+        }
+
+        if (deps.length) {
+            hsRequires(
+                deps  ,
+                func );
         } else {
                 func();
         }
@@ -209,6 +220,14 @@ function forMirror(func, mode) {
 }
 
 function setMirror(node, func) {
+    var mods = [];
+    node.each(function() {
+        var mode = $(this).data ("mode")
+              ||   $(this).data ("type");
+            mode = getModeByName( mode );
+        mods.push(mode[0]);
+    });
+
     forMirror(function() {
         node.each(function() {
             var that = $(this);
@@ -216,48 +235,45 @@ function setMirror(node, func) {
             var mode = $(this).data ("mode")
                   ||   $(this).data ("type");
                 mode = getModeByName( mode );
-            hsRequires([
-                "static/addons/codemirror/mode/"+mode[0]+"/"+mode[0]+".js"
-            ] , function() {
-                if (that.is("textarea")) {
-                    var cm = CodeMirror.fromTextArea(that[0], {
-                        mode        : mode[1],
-                        readOnly    : read,
-                        lineNumbers : true
-                    });
 
-                    var cw = $(cm.getWrapperElement());
-                    cw.addClass("form-control");
-                    cw.height  ( that.height());
+            if (that.is("textarea")) {
+                var cm = CodeMirror.fromTextArea(that[0], {
+                    mode        : mode[1],
+                    lineNumbers : true,
+                    readOnly    : read
+                });
 
-                    that.addClass ("invisible");
-                    that.data("CM", cm);
-                    that.data("destroy", function() {
-                        cm.toTextArea();
-                    });
-                    that.data("synchro", function() {
-                        cm.save(      );
-                    });
-                } else {
-                    var cm = CodeMirror(that.parent()[0], {
-                        mode        : mode,
-                        lineNumbers : true,
-                        readOnly    : "nocursor",
-                        value       : that.text()
-                    });
+                var cw = $(cm.getWrapperElement());
+                cw.addClass("form-control");
+                cw.height  ( that.height());
 
-                    var cw = $(cm.getWrapperElement());
-                    cw.addClass("form-control-static");
-                    cw.height  ("auto");
+                that.addClass ("invisible");
+                that.data("CM", cm);
+                that.data("destroy", function() {
+                    cm.toTextArea();
+                });
+                that.data("synchro", function() {
+                    cm.save(      );
+                });
+            } else {
+                var cm = CodeMirror(that.parent()[0], {
+                    mode        : mode[1],
+                    lineNumbers : true,
+                    readOnly    : "nocursor",
+                    value       : that.text()
+                });
 
-                    that.data("CM", cm);
-                    that.text( "" );
-                    that.hide(    );
-                }
-                func && func.call(node);
-            });
+                var cw = $(cm.getWrapperElement());
+                cw.addClass("form-control-static");
+                cw.height  ("auto");
+
+                that.data("CM", cm);
+                that.text( "" );
+                that.hide(    );
+            }
         });
-    });
+        func && func.call(node);
+    } , mods);
 }
 
 function getModeByName(name) {

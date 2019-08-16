@@ -30,7 +30,7 @@ public class DistanceSeries extends FieldComparatorSource {
 
     @Override
     public String toString() {
-        return "Dictance(" + a +","+ o + ")";
+        return "Dictance(" + o +","+ a + ")";
     }
 
     @Override

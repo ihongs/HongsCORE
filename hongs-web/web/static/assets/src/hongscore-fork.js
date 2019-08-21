@@ -60,6 +60,9 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         } while (false);
     }
 
+    // 读取已选数据
+    fet.call(foo, box, v, n);
+
     function pickItem(val, txt, inf, chk ) {
         var evt = jQuery.Event("pickItem");
         evt.target = chk;
@@ -118,9 +121,11 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         .on("click"   , ".commit"  , commit)
         .on("saveBack", ".create"  , create);
 
-        bin.data("pickData", v);
-        bin.data("rel", btn.closest(".openbox")[0]);
-        bin.find( ".checkone" ).val(Object.keys(v));
+        var ids = Object.keys( v );
+        var num = ids.length || "";
+        bin.data( "pickData" , v );
+        bin.find(".checkone").val ( ids );
+        bin.find(".picknum" ).text( num );
     };
 
     function select () {
@@ -169,6 +174,11 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             chk.prop( "checked", false );
             return false;
         }
+
+        // 已选数量
+        var num = Object.keys(v).length ;
+        bin.find(".picknum")
+           .text( num || "");
     }
 
     function commit () {
@@ -215,13 +225,12 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
         return false ;
     }
 
-    fet.call(  foo, box, v, n  ); // 读取已选
     if (bin) {
-        bin =  bin  .hsOpen(url);
+        bin =  bin  .hsOpen(url, pickOpen);
     } else {
-        bin = jQuery.hsOpen(url);
+        bin = jQuery.hsOpen(url, pickOpen);
     }
-    pickOpen();
+    bin.data( "rel" , btn.closest( ".openbox" )[0] );
 
     return bin;
 };
@@ -230,9 +239,8 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
  * 表单获取选项
  * @param {jQuery} box
  * @param {Object} v
- * @param {String} n
  */
-function hsFormForkData(box, v, n) {
+function hsFormForkData(box, v) {
     if (box.is("input")) {
         var val = box.val ();
         var dat = box.data();

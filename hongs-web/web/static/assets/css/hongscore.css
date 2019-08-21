@@ -556,6 +556,16 @@ ul.pickrol > li.btn-text:hover {
     font-weight: inherit;
 }
 
+.picknum:before {
+    content : "(" ;
+}
+.picknum:after  {
+    content : ")" ;
+}
+.picknum:empty  {
+    display : none;
+}
+
 .pickrol .close {
     display : none;
 }

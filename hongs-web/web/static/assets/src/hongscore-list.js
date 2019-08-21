@@ -891,35 +891,49 @@ jQuery.fn.hsList = function(opts) {
             return;
         }
         var tr = $(this).closest("tr");
-        var ck = tr.find(".checkone" );
-        if (this  !=  ck.closest("td")[0])
-            tr.closest("tbody").find(".checkone:checked").not(ck )
-                               .prop( "checked" , false ).change();
-        ck.prop("checked", ! ck.prop( "checked" )).change();
+        var ck = tr.find (".checkone");
+        if (ck . is(":disabled")) {
+            return;
+        }
+        ck.prop( "checked" , ! ck.prop("checked") )
+          .change();
+        if ( this !== ck.closest("td")[0] ) {
+        tr.closest ("tbody")
+          .find(".checkone:checked")
+          .not (":disabled").not(ck)
+          .prop( "checked" , false )
+          .change();
+        }
     })
     .on("change", ".HsList .checkone",
     function() {
-        var box = $(this ).closest(".HsList" );
-        var siz = box.find(".checkone").length;
-        var len = box.find(".checkone:checked").length;
-        var ckd = siz && siz === len ? true : (len && len !== siz ? null : false);
-        $(this).closest( "tr" ).toggleClass( "active" , $(this).prop("checked") );
-        box.find(".for-choose").prop("disabled", len !== 1);
-        box.find(".for-checks").prop("disabled", len === 0);
-        box.find(".checkall").prop("choosed", ckd);
+        var box = $(this).closest(".HsList");
+        var ckd = $(this).prop   ("checked");
+        var max = box.find(".checkone").not(":disabled").length;
+        var min = box.find(".checkone").not(":disabled")
+                                    .filter(":checked" ).length;
+        var chd = max && max == min ? true
+              : ( min && min != max ? null
+              :   false );
+        $(this).closest("tr").toggleClass("active", ckd);
+        box.find( ".checkall" ).prop("choosed" ,    chd);
+        box.find(".for-choose").prop("disabled", 1!=min);
+        box.find(".for-checks").prop("disabled", 0==min);
     })
     .on("change", ".HsList .checkall",
     function() {
-        var box = $(this ).closest(".HsList" );
-        var ckd = $(this/**/).prop("checked" );
-                  $(this/**/).prop("choosed", ckd);
-        box.find(".checkone").prop("checked", ckd).trigger("change");
+        var box = $(this).closest(".HsList");
+        var ckd = $(this).prop   ("checked");
+        var cks = box.find(".checkone").not(":disabled");
+        $( cks).prop("checked", ckd).trigger( "change" );
+        $(this).prop("choosed", ckd);
     })
     .on("loadOver", ".HsList .listbox",
     function() {
-        var box = $(this ).closest(".HsList" );
-        box.find(".for-choose,.for-checks").prop("disabled" , true );
-        box.find(".checkall").prop("choosed", false);
-        box.find(".checkone").change();
+        var box = $(this).closest(".HsList");
+        box.find(".for-choose, .for-checks")
+                             .prop("disabled", true);
+        box.find(".checkall").prop("checked", false)
+                             .prop("choosed", false);
     });
 })(jQuery);

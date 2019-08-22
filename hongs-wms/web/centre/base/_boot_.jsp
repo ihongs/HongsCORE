@@ -1,3 +1,4 @@
+<%@page import="io.github.ihongs.Core"%>
 <%@page import="io.github.ihongs.CoreLocale"%>
 <%@page import="io.github.ihongs.HongsException"%>
 <%@page import="io.github.ihongs.action.ActionDriver"%>
@@ -43,6 +44,22 @@
     }
 %>
 <%
+    /**
+     * 静默或非调试模式下开启缓存策略
+     * 但须在系统启动之后和八小时以内
+     */
+    if (0 == Core.DEBUG || 8 == (8 & Core.DEBUG)) {
+        long n , m;
+        n = Math.max(Core.STARTS_TIME, Core.ACTION_TIME.get() - 28800000) / 1000 * 1000; // 精确到秒
+        m = request .getDateHeader("If-Modified-Since");
+        if ( n > m) {
+            response.setDateHeader("Last-Modified", n );
+        } else {
+            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+            return;
+        }
+    }
+
     String     _title = "";
     String     _module;
     String     _entity;

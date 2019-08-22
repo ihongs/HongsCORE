@@ -208,7 +208,7 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
           // 使 JSP 可处理 REST 所有方法
           String mathod = getMathod();
           if (! "GET".equals(mathod )
-          ||  !"HEAD".equals(mathod)) {
+          &&  !"HEAD".equals(mathod)) {
               return "POST";
           }
           return mathod;

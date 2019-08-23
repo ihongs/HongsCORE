@@ -205,6 +205,8 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
 
      eq     等于
      ne     不等于
+     cq     匹配
+     nc     不匹配
      gt     大于
      ge     大于或等于
      lt     小于
@@ -212,6 +214,8 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
      rg     区间
      in     包含
      ni     不包含
+     is     空或非空
+     or     值关系为或
 
 还有一些参数名称具有特定的意义, 列举如下:
 

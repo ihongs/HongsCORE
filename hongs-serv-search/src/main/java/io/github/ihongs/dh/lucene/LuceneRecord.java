@@ -163,19 +163,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     /**
      * 获取数据
-     *
-     * 以下参数为特殊参数, 可在 default.properties 中配置:
-     * id   ID, 仅指定单个 id 时则返回详情(info)
-     * rn   行数, 明确指定为 0 则不分页
-     * gn   分页
-     * pn   页码
-     * wd   搜索
-     * ob   排序
-     * rb   字段
-     * or   多组"或"关系条件
-     * ar   串联多组关系条件
-     * sr   附加多组"或"关系, LuceneRecord 特有
-     * 请注意尽量避免将其作为字段名(id,wd除外)
+
+ 以下参数为特殊参数, 可在 default.properties 中配置:
+ id   ID, 仅指定单个 id 时则返回详情(info)
+ rn   行数, 明确指定为 0 则不分页
+ gn   分页
+ pn   页码
+ wd   搜索
+ ob   排序
+ r2   字段
+ r2   多组"或"关系条件
+ ar   串联多组关系条件
+ sr   附加多组"或"关系, LuceneRecord 特有
+ 请注意尽量避免将其作为字段名(id,wd除外)
      *
      * @param rd
      * @return
@@ -1068,6 +1068,26 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 continue;
             }
 
+            //** 条件关系 **/
+
+            v = vd.get(Cnst.OR_REL);
+            if (Cnst.OR_KEY.equals(v )
+            ||  Cnst.NR_KEY.equals(v)) {
+                List r2 = new ArrayList(vd.size() - 1);
+                for(Object ot : vd.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    Object k2 = et.getKey  ();
+                    if (! Cnst.OR_KEY.equals(k2)) {
+                    Object v2 = et.getValue();
+                        r2.add(Synt.mapOf(k2,v2));
+                    }
+                }
+                if ( !  r2.isEmpty( )) {
+                    padQry(qr, Synt.mapOf(v ,r2), r-1);
+                }
+                continue;
+            }
+
             //** 空值查询 **/
 
             v = vd.get(Cnst.IS_REL);
@@ -1266,7 +1286,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     // 权重
                     Query qb = qa;
                     v = map.get(Cnst.WT_REL);
-                    if (v != null) {
+                    if (v != null && !"".equals(v)) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }
 
@@ -1293,7 +1313,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     // 权重
                     Query qb = qa;
                     v = map.get(Cnst.WT_REL);
-                    if (v != null) {
+                    if (v != null && !"".equals(v)) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }
 
@@ -1321,7 +1341,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     // 权重
                     Query qb = qa;
                     v = map.get(Cnst.WT_REL);
-                    if (v != null) {
+                    if (v != null && !"".equals(v)) {
                         qb = new BoostQuery(qa, Synt.declare(v, 1f));
                     }
 

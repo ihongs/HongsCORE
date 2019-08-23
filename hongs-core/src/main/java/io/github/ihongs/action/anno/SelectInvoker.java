@@ -16,8 +16,6 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * !enum 表示不需要执行, 同 .enum
- * !info 表示不需要执行, 同 .info
  * .enum 表示要选项数据
  * .info 表示补充默认值
  * .form 表示处理子表单
@@ -44,79 +42,50 @@ public class SelectInvoker implements FilterInvoker {
                       .get( Cnst.AB_KEY )
             );
             if (ab != null) {
-                if (ab.contains("!menu" )
-                ||  ab.contains("!enum" )
-                ||  ab.contains("!info")) {
-                    if (ab.contains("!menu")) {
-                        menu  = true ;
-                        adds -= SelectHelper.ENUM;
-                    } else
-                    if (ab.contains("!enum")) {
-                        adds -= SelectHelper.ENUM;
-                    }
-                    if (ab.contains("!info")) {
-                        adds -= SelectHelper.INFO;
-                    }
-                    if (ab.contains(".form")) {
-                        adds -= SelectHelper.FORM;
-                    }
-                    if (ab.contains("_fork")) {
-                        adds -= SelectHelper.FORK;
-                    }
-                    if (ab.contains("_link")) {
-                        adds -= SelectHelper.LINK;
-                    }
-                    if (ab.contains("_time")) {
-                        adds -= SelectHelper.TIME;
-                    }
-                    if (ab.contains("_text")) {
-                        adds -= SelectHelper.TEXT;
-                    }
-                } else {
-                    if (ab.contains(".menu")) {
-                        menu  = true ;
-                        adds += SelectHelper.ENUM;
-                    } else
-                    if (ab.contains(".enum")) {
-                        adds += SelectHelper.ENUM;
-                    }
-                    if (ab.contains(".info")) {
-                        adds += SelectHelper.INFO;
-                    }
-                    if (ab.contains(".form")) {
-                        adds += SelectHelper.FORM;
-                    }
-                    if (ab.contains("_fork")) {
-                        adds += SelectHelper.FORK;
-                    }
-                    if (ab.contains("_link")) {
-                        adds += SelectHelper.LINK;
-                    }
-                    if (ab.contains("_time")) {
-                        adds += SelectHelper.TIME;
-                    }
-                    if (ab.contains("_text")) {
-                        adds += SelectHelper.TEXT;
-                    }
+                if (ab.contains(".menu")) {
+                    menu  = true;
+                    adds += SelectHelper.ENUM;
+                } else
+                if (ab.contains(".enum")) {
+                    adds += SelectHelper.ENUM;
+                }
+
+                if (ab.contains(".info")) {
+                    adds += SelectHelper.INFO;
+                }
+
+                if (ab.contains(".form")) {
+                    adds += SelectHelper.FORM;
+                }
+
+                if (ab.contains("_fork")) {
+                    adds += SelectHelper.FORK;
+                }
+
+                if (ab.contains("_link")) {
+                    adds += SelectHelper.LINK;
+                }
+
+                if (ab.contains("_time")) {
+                    adds += SelectHelper.TIME;
+                }
+
+                if (ab.contains("_text")) {
+                    adds += SelectHelper.TEXT;
                 }
             }
         }
 
-        // 为负则不执行, 仅取选项数据
-        Map rsp;
-        if (adds <  0) {
-            adds = (byte)(0-adds);
-            rsp  =  new HashMap();
-        } else
+        // 向下执行
+        chains.doAction();
         if (adds == 0) {
-            chains.doAction(  );
             return;
-        } else {
-            chains.doAction(  );
-            rsp  = helper.getResponseData(  );
-        if (rsp != null && ! Synt.declare(rsp.get("ok"), false)) {
+        }
+        Map  rsp  = helper . getResponseData();
+        if ( rsp == null) rsp = new HashMap ();
+        if (!Synt.declare(rsp.get("ok"),true)) {
             return;
-        }}
+        }
 
         // 识别路径
         if (form.length() == 0) {
@@ -148,7 +117,7 @@ public class SelectInvoker implements FilterInvoker {
             sel.select ( rsp, adds );
 
             // 某些框架可把数据映射到对象, 需规避关键词 enum
-            if (menu && rsp != null && rsp.containsKey("enum")) {
+            if (  menu  && rsp.containsKey("enum")) {
                 rsp.put("menu", rsp.remove("enum"));
             }
         } catch (HongsException ex ) {

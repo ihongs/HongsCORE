@@ -1044,7 +1044,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             Map vd;
             if (v instanceof Map) {
-                vd = (Map) v;
+                vd = (Map) v ;
             } else
             if (v instanceof Set
             ||  v instanceof Collection

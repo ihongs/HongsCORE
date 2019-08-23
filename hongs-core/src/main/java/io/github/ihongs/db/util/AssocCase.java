@@ -434,16 +434,14 @@ public class AssocCase {
 
         for(String kn : ks) {
             Object vv = Dict.getParam( rd , kn );
-            Map    vm = null;
             String fn ;
             Object vo ;
 
             if ( vv == null ) {
                 continue;
             }
-            if ( vv instanceof Map ) {
-                 vm  = (Map )  vv  ;
-            }
+
+            Map  vm  = vv instanceof Map ? (Map) vv : null;
 
             // 常规条件
             if ( vm == null ) {
@@ -452,7 +450,7 @@ public class AssocCase {
 
             if ( vv instanceof Collection
             ||   vv instanceof Object[] ) {
-                Set vs = Synt.asSet(vv);
+                Set vs = Synt.asSet( vv );
                     vs.remove("");
                 if(!vs.isEmpty( )) {
                     caze.filter(fn+" IN (?)", vv);

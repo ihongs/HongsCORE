@@ -229,7 +229,8 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
      rb     响应字段(reply with)
      ab     应用处理(apply with)
      or     或查询  (or )
-     ar     多组或  (and)
+     ar     多组    (and)
+     nr     否定    (not)
 
 请避免将这些参数作为您的字段名.
 

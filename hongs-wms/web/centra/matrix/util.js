@@ -464,10 +464,14 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         }
 
         for(var k in field) {
-            if (/^__/.test( k ) ) {
+            if (k === "__name__"
+            ||  k === "__type__"
+            ||  k === "selected") {
                 continue;
             }
-            if (k === "selected") {
+            if (/^__/.test(  k  )
+            && !input.attr("data-"+ k )
+            &&  group.attr("data-type") !== "-" ) {
                 continue;
             }
             if (k === "datalist") {

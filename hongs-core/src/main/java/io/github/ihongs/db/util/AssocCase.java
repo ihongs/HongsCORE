@@ -424,40 +424,73 @@ public class AssocCase {
         if (rd == null || rd.isEmpty()) return;
 
         Map<String, String> af = allow(FINDABLE);
-        Map<String, String> cf = new LinkedHashMap(allow(RANKABLE));
-        Map<String, String> sf = new LinkedHashMap(allow(SRCHABLE));
+        Map<String, String> rf = allow(RANKABLE);
+        Map<String, String> sf = allow(SRCHABLE);
 
-        for(Map.Entry<String, String> et : af.entrySet()) {
-            String kn = et.getKey(  );
-            String fn = et.getValue();
-            Object vv = Dict.getParam(rd , kn);
+        Set<String>  ks  =  new  LinkedHashSet();
+        ks.addAll(af.keySet());
+        ks.addAll(rf.keySet());
+        ks.addAll(sf.keySet());
 
-            if (vv == null) {
+        for(String kn : ks) {
+            Object vv = Dict.getParam( rd , kn );
+            Map    vm = null;
+            String fn ;
+            Object vo ;
+
+            if ( vv == null ) {
                 continue;
-            } else
-            if (vv instanceof Set
-            ||  vv instanceof Collection
-            ||  vv instanceof Object [] ) {
+            }
+            if ( vv instanceof Map ) {
+                 vm  = (Map )  vv  ;
+            }
+
+            // 常规条件
+            if ( vm == null ) {
+            fn = af.get( kn );
+            if ( fn != null ) {
+
+            if ( vv instanceof Collection
+            ||   vv instanceof Object[] ) {
                 Set vs = Synt.asSet(vv);
                     vs.remove("");
                 if(!vs.isEmpty( )) {
                     caze.filter(fn+" IN (?)", vv);
                 }
-                continue;
-            } else
-            if (! ( vv instanceof Map ) ) {
+            } else {
                 if(!vv.equals("")) {
                     caze.filter(fn+  " = ?" , vv);
+                }
+            }
+
+            } // End fn
+                continue;
+            } // End vm
+
+            // 条件关系
+            vo = vm.get(Cnst.OR_REL);
+            if (Cnst.OR_KEY.equals(vo )
+            ||  Cnst.NR_KEY.equals(vo)) {
+                List r2 = new ArrayList(vm.size() - 1);
+                for(Object ot : vm.entrySet()) {
+                    Map.Entry et = (Map.Entry) ot;
+                    Object k2 = et.getKey  ();
+                    if (! Cnst.OR_KEY.equals(k2)) {
+                    Object v2 = et.getValue();
+                        r2.add(Synt.mapOf(k2,v2));
+                    }
+                }
+                if ( !  r2.isEmpty(  )) {
+                    where(caze,Synt.mapOf(vo,r2));
                 }
                 continue;
             }
 
-            String f0 = cf.remove( kn ); // 区间字段
-            String f1 = sf.remove( kn ); // 搜索字段
-            Map    vm = new HashMap ( ( Map ) vv);
-            Object vo ;
+            // 一般条件
+            fn = af.get( kn );
+            if ( fn != null ) {
 
-            vo = vm.remove(Cnst.IS_REL);
+            vo = vm.get(Cnst.IS_REL);
             if ( vo != null ) {
                 String rv  =  Synt.asString(vo);
                 if ("NULL".equalsIgnoreCase(rv)) {
@@ -468,135 +501,76 @@ public class AssocCase {
                 }
             }
 
-            vo = vm.remove(Cnst.IN_REL);
+            vo = vm.get(Cnst.IN_REL);
             if ( vo != null ) {
                 caze.filter(fn+/**/" IN (?)", vo );
             }
-            vo = vm.remove(Cnst.NI_REL);
+            vo = vm.get(Cnst.NI_REL);
             if ( vo != null ) {
                 caze.filter(fn+" NOT IN (?)", vo );
             }
 
-            vo = vm.remove(Cnst.EQ_REL);
+            vo = vm.get(Cnst.EQ_REL);
             if ( vo != null ) {
                 caze.filter(fn+ " = ?", alone(vo, kn, Cnst.EQ_REL));
             }
-            vo = vm.remove(Cnst.NE_REL);
+            vo = vm.get(Cnst.NE_REL);
             if ( vo != null ) {
                 caze.filter(fn+" != ?", alone(vo, kn, Cnst.NE_REL));
             }
 
-            vo = vm.remove(Cnst.GT_REL);
-            if ( f0 != null && vo != null && !"".equals(vo) ) {
-                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.GT_REL));
-            } else {
-            vo = vm.remove(Cnst.GE_REL);
-            if ( f0 != null && vo != null && !"".equals(vo) ) {
-                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.GE_REL));
-            }}
+            } // End af
 
-            vo = vm.remove(Cnst.LT_REL);
-            if ( f0 != null && vo != null && !"".equals(vo) ) {
-                caze.filter(f0+ " < ?", alone(vo, kn, Cnst.LT_REL));
-            } else {
-            vo = vm.remove(Cnst.LE_REL);
-            if ( f0 != null && vo != null && !"".equals(vo) ) {
-                caze.filter(f0+" <= ?", alone(vo, kn, Cnst.LE_REL));
-            }}
-
-            vo = vm.remove(Cnst.RG_REL);
-            if ( f0 != null && vo != null ) {
-                Set ir = Synt.asSet(vo);
-                if (ir != null && !ir.isEmpty()) {
-                    range(caze, ir, f0);
-                }
-            }
-
-            vo = vm.remove(Cnst.CQ_REL);
-            if ( f1 != null && vo != null && !"".equals(vo) ) {
-                Set<String> ws = Synt.toWords(vo);
-                likes(caze, ws , f1 , /**/"LIKE");
-            }
-            vo = vm.remove(Cnst.NC_REL);
-            if ( f1 != null && vo != null && !"".equals(vo) ) {
-                Set<String> ws = Synt.toWords(vo);
-                likes(caze, ws , f1 , "NOT LIKE");
-            }
-
-            // 如果还有剩余, 就当做 IN 来处理. 2019/07/27 为避免歧义, 取消此逻辑
-            /*   vm.remove("");
-            if (!vm.isEmpty()) {
-                caze.filter(fn + " IN (?)" , Synt.asSet(vm) );
-            }*/
-        }
-
-        /**
-         * 可能存在不过滤的区间和搜索字段
-         * 例如长文本类型并不便于一般比对
-         * 下面即为处理与过滤表的差集部分
-         */
-
-        for(Map.Entry<String, String> et : cf.entrySet()) {
-            String kn = et.getKey(  );
-            String f0 = et.getValue();
-            Object vv = Dict.getParam(rd , kn);
-
-            if (! (vv instanceof Map)) {
-                continue;
-            }
-
-            Map    vm = (Map) vv;
-            Object vo ;
+            // 区间查询
+            fn = rf.get( kn );
+            if ( fn != null ) {
 
             vo = vm.get(Cnst.GT_REL);
             if ( vo != null && !"".equals(vo) ) {
-                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.GT_REL));
-            }
+                caze.filter(fn+ " > ?", alone(vo, kn, Cnst.GT_REL));
+            } else {
             vo = vm.get(Cnst.GE_REL);
             if ( vo != null && !"".equals(vo) ) {
-                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.GE_REL));
-            }
+                caze.filter(fn+" >= ?", alone(vo, kn, Cnst.GE_REL));
+            }}
 
             vo = vm.get(Cnst.LT_REL);
             if ( vo != null && !"".equals(vo) ) {
-                caze.filter(f0+ " > ?", alone(vo, kn, Cnst.LT_REL));
-            }
+                caze.filter(fn+ " < ?", alone(vo, kn, Cnst.LT_REL));
+            } else {
             vo = vm.get(Cnst.LE_REL);
             if ( vo != null && !"".equals(vo) ) {
-                caze.filter(f0+" >= ?", alone(vo, kn, Cnst.LE_REL));
-            }
+                caze.filter(fn+" <= ?", alone(vo, kn, Cnst.LE_REL));
+            }}
 
             vo = vm.get(Cnst.RG_REL);
             if ( vo != null ) {
-                Set ir = Synt.setOf(vo);
-                if (ir != null && !ir.isEmpty()) {
-                    range(caze, ir, f0);
+                Set ir = Synt.asSet(vo);
+                if (ir != null && ! ir.isEmpty()) {
+                    range(caze, ir, fn);
                 }
             }
-        }
 
-        for(Map.Entry<String, String> et : sf.entrySet()) {
-            String kn = et.getKey(  );
-            String f1 = et.getValue();
-            Object vv = Dict.getParam(rd , kn);
+            } // End rf
 
-            if (! (vv instanceof Map)) {
-                continue;
-            }
+            // 模糊匹配
+            fn = sf.get( kn );
+            if ( fn != null ) {
 
-            Map    vm = (Map) vv;
-            Object vo ;
-
-            vo = vm.remove(Cnst.CQ_REL);
+            vo = vm.get(Cnst.CQ_REL);
             if ( vo != null && !"".equals(vo) ) {
                 Set<String> ws = Synt.toWords(vo);
-                likes(caze, ws , f1 , /**/"LIKE");
+                likes(caze, ws , fn , /**/"LIKE");
             }
-            vo = vm.remove(Cnst.NC_REL);
+            vo = vm.get(Cnst.NC_REL);
             if ( vo != null && !"".equals(vo) ) {
                 Set<String> ws = Synt.toWords(vo);
-                likes(caze, ws , f1 , "NOT LIKE");
+                likes(caze, ws , fn , "NOT LIKE");
             }
+
+            } // End sf
+
+            // 2019/07/27 为避免歧义, 剩余值不再 IN
         }
 
         /**

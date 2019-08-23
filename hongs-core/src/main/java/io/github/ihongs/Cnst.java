@@ -52,6 +52,8 @@ public final class Cnst {
 
     //** 关系符号 **/
 
+    public static final String OR_REL =  "or"; // 条件关系  (or  , nr  )
+
     public static final String IS_REL =  "is"; // 是否为空  (NULL, WELL)
 
     public static final String EQ_REL =  "eq"; // 等于

@@ -41,14 +41,14 @@
     var context = $("#matrix-form-pick");
 
     // 附加关联所需的额外配置参数
-    context.data("_fill__fork", function(cel,v,n) {
+    context.data("_fill__fork", function(cel, v, n) {
         hsListFillFork.call(this, cel, v, n);
         var chk =  cel.find(  ".checkone"  );
-        var dat ;
-        if (this._info.unit_id === "-" ) {
-            dat = eval("("+ this._info.conf +")");
+        var cnf ;
+        if (this._info.unit_id === "-") {
+            cnf = eval("(" + this._info.conf + ")");
         } else {
-            dat = {
+            cnf = {
                  form    :                 this._info.id,
                  conf    : "centra/data/"+ this._info.id,
                 "data-at": "centra/data/"+ this._info.id +"/search",
@@ -58,7 +58,8 @@
                 "data-tk": "name"
             };
         }
-        chk.data(dat);
+        chk.removeData();
+        chk.data ( cnf );
     });
 })(jQuery);
 </script>

@@ -11,11 +11,12 @@
      * 但须在系统启动之后和八小时以内
      */
     if (0 == Core.DEBUG || 8 == (8 & Core.DEBUG)) {
-        long n , m;
-        n = Math.max(Core.STARTS_TIME, Core.ACTION_TIME.get() - 28800000) / 1000 * 1000; // 精确到秒
+        long s , a , m;
+        s = Core.STARTS_TIME;
+        a = Core.ACTION_TIME.get();
         m = request .getDateHeader("If-Modified-Since");
-        if ( n > m) {
-            response.setDateHeader("Last-Modified", n );
+        if ( m < Math.max(s , a - 28800000) ) {
+            response.setDateHeader("Last-Modified", a );
         } else {
             response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
             return;

@@ -1046,14 +1046,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (v instanceof Map) {
                 vd = (Map) v ;
             } else
-            if (v instanceof Set
-            ||  v instanceof Collection
+            if (v instanceof Collection
             ||  v instanceof Object[ ]) {
                 Set  a = Synt.asSet(v);
                      a.remove("");
                 if (!a.isEmpty( )) {
                     BooleanQuery.Builder qx = new BooleanQuery.Builder();
-                    for(Object b : a) {
+                    for( Object b : a ) {
                         qx.add(qa.whr(k, b), BooleanClause.Occur.SHOULD);
                     }
                     qr.add(qx.build(  ), BooleanClause.Occur.MUST);

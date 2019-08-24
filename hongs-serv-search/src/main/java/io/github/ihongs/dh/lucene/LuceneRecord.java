@@ -567,7 +567,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (! wl) return resp ;
 
         // 提取分页片段
-        List list = new ArrayList(rn);
+        List list = new ArrayList(st != 0 ? rn : 0 );
         while ( roll.hasNext() && maxRn > minRn ++ ) {
              list.add ( roll.next() );
         }

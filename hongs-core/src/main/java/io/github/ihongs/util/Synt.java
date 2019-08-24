@@ -112,7 +112,7 @@ public final class Synt {
         }
 
         int idx = 0;
-        Map map = new LinkedHashMap();
+        Map map = new LinkedHashMap ( objs.length/2 );
         while ( idx < objs.length ) {
             map.put ( objs [idx ++] , objs [idx ++] );
         }

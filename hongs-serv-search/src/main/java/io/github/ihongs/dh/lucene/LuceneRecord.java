@@ -202,12 +202,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             rd.put( Cnst.RB_KEY , getListable() );
         }
 
-        // 获取页码
-        int pn = 1;
-        if (rd.containsKey(Cnst.PN_KEY)) {
-            pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if ( pn < 0 ) pn = Math.abs( pn );
-        }
-
         // 获取行数, 默认依从配置
         int rn;
         if (rd.containsKey(Cnst.RN_KEY)) {
@@ -224,8 +218,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             gn = CoreConfig.getInstance().getProperty("fore.pugs.for.page", Cnst.GN_DEF);
         }
 
-        if (gn == 0) {
-            gn =  1;
+        // 获取页码
+        int pn = 1;
+        if (rd.containsKey(Cnst.PN_KEY)) {
+            pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if ( pn < 0 ) pn = Math.abs( pn );
         }
 
         // 指定行数 0, 则获取全部
@@ -236,12 +232,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             return data;
         }
 
-        // 指定页码 0, 仅获取分页
-        if (pn == 0) {
-            return getPage(rd, rn, gn, 1 );
-        } else {
-            return getList(rd, rn, gn, pn);
-        }
+        return search(rd, rn, pn, gn);
     }
 
     /**
@@ -483,21 +474,61 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     public List getAll(Map rd) throws HongsException {
         Loop roll = search(rd, 0, 0);
-        List list = new LinkedList();
+        List list = new ArrayList( );
         while  (  roll.hasNext()) {
             list.add(roll.next());
         }
         return list;
     }
 
-    private Map getPage(Map rd, int rn, int gn, int pn) throws HongsException {
+    /**
+     * 搜索查询文档
+     * @param rd
+     * @param begin 起始位置
+     * @param limit 获取限制
+     * @return
+     * @throws HongsException
+     */
+    public Loop search(Map rd, int begin, int limit) throws HongsException {
+        Query q = padQry(rd);
+        Sort  s = padSrt(rd);
+        Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        Loop  l = new Loop(this, q,s,r, begin,limit);
+
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            CoreLogger.debug("LuceneRecord.search: " + l.toString());
+        }
+
+        return l;
+    }
+
+    /**
+     * 获取分页列表
+     * @param rd
+     * @param rn 每页行数
+     * @param gn 组数
+     * @param pn 页数
+     * @return
+     * @throws HongsException
+     */
+    public Map search(Map rd, int rn, int pn, int gn) throws HongsException {
+        // 指定页码 0, 仅获取分页
+        boolean wl = false;
+        if (pn == 0) {
+            wl = true;
+            pn =  1;
+        }
+        if (gn == 0) {
+            gn =  1;
+        }
+
         // 获取页码, 计算查询区间
         int minPn = pn - (gn / 2);
         if (minPn < 1)   minPn=1 ;
         int maxPn = gn + minPn-1 ;
         int totRn = rn * maxPn+1 ;
         int minRn = rn * (pn - 1);
-//      int maxRn = rn + minRn   ;
+        int maxRn = rn + minRn   ;
 
         // 数量太少的话没必要估算
         int talRn = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
@@ -533,82 +564,16 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         page.put("pages", pc );
         resp.put("page", page);
 
-        return resp;
-    }
-
-    private Map getList(Map rd, int rn, int gn, int pn) throws HongsException {
-        // 获取页码, 计算查询区间
-        int minPn = pn - (gn / 2);
-        if (minPn < 1)   minPn=1 ;
-        int maxPn = gn + minPn-1 ;
-        int totRn = rn * maxPn+1 ;
-        int minRn = rn * (pn - 1);
-        int maxRn = rn + minRn   ;
-
-        // 数量太少的话没必要估算
-        int talRn = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
-        if (totRn < talRn) totRn = 1 + talRn / rn * rn ;
-
-        Loop roll = search( rd, minRn , totRn - minRn );
-        int  rc   = roll . size();
-        int  pc   = ( int ) Math.ceil((double) rc / rn);
-        int  st   ;
-
-        if (rc == 0) {
-            st =  0;
-        } else
-        if (rc <  minRn) {
-            st =  0;
-        } else
-        if (rc < totRn) {
-            st =  1;
-        } else
-        {
-            st =  2;
-            rc -= 1;
-            pc -= 1;
-        }
+        if (! wl) return resp ;
 
         // 提取分页片段
-        List list = new LinkedList();
-        while ( maxRn > minRn ++
-          && roll . hasNext (/**/) ) {
-             list . add(roll.next());
+        List list = new ArrayList(rn);
+        while ( roll.hasNext() && maxRn > minRn ++ ) {
+             list.add ( roll.next() );
         }
-
-        Map  resp = new HashMap();
-        Map  page = new HashMap();
-        page.put(Cnst.RN_KEY, rn);
-        page.put(Cnst.GN_KEY, gn);
-        page.put(Cnst.PN_KEY, pn);
-        page.put("state", st );
-        page.put("count", rc );
-        page.put("pages", pc );
-        resp.put("page", page);
         resp.put("list", list);
 
         return resp;
-    }
-
-    /**
-     * 搜索查询文档
-     * @param rd
-     * @param begin 起始位置
-     * @param limit 获取限制
-     * @return
-     * @throws HongsException
-     */
-    public Loop search(Map rd, int begin, int limit) throws HongsException {
-        Query q = padQry(rd);
-        Sort  s = padSrt(rd);
-        Set   r = Synt.toTerms (rd.get(Cnst.RB_KEY));
-        Loop  l = new Loop(this, q,s,r, begin,limit);
-
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-            CoreLogger.debug("LuceneRecord.search: " + l.toString());
-        }
-
-        return l;
     }
 
     //** 组件方法 **/
@@ -996,10 +961,12 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         int i = 0, j = 0; // 条件数量, 否定数量, 计数规避全否定时查不到数据
 
         Map<String, Map> fields = getFields();
-        for(Map.Entry<String, Map> e : fields.entrySet()) {
-            Map    m =  e.getValue();
-            String k =  e.getKey(  );
-            Object v = rd.get(  k  );
+        Set<String> ks = new LinkedHashSet(fields.keySet());
+                    ks.retainAll(rd.keySet());
+
+        for(String k : ks) {
+            Object v = rd.get(k);
+            Map m =fields.get(k);
 
             if (m == null
             ||  v == null) {
@@ -1997,7 +1964,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             // 是否获取全部
             if ( l  ==  0) {
-                 l = 1000;
+                 l = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
                  A = true;
             }
 
@@ -2081,21 +2048,22 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
          * @return
          */
         public int size() {
-            hasNext();
+            if (docs == null) {
+                hasNext();
+            }
             return H ;
         }
 
-        /**
-         * @deprecated
-         */
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported remove in lucene loop.");
+        public List<Map> toList() {
+            List<Map> list = new ArrayList();
+            while  (  hasNext() ) {
+                list.add(next() );
+            }
+            return list;
         }
 
         @Override
         public String toString() {
-        //  hasNext();
             StringBuilder sb = new StringBuilder(that.getDbName());
             if ( q != null ) {
                 sb.append(" QUERY: ");
@@ -2119,6 +2087,14 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 sb.append( l );
             }
             return sb.toString();
+        }
+
+        /**
+         * @deprecated
+         */
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException("Not supported remove in lucene loop.");
         }
     }
 

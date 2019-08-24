@@ -163,19 +163,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
     /**
      * 获取数据
-
- 以下参数为特殊参数, 可在 default.properties 中配置:
- id   ID, 仅指定单个 id 时则返回详情(info)
- rn   行数, 明确指定为 0 则不分页
- gn   分页
- pn   页码
- wd   搜索
- ob   排序
- r2   字段
- r2   多组"或"关系条件
- ar   串联多组关系条件
- sr   附加多组"或"关系, LuceneRecord 特有
- 请注意尽量避免将其作为字段名(id,wd除外)
+     *
+     * 以下参数为特殊参数, 可在 default.properties 中配置:
+     * id   ID, 仅指定单个 id 时则返回详情(info)
+     * rn   行数, 明确指定为 0 则不分页
+     * gn   分页
+     * pn   页码
+     * wd   搜索
+     * ob   排序
+     * rb   字段
+     * or   多组"或"关系条件
+     * nr   多组"否"关系条件
+     * ar   串联多组关系条件
+     * 请注意尽量避免将其作为字段名(id,wd除外)
      *
      * @param rd
      * @return

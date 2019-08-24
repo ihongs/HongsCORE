@@ -15,10 +15,9 @@ import java.sql.Statement;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.Collection;
 import java.util.ArrayList;
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -449,7 +448,7 @@ abstract public class Link
   public List fetchAll(String sql, Object... params)
     throws HongsException
   {
-    List<Map<String, Object>> rows = new LinkedList();
+    List<Map<String, Object>> rows = new ArrayList();
          Map<String, Object>  row  ;
 
     try (Loop rs = query(sql, 0, 0, params))

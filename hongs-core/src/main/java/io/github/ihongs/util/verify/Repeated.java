@@ -1,11 +1,11 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.util.Synt;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -50,9 +50,9 @@ public class Repeated extends Rule implements Rulx {
             String s ;
 
             // 正则拆分
-            s = Synt.asString( getParam("split") );
+            s = Synt.asString(getParam("split"));
             if (s != null) {
-                List<String> a = new LinkedList( );
+                List<String> a = new ArrayList();
                 Matcher m = Pattern.compile( s )
                                    .matcher( v );
                 int e , b = 0;
@@ -65,9 +65,9 @@ public class Repeated extends Rule implements Rulx {
             }
 
             // 普通拆分
-            s = Synt.asString( getParam("slice") );
+            s = Synt.asString(getParam("slice"));
             if (s != null) {
-                List<String> a = new LinkedList( );
+                List<String> a = new ArrayList();
                 int e , b = 0;
                 while ((e = v.indexOf(s, b))>-1) {
                     a.add(v.substring(b, e));
@@ -143,10 +143,10 @@ public class Repeated extends Rule implements Rulx {
     public Collection getContext() {
         // 是否必须不同的值
         Collection context;
-        if (Synt.declare(getParam("diverse") , false)) {
-            context =  new LinkedHashSet();
+        if (Synt.declare(getParam("diverse"), false )) {
+            context =  new LinkedHashSet(  );
         } else {
-            context =  new LinkedList(   );
+            context =  new ArrayList();
         }
         return context;
     }

@@ -7,7 +7,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Synt;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.http.Part;
 
@@ -20,7 +20,7 @@ public class FileAction {
 
     @Action("create")
     public void create(ActionHelper helper) throws HongsException {
-        List  list = new  LinkedList ();
+        List  list = new  ArrayList  ();
         List  fils = Synt.asList (helper.getRequestData( ).get("file") );
         String uid = Synt.declare(helper.getSessibute(Cnst.UID_SES),"0");
         String nid = Core.newIdentity();

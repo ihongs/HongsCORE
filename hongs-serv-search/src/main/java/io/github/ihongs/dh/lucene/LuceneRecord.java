@@ -28,7 +28,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -668,7 +667,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     public Sort  padSrt(Map rd) throws HongsException {
-        List<SortField> of = new LinkedList();
+        List<SortField> of = new ArrayList();
 
         padSrt(of, rd);
 

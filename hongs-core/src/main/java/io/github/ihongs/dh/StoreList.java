@@ -2,7 +2,7 @@ package io.github.ihongs.dh;
 
 import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
@@ -16,12 +16,12 @@ abstract public class StoreList<T> extends CoreSerial implements Collection<T> {
     protected Collection<T> list;
 
     public StoreList(String name, Collection list) throws HongsException {
-        this.list = list ;
-        init(name ,  0  );
+        this.list = list;
+        init(name ,  0 );
     }
 
     public StoreList(String name) throws HongsException {
-        this(name , new LinkedList() );
+        this(name , new ArrayList() );
     }
 
     /**

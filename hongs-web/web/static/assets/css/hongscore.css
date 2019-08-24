@@ -325,8 +325,10 @@ ol.repeated ,
 }
 .table-responsive-revised th ,
 .table-responsive-revised td {
+    max-width: 20em;
     white-space: nowrap;
     overflow-x : hidden;
+    overflow-y : hidden;
     text-overflow: ellipsis;
 }
 

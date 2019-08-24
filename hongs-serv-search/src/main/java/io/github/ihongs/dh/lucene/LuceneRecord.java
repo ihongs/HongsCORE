@@ -355,7 +355,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public String add(Map rd) throws HongsException {
         String id = Synt.asString(rd.get(Cnst.ID_KEY));
         if (id != null && id.length() != 0) {
-            throw new HongsException.Common("Id can not set in add");
+            throw new NullPointerException("Id can not set in add");
         }
         id  =  Core.newIdentity();
         rd.put(Cnst.ID_KEY , id );
@@ -1240,7 +1240,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException.Common("Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
+                throw new HongsException(HongsException.EXTERN, "Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1267,7 +1267,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         v = rd.get(Cnst.NR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException.Common("Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
+                throw new HongsException(HongsException.EXTERN, "Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1294,7 +1294,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         v = rd.get(Cnst.OR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException.Common("Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
+                throw new HongsException(HongsException.EXTERN, "Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {

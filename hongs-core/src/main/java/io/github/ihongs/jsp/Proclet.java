@@ -88,13 +88,22 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
       }
     }
     else
-    // 服务异常, 交换且记录
-    if (ern >= 0x110a && ern <= 0x110f)
+    // 服务异常, 仅记录起因
+    if (ern >= 0x110a && ern <= 0x110e)
     {
-        Throwable  tx  = ta ;
-                   ta  = te ;
-                   te  = tx ;
-        CoreLogger.error(tx);
+      if (null != te)
+      {
+        CoreLogger.error(ta);
+      }
+    }
+    else
+    // 通用错误, 仅记录起因
+    if (ern == 0x1000 || ern == 0x1001)
+    {
+      if (null != te)
+      {
+        CoreLogger.error(te);
+      }
     }
     else
     // 其他异常, 记录到日志

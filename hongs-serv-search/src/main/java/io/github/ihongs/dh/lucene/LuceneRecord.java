@@ -512,13 +512,15 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     public Map search(Map rd, int rn, int pn, int gn) throws HongsException {
         // 指定页码 0, 仅获取分页
-        boolean wl = false;
-        if (pn == 0) {
-            wl = true;
-            pn =  1;
-        }
+        boolean  nl;
         if (gn == 0) {
             gn =  1;
+        }
+        if (pn == 0) {
+            pn =  1;
+            nl = true ;
+        } else {
+            nl = false;
         }
 
         // 获取页码, 计算查询区间
@@ -563,7 +565,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         page.put("pages", pc );
         resp.put("page", page);
 
-        if (! wl) return resp ;
+        if ( nl ) return resp ;
 
         // 提取分页片段
         List list = new ArrayList(st != 0 ? rn : 0 );

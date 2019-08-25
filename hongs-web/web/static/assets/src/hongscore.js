@@ -1893,7 +1893,7 @@ $.hsNote = function(msg, typ, end, sec) {
             opt.glass = "alert-success";
             break;
         default:
-            console.warn("hsWarn: Wrong type " + typ);
+            console.warn("hsNote: Wrong type " + typ);
     }
 
     return $.hsMask.call ( this , opt );

@@ -41,7 +41,7 @@ abstract public class ModelGate implements IActing, IAction {
          */
 
         if (ent.startsWith("_") || mod.endsWith("/" + ent)) {
-            throw new HongsException(0x1100, "Unsupported Request!");
+            throw new HongsException(0x1104, "Unsupported Request!");
         }
 
         Map fs = null;
@@ -72,7 +72,7 @@ abstract public class ModelGate implements IActing, IAction {
 
         Set ca  = Synt.toSet( Dict.get( fs , null, "@", "callable"));
         if (ca != null && !ca.contains(act)) {
-            throw new HongsException(0x1100, "Unsupported Request.");
+            throw new HongsException(0x1105, "Unsupported Request.");
         }
     }
 

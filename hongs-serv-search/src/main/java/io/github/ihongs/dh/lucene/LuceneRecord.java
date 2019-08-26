@@ -616,6 +616,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     public Document getDoc(String id) throws HongsException {
+        /* Maybe changed */ getReader( );
         IndexSearcher  ff = getFinder( );
         try {
                 Query  qq = new TermQuery(new Term("@"+Cnst.ID_KEY, id));
@@ -1574,10 +1575,19 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         return getSrchable();
     }
 
+    /**
+     * 获取查询器
+     * 由于 getReader 中发现数据变化会重开
+     * 如需 getReader 务必先于当前方法执行
+     * @return
+     * @throws HongsException 
+     */
     public IndexSearcher getFinder() throws HongsException {
-        IndexReader ir = getReader(); // 见下方注释
         if (finder == null) {
-            finder  = new IndexSearcher(ir);
+        if (reader == null) {
+            getReader(/**/);
+        }
+            finder  = new IndexSearcher(reader);
         }
         return finder;
     }
@@ -1979,8 +1989,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             // 获取查读对象
             try {
-                finder = that.getFinder();
                 reader = that.getReader();
+                finder = that.getFinder();
             } catch ( HongsException ex ) {
                 throw ex.toExemption(   );
             }

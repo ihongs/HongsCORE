@@ -207,16 +207,18 @@ public class FormSet
 
       if ("enum".equals(tagName2))
       {
-        String namz = element2.getAttribute("name");
-        if (namz == null) namz = "";
+        String namz = element2.hasAttribute("name")
+                    ? element2.getAttribute("name")
+                    : "" ;
         Map items = new LinkedHashMap();
         this.parse(element2, null, items);
         enums.put(namz, items);
       } else
       if ("form".equals(tagName2))
       {
-        String namz = element2.getAttribute("name");
-        if (namz == null) namz = "";
+        String namz = element2.hasAttribute("name")
+                    ? element2.getAttribute("name")
+                    : "" ;
         Map items = new LinkedHashMap();
         this.parse(element2, items, null);
         forms.put(namz, items);
@@ -397,9 +399,9 @@ public class FormSet
 
   public Map getEnum(String name) throws HongsException {
     if (null == name) {
-        throw new NullPointerException ("Enum name can not be null");
+        throw new NullPointerException( "Enum name can not be null" );
     }
-    Map names = enums.get("_enum_");
+    Map names = enums.get("__enum__");
     if (null != names
     &&  names.containsKey(name)) {
         name  = (String)  names.get(name);
@@ -415,9 +417,9 @@ public class FormSet
 
   public Map getForm(String name) throws HongsException {
     if (null == name) {
-        throw new NullPointerException ("Form name can not be null");
+        throw new NullPointerException( "Form name can not be null" );
     }
-    Map names = enums.get("_form_");
+    Map names = enums.get("__form__");
     if (null != names
     &&  names.containsKey(name)) {
         name  = (String)  names.get(name);

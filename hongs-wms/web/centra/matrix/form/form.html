@@ -249,7 +249,7 @@
                     </div>
                     <div class="form-group base-field" data-type="note">
                         <label class="control-label clearfix" style="display: block;">
-                            <span>简介</span>
+                            <span>概要</span>
                             <span class="glyphicon glyphicon-remove-sign pull-right"></span>
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
@@ -285,11 +285,6 @@
                         <input type="file" name="logo" class="form-ignored invisible" accept="image/*"/>
                         <button class="btn btn-default form-control" type="button" data-toggle="hsView"><i class="glyphicon glyphicon-folder-open"></i>浏览...</button>
                     </div>
-                    <div class="form-group">
-                        <legend class="clearfix" data-valtype="text">
-                            <span>系统字段</span>
-                        </legend>
-                    </div>
                     <div class="form-group base-field" data-type="boost">
                         <label class="control-label clearfix" style="display: block;">
                             <span>权重</span>
@@ -297,7 +292,7 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="number" name="boost" data-default="0" data-sortable="yes"/>
+                        <input  class="form-control" name="boost" data-default="0" data-type="long" type="number"/>
                     </div>
                     <div class="form-group base-field" data-type="state">
                         <label class="control-label clearfix" style="display: block;">
@@ -306,7 +301,14 @@
                             <span class="glyphicon glyphicon-info-sign pull-right"></span>
                             <span class="glyphicon glyphicon-plus-sign pull-right"></span>
                         </label>
-                        <input class="invisible" type="enum" name="state" data-type="byte" data-default="1" data-:1="正常"/>
+                        <select class="form-control" name="state" data-default="1" data-type="byte">
+                            <option value="1">正常</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <legend class="clearfix" data-valtype="text">
+                            <span>系统字段</span>
+                        </legend>
                     </div>
                     <div class="form-group base-field" data-type="ctime">
                         <label class="control-label clearfix" style="display: block;">

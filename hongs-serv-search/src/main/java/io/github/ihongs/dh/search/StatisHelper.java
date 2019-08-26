@@ -49,8 +49,8 @@ public class StatisHelper {
      * @throws HongsException
      */
     public Map acount(Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
+        IndexSearcher finder = that.getFinder();
 
         int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
@@ -258,8 +258,8 @@ public class StatisHelper {
     }
 
     public Map amount(Map rd) throws HongsException {
-        IndexSearcher finder = that.getFinder();
         IndexReader   reader = that.getReader();
+        IndexSearcher finder = that.getFinder();
 
         int         topn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)   );

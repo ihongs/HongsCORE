@@ -188,7 +188,7 @@
         _fill__view: hsFormFillView
     });
 
-    <%if ("revert".equals(_action)) {%>
+    <%if ("reveal".equals(_action)) {%>
     // 前后历史记录快速切换
     var id = H$("@id"   , loadbox);
     var ct = H$("@ctime", loadbox);

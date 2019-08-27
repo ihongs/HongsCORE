@@ -1047,11 +1047,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     Object k2 = et.getKey  ();
                     if (! Cnst.OR_KEY.equals(k2)) {
                     Object v2 = et.getValue();
-                        r2.add(Synt.mapOf(k2,v2));
+                        r2.add(Synt.mapOf(k, Synt.mapOf(k2, v2)));
                     }
                 }
                 if ( !  r2.isEmpty( )) {
-                    padQry(qr, Synt.mapOf(v ,r2), r-1);
+                    padQry(qr, Synt.mapOf(v, r2), r-1);
                 }
                 continue;
             }

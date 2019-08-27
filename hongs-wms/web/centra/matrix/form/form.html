@@ -390,7 +390,7 @@
                 <input class="form-control" type="text" name="span:first" value=""/>
             </div>
         </div>
-        <div class="widget-pane widget-pane-text widget-pane-name widget-pane-note widget-pane-tags">
+        <div class="widget-pane widget-pane-text widget-pane-name widget-pane-tags">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>
@@ -432,7 +432,7 @@
                 </label>
             </div>
         </div>
-        <div class="widget-pane widget-pane-word">
+        <div class="widget-pane widget-pane-note widget-pane-word">
             <div class="form-group">
                 <label class="control-label">字段名称</label>
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>
@@ -457,32 +457,6 @@
                     <input type="checkbox" name="input|data-listable" value="yes"/>列举
                 </label>
             </div>
-        </div>
-        <div class="widget-pane widget-pane-memo">
-            <div class="form-group">
-                <label class="control-label">字段名称</label>
-                <input class="form-control" type="text" name="label span:first" value="" required="required"/>
-            </div>
-            <div class="form-group">
-                <label class="control-label">提示文字</label>
-                <input class="form-control" type="text" name="input|placeholder" value=""/>
-            </div>
-            <div class="form-group">
-                <label class="control-label">长度范围</label>
-                <div class="control-group">
-                    <input class="form-control" type="number" name="input|minlength" value="" style="display: inline-block; width: 8em;"/>
-                    <span>&nbsp;~&nbsp;</span>
-                    <input class="form-control" type="number" name="input|maxlength" value="" style="display: inline-block; width: 8em;"/>
-                </div>
-            </div>
-            <div class="checkbox">
-                <label>
-                    <input type="checkbox" name="input|required" value="required"/>必填
-                </label>
-            </div>
-            <label>
-                <input type="checkbox" name="input|data-listable" value="yes"/>列举
-            </label>
         </div>
         <div class="widget-pane widget-pane-email widget-pane-url widget-pane-tel widget-pane-sms">
             <div class="form-group">
@@ -712,6 +686,7 @@
                     <!-- JS  家族 -->
                     <option value="js">Javascript</option>
                     <option value="ts">Typescript</option>
+                    <option value="coffee">Coffee</option>
                     <option value="jsx">JSX</option>
                     <option value="vue">VUE</option>
                     <option value="json">JSON</option>
@@ -732,8 +707,9 @@
                     <!-- 其他代码 -->
                     <option value="sql">SQL</option>
                     <option value="css">CSS</option>
-                    <option value="scss">SCSS</option>
                     <option value="less">LESS</option>
+                    <option value="scss">SCSS</option>
+                    <option value="sass">SASS</option>
                     <option value="proto">Protobuf</option>
                     <option value="properties">Properties</option>
                 </select>

@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.dh.MergeMore;
+import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.Arrays;
@@ -461,22 +462,45 @@ public class SelectHelper {
                     ak = fn + "_fork";
                 }
             }
+            if (vk == null || vk.isEmpty()) {
+                vk =  Cnst.ID_KEY;
+            }
+            if (tk == null || tk.isEmpty()) {
+                tk = "name";
+            }
 
-            // 查询结构
+            // 附加参数
+            // 因下面要判断 AB 故需在此解析
+            int ps = at.indexOf  ('?');
+            if (ps > -1) {
+              String aq;
+                aq = at.substring(1 + ps).trim();
+                at = at.substring(0 , ps).trim();
+                if (aq.startsWith("{") && aq.endsWith("}")) {
+                    rd.putAll( (Map) Dawn . toObject (aq ));
+                } else {
+                    rd.putAll(ActionHelper.parseQuery(aq ));
+                }
+            }
+
+            // 关联参数
             rd.clear( );
-            rd.put(Cnst.RN_KEY, 0);             // 不分页
-            rd.put(Cnst.ID_KEY, ms.keySet ());  // 关联ID
-            if (vk != null && ! vk.isEmpty()
-            &&  tk != null && ! tk.isEmpty()) {
-                Set rb = new HashSet();
-                rb.add(tk); rb.add(vk);
-                rd.put(Cnst.RB_KEY,rb);         // 返回列
+            rd.put(Cnst.RN_KEY, 0);
+            rd.put(Cnst.ID_KEY, ms.keySet ( ));
+            if (! vk.  equals   (Cnst.ID_KEY)) {
+                  rd.put ( vk , ms.keySet ( ));
+            }
+            if (! rd.containsKey(Cnst.RB_KEY)) {
+                Set rb = new HashSet( );
+                rd.put(Cnst.RB_KEY, rb);
+                rb.add(vk);
+                rb.add(tk);
             }
 
             // 获取结果
             // 关联出错应在测试期发现并解决
             try {
-                ActionRunner ar = ActionRunner.newInstance(ah, at);
+                ActionRunner ar = ActionRunner.newInstance( ah, at );
                 if (rd.containsKey(Cnst.AB_KEY)) {
                     ar.doAction();
                 } else {

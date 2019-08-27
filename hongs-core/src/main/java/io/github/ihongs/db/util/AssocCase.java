@@ -291,7 +291,7 @@ public class AssocCase {
 
         query(caze, Synt.toWords(rd.remove(Cnst.WD_KEY)));
 
-        AssocCase.this.where(caze, rd);
+        where(caze, rd);
     }
 
     private void field(FetchCase caze, Set<String> rb) {
@@ -475,7 +475,7 @@ public class AssocCase {
                     Object k2 = et.getKey  ();
                     if (! Cnst.OR_KEY.equals(k2)) {
                     Object v2 = et.getValue();
-                        r2.add(Synt.mapOf(k2,v2));
+                        r2.add(Synt.mapOf(kn,Synt.mapOf(k2,v2)));
                     }
                 }
                 if ( !  r2.isEmpty(  )) {

@@ -309,8 +309,8 @@ public class SelectHelper {
         if (withFork) {
             /**/ Map  info = (Map ) values.get("info");
             List<Map> list = (List) values.get("list");
-            if (info != null) injectFork(info);
-            if (list != null) injectFork(list);
+            if (info != null) injectFork(info ,action);
+            if (list != null) injectFork(list ,action);
         }
 
         // 填充下级表单
@@ -418,19 +418,35 @@ public class SelectHelper {
         injectLink(info, files);
     }
 
-    public void injectFork(Map info) {
-        injectFork(Synt.listOf(info));
+    public void injectFork(Map info , byte ad ) {
+        injectFork(Synt.listOf(info), /**/ ad );
     }
 
-    public void injectFork(List<Map> list) {
+    public void injectFork(List<Map> list, byte ad ) {
         ActionHelper ah = ActionHelper.newInstance();
-        MergeMore    mm = new MergeMore(list);
+        MergeMore    mm = new MergeMore( list );
         Map          rd = new HashMap();
         Map          cd = new HashMap();
+        Set          rb = new HashSet();
+        Set          ab = new HashSet();
 
         ah.setRequestData(rd);
         ah.setContextData(cd);
         cd.put(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get());
+
+        // 传递 ab 参数
+        if (TEXT==(TEXT & ad)) {
+            ab.add( "_text" );
+        }
+        if (TIME==(TIME & ad)) {
+            ab.add( "_time" );
+        }
+        if (LINK==(LINK & ad)) {
+            ab.add( "_link" );
+        }
+        if (FORK==(FORK & ad)) {
+            ab.add( "_fork" );
+        }
 
         for(Map.Entry et : forks.entrySet()) {
             Map    mt = (Map) et.getValue( );
@@ -440,7 +456,7 @@ public class SelectHelper {
             Map<Object, List> ms = mm.mapped( fn );
             ms.remove(  ""  );
             ms.remove( null );
-            if (ms.isEmpty()) {
+            if (ms.isEmpty( )) {
                 continue;
             }
 
@@ -469,8 +485,12 @@ public class SelectHelper {
                 tk = "name";
             }
 
+            rd.clear();
+            rb.clear();
+            rb.add(vk);
+            rb.add(tk);
+
             // 附加参数
-            // 因下面要判断 AB 故需在此解析
             int ps = at.indexOf  ('?');
             if (ps > -1) {
               String aq;
@@ -484,27 +504,30 @@ public class SelectHelper {
             }
 
             // 关联参数
-            rd.clear( );
             rd.put(Cnst.RN_KEY, 0);
-            rd.put(Cnst.ID_KEY, ms.keySet ( ));
-            if (! vk.  equals   (Cnst.ID_KEY)) {
-                  rd.put ( vk , ms.keySet ( ));
+            rd.put(Cnst.ID_KEY, ms.keySet());
+            if (vk.equals(Cnst.ID_KEY) == false ) {
+                rd.put(vk, ms.keySet());
             }
-            if (! rd.containsKey(Cnst.RB_KEY)) {
-                Set rb = new HashSet( );
-                rd.put(Cnst.RB_KEY, rb);
-                rb.add(vk);
-                rb.add(tk);
-            }
+            Set xb;
+            xb = Synt.toTerms(rd.get(Cnst.RB_KEY));
+            if (xb == null) {
+                xb  = rb;
+            }   rd.put(Cnst.RB_KEY, xb);
+            xb = Synt.toTerms(rd.get(Cnst.AB_KEY));
+            if (xb == null) {
+                xb  = ab;
+            }   rd.put(Cnst.AB_KEY, xb);
 
             // 获取结果
             // 关联出错应在测试期发现并解决
+            // 没有 ab 就没必要调用注解过滤
             try {
                 ActionRunner ar = ActionRunner.newInstance( ah, at );
-                if (rd.containsKey(Cnst.AB_KEY)) {
-                    ar.doAction();
-                } else {
+                if (xb.isEmpty ()) {
                     ar.doInvoke();
+                } else {
+                    ar.doAction();
                 }
             } catch (HongsException e) {
                 throw e.toExemption( );

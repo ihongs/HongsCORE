@@ -21,6 +21,20 @@ $(window).on("popstate", function(ev) {
 }); history.pushState({crumb: true}, null, null);
 
 /**
+ * 筛选重置事件处理
+ */
+$(document).on("reset", ".HsList .findbox", function() {
+    var findbox = $(this);
+    findbox.find( "[data-ft=_fork]" ).each( function() {
+        hsFormFillFork( $(this), {} );
+    });
+    setTimeout(function() {
+        findbox.find(":submit")
+               .first().click();
+    } , 500);
+});
+
+/**
  * 获取当前模块对象
  */
 function S$() {

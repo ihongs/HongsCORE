@@ -312,6 +312,7 @@
 (function($) {
     var context = H$("#<%=_pageId%>");
     var loadbox = context.closest(".loadbox");
+    var listbox = context.find(".listbox");
     var findbox = context.find(".findbox");
     var filtbox = context.find(".filtbox");
     var statbox = context.find(".statbox");
@@ -393,13 +394,13 @@
     }
 
     // 延迟加载
-    filtbox.on("opened", function() {
+    context.on("opened",".filtbox", function() {
         if (filtbox.data("fetched") != true) {
             filtbox.data("fetched"  ,  true);
             filtobj.load();
         }
     });
-    statbox.on("opened", function() {
+    context.on("opened",".statbox", function() {
         if (statbox.data("changed") == true) {
             statbox.data("changed"  ,  null);
             statobj.load();
@@ -407,34 +408,26 @@
     });
 
     // 管理动作
-    findbox.find(".filter").click(function() {
+    context.on("click", ".toolbox .filter", function() {
         filtbox.toggleClass("invisible");
         if (! filtbox.is("invisible")) {
             filtbox.trigger("opened");
         }
     });
-    findbox.find(".statis").click(function() {
+    context.on("click", ".toolbox .statis", function() {
         statbox.toggleClass("invisible");
         if (! statbox.is("invisible")) {
             statbox.trigger("opened");
         }
     });
-    findbox.find(".recopy").click(function() {
-        hsCopyListData(listobj.listBox);
-    });
-    findbox.find(".search").click(function() {
+    context.on("click", ".toolbox :submit", function() {
         filtbox.addClass("invisible");
     });
-    filtbox.find(":submit").click(function() {
+    context.on("click", ".filtbox :submit", function() {
         filtbox.addClass("invisible");
     });
-    filtbox.find(":reset" ).click(function() {
-        filtbox.find("[data-ft=_fork]").each(function() {
-            hsFormFillFork($(this), {});
-        });
-        setTimeout(function() {
-            filtbox.find(":submit").click( );
-        } , 500);
+    context.on("click", ".toolbox .recopy", function() {
+        hsCopyListData  (  listbox  );
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {

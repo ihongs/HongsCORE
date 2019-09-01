@@ -320,39 +320,28 @@
     }
 
     // 延迟加载
-    filtbox.on("opened", function() {
+    context.on("opened",".filtbox", function() {
         if (filtbox.data("fetched") != true) {
-            filtbox.data("fetched"  ,  true);
+            filtbox.data("fetched",    true);
             filtobj.load();
         }
     });
-    statbox.on("opened", function() {
+    context.on("opened",".statbox", function() {
         if (statbox.data("changed") == true) {
-            statbox.data("changed"  ,  null);
+            statbox.data("changed",    null);
             statobj.load();
         }
     });
 
     // 管理动作
-    findbox.find(".filter").click(function() {
+    context.on("click", ".toolbox .filter", function() {
         filtbox.toggleClass("invisible");
         if (! filtbox.is("invisible")) {
             filtbox.trigger("opened");
         }
     });
-    findbox.find(".search").click(function() {
+    context.on("click", ".findbox :submit", function() {
         filtbox.addClass("invisible");
-    });
-    filtbox.find(":submit").click(function() {
-        filtbox.addClass("invisible");
-    });
-    filtbox.find(":reset" ).click(function() {
-        filtbox.find("[data-ft=_fork]").each(function() {
-            hsFormFillFork($(this), {});
-        });
-        setTimeout(function() {
-            filtbox.find(":submit").click( );
-        } , 500);
     });
 
     hsRequires("<%=_module%>/<%=_entity%>/defines.js", function() {

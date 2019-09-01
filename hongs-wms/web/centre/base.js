@@ -11,6 +11,20 @@ if (hsChkUri('public')) {
 }
 
 /**
+ * 列表搜索表单重置
+ */
+$(document).on("reset", ".HsList .findbox", function() {
+    var findbox = $(this);
+    findbox.find( "[data-ft=_fork]" ).each( function() {
+        hsFormFillFork( $(this), {} );
+    });
+    setTimeout(function() {
+        findbox.find(":submit")
+               .first().click();
+    } , 500);
+});
+
+/**
  * 获取当前模块对象
  */
 function S$() {

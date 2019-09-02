@@ -33,10 +33,10 @@ import javax.servlet.http.HttpSession;
 public class AuthKit {
 
     private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
-
-    private static final String AUTH_SID_KEY = "ssid";
-    private static final String AUTH_UNI_KEY = "unit";
-    private static final String AUTH_UUT_KEY = "uut" ; // 用户更新时间
+    private static final String NAME = "uname" ;
+    private static final String HEAD = "uhead" ;
+    private static final String UNIT =  "unit" ;
+    private static final String SSID =  "ssid" ;
 
     /**
      * 登录成功后跳转
@@ -112,7 +112,7 @@ public class AuthKit {
      */
     public static Map userSign(ActionHelper ah, String unit, String uuid, String uname, String uhead)
     throws HongsException {
-        long     stime = System.currentTimeMillis() / 1000 ;
+        long      time = System.currentTimeMillis() / 1000 ;
         HttpSession sd = ah.getRequest( ).getSession(false);
 
         // 重建会话
@@ -134,21 +134,19 @@ public class AuthKit {
         String ssid = sd.getId();
 
         // 设置会话
-        sd.setAttribute(Cnst.UID_SES, uuid );
-        sd.setAttribute(Cnst.UST_SES, stime);
-        sd.setAttribute(AUTH_UUT_KEY, stime);
-        sd.setAttribute("uname", uname);
-        sd.setAttribute("uhead", uhead);
+        sd.setAttribute(Cnst.UID_SES, uuid);
+        sd.setAttribute(Cnst.UST_SES, time);
+        sd.setAttribute(NAME, uname);
+        sd.setAttribute(NAME, uhead);
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(AUTH_UNI_KEY, unit );
-        rd.put(Cnst.UID_SES, uuid );
-        rd.put(AUTH_SID_KEY, ssid );
-        rd.put(Cnst.UST_SES, stime);
-        rd.put(AUTH_UUT_KEY, stime);
-        rd.put("uname", uname);
-        rd.put("uhead", uhead);
+        rd.put(Cnst.UID_SES, uuid);
+        rd.put(Cnst.UST_SES, time);
+        rd.put(NAME, uname);
+        rd.put(HEAD, uhead);
+        rd.put(UNIT,  unit);
+        rd.put(SSID,  ssid);
 
         return rd;
     }
@@ -176,15 +174,16 @@ public class AuthKit {
                      .getOne(   );
 
         // 记录关联
-        String uuid;
-        if (ud != null && !ud.isEmpty()) {
+        String  uuid;
+        boolean regs = ud != null && ! ud.isEmpty();
+        if (regs) {
             uuid  = (String) ud.get( "id" );
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
         } else {
             // 校验及下载头像
-            VerifyHelper vh = new VerifyHelper();
-            vh.addRulesByForm("master" , "user");
+            VerifyHelper vh  =  new  VerifyHelper();
+            vh.addRulesByForm("master", "user");
 
             ud  =  new HashMap( );
             ud.put("name", uname);
@@ -214,7 +213,9 @@ public class AuthKit {
 //          db.getTable("user_role").insert(ud);
         }
 
-        return userSign(ah, unit, uuid, uname, uhead);
+        ud = userSign(ah, unit, uuid, uname, uhead);
+        ud.put( "regs", regs );
+        return ud;
     }
 
     /**

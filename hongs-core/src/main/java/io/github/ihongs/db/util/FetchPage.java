@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.link.Link;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,54 +30,31 @@ public final class FetchPage
 
   private int rows = Cnst.RN_DEF;
 
-  public FetchPage(FetchCase caze, DB db) throws HongsException
+  public FetchPage(FetchCase caze) throws HongsException
   {
-    this.db    = db;
-    this.tb    = null;
-    this.caze  = caze;
+    this.db   = null;
+    this.tb   = null;
+    this.caze = caze;
 
-    Object page2 = caze.getOption(Cnst.PN_KEY);
-    if (page2 != null && page2.equals(""))
-    {
-      this.setPage(Integer.parseInt(page2.toString()));
-    }
-
-    Object lnks2 = caze.getOption(Cnst.GN_KEY);
-    if (lnks2 != null && lnks2.equals(""))
-    {
-      this.setPugs(Integer.parseInt(lnks2.toString()));
-    }
-
-    Object rows2 = caze.getOption(Cnst.RN_KEY);
-    if (rows2 != null && rows2.equals(""))
-    {
-      this.setRows(Integer.parseInt(rows2.toString()));
-    }
+    chkInit( );
   }
 
-  public FetchPage(FetchCase caze, Table table) throws HongsException
+  public FetchPage(FetchCase caze, DB db) throws HongsException
   {
-    this.db    = table.db;
-    this.tb    = table;
-    this.caze  = caze;
+    this.db   = db  ;
+    this.tb   = null;
+    this.caze = caze;
 
-    Object page2 = caze.getOption(Cnst.PN_KEY);
-    if (page2 != null && page2.equals(""))
-    {
-      this.setPage(Integer.parseInt(page2.toString()));
-    }
+    chkInit( );
+  }
 
-    Object lnks2 = caze.getOption(Cnst.GN_KEY);
-    if (lnks2 != null && lnks2.equals(""))
-    {
-      this.setPugs(Integer.parseInt(lnks2.toString()));
-    }
+  public FetchPage(FetchCase caze, Table tb) throws HongsException
+  {
+    this.tb   = tb  ;
+    this.db   = null;
+    this.caze = caze;
 
-    Object rows2 = caze.getOption(Cnst.RN_KEY);
-    if (rows2 != null && rows2.equals(""))
-    {
-      this.setRows(Integer.parseInt(rows2.toString()));
-    }
+    chkInit( );
   }
 
   /**
@@ -113,16 +91,64 @@ public final class FetchPage
     this.rows = rows;
   }
 
-  public List gotList()
+  private void chkInit()
+    throws HongsException
+  {
+    if (caze == null)
+    {
+      throw new NullPointerException("FetchPage: FetchCase param required.");
+    }
+
+    Object page2 = caze.getOption(Cnst.PN_KEY);
+    if (page2 != null && page2.equals(""))
+    {
+      this.setPage(Integer.parseInt(page2.toString()));
+    }
+
+    Object lnks2 = caze.getOption(Cnst.GN_KEY);
+    if (lnks2 != null && lnks2.equals(""))
+    {
+      this.setPugs(Integer.parseInt(lnks2.toString()));
+    }
+
+    Object rows2 = caze.getOption(Cnst.RN_KEY);
+    if (rows2 != null && rows2.equals(""))
+    {
+      this.setRows(Integer.parseInt(rows2.toString()));
+    }
+  }
+
+  private Link gotLink()
+    throws HongsException
+  {
+    if (this.db != null)
+    {
+      return this.db;
+    } else
+    if (this.tb != null)
+    {
+      return this.tb.db;
+    } else
+    {
+      Link link  = this.caze.linker( );
+      if ( link != null ) return link ;
+      throw new HongsException(0x10b6);
+    }
+  }
+
+  private List gotList()
     throws HongsException
   {
     if (this.tb != null)
     {
       return this.tb.fetchMore(caze);
-    }
-    else
+    } else
+    if (this.db != null)
     {
       return this.db.fetchMore(caze);
+    } else
+    {
+      return this.caze.getAll (    );
     }
   }
 
@@ -180,30 +206,30 @@ public final class FetchPage
       limit = 0;
     }
 
-    // 查询总行数
+    // 组织总行数查询语句
     String     sql;
     Object[]   params;
     FetchCase  caze2 = this.caze.clone().limit(limit);
     if(clnSort(caze2))
     {
       caze2.field("1");
-      sql    = caze2.getSQL(   );
       params = caze2.getParams();
+      sql    = caze2.getSQL(   );
       sql    = "SELECT COUNT(1) AS __count__ FROM (" + sql +") AS __table__";
     }
     else
     {
-      caze2.field("COUNT(1) AS __count__" );
-      sql    = caze2.getSQL(   );
+      caze2.field(/**/"COUNT(1) AS __count__");
       params = caze2.getParams();
+      sql    = caze2.getSQL(   );
     }
 
     // 计算总行数及总页数
-    Map row = this.db.fetchOne(sql, params);
-    if (row.isEmpty() == false)
+    Map row  = gotLink().fetchOne(sql, params);
+    if (row != null && ! row.isEmpty())
     {
       int rc = Integer.parseInt(row.get("__count__").toString());
-      int pc = (int)Math.ceil((float)rc / this.rows);
+      int pc = (int) Math.ceil ( ( float )  ( rc / this.rows ) );
 
       /**
        * 查得数量与限制数量一致

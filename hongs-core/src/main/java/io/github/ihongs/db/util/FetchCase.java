@@ -1355,6 +1355,11 @@ public class FetchCase
     return this;
   }
 
+  public Link linker()
+  {
+    return _db_;
+  }
+  
   /**
    * 查询并获取记录迭代
    * @return

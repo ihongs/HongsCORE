@@ -26,7 +26,8 @@
         }
         $(this).before($(this).clone().val(''));
             box = $(box );
-        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var txt = /^data:.+\/.+,/.test(src) ? ''
+                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
         var lab = $('<span></span>' ).text(txt);
         var inp = $(this);
@@ -51,7 +52,8 @@
             return;
         }
         var box = $(this);
-        var txt = decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var txt = /^data:.+\/.+,/.test(src) ? ''
+                : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
         var lab = $('<span></span>' ).text(txt);
         var inp = $('<input  type="hidden" />')
@@ -86,7 +88,8 @@
         var inp = $(this);
         var img = k ? $.hsKeepSnap( src, w, h )
                     : $.hsPickSnap( src, w, h );
-        var txt = decodeURIComponent( src.replace(/^.*[\/\\]/ , '') );
+        var txt = /^data:.+\/.+,/.test(src) ? ''
+                  : decodeURIComponent(src.replace(/^.*[\/\\]/, '' ));
         var div = $('<li class="preview"></li>').attr( "title", txt )
            .css({width : w+'px', height: h+'px', overflow: 'hidden'})
            .append(inp)
@@ -114,7 +117,8 @@
                    .attr("name", nam).val (src);
         var img = k ? $.hsKeepSnap( src, w, h )
                     : $.hsPickSnap( src, w, h );
-        var txt = decodeURIComponent( src.replace(/^.*[\/\\]/ , '') );
+        var txt = /^data:.+\/.+,/.test(src) ? ''
+                  : decodeURIComponent(src.replace(/^.*[\/\\]/, '' ));
         var div = $('<li class="preview"></li>').attr( "title", txt )
            .css({width : w+'px', height: h+'px', overflow: 'hidden'})
            .append(inp)

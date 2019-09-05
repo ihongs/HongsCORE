@@ -200,8 +200,8 @@
                             kind += "\" data-size=\""+size+"\" data-keep=\""+keep;
                         }
                     %>
-                    <input type="file" name="<%=name%>" accept="<%=typa%>" class="form-ignored invisible"/>
-                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%> <%=rptd%>></ul>
+                    <input type="file" name="<%=name%>" accept="<%=typa%>" <%=rptd%> class="form-ignored invisible"/>
+                    <ul class="pickbox" data-fn="<%=name%>" data-ft="<%=kind%>" <%=rqrd%>></ul>
                     <button type="button" class="btn btn-default form-control" data-toggle="<%=mode%>"><%=_locale.translate("fore.file.browse", text)%></button>
                 <%} else {%>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%> <%=rptd%>/>

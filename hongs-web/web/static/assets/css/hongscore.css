@@ -600,7 +600,12 @@ ul.pickrol > li.btn-text:hover {
 .preview .close:hover {
     box-shadow: 0 0 0.5em #000;
 }
-.pickrol .preview img {
+.pickbox .preview {
+    float: left;
+    margin-right : 5px;
+    margin-bottom: 5px;
+}
+.pickrol .preview {
     cursor: pointer;
 }
 

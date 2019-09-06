@@ -324,10 +324,14 @@
         }
 
         // 取表单项, 没有则添加一个
-        var hide = this.next("input:hidden")
-                || this.prev("input:hidden");
+        var hide = this.next("input:hidden");
         if (! hide.size() ) {
-            hide = $('<input type="hidden" class="form-ignored"/>');
+            hide = this.prev("input:hidden");
+        }
+        if (! hide.size() ) {
+            hide = $ ('<input type="hidden" class="form-ignored"/>');
+            hide.attr("name", this.attr("name"));
+            this.attr("name", "");
             // 避免在 input-group 中影响圆边角
             if (! this.index( ) ) {
                 this.after (hide);
@@ -335,15 +339,11 @@
                 this.before(hide);
             }
         }
-        if (! hide.attr("name") ) {
-            hide.attr("name", this.attr("name"));
-        }
-        this.attr( "name" ,  "" );
         this.data("linked", hide);
         hide.data("linked", this);
 
         // 互联互动
-        this.on("change", function() {
+        this.on("change", function(e) {
             var v = $(this).val();
             if (v == "") {
                 hide.val("");
@@ -352,9 +352,9 @@
 
             // 解析失败设为空
             var d = hsPrsDate(v, frmt);
-                d = d.getTime();
-            if (isNaN(d)
-            ||  0 === d) {
+            var t = d.getTime();
+            if (isNaN(t)
+            ||  0 === t) {
                 hide.val("");
                 return ;
             }
@@ -362,15 +362,23 @@
             // 可选择精确到秒
             if (kind == "timestamp"
             ||  kind == "datestamp") {
-                d = Math.round(d/1000);
+                t = Math.round(t/1000);
             }
 
-            hide.val(d);
+            hide.val(t);
+
+            // 自定事件可微调
+            hide.trigger($.Event("change", {Date: d}));
         });
-        hide.on("change", function() {
+        hide.on("change", function(e) {
             var v = $(this).val();
             if (v == "") {
                 that.val("");
+                return ;
+            }
+
+            // 跳过自定的事件
+            if (e.Date ) {
                 return ;
             }
 
@@ -464,9 +472,10 @@
                 val = hsFmtDate(dat , fmt);
         }
 
-        var evt = $.Event("change", {"date": dat});
-        inp.val    (val);
-        inp.trigger(evt);
+        inp.val(val);
+
+        // 自定事件可微调
+        inp.trigger($.Event("change", {Date: dat}));
     });
 
     // 表单项的值更改后联动日期控件
@@ -476,6 +485,9 @@
         }
         if (! $(this).data("linked")) {
             return; // 跳过未初始化
+        }
+        if (evt.Date) {
+            return; // 跳过自定事件
         }
 
         var inp = $(this);

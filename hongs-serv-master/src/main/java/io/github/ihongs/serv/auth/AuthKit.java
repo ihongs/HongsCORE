@@ -137,7 +137,7 @@ public class AuthKit {
         sd.setAttribute(Cnst.UID_SES, uuid);
         sd.setAttribute(Cnst.UST_SES, time);
         sd.setAttribute(NAME, uname);
-        sd.setAttribute(NAME, uhead);
+        sd.setAttribute(HEAD, uhead);
 
         // 返回数据
         Map rd = new HashMap();
@@ -175,14 +175,14 @@ public class AuthKit {
 
         // 记录关联
         String  uuid;
-        boolean regs = ud != null && ! ud.isEmpty();
-        if (regs) {
+        boolean regs = ud == null ||  ud.isEmpty();
+        if (regs == false) {
             uuid  = (String) ud.get( "id" );
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
         } else {
             // 校验及下载头像
-            VerifyHelper vh  =  new  VerifyHelper();
+            VerifyHelper vh  =  new VerifyHelper();
             vh.addRulesByForm("master", "user");
 
             ud  =  new HashMap( );

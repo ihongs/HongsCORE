@@ -113,7 +113,7 @@ public class AuthAction
           helper.error400("Illegal callback function name!");
           return;
         }
-        helper.print("function "+c+"() { return "+s+"; }", "text/javascript");
+        helper.print(c+"("+s+");", "text/javascript" );
       } else {
         helper.print("if(!self.HsAUTH)self.HsAUTH={};Object.assign(self.HsAUTH,"+s+");", "text/javascript");
       }

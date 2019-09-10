@@ -135,7 +135,7 @@ public class LangAction
           helper.error400("Illegal callback function name!");
           return;
         }
-        helper.print("function "+c+"() { return "+s+"; }", "text/javascript");
+        helper.print(c+"("+s+");", "text/javascript" );
       }
       else
       {

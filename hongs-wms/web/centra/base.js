@@ -355,9 +355,12 @@ function hsSendWithMemo(btn, msg, url, data) {
  * 列表高级搜索支持
  */
 function hsFindWithWord(url, data) {
-    var word = this.context. find ( ".findbox [name=wd]" ).val();
-    if (data && word && /^\?.+=/.test (word)) {
-        data = hsSerialMix(hsSerialDic(data), hsSerialDic(word));
+    var word = this.context.find(".findbox [name=wd]").val();
+    if (data && word && /^\?.+=/.test(word)) {
+        word = hsSerialDic(word);
+        data = hsSerialDic(data);
+               delete data["wd"];
+        data = hsSerialMix(data, word);
     }
     HsList.prototype.load.call(this, url, data);
 }

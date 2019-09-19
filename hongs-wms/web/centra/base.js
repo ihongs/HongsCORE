@@ -352,6 +352,19 @@ function hsSendWithMemo(btn, msg, url, data) {
 }
 
 /**
+ * 列表高级搜索支持
+ */
+function hsFindWithWord(url, data) {
+    if (data) {
+        var word = $(this.context.find(".findbox [name=wd]").val( ));
+        if (word && /^\?.+=/.test(word)) {
+            data = hsSerialMix(hsSerialDic(data), hsSerialDic(word));
+        }
+    }
+    HsList.prototype.load.call(this, url , data);
+}
+
+/**
  * 列表统计筛选组件
  * @param {jQuery|Element} context
  * @param {Object} opts

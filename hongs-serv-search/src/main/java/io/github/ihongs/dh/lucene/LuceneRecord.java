@@ -237,26 +237,27 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     /**
      * 创建记录
      * @param rd
-     * @return id,name等(由dispCols指定)
+     * @return id,name等(由listable指定)
      * @throws HongsException
      */
     @Override
     public Map create(Map rd) throws HongsException {
-        String  id = add( rd);
-        Set<String> fs = getListable();
-        if (null != fs && ! fs.isEmpty( )) {
-            Map sd = new LinkedHashMap( );
-            for(String fn : fs) {
-                if ( ! fn.contains( "." )) {
-                    sd.put( fn, rd.get(fn) );
-                }
-            }
-            sd.put(Cnst.ID_KEY, id);
-            return sd;
-        } else {
-            rd.put(Cnst.ID_KEY, id);
-            return rd;
-        }
+        String id = add(  rd  );
+        rd.put(Cnst.ID_KEY, id);
+
+        Set<String> fs = Synt.toTerms(rd.get(Cnst.RB_KEY));
+        if (null == fs || fs .isEmpty()) {
+            fs = getListable( );
+        if (null == fs || fs .isEmpty()) {
+            return  rd;
+        }}
+
+        Map sd = new LinkedHashMap();
+        for(String fn : fs) {
+        if ( ! fn.contains ( "." ) ) {
+            sd.put(fn , rd.get(fn) );
+        }}
+        return sd;
     }
 
     /**
@@ -1580,7 +1581,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * 由于 getReader 中发现数据变化会重开
      * 如需 getReader 务必先于当前方法执行
      * @return
-     * @throws HongsException 
+     * @throws HongsException
      */
     public IndexSearcher getFinder() throws HongsException {
         if (finder == null) {

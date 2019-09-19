@@ -347,6 +347,7 @@
             [ '<%=_module%>/<%=_entity%>/swap.html',
               '.manual', '@' ]
         ],
+        load: hsFindWithWord,
         send: hsSendWithMemo,
         <%if ("select".equals(_action)) {%>
         _fill__check: hsListFillSele,

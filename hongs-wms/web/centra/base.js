@@ -355,13 +355,11 @@ function hsSendWithMemo(btn, msg, url, data) {
  * 列表高级搜索支持
  */
 function hsFindWithWord(url, data) {
-    if (data) {
-        var word = $(this.context.find(".findbox [name=wd]").val( ));
-        if (word && /^\?.+=/.test(word)) {
-            data = hsSerialMix(hsSerialDic(data), hsSerialDic(word));
-        }
+    var word = this.context. find ( ".findbox [name=wd]" ).val();
+    if (data && word && /^\?.+=/.test (word)) {
+        data = hsSerialMix(hsSerialDic(data), hsSerialDic(word));
     }
-    HsList.prototype.load.call(this, url , data);
+    HsList.prototype.load.call(this, url, data);
 }
 
 /**

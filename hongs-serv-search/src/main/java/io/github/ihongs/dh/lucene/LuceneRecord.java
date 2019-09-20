@@ -811,7 +811,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 }
 
                 // 条件类可去重
-                Set a = Synt.asSet(v);
+                Set a = Synt.asSet(v); v = a;
 
                 if (s && a != null && !a.isEmpty()) {
                     Object  w = a.toArray( )[0]; // 排序值不能存多个
@@ -841,6 +841,13 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 if (p) {
                     doc.add(f.wdr(k, v));
                 }
+            }
+
+            // 不可能过滤时仍可判断空/非空/空串
+            if (!q && !p) {
+                String x = v.toString( );
+                if (!"".equals(x)) x="0";
+                doc.add( f.whr(k , x ) );
             }
         }
     }
@@ -973,6 +980,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
             if (m == null
             ||  v == null) {
+                continue;
+            }
+
+            // 自定义条件
+            if (!padQry(qr, rd, k,v)) {
                 continue;
             }
 
@@ -1335,6 +1347,20 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     /**
+     * 自定义查询条件
+     * 可覆盖此方便补充特殊条件
+     *
+     * @param qr
+     * @param rd
+     * @param k 查询字段
+     * @param v 字段取值
+     * @return 返回 false 阻断
+     */
+    protected boolean padQry(BooleanQuery.Builder qr, Map rd, String k, Object v) {
+        return true;
+    }
+
+    /**
      * 组织排序规则
      * 可覆盖此方法进行补充排序
      *
@@ -1367,7 +1393,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             if (rv) fn = fn.substring ( 1 );
 
             // 自定义排序
-            if (! LuceneRecord.this.padSrt (of, rd, fn, rv) ) {
+            if (! padSrt (of, rd, fn, rv) ) {
                 continue;
             }
 

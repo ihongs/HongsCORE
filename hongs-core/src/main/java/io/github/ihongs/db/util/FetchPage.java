@@ -228,8 +228,14 @@ public final class FetchPage
     Map row  = gotLink().fetchOne(sql, params);
     if (row != null && ! row.isEmpty())
     {
-      int rc = Integer.parseInt(row.get("__count__").toString());
-      int pc = (int) Math.ceil ( ( float )  ( rc / this.rows ) );
+      int rc, pc;
+      Object  cc = row.get("__count__");
+      if (cc instanceof Number) {
+          rc = ((Number) cc).intValue();
+      } else {
+          rc = Integer.valueOf(cc.toString( ));
+      }
+      pc = (int) Math.ceil((double) rc / rows);
 
       /**
        * 查得数量与限制数量一致

@@ -7,29 +7,25 @@
 html, body {
     height: 100%;
     width : 100%;
-    min-width: 970px;
+    min-width: 992px;
 }
-
 #context {
     height: 100%;
     width : 100%;
-}
-#bodybox {
-    height: 100%;
-    width : 100%;
-    overflow: auto;
-    padding-left: 175px;
+    min-width: 970px;
 }
 #headbox {
     height: 100%;
-    width : 175px;
+    width : 180px;
     overflow: auto;
     position: fixed;
-    z-index : 10;
     background: #2e2f2f;
 }
+#bodybox {
+    padding-left: 180px;
+}
 #context.fullest>#bodybox {
-    padding: 0;
+    padding-left: 0;
 }
 #context.fullest>#headbox {
     width: 0;
@@ -176,7 +172,7 @@ html, body {
 #head-handled {
     position: fixed;
     top  : 50%;
-    left : 175px;
+    left : 180px;
     width : 14px;
     height: 30px;
     margin-top: -15px;
@@ -208,7 +204,7 @@ html, body {
     font-size: 10px;
     position: fixed;
     bottom:  5px;
-    width: 175px;
+    width: 180px;
 }
 #head-powered a {
     color: #a00;

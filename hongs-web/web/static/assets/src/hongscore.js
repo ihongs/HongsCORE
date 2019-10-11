@@ -680,7 +680,9 @@ function hsSetSeria (arr, name, value) {
         return;
     }
     if (!jQuery.isArray(value)) {
-        value = [ value ];
+        value =  value !== undefined
+              && value !== null
+              ? [value] : [];
     }
     for(var j = arr.length-1; j > -1; j --) {
         if (arr[j]["name"] === name) {
@@ -757,7 +759,9 @@ function hsSetParam(url, name, value) {
     var reg = new RegExp("[\\?&#]"+ nam +"=([^&#]*)", "g");
     url = url.replace(reg, "");
     if (!jQuery.isArray(value)) {
-        value = [value];
+        value =  value !== undefined
+              && value !== null
+              ? [value] : [];
     }
     for(var i = 0; i < value.length; i ++) {
         url+= "&"+ name +"="+ encodeURIComponent(value[i]);

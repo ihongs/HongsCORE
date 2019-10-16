@@ -5,12 +5,11 @@ import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.db.DB;
-import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
+import io.github.ihongs.db.util.FetchCase;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Synt;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -61,30 +60,9 @@ extends Model {
         }
         Map sd = super.getList(rd, caze);
 
-        // Add all depts for every user
-        byte incs = Synt.declare( rd.get("with-depts"), (byte) 0 );
-        if ( incs > 0 ) {
-            List<Map> list = ( List ) sd.get( "list" );
-            if (list != null) {
-                Map<String, Map> maps = new HashMap( );
-                for ( Map info : list ) {
-                    String uid = info.get("id").toString( );
-                    info.put( "depts" , new HashSet());
-                    maps.put(uid, info);
-                }
-                    caze = db.getTable("user_dept").fetchCase( )
-                        .filter("user_id IN (?)", maps.keySet());
-                if (incs == 2) {
-                    caze.join(db.getTable("dept").tableName,
-                        "dept", "user_dept.dept_id = dept.id")
-                        .select("user_id , dept_id , dept.* ");
-                }
-                List<Map> rows = caze.getAll( );
-                for ( Map dept : rows ) {
-                    String uid = dept.remove("user_id").toString();
-                    ((Set) maps.get(uid).get("depts") ).add(dept );
-                }
-            }
+        // 管辖范围限制标识: 0 一般用户, 1 管理员, 2 管理层
+        if (Synt.declare(rd.get("bind-scope"), false )) {
+            sd.put("scope", caze.getOption("SCOPE", 0));
         }
 
         return sd;
@@ -112,7 +90,9 @@ extends Model {
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` IN (?)" , set );
-            }}}
+            }
+            } else caze.setOption("SCOPE" , 2 );
+            } else caze.setOption("SCOPE" , 1 );
         }
 
         /**

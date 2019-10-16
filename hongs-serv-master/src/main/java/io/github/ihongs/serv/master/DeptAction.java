@@ -34,9 +34,29 @@ public class DeptAction {
     @Action("list")
     public void getList(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        FetchCase fc = model.fetchCase();
-        rd = model.getList(rd , fc);
+        Map  rd = helper.getRequestData();
+        byte wd =  Synt.declare(rd.get("with-depts") , (byte) 0);
+             rd = model.getList(rd);
+
+        List<Map> list = (List) rd.get("list");
+        if (list != null) {
+
+        // With all depts
+        if (wd == 1) {
+            for ( Map info : list ) {
+                String id = info.get("id").toString (   );
+                info.put("depts", model.getParentIds(id));
+            }
+        } else
+        if (wd == 2) {
+            for ( Map info : list ) {
+                String id = info.get("id").toString (   );
+                info.put("depts", model.getParents  (id));
+            }
+        }
+
+        }
+
         helper.reply(rd);
     }
 

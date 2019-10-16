@@ -1,0 +1,34 @@
+<h2>选择部门</h2>
+<div id="master-user-pick"
+     data-module="hsList"
+     data-load-url="centra/master/dept/list.act?rb=id,name,mtime,ctime"
+     data-load-data="(this.closest('.loadbox'))"
+     data-data-0="_fill__fork:(hsListFillFork)">
+    <div>
+        <div class="toolbox col-xs-9 btn-group">
+            <button type="button" class="ensure btn btn-primary">确认选择</button>
+        </div>
+        <form class="findbox col-xs-3 input-group" action="" method="POST">
+            <input type="search" name="wd" class="form-control input-search"/>
+            <span class="input-group-btn">
+                <button type="submit" class="btn btn-default">查找</button>
+            </span>
+        </form>
+    </div>
+    <div class="listbox table-responsive">
+        <table class="table table-hover table-striped">
+            <thead>
+                <tr>
+                    <th data-fn="id[]" data-ft="_fork" class="_check">
+                        <input type="checkbox" class="checkall" name="id[]"/>
+                    </th>
+                    <th data-fn="name" class="sortable">名称</th>
+                    <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
+                    <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
+                </tr>
+            </thead>
+            <tbody></tbody>
+        </table>
+    </div>
+    <div class="pagebox clearfix"></div>
+</div>

@@ -19,6 +19,7 @@ import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Synt;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -41,17 +42,58 @@ public class UserAction {
     @Select(conf="master", form="user")
     public void getList(ActionHelper helper)
     throws HongsException {
-        Map rd = helper.getRequestData();
-        FetchCase fc = model.fetchCase();
-        rd = model.getList(rd , fc);
+        Map  rd = helper.getRequestData();
+        byte wd =  Synt.declare(rd.get("with-depts") , (byte) 0);
+             rd = model.getList(rd);
+
+        List<Map> list = (List) rd.get("list");
+        if (list != null) {
+
+        // With all depts
+        if (wd == 1) {
+            Map<String, Map> maps = new HashMap( );
+            for ( Map info : list ) {
+                info.put( "depts" , new HashSet());
+                maps.put(info.get("id").toString(), info);
+            }
+
+            List<Map> rows = model.db.getTable("user_dept")
+                .fetchCase()
+                .filter("user_id IN (?)" , maps.keySet( ) )
+                .select("user_id, dept_id")
+                .getAll(   );
+            for ( Map dept : rows ) {
+                String uid = dept.remove("user_id").toString();
+                ((Set) maps.get(uid).get("depts") ).add(dept );
+            }
+        } else
+        if (wd == 2) {
+            Map<String, Map> maps = new HashMap( );
+            for ( Map info : list ) {
+                info.put( "depts" , new HashSet());
+                maps.put(info.get("id").toString(), info);
+            }
+
+            List<Map> rows = model.db.getTable("user_dept")
+                .fetchCase()
+                .join(model.db.getTable("dept").tableName ,
+                    "dept", "user_dept.dept_id = dept.id" )
+                .filter("user_id IN (?)" , maps.keySet( ) )
+                .select("user_id, dept_id, dept.*")
+                .getAll(   );
+            for ( Map dept : rows ) {
+                String uid = dept.remove("user_id").toString();
+                ((Set) maps.get(uid).get("depts") ).add(dept );
+            }
+        }
 
         // Remove the password field, don't show password in page
-        List<Map> list  = (List) rd.get("list");
-        if  (/**/ null !=  list) {
         for (Map  info  :  list) {
             info.remove("password");
             info.remove("passcode");
-        }}
+        }
+
+        }
 
         helper.reply(rd);
     }

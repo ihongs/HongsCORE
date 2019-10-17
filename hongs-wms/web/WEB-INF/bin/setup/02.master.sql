@@ -86,24 +86,6 @@ INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ct
 INSERT INTO `a_master_user` (`id`,`password`,`username`,`name`,`head`,`note`,`ctime`,`mtime`,`rtime`,`state`) VALUES ('0','9BA587D4E465F45669F19AF20CA033D9','xyz@def.cn','匿名使用者',NULL,NULL,'1424075622','1424075622','0',-2);
 
 --
--- 用户所属部门
---
-
-DROP TABLE IF EXISTS `a_master_user_dept`;
-CREATE TABLE `a_master_user_dept` (
-  `user_id` CHAR(16) NOT NULL,
-  `dept_id` CHAR(16) NOT NULL,
-  PRIMARY KEY (`user_id`,`dept_id`),
-  FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE,
-  FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
-);
-
-CREATE INDEX `IK_a_master_user_dept_user` ON `a_master_user_dept` (`user_id`);
-CREATE INDEX `IK_a_master_user_dept_dept` ON `a_master_user_dept` (`dept_id`);
-
-INSERT INTO `a_master_user_dept` VALUES ('1','0');
-
---
 -- 用户所属角色
 --
 
@@ -139,6 +121,24 @@ INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/search');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/create');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/update');
 INSERT INTO `a_master_user_role` VALUES ('1','centra/matrix/unit/delete');
+
+--
+-- 用户所属部门
+--
+
+DROP TABLE IF EXISTS `a_master_dept_user`;
+CREATE TABLE `a_master_dept_user` (
+  `user_id` CHAR(16) NOT NULL,
+  `dept_id` CHAR(16) NOT NULL,
+  PRIMARY KEY (`user_id`,`dept_id`),
+  FOREIGN KEY (`user_id`) REFERENCES `a_master_user` (`id`) ON DELETE CASCADE,
+  FOREIGN KEY (`dept_id`) REFERENCES `a_master_dept` (`id`) ON DELETE CASCADE
+);
+
+CREATE INDEX `IK_a_master_dept_user_user` ON `a_master_dept_user` (`user_id`);
+CREATE INDEX `IK_a_master_dept_user_dept` ON `a_master_dept_user` (`dept_id`);
+
+INSERT INTO `a_master_dept_user` VALUES ('1','0');
 
 --
 -- 用户关联登录

@@ -16,7 +16,7 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                    foreignKey="user_id"/>
             <assoc type="HAS_MORE"
                    name="depts"
-                   tableName="user_dept"
+                   tableName="dept_user"
                    foreignKey="user_id">
                 <assoc type="BLS_TO"
                        name="dept"
@@ -38,15 +38,15 @@ xsi:schemaLocation="http://ihongs.github.io/hongs-core db.xsd">
                    tableName="dept_role"
                    foreignKey="dept_id"/>
         </table>
-        <table name="user_sign"
-               tableName="a_master_user_sign"/>
-        <table name="user_open"
-               tableName="a_master_user_open"/>
-        <table name="user_dept"
-               tableName="a_master_user_dept"/>
         <table name="user_role"
                tableName="a_master_user_role"/>
         <table name="dept_role"
                tableName="a_master_dept_role"/>
+        <table name="user_sign"
+               tableName="a_master_user_sign"/>
+        <table name="dept_user"
+               tableName="a_master_dept_user"/>
+        <table name="user_dept"
+               tableName="a_master_dept_user"/>
     </tables>
 </db>

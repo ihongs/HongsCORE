@@ -97,20 +97,20 @@ extends Grade {
 
         /**
          * 如果有指定 user_id
-         * 则关联 a_master_user_dept 来约束范围
+         * 则关联 a_master_dept_user 来约束范围
          * 当其为横杠时表示取那些没有关联的部门
          */
         Object uid = req.get("user_id");
         if (null != uid && ! "".equals(uid)) {
             if ( "-".equals (uid)) {
                 caze.gotJoin("users")
-                    .from   ("a_master_user_dept")
+                    .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
                     .on     ("`users`.`dept_id` = `dept`.`id`")
                     .filter ("`users`.`user_id` IS NULL" /**/ );
             } else {
                 caze.gotJoin("users")
-                    .from   ("a_master_user_dept")
+                    .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
                     .on     ("`users`.`dept_id` = `dept`.`id`")
                     .filter ("`users`.`user_id` IN (?)" , uid );
@@ -145,7 +145,7 @@ extends Grade {
             }
         } else {
             List  list  ;
-            Table tablx = db.getTable("user_dept");
+            Table tablx = db.getTable("dept_user");
 
             // 删除限制, 如果部门下有部门则中止当前操作
             list = table.fetchCase()

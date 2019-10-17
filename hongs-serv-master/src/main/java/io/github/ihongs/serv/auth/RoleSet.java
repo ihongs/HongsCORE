@@ -75,7 +75,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         }
 
         tb = db.getTable("dept");
-        td = db.getTable("user_dept");
+        td = db.getTable("dept_user");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)
                 .join  (td.tableName, td.name , td.name+".dept_id = "+tb.name+".id" /***/ )
@@ -126,7 +126,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
         //** 查询部门权限 **/
 
         tb = db.getTable("dept_role");
-        td = db.getTable("user_dept");
+        td = db.getTable("dept_user");
         tt = db.getTable("dept");
         fc = new FetchCase( FetchCase.STRICT )
                 .from  (tb.tableName, tb.name)

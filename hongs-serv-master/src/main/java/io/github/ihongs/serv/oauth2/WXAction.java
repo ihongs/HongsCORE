@@ -32,6 +32,7 @@ public class WXAction {
 
         if (appId == null || appSk == null) {
             helper.error500("Not support this mode");
+            return;
         }
 
         Map info = getUserInfo(code, appId, appSk);
@@ -59,6 +60,7 @@ public class WXAction {
 
         if (appId == null || appSk == null) {
             helper.error500("Not support this mode");
+            return;
         }
 
         Map info = getUserInfo(code, appId, appSk);

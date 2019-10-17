@@ -86,7 +86,7 @@ extends Model {
             if (!set.contains(pid)) {
                 caze.by     (FetchCase.DISTINCT  ); // 去重复
                 caze.gotJoin("depts")
-                    .from   ("a_master_user_dept")
+                    .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` IN (?)" , set );
@@ -97,20 +97,20 @@ extends Model {
 
         /**
          * 如果有指定 dept_id
-         * 则关联 a_master_user_dept 来约束范围
+         * 则关联 a_master_dept_user 来约束范围
          * 当其为横杠时表示取那些没有关联的用户
          */
         Object pid = req.get("dept_id");
         if (null != pid && ! "".equals(pid)) {
             if ( "-".equals (pid ) ) {
                 caze.gotJoin("depts")
-                    .from   ("a_master_user_dept")
+                    .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` IS NULL" /**/ );
             } else {
                 caze.gotJoin("depts")
-                    .from   ("a_master_user_dept")
+                    .from   ("a_master_dept_user")
                     .by     (FetchCase.INNER)
                     .on     ("`depts`.`user_id` = `user`.`id`")
                     .filter ("`depts`.`dept_id` IN (?)" , pid );

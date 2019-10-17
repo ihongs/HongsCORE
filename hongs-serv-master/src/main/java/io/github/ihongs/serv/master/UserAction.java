@@ -57,7 +57,7 @@ public class UserAction {
                 maps.put(info.get("id").toString(), info);
             }
 
-            List<Map> rows = model.db.getTable("user_dept")
+            List<Map> rows = model.db.getTable("dept_user")
                 .fetchCase()
                 .filter("user_id IN (?)" , maps.keySet( ) )
                 .select("user_id, dept_id")
@@ -74,10 +74,10 @@ public class UserAction {
                 maps.put(info.get("id").toString(), info);
             }
 
-            List<Map> rows = model.db.getTable("user_dept")
+            List<Map> rows = model.db.getTable("dept_user")
                 .fetchCase()
                 .join(model.db.getTable("dept").tableName ,
-                    "dept", "user_dept.dept_id = dept.id" )
+                    "dept", "dept_user.dept_id = dept.id" )
                 .filter("user_id IN (?)" , maps.keySet( ) )
                 .select("user_id, dept_id, dept.*")
                 .getAll(   );

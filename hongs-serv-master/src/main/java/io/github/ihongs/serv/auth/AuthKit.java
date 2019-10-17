@@ -57,7 +57,7 @@ public class AuthKit {
         CoreConfig cc = CoreConfig.getInstance("oauth2");
 
         do {
-            k = cc.getProperty("oauth2.bak.prm", "back");
+            k = cc.getProperty("oauth2.bak.prm", "r");
             v = helper.getParameter(k);
             if (v != null && !v.isEmpty()) {
                 break;
@@ -65,7 +65,7 @@ public class AuthKit {
 
             k = cc.getProperty("oauth2.bak.cok");
             if (k != null && !k.isEmpty()) {
-                v = (String) helper.getCookibute(k);
+                v = (String) helper.getCookibute( k );
                 if (v != null && !v.isEmpty()) {
                     helper.setCookibute(k, null); // 清除 Cookies
                     break;
@@ -74,7 +74,7 @@ public class AuthKit {
 
             k = cc.getProperty("oauth2.bak.ses");
             if (k != null && !k.isEmpty()) {
-                v = (String) helper.getSessibute(k);
+                v = (String) helper.getSessibute( k );
                 if (v != null && !v.isEmpty()) {
                     helper.setSessibute(k, null); // 清除 Session
                     break;
@@ -204,7 +204,7 @@ public class AuthKit {
             ud  =  new HashMap( );
             ud.put("user_id",  uuid   );
             ud.put("dept_id", "CENTRE");
-            db.getTable("user_dept").insert(ud);
+            db.getTable("dept_user").insert(ud);
 
             // 赋予公共权限. 仅用部门即可(2019/02/28)
 //          ud  =  new HashMap( );
@@ -309,7 +309,7 @@ public class AuthKit {
      * @throws HongsException
      */
     public static Set getUserDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("user_dept");
+        Table rel = DB.getInstance("master").getTable("dept_user");
         List<Map> lst = rel.fetchCase()
             .filter("user_id = ?", uid)
             .select("dept_id" )
@@ -328,7 +328,7 @@ public class AuthKit {
      * @throws HongsException
      */
     public static Set getMoreDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("user_dept");
+        Table rel = DB.getInstance("master").getTable("dept_user");
         List<Map> lst = rel.fetchCase()
             .filter("user_id = ?", uid)
             .select("dept_id" )
@@ -364,7 +364,7 @@ public class AuthKit {
      * @throws HongsException
      */
     public static Set getLessDepts(String uid) throws HongsException {
-        Table rel = DB.getInstance("master").getTable("user_dept");
+        Table rel = DB.getInstance("master").getTable("dept_user");
         List<Map> lst = rel.fetchCase()
             .filter("user_id = ?", uid)
             .select("dept_id" )

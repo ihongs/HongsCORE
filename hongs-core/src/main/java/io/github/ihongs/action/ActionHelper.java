@@ -874,6 +874,7 @@ public class ActionHelper implements Cloneable
    * @param ern
    * @param err
    * @param msg
+   * @deprecated 将移除, 请改用 reply(Map)
    */
   public void fault(String ern, String err, String msg)
   {

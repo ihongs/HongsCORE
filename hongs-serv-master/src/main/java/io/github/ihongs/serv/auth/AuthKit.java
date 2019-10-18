@@ -11,6 +11,8 @@ import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.serv.master.Dept;
 import io.github.ihongs.serv.master.UserAction;
+import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.Synt;
 import io.github.ihongs.util.verify.Wrong;
 import io.github.ihongs.util.verify.Wrongs;
 import java.security.MessageDigest;
@@ -35,8 +37,7 @@ public class AuthKit {
     private static final byte[] PAZZ = {'A','B','C','D','E','F','1','2','3','4','5','6','7','8','9','0'};
     private static final String NAME = "uname" ;
     private static final String HEAD = "uhead" ;
-    private static final String UNIT =  "unit" ;
-    private static final String SSID =  "ssid" ;
+    private static final String SSID = "sid"   ;
 
     /**
      * 登录成功后跳转
@@ -44,7 +45,8 @@ public class AuthKit {
      * 都没有指定时则跳转到默认地址
      * 默认地址缺失则跳转到网站首页
      * 也可用特殊值要求返回特定数据
-     *  * 用户信息
+     *  _mine_info 用户信息
+     *  _sign_info 会话信息
      *  - 无返回信息
      * @param helper
      * @param rst
@@ -52,13 +54,12 @@ public class AuthKit {
      */
     public static void redirect(ActionHelper helper, Map rst)
     throws HongsException {
-        String k;
-        String v;
+        String k, v, r;
         CoreConfig cc = CoreConfig.getInstance("oauth2");
 
         do {
             k = cc.getProperty("oauth2.bak.prm", "r");
-            v = helper.getParameter(k);
+            r = v = helper.getParameter(k);
             if (v != null && !v.isEmpty()) {
                 break;
             }
@@ -84,16 +85,36 @@ public class AuthKit {
             v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
         } while (false);
 
-        if ("_mine_info_".equals(v)) {
+        // 登录失败
+        if (! Synt.declare(rst.get("ok"), true)) {
+            if (!"_mine_info_".equals(r)
+            &&  !"_sign_info_".equals(r)
+            &&  !"-".equals(r)) {
+                helper.print(
+                    Syno.inject(CoreConfig.getInstance(   )
+                        .getProperty ("core.redirect.html"),
+                    Synt.mapOf (
+                        "msg" , Synt.declare(rst.get("msg"), ""),
+                        "urt" , Core.BASE_HREF,
+                        "uri" , v
+                    ))
+                );
+            } else {
+                helper.reply(rst);
+            }
+            return;
+        }
+
+        if ("_mine_info_".equals(r)) {
             Object id = helper.getSessibute(Cnst.UID_SES);
             Map    rd = helper.getRequestData();
                    rd.put (Cnst.ID_KEY , id);
             new UserAction().getInfo(helper);
         } else
-        if ("_sign_info_".equals(v)) {
+        if ("_sign_info_".equals(r)) {
             helper.reply( "" , rst );
         } else
-        if ("-".equals(v)) {
+        if ("-".equals(r)) {
             helper.reply( "" );
         } else {
             helper.redirect(v);
@@ -101,16 +122,85 @@ public class AuthKit {
     }
 
     /**
+     * 登录失败后跳转
+     * 依此检查 Parameters,Cookies,Session 中是否有指定返回路径
+     * 都没有指定时则跳转到默认地址
+     * 默认地址缺失则跳转到网站首页
+     * 如指定特殊值则会返回错误信息
+     * @param helper
+     * @param err
+     * @throws HongsException
+     */
+    public static void redirect(ActionHelper helper, HongsException err)
+    throws HongsException {
+        String k, v, r;
+        CoreConfig cc = CoreConfig.getInstance("oauth2");
+
+        do {
+            k = cc.getProperty("oauth2.bak.prm", "r");
+            r = v = helper.getParameter(k);
+            if (v != null && !v.isEmpty()) {
+                break;
+            }
+
+            k = cc.getProperty("oauth2.bak.cok");
+            if (k != null && !k.isEmpty()) {
+                v = (String) helper.getCookibute( k );
+                if (v != null && !v.isEmpty()) {
+                    helper.setCookibute(k, null); // 清除 Cookies
+                    break;
+                }
+            }
+
+            k = cc.getProperty("oauth2.bak.ses");
+            if (k != null && !k.isEmpty()) {
+                v = (String) helper.getSessibute( k );
+                if (v != null && !v.isEmpty()) {
+                    helper.setSessibute(k, null); // 清除 Session
+                    break;
+                }
+            }
+
+            v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
+        } while (false);
+
+        // 输出 JSON
+        if ("_mine_info_".equals(r)
+        ||  "_sign_info_".equals(r)
+        ||  "-".equals(r)) {
+            String n = Integer.toHexString(err.getErrno());
+            helper.reply( Synt.mapOf (
+                "ok" ,  false ,
+                "ern", "Ex"+n ,
+                "err", err.getMessage(),
+                "msg", err.getLocalizedMessage()
+            ));
+            return;
+        }
+
+        // 输出 HTML
+        helper.print(
+            Syno.inject( CoreConfig
+                .getInstance(/* default config */)
+                .getProperty("core.redirect.html"),
+            Synt.mapOf (
+                "msg", Synt.declare(err.getLocalizedMessage(), ""),
+                "urt", Core.BASE_HREF,
+                "uri", r
+            ))
+        );
+    }
+
+    /**
      * 自运营登录
      * @param ah
-     * @param unit
      * @param uuid
      * @param uname 名称
      * @param uhead 头像
      * @return
      * @throws HongsException
      */
-    public static Map userSign(ActionHelper ah, String unit, String uuid, String uname, String uhead)
+    public static Map userSign(ActionHelper ah, String uuid, String uname, String uhead)
     throws HongsException {
         long      time = System.currentTimeMillis() / 1000 ;
         HttpSession sd = ah.getRequest( ).getSession(false);
@@ -141,12 +231,11 @@ public class AuthKit {
 
         // 返回数据
         Map rd = new HashMap();
-        rd.put(Cnst.UID_SES, uuid);
         rd.put(Cnst.UST_SES, time);
+        rd.put(Cnst.UID_SES, uuid);
+        rd.put(SSID, ssid );
         rd.put(NAME, uname);
         rd.put(HEAD, uhead);
-        rd.put(UNIT,  unit);
-        rd.put(SSID,  ssid);
 
         return rd;
     }
@@ -169,26 +258,35 @@ public class AuthKit {
         Map   ud = tb.fetchCase()
                      .from(tb.tableName, "s")
                      .join(ub.tableName, "u", "`u`.`id` = `s`.`user_id`")
-                     .filter("`s`.`unit`=? AND `s`.`code`=?", unit, code)
-                     .select("`u`.`id`, `u`.`name`, `u`.`head`")
+                     .filter("`s`.`unit` = ? AND `s`.`code` = ?", unit, code)
+                     .select("`u`.`id`, `u`.`name`, `u`.`head`, `u`.`state`")
                      .getOne(   );
 
-        // 记录关联
-        String  uuid;
-        boolean regs = ud == null ||  ud.isEmpty();
-        if (regs == false) {
+        int     stat  = Synt.declare(ud.get("state"), 0);
+        String  uuid  ;
+
+        if (!ud.isEmpty()) {
+            // 锁定或系统账号
+            if (stat <= 0) {
+                throw new Wrongs(Synt.mapOf("state" ,
+                      new Wrong ( "core.sign.state.invalid")
+                )).setLocalizedContext("master");
+                //.setLocalizedOptions(  stat  );
+            }
+
             uuid  = (String) ud.get( "id" );
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
         } else {
-            // 校验及下载头像
-            VerifyHelper vh  =  new VerifyHelper();
-            vh.addRulesByForm("master", "user");
-
             ud  =  new HashMap( );
             ud.put("name", uname);
             ud.put("head", uhead);
-            ud  =   vh.verify(ud , true , true);
+
+            // 校验及下载头像
+            ud  =  new VerifyHelper(  )
+              .addRulesByForm("master", "user")
+              .verify( ud, true, true );
+
             uuid  = db.getModel("user").add(ud);
             uname = (String) ud.get("name");
             uhead = (String) ud.get("head");
@@ -198,7 +296,7 @@ public class AuthKit {
             ud.put("user_id",  uuid   );
             ud.put("unit"   ,  unit   );
             ud.put("code"   ,  code   );
-            tb.insert( ud  );
+            db.getTable("user_sign").insert(ud);
 
             // 加入公共部门
             ud  =  new HashMap( );
@@ -213,8 +311,9 @@ public class AuthKit {
 //          db.getTable("user_role").insert(ud);
         }
 
-        ud = userSign(ah, unit, uuid, uname, uhead);
-        ud.put( "regs", regs );
+        ud = userSign( ah , uuid, uname, uhead );
+        ud.put("unit", /**/ unit);
+        ud.put("regs", 0 == stat);
         return ud;
     }
 
@@ -223,9 +322,8 @@ public class AuthKit {
      * @param k 字段
      * @param w 错误
      * @return
-     * @throws HongsException
      */
-    public static Map getWrong(String k, String w) throws HongsException {
+    public static Map getWrong(String k, String w) {
         CoreLocale l = CoreLocale.getInstance("master");
         Map e  = new HashMap();
         if (k != null && ! "".equals( k )) {

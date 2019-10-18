@@ -124,13 +124,21 @@ extends Model {
         if (data != null) {
             // 加密密码
             data.remove ("passcode");
-            if (data.containsKey ("password")) {
-                String pw = Synt.declare( data.get("password"), "" );
+            if (data.containsKey("password") ) {
+                String pw = Synt.declare(data.get("password"), "");
                 String pc = Core.newIdentity();
                 pc = AuthKit.getCrypt(pw + pc);
                 pw = AuthKit.getCrypt(pw + pc);
                 data.put("password" , pw);
                 data.put("passcode" , pc);
+            }
+
+            // 登录账号, 空串可能导致重复
+            if (data.containsKey("username") ) {
+                String un = Synt.declare(data.get("username"), "");
+                if (un.isEmpty()) {
+                    data.put("username", null);
+                }
             }
 
             // 状态变更, 联动权限更新时间

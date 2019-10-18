@@ -86,26 +86,6 @@ public class AuthKit {
             v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
         } while (false);
 
-        // 登录失败
-        if (! Synt.declare(rst.get("ok"), true)) {
-            if (!"_mine_info_".equals(r)
-            &&  !"_sign_info_".equals(r)
-            &&  !"-".equals(r)) {
-                helper.print(
-                    Syno.inject(CoreConfig.getInstance(   )
-                        .getProperty ("core.redirect.html"),
-                    Synt.mapOf (
-                        "msg" , Synt.declare(rst.get("msg"), ""),
-                        "urt" , Core.BASE_HREF,
-                        "uri" , v
-                    ))
-                );
-            } else {
-                helper.reply(rst);
-            }
-            return;
-        }
-
         if ("_mine_info_".equals(r)) {
             Object id = helper.getSessibute(Cnst.UID_SES);
             Map    rd = helper.getRequestData();

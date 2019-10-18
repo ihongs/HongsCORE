@@ -146,23 +146,30 @@ public class MoreAction {
         try {
             req.getRequestDispatcher("/" + uri).include(req, rsp);
         } catch (ServletException ex) {
-            if (ex.getCause( ) instanceof HongsCause) {
-                HongsCause ez = (HongsCause) ex.getCause( );
-                String msg = ez.getLocalizedMessage();
-                String err = ez.getMessage();
-                String ern = "Ex"+Integer.toHexString(ez.getErrno());
-                helper.fault(ern, err, msg );
+            if (ex.getCause() instanceof HongsCause) {
+                HongsCause  ez = ( HongsCause ) ex.getCause( );
+                String en = Integer.toHexString(ez.getErrno());
+                Map map = new HashMap();
+                map.put("ok" ,  false );
+                map.put("ern", "Ex"+en);
+                map.put("err", ez.getMessage());
+                map.put("msg", ez.getLocalizedMessage());
+                helper.reply(map);
             } else {
-                String msg = ex.getLocalizedMessage();
-                String err = ex.getMessage();
-                String ern = "Er500";
-                helper.fault(ern, err, msg );
+                Map map = new HashMap();
+                map.put("ok" ,  false );
+                map.put("ern", "Er500");
+                map.put("err", ex.getMessage());
+                map.put("msg", ex.getLocalizedMessage());
+                helper.reply(map);
             }
         } catch (IOException ex) {
-                String msg = ex.getLocalizedMessage();
-                String err = ex.getMessage();
-                String ern = "Er500";
-                helper.fault(ern, err, msg );
+                Map map = new HashMap();
+                map.put("ok" ,  false );
+                map.put("ern", "Er500");
+                map.put("err", ex.getMessage());
+                map.put("msg", ex.getLocalizedMessage());
+                helper.reply(map);
         }
     }
 

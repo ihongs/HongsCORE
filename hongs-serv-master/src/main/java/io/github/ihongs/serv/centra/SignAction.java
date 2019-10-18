@@ -34,7 +34,6 @@ public class SignAction {
     @Action("create")
     @Verify(conf="master", form="sign")
     public void signCreate(ActionHelper ah) throws HongsException {
-        String unit     = Synt.declare(ah.getParameter("unit" ), "_WEB_" );
         String place    = Synt.declare(ah.getParameter("place"), "centre");
         String username = Synt.declare(ah.getParameter("username"), "");
         String password = Synt.declare(ah.getParameter("password"), "");
@@ -118,13 +117,13 @@ public class SignAction {
         }
 
         // 验证区域
-        Set rs = RoleSet.getInstance (uuid);
-        if (0 != place.length() && ! rs.contains(place) ) {
+        Set rs  = RoleSet.getInstance(uuid);
+        if (rs != null && ! place.isEmpty() && ! rs.contains(place)) {
             ah.reply(AuthKit.getWrong("place" , "core.sign.place.invalid"));
             return;
         }
 
-        Map sd = AuthKit.userSign(ah, unit, uuid, uname, uhead);
+        Map sd = AuthKit.userSign(ah, uuid, uname, uhead);
         ah.reply ( "" , sd);
     }
 

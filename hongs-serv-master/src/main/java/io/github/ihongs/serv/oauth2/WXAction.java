@@ -4,6 +4,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.serv.auth.AuthKit;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Remote;
@@ -21,9 +22,10 @@ public class WXAction {
     /**
      * 微信 Web 登录回调
      * @param helper
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("web/create")
+    @CommitSuccess
     public void inWeb(ActionHelper helper) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("oauth2");
         String  appId = cc.getProperty("oauth2.wx.web.app.id" );
@@ -35,23 +37,28 @@ public class WXAction {
             return;
         }
 
-        Map info = getUserInfo(code, appId, appSk);
-        String  opnId = (String) info.get("opnid");
-        String  opuId = (String) info.get("opuid");
-        String   name = (String) info.get( "name");
-        String   head = (String) info.get( "head");
+        try {
+            Map info = getUserInfo(code, appId, appSk);
+            String  opnId = (String) info.get("opnid");
+            String  opuId = (String) info.get("opuid");
+            String   name = (String) info.get( "name");
+            String   head = (String) info.get( "head");
 
-        Map back = AuthKit.openSign(helper, "wx", Synt.defoult(opuId, opnId), name, head);
+            Map back = AuthKit.openSign(helper, "wx", Synt.defoult(opuId, opnId), name, head);
 
-        AuthKit.redirect(helper, back);
+            AuthKit.redirect(helper, back);
+        } catch (HongsException  ex) {
+            AuthKit.redirect(helper,  ex );
+        }
     }
 
     /**
      * 微信 WAP 登录回调
      * @param helper
-     * @throws HongsException 
+     * @throws HongsException
      */
     @Action("wap/create")
+    @CommitSuccess
     public void inWap(ActionHelper helper) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("oauth2");
         String  appId = cc.getProperty("oauth2.wx.wap.app.id" );
@@ -63,15 +70,19 @@ public class WXAction {
             return;
         }
 
-        Map info = getUserInfo(code, appId, appSk);
-        String  opnId = (String) info.get("opnid");
-        String  opuId = (String) info.get("opuid");
-        String   name = (String) info.get( "name");
-        String   head = (String) info.get( "head");
+        try {
+            Map info = getUserInfo(code, appId, appSk);
+            String  opnId = (String) info.get("opnid");
+            String  opuId = (String) info.get("opuid");
+            String   name = (String) info.get( "name");
+            String   head = (String) info.get( "head");
 
-        Map back = AuthKit.openSign(helper, "wx", Synt.defoult(opuId, opnId), name, head);
-
-        AuthKit.redirect(helper, back);
+            Map back = AuthKit.openSign(helper, "wx", Synt.defoult(opuId, opnId), name, head);
+            
+            AuthKit.redirect(helper, back);
+        } catch (HongsException  ex) {
+            AuthKit.redirect(helper,  ex );
+        }
     }
 
     public static Map getUserInfo(String code, String appId, String appSk)

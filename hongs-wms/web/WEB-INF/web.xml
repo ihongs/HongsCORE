@@ -134,10 +134,6 @@
         <filter-name>AuthFilter_Centra</filter-name>
         <filter-class>io.github.ihongs.action.serv.AuthFilter</filter-class>
         <init-param>
-            <param-name>expire-time</param-name>
-            <param-value>57600</param-value><!--16 hours-->
-        </init-param>
-        <init-param>
             <param-name>config-name</param-name>
             <param-value>centra</param-value>
         </init-param>
@@ -167,10 +163,6 @@
     <filter>
         <filter-name>AuthFilter_Centre</filter-name>
         <filter-class>io.github.ihongs.action.serv.AuthFilter</filter-class>
-        <init-param>
-            <param-name>expire-time</param-name>
-            <param-value>57600</param-value><!--16 hours-->
-        </init-param>
         <init-param>
             <param-name>config-name</param-name>
             <param-value>centre</param-value>
@@ -239,12 +231,12 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>10080</session-timeout><!--for minute, 7 days-->
+        <session-timeout>10080</session-timeout><!--for minute, 1 week-->
         <tracking-mode>COOKIE</tracking-mode>
         <cookie-config>
             <path>/</path>
             <name>XXID</name>
-            <max-age>604800</max-age><!--for second, 7 days-->
+            <max-age>57600</max-age><!--for second, 16 hours-->
             <http-only>true</http-only>
         </cookie-config>
     </session-config>

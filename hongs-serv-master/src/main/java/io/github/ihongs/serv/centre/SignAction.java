@@ -5,6 +5,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.serv.auth.AuthKit;
@@ -44,6 +45,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      */
     @Action("user/create")
     @Verify(conf="master", form="regs")
+    @CommitSuccess
     public void userCreate(ActionHelper ah) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("master");
         if(!cc.getProperty("core.public.regs.open",true)) {
@@ -55,7 +57,6 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
         Map  sd = (Map ) uo.create (rd);
 
         // 提取登录信息
-        String unit  = Synt.declare(ah.getParameter("unit"), "_WEB_" );
         String uuid  = Synt.declare(sd.get( "id" ), "");
         String uname = Synt.declare(sd.get("name"), "");
         String uhead = Synt.declare(sd.get("head"), "");
@@ -72,7 +73,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
 //      sd.put("role"   , cc.getProperty("core.public.regs.role", "centre"));
 //      uo.db.getTable("user_role").insert(sd);
 
-        ah.reply(AuthKit.userSign(ah, unit, uuid, uname, uhead));
+        ah.reply(AuthKit.userSign(ah, uuid, uname, uhead));
     }
 
     /**

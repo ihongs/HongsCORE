@@ -558,55 +558,59 @@ ul.pickrol > li.btn-text:hover {
     font-weight: inherit;
 }
 
-.picknum:before {
-    content : "(" ;
-}
-.picknum:after  {
-    content : ")" ;
-}
-.picknum:empty  {
-    display : none;
-}
-
-.pickrol .close {
-    display : none;
-}
-
 .preview {
     position: relative;
-}
-.preview img,
-.preview .close {
-    position: absolute;
-}
-.preview {
     padding: 0px;
     border : 0px;
     margin : 1px;
     border-radius: 4px;
     box-shadow: 0 0 0.2em #000;
 }
+.preview img {
+    position: absolute;
+}
 .preview .close {
+    position: absolute;
     top   :  7px;
     right :  7px;
     width : 24px;
     height: 24px;
-    line-height : 21px;
+    border-radius: 50%;
+    line-height : 22px;
     text-align: center;
     background: silver;
-    border-radius: 50%;
     box-shadow: 0 0 0.2em #000;
 }
-.preview .close:hover {
+.preview .close:hover ,
+.preview .close:focus {
     box-shadow: 0 0 0.5em #000;
 }
 .pickbox .preview {
-    float: left;
+    float  : left ;
+    cursor : pointer;
     margin-right : 5px;
     margin-bottom: 5px;
 }
-.pickrol .preview {
-    cursor: pointer;
+.pickrol .close {
+    display: none ;
+}
+.pickbox:empty  {
+    display: none ;
+}
+.pickbox:after  {
+    display: table;
+    clear  : both ;
+    content: " "  ;
+}
+
+.picknum:empty  {
+    display: none ;
+}
+.picknum:after  {
+    content: ") " ;
+}
+.picknum:before {
+    content: " (" ;
 }
 
 .datebox.input-group {

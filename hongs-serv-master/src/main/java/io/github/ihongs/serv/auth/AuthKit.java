@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLocale;
+import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.VerifyHelper;
@@ -131,7 +132,7 @@ public class AuthKit {
      * @param err
      * @throws HongsException
      */
-    public static void redirect(ActionHelper helper, HongsException err)
+    public static void redirect(ActionHelper helper, HongsCause err)
     throws HongsException {
         String k, v, r;
         CoreConfig cc = CoreConfig.getInstance("oauth2");

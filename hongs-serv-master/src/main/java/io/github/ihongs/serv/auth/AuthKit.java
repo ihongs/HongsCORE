@@ -153,8 +153,8 @@ public class AuthKit {
             helper.reply( Synt.mapOf (
                 "ok" , false,
                 "ern", errno,
-                "err", err.getMessage(),
-                "msg", err.getLocalizedMessage()
+                "err", err.getMessage(  ),
+                "msg", err.getLocalizedMessage(  )
             ));
             return;
         }

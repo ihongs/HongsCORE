@@ -165,7 +165,7 @@ public class AuthKit {
                 .getInstance(/* default config */)
                 .getProperty("core.redirect.html"),
             Synt.mapOf (
-                "msg", Synt.declare(err.getLocalizedMessage(), ""),
+                "msg", Synt.declare ( err.getLocalizedMessage( ), "" ),
                 "urt", Core.BASE_HREF,
                 "uri", r
             ))

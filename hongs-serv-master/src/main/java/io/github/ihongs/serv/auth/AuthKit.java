@@ -149,10 +149,10 @@ public class AuthKit {
         if ("_mine_info_".equals(r)
         ||  "_sign_info_".equals(r)
         ||  "-".equals(r)) {
-            String n = Integer.toHexString(err.getErrno());
+            String errno = "Ex" + Integer.toHexString(err.getErrno( ));
             helper.reply( Synt.mapOf (
-                "ok" ,  false ,
-                "ern", "Ex"+n ,
+                "ok" , false,
+                "ern", errno,
                 "err", err.getMessage(),
                 "msg", err.getLocalizedMessage()
             ));

@@ -203,6 +203,98 @@ function hsListWrapOpen(t) {
 }
 
 /**
+ * 存取列表隐藏的列
+ */
+function hsSaveListCols(box, id) {
+    var tbl = box.is("table")?box:box.find("table:first");
+    var ths = tbl.children("thead").children().children();
+    var fs  = H$("%list-cols-"+ id);
+
+    // 读取
+    if (fs) {
+        fs = fs.split(",");
+        for(var i = 0; i < fs.length; i ++) {
+            var f = fs[i] ;
+            if (f) {
+                ths.filter('[data-fn="'+f+'"]')
+                   .not     (".showed")
+                   .addClass( "hidden");
+            }
+        }
+    }
+
+    // 存储
+    box.on("hideCols", function() {
+        fs = [];
+        ths.filter(".hidden").not(".showed").each(function() {
+             fs.push ($(this).data("fn"));
+        });
+        fs = fs.join (",");
+        if (!fs) fs = null;
+        H$ ("%list-cols-" + id, fs);
+    });
+}
+
+/**
+ * 设置列表隐藏的列
+ */
+function hsHideListCols(box) {
+    var tbl = box.is("table")?box:box.find("table:first");
+    var ths = tbl.children("thead").children().children();
+    var chs = $('<form class="checkbox" onsubmit="return false"></form>');
+    var cho = $('<label><input type="checkbox" name="_list_cols"/><span></span></label>');
+
+    ths.each(function() {
+        if ($(this).is(".showed,._admin,._check,._fork")) {
+            return;
+        }
+        var ch = cho.clone().appendTo(chs);
+        ch.find("span" ).text( $(this).text(/**/) );
+        ch.find("input").val ( $(this).data("fn") );
+        ch.find("input").prop("checked", !$(this).is(".hidden"));
+    });
+
+    $.hsMask({
+        title: "请选择要显示的列",
+        glass: "alert-info",
+        mode : "warn"
+    }, {
+        label: "确定",
+        glass: "btn-primary",
+        click: function() {
+            var trs = tbl.children("thead,tbody,tfoot").children();
+            chs.find("input").each(function() {
+                var ck = $(this).prop("checked");
+                var fn = $(this).val (/*field*/);
+                var fi = ths.filter('[data-fn="'+fn+'"]').index( );
+                trs.each(function() {
+                    $(this).children().eq(fi).toggleClass("hidden", ! ck );
+                });
+            });
+            box.trigger("hideCols");
+        }
+    }, {
+        label: "全部",
+        glass: "btn-default",
+        click: function() {
+            var trs = tbl.children("thead,tbody,tfoot").children();
+            chs.find("input").each(function() {
+                var fn = $(this).val (/*field*/);
+                var fi = ths.filter('[data-fn="'+fn+'"]').index( );
+                trs.each(function() {
+                    $(this).children().eq(fi).toggleClass("hidden", false);
+                });
+            });
+            box.trigger("hideCols");
+        }
+    }, {
+        label: "取消",
+        glass: "btn-link"
+    }).find(".alert-body")
+      .append(chs);
+}
+
+/**
  * 复制列表中的内容
  */
 function hsCopyListData(box) {

@@ -242,7 +242,8 @@ function hsHideListCols(box) {
     var tbl = box.is("table")?box:box.find("table:first");
     var ths = tbl.children("thead").children().children();
     var chs = $('<form class="checkbox" onsubmit="return false"></form>');
-    var cho = $('<label><input type="checkbox" name="_list_cols"/><span></span></label>');
+    var cho = $('<label><input type="checkbox" name="_list_cols" />'
+              + '<span style="display:inline-block"></span></label>');
 
     ths.each(function() {
         if ($(this).is(".showed,._admin,._check,._fork")) {
@@ -255,9 +256,7 @@ function hsHideListCols(box) {
     });
 
     $.hsMask({
-        title: "请选择要显示的列",
-        glass: "alert-info",
-        mode : "warn"
+        title: "请选择要显示的列"
     }, {
         label: "确定",
         glass: "btn-primary",
@@ -290,7 +289,7 @@ function hsHideListCols(box) {
     }, {
         label: "取消",
         glass: "btn-link"
-    }).find(".alert-body")
+    }).find(".modal-body")
       .append(chs);
 }
 

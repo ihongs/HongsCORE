@@ -19,6 +19,7 @@ import javax.servlet.http.HttpServletResponse;
 /**
  * 会话状态过滤
  * @author Hongs
+ * @deprecated 改用 Jetty 的 SessionManager
  */
 public class SessFilter implements Filter {
 
@@ -107,3 +108,37 @@ public class SessFilter implements Filter {
     }
 
 }
+
+/*
+    <filter>
+        <filter-name>SessFilter</filter-name>
+        <filter-class>io.github.ihongs.normal.serv.SessFilter</filter-class>
+        <init-param>
+            <param-name>record-max-age</param-name>
+            <param-value>604800</param-value>
+        </init-param>
+        <init-param>
+            <param-name>cookie-max-age</param-name>
+            <param-value>604800</param-value>
+        </init-param>
+        <init-param>
+            <param-name>attend-urls</param-name>
+            <param-value>
+                /common/auth/*;/common/lang/*
+            </param-value>
+        </init-param>
+        <init-param>
+            <param-name>ignore-urls</param-name>
+            <param-value>
+                *.js;*.css;*.png;*.gif;*.jpg;*.bmp
+            </param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessFilter</filter-name>
+        <url-pattern>/centra/*</url-pattern>
+        <url-pattern>/centre/*</url-pattern>
+        <url-pattern>/common/*</url-pattern>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
+*/

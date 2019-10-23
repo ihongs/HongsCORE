@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletRequestWrapper;
 /**
  * 会话请求包装
  * @author Hongs
+ * @deprecated 改用 Jetty 的 SessionManager
  */
 public class SessAccess extends HttpServletRequestWrapper {
 

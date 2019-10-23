@@ -22,6 +22,7 @@ import javax.servlet.http.HttpSessionContext;
 /**
  * 会话状态记录
  * @author Hongs
+ * @deprecated 改用 Jetty 的 SessionManager
  */
 @Cmdlet("normal.sesion")
 public class Sesion implements HttpSession, AutoCloseable, Serializable {
@@ -130,7 +131,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         isMod = true ;
         isSav = true ;
         ctime = System.currentTimeMillis();
-        
+
         // 删除会话 Cookie
         if (req != null && req instanceof SessAccess) {
            ((SessAccess) req ).delCookie();
@@ -143,7 +144,7 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         isMod = true ;
         isSav = false;
         ctime = System.currentTimeMillis();
-        
+
         // 更新会话 Cookie
         if (req != null && req instanceof SessAccess) {
            ((SessAccess) req ).setCookie();

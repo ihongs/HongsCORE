@@ -18,6 +18,14 @@
         <param-name>org.eclipse.jetty.servlet.Default.useFileMappedBuffer</param-name>
         <param-value>false</param-value>
     </context-param>
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.SessionIdPathParameterName</param-name>
+        <param-value>token</param-value>
+    </context-param>
+    <context-param>
+        <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
+        <param-value>JSSID</param-value>
+    </context-param>
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
@@ -197,16 +205,13 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>10080</session-timeout><!-- for minute, 1 week -->
+        <session-timeout>1440</session-timeout><!-- 24 hours -->
         <tracking-mode>COOKIE</tracking-mode>
         <tracking-mode>URL</tracking-mode>
+        <tracking-mode>SSL</tracking-mode>
         <cookie-config>
             <http-only>true</http-only>
-            <name>s</name>
         </cookie-config>
-        <url-config>
-            <name>s</name>
-        </url-config>
     </session-config>
     <!-- Default Tags -->
     <jsp-config>
@@ -244,16 +249,6 @@
         <error-code>500</error-code>
         <location>/500.jsp</location>
     </error-page>
-    <!--
-    <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/500.jsp</location>
-    </error-page>
-    <error-page>
-        <exception-type>javax.servle.ServletException</exception-type>
-        <location>/500.jsp</location>
-    </error-page>
-    //-->
     <icon>
         <small-icon>/favicon.ico</small-icon>
         <large-icon>/favicon.ico</large-icon>

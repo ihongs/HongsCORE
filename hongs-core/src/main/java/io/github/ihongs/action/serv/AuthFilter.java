@@ -197,7 +197,7 @@ public class AuthFilter
     long ust = Synt.declare ( hlpr.getSessibute ( Cnst.UST_SES ) , 0L );
     long now = System.currentTimeMillis() / 1000;
     if ( exp == 0 || exp > now - ust ) {
-        if ( 0 < Core.DEBUG ) {
+        if ( 0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
             String uid = Synt.asString(hlpr.getSessibute(Cnst.UID_SES));
             if ( Cnst.ADM_UID.equals(uid)) {
                 chain.doFilter( req, rsp );

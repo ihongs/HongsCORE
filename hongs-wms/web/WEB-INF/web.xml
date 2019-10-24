@@ -10,22 +10,6 @@
         <param-name>debug</param-name>
         <param-value>3</param-value>
     </context-param>
-    <context-param>
-        <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
-        <param-value>false</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.eclipse.jetty.servlet.Default.useFileMappedBuffer</param-name>
-        <param-value>false</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.eclipse.jetty.servlet.SessionIdPathParameterName</param-name>
-        <param-value>token</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.eclipse.jetty.servlet.SessionCookie</param-name>
-        <param-value>JSSID</param-value>
-    </context-param>
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
@@ -205,12 +189,13 @@
     </filter-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>1440</session-timeout><!-- 24 hours -->
+        <session-timeout>1440</session-timeout><!-- one day -->
         <tracking-mode>COOKIE</tracking-mode>
         <tracking-mode>URL</tracking-mode>
         <tracking-mode>SSL</tracking-mode>
         <cookie-config>
             <http-only>true</http-only>
+            <name>SK</name>
         </cookie-config>
     </session-config>
     <!-- Default Tags -->

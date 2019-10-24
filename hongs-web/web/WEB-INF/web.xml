@@ -10,23 +10,6 @@
         <param-name>debug</param-name>
         <param-value>3</param-value>
     </context-param>
-    <context-param>
-        <param-name>org.eclipse.jetty.servlet.Default.dirAllowed</param-name>
-        <param-value>false</param-value>
-    </context-param>
-    <context-param>
-        <param-name>org.eclipse.jetty.servlet.Default.useFileMappedBuffer</param-name>
-        <param-value>false</param-value>
-    </context-param>
-    <!-- Jsps Servlet -->
-    <servlet>
-        <servlet-name>Jsps</servlet-name>
-        <servlet-class>org.apache.jasper.servlet.JspServlet</servlet-class>
-    </servlet>
-    <servlet-mapping>
-        <servlet-name>Jsps</servlet-name>
-        <url-pattern>*.jsp</url-pattern>
-    </servlet-mapping>
     <!-- Acts Servlet -->
     <servlet>
         <servlet-name>Acts</servlet-name>
@@ -74,13 +57,13 @@
     </servlet-mapping>
     <!-- Session Sets -->
     <session-config>
-        <session-timeout>10080</session-timeout><!--for minute, 1 week-->
+        <session-timeout>1440</session-timeout>
         <tracking-mode>COOKIE</tracking-mode>
+        <tracking-mode>URL</tracking-mode>
+        <tracking-mode>SSL</tracking-mode>
         <cookie-config>
-            <path>/</path>
-            <name>SSID</name>
-            <max-age>57600</max-age><!--for second, 16 hours-->
             <http-only>true</http-only>
+            <name>SK</name>
         </cookie-config>
     </session-config>
     <!-- Default Tags -->
@@ -119,16 +102,6 @@
         <error-code>500</error-code>
         <location>/500.jsp</location>
     </error-page>
-    <!--
-    <error-page>
-        <exception-type>java.lang.Exception</exception-type>
-        <location>/500.jsp</location>
-    </error-page>
-    <error-page>
-        <exception-type>javax.servle.ServletException</exception-type>
-        <location>/500.jsp</location>
-    </error-page>
-    //-->
     <icon>
         <small-icon>/favicon.ico</small-icon>
         <large-icon>/favicon.ico</large-icon>

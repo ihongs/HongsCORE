@@ -93,27 +93,21 @@ public class ServerCmdlet {
         // 构建应用
         Server        server;
         WebAppContext webapp;
-        server = new  Server ( port );
         webapp = new  WebAppContext();
+        server = new  Server ( port );
         webapp.setDescriptor ( conf );
         webapp.setContextPath (Core.BASE_HREF);
         webapp.setResourceBase(Core.BASE_PATH);
         webapp.setParentLoaderPriority( true );
-        webapp.setThrowUnavailableOnStartupException ( true ); // 缺了这个启动时异常看不到
+        webapp.setThrowUnavailableOnStartupException(true);
         server.setHandler    (webapp);
 
-        // 外部配置
-        CoreConfig c = CoreConfig.getInstance("defines");
-        for(Map.Entry  t : c.entrySet( )) {
-            String k = (String) t.getKey  ();
-            String v = (String) t.getValue();
-            if (k.startsWith("jetty.attr.")) {
-                webapp.setAttribute    ( k.substring(11), v );
-            } else
-            if (k.startsWith("jetty.para.")) {
-                webapp.setInitParameter( k.substring(11), v );
-            }
-        }
+        String x;
+
+        // 默认微调
+        x = org.eclipse.jetty.servlet.DefaultServlet.CONTEXT_INIT;
+        webapp.setInitParameter(x+"useFileMappedBuffer", "false");
+        webapp.setInitParameter(x+"dirAllowed"         , "false");
 
         /**
          * 初始设置
@@ -121,35 +115,46 @@ public class ServerCmdlet {
          * 可能需要替换 JSP 解析器或 Session 容器
          * 可以设置 jetty.init 来注入 Initer 对象
          */
-        String xs = c.getProperty("jetty.init");
-        if (null !=  xs) {
-            String[] xa = xs.split(";");
-            for ( String  xn: xa ) {
-                     xn = xn.trim (   );
-                if ("".equals(xn)) {
+        x = CoreConfig.getInstance("defines").getProperty( "jetty.init" );
+        if (null !=  x) {
+            String[] a = x.split(";");
+            for ( String n  : a ) {
+                     n = n.trim (   );
+                if ( n.isEmpty()) {
                     continue;
                 }
 
                 try {
-                    ((Initer) Class.forName(xn).newInstance()).init(webapp);
-                } catch (ClassNotFoundException ex) {
-                    throw new HongsError.Common(ex);
-                } catch (InstantiationException ex) {
-                    throw new HongsError.Common(ex);
-                } catch (IllegalAccessException ex) {
-                    throw new HongsError.Common(ex);
+                    ((Initer)Class.forName(n).newInstance()).init(webapp);
+                } catch (ClassNotFoundException e) {
+                    throw new HongsError.Common(e);
+                } catch (InstantiationException e) {
+                    throw new HongsError.Common(e);
+                } catch (IllegalAccessException e) {
+                    throw new HongsError.Common(e);
                 }
             }
         }
 
         // 中止机制
-        Runtime.getRuntime().addShutdownHook(new Stoper(server, ppid));
+        Runtime.getRuntime( ).addShutdownHook( new Stoper(server, ppid) );
 
         // 启动服务
         try {
-            server.setHandler(webapp);
             server.start();
-        //  server.dumpStdErr();
+
+            /**
+             * URL 会话参数等同于对应的 Cookie, 总是小写
+             * server.start_ 执行之前 web.xml 还没解析
+             */
+                x = webapp.getInitParameter (SessionHandler.__SessionIdPathParameterNameProperty);
+            if (x == null || x.isEmpty()) {
+                x = webapp.getServletContext().getSessionCookieConfig().getName();
+                x = x.toLowerCase( );
+                    webapp.getSessionHandler().setSessionIdPathParameterName( x );
+            }
+//          System.err.println("\tSESS_NAME   : " + x);
+
             server.join( );
         } catch (Exception e) {
             throw new HongsException.Common(e);
@@ -164,14 +169,14 @@ public class ServerCmdlet {
         private final File   ppid  ;
 
         public Stoper(Server server, File ppid) {
-            this.server  = server;
-            this.ppid    = ppid  ;
+            this.server = server;
+            this.ppid   = ppid  ;
         }
 
         @Override
         public void run() {
-            System.out.println("");
-            if (server.isStopped( )) {
+            System.out.println ("");
+            if (server.isStopped ()) {
                 System.err.println("Server is stopped !!!");
                 return;
             }

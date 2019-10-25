@@ -142,34 +142,33 @@ public class AuthKit {
                 }
             }
 
-            v = cc.getProperty("oauth2.bak.url", Core.BASE_HREF + "/");
+            v = cc.getProperty("oauth2.bak.url" , Core.BASE_HREF+"/");
         } while (false);
 
         // 输出 JSON
         if ("_mine_info_".equals(r)
         ||  "_sign_info_".equals(r)
         ||  "-".equals(r)) {
-            String errno = "Ex" + Integer.toHexString(err.getErrno( ));
+            String errno = "Ex" + Integer.toHexString(err.getErrno());
             helper.reply( Synt.mapOf (
                 "ok" , false,
                 "ern", errno,
-                "err", err.getMessage(  ),
-                "msg", err.getLocalizedMessage(  )
+                "err", err.getMessage(),
+                "msg", err.getLocalizedMessage()
             ));
             return;
         }
 
         // 输出 HTML
-        helper.print(
-            Syno.inject( CoreConfig
-                .getInstance(/* default config */)
-                .getProperty("core.redirect.html"),
+        helper.error401(Syno.inject(
+            CoreLocale .getInstance(/* default locale */)
+                       .getProperty("core.redirect.html"),
             Synt.mapOf (
-                "msg", Synt.declare( err.getLocalizedMessage( ) , "" ),
+                "uri", v,
                 "urt", Core.BASE_HREF,
-                "uri", r
-            ))
-        );
+                "msg", err.getLocalizedMessage()
+            )
+        ));
     }
 
     /**

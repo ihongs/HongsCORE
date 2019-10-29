@@ -58,8 +58,7 @@ public class SparFilter implements Filter {
         HttpServletRequest raq = (HttpServletRequest) req;
         String url = ActionDriver.getRecentPath (raq);
 
-        if (null != raq.getHeader("X-Requested-With")
-        ||  ignore.ignore (url) ) {
+        if (ignore.ignore( url )) {
             fc.doFilter(req, rsp);
             return;
         }

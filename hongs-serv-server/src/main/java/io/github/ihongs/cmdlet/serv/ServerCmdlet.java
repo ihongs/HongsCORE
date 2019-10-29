@@ -55,14 +55,14 @@ public class ServerCmdlet {
 
     @Cmdlet("start")
     public static void start(String[] args) throws HongsException {
-        int    port = args.length > 0 ? Integer.parseInt(args[0]) : 8080;
+        int    port = args.length >0 ? Integer.parseInt(args[0]) : 8080;
         String conf = Core.CORE_PATH + File.separator + "web.xml";
         if ( ! (new File(conf)).exists( ) ) {
                conf = Core.CONF_PATH + File.separator + "web.xml";
         }
         String serd = Core.DATA_PATH + File.separator + "server" ;
-        File   ppid = new  File(serd + File.separator +  port + ".pid" );
-        File   ppcd = ppid.getParentFile( );
+        File   ppid = new  File(serd + File.separator +  port + ".pid");
+        File   ppcd = new  File(serd);
 
         // 检查进程
         if (ppid.exists() != false) {
@@ -98,7 +98,7 @@ public class ServerCmdlet {
         webapp.setDescriptor ( conf );
         webapp.setContextPath (Core.BASE_HREF);
         webapp.setResourceBase(Core.BASE_PATH);
-        webapp.setParentLoaderPriority( true );
+        webapp.setParentLoaderPriority              (true);
         webapp.setThrowUnavailableOnStartupException(true);
         server.setHandler    (webapp);
 

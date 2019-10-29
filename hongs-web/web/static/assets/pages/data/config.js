@@ -134,12 +134,13 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
     });
     $(document).on("loadBack", ".HsForm", function(evt, rst) {
         if (!H$("@id", this)) {
-            rst.info = {};
+            delete rst.list;
+            rst.info = {  };
         }
     });
 
     // 规避 POST 一个 json 演示数据文件而失败
-    var _hsAjax = $.hsAjax;
+    var _hsAjax = $.hsAjax ;
     $.hsAjax = function(url, settings) {
         if (typeof(url) ===  "object") {
             settings = url;

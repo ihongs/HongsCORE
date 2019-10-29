@@ -4,20 +4,24 @@
      data-open-urls-0="['page/form.html'        ,'.create','@']"
      data-open-urls-1="['page/form.html?id={ID}','.modify','@']"
      data-open-urls-2="['page/info.html?id={ID}','.review','@']">
-    <div class="row">
-        <div class="toolbox col-md-8 btn-group">
-            <button type="button" class="create btn btn-default">创建文章</button>
-            <button type="button" class="modify for-choose btn btn-default">修改</button>
-            <button type="button" class="review for-choose btn btn-default">查看</button>
-            <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+    <form class="findbox toolbox board row" onsubmit="return false;">
+        <div class="col-md-6">
+            <div class="btn-group">
+                <button type="button" class="create btn btn-default">创建文章</button>
+                <button type="button" class="modify for-choose btn btn-default">修改</button>
+                <button type="button" class="review for-choose btn btn-default">查看</button>
+                <button type="button" class="delete for-checks btn btn-warning" title="删除"><span class="glyphicon glyphicon-trash"></span></button>
+            </div>
         </div>
-        <form class="findbox col-md-4 input-group" action="" method="POST">
-            <input type="search" name="wd" class="form-control input-search"/>
-            <span class="input-group-btn">
-                <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
-            </span>
-        </form>
-    </div>
+        <div class="col-md-6">
+            <div class="input-group">
+                <input type="search" name="wd" class="form-control input-search"/>
+                <span class="input-group-btn">
+                    <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                </span>
+            </div>
+        </div>
+    </form>
     <div class="listbox table-responsive">
         <table class="table table-hover table-striped">
             <thead>

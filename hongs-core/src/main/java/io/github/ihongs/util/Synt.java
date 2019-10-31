@@ -69,6 +69,7 @@ public final class Synt {
      * 区间参数: [min,max] (min,max) 类似数学表达式
      */
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
+    private static final Pattern RNGQ = Pattern.compile("[\\[\\(,\\)\\]]");
 
     /**
      * 视为真的字符串有: True , Yes, On, T, Y, I, 1
@@ -750,6 +751,12 @@ public final class Synt {
                     ! "".equals(m3) ? m3 : null,
                     !"(".equals(m.group ( 1 ) ),
                     !")".equals(m.group ( 4 ) )
+                };
+            }
+            // 单一值区间
+            if ( ! RNGQ.matcher(vs).find( ) ) {
+                return new Object[] {
+                    vs , vs , true , true
                 };
             }
             throw new ClassCastException("'"+val+"' can not be cast to range");

@@ -601,14 +601,14 @@ public class StatisHelper {
         }
 
         public boolean covers(double n) {
-            if (le) { if (n >= max) {
+            if (le) { if (n >  max) {
                 return false;
-            }} else { if (n >  max) {
+            }} else { if (n >= max) {
                 return false;
             }}
-            if (ge) { if (n <= min) {
+            if (ge) { if (n <  min) {
                 return false;
-            }} else { if (n <  min) {
+            }} else { if (n <= min) {
                 return false;
             }}
             return true;

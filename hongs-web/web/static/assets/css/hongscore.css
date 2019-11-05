@@ -268,7 +268,13 @@ ol.repeated ,
 .alert-footer {
     text-align : right;
 }
-.alert-header h4 ,
+.alert-footer button {
+    margin-left: 5px;
+}
+.alert-header h3 ,
+.alert-header h4 {
+    margin-bottom: 0;
+}
 .alert-header .close {
     margin-bottom: 0;
 }
@@ -283,8 +289,18 @@ ol.repeated ,
 .alert-content>.alert-footer:empty {
     margin-top : 0em;
 }
-.alert-footer button {
-    margin-left: 5px;
+.alert.dialog .alert-header .close {
+    width : 24px;
+    height: 24px;
+    font-size  : 20px;
+    line-height: 22px;
+    margin-top : -2px;
+    padding-bottom: 2px;
+    border-radius : 50%;
+    text-align : center;
+    text-shadow: none;
+    font-weight: bold;
+    background : #fff;
 }
 
 /* 对话框背景色, 类按钮情景色 */

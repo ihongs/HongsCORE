@@ -59,8 +59,15 @@ html, body {
     display: block;
     text-decoration: none;
 }
+#main-menubar>ul>li {
+    margin : 2px 0;
+}
+#main-menubar>ul>li.acting ,
+#main-menubar>ul>li.active {
+    box-shadow: 0 1px 2px #200;
+}
 #main-menubar li a {
-    font-size: 14px;
+    font-size: 15px;
     font-weight: 600;
     padding: 8px 6px 8px 16px;
 }
@@ -73,7 +80,7 @@ html, body {
 #user-menubar li li a {
     font-size: 13px;
     font-weight: 400;
-    padding: 9px 6px 9px 17px;
+    padding: 9px 6px 9px 16px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,

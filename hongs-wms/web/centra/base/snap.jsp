@@ -59,14 +59,14 @@
                             </ul>
                         </div>
                     </th>
-                    <th data-fn="ctime" data-ft="time" class="_htime sortable">记录时间</th>
-                    <th data-fn="state" data-ft="stat" style="width:4em;">行为</th>
+                    <th data-fn="ctime" data-ft="time" class="sortable" style="width: 7em;">时间</th>
                     <th data-fn="user">用户</th>
+                    <th data-fn="state" data-ft="stat" class="sortable" style="width: 4em;">行为</th>
                     <th data-fn="name">资源标题</th>
                     <th data-fn="memo">操作备注</th>
                     <th data-fn="meno">终端标识</th>
-                    <th data-fn="etime" data-ft="time" class="_htime sortable">截止时间</th>
-                    <th data-fn="rtime" data-ft="time" class="_htime sortable">恢复起源</th>
+                    <th data-fn="etime" data-ft="time" class="sortable" style="width: 7em;">截止时间</th>
+                    <th data-fn="rtime" data-ft="time" class="sortable" style="width: 7em;">恢复起源</th>
                 </tr>
             </thead>
             <tbody></tbody>

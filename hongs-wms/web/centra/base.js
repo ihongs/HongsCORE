@@ -273,7 +273,7 @@ function hsHideListCols(box) {
             box.trigger("hideCols");
         }
     }, {
-        label: "全部",
+        label: "重置",
         glass: "btn-default",
         click: function() {
             var trs = tbl.children("thead,tbody,tfoot").children();

@@ -6,11 +6,17 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
+import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
+import io.github.ihongs.dh.ITrnsct;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -301,6 +307,200 @@ public class DataCmdlet {
 
         for(Map od : dr.search(rd, 0, 0)) {
             CmdletHelper.preview(od);
+        }
+    }
+
+    /**
+     * 归并命令
+     * @param args
+     * @throws HongsException
+     */
+    @Cmdlet("uproot")
+    public void uproot(String[] args) throws HongsException {
+        Map opts = CmdletHelper.getOpts(
+            args ,
+            "uid=s" ,
+            "uids=s",
+            "conf=s",
+            "form=s",
+            "?Usage: attach --uid UID --uids UID1,UID2... [--conf CONF_NAME --form FORM_NAME]"
+        );
+
+        String uid  = (String) opts.get("uid" );
+        String uidz = (String) opts.get("uids");
+        String conf = (String) opts.get("conf");
+        String form = (String) opts.get("form");
+
+        String [ ] uids = uidz.split(",");
+        List<Data> ents = new ArrayList();
+
+        if ((conf == null || conf.isEmpty() )
+        && ( form == null || form.isEmpty())) {
+            // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
+            Loop loop;
+            loop = DB.getInstance("matrix")
+                     .getTable   ( "data" )
+                     .fetchCase  ( )
+                     .filter("`state` > 0")
+                     .filter("`unit_id` != '-'")
+                     .select("`id`")
+                     .select(  );
+            conf = "centra/data";
+        for(Map row : loop) {
+            form = Synt.asString(row.get( "id" ));
+            ents.add(Data.getInstance(conf,form));
+        } } else {
+            ents.add(Data.getInstance(conf,form));
+        }
+
+        // 在全局中标识为事务模式
+        Core   core;
+        Object mode;
+        core = Core.getInstance( );
+        mode = core.got(Cnst.TRNSCT_MODE);
+        core.put(Cnst.TRNSCT_MODE , true);
+
+        try {
+            // 开启
+            for(Object o : core.values()) {
+                if (o instanceof ITrnsct) {
+                    ((ITrnsct) o).begin();
+                }
+            }
+
+            try {
+                for(  Data ent : ents) {
+                    uproot(ent , uid , uids);
+                }
+
+                // 提交
+                for(Object o : core.values().toArray()) {
+                    if (o instanceof ITrnsct) {
+                        ((ITrnsct) o).commit();
+                    }
+                }
+            } catch (Throwable ex) {
+                // 回滚
+                for(Object o : core.values().toArray()) {
+                    if (o instanceof ITrnsct) {
+                        ((ITrnsct) o).revert();
+                    }
+                }
+
+                throw ex;
+            }
+        } finally {
+            if (mode  != null) {
+                core.put(Cnst.TRNSCT_MODE, mode);
+            }
+        }
+    }
+
+    /**
+     * 归并账号
+     * @param uid
+     * @param uids
+     * @throws HongsException
+     */
+    public static void uproot(String uid, String... uids) throws HongsException {
+        String     conf;
+        String     form;
+        Loop       loop;
+        List<Data> ents;
+
+        conf = "centra/data" ;
+        ents = new ArrayList ( );
+
+        // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
+        loop = DB.getInstance("matrix")
+                 .getTable   ( "data" )
+                 .fetchCase  ( )
+                 .filter("`state` > 0")
+                 .filter("`unit_id` != '-'")
+                 .select("`id`")
+                 .select( );
+
+        for ( Map  row : loop) {
+            form = Synt.asString(row.get( "id" ));
+            ents.add(Data.getInstance(conf,form));
+        }
+
+        for ( Data ent : ents) {
+            uproot(ent , uid , uids);
+        }
+    }
+
+    /**
+     * 归并账号
+     * @param ent
+     * @param uid
+     * @param uids
+     * @throws HongsException
+     */
+    public static void uproot(Data ent, String uid, String... uids) throws HongsException {
+        Set uidz = Synt.setOf(uids);
+        Map cols = ent .getFields();
+        Set colz = new HashSet();
+        Map relz = new HashMap();
+        long now = System.currentTimeMillis() / 1000;
+
+        // 组织条件, 类似: fn1 IN (uids) OR fn2 IN (uids)
+        for(Object ot : cols.entrySet()) {
+            Map.Entry et = (Map.Entry) ot;
+            Map    fc = (Map   ) et.getValue();
+            String fn = (String) et.getKey  ();
+            String tp = (String) fc.get("__type__");
+            String cf = (String) fc.get(  "conf"  );
+            String mf = (String) fc.get(  "form"  );
+            String at = (String) fc.get("data-at" );
+            // 关联到用户的规则:
+            // 类型为 fork 或者 pick
+            // 表单为 master 的 user, 或关联接口为 master/user/list
+            if (("fork".equals(tp) ||   "pick".equals(tp))
+            && (("user".equals(mf) && "master".equals(cf))
+            || "centra/master/user/list".equals(at)
+            || "centre/master/user/list".equals(at)
+            ))  {
+                relz.put(
+                    fn, Synt.mapOf(
+                    fn, Synt.mapOf(
+                        Cnst.IN_REL, uidz
+                    ))
+                );
+            }
+        }
+
+        colz.add   (Cnst.ID_KEY  );
+        colz.addAll(relz.keySet());
+
+        // 查询数据, 逐条将 uids 置换为 uid
+        Data.Loop loop = ent.search(Synt.mapOf(
+            Cnst.RB_KEY , colz,
+            Cnst.OR_KEY , relz
+        ) , 0 , 0);
+        for(Map row : loop) {
+            String id = (String) row.get(Cnst.ID_KEY);
+
+            // 寻找那些包含 uids 的换为 uid
+            for(Object fn : relz.keySet()) {
+                Object fv = row.get( fn );
+                if (fv instanceof Collection) {
+                   List val = Synt.asList(fv);
+                    if (val.removeAll(uidz) ) {
+                        val.add      (uid );
+                        row.put( fn , val );
+                    }
+                } else {
+                    fv = fv.toString (    );
+                    if (uidz.contains( fv ) ) {
+                        row.put( fn , uid );
+                    }
+                }
+            }
+
+            row.put("meno", "system");
+            row.put("memo", "uproot");
+            ent.save(now, id, row);
         }
     }
 

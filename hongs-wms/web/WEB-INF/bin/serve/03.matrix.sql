@@ -1,4 +1,4 @@
 -- DB: module
--- DT: -1M
+-- DT: -3M
 
-DELETE FROM `a_matrix_data` WHERE (`state` = 1 AND `etime` < '{{t}}') OR (`state` = 0 `ctime` < '{{t}}');
+DELETE FROM `a_matrix_data` WHERE (`state` = 0 AND `ctime` < '{{t}}') OR (`state` = 1 AND `etime` < '{{t}}');

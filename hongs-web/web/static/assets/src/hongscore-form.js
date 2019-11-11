@@ -107,8 +107,9 @@ HsForm.prototype = {
             "dataType" : "json",
             "funcName" : "load",
             "cache"    : false,
+            "global"   : false,
             "context"  : this,
-            "success"  : this.loadBack
+            "complete" : this.loadBack
         });
     },
     loadBack : function(rst) {
@@ -418,12 +419,12 @@ HsForm.prototype = {
             "dataKind"  : kind,
             "dataType"  : "json",
             "funcName"  : "save",
-            "global"    : false,
             "async"     : false,
             "cache"     : false,
+            "global"    : false,
             "context"   : this,
-            "complete"  : this.saveBack,
-            "error"     : function() { return false; }
+            "trigger"   : this.formBox,
+            "complete"  : this.saveBack
         } );
     },
 

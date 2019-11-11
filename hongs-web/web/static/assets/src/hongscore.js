@@ -2615,24 +2615,9 @@ Object.assign = function() {
 
 //** Global Events **/
 
-$(document).ajaxError(function(evt, xhr, cnf) {
-    var rst = hsResponse(xhr);
-    if (typeof(cnf.funcName) === "undefined") {
-        return;
-    }
-    if (typeof(cnf.trigger ) !== "undefined") {
-        var btn = $(cnf.trigger);
-        btn.trigger(cnf.funcName+"Error", evt, rst);
-    }
-    if (typeof(cnf.context ) !== "undefined") {
-        var box;
-        if ( typeof(cnf.context.context) !== "undefined") {
-            box = $(cnf.context.context);
-        } else {
-            box = $(cnf.context);
-        }
-        box.trigger(cnf.funcName+"Error", evt, rst);
-    }
+$(document).ajaxError(
+function(evt , xhr) {
+    hsResponse(xhr);
 });
 
 $(document)

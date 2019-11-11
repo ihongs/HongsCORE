@@ -173,8 +173,9 @@ HsList.prototype = {
             "dataType" : "json",
             "funcName" : "load",
             "cache"    : false,
+            "global"   : false,
             "context"  : this,
-            "success"  : this.loadBack
+            "complete" : this.loadBack
         });
     },
     loadBack : function(rst) {
@@ -440,9 +441,10 @@ HsList.prototype = {
             "dataType"  : "json",
             "funcName"  : "send",
             "cache"     : false,
+            "global"    : false,
             "context"   : that,
             "trigger"   : btn ,
-            "success"   : function(rst) {
+            "complete"  : function(rst) {
                 this.sendBack(btn, rst, dat2);
             }
         });

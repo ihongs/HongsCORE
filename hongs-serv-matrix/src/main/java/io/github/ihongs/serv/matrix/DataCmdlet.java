@@ -331,8 +331,8 @@ public class DataCmdlet {
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
 
-        String [ ] uids = uidz.split(",");
-        List<Data> ents = new ArrayList();
+        Set<String> uids = Synt.toSet(uidz);
+        List<Data>  ents = new ArrayList ();
 
         if ((conf == null || conf.isEmpty() )
         && ( form == null || form.isEmpty())) {
@@ -402,7 +402,7 @@ public class DataCmdlet {
      * @param uids
      * @throws HongsException
      */
-    public static void uproot(String uid, String... uids) throws HongsException {
+    public static void uproot(String uid, Set<String> uids) throws HongsException {
         String     conf;
         String     form;
         Loop       loop;
@@ -413,7 +413,7 @@ public class DataCmdlet {
 
         // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
         loop = DB.getInstance("matrix")
-                 .getTable   ( "data" )
+                 .getTable   ( "form" )
                  .fetchCase  ( )
                  .filter("`state` > 0")
                  .filter("`unit_id` != '-'")
@@ -437,8 +437,7 @@ public class DataCmdlet {
      * @param uids
      * @throws HongsException
      */
-    public static void uproot(Data ent, String uid, String... uids) throws HongsException {
-        Set uidz = Synt.setOf(uids);
+    public static void uproot(Data ent, String uid, Set<String> uids) throws HongsException {
         Map cols = ent .getFields();
         Set colz = new HashSet();
         Map relz = new HashMap();
@@ -464,7 +463,7 @@ public class DataCmdlet {
                 relz.put(
                     fn, Synt.mapOf(
                     fn, Synt.mapOf(
-                        Cnst.IN_REL, uidz
+                        Cnst.IN_REL, uids
                     ))
                 );
             }
@@ -483,16 +482,17 @@ public class DataCmdlet {
 
             // 寻找那些包含 uids 的换为 uid
             for(Object fn : relz.keySet()) {
-                Object fv = row.get( fn );
+                Object fv = row .get(fn);
+                if (fv == null) continue;
                 if (fv instanceof Collection) {
-                   List val = Synt.asList(fv);
-                    if (val.removeAll(uidz) ) {
-                        val.add      (uid );
+                    List   val = Synt.asList  (fv);
+                    if (val.removeAll(uids) ) {
+                        val.add /**/ (uid );
                         row.put( fn , val );
                     }
                 } else {
-                    fv = fv.toString (    );
-                    if (uidz.contains( fv ) ) {
+                    String str = Synt.asString(fv);
+                    if (uids.contains(str ) ) {
                         row.put( fn , uid );
                     }
                 }

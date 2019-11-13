@@ -245,7 +245,7 @@
             });
         $("#user-set")
             .click(function() {
-                $.hsOpen("centre/manage/mime.html");
+                $.hsOpen("centre/manage/mine.html");
             });
         $("#note-msg")
             .click(function() {

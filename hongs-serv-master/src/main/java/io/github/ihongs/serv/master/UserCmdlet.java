@@ -135,11 +135,12 @@ public class UserCmdlet {
 
         lo = tb.fetchCase()
                .filter("`id` = ?", uid)
-               .select("`phone`,`phone_checked`,`email`,`email_checked`")
+               .select("`phone`,`phone_checked`,`email`,`email_checked`,`username`")
                .select();
         Map info = new HashMap();
         boolean phoneChecked = false;
         boolean emailChecked = false;
+        boolean loginChecked = false;
         for(Map ro : lo) {
             info.putAll(ro);
 
@@ -154,30 +155,44 @@ public class UserCmdlet {
             &&  email != null && ! email.equals("")) {
                 emailChecked = true ;
             }
+
+            Object login = info.get("username");
+            if (login != null && ! login.equals("")) {
+                loginChecked = true ;
+            }
         }
 
         lo = tb.fetchCase()
-               .filter("`id` IN (?) AND (`phone` != ? OR `phone` IS NOT NULL) AND (`email` != ? OR `email` IS NOT NULL)", uids, "", "")
-               .select("`phone`,`phone_checked`,`email`,`email_checked`")
-               .assort("`mtime` DESC")
+               .filter("`id` IN (?)", uids )
+               .assort("`ctime` DESC, `mtime` DESC")
+               .select("`phone`,`phone_checked`,`email`,`email_checked`,`username`,`password`,`passcode`")
                .select();
         for(Map ro : lo) {
             if (! phoneChecked) {
-            Object phone = info.get("phone");
+            Object phone  =  ro.get("phone");
             if (Synt.declare(ro.get("phone_checked"), false)
             &&  phone != null && ! phone.equals("")) {
                 phoneChecked = true ;
-                info.put("phone_checked", true );
-                info.put("phone"        , phone);
+                info.put("phone_checked", 1);
+                info.put("phone"    , phone);
             }}
 
             if (! emailChecked) {
-            Object email = info.get("email");
+            Object email  =  ro.get("email");
             if (Synt.declare(ro.get("email_checked"), false)
             &&  email != null && ! email.equals("")) {
                 emailChecked = true ;
-                info.put("email_checked", true );
-                info.put("email"        , email);
+                info.put("email_checked", 1);
+                info.put("email"    , email);
+            }}
+
+            if (! loginChecked) {
+            Object login  =  ro.get("username");
+            if (login != null && ! login.equals("")) {
+                loginChecked = true ;
+                info.put("username" , login);
+                info.put("password" , info.get("password") );
+                info.put("passcode" , info.get("passcode") );
             }}
         }
 

@@ -220,7 +220,7 @@
             } );
         $("#user-set")
             .click( function() {
-                $.hsOpen("centra/manage/mime.html");
+                $.hsOpen("centra/manage/mine.html");
             } );
         $("#note-msg")
             .click( function() {

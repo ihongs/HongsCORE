@@ -12,9 +12,9 @@ import java.io.File;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.LinkedHashMap;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.LinkedHashMap;
 import java.util.function.Supplier;
 
 import org.apache.lucene.document.Document;

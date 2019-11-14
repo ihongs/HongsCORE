@@ -151,7 +151,7 @@ public class UserAction {
             cp = false;
         } else
         if (null  ==  rd.get(   "id"   )
-        &&  "".equals(rd.get(   "id"   ))) {
+        ||  "".equals(rd.get(   "id"   ))) {
             cp = false;
         } else
         {

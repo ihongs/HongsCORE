@@ -25,7 +25,6 @@ import java.util.TreeSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.activation.MimetypesFileTypeMap;
 
 /**
  * 文件管理
@@ -65,7 +64,6 @@ public class FileAction implements IAction {
     @Override
     @Action("search")
     public void search(ActionHelper helper) throws HongsException {
-        MimetypesFileTypeMap nmap = new MimetypesFileTypeMap();
         CoreLocale lang = CoreLocale.getInstance("manage");
         String type = helper.getParameter("type");
         String path = helper.getParameter("path");
@@ -213,7 +211,6 @@ public class FileAction implements IAction {
                 Map xxxx = new HashMap();
                 xxxx.put("name" , name );
                 xxxx.put("path" , pxth + "/" + name);
-                xxxx.put("mime" , nmap.getContentType (name));
                 xxxx.put("type" , item.isDirectory() ? "dir" : (isTextFile(item) ? "txt" : "bin"));
                 xxxx.put("size" , item.isDirectory() ? item.list(  ).length  :  item.length(  )  );
                 xxxx.put("mtime", item.lastModified( ));
@@ -231,12 +228,10 @@ public class FileAction implements IAction {
         } else
         if (isTextFile(file)) {
             String name = file.getName();
-            String mime = nmap.getContentType(name);
 
             Map xxxx = new HashMap();
-            xxxx.put("path" , pxth );
             xxxx.put("name" , name );
-            xxxx.put("mime" , mime );
+            xxxx.put("path" , pxth );
             xxxx.put("type" , "txt");
             xxxx.put("text" , readFile(file));
             xxxx.put("size" , file.length( ));

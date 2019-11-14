@@ -21,17 +21,12 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>activation</artifactId>
-            <groupId>javax.activation</groupId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <artifactId>httpclient</artifactId>
+            <artifactId>httpmime</artifactId>
             <groupId>org.apache.httpcomponents</groupId>
             <version>4.5.9</version>
         </dependency>
         <dependency>
-            <artifactId>httpmime</artifactId>
+            <artifactId>httpclient</artifactId>
             <groupId>org.apache.httpcomponents</groupId>
             <version>4.5.9</version>
         </dependency>

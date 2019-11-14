@@ -348,8 +348,9 @@ public class Data extends SearchEntity {
     public Map create(Map rd) throws HongsException {
         long ct = System.currentTimeMillis() / 1000 ;
         String id = Core.newIdentity();
-        save ( ct , id , rd );
-        call ( ct , id , "create" );
+        if (save( ct, id, rd) > 0 ) {
+            call( ct, id, "create");
+        }
 
         Set<String> fs = getListable();
         if (null != fs && ! fs.isEmpty( )) {
@@ -380,8 +381,10 @@ public class Data extends SearchEntity {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1096);
         for(String  id  : ids) {
-           cn += save(ct, id, rd);
-           call(ct, id, "update");
+            if (save(ct, id, rd) > 0 ) {
+                call(ct, id, "update");
+                cn ++;
+            }
         }
         return  cn;
     }
@@ -399,8 +402,9 @@ public class Data extends SearchEntity {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
         permit (rd, ids , 0x1097);
         for(String  id  : ids) {
-           cn += drop(ct, id, rd);
-           call(ct, id, "delete");
+            if (drop(ct, id, rd) > 0 ) {
+                call(ct, id, "delete");
+            }
         }
         return  cn;
     }
@@ -415,9 +419,12 @@ public class Data extends SearchEntity {
         long ct = System.currentTimeMillis() / 1000 ;
         String id = ( String ) rd.get( Cnst.ID_KEY );
         permit(rd , Synt.setOf(id), 0x1096 );
-        int  cn = redo(ct, id, rd);
-        call(ct, id, "revert");
-        return cn;
+        if (redo(ct, id, rd) > 0 ) {
+            call(ct, id, "revert");
+            return 1;
+        } else {
+            return 0;
+        }
     }
 
     /**

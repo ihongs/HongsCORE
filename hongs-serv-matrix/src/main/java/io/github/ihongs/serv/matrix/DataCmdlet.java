@@ -2,6 +2,7 @@ package io.github.ihongs.serv.matrix;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.cmdlet.CmdletHelper;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -331,8 +333,8 @@ public class DataCmdlet {
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
 
-        String [ ] uids = uidz.split(",");
-        List<Data> ents = new ArrayList();
+        Set<String> uids = Synt.toSet(uidz);
+        List<Data>  ents = new ArrayList ();
 
         if ((conf == null || conf.isEmpty() )
         && ( form == null || form.isEmpty())) {
@@ -402,31 +404,48 @@ public class DataCmdlet {
      * @param uids
      * @throws HongsException
      */
-    public static void uproot(String uid, String... uids) throws HongsException {
-        String     conf;
-        String     form;
-        Loop       loop;
-        List<Data> ents;
+    public static void uproot(String uid, Set<String> uids) throws HongsException {
+        Set<String> ents = new LinkedHashSet();
 
-        conf = "centra/data" ;
-        ents = new ArrayList ( );
-
+        // 提取所有表单记录
         // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
-        loop = DB.getInstance("matrix")
-                 .getTable   ( "data" )
-                 .fetchCase  ( )
-                 .filter("`state` > 0")
-                 .filter("`unit_id` != '-'")
-                 .select("`id`")
-                 .select( );
-
-        for ( Map  row : loop) {
-            form = Synt.asString(row.get( "id" ));
-            ents.add(Data.getInstance(conf,form));
+        Loop lo = DB
+                .getInstance("matrix")
+                .getTable   ( "form" )
+                .fetchCase  ( )
+                .filter("`state` > 0")
+                .filter("`unit_id` != '-'")
+                .select("`id`")
+                .select();
+        for(Map ro : lo ) {
+            String id = ro.get("id").toString( );
+            ents.add( "centra/data/"+id+"."+id );
         }
 
-        for ( Data ent : ents) {
-            uproot(ent , uid , uids);
+        // 增加额外定制的表
+        Set<String> incl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("core.matrix.uproot.include")
+        );
+        if (incl != null && ! incl.isEmpty()) {
+            ents.   addAll(incl);
+        }
+
+        // 排除特殊处理的表
+        Set<String> excl = Synt.toSet(
+            CoreConfig.getInstance("matrix")
+                      .getProperty("core.matrix.uproot.exclude")
+        );
+        if (excl != null && ! excl.isEmpty()) {
+            ents.removeAll(excl);
+        }
+
+        // 逐一进行账号归并
+        for(String n : ents) {
+            int    p = n.lastIndexOf(".");
+            String c = n.substring (0, p);
+            String f = n.substring (1+ p);
+            uproot(Data.getInstance(c, f), uid, uids);
         }
     }
 
@@ -437,8 +456,7 @@ public class DataCmdlet {
      * @param uids
      * @throws HongsException
      */
-    public static void uproot(Data ent, String uid, String... uids) throws HongsException {
-        Set uidz = Synt.setOf(uids);
+    public static void uproot(Data ent, String uid, Set<String> uids) throws HongsException {
         Map cols = ent .getFields();
         Set colz = new HashSet();
         Map relz = new HashMap();
@@ -464,14 +482,17 @@ public class DataCmdlet {
                 relz.put(
                     fn, Synt.mapOf(
                     fn, Synt.mapOf(
-                        Cnst.IN_REL, uidz
+                        Cnst.IN_REL, uids
                     ))
                 );
             }
         }
 
-        colz.add   (Cnst.ID_KEY  );
+        // 没有关联到用户则不必处理
+        if (relz.isEmpty()) return;
+
         colz.addAll(relz.keySet());
+        colz.add   (Cnst.ID_KEY  );
 
         // 查询数据, 逐条将 uids 置换为 uid
         Data.Loop loop = ent.search(Synt.mapOf(
@@ -483,16 +504,17 @@ public class DataCmdlet {
 
             // 寻找那些包含 uids 的换为 uid
             for(Object fn : relz.keySet()) {
-                Object fv = row.get( fn );
+                Object fv = row .get(fn);
+                if (fv == null) continue;
                 if (fv instanceof Collection) {
-                   List val = Synt.asList(fv);
-                    if (val.removeAll(uidz) ) {
-                        val.add      (uid );
+                    List   val = Synt.asList  (fv);
+                    if (val.removeAll(uids) ) {
+                        val.add /**/ (uid );
                         row.put( fn , val );
                     }
                 } else {
-                    fv = fv.toString (    );
-                    if (uidz.contains( fv ) ) {
+                    String str = Synt.asString(fv);
+                    if (uids.contains(str ) ) {
                         row.put( fn , uid );
                     }
                 }

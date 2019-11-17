@@ -367,36 +367,6 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     /**
-     * 设置文档(无则添加)
-     * @param id
-     * @param rd
-     * @return 1
-     * @throws HongsException
-     */
-    public int set(String id, Map rd) throws HongsException {
-        if (id == null || id.length() == 0) {
-            throw new NullPointerException("Id must be set in set");
-        }
-        Document doc = getDoc(id);
-        if (doc == null) {
-//          throw new NullPointerException("Doc#"+id+" not exists");
-        } else {
-            /**
-             * 实际运行中发现
-             * 直接往取出的 doc 里设置属性, 会造成旧值的索引丢失
-             * 故只好转换成 map 再重新设置, 这样才能确保索引完整
-             * 但那些 Store=NO 的数据将无法设置
-             */
-            Map md = padDat(doc );
-                md . putAll( rd );
-                rd = md;
-        }
-        rd.put(Cnst.ID_KEY , id );
-        setDoc( id , padDoc (rd)); // 总是新建 Document
-        return  1;
-    }
-
-    /**
      * 修改文档(局部更新)
      * @param id
      * @param rd
@@ -427,6 +397,36 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     }
 
     /**
+     * 设置文档(无则添加)
+     * @param id
+     * @param rd
+     * @return 1
+     * @throws HongsException
+     */
+    public int set(String id, Map rd) throws HongsException {
+        if (id == null || id.length() == 0) {
+            throw new NullPointerException("Id must be set in set");
+        }
+        Document doc = getDoc(id);
+        if (doc == null) {
+//          throw new NullPointerException("Doc#"+id+" not exists");
+        } else {
+            /**
+             * 实际运行中发现
+             * 直接往取出的 doc 里设置属性, 会造成旧值的索引丢失
+             * 故只好转换成 map 再重新设置, 这样才能确保索引完整
+             * 但那些 Store=NO 的数据将无法设置
+             */
+            Map md = padDat(doc );
+                md . putAll( rd );
+                rd = md;
+        }
+        rd.put(Cnst.ID_KEY , id );
+        setDoc( id , padDoc (rd)); // 总是新建 Document
+        return  1;
+    }
+
+    /**
      * 删除文档(delDoc 的别名)
      * @param id
      * @return 1
@@ -438,7 +438,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
         Document doc = getDoc(id);
         if (doc == null) {
-            throw new NullPointerException("Doc#"+id+" not exists");
+//          throw new NullPointerException("Doc#"+id+" not exists");
+            return 0; // 删除为幂等, 只是无变化
         }
         delDoc(id);
         return 1;

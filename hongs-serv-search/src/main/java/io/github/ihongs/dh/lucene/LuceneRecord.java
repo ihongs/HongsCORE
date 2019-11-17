@@ -270,10 +270,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public int update(Map rd) throws HongsException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
         permit (rd, ids , 0x1096);
+        int c = 0;
         for(String  id  : ids) {
-            put(id, rd  );
+            c+= put(id  , rd );
         }
-        return ids.size();
+        return  c;
     }
 
     /**
@@ -286,10 +287,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.asSet(rd.get(Cnst.ID_KEY));
         permit (rd, ids , 0x1097);
+        int c = 0;
         for(String  id  : ids) {
-            del(id /**/ );
+            c+= del(id  /**/ );
         }
-        return ids.size();
+        return  c;
     }
 
     /**
@@ -368,9 +370,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      * 设置文档(无则添加)
      * @param id
      * @param rd
+     * @return 1
      * @throws HongsException
      */
-    public void set(String id, Map rd) throws HongsException {
+    public int set(String id, Map rd) throws HongsException {
         if (id == null || id.length() == 0) {
             throw new NullPointerException("Id must be set in set");
         }
@@ -390,15 +393,17 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
         rd.put(Cnst.ID_KEY , id );
         setDoc( id , padDoc (rd)); // 总是新建 Document
+        return  1;
     }
 
     /**
      * 修改文档(局部更新)
      * @param id
      * @param rd
+     * @return 1
      * @throws HongsException
      */
-    public void put(String id, Map rd) throws HongsException {
+    public int put(String id, Map rd) throws HongsException {
         if (id == null || id.length() == 0) {
             throw new NullPointerException("Id must be set in put");
         }
@@ -418,14 +423,16 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         }
         rd.put(Cnst.ID_KEY , id );
         setDoc( id , padDoc (rd)); // 总是新建 Document
+        return  1;
     }
 
     /**
      * 删除文档(delDoc 的别名)
      * @param id
+     * @return 1
      * @throws HongsException
      */
-    public void del(String id) throws HongsException {
+    public int del(String id) throws HongsException {
         if (id == null || id.length() == 0) {
             throw new NullPointerException("Id must be set in del");
         }
@@ -434,6 +441,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             throw new NullPointerException("Doc#"+id+" not exists");
         }
         delDoc(id);
+        return 1;
     }
 
     /**

@@ -19,7 +19,6 @@ import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.util.Collection;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -56,7 +55,6 @@ public class Data extends SearchEntity {
     private         Set<String> nmCols = null;
     private         Set<String> wdCols = null;
     private         Set<String> skCols = null;
-    protected       Set<String> dcUrls = new LinkedHashSet();
 
     /**
      * 数据实例基础构造方法
@@ -783,39 +781,10 @@ public class Data extends SearchEntity {
      * @param on
      * @return 有回调为 1, 无回调为 0
      * @throws HongsException
+     * @deprecated 废弃
      */
     public int call(long xtime, String id, String on) throws HongsException {
-        String url = (String) getParams().get("callback");
-        if (url == null || "".equals(url)) {
-            return 0;
-        }
-
-        dcUrls.add(Syno.inject(url, Synt.mapOf(
-            "user_id", getUserId(),
-            "form_id", getFormId(),
-            "id"     , id ,
-            "type"   , on ,
-            "time"   , xtime
-        )));
-
-        return 1 ;
-    }
-
-    @Override
-    public void close() {
-        super . close();
-
-        // 离开时通知第三方
-        try {
-            DataCaller dc = DataCaller.getInstance();
-            for(String du : dcUrls) {
-                dc.add(du);
-            }
-        } catch (HongsException e ) {
-            throw e.toExemption ( );
-        } finally {
-            dcUrls.clear();
-        }
+        return 0;
     }
 
     @Override

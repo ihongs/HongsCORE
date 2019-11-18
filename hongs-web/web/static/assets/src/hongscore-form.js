@@ -412,6 +412,11 @@ HsForm.prototype = {
         }
     },
     save : function(url, data, type, kind) {
+        if (this._sending) {
+            this.note(hsGetLang("form.sending"));
+            return; // 防重复提交
+        }   this._sending = true;
+
         this.ajax( {
             "url"       : url ,
             "data"      : data,
@@ -424,7 +429,10 @@ HsForm.prototype = {
             "global"    : false,
             "context"   : this,
             "trigger"   : this.formBox,
-            "complete"  : this.saveBack
+            "complete"  : function(rst) {
+                delete this._sending;
+                this.saveBack( rst );
+            }
         } );
     },
 
@@ -1144,37 +1152,25 @@ jQuery.fn.hsForm = function(opts) {
 
 (function($) {
     $(document)
-    .on("submit", "form",
-    function(evt) {
-        if (evt.isDefaultPrevented()) {
-            return;
-        }
-        var btn = $(this).find( ":submit" );
-        btn.prop("disabled", true );
-        btn.data("txt", btn.text());
-        btn.text(hsGetLang("form.sending"));
-    })
-    .on("saveBack saveFail", "form",
-    function() {
-        var btn = $(this).find( ":submit" );
-        var txt = btn.data( "txt" );
-        if (txt)  btn.text(  txt  );
-        btn.prop("disabled", false);
-    })
     .on("change", "fieldset .checkall",
     function(evt) {
         this.indeterminate = false;
         var box = $(this).closest("fieldset");
         var ckd = $(this).prop   ("checked" );
-        box.find(":checkbox:not(.checkall)").prop("checked", ckd).trigger("change");
+        box.find(":checkbox"    )
+           .not (".checkall"    )
+           .prop( "checked", ckd)
+           .trigger(  "change"  );
     })
     .on("change", "fieldset :checkbox:not(.checkall)",
     function(evt) {
         var box = $(this).closest("fieldset");
-        var siz = box.find(":checkbox:not(.checkall)").length;
+        var siz = box.find(":checkbox:not(.checkall)"        ).length;
         var len = box.find(":checkbox:not(.checkall):checked").length;
-        var ckd = siz && siz == len ? true : (len && siz != len ? null : false);
-        box.find(".checkall").prop("choosed", ckd);
+        var ckd = siz && siz === len ? true
+              : ( len && siz !== len ? null : false);
+        box.find(".checkall"    )
+           .prop( "choosed", ckd);
     })
     .on("click", "[data-toggle=hsEdit]",
     function(evt) {
@@ -1192,7 +1188,7 @@ jQuery.fn.hsForm = function(opts) {
         };
 
         var box = $(this).attr("data-target");
-        var url = $(this).attr("data-href");
+        var url = $(this).attr("data-href"  );
             url = hsFixPms(url, this);
         if (box) {
             box = $(this).hsFind(box);

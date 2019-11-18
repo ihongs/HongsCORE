@@ -44,7 +44,11 @@
 
         // path 作为 ID 使用, 进行 md5 编码, 规避 jquery 选择器的语法问题
         context.data("loadBack", function(rst, pid) {
-            pid = hex_md5(pid);
+            rst = hsResponse(rst);
+            pid = hex_md5   (pid);
+            if (! rst.ok) {
+                return;
+            }
             if (rst.list)
             for(var i = 0; i < rst.list.length; i ++) {
                 var info = rst.list[i];

@@ -429,7 +429,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
     /**
      * 删除文档(delDoc 的别名)
      * @param id
-     * @return 1
+     * @return 有 1, 无 0
      * @throws HongsException
      */
     public int del(String id) throws HongsException {

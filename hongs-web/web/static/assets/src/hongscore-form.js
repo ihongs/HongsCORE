@@ -313,6 +313,12 @@ HsForm.prototype = {
                 return ;
             }
 
+            // 防止重复提交, 在 save/swap 的回调中移除
+            if (that._waiting) {
+                that.note (hsGetLang("form.waiting"));
+                return ;
+            }   that._waiting = true;
+
             var data = that.formBox ;
             var url  = data.attr("action" ) ;
             var type = data.attr("method" ) || "POST";
@@ -325,6 +331,7 @@ HsForm.prototype = {
                 var ext = jQuery.Event("willSave");
                 data.trigger(ext, [ dat , that ] );
                 if (ext.isDefaultPrevented()) {
+                    delete that._waiting;
                     return;
                 }
 
@@ -337,6 +344,7 @@ HsForm.prototype = {
                 var ext = jQuery.Event("willSave");
                 data.trigger(ext, [ dat , that ] );
                 if (ext.isDefaultPrevented()) {
+                    delete that._waiting;
                     return;
                 }
 
@@ -349,34 +357,23 @@ HsForm.prototype = {
                 var ext = jQuery.Event("willSave");
                 data.trigger(ext, [ dat , that ] );
                 if (ext.isDefaultPrevented()) {
+                    delete that._waiting;
                     return;
                 }
 
                 that.save(url, dat, type, "part" );
             } else
             {
+                var dat = hsBeFormData( data [0] );
                 var ext = jQuery.Event("willSave");
-                data.trigger(ext, [ null, that ] );
+                data.trigger(ext, [ dat , that ] );
                 if (ext.isDefaultPrevented()) {
                     evt.preventDefault();
+                    delete that._waiting;
                     return;
                 }
 
-                // 显式申明 AJAX 方式
-                data.attr( "action" , hsSetParam (url, ".ajax", "1") );
-
-                if (! data.attr("target")) {
-                    var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
-                    var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
-                    var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
-                    data.attr("target", name).before ( frame );
-                    frame.on ( "load" , function ( ) {
-                        var doc = frame[0].contentDocument || frame[0].contentWindow.document;
-                        if (doc.location.href==="about:blank") return ;
-                        var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
-                        that.saveBack(rst);
-                    } );
-                }
+                that.swap(url, data);
             }
         });
     },
@@ -411,12 +408,29 @@ HsForm.prototype = {
             }
         }
     },
-    save : function(url, data, type, kind) {
-        if (this._sending) {
-            this.note(hsGetLang("form.sending"));
-            return; // 防重复提交
-        }   this._sending = true;
 
+    swap : function(url, data) {
+        if (! data.attr("target")) {
+            var that  = this;
+            var href  = hsSetParam (url, ".ajax", "1"); // 显式申明 AJAX 方式
+            var name  = "_" + ( (new Date()).getTime() % 86400000 ) + "_" + Math.floor( Math.random( ) * 1000 );
+            var style = "width:0; height:0; border:0; margin:0; padding:0; overflow:hidden; visibility:hidden;";
+            var frame = jQuery('<iframe src="about:blank" name="' + name + '" style="' + style + '"></iframe>');
+
+            frame.insertBefore( data );
+            data.attr("target", name );
+            data.attr("action", href );
+
+            frame.on ( "load" , function() {
+                var doc = frame[0].contentDocument || frame[0].contentWindow.document;
+                if (doc.location.href==="about:blank") return ;
+                var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
+                delete that._sending;
+                that.saveBack( rst );
+            } );
+        }
+    },
+    save : function(url, data, type, kind) {
         this.ajax( {
             "url"       : url ,
             "data"      : data,

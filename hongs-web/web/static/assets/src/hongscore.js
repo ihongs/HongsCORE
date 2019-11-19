@@ -517,60 +517,6 @@ function HsSerialDat(obj) {
 }
 
 /**
- * 兼容 FormData
- * 将表单转为类似 FormData 的数据结构
- * 使其可执行类似 FormData 的常规操作
- * @param {Array|String|Object|Element} data
- * @return {Array}
- */
-function hsAsFormData (data) {
-    data = hsSerialArr(data);
-    if (typeof data.getAll === "function") {
-        return data; // append,delete 可能被别人扩展, getAll 的可能性则很小
-    }
-    data["append"] = function(name, value) {
-        data.push( { name: name, value: value } );
-    };
-    data["set"   ] = function(name, value) {
-        hsSetSeria ( data, name, value );
-    };
-    data["delete"] = function(name) {
-        hsSetSerias( data, name, [] );
-    };
-    data["get"   ] = function(name) {
-        return hsGetSeria (name);
-    };
-    data["getAll"] = function(name) {
-        return hsGetSerias(name);
-    };
-    data["has"   ] = function(name) {
-        return hsGetSerias(name).length ;
-    };
-    data.entriez = data.entries ;
-    data.entries = function() {
-        var j, i = 0 , x = {
-            next : function() {
-                if (i < data.length) {
-                    j = data[ i ++ ];
-                    return {
-                        value: [j.name, j.value],
-                        done : false
-                    };
-                } else {
-                    return {
-                        value: undefined,
-                        done : true
-                    };
-                }
-            }
-        };
-        if (self.Symbol) x[Symbol.iterator] = function() { return x; };
-        return x;
-    };
-    return  data;
-}
-
-/**
  * 构建 FormData
  * 尝试将表单转为 FormData 的数据结构
  * 特别对空文件在 Safari 中引发的问题
@@ -627,6 +573,132 @@ function hsToFormData (data) {
         }
     }
     return  form;
+}
+
+/**
+ * 兼容 FormData
+ * 将表单转为类似 FormData 的数据结构
+ * 使其可执行类似 FormData 的常规操作
+ * @param {Array|String|Object|Element} data
+ * @return {Array}
+ */
+function hsAsFormData (data) {
+    // 转换为标准列表格式, 不重复绑定兼容函数
+    data = hsSerialArr(data);
+    if (typeof data.getAll === "function") {
+        return data;
+    }
+
+    data["append"] = function(name, value) {
+        data.push( { name: name, value: value } );
+    };
+    data["set"   ] = function(name, value) {
+        hsSetSeria ( data, name, value );
+    };
+    data["delete"] = function(name) {
+        hsSetSerias( data, name, [] );
+    };
+    data["get"   ] = function(name) {
+        return hsGetSeria (name);
+    };
+    data["getAll"] = function(name) {
+        return hsGetSerias(name);
+    };
+    data["has"   ] = function(name) {
+        return hsGetSerias(name).length ;
+    };
+    data.entriez = data.entries ;
+    data.entries = function() {
+        var j, i = 0 , x = {
+            next : function() {
+                if (i < data.length) {
+                    j = data[ i ++ ];
+                    return {
+                        value: [j.name, j.value],
+                        done : false
+                    };
+                } else {
+                    return {
+                        value: undefined,
+                        done : true
+                    };
+                }
+            }
+        };
+        if (self.Symbol) x[Symbol.iterator] = function() { return x; };
+        return x;
+    };
+    return  data;
+}
+
+/**
+ * 兼容 FormData
+ * 为表单添加一些 FormData 的常规函数
+ * 使其可执行类似 FormData 的常规操作
+ * @param {Element|Selector} elem
+ * @return {Element}
+ */
+function hsBeFormData (elem) {
+    // 清除可能前次添加的, 不重复绑定兼容函数
+    elem = jQuery(elem);
+    elem.find(".form-deposit").remove();
+    var data = elem.data ("beFormData");
+    if (data ) {
+        return data;
+    } else {
+        data = { } ;
+        elem.data("beFormData" , data );
+    }
+
+    data["append"] = function(name, value) {
+        var inp = jQuery('<input type="hidden" class="form-deposit"/>');
+        inp.val ("value", value);
+        inp.attr("name" , name );
+        elem.append(inp);
+    };
+    data["delete"] = function(name) {
+        elem.find("[name='" + name + "']").remove();
+    };
+    data["getAll"] = function(name) {
+        var arr = [];
+        elem.find("[name='" + name + "']").each(function() {
+            arr.push(this.value);
+        });
+        return  arr ;
+    };
+    data["get"   ] = function(name) {
+        return elem.find("[name='" + name + "']").val (/**/);
+    };
+    data["has"   ] = function(name) {
+        return elem.find("[name='" + name + "']").size() > 0;
+    };
+    data["set"   ] = function(name, value) {
+        data["delete"](name       );
+        data["append"](name, value);
+    };
+    data.entriez = data.entries ;
+    data.entries = function() {
+        var data = elem.find("input,select,textarea");
+        var j, i = 0 , x = {
+            next : function() {
+                if (i < data.length) {
+                    j = data[ i ++ ];
+                    return {
+                        value: [j.name, j.value],
+                        done : false
+                    };
+                } else {
+                    return {
+                        value: undefined,
+                        done : true
+                    };
+                }
+            }
+        };
+        if (self.Symbol) x[Symbol.iterator] = function() { return x; };
+        return x;
+    };
+    return  data;
 }
 
 /**

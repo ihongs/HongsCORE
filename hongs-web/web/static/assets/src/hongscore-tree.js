@@ -1,6 +1,4 @@
 
-/* global self, Element */
-
 /**
  * 树型组件
  * @param {Object} opts 选项
@@ -442,13 +440,13 @@ HsTree.prototype = {
     },
 
     ajax : function() {
-        return jQuery.hsAjax.apply(self, arguments);
+        return jQuery.hsAjax.apply(window, arguments);
     },
     note : function() {
-        return jQuery.hsNote.apply(self, arguments);
+        return jQuery.hsNote.apply(window, arguments);
     },
     warn : function() {
-        return jQuery.hsWarn.apply(self, arguments);
+        return jQuery.hsWarn.apply(window, arguments);
     },
 
     select   : function(id) {

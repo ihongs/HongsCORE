@@ -21,16 +21,23 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#manage-file-fold-modify").removeAttr("id");
+        var context = H$("#manage-file-fold-modify");
+        var loadbox = context.closest(".loadbox");
+        var loadpms = hsSerialArr(loadbox       );
+        var path    = hsGetSeria (loadpms,"path");
 
-        context.find("[name=name]").val(H$("@path", context).replace(/^.*\//, ''));
+        // 目录修改无需请求, 直接从路径取即可
+        context.find("[name=name]").val( path.replace(/^.*\//, '') );
 
         context.find("form").on("submit", function(evt) {
-            var inst = context.data("HsForm");
             var form = $(this);
+            var inst = context.data( "HsForm" );
+            var path = form.find("[name=path]").val();
+            var name = form.find("[name=name]").val();
+            var dist = path.replace(/\/[^\/]*$/, '' );
             var data = {
-                dist : form.find("[name=path]").val().replace(/[^\/]+$/, '') + form.find("[name=name]").val(),
-                path : form.find("[name=path]").val(),
+                dist : dist + "/" + name,
+                path : path,
                 type : "dir"
             };
             evt.preventDefault();

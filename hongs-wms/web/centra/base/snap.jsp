@@ -86,8 +86,11 @@
     };
 
     var context = H$("#<%=_pageId%>");
-    context.find("[name='ctime.<%=Cnst.GE_REL%>']").val(H$("@ctime_ge", context));
-    context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(H$("@ctime_le", context));
+    var loadbox = context.closest(".loadbox");
+    var loadpms = hsSerialArr(loadbox);
+
+    context.find("[name='ctime.<%=Cnst.GE_REL%>']").val(hsGetSeria(loadpms, "ctime_ge"));
+    context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(hsGetSeria(loadpms, "ctime_le"));
 
     var listobj = context.hsList({
         loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
@@ -112,8 +115,8 @@
     });
 
     // 独立记录
-    if (H$( "@id" , context )
-    ||  H$("@user", context)) {
+    if (hsGetSeria(loadpms,  "id"  )
+    ||  hsGetSeria(loadpms, "user")) {
         context.find("ul.nav-tabs>li:eq(1),ul.adm-menu>li:gt(1)")
                .hide();
     }
@@ -149,7 +152,7 @@
         var id =    tr.data(     "id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
     });
 
     context.on("click", ".same-u", function() {
@@ -159,7 +162,7 @@
         var id =    tr.data("user_id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
     });
 
     context.on("click", ".same-m", function() {
@@ -169,7 +172,7 @@
         var id =    tr.data(   "meno");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsTitl(tt); });
+        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
     });
 
     context.on("click", ".nav li", function() {

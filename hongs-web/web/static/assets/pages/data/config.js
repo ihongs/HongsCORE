@@ -133,7 +133,8 @@ if(!window.HsLANG)window.HsLANG={};$.extend(window.HsLANG,{
         }
     });
     $(document).on("loadBack", ".HsForm", function(evt, rst) {
-        if (!H$("@id", this)) {
+        var box = $( this ).closest (".loadbox" );
+        if (! hsGetSeria(hsSerialArr(box), "id")) {
             delete rst.list;
             rst.info = {  };
         }

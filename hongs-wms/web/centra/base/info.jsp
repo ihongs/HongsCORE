@@ -190,8 +190,9 @@
 
     <%if ("reveal".equals(_action)) {%>
     // 前后历史记录快速切换
-    var id = H$("@id"   , loadbox);
-    var ct = H$("@ctime", loadbox);
+    var sa = hsSerialArr(loadbox);
+    var id = hsGetSeria(sa,  "id"  );
+    var ct = hsGetSeria(sa, "ctime");
     context.on("click", ".re-new,.re-old", function() {
         var data = {
             "<%=Cnst.OB_KEY%>" : "ctime",

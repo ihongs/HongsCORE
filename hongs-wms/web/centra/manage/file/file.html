@@ -56,13 +56,16 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#manage-file-list");
+        var context = H$("#manage-file-list");
+        var loadbox = context.closest(".loadbox");
+        var loadpms = hsSerialArr(loadbox       );
+        var path    = hsGetSeria (loadpms,"path");
 
-        if (H$("&path", context) === '/' ) {
+        if (path === '/') {
             context.removeAttr("data-load-url");
-            context.find(".alert"  ).show( );
-            context.find(".listbox").hide( );
-            context.find(".pagebox").hide( );
+            context.find(".alert"  ).show();
+            context.find(".listbox").hide();
+            context.find(".pagebox").hide();
             context.find(".toolbox").find("input,button").prop("disabled", true);
         }
 
@@ -74,31 +77,35 @@
             HsList.prototype.fillPage.call(this, page);
         });
 
-        context.on("click", ".create", function() {
-            var inst  = context.data("HsList");
-            var path  = H$( "&path", context );
+        context.data("_fill__check", function(td, v, n) {
+            HsList.prototype._fill__check.call ( this, td, v, n );
+            $(td).find(":checkbox").data("type", this._info.type);
+        });
+
+        context.on("click", ".create", function( ) {
+            var inst  =  context.data("HsList");
             inst.open($(this), $(this).hsFind("@"),
             "centra/manage/file/file_form.html?path="+encodeURIComponent(path));
         });
 
-        context.on("click", ".modify", function() {
-            var inst  = context.data("HsList");
-            var path  = inst.getOne ();
-            if (path == null) {
+        context.on("click", ".modify", function( ) {
+            var inst  =  context.data("HsList");
+            var item  =  inst.getOne (   );
+            if (item === null ) {
                 return;
             }
-            var type  = path.closest("tr").find("td:eq(3)").text();
-            if (type !="txt") {
-                alert("抱歉, 暂不支持对非文本文件进行编辑");
+            var type  =  item.data("type");
+            var path  =  item.val ( /**/ );
+            if (type !== "txt") {
+                hsWarn("抱歉, 暂不支持编辑非文本文件");
                 return;
             }
-            path = path.val();
             inst.open($(this), $(this).hsFind("@"),
             "centra/manage/file/file_edit.html?path="+encodeURIComponent(path));
         });
 
         context.on("click", ".upload,.dnload", function() {
-            alert("抱歉, 暂不支持上传和下载");
+            hsWarn("抱歉, 暂不支持上传和下载");
         });
     })(jQuery);
 </script>

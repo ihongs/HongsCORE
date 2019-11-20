@@ -345,7 +345,7 @@ public class Data extends SearchEntity {
     @Override
     public int delete(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        permit (rd, ids , 0x1096);
+        permit(rd , ids , 0x1096);
 
         int c = 0;
         for(String  id  : ids) {
@@ -362,7 +362,7 @@ public class Data extends SearchEntity {
      */
     public int revert(Map rd) throws HongsException {
         Set<String> ids = Synt.declare(rd.get(Cnst.ID_KEY), new HashSet());
-        permit (rd, ids , 0x1096);
+    //  permit(rd , ids , 0x1096);
 
         int c = 0;
         for(String  id  : ids) {

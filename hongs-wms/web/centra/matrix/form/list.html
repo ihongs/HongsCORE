@@ -81,9 +81,10 @@
         var context = $('#matrix-form-list');
         var helpBox = context.find(".modal");
         var srchInp = context.find(".findbox [type=search]");
+        var loadBox = context.closest(".loadbox");
 
         // 根节点搜全部
-        if (H$("@unit_id", context) === '0') {
+        if (hsGetSeria(hsSerialArr(loadBox), "unit_id") === '0') {
             srchInp.after('<input type="hidden" name="unit_id" value="0">');
             srchInp.attr ("placeholder" , "可以搜全部表单哦");
             srchInp.on   ("change" , function () {

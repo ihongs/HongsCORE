@@ -39,8 +39,8 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#centra-fold-tree").removeAttr ("id");
-        var pathMap = {"6666cd76f96956469e7be39d750cc7d9":"/"};
+        var context = H$("#centra-fold-tree");
+        var pathMap = {"6666cd76f96956469e7be39d750cc7d9": "/"};
 
         // path 作为 ID 使用, 进行 md5 编码, 规避 jquery 选择器的语法问题
         context.data("loadBack", function(rst, pid) {

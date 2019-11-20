@@ -94,6 +94,8 @@
 <script type="text/javascript">
     (function($) {
         var context = $("#master-user-form");
+        var loadbox = context.closest(".loadbox");
+        var loadpms = hsSerialArr( loadbox );
 
         // 权限、分组以及密码
         context.on("loadBack", function(ev, rd) {
@@ -103,7 +105,7 @@
                 context.removeClass( "hide-roles" );
             }
             if (!rd["info"] ) {
-                var dp = H$ ( "@dept_id", context );
+                var dp = hsGetSeria(loadpms, "dept_id");
                 $(this).find("[name='depts..dept_id']").val( dp );
             } else {
                 $(this).find("[name='depts..dept_id']").remove( );

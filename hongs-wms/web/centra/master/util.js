@@ -238,7 +238,7 @@ function hsUserSend(btn, msg, url, data) {
         var dis = data.closest("tr")
                  .data ( "dept_ids")
                  .slice( 0 );
-        var did =  H$  ("&dept_id" , this._url);
+        var did = hsGetParam(this._url, "dept_id");
 
         hsUserDel_(dis, did);
         if (dis.length == 0) {

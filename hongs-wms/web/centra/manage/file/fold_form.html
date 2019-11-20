@@ -21,13 +21,15 @@
 </div>
 <script type="text/javascript">
     (function($) {
-        var context = $("#manage-file-fold-create").removeAttr("id");
+        var context = H$("#manage-file-fold-create");
 
         context.find("form").on("submit", function(evt) {
-            var inst = context.data("HsForm");
             var form = $(this);
+            var inst = context.data( "HsForm" );
+            var path = form.find("[name=path]").val();
+            var name = form.find("[name=name]").val();
             var data = {
-                path : form.find("[name=path]").val() + "/" + form.find("[name=name]").val(),
+                path : path + "/" + name,
                 type : "dir"
             };
             evt.preventDefault();

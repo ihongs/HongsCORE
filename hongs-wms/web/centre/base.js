@@ -216,8 +216,8 @@ function HsPops (context , urls) {
     $(window).on("popstate", function() {
         inState = true;
         paneBox.children().eq(2).children().hsClose();
-        if (H$("@id")) {
-            if (H$("@if")) {
+        if (hsGetParam(location.search, "id")) {
+            if (hsGetParam(location.search, "if")) {
                 if (urls.formUrl) {
                     inState = true;
                     paneBox.hsOpen(urls.formUrl + location.search);
@@ -229,7 +229,7 @@ function HsPops (context , urls) {
                 }
             }
         } else {
-            if (H$("@if")) {
+            if (hsGetParam(location.search, "if")) {
                 if (urls.addsUrl) {
                     inState = true;
                     paneBox.hsOpen(urls.addsUrl + location.search);

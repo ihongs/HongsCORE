@@ -1,6 +1,4 @@
 
-/* global self, FormData */
-
 /**
  * 表单组件
  * @param {Object} opts 选项
@@ -451,13 +449,13 @@ HsForm.prototype = {
     },
 
     ajax : function() {
-        return jQuery.hsAjax.apply(self, arguments);
+        return jQuery.hsAjax.apply(window, arguments);
     },
     note : function() {
-        return jQuery.hsNote.apply(self, arguments);
+        return jQuery.hsNote.apply(window, arguments);
     },
     warn : function() {
-        return jQuery.hsWarn.apply(self, arguments);
+        return jQuery.hsWarn.apply(window, arguments);
     },
 
     _fill__review : function(inp, v, n) {

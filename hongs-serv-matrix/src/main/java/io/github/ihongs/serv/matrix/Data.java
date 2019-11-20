@@ -645,6 +645,17 @@ public class Data extends SearchEntity {
         return 1;
     }
 
+    /**
+     * 删除记录
+     *
+     * 注意:
+     * 此方法不被 update 调用,
+     * 重写请覆盖 del(id, rd).
+     *
+     * @param id
+     * @return 有更新为 1, 无更新为 0
+     * @throws HongsException
+     */
     @Override
     public int del(String id) throws HongsException {
         Map    rd = /**/ new HashMap();

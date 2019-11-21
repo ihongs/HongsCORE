@@ -2394,7 +2394,7 @@ $.fn.hsTdel = function(ref) {
     return [tab, pne];
 };
 
-// 设标题
+// 标题名
 $.fn.hsName = function(tit) {
     var box = $(this);
     var prt = box.parent( );
@@ -2479,7 +2479,16 @@ $.fn.hsI18n = function(rep) {
     return box;
 };
 
-$.fn.hsData = function() {
+/**
+ * 配置数据
+ * @param {Object} vals
+ * @returns {Object}
+ */
+$.fn.hsData = function(vals) {
+    if (vals  !== undefined) {
+        this.data(vals);
+        return;
+    }
     var that = this.get(0);
     var conf = this.data();
     var nreg = /^data-\d+$/;
@@ -2549,6 +2558,11 @@ $.fn.hsData = function() {
 };
 $.fn._hsConfig = $.fn.hsData; // 兼容旧版命名
 
+/**
+ * 快捷查找
+ * @param {String} selr
+ * @returns {jQuery}
+ */
 $.fn.hsFind = function(selr) {
     if (typeof selr != "string") {
         return $ (selr);
@@ -2613,6 +2627,12 @@ $.fn.hsFind = function(selr) {
 };
 $.fn._hsTarget = $.fn.hsFind; // 兼容旧版命名
 
+/**
+ * 模块助手
+ * @param {Module} func
+ * @param {Object} opts
+ * @returns {Object}
+ */
 $.fn._hsModule = function(func, opts) {
     var name = func.name || /^function\s+(\w+)/.exec(func.toString())[1];
     var inst = this.data(name);
@@ -2690,11 +2710,20 @@ Object.assign = function() {
 
 //** Global Events **/
 
+/**
+ * Ajax 全局错误处理
+ */
 $(document).ajaxError(
-function(evt , xhr) {
-    hsResponse(xhr);
+  function(evt, xhr) {
+    hsResponse (xhr);
 });
 
+/**
+ * Bootstrap 模态框会在禁用滚动条时给右侧加一个间隙, 以防止闪烁.
+ * 首次开启时, 可将样式暂存起来,
+ * 完全关闭时, 再将样式填充回去;
+ * 如存在多个, 须将模态类加回去.
+ */
 $(document)
 .on("show.bs.modal",
 function() {
@@ -2711,18 +2740,14 @@ function() {
     } else {
         bod.addClass("modal-open");
     }
-    /**
-     * Bootstrap 模态框会在禁用滚动条时给右侧加一个间隙, 以防止闪烁.
-     * 首次开启时, 可将样式暂存起来,
-     * 完全关闭时, 再将样式填充回去;
-     * 如存在多个, 须将模态类加回去.
-     */
-})
+});
+
+/**
+ * 多选中单击复选
+ */
+$(document)
 .on("change", "select[multiple]",
 function(evt) {
-    /**
-     * 多选列表单击复选
-     */
     if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
         return;
     }
@@ -2738,7 +2763,12 @@ function(evt) {
     });
     $(this).data("vals", vals);
     $(this).val ( vals );
-})
+});
+
+/**
+ * 快捷开启和关闭
+ */
+$(document)
 .on("click", "[data-toggle=hsDrop]",
 function(evt) {
     if ($(this).siblings(".dropdown-body,.dropdown-list").size()
@@ -2746,10 +2776,16 @@ function(evt) {
         $(this).parent( ).toggleClass( "dropup" );
     }
 })
-.on("cilck", "[data-toggle=hsExit]",
-function() {
-    var box = $(this).attr("data-target");
-    $(this).hsFind(box || "@").hsClose( );
+.on("click", "[data-toggle=hsDisp]", function() {
+    var btn = $(this);
+    var tit = btn.data("title");
+    var txt = btn.data("text");
+    var htm = btn.data("html");
+    $.hsMask({
+        title: tit,
+        text : txt,
+        html : htm
+    });
 })
 .on("click", "[data-toggle=hsOpen]",
 function() {
@@ -2757,51 +2793,24 @@ function() {
     var box = btn.data("target");
     var url = btn.data("href");
     var dat = btn.data("data");
-    var das = btn.data();
-    var evs = { };
-
-    /**
-     * 从数据属性中提取出事件句柄
-     * 绑定在打开的区域上
-     * 因打开的区域会在关闭后销毁
-     * 故可在打开重复绑定
-     */
-    for(var n in das) {
-        var f  = das[n];
-        if (! /^on[A-Z]\w*/.test( n )) {
-            continue;
-        }
-        if (typeof(f) !== "function" ) {
-            f = eval( '(null||function(event){' + f + '})' );
-        }
-        n = n.substring(2, 3).toLowerCase() + n.substring(3);
-        evs[n] = f;
-    }
-
-    url = hsFixPms(url, this);
     if (box) {
-        box = btn.hsFind(box)
-                 .hsOpen(url, dat, evs.hsReady);
+        box = btn.hsFind(box);
+        box.hsOpen(url , dat);
     } else {
-        box =   $.hsOpen(url, dat, evs.hsReady);
-    }
-
-    for(var n in evs) {
-        var f  = evs[n];
-        if (n === "hsReady") {
-            continue;
-        }
-        box.on(n, function() {
-            f.apply(btn, arguments);
-        });
+          $.hsOpen(url , dat);
     }
 })
-.on("click", ".close,.cancel",
+.on("cilck", "[data-toggle=hsExit]",
+function() {
+    var box = $(this).attr("data-target");
+    $(this).hsFind(box || "@").hsClose( );
+})
+.on("click", ".exit,.close,.cancel",
 function() {
     var box;
     var ths = $(this);
     do {
-        // 云标签
+        // 标签项
         if (ths.is("li>.close")) {
             return;
         }
@@ -2839,6 +2848,21 @@ function() {
             return;
     }
     box.hsClose( );
+});
+
+/**
+ * 导航条和选项卡
+ */
+$(document)
+.on("click", ".home-crumb  a",
+function() {
+    // Nothing to do...
+})
+.on("click", ".back-crumb  a",
+function() {
+    var nav = $(this).closest('.breadcrumb');
+    nav.find('li:last a').hsClose();
+    nav.find('li:last a').  click();
 })
 .on("click", ".tabs > li > a",
 function() {
@@ -2871,16 +2895,6 @@ function() {
     tab.show().addClass("active");
     pne.show().trigger("hsRecur");
 })
-.on("click", ".home-crumb a",
-function() {
-    // Nothing to do...
-})
-.on("click", ".back-crumb a",
-function() {
-    var nav = $(this).closest('.breadcrumb');
-    nav.find('li:last a').hsClose();
-    nav.find('li:last a').  click();
-})
 .on("hsReady hsRecur", ".labs.laps",
 function() {
     var nav = $(this).siblings('.breadcrumb') || $(this).data("tabs");
@@ -2897,8 +2911,6 @@ function() {
     }
 });
 
-$(function() {
-    $(document).hsReady();
-});
+$(function( ) { $(document).hsReady( ) } );
 
 })(jQuery);

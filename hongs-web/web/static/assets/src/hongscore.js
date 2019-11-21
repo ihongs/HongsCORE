@@ -1,5 +1,5 @@
 
-/* global Symbol, Element, FormData, File, eval, encodeURIComponent, decodeURIComponent, jQuery, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
+/* global Symbol, Element, FormData, File, JSON, eval, encodeURIComponent, decodeURIComponent, jQuery, HsAUTH,HsCONF,HsLANG,HsREQS,HsDEPS */
 
 if (!window.HsAUTH) window.HsAUTH = {};
 if (!window.HsCONF) window.HsCONF = {};

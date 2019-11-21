@@ -450,7 +450,7 @@ function hsSerialArr(obj) {
 
 /**
  * 合并多组序列, 类似 jQuery.merge, 但归并层级, 返回为单层 HsSerialDic
- * @param {Array|String|Object|Element|FormData} obj0, obj1, obj2...
+ * 支持参数类型: {Array|String|Object|Element|FormData}
  * @returns {Object}
  */
 function hsSerialMix() {
@@ -503,6 +503,7 @@ function hsSerialDat(obj) {
 
 /**
  * 序列字典伪类, 可用于识别 hsSerialDic 处理的数据
+ * @param {Object} obj
  */
 function HsSerialDic(obj) {
     if (obj) jQuery.extend(this, obj);
@@ -510,6 +511,7 @@ function HsSerialDic(obj) {
 
 /**
  * 序列对象伪类, 可用于识别 hsSerialDat 处理的数据
+ * @param {Object} obj
  */
 function HsSerialDat(obj) {
     if (obj) jQuery.extend(this, obj);
@@ -2711,6 +2713,8 @@ Object.assign = function() {
 
 /**
  * Ajax 全局错误处理
+ * @param {Event} evt
+ * @param {jqXHR} xhr
  */
 $(document).ajaxError(
   function(evt, xhr) {
@@ -2743,6 +2747,7 @@ function() {
 
 /**
  * 多选中单击复选
+ * @param {Event} evt
  */
 $(document)
 .on("change", "select[multiple]",
@@ -2766,6 +2771,7 @@ function(evt) {
 
 /**
  * 快捷开启和关闭
+ * @param {Event} evt
  */
 $(document)
 .on("click", "[data-toggle=hsDrop]",
@@ -2910,6 +2916,6 @@ function() {
     }
 });
 
-$(function( ) { $(document).hsReady( ) } );
+$(function( ) { $(document).hsReady( ); });
 
 })(jQuery);

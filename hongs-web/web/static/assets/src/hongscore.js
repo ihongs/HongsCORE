@@ -2485,12 +2485,11 @@ $.fn.hsI18n = function(rep) {
  * @returns {Object}
  */
 $.fn.hsData = function(vals) {
-    if (vals  !== undefined) {
-        this.data(vals);
-        return;
+    if (vals) {
+        return this.data(vals);
     }
-    var that = this.get(0);
-    var conf = this.data();
+    var conf = this.data(    );
+    var that = this.get (  0 );
     var nreg = /^data-\d+$/;
     var treg = /-\d+$/;
     var freg = /-\w/g ;

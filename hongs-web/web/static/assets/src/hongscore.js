@@ -2604,11 +2604,11 @@ $.fn.hsFind = function(selr) {
             return elem.children(salr);
         case '~':
             return elem.siblings(salr);
+        case '-':
+            return elem.prev(salr);
         case '+':
             return elem.next(salr);
         case '*':
-            return elem.prev(salr);
-        case '?':
             return elem.find(salr);
         case '$':
             return $(salr);

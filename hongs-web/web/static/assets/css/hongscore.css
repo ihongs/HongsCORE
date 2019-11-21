@@ -250,6 +250,11 @@ ol.repeated ,
     display: none;
 }
 
+.modal-header:empty ,
+.modal-footer:empty {
+    display: none;
+}
+
 .progbox.alert ,
 .warnbox.alert ,
 .notebox.alert {

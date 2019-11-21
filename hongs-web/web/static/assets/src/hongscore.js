@@ -2711,11 +2711,7 @@ Object.assign = function() {
 
 //** Global Events **/
 
-/**
- * Ajax 全局错误处理
- * @param {Event} evt
- * @param {jqXHR} xhr
- */
+// Ajax 全局错误处理
 $(document).ajaxError(
   function(evt, xhr) {
     hsResponse (xhr);
@@ -2745,10 +2741,7 @@ function() {
     }
 });
 
-/**
- * 多选中单击复选
- * @param {Event} evt
- */
+// 多选中单击复选
 $(document)
 .on("change", "select[multiple]",
 function(evt) {
@@ -2769,10 +2762,7 @@ function(evt) {
     $(this).val ( vals );
 });
 
-/**
- * 快捷开启和关闭
- * @param {Event} evt
- */
+// 快捷开启和关闭
 $(document)
 .on("click", "[data-toggle=hsDrop]",
 function(evt) {
@@ -2855,9 +2845,7 @@ function() {
     box.hsClose( );
 });
 
-/**
- * 导航条和选项卡
- */
+// 导航条和选项卡
 $(document)
 .on("click", ".home-crumb  a",
 function() {

@@ -233,31 +233,31 @@ public class FormSet
         forms.put(namz, items);
 
         items.put("__name__", namz);
-        String namx = namz;
 
-        namz = element2.getAttribute("type");
-        items.put("__type__", namz);
-        String typx = namz;
+        String typz, attr;
 
-        namz = element2.getAttribute("rule");
-        items.put("__rule__", namz);
+        typz = element2.getAttribute("type");
+        items.put("__type__", typz);
 
-        namz = element2.getAttribute("text");
-        items.put("__text__", namz);
+        attr = element2.getAttribute("rule");
+        items.put("__rule__", attr);
 
-        namz = element2.getAttribute("hint");
-        items.put("__hint__", namz);
+        attr = element2.getAttribute("text");
+        items.put("__text__", attr);
+
+        attr = element2.getAttribute("hint");
+        items.put("__hint__", attr);
 
         if (element2.hasAttribute("required")) {
-            namz = element2.getAttribute("required");
-            items.put("__required__",  namz  );
+            attr = element2.getAttribute("required");
+            items.put("__required__",  attr  );
         } else {
             items.put("__required__", "false");
         }
 
         if (element2.hasAttribute("repeated")) {
-            namz = element2.getAttribute("repeated");
-            items.put("__repeated__",  namz  );
+            attr = element2.getAttribute("repeated");
+            items.put("__repeated__",  attr  );
         } else {
             items.put("__repeated__", "false");
         }
@@ -268,36 +268,40 @@ public class FormSet
          * 注意规避解析默认表单配置时可能引起无限递归
          */
         if (!"default".equals(name)) {
-            typx = (String) getInstance().getEnum("__types__").get(typx);
+            typz = (String) getInstance().getEnum("__types__").get(typz);
             if ( "@"  .equals(namz)) {
                 if (! items.containsKey("form")) {
-                    items.put("form", element.getAttribute("name"));
+                    attr = element.getAttribute("name");
+                    items.put("form", attr);
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
                 }
             } else
-            if ("enum".equals(typx)) {
+            if ("enum".equals(typz)) {
                 if (! items.containsKey("enum")) {
-                    items.put("enum", namx);
+                //  namz = namz.replaceFirst("_id$","");
+                    items.put("enum", namz);
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
                 }
             } else
-            if ("form".equals(typx)) {
+            if ("form".equals(typz)) {
                 if (! items.containsKey("form")) {
-                    items.put("form", namx.replace("_id", ""));
+                    namz = namz.replaceFirst("_id$","");
+                    items.put("form", namz);
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);
                 }
             } else
-            if ("fork".equals(typx)) {
+            if ("fork".equals(typz)) {
                 if (! items.containsKey("data-at" )
                 &&  ! items.containsKey("data-al")) {
                 if (! items.containsKey("form")) {
-                    items.put("form", namx.replace("_id", ""));
+                    namz = namz.replaceFirst("_id$","");
+                    items.put("form", namz);
                 }
                 if (! items.containsKey("conf")) {
                     items.put("conf", name);

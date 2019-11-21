@@ -1719,9 +1719,9 @@ $.hsOpen = function(url, data, complete) {
               + '<button type="button" class="close" data-dismiss="modal">&times;</button>'
               + '<h4  class="modal-title"  >' + hsGetLang( "opening" ) + '</h4>'
               + '</div><div class="modal-body openbox"></div></div></div></div>');
-    var box = div.find ( '.openbox' );
-    box.hsLoad( url, data, complete );
-    div.on("hide.bs.modal",function() {
+    var box = div.find('.openbox');
+    box.hsLoad(url,data, complete);
+    div.on("hidden.bs.modal", function() {
         div.remove();
     } );
     div.modal();
@@ -1922,6 +1922,10 @@ $.hsMask = function(opt) {
     }
 
     btn.on("click", "button", function(evt) {
+        if (evt.isPropagationStopped()
+        ||  evt.isDefaultPrevented( )) {
+            return;
+        }
         mod.modal ( "hide" );
     } );
     mod.on("hidden.bs.modal", function(evt) {
@@ -2692,8 +2696,33 @@ function(evt , xhr) {
 });
 
 $(document)
+.on("show.bs.modal",
+function() {
+    var bod = $ ( "body" );
+    if (bod.find(".modal:visible").size() === 0) {
+        bod.data( "style" , bod.attr( "style" ));
+    }
+})
+.on("hidden.bs.modal",
+function() {
+    var bod = $ ( "body" );
+    if (bod.find(".modal:visible").size() === 0) {
+        bod.attr( "style" , bod.data( "style" ));
+    } else {
+        bod.addClass("modal-open");
+    }
+    /**
+     * Bootstrap 模态框会在禁用滚动条时给右侧加一个间隙, 以防止闪烁.
+     * 首次开启时, 可将样式暂存起来,
+     * 完全关闭时, 再将样式填充回去;
+     * 如存在多个, 须将模态类加回去.
+     */
+})
 .on("change", "select[multiple]",
 function(evt) {
+    /**
+     * 多选列表单击复选
+     */
     if (evt.shiftKey || evt.metaKey || evt.ctrlKey || evt.altKey) {
         return;
     }
@@ -2865,14 +2894,6 @@ function() {
         nav.children('.back-crumb').hide();
     } else {
         nav.children('.back-crumb').show();
-    }
-})
-.on("hidden.bs.modal",
-function() {
-    // 关闭模态框时, 为了保障滚动条有效,
-    // 如果存在多个, 必须将模态类加回去.
-    if ($("body .modal:visible").size()) {
-        $("body").addClass("modal-open");
     }
 });
 

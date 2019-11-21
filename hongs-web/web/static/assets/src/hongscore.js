@@ -2771,7 +2771,8 @@ function(evt) {
         $(this).parent( ).toggleClass( "dropup" );
     }
 })
-.on("click", "[data-toggle=hsDisp]", function() {
+.on("click", "[data-toggle=hsDisp]",
+function() {
     var btn = $(this);
     var tit = btn.data("title");
     var txt = btn.data("text");

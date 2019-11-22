@@ -145,7 +145,7 @@ public class Data extends SearchEntity {
      * 获取字段
      * 当前表单不在管理区之内时,
      * 会用当前表单覆盖管理表单,
-     * 配置文件不存在则抛出异常 0x1104
+     * 配置文件不存在则抛出异常 0x404
      * @return
      */
     @Override
@@ -217,7 +217,7 @@ public class Data extends SearchEntity {
         }   while  ( false );
 
         if ( null == fields) {
-            throw new HongsExemption(0x1104, "Data form conf '" + conf + "' is not exists")
+            throw new HongsExemption(0x404, "Data form conf '" + conf + "' is not exists")
                 .setLocalizedOptions(conf);
         }
 

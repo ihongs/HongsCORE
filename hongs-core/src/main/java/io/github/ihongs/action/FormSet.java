@@ -4,8 +4,8 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.io.File;
@@ -441,7 +441,7 @@ public class FormSet
     try {
       return CoreLocale.getInstance(name);
     }
-    catch (HongsError e) {
+    catch (HongsExemption e) {
       if  (e.getErrno( ) != 0x2a) {
         throw e;
       }

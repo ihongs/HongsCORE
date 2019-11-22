@@ -5,8 +5,8 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.reflex.Block;
 import java.io.File;
 import java.io.FileInputStream;
@@ -656,7 +656,7 @@ public class NaviMap
     try {
       lang = CoreLocale.getInstance(name).clone();
     }
-    catch (HongsError e) {
+    catch (HongsExemption e) {
       if  (e.getErrno( ) != 0x2a) {
         throw e;
       }

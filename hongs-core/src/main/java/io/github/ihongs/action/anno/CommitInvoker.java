@@ -2,7 +2,6 @@ package io.github.ihongs.action.anno;
 
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
@@ -54,9 +53,6 @@ public class CommitInvoker implements FilterInvoker {
                     }
                 }
 
-                if (ex instanceof HongsError) {
-                    throw (HongsError) ex;
-                } else
                 if (ex instanceof HongsException) {
                     throw (HongsException) ex;
                 } else
@@ -116,9 +112,6 @@ public class CommitInvoker implements FilterInvoker {
                     }
                 }
 
-                if (ex instanceof HongsError) {
-                    throw (HongsError) ex;
-                } else
                 if (ex instanceof HongsException) {
                     throw (HongsException) ex;
                 } else

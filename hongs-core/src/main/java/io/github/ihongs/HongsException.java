@@ -15,17 +15,15 @@ package io.github.ihongs;
  */
 public class HongsException extends Exception implements HongsCause {
 
+    public static final int COMMON = HongsCurse.COMMON;
+    public static final int NOTICE = HongsCurse.NOTICE;
+
     protected final HongsCurse that;
 
     public HongsException(int errno, String error, Throwable cause) {
         super(cause);
 
         that = new HongsCurse(errno, error, this);
-
-        if (errno < 0x1000) {
-            throw new HongsError(0x22,
-                "Exception code must be greater than 0xFFF(4095).");
-        }
     }
 
     public HongsException(int code, Throwable cause) {
@@ -82,7 +80,7 @@ public class HongsException extends Exception implements HongsCause {
     }
 
     @Override
-    public HongsException setLocalizedContext(String lang) {
+    public HongsException setLocalizedContext(String    lang) {
         that.setLocalizedContext(lang);
         return this;
     }
@@ -93,24 +91,10 @@ public class HongsException extends Exception implements HongsCause {
         return this;
     }
 
-    public static final int COMMON = 0x1000;
-
-    public static final int NOTICE = 0x1001;
-
-    /**
-     * 外部错误, 对应 HTTP 400 错误
-     */
-    public static final int EXTERN = 0x1100;
-
-    /**
-     * 内部错误, 对应 HTTP 500 错误
-     */
-    public static final int INTERN = 0x110E;
-
     /**
      * 常规错误(无需错误代码)
      */
-    public static class Common extends HongsException {
+    public static final class Common extends HongsException {
         public Common(String error, Throwable cause) {
             super(COMMON, error,cause);
         }
@@ -125,7 +109,7 @@ public class HongsException extends Exception implements HongsCause {
     /**
      * 通告错误(无需错误代码)
      */
-    public static class Notice extends HongsException {
+    public static final class Notice extends HongsException {
         public Notice(String error, Throwable cause) {
             super(NOTICE, error,cause);
         }

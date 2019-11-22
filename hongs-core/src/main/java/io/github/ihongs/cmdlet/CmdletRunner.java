@@ -6,7 +6,7 @@ import io.github.ihongs.CoreLocale;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -63,14 +63,14 @@ public class CmdletRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsError(0x42, "Cmdlet name can not be empty.");
+      throw new HongsExemption(0x42, "Cmdlet name can not be empty.");
     }
 
     // 获取方法
     Method met = getCmdlets().get( act );
     if (null == met)
     {
-      throw new HongsError(0x42, "Cmdlet "+act+" is not exists.");
+      throw new HongsExemption(0x42, "Cmdlet "+act+" is not exists.");
     }
 
     this.met  = met ;
@@ -169,14 +169,14 @@ public class CmdletRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsError(0x42, "Cmdlet name can not be empty.");
+      throw new HongsExemption(0x42, "Cmdlet name can not be empty.");
     }
 
     // 获取方法
     Method met = getCmdlets().get( act );
     if (null == met)
     {
-      throw new HongsError(0x42, "Cmdlet "+act+" is not exists.");
+      throw new HongsExemption(0x42, "Cmdlet "+act+" is not exists.");
     }
 
     // 执行方法
@@ -186,15 +186,15 @@ public class CmdletRunner implements Runnable
     }
     catch (   IllegalAccessException ex)
     {
-      throw new HongsError(0x43, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
+      throw new HongsExemption(0x43, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
     }
     catch ( IllegalArgumentException ex)
     {
-      throw new HongsError(0x43, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
+      throw new HongsExemption(0x43, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsError(0x44, ex.getCause());
+      throw new HongsExemption(0x44, ex.getCause());
     }
   }
 

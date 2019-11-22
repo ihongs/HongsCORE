@@ -3,8 +3,8 @@ package io.github.ihongs.db;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreSerial;
-import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Syno;
 import java.io.File;
 import java.io.FileInputStream;
@@ -105,7 +105,7 @@ public class DBConfig
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsError(0x2a,
+            throw new HongsExemption(0x2a,
                 "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'.");
         }
     }

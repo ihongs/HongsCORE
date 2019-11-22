@@ -2,8 +2,8 @@ package io.github.ihongs.cmdlet.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsError;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DBConfig;
 import io.github.ihongs.util.reflex.Classes;
@@ -127,11 +127,11 @@ public class ServerCmdlet {
                 try {
                     ((Initer)Class.forName(n).newInstance()).init(webapp);
                 } catch (ClassNotFoundException e) {
-                    throw new HongsError.Common(e);
+                    throw new HongsExemption.Common(e);
                 } catch (InstantiationException e) {
-                    throw new HongsError.Common(e);
+                    throw new HongsExemption.Common(e);
                 } catch (IllegalAccessException e) {
-                    throw new HongsError.Common(e);
+                    throw new HongsExemption.Common(e);
                 }
             }
         }
@@ -159,7 +159,7 @@ public class ServerCmdlet {
         } catch (Exception e) {
             throw new HongsException.Common(e);
         } catch (Error     e) {
-            throw new HongsError    .Common(e);
+            throw new HongsExemption.Common(e);
         }
     }
 
@@ -293,7 +293,7 @@ public class ServerCmdlet {
             try {
                 conf= new DBConfig(dh);
             } catch (HongsException e) {
-                throw new HongsError.Common(e);
+                throw new HongsExemption.Common(e);
             }
 
             if (conf.link != null && conf.link.length() != 0 ) {
@@ -316,7 +316,7 @@ public class ServerCmdlet {
                 da.setDriverInfo(dt, dh);
                 return da;
             } else {
-                throw new HongsError.Common("Wrong session manager jdbc!");
+                throw new HongsExemption.Common("Wrong session manager jdbc!");
             }
         }
 
@@ -428,9 +428,9 @@ public class ServerCmdlet {
                 EventListener evto = (EventListener) clso.newInstance();
                 context.addEventListener(evto);
             } catch (InstantiationException e) {
-                throw new HongsError.Common(e);
+                throw new HongsExemption.Common(e);
             } catch (IllegalAccessException e) {
-                throw new HongsError.Common(e);
+                throw new HongsExemption.Common(e);
             }
         }
 
@@ -439,7 +439,7 @@ public class ServerCmdlet {
             try {
                 clso = Class.forName(clsn);
             } catch (ClassNotFoundException ex ) {
-                throw new HongsError.Common("Can not find class '" + clsn + "'.", ex);
+                throw new HongsExemption.Common("Can not find class '" + clsn + "'.", ex);
             }
             return clso;
         }
@@ -452,10 +452,10 @@ public class ServerCmdlet {
                 try {
                     clss = Classes.getClassNames(pkgn, true );
                 } catch (IOException ex) {
-                    throw new HongsError.Common("Can not load package '" + pkgn + "'.", ex);
+                    throw new HongsExemption.Common("Can not load package '" + pkgn + "'.", ex);
                 }
                 if (clss == null) {
-                    throw new HongsError.Common("Can not find package '" + pkgn + "'.");
+                    throw new HongsExemption.Common("Can not find package '" + pkgn + "'.");
                 }
             } else
             if (pkgn.endsWith(".*" )) {
@@ -463,10 +463,10 @@ public class ServerCmdlet {
                 try {
                     clss = Classes.getClassNames(pkgn, false);
                 } catch (IOException ex) {
-                    throw new HongsError.Common("Can not load package '" + pkgn + "'.", ex);
+                    throw new HongsExemption.Common("Can not load package '" + pkgn + "'.", ex);
                 }
                 if (clss == null) {
-                    throw new HongsError.Common("Can not find package '" + pkgn + "'.");
+                    throw new HongsExemption.Common("Can not find package '" + pkgn + "'.");
                 }
             } else {
                 clss = new HashSet();

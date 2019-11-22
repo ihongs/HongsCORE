@@ -83,7 +83,7 @@
 
         // 没菜单配置则抛出资源缺失异常
         if (_title == null) {
-            throw new HongsException(0x1104, _locale.translate("core.error.no.thing"));
+            throw new HongsException(0x404, _locale.translate("core.error.no.thing"));
         }
     }
 %>

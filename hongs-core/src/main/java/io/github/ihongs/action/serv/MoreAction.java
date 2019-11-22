@@ -117,10 +117,10 @@ public class MoreAction {
             ias.add( "0:0:0:0:0:0:0:1" );
         }
         if (! sw ) {
-            throw new HongsException(0x1100, "Illegal request!");
+            throw new HongsException(0x400, "Illegal request!");
         }
         if (! ias.contains(ip) ) {
-            throw new HongsException(0x1100, "Illegal request.");
+            throw new HongsException(0x400, "Illegal request.");
         }
 
         // 从参数提取参数

@@ -2,7 +2,7 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLocale;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
@@ -97,7 +97,7 @@ public class LangAction
       {
         s = this.makeLang(name);
       }
-      catch (HongsError ex) {
+      catch (HongsExemption ex) {
         helper.error500(ex.getMessage());
         return;
       }

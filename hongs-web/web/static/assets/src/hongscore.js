@@ -1722,6 +1722,7 @@ $.hsOpen = function(url, data, complete) {
               + '<h4  class="modal-title"  >' + hsGetLang( "opening" ) + '</h4>'
               + '</div><div class="modal-body openbox"></div></div></div></div>');
     var box = div.find('.openbox');
+    $(document.body).append( div );
     box.hsLoad(url,data, complete);
     div.on("hidden.bs.modal", function() {
         div.remove();
@@ -1932,9 +1933,12 @@ $.hsMask = function(opt) {
     } );
     mod.on("hidden.bs.modal", function(evt) {
         end. call (div, evt);
-        mod.remove();
+        mod.remove(        );
     } );
-    mod.modal( ini );
+
+    btx = $( document.body );
+    btx.append(mod);
+    mod.modal (ini);
 
     return  div;
 };
@@ -2726,19 +2730,20 @@ $(document).ajaxError(
 $(document)
 .on("show.bs.modal",
 function() {
-    var bod = $ ( "body" );
-    if (bod.find(".modal:visible").size() === 0) {
-        bod.data( "style" , bod.attr( "style" ));
+    var bod = $ (document . body );
+    if (bod.hasClass("modal-open") === false) {
+        bod.data( "style" , bod.attr("style") || "");
     }
 })
 .on("hidden.bs.modal",
 function() {
-    var bod = $ ( "body" );
-    if (bod.find(".modal:visible").size() === 0) {
-        bod.attr( "style" , bod.data( "style" ));
+    var bod = $ (document . body );
+    if (bod.hasClass("modal-open") === false) {
+    if (bod.find(".modal:visible").size()<=0) {
+        bod.attr( "style" , bod.data("style") /**/ );
     } else {
         bod.addClass("modal-open");
-    }
+    }}
 });
 
 // 多选中单击复选

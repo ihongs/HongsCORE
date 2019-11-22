@@ -211,11 +211,11 @@ abstract public class Core
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsError(0x27, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x27, "Can not build "+clas.getName(), ex);
       }
       catch (IllegalArgumentException ex)
       {
-        throw new HongsError(0x27, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x27, "Can not build "+clas.getName(), ex);
       }
       catch (java.lang.reflect.InvocationTargetException  ex )
       {
@@ -227,7 +227,7 @@ abstract public class Core
             throw ( StackOverflowError ) ta ;
         }
 
-        throw new HongsError(0x27, "Can not build "+clas.getName(), ta);
+        throw new HongsExemption(0x27, "Can not build "+clas.getName(), ta);
       }
     }
     catch (NoSuchMethodException ez)
@@ -239,7 +239,7 @@ abstract public class Core
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsError(0x28, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x28, "Can not build "+clas.getName(), ex);
       }
       catch (InstantiationException ex)
       {
@@ -251,12 +251,12 @@ abstract public class Core
             throw ( StackOverflowError ) ta ;
         }
 
-        throw new HongsError(0x28, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x28, "Can not build "+clas.getName(), ex);
       }
     }
     catch (SecurityException se)
     {
-        throw new HongsError(0x26, "Can not build "+clas.getName(), se);
+        throw new HongsExemption(0x26, "Can not build "+clas.getName(), se);
     }
   }
 
@@ -271,7 +271,7 @@ abstract public class Core
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsError(0x25, "Can not find class by name '" + name + "'.");
+      throw new HongsExemption(0x25, "Can not find class by name '" + name + "'.");
     }
 
     return newInstance(klass);

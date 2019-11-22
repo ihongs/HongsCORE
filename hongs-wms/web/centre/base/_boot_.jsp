@@ -141,9 +141,7 @@
         }
 
         if (_fields == null) {
-            throw new HongsException(0x1104, _locale.translate("core.error.no.thing"));
+            throw new HongsException(0x404, _locale.translate("core.error.no.thing"));
         }
-
-        //out.println("<!-- " + io.github.ihongs.util.Dawn.toString(_fields) + " -->");
     }
 %>

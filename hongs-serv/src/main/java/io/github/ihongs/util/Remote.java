@@ -1,5 +1,6 @@
 package io.github.ihongs.util;
 
+import io.github.ihongs.HongsCurse;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import java.io.File;
@@ -510,14 +511,15 @@ public final class Remote {
      * getUrl() 的 Url 为当前请求地址
      * getRsp() 在 3xx 时返回跳转地址, 其他情况则返回响应文本
      */
-    public static class StatusException extends HongsException.Common {
+    public static class StatusException extends HongsException {
 
         private final  int   sta;
         private final String url;
         private final String rsp;
 
         public StatusException(int sta, String url, String rsp) {
-            super(sta >= 300 && sta <= 399
+            super(HongsCurse.COMMON,
+                  sta >= 300 && sta <= 399
                 ? "Redirect from "+url+" to " +rsp
                 : "Error "+sta+" for request "+url);
 
@@ -549,12 +551,13 @@ public final class Remote {
      * 可通过 getCuase() 获取具体异常对象,
      * 通常为 URISyntaxException, IOException
      */
-    public static class SimpleException extends HongsException.Common {
+    public static class SimpleException extends HongsException {
 
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super("Fail to request "+ url, cause);
+            super(HongsCurse.COMMON,
+                  "Fail to request "+ url, cause);
 
             this.url = url;
 

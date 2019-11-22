@@ -4,8 +4,9 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreRoster.Mathod;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.HongsCurse;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Assign;
 import io.github.ihongs.action.anno.Filter;
@@ -256,8 +257,8 @@ public class ActionRunner {
             throw new HongsException(0x110e, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
             Throwable  ex = e.getCause( );
-            if (ex instanceof HongsError) {
-                throw (HongsError    ) ex;
+            if (ex instanceof HongsExemption) {
+                throw (HongsExemption) ex;
             } else
             if (ex instanceof HongsException) {
                 throw (HongsException) ex;

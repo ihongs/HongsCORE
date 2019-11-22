@@ -42,7 +42,7 @@ public class DBAction implements IAction, IActing {
          */
 
         if (ent.startsWith("_") || mod.endsWith("/" + ent)) {
-            throw new HongsException(0x1100, "Unsupported Request!");
+            throw new HongsException(0x404, "Unsupported Request!");
         }
 
         Map fs = null;
@@ -71,9 +71,9 @@ public class DBAction implements IAction, IActing {
             return;
         }
 
-        Set ca  = Synt.toSet( Dict.get( fs , null, "@", "callable"));
+        Set ca  = Synt.toSet( Dict.get( fs, null, "@", "callable"));
         if (ca != null && !ca.contains(act)) {
-            throw new HongsException(0x1100, "Unsupported Request.");
+            throw new HongsException(0x405, "Unsupported Request.");
         }
     }
 

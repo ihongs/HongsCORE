@@ -1,7 +1,7 @@
 package io.github.ihongs.util;
 
 import io.github.ihongs.Core;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.HongsExemption;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -36,8 +36,8 @@ public final class Digest {
     public Digest(String type) {
         try {
             DIGEST = MessageDigest.getInstance(type);
-        } catch (NoSuchAlgorithmException e) {
-            throw  new  HongsError.Common(e);
+        } catch ( NoSuchAlgorithmException  e) {
+            throw new HongsExemption.Common(e);
         }
     }
 

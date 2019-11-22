@@ -2,7 +2,7 @@ package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
@@ -96,7 +96,7 @@ public class ConfAction
       try {
         s = this.makeConf(name);
       }
-      catch (HongsError ex) {
+      catch (HongsExemption ex) {
         helper.error500(ex.getMessage());
         return;
       }

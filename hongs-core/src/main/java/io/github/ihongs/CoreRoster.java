@@ -134,7 +134,7 @@ public class CoreRoster {
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
             if (prms == null || prms.length != 1 || !prms[0].isAssignableFrom(ActionHelper.class)) {
-                throw new HongsError(0x3c, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
+                throw new HongsExemption(0x3c, "Can not find action method '"+clsn+"."+mtdn+"(ActionHelper)'.");
             }
 
             Mathod mtdx = new Mathod();
@@ -172,7 +172,7 @@ public class CoreRoster {
             // 检查方法是否合法
             Class[] prms = mtdo.getParameterTypes();
             if (prms == null || prms.length != 1 || !prms[0].isAssignableFrom(String[].class)) {
-                throw new HongsError(0x3c, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
+                throw new HongsExemption(0x3c, "Can not find cmdlet method '"+clsn+"."+mtdn+"(String[])'.");
             }
 
             if ("__main__".equals(actx)) {
@@ -191,10 +191,10 @@ public class CoreRoster {
             try {
                 clss = Classes.getClassNames(pkgn, true );
             } catch (IOException ex) {
-                throw new HongsError( 0x3a , "Can not load package '" + pkgn + "'.", ex);
+                throw new HongsExemption( 0x3a , "Can not load package '" + pkgn + "'.", ex);
             }
             if (clss == null) {
-                throw new HongsError( 0x3a , "Can not find package '" + pkgn + "'.");
+                throw new HongsExemption( 0x3a , "Can not find package '" + pkgn + "'.");
             }
         } else
         if (pkgn.endsWith(".*" )) {
@@ -202,10 +202,10 @@ public class CoreRoster {
             try {
                 clss = Classes.getClassNames(pkgn, false);
             } catch (IOException ex) {
-                throw new HongsError( 0x3a , "Can not load package '" + pkgn + "'.", ex);
+                throw new HongsExemption( 0x3a , "Can not load package '" + pkgn + "'.", ex);
             }
             if (clss == null) {
-                throw new HongsError( 0x3a , "Can not find package '" + pkgn + "'.");
+                throw new HongsExemption( 0x3a , "Can not find package '" + pkgn + "'.");
             }
         } else {
             clss = new HashSet();
@@ -220,7 +220,7 @@ public class CoreRoster {
         try {
             clso = Class.forName(clsn);
         } catch (ClassNotFoundException ex) {
-            throw new HongsError(0x3b, "Can not find class '" + clsn + "'.", ex);
+            throw new HongsExemption(0x3b, "Can not find class '" + clsn + "'.", ex);
         }
         return clso;
     }

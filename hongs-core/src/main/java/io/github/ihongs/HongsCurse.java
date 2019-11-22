@@ -6,8 +6,11 @@ package io.github.ihongs;
  */
 public class HongsCurse {
 
-    private final int       code;
-    private final String    desc;
+    public static final int COMMON = 0x0;
+    public static final int NOTICE = 0x1;
+
+    private final       int code;
+    private final    String desc;
     private final Throwable that;
 
     private String   lang;
@@ -85,23 +88,24 @@ public class HongsCurse {
         optx = opts != null ? opts : new String[]{};
         trns = CoreLocale.getInstance("defects").clone();
 
-        // 0x10,0x1000 为通用一般异常代号
-        // 0x11,0x1001 使用消息作为语言键
         switch (code) {
-            case HongsException.COMMON:
-            case     HongsError.COMMON:
+            case COMMON:
+            case 0x1000:
+            case 0x10:
+                // 通用的一般异常代号
                 // 包裹其他异常和错误
                 if (null == desc) {
                   Throwable them  =  that.getCause(  );
                 if (null != them) {
                     return  them.getLocalizedMessage();
-                }
-                }
+                }}
                 ckey = "fore.error";
-                dkey = "";
+                dkey = "==";
                 break;
-            case HongsException.NOTICE:
-            case     HongsError.NOTICE:
+            case NOTICE:
+            case 0x1001:
+            case 0x11:
+                // 错误消息作为翻译键
                 ckey = "fore.error";
                 dkey = desx;
                 break;
@@ -133,7 +137,7 @@ public class HongsCurse {
      * 获取翻译章节(模块语言)
      * @return
      */
-    public String getLocalizedContext() {
+    public String   getLocalizedContext() {
         return this.lang;
     }
 
@@ -149,7 +153,7 @@ public class HongsCurse {
      * 设置翻译章节(模块语言)
      * @param lang
      */
-    public void setLocalizedContext(String lang) {
+    public void setLocalizedContext(String    lang) {
         this.lang = lang;
     }
 

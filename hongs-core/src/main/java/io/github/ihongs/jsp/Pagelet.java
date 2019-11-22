@@ -1,5 +1,6 @@
 package io.github.ihongs.jsp;
 
+import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
@@ -53,33 +54,42 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     {
         Throwable ax = ex.getCause( );
         if (ax == null) { ax = ex ; }
-        int eo = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
+        int eo  = ax instanceof HongsCause ? ((HongsCause)ax).getErrno() : 0;
+        String er = ax.getLocalizedMessage();
+        String ec ;
+
+        // 代号映射
+          ec = Integer.toHexString( eo );
+          ec = CoreConfig.getInstance( ).getProperty( "core.ern.map." + ec );
+        if (null != ec && !ec.isEmpty())
+        {
+          eo = Integer.parseInt(ec, 16 );
+        }
+
+        // 响应状态
         switch (eo) {
-            case 0x1100:
+            case 0x400:
                 eo = HttpServletResponse.SC_BAD_REQUEST ;
                 break;
-            case 0x1101:
+            case 0x401:
                 eo = HttpServletResponse.SC_UNAUTHORIZED;
                 break;
-            case 0x1102:
+            case 0x402:
                 eo = HttpServletResponse.SC_FORBIDDEN;
                 break;
-            case 0x1103:
+            case 0x403:
                 eo = HttpServletResponse.SC_FORBIDDEN;
                 break;
-            case 0x1104:
+            case 0x404:
                 eo = HttpServletResponse.SC_NOT_FOUND;
                 break;
-            case 0x1106:
-                eo = HttpServletResponse.SC_NOT_ACCEPTABLE;
-                break;
-            case 0x1105:
-                eo = HttpServletResponse.SC_METHOD_NOT_ALLOWED;
+            case 0x405:
+                eo = HttpServletResponse.SC_METHOD_NOT_ALLOWED    ;
                 break;
             default:
                 eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
         }
-        String  er = ax.getLocalizedMessage();
+
         req.setAttribute("javax.servlet.error.status_code"   , eo);
         req.setAttribute("javax.servlet.error.message"       , er);
         req.setAttribute("javax.servlet.error.exception"     , ax);

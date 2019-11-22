@@ -3,7 +3,9 @@ package io.github.ihongs.action;
 import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.CoreLocale;
+import io.github.ihongs.CoreLogger;
+import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
@@ -262,10 +264,6 @@ public class ActionHelper implements Cloneable
           Dict.putAll(requestData, ad);
         }
       }
-      catch (HongsError er)
-      {
-        throw new HongsExemption(0x1100 , er);
-      }
       finally
       {
         // 防止解析故障后再调用又出错
@@ -288,7 +286,7 @@ public class ActionHelper implements Cloneable
     try {
         return (Map) request.getAttribute(Cnst.REQUES_ATTR);
     } catch ( ClassCastException ex) {
-        throw new HongsExemption(0x1100, ex);
+        throw new HongsExemption(0x400 , ex);
     }
   }
 
@@ -304,17 +302,17 @@ public class ActionHelper implements Cloneable
     }
     try {
         return (Map) Dawn.toObject ( request.getReader( ) );
+    } catch ( /**/HongsExemption ex) {
+        throw new HongsExemption(0x400 , ex);
+    } catch ( ClassCastException ex) {
+        throw new HongsExemption(0x400 , ex);
     } catch (IOException ex) {
         throw new HongsExemption(0x1114, ex);
-    } catch ( /**/HongsExemption ex) {
-        throw new HongsExemption(0x1100, ex);
-    } catch ( ClassCastException ex) {
-        throw new HongsExemption(0x1100, ex);
     }
   }
 
   /**
-   * 解析 multipart/form-data 数据, 处理上传
+   * 解析 multipart/form-map 数据, 处理上传
    * @return
    */
   final Map getRequestPart() {
@@ -377,10 +375,10 @@ public class ActionHelper implements Cloneable
                 type = type.substring(0 , pos);
             }
             if (allowTypes != null && !allowTypes.contains(type)) {
-                throw new HongsExemption(0x1100, "Type '" +type+ "' is not allowed");
+                throw new HongsExemption(0x400, "Type '" +type+ "' is not allowed");
             }
             if ( denyTypes != null &&   denyTypes.contains(type)) {
-                throw new HongsExemption(0x1100, "Type '" +type+ "' is denied");
+                throw new HongsExemption(0x400, "Type '" +type+ "' is denied");
             }
 
             // 检查扩展
@@ -391,10 +389,10 @@ public class ActionHelper implements Cloneable
                 extn = "";
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsExemption(0x1100, "Type '" +extn+ "' is not allowed");
+                throw new HongsExemption(0x400, "Type '" +extn+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsExemption(0x1100, "Type '" +extn+ "' is denied");
+                throw new HongsExemption(0x400, "Type '" +extn+ "' is denied");
             }
 
             /**
@@ -433,7 +431,7 @@ public class ActionHelper implements Cloneable
 
         return rd;
     } catch (IllegalStateException e) {
-        throw new HongsExemption(0x1100, e); // 上传受限, 如大小超标
+        throw new HongsExemption(0x400 , e); // 上传受限, 如大小超标
     } catch (ServletException e) {
         throw new HongsExemption(0x1113, e);
     } catch (IOException e) {
@@ -710,10 +708,10 @@ public class ActionHelper implements Cloneable
         try {
           value = URLEncoder.encode(value,"UTF-8");
         } catch ( UnsupportedEncodingException e ) {
-          throw   new HongsError.Common(e);
+          throw   new HongsExemption.Common  ( e );
         }
       }
-      Cookie ce = new Cookie(name , value);
+      Cookie ce = new Cookie(name, value);
       if (path != null) {
           ce.setPath  (path);
       }
@@ -777,7 +775,7 @@ public class ActionHelper implements Cloneable
     try {
       helper = (ActionHelper) super.clone();
     } catch (CloneNotSupportedException ex) {
-      throw new HongsError.Common( /**/ ex);
+      throw  new  HongsExemption.Common(ex);
     }
     helper.responseData = null;
     return helper;
@@ -870,25 +868,117 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 返回错误信息
-   * @param ern
-   * @param err
-   * @param msg
-   * @deprecated 将移除, 请改用 reply(Map)
+   * 输出异常信息
+   * @param exp
    */
-  public void fault(String ern, String err, String msg)
+  public void fault(HongsCause exp)
   {
+    Throwable  ta = (Throwable)exp;
+    Throwable  te = ta.getCause( );
+    int    ern = exp.getErrno();
+    String eru = exp.getError();
+    String erc ;
+    String err ;
+    String msg ;
+
+    // 错误消息
+      err = ta.getMessage( );
+      msg = ta.getLocalizedMessage();
+    if (null != te
+    && (null == msg || msg.length () == 0))
+    {
+      msg = te.getLocalizedMessage();
+    }
+    if (null == msg || msg.length () == 0 )
+    {
+      msg = CoreLocale.getInstance(). translate ("core.error.unkwn" );
+    }
+
+    // 代号映射
+      erc = Integer.toHexString(ern);
+      erc = CoreConfig.getInstance().getProperty("core.ern.map."+erc);
+    if (null != erc && erc.length () != 0 )
+    {
+      ern = Integer.parseInt(erc,16);
+    }
+
+    // 错误代码
+    if (ern != 0x1  )
+    {
+    //  err is ern  ;
+    } else
+    if (ern == 0x0  )
+    {
+      eru = "Er500" ;
+    } else
+    if (ern <= 0xfff)
+    {
+      eru = "Er"+ Integer.toHexString(ern);
+    } else
+    {
+      eru = "Ex"+ Integer.toHexString(ern);
+    }
+
+    // 外部异常, 不记录日志
+    if (ern >= 0x400 && ern <= 0x499)
+    {
+      // Nothing to do.
+    }
+    else
+    // 服务异常, 仅记录起因
+    if (ern >= 0x500 && ern <= 0x599)
+    {
+      if (null != te)
+      {
+        CoreLogger.error(ta);
+      }
+    }
+    else
+    // 通用错误, 仅记录起因
+    if (ern == 0x0   || ern == 0x1  )
+    {
+      if (null != te)
+      {
+        CoreLogger.error(te);
+      }
+    }
+    else
+    // 其他异常, 记录到日志
+    {
+        CoreLogger.error(ta);
+    }
+
+    // 响应状态
+    HttpServletResponse rsp = getResponse();
+    if (null != rsp) switch (ern)
+    {
+      case 0x400:
+        rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST );
+        break;
+      case 0x401:
+        rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        break;
+      case 0x402:
+        rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        break;
+      case 0x403:
+        rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        break;
+      case 0x404:
+        rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        break;
+      case 0x405:
+        rsp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED   );
+        break;
+      default:
+        rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+    }
+
     Map map = new HashMap();
-    if (null !=  msg) {
-        map.put("msg", msg);
-    }
-    if (null !=  err) {
-        map.put("err", err);
-    }
-    if (null !=  ern) {
-        map.put("ern", ern);
-    }
-    map.put("ok", false);
+    map.put( "ok" , false );
+    map.put("ern" , eru);
+    map.put("err" , err);
+    map.put("msg" , msg);
     reply(map);
   }
 

@@ -7,7 +7,7 @@
 <%@page contentType="application/json" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
     if (!Core.ACTION_NAME.get().endsWith("/create"+Cnst.ACT_EXT)) {
-        throw new HongsException( 0x1104, "Unsupported action!" );
+        throw new HongsException( 0x404, "Unsupported action!" );
     }
 
     ActionHelper ah = Core.getInstance(ActionHelper.class);

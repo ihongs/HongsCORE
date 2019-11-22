@@ -43,7 +43,7 @@ public class CoreLocale
 
     if (null == lang)
     {
-      throw new HongsError(0x2c, "Language is not specified for '" + name + "'.");
+      throw new HongsExemption(0x2c, "Language is not specified for '" + name + "'.");
     }
 
     if (null != name)

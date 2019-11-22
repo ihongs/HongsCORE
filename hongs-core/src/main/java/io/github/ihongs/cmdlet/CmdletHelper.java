@@ -1,7 +1,7 @@
 package io.github.ihongs.cmdlet;
 
 import io.github.ihongs.CoreLogger;
-import io.github.ihongs.HongsError;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -311,9 +311,9 @@ public class CmdletHelper
       }
       hlp = err.toString();
 
-      throw  new HongsError(0x3e, hlp).setLocalizedOptions(hlp);
+      throw  new HongsExemption(0x3e, hlp).setLocalizedOptions(hlp);
     } else if (hlp != null && args.length == 0) {
-      throw  new HongsError(0x3f, hlp).setLocalizedOptions(hlp);
+      throw  new HongsExemption(0x3f, hlp).setLocalizedOptions(hlp);
     }
 
     // 把剩余的参数放进去

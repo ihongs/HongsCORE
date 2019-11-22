@@ -78,10 +78,10 @@ public class Form extends Model {
         // 冻结意味着手动修改了配置
         // 再操作可能会冲掉自定配置
         if ("8".equals(stax)) {
-            throw new HongsException(0x1100, "表单冻结, 禁止操作");
+            throw new HongsException(0x400, "表单冻结, 禁止操作");
         }
         if ("0".equals(stax)) {
-            throw new HongsException(0x1104, "表单缺失, 无法操作");
+            throw new HongsException(0x404, "表单缺失, 无法操作");
         }
 
         int n  = superPut (id , rd);

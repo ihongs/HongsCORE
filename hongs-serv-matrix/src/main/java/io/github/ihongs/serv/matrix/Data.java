@@ -437,9 +437,9 @@ public class Data extends SearchEntity {
     public int set(String id, Map rd) throws HongsException {
         // 合并新旧数据
         int i  = 0;
-        int t  = 2;
+    //  int t  = 2;
         Map dd = get(id);
-        if (dd.isEmpty()) t = 1;
+    //  if (dd.isEmpty()) t = 1;
         Map<String,Map> fs = getFields();
         for(String fn : fs . keySet( ) ) {
             if (  "id". equals(fn)) {
@@ -672,7 +672,7 @@ public class Data extends SearchEntity {
     public int del(String id, Map rd) throws HongsException {
         Table table = getTable();
         if (table == null) {
-            delDoc(id); return 0;
+            delDoc(id); return 1;
         }
 
         String   fid   = getFormId();
@@ -768,6 +768,7 @@ public class Data extends SearchEntity {
         }
         Map nd = table.fetchCase()
             .filter( wher2, para2)
+        //  .assort("ctime  DESC")
             .getOne( );
         if (nd.isEmpty()) {
             throw new HongsException(0x1100, "找不到恢复起源");
@@ -808,43 +809,7 @@ public class Data extends SearchEntity {
         Document dc = padDoc(dd);
 
         setDoc(id, dc);
-
         return 1;
-    }
-
-    /**
-     * @deprecated 废弃
-     */
-    public int save(String id, Map rd) throws HongsException {
-        return set(id, rd);
-    }
-
-    /**
-     * @deprecated 废弃
-     */
-    public int save(long ctime, String id, Map rd) throws HongsException {
-        return put(id, rd);
-    }
-
-    /**
-     * @deprecated 废弃
-     */
-    public int drop(long ctime, String id, Map rd) throws HongsException {
-        return del(id, rd);
-    }
-
-    /**
-     * @deprecated 废弃
-     */
-    public int redo(long ctime, String id, Map rd) throws HongsException {
-        return rev(id, rd);
-    }
-
-    /**
-     * @deprecated 废弃
-     */
-    public int call(long xtime, String id, String on) throws HongsException {
-        return 0;
     }
 
     @Override

@@ -5,23 +5,21 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
+import io.github.ihongs.action.anno.CommitInvoker;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
 import io.github.ihongs.db.link.Loop;
-import io.github.ihongs.dh.ITrnsct;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import org.apache.lucene.document.Document;
 
 /**
  * 数据操作命令
@@ -30,8 +28,65 @@ import org.apache.lucene.document.Document;
 @Cmdlet("matrix.data")
 public class DataCmdlet {
 
+    /**
+     * 数据实体工厂类,
+     * 供扩展实体时用.
+     */
+    public static class DataFactor {
+        public Data getInstance(String conf, String form) {
+        return Data.getInstance(       conf,        form);
+        }
+        public Set<String> getAllPaths() {
+            Set<String> ents = new LinkedHashSet();
+
+            // 提取所有表单记录
+            try {
+                // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
+                Loop lo = DB
+                    .getInstance("matrix")
+                    .getTable   ( "form" )
+                    .fetchCase  ( )
+                    .filter("`state` > 0")
+                    .filter("`unit_id` != '-'")
+                    .select("`id`")
+                    .select();
+                for(Map ro : lo ) {
+                    String id = ro.get("id").toString();
+                    ents.add("centra/data/" +id+"."+id);
+                }
+            } catch (HongsException ex) {
+                throw ex.toExemption( );
+            }
+
+            // 增加额外定制的表
+            Set<String> incl = Synt.toSet(
+                CoreConfig.getInstance("matrix")
+                          .getProperty("core.matrix.uproot.include")
+            );
+            if (incl != null && ! incl.isEmpty()) {
+                ents.   addAll(incl);
+            }
+
+            // 排除特殊处理的表
+            Set<String> excl = Synt.toSet(
+                CoreConfig.getInstance("matrix")
+                          .getProperty("core.matrix.uproot.exclude")
+            );
+            if (excl != null && ! excl.isEmpty()) {
+                ents.removeAll(excl);
+            }
+
+            return ents;
+        }
+    }
+
     @Cmdlet("revert")
-    public static void revert(String[] args) throws HongsException, InterruptedException {
+    public static void revert(String[] args)
+    throws HongsException, InterruptedException {
+        revert(args, new DataFactor());
+    }
+    public static void revert(String[] args, DataFactor df)
+    throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -46,11 +101,10 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        Set< String >  ds = Synt.asSet ( opts.get(""));
-        long ct = Synt.declare(opts.get("time"),  0L );
-        long dt = Core.ACTION_TIME .get() /1000;
-        Data dr = Data.getInstance( conf,form );
+        long ct = Synt.declare(opts.get("time"), 0L);
+        Set<String> ds = Synt.asSet ( opts.get("") );
 
+        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
 //      user = dr.getUserId( );
         form = dr.getFormId( );
@@ -145,7 +199,12 @@ public class DataCmdlet {
     }
 
     @Cmdlet("import")
-    public static void impart(String[] args) throws HongsException, InterruptedException {
+    public static void impart(String[] args)
+    throws HongsException, InterruptedException {
+        impart(args, new DataFactor());
+    }
+    public static void impart(String[] args, DataFactor df)
+    throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -159,11 +218,9 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long dt = Core.ACTION_TIME .get() /1000;
-        Data dr = Data.getInstance( conf,form );
-
         String[] dats = (String[]) opts.get("");
 
+        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
 //      user = dr.getUserId( );
 //      form = dr.getFormId( );
@@ -190,7 +247,12 @@ public class DataCmdlet {
     }
 
     @Cmdlet("update")
-    public static void update(String[] args) throws HongsException, InterruptedException {
+    public static void update(String[] args)
+    throws HongsException, InterruptedException {
+        update(args, new DataFactor());
+    }
+    public static void update(String[] args, DataFactor df)
+    throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -204,15 +266,14 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long dt = Core.ACTION_TIME .get() /1000;
-        Data dr = Data.getInstance( conf,form );
-
         String[] dats = (String[]) opts.get("");
+
         if (dats.length < 2) {
             CmdletHelper.println ( "Need FIND DATA." );
             return;
         }
 
+        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
 //      user = dr.getUserId( );
 //      form = dr.getFormId( );
@@ -239,7 +300,12 @@ public class DataCmdlet {
     }
 
     @Cmdlet("delete")
-    public static void delete(String[] args) throws HongsException, InterruptedException {
+    public static void delete(String[] args)
+    throws HongsException, InterruptedException {
+        delete(args, new DataFactor());
+    }
+    public static void delete(String[] args, DataFactor df)
+    throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -253,15 +319,14 @@ public class DataCmdlet {
         String form = (String) opts.get("form");
         String user = (String) opts.get("user");
         String memo = (String) opts.get("memo");
-        long dt = Core.ACTION_TIME .get() /1000;
-        Data dr = Data.getInstance( conf,form );
-
         String[] dats = (String[]) opts.get("");
+
         if (dats.length < 1) {
             CmdletHelper.println ( "Need FIND_TERM." );
             return;
         }
 
+        Data dr = df.getInstance (conf, form);
         dr.setUserId(Synt.defoult(user, Cnst.ADM_UID));
 //      user = dr.getUserId( );
 //      form = dr.getFormId( );
@@ -288,7 +353,12 @@ public class DataCmdlet {
     }
 
     @Cmdlet("search")
-    public static void search(String[] args) throws HongsException {
+    public static void search(String[] args)
+    throws HongsException {
+        search(args, new DataFactor());
+    }
+    public static void search(String[] args, DataFactor df)
+    throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
             "form=s",
@@ -298,18 +368,18 @@ public class DataCmdlet {
 
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
-        Data dr = Data.getInstance( conf,form );
-
         String[] dats = (String[]) opts.get("");
+
         if (dats.length < 1) {
-            CmdletHelper.println("Need FIND_TERM.");
+            CmdletHelper.println ( "Need FIND_TERM." );
             return;
         }
 
-        Map rd = data(dats[0]);
+        Data dr = df.getInstance (conf, form);
+        Map  rd =       data     ( dats [0] );
 
         for(Map od : dr.search(rd, 0, 0)) {
-            CmdletHelper.preview(od);
+            CmdletHelper.preview (  od  );
         }
     }
 
@@ -319,129 +389,60 @@ public class DataCmdlet {
      * @throws HongsException
      */
     @Cmdlet("uproot")
-    public void uproot(String[] args) throws HongsException {
+    public static void uproot(String[] args)
+    throws HongsException {
+        uproot(args, new DataFactor());
+    }
+    public static void uproot(String[] args, DataFactor df)
+    throws HongsException {
         Map opts = CmdletHelper.getOpts(
             args ,
             "uid=s" ,
             "uids=s",
-            "conf=s",
-            "form=s",
+            "conf:s",
+            "form:s",
             "?Usage: attach --uid UID --uids UID1,UID2... [--conf CONF_NAME --form FORM_NAME]"
         );
 
-        String uid  = (String) opts.get("uid" );
-        String uidz = (String) opts.get("uids");
         String conf = (String) opts.get("conf");
         String form = (String) opts.get("form");
+        String uid  = (String) opts.get("uid" );
+        String uidz = (String) opts.get("uids");
 
-        Set<String> uids = Synt.toSet(uidz);
-        List<Data>  ents = new ArrayList ();
+        Set<String> uids = Synt.toSet (uidz);
+        Set<String> ents ;
 
-        if ((conf == null || conf.isEmpty() )
-        && ( form == null || form.isEmpty())) {
-            // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
-            Loop loop;
-            loop = DB.getInstance("matrix")
-                     .getTable   ( "data" )
-                     .fetchCase  ( )
-                     .filter("`state` > 0")
-                     .filter("`unit_id` != '-'")
-                     .select("`id`")
-                     .select(  );
-            conf = "centra/data";
-        for(Map row : loop) {
-            form = Synt.asString(row.get( "id" ));
-            ents.add(Data.getInstance(conf,form));
-        } } else {
-            ents.add(Data.getInstance(conf,form));
+        // 获取路径
+        if (conf != null && ! conf.isEmpty()
+        &&  form != null && ! form.isEmpty()) {
+            ents = Synt.setOf(conf+"."+form);
+        } else {
+            ents = df.getAllPaths();
         }
 
-        // 在全局中标识为事务模式
-        Core   core;
-        Object mode;
-        core = Core.getInstance( );
-        mode = core.got(Cnst.TRNSCT_MODE);
-        core.put(Cnst.TRNSCT_MODE , true);
-
-        try {
-            // 开启
-            for(Object o : core.values()) {
-                if (o instanceof ITrnsct) {
-                    ((ITrnsct) o).begin();
-                }
-            }
-
+        // 批量更新
+        CommitInvoker.invoke(() -> {
             try {
-                for(  Data ent : ents) {
-                    uproot(ent , uid , uids);
+                for(String n : ents) {
+                    int    p = n.lastIndexOf(".");
+                    String c = n.substring (0, p);
+                    String f = n.substring (1+ p);
+                    uproot( df.getInstance (c, f), uid, uids);
                 }
-
-                // 提交
-                for(Object o : core.values().toArray()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).commit();
-                    }
-                }
-            } catch (Throwable ex) {
-                // 回滚
-                for(Object o : core.values().toArray()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).revert();
-                    }
-                }
-
-                throw ex;
+            } catch (HongsException ex) {
+                throw ex.toExemption( );
             }
-        } finally {
-            if (mode  != null) {
-                core.put(Cnst.TRNSCT_MODE, mode);
-            }
-        }
+        });
     }
 
     /**
-     * 归并账号
+     * 归并账号(所有模型的数据)
      * @param uid
      * @param uids
      * @throws HongsException
      */
     public static void uproot(String uid, Set<String> uids) throws HongsException {
-        Set<String> ents = new LinkedHashSet();
-
-        // 提取所有表单记录
-        // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
-        Loop lo = DB
-                .getInstance("matrix")
-                .getTable   ( "form" )
-                .fetchCase  ( )
-                .filter("`state` > 0")
-                .filter("`unit_id` != '-'")
-                .select("`id`")
-                .select();
-        for(Map ro : lo ) {
-            String id = ro.get("id").toString( );
-            ents.add( "centra/data/"+id+"."+id );
-        }
-
-        // 增加额外定制的表
-        Set<String> incl = Synt.toSet(
-            CoreConfig.getInstance("matrix")
-                      .getProperty("core.matrix.uproot.include")
-        );
-        if (incl != null && ! incl.isEmpty()) {
-            ents.   addAll(incl);
-        }
-
-        // 排除特殊处理的表
-        Set<String> excl = Synt.toSet(
-            CoreConfig.getInstance("matrix")
-                      .getProperty("core.matrix.uproot.exclude")
-        );
-        if (excl != null && ! excl.isEmpty()) {
-            ents.removeAll(excl);
-        }
-
-        // 逐一进行账号归并
+        Set<String> ents = new DataFactor( ).getAllPaths( );
         for(String n : ents) {
             int    p = n.lastIndexOf(".");
             String c = n.substring (0, p);
@@ -451,7 +452,7 @@ public class DataCmdlet {
     }
 
     /**
-     * 归并账号
+     * 归并账号(指定模型的数据)
      * @param ent
      * @param uid
      * @param uids
@@ -461,7 +462,6 @@ public class DataCmdlet {
         Map cols = ent .getFields();
         Set colz = new HashSet();
         Map relz = new HashMap();
-        long now = System.currentTimeMillis() / 1000;
 
         // 组织条件, 类似: fn1 IN (uids) OR fn2 IN (uids)
         for(Object ot : cols.entrySet()) {

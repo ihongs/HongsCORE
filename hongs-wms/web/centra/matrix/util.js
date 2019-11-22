@@ -315,11 +315,11 @@ function saveConf(modal, field) {
 function gainFlds(fields, area) {
     area.find(".form-group").each(function() {
         var label = $(this).find("label span,legend span").first();
-        var input = $(this).find(   "[data-fn],[name]"   ).first();
+        var input = $(this).find(   "[name],[data-fn]"   ).first();
         var text  = label.text();
-        var name  = input.attr("name") || input.attr("data-fn");
-        var type  = input.attr("type") || input.prop("tagName");
         var hint  = input.attr("placeholder");
+        var type  = input.attr("type") || input.prop("tagName");
+        var name  = input.attr("name") || input.attr("data-fn");
         var required = input.prop("required") || input.data("required") ? "true" : "";
         var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "";
         var params   = {};
@@ -345,17 +345,18 @@ function gainFlds(fields, area) {
 
         var a = input.get(0).attributes ;
         for(var i = 0; i < a.length; i ++) {
-            var k = a[i].nodeName ;
             var v = a[i].nodeValue;
-            if (k.substr(0,5) === "data-") {
+            var k = a[i].nodeName;
+            if ("data-" === k.substr(0,5)) {
                 if (k === "data-fn"
                 ||  k === "data-ft"
                 ||  k === "data-required"
                 ||  k === "data-repeated") {
-                    continue;
+                    continue ;
                 }
 //              if (k === "data-datalist") {
-//                  v = JSON.stringify(prsDataList(v));
+//                  v = prsDataList    (v);
+//                  v = JSON.stringify (v);
 //              }
                 if (COLS_PATT_DATN.test(k)) {
                     var j = v.indexOf("|");
@@ -364,6 +365,14 @@ function gainFlds(fields, area) {
                 } else
                 if (COLS_PATT_DATL.test(k)) {
                     k = k.substring(5    );
+                }
+                params[k] = v;
+            } else {
+                if (k !== "min"
+                &&  k !== "max"
+                &&  k !== "step"
+                &&  k !== "pattern") {
+                    continue ;
                 }
                 params[k] = v;
             }
@@ -510,6 +519,12 @@ function drawFlds(fields, area, wdgt, pre, suf) {
                 continue;
             }
 
+            if (k === "min"
+            ||  k === "max"
+            ||  k === "step"
+            ||  k === "pattern") {
+                input.attr(k, field[k]);
+            } else
             if (COLS_PATT_DATA.test(k)) {
                 input.attr(k, field[k]);
             } else

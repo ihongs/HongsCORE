@@ -63,14 +63,14 @@ public class CmdletRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsExemption(0x42, "Cmdlet name can not be empty.");
+      throw new HongsExemption(0x842, "Cmdlet name can not be empty.");
     }
 
     // 获取方法
     Method met = getCmdlets().get( act );
     if (null == met)
     {
-      throw new HongsExemption(0x42, "Cmdlet "+act+" is not exists.");
+      throw new HongsExemption(0x842, "Cmdlet "+act+" is not exists.");
     }
 
     this.met  = met ;
@@ -118,19 +118,23 @@ public class CmdletRunner implements Runnable
       {
         switch (((HongsCause) e).getErrno())
         {
-          case 0x42: c = 2; break;
-          case 0x43: c = 3; break;
-          case 0x44: e = e.getCause();
-          default  : c = 4;
+          case 0x842: c = 2; break;
+          case 0x843: c = 3; break;
+          case 0x844: e = e.getCause();
+          default   : c = 4;
         }
-      } else {   c = 5;   }
-      if (Core.DEBUG  != 0)
-      {
-        CoreLogger.error(e);
       }
       else
       {
+        c = 5;
+      }
+      if (0 == Core.DEBUG || 8 == (8 & Core.DEBUG))
+      {
         System.err.println(e.getLocalizedMessage());
+      }
+      else
+      {
+        CoreLogger.error  (e);
       }
     }
     finally
@@ -169,14 +173,14 @@ public class CmdletRunner implements Runnable
     // 提取动作
     if (null == act || act.length() < 1)
     {
-      throw new HongsExemption(0x42, "Cmdlet name can not be empty.");
+      throw new HongsExemption(0x842, "Cmdlet name can not be empty.");
     }
 
     // 获取方法
     Method met = getCmdlets().get( act );
     if (null == met)
     {
-      throw new HongsExemption(0x42, "Cmdlet "+act+" is not exists.");
+      throw new HongsExemption(0x842, "Cmdlet "+act+" is not exists.");
     }
 
     // 执行方法
@@ -186,15 +190,15 @@ public class CmdletRunner implements Runnable
     }
     catch (   IllegalAccessException ex)
     {
-      throw new HongsExemption(0x43, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
+      throw new HongsExemption(0x843, "Illegal access for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
     }
     catch ( IllegalArgumentException ex)
     {
-      throw new HongsExemption(0x43, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
+      throw new HongsExemption(0x843, "Illegal params for method "+met.getClass().getName()+"."+met.getName()+"(String[]).", ex);
     }
     catch (InvocationTargetException ex)
     {
-      throw new HongsExemption(0x44, ex.getCause());
+      throw new HongsExemption(0x844, ex.getCause());
     }
   }
 

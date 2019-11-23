@@ -226,7 +226,7 @@ public class Capts {
      */
     public static Capts captcha(int h, String b, String f) {
         if (h < 24 || h > 96) {
-            throw new HongsExemption(0x400, "h must be 24~96 (px)");
+            throw new HongsExemption(400 , "h must be 24~96 (px)");
         }
 
         // 获取配置

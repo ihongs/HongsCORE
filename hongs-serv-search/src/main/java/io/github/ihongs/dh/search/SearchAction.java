@@ -121,16 +121,16 @@ public class SearchAction extends ModelGate implements IAction, IActing {
                 fn = pt.matcher (fn.toString()).replaceAll("");
             }
             if (! fs.containsKey(fn)) {
-                throw new HongsException(0x400, "Field '"+fn+"' is not exists"  );
+                throw new HongsException(400, "Field '"+fn+"' is not exists"  );
             }
             if (! st.contains   (fn)) {
-                throw new HongsException(0x400, "Field '"+fn+"' is not statable");
+                throw new HongsException(400, "Field '"+fn+"' is not statable");
             }
             Map fc = (Map)fs.get(fn);
             if (  ss  != null
             &&  ! ss.contains   (fc.get("__type__"))
             &&  ! ss.contains   (fc.get(  "type"  ))  ) {
-                throw new HongsException(0x400, "Field '"+fn+"' is not numeric" );
+                throw new HongsException(400, "Field '"+fn+"' is not numeric" );
             }
         }
     }

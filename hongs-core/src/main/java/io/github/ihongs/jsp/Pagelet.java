@@ -60,22 +60,16 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
               ? ( (HongsCause) ax ).getErrno() : 0;
 
       // 代号映射
-        ec = Integer.toHexString( eo );
+        ec = Integer.toString( eo, 16 );
         ec = CoreConfig.getInstance("defects")
                        .getProperty("Ex"+ ec );
-      if (null != ec && !ec.isEmpty())
+      if (null != ec && !ec.isEmpty( ))
       {
-        eo = Integer.parseInt(ec, 16 );
+        eo = Integer.parseInt( ec, 10 );
       }
 
-      // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
-      if (eo >= 0x400 && eo <= 0x599 ) try
-      {
-        eo = Integer.parseInt( Integer.toHexString (eo) );
-      } catch (NumberFormatException ne)
-      {
-        eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-      } else
+      // 响应状态
+      if (eo < 400 || eo > 599)
       {
         eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
       }

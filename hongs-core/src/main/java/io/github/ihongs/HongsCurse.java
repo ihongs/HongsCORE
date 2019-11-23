@@ -43,28 +43,30 @@ public class HongsCurse {
     {
         String codx, desx;
 
-        if (code < 0x1000) {
-            codx = "Er"+ Integer.toHexString(code);
+        if (code >= 600 ) {
+            codx  = "Ex" + Integer.toString(code, 16);
+        } else
+        if (code >= 400 ) {
+            codx  = "Er" + Integer.toString(code, 10);
         } else {
-            codx = "Ex"+ Integer.toHexString(code);
+            codx  = "";
         }
 
         if (null != desc) {
             desx  = desc;
         } else {
-            Throwable   erro = that.getCause();
-            if (null != erro   ) {
-                if (code < 0x10) {
-                    return erro.getMessage();
-                } else {
-                    desx = erro.getMessage();
-                }
+          Throwable erro = that.getCause();
+        if (null != erro) {
+            if (code < 2) {
+                return erro.getMessage();
             } else {
-                desx = "";
+                desx = erro.getMessage();
             }
-        }
+        } else {
+            desx  = "";
+        }}
 
-        return  codx +" "+ desx;
+        return (codx +" "+ desx).trim( );
     }
 
     /**
@@ -74,25 +76,28 @@ public class HongsCurse {
     public String getLocalizedMessage() {
         String codx, desx;
 
-        if (code < 0x1000) {
-            codx = "Er"+ Integer.toHexString(code);
+        if (code >= 600 ) {
+            codx  = "Ex" + Integer.toString(code, 16);
+        } else
+        if (code >= 400 ) {
+            codx  = "Er" + Integer.toString(code, 10);
         } else {
-            codx = "Ex"+ Integer.toHexString(code);
+            codx  = "";
         }
 
         if (null != desc) {
             desx  = desc;
         } else {
-            Throwable   erro = that.getCause();
-            if (null != erro   ) {
-                if (code < 0x10) {
-                    return erro.getLocalizedMessage();
-                }
-                desx = codx;
+          Throwable erro = that.getCause();
+        if (null != erro) {
+            if (code < 2) {
+                return erro.getLocalizedMessage();
             } else {
-                desx =  "" ;
+                desx = codx;
             }
-        }
+        } else {
+            desx  = "";
+        }}
 
         /**
          * 在例如多线程环境下未初始化 Core 时
@@ -119,13 +124,13 @@ public class HongsCurse {
         if (trns.getProperty(codx) != null) {
             desx = trns.translate( codx, opts );
         }
-        if (code  <=  0xf ) {
+        if (code  <=  99  ) {
             codx = trns.translate("fore.error", codx);
         } else {
             codx = trns.translate("core.error", codx);
         }
 
-        return  codx +" "+ desx;
+        return (codx +" "+ desx).trim( );
     }
 
     /**

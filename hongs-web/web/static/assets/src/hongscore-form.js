@@ -314,6 +314,7 @@ HsForm.prototype = {
             // 防止重复提交, 在 save/swap 的回调中移除
             if (that._waiting) {
                 that.note (hsGetLang("form.waiting"));
+                evt.preventDefault();
                 return ;
             }   that._waiting = true;
 

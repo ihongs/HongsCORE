@@ -1964,7 +1964,7 @@ $.hsNote = function(msg, typ, end, sec) {
     };
 
     // 样式
-    switch (typ) {
+    if (typ) switch (typ) {
         case 'info':
             opt.glass = "alert-info" ;
             break;
@@ -2004,7 +2004,7 @@ $.hsWarn = function(msg, typ, yes, not) {
     var arr  = [ opt ];
 
     // 样式
-    switch (typ) {
+    if (typ) switch (typ) {
         case 'info':
             opt.glass = "alert-info" ;
             break;

@@ -129,9 +129,9 @@ public class Capts {
             }
             font = Font.createFont ( Font.TRUETYPE_FONT , is ) ;
         } catch (FontFormatException ex) {
-            throw new HongsExemption.Common(ex);
+            throw new HongsExemption(ex);
         } catch (IOException ex) {
-            throw new HongsExemption.Common(ex);
+            throw new HongsExemption(ex);
         }
 
         for(int i  = 0; i < codeCount; i ++) {

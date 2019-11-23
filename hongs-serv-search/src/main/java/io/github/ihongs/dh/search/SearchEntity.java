@@ -121,13 +121,13 @@ public class SearchEntity extends LuceneRecord {
                         Directory dir = FSDirectory.open(Paths.get(path));
 
                         writer = new IndexWriter(dir, iwc);
-                    } catch (IOException x ) {
-                        throw new HongsExemption.Common(x);
+                    } catch (   IOException x) {
+                        throw new HongsExemption(x);
                     } catch (HongsException x) {
                         throw x.toExemption( );
                     }
 
-                    return new Writer(writer , name);
+                    return new Writer(writer, name);
                 }
             });
         } catch (HongsExemption x) {

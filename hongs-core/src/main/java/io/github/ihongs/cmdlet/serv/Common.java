@@ -288,34 +288,11 @@ public class Common {
                 System.out.print ( ln );
             }
         } catch (UnsupportedEncodingException ex ) {
-            throw new HongsException.Common(ex);
+            throw  new  HongsException(ex);
         } catch (MalformedURLException ex) {
-            throw new HongsException.Common(ex);
+            throw  new  HongsException(ex);
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
-        }
-    }
-
-    public static String file(String path) throws HongsException {
-        try (
-            BufferedReader br = new BufferedReader(
-                 new FileReader(new File(path)));
-        ) {
-            int           bn ;
-            char[ ]       bs ;
-            StringBuilder sb = new StringBuilder();
-            while ( true ) {
-                bs = new char [1024];
-                if((bn = br.read(bs)) < 0) {
-                    break;
-                }
-                sb.append(bs, 0, bn);
-            }
-            return sb.toString();
-        } catch (FileNotFoundException ex) {
-            throw new HongsException.Common("Can not find " + path, ex);
-        } catch (IOException ex) {
-            throw new HongsException.Common("Can not read " + path, ex);
+            throw  new  HongsException(ex);
         }
     }
 
@@ -330,9 +307,31 @@ public class Common {
                 ck.append(";");
             }
             return ck.toString();
+        } catch (UnsupportedEncodingException ex) {
+            throw  new  HongsException(ex);
         }
-        catch (UnsupportedEncodingException ex) {
-            throw new HongsException.Common(ex);
+    }
+
+    private static String file(String path) throws HongsException {
+        try (
+            BufferedReader br = new BufferedReader(
+                new FileReader( new File (path) ) );
+        ) {
+            int            bn ;
+            char[ ]        bs ;
+            StringBuilder  sb = new StringBuilder();
+            while ( true ) {
+                bs = new char [1024];
+                if((bn = br.read(bs)) < 0) {
+                    break;
+                }
+                sb.append(bs, 0, bn);
+            }
+            return sb.toString();
+        } catch (FileNotFoundException ex) {
+            throw  new  HongsException("Can not find " + path, ex);
+        } catch (IOException ex) {
+            throw  new  HongsException("Can not read " + path, ex);
         }
     }
 

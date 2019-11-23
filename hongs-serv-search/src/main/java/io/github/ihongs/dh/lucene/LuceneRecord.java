@@ -594,7 +594,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         try {
             iw.addDocument (doc);
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
         if (!TRNSCT_MODE) {
             commit();
@@ -606,7 +606,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         try {
             iw.updateDocument (new Term("@"+Cnst.ID_KEY, id), doc);
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
         if (!TRNSCT_MODE) {
             commit();
@@ -618,7 +618,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         try {
             iw.deleteDocuments(new Term("@"+Cnst.ID_KEY, id) /**/);
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
         if (!TRNSCT_MODE) {
             commit();
@@ -638,7 +638,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 return null;
             }
         } catch ( IOException ex ) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
     }
 
@@ -1087,8 +1087,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 Query  p ;
                 try {
                     p = new QueryParser(b + k, new StandardAnalyzer()).parse("[* TO *]");
-                } catch (ParseException ex) {
-                    throw new HongsExemption.Common(ex);
+                } catch ( ParseException e) {
+                    throw new HongsExemption(e);
                 }
                 if ("WELL".equalsIgnoreCase(a)) {
                     qr.add(p, BooleanClause.Occur.MUST);
@@ -1640,7 +1640,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     finder = null ;
                 }
             } catch (IOException x) {
-                throw new HongsException.Common(x);
+                throw new HongsException(x);
             }
         } else {
             String path = getDbPath();
@@ -1655,7 +1655,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
                 reader = DirectoryReader.open(dir);
             } catch (IOException x) {
-                throw new HongsException.Common(x);
+                throw new HongsException(x);
             }
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
@@ -1677,7 +1677,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
 
                 writer = new IndexWriter(dir, iwc);
             } catch (IOException x) {
-                throw new HongsException.Common(x);
+                throw new HongsException(x);
             }
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
@@ -1777,10 +1777,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             }
 
             return cb.build();
-        } catch ( IOException ex) {
-            throw new HongsException.Common(ex);
-        } catch ( IllegalArgumentException  ex) {
-            throw new HongsException.Common(ex);
+        } catch (IOException ex) {
+            throw new HongsException(ex);
+        } catch (IllegalArgumentException ex) {
+            throw new HongsException(ex);
         }
     }
 
@@ -1852,10 +1852,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
             }
 
             return cb.build();
-        } catch ( IOException ex) {
-            throw new HongsException.Common(ex);
-        } catch ( IllegalArgumentException  ex) {
-            throw new HongsException.Common(ex);
+        } catch (IOException ex) {
+            throw new HongsException(ex);
+        } catch (IllegalArgumentException ex) {
+            throw new HongsException(ex);
         }
     }
 
@@ -2066,8 +2066,8 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                     H   += h;
                 }
                 return i < h;
-            } catch (IOException ex) {
-                throw new HongsExemption.Common(ex);
+            } catch (IOException e) {
+                throw new HongsExemption(e);
             }
         }
 
@@ -2077,11 +2077,11 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
                 throw new NullPointerException("hasNext not run?");
             }
             try {
-                /*Read*/ doc = docs[i ++ ];
+                /*Read*/ doc = docs[ i ++ ];
                 Document dox = reader.document( doc.doc );
-                return  that.padDat(dox,r);
-            } catch (IOException ex) {
-                throw new HongsExemption.Common(ex);
+                return  that.padDat(dox, r);
+            } catch (IOException e) {
+                throw new HongsExemption(e);
             }
         }
 

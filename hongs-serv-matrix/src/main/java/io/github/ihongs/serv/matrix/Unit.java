@@ -345,7 +345,7 @@ public class Unit extends Grade {
             DocumentBuilder        builder = factory.newDocumentBuilder();
             return  builder.newDocument();
         } catch (ParserConfigurationException e) {
-            throw new HongsException.Common ( e);
+            throw new HongsException( e );
         }
     }
 
@@ -370,15 +370,15 @@ public class Unit extends Grade {
 
             tr.transform(ds, sr);
         } catch (TransformerConfigurationException e) {
-            throw new HongsException.Common(e);
-        } catch (IllegalArgumentException e) {
-            throw new HongsException.Common(e);
-        } catch (TransformerException  e) {
-            throw new HongsException.Common(e);
-        } catch (FileNotFoundException e) {
-            throw new HongsException.Common(e);
+            throw new HongsException(e);
         } catch (UnsupportedEncodingException e) {
-            throw new HongsException.Common(e);
+            throw new HongsException(e);
+        } catch (IllegalArgumentException e) {
+            throw new HongsException(e);
+        } catch (FileNotFoundException e) {
+            throw new HongsException(e);
+        } catch ( TransformerException e) {
+            throw new HongsException(e);
         }
     }
 

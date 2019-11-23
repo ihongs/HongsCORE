@@ -105,7 +105,7 @@ public class WXAction {
 
         err = Synt.declare(rsp.get("errcode"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get token error\r\n"+Dawn.toString(rsp));
+            throw new HongsException("Get token error\r\n"+Dawn.toString(rsp));
         }
         token = (String) rsp.get("access_token");
         opnId = (String) rsp.get("openid");
@@ -119,7 +119,7 @@ public class WXAction {
 
         err = Synt.declare(rsp.get("errcode"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get user info error\r\n"+Dawn.toString(rsp));
+            throw new HongsException("Get user info error\r\n"+Dawn.toString(rsp));
         }
         opuId = (String) rsp.get("unionid");
 

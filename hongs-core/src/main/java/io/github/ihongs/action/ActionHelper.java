@@ -708,7 +708,7 @@ public class ActionHelper implements Cloneable
         try {
           value = URLEncoder.encode(value,"UTF-8");
         } catch ( UnsupportedEncodingException e ) {
-          throw   new HongsExemption.Common  ( e );
+          throw   new HongsExemption( e );
         }
       }
       Cookie ce = new Cookie(name, value);
@@ -773,9 +773,9 @@ public class ActionHelper implements Cloneable
   public ActionHelper clone() {
     ActionHelper helper;
     try {
-      helper = (ActionHelper) super.clone();
-    } catch (CloneNotSupportedException ex) {
-      throw  new  HongsExemption.Common(ex);
+      helper = (ActionHelper) super.clone( );
+    } catch ( CloneNotSupportedException e ) {
+      throw   new HongsExemption( e );
     }
     helper.responseData = null;
     return helper;
@@ -903,7 +903,7 @@ public class ActionHelper implements Cloneable
     }
 
     // 错误代码
-    if (ern != 0x1  )
+    if (ern == 0x1  )
     {
     //  err is ern  ;
     } else
@@ -919,59 +919,39 @@ public class ActionHelper implements Cloneable
       eru = "Ex"+ Integer.toHexString(ern);
     }
 
-    // 外部异常, 不记录日志
-    if (ern >= 0x400 && ern <= 0x499)
-    {
-      // Nothing to do.
-    }
-    else
-    // 服务异常, 仅记录起因
-    if (ern >= 0x500 && ern <= 0x599)
+    // 错误日志
+    if (ern >= 0x0   || ern <= 0xf  )
     {
       if (null != te)
       {
-        CoreLogger.error(ta);
+        CoreLogger.error(te); // 通用错误, 仅记录起因
       }
-    }
-    else
-    // 通用错误, 仅记录起因
-    if (ern == 0x0   || ern == 0x1  )
+    } else
+    if (ern >= 0x400 && ern <= 0x4ff)
     {
       if (null != te)
       {
-        CoreLogger.error(te);
+        CoreLogger.error(ta); // 外部异常, 仅记录起因
       }
-    }
-    else
-    // 其他异常, 记录到日志
+    } else
+    if (ern >= 0x500 && ern <= 0x5ff)
     {
-        CoreLogger.error(ta);
+        CoreLogger.error(ta); // 服务异常, 记录到日志
+    } else
+    {
+        CoreLogger.error(ta); // 其他异常, 记录到日志
     }
 
     // 响应状态
-    HttpServletResponse rsp = getResponse();
-    if (null != rsp) switch (ern)
+    HttpServletResponse rsp  = getResponse();
+    if (rsp != null)
+    if (ern >= 0x400 && ern <= 0x599)
+    { // 错误码为 16 进制, 取字面值, 如 0x400 取 400
+      rsp.setStatus(Integer.parseInt(Integer.toHexString( ern )));
+    }
+    else
     {
-      case 0x400:
-        rsp.setStatus(HttpServletResponse.SC_BAD_REQUEST );
-        break;
-      case 0x401:
-        rsp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        break;
-      case 0x402:
-        rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        break;
-      case 0x403:
-        rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
-        break;
-      case 0x404:
-        rsp.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        break;
-      case 0x405:
-        rsp.setStatus(HttpServletResponse.SC_METHOD_NOT_ALLOWED   );
-        break;
-      default:
-        rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     Map map = new HashMap();

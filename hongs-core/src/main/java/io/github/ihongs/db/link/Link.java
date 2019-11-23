@@ -373,7 +373,7 @@ abstract public class Link
             limit  = 0;
         }
     } catch (SQLException ex) {
-        throw new HongsException.Common( ex );
+        throw new HongsException(ex);
     }
 
     if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG))

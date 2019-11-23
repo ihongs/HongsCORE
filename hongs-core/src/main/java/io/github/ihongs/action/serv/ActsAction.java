@@ -58,7 +58,7 @@ public class ActsAction
 
     if (act == null || act.length() == 0)
     {
-      helper.fault(new HongsException(0x404, "Action URI can not be empty."));
+      helper.fault(new HongsException(404, "Action URI can not be empty."));
       return;
     }
 
@@ -75,11 +75,11 @@ public class ActsAction
     }
     catch (  ClassCastException e)
     {
-      helper.fault(new HongsException(0x400, e)); // 转不了按非法请求来处理
+      helper.fault(new HongsException(400, e)); // 转不了按非法请求来处理
     }
     catch (NullPointerException e)
     {
-      helper.fault(new HongsException(0x500, e)); // 空指针按内部错误来处理
+      helper.fault(new HongsException(500, e)); // 空指针按内部错误来处理
     }
     catch (HongsException ex)
     {

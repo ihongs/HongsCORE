@@ -1263,7 +1263,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         v = rd.get(Cnst.AR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException(0x400, "Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
+                throw new HongsException(400, "Key '" + Cnst.AR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1290,7 +1290,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         v = rd.get(Cnst.NR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException(0x400, "Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
+                throw new HongsException(400, "Key '" + Cnst.NR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {
@@ -1317,7 +1317,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         v = rd.get(Cnst.OR_KEY);
         if ( v != null ) {
             if ( r > 2 ) {
-                throw new HongsException(0x400, "Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
+                throw new HongsException(400, "Key '" + Cnst.OR_KEY + "' can not exceed 2 layers");
             }
             Set<Map> set = Synt.asSet(v);
             if (set != null && ! set.isEmpty()) {

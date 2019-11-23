@@ -16,7 +16,7 @@ public class Wrongs extends HongsException {
   protected CoreLocale lang = null;
 
     public Wrongs(Map<String,Wrong> wrongs) {
-        super( 0x400 , "fore.form.invalid");
+        super( 400  ,  "fore.form.invalid");
         this.setLocalizedContext("default");
         this.wrongs = wrongs;
     }

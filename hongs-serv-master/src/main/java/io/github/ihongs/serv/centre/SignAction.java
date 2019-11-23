@@ -32,7 +32,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     public void signCreate(ActionHelper ah) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("master");
         if(!cc.getProperty("core.public.sign.open",true)) {
-            throw new HongsException(0x404, "Sign in is not allowed!");
+            throw new HongsException(404,"Sign in is not allowed");
         }
 
         super.signCreate(ah);
@@ -49,10 +49,10 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
     public void userCreate(ActionHelper ah) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("master");
         if(!cc.getProperty("core.public.regs.open",true)) {
-            throw new HongsException(0x404, "Sign on is not allowed!");
+            throw new HongsException(404,"Sign on is not allowed");
         }
 
-        User uo = (User) DB.getInstance( "master" ).getModel( "user" );
+        User uo = (User) DB.getInstance("master").getModel("user");
         Map  rd = ah.getRequestData(  );
         Map  sd = (Map ) uo.create (rd);
 

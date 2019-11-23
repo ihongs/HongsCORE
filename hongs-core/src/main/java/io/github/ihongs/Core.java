@@ -45,11 +45,11 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * <h3>错误代码:</h3>
  * <pre>
- * 0x24 实例名称不能为空
- * 0x25 无法获取对应的类
- * 0x26 禁止访问工厂方法
- * 0x27 无法执行工厂方法
- * 0x28 执行构造方法失败
+ * 0x824 实例名称不能为空
+ * 0x825 无法获取对应的类
+ * 0x826 禁止访问工厂方法
+ * 0x827 无法执行工厂方法
+ * 0x828 执行构造方法失败
  * </pre>
  *
  * @author Hongs
@@ -211,11 +211,11 @@ abstract public class Core
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsExemption(0x27, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x827, "Can not build "+clas.getName(), ex);
       }
       catch (IllegalArgumentException ex)
       {
-        throw new HongsExemption(0x27, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x827, "Can not build "+clas.getName(), ex);
       }
       catch (java.lang.reflect.InvocationTargetException  ex )
       {
@@ -227,7 +227,7 @@ abstract public class Core
             throw ( StackOverflowError ) ta ;
         }
 
-        throw new HongsExemption(0x27, "Can not build "+clas.getName(), ta);
+        throw new HongsExemption(0x827, "Can not build "+clas.getName(), ta);
       }
     }
     catch (NoSuchMethodException ez)
@@ -239,7 +239,7 @@ abstract public class Core
       }
       catch (IllegalAccessException ex)
       {
-        throw new HongsExemption(0x28, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x828, "Can not build "+clas.getName(), ex);
       }
       catch (InstantiationException ex)
       {
@@ -251,12 +251,12 @@ abstract public class Core
             throw ( StackOverflowError ) ta ;
         }
 
-        throw new HongsExemption(0x28, "Can not build "+clas.getName(), ex);
+        throw new HongsExemption(0x828, "Can not build "+clas.getName(), ex);
       }
     }
     catch (SecurityException se)
     {
-        throw new HongsExemption(0x26, "Can not build "+clas.getName(), se);
+        throw new HongsExemption(0x826, "Can not build "+clas.getName(), se);
     }
   }
 
@@ -271,7 +271,7 @@ abstract public class Core
     }
     catch (ClassNotFoundException ex)
     {
-      throw new HongsExemption(0x25, "Can not find class by name '" + name + "'.");
+      throw new HongsExemption(0x825, "Can not find class by name '" + name + "'.");
     }
 
     return newInstance(klass);

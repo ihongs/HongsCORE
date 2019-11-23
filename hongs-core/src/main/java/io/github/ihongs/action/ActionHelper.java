@@ -286,7 +286,7 @@ public class ActionHelper implements Cloneable
     try {
         return (Map) request.getAttribute(Cnst.REQUES_ATTR);
     } catch ( ClassCastException ex) {
-        throw new HongsExemption(0x400 , ex);
+        throw new HongsExemption(400 , ex);
     }
   }
 
@@ -303,9 +303,9 @@ public class ActionHelper implements Cloneable
     try {
         return (Map) Dawn.toObject ( request.getReader( ) );
     } catch ( /**/HongsExemption ex) {
-        throw new HongsExemption(0x400 , ex);
+        throw new HongsExemption(400 , ex);
     } catch ( ClassCastException ex) {
-        throw new HongsExemption(0x400 , ex);
+        throw new HongsExemption(400 , ex);
     } catch (IOException ex) {
         throw new HongsExemption(0x1114, ex);
     }
@@ -375,10 +375,10 @@ public class ActionHelper implements Cloneable
                 type = type.substring(0 , pos);
             }
             if (allowTypes != null && !allowTypes.contains(type)) {
-                throw new HongsExemption(0x400, "Type '" +type+ "' is not allowed");
+                throw new HongsExemption(400, "Type '" +type+ "' is not allowed");
             }
             if ( denyTypes != null &&   denyTypes.contains(type)) {
-                throw new HongsExemption(0x400, "Type '" +type+ "' is denied");
+                throw new HongsExemption(400, "Type '" +type+ "' is denied");
             }
 
             // 检查扩展
@@ -389,10 +389,10 @@ public class ActionHelper implements Cloneable
                 extn = "";
             }
             if (allowExtns != null && !allowExtns.contains(extn)) {
-                throw new HongsExemption(0x400, "Type '" +extn+ "' is not allowed");
+                throw new HongsExemption(400, "Type '" +extn+ "' is not allowed");
             }
             if ( denyExtns != null &&   denyExtns.contains(extn)) {
-                throw new HongsExemption(0x400, "Type '" +extn+ "' is denied");
+                throw new HongsExemption(400, "Type '" +extn+ "' is denied");
             }
 
             /**
@@ -431,7 +431,7 @@ public class ActionHelper implements Cloneable
 
         return rd;
     } catch (IllegalStateException e) {
-        throw new HongsExemption(0x400 , e); // 上传受限, 如大小超标
+        throw new HongsExemption(400, e); // 上传受限, 如大小超标
     } catch (ServletException e) {
         throw new HongsExemption(0x1113, e);
     } catch (IOException e) {
@@ -873,97 +873,80 @@ public class ActionHelper implements Cloneable
    */
   public void fault(HongsCause exp)
   {
+    HttpServletResponse rs = getResponse();
     Throwable  ta = (Throwable)exp;
     Throwable  te = ta.getCause( );
-    int    ern = exp.getErrno();
-    String eru = exp.getError();
-    String erc ;
+    int ero = exp.getErrno();
+    String ern ;
     String err ;
     String msg ;
 
     // 错误消息
       err = ta.getMessage( );
       msg = ta.getLocalizedMessage();
-    if (null != te
-    && (null == msg || msg.length () == 0))
+    if (null != te)
+    if (null == msg || msg.isEmpty())
     {
       msg = te.getLocalizedMessage();
     }
-    if (null == msg || msg.length () == 0 )
+    if (null == msg || msg.isEmpty())
     {
-      msg = CoreLocale.getInstance(). translate("core.error.unkwn");
+      msg = CoreLocale.getInstance().translate("core.error.unkwn");
     }
 
     // 代号映射
-      erc = Integer.toHexString(ern);
-      erc = CoreConfig.getInstance("defects")
-                      .getProperty("Ex"+erc );
-    if (null != erc && erc.length () != 0 )
+      ern = Integer.toString(ero,16);
+      ern = CoreConfig.getInstance("defects" )
+                      .getProperty("Ex"+ ern );
+    if (null != ern && ern.isEmpty() == false)
     {
-      ern = Integer.parseInt(erc,16);
+      ero = Integer.parseInt(ern,10);
     }
 
-    // 错误代码
-    if (ern == 0x1  )
-    {
-    //  err is ern  ;
+    // 外部错误
+    if (ero >= 400 && ero <= 499) {
+        ern = "Er" + Integer.toString(ero, 10);
+        if (null != rs) {
+            rs.setStatus(ero);
+        }
+        if (null != te) {
+            CoreLogger.error(ta);
+        }
     } else
-    if (ern == 0x0  )
-    {
-      eru = "Er500" ;
+    // 内部错误
+    if (ero >= 500 && ero <= 599) {
+        ern = "Er" + Integer.toString(ero, 10);
+        if (null != rs) {
+            rs.setStatus(ero);
+        }
+    //  if (null != te) {
+            CoreLogger.error(ta);
+    //  }
     } else
-    if (ern <= 0xfff)
-    {
-      eru = "Er"+ Integer.toHexString(ern);
+    // 内部异常
+    if (ero >= 600) {
+        ern = "Ex" + Integer.toString(ero, 16);
+        if (null != rs) {
+            rs.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+    //  if (null != te) {
+            CoreLogger.error(ta);
+    //  }
     } else
+    // 其他异常
     {
-      eru = "Ex"+ Integer.toHexString(ern);
-    }
-
-    // 错误日志
-    if (ern >= 0x0   || ern <= 0xf  )
-    {
-      if (null != te)
-      {
-        CoreLogger.error(te); // 通用错误, 仅记录起因
-      }
-    } else
-    if (ern >= 0x400 && ern <= 0x4ff)
-    {
-      if (null != te)
-      {
-        CoreLogger.error(ta); // 外部异常, 仅记录起因
-      }
-    } else
-    if (ern >= 0x500 && ern <= 0x5ff)
-    {
-        CoreLogger.error(ta); // 服务异常, 记录到日志
-    } else
-    {
-        CoreLogger.error(ta); // 其他异常, 记录到日志
-    }
-
-    // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
-    HttpServletResponse rsp  = getResponse();
-    if (rsp != null)
-    if (ern >= 0x400 && ern <= 0x599)
-    {
-      try
-      {
-        rsp.setStatus(Integer.parseInt(Integer.toHexString( ern )));
-      }
-      catch (NumberFormatException e)
-      {
-        rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
-      }
-    } else
-    {
-        rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        ern = "Er500";
+        if (null != rs) {
+            rs.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        }
+        if (null != te) {
+            CoreLogger.error(ta);
+        }
     }
 
     Map map = new HashMap();
     map.put( "ok" , false );
-    map.put("ern" , eru);
+    map.put("ern" , ern);
     map.put("err" , err);
     map.put("msg" , msg);
     reply(map);

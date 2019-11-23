@@ -891,12 +891,13 @@ public class ActionHelper implements Cloneable
     }
     if (null == msg || msg.length () == 0 )
     {
-      msg = CoreLocale.getInstance(). translate ("core.error.unkwn" );
+      msg = CoreLocale.getInstance(). translate("core.error.unkwn");
     }
 
     // 代号映射
       erc = Integer.toHexString(ern);
-      erc = CoreConfig.getInstance().getProperty("core.ern.map."+erc);
+      erc = CoreConfig.getInstance("defects")
+                      .getProperty("Ex"+erc );
     if (null != erc && erc.length () != 0 )
     {
       ern = Integer.parseInt(erc,16);

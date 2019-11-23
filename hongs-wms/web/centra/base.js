@@ -401,6 +401,7 @@ function hsSaveWithMemo(msg) {
       HsForm.prototype.save.apply(that, args);
     } ;
     if (msg) {
+        delete this._waiting;
         this.warn(msg, "warning", func, null)
             .find(".alert-body").append(memo)
             .trigger("shown.bs.modal");
@@ -434,6 +435,7 @@ function hsSendWithMemo(btn, msg, url, data) {
     });
     } ;
     if (msg) {
+        delete this._sending;
         this.warn(msg, "warning", func, null)
             .find(".alert-body").append(memo)
             .trigger("shown.bs.modal");

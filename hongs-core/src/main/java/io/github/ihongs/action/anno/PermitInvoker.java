@@ -34,7 +34,7 @@ public class PermitInvoker implements FilterInvoker {
         boolean has = false;
 
         if (! was) {
-            throw new HongsException(0x401);
+            throw new HongsException(0x1101);
         }
 
         if (role == null || role.length == 0) {
@@ -55,7 +55,7 @@ public class PermitInvoker implements FilterInvoker {
         }
 
         if (! has) {
-            throw new HongsException(0x403);
+            throw new HongsException(0x1103);
         }
 
         chains.doAction();

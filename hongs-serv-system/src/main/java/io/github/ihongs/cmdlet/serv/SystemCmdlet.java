@@ -189,9 +189,9 @@ public class SystemCmdlet {
                             in.read( buf ) ;
             sql = new String(buf, "UTF-8") ;
         } catch (FileNotFoundException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException ( ex);
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException ( ex);
         }
 
         // 解析配置
@@ -256,11 +256,11 @@ public class SystemCmdlet {
             DocumentBuilder  dbn = dbf.newDocumentBuilder();
             doc = dbn.parse( fo );
         } catch (ParserConfigurationException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         } catch (SAXException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         } catch ( IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
 
         NodeList l = doc.getDocumentElement()
@@ -283,7 +283,7 @@ public class SystemCmdlet {
             if ("action".equals(t)) {
                 runAct( e, dt, lg );
             } else {
-                throw new HongsException.Common("Wrong tagName: " + t);
+                throw new HongsException("Wrong tagName: " + t );
             }
         }
     }
@@ -615,7 +615,7 @@ public class SystemCmdlet {
 
             return null;
         } catch (ParseException ex) {
-            throw new HongsExemption.Common(ex);
+            throw new HongsExemption(ex);
         }
     }
 

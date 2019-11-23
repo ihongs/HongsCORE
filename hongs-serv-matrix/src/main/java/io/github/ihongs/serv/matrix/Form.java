@@ -931,7 +931,7 @@ public class Form extends Model {
             DocumentBuilder        builder = factory.newDocumentBuilder();
             return  builder.newDocument();
         } catch (ParserConfigurationException e) {
-            throw new HongsException.Common ( e);
+            throw new HongsException( e );
         }
     }
 
@@ -945,11 +945,11 @@ public class Form extends Model {
                 return  builder.newDocument();
             }
         } catch (ParserConfigurationException e) {
-            throw new HongsException.Common ( e);
+            throw new HongsException( e );
         } catch (SAXException e) {
-            throw new HongsException.Common ( e);
+            throw new HongsException( e );
         } catch ( IOException e) {
-            throw new HongsException.Common ( e);
+            throw new HongsException( e );
         }
     }
 
@@ -974,15 +974,15 @@ public class Form extends Model {
 
             tr.transform(ds, sr);
         } catch (TransformerConfigurationException e) {
-            throw new HongsException.Common(e);
-        } catch (IllegalArgumentException e) {
-            throw new HongsException.Common(e);
-        } catch (TransformerException  e) {
-            throw new HongsException.Common(e);
-        } catch (FileNotFoundException e) {
-            throw new HongsException.Common(e);
+            throw new HongsException(e);
         } catch (UnsupportedEncodingException e) {
-            throw new HongsException.Common(e);
+            throw new HongsException(e);
+        } catch (IllegalArgumentException e) {
+            throw new HongsException(e);
+        } catch (FileNotFoundException e) {
+            throw new HongsException(e);
+        } catch ( TransformerException e) {
+            throw new HongsException(e);
         }
     }
 

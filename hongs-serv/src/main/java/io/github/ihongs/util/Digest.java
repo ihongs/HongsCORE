@@ -36,8 +36,8 @@ public final class Digest {
     public Digest(String type) {
         try {
             DIGEST = MessageDigest.getInstance(type);
-        } catch ( NoSuchAlgorithmException  e) {
-            throw new HongsExemption.Common(e);
+        } catch ( NoSuchAlgorithmException e) {
+            throw new HongsExemption(e);
         }
     }
 

@@ -13,25 +13,39 @@ package io.github.ihongs;
  *
  * @author Hongs
  */
-public class HongsExemption extends RuntimeException implements HongsCause {
+public class HongsExemption
+  extends  RuntimeException
+  implements HongsCause {
 
-    public static final int COMMON = HongsCurse.COMMON;
-    public static final int NOTICE = HongsCurse.NOTICE;
+    public static final int COMMON = 0;
+    public static final int NOTICE = 1;
 
     protected final HongsCurse that;
 
-    public HongsExemption(int errno, String error, Throwable cause) {
-        super(cause);
+    public HongsExemption(int code, String desc, Throwable fact) {
+        super(fact);
 
-        that = new HongsCurse(errno, error, this);
+        that = new HongsCurse(code, desc, this);
     }
 
-    public HongsExemption(int code, Throwable cause) {
-        this(code, cause.getMessage(), cause);
+    public HongsExemption(String desc, Throwable fact) {
+        this(0x0 , null, fact);
+    }
+
+    public HongsExemption(int code, Throwable fact) {
+        this(code, null, fact);
     }
 
     public HongsExemption(int code, String desc) {
         this(code, desc, null);
+    }
+
+    public HongsExemption(Throwable fact) {
+        this(0x0 , null, fact);
+    }
+
+    public HongsExemption(String desc) {
+        this(0x0 , desc, null);
     }
 
     public HongsExemption(int code) {
@@ -93,6 +107,7 @@ public class HongsExemption extends RuntimeException implements HongsCause {
 
     /**
      * 常规错误(无需错误代码)
+     * @deprecated 请改用 HongsExemption(String, Throwable)
      */
     public static final class Common extends HongsExemption {
         public Common(String error, Throwable cause) {
@@ -108,6 +123,7 @@ public class HongsExemption extends RuntimeException implements HongsCause {
 
     /**
      * 通告错误(无需错误代码)
+     * @deprecated 请改用 HongsExemption(String, Throwable)
      */
     public static final class Notice extends HongsExemption {
         public Notice(String error, Throwable cause) {

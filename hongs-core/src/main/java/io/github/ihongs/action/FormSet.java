@@ -179,7 +179,7 @@ public class FormSet
       try {
         is.close();
       } catch (IOException ex) {
-        throw new HongsException.Common(ex);
+        throw new HongsException(ex);
       }
     }
   }
@@ -392,7 +392,7 @@ public class FormSet
         }
       }
 
-      throw new HongsException.Common("Unrecognized type '"+type+"'");
+      throw new HongsException ( "Unrecognized type '" + type + "'" );
   }
   private static final Pattern SEXP = Pattern.compile ( "\\s*,\\s*" );
   private static final Pattern MEXP = Pattern.compile ( "\\s*:\\s*" );

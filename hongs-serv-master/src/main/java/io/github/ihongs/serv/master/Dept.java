@@ -153,8 +153,7 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException
-                    .Notice("ex.master.dept.have.depts")
+                throw new HongsException("ex.master.dept.have.depts")
                     .setLocalizedContext("master");
             }
 
@@ -164,8 +163,7 @@ extends Grade {
                 .limit (1)
                 .getAll( );
             if (!list.isEmpty() ) {
-                throw new HongsException
-                    .Notice("ex.master.dept.have.users")
+                throw new HongsException("ex.master.dept.have.users")
                     .setLocalizedContext("master");
             }
         }
@@ -203,8 +201,7 @@ extends Grade {
                 }
             }
 
-            throw new HongsException
-                .Notice("ex.master.dept.unit.error")
+            throw new HongsException("ex.master.dept.unit.error")
                 .setLocalizedContext("master");
         }
     }

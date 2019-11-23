@@ -338,7 +338,7 @@ public class AuthKit {
             }
             return new String(b);
         }   catch (NoSuchAlgorithmException ex) {
-            throw new HongsException.Common(ex);
+            throw  new HongsException(ex);
         }
     }
 

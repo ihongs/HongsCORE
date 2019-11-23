@@ -224,13 +224,13 @@ public class UserCmdlet {
         for(String  n : u.split( "," )) {
             int p = n . indexOf( ":" );
             if (p < 0) {
-                throw new HongsException.Common("core.master.uproot prop item must be [DB.]TABLE:FIELD");
+                throw new HongsException("Config item 'core.master.uproot' must be '[DB.]TABLE:FIELD'");
             }
             String  t = n.substring(0 , p).trim();
             String  f = n.substring(1 + p).trim();
 
             tb = db.getTable(t);
-            tb.db.execute("UPDATE `"+tb.tableName+"` SET `"+f+"` = ? WHERE `"+f+"` IN (?)" , uid , uids);
+            tb.db.execute("UPDATE `"+tb.tableName+"` SET `"+f+"` = ? WHERE `"+f+"` IN (?)", uid , uids);
         }
     }
 

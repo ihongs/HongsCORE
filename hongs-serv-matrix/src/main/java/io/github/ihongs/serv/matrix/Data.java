@@ -489,8 +489,8 @@ public class Data extends SearchEntity {
                 nd.put("form_id", fid);
                 nd.put("user_id", uid);
             } else {
-                if ( Synt.declare ( nd.get("state"), 0  )  ==   0    ) {
-                    throw new HongsException(0x1104, "记录已经删除了");
+                if (Synt.declare(nd.get("state"), 0 ) ==  0   ) {
+                    throw new HongsException(0x404, "记录已经删除了");
                 }
             }
 
@@ -578,11 +578,11 @@ public class Data extends SearchEntity {
                     .select("ctime,state")
                     .getOne( );
                 if (! od.isEmpty()) {
-                    if ( Synt.declare ( od.get("state"), 0  )  ==   0    ) {
-                        throw new HongsException(0x1104, "记录已经删除了");
+                    if (Synt.declare(od.get("state"), 0 ) ==  0   ) {
+                        throw new HongsException(0x404, "记录已经删除了");
                     }
-                    if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
-                        throw new HongsException(0x1100, "等会儿, 不要急");
+                    if (Synt.declare(od.get("ctime"), 0L) >= ctime) {
+                        throw new HongsException(0x400, "等会儿, 不要急");
                     }
                 }
             } else {
@@ -591,11 +591,11 @@ public class Data extends SearchEntity {
                     .select("ctime,state,data")
                     .getOne( );
                 if (! od.isEmpty()) {
-                    if ( Synt.declare ( od.get("state"), 0  )  ==   0    ) {
-                        throw new HongsException(0x1104, "记录已经删除了");
+                    if (Synt.declare(od.get("state"), 0 ) ==  0   ) {
+                        throw new HongsException(0x404, "记录已经删除了");
                     }
-                    if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
-                        throw new HongsException(0x1100, "等会儿, 不要急");
+                    if (Synt.declare(od.get("ctime"), 0L) >= ctime) {
+                        throw new HongsException(0x400, "等会儿, 不要急");
                     }
 
                     // 用快照补全数据

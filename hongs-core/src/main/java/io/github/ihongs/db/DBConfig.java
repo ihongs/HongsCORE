@@ -116,7 +116,7 @@ public class DBConfig
       try {
         is.close();
       } catch (IOException ex) {
-        throw new HongsException.Common(ex);
+        throw new HongsException(ex);
       }
     }
 

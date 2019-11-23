@@ -73,13 +73,13 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             }
         }
         catch (SQLException ex) {
-            throw new HongsException.Common(ex);
+            throw new  HongsException(ex);
         }
         catch ( IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new  HongsException(ex);
         }
         catch (ClassNotFoundException ex) {
-            throw new HongsException.Common(ex);
+            throw new  HongsException(ex);
         }
     }
 
@@ -105,8 +105,8 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             out.flush();
             arr = bos.toByteArray();
         }
-        catch (IOException ex) {
-            throw new HongsException.Common(ex);
+        catch (IOException e) {
+            throw new HongsException(e);
         }
 
         long now = System.currentTimeMillis() / 1000;
@@ -131,8 +131,8 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
                return;
             }
         }
-        catch (SQLException ex ) {
-            throw new HongsException.Common(ex);
+        catch ( SQLException e ) {
+            throw new HongsException(e);
         }
 
         try (
@@ -152,8 +152,8 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
                return;
             }
         }
-        catch (SQLException ex ) {
-            throw new HongsException.Common(ex);
+        catch ( SQLException e ) {
+            throw new HongsException(e);
         }
     }
 
@@ -180,8 +180,8 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.setString(3, key);
             ps.executeUpdate(  );
         }
-        catch (SQLException ex ) {
-            throw new HongsException.Common(ex);
+        catch ( SQLException e ) {
+            throw new HongsException(e);
         }
     }
 
@@ -202,8 +202,8 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.setString(1, key);
             ps.executeUpdate(  );
         }
-        catch (SQLException ex ) {
-            throw new HongsException.Common(ex);
+        catch ( SQLException e ) {
+            throw new HongsException(e);
         }
     }
 
@@ -224,8 +224,8 @@ public class JRecord<T> implements IRecord<T>, AutoCloseable {
             ps.setLong  (1, exp);
             ps.executeUpdate(  );
         }
-        catch (SQLException ex ) {
-            throw new HongsException.Common(ex);
+        catch ( SQLException e ) {
+            throw new HongsException(e);
         }
     }
 

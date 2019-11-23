@@ -13,25 +13,39 @@ package io.github.ihongs;
  *
  * @author Hongs
  */
-public class HongsException extends Exception implements HongsCause {
+public class HongsException
+     extends      Exception
+  implements HongsCause {
 
-    public static final int COMMON = HongsCurse.COMMON;
-    public static final int NOTICE = HongsCurse.NOTICE;
+    public static final int COMMON = 0;
+    public static final int NOTICE = 1;
 
     protected final HongsCurse that;
 
-    public HongsException(int errno, String error, Throwable cause) {
-        super(cause);
+    public HongsException(int code, String desc, Throwable fact) {
+        super(fact);
 
-        that = new HongsCurse(errno, error, this);
+        that = new HongsCurse(code, desc, this);
     }
 
-    public HongsException(int code, Throwable cause) {
-        this(code, cause.getMessage(), cause);
+    public HongsException(String desc, Throwable fact) {
+        this(0x0 , null, fact);
+    }
+
+    public HongsException(int code, Throwable fact) {
+        this(code, null, fact);
     }
 
     public HongsException(int code, String desc) {
         this(code, desc, null);
+    }
+
+    public HongsException(Throwable fact) {
+        this(0x0 , null, fact);
+    }
+
+    public HongsException(String desc) {
+        this(0x0 , desc, null);
     }
 
     public HongsException(int code) {
@@ -93,6 +107,7 @@ public class HongsException extends Exception implements HongsCause {
 
     /**
      * 常规错误(无需错误代码)
+     * @deprecated 请改用 HongsException(String, Throwable)
      */
     public static final class Common extends HongsException {
         public Common(String error, Throwable cause) {
@@ -108,6 +123,7 @@ public class HongsException extends Exception implements HongsCause {
 
     /**
      * 通告错误(无需错误代码)
+     * @deprecated 请改用 HongsException(String, Throwable)
      */
     public static final class Notice extends HongsException {
         public Notice(String error, Throwable cause) {

@@ -104,9 +104,9 @@ public class Thumb {
                       : Integer.parseInt (x[3].trim());
                 return setColor(new Color(r, g, b, a));
             }
-            throw new HongsExemption.Common("Unable to parse color value: "+str);
+            throw new HongsExemption("Unable to parse color value: "+str);
         } catch (NumberFormatException | IndexOutOfBoundsException e) {
-            throw new HongsExemption.Common("Unable to parse color value: "+str);
+            throw new HongsExemption("Unable to parse color value: "+str);
         }
     }
 
@@ -146,7 +146,7 @@ public class Thumb {
             case "bottom right" :
                 return setAlign(Positions.BOTTOM_RIGHT );
             default:
-                throw new HongsExemption.Common("Unsupported place value: "+str);
+                throw new HongsExemption("Unsupported place value: "+str);
         }
     }
 

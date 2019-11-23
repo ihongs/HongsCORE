@@ -338,9 +338,9 @@ public class IsFile extends Rule {
         }
 
         try {
-            name = path+ URLDecoder.decode(name , "UTF-8");
+            name = URLDecoder.decode(name, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw  new HongsExemption.Common (e);
+            throw new HongsExemption(e);
         }
 
 //      name = name.replace("%20","+");
@@ -364,9 +364,9 @@ public class IsFile extends Rule {
         }
 
         try {
-            name = URLEncoder.encode(name , "UTF-8");
+            name = URLEncoder.encode(name, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            throw  new HongsExemption.Common (e);
+            throw new HongsExemption(e);
         }
 
         name = name.replace("+","%20");

@@ -251,7 +251,7 @@ public class StatisHelper {
                 }
             }
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
 
         return total;
@@ -463,7 +463,7 @@ public class StatisHelper {
                 }
             }
         } catch (IOException ex) {
-            throw new HongsException.Common(ex);
+            throw new HongsException(ex);
         }
 
         return total;

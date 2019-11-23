@@ -210,9 +210,9 @@ public class Sesion implements HttpSession, AutoCloseable, Serializable {
         // 如果数据记录对象可关闭, 关闭之
         if (rec instanceof AutoCloseable) {
             try {
-                (   (AutoCloseable) rec ).close(   );
-            } catch (Exception err) {
-                throw new HongsException.Common(err);
+                ((AutoCloseable) rec).close();
+            } catch ( Exception  err) {
+                throw new HongsException(err);
             }
         }
     }

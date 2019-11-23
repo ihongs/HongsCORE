@@ -107,8 +107,8 @@ public class SearchQuery extends StringQuery {
         try {
             Query  q2 = qp.parse(s);
             return q2 ;
-        } catch (ParseException ex) {
-            throw new HongsExemption.Common(ex);
+        } catch ( ParseException e) {
+            throw new HongsExemption(e);
         }
     }
 

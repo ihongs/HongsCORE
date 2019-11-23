@@ -165,8 +165,7 @@ extends Model {
                 List list = Synt.asList(data.get( "depts" ));
                 AuthKit.cleanUserDepts (list, id);
                 if ( list.isEmpty() ) {
-                    throw new HongsException
-                        .Notice("ex.master.user.dept.error")
+                    throw new HongsException("ex.master.user.dept.error")
                         .setLocalizedContext("master");
                 }
                 data.put("depts", list);
@@ -201,8 +200,7 @@ extends Model {
                 }
             }
 
-            throw new HongsException
-                .Notice("ex.master.user.unit.error")
+            throw new HongsException("ex.master.user.unit.error")
                 .setLocalizedContext("master");
         }
     }

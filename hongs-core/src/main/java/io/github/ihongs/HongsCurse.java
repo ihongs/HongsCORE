@@ -6,9 +6,6 @@ package io.github.ihongs;
  */
 public class HongsCurse {
 
-    public static final int COMMON = 0x0;
-    public static final int NOTICE = 0x1;
-
     private final       int code;
     private final    String desc;
     private final Throwable that;
@@ -47,24 +44,21 @@ public class HongsCurse {
         String codx, desx;
 
         if (code < 0x1000) {
-            codx = "Er" + Integer.toHexString(code);
+            codx = "Er"+ Integer.toHexString(code);
         } else {
-            codx = "Ex" + Integer.toHexString(code);
-        }
-        if (null != lang) {
-            codx  = lang.replaceAll("[/\\\\]", ".")+"."+codx;
+            codx = "Ex"+ Integer.toHexString(code);
         }
 
         if (null != desc) {
             desx  = desc;
         } else {
-            Throwable erro = that.getCause();
-            if (null != erro) {
-                if ( erro instanceof HongsCause ) {
+            Throwable   erro = that.getCause();
+            if (null != erro   ) {
+                if (code < 0x10) {
                     return erro.getMessage();
+                } else {
+                    desx = erro.getMessage();
                 }
-                desx = erro.getClass().getName( )
-                     +" "+ erro.getMessage();
             } else {
                 desx = "";
             }
@@ -78,10 +72,27 @@ public class HongsCurse {
      * @return
      */
     public String getLocalizedMessage() {
-        CoreLocale trns;
-        String ckey, dkey;
         String codx, desx;
-        String [ ] optx;
+
+        if (code < 0x1000) {
+            codx = "Er"+ Integer.toHexString(code);
+        } else {
+            codx = "Ex"+ Integer.toHexString(code);
+        }
+
+        if (null != desc) {
+            desx  = desc;
+        } else {
+            Throwable   erro = that.getCause();
+            if (null != erro   ) {
+                if (code < 0x10) {
+                    return erro.getLocalizedMessage();
+                }
+                desx = codx;
+            } else {
+                desx =  "" ;
+            }
+        }
 
         /**
          * 在例如多线程环境下未初始化 Core 时
@@ -94,56 +105,24 @@ public class HongsCurse {
             CoreLogger.error("ACTION_LANG is null in error or exception: " + that.getMessage());
         }
 
-        if (code < 0x1000) {
-            codx = "Er" + Integer.toHexString(code);
-        } else {
-            codx = "Ex" + Integer.toHexString(code);
-        }
-        desx = desc != null ? desc : new String(  );
-        optx = opts != null ? opts : new String[]{};
-        trns = CoreLocale.getInstance("defects").clone();
-
-        switch (code) {
-            case COMMON:
-            case 0x1000:
-            case 0x10:
-                // 通用的一般异常代号
-                // 包裹其他异常和错误
-                if (null == desc) {
-                  Throwable them  =  that.getCause(  );
-                if (null != them) {
-                    return  them.getLocalizedMessage();
-                }}
-                ckey = "fore.error";
-                dkey = "==";
-                break;
-            case NOTICE:
-            case 0x1001:
-            case 0x11:
-                // 错误消息作为翻译键
-                ckey = "fore.error";
-                dkey = desx;
-                break;
-            default:
-                ckey = "core.error";
-                dkey = codx;
-        }
-
+        /**
+         * 存在错误解释就按错误作翻译
+         * 存在代号语句就按代号来翻译
+         */
+        CoreLocale trns = CoreLocale.getInstance("defects").clone();
         if (null  !=  lang) {
             trns.load(lang);
-            codx = lang.replaceAll("[/\\\\]", ".")+"."+codx;
         }
-        if (trns.getProperty(ckey) != null) {
-            codx = trns.translate(ckey, codx);
+        if (trns.getProperty(desx) != null) {
+            desx = trns.translate( desx, opts );
+        } else
+        if (trns.getProperty(codx) != null) {
+            desx = trns.translate( codx, opts );
         }
-        if (trns.getProperty(dkey) != null) {
-            desx = trns.translate(dkey, optx);
+        if (code  <=  0xf ) {
+            codx = trns.translate("fore.error", codx);
         } else {
-            Throwable cause = that.getCause();
-            if (cause != null
-            &&  cause instanceof HongsCause ) {
-                return cause.getLocalizedMessage();
-            }
+            codx = trns.translate("core.error", codx);
         }
 
         return  codx +" "+ desx;

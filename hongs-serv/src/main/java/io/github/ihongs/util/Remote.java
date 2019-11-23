@@ -1,6 +1,5 @@
 package io.github.ihongs.util;
 
-import io.github.ihongs.HongsCurse;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import java.io.File;
@@ -444,7 +443,7 @@ public final class Remote {
             return new UrlEncodedFormEntity(pair, "UTF-8");
         }
         catch (UnsupportedEncodingException e) {
-            throw new HongsException.Common(e);
+            throw  new HongsException(e);
         }
     }
 
@@ -518,8 +517,7 @@ public final class Remote {
         private final String rsp;
 
         public StatusException(int sta, String url, String rsp) {
-            super(HongsCurse.COMMON,
-                  sta >= 300 && sta <= 399
+            super(sta >= 300 && sta <= 399
                 ? "Redirect from "+url+" to " +rsp
                 : "Error "+sta+" for request "+url);
 
@@ -556,8 +554,7 @@ public final class Remote {
         private final String url;
 
         public SimpleException(String url, Throwable cause) {
-            super(HongsCurse.COMMON,
-                  "Fail to request "+ url, cause);
+            super("Fail to request "+ url, cause);
 
             this.url = url;
 

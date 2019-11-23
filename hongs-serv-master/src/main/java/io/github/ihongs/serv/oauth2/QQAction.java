@@ -108,7 +108,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get token error\r\n"+Dawn.toString(rsp));
+            throw new HongsException("Get token error\r\n"+Dawn.toString(rsp));
         }
         token = (String) rsp.get("access_token");
 
@@ -121,7 +121,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("code"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get open id error\r\n"+Dawn.toString(rsp));
+            throw new HongsException("Get open id error\r\n"+Dawn.toString(rsp));
         }
         opnId = (String) rsp.get("openid");
 
@@ -134,7 +134,7 @@ public class QQAction {
 
         err = Synt.declare(rsp.get("ret"), 0);
         if (err != 0) {
-            throw new HongsException.Common("Get user info error\r\n"+Dawn.toString(rsp));
+            throw new HongsException("Get user info error\r\n"+Dawn.toString(rsp));
         }
         opuId = (String) rsp.get("unionid");
 

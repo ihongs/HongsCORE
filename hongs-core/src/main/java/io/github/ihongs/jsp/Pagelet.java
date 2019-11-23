@@ -54,13 +54,13 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     {
         Throwable ax = ex.getCause( );
         if (ax == null) { ax = ex ; }
-        int eo  = ax instanceof HongsCause ? ((HongsCause)ax).getErrno() : 0;
+        int eo  = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
         String er = ax.getLocalizedMessage();
         String ec ;
 
         // 代号映射
           ec = Integer.toHexString( eo );
-          ec = CoreConfig.getInstance( ).getProperty( "core.ern.map." + ec );
+          ec = CoreConfig.getInstance( ).getProperty ( "core.ern.map." + ec );
         if (null != ec && !ec.isEmpty())
         {
           eo = Integer.parseInt(ec, 16 );

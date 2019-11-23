@@ -129,7 +129,7 @@ public class CoreLogger
 
         if (1 != (1 & Core.DEBUG )
         &&  2 != (2 & Core.DEBUG)) {
-            getLogger("hongs.log" + flag).error(envir(t.getMessage()));
+            getLogger("hongs.log" + flag).error(envir(t.toString()));
             return;
         }
 

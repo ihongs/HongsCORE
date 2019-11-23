@@ -66,28 +66,13 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
           eo = Integer.parseInt(ec, 16 );
         }
 
-        // 响应状态
-        switch (eo) {
-            case 0x400:
-                eo = HttpServletResponse.SC_BAD_REQUEST ;
-                break;
-            case 0x401:
-                eo = HttpServletResponse.SC_UNAUTHORIZED;
-                break;
-            case 0x402:
-                eo = HttpServletResponse.SC_FORBIDDEN;
-                break;
-            case 0x403:
-                eo = HttpServletResponse.SC_FORBIDDEN;
-                break;
-            case 0x404:
-                eo = HttpServletResponse.SC_NOT_FOUND;
-                break;
-            case 0x405:
-                eo = HttpServletResponse.SC_METHOD_NOT_ALLOWED    ;
-                break;
-            default:
-                eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
+        // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
+        if (eo >= 0x400 && eo <= 0x599 )
+        {
+          eo = Integer.parseInt( Integer.toHexString (eo) );
+        } else
+        {
+          eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
 
         req.setAttribute("javax.servlet.error.status_code"   , eo);

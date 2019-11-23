@@ -60,7 +60,8 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
 
       // 代号映射
         ec = Integer.toHexString( eo );
-        ec = CoreConfig.getInstance( ).getProperty ( "core.ern.map." + ec );
+        ec = CoreConfig.getInstance("defects")
+                       .getProperty("Ex"+ ec );
       if (null != ec && !ec.isEmpty())
       {
         eo = Integer.parseInt(ec, 16 );

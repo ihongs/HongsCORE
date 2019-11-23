@@ -1,7 +1,6 @@
 package io.github.ihongs.jsp;
 
 import io.github.ihongs.HongsCause;
-import io.github.ihongs.HongsCurse;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
@@ -55,7 +54,7 @@ abstract public class Proclet extends ActionDriver implements HttpJspPage
         if (ax instanceof HongsCause) {
             ah.fault((HongsCause) ax);
         } else {
-            ah.fault(new HongsException(0x400, ax));
+            ah.fault(new HongsException(0x500, ax));
         }
     }
   }

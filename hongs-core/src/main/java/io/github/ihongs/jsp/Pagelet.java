@@ -52,37 +52,37 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     }
     catch (ServletException ex )
     {
-        Throwable ax = ex.getCause( );
-        if (ax == null) { ax = ex ; }
-        int eo  = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
-        String er = ax.getLocalizedMessage();
-        String ec ;
+      Throwable ax = ex.getCause( );
+      if (ax == null) { ax = ex ; }
+      int eo  = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
+      String er = ax.getLocalizedMessage();
+      String ec ;
 
-        // 代号映射
-          ec = Integer.toHexString( eo );
-          ec = CoreConfig.getInstance( ).getProperty ( "core.ern.map." + ec );
-        if (null != ec && !ec.isEmpty())
-        {
-          eo = Integer.parseInt(ec, 16 );
-        }
+      // 代号映射
+        ec = Integer.toHexString( eo );
+        ec = CoreConfig.getInstance( ).getProperty ( "core.ern.map." + ec );
+      if (null != ec && !ec.isEmpty())
+      {
+        eo = Integer.parseInt(ec, 16 );
+      }
 
-        // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
-        if (eo >= 0x400 && eo <= 0x599 ) try
-        {
-          eo = Integer.parseInt( Integer.toHexString (eo) );
-        } catch (NumberFormatException ne)
-        {
-          eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        } else
-        {
-          eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-        }
+      // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
+      if (eo >= 0x400 && eo <= 0x599 ) try
+      {
+        eo = Integer.parseInt( Integer.toHexString (eo) );
+      } catch (NumberFormatException ne)
+      {
+        eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+      } else
+      {
+        eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
+      }
 
-        req.setAttribute("javax.servlet.error.status_code" , eo);
-        req.setAttribute("javax.servlet.error.message"     , er);
-        req.setAttribute("javax.servlet.error.exception"   , ax);
-        req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
-        rsp.sendError(eo, er);
+      req.setAttribute("javax.servlet.error.status_code" , eo);
+      req.setAttribute("javax.servlet.error.message"     , er);
+      req.setAttribute("javax.servlet.error.exception"   , ax);
+      req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
+      rsp.sendError(eo, er);
     }
   }
 

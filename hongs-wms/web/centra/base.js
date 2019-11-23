@@ -396,13 +396,15 @@ function hsSaveWithMemo(msg) {
     var data = args[ 1 ];
     var that = this;
     var memo = jQuery('<input type="text" name="memo" class="form-control" placeholder="选填, 请输入操作备注, 如: 补充简介信息"/>');
+    var funx = function() {
+        delete that._waiting;
+    } ;
     var func = function() {
         data.append("memo",memo.val());
       HsForm.prototype.save.apply(that, args);
     } ;
     if (msg) {
-        delete this._waiting;
-        this.warn(msg, "warning", func, null)
+        this.warn(msg, "warning", func, funx)
             .find(".alert-body").append(memo)
             .trigger("shown.bs.modal");
     } else {
@@ -435,7 +437,6 @@ function hsSendWithMemo(btn, msg, url, data) {
     });
     } ;
     if (msg) {
-        delete this._sending;
         this.warn(msg, "warning", func, null)
             .find(".alert-body").append(memo)
             .trigger("shown.bs.modal");

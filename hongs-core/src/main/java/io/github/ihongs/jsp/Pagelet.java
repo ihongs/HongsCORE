@@ -78,9 +78,9 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
           eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         }
 
-        req.setAttribute("javax.servlet.error.status_code"   , eo);
-        req.setAttribute("javax.servlet.error.message"       , er);
-        req.setAttribute("javax.servlet.error.exception"     , ax);
+        req.setAttribute("javax.servlet.error.status_code" , eo);
+        req.setAttribute("javax.servlet.error.message"     , er);
+        req.setAttribute("javax.servlet.error.exception"   , ax);
         req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
         rsp.sendError(eo, er);
     }

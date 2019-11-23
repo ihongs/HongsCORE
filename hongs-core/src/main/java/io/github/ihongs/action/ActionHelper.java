@@ -942,11 +942,11 @@ public class ActionHelper implements Cloneable
         CoreLogger.error(ta); // 其他异常, 记录到日志
     }
 
-    // 响应状态
+    // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
     HttpServletResponse rsp  = getResponse();
     if (rsp != null)
     if (ern >= 0x400 && ern <= 0x599)
-    { // 错误码为 16 进制, 取字面值, 如 0x400 取 400
+    {
       rsp.setStatus(Integer.parseInt(Integer.toHexString( ern )));
     }
     else

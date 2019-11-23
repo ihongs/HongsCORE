@@ -67,9 +67,12 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
         }
 
         // 响应状态, 错误码为 16 进制, 取字面值, 如 0x400 取 400
-        if (eo >= 0x400 && eo <= 0x599 )
+        if (eo >= 0x400 && eo <= 0x599 ) try
         {
           eo = Integer.parseInt( Integer.toHexString (eo) );
+        } catch (NumberFormatException ne)
+        {
+          eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
         } else
         {
           eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;

@@ -947,11 +947,17 @@ public class ActionHelper implements Cloneable
     if (rsp != null)
     if (ern >= 0x400 && ern <= 0x599)
     {
-      rsp.setStatus(Integer.parseInt(Integer.toHexString( ern )));
-    }
-    else
+      try
+      {
+        rsp.setStatus(Integer.parseInt(Integer.toHexString( ern )));
+      }
+      catch (NumberFormatException e)
+      {
+        rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+      }
+    } else
     {
-      rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+        rsp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
     }
 
     Map map = new HashMap();

@@ -54,9 +54,10 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     {
       Throwable ax = ex.getCause( );
       if (ax == null) { ax = ex ; }
-      int eo  = ax instanceof HongsCause ? ((HongsCause) ax).getErrno() : 0;
-      String er = ax.getLocalizedMessage();
       String ec ;
+      String er = ax.getLocalizedMessage();
+      int    eo = ax instanceof HongsCause
+              ? ( (HongsCause) ax ).getErrno() : 0;
 
       // 代号映射
         ec = Integer.toHexString( eo );

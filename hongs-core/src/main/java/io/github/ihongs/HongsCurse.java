@@ -44,21 +44,32 @@ public class HongsCurse {
      */
     public String getMessage()
     {
-        String codx = "Ex" + Integer.toHexString(code);
-        String desx = desc != null ? desc : "";
+        String codx, desx;
+
+        if (code < 0x1000) {
+            codx = "Er" + Integer.toHexString(code);
+        } else {
+            codx = "Ex" + Integer.toHexString(code);
+        }
         if (null != lang) {
             codx  = lang.replaceAll("[/\\\\]", ".")+"."+codx;
         }
-        if (null == desc) {
-            Throwable erro = this.that.getCause();
+
+        if (null != desc) {
+            desx  = desc;
+        } else {
+            Throwable erro = that.getCause();
             if (null != erro) {
-                if (  erro instanceof HongsCause) {
+                if ( erro instanceof HongsCause ) {
                     return erro.getMessage();
                 }
-                desx  = erro.getClass().getName()
+                desx = erro.getClass().getName( )
                      +" "+ erro.getMessage();
+            } else {
+                desx = "";
             }
         }
+
         return  codx +" "+ desx;
     }
 
@@ -83,8 +94,12 @@ public class HongsCurse {
             CoreLogger.error("ACTION_LANG is null in error or exception: " + that.getMessage());
         }
 
-        codx = "Ex"+Integer.toHexString(code);
-        desx = desc != null ? desc : "" /**/ ;
+        if (code < 0x1000) {
+            codx = "Er" + Integer.toHexString(code);
+        } else {
+            codx = "Ex" + Integer.toHexString(code);
+        }
+        desx = desc != null ? desc : new String(  );
         optx = opts != null ? opts : new String[]{};
         trns = CoreLocale.getInstance("defects").clone();
 
@@ -124,9 +139,10 @@ public class HongsCurse {
         if (trns.getProperty(dkey) != null) {
             desx = trns.translate(dkey, optx);
         } else {
-            Throwable cause = this.that.getCause( );
-            if (null != cause && cause instanceof HongsCause) {
-                return  cause.getLocalizedMessage();
+            Throwable cause = that.getCause();
+            if (cause != null
+            &&  cause instanceof HongsCause ) {
+                return cause.getLocalizedMessage();
             }
         }
 

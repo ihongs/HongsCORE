@@ -59,6 +59,11 @@ public class HongsException
     }
 
     @Override
+    public int getState() {
+        return that.getState();
+    }
+
+    @Override
     public int getErrno() {
         return that.getErrno();
     }

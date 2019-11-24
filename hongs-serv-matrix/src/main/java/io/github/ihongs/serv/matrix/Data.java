@@ -40,6 +40,15 @@ import org.apache.lucene.search.BooleanClause;
  * add,set,put,del  直接作用于数据索引, 不会产生数据变更日志;
  * save(String,Map) 仅供动作内后续修改, 不得用于对外模型方法.
  *
+ * 错误代码
+ * 取值区间: [0x1160,0x116f]
+ * Ex1160=表单配置文件不存在
+ * Ex1163=记录已被删除了
+ * Ex1164=等会儿, 不要急
+ * Ex1167=找不到恢复起源
+ * Ex1168=这已是最终记录
+ * Ex1169=资源不支持恢复
+ * 
  * @author Hongs
  */
 public class Data extends SearchEntity {
@@ -217,8 +226,8 @@ public class Data extends SearchEntity {
         }   while  ( false );
 
         if ( null == fields) {
-            throw new HongsExemption(404, "Data form conf '" + conf + "' is not exists")
-                .setLocalizedOptions(conf);
+            throw new HongsExemption(0x1160, "Data form '"+conf+"."+form+"' is not exists")
+                .setLocalizedOptions("matrix");
         }
 
         setFields(fields);
@@ -490,7 +499,8 @@ public class Data extends SearchEntity {
                 nd.put("user_id", uid);
             } else {
                 if (Synt.declare(nd.get("state"), 0 ) ==  0   ) {
-                    throw new HongsException(404, "记录已经删除了");
+                    throw new HongsException(0x1163, "Data item '"+id+"' is removed in "+getDbName())
+                        .setLocalizedContext("matrix");
                 }
             }
 
@@ -578,11 +588,13 @@ public class Data extends SearchEntity {
                     .select("ctime,state")
                     .getOne( );
                 if (! od.isEmpty()) {
-                    if (Synt.declare(od.get("state"), 0 ) ==  0   ) {
-                        throw new HongsException(404, "记录已经删除了");
+                    if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
+                        throw new HongsException(0x1163, "Data item '"+id+"' is removed in "+getDbName())
+                            .setLocalizedContext("matrix");
                     }
-                    if (Synt.declare(od.get("ctime"), 0L) >= ctime) {
-                        throw new HongsException(400, "等会儿, 不要急");
+                    if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
+                        throw new HongsException(0x1164, "Wait 1 second to put '"+id+"' in "+getDbName())
+                            .setLocalizedContext("matrix");
                     }
                 }
             } else {
@@ -591,11 +603,13 @@ public class Data extends SearchEntity {
                     .select("ctime,state,data")
                     .getOne( );
                 if (! od.isEmpty()) {
-                    if (Synt.declare(od.get("state"), 0 ) ==  0   ) {
-                        throw new HongsException(404, "记录已经删除了");
+                    if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
+                        throw new HongsException(0x1163, "Data item '"+id+"' is removed in "+getDbName())
+                            .setLocalizedContext("matrix");
                     }
-                    if (Synt.declare(od.get("ctime"), 0L) >= ctime) {
-                        throw new HongsException(400, "等会儿, 不要急");
+                    if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
+                        throw new HongsException(0x1164, "Wait 1 second to put '"+id+"' in "+getDbName())
+                            .setLocalizedContext("matrix");
                     }
 
                     // 用快照补全数据
@@ -689,14 +703,13 @@ public class Data extends SearchEntity {
             .getOne( );
         if (od.isEmpty()) {
              delDoc( id ); return 0; // 规避关系库无而搜索库有
-        //  throw new HongsException(0x1104, "找不到原始记录");
         }
-        if ( Synt.declare ( od.get("state"), 0  )  ==   0    ) {
+        if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
              delDoc( id ); return 0; // 删除是幂等的可重复调用
-        //  throw new HongsException(0x1100, "禁操作删除记录");
         }
-        if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
-            throw new HongsException(0x1100, "等会儿, 不要急");
+        if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
+            throw new HongsException(0x1164, "Wait 1 second to del '"+id+"' in "+getDbName())
+                .setLocalizedContext("matrix");
         }
 
         //** 保存到数据库 **/
@@ -742,7 +755,8 @@ public class Data extends SearchEntity {
     public int rev(String id, Map rd) throws HongsException {
         Table table = getTable();
         if (table == null) {
-            throw new HongsException(0x1100, "资源不支持恢复");
+            throw new HongsException(0x1169, "Data table for '"+getDbName()+"' is not exists")
+                .setLocalizedContext("matrix");
         }
 
         String   fid   = getFormId();
@@ -761,22 +775,26 @@ public class Data extends SearchEntity {
             .select("ctime")
             .getOne( );
         if (od.isEmpty()) {
-        //  throw new HongsException(0x1104, "找不到原始记录");
+        //  throw new HongsException(0x1167, "Can not find current '"+id+"' in "+getDbName())
+        //      .setLocalizedContext("matrix");
         } else
-        if ( Synt.declare ( od.get("ctime"), 0L )  >=  ctime ) {
-            throw new HongsException(0x1100, "等会儿, 不要急");
+        if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
+            throw new HongsException(0x1164, "Wait 1 second to del '"+id+"' in "+getDbName())
+                .setLocalizedContext("matrix");
         }
         Map nd = table.fetchCase()
             .filter( wher2, para2)
         //  .assort("ctime  DESC")
             .getOne( );
         if (nd.isEmpty()) {
-            throw new HongsException(0x1100, "找不到恢复起源");
+            throw new HongsException(0x1167, "Empty '"+id+"' at '"+ctime+"' in "+getDbName())
+                .setLocalizedContext("matrix");
         }
         // 删除时保留的是删除前的快照, 即使为最终记录仍然可以恢复
-        if ( Synt.declare ( nd.get("state"), 0  )  !=   0    ) {
-        if ( Synt.declare ( nd.get("etime"), 0L )  ==   0L   ) {
-            throw new HongsException(0x1100, "这已是最终记录");
+        if (Synt.declare(nd.get("state"), 0  ) !=  0   ) {
+        if (Synt.declare(nd.get("etime"), 0L ) ==  0L  ) {
+            throw new HongsException(0x1168, "Alive '"+id+"' at '"+ctime+"' in "+getDbName())
+                .setLocalizedContext("matrix");
         }}
 
         //** 保存到数据库 **/

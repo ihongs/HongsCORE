@@ -7,6 +7,8 @@ package io.github.ihongs;
 public interface HongsCause
 {
 
+    public int getState();
+
     public int getErrno();
 
     public String getError();

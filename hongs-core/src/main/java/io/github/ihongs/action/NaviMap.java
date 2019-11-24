@@ -657,7 +657,7 @@ public class NaviMap
       lang = CoreLocale.getInstance(name).clone();
     }
     catch (HongsExemption e) {
-      if  (e.getErrno( ) != 0x2a) {
+      if  (e.getErrno() != 0x82a) {
         throw e;
       }
       lang = new CoreLocale(null);

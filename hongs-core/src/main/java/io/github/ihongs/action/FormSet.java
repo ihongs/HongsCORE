@@ -442,7 +442,7 @@ public class FormSet
       return CoreLocale.getInstance(name);
     }
     catch (HongsExemption e) {
-      if  (e.getErrno( ) != 0x2a) {
+      if  (e.getErrno() != 0x82a) {
         throw e;
       }
       return new CoreLocale(null);

@@ -466,7 +466,7 @@ public final class Dict
                     lst.add( "" );
                 } else
                 if (']' != path.charAt(beg - 1)) { // 规避 a[b][c] 中的 ][
-                    throw new HongsExemption(0x158, "Syntax error at " + end + " in " + path);
+                    throw new HongsExemption(0x1158, "Syntax error at " + end + " in " + path);
                 }
                 beg  = end + 1;
                 fkh  = true;

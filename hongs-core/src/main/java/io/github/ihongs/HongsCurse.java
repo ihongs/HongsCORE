@@ -119,15 +119,15 @@ public class HongsCurse {
             trns.load(lang);
         }
         if (trns.getProperty(desx) != null) {
-            desx = trns.translate( desx, opts );
+            desx = trns.translate( desx, opts != null ? opts : new String[] {} );
         } else
         if (trns.getProperty(codx) != null) {
-            desx = trns.translate( codx, opts );
+            desx = trns.translate( codx, opts != null ? opts : new String[] {} );
         }
         if (code  <=  99  ) {
-            codx = trns.translate("fore.error", codx);
+            codx = trns.translate("fore.error" , codx);
         } else {
-            codx = trns.translate("core.error", codx);
+            codx = trns.translate("core.error" , codx);
         }
 
         return (codx +" "+ desx).trim( );

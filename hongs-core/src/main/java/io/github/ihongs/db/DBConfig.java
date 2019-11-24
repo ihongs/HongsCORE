@@ -105,7 +105,7 @@ public class DBConfig
         is = this.getClass().getClassLoader().getResourceAsStream(fn);
         if (  is  ==  null )
         {
-            throw new HongsExemption(0x2a,
+            throw new HongsExemption(0x82a,
                 "Can not find the config file '" + name + Cnst.DB_EXT + ".xml'.");
         }
     }

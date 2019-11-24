@@ -1,6 +1,5 @@
 package io.github.ihongs.jsp;
 
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
@@ -54,29 +53,17 @@ abstract public class Pagelet extends ActionDriver implements HttpJspPage
     {
       Throwable ax = ex.getCause( );
       if (ax == null) { ax = ex ; }
-      String ec ;
+
       String er = ax.getLocalizedMessage();
-      int    eo = ax instanceof HongsCause
-              ? ( (HongsCause) ax ).getErrno() : 0;
-
-      // 代号映射
-        ec = Integer.toString( eo, 16 );
-        ec = CoreConfig.getInstance("defects")
-                       .getProperty("Ex"+ ec );
-      if (null != ec && !ec.isEmpty( ))
+      int eo  = ax instanceof HongsCause ? ( (HongsCause) ax).getState() : 0;
+      if (eo <= 400 || eo > 600)
       {
-        eo = Integer.parseInt( ec, 10 );
+          eo  = HttpServletResponse.SC_INTERNAL_SERVER_ERROR ;
       }
 
-      // 响应状态
-      if (eo < 400 || eo > 599)
-      {
-        eo = HttpServletResponse.SC_INTERNAL_SERVER_ERROR;
-      }
-
-      req.setAttribute("javax.servlet.error.status_code" , eo);
-      req.setAttribute("javax.servlet.error.message"     , er);
-      req.setAttribute("javax.servlet.error.exception"   , ax);
+      req.setAttribute("javax.servlet.error.status_code", eo);
+      req.setAttribute("javax.servlet.error.message"    , er);
+      req.setAttribute("javax.servlet.error.exception"  , ax);
       req.setAttribute("javax.servlet.error.exception_type", ax.getClass().getName());
       rsp.sendError(eo, er);
     }

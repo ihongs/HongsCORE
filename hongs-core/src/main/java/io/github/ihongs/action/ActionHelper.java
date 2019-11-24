@@ -869,20 +869,20 @@ public class ActionHelper implements Cloneable
 
   /**
    * 输出异常信息
-   * @param exp
+   * @param ex
    */
-  public void fault(HongsCause exp)
+  public void fault(HongsCause ex)
   {
     HttpServletResponse rs = getResponse();
-    Throwable  ta = (Throwable)exp;
-    Throwable  te = ta.getCause( );
-    int ero = exp.getErrno();
+    Throwable ta = (Throwable) ex;
+    Throwable te = ta.getCause( );
+    int ero = ex.getState();
     String ern ;
     String err ;
     String msg ;
 
     // 错误消息
-      err = ta.getMessage( );
+      err = ta.getMessage();
       msg = ta.getLocalizedMessage();
     if (null != te)
     if (null == msg || msg.isEmpty())
@@ -892,15 +892,6 @@ public class ActionHelper implements Cloneable
     if (null == msg || msg.isEmpty())
     {
       msg = CoreLocale.getInstance().translate("core.error.unkwn");
-    }
-
-    // 代号映射
-      ern = Integer.toString(ero,16);
-      ern = CoreConfig.getInstance("defects" )
-                      .getProperty("Ex"+ ern );
-    if (null != ern && ern.isEmpty() == false)
-    {
-      ero = Integer.parseInt(ern,10);
     }
 
     // 外部错误

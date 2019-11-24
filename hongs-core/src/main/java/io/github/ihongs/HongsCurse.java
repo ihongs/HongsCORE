@@ -36,6 +36,23 @@ public class HongsCurse {
     }
 
     /**
+     * 接口代号
+     * @return
+     */
+    public int getState() {
+        if ( 600 > code ) {
+            return code ;
+        }
+        String     codx = "Ex"+ Integer.toString(code, 16 );
+        CoreConfig conf = CoreConfig.getInstance("defects");
+        if (null!= lang ) {
+            conf = conf.clone();
+            conf . load( lang );
+        }
+        return conf.getProperty(codx, code);
+    }
+
+    /**
      * 获取消息
      * @return
      */
@@ -114,9 +131,10 @@ public class HongsCurse {
          * 存在错误解释就按错误作翻译
          * 存在代号语句就按代号来翻译
          */
-        CoreLocale trns = CoreLocale.getInstance("defects").clone();
-        if (null  !=  lang) {
-            trns.load(lang);
+        CoreLocale trns = CoreLocale.getInstance("defects");
+        if (null!= lang) {
+            trns = trns.clone();
+            trns . load( lang );
         }
         if (trns.getProperty(desx) != null) {
             desx = trns.translate( desx, opts != null ? opts : new String[] {} );

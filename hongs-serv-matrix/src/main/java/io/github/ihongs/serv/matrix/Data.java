@@ -41,13 +41,12 @@ import org.apache.lucene.search.BooleanClause;
  * save(String,Map) 仅供动作内后续修改, 不得用于对外模型方法.
  *
  * 错误代码
- * 取值区间: [0x1160,0x116f]
- * Ex1160=表单配置文件不存在
- * Ex1163=记录已被删除了
- * Ex1164=等会儿, 不要急
- * Ex1167=找不到恢复起源
- * Ex1168=这已是最终记录
- * Ex1169=资源不支持恢复
+ * matrix.form.not.exists=表单配置文件不存在
+ * matrix.wait.one.second=等会儿, 不要急
+ * matrix.item.is.removed=记录已被删除了
+ * matrix.node.not.exists=找不到恢复起源
+ * matrix.node.is.current=这已是最终记录
+ * matrix.rev.unsupported=资源不支持恢复
  * 
  * @author Hongs
  */
@@ -499,7 +498,8 @@ public class Data extends SearchEntity {
                 nd.put("user_id", uid);
             } else {
                 if (Synt.declare(nd.get("state"), 0 ) ==  0   ) {
-                    throw new HongsException(0x1163, "Data item '"+id+"' is removed in "+getDbName())
+                    throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
+                        .setLocalizedContent("matrix.item.is.removed")
                         .setLocalizedContext("matrix");
                 }
             }
@@ -589,11 +589,13 @@ public class Data extends SearchEntity {
                     .getOne( );
                 if (! od.isEmpty()) {
                     if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
-                        throw new HongsException(0x1163, "Data item '"+id+"' is removed in "+getDbName())
+                        throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
+                            .setLocalizedContent("matrix.item.is.removed")
                             .setLocalizedContext("matrix");
                     }
                     if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-                        throw new HongsException(0x1164, "Wait 1 second to put '"+id+"' in "+getDbName())
+                        throw new HongsException(400, "Wait 1 second to put '"+id+"' in "+getDbName())
+                            .setLocalizedContent("matrix.wait.one.second")
                             .setLocalizedContext("matrix");
                     }
                 }
@@ -604,11 +606,13 @@ public class Data extends SearchEntity {
                     .getOne( );
                 if (! od.isEmpty()) {
                     if (Synt.declare(od.get("state"), 0  ) ==  0   ) {
-                        throw new HongsException(0x1163, "Data item '"+id+"' is removed in "+getDbName())
+                        throw new HongsException(404, "Data item '"+id+"' is removed in "+getDbName())
+                            .setLocalizedContent("matrix.item.is.removed")
                             .setLocalizedContext("matrix");
                     }
                     if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-                        throw new HongsException(0x1164, "Wait 1 second to put '"+id+"' in "+getDbName())
+                        throw new HongsException(400, "Wait 1 second to put '"+id+"' in "+getDbName())
+                            .setLocalizedContent("matrix.wait.one.second")
                             .setLocalizedContext("matrix");
                     }
 
@@ -708,7 +712,8 @@ public class Data extends SearchEntity {
              delDoc( id ); return 0; // 删除是幂等的可重复调用
         }
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(0x1164, "Wait 1 second to del '"+id+"' in "+getDbName())
+            throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
+                .setLocalizedContent("matrix.wait.one.second")
                 .setLocalizedContext("matrix");
         }
 
@@ -755,7 +760,8 @@ public class Data extends SearchEntity {
     public int rev(String id, Map rd) throws HongsException {
         Table table = getTable();
         if (table == null) {
-            throw new HongsException(0x1169, "Data table for '"+getDbName()+"' is not exists")
+            throw new HongsException(405, "Data table for '"+getDbName()+"' is not exists")
+                .setLocalizedContent("matrix.rev.unsupported")
                 .setLocalizedContext("matrix");
         }
 
@@ -775,11 +781,13 @@ public class Data extends SearchEntity {
             .select("ctime")
             .getOne( );
         if (od.isEmpty()) {
-        //  throw new HongsException(0x1167, "Can not find current '"+id+"' in "+getDbName())
+        //  throw new HongsException(404, "Can not find current '"+id+"' in "+getDbName())
+        //      .setLocalizedContent("matrix.wait.one.second")
         //      .setLocalizedContext("matrix");
         } else
         if (Synt.declare(od.get("ctime"), 0L ) >= ctime) {
-            throw new HongsException(0x1164, "Wait 1 second to del '"+id+"' in "+getDbName())
+            throw new HongsException(400, "Wait 1 second to del '"+id+"' in "+getDbName())
+                .setLocalizedContent("matrix.wait.one.second")
                 .setLocalizedContext("matrix");
         }
         Map nd = table.fetchCase()
@@ -787,13 +795,15 @@ public class Data extends SearchEntity {
         //  .assort("ctime  DESC")
             .getOne( );
         if (nd.isEmpty()) {
-            throw new HongsException(0x1167, "Empty '"+id+"' at '"+ctime+"' in "+getDbName())
+            throw new HongsException(404, "Empty '"+id+"' at '"+ctime+"' in "+getDbName())
+                .setLocalizedContent("matrix.node.not.exists")
                 .setLocalizedContext("matrix");
         }
         // 删除时保留的是删除前的快照, 即使为最终记录仍然可以恢复
         if (Synt.declare(nd.get("state"), 0  ) !=  0   ) {
         if (Synt.declare(nd.get("etime"), 0L ) ==  0L  ) {
-            throw new HongsException(0x1168, "Alive '"+id+"' at '"+ctime+"' in "+getDbName())
+            throw new HongsException(400, "Alive '"+id+"' at '"+ctime+"' in "+getDbName())
+                .setLocalizedContent("matrix.node.is.current")
                 .setLocalizedContext("matrix");
         }}
 

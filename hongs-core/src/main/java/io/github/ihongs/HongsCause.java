@@ -21,9 +21,13 @@ public interface HongsCause
 
     public String getLocalizedContext();
 
+    public String getLocalizedContent();
+
     public String[] getLocalizedOptions();
 
     public HongsCause setLocalizedContext(String    lang);
+
+    public HongsCause setLocalizedContent(String    lang);
 
     public HongsCause setLocalizedOptions(String... opts);
 

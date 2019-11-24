@@ -75,7 +75,7 @@ public class HongsExemption
 
     @Override
     public String toString() {
-        return this.getMessage();
+        return that.toString();
     }
 
     @Override
@@ -94,6 +94,11 @@ public class HongsExemption
     }
 
     @Override
+    public String getLocalizedContent() {
+        return that.getLocalizedContent();
+    }
+
+    @Override
     public String[] getLocalizedOptions() {
         return that.getLocalizedOptions();
     }
@@ -101,6 +106,12 @@ public class HongsExemption
     @Override
     public HongsExemption setLocalizedContext(String    lang) {
         that.setLocalizedContext(lang);
+        return this;
+    }
+
+    @Override
+    public HongsExemption setLocalizedContent(String    word) {
+        that.setLocalizedContent(word);
         return this;
     }
 

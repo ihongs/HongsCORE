@@ -4,35 +4,20 @@ package io.github.ihongs;
  * 异常本地化工具
  * @author Hongs
  */
-public class HongsCurse {
+public final class HongsCurse {
 
     private final       int code;
     private final    String desc;
     private final Throwable that;
 
     private String   lang;
+    private String   term;
     private String[] opts;
 
     HongsCurse( int errno, String error, Throwable cause ) {
         this.code = errno;
         this.desc = error;
         this.that = cause;
-    }
-
-    /**
-     * 获取代号
-     * @return
-     */
-    public int getErrno() {
-        return this.code;
-    }
-
-    /**
-     * 获取描述
-     * @return
-     */
-    public String getError() {
-        return this.desc;
     }
 
     /**
@@ -53,6 +38,32 @@ public class HongsCurse {
     }
 
     /**
+     * 获取代号
+     * @return
+     */
+    public int getErrno() {
+        return this.code;
+    }
+
+    /**
+     * 获取描述
+     * @return
+     */
+    public String getError() {
+        return this.desc;
+    }
+
+    /**
+     * 描述文本
+     * @return
+     */
+    @Override
+    public String toString()
+    {
+        return  getMessage();
+    }
+
+    /**
      * 获取消息
      * @return
      */
@@ -69,8 +80,12 @@ public class HongsCurse {
             codx  = "";
         }
 
+        // 优先错误描述
         if (null != desc) {
             desx  = desc;
+        } else
+        if (null != term) {
+            desx  = term;
         } else {
           Throwable erro = that.getCause();
         if (null != erro) {
@@ -102,6 +117,10 @@ public class HongsCurse {
             codx  = "";
         }
 
+        // 优先本地描述
+        if (null != term) {
+            desx  = term;
+        } else
         if (null != desc) {
             desx  = desc;
         } else {
@@ -110,7 +129,7 @@ public class HongsCurse {
             if (code < 2) {
                 return erro.getLocalizedMessage();
             } else {
-                desx = codx;
+                desx = erro.getLocalizedMessage();
             }
         } else {
             desx  = "";
@@ -142,7 +161,7 @@ public class HongsCurse {
         if (trns.getProperty(codx) != null) {
             desx = trns.translate( codx, opts != null ? opts : new String[] {} );
         }
-        if (code  <=  99  ) {
+        if (code < 600 ) {
             codx = trns.translate("fore.error" , codx);
         } else {
             codx = trns.translate("core.error" , codx);
@@ -152,7 +171,7 @@ public class HongsCurse {
     }
 
     /**
-     * 获取翻译章节(模块语言)
+     * 获取翻译配置
      * @return
      */
     public String   getLocalizedContext() {
@@ -160,7 +179,15 @@ public class HongsCurse {
     }
 
     /**
-     * 获取翻译选项(填充参数)
+     * 获取翻译短语
+     * @return
+     */
+    public String   getLocalizedContent() {
+        return this.term;
+    }
+
+    /**
+     * 获取翻译选项
      * @return
      */
     public String[] getLocalizedOptions() {
@@ -168,7 +195,7 @@ public class HongsCurse {
     }
 
     /**
-     * 设置翻译章节(模块语言)
+     * 设置翻译配置
      * @param lang
      */
     public void setLocalizedContext(String    lang) {
@@ -176,7 +203,15 @@ public class HongsCurse {
     }
 
     /**
-     * 设置翻译选项(填充参数)
+     * 设置翻译短语
+     * @param word
+     */
+    public void setLocalizedContent(String    word) {
+        this.term = word;
+    }
+
+    /**
+     * 设置翻译选项
      * @param opts
      */
     public void setLocalizedOptions(String... opts) {

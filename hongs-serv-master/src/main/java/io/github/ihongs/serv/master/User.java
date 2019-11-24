@@ -152,8 +152,8 @@ extends Model {
                 List list = Synt.asList(data.get( "roles" ));
                 AuthKit.cleanUserRoles (list, id);
 //              if ( list.isEmpty() ) {
-//                  throw new HongsException
-//                      .Notice("ex.master.user.role.error")
+//                  throw new HongsException(400)
+//                      .setLocalizedContent("master.user.role.error")
 //                      .setLocalizedContext("master");
 //              }
                 data.put("roles", list);
@@ -165,7 +165,8 @@ extends Model {
                 List list = Synt.asList(data.get( "depts" ));
                 AuthKit.cleanUserDepts (list, id);
                 if ( list.isEmpty() ) {
-                    throw new HongsException("ex.master.user.dept.error")
+                    throw new HongsException(400)
+                        .setLocalizedContent("master.user.dept.error")
                         .setLocalizedContext("master");
                 }
                 data.put("depts", list);
@@ -200,7 +201,8 @@ extends Model {
                 }
             }
 
-            throw new HongsException("ex.master.user.unit.error")
+            throw new HongsException(400)
+                .setLocalizedContent("master.user.unit.error")
                 .setLocalizedContext("master");
         }
     }

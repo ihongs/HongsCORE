@@ -935,11 +935,16 @@ public class ActionHelper implements Cloneable
         }
     }
 
+    Map ers = new HashMap();
+    ers.put("_module_", ex.getLocalizedContext());
+    ers.put("_nodule_", ex.getLocalizedContent());
+
     Map map = new HashMap();
     map.put( "ok" , false );
-    map.put("ern" , ern);
-    map.put("err" , err);
-    map.put("msg" , msg);
+    map.put("ern" , ern );
+    map.put("err" , err );
+    map.put("msg" , msg );
+    map.put("errs", ers );
     reply(map);
   }
 

@@ -22,8 +22,8 @@ import java.util.Properties;
  *
  * <h3>错误代码:</h3>
  * <pre>
- * 0x2a 无法找到配置文件
- * 0x2b 无法读取配置文件
+ * 0x82a 无法找到配置文件
+ * 0x82b 无法读取配置文件
  * </pre>
  *
  * @author Hongs
@@ -129,7 +129,7 @@ public class CoreConfig
     try {
         this.load(name);
     } catch (HongsExemption e) {
-        if  (e.getErrno( ) != 0x2a) {
+        if  (e.getErrno() != 0x82a) {
             throw e;
         }
     }

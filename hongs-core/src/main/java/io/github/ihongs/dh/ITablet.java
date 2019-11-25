@@ -6,7 +6,7 @@ import java.util.Map;
  * 字段参数
  * @author Hongs
  */
-public interface IVolume {
+public interface ITablet {
 
     public Map getFields();
 

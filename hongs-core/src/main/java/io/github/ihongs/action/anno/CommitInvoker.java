@@ -6,7 +6,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.dh.ITrnsct;
+import io.github.ihongs.dh.IReflux;
 import java.lang.annotation.Annotation;
 
 /**
@@ -25,14 +25,14 @@ public class CommitInvoker implements FilterInvoker {
 
         // 全局中标识为事务模式
         core = Core.getInstance( );
-        mode = core.got(Cnst.TRNSCT_MODE);
-        core.put(Cnst.TRNSCT_MODE , true);
+        mode = core.got(Cnst.REFLUX_MODE);
+        core.put(Cnst.REFLUX_MODE , true);
 
         try {
             // 开启
             for(Object o : core.values()) {
-                if (o instanceof ITrnsct) {
-                    ((ITrnsct) o).begin();
+                if (o instanceof IReflux) {
+                    ((IReflux) o).begin();
                 }
             }
 
@@ -41,15 +41,15 @@ public class CommitInvoker implements FilterInvoker {
 
                 // 提交
                 for(Object o : core.values().toArray()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).commit();
+                    if (o instanceof IReflux) {
+                        ((IReflux) o).commit();
                     }
                 }
             } catch (Throwable ex) {
                 // 回滚
                 for(Object o : core.values().toArray()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).revert();
+                    if (o instanceof IReflux) {
+                        ((IReflux) o).revert();
                     }
                 }
 
@@ -65,7 +65,7 @@ public class CommitInvoker implements FilterInvoker {
             }
         } finally {
             if (mode  != null) {
-                core.put(Cnst.TRNSCT_MODE , mode);
+                core.put(Cnst.REFLUX_MODE , mode);
             }
         }
     }
@@ -83,14 +83,14 @@ public class CommitInvoker implements FilterInvoker {
 
         // 全局中标识为事务模式
         core = Core.getInstance( );
-        mode = core.got(Cnst.TRNSCT_MODE);
-        core.put(Cnst.TRNSCT_MODE , true);
+        mode = core.got(Cnst.REFLUX_MODE);
+        core.put(Cnst.REFLUX_MODE , true);
 
         try {
             // 开启
             for(Object o : core.values()) {
-                if (o instanceof ITrnsct) {
-                    ((ITrnsct) o).begin();
+                if (o instanceof IReflux) {
+                    ((IReflux) o).begin();
                 }
             }
 
@@ -100,15 +100,15 @@ public class CommitInvoker implements FilterInvoker {
 
                 // 提交
                 for(Object o : core.values().toArray()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).commit();
+                    if (o instanceof IReflux) {
+                        ((IReflux) o).commit();
                     }
                 }
             } catch (Throwable ex) {
                 // 回滚
                 for(Object o : core.values().toArray()) {
-                    if (o instanceof ITrnsct) {
-                        ((ITrnsct) o).revert();
+                    if (o instanceof IReflux) {
+                        ((IReflux) o).revert();
                     }
                 }
 
@@ -124,7 +124,7 @@ public class CommitInvoker implements FilterInvoker {
             }
         } finally {
             if (mode  != null) {
-                core.put(Cnst.TRNSCT_MODE , mode);
+                core.put(Cnst.REFLUX_MODE , mode);
             }
         }
     }

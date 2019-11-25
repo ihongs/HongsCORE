@@ -8,7 +8,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.IEntity;
-import io.github.ihongs.dh.ITrnsct;
+import io.github.ihongs.dh.IReflux;
 import io.github.ihongs.dh.ModelCase;
 import io.github.ihongs.dh.lucene.field.*;
 import io.github.ihongs.dh.lucene.value.*;
@@ -72,11 +72,11 @@ import org.apache.lucene.queryparser.classic.QueryParser;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoCloseable {
+public class LuceneRecord extends ModelCase implements IEntity, IReflux, AutoCloseable {
 
     protected boolean OBJECT_MODE = false;
-    protected boolean TRNSCT_MODE = false;
-    protected final  boolean TRNSCT_BASE ;
+    protected boolean REFLUX_MODE = false;
+    protected final  boolean REFLUX_BASE ;
 
     private IndexSearcher finder  = null ;
     private IndexReader   reader  = null ;
@@ -104,10 +104,10 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         OBJECT_MODE = Synt.declare(
             Core.getInstance().got(Cnst.OBJECT_MODE),
             conf.getProperty("core.in.object.mode", false));
-        TRNSCT_MODE = Synt.declare(
-            Core.getInstance().got(Cnst.TRNSCT_MODE),
-            conf.getProperty("core.in.trnsct.mode", false));
-        TRNSCT_BASE = TRNSCT_MODE;
+        REFLUX_MODE = Synt.declare(
+            Core.getInstance().got(Cnst.REFLUX_MODE),
+            conf.getProperty("core.in.reflux.mode", false));
+        REFLUX_BASE = REFLUX_MODE;
     }
 
     /**
@@ -596,7 +596,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         } catch (IOException ex) {
             throw new HongsException(ex);
         }
-        if (!TRNSCT_MODE) {
+        if (!REFLUX_MODE) {
             commit();
         }
     }
@@ -608,7 +608,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         } catch (IOException ex) {
             throw new HongsException(ex);
         }
-        if (!TRNSCT_MODE) {
+        if (!REFLUX_MODE) {
             commit();
         }
     }
@@ -620,7 +620,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         } catch (IOException ex) {
             throw new HongsException(ex);
         }
-        if (!TRNSCT_MODE) {
+        if (!REFLUX_MODE) {
             commit();
         }
     }
@@ -1491,7 +1491,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
         if (writer != null ) {
         if (writer.isOpen()) {
             // 默认退出时提交
-            if (TRNSCT_MODE) {
+            if (REFLUX_MODE) {
                 try {
                 try {
                     commit();
@@ -1533,7 +1533,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void begin() {
-        TRNSCT_MODE = true;
+        REFLUX_MODE = true;
     }
 
     /**
@@ -1541,7 +1541,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void commit() {
-        TRNSCT_MODE = TRNSCT_BASE;
+        REFLUX_MODE = REFLUX_BASE;
         if (writer == null) {
             return;
         }
@@ -1557,7 +1557,7 @@ public class LuceneRecord extends ModelCase implements IEntity, ITrnsct, AutoClo
      */
     @Override
     public void revert() {
-        TRNSCT_MODE = TRNSCT_BASE;
+        REFLUX_MODE = REFLUX_BASE;
         if (writer == null) {
             return;
         }

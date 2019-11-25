@@ -375,7 +375,7 @@ function hsFormFillPick(box, v, n) {
             });
         }
 
-        if (!jQuery.isEmptyObject(v)) {
+        if (! jQuery.isEmptyObject(v) ) {
             for(var val in v) {
                 var arr  = v[val];
                 var txt  = arr[0];
@@ -403,9 +403,13 @@ function hsFormFillPick(box, v, n) {
                 var box = evt.data[1];
                 var opt = jQuery( this ).closest( "li" );
                 var val = opt.find("input:hidden").val();
-                var key = box.attr("data-vk" ) || "id"  ;
+                var key = box.attr("data-vk" )||( "id" );
                 var url = box.attr("data-href"  );
                 var rel = box.attr("data-target");
+                if (url === "-" || rel === "-"
+                ||  evt.isDefaultPrevented() ) {
+                    return; // 可阻止默认行为
+                }
                 if (url) {
                     url = hsSetParam ( url , key , val );
                     if (! rel) {
@@ -415,14 +419,14 @@ function hsFormFillPick(box, v, n) {
                            .hsOpen(url);
                     }
                 } else {
-                    if (! rol) {
+                    if (! rol && ! mul) {
                         btn.click (   );
                     }
                 }
             });
         }
 
-        if (!jQuery.isEmptyObject(v)) {
+        if (! jQuery.isEmptyObject(v) ) {
             if (! mul) btn.hide();
         } else {
             if (! rol) btn.show();
@@ -430,17 +434,15 @@ function hsFormFillPick(box, v, n) {
 
         // 按钮及图标样式
         var cls = [];
-        if (! rol) {
-            cls[0] = "btn-info";
-            cls[1] = box.attr("data-href")
-                   ? "glyphicon-share"
-                   : "glyphicon-check";
+        if (box.attr('data-href')) {
+            cls[0] = rol ? "btn-link" : "btn-info";
+            cls[1] = rol ? "glyphicon-link" : "glyphicon-share";
         } else {
-            cls[0] = box.attr("data-href")
-                   ? "btn-link"
-                   : "btn-text";
-            cls[1] = "glyphicon-link" ;
+            cls[0] = rol ? "btn-text" : "btn-info";
+            cls[0] = rol ? "glyphicon-link" : "glyphicon-check";
         }
+        cls[0] = box.attr("data-item-class") || cls[0];
+        cls[1] = box.attr("data-icon-class") || cls[1];
 
         box.empty();
         for(var val in v) {

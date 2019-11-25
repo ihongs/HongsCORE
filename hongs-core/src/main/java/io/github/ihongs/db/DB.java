@@ -651,7 +651,7 @@ public class DB
    * 获取指定数据库对象
    * <b>注意:</b>
    * <p>
-   * 会根据当前运行环境自动设置 OBJECT_MODE,TRNSCT_MODE;
+   * 会根据当前运行环境自动设置 OBJECT_MODE,REFLUX_MODE;
    * 数据库配置中有指定 dbClass, 请务必添加 getInstance:
    * </p>
    * <pre>

@@ -130,7 +130,7 @@ public final class Cnst {
 
     public static final String OBJECT_MODE = "__OBJECT_MODE__"; // 对象模式
 
-    public static final String TRNSCT_MODE = "__TRNSCT_MODE__"; // 事务模式
+    public static final String REFLUX_MODE = "__REFLUX_MODE__"; // 事务模式
 
     public static final String UPDATE_MODE = "__UPDATE_MODE__"; // 增补模式
 

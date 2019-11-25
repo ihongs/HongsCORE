@@ -146,7 +146,7 @@ public class SearchEntity extends LuceneRecord {
     public void close( ) {
         super . close( );
 
-        if (TRNSCT_MODE) {
+        if (REFLUX_MODE) {
             try {
             try {
                 commit();
@@ -222,7 +222,7 @@ public class SearchEntity extends LuceneRecord {
     throws HongsException {
         String id = doc.getField(Cnst.ID_KEY).stringValue();
         WRITES.put(id, doc );
-        if (!TRNSCT_MODE) {
+        if (!REFLUX_MODE) {
             commit();
         }
     }
@@ -231,7 +231,7 @@ public class SearchEntity extends LuceneRecord {
     public void setDoc(String id, Document doc)
     throws HongsException {
         WRITES.put(id, doc );
-        if (!TRNSCT_MODE) {
+        if (!REFLUX_MODE) {
             commit();
         }
     }
@@ -240,7 +240,7 @@ public class SearchEntity extends LuceneRecord {
     public void delDoc(String id)
     throws HongsException {
         WRITES.put(id, null);
-        if (!TRNSCT_MODE) {
+        if (!REFLUX_MODE) {
             commit();
         }
     }

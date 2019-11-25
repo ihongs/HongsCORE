@@ -6,7 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
-import io.github.ihongs.dh.ITrnsct;
+import io.github.ihongs.dh.IReflux;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.sql.Connection;
@@ -28,7 +28,7 @@ import java.util.Map;
  * @author Hongs
  */
 abstract public class Link
-  implements ITrnsct, AutoCloseable
+  implements IReflux, AutoCloseable
 {
 
   /**
@@ -39,12 +39,12 @@ abstract public class Link
   /**
    * 是否为事务模式(即不会自动提交)
    */
-  protected boolean TRNSCT_MODE;
+  protected boolean REFLUX_MODE;
 
   /**
    * 初始的事务模式
    */
-  private final boolean TRNSCT_BASE;
+  private final boolean REFLUX_BASE;
 
   /**
    * 库名
@@ -69,13 +69,13 @@ abstract public class Link
     }
 
     // 是否要开启事务
-    Object tr  = Core.getInstance().got(Cnst.TRNSCT_MODE);
+    Object tr  = Core.getInstance().got(Cnst.REFLUX_MODE);
     if ( ( tr != null  &&  Synt.declare( tr , false  )  )
-    ||     CoreConfig.getInstance().getProperty("core.in.trnsct.mode", false)) {
-        TRNSCT_MODE = true;
+    ||     CoreConfig.getInstance().getProperty("core.in.reflux.mode", false)) {
+        REFLUX_MODE = true;
     }
 
-    TRNSCT_BASE = TRNSCT_MODE;
+    REFLUX_BASE = REFLUX_MODE;
   }
 
   /**
@@ -146,8 +146,8 @@ abstract public class Link
     this.open(); // 先连接数据库
 
     try {
-        if (this.connection.getAutoCommit() == this.TRNSCT_MODE) {
-            this.connection.setAutoCommit(  !  this.TRNSCT_MODE);
+        if (this.connection.getAutoCommit() == this.REFLUX_MODE) {
+            this.connection.setAutoCommit(  !  this.REFLUX_MODE);
         }
     } catch (SQLException ex) {
         throw new HongsException(0x102a, ex);
@@ -160,7 +160,7 @@ abstract public class Link
   @Override
   public void begin( )
   {
-    TRNSCT_MODE = true;
+    REFLUX_MODE = true;
     try {
         if (connection != null
         && !connection.isClosed()) {
@@ -177,7 +177,7 @@ abstract public class Link
   @Override
   public void commit()
   {
-    TRNSCT_MODE = TRNSCT_BASE;
+    REFLUX_MODE = REFLUX_BASE;
     try {
         if (connection != null
         && !connection.isClosed()
@@ -195,7 +195,7 @@ abstract public class Link
   @Override
   public void revert()
   {
-    TRNSCT_MODE = TRNSCT_BASE;
+    REFLUX_MODE = REFLUX_BASE;
     try {
         if (connection != null
         && !connection.isClosed()

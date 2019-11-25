@@ -214,8 +214,8 @@ abstract public class ModelGate implements IActing, IAction {
         Map     item;
         do {
             // 先从表单取名字
-            if ( ett instanceof IVolume ) {
-                item  = (( IVolume ) ett).getFields();
+            if ( ett instanceof ITablet ) {
+                item  = (( ITablet ) ett).getFields();
             } else {
                 item  = getForm(mod, ent);
             }

@@ -19,7 +19,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-public class ModelCase implements IVolume {
+public class ModelCase implements ITablet {
 
     private Map _fields = null;
     private Map _params = null;

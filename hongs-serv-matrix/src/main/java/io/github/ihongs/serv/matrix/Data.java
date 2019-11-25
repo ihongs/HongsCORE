@@ -85,7 +85,7 @@ public class Data extends SearchEntity {
     public static Data getInstance(String conf, String form) {
         Data   inst;
         Core   core = Core.getInstance();
-        String name = Data.class.getName() +":"+ conf +":"+ form;
+        String name = Data.class.getName() +":"+ conf +"."+ form;
         if (core.containsKey(name)) {
             inst = (Data) core.got(name);
         } else {

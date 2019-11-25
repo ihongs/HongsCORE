@@ -4,7 +4,6 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreRoster;
 import io.github.ihongs.CoreRoster.Mathod;
-import io.github.ihongs.HongsCurse;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.anno.Action;

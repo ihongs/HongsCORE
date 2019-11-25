@@ -424,7 +424,7 @@ HsForm.prototype = {
                 var doc = frame[0].contentDocument || frame[0].contentWindow.document;
                 if (doc.location.href==="about:blank") return ;
                 var rst = doc.body.innerHTML.replace( /(^<PRE.*?>|<\/PRE>$)/igm, "" );
-                delete that._sending;
+                delete that._waiting;
                 that.saveBack( rst );
             } );
         }
@@ -443,7 +443,7 @@ HsForm.prototype = {
             "context"   : this,
             "trigger"   : this.formBox,
             "complete"  : function(rst) {
-                delete this._sending;
+                delete this._waiting;
                 this.saveBack( rst );
             }
         } );

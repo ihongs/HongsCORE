@@ -1227,16 +1227,6 @@ public class Data extends SearchEntity {
         }
     }
 
-    @Override
-    protected Set<String> getWdCols( ) {
-        Map fs  = (Map) getFields().get("word");
-        if (fs != null) {
-            return Synt.setOf ("word");
-        } else {
-            return getWordable( /**/ );
-        }
-    }
-
     /**
      * 增加搜索和命名未明确指定时的后备类型
      * @param t
@@ -1251,6 +1241,20 @@ public class Data extends SearchEntity {
             return Synt.setOf("string", "search", "text");
         } else {
             return super.getCaseTypes(t);
+        }
+    }
+
+    /**
+     * 存在 word 字段则为 word, 否则调 getWordable
+     * @return
+     */
+    @Override
+    public Set<String> getRschable() {
+        Map fs  = (Map) getFields().get("word");
+        if (fs != null) {
+            return Synt.setOf ("word");
+        } else {
+            return getWordable( /**/ );
         }
     }
 

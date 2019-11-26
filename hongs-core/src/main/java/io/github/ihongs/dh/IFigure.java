@@ -19,8 +19,4 @@ public interface IFigure {
 
     public Set<String> getFindable();
 
-    public Set<String> getSrchable();
-
-    public Set<String> getRankable();
-
 }

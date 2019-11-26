@@ -275,7 +275,6 @@ public class JFigure implements IFigure {
      * 获取可搜索的字段
      * @return
      */
-    @Override
     public Set<String> getSrchable() {
         if (null != _wd_fns) {
             return  _wd_fns;
@@ -288,7 +287,6 @@ public class JFigure implements IFigure {
      * 获取可比对的字段 (用于区间查询)
      * @return
      */
-    @Override
     public Set<String> getRankable() {
         if (null != _rk_fns) {
             return  _rk_fns;

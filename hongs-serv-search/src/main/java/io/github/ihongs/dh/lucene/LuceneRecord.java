@@ -8,8 +8,8 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.IEntity;
+import io.github.ihongs.dh.JFigure;
 import io.github.ihongs.dh.IReflux;
-import io.github.ihongs.dh.ModelCase;
 import io.github.ihongs.dh.lucene.field.*;
 import io.github.ihongs.dh.lucene.value.*;
 import io.github.ihongs.dh.lucene.query.*;
@@ -72,7 +72,7 @@ import org.apache.lucene.queryparser.classic.QueryParser;
  *
  * @author Hongs
  */
-public class LuceneRecord extends ModelCase implements IEntity, IReflux, AutoCloseable {
+public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoCloseable {
 
     protected boolean OBJECT_MODE = false;
     protected boolean REFLUX_MODE = false;

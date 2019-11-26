@@ -4,17 +4,15 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.anno.Action;
-import io.github.ihongs.dh.IActing;
-import io.github.ihongs.dh.IAction;
 import io.github.ihongs.dh.IEntity;
-import io.github.ihongs.dh.ModelGate;
+import io.github.ihongs.dh.JAction;
 
 /**
  * Lucene 模型动作
  * @author Hongs
  */
 @Action()
-public class LuceneAction extends ModelGate implements IAction, IActing {
+public class LuceneAction extends JAction {
 
     /**
      * 获取模型对象

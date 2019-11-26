@@ -12,14 +12,15 @@ import java.util.Set;
  * 表单模型通用配置
  *
  * 对表单中 @ 区域的 xxxxable 配置项:
- * 其取值为 @ 表示当前全部字段都可用,
- * 其取值为 $ 将检查字段内的对应设置,
+ * 其取值为 @all 表示当前全部字段都可用,
+ * 其取值为 @set 将检查字段内的对应设置,
+ * 其取值为 @not 则无此字段, 空串也一样;
  * 亦可直接指定一个字段列表,
  * 默认不作设置按类型来判别.
  *
  * @author Hongs
  */
-public class ModelCase implements ITablet {
+public class JFigure implements IFigure {
 
     private Map _fields = null;
     private Map _params = null;
@@ -190,7 +191,7 @@ public class ModelCase implements ITablet {
         }
 
         // 有设的字段, 仅接受有设置 xable 且不为 false
-        if ("$".equals(ab)) {
+        if ("@set".equals(ab)) {
             fns = new LinkedHashSet();
             for(Map.Entry<String, Map> et:fields.entrySet()) {
                 Map field = et.getValue();
@@ -206,7 +207,7 @@ public class ModelCase implements ITablet {
         }
 
         // 所有的字段, 除非明确声明 xable 且值为 false
-        if ("@".equals(ab)) {
+        if ("@all".equals(ab)) {
             fns = new LinkedHashSet();
             for(Map.Entry<String, Map> et:fields.entrySet()) {
                 Map field = et.getValue();
@@ -221,14 +222,21 @@ public class ModelCase implements ITablet {
             return  fns;
         }
 
+        // 关闭此属性
+        if ("@not".equals(ab)) {
+            fns = new LinkedHashSet();
+            return  fns;
+        }
+
         // 指定的字段
-        return Synt . toSet(ab);
+        return Synt.toSet(ab);
     }
 
     /**
      * 获取可列举的字段
      * @return
      */
+    @Override
     public Set<String> getListable() {
         if (null != _rb_fns) {
             return  _rb_fns;
@@ -241,6 +249,7 @@ public class ModelCase implements ITablet {
      * 获取可排序的字段
      * @return
      */
+    @Override
     public Set<String> getSortable() {
         if (null != _ob_fns) {
             return  _ob_fns;
@@ -253,6 +262,7 @@ public class ModelCase implements ITablet {
      * 获取可过滤的字段
      * @return
      */
+    @Override
     public Set<String> getFindable() {
         if (null != _wh_fns) {
             return  _wh_fns;
@@ -265,6 +275,7 @@ public class ModelCase implements ITablet {
      * 获取可搜索的字段
      * @return
      */
+    @Override
     public Set<String> getSrchable() {
         if (null != _wd_fns) {
             return  _wd_fns;
@@ -277,6 +288,7 @@ public class ModelCase implements ITablet {
      * 获取可比对的字段 (用于区间查询)
      * @return
      */
+    @Override
     public Set<String> getRankable() {
         if (null != _rk_fns) {
             return  _rk_fns;

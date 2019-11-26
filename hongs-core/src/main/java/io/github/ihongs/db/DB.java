@@ -62,7 +62,8 @@ import java.lang.reflect.InvocationTargetException;
  * 0x104e  执行更新语句失败
  * 0x104f  执行删除语句失败
  *
- * 0x1051  参数的个数与语句中的插入标识数不符
+ * 0x1051  语句参数个数不符
+ * 0x1052  语句条件不能为空
  * </pre>
  *
  * @author Hongs

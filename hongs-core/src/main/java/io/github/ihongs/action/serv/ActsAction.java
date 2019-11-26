@@ -63,31 +63,29 @@ public class ActsAction
     }
 
     // 去掉根和扩展名
-    act = act.substring(1);
     int pos = act.lastIndexOf('.');
-    if (pos != -1)
-        act = act.substring(0,pos);
+    if (pos != -1) {
+        act = act.substring(1,pos);
+    } else {
+        act = act.substring(1);
+    }
 
     // 获取并执行动作
     try
     {
       new ActionRunner(helper,act).doAction();
     }
-    catch (  ClassCastException e)
+    catch (  HongsException e)
     {
-      helper.fault(new HongsException(400, e)); // 转不了按非法请求来处理
+      helper.fault(e);
     }
-    catch (NullPointerException e)
+    catch (  HongsExemption e)
     {
-      helper.fault(new HongsException(500, e)); // 空指针按内部错误来处理
+      helper.fault(e);
     }
-    catch (HongsException ex)
+    catch (RuntimeException e)
     {
-      helper.fault(ex);
-    }
-    catch (HongsExemption ex)
-    {
-      helper.fault(ex);
+      helper.fault(new HongsException(500, e));
     }
   }
 

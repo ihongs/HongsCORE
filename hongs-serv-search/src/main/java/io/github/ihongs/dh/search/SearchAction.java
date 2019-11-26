@@ -8,10 +8,8 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.Preset;
 import io.github.ihongs.action.anno.Select;
-import io.github.ihongs.dh.IActing;
-import io.github.ihongs.dh.IAction;
 import io.github.ihongs.dh.IEntity;
-import io.github.ihongs.dh.ModelGate;
+import io.github.ihongs.dh.JAction;
 import io.github.ihongs.util.Synt;
 
 import java.util.ArrayList;
@@ -25,7 +23,7 @@ import java.util.regex.Pattern;
  * @author Hongs
  */
 @Action()
-public class SearchAction extends ModelGate implements IAction, IActing {
+public class SearchAction extends JAction {
 
     @Override
     public IEntity getEntity(ActionHelper helper)

@@ -28,64 +28,12 @@ import java.util.Set;
 @Cmdlet("matrix.data")
 public class DataCmdlet {
 
-    /**
-     * 数据实体工厂类,
-     * 供扩展实体时用.
-     */
-    public static class DataFactor {
-        public Data getInstance(String conf, String form) {
-        return Data.getInstance(       conf,        form);
-        }
-        public Set<String> getAllPaths() {
-            Set<String> ents = new LinkedHashSet();
-
-            // 提取所有表单记录
-            try {
-                // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
-                Loop lo = DB
-                    .getInstance("matrix")
-                    .getTable   ( "form" )
-                    .fetchCase  ( )
-                    .filter("`state` > 0")
-                    .filter("`unit_id` != '-'")
-                    .select("`id`")
-                    .select();
-                for(Map ro : lo ) {
-                    String id = ro.get("id").toString();
-                    ents.add("centra/data/" +id+"."+id);
-                }
-            } catch (HongsException ex) {
-                throw ex.toExemption( );
-            }
-
-            // 增加额外定制的表
-            Set<String> incl = Synt.toSet(
-                CoreConfig.getInstance("matrix")
-                          .getProperty("core.matrix.uproot.include")
-            );
-            if (incl != null && ! incl.isEmpty()) {
-                ents.   addAll(incl);
-            }
-
-            // 排除特殊处理的表
-            Set<String> excl = Synt.toSet(
-                CoreConfig.getInstance("matrix")
-                          .getProperty("core.matrix.uproot.exclude")
-            );
-            if (excl != null && ! excl.isEmpty()) {
-                ents.removeAll(excl);
-            }
-
-            return ents;
-        }
-    }
-
     @Cmdlet("revert")
     public static void revert(String[] args)
     throws HongsException, InterruptedException {
-        revert(args, new DataFactor());
+        revert(args, new Inst());
     }
-    public static void revert(String[] args, DataFactor df)
+    public static void revert(String[] args, Inst df)
     throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
@@ -201,9 +149,9 @@ public class DataCmdlet {
     @Cmdlet("import")
     public static void impart(String[] args)
     throws HongsException, InterruptedException {
-        impart(args, new DataFactor());
+        impart(args, new Inst());
     }
-    public static void impart(String[] args, DataFactor df)
+    public static void impart(String[] args, Inst df)
     throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
@@ -249,9 +197,9 @@ public class DataCmdlet {
     @Cmdlet("update")
     public static void update(String[] args)
     throws HongsException, InterruptedException {
-        update(args, new DataFactor());
+        update(args, new Inst());
     }
-    public static void update(String[] args, DataFactor df)
+    public static void update(String[] args, Inst df)
     throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
@@ -302,9 +250,9 @@ public class DataCmdlet {
     @Cmdlet("delete")
     public static void delete(String[] args)
     throws HongsException, InterruptedException {
-        delete(args, new DataFactor());
+        delete(args, new Inst());
     }
-    public static void delete(String[] args, DataFactor df)
+    public static void delete(String[] args, Inst df)
     throws HongsException, InterruptedException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
@@ -355,9 +303,9 @@ public class DataCmdlet {
     @Cmdlet("search")
     public static void search(String[] args)
     throws HongsException {
-        search(args, new DataFactor());
+        search(args, new Inst());
     }
-    public static void search(String[] args, DataFactor df)
+    public static void search(String[] args, Inst df)
     throws HongsException {
         Map opts = CmdletHelper.getOpts(args, new String[] {
             "conf=s",
@@ -391,9 +339,9 @@ public class DataCmdlet {
     @Cmdlet("uproot")
     public static void uproot(String[] args)
     throws HongsException {
-        uproot(args, new DataFactor());
+        uproot(args, new Inst());
     }
-    public static void uproot(String[] args, DataFactor df)
+    public static void uproot(String[] args, Inst df)
     throws HongsException {
         Map opts = CmdletHelper.getOpts(
             args ,
@@ -413,11 +361,13 @@ public class DataCmdlet {
         Set<String> ents ;
 
         // 获取路径
-        if (conf != null && ! conf.isEmpty()
-        &&  form != null && ! form.isEmpty()) {
-            ents = Synt.setOf(conf+"."+form);
-        } else {
-            ents = df.getAllPaths();
+        if (conf == null || conf.isEmpty()
+        ||  form == null || form.isEmpty()) {
+            ents  = df.getAllPaths();
+        if (ents == null || ents.isEmpty()) {
+            return;
+        }}  else  {
+            ents  = Synt.setOf(conf + "." + form);
         }
 
         // 批量更新
@@ -425,9 +375,9 @@ public class DataCmdlet {
             try {
                 for(String n : ents) {
                     int    p = n.lastIndexOf(".");
-                    String c = n.substring (0, p);
-                    String f = n.substring (1+ p);
-                    uproot( df.getInstance (c, f), uid, uids);
+                    String c = n.substring(0 , p);
+                    String f = n.substring(1 + p);
+                    uproot (df.getInstance(c , f), uid, uids);
                 }
             } catch (HongsException ex) {
                 throw ex.toExemption( );
@@ -442,7 +392,7 @@ public class DataCmdlet {
      * @throws HongsException
      */
     public static void uproot(String uid, Set<String> uids) throws HongsException {
-        Set<String> ents = new DataFactor( ).getAllPaths( );
+        Set<String> ents = new Inst( ).getAllPaths( );
         for(String n : ents) {
             int    p = n.lastIndexOf(".");
             String c = n.substring (0, p);
@@ -540,6 +490,61 @@ public class DataCmdlet {
         } else {
             return ActionHelper.parseQuery(text);
         }
+    }
+
+    /**
+     * 数据实体工厂类,
+     * 供扩展实体时用.
+     */
+    public static class Inst {
+
+        public Data getInstance(String conf, String form) throws HongsException {
+            return  Data . getInstance(conf, form);
+        }
+
+        public Set<String> getAllPaths() {
+            Set<String> ents = new LinkedHashSet();
+
+            // 提取所有表单记录
+            try {
+                // unit_id 为 - 表示这是一个内置关联项, 这样的无需处理
+                Loop lo = DB
+                    .getInstance("matrix")
+                    .getTable   ( "form" )
+                    .fetchCase  ( )
+                    .filter("`state` > 0")
+                    .filter("`unit_id` != '-'")
+                    .select("`id`")
+                    .select();
+                for(Map ro : lo ) {
+                    String id = ro.get("id").toString();
+                    ents.add("centra/data/" +id+"."+id);
+                }
+            } catch (HongsException ex) {
+                throw ex.toExemption( );
+            }
+
+            // 增加额外定制的表
+            Set<String> incl = Synt.toSet(
+                CoreConfig.getInstance("matrix")
+                          .getProperty("core.matrix.uproot.include")
+            );
+            if (incl != null && ! incl.isEmpty()) {
+                ents.   addAll(incl);
+            }
+
+            // 排除特殊处理的表
+            Set<String> excl = Synt.toSet(
+                CoreConfig.getInstance("matrix")
+                          .getProperty("core.matrix.uproot.exclude")
+            );
+            if (excl != null && ! excl.isEmpty()) {
+                ents.removeAll(excl);
+            }
+
+            return ents;
+        }
+
     }
 
 }

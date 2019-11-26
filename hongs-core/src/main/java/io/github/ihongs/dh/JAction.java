@@ -24,7 +24,7 @@ import java.util.Set;
  *
  * @author Hongs
  */
-abstract public class ModelGate implements IActing, IAction {
+abstract public class JAction implements IActing, IAction {
 
     @Override
     public void acting(ActionHelper helper, ActionRunner runner) throws HongsException {
@@ -214,8 +214,8 @@ abstract public class ModelGate implements IActing, IAction {
         Map     item;
         do {
             // 先从表单取名字
-            if ( ett instanceof ITablet ) {
-                item  = (( ITablet ) ett).getFields();
+            if ( ett instanceof IFigure ) {
+                item  = (( IFigure ) ett).getFields();
             } else {
                 item  = getForm(mod, ent);
             }

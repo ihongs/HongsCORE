@@ -4,7 +4,7 @@
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.FormSet"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
-<%@page import="io.github.ihongs.dh.ModelCase"%>
+<%@page import="io.github.ihongs.dh.JFigure"%>
 <%@page import="io.github.ihongs.util.Synt"%>
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
@@ -37,7 +37,7 @@
         return fs;
     }
 
-    private static class Sample extends ModelCase {
+    private static class Sample extends JFigure {
         public Sample(Map fields) {
             setFields(/**/fields);
         }

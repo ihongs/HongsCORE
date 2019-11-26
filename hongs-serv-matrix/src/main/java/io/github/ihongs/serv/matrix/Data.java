@@ -17,6 +17,7 @@ import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.HashMap;
@@ -36,18 +37,16 @@ import org.apache.lucene.search.BooleanClause;
 /**
  * 数据存储模型
  *
- * 注意:
- * add,set,put,del  直接作用于数据索引, 不会产生数据变更日志;
- * save(String,Map) 仅供动作内后续修改, 不得用于对外模型方法.
- *
- * 错误代码
+ * <pre>
+ * 错误代码:
  * matrix.form.not.exists=表单配置文件不存在
  * matrix.wait.one.second=等会儿, 不要急
  * matrix.item.is.removed=记录已被删除了
  * matrix.node.not.exists=找不到恢复起源
  * matrix.node.is.current=这已是最终记录
  * matrix.rev.unsupported=资源不支持恢复
- * 
+ * </pre>
+ *
  * @author Hongs
  */
 public class Data extends SearchEntity {
@@ -77,15 +76,72 @@ public class Data extends SearchEntity {
 
     /**
      * 获取实例
-     * 生命周期将交由 Core 维护
+     *
+     * <pre>
+     * 配置如指定 db-class 则调用类的:
+     * getInstance(conf, form)
+     * getInstance()
+     * new  Xxxx  ()
+     * 此类必须是 Data 的子类.
+     * 存在以上任一方法即返回,
+     * 首个需自行维护生命周期,
+     * 后两个交由 Core 作存取.
+     * </pre>
+     *
+     * <pre>
+     * 错误代码:
+     * 0x10e8  配置文件不存在
+     * 0x10ea  表单信息不存在
+     * 0x825   找不到对应的类
+     * 0x826   构建方法不可用
+     * 0x827   构建实例不成功
+     * </pre>
+     *
      * @param conf
      * @param form
      * @return
+     * @throws HongsException 表单获取失败
+     * @throws HongsExemption 实例构建失败
+     * @throws ClassCastException 不是 Data 的子类
      */
-    public static Data getInstance(String conf, String form) {
+    public static Data getInstance(String conf , String form) throws HongsException {
+        // 外部指定
+        Map    dict = FormSet.getInstance(conf).getForm(form);
+        String name = ( String ) Dict.get(dict, null, "@", "db-class");
+        if (name != null && !name.isEmpty() && !name.equals(Data.class.getName( ))) {
+            Class klass ;
+            try {
+                  klass = Class.forName (name);
+            } catch (ClassNotFoundException e) {
+                throw new HongsExemption(0x825,"Can not find class by name '"+name+"'.");
+            }
+
+            try {
+                return (Data) klass
+                    .getMethod("getInstance", new Class [] {String.class, String.class})
+                    .invoke   (    null     , new Object[] {  conf      ,   form      });
+            } catch (NoSuchMethodException ex) {
+                return (Data) Core.getInstance(klass);
+            } catch (InvocationTargetException ex) {
+                Throwable ta = ex.getCause(  );
+                // 调用层级过多, 最好直接抛出
+                if (ta instanceof StackOverflowError) {
+                    throw (StackOverflowError) ta;
+                }
+                throw new HongsExemption(0x827,"Can not call '"+name+".getInstance'",ta);
+            } catch ( IllegalArgumentException ex) {
+                throw new HongsExemption(0x827,"Can not call '"+name+".getInstance'",ex);
+            } catch (   IllegalAccessException ex) {
+                throw new HongsExemption(0x827,"Can not call '"+name+".getInstance'",ex);
+            } catch (        SecurityException se) {
+                throw new HongsExemption(0x826,"Can not call '"+name+".getInstance'",se);
+            }
+        }
+
+        // 默认构造
         Data   inst;
         Core   core = Core.getInstance();
-        String name = Data.class.getName() +":"+ conf +"."+ form;
+        name = Data.class.getName() +":"+ conf +"."+ form;
         if (core.containsKey(name)) {
             inst = (Data) core.got(name);
         } else {
@@ -667,7 +723,7 @@ public class Data extends SearchEntity {
      * 删除记录
      *
      * 注意:
-     * 此方法不被 update 调用,
+     * 此方法不被 delete 调用,
      * 重写请覆盖 del(id, rd).
      *
      * @param id

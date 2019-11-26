@@ -272,7 +272,7 @@ public class JFigure implements IFigure {
     }
 
     /**
-     * 获取可搜索的字段
+     * 获取可搜索的字段 (用于模糊查询)
      * @return
      */
     public Set<String> getSrchable() {

@@ -1237,7 +1237,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         v = rd.get(Cnst.WD_KEY);
         if ( v != null && ! "".equals(v) ) {
-            Set<String> fs = getWdCols();
+            Set<String> fs = getRschable();
             if (fs.size() > 0) {
                 BooleanQuery.Builder qx = new BooleanQuery.Builder();
                  SearchQuery         qs = new  SearchQuery        ();
@@ -1599,16 +1599,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             throw new NullPointerException("DB name is not set");
         }
         return dbname;
-    }
-
-    /**
-     * 获取搜索列
-     * 特别针对 wd 查询参数
-     * 默认等同 getSrchable
-     * @return
-     */
-    protected Set<String> getWdCols() {
-        return getSrchable();
     }
 
     /**

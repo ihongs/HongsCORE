@@ -50,10 +50,6 @@ public class AssocCase {
      */
     public  static final String  LISTABLE = "LISTABLE";
     /**
-     * 可搜索字段, 用于 FetchCase 的 Option
-     */
-    public  static final String  SRCHABLE = "SRCHABLE";
-    /**
      * 可排序字段, 用于 FetchCase 的 Option, 未设置则取 LISTABLE
      */
     public  static final String  SORTABLE = "SORTABLE";
@@ -62,9 +58,13 @@ public class AssocCase {
      */
     public  static final String  FINDABLE = "FINDABLE";
     /**
+     * 可搜索字段, 用于 FetchCase 的 Option
+     */
+    public  static final String  SRCHABLE = "SRCHABLE";
+    /**
      * 搜索的字段, 用于 FetchCase 的 Option, 未设置则取 SRCHABLE
      */
-    public  static final String  WORDABLE = "WORDABLE";
+    public  static final String  RSCHABLE = "RSCHABLE";
     /**
      * 可区间查询, 用于 FetchCase 的 Option, 未设置则取 SORTABLE
      */
@@ -218,7 +218,7 @@ public class AssocCase {
      * @return
      */
     public AssocCase allow(Map fc) {
-        String[] ks = new String[] {"listable", "findable", "sortable", "srchable", "wordable", "rankable"};
+        String[] ks = new String[] {"listable", "findable", "sortable", "srchable", "rschable", "rankable"};
         for(String k : ks) {
             Object s = fc.get( k );
             if (null == s) {
@@ -389,7 +389,7 @@ public class AssocCase {
 
     private void query(FetchCase caze, Set<String> wd) {
         if (wd == null || wd.isEmpty()) return;
-        Map<String, String> af = allow(WORDABLE);
+        Map<String, String> af = allow(RSCHABLE);
         if (af == null || af.isEmpty()) return;
 
         int  i = 0;
@@ -727,7 +727,7 @@ public class AssocCase {
             case SRCHABLE:
                 af =  new HashMap();
                 break;
-            case WORDABLE:
+            case RSCHABLE:
                 af = allow(SRCHABLE);
                 if (af == null) {
                     af =  new HashMap();
@@ -849,14 +849,14 @@ public class AssocCase {
         Map ps = table.getParams();
         cs = (String) ps.get("listable");
         if (cs != null) allow(LISTABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("srchable");
-        if (cs != null) allow(SRCHABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("sortable");
         if (cs != null) allow(SORTABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("findable");
         if (cs != null) allow(FINDABLE, cs.trim().split("\\s*,\\s*"));
-        cs = (String) ps.get("wordable");
-        if (cs != null) allow(WORDABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("srchable");
+        if (cs != null) allow(SRCHABLE, cs.trim().split("\\s*,\\s*"));
+        cs = (String) ps.get("rschable");
+        if (cs != null) allow(RSCHABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("rankable");
         if (cs != null) allow(RANKABLE, cs.trim().split("\\s*,\\s*"));
         cs = (String) ps.get("saveable");

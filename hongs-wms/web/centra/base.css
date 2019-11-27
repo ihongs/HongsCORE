@@ -16,13 +16,14 @@ html, body {
 }
 #headbox {
     height: 100%;
-    width : 180px;
+    width : 200px;
     overflow: auto;
     position: fixed;
+    z-index : 1;
     background: #2e2f2f;
 }
 #bodybox {
-    padding-left: 180px;
+    padding-left: 200px;
 }
 #context.fullest>#bodybox {
     padding-left: 0;
@@ -59,16 +60,9 @@ html, body {
     display: block;
     text-decoration: none;
 }
-#main-menubar>ul>li {
-    margin : 2px 0;
-}
-#main-menubar>ul>li.acting ,
-#main-menubar>ul>li.active {
-    box-shadow: 0 1px 2px #200;
-}
 #main-menubar li a {
     font-size: 15px;
-    font-weight: 600;
+    font-weight: 800;
     padding: 8px 6px 8px 16px;
 }
 #user-menubar li a {
@@ -96,7 +90,7 @@ html, body {
 #user-menubar li.acting > a.dropup:hover {
     color: #aaaaaa;
     background: #770000;
-    border-left: 2px solid #990000;
+    border-left: 2px solid #bb0000;
 }
 #main-menubar li.acting > a ,
 #main-menubar li.active > a ,
@@ -105,7 +99,7 @@ html, body {
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
     color: #eeeeee;
-    background: #990000;
+    background: #bb0000;
     border-left: 2px solid #ff0000;
 }
 
@@ -126,11 +120,35 @@ html, body {
     color: #cccccc;
 }
 
+#main-menubar ul li {
+    margin: 1em 0;
+}
+#main-menubar li li {
+    margin: 0px 0;
+}
+#main-menubar ul li a:before {
+    width    : 20px;
+    font-size: 11px;
+    font-family: "Glyphicons Halflings";
+    display: inline-block;
+    content: "\e165";
+}
+#main-menubar li li a:before {
+    content: "";
+}
+#main-menubar ul li a[href="/centra/#manage"]:before {
+    content: "\e021";
+}
+#main-menubar ul li a[href="/common/menu.act?m=centra&x=base"]:before {
+    content: "\e019";
+}
+
 /* 头像 */
 
 #user-menubar {
     background: #777;
     position: relative;
+    border-bottom: 4px solid #444;
 }
 #user-menubar .uhead {
     display: inline-block ;
@@ -138,6 +156,7 @@ html, body {
     width : 44px;
     height: 44px;
     margin: -4px 8px -4px 10px;
+    border-radius  :  4px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
@@ -145,11 +164,11 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #eee;
-    width : 75px;
+    color : #ccc;
+    width : 90px;
     height: 36px;
     line-height: 36px;
-    font-weight: 500 ;
+    font-weight: bold;
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow   : hidden;
@@ -173,13 +192,16 @@ html, body {
     margin-right: 10px;
     text-align: center;
 }
+#user-menubar:hover .uhead {
+    box-shadow: 5px 5px 50px 5px #fff;
+}
 
 /* 其他 */
 
 #head-handled {
     position: fixed;
     top  : 50%;
-    left : 180px;
+    left : 200px;
     width : 14px;
     height: 30px;
     margin-top: -15px;
@@ -211,7 +233,7 @@ html, body {
     font-size: 10px;
     position: fixed;
     bottom:  5px;
-    width: 180px;
+    width: 200px;
 }
 #head-powered a {
     color: #a00;
@@ -226,6 +248,10 @@ html, body {
 }
 #main-context > .labs {
     margin-top: 18px;
+}
+#main-context > .laps.breadcrumb {
+    background: #eee;
+    border-radius: 0;
 }
 
 /* 统计图表附带选项 */

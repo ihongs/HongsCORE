@@ -33,7 +33,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">手机</label>
-                    <input type="tel"   name="phone" class="form-control"/>
+                    <input type="tel"   name="phone" class="form-control" data-unique="centra/master/user/unique.act?id=${id}"/>
                     <label class="form-control-static">
                         <input type="hidden"   name="phone_checked" value="0" class="form-ignored"/>
                         <input type="checkbox" name="phone_checked" value="1" style="margin-right: 1em;"/>
@@ -43,7 +43,7 @@
                 </div>
                 <div class="form-group">
                     <label class="control-label">邮箱</label>
-                    <input type="email" name="email" class="form-control"/>
+                    <input type="email" name="email" class="form-control" data-unique="centra/master/user/unique.act?id=${id}"/>
                     <label class="form-control-static">
                         <input type="hidden"   name="email_checked" value="0" class="form-ignored"/>
                         <input type="checkbox" name="email_checked" value="1" style="margin-right: 1em;"/>
@@ -71,9 +71,10 @@
             </div>
             <div class="col-xs-6 role-info">
                 <div class="form-group">
-                    <h4>权限设置</h4>
+                    <label class="control-label">权限设置</label>
                     <input type="hidden" name="roles..role" class="form-ignored"/>
-                    <div class="checkset" data-item-class="col-xs-6 col-lg-3"
+                    <div style="max-height: 802px; overflow: auto; background: #fff; padding-top: 10px; border-top: 1px solid #ddd;"
+                         class="checkset" data-item-class="col-xs-6 col-lg-3"
                          data-fn="roles..role" data-ft="_checkset"
                          data-vl="roles" data-tl="text"
                          data-vk="name"  data-tk="text">

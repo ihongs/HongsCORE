@@ -439,7 +439,7 @@ function hsFormFillPick(box, v, n) {
             cls[1] = rol ? "glyphicon-link" : "glyphicon-share";
         } else {
             cls[0] = rol ? "btn-text" : "btn-info";
-            cls[0] = rol ? "glyphicon-link" : "glyphicon-check";
+            cls[1] = rol ? "glyphicon-link" : "glyphicon-check";
         }
         cls[0] = box.attr("data-item-class") || cls[0];
         cls[1] = box.attr("data-icon-class") || cls[1];

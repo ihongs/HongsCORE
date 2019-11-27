@@ -16,12 +16,17 @@
                     <label class="control-label">说明</label>
                     <textarea name="note" class="form-control"></textarea>
                 </div>
+                <div class="form-group">
+                    <label class="control-label">状态</label>
+                    <select name="state" class="form-control"></select>
+                </div>
             </div>
             <div class="col-xs-6 role-info">
                 <div class="form-group">
-                    <h4>权限设置</h4>
+                    <label class="control-label">权限设置</label>
                     <input type="hidden" name="roles..role" class="form-ignored"/>
-                    <div class="checkset" data-item-class="col-xs-6 col-lg-3"
+                    <div style="max-height: 802px; overflow: auto; background: #fff; padding-top: 10px; border-top: 1px solid #ddd;"
+                         class="checkset" data-item-class="col-xs-6 col-lg-3"
                          data-fn="roles..role" data-ft="_checkset"
                          data-vl="roles" data-tl="text"
                          data-vk="name"  data-tk="text">

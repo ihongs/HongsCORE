@@ -140,9 +140,6 @@ fieldset>.dropdown-list {
 .breadcrumb .close {
     display: none;
 }
-.breadcrumb.laps {
-    background: #ffffff;
-}
 .breadcrumb.laps > li.home-crumb i {
     margin-right: 0.5em;
 }

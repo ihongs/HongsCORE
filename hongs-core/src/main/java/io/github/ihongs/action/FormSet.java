@@ -335,10 +335,10 @@ public class FormSet
 
   private Object parse(String type, String text) throws HongsException {
       if (null == type || "".equals(type)) {
-          return  text  ;
+          return  text.trim();
+      } else {
+          text =  text.trim();
       }
-
-      text = text.trim();
 
       if ("bool".equals(type)) {
           return Synt.defoult(Synt.asBool(text), false);

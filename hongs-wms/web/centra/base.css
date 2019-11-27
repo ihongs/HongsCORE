@@ -259,6 +259,9 @@ html, body {
     display: block;
     font-size: 12px;
     line-height: 21px;
+    white-space: nowrap;
+         overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* 隐藏受限的搜索框 */

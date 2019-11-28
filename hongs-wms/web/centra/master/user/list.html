@@ -25,25 +25,26 @@
             </div>
         </div>
     </form>
-    <div class="listbox table-responsive">
+    <div class="table-responsive-revised">
+    <div class="table-responsive listbox">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
                     <th data-fn="id[]" data-ft="_check" class="_check">
                         <input type="checkbox" class="checkall" name="id[]" />
                     </th>
-                    <th data-fn="head"     class="userhead">头像</th>
-                    <th data-fn="name"     class="sortable">名称</th>
+                    <th data-fn="head" class="userhead">头像</th>
+                    <th data-fn="name" class="sortable">名称</th>
                     <th data-fn="username" class="sortable">账号</th>
-                    <th data-fn="depts..name">分组</th>
-                    <th data-fn="state_text" >状态</th>
+                    <th data-fn="depts..name" data-ft="tips">分组</th>
+                    <th data-fn="state_text">状态</th>
                     <th data-fn="mtime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">修改时间</th>
                     <th data-fn="ctime" data-ft="_htime" data-fl="v*1000" class="_htime sortable">创建时间</th>
                 </tr>
             </thead>
             <tbody></tbody>
         </table>
-    </div>
+    </div></div>
     <div class="pagebox clearfix"></div>
 
     <div class="modal fade in" style="z-index: 99999; display: none;">
@@ -66,6 +67,12 @@
         var viewImg = context.find(".modal");
 
         hsRequires("centra/master/util.css");
+
+        // 鼠标悬浮在格子上提示
+        context.data("_fill_tips" , function(td, v, n) {
+            if (v) td.attr("title", v);
+            return v;
+        });
 
         // 点击用户头像打开预览
         viewImg.modal("hide");

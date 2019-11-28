@@ -7,38 +7,38 @@
     <form action="" method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" />
         <input type="hidden" name="pid"/>
+        <div class="form-group row">
+            <label class="col-xs-3 col-md-2 control-label form-control-static text-right">名称</label>
+            <div class="col-xs-9 col-md-8">
+                <input class="form-control" required="required" type="text" name="name"
+                       data-unique="centra/matrix/unit/unique.act?rb=id&id=${id}&pid=${pid}"
+                       placeholder="请输入名字用以作为菜单显示"/>
+            </div>
+            <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-3 col-md-2 control-label form-control-static text-right">权重</label>
+            <div class="col-xs-9 col-md-8">
+                <input class="form-control" required="required" type="number" name="boost" value="0"/>
+            </div>
+            <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+        </div>
+        <div class="form-group row">
+            <label class="col-xs-3 col-md-2 control-label form-control-static text-right">备注</label>
+            <div class="col-xs-9 col-md-8">
+                <textarea class="form-control" name="note"></textarea>
+            </div>
+            <div class="col-xs-9 col-md-2 col-xs-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
+        </div>
+        <hr/>
         <div class="row">
-            <div class="col-xs-6 center-block">
-                <div class="form-group">
-                    <label class="control-label">名称</label>
-                    <input class="form-control" name="name" type="text" required="required"
-                           data-unique="centra/matrix/unit/unique.act?rb=id&id=${id}&pid=${pid}"
-                           placeholder="请输入名字用以作为菜单显示"/>
-                </div>
-                <!--
-                <div class="form-group dont-close">
-                    <label class="control-label">图标</label>
-                    <input type="text" name="icon" class="form-ignored invisible"/>
-                    <input type="file" name="icon" class="form-ignored invisible" accept="image/*"/>
-                    <ul class="pickbox" data-fn="icon" data-size="150*150"></ul>
-                    <button type="button" class="form-control btn btn-default" data-toggle="hsView">请选择图标</button>
-                    <p class="help-block text-error"></p>
-                    <p class="help-block text-muted">缩略图比例 1:1, 推荐分辨率 150*150 到 300*300 (像素)</p>
-                </div>
-                -->
-                <div class="form-group">
-                    <label class="control-label">权重</label>
-                    <input class="form-control" name="boost" type="number" required="required" value="0"/>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">备注</label>
-                    <textarea class="form-control" name="note"></textarea>
-                </div>
-                <div class="form-group">
+            <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
+                <div>
                     <button type="submit" class="commit btn btn-primary">提交</button>
                     <button type="button" class="cancel btn btn-link"   >取消</button>
                 </div>
             </div>
         </div>
+        <br/>
     </form>
 </div>

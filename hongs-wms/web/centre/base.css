@@ -26,13 +26,14 @@
 }
 
 #bodybox {
-    margin-top   : 58px; /* 顶部菜单 */
-    margin-bottom: 50px; /* 底部通栏 */
+    margin-top   : 59px; /* 菜单和间距 */
+    margin-bottom: 33px; /* 页尾的高度 */
 }
 
-.main-context ,
-.side-context {
-    padding: 0;
+/* 主导航条样式微调 */
+.container > .breadcrumb.laps {
+    background: #fff;
+    border: 1px solid #ddd;
 }
 
 /* 隐藏受限的搜索框 */

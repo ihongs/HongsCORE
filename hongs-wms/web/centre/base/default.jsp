@@ -47,7 +47,7 @@
         </nav>
         <div id="bodybox">
             <div class="container">
-                <ol class="breadcrumb tabs laps hide row" data-toggle="hsTabs">
+                <ol class="breadcrumb tabs laps hide" data-toggle="hsTabs">
                     <li class="back-crumb dont-close pull-right">
                         <a href="javascript:;">
                             <i class="glyphicon glyphicon-remove-sign"></i>

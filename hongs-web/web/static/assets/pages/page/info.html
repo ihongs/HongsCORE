@@ -12,57 +12,75 @@
         <input type="hidden" name="temp" value="default"/>
         <input type="hidden" name="kind" value="html"/>
         <input type="hidden" name="stave" value="0"/>
-        <div class="row">
-            <div class="col-md-6 center-block">
-                <div class="form-group">
-                    <label class="control-label">名称</label>
-                    <div class="form-control-static" data-fn="name"></div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">名称</label>
+            <div class="col-sm-9 col-md-8">
+                <div class="form-control-static" data-fn="name"></div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">备注</label>
+            <div class="col-sm-9 col-md-8">
+                <div class="form-control-static" data-fn="note" style="white-space: pre-line;"></div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">类型</label>
+            <div class="col-sm-9 col-md-8">
+                <div class="form-control-static" data-fn="type_text"></div>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">权限</label>
+            <div class="col-sm-9 col-md-8">
+                <div class="form-control-static" data-fn="auth_text"></div>
+            </div>
+        </div>
+        <div class="form-group row dont-close">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">日期</label>
+            <div class="col-sm-9 col-md-8">
+                <div class="form-control-static">
+                    <span>从</span>
+                    <span data-fn="mtime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
                 </div>
-                <div class="form-group">
-                    <label class="control-label">备注</label>
-                    <div class="form-control-static" data-fn="note" style="white-space: pre-line;"></div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">类型</label>
-                    <div class="form-control-static" data-fn="type_text"></div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">权限</label>
-                    <div class="form-control-static" data-fn="auth_text"></div>
-                </div>
-                <div class="form-group dont-close">
-                    <label class="control-label">日期</label>
-                    <div class="form-control-static">
-                        <span>从</span>
-                        <span data-fn="mtime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
-                    </div>
-                    <div class="form-control-static">
-                        <span>到</span>
-                        <span data-fn="ctime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">关联</label>
-                    <ul class="pickbox pickrol" data-ft="_fork" data-fn="sect_id" data-ak="section" data-tk="name" data-vk="id"></ul>
-                </div>
-                <div class="form-group dont-close">
-                    <label class="control-label">文件</label>
-                    <ul class="pickbox pickrol" data-ft="_file" data-fn="file."></ul>
-                </div>
-                <div class="form-group dont-close">
-                    <label class="control-label">图片</label>
-                    <ul class="pickbox pickrol" data-ft="_view" data-fn="snap." data-size="100*100"></ul>
-                </div>
-                <div class="form-group">
-                    <label class="control-label">标准文件上传</label>
-                    <div class="form-control-static">
-                        <a data-fn="base_file" data-ft="_review" target="_blank"></a>
-                    </div>
-                </div>
-                <div>
-                    <button type="button" class="cancel btn btn-primary">关闭</button>
+                <div class="form-control-static">
+                    <span>到</span>
+                    <span data-fn="ctime" data-ft="_datetime" data-fl="v ? v * 1000 : ''"></span>
                 </div>
             </div>
         </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">关联</label>
+            <div class="col-sm-9 col-md-8">
+                <ul class="pickbox pickrol" data-ft="_fork" data-fn="sect_id" data-ak="section" data-tk="name" data-vk="id"></ul>
+            </div>
+        </div>
+        <div class="form-group row dont-close">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">文件</label>
+            <div class="col-sm-9 col-md-8">
+                <ul class="pickbox pickrol" data-ft="_file" data-fn="file."></ul>
+            </div>
+        </div>
+        <div class="form-group row dont-close">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">图片</label>
+            <div class="col-sm-9 col-md-8">
+                <ul class="pickbox pickrol" data-ft="_view" data-fn="snap." data-size="100*100"></ul>
+            </div>
+        </div>
+        <div class="form-group row">
+            <label class="col-sm-3 col-md-2 control-label form-control-static text-right">标准文件上传</label>
+            <div class="col-sm-9 col-md-8">
+                <div class="form-control-static">
+                    <a data-fn="base_file" data-ft="_review" target="_blank"></a>
+                </div>
+            </div>
+        </div>
+        <hr/>
+        <div class="row">
+            <div class="col-sm-9 col-md-8 col-sm-offset-3 col-md-offset-2">
+                <button type="button" class="cancel btn btn-primary">关闭</button>
+            </div>
+        </div>
+        <br/>
     </form>
 </div>

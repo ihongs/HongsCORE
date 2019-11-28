@@ -53,7 +53,7 @@
     </div>
     </div>
     <!-- 筛选 -->
-    <form class="findbox filtbox statbox invisible panel panel-body">
+    <form class="findbox filtbox statbox invisible panel panel-default panel-body">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {

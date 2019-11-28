@@ -103,6 +103,13 @@ html, body {
     border-left: 2px solid #ff0000;
 }
 
+#main-menubar>ul>li {
+    margin:  1em 0px;
+}
+#user-menubar>ul>li {
+    margin:  0px 0px;
+}
+
 #main-menubar .caret {
     margin:  8px 0px;
 }
@@ -120,35 +127,12 @@ html, body {
     color: #cccccc;
 }
 
-#main-menubar ul li {
-    margin: 1em 0;
-}
-#main-menubar li li {
-    margin: 0px 0;
-}
-#main-menubar ul li a:before {
-    width    : 20px;
-    font-size: 11px;
-    font-family: "Glyphicons Halflings";
-    display: inline-block;
-    content: "\e165";
-}
-#main-menubar li li a:before {
-    content: "";
-}
-#main-menubar ul li a[href="/centra/#manage"]:before {
-    content: "\e021";
-}
-#main-menubar ul li a[href="/common/menu.act?m=centra&x=base"]:before {
-    content: "\e019";
-}
-
 /* 头像 */
 
 #user-menubar {
     background: #777;
     position: relative;
-    border-bottom: 4px solid #444;
+    border-bottom: 5px solid #555;
 }
 #user-menubar .uhead {
     display: inline-block ;
@@ -164,14 +148,14 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #ccc;
+    color : #fff;
     width : 90px;
     height: 36px;
     line-height: 36px;
-    font-weight: bold;
-    text-overflow: ellipsis;
     white-space: nowrap;
     overflow   : hidden;
+    text-overflow: ellipsis;
+    text-shadow: 2px 1px 0px #000;
 }
 #user-menubar .badge {
     position: absolute;
@@ -186,14 +170,35 @@ html, body {
     margin : -8px  6px;
 }
 #user-menubar .glyphicon {
-    color: #a00;
+    color: #b00;
     width: 40px;
     top  :  2px; /* 修正字体符号偏上的问题 */
     margin-right: 10px;
     text-align: center;
 }
 #user-menubar:hover .uhead {
-    box-shadow: 5px 5px 50px 5px #fff;
+    box-shadow: 10px 10px 100px 10px #fff;
+}
+
+/* 图标 */
+
+#main-menubar ul li a:before {
+    display    : inline-block;
+    position   : relative;
+    top        :  1px; /* 修正字体符号偏上的问题 */
+    width      : 20px;
+    font-size  : 13px;
+    font-family: "Glyphicons Halflings";
+    content: "";
+}
+#main-menubar>ul>li>a:before {
+    content: "\e165";
+}
+#main-menubar>ul>li>a[href="/centra/#manage"]:before {
+    content: "\e021";
+}
+#main-menubar>ul>li>a[href="/common/menu.act?m=centra&x=base"]:before {
+    content: "\e019";
 }
 
 /* 其他 */
@@ -243,15 +248,14 @@ html, body {
 }
 
 /* 容器主要内容边界 */
-#main-context > .tabs {
-    margin-bottom: 0;
-}
 #main-context > .labs {
     margin-top: 18px;
 }
 #main-context > .laps.breadcrumb {
-    background: #eee;
-    border-radius: 0;
+    margin-bottom: 0;
+    margin-top: 18px;
+    background: #fff;
+    border: 1px solid #ddd;
 }
 
 /* 统计图表附带选项 */

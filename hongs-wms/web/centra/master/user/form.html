@@ -51,10 +51,6 @@
                     </label>
                     <div class="help-block text-error form-control-static"></div>
                 </div>
-                <div class="form-group">
-                    <label class="control-label">状态</label>
-                    <select name="state" class="form-control"></select>
-                </div>
                 <div class="form-group dont-close">
                     <label class="control-label">头像</label>
                     <input type="text" name="head" class="invisible form-ignored"/>
@@ -65,12 +61,16 @@
                     <p class="help-block text-muted">缩略图比例 1:1, 推荐分辨率 150*150 到 300*300 (像素)</p>
                 </div>
                 <div class="form-group">
-                    <label class="control-label">备注</label>
+                    <label class="control-label">简介</label>
                     <textarea name="note" class="form-control"></textarea>
+                </div>
+                <div class="form-group" style="margin-bottom: 0;">
+                    <label class="control-label">状态</label>
+                    <select name="state" class="form-control"></select>
                 </div>
             </div>
             <div class="col-xs-6 role-info">
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 0;">
                     <label class="control-label">权限设置</label>
                     <input type="hidden" name="roles..role" class="form-ignored"/>
                     <div style="max-height: 802px; overflow: auto; background: #fff; padding-top: 10px; border-top: 1px solid #ddd;"
@@ -82,14 +82,14 @@
                 </div>
             </div>
         </div>
+        <hr/>
         <div class="row">
             <div class="col-xs-6 form-btns">
-                <div class="form-group">
-                    <button type="submit" class="commit btn btn-primary">提交</button>
-                    <button type="button" class="cancel btn btn-link"   >取消</button>
-                </div>
+                <button type="submit" class="commit btn btn-primary">提交</button>
+                <button type="button" class="cancel btn btn-link"   >取消</button>
             </div>
         </div>
+        <br/>
     </form>
 </div>
 <script type="text/javascript">

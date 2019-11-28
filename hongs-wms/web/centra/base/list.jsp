@@ -65,7 +65,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible panel panel-body">
+    <form class="findbox filtbox invisible panel panel-default panel-body">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -189,7 +189,7 @@
             }
         %>
         <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>">
-            <div class="panel clearfix">
+            <div class="panel panel-default panel-body clearfix">
                 <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
                 <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
             </div>

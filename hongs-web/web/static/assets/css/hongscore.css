@@ -533,7 +533,6 @@ ol.repeated ,
 
 /* 类似 panel 但无边框无背景 */
 .board {
-    border: 1px solid transparent;
     margin-bottom: 18px;
 }
 .board-body {

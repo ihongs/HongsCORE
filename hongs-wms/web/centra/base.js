@@ -273,22 +273,24 @@ function hsHideListCols(box) {
             box.trigger("hideCols");
         }
     }, {
-        label: "重置",
-        glass: "btn-default",
-        click: function() {
-            var trs = tbl.children("thead,tbody,tfoot").children();
-            chs.find("input").each(function() {
-                var fn = $(this).val (/*field*/);
-                var fi = ths.filter('[data-fn="'+fn+'"]').index( );
-                trs.each(function() {
-                    $(this).children().eq(fi).toggleClass("hidden", false);
-                });
-            });
-            box.trigger("hideCols");
+        label: "关闭",
+        glass: "btn-default"
+    }, {
+        label: "全选",
+        glass: "btn-link pull-left",
+        click: function(evt) {
+            chs.find(":checkbox").prop("checked", true );
+            evt.preventDefault( );
+            return false;
         }
     }, {
-        label: "取消",
-        glass: "btn-link"
+        label: "全否",
+        glass: "btn-link pull-left",
+        click: function(evt) {
+            chs.find(":checkbox").prop("checked", false);
+            evt.preventDefault( );
+            return false;
+        }
     }).find(".modal-body")
       .append(chs);
 }

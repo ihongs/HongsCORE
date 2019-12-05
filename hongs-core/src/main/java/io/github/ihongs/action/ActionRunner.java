@@ -37,13 +37,16 @@ import java.util.Map;
  * @author Hong
  */
 public class ActionRunner {
-    private int idx = -1 ;
-    private String action;
+    private final String   action;
     private final Object   object;
     private final Method   method;
     private final Class<?> mclass;
     private final ActionHelper helper;
     private final Annotation[] annarr;
+
+    private final int len ;
+    private final int ido = -1;
+    private       int idx = -1;
 
     public ActionRunner(ActionHelper helper, Object object, String method)
     throws HongsException {
@@ -55,6 +58,7 @@ public class ActionRunner {
         try {
             this.method = this.mclass.getMethod(method, ActionHelper.class);
             this.annarr = this.method.getAnnotations();
+            this.len    = this.annarr.length;
         } catch (NoSuchMethodException ex) {
             throw new HongsException(0x1104, "Can not find action '"+ mclass.getName() +"."+ method +"'");
         } catch (    SecurityException ex) {
@@ -62,17 +66,22 @@ public class ActionRunner {
         }
 
         // 从注解中提取动作
-        Action a;
+        Action a; String c, e;
         a = this.mclass.getAnnotation(Action.class);
         if (null != a) {
-            this.action  = a.value()+"/";
+            c = a.value();
         } else {
-            this.action  = /*basic*/ "/";
+            c = this.mclass.getName();
+            c = c.replace( '.', '/' );
         }
         a = this.method.getAnnotation(Action.class);
         if (null != a) {
-            this.action += a.value();
+            e = a.value();
+        } else {
+            e = this.method.getName();
+        //  e = e.replace( '.', '/' );
         }
+        this.action = c + "/" + e;
     }
 
     public ActionRunner(ActionHelper helper, String action)
@@ -88,6 +97,7 @@ public class ActionRunner {
         this.method = mt.getMethod();
         this.object = Core.getInstance(mclass);
         this.annarr = method.getAnnotations( );
+        this.len    = annarr.length ;
     }
 
     /**
@@ -141,7 +151,7 @@ public class ActionRunner {
              * 目标动作已经存在
              * 直接使用不走代理
              */
-            if ( ad.containsKey (ap)) {
+            if ( ad.containsKey(ap)) {
                  at = ap;
             }
         } else {
@@ -151,17 +161,17 @@ public class ActionRunner {
              * 当前动作并不存在
              * 尝试逐级向上查找
              */
-            if (!ad.containsKey (at)) {
+            if (!ad.containsKey(at)) {
                 String   mt; // 方法
                 String   ot; // 资源
                     ot = at;
                 if  (  0 < (ps = ot.lastIndexOf("/"))) {
-                    mt = ot.substring(0+ ps);
-                    ot = ot.substring(0, ps);
+                    mt = ot.substring(0+ps);
+                    ot = ot.substring(0,ps);
                 while (0 < (ps = ot.lastIndexOf("/"))) {
-                    ot = ot.substring(0, ps);
+                    ot = ot.substring(0,ps);
                          ap = ot  +  mt;
-                    if ( ad.containsKey (ap)) {
+                    if ( ad.containsKey(ap)) {
                          at = ap; break;
                     }
                 }}
@@ -201,28 +211,29 @@ public class ActionRunner {
      * @throws HongsException
      */
     public void doAction() throws HongsException {
-        if ( idx  < 0) {
-             idx  = 0 ;
-            doInvite();
-        } else
-        // 如果超出链长度, 则终止执行
-        if ( idx  >  annarr.length) {
-            throw new HongsException(0x110f, "Action annotation out of index: "
-            +idx+">"+annarr.length);
+        // 如果正处于链头, 则作初始化
+        if ( idx == ido ) {
+            doActing();
         }
 
         // 如果已到达链尾, 则执行动作
-        if ( idx ==  annarr.length) {
+        if ( idx == len ) {
             doInvoke();
             return;
         }
 
-        Filter actw;
+        // 如果超出链长度, 则终止执行 (2019/12/05 没有可能, 多此一举)
+//      if ( idx >  len ) {
+//          throw new HongsException(0x110f, "Action annotation out of index: "+idx+">"+len);
+//      }
+
         Annotation anno = annarr[idx ++];
+        Filter     actw ;
         if (anno instanceof Filter) {
             actw = ( Filter ) anno;
         } else {
-            actw = anno.annotationType().getAnnotation(Filter.class);
+            actw = anno.annotationType()
+            .getAnnotation(Filter.class);
         }
 
         // 如果不是动作链, 则跳过注解
@@ -232,9 +243,8 @@ public class ActionRunner {
         }
 
         // 执行注解过滤器
-        Class<? extends FilterInvoker> classo = actw.value();
-        FilterInvoker filter = Core.getInstance(classo);
-        filter.invoke(helper , this, anno);
+        Class <? extends FilterInvoker> classo = actw.value();
+        Core.getInstance(classo).invoke(helper , this, anno );
     }
 
     /**
@@ -243,9 +253,10 @@ public class ActionRunner {
      * @throws HongsException
      */
     public void doInvoke() throws HongsException {
-        if ( idx  < 0) {
-             idx  = 0 ;
-            doInvite();
+        if (idx == ido) {
+            doActing( );
+        } else {
+            idx  =  0  ;
         }
 
         try {
@@ -272,14 +283,16 @@ public class ActionRunner {
      * 会执行 acting 方法, doAction,doInvoke 内已调
      * @throws HongsException
      */
-    public void doInvite()
-    throws HongsException {
+    public void doActing() throws HongsException {
+        // Reset
+        idx = 0;
+
         // Regist the runner
         helper.setAttribute(ActionRunner.class.getName(), this);
 
         // Initialize action
-        if (object instanceof IActing ) {
-           ( ( IActing ) object ).acting( helper, this );
+        if (object instanceof IActing) {
+           (  (  IActing  )  object  ).acting(  helper  , this);
         }
     }
 

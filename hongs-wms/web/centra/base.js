@@ -52,8 +52,8 @@ S$.send = function(url, req) {
     $.hsAjax({
         url     : hsFixUri   (url),
         data    : hsSerialArr(req),
-        success : function   (rst) {
-            rzt = hsResponse (rst);
+        complete: function   (rst) {
+            rzt = hsResponse (rst , 3);
         },
         type    : "post",
         dataType: "json",
@@ -718,9 +718,9 @@ HsStat.prototype = {
             series: [{
                 data: bData,
                 type: "bar",
-                barMaxWidth: 10,
+                barMaxWidth: 13,
                 itemStyle: { normal: {
-                    barBorderRadius: [5, 5, 0, 0]
+                    barBorderRadius: [3, 3, 0, 0]
                 } }
             }],
             xAxis : [{
@@ -820,16 +820,16 @@ HsStat.prototype = {
             series: [{
                 data: bData1,
                 type: "bar",
-                barMaxWidth: 10,
+                barMaxWidth: 13,
                 itemStyle: { normal: {
-                    barBorderRadius: [5, 5, 0, 0]
+                    barBorderRadius: [3, 3, 0, 0]
                 } }
             }, {
                 data: bData2,
                 type: "bar",
-                barMaxWidth: 10,
+                barMaxWidth: 13,
                 itemStyle: { normal: {
-                    barBorderRadius: [5, 5, 0, 0]
+                    barBorderRadius: [3, 3, 0, 0]
                 } }
             }],
             xAxis : [{

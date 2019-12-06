@@ -42,8 +42,8 @@ S$.send = function(url, req) {
     $.hsAjax({
         url     : hsFixUri   (url),
         data    : hsSerialArr(req),
-        success : function   (rst) {
-            rzt = hsResponse (rst);
+        complete: function   (rst) {
+            rzt = hsResponse (rst , 3);
         },
         type    : "post",
         dataType: "json",

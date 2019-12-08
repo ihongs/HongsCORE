@@ -817,6 +817,7 @@ HsStat.prototype = {
                     myBar: {
                         show: true,
                         icon: 'M85.312 938.688H1024V1024H0V0h85.312v938.688zM256 341.312h85.312V768H256V341.312zM512 128h85.312v640H512V128z m256 213.312h85.312V768H768V341.312z',
+                        iconStyle: {borderWidth: 0, color: '#666'},
                         title: '柱状图',
                         onclick: function () {
                             chart.setOption(barOpts);
@@ -825,6 +826,7 @@ HsStat.prototype = {
                     myPie: {
                         show: true,
                         icon: 'M85.312 512a426.688 426.688 0 0 0 844.8 85.312H426.688V93.888A426.816 426.816 0 0 0 85.312 512zM512 0v512h512a512 512 0 1 1-512-512z m506.816 438.848H585.152V5.184a512.32 512.32 0 0 1 433.664 433.664z',
+                        iconStyle: {borderWidth: 0, color: '#666'},
                         title: '饼视图',
                         onclick: function () {
                             chart.setOption(pieOpts);
@@ -833,6 +835,7 @@ HsStat.prototype = {
                     myTab: {
                         show: true,
                         icon: 'M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-85.312A426.688 426.688 0 1 0 512 85.312a426.688 426.688 0 0 0 0 853.376zM320 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z',
+                        iconStyle: {borderWidth: 0, color: '#666'},
                         title: '导出',
                         onclick: function () {
                             that.export(box);
@@ -939,6 +942,7 @@ HsStat.prototype = {
                     myBar: {
                         show: true,
                         icon: 'M85.312 938.688H1024V1024H0V0h85.312v938.688zM256 341.312h85.312V768H256V341.312zM512 128h85.312v640H512V128z m256 213.312h85.312V768H768V341.312z',
+                        iconStyle: {borderWidth: 0, color: '#666'},
                         title: '柱状图',
                         onclick: function () {
                             chart.setOption(barOpts);
@@ -947,6 +951,7 @@ HsStat.prototype = {
                     myPie: {
                         show: true,
                         icon: 'M85.312 512a426.688 426.688 0 0 0 844.8 85.312H426.688V93.888A426.816 426.816 0 0 0 85.312 512zM512 0v512h512a512 512 0 1 1-512-512z m506.816 438.848H585.152V5.184a512.32 512.32 0 0 1 433.664 433.664z',
+                        iconStyle: {borderWidth: 0, color: '#666'},
                         title: '饼视图',
                         onclick: function () {
                             chart.setOption(pieOpts);
@@ -955,6 +960,7 @@ HsStat.prototype = {
                     myTab: {
                         show: true,
                         icon: 'M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-85.312A426.688 426.688 0 1 0 512 85.312a426.688 426.688 0 0 0 0 853.376zM320 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z',
+                        iconStyle: {borderWidth: 0, color: '#666'},
                         title: '导出',
                         onclick: function () {
                             that.export(box);

@@ -37,16 +37,15 @@ public class PermitInvoker implements FilterInvoker {
             throw new HongsException(0x1101);
         }
 
-        if (role == null || role.length == 0) {
-            has = map.chkAuth(chains.getAction( ) );
-        } else {
-            for ( String rale : role ) {
-                if ( rale.startsWith( "@" ) ) {
+        if (role == null || role.length < 1) {
+            has  =  map.chkAuth(chains.getAction());
+        } else for (String rale:role ) {
+            if (rale.startsWith("@") ) {
                 if (map.chkAuth(rale.substring(1))) {
                     has = true;
                     break;
                 }
-                } else
+            } else {
                 if (map.chkRole(rale)) {
                     has = true;
                     break;

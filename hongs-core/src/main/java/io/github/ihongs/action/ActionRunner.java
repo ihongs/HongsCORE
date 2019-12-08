@@ -312,7 +312,11 @@ public class ActionRunner {
         met = name;
     }
 
-    public String getModule() throws HongsException {
+    /**
+     * 获取待操作的模块/配置
+     * @return
+     */
+    public String getModule() {
         if (null != mod) {
             return  mod;
         }
@@ -337,7 +341,11 @@ public class ActionRunner {
         return mod;
     }
 
-    public String getEntity() throws HongsException {
+    /**
+     * 获取待操作的实体/表单
+     * @return
+     */
+    public String getEntity() {
         if (null != ent) {
             return  ent;
         }
@@ -362,7 +370,11 @@ public class ActionRunner {
         return ent;
     }
 
-    public String getHandle() throws HongsException {
+    /**
+     * 获取待操作的动作/方法
+     * @return
+     */
+    public String getHandle() {
         if (null != met) {
             return  met;
         }
@@ -376,20 +388,18 @@ public class ActionRunner {
 
     /**
      * 获取动作名
-     * 外部有指定工作路径(Cnst.ACTION_ATTR)则返回工作动作名
-     * 同时可使用 setAction 进行设置
+     * 设置请使用 getHelper().setAttribute(Cnst.ACTION_ATTR, "x/y/z.act")
      * @return
-     * @throws HongsException
      */
-    public String getAction() throws HongsException {
+    public String getAction() {
         // 去除路径中的根目录和扩展名
-        String  axt = (String) helper.getAttribute(Cnst.ACTION_ATTR);
-        if (axt != null) {
-            int pos = axt.lastIndexOf('.');
+        String  act = (String) helper.getAttribute(Cnst.ACTION_ATTR);
+        if (act != null) {
+            int pos = act.lastIndexOf('.');
             if (pos > 0) {
-                axt = axt.substring(0,pos);
+                act = act.substring(0,pos);
             }
-            return axt;
+            return act;
         }
         return  action;
     }

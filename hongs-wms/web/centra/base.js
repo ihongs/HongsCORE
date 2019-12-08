@@ -636,6 +636,73 @@ HsStat.prototype = {
         });
     },
 
+    export: function(itemBox) {
+        var findBox = this.findBox;
+        var rb  = itemBox.attr("data-rb"  );
+        var fx  = itemBox.attr("data-text");
+        var fn  = itemBox.attr("data-name");
+        var ft  = itemBox.attr("data-type");
+        var url = ft == "amount" ? this.murl : this.curl;
+            url = hsSetParam(url, "rn","0"); // 全部数据
+
+        $.ajax({
+            url : url + rb,
+            data: findBox.serialize(),
+            dataType: "json",
+            cache  : true,
+            success: function(rst) {
+                // 构建表格
+                var div = $('<div></div>').appendTo(itemBox);
+                var tab = $('<table></table>').appendTo(div);
+                var thd = $('<thead></thead>').appendTo(tab);
+                var tbd = $('<tbody></tbody>').appendTo(tab);
+                var tr  = $('<tr></tr>');
+                var th  = $('<td></th>');
+                var td  = $('<td></td>');
+                div.attr("style" , "height:1px; overflow:auto;");
+                tab.attr("class" , "table table-bordered");
+
+                // 表头
+                var tr2 = tr.clone().appendTo ( thd );
+                    th.clone().appendTo(tr2).text(fx);
+                    th.clone().appendTo(tr2).text("数量");
+                if (ft === "amount") {
+                    th.clone().appendTo(tr2).text("求和");
+                    th.clone().appendTo(tr2).text("最小");
+                    th.clone().appendTo(tr2).text("最大");
+                }
+
+                // 内容
+                if (rst.info && rst.info[fn]) {
+                        var a = rst.info[fn];
+                    for(var i = 0; i < a.length; i ++) {
+                        var b = a [i];
+                        tr2 = tr.clone().appendTo( tbd );
+                    for(var j = 1; j < b.length; j ++) {
+                        var c = b [j];
+                        td.clone().appendTo(tr2).text(c);
+                    }}
+                }
+
+                // 复制内容
+                var rng = document.createRange();
+                var sel = window.getSelection( );
+                sel.removeAllRanges();
+                try {
+                    rng.selectNodeContents(tab[0]);
+                    sel.addRange(rng);
+                } catch (e) {
+                    rng.selectNode /****/ (tab[0]);
+                    sel.addRange(rng);
+                }
+                document.execCommand("Copy");
+                div.remove();
+
+                $.hsNote("复制成功, 去粘贴吧!", "success");
+            }
+        });
+    },
+
     setAmountCheck: function(box, data) {
         var name  = box.data("name");
         var text  = box.data("text");
@@ -687,6 +754,7 @@ HsStat.prototype = {
     },
 
     setAcountChart: function(box, data) {
+        var that  = this;
         var chart = box.data("echart");
         var xData = [];
         var bData = [];
@@ -720,7 +788,7 @@ HsStat.prototype = {
                 type: "bar",
                 barMaxWidth: 13,
                 itemStyle: { normal: {
-                    barBorderRadius: [3, 3, 0, 0]
+                    barBorderRadius: [4, 4, 0, 0]
                 } }
             }],
             xAxis : [{
@@ -748,7 +816,7 @@ HsStat.prototype = {
                     show: true,
                     myBar: {
                         show: true,
-                        icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
+                        icon: 'M85.312 938.688H1024V1024H0V0h85.312v938.688zM256 341.312h85.312V768H256V341.312zM512 128h85.312v640H512V128z m256 213.312h85.312V768H768V341.312z',
                         title: '柱状图',
                         onclick: function () {
                             chart.setOption(barOpts);
@@ -756,10 +824,18 @@ HsStat.prototype = {
                     },
                     myPie: {
                         show: true,
-                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
+                        icon: 'M85.312 512a426.688 426.688 0 0 0 844.8 85.312H426.688V93.888A426.816 426.816 0 0 0 85.312 512zM512 0v512h512a512 512 0 1 1-512-512z m506.816 438.848H585.152V5.184a512.32 512.32 0 0 1 433.664 433.664z',
                         title: '饼视图',
                         onclick: function () {
                             chart.setOption(pieOpts);
+                        }
+                    },
+                    myTab: {
+                        show: true,
+                        icon: 'M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-85.312A426.688 426.688 0 1 0 512 85.312a426.688 426.688 0 0 0 0 853.376zM320 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z',
+                        title: '导出',
+                        onclick: function () {
+                            that.export(box);
                         }
                     }
                 }
@@ -777,6 +853,7 @@ HsStat.prototype = {
     },
 
     setAmountChart: function(box, data) {
+        var that  = this;
         var chart = box.data("echart");
         var xData = [];
         var bData1 = [];
@@ -822,14 +899,14 @@ HsStat.prototype = {
                 type: "bar",
                 barMaxWidth: 13,
                 itemStyle: { normal: {
-                    barBorderRadius: [3, 3, 0, 0]
+                    barBorderRadius: [4, 4, 0, 0]
                 } }
             }, {
                 data: bData2,
                 type: "bar",
                 barMaxWidth: 13,
                 itemStyle: { normal: {
-                    barBorderRadius: [3, 3, 0, 0]
+                    barBorderRadius: [4, 4, 0, 0]
                 } }
             }],
             xAxis : [{
@@ -861,7 +938,7 @@ HsStat.prototype = {
                     show: true,
                     myBar: {
                         show: true,
-                        icon: 'M6.7,22.9h10V48h-10V22.9zM24.9,13h10v35h-10V13zM43.2,2h10v46h-10V2zM3.1,58h53.7',
+                        icon: 'M85.312 938.688H1024V1024H0V0h85.312v938.688zM256 341.312h85.312V768H256V341.312zM512 128h85.312v640H512V128z m256 213.312h85.312V768H768V341.312z',
                         title: '柱状图',
                         onclick: function () {
                             chart.setOption(barOpts);
@@ -869,10 +946,18 @@ HsStat.prototype = {
                     },
                     myPie: {
                         show: true,
-                        icon: 'M56.3,20.1 C52.1,9,40.5,0.6,26.8,2.1C12.6,3.7,1.6,16.2,2.1,30.6 M3.7,39.9c4.2,11.1,15.8,19.5,29.5,18 c14.2-1.6,25.2-14.1,24.7-28.5',
+                        icon: 'M85.312 512a426.688 426.688 0 0 0 844.8 85.312H426.688V93.888A426.816 426.816 0 0 0 85.312 512zM512 0v512h512a512 512 0 1 1-512-512z m506.816 438.848H585.152V5.184a512.32 512.32 0 0 1 433.664 433.664z',
                         title: '饼视图',
                         onclick: function () {
                             chart.setOption(pieOpts);
+                        }
+                    },
+                    myTab: {
+                        show: true,
+                        icon: 'M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-85.312A426.688 426.688 0 1 0 512 85.312a426.688 426.688 0 0 0 0 853.376zM320 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z',
+                        title: '导出',
+                        onclick: function () {
+                            that.export(box);
                         }
                     }
                 }

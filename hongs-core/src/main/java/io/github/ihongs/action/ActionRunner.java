@@ -30,8 +30,8 @@ import java.util.Map;
  * 0x1103 无权访问
  * 0x1104 无此动作
  * 0x1105 非法请求
- * 0x110e 无法执行, 禁止访问或参数错误
- * 0x110f 注解链溢出
+ * 0x110e 内部错误
+ * 0x110f 无法执行, 禁止访问或参数错误
  * </pre>
  *
  * @author Hong
@@ -262,9 +262,9 @@ public class ActionRunner {
         try {
             method.invoke(object, helper);
         } catch (   IllegalAccessException e) {
-            throw new HongsException(0x110e, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new HongsException(0x110f, "Illegal access for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch ( IllegalArgumentException e) {
-            throw new HongsException(0x110e, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
+            throw new HongsException(0x110f, "Illegal params for method '"+mclass.getName()+"."+method.getName()+"(ActionHelper).");
         } catch (InvocationTargetException e) {
             Throwable  ex = e.getCause( );
             if (ex instanceof HongsExemption) {

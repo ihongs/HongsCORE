@@ -301,7 +301,6 @@ public class ActionRunner {
     private String mod = null;
     private String ent = null;
     private String met = null;
-    private String act = null;
 
     public void setModule(String name) {
         mod = name;
@@ -383,21 +382,16 @@ public class ActionRunner {
      * @throws HongsException
      */
     public String getAction() throws HongsException {
-        if (null != act) {
-            return  act;
-        }
-
         // 去除路径中的根目录和扩展名
-        act = (String) helper.getAttribute(Cnst.ACTION_ATTR);
-        if (act != null) {
-            int pos = act.lastIndexOf('.');
+        String  axt = (String) helper.getAttribute(Cnst.ACTION_ATTR);
+        if (axt != null) {
+            int pos = axt.lastIndexOf('.');
             if (pos > 0) {
-                act = act.substring(0,pos);
+                axt = axt.substring(0,pos);
             }
-            return    act;
-        } else {
-            return action;
+            return axt;
         }
+        return  action;
     }
 
     //** 动作方法 **/

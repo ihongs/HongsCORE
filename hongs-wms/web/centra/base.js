@@ -636,7 +636,7 @@ HsStat.prototype = {
         });
     },
 
-    export: function(itemBox) {
+    report: function(itemBox) {
         var findBox = this.findBox;
         var rb  = itemBox.attr("data-rb"  );
         var fx  = itemBox.attr("data-text");
@@ -838,7 +838,7 @@ HsStat.prototype = {
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '导出',
                         onclick: function () {
-                            that.export(box);
+                            that.report(box);
                         }
                     }
                 }
@@ -963,7 +963,7 @@ HsStat.prototype = {
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '导出',
                         onclick: function () {
-                            that.export(box);
+                            that.report(box);
                         }
                     }
                 }

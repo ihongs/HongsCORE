@@ -255,8 +255,8 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">接口</label>
                     <pre class="form-control-static">
-<%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
-<%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
+计数: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/acount<%=Cnst.ACT_EXT%>
+计算: <%=Core.BASE_HREF%>/<%=_module%>/<%=_entity%>/amount<%=Cnst.ACT_EXT%>
                     </pre>
                 </div>
                 <div class="form-group">

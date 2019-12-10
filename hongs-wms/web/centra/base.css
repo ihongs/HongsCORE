@@ -194,6 +194,9 @@ html, body {
 #main-menubar>ul>li>a:before {
     content: "\e165";
 }
+#main-menubar>ul>li.actual>a:before {
+    content: "\e124";
+}
 #main-menubar>ul>li>a[href="/centra/#manage"]:before {
     content: "\e021";
 }

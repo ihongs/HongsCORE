@@ -46,7 +46,7 @@
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
-                    <th data-fn="_" data-ft="_admin" class="_amenu">
+                    <th data-fn="_" data-ft="_admin" class="_admin _amenu">
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                             <ul class="dropdown-menu adm-menu">

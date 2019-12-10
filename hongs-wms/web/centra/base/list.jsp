@@ -32,7 +32,7 @@
                 <button type="button" class="update for-choose btn btn-default"><%=_locale.translate("fore.update", _title)%></button>
                 <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
-                <button type="button" class="recopy for-checks btn btn-default" title="<%=_locale.translate("fore.recopy", _title)%>"><span class="glyphicon glyphicon-copy "></span></button>
+                <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="glyphicon glyphicon-share"></span></button>
                 <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
                 <%} // End If %>
             </div>
@@ -55,7 +55,7 @@
                     <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                     <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats "></span></button>
-                    <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="glyphicon glyphicon-tasks "></span></button>
+                    <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="glyphicon glyphicon-check "></span></button>
                     <%if ("browse".equals(_action)) {%>
                     <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
                     <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book  "></span></button>
@@ -428,7 +428,7 @@
     context.on("click", ".filtbox :submit", function() {
         filtbox.addClass("invisible");
     });
-    context.on("click", ".toolbox .recopy", function() {
+    context.on("click", ".toolbox .copies", function() {
         hsCopyListData(listbox);
     });
     context.on("click", ".toolbox .column", function() {

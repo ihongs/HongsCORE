@@ -1,4 +1,4 @@
-/* global echarts, jQuery, HsForm, HsList, hsListFillFork */
+/* global jQuery, HsCUID, HsForm, HsList, hsFormFillFork, hsListFillFork, echarts */
 
 /**
  * 设置当前用户ID
@@ -216,9 +216,9 @@ function hsSaveListCols(box, id) {
         for(var i = 0; i < fs.length; i ++) {
             var f = fs[i] ;
             if (f) {
-                ths.filter('[data-fn="'+f+'"]')
-                   .not     (".showed")
-                   .addClass( "hidden");
+                ths.filter("[data-fn='"+f+"']")
+                   .not   (".dont-hide")
+                   .addClass( "hidden" );
             }
         }
     }
@@ -226,7 +226,9 @@ function hsSaveListCols(box, id) {
     // 存储
     box.on("hideCols", function() {
         fs = [];
-        ths.filter(".hidden").not(".showed").each(function() {
+        ths.filter(".hidden")
+           .not(".dont-hide")
+           .each( function( ) {
              fs.push ($(this).data("fn"));
         });
         fs = fs.join (",");
@@ -246,7 +248,7 @@ function hsHideListCols(box) {
               + '<span style="display:inline-block"></span></label>');
 
     ths.each(function() {
-        if ($(this).is(".showed,._admin,._check,._fork")) {
+        if ($(this).is(".dont-hide,._check,._admin")) {
             return;
         }
         var ch = cho.clone().appendTo(chs);
@@ -301,38 +303,69 @@ function hsHideListCols(box) {
 function hsCopyListData(box) {
     // 检查接口
     if (! window.getSelection
-    ||  ! document.createRange
-    ||  ! document.execCommand ) {
-        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome,Firefox 或以它们为核心的其他浏览器.", "warning");
+    ||  ! document.execCommand
+    ||  ! document.createRange ) {
+        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome/Safari/Firefox, 或某些双核/多核浏览器的极速模式.", "warning");
         return;
     }
 
+    // 复制提示
+    var msk = $.hsMask({
+        mode : "warn",
+        glass: "alert-default",
+        title: "正在组织列表原始数据, 请稍等..."
+    }, {
+        glass: "btn-primary",
+        label: "复制"
+    }, {
+        glass: "btn-default",
+        label: "取消"
+    });
+    var mok = function() {
+        msk.removeClass ("alert-info")
+           .addClass ("alert-success");
+        msk.find(".alert-footer .btn")
+           .prop( "disabled" , false );
+        msk.find(".alert-title" /**/ )
+           .text("已经备好列表原始数据, 请复制吧!");
+    };
+    msk.find(".alert-footer button").prop("disabled", true);
+    msk.find(".alert-footer button").eq(0).click(function() {
+        msk.prev().show().children().hsCopy();
+    });
+
     // 复制表格
-    var div = $('<div></div>').insertBefore(box);
+    var div = $('<div></div>').insertBefore(msk);
     var tab = $('<table></table>').appendTo(div);
     var thd = $('<thead></thead>').appendTo(tab);
     var tbd = $('<tbody></tbody>').appendTo(tab);
     var tr  = $('<tr></tr>');
     var th  = $('<td></th>');
     var td  = $('<td></td>');
-    div.attr("style" , "height:1px; overflow:auto;");
-    tab.attr("class" , "table table-bordered");
+    div.attr("style" , "height:1px; display:none; overflow:auto;");
+    tab.attr("style" , "margin:1px;")
+       .attr("class" , "table table-bordered");
+
+    // 表头
     box.find("thead:first tr").each(function() {
         var tr2 = tr.clone().appendTo(thd);
         $(this).find("th").each(function() {
             var th0 = $(this);
-            if (th0.is(".dont-copy,._check,._amenu")) {
+            if (th0.is(".dont-copy,._check,._admin,:hidden")) {
                 return;
             }
             var th2 = th.clone().appendTo(tr2);
             th2.text(th0.text());
         });
     });
-    box.find("tbody:first tr.active").each(function() {
+
+    // 内容
+    box.find("tbody:first tr").each(function() {
+        if (!$(this).is(".active")) return;
         var tr2 = tr.clone().appendTo(tbd);
         $(this).find("td").each(function() {
             var td0 = $ (this);
-            if (td0.is(".dont-copy,._check,._amenu")) {
+            if (td0.is(".dont-copy,._check,._admin,:hidden")) {
                 return;
             }
             var td2 = td.clone().appendTo(tr2);
@@ -355,21 +388,8 @@ function hsCopyListData(box) {
         });
     });
 
-    // 复制内容
-    var rng = document.createRange();
-    var sel = window.getSelection( );
-    sel.removeAllRanges();
-    try {
-        rng.selectNodeContents(tab[0]);
-        sel.addRange(rng);
-    } catch (e) {
-        rng.selectNode /****/ (tab[0]);
-        sel.addRange(rng);
-    }
-    document.execCommand("Copy");
-    div.remove();
-
-    $.hsNote("复制成功, 去粘贴吧!", "success");
+    // 就绪
+    mok ();
 }
 
 /**
@@ -637,7 +657,52 @@ HsStat.prototype = {
     },
 
     report: function(itemBox) {
-        var findBox = this.findBox;
+        var listBox =itemBox.find(".checkbox");
+
+        // 检查接口
+        if (! window.getSelection
+        ||  ! document.execCommand
+        ||  ! document.createRange ) {
+            $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome/Safari/Firefox, 或某些双核/多核浏览器的极速模式.", "warning");
+            return;
+        }
+
+        // 复制提示
+        var msk = $.hsMask({
+            mode : "warn",
+            glass: "alert-default",
+            title: "正在获取完整统计数据, 请稍等..."
+        }, {
+            glass: "btn-primary",
+            label: "复制"
+        }, {
+            glass: "btn-default",
+            label: "取消"
+        });
+        var mok = function() {
+            msk.removeClass ("alert-info")
+               .addClass ("alert-success");
+            msk.find(".alert-footer .btn")
+               .prop( "disabled" , false );
+            msk.find(".alert-title" /**/ )
+               .text("已经取得完整统计数据, 请复制吧!");
+        };
+        msk.find(".alert-footer button").prop("disabled", true);
+        msk.find(".alert-footer button").eq(0).click(function() {
+            var div = listBox.children( "div" );
+            var tab = /**/div.children("table");
+            div.show(  );
+            tab.hsCopy();
+            div.hide(  );
+        });
+
+        // 重复拷贝
+        var div = listBox.children( "div" );
+        if (div.size( )) {
+            mok( );
+            return;
+        }
+
         var rb  = itemBox.attr("data-rb"  );
         var fx  = itemBox.attr("data-text");
         var fn  = itemBox.attr("data-name");
@@ -647,20 +712,21 @@ HsStat.prototype = {
 
         $.ajax({
             url : url + rb,
-            data: findBox.serialize(),
+            data: this.findBox.serialize( ),
             dataType: "json",
             cache  : true,
             success: function(rst) {
                 // 构建表格
-                var div = $('<div></div>').appendTo(itemBox);
+                var div = $('<div></div>').appendTo(listBox);
                 var tab = $('<table></table>').appendTo(div);
                 var thd = $('<thead></thead>').appendTo(tab);
                 var tbd = $('<tbody></tbody>').appendTo(tab);
                 var tr  = $('<tr></tr>');
                 var th  = $('<td></th>');
                 var td  = $('<td></td>');
-                div.attr("style" , "height:1px; overflow:auto;");
-                tab.attr("class" , "table table-bordered");
+                div.attr("style", "height:1px; display:none; overflow:auto;");
+                tab.attr("style", "margin:1px;")
+                   .attr("class", "table table-bordered");
 
                 // 表头
                 var tr2 = tr.clone().appendTo ( thd );
@@ -677,6 +743,7 @@ HsStat.prototype = {
                         var a = rst.info[fn];
                     for(var i = 0; i < a.length; i ++) {
                         var b = a [i];
+                        if (b[1]===null) b[1] = '#'+b[0];
                         tr2 = tr.clone().appendTo( tbd );
                     for(var j = 1; j < b.length; j ++) {
                         var c = b [j];
@@ -684,29 +751,17 @@ HsStat.prototype = {
                     }}
                 }
 
-                // 复制内容
-                var rng = document.createRange();
-                var sel = window.getSelection( );
-                sel.removeAllRanges();
-                try {
-                    rng.selectNodeContents(tab[0]);
-                    sel.addRange(rng);
-                } catch (e) {
-                    rng.selectNode /****/ (tab[0]);
-                    sel.addRange(rng);
-                }
-                document.execCommand("Copy");
-                div.remove();
-
-                $.hsNote("复制成功, 去粘贴吧!", "success");
+                mok ();
             }
         });
     },
 
     setAmountCheck: function(box, data) {
+        data.length > 0 ? box.show() : box.hide();
+
         var name  = box.data("name");
         var text  = box.data("text");
-        var box2  = box.find( ".checkbox").empty();
+        var box2  = box.find(".checkbox").empty();
 
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');
@@ -716,7 +771,8 @@ HsStat.prototype = {
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "" || v[2] == 0) continue;
+            if (v[0] ==  "" )  continue;
+            if (v[1] == null)  v[1] = "#"+ v[0] ;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ", "+ v[3] +")" );
             check = $('<input type="checkbox" class="checkone2"/>')
@@ -729,9 +785,11 @@ HsStat.prototype = {
     },
 
     setAcountCheck: function(box, data) {
+        data.length > 0 ? box.show() : box.hide();
+
         var name  = box.data("name");
         var text  = box.data("text");
-        var box2  = box.find( ".checkbox").empty();
+        var box2  = box.find(".checkbox").empty();
 
         var label = $('<label></label>');
         var check = $('<input type="checkbox" class="checkall2"/>');
@@ -741,7 +799,8 @@ HsStat.prototype = {
 
         for(var i = 0; i < data.length; i ++) {
             var v = data[i];
-            if (v[0] == "" || v[2] == 0) continue;
+            if (v[0] ==  "" )  continue;
+            if (v[1] == null)  v[1] = "#"+ v[0] ;
             label = $('<label></label>')
                 .attr("title", v[1] +" ("+ v[2] + ")");
             check = $('<input type="checkbox" class="checkone2"/>')
@@ -894,6 +953,8 @@ HsStat.prototype = {
             }],
             yAxis : [{
                 show: false
+            }, {
+                show: false
             }]
         };
         var barOpts = {
@@ -983,4 +1044,20 @@ HsStat.prototype = {
 
 jQuery.fn.hsStat = function(opts) {
   return this._hsModule(HsStat, opts);
+};
+
+jQuery.fn.hsCopy = function() {
+    var rng = document.createRange();
+    var sel = window.getSelection( );
+    sel.removeAllRanges();
+    for ( var i = 0; i < this.length; i ++) {
+        try {
+            rng.selectNodeContents(this[i]);
+            sel.addRange(rng);
+        } catch (e) {
+            rng.selectNode/*Text*/(this[i]);
+            sel.addRange(rng);
+        }
+    }
+    document.execCommand("Copy");
 };

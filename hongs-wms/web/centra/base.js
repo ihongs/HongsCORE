@@ -332,6 +332,7 @@ function hsCopyListData(box) {
     msk.find(".alert-footer button").prop("disabled", true);
     msk.find(".alert-footer button").eq(0).click(function() {
         msk.prev().show().children().hsCopy();
+        $.hsNote("复制成功, 去粘贴吧!");
     });
 
     // 复制表格
@@ -694,6 +695,7 @@ HsStat.prototype = {
             div.show(  );
             tab.hsCopy();
             div.hide(  );
+            $.hsNote("复制成功, 去粘贴吧!");
         });
 
         // 重复拷贝
@@ -1047,6 +1049,12 @@ jQuery.fn.hsStat = function(opts) {
 };
 
 jQuery.fn.hsCopy = function() {
+    if (! window.getSelection
+    ||  ! document.execCommand
+    ||  ! document.createRange ) {
+        throw new Error("hsCopy: Copy is not supported");
+    }
+
     var rng = document.createRange();
     var sel = window.getSelection( );
     sel.removeAllRanges();

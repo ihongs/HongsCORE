@@ -5,6 +5,9 @@
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
+<%!
+    private final int Cnst_PN_ONE = 1;
+%>
 <%
     String _pageId = (_module + "-" + _entity + "-swap").replace('/', '-');
 
@@ -26,8 +29,6 @@
             sortable.append(",").append(name);
         }
     }
-
-    int Cnst_PN_ONE = 1;
 %>
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
 <div id="<%=_pageId%>" class="lore-info row">

@@ -118,7 +118,7 @@
     "info": {
         "字段名": "字段值"
     },
-    "data": {
+    "enum": {
         "字段名": [
             ["值", "文本"],
         ]
@@ -238,7 +238,7 @@ id=ID 或 id.=ID1&id.=ID2...
     "info": {
         "字段名": "字段值"
     },
-    "data": {
+    "enum": {
         "字段名": [
             ["值", "文本"],
         ]
@@ -268,10 +268,18 @@ id=ID 或 id.=ID1&id.=ID2...
                 <div class="form-group">
                     <label class="control-label">返回</label>
                     <pre class="form-control-static">
-{
-    "data": {
+计数: {
+    "info": {
         "字段名": [
-            ["值", "文本", "数量", "求和"],
+            ["值", "文本", "数量"],
+        ]
+    },
+    // ...
+},
+计算: {
+    "info": {
+        "字段名": [
+            ["值", "文本", "数量", "求和", "最小值", "最大值"],
         ]
     },
     // ...
@@ -298,6 +306,11 @@ id=ID 或 id.=ID1&id.=ID2...
                         另有一些 H5 的类型如 tel,url,email,date,datetime(实为datetime-local) 等.
                         还有一些自定义的类型, 如: string 同 text, enum 同 select,
                         fork/pick 表示关联, form/part 表示内联.
+                    </p>
+                    <p>
+                        <%=Cnst.AB_KEY%>=.enum 可返回键为 enum 的选项数据,
+                        enum 在 JavaScript 等语言中为关键词, 不方便对象化,
+                        <%=Cnst.AB_KEY%>=.menu 则返回键为 menu 的选项数据.
                     </p>
                     <p>
                         如果已经开放公共访问, 则开放接口只需将上述路径的前缀 <%=Core.BASE_HREF%>/centra/ 更换为 <%=Core.BASE_HREF%>/centre/ 即可, 其他部分不变.

@@ -189,9 +189,9 @@
             }
         %>
         <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>">
-            <div class="panel panel-default panel-body clearfix">
-                <div class="col-xs-3 checkbox" style="height: 250px; overflow: auto;"></div>
-                <div class="col-xs-9 chartbox" style="height: 250px; margin: 10px 0;"></div>
+            <div class="panel panel-default panel-body clearfix" style="height: 302px;">
+                <div class="col-xs-3 checkbox" style="height: 100%; margin: 0; padding: 0; overflow: auto;"></div>
+                <div class="col-xs-9 chartbox" style="height: 100%; margin: 0; padding: 0; overflow: auto;"></div>
             </div>
         </div>
         <%} /*End For*/%>

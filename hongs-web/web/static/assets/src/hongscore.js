@@ -1960,7 +1960,7 @@ $.hsNote = function(msg, typ, end, sec) {
         text : txt ,
         title: msg ,
         close: end ,
-        count: sec || 1.5
+        count: sec || 2
     };
 
     // 样式

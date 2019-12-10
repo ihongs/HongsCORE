@@ -543,8 +543,9 @@ HsStat.prototype = {
     load: function() {
         var that    = this;
         var statBox = this.statBox;
+
         hsRequires("static/addons/echarts/echarts.min.js", function() {
-            statBox.find("[data-type=acount],[data-type=amount]")
+            statBox.find(".stat-group")
                    .each(  function  () {
                 var sta =  $(  this  );
                 if(!sta.data("echart")) {
@@ -554,28 +555,33 @@ HsStat.prototype = {
                 }
             });
 
-            that.amount();
-            that.acount();
+            that.fill(statBox.find("[data-type=amount]"));
+            that.fill(statBox.find("[data-type=acount]"));
         });
     },
 
-    amount: function(rb) {
-        var that = this;
-        var url  = this.murl;
+    fill: function(itemBox) {
+        var that    = this;
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;
 
-        if ( ! rb ) {
-            rb = [];
-            statBox.find( "[data-type=amount]" )
-                   .each(function() {
-                rb.push($(this).attr("data-rb"));
-            });
-        }
-        if (rb.length == 0) {
-            return;
-        }
+        var rb  = [];
+        var ft  = itemBox.attr("data-type");
+        var url = ft === "amount" ? this.murl : this.curl;
+
+        itemBox.each(function() {
+            var ib = $ ( this );
+            rb.push (ib.attr("data-rb"));
+
+            var sm = ib.find("stat-msg");
+            if (sm.size() == 0) {
+                sm = $ ('<div class="stat-msg"></div>').appendTo(ib);
+            }
+            ib.find(".checkbox").hide( );
+            ib.find(".chartbox").hide( );
+            sm.show().text(sm.data("text")+"统计中...");
+        });
 
         $.ajax({
             url : url + rb.join( "" ),
@@ -584,80 +590,47 @@ HsStat.prototype = {
             cache  : true,
             success: function(rst) {
                 rst  = rst.info || {};
-                for (var k in rst) {
-                     if (k == "__count__") continue;
-                     var n  = statBox.find("[data-name='"+k+"']");
-                     if (0 == n.size( )  ) continue;
-                     var d  = rst[k];
-                     that.setAmountCheck(n, d);
-                     that.setAmountChart(n, d);
-                }
+                for(var k  in rst) {
+                    if (k  == "__count__") continue;
+                    var n  =  statBox.find("[data-name='"+k+"']");
+                    if (0  == n.size( )  ) continue;
+                    var d  =  rst[k];
 
-                var list = context.data( "HsList" );
-                var data = hsSerialDic (list._data);
-                for (var k in data) {
-                    statBox.find("[name='"+k+"']" ).val(data [k]);
+                    if (d.length == 0) {
+                        n.find(".stat-msg").text(n.data( "text" )+"无统计数据!");
+                        continue;
+                    } else {
+                        n.find(".stat-msg").hide();
+                        n.find(".checkbox").show();
+                        n.find(".chartbox").show();
+                    }
+
+                    if (ft === "amount") {
+                        that.setAmountCheck(n , d);
+                        that.setAmountChart(n , d);
+                    } else {
+                        that.setAcountCheck(n , d);
+                        that.setAcountChart(n , d);
+                    }
                 }
 
                 statBox.find(".checkbox").each(function() {
-                    if ($(this).find(":checked"  ).size() === 0 ) {
+                    if ($(this).find(":checked"  ).size() === 0) {
                         $(this).find(".checkall2").prop("checked", true);
                     }
                 });
+
+                var list = context.data( "HsList" );
+                if (list) {
+                var data = hsSerialDic (list._data);
+                for(var k in data) {
+                    statBox. find("[name='"+k+"']").val(data[k]);
+                }}
             }
         });
     },
 
-    acount: function(rb) {
-        var that = this;
-        var url  = this.curl;
-        var context = this.context;
-        var statBox = this.statBox;
-        var findBox = this.findBox;
-
-        if ( ! rb ) {
-            rb = [];
-            statBox.find( "[data-type=acount]" )
-                   .each(function() {
-                rb.push($(this).attr("data-rb"));
-            });
-        }
-        if (rb.length == 0) {
-            return;
-        }
-
-        $.ajax({
-            url : url + rb.join( "" ),
-            data: findBox.serialize(),
-            dataType: "json",
-            cache  : true,
-            success: function(rst) {
-                rst  = rst.info || {};
-                for (var k in rst) {
-                     if (k == "__count__") continue;
-                     var n  = statBox.find("[data-name='"+k+"']");
-                     if (0 == n.size( )  ) continue;
-                     var d  = rst[k];
-                     that.setAcountCheck(n, d);
-                     that.setAcountChart(n, d);
-                }
-
-                var list = context.data( "HsList" );
-                var data = hsSerialDic (list._data);
-                for (var k in data) {
-                    statBox.find("[name='"+k+"']" ).val(data [k]);
-                }
-
-                statBox.find(".checkbox").each(function() {
-                    if ($(this).find(":checked"  ).size() === 0 ) {
-                        $(this).find(".checkall2").prop("checked", true);
-                    }
-                });
-            }
-        });
-    },
-
-    report: function(itemBox) {
+    copy: function(itemBox) {
         var listBox =itemBox.find(".checkbox");
 
         // 检查接口
@@ -709,8 +682,8 @@ HsStat.prototype = {
         var fx  = itemBox.attr("data-text");
         var fn  = itemBox.attr("data-name");
         var ft  = itemBox.attr("data-type");
-        var url = ft == "amount" ? this.murl : this.curl;
-            url = hsSetParam(url, "rn","0"); // 全部数据
+        var url = ft === "amount" ? this.murl : this.curl;
+            url = hsSetParam(url, "rn","0"); // 取全部数据
 
         $.ajax({
             url : url + rb,
@@ -759,8 +732,6 @@ HsStat.prototype = {
     },
 
     setAmountCheck: function(box, data) {
-        data.length > 0 ? box.show() : box.hide();
-
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.find(".checkbox").empty();
@@ -787,8 +758,6 @@ HsStat.prototype = {
     },
 
     setAcountCheck: function(box, data) {
-        data.length > 0 ? box.show() : box.hide();
-
         var name  = box.data("name");
         var text  = box.data("text");
         var box2  = box.find(".checkbox").empty();
@@ -880,7 +849,7 @@ HsStat.prototype = {
                         icon: 'M85.312 938.688H1024V1024H0V0h85.312v938.688zM256 341.312h85.312V768H256V341.312zM512 128h85.312v640H512V128z m256 213.312h85.312V768H768V341.312z',
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '柱状图',
-                        onclick: function () {
+                        onclick: function() {
                             chart.setOption(barOpts);
                         }
                     },
@@ -889,7 +858,7 @@ HsStat.prototype = {
                         icon: 'M85.312 512a426.688 426.688 0 0 0 844.8 85.312H426.688V93.888A426.816 426.816 0 0 0 85.312 512zM512 0v512h512a512 512 0 1 1-512-512z m506.816 438.848H585.152V5.184a512.32 512.32 0 0 1 433.664 433.664z',
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '饼视图',
-                        onclick: function () {
+                        onclick: function() {
                             chart.setOption(pieOpts);
                         }
                     },
@@ -898,8 +867,8 @@ HsStat.prototype = {
                         icon: 'M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-85.312A426.688 426.688 0 1 0 512 85.312a426.688 426.688 0 0 0 0 853.376zM320 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z',
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '导出',
-                        onclick: function () {
-                            that.report(box);
+                        onclick: function() {
+                            that.copy(box );
                         }
                     }
                 }
@@ -1007,7 +976,7 @@ HsStat.prototype = {
                         icon: 'M85.312 938.688H1024V1024H0V0h85.312v938.688zM256 341.312h85.312V768H256V341.312zM512 128h85.312v640H512V128z m256 213.312h85.312V768H768V341.312z',
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '柱状图',
-                        onclick: function () {
+                        onclick: function() {
                             chart.setOption(barOpts);
                         }
                     },
@@ -1016,7 +985,7 @@ HsStat.prototype = {
                         icon: 'M85.312 512a426.688 426.688 0 0 0 844.8 85.312H426.688V93.888A426.816 426.816 0 0 0 85.312 512zM512 0v512h512a512 512 0 1 1-512-512z m506.816 438.848H585.152V5.184a512.32 512.32 0 0 1 433.664 433.664z',
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '饼视图',
-                        onclick: function () {
+                        onclick: function() {
                             chart.setOption(pieOpts);
                         }
                     },
@@ -1025,8 +994,8 @@ HsStat.prototype = {
                         icon: 'M512 1024A512 512 0 1 1 512 0a512 512 0 0 1 0 1024z m0-85.312A426.688 426.688 0 1 0 512 85.312a426.688 426.688 0 0 0 0 853.376zM320 576a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z m192 0a64 64 0 1 1 0-128 64 64 0 0 1 0 128z',
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '导出',
-                        onclick: function () {
-                            that.report(box);
+                        onclick: function() {
+                            that.copy(box );
                         }
                     }
                 }

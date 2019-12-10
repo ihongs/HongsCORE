@@ -187,9 +187,11 @@ public class StatisHelper {
             Map<String, Map<String, Integer>> counts,
             Map<String, Set<String         >> countx,
             IndexReader reader, IndexSearcher finder) throws HongsException {
+        Set<Map.Entry<String, Map<String, Integer>>> es = counts.entrySet();
+
         // 判断是否需要额外的值
         Set<String> more = new HashSet();
-        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+        for(Map.Entry<String, Map<String, Integer>>  et : es) {
             if (et.getValue().isEmpty()) {
                 more.add( et . getKey());
             }
@@ -212,7 +214,7 @@ public class StatisHelper {
                     for(ScoreDoc dox : docs) {
                         Document doc = reader.document(dox.doc);
 
-                        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+                        for(Map.Entry<String, Map<String, Integer>>  et : es) {
                             String               k    = et .getKey   ( );
                             Map<String, Integer> cntc = et .getValue ( );
                             IndexableField[]     vals = doc.getFields(k);
@@ -408,6 +410,8 @@ public class StatisHelper {
             Map<String, Map<Minmax , Cntsum>> counts,
             Map<String, Set<Minmax         >> countx,
             IndexReader reader, IndexSearcher finder) throws HongsException {
+        Set<Map.Entry<String, Map<Minmax, Cntsum>>> es = counts.entrySet();
+
         int total = 0;
 
         try {
@@ -425,26 +429,27 @@ public class StatisHelper {
                     for(ScoreDoc dox : docs) {
                         Document doc = reader.document(dox.doc);
 
-                        for (Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
+                        for(Map.Entry<String, Map<Minmax, Cntsum>>  et : es) {
                             String              k    = et .getKey   ( );
                             Map<Minmax, Cntsum> cntc = et .getValue ( );
                             Set<Minmax        > cntx = countx.get   (k);
                             IndexableField[   ] vals = doc.getFields(k);
 
-                        F : for (IndexableField x : vals) {
+                        F : for(IndexableField x : vals) {
                                 double v = x.numericValue()
                                             . doubleValue();
                                        v = getValue( v, k );
 
-                                if (cntx != null) for (Minmax w : cntx) {
+                                if (  null  != cntx)
+                                for(Minmax w : cntx) {
                                     if (w.covers(v)) {
                                         continue F ;
                                     }
                                 }
 
-                                for (Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
-                                    Minmax m = mc.getKey  ( );
+                                for(Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
                                     Cntsum c = mc.getValue( );
+                                    Minmax m = mc.getKey  ( );
 
                                     if (m.covers(v)) {
                                         c.add   (v);

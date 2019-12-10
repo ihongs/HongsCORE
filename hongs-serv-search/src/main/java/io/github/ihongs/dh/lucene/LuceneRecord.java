@@ -964,7 +964,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @throws HongsException
      */
     protected void padQry(BooleanQuery.Builder qr, Map rd) throws HongsException {
-        LuceneRecord.this.padQry(qr, rd, 0);
+        try {
+            padQry(qr, rd, 0);
+        } catch (BooleanQuery.TooManyClauses ex) {
+            throw  new  HongsException(400 , ex);
+        }
     }
 
     /**

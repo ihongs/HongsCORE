@@ -75,6 +75,7 @@
                     .append("</li>\r\n");
             } else
             if (!href.startsWith("common/menu.")) {
+                actc = "actual " + actc ;
                 href = Core.BASE_HREF +"/"+ href;
                 hrel = Core.BASE_HREF +"/"+ hrel;
                 menu.append("<li class=\"").append(actc).append("\">")

@@ -1,4 +1,4 @@
-/* global echarts, jQuery, HsForm, HsList, HsCUID */
+/* global jQuery, HsCUID, HsForm, HsList */
 
 /**
  * 设置当前用户ID

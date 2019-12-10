@@ -189,55 +189,61 @@ public class TitlesHelper {
         if (tk == null || tk.isEmpty()) {
             tk  =  "name";
         }
+        Object[] vk2 = Dict.splitKeys(vk);
+        Object[] tk2 = Dict.splitKeys(tk);
 
         // 映射关系
-        Map<String, List> lm = new HashMap();
+        Map<Object, Object[]> lm = new HashMap();
         for(Object[] lx : ls) {
-            String   lv = ( String ) lx[0];
-            List<Object[]> lw = lm.get(lv);
-            if (lw == null) {
-                lw  = new ArrayList();
-                lm.put(lv, lw);
-            }
-            lw.add(lx);
+            lm.put(lx[0], lx);
         }
-        Set li  =  lm.keySet();
+        Set li = lm.keySet( );
 
         // 查询结构
+        Map cd = new HashMap();
         Map rd = new HashMap();
         Set rb = new HashSet();
-        rd.put(Cnst.RN_KEY, 0);
-        rd.put(Cnst.RB_KEY,rb);
-        rd.put(Cnst.ID_KEY,li);
+        rd.put(Cnst.RB_KEY, rb );
+        rd.put(Cnst.RN_KEY,1024);
+        cd.put(Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get( ) );
         rb.add(vk);
         rb.add(tk);
 
         // 获取结果
-        ActionHelper ah = ActionHelper.newInstance();
-        ah.setContextData(Synt.mapOf(
-            Cnst.ORIGIN_ATTR, Core.ACTION_NAME.get()
-        ));
-        ah.setRequestData( rd );
-        try {
-            ActionRunner.newInstance(ah, at).doInvoke();
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
-        }
+        ActionHelper ah = ActionHelper.newInstance( /**/ );
+        ah.setContextData (cd);
+        ah.setRequestData (rd);
+        ActionRunner ar = ActionRunner.newInstance(ah, at);
 
-        // 整合数据
-        Map sd  = ah.getResponseData( /**/ );
-        List<Map> lz = (List) sd.get("list");
-        if (lz == null) {
-            return;
-        }
-        for ( Map  ro : lz) {
-            String lv = Dict.getParam(ro, "", vk);
-            String lt = Dict.getParam(ro, "", tk);
+        /**
+         * Lucene 单个条件的数量无法超过 1024
+         * 故需拆成片段
+         * 分批进行查询
+         */
+       List l = new ArrayList(li);
+        int k = l.size ();
+        int j = 0 , i = 0;
+        while  (j < k) {
+            j = i + 1024 ;
+            if (j > k) {
+                j = k;
+            }
+            rd.put(Cnst.ID_KEY, l.subList(i, j) );
+            /**/i = j;
 
-            List<Object[]> lw = lm.get( lv );
-            if  (  null != lw )
-            for (Object[]  lx : lw) {
-                   lx[1] = lt ;
+            ar.doInvoke();
+
+            // 整合数据
+            Map sd  =  ah.getResponseData( /**/ );
+            List <Map> lz = (List) sd.get("list");
+            if (lz != null) for (Map ro : lz) {
+                String lv = Dict.getValue(ro, "", vk2);
+                String lt = Dict.getValue(ro, "", tk2);
+
+                Object[ ]   lx  =  lm.get(lv);
+                if (null != lx) {
+                    lx[1] = lt;
+                }
             }
         }
     }

@@ -86,12 +86,10 @@
             });
         });
         $("#prog2").click(function() {
-            var box = $.hsXhwp("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM",
+            var box = $.hsWait("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM",
                 {"addEventListener": function() {}},
                 {"addEventListener": function() {}}
             );
-            var bar = box.find(".progress-bar");
-            var etc = box.find(".button");
             var cnt = 0;
             var ord = 1;
             setInterval(function() {
@@ -108,8 +106,7 @@
                         ord = 1 ;
                     }
                 }
-                bar.css ("width", cnt + "%");
-                etc.text(/******/ cnt + "%");
+                box.setProgress(cnt);
             } , 100);
         });
 

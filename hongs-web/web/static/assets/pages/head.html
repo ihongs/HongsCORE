@@ -41,6 +41,7 @@
                 <li class="divider"></li>
                 <li><a href="javascript:;" id="warn2">确认</a></li>
                 <li><a href="javascript:;" id="view2">浮窗</a></li>
+                <li><a href="javascript:;" id="prog1">进行中</a></li>
                 <li><a href="javascript:;" id="prog2">进度条</a></li>
             </ul>
         </li>
@@ -85,11 +86,12 @@
                 }
             });
         });
+        $("#prog1").click(function() {
+            var box = $.hsWait("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM");
+            box.setProgress();
+        });
         $("#prog2").click(function() {
-            var box = $.hsWait("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM",
-                {"addEventListener": function() {}},
-                {"addEventListener": function() {}}
-            );
+            var box = $.hsWait("开始上传 C:\\WINDOWS\\SYSTEM32\\CONFIG\\SYSTEM");
             var cnt = 0;
             var ord = 1;
             setInterval(function() {

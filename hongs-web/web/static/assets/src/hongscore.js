@@ -2048,7 +2048,7 @@ $.hsWarn = function(msg, typ, yes, not) {
  * @param {XMLHttpRequest} xhr
  * @param {XMLHttpRequestUpload} xhu
  */
-$.hsXhwp = function(msg, xhr, xhu) {
+$.hsWait = function(msg, xhr, xhu) {
     var box = $.hsMask({
         title:  msg  ,
         mode : "wait",
@@ -2058,26 +2058,22 @@ $.hsXhwp = function(msg, xhr, xhu) {
     var foo = box.find(".alert-footer");
     var bar = box.find(".progress-bar");
     var stt = new Date().getTime()/1000;
-    var pct = 0;
     var rtt = 0;
+    var pct = 0;
 
-    foo.empty().text("...");
-    box.find ( ".close").remove();
-    box.trigger("shown.bs.modal");
-
-    if (xhr)
-    xhr.addEventListener(  "load"  , function(   ) {
-        mod.modal( "hide" );
-    } , false);
-    if (xhu)
-    xhu.addEventListener("progress", function(evt) {
-        if (pct >= 100 || ! evt.lengthComputable ) {
+    box.getProgress = function() {
+        return pct;
+    };
+    box.setProgress = function(snt , tal) {
+        if (tal === null && snt === null) {
+            mod.modal ("hide");
             return;
         }
+        if (tal === undefined) {
+            tal  =  100;
+        }
 
-        var tal  = evt.total ;
-        var snt  = evt.loaded;
-        var ctt  = new Date().getTime( )/1000 - stt;
+        var ctt = new Date().getTime() / 1000 - stt;
         pct  = Math.ceil((100 * snt) / (0.0 + tal));
         rtt  = Math.ceil((100 - pct) * (ctt / pct));
 
@@ -2097,9 +2093,22 @@ $.hsXhwp = function(msg, xhr, xhu) {
         bar.attr("aria-valuenow", pct);
         bar.css ( "width" , pct + "%");
         foo.text(  pct  + "% -" + snt);
-    } , false);
+    };
 
-    return box;
+    foo.empty().text("...");
+
+    if (xhr)
+    xhr.addEventListener(  "load"  , function(   ) {
+        mod.modal( "hide" );
+    } , false );
+    if (xhu)
+    xhu.addEventListener("progress", function(evt) {
+        if (pct  <  100  && evt.lengthComputable ) {
+            box.setProgress(evt.loaded,evt.total );
+        }
+    } , false );
+
+    return  box;
 };
 /**
  * 带上传进度条的异步通讯方法
@@ -2110,7 +2119,7 @@ $.hsXhup = function(msg) {
     return function(   ) {
         var xhr = $.ajaxSettings.xhr();
         var xhu = xhr.upload ||  xhr  ;
-        $.hsXhwp( /**/ msg, xhr, xhu );
+        $.hsWait( /**/ msg, xhr, xhu );
         return xhr;
     };
 };
@@ -2122,7 +2131,7 @@ $.hsXhup = function(msg) {
 $.hsXhrp = function(msg) {
     return function(   ) {
         var xhr = $.ajaxSettings.xhr();
-        $.hsXhwp( /**/ msg, xhr, xhr );
+        $.hsWait( /**/ msg, xhr, xhr );
         return xhr;
     };
 };

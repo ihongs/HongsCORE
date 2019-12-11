@@ -313,6 +313,7 @@ function hsCopyListData(box) {
     var msk = $.hsMask({
         mode : "warn",
         glass: "alert-default",
+        text : "这将整理原始数据, 清理表格中的内容, 提取完整的日期/时间, 补全图片/链接等网址, 以便您复制到 Office 等软件中查阅.",
         title: "正在组织列表原始数据, 请稍等..."
     }, {
         glass: "btn-primary",
@@ -332,7 +333,7 @@ function hsCopyListData(box) {
     msk.find(".alert-footer button").prop("disabled", true);
     msk.find(".alert-footer button").eq(0).click(function() {
         msk.prev().show().children().hsCopy();
-        $.hsNote("复制成功, 去粘贴吧!");
+        $.hsNote("复制成功, 去粘贴吧!", "success");
     });
 
     // 复制表格
@@ -571,16 +572,13 @@ HsStat.prototype = {
         var url = ft === "amount" ? this.murl : this.curl;
 
         itemBox.each(function() {
-            var ib = $ ( this );
-            rb.push (ib.attr("data-rb"));
+            rb.push($(this).attr("data-rb"));
 
-            var sm = ib.find("stat-msg");
-            if (sm.size() == 0) {
-                sm = $ ('<div class="stat-msg"></div>').appendTo(ib);
-            }
-            ib.find(".checkbox").hide( );
-            ib.find(".chartbox").hide( );
-            sm.show().text(sm.data("text")+"统计中...");
+            $(this).find(".checkbox").hide();
+            $(this).find(".chartbox").hide();
+            $(this).find(".alert"   ).show().text(
+                $(this).data ("text") + "统计中..."
+            );
         });
 
         $.ajax({
@@ -591,19 +589,19 @@ HsStat.prototype = {
             success: function(rst) {
                 rst  = rst.info || {};
                 for(var k  in rst) {
-                    if (k  == "__count__") continue;
+                    var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
-                    if (0  == n.size( )  ) continue;
-                    var d  =  rst[k];
 
-                    if (d.length == 0) {
-                        n.find(".stat-msg").text(n.data( "text" )+"无统计数据!");
+                    if (n.size() == 0) {
                         continue;
-                    } else {
-                        n.find(".stat-msg").hide();
-                        n.find(".checkbox").show();
-                        n.find(".chartbox").show();
                     }
+                    if (d.length == 0) {
+                        continue;
+                    }
+
+                    n.find(".alert"   ).hide();
+                    n.find(".checkbox").show();
+                    n.find(".chartbox").show();
 
                     if (ft === "amount") {
                         that.setAmountCheck(n , d);
@@ -613,6 +611,12 @@ HsStat.prototype = {
                         that.setAcountChart(n , d);
                     }
                 }
+
+                itemBox.each(function() {
+                    $(this).find(".alert:visible").text(
+                        $(this).data ("text") + "无统计值!"
+                    );
+                });
 
                 statBox.find(".checkbox").each(function() {
                     if ($(this).find(":checked"  ).size() === 0) {
@@ -645,6 +649,7 @@ HsStat.prototype = {
         var msk = $.hsMask({
             mode : "warn",
             glass: "alert-default",
+            text : "为提升用户体验, 让浏览尽量顺畅, 页面中的统计数据按数量从多到少排列, 仅取前 20 个选项, 可以通过此功能获取完整的统计数据, 以便您复制到 Office 等软件中查阅.",
             title: "正在获取完整统计数据, 请稍等..."
         }, {
             glass: "btn-primary",
@@ -668,7 +673,7 @@ HsStat.prototype = {
             div.show(  );
             tab.hsCopy();
             div.hide(  );
-            $.hsNote("复制成功, 去粘贴吧!");
+            $.hsNote("复制成功, 去粘贴吧!", "success");
         });
 
         // 重复拷贝

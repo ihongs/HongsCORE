@@ -220,7 +220,7 @@ html, body {
     background: rgba(66,66,66,1.0);
 }
 #head-handled a {
-    width : 0; 
+    width : 0;
     height: 0;
     display: block;
     border-width: 4px;
@@ -261,6 +261,17 @@ html, body {
     border: 1px solid #ddd;
 }
 
+/* 隐藏受限的搜索框 */
+.input-group .input-search:disabled {
+    visibility: hidden;
+}
+.input-group .input-search:disabled+.input-group-btn>.btn:first-child {
+    border-radius: 4px 0 0 4px;
+}
+.input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
+    content: "\e031";
+}
+
 /* 统计图表附带选项 */
 .statbox .checkbox label {
     display: block;
@@ -270,15 +281,17 @@ html, body {
          overflow: hidden;
     text-overflow: ellipsis;
 }
-
-/* 隐藏受限的搜索框 */
-.input-group .input-search:disabled {
-    visibility: hidden;
+.statbox .checkbox ,
+.statbox .chartbox {
+    margin  : 0;
+    padding : 0;
+    overflow: auto;
 }
-.input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
-    content : "\e031" ;
+.statbox .panel {
+    display : flex;
+    align-items: center;
 }
-.input-group .input-search:disabled+.input-group-btn:last-child>.btn:first-child {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
+.statbox .alert {
+    width   : 100%;
+     text-align: center;
 }

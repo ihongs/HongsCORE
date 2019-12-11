@@ -137,9 +137,9 @@
         <%} /*End For*/%>
         <div class="form-group form-group-sm clearfix" style="margin: 0 0">
             <div class="col-xs-6 col-xs-offset-3">
-                <button type="submit" class="btn btn-default">过滤</button>
+                <button type="submit" class="btn btn-primary">过滤</button>
                 <span style="padding: 0.1em;"></span>
-                <button type="reset"  class="btn btn-link"   >重置</button>
+                <button type="reset"  class="btn btn-default">重置</button>
             </div>
         </div>
     </form>
@@ -189,9 +189,10 @@
             }
         %>
         <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>">
-            <div class="panel panel-default panel-body clearfix" style="height: 302px;">
-                <div class="col-xs-3 checkbox" style="height: 100%; margin: 0; padding: 0; overflow: auto;"></div>
-                <div class="col-xs-9 chartbox" style="height: 100%; margin: 0; padding: 0; overflow: auto;"></div>
+            <div class="panel panel-body panel-default clearfix" style="height: 302px;">
+                <div class="checkbox col-xs-3" style="height: 100%;"></div>
+                <div class="chartbox col-xs-9" style="height: 100%;"></div>
+                <div class="alert" style="display: none;"></div>
             </div>
         </div>
         <%} /*End For*/%>

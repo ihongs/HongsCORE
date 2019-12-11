@@ -2052,7 +2052,10 @@ $.hsWait = function(msg, xhr, xhu) {
     var box = $.hsMask({
         title:  msg  ,
         mode : "wait",
-        html : '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>'
+        html : '<div class="progress">'
+             + '<div class="progress-bar progress-bar-striped active" style=" width: 100%; " '
+             + 'role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">'
+             + '</div></div>'
     });
     var mod = box.closest(".modal");
     var foo = box.find(".alert-footer");
@@ -2061,8 +2064,8 @@ $.hsWait = function(msg, xhr, xhu) {
     var pct = 0;
     var itl;
 
+    // 剩余时间文本表示, h:mm:ss
     function getProgtime (rtt) {
-        // 剩余时间文本表示, h:mm:ss
         var ctt, snt;
         snt  =  ""  ;
         ctt  = Math.floor(rtt /3600);

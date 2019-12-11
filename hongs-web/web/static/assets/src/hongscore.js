@@ -2058,27 +2058,13 @@ $.hsWait = function(msg, xhr, xhu) {
     var foo = box.find(".alert-footer");
     var bar = box.find(".progress-bar");
     var stt = new Date().getTime()/1000;
-    var rtt = 0;
     var pct = 0;
+    var itl;
 
-    box.getProgress = function() {
-        return pct;
-    };
-    box.setProgress = function(snt, tal) {
-        if (tal === undefined) {
-        if (snt === undefined) {
-            mod.modal ("hide");
-            return;
-        } else {
-            tal  =  100;
-        }}
-
-        var ctt = new Date().getTime() / 1000 - stt;
-        pct  = Math.ceil((100 * snt) / (0.0 + tal));
-        rtt  = Math.ceil((100 - pct) * (ctt / pct));
-
+    function getHtime(rtt) {
         // 剩余时间文本表示, h:mm:ss
-        snt  =  "" ;
+        var ctt, snt;
+        snt  =  ""  ;
         ctt  = Math.floor(rtt /3600);
         if ( 0<ctt) rtt  =rtt %3600 ;
 //      if (10>ctt) snt += "0";
@@ -2089,6 +2075,36 @@ $.hsWait = function(msg, xhr, xhu) {
         snt += ctt + ":";
         if (10>rtt) snt += "0";
         snt += rtt ;
+        return snt ;
+    }
+
+    box.getProgress = function() {
+        return pct;
+    };
+    box.setProgress = function(snt, tal) {
+        if (itl) {
+            clearInterval(itl);
+            itl  =  undefined ;
+        }
+        if (tal === undefined) {
+            tal  =  100;
+        if (snt === undefined) {
+            snt  =  100;
+            // 设置为 100% 并计时
+            bar.attr("aria-valuenow", snt);
+            bar.css ( "width" , snt + "%");
+            itl  =  setInterval(function() {
+                var ctt = new Date().getTime() / 1000 - stt;
+                foo.text( "+" + getHtime(Math.ceil(ctt) ) );
+            });
+            return;
+        }}
+
+        var ctt, rtt;
+        ctt  = new Date ().getTime() / 1000 - stt;
+        pct  = Math.ceil((100 * snt) / (0.0 + tal));
+        rtt  = Math.ceil((100 - pct) * (ctt / pct));
+        snt  = getHtime ( rtt );
 
         bar.attr("aria-valuenow", pct);
         bar.css ( "width" , pct + "%");

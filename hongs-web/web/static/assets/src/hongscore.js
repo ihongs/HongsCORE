@@ -2079,7 +2079,7 @@ $.hsWait = function(msg, xhr, xhu) {
     }
 
     box.getProgress = function() {
-        return pct;
+        return pct ;
     };
     box.setProgress = function(snt, tal) {
         if (itl) {
@@ -2096,8 +2096,8 @@ $.hsWait = function(msg, xhr, xhu) {
             itl  =  setInterval(function() {
                 var ctt = new Date().getTime() / 1000 - stt;
                 foo.text( "+" + getHtime(Math.ceil(ctt) ) );
-            });
-            return;
+            },1000);
+            return ;
         }}
 
         var ctt, rtt;

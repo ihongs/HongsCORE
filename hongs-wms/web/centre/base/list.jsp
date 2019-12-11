@@ -21,37 +21,37 @@
 %>
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-list">
-    <div class="row board">
-    <div class="col-md-6 col-sm-8 center-block">
-        <div style="display: table; width: 100%;">
-        <div style="display: table-cell; width: 15px; vertical-align: middle;">
-            <div class="toolbox btn-group">
-                <button type="button" class="create btn btn-primary" style="margin-right: 15px;"><%=_locale.translate("fore.create", _title)%></button>
+    <form class="findbox toolbox board row">
+        <div class="col-md-6 col-sm-8 center-block">
+            <div style="display: table; width: 100%;">
+            <div style="display: table-cell; width: 15px; vertical-align: middle;">
+                <div class="btn-group">
+                    <button type="button" class="create btn btn-primary" style="margin-right: 15px;"><%=_locale.translate("fore.create", _title)%></button>
+                </div>
+            </div>
+            <div style="display: table-cell; width: 100%; vertical-align: middle;">
+                <div class="input-group">
+                    <%
+                        StringBuilder sp = new StringBuilder( );
+                        if (! _wd.isEmpty()) {
+                        for(String ss : _wd) {
+                            ss = Dict.getValue(_fields, "", ss , "__text__" );
+                            if (ss.length() != 0) sp.append(ss).append(", " );
+                        }   if (sp.length() != 0) sp.setLength(sp.length()-2);
+                        } else {
+                            sp.append("\" disabled=\"disabled");
+                        }
+                    %>
+                    <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
+                    <span class="input-group-btn">
+                        <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
+                        <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
+                    </span>
+                </div>
+            </div>
             </div>
         </div>
-        <div style="display: table-cell; width: 100%; vertical-align: middle;">
-            <form class="findbox input-group">
-                <%
-                    StringBuilder sp = new StringBuilder( );
-                    if (! _wd.isEmpty()) {
-                    for(String ss : _wd) {
-                        ss = Dict.getValue(_fields, "", ss , "__text__" );
-                        if (ss.length() != 0) sp.append(ss).append(", " );
-                    }   if (sp.length() != 0) sp.setLength(sp.length()-2);
-                    } else {
-                        sp.append("\" disabled=\"disabled");
-                    }
-                %>
-                <input type="search" class="form-control" name="<%=Cnst.WD_KEY%>" placeholder="<%=sp%>" /><!--<%=_wd%>-->
-                <span class="input-group-btn">
-                    <button type="submit" class="search btn btn-default" title="<%=_locale.translate("fore.search", _title)%>"><span class="glyphicon glyphicon-search"></span></button>
-                    <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
-                </span>
-            </form>
-        </div>
-        </div>
-    </div>
-    </div>
+    </form>
     <!-- 筛选 -->
     <form class="findbox filtbox statbox invisible panel panel-default panel-body">
         <%

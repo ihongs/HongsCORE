@@ -2111,6 +2111,7 @@ $.hsWait = function(msg, xhr, xhu) {
         foo.text(  pct  + "% -" + snt);
     };
 
+    foo.css("font-family","monospace");
     foo.empty().text("...");
 
     if (xhr)

@@ -713,15 +713,48 @@ input[type=file].form-control {
 
 /** 适配 **/
 
-@media (min-width: 630px) {
-    .warnbox.alert ,
-    .progbox.alert {
-        border-radius: 0;
+.modal-bottom {
+    align-items: flex-end;
+    display: flex;
+}
+.modal-middle {
+    align-items: center;
+    display: flex;
+}
+.modal {
+    padding: 10px;
+}
+.modal-dialog ,
+.alert.dialog {
+    margin : 0px ;
+    width  : 100%;
+}
+@media (min-width: 768px) {
+    .modal {
+        padding : 0px;
     }
-    .notebox.alert ,
-    .warnbox.alert .alert-content ,
-    .progbox.alert .alert-content {
-        margin: 0 auto;
-        width : 600px ;
+    .modal-dialog {
+        width : 600px;
+        margin:  30px auto;
+    }
+    .alert.dialog {
+        width : 100% ;
+        margin:   0px auto;
+        border-radius: 0px;
+    }
+    .alert.dialog>.alert-content {
+        width : 600px;
+        margin:   0px auto;
+        border-radius: 0px;
+    }
+    .alert.dialog.notebox {
+        width : 600px;
+        margin:  30px auto;
+        border-radius: 6px;
+    }
+    .alert.dialog.notebox>.alert-content {
+        width : 100% ;
+        margin:   0px auto;
+        border-radius: 0px;
     }
 }

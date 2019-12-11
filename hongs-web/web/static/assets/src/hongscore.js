@@ -1877,6 +1877,14 @@ $.hsMask = function(opt) {
         mod.modal( "hide" );
     } , dow);
 
+    // 显示位置
+    if (opt.position === "middle") {
+        mod.addClass("modal-middle");
+    } else
+    if (opt.position === "bottom") {
+        mod.addClass("modal-middle");
+    }
+
     // 附加开关
     if (opt.closable ===  false  ) {
         btt.siblings(".close").remove();
@@ -1884,42 +1892,12 @@ $.hsMask = function(opt) {
 
     // 附加类型
     if (ini.backdrop === "hidden") {
-        ini.backdrop  =   false  ;
+        ini.backdrop   =  false  ;
 
         // 无遮罩时点对话框外也关闭
         mod.on("click", function( evt ) {
             if ($(this).is(evt.target)) {
-                mod.modal (  "hide"  );
-            }
-        } );
-    }
-
-    // 显示位置
-    if (opt.position === "middle") {
-        // 规避再打开不触发显示事件
-        delete( $.support.transition );
-
-        mod.on("shown.bs.modal", function(evt) {
-            var wh =$(window).height();
-            var mh = div.outerHeight();
-            if (wh > mh) {
-                mh = Math.floor((wh - mh) / 2);
-                div.css("margin-top", mh+"px");
-                mod.css("padding"   ,   "0px");
-            }
-        } );
-    } else
-    if (opt.position === "bottom") {
-        // 规避再打开不触发显示事件
-        delete( $.support.transition );
-
-        mod.on("shown.bs.modal", function(evt) {
-            var wh =$(window).height();
-            var mh = div.outerHeight();
-            if (wh > mh) {
-                mh = wh - mh;
-                div.css("margin-top", mh+"px");
-                mod.css("padding"   ,   "0px");
+                mod.modal ( "hide" );
             }
         } );
     }
@@ -1935,6 +1913,9 @@ $.hsMask = function(opt) {
         end. call (div, evt);
         mod.remove(        );
     } );
+
+    // 规避再打开不触发显示事件
+    delete ($.support.transition);
 
     btx = $( document.body );
     btx.append(mod);

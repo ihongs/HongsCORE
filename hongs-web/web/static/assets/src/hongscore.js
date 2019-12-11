@@ -1766,23 +1766,7 @@ $.hsMask = function(opt) {
     }
 
     // 预置组合
-    switch (opt["mode"]) {
-    case "warn":
-        div.addClass(opt.mode + "box" );
-        if (opt.position === undefined) {
-            opt.position  = "middle";
-        }
-        if (arguments.length > 1) {
-        if (opt.backdrop === undefined) {
-            opt.backdrop  = "static";
-        }
-        if (opt.keyboard === undefined) {
-            opt.keyboard  =  false;
-        }
-        if (opt.closable === undefined) {
-            opt.closable  =  false;
-        }}
-        break;
+    if (opt["mode"]) switch (opt.mode ) {
     case "note":
         div.addClass(opt.mode + "box" );
         if (opt.position === undefined) {
@@ -1802,6 +1786,39 @@ $.hsMask = function(opt) {
             opt.closable  =  false;
         }}
         break;
+    case "warn":
+        div.addClass(opt.mode + "box" );
+        if (opt.position === undefined) {
+            opt.position  = "middle";
+        }
+        if (arguments.length > 1) {
+        if (opt.backdrop === undefined) {
+            opt.backdrop  = "static";
+        }
+        if (opt.keyboard === undefined) {
+            opt.keyboard  =  false;
+        }
+        if (opt.closable === undefined) {
+            opt.closable  =  false;
+        }}
+        break;
+    case "wait":
+        div.addClass(opt.mode + "box" );
+        if (opt.position === undefined) {
+            opt.position  = "middle";
+        }
+        if (opt.backdrop === undefined) {
+            opt.backdrop  = "static";
+        }
+        if (opt.keyboard === undefined) {
+            opt.keyboard  =  false;
+        }
+        if (opt.closable === undefined) {
+            opt.closable  =  false;
+        }
+        break;
+    default:
+        throw new Error("hsMask: Unsupported mode " + opt.mode);
     }
 
     // 设置参数
@@ -2033,14 +2050,9 @@ $.hsWarn = function(msg, typ, yes, not) {
  */
 $.hsXhwp = function(msg, xhr, xhu) {
     var box = $.hsMask({
-        title: msg,
-        mode : "prog",
-        glass: "progbox",
-        html : '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>',
-        position: "middle",
-        backdrop: "static",
-        keyboard:  false,
-        closable:  false
+        title:  msg  ,
+        mode : "wait",
+        html : '<div class="progress"><div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div></div>'
     });
     var mod = box.closest(".modal");
     var foo = box.find(".alert-footer");

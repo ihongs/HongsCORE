@@ -253,20 +253,18 @@ ol.repeated ,
     display: none;
 }
 
-.progbox.alert ,
-.warnbox.alert ,
-.notebox.alert {
+.alert.dialog {
     border-color: transparent;
     box-shadow: 0 0 15px #000;
     color : #eee;
     margin: 0;
 }
-.progbox.alert ,
-.warnbox.alert {
-    padding: 30px 15px;
-}
-.notebox.alert {
+.alert.notebox {
     padding: 15px 15px;
+}
+.alert.warnbox ,
+.alert.waitbox {
+    padding: 30px 15px;
 }
 .alert-footer {
     text-align : right;
@@ -307,31 +305,74 @@ ol.repeated ,
 }
 
 /* 对话框背景色, 类按钮情景色 */
-.notebox.alert ,
-.warnbox.alert ,
-.progbox.alert {
+.alert.dialog {
     background: rgb (51,51,51);
     background: rgba(51,51,51,0.8);
 }
-.notebox.alert.alert-info ,
-.warnbox.alert.alert-info {
+.alert.dialog.alert-info {
     background: rgb (0,102,153);
     background: rgba(0,102,153,0.8);
 }
-.notebox.alert.alert-warning ,
-.warnbox.alert.alert-warning {
-    background: rgb (102,0,102);
-    background: rgba(102,0,102,0.8);
-}
-.notebox.alert.alert-success ,
-.warnbox.alert.alert-success {
+.alert.dialog.alert-success {
     background: rgb (0,102,0);
     background: rgba(0,102,0,0.8);
 }
-.notebox.alert.alert-danger ,
-.warnbox.alert.alert-danger  {
+.alert.dialog.alert-warning {
+    background: rgb (102,0,102);
+    background: rgba(102,0,102,0.8);
+}
+.alert.dialog.alert-danger  {
     background: rgb (102,0,0);
     background: rgba(102,0,0,0.8);
+}
+
+/** 适配 **/
+
+.modal-bottom {
+    align-items: flex-end;
+    display: flex;
+}
+.modal-middle {
+    align-items: center;
+    display: flex;
+}
+.modal {
+    padding: 10px;
+}
+.modal-dialog ,
+.alert.dialog {
+    margin :  0px;
+    width  : 100%;
+}
+@media (min-width: 768px) {
+    .modal {
+        padding : 0px;
+    }
+    .modal-dialog {
+        width : 600px;
+        margin:  30px auto;
+        border-radius: 6px;
+    }
+    .alert.dialog {
+        width : 100% ;
+        margin:   0px auto;
+        border-radius: 0px;
+    }
+    .alert.dialog.notebox {
+        width : 600px;
+        margin:  30px auto;
+        border-radius: 6px;
+    }
+    .alert.dialog>.alert-content {
+        width : 600px;
+        margin:   0px auto;
+        border-radius: 0px;
+    }
+    .alert.dialog.notebox>.alert-content {
+        width : auto ;
+        margin:   0px auto;
+        border-radius: 0px;
+    }
 }
 
 /** 列表 **/
@@ -709,51 +750,4 @@ input[type=file].form-control {
 input[type=file].form-control {
     padding:  0px  0px;
 }
-}
-
-/** 适配 **/
-
-.modal-bottom {
-    align-items: flex-end;
-    display: flex;
-}
-.modal-middle {
-    align-items: center;
-    display: flex;
-}
-.modal {
-    padding: 10px;
-}
-.modal-dialog ,
-.alert.dialog {
-    margin : 0px ;
-    width  : 100%;
-}
-@media (min-width: 768px) {
-    .modal {
-        padding : 0px;
-    }
-    .modal-dialog {
-        width : 600px;
-        margin:  30px auto;
-        border-radius: 6px;
-    }
-    .alert.dialog {
-        width : 100% ;
-        margin:   0px auto;
-        border-radius: 0px;
-    }
-    .alert.dialog.notebox {
-        width : 600px;
-        margin:  30px auto;
-        border-radius: 6px;
-    }
-    .alert.dialog>.alert-content {
-        width : 600px;
-        margin:   0px auto;
-    }
-    .alert.dialog.notebox>.alert-content {
-        width : auto ;
-        margin:   0px auto;
-    }
 }

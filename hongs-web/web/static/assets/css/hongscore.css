@@ -750,8 +750,10 @@ input[type=file].form-control {
     }
     .alert.dialog>.alert-content {
         width : 600px;
+        margin:   0px auto;
     }
     .alert.dialog.notebox>.alert-content {
         width : auto ;
+        margin:   0px auto;
     }
 }

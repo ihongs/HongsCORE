@@ -2061,7 +2061,7 @@ $.hsWait = function(msg, xhr, xhu) {
     var pct = 0;
     var itl;
 
-    function getHtime(rtt) {
+    function getProgtime (rtt) {
         // 剩余时间文本表示, h:mm:ss
         var ctt, snt;
         snt  =  ""  ;
@@ -2095,7 +2095,7 @@ $.hsWait = function(msg, xhr, xhu) {
             bar.css ( "width" , snt + "%");
             itl  =  setInterval(function() {
                 var ctt = new Date().getTime() / 1000 - stt;
-                foo.text( "+" + getHtime(Math.ceil(ctt) ) );
+                foo.text("+" + getProgtime(Math.ceil(ctt)));
             },1000);
             return ;
         }}
@@ -2104,7 +2104,7 @@ $.hsWait = function(msg, xhr, xhu) {
         ctt  = new Date ().getTime() / 1000 - stt;
         pct  = Math.ceil((100 * snt) / (0.0 + tal));
         rtt  = Math.ceil((100 - pct) * (ctt / pct));
-        snt  = getHtime ( rtt );
+        snt  = getProgtime (rtt);
 
         bar.attr("aria-valuenow", pct);
         bar.css ( "width" , pct + "%");

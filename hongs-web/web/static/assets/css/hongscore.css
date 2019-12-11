@@ -736,14 +736,10 @@ input[type=file].form-control {
     .modal-dialog {
         width : 600px;
         margin:  30px auto;
+        border-radius: 6px;
     }
     .alert.dialog {
         width : 100% ;
-        margin:   0px auto;
-        border-radius: 0px;
-    }
-    .alert.dialog>.alert-content {
-        width : 600px;
         margin:   0px auto;
         border-radius: 0px;
     }
@@ -752,8 +748,8 @@ input[type=file].form-control {
         margin:  30px auto;
         border-radius: 6px;
     }
-    .alert.dialog.notebox>.alert-content {
-        width : 100% ;
+    .alert.dialog>.alert-content {
+        width : 600px;
         margin:   0px auto;
         border-radius: 0px;
     }

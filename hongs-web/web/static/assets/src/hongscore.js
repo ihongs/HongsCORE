@@ -1894,14 +1894,6 @@ $.hsMask = function(opt) {
         mod.modal( "hide" );
     } , dow);
 
-    // 显示位置
-    if (opt.position === "middle") {
-        mod.addClass("modal-middle");
-    } else
-    if (opt.position === "bottom") {
-        mod.addClass("modal-middle");
-    }
-
     // 附加开关
     if (opt.closable ===  false  ) {
         btt.siblings(".close").remove();
@@ -1919,6 +1911,17 @@ $.hsMask = function(opt) {
         } );
     }
 
+    // 显示位置
+    if (opt.position === "middle") {
+        mod.addClass("modal-middle");
+    } else
+    if (opt.position === "bottom") {
+        mod.addClass("modal-middle");
+    }
+
+    // 规避再打开不触发显示事件
+    delete( $.support.transition );
+
     btn.on("click", "button", function(evt) {
         if (evt.isPropagationStopped()
         ||  evt.isDefaultPrevented( )) {
@@ -1930,9 +1933,6 @@ $.hsMask = function(opt) {
         end. call (div, evt);
         mod.remove(        );
     } );
-
-    // 规避再打开不触发显示事件
-    delete ($.support.transition);
 
     btx = $( document.body );
     btx.append(mod);

@@ -2064,14 +2064,14 @@ $.hsWait = function(msg, xhr, xhu) {
     box.getProgress = function() {
         return pct;
     };
-    box.setProgress = function(snt , tal) {
-        if (tal === null && snt === null) {
+    box.setProgress = function(snt, tal) {
+        if (tal === undefined) {
+        if (snt === undefined) {
             mod.modal ("hide");
             return;
-        }
-        if (tal === undefined) {
+        } else {
             tal  =  100;
-        }
+        }}
 
         var ctt = new Date().getTime() / 1000 - stt;
         pct  = Math.ceil((100 * snt) / (0.0 + tal));

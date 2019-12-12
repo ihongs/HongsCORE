@@ -254,13 +254,10 @@ ol.repeated ,
 }
 
 .alert.dialog {
-    border-color: transparent;
-    box-shadow: 0 0 15px #000;
+    border-color: rgba(204,204,204,0.3);
+    box-shadow: 0 0 30px #000;
     color : #eee;
     margin: 0;
-}
-.alert.notebox {
-    padding: 15px 15px;
 }
 .alert.warnbox ,
 .alert.waitbox {
@@ -354,24 +351,22 @@ ol.repeated ,
         border-radius: 6px;
     }
     .alert.dialog {
-        width : 100% ;
-        margin:   0px auto;
-        border-radius: 0px;
-    }
-    .alert.dialog.notebox {
         width : 600px;
         margin:  30px auto;
         border-radius: 6px;
     }
-    .alert.dialog>.alert-content {
+    .alert.warnbox ,
+    .alert.waitbox {
+        width : 100% ;
+        margin:   0px auto;
+        border-radius: 0px;
+        border-right : 0px;
+        border-left  : 0px;
+    }
+    .alert.warnbox>.alert-content ,
+    .alert.waitbox>.alert-content {
         width : 600px;
         margin:   0px auto;
-        border-radius: 0px;
-    }
-    .alert.dialog.notebox>.alert-content {
-        width : auto ;
-        margin:   0px auto;
-        border-radius: 0px;
     }
 }
 
@@ -600,9 +595,6 @@ ul.pickrol > li.btn {
     padding-right: 0px;
     margin-bottom: 0px;
 }
-ul.pickmul > li.btn {
-    margin-bottom: 1px;
-}
 ul.pickbox > li.btn .glyphicon {
     margin-right : 6px;
     color   : #ddd;
@@ -612,7 +604,8 @@ ul.pickrol > li.btn .glyphicon {
     display : none;
 }
 ul.pickrol > li.btn-text,
-ul.pickrol > li.btn-text:hover {
+ul.pickrol > li.btn-text:hover ,
+ul.pickrol > li.btn-text:focus {
     cursor  : text;
     color   : inherit;
     user-select: text;
@@ -621,11 +614,11 @@ ul.pickrol > li.btn-text:hover {
 
 .preview {
     position: relative;
-    padding: 0px;
-    border : 0px;
-    margin : 1px;
+    cursor  : pointer ;
+    padding : 0;
+    margin  : 0;
+    border  : 1px solid #ccc;
     border-radius: 4px;
-    box-shadow: 0 0 0.2em #000;
 }
 .preview img {
     position: absolute;
@@ -646,24 +639,29 @@ ul.pickrol > li.btn-text:hover {
 .preview .close:focus {
     box-shadow: 0 0 0.5em #000;
 }
-.pickbox .preview {
-    float  : left ;
-    cursor : pointer;
-    margin-right : 5px;
-    margin-bottom: 5px;
+
+.pickmul:after {
+    clear  : both ;
+    display: table;
+    content: " "  ;
 }
-.pickrol .close {
-    display: none ;
+.pickmul.pickrol {
+    display: table;
+    width: 100%;
+    margin-bottom:-2px;
 }
+.pickmul > .preview {
+    float: left;
+    margin-right : 2px;
+    margin-bottom: 2px;
+}
+.pickmul > .btn {
+    margin-bottom: 2px;
+}
+
 .pickbox:empty  {
     display: none ;
 }
-.pickbox:after  {
-    display: table;
-    clear  : both ;
-    content: " "  ;
-}
-
 .picknum:empty  {
     display: none ;
 }
@@ -672,6 +670,9 @@ ul.pickrol > li.btn-text:hover {
 }
 .picknum:before {
     content: " (" ;
+}
+.pickrol .close {
+    display: none ;
 }
 
 .datebox.input-group {

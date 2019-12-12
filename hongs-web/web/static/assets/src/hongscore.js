@@ -1766,9 +1766,9 @@ $.hsMask = function(opt) {
     }
 
     // 预置组合
-    if (opt["mode"]) switch (opt.mode ) {
+    if (opt["mode"])switch(opt["mode"]) {
     case "note":
-        div.addClass(opt.mode + "box" );
+        div.addClass("notebox");
         if (opt.position === undefined) {
             opt.position  = "middle";
         }
@@ -1787,7 +1787,7 @@ $.hsMask = function(opt) {
         }}
         break;
     case "warn":
-        div.addClass(opt.mode + "box" );
+        div.addClass("warnbox");
         if (opt.position === undefined) {
             opt.position  = "middle";
         }
@@ -1803,7 +1803,7 @@ $.hsMask = function(opt) {
         }}
         break;
     case "wait":
-        div.addClass(opt.mode + "box" );
+        div.addClass("waitbox");
         if (opt.position === undefined) {
             opt.position  = "middle";
         }
@@ -2081,6 +2081,12 @@ $.hsWait = function(msg, xhr, xhu) {
         return snt ;
     }
 
+    box.getStarting = function() {
+        return stt ;
+    };
+    box.setStarting = function(ctt) {
+        stt  = ctt ;
+    };
     box.getProgress = function() {
         return pct ;
     };

@@ -254,7 +254,7 @@ ol.repeated ,
 }
 
 .alert.dialog {
-    border-color: rgba(153,153,153,0.3);
+    border-color: rgba(204,204,204,0.3);
     box-shadow: 0 0 30px #333;
     color : #eee;
     margin: 0;

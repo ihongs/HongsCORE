@@ -576,9 +576,8 @@ HsStat.prototype = {
 
             $(this).find(".checkbox").hide();
             $(this).find(".chartbox").hide();
-            $(this).find(".alert"   ).show().text(
-                $(this).data ("text") + "统计中..."
-            );
+            $(this).find(".alertbox").show()
+             .children().text($(this).data("text")+" 统计中...");
         });
 
         $.ajax({
@@ -592,14 +591,14 @@ HsStat.prototype = {
                     var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
 
-                    if (n.size() == 0) {
+                    if (n.size() === 0) {
                         continue;
                     }
-                    if (d.length == 0) {
+                    if (d.length === 0) {
                         continue;
                     }
 
-                    n.find(".alert"   ).hide();
+                    n.find(".alertbox").hide();
                     n.find(".checkbox").show();
                     n.find(".chartbox").show();
 
@@ -613,9 +612,8 @@ HsStat.prototype = {
                 }
 
                 itemBox.each(function() {
-                    $(this).find(".alert:visible").text(
-                        $(this).data ("text") + "无统计值!"
-                    );
+                    $(this).find(".alertbox:visible")
+                     .children().text($(this).data("text")+" 无统计值!");
                 });
 
                 statBox.find(".checkbox").each(function() {
@@ -649,7 +647,7 @@ HsStat.prototype = {
         var msk = $.hsMask({
             mode : "warn",
             glass: "alert-default",
-            text : "为提升用户体验, 让浏览尽量顺畅, 页面中的统计数据按数量从多到少排列, 仅取前 20 个选项, 可以通过此功能获取完整的统计数据, 以便您复制到 Office 等软件中查阅.",
+            text : "为了降低网络延迟, 图表按从多到少排, 仅取前 20 条; 而此功能将调取完整统计数据, 以便您复制到 Office 等软件中查阅.",
             title: "正在获取完整统计数据, 请稍等..."
         }, {
             glass: "btn-primary",

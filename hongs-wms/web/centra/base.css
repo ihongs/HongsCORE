@@ -287,11 +287,13 @@ html, body {
     padding : 0;
     overflow: auto;
 }
-.statbox .panel {
+.statbox .alertbox {
+    width   : 100%;
+    height  : 100%;
     display : flex;
     align-items: center;
 }
-.statbox .alert {
+.statbox .alertbox>div {
     width   : 100%;
      text-align: center;
 }

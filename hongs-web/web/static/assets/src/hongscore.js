@@ -2053,8 +2053,8 @@ $.hsWait = function(msg, xhr, xhu) {
         title:  msg  ,
         mode : "wait",
         html : '<div class="progress">'
-             + '<div class="progress-bar progress-bar-striped active" style=" width: 100%; " '
-             + 'role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">'
+             + '<div class="progress-bar progress-bar-striped active" style="width: 100%;" '
+             + 'role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">'
              + '</div></div>'
     });
     var mod = box.closest(".modal");
@@ -2100,7 +2100,7 @@ $.hsWait = function(msg, xhr, xhu) {
         if (snt === undefined) {
             snt  =  100;
             // 设置为 100% 并计时
-            bar.attr("aria-valuenow", snt);
+            bar.attr("aria-valuenow",  0 );
             bar.css ( "width" , snt + "%");
             itl  =  setInterval(function() {
                 var ctt = new Date().getTime() / 1000 - stt;

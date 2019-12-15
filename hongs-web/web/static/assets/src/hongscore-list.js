@@ -94,13 +94,6 @@ function HsList(context, opts) {
         var m = evt.data[1];
         var u = evt.data[2];
 
-        switch (m) {
-            case "{CONTEXT}": m = context; break;
-            case "{LOADBOX}": m = loadBox; break;
-            case "{AUTOBOX}": m = '@';
-            default: if ( m ) m = n.hsFind(m);
-        }
-
         var t = n.closest(".tooltip");
         if (t.length) {
             n = t.data   ( "trigger");
@@ -490,6 +483,14 @@ HsList.prototype = {
         var that = this;
         var dat2 = jQuery.extend({}, hsSerialDat(url), hsSerialDat(data));
         if (box) {
+            // 外部打开
+            if (box instanceof String && /^_/.test(box)) {
+                url = hsSetPms(url, data);
+                window . open (url, box );
+                return ;
+            }
+            // 内部打开
+            box = btn.hsFind(m);
             box.hsOpen(url, data, function() {
                that.openBack(btn, jQuery( this ), dat2 );
             })

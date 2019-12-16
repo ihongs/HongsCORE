@@ -162,7 +162,7 @@
             <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
                 <%if ("reveal".equals(_action)) {%>
-                <ul class="pagination pull-right">
+                <ul class="pagination pull-right" style="margin: 0;">
                     <li><a href="javascript:;" class="re-new" title="后一个（新）">&laquo;</a></li>
                     <li><a href="javascript:;" class="re-old" title="前一个（旧）">&raquo;</a></li>
                 </ul>

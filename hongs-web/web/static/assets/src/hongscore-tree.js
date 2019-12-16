@@ -406,7 +406,7 @@ HsTree.prototype = {
                 return ;
             }
             // 内部打开
-            box = btn.hsFind(m);
+            box = btn.hsFind(box);
             box.hsOpen(url, data, function() {
                that.openBack(btn, jQuery( this ), dat2 );
             })

@@ -320,6 +320,10 @@ function hsFormFillPick(box, v, n) {
         var v2 = {};
         for(var i = 0; i < v.length; i++) {
             var j = v[ i];
+            if (!jQuery.isPlainObject(j)
+            &&  !jQuery.isArray      (j)) {
+                continue; // 规避关联被删除只剩 ID 的情况
+            }
             var v3= j[vk] || hsGetValue(j, vk);
             var t3= j[tk] || hsGetValue(j, tk);
             if (v3 !== undefined

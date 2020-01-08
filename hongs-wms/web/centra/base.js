@@ -853,7 +853,8 @@ HsStat.prototype = {
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '柱状图',
                         onclick: function() {
-                            chart.setOption(barOpts);
+                            box.data("plot", "bar");
+                            chart.setOption(chart._barOpts);
                         }
                     },
                     myPie: {
@@ -862,7 +863,8 @@ HsStat.prototype = {
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '饼视图',
                         onclick: function() {
-                            chart.setOption(pieOpts);
+                            box.data("plot", "pie");
+                            chart.setOption(chart._pieOpts);
                         }
                     },
                     myTab: {
@@ -877,6 +879,9 @@ HsStat.prototype = {
                 }
             }
         };
+
+        chart._pieOpts = pieOpts;
+        chart._barOpts = barOpts;
 
         if (box.data("plot") == "pie") {
             $.extend( opts , pieOpts );
@@ -980,7 +985,8 @@ HsStat.prototype = {
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '柱状图',
                         onclick: function() {
-                            chart.setOption(barOpts);
+                            box.data("plot", "bar");
+                            chart.setOption(chart._barOpts);
                         }
                     },
                     myPie: {
@@ -989,7 +995,8 @@ HsStat.prototype = {
                         iconStyle: {borderWidth: 0, color: '#666'},
                         title: '饼视图',
                         onclick: function() {
-                            chart.setOption(pieOpts);
+                            box.data("plot", "pie");
+                            chart.setOption(chart._pieOpts);
                         }
                     },
                     myTab: {
@@ -1004,6 +1011,9 @@ HsStat.prototype = {
                 }
             }
         };
+
+        chart._pieOpts = pieOpts;
+        chart._barOpts = barOpts;
 
         if (box.data("plot") == "pie") {
             $.extend( opts , pieOpts );

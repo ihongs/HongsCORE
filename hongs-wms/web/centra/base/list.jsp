@@ -153,42 +153,35 @@
             String  name = (String) et.getKey();
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
+            String  term = "&rb.="+ name;
 
             if ("@".equals(name) || "id".equals(name)
             || !Synt.declare(info.get("statable"), false)) {
                 continue;
             }
 
-            String rb;
-
-            if ("number".equals(type)) {
+            if (! "number".equals(type)) {
+                // 检查是否有枚举数据
                 String enumConf = Synt.defxult((String) info.get("conf"),_conf);
                 String enumName = Synt.defxult((String) info.get("enum"), name);
-                Map    enumData ;
+                Map    enumData = null;
                 try {
                     enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
-                } catch (HongsException ex) {
-                    enumData  = null;
-                }
-                if (enumData != null ) {
-                    StringBuilder sb = new StringBuilder();
-                    for (Object code : enumData.keySet( )) {
-                        sb.append("&rb.=")
-                          .append(name)
-                          .append(":" )
-                          .append(code);
-                    }
-                    rb = sb.toString( );
+                } catch ( HongsException ex) {
+                if (ex.getErrno() != 0x10eb) {
+                    throw ex;
+                }}
+
+                if (enumData != null) {
+                    type = "ecount";
                 } else {
-                    rb = "&rb.="+ name ;
+                    type = "acount";
                 }
-                type = "amount";
             } else {
-                rb   = "&rb.=" +  name ;
-                type = "acount";
+                type = "amount";
             }
         %>
-        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-rb="<%=rb%>">
+        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-term="<%=term%>">
             <div class="panel panel-body panel-default clearfix" style="height: 302px;">
                 <div class="checkbox col-xs-3" style="height: 100%; display:none"></div>
                 <div class="chartbox col-xs-9" style="height: 100%; display:none"></div>
@@ -370,8 +363,9 @@
     });
 
     var statobj = context.hsStat({
-        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
+        eurl: "<%=_module%>/<%=_entity%>/ecount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork",
+        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork",
+        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text"
     });
 
     var loadres = hsSerialDic(loadbox);

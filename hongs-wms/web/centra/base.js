@@ -501,6 +501,7 @@ function HsStat(context, opts) {
     this.findBox = findBox;
     this.murl  = opts.murl;
     this.curl  = opts.curl;
+    this.eurl  = opts.eurl;
 
     var  that  = this;
 
@@ -556,8 +557,9 @@ HsStat.prototype = {
                 }
             });
 
-            that.fill(statBox.find("[data-type=amount]"));
+            that.fill(statBox.find("[data-type=ecount]"));
             that.fill(statBox.find("[data-type=acount]"));
+            that.fill(statBox.find("[data-type=amount]"));
         });
     },
 
@@ -569,10 +571,12 @@ HsStat.prototype = {
 
         var rb  = [];
         var ft  = itemBox.attr("data-type");
-        var url = ft === "amount" ? this.murl : this.curl;
+        var url = ft === "amount" ? this.murl
+              : ( ft === "acount" ? this.curl
+              :                     this.eurl);
 
         itemBox.each(function() {
-            rb.push($(this).attr("data-rb"));
+            rb.push($(this).data("term"));
 
             $(this).find(".checkbox").hide();
             $(this).find(".chartbox").hide();

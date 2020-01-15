@@ -4,6 +4,7 @@ import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -22,6 +23,8 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.ScoreDoc;
@@ -43,6 +46,188 @@ public class StatisHelper {
     }
 
     /**
+     * 统计枚举
+     * @param rd
+     * @return
+     * @throws HongsException
+     */
+    public Map ecount(Map rd) throws HongsException {
+        IndexSearcher finder = that.getFinder();
+
+        int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
+        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL)    );
+        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL)    );
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
+        Map<String, Map<String, Integer>> counts = new HashMap();
+
+        //** 整理待统计的数据 **/
+
+        if (incs != null && ! incs.isEmpty( )
+        &&  cntz != null && ! cntz.isEmpty()) {
+        //  if (incs == null) {
+        //      incs  = new HashMap();
+        //  }
+            if (excs == null) {
+                excs  = new HashMap();
+            }
+
+            for(String x : cntz) {
+                Map cnt; Set inc, exc;
+                    inc  = Synt.asSet(incs.get(x));
+                if (inc != null && !inc.isEmpty()) {
+                    exc  = Synt.asSet(excs.get(x));
+                if (exc == null) {
+                    exc  = new HashSet( );
+                }
+                    cnt  = new HashMap( );
+                    counts.put( x , cnt );
+                    for( Object v : inc ) {
+                    if (!exc.contains(v)) {
+                        cnt.put(v.toString() , 0 );
+                    }}
+                }
+            }
+        }
+
+        //** 分块统计数据 **/
+
+        Map<String, Map<String, Integer>> counts2 = new HashMap();
+
+        Map<String, Map<String, Integer>> counts3 = new HashMap();
+
+        /**
+         * 根据请求数据进行综合判断,
+         * 如果字段已经作为过滤条件,
+         * 则此字段的统计需单独进行,
+         * 且需抛开此字段的过滤数据.
+         *
+         * 例如某数据有一个地区字段且每条记录只能有一个地区,
+         * 如果没有以下处理则选某地后其他未选地区数量将为零.
+         *
+         * 与 LinkedIn 左侧筛选类似.
+         */
+
+        for(String  k  : counts.keySet()) {
+            Map     vd = null;
+            Set     vs = null;
+            Object  vo = rd.get(k);
+            if (vo instanceof Map) {
+                Map vm = (Map) vo ;
+                if (vm.containsKey ( /***/ Cnst.IN_REL)) {
+                    vs = Synt.asSet(vm.get(Cnst.IN_REL));
+                    vd = new HashMap( rd );
+                    vm = new HashMap( vm );
+                    vm.remove(Cnst.IN_REL);
+                    vd.put(k , vm);
+                }
+            }
+
+            if (vs == null || vs.isEmpty()) {
+                if (counts .containsKey(k)) {
+                    counts2.put(k, counts.get(k));
+                }
+            } else {
+                Map<String, Integer> vz = counts.get(k);
+
+                counts3.clear();
+
+                if (vz != null) {
+                    counts3.put(k, vz);
+                } else {
+                    vz = new HashMap();
+                    counts3.put(k, vz);
+                }
+
+                ecount(vd, counts3, finder);
+            }
+        }
+
+        int z = ecount(rd, counts2, finder);
+        // 以上仅对枚举值做计数, 以下计算全部
+        z = ecount(that.padQry(rd), finder);
+
+        Map cnts = new HashMap();
+        cnts.put("__count__", z);
+
+        //** 排序并截取统计数据 **/
+
+        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+            List<Object[]>  a = new ArrayList( );
+            for (Map.Entry< String, Integer > e : et.getValue().entrySet()) {
+                String m = e.getKey  ();
+                int    c = e.getValue();
+                if (c != 0) {
+                    a.add( new Object[] {
+                       m , null, c
+                    });
+                }
+            }
+            Collections.sort (a, new Counts());
+            if (0 < topn && topn < a . size()) {
+                a = a.subList(0, topn);
+            }
+            cnts.put( et.getKey(), a );
+        }
+
+        return cnts;
+    }
+
+    private int ecount(Map rd,
+            Map<String, Map<String, Integer>> counts,
+            IndexSearcher finder) throws HongsException {
+        int total = 0 ;
+
+        Query q = that.padQry(rd);
+
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
+            CoreLogger.debug("SearchRecord.counts: "+q.toString());
+        }
+
+        Map fs = getRecord(  ).getFields(  );
+        Set ss = (Set) FormSet.getInstance()
+        .getEnum ("__saves__").get("number");
+
+        for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
+            Map<String, Integer> fo = et.getValue();
+                String fn = et.getKey();
+
+                // 数值类型采用区间查法
+                Map    fc = (Map)fs.get(fn);
+                String fr = ss.contains(fc.get("__type__"))
+                         || ss.contains(fc.get(  "type"  ))
+                          ? Cnst.RG_REL : Cnst.IN_REL;
+
+            for(Map.Entry<String, Integer> xt : fo.entrySet()) {
+                String fv = xt.getKey();
+
+                // 增加查询条件
+                Query b = that.padQry(Synt.mapOf(fn, Synt.mapOf(fr, fv)));
+                BooleanQuery.Builder bq = new BooleanQuery.Builder();
+                bq.add(q, BooleanClause.Occur.MUST);
+                bq.add(b, BooleanClause.Occur.MUST);
+
+                // 计算命中数量
+                int c = ecount (bq.build(), finder);
+
+                xt.setValue(c);
+                if (total < c) {
+                    total = c;
+                }
+            }
+        }
+
+        return total;
+    }
+
+    private int ecount(Query q, IndexSearcher finder) throws HongsException {
+        try {
+            return (int) finder.search(q, 1).totalHits;
+        } catch (IOException e) {
+            throw new HongsException(e);
+        }
+    }
+
+    /**
      * 统计数量
      * @param rd
      * @return
@@ -53,6 +238,8 @@ public class StatisHelper {
         IndexSearcher finder = that.getFinder();
 
         int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
+        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL)    );
+        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL)    );
         Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
         Map<String, Map<String, Integer>> counts = new HashMap();
         Map<String, Set<String         >> countx = new HashMap();
@@ -60,28 +247,33 @@ public class StatisHelper {
         //** 整理待统计的数据 **/
 
         if (cntz != null && !cntz.isEmpty()) {
-            for(String   x : cntz) {
-                String[] a = x.split(":", 2);
-                if (a[0].startsWith ("-")) {
-                    a[0] = a[0].substring(1);
-                    if (a.length > 1) {
-                        if (!countx.containsKey(a[0])) {
-                            countx.put(a[0], new HashSet());
-                        }
-                        countx.get(a[0]).add(a[1]/**/);
+            if (incs == null) {
+                incs  = new HashMap();
+            }
+            if (excs == null) {
+                excs  = new HashMap();
+            }
+
+            for(String x : cntz) {
+                Map cnt; Set inc, exc, cnx;
+
+                    cnt  = new  HashMap( );
+                    inc  = Synt.asSet(incs.get(x));
+                if (inc != null && !inc.isEmpty()) {
+                    for(Object v:inc) {
+                        String s = v.toString ( );
+                       cnt.put(s, 0 );
                     }
-                } else {
-                    if (a.length > 1) {
-                        if (!counts.containsKey(a[0])) {
-                            counts.put(a[0], new HashMap());
-                        }
-                        counts.get(a[0]).put(a[1] , 0);
-                    } else {
-                        if (!counts.containsKey(a[0])) {
-                            counts.put(a[0], new HashMap());
-                        }
+                }   counts.put(x,cnt);
+
+                    cnx  = new  HashSet( );
+                    exc  = Synt.asSet(excs.get(x));
+                if (exc != null && !exc.isEmpty()) {
+                    for(Object v:inc) {
+                        String s = v.toString ( );
+                       cnx.add(s/**/);
                     }
-                }
+                }   countx.put(x,exc);
             }
         }
 
@@ -206,51 +398,46 @@ public class StatisHelper {
                 CoreLogger.debug("SearchRecord.counts: "+q.toString());
             }
 
-            TopDocs docz = finder.search(q,65535);
-            while ( docz.totalHits > 0) {
-                ScoreDoc[] docs = docz.scoreDocs ;
+              TopDocs  docz = finder.search(q, 65535);
+            ScoreDoc[] docs = docz.scoreDocs;
+            total = (  int  ) docz.totalHits;
 
-                if (!counts.isEmpty()) {
-                    for(ScoreDoc dox : docs) {
-                        Document doc = reader.document(dox.doc);
+            if (!counts.isEmpty()) while (docs.length > 0 ) {
+                for(ScoreDoc dox : docs) {
+                    Document doc = reader.document(dox.doc);
 
-                        for(Map.Entry<String, Map<String, Integer>>  et : es) {
-                            String               k    = et .getKey   ( );
-                            Map<String, Integer> cntc = et .getValue ( );
-                            IndexableField[]     vals = doc.getFields(k);
-                            Set<String>          cntx = countx.get   (k);
+                    for(Map.Entry<String, Map<String, Integer>>  et : es) {
+                        String               k    = et .getKey   ( );
+                        Map<String, Integer> cntc = et .getValue ( );
+                        IndexableField[]     vals = doc.getFields(k);
+                        Set<String>          cntx = countx.get   (k);
 
-                            if (! more.contains( k )) {
-                                for(IndexableField x : vals) {
-                                    String   v = x.stringValue();
-                                             v = getValue( v,k );
-                                    if (cntc.containsKey(v)) {
-                                        cntc.put(v, 1 + cntc.get(v));
-                                    }
+                        if (! more.contains( k )) {
+                            for(IndexableField x : vals) {
+                                String   v = x.stringValue();
+                                         v = getValue( v,k );
+                                if (cntc.containsKey(v)) {
+                                    cntc.put(v, 1 + cntc.get(v));
                                 }
-                            } else {
-                                for(IndexableField x : vals) {
-                                    String   v = x.stringValue();
-                                             v = getValue( v,k );
-                                    if (cntc.containsKey(v)) {
-                                        cntc.put(v, 1 + cntc.get(v));
-                                    } else
-                                    if (cntx == null
-                                    || !cntx.contains   (v)) {
-                                        cntc.put(v, 1);
-                                    }
+                            }
+                        } else {
+                            for(IndexableField x : vals) {
+                                String   v = x.stringValue();
+                                         v = getValue( v,k );
+                                if (cntc.containsKey(v)) {
+                                    cntc.put(v, 1 + cntc.get(v));
+                                } else
+                                if (cntx == null
+                                || !cntx.contains   (v)) {
+                                    cntc.put(v, 1);
                                 }
                             }
                         }
                     }
                 }
 
-                if (docs.length > 0) {
-                    docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
-                    total += docs.length;
-                } else {
-                    break;
-                }
+                docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
+                docs = docz.scoreDocs;
             }
         } catch (IOException ex) {
             throw new HongsException(ex);
@@ -263,44 +450,48 @@ public class StatisHelper {
         IndexReader   reader = that.getReader();
         IndexSearcher finder = that.getFinder();
 
-        int         topn = Synt.declare(rd.get(Cnst.RN_KEY), 0);
-        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)   );
-        Map<String, Map<Minmax, Cntsum>> counts = new HashMap();
-        Map<String, Set<Minmax        >> countx = new HashMap();
+        int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
+        Map         incs = Synt.asMap  (rd.get(Cnst.IN_REL)    );
+        Map         excs = Synt.asMap  (rd.get(Cnst.NI_REL)    );
+        Set<String> cntz = Synt.toTerms(rd.get(Cnst.RB_KEY)    );
+        Map<String, Map<Minmax, Cntsum >> counts = new HashMap();
+        Map<String, Set<Minmax         >> countx = new HashMap();
 
         //** 整理待统计的数据 **/
 
         if (cntz != null && !cntz.isEmpty()) {
-            for(String   x : cntz) {
-                String[] a = x.split(":", 2);
-                if (a[0].startsWith ("-")) {
-                    a[0] = a[0].substring(1);
-                    if (a.length > 1) {
-                        if (!countx.containsKey(a[0])) {
-                            countx.put(a[0], new HashSet());
-                        }
+            if (incs == null) {
+                incs  = new HashMap();
+            }
+            if (excs == null) {
+                excs  = new HashMap();
+            }
 
-                        Minmax mm = new Minmax(a[1]);
-                        countx.get( a[0] ).add( mm );
+            for(String x : cntz) {
+                Map cnt; Set inc, exc, cnx;
+
+                    inc  = Synt.asSet(incs.get(x));
+                if (inc != null && !inc.isEmpty()) {
+                    cnt  = new  HashMap();
+                    for(Object v:inc) {
+                        String s = v.toString ( );
+                        Minmax m = new Minmax (s);
+                        Cntsum c = new Cntsum ( );
+                       cnt.put(m, c );
                     }
-                } else {
-                    if (a.length > 1) {
-                        if (!counts.containsKey(a[0])) {
-                            counts.put(a[0], new HashMap());
-                        }
+                    counts.put(x,cnt);
+                }
 
-                        Minmax mm = new Minmax(a[1]);
-                        Cntsum cs = new Cntsum(    );
-                        counts.get(a[0]).put(mm, cs);
-                    } else {
-                        if (!counts.containsKey(a[0])) {
-                            counts.put(a[0], new HashMap());
-                        }
-
-                        Minmax mm = new Minmax( "" );
-                        Cntsum cs = new Cntsum(    );
-                        counts.get(a[0]).put(mm, cs);
+                    exc  = Synt.asSet(excs.get(x));
+                if (exc != null && !exc.isEmpty()) {
+                    cnx  = new  HashSet( );
+                    for(Object v:inc) {
+                        String s = v.toString ( );
+                        Minmax m = new Minmax (s);
+                    //  Cntsum c = new Cntsum ( );
+                       cnx.add(m/**/);
                     }
+                    countx.put(x,exc);
                 }
             }
         }
@@ -421,51 +612,45 @@ public class StatisHelper {
                 CoreLogger.debug("SearchRecord.statis: " +q.toString());
             }
 
-            TopDocs docz = finder.search(q,65535);
-            while ( docz.totalHits > 0) {
-                ScoreDoc[] docs = docz.scoreDocs ;
+              TopDocs  docz = finder.search(q, 65535);
+            ScoreDoc[] docs = docz.scoreDocs;
+            total = (  int  ) docz.totalHits;
+            if (!counts.isEmpty()) while (docs.length > 0 ) {
+                for(ScoreDoc dox : docs) {
+                    Document doc = reader.document(dox.doc);
 
-                if (!counts.isEmpty()) {
-                    for(ScoreDoc dox : docs) {
-                        Document doc = reader.document(dox.doc);
+                    for(Map.Entry<String, Map<Minmax, Cntsum>>  et : es) {
+                        String              k    = et .getKey   ( );
+                        Map<Minmax, Cntsum> cntc = et .getValue ( );
+                        Set<Minmax        > cntx = countx.get   (k);
+                        IndexableField[   ] vals = doc.getFields(k);
 
-                        for(Map.Entry<String, Map<Minmax, Cntsum>>  et : es) {
-                            String              k    = et .getKey   ( );
-                            Map<Minmax, Cntsum> cntc = et .getValue ( );
-                            Set<Minmax        > cntx = countx.get   (k);
-                            IndexableField[   ] vals = doc.getFields(k);
+                    F : for(IndexableField x : vals) {
+                            double v = x.numericValue()
+                                        . doubleValue();
+                                   v = getValue( v, k );
 
-                        F : for(IndexableField x : vals) {
-                                double v = x.numericValue()
-                                            . doubleValue();
-                                       v = getValue( v, k );
-
-                                if (  null  != cntx)
-                                for(Minmax w : cntx) {
-                                    if (w.covers(v)) {
-                                        continue F ;
-                                    }
+                            if (  null  != cntx)
+                            for(Minmax w : cntx) {
+                                if (w.covers(v)) {
+                                    continue F ;
                                 }
+                            }
 
-                                for(Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
-                                    Cntsum c = mc.getValue( );
-                                    Minmax m = mc.getKey  ( );
+                            for(Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
+                                Cntsum c = mc.getValue( );
+                                Minmax m = mc.getKey  ( );
 
-                                    if (m.covers(v)) {
-                                        c.add   (v);
-                                    }
+                                if (m.covers(v)) {
+                                    c.add   (v);
                                 }
                             }
                         }
                     }
                 }
 
-                if (docs.length > 0) {
-                    docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
-                    total += docs.length;
-                } else {
-                    break;
-                }
+                docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
+                docs = docz.scoreDocs;
             }
         } catch (IOException ex) {
             throw new HongsException(ex);

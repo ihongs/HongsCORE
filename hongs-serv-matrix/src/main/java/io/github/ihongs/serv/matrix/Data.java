@@ -1296,11 +1296,14 @@ public class Data extends SearchEntity {
         if (null != skCols) {
             return  skCols;
         }
-        skCols = new HashSet(getCaseNames("skipable"));
-        skCols.add("mtime");
-        skCols.add("muser");
-        skCols.add("memo" );
-        skCols.add("meno" );
+        skCols = getCaseNames("skipable");
+        if (skCols.isEmpty( ) ) {
+        skCols = new HashSet( );
+            skCols.add("mtime");
+            skCols.add("muser");
+            skCols.add("memo" );
+            skCols.add("meno" );
+        }
         return skCols;
     }
 

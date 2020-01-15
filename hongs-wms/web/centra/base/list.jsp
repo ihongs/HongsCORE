@@ -153,35 +153,38 @@
             String  name = (String) et.getKey();
             String  type = (String) info.get("__type__");
             String  text = (String) info.get("__text__");
-            String  term = "&rb.="+ name;
 
             if ("@".equals(name) || "id".equals(name)
             || !Synt.declare(info.get("statable"), false)) {
                 continue;
             }
 
-            if (! "number".equals(type)) {
-                // 检查是否有枚举数据
-                String enumConf = Synt.defxult((String) info.get("conf"),_conf);
-                String enumName = Synt.defxult((String) info.get("enum"), name);
-                Map    enumData = null;
-                try {
-                    enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
-                } catch ( HongsException ex) {
-                if (ex.getErrno() != 0x10eb) {
-                    throw ex;
-                }}
+            // 检查是否有枚举数据
+            String enumConf = Synt.defxult((String) info.get("conf"),_conf);
+            String enumName = Synt.defxult((String) info.get("enum"), name);
+            Map    enumData = null;
+            try {
+                enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
+            } catch ( HongsException ex) {
+            if (ex.getErrno() != 0x10eb) {
+                throw ex;
+            }}
 
-                if (enumData != null) {
-                    type = "ecount";
+            if ("number".equals(type)) {
+                if (enumData == null ) {
+                    continue ;
                 } else {
-                    type = "acount";
+                    type = "amount";
                 }
             } else {
-                type = "amount";
+                if (enumData == null) {
+                    type = "acount";
+                } else {
+                    type = "ecount";
+                }
             }
         %>
-        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>" data-term="<%=term%>">
+        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>">
             <div class="panel panel-body panel-default clearfix" style="height: 302px;">
                 <div class="checkbox col-xs-3" style="height: 100%; display:none"></div>
                 <div class="chartbox col-xs-9" style="height: 100%; display:none"></div>

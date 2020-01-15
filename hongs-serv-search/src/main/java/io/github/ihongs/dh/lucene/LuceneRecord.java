@@ -1971,7 +1971,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
             // 是否获取全部
             if (l == 0 ) {
-                l = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
+                l = Integer.MAX_VALUE;
                 A = true ;
             } else {
                 A = false;
@@ -2004,11 +2004,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         public boolean hasNext() {
             try {
                 if ( docs == null) {
+                    int L  = l+b ;
                      TopDocs tops;
                     if (s != null) {
-                        tops = finder.search(q, l + b, s);
+                        tops = finder.searchAfter(doc, q, L, s);
                     } else {
-                        tops = finder.search(q, l + b);
+                        tops = finder.searchAfter(doc, q, L);
                     }
                     docs = tops.scoreDocs;
                     H    = tops.totalHits;

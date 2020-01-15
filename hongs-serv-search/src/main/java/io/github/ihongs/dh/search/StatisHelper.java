@@ -152,14 +152,12 @@ public class StatisHelper {
         //** 排序并截取统计数据 **/
 
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-            List<Object[]>  a = new ArrayList( );
-            for (Map.Entry< String, Integer > e : et.getValue().entrySet()) {
-                String m = e.getKey  ();
-                int    c = e.getValue();
+            List<Object[]> a = new ArrayList( );
+            for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
+                String m = e.getKey ();
+                int c  = e.getValue ();
                 if (c != 0) {
-                    a.add( new Object[] {
-                       m , null, c
-                    });
+                    a.add(new Object[] {m, null, c});
                 }
             }
             Collections.sort (a, new Counts());
@@ -357,13 +355,13 @@ public class StatisHelper {
         //** 排序并截取统计数据 **/
 
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
-            List<Object[]>  a = new ArrayList( );
-            for (Map.Entry< String, Integer > e : et.getValue().entrySet()) {
-                String  m = e.getKey  ();
-                Integer c = e.getValue();
-                a.add(new Object[] {
-                    m, null, c
-                });
+            List<Object[]> a = new ArrayList();
+            for(Map.Entry<String, Integer> e : et.getValue().entrySet()) {
+                String m = e.getKey ();
+                int c  = e.getValue ();
+                if (c != 0) {
+                    a.add(new Object[] {m, null, c});
+                }
             }
             Collections.sort (a, new Counts());
             if (0 < topn && topn < a . size()) {
@@ -398,7 +396,7 @@ public class StatisHelper {
                 CoreLogger.debug("SearchRecord.counts: "+q.toString());
             }
 
-              TopDocs  docz = finder.search(q, 65535);
+              TopDocs  docz = finder.search(q, Integer.MAX_VALUE);
             ScoreDoc[] docs = docz.scoreDocs;
             total = (  int  ) docz.totalHits;
 
@@ -406,6 +404,7 @@ public class StatisHelper {
                 for(ScoreDoc dox : docs) {
                     Document doc = reader.document(dox.doc);
 
+                    // 逐个字段读值并计数
                     for(Map.Entry<String, Map<String, Integer>>  et : es) {
                         String               k    = et .getKey   ( );
                         Map<String, Integer> cntc = et .getValue ( );
@@ -436,7 +435,7 @@ public class StatisHelper {
                     }
                 }
 
-                docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
+                docz = finder.searchAfter(docs[docs.length - 1], q, Integer.MAX_VALUE);
                 docs = docz.scoreDocs;
             }
         } catch (IOException ex) {
@@ -576,16 +575,18 @@ public class StatisHelper {
         //** 排序统计数据 **/
 
         for(Map.Entry<String, Map<Minmax, Cntsum>> et : counts.entrySet()) {
-            List<Object[]> a = new ArrayList( );
-            for(Map.Entry < Minmax, Cntsum > e : et.getValue().entrySet()) {
+            List<Object[]> a = new ArrayList();
+            for(Map.Entry<Minmax, Cntsum> e : et.getValue().entrySet()) {
                 Minmax m = e.getKey  ();
                 Cntsum c = e.getValue();
                 String v = m.toString();
-                a.add(new Object[] {
-                    v, null, c.cnt, c.sum ,
-                    c.cnt != 0 ? c.min : 0, // 最小值
-                    c.cnt != 0 ? c.max : 0  // 最大值
-                });
+                if (0 < c.cnt) {
+                    a.add( new Object[] {
+                        v, null,
+                        c.cnt, c.sum,
+                        c.min, c.max
+                    } );
+                }
             }
             Collections.sort (a, new Mounts());
             if (0 < topn && topn < a . size()) {
@@ -612,13 +613,14 @@ public class StatisHelper {
                 CoreLogger.debug("SearchRecord.statis: " +q.toString());
             }
 
-              TopDocs  docz = finder.search(q, 65535);
+              TopDocs  docz = finder.search(q, Integer.MAX_VALUE);
             ScoreDoc[] docs = docz.scoreDocs;
             total = (  int  ) docz.totalHits;
             if (!counts.isEmpty()) while (docs.length > 0 ) {
                 for(ScoreDoc dox : docs) {
                     Document doc = reader.document(dox.doc);
 
+                    // 逐个字段读值并计数
                     for(Map.Entry<String, Map<Minmax, Cntsum>>  et : es) {
                         String              k    = et .getKey   ( );
                         Map<Minmax, Cntsum> cntc = et .getValue ( );
@@ -649,7 +651,7 @@ public class StatisHelper {
                     }
                 }
 
-                docz = finder.searchAfter(docs[docs.length - 1], q, 65535);
+                docz = finder.searchAfter(docs[docs.length - 1], q, Integer.MAX_VALUE);
                 docs = docz.scoreDocs;
             }
         } catch (IOException ex) {

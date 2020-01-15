@@ -564,19 +564,21 @@ HsStat.prototype = {
     },
 
     fill: function(itemBox) {
+        if ( 0 === itemBox.size() ) return;
+
         var that    = this;
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;
 
         var rb  = [];
-        var ft  = itemBox.attr("data-type");
-        var url = ft === "amount" ? this.murl
-              : ( ft === "acount" ? this.curl
-              :                     this.eurl);
+        var ft  = itemBox.attr ("data-type");
+        var url = ft==="amount"? this.murl
+              : ( ft==="acount"? this.curl
+              :                  this.eurl );
 
         itemBox.each(function() {
-            rb.push($(this).data("term"));
+            rb .push( $(this).data("name") );
 
             $(this).find(".checkbox").hide();
             $(this).find(".chartbox").hide();
@@ -585,7 +587,7 @@ HsStat.prototype = {
         });
 
         $.ajax({
-            url : url + rb.join( "" ),
+            url : hsSetParam(url, "rb.", rb),
             data: findBox.serialize(),
             dataType: "json",
             cache  : true,

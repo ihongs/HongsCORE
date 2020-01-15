@@ -2055,7 +2055,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (docs == null) {
                 hasNext();
             }
-            return (int)H;
+            return (int)H; // 会有超 Integer.MAX_VALUE 条数据？
         }
 
         /**

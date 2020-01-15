@@ -349,75 +349,33 @@ function HsCate(context, opts) {
 }
 HsCate.prototype = {
     load: function() {
-        this.amount();
-        this.acount();
+        var that    = this;
+        var statBox = this.statBox;
+        that.fill(statBox.find("[data-type=ecount]"));
+        that.fill(statBox.find("[data-type=acount]"));
+        that.fill(statBox.find("[data-type=amount]"));
     },
 
-    amount: function(rb) {
-        var that = this;
-        var url  = this.murl;
+    fill: function(itemBox) {
+        var that    = this;
         var context = this.context;
         var statBox = this.statBox;
         var findBox = this.findBox;
 
-        if ( ! rb ) {
-            rb = [];
-            statBox.find( "[data-type=amount]" )
-                   .each(function() {
-                rb.push($(this).attr("data-rb"));
-            });
-        }
-        if (rb.length == 0) {
-            return;
-        }
+        var rb  = [];
+        var ft  = itemBox.attr("data-type");
+        var url = ft === "amount" ? this.murl
+              : ( ft === "acount" ? this.curl
+              :                     this.eurl);
 
-        $.ajax({
-            url : url + rb.join( "" ),
-            data: findBox.serialize(),
-            dataType: "json",
-            cache  : true,
-            success: function(rst) {
-                rst  = rst.info || {};
-                for (var k in rst) {
-                     if (k == "__count__") continue;
-                     var n  = statBox.find("[data-name='"+k+"']");
-                     if (0 == n.size( )  ) continue;
-                     var d  = rst[k];
-                     that.setAmountCheck(n, d);
-                }
+        itemBox.each(function() {
+            rb.push($(this).attr("data-term"));
 
-                var list = context.data( "HsList" );
-                var data = hsSerialDic (list._data);
-                for (var k in data) {
-                    statBox.find("[name='"+k+"']" ).val(data [k]);
-                }
-
-                statBox.find(".checkbox").each(function() {
-                    if ($(this).find(":checked"  ).size() === 0 ) {
-                        statBox.find(".checkall2").prop("checked", true);
-                    }
-                });
-            }
+            $(this).find(".checkbox").hide();
+            $(this).find(".chartbox").hide();
+            $(this).find(".alertbox").show()
+             .children().text($(this).data("text")+" 统计中...");
         });
-    },
-
-    acount: function(rb) {
-        var that = this;
-        var url  = this.curl;
-        var context = this.context;
-        var statBox = this.statBox;
-        var findBox = this.findBox;
-
-        if ( ! rb ) {
-            rb = [];
-            statBox.find( "[data-type=acount]" )
-                   .each(function() {
-                rb.push($(this).attr("data-rb"));
-            });
-        }
-        if (rb.length == 0) {
-            return;
-        }
 
         $.ajax({
             url : url + rb.join( "" ),
@@ -426,25 +384,45 @@ HsCate.prototype = {
             cache  : true,
             success: function(rst) {
                 rst  = rst.info || {};
-                for (var k in rst) {
-                     if (k == "__count__") continue;
-                     var n  = statBox.find("[data-name='"+k+"']");
-                     if (0 == n.size( )  ) continue;
-                     var d  = rst[k];
-                     that.setAcountCheck(n, d);
+                for(var k  in rst) {
+                    var d  =  rst [k];
+                    var n  =  statBox.find("[data-name='"+k+"']");
+
+                    if (n.size() === 0) {
+                        continue;
+                    }
+                    if (d.length === 0) {
+                        continue;
+                    }
+
+                    n.find(".alertbox").hide();
+                    n.find(".checkbox").show();
+                    n.find(".chartbox").show();
+
+                    if (ft === "amount") {
+                        that.setAmountCheck(n , d);
+                    } else {
+                        that.setAcountCheck(n , d);
+                    }
                 }
 
-                var list = context.data( "HsList" );
-                var data = hsSerialDic (list._data);
-                for (var k in data) {
-                    statBox.find("[name='"+k+"']" ).val(data [k]);
-                }
+                itemBox.each(function() {
+                    $(this).find(".alertbox:visible")
+                     .children().text($(this).data("text")+" 无统计值!");
+                });
 
                 statBox.find(".checkbox").each(function() {
-                    if ($(this).find(":checked"  ).size() === 0 ) {
-                        statBox.find(".checkall2").prop("checked", true);
+                    if ($(this).find(":checked"  ).size() === 0) {
+                        $(this).find(".checkall2").prop("checked", true);
                     }
                 });
+
+                var list = context.data( "HsList" );
+                if (list) {
+                var data = hsSerialDic (list._data);
+                for(var k in data) {
+                    statBox. find("[name='"+k+"']").val(data[k]);
+                }}
             }
         });
     },

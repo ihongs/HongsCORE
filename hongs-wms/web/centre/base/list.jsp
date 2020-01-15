@@ -62,6 +62,7 @@
             String  name = (String) et.getKey();
             String  type = (String) info.get ("__type__");
             String  text = (String) info.get ("__text__");
+            String  term = "&rb.="+ name;
 
             if ("@".equals(name) || "id".equals(name)
             ||  Synt.declare(info.get("wardonly"), false)) {
@@ -73,35 +74,28 @@
             <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8 form-control-static" style="height: auto;">
                 <%
-                    String rb;
-                    if ("number".equals(type)) {
+                    if (! "number".equals(type)) {
+                        // 检查是否有枚举数据
                         String enumConf = Synt.defxult((String) info.get("conf"),_conf);
                         String enumName = Synt.defxult((String) info.get("enum"), name);
-                        Map    enumData ;
+                        Map    enumData = null;
                         try {
                             enumData  = FormSet.getInstance(enumConf).getEnum(enumName);
-                        } catch (HongsException ex) {
-                            enumData  = null;
-                        }
-                        if (enumData != null ) {
-                            StringBuilder sb = new StringBuilder();
-                            for (Object code : enumData.keySet( )) {
-                                sb.append("&rb.=")
-                                  .append(name)
-                                  .append(":" )
-                                  .append(code);
-                            }
-                            rb = sb.toString( );
+                        } catch ( HongsException ex) {
+                        if (ex.getErrno() != 0x10eb) {
+                            throw ex;
+                        }}
+
+                        if (enumData != null) {
+                            type = "ecount";
                         } else {
-                            rb = "&rb.="+ name ;
+                            type = "acount";
                         }
-                        type = "amount";
                     } else {
-                        rb   = "&rb.=" +  name ;
-                        type = "acount";
+                        type = "amount";
                     }
                 %>
-                <div class="checkbox" style="margin:0" data-name="<%=name%>" data-type="<%=type%>" data-rb="<%=rb%>"></div>
+                <div class="checkbox" style="margin:0" data-name="<%=name%>" data-type="<%=type%>" data-term="<%=term%>"></div>
             </div>
         </div>
         <%} else if (Synt.declare(info.get("filtable"), false)) {%>
@@ -296,8 +290,9 @@
     });
 
     var statobj = context.hsCate({
-        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
-        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
+        eurl: "<%=_module%>/<%=_entity%>/ecount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork",
+        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork",
+        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text"
     });
 
     var loadres = hsSerialDat(loadres);

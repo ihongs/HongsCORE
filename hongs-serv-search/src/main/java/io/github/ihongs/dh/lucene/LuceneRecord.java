@@ -532,38 +532,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         } else {
             nl = false;
         }
+        int bn = rn * (pn - 1);
 
-        // 获取页码, 计算查询区间
-        int minPn = pn - (gn / 2);
-        if (minPn < 1)   minPn=1 ;
-        int maxPn = gn + minPn-1 ;
-        int totRn = rn * maxPn+1 ;
-        int minRn = rn * (pn - 1);
-        int maxRn = rn + minRn   ;
-
-        // 数量太少的话没必要估算
-        int talRn = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
-        if (totRn < talRn) totRn = 1 + talRn / rn * rn ;
-
-        Loop roll = search( rd, minRn , totRn - minRn );
-        int  rc   = roll . size();
-        int  pc   = ( int ) Math.ceil((double) rc / rn);
-        int  st   ;
-
-        if (rc == 0) {
-            st =  0;
-        } else
-        if (rc <  minRn) {
-            st =  0;
-        } else
-        if (rc <  totRn) {
-            st =  1;
-        } else
-        {
-            st =  2;
-            rc -= 1;
-            pc -= 1;
-        }
+        // 查询数据, 计算查询区间
+        Loop roll = search(rd , bn , rn );
+        int rc = (int) roll.hits(/* total hits */);
+        int pc = (int) Math.ceil((double) rc / rn);
+        int st = rc <= bn ? 0 : 1;
 
         Map  resp = new HashMap();
         Map  page = new HashMap();
@@ -579,7 +554,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         // 提取分页片段
         List list = new ArrayList(st != 0 ? rn : 0 );
-        while ( roll.hasNext() && maxRn > minRn ++ ) {
+        while (roll.hasNext()) {
              list.add ( roll.next() );
         }
         resp.put("list", list);
@@ -1974,16 +1949,15 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         private final LuceneRecord  that;
         private       ScoreDoc[]    docs;
         private       ScoreDoc      doc ;
+        private final boolean A; // 无限查询
         private final Query   q;
         private final Sort    s;
         private final Set     r;
         private final int     b; // 起始位置
-        private final int     l; // 单次限制
-        private       int     L; // 起始限制
-        private       int     h; // 单次总数
-        private       int     H; // 全局总数
+        private final int     l; // 数量限制
         private       int     i; // 提取游标
-        private       boolean A; // 无限查询
+        private       int     h; // 单次总数
+        private       long    H; // 全局总数
 
         /**
          * 查询迭代器
@@ -1995,27 +1969,22 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
          * @param l 查询限额
          */
         public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
+            // 是否获取全部
+            if (l == 0 ) {
+                l = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
+                A = true ;
+            } else {
+                A = false;
+            }
+
             this.that = that;
             this.docs = null;
             this.doc  = null;
-            this.q    = q;
-            this.s    = s;
-            this.r    = r;
-            this.b    = b;
-
-            // 是否获取全部
-            if ( l  ==  0) {
-                 l = CoreConfig.getInstance().getProperty("core.search.least.limit", 65535);
-                 A = true;
-            }
-
-            this.l    = l;
-            this.L    = l;
-
-            // 起始位置偏移
-            if ( b  !=  0) {
-                 L  +=  b;
-            }
+            this.q =  q;
+            this.s =  s;
+            this.r =  r;
+            this.b =  b;
+            this.l =  l;
 
             // 获取查读对象
             try {
@@ -2037,17 +2006,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if ( docs == null) {
                      TopDocs tops;
                     if (s != null) {
-                        tops = finder.search/***/(/***/q, L, s);
+                        tops = finder.search(q, l + b, s);
                     } else {
-                        tops = finder.search/***/(/***/q, L);
+                        tops = finder.search(q, l + b);
                     }
                     docs = tops.scoreDocs;
+                    H    = tops.totalHits;
                     h    = docs.length;
                     i    = b;
-                    H    = h;
-                    L    = l;
                 } else
-                if ( A && L <= i ) {
+                if ( A && i >= h ) {
                      TopDocs tops;
                     if (s != null) {
                         tops = finder.searchAfter(doc, q, l, s);
@@ -2057,7 +2025,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     docs = tops.scoreDocs;
                     h    = docs.length;
                     i    = 0;
-                    H   += h;
                 }
                 return i < h;
             } catch (IOException e) {
@@ -2081,18 +2048,30 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
         /**
          * 获取命中总数
-         * 注意:
-         * 初始化时 y 参数为 0 (即获取全部命中)
-         * 则在全部循环完后获取到的数值才是对的
-         * 但其实此时完全可以直接计算循环的次数
-         * 此方法主要用于分页时获取查询命中总量
+         * @return
+         */
+        public int hits() {
+            if (docs == null) {
+                hasNext();
+            }
+            return (int)H;
+        }
+
+        /**
+         * 获取单次数量
          * @return
          */
         public int size() {
             if (docs == null) {
                 hasNext();
             }
-            return H ;
+            int L;
+            if (A) {
+                L  = (int) H - b;
+            } else {
+                L  = (int) h - b;
+            }
+            return L > 0 ? L : 0;
         }
 
         public List<Map> toList() {

@@ -20,7 +20,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.BooleanClause;
@@ -138,11 +137,11 @@ public class StatisHelper {
                     counts3.put(k, vz);
                 }
 
-                ecount(vd, counts3, finder);
+                ecount(vd, finder, counts3);
             }
         }
 
-        int z = ecount(rd, counts2, finder);
+        int z = ecount(rd, finder, counts2);
         // 以上仅对枚举值做计数, 以下计算全部
         z = ecount(that.padQry(rd), finder);
 
@@ -170,9 +169,8 @@ public class StatisHelper {
         return cnts;
     }
 
-    private int ecount(Map rd,
-            Map<String, Map<String, Integer>> counts,
-            IndexSearcher finder) throws HongsException {
+    private int ecount( Map rd, IndexSearcher finder,
+            Map<String, Map<String, Integer>> counts) throws HongsException {
         int total = 0 ;
 
         Query q = that.padQry(rd);
@@ -232,7 +230,6 @@ public class StatisHelper {
      * @throws HongsException
      */
     public Map acount(Map rd) throws HongsException {
-        IndexReader   reader = that.getReader();
         IndexSearcher finder = that.getFinder();
 
         int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
@@ -271,7 +268,7 @@ public class StatisHelper {
                         String s = v.toString ( );
                        cnx.add(s/**/);
                     }
-                }   countx.put(x,exc);
+                }   countx.put(x,cnx);
             }
         }
 
@@ -343,11 +340,11 @@ public class StatisHelper {
                 }
                 */
 
-                acount(vd, counts3, countx3, reader, finder);
+                acount(vd, finder, counts3, countx3);
             }
         }
 
-        int z = acount(rd, counts2, countx2, reader, finder);
+        int z = acount(rd, finder, counts2, countx2);
 
         Map cnts = new HashMap();
         cnts.put("__count__", z);
@@ -373,10 +370,9 @@ public class StatisHelper {
         return cnts;
     }
 
-    private int acount(Map rd,
+    private int acount( Map rd, IndexSearcher finder,
             Map<String, Map<String, Integer>> counts,
-            Map<String, Set<String         >> countx,
-            IndexReader reader, IndexSearcher finder) throws HongsException {
+            Map<String, Set<String         >> countx) throws HongsException {
         Set<Map.Entry<String, Map<String, Integer>>> es = counts.entrySet();
 
         // 判断是否需要额外的值
@@ -393,16 +389,16 @@ public class StatisHelper {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("SearchRecord.counts: "+q.toString());
+                CoreLogger.debug("SearchRecord.counts: " + q.toString());
             }
 
-              TopDocs  docz = finder.search(q, Integer.MAX_VALUE);
+              TopDocs  docz = finder.search(q , 65536);
             ScoreDoc[] docs = docz.scoreDocs;
             total = (  int  ) docz.totalHits;
 
-            if (!counts.isEmpty()) while (docs.length > 0 ) {
+            if (!counts.isEmpty()) while (docs.length > 0) {
                 for(ScoreDoc dox : docs) {
-                    Document doc = reader.document(dox.doc);
+                    Document doc = finder.doc(dox.doc);
 
                     // 逐个字段读值并计数
                     for(Map.Entry<String, Map<String, Integer>>  et : es) {
@@ -435,7 +431,7 @@ public class StatisHelper {
                     }
                 }
 
-                docz = finder.searchAfter(docs[docs.length - 1], q, Integer.MAX_VALUE);
+                docz = finder.searchAfter(docs[docs.length - 1], q, 65536);
                 docs = docz.scoreDocs;
             }
         } catch (IOException ex) {
@@ -446,7 +442,6 @@ public class StatisHelper {
     }
 
     public Map amount(Map rd) throws HongsException {
-        IndexReader   reader = that.getReader();
         IndexSearcher finder = that.getFinder();
 
         int         topn = Synt.declare(rd.get(Cnst.RN_KEY) , 0);
@@ -563,11 +558,11 @@ public class StatisHelper {
                 }
                 */
 
-                amount(vd, counts3, countx3, reader, finder);
+                amount(vd, finder, counts3, countx3);
             }
         }
 
-        int z = amount(rd, counts2, countx2, reader, finder);
+        int z = amount(rd, finder, counts2, countx2);
 
         Map cnts = new HashMap();
         cnts.put("__count__", z);
@@ -598,11 +593,10 @@ public class StatisHelper {
         return cnts;
     }
 
-    private int amount(Map rd,
+    private int amount( Map rd, IndexSearcher finder,
             Map<String, Map<Minmax , Cntsum>> counts,
-            Map<String, Set<Minmax         >> countx,
-            IndexReader reader, IndexSearcher finder) throws HongsException {
-        Set<Map.Entry<String, Map<Minmax, Cntsum>>> es = counts.entrySet();
+            Map<String, Set<Minmax         >> countx) throws HongsException {
+        Set<Map.Entry<String, Map<Minmax , Cntsum>>> es = counts.entrySet();
 
         int total = 0;
 
@@ -610,15 +604,15 @@ public class StatisHelper {
             Query q = that.padQry(rd);
 
             if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("SearchRecord.statis: " +q.toString());
+                CoreLogger.debug("SearchRecord.statis: " + q.toString());
             }
 
-              TopDocs  docz = finder.search(q, Integer.MAX_VALUE);
+              TopDocs  docz = finder.search(q , 65536);
             ScoreDoc[] docs = docz.scoreDocs;
             total = (  int  ) docz.totalHits;
-            if (!counts.isEmpty()) while (docs.length > 0 ) {
+            if (!counts.isEmpty()) while (docs.length > 0) {
                 for(ScoreDoc dox : docs) {
-                    Document doc = reader.document(dox.doc);
+                    Document doc = finder.doc(dox.doc);
 
                     // 逐个字段读值并计数
                     for(Map.Entry<String, Map<Minmax, Cntsum>>  et : es) {
@@ -651,7 +645,7 @@ public class StatisHelper {
                     }
                 }
 
-                docz = finder.searchAfter(docs[docs.length - 1], q, Integer.MAX_VALUE);
+                docz = finder.searchAfter(docs[docs.length - 1], q, 65536);
                 docs = docz.scoreDocs;
             }
         } catch (IOException ex) {

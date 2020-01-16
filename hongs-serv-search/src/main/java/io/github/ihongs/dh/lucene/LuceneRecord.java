@@ -223,6 +223,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             pn = Synt.declare(rd.get(Cnst.PN_KEY), 1); if ( pn < 0 ) pn = Math.abs( pn );
         }
 
+        if (rn < 0 || pn < 0 || gn < 1 ) {
+            throw new HongsException(400 , "Wrong page parameter." );
+        }
+
         // 指定行数 0, 则获取全部
         if (rn == 0) {
             Map  data = new HashMap();
@@ -231,7 +235,32 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             return data;
         }
 
-        return search(rd, rn, pn, gn);
+        // 指定页码 0, 仅获取分页
+        boolean  nl = pn == 0 ;
+        if (nl)  pn = /***/ 1 ;
+        int bn = rn * (pn - 1);
+
+        Loop roll = search(rd, bn, rn);
+
+        int rc = (int) roll.hits(/* total hits */);
+        int pc = (int) Math.ceil((double) rc / rn);
+        int st = rc > bn ? 1 : 0 ;
+
+        Map  resp = new HashMap();
+        Map  page = new HashMap();
+        page.put(Cnst.RN_KEY, rn);
+        page.put(Cnst.GN_KEY, gn);
+        page.put(Cnst.PN_KEY, pn);
+        page.put("count", rc);
+        page.put("pages", pc);
+        page.put("state", st);
+
+        if (! nl) {
+            List list = roll.toList( );
+            resp.put("list", list);
+        }   resp.put("page", page);
+
+        return resp;
     }
 
     /**
@@ -509,57 +538,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         return l;
-    }
-
-    /**
-     * 获取分页列表
-     * @param rd
-     * @param rn 每页行数
-     * @param gn 组数
-     * @param pn 页数
-     * @return
-     * @throws HongsException
-     */
-    public Map search(Map rd, int rn, int pn, int gn) throws HongsException {
-        // 指定页码 0, 仅获取分页
-        boolean  nl;
-        if (gn == 0) {
-            gn =  1;
-        }
-        if (pn == 0) {
-            pn =  1;
-            nl = true ;
-        } else {
-            nl = false;
-        }
-        int bn = rn * (pn - 1);
-
-        // 查询数据, 计算查询区间
-        Loop roll = search(rd , bn , rn );
-        int rc = (int) roll.hits(/* total hits */);
-        int pc = (int) Math.ceil((double) rc / rn);
-        int st = rc <= bn ? 0 : 1;
-
-        Map  resp = new HashMap();
-        Map  page = new HashMap();
-        page.put(Cnst.RN_KEY, rn);
-        page.put(Cnst.GN_KEY, gn);
-        page.put(Cnst.PN_KEY, pn);
-        page.put("state", st );
-        page.put("count", rc );
-        page.put("pages", pc );
-        resp.put("page", page);
-
-        if ( nl ) return resp ;
-
-        // 提取分页片段
-        List list = new ArrayList(st != 0 ? rn : 0 );
-        while (roll.hasNext()) {
-             list.add ( roll.next() );
-        }
-        resp.put("list", list);
-
-        return resp;
     }
 
     //** 组件方法 **/
@@ -1971,7 +1949,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
             // 是否获取全部
             if (l == 0 ) {
-                l = Integer.MAX_VALUE;
+                l = 1024 ;
                 A = true ;
             } else {
                 A = false;
@@ -2048,17 +2026,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         /**
-         * 获取命中总数
-         * @return
-         */
-        public int hits() {
-            if (docs == null) {
-                hasNext();
-            }
-            return (int)H; // 会有超 Integer.MAX_VALUE 条数据？
-        }
-
-        /**
          * 获取单次数量
          * @return
          */
@@ -2073,6 +2040,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 L  = (int) h - b;
             }
             return L > 0 ? L : 0;
+        }
+
+        /**
+         * 获取命中总数
+         * @return
+         */
+        public int hits() {
+            if (docs == null) {
+                hasNext();
+            }
+            // 只支持读取 2G 的数据
+            return H < Integer.MAX_VALUE
+            ?(int) H : Integer.MAX_VALUE;
         }
 
         public List<Map> toList() {

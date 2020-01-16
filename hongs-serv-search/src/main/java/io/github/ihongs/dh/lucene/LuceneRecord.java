@@ -1949,7 +1949,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
             // 是否获取全部
             if (l == 0 ) {
-                l = 1024 ;
+                l = 8192 ;
                 A = true ;
             } else {
                 A = false;

@@ -142,8 +142,15 @@ public class StatisHelper {
         }
 
         int z = ecount(rd, finder, counts2);
-        // 以上仅对枚举值做计数, 以下计算全部
-        z = ecount(that.padQry(rd), finder);
+
+        // 以上仅对枚举值计数, 以下计算全部
+        try {
+            Query q ;
+            q = that.padQry (rd);
+            z = finder.count( q);
+        } catch (IOException  e) {
+            throw new HongsException(e);
+        }
 
         Map cnts = new HashMap();
         cnts.put("__count__", z);
@@ -203,7 +210,12 @@ public class StatisHelper {
                 bq.add(b, BooleanClause.Occur.MUST);
 
                 // 计算命中数量
-                int c = ecount (bq.build(), finder);
+                int c ;
+                try {
+                    c = finder.count(bq.build());
+                } catch (IOException ex) {
+                    throw new HongsException(ex);
+                }
 
                 xt.setValue(c);
                 if (total < c) {
@@ -213,14 +225,6 @@ public class StatisHelper {
         }
 
         return total;
-    }
-
-    private int ecount(Query q, IndexSearcher finder) throws HongsException {
-        try {
-            return (int) finder.search(q, 1).totalHits;
-        } catch (IOException e) {
-            throw new HongsException(e);
-        }
     }
 
     /**

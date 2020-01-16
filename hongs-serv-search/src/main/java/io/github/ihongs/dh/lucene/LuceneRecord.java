@@ -1923,11 +1923,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     public static class Loop implements Iterable<Map>, Iterator<Map> {
         private final IndexSearcher finder;
-        private final IndexReader   reader;
         private final LuceneRecord  that;
         private       ScoreDoc[]    docs;
         private       ScoreDoc      doc ;
-        private final boolean A; // 无限查询
+        private final boolean t; // 有限查询
         private final Query   q;
         private final Sort    s;
         private final Set     r;
@@ -1949,10 +1948,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         public Loop(LuceneRecord that, Query q, Sort s, Set r, int b, int l) {
             // 是否获取全部
             if (l == 0 ) {
-                l = 8192 ;
-                A = true ;
+                l = 65536;
+                t = false;
             } else {
-                A = false;
+                t = true ;
             }
 
             this.that = that;
@@ -1966,7 +1965,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             // 获取查读对象
             try {
-                reader = that.getReader();
                 finder = that.getFinder();
             } catch ( HongsException ex ) {
                 throw ex.toExemption(   );
@@ -1994,7 +1992,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     h    = docs.length;
                     i    = b;
                 } else
-                if ( A && i >= h ) {
+                if (! t && i >= h) {
                      TopDocs tops;
                     if (s != null) {
                         tops = finder.searchAfter(doc, q, l, s);
@@ -2018,7 +2016,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             }
             try {
                 /*Read*/ doc = docs[ i ++ ];
-                Document dox = reader.document( doc.doc );
+                Document dox = finder.doc(doc.doc);
                 return  that.padDat(dox, r);
             } catch (IOException e) {
                 throw new HongsExemption(e);
@@ -2034,12 +2032,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 hasNext();
             }
             int L;
-            if (A) {
-                L  = (int) H - b;
+            if (t) {
+                L  = (int) (h - b);
             } else {
-                L  = (int) h - b;
+                L  = (int) (H - b);
             }
-            return L > 0 ? L : 0;
+            return L > 0 ?  L : 0 ;
         }
 
         /**

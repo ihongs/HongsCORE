@@ -127,9 +127,11 @@ public final class HongsCurse {
           Throwable erro = that.getCause();
         if (null != erro) {
             if (code < 2) {
-                return erro.getLocalizedMessage();
+                desx = erro.getLocalizedMessage();
+                return desx != null ? desx : "";
             } else {
                 desx = erro.getLocalizedMessage();
+                desx = desx != null ? desx : "";
             }
         } else {
             desx  = "";

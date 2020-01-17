@@ -772,36 +772,30 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     }
                 }
 
-                // 条件类可去重
-                Set a = Synt.asSet(v); v = a;
-
-                if (s && a != null && !a.isEmpty()) {
-                    Object  w = a.toArray( )[0]; // 排序值不能存多个
-                        doc.add(f.odr(k, w));
+                Set a  = Synt.asSet( v );
+                if (a != null && ! a.isEmpty( )) {
+                if (q) for (Object w: a) {
+                    doc.add(f.whr(k, w));
                 }
-                if (q && a != null && !a.isEmpty()) {
-                    for (Object w: a) {
-                        doc.add(f.whr(k, w));
-                    }
+                if (p) for (Object w: a) {
+                    doc.add(f.wdr(k, w));
                 }
-                if (p && a != null && !a.isEmpty()) {
-                    for (Object w: a) {
-                        doc.add(f.wdr(k, w));
-                    }
-                }
+                if (s) for (Object w: a) {
+                    doc.add(f.ods(k, w));
+                }}
             } else
             {
                 if (g) {
                     doc.add(f.get(k, v));
-                }
-                if (s) {
-                    doc.add(f.odr(k, v));
                 }
                 if (q) {
                     doc.add(f.whr(k, v));
                 }
                 if (p) {
                     doc.add(f.wdr(k, v));
+                }
+                if (s) {
+                    doc.add(f.odr(k, v));
                 }
             }
 
@@ -1952,6 +1946,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 t = false;
             } else {
                 t = true ;
+                // 最多 2G
+                if (b > Integer.MAX_VALUE - l) {
+                    b = Integer.MAX_VALUE - l;
+                }
             }
 
             this.that = that;
@@ -2048,7 +2046,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             if (docs == null) {
                 hasNext();
             }
-            // 只支持读取 2G 的数据
+            // 最多 2G
             return H < Integer.MAX_VALUE
             ?(int) H : Integer.MAX_VALUE;
         }

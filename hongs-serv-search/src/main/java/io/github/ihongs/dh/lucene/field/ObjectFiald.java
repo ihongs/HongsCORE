@@ -31,4 +31,8 @@ public class ObjectFiald implements IField {
     public Field odr(String k, Object v) {
         return null; // 对象类型无法用于排序, 无法增加排序字段
     }
+    @Override
+    public Field ods(String k, Object v) {
+        return null; // 对象类型无法用于排序, 无法增加排序字段
+    }
 }

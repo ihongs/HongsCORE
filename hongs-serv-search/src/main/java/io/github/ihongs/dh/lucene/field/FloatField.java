@@ -2,9 +2,11 @@ package io.github.ihongs.dh.lucene.field;
 
 import io.github.ihongs.util.Synt;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FloatDocValuesField;
 import org.apache.lucene.document.FloatPoint;
 import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.SortedNumericDocValuesField;
+import org.apache.lucene.util.NumericUtils;
 
 /**
  *
@@ -21,7 +23,11 @@ public class FloatField implements IField {
     }
     @Override
     public Field odr(String k, Object v) {
-        return new  FloatDocValuesField("#"+k, Synt.declare(v, 0.0F));
+        return new NumericDocValuesField("#"+k, Float.floatToRawIntBits(Synt.declare(v, 0.0F)));
+    }
+    @Override
+    public Field ods(String k, Object v) {
+        return new SortedNumericDocValuesField("#"+k, NumericUtils.floatToSortableInt(Synt.declare(v, 0.0F)));
     }
     @Override
     public Field wdr(String k, Object v) {

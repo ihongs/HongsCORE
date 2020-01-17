@@ -2,6 +2,7 @@ package io.github.ihongs.dh.lucene.field;
 
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.SortedDocValuesField;
+import org.apache.lucene.document.SortedSetDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
@@ -27,5 +28,9 @@ public class StringFiald implements IField {
     @Override
     public Field odr(String k, Object v) {
         return new SortedDocValuesField("#"+k, new BytesRef(v != null ? v.toString() : ""));
+    }
+    @Override
+    public Field ods(String k, Object v) {
+        return new SortedSetDocValuesField("#"+k, new BytesRef(v != null ? v.toString() : ""));
     }
 }

@@ -60,6 +60,7 @@ public class SearchAction extends JAction {
         super.search(helper);
     }
 
+    /* // acount, amount 均已提速, 弃之
     @Action("ecount")
     @Preset(conf="", form="")
     public void ecount(ActionHelper helper) throws HongsException {
@@ -78,6 +79,7 @@ public class SearchAction extends JAction {
 
         helper.reply(sd);
     }
+    */
 
     @Action("acount")
     @Preset(conf="", form="")
@@ -126,30 +128,21 @@ public class SearchAction extends JAction {
      */
     protected void acheck(StatisHelper sh, Map rd, int nb) throws HongsException {
         Set rb = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        LuceneRecord sr = sh . getRecord ( );
+        Map es = Synt.asMap  (rd.get(Cnst.IN_REL));
+        LuceneRecord  sr  =   sh.getRecord();
         Set st = sr.getCaseNames("statable");
         Map fs = sr.getFields( );
 
-        Set ss = null;
-        Map es = null;
-        String cn = null;
-//      String nn = null;
-
         // 数值统计
-        if (nb == 2) {
-            ss = (Set) FormSet.getInstance().getEnum("__saves__").get("number");
-        }
+        Set ss = (Set) FormSet.getInstance().getEnum("__saves__").get("number");
 
         // 枚举统计
-        if (nb != 1) {
-            es = Synt.asMap(rd.get(Cnst.IN_REL));
-            if (es == null) {
-                es =  new  HashMap(   );
-                rd.put(Cnst.IN_REL, es);
-            }
-            cn = Dict.getValue(fs, "default", "@", "conf");
-//          nn = Dict.getValue(fs, "unknown", "@", "form");
+        if (es == null) {
+            es =  new  HashMap  ( );
+            rd.put(Cnst.IN_REL, es);
         }
+        String cn = Dict.getValue(fs, "default", "@", "conf");
+//      String nn = Dict.getValue(fs, "unknown", "@", "form");
 
         if (rb != null) for (Object fn : rb ) {
             Map fc = (Map)fs.get(fn);
@@ -161,29 +154,31 @@ public class SearchAction extends JAction {
             }
 
             // 数值统计
-            if (  ss  != null
+            if (  nb  == 2
             &&  ! ss.contains   (fc.get("__type__"))
             &&  ! ss.contains   (fc.get(  "type"  )) ) {
                 throw new HongsException(400, "Field '"+fn+"' is not numeric" );
             }
 
             // 枚举统计
-            if (  es  != null ) {
-                Set e  = Synt.asSet(es.get(fn));
-                if (e != null && ! e.isEmpty()) {
-                    continue;
+            Set e  = Synt.asSet(es.get(fn));
+            if (e != null && ! e.isEmpty()) {
+                // * 代表不限
+                if (e.contains("*")) {
+                    es.remove ( fn );
                 }
-
-                // 提取枚举
-                String xc = Synt.defxult((String) fc.get("conf"), (String) cn);
-                String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
-                try {
-                    es.put( fn, FormSet.getInstance(xc).getEnum(xn).keySet() );
-                } catch ( HongsException ex) {
-                if (ex.getErrno() != 0x10eb) {
-                    throw ex;
-                }}
+                continue;
             }
+
+            // 提取枚举
+            String xc = Synt.defxult((String) fc.get("conf"), (String) cn);
+            String xn = Synt.defxult((String) fc.get("enum"), (String) fn);
+            try {
+                es.put( fn, FormSet.getInstance(xc).getEnum(xn).keySet() );
+            } catch ( HongsException ex) {
+            if (ex.getErrno() != 0x10eb) {
+                throw ex;
+            }}
         }
     }
 

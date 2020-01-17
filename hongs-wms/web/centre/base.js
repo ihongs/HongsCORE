@@ -207,7 +207,7 @@ function HsPops (context , urls) {
     inState = false ;
     IF = "1" ; // 处于表单中
     NF = null; // 非表单模式
-    
+
     /**
      * 列表和查看对公共区很重要
      * 如果有给编号则打开详情页
@@ -238,8 +238,8 @@ function HsPops (context , urls) {
         }
     });
     $(window).trigger("popstate");
-    
-    
+
+
     /**
      * 还需要处理内部加载的页面
      */
@@ -374,16 +374,17 @@ HsCate.prototype = {
         itemBox.each(function() {
             rb .push( $(this).data("name") );
 
-            $(this).find(".checkbox").hide();
-            $(this).find(".chartbox").hide();
-            $(this).find(".alertbox").show()
-             .children().text($(this).data("text")+" 统计中...");
+            $(this).empty(); // 清空待写入选项
         });
 
-        $.ajax({
-            url : hsSetParam(url, "rb.", rb),
-            data: findBox.serialize(),
-            dataType: "json",
+        var dat;
+        dat = hsSerialDic(findBox);
+        url = hsSetParam (url, "rb.", rb);
+
+        $.hsAjax({
+            url : url,
+            data: dat,
+            dataType : "json",
             cache  : true,
             success: function(rst) {
                 rst  = rst.info || {};
@@ -391,41 +392,28 @@ HsCate.prototype = {
                     var d  =  rst [k];
                     var n  =  statBox.find("[data-name='"+k+"']");
 
-                    if (n.size() === 0) {
+                    if (n.size() === 0 ) {
                         continue;
                     }
-                    if (d.length === 0) {
+                    if (d.length === 0 ) {
                         continue;
                     }
-
-                    n.find(".alertbox").hide();
-                    n.find(".checkbox").show();
-                    n.find(".chartbox").show();
 
                     if (ft === "amount") {
                         that.setAmountCheck(n , d);
                     } else {
                         that.setAcountCheck(n , d);
                     }
+
+                    if (dat && dat [k] ) {
+                        n.find("[name='"+ k +"']").val ( dat [k] );
+                    } else {
+                        n.find(".checkall2").prop("checked", true);
+                    }
                 }
 
-                itemBox.each(function() {
-                    $(this).find(".alertbox:visible")
-                     .children().text($(this).data("text")+" 无统计值!");
-                });
-
-                statBox.find(".checkbox").each(function() {
-                    if ($(this).find(":checked"  ).size() === 0) {
-                        $(this).find(".checkall2").prop("checked", true);
-                    }
-                });
-
-                var list = context.data( "HsList" );
-                if (list) {
-                var data = hsSerialDic (list._data);
-                for(var k in data) {
-                    statBox. find("[name='"+k+"']").val(data[k]);
-                }}
+                // 隐藏空的统计块
+                itemBox.filter(":empty").closest(".stat-group").hide();
             }
         });
     },

@@ -586,10 +586,14 @@ HsStat.prototype = {
              .children().text($(this).data("text")+" 统计中...");
         });
 
-        $.ajax({
-            url : hsSetParam(url, "rb.", rb),
-            data: findBox.serialize(),
-            dataType: "json",
+        var dat;
+        dat = hsSerialDic(findBox);
+        url = hsSetParam (url, "rb.", rb);
+
+        $.hsAjax({
+            url : url,
+            data: dat,
+            dataType : "json",
             cache  : true,
             success: function(rst) {
                 rst  = rst.info || {};
@@ -615,25 +619,18 @@ HsStat.prototype = {
                         that.setAcountCheck(n , d);
                         that.setAcountChart(n , d);
                     }
+
+                    if (dat && dat [k] ) {
+                        n.find("[name='"+ k +"']").val ( dat [k] );
+                    } else {
+                        n.find(".checkall2").prop("checked", true);
+                    }
                 }
 
                 itemBox.each(function() {
                     $(this).find(".alertbox:visible")
                      .children().text($(this).data("text")+" 无统计值!");
                 });
-
-                statBox.find(".checkbox").each(function() {
-                    if ($(this).find(":checked"  ).size() === 0) {
-                        $(this).find(".checkall2").prop("checked", true);
-                    }
-                });
-
-                var list = context.data( "HsList" );
-                if (list) {
-                var data = hsSerialDic (list._data);
-                for(var k in data) {
-                    statBox. find("[name='"+k+"']").val(data[k]);
-                }}
             }
         });
     },
@@ -687,17 +684,21 @@ HsStat.prototype = {
             return;
         }
 
-        var rb  = itemBox.attr("data-rb"  );
         var fx  = itemBox.attr("data-text");
         var fn  = itemBox.attr("data-name");
         var ft  = itemBox.attr("data-type");
-        var url = ft === "amount" ? this.murl : this.curl;
-            url = hsSetParam(url, "rn","0"); // 取全部数据
+        var url = ft==="amount"? this.murl
+              : ( ft==="acount"? this.curl
+              :                  this.eurl);
+        var dat = this.findBox.serialize( );
 
-        $.ajax({
-            url : url + rb,
-            data: this.findBox.serialize( ),
-            dataType: "json",
+        url = hsSetParam(url, "rb", fn ); // 单字段
+        url = hsSetParam(url, "rn", "0"); // 不分页
+
+        $.hsAjax({
+            url : url,
+            data: dat,
+            dataType : "json",
             cache  : true,
             success: function(rst) {
                 // 构建表格

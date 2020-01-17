@@ -171,17 +171,13 @@
             }}
 
             if ("number".equals(type)) {
-                if (enumData == null ) {
-                    continue ;
-                } else {
+                if (enumData != null ) {
                     type = "amount";
+                } else {
+                    type = "acount";
                 }
             } else {
-                if (enumData == null) {
-                    type = "acount";
-                } else {
-                    type = "ecount";
-                }
+                type = "acount";
             }
         %>
         <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>">
@@ -366,9 +362,8 @@
     });
 
     var statobj = context.hsStat({
-        eurl: "<%=_module%>/<%=_entity%>/ecount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork",
-        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork",
-        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text"
+        murl: "<%=_module%>/<%=_entity%>/amount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text",
+        curl: "<%=_module%>/<%=_entity%>/acount.act?<%=Cnst.RN_KEY%>=<%=Cnst.RN_DEF%>&<%=Cnst.AB_KEY%>=_text,_fork"
     });
 
     var loadres = hsSerialDic(loadbox);

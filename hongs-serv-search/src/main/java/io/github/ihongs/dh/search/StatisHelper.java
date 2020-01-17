@@ -21,12 +21,23 @@ import java.util.Set;
 
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexableField;
+import org.apache.lucene.index.LeafReader;
+import org.apache.lucene.index.LeafReaderContext;
+import org.apache.lucene.index.NumericDocValues;
+import org.apache.lucene.index.SortedDocValues;
+import org.apache.lucene.index.SortedNumericDocValues;
+import org.apache.lucene.index.SortedSetDocValues;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.Collector;
+import org.apache.lucene.search.DocIdSetIterator;
+import org.apache.lucene.search.LeafCollector;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.Scorer;
+import org.apache.lucene.util.NumericUtils;
 
 /**
  * 搜索助手
@@ -182,8 +193,8 @@ public class StatisHelper {
 
         Query q = that.padQry(rd);
 
-        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-            CoreLogger.debug("SearchRecord.counts: "+q.toString());
+        if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+            CoreLogger.debug("StatisHelper.ecount: "+ q.toString());
         }
 
         Map fs = getRecord(  ).getFields(  );
@@ -387,18 +398,51 @@ public class StatisHelper {
             }
         }
 
-        int total = 0;
+        int t = 0;
 
         try {
             Query q = that.padQry(rd);
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("SearchRecord.counts: " + q.toString());
+            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+                CoreLogger.debug("StatisHelper.acount: "+ q.toString());
             }
 
+            if (counts.isEmpty()) return finder.count (q);
+
+            Collec c = new AcountCollec((String k, String[] a) -> {
+                Map<String, Integer> cntc = counts.get(k);
+                Set<String         > cntx = countx.get(k);
+
+                if (! more.contains( k )) {
+                    for ( String v : a  ) {
+                        if (cntx.contains   (v)) {
+                            continue;
+                        }
+                        if (cntc.containsKey(v)) {
+                            cntc.put(v, 1 + cntc.get(v));
+                        }
+                    }
+                } else {
+                    for ( String v : a  ) {
+                        if (cntx.contains   (v)) {
+                            continue;
+                        }
+                        if (cntc.containsKey(v)) {
+                            cntc.put(v, 1 + cntc.get(v));
+                        } else {
+                            cntc.put(v, 1);
+                        }
+                    }
+                }
+            } , counts.keySet(), that);
+
+            finder.search(q, c);
+            t = c.countTotals();
+
+            /*
               TopDocs  docz = finder.search(q , 65536);
             ScoreDoc[] docs = docz.scoreDocs;
-            total = (  int  ) docz.totalHits;
+            t   =   (  int  ) docz.totalHits;
 
             if (!counts.isEmpty()) while (docs.length > 0) {
                 for(ScoreDoc dox : docs) {
@@ -438,11 +482,12 @@ public class StatisHelper {
                 docz = finder.searchAfter(docs[docs.length - 1], q, 65536);
                 docs = docz.scoreDocs;
             }
+            */
         } catch (IOException ex) {
             throw new HongsException(ex);
         }
 
-        return total;
+        return t;
     }
 
     public Map amount(Map rd) throws HongsException {
@@ -602,18 +647,47 @@ public class StatisHelper {
             Map<String, Set<Minmax         >> countx) throws HongsException {
         Set<Map.Entry<String, Map<Minmax , Cntsum>>> es = counts.entrySet();
 
-        int total = 0;
+        int t = 0;
 
         try {
             Query q = that.padQry(rd);
 
-            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG)) {
-                CoreLogger.debug("SearchRecord.statis: " + q.toString());
+            if (0 < Core.DEBUG && 8 != (8 & Core.DEBUG) ) {
+                CoreLogger.debug("StatisHelper.amount: "+ q.toString());
             }
 
+            if (counts.isEmpty()) return finder.count (q);
+
+            Collec c = new AmountCollec((String k, double[] a) -> {
+                Map<Minmax, Cntsum > cntc = counts.get(k);
+                Set<Minmax         > cntx = countx.get(k);
+
+                F : for(double v :  a  ) {
+                    if (  null  != cntx)
+                    for(Minmax w : cntx) {
+                        if (w.covers(v)) {
+                            continue F ;
+                        }
+                    }
+
+                    for(Map.Entry<Minmax, Cntsum> mc : cntc.entrySet()) {
+                        Cntsum w = mc.getValue( );
+                        Minmax m = mc.getKey  ( );
+
+                        if (m.covers(v)) {
+                            w.add   (v);
+                        }
+                    }
+                }
+            } , counts.keySet(), that );
+
+            finder.search(q, c);
+            t = c.countTotals();
+
+            /*
               TopDocs  docz = finder.search(q , 65536);
             ScoreDoc[] docs = docz.scoreDocs;
-            total = (  int  ) docz.totalHits;
+            t   =   (  int  ) docz.totalHits;
             if (!counts.isEmpty()) while (docs.length > 0) {
                 for(ScoreDoc dox : docs) {
                     Document doc = finder.doc(dox.doc);
@@ -652,11 +726,12 @@ public class StatisHelper {
                 docz = finder.searchAfter(docs[docs.length - 1], q, 65536);
                 docs = docz.scoreDocs;
             }
+            */
         } catch (IOException ex) {
             throw new HongsException(ex);
         }
 
-        return total;
+        return t;
     }
 
     /**
@@ -677,6 +752,288 @@ public class StatisHelper {
      */
     protected double getValue(double v, String k) {
         return v;
+    }
+
+    private static class AcountCollec extends Collec<String, String[]> {
+
+        public AcountCollec(Coller<String, String[]> coller, Set<String> fields, LuceneRecord record) {
+            super(coller, fields, record);
+        }
+
+        @Override
+        public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
+            LeafReader reader = lrc.reader();
+                Object valuez ;
+
+            for (int i = 0; i < fields.length; i ++) {
+                valuez = reader.getSortedDocValues("#"+fields[i]);
+                if (valuez != null) {
+                    values[i] = valuez;
+                    continue;
+                }
+
+                valuez = reader.getSortedSetDocValues("#"+fields[i]);
+                if (valuez != null) {
+                    values[i] = valuez;
+                    continue;
+                }
+
+                valuez = reader.getNumericDocValues("#"+fields[i]);
+                if (valuez != null) {
+                    values[i] = valuez;
+                    continue;
+                }
+
+                valuez = reader.getSortedNumericDocValues("#"+fields[i]);
+                if (valuez != null) {
+                    values[i] = valuez;
+                    continue;
+                }
+
+                values[i] = null;
+            }
+
+            return this;
+        }
+
+        @Override
+        public void collect(int doc) throws IOException {
+            super.collect(doc);
+
+            for (int i = 0; i < fields.length; i ++) {
+                String n = fields[i];
+                Object d = values[i];
+                if (d == null) {
+                    continue ;
+                }
+
+                if (d instanceof SortedDocValues) {
+                    SortedDocValues b = (SortedDocValues) d;
+                    if (!b.advanceExact(doc)) {
+                        continue;
+                    }
+
+                    String[] v = new String[1];
+                    v[0] = b.binaryValue().utf8ToString();
+                    coller.collect(n, v);
+                } else
+                if (d instanceof SortedSetDocValues) {
+                    SortedSetDocValues b = (SortedSetDocValues) d;
+                    if (!b.advanceExact(doc)) {
+                        continue;
+                    }
+
+                    String[] v = new String[(int) b.getValueCount()];
+                    for (int j = 0; j < v.length; j ++) {
+                        v[j] =  b.lookupOrd(j).utf8ToString();
+                    }
+                    coller.collect(n, v);
+                } else
+                if (d instanceof NumericDocValues) {
+                    NumericDocValues b = (NumericDocValues) d;
+                    if (!b.advanceExact(doc)) {
+                        continue;
+                    }
+
+                    String[] v = new String[1];
+                    if (floats.contains(n)) {
+                        v[0] = Syno.toNumStr(NumericUtils.sortableLongToDouble(b.longValue()));
+                    } else {
+                        v[0] = Syno.toNumStr(b.longValue());
+                    }
+                    coller.collect(n, v);
+                } else
+                if (d instanceof SortedNumericDocValues) {
+                    SortedNumericDocValues b = (SortedNumericDocValues) d;
+                    if (!b.advanceExact(doc)) {
+                        continue;
+                    }
+
+                    String[] v = new String[(int) b.docValueCount()];
+                    if (floats.contains(n)) {
+                        for (int j = 0; j < v.length; j ++) {
+                            v[j] = Syno.toNumStr(NumericUtils.sortableLongToDouble(b.nextValue())) ;
+                        }
+                    } else {
+                        for (int j = 0; j < v.length; j ++) {
+                            v[j] = Syno.toNumStr(b.nextValue());
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
+    private static class AmountCollec extends Collec<String, double[]> {
+
+        public AmountCollec(Coller<String, double[]> coller, Set<String> fields, LuceneRecord record) {
+            super(coller, fields, record);
+        }
+
+        @Override
+        public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
+            LeafReader reader = lrc.reader();
+                Object valuez ;
+
+            for (int i = 0; i < fields.length; i ++) {
+                valuez = reader.getNumericDocValues("#"+fields[i]);
+                if (valuez != null) {
+                    values[i] = valuez;
+                    continue;
+                }
+
+                valuez = reader.getSortedNumericDocValues("#"+fields[i]);
+                if (valuez != null) {
+                    values[i] = valuez;
+                    continue;
+                }
+
+                values[i] = null;
+            }
+
+            return this;
+        }
+
+        @Override
+        public void collect(int doc) throws IOException {
+            super.collect(doc);
+
+            for (int i = 0; i < fields.length; i ++) {
+                String n = fields[i];
+                Object d = values[i];
+                if (d == null) {
+                    continue ;
+                }
+
+                if (d instanceof NumericDocValues) {
+                    NumericDocValues b = (NumericDocValues) d;
+                    if (!b.advanceExact(doc)) {
+                        continue;
+                    }
+
+                    double[] v = new double[1];
+                    if (floats.contains(n)) {
+                        v[0] = NumericUtils.sortableLongToDouble(b.longValue());
+                    } else {
+                        v[0] = (double) b.longValue();
+                    }
+                    coller.collect(n, v);
+                } else
+                if (d instanceof SortedNumericDocValues) {
+                    SortedNumericDocValues b = (SortedNumericDocValues) d;
+                    if (!b.advanceExact(doc)) {
+                        continue;
+                    }
+
+                    double[] v = new double[(int) b.docValueCount()];
+                    if (floats.contains(n)) {
+                        for (int j = 0; j < v.length; j ++) {
+                            v[j] = NumericUtils.sortableLongToDouble(b.nextValue());
+                        }
+                    } else {
+                        for (int j = 0; j < v.length; j ++) {
+                            v[j] = (double) b.nextValue();
+                        }
+                    }
+                    coller.collect(n, v);
+                }
+            }
+        }
+
+    }
+
+    private static interface Coller<K, V> {
+        public void collect(K k, V v);
+    }
+
+    private static abstract class Collec<K, V> implements Collector, LeafCollector {
+
+        protected final Coller<K,V> coller;
+        protected final String[   ] fields;
+        protected final Object[   ] values;
+        protected final Set<String> floats;
+        private Scorer  scorer;
+        private boolean scores;
+        private int     totals;
+
+        public Collec(Coller<K,V> coller, Set<String> fields, LuceneRecord record) {
+            this.coller = coller;
+            this.fields = fields.toArray(new String[]{});
+            this.values = new Object[this.fields.length];
+
+            // 找出那些要转为小数的字段
+            this.floats = new HashSet();
+            for (String fn : this.fields) {
+                Map fc  = (Map) record.getFields().get(fn);
+                if (fc != null) {
+                    String t;
+
+                    t = (String) fc.get("lucene-type");
+                    if (t != null) {
+                        if ("float".equals(t)
+                                || "double".equals(t)
+                                || "number".equals(t)) {
+                            floats.add(fn);
+                        }
+                        continue;
+                    }
+
+                    t = (String) fc.get("__type__");
+                    if (t == null) {
+                        continue;
+                    }
+
+                    Set<String> ks;
+
+                    ks = record.getSaveTypes( "enum" );
+                    if (ks != null && ks.contains(t)) {
+                        t = Synt.declare(fc.get("type"), "string");
+                        if ("float".equals(t)
+                                || "double".equals(t)
+                                || "number".equals(t)) {
+                            floats.add(fn);
+                        }
+                        continue;
+                    }
+
+                    ks = record.getSaveTypes("number");
+                    if (ks != null && ks.contains(t)) {
+                        t = Synt.declare(fc.get("type"), "double");
+                        if ("float".equals(t)
+                                || "double".equals(t)
+                                || "number".equals(t)) {
+                            floats.add(fn);
+                        }
+                        continue;
+                    }
+                }
+            }
+        }
+
+        @Override
+        public void collect(int doc) throws IOException {
+            this.totals ++;
+        }
+
+        @Override
+        public void setScorer(Scorer scorer) throws IOException {
+            this.scorer = scorer;
+        }
+
+        public void needsScores(boolean scores) {
+            this.scores = scores;
+        }
+
+        @Override
+        public boolean needsScores() {
+            return this . scores;
+        }
+
+        public int     countTotals() {
+            return this . totals;
+        }
+
     }
 
     // jdk 1.7 加上这个后排序不会报错

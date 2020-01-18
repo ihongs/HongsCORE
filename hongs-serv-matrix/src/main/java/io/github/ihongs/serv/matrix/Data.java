@@ -909,10 +909,6 @@ public class Data extends SearchEntity {
 
     @Override
     protected void padDoc(Document doc, Map map, Set rep) {
-        if (rep != null && rep.isEmpty( )) {
-            rep  = null;
-        }
-
         // 写入分区标识
         String pd = getPartId();
         if (null != pd && ! pd.isEmpty( )) {
@@ -920,185 +916,27 @@ public class Data extends SearchEntity {
             doc.add(new StoredField(/**/PART_ID_KEY, pd));
         }
 
+        /**
+         * 补充:
+         * 需写入名称和关键词
+         * 2019/03/23
+         * 存在外部只读才拼接
+         */
         Map<String, Map> fields = getFields();
-        for(Map.Entry<String, Map> e : fields.entrySet()) {
-            Map    m = e.getValue();
-            String k = e.getKey  ();
-            Object v = Dict.getParam(map , k);
-
-            doc.removeFields(k);
-
-            if (rep != null
-            && !rep.contains(k)) {
-                continue;
-            }
-
-            /**
-             * 补充:
-             * 需写入名称和关键词
-             * 2019/03/23
-             * 存在外部只读才拼接
-             */
-            if (k != null) switch (k) {
-            case "name":
-                if (Synt.declare(m.get("readonly"), false)) {
-                    v  = getName(map);
-                    map.put(k, v);
-                }
-                break;
-            case "word":
-                if (Synt.declare(m.get("readonly"), false)) {
-                    v  = getWord(map);
-                    map.put(k, v);
-                }
-                break;
-            }
-
-            if (v == null
-            ||  k == null
-            ||  k.equals("@")
-            ||  unstated( m )) {
-                continue;
-            }
-
-            IField  f ;
-            String  t = datatype(m);
-            boolean r = repeated(m);
-            boolean s = sortable(m);
-            boolean p = srchable(m);
-            boolean q = findable(m);
-            boolean g =!unstored(m);
-
-            if (Cnst.ID_KEY.equals(k)) {
-                q  = true;
-                g  = true;
-            }
-
-            if (t != null) switch (t)  {
-            case "int":
-                if ("".equals(v)) continue;
-                f = new IntField();
-                p = false;
-                break;
-            case "long":
-            case "date":
-                if ("".equals(v)) continue;
-                f = new LongField();
-                p = false;
-                break;
-            case "float":
-                if ("".equals(v)) continue;
-                f = new FloatField();
-                p = false;
-                break;
-            case "double":
-            case "number":
-                if ("".equals(v)) continue;
-                f = new DoubleField();
-                p = false;
-                break;
-            case "sorted":
-                if ("".equals(v)) continue;
-                f = new LongField();
-                s = true ;
-                g = false; // 排序类型无需存储
-                p = false; // 排序类型无法搜索
-                q = false; // 排序类型无法筛选
-                break;
-            case "object":
-                if ("".equals(v)) continue;
-                f = new ObjectFiald();
-                g = true ;
-                p = false; // 对象类型无法搜索
-                q = false; // 对象类型无法筛选
-                s = false; // 对象类型无法排序
-                break;
-            case "stored":
-                f = new StringFiald();
-                g = true ;
-                p = false; // 存储类型无法搜索
-                q = false; // 存储类型无法筛选
-                s = false; // 存储类型无法排序
-                break;
-            case "search":
-                f = new StringFiald();
-                p = true ;
-                g = false; // 搜索类型无需存储
-                q = false; // 搜索类型无法筛选
-                s = false; // 搜索类型无法排序
-                break;
-            default:
-                f = new StringFiald();
-            } else {
-                f = new StringFiald();
-            }
-
-            /**
-             * 补充:
-             * 找出那些 textview 类的字段
-             * 索引前需将标签代码清理干净
-             */
-            Object x = v;
-            if (p && "textview".equals(m.get("__type__"))) {
-                x = Syno.stripEnds(Syno.stripTags(Syno.stripCros(
-                    Synt.asString ( x )
-                 )  )  );
-            }
-
-            if (r) {
-                if (g) {
-                    if (v instanceof Object [ ]) {
-                        for (Object w: (Object [ ]) v) {
-                            doc.add(f.get(k, w));
-                        }
-                    } else
-                    if (v instanceof Collection) {
-                        for (Object w: (Collection) v) {
-                            doc.add(f.get(k, w));
-                        }
-                    } else
-                    {
-                        Set a = Synt.asSet ( v );
-                        for (Object w: a ) {
-                            doc.add(f.get(k, w));
-                        }
-                        v = a;
-                    }
-                }
-
-                // 条件类可去重
-                Set a = Synt.asSet(v);
-
-                if (s && a != null && !a.isEmpty()) {
-                    Object  w = a.toArray( )[0]; // 排序值不能存多个
-                        doc.add(f.odr(k, w));
-                }
-                if (q && a != null && !a.isEmpty()) {
-                    for (Object w: a) {
-                        doc.add(f.whr(k, w));
-                    }
-                }
-                if (p && a != null && !a.isEmpty()) {
-                    for (Object w: a) {
-                        doc.add(f.wdr(k, w));
-                    }
-                }
-            } else
-            {
-                if (g) {
-                    doc.add(f.get(k, v));
-                }
-                if (s) {
-                    doc.add(f.odr(k, v));
-                }
-                if (q) {
-                    doc.add(f.whr(k, v));
-                }
-                if (p) {
-                    doc.add(f.wdr(k, x));
-                }
+        if (fields.containsKey("name")) {
+            Map m = fields.get("name");
+            if (Synt.declare(m.get("readonly"), false)) {
+                map.put("name", getName(map));
             }
         }
+        if (fields.containsKey("word")) {
+            Map m = fields.get("word");
+            if (Synt.declare(m.get("readonly"), false)) {
+                map.put("word", getWord(map));
+            }
+        }
+
+        super.padDoc(doc, map, rep);
     }
 
     /**

@@ -409,7 +409,7 @@ HsCate.prototype = {
                     }
 
                     if (dat && dat [k] ) {
-                        n.find("[name='"+ k +"']").val ( dat [k] );
+                        n.find(".checkone2").val ( dat[k] );
                     } else {
                         n.find(".checkall2").prop("checked", true);
                     }

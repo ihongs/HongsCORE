@@ -21,7 +21,8 @@
             string,sorted,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,type,select,check,radio
+            enum,type,select,check,radio,
+            fork,pick
         </value>
         <value code="rankable" type="set">
             number,range,color,

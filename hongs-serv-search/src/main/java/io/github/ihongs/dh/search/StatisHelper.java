@@ -55,6 +55,7 @@ public class StatisHelper {
      * @param rd
      * @return
      * @throws HongsException
+     * @deprecated 查询次数随统计列和值一同增多, 效率不够理想
      */
     public Map ecount(Map rd) throws HongsException {
         IndexSearcher finder = that.getFinder();

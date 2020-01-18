@@ -623,6 +623,7 @@ HsStat.prototype = {
                         that.setAcountChart(n , d);
                     }
 
+                    k = n.find(".checkone2").attr( "name" );
                     if (dat && dat [k] ) {
                         n.find(".checkone2").val ( dat[k] );
                     } else {

@@ -408,7 +408,8 @@ HsCate.prototype = {
                         that.setAcountCheck(n , d);
                     }
 
-                    if (dat && dat [k] ) {
+                    k = n.find(".checkone2").attr( "name" );
+                    if (dat && dat[k] ) {
                         n.find(".checkone2").val ( dat[k] );
                     } else {
                         n.find(".checkall2").prop("checked", true);

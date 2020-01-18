@@ -781,7 +781,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     doc.add(f.whr(k, w));
                 }
                 if (p) for (Object w: a) {
-                    doc.add(f.wdr(k, datatext(m, w.toString())));
+                    doc.add(f.wdr(k, srchable(m, w)));
                 }}
             } else
             {
@@ -795,7 +795,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     doc.add(f.whr(k, v));
                 }
                 if (p) {
-                    doc.add(f.wdr(k, datatext(m, v.toString())));
+                    doc.add(f.wdr(k, srchable(m, v)));
                 }
             }
 
@@ -1884,9 +1884,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * @param v  待存储值
      * @return
      */
-    protected String datatext(Map fc,  String v  ) {
+    protected Object srchable(Map fc,  Object v  ) {
         if ("textview".equals(fc.get("__type__"))) {
-           v = Syno.stripEnds(Syno.stripTags(Syno.stripCros(v)));
+           v = Syno.stripEnds(Syno.stripTags(Syno.stripCros(v.toString())));
         }
         return v;
     }

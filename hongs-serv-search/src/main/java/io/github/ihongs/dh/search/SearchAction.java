@@ -60,7 +60,11 @@ public class SearchAction extends JAction {
         super.search(helper);
     }
 
-    /* // acount, amount 均已提速, 弃之
+    /**
+     * @param helper
+     * @throws HongsException 
+     * @deprecated acount,amount 均已提速, 弃之
+     */
     @Action("ecount")
     @Preset(conf="", form="")
     public void ecount(ActionHelper helper) throws HongsException {
@@ -79,7 +83,6 @@ public class SearchAction extends JAction {
 
         helper.reply(sd);
     }
-    */
 
     @Action("acount")
     @Preset(conf="", form="")

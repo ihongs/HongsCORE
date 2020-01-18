@@ -774,28 +774,28 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
                 Set a  = Synt.asSet( v );
                 if (a != null && ! a.isEmpty( )) {
+                if (s) for (Object w: a) {
+                    doc.add(f.ods(k, w));
+                }
                 if (q) for (Object w: a) {
                     doc.add(f.whr(k, w));
                 }
                 if (p) for (Object w: a) {
-                    doc.add(f.wdr(k, w));
-                }
-                if (s) for (Object w: a) {
-                    doc.add(f.ods(k, w));
+                    doc.add(f.wdr(k, datatext(m, w.toString())));
                 }}
             } else
             {
                 if (g) {
                     doc.add(f.get(k, v));
                 }
+                if (s) {
+                    doc.add(f.odr(k, v));
+                }
                 if (q) {
                     doc.add(f.whr(k, v));
                 }
                 if (p) {
-                    doc.add(f.wdr(k, v));
-                }
-                if (s) {
-                    doc.add(f.odr(k, v));
+                    doc.add(f.wdr(k, datatext(m, v.toString())));
                 }
             }
 
@@ -1876,6 +1876,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         return t;
+    }
+
+    /**
+     * 清理搜索文本
+     * @param fc 字段配置
+     * @param v  待存储值
+     * @return
+     */
+    protected String datatext(Map fc,  String v  ) {
+        if ("textview".equals(fc.get("__type__"))) {
+           v = Syno.stripEnds(Syno.stripTags(Syno.stripCros(v)));
+        }
+        return v;
     }
 
     protected boolean findable(Map fc) {

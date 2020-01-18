@@ -572,13 +572,15 @@ HsStat.prototype = {
         var findBox = this.findBox;
 
         var rb  = [];
+        var eb  = [];
         var ft  = itemBox.attr ("data-type");
         var url = ft==="amount"? this.murl
               : ( ft==="acount"? this.curl
               :                  this.eurl );
 
         itemBox.each(function() {
-            rb .push( $(this).data("name") );
+            if ($(this).data("name")) rb.push($(this).data("name"));
+            if ($(this).data("extr")) eb.push($(this).data("extr"));
 
             $(this).find(".checkbox").hide();
             $(this).find(".chartbox").hide();
@@ -589,6 +591,7 @@ HsStat.prototype = {
         var dat;
         dat = hsSerialDic(findBox);
         url = hsSetParam (url, "rb.", rb);
+        url = url + eb.join( "&" );
 
         $.hsAjax({
             url : url,

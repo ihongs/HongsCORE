@@ -366,13 +366,15 @@ HsCate.prototype = {
         var findBox = this.findBox;
 
         var rb  = [];
+        var eb  = [];
         var ft  = itemBox.attr ("data-type");
         var url = ft==="amount"? this.murl
               : ( ft==="acount"? this.curl
               :                  this.eurl );
 
         itemBox.each(function() {
-            rb .push( $(this).data("name") );
+            if ($(this).data("name")) rb.push($(this).data("name"));
+            if ($(this).data("extr")) eb.push($(this).data("extr"));
 
             $(this).empty(); // 清空待写入选项
         });
@@ -380,6 +382,7 @@ HsCate.prototype = {
         var dat;
         dat = hsSerialDic(findBox);
         url = hsSetParam (url, "rb.", rb);
+        url = url + eb.join( "&" );
 
         $.hsAjax({
             url : url,

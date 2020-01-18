@@ -248,23 +248,23 @@ function saveConf(modal, field) {
                 }
             } else
             if ($(this).is(":checkbox")) {
-                if ( COLS_PATT_DATA .test(attr)) {
-                    field.find(name).attr(attr, $(this).prop("checked") ? "true" : "" );
-                } else {
-                    field.find(name).prop(attr, $(this).prop("checked"));
-                }
+            if ($(this).prop("checked")) {
+                field.find(name).attr(attr, $(this).val());
+            } else {
+                field.find(name).removeAttr(attr);
+            }
             } else
             if (attr === "type") {
-               setItemType(field.find(name), $(this).val());
+               setItemType(field.find(name),$(this).val());
             } else
             if (attr !== "text") {
-                field.find(name).attr(attr , $(this).val());
+                field.find(name).attr(attr, $(this).val());
             } else
             {
                 field.find(name).text($(this).val());
             }
         } else {
-            field.find(name).text($(this).val());
+                field.find(name).text($(this).val());
         }
     });
 

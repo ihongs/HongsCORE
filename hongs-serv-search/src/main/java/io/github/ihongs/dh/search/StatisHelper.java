@@ -806,11 +806,19 @@ public class StatisHelper {
                         continue;
                     }
 
+                    /*
                     String[] v = new String[(int) b.getValueCount()];
                     for( int j = 0; j < v.length; j ++ ) {
                     v[j] = b.lookupOrd (j).utf8ToString();
                     }
                     coller.collect(n, v);
+                    */
+                    List<String> v = new ArrayList();
+                    long j;
+                    while ((j = b.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
+                        v.add(b.lookupOrd (j).utf8ToString());
+                    }
+                    coller.collect(n, v.toArray(new String[v.size()]));
                 } else
                 if (d instanceof NumericDocValues) {
                     NumericDocValues b = (NumericDocValues) d;
@@ -832,7 +840,7 @@ public class StatisHelper {
                         continue;
                     }
 
-                    String[] v = new String[(int) b.docValueCount()];
+                    String[] v = new String[b.docValueCount()];
                     if (floats.contains(n))
                     for( int j = 0; j < v.length; j ++ ) {
                         v[j] = Synt.asString(NumericUtils.sortableLongToDouble(b.nextValue()));

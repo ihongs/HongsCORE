@@ -317,7 +317,7 @@ public final class Syno
   //** 注入 **/
 
   // 偶数个转义符$单词或{文本}
-  private static final Pattern IJ_PAT = Pattern.compile("((?:[\\\\][\\\\])*)\\$(?:(\\w+)|\\{(.*?)\\})");
+  private static final Pattern INJ = Pattern.compile("((?:[\\\\][\\\\])*)\\$(?:(\\w+)|\\{(.*?)\\})");
 
   /**
    * 注入参数
@@ -326,8 +326,8 @@ public final class Syno
    * @return 注入后的文本
    */
   public static String inject(String str, Map vars) {
-      Matcher matcher = IJ_PAT.matcher(str);
-      StringBuffer sb = new StringBuffer( );
+      Matcher matcher = INJ.matcher( str );
+      StringBuffer sb = new StringBuffer();
       Object       ob;
       String       st;
 

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
-import java.text.NumberFormat;
 
 /**
  * 常用文本工具
@@ -21,19 +20,15 @@ import java.text.NumberFormat;
 public final class Syno
 {
 
-  private static final NumberFormat NS_FMT = NumberFormat.getInstance();
-  static {
-      NS_FMT.setGroupingUsed(false);
-  }
-
   /**
    * 默认情况大数字转字符串会用科学计数法
    * 故用 NumberFormat 格式化成普通数字串
+   * @deprecated 请使用 Synt.asString
    * @param num
    * @return
    */
   public static String toNumStr(Number num) {
-      return  NS_FMT.format ( num );
+    return Synt.asString(num);
   }
 
   //** 进制 **/

@@ -836,7 +836,7 @@ abstract public class Link
       else
       if (obj instanceof Number)
       {
-        str = Syno.toNumStr((Number) obj);
+        str = Synt.asString((Number) obj);
       }
       else
       {

@@ -6,7 +6,6 @@ import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.FormSet;
 import io.github.ihongs.dh.lucene.LuceneRecord;
-import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 
 import java.io.IOException;
@@ -758,35 +757,23 @@ public class StatisHelper {
 
         @Override
         public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
-            LeafReader reader = lrc.reader();
-                Object valuez ;
+            LeafReader reader = lrc.reader( );
 
             for (int i = 0; i < fields.length; i ++) {
-                valuez = reader.getSortedDocValues("#"+fields[i]);
-                if (valuez != null) {
-                    values[i] = valuez;
-                    continue;
+                if (rounds.contains(fields[i])
+                ||  floats.contains(fields[i]) ) {
+                if (multis.contains(fields[i]) ) {
+                    values[i] = reader.getSortedNumericDocValues("%"+fields[i]);
+                } else {
+                    values[i] = reader.      getNumericDocValues("%"+fields[i]);
                 }
-
-                valuez = reader.getSortedSetDocValues("%"+fields[i]);
-                if (valuez != null) {
-                    values[i] = valuez;
-                    continue;
+                } else {
+                if (multis.contains(fields[i]) ) {
+                    values[i] = reader.getSortedSetDocValues("%"+fields[i]);
+                } else {
+                    values[i] = reader.   getSortedDocValues("%"+fields[i]);
                 }
-
-                valuez = reader.getNumericDocValues("#"+fields[i]);
-                if (valuez != null) {
-                    values[i] = valuez;
-                    continue;
                 }
-
-                valuez = reader.getSortedNumericDocValues("%"+fields[i]);
-                if (valuez != null) {
-                    values[i] = valuez;
-                    continue;
-                }
-
-                values[i] = null;
             }
 
             return this;
@@ -820,8 +807,8 @@ public class StatisHelper {
                     }
 
                     String[] v = new String[(int) b.getValueCount()];
-                    for (int j = 0; j < v.length; j ++) {
-                        v[j] =  b.lookupOrd(j).utf8ToString();
+                    for( int j = 0; j < v.length; j ++ ) {
+                    v[j] = b.lookupOrd (j).utf8ToString();
                     }
                     coller.collect(n, v);
                 } else
@@ -833,9 +820,9 @@ public class StatisHelper {
 
                     String[] v = new String[1];
                     if (floats.contains(n)) {
-                        v[0] = Syno.toNumStr(NumericUtils.sortableLongToDouble(b.longValue()));
+                        v[0] = Synt.asString(NumericUtils.sortableLongToDouble(b.longValue()));
                     } else {
-                        v[0] = Syno.toNumStr(b.longValue());
+                        v[0] = Synt.asString(b.longValue());
                     }
                     coller.collect(n, v);
                 } else
@@ -846,15 +833,14 @@ public class StatisHelper {
                     }
 
                     String[] v = new String[(int) b.docValueCount()];
-                    if (floats.contains(n)) {
-                        for (int j = 0; j < v.length; j ++) {
-                            v[j] = Syno.toNumStr(NumericUtils.sortableLongToDouble(b.nextValue())) ;
-                        }
-                    } else {
-                        for (int j = 0; j < v.length; j ++) {
-                            v[j] = Syno.toNumStr(b.nextValue());
-                        }
+                    if (floats.contains(n))
+                    for( int j = 0; j < v.length; j ++ ) {
+                        v[j] = Synt.asString(NumericUtils.sortableLongToDouble(b.nextValue()));
+                    } else
+                    for( int j = 0; j < v.length; j ++ ) {
+                        v[j] = Synt.asString(b.nextValue());
                     }
+                    coller.collect(n, v);
                 }
             }
         }
@@ -869,23 +855,14 @@ public class StatisHelper {
 
         @Override
         public LeafCollector getLeafCollector(LeafReaderContext lrc) throws IOException {
-            LeafReader reader = lrc.reader();
-                Object valuez ;
+            LeafReader reader = lrc.reader( );
 
             for (int i = 0; i < fields.length; i ++) {
-                valuez = reader.getNumericDocValues("#"+fields[i]);
-                if (valuez != null) {
-                    values[i] = valuez;
-                    continue;
+                if (multis.contains(fields[i]) ) {
+                    values[i] = reader.getSortedNumericDocValues("%"+fields[i]);
+                } else {
+                    values[i] = reader.      getNumericDocValues("#"+fields[i]);
                 }
-
-                valuez = reader.getSortedNumericDocValues("%"+fields[i]);
-                if (valuez != null) {
-                    values[i] = valuez;
-                    continue;
-                }
-
-                values[i] = null;
             }
 
             return this;
@@ -923,14 +900,12 @@ public class StatisHelper {
                     }
 
                     double[] v = new double[(int) b.docValueCount()];
-                    if (floats.contains(n)) {
-                        for (int j = 0; j < v.length; j ++) {
-                            v[j] = NumericUtils.sortableLongToDouble(b.nextValue());
-                        }
-                    } else {
-                        for (int j = 0; j < v.length; j ++) {
-                            v[j] = (double) b.nextValue();
-                        }
+                    if (floats.contains(n))
+                    for( int j = 0; j < v.length; j ++ ) {
+                        v[j] = NumericUtils.sortableLongToDouble(b.nextValue());
+                    } else
+                    for( int j = 0; j < v.length; j ++ ) {
+                        v[j] = (double) b.nextValue();
                     }
                     coller.collect(n, v);
                 }
@@ -948,7 +923,9 @@ public class StatisHelper {
         protected final Coller<K,V> coller;
         protected final String[   ] fields;
         protected final Object[   ] values;
-        protected final Set<String> floats;
+        protected final Set<String> multis; // 多个值
+        protected final Set<String> rounds; // 整数型
+        protected final Set<String> floats; // 浮点型
         private Scorer  scorer;
         private boolean scores;
         private int     totals;
@@ -957,41 +934,56 @@ public class StatisHelper {
             this.coller = coller;
             this.fields = fields.toArray(new String[]{});
             this.values = new Object[this.fields.length];
+            this.multis = new HashSet( );
+            this.rounds = new HashSet( );
+            this.floats = new HashSet( );
 
-            // 找出那些要转为小数的字段
-            this.floats = new HashSet();
-            for (String fn : this.fields) {
-                Map fc  = (Map) record.getFields().get(fn);
-                if (fc != null) {
-                    String t;
-                    Set <String> ks;
+                Map fs  = record.getFields();
+            for(String fn : this.fields) {
+                Map fc  = (Map) fs.get( fn );
+                if (fc == null) {
+                    continue;
+                }
 
-                    t = (String) fc.get("__type__");
-                    if (t == null) {
-                        continue;
+                String  t = (String) fc.get("__type__");
+                if ( t == null) {
+                    continue;
+                }
+
+                if (Synt.declare(fc.get("__repeated__"), false)) {
+                    multis.add(fn);
+                }
+
+                Set <String> ks;
+
+                ks = record.getSaveTypes( "enum" );
+                if (ks != null && ks.contains(t)) {
+                    t = Synt.declare(fc.get("type"), "string");
+                    if ("float".equals(t)
+                    || "double".equals(t)
+                    || "number".equals(t)) {
+                        floats .add (fn);
+                    } else
+                    if (  "int".equals(t)
+                    ||   "long".equals(t)) {
+                        rounds .add (fn);
                     }
+                    continue;
+                }
 
-                    ks = record.getSaveTypes( "enum" );
-                    if (ks != null && ks.contains(t)) {
-                        t = Synt.declare(fc.get("type"), "string");
-                        if ("float".equals(t)
-                        || "double".equals(t)
-                        || "number".equals(t)) {
-                            floats.add(fn);
-                        }
-                        continue;
-                    }
-
-                    ks = record.getSaveTypes("number");
-                    if (ks != null && ks.contains(t)) {
-                        t = Synt.declare(fc.get("type"), "double");
-                        if ("float".equals(t)
-                        || "double".equals(t)
-                        || "number".equals(t)) {
-                            floats.add(fn);
-                        }
-                        continue;
-                    }
+                ks = record.getSaveTypes("number");
+                if (ks != null && ks.contains(t)) {
+                    t = Synt.declare(fc.get("type"), "double");
+                    if ("float".equals(t)
+                    || "double".equals(t)
+                    || "number".equals(t)) {
+                        floats .add (fn);
+                    } else
+                //  if (  "int".equals(t)
+                //  ||   "long".equals(t)) {
+                        rounds .add (fn);
+                //  }
+                //  continue;
                 }
             }
         }
@@ -1110,9 +1102,9 @@ public class StatisHelper {
             }
             StringBuilder sb = new StringBuilder();
             sb.append(le ? "[" : "(");
-            sb.append(min != Double.NEGATIVE_INFINITY ? Syno.toNumStr(min) : "");
+            sb.append(min != Double.NEGATIVE_INFINITY ? Synt.asString(min) : "");
             sb.append(",");
-            sb.append(max != Double.POSITIVE_INFINITY ? Syno.toNumStr(max) : "");
+            sb.append(max != Double.POSITIVE_INFINITY ? Synt.asString(max) : "");
             sb.append(ge ? "]" : ")");
             return sb.toString();
         }

@@ -27,7 +27,7 @@ public class DoubleField implements IField {
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedNumericDocValuesField("#"+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D)));
+        return new SortedNumericDocValuesField("%"+k, NumericUtils.doubleToSortableLong(Synt.declare(v, 0.0D)));
     }
     @Override
     public Field wdr(String k, Object v) {

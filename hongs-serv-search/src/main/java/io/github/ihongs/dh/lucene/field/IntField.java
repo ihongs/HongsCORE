@@ -26,7 +26,7 @@ public class IntField implements IField {
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedNumericDocValuesField("#"+k, Synt.declare(v, 0));
+        return new SortedNumericDocValuesField("%"+k, Synt.declare(v, 0));
     }
     @Override
     public Field wdr(String k, Object v) {

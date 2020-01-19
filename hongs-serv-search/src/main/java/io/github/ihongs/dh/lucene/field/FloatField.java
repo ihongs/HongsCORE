@@ -27,7 +27,7 @@ public class FloatField implements IField {
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedNumericDocValuesField("#"+k, NumericUtils.floatToSortableInt(Synt.declare(v, 0.0F)));
+        return new SortedNumericDocValuesField("%"+k, NumericUtils.floatToSortableInt(Synt.declare(v, 0.0F)));
     }
     @Override
     public Field wdr(String k, Object v) {

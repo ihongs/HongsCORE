@@ -31,6 +31,6 @@ public class StringFiald implements IField {
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedSetDocValuesField("#"+k, new BytesRef(v != null ? v.toString() : ""));
+        return new SortedSetDocValuesField("%"+k, new BytesRef(v != null ? v.toString() : ""));
     }
 }

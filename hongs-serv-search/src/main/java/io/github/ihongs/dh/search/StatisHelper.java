@@ -765,13 +765,13 @@ public class StatisHelper {
                 if (multis.contains(fields[i]) ) {
                     values[i] = reader.getSortedNumericDocValues("%"+fields[i]);
                 } else {
-                    values[i] = reader.      getNumericDocValues("%"+fields[i]);
+                    values[i] = reader.      getNumericDocValues("#"+fields[i]);
                 }
                 } else {
                 if (multis.contains(fields[i]) ) {
                     values[i] = reader.getSortedSetDocValues("%"+fields[i]);
                 } else {
-                    values[i] = reader.   getSortedDocValues("%"+fields[i]);
+                    values[i] = reader.   getSortedDocValues("#"+fields[i]);
                 }
                 }
             }

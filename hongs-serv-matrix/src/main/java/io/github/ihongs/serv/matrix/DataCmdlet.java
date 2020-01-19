@@ -147,7 +147,7 @@ public class DataCmdlet {
         dr.commit();
 
         if (pr) CmdletHelper.progres();
-        CmdletHelper.println("Revert "+i+" item(s) in "+dr.getDbName());
+        CmdletHelper.println("Revert "+i+" item(s) for "+form+" to "+dr.getDbName());
     }
 
     @Cmdlet("import")

@@ -204,11 +204,11 @@ public final class Dawn
     }
     else if (val instanceof Number )
     {
-      sb.append(Syno.toNumStr((Number) val));
+      sb.append(Synt.asString((Number) val));
     }
     else if (val instanceof  Date  )
     {
-      sb.append(Syno.toNumStr(((Date ) val).getTime()));
+      sb.append(Synt.asString(((Date ) val).getTime()));
     }
     else if (val instanceof Serializable
       &&  ! (val instanceof CharSequence)

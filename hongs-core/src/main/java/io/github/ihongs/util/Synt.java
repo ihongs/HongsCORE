@@ -1,6 +1,7 @@
 package io.github.ihongs.util;
 
 import java.lang.reflect.Array;
+import java.text.NumberFormat;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,7 @@ public final class Synt {
      * LOOP.NEXT 跳过此项
      * LOOP.LAST 跳出循环
      */
-    public static enum LOOP {
+    public  static enum LOOP {
 
         NEXT, LAST;
 
@@ -49,9 +50,35 @@ public final class Synt {
 
     };
 
+    /**
+     * 数字转换工具
+     */
+    private static final ThreadLocal<NumberFormat> DIGI = new ThreadLocal() {
+        @Override
+        protected NumberFormat initialValue() {
+            NumberFormat nf;
+            nf  = NumberFormat.getInstance ();
+            nf  . setGroupingUsed (  false  );
+            return nf;
+        }
+    };
+
     private static final Number  ZERO = 0 ;
     private static final String  VOID = "";
 
+    /**
+     * 视为真的字符串有: True , Yes, On, T, Y, I, 1
+     */
+    public  static final Pattern TRUE = Pattern.compile( "(1|I|Y|T|ON|YES|TRUE)" , Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 视为假的字符串有: False, No, Off, F, N, O, 0
+     */
+    public  static final Pattern FAKE = Pattern.compile("(|0|O|N|F|NO|OFF|FALSE)", Pattern.CASE_INSENSITIVE);
+
+    /**
+     * 拆分字符: 用于解 Map
+     */
     private static final Pattern SEXP = Pattern.compile("\\s*,\\s*");
     private static final Pattern MEXP = Pattern.compile("\\s*:\\s*");
 
@@ -68,18 +95,8 @@ public final class Synt {
     /**
      * 区间参数: [min,max] (min,max) 类似数学表达式
      */
+    private static final Pattern RNGQ = Pattern.compile(  "[\\[\\(,\\)\\]]"  );
     private static final Pattern RNGP = Pattern.compile("^([\\(\\[])?(.*?),(.*?)([\\]\\)])?$");
-    private static final Pattern RNGQ = Pattern.compile("[\\[\\(,\\)\\]]");
-
-    /**
-     * 视为真的字符串有: True , Yes, On, T, Y, I, 1
-     */
-    public  static final Pattern TRUE = Pattern.compile( "(1|I|Y|T|ON|YES|TRUE)" , Pattern.CASE_INSENSITIVE);
-
-    /**
-     * 视为假的字符串有: False, No, Off, F, N, O, 0
-     */
-    public  static final Pattern FAKE = Pattern.compile("(|0|O|N|F|NO|OFF|FALSE)", Pattern.CASE_INSENSITIVE);
 
     /**
      * 快速构建 List
@@ -413,6 +430,19 @@ public final class Synt {
     }
 
     /**
+     * 数字转为字符串
+     * @param val
+     * @return
+     */
+    public static String asString(Number val) {
+        if (val == null) {
+            return null;
+        }
+
+        return DIGI.get( ).format(val);
+    }
+
+    /**
      * 确定转为字符串
      * 数组和集合仅取第一个
      * @param val
@@ -422,6 +452,11 @@ public final class Synt {
         val = asSingle(val);
         if (val == null) {
             return null;
+        }
+
+        // 规避用科学计数法表示小数
+        if (val instanceof Number) {
+            asString((Number) val);
         }
 
         return val.toString();

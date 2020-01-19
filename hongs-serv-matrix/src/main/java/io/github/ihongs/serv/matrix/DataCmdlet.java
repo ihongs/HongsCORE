@@ -104,9 +104,11 @@ public class DataCmdlet {
             }
         }
 
+        boolean pr = 0 == Core.DEBUG;
         long tm = System.currentTimeMillis();
-        CmdletHelper.progres(tm, c, i);
-        dr.begin(  );
+        if (pr) CmdletHelper.progres(tm,c,i);
+
+        dr.begin( );
 
         for(Map od : lp ) {
             String id = ( String ) od.get( Cnst.ID_KEY );
@@ -125,7 +127,8 @@ public class DataCmdlet {
                 dr.delDoc(id);
             }}
                 ds.remove(id);
-            CmdletHelper.progres(tm, c, ++ i);
+                i ++;
+            if (pr) CmdletHelper.progres(tm, c,i);
 //          if (i % 500 == 0) {
 //              dr.commit(  );
 //          }
@@ -134,15 +137,16 @@ public class DataCmdlet {
         // 不存在的直接删掉
         for(String id:ds) {
             dr.delDoc(id);
-            CmdletHelper.progres(tm, c, ++ i);
+                i ++;
+            if (pr) CmdletHelper.progres(tm, c,i);
  //         if (i % 500 == 0) {
  //             dr.commit(  );
  //         }
         }
 
-        dr.commit( );
-        CmdletHelper.progred( );
+        dr.commit();
 
+        if (pr) CmdletHelper.progres();
         CmdletHelper.println("Revert "+i+" item(s) in "+dr.getDbName());
     }
 

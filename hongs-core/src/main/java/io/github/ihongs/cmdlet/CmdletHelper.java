@@ -484,7 +484,7 @@ public class CmdletHelper
    * 接获到异常或中止执行时
    * 使用本方法可安全的切行
    */
-  public static void progred()
+  public static void progres()
   {
     System.err.println();
   }

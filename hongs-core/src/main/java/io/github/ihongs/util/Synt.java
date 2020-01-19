@@ -430,19 +430,6 @@ public final class Synt {
     }
 
     /**
-     * 数字转为字符串
-     * @param val
-     * @return
-     */
-    public static String asString(Number val) {
-        if (val == null) {
-            return null;
-        }
-
-        return DIGI.get( ).format(val);
-    }
-
-    /**
      * 确定转为字符串
      * 数组和集合仅取第一个
      * @param val
@@ -455,11 +442,24 @@ public final class Synt {
         }
 
         // 规避用科学计数法表示小数
-        if (val instanceof Number) {
-            asString((Number) val);
+        if (val  instanceof  Number) {
+            return asString((Number) val);
         }
 
         return val.toString();
+    }
+
+    /**
+     * 数字转为字符串
+     * @param val
+     * @return
+     */
+    public static String asString(Number val) {
+        if (val == null) {
+            return null;
+        }
+
+        return DIGI.get( ).format(val);
     }
 
     /**

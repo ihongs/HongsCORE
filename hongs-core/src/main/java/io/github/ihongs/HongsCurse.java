@@ -94,6 +94,9 @@ public final class HongsCurse {
             } else {
                 desx = erro.getMessage();
             }
+        if (desx == null) {
+            desx  = "";
+        }
         } else {
             desx  = "";
         }}
@@ -127,12 +130,13 @@ public final class HongsCurse {
           Throwable erro = that.getCause();
         if (null != erro) {
             if (code < 2) {
-                desx = erro.getLocalizedMessage();
-                return desx != null ? desx : "";
+                return erro.getLocalizedMessage();
             } else {
                 desx = erro.getLocalizedMessage();
-                desx = desx != null ? desx : "";
             }
+        if (desx == null) {
+            desx  = "";
+        }
         } else {
             desx  = "";
         }}

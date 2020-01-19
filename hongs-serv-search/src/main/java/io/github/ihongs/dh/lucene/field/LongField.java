@@ -26,7 +26,7 @@ public class LongField implements IField {
     }
     @Override
     public Field ods(String k, Object v) {
-        return new SortedNumericDocValuesField("#"+k, Synt.declare(v, 0L));
+        return new SortedNumericDocValuesField("%"+k, Synt.declare(v, 0L));
     }
     @Override
     public Field wdr(String k, Object v) {

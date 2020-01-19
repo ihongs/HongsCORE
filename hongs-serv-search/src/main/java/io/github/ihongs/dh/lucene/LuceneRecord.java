@@ -37,8 +37,6 @@ import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.custom.CustomAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.search.Sort;
-import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.MatchAllDocsQuery;
 import org.apache.lucene.search.TermQuery;
@@ -46,6 +44,8 @@ import org.apache.lucene.search.BoostQuery;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Sort;
+import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.FSDirectory;
@@ -56,14 +56,13 @@ import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
-import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
 
 /**
  * Lucene 记录模型
  *
  * 可选字段配置参数:
- *  lucene-type         Lucene 字段类型(string,search,stored,sorted,int,long,float,double)
  *  lucene-tokenizer    Lucene 分词器类
  *  lucene-char-filter  存储时使用的 CharFilter  类
  *  lucene-token-filter 存储时使用的 TokenFilter 类
@@ -665,7 +664,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             String k = e.getKey  ();
             Object v = Dict.getParam(map , k);
 
-            doc.removeFields(k);
+        //  doc.removeFields(k); // 总是新文档, 不需要清理
 
             if (rep != null
             && !rep.contains(k)) {
@@ -782,6 +781,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 }
                 if (p) for (Object w: a) {
                     doc.add(f.wdr(k, srchable(m, w)));
+                }
+                if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
+                    doc.add(f.whr(k, v.equals("") ? "" : "0"));
                 }}
             } else
             {
@@ -797,14 +799,19 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 if (p) {
                     doc.add(f.wdr(k, srchable(m, v)));
                 }
+                if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
+                    doc.add(f.whr(k, v.equals("") ? "" : "0"));
+                }
             }
+        }
 
-            // 不可能过滤时仍可判断空/非空/空串
-            if (!q && !p) {
-                String x = v.toString( );
-                if (!"".equals(x)) x="0";
-                doc.add( f.whr(k , x ) );
-            }
+        // 临时清理, 规避 Document.getField/removeField 等抛 NullPointerException
+        Iterator<IndexableField>  it = doc.iterator();
+        while (it.hasNext( )) {
+           IndexableField field = it.next();
+           if (field == null) {
+               it.remove ( );
+           }
         }
     }
 
@@ -1397,9 +1404,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
             /**
              * 因为 Lucene 5 必须使用 DocValues 才能排序
-             * 在更新数据时, 默认有加 '#' 打头的排序字段
+             * 在更新数据时, 会加前缀 '#','%' 的排序字段
              */
-            of.add(new SortField("#" + fn , st , rv));
+            if (repeated(m)) {
+                of.add(new SortField("%" + fn, st, rv));
+            } else {
+                of.add(new SortField("#" + fn, st, rv));
+            }
         }
     }
 
@@ -1816,20 +1827,12 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     protected String datatype(Map fc) {
         String t;
-
-        t = (String) fc.get("lucene-type");
-        if (t != null) {
-            return t.equals(  "text"  )
-                 ?  "search"
-                 : t;
-        }
+        Set <String> ks;
 
         t = (String) fc.get("__type__");
         if (t == null) {
             return t;
         }
-
-        Set<String> ks;
 
         //** 先查特有的 **/
 

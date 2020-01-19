@@ -768,7 +768,7 @@ public class StatisHelper {
                     continue;
                 }
 
-                valuez = reader.getSortedSetDocValues("#"+fields[i]);
+                valuez = reader.getSortedSetDocValues("%"+fields[i]);
                 if (valuez != null) {
                     values[i] = valuez;
                     continue;
@@ -780,7 +780,7 @@ public class StatisHelper {
                     continue;
                 }
 
-                valuez = reader.getSortedNumericDocValues("#"+fields[i]);
+                valuez = reader.getSortedNumericDocValues("%"+fields[i]);
                 if (valuez != null) {
                     values[i] = valuez;
                     continue;
@@ -879,7 +879,7 @@ public class StatisHelper {
                     continue;
                 }
 
-                valuez = reader.getSortedNumericDocValues("#"+fields[i]);
+                valuez = reader.getSortedNumericDocValues("%"+fields[i]);
                 if (valuez != null) {
                     values[i] = valuez;
                     continue;
@@ -964,30 +964,19 @@ public class StatisHelper {
                 Map fc  = (Map) record.getFields().get(fn);
                 if (fc != null) {
                     String t;
-
-                    t = (String) fc.get("lucene-type");
-                    if (t != null) {
-                        if ("float".equals(t)
-                                || "double".equals(t)
-                                || "number".equals(t)) {
-                            floats.add(fn);
-                        }
-                        continue;
-                    }
+                    Set <String> ks;
 
                     t = (String) fc.get("__type__");
                     if (t == null) {
                         continue;
                     }
 
-                    Set<String> ks;
-
                     ks = record.getSaveTypes( "enum" );
                     if (ks != null && ks.contains(t)) {
                         t = Synt.declare(fc.get("type"), "string");
                         if ("float".equals(t)
-                                || "double".equals(t)
-                                || "number".equals(t)) {
+                        || "double".equals(t)
+                        || "number".equals(t)) {
                             floats.add(fn);
                         }
                         continue;
@@ -997,8 +986,8 @@ public class StatisHelper {
                     if (ks != null && ks.contains(t)) {
                         t = Synt.declare(fc.get("type"), "double");
                         if ("float".equals(t)
-                                || "double".equals(t)
-                                || "number".equals(t)) {
+                        || "double".equals(t)
+                        || "number".equals(t)) {
                             floats.add(fn);
                         }
                         continue;

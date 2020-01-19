@@ -3,6 +3,7 @@ package io.github.ihongs.dh.lucene.field;
 import io.github.ihongs.util.Dawn;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.StoredField;
+import org.apache.lucene.document.StringField;
 
 /**
  *
@@ -21,7 +22,8 @@ public class ObjectFiald implements IField {
     }
     @Override
     public Field whr(String k, Object v) {
-        return null; // 对象类型无法用于排序, 无法增加排序字段
+        // 对象类型无法进行筛选, 但可判断是否有值
+        return new StringField("@"+k, v == null || v.equals("") ? "" : "0", Field.Store.NO);
     }
     @Override
     public Field wdr(String k, Object v) {

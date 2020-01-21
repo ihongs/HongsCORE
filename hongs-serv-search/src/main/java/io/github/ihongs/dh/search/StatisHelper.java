@@ -795,7 +795,7 @@ public class StatisHelper {
                     continue ;
                 }
 
-                if (d instanceof SortedDocValues) {
+                if (groups[i][0] == 0 && groups[i][1] == 0) {
                     SortedDocValues b = (SortedDocValues) d;
                     if (!b.advanceExact(doc)) {
                         continue;
@@ -805,7 +805,7 @@ public class StatisHelper {
                     v[0] = b.binaryValue().utf8ToString();
                     coller.collect(n, v);
                 } else
-                if (d instanceof SortedSetDocValues) {
+                if (groups[i][0] == 0 && groups[i][1] == 1) {
                     SortedSetDocValues b = (SortedSetDocValues) d;
                     if (!b.advanceExact(doc)) {
                         continue;
@@ -818,7 +818,7 @@ public class StatisHelper {
                     }
                     coller.collect(n, v.toArray(new String[ v.size() ]) );
                 } else
-                if (d instanceof NumericDocValues) {
+                if (groups[i][0] >= 1 && groups[i][1] == 0) {
                     NumericDocValues b = (NumericDocValues) d;
                     if (!b.advanceExact(doc)) {
                         continue;
@@ -836,7 +836,7 @@ public class StatisHelper {
                     }
                     coller.collect(n, v);
                 } else
-                if (d instanceof SortedNumericDocValues) {
+                if (groups[i][0] >= 1 && groups[i][1] == 1) {
                     SortedNumericDocValues b = (SortedNumericDocValues) d;
                     if (!b.advanceExact(doc)) {
                         continue;
@@ -894,7 +894,7 @@ public class StatisHelper {
                     continue ;
                 }
 
-                if (d instanceof NumericDocValues) {
+                if (groups[i][0] >= 1 && groups[i][1] == 0) {
                     NumericDocValues b = (NumericDocValues) d;
                     if (!b.advanceExact(doc)) {
                         continue;
@@ -912,7 +912,7 @@ public class StatisHelper {
                     }
                     coller.collect(n, v);
                 } else
-                if (d instanceof SortedNumericDocValues) {
+                if (groups[i][0] >= 1 && groups[i][1] == 1) {
                     SortedNumericDocValues b = (SortedNumericDocValues) d;
                     if (!b.advanceExact(doc)) {
                         continue;

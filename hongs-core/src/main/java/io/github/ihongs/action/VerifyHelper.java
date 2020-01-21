@@ -58,7 +58,7 @@ public class VerifyHelper extends Verify {
         FormSet  formSet;
         formSet= FormSet.getInstance("default");
         Map ts = formSet.getEnum ( "__types__");
-        Map ps = formSet.getEnum ( "__patts__");
+        Map ps = formSet.getEnum ( "__typos__");
         Iterator it = fs.entrySet().iterator( );
 
         while (it.hasNext()) {

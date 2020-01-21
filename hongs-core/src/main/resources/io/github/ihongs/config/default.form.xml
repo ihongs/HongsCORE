@@ -83,7 +83,7 @@
         <value code="color"><![CDATA[^#[0-9A-Fa-f]{6}$]]></value>
         <value code="datetime"><![CDATA[^\d{2,4}-\d{1,2}-\d{1,2}T\d{1,2}:\d{1,2}:\d{1,2}]]></value>
         <value code="date"><![CDATA[^\d{2,4}-\d{1,2}-\d{1,2}]]></value>
-        <value code="time"><![CDATA[^\d{1,2}:\d{1,2}-\d{1,2}]]></value>
+        <value code="time"><![CDATA[^\d{1,2}:\d{1,2}:\d{1,2}]]></value>
     </enum>
     <!--
         form 的 field 节点上的属性,
@@ -140,7 +140,7 @@
             <param name="maxrepeat">6</param>
         </field>
         <field name="more" text="默认" type="text">
-            <param name="default">%now,$uid</param>
+            <param name="default">=%now,=%uid</param>
             <param name="deforce">create,update,always,blanks</param>
         </field>
     </form>

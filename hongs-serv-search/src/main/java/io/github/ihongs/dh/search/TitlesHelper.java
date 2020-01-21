@@ -68,7 +68,8 @@ public class TitlesHelper {
 
             if ("enum".equals(type)
             ||  "date".equals(type)
-            ||"number".equals(type)) {
+            ||"number".equals(type)
+            ||"hidden".equals(type)) {
                 String xc = Synt.defxult( (String) mt.get("conf") , conf);
                 String xn = Synt.defxult( (String) mt.get("enum") , name);
                 Map    fe ;

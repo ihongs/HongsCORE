@@ -1872,7 +1872,6 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             case "number":
                 return Synt.declare(fc.get("type"), "double");
             case "hidden":
-                return Synt.declare(fc.get("type"), "string");
             case  "enum" :
                 return Synt.declare(fc.get("type"), "string");
             case  "file" :

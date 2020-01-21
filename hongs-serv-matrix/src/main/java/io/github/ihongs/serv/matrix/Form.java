@@ -1081,6 +1081,7 @@ public class Form extends Model {
         // 复合类型
         if ("number".equals(t)) {
             t = Synt.declare(fc.get("type"), "number");
+            if ("number".equals(t)) t = "double";
             return t;
         }
         if ("hidden".equals(t)) {

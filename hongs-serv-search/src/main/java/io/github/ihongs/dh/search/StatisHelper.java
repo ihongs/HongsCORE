@@ -940,6 +940,8 @@ public class StatisHelper {
         protected final Set<String> multis; // 多个值
         protected final Set<String> rounds; // 整数型
         protected final Set<String> floats; // 浮点型
+        private static  final  Set  roundz = Synt.setOf("int"  , "long"  );
+        private static  final  Set  floatz = Synt.setOf("float", "double", "number");
         private Scorer  scorer;
         private boolean scores;
         private int     totals;
@@ -965,7 +967,16 @@ public class StatisHelper {
                 }
 
                 if (Synt.declare(fc.get("__repeated__"), false)) {
-                    multis.add(fn);
+                    multis . add(fn);
+                }
+
+                switch (t) {
+                    case "string":
+                    case "search":
+                    case "sorted":
+                    case "stored":
+                    case "object":
+                        continue ;
                 }
 
                 // 基准类型
@@ -981,50 +992,34 @@ public class StatisHelper {
                     throw e.toExemption( );
                 }
 
-                if ( "date" .equals(t)) {
-                     rounds .add(fn);
-                    continue;
-                }
-
-                if ( "enum" .equals(t)) {
-                    t = Synt.declare(fc.get("type"), "string");
-                    if (  "int".equals(t)
-                    ||   "long".equals(t)) {
-                        rounds .add (fn);
-                    } else
-                    if ("float".equals(t)
-                    || "double".equals(t)
-                    || "number".equals(t)) {
-                        floats .add (fn);
-                    }
-                }
-
-                if ("hidden".equals(t)) {
-                    t = Synt.declare(fc.get("type"), "string");
-                    if (  "int".equals(t)
-                    ||   "long".equals(t)) {
-                        rounds .add (fn);
-                    } else
-                    if ("float".equals(t)
-                    || "double".equals(t)
-                    || "number".equals(t)) {
-                        floats .add (fn);
-                    }
-                    continue;
-                }
-
-                if ("number".equals(t)) {
-                    t = Synt.declare(fc.get("type"), "double");
-                    if (  "int".equals(t)
-                    ||   "long".equals(t)) {
-                        rounds .add (fn);
-                    } else
-                //  if ("float".equals(t)
-                //  || "double".equals(t)
-                //  || "number".equals(t)) {
-                        floats .add (fn);
-                //  }
-                //  continue;
+                switch (t) {
+                    case "number":
+                        if (roundz.contains(fc.get("type"))) {
+                            rounds.add(fn);
+                        } else
+                        {
+                            floats.add(fn);
+                        }
+                        break ;
+                    case "hidden":
+                        if (roundz.contains(fc.get("type"))) {
+                            rounds.add(fn);
+                        } else
+                        if (floatz.contains(fc.get("type"))) {
+                            floats.add(fn);
+                        }
+                        break ;
+                    case  "enum" :
+                        if (roundz.contains(fc.get("type"))) {
+                            rounds.add(fn);
+                        } else
+                        if (floatz.contains(fc.get("type"))) {
+                            floats.add(fn);
+                        }
+                        break ;
+                    case  "date" :
+                        rounds.add(fn);
+                        break ;
                 }
             }
         }

@@ -1888,8 +1888,8 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         // 矫正别名
-        if (t.equals("number")) {
-            return   "double" ;
+        if ("number".equals(t)) {
+            return  "double"  ;
         }
 
         return  t;

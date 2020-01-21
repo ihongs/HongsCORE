@@ -74,7 +74,7 @@
         <value code="part">form</value><!-- form 的别名 -->
     </enum>
     <!-- 文本校验正则映射 -->
-    <enum name="__patts__">
+    <enum name="__typos__">
         <value code="id" ><![CDATA[^[0-9A-Za-z\-_]{1,18}$]]></value>
         <value code="sms"><![CDATA[^\+?[0-9][\d\-]+[0-9]$]]></value>
         <value code="tel"><![CDATA[^\+?[0-9][\d\-]+[0-9]$]]></value>

@@ -65,7 +65,7 @@ public class IsString extends Rule {
         // 正则匹配
         Map<String,String> pats;
         try {
-            pats = FormSet.getInstance().getEnum("__patts__");
+            pats = FormSet.getInstance().getEnum("__typos__");
         } catch (HongsException ex) {
             throw ex.toExemption( );
         }

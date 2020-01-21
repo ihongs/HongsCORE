@@ -1834,9 +1834,9 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      * date
      * string
      * search
-     * object
-     * stored
      * sorted
+     * stored
+     * object
      * @param fc 字段配置
      * @return
      */

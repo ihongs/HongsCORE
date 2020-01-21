@@ -177,7 +177,7 @@ public class Form extends Model {
      * 保存配置
      * @param id
      * @param conf
-     * @return 0 无变化, 1 有变化, 4 字段类型有变, 2 数量类型有变
+     * @return 0 无变化, 1 有变化, 2 字段类型有变, 4 数量类型有变
      * @throws HongsException
      */
     protected int storeConf(String id, Object conf) throws HongsException {

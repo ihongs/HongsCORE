@@ -192,19 +192,25 @@ public class StatisHelper {
             CoreLogger.debug("StatisHelper.ecount: "+ q.toString());
         }
 
-        Map fs = getRecord(  ).getFields(  );
-        Set ss = (Set) FormSet.getInstance()
-        .getEnum ("__saves__").get("number");
+        Map fs = getRecord().getFields();
+        Map ts = FormSet.getInstance().getEnum("__types__");
+        Set ks = Synt.setOf("int", "long", "float", "double", "number");
 
         for(Map.Entry<String, Map<String, Integer>> et : counts.entrySet()) {
             Map<String, Integer> fo = et.getValue();
                 String fn = et.getKey();
 
                 // 数值类型采用区间查法
-                Map    fc = (Map)fs.get(fn);
-                String fr = ss.contains(fc.get("__type__"))
-                         || ss.contains(fc.get(  "type"  ))
-                          ? Cnst.RG_REL : Cnst.IN_REL;
+                Map    fc = ( Map ) fs.get(fn);
+                Object ft = fc.get("__type__");
+                Object fk = fc.get(  "type"  );
+                       ft = ts.containsKey(ft) ? ts.get(ft) : ft ;
+                String fr = "date" .equals(ft)
+                       ||  "number".equals(ft)
+                       || ( "enum" .equals(ft) && ks.contains(fk))
+                       || ("hidden".equals(ft) && ks.contains(fk))
+                          ? Cnst.RG_REL
+                          : Cnst.IN_REL;
 
             for(Map.Entry<String, Integer> xt : fo.entrySet()) {
                 String fv = xt.getKey();
@@ -962,34 +968,61 @@ public class StatisHelper {
                     multis.add(fn);
                 }
 
-                Set <String> ks;
+                // 基准类型
+                try {
+                    String k  = (String) FormSet
+                          .getInstance ( /***/ )
+                          .getEnum ("__types__")
+                          .get (t);
+                    if (null != k) {
+                           t  = k;
+                    }
+                } catch (HongsException e) {
+                    throw e.toExemption( );
+                }
 
-                ks = record.getSaveTypes( "enum" );
-                if (ks != null && ks.contains(t)) {
+                if ( "date" .equals(t)) {
+                     rounds .add(fn);
+                    continue;
+                }
+
+                if ( "enum" .equals(t)) {
                     t = Synt.declare(fc.get("type"), "string");
+                    if (  "int".equals(t)
+                    ||   "long".equals(t)) {
+                        rounds .add (fn);
+                    } else
                     if ("float".equals(t)
                     || "double".equals(t)
                     || "number".equals(t)) {
                         floats .add (fn);
-                    } else
+                    }
+                }
+
+                if ("hidden".equals(t)) {
+                    t = Synt.declare(fc.get("type"), "string");
                     if (  "int".equals(t)
                     ||   "long".equals(t)) {
                         rounds .add (fn);
+                    } else
+                    if ("float".equals(t)
+                    || "double".equals(t)
+                    || "number".equals(t)) {
+                        floats .add (fn);
                     }
                     continue;
                 }
 
-                ks = record.getSaveTypes("number");
-                if (ks != null && ks.contains(t)) {
+                if ("number".equals(t)) {
                     t = Synt.declare(fc.get("type"), "double");
-                    if ("float".equals(t)
-                    || "double".equals(t)
-                    || "number".equals(t)) {
-                        floats .add (fn);
-                    } else
-                //  if (  "int".equals(t)
-                //  ||   "long".equals(t)) {
+                    if (  "int".equals(t)
+                    ||   "long".equals(t)) {
                         rounds .add (fn);
+                    } else
+                //  if ("float".equals(t)
+                //  || "double".equals(t)
+                //  || "number".equals(t)) {
+                        floats .add (fn);
                 //  }
                 //  continue;
                 }

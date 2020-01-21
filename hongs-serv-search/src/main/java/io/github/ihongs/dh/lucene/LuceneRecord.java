@@ -780,7 +780,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     doc.add(f.whr(k, w));
                 }
                 if (p) for (Object w: a) {
-                    doc.add(f.wdr(k, srchable(m, w)));
+                    doc.add(f.wdr(k, getSrchText(m, w)));
                 }
                 if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
@@ -797,7 +797,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                     doc.add(f.whr(k, v));
                 }
                 if (p) {
-                    doc.add(f.wdr(k, srchable(m, v)));
+                    doc.add(f.wdr(k, getSrchText(m, v)));
                 }
                 if (!q && !p) { // 不可过滤时仍可判断空/非空/空串
                     doc.add(f.whr(k, v.equals("") ? "" : "0"));
@@ -1812,86 +1812,83 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     }
 
     /**
-     * 获取类型变体
-     * 返回的类型有
-     * int
-     * long
-     * float
-     * double
-     * search
-     * string
-     * object
-     * date
-     * @param fc 字段配置
-     * @return
-     */
-    protected String datatype(Map fc) {
-        String t;
-        Set <String> ks;
-
-        t = (String) fc.get("__type__");
-        if (t == null) {
-            return t;
-        }
-
-        //** 先查特有的 **/
-
-        ks = getSaveTypes("search");
-        if (ks != null && ks.contains(t)) {
-            return "search";
-        }
-
-        ks = getSaveTypes("sorted");
-        if (ks != null && ks.contains(t)) {
-            return "sorted";
-        }
-
-        ks = getSaveTypes("stored");
-        if (ks != null && ks.contains(t)) {
-            return "stored";
-        }
-
-        ks = getSaveTypes("object");
-        if (ks != null && ks.contains(t)) {
-            return "object";
-        }
-
-        //** 再查一般的 **/
-
-        ks = getSaveTypes( "date" );
-        if (ks != null && ks.contains(t)) {
-            return  "date" ;
-        }
-
-        ks = getSaveTypes( "enum" );
-        if (ks != null && ks.contains(t)) {
-            return Synt.declare(fc.get("type"), "string");
-        }
-
-        ks = getSaveTypes("string");
-        if (ks != null && ks.contains(t)) {
-            return "string";
-        }
-
-        ks = getSaveTypes("number");
-        if (ks != null && ks.contains(t)) {
-            return Synt.declare(fc.get("type"), "double");
-        }
-
-        return t;
-    }
-
-    /**
      * 清理搜索文本
      * @param fc 字段配置
      * @param v  待存储值
      * @return
      */
-    protected Object srchable(Map fc,  Object v  ) {
+    protected Object getSrchText(Map fc, Object v) {
         if ("textview".equals(fc.get("__type__"))) {
-           v = Syno.stripEnds(Syno.stripTags(Syno.stripCros(v.toString())));
+            return Syno.stripEnds(Syno.stripTags(Syno.stripCros(v.toString())));
         }
         return v;
+    }
+
+    /**
+     * 获取基准类型
+     * 返回的类型有
+     * int
+     * long
+     * float
+     * double
+     * date
+     * string
+     * search
+     * object
+     * stored
+     * sorted
+     * @param fc 字段配置
+     * @return
+     */
+    protected String datatype(Map fc) {
+        String t = (String) fc.get("__type__");
+        if (t == null) {
+            return t;
+        }
+
+        // 特有类型
+        if ("string".equals(t)
+        ||  "search".equals(t)
+        ||  "stored".equals(t)
+        ||  "sorted".equals(t)
+        ||  "object".equals(t)) {
+            return t;
+        }
+
+        // 基准类型
+        try {
+            String k  = (String) FormSet
+                  .getInstance ( /***/ )
+                  .getEnum ("__types__")
+                  .get (t);
+            if (null != k) {
+                   t  = k;
+            }
+        } catch (HongsException e) {
+            throw e.toExemption( );
+        }
+
+        // 复合类型
+        if ("number".equals(t)) {
+            return Synt.declare(fc.get("type"), "number");
+        }
+        if ("hidden".equals(t)) {
+            return Synt.declare(fc.get("type"), "string");
+        }
+        if ( "enum" .equals(t)) {
+            return Synt.declare(fc.get("type"), "string");
+        }
+
+        // 其他类型
+        if ( "file" .equals(t)
+        ||   "fork" .equals(t)) {
+            return "string";
+        }
+        if ( "form" .equals(t)) {
+            return "object";
+        }
+
+        return t;
     }
 
     protected boolean findable(Map fc) {

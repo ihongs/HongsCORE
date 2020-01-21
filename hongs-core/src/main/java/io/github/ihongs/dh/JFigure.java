@@ -90,22 +90,6 @@ public class JFigure implements IFigure {
     }
 
     /**
-     * 获取特定类别的字段类型
-     * @param x 类别, 如 string,number
-     * @return
-     */
-    public Set<String> getSaveTypes(String x) {
-        try {
-            return ((Map<String, Set>) FormSet
-                    .getInstance()
-                    .getEnum("__saves__"))
-                    .get( x );
-        } catch (HongsException e) {
-            throw e.toExemption( );
-        }
-    }
-
-    /**
      * 获取特定用途的字段类型
      * @param x 标识, 如 listable,sortable
      * @return
@@ -122,32 +106,8 @@ public class JFigure implements IFigure {
     }
 
     /**
-     * 获取特定类别的字段名称
-     * @param x 类别, 如 string,number
-     * @return
-     */
-    public Set<String> getSaveNames(String x) {
-        Map<String, Map> fields = getFields();
-        Set fts = getSaveTypes(  x  );
-        Set fns = new LinkedHashSet();
-
-        for(Map.Entry<String, Map> et: fields.entrySet()) {
-            Map field = et.getValue();
-            String fn = et.getKey(  );
-            if ("@".equals(fn)) {
-                continue; // 排除掉 @
-            }
-            if (fts.contains( field.get( "__type__" ) ) ) {
-                fns.add(fn);
-            }
-        }
-
-        return  fns;
-    }
-
-    /**
      * 获取特定用途的字段名称
-     * @param x 标识 例如 listable,sortable
+     * @param x 标识, 如 listable,sortable
      * @return
      */
     public Set<String> getCaseNames(String x) {

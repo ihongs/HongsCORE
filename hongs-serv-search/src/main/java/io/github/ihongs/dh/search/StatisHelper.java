@@ -755,9 +755,9 @@ public class StatisHelper {
         return v;
     }
 
-    private static class AcountCollec extends Collec<String, String[]> {
+    private static class AcountCollec extends Collec<String[]> {
 
-        public AcountCollec(Coller<String, String[]> coller, Set<String> fields, LuceneRecord record) {
+        public AcountCollec(Coller<String[]> coller, Set<String> fields, LuceneRecord record) {
             super(coller, fields, record);
         }
 
@@ -862,9 +862,9 @@ public class StatisHelper {
 
     }
 
-    private static class AmountCollec extends Collec<String, double[]> {
+    private static class AmountCollec extends Collec<double[]> {
 
-        public AmountCollec(Coller<String, double[]> coller, Set<String> fields, LuceneRecord record) {
+        public AmountCollec(Coller<double[]> coller, Set<String> fields, LuceneRecord record) {
             super(coller, fields, record);
         }
 
@@ -938,21 +938,21 @@ public class StatisHelper {
 
     }
 
-    private static interface Coller<K, V> {
-        public void collect(K k, V v);
+    private static interface Coller<V> {
+        public void collect(String k, V v);
     }
 
-    private static abstract class Collec<K, V> implements Collector, LeafCollector {
+    private static abstract class Collec<V> implements Collector, LeafCollector {
 
-        protected final Coller<K,V> coller;
-        protected final String[   ] fields;
-        protected final Object[   ] values;
-        protected final int[  ][  ] groups; // 类型
+        protected final Coller<V> coller;
+        protected final String[ ] fields;
+        protected final Object[ ] values;
+        protected final int[ ][ ] groups; // 类型
         private Scorer  scorer;
         private boolean scores;
         private int     totals;
 
-        public Collec(Coller<K,V> coller, Set<String> fields, LuceneRecord record) {
+        public Collec(Coller<V> coller, Set<String> fields, LuceneRecord record) {
             this.coller = coller;
             this.fields = fields.toArray(new String[]{});
             this.values = new Object[this.fields.length];

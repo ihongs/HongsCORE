@@ -1869,30 +1869,21 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         switch (t) {
-            case  "date" :
-                return t ;
-            case  "form" :
-                return "object";
-            case  "fork" :
-            case  "file" :
-                return "string";
-            case  "enum" :
-                t  = Synt.declare(fc.get("type"), "string");
-                break;
-            case "hidden":
-                t  = Synt.declare(fc.get("type"), "string");
-                break;
             case "number":
-                t  = Synt.declare(fc.get("type"), "double");
-                break;
+                return Synt.declare(fc.get("type"), "double");
+            case "hidden":
+                return Synt.declare(fc.get("type"), "string");
+            case  "enum" :
+                return Synt.declare(fc.get("type"), "string");
+            case  "file" :
+            case  "fork" :
+                return "string";
+            case  "form" :
+            case  "json" :
+                return "object";
+            default:
+                return t ;
         }
-
-        // 矫正别名
-        if ("number".equals(t)) {
-            return  "double"  ;
-        }
-
-        return  t;
     }
 
     protected boolean findable(Map fc) {

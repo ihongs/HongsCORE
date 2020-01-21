@@ -208,10 +208,9 @@ public class Form extends Model {
 
             int i = 1;
             Object data = row != row.get("data");
-            List<Map> confList = Synt.asList(Dawn.toObject((String) conf));
-            List<Map> confData = Synt.asList(Dawn.toObject((String) data));
             Map<String, Map> confDict = new HashMap();
-            Map<String, Set> baseType = FormSet.getInstance().getEnum("__types__");
+            List<Map> confData = Synt.asList(Dawn.toObject((String) data));
+            List<Map> confList = Synt.asList(Dawn.toObject((String) conf));
 
             for(Map fo : confData) {
                 String fn  = (String) fo.get("__name__");

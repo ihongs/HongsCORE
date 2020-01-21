@@ -66,11 +66,11 @@ public class IsString extends Rule {
         Map<String,String> pats;
         try {
             pats = FormSet.getInstance().getEnum("__typos__");
-        } catch (HongsException ex) {
-            throw ex.toExemption( );
+        } catch (HongsException e) {
+            throw e.toExemption( );
         }
             String type = Synt.asString(getParam("__type__"));
-            String patt = Synt.asString(getParam( "pattern"));
+            String patt = Synt.asString(getParam("pattern" ));
         if (patt != null && patt.length() != 0) {
             String patl = pats.get(patt);
             if (patl != null && patl.length() != 0) {

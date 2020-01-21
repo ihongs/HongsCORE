@@ -206,6 +206,7 @@ public class Form extends Model {
              * 变更影响存储需重建索引
              */
 
+            /*
             int i = 1;
             Object data = row != row.get("data");
             Map<String, Map> confDict = new HashMap();
@@ -213,11 +214,11 @@ public class Form extends Model {
             List<Map> confList = Synt.asList(Dawn.toObject((String) conf));
 
             for(Map fo : confData) {
-                String fn  = (String) fo.get("__name__");
-                /**/confDict.put(fn , fo);
+                String fn = (String)  fo.get("__name__");
+                confDict.put(fn, fo);
             }
             for(Map fc : confList) {
-                String fn  = (String) fc.get("__name__");
+                String fn = (String)  fc.get("__name__");
                 Map fo = confDict.get(fn);
                 if (fo == null) continue ;
 
@@ -235,6 +236,7 @@ public class Form extends Model {
                 }
             }
             return  i;
+            */
         } else {
             sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
             db.updates(sql, now, "0", "-", id);

@@ -1002,13 +1002,6 @@ public class StatisHelper {
                         }
                         break ;
                     case "hidden":
-                        if (roundz.contains(fc.get("type"))) {
-                            rounds.add(fn);
-                        } else
-                        if (floatz.contains(fc.get("type"))) {
-                            floats.add(fn);
-                        }
-                        break ;
                     case  "enum" :
                         if (roundz.contains(fc.get("type"))) {
                             rounds.add(fn);

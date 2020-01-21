@@ -1843,16 +1843,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     protected String datatype(Map fc) {
         String t = (String) fc.get("__type__");
         if (t == null) {
-            return t;
+            return t ;
         }
 
-        // 特有类型
-        if ("string".equals(t)
-        ||  "search".equals(t)
-        ||  "stored".equals(t)
-        ||  "sorted".equals(t)
-        ||  "object".equals(t)) {
-            return t;
+        switch (t) {
+            case "string":
+            case "search":
+            case "sorted":
+            case "stored":
+            case "object":
+                return t ;
         }
 
         // 基准类型
@@ -1868,27 +1868,31 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             throw e.toExemption( );
         }
 
-        // 复合类型
-        if ("number".equals(t)) {
-            return Synt.declare(fc.get("type"), "number");
-        }
-        if ("hidden".equals(t)) {
-            return Synt.declare(fc.get("type"), "string");
-        }
-        if ( "enum" .equals(t)) {
-            return Synt.declare(fc.get("type"), "string");
+        switch (t) {
+            case  "date" :
+                return t ;
+            case  "form" :
+                return "object";
+            case  "fork" :
+            case  "file" :
+                return "string";
+            case  "enum" :
+                t  = Synt.declare(fc.get("type"), "string");
+                break;
+            case "hidden":
+                t  = Synt.declare(fc.get("type"), "string");
+                break;
+            case "number":
+                t  = Synt.declare(fc.get("type"), "double");
+                break;
         }
 
-        // 其他类型
-        if ( "file" .equals(t)
-        ||   "fork" .equals(t)) {
-            return "string";
-        }
-        if ( "form" .equals(t)) {
-            return "object";
+        // 矫正别名
+        if (t.equals("number")) {
+            return   "double" ;
         }
 
-        return t;
+        return  t;
     }
 
     protected boolean findable(Map fc) {

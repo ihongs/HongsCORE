@@ -21,6 +21,7 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -172,6 +173,13 @@ public class Form extends Model {
         return super.del(id, fc);
     }
 
+    /**
+     * 保存配置
+     * @param id
+     * @param conf
+     * @return 0 无变化, 1 有变化, 4 字段类型有变, 2 数量类型有变
+     * @throws HongsException
+     */
     protected int storeConf(String id, Object conf) throws HongsException {
         Object uid = ActionHelper.getInstance().getSessibute(Cnst.UID_SES);
         long   now = System.currentTimeMillis() / 1000;
@@ -192,12 +200,48 @@ public class Form extends Model {
 
             sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
             db.updates(sql, now, "0", "-", id, uid, conf, "1");
+
+            /**
+             * 探查是否有变更字段类型
+             * 变更影响存储需重建索引
+             */
+
+            int i = 1;
+            Object data = row != row.get("data");
+            List<Map> confList = Synt.asList(Dawn.toObject((String) conf));
+            List<Map> confData = Synt.asList(Dawn.toObject((String) data));
+            Map<String, Map> confDict = new HashMap();
+            Map<String, Set> baseType = FormSet.getInstance().getEnum("__types__");
+
+            for(Map fo : confData) {
+                String fn  = (String) fo.get("__name__");
+                /**/confDict.put(fn , fo);
+            }
+            for(Map fc : confList) {
+                String fn  = (String) fc.get("__name__");
+                Map fo = confDict.get(fn);
+                if (fo == null) continue ;
+
+                // 字段类型有变
+                String ft0 = getDataType(fo);
+                String ft1 = getDataType(fc);
+                if ( ! ft0.equals(ft1)) {
+                    if (2 != (2 & i)) i += 2;
+                }
+
+                // 数量类型有变
+                if (Synt.declare (fo.get("__repeated__"), false)
+                !=  Synt.declare (fc.get("__repeated__"), false) ) {
+                    if (4 != (4 & i)) i += 4;
+                }
+            }
+            return  i;
         } else {
             sql = "UPDATE `"+tbl+"` SET `etime` = ? WHERE `etime` = ? AND `form_id` = ? AND `id` = ?";
             db.updates(sql, now, "0", "-", id);
 
             sql = "INSERT INTO `"+tbl+"` (`ctime`,`etime`,`form_id`,`id`,`user_id`,`data`,`state`) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            db.updates(sql, now, "0", "-", id, uid, "{}", "0");
+            db.updates(sql, now, "0", "-", id, uid, "[]", "0");
         }
 
         return 1;
@@ -1003,6 +1047,62 @@ public class Form extends Model {
             return e;
         }
         return  null;
+    }
+
+    private String getDataType(Map fc) throws HongsException {
+        String t = (String) fc.get("__type__");
+        if (t == null) {
+            return "string";
+        }
+
+        // 特有类型
+        if ("string".equals(t)
+        ||  "search".equals(t)
+        ||  "stored".equals(t)
+        ||  "sorted".equals(t)
+        ||  "object".equals(t)) {
+            return t;
+        }
+
+        // 基准类型
+        try {
+            String k  = (String) FormSet
+                  .getInstance ( /***/ )
+                  .getEnum ("__types__")
+                  .get (t);
+            if (null != k) {
+                   t  = k;
+            }
+        } catch (HongsException e) {
+            throw e.toExemption( );
+        }
+
+        // 复合类型
+        if ("number".equals(t)) {
+            t = Synt.declare(fc.get("type"), "number");
+            return t;
+        }
+        if ("hidden".equals(t)) {
+            t = Synt.declare(fc.get("type"), "string");
+            if ("number".equals(t)) t = "double";
+            return t;
+        }
+        if ( "enum" .equals(t)) {
+            t = Synt.declare(fc.get("type"), "string");
+            if ("number".equals(t)) t = "double";
+            return t;
+        }
+        
+        // 其他类型
+        if ( "fork" .equals(t)
+        ||   "file" .equals(t)) {
+            return "string";
+        }
+        if ( "form" .equals(t)) {
+            return "object";
+        }
+
+        return t;
     }
 
 }

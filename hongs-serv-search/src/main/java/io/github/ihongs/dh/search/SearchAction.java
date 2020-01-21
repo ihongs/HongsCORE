@@ -60,11 +60,8 @@ public class SearchAction extends JAction {
         super.search(helper);
     }
 
-    /**
-     * @param helper
-     * @throws HongsException 
-     * @deprecated acount,amount 均已提速, 弃之
-     */
+    /*
+    // acount,amount 均已提速, 弃之
     @Action("ecount")
     @Preset(conf="", form="")
     public void ecount(ActionHelper helper) throws HongsException {
@@ -83,6 +80,7 @@ public class SearchAction extends JAction {
 
         helper.reply(sd);
     }
+    */
 
     @Action("acount")
     @Preset(conf="", form="")
@@ -136,9 +134,6 @@ public class SearchAction extends JAction {
         Set st = sr.getCaseNames("statable");
         Map fs = sr.getFields( );
 
-        // 数值统计
-        Set ss = (Set) FormSet.getInstance().getEnum("__saves__").get("number");
-
         // 枚举统计
         if (es == null) {
             es =  new  HashMap  ( );
@@ -157,10 +152,18 @@ public class SearchAction extends JAction {
             }
 
             // 数值统计
-            if (  nb  == 2
-            &&  ! ss.contains   (fc.get("__type__"))
-            &&  ! ss.contains   (fc.get(  "type"  )) ) {
-                throw new HongsException(400, "Field '"+fn+"' is not numeric" );
+            if (nb == 2) {
+                Map ts = FormSet.getInstance().getEnum("__types__");
+                Set ks = Synt.setOf("int", "long", "float", "double", "number");
+                Object t = fc.get("__type__");
+                Object k = fc.get(  "type"  );
+                t = ts.containsKey(t) ? ts.get(t) : t;
+                if (! "number".equals(t)
+                &&  !  "date" .equals(t)
+                &&  !("hidden".equals(t) && ks.contains(k))
+                &&  !( "enum" .equals(t) && ks.contains(k))) {
+                    throw new HongsException(400, "Field '"+fn+"' is not numeric");
+                }
             }
 
             // 枚举统计

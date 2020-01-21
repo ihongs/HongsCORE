@@ -37,12 +37,13 @@ public class Ordinary extends Rule {
          */
         if (value instanceof Map) {
             try {
-            FormSet fields = FormSet.getInstance();
-             Object type   = /****/ getParam ( "__type__"  );
-                Map saves  = fields.getEnum  ( "__saves__" );
-                Set types  = Synt.toSet(saves.get("object"));
-                if (types != null && type != null
-                &&  types.contains ( type )) {
+                Object type = getParam ("__type__");
+                if ("json".equals(type)
+                ||"object".equals(type)) {
+                    return value;
+                }
+                Object kind = FormSet.getInstance().getEnum("__types__").get(type);
+                if ("form".equals(kind)) {
                     return value;
                 }
             } catch ( HongsException ex) {

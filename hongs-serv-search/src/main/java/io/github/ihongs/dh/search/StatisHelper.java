@@ -766,15 +766,14 @@ public class StatisHelper {
             LeafReader reader = lrc.reader( );
 
             for (int i = 0; i < fields.length; i ++) {
-                if (rounds.contains(fields[i])
-                ||  floats.contains(fields[i]) ) {
-                if (multis.contains(fields[i]) ) {
+                if (groups[i][0] >= 1) {
+                if (groups[i][1] == 1) {
                     values[i] = reader.getSortedNumericDocValues("%"+fields[i]);
                 } else {
                     values[i] = reader.      getNumericDocValues("#"+fields[i]);
                 }
                 } else {
-                if (multis.contains(fields[i]) ) {
+                if (groups[i][1] == 1) {
                     values[i] = reader.getSortedSetDocValues("%"+fields[i]);
                 } else {
                     values[i] = reader.   getSortedDocValues("#"+fields[i]);
@@ -812,19 +811,12 @@ public class StatisHelper {
                         continue;
                     }
 
-                    /*
-                    String[] v = new String[(int) b.getValueCount()];
-                    for( int j = 0; j < v.length; j ++ ) {
-                    v[j] = b.lookupOrd (j).utf8ToString();
-                    }
-                    coller.collect(n, v);
-                    */
                     List<String> v = new ArrayList();
-                    long j;
+                    long    j ;
                     while ((j = b.nextOrd()) != SortedSetDocValues.NO_MORE_ORDS) {
-                        v.add(b.lookupOrd (j).utf8ToString());
+                        v.add(b.lookupOrd(j).utf8ToString() );
                     }
-                    coller.collect(n, v.toArray(new String[v.size()]));
+                    coller.collect(n, v.toArray(new String[ v.size() ]) );
                 } else
                 if (d instanceof NumericDocValues) {
                     NumericDocValues b = (NumericDocValues) d;
@@ -833,9 +825,13 @@ public class StatisHelper {
                     }
 
                     String[] v = new String[1];
-                    if (floats.contains(n)) {
-                        v[0] = Synt.asString(NumericUtils.sortableLongToDouble(b.longValue()));
-                    } else {
+                    if (groups[i][0] == 4) {
+                        v[0] = Synt.asString(NumericUtils.sortableLongToDouble((long) b.longValue()));
+                    }  else
+                    if (groups[i][0] == 3) {
+                        v[0] = Synt.asString(NumericUtils. sortableIntToFloat (( int) b.longValue()));
+                    }  else
+                    {
                         v[0] = Synt.asString(b.longValue());
                     }
                     coller.collect(n, v);
@@ -847,13 +843,18 @@ public class StatisHelper {
                     }
 
                     String[] v = new String[b.docValueCount()];
-                    if (floats.contains(n))
+                    if (groups[i][0] == 4) {
                     for( int j = 0; j < v.length; j ++ ) {
-                        v[j] = Synt.asString(NumericUtils.sortableLongToDouble(b.nextValue()));
-                    } else
+                        v[j] = Synt.asString(NumericUtils.sortableLongToDouble((long) b.nextValue()));
+                    }} else
+                    if (groups[i][0] == 3) {
+                    for( int j = 0; j < v.length; j ++ ) {
+                        v[j] = Synt.asString(NumericUtils. sortableIntToFloat (( int) b.nextValue()));
+                    }} else
+                    {
                     for( int j = 0; j < v.length; j ++ ) {
                         v[j] = Synt.asString(b.nextValue());
-                    }
+                    }}
                     coller.collect(n, v);
                 }
             }
@@ -872,7 +873,7 @@ public class StatisHelper {
             LeafReader reader = lrc.reader( );
 
             for (int i = 0; i < fields.length; i ++) {
-                if (multis.contains(fields[i]) ) {
+                if (groups[i][1] == 1) {
                     values[i] = reader.getSortedNumericDocValues("%"+fields[i]);
                 } else {
                     values[i] = reader.      getNumericDocValues("#"+fields[i]);
@@ -900,9 +901,13 @@ public class StatisHelper {
                     }
 
                     double[] v = new double[1];
-                    if (floats.contains(n)) {
-                        v[0] = NumericUtils.sortableLongToDouble(b.longValue());
-                    } else {
+                    if (groups[i][0] == 4) {
+                        v[0] = NumericUtils.sortableLongToDouble((long) b.longValue());
+                    }  else
+                    if (groups[i][0] == 3) {
+                        v[0] = NumericUtils. sortableIntToFloat (( int) b.longValue());
+                    }  else
+                    {
                         v[0] = (double) b.longValue();
                     }
                     coller.collect(n, v);
@@ -914,13 +919,18 @@ public class StatisHelper {
                     }
 
                     double[] v = new double[(int) b.docValueCount()];
-                    if (floats.contains(n))
+                    if (groups[i][0] == 4) {
                     for( int j = 0; j < v.length; j ++ ) {
-                        v[j] = NumericUtils.sortableLongToDouble(b.nextValue());
-                    } else
+                        v[j] = NumericUtils.sortableLongToDouble((long) b.nextValue());
+                    }} else
+                    if (groups[i][0] == 3) {
+                    for( int j = 0; j < v.length; j ++ ) {
+                        v[j] = NumericUtils. sortableIntToFloat (( int) b.nextValue());
+                    }} else
+                    {
                     for( int j = 0; j < v.length; j ++ ) {
                         v[j] = (double) b.nextValue();
-                    }
+                    }}
                     coller.collect(n, v);
                 }
             }
@@ -937,11 +947,7 @@ public class StatisHelper {
         protected final Coller<K,V> coller;
         protected final String[   ] fields;
         protected final Object[   ] values;
-        protected final Set<String> multis; // 多个值
-        protected final Set<String> rounds; // 整数型
-        protected final Set<String> floats; // 浮点型
-        private static  final  Set  roundz = Synt.setOf("int"  , "long"  );
-        private static  final  Set  floatz = Synt.setOf("float", "double", "number");
+        protected final int[  ][  ] groups; // 类型
         private Scorer  scorer;
         private boolean scores;
         private int     totals;
@@ -950,12 +956,11 @@ public class StatisHelper {
             this.coller = coller;
             this.fields = fields.toArray(new String[]{});
             this.values = new Object[this.fields.length];
-            this.multis = new HashSet( );
-            this.rounds = new HashSet( );
-            this.floats = new HashSet( );
+            this.groups = new int[this.fields.length][2];
 
+                int  i  = -1;
                 Map fs  = record.getFields();
-            for(String fn : this.fields) {
+            for(String fn : fields) { i ++  ;
                 Map fc  = (Map) fs.get( fn );
                 if (fc == null) {
                     continue;
@@ -967,7 +972,9 @@ public class StatisHelper {
                 }
 
                 if (Synt.declare(fc.get("__repeated__"), false)) {
-                    multis . add(fn);
+                    groups[i][1] = 1;
+                } else {
+                    groups[i][1] = 0;
                 }
 
                 switch (t) {
@@ -976,6 +983,7 @@ public class StatisHelper {
                     case "sorted":
                     case "stored":
                     case "object":
+                        groups[i][0] = 0;
                         continue ;
                 }
 
@@ -992,27 +1000,43 @@ public class StatisHelper {
                     throw e.toExemption( );
                 }
 
+                Object  k = fc.get("type");
                 switch (t) {
                     case "number":
-                        if (roundz.contains(fc.get("type"))) {
-                            rounds.add(fn);
+                        if (   "int".equals(k)) {
+                            groups[i][0] = 1;
+                        } else
+                        if (  "long".equals(k)) {
+                            groups[i][0] = 2;
+                        } else
+                        if ("float".equals(k)) {
+                            groups[i][0] = 3;
                         } else
                         {
-                            floats.add(fn);
+                            groups[i][0] = 4;
                         }
                         break ;
                     case "hidden":
                     case  "enum" :
-                        if (roundz.contains(fc.get("type"))) {
-                            rounds.add(fn);
+                        if (   "int".equals(k)) {
+                            groups[i][0] = 1;
                         } else
-                        if (floatz.contains(fc.get("type"))) {
-                            floats.add(fn);
+                        if (  "long".equals(k)) {
+                            groups[i][0] = 2;
+                        } else
+                        if ( "float".equals(k)) {
+                            groups[i][0] = 3;
+                        } else
+                        if ("double".equals(k)
+                        ||  "number".equals(k)) {
+                            groups[i][0] = 4;
                         }
                         break ;
                     case  "date" :
-                        rounds.add(fn);
+                        groups[i][0] = 2;
                         break ;
+                    default:
+                        groups[i][0] = 0;
                 }
             }
         }

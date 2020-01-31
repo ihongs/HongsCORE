@@ -112,6 +112,54 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <!-- Minify css and js -->
+            <!--
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <force>true</force>
+                    <jswarn>false</jswarn>
+                    <suffix>.min</suffix>
+                    <sourceDirectory>web/static/assets</sourceDirectory>
+                    <outputDirectory>web/static/assets</outputDirectory>
+                    <includes>
+                        <include>*/hongscore*.js</include>
+                        <include>*/hongscore.css</include>
+                    </includes>
+                    <excludes>
+                        <exclude>*/hongscore*.min.js</exclude>
+                        <exclude>*/hongscore.min.css</exclude>
+                    </excludes>
+                    <aggregations>
+                        <aggregation>
+                            <output>web/static/assets/hongscore.min.js</output>
+                            <inputDir>web/static/assets/src</inputDir>
+                            <includes>
+                                <include>hongscore.min.js</include>
+                                <include>hongscore-form.min.js</include>
+                                <include>hongscore-list.min.js</include>
+                                <include>hongscore-tree.min.js</include>
+                                <include>hongscore-fork.min.js</include>
+                                <include>hongscore-file.min.js</include>
+                                <include>hongscore-date.min.js</include>
+                            </includes>
+                            <removeIncluded>true</removeIncluded>
+                            <insertNewLine>true</insertNewLine>
+                        </aggregation>
+                    </aggregations>
+                </configuration>
+            </plugin>
+            //-->
             <!-- Build target system -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

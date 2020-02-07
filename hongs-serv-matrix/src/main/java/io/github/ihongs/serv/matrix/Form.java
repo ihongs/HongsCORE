@@ -21,7 +21,6 @@ import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -556,12 +555,14 @@ public class Form extends Model {
             form.appendChild ( item );
 
             String s, n, t;
-            s = (String) fiel.get("__text__");
-            if (s != null) item.setAttribute("text", s);
             n = (String) fiel.get("__name__");
             if (n != null) item.setAttribute("name", n);
             t = (String) fiel.get("__type__");
             if (t != null) item.setAttribute("type", t);
+            s = (String) fiel.get("__text__");
+            if (s != null) item.setAttribute("text", s);
+            s = (String) fiel.get("__hint__");
+            if (s != null) item.setAttribute("hint", s);
             s = (String) fiel.get("__rule__");
             if (s != null && s.length() != 0) item.setAttribute("rule", s);
             s = (String) fiel.get("__required__");

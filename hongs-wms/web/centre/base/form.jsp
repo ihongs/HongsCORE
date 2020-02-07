@@ -210,9 +210,14 @@
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>" <%=rqrd%> <%=rptd%>/>
                     <%hint ="";%>
                 <%} /*End If */%>
+                    <%
+                        String hiss;
+                        hiss = Synt.declare(info.get("hiss"),  "" );
+                        hint = Synt.declare(info.get("hint"), hint);
+                    %>
+                    <div class="help-block text-error form-control-static"><%=hiss%></div>
+                    <div class="help-block text-muted form-control-static"><%=hint%></div>
                 </div>
-                <div class="col-sm-9 col-md-2 col-sm-offset-3 col-md-offset-0 help-block text-error form-control-static"></div>
-                <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2 help-block text-muted form-control-static"><%=hint%></div>
             </div>
         <%} /*End If */%>
         <%} /*End For*/%>

@@ -28,8 +28,8 @@ import java.util.Map;
  * 维护命令
  * @author hongs
  */
-@Cmdlet("server")
-public class Server {
+@Cmdlet("access")
+public class Access {
 
     @Cmdlet("exec")
     public static void exec(String[] args) throws HongsException {
@@ -82,8 +82,8 @@ public class Server {
         }
     }
 
-    @Cmdlet("call")
-    public static void call(String[] args) throws HongsException {
+    @Cmdlet("eval")
+    public static void eval(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s", "!A"
@@ -149,8 +149,8 @@ public class Server {
         }
     }
 
-    @Cmdlet("yell")
-    public static void yell(String[] args) throws HongsException {
+    @Cmdlet("call")
+    public static void call(String[] args) throws HongsException {
         Map<String, Object> opts;
         opts = CmdletHelper.getOpts(args ,
             "request:s", "context:s", "session:s", "cookies:s", "!A"

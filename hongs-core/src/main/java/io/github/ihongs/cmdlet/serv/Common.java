@@ -8,10 +8,11 @@ import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.CoreRoster.Mathod;
 import java.io.File;
-import java.io.IOException;
+import java.io.PrintStream;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -39,7 +40,7 @@ public class Common {
     public static void makeUID(String[] args) {
         String sid =  args.length > 0 ? args[0] : Core.SERVER_ID;
         String uid =  Core.newIdentity( sid );
-        System.out.println(uid);
+        CmdletHelper.OUT.get().println( uid );
     }
 
     @Cmdlet("show-env")
@@ -58,14 +59,16 @@ public class Common {
             }
         }
 
+        PrintStream out = CmdletHelper.OUT.get ();
+
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
             s.append(n.getKey());
             for (j = n.getKey( ).length( ); j < i; j ++) {
                 s.append(" " );
             }   s.append("\t");
-            s.append(n.getValue());
-            System.out.println (s);
+                s.append(n.getValue());
+            out.println ( s  );
         }
     }
 
@@ -85,14 +88,16 @@ public class Common {
             }
         }
 
+        PrintStream out = CmdletHelper.OUT.get ();
+
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
             s.append(n.getKey());
             for (j = n.getKey( ).length( ); j < i; j ++) {
                 s.append(" " );
             }   s.append("\t");
-            s.append(n.getValue());
-            System.out.println (s);
+                s.append(n.getValue());
+            out.println ( s  );
         }
     }
 
@@ -111,14 +116,16 @@ public class Common {
             }
         }
 
+        PrintStream out = CmdletHelper.OUT.get ();
+
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
             s.append(n.getKey());
             for (j = n.getKey( ).length( ); j < i; j ++) {
                 s.append(" " );
             }   s.append("\t");
-            s.append(n.getValue());
-            System.out.println (s);
+                s.append(n.getValue());
+            out.println ( s  );
         }
     }
 
@@ -137,14 +144,16 @@ public class Common {
             }
         }
 
+        PrintStream out = CmdletHelper.OUT.get ();
+
         for (Map.Entry<String, String> n : a.entrySet()) {
             StringBuilder s = new StringBuilder();
             s.append(n.getKey());
             for (j = n.getKey( ).length( ); j < i; j ++) {
                 s.append(" " );
             }   s.append("\t");
-            s.append(n.getValue());
-            System.out.println (s);
+                s.append(n.getValue());
+            out.println ( s  );
         }
     }
 

@@ -44,7 +44,7 @@ public class Access {
         // 请求参数
         Map rep = new HashMap();
         rep.put("cmd", args[0]);
-        if (args.length >  1) {
+        if (args.length > 1 ) {
             rep.put("args", Arrays.copyOfRange(args, 1, args.length));
         }
         String req = Dawn.toString (rep, true);
@@ -68,14 +68,16 @@ public class Access {
             PrintWriter    pw;
             BufferedReader br;
 
-            ps = CmdletHelper.OUT.get();
-            pw = new    PrintWriter( conn.getOutputStream( ) );
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            pw = new PrintWriter(conn.getOutputStream());
             pw.print(req);
-            pw.flush(   );
+            pw.flush();
+            pw.close();
+
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            ps = CmdletHelper.OUT.get();
             while ( (ln = br.readLine()) != null ) {
                 ps.print( ln );
-            }
+            }   ps.println(  );
         } catch (UnsupportedEncodingException ex ) {
             throw  new  HongsException(ex);
         } catch (MalformedURLException ex) {
@@ -137,14 +139,16 @@ public class Access {
             PrintWriter    pw;
             BufferedReader br;
 
-            ps = CmdletHelper.OUT.get();
-            pw = new    PrintWriter( conn.getOutputStream( ) );
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            pw = new PrintWriter(conn.getOutputStream());
             pw.print(req);
-            pw.flush(   );
+            pw.flush();
+            pw.close();
+
+            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+            ps = CmdletHelper.OUT.get();
             while ( (ln = br.readLine()) != null ) {
                 ps.print( ln );
-            }
+            }   ps.println(  );
         } catch (UnsupportedEncodingException ex ) {
             throw  new  HongsException(ex);
         } catch (MalformedURLException ex) {
@@ -192,6 +196,7 @@ public class Access {
             co.put(cn, helper);
             ActionRunner.newInstance(helper, args[0]).doActing();
             helper.responed( );
+            ps.println( );
         } finally {
             if ( null  !=  ah) {
                 co.put(cn, ah);

@@ -102,10 +102,8 @@ public class CmdletRunner implements Runnable
   /**
    * 外部执行
    * @param args
-   * @throws IOException
    */
   public static void main(String[] args)
-    throws IOException
   {
     int c = 0;
     try
@@ -152,10 +150,8 @@ public class CmdletRunner implements Runnable
   /**
    * 内部执行
    * @param args
-   * @throws IOException
    */
   public static void exec(String[] args)
-    throws IOException
   {
     String  act = null ;
     int l = args.length;
@@ -206,10 +202,8 @@ public class CmdletRunner implements Runnable
    * 命令启动初始化
    * @param args
    * @return
-   * @throws IOException
    */
   public static String[] init(String[] args)
-    throws IOException
   {
     Map<String, Object> opts;
     opts = CmdletHelper.getOpts(args,

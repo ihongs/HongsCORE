@@ -129,15 +129,15 @@ public class MoreAction {
             throw new HongsException(400, "Illegal request.");
         }
 
+        Map    map = helper.getRequestData();
+        String act = Core.ACTION_NAME.get( );
+        String uri = (String)map.get("act" );
+
         // 从参数提取参数
-        Map map = helper.getRequestData();
         helper.setRequestData(data(map.get("request")));
         helper.setContextData(data(map.get("context")));
         helper.setSessionData(data(map.get("session")));
         helper.setCookiesData(data(map.get("cookies")));
-
-        String act = Core.ACTION_NAME.get();
-        String uri = (String)map.get("act");
 
         try {
             Core.ACTION_NAME.set(uri);
@@ -171,15 +171,9 @@ public class MoreAction {
             throw new HongsException(400, "Illegal request.");
         }
 
-        // 从参数提取参数
-        Map map = helper.getRequestData();
-        helper.setRequestData(data(map.get("request")));
-        helper.setContextData(data(map.get("context")));
-        helper.setSessionData(data(map.get("session")));
-        helper.setCookiesData(data(map.get("cookies")));
-
-        String act = Core.ACTION_NAME.get();
-        String cmd = (String)map.get("cmd");
+        Map    map = helper.getRequestData();
+        String act = Core.ACTION_NAME.get( );
+        String cmd = (String)map.get("cmd" );
 
         try {
             Core.ACTION_NAME.set(cmd);
@@ -238,23 +232,20 @@ public class MoreAction {
         args[0] = cmd;
 
         try {
-            // 设置环境
-            InputStream in  = req.getInputStream();
-            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
-            CmdletHelper.IN .set( in  );
-            CmdletHelper.OUT.set( out );
-            CmdletHelper.ERR.set( out );
+            PrintStream  out = new PrintStream(rsp.getOutputStream(), true);
             CmdletHelper.ENV.set((byte) 1);
+            CmdletHelper.ERR.set(out);
+            CmdletHelper.OUT.set(out);
 
-            // 执行命令
             CmdletRunner.exec( args );
         }
-        catch (IOException e ) {
-            throw new HongsExemption(e);
+        catch (    IOException  ex  ) {
+            helper.print("ERROR: "+ex.getMessage());
+        }
+        catch ( HongsExemption  ex  ) {
+            helper.print("ERROR: "+ex.getMessage());
         }
         finally {
-            // 还原环境
-            CmdletHelper.IN .remove();
             CmdletHelper.OUT.remove();
             CmdletHelper.ERR.remove();
             CmdletHelper.ENV.remove();

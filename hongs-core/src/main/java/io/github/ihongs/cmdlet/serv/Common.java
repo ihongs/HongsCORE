@@ -27,6 +27,15 @@ import java.util.Map;
 @Cmdlet("common")
 public class Common {
 
+    @Cmdlet("echo")
+    public static void echo(String[] args) {
+        PrintStream out = CmdletHelper.OUT.get();
+        for (String arg : args) {
+            out.print(arg);
+            out.print(" ");
+        }   out.println( );
+    }
+
     @Cmdlet("drop-dir")
     public static void dropDir(String[] args) {
         new Dirs(args[0]).rmdirs();

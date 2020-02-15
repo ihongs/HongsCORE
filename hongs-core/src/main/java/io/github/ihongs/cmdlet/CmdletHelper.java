@@ -362,32 +362,34 @@ public class CmdletHelper
   //** 输出相关 **/
 
   /**
-   * 输出调试信息
-   * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作调试输出;
+   * 输出过程信息, 如条目、日志、名单
+   * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作辅助输出;
    * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
    * @param text 提示文本
    */
   public static void paintln(String text)
   {
-    if (ENV.get( ) == 0 ) {
-        ERR.get( ).println(text);
+    if (ENV.get( ) == 0) {
+        OUT.get( ).println  (text);
     } else {
-        CoreLogger.debug  (text);
+        CoreLogger.getLogger(CoreLogger.space("hongs.out"))
+                  .info     (CoreLogger.envir( text /**/ ));
     }
   }
 
   /**
-   * 输出辅助信息
+   * 输出执行状态, 如错误、状态、进度
    * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作辅助输出;
    * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
    * @param text 提示文本
    */
   public static void println(String text)
   {
-    if (ENV.get( ) == 0 ) {
-        OUT.get( ).println(text);
+    if (ENV.get( ) == 0) {
+        ERR.get( ).println  (text);
     } else {
-        CoreLogger.trace  (text);
+        CoreLogger.getLogger(CoreLogger.space("hongs.out"))
+                  .warn     (CoreLogger.envir( text /**/ ));
     }
   }
 

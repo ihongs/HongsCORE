@@ -1,10 +1,13 @@
 package io.github.ihongs.cmdlet;
 
+import io.github.ihongs.Core;
 import io.github.ihongs.CoreLogger;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Formatter;
 import java.util.HashMap;
@@ -22,6 +25,40 @@ import java.util.regex.Pattern;
  */
 public class CmdletHelper
 {
+
+  /**
+   * 输入输出接口
+   */
+  public static final ThreadLocal<InputStream> IN  = new ThreadLocal() {
+    @Override
+    protected InputStream initialValue() {
+      return System.in ;
+    }
+  };
+  public static final ThreadLocal<PrintStream> OUT = new ThreadLocal() {
+    @Override
+    protected PrintStream initialValue() {
+      return System.out;
+    }
+  };
+  public static final ThreadLocal<PrintStream> ERR = new ThreadLocal() {
+    @Override
+    protected PrintStream initialValue() {
+      return System.err;
+    }
+  };
+
+  /**
+   * 运行环境代码
+   * 0 Cmd, 1 Web
+   * 默认同 Core.ENVIR
+   */
+  public static final ThreadLocal<Byte> ENV = new ThreadLocal() {
+    @Override
+    protected Byte initialValue() {
+      return Core.ENVIR;
+    }
+  };
 
   /**
    * 参数处理正则
@@ -325,26 +362,30 @@ public class CmdletHelper
   //** 输出相关 **/
 
   /**
+   * 输出辅助信息
+   * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作辅助输出;
+   * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
+   * @param text 提示文本
+   */
+  public static void println(String text)
+  {
+    if (ENV.get( ) == 0 ) {
+        OUT.get( ).println(text);
+    } else {
+        CoreLogger.trace  (text);
+    }
+  }
+
+  /**
    * 输出数据预览
    * 此方法会将对象(基础类型、集合框架)以 JSON 形式输出到终端.
    * @param data 预览数据
    */
   public static void preview(Object data)
   {
-    Dawn.append(System.out , data, false);
-    System.out.println();
-  }
-
-  /**
-   * 输出辅助信息
-   * 此方法通过 CoreLogger 输出到 hongs.out, 仅被用作辅助输出;
-   * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
-   * @param text 提示文本
-   */
-  public static void println(String text)
-  {
-    CoreLogger.getLogger(CoreLogger.space("hongs.out"))
-              .trace/**/(CoreLogger.envir( text /**/ ));
+    PrintStream out = OUT.get ( );
+    Dawn.append(out, data, false);
+    out.println();
   }
 
   /**
@@ -392,7 +433,7 @@ public class CmdletHelper
     }
     sb.append( "\r");
 
-    System.err.print(sb);
+    ERR.get().print(sb);
   }
 
   /**
@@ -486,7 +527,7 @@ public class CmdletHelper
    */
   public static void progres()
   {
-    System.err.println();
+    ERR.get().println();
   }
 
 }

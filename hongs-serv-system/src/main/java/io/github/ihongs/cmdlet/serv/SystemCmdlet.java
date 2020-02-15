@@ -384,9 +384,9 @@ public class SystemCmdlet {
         List<String> a = new ArrayList();
 
         if (server) {
-            a.add ("common.call-action"); // 在服务端执行
+            a.add ("server.call"); // 在服务端执行
         } else {
-            a.add ("common.exec-action"); // 在命令行执行
+            a.add ("server.yell"); // 在命令行执行
         }
 
         String c, s;

@@ -1,30 +1,17 @@
 package io.github.ihongs.cmdlet.serv;
 
-import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
-import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
-import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.CoreRoster.Mathod;
-import io.github.ihongs.util.Dawn;
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.io.FileReader;
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.FileNotFoundException;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.net.URLEncoder;
 import java.lang.reflect.Method;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -32,7 +19,7 @@ import java.util.TreeMap;
 import java.util.Map;
 
 /**
- * 常规服务
+ * 常规命令
  * @author Hongs
  */
 @Cmdlet("common")
@@ -189,191 +176,6 @@ public class Common {
         {
           throw new HongsException(0x10d4, e);
         }
-    }
-
-    @Cmdlet("exec-action")
-    public static void execAction(String[] args) throws HongsException {
-        Map<String, Object> opts;
-        opts = CmdletHelper.getOpts(args ,
-            "request:s", "context:s", "session:s", "cookies:s", "!A"
-        );
-        args = (String[ ]) opts.get( "" );
-
-        if (args.length == 0) {
-            System.err.println(
-                  "Usage: ACTION_NAME [--request DATA] [--cookies DATA] [--session DATA] [--context DATA]\r\n\t"
-                + "DATA can be JSON or URL search string."
-            );
-            return;
-        }
-
-        ActionHelper helper = new ActionHelper(
-            data((String) opts.get("request")),
-            data((String) opts.get("context")),
-            data((String) opts.get("session")),
-            data((String) opts.get("cookies"))
-        );
-
-        String  target = args [ 0 ];
-        String  action = args [ 0 ];
-        int p = action.indexOf('!');
-        if (p > 0) {
-            target = action.substring( 1 + p );
-            action = action.substring( 0 , p );
-        if (ActionRunner.getActions().containsKey(target)) {
-            action = target;
-        }}
-
-        // 放入全局以便跨层读取
-        String cn = ActionHelper.class.getName( );
-        Core   co = Core.getInstance();
-        Object ah = co.got(cn);
-        co.put ( cn , helper );
-
-        try {
-            helper.setAttribute(Cnst.ACTION_ATTR , target);
-            new ActionRunner( helper, action ).doAction( );
-            CmdletHelper.preview(helper.getResponseData());
-        } finally {
-            if (ah  !=  null ) {
-                co.put(cn, ah);
-            } else {
-                co.remove( cn);
-            }
-        }
-    }
-
-    @Cmdlet("call-action")
-    public static void callAction(String[] args) throws HongsException {
-        Map<String, Object> opts;
-        opts = CmdletHelper.getOpts(args ,
-            "request:s", "cookies:s", "!A"
-        );
-        args = (String[ ]) opts.get( "" );
-
-        if (args.length == 0) {
-            System.err.println(
-                  "Usage: ACTION_NAME [--request DATA] [--cookies DATA]"
-                + "DATA can be JSON or URL search string."
-            );
-            return;
-        }
-
-        String req = text((String) opts.get("request"));
-        String cok = cook((String) opts.get("cookies"));
-        String url = Core.SITE_HREF + Core.BASE_HREF + "/" + args[0] + Cnst.ACT_EXT;
-
-        try {
-            HttpURLConnection conn = (HttpURLConnection) new URL(url).openConnection();
-            conn.setDoInput        ( true );
-            conn.setDoOutput       ( true );
-            conn.setUseCaches      ( false);
-            conn.setConnectTimeout (  0   );
-            conn.setRequestMethod  ("POST");
-            conn.setRequestProperty("Cookie", cok);
-            conn.setRequestProperty("Accept", "application/json,text/html,*/*;q=0.8" );
-            conn.setRequestProperty("Content-Type", req.startsWith("{") && req.endsWith("}")
-                                                    ? "application/json" : "application/x-www-form-urlencoded" );
-            conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
-
-            String         ln;
-            PrintWriter    pw;
-            BufferedReader br;
-
-            pw = new PrintWriter   (                      conn.getOutputStream());
-            br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-            pw.print(req);
-            pw.flush(   );
-            while ( (ln = br.readLine()) != null ) {
-                System.out.print ( ln );
-            }
-        } catch (UnsupportedEncodingException ex ) {
-            throw  new  HongsException(ex);
-        } catch (MalformedURLException ex) {
-            throw  new  HongsException(ex);
-        } catch (IOException ex) {
-            throw  new  HongsException(ex);
-        }
-    }
-
-    private static String cook(String text) throws HongsException {
-        try {
-            Map<String, String> cd =  data( text );
-            StringBuilder ck = new StringBuilder();
-            for (Map.Entry<String, String> et : cd.entrySet()) {
-                ck.append( URLEncoder.encode( et.getKey(  ), "UTF-8" ));
-                ck.append("=");
-                ck.append( URLEncoder.encode( et.getValue(), "UTF-8" ));
-                ck.append(";");
-            }
-            return ck.toString();
-        } catch (UnsupportedEncodingException ex) {
-            throw  new  HongsException(ex);
-        }
-    }
-
-    private static String file(String path) throws HongsException {
-        try (
-            BufferedReader br = new BufferedReader(
-                new FileReader( new File (path) ) );
-        ) {
-            int            bn ;
-            char[ ]        bs ;
-            StringBuilder  sb = new StringBuilder();
-            while ( true ) {
-                bs = new char [1024];
-                if((bn = br.read(bs)) < 0) {
-                    break;
-                }
-                sb.append(bs, 0, bn);
-            }
-            return sb.toString();
-        } catch (FileNotFoundException ex) {
-            throw  new  HongsException("Can not find " + path, ex);
-        } catch (IOException ex) {
-            throw  new  HongsException("Can not read " + path, ex);
-        }
-    }
-
-    private static String text(String text) throws HongsException {
-        if (text == null ) {
-            return   ""   ;
-        }
-        text = text.trim();
-
-        if (text.startsWith("@")) {
-            text = text.substring(1);
-            if ( ! new File(text).isAbsolute()) {
-                text = Core.CORE_PATH  +  text;
-            }
-            text = file(text);
-            text = text.replaceAll("//.*?(\\r|\\n|$)", "$1");
-            text = text.trim();
-        }
-
-        return text;
-    }
-
-    private static Map data(String text) throws HongsException {
-        text = text(text);
-        if (text.length() == 0 ) {
-            return new HashMap();
-        }
-
-        Map data;
-        if (text.startsWith("{") && text.endsWith("}")) {
-            data = (  Map  ) Dawn.toObject(text);
-        } else
-        if (text.startsWith("[") && text.endsWith("]")) {
-            throw  new UnsupportedOperationException("Unsupported list: "+ text);
-        } else
-        if (text.startsWith("<") && text.endsWith(">")) {
-            throw  new UnsupportedOperationException("Unsupported html: "+ text);
-        } else {
-            data = ActionHelper.parseQuery(text);
-        }
-
-        return data;
     }
 
     private static class Dirs {

@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.io.FileNotFoundException;
@@ -34,7 +35,7 @@ public class Access {
     @Cmdlet("exec")
     public static void exec(String[] args) throws HongsException {
         if (args.length == 0) {
-            System.err.println(
+            CmdletHelper.ERR.get().println(
                   "Usage: CMDLET_NAME [ARG_0] [ARG_1] ..."
             );
             return;
@@ -63,15 +64,17 @@ public class Access {
             conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
 
             String         ln;
+            PrintStream    ps;
             PrintWriter    pw;
             BufferedReader br;
 
-            pw = new PrintWriter   (                      conn.getOutputStream());
+            ps = CmdletHelper.OUT.get();
+            pw = new    PrintWriter( conn.getOutputStream( ) );
             br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             pw.print(req);
             pw.flush(   );
             while ( (ln = br.readLine()) != null ) {
-                System.out.print ( ln );
+                ps.print( ln );
             }
         } catch (UnsupportedEncodingException ex ) {
             throw  new  HongsException(ex);
@@ -91,7 +94,7 @@ public class Access {
         args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
-            System.err.println(
+            CmdletHelper.ERR.get().println(
                   "Usage: ACTION_NAME [--request DATA] [--cookies DATA] [--session DATA] [--context DATA]\r\n\t"
                 + "DATA can be JSON or URL search string."
             );
@@ -130,15 +133,17 @@ public class Access {
             conn.setRequestProperty("X-Requested-With", CoreConfig.getInstance().getProperty("core.powered.by"));
 
             String         ln;
+            PrintStream    ps;
             PrintWriter    pw;
             BufferedReader br;
 
-            pw = new PrintWriter   (                      conn.getOutputStream());
+            ps = CmdletHelper.OUT.get();
+            pw = new    PrintWriter( conn.getOutputStream( ) );
             br = new BufferedReader(new InputStreamReader(conn.getInputStream()));
             pw.print(req);
             pw.flush(   );
             while ( (ln = br.readLine()) != null ) {
-                System.out.print ( ln );
+                ps.print( ln );
             }
         } catch (UnsupportedEncodingException ex ) {
             throw  new  HongsException(ex);
@@ -158,13 +163,14 @@ public class Access {
         args = (String[ ]) opts.get( "" );
 
         if (args.length == 0) {
-            System.err.println(
+            CmdletHelper.ERR.get().println(
                   "Usage: ACTION_NAME [--request DATA] [--cookies DATA] [--session DATA] [--context DATA]\r\n\t"
                 + "DATA can be JSON or URL search string."
             );
             return;
         }
 
+        // 请求参数
         ActionHelper helper = new ActionHelper(
             data((String) opts.get("request")),
             data((String) opts.get("context")),
@@ -172,31 +178,25 @@ public class Access {
             data((String) opts.get("cookies"))
         );
 
-        String  target = args [ 0 ];
-        String  action = args [ 0 ];
-        int p = action.indexOf('!');
-        if (p > 0) {
-            target = action.substring( 1 + p );
-            action = action.substring( 0 , p );
-        if (ActionRunner.getActions().containsKey(target)) {
-            action = target;
-        }}
+        // 输出管道
+        PrintStream ps = CmdletHelper.OUT.get( );
+        PrintWriter pw = new PrintWriter(  ps  );
+        helper.updateOutput( ps , pw );
 
-        // 放入全局以便跨层读取
-        String cn = ActionHelper.class.getName( );
+        // 将新动作助手对象放入全局以便跨层读取
+        String cn = ActionHelper.class.getName();
         Core   co = Core.getInstance();
         Object ah = co.got(cn);
-        co.put ( cn , helper );
 
         try {
-            helper.setAttribute(Cnst.ACTION_ATTR , target);
-            new ActionRunner( helper, action ).doAction( );
-            CmdletHelper.preview(helper.getResponseData());
+            co.put(cn, helper);
+            ActionRunner.newInstance(helper, args[0]).doActing();
+            helper.responed( );
         } finally {
-            if (ah  !=  null ) {
+            if ( null  !=  ah) {
                 co.put(cn, ah);
             } else {
-                co.remove( cn);
+                co.remove (cn);
             }
         }
     }

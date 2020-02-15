@@ -5,14 +5,20 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsCause;
 import io.github.ihongs.HongsException;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.cmdlet.CmdletHelper;
+import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.ServletException;
@@ -131,7 +137,7 @@ public class MoreAction {
         helper.setCookiesData(data(map.get("cookies")));
 
         String act = Core.ACTION_NAME.get();
-        String uri = map.get("act") + Cnst.ACT_EXT;
+        String uri = (String)map.get("act");
 
         try {
             Core.ACTION_NAME.set(uri);
@@ -141,10 +147,52 @@ public class MoreAction {
         }
     }
 
-    private void call(ActionHelper helper, String uri,
+    @Action("exec")
+    public void exec(ActionHelper helper) throws HongsException {
+        CoreConfig          cnf = CoreConfig.getInstance();
+        HttpServletRequest  req = helper.getRequest( );
+        HttpServletResponse rsp = helper.getResponse();
+
+        // 许可及IP白名单
+        boolean sw  = cnf.getProperty( "core.exec.more.enable" , false);
+        String  ia  = cnf.getProperty( "core.exec.more.allows" );
+        String  ip  = ActionDriver.getClientAddr (req);
+        Set     ias = Synt.toTerms( ia );
+        if (ias == null || ias.isEmpty()) {
+            ias =  new  HashSet();
+            ias.add(       "::1"       );
+            ias.add(    "127.0.0.1"    );
+            ias.add( "0:0:0:0:0:0:0:1" );
+        }
+        if (! sw ) {
+            throw new HongsException(400, "Illegal request!");
+        }
+        if (! ias.contains(ip) ) {
+            throw new HongsException(400, "Illegal request.");
+        }
+
+        // 从参数提取参数
+        Map map = helper.getRequestData();
+        helper.setRequestData(data(map.get("request")));
+        helper.setContextData(data(map.get("context")));
+        helper.setSessionData(data(map.get("session")));
+        helper.setCookiesData(data(map.get("cookies")));
+
+        String act = Core.ACTION_NAME.get();
+        String cmd = (String)map.get("cmd");
+
+        try {
+            Core.ACTION_NAME.set(cmd);
+            exec(helper, cmd,req,rsp);
+        } finally {
+            Core.ACTION_NAME.set(act);
+        }
+    }
+
+    private void call(ActionHelper helper, String act,
             HttpServletRequest req, HttpServletResponse rsp) {
         try {
-            req.getRequestDispatcher("/" + uri).include(req, rsp);
+            req.getRequestDispatcher("/" + act + Cnst.ACT_EXT).include(req, rsp);
         } catch (ServletException ex) {
             if (ex.getCause() instanceof HongsCause) {
                 HongsCause  ez = ( HongsCause ) ex.getCause( );
@@ -170,6 +218,46 @@ public class MoreAction {
                 map.put("err", ex.getMessage());
                 map.put("msg", ex.getLocalizedMessage());
                 helper.reply(map);
+        }
+    }
+
+    private void exec(ActionHelper helper, String cmd,
+            HttpServletRequest req, HttpServletResponse rsp) {
+        // 组织参数
+        String[] args;
+        List opts = Synt.asList(helper.getRequestData().get("args"));
+        if (opts == null || opts.isEmpty()) {
+            args = new String[1 /* no args */ ];
+        } else {
+            args = new String[1 + opts.size() ];
+                int  i = 1 ;
+            for(Object opt : opts) {
+                args[i ++] = Synt.asString(opt);
+            }
+        }
+        args[0] = cmd;
+
+        try {
+            // 设置环境
+            InputStream in  = req.getInputStream();
+            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
+            CmdletHelper.IN .set( in  );
+            CmdletHelper.OUT.set( out );
+            CmdletHelper.ERR.set( out );
+            CmdletHelper.ENV.set((byte) 1);
+
+            // 执行命令
+            CmdletRunner.exec( args );
+        }
+        catch (IOException e ) {
+            throw new HongsExemption(e);
+        }
+        finally {
+            // 还原环境
+            CmdletHelper.IN .remove();
+            CmdletHelper.OUT.remove();
+            CmdletHelper.ERR.remove();
+            CmdletHelper.ENV.remove();
         }
     }
 

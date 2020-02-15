@@ -7,6 +7,7 @@ import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.CmdletRunner;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.CoreRoster.Mathod;
+import io.github.ihongs.HongsExemption;
 import java.io.File;
 import java.io.PrintStream;
 import java.io.FileInputStream;
@@ -160,10 +161,10 @@ public class Common {
     @Cmdlet("view-serial")
     public static void viewSerial(String[] args) throws HongsException {
         if (args.length == 0) {
-            System.err.println(
-                  "Usage: common:view-serial serial/file/path\r\n\t"
-                + "Just for CoreSerial or Collection object.");
-            return;
+          CmdletHelper.paintln(
+                "Usage: common.view-serial serial/file/path\r\n\t"
+              + "Just for CoreSerial or Collection object.");
+          return;
         }
 
         File fio = new File(args[0]);
@@ -184,6 +185,10 @@ public class Common {
         catch (           IOException e)
         {
           throw new HongsException(0x10d4, e);
+        }
+        catch (HongsExemption e) //0x1051
+        {
+          throw e.toException( );
         }
     }
 

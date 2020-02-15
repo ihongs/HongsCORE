@@ -362,6 +362,21 @@ public class CmdletHelper
   //** 输出相关 **/
 
   /**
+   * 输出调试信息
+   * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作调试输出;
+   * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.
+   * @param text 提示文本
+   */
+  public static void paintln(String text)
+  {
+    if (ENV.get( ) == 0 ) {
+        ERR.get( ).println(text);
+    } else {
+        CoreLogger.debug  (text);
+    }
+  }
+
+  /**
    * 输出辅助信息
    * 此方法通过 CoreLogger 调用日志进行输出, 仅被用作辅助输出;
    * 如果需要输出结构化的数据供其它程序处理, 请不要使用此方法.

@@ -379,10 +379,28 @@ HsCate.prototype = {
             $(this).empty(); // 清空待写入选项
         });
 
+        // 统计字段
+        url = hsSetParam(url, "rb.", rb) + eb.join("&");
+
+        // 筛选数据
         var dat;
-        dat = hsSerialDic(findBox);
-        url = hsSetParam (url, "rb.", rb);
-        url = url + eb.join( "&" );
+        var mod;
+        do {
+            mod = context.data("HsList");
+            if (mod) {
+                dat = mod._data;
+                break;
+            }
+
+            mod = context.data("HsTree");
+            if (mod) {
+                dat = mod._data;
+                break;
+            }
+
+            dat = hsSerialDic ( findBox);
+        }
+        while (false);
 
         $.hsAjax({
             url : url,

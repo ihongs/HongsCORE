@@ -2059,7 +2059,7 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         }
 
         public List<Map> toList() {
-            List<Map> list = new ArrayList();
+            List<Map> list = new ArrayList(size());
             while  (  hasNext() ) {
                 list.add(next() );
             }

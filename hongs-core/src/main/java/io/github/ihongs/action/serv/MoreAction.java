@@ -232,23 +232,28 @@ public class MoreAction {
         args[0] = cmd;
 
         try {
-            PrintStream  out = new PrintStream(rsp.getOutputStream(), true);
-            CmdletHelper.ENV.set((byte) 1);
-            CmdletHelper.ERR.set(out);
-            CmdletHelper.OUT.set(out);
+            PrintStream out = new PrintStream(rsp.getOutputStream(), true);
+            rsp.setContentType("text/plain" );
+            rsp.setCharacterEncoding("utf-8");
 
-            CmdletRunner.exec( args );
+            try {
+                CmdletHelper.ENV.set((byte)1);
+                CmdletHelper.ERR.set(out);
+                CmdletHelper.OUT.set(out);
+
+                CmdletRunner.exec( args );
+            }
+            catch ( Error | Exception e ) {
+                out.print( "ERROR: "+ e.getMessage() );
+            }
+            finally {
+                CmdletHelper.OUT.remove();
+                CmdletHelper.ERR.remove();
+                CmdletHelper.ENV.remove();
+            }
         }
-        catch (    IOException  ex  ) {
-            helper.print("ERROR: "+ex.getMessage());
-        }
-        catch ( HongsExemption  ex  ) {
-            helper.print("ERROR: "+ex.getMessage());
-        }
-        finally {
-            CmdletHelper.OUT.remove();
-            CmdletHelper.ERR.remove();
-            CmdletHelper.ENV.remove();
+        catch (IOException e) {
+            throw new HongsExemption( e );
         }
     }
 

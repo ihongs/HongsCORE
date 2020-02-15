@@ -30,7 +30,7 @@ import javax.servlet.http.HttpServletResponse;
  * 可一次调用多个动作
  * 批量执行后返回数据
  * 请求格式举例:
- * a.KEY=ACTION&e.KEY=PARAMS&foo=bar
+ * a.KEY=ACTION&d.KEY=PARAMS&foo=bar
  * PARAMS 为 JSON 或 URLEncoded 格式
  * 其他参数为共用参数
  * @author Hongs
@@ -39,7 +39,7 @@ import javax.servlet.http.HttpServletResponse;
 public class MoreAction {
 
     @Action("__main__")
-    public void pack(ActionHelper helper) {
+    public void more(ActionHelper helper) {
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
         Map<String, Object> re0 = helper.getRequestData( );
@@ -78,7 +78,7 @@ public class MoreAction {
                 wrap.setAttribute(Cnst.ACTION_ATTR, null);
                 wrap.setAttribute(Cnst.ORIGIN_ATTR, null);
                 wrap.reply((Map) null );
-                call( wrap, uri , req , rsp);
+                eval( wrap, uri , req , rsp);
                 rs1 = wrap.getResponseData();
                 rs0 . put ( key , rs1 );
 
@@ -105,15 +105,15 @@ public class MoreAction {
         helper.reply(rs0);
     }
 
-    @Action("call")
-    public void call(ActionHelper helper) throws HongsException {
+    @Action("eval")
+    public void eval(ActionHelper helper) throws HongsException {
         CoreConfig          cnf = CoreConfig.getInstance();
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
 
         // 许可及IP白名单
-        boolean sw  = cnf.getProperty( "core.call.more.enable" , false);
-        String  ia  = cnf.getProperty( "core.call.more.allows" );
+        boolean sw  = cnf.getProperty( "core.eval.more.enable" , false);
+        String  ia  = cnf.getProperty( "core.eval.more.allows" );
         String  ip  = ActionDriver.getClientAddr (req);
         Set     ias = Synt.toTerms( ia );
         if (ias == null || ias.isEmpty()) {
@@ -141,7 +141,7 @@ public class MoreAction {
 
         try {
             Core.ACTION_NAME.set(uri);
-            call(helper, uri,req,rsp);
+            eval(helper, uri,req,rsp);
         } finally {
             Core.ACTION_NAME.set(act);
         }
@@ -189,7 +189,7 @@ public class MoreAction {
         }
     }
 
-    private void call(ActionHelper helper, String act,
+    private void eval(ActionHelper helper, String act,
             HttpServletRequest req, HttpServletResponse rsp) {
         try {
             req.getRequestDispatcher("/" + act + Cnst.ACT_EXT).include(req, rsp);

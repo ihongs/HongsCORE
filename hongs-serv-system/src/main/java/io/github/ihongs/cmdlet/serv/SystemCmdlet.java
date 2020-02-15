@@ -249,7 +249,8 @@ public class SystemCmdlet {
         CmdletHelper.progres( );
     }
 
-    private static void runCmd(Date dt, File fo, Looker lg) throws HongsException {
+    private static void runCmd(Date dt, File fo, Looker lg)
+            throws HongsException {
         Document doc;
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();

@@ -20,7 +20,7 @@ html, body {
     overflow: auto;
     position: fixed;
     z-index : 1;
-    background: #2e2f2f;
+    background: #e0e2e2;
 }
 #bodybox {
     padding-left: 200px;
@@ -49,11 +49,11 @@ html, body {
     padding: 0;
     margin : 0;
     list-style: none;
-    background: #2e2f2f;
+    background: #e0e2e2;
 }
 #main-menubar ul ul ,
 #user-menubar ul ul {
-    background: #202222;
+    background: #f0f2f2;
 }
 #main-menubar li a ,
 #user-menubar li a {
@@ -62,25 +62,25 @@ html, body {
 }
 #main-menubar li a {
     font-size: 15px;
-    font-weight: 800;
+    font-weight: 400;
     padding: 8px 6px 8px 16px;
 }
 #user-menubar li a {
     font-size: 13px;
-    font-weight: 400;
-    padding: 9px 6px 9px 10px;
+    font-weight: 200;
+    padding: 9px 6px 9px 12px;
 }
 #main-menubar li li a ,
 #user-menubar li li a {
     font-size: 13px;
-    font-weight: 400;
+    font-weight: 200;
     padding: 9px 6px 9px 16px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #aaaaaa;
+    color: #6f6f6f;
     background: transparent;
     border-left: 2px solid transparent;
 }
@@ -88,9 +88,9 @@ html, body {
 #main-menubar li.acting > a.dropup:hover ,
 #user-menubar li a:hover,
 #user-menubar li.acting > a.dropup:hover {
-    color: #aaaaaa;
-    background: #770000;
-    border-left: 2px solid #bb0000;
+    color: #bb0000;
+    background: transparent;
+    border-left: 2px solid transparent;
 }
 #main-menubar li.acting > a ,
 #main-menubar li.active > a ,
@@ -98,9 +98,9 @@ html, body {
 #user-menubar li.acting > a ,
 #user-menubar li.active > a ,
 #user-menubar li.active > a.dropup {
-    color: #eeeeee;
-    background: #bb0000;
-    border-left: 2px solid #ff0000;
+    color: #bb0000;
+    background: #f0e0e0;
+    border-left: 2px solid #bb0000;
 }
 
 #main-menubar>ul>li {
@@ -119,20 +119,22 @@ html, body {
 #main-menubar .caret ,
 #user-menubar .caret {
     float:  right ;
-    color: #505252;
+    color: #e0e2e2;
 }
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
     float:  right ;
-    color: #cccccc;
+    color: #a0a2a2;
 }
 
 /* 头像 */
 
 #user-menubar {
-    background: #777;
-    position: relative;
-    border-bottom: 5px solid #555;
+    position: relative ;
+    background: #d0d0d0;
+    background-image: linear-gradient(90deg,#d0d0d0 0,#e0e2e2 100%);
+  /*background-image: repeating-linear-gradient(135deg,hsla(0,0%,100%,0.1) 0,hsla(0,0%,100%,0.1) 15px,transparent 0,transparent 30px);*/
+    border-bottom: 10px solid #ffffff;
 }
 #user-menubar .uhead {
     display: inline-block ;
@@ -148,18 +150,18 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #fff;
+    color : #666;
     width : 90px;
     height: 36px;
     line-height: 36px;
+    font-weight: 600 ;
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
-    text-shadow: 2px 1px 0px #000;
 }
 #user-menubar .badge {
     position: absolute;
-    background: #f00;
+    background: #b00;
     display: none;
     min-width : 0;
     min-height: 0;
@@ -171,7 +173,7 @@ html, body {
 }
 #user-menubar .glyphicon {
     color: #b00;
-    width: 40px;
+    width: 38px;
     top  :  2px; /* 修正字体符号偏上的问题 */
     margin-right: 10px;
     text-align: center;
@@ -214,10 +216,10 @@ html, body {
     height: 30px;
     margin-top: -15px;
     border-radius: 0 5px 5px 0;
-    background: rgba(66,66,66,0.5);
+    background: rgba(224,224,224,0.5);
 }
 #head-handled:hover {
-    background: rgba(66,66,66,1.0);
+    background: rgba(196,196,196,1.0);
 }
 #head-handled a {
     width : 0;
@@ -236,15 +238,20 @@ html, body {
 }
 
 #head-powered {
-    text-shadow: 0 1px 1px #000;
+    background: #e0e2e2;
+    text-shadow: 0 0 1px #000;
     text-align: center;
     font-size: 10px;
     position: fixed;
-    bottom:  5px;
+    bottom:  0px;
     width: 200px;
+    color: #eee;
+}
+#head-powered:hover {
+    color: #000;
 }
 #head-powered a {
-    color: #a00;
+    color: #fcc;
 }
 #head-powered a:hover {
     color: #f00;

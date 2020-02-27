@@ -211,6 +211,13 @@ public class MergeMore
     List    lst;
     Object  rid;
 
+    // 2020/02/27, 同名字段需先清理
+    if (col.equals(sub))
+    for(Map rxw : rows)
+    {
+        rxw.remove(sub);
+    }
+
     while (iter.hasNext())
     {
       raw = ( Map  ) iter.next( );
@@ -261,9 +268,15 @@ public class MergeMore
   public void append(Iterator iter, Map<Object, List> map, String col, String sub)
   {
     Map     row, raw;
-    List    lst;
-    List    lzt;
+    List    lst, lzt;
     Object  rid;
+
+    // 2020/02/27, 同名字段需先清理
+    if (col.equals(sub))
+    for(Map rxw : rows)
+    {
+        rxw.remove(sub);
+    }
 
     while (iter.hasNext())
     {

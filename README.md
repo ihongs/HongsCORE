@@ -232,7 +232,7 @@ action 和 cmdlet 使用 @Action 和 @Cmdlet 注解来设置访问路径, 如果
      ar     多组    (and)
      nr     否定    (not)
 
-请避免将这些参数作为您的字段名.
+其中 ob,rb,ab 的值还支持逗号和空格分隔，如 ob=abc,def 等同于 ob.=abc&ob.=def 等同于 {"ob":["abc","def"]}. 请避免将这些参数作为您的字段名, 除 id 外字段名字母数多于 2 即可.
 
 ### 响应结构
 

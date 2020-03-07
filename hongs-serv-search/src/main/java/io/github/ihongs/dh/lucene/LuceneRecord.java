@@ -773,8 +773,14 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
 
                 Set a  = Synt.asSet( v );
                 if (a != null && ! a.isEmpty( )) {
-                if (s) for (Object w: a) {
-                    doc.add(f.ods(k, w));
+                if (s) {
+                    for (Object w: a) {
+                        doc.add(f.odr(k, w));
+                        break ; // 多个值的普通排序只能用其中一个
+                    }
+                    for (Object w: a) {
+                        doc.add(f.ods(k, w));
+                    }
                 }
                 if (q) for (Object w: a) {
                     doc.add(f.whr(k, w));
@@ -1405,12 +1411,13 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             /**
              * 因为 Lucene 5 必须使用 DocValues 才能排序
              * 在更新数据时, 会加前缀 '#','%' 的排序字段
+             * 2020/03/07 多个值的普通排序只能用其中一个
              */
-            if (repeated(m)) {
-                of.add(new SortField("%" + fn, st, rv));
-            } else {
+        //  if (repeated(m)) {
+        //      of.add(new SortField("%" + fn, st, rv));
+        //  } else {
                 of.add(new SortField("#" + fn, st, rv));
-            }
+        //  }
         }
     }
 

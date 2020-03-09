@@ -219,7 +219,8 @@ public class ActionRunner {
 
         // Initialize action
         if (object instanceof IActing) {
-           (  (  IActing  )  object  ).acting(  helper  , this);
+            IActing acting = (IActing) object;
+             acting.acting   ( helper, this );
         }
     }
 

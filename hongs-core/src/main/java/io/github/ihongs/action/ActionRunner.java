@@ -48,7 +48,6 @@ public class ActionRunner {
     private final int low = -1;
     private       int idx = -1;
 
-    @SuppressWarnings("LeakingThisInConstructor")
     public ActionRunner(ActionHelper helper, Object object, String method)
     throws HongsException {
         this.helper = helper;
@@ -83,9 +82,6 @@ public class ActionRunner {
         //  e = e.replace( '.', '/' );
         }
         this.action = c + "/" + e;
-
-        // Regist the runner
-        helper.setAttribute(ActionRunner.class.getName(), this);
     }
 
     public ActionRunner(ActionHelper helper, String action)
@@ -218,9 +214,12 @@ public class ActionRunner {
         // Reset
         idx = 0;
 
+        // Regist the runner
+        helper.setAttribute(ActionRunner.class.getName(), this);
+
         // Initialize action
         if (object instanceof IActing) {
-           ( (IActing) object).acting(helper, this);
+           (  (  IActing  )  object  ).acting(  helper  , this);
         }
     }
 

@@ -45,9 +45,10 @@ public class ActionRunner {
     private final Annotation[] annarr;
 
     private final int len ;
-    private final int ido = -1;
+    private final int low = -1;
     private       int idx = -1;
 
+    @SuppressWarnings("LeakingThisInConstructor")
     public ActionRunner(ActionHelper helper, Object object, String method)
     throws HongsException {
         this.helper = helper;
@@ -82,6 +83,9 @@ public class ActionRunner {
         //  e = e.replace( '.', '/' );
         }
         this.action = c + "/" + e;
+
+        // Regist the runner
+        helper.setAttribute(ActionRunner.class.getName(), this);
     }
 
     public ActionRunner(ActionHelper helper, String action)
@@ -206,14 +210,30 @@ public class ActionRunner {
     }
 
     /**
+     * 执行初始方法
+     * 会执行 acting 方法, doAction,doInvoke 内已调
+     * @throws HongsException
+     */
+    public void doActing() throws HongsException {
+        // Reset
+        idx = 0;
+
+        // Initialize action
+        if (object instanceof IActing) {
+           ( (IActing) object).acting(helper, this);
+        }
+    }
+
+    /**
      * 执行动作方法
      * 会执行 action 方法上 annotation 指定的过滤器
      * @throws HongsException
      */
     public void doAction() throws HongsException {
         // 如果正处于链头, 则作初始化
-        if ( idx == ido ) {
+        if ( idx == low ) {
             doActing();
+        //  return;
         }
 
         // 如果已到达链尾, 则执行动作
@@ -221,11 +241,6 @@ public class ActionRunner {
             doInvoke();
             return;
         }
-
-        // 如果超出链长度, 则终止执行 (2019/12/05 没有可能, 多此一举)
-//      if ( idx >  len ) {
-//          throw new HongsException(0x110f, "Action annotation out of index: "+idx+">"+len);
-//      }
 
         Annotation anno = annarr[idx ++];
         Filter     actw ;
@@ -253,7 +268,7 @@ public class ActionRunner {
      * @throws HongsException
      */
     public void doInvoke() throws HongsException {
-        if (idx == ido) {
+        if (idx == low) {
             doActing( );
         } else {
             idx  =  0  ;
@@ -275,24 +290,6 @@ public class ActionRunner {
             } else {
                 throw new HongsException(0x110e, ex);
             }
-        }
-    }
-
-    /**
-     * 执行初始方法
-     * 会执行 acting 方法, doAction,doInvoke 内已调
-     * @throws HongsException
-     */
-    public void doActing() throws HongsException {
-        // Reset
-        idx = 0;
-
-        // Regist the runner
-        helper.setAttribute(ActionRunner.class.getName(), this);
-
-        // Initialize action
-        if (object instanceof IActing) {
-           (  (  IActing  )  object  ).acting(  helper  , this);
         }
     }
 

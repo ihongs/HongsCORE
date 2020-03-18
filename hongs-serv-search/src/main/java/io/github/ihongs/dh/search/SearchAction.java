@@ -43,16 +43,19 @@ public class SearchAction extends JAction {
         /**
          * 有指定查询条件则按匹配度排序
          */
-        Map rd = helper.getRequestData();
-        Object  wd = rd.get(Cnst.WD_KEY);
-        if(null != wd && "".equals(wd) ) {
-           List ob  = Synt.asList(rd.get(Cnst.OB_KEY));
-            if( ob == null) {
-                ob  =  new  ArrayList( );
-                rd.put(Cnst.OB_KEY , ob);
+        Map rd  = helper.getRequestData();
+        Object  wd  = rd.get(Cnst.WD_KEY);
+        if( wd != null && ! "".equals(wd)) {
+           Set  xb  = Synt.toTerms (rd.get(Cnst.OB_KEY));
+           List ob  ;
+            if( xb == null) {
+                ob  = new ArrayList( 1);
+                rd.put(Cnst.OB_KEY, ob);
                 ob.add( 0 , "-");
             } else
-            if(!ob.contains("-")) {
+            if(!xb.contains("-")) {
+                ob  = new ArrayList(xb);
+                rd.put(Cnst.OB_KEY, ob);
                 ob.add( 0 , "-");
             }
         }

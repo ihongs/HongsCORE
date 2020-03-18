@@ -684,9 +684,9 @@ public class ActionHelper implements Cloneable
     } else
     if (this.response    != null) {
       if (value == null) {
-        setCookibute(name, value, 0/*Remove*/, Core.BASE_HREF + "/", null, false, false );
+        setCookibute(name, value,  0, Core.BASE_HREF + "/", null, false, false);
       } else {
-        setCookibute(name, value, Cnst.CL_DEF, Core.BASE_HREF + "/", null, false, false );
+        setCookibute(name, value, -1, Core.BASE_HREF + "/", null, false, false);
       }
     }
   }

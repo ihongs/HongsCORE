@@ -55,7 +55,7 @@ public class XsrfFilter implements Filter {
         if (ret != null && ret.length() != 0) {
             try {
                 req.setAttribute(inside,true);
-                fc.doFilter(rxq, rxp);
+                fc . doFilter   (   rxq, rxp);
             } finally {
                 req.removeAttribute( inside );
             }
@@ -67,16 +67,15 @@ public class XsrfFilter implements Filter {
         String dmn = req.getServerName( );
         if (ref != null && dmn != null) {
             Matcher mat = DOMAIN.matcher(ref);
-            if (mat.find( ) && mat.group(1).equals(dmn)) {
-                try {
-                    req.setAttribute(inside,true);
-                    fc.doFilter(rxq, rxp);
-                } finally {
-                    req.removeAttribute( inside );
-                }
-                return;
+        if (mat.find( ) && mat.group(1).equals(dmn)) {
+            try {
+                req.setAttribute(inside,true);
+                fc . doFilter   (   rxq, rxp);
+            } finally {
+                req.removeAttribute( inside );
             }
-        }
+            return;
+        }}
 
         rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         rsp.getWriter().print("XSRF Access Forbidden!");

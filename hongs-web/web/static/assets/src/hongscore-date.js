@@ -545,7 +545,11 @@
 
     // 清除所有选项
     $(document).on("click", ".datebox .clear", function() {
-        $(this).closest(".datebox").find("select").val( "" );
+        var sel = $(this).closest(".datebox").find("select");
+        var inp = $(this).closest(".datebox").data("linked");
+        sel.val ("");
+        inp.val ("");
+        inp.change();
     });
 
     // 加载就绪后自动初始化日期控件

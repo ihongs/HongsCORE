@@ -136,17 +136,35 @@ function forEditor(func) {
 function setEditor(node, func) {
     forEditor(function() {
         node.each(function() {
+            var that =   this ;
             var data = $(this).hsData() || {};
+            var lang = HsLANG['lang'].replace('_', '-');
             var conf = {
                 toolbar : [
-                    ['base', ['bold' , 'italic' , 'underline' , 'strikethrough' , 'clear']],
-                    ['font', ['color', 'height' , 'fontsize']],
-                    ['para', ['paragraph', 'ul' , 'ol'  ]],
-                    ['list', ['table', 'picture', 'link']]
+                    ['font', ['color', 'fontsize' , 'bold', 'italic']],
+                    ['para', ['style', 'paragraph', 'ul'  , 'ol'    ]],
+                    ['inst', ['table', 'picture'  , 'link']],
+                    ['misc', ['clean', 'codeview']]
                 ],
-                colorButton: {
-                    foreColor: '#FFFFFF',
-                    backColor: '#474949'
+                buttons : {
+                    "clean": function() {
+                        return $.summernote.ui.button({
+                            contents: '<i class="note-icon-eraser"></i>',
+                            tooltip : $.summernote.lang[lang].font.clear,
+                            click : function() {
+                                var code ;
+                                code = $(that).summernote("code");
+                                if ( ! /<\w+[^>]+>/.test ( code )) {
+                                    code = code.replace(/^/g, '<p>');
+                                    code = code.replace(/$/g,'</p>');
+                                } else {
+                                    code = code.replace(/<!--[\S\s]*?-->/mg, '');
+                                    code = code.replace(/ (style|class)=\"[\S\s]*?\"/mg, '');
+                                }
+                                $(that).summernote("code", code );
+                            }
+                        }).render();
+                    }
                 },
                 callbacks: {
                     onImageUpload: function(files) {
@@ -172,10 +190,12 @@ function setEditor(node, func) {
                         });
                     }
                 },
+                styleTags  : [ 'p' , 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
+                colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
                 placeholder: $(this).attr("placeholder") || "",
-                minHeight  : $(this).height (   ) * 1 ,
-                maxHeight  : $(this).height (   ) * 2 ,
-                lang: HsLANG['lang'].replace('_', '-')
+                minHeight  : $(this).height() * 1 ,
+                maxHeight  : $(this).height() * 2 ,
+                lang: lang
             };
             $(this).summernote( $.extend(conf, data) );
 
@@ -187,7 +207,6 @@ function setEditor(node, func) {
                    .css("background-color", "inherit");
 
             // 关闭时需销毁
-            var that = this;
             $(this).data("destroy",function() {
                 $(that).summernote("destroy");
             });

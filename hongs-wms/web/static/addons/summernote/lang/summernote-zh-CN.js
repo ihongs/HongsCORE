@@ -28,7 +28,7 @@
         shapeNone: '形状: 无',
         dragImageHere: '将图片拖拽至此处',
         dropImage: '拖拽图片或文本',
-        selectFromFiles: '从本地上传',
+        selectFromFiles: '本地上传',
         maximumFileSize: '文件大小最大值',
         maximumFileSizeError: '文件大小超出最大值。',
         url: '图片地址',

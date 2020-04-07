@@ -200,7 +200,7 @@ function setEditor(node, func) {
             $(this).summernote( $.extend(conf, data) );
 
             // 默认无背景色
-            $(this).siblings(".note-editor")
+            $(this).siblings(".note-editor" )
                    .find(".note-current-color-button")
                    .attr( "data-backcolor", "inherit")
                    .find( "i" )

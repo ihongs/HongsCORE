@@ -344,10 +344,11 @@ function hsCopyListData(box) {
     var tr  = $('<tr></tr>');
     var th  = $('<th></th>');
     var td  = $('<td></td>');
+    th .attr("style", 'white-space: pre-line; mso-number-format: "\\@";');
+    td .attr("style", 'white-space: pre-line; mso-number-format: "\\@";');
+    div.attr("style", "height: 1px; display: none; overflow: auto;");
     tab.attr("style", "margin: 1px;");
     tab.attr("class", "table table-bordered table-copylist");
-    div.attr("style", "height: 1px; display: none; overflow: auto;");
-    td .attr("style", "white-space: pre-line; mso-number-format: \"\@\";");
 
     // 表头
     box.find("thead:first tr").each(function() {

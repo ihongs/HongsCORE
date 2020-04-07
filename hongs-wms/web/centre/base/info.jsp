@@ -65,6 +65,17 @@
             if (text == null) {
                 text  = "" ;
             }
+
+            // 显示 ID
+            if (name.equals(Cnst.ID_KEY)) {
+                if (type.equals("hidden")
+                ||  type.equals("")) {
+                    type = "text";
+                }
+                if (text.equals("")) {
+                    text =  "ID" ;
+                }
+            }
         %>
         <%if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>"/>
@@ -80,15 +91,12 @@
                         if ("image".equals(type)) {
                             kind = "_view";
                             String size = Synt.declare (info.get("thumb-size"), "");
-                            String keep = Synt.declare (info.get("thumb-mode"), "");
-                            if (! "keep".equals(keep)) {
-                                keep = "" ;
-                            }
+                            String moda = Synt.declare (info.get("thumb-mode"), "");
                             if (size.length( ) != 0  ) {
                                 Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
                                 if ( m.find( ) ) {
                                     // 限制最大尺寸, 避免撑开容器
-                                    int w  = 300 ;
+                                    int w  = 450 ;
                                     int h  = 150 ;
                                     int sw = Synt.declare(m.group(1), w);
                                     int sh = Synt.declare(m.group(2), h);
@@ -107,7 +115,7 @@
                             } else {
                                 size = "150*150";
                             }
-                            kind += "\" data-size=\""+size+"\" data-keep=\""+keep;
+                            kind += "\" data-size=\""+size+"\" data-mode=\""+moda;
                         }
                     %>
                     <ul class="pickbox pickrol" data-fn="<%=name%>" data-ft="<%=kind%>"></ul>

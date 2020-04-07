@@ -86,15 +86,30 @@
         $(this).before($(this).clone().val(''));
             box = $(box );
         var inp = $(this);
-        var img = k ? $.hsKeepSnap( src, w, h )
-                    : $.hsPickSnap( src, w, h );
         var txt = /^data:.+\/.+,/.test(src) ? ''
-                  : decodeURIComponent(src.replace(/^.*[\/\\]/, '' ));
-        var div = $('<li class="preview"></li>').attr( "title", txt )
-           .css({width : w+'px', height: h+'px', overflow: 'hidden'})
-           .append(inp)
+                  : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var div = $('<li class="preview"></li>').attr("title" , txt)
+           .css({width: w+'px', height: h+'px', overflow: 'hidden'});
+
+        // 非保留和截取时为图片自身尺寸
+        var cal ;
+        if (!k) {
+            cal = function() {
+                var w = this.width ;
+                var h = this.height;
+                var img = $( this );
+                img.css({top  :  "0px", left  :  "0px"});
+                div.css({width: w+'px', height: h+'px'});
+            };
+        }
+
+        var img = k === "pick"
+                ? $.hsPickSnap(src, w, h, cal)
+                : $.hsKeepSnap(src, w, h, cal);
+
+        div.append(inp)
            .append(img)
-           .append('<a href="javascript:;" class="close">&times</a>');
+           .append('<a href="javascript:;" class="close">&times;</a>');
         box.append(div);
         return div;
     };
@@ -105,7 +120,7 @@
      * @param {String } src 文件路径取值
      * @param {Number } w   预览额定宽度
      * @param {Number } h   预览额定高度
-     * @param {boolean} k   为 true 保留, 否则截取
+     * @param {boolean} k   为 keep 保留, 为 pick 截取
      * @returns {undefined|Element} 节点
      */
     $.fn.hsFillView = function(nam, src, w, h, k) {
@@ -113,17 +128,32 @@
             return;
         }
         var box = $(this);
-        var inp = $( '<input type="hidden"/>' )
-                   .attr("name", nam).val (src);
-        var img = k ? $.hsKeepSnap( src, w, h )
-                    : $.hsPickSnap( src, w, h );
+        var inp = $('<input  type="hidden" />')
+                   .attr('name', nam ).val(src);
         var txt = /^data:.+\/.+,/.test(src) ? ''
-                  : decodeURIComponent(src.replace(/^.*[\/\\]/, '' ));
-        var div = $('<li class="preview"></li>').attr( "title", txt )
-           .css({width : w+'px', height: h+'px', overflow: 'hidden'})
-           .append(inp)
+                  : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
+        var div = $('<li class="preview"></li>').attr("title" , txt)
+           .css({width: w+'px', height: h+'px', overflow: 'hidden'});
+
+        // 非保留和截取时为图片自身尺寸
+        var cal ;
+        if (!k) {
+            cal = function() {
+                var w = this.width ;
+                var h = this.height;
+                var img = $( this );
+                img.css({top  :  "0px", left  :  "0px"});
+                div.css({width: w+'px', height: h+'px'});
+            };
+        }
+
+        var img = k === "pick"
+                ? $.hsPickSnap(src, w, h, cal)
+                : $.hsKeepSnap(src, w, h, cal);
+
+        div.append(inp)
            .append(img)
-           .append('<a href="javascript:;" class="close">&times</a>');
+           .append('<a href="javascript:;" class="close">&times;</a>');
         box.append(div);
         return div;
     };
@@ -166,7 +196,7 @@
      * @param {Number } h   预览额定高度
      * @returns {Element}
      */
-    $.hsPickSnap = function(src, w, h) {
+    $.hsPickSnap = function(src, w, h, b) {
         var img  =  new Image();
         img.onload = function() {
             var xw = img.width ;
@@ -184,6 +214,7 @@
                 img.width   = xw * h / xh;
                 $(img).css("left", (((w - img.width ) / 2)) + "px");
             }
+            if (b) b.call (img);
         };
         img.src = src ;
         return  $(img);
@@ -196,7 +227,7 @@
      * @param {Number } h   预览额定高度
      * @returns {Element}
      */
-    $.hsKeepSnap = function(src, w, h) {
+    $.hsKeepSnap = function(src, w, h, b) {
         var img  =  new Image();
         img.onload = function() {
             var xw = img.width ;
@@ -214,6 +245,7 @@
                 img.width   = xw * h / xh;
                 $(img).css("left", (((w - img.width ) / 2)) + "px");
             }
+            if (b) b.call (img);
         };
         img.src = src ;
         return  $(img);
@@ -246,7 +278,7 @@
             inp.data("picked", 1);
             var box = inp.siblings(".pickbox");
             var mul = inp.prop("multiple");
-            var  k  = box.data("keep");
+            var  k  = box.data("mode");
             var  w  = box.data("size");
             var  h  = w.split ("*", 2);
                  w  = h [0]; h = h [1];
@@ -358,7 +390,7 @@ function hsFormFillView(box, v, n) {
         _hsSoloFile ( box, false );
     }
 
-    var k = box.data("keep");
+    var k = box.data("mode");
     var w = box.data("size");
     var h = w.split ("*", 2);
         w = h [0]; h = h [1];

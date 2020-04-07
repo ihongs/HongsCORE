@@ -342,11 +342,13 @@ function hsCopyListData(box) {
     var thd = $('<thead></thead>').appendTo(tab);
     var tbd = $('<tbody></tbody>').appendTo(tab);
     var tr  = $('<tr></tr>');
-    var th  = $('<td></th>');
+    var th  = $('<th></th>');
     var td  = $('<td></td>');
-    div.attr("style" , "height:1px; display:none; overflow:auto;");
-    tab.attr("style" , "margin:1px;")
-       .attr("class" , "table table-bordered");
+//  th .attr("style", 'white-space: pre-line; mso-number-format: "\\@";');
+//  td .attr("style", 'white-space: pre-line; mso-number-format: "\\@";');
+    div.attr("style", "height: 1px; display: none; overflow: auto;");
+    tab.attr("style", "margin: 1px;");
+    tab.attr("class", "table table-bordered table-copylist");
 
     // 表头
     box.find("thead:first tr").each(function() {
@@ -371,7 +373,6 @@ function hsCopyListData(box) {
                 return;
             }
             var td2 = td.clone().appendTo(tr2);
-            td2.attr( "style" , "white-space: pre-line;" );
             if (td0.data("node" )) {
                 td2.html(hsTidyHtmlTags(td0.data("node")));
             } else

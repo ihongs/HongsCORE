@@ -60,21 +60,17 @@ html, body {
     display: block;
     text-decoration: none;
 }
-#main-menubar li a {
-    font-size: 15px;
-    font-weight: 400;
-    padding: 8px 6px 8px 16px;
-}
 #user-menubar li a {
-    font-size: 13px;
-    font-weight: 200;
+    font-weight: normal;
     padding: 9px 6px 9px 12px;
 }
-#main-menubar li li a ,
-#user-menubar li li a {
-    font-size: 13px;
-    font-weight: 200;
-    padding: 9px 6px 9px 16px;
+#main-menubar li a {
+    font-weight: bolder;
+    padding: 9px 6px 9px 36px;
+}
+#main-menubar li li a {
+    font-weight: normal;
+    padding: 9px 6px 9px 36px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
@@ -132,9 +128,7 @@ html, body {
 #user-menubar {
     position: relative ;
     background: #d0d0d0;
-    background-image: linear-gradient(90deg,#d0d0d0 0,#e0e2e2 100%);
-  /*background-image: repeating-linear-gradient(135deg,hsla(0,0%,100%,0.1) 0,hsla(0,0%,100%,0.1) 15px,transparent 0,transparent 30px);*/
-    border-bottom: 10px solid #ffffff;
+    border-bottom: 4px solid #ffffff;
 }
 #user-menubar .uhead {
     display: inline-block ;
@@ -187,9 +181,9 @@ html, body {
 #main-menubar ul li a:before {
     display    : inline-block;
     position   : relative;
-    top        :  1px; /* 修正字体符号偏上的问题 */
+    top        :  2px; /* 修正字体符号偏上的问题 */
     width      : 20px;
-    font-size  : 13px;
+    margin-left:-20px;
     font-family: "Glyphicons Halflings";
     content: "";
 }
@@ -266,6 +260,13 @@ html, body {
     margin-top: 18px;
     background: #fff;
     border: 1px solid #ddd;
+}
+
+/* 复制导出列表样式 */
+.table-copylist th ,
+.table-copylist td {
+    white-space: pre-line;
+    mso-number-format: "\\@";
 }
 
 /* 隐藏受限的搜索框 */

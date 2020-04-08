@@ -134,6 +134,7 @@ function forEditor(func) {
 }
 
 function setEditor(node, func) {
+    forMirror(function() {
     forEditor(function() {
         node.each(function() {
             var that =   this ;
@@ -141,10 +142,10 @@ function setEditor(node, func) {
             var lang = HsLANG['lang'].replace('_', '-');
             var conf = {
                 toolbar : [
-                    ['font', ['color', 'bold' , 'italic', 'fontsize']],
+                    ['font', ['color', 'bold'     , 'italic'  ]],
+                    ['inst', ['table', 'picture'  , 'link'    ]],
                     ['para', ['style', 'paragraph', 'ul', 'ol']],
-                    ['inst', ['table', 'picture', 'link']],
-                    ['misc', ['clean', 'codeview' ]]
+                    ['misc', ['clean', 'codeview']]
                 ],
                 buttons : {
                     "clean": function() {
@@ -159,7 +160,9 @@ function setEditor(node, func) {
                                     code = code.replace(/$/g,'</p>');
                                 } else {
                                     code = code.replace(/<!--[\S\s]*?-->/mg, '');
-                                    code = code.replace(/ (style|class)=\"[\S\s]*?\"/mg, '');
+                                    code = code.replace(/(<font(\s[^>]*)?>|<\/font>)/mg, '');
+                                    code = code.replace(/(<span(\s[^>]*)?>|<\/span>)/mg, '');
+                                    code = code.replace(/\s(style|class|align|color)=\"[\S\s]*?\"/mg, '');
                                 }
                                 $(that).summernote("code", code );
                             }
@@ -190,7 +193,13 @@ function setEditor(node, func) {
                         });
                     }
                 },
-                styleTags  : [ 'p' , 'h1', 'h2', 'h3', 'h4', 'h5', 'h6' ],
+                codemirror : {
+                    mode   : "text/html",
+                    htmlMode     : true ,
+                    lineNumbers  : true ,
+                    lineWrapping : true
+                },
+                styleTags  : [ 'p' , 'h6', 'h5', 'h4', 'h3', 'h2', 'h1' ],
                 colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
                 placeholder: $(this).attr("placeholder") || "",
                 minHeight  : $(this).height() * 1 ,
@@ -213,6 +222,7 @@ function setEditor(node, func) {
         });
         func && func.call(node);
     });
+    } , 'xml');
 }
 
 function forMirror(func, mode) {

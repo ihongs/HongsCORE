@@ -393,11 +393,11 @@ HsList.prototype = {
             glass: 'btn-primary',
             label: hsGetLang("ensure"),
             click: function() {
-                var fo = jQuery(this).closest(".alert-content" ).find("form");
-                var pn = parseInt(fo.find("[name='"+that.pageKey+"']").val());
-                var rn = parseInt(fo.find("[name='"+that.rowsKey+"']").val());
-                if (isNaN(pn) || isNaN(rn) || pn < 01 || rn < 10 || rn > 100) {
-                    alert( "输入错误, 页码需大于或等于1, 行数需10到100之间" );
+                var fo = jQuery(this).closest(".alert-content").find("form");
+                var rn = parseInt(fo.find("[name='rn']").val());
+                var pn = parseInt(fo.find("[name='pn']").val());
+                if (isNaN(pn) || isNaN(rn) || pn < 1 || rn < 10 || rn > 100) {
+                    alert("输入错误, 页码需大于或等于1, 行数需10到100之间!");
                     return false;
                 }
                 jQuery(this).closest(".modal").find(":submit").click();
@@ -409,12 +409,12 @@ HsList.prototype = {
             evt.preventDefault( );
             evt.stopPropagation();
             jQuery(this).closest(".modal").modal("hide");
-            var req = hsSerialArr(that._data);
-            var url = (  that._url  ||  ""  );
-            that.load (
-                hsSetParam(url, that.rowsKey, $(this).find("[name=rn]").val()),
-                hsSetSeria(req, that.pageKey, $(this).find("[name=pn]").val())
-            );
+            var rn = $(this).find( "[name=rn]" ).val(  );
+            var pn = $(this).find( "[name=pn]" ).val(  );
+            that._data = hsSerialArr(that._data);
+            that._url  = hsSetParam (that._url , that.rowsKey, rn);
+            /* SetDat */ hsSetSeria (that._data, that.pageKey, pn);
+            that.load();
         });
     },
     _ps_key  : "state" ,

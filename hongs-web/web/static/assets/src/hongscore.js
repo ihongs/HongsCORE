@@ -118,13 +118,24 @@ function hsRequires(url, fun ) {
          || document.documentElement;
 
     while ( l >= ++ i ) {
-        var u = url[i - 1 ];
-        if ( HsREQS[u]) {
-            u = HsREQS  [u];
-        }   u = hsFixUri(u);
+        var w = url[i - 1 ];
+        if ( HsREQS[w]) {
+            w = HsREQS  [w];
+        }
+        var u = hsFixUri(w);
+
         if (!HsDEPS[u]) {
              HsDEPS[u]  = 1;
         } else {
+             HsDEPS[u] += 1;
+            if (fun && ++ j == l) {
+                fun( );
+            }
+            continue  ;
+        }
+        if (jQuery('link[href="'+w+'"],script[src="'+w+'"],'
+                  +'link[href="'+u+'"],script[src="'+u+'"]')
+                  . size( )) {
              HsDEPS[u] += 1;
             if (fun && ++ j == l) {
                 fun( );

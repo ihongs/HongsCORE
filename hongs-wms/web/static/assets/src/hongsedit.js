@@ -217,22 +217,22 @@ function setEditor(node, func) {
 + '</div>'
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">字号</label>'
-+ '<div class="col-xs-4"><input class="form-control" type="number" name="font-size"   value="0" data-unit="px" step="1"   min="0" max="36"></div>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="font-size"   value="" data-unit="px" step="1"   min="0" max="36"></div>'
 + '<div class="col-xs-2 form-control-static">(px)</div>'
 + '</div>'
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">行高</label>'
-+ '<div class="col-xs-4"><input class="form-control" type="number" name="line-height" value="0" data-unit="em" step="0.1" min="0" max="8" ></div>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="line-height" value="" data-unit="em" step="0.1" min="0" max="8" ></div>'
 + '<div class="col-xs-2 form-control-static">(em)</div>'
 + '</div>'
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">缩进</label>'
-+ '<div class="col-xs-4"><input class="form-control" type="number" name="text-indent" value="0" data-unit="em" step="0.5" min="0" max="8" ></div>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="text-indent" value="" data-unit="em" step="0.5" min="0" max="8" ></div>'
 + '<div class="col-xs-2 form-control-static">(em)</div>'
 + '</div>'
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">段尾间距</label>'
-+ '<div class="col-xs-4"><input class="form-control" type="number" name="margin-bottom" value="0" data-unit="px" step="1" min="0" max="80"></div>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="margin-bottom" value="" data-unit="px" step="1" min="0" max="80"></div>'
 + '<div class="col-xs-2 form-control-static">(px)</div>'
 + '</div>'
 + '<div class="form-group row">'
@@ -303,7 +303,9 @@ function setEditor(node, func) {
                                             var v = $(this).val ( /**/ );
                                             var u = $(this).data("unit");
                                             var n = $(this).attr("name");
-                                            if (v === "0" ) v = u = "";
+                                            if (v === "" || v === "0") {
+                                                v = u = "" ;
+                                            }
                                             opts[n] = v + u;
                                         });
                                         // 设置段落样式

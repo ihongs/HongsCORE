@@ -254,7 +254,7 @@ function setEditor(node, func) {
 + '<div class="col-xs-8 radio">'
 + '<label><input type="radio" name="area" value="range" checked="checked" > 选区</label>'
 + '<label><input type="radio" name="area" value="whole"> 全文</label>'
-+ '<label><input type="radio" name="area" value="clean"> 重置</label>'
++ '<label><input type="radio" name="area" value="clean"> 清理</label>'
 + '</div></div>'
 + '</form>'
                                 } , {

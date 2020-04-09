@@ -1,4 +1,54 @@
-/* global HsLANG, CodeMirror */
+/* global H$, HsLANG, CodeMirror */
+
+//** 资源扩展功能 **/
+
+H$.inst = function() {
+    var context = $(".HsList,.HsForm").filter(":visible:first");
+    return context.data("HsList")
+        || context.data("HsForm");
+};
+H$.src  = function() {
+    return (H$.inst()._url || location.pathname)
+    //  .replace(/\#.*/, '')
+        .replace(/\?.*/, '')
+        .replace(/\/[^\/]+$/, '');
+};
+H$.load = function(req) {
+    var mod = H$.inst();
+    mod.load(undefined, hsSerialMix(mod._data, req));
+};
+H$.send = function(url, req) {
+    var rzt;
+    $.hsAjax({
+        url     : hsFixUri   (url),
+        data    : hsSerialArr(req),
+        complete: function   (rst) {
+            rzt = hsResponse (rst , 3);
+        },
+        type    : "post",
+        dataType: "json",
+        async   : false ,
+        cache   : false ,
+        global  : false
+    });
+    return  rzt ;
+};
+H$["search"] = function(req) {
+    var url = H$.src() + "/search.act";
+    return H$.send(url, req);
+};
+H$["create"] = function(req) {
+    var url = H$.src() + "/create.act";
+    return H$.send(url, req);
+};
+H$["update"] = function(req) {
+    var url = H$.src() + "/update.act";
+    return H$.send(url, req);
+};
+H$["delete"] = function(req) {
+    var url = H$.src() + "/delete.act";
+    return H$.send(url, req);
+};
 
 //** 初始化表单项 **/
 

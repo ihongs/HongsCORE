@@ -4,7 +4,7 @@
 <%@page import="io.github.ihongs.action.ActionDriver"%>
 <%@page import="io.github.ihongs.action.NaviMap"%>
 <%@page import="java.util.Map"%>
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
     /**
      * 静默或非调试模式下开启缓存策略
@@ -23,48 +23,51 @@
         }
     }
 
-    String     _title = null;
-    String     _module;
-    String     _entity;
-    CoreLocale _locale;
+    boolean    $hide = false;
+    String     $title = null;
+    String     $module;
+    String     $entity;
+    CoreLocale $locale;
 
     {
         // 拆解路径
         int i;
-        _module = ActionDriver.getOriginPath(request);
-        i = _module.lastIndexOf('/');
-        _module = _module.substring( 1, i );
-        i = _module.lastIndexOf('/');
-        _entity = _module.substring( 1+ i );
-        _module = _module.substring( 0, i );
+        $module = ActionDriver.getOriginPath(request);
+        i = $module.lastIndexOf('/');
+        $module = $module.substring( 1, i );
+        i = $module.lastIndexOf('/');
+        $entity = $module.substring( 1+ i );
+        $module = $module.substring( 0, i );
 
         // 获取语言
-        _locale = CoreLocale.getInstance( ).clone(  );
-        _locale.fill(_module);
-        _locale.fill(_module +"/"+ _entity);
+        $locale = CoreLocale.getInstance( ).clone(  );
+        $locale.fill($module);
+        $locale.fill($module +"/"+ $entity);
 
         // 查找标题
-        String[] a= {_module +"/"+ _entity , _module , "centra"};
+        String[] a= {$module +"/"+ $entity , $module , "centra"};
         for (String name : a) try {
             NaviMap site = NaviMap.getInstance ( name );
             Map menu;
-            menu  = site.getMenu(_module +"/"+ _entity +"/");
+            menu  = site.getMenu($module +"/"+ $entity +"/");
             if (menu != null) {
-                    _title  = (String) menu.get("text");
-                if (_title != null) {
-                    _title  = _locale.translate(_title);
+                    $hide   = "HIDE".equals(menu.get("hrel"));
+                    $title  = (String) menu.get("text");
+                if ($title != null) {
+                    $title  = $locale.translate($title);
                 } else {
-                    _title  = "";
+                    $title  = "";
                 }
                 break;
             }
-            menu  = site.getMenu(_module +"/#"+_entity);
+            menu  = site.getMenu($module +"/#"+$entity);
             if (menu != null) {
-                    _title  = (String) menu.get("text");
-                if (_title != null) {
-                    _title  = _locale.translate(_title);
+                    $hide   = "HIDE".equals(menu.get("hrel"));
+                    $title  = (String) menu.get("text");
+                if ($title != null) {
+                    $title  = $locale.translate($title);
                 } else {
-                    _title  = "";
+                    $title  = "";
                 }
                 break;
             }
@@ -76,8 +79,8 @@
         }
 
         // 没菜单配置则抛出资源缺失异常
-        if (_title == null) {
-            throw new HongsException(404, _locale.translate("core.error.no.thing"));
+        if ($title == null) {
+            throw new HongsException(404, $locale.translate("core.error.no.thing"));
         }
     }
 %>

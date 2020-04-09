@@ -318,20 +318,10 @@ function gainFlds(fields, area) {
         var input = $(this).find(   "[name],[data-fn]"   ).first();
         var text  = label.text();
         var hint  = input.attr("placeholder");
-        var type  = input.attr("type") || input.prop("tagName");
         var name  = input.attr("name") || input.attr("data-fn");
+        var type  = input.attr("type") || input.prop("tagName");
         var required = input.prop("required") || input.data("required") ? "true" : "";
         var repeated = input.prop("multiple") || input.data("repeated") ? "true" : "";
-        var params   = {};
-
-        if (name.substr(0, 1) === "-") {
-            name  = "-";
-        } else
-        if (name == "@") {
-            type  = "" ;
-            text  = "" ;
-            hint  = "" ;
-        }
 
             type  = type.toLowerCase ( );
         if (type == "ul"
@@ -339,11 +329,28 @@ function gainFlds(fields, area) {
         ||  type == "textarea") {
             type  = $(this).data("type");
         }
-        if (type == "image") {
-            params["__rule__"] = "Thumb";
+
+        var params = {
+            "__name__": name,
+            "__type__": type,
+            "__text__": text,
+            "__hint__": hint,
+            "__required__": required ,
+            "__repeated__": repeated
+        };
+
+        if (/^\-/.test(name)) {
+            params["__name__"] = "-" ;
+        } else
+        if (/^@$/.test(name)) {
+            delete params["__type__"];
+            delete params["__text__"];
+            delete params["__hint__"];
+            delete params["__required__"];
+            delete params["__repeated__"];
         }
 
-        var a = input.get(0).attributes ;
+        var a = input.get(0).attributes;
         for(var i = 0; i < a.length; i ++) {
             var v = a[i].nodeValue;
             var k = a[i].nodeName;
@@ -386,7 +393,7 @@ function gainFlds(fields, area) {
                 selected.push( $(this).val());
                 }
             });
-            input.change();
+            input.change( );
             params["datalist"] = JSON.stringify(datalist);
             params["selected"] = JSON.stringify(selected);
         } else
@@ -399,18 +406,12 @@ function gainFlds(fields, area) {
                 selected.push( $(this).val());
                 }
             });
-            input.change();
+            input.change( );
             params["datalist"] = JSON.stringify(datalist);
             params["selected"] = JSON.stringify(selected);
         }
-        fields.push($.extend({
-            "__name__": name,
-            "__type__": type,
-            "__text__": text,
-            "__hint__": hint,
-            "__required__": required,
-            "__repeated__": repeated
-        }, params));
+
+        fields.push(params);
     });
 }
 
@@ -480,7 +481,8 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             }
             if (/^__/.test(  k  )
             && !input.attr("data-"+ k )
-            &&  group.attr("data-type") !== "-" ) {
+            &&  group.attr("data-type") !== "-" 
+            &&  group.attr("data-type") !== "_" ) {
                 continue;
             }
             if (k === "datalist") {

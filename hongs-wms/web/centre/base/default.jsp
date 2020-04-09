@@ -3,10 +3,16 @@
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
+<%
+    // 仅开放接口则抛出资源缺失异常
+    if ($hide) {
+        throw new HongsException(404, $locale.translate("core.error.no.thing"));
+    }
+%>
 <!doctype html>
 <html>
     <head>
-        <title><%=_title%></title>
+        <title><%=$title%></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <base href="<%=request.getContextPath()%>/">
@@ -25,16 +31,16 @@
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centre.js" ></script>
         <script type="text/javascript" src="centre/base.min.js"></script>
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/defines.js"></script>
+        <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
         <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;
+            HsDEPS["<%=request.getContextPath()%>/<%=$module%>/<%=$entity%>/defines.js"]=1;
             HsDEPS["__DEFINED__"]=1;
             $(function(){
                 HsPops($("#main-context"), {
-                    listUrl: "<%=_module%>/<%=_entity%>/list.html",
-                    infoUrl: "<%=_module%>/<%=_entity%>/info.html",
-                    formUrl: "<%=_module%>/<%=_entity%>/form.html",
-                    addsUrl: "<%=_module%>/<%=_entity%>/form_init.html"
+                    listUrl: "<%=$module%>/<%=$entity%>/list.html",
+                    infoUrl: "<%=$module%>/<%=$entity%>/info.html",
+                    formUrl: "<%=$module%>/<%=$entity%>/form.html",
+                    addsUrl: "<%=$module%>/<%=$entity%>/form_init.html"
                 });
             });
         </script>
@@ -42,7 +48,7 @@
     <body>
         <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
             <div class="container">
-                <div class="row" data-load="centre/head.jsp?active=<%=encodeURL(_module+"/"+_entity+"/")%>"></div>
+                <div class="row" data-load="centre/head.jsp?active=<%=encodeURL($module+"/"+$entity+"/")%>"></div>
             </div>
         </nav>
         <div id="bodybox">

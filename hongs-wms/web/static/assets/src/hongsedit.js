@@ -354,6 +354,12 @@ function setEditor(node, func) {
                         });
                     }
                 },
+                codemirror : {
+                    mode   : "text/html",
+                    htmlMode     : true ,
+                    lineNumbers  : true ,
+                    lineWrapping : true
+                },
                 styleTags  : [ 'p' , 'h6', 'h5', 'h4', 'h3', 'h2', 'h1' ],
                 colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
                 placeholder: $(this).attr("placeholder") || "",

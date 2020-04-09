@@ -9,7 +9,7 @@
 <%@page import="java.util.LinkedHashMap"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.Set"%>
-<%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
+<%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%!
     /**
      * 获取全局搜索字段
@@ -105,7 +105,7 @@
                 }
 
                 if (_fields != null && name.startsWith("centre/") ) {
-                    name = "centra/" + name.substring(7);
+                    name = "centra/" + name.substring (7);
                 } else {
                     break;
                 }

@@ -3,10 +3,16 @@
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
+<%
+    // 仅开放接口则抛出资源缺失异常
+    if ($hide) {
+        throw new HongsException(404, $locale.translate("core.error.no.thing"));
+    }
+%>
 <!doctype html>
 <html>
     <head>
-        <title><%=_title%></title>
+        <title><%=$title%></title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
         <base href="<%=request.getContextPath()%>/">
         <link rel="icon" href="favicon.ico" type="image/x-icon"/>
@@ -24,16 +30,16 @@
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centra.js" ></script>
         <script type="text/javascript" src="centra/base.min.js"></script>
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/defines.js"></script>
+        <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
         <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=_module%>/<%=_entity%>/defines.js"]=1;
+            HsDEPS["<%=request.getContextPath()%>/<%=$module%>/<%=$entity%>/defines.js"]=1;
             HsDEPS["__DEFINED__"]=1;
         </script>
     </head>
     <body>
         <div id="context">
             <div id="headbox">
-                <div id="menu-context" data-load="centra/head.jsp?active=<%=encodeURL(_module+"/"+_entity+"/")%>"></div>
+                <div id="menu-context" data-load="centra/head.jsp?active=<%=encodeURL($module+"/"+$entity+"/")%>"></div>
             </div>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
@@ -52,7 +58,7 @@
                     </ol>
                     <div class="labs laps">
                         <div></div>
-                        <div data-load="<%=_module%>/<%=_entity%>/list.html"></div>
+                        <div data-load="<%=$module%>/<%=$entity%>/list.html"></div>
                     </div>
                 </div>
             </div>

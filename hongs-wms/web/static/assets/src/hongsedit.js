@@ -203,18 +203,127 @@ function setEditor(node, func) {
                             contents: '<i class="note-icon-eraser"></i>',
                             tooltip : $.summernote.lang[lang].font.clear,
                             click : function() {
-                                var code ;
-                                code = $(that).summernote("code");
-                                if ( ! /<\w+[^>]+>/.test ( code )) {
-                                    code = code.replace(/^/g, '<p>');
-                                    code = code.replace(/$/g,'</p>');
-                                } else {
-                                    code = code.replace(/<!--[\S\s]*?-->/mg, '');
-                                    code = code.replace(/(<font(\s[^>]*)?>|<\/font>)/mg, '');
-                                    code = code.replace(/(<span(\s[^>]*)?>|<\/span>)/mg, '');
-                                    code = code.replace(/\s(style|class|align|color)=\"[\S\s]*?\"/mg, '');
-                                }
-                                $(that).summernote("code", code );
+                                $.hsMask({
+                                    title: "富文本格式化工具",
+                                    html : '<form onsubmit="return false">'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">字体</label>'
++ '<div class="col-xs-6"><input class="form-control" type="text"   name="font-family" value=""  data-unit=""   list="hs-font-list">'
++ '<datalist id="hs-font-list">'
++ '<option value="SimSun" style="font-family: SimSun">宋体</option>'
++ '<option value="SimHei" style="font-family: SimHei">黑体</option>'
++ '<option value="KaiTi"  style="font-family: KaiTi" >楷体</option>'
++ '</datalist></div>'
++ '</div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">字号</label>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="font-size"   value="0" data-unit="px" step="1"   min="0" max="36"></div>'
++ '<div class="col-xs-2 form-control-static">(px)</div>'
++ '</div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">行高</label>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="line-height" value="0" data-unit="em" step="0.1" min="0" max="8" ></div>'
++ '<div class="col-xs-2 form-control-static">(em)</div>'
++ '</div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">缩进</label>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="text-indent" value="0" data-unit="em" step="0.5" min="0" max="8" ></div>'
++ '<div class="col-xs-2 form-control-static">(em)</div>'
++ '</div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">段尾间距</label>'
++ '<div class="col-xs-4"><input class="form-control" type="number" name="margin-bottom" value="0" data-unit="px" step="1" min="0" max="80"></div>'
++ '<div class="col-xs-2 form-control-static">(px)</div>'
++ '</div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">文本对齐</label>'
++ '<div class="col-xs-4"><select class="form-control" name="text-align" data-unit="">'
++ '<option value=""></option>'
++ '<option value="center" > 居中对齐</option>'
++ '<option value="justify"> 两端对齐</option>'
++ '</select>'
++ '</div></div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">图片样式</label>'
++ '<div class="col-xs-8 radio checkbox">'
++ '<label><input type="checkbox" name="pics" data-float="" data-margin="0 auto" data-display="block"> 居中</label>'
++ '<label><input type="checkbox" name="picw" data-width="100%"> 宽 100%</label>'
++ '</div></div>'
++ '<div class="form-group row">'
++ '<label class="col-xs-4 text-right control-label form-control-static">应用范围</label>'
++ '<div class="col-xs-8 radio">'
++ '<label><input type="radio" name="area" value="range" checked="checked" > 选区</label>'
++ '<label><input type="radio" name="area" value="whole"> 全文</label>'
++ '<label><input type="radio" name="area" value="clean"> 重置</label>'
++ '</div></div>'
++ '</form>'
+                                } , {
+                                    label: "应用",
+                                    glass: "btn-primary",
+                                    click: function() {
+                                        var form = $(this).closest(".modal-content").find("form");
+                                        var area = form.find ("[name=area]:checked").val ( /**/ );
+                                        var pics = {width:"", margin:"", display:""};
+                                        var opts = {};
+                                        var list ;
+                                        // 清理内容数据
+                                        switch (area) {
+                                            case 'range':
+                                                list = $(that).summernote("getLastRange").nodes();
+                                                break;
+                                            case 'whole':
+                                                list = $(that).data("summernote").layoutInfo.editable;
+                                                list = $(list).find("p,pre,div,ul,ol,h1,h2,h3,h4,h5,h6,table");
+                                                break;
+                                            case 'clean':
+                                                var code ;
+                                                code = $(that).summernote("code");
+                                                if ( ! /<\w+[^>]+>/.test ( code )) {
+                                                    code = code.replace(/^/g, '<p>');
+                                                    code = code.replace(/$/g,'</p>');
+                                                } else {
+                                                    code = code.replace(/<!--[\S\s]*?-->/mg, '');
+                                                    code = code.replace(/(<font(\s[^>]*)?>|<\/font>)/mg, '');
+                                                    code = code.replace(/(<span(\s[^>]*)?>|<\/span>)/mg, '');
+                                                    code = code.replace(/\s(style|class|align|color)=\"[\S\s]*?\"/mg, '');
+                                                }
+                                                $(that).summernote("code", code );
+                                                list = $(that).data("summernote").layoutInfo.editable;
+                                                list = $(list).find("p,pre,div,ul,ol,h1,h2,h3,h4,h5,h6,table");
+                                                break;
+                                        }
+                                        // 获取图片样式
+                                        form.find("[name^=pic]").each(function() {
+                                            if ($(this).prop("checked")) {
+                                                $.extend( pics, $(this).data() );
+                                            }
+                                        });
+                                        // 获取基本样式
+                                        form.find("[data-unit]").each(function() {
+                                            var v = $(this).val ( /**/ );
+                                            var u = $(this).data("unit");
+                                            var n = $(this).attr("name");
+                                            if (v === "0" ) v = u = "";
+                                            opts[n] = v + u;
+                                        });
+                                        // 设置段落样式
+                                        for(var i = 0; i < list.length; i ++) {
+                                            var p = $(list[i]).closest("p,pre,div,ul,ol,h1,h2,h3,h4,h5,h6,table,.note-editable");
+                                            if (p.is(".note-editable")) {
+                                                continue;
+                                            }
+                                            p.css(opts);
+                                            var m = p.find("img");
+                                            if (m.size( ) === 0 ) {
+                                                continue;
+                                            }
+                                            m.css(pics);
+                                        }
+                                    }
+                                } , {
+                                    label: "取消",
+                                    glass: "btn-default"
+                                } );
                             }
                         }).render();
                     }
@@ -242,12 +351,6 @@ function setEditor(node, func) {
                             }
                         });
                     }
-                },
-                codemirror : {
-                    mode   : "text/html",
-                    htmlMode     : true ,
-                    lineNumbers  : true ,
-                    lineWrapping : true
                 },
                 styleTags  : [ 'p' , 'h6', 'h5', 'h4', 'h3', 'h2', 'h1' ],
                 colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},

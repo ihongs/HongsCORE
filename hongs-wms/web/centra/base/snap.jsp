@@ -2,9 +2,9 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
 <%
-    String _pageId = (_module + "-" + _entity + "-snap").replace('/', '-');
+    String _pageId = ($module + "-" + $entity + "-snap").replace('/', '-');
 %>
-<h2><%=_locale.translate("fore.record.title", _title)%></h2>
+<h2><%=$locale.translate("fore.record.title", $title)%></h2>
 <div id="<%=_pageId%>" class="snap-list">
     <form class="findbox">
         <ul class="nav nav-tabs board clearfix">
@@ -93,7 +93,7 @@
     context.find("[name='ctime.<%=Cnst.LE_REL%>']").val(hsGetSeria(loadpms, "ctime_le"));
 
     var listobj = context.hsList({
-        loadUrl : "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
+        loadUrl : "<%=$module%>/<%=$entity%>/reveal.act?<%=Cnst.ID_KEY%>.=$<%=Cnst.ID_KEY%>&<%=Cnst.OB_KEY%>=-ctime&<%=Cnst.RB_KEY%>=-data,user.*&user=$user&meno=$meno",
         send    : hsSendWithMemo,
         _fill_stat: function(td , stat) {
             var st = statmap['' + stat];
@@ -122,7 +122,7 @@
     }
 
     // 权限检查
-    if (! hsChkUri("<%=_module%>/<%=_entity%>/revert.act")) {
+    if (! hsChkUri("<%=$module%>/<%=$entity%>/revert.act")) {
         var btn = context.find(".revert");
         var spn = btn.siblings(  "span" );
         btn.remove();
@@ -134,7 +134,7 @@
         var tr = $(this).closest("tr");
         var id =      tr.data(   "id");
         var ct =      tr.data("ctime");
-        listobj.send (tr, ms, "<%=_module%>/<%=_entity%>/revert.act"    , {id: id, rtime: ct});
+        listobj.send (tr, ms, "<%=$module%>/<%=$entity%>/revert.act"    , {id: id, rtime: ct});
     });
 
     context.on("click", ".review", function() {
@@ -142,7 +142,7 @@
         var tr = $(this).closest("tr");
         var id =      tr.data(   "id");
         var ct =      tr.data("ctime");
-        listobj.open (tr, lo, "<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
+        listobj.open (tr, lo, "<%=$module%>/<%=$entity%>/info_snap.html", {id: id, ctime: ct});
     });
 
     context.on("click", ".same-r", function() {
@@ -152,7 +152,7 @@
         var id =    tr.data(     "id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
+        lo.hsOpen ("<%=$module%>/<%=$entity%>/snap.html", { id : id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
     });
 
     context.on("click", ".same-u", function() {
@@ -162,7 +162,7 @@
         var id =    tr.data("user_id");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
+        lo.hsOpen ("<%=$module%>/<%=$entity%>/snap.html", {user: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
     });
 
     context.on("click", ".same-m", function() {
@@ -172,7 +172,7 @@
         var id =    tr.data(   "meno");
         var ge = context.find("[name='ctime.<%=Cnst.GE_REL%>']").val();
         var le = context.find("[name='ctime.<%=Cnst.LE_REL%>']").val();
-        lo.hsOpen ("<%=_module%>/<%=_entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
+        lo.hsOpen ("<%=$module%>/<%=$entity%>/snap.html", {meno: id, ctime_ge: ge, ctime_le: le}, function() { $(this).hsName(tt); });
     });
 
     context.on("click", ".nav li", function() {

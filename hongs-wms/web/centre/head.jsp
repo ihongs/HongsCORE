@@ -2,7 +2,6 @@
 <%@page import="java.util.Set"%>
 <%@page import="java.util.List"%>
 <%@page import="java.util.regex.Pattern"%>
-<%@page import="io.github.ihongs.Cnst"%>
 <%@page import="io.github.ihongs.Core"%>
 <%@page import="io.github.ihongs.CoreLocale"%>
 <%@page import="io.github.ihongs.action.ActionHelper"%>

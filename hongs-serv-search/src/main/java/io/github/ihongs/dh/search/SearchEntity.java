@@ -36,6 +36,7 @@ public class SearchEntity extends LuceneRecord {
 
     private final Map<String, Document> WRITES = new LinkedHashMap();
     private Writer WRITER = null ;
+    private Document DOCK = null ;
 
     public SearchEntity(Map form , String path , String name) {
         super(form , path , name);
@@ -193,6 +194,7 @@ public class SearchEntity extends LuceneRecord {
             throw new HongsExemption(0x102d, ex);
         } finally {
             WRITES.clear();
+            DOCK = null;
         }
     }
 
@@ -214,14 +216,15 @@ public class SearchEntity extends LuceneRecord {
             throw new HongsExemption(0x102d, ex);
         } finally {
             WRITES.clear();
+            DOCK = null;
         }
     }
 
     @Override
     public void addDoc(Document doc)
     throws HongsException {
-        String id = doc.getField(Cnst.ID_KEY).stringValue();
-        WRITES.put(id, doc );
+        String  id  =  doc . get( Cnst.ID_KEY );
+        WRITES.put(id, doc);
         if (!REFLUX_MODE) {
             commit();
         }
@@ -230,7 +233,7 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public void setDoc(String id, Document doc)
     throws HongsException {
-        WRITES.put(id, doc );
+        WRITES.put(id, doc);
         if (!REFLUX_MODE) {
             commit();
         }
@@ -239,7 +242,7 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public void delDoc(String id)
     throws HongsException {
-        WRITES.put(id, null);
+        WRITES.put(id,null);
         if (!REFLUX_MODE) {
             commit();
         }
@@ -248,11 +251,23 @@ public class SearchEntity extends LuceneRecord {
     @Override
     public Document getDoc(String id)
     throws HongsException {
-        Document doc = WRITES.get(id);
-        if (doc == null ) {
-            doc  = super . getDoc(id);
+        if (WRITES.containsKey(id)) {
+            return  WRITES.get(id);
         }
-        return   doc;
+
+        // 规避遍历更新时重复读取
+        if (null != DOCK && id.equals(DOCK.get(Cnst.ID_KEY))) {
+            return  DOCK ;
+        }
+
+        Document doc = super.getDoc(id);
+        DOCK = doc;
+        return doc;
+    }
+
+    @Override
+    protected void preDoc(Document doc) {
+        DOCK = doc;
     }
 
     private static class Writer implements AutoCloseable, Core.Cleanable, Core.Singleton {

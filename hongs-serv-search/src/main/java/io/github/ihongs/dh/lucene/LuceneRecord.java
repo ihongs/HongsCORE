@@ -646,6 +646,16 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     //** 组件封装 **/
 
     /**
+     * 遍历暂存文档(供 Loop.next 专用)
+     * 可实现此方法用于中间缓存
+     *
+     * @param doc
+     */
+    protected void preDoc(Document doc) {
+        // Nothing to do.
+    }
+
+    /**
      * 填充存储数据(将 map 填充到 doc)
      * 可覆盖此方法补充额外数据
      *
@@ -2027,8 +2037,10 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
                 throw new NullPointerException("hasNext not run?");
             }
             try {
-                /*Read*/ doc = docs[ i ++ ];
-                Document dox = finder.doc(doc.doc);
+                Document dox;
+                doc = docs[i ++];
+                dox = finder.doc( doc.doc );
+                        that.preDoc(dox   );
                 return  that.padDat(dox, r);
             } catch (IOException e) {
                 throw new HongsExemption(e);

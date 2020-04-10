@@ -208,11 +208,11 @@ function setEditor(node, func) {
                                     html : '<form onsubmit="return false">'
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">字体</label>'
-+ '<div class="col-xs-6"><input class="form-control" type="text"   name="font-family" value=""  data-unit=""   list="hs-font-list">'
++ '<div class="col-xs-6"><input class="form-control" type="text"   name="font-family" value="" data-unit="" list="hs-font-list">'
 + '<datalist id="hs-font-list">'
-+ '<option value="SimSun" style="font-family: SimSun">宋体</option>'
-+ '<option value="SimHei" style="font-family: SimHei">黑体</option>'
-+ '<option value="KaiTi"  style="font-family: KaiTi" >楷体</option>'
++ '<option value="宋体,STSong"  style="font-family: 宋体,STSong" >宋体</option>'
++ '<option value="黑体,STHeiti" style="font-family: 黑体,STHeiti">黑体</option>'
++ '<option value="楷体,STKaiti" style="font-family: 楷体,STKaiti">楷体</option>'
 + '</datalist></div>'
 + '</div>'
 + '<div class="form-group row">'
@@ -252,8 +252,8 @@ function setEditor(node, func) {
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">应用范围</label>'
 + '<div class="col-xs-8 radio">'
-+ '<label><input type="radio" name="area" value="range" checked="checked" > 选区</label>'
-+ '<label><input type="radio" name="area" value="whole"> 全文</label>'
++ '<label><input type="radio" name="area" value="range" checked="checked"> 选段</label>'
++ '<label><input type="radio" name="area" value="whole"> 全部</label>'
 + '<label><input type="radio" name="area" value="clean"> 清理</label>'
 + '</div></div>'
 + '</form>'
@@ -288,6 +288,7 @@ function setEditor(node, func) {
                                                     code = code.replace(/\s(style|class|align|color)=\"[\S\s]*?\"/mg, '');
                                                 }
                                                 $(that).summernote("code", code );
+                                                // 清理后设样式
                                                 list = $(that).data("summernote").layoutInfo.editable;
                                                 list = $(list).find("p,pre,div,ul,ol,h1,h2,h3,h4,h5,h6,table");
                                                 break;
@@ -310,7 +311,7 @@ function setEditor(node, func) {
                                         });
                                         // 设置段落样式
                                         for(var i = 0; i < list.length; i ++) {
-                                            var p = $(list[i]).closest("p,pre,div,ul,ol,h1,h2,h3,h4,h5,h6,table,.note-editable");
+                                            var p = $(list[i]).closest("p,pre,div,h1,h2,h3,h4,h5,h6,ul,ol,table,blockquote,.note-editable");
                                             if (p.is(".note-editable")) {
                                                 continue;
                                             }
@@ -320,6 +321,10 @@ function setEditor(node, func) {
                                                 continue;
                                             }
                                             m.css(pics);
+                                            // 段首缩进不可用于标题/列表/表格
+                                            if (opts ["text-indent"] && p.is("h1,h2,h3,h4,h5,h6,ul,ol,table")) {
+                                                p.css("text-indent", "");
+                                            }
                                         }
                                     }
                                 } , {
@@ -348,7 +353,7 @@ function setEditor(node, func) {
                                 data = hsResponse(data);
                                 if ( ! data.ok ) return;
                                 for(var i = 0 ; i < data.file.length ; i ++) {
-                                    $(that).summernote("insertImage" , data.file[i] );
+                                    $(that).summernote("insertImage" , data.file[i]);
                                 }
                             }
                         });
@@ -360,9 +365,9 @@ function setEditor(node, func) {
                     lineNumbers  : true ,
                     lineWrapping : true
                 },
-                styleTags  : [ 'p' , 'h6', 'h5', 'h4', 'h3', 'h2', 'h1' ],
+                styleTags  : ['p', 'h6','h5', 'h4','h3', 'h2','h1', 'pre','blockquote'],
                 colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
-                placeholder: $(this).attr("placeholder") || "",
+                placeholder: $(this).attr("placeholder") ||"",
                 minHeight  : $(this).height() * 1 ,
                 maxHeight  : $(this).height() * 2 ,
                 lang: lang

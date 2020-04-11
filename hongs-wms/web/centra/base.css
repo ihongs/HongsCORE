@@ -52,7 +52,7 @@ html, body {
 }
 #main-namebar {
     top   : 0;
-    background: #404444 linear-gradient(-15deg, #404444 5%, #404f4f 50%, #404444 50%);
+    background: #404444 linear-gradient(-24deg, #404444 5%, #404f4f 50%, #404444 50%);
     padding: 18px 15px;
     text-align: center;
     text-shadow: 0 -1px 3px #000;
@@ -262,13 +262,12 @@ html, body {
 
 #head-powered {
     writing-mode: vertical-lr;
-    text-shadow: 0 0 1px #000;
     text-align: center;
     font-size : 8px;
     position: fixed;
     bottom: 8px;
     right : 0px;
-    color: #eee;
+    color: #ccc;
 }
 #head-powered a {
     color: #fcc;

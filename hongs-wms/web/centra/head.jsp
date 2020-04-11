@@ -106,13 +106,13 @@
     }
 %>
 
+<div id="main-menubar">
+    <ul>
+<%=makeMenu(menu, acti)%>
+    </ul>
+</div>
+
 <div id="user-menubar">
-    <a href="javascript:;" style="display: block;">
-        <div class="caret"></div>
-        <div class="badge"></div>
-        <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
-        <div class="uname" title="<%=name%>"><%=name%></div>
-    </a>
     <ul>
         <li>
             <a href="javascript:;" id="user-set">
@@ -125,20 +125,26 @@
             </a>
         </li>
     </ul>
+    <a href="javascript:;" class="dropup" style="display: block;">
+        <div class="caret"></div>
+        <div class="badge"></div>
+        <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
+        <div class="uname" title="<%=name%>"><%=name%></div>
+    </a>
 </div>
 
-<div id="main-menubar">
-    <ul>
-<%=makeMenu(menu, acti)%>
-    </ul>
-</div>
-
-<div id="head-handled">
-    <a href="javascript:;"></a>
+<div id="main-namebar">
+    <div><%=CoreLocale.getInstance().translate("fore.centra.title")%></div>
+    <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
 </div>
 
 <div id="head-powered">
+    &COPY; <%=CoreLocale.getInstance().translate("fore.copy.right")%>,
     Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
+</div>
+
+<div id="head-handler">
+    <a href="javascript:;"></a>
 </div>
 
 <script type="text/javascript">
@@ -235,9 +241,9 @@
         menubar.find("li.acting> a ").addClass("dropup");
         $().add(menubar).add(userbar)
            .on ("click", "a", function() {
-            var la = $( this );
-            var ul = la.next();
-            if (ul.size(  )  ) {
+            var la = $(this);
+            var ul = la.siblings( "ul" );
+            if (ul.size( ) ) {
                 ul.slideToggle( "fast" );
                 la.toggleClass("dropup");
                 return false;
@@ -245,7 +251,7 @@
         });
 
         // 边栏隐藏与显示
-        $("#head-handled").click(function() {
+        $("#head-handler").click(function() {
             $( "#context").toggleClass("fullest");
         });
     })(jQuery);

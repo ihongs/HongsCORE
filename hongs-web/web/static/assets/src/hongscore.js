@@ -2311,7 +2311,7 @@ $.fn.hsReady = function() {
     });
 
     // 写标题
-    box.hsName ( );
+    box.hsHead ( );
 
     // 在加载前触发事件
     box.trigger("hsReady");
@@ -2442,8 +2442,47 @@ $.fn.hsTdel = function(ref) {
     return [tab, pne];
 };
 
+// 国际化
+$.fn.hsI18n = function(rep) {
+    var box = $(this);
+    var lng;
+
+    if (rep === undefined ) {
+        rep = box.hsData( );
+    }
+
+    if (box.attr("data-i18n")) {
+        lng = box.attr("data-i18n");
+        lng = hsGetLang(lng, rep);
+        box.text( lng );
+    } else
+    if ($(this).text()) {
+        lng = box.text(/*content*/);
+        lng = hsGetLang(lng, rep);
+        box.text( lng );
+    }
+
+    if (box.attr("alt")) {
+        lng = box.attr("alt");
+        lng = hsGetLang(lng, rep);
+        box.attr("alt" , lng);
+    }
+    if (box.attr("title")) {
+        lng = box.attr("title");
+        lng = hsGetLang(lng, rep);
+        box.attr("title" , lng);
+    }
+    if (box.attr("placeholder")) {
+        lng = box.attr("placeholder");
+        lng = hsGetLang(lng, rep);
+        box.attr("placeholder" , lng);
+    }
+
+    return box;
+};
+
 // 标题名
-$.fn.hsName = function(tit) {
+$.fn.hsHead = function(tit) {
     var box = $(this);
     var prt = box.parent( );
     var hea = box.children("h1,h2,h3,h4,h5,h6");
@@ -2487,45 +2526,7 @@ $.fn.hsName = function(tit) {
 
     return box;
 };
-
-// 国际化
-$.fn.hsI18n = function(rep) {
-    var box = $(this);
-    var lng;
-
-    if (rep === undefined ) {
-        rep = box.hsData( );
-    }
-
-    if (box.attr("data-i18n")) {
-        lng = box.attr("data-i18n");
-        lng = hsGetLang(lng, rep);
-        box.text( lng );
-    } else
-    if ($(this).text()) {
-        lng = box.text(/*content*/);
-        lng = hsGetLang(lng, rep);
-        box.text( lng );
-    }
-
-    if (box.attr("alt")) {
-        lng = box.attr("alt");
-        lng = hsGetLang(lng, rep);
-        box.attr("alt" , lng);
-    }
-    if (box.attr("title")) {
-        lng = box.attr("title");
-        lng = hsGetLang(lng, rep);
-        box.attr("title" , lng);
-    }
-    if (box.attr("placeholder")) {
-        lng = box.attr("placeholder");
-        lng = hsGetLang(lng, rep);
-        box.attr("placeholder" , lng);
-    }
-
-    return box;
-};
+$.fn.hsName = $.fn.hsHead; // 兼容旧版命名
 
 /**
  * 配置数据

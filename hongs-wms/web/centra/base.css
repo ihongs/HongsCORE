@@ -31,11 +31,46 @@ html, body {
 #context.fullest>#headbox {
     width: 0;
 }
-#context.fullest #head-handled {
+#context.fullest #head-handler {
     left : 0;
 }
-#context.fullest #head-powered {
+#context.fullest #main-namebar ,
+#context.fullest #user-menubar {
     display: none;
+}
+
+/** 标题 **/
+
+#user-menubar ,
+#main-namebar {
+    width: 200px;
+    position: fixed;
+}
+#user-menubar {
+    bottom: 0;
+    background: #d0d0d0;
+}
+#main-namebar {
+    top   : 0;
+    background: #404444 linear-gradient(-15deg, #404444 5%, #404f4f 50%, #404444 50%);
+    padding: 18px 15px;
+    text-align: center;
+    text-shadow: 0 -1px 3px #000;
+    color: #eee;
+}
+#main-menubar {
+    margin-top   : 90px;
+    margin-bottom: 72px;
+}
+#main-namebar>div:nth-child(1) {
+    font-weight: bolder;
+    font-size  : 18px;
+    line-height: 36px;
+}
+#main-namebar>div:nth-child(2) {
+    font-weight: normal;
+    font-size  : 13px;
+    line-height: 18px;
 }
 
 /** 菜单 **/
@@ -125,17 +160,12 @@ html, body {
 
 /* 头像 */
 
-#user-menubar {
-    position: relative ;
-    background: #d0d0d0;
-    border-bottom: 4px solid #ffffff;
-}
 #user-menubar .uhead {
     display: inline-block ;
     vertical-align: middle;
-    width : 44px;
-    height: 44px;
-    margin: -4px 8px -4px 10px;
+    width : 48px;
+    height: 48px;
+    margin: -6px 12px -6px 12px;
     border-radius  :  4px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
@@ -145,7 +175,7 @@ html, body {
     display: inline-block ;
     vertical-align: middle;
     color : #666;
-    width : 90px;
+    width : 108px;
     height: 36px;
     line-height: 36px;
     font-weight: 600 ;
@@ -166,9 +196,8 @@ html, body {
     margin : -8px  6px;
 }
 #user-menubar .glyphicon {
-    color: #b00;
-    width: 38px;
     top  :  2px; /* 修正字体符号偏上的问题 */
+    width: 48px;
     margin-right: 10px;
     text-align: center;
 }
@@ -202,7 +231,7 @@ html, body {
 
 /* 其他 */
 
-#head-handled {
+#head-handler {
     position: fixed;
     top  : 50%;
     left : 200px;
@@ -212,42 +241,42 @@ html, body {
     border-radius: 0 5px 5px 0;
     background: rgba(224,224,224,0.5);
 }
-#head-handled:hover {
+#head-handler:hover {
     background: rgba(196,196,196,1.0);
 }
-#head-handled a {
+#head-handler a {
     width : 0;
     height: 0;
     display: block;
     border-width: 4px;
     border-style: solid;
 }
-#context #head-handled a {
+#context #head-handler a {
     border-color: transparent #fcfcfc transparent transparent;
     margin-top: 11px;
 }
-#context.fullest #head-handled a {
+#context.fullest #head-handler a {
     border-color: transparent transparent transparent #fcfcfc;
     margin-left: 5px;
 }
 
 #head-powered {
-    background: #e0e2e2;
+    writing-mode: vertical-lr;
     text-shadow: 0 0 1px #000;
     text-align: center;
-    font-size: 10px;
+    font-size : 8px;
     position: fixed;
-    bottom:  0px;
-    width: 200px;
+    bottom: 8px;
+    right : 0px;
     color: #eee;
-}
-#head-powered:hover {
-    color: #000;
 }
 #head-powered a {
     color: #fcc;
 }
-#head-powered a:hover {
+#head-powered:hover {
+    color: #000;
+}
+#head-powered:hover a {
     color: #f00;
 }
 
@@ -266,7 +295,7 @@ html, body {
 .table-copylist th ,
 .table-copylist td {
     white-space: pre-line;
-    mso-number-format: "\\@";
+    mso-number-format: "\@";
 }
 
 /* 隐藏受限的搜索框 */

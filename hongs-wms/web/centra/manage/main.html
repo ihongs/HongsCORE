@@ -1,38 +1,69 @@
 <div id="centra-manage-main" class="jumbotron" style="margin-top: 15px;">
-    <h1>Hello, world!</h1>
-    <p>
-        如果您拥有文件管理权限，
-        可到 <b>通用/文件管理</b> 打开 <b>网站/centra/manage</b> 下的 <b>main.html</b> 文件，
-        此内容即在这个文件里面，
-        修改作为公告或其他用途。
-        更多功能请尝试左侧菜单。
-    </p>
-    <p>
-        <a class="btn btn-lg btn-info   " style="margin-right: 1em;"
-           role="button" href="centra/manage/info/"
-           data-eval="!hsChkUri('centra/info/search.act') && $(this).hide()">
-            系统信息
-        </a>
-        <a class="btn btn-lg btn-success" style="margin-right: 1em;"
-           role="button" href="centra/manage/file/"
-           data-eval="!hsChkUri('centra/file/search.act') && $(this).hide()">
-            管理文件
-        </a>
-    </p>
+    <div class="clearfix">
+        <div style="float: left; width: 96px; height: 96px;">
+            <img data-fn="head" src="" alt="" style="width: 100%; height: 100%; border-radius: 50%;">
+        </div>
+        <div style="float: left; padding-left: 24px; line-height: 96px;">
+            <span data-fn="name" style="font-size: 48px;"></span>
+            <sub data-fn="title" style="font-size: 24px; padding-left: 1em;"></sub>
+        </div>
+    </div>
+    <div class="row" style="margin-top: 24px;">
+        <div class="col-xs-6">
+            <div class="form-group">
+                <div class="form-control-static">
+                    用户名: &emsp; <span data-fn="username" data-fl="v?v:'-'"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-control-static">
+                    联系电话: &emsp; <span data-fn="phone" data-fl="v?v:'-'"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-control-static">
+                    电子邮箱: &emsp; <span data-fn="email" data-fl="v?v:'-'"></span>
+                </div>
+            </div>
+        </div>
+        <div class="col-xs-6">
+            <div class="form-group">
+                <div class="form-control-static">
+                    资料更新时间: &emsp; <span data-fn="mtime" data-ft="_datetime" data-fl="v?v*1000:'-'"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-control-static">
+                    本次登录时间: &emsp; <span data-fn="stime" data-ft="_datetime" data-fl="v?v*1000:'-'"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="form-control-static">
+                    <a href="javascript:;" onclick="$('#user-set').click()">修改资料</a>
+                    <span style="padding:0 1em;">&bull;</span>
+                    <a href="javascript:;" onclick="$('#sign-out').click()">退出登录</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+<blockquote style="font-size: inherit;">
+    <span style="padding-right: 0.5em;" data-i18n="centra.title"    ></span>
+    <span style="padding-right: 0.5em;" data-i18n="centra.sub.title"></span>
+    &copy; <span data-i18n="copy.right"></span>
+    &bull; Powered by <a href="power.html" target="_blank">HongsCORE</a>
+</blockquote>
 <script type="text/javascript">
     (function($) {
         var context = H$("#centra-manage-main");
-        
-        $.hsAjax({
-            url : "centra/mine/info.act",
-            type: "GET",
-            dataKind: "form",
-            dataType: "json",
-            success :   function(rst) {
-                rst = hsResponse(rst);
-                context.find("h1").text("Hello, "+rst.info.name+"!");
+        context.on("loadBack", function(ev, sd) {
+            sd.info.stime = window.CUST || 1;
+            if (!sd.info.head) {
+                 sd.info.head = "static/assets/img/head_icon.jpg";
             }
+        });
+        context.hsForm({
+            loadUrl : "centra/mine/info.act?ab=info"
         });
     })(jQuery);
 </script>

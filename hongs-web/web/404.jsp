@@ -68,7 +68,10 @@
         </div>
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
-                <blockquote><p>Copyleft &copy; 2019 黄弘. <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a>.</small></p></blockquote>
+                <blockquote><p>
+                    <span>&copy; <%=CoreLocale.getInstance().translate("copy.right")%></span>
+                    <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+                </p></blockquote>
             </div>
         </nav>
     </body>

@@ -128,19 +128,23 @@
     <a href="javascript:;" class="dropup" style="display: block;">
         <div class="caret"></div>
         <div class="badge"></div>
-        <div class="uhead" style="background-image:url(<%=Core.BASE_HREF%>/<%=head%>)"></div>
+        <div class="uhead" style="background-image: url(<%=head%>)">
+            <div style="background: url(static/assets/img/head_glob.png) no-repeat; background-size: 100% 100%; width: 100%; height: 100%;"></div>
+        </div>
         <div class="uname" title="<%=name%>"><%=name%></div>
     </a>
 </div>
 
 <div id="main-namebar">
-    <div><%=CoreLocale.getInstance().translate("fore.centra.title")%></div>
+    <div><%=CoreLocale.getInstance().translate("fore.centra.title"    )%></div>
     <div><%=CoreLocale.getInstance().translate("fore.centra.sub.title")%></div>
 </div>
 
 <div id="head-powered">
-    &COPY; <%=CoreLocale.getInstance().translate("fore.copy.right")%>,
-    Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
+    <p>
+        &copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%>
+        &bull; Powered by <a href="<%=Core.BASE_HREF%>/power.html" target="_blank">HongsCORE</a>
+    </p>
 </div>
 
 <div id="head-handler">

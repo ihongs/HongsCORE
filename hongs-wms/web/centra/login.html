@@ -62,7 +62,10 @@
         </div>
         <nav id="footbox" class="navbar">
             <div class="container">
-                <blockquote><p>Copyleft &copy; 2019 黄弘. <small class="pull-right">Powered by <a href="power.html" target="_blank">HongsCORE</a>.</small></p></blockquote>
+                <blockquote><p>
+                    <span>&copy; <span data-i18n="copy.right"></span></span>
+                    <small class="pull-right">Powered by <a href="power.html" target="_blank">HongsCORE</a>.</small>
+                </p></blockquote>
             </div>
         </nav>
         <script type="text/javascript">
@@ -72,6 +75,7 @@
                 // 表单
                 context.on("saveBack", function(ev, rd, md) {
                     H$('%HsCUID', rd.info.uid);
+                    H$('%HsCUST', rd.info.ust);
                     location.replace(hsFixUri(hsGetParam(location.href, "r") || "centra/"));
                 });
                 context.on("saveFail", function(ev, rd, md) {

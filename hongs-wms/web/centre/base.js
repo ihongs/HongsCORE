@@ -1,13 +1,16 @@
-/* global jQuery, HsCUID, HsForm, HsList */
+/* global jQuery, HsCUID, HsCUST, HsForm, HsList */
 
 /**
  * 设置当前用户ID
  */
 if (hsChkUri('public')) {
     window.HsCUID = H$('%HsCUID');
+    window.HsCUST = H$('%HsCUST');
 } else {
     window.HsCUID = null ;
+    window.HsCUST = null ;
     H$ ( '%HsCUID', null);
+    H$ ( '%HsCUST', null);
 }
 
 /**
@@ -23,56 +26,6 @@ $(document).on("reset", ".HsList .findbox", function() {
                .first().click();
     } , 500);
 });
-
-/**
- * 获取当前模块对象
- */
-function S$() {
-    var context = $(".HsList,.HsForm").filter(":visible:first");
-    return context.data("HsList")
-        || context.data("HsForm");
-}
-S$.src  = function() {
-    return (S$()._url || location.pathname)
-        .replace(/\?.*/, '')
-        .replace(/\/[^\/]+$/, '');
-};
-S$.send = function(url, req) {
-    var rzt;
-    $.hsAjax({
-        url     : hsFixUri   (url),
-        data    : hsSerialArr(req),
-        complete: function   (rst) {
-            rzt = hsResponse (rst , 3);
-        },
-        type    : "post",
-        dataType: "json",
-        async   : false ,
-        cache   : false ,
-        global  : false
-    });
-    return  rzt ;
-};
-S$.search = function(req) {
-    var url = S$.src() + "/search.act";
-    return S$.send(url, req);
-};
-S$.create = function(req) {
-    var url = S$.src() + "/create.act";
-    return S$.send(url, req);
-};
-S$.update = function(req) {
-    var url = S$.src() + "/update.act";
-    return S$.send(url, req);
-};
-S$.remove = function(req) {
-    var url = S$.src() + "/delete.act";
-    return S$.send(url, req);
-};
-S$.browse = function(req) {
-    var mod = S$();
-    mod.load(undefined, hsSerialMix(mod._data, req));
-};
 
 /**
  * 依据权限开放编辑

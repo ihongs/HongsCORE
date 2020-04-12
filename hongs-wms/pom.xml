@@ -145,6 +145,44 @@
                     <skip>true</skip>
                 </configuration>
             </plugin>
+            <!-- Minify css and js -->
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>yuicompressor-maven-plugin</artifactId>
+                <version>1.5.1</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compress</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <force>true</force>
+                    <jswarn>false</jswarn>
+                    <suffix>.min</suffix>
+                    <sourceDirectory>web/static/assets</sourceDirectory>
+                    <outputDirectory>web/static/assets</outputDirectory>
+                    <includes>
+                        <include>*/hongsedit.js</include>
+                    </includes>
+                    <excludes>
+                        <exclude>*/hongsedit.min.js</exclude>
+                    </excludes>
+                    <aggregations>
+                        <aggregation>
+                            <insertNewLine>true</insertNewLine>
+                            <removeIncluded>true</removeIncluded>
+                            <output>web/static/assets/hongsedit.min.js</output>
+                            <inputDir>web/static/assets/src</inputDir>
+                            <includes>
+                                <include>hongsedit.min.js</include>
+                            </includes>
+                        </aggregation>
+                    </aggregations>
+                </configuration>
+            </plugin>
             <!-- Build target system -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

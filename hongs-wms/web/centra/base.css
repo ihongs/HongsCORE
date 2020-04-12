@@ -42,6 +42,20 @@ html, body {
 
 /** 标题 **/
 
+#user-menubar {
+    padding: 12px 0;
+}
+#main-menubar {
+    padding: 18px 0;
+}
+#main-namebar {
+    padding: 18px 15px;
+}
+#main-menubar {
+    margin-top   : 90px;
+    margin-bottom: 60px;
+}
+
 #user-menubar ,
 #main-namebar {
     width: 200px;
@@ -49,19 +63,16 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    background: #d0d0d0;
+    background: #c0c0c0 linear-gradient(180deg, #d0d0d0 5%, #c0c0c0 50%, #d0d0d0 90%);
 }
 #main-namebar {
     top   : 0;
     background: #404444 linear-gradient(-24deg, #404444 5%, #404f4f 50%, #404444 50%);
-    padding: 18px 15px;
-    text-align: center;
-    text-shadow: 0 -1px 3px #000;
-    color: #eee;
 }
-#main-menubar {
-    margin-top   : 90px;
-    margin-bottom: 72px;
+#main-namebar>div {
+    color: #eee;
+    text-align : center;
+    text-shadow: 0 -1px 3px #000;
 }
 #main-namebar>div:nth-child(1) {
     font-weight: bolder;
@@ -76,10 +87,6 @@ html, body {
 
 /** 菜单 **/
 
-#main-menubar ,
-#user-menubar {
-    padding: 18px 0;
-}
 #main-menubar ul ,
 #user-menubar ul {
     padding: 0;
@@ -166,8 +173,8 @@ html, body {
     vertical-align: middle;
     width : 48px;
     height: 48px;
-    margin: -6px 12px -6px 12px;
-    border-radius  :  4px;
+    margin: -8px 6px;
+    border-radius  :  50%;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
@@ -176,10 +183,9 @@ html, body {
     display: inline-block ;
     vertical-align: middle;
     color : #666;
-    width : 108px;
+    width :120px;
     height: 36px;
     line-height: 36px;
-    font-weight: 600 ;
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
@@ -198,12 +204,15 @@ html, body {
 }
 #user-menubar .glyphicon {
     top  :  2px; /* 修正字体符号偏上的问题 */
-    width: 48px;
+    width: 36px;
     margin-right: 10px;
     text-align: center;
 }
+#user-menubar:hover .uname {
+    color: #b00;
+}
 #user-menubar:hover .uhead {
-    box-shadow: 10px 10px 100px 10px #fff;
+    box-shadow: 0 0 30px #b00;
 }
 
 /* 图标 */
@@ -240,10 +249,10 @@ html, body {
     height: 30px;
     margin-top: -15px;
     border-radius: 0 5px 5px 0;
-    background: rgba(196,196,196,0.5);
+    background: rgba(210,210,210,0.5);
 }
 #head-handler:hover {
-    background: rgba(196,196,196,1.0);
+    background: rgba(210,210,210,1.0);
 }
 #head-handler a {
     width : 0;
@@ -253,11 +262,11 @@ html, body {
     border-style: solid;
 }
 #context #head-handler a {
-    border-color: transparent #fcfcfc transparent transparent;
+    border-color: transparent #fff transparent transparent;
     margin-top: 11px;
 }
 #context.fullest #head-handler a {
-    border-color: transparent transparent transparent #fcfcfc;
+    border-color: transparent transparent transparent #fff;
     margin-left: 5px;
 }
 

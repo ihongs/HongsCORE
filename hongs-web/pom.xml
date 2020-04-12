@@ -113,7 +113,6 @@
                 </configuration>
             </plugin>
             <!-- Minify css and js -->
-            <!--
             <plugin>
                 <groupId>net.alchim31.maven</groupId>
                 <artifactId>yuicompressor-maven-plugin</artifactId>
@@ -159,7 +158,6 @@
                     </aggregations>
                 </configuration>
             </plugin>
-            //-->
             <!-- Build target system -->
             <plugin>
                 <artifactId>maven-antrun-plugin</artifactId>

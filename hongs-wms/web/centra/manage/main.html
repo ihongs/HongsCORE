@@ -57,7 +57,7 @@
     (function($) {
         var context = H$("#centra-manage-main");
         context.on("loadBack", function(ev, sd) {
-            sd.info.stime = window.CUST || 1;
+            sd.info.stime = window.CUST ? window.CUST * 1000: '-';
             if (!sd.info.head) {
                  sd.info.head = "static/assets/img/head_icon.jpg";
             }

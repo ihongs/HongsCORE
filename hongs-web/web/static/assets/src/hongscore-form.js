@@ -196,13 +196,6 @@ HsForm.prototype = {
             if (t && this["_doll_"+t] !== undefined) {
                 v  = this["_doll_"+t].call(this, i, v, n);
             }
-            // 兼容
-            if (n && this["_prep_"+n] !== undefined) {
-                v  = this["_prep_"+n].call(this, i, v, n);
-            } else
-            if (t && this["_prep_"+t] !== undefined) {
-                v  = this["_prep_"+t].call(this, i, v, n);
-            }
             // 无值不理会
             if (!v && v !== 0 && v !== "") {
                 continue;
@@ -1151,13 +1144,6 @@ HsForm.prototype = {
         }
     }
 };
-
-// 旧版枚举填充函数名称兼容, 将在一个月后移除
-HsForm.prototype._prep__review = HsForm.prototype._doll__review;
-HsForm.prototype._prep__select = HsForm.prototype._doll__select;
-HsForm.prototype._prep__radio  = HsForm.prototype._doll__radio ;
-HsForm.prototype._prep__check  = HsForm.prototype._doll__check ;
-HsForm.prototype._prep__checkset = HsForm.prototype._doll__checkset;
 
 jQuery.fn.hsForm = function(opts) {
     return this._hsModule(HsForm, opts);

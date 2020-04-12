@@ -21,6 +21,7 @@ html, body {
     position: fixed;
     z-index : 1;
     background: #e0e2e2;
+    box-shadow: 0 0 8px #ccc;
 }
 #bodybox {
     padding-left: 200px;
@@ -239,7 +240,7 @@ html, body {
     height: 30px;
     margin-top: -15px;
     border-radius: 0 5px 5px 0;
-    background: rgba(224,224,224,0.5);
+    background: rgba(196,196,196,0.5);
 }
 #head-handler:hover {
     background: rgba(196,196,196,1.0);

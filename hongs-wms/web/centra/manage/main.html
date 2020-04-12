@@ -1,11 +1,12 @@
 <div id="centra-manage-main" class="jumbotron" style="margin-top: 15px;">
     <div class="clearfix">
         <div style="float: left; width: 96px; height: 96px;">
-            <img data-fn="head" src="" alt="" style="width: 100%; height: 100%; border-radius: 50%;">
+            <img  data-fn="head"  style="width: 100%; height: 100%; border-radius: 50%;" src="" alt="">
         </div>
         <div style="float: left; padding-left: 24px; line-height: 96px;">
-            <span data-fn="name" style="font-size: 48px;"></span>
-            <sub data-fn="title" style="font-size: 24px; padding-left: 1em;"></sub>
+            <span data-fn="name"  style="font-size: 48px; font-weight: bolder;"></span>
+            <span>&emsp;</span>
+            <span data-fn="title" style="font-size: 24px; font-weight: normal;"></span>
         </div>
     </div>
     <div class="row" style="margin-top: 24px;">
@@ -29,21 +30,26 @@
         <div class="col-xs-6">
             <div class="form-group">
                 <div class="form-control-static">
-                    资料更新时间: &emsp; <span data-fn="mtime" data-ft="_datetime" data-fl="v?v*1000:0"></span>
+                    更新时间: &emsp; <span data-fn="mtime" data-ft="_datetime" data-fl="v?v*1000:0"></span>
                 </div>
             </div>
             <div class="form-group">
                 <div class="form-control-static">
-                    本次登录时间: &emsp; <span data-fn="stime" data-ft="_datetime" data-fl="v?v*1000:0"></span>
+                    登录时间: &emsp; <span data-fn="stime" data-ft="_datetime" data-fl="v?v*1000:0"></span>
                 </div>
             </div>
-            <div class="form-group">
-                <div class="form-control-static">
-                    <a href="javascript:;" onclick="$('#user-set').click()">修改资料</a>
-                    <span style="padding:0 1em;">&bull;</span>
-                    <a href="javascript:;" onclick="$('#sign-out').click()">退出登录</a>
-                </div>
-            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="form-control-static">
+            权限分组: &emsp; <span data-fn="depts..name" class="repeated" data-item-style="display: inline-block; margin-right: 1em; text-decoration: underline;"></span>
+        </div>
+    </div>
+    <div class="form-group" style="margin-bottom: 0;">
+        <div class="form-control-static" style="text-align: right;">
+            <a href="javascript:;" onclick="$('#user-set').click()">修改资料</a>
+            <span style="padding:0 1em;">&bull;</span>
+            <a href="javascript:;" onclick="$('#sign-out').click()">退出登录</a>
         </div>
     </div>
 </div>
@@ -63,7 +69,7 @@
             }
         });
         context.hsForm({
-            loadUrl : "centra/mine/info.act?ab=info"
+            loadUrl : "centra/mine/info.act?ab=-"
         });
     })(jQuery);
 </script>

@@ -287,7 +287,7 @@ function setEditor(node, func) {
                                                     code = code.replace(/(<span(\s[^>]*)?>|<\/span>)/mg, '');
                                                     code = code.replace(/\s(style|class|align|color)=\"[\S\s]*?\"/mg, '');
                                                     // Office 特殊代码
-                                                    code = code.replace('<o:p></o:p>' , '<br/>');
+                                                    code = code.replace(/<o:p><\/o:p>/mg, '<br/>');
                                                 }
                                                 $(that).summernote("code", code );
                                                 // 清理后设样式

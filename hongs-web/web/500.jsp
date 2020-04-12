@@ -101,7 +101,7 @@
         <nav id="footbox" class="navbar navbar-fixed-bottom">
             <div class="container">
                 <blockquote><p>
-                    <span>&copy; <%=CoreLocale.getInstance().translate("copy.right")%></span>
+                    <span>&copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
                     <small class="pull-right" style="margin-top: 3px;">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
                 </p></blockquote>
             </div>

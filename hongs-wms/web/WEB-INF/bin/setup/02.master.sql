@@ -65,10 +65,10 @@ CREATE TABLE `a_master_user` (
   `rtime` INTEGER(10) DEFAULT NULL, /* 权限最后更新时间 */
   `state` TINYINT DEFAULT '1', /* 1 正常, 2 系统, 0 删除, -1 锁定
   /* 扩展字段 */
-  `organ` VARCHAR(200) DEFAULT NULL,
   `title` VARCHAR(200) DEFAULT NULL,
   `email` VARCHAR(200) DEFAULT NULL,
   `phone` VARCHAR(20 ) DEFAULT NULL,
+  `title_checked` TINYINT DEFAULT '0',
   `email_checked` TINYINT DEFAULT '0',
   `phone_checked` TINYINT DEFAULT '0',
   PRIMARY KEY (`id`)

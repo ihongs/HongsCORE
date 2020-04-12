@@ -102,7 +102,7 @@
             <div class="container">
                 <blockquote><p>
                     <span>&copy; <%=CoreLocale.getInstance().translate("copy.right")%></span>
-                    <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+                    <small class="pull-right" style="margin-top: 3px;">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
                 </p></blockquote>
             </div>
         </nav>

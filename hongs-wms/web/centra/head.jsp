@@ -256,7 +256,7 @@
 
         // 边栏隐藏与显示
         $("#head-handler").click(function() {
-            $( "#context").toggleClass("fullest");
-        });
+            $(document.body).toggleClass("side-mode");
+        }); $(document.body).   addClass("side-mode");
     })(jQuery);
 </script>

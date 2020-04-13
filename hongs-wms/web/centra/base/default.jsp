@@ -36,7 +36,7 @@
             HsDEPS["__DEFINED__"]=1;
         </script>
     </head>
-    <body>
+    <body class="side-mode">
         <div id="context">
             <div id="headbox">
                 <div id="menu-context" data-load="centra/head.jsp?active=<%=encodeURL($module+"/"+$entity+"/")%>"></div>

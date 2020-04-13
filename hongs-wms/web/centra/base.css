@@ -16,28 +16,31 @@ html, body {
 }
 #headbox {
     height: 100%;
-    width : 200px;
-    overflow: auto;
+    overflow: auto ;
     position: fixed;
-    z-index : 1;
     background: #e0e2e2;
     box-shadow: 0 0 8px #ccc;
+    z-index: 1;
 }
-#bodybox {
+
+#main-namebar ,
+#main-menubar ,
+#user-menubar {
+    display: none ;
+}
+.side-mode #main-namebar ,
+.side-mode #main-menubar ,
+.side-mode #user-menubar {
+    display: block;
+}
+.side-mode #head-handler {
+    left : 200px;
+}
+.side-mode #headbox {
+    width: 200px;
+}
+.side-mode #bodybox {
     padding-left: 200px;
-}
-#context.fullest>#bodybox {
-    padding-left: 0;
-}
-#context.fullest>#headbox {
-    width: 0;
-}
-#context.fullest #head-handler {
-    left : 0;
-}
-#context.fullest #main-namebar ,
-#context.fullest #user-menubar {
-    display: none;
 }
 
 /** 标题 **/
@@ -243,8 +246,8 @@ html, body {
 
 #head-handler {
     position: fixed;
-    top  : 50%;
-    left : 200px;
+    top   :  50%;
+    left  :  0px;
     width : 14px;
     height: 30px;
     margin-top: -15px;
@@ -258,16 +261,17 @@ html, body {
     width : 0;
     height: 0;
     display: block;
-    border-width: 4px;
     border-style: solid;
+    border-width: 4px;
+    margin-top : 11px;
 }
-#context #head-handler a {
-    border-color: transparent #fff transparent transparent;
-    margin-top: 11px;
-}
-#context.fullest #head-handler a {
+#head-handler a {
+    margin-left : 5px;
     border-color: transparent transparent transparent #fff;
-    margin-left: 5px;
+}
+.side-mode #head-handler a {
+    margin-left : 0px;
+    border-color: transparent #fff transparent transparent;
 }
 
 #head-powered {

@@ -46,36 +46,31 @@
         </script>
     </head>
     <body>
-        <nav id="headbox" class="navbar navbar-default navbar-fixed-top" role="navigation">
-            <div class="container">
+        <div id="context">
+            <div id="headbox">
                 <div class="row" data-load="centre/head.jsp?active=<%=encodeURL($module+"/"+$entity+"/")%>"></div>
             </div>
-        </nav>
-        <div id="bodybox">
-            <div class="container">
-                <ol class="breadcrumb tabs laps hide" data-toggle="hsTabs">
-                    <li class="back-crumb dont-close pull-right">
-                        <a href="javascript:;">
-                            <i class="glyphicon glyphicon-remove-sign"></i>
-                        </a>
-                    </li>
-                    <li class="home-crumb active">
-                        <a href="javascript:;">
-                            <i class="glyphicon glyphicon-folder-open"></i>
-                            <b></b>
-                        </a>
-                    </li>
-                </ol>
-                <div class="labs laps">
-                    <div></div>
-                    <div id="main-context"></div>
+            <div id="bodybox">
+                <div class="container">
+                    <ol class="breadcrumb tabs laps hide" data-toggle="hsTabs">
+                        <li class="back-crumb dont-close pull-right">
+                            <a href="javascript:;">
+                                <i class="glyphicon glyphicon-remove-sign"></i>
+                            </a>
+                        </li>
+                        <li class="home-crumb active">
+                            <a href="javascript:;">
+                                <i class="glyphicon glyphicon-folder-open"></i>
+                                <b></b>
+                            </a>
+                        </li>
+                    </ol>
+                    <div class="labs laps">
+                        <div></div>
+                        <div data-load="<%=$module%>/<%=$entity%>/list.html"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <nav id="footbox" class="navbar navbar-default navbar-fixed-bottom">
-            <div class="container">
-                <div class="row" data-load="centre/foot.jsp"></div>
-            </div>
-        </nav>
     </body>
 </html>

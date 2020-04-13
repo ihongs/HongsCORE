@@ -108,50 +108,53 @@
     }
 %>
 
-<div class="navbar-header">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-collapse">
-        <span class="sr-only">Toggle navigation</span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-    </button>
-    <a href="<%=Core.BASE_HREF%>/centre/" class="navbar-brand" style="font-size: 16px;">
-        <span><img src="<%=Core.BASE_HREF%>/favicon.gif" style="border-radius: 3px; margin-top: -3px;"/></span>
-        <span style="color:#833">H</span>
-        <span style="color:#722">o</span>
-        <span style="color:#611">n</span>
-        <span style="color:#722">g</span>
-        <span style="color:#833">s</span>
-        <span style="color:#eaa">C</span>
-        <span style="color:#ebb">O</span>
-        <span style="color:#fcc">R</span>
-        <span style="color:#fdd">E</span>
-    </a>
-</div>
-
-<div class="collapse navbar-collapse" id="main-collapse">
-    <ul class="nav navbar-nav navbar-left " id="main-menubar">
-<%=makeMenu(menu, acti)%>
-    </ul>
-    <ul class="nav navbar-nav navbar-right" id="user-menubar">
-        <li class="dropdown">
-            <%if (role.contains("centre")) {%>
-            <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
-                <span class="uhead" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
-                <span class="badge"></span>
-                <span class="caret"></span>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a href="<%=Core.BASE_HREF%>/centre/" class="navbar-brand" style="font-size: 16px;"
+                title="<%=CoreLocale.getInstance().translate("fore.centre.sub.title")%>">
+                <%=CoreLocale.getInstance().translate("fore.centre.title")%>
             </a>
-            <ul class="dropdown-menu" role="menu">
-                <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
+        </div>
+        <div class="collapse navbar-collapse" id="main-collapse">
+            <ul class="nav navbar-nav navbar-left " id="main-menubar">
+                <%=makeMenu(menu, acti)%>
             </ul>
-            <%} else {%>
-            <a href="javascript:;" id="sign-in"><%=CoreLocale.getInstance().translate("fore.login")%></a>
-            <%} /*End If*/%>
-        </li>
-    </ul>
-</div>
+            <ul class="nav navbar-nav navbar-right" id="user-menubar">
+                <li class="dropdown">
+                    <%if (role.contains("centre")) {%>
+                    <a href="javascript:;" class="dropdown-toggle" data-toggle="dropdown">
+                        <span class="uhead" style="background-image:url(<%=head%>);" title="<%=name%>"></span>
+                        <span class="badge"></span>
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="javascript:;" id="user-set"><%=CoreLocale.getInstance().translate("fore.modify")%></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="javascript:;" id="sign-out"><%=CoreLocale.getInstance().translate("fore.logout")%></a></li>
+                    </ul>
+                    <%} else {%>
+                    <a href="javascript:;" id="sign-in"><%=CoreLocale.getInstance().translate("fore.login")%></a>
+                    <%} /*End If*/%>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+    <div class="container">
+        <blockquote><p>
+            <span>&copy; <%=CoreLocale.getInstance().translate("copy.right")%></span>
+            <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+        </p></blockquote>
+    </div>
+</nav>
 
 <script type="text/javascript">
     (function($) {

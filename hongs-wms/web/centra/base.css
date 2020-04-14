@@ -81,13 +81,13 @@ html, body {
     font-size: 1.42857143em;
     line-height: 1.0em;
     font-weight: 800;
-    padding: 9px 0;
+    padding: 6px 0;
 }
 #main-namebar>div:nth-child(2) {
     font-size: 0.92307692em;
     line-height: 1.5em;
     font-weight: 500;
-    padding: 0px 0;
+    padding: 3px 0;
 }
 #main-namebar:after {
     content: "";
@@ -225,7 +225,7 @@ html, body {
     margin : -8px  6px;
 }
 #user-menubar .glyphicon {
-    top  :  2px; /* 修正字体符号偏上的问题 */
+    top  :  1px; /* 修正字体符号偏上的问题 */
     width: 26px;
     margin-right: 17px;
     text-align: center;
@@ -236,7 +236,7 @@ html, body {
 #main-menubar ul li a:before {
     display    : inline-block;
     position   : relative;
-    top        :  2px; /* 修正字体符号偏上的问题 */
+    top        :  1px; /* 修正字体符号偏上的问题 */
     width      : 26px;
     margin-left:-26px;
     text-align : center;

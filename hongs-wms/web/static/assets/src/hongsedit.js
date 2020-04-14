@@ -368,7 +368,7 @@ function setEditor(node, func) {
                     lineWrapping : true
                 },
                 styleTags  : ['p', 'h6','h5', 'h4','h3', 'h2','h1', 'pre','blockquote'],
-                colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
+            //  colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
                 placeholder: $(this).attr("placeholder") ||"",
                 minHeight  : $(this).height() * 1 ,
                 maxHeight  : $(this).height() * 2 ,

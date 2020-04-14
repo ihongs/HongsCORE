@@ -60,7 +60,7 @@
             <div class="container">
                 <h1>: (</h1>
                 <p> <%=escapeXML(text)%> </p>
-                <p> <a href="<%=request.getContextPath()%>/">
+                <p> <a href="<%=request.getContextPath()%>/" class="btn btn-lg btn-info">
                     <%=escapeXML(link)%>
                     </a>
                 </p>

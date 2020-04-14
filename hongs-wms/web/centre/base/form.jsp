@@ -15,7 +15,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-form">
     <form action="<%=_module%>/<%=_entity%>/<%=_action%>.act"
-          method="POST" enctype="multipart/form-data">
+          method="POST" enctype="multipart/form-data" class="form-horizontal">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -56,7 +56,7 @@
             </fieldset>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-sm-3 col-md-2 control-label form-control-static text-right"><%=text%></label>
+                <label class="col-sm-3 col-md-2 control-label text-right"><%=text%></label>
                 <div class="col-sm-9 col-md-8">
                 <%if ("textarea".equals(type) || "textview".equals(type)) {%>
                     <%

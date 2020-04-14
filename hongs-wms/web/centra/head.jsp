@@ -128,9 +128,7 @@
     <a href="javascript:;" class="dropup" style="display: block;">
         <div class="caret"></div>
         <div class="badge"></div>
-        <div class="uhead" style="background-image: url(<%=head%>)">
-            <div style="background: url(static/assets/img/head_glob.png) no-repeat; background-size: 100% 100%; width: 100%; height: 100%;"></div>
-        </div>
+        <div class="uhead" style="background-image: url(<%=head%>)"></div>
         <div class="uname" title="<%=name%>"><%=name%></div>
     </a>
 </div>

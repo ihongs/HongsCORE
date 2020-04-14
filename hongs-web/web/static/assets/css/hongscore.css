@@ -322,8 +322,8 @@ ol.repeated ,
     background: rgba(0,102,0,0.8);
 }
 .alert.dialog.alert-warning {
-    background: rgb (102,102,0);
-    background: rgba(102,102,0,0.8);
+    background: rgb (204,102,0);
+    background: rgba(204,102,0,0.8);
 }
 .alert.dialog.alert-danger  {
     background: rgb (102,0,0);

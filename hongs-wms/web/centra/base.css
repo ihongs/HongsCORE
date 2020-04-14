@@ -78,14 +78,16 @@ html, body {
     text-shadow: 0 2px 0 #400;
 }
 #main-namebar>div:nth-child(1) {
-    font-weight: 800 ;
-    font-size  : 18px;
-    line-height: 36px;
+    font-size: 1.42857143em;
+    line-height: 1.0em;
+    font-weight: 800;
+    padding: 9px 0;
 }
 #main-namebar>div:nth-child(2) {
-    font-weight: 400 ;
-    font-size  : 12px;
-    line-height: 18px;
+    font-size: 0.92307692em;
+    line-height: 1.5em;
+    font-weight: 500;
+    padding: 0px 0;
 }
 #main-namebar:after {
     content: "";

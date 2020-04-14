@@ -70,7 +70,7 @@ html, body {
 }
 #main-namebar {
     top   : 0;
-    background: rgba( 64, 64, 64,0.8);
+    background: rgba(153,153,102,0.6);
 }
 #main-namebar>div {
     color: #ffb;
@@ -93,7 +93,7 @@ html, body {
     content: "";
     display: block;
     position: absolute;
-    background: radial-gradient(transparent 0%, transparent 10%, #444 90%);
+    background: radial-gradient(transparent 0%, transparent 10%, #666 90%);
     height: 100%;
     width : 100%;
     left: 0;

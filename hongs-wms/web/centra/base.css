@@ -66,11 +66,21 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    background: rgba(196,196,196,0.9);
+    background: rgba(196,196,196,0.8);
 }
 #main-namebar {
     top   : 0;
-    background: rgba(153,153,102,0.6);
+    background: rgba(204, 0 , 0 ,0.8);
+}
+#main-namebar:after {
+    content: "";
+    display: block;
+    position: absolute;
+    background: radial-gradient(transparent 0%, transparent 10%, rgba(80,80,80,0.25) 90%);
+    height: 100%;
+    width : 100%;
+    left: 0;
+    top : 0;
 }
 #main-namebar>div {
     color: #ffb;
@@ -88,16 +98,6 @@ html, body {
     line-height: 1.5em;
     font-weight: 500;
     padding: 3px 0;
-}
-#main-namebar:after {
-    content: "";
-    display: block;
-    position: absolute;
-    background: radial-gradient(transparent 0%, transparent 10%, #666 90%);
-    height: 100%;
-    width : 100%;
-    left: 0;
-    top : 0;
 }
 
 /** 菜单 **/
@@ -134,7 +134,7 @@ html, body {
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #6f6f6f;
+    color: #686868;
     background: transparent;
     border-left: 4px solid transparent;
 }

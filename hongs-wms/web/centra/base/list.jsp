@@ -135,7 +135,7 @@
             </div>
         </div>
         <%} /*End For*/%>
-        <div class="form-group form-group-sm clearfix" style="margin: 0 0">
+        <div class="form-group form-group-sm clearfix">
             <div class="col-xs-6 col-xs-offset-3">
                 <button type="submit" class="btn btn-primary">过滤</button>
                 <span style="padding: 0.1em;"></span>

@@ -76,7 +76,7 @@ html, body {
     content: "";
     display: block;
     position: absolute;
-    background: radial-gradient(transparent 0%, transparent 10%, rgba(80,80,80,0.25) 90%);
+    background: radial-gradient(transparent 0%, transparent 10%, rgba(80,80,80,0.25) 75%);
     height: 100%;
     width : 100%;
     left: 0;

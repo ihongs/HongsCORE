@@ -289,12 +289,12 @@ ol.repeated ,
     margin-top : 0em;
 }
 .alert.dialog .alert-header .close {
-    width : 22px;
-    height: 22px;
+    width : 24px;
+    height: 24px;
     font-size  : 20px;
     line-height: 20px;
     margin-top : -2px;
-    padding-bottom: 2px;
+    padding-bottom: 4px;
     border-radius : 50%;
     text-align : center;
     text-shadow: none;
@@ -316,8 +316,8 @@ ol.repeated ,
     background: rgba(0,102,0,0.8);
 }
 .alert.dialog.alert-warning {
-    background: rgb (102,0,102);
-    background: rgba(102,0,102,0.8);
+    background: rgb (102,102,0);
+    background: rgba(102,102,0,0.8);
 }
 .alert.dialog.alert-danger  {
     background: rgb (102,0,0);

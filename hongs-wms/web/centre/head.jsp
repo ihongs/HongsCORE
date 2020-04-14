@@ -108,7 +108,7 @@
     }
 %>
 
-<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <div class="container">
         <div class="navbar-header">
             <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-collapse">
@@ -147,11 +147,13 @@
         </div>
     </div>
 </nav>
+
 <nav class="navbar navbar-default navbar-fixed-bottom">
     <div class="container">
-        <blockquote><p>
-            <span>&copy; <%=CoreLocale.getInstance().translate("copy.right")%></span>
-            <small class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></small>
+        <blockquote><p class="clearfix">
+            <span>&copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
+            <span>&bull; <%=CoreLocale.getInstance().translate("fore.site.icp"  )%></span>
+            <span class="pull-right">Powered by <a href="<%=request.getContextPath()%>/power.html" target="_blank">HongsCORE</a></span>
         </p></blockquote>
     </div>
 </nav>

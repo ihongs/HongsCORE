@@ -70,22 +70,32 @@ html, body {
 }
 #main-namebar {
     top   : 0;
-    background: rgba( 48, 48, 48,0.8);
+    background: rgba( 64, 64, 64,0.8);
 }
 #main-namebar>div {
-    color: #eee;
+    color: #ffb;
     text-align : center;
-    text-shadow: 0 -1px 3px #000;
+    text-shadow: 0 2px 0 #400;
 }
 #main-namebar>div:nth-child(1) {
-    font-weight: bolder;
+    font-weight: 800 ;
     font-size  : 18px;
     line-height: 36px;
 }
 #main-namebar>div:nth-child(2) {
-    font-weight: normal;
-    font-size  : 13px;
+    font-weight: 400 ;
+    font-size  : 12px;
     line-height: 18px;
+}
+#main-namebar:after {
+    content: "";
+    display: block;
+    position: absolute;
+    background: radial-gradient(transparent 0%, transparent 10%, #444 90%);
+    height: 100%;
+    width : 100%;
+    left: 0;
+    top : 0;
 }
 
 /** 菜单 **/
@@ -107,16 +117,16 @@ html, body {
     text-decoration: none;
 }
 #user-menubar li a {
-    font-weight: normal;
-    padding: 9px 6px 9px 12px;
+    font-weight: 600;
+    padding: 9px 16px 9px 13px;
 }
 #main-menubar li a {
-    font-weight: bolder;
-    padding: 9px 6px 9px 36px;
+    font-weight: 600;
+    padding: 9px 16px 9px 39px;
 }
 #main-menubar li li a {
-    font-weight: normal;
-    padding: 9px 6px 9px 36px;
+    font-weight: 300;
+    padding: 9px 16px 9px 39px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
@@ -124,7 +134,7 @@ html, body {
 #user-menubar li.acting > a.dropup {
     color: #6f6f6f;
     background: transparent;
-    border-left: 2px solid transparent;
+    border-left: 4px solid transparent;
 }
 #main-menubar li a:hover,
 #main-menubar li.acting > a.dropup:hover ,
@@ -132,7 +142,7 @@ html, body {
 #user-menubar li.acting > a.dropup:hover {
     color: #bb0000;
     background: transparent;
-    border-left: 2px solid transparent;
+    border-left: 4px solid transparent;
 }
 #main-menubar li.acting > a ,
 #main-menubar li.active > a ,
@@ -142,7 +152,7 @@ html, body {
 #user-menubar li.active > a.dropup {
     color: #bb0000;
     background: #f0e0e0;
-    border-left: 2px solid #bb0000;
+    border-left: 4px solid #bb0000;
 }
 
 #main-menubar>ul>li {
@@ -154,6 +164,7 @@ html, body {
 
 #main-menubar .caret {
     margin:  8px 0px;
+    margin-right: -10px;
 }
 #user-menubar .caret {
     margin: 16px 6px;
@@ -168,6 +179,9 @@ html, body {
     float:  right ;
     color: #a0a2a2;
 }
+#main-menubar .caret {
+    margin-right: -10px; /* 修正上层内补误差 */
+}
 
 /* 头像 */
 
@@ -176,8 +190,8 @@ html, body {
     vertical-align: middle;
     width : 48px;
     height: 48px;
-    margin: -8px 6px;
-    border-radius  :  50%;
+    margin: -6px 6px;
+    border-radius  : 4px;
     background-size: 100% 100%;
     background-repeat: no-repeat;
     background-position:  center;
@@ -185,13 +199,16 @@ html, body {
 #user-menubar .uname {
     display: inline-block ;
     vertical-align: middle;
-    color : #666;
-    width :120px;
+    width: 120px;
     height: 36px;
     line-height: 36px;
     white-space: nowrap;
     overflow   : hidden;
     text-overflow: ellipsis;
+    color: #666;
+}
+#user-menubar:hover .uname {
+    color: #b00;
 }
 #user-menubar .badge {
     position: absolute;
@@ -207,15 +224,9 @@ html, body {
 }
 #user-menubar .glyphicon {
     top  :  2px; /* 修正字体符号偏上的问题 */
-    width: 36px;
-    margin-right: 10px;
+    width: 26px;
+    margin-right: 17px;
     text-align: center;
-}
-#user-menubar:hover .uname {
-    color: #b00;
-}
-#user-menubar:hover .uhead {
-    box-shadow: 0 0 30px #b00;
 }
 
 /* 图标 */
@@ -224,8 +235,9 @@ html, body {
     display    : inline-block;
     position   : relative;
     top        :  2px; /* 修正字体符号偏上的问题 */
-    width      : 20px;
-    margin-left:-20px;
+    width      : 26px;
+    margin-left:-26px;
+    text-align : center;
     font-family: "Glyphicons Halflings";
     content: "";
 }

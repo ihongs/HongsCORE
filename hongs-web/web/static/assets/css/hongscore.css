@@ -50,6 +50,12 @@ code, pre, var, dfn, kbd {
     color: #eee;
 }
 
+.radio    ,
+.checkbox {
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
+
 /*
 select.form-control {
     height: 2.76923077em;

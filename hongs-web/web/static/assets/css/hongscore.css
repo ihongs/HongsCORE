@@ -4,6 +4,7 @@
  * 版本: 2018/07/28 22:10
  */
 
+/*
 html, body, p, h1, h2, h3, h4, h5, h6, ul, ol, table {
     font-family: "Microsoft Yahei","Helvetica Neue","Open Sans",Helvetica,Tahoma,Arial,sans-serif;
 }
@@ -16,9 +17,7 @@ label, input, button, select, textarea {
 code, pre, var, dfn, kbd {
     font-family: "Courier New",Monaco,Menlo,monospace;
 }
-.text-mono {
-    font-family: "Courier New",Monaco,Menlo,monospace;
-}
+*/
 
 /** Bootstrap 调整 **/
 
@@ -40,7 +39,7 @@ code, pre, var, dfn, kbd {
 }
 
 .btn .close {
-    margin-right: -0.5em;
+    margin-right: -0.3em;
     margin-top: -0.1em;
     opacity: 0.8;
     color: #eee;
@@ -51,9 +50,11 @@ code, pre, var, dfn, kbd {
     color: #eee;
 }
 
+/*
 select.form-control {
     height: 2.76923077em;
 }
+*/
 select.form-control[multiple],
 textarea.form-control {
     height: 8.30769231em;
@@ -168,8 +169,8 @@ fieldset>.dropdown-list {
 
 /* bootstrap-tagsinput */
 div.bootstrap-tagsinput.form-control {
-    padding-top: 4px;
-    padding-bottom: 4px;
+    padding-top: 2px;
+    padding-bottom: 2px;
 }
 
 /* bootstrap-fileinput */
@@ -617,7 +618,7 @@ ul.pickrol > li.btn-text:focus {
     cursor  : pointer ;
     padding : 0;
     margin  : 0;
-    border  : 1px solid #ccc;
+    box-shadow : 0 0 2px #aaa inset;
     border-radius: 4px;
 }
 .preview img {
@@ -625,12 +626,12 @@ ul.pickrol > li.btn-text:focus {
 }
 .preview .close {
     position: absolute;
-    top   :  7px;
-    right :  7px;
-    width : 24px;
-    height: 24px;
+    top   :  5px;
+    right :  5px;
+    width : 22px;
+    height: 22px;
     border-radius: 50%;
-    line-height : 22px;
+    line-height : 20px;
     text-align: center;
     background: silver;
     box-shadow: 0 0 0.2em #000;
@@ -707,7 +708,7 @@ ul.pickrol > li.btn-text:focus {
 .datebox.input-group .input-group-addon ,
 .datebox.input-group .form-control {
     width : auto;
-    height: 34px;
+    height: 32px;
     border: 0;
     padding-right: 4px;
     padding-left : 4px;

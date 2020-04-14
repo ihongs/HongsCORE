@@ -15,7 +15,7 @@
 <h2><%=_locale.translate("fore."+_action+".title", _title)%></h2>
 <div id="<%=_pageId%>" class="<%=_action%>-info">
     <form action="" onsubmit="return false"
-          method="POST" enctype="multipart/form-data">
+          method="POST" enctype="multipart/form-data" class="form-horizontal">
         <%
         Iterator it = _fields.entrySet().iterator();
         while (it.hasNext()) {
@@ -82,7 +82,7 @@
             <legend class="form-group"><%=text%></legend>
         <%} else {%>
             <div class="form-group row">
-                <label class="col-xs-3 col-md-2 control-label form-control-static text-right"><%=text%></label>
+                <label class="col-xs-3 col-md-2 control-label text-right"><%=text%></label>
                 <div class="col-xs-9 col-md-8">
                 <%if ("file".equals(type) || "image".equals(type) || "video".equals(type) || "audio".equals(type)) {%>
                     <%

@@ -53,7 +53,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox statbox invisible panel panel-default panel-body">
+    <form class="findbox filtbox statbox invisible panel panel-default panel-body form-horizontal">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -70,8 +70,8 @@
         %>
         <% /***/ if (Synt.declare(info.get("statable"), false)) {%>
         <div class="stat-group form-group form-group-sm clearfix" data-find="<%=name%>">
-            <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
-            <div class="col-md-6 col-sm-8 form-control-static" style="height: auto;">
+            <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
+            <div class="col-md-6 col-sm-8">
                 <%
                     // 检查是否有枚举数据
                     String enumConf = Synt.defxult((String) info.get("conf"),_conf);
@@ -94,12 +94,12 @@
                         type = "acount";
                     }
                 %>
-                <div class="checkbox" style="margin:0" data-name="<%=name%>" data-type="<%=type%>"></div>
+                <div class="checkbox" data-name="<%=name%>" data-type="<%=type%>"></div>
             </div>
         </div>
         <%} else if (Synt.declare(info.get("filtable"), false)) {%>
         <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
-            <label class="col-md-3 col-sm-2 form-control-static control-label text-right"><%=text%></label>
+            <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">
@@ -156,10 +156,10 @@
         <%} /*End If */%>
         <%} /*End For*/%>
         <div class="filt-group form-group form-group-sm clearfix" data-find="cuser">
-            <label class="col-md-3 col-sm-2 form-control-static control-label text-right">属主</label>
-            <div class="col-md-6 col-sm-8 form-control-static">
+            <label class="col-md-3 col-sm-2 control-label text-right">属主</label>
+            <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="cuser" value="" data-ft="_mine"/>
-                <div class="radio" style="margin:0">
+                <div class="radio">
                     <label>
                         <input type="radio" value="0" checked="checked"/>
                         <span>全部</span>
@@ -176,7 +176,7 @@
             </div>
         </div>
         <div class="sort-group form-group form-group-sm clearfix" data-find="ob">
-            <label class="col-md-3 col-sm-2 form-control-static control-label text-right">排序</label>
+            <label class="col-md-3 col-sm-2 control-label text-right">排序</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
                 <div>

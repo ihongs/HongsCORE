@@ -65,7 +65,7 @@
         </div>
     </form>
     <!-- 筛选 -->
-    <form class="findbox filtbox invisible panel panel-default panel-body">
+    <form class="findbox filtbox invisible panel panel-default panel-body form-horizontal">
         <%
         Iterator it2 = _fields.entrySet().iterator();
         while (it2.hasNext()) {
@@ -81,7 +81,7 @@
             }
         %>
         <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
-            <label class="col-xs-3 form-control-static control-label text-right"><%=text%></label>
+            <label class="col-xs-3 control-label text-right"><%=text%></label>
             <div class="col-xs-6">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
                 <div class="input-group">

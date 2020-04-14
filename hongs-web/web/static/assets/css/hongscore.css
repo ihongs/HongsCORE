@@ -50,12 +50,6 @@ code, pre, var, dfn, kbd {
     color: #eee;
 }
 
-.radio    ,
-.checkbox {
-    margin-top: 7px;
-    margin-bottom: 7px;
-}
-
 /*
 select.form-control {
     height: 2.76923077em;
@@ -85,6 +79,20 @@ input[type="time"].form-control {
     padding-top: 0px;
     padding-bottom: 0px;
 }
+}
+
+/* 修正选择框在特殊表单组下不变化的问题 */
+.form-group-lg .checkbox,
+.form-group-lg .radio {
+    font-size : 18px;
+}
+.form-group-sm .checkbox,
+.form-group-sm .radio {
+    font-size : 12px;
+}
+.form-group-sm .checkbox input[type=checkbox],
+.form-group-sm .radio input[type=radio] {
+    margin-top:  2px;
 }
 
 .center-block {

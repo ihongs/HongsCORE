@@ -19,7 +19,7 @@ html, body {
     overflow: auto ;
     position: fixed;
     background: #e0e2e2;
-    box-shadow: 0 0 8px #ccc;
+    box-shadow: 1px 0 8px #ccc;
     z-index: 1;
 }
 
@@ -52,10 +52,10 @@ html, body {
     padding: 18px 0;
 }
 #main-namebar {
-    padding: 18px 15px;
+    padding: 20px 15px;
 }
 #main-menubar {
-    margin-top   : 90px;
+    margin-top   : 96px;
     margin-bottom: 60px;
 }
 
@@ -66,12 +66,13 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    background-color: rgba(238,238,238,0.8);
+    box-shadow: 0 -2px 8px #ccc;
+    background-color: rgba(238,238,238,0.9);
 }
 #main-namebar {
     top   : 0;
+    box-shadow: 0  2px 8px #888;
     background-color: rgba( 34, 34, 34,0.8);
-    background-image: radial-gradient(rgba(22,22,22,0.1), rgba(35,34,34,0.1));
 }
 #main-namebar:after {
     content: "";
@@ -96,7 +97,7 @@ html, body {
 }
 #main-namebar>div:nth-child(2) {
     font-size: 12px;
-    line-height: 18px;
+    line-height: 16px;
     font-weight: 500;
     padding: 3px 0;
     color: #e22;
@@ -181,7 +182,7 @@ html, body {
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
     float:  right ;
-    color: #808282;
+    color: #335070;
 }
 #main-menubar .caret {
     margin-right: -10px; /* 修正上层内补误差 */
@@ -312,11 +313,11 @@ html, body {
 
 /* 容器主要内容边界 */
 #main-context > .labs {
-    margin-top: 18px;
+    margin-top: 20px;
 }
 #main-context > .laps.breadcrumb {
     margin-bottom: 0;
-    margin-top: 18px;
+    margin-top: 20px;
     background: #fff;
     border: 1px solid #ddd;
 }

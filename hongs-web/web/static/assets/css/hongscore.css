@@ -130,7 +130,7 @@ fieldset>.dropdown-list {
 /** 响应式表格区 **/
 
 .table-responsive {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 .table-responsive>.table {
     margin-bottom:  0px;
@@ -330,12 +330,12 @@ ol.repeated ,
     background: rgba(0,102,0,0.8);
 }
 .alert.dialog.alert-warning {
-    background: rgb (204,102,0);
-    background: rgba(204,102,0,0.8);
-}
-.alert.dialog.alert-danger  {
     background: rgb (102,0,0);
     background: rgba(102,0,0,0.8);
+}
+.alert.dialog.alert-danger  {
+    background: rgb (153,0,102);
+    background: rgba(153,0,102,0.8);
 }
 
 /** 适配 **/
@@ -584,7 +584,7 @@ ol.repeated ,
 
 /* 类似 panel 但无边框无背景 */
 .board {
-    margin-bottom: 18px;
+    margin-bottom: 20px;
 }
 .board-body {
     padding : 15px 15px;

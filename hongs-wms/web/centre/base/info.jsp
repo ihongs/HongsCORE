@@ -80,7 +80,7 @@
         <%if ("hidden".equals(type)) {%>
             <input type="hidden" name="<%=name%>"/>
         <%} else if ( "legend" .equals(type)) {%>
-            <legend class="form-group"><%=text%></legend>
+            <legend class="text-center"><%=text%></legend>
         <%} else {%>
             <div class="form-group row">
                 <label class="col-sm-3 col-md-2 control-label text-right"><%=text%></label>

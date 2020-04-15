@@ -192,8 +192,8 @@ function setEditor(node, func) {
             var lang = HsLANG['lang'].replace('_', '-');
             var conf = {
                 toolbar : [
-                    ['font', ['color', 'bold'     , 'italic'  ]],
-                    ['inst', ['table', 'picture'  , 'link'    ]],
+                    ['font', ['color', 'bold' , 'italic', 'underline']],
+                    ['inst', ['table', 'picture', 'link', 'hr']],
                     ['para', ['style', 'paragraph', 'ul', 'ol']],
                     ['misc', ['clean', 'codeview']]
                 ],

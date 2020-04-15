@@ -66,38 +66,40 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    background: rgba(196,196,196,0.8);
+    background-color: rgba(238,238,238,0.8);
 }
 #main-namebar {
     top   : 0;
-    background: rgba(204, 0 , 0 ,0.8);
+    background-color: rgba( 34, 34, 34,0.8);
+    background-image: radial-gradient(rgba(22,22,22,0.1), rgba(35,34,34,0.1));
 }
 #main-namebar:after {
     content: "";
     display: block;
     position: absolute;
-    background: radial-gradient(transparent 0%, transparent 10%, rgba(80,80,80,0.25) 75%);
+    background-image: radial-gradient(rgba(22,22,22,0.1), rgba(34,34,34,0.8));
     height: 100%;
     width : 100%;
     left: 0;
     top : 0;
 }
 #main-namebar>div {
-    color: #ffb;
     text-align : center;
     text-shadow: 0 2px 0 #400;
 }
 #main-namebar>div:nth-child(1) {
-    font-size: 1.42857143em;
-    line-height: 1.0em;
+    font-size: 18px;
+    line-height: 22px;
     font-weight: 800;
     padding: 6px 0;
+    color: #fea;
 }
 #main-namebar>div:nth-child(2) {
-    font-size: 0.92307692em;
-    line-height: 1.5em;
+    font-size: 12px;
+    line-height: 18px;
     font-weight: 500;
     padding: 3px 0;
+    color: #e22;
 }
 
 /** 菜单 **/
@@ -127,14 +129,14 @@ html, body {
     padding: 9px 16px 9px 39px;
 }
 #main-menubar li li a {
-    font-weight: 300;
+    font-weight: 400;
     padding: 9px 16px 9px 39px;
 }
 #main-menubar li a ,
 #main-menubar li.acting > a.dropup ,
 #user-menubar li a ,
 #user-menubar li.acting > a.dropup {
-    color: #686868;
+    color: #335070;
     background: transparent;
     border-left: 4px solid transparent;
 }
@@ -179,7 +181,7 @@ html, body {
 #main-menubar:hover .caret ,
 #user-menubar:hover .caret {
     float:  right ;
-    color: #a0a2a2;
+    color: #808282;
 }
 #main-menubar .caret {
     margin-right: -10px; /* 修正上层内补误差 */
@@ -298,6 +300,7 @@ html, body {
     color: #ccc;
 }
 #head-powered a {
+    text-decoration: none;
     color: #fcc;
 }
 #head-powered:hover {

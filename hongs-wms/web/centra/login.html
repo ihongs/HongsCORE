@@ -47,7 +47,7 @@
                             <div class="input-group">
                                 <input type="text" name="captcode" placeholder="captcode" value="" class="form-control i18n" required="required" autocomplete="off"/>
                                 <div class="input-group-addon" style="padding: 0;">
-                                    <div style="width: 100px; height: 34px;">
+                                    <div style="width: 100px; height: 32px;">
                                         <img src="" alt="" class="hide" title="看不清? 点一下换一个."/>
                                     </div>
                                 </div>
@@ -85,7 +85,7 @@
 
                 // 验证
                 context.find(".form-group img").click(function() {
-                    $(this).attr("src", "common/capt/create.act?h=34&f=666666&_="
+                    $(this).attr("src", "common/capt/create.act?h=32&f=666666&_="
                     + Math.random( ));
                 });
                 context.find("[name=captcode]").focus(function() {

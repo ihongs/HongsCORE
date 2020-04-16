@@ -554,40 +554,40 @@ public class Form extends Model {
             item = docm.createElement("field");
             form.appendChild ( item );
 
-            String s, n, t;
+            String n, t, y;
             n = (String) fiel.get("__name__");
-            if (n != null) item.setAttribute("name", n);
+            if (n != null) item.setAttribute("name", n); else n = "";
             t = (String) fiel.get("__type__");
-            if (t != null) item.setAttribute("type", t);
-            s = (String) fiel.get("__text__");
-            if (s != null) item.setAttribute("text", s);
-            s = (String) fiel.get("__hint__");
-            if (s != null) item.setAttribute("hint", s);
-            s = (String) fiel.get("__rule__");
-            if (s != null && s.length() != 0) item.setAttribute("rule", s);
-            s = (String) fiel.get("__required__");
-            if (s != null && s.length() != 0) item.setAttribute("required", s);
-            s = (String) fiel.get("__repeated__");
-            if (s != null && s.length() != 0) item.setAttribute("repeated", s);
+            if (t != null) item.setAttribute("type", t); else t = "";
+            y = (String) fiel.get("__text__");
+            if (y != null) item.setAttribute("text", y);
+            y = (String) fiel.get("__hint__");
+            if (y != null) item.setAttribute("hint", y);
+            y = (String) fiel.get("__rule__");
+            if (y != null && y.length() != 0) item.setAttribute("rule", y);
+            y = (String) fiel.get("__required__");
+            if (y != null && y.length() != 0) item.setAttribute("required", y);
+            y = (String) fiel.get("__repeated__");
+            if (y != null && y.length() != 0) item.setAttribute("repeated", y);
 
             //** 复查字段属性 **/
 
-            s = (String) types.get(t);
+            y = (String) types.get(t);
             // 日期类型要指定存储格式
-            if ("date".equals(s)) {
+            if ("date".equals(y)) {
                 if(!fiel.containsKey("type")) {
                     fiel.put("type", "timestamp");
                 }
             } else
             // 选项表单要指定配置路径
-            if ("enum".equals(s)
-            ||  "form".equals(s)) {
+            if ("enum".equals(y)
+            ||  "form".equals(y)) {
                 if(!fiel.containsKey("conf")) {
                     fiel.put("conf", centra + "/" + id);
                 }
             } else
             // 文件类型要指定上传路径
-            if ("file".equals(s)) {
+            if ("file".equals(y)) {
                 if(!fiel.containsKey("href")) {
                     fiel.put("href", upload + "/" + id);
                 }

@@ -281,7 +281,6 @@ public class Form extends Model {
             if (tdf != null) {
                 flds.add(0, tdf);
                 // 去掉表单的基础属性
-                tdf.remove("__name__");
                 tdf.remove("__type__");
                 tdf.remove("__rule__");
                 tdf.remove("__required__");

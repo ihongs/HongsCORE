@@ -30,13 +30,9 @@
     font-size : 12px;
 }
 
-/* 主导航条样式微调 */
+/* 主导航条默认隐藏 */
 .container > .laps.tabs.bread-home {
     display   : none;
-}
-.container > .laps.tabs.breadcrumb {
-    background: #fff;
-    border: 1px solid #ddd;
 }
 
 /* 隐藏受限的搜索框 */

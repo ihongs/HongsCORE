@@ -205,7 +205,7 @@ function setEditor(node, func) {
                             click : function() {
                                 $.hsMask({
                                     title: "富文本格式化工具",
-                                    html : '<form onsubmit="return false">'
+                                    html : '<form class="form-horizontal" onsubmit="return false">'
 + '<div class="form-group row">'
 + '<label class="col-xs-4 text-right control-label form-control-static">字体</label>'
 + '<div class="col-xs-6"><input class="form-control" type="text"   name="font-family" value="" data-unit="" list="hs-font-list">'
@@ -368,7 +368,7 @@ function setEditor(node, func) {
                     lineWrapping : true
                 },
                 styleTags  : ['p', 'h6','h5', 'h4','h3', 'h2','h1', 'pre','blockquote'],
-            //  colorButton: {foreColor: '#FFFFFF', backColor: '#474949'},
+                colorButton: {foreColor: 'inherit', backColor: 'transparent'},
                 placeholder: $(this).attr("placeholder") ||"",
                 minHeight  : $(this).height() * 1 ,
                 maxHeight  : $(this).height() * 2 ,

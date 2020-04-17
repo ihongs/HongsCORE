@@ -58,7 +58,6 @@
                     <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="glyphicon glyphicon-check "></span></button>
                     <%if ("browse".equals(_action)) {%>
                     <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
-                    <button type="button" class="manual btn btn-default" title="<%=_locale.translate("fore.manual", _title)%>"><span class="glyphicon glyphicon-book  "></span></button>
                     <%} // End If %>
                 </span>
             </div>

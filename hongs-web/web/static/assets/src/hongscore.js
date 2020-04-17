@@ -1762,6 +1762,7 @@ $.hsMask = function(opt) {
         btt = div.find(".alert-title" );
         btx = div.find(".alert-body"  );
         btn = div.find(".alert-footer");
+        mod . addClass( "alert-modal" ); // 规避警告框右侧的滚动条间隙, CSS 中实现
     } else {
         mod = $('<div class="modal fade in"><div class="modal-dialog">'
               + '<div class="modal-content"><div class="modal-header">'
@@ -1989,6 +1990,8 @@ $.hsNote = function(msg, typ, end, sec) {
         case 'success':
             opt.glass = "alert-success";
             break;
+        case 'default':
+            break;
         default:
             console.warn("hsNote: Wrong type " + typ);
     }
@@ -2028,6 +2031,8 @@ $.hsWarn = function(msg, typ, yes, not) {
             break;
         case 'success':
             opt.glass = "alert-success";
+            break;
+        case 'default':
             break;
         default:
             console.warn("hsWarn: Wrong type " + typ);

@@ -382,7 +382,7 @@ function hsSaveWithMemo(msg) {
       HsForm.prototype.save.apply(that, args);
     } ;
     if (msg) {
-        this.warn(msg, "warning", func, funx)
+        this.warn(msg, "default", func, funx)
             .find(".alert-body").append(memo)
             .trigger("shown.bs.modal");
     } else {

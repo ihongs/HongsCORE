@@ -16,10 +16,11 @@ html, body {
 }
 #headbox {
     height: 100%;
+    width :  0  ;
     overflow: auto ;
     position: fixed;
     background: #e0e2e2;
-    box-shadow: 1px 0 8px #ccc;
+    box-shadow: 0 0 10px #aaa;
     z-index: 1;
 }
 
@@ -28,18 +29,18 @@ html, body {
 #user-menubar {
     display: none ;
 }
-.side-mode #main-namebar ,
-.side-mode #main-menubar ,
-.side-mode #user-menubar {
+.sider-open #main-namebar ,
+.sider-open #main-menubar ,
+.sider-open #user-menubar {
     display: block;
 }
-.side-mode #head-handler {
+.sider-open #head-handler {
     left : 200px;
 }
-.side-mode #headbox {
+.sider-open #headbox {
     width: 200px;
 }
-.side-mode #bodybox {
+.sider-open #bodybox {
     padding-left: 200px;
 }
 
@@ -49,7 +50,7 @@ html, body {
     padding: 12px 0;
 }
 #main-menubar {
-    padding: 18px 0;
+    padding: 20px 0;
 }
 #main-namebar {
     padding: 20px 15px;
@@ -66,12 +67,12 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    box-shadow: 0 -2px 8px #ccc;
+    box-shadow: 0 0 10px #ccc;
     background-color: rgba(238,238,238,0.9);
 }
 #main-namebar {
     top   : 0;
-    box-shadow: 0  2px 8px #888;
+    box-shadow: 0 0 10px #888;
     background-color: rgba( 34, 34, 34,0.8);
 }
 #main-namebar:after {
@@ -86,7 +87,7 @@ html, body {
 }
 #main-namebar>div {
     text-align : center;
-    text-shadow: 0 2px 0 #400;
+    text-shadow: 0 -2px 2px #400;
 }
 #main-namebar>div:nth-child(1) {
     font-size: 18px;
@@ -286,7 +287,7 @@ html, body {
     margin-left : 5px;
     border-color: transparent transparent transparent #fff;
 }
-.side-mode #head-handler a {
+.sider-open #head-handler a {
     margin-left : 0px;
     border-color: transparent #fff transparent transparent;
 }

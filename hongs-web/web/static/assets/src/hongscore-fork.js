@@ -31,9 +31,10 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var t    = box.attr("data-ft" ) || box.attr("type");
     var vk   = box.attr("data-vk" ) || "id"  ;
     var tk   = box.attr("data-tk" ) || "name";
-    var mul  = box.data("repeated") || box.is( ".pickmul" )
-                               || /(\[\]|\.\.|\.$)/.test(n);
-    var foo  = box.closest(".HsForm").data("HsForm") || { };
+    var mul  = box.is  (".pickmul")
+         || !! box.data("repeated")
+         || /(\[\]|\.\.|\.$)/.test(n);
+    var foo  = box.closest(".HsForm").data("HsForm") || {};
     var btn  = jQuery(this);
 
     if (! fil) {
@@ -297,13 +298,14 @@ function hsFormForkData(box, v) {
  */
 function hsFormFillPick(box, v, n) {
     if (! n ) n = box.data( "fn" );
-    var rol = box.data("readonly")
-           || box.is  (".pickrol");
-    var mul = box.data("repeated")
-           || box.is  (".pickmul")
-           || /(\[\]|\.\.|\.$)/.test(n);
-        box.toggleClass("pickmul", mul);
+    var rol = box.is  (".pickrol")
+        || !! box.data("readonly");
+    var mul = box.is  (".pickmul")
+        || !! box.data("repeated")
+        || /(\[\]|\.\.|\.$)/.test(n);
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
+
+    box.toggleClass ("pickmul", mul);
 
     // 表单初始化载入时需从关联数据提取选项对象
     if (this._info) {

@@ -253,7 +253,7 @@
 
         // 边栏隐藏与显示
         $("#head-handler").click(function() {
-            $(document.body).toggleClass("side-mode");
-        }); $(document.body).   addClass("side-mode");
+            $(document.body).toggleClass("sider-open");
+        }); $(document.body).   addClass("sider-open");
     })(jQuery);
 </script>

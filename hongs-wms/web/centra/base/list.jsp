@@ -33,7 +33,7 @@
                 <button type="button" class="review for-choose btn btn-default"><%=_locale.translate("fore.review", _title)%></button>
                 <button type="button" class="reveal for-choose btn btn-default" title="<%=_locale.translate("fore.reveal", _title)%>"><span class="glyphicon glyphicon-time "></span></button>
                 <button type="button" class="copies for-checks btn btn-default" title="<%=_locale.translate("fore.copies", _title)%>"><span class="glyphicon glyphicon-share"></span></button>
-                <button type="button" class="delete for-checks btn btn-warning" title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
+                <button type="button" class="delete for-checks btn btn-danger " title="<%=_locale.translate("fore.delete", _title)%>"><span class="glyphicon glyphicon-trash"></span></button>
                 <%} // End If %>
             </div>
         </div>

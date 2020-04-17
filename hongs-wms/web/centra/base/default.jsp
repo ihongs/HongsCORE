@@ -46,7 +46,7 @@
                     <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
                         <li class="hook-crumb dont-crumb pull-right">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual", $title)%>">
-                                <i class="glyphicon glyphicon-info-sign"></i>
+                                <i class="glyphicon glyphicon-book"></i>
                             </a>
                         </li>
                         <li class="back-crumb dont-close pull-right">

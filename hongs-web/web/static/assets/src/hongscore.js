@@ -2258,17 +2258,10 @@ $.fn.hsOpen = function(url, data, complete) {
     }
 
     if (tab) {
-        bak = tab.parent().children( ).filter(".active");
-        tab.show( ).find("a").click( );
-        if (tab.find("a b,a span").size()) {
-            tab.find("a b,a span")
-               .not (".close").filter(":empty")
-               .text("...");
-        } else {
-            tab.find("a"  )
-               .not (".close").filter(":empty")
-               .text("...");
-        }
+        bak = tab.parent().children().filter(".active");
+        tab.show( ).find("a").click();
+        tab.find("a:empty,b:empty,.title")
+           .text("...");
         // 关闭关联的 tab
         if (prt.children().size( ) ) {
             prt.children().hsCloze();
@@ -2431,7 +2424,7 @@ $.fn.hsTadd = function(ref) {
     var tab;
     var pne;
     if (! ref || ! box.find("[data-hrel='"+ref+"']").size() ) {
-        tab = $('<li><a href="javascript:;"><span class="title">&minus;</span><span class="close">&times;</span></a></li>')
+        tab = $('<li><a href="javascript:;"><span class="title">...</span><span class="close">&times;</span></a></li>')
                               .appendTo( box  );
         pne = $('<div></div>').appendTo( box.data( "labs" ) );
     } else {
@@ -2511,22 +2504,8 @@ $.fn.hsHead = function(tit) {
         var tbs = box.closest(".labs").data("tabs");
         var idx = box.closest(".labs>*").index();
         var tab = tbs.children().eq(idx);
-        var a = tab.find("a"); // 按钮
-        var b = tab.find("b,span").not(".close"); // 标签
-        var i = tab.find("i"); // 图标
-
-        // 已经有字就不要改了, 以下后两个字符为乘号与减号, hsTadd 时写入
-        var txt = $.trim(b.size() ? b.text() : a.text());
-        if (txt && txt !== "..." && txt !== "\u00d7" && txt !== "\u2212") {
-            return box ;
-        }
-
-        if (b.size() !== 0) {
-            b.text(tit);
-        } else
-        if (i.size() === 0) {
-            a.text(tit);
-        }
+        tab.find(".title,a:empty,b:empty")
+           .text( tit );
     } else
     if (box.is(".modal-body")) {
         box.closest(".modal")
@@ -2935,13 +2914,16 @@ function() {
         var ref;
         ref = ths.attr("data-href");
         ths.removeAttr("data-href");
-        pne.hsOpen( ref );
+        pne.hsOpen(ref);
     }
-    pne.siblings().hide();
     tab.siblings()
-           .removeClass("active");
-    tab.show().addClass("active");
-    pne.show().trigger("hsRecur");
+    .removeClass("active");
+    tab.addClass("active")
+       .css("display", "");
+    pne.siblings()
+       .hide();
+    pne.show()
+       .trigger("hsRecur");
 })
 .on("click", ".back-crumb  a",
 function() {

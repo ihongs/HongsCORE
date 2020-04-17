@@ -51,11 +51,11 @@ public class IsString extends Rule {
         int len;
         len = Synt.declare(getParam("minlength"), 0);
         if (len > 0 && len > str.length()) {
-            throw new Wrong("fore.form.lt.minlength", Integer.toString(len));
+            throw new Wrong("fore.form.lt.minlength", Integer.toString(len), Integer.toString(str.length()));
         }
         len = Synt.declare(getParam("maxlength"), 0);
         if (len > 0 && len < str.length()) {
-            throw new Wrong("fore.form.lt.maxlength", Integer.toString(len));
+            throw new Wrong("fore.form.gt.maxlength", Integer.toString(len), Integer.toString(str.length()));
         }
 
         if (str.length() == 0) {

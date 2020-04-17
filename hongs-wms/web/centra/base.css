@@ -55,7 +55,7 @@ html, body {
     padding: 20px 15px;
 }
 #main-menubar {
-    margin-top   : 96px;
+    margin-top   : 88px;
     margin-bottom: 60px;
 }
 
@@ -95,9 +95,9 @@ html, body {
 }
 #main-namebar>div:nth-child(2) {
     font-size: 12px;
-    line-height: 16px;
+    line-height: 12px;
     font-weight: 500;
-    padding: 3px 0;
+    padding: 1px 0;
     color: #e22;
 }
 

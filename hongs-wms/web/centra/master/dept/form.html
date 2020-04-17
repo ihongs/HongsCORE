@@ -7,7 +7,7 @@
         <input type="hidden" name="id" />
         <input type="hidden" name="pid"/>
         <div class="row">
-            <div class="col-xs-6 base-info">
+            <div class="col-xs-6 base-info" style="overflow: auto;">
                 <div class="form-group">
                     <label class="control-label">名称</label>
                     <input type="text" name="name" class="form-control" required="required"/>
@@ -21,12 +21,11 @@
                     <select name="state" class="form-control"></select>
                 </div>
             </div>
-            <div class="col-xs-6 role-info">
+            <div class="col-xs-6 role-info" style="overflow: auto;">
                 <div class="form-group" style="margin-bottom: 0;">
                     <label class="control-label">权限设置</label>
                     <input type="hidden" name="roles..role" class="form-ignored"/>
-                    <div style="max-height: 802px; overflow: auto; background: #fff; padding-top: 10px; border-top: 1px solid #ddd;"
-                         class="checkset" data-item-class="col-xs-6 col-lg-3"
+                    <div class="checkset" data-item-class="col-xs-6 col-lg-3"
                          data-fn="roles..role" data-ft="_checkset"
                          data-vl="roles" data-tl="text"
                          data-vk="name"  data-tk="text">
@@ -47,6 +46,11 @@
 <script type="text/javascript">
     (function($) {
         var context = $("#master-dept-form");
+
+        // 左右平衡大小
+        var h = $(window).height() - 75 - 95; // 上面导航和下面按钮的高度
+        context.find(".base-info").css("max-height", h);
+        context.find(".role-info").css("max-height", h);
 
         // 无可分配权限则隐藏
         context.on("loadBack", function(ev, rd) {

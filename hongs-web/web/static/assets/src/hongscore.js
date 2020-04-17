@@ -2261,10 +2261,12 @@ $.fn.hsOpen = function(url, data, complete) {
         bak = tab.parent().children( ).filter(".active");
         tab.show( ).find("a").click( );
         if (tab.find("a b,a span").size()) {
-            tab.find("a b,a span").not(".close")
+            tab.find("a b,a span")
+               .not (".close").filter(":empty")
                .text("...");
         } else {
-            tab.find( "a" )
+            tab.find("a"  )
+               .not (".close").filter(":empty")
                .text("...");
         }
         // 关闭关联的 tab
@@ -2356,13 +2358,13 @@ $.fn.hsClose = function() {
 
     // 恢复标签
     if (tab) {
-        var idx = box.data("hrev") ? box.data("hrev").index() : 0;
+        var idx = box.data("hrev") ? box.data("hrev").index() : 0 ;
         var tbs = tab.parent().children();
         var pns = prt.parent().children();
         var tb2 = tbs.eq(idx);
         var pn2 = pns.eq(idx);
-        tbs./**/removeClass("active");
-        tb2.show().addClass("active");
+        tbs.removeClass("active");
+        tb2.   addClass("active").css("display" , "");
         pns.hide();
         pn2.show();
         if (tab.has(".close").size()) {
@@ -2509,12 +2511,20 @@ $.fn.hsHead = function(tit) {
         var tbs = box.closest(".labs").data("tabs");
         var idx = box.closest(".labs>*").index();
         var tab = tbs.children().eq(idx);
-        var a = tab.find("a"     );
-        var b = tab.find("b,span")
-                   .not (".close");
-        if (b.size()) {
+        var a = tab.find("a"); // 按钮
+        var b = tab.find("b,span").not(".close"); // 标签
+        var i = tab.find("i"); // 图标
+
+        // 已经有字就不要改了, 以下后两个字符为乘号与减号, hsTadd 时写入
+        var txt = $.trim(b.size() ? b.text() : a.text());
+        if (txt && txt !== "..." && txt !== "\u00d7" && txt !== "\u2212") {
+            return box ;
+        }
+
+        if (b.size() !== 0) {
             b.text(tit);
-        } else {
+        } else
+        if (i.size() === 0) {
             a.text(tit);
         }
     } else
@@ -2629,13 +2639,15 @@ $.fn.hsFind = function(selr) {
         case '@':
             do {
                 var x;
+                x = elem.closest(".laps");
+                if (x.size()) { elem = x; break; }
                 x = elem.closest(".labs");
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".openbox");
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".loadbox");
                 if (x.size()) { elem = x; break; }
-                elem = $(document);
+                elem = $(document.body);
             } while (false);
             return salr ? $(salr, elem) : elem ;
         case '%':
@@ -2645,7 +2657,7 @@ $.fn.hsFind = function(selr) {
                 if (x.size()) { elem = x; break; }
                 x = elem.closest(".openbox");
                 if (x.size()) { elem = x; break; }
-                elem = $(document);
+                elem = $(document.body);
             } while (false);
             return salr ? $(salr, elem) : elem ;
         case '/':
@@ -2901,16 +2913,6 @@ function() {
 
 // 导航条和选项卡
 $(document)
-.on("click", ".home-crumb  a",
-function() {
-    // Nothing to do...
-})
-.on("click", ".back-crumb  a",
-function() {
-    var nav = $(this).closest('.breadcrumb');
-    nav.find('li:last a').hsClose();
-    nav.find('li:last a').  click();
-})
 .on("click", ".tabs > li > a",
 function() {
     var ths = $(this);
@@ -2918,13 +2920,12 @@ function() {
     var nav = tab.parent();
     var pns = nav.data("labs");
     var pne = pns ? pns.children().eq(tab.index()) : $();
-    if (tab.is(".dont-close")
-    ||  tab.is(".back-crumb")) {
+    if (tab.is(".dont-close,.back-crumb")) {
         return;
     }
     // 联动关闭
     if (nav.is(".breadcrumb")
-    && !tab.is(".hold-crumb")) {
+    && !tab.is(".hook-crumb,.hold-crumb")) {
         tab.nextAll( ).find("a").each( function() {
             $(this).hsClose();
         });
@@ -2942,22 +2943,21 @@ function() {
     tab.show().addClass("active");
     pne.show().trigger("hsRecur");
 })
+.on("click", ".back-crumb  a",
+function() {
+    var nav = $(this).closest ('.breadcrumb');
+    nav.find('li:last a').hsClose();
+    nav.find('li:last a').  click();
+})
 .on("hsReady hsRecur", ".labs.laps",
 function() {
-    var nav = $(this).siblings('.breadcrumb') || $(this).data("tabs");
-    if (nav.children().not('.back-crumb,.home-crumb').size( )) {
-        nav.show().removeClass( "invisible" )
-                  .removeClass(  "hide"  );
-    } else {
-        nav.hide();
-    }
-    if (nav.children(".active").is('.home-crumb,.hold-crumb')) {
-        nav.children('.back-crumb').hide();
-    } else {
-        nav.children('.back-crumb').show();
-    }
+    var nav = $(this).siblings('.breadcrumb') || $ (this).data("tabs");
+    nav.toggleClass("bread-home", nav.children('.home-crumb').is(".active")); // 主页
+    nav.toggleClass("bread-hook", nav.children('.hook-crumb').is(".active")); // 主页显示
+    nav.toggleClass("bread-hold", nav.children('.hold-crumb').is(".active")); // 总是显示
+    nav.removeClass("hide"); // 兼容代码, 去掉旧的 hide
 });
 
-$(function( ) { $(document).hsReady( ); });
+$(function() {$(document).hsReady();});
 
 })(jQuery);

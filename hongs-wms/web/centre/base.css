@@ -5,8 +5,8 @@
  */
 
 #bodybox {
-    margin-top   : 68px; /* 菜单和间距 */
-    margin-bottom: 37px; /* 页尾的高度 */
+    margin-top   : 71px; /* 菜单和间距 */
+    margin-bottom: 38px; /* 页尾的高度 */
 }
 
 #headbox .uhead {
@@ -31,7 +31,10 @@
 }
 
 /* 主导航条样式微调 */
-.container > .breadcrumb.laps {
+.container > .laps.tabs.bread-home {
+    display   : none;
+}
+.container > .laps.tabs.breadcrumb {
     background: #fff;
     border: 1px solid #ddd;
 }

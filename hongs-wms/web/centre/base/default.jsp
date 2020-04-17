@@ -48,11 +48,11 @@
     <body>
         <div id="context">
             <div id="headbox">
-                <div class="row" data-load="centre/head.jsp?active=<%=encodeURL($module+"/"+$entity+"/")%>"></div>
+                <div class="row" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
             <div id="bodybox">
                 <div class="container">
-                    <ol class="breadcrumb tabs laps hide" data-toggle="hsTabs">
+                    <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">
                                 <i class="glyphicon glyphicon-remove-sign"></i>

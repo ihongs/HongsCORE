@@ -172,13 +172,14 @@
 
             var a, b, h, l;
 
-            h = location.href.replace(/^\w+:\/\/[^\/]+/, '');
-            a = menubar .find("a[href='"+h+"']");
-            h = menubar .find("a").attr("href" );
-            b = menubar ;
+            h = menubar.closest(".loadbox").data("active")
+            || location.href.replace(/^\w+:\/\/[^\/]+/,'');
+            a = menubar.find("a[href='"+hsFixUri(h) +"']");
+            h = menubar.find("a").attr("href");
+            b = menubar;
 
-            b.find("li").removeClass( "active" );
-            a.parents("li").addClass( "active" );
+            b.find("li").removeClass("active");
+            a.parents("li").addClass("active");
 
             /**
              * 容器不存在或容器已预载,

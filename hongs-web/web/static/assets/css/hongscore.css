@@ -39,8 +39,8 @@ code, pre, var, dfn, kbd {
 }
 
 .btn .close {
-    margin-right: -0.3em;
-    margin-top: -0.1em;
+    margin-right: -0.30em;
+    margin-top: -0.15em;
     opacity: 0.8;
     color: #eee;
 }
@@ -148,27 +148,54 @@ fieldset>.dropdown-list {
 
 /** 可后退导航条 **/
 
-.breadcrumb .close {
+.breadcrumb.laps {
+    border: 1px solid #535353;
+    background: #777777;
+    margin-bottom: 20px;
+}
+.breadcrumb.laps ,
+.breadcrumb.laps a {
+    color: #fff;
+}
+.breadcrumb.laps a:hover ,
+.breadcrumb.laps a:focus {
+    color: #6ae;
+}
+.breadcrumb.laps .active a ,
+.breadcrumb.laps .active a:hover ,
+.breadcrumb.laps .active a:focus {
+    color: #e22;
+    text-decoration: none;
+}
+
+.breadcrumb.laps .close {
     display: none;
 }
-.breadcrumb.laps > li.home-crumb i {
-    margin-right: 0.5em;
+.breadcrumb.laps > li.back-crumb {
+    margin-left : 1em;
 }
-.breadcrumb.laps > li.home-crumb i ,
-.breadcrumb.laps > li.back-crumb i {
-    color: #666;
+.breadcrumb.laps > li.home-crumb i {
+    margin-right: 1em;
 }
 .breadcrumb.laps > li + li.home-crumb:before {
     padding: 0 ;
 }
 .breadcrumb.laps > li + li.home-crumb:before ,
-.breadcrumb.laps > li + li.back-crumb:before {
+.breadcrumb.laps > li + li.back-crumb:before ,
+.breadcrumb.laps > li + li.hook-crumb:before ,
+.breadcrumb.laps > li + li.bold-crumb:before {
     content: "";
 }
-.breadcrumb > .active > a {
-    font-weight: bold;
-    color: #808080;
-    color: inherit;
+
+.laps.tabs            .back-crumb ,
+.laps.tabs.bread-home .hook-crumb {
+    display: block;
+}
+.laps.tabs            .hook-crumb ,
+.laps.tabs.bread-home .back-crumb ,
+.laps.tabs.bread-hook .back-crumb ,
+.laps.tabs.bread-hold .back-crumb {
+    display: none ;
 }
 
 /** 其他组件调整 **/
@@ -187,6 +214,9 @@ div.bootstrap-tagsinput.form-control {
 }
 div.bootstrap-tagsinput.form-control input {
     padding: 0px 8px;
+}
+div.bootstrap-tagsinput .tag [data-role="remove"]:after {
+    content: "\00d7";
 }
 
 /* bootstrap-fileinput */
@@ -294,7 +324,7 @@ ol.repeated ,
     margin-bottom: 0;
 }
 .modal-header .close {
-    margin-top : 2px;
+    margin-top : 0px;
 }
 .alert-content>.alert-body ,
 .alert-content>.alert-footer {
@@ -305,17 +335,13 @@ ol.repeated ,
     margin-top : 0em;
 }
 .alert.dialog .alert-header .close {
-    width : 24px;
-    height: 24px;
-    font-size  : 20px;
-    line-height: 20px;
-    margin-top : -2px;
-    padding-bottom: 4px;
-    border-radius : 50%;
-    text-align : center;
-    text-shadow: none;
-    font-weight: bold;
-    background : #fff;
+    margin-top : -0.15em;
+    color : #fff;
+    opacity: 0.5;
+}
+.alert.dialog .alert-header .close:hover ,
+.alert.dialog .alert-header .close:focus {
+    opacity: 1.0;
 }
 
 /* 规避警告框右侧的滚动条间隙 */
@@ -345,15 +371,12 @@ ol.repeated ,
     background: rgb (153,0,102);
     background: rgba(153,0,102,0.8);
 }
-.alert.dialog .btn-default  {
-    border-color: #555;
-}
 .alert.dialog .btn-link {
-    color : #eee;
+    color : #fff;
 }
 .alert.dialog .btn-link:hover ,
 .alert.dialog .btn-link:focus {
-    color : #cef;
+    color : #6ae;
 }
 
 /** 适配 **/

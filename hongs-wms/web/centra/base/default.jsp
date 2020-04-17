@@ -39,11 +39,16 @@
     <body class="sider-open">
         <div id="context">
             <div id="headbox">
-                <div id="menu-context" data-load="centra/head.jsp?active=<%=encodeURL($module+"/"+$entity+"/")%>"></div>
+                <div id="menu-context" data-load="centra/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
-                    <ol class="breadcrumb tabs laps hide" data-toggle="hsTabs">
+                    <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
+                        <li class="hook-crumb dont-crumb pull-right">
+                            <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual", $title)%>">
+                                <i class="glyphicon glyphicon-info-sign"></i>
+                            </a>
+                        </li>
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">
                                 <i class="glyphicon glyphicon-remove-sign"></i>
@@ -52,11 +57,12 @@
                         <li class="home-crumb active">
                             <a href="javascript:;">
                                 <i class="glyphicon glyphicon-folder-open"></i>
-                                <b></b>
+                                <b><%=$title%></b>
                             </a>
                         </li>
                     </ol>
                     <div class="labs laps">
+                        <div></div>
                         <div></div>
                         <div data-load="<%=$module%>/<%=$entity%>/list.html"></div>
                     </div>

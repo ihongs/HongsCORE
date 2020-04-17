@@ -20,7 +20,6 @@ html, body {
     overflow: auto ;
     position: fixed;
     background: #e0e2e2;
-    box-shadow: 0 0 10px #aaa;
     z-index: 1;
 }
 
@@ -67,13 +66,11 @@ html, body {
 }
 #user-menubar {
     bottom: 0;
-    box-shadow: 0 0 10px #ccc;
-    background-color: rgba(238,238,238,0.9);
+    background-color: rgba(204,204,204,0.9);
 }
 #main-namebar {
     top   : 0;
-    box-shadow: 0 0 10px #888;
-    background-color: rgba( 34, 34, 34,0.8);
+    background-color: rgba( 34, 34, 34,0.6);
 }
 #main-namebar:after {
     content: "";
@@ -312,15 +309,19 @@ html, body {
     color: #f00;
 }
 
-/* 容器主要内容边界 */
-#main-context > .labs {
+/* 容器主导航条样式 */
+#main-context > .laps.labs {
     margin-top: 20px;
 }
-#main-context > .laps.breadcrumb {
-    margin-bottom: 0;
-    margin-top: 20px;
-    background: #fff;
-    border: 1px solid #ddd;
+#main-context > .laps.tabs.breadcrumb {
+    margin: 0  -15px;
+    border-radius: 0;
+    border-color : #555;
+    border-bottom-color: #333;
+       background-color: #555;
+}
+#main-context > .laps.hide.breadcrumb {
+    display: block !important;
 }
 
 /* 复制导出列表样式 */

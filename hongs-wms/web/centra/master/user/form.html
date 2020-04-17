@@ -107,6 +107,11 @@
         var loadbox = context.closest(".loadbox");
         var loadpms = hsSerialArr( loadbox );
 
+        // 左右平衡大小
+        var h = $(window).height() - 75 - 95; // 上面导航和下面按钮的高度
+        context.find(".base-info").css("max-height", h);
+        context.find(".role-info").css("max-height", h);
+
         // 权限、分组以及密码
         context.on("loadBack", function(ev, rd) {
             if (!rd["enum"]["roles..role"].length ) {
@@ -219,10 +224,5 @@
             }
             return ps.join("");
         }
-        
-        // 左右平衡大小
-        var h = $(window).height() - 75 - 95; // 上面导航和下面按钮的高度
-        context.find(".base-info").css("max-hegiht", h);
-        context.find(".role-info").css("max-hegiht", h);
     })(jQuery);
 </script>

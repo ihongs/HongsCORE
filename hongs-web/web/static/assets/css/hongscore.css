@@ -193,7 +193,8 @@ fieldset>.dropdown-list {
 }
 
 .laps.tabs            .back-crumb ,
-.laps.tabs.bread-home .hook-crumb {
+.laps.tabs.bread-home .hook-crumb ,
+.laps.tabs.bread-hook .hook-crumb {
     display: block;
 }
 .laps.tabs            .hook-crumb ,

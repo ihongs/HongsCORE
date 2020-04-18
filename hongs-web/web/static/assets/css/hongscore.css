@@ -732,6 +732,7 @@ ul.pickrol > li.btn-text:focus {
 .picknum:before {
     content: " (" ;
 }
+.pickrol  input ,
 .pickrol .close {
     display: none ;
 }

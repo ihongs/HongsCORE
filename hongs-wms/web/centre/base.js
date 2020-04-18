@@ -156,7 +156,10 @@ function hsListInitMine(x, v, n) {
 function HsPops (context , urls) {
     var paneBox, inState, IF, NF;
     context = jQuery( context  );
-    paneBox = context.closest(".labs");
+    paneBox = context.children(".labs");
+    if (paneBox.size( ) === 0  ) {
+    paneBox = context.closest (".labs");
+    }
     inState = false ;
     IF = "1" ; // 处于表单中
     NF = null; // 非表单模式
@@ -165,7 +168,6 @@ function HsPops (context , urls) {
      * 列表和查看对公共区很重要
      * 如果有给编号则打开详情页
      */
-    context.hsLoad(urls.listUrl + hsSetParam(location.search, "id", null));
     $(window).on("popstate", function() {
         inState = true;
         paneBox.children().eq(2).children().hsClose();

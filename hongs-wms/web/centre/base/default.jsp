@@ -8,6 +8,7 @@
     if ($hide) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
+    String $func = "in_"+ ($module+"_"+$entity).replace('/', '_');
 %>
 <!doctype html>
 <html>
@@ -32,18 +33,6 @@
         <script type="text/javascript" src="common/auth/centre.js" ></script>
         <script type="text/javascript" src="centre/base.min.js"></script>
         <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
-        <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=$module%>/<%=$entity%>/defines.js"]=1;
-            HsDEPS["__DEFINED__"]=1;
-            $(function(){
-                HsPops($("#main-context"), {
-                    listUrl: "<%=$module%>/<%=$entity%>/list.html",
-                    infoUrl: "<%=$module%>/<%=$entity%>/info.html",
-                    formUrl: "<%=$module%>/<%=$entity%>/form.html",
-                    addsUrl: "<%=$module%>/<%=$entity%>/form_init.html"
-                });
-            });
-        </script>
     </head>
     <body>
         <div id="context">
@@ -51,7 +40,7 @@
                 <div class="row" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
             <div id="bodybox">
-                <div class="container">
+                <div class="container" id="main-context">
                     <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">
@@ -72,5 +61,11 @@
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+            (function($) {
+                // 外部定制
+                window["<%=$func%>"] && window["<%=$func%>"]($("#mian-context"));
+            })(jQuery);
+        </script>
     </body>
 </html>

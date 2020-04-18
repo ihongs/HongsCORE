@@ -187,7 +187,8 @@
              * 没有则最终转向首个链接.
              */
             if (context .size() === 0
-            ||  context .data("load")) {
+            ||  context .data("load")
+            ||  context .children().size()) {
                 return;
             }
 

@@ -321,7 +321,10 @@ html, body {
        background-color: #555;
 }
 #main-context > .laps.hide.breadcrumb {
-    display: block !important;
+    display: block  !important;
+}
+.breadcrumb.laps.tabs .active .title  {
+    display: inline !important;
 }
 
 /* 复制导出列表样式 */

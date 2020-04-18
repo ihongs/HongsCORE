@@ -2504,7 +2504,7 @@ $.fn.hsHead = function(tit) {
         var tbs = box.closest(".labs").data("tabs");
         var idx = box.closest(".labs>*").index();
         var tab = tbs.children().eq(idx);
-        tab.find(".title,a:empty,b:empty")
+        tab.find(".title,b:empty,a:empty")
            .text( tit );
     } else
     if (box.is(".modal-body")) {

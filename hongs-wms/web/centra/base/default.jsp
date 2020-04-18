@@ -8,6 +8,7 @@
     if ($hide) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
+    String $func = "in_"+ ($module+"_"+$entity).replace('/', '_');
 %>
 <!doctype html>
 <html>
@@ -31,10 +32,6 @@
         <script type="text/javascript" src="common/auth/centra.js" ></script>
         <script type="text/javascript" src="centra/base.min.js"></script>
         <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
-        <script type="text/javascript">
-            HsDEPS["<%=request.getContextPath()%>/<%=$module%>/<%=$entity%>/defines.js"]=1;
-            HsDEPS["__DEFINED__"]=1;
-        </script>
     </head>
     <body class="sider-open">
         <div id="context">
@@ -44,9 +41,16 @@
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
                     <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
-                        <li class="hook-crumb dont-crumb pull-right">
+                        <li class="hook-crumb dont-crumb pull-right" data-eval="!H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).remove()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual", $title)%>">
                                 <i class="glyphicon glyphicon-book"></i>
+                                <span class="title hide">...</span>
+                            </a>
+                        </li>
+                        <li class="hook-crumb dont-crumb pull-right" data-eval="!H$('!<%=$module%>/<%=$entity%>/reveal.act') || $(this).remove()">
+                            <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/snap.html"%>" title="<%=$locale.translate("fore.record", $title)%>">
+                                <i class="glyphicon glyphicon-time"></i>
+                                <span class="title hide">...</span>
                             </a>
                         </li>
                         <li class="back-crumb dont-close pull-right">
@@ -64,10 +68,17 @@
                     <div class="labs laps">
                         <div></div>
                         <div></div>
+                        <div></div>
                         <div data-load="<%=$module%>/<%=$entity%>/list.html"></div>
                     </div>
                 </div>
             </div>
         </div>
+        <script type="text/javascript">
+            (function($) {
+                // 外部定制
+                window["<%=$func%>"] && window["<%=$func%>"]($("#mian-context"));
+            })(jQuery);
+        </script>
     </body>
 </html>

@@ -76,7 +76,7 @@
         </div>
         <script type="text/javascript">
             (function($) {
-                var context = $("#mian-context");
+                var context = $("#main-context");
 
                 // 外部定制
                 window["<%=$func%>"] && window["<%=$func%>"](context);

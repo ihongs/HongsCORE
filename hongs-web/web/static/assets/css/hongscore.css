@@ -180,13 +180,11 @@ fieldset>.dropdown-list {
 .breadcrumb.laps > li.pull-right {
     margin-left: 1.0em;
 }
-.breadcrumb.laps > li + li.home-crumb:before {
+.breadcrumb.laps > li.home-crumb:before ,
+.breadcrumb.laps > li.back-crumb:before ,
+.breadcrumb.laps > li.hook-crumb:before ,
+.breadcrumb.laps > li.hold-crumb:before {
     padding: 0 ;
-}
-.breadcrumb.laps > li + li.home-crumb:before ,
-.breadcrumb.laps > li + li.back-crumb:before ,
-.breadcrumb.laps > li + li.hook-crumb:before ,
-.breadcrumb.laps > li + li.hold-crumb:before {
     content: "";
 }
 

@@ -45,15 +45,10 @@
                 hint  = "" ;
             }
         %>
-        <%if ("hidden".equals(type)) {%>
-            <input type="hidden" name="<%=name%>" value="<%="form_id".equals(name)?_entity:""%>"/>
-        <%} else if ( "legend" .equals(type)) {%>
+        <%/****/ if ("hidden".equals(type)) {%>
+            <input type="hidden" name="<%=name%>" />
+        <%} else if ("legend".equals(type)) {%>
             <legend class="text-center"><%=text%></legend>
-        <%} else if ("checkset".equals(type)) {%>
-            <fieldset>
-                <legend class="text-left"><%=text%></legend>
-                <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>
-            </fieldset>
         <%} else {%>
             <div class="form-group row">
                 <label class="col-sm-3 col-md-2 control-label text-right"><%=text%></label>
@@ -122,12 +117,12 @@
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} else { rqrd = "data-"+rqrd; }%>
-                    <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
+                    <div class="checkbox" data-fn="<%=name%>" data-ft="_check" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>" <%=rqrd%>></div>
                 <%} else if ("radio".equals(type)) {%>
                     <%if ("".equals(rqrd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
                     <%} else { rqrd = "data-"+rqrd; }%>
-                    <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>"></div>
+                    <div class="radio"    data-fn="<%=name%>" data-ft="_radio" data-vk="<%=Synt.defoult(info.get("data-vk"), "0")%>" data-tk="<%=Synt.defoult(info.get("data-tk"), "1")%>" <%=rqrd%>></div>
                 <%} else if ("enum".equals(type) || "type".equals(type) || "select".equals(type)) {%>
                     <%if ("".equals(rqrd) && !"".equals(rptd)) {%>
                     <input type="hidden" name="<%=name%>" class="form-ignored"/>
@@ -172,8 +167,8 @@
                         if ("image".equals(type)) {
                             mode  = "hsView";
                             kind  =  "_view";
-                            String size = Synt.declare( info.get("thumb-size"), "");
                             String moda = Synt.declare( info.get("thumb-mode"), "");
+                            String size = Synt.declare( info.get("thumb-size"), "");
                             if (size.length( ) != 0  ) {
                                 Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
                                 if ( m.find( ) ) {
@@ -236,9 +231,9 @@
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
         <%} /* End if */ %>
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,

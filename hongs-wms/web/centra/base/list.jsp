@@ -56,9 +56,6 @@
                     <button type="button" class="filter btn btn-default" title="<%=_locale.translate("fore.filter", _title)%>"><span class="glyphicon glyphicon-filter"></span></button>
                     <button type="button" class="statis btn btn-default" title="<%=_locale.translate("fore.statis", _title)%>"><span class="glyphicon glyphicon-stats "></span></button>
                     <button type="button" class="column btn btn-default" title="<%=_locale.translate("fore.column", _title)%>"><span class="glyphicon glyphicon-check "></span></button>
-                    <%if ("browse".equals(_action)) {%>
-                    <button type="button" class="record btn btn-default" title="<%=_locale.translate("fore.record", _title)%>"><span class="glyphicon glyphicon-record"></span></button>
-                    <%} // End If %>
                 </span>
             </div>
         </div>
@@ -315,7 +312,6 @@
     if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
     if (!hsChkUri("<%=_module%>/<%=_entity%>/reveal.act")) context.find(".reveal").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/reveal.act")) context.find(".record").remove();
 
     //** 列表、搜索表单 **/
 

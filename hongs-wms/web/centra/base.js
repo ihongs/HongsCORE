@@ -38,6 +38,36 @@ $(document).on("reset", ".HsList .findbox", function() {
 });
 
 /**
+ * 添加一个面包屑按钮
+ * @param {jQuery} context 导航容器, .tabs 或 .labs 区域内都行
+ * @param {String} type 分类, 如 hook-crumb, hold-crumb
+ * @param {String} icon 图标, 如 glyphicon-link
+ * @param {String} href 对应链接
+ * @param {String} text 悬浮文本
+ * @returns {hsPushCrumb.tab|$}
+ */
+function hsPushCrumb(context, href, text, icon, type) {
+    var laps = context.closest(".tabs,.labs");
+    var tabs , labs;
+    if (laps.is(".tabs")) {
+        tabs = laps;
+        labs = laps.data("labs");
+    } else {
+        tabs = laps;
+        labs = laps.data("labs");
+    }
+    var pan  = $('<div></div>' );
+    var tab  = $('<li class="pull-right dont-crumb"><a href="javascript:;"><i class="glyphicon"></i><span class="hide title"></span></a></li>');
+    tab.find("a").attr("data-href", href)
+                 .attr(  "title"  , text);
+    tab.find("i").addClass(icon);
+    tab.addClass(type);
+    tabs.prepend(tab );
+    labs.prepend(pan );
+    return [tab, pan ];
+}
+
+/**
  * 筛选列表填充数据
  */
 function hsListFillSele(x, v, n) {

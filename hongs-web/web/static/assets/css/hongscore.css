@@ -159,14 +159,12 @@ fieldset>.dropdown-list {
 }
 .breadcrumb.laps a:hover ,
 .breadcrumb.laps a:focus {
-    color: #6ae;
+    color: #bbb;
 }
 .breadcrumb.laps .active a {
-    color: #ccc;
+    color: #bbb;
     text-decoration: none;
 }
-.breadcrumb.laps .active a:hover ,
-.breadcrumb.laps .active a:focus ,
 .breadcrumb.laps .active.home-crumb a ,
 .breadcrumb.laps .active.back-crumb a {
     color: #fff;
@@ -176,11 +174,11 @@ fieldset>.dropdown-list {
 .breadcrumb.laps .close {
     display: none;
 }
-.breadcrumb.laps > li.back-crumb {
-    margin-left : 1em;
+.breadcrumb.laps > li i + * {
+    margin-left: 0.5em;
 }
-.breadcrumb.laps > li.home-crumb i {
-    margin-right: 1em;
+.breadcrumb.laps > li.pull-right {
+    margin-left: 1.0em;
 }
 .breadcrumb.laps > li + li.home-crumb:before {
     padding: 0 ;
@@ -188,7 +186,7 @@ fieldset>.dropdown-list {
 .breadcrumb.laps > li + li.home-crumb:before ,
 .breadcrumb.laps > li + li.back-crumb:before ,
 .breadcrumb.laps > li + li.hook-crumb:before ,
-.breadcrumb.laps > li + li.bold-crumb:before {
+.breadcrumb.laps > li + li.hold-crumb:before {
     content: "";
 }
 
@@ -382,7 +380,7 @@ ol.repeated ,
 }
 .alert.dialog .btn-link:hover ,
 .alert.dialog .btn-link:focus {
-    color : #6ae;
+    color : #ddd;
 }
 
 /** 适配 **/

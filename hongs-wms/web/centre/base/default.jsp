@@ -63,8 +63,18 @@
         </div>
         <script type="text/javascript">
             (function($) {
+                var context = $("#mian-context");
+
                 // 外部定制
-                window["<%=$func%>"] && window["<%=$func%>"]($("#mian-context"));
+                window["<%=$func%>"] && window["<%=$func%>"](context);
+
+                // 虚拟导航
+                HsPops(context, {
+                    listUrl: "<%=$module%>/<%=$entity%>/list.html",
+                    infoUrl: "<%=$module%>/<%=$entity%>/info.html",
+                    formUrl: "<%=$module%>/<%=$entity%>/form.html",
+                    addsUrl: "<%=$module%>/<%=$entity%>/form_init.html"
+                });
             })(jQuery);
         </script>
     </body>

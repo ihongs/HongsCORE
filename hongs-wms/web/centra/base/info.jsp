@@ -24,7 +24,7 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            ||  Synt.declare(info.get("readinly"), false)) {
+            ||  Synt.declare(info.get("unviewable"), false)) {
                 continue ;
             }
 
@@ -38,7 +38,7 @@
                 // 日期类需注意 Unix 时间戳需要乘 1000
                 String typa = (String) info.get("type");
                 if (text == null || text.length() == 0) {
-                    type  = "hidden"  ;
+                    continue;
                 } else
                 if (typa == null || typa.length() == 0
                 ||  "date".equals(typa)

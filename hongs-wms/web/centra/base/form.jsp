@@ -44,15 +44,10 @@
                 hint  = "" ;
             }
         %>
-        <%if ("hidden".equals(type)) {%>
-            <input type="hidden" name="<%=name%>" value="<%="form_id".equals(name)?_entity:""%>"/>
-        <%} else if ( "legend" .equals(type)) {%>
+        <%/****/ if ("hidden".equals(type)) {%>
+            <input type="hidden" name="<%=name%>" />
+        <%} else if ("legend".equals(type)) {%>
             <legend class="text-center"><%=text%></legend>
-        <%} else if ("checkset".equals(type)) {%>
-            <fieldset>
-                <legend class="text-left"><%=text%></legend>
-                <div class="form-group" data-ft="_checkset" data-fn="<%=name%>" data-vk="<%=info.get("data-vk")%>" data-tk="<%=info.get("data-tk")%>" <%=rqrd%>></div>
-            </fieldset>
         <%} else {%>
             <div class="form-group row">
                 <label class="col-xs-3 col-md-2 control-label text-right"><%=text%></label>
@@ -151,6 +146,8 @@
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                        rl = rl.replace("centre", "centra");
+                        al = al.replace("centre", "centra");
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                         mode += "\" data-href=\""+al+"\" data-target=\"@";
@@ -233,9 +230,9 @@
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
         <%if (! _fields.containsKey("memo")) {%>
         save: hsSaveWithMemo('<%=_locale.translate("fore.update.confirm", _title)%>'),
         <%}} /* End if */%>

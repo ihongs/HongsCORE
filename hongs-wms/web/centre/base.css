@@ -30,33 +30,9 @@
     font-size : 12px;
 }
 
-/* 反色导航条 */
-.breadcrumb.laps {
-    border: 1px solid #222;
-    background: #535353;
-    margin-bottom: 20px;
-}
-.breadcrumb.laps ,
-.breadcrumb.laps a {
-    color: #fff;
-}
-.breadcrumb.laps a:hover ,
-.breadcrumb.laps a:focus {
-    color: #b22;
-}
-.breadcrumb.laps .active a {
-    color: #b22;
-    text-decoration: none;
-}
-.breadcrumb.laps .active.home-crumb a ,
-.breadcrumb.laps .active.back-crumb a {
-    color: #fff;
-    text-decoration: none;
-}
-
 /* 主导航条默认隐藏 */
 .container > .laps.tabs.bread-home {
-    display: none;
+    display   : none;
 }
 
 /* 隐藏受限的搜索框 */

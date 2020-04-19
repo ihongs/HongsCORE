@@ -51,7 +51,7 @@
             </div>
             </div>
         </div>
-    </form>
+    </form> unviewable,uneditable,un
     <!-- 筛选 -->
     <form class="findbox filtbox statbox invisible panel panel-default panel-body form-horizontal">
         <%
@@ -64,7 +64,7 @@
             String  text = (String) info.get ("__text__");
 
             if ("@".equals(name) || "id".equals(name)
-            ||  Synt.declare(info.get("wardonly"), false)) {
+            ||  Synt.declare(info.get("unopenable"), false)) {
                 continue;
             }
         %>

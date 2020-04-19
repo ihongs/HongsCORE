@@ -130,12 +130,14 @@
              * 从字段配置里提取表单标题
              */
             if (_fields != null) {
-                _params  = (Map) _fields.get ( "@" );
-                if (_params != null) {
-                    _title   = (String) _params.get("__text__");
+                _params  = (Map) _fields.get("@");
+                if (_params == null) {
+                    _params = new LinkedHashMap();
+                }
+                _title   = (String) _params.get("__text__");
                 if (_title  == null) {
-                    _title   =  "" ;
-                }}
+                    _title  = "";
+                }
                 break;
             }
         }

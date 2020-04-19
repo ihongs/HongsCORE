@@ -141,8 +141,10 @@
                     </excludes>
                     <aggregations>
                         <aggregation>
-                            <output>web/static/assets/hongscore.min.js</output>
+                            <insertNewLine>true</insertNewLine>
+                            <removeIncluded>true</removeIncluded>
                             <inputDir>web/static/assets/src</inputDir>
+                            <output>web/static/assets/hongscore.min.js</output>
                             <includes>
                                 <include>hongscore.min.js</include>
                                 <include>hongscore-form.min.js</include>
@@ -152,8 +154,6 @@
                                 <include>hongscore-file.min.js</include>
                                 <include>hongscore-date.min.js</include>
                             </includes>
-                            <removeIncluded>true</removeIncluded>
-                            <insertNewLine>true</insertNewLine>
                         </aggregation>
                     </aggregations>
                 </configuration>

@@ -148,8 +148,23 @@ fieldset>.dropdown-list {
 
 /** 可后退导航条 **/
 
+.laps.tabs .active .hide.title {
+    display: inline !important;
+}
+.laps.tabs            .back-crumb ,
+.laps.tabs.bread-home .hook-crumb ,
+.laps.tabs.bread-hook .hook-crumb {
+    display: block;
+}
+.laps.tabs            .hook-crumb ,
+.laps.tabs.bread-home .back-crumb ,
+.laps.tabs.bread-hook .back-crumb ,
+.laps.tabs.bread-hold .back-crumb {
+    display: none ;
+}
+
 .breadcrumb.laps .close {
-    display: none;
+    display: none ;
 }
 .breadcrumb.laps > li i + * {
     margin-left: 0.5em;
@@ -165,19 +180,31 @@ fieldset>.dropdown-list {
     content: "";
 }
 
-.laps.tabs > li.active hide.title {
-    display: inline !important;
+/* 反色 */
+.breadcrumb.laps {
+    border: 1px solid #222;
+    background: #535353;
+    margin-bottom: 20px;
 }
-.laps.tabs            .back-crumb ,
-.laps.tabs.bread-home .hook-crumb ,
-.laps.tabs.bread-hook .hook-crumb {
-    display: block;
+.breadcrumb.laps ,
+.breadcrumb.laps a {
+    color: #fff;
 }
-.laps.tabs            .hook-crumb ,
-.laps.tabs.bread-home .back-crumb ,
-.laps.tabs.bread-hook .back-crumb ,
-.laps.tabs.bread-hold .back-crumb {
-    display: none ;
+.breadcrumb.laps a:hover ,
+.breadcrumb.laps a:focus ,
+.breadcrumb.laps .active a {
+    color: #ddd;
+}
+.breadcrumb.laps .active a {
+    text-decoration: none;
+}
+.breadcrumb.laps .active.home-crumb a ,
+.breadcrumb.laps .active.back-crumb a {
+    color: #fff;
+}
+.breadcrumb.laps .active.hook-crumb a ,
+.breadcrumb.laps .active.hold-crumb a {
+    color: #d22;
 }
 
 /** 其他组件调整 **/

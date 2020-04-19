@@ -1,5 +1,3 @@
-<%@page import="io.github.ihongs.Core"%>
-<%@page import="java.io.File"%>
 <%@page extends="io.github.ihongs.jsp.Pagelet"%>
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_base_.jsp"%>
@@ -8,7 +6,7 @@
     if ($hide) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
-    String $func = "in_"+ ($module+"_"+$entity).replace('/', '_');
+    String $func = "in_"+($module+"_"+$entity).replace ('/', '_');
 %>
 <!doctype html>
 <html>

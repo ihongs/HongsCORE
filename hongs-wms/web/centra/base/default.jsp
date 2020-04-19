@@ -24,11 +24,10 @@
         <script type="text/javascript" src="static/assets/jquery.min.js"></script>
         <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongsedit.min.js"></script>
+        <script type="text/javascript" src="static/assets/hongsedge.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centra.js" ></script>
-        <script type="text/javascript" src="centra/base.min.js"></script>
         <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
     </head>
     <body class="sider-open">

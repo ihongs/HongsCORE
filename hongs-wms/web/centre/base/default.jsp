@@ -25,11 +25,10 @@
         <script type="text/javascript" src="static/assets/jquery.min.js"></script>
         <script type="text/javascript" src="static/assets/bootstrap.min.js"></script>
         <script type="text/javascript" src="static/assets/hongscore.min.js"></script>
-        <script type="text/javascript" src="static/assets/hongsedit.min.js"></script>
+        <script type="text/javascript" src="static/assets/hongsedge.min.js"></script>
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centre.js" ></script>
-        <script type="text/javascript" src="centre/base.min.js"></script>
         <script type="text/javascript" src="<%=$module%>/<%=$entity%>/defines.js"></script>
     </head>
     <body>
@@ -67,7 +66,7 @@
                 window["<%=$func%>"] && window["<%=$func%>"](context);
 
                 // 虚拟导航
-                HsPops(context, {
+                context.hsPops({
                     listUrl: "<%=$module%>/<%=$entity%>/list.html",
                     infoUrl: "<%=$module%>/<%=$entity%>/info.html",
                     formUrl: "<%=$module%>/<%=$entity%>/form.html",

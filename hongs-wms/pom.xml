@@ -166,6 +166,8 @@
                     <outputDirectory>web</outputDirectory>
                     <includes>
                         <include>static/assets/src/hongsedit.js</include>
+                        <include>static/assets/src/hongsedge.js</include>
+                        <include>static/assets/src/hongsedge-*.js</include>
                         <include>*/*.js</include>
                         <include>*/*.css</include>
                     </includes>
@@ -177,10 +179,13 @@
                         <aggregation>
                             <insertNewLine>true</insertNewLine>
                             <removeIncluded>true</removeIncluded>
-                            <output>web/static/assets/hongsedit.min.js</output>
+                            <output>web/static/assets/hongsedge.min.js</output>
                             <inputDir>web/static/assets/src</inputDir>
                             <includes>
                                 <include>hongsedit.min.js</include>
+                                <include>hongsedge.min.js</include>
+                                <include>hongsedge-centra.min.js</include>
+                                <include>hongsedge-centre.min.js</include>
                             </includes>
                         </aggregation>
                     </aggregations>

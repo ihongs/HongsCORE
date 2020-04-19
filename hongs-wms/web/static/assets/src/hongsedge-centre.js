@@ -1,102 +1,21 @@
-/* global jQuery, HsCUID, HsCUST, HsForm, HsList */
+
+//** 前台标准功能 **/
 
 /**
- * 设置当前用户ID
+ * 列表属主权限控制
  */
-if (hsChkUri('public')) {
-    window.HsCUID = H$('%HsCUID');
-    window.HsCUST = H$('%HsCUST');
-} else {
-    window.HsCUID = null ;
-    window.HsCUST = null ;
-    H$ ( '%HsCUID', null);
-    H$ ( '%HsCUST', null);
-}
-
-/**
- * 列表搜索表单重置
- */
-$(document).on("reset", ".HsList .findbox", function() {
-    var findbox = $(this);
-    findbox.find( "[data-ft=_fork]" ).each( function() {
-        hsFormFillFork( $(this), {} );
-    });
-    setTimeout(function() {
-        findbox.find(":submit")
-               .first().click();
-    } , 500);
-});
-
-/**
- * 依据权限开放编辑
- */
-function hsListShowEdit(d, v) {
-    if (v) {
-        if (v.uid !== undefined) {
-            v = v.uid;
-        } else
-        if (v. id !== undefined) {
-            v = v. id;
+function hsListInitMine(x, v, n) {
+    x.next().on( "change", ":radio", function() {
+        switch ($(this).val()) {
+            case "1": x.attr("name", n + ".eq").val(HsCUID); break;
+            case "2": x.attr("name", n + ".ne").val(HsCUID); break;
+            default : x.attr("name", n).val(""); break;
         }
-    }
-    if (v && v == window.HsCUID) {
-        d.show ();
-    }
-}
 
-/**
- * 列表填充卡片图标
- */
-function hsListFillLogo(d, v) {
-    if (!v) return ;
-    d.css ( {
-        "background-size"    : "cover",
-        "background-repeat"  : "no-repeat",
-        "background-position": "center center",
-        "background-image"   : "url(" + v + ")"
+        // 为规避多余的查询项, 没有设选项字段名称, 需自行取消其他选项
+        $(this).closest("label").siblings().find("input").prop("checked", false);
     });
 }
-
-/**
- * 列表填充过滤选项
- */
-function hsListFillFilt(x, v, n) {
-    n = n.replace(/^ar\.\d\./, "");
-    v = this._info[n];
-    return v;
-}
-
-/**
- * 列表预置过滤选项
- */
-function hsListDollFilt(x, v, n) {
-    n = n.replace(/^ar\.\d\./, "");
-    v = this._enum[n];
-
-    /**
-     * 列表的初始条件是空的
-     * 如果选项没有设置空值
-     * 需要补充一个空的选项
-     */
-    var vk = x.attr("data-vk") || 0;
-    var tk = x.attr("data-tk") || 1;
-    var ek = true;
-    for(var i = 0; i < v.length; i ++) {
-        var k = hsGetValue(v[i], vk  );
-        if (k == '') {
-            ek = false ; break ;
-        }
-    }
-    if (ek) {
-        var a = $.isArray(v) ? [] : {};
-        a[vk] =  "" ;
-        a[tk] =  "" ;
-        v.unshift(a);
-    }
-
-    return HsForm.prototype._doll__select.call(this, x, v, n);
-}
-var hsListPrepFilt = hsListDollFilt; // 兼容
 
 /**
  * 列表预设排序选项
@@ -129,22 +48,6 @@ function hsListInitSort(x, v, n) {
         inp.val ("-ctime");
     }
     */
-}
-
-/**
- * 列表属主权限控制
- */
-function hsListInitMine(x, v, n) {
-    x.next().on( "change", ":radio", function() {
-        switch ($(this).val()) {
-            case "1": x.attr("name", n + ".eq").val(HsCUID); break;
-            case "2": x.attr("name", n + ".ne").val(HsCUID); break;
-            default : x.attr("name", n).val(""); break;
-        }
-
-        // 为规避多余的查询项, 没有设选项字段名称, 需自行取消其他选项
-        $(this).closest("label").siblings().find("input").prop("checked", false);
-    });
 }
 
 /**
@@ -244,6 +147,9 @@ function HsPops (context , urls) {
         }
     });
 }
+jQuery.fn.hsPops = function(opts) {
+  return this._hsModule(HsPops, opts);
+};
 
 /**
  * 列表统计筛选组件
@@ -459,7 +365,6 @@ HsCate.prototype = {
         }
     }
 };
-
 jQuery.fn.hsCate = function(opts) {
   return this._hsModule(HsCate, opts);
 };

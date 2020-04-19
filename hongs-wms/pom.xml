@@ -162,18 +162,16 @@
                     <force>true</force>
                     <jswarn>false</jswarn>
                     <suffix>.min</suffix>
-                    <sourceDirectory>web</sourceDirectory>
-                    <outputDirectory>web</outputDirectory>
+                    <sourceDirectory>web/static</sourceDirectory>
+                    <outputDirectory>web/static</outputDirectory>
                     <includes>
-                        <include>static/assets/src/hongsedit.js</include>
-                        <include>static/assets/src/hongsedge.js</include>
-                        <include>static/assets/src/hongsedge-*.js</include>
-                        <include>*/*.js</include>
-                        <include>*/*.css</include>
+                        <include>assets/src/hongsedit.js</include>
+                        <include>assets/src/hongsedge.js</include>
+                        <include>assets/src/hongsedge-*.js</include>
+                        <include>centra/*.*</include>
                     </includes>
                     <excludes>
-                        <exclude>*/*.min.js</exclude>
-                        <exclude>*/*.min.css</exclude>
+                        <include>centra/*.min.*</include>
                     </excludes>
                     <aggregations>
                         <aggregation>

@@ -66,6 +66,7 @@
     String     _entity;
     CoreLocale _locale;
     Map        _fields = null;
+    Map        _params = null;
 
     {
         // 拆解路径
@@ -85,7 +86,6 @@
         // 获取字段
         String[] a= {_module +"/"+ _entity , _module};
         for(String name : a) {
-            Map _params = null;
             Map _fieldx = null;
                 _fields = null;
 

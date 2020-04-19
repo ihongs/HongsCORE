@@ -148,29 +148,6 @@ fieldset>.dropdown-list {
 
 /** 可后退导航条 **/
 
-.breadcrumb.laps {
-    border: 1px solid #222;
-    background: #535353;
-    margin-bottom: 20px;
-}
-.breadcrumb.laps ,
-.breadcrumb.laps a {
-    color: #fff;
-}
-.breadcrumb.laps a:hover ,
-.breadcrumb.laps a:focus {
-    color: #bbb;
-}
-.breadcrumb.laps .active a {
-    color: #bbb;
-    text-decoration: none;
-}
-.breadcrumb.laps .active.home-crumb a ,
-.breadcrumb.laps .active.back-crumb a {
-    color: #fff;
-    text-decoration: none;
-}
-
 .breadcrumb.laps .close {
     display: none;
 }
@@ -188,6 +165,9 @@ fieldset>.dropdown-list {
     content: "";
 }
 
+.laps.tabs > li.active hide.title {
+    display: inline !important;
+}
 .laps.tabs            .back-crumb ,
 .laps.tabs.bread-home .hook-crumb ,
 .laps.tabs.bread-hook .hook-crumb {
@@ -488,7 +468,7 @@ ol.repeated ,
 }
 .listbox thead .sort-ico {
     display: inline-block;
-    color: #2780e3;
+    color: #aaa;
     font-size: 0.8em;
     font-weight: 400;
     font-style: normal;

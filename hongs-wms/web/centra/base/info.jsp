@@ -24,7 +24,8 @@
             String  name = (String) et.getKey();
 
             if ("@".equals(name)
-            ||  Synt.declare(info.get("unviewable"), false)) {
+            ||  Synt.declare(info.get( "disabled" ), false)
+            ||  Synt.declare(info.get("unreadable"), false)) {
                 continue ;
             }
 
@@ -57,6 +58,7 @@
                 // 选项类字段在查看页仅需读取其文本即可
                 name += "_text";
             }
+
             if (Synt.declare(info.get("__repeated__"), false)) {
                 // 为与表单一致而对多值字段的名称后加点
                 name += ".";

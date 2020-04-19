@@ -2929,7 +2929,7 @@ function() {
 function() {
     var nav = $(this).closest ('.breadcrumb');
     nav.find('li:last a').hsClose();
-    nav.find('li:last a').  click();
+//  nav.find('li:last a').  click(); // 会致 hook-crumb,hold-crumb 打开的回不去
 })
 .on("hsReady hsRecur", ".labs.laps",
 function() {

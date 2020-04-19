@@ -169,9 +169,11 @@
                         <include>assets/src/hongsedge.js</include>
                         <include>assets/src/hongsedge-*.js</include>
                         <include>centra/*.*</include>
+                        <include>centre/*.*</include>
                     </includes>
                     <excludes>
-                        <include>centra/*.min.*</include>
+                        <exclude>centra/*.min.*</exclude>
+                        <exclude>centre/*.min.*</exclude>
                     </excludes>
                     <aggregations>
                         <aggregation>

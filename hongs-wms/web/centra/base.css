@@ -310,6 +310,30 @@ html, body {
     color: #f00;
 }
 
+/* 反色导航条 */
+.breadcrumb.laps {
+    border: 1px solid #222;
+    background: #535353;
+    margin-bottom: 20px;
+}
+.breadcrumb.laps ,
+.breadcrumb.laps a {
+    color: #fff;
+}
+.breadcrumb.laps a:hover ,
+.breadcrumb.laps a:focus {
+    color: #b22;
+}
+.breadcrumb.laps .active a {
+    color: #b22;
+    text-decoration: none;
+}
+.breadcrumb.laps .active.home-crumb a ,
+.breadcrumb.laps .active.back-crumb a {
+    color: #fff;
+    text-decoration: none;
+}
+
 /* 容器主导航条样式 */
 #main-context > .laps.labs {
     margin-top: 20px;
@@ -321,19 +345,6 @@ html, body {
     border-bottom-color: #333;
        background-color: #555;
 }
-#main-context > .laps.hide.breadcrumb {
-    display: block  !important;
-}
-.breadcrumb.laps.tabs .active .title  {
-    display: inline !important;
-}
-
-/* 复制导出列表样式 */
-.table-copylist th ,
-.table-copylist td {
-    white-space: pre-line;
-    mso-number-format: "\@";
-}
 
 /* 隐藏受限的搜索框 */
 .input-group .input-search:disabled {
@@ -344,6 +355,13 @@ html, body {
 }
 .input-group .input-search:disabled+.input-group-btn .glyphicon-search:before {
     content: "\e031";
+}
+
+/* 复制导出列表样式 */
+.table-copylist th ,
+.table-copylist td {
+    white-space: pre-line;
+    mso-number-format: "\@";
 }
 
 /* 统计图表附带选项 */

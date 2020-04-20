@@ -493,6 +493,28 @@ ol.repeated ,
     overflow: visible;
 }
 
+/* 横向菜单 */
+.listbox ._amenu .dropdown-menu {
+    top: -0.8em;
+    left: 1.0em;
+    padding-left : 10px;
+    padding-right: 10px;
+}
+.listbox ._amenu .dropdown-menu a  {
+    padding-left : 10px;
+    padding-right: 10px;
+}
+.listbox ._amenu .dropdown-menu li {
+    display: inline-block;
+}
+.listbox ._amenu .dropdown-menu li.divider {
+    width :  1px;
+    height: 20px;
+    margin: -5px 1px;
+    background: #ccc;
+}
+
+/* 排序符号 */
 .listbox thead .sortable {
     cursor: pointer;
 }

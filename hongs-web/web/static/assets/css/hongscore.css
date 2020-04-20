@@ -497,10 +497,10 @@ ol.repeated ,
 .listbox ._amenu .dropdown-menu {
     top: -10px;
     left: 14px;
-    padding: 4px 10px;
+    padding: 4px 4px;
 }
 .listbox ._amenu .dropdown-menu a  {
-    padding: 3px 10px;
+    padding: 3px 8px;
 }
 .listbox ._amenu .dropdown-menu li {
     display: inline-block;

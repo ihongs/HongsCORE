@@ -495,14 +495,12 @@ ol.repeated ,
 
 /* 横向菜单 */
 .listbox ._amenu .dropdown-menu {
-    top: -0.8em;
-    left: 1.0em;
-    padding-left : 10px;
-    padding-right: 10px;
+    top: -10px;
+    left: 14px;
+    padding: 4px 10px;
 }
 .listbox ._amenu .dropdown-menu a  {
-    padding-left : 10px;
-    padding-right: 10px;
+    padding: 3px 10px;
 }
 .listbox ._amenu .dropdown-menu li {
     display: inline-block;

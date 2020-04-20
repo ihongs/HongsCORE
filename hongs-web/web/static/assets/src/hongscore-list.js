@@ -547,7 +547,15 @@ HsList.prototype = {
         }
     },
     getRow   : function(o) {
-        return jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]");
+        var chk = jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]");
+        // 规避未选中无法获取参数的问题
+        if (chk.is (":checkbox,:radio")) {
+            chk = [{
+                value:chk.attr("value"),
+                name :chk.attr("name" )
+            }];
+        }
+        return chk;
     },
     getIds   : function(o) {
         if (jQuery.inArray (this.listBox[0], jQuery(o).parents()) != -1) {

@@ -194,6 +194,19 @@
                     <th data-fn="id." data-ft="_check" class="_check">
                         <input name="id." type="checkbox" class="checkall"/>
                     </th>
+                    <%if ("browse".equals(_action)) {%>
+                    <th data-fn="_" data-ft="_admin" class="_admin _amenu">
+                        <div class="dropdown invisible">
+                            <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:;" class="review"><%=_locale.translate("fore.review", _title)%></a></li>
+                                <li><a href="javascript:;" class="update"><%=_locale.translate("fore.update", _title)%></a></li>
+                                <li><a href="javascript:;" class="reveal"><%=_locale.translate("fore.reveal", _title)%></a></li>
+                                <li><a href="javascript:;" class="delete"><span class="text-danger"><%=_locale.translate("fore.delete", _title)%></span></a></li>
+                            </ul>
+                        </div>
+                    </th>
+                    <%} /*End If*/%>
                 <%
                 Iterator it = _fields.entrySet().iterator();
                 while (it.hasNext()) {
@@ -308,10 +321,17 @@
     var statbox = context.find(".statbox");
 
     // 权限控制
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/reveal.act")) context.find(".reveal").remove();
+    for (var a in {
+        "search":".review", "reveal":".reveal",
+        "create":".create", "update":".update", "delete":".delete"
+    }) {
+        if (! hsChkUri("<%=_module%>/<%=_entity%>/"+a[0]+".act")) {
+            context.find(a[1]).remove();
+        }
+    }
+    if (listbox.find("thead tr[data-fn='_'] ul > li").size() > 0) {
+        listbox.find("thead tr[data-fn='_']").hide( );
+    }
 
     //** 列表、搜索表单 **/
 

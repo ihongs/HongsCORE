@@ -38,6 +38,11 @@ code, pre, var, dfn, kbd {
     max-height: 0;
 }
 
+/* 微调对齐 */
+.glyphicon {
+    top: 2px;
+}
+
 .btn .close {
     margin-right: -0.30em;
     margin-top: -0.15em;
@@ -198,13 +203,11 @@ fieldset>.dropdown-list {
 .breadcrumb.laps .active a {
     text-decoration: none;
 }
-.breadcrumb.laps .active.home-crumb a ,
-.breadcrumb.laps .active.back-crumb a {
+.breadcrumb.laps .home-crumb a {
     color: #fff;
 }
-.breadcrumb.laps .active.hook-crumb a ,
-.breadcrumb.laps .active.hold-crumb a {
-    color: #d22;
+.breadcrumb.laps .back-crumb a {
+    color: #f44;
 }
 
 /** 其他组件调整 **/

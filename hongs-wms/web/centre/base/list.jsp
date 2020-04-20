@@ -51,7 +51,7 @@
             </div>
             </div>
         </div>
-    </form> unviewable,uneditable,un
+    </form>
     <!-- 筛选 -->
     <form class="findbox filtbox statbox invisible panel panel-default panel-body form-horizontal">
         <%

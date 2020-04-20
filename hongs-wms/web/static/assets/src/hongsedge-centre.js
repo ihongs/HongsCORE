@@ -2,6 +2,36 @@
 //** 前台标准功能 **/
 
 /**
+ * 列表填充卡片图标
+ */
+function hsListFillLogo(d, v) {
+    if (!v) return ;
+    d.css ( {
+        "background-size"    : "cover",
+        "background-repeat"  : "no-repeat",
+        "background-position": "center center",
+        "background-image"   : "url(" + v + ")"
+    });
+}
+
+/**
+ * 依据权限开放编辑
+ */
+function hsListShowEdit(d, v) {
+    if (v) {
+        if (v.uid !== undefined) {
+            v = v.uid;
+        } else
+        if (v. id !== undefined) {
+            v = v. id;
+        }
+    }
+    if (v && v == window.HsCUID) {
+        d.show ();
+    }
+}
+
+/**
  * 列表属主权限控制
  */
 function hsListInitMine(x, v, n) {

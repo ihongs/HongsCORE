@@ -6,7 +6,7 @@
             string,stored,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,type,select,check,radio,
+            enum,type,select,switch,check,radio,
             file,image,audio,video,
             fork,pick
         </value>
@@ -14,14 +14,14 @@
             string,search,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,type,select,check,radio,
+            enum,type,select,switch,check,radio,
             fork,pick
         </value>
         <value code="sortable" type="set">
             string,sorted,hidden,text,email,url,tel,sms,
             number,range,color,
             date,time,datetime,
-            enum,type,select,check,radio,
+            enum,type,select,switch,check,radio,
             fork,pick
         </value>
         <value code="rankable" type="set">
@@ -59,6 +59,7 @@
         <value code="enum">enum</value>
         <value code="type">enum</value><!-- enum 的别名 -->
         <value code="select">enum</value>
+        <value code="switch">enum</value>
         <value code="check">enum</value>
         <value code="radio">enum</value>
         <!-- File -->

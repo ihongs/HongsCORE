@@ -16,9 +16,9 @@ import org.junit.Test;
  * 测试 io.github.ihongs.util.Syno
  * @author Hongs
  */
-public class TestTool extends TestCase {
+public class TestSyno extends TestCase {
 
-    public TestTool() {
+    public TestSyno() {
 
     }
 
@@ -83,8 +83,8 @@ public class TestTool extends TestCase {
     @Test
     public void testInject() {
         String a, b, s;
-        a = "I'm $0, are you ${1}in?";
-        b = "I'm Hongs, are you Kevin?";
+        a = "I'm $0, are you ${1}in? Yes, I ${2|am}. $$10 please.";
+        b = "I'm Hongs, are you Kevin? Yes, I am. $10 please.";
 
         s = Syno.inject(a, "Hongs", "Kev");
         assertEquals(s, b);

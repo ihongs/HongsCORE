@@ -23,7 +23,7 @@ import java.util.Set;
  * 可使用 ab 参数将指定好的条件注入到请求数据中.
  * 这样可减少终端一些常规参数,
  * 并能在未来更方便地做出调整;
- * 如 ab=v1 附加版本 1 的参数.
+ * 如 ab=.v1 附加指定版本参数.
  * </p>
  * @author Hong
  */
@@ -45,17 +45,14 @@ public class PresetInvoker implements FilterInvoker {
             Set<String> used = new LinkedHashSet ();
             if (null != uzed && ! uzed.isEmpty ( )) {
                 for(String item : uzed) {
-                    if (item.startsWith("_" )
-                    ||  item.startsWith("." )
-                    ||  item.startsWith("!")) {
+                    if (item.startsWith(".")) {
+                        used.add(item);
+                    } else
                     if (item.equals("_obj_")) {
                         Core.getInstance().put(Cnst.OBJECT_MODE, true);
                     } else
                     if (item.equals("_str_")) {
                         Core.getInstance().put(Cnst.OBJECT_MODE,false);
-                    }
-                    } else {
-                        used.add("." + item);
                     }
                 }
                 deft  = used.toArray(new String[0]);

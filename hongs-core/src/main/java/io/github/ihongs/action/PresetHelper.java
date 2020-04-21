@@ -82,9 +82,8 @@ public class PresetHelper {
     /**
      * 以表单配置追加预设值
      * 注意:
-     *  deft,defs 中以 :,! 打头会把 name 作为前缀,
-     *  name=abc,deft=:xyz 会取配置的枚举 abc:xyz,
-     *  ! 用于外部默认参数
+     *  deft,defs 中以 :. 打头会把 name 作为前缀,
+     *  name=abc, deft=:xyz 会取配置枚举 abc:xyz,
      * @param conf
      * @param name
      * @param deft 默认值

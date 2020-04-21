@@ -210,7 +210,7 @@ public class UserAction {
         int rn = model.delete(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
-        String ms = ln.translate("core.delete.user.success", Integer.toString(rn));
+        String ms = ln.translate("core.delete.user.success", null,Integer.toString(rn));
         helper.reply(ms, rn);
     }
 

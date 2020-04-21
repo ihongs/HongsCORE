@@ -190,6 +190,28 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
             Map  data = new HashMap();
             Map  info = getOne(rd);
             data.put("info", info);
+
+            /**
+             * 查不到可能是不存在、已删除或受限
+             * 需通过 id 再查一遍，区分不同错误
+             */
+            if (info == null || info.isEmpty()) {
+                data.put("ok", false);
+                Set ab = Synt.toTerms(Cnst.AB_KEY);
+                if (null == ab || ! ab.contains("404.x")) {
+                    data.put("ern", "404");
+                    data.put("err", "Info not found");
+                } else
+                if (null == getDoc( id.toString(/**/) ) ) {
+                    data.put("ern", "Er404.1");
+                    data.put("err", "Info not found");
+                } else
+                {
+                    data.put("ern", "Er404.2");
+                    data.put("err", "Info forbidden");
+                }
+            }
+
             return data;
         }
 

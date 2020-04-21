@@ -208,6 +208,7 @@ public class DBAction implements IAction, IActing {
      */
     protected  Map   getRspMap(ActionHelper helper, Model ett, String opr, Map rsp)
     throws HongsException {
+        // 补充标准 ID
         if (!Cnst.ID_KEY.equals(ett.table.primaryKey)) {
             if (rsp.containsKey("info")) {
                 /**/ Map  info = (Map ) rsp.get("info");
@@ -220,6 +221,30 @@ public class DBAction implements IAction, IActing {
             }
             }
         }
+
+        // 补充错误消息
+        if (rsp.containsKey("info")) {
+            boolean ok = Synt.declare(rsp.get( "ok"), true);
+            String ern = Synt.declare(rsp.get("ern"),  "" );
+            if (! ok && ern.equals("Er404") || ern.startsWith("Er404.")) {
+                ActionRunner runner = (ActionRunner)
+                   helper.getAttribute(ActionRunner.class.getName());
+
+                String mod = runner.getModule();
+                String ent = runner.getEntity();
+
+                CoreLocale locale = CoreLocale.getInstance().clone();
+                locale.fill(mod);
+
+                String key = "fore."+ent+".info.empty";
+                if ( ! locale.containsKey(key)) {
+                       key = "fore.info.empty" ;
+                }
+
+                rsp.put("msg" , locale.translate(key));
+            }
+        }
+
         return rsp;
     }
 
@@ -242,15 +267,14 @@ public class DBAction implements IAction, IActing {
         String cnt = Integer.toString(num);
 
         CoreLocale locale = CoreLocale.getInstance().clone();
-        locale.fill(    mod    );
-        locale.fill(mod+"/"+ent);
+        locale.fill(mod);
 
         String key = "fore."+opr+"."+ent+".success";
         if (!locale.containsKey(key)) {
                key = "fore."+opr/**/+/**/".success";
         }
 
-        return locale.translate(key , cnt);
+        return locale.translate(key, null, cnt);
     }
 
 }

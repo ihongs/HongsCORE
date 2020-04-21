@@ -661,6 +661,39 @@ implements IEntity
     Map data = new HashMap();
     data.put( "info", info );
 
+    /**
+     * 查不到可能是不存在、已删除或受限
+     * 需通过 id 再查一遍，区分不同错误
+     */
+    if (info != null && ! info.isEmpty())
+    {
+        Object id = rd.containsKey(Cnst.ID_KEY)
+                  ? rd.get        (Cnst.ID_KEY)
+                  : rd.get   (table.primaryKey);
+        if (id != null && ! "".equals(id) ) {
+        Set ab  = Synt.toTerms(Cnst.AB_KEY);
+        if (ab != null && ab.contains("404.x")) {
+            FetchCase fc = new FetchCase(FetchCase.STRICT)
+                .filter(table.primaryKey , id )
+                .select(table.primaryKey);
+            Map row = table.fetchLess(fc);
+            if (row != null && ! row.isEmpty()) {
+                data.put("ern", "Er404.2" );
+                data.put("err", "Info forbidden");
+            }  else {
+                data.put("ern", "Er404.1" );
+                data.put("err", "Info not found");
+            }
+        }  else {
+            data.put("ern", "Er404");
+            data.put("err", "Info not found");
+        }} else {
+            data.put("ern", "Er404");
+            data.put("err", "Info not found");
+        }
+        data.put("ok" , false);
+    }
+
     return data;
   }
 

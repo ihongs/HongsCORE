@@ -4,9 +4,20 @@
  * 版本: 2018/07/27 23:00
  */
 
+#context {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
 #bodybox {
-    margin-top   : 71px; /* 菜单和间距 */
-    margin-bottom: 38px; /* 页尾的高度 */
+    flex: 1;
+    padding-top: 71px; /* 顶部菜单距离 */
+}
+#footbox .navbar ,
+#footbox .navbar blockquote {
+    min-height: 0;
+    margin-bottom: 0;
+    font-size : 12px;
 }
 
 #headbox .uhead {
@@ -18,16 +29,6 @@
     background-repeat: no-repeat;
     background-position:  center;
     display: inline-block;
-}
-
-#headbox .navbar.navbar-fixed-top {
-    box-shadow: 0 1px 18px #888;
-}
-#headbox .navbar.navbar-fixed-bottom ,
-#headbox .navbar.navbar-fixed-bottom blockquote {
-    min-height: 0;
-    margin-bottom: 0;
-    font-size : 12px;
 }
 
 /* 主导航条默认隐藏 */

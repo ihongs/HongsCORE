@@ -34,10 +34,10 @@
     <body>
         <div id="context">
             <div id="headbox">
-                <div class="row" data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
+                <div data-load="centre/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
             <div id="bodybox">
-                <div class="container" id="main-context">
+                <div id="main-context" class="container">
                     <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">

@@ -148,7 +148,8 @@
     </div>
 </nav>
 
-<nav class="navbar navbar-default navbar-fixed-bottom">
+<div id="footbox">
+<nav class="navbar navbar-default">
     <div class="container">
         <blockquote><p class="clearfix">
             <span>&copy; <%=CoreLocale.getInstance().translate("fore.copy.right")%></span>
@@ -158,9 +159,13 @@
         </p></blockquote>
     </div>
 </nav>
+</div>
 
 <script type="text/javascript">
     (function($) {
+        // 挪动页尾到外部
+        $("#context").append("#footbox");
+
         var context = $("#main-context");
         var menubar = $("#main-menubar");
 //      var userbar = $("#user-menubar");

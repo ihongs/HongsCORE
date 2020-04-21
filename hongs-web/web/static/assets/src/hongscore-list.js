@@ -547,13 +547,13 @@ HsList.prototype = {
         }
     },
     getRow   : function(o) {
-        var chk = jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]");
+        var chk = jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]").first();
         // 规避未选中无法获取参数的问题
-        if (chk.is (":checkbox,:radio")) {
-            chk = [{
-                value:chk.attr("value"),
-                name :chk.attr("name" )
-            }];
+        if (chk.is(":checkbox,:radio")) {
+            chk = jQuery('<input type="hidden"/>')
+               .attr("name" , chk.attr("name" ) || "")
+               .attr("value", chk.attr("value") || "")
+               .insertAfter ( chk );
         }
         return chk;
     },
@@ -568,7 +568,7 @@ HsList.prototype = {
             return this.getAll( );
         }
         else {
-            return [];
+            return jQuery();
         }
     },
 

@@ -5,7 +5,6 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
 import io.github.ihongs.action.FormSet;
-import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.action.anno.Preset;
@@ -176,6 +175,29 @@ abstract public class JAction implements IActing, IAction {
      */
     protected  Map   getRspMap(ActionHelper helper, IEntity ett, String opr, Map rsp)
     throws HongsException {
+        // 补充错误消息
+        if (rsp.containsKey("info")) {
+            boolean ok = Synt.declare(rsp.get( "ok"), true);
+            String ern = Synt.declare(rsp.get("ern"),  "" );
+            if (! ok && ern.equals("Er404") || ern.startsWith("Er404.")) {
+                ActionRunner runner = (ActionRunner)
+                   helper.getAttribute(ActionRunner.class.getName());
+
+                String mod = runner.getModule();
+                String ent = runner.getEntity();
+
+                CoreLocale locale = CoreLocale.getInstance().clone();
+                locale.fill(mod);
+
+                String key = "fore."+ent+".info.empty";
+                if ( ! locale.containsKey(key)) {
+                       key = "fore.info.empty";
+                }
+
+                rsp.put("msg" , locale.translate(key));
+            }
+        }
+
         return rsp;
     }
 
@@ -191,83 +213,21 @@ abstract public class JAction implements IActing, IAction {
     protected String getRspMsg(ActionHelper helper, IEntity ett, String opr, int num)
     throws HongsException {
         ActionRunner runner = (ActionRunner)
-           helper.getAttribute(ActionRunner.class.getName(  ));
-        CoreLocale   locale = CoreLocale.getInstance().clone();
+           helper.getAttribute(ActionRunner.class.getName());
 
         String mod = runner.getModule(   );
         String ent = runner.getEntity(   );
         String cnt = Integer.toString(num);
-        String key = "fore." + opr + "." + ent + ".success";
 
+        CoreLocale locale = CoreLocale.getInstance().clone();
         locale.fill(mod);
-        if ( ! locale.containsKey(key) ) {
-               key = "fore." + opr + ".success";
-               ent = getName(locale,ett, mod, ent);
-            return locale.translate(key, ent, cnt);
-        } else {
-            return locale.translate(key, /**/ cnt);
+
+        String key = "fore."+opr+"."+ent+".success";
+        if (!locale.containsKey(key)) {
+               key = "fore."+opr/**/+/**/".success";
         }
-    }
 
-    private String getName(CoreLocale locale, IEntity ett, String mod, String ent) throws HongsException {
-        String  text;
-        Map     item;
-        do {
-            // 先从表单取名字
-            if ( ett instanceof IFigure ) {
-                item  = (( IFigure ) ett).getFields();
-            } else {
-                item  = getForm(mod, ent);
-            }
-            if (item != null  && item.containsKey(   "@"    )) {
-                item  = (Map   ) item.get(   "@"    );
-            if (item != null  && item.containsKey("__text__")) {
-                text  = (String) item.get("__text__");
-                break;
-            }
-            }
-
-            // 再从菜单取名字
-            item = getMenu(mod, ent);
-            if (item != null  && item.containsKey(  "text"  )) {
-                text  = (String) item.get(  "text"  );
-                break;
-            }
-
-            // 最后配置取名字
-            text = "core.entity."+ent+".name";
-        } while (false);
-
-        return locale.translate(text);
-    }
-
-    private Map getForm(String mod, String ent) throws HongsException {
-        try {
-            String  cuf  = FormSet.hasConfFile(mod+"/"+ent)
-                               ? mod+"/"+ent : mod ;
-            FormSet form = FormSet.getInstance(cuf);
-            return  form.getForm(ent);
-        } catch ( HongsException ex ) {
-        if (ex.getErrno() != 0x10e8
-        &&  ex.getErrno() != 0x10ea ) {
-            throw   ex  ;
-        }
-            return  null;
-        }
-    }
-
-    private Map getMenu(String mod, String ent) throws HongsException {
-        try {
-            String  cuf  = FormSet.hasConfFile(mod+"/"+ent)
-                               ? mod+"/"+ent : mod ;
-            NaviMap navi = NaviMap.getInstance(cuf);
-            return  navi.getMenu(mod+"/"+ent + "/");
-        } catch ( HongsException ex ) {
-        if (ex.getErrno() != 0x10e0 ) {
-            throw   ex  ;
-        }
-            return  null;
-        }
+        return locale.translate(key, null, cnt);
     }
 
 }

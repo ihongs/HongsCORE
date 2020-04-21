@@ -50,8 +50,8 @@
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                             <ul class="dropdown-menu adm-menu">
-                                <li><a href="javascript:;" class="review">查看快照</a></li>
-                                <li><a href="javascript:;" class="revert">恢复记录</a></li>
+                                <li><a href="javascript:;" class="review">查看</a></li>
+                                <li><a href="javascript:;" class="revert">恢复</a></li>
                                 <li class="divider"></li>
                                 <li><a href="javascript:;" class="same-r">同资源的</a></li>
                                 <li><a href="javascript:;" class="same-u">同用户的</a></li>

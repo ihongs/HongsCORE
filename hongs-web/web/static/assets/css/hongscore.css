@@ -496,7 +496,7 @@ ol.repeated ,
 /* 横向菜单 */
 .listbox ._amenu .dropdown-menu {
     top: -10px;
-    left: 14px;
+    left : 1em;
     padding: 4px 4px;
 }
 .listbox ._amenu .dropdown-menu a  {
@@ -510,6 +510,14 @@ ol.repeated ,
     height: 20px;
     margin: -5px 1px;
     background: #ccc;
+}
+.listbox ._amenu .dropdown-menu.dropdown-menu-left  {
+    left : 1em ;
+    right: auto;
+}
+.listbox ._amenu .dropdown-menu.dropdown-menu-right {
+    left : auto;
+    right: 1em ;
 }
 
 /* 排序符号 */
@@ -655,12 +663,18 @@ ol.repeated ,
 
 /** 其他 **/
 
-/* 类似 panel 但无边框无背景 */
+/* 类似 panel 和 form-group, 但无边框无背景 */
 .board {
     margin-bottom: 20px;
 }
-.board-body {
-    padding : 15px 15px;
+.board-top {
+    margin-top: 20px;
+}
+.group {
+    margin-bottom: 15px;
+}
+.group-top {
+    margin-top: 15px;
 }
 
 ul.pickbox {

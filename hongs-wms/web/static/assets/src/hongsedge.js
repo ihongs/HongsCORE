@@ -211,24 +211,34 @@ function hsFormWrapOpen(t) {
     };
 }
 
+jQuery.hsCanCopy = function() {
+    return window.clipboardData
+      || ( window.getSelection
+      &&   document.execCommand
+      &&   document.createRange );
+};
 jQuery.fn.hsCopy = function() {
-    if (! window.getSelection
-    ||  ! document.execCommand
-    ||  ! document.createRange ) {
+    if (window.clipboardData) {
+        clipboardData.setData("Text", $(this).prop("outerHTML"));
+    } else
+    if (window.getSelection
+    &&  document.execCommand
+    &&  document.createRange) {
+        var rng = document.createRange();
+        var sel = window.getSelection( );
+        sel.removeAllRanges();
+        for ( var i = 0; i < this.length; i ++) {
+            try {
+                rng.selectNodeContents(this[i]);
+                sel.addRange(rng);
+            } catch (e) {
+                rng.selectNode/*Text*/(this[i]);
+                sel.addRange(rng);
+            }
+        }
+        document.execCommand("Copy");
+    } else
+    {
         throw new Error("hsCopy: Copy is not supported");
     }
-
-    var rng = document.createRange();
-    var sel = window.getSelection( );
-    sel.removeAllRanges();
-    for ( var i = 0; i < this.length; i ++) {
-        try {
-            rng.selectNodeContents(this[i]);
-            sel.addRange(rng);
-        } catch (e) {
-            rng.selectNode/*Text*/(this[i]);
-            sel.addRange(rng);
-        }
-    }
-    document.execCommand("Copy");
 };

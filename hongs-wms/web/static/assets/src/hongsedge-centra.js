@@ -101,10 +101,8 @@ function hsHideListCols(box) {
  */
 function hsCopyListData(box) {
     // 检查接口
-    if (! window.getSelection
-    ||  ! document.execCommand
-    ||  ! document.createRange ) {
-        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome/Safari/Firefox, 或某些双核/多核浏览器的极速模式.", "warning");
+    if (! $.hsCanCopy()) {
+        $.hsWarn("浏览器无法复制\r\n请使用较新版的 Chrome/Firefox/Safari/Edge/IE, 或某些双核/多核浏览器的极速模式.", "warning");
         return;
     }
 
@@ -143,10 +141,8 @@ function hsCopyListData(box) {
     var tr  = $('<tr></tr>');
     var th  = $('<th></th>');
     var td  = $('<td></td>');
-//  th .attr("style", 'white-space: pre-line; mso-number-format: "\\@";');
-//  td .attr("style", 'white-space: pre-line; mso-number-format: "\\@";');
     div.attr("style", "height: 1px; display: none; overflow: auto;");
-    tab.attr("style", "margin: 1px;");
+    tab.attr("style", "margin: 1px; white-space: pre-line;");
     tab.attr("class", "table table-bordered table-copylist");
 
     // 表头
@@ -186,6 +182,14 @@ function hsCopyListData(box) {
             } else
             {
                 td2.html(hsTidyHtmlTags(td0.html()));
+            }
+            /**
+             * 规避将非数字类型的数字文本解析为数字
+             * mso-number-format: '\@' 仅在 IE 有效
+             * vnd.ms-excel.numberformat: '@' 非 IE 有效
+             */
+            if (! td0.is(".numerial")) {
+                td2.attr("style", "mso-number-format:'\\@';vnd.ms-excel.numberformat:'@';");
             }
         });
     });

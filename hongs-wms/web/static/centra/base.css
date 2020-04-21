@@ -336,7 +336,6 @@ html, body {
 .table-copylist th ,
 .table-copylist td {
     white-space: pre-line;
-    mso-number-format: "\@";
 }
 
 /* 统计图表附带选项 */

@@ -12,7 +12,7 @@
             <div class="btn-group">
                 <button type="button" class="create btn btn-default">创建用户</button>
                 <button type="button" class="modify for-choose btn btn-default">修改</button>
-                <button type="button" class="remove for-choose btn btn-danger " title="移除"><span class="glyphicon glyphicon-erase"></span></button>
+                <button type="button" class="remove for-choose btn btn-danger " title="移出"><span class="glyphicon glyphicon-erase"></span></button>
                 <button type="button" class="delete for-checks btn btn-danger " title="删除"><span class="glyphicon glyphicon-trash"></span></button>
             </div>
         </div>
@@ -32,6 +32,16 @@
                 <tr>
                     <th data-fn="id[]" data-ft="_check" class="_check">
                         <input type="checkbox" class="checkall" name="id[]" />
+                    </th>
+                    <th data-fn="_" data-ft="_admin" class="_admin _amenu">
+                        <div class="dropdown invisible">
+                            <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="javascript:;" class="modify">修改</a></li>
+                                <li><a href="javascript:;" class="remove"><span class="text-danger">移出</span></a></li>
+                                <li><a href="javascript:;" class="delete"><span class="text-danger">删除</span></a></li>
+                            </ul>
+                        </div>
                     </th>
                     <th data-fn="head" class="userhead">头像</th>
                     <th data-fn="name" class="sortable">名称</th>

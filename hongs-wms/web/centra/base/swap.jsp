@@ -33,6 +33,8 @@
 <h2><%=_locale.translate("fore.manual.title", _title)%></h2>
 <div id="<%=_pageId%>" class="lore-info row">
     <div class="col-xs-6">
+        <div class="table-responsive-revised">
+        <div class="table-responsive listbox">
         <table class="table table-hover table-striped">
             <thead>
                 <tr>
@@ -60,16 +62,21 @@
                         <%if (Synt.declare(info.get("__repeated__"), false)) {%><span class="label label-primary" style="margin-right: 2px;">多值</span><%}%>
                         <%if (Synt.declare(info.get(  "listable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">列举</span><%}%>
                         <%if (Synt.declare(info.get(  "sortable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">排序</span><%}%>
-                        <%if (Synt.declare(info.get(  "wordable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜寻</span><%}%>
-                        <%if (Synt.declare(info.get(  "srchable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜索</span><%}%>
-                        <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">筛选</span><%}%>
                         <%if (Synt.declare(info.get(  "statable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">统计</span><%}%>
+                        <%if (Synt.declare(info.get(  "findable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">筛选</span><%}%>
+                        <%if (Synt.declare(info.get(  "rankable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">区间</span><%}%>
+                        <%if (Synt.declare(info.get(  "srchable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">匹配</span><%}%>
+                        <%if (Synt.declare(info.get(  "wordable"  ), false)) {%><span class="label label-default" style="margin-right: 2px;">搜索</span><%}%>
                         <%if (Synt.declare(info.get(  "readonly"  ), false)) {%><span class="label label-success" style="margin-right: 2px;">只读</span><%}%>
+                        <%if (Synt.declare(info.get(  "disabled"  ), false)) {%><span class="label label-warning" style="margin-right: 2px;">内部</span><%}%>
+                        <%if (Synt.declare(info.get( "unreadable" ), false)) {%><span class="label label-danger " style="margin-right: 2px;">禁查看</span><%}%>
+                        <%if (Synt.declare(info.get( "unwritable" ), false)) {%><span class="label label-danger " style="margin-right: 2px;">禁编辑</span><%}%>
                     </td>
                 </tr>
             <%} /*End For*/%>
             </tbody>
         </table>
+        </div></div>
     </div>
     <div class="col-xs-6">
         <fieldset>

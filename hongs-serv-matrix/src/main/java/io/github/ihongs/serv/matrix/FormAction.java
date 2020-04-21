@@ -61,7 +61,7 @@ public class FormAction {
         int  rows = model.delete(data );
         CoreLocale  lang = CoreLocale.getInstance().clone( );
                     lang.load("matrix");
-        String ms = lang.translate("core.delete.form.success", Integer.toString(rows));
+        String ms = lang.translate("core.delete.form.success", null, Integer.toString(rows));
         helper.reply(ms, rows);
     }
 

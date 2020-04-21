@@ -61,7 +61,7 @@ public class UnitAction {
         int  rows = model.delete(data );
         CoreLocale  lang = CoreLocale.getInstance().clone( );
                     lang.load("matrix");
-        String ms = lang.translate("core.delete.unit.success", Integer.toString(rows));
+        String ms = lang.translate("core.delete.unit.success", null, Integer.toString(rows));
         helper.reply(ms, rows);
     }
 

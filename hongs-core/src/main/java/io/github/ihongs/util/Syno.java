@@ -316,8 +316,8 @@ public final class Syno
 
   //** 注入 **/
 
-  // 偶数个转义符$单词或{文本}
-  private static final Pattern INJ = Pattern.compile("((?:[\\\\][\\\\])*)\\$(?:(\\w+)|\\{(.*?)\\})");
+  // 偶数个转义符$单词或${文本}
+  private static final Pattern INJ = Pattern.compile("\\$(\\$|\\w+|\\{.+?\\})");
 
   /**
    * 注入参数
@@ -330,21 +330,34 @@ public final class Syno
       StringBuffer sb = new StringBuffer();
       Object       ob;
       String       st;
+      String       sd;
 
       while  ( matcher.find() ) {
-              st  = matcher.group(2);
-          if (st == null) {
-              st  = matcher.group(3);
+          st = matcher.group(1);
+
+          if (! st.equals("$")) {
+              if (st.startsWith("{")) {
+                  st = st.substring(1, st.length() - 1);
+                  // 默认值
+                  int p  = st.indexOf  ("|");
+                  if (p != -1) {
+                      sd = st.substring(1+p);
+                      st = st.substring(0,p);
+                  } else {
+                      sd = "";
+                  }
+              } else {
+                      sd = "";
+              }
+
+                  ob  = vars.get (st);
+              if (ob != null) {
+                  st  = ob.toString();
+              } else {
+                  st  = sd;
+              }
           }
 
-              ob  = vars.get(  st  );
-          if (ob != null) {
-              st  = ob.toString (  );
-          } else {
-              st  = "";
-          }
-
-          st = matcher.group(1) + st;
           st = Matcher.quoteReplacement(st);
           matcher.appendReplacement(sb, st);
       }

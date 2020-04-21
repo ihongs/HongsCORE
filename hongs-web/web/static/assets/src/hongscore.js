@@ -1279,14 +1279,23 @@ function hsFixPms(uri, pms) {
         pms = jQuery(pms).closest(".loadbox");
         pms = hsSerialArr(pms);
     }   pms = hsSerialDic(pms);
-    return  uri.replace(/\$(\w+|\{.+?\})/gm, function(w) {
-        if (w.substring(0 , 2) === "${") {
-            w = w.substring(2 , w.length - 1);
+    return  uri.replace(/\$(\$|\w+|\{.+?\})/gm, function(w) {
+        if ("$$" === w) {
+            return   w;
         }
-        else {
+        var x = "";
+        if ("${" === w.substring(0,2)) {
+            w = w.substring(2, w.length - 1);
+            // 默认值
+            var p  = w. indexOf ("|");
+            if (p != -1) {
+                x  = w.substring(1+p);
+                w  = w.substring(0,p);
+            }
+        } else {
             w = w.substring(1);
-        }
-        return  pms [w] || "" ;
+        }   w = pms[ w ];
+        return  w !== undefined && w !== null ? w : x;
     });
 };
 

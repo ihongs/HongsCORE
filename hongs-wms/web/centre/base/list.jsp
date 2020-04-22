@@ -14,8 +14,13 @@
                   || NaviMap.hasConfFile(_module + "/" + _entity)
                    ? _module + "/" + _entity : _module ;
 
+    String NAME = Synt.declare(_params.get("field-name"), "name");
+    String NOTE = Synt.declare(_params.get("field-note"), "note");
+    String LOGO = Synt.declare(_params.get("field-logo"), "logo");
+    String USER = Synt.declare(_params.get("field-user"),"cuser");
+
     StringBuilder _ob = new StringBuilder("-boost,-mtime,-ctime");
-    StringBuilder _rb = new StringBuilder("id,name,note,logo,cuser");
+    StringBuilder _rb = new StringBuilder("id,"+NAME+","+NOTE+","+LOGO+","+USER);
     Set<String>   _wd = getWordable (_fields);
     Set<String>   _sd = getSrchable (_fields);
 %>
@@ -212,17 +217,19 @@
         <input type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && undefined" />
         <div class="panel panel-default" style="margin: 0; padding: 0; position: relative;">
             <div class="panel-body" style="display: table; width: 100%;">
-                <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top; <%=!_fields.containsKey("logo")?"display: none;":""%>">
+                <%if (_fields.containsKey(LOGO)) {%>
+                <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
                     <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
-                        <div data-fn="logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
+                        <div data-fn="<%=LOGO%>" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
                     </div>
                 </div>
+                <%} /*End If*/%>
                 <div style="display: table-cell; width: 100%; padding: 0px; vertical-align: top;">
                     <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
-                        <div data-fn="name" style="color: #444;"></div>
-                        <div data-fn="note" style="color: #888;"></div>
+                        <div data-fn="<%=NAME%>" style="color: #444;"></div>
+                        <div data-fn="<%=NOTE%>" style="color: #888;"></div>
                     </div>
-                    <div data-ft="edit" data-fn="cuser" class="btn-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
+                    <div data-ft="edit" data-fn="<%=USER%>" class="btn-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
                         <button type="button" class="btn btn-sm btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                         <button type="button" class="btn btn-sm btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                     </div>

@@ -8,6 +8,7 @@ function HsForm(context, opts) {
     context = jQuery (context);
 
     var loadBox  = context.closest(".loadbox");
+    var pageBox  = context.find   (".pagebox");
     var formBox  = context.find   ( "form"   );
     var loadUrl  = hsGetValue(opts, "loadUrl");
     var saveUrl  = hsGetValue(opts, "saveUrl");
@@ -20,6 +21,7 @@ function HsForm(context, opts) {
 
     this.context = context;
     this.loadBox = loadBox;
+    this.pageBox = pageBox;
     this.formBox = formBox;
     this._url  = "";
     this._data = [];
@@ -119,6 +121,7 @@ HsForm.prototype = {
         var envm = rst["enum"]
                 || rst["menu"] || {};
         var info = rst["info"] || {};
+        var page = rst["page"] || {};
         if (rst.list) {
             info = rst.list[0] || {};
         }
@@ -134,6 +137,7 @@ HsForm.prototype = {
 
         this.fillEnum(envm);
         this.fillInfo(info);
+        this.fillPage(page);
 
         this.formBox.trigger("loadOver", [rst, this]);
     },
@@ -295,6 +299,35 @@ HsForm.prototype = {
             }
         }
         delete this._info;
+    },
+    fillPage : function(page) {
+        var formBox = this.formBox;
+        var pageBox = this.pageBox;
+        if (page.state === undefined
+        ||  page.state === null
+        ||  page.state > 0) {
+            formBox.show( );
+            pageBox.hide( );
+        }  else
+        if (pageBox.size()) {
+            formBox.hide( );
+            pageBox.show( );
+
+            // 显示警示框
+            if (page.count && page.count > 0) {
+                pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                           + (this._above_err || hsGetLang('info.above')) + '</div>');
+            } else {
+                pageBox.empty().append('<div class="alert alert-warning" style="width: 100%;">'
+                           + (this._empty_err || hsGetLang('info.empty')) + '</div>');
+            }
+        } else {
+            if (page.count && page.count > 0) {
+                jQuery.hsWarn(this._above_err || hsGetLang('info.above') , "warning");
+            } else {
+                jQuery.hsWarn(this._empty_err || hsGetLang('info.empty') , "warning");
+            }
+        }
     },
 
     saveInit : function() {

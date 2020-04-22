@@ -53,7 +53,8 @@ public class SearchAction extends JAction {
                 rd.put(Cnst.OB_KEY, ob);
                 ob.add( 0 , "-");
             } else
-            if(!xb.contains("-")) {
+            if(!xb.contains("-")
+            && !xb.contains("*")) {
                 ob  = new ArrayList(xb);
                 rd.put(Cnst.OB_KEY, ob);
                 ob.add( 0 , "-");

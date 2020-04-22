@@ -200,7 +200,7 @@
                 continue;
             }
         %>
-                        <option value="<%=name%>"><%=text%></option>
+                        <option value="<%=name%>,*"><%=text%></option>
         <%} /*End for*/%>
                     </select>
                     <select class="form-control" style="width: auto; display: inline-block;">

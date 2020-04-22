@@ -189,6 +189,7 @@ public class DBAction implements IAction, IActing {
      */
     protected  Map   getReqMap(ActionHelper helper, Model ett, String opr, Map req)
     throws HongsException {
+        // 补充主键
         if (!Cnst.ID_KEY.equals(ett.table.primaryKey)) {
             if (req.containsKey(Cnst.ID_KEY)) {
                 req.put(ett.table.primaryKey, req.get(Cnst.ID_KEY));
@@ -221,30 +222,6 @@ public class DBAction implements IAction, IActing {
             }
             }
         }
-
-        // 补充错误消息
-        if (rsp.containsKey("info")) {
-            boolean ok = Synt.declare(rsp.get( "ok"), true);
-            String ern = Synt.declare(rsp.get("ern"),  "" );
-            if (! ok && ern.equals("Er404") || ern.startsWith("Er404.")) {
-                ActionRunner runner = (ActionRunner)
-                   helper.getAttribute(ActionRunner.class.getName());
-
-                String mod = runner.getModule();
-                String ent = runner.getEntity();
-
-                CoreLocale locale = CoreLocale.getInstance().clone();
-                locale.fill(mod);
-
-                String key = "fore."+ent+".info.empty";
-                if ( ! locale.containsKey(key)) {
-                       key = "fore.info.empty" ;
-                }
-
-                rsp.put("msg" , locale.translate(key));
-            }
-        }
-
         return rsp;
     }
 

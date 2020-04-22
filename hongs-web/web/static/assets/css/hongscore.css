@@ -497,6 +497,7 @@ ol.repeated ,
 .listbox ._amenu .dropdown-menu {
     top: -10px;
     left : 1em;
+    min-width: 0;
     padding: 4px 4px;
 }
 .listbox ._amenu .dropdown-menu a  {

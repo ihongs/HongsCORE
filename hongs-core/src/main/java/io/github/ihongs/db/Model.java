@@ -580,7 +580,7 @@ implements IEntity
     return this.getOne(rd, null);
   }
 
-  public Map  getOne(Map rd, FetchCase caze)
+  public Map getOne(Map rd, FetchCase caze)
     throws HongsException
   {
     if (rd == null) {
@@ -658,40 +658,54 @@ implements IEntity
     this.filter(caze, rd);
 
     Map info = table.fetchLess(caze);
+
     Map data = new HashMap();
     data.put( "info", info );
+
+    /**
+     * 与 list 保持一致, 用 rn 控制 page
+     * rn= 1 正常
+     * rn= 0 不给 page
+     * rn=-1 返回 page.count=0 缺失 page.count=1 受限
+     */
+    int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
+    if (rn == 0) {
+        return data ;
+    }
+
+    Map page = new HashMap();
+    data.put( "page", page );
 
     /**
      * 查不到可能是不存在、已删除或受限
      * 需通过 id 再查一遍，区分不同错误
      */
-    if (info != null && ! info.isEmpty())
-    {
-        Object id = rd.containsKey(Cnst.ID_KEY)
-                  ? rd.get        (Cnst.ID_KEY)
-                  : rd.get   (table.primaryKey);
-        if (id != null && ! "".equals(id) ) {
-        Set ab  = Synt.toTerms(Cnst.AB_KEY);
-        if (ab != null && ab.contains("404.x")) {
-            FetchCase fc = new FetchCase(FetchCase.STRICT)
-                .filter(table.primaryKey , id )
-                .select(table.primaryKey);
-            Map row = table.fetchLess(fc);
-            if (row != null && ! row.isEmpty()) {
-                data.put("ern", "Er404.2" );
-                data.put("err", "Info forbidden");
-            }  else {
-                data.put("ern", "Er404.1" );
-                data.put("err", "Info not found");
-            }
+    page.put(Cnst.RN_KEY,rn);
+    Object id = rd.get(table.primaryKey);
+    if (info != null && ! info.isEmpty()) {
+        page.put("state", 1);
+        page.put("count", 1);
+    } else
+    if (rn >= 1
+    ||  id == null
+    ||  id.equals("")
+    ||  id instanceof Map
+    ||  id instanceof Collection
+    ||  id instanceof Object[ ]) {
+        page.put("state", 0);
+        page.put("count", 0);
+    } else {
+        FetchCase fc = new FetchCase(FetchCase.STRICT)
+            .filter(table.primaryKey , id )
+            .select(table.primaryKey);
+        Map row = table.fetchLess(fc);
+        if (row != null && ! row.isEmpty()) {
+            page.put("state", 0);
+            page.put("count", 1);
         }  else {
-            data.put("ern", "Er404");
-            data.put("err", "Info not found");
-        }} else {
-            data.put("ern", "Er404");
-            data.put("err", "Info not found");
+            page.put("state", 0);
+            page.put("count", 0);
         }
-        data.put("ok" , false);
     }
 
     return data;

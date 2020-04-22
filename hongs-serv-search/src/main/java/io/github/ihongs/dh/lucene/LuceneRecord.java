@@ -185,31 +185,47 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
         Object id = rd.get (Cnst.ID_KEY);
         if (id != null && !(id instanceof Collection) && !(id instanceof Map)) {
             if ( "".equals( id ) ) {
-                return  new HashMap(); // id 为空则不获取
+                return new HashMap(); // id 为空则不获取
             }
-            Map  data = new HashMap();
-            Map  info = getOne(rd);
-            data.put("info", info);
+            Map info = getOne ( rd );
+
+            Map data = new HashMap();
+            data.put( "info", info );
+
+            /**
+             * 与 list 保持一致, 用 rn 控制 page
+             * rn= 1 正常
+             * rn= 0 不给 page
+             * rn=-1 返回 page.state=-1 (缺失), page.state=-2 (受限)
+             */
+            int rn = Synt.declare(rd.get(Cnst.RN_KEY), 1);
+            if (rn == 0) {
+                return data ;
+            }
+
+            Map page = new HashMap();
+            data.put( "page", page );
 
             /**
              * 查不到可能是不存在、已删除或受限
              * 需通过 id 再查一遍，区分不同错误
              */
-            if (info == null || info.isEmpty()) {
-                data.put("ok", false);
-                Set ab = Synt.toTerms(Cnst.AB_KEY);
-                if (null == ab || ! ab.contains("404.x")) {
-                    data.put("ern", "404");
-                    data.put("err", "Info not found");
-                } else
-                if (null == getDoc( id.toString(/**/) ) ) {
-                    data.put("ern", "Er404.1");
-                    data.put("err", "Info not found");
-                } else
-                {
-                    data.put("ern", "Er404.2");
-                    data.put("err", "Info forbidden");
-                }
+            page.put(Cnst.RN_KEY,rn);
+            if (null != info && ! info.isEmpty()) {
+                page.put("state", 1);
+                page.put("count", 1);
+            } else
+            if (rn >= 1 ) {
+                page.put("state", 0);
+                page.put("count", 0);
+            } else
+            if (null != getDoc( id.toString( ) )) {
+                page.put("state", 0);
+                page.put("count", 1);
+            }  else
+            {
+                page.put("state", 0);
+                page.put("count", 0);
             }
 
             return data;

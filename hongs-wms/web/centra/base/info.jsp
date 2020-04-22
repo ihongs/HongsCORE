@@ -173,10 +173,10 @@
             <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
                 <%if ("reveal".equals(_action)) {%>
-                <ul class="pagination pull-right" style="margin: 0;">
-                    <li><a href="javascript:;" class="re-new" title="后一个（新）">&laquo;</a></li>
-                    <li><a href="javascript:;" class="re-old" title="前一个（旧）">&raquo;</a></li>
-                </ul>
+                <div class="btn-group pull-right">
+                    <button type="button" class="newer btn btn-default" disabled="disabled">更新</button>
+                    <button type="button" class="older btn btn-default" disabled="disabled">更旧</button>
+                </div>
                 <%} /*End If */%>
             </div>
         </div>
@@ -192,9 +192,9 @@
 
     var formobj = context.hsForm({
         <%if ("reveal".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=_text,_fork,.form",
+        _url: "<%=_module%>/<%=_entity%>/reveal.act?<%=Cnst.AB_KEY%>=_text,_fork,.form,older,newer",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=_text,_fork,.form",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=_text,_fork,.form",
         <%} /* End if */%>
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,
@@ -203,41 +203,20 @@
 
     <%if ("reveal".equals(_action)) {%>
     // 前后历史记录快速切换
-    var sa = hsSerialArr(loadbox);
-    var id = hsGetSeria(sa,  "id"  );
-    var ct = hsGetSeria(sa, "ctime");
-    context.on("click", ".re-new,.re-old", function() {
-        var data = {
-            "<%=Cnst.OB_KEY%>" : "ctime",
-            "<%=Cnst.RB_KEY%>" : "ctime",
-            "<%=Cnst.RN_KEY%>" : "1",
-            "<%=Cnst.PN_KEY%>" : "1",
-            "<%=Cnst.ID_KEY%>.": id
-        };
-        if ($(this).is( ".re-old" )) {
-            data["<%=Cnst.OB_KEY%>"] = "-"+data["<%=Cnst.OB_KEY%>"];
-            data["ctime.lt"] = ct;
+    context.on("loadBack", function(rst) {
+        if (rst.info && rst.snap && rst.snap.newer) {
+            context.find(".newer").data({id: rst.info.id , ctime: rst.snap.newer});
         } else {
-            data["ctime.gt"] = ct;
+            context.find(".newer").prop("disabled", true);
         }
-        $.hsAjax({
-            url : "<%=_module%>/<%=_entity%>/reveal.act",
-            data: data ,
-            type: "GET",
-            success: function(rst) {
-                rst = hsResponse(rst, 1);
-                if (! rst.ok) {
-                    $.hsWarn(rst.msg || "未知的错误", "danger");
-                    return;
-                }
-                if (! rst.list || ! rst.list.length) {
-                    $.hsNote(rst.msg || "没有记录了", "danger");
-                    return;
-                }
-                ct = rst.list[0].ctime;
-                loadbox.hsLoad("<%=_module%>/<%=_entity%>/info_snap.html", {id: id, ctime: ct});
-            }
-        });
+        if (rst.info && rst.snap && rst.snap.older) {
+            context.find(".older").data({id: rst.info.id , ctime: rst.snap.older});
+        } else {
+            context.find(".older").prop("disabled", true);
+        }
+    });
+    context.on("click", ".newer,.older", function() {
+        loadbox.hsLoad("<%=_module%>/<%=_entity%>/info_snap.html", $(this).data());
     });
     <%} /*End If */%>
 

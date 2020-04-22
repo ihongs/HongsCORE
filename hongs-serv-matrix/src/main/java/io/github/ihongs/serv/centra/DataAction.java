@@ -140,12 +140,35 @@ public class DataAction extends SearchAction {
                 if (ab.contains("_link")) md += SelectHelper.LINK;
                 if (ab.contains("_fork")) md += SelectHelper.FORK;
                 if (md != 0) {
-                   new SelectHelper().addItemsByForm(mod, ent).select(rsp, md);
+                    new SelectHelper().addItemsByForm(mod, ent).select(rsp, md);
                 }
+
                 // 规避关键词
-                if (ab.contains   (".menu" )
-                && rsp.containsKey( "enum")) {
-                   rsp.put("menu", rsp.remove("enum"));
+                if (ab.contains(".menu")
+                &&  rsp.containsKey("enum") ) {
+                    rsp.put("menu", rsp.remove("enum"));
+                }
+
+                // 新的和旧的
+                if (ab.contains("older")
+                ||  ab.contains("newer")) {
+                    Object  id = df.get(/**/ "id");
+                    Object fid = df.get("form_id");
+                    long ctime = Synt.declare(df.get("ctime"), 0L);
+                    if (ab.contains("older")) {
+                        Map row = ett.getModel().table.fetchCase()
+                           .filter("`id` = ? AND `form_id` = ? AND `ctime` < ?", id, fid, ctime)
+                           .select("`ctime`")
+                           .getOne();
+                        df.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
+                    }
+                    if (ab.contains("newer")) {
+                        Map row = ett.getModel().table.fetchCase()
+                           .filter("`id` = ? AND `form_id` = ? AND `ctime` > ?", id, fid, ctime)
+                           .select("`ctime`")
+                           .getOne();
+                        df.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);
+                    }
                 }
             }
         }

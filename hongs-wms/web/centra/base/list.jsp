@@ -226,7 +226,7 @@
                     if (Synt.declare(info.get("sortable"), false)) {
                         ob = (String)info.get("data-ob" );
                         if (ob == null) {
-                            ob = name;
+                            ob  = name +",*";
                         }
                         ob = "data-ob=\""+ob+"\"";
                         oc = "sortable";

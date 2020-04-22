@@ -164,7 +164,7 @@
 <script type="text/javascript">
     (function($) {
         // 挪动页尾到外部
-        $("#context").append("#footbox");
+        $("#context").append($("#footbox"));
 
         var context = $("#main-context");
         var menubar = $("#main-menubar");

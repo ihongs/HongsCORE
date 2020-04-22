@@ -177,6 +177,7 @@
         </div>
         <br/>
     </form>
+    <div class="pagebox"></div>
 </div>
 <script type="text/javascript">
 (function($) {

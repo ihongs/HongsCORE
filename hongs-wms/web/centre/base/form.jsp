@@ -371,9 +371,9 @@
 
     var formobj = context.hsForm({
         <%if ("create".equals(_action)) {%>
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
+        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
         <%} else {%>
-        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.RN_KEY%>=0&<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
+        _url: "<%=_module%>/<%=_entity%>/search.act?<%=Cnst.AB_KEY%>=.enum,.info,.form,_fork,_text",
         <%} /* End if */ %>
         _fill__fork: hsFormFillFork,
         _fill__file: hsFormFillFile,

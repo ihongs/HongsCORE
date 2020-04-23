@@ -199,8 +199,8 @@
                         <div class="dropdown invisible">
                             <a href="javascript:;" data-toggle="dropdown"><span class="glyphicon glyphicon-menu-hamburger"></span></a>
                             <ul class="dropdown-menu">
-                                <li><a href="javascript:;" class="review"><%=_locale.translate("fore.review", _title)%></a></li>
                                 <li><a href="javascript:;" class="update"><%=_locale.translate("fore.update", _title)%></a></li>
+                                <li><a href="javascript:;" class="review"><%=_locale.translate("fore.review", _title)%></a></li>
                                 <li><a href="javascript:;" class="reveal"><%=_locale.translate("fore.reveal", _title)%></a></li>
                                 <li><a href="javascript:;" class="delete"><span class="text-danger"><%=_locale.translate("fore.delete", _title)%></span></a></li>
                             </ul>

@@ -203,19 +203,23 @@
 
     <%if ("reveal".equals(_action)) {%>
     // 前后历史记录快速切换
-    context.on("loadBack", function(rst) {
-        if (rst.info && rst.snap && rst.snap.newer) {
-            context.find(".newer").data({id: rst.info.id , ctime: rst.snap.newer});
+    context.on("loadBack", function(evt, rst) {
+        if (rst.info && rst.snap && rst.snap.newer ) {
+            var tt = hsFmtDate(rst.snap.newer*1000 , H$(":datetime.format"));
+            context.find(".newer").attr("title", tt).prop("disabled", false)
+                                  .data({id: rst.info.id , ctime: rst.snap.newer});
         } else {
-            context.find(".newer").prop("disabled", true);
+            context.find(".newer").attr("title", "").prop("disabled", true );
         }
-        if (rst.info && rst.snap && rst.snap.older) {
-            context.find(".older").data({id: rst.info.id , ctime: rst.snap.older});
+        if (rst.info && rst.snap && rst.snap.older ) {
+            var tt = hsFmtDate(rst.snap.older*1000 , H$(":datetime.format"));
+            context.find(".older").attr("title", tt).prop("disabled", false)
+                                  .data({id: rst.info.id , ctime: rst.snap.older});
         } else {
-            context.find(".older").prop("disabled", true);
+            context.find(".older").attr("title", "").prop("disabled", true );
         }
     });
-    context.on("click", ".newer,.older", function() {
+    context.on("click", ".newer,.older", function( ) {
         loadbox.hsLoad("<%=_module%>/<%=_entity%>/info_snap.html", $(this).data());
     });
     <%} /*End If */%>

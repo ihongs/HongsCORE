@@ -321,16 +321,16 @@
     var statbox = context.find(".statbox");
 
     // 权限控制
-    for (var a in [
-        ["search",".review"], ["create",".create"],
-        ["update",".update"], ["delete",".delete"],
-        ["reveal",".reveal,.record"]
-    ]) {
-        if (! hsChkUri("<%=_module%>/<%=_entity%>/"+a[0]+".act")) {
-            context.find(a[1]).remove();
+    $.each({
+        "search":".review", "create":".create",
+        "update":".update", "delete":".delete",
+        "reveal":".reveal,.record"
+    }, function(k, v) {
+        if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
+            context.find(v).remove();
         }
-    }
-    if (listbox.find("thead tr[data-fn='_'] ul > li").size() > 0) {
+    });
+    if (listbox.find("thead tr[data-fn='_'] ul > li").size( )) {
         listbox.find("thead tr[data-fn='_']").hide( );
     }
 

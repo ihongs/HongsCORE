@@ -321,10 +321,11 @@
     var statbox = context.find(".statbox");
 
     // 权限控制
-    for (var a in {
-        "search":".review", "reveal":".reveal",
-        "create":".create", "update":".update", "delete":".delete"
-    }) {
+    for (var a in [
+        ["search",".review"], ["create",".create"],
+        ["update",".update"], ["delete",".delete"],
+        ["reveal",".reveal,.record"]
+    ]) {
         if (! hsChkUri("<%=_module%>/<%=_entity%>/"+a[0]+".act")) {
             context.find(a[1]).remove();
         }

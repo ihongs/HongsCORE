@@ -131,6 +131,7 @@ HsForm.prototype = {
             var d = hsSerialDic(this._init);
             for(var k in d ) {
                 var v  = d [k];
+                k = k.replace(/(\[\]|\.)$/, ''); // 规避数组键影响
                 hsSetValue ( info , k , v );
             }
         }
@@ -177,7 +178,7 @@ HsForm.prototype = {
         for(n in fns) {
             t  = fts[n];
             f  = fls[n];
-            v  = hsGetValue(envm, n);
+            v  = hsGetValue(envm, n.replace(/(\[\]|\.)$/, '')); // 规避数组键影响
             if (v === undefined) {
                 v  =  envm [ n ];
             }
@@ -249,7 +250,7 @@ HsForm.prototype = {
         for(n in fns) {
             t  = fts[n];
             f  = fls[n];
-            v  = hsGetValue(info, n);
+            v  = hsGetValue(info, n.replace(/(\[\]|\.)$/, '')); // 规避数组键影响
             if (v === undefined) {
                 v  =  info [ n ];
             }

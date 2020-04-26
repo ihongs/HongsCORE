@@ -9,7 +9,6 @@ import io.github.ihongs.action.FormSet;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Model;
 import io.github.ihongs.db.Table;
-import io.github.ihongs.dh.lucene.field.*;
 import io.github.ihongs.dh.search.SearchEntity;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
@@ -925,13 +924,13 @@ public class Data extends SearchEntity {
         Map<String, Map> fields = getFields();
         if (fields.containsKey("name")) {
             Map m = fields.get("name");
-            if (Synt.declare(m.get("readonly"), false)) {
+            if (Synt.declare(m.get("disabled"), false)) {
                 map.put("name", getName(map));
             }
         }
         if (fields.containsKey("word")) {
             Map m = fields.get("word");
-            if (Synt.declare(m.get("readonly"), false)) {
+            if (Synt.declare(m.get("disabled"), false)) {
                 map.put("word", getWord(map));
             }
         }

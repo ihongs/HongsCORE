@@ -338,7 +338,7 @@ public class Form extends Model {
                 flds.add(Synt.mapOf(
                     "__name__", "name",
                     "__type__", "hidden",
-                    "readonly", "true",
+                    "disabled", "true",
                     "wordable", "true"
                 ));
             }

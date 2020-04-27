@@ -4,7 +4,6 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.UploadHelper;
-import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -16,6 +15,8 @@ import java.net.URLEncoder;
 import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
@@ -30,6 +31,7 @@ import javax.servlet.http.Part;
  *  drop-origin yes|no 抛弃原始文件, 仅使用 checks 中新创建的
  *  keep-origin yes|no 返回原始路径, 不理会 checks 中新创建的
  *  keep-naming yes|no 保持原文件名, 会对网址末尾的文件名编码
+ *  name-digest 命名摘要算法, 如: MD5,SHA-1,SHA-256
  *  temp 上传临时目录, 可用变量 $DATA_PATH, $BASE_PATH 等
  *  path 上传目标目录, 可用变量 $BASE_PATH, $DATA_PATH 等
  *  href 上传文件链接, 可用变量 $BASE_HREF, $SERV_HREF 等, 后者包含域名
@@ -95,6 +97,9 @@ public class IsFile extends Rule {
                     x = Core.BASE_PATH + "/static/upload/tmp";
                 }
                 value = stores(value.toString(), x);
+                if (value == null) {
+                    return   null;
+                }
             } while(false);
             }
         }
@@ -105,6 +110,7 @@ public class IsFile extends Rule {
         String href;
         String path;
         Object para;
+        String name;
 
         para = getParam("temp");
         if (para != null && !"".equals(para)) hlpr.setUploadTemp(Synt.declare(para, String.class));
@@ -116,18 +122,26 @@ public class IsFile extends Rule {
         if (para != null && !"".equals(para)) hlpr.setAllowTypes(Synt.toArray(para, String.class));
         para = getParam("extn");
         if (para != null && !"".equals(para)) hlpr.setAllowExtns(Synt.toArray(para, String.class));
+        para = getParam("name-digest");
+        if (para != null && !"".equals(para)) hlpr.setDigestType(Synt.declare(para, String.class));
 
-        if (value instanceof Part) {
+        if (value instanceof Part ) {
             Part part =(Part) value;
-            hlpr.upload(part, bename(part.getSubmittedFileName()));
+            hlpr.upload(part);
+            name = part.getSubmittedFileName();
         } else
-        if (value instanceof File) {
+        if (value instanceof File ) {
             File file =(File) value;
-            hlpr.upload(file, bename(file.getName()));
+            hlpr.upload(file);
+            name = file.getName ( );
         } else
         {
-            // 外部记录的是网址, 必须进行解码才行
+            /**
+             * 外部记录的是网址
+             * 必须进行解码才行
+             */
             href = value.toString();
+            name = null ;
             if (getParam("keep-naming", false)
             &&  href.contains("/")) {
                 href = decode(href);
@@ -138,13 +152,9 @@ public class IsFile extends Rule {
         path = hlpr.getResultPath();
         href = hlpr.getResultHref();
 
-        /**
-         * UploadHelper
-         * 不对路径进行转码
-         * 故需自行编码处理
-         */
-        if (getParam("keep-naming", false)) {
-            href = encode(href);
+        // 没新上传, 不必检查
+        if (null == name) {
+            return  href;
         }
 
         /**
@@ -152,19 +162,73 @@ public class IsFile extends Rule {
          * 可以返回原始路径
          * 或者抛弃原始文件
          */
-        if ( ! href.equals(value) ) {
-            String  x = checks(href , path);
-            if ( ! href.equals(x) ) {
-                if (Synt.declare(getParam("keep-origin"), false)) {
-                    // Keep to return origin href
-                } else
-                if (Synt.declare(getParam("drop-origin"), false)) {
-                    new File(path).delete();
-                    href = x;
-                } else {
-                    href = x;
-                }
+        String[] hp = checks(href, path);
+        if (Synt.declare(getParam("keep-origin"), false)) {
+            // Keep to return origin href
+        } else
+        if (Synt.declare(getParam("drop-origin"), false)) {
+            new File(path).delete();
+            href = hp[0];
+            path = hp[1];
+        } else {
+            href = hp[0];
+            path = hp[1];
+        }
+
+        if (getParam("keep-naming", false)) {
+            // 检查外部文件名是否合法
+            if (name.getBytes( ).length > 256 ) {
+                throw new Wrong("fore.file.name.toolong", name);
             }
+            if (NAME_PATT.matcher(name).find()) {
+                throw new Wrong("fore.file.name.illegal", name);
+            }
+
+            try {
+                int    pos ;
+                String nick;
+                String dist;
+
+                // 新的网址
+                pos  = href.lastIndexOf('/');
+                nick = href.substring(1+pos);
+                href = href.substring(0,pos);
+                pos  = nick.lastIndexOf('.');
+                if (pos <= 0) { // 没有扩展名
+                    href = href +"/"+ nick +".d/"+ name;
+                } else {
+                    href = href +"/"+ nick.substring(0 , pos) +"/"+ name;
+                }
+
+                // 新的路径
+                pos  = path.lastIndexOf('/');
+                nick = path.substring(1+pos);
+                path = path.substring(0,pos);
+                pos  = nick.lastIndexOf('.');
+                if (pos <= 0) { // 没有扩展名
+                    path = path +"/"+ nick +".d/"+ name;
+                } else {
+                    path = path +"/"+ nick.substring(0 , pos) +"/"+ name;
+                }
+
+                // 指向上级原始文件
+                dist = "../" + nick;
+
+                Files.createSymbolicLink(Path.of(path) , Path.of(dist) );
+            }
+            catch (StringIndexOutOfBoundsException ex) {
+                throw new HongsExemption(500, "Wrong path/href setting");
+            }
+            catch (IOException ex) {
+                throw new HongsExemption(ex);
+            }
+
+            /**
+             * UploadHelper
+             * 不对路径进行转码
+             * 故需自行编码处理
+             */
+            href = encode(href);
         }
 
         return href;
@@ -287,38 +351,14 @@ public class IsFile extends Rule {
 
     /**
      * 上传成功后的进一步检查
-     * 用于后续处理, 如生成缩略图, 或视频截图等
+     * 用于后续处理, 如生成缩略图, 或视频截图等, 返回新的链接和路径
      * @param href 文件链接
      * @param path 文件路径
      * @return
      * @throws Wrong
      */
-    protected String checks(String href, String path) throws Wrong {
-        return href;
-    }
-
-    private static final Pattern NAME_PATT = Pattern.compile("[\\/<>:?*\"|]");
-
-    /**
-     * 命名文件, 规避存储路径重合
-     * @param name
-     * @return
-     * @throws Wrong
-     */
-    private String bename(String name) throws Wrong {
-        if (getParam("keep-naming", false)) {
-            if (255 < name.getBytes(  ).length) {
-                throw new Wrong("fore.file.name.toolong", name);
-            }
-            if (NAME_PATT.matcher(name).find()) {
-                throw new Wrong("fore.file.name.illegal", name);
-            }
-            return Syno.splitPn36(
-                   Core.newIdentity()
-                   ) + "/" + name;
-        } else {
-            return Core.newIdentity();
-        }
+    protected String[] checks(String href, String path) throws Wrong {
+        return new String[] {href, path};
     }
 
     /**
@@ -372,4 +412,7 @@ public class IsFile extends Rule {
         name = name.replace("+","%20");
         return path + name;
     }
+
+    private static final Pattern NAME_PATT = Pattern.compile("[\\/<>:?*\"|]");
+
 }

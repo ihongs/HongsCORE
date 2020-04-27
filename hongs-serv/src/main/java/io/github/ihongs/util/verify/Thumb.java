@@ -28,7 +28,7 @@ import net.coobird.thumbnailator.Thumbnails.Builder;
 public class Thumb extends IsFile {
 
     @Override
-    public String checks(String href, String path) throws Wrong {
+    public String[] checks(String href, String path) throws Wrong {
         String extn = Synt.declare(getParam("thumb-extn" ), "");
         String size = Synt.declare(getParam("thumb-size" ), "");
         String mode = Synt.declare(getParam("thumb-mode" ), "");
@@ -37,7 +37,8 @@ public class Thumb extends IsFile {
         int    idx  = Synt.declare(getParam("thumb-index"), 0 );
 
         try {
-            return exec(href, path, extn, size, mode, col, pos)[0][idx];
+            String[][] hp = exec ( href, path, extn, size, mode, col, pos );
+            return new String[ ] { hp [0] [idx], hp [1] [idx] };
         } catch (IndexOutOfBoundsException ex) {
             throw new Wrong( ex, "Thumb index out of bounds." );
         } catch (IOException ex) {

@@ -1,6 +1,7 @@
 package io.github.ihongs.action;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dict;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
@@ -8,11 +9,16 @@ import io.github.ihongs.util.verify.Wrong;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
 import java.net.FileNameMap;
 import java.net.URLConnection;
+import java.nio.MappedByteBuffer;
+import java.nio.channels.FileChannel;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,10 +39,16 @@ public class UploadHelper {
     private String uploadTemp = "static/upload/tmp";
     private String uploadPath = "static/upload";
     private String uploadHref = "static/upload";
+    private String digestType = null;
     private String resultName = null;
     private String requestKey = null;
     private Set<String> allowTypes = null;
     private Set<String> allowExtns = null;
+
+    private static final char[] DIGITS = {
+        '0', '1', '2', '3', '4', '5', '6', '7',
+        '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
+    };
 
 //  static {
 //      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getClassName());
@@ -69,6 +81,16 @@ public class UploadHelper {
      */
     public UploadHelper setUploadHref(String href) {
         this.uploadHref = href;
+        return this;
+    }
+
+    /**
+     * 设置命名摘要算法, 如: MD5, SHA-1, SHA-256
+     * @param type
+     * @return
+     */
+    public UploadHelper setDigestType(String type) {
+        this.digestType = type;
         return this;
     }
 
@@ -129,16 +151,16 @@ public class UploadHelper {
          * 当文件名以点结尾表示同上但需加扩展名
          * 默认情况下会把文件等分拆解成多级目录
          */
-        if (name.endsWith(".")) {
+        if (name.endsWith(".") == true ) {
             int l = name.length ( ) - 1 ;
             name  = name.substring(0, l);
         } else
-        if (name.contains(".")
-        ||  name.contains("/")) {
-            extn  = null;
+        if (name.contains(".") == false
+        &&  name.contains("/") == false) {
+            name  = Syno.splitPath(name);
         } else
         {
-            name  = Syno.splitPath(name);
+            extn  = null;
         }
 
         if (extn != null
@@ -187,6 +209,66 @@ public class UploadHelper {
                          + Core.BASE_HREF);
         href = Syno.inject(href, m );
         return href;
+    }
+
+    private String getDigestName(File file) {
+        if (digestType == null) {
+            return Core.newIdentity();
+        }
+
+        // 摘要计算
+        byte[] a ;
+        long   l = file.length();
+        try (
+            FileInputStream  in = new FileInputStream(file);
+            FileChannel      fc = in.getChannel();
+        ) {
+            MappedByteBuffer bb = fc.map (FileChannel.MapMode.READ_ONLY, 0, l);
+            MessageDigest m ;
+            m = MessageDigest.getInstance(digestType);
+                m.update(bb);
+            a = m.digest(  );
+        }
+        catch (IOException e) {
+            throw new HongsExemption(e);
+        }
+        catch (NoSuchAlgorithmException e) {
+            throw new HongsExemption(e);
+        }
+
+        // 转为 16 进制
+        int  i = 0 ;
+        int  j = a . length;
+        StringBuilder s = new StringBuilder(2 * j);
+        for (  ; i < j; i ++  ) {
+            byte b = a[ i ];
+            char y = DIGITS[b       & 0xf];
+            char x = DIGITS[b >>> 4 & 0xf];
+            s.append(x);
+            s.append(y);
+        }
+        return s.toString();
+    }
+
+    private File getDigestFile(File file) {
+        // 获取扩展
+        String extn = file.getName();
+        extn = extn.substring(extn.lastIndexOf('.') + 1);
+
+        // 重建名称
+        String name = getDigestName(file);
+               setResultName(name , extn);
+        String path = getResultPath(/**/);
+
+        // 移动文件
+        File dist = new  File  (  path  );
+        File dirt = dist.getParentFile( );
+        if (!dirt.isDirectory()) {
+             dirt.mkdirs( );
+        }
+        file.renameTo(dist);
+
+        return dist;
     }
 
     /**
@@ -266,7 +348,13 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(InputStream xis, String type, String extn) throws Wrong {
-        return  upload(xis, type, extn, Core.newIdentity());
+        if (digestType == null) {
+            return upload(xis, type, extn, Core.newIdentity());
+        }
+
+        File tmp = upload(xis, type, extn, Core.newIdentity()+".tmp.");
+
+        return getDigestFile(tmp);
     }
 
     /**
@@ -316,7 +404,13 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(Part part) throws Wrong {
-        return  upload(part, Core.newIdentity());
+        if (digestType == null) {
+            return upload(part, Core.newIdentity());
+        }
+
+        File tmp = upload(part, Core.newIdentity()+".tmp.");
+
+        return getDigestFile(tmp);
     }
 
     /**
@@ -372,7 +466,13 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(File file) throws Wrong {
-        return  upload(file, Core.newIdentity());
+        if (digestType == null) {
+            return upload(file, Core.newIdentity());
+        }
+
+        File tmp = upload(file, Core.newIdentity()+".tmp.");
+
+        return getDigestFile(tmp);
     }
 
     /**
@@ -421,7 +521,7 @@ public class UploadHelper {
                 if (subn.contains("./" )) {
                     throw new Wrong("core.file.upload.not.allows");
                 }
-//              name = path + subn;
+            //  name = path + subn;
                 break;
             }
 
@@ -431,8 +531,8 @@ public class UploadHelper {
                 if (name.contains("./" )) {
                     throw new Wrong("core.file.upload.not.allows");
                 }
-                subn = Core.newIdentity();
                 name = temp + name;
+                subn = getDigestName(new File(name));
                 break;
             }
         }

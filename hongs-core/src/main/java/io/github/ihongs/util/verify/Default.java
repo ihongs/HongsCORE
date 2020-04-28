@@ -197,8 +197,8 @@ public class Default extends Rule {
     public Object merge(Value watch, String param) throws Wrong {
         Map vars = watch.getCleans();
         Set a = Synt.setOf(); // 缺失的键
-        int i = 0; // 位置数量
-        int j = 0; // 缺值数量
+        int i = 0; // 缺值数量
+        int j = 0; // 取值数量
 
         /**
          * 以下代码源自 Syno.inject
@@ -231,8 +231,8 @@ public class Default extends Rule {
                 // 记下缺失的字段
                 if (! vars.containsKey(st)) {
                     a.add( st );
-                    j ++;
-                }   i ++;
+                    i ++;
+                }   j ++;
 
                     ob  = vars.get (st);
                 if (ob != null) {

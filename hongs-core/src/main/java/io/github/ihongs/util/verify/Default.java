@@ -250,6 +250,7 @@ public class Default extends Rule {
             st = Matcher.quoteReplacement(st);
             matcher.appendReplacement(sb, st);
         }
+
         /**
          * 创建时不理会缺失的值, 作空处理即可
          * 更新时除非全部未给值, 否则校验错误

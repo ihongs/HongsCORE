@@ -233,11 +233,6 @@ public class Default extends Rule {
                     a.add( st );
                     j ++;
                 }   i ++;
-                // 记下缺失的字段
-                if (! vars.containsKey(st)) {
-                    a.add( st );
-                    j ++;
-                }   i ++;
 
                     ob  = vars.get (st);
                 if (ob != null) {

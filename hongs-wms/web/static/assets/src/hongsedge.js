@@ -143,7 +143,7 @@ function hsListDollFilt(x, v, n) {
  * 填充打开链接方式
  * 当多个时显示列表
  */
-function hsFillOpeLink(x, v, t) {
+function hsFillOpenLink(x, v, t) {
     if (!v || !v.length) {
         return ;
     }
@@ -202,12 +202,12 @@ function hsFillOpeLink(x, v, t) {
 }
 function hsListWrapOpen(t) {
     return function (x, v) {
-         hsFillOpeLink (x, v, t);
+         hsFillOpenLink(x, v, t);
     };
 }
 function hsFormWrapOpen(t) {
     return function (x, v) {
-         hsFillOpeLink (x, v, t);
+         hsFillOpenLink(x, v, t);
     };
 }
 

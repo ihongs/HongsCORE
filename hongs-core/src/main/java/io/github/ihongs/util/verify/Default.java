@@ -77,6 +77,16 @@ public class Default extends Rule {
             return def.substring(1);
         }
 
+        // 会话属性
+        if (def.startsWith("=$")) {
+            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
+        }
+
+        // 应用属性
+        if (def.startsWith("=#")) {
+            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
+        }
+
         if (def.startsWith("=@")) {
             // 别名字段, 通常用于截取字串, 清理 HTML
             if (def.startsWith("=@alias:")) {
@@ -111,53 +121,45 @@ public class Default extends Rule {
             }
         }
 
-        // 会话属性
-        if (def.startsWith("=$")) {
-            return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
-        }
-
-        // 应用属性
-        if (def.startsWith("=#")) {
-            return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
-        }
-
-        // 新唯一ID
-        if (def.equals("=%id")) {
-            return Core.newIdentity();
-        }
-
-        // 动作选项
-        if (def.equals("=%zone")) {
-            return Core.ACTION_ZONE.get();
-        }
-        if (def.equals("=%lang")) {
-            return Core.ACTION_LANG.get();
-        }
-        if (def.equals("=%addr")) {
-            return Core.CLIENT_ADDR.get();
-        }
-
-        // 默认时间
-        Matcher mat = NOW.matcher(def);
-        if (mat.matches()) {
-           Date now = new Date();
-            String flag = mat.group(1);
-            String plus = mat.group(2);
-            if (flag.length() == 4) {// time 字串长度
-                now.setTime(Core.ACTION_TIME.get( ));
+        if (def.startsWith("=%")) {
+            // 新唯一ID
+            if (def.equals("=%id")) {
+                return Core.newIdentity();
             }
-            if (plus != null) {
-               Long msc = Long.valueOf(plus.substring(1));
-                if ("+".equals(plus.substring(0,1))) {
-                    now.setTime(now.getTime() + msc);
-                } else {
-                    now.setTime(now.getTime() - msc);
+
+            // 动作选项
+            if (def.equals("=%zone")) {
+                return Core.ACTION_ZONE.get();
+            }
+            if (def.equals("=%lang")) {
+                return Core.ACTION_LANG.get();
+            }
+            if (def.equals("=%addr")) {
+                return Core.CLIENT_ADDR.get();
+            }
+
+            // 默认时间
+            Matcher mat = NOW.matcher(def);
+            if (mat.matches()) {
+               Date now = new Date();
+                String flag = mat.group(1);
+                String plus = mat.group(2);
+                if (flag.length() == 4) {// time 字串长度
+                    now.setTime(Core.ACTION_TIME.get( ));
                 }
+                if (plus != null) {
+                   Long msc = Long.valueOf(plus.substring(1));
+                    if ("+".equals(plus.substring(0,1))) {
+                        now.setTime(now.getTime() + msc);
+                    } else {
+                        now.setTime(now.getTime() - msc);
+                    }
+                }
+                return  now;
             }
-            return  now;
         }
 
-            return  val;
+        return  val;
     }
 
     private static final Pattern NOW = Pattern.compile ("^=%(time|now)([+\\-]\\d+)?$");

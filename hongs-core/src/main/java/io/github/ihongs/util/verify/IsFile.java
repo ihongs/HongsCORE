@@ -16,7 +16,7 @@ import java.net.URLConnection;
 import java.net.MalformedURLException;
 import java.net.URLDecoder;
 import java.nio.file.Files;
-import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.http.Part;
@@ -214,7 +214,12 @@ public class IsFile extends Rule {
                 // 指向上级原始文件
                 dist = "../" + nick;
 
-                Files.createSymbolicLink(Path.of(path) , Path.of(dist) );
+                File d = new File(path).getParentFile();
+                if (!d.exists()) {
+                     d.mkdir ();
+                }
+
+                Files.createSymbolicLink(Paths.get(path), Paths.get(dist));
             }
             catch (StringIndexOutOfBoundsException ex) {
                 throw new HongsExemption(500, "Wrong path/href setting");

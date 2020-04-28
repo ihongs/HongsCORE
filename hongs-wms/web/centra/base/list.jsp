@@ -365,7 +365,6 @@
         // 链接填充, 支持多值, 占格子窄
         _fill__ulink: hsListWrapOpen("link" ),
         _fill__files: hsListWrapOpen("file" ),
-        _fill__email: hsListWrapOpen("email"),
         _fill__image: hsListWrapOpen("image"),
         _fill__video: hsListWrapOpen("video"),
         _fill__audio: hsListWrapOpen("audio")

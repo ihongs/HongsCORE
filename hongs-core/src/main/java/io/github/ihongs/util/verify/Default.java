@@ -1,10 +1,14 @@
 package io.github.ihongs.util.verify;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Dict;
-import io.github.ihongs.util.Syno;
+import io.github.ihongs.util.Synt;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -20,7 +24,7 @@ import java.util.regex.Pattern;
  */
 public class Default extends Rule {
     @Override
-    public Object verify(Value watch) {
+    public Object verify(Value watch) throws Wrong, Wrongs {
         Object value = watch.get();
         Object force = getParam("deforce");
         if ("create".equals(force)) {
@@ -66,34 +70,54 @@ public class Default extends Rule {
         if (null == val || ! ( val instanceof String )) {
             return  val ;
         }
-
         String def = ((String) val).trim();
-        String bef = def.length ( ) >= 2
-                   ? def.substring( 0, 2 )
-                   : "" ;
 
         // 起始转义
-        if (bef.equals("\\=") ) {
+        if (def.startsWith("\\=") ) {
             return def.substring(1);
         }
 
-        // 拼接字段
-        if (bef.equals("=+")) {
-            return Syno.inject(def.substring(2), watch.getCleans());
-        }
+        if (def.startsWith("=@")) {
+            // 别名字段, 通常用于截取字串, 清理 HTML
+            if (def.startsWith("=@alias:")) {
+                return alias(watch, def.substring(8));
+            }
 
-        // 别名字段
-        if (bef.equals("=@")) {
-            return Dict.get(watch.getCleans(), BLANK, Dict.splitKeys(def.substring(2)));
+            // 计数字段
+            if (def.startsWith("=@count:")) {
+                return count(watch, def.substring(8));
+            }
+
+            // 组合字段
+            if (def.startsWith("=@merge:")) {
+                return merge(watch, def.substring(8));
+            }
+
+            // 自定方法
+            try {
+                String c, p ;
+                int i  = def.indexOf  (':');
+                if (i != -1) {
+                    c  = def.substring(1,i);
+                    p  = def.substring(1+i);
+                } else {
+                    c  = def.substring( 1 );
+                    p  = "" ;
+                }
+                return ((Def) Core.getInstance(c)).def(watch, p);
+            }
+            catch (HongsExemption | ClassCastException ex) {
+                throw new HongsExemption(500 , "Wrong default param", ex);
+            }
         }
 
         // 会话属性
-        if (bef.equals("=$")) {
+        if (def.startsWith("=$")) {
             return Core.getInstance(ActionHelper.class).getSessibute(def.substring(2));
         }
 
         // 应用属性
-        if (bef.equals("=#")) {
+        if (def.startsWith("=#")) {
             return Core.getInstance(ActionHelper.class).getAttribute(def.substring(2));
         }
 
@@ -137,4 +161,116 @@ public class Default extends Rule {
     }
 
     private static final Pattern NOW = Pattern.compile ("^=%(time|now)([+\\-]\\d+)?$");
+    private static final Pattern INJ = Pattern.compile ("\\$(\\$|\\w+|\\{.+?\\})");
+
+    public Object alias(Value watch, String param) {
+        Object v = Dict.getParam(watch.getCleans(), BLANK, param);
+        if (v == BLANK) {
+            return BLANK;
+        }
+        if (v == null ) {
+            return "";
+        }
+        return v;
+    }
+
+    public Object count(Value watch, String param) {
+        Object v = Dict.getParam(watch.getCleans(), BLANK, param);
+        if (v == BLANK) {
+            return BLANK;
+        }
+        if (v == null ) {
+            return 0 ;
+        }
+        if (v instanceof Map) {
+            return ( (Map) v).size();
+        }
+        if (v instanceof Collection) {
+            return ( (Collection) v).size();
+        }
+        if (v instanceof Object [] ) {
+            return ( (Object [] ) v).length;
+        }
+        return v.toString().length();
+    }
+
+    public Object merge(Value watch, String param) throws Wrong {
+        Map vars = watch.getCleans();
+        Set a = Synt.setOf(); // 缺失的键
+        int i = 0; // 位置数量
+        int j = 0; // 缺值数量
+
+        /**
+         * 以下代码源自 Syno.inject
+         */
+
+        Matcher matcher = INJ.matcher(param);
+        StringBuffer sb = new StringBuffer();
+        Object       ob;
+        String       st;
+        String       sd;
+
+        while  ( matcher.find() ) {
+            st = matcher.group(1);
+
+            if (! st.equals("$")) {
+                if (st.startsWith("{")) {
+                    st = st.substring(1, st.length() - 1);
+                    // 默认值
+                    int p  = st.indexOf  ("|");
+                    if (p != -1) {
+                        sd = st.substring(1+p);
+                        st = st.substring(0,p);
+                    } else {
+                        sd = "";
+                    }
+                } else {
+                        sd = "";
+                }
+
+                // 记下缺失的字段
+                if (! vars.containsKey(st)) {
+                    a.add( st );
+                    j ++;
+                }   i ++;
+                // 记下缺失的字段
+                if (! vars.containsKey(st)) {
+                    a.add( st );
+                    j ++;
+                }   i ++;
+
+                    ob  = vars.get (st);
+                if (ob != null) {
+                    st  = ob.toString();
+                } else {
+                    st  = sd;
+                }
+            }
+
+            st = Matcher.quoteReplacement(st);
+            matcher.appendReplacement(sb, st);
+        }
+        /**
+         * 创建时不理会缺失的值, 作空处理即可
+         * 更新时除非全部未给值, 否则校验错误
+         */
+        if (watch.isUpdate( )) {
+            if (i != j) {
+                throw new Wrong("core.error.default.need.vars", a.toString());
+            } else {
+                return  BLANK ;
+            }
+        }
+
+        matcher.appendTail(sb);
+        return sb.toString(  );
+    }
+
+    /**
+     * 默认值调节器
+     * 用默认值配置 =@abc.Def:param
+     */
+    public static interface Def {
+        public Object def(Value value, String param) throws Wrong, Wrongs;
+    }
 }

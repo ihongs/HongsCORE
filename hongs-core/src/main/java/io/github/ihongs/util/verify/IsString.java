@@ -33,22 +33,27 @@ public class IsString extends Rule {
         // 文本清理
         Set<String> sa = Synt.toSet(getParam("strip"));
         if (null != sa) {
-            if (sa.contains("cros")) {
-                str = Syno.stripTags(str); // 清除脚本
+            if (sa.contains("cros") || sa.contains("html")) {
+                str = Syno.stripCros(str); // 清除脚本
             }
-            if (sa.contains("tags")) {
+            if (sa.contains("tags") || sa.contains("html")) {
                 str = Syno.stripTags(str); // 清除标签
             }
-            if (sa.contains("ends")) {
-                str = Syno.stripEnds(str); // 首尾清理(含全角)
+            if (sa.contains("ends") || sa.contains("html") || sa.contains("text")) {
+                str = Syno.stripEnds(str); // 首尾清理
             }
-            if (sa.contains("trim") || sa.contains("true")) {
+            if (sa.contains("trim") || sa.contains("html") || sa.contains("text")) {
                 str = str.trim();
             }
         }
 
+        // 截取部分
+        int len = Synt.declare(getParam("limit"), 0);
+        if (len > 0 && len < str.length()) {
+            str = str.substring( 0, len );
+        }
+
         // 长度限制
-        int len;
         len = Synt.declare(getParam("minlength"), 0);
         if (len > 0 && len > str.length()) {
             throw new Wrong("fore.form.lt.minlength", Integer.toString(len), Integer.toString(str.length()));

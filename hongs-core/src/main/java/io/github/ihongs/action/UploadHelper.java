@@ -13,7 +13,6 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
-import java.net.FileNameMap;
 import java.net.URLConnection;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
@@ -28,8 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import javax.servlet.http.Part;
-//import eu.medsea.mimeutil.MimeUtil;
-//import eu.medsea.mimeutil.detector.MagicMimeMimeDetector;
 
 /**
  * 文件上传助手
@@ -49,10 +46,6 @@ public class UploadHelper {
         '0', '1', '2', '3', '4', '5', '6', '7',
         '8', '9', 'a', 'b', 'c', 'd', 'e', 'f'
     };
-
-//  static {
-//      MimeUtil.registerMimeDetector(MagicMimeMimeDetector.class.getClassName());
-//  }
 
     /**
      * 设置上传临时目录
@@ -211,6 +204,29 @@ public class UploadHelper {
         return href;
     }
 
+    private String getTypeByName(String name) {
+        return URLConnection.getFileNameMap()
+                     .getContentTypeFor(name);
+    }
+
+    private String getTypeByMime(String type) {
+        int pos  = type./**/indexOf(';');
+        if (pos >= 1 ) {
+            return type.substring(0,pos);
+        } else {
+            return type;
+        }
+    }
+
+    private String getExtnByName(String name) {
+        int pos  = name.lastIndexOf('.');
+        if (pos >= 1 ) {
+            return name.substring(1+pos);
+        } else {
+            return  "" ;
+        }
+    }
+
     private String getDigestName(File file) {
         if (digestType == null) {
             return Core.newIdentity();
@@ -251,14 +267,12 @@ public class UploadHelper {
     }
 
     private File getDigestFile(File file) {
-        // 获取扩展
-        String extn = file.getName();
-        extn = extn.substring(extn.lastIndexOf('.') + 1);
+        String name = file. getName();
+        String extn = getExtnByName(name);
+        String subn = getDigestName(file);
 
-        // 重建名称
-        String name = getDigestName(file);
-               setResultName(name , extn);
-        String path = getResultPath(/**/);
+        setResultName ( subn , extn );
+        String path = getResultPath();
 
         // 移动文件
         File dist = new  File  (  path  );
@@ -305,9 +319,11 @@ public class UploadHelper {
      * @throws Wrong
      */
     public File upload(InputStream xis, String type, String extn, String subn) throws Wrong {
+        if (type.contains( ";" )) {
+            type = type.substring(0 , type./**/indexOf(";"));
+        }
         if (extn.contains( "." )) {
-//          extn = MimeUtil.getExtension(extn);
-            extn = extn.substring(extn.lastIndexOf('.') + 1);
+            extn = extn.substring(1 + extn.lastIndexOf('.'));
         }
 
         chkTypeOrExtn(type, extn);
@@ -370,24 +386,13 @@ public class UploadHelper {
             return  null;
         }
 
-        String type = part.getContentType();
-        String extn = part.getSubmittedFileName();
-
         /**
-         * 从 Mime-Type 和原始文件名中分解出类型和扩展名
+         * 从上传项中获取类型并提取扩展名
          */
-        int pos  = type.indexOf(',');
-        if (pos == -1) {
-            type = "";
-        } else {
-            type = type.substring(0 , pos);
-        }
-        pos  = extn.lastIndexOf('.');
-        if (pos == -1) {
-            extn = "";
-        } else {
-            extn = extn.substring(1 + pos);
-        }
+        String type = part.getContentType( /**/ );
+               type = getTypeByMime( type );
+        String extn = part.getSubmittedFileName();
+               extn = getExtnByName( extn );
 
         try {
             return upload(part.getInputStream(), type, extn, subn);
@@ -434,12 +439,9 @@ public class UploadHelper {
         /**
          * 从文件名中解析类型和提取扩展名
          */
-//      type = MimeUtil.getMimeTypes (file).toString(   );
-//      extn = MimeUtil.getExtension (file);
-        FileNameMap nmap = URLConnection.getFileNameMap();
-        String      extn = file.getName(  );
-        String      type = nmap.getContentTypeFor( extn );
-        extn = extn.substring(extn.lastIndexOf('.') + 1 );
+        String name = file. getName();
+        String type = getTypeByName(name);
+        String extn = getExtnByName(name);
 
         chkTypeOrExtn(type, extn);
         setResultName(subn, extn);

@@ -193,21 +193,15 @@ fieldset>.dropdown-list {
 }
 .breadcrumb.laps ,
 .breadcrumb.laps a {
-    color: #fff;
+    color: #ccc;
 }
 .breadcrumb.laps a:hover ,
 .breadcrumb.laps a:focus ,
 .breadcrumb.laps .active a {
-    color: #ddd;
+    color: #fff;
 }
 .breadcrumb.laps .active a {
     text-decoration: none;
-}
-.breadcrumb.laps .home-crumb a {
-    color: #fff;
-}
-.breadcrumb.laps .back-crumb a {
-    color: #f44;
 }
 
 /** 其他组件调整 **/

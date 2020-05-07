@@ -11,6 +11,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.CmdletRunner;
+import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
@@ -40,39 +41,126 @@ public class MoreAction {
 
     @Action("__main__")
     public void more(ActionHelper helper) {
+        helper.reply(new HashMap());
+
         HttpServletRequest  req = helper.getRequest( );
         HttpServletResponse rsp = helper.getResponse();
-        Map<String, Object> re0 = helper.getRequestData( );
-        Map<String, String> acs = Synt.asMap(re0.get("a"));
-        Map<String, Object> das = Synt.asMap(re0.get("d"));
-        Map                 re1;
-        Map                 rs0;
-        Map                 rs1;
-        String              key;
-        String              uri;
-        String              act;
+        Map    re0 = helper.getRequestData( );
+        Map    rs0 = helper.getResponseData();
+        Core  core = Core.getInstance();
+        Wrap  wrap = new Wrap( helper );
+        String act ;
 
+            act = Core.ACTION_NAME.get();
+            core.put(ActionHelper.class.getName(),  wrap );
+        try {
+            /* 旧的平行逻辑 */
+            mass(wrap, req, rsp, re0, rs0);
+
+            /* 新的关联逻辑 */
+            more(wrap, req, rsp, re0, rs0, null, null, 0 );
+        } finally {
+            Core.ACTION_NAME.set ( act );
+            core.put(ActionHelper.class.getName(), helper);
+        }
+
+        helper.reply(rs0);
+    }
+
+    private void mass(ActionHelper wrap, HttpServletRequest req, HttpServletResponse rsp, Map re0, Map rs0) {
+        Map<String, String> acs = Synt.asMap(re0.remove("a"));
+        Map<String, Object> das = Synt.asMap(re0.remove("d"));
         if (acs == null) {
-            acs = new HashMap();
+            return;
+        //  acs = new HashMap();
         }
         if (das == null) {
             das = new HashMap();
         }
-            rs0 = new HashMap();
-            act = Core.ACTION_NAME.get();
 
-        Wrap wrap = new Wrap( helper );
-        Core core = Core.getInstance();
-        core.put(ActionHelper.class.getName(), wrap);
+        String uri;
+        String key;
+        Map    re1;
+        Map    rs1;
+
+        for(Map.Entry<String, String> et : acs.entrySet()) {
+            key = et.getKey(  );
+            uri = et.getValue();
+            uri = uri + Cnst.ACT_EXT;
+            re1 = new HashMap( re0 );
+            re1.putAll( data ( das.get (key) ) );
+
+            Core.ACTION_NAME.set ( uri );
+            wrap.setRequestData  ( re1 );
+            wrap.setAttribute(Cnst.ACTION_ATTR, null);
+            wrap.setAttribute(Cnst.ORIGIN_ATTR, null);
+            wrap.reply((Map) null );
+            eval( wrap, uri , req , rsp);
+            rs1 = wrap.getResponseData();
+            rs0 . put ( key , rs1 );
+
+            if (rs1 != null
+            && !rs0.containsKey("ok")
+            && !Synt.declare(rs1.get("ok"), true)) {
+                rs0.put("ok" , false);
+                if (rs1.containsKey("ern")) {
+                    rs0.put("ern", rs1.get("ern"));
+                }
+                if (rs1.containsKey("err")) {
+                    rs0.put("err", rs1.get("err"));
+                }
+                if (rs1.containsKey("msg")) {
+                    rs0.put("msg", rs1.get("msg"));
+                }
+            }
+        }
+    }
+
+    private void more(ActionHelper wrap, HttpServletRequest req, HttpServletResponse rsp, Map re0, Map rs0, MergeMore meg, String sub, int lev) {
+        String  uri;
+        String  key;
+        String  col;
+        Map     re1;
+        Map     rs1;
 
         try {
-            for(Map.Entry<String, String> et : acs.entrySet()) {
-                key = et.getKey(  );
-                uri = et.getValue();
-                uri = uri + Cnst.ACT_EXT;
-                re1 = new HashMap( re0 );
-                re1.putAll( data ( das.get (key) ) );
+            uri = (String) re0.remove("at");
+            key = (String) re0.remove("on");
+            re1 = (Map   ) re0.remove("in");
+        }
+        catch (ClassCastException ex) {
+            return;
+        }
 
+        if (uri != null) {
+            if (meg != null) {
+                if (key != null) {
+                    int  p  = key.indexOf  (':');
+                    if ( p >= 0) {
+                        col = key.substring(1+p);
+                        key = key.substring(0,p);
+                    } else {
+                        col = Cnst.ID_KEY;
+                    }
+                } else {
+                        col = Cnst.ID_KEY;
+                        key = sub +"_"+ Cnst.ID_KEY;
+                }
+
+                // 映射参数
+                Map<Object,List> map ;
+                map = meg.mapped(key);
+                if (map.isEmpty()) {
+                    return;
+                }
+
+                // 请求参数
+                if (re1 == null) {
+                    re1  = new HashMap( );
+                }
+                re1.put(col,map.keySet());
+
+                // 执行请求
                 Core.ACTION_NAME.set ( uri );
                 wrap.setRequestData  ( re1 );
                 wrap.setAttribute(Cnst.ACTION_ATTR, null);
@@ -80,29 +168,77 @@ public class MoreAction {
                 wrap.reply((Map) null );
                 eval( wrap, uri , req , rsp);
                 rs1 = wrap.getResponseData();
-                rs0 . put ( key , rs1 );
 
-                if (rs1 != null
-                && !rs0.containsKey("ok")
-                && !Synt.declare(rs1.get("ok"), true)) {
-                    rs0.put("ok" , false);
-                    if (rs1.containsKey("ern")) {
-                        rs0.put("ern", rs1.get("ern"));
-                    }
-                    if (rs1.containsKey("err")) {
-                        rs0.put("err", rs1.get("err"));
-                    }
-                    if (rs1.containsKey("msg")) {
-                        rs0.put("msg", rs1.get("msg"));
-                    }
+                // 获取列表
+               List list  = (List) rs1.get("list");
+                if (list ==  null) {
+                Map info  = (Map ) rs1.get("info");
+                if (info !=  null) {
+                    list  =  Synt. listOf ( info );
+                } else {
+                    return;
+                }}
+
+                // 进行关联
+                meg.append(list, map, col, sub);
+
+                // 下级关联
+                meg = new MergeMore(list);
+            } else {
+                // 请求参数
+                if (re1 == null) {
+                    re1  = new HashMap( );
+                }
+
+                // 执行请求
+                Core.ACTION_NAME.set ( uri );
+                wrap.setRequestData  ( re1 );
+                wrap.setAttribute(Cnst.ACTION_ATTR, null);
+                wrap.setAttribute(Cnst.ORIGIN_ATTR, null);
+                wrap.reply((Map) null );
+                eval( wrap, uri , req , rsp);
+                rs1 = wrap.getResponseData();
+
+                // 获取列表
+               List list  = (List) rs1.get("list");
+                if (list ==  null) {
+                Map info  = (Map ) rs1.get("info");
+                if (info !=  null) {
+                    list  =  Synt. listOf ( info );
+                } else {
+                    return;
+                }}
+
+                // 下级关联
+                meg = new MergeMore(list);
+
+                if (sub != null) {
+                    rs0.put(sub, rs1);
+                } else {
+                    rs0.putAll ( rs1);
                 }
             }
-        } finally {
-            Core.ACTION_NAME.set(act);
-            core.put(ActionHelper.class.getName(), helper);
+        } else
+        if (lev == 0 ) {
+            rs1 = rs0;
+        } else
+        {
+            return;
         }
 
-        helper.reply(rs0);
+        /* 下级数据 */
+
+        lev ++;
+        for(Object ot : re0.entrySet()) {
+            Map.Entry  et = (Map.Entry) ot;
+            Object k = et.getKey  ();
+            Object v = et.getValue();
+            if (k instanceof String && v instanceof Map) {
+                sub = (String) k;
+                re1 = (Map   ) v;
+                more(wrap, req, rsp, re1, rs1, meg, sub, lev);
+            }
+        }
     }
 
     @Action("eval")

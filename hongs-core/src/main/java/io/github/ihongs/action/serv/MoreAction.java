@@ -17,6 +17,7 @@ import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -181,6 +182,15 @@ public class MoreAction {
 
                 // 进行关联
                 meg.append(list, map, col, sub);
+
+                // 补全空白
+                List sup = new ArrayList(0);
+                for (Map.Entry<Object,List> lr : map.entrySet()) {
+                    List<Map> lst = lr.getValue();
+                    for (Map  row : lst) {
+                        row.put(sub,sup);
+                    }
+                }
 
                 // 下级关联
                 meg = new MergeMore(list);

@@ -171,8 +171,9 @@ public class MergeMore
    */
   public void filled(Map raw, Map<Object, List> map)
   {
-    if (raw == null) {
-        raw  = new HashMap();
+    if (raw == null || raw.isEmpty())
+    {
+      return;
     }
 
     for (Map.Entry<Object,List> lr : map.entrySet())

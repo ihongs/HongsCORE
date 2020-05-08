@@ -95,7 +95,7 @@ public class NaviMap
   extends CoreSerial
 {
 
-  private final String name;
+  protected transient String name;
 
   /**
    * 菜单层级信息

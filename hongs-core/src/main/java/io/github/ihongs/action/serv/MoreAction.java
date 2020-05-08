@@ -15,7 +15,6 @@ import io.github.ihongs.dh.MergeMore;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,9 +31,22 @@ import javax.servlet.http.HttpServletResponse;
  * 可一次调用多个动作
  * 批量执行后返回数据
  * 请求格式举例:
- * a.KEY=ACTION&d.KEY=PARAMS&foo=bar
- * PARAMS 为 JSON 或 URLEncoded 格式
- * 其他参数为共用参数
+ * {
+ *   at: "path/to/action",
+ *   in: {type: 1},
+ *   sub1: {
+ *     at: "path/to/sub1/action",
+ *     on: "sub1_id:id",
+ *     in: {rb: ["id", "name"]},
+ *     sub2: {
+ *       at: "path/to/sub2/action",
+ *       on: "id:sub1_id",
+ *       in: {ob: ["-mtime"]}
+ *     }
+ *   }
+ * }
+ * 下层用 on 关联上层, 缺省为层级名加 _id;
+ * 当顶层 at 未给出时, 顶层资源平行无关联.
  * @author Hongs
  */
 @Action("common/more")
@@ -56,10 +68,6 @@ public class MoreAction {
             act = Core.ACTION_NAME.get();
             core.put(ActionHelper.class.getName(),  wrap );
 
-            /* 旧平行逻辑 */
-            mass(wrap, /***/ req, rsp, re0, rs0 );
-
-            /* 新关联逻辑 */
             more(wrap, null, req, rsp, re0, rs0, null, 0 );
         } finally {
             Core.ACTION_NAME.set ( act );
@@ -145,58 +153,6 @@ public class MoreAction {
         }
     }
 
-    /**
-     * @deprecated 有新规则, 保留一月
-     */
-    private void mass(ActionHelper wrap, HttpServletRequest req, HttpServletResponse rsp, Map re0, Map rs0) {
-        Map<String, String> acs = Synt.asMap(re0.remove("a"));
-        Map<String, Object> das = Synt.asMap(re0.remove("d"));
-        if (acs == null) {
-            return;
-        //  acs = new HashMap();
-        }
-        if (das == null) {
-            das = new HashMap();
-        }
-
-        String uri;
-        String key;
-        Map    re1;
-        Map    rs1;
-
-        for(Map.Entry<String, String> et : acs.entrySet()) {
-            key = et.getKey(  );
-            uri = et.getValue();
-            re1 = new HashMap( re0 );
-            re1.putAll( data ( das.get (key) ) );
-
-            wrap.reply( (Map) null );
-            wrap.setRequestData(re1);
-            eval( wrap, uri , req , rsp);
-            rs1 = wrap.getResponseData();
-
-            if (rs1 == null) {
-                continue;
-            }
-            rs0.put(key,rs1);
-
-            // 首个错误上移
-            if (Synt.declare(rs0.get("ok"), true)
-            && !Synt.declare(rs1.get("ok"), true)) {
-                rs0.put("ok", false);
-                if (rs1.containsKey("ern")) {
-                    rs0.put("ern", rs1.get("ern"));
-                }
-                if (rs1.containsKey("err")) {
-                    rs0.put("err", rs1.get("err"));
-                }
-                if (rs1.containsKey("msg")) {
-                    rs0.put("msg", rs1.get("msg"));
-                }
-            }
-        }
-    }
-
     private void more(ActionHelper helper, String sub, HttpServletRequest req, HttpServletResponse rsp, Map re0, Map rs0, MergeMore meg, int l) {
         String uri;
         String key;
@@ -209,7 +165,7 @@ public class MoreAction {
             key = (String) re0.remove("on");
             re1 = (Map   ) re0.remove("in");
         }
-        catch (ClassCastException ex) {
+        catch (ClassCastException e) {
             return;
         }
 

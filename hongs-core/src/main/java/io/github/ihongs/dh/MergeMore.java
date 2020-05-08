@@ -165,12 +165,16 @@ public class MergeMore
 
   /**
    * 补全默认值
-   * 可在 extend rows 之后执行
-   * @param raw 默认值
+   * 可在 extend/append 之后执行
    * @param map 映射表
+   * @param raw 默认值
    */
-  public void filled(Map raw, Map<Object, List> map)
+  public void filled(Map<Object, List> map, Map raw)
   {
+    if (map == null || map.isEmpty())
+    {
+      return;
+    }
     if (raw == null || raw.isEmpty())
     {
       return;
@@ -184,19 +188,18 @@ public class MergeMore
         for (Object ot : raw.entrySet())
         {
           Map.Entry et = (Map.Entry) ot;
-          Object ek = et.getKey(  );
-          if (! row.containsKey(ek)) {
           Object ev = et.getValue();
-            row.put(ek , ev);
-          }
+          Object ek = et.getKey(  );
+          if (row.containsKey( ek )) continue;
+          row.put ( ek , ev );
         }
       }
     }
   }
 
-  public void filled(Map raw, String key)
+  public void filled(String key, Map raw)
   {
-    filled(raw, mapped(key));
+    filled(mapped(key), raw);
   }
 
   /**
@@ -208,16 +211,9 @@ public class MergeMore
    */
   public void extend(Iterator iter, Map<Object, List> map, String col, String sub)
   {
-    Map     row, raw;
+    Map     row, raw, rxw;
     List    lst;
     Object  rid;
-
-    // 2020/02/27, 同名字段需先清理
-    if (col.equals(sub))
-    for(Map rxw : rows)
-    {
-        rxw.remove(sub);
-    }
 
     while (iter.hasNext())
     {
@@ -234,17 +230,21 @@ public class MergeMore
       Iterator it = lst.iterator();
       while (it.hasNext())
       {
-        row = (Map) it.next();
-
+        row = (Map) it.next(   );
         if ( null == sub)
         {
-//        raw.putAll(row);
           row.putAll(raw);
+          continue;
         }
-        else
+
+        rxw = (Map) row.get(sub);
+        if ( null != rxw)
         {
-          row.put( sub, raw );
+          rxw.putAll(raw);
+          continue;
         }
+
+        row.put(sub, raw);
       }
     }
   }
@@ -271,13 +271,6 @@ public class MergeMore
     Map     row, raw;
     List    lst, lzt;
     Object  rid;
-
-    // 2020/02/27, 同名字段需先清理
-    if (col.equals(sub))
-    for(Map rxw : rows)
-    {
-        rxw.remove(sub);
-    }
 
     while (iter.hasNext())
     {

@@ -539,10 +539,25 @@ public class SelectHelper {
             if (ls == null) {
                 continue;
             }
-            boolean rp = Synt.declare(mt.get("__repeated__"), false);
-            if (rp) {
+            if (Synt.declare(mt.get("__repeated__"), false)) {
+                // 预置数据
+                for (Map.Entry<Object, List> lr : ms.entrySet()) {
+                    List<Map> lst = lr.getValue();
+                    for (Map  row : lst) {
+                         row.put(ak, new ArrayList());
+                    }
+                }
+
                 mm.append(ls, ms, vk, ak);
             } else {
+                // 预置数据
+                for (Map.Entry<Object, List> lr : ms.entrySet()) {
+                    List<Map> lst = lr.getValue();
+                    for (Map  row : lst) {
+                         row.put(ak, new  HashMap ());
+                    }
+                }
+
                 mm.extend(ls, ms, vk, ak);
             }
         }

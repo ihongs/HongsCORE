@@ -440,13 +440,13 @@ public class AuthFilter
         file = new File(Core.DATA_PATH
              + File.separator + "serial"
              + File.separator + name + Cnst.NAVI_EXT + ".ser");
-        if (!file.exists() || file.lastModified() > mod) {
+        if (!file.exists() || file.lastModified() > mod ) {
             break;
         }
 
         file = new File(Core.CONF_PATH
              + File.separator + name + Cnst.NAVI_EXT + ".xml");
-        if ( file.exists() && file.lastModified() > mod) {
+        if ( file.exists() && file.lastModified() > mod ) {
             break;
         }
 

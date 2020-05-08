@@ -1,5 +1,5 @@
 <root>
-    <rsname>@default</rsname>
+    <rsname>#default</rsname>
     <menu text="前台" href="common/menu.act?m=centre">
         <role text="访问前台" name="centre">
             <action>public</action><!-- 非区域同名才开放访问 -->

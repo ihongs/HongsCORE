@@ -1,5 +1,5 @@
 <root>
-    <rsname>@default</rsname>
+    <rsname>#default</rsname>
     <menu text="后台" href="common/menu.act?m=centra">
         <role text="登录后台" name="centra">
             <action>centra</action><!-- 未登录则完全禁止访问 -->

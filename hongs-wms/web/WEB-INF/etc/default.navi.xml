@@ -1,5 +1,5 @@
 <root>
-    <rsname>!io.github.ihongs.serv.auth.RoleSet</rsname>
+    <rsname>@io.github.ihongs.serv.auth.RoleSet</rsname>
     <import>centra</import>
     <import>centre</import>
 </root>

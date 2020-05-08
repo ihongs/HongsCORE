@@ -571,10 +571,10 @@ public class NaviMap
           CoreLogger.error("Can not get roles for menu "+ name);
           return null;
       }
-      if (session.startsWith("@")) {
+      if (session.startsWith("#")) {
           return getInstance(session.substring(1)).getRoleSet();
       } else
-      if (session.startsWith("!")) {
+      if (session.startsWith("@")) {
           return ( Set ) Core.getInstance(session.substring(1));
       } else
       {

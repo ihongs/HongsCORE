@@ -48,11 +48,11 @@ import javax.servlet.http.Part;
  *
  * <h3>配置选项:</h3>
  * <pre>
- * server.id              服务ID
- * core.language.probing  探测语言
- * core.language.default  默认语言
- * core.timezone.probing  探测时区
- * core.timezone.default  默认时区
+ * server.id             服务ID
+ * core.language.probing 探测语言
+ * core.language.default 默认语言
+ * core.timezone.probing 探测时区
+ * core.timezone.default 默认时区
  * </pre>
  *
  * @author Hong

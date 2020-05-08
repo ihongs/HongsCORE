@@ -20,7 +20,7 @@ public class Cmdrun {
     @Cmdlet("__main__")
     public static void exec(String[] args) throws HongsException {
         Map opts = CmdletHelper.getOpts(args,
-            "from=s", "to=s", "sync:b", "del-tables:b", "del-fields"
+            "from=s", "to=s", "sync:b", "del-tables:b", "del-fields:b"
         );
 
         String  fr = (String ) opts.get("from");

@@ -17,7 +17,7 @@ import java.util.Properties;
  *
  * <h3>配置选项:</h3>
  * <pre>
- * core.load.config.once    为true则仅加载一次, 为false由Core控制
+ * core.load.config.once  为true则仅加载一次, 为false由Core控制
  * </pre>
  *
  * <h3>错误代码:</h3>

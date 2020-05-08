@@ -205,7 +205,8 @@ public abstract class CoreSerial
 
     lock.lockr();
     try {
-      if (file.exists() && !expired(time)) {
+      if (file.exists()
+      && !expired(time)) {
           load(file);
           return;
       }
@@ -215,7 +216,7 @@ public abstract class CoreSerial
 
     lock.lockw();
     try {
-      imports ();
+      imports( );
       save(file);
     } finally {
       lock.unlockw();

@@ -10,6 +10,7 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.PasserHelper;
 import io.github.ihongs.action.NaviMap;
 import io.github.ihongs.util.Synt;
+import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -46,6 +47,11 @@ public class AuthFilter
    * 动作配置
    */
   private NaviMap siteMap;
+
+  /**
+   * 载入时间
+   */
+  private long    mod = 0;
 
   /**
    * 登录超时
@@ -121,6 +127,7 @@ public class AuthFilter
         throw new ServletException(ex);
       }
     }
+    this.mod = System.currentTimeMillis();
 
     /**
      * 获取首页URL
@@ -187,6 +194,8 @@ public class AuthFilter
     if (act . startsWith ("/") ) {
         act = act.substring( 1 );
     }
+
+    reload(); // 自动重载权限表
 
     /**
      * 判断当前用户是否登录超时
@@ -415,6 +424,43 @@ public class AuthFilter
           return true;
       }
       return false;
+  }
+
+  private void reload( ) throws ServletException {
+    if (siteMap == null) {
+        return;
+    }
+
+    String name = siteMap.getName();
+
+    // 检查更新
+    do {
+        File file;
+
+        file = new File(Core.DATA_PATH
+             + File.separator + "serial"
+             + File.separator + name + Cnst.NAVI_EXT + ".ser");
+        if ( mod < file.lastModified() ) {
+            break;
+        }
+
+        file = new File(Core.CONF_PATH
+             + File.separator + name + Cnst.NAVI_EXT + ".xml");
+        if ( mod < file.lastModified() ) {
+            break;
+        }
+
+        return; // 未改变
+    }
+    while ( false );
+
+    // 重载配置
+    try {
+        this.siteMap = NaviMap.getInstance( name );
+        this.mod     = System .currentTimeMillis();
+    } catch (HongsException ex) {
+        throw new ServletException(ex);
+    }
   }
 
 }

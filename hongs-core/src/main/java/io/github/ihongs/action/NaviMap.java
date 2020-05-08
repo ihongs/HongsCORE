@@ -130,11 +130,11 @@ public class NaviMap
   public NaviMap(String name)
     throws HongsException
   {
-    this. name = name ;
-    this.initial(name);
+    this.name = name ;
+    this.init ( /**/);
   }
 
-  private void initial(String name)
+  private void init()
     throws HongsException
   {
     File serFile = new File(Core.DATA_PATH

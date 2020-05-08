@@ -205,7 +205,7 @@ public abstract class CoreSerial
 
     lock.lockr();
     try {
-      if (file.exists()
+      if (file.exists( )
       && !expired(time)) {
           load(file);
           return;

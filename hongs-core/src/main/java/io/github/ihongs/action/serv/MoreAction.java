@@ -306,6 +306,7 @@ public class MoreAction {
 
     private void eval(ActionHelper helper, String act,
             HttpServletRequest req, HttpServletResponse rsp) {
+        // 重设路径
         act = act + Cnst.ACT_EXT ;
         Core.ACTION_NAME.set(act);
         helper.setAttribute (Cnst.ACTION_ATTR, null);

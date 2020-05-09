@@ -1,0 +1,11 @@
+<root>
+    <!-- 图片上传 -->
+    <form name="image">
+        <field name="file" type="file" required="yes" repeated="yes">
+            <param name="href">${BASE_HREF}/static/upload/image</param>
+            <param name="path">${BASE_PATH}/static/upload/image</param>
+            <param name="extn">jpeg,jpg,png,gif,bmp</param>
+            <param name="name-digest">MD5</param>
+        </field>
+    </form>
+</root>

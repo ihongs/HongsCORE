@@ -324,7 +324,9 @@ public class Form extends Model {
             fld = Synt.mapOf(
                 "__text__", "ID",
                 "__name__", "id",
-                "__type__", "hidden"
+                "__type__", "hidden",
+                "deforce" , "create",
+                "default" , "=%id"
             );
             if (idf != null) {
                 fld .putAll(idf);

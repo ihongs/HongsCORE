@@ -423,12 +423,11 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     public String add(Map rd) throws HongsException {
         String id = Synt.asString(rd.get(Cnst.ID_KEY));
-        if (id != null && id.length() != 0) {
-            throw new NullPointerException("Id can not set in add");
+        if (id == null || id.length() == 0) {
+            id  =  Core.newIdentity();
+            rd.put(Cnst.ID_KEY , id );
         }
-        id  =  Core.newIdentity();
-        rd.put(Cnst.ID_KEY , id );
-        addDoc(padDoc (rd));
+        addDoc(padDoc(rd));
         return id;
     }
 

@@ -1,27 +1,28 @@
 package io.github.ihongs.serv.centra;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Syno;
 import io.github.ihongs.util.Synt;
-import java.io.File;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.lang.management.OperatingSystemMXBean;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
 import java.util.Properties;
-import java.util.LinkedHashMap;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+/*
+import java.io.File;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+*/
 
 /**
  * 管理信息
@@ -34,8 +35,8 @@ public class InfoAction {
     public void search(ActionHelper helper) throws HongsException {
         Map  rsp = new HashMap();
         Map  req = helper.getRequestData();
-        long now = System.currentTimeMillis( );
-        Set  rb  = Synt.toTerms(req.get("rb"));
+        long now = System.currentTimeMillis();
+        Set  rb = Synt.toTerms(req.get(Cnst.RB_KEY));
 
         // 当前时间
         rsp.put("now_msec", now);
@@ -44,12 +45,12 @@ public class InfoAction {
         if ( rb == null || rb.contains("app_info") ) {
             Map  app = new HashMap();
             rsp.put("app_info", app);
-            long tim = Core.STARTS_TIME;
-            app.put("server_id",Core.SERVER_ID);
-            app.put("base_href",Core.BASE_HREF);
-            app.put("base_path",Core.BASE_PATH);
-            app.put("open_time",tim);
-            app.put("live_time",Syno.humanTime(now - tim));
+
+            app.put("server_id", Core.SERVER_ID);
+            app.put("site_href", Core.SITE_HREF);
+            app.put("base_href", Core.BASE_HREF);
+            app.put("core_path", Core.CORE_PATH);
+            app.put("starts_time", Core.STARTS_TIME);
         }
 
         // 系统信息
@@ -58,19 +59,11 @@ public class InfoAction {
             rsp.put("sys_info", inf);
 
             Properties pps = System.getProperties( );
-            inf.put("name", pps.getProperty("os.name"));
-            inf.put("arch", pps.getProperty("os.arch"));
-            inf.put("vers", pps.getProperty("os.version"));
+            inf.put("name", pps.getProperty("os.name"   )
+                      +" "+ pps.getProperty("os.version"));
+            inf.put("java", pps.getProperty("java.specification.name"   )
+                      +" "+ pps.getProperty("java.specification.version"));
             inf.put("user", pps.getProperty("user.name" ));
-            inf.put("java", pps.getProperty("java.version"));
-
-            try {
-                InetAddress hst = InetAddress.getLocalHost();
-                inf.put("addr", hst.getHostAddress());
-                inf.put("host", hst.getHostName());
-            }  catch (UnknownHostException e) {
-                // Nothing todo.
-            }
         }
 
         // 运行信息
@@ -91,14 +84,15 @@ public class InfoAction {
             Map  inf = new HashMap();
             rsp.put("run_info", inf);
 
-            inf.put("load" , new Object[] {avg, String.valueOf(avg), "负载"});
-            inf.put("size" , new Object[] {siz, Syno.humanSize(siz), "全部"});
-            inf.put("free" , new Object[] {fre, Syno.humanSize(fre), "空闲"});
-            inf.put("dist" , new Object[] {max, Syno.humanSize(max), "可用"});
-            inf.put("used" , new Object[] {use, Syno.humanSize(use), "已用"});
-            inf.put("uses" , new Object[] {stk, Syno.humanSize(stk), "非堆"});
+            inf.put("load", new Object[] {avg, String.valueOf(avg), "负载"});
+            inf.put("size", new Object[] {siz, Syno.humanSize(siz), "全部"});
+            inf.put("free", new Object[] {fre, Syno.humanSize(fre), "空闲"});
+            inf.put("dist", new Object[] {max, Syno.humanSize(max), "可用"});
+            inf.put("used", new Object[] {use, Syno.humanSize(use), "已用"});
+            inf.put("uses", new Object[] {stk, Syno.humanSize(stk), "非堆"});
         }
 
+        /*
         // 磁盘情况
         if ( rb == null || rb.contains("dir_info") ) {
             rsp.put("base_dir", getAllSize(new File(Core.BASE_PATH)));
@@ -106,6 +100,7 @@ public class InfoAction {
             rsp.put("conf_dir", getAllSize(new File(Core.CONF_PATH)));
             rsp.put("core_dir", getAllSize(new File(Core.CORE_PATH)));
         }
+        */
 
         /**
          * 公共核心情况和锁情况
@@ -120,17 +115,15 @@ public class InfoAction {
         helper.reply("", rsp);
     }
 
-    @Action("note/update")
-    public void noteUpdate(ActionHelper helper) {
-
-    }
-
+    /*
     private static Map  getAllSize(File d) {
         Map     map = new LinkedHashMap();
-        long    all = 0;
-        long    oth = 0;
+        long    tot ;
         long    one ;
         String  hum ;
+
+        long    all = 0;
+        long    oth = 0;
 
         for (File f : d.listFiles()) {
             if (f.getName().endsWith("-INF")) {
@@ -155,8 +148,6 @@ public class InfoAction {
 
         hum = Syno.humanSize(oth);
         map.put("!", new Object[] {oth, hum, "其他文件"});
-
-        long tot;
 
         tot = d.getTotalSpace();
         hum = Syno.humanSize(tot);
@@ -203,4 +194,5 @@ public class InfoAction {
             return n1 < n2 ? 1 : -1;
         }
     }
+    */
 }

@@ -130,7 +130,7 @@
             yAxis: [{
                 name: "负载",
                 type: 'value',
-                max : 10
+                max : 1.0
             },{
                 name: "内存",
                 type: 'value',
@@ -173,9 +173,9 @@
         var list0 = option.series[0].data;
         var list1 = option.series[1].data;
         for(var i = 0; i < 60; i ++) {
-            listX.push("");
-            list0.push(0 );
-            list1.push(0 );
+            listX.push( "" );
+            list0.push(null);
+            list1.push(null);
         }
 
         addSysOption(option, data, ctime);
@@ -409,8 +409,11 @@
     }
 
     function setAllCharts(ec, et) {
+        var context = $( "#centra-info" );
+        var formObj = new HsForm(context , {});
+
         $.hsAjax({
-            url: "centra/info/search.act",
+            url: "centra/info/search.act?rb=app_info,sys_info,run_info,core_info,lock_info",
             dataType: "json",
             success: function(rst) {
                 var box;
@@ -420,22 +423,6 @@
                 var sysChart;
                 var runOpts = {};
                 var sysOpts = {};
-                var context = $("#centra-info");
-
-                /*
-                box = context.find(".sys-info-box");
-                opts = rst.info.sys_info;
-                box.find("[data-fn=java]").text(    "Java "  +opts.java);
-                box.find("[data-fn=name]").text(opts.name+" "+opts.vers);
-                box.find("[data-fn=user]").text(opts.user);
-                opts = rst.info.app_info;
-                opts.open_time = hsFmtDate(opts.open_time, hsGetLang("datetime.format"));
-                opts.base_href = location.protocol+"//"+location.host+opts.base_href+"/";
-                box.find("[data-fn=server_id]").text(opts.server_id);
-                box.find("[data-fn=open_time]").text(opts.open_time);
-                box.find("[data-fn=base_href]").text(opts.base_href);
-                box.find("[data-fn=base_path]").text(opts.base_path);
-                */
 
                 // 历史负载
                 box = context.find(".sys-info-box")[0];
@@ -453,6 +440,7 @@
                 runChart = chart;
                 runOpts = opts;
 
+                /*
                 // 网站目录
                 box = context.find(".base-dir-pie")[0];
                 opts = getPieOption(rst.info.base_dir, "网站");
@@ -476,6 +464,7 @@
                 opts = getPieOption(rst.info.core_dir, "系统");
                 chart = ec.init(box, et);
                 chart.setOption(opts);
+                */
 
                 var itr = setInterval(function() {
                     if (!context.is(":visible")) {
@@ -493,8 +482,46 @@
                             runChart.setOption(runOpts, true);
                         }
                     });
-                }, 2000);
+                } , 2000);
+
+                // 应用信息
+                var a ;
+                a = [];
+                for (var k in rst.info.lock_map.Locker) {
+                    a.push(k+"("+rst.info.lock_map.Locker[k]+")");
+                }
+                rst.info.lock_map.Locker = a.sort( ).join("\r\n");
+                a = [];
+                for (var k in rst.info.lock_map.Larder) {
+                    a.push(k+"("+rst.info.lock_map.Larder[k]+")");
+                }
+                rst.info.lock_map.Larder = a.sort( ).join("\r\n");
+                rst.info.core_set = rst.info.core_set.sort().join("\r\n");
+                formObj.fillInfo(rst.info);
             }
+        });
+
+        context.find(".reload-core-and-lock").click(function() {
+            $.hsAjax({
+                url: "centra/info/search.act?rb=core_info,lock_info",
+                dataType: "json",
+                success: function(rst) {
+                    // 应用信息
+                    var a ;
+                    a = [];
+                    for (var k in rst.info.lock_map.Locker) {
+                        a.push(k+"("+rst.info.lock_map.Locker[k]+")");
+                    }
+                    rst.info.lock_map.Locker = a.sort( ).join("\r\n");
+                    a = [];
+                    for (var k in rst.info.lock_map.Larder) {
+                        a.push(k+"("+rst.info.lock_map.Larder[k]+")");
+                    }
+                    rst.info.lock_map.Larder = a.sort( ).join("\r\n");
+                    rst.info.core_set = rst.info.core_set.sort().join("\r\n");
+                    formObj.fillInfo(rst.info);
+                }
+            });
         });
     }
 

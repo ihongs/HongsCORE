@@ -11,7 +11,7 @@
     }
 
     ActionHelper ah = Core.getInstance(ActionHelper.class);
-    VerifyHelper vh = new VerifyHelper( );
-    vh.addRulesByForm ("upload", "image");
-    ah.reply(vh.verify(ah.getRequestData( ), true , true));
+    VerifyHelper vh = new VerifyHelper();
+    vh.addRulesByForm ("centre/upload", "image");
+    ah.reply(vh.verify(ah.getRequestData(), true, true));
 %>

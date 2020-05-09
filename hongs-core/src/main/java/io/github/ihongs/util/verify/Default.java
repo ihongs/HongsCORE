@@ -127,6 +127,14 @@ public class Default extends Rule {
                 return Core.newIdentity();
             }
 
+            // 空或丢弃
+            if (def.equals("=%null")) {
+                return null ;
+            }
+            if (def.equals("=%void")) {
+                return BLANK;
+            }
+
             // 动作选项
             if (def.equals("=%zone")) {
                 return Core.ACTION_ZONE.get();

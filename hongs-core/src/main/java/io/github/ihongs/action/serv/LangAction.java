@@ -74,13 +74,16 @@ public class LangAction
       return;
     }
 
+    // 需要区分语言
+    String lang = name +"_"+ Core.ACTION_LANG.get();
+
     /**
      * 如果指定语言的数据并没有改变
      * 则直接返回 304 Not modified
      */
     String m;
     m = helper.getRequest().getHeader("If-Modified-Since");
-    if (m != null && m.equals(LangAction.MTIMES.get(name)))
+    if (m != null && m.equals(LangAction.MTIMES.get(lang)))
     {
       helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
       return;
@@ -91,14 +94,14 @@ public class LangAction
      * 则调用工厂方法构造 JS 代码
      */
     String s;
-    if (!LangAction.CACHES.containsKey(name))
+    if (!LangAction.CACHES.containsKey(lang))
     {
       try
       {
         s = this.makeLang(name);
       }
       catch (HongsExemption ex) {
-        helper.error500(ex.getMessage());
+        helper.error404(ex.getMessage());
         return;
       }
 
@@ -108,13 +111,13 @@ public class LangAction
           sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
       m = sdf.format(new Date());
 
-      LangAction.CACHES.put(name , s);
-      LangAction.MTIMES.put(name , m);
+      LangAction.CACHES.put(lang , s);
+      LangAction.MTIMES.put(lang , m);
     }
     else
     {
-      s = LangAction.CACHES.get(name);
-      m = LangAction.MTIMES.get(name);
+      s = LangAction.CACHES.get(lang);
+      m = LangAction.MTIMES.get(lang);
     }
 
     // 标明修改时间
@@ -161,9 +164,10 @@ public class LangAction
   /**
    * 按语言构造消息信息
    * 配置类型按后缀划分为:
+   * .N 数字
+   * .B 布尔
    * .C 代码
    * 无后缀及其他为字符串
-   * @param lang
    */
   private String makeLang(String confName)
   {
@@ -179,25 +183,10 @@ public class LangAction
     {
       sb.append("\t\"lang\":\"")
         .append(Core.ACTION_LANG.get())
-        .append("\",\n")
+        .append("\",\r\n")
         .append("\t\"zone\":\"")
         .append(Core.ACTION_ZONE.get())
-        .append("\",\n");
-//        .append("\t\"error.label\":\"")
-//        .append(mk.lang.getProperty("core.error.label", "ERROR"))
-//        .append("\",\n")
-//        .append("\t\"error.unkwn\":\"")
-//        .append(mk.lang.getProperty("core.error.unkwn", "UNKWN"))
-//        .append("\",\n")
-//        .append("\t\"date.format\":\"")
-//        .append(mk.lang.getProperty("core.default.date.format", "yyyy/MM/dd"))
-//        .append("\",\n")
-//        .append("\t\"time.format\":\"")
-//        .append(mk.lang.getProperty("core.default.time.format",  "HH:mm:ss" ))
-//        .append("\",\n")
-//        .append("\t\"datetime.format\":\"")
-//        .append(mk.lang.getProperty("core.default.datetime.format", "yyyy/MM/dd HH:mm:ss"))
-//        .append("\",\n");
+        .append("\",\r\n");
     }
 
     // 查找扩展语言信息
@@ -244,6 +233,12 @@ public class LangAction
     public Maker(String name)
     {
       lang = CoreLocale.getInstance(name);
+
+      // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
+      if ( lang.getProperty("core.fore.keys", null) == null )
+      {
+        throw new HongsExemption(404, "Lang for "+name+" is non-public");
+      }
     }
 
     public String make(String nam, String key)

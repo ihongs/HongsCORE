@@ -97,7 +97,7 @@ public class ConfAction
         s = this.makeConf(name);
       }
       catch (HongsExemption ex) {
-        helper.error500(ex.getMessage());
+        helper.error404(ex.getMessage());
         return;
       }
 
@@ -179,13 +179,13 @@ public class ConfAction
     {
       sb.append("\t\"DEBUG\":")
         .append(String.valueOf(Core.DEBUG))
-        .append(",\n")
+        .append(",\r\n")
         .append("\t\"SERVER_ID\":\"")
         .append(Core.SERVER_ID)
-        .append("\",\n")
+        .append("\",\r\n")
         .append("\t\"BASE_HREF\":\"")
         .append(Core.BASE_HREF)
-        .append("\",\n");
+        .append("\",\r\n");
     }
 
     // 查找扩展配置信息
@@ -227,11 +227,17 @@ public class ConfAction
    */
   private static class Maker
   {
-    private final CoreConfig conf ;
+    private final CoreConfig conf;
 
     public Maker(String name)
     {
       conf = CoreConfig.getInstance(name);
+
+      // 未设置 core.fore.keys 不公开, 哪怕设置个空的都行
+      if ( conf.getProperty("core.fore.keys", null) == null )
+      {
+        throw new HongsExemption(404, "Conf for "+name+" is non-public");
+      }
     }
 
     public String make(String nam, String key)

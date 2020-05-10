@@ -1,7 +1,7 @@
 /**
  * 文件上传及预览用法:
  * 在表单配置区域添加:
- * data-0="_fill__file:(hsFormFillFile)"
+ * data--0="_fill__file:(hsFormFillFile)"
  * 在表单选项区域添加:
  * <input type="text" name="x_url" class="form-ignored invisible"/>
  * <input type="file" name="x_url" class="form-ignored invisible"/>

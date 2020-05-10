@@ -4,11 +4,11 @@
 /**
  * 组合选择工具之用法:
  * 在选择列表配置添加:
- * data-0="_fill__fork:(hsListFillFork)"
+ * data--0="_fill__fork:(hsListFillFork)"
  * 在选择列表头部添加:
  * <td data-ft="_fork"><input type="checkbox" class="checkall" title="XX"/></td>
  * 在表单配置区域添加:
- * data-0="_fill__fork:(hsFormFillFork)"
+ * data--0="_fill__fork:(hsFormFillFork)"
  * 在表单选项区域添加:
  * <ul data-ft="_fork" data-fn="xx_id" data-ak="xx" data-vk="id" data-tk="name" class="pickbox"></ul>
  * <button type="button" data-toggle="hsFork" data-target="@" data-href="xx/pick.html"> ... </button>

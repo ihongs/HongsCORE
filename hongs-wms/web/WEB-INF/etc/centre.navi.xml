@@ -6,6 +6,7 @@
             <action>centre/data/upload/image/create.act</action>
         </role>
         <menu text="首页" href="centre/#manage" hrel="centre/manage/main.html"></menu>
+        <import>centra/data/upload</import>
         <import>centre/data</import>
     </menu>
 </root>

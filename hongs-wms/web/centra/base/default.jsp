@@ -37,7 +37,7 @@
             </div>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
-                    <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
+                    <ol class="breadcrumb tabs laps" data-topple="hsTabs">
                         <li class="hook-crumb dont-crumb pull-right" data-eval="H$('!<%=$module%>/<%=$entity%>/select.act') || $(this).hide()">
                             <a href="javascript:;" data-href="<%=$module+"/"+$entity+"/swap.html"%>" title="<%=$locale.translate("fore.manual", $title)%>">
                                 <i class="glyphicon glyphicon-book"></i>

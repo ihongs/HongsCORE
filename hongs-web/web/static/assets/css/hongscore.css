@@ -467,6 +467,9 @@ ol.repeated ,
 .pagebox .page-text   {
     line-height: 36px;
 }
+.pagebox .alert {
+    text-align : center;
+}
 
 .listbox ._amenu,
 .listbox ._check,

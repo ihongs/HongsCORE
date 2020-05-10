@@ -2299,41 +2299,34 @@ $.fn.hsReady = function() {
         $(this).addClass("input-"+$(this).attr("type"));
     });
 
-    // 国际化
-    box.find("[data-i18n] , .i18n ").each(function() {
-        $(this).hsI18n();
-    });
-
-    // 选项卡
-    box.find("[data-toggle=hsTabs]").each(function() {
-        $(this).hsTabs();
-    });
-
     // 组件化
-    box.find("[data-module]").each( function() {
-        var prnt = $(this);
-        var opts = $(this).hsData();
-        var func = $(this).attr("data-module");
-        if (typeof(prnt[func]) === "function") {
-            prnt[func] (opts);
+    box.find("[data-topple]").each( function() {
+        var func = $(this).attr("data-topple");
+        if ($.fn[func]) {
+            $.fn[func].call($(this));
+        } else if ( window.console ) {
+            console.warn("hsReady: Can not bind "+func);
         }
     });
 
-    // 写标题
-    box.hsHead ( );
+    // 国际化
+    box.find("[data-i18n]").each(function() {
+        $(this).hsI18n();
+    });
+
+    // 标题化
+    box.hsL10n ( );
 
     // 在加载前触发事件
     box.trigger("hsReady");
 
-    // 加载、打开、执行
+    // 加载
     box.find("[data-load]").each(function() {
-        $(this).hsLoad($(this).attr("data-load"), $(this).attr("data-data"));
+        $(this).hsLoad($(this).attr("data-load") , $(this).attr("data-data"));
     });
-    box.find("[data-open]").each(function() {
-        $(this).hsOpen($(this).attr("data-open"), $(this).attr("data-data"));
-    });
+    // 执行
     box.find("[data-eval]").each(function() {
-        eval('(false||function(){'+ $(this).attr("data-eval") +'})').call(this);
+        eval('(false||function(){'+$(this).attr("data-eval")+'})').call(this);
     });
 
     return box;
@@ -2405,20 +2398,20 @@ $.fn.hsCloze = function() {
 };
 
 // 选项卡
-$.fn.hsTabs = function(rel) {
+$.fn.hsTabs = function(tar) {
     var box = $(this);
-    if (! rel) {
-        rel = box.attr("data-target");
-        if (rel) {
-            rel = box.hsFind(rel);
+    if (! tar || !(tar instanceof jQuery)) {
+        tar = box.attr("data-target");
+        if (tar) {
+            tar = box.hsFind(tar);
         } else {
-            rel = box.next( );
+            tar = box.next( );
         }
     }
     box.addClass( "tabs");
-    box.data("labs", rel);
-    rel.addClass( "labs");
-    rel.data("tabs", box);
+    box.data("labs", tar);
+    tar.addClass( "labs");
+    tar.data("tabs", box);
 
     var act = box.children(".active" );
     if (act.size() === 0) {
@@ -2426,72 +2419,35 @@ $.fn.hsTabs = function(rel) {
     }
     act.children("a").click();
 
-    return box;
+    return [box, tar];
 };
 $.fn.hsTadd = function(ref) {
     var box = $(this);
     var tab;
-    var pne;
+    var lab;
     if (! ref || ! box.find("[data-hrel='"+ref+"']").size() ) {
         tab = $('<li><a href="javascript:;"><span class="title">...</span><span class="close">&times;</span></a></li>')
                               .appendTo( box  );
-        pne = $('<div></div>').appendTo( box.data( "labs" ) );
+        lab = $('<div></div>').appendTo( box.data( "labs" ) );
+        tab.find("a").attr("data-hrel" , ref  );
     } else {
         tab = box.find("[data-hrel='"+ref+"']").closest("li");
-        pne = $(box.data("tabs")).children().eq(tab.index( ));
+        lab = $(box.data("labs")).children().eq(tab.index( ));
     }
-    return [tab, pne];
+    return [tab, lab];
 };
 $.fn.hsTdel = function(ref) {
     var box = $(this);
     var tab = box.find("[data-hrel='"+ref+"']").closest("li");
-    var pne = $(box.data("tabs")).children().eq(tab.index( ));
-    tab.children("a").hsClose( ); // 先关闭
-    tab.remove( ); pne.remove( ); // 再删除
-    return [tab, pne];
+    var lab = $(box.data("tabs")).children().eq(tab.index( ));
+    tab.children("a").hsClose( ); // 先关闭再删除
+    tab.remove();
+    lab.remove();
+    return [tab, lab];
 };
 
-// 国际化
-$.fn.hsI18n = function(rep) {
-    var box = $(this);
-    var lng;
-
-    if (rep === undefined ) {
-        rep = box.hsData( );
-    }
-
-    if (box.attr("data-i18n")) {
-        lng = box.attr("data-i18n");
-        lng = hsGetLang(lng, rep);
-        box.text( lng );
-    } else
-    if ($(this).text()) {
-        lng = box.text(/*content*/);
-        lng = hsGetLang(lng, rep);
-        box.text( lng );
-    }
-
-    if (box.attr("alt")) {
-        lng = box.attr("alt");
-        lng = hsGetLang(lng, rep);
-        box.attr("alt" , lng);
-    }
-    if (box.attr("title")) {
-        lng = box.attr("title");
-        lng = hsGetLang(lng, rep);
-        box.attr("title" , lng);
-    }
-    if (box.attr("placeholder")) {
-        lng = box.attr("placeholder");
-        lng = hsGetLang(lng, rep);
-        box.attr("placeholder" , lng);
-    }
-
-    return box;
-};
-
-// 标题名
-$.fn.hsHead = function(tit) {
+// 标题化
+$.fn.hsL10n = function(tit) {
     var box = $(this);
     var prt = box.parent( );
     var hea = box.children("h1,h2,h3,h4,h5,h6");
@@ -2529,7 +2485,50 @@ $.fn.hsHead = function(tit) {
 
     return box;
 };
-$.fn.hsName = $.fn.hsHead; // 兼容旧版命名
+
+// 国际化
+$.fn.hsI18n = function(rep) {
+    var box = $(this);
+    var lng;
+
+    if (rep === undefined ) {
+        rep = box.hsData( ).reps ;
+    }
+
+    if (box.data("i18n")) {
+        lng = box.data("i18n");
+        lng = hsGetLang(lng, rep);
+        box.text( lng );
+    } else
+    if (box.text( /**/ )) {
+        lng = box.text( /**/ );
+        lng = hsGetLang(lng, rep);
+        box.text( lng );
+    }
+
+    if (box.attr("alt")) {
+        lng = box.attr("alt");
+        lng = hsGetLang(lng, rep);
+        box.attr("alt", lng );
+    }
+    if (box.attr("title")) {
+        lng = box.attr("title");
+        lng = hsGetLang(lng, rep);
+        box.attr("title", lng );
+    }
+    if (box.attr("tooltip")) {
+        lng = box.attr("tooltip");
+        lng = hsGetLang(lng, rep);
+        box.attr("tooltip", lng );
+    }
+    if (box.attr("placeholder")) {
+        lng = box.attr("placeholder");
+        lng = hsGetLang(lng, rep);
+        box.attr("placeholder", lng );
+    }
+
+    return box;
+};
 
 /**
  * 配置数据
@@ -2540,36 +2539,33 @@ $.fn.hsData = function(vals) {
     if (vals) {
         return this.data(vals);
     }
-    var conf = this.data(    );
-    var that = this.get (  0 );
-    var nreg = /^data-\d+$/;
-    var treg = /-\d+$/;
-    var freg = /-\w/g ;
+    var conf = this.data(/**/);
+    if (conf._hs_data_ === undefined) {
+        conf._hs_data_ = true ;
+    } else {
+        return conf;
+    }
+    var nreg = /^-\d+$/;
+    var areg =  /-\d+$/;
+    var freg =  /-\w/g ;
+    var that = this.get(0);
     var frep = function(n) {
         return n.substring(1).toUpperCase();
     };
     var vrep = function(v) {
-        if ( /^(\{.*\}|\[.*\])$/.test( v )) {
-            v = eval('('+v+')');
-        } else if ( /^(\(.*\))$/.test( v )) {
-            v = eval(    v    );
+        if (/^(\{.*\}|\[.*\])$/.test(v)) {
+            return eval('('+v+')');
+        } else if (/^(\(.*\))$/.test(v)) {
+            return eval(v);
         }
-        return  v;
-    };
-    var mrep = function(v) {
-        if (!/^(\{.*\})$/.test( v )) {
-                v  = '{'+v+'}' ;
-        }
-        return  eval('('+v+')');
+        return v ;
     };
     this.each( function( ) {
         var a = this.attributes;
         if (! a ) {
             return;
         }
-        var j = a.length;
-        var i = 0;
-        for ( ; i < j; i ++ ) {
+        for(var i = 0; i < a.length; i ++) {
             var n = a[i].name ;
             if (n.substring(0 , 5) == 'data-') {
                 n = n.substring(5);
@@ -2577,10 +2573,6 @@ $.fn.hsData = function(vals) {
                 continue;
             }
             var v = a[i].value;
-            if ('data' == n ) {
-                v = mrep.call(that, v);
-                jQuery.extend(conf, v);
-            } else
             if (nreg.test(n)) {
                 var o = v.indexOf(':');
                 n = v.substring(0 , o);
@@ -2590,18 +2582,18 @@ $.fn.hsData = function(vals) {
                 v = vrep.call(that, v);
                 hsSetValue(conf, n, v);
             } else
-            if (treg.test(n)) {
-                n = n.replace(treg,  ''  );
+            if (areg.test(n)) {
+                var j ;
+                var o = n.lastIndexOf('-');
+                j = n.substring(1 + o);
+                n = n.substring(0 , o);
+                v = vrep.call(that, v);
+                j = parseInt (/***/ j);
                 n = n.replace(freg, frep );
                 if (conf[n] === undefined) {
                     conf[n] = [];
                 }
-                v = vrep.call(that, v);
-                 conf[n].push(v);
-            } else {
-                n = n.replace(freg, frep );
-                v = vrep.call(that, v);
-                 conf[n]  =   v ;
+                conf [n][j] = v ;
             }
         }
     });
@@ -2686,11 +2678,11 @@ $.fn._hsTarget = $.fn.hsFind; // 兼容旧版命名
  * @param {Object} opts
  * @returns {Object}
  */
-$.fn._hsModule = function(func, opts) {
+$.fn.hsBind = function(func, opts) {
     var name = func.name || /^function\s+(\w+)/.exec(func.toString())[1];
     var inst = this.data(name);
     if (! inst) {
-        inst =  new func(this , opts ? opts : {});
+        inst =  new func(this , opts || this.hsData());
         this.data(name , inst);
         this. addClass ( name);
     } else
@@ -2704,6 +2696,7 @@ $.fn._hsModule = function(func, opts) {
     }
     return  inst;
 };
+$.fn._hsModule = $.fn.hsBind; // 兼容旧版命名
 
 // 三态选择
 // indeterminate 有三个值: true 选中, null 半选, false 未选

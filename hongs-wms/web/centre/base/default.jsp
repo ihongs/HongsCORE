@@ -38,7 +38,7 @@
             </div>
             <div id="bodybox">
                 <div id="main-context" class="container">
-                    <ol class="breadcrumb tabs laps" data-toggle="hsTabs">
+                    <ol class="breadcrumb tabs laps" data-topple="hsTabs">
                         <li class="back-crumb dont-close pull-right">
                             <a href="javascript:;">
                                 <i class="glyphicon glyphicon-remove-sign"></i>

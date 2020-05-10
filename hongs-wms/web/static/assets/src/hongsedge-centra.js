@@ -859,5 +859,5 @@ HsStat.prototype = {
     }
 };
 jQuery.fn.hsStat = function(opts) {
-  return this._hsModule(HsStat, opts);
+  return this.hsBind(HsStat, opts);
 };

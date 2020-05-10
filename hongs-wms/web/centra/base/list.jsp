@@ -123,7 +123,7 @@
                     && (_wd.contains(name)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配";
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"搜索";
                     }
                 %>
                 <input class="form-control" type="text" name="ar.0.<%=name%>" />

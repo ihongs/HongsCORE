@@ -178,7 +178,7 @@ function HsPops (context , urls) {
     });
 }
 jQuery.fn.hsPops = function(opts) {
-  return this._hsModule(HsPops, opts);
+  return this.hsBind(HsPops, opts);
 };
 
 /**
@@ -396,5 +396,5 @@ HsCate.prototype = {
     }
 };
 jQuery.fn.hsCate = function(opts) {
-  return this._hsModule(HsCate, opts);
+  return this.hsBind(HsCate, opts);
 };

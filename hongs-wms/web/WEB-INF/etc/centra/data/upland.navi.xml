@@ -1,7 +1,5 @@
 <root>
     <menu text="论坛" href="centra/data/upland/forum/">
-        <menu text="主题" href="centra/data/upland/forum/" hrel="HIDE"></menu>
-        <menu text="评论" href="centra/data/upland/issue/" hrel="HIDE"></menu>
         <role name="centra">
             <action>centra/data/upland/topic/create.act</action>
             <action>centra/data/upland/topic/update.act</action>
@@ -12,6 +10,7 @@
             <action>centra/data/upland/image/create.act</action>
         </role>
         <role text="管理论坛" name="centra/data/upland/forum/manage">
+            <depend>centra</depend>
             <action>centra/data/upland/forum/create.act</action>
             <action>centra/data/upland/forum/update.act</action>
             <action>centra/data/upland/forum/delete.act</action>

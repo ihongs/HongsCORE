@@ -24,14 +24,9 @@
             String hrel = (String) item.get("hrel");
 //          String icon = (String) item.get("icon");
 
-            if (href.startsWith("!")) {
-                continue;
-            }
-            if (hrel.equals("HIDE" )) {
-                continue;
-            }
-            if (hrel.equals("LINE" )) {
-                menu.append("<li class=\"divider\"></li>\r\n");
+            if (href.startsWith("!")
+            ||"HIDE".equals(hrel )
+            ||"NONE".equals(hrel)) {
                 continue;
             }
 

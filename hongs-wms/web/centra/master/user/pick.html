@@ -64,8 +64,11 @@
 
         // 鼠标悬浮在格子上提示
         context.data("_fill_tips" , function(c, v, n) {
-            if (v) c.attr( "title", v);
-            return v;
+            if (v) {
+                v = v.sort().join(", ");
+                    c.attr("title" , v);
+            }
+            return  v;
         });
 
         // 点击用户头像打开预览

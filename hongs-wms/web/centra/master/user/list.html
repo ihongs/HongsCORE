@@ -79,9 +79,12 @@
         hsRequires("centra/master/util.css");
 
         // 鼠标悬浮在格子上提示
-        context.data("_fill_tips" , function(td, v, n) {
-            if (v) td.attr("title", v);
-            return v;
+        context.data("_fill_tips" , function(c, v, n) {
+            if (v) {
+                v = v.sort().join(", ");
+                    c.attr("title" , v);
+            }
+            return  v;
         });
 
         // 点击用户头像打开预览

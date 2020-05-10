@@ -886,7 +886,7 @@ function hsListFillItem(list) {
 }
 
 jQuery.fn.hsList = function(opts) {
-    return this._hsModule(HsList, opts);
+    return this.hsBind(HsList, opts);
 };
 
 (function($) {

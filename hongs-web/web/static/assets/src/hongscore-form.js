@@ -1180,7 +1180,7 @@ HsForm.prototype = {
 };
 
 jQuery.fn.hsForm = function(opts) {
-    return this._hsModule(HsForm, opts);
+    return this.hsBind(HsForm, opts);
 };
 
 (function($) {

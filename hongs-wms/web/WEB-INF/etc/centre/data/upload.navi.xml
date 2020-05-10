@@ -1,0 +1,6 @@
+<root>
+    <!-- 上传必须登录 -->
+    <role name="centre">
+        <action>centre/data/upload/image/create.act</action>
+    </role>
+</root>

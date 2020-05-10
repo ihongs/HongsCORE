@@ -1,0 +1,26 @@
+<div id="centra-data-upland-forum-list">
+    <div class="itembox invisible">
+        <input type="hidden" name="id" data-fn="id" data-fl="$(this).val(v) && undefined" />
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <div data-fn="name" class="enter" style="cursor: pointer;"></div>
+            </div>
+            <div class="panel-body">
+                <div data-fn="note" class="enter" style="cursor: pointer;"></div>
+            </div>
+        </div>
+    </div>
+    <div class="listbox"></div>
+    <div class="pagebox"></div>
+</div>
+<script type="text/javascript">
+(function($) {
+    var context = H$("#centra-data-upland-forum-list");
+    var lapsbox = context.hsFind("@");
+    
+    context.on("click", ".enter", function() {
+        var id = $(this).closest(".itembox").children("input:hidden").val();
+        lapsbox.hsOpen("centra/data/upland/topic/list.html?")
+    });
+})(jQuery);
+</script>

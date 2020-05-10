@@ -151,7 +151,7 @@
                     && (_wd.contains(name)
                     ||  "textarea".equals(type)
                     ||  "textview".equals(type))) {
-                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"模糊匹配";
+                        name += "."+ Cnst.CQ_REL + "\" placeholder=\"搜索";
                     }
                 %>
                 <input type="text" class="form-control" name="<%=name%>" />

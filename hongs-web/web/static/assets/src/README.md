@@ -56,7 +56,7 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
 ```html
     <div id="master-user-list"
-         data-module="hsList"
+         data-topple="hsList"
          data-load-url="centra/master/user/list.act?dept_id=${dept_id}"
          data-send-urls-0="['centra/master/user/delete.act','.delete','您确定要删除此用户?']"
          data-open-urls-0="['centra/master/user/form.html?dept_id=${dept_id}','.create','@']"
@@ -98,7 +98,7 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 
 ```html
     <div id="master-dept-tree"
-         data-module="hsTree"
+         data-topple="hsTree"
          data-load-url="centra/master/dept/list.act"
          data-send-urls-0="['centra/master/dept/delete.act','.delete','您确定要删除此部门?']"
          data-link-urls-0="['centra/master/user/list.html?dept_id={ID}','.main-context']"
@@ -119,7 +119,7 @@ data-fl,data-dl 的取值为表达式, 参数可使用 this,form|list,v,n; data-
 ```html
     <h2>{DO}部门</h2>
     <div id="master-dept-form"
-         data-module="hsForm"
+         data-topple="hsForm"
          data-load-url="centra/master/dept/info.act"
          data-save-url="centra/master/dept/save.act">
         <form action="" method="POST">

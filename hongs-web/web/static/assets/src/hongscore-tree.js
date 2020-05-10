@@ -513,7 +513,7 @@ HsTree.prototype = {
 };
 
 jQuery.fn.hsTree = function(opts) {
-    return this._hsModule(HsTree, opts);
+    return this.hsBind(HsTree, opts);
 };
 
 (function($) {

@@ -1,0 +1,24 @@
+<root>
+    <menu text="论坛" href="centra/data/upland/forum/">
+        <menu text="主题" href="centra/data/upland/forum/" hrel="HIDE"></menu>
+        <menu text="评论" href="centra/data/upland/issue/" hrel="HIDE"></menu>
+        <role name="centra">
+            <action>centra/data/upland/topic/create.act</action>
+            <action>centra/data/upland/topic/update.act</action>
+            <action>centra/data/upland/topic/delete.act</action>
+            <action>centra/data/upland/issue/create.act</action>
+            <action>centra/data/upland/issue/update.act</action>
+            <action>centra/data/upland/issue/delete.act</action>
+            <action>centra/data/upland/image/create.act</action>
+        </role>
+        <role text="管理论坛" name="centra/data/upland/forum/manage">
+            <action>centra/data/upland/forum/create.act</action>
+            <action>centra/data/upland/forum/update.act</action>
+            <action>centra/data/upland/forum/delete.act</action>
+            <action>centra/data/upland/forum/reveal.act</action>
+            <action>centra/data/upland/forum/revert.act</action>
+            <action>centra/data/upland/topic/revert.act</action>
+            <action>centra/data/upland/issue/revert.act</action>
+        </role>
+    </menu>
+</root>

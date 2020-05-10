@@ -2583,12 +2583,12 @@ $.fn.hsData = function(vals) {
                 hsSetValue(conf, n, v);
             } else
             if (areg.test(n)) {
-                var j ;
-                var o = n.lastIndexOf('-');
+                var o, j;
+                o = n.lastIndexOf('-');
                 j = n.substring(1 + o);
                 n = n.substring(0 , o);
+                j = parseInt (   j   );
                 v = vrep.call(that, v);
-                j = parseInt (/***/ j);
                 n = n.replace(freg, frep );
                 if (conf[n] === undefined) {
                     conf[n] = [];

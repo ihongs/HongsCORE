@@ -139,12 +139,14 @@ public class IsFile extends Rule {
             /**
              * 外部记录的是网址
              * 必须进行解码才行
+             * 没斜杠为新上传的
              */
-            href = value.toString();
-            name = null ;
-            if (getParam("keep-naming", false)
-            &&  href.contains("/")) {
-                href = decode(href);
+            href = decode(value.toString());
+            int p  = href.lastIndexOf ("/");
+            if (p == -1) {
+                name  = href ;
+            } else {
+                name  = null ;
             }
             hlpr.upload(href);
         }

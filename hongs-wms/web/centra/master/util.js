@@ -89,7 +89,8 @@ function hsUserMove(treebox, listbox) {
         treebox.find(".tree-node table" )
         .droppable({
             accept: function(item) {
-                return ! $.contains(item.closest(".tree-node").get(0), $(this).get(0));
+                return ! item.is(".tree-name")
+                    || ! $.contains(item.closest(".tree-node").get(0), $(this).get(0));
             },
             drop: function(ev, ui) {
                 var pid = $(this).parent().closest(".tree-node").attr("id").substring(10);

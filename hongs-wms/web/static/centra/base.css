@@ -167,8 +167,7 @@ html, body {
 }
 
 #main-menubar .caret {
-    margin:  8px 0px;
-    margin-right: -10px;
+    margin:  9px 0px;
 }
 #user-menubar .caret {
     margin: 16px 6px;

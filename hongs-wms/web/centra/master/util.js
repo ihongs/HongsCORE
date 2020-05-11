@@ -34,22 +34,24 @@ function hsUserMove(treebox, listbox) {
         }
 
         // 拖拽用户
-        listbox.find(".listbox tbody tr")
+        listbox.find(".listbox tbody tr td:nth-child(3)"
+                   +",.listbox tbody tr td:nth-child(4)")
         .draggable({
             opactiy: 0.5,
             revert: "invalid",
             helper: function() {
-                var uid = $(this).find("td:eq(0) input").val();
-                var img = $(this).find("td:eq(1)").clone();
-                var txt = $(this).find("td:eq(2)").clone();
-                var dis = $(this).data("dept_ids");
-                return $( '<table data-type="user"></table>' )
+                var tr  = $(this).closest("tr");
+                var uid = tr.find("td:eq(0) input").val();
+                var img = tr.find("td:eq(2)").clone();
+                var txt = tr.find("td:eq(3)").clone();
+                var dis = tr.data("dept_ids");
+                return $('<table data-type="user"></table>')
                         .data("user_id" , uid)
                         .data("dept_id" , did)
                         .data("dept_ids", dis)
                         .append($('<tr></tr>')
-                            .append(img)
-                            .append(txt)
+                                  .append(img)
+                                  .append(txt)
                         );
             }
         });
@@ -72,26 +74,27 @@ function hsUserMove(treebox, listbox) {
         }
 
         // 拖拽分组
-        treebox.find(".tree-node" /**/ )
+        treebox.find(".tree-node .tree-name" )
         .draggable({
             opacity: 0.5,
             revert: "invalid",
             helper: function() {
-                var txt = $(this).children( "table" )
-                                 .find (".tree-name")
-                                 .first(  ).clone(  );
-                return $( '<table data-type="dept"></table>' )
-                        .append($('<tr></tr>').append( txt ) );
+                var txt = $(this).clone();
+                return $('<table data-type="dept"></table>')
+                        .append($('<tr></tr>').append(txt) );
             }
         });
 
         // 分组接收
-        treebox.find(".tree-node table")
+        treebox.find(".tree-node table" )
         .droppable({
+            accept: function(item) {
+                return ! $.contains(item.closest(".tree-node").get(0), $(this).get(0));
+            },
             drop: function(ev, ui) {
-                var pid = $(this).parent().attr("id").substring(10);
+                var pid = $(this).parent().closest(".tree-node").attr("id").substring(10);
                 if (ui.helper.data("type") == "dept") {
-                    var did = ui.draggable.attr("id").substring(10);
+                    var did = ui.draggable.closest(".tree-node").attr("id").substring(10);
                     var req = { id : did, pid : pid };
                     $.hsMask({
                             "mode" : "warn",

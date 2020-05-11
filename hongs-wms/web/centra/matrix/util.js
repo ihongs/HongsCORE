@@ -481,7 +481,7 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             }
             if (/^__/.test(  k  )
             && !input.attr("data-"+ k )
-            &&  group.attr("data-type") !== "-" 
+            &&  group.attr("data-type") !== "-"
             &&  group.attr("data-type") !== "_" ) {
                 continue;
             }
@@ -732,39 +732,48 @@ $.fn.hsCols = function() {
 function hsFormMove(treebox, listbox) {
     listbox.on("loadOver", function(evt, rst, mod) {
         var uid = hsGetParam(mod._url , "unit_id");
-        listbox.find(".listbox tbody tr")
+
+        listbox.find(".listbox tbody tr td:nth-child(3)")
         .draggable({
             opactiy: 0.5,
             revert: "invalid",
             helper: function() {
-                var fid = $(this).find("td:eq(0) input").val ();
-                var txt = $(this).find("td:eq(1)"      ).text();
-                return $('<div data-type="form"></div>')
+                var tr  = $(this).closest("tr");
+                var fid = tr.find("td:eq(0) input").val();
+            //  var img = tr.find("td:eq(2)").clone();
+                var txt = tr.find("td:eq(2)").clone();
+                return $('<table data-type="form"></table>')
                         .data("form_id" , fid)
                         .data("unit_id" , uid)
-                        .append(txt);
+                        .append($('<tr></tr>')
+                                //.append(img)
+                                  .append(txt)
+                        );
             }
         });
     });
 
     treebox.on("loadOver", function(evt, rst, mod) {
-        treebox.find(".tree-node" /***/ )
+        treebox.find(".tree-node .tree-name" )
         .draggable({
             opacity: 0.5,
             revert: "invalid",
             helper: function() {
-                return $('<div data-type="unit"></div>')
-                        .text( $(this).children("table")
-                        .find( ".tree-name" ).text( )  );
+                var txt = $(this).clone();
+                return $('<table data-type="unit"></table>')
+                        .append($('<tr></tr>').append(txt) );
             }
         });
 
         treebox.find(".tree-node table" )
         .droppable({
+            accept: function(item) {
+                return ! $.contains(item.closest(".tree-node").get(0), $(this).get(0));
+            },
             drop: function(ev, ui) {
-                var pid = $(this).parent().attr("id").substring(10);
+                var pid = $(this).parent().closest(".tree-node").attr("id").substring(10);
                 if (ui.helper.data("type") == "unit") {
-                    var did = ui.draggable.attr("id").substring(10);
+                    var did = ui.draggable.closest(".tree-node").attr("id").substring(10);
                     var req = { id : did, pid : pid };
                     $.hsMask({
                             "mode" : "warn",

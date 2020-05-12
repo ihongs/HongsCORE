@@ -677,7 +677,7 @@ $.fn.hsCols = function() {
         loadConf(modal, field);
         modal.modal( "show"  );
     });
-    
+
     // 完成设置
     modal.find("form").submit(function() {
         modal.modal( "hide"  );
@@ -690,7 +690,7 @@ $.fn.hsCols = function() {
         var tr = tb.find( ".hide" ).clone();
         tr.appendTo(tb).removeClass("hide");
     });
-    
+
     // 删除属性
     modal.on("click", ".del-param", function() {
         $(this).closest("tr").remove();

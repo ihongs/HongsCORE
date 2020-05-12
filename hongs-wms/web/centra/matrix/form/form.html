@@ -54,19 +54,6 @@
                         </legend>
                     </div>
                     <div class="target-area"></div>
-                    <!-- 已挪到底部
-                    <hr/>
-                    <div class="clearfix">
-                        <div class="pull-left" >
-                            <button type="button" class="btn btn-primary commit">保存设置</button>
-                            <button type="button" class="btn btn-link    cancel">取消</button>
-                        </div>
-                        <div class="pull-right">
-                            <button type="submit" class="btn btn-success">模拟提交</button>
-                            <button type="reset"  class="btn btn-link"   >重置</button>
-                        </div>
-                    </div>
-                    // -->
                     <div class="invisible">
                         <div class="form-group">
                             <input type="hidden" name="validate" data-validate="validate"/>
@@ -897,10 +884,10 @@
     (function($) {
         var context = $("#matrix-form-form");
 
-        // 左右平衡大小, 高度减掉上面导航和下面按钮
+        // 左右平衡大小, 需减掉上下部分的高度
         var h = $(window).height() - 55 - 95;
         context.children(".clearfix").children().css({
-            "max-height": h, "overflow": "auto"
+            maxHeight: h , overflow: "auto"
         });
     })(jQuery);
 </script>

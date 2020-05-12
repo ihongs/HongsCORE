@@ -591,14 +591,6 @@ $.fn.hsCols = function() {
         }
     });
 
-    // 模拟提交
-    targets.on("willSave", function(ev) {
-        $.hsWarn("模拟提交成功, 别忘了保存设置哦.", "success");
-        ev.stopPropagation();
-        ev.preventDefault ();
-        return false;
-    });
-
     // 字段加载
     records.on("loadOver", function(evt, rst) {
         if (!rst.info || !rst.info.conf) {
@@ -685,6 +677,7 @@ $.fn.hsCols = function() {
         loadConf(modal, field);
         modal.modal( "show"  );
     });
+    
     // 完成设置
     modal.find("form").submit(function() {
         modal.modal( "hide"  );
@@ -697,6 +690,7 @@ $.fn.hsCols = function() {
         var tr = tb.find( ".hide" ).clone();
         tr.appendTo(tb).removeClass("hide");
     });
+    
     // 删除属性
     modal.on("click", ".del-param", function() {
         $(this).closest("tr").remove();
@@ -713,6 +707,7 @@ $.fn.hsCols = function() {
         });
     });
 
+    // 文本类型, 富文本、代码等
     modal.on("change", "[name='textarea|data-type']", function() {
         var type = $(this).val();
         $(this).closest(".form-group")

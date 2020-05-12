@@ -46,7 +46,7 @@ function getFormInfo(id, func) {
 
 function prsDataList(s) {
     var a = [];
-    var x = s.split(/[\r\n]/);
+    var x = s.split(/[\r\n]|\r|\n/);
     for(var i = 0; i < x.length; i ++) {
         var z = $.trim(x[i]);
         if (! z.length ) {
@@ -442,7 +442,8 @@ function drawFlds(fields, area, wdgt, pre, suf) {
         }
         // 内部缺省字段, 禁止自行设置
         if ((type == "number" && (name == "ctime" || name == "mtime"))
-        || ( type == "hidden" && (name == "cuser" || name == "muser" || name == "id"))) {
+        ||  (type == "hidden" && (name == "cuser" || name == "muser"))
+        ||  (type == "hidden" &&  name == "id") ) {
             continue;
         }
 

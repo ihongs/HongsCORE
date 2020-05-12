@@ -130,7 +130,7 @@
             yAxis: [{
                 name: "负载",
                 type: 'value',
-                max : 1.0
+                min : 1.0
             },{
                 name: "内存",
                 type: 'value',

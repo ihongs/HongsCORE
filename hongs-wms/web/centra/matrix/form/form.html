@@ -816,15 +816,23 @@
                 <input class="form-control" type="text" name="label span:first" value="" required="required"/>
             </div>
             <div class="form-group">
+                <label class="control-label">提示文字</label>
+                <input class="form-control" type="text" name="input|data-__hint__" value=""/>
+            </div>
+            <div class="form-group">
                 <label class="control-label">字段类型</label>
                 <input class="form-control" type="text" name="input|type" value="" required="required"/>
             </div>
+            <div class="form-group">
+                <label class="control-label">校验方法</label>
+                <input class="form-control" type="text" name="input|data-__rule__" value=""/>
+            </div>
             <div class="checkbox">
                 <label>
-                    <input type="checkbox" name="input|required" value="required"/>必填
+                    <input type="checkbox" name="input|data-__required__" value="yes"/>必填
                 </label>
                 <label>
-                    <input type="checkbox" name="input|data-repeated" value="yes"/>多个
+                    <input type="checkbox" name="input|data-__repeated__" value="yes"/>多个
                 </label>
             </div>
         </div>

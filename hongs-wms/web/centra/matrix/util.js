@@ -14,6 +14,9 @@ function getTypePane(context, type) {
 
 function setItemType(input, type) {
     input = jQuery(input);
+    if (type == input.attr("type")) {
+        return  input;
+    }
     var oldAttrs = input[0].attributes;
     var newInput = jQuery('<input type="'+type+'"/>');
     for(var i = 0; i < oldAttrs.length; i ++ ) {
@@ -256,6 +259,7 @@ function saveConf(modal, field) {
             } else
             if (attr === "type") {
                setItemType(field.find(name),$(this).val());
+               fd = field.find("[data-fn],[name]").first(); // 改变类型会重建节点， 重新获取以规避问题
             } else
             if (attr !== "text") {
                 field.find(name).attr(attr, $(this).val());
@@ -468,22 +472,35 @@ function drawFlds(fields, area, wdgt, pre, suf) {
             input.attr("data-repeated", repeated);
         } else {
             input.attr("name"   , name);
+        if (group.attr("data-type") !== "_"
+        &&  group.attr("data-type") !== "-") {
+            input.attr("placeholder", hint );
             input.prop("required" , ! ! required);
             input.prop("multiple" , ! ! repeated);
-            input.attr("placeholder"  ,   hint  );
-        }
+        }}
 
         for(var k in field) {
+            // 双下划线为字段标准属性, 上面已处理
+            // 表单配置(_)和自定字段(-)需特殊处理
             if (k === "__name__"
-            ||  k === "__type__"
-            ||  k === "selected") {
+            ||  k === "__type__") {
                 continue;
             }
-            if (/^__/.test(  k  )
-            && !input.attr("data-"+ k )
-            &&  group.attr("data-type") !== "-"
-            &&  group.attr("data-type") !== "_" ) {
+            if (group.attr("data-type") === "_" ) {
+            if (k === "__rule__") {
                 continue;
+            }} else
+            if (group.attr("data-type") === "-" ) {
+            if (k === "__text__") {
+                continue;
+            }} else
+            if (/^__/.test(  k  )
+            && !input.attr("data-"+ k)) {
+                continue;
+            }
+
+            if (k === "selected") {
+                continue; // 下方一并处理
             }
             if (k === "datalist") {
                 if (input.is( "input")) {

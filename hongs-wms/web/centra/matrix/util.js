@@ -610,12 +610,14 @@ $.fn.hsCols = function() {
         }
         drawFlds(conf, targetz, widgets);
     });
+
     // 字段保存
-    targets.on("click", ".commit", function() {
+    context.on("click", ".commit", function() {
         var conf = [];
         gainFlds(conf, targetz, widgets);
-        records.find("[name=conf]").val(JSON.stringify(conf));
-        records.find(":submit").click();
+            conf = JSON.stringify (conf);
+        records.find("[name=conf]").val(conf);
+        records.find(":submit").click( );
     });
 
     // 删除字段

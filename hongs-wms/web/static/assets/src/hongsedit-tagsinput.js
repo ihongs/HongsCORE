@@ -16,7 +16,7 @@
 
             $(this).tagsinput({
                 trimValue  : true,
-                confirmKeys: [ 13,44,59, 0xff0c,0xff1b ]
+                confirmKeys: [ 13, 44, 59, 0x3001, 0xff0c, 0xff1b ] // 回车, 半角逗号和分好, 全角顿号、逗号和分号
             });
 
             // 微调样式以融入环境

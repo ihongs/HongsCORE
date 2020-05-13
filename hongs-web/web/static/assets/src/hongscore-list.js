@@ -263,6 +263,11 @@ HsList.prototype = {
                     continue;
                 }
 
+                // 默认数组转字串分隔逗号后无空格
+                if (jQuery.isArray(v)) {
+                    v = v.join( ", ");
+                }
+
                 td.text( v );
             }
         }
@@ -820,8 +825,13 @@ function hsListFillNext(page) {
  */
 function hsListFillItem(list) {
     var that = this;
-    var tt   = this.context.find(".itembox:hidden:first");
-    var tr, td, n, t, v, f;
+    var tt, tr, td, n, t, v, f;
+
+    // 条目模板
+    if (! this.itemBox ) {
+          this.itemBox = this.context.find(".itembox:hidden:first");
+    }
+    tt  = this.itemBox ;
 
     // _keep_prev 无论何种情况都不清空之前的列表
     // _keep_void 当前数据为空时不清空之前的列表

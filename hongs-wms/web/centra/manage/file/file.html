@@ -32,7 +32,7 @@
         </table>
     </div>
     <div class="pagebox"></div>
-    <div class="alert alert-info" style="display: none;">
+    <div class="well" style="display: none;">
         <h2>使用帮助</h2>
         <p><br/></p>
         <p style="line-height: 2em; margin-bottom: 1em;">
@@ -63,7 +63,7 @@
 
         if (path === '/') {
             context.removeAttr("data-load-url");
-            context.find(".alert"  ).show();
+            context.find(".well"   ).show();
             context.find(".listbox").hide();
             context.find(".pagebox").hide();
             context.find(".toolbox").find("input,button").prop("disabled", true);

@@ -8,6 +8,7 @@ import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Synt;
+import io.github.ihongs.util.reflex.Block;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -15,11 +16,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Pattern;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -78,6 +79,7 @@ import org.xml.sax.SAXException;
  */
 public class FormSet
   extends CoreSerial
+  implements CoreSerial.LastModified
 {
 
   protected transient String name;
@@ -96,17 +98,54 @@ public class FormSet
     throws HongsException
   {
     this.name = name ;
-    this.init ( name + Cnst.FORM_EXT );
+    this.init ( /**/);
   }
 
-  @Override
-  protected boolean expired(long time)
+  private void init()
+    throws HongsException
   {
     File serFile = new File(Core.DATA_PATH
                  + File.separator + "serial"
                  + File.separator + name + Cnst.FORM_EXT + ".ser");
+
+    //* 加锁读写 */
+
+    Block.Larder lock = Block.getLarder(CoreSerial.class.getName() + ":" + name + Cnst.FORM_EXT);
+
+    lock.lockr();
+    try {
+      if (serFile.exists()
+      && !expired( name )) {
+          load( serFile );
+      }
+    } finally {
+      lock.unlockr();
+    }
+
+    lock.lockw();
+    try {
+      imports( );
+      save(serFile );
+    } finally {
+      lock.unlockw();
+    }
+  }
+
+  @Override
+  public long lastModified() {
+      File serFile = new File(Core.DATA_PATH
+                 + File.separator + "serial"
+                 + File.separator + name + Cnst.FORM_EXT + ".ser");
+      return serFile.exists() ? serFile.lastModified() : -1L;
+  }
+
+  protected boolean expired(String namz)
+  {
+    File serFile = new File(Core.DATA_PATH
+                 + File.separator + "serial"
+                 + File.separator + namz + Cnst.FORM_EXT + ".ser");
     File xmlFile = new File(Core.CONF_PATH
-                 + File.separator + name + Cnst.FORM_EXT + ".xml");
+                 + File.separator + namz + Cnst.FORM_EXT + ".xml");
     if ( xmlFile.exists() )
     {
       return xmlFile.lastModified() > serFile.lastModified();
@@ -114,9 +153,9 @@ public class FormSet
 
     // 为减少判断逻辑对 jar 文件不做变更对比, 只要资源存在即可
     return null == getClass().getClassLoader().getResource(
-             name.contains(".")
-          || name.contains("/") ? name + Cnst.FORM_EXT + ".xml"
-           : Cnst.CONF_PACK +"/"+ name + Cnst.FORM_EXT + ".xml"
+             namz.contains(".")
+          || namz.contains("/") ? namz + Cnst.FORM_EXT + ".xml"
+           : Cnst.CONF_PACK +"/"+ namz + Cnst.FORM_EXT + ".xml"
     );
   }
 

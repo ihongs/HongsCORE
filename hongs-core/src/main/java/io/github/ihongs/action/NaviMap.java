@@ -93,6 +93,7 @@ import org.xml.sax.SAXException;
  */
 public class NaviMap
   extends CoreSerial
+  implements CoreSerial.LastModified
 {
 
   protected transient String name;
@@ -170,6 +171,14 @@ public class NaviMap
     } finally {
       lock.unlockw();
     }
+  }
+
+  @Override
+  public long lastModified() {
+      File serFile = new File(Core.DATA_PATH
+                 + File.separator + "serial"
+                 + File.separator + name + Cnst.FORM_EXT + ".ser");
+      return serFile.exists() ? serFile.lastModified() : -1L;
   }
 
   protected boolean expired(String namz)

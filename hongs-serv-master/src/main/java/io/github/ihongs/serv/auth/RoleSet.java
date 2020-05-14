@@ -22,11 +22,11 @@ import java.util.Set;
  * 用户组记录
  * @author Hongs
  */
-public class RoleSet extends CoreSerial implements Set<String> {
+public class RoleSet extends CoreSerial implements CoreSerial.LastModified, Set<String> {
 
     public /**/String userId;
     public Set<String> roles;
-    public int         rtime;
+    public long        rtime;
 
     private RoleSet(String userId) throws HongsException {
         this.userId = userId;
@@ -52,8 +52,8 @@ public class RoleSet extends CoreSerial implements Set<String> {
         Table     td;
         FetchCase fc;
         Map       rs;
-        int       rt;
         int       st;
+        long      rt;
 
         db = DB.getInstance("master");
 
@@ -63,12 +63,12 @@ public class RoleSet extends CoreSerial implements Set<String> {
                 .select(tb.name+".rtime, "+tb.name+".state")
                 .filter(tb.name+".id = ?", userId);
         rs = db.fetchLess(fc);
-        st = Synt.declare(rs.get("state"), 0);
+        st = Synt.declare(rs.get("state"), 0 );
         if (st <=   0 ) { // 删除或锁定
             rtime = 0 ;
             return;
         }
-        rt = Synt.declare(rs.get("rtime"), 0);
+        rt = Synt.declare(rs.get("rtime"), 0L);
         if (rt > rtime) { // 从库表加载
             init(n, f, 1);
             return;
@@ -86,12 +86,12 @@ public class RoleSet extends CoreSerial implements Set<String> {
         if (rs.isEmpty()) { // 部门可选
             return;
         }
-        st = Synt.declare(rs.get("state"), 0);
+        st = Synt.declare(rs.get("state"), 0 );
         if (st <=   0 ) { // 删除或锁定
             rtime = 0 ;
             return;
         }
-        rt = Synt.declare(rs.get("rtime"), 0);
+        rt = Synt.declare(rs.get("rtime"), 0L);
         if (rt > rtime) { // 从库表加载
             init(n, f, 1);
 //          return;
@@ -142,7 +142,12 @@ public class RoleSet extends CoreSerial implements Set<String> {
 
         //** 当前保存时间 **/
 
-        rtime = (int) (System.currentTimeMillis() / 1000);
+        rtime = System.currentTimeMillis() / 1000L;
+    }
+
+    @Override
+    public long lastModified() {
+        return rtime * 1000L;
     }
 
     //** 构造工厂方法 **/
@@ -155,7 +160,7 @@ public class RoleSet extends CoreSerial implements Set<String> {
             return (RoleSet) c.get( k );
         }
         RoleSet s = new RoleSet(userId);
-        if (s . rtime ==  0 ) {
+        if (s . rtime == 0L ) {
             s = null; // 状态不对
         }
         c.put(k , s); // 缓存对象

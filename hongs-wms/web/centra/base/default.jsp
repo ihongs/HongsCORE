@@ -3,7 +3,7 @@
 <%@include file="_base_.jsp"%>
 <%
     // 仅开放接口则抛出资源缺失异常
-    if ($hide) {
+    if ("HIDE".equals($hrel) || "NONE".equals($hrel)) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
     String $func = "in_"+($module+"_"+$entity).replace ('/', '_');

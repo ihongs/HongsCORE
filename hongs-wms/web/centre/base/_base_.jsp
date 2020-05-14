@@ -6,24 +6,7 @@
 <%@page import="java.util.Map"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
-    /**
-     * 静默或非调试模式下开启缓存策略
-     * 但须在系统启动之后和八小时以内
-     */
-    if (0 == Core.DEBUG || 8 == (8 & Core.DEBUG)) {
-        long s , a , m;
-        s = Core.STARTS_TIME;
-        a = Core.ACTION_TIME.get();
-        m = request .getDateHeader("If-Modified-Since");
-        if ( m < Math.max(s , a - 28800000) ) {
-            response.setDateHeader("Last-Modified", a );
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
-        }
-    }
-
-    boolean    $hide = false;
+    String     $hrel  = null;
     String     $title = null;
     String     $module;
     String     $entity;
@@ -51,7 +34,7 @@
             Map menu;
             menu  = site.getMenu($module +"/"+ $entity +"/");
             if (menu != null) {
-                    $hide   = "HIDE".equals(menu.get("hrel"));
+                    $hrel   = (String) menu.get("hrel");
                     $title  = (String) menu.get("text");
                 if ($title != null) {
                     $title  = $locale.translate($title);
@@ -62,7 +45,7 @@
             }
             menu  = site.getMenu($module +"/#"+$entity);
             if (menu != null) {
-                    $hide   = "HIDE".equals(menu.get("hrel"));
+                    $hrel   = (String) menu.get("hrel");
                     $title  = (String) menu.get("text");
                 if ($title != null) {
                     $title  = $locale.translate($title);

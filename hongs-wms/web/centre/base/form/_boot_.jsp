@@ -11,23 +11,6 @@
 <%@page import="java.util.Set"%>
 <%@page pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%
-    /**
-     * 静默或非调试模式下开启缓存策略
-     * 但须在系统启动之后和八小时以内
-     */
-    if (0 == Core.DEBUG || 8 == (8 & Core.DEBUG)) {
-        long s , a , m;
-        s = Core.STARTS_TIME;
-        a = Core.ACTION_TIME.get();
-        m = request .getDateHeader("If-Modified-Since");
-        if ( m < Math.max(s , a - 28800000) ) {
-            response.setDateHeader("Last-Modified", a );
-        } else {
-            response.setStatus(HttpServletResponse.SC_NOT_MODIFIED);
-            return;
-        }
-    }
-
     String     _title = "";
     String     _module;
     String     _entity;

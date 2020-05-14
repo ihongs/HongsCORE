@@ -8,10 +8,6 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.util.Syno;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.Locale;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -40,7 +36,7 @@ public class LangAction
   extends  ActionDriver
 {
   private static final Map<String, String> CACHES = new HashMap();
-  private static final Map<String, String> MTIMES = new HashMap();
+  private static final Map<String, Long  > MTIMES = new HashMap();
 
   /**
    * 服务方法
@@ -69,21 +65,20 @@ public class LangAction
     }
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
-    if ( !"js".equals(type) && !"json".equals(type)) {
-      helper.error400("Wrong file type: "+type);
+    if (!"js".equals(type) && !"json".equals(type)) {
+      helper.error400( "Wrong file type: " + type);
       return;
     }
 
     // 需要区分语言
-    String lang = name +"_"+ Core.ACTION_LANG.get();
+    String lang = name+"_"+Core.ACTION_LANG.get( );
 
     /**
      * 如果指定语言的数据并没有改变
      * 则直接返回 304 Not modified
      */
-    String m;
-    m = helper.getRequest().getHeader("If-Modified-Since");
-    if (m != null && m.equals(LangAction.MTIMES.get(lang)))
+    long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
+    if ( LangAction.MTIMES.containsKey(lang) && MTIMES.get( lang ) <= m )
     {
       helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
       return;
@@ -105,11 +100,7 @@ public class LangAction
         return;
       }
 
-      SimpleDateFormat
-          sdf = new SimpleDateFormat("EEE, d MMM yyyy HH:mm:ss z",
-                                      Locale.ENGLISH );
-          sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-      m = sdf.format(new Date());
+      m = System.currentTimeMillis( );
 
       LangAction.CACHES.put(lang , s);
       LangAction.MTIMES.put(lang , m);
@@ -121,7 +112,7 @@ public class LangAction
     }
 
     // 标明修改时间
-    helper.getResponse().setHeader("Last-Modified", m);
+    helper.getResponse().setDateHeader("Last-Modified", m);
 
     // 输出语言信息
     if ("json".equals(type))

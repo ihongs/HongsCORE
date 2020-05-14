@@ -1,6 +1,7 @@
 package io.github.ihongs.action.serv;
 
 import io.github.ihongs.Core;
+import io.github.ihongs.CoreSerial;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.HongsExemption;
 import io.github.ihongs.action.ActionHelper;
@@ -49,10 +50,13 @@ public class AuthAction
   public void service(HttpServletRequest req, HttpServletResponse rsp)
     throws ServletException, IOException
   {
-    // 受是否登录、不同用户等影响, 权限经常变化，必须禁止缓存
+    /*
+    // 2020/05/14  通过配置和用户的修改时间来判断是否能有变化
+    // 受是否登录、不同用户等影响, 权限经常变化, 必须禁止缓存
     rsp.setHeader("Expires", "0");
     rsp.addHeader("Pragma" , "no-cache");
     rsp.setHeader("Cache-Control", "no-cache");
+    */
 
     Core core = ActionDriver.getActualCore(req );
     ActionHelper helper = core.get(ActionHelper.class);
@@ -69,8 +73,8 @@ public class AuthAction
     }
     String type = name.substring(1 + p);
            name = name.substring(1 , p);
-    if ( !"js".equals(type) && !"json".equals(type)) {
-      helper.error400("Wrong file type: "+type);
+    if (!"js".equals(type) && !"json".equals(type)) {
+      helper.error400( "Wrong file type: " + type);
       return;
     }
 
@@ -83,6 +87,19 @@ public class AuthAction
       if (null == sitemap.session) {
         helper.error404("Auth data for '"+name+"' is not open to the public");
         return;
+      }
+
+      // HTTP 304 缓存策略
+      if (authset instanceof CoreSerial.LastModified) {
+        CoreSerial.LastModified authmod = ( CoreSerial.LastModified ) authset;
+        long t  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
+        if ( t != -1
+        &&   t >= sitemap.lastModified()
+        &&   t >= authmod.lastModified() ) {
+          helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
+          return;
+        }
+        helper.getResponse().setDateHeader("Last-Modified", System.currentTimeMillis());
       }
 
       Map<String, Boolean> datamap = new HashMap();
@@ -99,6 +116,10 @@ public class AuthAction
       } else {
         helper.error500(ex.getMessage());
       }
+      return;
+    }
+    catch (IllegalArgumentException ex ) {
+      helper.error500(ex.getMessage(  ));
       return;
     }
 

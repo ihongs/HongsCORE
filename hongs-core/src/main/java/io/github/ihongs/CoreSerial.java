@@ -453,4 +453,14 @@ public abstract class CoreSerial
     return map;
   }
 
+  /**
+   * 缓存最后更新时间
+   */
+  public static interface LastModified
+  {
+
+    public long lastModified();
+
+  }
+
 }

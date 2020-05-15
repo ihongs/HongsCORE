@@ -96,7 +96,7 @@ public class ConfAction
         return;
       }
 
-      m = System.currentTimeMillis( );
+      m = System.currentTimeMillis( ) / 1000L * 1000L; // HTTP 时间精确到秒
 
       ConfAction.CACHES.put(name , s);
       ConfAction.MTIMES.put(name , m);

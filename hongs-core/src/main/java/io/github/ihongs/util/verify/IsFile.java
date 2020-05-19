@@ -140,6 +140,7 @@ public class IsFile extends Rule {
              * 外部记录的是网址
              * 必须进行解码才行
              * 没斜杠为新上传的
+             * 竖杆后真实文件名
              */
             href = value.toString();
             if (href.contains("/")) {
@@ -147,6 +148,11 @@ public class IsFile extends Rule {
                 name =  null ;
             } else {
                 name =  href ;
+                int  p   = name.indexOf  ("|");
+                if ( p  != -1) {
+                    href = name.substring(0,p);
+                    name = name.substring(1+p);
+                }
             }
             hlpr.upload(href);
         }
@@ -420,6 +426,6 @@ public class IsFile extends Rule {
         return path + name;
     }
 
-    private static final Pattern NAME_PATT = Pattern.compile("[\\/<>:?*\"|]");
+    private static final Pattern NAME_PATT = Pattern.compile("[\"\\/<>*:?|]");
 
 }

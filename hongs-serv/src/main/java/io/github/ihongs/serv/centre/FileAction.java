@@ -7,8 +7,9 @@ import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.UploadHelper;
 import io.github.ihongs.action.anno.Action;
 import io.github.ihongs.util.Synt;
-import java.util.ArrayList;
+import java.io.File;
 import java.util.List;
+import java.util.ArrayList;
 import javax.servlet.http.Part;
 
 /**
@@ -27,21 +28,20 @@ public class FileAction {
         String fmt = "%0"+ String.valueOf ( fils.size( ) ).length()+"d" ;
         int    idx = 0;
 
+        UploadHelper uh = new UploadHelper( );
+        uh.setUploadPath("static/upload/tmp");
+        uh.setUploadHref("static/upload/tmp");
+
         for(Object item  :  fils) {
         if (item instanceof Part) {
-            Part   part  = (Part) item;
-            String name  = ( uid +"-"+ nid ) +"-"+
-            String.format  ( fmt , + + idx ) +".";
+            Part   part = ( Part) item;
+            String name = ( uid +"-"+ nid ) +"-"+
+            String.format ( fmt , + + idx ) +".";
 
-            // 传到临时目录
-            UploadHelper  uh = new UploadHelper();
-            uh.setUploadPath("static/upload/tmp");
-            uh.setUploadHref("static/upload/tmp");
-            name = uh.upload(part,name).getName();
-            String href = uh . getResultHref(   );
-
-            // 组织绝对路径
+            File   file = uh.upload(part , name);
+            String href = uh.getResultHref(/**/);
             String link = Core.SITE_HREF + Core.BASE_HREF + "/" + href;
+            name = file.getName( ) + "|" + part.getSubmittedFileName();
 
             list.add(Synt.mapOf(
                 "name", name,

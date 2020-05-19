@@ -81,7 +81,8 @@ public class AuthAction
     String s;
     try {
       NaviMap  sitemap = NaviMap.getInstance(name);
-      Set<String> authset = sitemap.getAuthSet(  );
+      Set<String> roleset = sitemap.getRoleSet(  );
+      Set<String> authset ;
 
       // 没有设置 rsname 的不公开
       if (null == sitemap.session) {
@@ -90,20 +91,26 @@ public class AuthAction
       }
 
       // HTTP 304 缓存策略
-      if (authset instanceof CoreSerial.LastModified) {
-        CoreSerial.LastModified authmod = ( CoreSerial.LastModified ) authset;
-        long t  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
-        if ( t != -1
-        &&   t >= sitemap.lastModified()
-        &&   t >= authmod.lastModified() ) {
+      if (roleset instanceof CoreSerial.LastModified) {
+        CoreSerial.LastModified rolemod = ( CoreSerial.LastModified ) roleset;
+        long l  =  Math.max( sitemap.lastModified(), rolemod.lastModified() );
+        long m  =  helper.getRequest(  ).getDateHeader( "If-Modified-Since" );
+        if ( l != -1 ) {
+            // HTTP 时间精确到秒
+             l  =  l / 1000;
+             m  =  m / 1000;
+        if ( m >=  l ) {
           helper.getResponse().setStatus(HttpServletResponse.SC_NOT_MODIFIED);
           return;
-        }
-        helper.getResponse().setDateHeader("Last-Modified", System.currentTimeMillis());
+        } else {
+          helper.getResponse().setHeader( "Cache-Control", "no-cache" );
+          helper.getResponse().setDateHeader("Last-Modified", l * 1000);
+        }}
       }
 
       Map<String, Boolean> datamap = new HashMap();
-      if (null == authset) authset = new HashSet();
+      if (null == roleset) authset = new HashSet();
+      else  authset  =  sitemap.getRoleAuths(roleset.toArray(new String[]{}));
       for(String  act : sitemap.actions) {
         datamap.put( act , authset.contains(act) );
       }

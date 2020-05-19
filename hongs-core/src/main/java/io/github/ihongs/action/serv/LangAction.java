@@ -100,7 +100,7 @@ public class LangAction
         return;
       }
 
-      m = System.currentTimeMillis( );
+      m = System.currentTimeMillis( ) / 1000L * 1000L; // HTTP 时间精确到秒
 
       LangAction.CACHES.put(lang , s);
       LangAction.MTIMES.put(lang , m);

@@ -26,7 +26,7 @@
         }
         $(this).before($(this).clone().val(''));
             box = $(box );
-        var txt = /^data:.+\/.+,/.test(src) ? ''
+        var txt = /^data:/.test (src)  ?  ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
         var lab = $('<span></span>' ).text(txt);
@@ -52,7 +52,7 @@
             return;
         }
         var box = $(this);
-        var txt = /^data:.+\/.+,/.test(src) ? ''
+        var txt = /^data:/.test (src)  ?  ''
                 : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var cls = box.is(".pickrol" )  ?  "btn-link" : "btn-info" ;
         var lab = $('<span></span>' ).text(txt);
@@ -86,7 +86,7 @@
         $(this).before($(this).clone().val(''));
             box = $(box );
         var inp = $(this);
-        var txt = /^data:.+\/.+,/.test(src) ? ''
+        var txt = /^data:/.test( src ) ? ''
                   : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var div = $('<li class="preview"></li>').attr("title" , txt)
            .css({width: w+'px', height: h+'px', overflow: 'hidden'});
@@ -130,7 +130,7 @@
         var box = $(this);
         var inp = $('<input  type="hidden" />')
                    .attr('name', nam ).val(src);
-        var txt = /^data:.+\/.+,/.test(src) ? ''
+        var txt = /^data:/.test( src ) ? ''
                   : decodeURIComponent(src.replace(/^.*[\/\\]/, ''));
         var div = $('<li class="preview"></li>').attr("title" , txt)
            .css({width: w+'px', height: h+'px', overflow: 'hidden'});

@@ -4,6 +4,7 @@ import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.PasserHelper;
 import io.github.ihongs.util.Synt;
 import java.io.IOException;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.Filter;
@@ -25,14 +26,19 @@ public class XsrfFilter implements Filter {
 
     private String       inside = null; // 过滤器标识
     private PasserHelper ignore = null; // 待忽略用例
+    private Set <String> allows = null; // 许可的域名
 
     @Override
     public void init(FilterConfig fc) throws ServletException {
         inside = XsrfFilter.class.getName()+":"+fc.getFilterName()+":INSIDE";
+        allows = Synt.toTerms (fc.getInitParameter("allow-hosts"));
         ignore = new PasserHelper(
             fc.getInitParameter("ignore-urls"),
             fc.getInitParameter("attend-urls")
         );
+        if (allows != null && allows.isEmpty()) {
+            allows  = null;
+        }
     }
 
     @Override
@@ -64,10 +70,13 @@ public class XsrfFilter implements Filter {
 
         // 提取到 Referer 并与当前请求的 URL 比对来判断同域
         String ref = req.getHeader("Referer");
-        String dmn = req.getServerName( );
-        if (ref != null && dmn != null) {
+        if (ref != null) {
             Matcher mat = DOMAIN.matcher(ref);
-        if (mat.find( ) && mat.group(1).equals(dmn)) {
+        if (mat.find( )) {
+            String domain = mat.group(1);
+            String server = req.getServerName();
+        if ((allows != null && allows.contains(domain) )
+        || ( server != null && server. equals (domain))) {
             try {
                 req.setAttribute(inside,true);
                 fc . doFilter   (   rxq, rxp);
@@ -75,7 +84,7 @@ public class XsrfFilter implements Filter {
                 req.removeAttribute( inside );
             }
             return;
-        }}
+        } } }
 
         rsp.setStatus(HttpServletResponse.SC_FORBIDDEN);
         rsp.getWriter().print("XSRF Access Forbidden!");

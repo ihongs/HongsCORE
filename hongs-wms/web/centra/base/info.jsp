@@ -204,6 +204,7 @@
     <%if ("reveal".equals(_action)) {%>
     // 前后历史记录快速切换
     context.on("loadBack", function(evt, rst) {
+        delete formobj._init;
         if (rst.info && rst.snap && rst.snap.newer ) {
             var tt = hsFmtDate(rst.snap.newer*1000 , H$(":datetime.format"));
             context.find(".newer").attr("title", tt).prop("disabled", false)

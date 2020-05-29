@@ -35,11 +35,12 @@
         <script type="text/javascript" src="common/auth/centre.js" ></script>
         <link rel="stylesheet" type="text/css" href="<%=_module%>/<%=_entity%>/form/defines.css">
         <script type="text/javascript" src="<%=_module%>/<%=_entity%>/form/defines.js" ></script>
+        <style  type="text/css"> .container {padding-top: 20px;} </style>
         <%if ( _style != null && ! _style .isEmpty()) {%>
-        <style  type="text/css"><%=_style %></style>
+        <style  type="text/css"><%=_style%></style>
         <%}%>
         <%if (_script != null && ! _script.isEmpty()) {%>
-        <script type="text/css"><%=_script%></script>
+        <script type="text/javascript"><%=_script%></script>
         <%}%>
     </head>
     <body>

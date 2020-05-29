@@ -67,18 +67,21 @@ function HsForm(context, opts) {
     /**
      * 表单初始数据可以从加载参数中提取
      */
-    if (! initDat) {
-        var initArr = [];
+    if (initDat) {
+        initDat = hsSerialDic(initDat);
+    } else {
+        initDat = hsSerialDic(  [ ]  );
         for(var i = 0; i < loadArr.length; i ++ ) {
             var n = loadArr [i];
             if (n.name && (n.value||n.value===0)) {
-                initArr.push(n);
+                var v = n.value;
+                var k = n.name ;
+                k = _hsGetDkeys (k);
+                _hsSetPoint(initDat, k,v);
             }
         }
-        this._init = initArr;
-    } else {
-        this._init = initDat;
     }
+    this._init = initDat;
 
     this.valiInit();
     this.saveInit();
@@ -118,20 +121,18 @@ HsForm.prototype = {
 
         this.formBox.trigger("loadBack", [rst, this]);
 
-        var envm = rst["enum"]
-                || rst["menu"] || {};
-        var info = rst["info"] || {};
         var page = rst["page"] || {};
-        if (rst.list) {
-            info = rst.list[0] || {};
-        }
+        var envm = rst["enum"] ||
+                   rst["menu"] || {};
+        var info = rst["info"] ||
+                 ( rst["list"] && rst.list[0] ) || {};
 
         // 填充预置数据
         if (this._init) {
             var d = hsSerialDic(this._init);
             for(var k in d ) {
                 var v  = d [k];
-                k = k.replace(/(\[\]|\.)$/, ''); // 规避数组键影响
+            k = k.replace(/(\[\]|\.)$/, ''); // 规避数组键影响
                 hsSetValue ( info , k , v );
             }
         }

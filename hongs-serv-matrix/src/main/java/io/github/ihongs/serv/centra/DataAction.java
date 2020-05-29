@@ -158,6 +158,7 @@ public class DataAction extends SearchAction {
                     if (ab.contains("older")) {
                         Map row = ett.getModel().table.fetchCase()
                            .filter("`id` = ? AND `form_id` = ? AND `ctime` < ?", id, fid, ctime)
+                           .assort("`ctime` DESC")
                            .select("`ctime`")
                            .getOne();
                         df.put("older" , ! row.isEmpty() ? row.get("ctime") : null);
@@ -165,6 +166,7 @@ public class DataAction extends SearchAction {
                     if (ab.contains("newer")) {
                         Map row = ett.getModel().table.fetchCase()
                            .filter("`id` = ? AND `form_id` = ? AND `ctime` > ?", id, fid, ctime)
+                           .assort("`ctime`  ASC")
                            .select("`ctime`")
                            .getOne();
                         df.put("newer" , ! row.isEmpty() ? row.get("ctime") : null);

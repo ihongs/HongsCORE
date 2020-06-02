@@ -258,7 +258,7 @@ div.bootstrap-tagsinput .tag [data-role="remove"]:after {
 }
 
 /* codemirror */
-.CodeMirror.form-control,
+.CodeMirror.form-control        ,
 .CodeMirror.form-control-static {
     background: #fefefe;
     padding: 0;
@@ -350,11 +350,6 @@ ol.repeated ,
     opacity: 1.0;
 }
 
-/* 规避警告框右侧的滚动条间隙 */
-.alert-modal {
-    padding-right: 0 !important;
-}
-
 /* 对话框背景色, 类按钮情景色 */
 .alert.dialog ,
 .alert.dialog.alert-default {
@@ -429,6 +424,10 @@ ol.repeated ,
     .alert.waitbox>.alert-content {
         width : 600px;
         margin:   0px auto;
+    }
+    /* 规避警告框右侧的滚动条间隙 */
+    .alert-modal {
+        padding-right: 0 !important;
     }
 }
 

@@ -725,24 +725,22 @@ public class Form extends Model {
             //  docm.renameNode(form, null, "form");
             }
 
-            // 全局性保护, 取消 AR,NR,OR 限制, 从外部过滤
-            /*
+            // 全局性保护
             defs = docm.createElement("enum");
             root.appendChild ( defs );
             defs.setAttribute("name", id+":defense");
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.AR_KEY);
-            defi.appendChild ( docm.createTextNode("(null)"));
+            defi.appendChild ( docm.createTextNode("(void)"));
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.NR_KEY);
-            defi.appendChild ( docm.createTextNode("(null)"));
+            defi.appendChild ( docm.createTextNode("(void)"));
             defi = docm.createElement("value");
             defs.appendChild ( defi );
             defi.setAttribute("code", Cnst.OR_KEY);
-            defi.appendChild ( docm.createTextNode("(null)"));
-            */
+            defi.appendChild ( docm.createTextNode("(void)"));
 
             // 保护写接口
             defs = docm.createElement("enum");

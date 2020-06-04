@@ -21,9 +21,9 @@ public final class CommitRunner {
            throws Throwable ;
     }
 
-    static public void run( Run run )
+    static public void run( Run run)
     throws HongsException {
-        run(run , Core.getInstance());
+        run(run, Core.getInstance());
     }
 
     static public void run( Run run, Core core)

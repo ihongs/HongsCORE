@@ -375,7 +375,7 @@ public class DataCmdlet {
         }
 
         // 批量更新
-        CommitHolder.invoke(() -> {
+        CommitHolder.run(() -> {
             try {
                 for(String n : ents) {
                     int    p = n.lastIndexOf(".");

@@ -16,23 +16,23 @@ import io.github.ihongs.dh.IReflux;
  */
 public final class CommitHolder {
 
-    public static interface Wrap {
-        public void invoke() throws Throwable;
+    static public interface Run {
+           public void run( ) throws Throwable;
     }
 
-    public static void invoke(Wrap wrap)
+    static public void run( Run run)
     throws HongsException {
-        invoke(wrap, Core.getInstance());
+        run(run, Core.getInstance());
     }
 
-    public static void invoke(Wrap wrap, Core core)
+    static public void run( Run run, Core core)
     throws HongsException {
         // 全局中标识为事务模式
         // 外部已指定则不再处理
         if (core.containsKey(Cnst.REFLUX_MODE)) {
             try {
                 // 执行
-                wrap.invoke();
+                run.run();
             } catch (Throwable ex) {
                 if (ex instanceof HongsException) {
                     throw (HongsException) ex;
@@ -58,7 +58,7 @@ public final class CommitHolder {
 
             try {
                 // 执行
-                wrap.invoke();
+                run.run();
 
                 // 提交
                 for(Object o : core.values().toArray()) {

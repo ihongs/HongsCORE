@@ -14,7 +14,7 @@ import io.github.ihongs.dh.IReflux;
  *
  * @author Kevin
  */
-public final class CommitHolder {
+public final class CommitRunner {
 
     static public interface Run {
            public void run( )

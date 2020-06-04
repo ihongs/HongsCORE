@@ -5,7 +5,7 @@ import io.github.ihongs.Core;
 import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
-import io.github.ihongs.action.anno.CommitInvoker;
+import io.github.ihongs.action.CommitHolder;
 import io.github.ihongs.cmdlet.CmdletHelper;
 import io.github.ihongs.cmdlet.anno.Cmdlet;
 import io.github.ihongs.db.DB;
@@ -375,7 +375,7 @@ public class DataCmdlet {
         }
 
         // 批量更新
-        CommitInvoker.invoke(() -> {
+        CommitHolder.invoke(() -> {
             try {
                 for(String n : ents) {
                     int    p = n.lastIndexOf(".");

@@ -17,7 +17,8 @@ import io.github.ihongs.dh.IReflux;
 public final class CommitHolder {
 
     static public interface Run {
-           public void run( ) throws Throwable;
+           public void run( )
+           throws Throwable ;
     }
 
     static public void run( Run run)

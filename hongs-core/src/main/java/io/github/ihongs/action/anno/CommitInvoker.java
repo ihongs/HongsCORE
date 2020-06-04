@@ -3,7 +3,7 @@ package io.github.ihongs.action.anno;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.ActionRunner;
-import io.github.ihongs.action.CommitHolder;
+import io.github.ihongs.action.CommitRunner;
 import java.lang.annotation.Annotation;
 
 /**
@@ -19,7 +19,7 @@ public class CommitInvoker implements FilterInvoker {
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
     throws HongsException {
         // 为兼容 Java8 之前版本未使用函数式
-        CommitHolder.run(new CommitHolder.Run() {
+        CommitRunner.run(new CommitRunner.Run() {
             public void run () throws Throwable {
                 chains.doAction();
             }

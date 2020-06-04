@@ -21,16 +21,16 @@ public final class CommitHolder {
            throws Throwable ;
     }
 
-    static public void run( Run run)
+    static public void run( Run run )
     throws HongsException {
-        run(run, Core.getInstance());
+        run(run , Core.getInstance());
     }
 
-    static public void run( Run run, Core core)
+    static public void run( Run run, Core core )
     throws HongsException {
         // 全局中标识为事务模式
         // 外部已指定则不再处理
-        if (core.containsKey(Cnst.REFLUX_MODE)) {
+        if (core.containsKey (Cnst.REFLUX_MODE)) {
             try {
                 // 执行
                 run.run();

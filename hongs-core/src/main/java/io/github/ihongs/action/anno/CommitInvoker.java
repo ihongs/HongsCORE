@@ -18,12 +18,7 @@ public class CommitInvoker implements FilterInvoker {
     @Override
     public void invoke(ActionHelper helper, ActionRunner chains, Annotation anno)
     throws HongsException {
-        // 为兼容 Java8 之前版本未使用函数式
-        CommitRunner.run(new CommitRunner.Run() {
-            public void run () throws Throwable {
-                chains.doAction();
-            }
-        });
+        CommitRunner.run( () -> chains.doAction() );
     }
 
 }

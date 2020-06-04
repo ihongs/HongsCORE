@@ -43,7 +43,7 @@ public final class CommitRunner {
                 }
 
                 // 其他异常需包裹
-                throw new  HongsException (0x1140, ex);
+                throw new  HongsException (0x110c, ex);
             }
             return;
         }
@@ -83,7 +83,7 @@ public final class CommitRunner {
                 }
 
                 // 其他异常需包裹
-                throw new  HongsException (0x1140, ex);
+                throw new  HongsException (0x110c, ex);
             }
         } finally {
             core.remove(Cnst.REFLUX_MODE);

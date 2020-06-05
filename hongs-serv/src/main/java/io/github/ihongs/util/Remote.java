@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.net.URI;
@@ -15,6 +16,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.apache.http.Header;
@@ -22,6 +24,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpEntityEnclosingRequest;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -156,88 +159,18 @@ public final class Remote {
      */
     public static String request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head)
             throws HongsException, StatusException, SimpleException {
-        if (url == null) {
-            throw new NullPointerException("Request url can not be null");
-        }
-
-        HttpRequestBase http = null;
-        try {
-            // 构建 HTTP 请求对象
-            switch (type) {
-                case DELETE: http = new HttpDelete(); break;
-                case PATCH : http = new HttpPatch( ); break;
-                case POST  : http = new HttpPost(  ); break;
-                case PUT   : http = new HttpPut(   ); break;
-                default    : http = new HttpGet(   ); break;
+        final String         [ ] txt = new String         [1];
+        final SimpleException[ ] err = new SimpleException[1];
+        request(type, kind, url, data, head, (rsp) -> {
+            try {
+                txt[0] = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
+            } catch (IOException | ParseException ex) {
+                err[0] = new SimpleException(url, ex);
             }
-
-            // 设置报文
-            if (data != null) {
-                if (http instanceof HttpEntityEnclosingRequest) {
-                    HttpEntityEnclosingRequest htte = (HttpEntityEnclosingRequest) http;
-                    if (null != kind) switch ( kind ) {
-                    case JSON:
-                        htte.setEntity(buildJson(data));
-                        break;
-                    case PART:
-                        htte.setEntity(buildPart(data));
-                        break;
-                    default:
-                        htte.setEntity(buildPost(data));
-                        break;
-                    } else {
-                        htte.setEntity(buildPost(data));
-                    }
-                } else {
-                    String qry = EntityUtils.toString(buildPost(data), "UTF-8");
-                    if (url.indexOf('?') == -1) {
-                        url += "?" + qry;
-                    } else {
-                        url += "&" + qry;
-                    }
-                }
-            }
-
-            // 设置报头
-            if (head != null) {
-                for(Map.Entry<String, String> et : head.entrySet()) {
-                    http.setHeader  ( et.getKey(), et.getValue() );
-                }
-                if (head.containsKey("Accept") == false) {
-                    http.setHeader  ("Accept", "application/json, */*;q=0.8");
-                }
-            } else {
-                    http.setHeader  ("Accept", "application/json, */*;q=0.8");
-            }
-
-            // 执行请求
-            http.setURI(new URI(url));
-            HttpResponse rsp = HttpClients
-                     .createDefault()
-                     .execute( http );
-
-            // 判断结果
-            int sta = rsp.getStatusLine().getStatusCode();
-            if (sta >= 300 && sta <= 399) {
-                Header hea = rsp.getFirstHeader( "Location" );
-                String loc = hea != null ? hea.getValue(): "";
-                throw  new StatusException(sta, url, loc);
-            } else
-            if (sta <= 199 || sta >= 400) {
-                String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
-                throw  new StatusException(sta, url, txt);
-            } else
-            {
-                String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
-                return txt;
-            }
-        } catch (URISyntaxException | IOException ex) {
-            throw new SimpleException (url, ex);
-        } finally {
-            if (http != null) {
-                http.releaseConnection();
-            }
-        }
+        });
+        if (null != err[0]) {
+            throw   err[0];
+        }   return  txt[0];
     }
 
     /**
@@ -254,6 +187,72 @@ public final class Remote {
      * @throws SimpleException
      */
     public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, File file)
+            throws HongsException, StatusException, SimpleException {
+        final SimpleException[ ] err = new SimpleException[1];
+        request(type, kind, url, data, head, (rsp) -> {
+            // 建立目录
+            File dir = file.getParentFile();
+            if (!dir.exists()) {
+                 dir.mkdirs();
+            }
+
+            // 保存文件
+            try (
+                OutputStream out = new FileOutputStream(file);
+            ) {
+                rsp.getEntity( ).writeTo(out);
+            } catch (IOException ex) {
+                err[0] = new SimpleException (url, ex);
+            }
+        });
+        if (null != err[0]) {
+            throw   err[0];
+        }
+    }
+
+    /**
+     * 简单输出请求
+     *
+     * @param type
+     * @param kind
+     * @param url
+     * @param data
+     * @param head
+     * @param out
+     * @throws HongsException
+     * @throws StatusException
+     * @throws SimpleException
+     */
+    public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, OutputStream out)
+            throws HongsException, StatusException, SimpleException {
+        final SimpleException[ ] err = new SimpleException[1];
+        request(type, kind, url, data, head, (rsp) -> {
+            try {
+                rsp.getEntity( ).writeTo(out);
+            }
+            catch (IOException ex) {
+                err[0] = new SimpleException (url, ex);
+            }
+        });
+        if (null != err[0]) {
+            throw   err[0];
+        }
+    }
+
+    /**
+     * 简单请求
+     *
+     * @param type
+     * @param kind
+     * @param url
+     * @param data
+     * @param head
+     * @param con
+     * @throws HongsException
+     * @throws StatusException
+     * @throws SimpleException
+     */
+    public static void request(METHOD type, FORMAT kind, String url, Map<String, Object> data, Map<String, String> head, Consumer<HttpResponse> con)
             throws HongsException, StatusException, SimpleException {
         if (url == null) {
             throw new NullPointerException("Request url can not be null");
@@ -310,42 +309,25 @@ public final class Remote {
                      .createDefault()
                      .execute( http );
 
-            // 判断结果
+            // 异常处理
             int sta = rsp.getStatusLine().getStatusCode();
             if (sta >= 300 && sta <= 399) {
                 Header hea = rsp.getFirstHeader( "Location" );
                 String loc = hea != null ? hea.getValue(): "";
                 throw  new StatusException(sta, url, loc);
-            } else
-            if (sta <= 199 || sta >= 400) {
-                String txt = EntityUtils.toString(rsp.getEntity(), "UTF-8").trim();
+            }
+            if (sta >= 400 || sta <= 199) {
+                HttpEntity t = rsp.getEntity();
+                String txt = EntityUtils.toString(t, "UTF-8");
                 throw  new StatusException(sta, url, txt);
             }
 
-            // 建立目录
-            File dir = file.getParentFile ();
-            if (!dir.exists()) {
-                 dir.mkdirs();
-            }
-
-            // 保存文件
-            HttpEntity ett = rsp.getEntity();
-            try (
-                InputStream  his = ett.getContent();
-                FileOutputStream fos = new FileOutputStream(file);
-            ) {
-                int     bn ;
-                byte[]  bs = new byte[1024];
-                while ((bn = his.read( bs )) != -1) {
-                    fos.write( bs, 0 , bn );
-                }
-                    fos.flush( );
-            }
+            con.accept( rsp );
         } catch (URISyntaxException | IOException ex) {
             throw new SimpleException(url, ex);
         } finally {
             if (http != null) {
-                http.releaseConnection();
+                http.releaseConnection( );
             }
         }
     }

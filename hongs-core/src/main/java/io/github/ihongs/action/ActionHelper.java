@@ -10,9 +10,9 @@ import io.github.ihongs.HongsExemption;
 import io.github.ihongs.util.Dawn;
 import io.github.ihongs.util.Dict;
 
-import java.io.OutputStream;
 import java.io.Writer;
-import java.io.PrintWriter;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -186,7 +186,7 @@ public class ActionHelper implements Cloneable
    */
   public final void updateOutput(OutputStream out)
   {
-    this.updateOutput ( out , new PrintWriter(out));
+    this.updateOutput ( out , new OutputStreamWriter(out));
   }
 
   public final void setRequestData(Map<String, Object> data) {
@@ -970,7 +970,7 @@ public class ActionHelper implements Cloneable
     try {
         out = getOutputWriter();
     } catch ( IllegalStateException e ) {
-        out = new PrintWriter(getOutputStream());
+        out = new OutputStreamWriter(getOutputStream());
     }
 
     try {
@@ -1030,7 +1030,7 @@ public class ActionHelper implements Cloneable
     try {
         out = getOutputWriter();
     } catch ( IllegalStateException e ) {
-        out = new PrintWriter(getOutputStream());
+        out = new OutputStreamWriter(getOutputStream());
     }
 
     // 检查是否有 JSONP 的回调函数

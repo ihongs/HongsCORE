@@ -52,17 +52,6 @@ public class HongsExemption
         this(code, null, null);
     }
 
-    public HongsException toException() {
-        return new HongsException(this.getErrno(), this.getError(), this)
-             .setLocalizedOptions(this.getLocalizedOptions())
-             .setLocalizedContext(this.getLocalizedContext());
-    }
-
-    @Override
-    public int getState() {
-        return that.getState();
-    }
-
     @Override
     public int getErrno() {
         return that.getErrno();
@@ -71,6 +60,16 @@ public class HongsExemption
     @Override
     public String getError() {
         return that.getError();
+    }
+
+    @Override
+    public int getState() {
+        return that.getState();
+    }
+
+    @Override
+    public String getStage() {
+        return that.getStage();
     }
 
     @Override
@@ -119,6 +118,18 @@ public class HongsExemption
     public HongsExemption setLocalizedOptions(String... opts) {
         that.setLocalizedOptions(opts);
         return this;
+    }
+
+    @Override
+    public HongsExemption toExemption() {
+        return this;
+    }
+
+    @Override
+    public HongsException toException() {
+        return new HongsException(this.getErrno(), this.getError(), this)
+             .setLocalizedOptions(this.getLocalizedOptions())
+             .setLocalizedContext(this.getLocalizedContext());
     }
 
     /**

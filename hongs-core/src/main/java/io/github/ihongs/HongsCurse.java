@@ -21,7 +21,23 @@ public final class HongsCurse {
     }
 
     /**
-     * 接口代号
+     * 获取代号
+     * @return
+     */
+    public int getErrno() {
+        return this.code;
+    }
+
+    /**
+     * 获取描述
+     * @return
+     */
+    public String getError() {
+        return this.desc;
+    }
+
+    /**
+     * 接口状态
      * @return
      */
     public int getState() {
@@ -38,19 +54,35 @@ public final class HongsCurse {
     }
 
     /**
-     * 获取代号
+     * 接口代码
      * @return
      */
-    public int getErrno() {
-        return this.code;
-    }
+    public String getStage() {
+        if (code >= 600 ) {
+            return "Ex" + Integer.toString(code, 16);
+        } else
+        if (code >= 400 ) {
+            return "Er" + Integer.toString(code, 10);
+        }
 
-    /**
-     * 获取描述
-     * @return
-     */
-    public String getError() {
-        return this.desc;
+        String codx;
+        if (lang != null
+        && !lang.isEmpty()
+        && !lang.equals("default")
+        && !lang.equals("defects")) {
+            codx  = lang.replace( '/','.')
+                        .replace('\\','.')
+                  + ":";
+        } else {
+            codx  = "" ;
+        }
+        if (term != null) {
+            codx += term;
+        } else
+        if (desc != null) {
+            codx += desc;
+        }
+        return codx;
     }
 
     /**

@@ -66,23 +66,33 @@ public final class HongsCurse {
         }
 
         String codx;
+        if (term != null
+        && !term.isEmpty()) {
+            codx  = term;
+        } else
+        if (desc != null
+        && !desc.isEmpty()) {
+            codx  = desc;
+        } else
+        {
+            codx  = "error";
+        }
+
+        // 增加模块前缀
         if (lang != null
         && !lang.isEmpty()
         && !lang.equals("default")
         && !lang.equals("defects")) {
-            codx  = lang.replace( '/','.')
-                        .replace('\\','.')
-                  + ":";
-        } else {
-            codx  = "" ;
+            String coda;
+            coda  = lang.replace('/' , '.')
+                        .replace('\\', '.')
+                  +  ".";
+            if (codx.startsWith(coda) == false) {
+                codx  =  coda + codx;
+            }
         }
-        if (term != null) {
-            codx += term;
-        } else
-        if (desc != null) {
-            codx += desc;
-        }
-        return codx;
+
+        return  codx  ;
     }
 
     /**

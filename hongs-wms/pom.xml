@@ -167,7 +167,6 @@
                     <includes>
                         <include>assets/src/hongsedit.js</include>
                         <include>assets/src/hongsedge.js</include>
-                        <include>assets/src/hongsedge-*.js</include>
                         <include>centra/*.*</include>
                         <include>centre/*.*</include>
                     </includes>
@@ -184,7 +183,6 @@
                             <includes>
                                 <include>hongsedit.min.js</include>
                                 <include>hongsedge.min.js</include>
-                                <include>hongsedge-*.min.js</include>
                             </includes>
                         </aggregation>
                     </aggregations>

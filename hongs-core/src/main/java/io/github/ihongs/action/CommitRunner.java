@@ -22,12 +22,12 @@ public final class CommitRunner {
     }
 
     static public void run( Run run)
-    throws HongsException {
+    throws HongsException, HongsExemption {
         run(run, Core.getInstance());
     }
 
     static public void run( Run run, Core core)
-    throws HongsException {
+    throws HongsException, HongsExemption {
         // 全局中标识为事务模式
         // 外部已指定则不再处理
         if (core.containsKey(Cnst.REFLUX_MODE)) {
@@ -36,14 +36,13 @@ public final class CommitRunner {
                 run.run();
             } catch (Throwable ex) {
                 if (ex instanceof HongsException) {
-                    throw (HongsException) ex;
+                    throw (HongsException) ex ;
                 } else
                 if (ex instanceof HongsExemption) {
-                    throw (HongsExemption) ex;
+                    throw (HongsExemption) ex ;
                 }
 
-                // 其他异常需包裹
-                throw new  HongsException (0x110c, ex);
+                throw new  HongsException (ex);
             }
             return;
         }
@@ -76,10 +75,10 @@ public final class CommitRunner {
                 }
 
                 if (ex instanceof HongsException) {
-                    throw (HongsException) ex;
+                    throw (HongsException) ex ;
                 } else
                 if (ex instanceof HongsExemption) {
-                    throw (HongsExemption) ex;
+                    throw (HongsExemption) ex ;
                 }
 
                 // 其他异常需包裹

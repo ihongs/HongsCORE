@@ -876,10 +876,10 @@ public class ActionHelper implements Cloneable
     HttpServletResponse rs = getResponse();
     Throwable ta = (Throwable) ex;
     Throwable te = ta.getCause( );
-    int ero = ex.getState();
-    String ern ;
-    String err ;
-    String msg ;
+    int      ero = ex.getState( );
+    String   ern = ex.getStage( );
+    String   err ;
+    String   msg ;
 
     // 错误消息
       err = ta.getMessage();
@@ -896,7 +896,6 @@ public class ActionHelper implements Cloneable
 
     // 外部错误
     if (ero >= 400 && ero <= 499) {
-        ern = "Er" + Integer.toString(ero, 10);
         if (null != rs) {
             rs.setStatus(ero);
         }
@@ -906,7 +905,6 @@ public class ActionHelper implements Cloneable
     } else
     // 内部错误
     if (ero >= 500 && ero <= 599) {
-        ern = "Er" + Integer.toString(ero, 10);
         if (null != rs) {
             rs.setStatus(ero);
         }
@@ -916,7 +914,6 @@ public class ActionHelper implements Cloneable
     } else
     // 内部异常
     if (ero >= 600) {
-        ern = "Ex" + Integer.toString(ero, 16);
         if (null != rs) {
             rs.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }
@@ -926,7 +923,6 @@ public class ActionHelper implements Cloneable
     } else
     // 其他异常
     {
-        ern = "Er500";
         if (null != rs) {
             rs.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
         }

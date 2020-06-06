@@ -86,13 +86,13 @@ public final class HongsCurse {
             String coda;
             coda  = lang.replace('/' , '.')
                         .replace('\\', '.')
-                  +  ".";
-            if (codx.startsWith(coda) == false) {
-                codx  =  coda + codx;
+                  + "." ;
+            if (!codx.startsWith(coda)) {
+                 codx  = (coda + codx);
             }
         }
 
-        return  codx  ;
+        return codx;
     }
 
     /**

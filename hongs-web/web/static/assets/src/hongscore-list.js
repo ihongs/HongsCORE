@@ -559,7 +559,7 @@ HsList.prototype = {
             chk.closest ( "td" )
                .siblings( "td" )
                .first().trigger("click");
-            chk.prop("chekced",  true  );
+            chk.prop("checked",  true  );
         }
         return chk;
     },
@@ -907,7 +907,7 @@ jQuery.fn.hsList = function(opts) {
         // 打开选中只能选一行, 发送选中可以选多行
         // 复选框太小不便操作, 当点击表格列时单选
         if ($(evt.target).is("a,input,textarea,button,select,option")
-        ||  $(this).is(".dont-check")) {
+        ||  $(this).is(".dont-check,._admin,._amenu")) {
             return;
         }
         var tr = $(this).closest("tr");

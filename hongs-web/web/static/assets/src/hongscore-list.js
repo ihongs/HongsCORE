@@ -554,14 +554,15 @@ HsList.prototype = {
     getRow   : function(o) {
         var chk = jQuery(o).closest("tr,.itembox").find(".checkone,[name=id],[data-fn=id],[data-ft=id]").first();
         // 规避未选中无法获取参数的问题
-        if (chk.is( ":checkbox, :radio" )
-        && !chk.is( ":checked" ) ) {
-            chk.closest ( "tr" )
-               .siblings( "tr" )
-               .find(".checkone:checked")
-               .prop( "checked" , false )
+        if (chk.is  (".checkone")
+        &&  chk.is  (":checkbox,:radio")) {
+            chk.not (":checked" )
+               .prop( "checked" , true  )
                .change();
-            chk.prop( "checked" , true  )
+            chk.closest ( "tr,.itembox" )
+               .siblings( "tr,.itembox" )
+               .find(":checked.checkone")
+               .prop( "checked" , false )
                .change();
         }
         return chk;

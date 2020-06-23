@@ -58,6 +58,7 @@ public final class HongsCurse {
      * @return
      */
     public String getStage() {
+        int code  = getState(); // 尝试转换
         if (code >= 600 ) {
             return "Ex" + Integer.toString(code, 16);
         } else

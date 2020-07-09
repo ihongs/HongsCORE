@@ -305,9 +305,13 @@
                         if ("image".equals(type)) {
                             mode  = "hsView";
                             kind  =  "_view";
-                            String moda = Synt.declare( info.get("thumb-mode"), "");
-                            String size = Synt.declare( info.get("thumb-size"), "");
-                            if (size.length( ) != 0  ) {
+                            String moda = Synt.declare(info.get("thumb-mode"), "");
+                            String size = Synt.declare(info.get("thumb-size"), "");
+                            if (rptd.length( ) != 0  
+                            &&  moda.length( ) == 0 ) {
+                                moda = "keep";
+                            }
+                            if (size.length( ) != 0 ) {
                                 Matcher m = Pattern.compile("(\\d+)\\*(\\d+)").matcher(size);
                                 if ( m.find( ) ) {
                                     // 限制最大尺寸, 避免撑开容器

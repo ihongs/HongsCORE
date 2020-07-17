@@ -6,6 +6,7 @@ import io.github.ihongs.CoreConfig;
 import io.github.ihongs.HongsException;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.anno.Action;
+import io.github.ihongs.action.anno.CommitSuccess;
 import io.github.ihongs.action.anno.Verify;
 import io.github.ihongs.db.DB;
 import io.github.ihongs.db.Table;
@@ -33,6 +34,7 @@ public class SignAction {
      */
     @Action("create")
     @Verify(conf="master", form="sign")
+    @CommitSuccess
     public void signCreate(ActionHelper ah) throws HongsException {
         String place    = Synt.declare(ah.getParameter("place"), "centre");
         String username = Synt.declare(ah.getParameter("username"), "");

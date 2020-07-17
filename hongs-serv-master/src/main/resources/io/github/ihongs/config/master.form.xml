@@ -25,13 +25,21 @@
             <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
             <param name="down-remote">yes</param>
         </field>
+        <field name="note" >
+        </field>
+        <field name="title">
+        </field>
+        <field name="email">
+        </field>
+        <field name="phone">
+        </field>
     </form>
     <form name="mine">
         <field name="username" required="yes">
         </field>
-        <field name="passolde">
+        <field name="password" required="no" >
         </field>
-        <field name="password">
+        <field name="passolde" required="no" >
         </field>
         <field name="name" required="yes">
         </field>
@@ -42,6 +50,14 @@
             <param name="thumb-mode">pick</param>
             <param name="thumb-size">_lg:300*300,_md:150*150,_sm:75*75</param>
             <param name="down-remote">yes</param>
+        </field>
+        <field name="note" >
+        </field>
+        <field name="title">
+        </field>
+        <field name="email">
+        </field>
+        <field name="phone">
         </field>
     </form>
     <form name="user">

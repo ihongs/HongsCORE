@@ -28,6 +28,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      */
     @Action("create")
     @Verify(conf="master", form="sign")
+    @CommitSuccess
     @Override
     public void signCreate(ActionHelper ah) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("master");
@@ -44,7 +45,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      * @throws HongsException
      */
     @Action("user/create")
-    @Verify(conf="master", form="regs")
+    @Verify(conf="master", form="regs", type=0, trim=1)
     @CommitSuccess
     public void userCreate(ActionHelper ah) throws HongsException {
         CoreConfig cc = CoreConfig.getInstance("master");
@@ -82,6 +83,7 @@ public class SignAction extends io.github.ihongs.serv.centra.SignAction {
      * @throws HongsException
      */
     @Action("user/delete")
+    @CommitSuccess
     public void userDelete(ActionHelper ah) throws HongsException {
         String id = (String) ah.getSessibute(Cnst.UID_SES);
         if (id == null) {

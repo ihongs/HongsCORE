@@ -431,8 +431,11 @@
                 context.find(v).remove();
             }
         });
+        if (loadres._deny_) {
+            context.find( loadres. _deny_ ).remove();
+        }
         // 无行内菜单项则隐藏之
-        if (listbox.find("thead tr._amenu ul>li>a" ).size() == 0 ) {
+        if (listbox.find("thead tr._amenu ul>li>a" ).size( ) == 0) {
             listbox.find("thead tr._amenu").remove();
         }
         // 移除参数限定的过滤项

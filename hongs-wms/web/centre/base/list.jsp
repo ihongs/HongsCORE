@@ -160,7 +160,7 @@
         </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <div class="filt-group form-group form-group-sm clearfix" data-find="cuser">
+        <div class="mine-group form-group form-group-sm clearfix" data-find="cuser">
             <label class="col-md-3 col-sm-2 control-label text-right">属主</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="cuser" value="" data-ft="_mine"/>
@@ -220,7 +220,7 @@
                 <%if (_fields.containsKey(LOGO)) {%>
                 <div style="display: table-cell; width: 10px; padding: 0px; vertical-align: top;">
                     <div class="review" style="height: 100px; overflow: hidden; cursor: pointer;">
-                        <div data-fn="<%=LOGO%>" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
+                        <div data-fn="<%=LOGO%>" data-ft="_logo" style="width: 100px; height: 100px; margin-right: 15px; border-radius: 4px;"></div>
                     </div>
                 </div>
                 <%} /*End If*/%>
@@ -229,7 +229,7 @@
                         <div data-fn="<%=NAME%>" style="color: #444;"></div>
                         <div data-fn="<%=NOTE%>" style="color: #888;"></div>
                     </div>
-                    <div data-ft="edit" data-fn="<%=USER%>" class="btn-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
+                    <div data-fn="<%=USER%>" data-ft="_edit" class="btn-group edit-group" style="position: absolute; right: 0; bottom: 0; opacity: 0.8; display: none;">
                         <button type="button" class="btn btn-sm btn-default update"><span class="glyphicon glyphicon-edit "></span></button>
                         <button type="button" class="btn btn-sm btn-default delete"><span class="glyphicon glyphicon-trash"></span></button>
                     </div>
@@ -250,20 +250,6 @@
     var filtbox = context.find(".filtbox");
     var statbox = context.find(".statbox");
 
-    // 权限控制
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/create.act")) context.find(".create").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/update.act")) context.find(".update").remove();
-    if (!hsChkUri("<%=_module%>/<%=_entity%>/delete.act")) context.find(".delete").remove();
-    context.find("[data-ft=edit]:empty").remove(); // 没有修改或删除权限就干脆移除掉编辑按钮组
-
-    // 附加控制
-    if (!window.HsCUID) {
-        findbox.find("[data-ft=_mine]").closest(".form-group").remove();
-    }
-    if (findbox.find("[data-ft=_sort]").closest(".form-group").find("option").size() <= 3 ) {
-        findbox.find("[data-ft=_sort]").closest(".form-group").remove();
-    }
-
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
@@ -283,8 +269,8 @@
         ],
         fillList    : hsListFillItem,
         fillPage    : hsListFillMore,
-        _fill_logo  : hsListFillLogo,
-        _fill_edit  : hsListShowEdit
+        _fill__logo : hsListFillLogo,
+        _fill__edit : hsListShowEdit
     });
 
     var filtobj = filtbox.hsForm({
@@ -306,18 +292,6 @@
     listobj._url = hsSetPms(listobj._url, loadres);
     statobj.murl = hsSetPms(statobj.murl, loadres);
     statobj.curl = hsSetPms(statobj.curl, loadres);
-
-    // 移除参数限定的过滤项
-    for(var fn in loadres) {
-    if (loadres   [ fn ] ) {
-        findbox.children("[data-find='"+fn+"']").remove();
-    }}
-
-    // 无过滤或统计则隐藏之
-    if (filtbox.find(".filt-group").size() == 0
-    &&  statbox.find(".stat-group").size() == 0) {
-        context.find(".filter").remove();
-    }
 
     // 延迟加载
     context.on("opened",".filtbox", function() {
@@ -348,6 +322,36 @@
         // 外部定制
         if (window["<%=_funcId%>"]) {
             window["<%=_funcId%>"](context, listobj, filtobj, statobj);
+        }
+
+        // 权限控制
+        $.each({
+            "create":".create", "update":".update", "delete":".delete"
+        }, function(k, v) {
+            if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
+                context.find(v).remove();
+            }
+        });
+        // 无行内菜单项则隐藏之
+        if (context.find(".edit-group button").size() == 0 ) {
+            context.find(".edit-group").remove();
+        }
+        // 无可排序选项则隐藏之
+        if (findbox.find(".sort-group option").size() <= 3 ) {
+            findbox.find(".sort-group").remove();
+        }
+        // 用户未登录则隐藏我的
+        if (!window.HsCUID) {
+            findbox.find(".mine-group").remove();
+        }
+        // 移除参数限定的过滤项
+        for(var n in loadres) if (loadres[n]) {
+            findbox.children("[data-find='"+n+"']").remove();
+        }
+        // 无过滤或统计则隐藏之
+        if (filtbox.find(".filt-group").size() == 0
+        &&  statbox.find(".stat-group").size() == 0) {
+            context.find(".filter").remove();
         }
 
         // 加载数据

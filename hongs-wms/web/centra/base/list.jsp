@@ -320,20 +320,6 @@
     var filtbox = context.find(".filtbox");
     var statbox = context.find(".statbox");
 
-    // 权限控制
-    $.each({
-        "search":".review", "create":".create",
-        "update":".update", "delete":".delete",
-        "reveal":".reveal,.record"
-    }, function(k, v) {
-        if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
-            context.find(v).remove();
-        }
-    });
-    if (listbox.find("thead tr[data-fn='_'] ul > li").size( )) {
-        listbox.find("thead tr[data-fn='_']").hide( );
-    }
-
     //** 列表、搜索表单 **/
 
     var listobj = context.hsList({
@@ -388,21 +374,6 @@
     statobj.murl = hsSetPms(statobj.murl, loadres);
     statobj.curl = hsSetPms(statobj.curl, loadres);
 
-    // 移除参数限定的过滤项
-    for(var fn in loadres) {
-    if (loadres   [ fn ] ) {
-        findbox.children("[data-find='"+fn+"']").remove();
-        findbox.find(".record").remove();
-    }}
-
-    // 无过滤或统计则隐藏之
-    if (filtbox.find(".filt-group").size() == 0) {
-        findbox.find(".filter").remove();
-    }
-    if (statbox.find(".stat-group").size() == 0) {
-        findbox.find(".statis").remove();
-    }
-
     // 延迟加载
     context.on("opened",".filtbox", function() {
         if (filtbox.data("fetched") != true) {
@@ -448,6 +419,32 @@
         // 外部定制
         if (window["<%=_funcId%>"]) {
             window["<%=_funcId%>"](context, listobj, filtobj, statobj);
+        }
+
+        // 权限控制
+        $.each({
+            "search":".review", "create":".create",
+            "update":".update", "delete":".delete",
+            "reveal":".reveal,.record"
+        }, function(k, v) {
+            if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
+                context.find(v).remove();
+            }
+        });
+        // 无行内菜单项则隐藏之
+        if (listbox.find("thead tr._amenu ul>li>a" ).size() == 0 ) {
+            listbox.find("thead tr._amenu").remove();
+        }
+        // 移除参数限定的过滤项
+        for(var n in loadres) if (loadres[n]) {
+            findbox.children("[data-find='"+n+"']").remove();
+        }
+        // 无过滤或统计则隐藏之
+        if (filtbox.find(".filt-group").size() == 0) {
+            findbox.find(".filter").remove();
+        }
+        if (statbox.find(".stat-group").size() == 0) {
+            findbox.find(".statis").remove();
         }
 
         // 加载数据

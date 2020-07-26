@@ -332,6 +332,9 @@
                 context.find(v).remove();
             }
         });
+        if (loadres._deny_) {
+            context.find(loadres._deny_).remove();
+        }
         // 无行内菜单项则隐藏之
         if (context.find(".edit-group button").size() == 0 ) {
             context.find(".edit-group").remove();

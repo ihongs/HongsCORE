@@ -287,6 +287,8 @@
     });
 
     var loadres = hsSerialDat(loadres);
+    var denycss = (loadres._deny_||"").split (",");
+    delete loadres._deny_ ;
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
@@ -332,24 +334,27 @@
                 context.find(v).remove();
             }
         });
-        if (loadres._deny_) {
-            context.find(loadres._deny_).remove();
-        }
-        // 无行内菜单项则隐藏之
-        if (context.find(".edit-group button").size() == 0 ) {
-            context.find(".edit-group").remove();
-        }
-        // 无可排序选项则隐藏之
-        if (findbox.find(".sort-group option").size() <= 3 ) {
-            findbox.find(".sort-group").remove();
-        }
+        // 外部限制
+        $.each(denycss, function(i, n) {
+            if (/^find\./.test(n)) {
+                n = "[data-find='"+n.substring(5)+"']";
+                findbox.find(n).remove();
+            } else
+            {
+                context.find(n).remove();
+            }
+        });
         // 用户未登录则隐藏我的
         if (!window.HsCUID) {
             findbox.find(".mine-group").remove();
         }
-        // 移除参数限定的过滤项
-        for(var n in loadres) if (loadres[n]) {
-            findbox.children("[data-find='"+n+"']").remove();
+        // 无可排序选项则隐藏之
+        if (findbox.find(".sort-group option").size() <= 3) {
+            findbox.find(".sort-group").remove();
+        }
+        // 无行内菜单项则隐藏之
+        if (context.find(".edit-group button").size() == 0) {
+            context.find(".edit-group").remove();
         }
         // 无过滤或统计则隐藏之
         if (filtbox.find(".filt-group").size() == 0

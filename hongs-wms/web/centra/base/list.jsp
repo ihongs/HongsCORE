@@ -368,6 +368,8 @@
     });
 
     var loadres = hsSerialDic(loadbox);
+    var denycss = (loadres._deny_||"").split (",");
+    delete loadres._deny_ ;
 
     // 绑定参数
     listobj._url = hsSetPms(listobj._url, loadres);
@@ -423,24 +425,38 @@
 
         // 权限控制
         $.each({
-            "search":".review", "create":".create",
-            "update":".update", "delete":".delete",
-            "reveal":".reveal,.record"
+            "create":".create", "update":".update", "delete":".delete",
+            "search":".review", "reveal":".reveal , .record"
         }, function(k, v) {
             if (! hsChkUri("<%=_module%>/<%=_entity%>/"+k+".act")) {
                 context.find(v).remove();
             }
         });
-        if (loadres._deny_) {
-            context.find( loadres. _deny_ ).remove();
-        }
+        // 外部限制
+        $.each(denycss, function(i, n) {
+            if (/^stat\./.test(n)) {
+                n = ".stat-group[data-find='"+n.substring(5)+"']";
+                statbox.find(n).remove();
+            } else
+            if (/^filt./.test(n)) {
+                n = ".filt-group[data-find='"+n.substring(5)+"']";
+                filtbox.find(n).remove();
+            } else
+            if (/^find\./.test(n)) {
+                n = "[data-find='"+n.substring(5)+"']";
+                findbox.find(n).remove();
+            } else
+            if (/^list\./.test(n)) {
+                n = "th[data-fn='"+n.substring(5)+"']";
+                listbox.find(n).remove();
+            } else
+            {
+                context.find(n).remove();
+            }
+        });
         // 无行内菜单项则隐藏之
         if (listbox.find("thead tr._amenu ul>li>a" ).size( ) == 0) {
             listbox.find("thead tr._amenu").remove();
-        }
-        // 移除参数限定的过滤项
-        for(var n in loadres) if (loadres[n]) {
-            findbox.children("[data-find='"+n+"']").remove();
         }
         // 无过滤或统计则隐藏之
         if (filtbox.find(".filt-group").size() == 0) {

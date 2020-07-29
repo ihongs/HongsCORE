@@ -1,10 +1,10 @@
 <root>
-    <form name="forum">
-        <field text="版块">
+    <form name="theme">
+        <field text="主题">
             <param name="db-name">centra/data/upland/data</param>
             <param name="db-path">centra/data/upland/data</param>
-            <param name="form_id">centra-upland-forum</param>
-            <param name="part_id">forum</param>
+            <param name="form_id">centra-upland-theme</param>
+            <param name="part_id">theme</param>
             <param name="wordable">name,note</param>
         </field>
         <field text="ID" name="id" type="hidden">
@@ -76,7 +76,7 @@
         </field>
     </form>
     <form name="topic">
-        <field text="主题">
+        <field text="话题">
             <param name="db-name">centra/data/upland/data</param>
             <param name="db-path">centra/data/upland/data</param>
             <param name="form_id">centra-upland-topic</param>
@@ -104,22 +104,22 @@
             <param name="srchable">yes</param>
             <param name="type">html</param>
         </field>
-        <field text="简介" name="note" type="text">
+        <field text="摘要" name="note" type="text">
             <param name="listable">yes</param>
             <param name="disabled">yes</param>
             <param name="default">=@alias:body</param>
             <param name="strip">html</param>
-            <param name="limit">100</param>
+            <param name="limit">100 </param>
         </field>
         <field text="附件" name="file" type="file" repeated="yes">
             <!-- 文件处于后台保护范围内 -->
-            <param name="path">centra/data/upland/upload/file</param>
-            <param name="href">centra/data/upland/upload/file</param>
+            <param name="path">centra/data/upland/data/file</param>
+            <param name="href">centra/data/upland/data/file</param>
             <param naem="name-digest">md5</param>
             <param name="keep-naming">yes</param>
             <param name="pass-source">yes</param>
         </field>
-        <field text="用户" name="cuser" type="fork" repeated="yes">
+        <field text="管理员" name="owner" type="fork" repeated="yes">
             <param name="listable">yes</param>
             <param name="readonly">yes</param>
             <param name="data-vk">id</param>
@@ -151,37 +151,37 @@
             <param name="deforce">create</param>
         </field>
     </form>
-    <form name="issue">
+    <form name="tweet">
         <field text="评论">
             <param name="db-name">centra/data/upland/data</param>
             <param name="db-path">centra/data/upland/data</param>
-            <param name="form_id">centra-upland-issue</param>
-            <param name="part_id">issue</param>
+            <param name="form_id">centra-upland-tweet</param>
+            <param name="part_id">tweet</param>
         </field>
         <field text="ID" name="id" type="hidden">
             <param name="default">=%id</param>
             <param name="deforce">create</param>
         </field>
-        <field text="主题" name="topic_id" type="fork">
+        <field text="所属话题" name="topic_id" type="fork">
             <param name="listable">yes</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
             <param name="data-at">centra/data/upland/topic/search</param>
             <param name="data-al">centra/data/upland/topic/pick.html</param>
         </field>
-        <field text="评论" name="issue_id" type="fork">
+        <field text="回复评论" name="tweet_id" type="fork">
             <param name="listable">yes</param>
             <param name="data-vk">id</param>
             <param name="data-tk">name</param>
-            <param name="data-at">centra/data/upland/issue/search</param>
-            <param name="data-al">centra/data/upland/issue/pick.html</param>
+            <param name="data-at">centra/data/upland/tweet/search</param>
+            <param name="data-al">centra/data/upland/tweet/pick.html</param>
         </field>
-        <field text="内容" name="note"  type="textarea">
+        <field text="内容" name="note" type="textarea">
             <param name="type">text</param>
             <param name="listable">yes</param>
             <param name="srchable">yes</param>
         </field>
-        <field text="用户" name="cuser" type="fork">
+        <field text="作者" name="cuser" type="fork">
             <param name="listable">yes</param>
             <param name="readonly">yes</param>
             <param name="data-vk">id</param>
@@ -200,12 +200,18 @@
             <param name="default">=%now</param>
             <param name="deforce">create</param>
         </field>
+        <field text="置顶" name="boost" type="number">
+            <param name="type">long</param>
+            <param name="default">0</param>
+            <param name="listable">yes</param>
+            <param name="sortable">yes</param>
+        </field>
     </form>
     <form name="image">
         <field name="file" type="file" required="yes" repeated="yes">
             <!-- 文件处于后台保护范围内 -->
-            <param name="path">centra/data/upland/upload/image</param>
-            <param name="href">centra/data/upland/upload/image</param>
+            <param name="path">centra/data/upland/data/image</param>
+            <param name="href">centra/data/upland/data/image</param>
             <param name="extn">jpeg,jpg,png,gif,bmp</param>
             <param name="name-digest">MD5</param>
             <param name="pass-source">yes</param>

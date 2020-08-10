@@ -905,6 +905,31 @@ jQuery.fn.hsList = function(opts) {
 
 (function($) {
     $(document)
+    .on("mouseover", ".table-responsive-revised th,.table-responsive-revised td",
+    function(evt) {
+        if ($(this).children().not("a,b,i,sub,sup,span").size()) {
+            return;
+        }
+        // 配合 CSS, 当内容省略时鼠标悬浮可见更多
+        if (  this .offsetWidth
+           <  this .scrollWidth  ) {
+        if ($(this).attr("title" )
+        &&  $(this).data("title")) {
+            return;
+        }
+            var tt = $( this ).text();
+            $(this).attr("title", tt);
+        } else {
+            $(this).attr("title", "");
+        }
+    })
+    .on("mouseout" , ".table-responsive-revised th,.table-responsive-revised td",
+    function(evt) {
+        if ($(this).children().not("a,b,i,sub,sup,span").size()) {
+            return;
+        }
+            $(this).attr("title", "");
+    })
     .on("click" , ".listbox tbody td",
     function(evt) {
         // 工具按钮有三类, 打开|打开选中|发送选中

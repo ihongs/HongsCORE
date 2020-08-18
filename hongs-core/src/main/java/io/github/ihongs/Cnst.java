@@ -50,7 +50,7 @@ public final class Cnst {
 
     //** 关系符号 **/
 
-    public static final String OR_REL =  "or"; // 条件关系  (or  , nr  )
+    public static final String OR_REL =  "or"; // 条件关系  (or, nr, ar)
 
     public static final String IS_REL =  "is"; // 是否为空  (NULL, WELL)
 
@@ -74,11 +74,11 @@ public final class Cnst {
 
     public static final String IN_REL =  "in"; // 包含
 
-    public static final String NI_REL =  "ni"; // 不包含
+    public static final String NI_REL =  "ni"; // 不包含    (not in)
 
-    public static final String AI_REL =  "ai"; // 全包含    (Lucene 特有, all in)
+    public static final String AI_REL =  "ai"; // 全包含    (all in, DB 未实现)
 
-    public static final String WT_REL =  "wt"; // 权重      (Lucene 特有, weight)
+    public static final String WT_REL =  "wt"; // 权重      (weight, DB 未实现)
 
     //** 配置扩展 **/
 

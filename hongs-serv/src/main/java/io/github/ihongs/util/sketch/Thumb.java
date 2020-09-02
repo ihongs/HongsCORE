@@ -36,15 +36,27 @@ public class Thumb {
     }
 
     public Thumb (File   src) throws IOException {
-        this.src = Thumbnails.of(src).useExifOrientation(true).scale(1).asBufferedImage(); // 纠正方向, 规避 iOS 旋转
+        this.src = Thumbnails.of(src)
+            .useExifOrientation(true)               // 规避图片旋转
+            .imageType(BufferedImage.TYPE_INT_ARGB) // 规避透明变黑
+            .scale(1)
+            .asBufferedImage();
     }
 
     public Thumb (String src) throws IOException {
-        this.src = Thumbnails.of(src).useExifOrientation(true).scale(1).asBufferedImage(); // 纠正方向, 规避 iOS 旋转
+        this.src = Thumbnails.of(src)
+            .useExifOrientation(true)               // 规避图片旋转
+            .imageType(BufferedImage.TYPE_INT_ARGB) // 规避透明变黑
+            .scale(1)
+            .asBufferedImage();
     }
 
     public Thumb (InputStream src) throws IOException {
-        this.src = Thumbnails.of(src).useExifOrientation(true).scale(1).asBufferedImage(); // 纠正方向, 规避 iOS 旋转
+        this.src = Thumbnails.of(src)
+            .useExifOrientation(true)               // 规避图片旋转
+            .imageType(BufferedImage.TYPE_INT_ARGB) // 规避透明变黑
+            .scale(1)
+            .asBufferedImage();
     }
 
     /**

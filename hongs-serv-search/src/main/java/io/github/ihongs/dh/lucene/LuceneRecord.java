@@ -308,22 +308,20 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
      */
     @Override
     public Map create(Map rd) throws HongsException {
-        String id = add(  rd  );
-        rd.put(Cnst.ID_KEY, id);
+        String id = Synt.asString(rd.get(Cnst.ID_KEY));
+        if (id == null || id.isEmpty()) {
+            id  =  Core.newIdentity();
+            rd.put(Cnst.ID_KEY , id );
+        }
 
-        Set<String> fs = Synt.toTerms(rd.get(Cnst.RB_KEY));
-        if (null == fs || fs .isEmpty()) {
-            fs = getListable( );
-        if (null == fs || fs .isEmpty()) {
-            return  rd;
-        }}
+        Set    rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
+        if (rb == null || rb.isEmpty()) {
+            rb  =  /**/ getListable();
+        }
 
-        Map sd = new LinkedHashMap();
-        for(String fn : fs) {
-        if ( ! fn.contains ( "." ) ) {
-            sd.put(fn , rd.get(fn) );
-        }}
-        return sd;
+        Document doc = padDoc(rd);
+                 addDoc(doc /**/);
+        return   padDat(doc , rb);
     }
 
     /**

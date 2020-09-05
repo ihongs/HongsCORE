@@ -812,6 +812,7 @@ public class ActionHelper implements Cloneable
    * 针对 create 等
    * @param msg
    * @param info
+   * @deprecated reply(Synt.mapOf("msg", msg, "info", info))
    */
   public void reply(String msg, Map info)
   {
@@ -828,6 +829,7 @@ public class ActionHelper implements Cloneable
    * 针对 update,delete 等
    * @param msg
    * @param size
+   * @deprecated reply(Synt.mapOf("msg", msg, "size", size))
    */
   public void reply(String msg, int size)
   {

@@ -683,12 +683,7 @@ implements IEntity
         page.put("state", 1);
         page.put("count", 1);
     } else
-    if (rn >= 1
-    ||  id == null
-    ||  id.equals("")
-    ||  id instanceof Map
-    ||  id instanceof Collection
-    ||  id instanceof Object[ ]) {
+    if (rn > 0) {
         page.put("state", 0);
         page.put("count", 0);
     } else {

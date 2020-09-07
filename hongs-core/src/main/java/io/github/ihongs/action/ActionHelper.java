@@ -790,29 +790,18 @@ public class ActionHelper implements Cloneable
    */
   public void reply(Map map)
   {
-    if( map != null ) {
-    if(!map.containsKey("ok" )) {
-        map.put("ok", true);
-    }
-    if(!map.containsKey("ern")) {
-        map.put("ern", "" );
-    }
-    if(!map.containsKey("err")) {
-        map.put("err", "" );
-    }
-    if(!map.containsKey("msg")) {
-        map.put("msg", "" );
-    }
+    if (map != null
+    && !map.containsKey("ok")) {
+        map.put( "ok" , true );
     }
     this.responseData = map;
   }
 
   /**
-   * 返回添加结果
+   * 返回结果信息
    * 针对 create 等
    * @param msg
    * @param info
-   * @deprecated reply(Synt.mapOf("msg", msg, "info", info))
    */
   public void reply(String msg, Map info)
   {
@@ -825,19 +814,18 @@ public class ActionHelper implements Cloneable
   }
 
   /**
-   * 返回操作行数
-   * 针对 update,delete 等
+   * 返回影响行数
+   * 针对 update 等
    * @param msg
-   * @param size
-   * @deprecated reply(Synt.mapOf("msg", msg, "size", size))
+   * @param inte
    */
-  public void reply(String msg, int size)
+  public void reply(String msg, int inte)
   {
     Map map = new HashMap();
     if (null !=  msg) {
         map.put("msg", msg);
     }
-    map.put("size", size);
+    map.put("inte", inte);
     reply(map);
   }
 

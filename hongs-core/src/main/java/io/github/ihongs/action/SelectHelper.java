@@ -35,6 +35,7 @@ public class SelectHelper {
     public  final static  byte FORK = 16;
     public  final static  byte FORM = 32;
     public  final static  byte INFO = 64;
+    public  final static  byte ENUS = ENUM;
 
     private final static  Pattern  HOSTP = Pattern.compile("^(\\w+:)?//");
     private final static  Pattern  SERVP = Pattern.compile("^\\$\\{?SER");
@@ -269,10 +270,10 @@ public class SelectHelper {
 
         // 附带枚举数据
         if (withEnum) {
-            /**/ Map  data = (Map ) values.get("enum");
+            /**/ Map  data = (Map ) values.get("enus");
             if (data == null) {
                 data  = new LinkedHashMap();
-                values.put( "enum" , data );
+                values.put( "enus" , data );
             }   injectData(  data  , enums);
         }
 
@@ -337,10 +338,10 @@ public class SelectHelper {
 
         Map xnum = null;
         if (1 == (1 & action)) {
-            xnum = (Map) values.get("enum");
+            xnum = (Map) values.get("enus");
             if (xnum == null ) {
                 xnum  = new LinkedHashMap();
-                values.put( "enum" , xnum );
+                values.put( "enus" , xnum );
             }
         }
 
@@ -372,7 +373,7 @@ public class SelectHelper {
             Map fields = et.getValue();
             Map valuez = new HashMap();
             Map anum   = new HashMap();
-            valuez.put( "enum", anum );
+            valuez.put( "enus", anum );
             valuez.put( "list", maps.get(fn) );
 
             try {
@@ -398,16 +399,16 @@ public class SelectHelper {
         injectData(data, enums);
     }
 
-    public void injectText(Map info) {
-        injectText(info, enums);
-    }
-
     public void injectInfo(Map info) {
         injectInfo(info, infos);
     }
 
     public void injectDefs(Map info) {
         injectDefs(info, infos);
+    }
+
+    public void injectText(Map info) {
+        injectText(info, enums);
     }
 
     public void injectTime(Map info) {

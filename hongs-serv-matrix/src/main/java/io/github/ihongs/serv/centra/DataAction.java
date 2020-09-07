@@ -132,21 +132,14 @@ public class DataAction extends SearchAction {
             Set ab = Synt.toTerms(req.get(Cnst.AB_KEY));
             if (null != ab) {
                 byte md = 0;
-                if (ab.contains(".menu")
-                ||  ab.contains(".enum")) md += SelectHelper.ENUM;
-                if (ab.contains(".form")) md += SelectHelper.FORM;
+                if (ab.contains(".enus")) md += SelectHelper.ENUM;
                 if (ab.contains("_text")) md += SelectHelper.TEXT;
                 if (ab.contains("_time")) md += SelectHelper.TIME;
                 if (ab.contains("_link")) md += SelectHelper.LINK;
                 if (ab.contains("_fork")) md += SelectHelper.FORK;
+                if (ab.contains(".form")) md += SelectHelper.FORM;
                 if (md != 0) {
                     new SelectHelper().addItemsByForm(mod, ent).select(rsp, md);
-                }
-
-                // 规避关键词
-                if (ab.contains(".menu")
-                &&  rsp.containsKey("enum") ) {
-                    rsp.put("menu", rsp.remove("enum"));
                 }
 
                 // 新的和旧的

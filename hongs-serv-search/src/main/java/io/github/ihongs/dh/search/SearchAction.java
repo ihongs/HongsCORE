@@ -99,7 +99,7 @@ public class SearchAction extends JAction {
         Map xd = sh.acount(rd);
         atitle(sr, rd, xd); // 增加标题
 
-        Map sd = Synt.mapOf("info" , xd);
+        Map sd = Synt.mapOf("enus" , xd);
         sd = getRspMap(helper, sr, "acount", sd);
 
         helper.reply(sd);
@@ -118,7 +118,7 @@ public class SearchAction extends JAction {
         Map xd = sh.amount(rd);
         atitle(sr, rd, xd); // 增加标题
 
-        Map sd = Synt.mapOf("info" , xd);
+        Map sd = Synt.mapOf("enus" , xd);
         sd = getRspMap(helper, sr, "amount", sd);
 
         helper.reply(sd);

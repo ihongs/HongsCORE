@@ -274,7 +274,7 @@
     });
 
     var filtobj = filtbox.hsForm({
-        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enum",
+        _url: "<%=_module%>/<%=_entity%>/select.act?<%=Cnst.AB_KEY%>=.enus",
         _doll__enum : hsListDollFilt,
         _fill__enum : hsListFillFilt,
         _fill__sort : hsListInitSort,

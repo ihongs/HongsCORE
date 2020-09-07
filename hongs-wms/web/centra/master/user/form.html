@@ -1,7 +1,7 @@
 <h2>{DO}用户</h2>
 <div id="master-user-form" class="hide-roles"
      data-topple="hsForm"
-     data-load-url="centra/master/user/info.act?ab=.enum&amp;with-roles=default"
+     data-load-url="centra/master/user/info.act?ab=enus&amp;with-roles=default"
      data-save-url="centra/master/user/save.act"
      data--0="_fill_head: (hsFormFillView) ">
     <form action="" method="POST" enctype="multipart/form-data" autocomplete="off">
@@ -114,7 +114,7 @@
 
         // 权限、分组以及密码
         context.on("loadBack", function(ev, rd) {
-            if (!rd["enum"]["roles..role"].length ) {
+            if (!rd["enus"]["roles..role"].length ) {
                 context.find(".role-info").remove();
             } else {
                 context.removeClass( "hide-roles" );

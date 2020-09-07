@@ -1,13 +1,14 @@
 
 # 更新日志
 
+* 2020/09/06 返回数据 size 更名为 inte, enum 更名为 enus; ab 参数 .enum 更名为 .enus
 * 2019/08/10 不再遵循 REST/CRUD 的资源4个方法规则, 取消统计和历史的虚拟子实体层级, 方法直接命名在主实体上; 并增加 select 接口为创建时提供默认值和枚举等, 使创建不再依赖查询权限
 * 2019/08/01 升级 lucene 到 7.7.2, 升级 jetty 到 9.4.19, 升级其他组件到最新的稳定版
 * 2019/03/23 搜索模块中精确模糊匹配不再二选一, 利用冗余的隐藏字段使得 Matrix 模块中一般结构变更不再需要重建索引
 * 2019/01/09 移除 Mview 类, 改写 auto 模板, 不再依赖 Mview 和 Data
 * 2018/10/28 增加 WEB 服务启动任务配置, 用于执行一些初始化或设置计划任务等
 * 2018/08/12 分离全局和线程内 Core 的实现, 全局 Core 内增加统一读写锁, 取消外部分散的全局同步和读写锁
-* 2018/07/12 将包名 app.hongs 更名为 io.github.ihongs, 启动脚本名更名为 hco 和 hdb
+* 2018/07/12 将包名 app.hongs 更名为 io.github.ihongs, 启动脚本名更名为 hdo 和 hdb
 * 2018/04/14 彻底移除 ueditor js 和 jsp,java 组件, 改用 summernote 提供富文本编辑的功能
 * 2018/03/23 hongs-serv-member 模块更名为 hongs-serv-master,
 * 2018/03/22 hongs-serv-socket,hongs-serv-graphs,hongs-serv-medium 等模块从基础版中移除

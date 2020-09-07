@@ -122,8 +122,7 @@ HsForm.prototype = {
         this.formBox.trigger("loadBack", [rst, this]);
 
         var page = rst["page"] || {};
-        var envm = rst["enum"] ||
-                   rst["menu"] || {};
+        var envm = rst["enus"] || {};
         var info = rst["info"] ||
                  ( rst["list"] && rst.list[0] ) || {};
 
@@ -137,13 +136,13 @@ HsForm.prototype = {
             }
         }
 
-        this.fillEnum(envm);
+        this.fillEnus(envm);
         this.fillInfo(info);
         this.fillPage(page);
 
         this.formBox.trigger("loadOver", [rst, this]);
     },
-    fillEnum : function(envm) {
+    fillEnus : function(envm) {
         var fds, fns, fts, fls, i, n, t, v, f;
         fds = this.formBox.find("[data-fn],input[name],select[name],textarea[name]")
                           .not ('.form-ignored');
@@ -175,7 +174,7 @@ HsForm.prototype = {
             }
         }
 
-        this._enum =  envm;
+        this._enus =  envm;
         for(n in fns) {
             t  = fts[n];
             f  = fls[n];
@@ -213,7 +212,7 @@ HsForm.prototype = {
                 this._doll__review(i, v, n);
             }
         }
-        delete this._enum;
+        delete this._enus;
     },
     fillInfo : function(info) {
         var fds, fns, fts, fls, i, n, t, v, f;
@@ -1129,10 +1128,10 @@ HsForm.prototype = {
                     if (rst["page"] !== undefined) {
                         ret = inp.attr("data-unique")
                             ? rst["page"].count  == 0
-                            : rst["list"].count  != 0;
+                            : rst["page"].count  != 0;
                     } else
-                    if (rst["size"] !== undefined) {
-                        ret = parseInt( rst["size"] ) ? true
+                    if (rst["inte"] !== undefined) {
+                        ret = parseInt( rst["inte"] ) ? true
                           : ( rst["msg"] ? rst["msg"] : false );
                     } else {
                         ret = rst["ok" ] ? true

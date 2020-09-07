@@ -16,7 +16,7 @@ import java.util.Set;
  * 选项补充处理器
  * <pre>
  * ab 参数含义:
- * .enum 表示要选项数据
+ * .enus 表示要选项数据
  * .info 表示补充默认值
  * .form 表示处理子表单
  * _text 表示加选项文本
@@ -34,7 +34,6 @@ public class SelectInvoker implements FilterInvoker {
         String   conf = ann.conf();
         String   form = ann.form();
         byte     adds = ann.adds();
-        boolean  menu = false;
 
         if (adds == 0) {
             Set ab  = Synt.toTerms(
@@ -42,11 +41,7 @@ public class SelectInvoker implements FilterInvoker {
                       .get( Cnst.AB_KEY )
             );
             if (ab != null) {
-                if (ab.contains(".menu")) {
-                    menu  = true;
-                    adds += SelectHelper.ENUM;
-                } else
-                if (ab.contains(".enum")) {
+                if (ab.contains(".enus")) {
                     adds += SelectHelper.ENUM;
                 }
 
@@ -115,11 +110,6 @@ public class SelectInvoker implements FilterInvoker {
             sel.setItemsInForm( rb );
             sel.addItemsByForm( conf, form, data);
             sel.select ( rsp, adds );
-
-            // 某些框架可把数据映射到对象, 需规避关键词 enum
-            if (  menu  && rsp.containsKey("enum")) {
-                rsp.put("menu", rsp.remove("enum"));
-            }
         } catch (HongsException ex ) {
             int  ec  = ex.getErrno();
             if  (ec != 0x10e8 && ec != 0x10e9 && ec != 0x10ea ) {

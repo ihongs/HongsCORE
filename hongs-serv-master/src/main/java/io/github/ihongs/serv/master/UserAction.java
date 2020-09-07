@@ -121,7 +121,7 @@ public class UserAction {
                     ? AuthKit.getUserRoles(ud)
                     : null
                 );
-            Dict.put(rd, rs, "enum", "roles..role");
+            Dict.put(rd, rs, "enus", "roles..role");
         }
 
         // Remove the password field, don't show password in page

@@ -117,13 +117,10 @@ implements IEntity
     if (id == null) {
         id =  rd.get(table.primaryKey);
     }
-    if (id == null
-    ||  id instanceof Map
-    ||  id instanceof Collection
-    ||  id instanceof Object [ ]) {
-        return getList(rd , caze);
-    } else {
+    if (id instanceof String || id instanceof Number) {
         return getInfo(rd , caze);
+    } else {
+        return getList(rd , caze);
     }
   }
 

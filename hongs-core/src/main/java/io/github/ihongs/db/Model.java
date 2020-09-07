@@ -683,7 +683,7 @@ implements IEntity
         page.put("state", 1);
         page.put("count", 1);
     } else
-    if (rn > 0) {
+    if (rn >= 0 || id == null) {
         page.put("state", 0);
         page.put("count", 0);
     } else {

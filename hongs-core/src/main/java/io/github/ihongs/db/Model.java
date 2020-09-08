@@ -128,11 +128,11 @@ implements IEntity
    * 创建记录
    *
    * @param rd
-   * @return 新增数据
+   * @return 新增编号
    * @throws io.github.ihongs.HongsException
    */
   @Override
-  public Map create(Map rd)
+  public String create(Map rd)
     throws HongsException
   {
     return this.create(rd, null);
@@ -143,32 +143,22 @@ implements IEntity
    *
    * @param rd
    * @param caze
-   * @return 新增数据
+   * @return 新增编号
    * @throws io.github.ihongs.HongsException
    */
-  public Map create(Map rd, FetchCase caze)
+  public String create(Map rd, FetchCase caze)
     throws HongsException
   {
-    String id = add(rd);
-
-    // 附加外部参数
-    Map xd = new HashMap();
-    if (rd.containsKey(Cnst.RB_KEY)) {
-        xd.put(Cnst.RB_KEY, rd.get(Cnst.RB_KEY));
+    String id = (String) caze.getOption(Cnst.ID_KEY);
+    if (id == null || id.isEmpty( )) {
+        id = Core.newIdentity();
     }
-    if (rd.containsKey(Cnst.AB_KEY)) {
-        xd.put(Cnst.AB_KEY, rd.get(Cnst.AB_KEY));
+    if (rd.containsKey(Cnst.ID_KEY)) {
+        rd.put(Cnst.ID_KEY, id);
     }
 
-    // 组织反查条件
-    FetchCase fc = caze != null
-                 ? caze.clone()
-                 : fetchCase ();
-    fc.where("`" + table.primaryKey + "`=?", id);
-    fc.setOption("MODEL_START", "create");
-    filter(fc , xd);
-
-    return table.fetchLess (fc);
+    add(id, rd);
+    return  id ;
   }
 
   /**

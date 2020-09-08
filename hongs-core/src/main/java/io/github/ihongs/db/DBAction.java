@@ -95,17 +95,15 @@ public class DBAction implements IAction, IActing {
     @Action("create")
     @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
-    @Select(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper)
     throws HongsException {
         Model   ett = getEntity(helper);
         Map     req = helper.getRequestData();
                 req = getReqMap(helper, ett, "create", req);
-        Map     rsp = ett.create(req);
-                rsp = getRspMap(helper, ett, "create", rsp);
+        String  nid = ett.create(req);
         String  msg = getRspMsg(helper, ett, "create", 1  );
-        helper.reply(msg, rsp);
+        helper.reply(msg, nid);
     }
 
     @Override

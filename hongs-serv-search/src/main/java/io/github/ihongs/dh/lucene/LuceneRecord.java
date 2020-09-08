@@ -303,25 +303,20 @@ public class LuceneRecord extends JFigure implements IEntity, IReflux, AutoClose
     /**
      * 创建记录
      * @param rd
-     * @return id,name等(由listable指定)
+     * @return
      * @throws HongsException
      */
     @Override
-    public Map create(Map rd) throws HongsException {
-        String id = Synt.asString(rd.get(Cnst.ID_KEY));
-        if (id == null || id.isEmpty()) {
-            id  =  Core.newIdentity();
-            rd.put(Cnst.ID_KEY , id );
+    public String create(Map rd) throws HongsException {
+        /**
+         * 外部用户不可指定 id
+         * 想要指定只能使用 add
+         */
+        if (rd.containsKey(Cnst.ID_KEY)) {
+            rd.remove     (Cnst.ID_KEY);
         }
 
-        Set    rb = Synt.toTerms (rd.get(Cnst.RB_KEY));
-        if (rb == null || rb.isEmpty()) {
-            rb  =  /**/ getListable();
-        }
-
-        Document doc = padDoc(rd);
-                 addDoc(doc /**/);
-        return   padDat(doc , rb);
+        return add(rd);
     }
 
     /**

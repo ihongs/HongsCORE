@@ -11,7 +11,7 @@ public interface IEntity {
 
     public Map search(Map rd) throws HongsException;
 
-    public Map create(Map rd) throws HongsException;
+    public String create(Map rd) throws HongsException;
 
     public int update(Map rd) throws HongsException;
 

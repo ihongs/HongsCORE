@@ -208,11 +208,38 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
             return;
         }
 
+        var at  = box.attr("data-at");
+        var evt = arguments[0];
         var rst = arguments[1];
-            rst = rst.info ? rst.info
-              : ( rst.list ? rst.list[0] : { } );
-        var val = rst[vk] || hsGetValue(rst, vk);
-        var txt = rst[tk] || hsGetValue(rst, tk);
+
+        if (rst.list) {
+            rst = rst.list [0];
+        } else
+        if (rst.info) {
+            rst = rst.info ;
+        } else
+        if (rst.nid && at) {
+            /**
+             * 新方案创建接口仅返回id
+             * 需调用详情接口获取数据
+             */
+            $.hsAjax({
+                url : hsSetParam(at, vk, rst.nid),
+                cache : false,
+                rsync : false,
+                dataType:  "json"  ,
+                complete:  function (rst) {
+                    rst = hsResponse(rst);
+                    delete rst .nid;
+                    create.call(btn[0], evt, rst);
+                }
+            });
+            return false;
+        } else {
+            return;
+        }
+        var val = rst[vk] || hsGetValue(rst, vk );
+        var txt = rst[tk] || hsGetValue(rst, tk );
 
         if (pickItem(val, txt, rst) === false) {
             return false;

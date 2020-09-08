@@ -79,7 +79,7 @@ public class SearchAction extends JAction {
         Map xd = sh.ecount(rd);
         atitle(sr, rd, xd); // 增加标题
 
-        Map sd = Synt.mapOf("info" , xd);
+        Map sd = Synt.mapOf("enus" , xd);
         sd = getRspMap(helper, sr, "ecount", sd);
 
         helper.reply(sd);

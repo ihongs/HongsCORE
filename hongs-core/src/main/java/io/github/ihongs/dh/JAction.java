@@ -99,16 +99,14 @@ abstract public class JAction implements IActing, IAction {
     @Action("create")
     @Preset(conf="", form="", defs={":defence"})
     @Verify(conf="", form="")
-    @Select(conf="", form="")
     @CommitSuccess
     public void create(ActionHelper helper) throws HongsException {
         IEntity sr = getEntity(helper);
         Map     rd = helper.getRequestData();
                 rd = getReqMap(helper, sr, "create", rd);
-        Map     sd = sr.create(  rd  );
-                sd = getRspMap(helper, sr, "create", sd);
+        String  sn = sr.create(  rd  );
         String  ss = getRspMsg(helper, sr, "create", 1 );
-        helper.reply(ss, sd);
+        helper.reply(ss, sn);
     }
 
     @Override

@@ -285,9 +285,10 @@
                         String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                         String rl = info.containsKey("data-rl") ? (String) info.get("data-rl") :  "" ;
                         String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                        String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
                         rl = rl.replace("centre", "centra");
                         al = al.replace("centre", "centra");
-                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk
+                        kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
                              +  "\" data-href=\""+rl+"\" data-target=\"@";
                         mode += "\" data-href=\""+al+"\" data-target=\"@";
                     %>

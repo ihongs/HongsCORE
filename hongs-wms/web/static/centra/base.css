@@ -362,3 +362,68 @@ html, body {
     width   : 100%;
      text-align: center;
 }
+
+/* 深色模式 */
+@media (prefers-color-scheme: dark) {
+    body {
+        color: #eee;
+        background-color: #000;
+    }
+    .well  ,
+    .panel ,
+    .jumbotron ,
+    .modal-content {
+        color: #eee;
+        border-color: #444;
+        background-color: #222;
+    }
+    .table-striped>tbody>tr:nth-of-type(odd) {
+        color: #eee;
+        background-color: #111;
+    }
+    .table tbody tr.active td ,
+    .table tbody tr.active th {
+        color: #eee;
+        background-color: #222;
+    }
+    .table tbody tr.active:hover td ,
+    .table tbody tr.active:hover th ,
+    .table-hover>tbody>tr:hover {
+        color: #eee;
+        background-color: #333;
+    }
+    .table>thead>tr>th,
+    .table>tbody>tr>th,
+    .table>tfoot>tr>th,
+    .table>thead>tr>td,
+    .table>tbody>tr>td,
+    .table>tfoot>tr>td {
+        border-top-color: #444;
+    }
+    .table>thead>tr>th {
+        border-bottom-color: #444;
+    }
+
+    #headbox ,
+    #main-menubar ,
+    #main-menubar ul {
+        background-color: #111;
+    }
+    #head-handler ,
+    #user-menubar ,
+    #user-menubar ul ,
+    #main-menubar li.acting>a,
+    #main-menubar li.active>a,
+    #main-menubar li.active>a.dropup,
+    #user-menubar li.acting>a,
+    #user-menubar li.active>a,
+    #user-menubar li.active>a.dropup,
+    #main-menubar ul ul ,
+    #user-menubar ul ul {
+        background-color: #222;
+    }
+    #main-context>.laps.tabs.breadcrumb {
+        background-color: #222;
+        border-color: #222;
+    }
+}

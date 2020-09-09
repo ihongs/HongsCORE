@@ -293,6 +293,8 @@
                         String at = info.containsKey("data-at") ? (String) info.get("data-at") :  "" ;
                         rl = rl.replace("centra", "centre");
                         al = al.replace("centra", "centre");
+                        at = at.replace("centra", "centre");
+                        if (!at.isEmpty()) at += Cnst.ACT_EXT;
                         kind += "\" data-ak=\""+ak+"\" data-tk=\""+tk+"\" data-vk=\""+vk+"\" data-at=\""+at
                              +  "\" data-href=\""+rl+"\" data-target=\"";
                         mode += "\" data-href=\""+al+"\" data-target=\"";

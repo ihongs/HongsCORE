@@ -111,6 +111,14 @@
                     String vk = info.containsKey("data-vk") ? (String) info.get("data-vk") : "id";
                     String ak = info.containsKey("data-ak") ? (String) info.get("data-ak") :  kn ;
                     String al = info.containsKey("data-al") ? (String) info.get("data-al") :  "" ;
+                    al = al.replace("centre", "centra");
+                    // 选择时禁用创建
+                    if ( ! al.isEmpty (   )) {
+                    if ( ! al.contains("?")) {
+                        al = al + "?_deny_=.create";
+                    } else {
+                        al = al + "&_deny_=.create";
+                    }}
                 %>
                 <ul  class="pickbox" data-ft="_fork" data-fn="ar.0.<%=name%>" data-ak="<%=ak%>" data-tk="<%=tk%>" data-vk="<%=vk%>"></ul>
                 <button type="button" class="btn btn-default form-control" data-toggle="hsFork" data-target="@" data-href="<%=al%>"><%=_locale.translate("fore.fork.select", text)%></button>

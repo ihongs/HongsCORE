@@ -125,8 +125,8 @@ public class SignAction {
             return;
         }
 
-        Map sd = AuthKit.userSign(ah, uuid, uname, uhead);
-        ah.reply ( "" , sd);
+        Map sd  = AuthKit.userSign( ah, uuid, uname, uhead );
+        ah.reply(Synt.mapOf("info", sd));
     }
 
     /**

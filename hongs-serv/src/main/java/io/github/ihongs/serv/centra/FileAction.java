@@ -229,14 +229,16 @@ public class FileAction implements IAction {
         if (isTextFile(file)) {
             String name = file.getName();
 
-            Map xxxx = new HashMap();
-            xxxx.put("name" , name );
-            xxxx.put("path" , pxth );
-            xxxx.put("type" , "txt");
-            xxxx.put("text" , readFile(file));
-            xxxx.put("size" , file.length( ));
-            xxxx.put("mtime", file.lastModified( ));
-            helper.reply( "", xxxx );
+            Map rsp = new HashMap();
+            Map inf = new HashMap();
+            rsp.put("info" , inf  );
+            inf.put("name" , name );
+            inf.put("path" , pxth );
+            inf.put("type" , "txt");
+            inf.put("text" , readFile(file));
+            inf.put("size" , file.length( ));
+            inf.put("mtime", file.lastModified( ));
+            helper.reply(rsp);
         } else {
             helper.fault(lang.translate("core.manage.file.unsupported"));
         }

@@ -92,18 +92,12 @@ public class DeptAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map    rd = helper.getRequestData();
-        String id;
-
-        id = model.set(rd);
-        rd = new HashMap();
-        rd.put( "id" , id);
-        rd.put("name", rd.get("name"));
-
+        Map rd = helper.getRequestData();
+        String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
         String ms = ln.translate("core.save.dept.success");
-        helper.reply(ms, rd);
+        helper.reply(ms, id);
     }
 
     @Action("delete")

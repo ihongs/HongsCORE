@@ -26,15 +26,17 @@ public class UnitAction {
     @Action("list")
     public void getList(ActionHelper helper)
     throws HongsException {
-        Map data = model.getList(helper.getRequestData());
-        helper.reply(data);
+        Map rd = helper.getRequestData();
+        Map sd = model.getList(rd);
+        helper.reply(sd);
     }
 
     @Action("info")
     public void getInfo(ActionHelper helper)
     throws HongsException {
-        Map data = model.getInfo(helper.getRequestData());
-        helper.reply(data);
+        Map rd = helper.getRequestData();
+        Map sd = model.getInfo(rd);
+        helper.reply(sd);
     }
 
     @Action("save")
@@ -42,34 +44,32 @@ public class UnitAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map  data = helper.getRequestData();
-        String id = model.set(data);
-        Map  info = new HashMap();
-        info.put( "id" , id);
-        info.put("name", data.get("name") );
+        Map rd = helper.getRequestData();
+        String id = model.set(rd);
         CoreLocale  lang = CoreLocale.getInstance().clone( );
                     lang.load("matrix");
         String ms = lang.translate("core.save.unit.success");
-        helper.reply(ms, info );
+        helper.reply(ms, id);
     }
 
     @Action("delete")
     @CommitSuccess
     public void doDelete(ActionHelper helper)
     throws HongsException {
-        Map  data = helper.getRequestData();
-        int  rows = model.delete(data );
-        CoreLocale  lang = CoreLocale.getInstance().clone( );
-                    lang.load("matrix");
-        String ms = lang.translate("core.delete.unit.success", null, Integer.toString(rows));
-        helper.reply(ms, rows);
+        Map rd = helper.getRequestData();
+        int rn = model.delete(rd);
+        CoreLocale  ln = CoreLocale.getInstance().clone( );
+                    ln.load("matrix");
+        String ms = ln.translate("core.delete.unit.success", null, Integer.toString(rn));
+        helper.reply(ms, rn);
     }
 
     @Action("unique")
     public void isUnique(ActionHelper helper)
     throws HongsException {
-        boolean v = model.unique(helper.getRequestData());
-        helper.reply(null, v ? 1 : 0);
+        Map rd = helper.getRequestData();
+        boolean un = model.unique(rd);
+        helper.reply(null, un ? 1:0 );
     }
 
 }

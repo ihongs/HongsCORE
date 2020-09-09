@@ -93,7 +93,7 @@ public class AuthKit {
             new UserAction().getInfo(helper);
         } else
         if ("_sign_info_".equals(r)) {
-            helper.reply( "" , rst );
+            helper.reply(Synt.mapOf("info", rst));
         } else
         if ("-".equals(r)) {
             helper.reply( "" );

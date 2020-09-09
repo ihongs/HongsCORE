@@ -112,7 +112,7 @@ public class InfoAction {
             rsp.put("lock_map", io.github.ihongs.util.reflex.Block.counts());
         }
 
-        helper.reply("", rsp);
+        helper.reply(Synt.mapOf("info", rsp));
     }
 
     /*

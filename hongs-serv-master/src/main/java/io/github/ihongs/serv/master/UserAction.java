@@ -139,11 +139,10 @@ public class UserAction {
     @CommitSuccess
     public void doSave(ActionHelper helper)
     throws HongsException {
-        Map    rd = helper.getRequestData();
-        String id;
-       boolean cp;
+        Map rd = helper.getRequestData();
 
         // Ignore empty password in update
+         boolean  cp  ;
         if (null  ==  rd.get("password")
         ||  "".equals(rd.get("password"))) {
             rd.remove("password");
@@ -158,16 +157,11 @@ public class UserAction {
             cp = true ;
         }
 
-        id = model.set(rd);
-        rd = new HashMap();
-        rd.put( "id" , id);
-        rd.put("name", rd.get("name"));
-        rd.put("head", rd.get("head"));
-
+        String id = model.set(rd);
         CoreLocale  ln = CoreLocale.getInstance().clone( );
                     ln.load("master");
         String ms = ln.translate("core.save.user.success");
-        helper.reply(ms, rd);
+        helper.reply(ms, id);
 
         /**
          * 2019/02/26

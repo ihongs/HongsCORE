@@ -350,7 +350,7 @@ public class AutoFilter extends ActionDriver {
                 continue;
             }
 
-            if (fx.isFile  (   )) {
+            if (fx.isFile     (   )) {
                 tmpset.add (dn + fn);
             } else
             if (fx.isDirectory(   )) {

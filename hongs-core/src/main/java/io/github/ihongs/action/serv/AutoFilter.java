@@ -340,6 +340,9 @@ public class AutoFilter extends ActionDriver {
             return;
         }
 
+        Set tmpset;
+        tmpset = new LinkedHashSet();
+
         for ( File fx : fs ) {
             String fn = fx.getName();
             if (fn.startsWith (".")
@@ -347,28 +350,36 @@ public class AutoFilter extends ActionDriver {
                 continue;
             }
 
+            if (fx.isFile  (   )) {
+                tmpset.add (dn + fn);
+            } else
             if (fx.isDirectory(   )) {
-                getlays(layset, fx, dn + fn + "/");
+                getlays(layset , fx , dn + fn + "/");
             }
 
             /**
              * #,$ 都表示这是一个动作脚步
              * # 为 include, $ 为 forward
+             * 废弃, 动作的归动作
              */
-//          if (fn.startsWith ("#")) {
-//              int    l  = fn.lastIndexOf(".");
-//              String ln = fn.substring(1 , l);
-//              cstmap.put( dn + ln , dn + fn );
-//          } else
-//          if (fn.startsWith ("$")) {
-//              int    l  = fn.lastIndexOf(".");
-//              String ln = fn.substring(1 , l);
-//              cxtmap.put( dn + ln , dn + fn );
-//          } else
-//          {
+            /*
+            if (fn.startsWith ("#")) {
+                int    l  = fn.lastIndexOf(".");
+                String ln = fn.substring(1 , l);
+                cstmap.put( dn + ln , dn + fn );
+            } else
+            if (fn.startsWith ("$")) {
+                int    l  = fn.lastIndexOf(".");
+                String ln = fn.substring(1 , l);
+                cxtmap.put( dn + ln , dn + fn );
+            } else
+            {
                 layset.add( dn + fn);
-//          }
+            }
+            */
         }
+
+        layset.addAll(tmpset);
     }
 
 }

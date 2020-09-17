@@ -86,6 +86,14 @@ input[type="time"].form-control {
 }
 }
 
+/* 选择列表内使用分组不需要把组标签放大 */
+.checkbox legend,
+.radio legend {
+    font-size: inherit;
+    margin: 0;
+    color : #b7b7b7;
+}
+
 /* 修正选择框在特殊表单组下不变化的问题 */
 .form-group-lg .checkbox,
 .form-group-lg .radio {
@@ -100,9 +108,6 @@ input[type="time"].form-control {
     margin-top:  2px;
 }
 
-.center-block {
-    float  : none;
-}
 .form-group .help-block:empty ,
 .form-group .text-error:empty ,
 .form-group .text-muted:empty {
@@ -115,8 +120,12 @@ input[type="time"].form-control {
     color  : #b7b7b7;
 }
 .help-block.form-control-static {
-    margin-top: 0;
     margin-bottom: 0;
+    margin-top   : 0;
+}
+
+.center-block {
+    float: none;
 }
 
 .navbar-default

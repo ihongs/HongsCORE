@@ -25,6 +25,7 @@ function HsForm(context, opts) {
     this.formBox = formBox;
     this._url  = "";
     this._data = [];
+    this._opt_group_start = "#"; // 选项分组起始符
 
     if (opts) for ( var k in opts ) {
         if ('_'===k.substring(0,1 )
@@ -563,6 +564,16 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
+            // 选项分组
+            if (k && this._opt_group_start && k[0] == this._opt_group_start) {
+                if (inp.is("optgroup")) {
+                    inp = inp.parent();
+                }
+                inp = jQuery('<optgroup></optgroup>').appendTo(inp);
+                inp.attr(     "label", t)
+                   .attr("data-value", k);
+                continue;
+            }
             var opt = jQuery('<option></option>');
             opt.val(k).text(t).data("data", v[i]);
             inp.append(opt);
@@ -578,6 +589,18 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
+            // 选项分组
+            if (k && this._opt_group_start && k[0] == this._opt_group_start) {
+                if (inp.is("fieldset")) {
+                    inp = inp.parent();
+                }
+                var leg;
+                inp = jQuery('<optgroup></optgroup>').appendTo(inp);
+                leg = jQuery(  '<legend></legend>'  ).appendTo(inp);
+                leg.text(              t);
+                inp.attr("data-value", k);
+                continue;
+            }
             var lab = jQuery('<label><input type="radio"   /><span></span></label>');
             lab.find("input"). val (k).attr("name", n).data("data", v[i]);
             lab.find("span" ).text (t);
@@ -594,6 +617,18 @@ HsForm.prototype = {
         for(var i = 0; i < v.length; i ++) {
             var k = hsGetValue(v[i], vk);
             var t = hsGetValue(v[i], tk);
+            // 选项分组
+            if (k && this._opt_group_start && k[0] == this._opt_group_start) {
+                if (inp.is("fieldset")) {
+                    inp = inp.parent();
+                }
+                var leg;
+                inp = jQuery('<optgroup></optgroup>').appendTo(inp);
+                leg = jQuery(  '<legend></legend>'  ).appendTo(inp);
+                leg.text(              t);
+                inp.attr("data-value", k);
+                continue;
+            }
             var lab = jQuery('<label><input type="checkbox"/><span></span></label>');
             lab.find("input"). val (k).attr("name", n).data("data", v[i]);
             lab.find("span" ).text (t);

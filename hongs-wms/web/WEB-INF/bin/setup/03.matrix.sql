@@ -71,8 +71,10 @@ CREATE TABLE `a_matrix_data` (
   PRIMARY KEY (`id`,`form_id`,`etime`)
 );
 
+CREATE INDEX `IK_a_matrix_data_id` ON `a_matrix_data` (`id`);
 CREATE INDEX `IK_a_matrix_data_form` ON `a_matrix_data` (`form_id`);
 CREATE INDEX `IK_a_matrix_data_user` ON `a_matrix_data` (`user_id`);
+CREATE INDEX `IK_a_matrix_data_meno` ON `a_matrix_data` (`meno`);
 CREATE INDEX `IK_a_matrix_data_state` ON `a_matrix_data` (`state`);
 CREATE INDEX `IK_a_matrix_data_ctime` ON `a_matrix_data` (`ctime`);
 CREATE INDEX `IK_a_matrix_data_etime` ON `a_matrix_data` (`etime`);

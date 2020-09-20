@@ -24,9 +24,11 @@
             String hrel = (String) item.get("hrel");
 //          String icon = (String) item.get("icon");
 
-            if (href.startsWith("!")
-            ||"HIDE".equals(hrel )
-            ||"NONE".equals(hrel)) {
+            if (hrel != null
+            &&  hrel.startsWith("!")) {
+                continue;
+            }
+            if (href.startsWith("!")) {
                 continue;
             }
 

@@ -111,15 +111,17 @@ public class MenuAction {
     private String getRedirect(NaviMap site, Map<String, Map> menu)
     throws  HongsException {
         for (Map.Entry<String, Map> et : menu.entrySet()) {
-            String href = et.getKey  ();
             Map    item = et.getValue();
-            if (href.startsWith("!")
-            ||  "HIDE".equals(item.get("hrel"))
-            ||  "NONE".equals(item.get("hrel"))) {
+            String href = et.getKey  ();
+            String hrel = (String) item.get("hrel");
+            if (hrel != null
+            &&  hrel.startsWith("!")) {
                 continue;
             }
-            if (href.startsWith("#")
-            ||  href.startsWith(MENU_ACT_URI + "?")) {
+            if (href.startsWith("!")) {
+                continue;
+            }
+            if (href.startsWith(MENU_ACT_URI + "?")) {
                 Map<String, Map> subs = (Map) item.get("menus");
                 if (subs != null && !subs.isEmpty()) {
                     href  = getRedirect(site, subs);

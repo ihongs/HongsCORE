@@ -243,10 +243,10 @@ public class Unit extends Grade {
          */
         if (! "0".equals(id)) {
             if (rows.size() ==  0 ) {
-                centraRoot.setAttribute("hrel", "HIDE");
+                centraRoot.setAttribute("hrel", "!HIDE");
             }
             if (rows.size() == cnt) {
-                centreRoot.setAttribute("hrel", "HIDE");
+                centreRoot.setAttribute("hrel", "!HIDE");
             }
         }
     }
@@ -314,14 +314,14 @@ public class Unit extends Grade {
             String nam = row.get("name").toString();
 
             centraHid2 = centraDocm.createElement("menu");
-            centraHid2.setAttribute("href", "common/menu.act?m="+centra+"&x="+pid);
-            centraHid2.setAttribute("hrel", "HIDE"); // 默认隐藏
+            centraHid2.setAttribute("href","common/menu.act?m="+centra+"&x="+pid);
+            centraHid2.setAttribute("hrel","!HIDE"); // 默认隐藏
             centraHid2.setAttribute("text",  nam  );
             centraRoot.appendChild (  centraHid2  );
 
             centreHid2 = centreDocm.createElement("menu");
-            centreHid2.setAttribute("href", "common/menu.act?m="+centre+"&x="+pid);
-            centraHid2.setAttribute("hrel", "HIDE"); // 默认隐藏
+            centreHid2.setAttribute("href","common/menu.act?m="+centre+"&x="+pid);
+            centraHid2.setAttribute("hrel","!HIDE"); // 默认隐藏
             centreHid2.setAttribute("text",  nam  );
             centreRoot.appendChild (  centreHid2  );
 

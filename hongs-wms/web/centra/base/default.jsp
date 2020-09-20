@@ -3,7 +3,7 @@
 <%@include file="_base_.jsp"%>
 <%
     // 仅开放接口则抛出资源缺失异常
-    if ("HIDE".equals($hrel) || "NONE".equals($hrel)) {
+    if ("!DENY".equals($hrel)) {
         throw new HongsException(404, $locale.translate("core.error.no.thing"));
     }
     String $func = "in_"+($module+"_"+$entity).replace ('/', '_');
@@ -18,6 +18,7 @@
         <link rel="stylesheet" type="text/css" href="static/assets/css/bootstrap.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/centra/base.min.css"/>
+        <link rel="stylesheet" type="text/css" href="<%=$module%>/<%=$entity%>/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
@@ -32,9 +33,11 @@
     </head>
     <body class="sider-open">
         <div id="context">
+            <%if (!"!HIDE".equals($hrel)) {%>
             <div id="headbox">
                 <div id="menu-context" data-load="centra/head.jsp" data-active="<%=$module+"/"+$entity+"/"%>"></div>
             </div>
+            <%} /* End if */%>
             <div id="bodybox">
                 <div id="main-context" class="container-fluid">
                     <ol class="breadcrumb tabs laps" data-topple="hsTabs">

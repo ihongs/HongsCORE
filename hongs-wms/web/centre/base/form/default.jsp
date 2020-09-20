@@ -2,14 +2,45 @@
 <%@page contentType="text/html" pageEncoding="UTF-8" trimDirectiveWhitespaces="true"%>
 <%@include file="_boot_.jsp"%>
 <%
-    String $func = "in_"+(_module+"_"+_entity).replace('/', '_');
+    // 判断是否许可
+    {
+        String[] a= {_module +"/"+ _entity , _module , "centre"};
+        for (String name : a) try {
+            NaviMap site = NaviMap.getInstance ( name );
+            Map menu;
+            menu  = site.getMenu(_module +"/"+ _entity +"/");
+            if (menu != null) {
+                String hrel = (String) menu.get("hrel");
+                if ("!DENY".equals(hrel)) {
+                    throw new HongsException(404, _locale.translate("core.error.no.thing"));
+                }
+                break;
+            }
+            menu  = site.getMenu(_module +"/#"+_entity);
+            if (menu != null) {
+                String hrel = (String) menu.get("hrel");
+                if ("!DENY".equals(hrel)) {
+                    throw new HongsException(404, _locale.translate("core.error.no.thing"));
+                }
+                break;
+            }
+        } catch (HongsException ex) {
+            // 忽略配置文件缺失的异常情况
+            if (ex.getErrno() != 0x10e0) {
+                throw ex ;
+            }
+        }
+    }
 
+    // 定制页面内容
     String _heading = (String) _params.get("page-heading");
     String _header  = (String) _params.get("page-header" );
     String _footer  = (String) _params.get("page-footer" );
     String _link    = (String) _params.get("page-link"   );
     String _style   = (String) _params.get("page-style"  );
     String _script  = (String) _params.get("page-script" );
+
+    String $func = "in_"+(_module+"_"+_entity).replace('/', '_');
 %>
 <!doctype html>
 <html>
@@ -23,6 +54,7 @@
         <link rel="stylesheet" type="text/css" href="static/assets/css/hongscore.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/centre/base.min.css"/>
         <link rel="stylesheet" type="text/css" href="static/centre/form.min.css"/>
+        <link rel="stylesheet" type="text/css" href="<%=_module%>/<%=_entity%>/form/defines.css"/>
         <!--[if glt IE8.0]>
         <script type="text/javascript" src="static/addons/respond/respond.min.js"></script>
         <![endif]-->
@@ -33,9 +65,7 @@
         <script type="text/javascript" src="common/conf/default.js"></script>
         <script type="text/javascript" src="common/lang/default.js"></script>
         <script type="text/javascript" src="common/auth/centre.js" ></script>
-        <link rel="stylesheet" type="text/css" href="<%=_module%>/<%=_entity%>/form/defines.css">
-        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/form/defines.js" ></script>
-        <style  type="text/css"> .container {padding-top: 20px;} </style>
+        <script type="text/javascript" src="<%=_module%>/<%=_entity%>/form/defines.js"></script>
         <%if ( _style != null && ! _style .isEmpty()) {%>
         <style  type="text/css"><%=_style%></style>
         <%}%>

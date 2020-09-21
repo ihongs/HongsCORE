@@ -603,13 +603,11 @@ ol.repeated ,
 }
 .tree-node table,
 .tree-node table td {
-    margin: 0 4px;
     border: 0;
     border-spacing: 0;
 }
 .tree-curr>table,
 .tree-curr>table td {
-    color: #000;
     font-weight: bold;
     text-decoration: underline;
 }

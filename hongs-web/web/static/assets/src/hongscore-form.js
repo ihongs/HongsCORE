@@ -506,7 +506,7 @@ HsForm.prototype = {
         }
 
         // 枚举,列表,选项,标签
-        if (inp.is( "ul,ol,.repeated" )) {
+        if (inp.is("ul,ol,.repeated,.multiple")) {
             var k = inp.attr("data-vk") || 0;
             var t = inp.attr("data-tk") || 1;
             var a = inp.data("data")  ||  [];

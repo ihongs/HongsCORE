@@ -367,16 +367,28 @@ html, body {
 @media (prefers-color-scheme: dark) {
     body {
         color: #eee;
-        background-color: #000;
+        background: #000;
     }
+    
     .well  ,
     .panel ,
     .jumbotron ,
-    .modal-content {
+    .modal-content ,
+    .panel-heading ,
+    .panel-footer  ,
+    .panel-default>.panel-heading ,
+    .panel-default>.panel-footer  {
         color: #eee;
+        background: #222;
         border-color: #444;
-        background-color: #222;
     }
+
+    h1, h2, h3,
+    h4, h5, h6,
+    legend {
+        color: #eee;
+    }
+
     .table-striped>tbody>tr:nth-of-type(odd) {
         color: #eee;
         background-color: #111;
@@ -398,10 +410,16 @@ html, body {
     .table>thead>tr>td,
     .table>tbody>tr>td,
     .table>tfoot>tr>td {
-        border-top-color: #444;
+        border-color: #444;
     }
     .table>thead>tr>th {
-        border-bottom-color: #444;
+        border-color: #444;
+    }
+
+    .panel>.panel-body.run-info-box ,
+    .panel>.panel-body.sys-info-box ,
+    .panel>.chartbox {
+        background-color: #eee;
     }
 
     #headbox ,

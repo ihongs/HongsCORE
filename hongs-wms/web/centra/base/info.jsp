@@ -31,49 +31,16 @@
 
             String  text = (String) info.get("__text__");
             String  type = (String) info.get("__type__");
-            String  kind = "_review";
-
-            if ("datetime".equals(type)
-            ||      "date".equals(type)
-            ||      "time".equals(type)) {
-                // 日期类需注意 Unix 时间戳需要乘 1000
-                String typa = (String) info.get("type");
-                if (text == null || text.length() == 0) {
-                    continue;
-                } else
-                if (typa == null || typa.length() == 0
-                ||  "date".equals(typa)
-                ||  "time".equals(typa)) {
-                    kind  = "_" + type;
-                } else {
-                    kind  = "_" + type;
-                    kind += "\" data-fl=\"!v?v:v*1000" ;
-                }
-            } else
-            if (  "select".equals(type)
-            ||     "check".equals(type)
-            ||     "radio".equals(type)
-            ||      "type".equals(type)
-            ||      "enum".equals(type)) {
-                // 选项类字段在查看页仅需读取其文本即可
-                name += "_text";
-            }
-
-            if (Synt.declare(info.get("__repeated__"), false)) {
-                // 为与表单一致而对多值字段的名称后加点
-                name += ".";
-            }
-            if (text == null) {
-                text  = "" ;
-            }
 
             // 显示 ID
             if (name.equals(Cnst.ID_KEY)) {
-                if (type.equals("hidden")
-                ||  type.equals("")) {
+                if (type == null
+                ||  type.length( ) == 0
+                || "hidden".equals(type)) {
                     type = "text";
                 }
-                if (text.equals("")) {
+                if (text == null
+                ||  text.length( ) == 0 ) {
                     text =  "ID" ;
                 }
             }
@@ -83,6 +50,40 @@
         <%} else if ("legend".equals(type)) {%>
             <legend class="text-center"><%=text%></legend>
         <%} else {%>
+            <%
+                String  kind = "_review";
+
+                if ("datetime".equals(type)
+                ||      "date".equals(type)
+                ||      "time".equals(type)) {
+                    // 日期类需注意 Unix 时间戳需要乘 1000
+                    String typa = (String) info.get("type");
+                    if (text == null || text.length() == 0) {
+                        continue;
+                    } else
+                    if (typa == null || typa.length() == 0
+                    ||  "date".equals(typa)
+                    ||  "time".equals(typa)) {
+                        kind  = "_" + type;
+                    } else {
+                        kind  = "_" + type;
+                        kind += "\" data-fl=\"!v?v:v*1000" ;
+                    }
+                } else
+                if (  "select".equals(type)
+                ||     "check".equals(type)
+                ||     "radio".equals(type)
+                ||      "type".equals(type)
+                ||      "enum".equals(type)) {
+                    // 选项类字段在查看页仅需读取其文本即可
+                    name += "_text";
+                }
+
+                if (Synt.declare(info.get("__repeated__"), false)) {
+                    // 为与表单一致而对多值字段的名称后加点
+                    name += ".";
+                }
+            %>
             <div class="form-group row">
                 <label class="col-xs-3 col-md-2 control-label text-right"><%=text%></label>
                 <div class="col-xs-9 col-md-8">
@@ -173,7 +174,7 @@
         <%} /*End if */%>
         <%} /*End For*/%>
         <hr/>
-        <div class="row">
+        <div class="btns-group row">
             <div class="col-xs-9 col-md-8 col-xs-offset-3 col-md-offset-2">
                 <button type="button" class="cancel btn btn-primary"><%=_locale.translate("fore.goback")%></button>
                 <%if ("reveal".equals(_action)) {%>

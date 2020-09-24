@@ -33,6 +33,7 @@ jQuery.fn.hsPick = function(url, bin, box, fil, fet) {
     var tk   = box.attr("data-tk" ) || "name";
     var mul  = box.is  (".pickmul")
          || !! box.data("repeated")
+         || !! box.data("multiple")
          || /(\[\]|\.\.|\.$)/.test(n);
     var foo  = box.closest(".HsForm").data("HsForm") || {};
     var btn  = jQuery(this);
@@ -329,6 +330,7 @@ function hsFormFillPick(box, v, n) {
         || !! box.data("readonly");
     var mul = box.is  (".pickmul")
         || !! box.data("repeated")
+        || !! box.data("multiple")
         || /(\[\]|\.\.|\.$)/.test(n);
     var btn = box.siblings("[data-toggle=hsPick],[data-toggle=hsFork]");
 

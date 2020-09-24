@@ -6,16 +6,16 @@ html, body {
 .container {
     background: #fff;
     height: auto;
+    padding: 20px 0 0 0;
 }
-
 @media (min-width: 768px) {
     .container {
-        padding: 0 40px;
+        padding: 40px 40px 20px 40px;
     }
 }
 @media (min-width: 992px) {
     .container {
-        padding: 0 80px;
+        padding: 40px 80px 20px 80px;
     }
 }
 @media (min-width: 1200px) {
@@ -125,9 +125,35 @@ header , footer {
 .survey-form .form-label-w5 .control-label-txt {
     width: 5em;
 }
-.survey-form .form-label-w5 .control-label-txt {
+.survey-form .form-label-w6 .control-label-txt {
     width: 6em;
 }
-.survey-form .form-label-w6 .control-label-txt {
+.survey-form .form-label-w7 .control-label-txt {
     width: 7em;
+}
+
+/* 按钮固定 */
+.survey-form.btns-fixed {
+    padding-bottom: 35px;
+}
+.survey-form.btns-fixed .btns-group {
+    position: fixed;
+    width : 100%;
+    bottom: 0;
+    left: 0;
+}
+.survey-form.btns-fixed .btns-group>div {
+    border-top: 1px solid #eee;
+    padding: 20px 15px;
+    margin :  0   auto;
+}
+@media (min-width: 768px) {
+    .survey-form.btns-fixed .btns-group>div {
+        width: 750px;
+    }
+}
+@media (min-width: 992px) {
+    .survey-form.btns-fixed .btns-group>div {
+        width: 970px;
+    }
 }

@@ -76,7 +76,7 @@
                 continue;
             }
         %>
-        <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
+        <div class="filt-group form-group form-group-sm clearfix" data-name="<%=name%>">
             <label class="col-xs-3 control-label text-right"><%=text%></label>
             <div class="col-xs-6">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
@@ -184,7 +184,7 @@
                 type = "acount";
             }
         %>
-        <div class="stat-group col-xs-6" data-find="<%=name%>" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>">
+        <div class="stat-group col-xs-6" data-name="<%=name%>" data-text="<%=text%>" data-type="<%=type%>">
             <div class="panel panel-body panel-default clearfix" style="height: 302px;">
                 <div class="checkbox col-xs-3" style="height: 100%; display:none"></div>
                 <div class="chartbox col-xs-9" style="height: 100%; display:none"></div>
@@ -443,19 +443,19 @@
         // 外部限制
         $.each(denycss, function(i, n) {
             if (/^stat\./.test(n)) {
-                n = ".stat-group[data-find='"+n.substring(5)+"']";
+                n = ".statbox .form-group[data-name='"+n.substring(5)+"']";
                 statbox.find(n).remove();
             } else
             if (/^filt./.test(n)) {
-                n = ".filt-group[data-find='"+n.substring(5)+"']";
+                n = ".filtbox .form-group[data-name='"+n.substring(5)+"']";
                 filtbox.find(n).remove();
             } else
             if (/^find\./.test(n)) {
-                n = "[data-find='"+n.substring(5)+"']";
+                n = ".findbox .form-group[data-name='"+n.substring(5)+"']";
                 findbox.find(n).remove();
             } else
             if (/^list\./.test(n)) {
-                n = "th[data-fn='"+n.substring(5)+"']";
+                n = ".listbox th[data-fn='"+n.substring(5)+"']";
                 listbox.find(n).remove();
             } else
             {

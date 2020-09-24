@@ -74,7 +74,7 @@
             }
         %>
         <% /***/ if (Synt.declare(info.get("statable"), false)) {%>
-        <div class="stat-group form-group form-group-sm clearfix" data-find="<%=name%>">
+        <div class="stat-group form-group form-group-sm clearfix" data-name="<%=name%>">
             <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
                 <%
@@ -103,7 +103,7 @@
             </div>
         </div>
         <%} else if (Synt.declare(info.get("filtable"), false)) {%>
-        <div class="filt-group form-group form-group-sm clearfix" data-find="<%=name%>">
+        <div class="filt-group form-group form-group-sm clearfix" data-name="<%=name%>">
             <label class="col-md-3 col-sm-2 control-label text-right"><%=text%></label>
             <div class="col-md-6 col-sm-8">
             <%if ("number".equals(type) || "range".equals(type) || "color".equals(type) || "sorted".equals(type)) {%>
@@ -167,7 +167,7 @@
         </div>
         <%} /*End If */%>
         <%} /*End For*/%>
-        <div class="mine-group form-group form-group-sm clearfix" data-find="cuser">
+        <div class="mine-group form-group form-group-sm clearfix" data-name="cuser">
             <label class="col-md-3 col-sm-2 control-label text-right">属主</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="cuser" value="" data-ft="_mine"/>
@@ -187,7 +187,7 @@
                 </div>
             </div>
         </div>
-        <div class="sort-group form-group form-group-sm clearfix" data-find="ob">
+        <div class="sort-group form-group form-group-sm clearfix" data-name="ob">
             <label class="col-md-3 col-sm-2 control-label text-right">排序</label>
             <div class="col-md-6 col-sm-8">
                 <input type="hidden" name="ob" value="<%=_ob%>" data-ft="_sort"/>
@@ -344,7 +344,7 @@
         // 外部限制
         $.each(denycss, function(i, n) {
             if (/^find\./.test(n)) {
-                n = "[data-find='"+n.substring(5)+"']";
+                n = ".findbox .form-group[data-name='"+n.substring(5)+"']";
                 findbox.find(n).remove();
             } else
             {

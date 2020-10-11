@@ -1,14 +1,18 @@
 package io.github.ihongs.normal.serv;
 
+import io.github.ihongs.Cnst;
 import io.github.ihongs.Core;
 import io.github.ihongs.action.ActionDriver;
 import io.github.ihongs.action.ActionHelper;
 import io.github.ihongs.action.PasserHelper;
+import io.github.ihongs.util.Synt;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
@@ -16,7 +20,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 /**
- * 去除关系符的冒号前缀
+ * 版本兼容
+ *
+ * 参数 versions 取值:
+ * 20171230 将 :xx 操作符换成 xx
+ * 20190810 将 enus 换成 enum 或 menu, create 返回 nid 而非 info 等
+ *
  * @deprecated 仅为兼容
  * @author Hongs
  */
@@ -25,7 +34,11 @@ public class XsymFilter extends ActionDriver {
     /**
      * 不包含的URL
      */
-    private PasserHelper ignore = null;
+    private PasserHelper ignoreUrls = null;
+    private PasserHelper ignoreRefs = null;
+    private byte level = 0;
+
+    private static final Pattern CTT_PAT = Pattern.compile("^.*/json(;.*)?");
 
     @Override
     public void init(FilterConfig config)
@@ -36,10 +49,27 @@ public class XsymFilter extends ActionDriver {
         /**
          * 获取不包含的URL
          */
-        this.ignore = new PasserHelper(
+        this.ignoreUrls = new PasserHelper(
             config.getInitParameter("ignore-urls"),
             config.getInitParameter("attend-urls")
         );
+        this.ignoreRefs = new PasserHelper(
+            config.getInitParameter("ignore-refs"),
+            config.getInitParameter("attend-refs")
+        );
+
+        /**
+         * 适配版本
+         */
+        Set vs  = Synt.toTerms(config.getInitParameter("versions"));
+        if (vs != null) {
+            if (vs.contains("20171230")) {
+                level += 1;
+            }
+            if (vs.contains("20190810")) {
+                level += 2;
+            }
+        }
     }
 
     @Override
@@ -47,7 +77,8 @@ public class XsymFilter extends ActionDriver {
     {
         super.destroy();
 
-        ignore = null;
+        ignoreUrls = null;
+        ignoreRefs = null;
     }
 
     @Override
@@ -57,33 +88,97 @@ public class XsymFilter extends ActionDriver {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
         String act = ActionDriver.getRecentPath(req);
-        String ctt = req.getContentType();
+        String ref = req.getHeader("Referer");
 
-        do {
-            if (ctt == null) {
-                break;
-            }
+        /**
+         * 检查当前动作是否可以忽略
+         */
+        if (0 == level) {
+            chain.doFilter(req, rsp);
+            return;
+        }
+        if (null != act && null != ignoreUrls && ignoreUrls.ignore(act)) {
+            chain.doFilter(req, rsp);
+            return;
+        }
+        if (null != ref && null != ignoreRefs && ignoreRefs.ignore(ref)) {
+            chain.doFilter(req, rsp);
+            return;
+        }
 
+        int rf = 0;
+        Map rd = hlpr.getRequestData();
+
+        if (1 == (1 & level)) {
             /**
              * 非 JSON 已在 Dict 中兼容
              */
-            ctt = ctt.split( ";", 2 )[0];
-            if (! ctt.endsWith("/json")) {
-                break;
+            String ct = req.getContentType();
+            if (ct != null) {
+                ct  = ct.split (";" , 2) [0];
+                if (ct.endsWith("/json")) {
+                    doChange(rd);
+                }
             }
-
-            /**
-             * 检查当前动作是否可以忽略
-             */
-            if (ignore != null && ignore.ignore(act)) {
-                break;
-            }
-
-            doChange(hlpr.getRequestData());
         }
-        while (false);
+
+        if (2 == (2 & level)) {
+            Set ab  = Synt.toTerms(rd.get(Cnst.AB_KEY));
+            if (ab != null) {
+                rd.put(Cnst.AB_KEY , ab);
+                if (rd.containsKey(Cnst.ID_KEY)
+                && (ab.contains("!enum")
+                ||  ab.contains("!menu")
+                ||  ab.contains("!info")) ) {
+                    rd.put(Cnst.ID_KEY, "");
+                }
+                if (ab.contains("!info")) {
+                    ab.add(".info");
+                }
+                if (ab.contains("!enum")
+                ||  ab.contains(".enum")) {
+                    ab.add(".enus");
+                    rf = 1;
+                } else
+                if (ab.contains("!menu")
+                ||  ab.contains(".menu")) {
+                    ab.add(".enus");
+                    rf = 2;
+                } else
+                if (ab.contains(".enus") == false) {
+                    rf = 3;
+                }
+            }
+        }
 
         chain.doFilter(req , rsp);
+
+        if (2 == (2 & level)) {
+            Map sd  = hlpr.getResponseData();
+            if (sd != null) {
+                if (sd.containsKey("enus")) {
+                    switch (rf) {
+                        case 1:
+                            sd.put("enum", sd.remove("enus"));
+                            break;
+                        case 2:
+                            sd.put("menu", sd.remove("enus"));
+                            break;
+                        case 3:
+                            sd.put("info", sd.remove("enus"));
+                            break;
+                    }
+                }
+                if (sd.containsKey("cnt" )
+                && !sd.containsKey("size")) {
+                    sd.put("size", sd.get("cnt" ));
+                }
+                if (sd.containsKey("nid" )
+                && !sd.containsKey("info")) {
+                    sd.put("info", rd);
+                }
+            }
+        }
     }
 
     private void doChange(Map rd) {

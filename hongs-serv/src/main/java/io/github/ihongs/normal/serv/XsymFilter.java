@@ -12,6 +12,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -23,8 +24,8 @@ import javax.servlet.http.HttpServletResponse;
  * 版本兼容
  *
  * 参数 versions 取值:
- * 20171230 将 :xx 操作符换成 xx
- * 20190810 将 enus 换成 enum 或 menu, create 返回 nid 而非 info 等
+ * 20190728 将 :xx 操作符换成 xx
+ * 20200906 将 enus 换成 enum 或 menu, create 返回 nid 而非 info 等
  *
  * @deprecated 仅为兼容
  * @author Hongs
@@ -38,7 +39,7 @@ public class XsymFilter extends ActionDriver {
     private PasserHelper ignoreRefs = null;
     private byte level = 0;
 
-    private static final Pattern CTT_PAT = Pattern.compile("^.*/json(;.*)?");
+    private static final Pattern REF_PAT = Pattern.compile("^\\w+://([^/;?#]+)(.*)");
 
     @Override
     public void init(FilterConfig config)
@@ -63,10 +64,10 @@ public class XsymFilter extends ActionDriver {
          */
         Set vs  = Synt.toTerms(config.getInitParameter("versions"));
         if (vs != null) {
-            if (vs.contains("20171230")) {
+            if (vs.contains("20190728")) {
                 level += 1;
             }
-            if (vs.contains("20190810")) {
+            if (vs.contains("20200906")) {
                 level += 2;
             }
         }
@@ -87,8 +88,6 @@ public class XsymFilter extends ActionDriver {
     {
         HttpServletResponse rsp = hlpr.getResponse();
         HttpServletRequest  req = hlpr.getRequest( );
-        String act = ActionDriver.getRecentPath(req);
-        String ref = req.getHeader("Referer");
 
         /**
          * 检查当前动作是否可以忽略
@@ -97,11 +96,13 @@ public class XsymFilter extends ActionDriver {
             chain.doFilter(req, rsp);
             return;
         }
-        if (null != act && null != ignoreUrls && ignoreUrls.ignore(act)) {
+        String act = ActionDriver.getRecentPath(req);
+        if (act == null && ignoreUrls.ignore(act)) {
             chain.doFilter(req, rsp);
             return;
         }
-        if (null != ref && null != ignoreRefs && ignoreRefs.ignore(ref)) {
+        String ref = /* Referer */getRefersPath(req);
+        if (ref != null && ignoreRefs.ignore(ref)) {
             chain.doFilter(req, rsp);
             return;
         }
@@ -151,7 +152,7 @@ public class XsymFilter extends ActionDriver {
             }
         }
 
-        chain.doFilter(req , rsp);
+        chain.doFilter(req, rsp);
 
         if (2 == (2 & level)) {
             Map sd  = hlpr.getResponseData();
@@ -169,16 +170,38 @@ public class XsymFilter extends ActionDriver {
                             break;
                     }
                 }
-                if (sd.containsKey("cnt" )
-                && !sd.containsKey("size")) {
-                    sd.put("size", sd.get("cnt" ));
-                }
                 if (sd.containsKey("nid" )
                 && !sd.containsKey("info")) {
-                    sd.put("info", rd);
+                    Object id = sd.get("nid");
+                    rd.put(Cnst.ID_KEY , id );
+                    sd.put("info", rd );
+                }
+                if (sd.containsKey("cnt" )
+                && !sd.containsKey("size")) {
+                    Object ct = sd.get("cnt");
+                    sd.put("size", ct );
                 }
             }
         }
+    }
+
+    private String getRefersPath(HttpServletRequest req) {
+        String hst = req.getHeader ("Host"   );
+        String ref = req.getHeader ("Referer");
+        if (hst != null && ref != null) {
+            Matcher mat = REF_PAT.matcher(ref);
+            if (mat.matches()) {
+                String  reh;
+                reh  =  mat.group(1);
+                ref  =  mat.group(2);
+                if (hst.equals(reh)) {
+                    if (ref.startsWith (Core.BASE_HREF + "/")) {
+                        return ref.substring(Core.BASE_HREF.length() + 1);
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private void doChange(Map rd) {

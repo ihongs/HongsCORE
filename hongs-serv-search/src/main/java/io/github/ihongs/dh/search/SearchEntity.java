@@ -99,36 +99,27 @@ public class SearchEntity extends LuceneRecord {
          * 计数归零可被回收.
          */
 
-        if (WRITER != null) {
-            return  WRITER.conn( );
-        }
-
         final String path = getDbPath();
         final String name = getDbName();
         final boolean[] b = new boolean[] {false};
 
-        try {
-            WRITER = Core.GLOBAL_CORE.get (Writer.class.getName() + ":" + name,
+        if (WRITER != null) {
+            b[ 0 ]  = true;
+        } else try {
+            WRITER  = Core.GLOBAL_CORE.get(Writer.class.getName() + ":" + name,
             new Supplier<Writer> () {
                 @Override
                 public Writer get() {
-                    IndexWriter writer;
-                    b[0] = true;
+                    b[ 0 ]  = true;
 
                     try {
                         IndexWriterConfig iwc = new IndexWriterConfig(getAnalyzer());
                         iwc.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
 
-                        Directory dir = FSDirectory.open(Paths.get(path));
-
-                        writer = new IndexWriter(dir, iwc);
-                    } catch (   IOException x) {
-                        throw new HongsExemption(x);
+                        return new Writer(iwc, path, name);
                     } catch (HongsException x) {
                         throw x.toExemption( );
                     }
-
-                    return new Writer(writer, name);
                 }
             });
         } catch (HongsExemption x) {
@@ -136,7 +127,7 @@ public class SearchEntity extends LuceneRecord {
         }
 
         // 首次进入无需计数
-        if ( b[0] ) {
+        if (b[0] == true) {
             return  WRITER.conn( );
         } else {
             return  WRITER.open( );
@@ -272,77 +263,80 @@ public class SearchEntity extends LuceneRecord {
 
     private static class Writer implements AutoCloseable, Core.Cleanable, Core.Singleton {
 
-        private final IndexWriter writer;
-        private final      String dbname;
-        private   int             c = 1 ;
+        private final String            dbpath;
+        private final String            dbname;
+        private final IndexWriterConfig config;
+        private       IndexWriter       writer;
+        private       int               c = 1 ;
 
-        public Writer(IndexWriter writer, String dbname) {
-            this.writer = writer;
+        public Writer(IndexWriterConfig config, String dbpath, String dbname) {
+            this.config = config;
+            this.dbpath = dbpath;
             this.dbname = dbname;
+
+            init();
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {
                 CoreLogger.trace("Start the lucene writer for " + dbname);
             }
         }
 
-        public IndexWriter conn() {
-//          synchronized (writer) {
-//              c += 0;
-                return writer;
-//          }
+        private void init() {
+            try {
+                Directory direct;
+                direct = FSDirectory.open(Paths.get(dbpath));
+                writer = new IndexWriter ( direct , config );
+            } catch (IOException x) {
+                throw new HongsExemption(x);
+            }
         }
 
-        public IndexWriter open() {
-            synchronized (writer) {
+        synchronized public IndexWriter conn() {
+            //  c += 0;
+            if ( ! writer.isOpen() ) init(); // 重连
+            return writer;
+        }
+
+        synchronized public IndexWriter open() {
                 c += 1;
-                return writer;
-            }
+            if ( ! writer.isOpen() ) init(); // 重连
+            return writer;
         }
 
-        public void exit () {
-            synchronized (writer) {
-                if (c >= 1) {
-                    c -= 1;
-                }
-            }
-        }
-
-        @Override
-        public byte clean() {
-            synchronized (writer) {
-                if (! writer.isOpen() ) {
-                    return (byte) 1;
-                }
-
-                if (c <= 0) {
-                    this . close( );
-                    return (byte) 1;
-                } else {
-                    return (byte) 0;
-                }
+        synchronized public void exit () {
+            if (c >= 1) {
+                c -= 1;
             }
         }
 
         @Override
-        public void close() {
-            synchronized (writer) {
-                if (! writer.isOpen() ) {
-                    return;
-                }
+        synchronized public byte clean() {
+            if (c <= 0) {
+                this . close( );
+                return (byte) 1;
+            } else {
+                return (byte) 0;
+            }
+        }
 
-                // 退出时合并索引
-                try {
-                    writer.maybeMerge();
-                } catch (IOException x) {
-                    CoreLogger.error(x);
-                }
+        @Override
+        synchronized public void close() {
+            if (! writer.isOpen() ) {
+                return;
+            }
 
-                // 关闭后外部移除
-                try {
-                    writer.close( );
-                } catch (IOException x) {
-                    CoreLogger.error(x);
-                }
+            // 退出时合并索引
+            try {
+                writer.maybeMerge();
+            } catch (IOException x) {
+                CoreLogger.error(x);
+            }
+
+            // 关闭后外部移除
+            try {
+                writer.close( );
+            } catch (IOException x) {
+                CoreLogger.error(x);
             }
 
             if (0 < Core.DEBUG && 4 != (4 & Core.DEBUG)) {

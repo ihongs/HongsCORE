@@ -212,15 +212,13 @@
                         }
                         if (rptd) {
                             extr += " data-toggle=\"tagsinput\"";
-                            info.remove("minlength");
-                            info.remove("maxlength");
-                            info.remove( "pattern" );
+                            type  =  "text";
+                        } else {
+                            if ("string".equals(type)) type = "text";
+                            if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
+                            if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
+                            if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                         }
-                        if ("string".equals(type)) type = "text";
-                        if (info.containsKey("size")) extr += " size=\""+info.get("size").toString()+"\"";
-                        if (info.containsKey("minlength")) extr += " minlength=\""+info.get("minlength").toString()+"\"";
-                        if (info.containsKey("maxlength")) extr += " maxlength=\""+info.get("maxlength").toString()+"\"";
-                        if (info.containsKey("pattern"  )) extr += " pattern=\""  +info.get("pattern"  ).toString()+"\"";
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>/>
                     <%hint = null;%>
@@ -230,10 +228,15 @@
                         if (rqrd) {
                             extr += " required=\"required\"";
                         }
-                        if ("sorted".equals(type)) type = "number";
-                        if (info.containsKey("step")) extr += " step=\""+info.get("step").toString()+"\"";
-                        if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
-                        if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
+                        if (rptd) {
+                            extr += " data-toggle=\"tagsinput\"";
+                            type  =  "text";
+                        } else {
+                            if ("sorted".equals(type)) type = "number";
+                            if (info.containsKey("min"      )) extr += " min=\""      +info.get("min"      ).toString()+"\"";
+                            if (info.containsKey("max"      )) extr += " max=\""      +info.get("max"      ).toString()+"\"";
+                            if (info.containsKey("step"     )) extr += " step=\""     +info.get("step"     ).toString()+"\"";
+                        }
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>/>
                     <%hint = null;%>
@@ -251,8 +254,8 @@
                         }
                             extr += " required=\"required\"";
                         }
-                        if (info.containsKey("min" )) extr += " min=\"" +info.get("min" ).toString()+"\"";
-                        if (info.containsKey("max" )) extr += " max=\"" +info.get("max" ).toString()+"\"";
+                        if (info.containsKey("min")) extr += " min=\""+info.get("min").toString()+"\"";
+                        if (info.containsKey("max")) extr += " max=\""+info.get("max").toString()+"\"";
                     %>
                     <input class="form-control" type="text" name="<%=name%>"<%=extr%>/>
                 <%} else if ("check".equals(type)) {%>
@@ -386,11 +389,12 @@
                 <%} else {%>
                     <%
                         String extr = "";
+                        if (rptd) {
+                            name += "." ;
+                            extr += " multiple=\"multiple\"";
+                        }
                         if (rqrd) {
                             extr += " required=\"required\"";
-                        }
-                        if (rptd) {
-                            extr += " multiple=\"multiple\"";
                         }
                     %>
                     <input class="form-control" type="<%=type%>" name="<%=name%>" placeholder="<%=hint%>"<%=extr%>/>

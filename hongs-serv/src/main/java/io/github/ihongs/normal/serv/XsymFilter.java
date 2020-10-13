@@ -97,7 +97,7 @@ public class XsymFilter extends ActionDriver {
             return;
         }
         String act = ActionDriver.getRecentPath(req);
-        if (act == null && ignoreUrls.ignore(act)) {
+        if (act != null && ignoreUrls.ignore(act)) {
             chain.doFilter(req, rsp);
             return;
         }
@@ -195,9 +195,9 @@ public class XsymFilter extends ActionDriver {
                 reh  =  mat.group(1);
                 ref  =  mat.group(2);
                 if (hst.equals(reh)) {
-                    if (ref.startsWith (Core.BASE_HREF + "/")) {
-                        return ref.substring(Core.BASE_HREF.length() + 1);
-                    }
+                    // 仅适配当前应用, 且去除应用路径
+                    if  (  ref.startsWith(Core.BASE_HREF + "/" ) )
+                    return ref.substring (Core.BASE_HREF.length());
                 }
             }
         }
